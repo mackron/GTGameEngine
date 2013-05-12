@@ -81,6 +81,16 @@ namespace GTEngine
         void PushNewVector4(GTCore::Script &script, float x, float y, float z, float w);
         inline void PushNewVector4(GTCore::Script &script, const glm::vec4 &value) { PushNewVector4(script, value.x, value.y, value.z, value.w); }
 
+        /// Pushes a new math.quat table.
+        ///
+        /// @param value [in] The glm::quat containing the initial value of the math.quat.
+        /// @param x     [in] The initial x value.
+        /// @param y     [in] The initial y value.
+        /// @param z     [in] The initial z value.
+        /// @param w     [in] The initial w value.
+        void PushNewQuaternion(GTCore::Script &script, float x, float y, float z, float w);
+        inline void PushNewQuaternion(GTCore::Script &script, const glm::quat &value) { PushNewQuaternion(script, value.x, value.y, value.z, value.w); }
+
 
         namespace FFI
         {

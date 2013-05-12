@@ -24,6 +24,20 @@ namespace GTEngine
                 "function math.degrees(radians)"
                 "    return radians * (180.0 / math.pi);"
                 "end;"
+
+                "function math.clamp(x, low, high)"
+                "    if x < low then"
+                "        return low;"
+                "    elseif x > high then"
+                "        return high;"
+                "    else"
+                "        return x;"
+                "    end;"
+                "end;"
+
+                "function math.mix(x, y, a)"
+                "    return x + a * (y - x);"
+                "end;"
             );
 
 
@@ -537,12 +551,24 @@ namespace GTEngine
                 "end;"
 
                 "math.__quat.__mul = function(a, b)"
-                "    return math.quat("
-                "        b.w * a.w - b.x * a.x - b.y * a.y - b.z * a.z,"
-			    "        b.w * a.x + b.x * a.w + b.y * a.z - b.z * a.y,"
-			    "        b.w * a.y + b.y * a.w + b.z * a.x - b.x * a.z,"
-			    "        b.w * a.z + b.z * a.w + b.x * a.y - b.y * a.x"
-                "    );"
+                "    if     type(a) == 'number' then"
+                "        return math.quat(a * b.x, a * b.y, a * b.z, a * b.w);"
+                "    elseif type(b) == 'number' then"
+                "        return math.quat(a.x * b, a.y * b, a.z * b, a.w * b);"
+                "    else"
+                "        return math.quat("
+                "            b.w * a.w - b.x * a.x - b.y * a.y - b.z * a.z,"
+			    "            b.w * a.x + b.x * a.w + b.y * a.z - b.z * a.y,"
+			    "            b.w * a.y + b.y * a.w + b.z * a.x - b.x * a.z,"
+			    "            b.w * a.z + b.z * a.w + b.x * a.y - b.y * a.x"
+                "        );"
+                "    end;"
+                "end;"
+
+                "math.__quat.__div = function(a, b)"
+                "    if type(a) == 'table' and type(b) == 'number' then"
+                "        return math.quat(a.x / b, a.y / b, a.z / b, a.w / b);"
+                "    end;"
                 "end;"
 
                 "math.__quat.__eq = function(a, b)"
@@ -558,6 +584,19 @@ namespace GTEngine
                 "end;"
 
 
+                "math.__quat.dot = function(self, b)"
+                "    return math.quat_dot(self, b);"
+                "end;"
+
+                "math.__quat.lerp = function(self, y, a)"
+                "    return math.quat_lerp(self, y, a);"
+                "end;"
+
+                "math.__quat.slerp = function(self, y, a)"
+                "    return math.quat_slerp(self, y, a);"
+                "end;"
+
+
                 "function math.quat(xIn, yIn, zIn, wIn)"
                 "    local new = {};"
                 "    setmetatable(new, math.__quat);"
@@ -569,7 +608,7 @@ namespace GTEngine
                 "end;"
 
                 "function math.quat_angleaxis(angle, axis)"
-                "    angle = radians(angle);"
+                "    angle = math.radians(angle);"
                 ""
                 "    local s = math.sin(angle * 0.5);"
                 "    return math.quat("
@@ -578,6 +617,45 @@ namespace GTEngine
                 "        axis.z * s,"
                 "        math.cos(angle * 0.5)"
                 "    );"
+                "end;"
+
+                "function math.quat_identity()"
+                "    return math.quat(0.0, 0.0, 0.0, 1.0);"
+                "end;"
+
+
+                "function math.quat_dot(a, b)"
+                "    return a.x * b.x + a.y * b.y + a.z * b.z + a.w * b.w;"
+                "end;"
+
+                "function math.quat_lerp(x, y, a)"
+                "    return math.quat("
+                "        math.mix(x.x, y.x, a),"
+                "        math.mix(x.y, y.y, a),"
+                "        math.mix(x.z, y.z, a),"
+                "        math.mix(x.w, y.w, a)"
+                "    );"
+                "end;"
+
+                "function math.quat_slerp(x, y, a)"
+                "    local cosTheta = math.quat_dot(x, y);"
+                ""
+                "    if cosTheta < 0.0 then"
+                "        y        = -y;"
+                "        cosTheta = -cosTheta;"
+                "    end;"
+                ""
+                "    if cosTheta > 1.0 - 0.000001 then"
+                "        return math.quat_lerp(x, y, a);"
+                "    else"
+                "        local angle = math.acos(cosTheta);"
+                ""
+                "        local s0 = math.sin((1 - a) * angle);"
+                "        local s1 = math.sin(a * angle);"
+                "        local s  = math.sin(angle);"
+                ""
+                "        return ((s0 * x) + (s1 * y)) / s;"
+                "    end;"
                 "end;"
             );
 
@@ -794,6 +872,28 @@ namespace GTEngine
             assert(script.IsTable(-1));
             {
                 script.Push("vec4");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.Push(x);
+                    script.Push(y);
+                    script.Push(z);
+                    script.Push(w);
+                    script.Call(4, 1);
+
+                    // Return value needs to be moved behind "math" in the stack which will leave it in the correct position for us.
+                    script.InsertIntoStack(-2);
+                }
+            }
+            script.Pop(1);
+        }
+
+        void PushNewQuaternion(GTCore::Script &script, float x, float y, float z, float w)
+        {
+            script.GetGlobal("math");
+            assert(script.IsTable(-1));
+            {
+                script.Push("quat");
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
