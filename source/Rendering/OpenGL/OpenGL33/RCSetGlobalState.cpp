@@ -296,7 +296,7 @@ namespace GTEngine
     }
 
 
-    void RCSetGlobalState::SetDrawBuffers(size_t count, int* buffers)
+    void RCSetGlobalState::SetDrawBuffers(size_t count, const int* buffers)
     {
         CHECK_REDUNDANCY(SCISSOR_BIT, "Warning: Renderer: Redundant call to SetDrawBuffers().");
 

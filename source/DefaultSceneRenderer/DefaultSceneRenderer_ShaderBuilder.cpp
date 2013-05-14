@@ -844,7 +844,7 @@ namespace GTEngine
                 {
                     fragmentSource.Append
                     (
-                        "    ColourOut.rgb += texture2D(BackgroundTexture, lightUV + (normalize(materialRefraction).xy * 0.01)).rgb * (1.0 - materialDiffuse.a);\n"
+                        "    ColourOut.rgb += texture2D(BackgroundTexture, screenUV + (normalize(materialRefraction).xy * 0.01)).rgb * (1.0 - materialDiffuse.a);\n"
                     );
                 }
                 else
