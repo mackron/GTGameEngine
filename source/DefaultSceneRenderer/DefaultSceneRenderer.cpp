@@ -217,10 +217,10 @@ namespace GTEngine
 
         // 5) The final composition. The source colour buffer will depend on whether or not transparency was used.
         auto sourceColourBuffer = framebuffer->opaqueColourBuffer;
-        if (visibleObjects.refractiveTransparentObjects.count > 0)
+        /*if (visibleObjects.refractiveTransparentObjects.count > 0)
         {
             sourceColourBuffer = framebuffer->finalColourBufferHDR;
-        }
+        }*/
 
         this->RenderFinalComposition(framebuffer, sourceColourBuffer);
     }
@@ -392,6 +392,19 @@ namespace GTEngine
     Shader* DefaultSceneRenderer::GetHighlightShader() const
     {
         return this->highlightShader;
+    }
+
+    Shader* DefaultSceneRenderer::GetFullscreenTriangleCopyShader() const
+    {
+        return this->finalCompositionShaderLDR;
+    }
+
+    const VertexArray & DefaultSceneRenderer::GetFullscreenTriangleVA() const
+    {
+        assert(this->fullscreenTriangleVA != nullptr);
+        {
+            return *this->fullscreenTriangleVA;
+        }
     }
 
 

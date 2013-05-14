@@ -96,11 +96,21 @@ namespace GTEngine
         /// @param shaderFlags [in] The shader flags.
         void RenderMesh(const DefaultSceneRendererMesh &mesh, const DefaultSceneRenderer_LightGroup &lightGroup, uint32_t shaderFlags);
 
+        /// Helper for rendering the lighting information of a mesh.
+        ///
+        /// @param mesh        [in] A reference to the mesh whose lighting is being drawn.
+        /// @param lightGroups [in] A reference to the list of light groups.
+        void RenderMeshLighting(const DefaultSceneRendererMesh &mesh, const GTCore::Vector<DefaultSceneRenderer_LightGroup> &lightGroups);
+
         /// Helper for rendering the highlight effect of the given mesh.
         ///
         /// @remarks
         ///     This requires that blending be enabled explicitly before calling this.
         void RenderMeshHighlight(const DefaultSceneRendererMesh &mesh);
+
+
+        /// Helper for drawing the background texture for refraction.
+        void RenderRefractionBackgroundTexture();
 
 
         /// Retrieves a reference to the main light group which will contain every light.

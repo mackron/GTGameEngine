@@ -6,6 +6,12 @@
 
 namespace GTEngine
 {
+    static const int ColourBufferIndex0          = DefaultSceneRendererFramebuffer::ColourOutputIndex0;
+    static const int ColourBufferIndex1          = DefaultSceneRendererFramebuffer::ColourOutputIndex1;
+    static const int DiffuseLightingBufferIndex  = DefaultSceneRendererFramebuffer::DiffuseLightingIndex;
+    static const int SpecularLightingBufferIndex = DefaultSceneRendererFramebuffer::SpecularLightingIndex;
+
+
     DefaultSceneRenderer_MultiPassPipeline::DefaultSceneRenderer_MultiPassPipeline(DefaultSceneRenderer &rendererIn, DefaultSceneRendererFramebuffer &viewportFramebufferIn, const DefaultSceneRenderer_VisibilityProcessor &visibleObjectsIn, bool splitShadowLightsIn)
         : renderer(rendererIn), viewportFramebuffer(viewportFramebufferIn), visibleObjects(visibleObjectsIn), splitShadowLights(splitShadowLightsIn),
           opaqueObjects(nullptr), blendedTransparentObjects(nullptr), refractiveTransparentObjects(nullptr),
@@ -22,7 +28,7 @@ namespace GTEngine
     void DefaultSceneRenderer_MultiPassPipeline::Execute()
     {
         // Clear.
-        int lightingBuffers[] = {1, 2};
+        int lightingBuffers[] = {DiffuseLightingBufferIndex, SpecularLightingBufferIndex};
         Renderer::SetDrawBuffers(2, lightingBuffers);
 
         Renderer::SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
@@ -161,7 +167,92 @@ namespace GTEngine
 
         if (this->refractiveTransparentObjects != nullptr && this->refractiveTransparentObjects->count > 0)
         {
+            // We need to render these back to front. We'll just build a new list. Shouldn't be too many refractive objects on screen at a time.
+            struct SortedMesh
+            {
+                float distanceToCamera;
+                const DefaultSceneRendererMesh* mesh;
 
+                SortedMesh(float distanceToCameraIn, const DefaultSceneRendererMesh* meshIn)
+                    : distanceToCamera(distanceToCameraIn), mesh(meshIn)
+                {
+                }
+
+                bool operator<(const SortedMesh &other) const
+                {
+                    return this->distanceToCamera > other.distanceToCamera;     // <-- Intentionally opposite.
+                }
+                bool operator>(const SortedMesh &other) const
+                {
+                    return this->distanceToCamera < other.distanceToCamera;     // <-- Intentionally opposite.
+                }
+
+                bool operator==(const SortedMesh &other) const
+                {
+                    return this->distanceToCamera == other.distanceToCamera;
+                }
+                bool operator!=(const SortedMesh &other) const
+                {
+                    return this->distanceToCamera != other.distanceToCamera;
+                }
+            };
+
+            GTCore::SortedVector<SortedMesh> sortedMeshes;
+            for (size_t iMesh = 0; iMesh < visibleObjects.refractiveTransparentObjects.count; ++iMesh)
+            {
+                auto &mesh = visibleObjects.refractiveTransparentObjects[iMesh];
+                {
+                    float distanceToCamera = glm::distance(glm::inverse(visibleObjects.viewMatrix)[3], mesh.transform[3]);
+                    sortedMeshes.Insert(SortedMesh(distanceToCamera, &mesh));
+                }
+            }
+
+
+            
+            auto backgroundTexture = this->viewportFramebuffer.finalColourBufferHDR;
+            assert(backgroundTexture != nullptr);
+            {
+                // We need to use a nearest/nearest filter for the background texture.
+                Renderer::SetTexture2DFilter(*backgroundTexture, TextureFilter::TextureFilter_Nearest, TextureFilter::TextureFilter_Nearest);
+
+
+
+                GTCore::Vector<DefaultSceneRenderer_LightGroup> lightGroups;
+
+                for (size_t iMesh = 0; iMesh < sortedMeshes.count; ++iMesh)
+                {
+                    auto &mesh = *sortedMeshes[iMesh].mesh;
+                    {
+                        lightGroups.Clear();
+                        this->SubdivideLightGroup(mesh.touchingLights, lightGroups, ConvertShadowLights);
+
+                        // Lighting.
+                        this->RenderMeshLighting(mesh, lightGroups);
+
+
+                        // We need a background texture for this mesh.
+                        this->RenderRefractionBackgroundTexture();
+
+
+                        // Need to ensure we are writing to the main colour buffer.
+                        Renderer::SetDrawBuffers(1, &ColourBufferIndex0);
+
+
+                        // Material.
+                        this->RenderMesh(mesh, lightGroups[0], DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass);
+                    
+                        // Highlight.
+                        if ((mesh.flags & SceneRendererMesh::DrawHighlight))
+                        {
+                            Renderer::EnableBlending();
+                            {
+                                this->RenderMeshHighlight(mesh);
+                            }
+                            Renderer::DisableBlending();
+                        }
+                    }
+                }
+            }
         }
     }
 
@@ -436,7 +527,7 @@ namespace GTEngine
     void DefaultSceneRenderer_MultiPassPipeline::OpaqueMaterialPass()
     {
         // We can assert that the current framebuffer will be the main one. All we need to do is change the draw buffer.
-        int outputBuffer[] = {0};
+        int outputBuffer[] = {ColourBufferIndex0};
         Renderer::SetDrawBuffers(1, outputBuffer);
 
         // Clear the background, if applicable.
@@ -659,7 +750,7 @@ namespace GTEngine
     {
         Renderer::SetCurrentFramebuffer(this->viewportFramebuffer.framebuffer);
 
-        int lightingBuffers[] = {1, 2};
+        int lightingBuffers[] = {DiffuseLightingBufferIndex, SpecularLightingBufferIndex};
         Renderer::SetDrawBuffers(2, lightingBuffers);
         Renderer::SetViewport(0, 0, this->viewportFramebuffer.width, this->viewportFramebuffer.height);
     }
@@ -724,6 +815,12 @@ namespace GTEngine
                 shader->SetUniform("SpecularLighting", this->viewportFramebuffer.lightingBuffer1);
             }
 
+            if (mesh.material->IsRefractive())
+            {
+                shader->SetUniform("BackgroundTexture", this->viewportFramebuffer.finalColourBufferHDR);
+            }
+
+
             Renderer::PushPendingUniforms(*shader);
 
 
@@ -734,6 +831,37 @@ namespace GTEngine
                 Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
             }
             if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer::EnableDepthTest();
+        }
+    }
+
+    void DefaultSceneRenderer_MultiPassPipeline::RenderMeshLighting(const DefaultSceneRendererMesh &mesh, const GTCore::Vector<DefaultSceneRenderer_LightGroup> &lightGroups)
+    {
+        int lightingBuffers[] = {DiffuseLightingBufferIndex, SpecularLightingBufferIndex};
+        Renderer::SetDrawBuffers(2, lightingBuffers);
+        
+
+        if (lightGroups.count > 1)
+        {
+            Renderer::SetBlendEquation(BlendEquation_Add);
+            Renderer::SetBlendFunction(BlendFunc_One, GTEngine::BlendFunc_One);
+        }
+
+
+        for (size_t i = 0; i < lightGroups.count; ++i)
+        {
+            if (i == 1)
+            {
+                Renderer::EnableBlending();
+            }
+
+            this->RenderMesh(mesh, lightGroups[0], 0);
+        }
+
+
+        // We'll need to disable blending if required.
+        if (lightGroups.count > 1)
+        {
+            Renderer::DisableBlending();
         }
     }
 
@@ -757,6 +885,30 @@ namespace GTEngine
         }
     }
 
+
+    void DefaultSceneRenderer_MultiPassPipeline::RenderRefractionBackgroundTexture()
+    {
+        // We render this to the second colour buffer.
+        Renderer::SetDrawBuffers(1, &ColourBufferIndex1);
+
+        // Shader setup.
+        auto shader = this->renderer.GetFullscreenTriangleCopyShader();
+        assert(shader != nullptr);
+        {
+            Renderer::SetCurrentShader(shader);
+            shader->SetUniform("ColourBuffer", this->viewportFramebuffer.opaqueColourBuffer);
+            Renderer::PushPendingUniforms(*shader);
+        }
+
+        // Draw.
+        Renderer::DisableDepthTest();
+        Renderer::DisableDepthWrites();
+        {
+            Renderer::Draw(this->renderer.GetFullscreenTriangleVA());
+        }
+        Renderer::EnableDepthTest();
+        Renderer::EnableDepthWrites();
+    }
 
 
     const DefaultSceneRenderer_LightGroup & DefaultSceneRenderer_MultiPassPipeline::GetMainLightGroup() const

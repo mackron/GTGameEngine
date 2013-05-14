@@ -86,7 +86,7 @@ namespace GTEngine
 
 
         /// Renderer::SetDrawBuffers()
-        void SetDrawBuffers(size_t count, int* buffers);
+        void SetDrawBuffers(size_t count, const int* buffers);
 
 
         /// Renderer::Enable*()

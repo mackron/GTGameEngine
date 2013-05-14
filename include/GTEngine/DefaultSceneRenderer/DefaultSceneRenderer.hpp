@@ -67,6 +67,12 @@ namespace GTEngine
         unsigned int height;
 
 
+        static const int ColourOutputIndex0    = 0;
+        static const int ColourOutputIndex1    = 3;
+        static const int DiffuseLightingIndex  = 1;
+        static const int SpecularLightingIndex = 2;
+        static const int FinalColourIndex      = 4;
+
 
         /// Constructor
         DefaultSceneRendererFramebuffer(unsigned int widthIn, unsigned int heightIn)
@@ -77,17 +83,17 @@ namespace GTEngine
               bloomFramebuffer(nullptr), bloomBuffer(nullptr), bloomBlurBuffer(nullptr),
               width(widthIn), height(heightIn)
         {
-            this->framebuffer          = Renderer::CreateFramebuffer();
-            this->depthStencilBuffer   = Renderer::CreateTexture2D();
-            this->opaqueColourBuffer   = Renderer::CreateTexture2D();
-            this->lightingBuffer0      = Renderer::CreateTexture2D();
-            this->lightingBuffer1      = Renderer::CreateTexture2D();
-            this->finalColourBufferHDR = Renderer::CreateTexture2D();
-            this->finalColourBuffer    = Renderer::CreateTexture2D();
+            this->framebuffer             = Renderer::CreateFramebuffer();
+            this->depthStencilBuffer      = Renderer::CreateTexture2D();
+            this->opaqueColourBuffer      = Renderer::CreateTexture2D();
+            this->lightingBuffer0         = Renderer::CreateTexture2D();
+            this->lightingBuffer1         = Renderer::CreateTexture2D();
+            this->finalColourBufferHDR    = Renderer::CreateTexture2D();
+            this->finalColourBuffer       = Renderer::CreateTexture2D();
 
-            this->bloomFramebuffer     = Renderer::CreateFramebuffer();
-            this->bloomBuffer          = Renderer::CreateTexture2D();
-            this->bloomBlurBuffer      = Renderer::CreateTexture2D();
+            this->bloomFramebuffer        = Renderer::CreateFramebuffer();
+            this->bloomBuffer             = Renderer::CreateTexture2D();
+            this->bloomBlurBuffer         = Renderer::CreateTexture2D();
 
 
             // Sizes and formats need to be set. All we need to do is call the Resize() method.
@@ -471,6 +477,12 @@ namespace GTEngine
 
         /// Retrieves the shader for doing the selection/highlight effect.
         Shader* GetHighlightShader() const;
+
+        /// Retrieves the shader for doing a fullscreen quad copy.
+        Shader* GetFullscreenTriangleCopyShader() const;
+
+        /// Retrieves a reference to the fullscreen triangle vertex array.
+        const VertexArray & GetFullscreenTriangleVA() const;
 
 
 

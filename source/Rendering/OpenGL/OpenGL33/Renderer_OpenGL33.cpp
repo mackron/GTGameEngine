@@ -929,7 +929,7 @@ namespace GTEngine
     }
 
 
-    void Renderer::SetDrawBuffers(size_t count, int* buffers)
+    void Renderer::SetDrawBuffers(size_t count, const int* buffers)
     {
         UPDATE_CURRENT_RC(RCSetGlobalState);
         assert(State.currentRCSetGlobalState != nullptr);

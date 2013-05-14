@@ -317,7 +317,7 @@ namespace GTEngine
         ///
         /// @param count  [in] The number of buffers to use.
         /// @param buffer [in] The indices of the colour buffers to use.
-        static void SetDrawBuffers(size_t count, int* buffers);
+        static void SetDrawBuffers(size_t count, const int* buffers);
 
 
         /// Sets the swap interval (controls v-sync).
