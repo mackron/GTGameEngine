@@ -125,4 +125,11 @@ namespace GTEngine
     {
         return this->id.GetShadowSpotLightCount();
     }
+
+
+    void DefaultSceneRenderer_LightGroup::Clear()
+    {
+        this->id.Reset();
+        this->lightIDs.Clear();
+    }
 }

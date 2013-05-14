@@ -32,14 +32,7 @@ namespace GTEngine
         DefaultSceneRenderer_LightGroupID()
             : value()
         {
-            value[0] = 0;
-            value[1] = 0;
-            value[2] = 0;
-            value[3] = 0;
-            value[4] = 0;
-            value[5] = 0;
-            value[6] = 0;
-            value[7] = 0;
+            this->Reset();
         }
 
         DefaultSceneRenderer_LightGroupID(const DefaultSceneRenderer_LightGroupID &other)
@@ -232,6 +225,19 @@ namespace GTEngine
         }
 
 
+        void Reset()
+        {
+            this->value[0] = 0;
+            this->value[1] = 0;
+            this->value[2] = 0;
+            this->value[3] = 0;
+            this->value[4] = 0;
+            this->value[5] = 0;
+            this->value[6] = 0;
+            this->value[7] = 0;
+        }
+
+
 
         bool operator<(const DefaultSceneRenderer_LightGroupID &other) const
         {
@@ -379,6 +385,10 @@ namespace GTEngine
                    this->GetShadowPointLightCount() +
                    this->GetShadowSpotLightCount();
         }
+
+
+        /// Clears the light group.
+        void Clear();
     };
 }
 

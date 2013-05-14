@@ -42,6 +42,9 @@ namespace GTEngine
         void AddSpotLight(const SpotLightComponent* lightComponent);
 
 
+        /// Retrieves the total number of lights.
+        unsigned int GetTotalLightCount() const;
+
 
         /// Takes a light group and sub-divides it into smaller chunks for use by the renderer.
         ///

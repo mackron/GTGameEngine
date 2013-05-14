@@ -448,6 +448,66 @@ namespace GTEngine
 
 
         ////////////////////////////////////////////////////////////////
+        // Resource Access.
+
+        /// Retrieves the shader to use for a depth pre-pass.
+        Shader* GetDepthPassShader() const;
+
+        /// Retrieves a directional light shadow map by it's index.
+        Texture2D* GetDirectionalShadowMapByIndex(size_t index);
+
+        /// Retrieves a point light shadow map by it's index.
+        TextureCube* GetPointShadowMapByIndex(size_t index);
+
+        /// Retrieves a spot light shadow map by it's index.
+        Texture2D* GetSpotShadowMapByIndex(size_t index);
+
+        /// Retrieves a pointer to the shader for the given light group and flags.
+        ///
+        /// @param material     [in] A reference to the material whose shader is being retrieved.
+        /// @param lightGroupID [in] A reference to the ID of the light group.
+        /// @param flags        [in] The additional flags controlling some properties of the shader.
+        Shader* GetMaterialShader(Material &material, const DefaultSceneRenderer_LightGroupID &lightGroupID, uint32_t flags);
+
+        /// Retrieves the shader for doing the selection/highlight effect.
+        Shader* GetHighlightShader() const;
+
+
+
+        ////////////////////////////////////////////////////////////////
+        // Rendering Helpers.
+
+        /// Renders a directional light shadow map into the specified shadow map index.
+        ///
+        /// @param light          [in] A reference to the light.
+        /// @param shadowMapIndex [in] The index of the shadow map to render into.
+        Texture2D* RenderDirectionalLightShadowMap(DefaultSceneRendererDirectionalLight &light, size_t shadowMapIndex);
+
+        /// Renders a point light shadow map into the specified shadow map index.
+        ///
+        /// @param light          [in] A reference to the light.
+        /// @param shadowMapIndex [in] The index of the shadow map to render into.
+        TextureCube* RenderPointLightShadowMap(DefaultSceneRendererPointLight &light, size_t shadowMapIndex);
+
+        /// Renders a spot light shadow map into the specified shadow map index.
+        ///
+        /// @param light          [in] A reference to the light.
+        /// @param shadowMapIndex [in] The index of the shadow map to render into.
+        Texture2D* RenderSpotLightShadowMap(DefaultSceneRendererSpotLight &light, size_t shadowMapIndex);
+
+        /// Sets the uniforms of the given material shader using the given data.
+        ///
+        /// @param shader         [in] A reference to the shader whose uniforms are being set.
+        /// @param material       [in] A reference to the owner material.
+        /// @param lightGroup     [in] A reference to the light group.
+        /// @param flags          [in] The flags specifying additional properties about the contents of the shader.
+        /// @param visibleObjects [in] A reference to the visibility processor containing information about the lights.
+        void SetMaterialShaderUniforms(Shader &shader, const Material &material, const DefaultSceneRenderer_LightGroup &lightGroup, uint32_t flags, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
+
+
+
+
+        ////////////////////////////////////////////////////////////////
         // Event Handlers from MaterialLibrary.
 
         /// Called when a material definition is deleted.
@@ -549,23 +609,6 @@ namespace GTEngine
         ///     If the structure has not yet been created, it will be created here. Note, this will not create the individual shaders. This will be handled by
         ///     the method responsible for retrieving those specific shaders.
         DefaultSceneRenderer_MaterialShaders* GetMaterialShaders(Material &material);
-
-        /// Retrieves a pointer to the shader for the given light group and flags.
-        ///
-        /// @param material     [in] A reference to the material whose shader is being retrieved.
-        /// @param lightGroupID [in] A reference to the ID of the light group.
-        /// @param flags        [in] The additional flags controlling some properties of the shader.
-        Shader* GetMaterialShader(Material &material, const DefaultSceneRenderer_LightGroupID &lightGroupID, uint32_t flags);
-
-        /// Sets the uniforms of the given material shader using the given data.
-        ///
-        /// @param shader         [in] A reference to the shader whose uniforms are being set.
-        /// @param material       [in] A reference to the owner material.
-        /// @param lightGroup     [in] A reference to the light group.
-        /// @param flags          [in] The flags specifying additional properties about the contents of the shader.
-        /// @param visibleObjects [in] A reference to the visibility processor containing information about the lights.
-        void SetMaterialShaderUniforms(Shader &shader, const Material &material, const DefaultSceneRenderer_LightGroup &lightGroup, uint32_t flags, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
-
 
         /// Retrieves the shader to use for the ambient light pass.
         ///
