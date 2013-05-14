@@ -207,9 +207,11 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaderID.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaders.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_Mesh.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_MultiPassPipeline.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_PointLight.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShaderBuilder.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShadowVisibilityProcessor.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_SinglePassPipeline.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_SpotLight.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_VisibilityProcessor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneUpdateManager.hpp" />
@@ -462,9 +464,11 @@
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaderID.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaders.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_Mesh.cpp" />
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_MultiPassPipeline.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_PointLight.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShaderBuilder.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShadowVisibilityProcessor.cpp" />
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_SinglePassPipeline.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_SpotLight.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_VisibilityProcessor.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneUpdateManager.cpp" />

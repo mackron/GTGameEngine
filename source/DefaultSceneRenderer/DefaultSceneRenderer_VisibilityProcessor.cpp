@@ -225,10 +225,10 @@ namespace GTEngine
             assert(objectList != nullptr);
             {
                 // If the lights pointer is null, we're going to make it affected by every light.
-                if (mesh.touchingLights == nullptr)
+                /*if (mesh.touchingLights == nullptr)
                 {
                     const_cast<DefaultSceneRendererMesh &>(mesh).touchingLights = &this->allLights;
-                }
+                }*/
 
                 objectList->PushBack(mesh);
             }
@@ -632,7 +632,7 @@ namespace GTEngine
 
 
         // Light groups need to be allocated.
-        this->PostProcess_AllocateLightGroups();
+        //this->PostProcess_AllocateLightGroups();
     }
 
 

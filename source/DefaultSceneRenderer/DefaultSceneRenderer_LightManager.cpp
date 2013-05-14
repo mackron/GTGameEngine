@@ -144,6 +144,12 @@ namespace GTEngine
     }
 
 
+    unsigned int DefaultSceneRenderer_LightManager::GetTotalLightCount() const
+    {
+        return this->ambientLights.count + this->directionalLights.count + this->pointLights.count + this->spotLights.count;
+    }
+
+
     void DefaultSceneRenderer_LightManager::SubdivideLightGroup(const DefaultSceneRenderer_LightGroup &source, GTCore::Vector<DefaultSceneRenderer_LightGroup> &output, unsigned int options)
     {
         output.Clear();     // TODO: Check that we actually need this clear.
