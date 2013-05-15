@@ -78,6 +78,12 @@ namespace GTEngine
             // Material.
             this->OpaqueMaterialPass();
         }
+        else
+        {
+            // There was no objects, by we might need to clear the background.
+            Renderer::SetDrawBuffers(1, &ColourBufferIndex0);
+            this->TryClearBackground();
+        }
     }
 
     void DefaultSceneRenderer_MultiPassPipeline::TransparentPass()
@@ -496,15 +502,7 @@ namespace GTEngine
         int outputBuffer[] = {ColourBufferIndex0};
         Renderer::SetDrawBuffers(1, outputBuffer);
 
-        // Clear the background, if applicable.
-        if (!this->hasBackgroundBeenCleared && this->renderer.IsBackgroundColourClearingEnabled())
-        {
-            auto &colour = this->renderer.GetBackgroundClearColour();
-            Renderer::SetClearColour(colour.x, colour.y, colour.z, 1.0f);
-            Renderer::Clear(BufferType_Colour);
-
-            this->hasBackgroundBeenCleared = true;
-        }
+        this->TryClearBackground();
 
 
         DefaultSceneRenderer_LightGroup emptyLightGroup;
@@ -874,6 +872,19 @@ namespace GTEngine
         }
         Renderer::EnableDepthTest();
         Renderer::EnableDepthWrites();
+    }
+
+
+    void DefaultSceneRenderer_MultiPassPipeline::TryClearBackground()
+    {
+        if (!this->hasBackgroundBeenCleared && this->renderer.IsBackgroundColourClearingEnabled())
+        {
+            auto &colour = this->renderer.GetBackgroundClearColour();
+            Renderer::SetClearColour(colour.x, colour.y, colour.z, 1.0f);
+            Renderer::Clear(BufferType_Colour);
+
+            this->hasBackgroundBeenCleared = true;
+        }
     }
 
 
