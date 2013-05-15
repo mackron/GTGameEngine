@@ -27,26 +27,6 @@
 
 namespace GTEngine
 {
-    // Structure containing metadata to attach to picking objects.
-    struct PickingShapeMetadata
-    {
-        /// A pointer to the editor metadata component, if any. Can be null.
-        EditorMetadataComponent* editorMetadata;
-
-        /// A pointer to the gizmo handle, if any.
-        //TransformGizmo::Handle* gizmoHandle;
-
-
-
-        /// Constructor.
-        PickingShapeMetadata()
-            : editorMetadata(nullptr)//, gizmoHandle(nullptr)
-        {
-        }
-    };
-
-
-
     //////////////////////////////////////////////
     // Scene Editor
     SceneEditor::SceneEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
@@ -293,6 +273,13 @@ namespace GTEngine
                 this->scene.PostSceneNodeScriptEvent_OnStartup();
 
 
+                // If the camera is not he main camera, we want to disable mouse capture in the viewport.
+                if (this->scene.GetViewportByIndex(0).GetCameraNode() != &this->camera)
+                {
+                    this->viewportEventHandler.DisableMouseCapture();
+                }
+
+
                 this->updateManager.Enable();
 
                 this->physicsManager.EnableSimulation();
@@ -351,6 +338,9 @@ namespace GTEngine
 
                 // A game may have captured the mouse. We'll force a release just in case it doesn't handle it correctly.
                 this->GetOwnerEditor().GetGame().ReleaseMouse();
+
+                // We will also want to make sure mouse capture is re-enabled.
+                this->viewportEventHandler.EnableMouseCapture();
 
 
                 // The grid might need to be shown.

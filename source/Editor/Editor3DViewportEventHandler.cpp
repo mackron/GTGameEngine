@@ -9,7 +9,8 @@ namespace GTEngine
 {
     Editor3DViewportEventHandler::Editor3DViewportEventHandler(Game &game, SceneViewport &viewport)
         : game(game), viewport(viewport),
-          mousePosX(0), mousePosY(0)
+          mousePosX(0), mousePosY(0),
+          isMouseCaptureEnabled(true)
     {
     }
 
@@ -17,6 +18,21 @@ namespace GTEngine
     {
     }
 
+    
+    void Editor3DViewportEventHandler::EnableMouseCapture()
+    {
+        this->isMouseCaptureEnabled = true;
+    }
+
+    void Editor3DViewportEventHandler::DisableMouseCapture()
+    {
+        this->isMouseCaptureEnabled = false;
+        
+        if (!this->game.IsMouseButtonDown(GTCore::MouseButton_Right))
+        {
+            this->game.ReleaseMouse();
+        }
+    }
 
 
     void Editor3DViewportEventHandler::OnSize(GTGUI::Element &element)
@@ -80,7 +96,7 @@ namespace GTEngine
 
     void Editor3DViewportEventHandler::OnLMBDown(GTGUI::Element &, int, int)
     {
-        if (!this->game.IsMouseCaptured())
+        if (!this->game.IsMouseCaptured() && this->isMouseCaptureEnabled)
         {
             this->game.CaptureMouse();
         }
@@ -96,7 +112,7 @@ namespace GTEngine
 
     void Editor3DViewportEventHandler::OnRMBDown(GTGUI::Element &, int, int)
     {
-        if (!this->game.IsMouseCaptured())
+        if (!this->game.IsMouseCaptured() && this->isMouseCaptureEnabled)
         {
             this->game.CaptureMouse();
         }
