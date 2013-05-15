@@ -82,39 +82,41 @@ namespace GTEngine
 
     void DefaultSceneRenderer_MultiPassPipeline::TransparentPass()
     {
+        struct SortedMesh
+        {
+            float distanceToCamera;
+            const DefaultSceneRendererMesh* mesh;
+
+            SortedMesh(float distanceToCameraIn, const DefaultSceneRendererMesh* meshIn)
+                : distanceToCamera(distanceToCameraIn), mesh(meshIn)
+            {
+            }
+
+            bool operator<(const SortedMesh &other) const
+            {
+                return this->distanceToCamera > other.distanceToCamera;     // <-- Intentionally opposite.
+            }
+            bool operator>(const SortedMesh &other) const
+            {
+                return this->distanceToCamera < other.distanceToCamera;     // <-- Intentionally opposite.
+            }
+
+            bool operator==(const SortedMesh &other) const
+            {
+                return this->distanceToCamera == other.distanceToCamera;
+            }
+            bool operator!=(const SortedMesh &other) const
+            {
+                return this->distanceToCamera != other.distanceToCamera;
+            }
+        };
+
+        GTCore::SortedVector<SortedMesh> sortedMeshes;
+
+
+        // Here is where we sort the meshes.
         if (this->blendedTransparentObjects != nullptr && this->blendedTransparentObjects->count > 0)
         {
-            // We need to render these back to front. We'll just build a new list. Shouldn't be too many refractive objects on screen at a time.
-            struct SortedMesh
-            {
-                float distanceToCamera;
-                const DefaultSceneRendererMesh* mesh;
-
-                SortedMesh(float distanceToCameraIn, const DefaultSceneRendererMesh* meshIn)
-                    : distanceToCamera(distanceToCameraIn), mesh(meshIn)
-                {
-                }
-
-                bool operator<(const SortedMesh &other) const
-                {
-                    return this->distanceToCamera > other.distanceToCamera;     // <-- Intentionally opposite.
-                }
-                bool operator>(const SortedMesh &other) const
-                {
-                    return this->distanceToCamera < other.distanceToCamera;     // <-- Intentionally opposite.
-                }
-
-                bool operator==(const SortedMesh &other) const
-                {
-                    return this->distanceToCamera == other.distanceToCamera;
-                }
-                bool operator!=(const SortedMesh &other) const
-                {
-                    return this->distanceToCamera != other.distanceToCamera;
-                }
-            };
-
-            GTCore::SortedVector<SortedMesh> sortedMeshes;
             for (size_t iMesh = 0; iMesh < visibleObjects.blendedTransparentObjects.count; ++iMesh)
             {
                 auto &mesh = visibleObjects.blendedTransparentObjects[iMesh];
@@ -123,22 +125,81 @@ namespace GTEngine
                     sortedMeshes.Insert(SortedMesh(distanceToCamera, &mesh));
                 }
             }
+        }
 
-
-            // Setup initial rendering state. We assert that the main framebuffer is current and the correct draw buffer is in place.
-            Renderer::EnableBlending();
-
-            GTCore::Vector<DefaultSceneRenderer_LightGroup> lightGroups;
-
-            for (size_t iMesh = 0; iMesh < sortedMeshes.count; ++iMesh)
+        if (this->refractiveTransparentObjects != nullptr && this->refractiveTransparentObjects->count > 0)
+        {
+            for (size_t iMesh = 0; iMesh < visibleObjects.refractiveTransparentObjects.count; ++iMesh)
             {
-                auto &mesh = *sortedMeshes[iMesh].mesh;
+                auto &mesh = visibleObjects.refractiveTransparentObjects[iMesh];
                 {
-                    lightGroups.Clear();
-                    this->SubdivideLightGroup(mesh.touchingLights, lightGroups, ConvertShadowLights);
+                    float distanceToCamera = glm::distance(glm::inverse(visibleObjects.viewMatrix)[3], mesh.transform[3]);
+                    sortedMeshes.Insert(SortedMesh(distanceToCamera, &mesh));
+                }
+            }
+        }
 
 
+        // We need to use a nearest/nearest filter for the background texture.
+        auto backgroundTexture = this->viewportFramebuffer.finalColourBufferHDR;
+        assert(backgroundTexture != nullptr);
+        {
+            Renderer::SetTexture2DFilter(*backgroundTexture, TextureFilter::TextureFilter_Nearest, TextureFilter::TextureFilter_Nearest);
+        }
+
+
+        bool isBlendingEnabled = false;
+        GTCore::Vector<DefaultSceneRenderer_LightGroup> lightGroups;
+
+        for (size_t iMesh = 0; iMesh < sortedMeshes.count; ++iMesh)
+        {
+            auto &mesh = *sortedMeshes[iMesh].mesh;
+            {
+                lightGroups.Clear();
+                this->SubdivideLightGroup(mesh.touchingLights, lightGroups, ConvertShadowLights);
+
+                if (mesh.material->IsRefractive())
+                {
+                    // No traditional blending here.
+                    if (isBlendingEnabled)
+                    {
+                        Renderer::DisableBlending();
+                        isBlendingEnabled = false;
+                    }
+
+                    // We need a background texture for this mesh.
+                    this->RenderRefractionBackgroundTexture();
+
+
+                    // Lighting.
+                    this->RenderMeshLighting(mesh, lightGroups);
+
+
+                    // Need to ensure we are writing to the main colour buffer.
+                    Renderer::SetDrawBuffers(1, &ColourBufferIndex0);
+
+
+                    // Material.
+                    this->RenderMesh(mesh, lightGroups[0], DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass);
+                    
+                    // Highlight.
+                    if ((mesh.flags & SceneRendererMesh::DrawHighlight))
+                    {
+                        Renderer::EnableBlending();
+                        isBlendingEnabled = true;
+
+                        this->RenderMeshHighlight(mesh);
+                    }
+                }
+                else
+                {
                     // Blending setup.
+                    if (!isBlendingEnabled)
+                    {
+                        Renderer::EnableBlending();
+                        isBlendingEnabled = true;
+                    }
+
                     Renderer::SetBlendEquation(mesh.material->GetBlendEquation());
                     Renderer::SetBlendFunction(mesh.material->GetBlendSourceFactor(), mesh.material->GetBlendDestinationFactor());
 
@@ -155,101 +216,6 @@ namespace GTEngine
                     if ((mesh.flags & SceneRendererMesh::DrawHighlight))
                     {
                         this->RenderMeshHighlight(mesh);
-                    }
-                }
-            }
-
-            Renderer::DisableBlending();
-        }
-
-
-
-
-        if (this->refractiveTransparentObjects != nullptr && this->refractiveTransparentObjects->count > 0)
-        {
-            // We need to render these back to front. We'll just build a new list. Shouldn't be too many refractive objects on screen at a time.
-            struct SortedMesh
-            {
-                float distanceToCamera;
-                const DefaultSceneRendererMesh* mesh;
-
-                SortedMesh(float distanceToCameraIn, const DefaultSceneRendererMesh* meshIn)
-                    : distanceToCamera(distanceToCameraIn), mesh(meshIn)
-                {
-                }
-
-                bool operator<(const SortedMesh &other) const
-                {
-                    return this->distanceToCamera > other.distanceToCamera;     // <-- Intentionally opposite.
-                }
-                bool operator>(const SortedMesh &other) const
-                {
-                    return this->distanceToCamera < other.distanceToCamera;     // <-- Intentionally opposite.
-                }
-
-                bool operator==(const SortedMesh &other) const
-                {
-                    return this->distanceToCamera == other.distanceToCamera;
-                }
-                bool operator!=(const SortedMesh &other) const
-                {
-                    return this->distanceToCamera != other.distanceToCamera;
-                }
-            };
-
-            GTCore::SortedVector<SortedMesh> sortedMeshes;
-            for (size_t iMesh = 0; iMesh < visibleObjects.refractiveTransparentObjects.count; ++iMesh)
-            {
-                auto &mesh = visibleObjects.refractiveTransparentObjects[iMesh];
-                {
-                    float distanceToCamera = glm::distance(glm::inverse(visibleObjects.viewMatrix)[3], mesh.transform[3]);
-                    sortedMeshes.Insert(SortedMesh(distanceToCamera, &mesh));
-                }
-            }
-
-
-            
-            auto backgroundTexture = this->viewportFramebuffer.finalColourBufferHDR;
-            assert(backgroundTexture != nullptr);
-            {
-                // We need to use a nearest/nearest filter for the background texture.
-                Renderer::SetTexture2DFilter(*backgroundTexture, TextureFilter::TextureFilter_Nearest, TextureFilter::TextureFilter_Nearest);
-
-
-
-                GTCore::Vector<DefaultSceneRenderer_LightGroup> lightGroups;
-
-                for (size_t iMesh = 0; iMesh < sortedMeshes.count; ++iMesh)
-                {
-                    auto &mesh = *sortedMeshes[iMesh].mesh;
-                    {
-                        lightGroups.Clear();
-                        this->SubdivideLightGroup(mesh.touchingLights, lightGroups, ConvertShadowLights);
-
-                        // Lighting.
-                        this->RenderMeshLighting(mesh, lightGroups);
-
-
-                        // We need a background texture for this mesh.
-                        this->RenderRefractionBackgroundTexture();
-
-
-                        // Need to ensure we are writing to the main colour buffer.
-                        Renderer::SetDrawBuffers(1, &ColourBufferIndex0);
-
-
-                        // Material.
-                        this->RenderMesh(mesh, lightGroups[0], DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass);
-                    
-                        // Highlight.
-                        if ((mesh.flags & SceneRendererMesh::DrawHighlight))
-                        {
-                            Renderer::EnableBlending();
-                            {
-                                this->RenderMeshHighlight(mesh);
-                            }
-                            Renderer::DisableBlending();
-                        }
                     }
                 }
             }
