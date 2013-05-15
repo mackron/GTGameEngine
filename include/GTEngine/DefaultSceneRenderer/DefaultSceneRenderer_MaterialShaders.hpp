@@ -18,34 +18,6 @@ namespace GTEngine
         ~DefaultSceneRenderer_MaterialShaders();
 
 
-        /// The shader to use when doing an ambient light pass.
-        Shader* ambientLightShader;
-
-        /// The shader to use when doing a directional light pass.
-        Shader* directionalLightShader;
-
-        /// The shader to use when doing a point light pass.
-        Shader* pointLightShader;
-
-        /// The shader to use when doing a spot light pass.
-        Shader* spotLightShader;
-
-
-        /// The shader to use when doing a shadow directional light pass.
-        Shader* shadowDirectionalLightShader;
-
-        /// The shader to use when doing a shadow point light pass.
-        Shader* shadowPointLightShader;
-
-        /// The shader to use when doing a shadow spot light pass.
-        Shader* shadowSpotLightShader;
-
-
-        /// The shader to use when doing the material pass.
-        Shader* materialShader;
-
-
-
 
         /// The map of shaders, keyed by a material shader ID.
         GTCore::Map<DefaultSceneRenderer_MaterialShaderID, Shader*> shaders;
