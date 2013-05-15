@@ -2148,6 +2148,10 @@ namespace GTEngine
                 this->camera.DisableSerialization();
                 this->camera.DisableStateStackStaging();
 
+                // The projection and aspect ratios of the camera may not be correct for the viewport dimensions, so we'll simulate
+                // a viewport resize by calling the OnSize event directly.
+                this->viewportEventHandler.OnSize(*this->GUI.Viewport);
+
 
                 // "View" settings.
                 bool isShowingGrid;
