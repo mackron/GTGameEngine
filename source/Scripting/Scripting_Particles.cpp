@@ -831,7 +831,11 @@ namespace GTEngine
                         }
 
 
-                    default: break;
+                    default:
+                        {
+                            assert(false);
+                            break;
+                        }
                     }
                 }
 
@@ -976,6 +980,8 @@ namespace GTEngine
 
                         default:
                             {
+                                assert(false);
+                                
                                 GTEngine::Log("You've forgotten to add the particle function to the scripting environment!");
                                 break;
                             }
@@ -1043,7 +1049,13 @@ namespace GTEngine
                                     break;
                                 }
 
-                            default: break;
+                            default:
+                                {
+                                    assert(false);
+                                    
+                                    GTEngine::Log("You've forgotten to handle the particle function in the SetFunctionRangeByIndex() scripting function!");
+                                    break;
+                                }
                             }
                         }
                     }

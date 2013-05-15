@@ -8,6 +8,9 @@
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable:4351)   // new behavior: elements of array will be default initialized
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
 namespace GTEngine
@@ -394,6 +397,8 @@ namespace GTEngine
 
 #if defined(_MSC_VER)
     #pragma warning(pop)
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic pop
 #endif
 
 #endif
