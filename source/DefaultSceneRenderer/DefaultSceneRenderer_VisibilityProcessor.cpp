@@ -170,16 +170,11 @@ namespace GTEngine
     {
         if (mesh.material != nullptr)
         {
-            GTCore::Vector<DefaultSceneRendererMesh>* objectList = nullptr;
-
             auto &materialDefinition = mesh.material->GetDefinition();
-            if (mesh.material->IsRefractive())
             {
-                objectList = &this->refractiveTransparentObjects;
-            }
-            else    // Opaque or Blended
-            {
-                if (mesh.material->IsBlended())
+                GTCore::Vector<DefaultSceneRendererMesh>* objectList = nullptr;
+
+                if (mesh.material->IsBlended() || mesh.material->IsRefractive())
                 {
                     if (!(mesh.flags & SceneRendererMesh::DrawLast))
                     {
@@ -219,18 +214,11 @@ namespace GTEngine
                         }
                     }
                 }
-            }
 
-
-            assert(objectList != nullptr);
-            {
-                // If the lights pointer is null, we're going to make it affected by every light.
-                /*if (mesh.touchingLights == nullptr)
+                assert(objectList != nullptr);
                 {
-                    const_cast<DefaultSceneRendererMesh &>(mesh).touchingLights = &this->allLights;
-                }*/
-
-                objectList->PushBack(mesh);
+                    objectList->PushBack(mesh);
+                }
             }
         }
     }
