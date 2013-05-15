@@ -6,10 +6,10 @@
 
 namespace GTEngine
 {
-    static const int ColourBufferIndex0          = DefaultSceneRendererFramebuffer::ColourOutputIndex0;
-    static const int ColourBufferIndex1          = DefaultSceneRendererFramebuffer::ColourOutputIndex1;
-    static const int DiffuseLightingBufferIndex  = DefaultSceneRendererFramebuffer::DiffuseLightingIndex;
-    static const int SpecularLightingBufferIndex = DefaultSceneRendererFramebuffer::SpecularLightingIndex;
+    static const int ColourBuffer0Index          = DefaultSceneRendererFramebuffer::ColourBuffer0Index;
+    static const int ColourBuffer1Index          = DefaultSceneRendererFramebuffer::ColourBuffer1Index;
+    static const int DiffuseLightingBufferIndex  = DefaultSceneRendererFramebuffer::LightingBuffer0Index;
+    static const int SpecularLightingBufferIndex = DefaultSceneRendererFramebuffer::LightingBuffer1Index;
 
 
     DefaultSceneRenderer_MultiPassPipeline::DefaultSceneRenderer_MultiPassPipeline(DefaultSceneRenderer &rendererIn, DefaultSceneRendererFramebuffer &viewportFramebufferIn, const DefaultSceneRenderer_VisibilityProcessor &visibleObjectsIn, bool splitShadowLightsIn)
@@ -81,7 +81,7 @@ namespace GTEngine
         else
         {
             // There was no objects, by we might need to clear the background.
-            Renderer::SetDrawBuffers(1, &ColourBufferIndex0);
+            Renderer::SetDrawBuffers(1, &ColourBuffer0Index);
             this->TryClearBackground();
         }
     }
@@ -147,7 +147,7 @@ namespace GTEngine
 
 
         // We need to use a nearest/nearest filter for the background texture.
-        auto backgroundTexture = this->viewportFramebuffer.finalColourBufferHDR;
+        auto backgroundTexture = this->viewportFramebuffer.colourBuffer1;
         assert(backgroundTexture != nullptr);
         {
             Renderer::SetTexture2DFilter(*backgroundTexture, TextureFilter::TextureFilter_Nearest, TextureFilter::TextureFilter_Nearest);
@@ -182,7 +182,7 @@ namespace GTEngine
 
 
                     // Need to ensure we are writing to the main colour buffer.
-                    Renderer::SetDrawBuffers(1, &ColourBufferIndex0);
+                    Renderer::SetDrawBuffers(1, &ColourBuffer0Index);
 
 
                     // Material.
@@ -499,7 +499,7 @@ namespace GTEngine
     void DefaultSceneRenderer_MultiPassPipeline::OpaqueMaterialPass()
     {
         // We can assert that the current framebuffer will be the main one. All we need to do is change the draw buffer.
-        int outputBuffer[] = {ColourBufferIndex0};
+        int outputBuffer[] = {ColourBuffer0Index};
         Renderer::SetDrawBuffers(1, outputBuffer);
 
         this->TryClearBackground();
@@ -781,7 +781,7 @@ namespace GTEngine
 
             if (mesh.material->IsRefractive())
             {
-                shader->SetUniform("BackgroundTexture", this->viewportFramebuffer.finalColourBufferHDR);
+                shader->SetUniform("BackgroundTexture", this->viewportFramebuffer.colourBuffer1);
             }
 
 
@@ -853,14 +853,14 @@ namespace GTEngine
     void DefaultSceneRenderer_MultiPassPipeline::RenderRefractionBackgroundTexture()
     {
         // We render this to the second colour buffer.
-        Renderer::SetDrawBuffers(1, &ColourBufferIndex1);
+        Renderer::SetDrawBuffers(1, &ColourBuffer1Index);
 
         // Shader setup.
         auto shader = this->renderer.GetFullscreenTriangleCopyShader();
         assert(shader != nullptr);
         {
             Renderer::SetCurrentShader(shader);
-            shader->SetUniform("ColourBuffer", this->viewportFramebuffer.opaqueColourBuffer);
+            shader->SetUniform("ColourBuffer", this->viewportFramebuffer.colourBuffer0);
             Renderer::PushPendingUniforms(*shader);
         }
 
