@@ -2523,7 +2523,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     
     self:WatchKeyPressed(function(data)
-        if self.IsMouseOverViewport and not GTGUI.Server.DoesFocusedElementHaveEditableText() then
+        if self.IsMouseOverViewport and not GTGUI.Server.DoesFocusedElementHaveEditableText() and not self:IsPlaying() then
             if not GTGUI.Server.IsCTRLKeyDown() then
                 if data.key == GTCore.Keys.Delete then
                     self:DeleteSelectedSceneNodes();
