@@ -507,6 +507,14 @@ namespace GTEngine
         /// @param shadowMapIndex [in] The index of the shadow map to render into.
         Texture2D* RenderSpotLightShadowMap(DefaultSceneRendererSpotLight &light, size_t shadowMapIndex);
 
+        /// Helper function for rendering an individual face of a point light.
+        ///
+        /// @param light          [in] A reference to the light having it's shadow map face drawn.
+        /// @param faceViewMatrix [in] The view matrix of the face being drawn.
+        /// @param faceIndex      [in] The index of the face being drawn.
+        /// @param meshes         [in] The list of meshes to draw.
+        void RenderPointShapowMapFace(const DefaultSceneRendererPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
+
         /// Sets the uniforms of the given material shader using the given data.
         ///
         /// @param shader         [in] A reference to the shader whose uniforms are being set.
@@ -542,65 +550,6 @@ namespace GTEngine
 
         /////////////////////////
         // Rendering.
-
-        /// Renders the opaque pass.
-        void RenderOpaquePass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
-
-        /// Renders the depth pre-pass.
-        ///
-        /// @remarks
-        ///     This method assumes the renderer state has been set beforehand.
-        void RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
-        void RenderDepthPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
-
-        /// Renders the opaque lighting pass.
-        void RenderOpaqueLightingPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
-
-        /// Renders the opaque material pass.
-        void RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
-        void RenderOpaqueMaterialPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
-
-        /// Performs an ambient lighting pass in the opaque pass.
-        void RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
-        void RenderOpaqueAmbientLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
-
-        /// Performs a directional lighting pass in the opaque pass.
-        void RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
-        void RenderOpaqueDirectionalLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
-
-        /// Performs a point lighting pass in the opaque pass.
-        void RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
-        void RenderOpaquePointLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
-
-        /// Performs a spot lighting pass in the opaque pass.
-        void RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
-        void RenderOpaqueSpotLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
-
-
-        /// Performs a shadow-casting directional lighting pass in the opaque pass.
-        void RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer);
-        void RenderOpaqueShadowDirectionalLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
-
-        /// Performs a shadow-casting point lighting pass in the opaque pass.
-        void RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer);
-        void RenderOpaqueShadowPointLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
-        void RenderPointShapowMapFace(const DefaultSceneRendererPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
-
-        /// Performs a shadow-casting spot lighting pass in the opaque pass.
-        void RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, DefaultSceneRendererFramebuffer* mainFramebuffer);
-        void RenderOpaqueShadowSpotLightingPass(size_t lightIndex, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
-
-
-        /// Renders the alpha transparency pass.
-        void RenderBlendedTransparentPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
-
-        /// Renders the refractive transparent pass.
-        void RenderRefractiveTransparentPass(DefaultSceneRendererFramebuffer* framebuffer, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
-
-
-        /// Renders the lighting of the given mesh.
-        void RenderMeshLighting(const DefaultSceneRendererMesh &mesh, const DefaultSceneRenderer_VisibilityProcessor &visibleObjects);
-
 
         /// Renders the final composition.
         void RenderFinalComposition(DefaultSceneRendererFramebuffer* framebuffer, Texture2D* sourceColourBuffer);
