@@ -34,12 +34,9 @@ namespace GTEngine
 
         /// Binds the objects that should be rendered during the next rendering operations.
         ///
-        /// @param opaqueObjects             [in] A pointer to the list of opaque objects.
-        /// @param blendedTransparentObjects [in] A pointer to the list of blended transparent objects.
-        void BindObjects(
-            const GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*>* opaqueObjects,
-            const GTCore::Vector<DefaultSceneRendererMesh>* blendedTransparentObjects,
-            const GTCore::Vector<DefaultSceneRendererMesh>* refractiveTransparentObjects);
+        /// @param opaqueObjects      [in] A pointer to the list of opaque objects.
+        /// @param transparentObjects [in] A pointer to the list of blended transparent objects.
+        void BindObjects(const GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*>* opaqueObjects, const GTCore::Vector<DefaultSceneRendererMesh>* transparentObjects);
 
 
         /// Performs the opaque pass on the currently bound objects.
@@ -141,10 +138,7 @@ namespace GTEngine
         const GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*>* opaqueObjects;
         
         /// A pointer to the currently bound blended transparent objects.
-        const GTCore::Vector<DefaultSceneRendererMesh>* blendedTransparentObjects;
-
-        /// A pointer to the currently bound refractive transparent objects.
-        const GTCore::Vector<DefaultSceneRendererMesh>* refractiveTransparentObjects;
+        const GTCore::Vector<DefaultSceneRendererMesh>* transparentObjects;
 
 
         /// Keeps track of whether or not the background has been cleared.
