@@ -571,47 +571,6 @@ namespace GTEngine
         ///     the method responsible for retrieving those specific shaders.
         DefaultSceneRenderer_MaterialShaders* GetMaterialShaders(Material &material);
 
-        /// Retrieves the shader to use for the ambient light pass.
-        ///
-        /// @param material [in] A reference to the material whose shader is being retrieved.
-        Shader* GetMaterialAmbientLightShader(Material &material);
-
-        /// Retrieves the shader to use for the directional light pass.
-        ///
-        /// @param material [in] A reference to the material whose shader is being retrieved.
-        Shader* GetMaterialDirectionalLightShader(Material &materail);
-
-        /// Retrieves the shader to use for the point light pass.
-        ///
-        /// @param material [in] A reference to the material whose shader is being retrieved.
-        Shader* GetMaterialPointLightShader(Material &materail);
-
-        /// Retrieves the shader to use for the spot light pass.
-        ///
-        /// @param material [in] A reference to the material whose shader is being retrieved.
-        Shader* GetMaterialSpotLightShader(Material &materail);
-
-
-        /// Retrieves the shader to use for the shadow directional light pass.
-        ///
-        /// @param material [in] A reference to the material whose shader is being retrieved.
-        Shader* GetMaterialShadowDirectionalLightShader(Material &materail);
-
-        /// Retrieves the shader to use for the shadow point light pass.
-        ///
-        /// @param material [in] A reference to the material whose shader is being retrieved.
-        Shader* GetMaterialShadowPointLightShader(Material &materail);
-
-        /// Retrieves the shader to use for the shadow spot light pass.
-        ///
-        /// @param material [in] A reference to the material whose shader is being retrieved.
-        Shader* GetMaterialShadowSpotLightShader(Material &materail);
-
-
-        /// Retrieves the material shader of the given material.
-        ///
-        /// @param material [in] A reference to the material whose material shader is being retrieved.
-        Shader* GetMaterialMaterialShader(Material &material);
 
 
 
