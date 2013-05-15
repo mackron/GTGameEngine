@@ -23,6 +23,11 @@ namespace GTEngine
             : lightGroupID(other.lightGroupID), flags(other.flags)
         {
         }
+        
+        /// Destructor (GCC warning silencer).
+        virtual ~DefaultSceneRenderer_MaterialShaderID()
+        {
+        }
 
 
         bool operator<(const DefaultSceneRenderer_MaterialShaderID &other) const

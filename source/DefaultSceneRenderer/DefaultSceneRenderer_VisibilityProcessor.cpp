@@ -12,6 +12,7 @@ namespace GTEngine
         : scene(sceneIn),
           opaqueObjects(), transparentObjects(), opaqueObjectsLast(), transparentObjectsLast(),
           lightManager(),
+          visibleMeshes(),
           visibleModels(), modelsToAnimate(),
           visibleParticleSystems(),
           allLights(),

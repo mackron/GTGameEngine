@@ -203,6 +203,22 @@ namespace GTEngine
                 : DefaultSceneRenderer_MaterialShaderID(materialShaderID), material(nullptr)
             {
             }
+            
+            /// Copy constructor.
+            ShaderKey(const ShaderKey &other)
+                : DefaultSceneRenderer_MaterialShaderID(other), material(other.material)
+            {
+            }
+            
+            
+            /// Assignment operator.
+            ShaderKey & operator=(const ShaderKey &other)
+            {
+                DefaultSceneRenderer_MaterialShaderID::operator=(other);
+                this->material = other.material;
+                
+                return *this;
+            }
 
 
             bool operator<(const ShaderKey &other) const
