@@ -3,6 +3,15 @@
 #include <GTEngine/ParticleEmitter.hpp>
 #include <GTEngine/Rendering.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/Logging.hpp>
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    
+    #if defined(__clang__)
+        #pragma GCC diagnostic ignored "-Wcast-align"
+    #endif
+#endif
 
 namespace GTEngine
 {
@@ -126,7 +135,13 @@ namespace GTEngine
                     }
 
 
-                default: break;
+                default:
+                    {
+                        assert(false);
+                        
+                        GTEngine::Log("You've forgotten to handle the particle function in the ParticleEmitter copy constructor!");
+                        break;
+                    }
                 }
             }
         }
@@ -279,7 +294,11 @@ namespace GTEngine
                     break;
                 }
 
-            default: break;
+            default:
+                {
+                    assert(false);
+                    break;
+                }
             }
 
 
@@ -1071,3 +1090,7 @@ namespace GTEngine
         return newFunction;
     }
 }
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
