@@ -10,8 +10,7 @@ namespace GTEngine
 
     DefaultSceneRenderer_VisibilityProcessor::DefaultSceneRenderer_VisibilityProcessor(Scene &sceneIn, SceneViewport &viewportIn)
         : scene(sceneIn),
-          opaqueObjects(),     blendedTransparentObjects(), refractiveTransparentObjects(),
-          opaqueObjectsLast(), blendedTransparentObjectsLast(),
+          opaqueObjects(), transparentObjects(), opaqueObjectsLast(), transparentObjectsLast(),
           lightManager(),
           visibleModels(), modelsToAnimate(),
           visibleParticleSystems(),
@@ -178,11 +177,11 @@ namespace GTEngine
                 {
                     if (!(mesh.flags & SceneRendererMesh::DrawLast))
                     {
-                        objectList = &this->blendedTransparentObjects;
+                        objectList = &this->transparentObjects;
                     }
                     else
                     {
-                        objectList = &this->blendedTransparentObjectsLast;
+                        objectList = &this->transparentObjectsLast;
                     }
                 }
                 else
@@ -662,9 +661,9 @@ namespace GTEngine
 
 
 
-        for (size_t i = 0; i < this->blendedTransparentObjects.count; ++i)
+        for (size_t i = 0; i < this->transparentObjects.count; ++i)
         {
-            auto &mesh = this->blendedTransparentObjects[i];
+            auto &mesh = this->transparentObjects[i];
 
             if (mesh.touchingLights != nullptr)
             {
@@ -672,20 +671,9 @@ namespace GTEngine
             }
         }
 
-        for (size_t i = 0; i < this->blendedTransparentObjectsLast.count; ++i)
+        for (size_t i = 0; i < this->transparentObjectsLast.count; ++i)
         {
-            auto &mesh = this->blendedTransparentObjectsLast[i];
-
-            if (mesh.touchingLights != nullptr)
-            {
-                this->lightManager.SubdivideLightGroup(*mesh.touchingLights, mesh.lightGroups, DefaultSceneRenderer_LightManager::SubdivideOption_ConvertShadowLights);
-            }
-        }
-
-
-        for (size_t i = 0; i < this->refractiveTransparentObjects.count; ++i)
-        {
-            auto &mesh = this->refractiveTransparentObjects[i];
+            auto &mesh = this->transparentObjectsLast[i];
 
             if (mesh.touchingLights != nullptr)
             {

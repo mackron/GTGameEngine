@@ -14,7 +14,7 @@ namespace GTEngine
 
     DefaultSceneRenderer_MultiPassPipeline::DefaultSceneRenderer_MultiPassPipeline(DefaultSceneRenderer &rendererIn, DefaultSceneRendererFramebuffer &viewportFramebufferIn, const DefaultSceneRenderer_VisibilityProcessor &visibleObjectsIn, bool splitShadowLightsIn)
         : renderer(rendererIn), viewportFramebuffer(viewportFramebufferIn), visibleObjects(visibleObjectsIn), splitShadowLights(splitShadowLightsIn),
-          opaqueObjects(nullptr), blendedTransparentObjects(nullptr), refractiveTransparentObjects(nullptr),
+          opaqueObjects(nullptr), transparentObjects(nullptr),
           hasBackgroundBeenCleared(false),
           hasGeneratedMainLightGroup(false), mainLightGroup()
     {
@@ -39,13 +39,13 @@ namespace GTEngine
 
 
         // There is two groups of meshes. The regular group and the "draw last" group.
-        this->BindObjects(&this->visibleObjects.opaqueObjects, &this->visibleObjects.blendedTransparentObjects, &this->visibleObjects.refractiveTransparentObjects);
+        this->BindObjects(&this->visibleObjects.opaqueObjects, &this->visibleObjects.transparentObjects);
         {
             this->OpaquePass();
             this->TransparentPass();
         }
 
-        this->BindObjects(&this->visibleObjects.opaqueObjectsLast, &this->visibleObjects.blendedTransparentObjectsLast, nullptr);
+        this->BindObjects(&this->visibleObjects.opaqueObjectsLast, &this->visibleObjects.transparentObjectsLast);
         {
             this->OpaquePass();
             this->TransparentPass();
@@ -53,14 +53,10 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer_MultiPassPipeline::BindObjects(
-            const GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*>* opaqueObjectsIn,
-            const GTCore::Vector<DefaultSceneRendererMesh>* blendedTransparentObjectsIn,
-            const GTCore::Vector<DefaultSceneRendererMesh>* refractiveTransparentObjectsIn)
+    void DefaultSceneRenderer_MultiPassPipeline::BindObjects(const GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*>* opaqueObjectsIn, const GTCore::Vector<DefaultSceneRendererMesh>* transparentObjectsIn)
     {
-        this->opaqueObjects                = opaqueObjectsIn;
-        this->blendedTransparentObjects    = blendedTransparentObjectsIn;
-        this->refractiveTransparentObjects = refractiveTransparentObjectsIn;
+        this->opaqueObjects      = opaqueObjectsIn;
+        this->transparentObjects = transparentObjectsIn;
     }
 
 
@@ -121,23 +117,11 @@ namespace GTEngine
 
 
         // Here is where we sort the meshes.
-        if (this->blendedTransparentObjects != nullptr && this->blendedTransparentObjects->count > 0)
+        if (this->transparentObjects != nullptr && this->transparentObjects->count > 0)
         {
-            for (size_t iMesh = 0; iMesh < visibleObjects.blendedTransparentObjects.count; ++iMesh)
+            for (size_t iMesh = 0; iMesh < visibleObjects.transparentObjects.count; ++iMesh)
             {
-                auto &mesh = visibleObjects.blendedTransparentObjects[iMesh];
-                {
-                    float distanceToCamera = glm::distance(glm::inverse(visibleObjects.viewMatrix)[3], mesh.transform[3]);
-                    sortedMeshes.Insert(SortedMesh(distanceToCamera, &mesh));
-                }
-            }
-        }
-
-        if (this->refractiveTransparentObjects != nullptr && this->refractiveTransparentObjects->count > 0)
-        {
-            for (size_t iMesh = 0; iMesh < visibleObjects.refractiveTransparentObjects.count; ++iMesh)
-            {
-                auto &mesh = visibleObjects.refractiveTransparentObjects[iMesh];
+                auto &mesh = visibleObjects.transparentObjects[iMesh];
                 {
                     float distanceToCamera = glm::distance(glm::inverse(visibleObjects.viewMatrix)[3], mesh.transform[3]);
                     sortedMeshes.Insert(SortedMesh(distanceToCamera, &mesh));
