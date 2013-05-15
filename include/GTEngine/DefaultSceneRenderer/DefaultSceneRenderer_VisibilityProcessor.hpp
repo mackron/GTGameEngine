@@ -50,9 +50,6 @@ namespace GTEngine
         /// Performs an optimization step that arranges everything in a way where the renderer can be a bit more efficient.
         void PostProcess();
 
-        /// Takes the light groups of each visible mesh and sub-divides them into the groups that will be used when rendering.
-        void PostProcess_AllocateLightGroups();
-
 
 
         //////////////////////////////////////
