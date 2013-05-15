@@ -113,6 +113,10 @@ namespace GTEngine
         void RenderRefractionBackgroundTexture();
 
 
+        /// Performs a background clear of the main colour buffer if it hasn't already been cleared.
+        void TryClearBackground();
+
+
         /// Retrieves a reference to the main light group which will contain every light.
         const DefaultSceneRenderer_LightGroup & GetMainLightGroup() const;
 
