@@ -203,7 +203,7 @@ namespace GTEngine
 
         // Here we just render the final image. Basically, this is just the post-process step. This will eventually be made into a proper
         // pipeline stage.
-        this->RenderFinalComposition(framebuffer, framebuffer->opaqueColourBuffer);
+        this->RenderFinalComposition(framebuffer, framebuffer->colourBuffer0);
     }
 
     void DefaultSceneRenderer::AddViewport(SceneViewport &viewport)

@@ -31,10 +31,10 @@ namespace GTEngine
         Texture2D* depthStencilBuffer;
 
         /// The main colour buffer (RGBA16F). This is the HDR buffer.
-        Texture2D* opaqueColourBuffer;
+        Texture2D* colourBuffer0;
 
         /// The final HDR colour buffer. RGBA16F.
-        Texture2D* finalColourBufferHDR;
+        Texture2D* colourBuffer1;
 
 
 
@@ -67,17 +67,17 @@ namespace GTEngine
         unsigned int height;
 
 
-        static const int ColourOutputIndex0    = 0;
-        static const int ColourOutputIndex1    = 3;
-        static const int DiffuseLightingIndex  = 1;
-        static const int SpecularLightingIndex = 2;
+        static const int ColourBuffer0Index    = 0;
+        static const int ColourBuffer1Index    = 1;
+        static const int LightingBuffer0Index  = 2;
+        static const int LightingBuffer1Index  = 3;
         static const int FinalColourIndex      = 4;
 
 
         /// Constructor
         DefaultSceneRendererFramebuffer(unsigned int widthIn, unsigned int heightIn)
             : framebuffer(nullptr),
-              depthStencilBuffer(nullptr), opaqueColourBuffer(nullptr), finalColourBufferHDR(nullptr),
+              depthStencilBuffer(nullptr), colourBuffer0(nullptr), colourBuffer1(nullptr),
               lightingBuffer0(nullptr), lightingBuffer1(nullptr),
               finalColourBuffer(nullptr),
               bloomFramebuffer(nullptr), bloomBuffer(nullptr), bloomBlurBuffer(nullptr),
@@ -85,10 +85,10 @@ namespace GTEngine
         {
             this->framebuffer             = Renderer::CreateFramebuffer();
             this->depthStencilBuffer      = Renderer::CreateTexture2D();
-            this->opaqueColourBuffer      = Renderer::CreateTexture2D();
+            this->colourBuffer0           = Renderer::CreateTexture2D();
+            this->colourBuffer1           = Renderer::CreateTexture2D();
             this->lightingBuffer0         = Renderer::CreateTexture2D();
             this->lightingBuffer1         = Renderer::CreateTexture2D();
-            this->finalColourBufferHDR    = Renderer::CreateTexture2D();
             this->finalColourBuffer       = Renderer::CreateTexture2D();
 
             this->bloomFramebuffer        = Renderer::CreateFramebuffer();
@@ -101,27 +101,28 @@ namespace GTEngine
 
 
             // Filters.
-            Renderer::SetTexture2DFilter(*this->opaqueColourBuffer,    TextureFilter_NearestNearest, TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->lightingBuffer0,       TextureFilter_Nearest,        TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->lightingBuffer1,       TextureFilter_Nearest,        TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->finalColourBufferHDR,  TextureFilter_NearestNearest, TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->finalColourBuffer,     TextureFilter_Nearest,        TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->bloomBuffer,           TextureFilter_Linear,         TextureFilter_Linear);
-            Renderer::SetTexture2DFilter(*this->bloomBlurBuffer,       TextureFilter_Nearest,        TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->colourBuffer0,     TextureFilter_NearestNearest, TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->colourBuffer1,     TextureFilter_NearestNearest, TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->lightingBuffer0,   TextureFilter_Nearest,        TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->lightingBuffer1,   TextureFilter_Nearest,        TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->finalColourBuffer, TextureFilter_Nearest,        TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->bloomBuffer,       TextureFilter_Linear,         TextureFilter_Linear);
+            Renderer::SetTexture2DFilter(*this->bloomBlurBuffer,   TextureFilter_Nearest,        TextureFilter_Nearest);
 
             // Wrap Modes.
-            Renderer::SetTexture2DWrapMode(*this->opaqueColourBuffer, TextureWrapMode_ClampToEdge);
-            Renderer::SetTexture2DWrapMode(*this->bloomBuffer,        TextureWrapMode_ClampToEdge);
-            Renderer::SetTexture2DWrapMode(*this->bloomBlurBuffer,    TextureWrapMode_ClampToEdge);
+            Renderer::SetTexture2DWrapMode(*this->colourBuffer0,   TextureWrapMode_ClampToEdge);
+            Renderer::SetTexture2DWrapMode(*this->bloomBuffer,     TextureWrapMode_ClampToEdge);
+            Renderer::SetTexture2DWrapMode(*this->bloomBlurBuffer, TextureWrapMode_ClampToEdge);
 
 
             // Attach to the main framebuffer.
             this->framebuffer->AttachDepthStencilBuffer(this->depthStencilBuffer);
-            this->framebuffer->AttachColourBuffer(this->opaqueColourBuffer,   0);
-            this->framebuffer->AttachColourBuffer(this->lightingBuffer0,      1);
-            this->framebuffer->AttachColourBuffer(this->lightingBuffer1,      2);
-            this->framebuffer->AttachColourBuffer(this->finalColourBufferHDR, 3);
-            this->framebuffer->AttachColourBuffer(this->finalColourBuffer,    4);
+            this->framebuffer->AttachColourBuffer(this->colourBuffer0,        ColourBuffer0Index);
+            this->framebuffer->AttachColourBuffer(this->colourBuffer1,        ColourBuffer1Index);
+            this->framebuffer->AttachColourBuffer(this->lightingBuffer0,      LightingBuffer0Index);
+            this->framebuffer->AttachColourBuffer(this->lightingBuffer1,      LightingBuffer1Index);
+            
+            this->framebuffer->AttachColourBuffer(this->finalColourBuffer,    FinalColourIndex);
             Renderer::PushAttachments(*this->framebuffer);
 
             this->bloomFramebuffer->AttachColourBuffer(this->bloomBuffer,     0);
@@ -133,10 +134,10 @@ namespace GTEngine
         ~DefaultSceneRendererFramebuffer()
         {
             Renderer::DeleteTexture2D(this->depthStencilBuffer);
-            Renderer::DeleteTexture2D(this->opaqueColourBuffer);
+            Renderer::DeleteTexture2D(this->colourBuffer0);
+            Renderer::DeleteTexture2D(this->colourBuffer1);
             Renderer::DeleteTexture2D(this->lightingBuffer0);
             Renderer::DeleteTexture2D(this->lightingBuffer1);
-            Renderer::DeleteTexture2D(this->finalColourBufferHDR);
             Renderer::DeleteTexture2D(this->finalColourBuffer);
             Renderer::DeleteFramebuffer(this->framebuffer);
 
@@ -153,18 +154,18 @@ namespace GTEngine
             this->height = newHeight;
 
 
-            this->depthStencilBuffer->SetData(  newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
-            this->opaqueColourBuffer->SetData(  newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->lightingBuffer0->SetData(     newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->lightingBuffer1->SetData(     newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->finalColourBufferHDR->SetData(newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->finalColourBuffer->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGB8);
+            this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
+            this->colourBuffer0->SetData(     newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->colourBuffer1->SetData(     newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->lightingBuffer0->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->lightingBuffer1->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->finalColourBuffer->SetData( newWidth, newHeight, GTImage::ImageFormat_RGB8);
 
             Renderer::PushTexture2DData(*this->depthStencilBuffer);
-            Renderer::PushTexture2DData(*this->opaqueColourBuffer);
+            Renderer::PushTexture2DData(*this->colourBuffer0);
+            Renderer::PushTexture2DData(*this->colourBuffer1);
             Renderer::PushTexture2DData(*this->lightingBuffer0);
             Renderer::PushTexture2DData(*this->lightingBuffer1);
-            Renderer::PushTexture2DData(*this->finalColourBufferHDR);
             Renderer::PushTexture2DData(*this->finalColourBuffer);
 
 
