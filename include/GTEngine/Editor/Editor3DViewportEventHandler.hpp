@@ -31,6 +31,13 @@ namespace GTEngine
         }
 
 
+        /// Enables mouse capture.
+        void EnableMouseCapture();
+
+        /// Disables mouse capture.
+        void DisableMouseCapture();
+
+
 
         //////////////////////////////////////////////////////////////////////////////////
         // Events.
@@ -76,6 +83,10 @@ namespace GTEngine
 
         /// The mouse position on the y axis.
         int mousePosY;
+
+
+        /// Whether or not mouse capture is enabled.
+        bool isMouseCaptureEnabled;
 
 
     private:    // No copying.
