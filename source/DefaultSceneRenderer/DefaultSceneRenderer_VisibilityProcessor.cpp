@@ -506,6 +506,7 @@ namespace GTEngine
                                     mesh.material       = emitter->GetMaterial();
                                     mesh.transform      = glm::mat4();
                                     mesh.touchingLights = particleSystemLights;
+                                    mesh.flags          = SceneRendererMesh::NoNormalMapping;   // No normal mapping on particles.
                                     this->AddMesh(mesh);
                                 }
                             }
