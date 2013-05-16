@@ -725,6 +725,11 @@ namespace GTEngine
 
     void DefaultSceneRenderer_MultiPassPipeline::RenderMesh(const DefaultSceneRendererMesh &mesh, const DefaultSceneRenderer_LightGroup &lightGroup, uint32_t shaderFlags)
     {
+        if ((mesh.flags & SceneRendererMesh::NoNormalMapping))
+        {
+            shaderFlags |= DefaultSceneRenderer_MaterialShaderID::NoNormalMapping;
+        }
+
         auto shader = this->renderer.GetMaterialShader(*mesh.material, lightGroup.id, shaderFlags);
         if (shader != nullptr)
         {

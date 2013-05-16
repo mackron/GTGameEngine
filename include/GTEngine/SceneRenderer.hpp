@@ -58,9 +58,10 @@ namespace GTEngine
         /// Enumerator for the various rendering options.
         enum Options
         {
-            DrawLast     = (1 << 1),
-            NoDepthTest  = (1 << 2),
-            NoDepthWrite = (1 << 3),
+            DrawLast        = (1 << 1),
+            NoDepthTest     = (1 << 2),
+            NoDepthWrite    = (1 << 3),
+            NoNormalMapping = (1 << 4),
 
             DrawHighlight = (1 << 31)           // <-- This is temporary and is only used for the editor.
         };
