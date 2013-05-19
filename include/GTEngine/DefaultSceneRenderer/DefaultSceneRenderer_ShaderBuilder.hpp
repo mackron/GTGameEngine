@@ -24,8 +24,8 @@ namespace GTEngine
         /// Creates a shader from the given material shader ID.
         ///
         /// @param shaderID [in] A reference to the shader ID to base the shader off.
-        Shader* CreateShader(const DefaultSceneRenderer_MaterialShaderID &shaderID, const Material* material);
-        Shader* CreateShader(const DefaultSceneRenderer_MaterialShaderID &shaderID, const Material &material);
+        Shader* CreateShader(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material);
+        Shader* CreateShader(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition &material);
         Shader* CreateShader(const DefaultSceneRenderer_MaterialShaderID &shaderID);
 
 
@@ -37,13 +37,13 @@ namespace GTEngine
         ///
         /// @param shaderID [in] The shader ID containing details about the material and lights.
         /// @param material [in] A pointer to the material in question.
-        GTCore::String CreateVertexShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const Material* material) const;
+        GTCore::String CreateVertexShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const;
 
         /// Creates a fragment shader string.
         ///
         /// @param shaderID [in] The shader ID containing details about the material and lights.
         /// @param material [in] A pointer to the material in question.
-        GTCore::String CreateFragmentShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const Material* material) const;
+        GTCore::String CreateFragmentShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const;
 
 
         /// Retrieves a string segment containing the declaration of globals needs for a directional light.
@@ -189,11 +189,11 @@ namespace GTEngine
         struct ShaderKey : public DefaultSceneRenderer_MaterialShaderID
         {
             /// A pointer to the owner material. Can be null.
-            const Material* material;
+            const MaterialDefinition* material;
 
 
             /// Constructor.
-            ShaderKey(const DefaultSceneRenderer_MaterialShaderID &materialShaderID, const Material* materialIn)
+            ShaderKey(const DefaultSceneRenderer_MaterialShaderID &materialShaderID, const MaterialDefinition* materialIn)
                 : DefaultSceneRenderer_MaterialShaderID(materialShaderID), material(materialIn)
             {
             }
