@@ -24,7 +24,7 @@ namespace GTEngine
     }
 
 
-    Shader* DefaultSceneRenderer_ShaderBuilder::CreateShader(const DefaultSceneRenderer_MaterialShaderID &shaderID, const Material* material)
+    Shader* DefaultSceneRenderer_ShaderBuilder::CreateShader(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material)
     {
         ShaderKey shaderKey(shaderID, material);
 
@@ -48,7 +48,7 @@ namespace GTEngine
         return shader;
     }
 
-    Shader* DefaultSceneRenderer_ShaderBuilder::CreateShader(const DefaultSceneRenderer_MaterialShaderID &shaderID, const Material &material)
+    Shader* DefaultSceneRenderer_ShaderBuilder::CreateShader(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition &material)
     {
         return this->CreateShader(shaderID, &material);
     }
@@ -60,7 +60,7 @@ namespace GTEngine
 
 
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::CreateVertexShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const Material* material) const
+    GTCore::String DefaultSceneRenderer_ShaderBuilder::CreateVertexShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const
     {
         (void)material;
 
@@ -268,7 +268,7 @@ namespace GTEngine
         return vertexSource;
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::CreateFragmentShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const Material* material) const
+    GTCore::String DefaultSceneRenderer_ShaderBuilder::CreateFragmentShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const
     {
         uint16_t ambientLightCount           = shaderID.lightGroupID.GetAmbientLightCount();
         uint16_t directionalLightCount       = shaderID.lightGroupID.GetDirectionalLightCount();

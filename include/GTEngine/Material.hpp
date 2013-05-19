@@ -45,6 +45,24 @@ namespace GTEngine
         const char* GetXMLString() const;
 
 
+        /// Retrieves the ID of the diffuse shader.
+        const char* GetDiffuseShaderID() const { return this->diffuseShaderID.c_str(); }
+
+        /// Retrieves the ID of the emissive shader.
+        const char* GetEmissiveShaderID() const { return this->emissiveShaderID.c_str(); }
+
+        /// Retrieves the ID of the shininess shader.
+        const char* GetShininessShaderID() const { return this->shininessShaderID.c_str(); }
+
+        /// Retrieves the ID of the normals shader.
+        const char* GetNormalShaderID() const { return this->normalShaderID.c_str(); }
+
+        /// Retrieves the ID of the specular shader.
+        const char* GetSpecularShaderID() const { return this->specularShaderID.c_str(); }
+
+        /// Retrieves the ID of the refraction shader.
+        const char* GetRefractionShaderID() const { return this->refractionShaderID.c_str(); }
+
 
         /// Determines whether or not the material is blended.
         bool IsBlended() const { return this->isBlended && !this->isRefractive; }

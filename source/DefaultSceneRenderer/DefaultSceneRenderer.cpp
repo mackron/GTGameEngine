@@ -359,7 +359,7 @@ namespace GTEngine
             }
             else
             {
-                auto shader = this->shaderBuilder.CreateShader(shaderID, material);
+                auto shader = this->shaderBuilder.CreateShader(shaderID, material.GetDefinition());
                 if (shader != nullptr)
                 {
                     materialShaders->shaders.Add(shaderID, shader);
