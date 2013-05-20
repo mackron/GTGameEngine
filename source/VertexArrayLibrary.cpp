@@ -7,7 +7,8 @@
 
 namespace GTEngine
 {
-    static VertexArray* FullscreenQuad = nullptr;
+    static VertexArray* FullscreenQuad     = nullptr;
+    static VertexArray* FullscreenTriangle = nullptr;
 
     VertexArray* VertexArrayLibrary::GetFullscreenQuadVA()
     {
@@ -34,6 +35,35 @@ namespace GTEngine
 
         return FullscreenQuad;
     }
+
+    VertexArray* VertexArrayLibrary::GetFullscreenTriangleVA()
+    {
+        if (FullscreenTriangle == nullptr)
+        {
+            FullscreenTriangle = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P2T2);
+
+            float triangleVertices[] =
+            {
+                -3.0f, -1.0f,
+                -1.0f,  0.0f,
+
+                 1.0f, -1.0f,
+                 1.0f,  0.0f,
+
+                 1.0f,  3.0f,
+                 1.0f,  2.0f,
+            };
+
+            unsigned int triangleIndices[] =
+            {
+                0, 1, 2
+            };
+
+            FullscreenTriangle->SetData(triangleVertices, 3, triangleIndices, 3);
+        }
+
+        return FullscreenTriangle;
+    }
 }
 
 
@@ -50,7 +80,10 @@ namespace GTEngine
     void VertexArrayLibrary::Shutdown()
     {
         Renderer::DeleteVertexArray(FullscreenQuad);
-        FullscreenQuad = nullptr;
+        Renderer::DeleteVertexArray(FullscreenTriangle);
+
+        FullscreenQuad     = nullptr;
+        FullscreenTriangle = nullptr;
     }
 
 
