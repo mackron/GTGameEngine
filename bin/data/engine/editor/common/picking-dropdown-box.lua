@@ -53,8 +53,6 @@ function GTGUI.Element:PickingDropDownBox(titleText)
     function self:Open()
         -- The list box needs to be positioned in a way where it's always visible. For example, if it would be clipped if positioned
         -- below the label, it will instead be positioned above it.
-        --
-        -- NOTE: This is not currently working correctly because the layout of invisible elements is not evaluated correctly yet.
         local xPos, yPos     = self:GetAbsolutePosition();
         local listWidth      = self.ListBox:GetWidth();
         local listHeight     = self.ListBox:GetHeight();
@@ -67,8 +65,8 @@ function GTGUI.Element:PickingDropDownBox(titleText)
             self.ListBox:SetStyle("left", 0);
         end
         
-        if (yPos + listHeight) > viewportHeight and listHeight > self:GetHeight() then
-            self.ListBox:SetStyle("top", self:GetHeight() - listHeight);
+        if (yPos + listHeight + self:GetHeight()) > viewportHeight then
+            self.ListBox:SetStyle("top", self:GetHeight() - listHeight - self:GetHeight());
         else
             self.ListBox:SetStyle("top", "100%");
         end
