@@ -601,6 +601,29 @@ namespace GTEngine
         ///
         /// @return The maximum number of texture units that can be used simultaneously.
         static unsigned int GetMaxTextureUnits();
+
+
+
+
+
+        /////////////////////////////////////////////////////////////
+        // Utility Helper Functions
+        //
+        // These functions are only intended to make things a little easier for client applications.
+        //
+        // These functions are also completely cross-API, meaning they do not need to be implemented across different API
+        // implementations (OpenGL, D3D, etc).
+        struct Utils
+        {
+            /// Draws a fullscreen quad using the given texture.
+            ///
+            /// @param texture [in] A reference to the texture to draw.
+            ///
+            /// @remarks
+            ///     This will change the current shader and explicitly disable depth testing and depth writes.
+            static void DrawFullscreenQuad(const Texture2D* texture);
+            static void DrawFullscreenQuad(const Texture2D &texture) { DrawFullscreenQuad(&texture); }
+        };
     };
 }
 

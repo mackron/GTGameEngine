@@ -115,7 +115,8 @@ namespace GTEngine
         /// Retrieves a P2 vertex array that can used for fullscreen quads.
         static VertexArray* GetFullscreenQuadVA();
 
-
+        /// Retrieves a P2T2 vertex array that can be used for a fullscreen texture write.
+        static VertexArray* GetFullscreenTriangleVA();
 
         
     };
