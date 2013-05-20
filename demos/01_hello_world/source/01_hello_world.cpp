@@ -2,6 +2,7 @@
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Scene.hpp>
+#include <GTEngine/ShaderLibrary.hpp>
 
 
 class ExampleGame : public GTEngine::Game
@@ -34,13 +35,16 @@ public:
         this->GetWindow()->SetTitle("Example 01 - Hello, World");
         this->GetWindow()->SetSize(1280, 720);
 
+        // We'll clear the background to a grey colour so everything looks a bit nicer. Also, this makes HDR play a little bit better.
+        this->scene.GetRenderer().EnableBackgroundColourClearing(0.25f, 0.25f, 0.25f);
 
         // Now we'll setup the viewport. First we'll need to setup the camera. Scene nodes are component based. To
         // create a camera node, all we need to do is add a camera component. In this case, we'll create a 3D/perspective
         // camera component.
         this->cameraNode.AddComponent<GTEngine::CameraComponent>();
         this->cameraNode.SetPosition(0.0f, 0.0f, 10.0f);
-        this->cameraNode.AddComponent<GTEngine::DirectionalLightComponent>()->SetColour(1.0f, 1.0f, 1.0f);
+        this->cameraNode.AddComponent<GTEngine::AmbientLightComponent    >()->SetColour(0.1f,  0.1f,  0.1f);
+        this->cameraNode.AddComponent<GTEngine::DirectionalLightComponent>()->SetColour(0.25f, 0.25f, 0.25f);
         
 
         // Now we set the add the viewport to the scene.
@@ -66,11 +70,8 @@ public:
     {
     }
 
-    // This is called on the update thread at the start of every frame. This is a good place to update the scene.
-    //
-    // Since this is running on the update thread, and not the rendering thread, rendering operations are cached
-    // in render-command queues (or RC queues for short). Updating the scene will fill the back RC queue which
-    // will be executed during the next frame.
+    // This is called on the update thread at the start of every frame. This is a good place to update the scene. Updating a scene
+    // will also render it. You should not update more than one scene at a time.
     void OnUpdate(double deltaTimeInSeconds)
     {
         // We will rotate the model node a bit.
@@ -80,16 +81,19 @@ public:
         this->scene.Update(deltaTimeInSeconds);
     }
 
-    // This is called on the rendering thread straight after the main front RC buffer has been executed. At this
-    // point we can draw a fullscreen quad and the GUI.
+    // This is called when the frame has finished. No other threads will be executing when this is called. It is
+    // completely thread-safe.
     //
-    // Because this method is called on the rendering thread, you should call rendering operations directly from
-    // the main renderer. The rule is: If it's running on the update thread, use a render command; if it's running
-    // on the rendering thread, draw directly with the main renderer.
-    void OnPostDraw()
+    // The rendering commands for the next frame will be cached in preparation for execution in the next frame. This
+    // is a good time to tell the renderer to draw the final fullscreen triangle. Of course, we don't want to do
+    // this if the editor is open, otherwise it will be drawn over the top of it.
+    void OnEndFrame()
     {
-        GTEngine::Renderer::SetFramebuffer(nullptr);
-        GTEngine::Renderer::Helpers::DrawFullscreenQuad(this->viewport.GetColourBuffer());
+        if (!this->IsEditorOpen())
+        {
+            GTEngine::Renderer::SetCurrentFramebuffer(nullptr);
+            GTEngine::Renderer::Utils::DrawFullscreenQuad(this->viewport.GetColourBuffer());
+        }
     }
 
     // This is called when the game window is sized.
