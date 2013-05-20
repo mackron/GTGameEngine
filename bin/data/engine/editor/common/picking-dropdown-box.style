@@ -79,11 +79,11 @@ picking-dropdown-box-listbox
     
     enable-shadow:      true
     shadow-color:       #000
-    shadow-offset-x:    4px
-    shadow-offset-y:    4px
-    shadow-extrusion-x: 2px
-    shadow-extrusion-y: 2px
-    shadow-blur-radius: 6px
+    shadow-offset-x:    0px
+    shadow-offset-y:    0px
+    shadow-extrusion-x: 6px
+    shadow-extrusion-y: 6px
+    shadow-blur-radius: 4px
 }
 
 picking-dropdown-box-listbox-item
