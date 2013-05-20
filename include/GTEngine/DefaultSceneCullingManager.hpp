@@ -450,7 +450,7 @@ namespace GTEngine
                   height(heightIn),
                   coneShape(glm::sin(glm::radians(outerAngle)) * height, height)
             {
-                glm::quat rotation = glm::angleAxis(180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+                glm::quat rotation;
                 glm::vec3 position = glm::vec3(0.0f, 0.0f, -height * 0.5f);
 
                 this->AttachShape(this->coneShape, rotation, position);
@@ -477,7 +477,7 @@ namespace GTEngine
 
                 
                 // 3) Re-attach the shape.
-                glm::quat rotation = glm::angleAxis(180.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+                glm::quat rotation;
                 glm::vec3 position = glm::vec3(0.0f, 0.0f, -height * 0.5f);
 
                 this->AttachShape(this->coneShape, rotation, position);
