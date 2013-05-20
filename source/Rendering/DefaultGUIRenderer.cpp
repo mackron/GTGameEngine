@@ -52,12 +52,9 @@ namespace GTEngine
 
         // We want to render to the main framebuffer and use the main GUI shader.
         GTEngine::Renderer::SetCurrentFramebuffer(nullptr);
-        GTEngine::Renderer::SetCurrentShader(this->shader);
-
 
         // We need to set the projection uniform on the main shader. Slightly more efficient if we do this after making it current.
         this->shader->SetUniform("Projection", this->projection);
-        GTEngine::Renderer::PushPendingUniforms(*this->shader);
     }
 
     void DefaultGUIRenderer::End()
