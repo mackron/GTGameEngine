@@ -25,7 +25,7 @@ namespace GTEngine
           blurShaderX(nullptr), blurShaderY(nullptr), blurShaderX7x7(nullptr), blurShaderY7x7(nullptr), blurShaderX11x11(nullptr), blurShaderY11x11(nullptr), blurShaderX15x15(nullptr), blurShaderY15x15(nullptr),
           shaderBuilder(),
           isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(1.0f),
-          directionalShadowMapSize(512), pointShadowMapSize(256), spotShadowMapSize(512),
+          directionalShadowMapSize(1024), pointShadowMapSize(256), spotShadowMapSize(512),
           materialLibraryEventHandler(*this)
     {
         this->directionalShadowMapFramebuffer.Resize(this->directionalShadowMapSize, this->directionalShadowMapSize);
