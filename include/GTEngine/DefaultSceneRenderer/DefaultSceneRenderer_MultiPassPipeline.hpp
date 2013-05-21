@@ -153,6 +153,10 @@ namespace GTEngine
         mutable DefaultSceneRenderer_LightGroup mainLightGroup;
 
 
+        /// A list of opaque meshes that are not having their depth written. This will be cleared when new objects are
+        /// bound with BindObjects(). We need to keep track of these because they are rendered differently.
+        GTCore::Vector<DefaultSceneRendererMesh*> opaqueMeshesWithNoDepthWrites;
+
 
         /// Enumerator containing flags for light group subdivision options.
         enum LightSubdivionFlags
