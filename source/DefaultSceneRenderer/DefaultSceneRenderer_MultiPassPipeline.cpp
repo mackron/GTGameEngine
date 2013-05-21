@@ -16,7 +16,8 @@ namespace GTEngine
         : renderer(rendererIn), viewportFramebuffer(viewportFramebufferIn), visibleObjects(visibleObjectsIn), splitShadowLights(splitShadowLightsIn),
           opaqueObjects(nullptr), transparentObjects(nullptr),
           hasBackgroundBeenCleared(false),
-          hasGeneratedMainLightGroup(false), mainLightGroup()
+          hasGeneratedMainLightGroup(false), mainLightGroup(),
+          opaqueMeshesWithNoDepthWrites()
     {
     }
 
@@ -57,6 +58,8 @@ namespace GTEngine
     {
         this->opaqueObjects      = opaqueObjectsIn;
         this->transparentObjects = transparentObjectsIn;
+
+        this->opaqueMeshesWithNoDepthWrites.Clear();
     }
 
 
@@ -73,6 +76,32 @@ namespace GTEngine
 
             // Material.
             this->OpaqueMaterialPass();
+
+
+            // Now we need to render the objects that do not have depth writes enabled separately.
+            DefaultSceneRenderer_LightGroup emptyLightGroup;
+            GTCore::Vector<DefaultSceneRenderer_LightGroup> lightGroups;
+
+            for (size_t iMesh = 0; iMesh < this->opaqueMeshesWithNoDepthWrites.count; ++iMesh)
+            {
+                auto mesh = this->opaqueMeshesWithNoDepthWrites[iMesh];
+                assert(mesh != nullptr);
+                {
+                    lightGroups.Clear();
+                    this->SubdivideLightGroup(mesh->touchingLights, lightGroups, ConvertShadowLights);
+
+
+                    // Lighting.
+                    this->RenderMeshLighting(*mesh, lightGroups);
+
+                    // Need to ensure we are writing to the main colour buffer.
+                    Renderer::SetDrawBuffers(1, &ColourBuffer0Index);
+
+                    // Material.
+                    this->RenderMesh(*mesh, emptyLightGroup, DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass | DefaultSceneRenderer_MaterialShaderID::GetLightingFromTextures);
+                    
+                }
+            }
         }
         else
         {
@@ -139,6 +168,7 @@ namespace GTEngine
 
 
         bool isBlendingEnabled = false;
+        DefaultSceneRenderer_LightGroup emptyLightGroup;
         GTCore::Vector<DefaultSceneRenderer_LightGroup> lightGroups;
 
         for (size_t iMesh = 0; iMesh < sortedMeshes.count; ++iMesh)
@@ -170,7 +200,7 @@ namespace GTEngine
 
 
                     // Material.
-                    this->RenderMesh(mesh, lightGroups[0], DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass);
+                    this->RenderMesh(mesh, emptyLightGroup, DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass | DefaultSceneRenderer_MaterialShaderID::GetLightingFromTextures);
                     
                     // Highlight.
                     if ((mesh.flags & SceneRendererMesh::DrawHighlight))
@@ -246,6 +276,10 @@ namespace GTEngine
                                     Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
                                 }
                                 if ((mesh.flags & SceneRendererMesh::NoDepthTest))  Renderer::EnableDepthTest();
+                            }
+                            else
+                            {
+                                this->opaqueMeshesWithNoDepthWrites.PushBack(&mesh);
                             }
                         }
                     }
@@ -351,7 +385,12 @@ namespace GTEngine
                                     {
                                         for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
                                         {
-                                            this->RenderMesh(meshList->buffer[iMesh], lightGroup, 0);
+                                            auto &mesh = meshList->buffer[iMesh];
+                                            
+                                            if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
+                                            {
+                                                this->RenderMesh(mesh, lightGroup, 0);
+                                            }
                                         }
                                     }
                                 }
@@ -386,7 +425,12 @@ namespace GTEngine
                                     {
                                         for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
                                         {
-                                            this->RenderMesh(meshList->buffer[iMesh], lightGroup, 0);
+                                            auto &mesh = meshList->buffer[iMesh];
+                                            
+                                            if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
+                                            {
+                                                this->RenderMesh(mesh, lightGroup, 0);
+                                            }
                                         }
                                     }
                                 }
@@ -421,7 +465,12 @@ namespace GTEngine
                                     {
                                         for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
                                         {
-                                            this->RenderMesh(meshList->buffer[iMesh], lightGroup, 0);
+                                            auto &mesh = meshList->buffer[iMesh];
+                                            
+                                            if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
+                                            {
+                                                this->RenderMesh(mesh, lightGroup, 0);
+                                            }
                                         }
                                     }
                                 }
@@ -469,7 +518,12 @@ namespace GTEngine
 
                         for (size_t iLightGroup = 0; iLightGroup < lightGroups.count; ++iLightGroup)
                         {
-                            this->RenderMesh(mesh, lightGroups[iLightGroup], 0);
+                            auto &mesh = meshList->buffer[iMesh];
+                                            
+                            if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
+                            {
+                                this->RenderMesh(mesh, lightGroups[iLightGroup], 0);
+                            }
                         }
                     }
                 }
@@ -499,17 +553,20 @@ namespace GTEngine
                 for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
                 {
                     auto &mesh = meshList->buffer[iMesh];
-                    {
-                        this->RenderMesh(meshList->buffer[iMesh], emptyLightGroup, DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass | DefaultSceneRenderer_MaterialShaderID::GetLightingFromTextures);
-
-                        // Highlight.
-                        if ((mesh.flags & SceneRendererMesh::DrawHighlight))
+                    {       
+                        if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
                         {
-                            Renderer::EnableBlending();
+                            this->RenderMesh(mesh, emptyLightGroup, DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass | DefaultSceneRenderer_MaterialShaderID::GetLightingFromTextures);
+
+                            // Highlight.
+                            if ((mesh.flags & SceneRendererMesh::DrawHighlight))
                             {
-                                this->RenderMeshHighlight(mesh);
+                                Renderer::EnableBlending();
+                                {
+                                    this->RenderMeshHighlight(mesh);
+                                }
+                                Renderer::DisableBlending();
                             }
-                            Renderer::DisableBlending();
                         }
                     }
                 }
