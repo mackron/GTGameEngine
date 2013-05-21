@@ -202,7 +202,7 @@ namespace GTEngine
 
     void Bone::Serialize(GTCore::Serializer &serializer) const
     {
-        serializer.Write(this->name);
+        serializer.WriteString(this->name);
         serializer.Write(this->position);
         serializer.Write(this->rotation);
         serializer.Write(this->scale);
@@ -212,7 +212,7 @@ namespace GTEngine
 
     void Bone::Deserialize(GTCore::Deserializer &deserializer)
     {
-        deserializer.Read(this->name);
+        deserializer.ReadString(this->name);
         deserializer.Read(this->position);
         deserializer.Read(this->rotation);
         deserializer.Read(this->scale);
