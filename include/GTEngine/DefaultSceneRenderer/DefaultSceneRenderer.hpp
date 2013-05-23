@@ -111,6 +111,7 @@ namespace GTEngine
 
             // Wrap Modes.
             Renderer::SetTexture2DWrapMode(*this->colourBuffer0,   TextureWrapMode_ClampToEdge);
+            Renderer::SetTexture2DWrapMode(*this->colourBuffer1,   TextureWrapMode_ClampToEdge);
             Renderer::SetTexture2DWrapMode(*this->bloomBuffer,     TextureWrapMode_ClampToEdge);
             Renderer::SetTexture2DWrapMode(*this->bloomBlurBuffer, TextureWrapMode_ClampToEdge);
 
