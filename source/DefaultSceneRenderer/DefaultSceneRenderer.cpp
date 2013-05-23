@@ -327,6 +327,7 @@ namespace GTEngine
     Texture2D* DefaultSceneRenderer::GetDirectionalShadowMapByIndex(size_t index)
     {
         assert(index == 0);     // <-- Temp assert until multiple shadow maps are supported.
+        (void)index;
 
         return this->directionalShadowMapFramebuffer.colourBuffer;
     }
@@ -334,6 +335,7 @@ namespace GTEngine
     TextureCube* DefaultSceneRenderer::GetPointShadowMapByIndex(size_t index)
     {
         assert(index == 0);     // <-- Temp assert until multiple shadow maps are supported.
+        (void)index;
 
         return this->pointShadowMapFramebuffer.colourBuffer;
     }
@@ -341,6 +343,7 @@ namespace GTEngine
     Texture2D* DefaultSceneRenderer::GetSpotShadowMapByIndex(size_t index)
     {
         assert(index == 0);     // <-- Temp assert until multiple shadow maps are supported.
+        (void)index;
 
         return this->spotShadowMapFramebuffer.colourBuffer;
     }
@@ -395,6 +398,7 @@ namespace GTEngine
     Texture2D* DefaultSceneRenderer::RenderDirectionalLightShadowMap(DefaultSceneRendererDirectionalLight &light, size_t shadowMapIndex)
     {
         assert(shadowMapIndex == 0);    // <-- temp assert until we add support for multiple shadow maps.
+        (void)shadowMapIndex;
 
         // Framebuffer setup.
         Renderer::SetCurrentFramebuffer(this->directionalShadowMapFramebuffer.framebuffer);
@@ -472,6 +476,7 @@ namespace GTEngine
     TextureCube* DefaultSceneRenderer::RenderPointLightShadowMap(DefaultSceneRendererPointLight &light, size_t shadowMapIndex)
     {
         assert(shadowMapIndex == 0);    // <-- temp assert until we add support for multiple shadow maps.
+        (void)shadowMapIndex;
 
         // Framebuffer setup.
         Renderer::SetCurrentFramebuffer(this->pointShadowMapFramebuffer.framebuffer);
@@ -491,6 +496,7 @@ namespace GTEngine
     Texture2D* DefaultSceneRenderer::RenderSpotLightShadowMap(DefaultSceneRendererSpotLight &light, size_t shadowMapIndex)
     {
         assert(shadowMapIndex == 0);    // <-- temp assert until we add support for multiple shadow maps.
+        (void)shadowMapIndex;
 
         // Framebuffer setup.
         Renderer::SetCurrentFramebuffer(this->spotShadowMapFramebuffer.framebuffer);

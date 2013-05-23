@@ -368,29 +368,27 @@ namespace GTEngine
                         auto light = iLight->value;
                         assert(light != nullptr);
                         {
-                            auto shadowMap = this->renderer.RenderDirectionalLightShadowMap(*light, i);
-                            assert(shadowMap != nullptr);
+                            this->renderer.RenderDirectionalLightShadowMap(*light, i);
+
+                            // Rendering the shadow map will have changed some state, so it needs to be re-enabled here.
+                            this->EnableLightingState();
+
+                            // Now we just iterate over and draw every mesh. We just use a light group with a single light in it.
+                            DefaultSceneRenderer_LightGroup lightGroup;
+                            lightGroup.AddShadowDirectionalLight(static_cast<uint32_t>(i));
+
+                            for (size_t iMeshList = 0; iMeshList < this->opaqueObjects->count; ++iMeshList)
                             {
-                                // Rendering the shadow map will have changed some state, so it needs to be re-enabled here.
-                                this->EnableLightingState();
-
-                                // Now we just iterate over and draw every mesh. We just use a light group with a single light in it.
-                                DefaultSceneRenderer_LightGroup lightGroup;
-                                lightGroup.AddShadowDirectionalLight(static_cast<uint32_t>(i));
-
-                                for (size_t iMeshList = 0; iMeshList < this->opaqueObjects->count; ++iMeshList)
+                                auto meshList = this->opaqueObjects->buffer[iMeshList]->value;
+                                assert(meshList != nullptr);
                                 {
-                                    auto meshList = this->opaqueObjects->buffer[iMeshList]->value;
-                                    assert(meshList != nullptr);
+                                    for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
                                     {
-                                        for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
-                                        {
-                                            auto &mesh = meshList->buffer[iMesh];
+                                        auto &mesh = meshList->buffer[iMesh];
                                             
-                                            if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
-                                            {
-                                                this->RenderMesh(mesh, lightGroup, 0);
-                                            }
+                                        if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
+                                        {
+                                            this->RenderMesh(mesh, lightGroup, 0);
                                         }
                                     }
                                 }
@@ -408,29 +406,27 @@ namespace GTEngine
                         auto light = iLight->value;
                         assert(light != nullptr);
                         {
-                            auto shadowMap = this->renderer.RenderPointLightShadowMap(*light, i);
-                            assert(shadowMap != nullptr);
+                            this->renderer.RenderPointLightShadowMap(*light, i);
+
+                            // Rendering the shadow map will have changed some state, so it needs to be re-enabled here.
+                            this->EnableLightingState();
+
+                            // Now we just iterate over and draw every mesh. We just use a light group with a single light in it.
+                            DefaultSceneRenderer_LightGroup lightGroup;
+                            lightGroup.AddShadowPointLight(static_cast<uint32_t>(i));
+
+                            for (size_t iMeshList = 0; iMeshList < this->opaqueObjects->count; ++iMeshList)
                             {
-                                // Rendering the shadow map will have changed some state, so it needs to be re-enabled here.
-                                this->EnableLightingState();
-
-                                // Now we just iterate over and draw every mesh. We just use a light group with a single light in it.
-                                DefaultSceneRenderer_LightGroup lightGroup;
-                                lightGroup.AddShadowPointLight(static_cast<uint32_t>(i));
-
-                                for (size_t iMeshList = 0; iMeshList < this->opaqueObjects->count; ++iMeshList)
+                                auto meshList = this->opaqueObjects->buffer[iMeshList]->value;
+                                assert(meshList != nullptr);
                                 {
-                                    auto meshList = this->opaqueObjects->buffer[iMeshList]->value;
-                                    assert(meshList != nullptr);
+                                    for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
                                     {
-                                        for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
-                                        {
-                                            auto &mesh = meshList->buffer[iMesh];
+                                        auto &mesh = meshList->buffer[iMesh];
                                             
-                                            if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
-                                            {
-                                                this->RenderMesh(mesh, lightGroup, 0);
-                                            }
+                                        if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
+                                        {
+                                            this->RenderMesh(mesh, lightGroup, 0);
                                         }
                                     }
                                 }
@@ -448,29 +444,27 @@ namespace GTEngine
                         auto light = iLight->value;
                         assert(light != nullptr);
                         {
-                            auto shadowMap = this->renderer.RenderSpotLightShadowMap(*light, i);
-                            assert(shadowMap != nullptr);
+                            this->renderer.RenderSpotLightShadowMap(*light, i);
+
+                            // Rendering the shadow map will have changed some state, so it needs to be re-enabled here.
+                            this->EnableLightingState();
+
+                            // Now we just iterate over and draw every mesh. We just use a light group with a single light in it.
+                            DefaultSceneRenderer_LightGroup lightGroup;
+                            lightGroup.AddShadowSpotLight(static_cast<uint32_t>(i));
+
+                            for (size_t iMeshList = 0; iMeshList < this->opaqueObjects->count; ++iMeshList)
                             {
-                                // Rendering the shadow map will have changed some state, so it needs to be re-enabled here.
-                                this->EnableLightingState();
-
-                                // Now we just iterate over and draw every mesh. We just use a light group with a single light in it.
-                                DefaultSceneRenderer_LightGroup lightGroup;
-                                lightGroup.AddShadowSpotLight(static_cast<uint32_t>(i));
-
-                                for (size_t iMeshList = 0; iMeshList < this->opaqueObjects->count; ++iMeshList)
+                                auto meshList = this->opaqueObjects->buffer[iMeshList]->value;
+                                assert(meshList != nullptr);
                                 {
-                                    auto meshList = this->opaqueObjects->buffer[iMeshList]->value;
-                                    assert(meshList != nullptr);
+                                    for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
                                     {
-                                        for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
-                                        {
-                                            auto &mesh = meshList->buffer[iMesh];
+                                        auto &mesh = meshList->buffer[iMesh];
                                             
-                                            if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
-                                            {
-                                                this->RenderMesh(mesh, lightGroup, 0);
-                                            }
+                                        if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
+                                        {
+                                            this->RenderMesh(mesh, lightGroup, 0);
                                         }
                                     }
                                 }
