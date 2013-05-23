@@ -39,7 +39,8 @@ namespace GTEngine
 {
     /// Class used for playing a sequence of animations.
     ///
-    /// This allows for flexible animation control. Each 
+    /// This allows for flexible animation control. Each sequence has "frames" which control which segment of the animation track should
+    /// be played at certain points, and how.
     class AnimationSequence
     {
     public:
@@ -49,6 +50,15 @@ namespace GTEngine
 
         /// Destructor.
         virtual ~AnimationSequence();
+
+
+        /// Sets the name of the animation sequence.
+        ///
+        /// @param newName [in] The new name of the sequence.
+        void SetName(const char* newName);
+
+        /// Retrieves the name of the animation sequence.
+        const char* GetName() const;
 
 
         /// Adds a named sequence frame.
@@ -86,6 +96,9 @@ namespace GTEngine
 
 
     private:
+
+        /// The name of the animation sequence.
+        GTCore::String name;
 
         /// The list of sequence frames.
         GTCore::Vector<AnimationSequenceFrame*> frames;

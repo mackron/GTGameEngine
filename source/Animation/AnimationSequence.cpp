@@ -5,7 +5,7 @@
 namespace GTEngine
 {
     AnimationSequence::AnimationSequence()
-        : frames()
+        : frames(), name()
     {
     }
 
@@ -15,6 +15,16 @@ namespace GTEngine
         {
             delete this->frames.buffer[i];
         }
+    }
+
+    void AnimationSequence::SetName(const char* newName)
+    {
+        this->name = newName;
+    }
+
+    const char* AnimationSequence::GetName() const
+    {
+        return this->name.c_str();
     }
 
     void AnimationSequence::AddFrame(const char* name, double transitionTime, bool loop)
