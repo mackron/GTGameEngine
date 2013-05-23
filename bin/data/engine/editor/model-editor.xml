@@ -2,9 +2,10 @@
 
 <include url="sub-editor.xml" />
 
-<style  url="styles/modeleditor.style"                />
-<script url="scripts/modeleditor.lua"                 />
 
-<script url="scripts/modeleditor-materialpanel.lua"   />
-<script url="scripts/modeleditor-animationspanel.lua" />
-<script url="scripts/modeleditor-cdpanel.lua"         />
+<style  url="model-editor/model-editor.style" />
+
+<script url="model-editor/model-editor.lua"                 />
+<script url="model-editor/model-editor-materialpanel.lua"   />
+<script url="model-editor/model-editor-animationspanel.lua" />
+<script url="model-editor/model-editor-cdpanel.lua"         />
