@@ -12,7 +12,9 @@ namespace GTEngine
     DefaultGUIRenderer::DefaultGUIRenderer()
         : shader(ShaderLibrary::GetGUIShader()),
           viewportWidth(0), viewportHeight(0), projection(0),
-          textures()
+          textures(),
+          currentOffsetX(0.0f), currentOffsetY(0.0f), currentTexture(nullptr), isBlendingEnabled(false),
+          uniformsRequirePush(true)
     {
         assert(shader != nullptr);
     }
@@ -55,6 +57,10 @@ namespace GTEngine
 
         // We need to set the projection uniform on the main shader. Slightly more efficient if we do this after making it current.
         this->shader->SetUniform("Projection", this->projection);
+
+
+        // Set the default state.
+        this->RestoreCurrentState();
     }
 
     void DefaultGUIRenderer::End()
@@ -66,34 +72,63 @@ namespace GTEngine
         GTEngine::Renderer::EnableDepthWrites();
     }
 
+    void DefaultGUIRenderer::BeginElementOnDrawEvent(GTGUI::Element &)
+    {
+    }
+
+    void DefaultGUIRenderer::EndElementOnDrawEvent(GTGUI::Element &)
+    {
+        // Anything that may be been changed needs to be resetored.
+        this->RestoreCurrentState();
+    }
+
     void DefaultGUIRenderer::SetScissor(int x, int y, unsigned int width, unsigned int height)
     {
         // GTGUI is top-down, but the renderer uses bottom-up. We need to convert appropriately.
         GTEngine::Renderer::SetScissor(x, this->viewportHeight - (y + height), width, height);
     }
 
-    void DefaultGUIRenderer::Draw(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount, float offsetX, float offsetY, const GTImage::Image* image, bool enableOpacity)
+    void DefaultGUIRenderer::SetOffset(float offsetX, float offsetY)
     {
-        auto texture = this->AcquireTexture2DFromImage(image);
+        this->currentOffsetX = offsetX;
+        this->currentOffsetY = offsetY;
 
+        this->shader->SetUniform("Offset", offsetX, offsetY);
+        this->uniformsRequirePush = true;
+    }
+
+    void DefaultGUIRenderer::SetTexture(const GTImage::Image* texture)
+    {
+        this->currentTexture = texture;
+
+        this->shader->SetUniform("Texture", this->AcquireTexture2DFromImage(texture));
+        this->uniformsRequirePush = true;
+    }
+
+    void DefaultGUIRenderer::EnableBlending()
+    {
+        this->isBlendingEnabled = true;
+
+        GTEngine::Renderer::EnableBlending();
+        GTEngine::Renderer::SetBlendEquation(BlendEquation_Add);
+        GTEngine::Renderer::SetBlendFunction(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
+    }
+
+    void DefaultGUIRenderer::DisableBlending()
+    {
+        this->isBlendingEnabled = false;
+
+        GTEngine::Renderer::DisableBlending();
+    }
+
+    void DefaultGUIRenderer::Draw(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount)
+    {
         // The shader needs to be make current in case an OnDraw event handler changes it. Setting uniforms is slightly more efficient if we bind it first.
-        GTEngine::Renderer::SetCurrentShader(this->shader);
-        this->shader->SetUniform("Offset",  offsetX, offsetY);
-        this->shader->SetUniform("Texture", texture);
-        GTEngine::Renderer::PushPendingUniforms(*this->shader);
-
-
-        if (enableOpacity)
+        if (this->uniformsRequirePush)
         {
-            GTEngine::Renderer::EnableBlending();
-            GTEngine::Renderer::SetBlendEquation(BlendEquation_Add);
-            GTEngine::Renderer::SetBlendFunction(BlendFunc_SourceAlpha, BlendFunc_OneMinusSourceAlpha);
+            GTEngine::Renderer::PushPendingUniforms(*this->shader);
+            this->uniformsRequirePush = false;
         }
-        else
-        {
-            GTEngine::Renderer::DisableBlending();  // Ensure blending is disabled for performance.
-        }
-
 
         // Draw.
         GTEngine::Renderer::Draw(vertices, vertexCount, indices, indexCount, VertexFormat::P2T2C4);
@@ -136,6 +171,22 @@ namespace GTEngine
 
             this->textures.Add(image, newTexture);
             return newTexture;
+        }
+    }
+
+    void DefaultGUIRenderer::RestoreCurrentState()
+    {
+        GTEngine::Renderer::SetCurrentShader(this->shader);
+        this->SetOffset(this->currentOffsetX, this->currentOffsetY);
+        this->SetTexture(this->currentTexture);
+
+        if (this->isBlendingEnabled)
+        {
+            this->EnableBlending();
+        }
+        else
+        {
+            this->DisableBlending();
         }
     }
 }
