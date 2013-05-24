@@ -15,6 +15,7 @@ function GTGUI.Element:ModelEditorPanel(_internalPtr)
     self.AnimationSegmentsPanel:ModelEditor_AnimationSegmentsPanel(_internalPtr);
     self.AnimationSequencesPanel:ModelEditor_AnimationSequencesPanel(_internalPtr);
     self.CDPanel:ModelEditor_CDPanel(_internalPtr);
+    self.CDPanel:Collapse();
     
     
     self.Scrollbar:VerticalScrollbar();
