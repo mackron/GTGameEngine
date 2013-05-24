@@ -16,7 +16,8 @@ namespace GTEngine
         : SubEditor(ownerEditor, absolutePath, relativePath),
           scene(), viewport(), camera(),
           modelNode(), convexHullParentNode(), convexHullNodes(),
-          mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), viewport),
+          mainElement(nullptr), viewportElement(nullptr), timelineElement(nullptr),
+          viewportEventHandler(ownerEditor.GetGame(), viewport),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
           grid(0.25f, 8, 32),
           random()
@@ -81,6 +82,26 @@ namespace GTEngine
 
                                 this->viewportElement->AttachEventHandler(this->viewportEventHandler);
                                 this->viewportElement->OnSize();
+                            }
+                            script.Pop(1);          // <-- return value from GetID()
+                        }
+                    }
+                    script.Pop(1);
+
+                    // Timeline Element
+                    script.Push("Timeline");
+                    script.GetTableValue(-2);
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("GetID");
+                        script.GetTableValue(-2);
+                        assert(script.IsFunction(-1));
+                        {
+                            script.PushValue(-2);   // <-- 'self'
+                            script.Call(1, 1);
+                            assert(script.IsString(-1));
+                            {
+                                this->timelineElement = gui.GetElementByID(script.ToString(-1));
                             }
                             script.Pop(1);          // <-- return value from GetID()
                         }
