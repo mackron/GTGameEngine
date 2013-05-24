@@ -119,8 +119,14 @@ namespace GTEngine
         /// The viewport element.
         GTGUI::Element* viewportElement;
 
+        /// The timeline element.
+        GTGUI::Element* timelineElement;
+
+
         /// The viewport event handler.
         Editor3DViewportEventHandler viewportEventHandler;
+
+        
 
 
         float cameraXRotation;      ///< The camera's current X rotation.
