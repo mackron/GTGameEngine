@@ -60,3 +60,40 @@ model-editor-panel-body
 }
 
 
+model-editor-animation-segment
+{
+    child-plane:      horizontal
+    flex-child-width: true
+    margin-bottom:    4px
+    
+    vertical-align:   center
+}
+
+model-editor-animation-segment-name includes textbox
+{
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
