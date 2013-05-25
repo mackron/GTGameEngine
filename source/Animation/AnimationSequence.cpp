@@ -5,7 +5,7 @@
 namespace GTEngine
 {
     AnimationSequence::AnimationSequence()
-        : frames(), name()
+        : name(), frames()
     {
     }
 
