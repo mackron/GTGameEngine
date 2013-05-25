@@ -4,6 +4,7 @@
 #define __GTEngine_AnimationSegment_hpp_
 
 #include <cstdint>
+#include <GTCore/String.hpp>
 
 namespace GTEngine
 {
@@ -11,16 +12,35 @@ namespace GTEngine
     struct AnimationSegment
     {
         AnimationSegment()
-            : startKeyFrame(0), endKeyFrame(0)
+            : name(), startKeyFrame(0), endKeyFrame(0)
         {
         }
 
         AnimationSegment(size_t startKeyFrame, size_t endKeyFrame)
-            : startKeyFrame(startKeyFrame), endKeyFrame(endKeyFrame)
+            : name(), startKeyFrame(startKeyFrame), endKeyFrame(endKeyFrame)
         {
         }
 
+        AnimationSegment(const char* nameIn)
+            : name(nameIn), startKeyFrame(0), endKeyFrame(0)
+        {
+        }
+
+        AnimationSegment(const char* nameIn, size_t startKeyFrameIn, size_t endKeyFrameIn)
+            : name(nameIn), startKeyFrame(startKeyFrameIn), endKeyFrame(endKeyFrameIn)
+        {
+        }
+
+
+
+
+        /// The name of the animation segment.
+        GTCore::String name;
+
+        /// The first key frame of the segment.
         size_t startKeyFrame;
+
+        /// The end last frame of the segment.
         size_t endKeyFrame;
     };
 }
