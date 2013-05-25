@@ -9,8 +9,6 @@
 #include "AnimationKeyFrameQueue.hpp"
 #include "../Serialization.hpp"
 #include <GTCore/Vector.hpp>
-#include <GTCore/Dictionary.hpp>
-
 
 namespace GTEngine
 {
@@ -75,7 +73,23 @@ namespace GTEngine
         /// @param endKeyFrame   [in] The index of the key frame to end at.
         void AddNamedSegment(const char* name, size_t startKeyFrame, size_t endKeyFrame);
 
-        /// Retrieves a pointer to a named segment.
+        /// Removes the first segment with the given name.
+        ///
+        /// @param name [in] The name of the segment to remove.
+        void RemoveFirstSegmentByName(const char* name);
+
+        /// Removes every segment with the given name.
+        ///
+        /// @param name [in] The name of the segments to remove.
+        void RemoveSegmentsByName(const char* name);
+
+        /// Removes the segment at the given index.
+        ///
+        /// @param name [in] The index of the segment to remove.
+        void RemoveSegmentByIndex(size_t index);
+
+
+        /// Retrieves a pointer to a first segment with the given name.
         ///
         /// @param name [in] The name of the segment to retrieve.
               AnimationSegment* GetNamedSegment(const char* name);
@@ -195,8 +209,8 @@ namespace GTEngine
         /// The list of channels attached to the animation.
         GTCore::Vector<AnimationChannel*> channels;
 
-        /// The map of named segments.
-        GTCore::Dictionary<AnimationSegment> segments;
+        /// The list of animation segments.
+        GTCore::Vector<AnimationSegment> segments;
 
 
         /// The key frame queue for the currently running animation. This is modified as the animation changes playing states.
