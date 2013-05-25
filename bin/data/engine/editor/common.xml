@@ -28,3 +28,9 @@
 
 <style  url="common/panel-dropdown-box.style"     />
 <script url="common/panel-dropdown-box.lua"       />
+
+<style  url="common/add-button.style"             />
+<script url="common/add-button.lua"               />
+
+<style  url="common/cross-button.style"           />
+<script url="common/cross-button.lua"             />
