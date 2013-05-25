@@ -60,25 +60,64 @@ namespace GTEngine
 
     void Animation::AddNamedSegment(const char* name, size_t startKeyFrame, size_t endKeyFrame)
     {
-        this->segments.Add(name, AnimationSegment(startKeyFrame, endKeyFrame));
+        this->segments.PushBack(AnimationSegment(name, startKeyFrame, endKeyFrame));
     }
+
+    
+    void Animation::RemoveFirstSegmentByName(const char* name)
+    {
+        for (size_t iSegment = 0; iSegment < this->segments.count; ++iSegment)
+        {
+            auto &segment = this->segments[iSegment];
+            {
+                if (segment.name == name)
+                {
+                    this->segments.Remove(iSegment);
+                    return;
+                }
+            }
+        }
+    }
+
+    void Animation::RemoveSegmentsByName(const char* name)
+    {
+        size_t iSegment = 0;
+        while (iSegment < this->segments.count)
+        {
+            auto &segment = this->segments[iSegment];
+
+            if (segment.name == name)
+            {
+                this->segments.Remove(iSegment);
+            }
+            else
+            {
+                ++iSegment;
+            }
+        }
+    }
+
+    void Animation::RemoveSegmentByIndex(size_t index)
+    {
+        this->segments.Remove(index);
+    }
+
 
     AnimationSegment* Animation::GetNamedSegment(const char* name)
     {
-        auto iSegment = this->segments.Find(name);
-        if (iSegment != nullptr)
-        {
-            return &iSegment->value;
-        }
-
-        return nullptr;
+        return const_cast<AnimationSegment*>(const_cast<const Animation*>(this)->GetNamedSegment(name));
     }
     const AnimationSegment* Animation::GetNamedSegment(const char* name) const
     {
-        auto iSegment = this->segments.Find(name);
-        if (iSegment != nullptr)
+        for (size_t iSegment = 0; iSegment < this->segments.count; ++iSegment)
         {
-            return &iSegment->value;
+            auto &segment = this->segments[iSegment];
+            {
+                if (segment.name == name)
+                {
+                    return &segment;
+                }
+            }
         }
 
         return nullptr;
@@ -86,16 +125,16 @@ namespace GTEngine
 
     AnimationSegment* Animation::GetNamedSegmentByIndex(size_t index)
     {
-        return &this->segments.buffer[index]->value;
+        return &this->segments[index];
     }
     const AnimationSegment* Animation::GetNamedSegmentByIndex(size_t index) const
     {
-        return &this->segments.buffer[index]->value;
+        return &this->segments[index];
     }
 
     const char* Animation::GetNamedSegmentNameByIndex(size_t index) const
     {
-        return this->segments.buffer[index]->key;
+        return this->segments[index].name.c_str();
     }
 
 
@@ -125,11 +164,11 @@ namespace GTEngine
                     if (frame->segmentName.GetLength() > 0)
                     {
                         // We're looking at a named segment.
-                        auto iSegment = this->segments.Find(frame->segmentName.c_str());
-                        if (iSegment != nullptr)
+                        auto segment = this->GetNamedSegment(frame->segmentName.c_str());
+                        if (segment != nullptr)
                         {
-                            keyFrameStart = iSegment->value.startKeyFrame;
-                            keyFrameEnd   = iSegment->value.endKeyFrame;
+                            keyFrameStart = segment->startKeyFrame;
+                            keyFrameEnd   = segment->endKeyFrame;
                         }
                     }
 
