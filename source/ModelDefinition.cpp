@@ -125,57 +125,6 @@ namespace GTEngine
             return true;
         }
 
-#if 0
-        if (IO::IsSupportedModelExtension(newAbsolutePath.c_str()))
-        {
-            if (!GTCore::IO::FileExists(newAbsolutePath.c_str()))
-            {
-                if (GTCore::Path::ExtensionEqual(newAbsolutePath.c_str(), "gtmodel"))
-                {
-                    newAbsolutePath = GTCore::IO::RemoveExtension(newAbsolutePath.c_str());
-                    newRelativePath = GTCore::IO::RemoveExtension(newRelativePath.c_str());
-
-                    if (!GTCore::IO::FileExists(newAbsolutePath.c_str()))
-                    {
-                        return false;
-                    }
-                }
-                else
-                {
-                    newAbsolutePath += ".gtmodel";
-                    newRelativePath += ".gtmodel";
-
-                    if (!GTCore::IO::FileExists(newAbsolutePath.c_str()))
-                    {
-                        return false;
-                    }
-                }
-            }
-
-
-            // If we've made it here, it means the file exists and is a supported model file. All we need to do is check the extension to determine
-            // whether or not we are loading from a native or foreign format.
-            bool successful = false;
-            if (GTCore::Path::ExtensionEqual(newAbsolutePath.c_str(), "gtmodel"))
-            {
-                successful = this->LoadFromNativeFile(newAbsolutePath);
-            }
-            else
-            {
-                successful = this->LoadFromForeignFile(newAbsolutePath);
-            }
-
-
-            if (successful)
-            {
-                this->absolutePath = newAbsolutePath;
-                this->relativePath = newRelativePath;
-
-                return true;
-            }
-        }
-#endif
-
         return false;
     }
 
