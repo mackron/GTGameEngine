@@ -1600,6 +1600,9 @@
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_SinglePassPipeline.cpp">
       <Filter>source\DefaultSceneRenderer</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\ModelDefinition_Assimp.cpp">
+      <Filter>source</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\bin\data\engine\editor\combobox.xml">

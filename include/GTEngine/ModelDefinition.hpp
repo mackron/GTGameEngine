@@ -29,6 +29,27 @@ namespace GTEngine
         ~ModelDefinition();
 
 
+        /// Loads the model definition from a file.
+        ///
+        /// @param fileName     [in] The path of the file to load. See remarks.
+        /// @param relativePath [in] The relative path of the file. Only used when 'fileName' is absolute. See remarks.
+        ///
+        /// @remarks
+        ///     The relative path of model (and every other asset) must be known. Thus, if 'fileName' is absolute, a relative path must
+        ///     be specified. Typically, absolute paths will only ever be passed to this method when called by the engine.
+        ///     @par
+        ///     The file can be any supported model file. If it is not a native engine model (.gtmodel) it will simply be imported. If
+        ///     a .gtmodel file is specified, but it does not exist, it will remove the extension and attempt to load the original source
+        ///     file. If a non .gtmodel file is specified and it does not exist, the .gtmodel extension will be added and another attempt
+        ///     will be made.
+        ///     @par
+        ///     This method will not clear data that is not present in the specified file. For example, if you first load a .gtmodel file,
+        ///     which contains convex hulls, and then load the corresponding .dae file (Collada file), it will NOT clear the convex hulls.
+        ///     The purpose behind this system is to make it so reloading a model does not delete information. To clear data, use the
+        ///     Clear*() methods before loading.
+        bool LoadFromFile(const char* fileNameIn, const char* relativePathIn = nullptr);
+
+
         /// Generates the tangents and bitangents of the mesh geometry.
         void GenerateTangentsAndBitangents();
 
@@ -78,6 +99,41 @@ namespace GTEngine
         bool HasConvexHulls() const { return this->convexHulls.count > 0; }
 
 
+        ////////////////////////////////////////////////////////
+        // Serialization/Deserialization
+
+        /// Serializes the model definition.
+        void Serialize(GTCore::Serializer &serializer);
+
+        /// Deserializes the model definition.
+        ///
+        /// @return True if successful; false otherwise.
+        bool Deserialize(GTCore::Deserializer &deserializer);
+
+
+    private:
+
+        /// Loads the model definition from a native .gtmodel file.
+        ///
+        /// @param absolutePathIn [in] The absolute path of the file to load.
+        ///
+        /// @return True if successful; false otherwise.
+        bool LoadFromNativeFile(const GTCore::String &absolutePathIn);
+
+        /// Loads a model definition from a non-native file (a non-gtmodel file).
+        ///
+        /// @param absolutePathIn [in] The absolute path of the file to load.
+        ///
+        /// @return True if successful; false otherwise.
+        bool LoadFromForeignFile(const GTCore::String &absolutePathIn);
+
+        /// Loads a model definition from an Assimp-supported file.
+        ///
+        /// @param absolutePathIn [in] the absolute path of the file to load.
+        ///
+        /// @return True if successful; false otherwise.
+        bool LoadFromAssimpFile(const GTCore::String &absolutePathIn);
+
 
     public:
 
@@ -87,6 +143,11 @@ namespace GTEngine
         /// The absolute file path.
         GTCore::String absolutePath;
 
+        /// The relative file path.
+        GTCore::String relativePath;
+
+
+        // TODO: Look into combinging these separated arrays in a ModelDefinitionMesh object to make things a little clearer.
 
         /// The vertex arrays containing the mesh data. This is always in P3T2N3T3B3 format.
         GTCore::Vector<GTEngine::VertexArray*> meshGeometries;
