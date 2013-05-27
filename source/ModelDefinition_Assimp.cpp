@@ -240,9 +240,6 @@ namespace GTEngine
             auto normals   = mesh->mNormals;
             auto texCoords = mesh->mTextureCoords;
 
-            // Material.
-            definition.meshMaterials.PushBack(MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
-
             // For now, only support triangle formats.
             if (mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE)
             {
@@ -393,22 +390,38 @@ namespace GTEngine
             {
                 GTCore::Vector<GTCore::Vector<BoneWeights*>*> meshBones;
 
+                size_t oldMeshCount = this->meshGeometries.count;
+
                 // At this point we're going to be re-creating the skinning and animation data. These need clearing.
                 this->ClearMeshGeometries();
-                this->ClearBones();
                 this->ClearMeshSkinningVertexAttributes();
+                this->ClearBones();
                 this->ClearAnimations();
 
                 // This is where we take the assimp meshes and create the GTEngine meshes.
                 aiMatrix4x4 transform;
                 CopyNodesWithMeshes(*scene, *root, transform, *this, meshBones);
 
+                // We need to perform a post-process step of sorts on each mesh. Here we sort out the materials and skinning vertex attributes. It's important that
+                // we do this after creating the local bones of the mesh so that we get the correct indices.
+                //
+                // If the number of meshes is different to the old one, we want to reset materials. Otherwise, we leave the materials alone.
+                bool resetMaterials = oldMeshCount != this->meshGeometries.count;
+                if (resetMaterials)
+                {
+                    this->ClearMaterials();
+                }
 
-
-                // Now what we do is iterate over the bones of each mesh and create the skinning vertex attributes. It's important that we do this after creating the local bones
-                // of the mesh so that we get the correct indices.
                 for (size_t i = 0; i < this->meshGeometries.count; ++i)
                 {
+                    // Material.
+                    if (resetMaterials)
+                    {
+                        this->meshMaterials.PushBack(MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
+                    }
+
+
+                    // Skinning Vertex Attributes.
                     auto localBones = meshBones[i];
                     if (localBones != nullptr)
                     {
