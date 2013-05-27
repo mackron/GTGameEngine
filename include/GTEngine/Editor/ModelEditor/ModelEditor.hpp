@@ -100,6 +100,9 @@ namespace GTEngine
         /// Refreshes the model editor.
         void Refresh();
 
+        /// Reloads the model.
+        void Reload();
+
 
     private:
 
@@ -156,6 +159,15 @@ namespace GTEngine
 
         /// The random number generator for convex hull colours, and whatever else we may need.
         GTCore::Random random;
+
+
+        /// Keeps track of whether or not the editor is in the middle of saving. We use this in determining whether or not the settings should be
+        /// set when it detects a modification to the file on disk.
+        bool isSaving;
+
+        /// Keeps track of whether or not we are handling a reload. We use this in keeping track of whether or not to mark the file as modified
+        /// when the settings are changed.
+        bool isReloading;
 
 
     private:    // No copying.
