@@ -815,11 +815,16 @@ namespace GTEngine
                         uint32_t* vertexCounts = static_cast<uint32_t*>(malloc(convexHullCount * sizeof(uint32_t)));
                         uint32_t* indexCounts  = static_cast<uint32_t*>(malloc(convexHullCount * sizeof(uint32_t)));
 
+                        deserializer.Read(vertexCounts, convexHullCount * sizeof(uint32_t));
+                        deserializer.Read(indexCounts,  convexHullCount * sizeof(uint32_t));
+
+
                         uint32_t totalVertexCount;
                         deserializer.Read(totalVertexCount);
 
                         uint32_t totalIndexCount;
                         deserializer.Read(totalIndexCount);
+
 
                         auto vertices = static_cast<float*   >(malloc(totalVertexCount * sizeof(float)));
                         auto indices  = static_cast<uint32_t*>(malloc(totalIndexCount  * sizeof(uint32_t)));
