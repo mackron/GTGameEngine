@@ -1189,7 +1189,7 @@ namespace GTEngine
                     auto model = component->GetModel();
                     if (model != nullptr)
                     {
-                        script.Push(model->GetDefinition().fileName.c_str());
+                        script.Push(model->GetDefinition().GetRelativePath());
                     }
                 }
                 else

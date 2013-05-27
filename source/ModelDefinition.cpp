@@ -8,31 +8,32 @@
 
 namespace GTEngine
 {
-    ModelDefinition::ModelDefinition(const char* fileNameIn)
-        : fileName(fileNameIn), absolutePath(),
+    ModelDefinition::ModelDefinition()
+        : absolutePath(), relativePath(),
           meshGeometries(), meshMaterials(), meshSkinningVertexAttributes(),
           bones(),
           animation(), animationChannelBones(), animationKeyCache(),
           convexHulls(), convexHullBuildSettings()
     {
-        if (this->fileName != "")
-        {
-            GTCore::IO::FindAbsolutePath(fileNameIn, this->absolutePath);
-        }
     }
 
     ModelDefinition::~ModelDefinition()
     {
         this->ClearMeshGeometries();
         this->ClearMeshSkinningVertexAttributes();
+        this->ClearMaterials();
         this->ClearBones();
         this->ClearAnimations();
-        this->ClearMaterials();
         this->ClearConvexHulls();
     }
 
+    bool ModelDefinition::LoadFromFile(const char* relativePathIn)
+    {
+        bool devnull;
+        return this->LoadFromFile(relativePathIn, nullptr, devnull);
+    }
 
-    bool ModelDefinition::LoadFromFile(const char* fileNameIn, const char* relativePathIn)
+    bool ModelDefinition::LoadFromFile(const char* fileNameIn, const char* relativePathIn, bool &needsSerialize)
     {
         GTCore::String newAbsolutePath;
         GTCore::String newRelativePath;
@@ -62,6 +63,69 @@ namespace GTEngine
         }
 
 
+        GTCore::String nativeAbsolutePath;
+        if (GTCore::Path::ExtensionEqual(newAbsolutePath.c_str(), "gtmodel"))
+        {
+            nativeAbsolutePath = newAbsolutePath;
+
+            newAbsolutePath = GTCore::IO::RemoveExtension(newAbsolutePath.c_str());
+            newRelativePath = GTCore::IO::RemoveExtension(newRelativePath.c_str());
+        }
+        else
+        {
+            nativeAbsolutePath = newAbsolutePath + ".gtmodel";
+        }
+
+
+        bool loadFromNativeFile = false;
+
+        // We need file info of both the foreign and native files. If the foreign file is different to the file that would used to generate
+        // the existing native file, it will be reloaded. 
+        GTCore::IO::FileInfo foreignFileInfo;
+        GTCore::IO::GetFileInfo(newAbsolutePath.c_str(), foreignFileInfo);
+
+        GTCore::IO::FileInfo nativeFileInfo;
+        GTCore::IO::GetFileInfo(nativeAbsolutePath.c_str(), nativeFileInfo);
+
+        if (!foreignFileInfo.exists && !nativeFileInfo.exists)
+        {
+            return false;
+        }
+        else
+        {
+            if (!foreignFileInfo.exists || (nativeFileInfo.exists && nativeFileInfo.lastModifiedTime > foreignFileInfo.lastModifiedTime))
+            {
+                loadFromNativeFile = true;
+            }
+            else
+            {
+                loadFromNativeFile = false;
+            }
+        }
+
+
+        bool successful = false;
+        if (loadFromNativeFile)
+        {
+            successful     = this->LoadFromNativeFile(nativeFileInfo.absolutePath);
+            needsSerialize = false;
+        }
+        else
+        {
+            successful     = this->LoadFromForeignFile(foreignFileInfo.absolutePath);
+            needsSerialize = true;
+        }
+
+
+        if (successful)
+        {
+            this->absolutePath = newAbsolutePath;
+            this->relativePath = newRelativePath;
+
+            return true;
+        }
+
+#if 0
         if (IO::IsSupportedModelExtension(newAbsolutePath.c_str()))
         {
             if (!GTCore::IO::FileExists(newAbsolutePath.c_str()))
@@ -110,8 +174,20 @@ namespace GTEngine
                 return true;
             }
         }
+#endif
 
         return false;
+    }
+
+
+    const char* ModelDefinition::GetAbsolutePath() const
+    {
+        return this->absolutePath.c_str();
+    }
+
+    const char* ModelDefinition::GetRelativePath() const
+    {
+        return this->relativePath.c_str();
     }
 
 
@@ -872,7 +948,7 @@ namespace GTEngine
     bool ModelDefinition::LoadFromNativeFile(const GTCore::String &absolutePathIn)
     {
         // When loading from a native file, all we need to do is deserialize.
-        auto file = GTCore::IO::Open(absolutePathIn.c_str(), GTCore::IO::OpenMode::Binary | GTCore::IO::OpenMode::Read);
+        auto file = GTCore::IO::Open(absolutePathIn.c_str(), GTCore::IO::OpenMode::Read);
         if (file != nullptr)
         {
             GTCore::FileDeserializer deserializer(file);
