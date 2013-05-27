@@ -52,9 +52,6 @@ namespace GTEngine
         /// @return A pointer to the new model if successful; null otherwise.
         static Model* CreateFromDefinition(const ModelDefinition &definition);
 
-        /// Creates an empty model.
-        static Model* CreateEmpty();
-
         /// Creates a model from a convex-hull.
         ///
         /// @param convexHull [in] A reference to the convexHull

@@ -144,11 +144,6 @@ namespace GTEngine
         return model;
     }
 
-    Model* ModelLibrary::CreateEmpty()
-    {
-        return new Model;
-    }
-
 
     static int ConvexHullCount = 0;
     Model* ModelLibrary::CreateFromConvexHull(const ConvexHull &convexHull)
