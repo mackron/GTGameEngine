@@ -4,6 +4,7 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
+#include <GTCore/Path.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -14,13 +15,15 @@ namespace GTEngine
 {
     ModelEditor::ModelEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
+          modelDefinition(), model(modelDefinition),
           scene(), viewport(), camera(),
           modelNode(), convexHullParentNode(), convexHullNodes(),
           mainElement(nullptr), viewportElement(nullptr), timelineElement(nullptr),
           viewportEventHandler(ownerEditor.GetGame(), viewport),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
           grid(0.25f, 8, 32),
-          random()
+          random(),
+          isSaving(false), isReloading(false)
     {
         // We use the camera for our lights.
         this->camera.AddComponent<GTEngine::CameraComponent>();
@@ -40,12 +43,21 @@ namespace GTEngine
         this->grid.Show(this->scene.GetRenderer());
 
 
-        //this->modelDefinition.LoadFromFile
+        // Load the model. If it needs serialization, we'll also do that. This mimicks the behaviour of the model library.
+        bool needsSerialize;
+        if (this->modelDefinition.LoadFromFile(absolutePath, relativePath, needsSerialize))
+        {
+            if (needsSerialize)
+            {
+                ModelLibrary::WriteToFile(this->modelDefinition);
+            }
+        }
 
-        // We need to ensure the model node has a model component. What we want to do is pass an absolute path, which will in turn
-        // require us to specify the base part of the path that would be used to make it relative.
-        GTCore::String basePath = GTEngine::IO::GetBasePath(absolutePath, relativePath);
-        this->modelNode.AddComponent<GTEngine::ModelComponent>()->SetModel(absolutePath, basePath.c_str());
+        // Refresh the model to have it show the current state of the model definition.
+        this->model.OnDefinitionChanged();
+
+        // Add a model component to the scene node.
+        this->modelNode.AddComponent<GTEngine::ModelComponent>()->SetModel(this->model);
 
 
         auto &gui    = this->GetGUI();
@@ -262,23 +274,15 @@ namespace GTEngine
 
     bool ModelEditor::SetMaterial(size_t index, const char* relativePath)
     {
-        auto modelComponent = this->modelNode.GetComponent<GTEngine::ModelComponent>();
-        if (modelComponent != nullptr)
+        auto newMaterial = MaterialLibrary::Create(relativePath);
+        if (newMaterial)
         {
-            auto model = modelComponent->GetModel();
-            if (model != nullptr)
-            {
-                if (model->meshes[index]->SetMaterial(relativePath))
-                {
-                    // This is painful, but we're going to cheat here and do a const_cast so we can modify the model's definition to hold the new base material.
-                    auto &definition = const_cast<ModelDefinition &>(model->GetDefinition());
+            MaterialLibrary::Delete(this->modelDefinition.meshMaterials[index]);
+            this->modelDefinition.meshMaterials[index] = newMaterial;
 
-                    MaterialLibrary::Delete(definition.meshMaterials[index]);
-                    definition.meshMaterials[index] = MaterialLibrary::CreateCopy(*model->meshes[index]->GetMaterial());
+            this->RefreshViewport();
 
-                    return true;
-                }
-            }
+            return true;
         }
 
         return false;
@@ -330,14 +334,7 @@ namespace GTEngine
         this->DeleteConvexHulls();
 
         // We build the convex decomposition on the definition directly.
-        auto model = this->modelNode.GetComponent<GTEngine::ModelComponent>()->GetModel();
-        if (model != nullptr)
-        {
-            // We're going to be naughty here and do a const_cast so we can build the convex hulls.
-            auto &definition = const_cast<ModelDefinition &>(model->GetDefinition());
-            definition.BuildConvexDecomposition(settings);
-        }
-
+        this->modelDefinition.BuildConvexDecomposition(settings);
 
 
         if (this->convexHullParentNode.IsVisible())
@@ -362,12 +359,24 @@ namespace GTEngine
 
     bool ModelEditor::Save()
     {
-        bool wasSaved = ModelLibrary::WriteToFile(this->GetAbsolutePath());
+        bool wasSaved = false;
 
-        if (wasSaved)
+        this->isSaving = true;
         {
-            this->UnmarkAsModified();
+            wasSaved = ModelLibrary::WriteToFile(this->modelDefinition);
+
+            if (wasSaved)
+            {
+                this->UnmarkAsModified();
+            }
+
+
+            // We want to immediatly force the game to check for changes so that the model is immediately reloaded.
+            auto &dataFilesWatcher = this->GetOwnerEditor().GetGame().GetDataFilesWatcher();
+            dataFilesWatcher.CheckForChanges(false);
+            dataFilesWatcher.DispatchEvents();
         }
+        this->isSaving = false;
 
         return wasSaved;
     }
@@ -420,9 +429,19 @@ namespace GTEngine
 
     void ModelEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
-        if (item.info.absolutePath == this->GetAbsolutePath() || (item.info.absolutePath + ".gtmodel") == this->GetAbsolutePath())
+        if (!this->isSaving)
         {
-            this->Refresh();
+            if (item.info.absolutePath == this->GetAbsolutePath())
+            {
+                this->Reload();
+            }
+            else
+            {
+                if (GTCore::Path::ExtensionEqual(item.info.absolutePath.c_str(), "gtmodel") && GTCore::IO::RemoveExtension(item.info.absolutePath.c_str()) == this->GetAbsolutePath())
+                {
+                    this->Reload();
+                }
+            }
         }
     }
 
@@ -466,6 +485,8 @@ namespace GTEngine
 
     void ModelEditor::Refresh()
     {
+        this->RefreshViewport();
+
         // We need to let the scene know that the model has changed. We just call OnChanged() on the component for this. If we don't do this, the
         // scene will not know that it needs to update the frustum culling volume.
         auto modelComponent = this->modelNode.GetComponent<ModelComponent>();
@@ -475,7 +496,7 @@ namespace GTEngine
         }
 
 
-        // GTGUI.Server.GetElementByID(this->mainElement->id):Refresh()
+
         auto &script = this->GetScript();
 
         script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
@@ -490,6 +511,25 @@ namespace GTEngine
             }
         }
         script.Pop(1);
+    }
+
+    void ModelEditor::Reload()
+    {
+        this->isReloading = true;
+        {
+            bool needsSerialize;
+            if (this->modelDefinition.LoadFromFile(this->modelDefinition.absolutePath.c_str(), this->modelDefinition.relativePath.c_str(), needsSerialize))
+            {
+                if (needsSerialize && !this->IsMarkedAsModified())
+                {
+                    ModelLibrary::WriteToFile(this->modelDefinition);
+                }
+            }
+
+
+            this->Refresh();
+        }
+        this->isReloading = false;
     }
 }
 
