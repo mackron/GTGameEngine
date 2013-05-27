@@ -97,17 +97,8 @@ namespace GTEngine
 
 
 
-
-    // Delete functions.
-    public:
-
-        /// Deletes an unreferenced definitions.
-        static void DeleteUnreferenceDefinitions();
-
-
-
-    // Misc functions.
-    public:
+        ////////////////////////////////////////////////
+        // Misc.
 
         /// Determines whether or not the given file extension is supported.
         ///
