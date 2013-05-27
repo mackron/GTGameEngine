@@ -605,7 +605,7 @@ namespace GTEngine
                 definition = new ModelDefinition(relativePath.c_str());
 
                 // We need to load the model.
-                if (ModelLibrary::Load(absolutePath.c_str(), *definition))
+                if (ModelLibrary::Load(absolutePath.c_str(), relativePath.c_str(), *definition))
                 {
                     LoadedDefinitions.Add(absolutePath.c_str(), definition);
                     LoadedModels.Add(definition, new GTCore::Vector<Model*>);
@@ -617,7 +617,7 @@ namespace GTEngine
                 }
             }
 
-            // Now all we do is
+            // Now all we do is create the model from the definition.
             if (definition != nullptr)
             {
                 return ModelLibrary::CreateFromDefinition(*definition);
@@ -687,7 +687,7 @@ namespace GTEngine
         auto definition = ModelLibrary::FindDefinition(fileName);
         if (definition != nullptr)
         {
-            ModelLibrary::Load(fileName, *definition);
+            ModelLibrary::Load(definition->absolutePath.c_str(), definition->relativePath.c_str(), *definition);
 
             // Every model with this definition needs to know that it has changed.
             auto iDefinitionModels = LoadedModels.Find(definition);
@@ -722,6 +722,13 @@ namespace GTEngine
         auto file = GTCore::IO::Open(fileName.c_str(), GTCore::IO::OpenMode::Write);
         if (file != nullptr)
         {
+            GTCore::FileSerializer serializer(file);
+            definition.Serialize(serializer);
+
+            GTCore::IO::Close(file);
+            return true;
+
+#if 0
             // First we write four bytes: "gtem".
             GTCore::IO::Write(file, "gtem", 4);
 
@@ -916,6 +923,7 @@ namespace GTEngine
 
 
             return true;
+#endif
         }
 
         return false;
@@ -1172,24 +1180,24 @@ namespace GTEngine
     ////////////////////////////////////////////////////////
     // Private
 
-    bool ModelLibrary::Load(const char* fileName, ModelDefinition &definition)
+    bool ModelLibrary::Load(const char* absolutePath, const char* relativePath, ModelDefinition &definition)
     {
-        if (GTCore::Path::ExtensionEqual(fileName, "gtmodel"))
+        if (GTCore::Path::ExtensionEqual(absolutePath, "gtmodel"))
         {
-            return ModelLibrary::LoadFromGTMODEL(fileName, definition);
+            return ModelLibrary::LoadFromGTMODEL(absolutePath, relativePath, definition);
         }
         else
         {
-            return ModelLibrary::LoadFromAssimp(fileName, definition);
+            return ModelLibrary::LoadFromAssimp(absolutePath, relativePath, definition);
         }
     }
 
-    bool ModelLibrary::LoadFromAssimp(const char* fileName, ModelDefinition &definition)
+    bool ModelLibrary::LoadFromAssimp(const char* absolutePath, const char* relativePath, ModelDefinition &definition)
     {
         // What we're going to do is load two file info's. The first will be the original source file. The other will be the .gtmodel file. If
         // the .gtmodel file does not exist, we create it from the source model.
         GTCore::IO::FileInfo sourceInfo;
-        GTCore::IO::GetFileInfo(fileName, sourceInfo);
+        GTCore::IO::GetFileInfo(absolutePath, sourceInfo);
 
         GTCore::IO::FileInfo gtmodelInfo;
         if (sourceInfo.exists)
@@ -1201,7 +1209,7 @@ namespace GTEngine
         }
         else
         {
-            GTCore::String gtmodelFileName(fileName);
+            GTCore::String gtmodelFileName(absolutePath);
             gtmodelFileName += ".gtmodel";
 
             GTCore::IO::GetFileInfo(gtmodelFileName.c_str(), gtmodelInfo);
@@ -1216,19 +1224,22 @@ namespace GTEngine
         {
             if ((!sourceInfo.exists && gtmodelInfo.exists) || gtmodelInfo.lastModifiedTime > sourceInfo.lastModifiedTime)
             {
-                return ModelLibrary::LoadFromGTMODEL(gtmodelInfo.absolutePath.c_str(), definition);
+                return ModelLibrary::LoadFromGTMODEL((GTCore::String(absolutePath) + ".gtmodel").c_str(), (GTCore::String(relativePath) + ".gtmodel").c_str(), definition);
             }
             else
             {
-                GTEngine::PostError("Could not find file: %s", fileName);
+                GTEngine::PostError("Could not find file: %s", absolutePath);
             }
         }
 
         return false;
     }
 
-    bool ModelLibrary::LoadFromGTMODEL(const char* fileName, ModelDefinition &definition)
+    bool ModelLibrary::LoadFromGTMODEL(const char* absolutePath, const char* relativePath, ModelDefinition &definition)
     {
+        return definition.LoadFromFile(absolutePath, relativePath);
+
+#if 0
         auto file = GTCore::IO::Open(fileName, GTCore::IO::OpenMode::Read);
         if (file != nullptr)
         {
@@ -1515,6 +1526,7 @@ namespace GTEngine
             GTEngine::PostError("Can not open file: %s.", fileName);
             return false;
         }
+#endif
     }
 
 
