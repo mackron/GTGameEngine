@@ -18,8 +18,10 @@ namespace GTEngine
     /// When models are loaded, the bind-pose mesh data remains in-memory
     class ModelLibrary
     {
-    // Startup/Shutdown.
     public:
+
+        ////////////////////////////////////////////////
+        // Startup/Shutdown
 
         /// Starts up the model library.
         static bool Startup();
@@ -28,19 +30,43 @@ namespace GTEngine
         static void Shutdown();
 
 
-    // Load/Save
-    public:
+        ////////////////////////////////////////////////
+        // Create/Delete
 
         /// Loads a model from a file.
         ///
-        /// @param fileName [in] The name of the file to load.
+        /// @param fileName       [in] The name of the file to load.
+        /// @param makeRelativeTo [in] If 'fileName' is absolute, it will be made relative to this path.
         ///
         /// @return A pointer to the new model, or null if the file could not be loaded.
         ///
         /// @remarks
         ///     This will not reload the file if it has previously been loaded. Thus, calling this function with the same file will
         ///     be quick after the first load.
-        static Model* LoadFromFile(const char* fileName, const char* makeRelativeTo = nullptr);
+        static Model* Create(const char* fileName, const char* makeRelativeTo = nullptr);
+
+        /// Creates a model from a definition.
+        ///
+        /// @param definition [in] A reference to the model defintinitin to create the model from.
+        ///
+        /// @return A pointer to the new model if successful; null otherwise.
+        static Model* CreateFromDefinition(const ModelDefinition &definition);
+
+        /// Creates an empty model.
+        static Model* CreateEmpty();
+
+        /// Creates a model from a convex-hull.
+        ///
+        /// @param convexHull [in] A reference to the convexHull
+        static Model* CreateFromConvexHull(const ConvexHull &convexHull);
+
+
+        /// Deletes a model that was created with the model library.
+        ///
+        /// @oaram model [in] A reference to the model to delete.
+        static void Delete(Model* model);
+        static void Delete(Model &model) { ModelLibrary::Delete(&model); }
+
 
         /// Reloads the given model. If the model has not yet been loaded, it will NOT be loaded.
         ///
@@ -51,6 +77,9 @@ namespace GTEngine
         static bool Reload(const char* fileName);
 
 
+
+        ////////////////////////////////////////////////
+        // Writing
 
         /// Saves the givem model as a .gtmodel.
         ///
@@ -71,31 +100,9 @@ namespace GTEngine
 
 
 
-    // Create functions.
-    public:
-
-        /// Creates a model from a definition.
-        ///
-        /// @param definition [in] A reference to the model defintinitin to create the model from.
-        ///
-        /// @return A pointer to the new model if successful; null otherwise.
-        static Model* CreateFromDefinition(const ModelDefinition &definition);
-
-        /// Creates an empty model.
-        static Model* CreateEmpty();
-
-        /// Creates a model from a convex-hull.
-        ///
-        /// @param convexHull [in] A reference to the convexHull
-        static Model* CreateFromConvexHull(const ConvexHull &convexHull);
-
-
 
     // Delete functions.
     public:
-
-        /// Deletes a model that was created with the model library.
-        static void Delete(Model* model);
 
         /// Deletes an unreferenced definitions.
         static void DeleteUnreferenceDefinitions();

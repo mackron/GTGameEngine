@@ -52,7 +52,7 @@ namespace GTEngine
 
     Model* ModelComponent::SetModel(const char* fileName, const char* relativeTo)
     {
-        this->SetModel(ModelLibrary::LoadFromFile(fileName, relativeTo), true);
+        this->SetModel(ModelLibrary::Create(fileName, relativeTo), true);
         return this->model;
     }
 

@@ -21,10 +21,12 @@
 #endif
 
 
-
-// Globals.
+// Startup/Shutdown
 namespace GTEngine
 {
+    ////////////////////////////////////////////////
+    // Globals
+
     /// The map of model definitions mapping a definition to a file name.
     static GTCore::Dictionary<ModelDefinition*> LoadedDefinitions;
 
@@ -39,11 +41,11 @@ namespace GTEngine
     /// @param va   [in] The vertex array of the primitive. This can be nullptr, but only if the primitive has already been created.
     Model* ModelLibrary_CreateFromPrimitive(const char* name, VertexArray* va);
 
-}
 
-// Startup/Shutdown
-namespace GTEngine
-{
+
+    ////////////////////////////////////////////////
+    // Startup/Shutdown
+
     bool ModelLibrary::Startup()
     {
         return true;
@@ -71,7 +73,10 @@ namespace GTEngine
     }
 
 
-    Model* ModelLibrary::LoadFromFile(const char* fileName, const char* makeRelativeTo)
+    ////////////////////////////////////////////////
+    // Create/Delete
+
+    Model* ModelLibrary::Create(const char* fileName, const char* makeRelativeTo)
     {
         GTCore::String relativePath(fileName);
 
@@ -125,95 +130,6 @@ namespace GTEngine
 
         return nullptr;
     }
-
-
-    bool ModelLibrary::Reload(const char* fileName)
-    {
-        // We need to find the definition that we're updating.
-        auto definition = ModelLibrary::FindDefinition(fileName);
-        if (definition != nullptr)
-        {
-            bool needsSerialize;
-            if (definition->LoadFromFile(definition->absolutePath.c_str(), definition->relativePath.c_str(), needsSerialize))
-            {
-                if (needsSerialize)
-                {
-                    ModelLibrary::WriteToFile(*definition);
-                }
-            }
-
-
-            // Every model with this definition needs to know that it has changed.
-            auto iDefinitionModels = LoadedModels.Find(definition);
-            assert(iDefinitionModels        != nullptr);
-            assert(iDefinitionModels->value != nullptr);
-
-            auto modelList = iDefinitionModels->value;
-            for (size_t iModel = 0; iModel < modelList->count; ++iModel)
-            {
-                auto model = modelList->buffer[iModel];
-                assert(model != nullptr);
-
-                model->OnDefinitionChanged();
-            }
-
-            return true;
-        }
-
-        return false;
-    }
-
-
-    bool ModelLibrary::WriteToFile(const ModelDefinition &definition, const char* fileNameIn)
-    {
-        // We have a model, so now we need to check that we can open the file.
-        GTCore::String fileName(fileNameIn);
-        if (!GTCore::Path::ExtensionEqual(fileNameIn, "gtmodel"))
-        {
-            fileName += ".gtmodel";
-        }
-
-        auto file = GTCore::IO::Open(fileName.c_str(), GTCore::IO::OpenMode::Write);
-        if (file != nullptr)
-        {
-            GTCore::FileSerializer serializer(file);
-            definition.Serialize(serializer);
-
-            GTCore::IO::Close(file);
-            return true;
-        }
-
-        return false;
-    }
-
-    bool ModelLibrary::WriteToFile(const ModelDefinition &definition)
-    {
-        return ModelLibrary::WriteToFile(definition, definition.absolutePath.c_str());
-    }
-
-    bool ModelLibrary::WriteToFile(const char* fileName)
-    {
-        // We first need to find the definition. If we can't find it with the original file name, we add '.gtmodel' and try again. If both fail, we need
-        // to return false.
-        auto iDefinition = LoadedDefinitions.Find(fileName);
-        if (iDefinition == nullptr)
-        {
-            iDefinition = LoadedDefinitions.Find((GTCore::String(fileName) + ".gtmodel").c_str());
-        }
-
-        if (iDefinition != nullptr)
-        {
-            return ModelLibrary::WriteToFile(*iDefinition->value, fileName);
-        }
-
-        return false;
-    }
-
-
-
-
-    ////////////////////////////////////////////////////////////////////////
-    // Create functions.
 
     Model* ModelLibrary::CreateFromDefinition(const ModelDefinition &definition)
     {
@@ -271,6 +187,94 @@ namespace GTEngine
             delete model;
         }
     }
+
+
+    bool ModelLibrary::Reload(const char* fileName)
+    {
+        // We need to find the definition that we're updating.
+        auto definition = ModelLibrary::FindDefinition(fileName);
+        if (definition != nullptr)
+        {
+            bool needsSerialize;
+            if (definition->LoadFromFile(definition->absolutePath.c_str(), definition->relativePath.c_str(), needsSerialize))
+            {
+                if (needsSerialize)
+                {
+                    ModelLibrary::WriteToFile(*definition);
+                }
+            }
+
+
+            // Every model with this definition needs to know that it has changed.
+            auto iDefinitionModels = LoadedModels.Find(definition);
+            assert(iDefinitionModels        != nullptr);
+            assert(iDefinitionModels->value != nullptr);
+
+            auto modelList = iDefinitionModels->value;
+            for (size_t iModel = 0; iModel < modelList->count; ++iModel)
+            {
+                auto model = modelList->buffer[iModel];
+                assert(model != nullptr);
+
+                model->OnDefinitionChanged();
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    ////////////////////////////////////////////////
+    // Writing
+
+    bool ModelLibrary::WriteToFile(const ModelDefinition &definition, const char* fileNameIn)
+    {
+        // We have a model, so now we need to check that we can open the file.
+        GTCore::String fileName(fileNameIn);
+        if (!GTCore::Path::ExtensionEqual(fileNameIn, "gtmodel"))
+        {
+            fileName += ".gtmodel";
+        }
+
+        auto file = GTCore::IO::Open(fileName.c_str(), GTCore::IO::OpenMode::Write);
+        if (file != nullptr)
+        {
+            GTCore::FileSerializer serializer(file);
+            definition.Serialize(serializer);
+
+            GTCore::IO::Close(file);
+            return true;
+        }
+
+        return false;
+    }
+
+    bool ModelLibrary::WriteToFile(const ModelDefinition &definition)
+    {
+        return ModelLibrary::WriteToFile(definition, definition.absolutePath.c_str());
+    }
+
+    bool ModelLibrary::WriteToFile(const char* fileName)
+    {
+        // We first need to find the definition. If we can't find it with the original file name, we add '.gtmodel' and try again. If both fail, we need
+        // to return false.
+        auto iDefinition = LoadedDefinitions.Find(fileName);
+        if (iDefinition == nullptr)
+        {
+            iDefinition = LoadedDefinitions.Find((GTCore::String(fileName) + ".gtmodel").c_str());
+        }
+
+        if (iDefinition != nullptr)
+        {
+            return ModelLibrary::WriteToFile(*iDefinition->value, fileName);
+        }
+
+        return false;
+    }
+
+
 
     void ModelLibrary::DeleteUnreferenceDefinitions()
     {
