@@ -40,6 +40,8 @@ namespace GTEngine
         this->grid.Show(this->scene.GetRenderer());
 
 
+        //this->modelDefinition.LoadFromFile
+
         // We need to ensure the model node has a model component. What we want to do is pass an absolute path, which will in turn
         // require us to specify the base part of the path that would be used to make it relative.
         GTCore::String basePath = GTEngine::IO::GetBasePath(absolutePath, relativePath);
@@ -184,6 +186,17 @@ namespace GTEngine
         this->cameraXRotation = cameraRotation.x;
         this->cameraYRotation = cameraRotation.y;
         this->ApplyCameraRotation();
+    }
+
+
+    ModelDefinition & ModelEditor::GetModelDefinition()
+    {
+        return this->modelDefinition;
+    }
+
+    void ModelEditor::RefreshViewport()
+    {
+        this->model.OnDefinitionChanged();
     }
 
 

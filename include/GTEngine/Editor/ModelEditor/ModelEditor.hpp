@@ -27,6 +27,16 @@ namespace GTEngine
         void ResetCamera();
 
 
+        /// Retrieves a reference to the model definition being modified.
+        ModelDefinition & GetModelDefinition();
+
+        /// Refreshes the viewport so that it shows the current state of the model being editted.
+        ///
+        /// @remarks
+        ///     This should be called whenever the model definition has been modified.
+        void RefreshViewport();
+
+
         /// Retrieves the relative paths of the materials attached to the model.
         ///
         /// @param materialsOut [out] A reference to the vector that will receive the material paths.
@@ -92,6 +102,13 @@ namespace GTEngine
 
 
     private:
+
+        /// The model definition that is being editted.
+        ModelDefinition modelDefinition;
+
+        /// The model to show in the viewport.
+        Model model;
+
 
         /// The scene containing the model.
         Scene scene;

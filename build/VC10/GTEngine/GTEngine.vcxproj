@@ -517,6 +517,7 @@
     <ClCompile Include="..\..\..\source\MeshBuilder.cpp" />
     <ClCompile Include="..\..\..\source\Model.cpp" />
     <ClCompile Include="..\..\..\source\ModelDefinition.cpp" />
+    <ClCompile Include="..\..\..\source\ModelDefinition_Assimp.cpp" />
     <ClCompile Include="..\..\..\source\ModelLibrary.cpp" />
     <ClCompile Include="..\..\..\source\NavigationMesh.cpp" />
     <ClCompile Include="..\..\..\source\Particle.cpp" />
