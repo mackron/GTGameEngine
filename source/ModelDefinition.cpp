@@ -238,7 +238,7 @@ namespace GTEngine
     ////////////////////////////////////////////////////////
     // Serialization/Deserialization
 
-    void ModelDefinition::Serialize(GTCore::Serializer &serializer)
+    void ModelDefinition::Serialize(GTCore::Serializer &serializer) const
     {
         GTCore::BasicSerializer intermediarySerializer;
 
@@ -366,8 +366,8 @@ namespace GTEngine
                                     {
                                         auto &bone = bones[iBone];
 
-                                        serializer.Write(static_cast<uint32_t>(bone.boneIndex));
-                                        serializer.Write(static_cast<float   >(bone.weight));
+                                        intermediarySerializer.Write(static_cast<uint32_t>(bone.boneIndex));
+                                        intermediarySerializer.Write(static_cast<float   >(bone.weight));
                                     }
                                 }
                             }
@@ -657,6 +657,8 @@ namespace GTEngine
                                 }
                                 vertexArray->UnmapIndexData();
                             }
+
+                            this->meshGeometries.PushBack(vertexArray);
 
 
 

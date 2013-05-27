@@ -157,32 +157,32 @@ namespace GTEngine
 
         /// Loads a file into the given model definition.
         ///
-        /// @param fileName   [in]  The ABSOLUTE path of the file to load.
-        /// @param definition [out] The definition to load the file into.
+        /// @param absolutePath [in]  The absolute path of the file to load.
+        /// @param relativePath [in]  The relative path of the file to load.
+        /// @param definition   [out] The definition to load the file into.
         ///
         /// @remarks
         ///     Any model using the given definition will be updated with the new data.
-        ///     @par
-        ///     It is asserted that the file name is absolute.
-        static bool Load(const char* fileName, ModelDefinition &definition);
+        static bool Load(const char* absolutePath, const char* relativePath, ModelDefinition &definition);
 
         /// Loads a file using assimp.
         ///
-        /// @param fileName   [in]  The ABSOULTE file path.
-        /// @param definition [out] The definition to load the file into.
+        /// @param absolutePath [in]  The absolute file path.
+        /// @param definition   [out] The definition to load the file into.
         ///
         /// @remarks
         ///     The file name must be absolute.
-        static bool LoadFromAssimp(const char* fileName, ModelDefinition &definition);
+        static bool LoadFromAssimp(const char* absolutePath, const char* relativePath, ModelDefinition &definition);
 
         /// Loads a .gtmodel file.
         ///
-        /// @param fileName   [in]  The ABSOLUTE file path.
-        /// @param definition [out] The definition to load the file into.
+        /// @param absolutePath [in]  The absolute file path.
+        /// @param relativePath [in]  The relative file path.
+        /// @param definition   [out] The definition to load the file into.
         ///
         /// @remarks
         ///     This function asserts that the file name is absolute and a gtmodel file.
-        static bool LoadFromGTMODEL(const char* fileName, ModelDefinition &definition);
+        static bool LoadFromGTMODEL(const char* absolutePath, const char* relativePath, ModelDefinition &definition);
 
 
 

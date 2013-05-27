@@ -103,7 +103,7 @@ namespace GTEngine
         // Serialization/Deserialization
 
         /// Serializes the model definition.
-        void Serialize(GTCore::Serializer &serializer);
+        void Serialize(GTCore::Serializer &serializer) const;
 
         /// Deserializes the model definition.
         ///
