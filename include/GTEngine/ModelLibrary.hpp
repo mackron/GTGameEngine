@@ -42,17 +42,6 @@ namespace GTEngine
         ///     be quick after the first load.
         static Model* LoadFromFile(const char* fileName, const char* makeRelativeTo = nullptr);
 
-        /// Generically loads a file from Neutral File Format (NFF) content.
-        ///
-        /// @param content [in] The content of the NFF file.
-        /// @param name    [in] The name to use for uniquely identifying this NFF. This will usually be based on the format of the model.
-        ///
-        /// @return A pointer to the new model, or null if the model could not be created.
-        ///
-        /// @remarks
-        ///     This will not reload the model if the same content has been used before.
-        //static Model* LoadFromNFF(const char* content, const char* name);
-
         /// Reloads the given model. If the model has not yet been loaded, it will NOT be loaded.
         ///
         /// @param fileName [in] The name of the file to reload.
@@ -92,29 +81,8 @@ namespace GTEngine
         /// @return A pointer to the new model if successful; null otherwise.
         static Model* CreateFromDefinition(const ModelDefinition &definition);
 
-
         /// Creates an empty model.
         static Model* CreateEmpty();
-
-
-#if 0
-        /// Creates a box.
-        ///
-        /// @remarks
-        ///     The box will use the P3T2N3T3B3 vertex format.
-        static Model* CreateBox(float halfWidth, float halfHeight, float halfDepth);
-
-        /// Creates a sphere.
-        ///
-        /// @radius [in] The radius of the sphere.
-        static Model* CreateSphere(float radius);
-
-        /// Creates a cylinder, standing up on the y axis.
-        ///
-        /// @param radius [in] The radius of the cylinder.
-        /// @param length [in] The length of the cylinder.
-        static Model* CreateCylinder(float radius, float length);
-#endif
 
         /// Creates a model from a convex-hull.
         ///
@@ -163,75 +131,6 @@ namespace GTEngine
         ///
         /// @return A pointer to the definition, or null if does not exist.
         static ModelDefinition* FindDefinition(const char* fileName);
-
-        /// Loads a file into the given model definition.
-        ///
-        /// @param absolutePath [in]  The absolute path of the file to load.
-        /// @param relativePath [in]  The relative path of the file to load.
-        /// @param definition   [out] The definition to load the file into.
-        ///
-        /// @remarks
-        ///     Any model using the given definition will be updated with the new data.
-        //static bool Load(const char* absolutePath, const char* relativePath, ModelDefinition &definition);
-
-        /// Loads a file using assimp.
-        ///
-        /// @param absolutePath [in]  The absolute file path.
-        /// @param definition   [out] The definition to load the file into.
-        ///
-        /// @remarks
-        ///     The file name must be absolute.
-        //static bool LoadFromAssimp(const char* absolutePath, const char* relativePath, ModelDefinition &definition);
-
-        /// Loads a .gtmodel file.
-        ///
-        /// @param absolutePath [in]  The absolute file path.
-        /// @param relativePath [in]  The relative file path.
-        /// @param definition   [out] The definition to load the file into.
-        ///
-        /// @remarks
-        ///     This function asserts that the file name is absolute and a gtmodel file.
-        //static bool LoadFromGTMODEL(const char* absolutePath, const char* relativePath, ModelDefinition &definition);
-
-
-
-        /// A helper function for importing a file via Assimp and saving the corresponding .gtmodel file.
-        ///
-        /// @param sourceInfo  [in]  The file info of the source file.
-        /// @param gtmodelInfo [in]  The file info of the gtmodel file.
-        /// @param definition  [out] The definition to load the file into.
-        //static bool LoadFromAssimp(const GTCore::IO::FileInfo &sourceInfo, const GTCore::IO::FileInfo &gtmodelInfo, ModelDefinition &definition);
-
-
-        /// A helper function for only loading the engine-specific metadata of the given .gtmodel file.
-        ///
-        /// @param file       [in] The file to load the metadata from.
-        /// @param definition [in] The definition to read the data into.
-        ///
-        /// @remarks
-        ///     This function asserts that 'file' is located at the start of the metadata.
-        //static bool LoadGTMODELMetadata(FILE* file, ModelDefinition &definition);
-
-        /// A helper function for writing the engine-specific metadata to the given .gtmodel file.
-        ///
-        /// @param file       [in] The file to write the metadata to.
-        /// @param definition [in] The definition to write the data from.
-        ///
-        /// @remarks
-        ///     This function asserts that 'file' is located at the start of the metadata. This function will write
-        ///     the 'metadata' ID.
-        //static bool WriteGTMODELMetadata(FILE* file, const ModelDefinition &definition);
-
-        /// A helper function for only loading the engine-specific metadata of the given .gtmodel file.
-        ///
-        /// @param file       [in] The file to load the metadata from.
-        /// @param definition [in] The definition to read the data into.
-        //static bool LoadGTMODELMetadata(const char* file, ModelDefinition &definition);
-
-        /// A helper function for loading the default metadata.
-        ///
-        /// @param definition [in] The definition whose having it's default metadata set.
-        //static bool LoadDefaultMetadata(ModelDefinition &definition);
     };
 }
 
