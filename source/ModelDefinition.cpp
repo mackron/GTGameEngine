@@ -902,17 +902,18 @@ namespace GTEngine
     bool ModelDefinition::LoadFromNativeFile(const GTCore::String &absolutePathIn)
     {
         // When loading from a native file, all we need to do is deserialize.
+        bool successful = false;
+
         auto file = GTCore::IO::Open(absolutePathIn.c_str(), GTCore::IO::OpenMode::Read);
         if (file != nullptr)
         {
             GTCore::FileDeserializer deserializer(file);
-            if (this->Deserialize(deserializer))
-            {
-                return true;
-            }
+            successful = this->Deserialize(deserializer);
+
+            GTCore::IO::Close(file);
         }
 
-        return false;
+        return successful;
     }
 
     bool ModelDefinition::LoadFromForeignFile(const GTCore::String &absolutePathIn)
