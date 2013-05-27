@@ -5,7 +5,6 @@
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
-
 #include <GTCore/Path.hpp>
 #include <GTCore/IO.hpp>
 
@@ -27,12 +26,36 @@ namespace GTEngine
     ////////////////////////////////////////////////
     // Globals
 
-    /// The map of model definitions mapping a definition to a file name.
-    static GTCore::Dictionary<ModelDefinition*> LoadedDefinitions;
+    struct ModelDefinitionReference
+    {
+        ModelDefinition* definition;
+        size_t           referenceCount;
 
-    /// We need to keep track of the models that are using each definition. What we do here is keep a map with the key being a pointer
-    /// to each loaded definition, and the value being a list of every loaded model that is using that definition.
-    static GTCore::Map<ModelDefinition*, GTCore::Vector<Model*>*> LoadedModels;
+        ModelDefinitionReference(ModelDefinition* definitionIn, size_t referenceCountIn)
+            : definition(definitionIn), referenceCount(referenceCountIn)
+        {
+        }
+
+        ModelDefinitionReference(const ModelDefinitionReference &other)
+            : definition(other.definition), referenceCount(other.referenceCount)
+        {
+        }
+
+
+        ModelDefinitionReference & operator=(const ModelDefinitionReference &other)
+        {
+            this->definition     = other.definition;
+            this->referenceCount = other.referenceCount;
+
+            return *this;
+        }
+    };
+
+    /// The list of loaded model definitions, index by the absolute path of the original source file.
+    static GTCore::Dictionary<ModelDefinitionReference> LoadedDefinitions;
+
+    /// The list of instantiated models. we need this so we can delete them on shutdown.
+    static GTCore::Vector<Model*> InstantiatedModels;
 
 
     /// Creates a model from a primitive's vertex array.
@@ -53,23 +76,20 @@ namespace GTEngine
 
     void ModelLibrary::Shutdown()
     {
-        // All models and definitions need to be deleted.
-        for (size_t iDefinition = 0; iDefinition < LoadedModels.count; ++iDefinition)
+        // Instantiated models need to be deleted.
+        for (size_t i = 0; i < InstantiatedModels.count; ++i)
         {
-            auto definition = LoadedModels.buffer[iDefinition]->key;
-            auto models     = LoadedModels.buffer[iDefinition]->value;
-
-            if (models != nullptr)
-            {
-                for (size_t iModel = 0; iModel < models->count; ++iModel)
-                {
-                    delete models->buffer[iModel];
-                }
-            }
-
-            delete models;
-            delete definition;
+            delete InstantiatedModels[i];
         }
+        InstantiatedModels.Clear();
+
+
+        // Definitions now need to be deleted.
+        for (size_t i = 0; i < LoadedDefinitions.count; ++i)
+        {
+            delete LoadedDefinitions.buffer[i]->value.definition;
+        }
+        LoadedDefinitions.Clear();
     }
 
 
@@ -98,16 +118,25 @@ namespace GTEngine
         GTCore::String absolutePath;
         if (ModelLibrary::FindAbsolutePath(fileName, absolutePath))
         {
-            auto definition = ModelLibrary::FindDefinition(absolutePath.c_str());
-            if (definition == nullptr)
+            ModelDefinition* definition = nullptr;
+
+            auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
+            if (iDefinition != nullptr)
             {
+                // Definition is already loaded. All we do it increment the reference counter.
+                iDefinition->value.referenceCount += 1;
+
+                definition = iDefinition->value.definition;
+            }
+            else
+            {
+                // Definition is not yet loaded and needs to be loaded now.
                 definition = new ModelDefinition;
 
                 bool needsSerialize;
                 if (definition->LoadFromFile(absolutePath.c_str(), relativePath.c_str(), needsSerialize))
                 {
-                    LoadedDefinitions.Add(definition->absolutePath.c_str(), definition);
-                    LoadedModels.Add(definition, new GTCore::Vector<Model*>);
+                    LoadedDefinitions.Add(definition->absolutePath.c_str(), ModelDefinitionReference(definition, 1));
 
                     if (needsSerialize)
                     {
@@ -120,6 +149,7 @@ namespace GTEngine
                     definition = nullptr;
                 }
             }
+
 
             // Now all we do is create the model from the definition.
             if (definition != nullptr)
@@ -134,12 +164,7 @@ namespace GTEngine
     Model* ModelLibrary::CreateFromDefinition(const ModelDefinition &definition)
     {
         auto model = new Model(definition);
-
-        auto iDefinitionModels = LoadedModels.Find(const_cast<ModelDefinition*>(&definition));        // <-- Naughty const_cast is OK here.
-        assert(iDefinitionModels        != nullptr);
-        assert(iDefinitionModels->value != nullptr);
-
-        iDefinitionModels->value->PushBack(model);
+        InstantiatedModels.PushBack(model);
 
         return model;
     }
@@ -169,15 +194,27 @@ namespace GTEngine
     {
         if (model != nullptr)
         {
-            // We need to find the list this model is part of and remove it.
-            auto iDefinitionModels = LoadedModels.Find(const_cast<ModelDefinition*>(&model->GetDefinition()));      // <-- const_cast is safe here.
-            if (iDefinitionModels != nullptr)
+            InstantiatedModels.RemoveFirstOccuranceOf(model);
+
+
+            // The reference counter needs to be decremented. If this is the last reference to the model we'll delete it.
+            GTCore::String absolutePath(model->GetDefinition().GetAbsolutePath());
+
+            auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
+            if (iDefinition != nullptr)
             {
-                assert(iDefinitionModels->value != nullptr);
+                assert(iDefinition->value.referenceCount >= 1);
                 {
-                    iDefinitionModels->value->RemoveFirstOccuranceOf(model);
+                    iDefinition->value.referenceCount -= 1;
+
+                    if (iDefinition->value.referenceCount == 0)
+                    {
+                        delete iDefinition->value.definition;
+                        LoadedDefinitions.RemoveByKey(absolutePath.c_str());
+                    }
                 }
             }
+
 
             delete model;
         }
@@ -201,18 +238,18 @@ namespace GTEngine
 
 
             // Every model with this definition needs to know that it has changed.
-            auto iDefinitionModels = LoadedModels.Find(definition);
-            assert(iDefinitionModels        != nullptr);
-            assert(iDefinitionModels->value != nullptr);
-
-            auto modelList = iDefinitionModels->value;
-            for (size_t iModel = 0; iModel < modelList->count; ++iModel)
+            for (size_t iModel = 0; iModel < InstantiatedModels.count; ++iModel)
             {
-                auto model = modelList->buffer[iModel];
+                auto model = InstantiatedModels[iModel];
                 assert(model != nullptr);
-
-                model->OnDefinitionChanged();
+                {
+                    if (&model->GetDefinition() == definition)
+                    {
+                        model->OnDefinitionChanged();
+                    }
+                }
             }
+
 
             return true;
         }
@@ -263,7 +300,7 @@ namespace GTEngine
 
         if (iDefinition != nullptr)
         {
-            return ModelLibrary::WriteToFile(*iDefinition->value, fileName);
+            return ModelLibrary::WriteToFile(*iDefinition->value.definition, fileName);
         }
 
         return false;
@@ -271,47 +308,8 @@ namespace GTEngine
 
 
 
-    void ModelLibrary::DeleteUnreferenceDefinitions()
-    {
-        GTCore::List<ModelDefinition*> definitionsToDelete;
-
-        for (size_t i = 0; i < LoadedModels.count; ++i)
-        {
-            auto iDefinitionModels = LoadedModels.buffer[i];
-            assert(iDefinitionModels        != nullptr);
-            assert(iDefinitionModels->value != nullptr);
-
-            if (iDefinitionModels->value->count == 0)
-            {
-                auto definition = iDefinitionModels->key;
-                auto modelsList = iDefinitionModels->value;
-
-                definitionsToDelete.Append(definition);
-
-                delete definition;
-                delete modelsList;
-            }
-        }
-
-
-        // Now all we do is remove the old pointers.
-        while (definitionsToDelete.root != nullptr)
-        {
-            auto definition = definitionsToDelete.root->value;
-
-            for (size_t i = 0; i < LoadedDefinitions.count; ++i)
-            {
-                if (LoadedDefinitions.buffer[i]->value == definition)
-                {
-                    LoadedDefinitions.RemoveByIndex(i);
-                    break;
-                }
-            }
-
-            LoadedModels.Remove(definition);
-        }
-    }
-
+    ////////////////////////////////////////////////
+    // Misc.
 
     bool ModelLibrary::IsExtensionSupported(const char* extension)
     {
@@ -337,8 +335,6 @@ namespace GTEngine
     }
 
     
-
-
 
     ////////////////////////////////////////////////////////
     // Private
@@ -366,7 +362,7 @@ namespace GTEngine
         auto iDefinition = LoadedDefinitions.Find(absolutePath);
         if (iDefinition != nullptr)
         {
-            return iDefinition->value;
+            return iDefinition->value.definition;
         }
 
         return nullptr;
@@ -385,20 +381,19 @@ namespace GTEngine
         ModelDefinition* definition = nullptr;
 
         // We first need to retrieve our model info.
-        auto iModelInfo = LoadedDefinitions.Find(name);
-        if (iModelInfo == nullptr)
+        auto iDefinition = LoadedDefinitions.Find(name);
+        if (iDefinition == nullptr)
         {
             definition = new ModelDefinition;
             definition->meshGeometries.PushBack(va);
             definition->meshMaterials.PushBack(MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
             definition->meshSkinningVertexAttributes.PushBack(nullptr);
 
-            LoadedDefinitions.Add(name, definition);
-            LoadedModels.Add(definition, new GTCore::Vector<Model*>);
+            LoadedDefinitions.Add(name, ModelDefinitionReference(definition, 1));
         }
         else
         {
-            definition = iModelInfo->value;
+            definition = iDefinition->value.definition;
         }
 
 
