@@ -134,7 +134,7 @@ namespace GTEngine
         if (this->model != nullptr)
         {
             intermediarySerializer.Write(true);
-            intermediarySerializer.WriteString(this->model->GetDefinition().fileName);
+            intermediarySerializer.WriteString(this->model->GetDefinition().GetRelativePath());
 
             this->model->Serialize(intermediarySerializer);
         }

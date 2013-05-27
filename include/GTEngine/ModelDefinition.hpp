@@ -23,7 +23,7 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        ModelDefinition(const char* fileName = "");
+        ModelDefinition();
 
         /// Destructor.
         ~ModelDefinition();
@@ -31,23 +31,41 @@ namespace GTEngine
 
         /// Loads the model definition from a file.
         ///
-        /// @param fileName     [in] The path of the file to load. See remarks.
-        /// @param relativePath [in] The relative path of the file. Only used when 'fileName' is absolute. See remarks.
+        /// @param relativePathIn [in] The relative path of the file. Only used when 'fileName' is absolute. See remarks.
         ///
         /// @remarks
-        ///     The relative path of model (and every other asset) must be known. Thus, if 'fileName' is absolute, a relative path must
-        ///     be specified. Typically, absolute paths will only ever be passed to this method when called by the engine.
-        ///     @par
-        ///     The file can be any supported model file. If it is not a native engine model (.gtmodel) it will simply be imported. If
-        ///     a .gtmodel file is specified, but it does not exist, it will remove the extension and attempt to load the original source
-        ///     file. If a non .gtmodel file is specified and it does not exist, the .gtmodel extension will be added and another attempt
-        ///     will be made.
-        ///     @par
         ///     This method will not clear data that is not present in the specified file. For example, if you first load a .gtmodel file,
         ///     which contains convex hulls, and then load the corresponding .dae file (Collada file), it will NOT clear the convex hulls.
         ///     The purpose behind this system is to make it so reloading a model does not delete information. To clear data, use the
         ///     Clear*() methods before loading.
-        bool LoadFromFile(const char* fileNameIn, const char* relativePathIn = nullptr);
+        bool LoadFromFile(const char* relativePathIn);
+        
+        /// Internal implementation of LoadFromFile(const char*) that should only be used internally.
+        ///
+        /// @param fileName       [in]  The path of the file to load.
+        /// @param relativePath   [in]  The relative path of the file. Only used when 'fileName' is absolute.
+        /// @param needsSerialize [out] A reference to a boolean that will receive a value determining whether or not the model needs to be serialized.
+        ///
+        /// @remarks
+        ///     The relative path of model (and every other asset) must be known. Thus, if 'fileName' is absolute, a relative path must
+        ///     be specified. Typically, absolute paths will only ever be passed to this method when called by the engine.
+        ///
+        /// @see
+        ///     GTEngine::ModelDefinition::LoadFromFile(const char*)
+        bool LoadFromFile(const char* fileNameIn, const char* relativePathIn, bool &needsSerialize);
+
+
+        /// Retrieves the absolute path of the file.
+        ///
+        /// @remarks
+        ///     The returned string is of the original source file that was used to generate the native file.
+        const char* GetAbsolutePath() const;
+
+        /// Retrieves the relative path of the file.
+        ///
+        /// @remarks
+        ///     The returned string is of the original source file that was used to generate the native file.
+        const char* GetRelativePath() const;
 
 
         /// Generates the tangents and bitangents of the mesh geometry.
@@ -138,12 +156,12 @@ namespace GTEngine
     public:
 
         /// The name of the file used to create the definition. This will be an empty string if it was not created from a file.
-        GTCore::String fileName;
+        //GTCore::String fileName;
 
-        /// The absolute file path.
+        /// The absolute file path. This is of the foreign (source) file.
         GTCore::String absolutePath;
 
-        /// The relative file path.
+        /// The relative file path. This is of the foreign (source) file.
         GTCore::String relativePath;
 
 
