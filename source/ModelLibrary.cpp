@@ -290,12 +290,14 @@ namespace GTEngine
 
     bool ModelLibrary::WriteToFile(const char* fileName)
     {
-        // We first need to find the definition. If we can't find it with the original file name, we add '.gtmodel' and try again. If both fail, we need
-        // to return false.
+        // We first need to find the definition.
         auto iDefinition = LoadedDefinitions.Find(fileName);
         if (iDefinition == nullptr)
         {
-            iDefinition = LoadedDefinitions.Find((GTCore::String(fileName) + ".gtmodel").c_str());
+            if (GTCore::Path::ExtensionEqual(fileName, "gtmodel"))
+            {
+                iDefinition = LoadedDefinitions.Find(GTCore::IO::RemoveExtension(fileName).c_str());
+            }
         }
 
         if (iDefinition != nullptr)
