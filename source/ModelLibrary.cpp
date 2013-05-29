@@ -221,10 +221,20 @@ namespace GTEngine
     }
 
 
-    bool ModelLibrary::Reload(const char* fileName)
+    bool ModelLibrary::Reload(const char* fileNameIn)
     {
+        GTCore::String fileName;
+        if (GTCore::Path::ExtensionEqual(fileNameIn, "gtmodel"))
+        {
+            fileName = GTCore::IO::RemoveExtension(fileNameIn);
+        }
+        else
+        {
+            fileName = fileNameIn;
+        }
+
         // We need to find the definition that we're updating.
-        auto definition = ModelLibrary::FindDefinition(fileName);
+        auto definition = ModelLibrary::FindDefinition(fileName.c_str());
         if (definition != nullptr)
         {
             bool needsSerialize;
@@ -235,7 +245,6 @@ namespace GTEngine
                     ModelLibrary::WriteToFile(*definition);
                 }
             }
-
 
             // Every model with this definition needs to know that it has changed.
             for (size_t iModel = 0; iModel < InstantiatedModels.count; ++iModel)
