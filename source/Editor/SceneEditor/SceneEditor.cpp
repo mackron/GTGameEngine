@@ -2008,7 +2008,7 @@ namespace GTEngine
                         auto model = modelComponent->GetModel();
                         if (model != nullptr)
                         {
-                            if (model->GetDefinition().absolutePath == item.info.absolutePath || (model->GetDefinition().absolutePath + ".gtmodel") == item.info.absolutePath)
+                            if (model->GetDefinition().absolutePath == item.info.absolutePath || GTCore::IO::RemoveExtension(item.info.absolutePath.c_str()) == model->GetDefinition().absolutePath)
                             {
                                 modelComponent->OnChanged();
 
