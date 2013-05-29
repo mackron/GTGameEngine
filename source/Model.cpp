@@ -266,6 +266,18 @@ namespace GTEngine
             assert(mesh != nullptr);
             {
                 mesh->Serialize(meshesSerializer, serializeMeshGeometry);
+
+                // We need to write a boolean that specifies whether or not the material is the same as that specified by the definition.
+                bool usingSameMaterial = false;
+                if (&this->definition != &NullModelDefinition && this->definition.meshMaterials[i] != nullptr && mesh->GetMaterial() != nullptr)
+                {
+                    auto &definitionA = this->definition.meshMaterials[i]->GetDefinition();
+                    auto &definitionB = mesh->GetMaterial()->GetDefinition();
+
+                    usingSameMaterial = definitionA.relativePath == definitionB.relativePath;
+                }
+
+                meshesSerializer.Write(usingSameMaterial);
             }
         }
 
@@ -409,6 +421,19 @@ namespace GTEngine
                                 assert(mesh != nullptr);
                                 {
                                     mesh->Deserialize(deserializer);
+
+                                    // The next byte should be a boolean specifying whether or not we are using the same material as that defined by the definition.
+                                    bool usingSameMaterial;
+                                    deserializer.Read(usingSameMaterial);
+
+                                    if (usingSameMaterial)
+                                    {
+                                        auto newMaterial = this->definition.meshMaterials[iMesh];
+                                        if (newMaterial != nullptr)
+                                        {
+                                            mesh->SetMaterial(newMaterial->GetDefinition().relativePath.c_str());
+                                        }
+                                    }
                                 }
                             }
 
