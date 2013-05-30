@@ -63,13 +63,13 @@ namespace GTEngine
 
         /// Adds a named sequence frame.
         ///
-        /// @param sequenceName   [in] The name of the sequence that should be played.
+        /// @param segmentName    [in] The name of the segment that should be played.
         /// @param transitionTime [in] The time to spend transitioning from the previous frame.
         /// @param loop           [in] Whether or not the sequence should loop.
         ///
         /// @remarks
         ///     <loop> should only be set to try for the last frame. It does not make sense to loop on anything other than that.
-        void AddFrame(const char* sequenceName, double transitionTime, bool loop = false);
+        void AddFrame(const char* segmentName, double transitionTime, bool loop = false);
 
         /// Adds a frame from a start and end key frame index.
         ///

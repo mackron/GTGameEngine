@@ -53,11 +53,23 @@ namespace GTEngine
             ///     Argument 1: A pointer to the model editor.
             int GetMaterials(GTCore::Script &script);
 
-            /// Retrieves the settings used to build the convex hull of the model loaded in the given model editor.
+            /// Sets a material on the model loaded in the given model editor.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the model editor.
-            int GetConvexHullBuildSettings(GTCore::Script &script);
+            ///     Argument 2: The index of the material being set.
+            ///     Argument 3: The relative path of the material to use.
+            int SetMaterial(GTCore::Script &script);
+            
+
+            /// Plays the animation segment.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            ///     Argument 2: The index of the animation segment to play.
+            ///
+            ///     The animation will be looped.
+            int PlayAnimationSegmentByIndex(GTCore::Script &script);
 
             /// Plays the animation track of the model loaded in the given model editor.
             ///
@@ -70,14 +82,6 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the model editor.
             int StopAnimation(GTCore::Script &script);
-
-            /// Sets a material on the model loaded in the given model editor.
-            ///
-            /// @remarks
-            ///     Argument 1: A pointer to the model editor.
-            ///     Argument 2: The index of the material being set.
-            ///     Argument 3: The relative path of the material to use.
-            int SetMaterial(GTCore::Script &script);
 
 
             /// Adds a new animation segment to the model.
@@ -137,6 +141,12 @@ namespace GTEngine
             ///     Each item in the returned list is a table containing 'name', 'startKeyFrame' and 'endKeyFrame'.
             int GetAnimationSegments(GTCore::Script &script);
 
+
+            /// Retrieves the settings used to build the convex hull of the model loaded in the given model editor.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            int GetConvexHullBuildSettings(GTCore::Script &script);
 
             /// Shows the convex decomposition of the model.
             ///

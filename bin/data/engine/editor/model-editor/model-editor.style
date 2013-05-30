@@ -73,6 +73,24 @@ model-editor-animation-segment-name includes textbox
 {
 }
 
+model-editor-play-button-small
+{
+    width:                  12px
+    height:                 12px
+    background-image:       std-arrow-right;
+    background-image-color: #aaa
+}
+
+model-editor-play-button-small:hovered
+{
+    background-image-color: #ccc
+}
+
+model-editor-play-button-small:pushed
+{
+    background-image-color: #eee
+}
+
 
 
 

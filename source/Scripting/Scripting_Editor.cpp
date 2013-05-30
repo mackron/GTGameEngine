@@ -30,10 +30,10 @@ namespace GTEngine
                     script.PushNewTable();
                     {
                         script.SetTableFunction(-1, "GetMaterials",                    ModelEditorFFI::GetMaterials);
-                        script.SetTableFunction(-1, "GetConvexHullBuildSettings",      ModelEditorFFI::GetConvexHullBuildSettings);
+                        script.SetTableFunction(-1, "SetMaterial",                     ModelEditorFFI::SetMaterial);
+                        script.SetTableFunction(-1, "PlayAnimationSegmentByIndex",     ModelEditorFFI::PlayAnimationSegmentByIndex);
                         script.SetTableFunction(-1, "PlayAnimation",                   ModelEditorFFI::PlayAnimation);
                         script.SetTableFunction(-1, "StopAnimation",                   ModelEditorFFI::StopAnimation);
-                        script.SetTableFunction(-1, "SetMaterial",                     ModelEditorFFI::SetMaterial);
                         script.SetTableFunction(-1, "AddNewAnimationSegment",          ModelEditorFFI::AddNewAnimationSegment);
                         script.SetTableFunction(-1, "RemoveAnimationSegmentByIndex",   ModelEditorFFI::RemoveAnimationSegmentByIndex);
                         script.SetTableFunction(-1, "SetAnimationSegmentName",         ModelEditorFFI::SetAnimationSegmentName);
@@ -41,6 +41,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "SetAnimationSegmentFrameIndices", ModelEditorFFI::SetAnimationSegmentFrameIndices);
                         script.SetTableFunction(-1, "GetAnimationSegmentFrameIndices", ModelEditorFFI::GetAnimationSegmentFrameIndices);
                         script.SetTableFunction(-1, "GetAnimationSegments",            ModelEditorFFI::GetAnimationSegments);
+                        script.SetTableFunction(-1, "GetConvexHullBuildSettings",      ModelEditorFFI::GetConvexHullBuildSettings);
                         script.SetTableFunction(-1, "ShowConvexDecomposition",         ModelEditorFFI::ShowConvexDecomposition);
                         script.SetTableFunction(-1, "HideConvexDecomposition",         ModelEditorFFI::HideConvexDecomposition);
                         script.SetTableFunction(-1, "BuildConvexDecomposition",        ModelEditorFFI::BuildConvexDecomposition);
@@ -203,29 +204,31 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetConvexHullBuildSettings(GTCore::Script &script)
+            int SetMaterial(GTCore::Script &script)
             {
-                ConvexHullBuildSettings settings;
-
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
                 {
-                    modelEditor->GetConvexHullBuildSettings(settings);
+                    script.Push(modelEditor->SetMaterial(script.ToInteger(2) - 1, script.ToString(3)));     // Minus 1 in the first argument because Lua is 1 based.
+                }
+                else
+                {
+                    script.Push(false);
                 }
 
-                script.PushNewTable();
-                script.SetTableValue(-1, "compacityWeight",               settings.compacityWeight);
-                script.SetTableValue(-1, "volumeWeight",                  settings.volumeWeight);
-                script.SetTableValue(-1, "minClusters",                   static_cast<int>(settings.minClusters));
-                script.SetTableValue(-1, "verticesPerCH",                 static_cast<int>(settings.verticesPerCH));
-                script.SetTableValue(-1, "concavity",                     settings.concavity);
-                script.SetTableValue(-1, "smallClusterThreshold",         settings.smallClusterThreshold);
-                script.SetTableValue(-1, "connectedComponentsDist",       settings.connectedComponentsDist);
-                script.SetTableValue(-1, "simplifiedTriangleCountTarget", static_cast<int>(settings.simplifiedTriangleCountTarget));
-                script.SetTableValue(-1, "addExtraDistPoints",            settings.addExtraDistPoints);
-                script.SetTableValue(-1, "addFacesPoints",                settings.addFacesPoints);
-
                 return 1;
+            }
+
+            
+            int PlayAnimationSegmentByIndex(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    modelEditor->PlayAnimationSegmentByIndex(static_cast<size_t>(script.ToInteger(2)));
+                }
+
+                return 0;
             }
 
             int PlayAnimation(GTCore::Script &script)
@@ -248,21 +251,6 @@ namespace GTEngine
                 }
 
                 return 0;
-            }
-
-            int SetMaterial(GTCore::Script &script)
-            {
-                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
-                if (modelEditor != nullptr)
-                {
-                    script.Push(modelEditor->SetMaterial(script.ToInteger(2) - 1, script.ToString(3)));     // Minus 1 in the first argument because Lua is 1 based.
-                }
-                else
-                {
-                    script.Push(false);
-                }
-
-                return 1;
             }
 
 
@@ -389,6 +377,31 @@ namespace GTEngine
                 return 1;
             }
 
+
+            int GetConvexHullBuildSettings(GTCore::Script &script)
+            {
+                ConvexHullBuildSettings settings;
+
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    modelEditor->GetConvexHullBuildSettings(settings);
+                }
+
+                script.PushNewTable();
+                script.SetTableValue(-1, "compacityWeight",               settings.compacityWeight);
+                script.SetTableValue(-1, "volumeWeight",                  settings.volumeWeight);
+                script.SetTableValue(-1, "minClusters",                   static_cast<int>(settings.minClusters));
+                script.SetTableValue(-1, "verticesPerCH",                 static_cast<int>(settings.verticesPerCH));
+                script.SetTableValue(-1, "concavity",                     settings.concavity);
+                script.SetTableValue(-1, "smallClusterThreshold",         settings.smallClusterThreshold);
+                script.SetTableValue(-1, "connectedComponentsDist",       settings.connectedComponentsDist);
+                script.SetTableValue(-1, "simplifiedTriangleCountTarget", static_cast<int>(settings.simplifiedTriangleCountTarget));
+                script.SetTableValue(-1, "addExtraDistPoints",            settings.addExtraDistPoints);
+                script.SetTableValue(-1, "addFacesPoints",                settings.addFacesPoints);
+
+                return 1;
+            }
 
             int ShowConvexDecomposition(GTCore::Script &script)
             {

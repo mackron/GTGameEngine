@@ -27,10 +27,10 @@ namespace GTEngine
         return this->name.c_str();
     }
 
-    void AnimationSequence::AddFrame(const char* name, double transitionTime, bool loop)
+    void AnimationSequence::AddFrame(const char* segmentName, double transitionTime, bool loop)
     {
         auto newFrame = new AnimationSequenceFrame;
-        newFrame->segmentName    = name;
+        newFrame->segmentName    = segmentName;
         newFrame->transitionTime = transitionTime;
         newFrame->loop           = loop;
 
