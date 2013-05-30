@@ -30,17 +30,17 @@ function GTGUI.Element:ModelEditor_AnimationSegmentsPanel(_internalPtr)
     self.AddSegmentButton:SetStyle("margin-top", "8px");
     
     self.AddSegmentButton:OnPressed(function()
-        self:AddNewSegment("Unnamed", true);
+        self:AddNewSegment("Unnamed", 0, 0, true);
     end);
     
     
     self.Segments = {};
     
     
-    function self:AddNewSegment(name, addToModel)
+    function self:AddNewSegment(name, startKeyFrame, endKeyFrame, addToModel)
         local newSegmentElement = GTGUI.Server.CreateElement(self.SegmentsContainer, "model-editor-animation-segment");
         if newSegmentElement then
-            newSegmentElement:ModelEditor_AnimationSegment(name, 0, 0);
+            newSegmentElement:ModelEditor_AnimationSegment(name, startKeyFrame, endKeyFrame);
             
             newSegmentElement.Cross:OnPressed(function()
                 self:DeleteSegment(newSegmentElement, true);
@@ -49,9 +49,11 @@ function GTGUI.Element:ModelEditor_AnimationSegmentsPanel(_internalPtr)
             self.Segments[#self.Segments + 1] = newSegmentElement;
             
             if addToModel then
-                GTEngine.System.ModelEditor.AddNewAnimationSegment(_internalPtr, name);
+                GTEngine.System.ModelEditor.AddNewAnimationSegment(_internalPtr, name, startKeyFrame, endKeyFrame);
             end
         end
+        
+        return newSegmentElement;
     end
     
     function self:DeleteSegment(segmentElement, removeFromModel)
@@ -68,7 +70,21 @@ function GTGUI.Element:ModelEditor_AnimationSegmentsPanel(_internalPtr)
     
     
     function self:Refresh()
+        self.Segments = {};
+        self.SegmentsContainer:DeleteAllChildren();
+        
+        local segments = GTEngine.System.ModelEditor.GetAnimationSegments(_internalPtr);
+        if segments then
+            for i,segment in ipairs(segments) do
+                self:AddNewSegment(segment.name, segment.startKeyFrame, segment.endKeyFrame);
+            end
+        end
     end
+    
+    
+    -- We just refresh to get the panel into the correct state.
+    self:Refresh();
+    
     
     return self;
 end

@@ -129,6 +129,14 @@ namespace GTEngine
             //      The return value is two integers.
             int GetAnimationSegmentFrameIndices(GTCore::Script &script);
 
+            /// Retrieves a list of animation segments currently attached to the model.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            ///
+            ///     Each item in the returned list is a table containing 'name', 'startKeyFrame' and 'endKeyFrame'.
+            int GetAnimationSegments(GTCore::Script &script);
+
 
             /// Shows the convex decomposition of the model.
             ///
