@@ -33,7 +33,11 @@ namespace GTEngine
                         script.SetTableFunction(-1, "SetMaterial",                     ModelEditorFFI::SetMaterial);
                         script.SetTableFunction(-1, "PlayAnimationSegmentByIndex",     ModelEditorFFI::PlayAnimationSegmentByIndex);
                         script.SetTableFunction(-1, "PlayAnimation",                   ModelEditorFFI::PlayAnimation);
+                        script.SetTableFunction(-1, "ResumeAnimation",                 ModelEditorFFI::ResumeAnimation);
                         script.SetTableFunction(-1, "StopAnimation",                   ModelEditorFFI::StopAnimation);
+                        script.SetTableFunction(-1, "PauseAnimation",                  ModelEditorFFI::PauseAnimation);
+                        script.SetTableFunction(-1, "IsAnimationPlaying",              ModelEditorFFI::IsAnimationPlaying);
+                        script.SetTableFunction(-1, "IsAnimationPaused",               ModelEditorFFI::IsAnimationPaused);
                         script.SetTableFunction(-1, "AddNewAnimationSegment",          ModelEditorFFI::AddNewAnimationSegment);
                         script.SetTableFunction(-1, "RemoveAnimationSegmentByIndex",   ModelEditorFFI::RemoveAnimationSegmentByIndex);
                         script.SetTableFunction(-1, "SetAnimationSegmentName",         ModelEditorFFI::SetAnimationSegmentName);
@@ -242,6 +246,17 @@ namespace GTEngine
                 return 0;
             }
 
+            int ResumeAnimation(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    modelEditor->ResumeAnimation();
+                }
+
+                return 0;
+            }
+
             int StopAnimation(GTCore::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
@@ -251,6 +266,47 @@ namespace GTEngine
                 }
 
                 return 0;
+            }
+
+            int PauseAnimation(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    modelEditor->PauseAnimation();
+                }
+
+                return 0;
+            }
+
+            int IsAnimationPlaying(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    script.Push(modelEditor->IsAnimationPlaying());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+            int IsAnimationPaused(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    script.Push(modelEditor->IsAnimationPaused());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
             }
 
 

@@ -109,6 +109,11 @@ function GTGUI.Element:ModelEditor_AnimationSegmentsPanel(_internalPtr)
     end
     
     
+    function self:UpdatePlaybackControls()
+        
+    end
+    
+    
     function self:Refresh()
         self.Segments = {};
         self.SegmentsContainer:DeleteAllChildren();

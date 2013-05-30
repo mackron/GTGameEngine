@@ -170,6 +170,11 @@ namespace GTEngine
         /// @return True if the animation is playing; false otherwise.
         bool IsPlaying() const { return this->isPlaying; }
 
+        /// Determines whether or not the animation is paused.
+        ///
+        /// @return True if the animation is paused; false otherwise.
+        bool IsPaused() const { return this->isPaused; }
+
 
 
         /// Clears the animation.
@@ -219,6 +224,9 @@ namespace GTEngine
 
         /// Keeps track of whether or not the animation is playing.
         bool isPlaying;
+
+        /// Keeps track of whether or not the animation is paused. If this is true, 'isPlaying' will also be true.
+        bool isPaused;
 
         /// The current playback time in the currently running animation.
         double playbackTime;

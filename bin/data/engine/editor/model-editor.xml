@@ -5,10 +5,13 @@
 
 <style  url="model-editor/model-editor.style" />
 
-<script url="model-editor/model-editor.lua"                 />
-<script url="model-editor/model-editor-materialpanel.lua"   />
-<script url="model-editor/model-editor-animationspanel.lua" />
-<script url="model-editor/model-editor-animationsegmentspanel.lua" />
+
+<script url="model-editor/model-editor.lua"                         />
+<script url="model-editor/model-editor-materialpanel.lua"           />
+<script url="model-editor/model-editor-animationspanel.lua"         />
+<script url="model-editor/model-editor-animationsegmentspanel.lua"  />
 <script url="model-editor/model-editor-animationsequencespanel.lua" />
-<script url="model-editor/model-editor-cdpanel.lua"         />
-<script url="model-editor/model-editor-timeline.lua"        />
+<script url="model-editor/model-editor-cdpanel.lua"                 />
+
+<script url="model-editor/model-editor-timeline.lua"                />
+<style  url="model-editor/model-editor-timeline.style"              />

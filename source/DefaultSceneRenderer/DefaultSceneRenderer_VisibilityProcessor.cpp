@@ -76,7 +76,7 @@ namespace GTEngine
                     this->visibleModels.Add(modelComponent, new DefaultSceneRenderer_LightGroup);
 
                     // If the model is animated, we don't want to mark it as such, but not actually apply the animation yet.
-                    if (model->IsAnimating())
+                    if (model->IsAnimating() && !model->IsAnimationPaused())
                     {
                         this->modelsToAnimate.PushBack(modelComponent);
                     }
@@ -346,7 +346,7 @@ namespace GTEngine
                         {
                             // If the mesh needs to be animated we don't want to add the mesh straight away. Instead we want to wait until
                             // after it's been animated. If it's not animated, we just add it straight away.
-                            if (model->IsAnimating())
+                            if (model->IsAnimating() && !model->IsAnimationPaused())
                             {
                                 if (!this->modelsToAnimate.Exists(modelComponent))
                                 {

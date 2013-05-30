@@ -23,6 +23,7 @@ namespace GTEngine
           cameraXRotation(0.0f), cameraYRotation(0.0f),
           grid(0.25f, 8, 32),
           random(),
+          currentlyPlayingSegmentIndex(-1), currentlyPlayingSequenceIndex(-1),
           isSaving(false), isReloading(false)
     {
         // We use the camera for our lights.
@@ -296,37 +297,46 @@ namespace GTEngine
             sequence.AddFrame(segment->startKeyFrame, segment->endKeyFrame, 0.0, true);
 
             this->model.PlayAnimation(sequence);
+            this->UpdateAnimationPlaybackControls();
         }
     }
 
     void ModelEditor::PlayAnimation()
     {
-        auto modelComponent = this->modelNode.GetComponent<GTEngine::ModelComponent>();
-        if (modelComponent != nullptr)
-        {
-            auto model = modelComponent->GetModel();
-            if (model != nullptr)
-            {
-                AnimationSequence sequence;
-                sequence.AddFrame(0, model->animation.GetKeyFrameCount(), 0.0f, true);      // '0.0f' is the transition time. 'true' says to loop.
+        AnimationSequence sequence;
+        sequence.AddFrame(0, this->model.animation.GetKeyFrameCount(), 0.0f, true);      // '0.0f' is the transition time. 'true' says to loop.
 
-                model->PlayAnimation(sequence);
-            }
-        }
+        this->model.PlayAnimation(sequence);
+    }
+
+    void ModelEditor::ResumeAnimation()
+    {
+        this->model.ResumeAnimation();
+        this->UpdateAnimationPlaybackControls();
     }
 
     void ModelEditor::StopAnimation()
     {
-        auto modelComponent = this->modelNode.GetComponent<GTEngine::ModelComponent>();
-        if (modelComponent != nullptr)
-        {
-            auto model = modelComponent->GetModel();
-            if (model != nullptr)
-            {
-                model->StopAnimation();
-            }
-        }
+        this->model.StopAnimation();
+        this->UpdateAnimationPlaybackControls();
     }
+
+    void ModelEditor::PauseAnimation()
+    {
+        this->model.PauseAnimation();
+        this->UpdateAnimationPlaybackControls();
+    }
+
+    bool ModelEditor::IsAnimationPlaying() const
+    {
+        return this->model.IsAnimating();
+    }
+
+    bool ModelEditor::IsAnimationPaused() const
+    {
+        return this->model.IsAnimationPaused();
+    }
+
 
     bool ModelEditor::SetMaterial(size_t index, const char* relativePath)
     {
@@ -599,6 +609,24 @@ namespace GTEngine
             this->Refresh();
         }
         this->isReloading = false;
+    }
+
+    void ModelEditor::UpdateAnimationPlaybackControls()
+    {
+        auto &script = this->GetScript();
+
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("UpdateAnimationPlaybackControls");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);       // 'self'
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
     }
 }
 

@@ -27,6 +27,12 @@ function GTGUI.Element:ModelEditorPanel(_internalPtr)
     end);
     
     
+    function self:UpdateAnimationPlaybackControls()
+        self.AnimationSegmentsPanel:UpdatePlaybackControls();
+        --self.AnimationSequencesPanel:UpdatePlaybackControls();
+    end
+    
+    
     
     function self:Refresh()
         self.MaterialsPanel:Refresh();
@@ -68,7 +74,14 @@ function GTGUI.Element:ModelEditor(_internalPtr)
     self.IsRMBDown       = false;
     self.HasMouseCapture = false;
     
-    self.Panel:ModelEditorPanel(self._internalPtr);
+    self.Panel:ModelEditorPanel(_internalPtr);
+    self.Timeline:ModelEditor_Timeline(_internalPtr);
+    
+    
+    function self:UpdateAnimationPlaybackControls()
+        self.Panel:UpdateAnimationPlaybackControls();
+        self.Timeline:UpdatePlaybackControls();
+    end
     
     
     function self:Refresh()

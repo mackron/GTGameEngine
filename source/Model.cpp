@@ -606,6 +606,11 @@ namespace GTEngine
         return this->animation.IsPlaying();
     }
 
+    bool Model::IsAnimationPaused() const
+    {
+        return this->animation.IsPaused();
+    }
+
     void Model::SetAnimationPlaybackSpeed(double speed)
     {
         this->animationPlaybackSpeed = speed;

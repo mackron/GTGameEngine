@@ -92,8 +92,20 @@ namespace GTEngine
         /// Plays the model's animation track.
         void PlayAnimation();
 
+        /// Resumes the model's animation if it's currently paused.
+        void ResumeAnimation();
+
         /// Stops the model's animation track.
         void StopAnimation();
+
+        /// Pauses the model's animation.
+        void PauseAnimation();
+
+        /// Determines whether or not the model's animation is playing.
+        bool IsAnimationPlaying() const;
+
+        /// Determines whether or not the model's animation is paused.
+        bool IsAnimationPaused() const;
 
 
         /// Sets a material on the model.
@@ -152,6 +164,9 @@ namespace GTEngine
         /// Reloads the model.
         void Reload();
 
+        /// Updates the animation playback controls.
+        void UpdateAnimationPlaybackControls();
+
 
     private:
 
@@ -208,6 +223,13 @@ namespace GTEngine
 
         /// The random number generator for convex hull colours, and whatever else we may need.
         GTCore::Random random;
+
+
+        /// The index of the segment that is currently being played. Set to -1 when nothing is playing.
+        int currentlyPlayingSegmentIndex;
+
+        /// The index of the sequence that is currently being played. Set to -1 when nothing is playing.
+        int currentlyPlayingSequenceIndex;
 
 
         /// Keeps track of whether or not the editor is in the middle of saving. We use this in determining whether or not the settings should be
