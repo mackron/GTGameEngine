@@ -865,6 +865,14 @@ namespace GTEngine
                         "    SpecularOut = vec4(lightSpecular, 1.0);\n"
                     );
                 }
+                else
+                {
+                    fragmentSource.Append
+                    (
+                        "    DiffuseOut  = vec4(0.0, 0.0, 0.0, 1.0);\n"
+                        "    SpecularOut = vec4(0.0, 0.0, 0.0, 1.0);\n"
+                    );
+                }
             }
         }
         fragmentSource.Append
