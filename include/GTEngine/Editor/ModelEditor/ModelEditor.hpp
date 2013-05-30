@@ -42,6 +42,45 @@ namespace GTEngine
         /// @param materialsOut [out] A reference to the vector that will receive the material paths.
         void GetMaterials(GTCore::Vector<GTCore::String> &materialsOut);
 
+
+        /// Adds a new animation segment to the model.
+        ///
+        /// @param name       [in] The name of the segment.
+        /// @param startIndex [in] The index of the first frame.
+        /// @param endIndex   [in] The index of the last frame.
+        void AddNewAnimationSegment(const char* name, size_t startIndex, size_t endIndex);
+
+        /// Removes an animation segment by it's index.
+        ///
+        /// @param index [in] The index of the animation segment to remove.
+        void RemoveAnimationSegmentByIndex(size_t index);
+
+        /// Sets the name of the given animation segment.
+        ///
+        /// @param index   [in] The index of the animation segment whose name is being set.
+        /// @param newName [in] The new name of the animation segment.
+        void SetAnimationSegmentName(size_t index, const char* newName);
+
+        /// Retrieves the name of the given animation segment.
+        ///
+        /// @param index [in] The index of the animation segment whose name is being retrieved.
+        const char* GetAnimationSegmentName(size_t index) const;
+
+        /// Sets the start and end frame indices of the given animation segment.
+        ///
+        /// @param segmentIndex [in] The index of the animation segment whose frame indices are being set.
+        /// @param startIndex   [in] The index of the first frame.
+        /// @param endIndex     [in] The index of the last frame.
+        void SetAnimationSegmentFrameIndices(size_t segmentIndex, size_t startIndex, size_t endIndex);
+
+        /// Retrieves the start and end frame indices of the given animation segment.
+        ///
+        /// @param segmentIndex [in] The index of the animation segment whose frame indices are being retrieved.
+        /// @param startIndex   [in] A reference to the variable that will receive the index of the first frame.
+        /// @param endIndex     [in] A reference to the variable that will receive the index of the last frame.
+        void GetAnimationSegmentFrameIndices(size_t segmentIndex, size_t &startIndex, size_t &endIndex) const;
+
+
         /// Retrieves the convex hull build settings.
         ///
         /// @param settingsOut [out] A reference to the object that will receive the settings.

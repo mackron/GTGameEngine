@@ -29,14 +29,20 @@ namespace GTEngine
                     script.Push("ModelEditor");
                     script.PushNewTable();
                     {
-                        script.SetTableFunction(-1, "GetMaterials",                 ModelEditorFFI::GetMaterials);
-                        script.SetTableFunction(-1, "GetConvexHullBuildSettings",   ModelEditorFFI::GetConvexHullBuildSettings);
-                        script.SetTableFunction(-1, "PlayAnimation",                ModelEditorFFI::PlayAnimation);
-                        script.SetTableFunction(-1, "StopAnimation",                ModelEditorFFI::StopAnimation);
-                        script.SetTableFunction(-1, "SetMaterial",                  ModelEditorFFI::SetMaterial);
-                        script.SetTableFunction(-1, "ShowConvexDecomposition",      ModelEditorFFI::ShowConvexDecomposition);
-                        script.SetTableFunction(-1, "HideConvexDecomposition",      ModelEditorFFI::HideConvexDecomposition);
-                        script.SetTableFunction(-1, "BuildConvexDecomposition",     ModelEditorFFI::BuildConvexDecomposition);
+                        script.SetTableFunction(-1, "GetMaterials",                    ModelEditorFFI::GetMaterials);
+                        script.SetTableFunction(-1, "GetConvexHullBuildSettings",      ModelEditorFFI::GetConvexHullBuildSettings);
+                        script.SetTableFunction(-1, "PlayAnimation",                   ModelEditorFFI::PlayAnimation);
+                        script.SetTableFunction(-1, "StopAnimation",                   ModelEditorFFI::StopAnimation);
+                        script.SetTableFunction(-1, "SetMaterial",                     ModelEditorFFI::SetMaterial);
+                        script.SetTableFunction(-1, "AddNewAnimationSegment",          ModelEditorFFI::AddNewAnimationSegment);
+                        script.SetTableFunction(-1, "RemoveAnimationSegmentByIndex",   ModelEditorFFI::RemoveAnimationSegmentByIndex);
+                        script.SetTableFunction(-1, "SetAnimationSegmentName",         ModelEditorFFI::SetAnimationSegmentName);
+                        script.SetTableFunction(-1, "GetAnimationSegmentName",         ModelEditorFFI::GetAnimationSegmentName);
+                        script.SetTableFunction(-1, "SetAnimationSegmentFrameIndices", ModelEditorFFI::SetAnimationSegmentFrameIndices);
+                        script.SetTableFunction(-1, "GetAnimationSegmentFrameIndices", ModelEditorFFI::GetAnimationSegmentFrameIndices);
+                        script.SetTableFunction(-1, "ShowConvexDecomposition",         ModelEditorFFI::ShowConvexDecomposition);
+                        script.SetTableFunction(-1, "HideConvexDecomposition",         ModelEditorFFI::HideConvexDecomposition);
+                        script.SetTableFunction(-1, "BuildConvexDecomposition",        ModelEditorFFI::BuildConvexDecomposition);
                     }
                     script.SetTableValue(-3);
 
@@ -257,6 +263,99 @@ namespace GTEngine
 
                 return 1;
             }
+
+
+            int AddNewAnimationSegment(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    auto name       = script.ToString(2);
+                    auto startIndex = static_cast<size_t>(script.ToInteger(3));
+                    auto endIndex   = static_cast<size_t>(script.ToInteger(4));
+
+                    modelEditor->AddNewAnimationSegment(name, startIndex, endIndex);
+                }
+
+                return 0;
+            }
+
+            int RemoveAnimationSegmentByIndex(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    modelEditor->RemoveAnimationSegmentByIndex(static_cast<size_t>(script.ToInteger(2)));
+                }
+
+                return 0;
+            }
+
+            int SetAnimationSegmentName(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    auto segmentIndex = static_cast<size_t>(script.ToInteger(2));
+                    auto segmentName  = script.ToString(3);
+
+                    modelEditor->SetAnimationSegmentName(segmentIndex, segmentName);
+                }
+
+                return 0;
+            }
+
+            int GetAnimationSegmentName(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    script.Push(modelEditor->GetAnimationSegmentName(static_cast<size_t>(script.ToInteger(2))));
+                }
+                else
+                {
+                    script.Push("");
+                }
+                
+                return 1;
+            }
+
+            int SetAnimationSegmentFrameIndices(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    auto segmentIndex = static_cast<size_t>(script.ToInteger(2));
+                    auto startIndex   = static_cast<size_t>(script.ToInteger(3));
+                    auto endIndex     = static_cast<size_t>(script.ToInteger(4));
+
+                    modelEditor->SetAnimationSegmentFrameIndices(segmentIndex, startIndex, endIndex);
+                }
+
+                return 0;
+            }
+
+            int GetAnimationSegmentFrameIndices(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    size_t startIndex;
+                    size_t endIndex;
+                    modelEditor->GetAnimationSegmentFrameIndices(static_cast<size_t>(script.ToInteger(2)), startIndex, endIndex);
+
+                    script.Push(static_cast<int>(startIndex));
+                    script.Push(static_cast<int>(endIndex));
+                }
+                else
+                {
+                    script.Push(0);
+                    script.Push(0);
+                }
+
+                return 2;
+            }
+
 
             int ShowConvexDecomposition(GTCore::Script &script)
             {

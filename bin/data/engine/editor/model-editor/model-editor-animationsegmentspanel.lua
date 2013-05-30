@@ -30,31 +30,39 @@ function GTGUI.Element:ModelEditor_AnimationSegmentsPanel(_internalPtr)
     self.AddSegmentButton:SetStyle("margin-top", "8px");
     
     self.AddSegmentButton:OnPressed(function()
-        self:AddNewSegment();
+        self:AddNewSegment("Unnamed", true);
     end);
     
     
     self.Segments = {};
     
     
-    function self:AddNewSegment(name)
+    function self:AddNewSegment(name, addToModel)
         local newSegmentElement = GTGUI.Server.CreateElement(self.SegmentsContainer, "model-editor-animation-segment");
         if newSegmentElement then
             newSegmentElement:ModelEditor_AnimationSegment(name, 0, 0);
             
             newSegmentElement.Cross:OnPressed(function()
-                self:DeleteSegment(newSegmentElement);
+                self:DeleteSegment(newSegmentElement, true);
             end);
             
             self.Segments[#self.Segments + 1] = newSegmentElement;
+            
+            if addToModel then
+                GTEngine.System.ModelEditor.AddNewAnimationSegment(_internalPtr, name);
+            end
         end
     end
     
-    function self:DeleteSegment(segmentElement)
+    function self:DeleteSegment(segmentElement, removeFromModel)
         local index = table.indexof(self.Segments, segmentElement);
         if index ~= nil then
             table.remove(self.Segments, index);
             GTGUI.Server.DeleteElement(segmentElement);
+            
+            if removeFromModel then
+                GTEngine.System.ModelEditor.RemoveAnimationSegmentByIndex(_internalPtr, index);
+            end
         end
     end
     
