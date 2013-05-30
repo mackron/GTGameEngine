@@ -166,12 +166,6 @@ namespace GTEngine
 
 
 
-        /// Retrieves a pointer to the animated geometry of the given index.
-        ///
-        /// @param index [in] The index of the animated geometry to retrieve - 0 or 1.
-        //VertexArray* GetAnimatedGeometry(size_t index);
-
-
         /// Retrieves the draw mode of the mesh.
         DrawMode GetDrawMode() const { return this->drawMode; }
 
