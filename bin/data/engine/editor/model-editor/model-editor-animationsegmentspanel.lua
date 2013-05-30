@@ -14,8 +14,12 @@ function GTGUI.Element:ModelEditor_AnimationSegment(name, rangeMin, rangeMax)
     self.Range:SetStyle("margin-left", "4px");
     self.Range:SetValue(rangeMin, rangeMax);
     
+    self.PlayButton = GTGUI.Server.CreateElement(self, "model-editor-play-button-small");
+    self.PlayButton:SetStyle("margin-left", "4px");
+    
     self.Cross = GTGUI.Server.CreateElement(self, "cross-button");
     self.Cross:SetStyle("margin-left", "4px");
+
     
     return self;
 end
@@ -42,6 +46,18 @@ function GTGUI.Element:ModelEditor_AnimationSegmentsPanel(_internalPtr)
         if newSegmentElement then
             newSegmentElement:ModelEditor_AnimationSegment(name, startKeyFrame, endKeyFrame);
             
+            newSegmentElement.Name:OnTextChanged(function()
+                self:UpdateSegmentName(newSegmentElement);
+            end);
+            
+            newSegmentElement.Range:OnValueChanged(function()
+                self:UpdateSegmentRange(newSegmentElement);
+            end);
+            
+            newSegmentElement.PlayButton:OnPressed(function()
+                self:PlayAnimationSegment(newSegmentElement);
+            end);
+            
             newSegmentElement.Cross:OnPressed(function()
                 self:DeleteSegment(newSegmentElement, true);
             end);
@@ -65,6 +81,30 @@ function GTGUI.Element:ModelEditor_AnimationSegmentsPanel(_internalPtr)
             if removeFromModel then
                 GTEngine.System.ModelEditor.RemoveAnimationSegmentByIndex(_internalPtr, index);
             end
+        end
+    end
+    
+    
+    function self:UpdateSegmentName(segmentElement)
+        local index = table.indexof(self.Segments, segmentElement);
+        if index ~= nil then
+            GTEngine.System.ModelEditor.SetAnimationSegmentName(_internalPtr, index, segmentElement.Name:GetText());
+        end
+    end
+    
+    function self:UpdateSegmentRange(segmentElement)
+        local index = table.indexof(self.Segments, segmentElement);
+        if index ~= nil then
+            local startKeyFrame = segmentElement.Range.X:GetValue();
+            local endKeyFrame   = segmentElement.Range.Y:GetValue();
+            GTEngine.System.ModelEditor.SetAnimationSegmentFrameIndices(_internalPtr, index, startKeyFrame, endKeyFrame);
+        end
+    end
+    
+    function self:PlayAnimationSegment(segmentElement)
+        local index = table.indexof(self.Segments, segmentElement);
+        if index ~= nil then
+            GTEngine.System.ModelEditor.PlayAnimationSegmentByIndex(_internalPtr, index);
         end
     end
     

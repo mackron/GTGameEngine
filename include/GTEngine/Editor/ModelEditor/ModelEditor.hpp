@@ -81,10 +81,13 @@ namespace GTEngine
         void GetAnimationSegmentFrameIndices(size_t segmentIndex, size_t &startIndex, size_t &endIndex) const;
 
 
-        /// Retrieves the convex hull build settings.
+        /// Plays an animation segment by it's index.
         ///
-        /// @param settingsOut [out] A reference to the object that will receive the settings.
-        void GetConvexHullBuildSettings(ConvexHullBuildSettings &settingsOut);
+        /// @param segmentIndex [in] The index of the segment to play.
+        ///
+        /// @remarks
+        ///     The animation will loop.
+        void PlayAnimationSegmentByIndex(size_t segmentIndex);
 
         /// Plays the model's animation track.
         void PlayAnimation();
@@ -92,11 +95,18 @@ namespace GTEngine
         /// Stops the model's animation track.
         void StopAnimation();
 
+
         /// Sets a material on the model.
         ///
         /// @param index        [in] The index of the material being set.
         /// @param relativePath [in] The relative path of the material being set.
         bool SetMaterial(size_t index, const char* relativePath);
+
+
+        /// Retrieves the convex hull build settings.
+        ///
+        /// @param settingsOut [out] A reference to the object that will receive the settings.
+        void GetConvexHullBuildSettings(ConvexHullBuildSettings &settingsOut);
 
         /// Shows the current model's convex decomposition.
         void ShowConvexDecomposition();

@@ -287,16 +287,15 @@ namespace GTEngine
     }
 
 
-    void ModelEditor::GetConvexHullBuildSettings(ConvexHullBuildSettings &settingsOut)
+    void ModelEditor::PlayAnimationSegmentByIndex(size_t segmentIndex)
     {
-        auto modelComponent = this->modelNode.GetComponent<ModelComponent>();
-        if (modelComponent != nullptr)
+        auto segment = this->modelDefinition.animation.GetNamedSegmentByIndex(segmentIndex);
+        if (segment != nullptr)
         {
-            auto model = modelComponent->GetModel();
-            if (model != nullptr)
-            {
-                settingsOut = model->GetDefinition().convexHullBuildSettings;
-            }
+            AnimationSequence sequence;
+            sequence.AddFrame(segment->startKeyFrame, segment->endKeyFrame, 0.0, true);
+
+            this->model.PlayAnimation(sequence);
         }
     }
 
@@ -345,6 +344,19 @@ namespace GTEngine
         return false;
     }
 
+
+    void ModelEditor::GetConvexHullBuildSettings(ConvexHullBuildSettings &settingsOut)
+    {
+        auto modelComponent = this->modelNode.GetComponent<ModelComponent>();
+        if (modelComponent != nullptr)
+        {
+            auto model = modelComponent->GetModel();
+            if (model != nullptr)
+            {
+                settingsOut = model->GetDefinition().convexHullBuildSettings;
+            }
+        }
+    }
 
     void ModelEditor::ShowConvexDecomposition()
     {
