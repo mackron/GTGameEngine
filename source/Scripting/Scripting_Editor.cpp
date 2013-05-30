@@ -40,6 +40,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetAnimationSegmentName",         ModelEditorFFI::GetAnimationSegmentName);
                         script.SetTableFunction(-1, "SetAnimationSegmentFrameIndices", ModelEditorFFI::SetAnimationSegmentFrameIndices);
                         script.SetTableFunction(-1, "GetAnimationSegmentFrameIndices", ModelEditorFFI::GetAnimationSegmentFrameIndices);
+                        script.SetTableFunction(-1, "GetAnimationSegments",            ModelEditorFFI::GetAnimationSegments);
                         script.SetTableFunction(-1, "ShowConvexDecomposition",         ModelEditorFFI::ShowConvexDecomposition);
                         script.SetTableFunction(-1, "HideConvexDecomposition",         ModelEditorFFI::HideConvexDecomposition);
                         script.SetTableFunction(-1, "BuildConvexDecomposition",        ModelEditorFFI::BuildConvexDecomposition);
@@ -354,6 +355,38 @@ namespace GTEngine
                 }
 
                 return 2;
+            }
+
+            int GetAnimationSegments(GTCore::Script &script)
+            {
+                script.PushNewTable();
+
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    auto &definition = modelEditor->GetModelDefinition();
+
+                    for (size_t i = 0; i < definition.animation.GetNamedSegmentCount(); ++i)
+                    {
+                        auto segment = definition.animation.GetNamedSegmentByIndex(i);
+                        assert(segment != nullptr);
+                        {
+                            // Key
+                            script.Push(static_cast<int>(i));
+                                
+                            // Value
+                            script.PushNewTable();
+                            script.SetTableValue(-1, "name",          segment->name.c_str());
+                            script.SetTableValue(-1, "startKeyFrame", static_cast<int>(segment->startKeyFrame));
+                            script.SetTableValue(-1, "endKeyFrame",   static_cast<int>(segment->endKeyFrame));
+                                
+                            // Set
+                            script.SetTableValue(-3);
+                        }
+                    }
+                }
+
+                return 1;
             }
 
 

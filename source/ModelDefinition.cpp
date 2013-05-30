@@ -481,6 +481,50 @@ namespace GTEngine
 
 
         /////////////////////////////////////
+        // Animation Segments
+
+        intermediarySerializer.Clear();
+        intermediarySerializer.Write(static_cast<uint32_t>(this->animation.GetNamedSegmentCount()));
+
+        for (size_t iSegment = 0; iSegment < this->animation.GetNamedSegmentCount(); ++iSegment)
+        {
+            auto segment = this->animation.GetNamedSegmentByIndex(iSegment);
+            assert(segment != nullptr);
+            {
+                intermediarySerializer.WriteString(segment->name);
+                intermediarySerializer.Write(static_cast<uint32_t>(segment->startKeyFrame));
+                intermediarySerializer.Write(static_cast<uint32_t>(segment->endKeyFrame));
+            }
+        }
+
+        header.id          = Serialization::ChunkID_Model_AnimationSegments;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
+
+
+
+        /////////////////////////////////////
+        // Animation Sequences
+
+        /*
+        intermediarySerializer.Clear();
+        intermediarySerializer.Write(static_cast<uint32_t>(this->animationSequences.count));
+
+        for (size_t iSequence = 0; iSequence < this->animationSequences.count; ++iSequence)
+        {
+        }
+
+        header.id          = Serialization::ChunkID_Model_AnimationSequences;
+        header.version     = 1;
+        header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+        serializer.Write(header);
+        serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
+        */
+
+
+        /////////////////////////////////////
         // Convex Hulls
 
         intermediarySerializer.Clear();
@@ -552,7 +596,7 @@ namespace GTEngine
         this->ClearMeshSkinningVertexAttributes();
         this->ClearMaterials();
         this->ClearBones();
-        this->ClearAnimations();
+        this->ClearAnimations(true);        // <-- 'true' = clear animation segments, too.
         this->ClearConvexHulls();
 
 
@@ -793,6 +837,53 @@ namespace GTEngine
                                 }
                             }
                         }
+                    }
+                    else
+                    {
+                        // Unsupported Version.
+                        deserializer.Seek(header.sizeInBytes);
+                    }
+
+                    break;
+                }
+
+            case Serialization::ChunkID_Model_AnimationSegments:
+                {
+                    deserializer.Seek(sizeof(header));
+
+                    if (header.version == 1)
+                    {
+                        uint32_t animationSegmentCount;
+                        deserializer.Read(animationSegmentCount);
+                        
+                        for (uint32_t iSegment = 0; iSegment < animationSegmentCount; ++iSegment)
+                        {
+                            GTCore::String name;
+                            uint32_t startKeyFrame;
+                            uint32_t endKeyFrame;
+
+                            deserializer.ReadString(name);
+                            deserializer.Read(startKeyFrame);
+                            deserializer.Read(endKeyFrame);
+
+                            this->animation.AddNamedSegment(name.c_str(), static_cast<size_t>(startKeyFrame), static_cast<size_t>(endKeyFrame));
+                        }
+                    }
+                    else
+                    {
+                        // Unsupported Version.
+                        deserializer.Seek(header.sizeInBytes);
+                    }
+
+                    break;
+                }
+
+            case Serialization::ChunkID_Model_AnimationSequences:
+                {
+                    deserializer.Seek(sizeof(header));
+
+                    if (header.version == 1)
+                    {
                     }
                     else
                     {
