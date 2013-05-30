@@ -7,7 +7,7 @@ namespace GTEngine
     Animation::Animation()
         : keyFrames(), channels(),
           segments(), keyFrameQueue(),
-          isPlaying(false), playbackTime(0.0),
+          isPlaying(false), isPaused(false), playbackTime(0.0),
           loopStartQueueIndex(static_cast<size_t>(-1))
     {
     }
@@ -207,22 +207,30 @@ namespace GTEngine
             }
 
             this->isPlaying = true;
+            this->isPaused  = false;
         }
     }
 
     void Animation::Stop()
     {
         this->isPlaying = false;
+        this->isPaused  = false;
     }
 
     void Animation::Pause()
     {
-        this->isPlaying = false;
+        if (this->isPlaying)
+        {
+            this->isPaused = true;
+        }
     }
 
     void Animation::Resume()
     {
-        this->isPlaying = true;
+        if (this->isPlaying && this->isPaused)
+        {
+            this->isPaused = false;
+        }
     }
 
 
@@ -303,6 +311,7 @@ namespace GTEngine
         this->keyFrameQueue.Serialize(playbackSerializer);
 
         playbackSerializer.Write(this->isPlaying);
+        playbackSerializer.Write(this->isPaused);
         playbackSerializer.Write(this->playbackTime);
         playbackSerializer.Write(static_cast<uint32_t>(this->loopStartQueueIndex));
 
@@ -341,6 +350,7 @@ namespace GTEngine
                     this->keyFrameQueue.Deserialize(deserializer);
 
                     deserializer.Read(this->isPlaying);
+                    deserializer.Read(this->isPaused);
                     deserializer.Read(this->playbackTime);
                     
                     uint32_t newLoopStartQueueIndex;

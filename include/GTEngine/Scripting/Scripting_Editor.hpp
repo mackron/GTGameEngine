@@ -77,11 +77,35 @@ namespace GTEngine
             ///     Argument 1: A pointer to the model editor.
             int PlayAnimation(GTCore::Script &script);
 
+            /// Resumes playback of the model's animation.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            int ResumeAnimation(GTCore::Script &script);
+
             /// Stops the animation track of the model loaded in the given model editor.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the model editor.
             int StopAnimation(GTCore::Script &script);
+
+            /// Pauses playback of the model's animation.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            int PauseAnimation(GTCore::Script &script);
+
+            /// Determines whether or not the model is currently animating.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            int IsAnimationPlaying(GTCore::Script &script);
+
+            /// Determines whether or not the model is currently paused.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            int IsAnimationPaused(GTCore::Script &script);
 
 
             /// Adds a new animation segment to the model.

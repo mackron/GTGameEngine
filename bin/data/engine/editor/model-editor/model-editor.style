@@ -27,15 +27,6 @@ model-editor-viewport
     border: 1px #222
 }
 
-model-editor-timeline
-{
-    width:      100%
-    height:     64px
-    
-    border:     1px #222
-    border-top: none
-}
-
 model-editor-panel
 {
     width:              250px

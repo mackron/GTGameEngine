@@ -135,6 +135,9 @@ namespace GTEngine
         /// Determines whether or not the model is animating. Basically, this is used in determining whether or not the model should have vertex blending applied.
         bool IsAnimating() const;
 
+        /// Determines whether or not the model's animation is currently in a paused state.
+        bool IsAnimationPaused() const;
+
         /// Sets the playback speed.
         void SetAnimationPlaybackSpeed(double speed);
 

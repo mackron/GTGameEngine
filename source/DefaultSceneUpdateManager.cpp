@@ -67,7 +67,7 @@ namespace GTEngine
         if (modelComponent != nullptr)
         {
             auto model = modelComponent->GetModel();
-            if (model != nullptr && model->IsAnimating())
+            if (model != nullptr && model->IsAnimating() && !model->IsAnimationPaused())
             {
                 model->StepAnimation(deltaTimeInSeconds);
             }
