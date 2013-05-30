@@ -100,6 +100,29 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             int GetMaterialCount(GTCore::Script &script);
+
+
+            /// Plays an animation segment by it's name.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the segment to play.
+            ///     Argument 3: A boolean controlling whether or not to loop the animation.
+            ///
+            ///     It is possible for segments to share the same name. This will play the first occurance.
+            int PlayAnimationSegmentByName(GTCore::Script &script);
+
+            /// Pauses the currently playing animation, if any.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int PauseAnimation(GTCore::Script &script);
+
+            /// Stops the currently playing animation, returning it to it's original pose.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int StopAnimation(GTCore::Script &script);
         }
 
         namespace PointLightComponentFFI

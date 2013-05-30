@@ -124,6 +124,18 @@ namespace GTEngine
                 "    return GTEngine.System.ModelComponent.GetMaterialCount(self._internalPtr);"
                 "end;"
 
+                "function GTEngine.ModelComponent:PlayAnimationSegmentByName(segmentName, loop)"
+                "    GTEngine.System.ModelComponent.PlayAnimationSegmentByName(self._internalPtr, segmentName, loop);"
+                "end;"
+
+                "function GTEngine.ModelComponent:PauseAnimation()"
+                "    GTEngine.System.ModelComponent.PauseAnimation(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ModelComponent:StopAnimation()"
+                "    GTEngine.System.ModelComponent.StopAnimation(self._internalPtr);"
+                "end;"
+
 
 
 
@@ -842,14 +854,17 @@ namespace GTEngine
                         script.GetTableValue(-2);
                         assert(script.IsTable(-1));
                         {
-                            script.SetTableFunction(-1, "SetModel",                ModelComponentFFI::SetModel);
-                            script.SetTableFunction(-1, "GetModelPath",            ModelComponentFFI::GetModelPath);
-                            script.SetTableFunction(-1, "EnableShadowCasting",     ModelComponentFFI::EnableShadowCasting);
-                            script.SetTableFunction(-1, "DisableShadowCasting",    ModelComponentFFI::DisableShadowCasting);
-                            script.SetTableFunction(-1, "IsShadowCastingEnabled",  ModelComponentFFI::IsShadowCastingEnabled);
-                            script.SetTableFunction(-1, "SetMaterial",             ModelComponentFFI::SetMaterial);
-                            script.SetTableFunction(-1, "GetMaterialPath",         ModelComponentFFI::GetMaterialPath);
-                            script.SetTableFunction(-1, "GetMaterialCount",        ModelComponentFFI::GetMaterialCount);
+                            script.SetTableFunction(-1, "SetModel",                   ModelComponentFFI::SetModel);
+                            script.SetTableFunction(-1, "GetModelPath",               ModelComponentFFI::GetModelPath);
+                            script.SetTableFunction(-1, "EnableShadowCasting",        ModelComponentFFI::EnableShadowCasting);
+                            script.SetTableFunction(-1, "DisableShadowCasting",       ModelComponentFFI::DisableShadowCasting);
+                            script.SetTableFunction(-1, "IsShadowCastingEnabled",     ModelComponentFFI::IsShadowCastingEnabled);
+                            script.SetTableFunction(-1, "SetMaterial",                ModelComponentFFI::SetMaterial);
+                            script.SetTableFunction(-1, "GetMaterialPath",            ModelComponentFFI::GetMaterialPath);
+                            script.SetTableFunction(-1, "GetMaterialCount",           ModelComponentFFI::GetMaterialCount);
+                            script.SetTableFunction(-1, "PlayAnimationSegmentByName", ModelComponentFFI::PlayAnimationSegmentByName);
+                            script.SetTableFunction(-1, "PauseAnimation",             ModelComponentFFI::PauseAnimation);
+                            script.SetTableFunction(-1, "StopAnimation",              ModelComponentFFI::StopAnimation);
                         }
                         script.Pop(1);
 
@@ -1302,6 +1317,55 @@ namespace GTEngine
                 }
 
                 return 1;
+            }
+
+
+            int PlayAnimationSegmentByName(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    auto model = component->GetModel();
+                    if (model != nullptr)
+                    {
+                        AnimationSequence sequence;
+                        sequence.AddFrame(script.ToString(2), 0.0, script.ToBoolean(3));
+
+                        model->PlayAnimation(sequence);
+                    }
+                }
+
+                return 0;
+            }
+
+            int PauseAnimation(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    auto model = component->GetModel();
+                    if (model != nullptr)
+                    {
+                        model->PauseAnimation();
+                    }
+                }
+
+                return 0;
+            }
+
+            int StopAnimation(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    auto model = component->GetModel();
+                    if (model != nullptr)
+                    {
+                        model->StopAnimation();
+                    }
+                }
+
+                return 0;
             }
         }
 
