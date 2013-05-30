@@ -79,6 +79,57 @@ namespace GTEngine
             ///     Argument 3: The relative path of the material to use.
             int SetMaterial(GTCore::Script &script);
 
+
+            /// Adds a new animation segment to the model.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            ///     Argument 2: The name of the new animation segment.
+            ///     Argument 3: The start frame index.
+            ///     Argument 4: The end frame index.
+            int AddNewAnimationSegment(GTCore::Script &script);
+
+            /// Removes an animation segment by it's index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            ///     Argument 2: The index of the animation segment to remove.
+            int RemoveAnimationSegmentByIndex(GTCore::Script &script);
+
+            /// Sets the name of the given animation segment.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            ///     Argument 2: The index of the animation segment whose name is being set.
+            ///     Argument 3: The new name.
+            int SetAnimationSegmentName(GTCore::Script &script);
+
+            /// Retrieves the name of the given animation segment.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            ///     Argument 2: The index of the animation segment whose name is being retrieved.
+            int GetAnimationSegmentName(GTCore::Script &script);
+
+            /// Sets the start and end frame indices of the given animation segment.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            ///     Argument 2: The index of the animation segment whose frame indices are being set.
+            ///     Argument 3: The start index.
+            ///     Argument 4: The end index.
+            int SetAnimationSegmentFrameIndices(GTCore::Script &script);
+
+            /// Retrieves the start and end frame indices of the given animation segment.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            ///     Argument 2: The index of the animation segment whose frame indices are being retrieved.
+            ///     
+            //      The return value is two integers.
+            int GetAnimationSegmentFrameIndices(GTCore::Script &script);
+
+
             /// Shows the convex decomposition of the model.
             ///
             /// @remarks

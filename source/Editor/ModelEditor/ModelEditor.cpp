@@ -230,6 +230,63 @@ namespace GTEngine
         }
     }
 
+
+    void ModelEditor::AddNewAnimationSegment(const char* name, size_t startIndex, size_t endIndex)
+    {
+        this->modelDefinition.animation.AddNamedSegment(name, startIndex, endIndex);
+        this->MarkAsModified();
+    }
+
+    void ModelEditor::RemoveAnimationSegmentByIndex(size_t index)
+    {
+        this->modelDefinition.animation.RemoveSegmentByIndex(index);
+        this->MarkAsModified();
+    }
+
+    void ModelEditor::SetAnimationSegmentName(size_t index, const char* newName)
+    {
+        auto segment = this->modelDefinition.animation.GetNamedSegmentByIndex(index);
+        if (segment != nullptr)
+        {
+            segment->name = newName;
+            this->MarkAsModified();
+        }
+    }
+
+    const char* ModelEditor::GetAnimationSegmentName(size_t index) const
+    {
+        auto segment = this->modelDefinition.animation.GetNamedSegmentByIndex(index);
+        if (segment != nullptr)
+        {
+            return segment->name.c_str();
+        }
+
+        return nullptr;
+    }
+
+    void ModelEditor::SetAnimationSegmentFrameIndices(size_t segmentIndex, size_t startIndex, size_t endIndex)
+    {
+        auto segment = this->modelDefinition.animation.GetNamedSegmentByIndex(segmentIndex);
+        if (segment != nullptr)
+        {
+            segment->startKeyFrame = startIndex;
+            segment->endKeyFrame   = endIndex;
+
+            this->MarkAsModified();
+        }
+    }
+
+    void ModelEditor::GetAnimationSegmentFrameIndices(size_t segmentIndex, size_t &startIndex, size_t &endIndex) const
+    {
+        auto segment = this->modelDefinition.animation.GetNamedSegmentByIndex(segmentIndex);
+        if (segment != nullptr)
+        {
+            startIndex = segment->startKeyFrame;
+            endIndex   = segment->endKeyFrame;
+        }
+    }
+
+
     void ModelEditor::GetConvexHullBuildSettings(ConvexHullBuildSettings &settingsOut)
     {
         auto modelComponent = this->modelNode.GetComponent<ModelComponent>();
