@@ -233,15 +233,15 @@ namespace GTEngine
         this->CopyAnimation(this->definition.animation, this->definition.animationChannelBones);
         
         // Now we need to create the meshes. This must be done after adding the bones.
-        for (size_t i = 0; i < this->definition.meshGeometries.count; ++i)
+        for (size_t i = 0; i < this->definition.meshes.count; ++i)
         {
-            if (this->definition.meshSkinningVertexAttributes[i] != nullptr)
+            if (this->definition.meshes[i].skinningVertexAttributes != nullptr)
             {
-                this->AttachMesh(this->definition.meshGeometries[i], this->definition.meshMaterials[i]->GetDefinition().relativePath.c_str(), this->definition.meshSkinningVertexAttributes[i]);
+                this->AttachMesh(this->definition.meshes[i].geometry, this->definition.meshes[i].material->GetDefinition().relativePath.c_str(), this->definition.meshes[i].skinningVertexAttributes);
             }
             else
             {
-                this->AttachMesh(this->definition.meshGeometries[i], this->definition.meshMaterials[i]->GetDefinition().relativePath.c_str());
+                this->AttachMesh(this->definition.meshes[i].geometry, this->definition.meshes[i].material->GetDefinition().relativePath.c_str());
             }
         }
     }
@@ -269,9 +269,9 @@ namespace GTEngine
 
                 // We need to write a boolean that specifies whether or not the material is the same as that specified by the definition.
                 bool usingSameMaterial = false;
-                if (&this->definition != &NullModelDefinition && this->definition.meshMaterials[i] != nullptr && mesh->GetMaterial() != nullptr)
+                if (&this->definition != &NullModelDefinition && this->definition.meshes[i].material != nullptr && mesh->GetMaterial() != nullptr)
                 {
-                    auto &definitionA = this->definition.meshMaterials[i]->GetDefinition();
+                    auto &definitionA = this->definition.meshes[i].material->GetDefinition();
                     auto &definitionB = mesh->GetMaterial()->GetDefinition();
 
                     usingSameMaterial = definitionA.relativePath == definitionB.relativePath;
@@ -428,7 +428,7 @@ namespace GTEngine
 
                                     if (usingSameMaterial)
                                     {
-                                        auto newMaterial = this->definition.meshMaterials[iMesh];
+                                        auto newMaterial = this->definition.meshes[iMesh].material;
                                         if (newMaterial != nullptr)
                                         {
                                             mesh->SetMaterial(newMaterial->GetDefinition().relativePath.c_str());

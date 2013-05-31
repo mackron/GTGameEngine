@@ -396,9 +396,11 @@ namespace GTEngine
         if (iDefinition == nullptr)
         {
             definition = new ModelDefinition;
-            definition->meshGeometries.PushBack(va);
-            definition->meshMaterials.PushBack(MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
-            definition->meshSkinningVertexAttributes.PushBack(nullptr);
+            
+            ModelDefinition::Mesh mesh;
+            mesh.geometry = va;
+            mesh.material = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
+            definition->AddMesh(mesh);
 
             LoadedDefinitions.Add(name, ModelDefinitionReference(definition, 1));
         }

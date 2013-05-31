@@ -10,7 +10,7 @@ namespace GTEngine
 {
     ModelDefinition::ModelDefinition()
         : absolutePath(), relativePath(),
-          meshGeometries(), meshMaterials(), meshSkinningVertexAttributes(),
+          //meshGeometries(), meshMaterials(), meshSkinningVertexAttributes(),
           meshes(), bones(),
           animation(), animationChannelBones(), animationKeyCache(),
           convexHulls(), convexHullBuildSettings()
@@ -24,9 +24,9 @@ namespace GTEngine
         this->ClearAnimations();
         this->ClearConvexHulls();
 
-        this->ClearMeshGeometries();
-        this->ClearMeshSkinningVertexAttributes();
-        this->ClearMaterials();
+        //this->ClearMeshGeometries();
+        //this->ClearMeshSkinningVertexAttributes();
+        //this->ClearMaterials();
     }
 
     bool ModelDefinition::LoadFromFile(const char* relativePathIn)
@@ -144,9 +144,9 @@ namespace GTEngine
 
     void ModelDefinition::GenerateTangentsAndBitangents()
     {
-        for (size_t i = 0; i < this->meshGeometries.count; ++i)
+        for (size_t i = 0; i < this->meshes.count; ++i)
         {
-            this->meshGeometries[i]->GenerateTangentsAndBitangents();
+            this->meshes[i].geometry->GenerateTangentsAndBitangents();
         }
     }
 
@@ -174,14 +174,13 @@ namespace GTEngine
 
 
         // After deleting the old convex hulls we can build the new ones.
-        for (size_t i = 0; i < this->meshGeometries.count; ++i)
+        for (size_t i = 0; i < this->meshes.count; ++i)
         {
-            auto va = this->meshGeometries[i];
-            if (va != nullptr)
+            if (this->meshes[i].geometry != nullptr)
             {
                 ConvexHull* convexHulls;
                 size_t      count;
-                ConvexHull::BuildConvexHulls(*va, convexHulls, count, settings);
+                ConvexHull::BuildConvexHulls(*this->meshes[i].geometry, convexHulls, count, settings);
 
                 for (size_t iHull = 0; iHull < count; ++iHull)
                 {
@@ -196,7 +195,7 @@ namespace GTEngine
         this->convexHullBuildSettings = settings;
     }
 
-
+    /*
     void ModelDefinition::ClearMeshGeometries()
     {
         for (size_t i = 0; i < this->meshGeometries.count; ++i)
@@ -224,7 +223,7 @@ namespace GTEngine
         }
         this->meshMaterials.Clear();
     }
-
+    */
 
     void ModelDefinition::ClearMeshes()
     {
@@ -232,9 +231,9 @@ namespace GTEngine
         {
             auto &mesh = this->meshes[iMesh];
             
-            //Renderer::DeleteVertexArray(mesh.geometry);
-            //MaterialLibrary::Delete(mesh.material);
-            //delete [] mesh.skinningVertexAttributes;
+            Renderer::DeleteVertexArray(mesh.geometry);
+            MaterialLibrary::Delete(mesh.material);
+            delete [] mesh.skinningVertexAttributes;
         }
 
         this->meshes.Clear();
@@ -461,20 +460,20 @@ namespace GTEngine
         // Vertex data is always saved in P3T2N3T3B3 format. Bones are referenced using an integer to index into the list of bones defined above.
 
         intermediarySerializer.Clear();
-        intermediarySerializer.Write(static_cast<uint32_t>(this->meshGeometries.count));
+        intermediarySerializer.Write(static_cast<uint32_t>(this->meshes.count));
 
-        for (size_t iMesh = 0; iMesh < this->meshGeometries.count; ++iMesh)
+        for (size_t iMesh = 0; iMesh < this->meshes.count; ++iMesh)
         {
             // Name.
             intermediarySerializer.WriteString(this->meshes[iMesh].name);
 
 
             // Material.
-            intermediarySerializer.WriteString(this->meshMaterials[iMesh]->GetDefinition().relativePath);
+            intermediarySerializer.WriteString(this->meshes[iMesh].material->GetDefinition().relativePath);
 
 
             // Vertices.
-            auto vertexArray = this->meshGeometries[iMesh];
+            auto vertexArray = this->meshes[iMesh].geometry;
             assert(vertexArray != nullptr);
             {
                 assert(vertexArray->GetFormat().GetSize() == VertexFormat::P3T2N3T3B3.GetSize());
@@ -498,7 +497,7 @@ namespace GTEngine
 
 
                     // Skinning Vertex Attributes.
-                    if (this->meshSkinningVertexAttributes[iMesh] != nullptr)
+                    if (this->meshes[iMesh].skinningVertexAttributes != nullptr)
                     {
                         intermediarySerializer.Write(static_cast<uint32_t>(vertexArray->GetVertexCount()));
 
@@ -510,7 +509,7 @@ namespace GTEngine
                             // Bone Counts.
                             for (size_t iVertex = 0; iVertex < vertexArray->GetVertexCount(); ++iVertex)
                             {
-                                uint16_t count = static_cast<uint16_t>(this->meshSkinningVertexAttributes[iMesh][iVertex].bones.count);
+                                uint16_t count = static_cast<uint16_t>(this->meshes[iMesh].skinningVertexAttributes[iVertex].bones.count);
                                 intermediarySerializer.Write(count);
 
                                 totalBoneWeights += count;
@@ -522,7 +521,7 @@ namespace GTEngine
 
                             for (size_t iVertex = 0; iVertex < vertexArray->GetVertexCount(); ++iVertex)
                             {
-                                auto &bones = this->meshSkinningVertexAttributes[iMesh][iVertex].bones;
+                                auto &bones = this->meshes[iMesh].skinningVertexAttributes[iVertex].bones;
                                 {
                                     for (size_t iBone = 0; iBone < bones.count; ++iBone)
                                     {
@@ -728,9 +727,11 @@ namespace GTEngine
     bool ModelDefinition::Deserialize(GTCore::Deserializer &deserializer)
     {
         // Clear everything.
-        this->ClearMeshGeometries();
-        this->ClearMeshSkinningVertexAttributes();
-        this->ClearMaterials();
+        //this->ClearMeshGeometries();
+        //this->ClearMeshSkinningVertexAttributes();
+        //this->ClearMaterials();
+
+        this->ClearMeshes();
         this->ClearBones();
         this->ClearAnimations(true);        // <-- 'true' = clear animation segments, too.
         this->ClearConvexHulls();
@@ -835,7 +836,6 @@ namespace GTEngine
                             deserializer.ReadString(materialName);
 
                             newMesh.material = MaterialLibrary::Create(materialName.c_str());
-                            this->meshMaterials.PushBack(newMesh.material);
 
 
 
@@ -869,8 +869,6 @@ namespace GTEngine
                                 }
                                 newMesh.geometry->UnmapIndexData();
                             }
-
-                            this->meshGeometries.PushBack(newMesh.geometry);
 
 
 
@@ -910,8 +908,6 @@ namespace GTEngine
                                 free(counts);
                                 free(boneWeights);
                             }
-
-                            this->meshSkinningVertexAttributes.PushBack(newMesh.skinningVertexAttributes);
 
                             // Finally, add the mesh.
                             this->AddMesh(newMesh);
