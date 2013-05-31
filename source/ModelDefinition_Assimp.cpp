@@ -240,12 +240,12 @@ namespace GTEngine
             auto normals   = mesh->mNormals;
             auto texCoords = mesh->mTextureCoords;
 
+            auto format = VertexFormat::P3T2N3T3B3;
+            auto va     = Renderer::CreateVertexArray(VertexArrayUsage_Static, format);
+
             // For now, only support triangle formats.
             if (mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE)
             {
-                auto format = VertexFormat::P3T2N3T3B3;
-
-                auto va = Renderer::CreateVertexArray(VertexArrayUsage_Static, format);
                 va->SetData(nullptr, mesh->mNumVertices, nullptr, mesh->mNumFaces * 3);
 
                 auto vertexData = va->MapVertexData();
@@ -322,9 +322,9 @@ namespace GTEngine
 
                 va->UnmapVertexData();
                 va->UnmapIndexData();
-
-                definition.meshGeometries.PushBack(va);
             }
+
+            definition.meshGeometries.PushBack(va);
 
 
             // Here is where we create all of the bones for the mesh.
@@ -423,7 +423,7 @@ namespace GTEngine
 
                     // Skinning Vertex Attributes.
                     auto localBones = meshBones[i];
-                    if (localBones != nullptr)
+                    if (localBones != nullptr && this->meshGeometries[i]->GetVertexCount() > 0)
                     {
                         auto skinningVertexAttributes = new SkinningVertexAttribute[this->meshGeometries[i]->GetVertexCount()];
 
