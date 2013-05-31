@@ -33,7 +33,7 @@ namespace GTEngine
             {
                 glm::vec3 aabbMin;
                 glm::vec3 aabbMax;
-                model->GetBaseAABB(aabbMin, aabbMax);
+                model->GetAABB(aabbMin, aabbMax);
 
                 aabbMin *= sceneNode.GetWorldScale();
                 aabbMax *= sceneNode.GetWorldScale();
@@ -358,7 +358,7 @@ namespace GTEngine
                     {
                         glm::vec3 aabbMin;
                         glm::vec3 aabbMax;
-                        model->GetBaseAABB(aabbMin, aabbMax);
+                        model->GetAABB(aabbMin, aabbMax);
 
                         aabbMin *= sceneNode.GetWorldScale();
                         aabbMax *= sceneNode.GetWorldScale();

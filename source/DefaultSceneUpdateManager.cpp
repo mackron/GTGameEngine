@@ -43,14 +43,14 @@ namespace GTEngine
         this->sceneNodes.RemoveFirstOccuranceOf(&sceneNode);
     }
 
-    void DefaultSceneUpdateManager::Step(double deltaTimeInSeconds)
+    void DefaultSceneUpdateManager::Step(double deltaTimeInSeconds, SceneCullingManager &cullingManager)
     {
         for (size_t i = 0; i < this->sceneNodes.count; ++i)
         {
             auto sceneNode = this->sceneNodes[i];
             assert(sceneNode != nullptr);
             {
-                this->StepSceneNode(*sceneNode, deltaTimeInSeconds);
+                this->StepSceneNode(*sceneNode, deltaTimeInSeconds, cullingManager);
             }
         }
     }
@@ -60,7 +60,7 @@ namespace GTEngine
     /////////////////////////////////////////////////////////
     // Protected Methods.
 
-    void DefaultSceneUpdateManager::StepSceneNode(SceneNode &node, double deltaTimeInSeconds)
+    void DefaultSceneUpdateManager::StepSceneNode(SceneNode &node, double deltaTimeInSeconds, SceneCullingManager &cullingManager)
     {
         // If we have an animated model component, that needs to have it's animation stepped.
         auto modelComponent = node.GetComponent<ModelComponent>();
@@ -70,6 +70,7 @@ namespace GTEngine
             if (model != nullptr && model->IsAnimating() && !model->IsAnimationPaused())
             {
                 model->StepAnimation(deltaTimeInSeconds);
+                cullingManager.UpdateModelAABB(node);
             }
         }
 
@@ -83,6 +84,7 @@ namespace GTEngine
                 if (particleSystem != nullptr)
                 {
                     particleSystem->Update(deltaTimeInSeconds);
+                    cullingManager.UpdateParticleSystemAABB(node);
                 }
             }
         }

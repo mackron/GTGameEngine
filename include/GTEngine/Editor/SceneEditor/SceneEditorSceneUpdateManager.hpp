@@ -40,7 +40,7 @@ namespace GTEngine
 
 
         /// DefaultSceneUpdateManager::Step()
-        void StepSceneNode(SceneNode &node, double deltaTimeInSeconds);
+        void StepSceneNode(SceneNode &node, double deltaTimeInSeconds, SceneCullingManager &cullingManager);
 
 
     private:

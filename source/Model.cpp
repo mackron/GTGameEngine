@@ -8,6 +8,9 @@
 #include <GTCore/Timing.hpp>
 #include <cfloat>
 
+#undef min
+#undef max
+
 namespace GTEngine
 {
     static ModelDefinition NullModelDefinition;
@@ -181,7 +184,7 @@ namespace GTEngine
         }
     }
 
-    void Model::GetBaseAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const
+    void Model::GetAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const
     {
         // We may need to update the AABB.
         if (!this->isAABBValid)
@@ -217,6 +220,14 @@ namespace GTEngine
 
         aabbMin = this->aabbMin;
         aabbMax = this->aabbMax;
+    }
+
+    void Model::SetAABB(const glm::vec3 &aabbMinIn, const glm::vec3 &aabbMaxIn)
+    {
+        this->aabbMin = aabbMinIn;
+        this->aabbMax = aabbMaxIn;
+
+        this->isAABBValid = true;
     }
 
 
@@ -568,6 +579,9 @@ namespace GTEngine
     {
         this->animation.Step(step * this->animationPlaybackSpeed);
 
+        glm::vec3 boneAABBMin = glm::vec3( FLT_MAX);
+        glm::vec3 boneAABBMax = glm::vec3(-FLT_MAX);
+
         // Now that we've stepped the animation, we need to update the bone positions.
         size_t startKeyFrame;
         size_t endKeyFrame;
@@ -597,8 +611,20 @@ namespace GTEngine
         // loop above to ensure all dependants have been updated beforehand.
         for (size_t i = 0; i < this->animationChannelBones.count; ++i)
         {
-            this->animationChannelBones.buffer[i]->key->UpdateSkinningTransform();
+            glm::vec3 position;
+            glm::quat devnull0;
+            glm::vec3 devnull1;
+            this->animationChannelBones.buffer[i]->key->UpdateSkinningTransform(position, devnull0, devnull1);
+
+            boneAABBMin = glm::min(boneAABBMin, position);
+            boneAABBMax = glm::max(boneAABBMax, position);
         }
+
+
+        // The AABB needs to be set, but with bone AABB padding applied.
+        boneAABBMin -= this->definition.GetAnimationAABBPadding();
+        boneAABBMax += this->definition.GetAnimationAABBPadding();
+        this->SetAABB(boneAABBMin, boneAABBMax);
     }
 
     bool Model::IsAnimating() const

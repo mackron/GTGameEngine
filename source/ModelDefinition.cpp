@@ -12,6 +12,7 @@ namespace GTEngine
         : absolutePath(), relativePath(),
           meshes(), bones(),
           animation(), animationChannelBones(), animationKeyCache(),
+          animationAABBPadding(0.25f),
           convexHulls(), convexHullBuildSettings()
     {
     }
@@ -357,6 +358,16 @@ namespace GTEngine
     }
 
 
+    const glm::vec3 & ModelDefinition::GetAnimationAABBPadding() const
+    {
+        return this->animationAABBPadding;
+    }
+
+    void ModelDefinition::SetAnimationAABBPadding(const glm::vec3 &padding)
+    {
+        this->animationAABBPadding = padding;
+    }
+
 
     ////////////////////////////////////////////////////////
     // Serialization/Deserialization
@@ -575,6 +586,9 @@ namespace GTEngine
                 }
             }
         }
+
+        intermediarySerializer.Write(this->animationAABBPadding);
+
 
         header.id          = Serialization::ChunkID_Model_Animation;
         header.version     = 1;
@@ -939,6 +953,8 @@ namespace GTEngine
                                 }
                             }
                         }
+
+                        deserializer.Read(this->animationAABBPadding);
                     }
                     else
                     {

@@ -160,6 +160,7 @@ namespace GTEngine
         /// @remarks
         ///     This method asserts that <destination> is already pre-allocated.
         void ApplySkinning();
+        void ApplySkinning(glm::vec3 &aabbMinOut, glm::vec3 &aabbMaxOut);
 
         /// Determines whether or not the mesh is animated.
         bool IsAnimated() const;

@@ -4,6 +4,7 @@
 #define __GTEngine_SceneUpdateManager_hpp_
 
 #include "SceneNode.hpp"
+#include "SceneCullingManager.hpp"
 
 namespace GTEngine
 {
@@ -58,10 +59,11 @@ namespace GTEngine
         /// Performs the update step.
         ///
         /// @param deltaTimeInSeconds [in] The delta time in seconds (time between updates).
+        /// @param cullingManager     [in] A reference to the culling manager so the update manager can update culling information when needed.
         ///
         /// @remarks
         ///     This should step everything that needs stepping, not including physics.
-        virtual void Step(double deltaTimeInSeconds) = 0;
+        virtual void Step(double deltaTimeInSeconds, SceneCullingManager &cullingManager) = 0;
 
 
 

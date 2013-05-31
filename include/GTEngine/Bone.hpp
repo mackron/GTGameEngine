@@ -132,6 +132,7 @@ namespace GTEngine
 
         /// Retrieves the absolute transformation of the bone.
         glm::mat4 GetAbsoluteTransform() const;
+        glm::mat4 GetAbsoluteTransform(glm::vec3 &absolutePositionOut, glm::quat &absoluteRotationOut, glm::vec3 &absoluteScaleOut) const;
 
 
         /// Updates the skinning transformation matrix.
@@ -139,6 +140,7 @@ namespace GTEngine
         /// @param
         ///     The matrix generated from this method is used as the return value for GetSkinningTransform().
         void UpdateSkinningTransform();
+        void UpdateSkinningTransform(glm::vec3 &absolutePositionOut, glm::quat &absoluteRotationOut, glm::vec3 &absoluteScaleOut);
 
         /// Retrieves the transformation to use when applying vertex blending.
         ///

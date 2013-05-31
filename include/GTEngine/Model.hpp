@@ -69,11 +69,17 @@ namespace GTEngine
         void GenerateTangentsAndBitangents();
 
 
-        /// Retrieves the AABB of the base geometry.
+        /// Retrieves the AABB of the geometry.
         ///
         /// @param aabbMin [out] A reference to the variable that will receive the min corner.
         /// @param aabbMax [out] A reference to the variable that will receive that max corner.
-        void GetBaseAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const;
+        void GetAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const;
+
+        /// Explicitly Sets the AABB of the geometry.
+        ///
+        /// @param aabbMin [in] The low bound of the AABB.
+        /// @param aabbMax [in] The high bound of the AABB.
+        void SetAABB(const glm::vec3 &aabbMin, const glm::vec3 &aabbMax);
 
 
         /// Retrieves the internal list of convex hulls of this model.
