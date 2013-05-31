@@ -7,7 +7,7 @@ namespace GTEngine
     Animation::Animation()
         : keyFrames(), channels(),
           segments(), keyFrameQueue(),
-          isPlaying(false), isPaused(false), playbackTime(0.0),
+          isPlaying(false), isPaused(false), hasLooped(false), playbackTime(0.0),
           loopStartQueueIndex(static_cast<size_t>(-1))
     {
     }
@@ -142,13 +142,18 @@ namespace GTEngine
     ////////////////////////////////////////////////////////////////////////
     // Playback.
 
-    void Animation::Play(const AnimationSequence &sequence)
+    void Animation::Play(const AnimationSequence &sequence, double transitionTime)
     {
+        (void)transitionTime;
+
         // First we need to make sure our queue is reset.
         this->keyFrameQueue.RemoveAll();
 
         /// The loop index needs to reset.
         this->loopStartQueueIndex = static_cast<size_t>(-1);
+
+        /// Need to let the animation know that we haven't yet looped anything.
+        this->hasLooped = false;
 
         // If we don't have any key frames, we won't bother doing anything.
         if (this->keyFrames.count > 0)
@@ -184,6 +189,54 @@ namespace GTEngine
                     }
 
 
+                    // Now we need to loop over and add the key frames to the queue.
+                    //
+                    // If we are looping, we need to add an extra key frame at both the beginning and the end of that segment.
+                    for (size_t jKeyFrame = keyFrameStart; jKeyFrame <= keyFrameEnd; ++jKeyFrame)
+                    {
+                        double transitionTime = 0.0;
+
+                        if (jKeyFrame == keyFrameStart)
+                        {
+                            if (iSequenceFrame > 0)
+                            {
+                                transitionTime = sequenceFrame.transitionTime;
+                            }
+                            else
+                            {
+                                transitionTime = transitionTime;
+                            }
+
+                            // Extra frame for looping at the beginning. Instant transition.
+                            /*if (sequenceFrame.loop)
+                            {
+                                this->keyFrameQueue.Append(keyFrameStart, 0.0);
+                            }*/
+                        }
+                        else
+                        {
+                            transitionTime = this->keyFrames.buffer[jKeyFrame]->value.GetTime() - this->keyFrames.buffer[jKeyFrame - 1]->value.GetTime();
+                        }
+
+                        
+                        this->keyFrameQueue.Append(jKeyFrame, transitionTime);
+                    }
+
+                    /*
+                    if (sequenceFrame.loop)
+                    {
+                        if (this->keyFrameQueue.GetCount() >= 2)
+                        {
+                            auto &lastKeyFrame       = this->keyFrames.buffer[keyFrameEnd    ]->value;
+                            auto &secondLastKeyFrame = this->keyFrames.buffer[keyFrameEnd - 1]->value;
+
+                            this->keyFrameQueue.Append(keyFrameStart, lastKeyFrame.GetTime() - secondLastKeyFrame.GetTime());
+                        }
+                    }
+                    */
+
+
+                    /*
                     // We calculate transition times for frames by looking at the times of each and getting the difference. This variable keeps track of
                     // the previous frame's time.
                     double prevFrameTime = 0.0f;
@@ -195,11 +248,22 @@ namespace GTEngine
                     // Now we can loop through each remaining key frame.
                     for (size_t j = keyFrameStart; j <= keyFrameEnd; ++j)
                     {
-                        auto jTime = this->keyFrames.buffer[j]->value.GetTime();
+                        double transitionTime = 0.0f;
+                        if (iSequenceFrame > 0 && j == keyFrameStart)
+                        {
+                            transitionTime = sequenceFrame.transitionTime;
+                        }
+                        else
+                        {
+                            auto jTime = this->keyFrames.buffer[j]->value.GetTime();
+                            
+                            transitionTime = jTime - prevFrameTime;
+                            prevFrameTime  = jTime;
+                        }
 
-                        this->keyFrameQueue.Append(j, jTime - prevFrameTime);
-                        prevFrameTime = jTime;
+                        this->keyFrameQueue.Append(j, transitionTime);
                     }
+                    */
                 }
 
                 this->playbackTime = this->keyFrameQueue.GetKeyFramePlaybackTime(0);
@@ -241,6 +305,18 @@ namespace GTEngine
     void Animation::SetPlaybackTime(double time)
     {
         this->playbackTime = time;
+
+        // We need to check if we've passed the looping point. If so, we need to modify the transition time of the first key frame in the looping segment.
+        if (time > this->keyFrameQueue.GetTotalDuration())
+        {
+            if (this->loopStartQueueIndex != static_cast<size_t>(-1) && !this->hasLooped && this->keyFrameQueue.GetCount() > 1)
+            {
+                //this->keyFrameQueue.SetKeyFrameTransitionTime(this->loopStartQueueIndex, this->keyFrameQueue.GetKeyFrameTransitionTime(this->loopStartQueueIndex + 1));
+                //this->keyFrameQueue.SetKeyFrameTransitionTime(this->loopStartQueueIndex, 0.0);
+                this->hasLooped = true;
+                //this->loopStartQueueIndex += 1;
+            }
+        }
     }
 
 
@@ -257,6 +333,12 @@ namespace GTEngine
 
                 double devnull;
                 time = loopStartTime + std::modf(this->playbackTime / loopDuration, &devnull) * loopDuration;
+
+                if (!this->hasLooped)
+                {
+                    this->keyFrameQueue.SetKeyFrameTransitionTime(this->loopStartQueueIndex, 0.0);
+                    this->hasLooped = true;
+                }
             }
             else
             {

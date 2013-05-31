@@ -103,12 +103,26 @@ namespace GTEngine
     double AnimationKeyFrameQueue::GetKeyFramePlaybackTime(size_t itemIndex)
     {
         double startTime = 0.0;
-        for (size_t i = 0; i <= itemIndex; ++i)
+        
+        if (this->keyFrames.count > 0)
         {
-            startTime += this->keyFrames[i].transitionTime;
+            for (size_t i = 0; i <= itemIndex; ++i)
+            {
+                startTime += this->keyFrames[i].transitionTime;
+            }
         }
 
         return startTime;
+    }
+
+    void AnimationKeyFrameQueue::SetKeyFrameTransitionTime(size_t keyFrameIndex, double transitionTime)
+    {
+        this->keyFrames[keyFrameIndex].transitionTime = transitionTime;
+    }
+
+    double AnimationKeyFrameQueue::GetKeyFrameTransitionTime(size_t keyFrameIndex) const
+    {
+        return this->keyFrames[keyFrameIndex].transitionTime;
     }
 
 
