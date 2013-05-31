@@ -12,7 +12,7 @@ namespace GTEngine
     ///
     /// The bones affecting each vertex is stored as a vertex attribute, which is simply an array that's indexable by the
     /// vertex ID.
-    class CPUVertexShader_Skinning : public CPUVertexShader
+    GLM_ALIGN(16) class CPUVertexShader_Skinning : public CPUVertexShader
     {
     public:
 
@@ -33,8 +33,20 @@ namespace GTEngine
         /// Note that this does not make a copy of the buffer; it simply sets the internal pointer.
         void SetSkinningVertexAttributes(const SkinningVertexAttribute* attributes);
 
+        /// Retrieves the AABB of the vertices that were processed.
+        ///
+        /// @param aabbMinOut [in] A reference to the variable that will receive the low bounds.
+        /// @param aabbMaxOut [in] A reference to the variable that will receive the high bounds.
+        ///
+        /// @remarks
+        ///     This is only valid after the shader has been executed.
+        void GetAABB(glm::vec3 &aabbMinOut, glm::vec3 &aabbMaxOut);
+
 
     protected:
+
+        /// CPUVertexShader::OnStartExecute()
+        void OnStartExecute();
 
         /// CPUVertexShader::ProcessVertex()
         void ProcessVertex(Vertex &vertex);
@@ -47,6 +59,10 @@ namespace GTEngine
 
         /// A pointer to the buffer containing the skinning vertex attributes.
         const SkinningVertexAttribute* skinningVertexAttributes;
+
+        /// The AABB containing each vertex.
+        glm::simdVec4 aabbMin;
+        glm::simdVec4 aabbMax;
         
     
     private:    // No copying.

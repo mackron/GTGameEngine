@@ -223,6 +223,8 @@ namespace GTEngine
         {
             //benchmarker.Start();
 
+            this->OnStartExecute();
+
             this->input              = input;
             this->vertexCount        = vertexCount;
             this->format             = format;
@@ -312,6 +314,7 @@ namespace GTEngine
                 ProcessVertexShader(*this, 0, this->vertexCount - 1);
             }
 
+            this->OnEndExecute();
 
             /*
             benchmarker.End();
@@ -327,6 +330,15 @@ namespace GTEngine
         }
         
         return false;
+    }
+
+
+    void CPUVertexShader::OnStartExecute()
+    {
+    }
+
+    void CPUVertexShader::OnEndExecute()
+    {
     }
 }
 
@@ -364,7 +376,6 @@ namespace GTEngine
             value = GetVertexAttribute4(this->data, componentCount, stride);
         }
 
-        //return glm::vec4(value.x, value.y, value.z, value.w);
         return glm::vec4(value.x, value.y, value.z, value.w);
     }
 
