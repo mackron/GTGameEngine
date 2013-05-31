@@ -10,7 +10,6 @@ namespace GTEngine
 {
     ModelDefinition::ModelDefinition()
         : absolutePath(), relativePath(),
-          //meshGeometries(), meshMaterials(), meshSkinningVertexAttributes(),
           meshes(), bones(),
           animation(), animationChannelBones(), animationKeyCache(),
           convexHulls(), convexHullBuildSettings()
@@ -23,10 +22,6 @@ namespace GTEngine
         this->ClearBones();
         this->ClearAnimations();
         this->ClearConvexHulls();
-
-        //this->ClearMeshGeometries();
-        //this->ClearMeshSkinningVertexAttributes();
-        //this->ClearMaterials();
     }
 
     bool ModelDefinition::LoadFromFile(const char* relativePathIn)
@@ -146,7 +141,10 @@ namespace GTEngine
     {
         for (size_t i = 0; i < this->meshes.count; ++i)
         {
-            this->meshes[i].geometry->GenerateTangentsAndBitangents();
+            if (this->meshes[i].geometry != nullptr)
+            {
+                this->meshes[i].geometry->GenerateTangentsAndBitangents();
+            }
         }
     }
 
@@ -195,35 +193,6 @@ namespace GTEngine
         this->convexHullBuildSettings = settings;
     }
 
-    /*
-    void ModelDefinition::ClearMeshGeometries()
-    {
-        for (size_t i = 0; i < this->meshGeometries.count; ++i)
-        {
-            // It's important that we garbage collect here.
-            Renderer::DeleteVertexArray(this->meshGeometries[i]);
-        }
-        this->meshGeometries.Clear();
-    }
-
-    void ModelDefinition::ClearMeshSkinningVertexAttributes()
-    {
-        for (size_t i = 0; i < this->meshSkinningVertexAttributes.count; ++i)
-        {
-            delete [] this->meshSkinningVertexAttributes[i];
-        }
-        this->meshSkinningVertexAttributes.Clear();
-    }
-
-    void ModelDefinition::ClearMaterials()
-    {
-        for (size_t i = 0; i < this->meshMaterials.count; ++i)
-        {
-            MaterialLibrary::Delete(this->meshMaterials[i]);
-        }
-        this->meshMaterials.Clear();
-    }
-    */
 
     void ModelDefinition::ClearMeshes()
     {

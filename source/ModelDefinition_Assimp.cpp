@@ -352,8 +352,24 @@ namespace GTEngine
                 }
 
 
-                // Finally, add the mesh.
-                definition.AddMesh(newMesh);
+                // Finally, add the mesh. If a mesh of the same name already exists, we just replace the appropriate data.
+                auto existingMesh = definition.GetMeshByName(newMesh.name.c_str());
+                if (existingMesh != nullptr)
+                {
+                    assert(existingMesh->geometry                 == nullptr);
+                    assert(existingMesh->skinningVertexAttributes == nullptr);
+
+                    existingMesh->geometry                 = newMesh.geometry;
+                    existingMesh->skinningVertexAttributes = newMesh.skinningVertexAttributes;
+
+                    // Don't change the material. We want to maintain this to play nicely with auto-reloading.
+                }
+                else
+                {
+                    // Set the default material before adding the mesh.
+                    newMesh.material = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
+                    definition.AddMesh(newMesh);
+                }
             }
         }
 
@@ -384,37 +400,39 @@ namespace GTEngine
             auto root = scene->mRootNode;
             if (root != nullptr)
             {
-                //size_t oldMeshCount = this->meshes.count;
+                // We want to clear geometry and skinning attributes from meshes, but not the materials. This will leave the meshes in the main list,
+                // but we'll do a post-process step afterwards and delete and meshes that do not have geometry.
+                for (size_t i = 0; i < this->meshes.count; ++i)
+                {
+                    Renderer::DeleteVertexArray(this->meshes[i].geometry);
+                    this->meshes[i].geometry = nullptr;
 
-                // At this point we're going to be re-creating the skinning and animation data. These need clearing.
-                //this->ClearMeshGeometries();
-                //this->ClearMeshSkinningVertexAttributes();
-                this->ClearMeshes();
+                    delete [] this->meshes[i].skinningVertexAttributes;
+                    this->meshes[i].skinningVertexAttributes = nullptr;
+                }
+
+                // All bones and animations need to be cleared, also.
                 this->ClearBones();
                 this->ClearAnimations();
-                
+
 
                 // This is where we take the assimp meshes and create the GTEngine meshes.
                 aiMatrix4x4 transform;
                 CopyNodesWithMeshes(*scene, *root, transform, *this);
 
-                // We need to perform a post-process step of sorts on each mesh. Here we sort out the materials and skinning vertex attributes. It's important that
-                // we do this after creating the local bones of the mesh so that we get the correct indices.
-                //
-                // If the number of meshes is different to the old one, we want to reset materials. Otherwise, we leave the materials alone.
-                //bool resetMaterials = oldMeshCount != this->meshes.count;
-                //if (resetMaterials)
-                //{
-                //    this->ClearMaterials();
-                //}
 
-                for (size_t i = 0; i < this->meshes.count; ++i)
+                // Any meshes without geometry is assumed to be a removed mesh.
+                for (size_t i = 0; i < this->meshes.count; )
                 {
-                    // Material.
-                    //if (resetMaterials)
-                    //{
-                    this->meshes[i].material = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
-                    //}
+                    if (this->meshes[i].geometry == nullptr)
+                    {
+                        MaterialLibrary::Delete(this->meshes[i].material);
+                        this->meshes.Remove(i);
+                    }
+                    else
+                    {
+                        ++i;
+                    }
                 }
 
 
