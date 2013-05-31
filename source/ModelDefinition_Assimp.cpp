@@ -250,6 +250,7 @@ namespace GTEngine
             if (mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE)
             {
                 ModelDefinition::Mesh newMesh;
+                newMesh.name = mesh->mName.C_Str();
 
                 newMesh.geometry = Renderer::CreateVertexArray(VertexArrayUsage_Static, vertexFormat);
                 newMesh.geometry->SetData(nullptr, mesh->mNumVertices, nullptr, mesh->mNumFaces * 3);
