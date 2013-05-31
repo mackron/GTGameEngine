@@ -197,6 +197,19 @@ namespace GTEngine
         size_t GetBoneCount() const;
 
 
+        /// Retrieves the amount of padding to apply to the AABB of animated meshes.
+        const glm::vec3 & GetAnimationAABBPadding() const;
+
+        /// Sets the amount of padding to apply to the AABB of animated meshes.
+        ///
+        /// @param padding [in] The new padding to apply to the AABB of animated meshes.
+        ///
+        /// @remarks
+        ///     Meshes won't use the new padding until their animations are stepped.
+        void SetAnimationAABBPadding(const glm::vec3 &padding);
+
+
+
 
         ////////////////////////////////////////////////////////
         // Serialization/Deserialization
@@ -259,6 +272,10 @@ namespace GTEngine
 
         /// The cache of animation keys.
         GTCore::Vector<TransformAnimationKey*> animationKeyCache;
+
+
+        /// The padding to apply to the animated AABB.
+        glm::vec3 animationAABBPadding;
 
 
         /// The list of the convex hulls making up the convex decomposition of this model. This is either loaded from the model's file or

@@ -34,7 +34,7 @@ namespace GTEngine
         virtual void RemoveSceneNode(SceneNode &sceneNode);
 
         /// SceneUpdateManager::Step().
-        virtual void Step(double deltaTimeInSeconds);
+        virtual void Step(double deltaTimeInSeconds, SceneCullingManager &cullingManager);
 
 
     protected:
@@ -46,7 +46,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This is called from Step().
-        virtual void StepSceneNode(SceneNode &node, double deltaTimeInSeconds);
+        virtual void StepSceneNode(SceneNode &node, double deltaTimeInSeconds, SceneCullingManager &cullingManager);
 
 
 

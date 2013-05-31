@@ -101,8 +101,14 @@ namespace GTEngine
     }
 
 
-
     void Mesh::ApplySkinning()
+    {
+        glm::vec3 devnull0;
+        glm::vec3 devnull1;
+        this->ApplySkinning(devnull0, devnull1);
+    }
+
+    void Mesh::ApplySkinning(glm::vec3 &aabbMinOut, glm::vec3 &aabbMaxOut)
     {
         if (this->geometry != nullptr)
         {
@@ -118,6 +124,9 @@ namespace GTEngine
                 shader.SetSkinningVertexAttributes(this->skinningData->skinningVertexAttributes);
 
                 shader.Execute(srcVertices, this->geometry->GetVertexCount(), this->geometry->GetFormat(), dstVertices);
+
+                // After executing, we need the AABBs.
+                shader.GetAABB(aabbMinOut, aabbMaxOut);
             }
 
 

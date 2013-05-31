@@ -636,21 +636,7 @@ namespace GTEngine
         // Now we need to update via the update manager.
         if (!this->IsPaused())
         {
-            this->updateManager.Step(deltaTimeInSeconds);
-        }
-
-
-        // We want to update the AABBs of each particle system.
-        for (size_t iParticleSystem = 0; iParticleSystem < this->sceneNodesWithParticleSystemComponents.count; ++iParticleSystem)
-        {
-            auto particleSystemComponent = this->sceneNodesWithParticleSystemComponents.buffer[iParticleSystem]->value;
-            assert(particleSystemComponent != nullptr);
-            {
-                if (particleSystemComponent->GetParticleSystem() != nullptr)
-                {
-                    this->cullingManager.UpdateParticleSystemAABB(particleSystemComponent->GetNode());
-                }
-            }
+            this->updateManager.Step(deltaTimeInSeconds, this->GetCullingManager());
         }
 
 

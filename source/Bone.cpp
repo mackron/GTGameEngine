@@ -151,17 +151,30 @@ namespace GTEngine
         glm::vec3 position;
         glm::quat rotation;
         glm::vec3 scale;
-        this->GetAbsoluteTransformComponents(position, rotation, scale);
+        return this->GetAbsoluteTransform(position, rotation, scale);
+    }
+
+    glm::mat4 Bone::GetAbsoluteTransform(glm::vec3 &absolutePositionOut, glm::quat &absoluteRotationOut, glm::vec3 &absoluteScaleOut) const
+    {
+        this->GetAbsoluteTransformComponents(absolutePositionOut, absoluteRotationOut, absoluteScaleOut);
 
         glm::mat4 result;
-        Math::CalculateTransformMatrix(position, rotation, scale, result);
+        Math::CalculateTransformMatrix(absolutePositionOut, absoluteRotationOut, absoluteScaleOut, result);
 
         return result;
     }
 
     void Bone::UpdateSkinningTransform()
     {
-        this->skinningMatrix = this->GetAbsoluteTransform() * this->offsetMatrix;
+        glm::vec3 position;
+        glm::quat rotation;
+        glm::vec3 scale;
+        this->UpdateSkinningTransform(position, rotation, scale);
+    }
+
+    void Bone::UpdateSkinningTransform(glm::vec3 &absolutePositionOut, glm::quat &absoluteRotationOut, glm::vec3 &absoluteScaleOut)
+    {
+        this->skinningMatrix = this->GetAbsoluteTransform(absolutePositionOut, absoluteRotationOut, absoluteScaleOut) * this->offsetMatrix;
     }
 
     const glm::mat4 & Bone::GetSkinningTransform() const

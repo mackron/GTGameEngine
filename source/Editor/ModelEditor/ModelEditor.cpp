@@ -168,7 +168,7 @@ namespace GTEngine
             auto model = modelComponent->GetModel();
             if (model != nullptr)
             {
-                model->GetBaseAABB(aabbMin, aabbMax);
+                model->GetAABB(aabbMin, aabbMax);
 
                 // Center point (camera look-at target).
                 glm::vec3 cameraLookAtTarget = (aabbMin + aabbMax) * 0.5f;

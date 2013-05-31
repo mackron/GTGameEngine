@@ -36,7 +36,7 @@ namespace GTEngine
     }
 
 
-    void SceneEditorSceneUpdateManager::StepSceneNode(SceneNode &node, double deltaTimeInSeconds)
+    void SceneEditorSceneUpdateManager::StepSceneNode(SceneNode &node, double deltaTimeInSeconds, SceneCullingManager &cullingManager)
     {
         // We need to orientate any sprites to face the camera.
         auto metadata = node.GetComponent<EditorMetadataComponent>();
@@ -51,7 +51,7 @@ namespace GTEngine
 
         if (this->isEnabled)
         {
-            DefaultSceneUpdateManager::StepSceneNode(node, deltaTimeInSeconds);
+            DefaultSceneUpdateManager::StepSceneNode(node, deltaTimeInSeconds, cullingManager);
         }
         else
         {
@@ -67,6 +67,7 @@ namespace GTEngine
                         if (particleSystem != nullptr)
                         {
                             particleSystem->Update(deltaTimeInSeconds);
+                            cullingManager.UpdateParticleSystemAABB(node);
                         }
                     }
                 }
