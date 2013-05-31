@@ -83,12 +83,21 @@ namespace GTEngine
 
 
         // Here we translate our start and end key frame indices.
-        startKeyFrameOut = this->keyFrames[iStart].keyFrameIndex;
-        endKeyFrameOut   = this->keyFrames[iEnd].keyFrameIndex;
+        if (this->keyFrames.count >= 2)
+        {
+            startKeyFrameOut = this->keyFrames[iStart].keyFrameIndex;
+            endKeyFrameOut   = this->keyFrames[iEnd].keyFrameIndex;
 
+            // At this point we will have the start and end frames. Now we need to get an interpolation factor between the two. This is the return value.
+            return static_cast<float>((time - startKeyTime) / this->keyFrames[iEnd].transitionTime);
+        }
+        else
+        {
+            startKeyFrameOut = 0;
+            endKeyFrameOut   = 0;
 
-        // At this point we will have the start and end frames. Now we need to get an interpolation factor between the two. This is the return value.
-        return static_cast<float>((time - startKeyTime) / this->keyFrames[iEnd].transitionTime);
+            return 0.0f;
+        }
     }
 
     double AnimationKeyFrameQueue::GetKeyFramePlaybackTime(size_t itemIndex)

@@ -83,7 +83,7 @@ namespace GTEngine
 
 
         /// Returns a constant reference to the internal list of frames.
-        const GTCore::Vector<AnimationSequenceFrame*> & GetFrames() const { return this->frames; }
+        const GTCore::Vector<AnimationSequenceFrame> & GetFrames() const { return this->frames; }
 
         /// Retrieves the number of frames.
         size_t GetFrameCount() const { return this->frames.count; }
@@ -91,8 +91,8 @@ namespace GTEngine
         /// Retrieves a frame at the given index.
         ///
         /// @param index [in] The index of the frame to retrieve.
-              AnimationSequenceFrame* GetFrame(size_t index)       { return this->frames[index]; }
-        const AnimationSequenceFrame* GetFrame(size_t index) const { return this->frames[index]; }
+              AnimationSequenceFrame & GetFrame(size_t index)       { return this->frames[index]; }
+        const AnimationSequenceFrame & GetFrame(size_t index) const { return this->frames[index]; }
 
 
     private:
@@ -101,7 +101,7 @@ namespace GTEngine
         GTCore::String name;
 
         /// The list of sequence frames.
-        GTCore::Vector<AnimationSequenceFrame*> frames;
+        GTCore::Vector<AnimationSequenceFrame> frames;
     };
 }
 
