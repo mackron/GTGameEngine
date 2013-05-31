@@ -465,6 +465,10 @@ namespace GTEngine
 
         for (size_t iMesh = 0; iMesh < this->meshGeometries.count; ++iMesh)
         {
+            // Name.
+            intermediarySerializer.WriteString(this->meshes[iMesh].name);
+
+
             // Material.
             intermediarySerializer.WriteString(this->meshMaterials[iMesh]->GetDefinition().relativePath);
 
@@ -820,16 +824,23 @@ namespace GTEngine
 
                         for (uint32_t iMesh = 0; iMesh < meshCount; ++iMesh)
                         {
+                            ModelDefinition::Mesh newMesh;
+
+                            // Name.
+                            deserializer.ReadString(newMesh.name);
+
+
                             // Material
                             GTCore::String materialName;
                             deserializer.ReadString(materialName);
 
-                            this->meshMaterials.PushBack(MaterialLibrary::Create(materialName.c_str()));
+                            newMesh.material = MaterialLibrary::Create(materialName.c_str());
+                            this->meshMaterials.PushBack(newMesh.material);
 
 
 
                             // Geometry
-                            auto vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2N3T3B3);
+                            newMesh.geometry = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2N3T3B3);
                             
                             // Vertices.
                             uint32_t vertexCount;
@@ -837,12 +848,12 @@ namespace GTEngine
 
                             if (vertexCount > 0)
                             {
-                                vertexArray->SetVertexData(nullptr, static_cast<size_t>(vertexCount));
-                                auto vertexData = vertexArray->MapVertexData();
+                                newMesh.geometry->SetVertexData(nullptr, static_cast<size_t>(vertexCount));
+                                auto vertexData = newMesh.geometry->MapVertexData();
                                 {
                                     deserializer.Read(vertexData, vertexCount * VertexFormat::P3T2N3T3B3.GetSizeInBytes());
                                 }
-                                vertexArray->UnmapVertexData();
+                                newMesh.geometry->UnmapVertexData();
                             }
 
                             // Indices.
@@ -851,15 +862,15 @@ namespace GTEngine
 
                             if (indexCount > 0)
                             {
-                                vertexArray->SetIndexData(nullptr, static_cast<size_t>(indexCount));
-                                auto indexData = vertexArray->MapIndexData();
+                                newMesh.geometry->SetIndexData(nullptr, static_cast<size_t>(indexCount));
+                                auto indexData = newMesh.geometry->MapIndexData();
                                 {
                                     deserializer.Read(indexData, indexCount * sizeof(uint32_t));
                                 }
-                                vertexArray->UnmapIndexData();
+                                newMesh.geometry->UnmapIndexData();
                             }
 
-                            this->meshGeometries.PushBack(vertexArray);
+                            this->meshGeometries.PushBack(newMesh.geometry);
 
 
 
@@ -869,7 +880,7 @@ namespace GTEngine
 
                             if (skinningVertexAttributeCount > 0)
                             {
-                                auto skinningVertexAttributes = new SkinningVertexAttribute[skinningVertexAttributeCount];
+                                newMesh.skinningVertexAttributes = new SkinningVertexAttribute[skinningVertexAttributeCount];
 
                                 auto counts = static_cast<uint16_t*>(malloc(skinningVertexAttributeCount * sizeof(uint16_t)));
                                 deserializer.Read(counts, skinningVertexAttributeCount * sizeof(uint16_t));
@@ -887,25 +898,23 @@ namespace GTEngine
                                     auto count = counts[iVertex];
 
                                     // Here we allocate the buffer for the bones. We trick the vector here by modifying attributes directly.
-                                    skinningVertexAttributes[iVertex].bones.Reserve(count);
-                                    skinningVertexAttributes[iVertex].bones.count = count;
+                                    newMesh.skinningVertexAttributes[iVertex].bones.Reserve(count);
+                                    newMesh.skinningVertexAttributes[iVertex].bones.count = count;
 
                                     for (uint16_t iBone = 0; iBone < count; ++iBone)
                                     {
-                                        skinningVertexAttributes[iVertex].bones[iBone] = *currentBoneWeight++;
+                                        newMesh.skinningVertexAttributes[iVertex].bones[iBone] = *currentBoneWeight++;
                                     }
                                 }
-
-                                this->meshSkinningVertexAttributes.PushBack(skinningVertexAttributes);
-
 
                                 free(counts);
                                 free(boneWeights);
                             }
-                            else
-                            {
-                                this->meshSkinningVertexAttributes.PushBack(nullptr);
-                            }
+
+                            this->meshSkinningVertexAttributes.PushBack(newMesh.skinningVertexAttributes);
+
+                            // Finally, add the mesh.
+                            this->AddMesh(newMesh);
                         }
                     }
                     else
