@@ -31,12 +31,6 @@ namespace GTEngine
             {
             }
 
-            /// Constructor
-            Mesh(const char* nameIn, VertexArray* geometryIn)
-                : name(nameIn), geometry(geometryIn), material(nullptr), skinningVertexAttributes(nullptr)
-            {
-            }
-
             /// Copy constructor.
             Mesh(const Mesh &other)
                 : name(other.name), geometry(other.geometry), material(other.material), skinningVertexAttributes(other.skinningVertexAttributes)
