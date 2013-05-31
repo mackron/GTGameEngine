@@ -143,13 +143,13 @@ namespace GTEngine
     // Adds an empty bone based only on a node to the given definition. This will also add ancestors. If a bone of the same name already exists, this function will do nothing.
     Bone* AddBone(const aiNode &node, ModelDefinition &definition)
     {
-        auto iExistingBone = definition.bones.Find(node.mName.C_Str());
-        if (iExistingBone == nullptr)
+        auto existingBone = definition.GetBoneByName(node.mName.C_Str());
+        if (existingBone == nullptr)
         {
             auto newBone = CreateEmptyBone(node);
             assert(newBone != nullptr);
 
-            definition.bones.Add(node.mName.C_Str(), newBone);
+            definition.AddBone(newBone);
 
             // Now we need to do ancestors.
             if (node.mParent != nullptr)
@@ -165,25 +165,25 @@ namespace GTEngine
         }
         else
         {
-            return iExistingBone->value;
+            return existingBone;
         }
     }
 
 
     /// Adds a bone to the given definition, including it's ancestors.
-    Bone* AddBone(const aiScene &scene, const aiBone &bone, ModelDefinition &definition)
+    size_t AddBone(const aiScene &scene, const aiBone &bone, ModelDefinition &definition)
     {
         auto node = FindNodeByName(scene, bone.mName);
         assert(node != nullptr);
 
-        auto iExistingBone = definition.bones.Find(bone.mName.C_Str());
-        if (iExistingBone == nullptr)
+        auto existingBone = definition.GetBoneByName(bone.mName.C_Str());
+        if (existingBone == nullptr)
         {
             // We now have enough information to create a GTEngine bone object.
             auto newBone = CreateBone(*node, bone);
             assert(newBone != nullptr);
 
-            definition.bones.Add(bone.mName.C_Str(), newBone);
+            size_t boneIndex = definition.AddBone(newBone);
 
             // Now we need to iterate over the ancestores and make sure we have bones for them.
             if (node->mParent != nullptr)
@@ -195,24 +195,30 @@ namespace GTEngine
                 }
             }
 
-            return newBone;
+            return boneIndex;
         }
         else
         {
             // If it already exists, we need to ensure we have data.
-            auto newBone = iExistingBone->value;
-            assert(newBone != nullptr);
+            ConvertBone(bone, *existingBone);
 
-            ConvertBone(bone, *newBone);
+            size_t boneIndex;
+            if (!definition.FindBoneIndex(existingBone, boneIndex))
+            {
+                assert(false);
+            }
 
-            return newBone;
+            return boneIndex;
         }
     }
 
 
 
-    void CopyNodesWithMeshes(const aiScene &scene, const aiNode &node, const aiMatrix4x4 &accumulatedTransform, ModelDefinition &definition, GTCore::Vector<GTCore::Vector<BoneWeights*>*> &meshBones)
+    void CopyNodesWithMeshes(const aiScene &scene, const aiNode &node, const aiMatrix4x4 &accumulatedTransform, ModelDefinition &definition)
     {
+        const auto vertexFormat = VertexFormat::P3T2N3T3B3;
+
+
         // First we need to grab the transformation to apply to the mesh.
         aiMatrix4x4 transform = accumulatedTransform * node.mTransformation;
         aiMatrix3x3 normalTransform(transform);
@@ -240,21 +246,21 @@ namespace GTEngine
             auto normals   = mesh->mNormals;
             auto texCoords = mesh->mTextureCoords;
 
-            auto format = VertexFormat::P3T2N3T3B3;
-            auto va     = Renderer::CreateVertexArray(VertexArrayUsage_Static, format);
-
             // For now, only support triangle formats.
             if (mesh->mPrimitiveTypes == aiPrimitiveType_TRIANGLE)
             {
-                va->SetData(nullptr, mesh->mNumVertices, nullptr, mesh->mNumFaces * 3);
+                ModelDefinition::Mesh newMesh;
 
-                auto vertexData = va->MapVertexData();
-                auto indexData  = va->MapIndexData();
+                newMesh.geometry = Renderer::CreateVertexArray(VertexArrayUsage_Static, vertexFormat);
+                newMesh.geometry->SetData(nullptr, mesh->mNumVertices, nullptr, mesh->mNumFaces * 3);
 
-                auto vertexSize = format.GetSize();
-                auto positionOffset = format.GetAttributeOffset(VertexAttribs::Position);
-                auto texCoordOffset = format.GetAttributeOffset(VertexAttribs::TexCoord);
-                auto normalOffset   = format.GetAttributeOffset(VertexAttribs::Normal);
+                auto vertexData = newMesh.geometry->MapVertexData();
+                auto indexData  = newMesh.geometry->MapIndexData();
+
+                auto vertexSize     = vertexFormat.GetSize();
+                auto positionOffset = vertexFormat.GetAttributeOffset(VertexAttribs::Position);
+                auto texCoordOffset = vertexFormat.GetAttributeOffset(VertexAttribs::TexCoord);
+                auto normalOffset   = vertexFormat.GetAttributeOffset(VertexAttribs::Normal);
 
                 // Here we will copy over the vertex data. We will generate tangents and bitangents afterwards.
                 for (unsigned int iVertex = 0; iVertex < mesh->mNumVertices; ++iVertex)
@@ -320,44 +326,37 @@ namespace GTEngine
                     }
                 }
 
-                va->UnmapVertexData();
-                va->UnmapIndexData();
-            }
+                newMesh.geometry->UnmapVertexData();
+                newMesh.geometry->UnmapIndexData();
 
-            definition.meshGeometries.PushBack(va);
+                definition.meshGeometries.PushBack(newMesh.geometry);
 
 
-            // Here is where we create all of the bones for the mesh.
-            if (mesh->mNumBones > 0)
-            {
-                auto localBones = new GTCore::Vector<BoneWeights*>;
-
-                for (unsigned int iBone = 0; iBone < mesh->mNumBones; ++iBone)
+                // Here is where we create all of the bones for the mesh.
+                if (mesh->mNumBones > 0)
                 {
-                    auto bone = mesh->mBones[iBone];
-                    assert(bone != nullptr);
+                    newMesh.skinningVertexAttributes = new SkinningVertexAttribute[newMesh.geometry->GetVertexCount()];
 
-                    auto newBone = AddBone(scene, *bone, definition);
-                    if (newBone != nullptr)
+                    for (unsigned int iBone = 0; iBone < mesh->mNumBones; ++iBone)
                     {
-                        // Here we create the VertexWeights object for this bone.
-                        auto weights = new BoneWeights(bone->mName.C_Str());
-                        weights->weights.Reserve(bone->mNumWeights);
-
-                        for (unsigned int iWeight = 0; iWeight < bone->mNumWeights; ++iWeight)
+                        auto sourceBone = mesh->mBones[iBone];
+                        assert(sourceBone != nullptr);
                         {
-                            weights->weights.PushBack(VertexWeightPair(bone->mWeights[iWeight].mVertexId, bone->mWeights[iWeight].mWeight));
+                            size_t boneIndex = AddBone(scene, *sourceBone, definition);
+                            
+                            for (unsigned int iWeight = 0; iWeight < sourceBone->mNumWeights; ++iWeight)
+                            {
+                                newMesh.skinningVertexAttributes[sourceBone->mWeights[iWeight].mVertexId].AddBoneWeightPair(boneIndex, sourceBone->mWeights[iWeight].mWeight);
+                            }
                         }
-
-                        localBones->PushBack(weights);
                     }
+
+                    definition.meshSkinningVertexAttributes.PushBack(newMesh.skinningVertexAttributes);
                 }
 
-                meshBones.PushBack(localBones);
-            }
-            else
-            {
-                meshBones.PushBack(nullptr);
+
+                // Finally, add the mesh.
+                definition.AddMesh(newMesh);
             }
         }
 
@@ -367,7 +366,7 @@ namespace GTEngine
             auto child = node.mChildren[iChild];
             assert(child != nullptr);
 
-            CopyNodesWithMeshes(scene, *child, transform, definition, meshBones);
+            CopyNodesWithMeshes(scene, *child, transform, definition);
         }
 
 
@@ -388,8 +387,6 @@ namespace GTEngine
             auto root = scene->mRootNode;
             if (root != nullptr)
             {
-                GTCore::Vector<GTCore::Vector<BoneWeights*>*> meshBones;
-
                 size_t oldMeshCount = this->meshGeometries.count;
 
                 // At this point we're going to be re-creating the skinning and animation data. These need clearing.
@@ -400,7 +397,7 @@ namespace GTEngine
 
                 // This is where we take the assimp meshes and create the GTEngine meshes.
                 aiMatrix4x4 transform;
-                CopyNodesWithMeshes(*scene, *root, transform, *this, meshBones);
+                CopyNodesWithMeshes(*scene, *root, transform, *this);
 
                 // We need to perform a post-process step of sorts on each mesh. Here we sort out the materials and skinning vertex attributes. It's important that
                 // we do this after creating the local bones of the mesh so that we get the correct indices.
@@ -418,33 +415,6 @@ namespace GTEngine
                     if (resetMaterials)
                     {
                         this->meshMaterials.PushBack(MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
-                    }
-
-
-                    // Skinning Vertex Attributes.
-                    auto localBones = meshBones[i];
-                    if (localBones != nullptr && this->meshGeometries[i]->GetVertexCount() > 0)
-                    {
-                        auto skinningVertexAttributes = new SkinningVertexAttribute[this->meshGeometries[i]->GetVertexCount()];
-
-                        for (size_t j = 0; j < localBones->count; ++j)
-                        {
-                            auto bone = localBones->buffer[j];
-                            assert(bone != nullptr);
-
-                            size_t boneIndex = this->bones.Find(bone->name.c_str())->index;
-
-                            for (size_t k = 0; k < bone->weights.count; ++k)
-                            {
-                                skinningVertexAttributes[bone->weights[k].vertexID].AddBoneWeightPair(boneIndex, bone->weights[k].weight);
-                            }
-                        }
-
-                        this->meshSkinningVertexAttributes.PushBack(skinningVertexAttributes);
-                    }
-                    else
-                    {
-                        this->meshSkinningVertexAttributes.PushBack(nullptr);
                     }
                 }
 
@@ -473,20 +443,16 @@ namespace GTEngine
                         // We need to retrieve the bone that this channel is modifying. There is a chance this bone is not part of the model's main bone list yet, in
                         // which case we need to add it. We include this instead of ignoring because the application may need the bone information, even though it's
                         // not affecting the mesh itself.
-                        Bone* bone = nullptr;
-
-                        auto iBone = this->bones.Find(channel->mNodeName.C_Str());
-                        if (iBone == nullptr)
+                        auto bone = this->GetBoneByName(channel->mNodeName.C_Str());
+                        if (bone == nullptr)
                         {
                             auto newNode = FindNodeByName(*scene, channel->mNodeName);
                             assert(newNode != nullptr);
+                            {
+                                bone = GTEngine::AddBone(*newNode, *this);
+                            }
+                        }
 
-                            bone = AddBone(*newNode, *this);
-                        }
-                        else
-                        {
-                            bone = iBone->value;
-                        }
 
                         assert(bone != nullptr);
 
