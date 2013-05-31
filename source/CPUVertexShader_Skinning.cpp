@@ -38,6 +38,25 @@ namespace GTEngine
         this->skinningVertexAttributes = attributes;
     }
 
+    void CPUVertexShader_Skinning::GetAABB(glm::vec3 &aabbMinOut, glm::vec3 &aabbMaxOut)
+    {
+        aabbMinOut.x = this->aabbMin.x;
+        aabbMinOut.y = this->aabbMin.y;
+        aabbMinOut.z = this->aabbMin.z;
+
+        aabbMaxOut.x = this->aabbMax.x;
+        aabbMaxOut.y = this->aabbMax.y;
+        aabbMaxOut.z = this->aabbMax.z;
+    }
+
+
+
+    void CPUVertexShader_Skinning::OnStartExecute()
+    {
+        this->aabbMin = glm::simdVec4( FLT_MAX);
+        this->aabbMax = glm::simdVec4(-FLT_MAX);
+    }
+
 
     void CPUVertexShader_Skinning::ProcessVertex(Vertex &vertex)
     {
@@ -86,5 +105,8 @@ namespace GTEngine
         vertex.Normal    = newNormal;
         vertex.Tangent   = newTangent;
         vertex.Bitangent = newBitangent;
+
+        this->aabbMin = glm::min(vertex.Position, this->aabbMin);
+        this->aabbMax = glm::max(vertex.Position, this->aabbMax);
     }
 }

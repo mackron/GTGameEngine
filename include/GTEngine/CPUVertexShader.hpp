@@ -21,7 +21,7 @@ namespace GTEngine
     /// notion of in/out interpolated variables. These shouldn't be needed anyway. Next, if a vertex attribute is not explicitly set, the output
     /// will be set to the input. Thus, if the ProcessVertex() function is left empty it will perform a simple (and inefficient) copy. Don't use
     /// this class for copying...
-    class CPUVertexShader
+    GLM_ALIGN(16) class CPUVertexShader
     {
     public:
 
@@ -103,6 +103,12 @@ namespace GTEngine
             Vertex & operator=(const Vertex &);
         };
 
+
+        /// A virtual method that will be called at the start of execution.
+        virtual void OnStartExecute();
+
+        /// A virtual method that will be called at the end of execution.
+        virtual void OnEndExecute();
 
         /// A virtual method that will be called when a vertex needs to be processed.
         virtual void ProcessVertex(Vertex &vertex) = 0;
