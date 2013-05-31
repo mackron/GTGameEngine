@@ -5,15 +5,13 @@ function GTGUI.Element:ModelEditorPanel(_internalPtr)
     self.Scrollbar = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='vertical-scrollbar'      style='' />");
     
     self.MaterialsPanel          = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-groupbox' style='' />");
-    --self.AnimationsPanel         = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-groupbox' style='' />");
     self.AnimationSegmentsPanel  = GTGUI.Server.CreateElement(self.Body, "panel-groupbox");
-    self.AnimationSequencesPanel = GTGUI.Server.CreateElement(self.Body, "panel-groupbox");
+    --self.AnimationSequencesPanel = GTGUI.Server.CreateElement(self.Body, "panel-groupbox");
     self.CDPanel                 = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-groupbox' style='' />");
     
     self.MaterialsPanel:ModelEditor_MaterialsPanel(_internalPtr);
-    --self.AnimationsPanel:ModelEditor_AnimationsPanel(_internalPtr);
     self.AnimationSegmentsPanel:ModelEditor_AnimationSegmentsPanel(_internalPtr);
-    self.AnimationSequencesPanel:ModelEditor_AnimationSequencesPanel(_internalPtr);
+    --self.AnimationSequencesPanel:ModelEditor_AnimationSequencesPanel(_internalPtr);
     self.CDPanel:ModelEditor_CDPanel(_internalPtr);
     self.CDPanel:Collapse();
     
@@ -36,9 +34,8 @@ function GTGUI.Element:ModelEditorPanel(_internalPtr)
     
     function self:Refresh()
         self.MaterialsPanel:Refresh();
-        --self.AnimationsPanel:Refresh();
         self.AnimationSegmentsPanel:Refresh();
-        self.AnimationSequencesPanel:Refresh();
+        --self.AnimationSequencesPanel:Refresh();
         self.CDPanel:Refresh();
     end;
     

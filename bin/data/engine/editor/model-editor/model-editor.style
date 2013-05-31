@@ -64,6 +64,32 @@ model-editor-animation-segment-name includes textbox
 {
 }
 
+
+
+model-editor-animation-sequence
+{
+    child-plane:      vertical
+    margin-bottom:    4px
+}
+
+model-editor-animation-sequence-name-container
+{
+    child-plane:      horizontal
+    flex-child-width: true
+    vertical-align:   center
+}
+
+model-editor-animation-sequence-properties-container
+{
+    padding-left: 8px
+}
+
+model-editor-animation-sequence-name includes textbox
+{
+}
+
+
+
 model-editor-play-button-small
 {
     width:                  12px
