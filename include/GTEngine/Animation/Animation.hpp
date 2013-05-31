@@ -118,8 +118,9 @@ namespace GTEngine
 
         /// Plays the given sequence.
         ///
-        /// @param sequence [in] A reference to the sequence that should be played.
-        void Play(const AnimationSequence &sequence);
+        /// @param sequence       [in] A reference to the sequence that should be played.
+        /// @param transitionTime [in] The time to spend transitioning to the new animation.
+        void Play(const AnimationSequence &sequence, double transitionTime = 0.0);
 
         /// Completely stops playback of whatever is playing.
         ///
@@ -227,6 +228,9 @@ namespace GTEngine
 
         /// Keeps track of whether or not the animation is paused. If this is true, 'isPlaying' will also be true.
         bool isPaused;
+
+        /// Keeps track of whether or not the animation has looped.
+        bool hasLooped;
 
         /// The current playback time in the currently running animation.
         double playbackTime;

@@ -65,6 +65,18 @@ namespace GTEngine
         double GetKeyFramePlaybackTime(size_t itemIndex);
 
 
+        /// Sets the transition time of the key frame at the given index.
+        ///
+        /// @param keyFrameIndex  [in] The index of the key frame whose transition time is being modified.
+        /// @param transitionTime [in] The new transition time.
+        void SetKeyFrameTransitionTime(size_t keyFrameIndex, double transitionTime);
+
+        /// Retrieves the transition time of the key frame at the given index.
+        ///
+        /// @param keyFrameIndex [in] The index of the key frame whose transition time is being retrieved.
+        double GetKeyFrameTransitionTime(size_t keyFrameIndex) const;
+
+
 
         ///////////////////////////////////////////////////////
         // Serialization/Deserialization.
