@@ -123,16 +123,6 @@ namespace GTEngine
 
 
 
-        /// Clears the mesh geometry.
-        //void ClearMeshGeometries();
-
-        /// Clears the meshes skinning vertex attributes.
-        //void ClearMeshSkinningVertexAttributes();
-
-        /// Clears the materials.
-        //void ClearMaterials();
-
-
         /// Clears the meshes.
         void ClearMeshes();
 
@@ -251,22 +241,6 @@ namespace GTEngine
 
         /// The relative file path. This is of the foreign (source) file.
         GTCore::String relativePath;
-
-
-        
-
-
-        // TODO: Look into combinging these separated arrays in a ModelDefinitionMesh object to make things a little clearer.
-
-        /// The vertex arrays containing the mesh data. This is always in P3T2N3T3B3 format.
-        //GTCore::Vector<GTEngine::VertexArray*> meshGeometries;
-
-        /// Pointers to the materials for each mesh.
-        //GTCore::Vector<GTEngine::Material*> meshMaterials;
-
-        /// The list of skinning vertex attributes for each mesh. The value is a pointer to a buffer containing the skinning attributes
-        /// for each vertex in the mesh.
-        //GTCore::Vector<SkinningVertexAttribute*> meshSkinningVertexAttributes;
 
 
         /// The list of meshes.
