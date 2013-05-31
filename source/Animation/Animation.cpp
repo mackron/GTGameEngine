@@ -156,15 +156,14 @@ namespace GTEngine
             // We loop through each frame in the sequence an then add them to the queue.
             for (size_t i = 0U; i < sequence.GetFrameCount(); ++i)
             {
-                auto frame = sequence.GetFrame(i);
-                if (frame != nullptr)
+                auto &frame = sequence.GetFrame(i);
                 {
-                    size_t keyFrameStart = frame->startKeyFrame;
-                    size_t keyFrameEnd   = frame->endKeyFrame;
-                    if (frame->segmentName.GetLength() > 0)
+                    size_t keyFrameStart = frame.startKeyFrame;
+                    size_t keyFrameEnd   = frame.endKeyFrame;
+                    if (frame.segmentName.GetLength() > 0)
                     {
                         // We're looking at a named segment.
-                        auto segment = this->GetNamedSegment(frame->segmentName.c_str());
+                        auto segment = this->GetNamedSegment(frame.segmentName.c_str());
                         if (segment != nullptr)
                         {
                             keyFrameStart = segment->startKeyFrame;
@@ -179,7 +178,7 @@ namespace GTEngine
 
                     // Here we check if this frame is looping. If so, we need to set the index of the item in the key frame queue. The value will be the
                     // current count.
-                    if (frame->loop)
+                    if (frame.loop)
                     {
                         this->loopStartQueueIndex = this->keyFrameQueue.GetCount();
                     }
