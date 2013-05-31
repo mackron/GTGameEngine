@@ -696,10 +696,6 @@ namespace GTEngine
     bool ModelDefinition::Deserialize(GTCore::Deserializer &deserializer)
     {
         // Clear everything.
-        //this->ClearMeshGeometries();
-        //this->ClearMeshSkinningVertexAttributes();
-        //this->ClearMaterials();
-
         this->ClearMeshes();
         this->ClearBones();
         this->ClearAnimations(true);        // <-- 'true' = clear animation segments, too.
