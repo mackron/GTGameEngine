@@ -55,7 +55,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If a bone of the same name already exists, this method will do nothing.
-        void CopyAndAttachBones(const GTCore::Dictionary<Bone*> &bones);
+        void CopyAndAttachBones(const GTCore::Vector<Bone*> &bones);
 
 
         /// Copies the given animation.

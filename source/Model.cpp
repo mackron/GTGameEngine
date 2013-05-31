@@ -64,12 +64,12 @@ namespace GTEngine
     }
 
 
-    void Model::CopyAndAttachBones(const GTCore::Dictionary<Bone*> &inputBones)
+    void Model::CopyAndAttachBones(const GTCore::Vector<Bone*> &inputBones)
     {
         // We do this in two passes. The first pass makes copies but does not link with parents. The second pass will link the bones together.
         for (size_t i = 0; i < inputBones.count; ++i)
         {
-            auto bone = inputBones.buffer[i]->value;
+            auto bone = inputBones[i];
             assert(bone != nullptr);
 
             this->bones.PushBack(new Bone(*bone));
@@ -78,7 +78,7 @@ namespace GTEngine
         // This is the second pass. We need to link the bones together to form their hierarchy.
         for (size_t i = 0; i < inputBones.count; ++i)
         {
-            auto inputBone = inputBones.buffer[i]->value;
+            auto inputBone = inputBones[i];
             assert(inputBone != nullptr);
 
             if (inputBone->GetParent() != nullptr)

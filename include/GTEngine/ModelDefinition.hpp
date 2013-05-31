@@ -22,6 +22,45 @@ namespace GTEngine
     {
     public:
 
+        /// Structure representing a mesh in the model definition.
+        struct Mesh
+        {
+            /// Constructor.
+            Mesh()
+                : name(), geometry(nullptr), material(nullptr), skinningVertexAttributes(nullptr)
+            {
+            }
+
+            /// Constructor
+            Mesh(const char* nameIn, VertexArray* geometryIn)
+                : name(nameIn), geometry(geometryIn), material(nullptr), skinningVertexAttributes(nullptr)
+            {
+            }
+
+            /// Copy constructor.
+            Mesh(const Mesh &other)
+                : name(other.name), geometry(other.geometry), material(other.material), skinningVertexAttributes(other.skinningVertexAttributes)
+            {
+            }
+
+            /// The name of the mesh.
+            GTCore::String name;
+
+            /// The vertex array containing the base geeometry of the mesh.
+            GTEngine::VertexArray* geometry;
+
+            /// The material to use when drawing the mesh.
+            GTEngine::Material* material;
+
+            /// The skinning vertex attributes. This is a pointer to an array buffer whose size is equal to the number of vertices in the mesh. This can
+            /// be null, in which case it is considered a static mesh.
+            SkinningVertexAttribute* skinningVertexAttributes;
+        };
+
+
+
+    public:
+
         /// Constructor.
         ModelDefinition();
 
@@ -96,6 +135,13 @@ namespace GTEngine
         /// Clears the meshes skinning vertex attributes.
         void ClearMeshSkinningVertexAttributes();
 
+        /// Clears the materials.
+        void ClearMaterials();
+
+
+        /// Clears the meshes.
+        void ClearMeshes();
+
         /// Clears the bones.
         void ClearBones();
 
@@ -105,16 +151,67 @@ namespace GTEngine
         /// Clears the named animation segments.
         void ClearNamedAnimationSegments();
 
-        /// Clears the materials.
-        void ClearMaterials();
-
         /// Clears the convex hulls.
         void ClearConvexHulls();
 
 
-        
         /// Determines whether or not the definition has convex hulls.
         bool HasConvexHulls() const { return this->convexHulls.count > 0; }
+
+
+
+        /// Adds a mesh to the definition.
+        ///
+        /// @param mesh [in] A reference to the mesh to add.
+        void AddMesh(const ModelDefinition::Mesh &mesh);
+
+        /// Retrieves a pointer to the mesh with the given name.
+        ///
+        /// @param meshName [in] The name of the mesh to retrieve.
+        ///
+        /// @return A pointer to the mesh if it exists, null otherwise.
+        ///
+        /// @remarks
+        ///     The pointer will be made invalid when a mesh is added or removed.
+              ModelDefinition::Mesh* GetMeshByName(const char* meshName);
+        const ModelDefinition::Mesh* GetMeshByName(const char* meshName) const;
+
+
+        /// Adds a bone to the definition.
+        ///
+        /// @param bone [in] A pointer to the bone to add.
+        ///
+        /// @return The index of the bone.
+        size_t AddBone(Bone* bone);
+
+        /// Retrieves a pointer to the bone with the given name.
+        ///
+        /// @param boneName [in] The name of the bone to retrieve.
+        ///
+        /// @return A pointer to the bone if it exists, null otherwise.
+              Bone* GetBoneByName(const char* boneName);
+        const Bone* GetBoneByName(const char* boneName) const;
+
+        /// Finds the index of the given bone.
+        ///
+        /// @param bone     [in] A reference to the bone to search for.
+        /// @param indexOut [in] A reference to the variable that will receive the index.
+        ///
+        /// @return True if the bone was found, false otherwise.
+        bool FindBoneIndex(const Bone* bone, size_t &indexOut) const;
+        bool FindBoneIndex(const Bone& bone, size_t &indexOut) const { return FindBoneIndex(&bone, indexOut); }
+        
+        /// Finds the index of the given bone by it's name.
+        ///
+        /// @param boneName [in] A reference to the bone to search for.
+        /// @param indexOut [in] A reference to the variable that will receive the index.
+        ///
+        /// @return True if the bone was found, false otherwise.
+        bool FindBoneIndex(const char* boneName, size_t &indexOut) const;
+
+        /// Retrieves the number of bones in the definition.
+        size_t GetBoneCount() const;
+
 
 
         ////////////////////////////////////////////////////////
@@ -155,14 +252,14 @@ namespace GTEngine
 
     public:
 
-        /// The name of the file used to create the definition. This will be an empty string if it was not created from a file.
-        //GTCore::String fileName;
-
         /// The absolute file path. This is of the foreign (source) file.
         GTCore::String absolutePath;
 
         /// The relative file path. This is of the foreign (source) file.
         GTCore::String relativePath;
+
+
+        
 
 
         // TODO: Look into combinging these separated arrays in a ModelDefinitionMesh object to make things a little clearer.
@@ -178,9 +275,12 @@ namespace GTEngine
         GTCore::Vector<SkinningVertexAttribute*> meshSkinningVertexAttributes;
 
 
+        /// The list of meshes.
+        GTCore::Vector<ModelDefinition::Mesh> meshes;
+
         /// A map of every bone of the model, indexed by it's name. We use a map here to make it easier for avoiding duplication and
         /// also fast lookups.
-        GTCore::Dictionary<Bone*> bones;
+        GTCore::Vector<Bone*> bones;
 
 
         /// The model's animation object.

@@ -11,7 +11,7 @@ namespace GTEngine
     ModelDefinition::ModelDefinition()
         : absolutePath(), relativePath(),
           meshGeometries(), meshMaterials(), meshSkinningVertexAttributes(),
-          bones(),
+          meshes(), bones(),
           animation(), animationChannelBones(), animationKeyCache(),
           convexHulls(), convexHullBuildSettings()
     {
@@ -19,12 +19,14 @@ namespace GTEngine
 
     ModelDefinition::~ModelDefinition()
     {
-        this->ClearMeshGeometries();
-        this->ClearMeshSkinningVertexAttributes();
-        this->ClearMaterials();
+        this->ClearMeshes();
         this->ClearBones();
         this->ClearAnimations();
         this->ClearConvexHulls();
+
+        this->ClearMeshGeometries();
+        this->ClearMeshSkinningVertexAttributes();
+        this->ClearMaterials();
     }
 
     bool ModelDefinition::LoadFromFile(const char* relativePathIn)
@@ -214,11 +216,35 @@ namespace GTEngine
         this->meshSkinningVertexAttributes.Clear();
     }
 
+    void ModelDefinition::ClearMaterials()
+    {
+        for (size_t i = 0; i < this->meshMaterials.count; ++i)
+        {
+            MaterialLibrary::Delete(this->meshMaterials[i]);
+        }
+        this->meshMaterials.Clear();
+    }
+
+
+    void ModelDefinition::ClearMeshes()
+    {
+        for (size_t iMesh = 0; iMesh < this->meshes.count; ++iMesh)
+        {
+            auto &mesh = this->meshes[iMesh];
+            
+            //Renderer::DeleteVertexArray(mesh.geometry);
+            //MaterialLibrary::Delete(mesh.material);
+            //delete [] mesh.skinningVertexAttributes;
+        }
+
+        this->meshes.Clear();
+    }
+
     void ModelDefinition::ClearBones()
     {
         for (size_t i = 0; i < this->bones.count; ++i)
         {
-            delete this->bones.buffer[i]->value;
+            delete this->bones.buffer[i];
         }
         this->bones.Clear();
     }
@@ -241,15 +267,6 @@ namespace GTEngine
         this->animation.ClearNamedSegments();
     }
 
-    void ModelDefinition::ClearMaterials()
-    {
-        for (size_t i = 0; i < this->meshMaterials.count; ++i)
-        {
-            MaterialLibrary::Delete(this->meshMaterials[i]);
-        }
-        this->meshMaterials.Clear();
-    }
-
     void ModelDefinition::ClearConvexHulls()
     {
         for (size_t i = 0; i < this->convexHulls.count; ++i)
@@ -258,6 +275,119 @@ namespace GTEngine
         }
         this->convexHulls.Clear();
     }
+
+
+
+    void ModelDefinition::AddMesh(const ModelDefinition::Mesh &mesh)
+    {
+        this->meshes.PushBack(mesh);
+    }
+
+    ModelDefinition::Mesh* ModelDefinition::GetMeshByName(const char* meshName)
+    {
+        for (size_t iMesh = 0; iMesh < this->meshes.count; ++iMesh)
+        {
+            if (this->meshes[iMesh].name == meshName)
+            {
+                return &this->meshes[iMesh];
+            }
+        }
+
+        return nullptr;
+    }
+
+    const ModelDefinition::Mesh* ModelDefinition::GetMeshByName(const char* meshName) const
+    {
+        for (size_t iMesh = 0; iMesh < this->meshes.count; ++iMesh)
+        {
+            if (this->meshes[iMesh].name == meshName)
+            {
+                return &this->meshes[iMesh];
+            }
+        }
+
+        return nullptr;
+    }
+
+
+
+    size_t ModelDefinition::AddBone(Bone* bone)
+    {
+        this->bones.PushBack(bone);
+        return this->bones.count - 1;
+    }
+
+    Bone* ModelDefinition::GetBoneByName(const char* boneName)
+    {
+        for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
+        {
+            auto bone = this->bones[iBone];
+            assert(bone != nullptr);
+            {
+                if (GTCore::Strings::Equal(bone->GetName(), boneName))
+                {
+                    return bone;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
+    const Bone* ModelDefinition::GetBoneByName(const char* boneName) const
+    {
+        for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
+        {
+            auto bone = this->bones[iBone];
+            assert(bone != nullptr);
+            {
+                if (GTCore::Strings::Equal(bone->GetName(), boneName))
+                {
+                    return bone;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
+    bool ModelDefinition::FindBoneIndex(const Bone* bone, size_t &indexOut) const
+    {
+        for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
+        {
+            if (this->bones[iBone] == bone)
+            {
+                indexOut = iBone;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool ModelDefinition::FindBoneIndex(const char* boneName, size_t &indexOut) const
+    {
+        for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
+        {
+            auto bone = this->bones[iBone];
+            assert(bone != nullptr);
+            {
+                if (GTCore::Strings::Equal(bone->GetName(), boneName))
+                {
+                    indexOut = iBone;
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    size_t ModelDefinition::GetBoneCount() const
+    {
+        return this->bones.count;
+    }
+
 
 
     ////////////////////////////////////////////////////////
@@ -276,7 +406,7 @@ namespace GTEngine
         // Local information.
         for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
         {
-            auto bone = this->bones.buffer[iBone]->value;
+            auto bone = this->bones[iBone];
             assert(bone != nullptr);
             {
                 // Name.
@@ -295,16 +425,19 @@ namespace GTEngine
         // Parents. -1 for bones without parents.
         for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
         {
-            auto bone = this->bones.buffer[iBone]->value;
+            auto bone = this->bones[iBone];
             assert(bone != nullptr);
             {
                 auto parentBone = bone->GetParent();
                 if (parentBone != nullptr)
                 {
-                    auto iParentBone = this->bones.Find(parentBone->GetName());
-                    assert(iParentBone != nullptr);
-
-                    intermediarySerializer.Write(static_cast<uint32_t>(iParentBone->index));
+                    size_t parentBoneIndex;
+                    if (!this->FindBoneIndex(parentBone, parentBoneIndex))
+                    {
+                        assert(false);
+                    }
+                    
+                    intermediarySerializer.Write(static_cast<uint32_t>(parentBoneIndex));
                 }
                 else
                 {
@@ -438,11 +571,10 @@ namespace GTEngine
                 assert(bone    != nullptr);
                 {
                     // Bone Index.
-                    auto iBone = this->bones.Find(bone->GetName());
-                    assert(iBone != nullptr);
-                    {
-                        intermediarySerializer.Write(static_cast<uint32_t>(iBone->index));
-                    }
+                    size_t boneIndex;
+                    this->FindBoneIndex(bone, boneIndex);
+
+                    intermediarySerializer.Write(static_cast<uint32_t>(boneIndex));
 
 
                     // Bone Transformation.
@@ -643,7 +775,7 @@ namespace GTEngine
                             bone->SetRotation(rotation);
                             bone->SetScale(scale);
                             bone->SetOffsetMatrix(offsetMatrix);
-                            this->bones.Add(name.c_str(), bone);
+                            this->AddBone(bone);
 
 
                             // We need to create a channel for this bone. We then need to map that channel to a bone.
@@ -662,7 +794,7 @@ namespace GTEngine
 
                             if (parentIndex != static_cast<uint32_t>(-1))
                             {
-                                this->bones.buffer[parentIndex]->value->AttachChild(*this->bones.buffer[iBone]->value);
+                                this->bones[parentIndex]->AttachChild(*this->bones[iBone]);
                             }
                         }
 
@@ -811,7 +943,7 @@ namespace GTEngine
                                 uint32_t boneIndex;
                                 deserializer.Read(boneIndex);
 
-                                auto bone = this->bones.buffer[boneIndex]->value;
+                                auto bone = this->bones[boneIndex];
                                 assert(bone != nullptr);
                                 {
                                     auto iChannelBone = this->animationChannelBones.Find(bone);
