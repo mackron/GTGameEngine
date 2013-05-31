@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Scripting/Scripting_Components.hpp>
+#include <GTEngine/Scripting/Scripting_Animation.hpp>
 #include <GTEngine/SceneNode.hpp>
 
 namespace GTEngine
@@ -124,8 +125,13 @@ namespace GTEngine
                 "    return GTEngine.System.ModelComponent.GetMaterialCount(self._internalPtr);"
                 "end;"
 
+
                 "function GTEngine.ModelComponent:PlayAnimationSegmentByName(segmentName, loop)"
                 "    GTEngine.System.ModelComponent.PlayAnimationSegmentByName(self._internalPtr, segmentName, loop);"
+                "end;"
+
+                "function GTEngine.ModelComponent:PlayAnimationSequence(segmentName, loop)"
+                "    GTEngine.System.ModelComponent.PlayAnimationSequence(self._internalPtr, segmentName, loop);"
                 "end;"
 
                 "function GTEngine.ModelComponent:PauseAnimation()"
@@ -863,6 +869,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "GetMaterialPath",            ModelComponentFFI::GetMaterialPath);
                             script.SetTableFunction(-1, "GetMaterialCount",           ModelComponentFFI::GetMaterialCount);
                             script.SetTableFunction(-1, "PlayAnimationSegmentByName", ModelComponentFFI::PlayAnimationSegmentByName);
+                            script.SetTableFunction(-1, "PlayAnimationSequence",      ModelComponentFFI::PlayAnimationSequence);
                             script.SetTableFunction(-1, "PauseAnimation",             ModelComponentFFI::PauseAnimation);
                             script.SetTableFunction(-1, "StopAnimation",              ModelComponentFFI::StopAnimation);
                         }
@@ -1332,6 +1339,21 @@ namespace GTEngine
                         sequence.AddFrame(script.ToString(2), 0.0, script.ToBoolean(3));
 
                         model->PlayAnimation(sequence);
+                    }
+                }
+
+                return 0;
+            }
+
+            int PlayAnimationSequence(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    auto model = component->GetModel();
+                    if (model != nullptr)
+                    {
+                        model->PlayAnimation(ToAnimationSequence(script, 2));
                     }
                 }
 

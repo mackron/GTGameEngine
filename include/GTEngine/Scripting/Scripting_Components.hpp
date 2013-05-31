@@ -112,6 +112,13 @@ namespace GTEngine
             ///     It is possible for segments to share the same name. This will play the first occurance.
             int PlayAnimationSegmentByName(GTCore::Script &script);
 
+            /// Plays the given animation sequence.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The AnimationSequence object to play.
+            int PlayAnimationSequence(GTCore::Script &script);
+
             /// Pauses the currently playing animation, if any.
             ///
             /// @remarks

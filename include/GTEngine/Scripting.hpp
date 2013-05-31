@@ -12,6 +12,7 @@
 #include "Scripting/Scripting_Components.hpp"
 #include "Scripting/Scripting_Particles.hpp"
 #include "Scripting/Scripting_Editor.hpp"
+#include "Scripting/Scripting_Animation.hpp"
 
 namespace GTEngine
 {

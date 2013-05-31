@@ -938,6 +938,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_SinglePassPipeline.hpp">
       <Filter>include\DefaultSceneRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Animation.hpp">
+      <Filter>include\Scripting</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1602,6 +1605,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\ModelDefinition_Assimp.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Animation.cpp">
+      <Filter>source\Scripting</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
