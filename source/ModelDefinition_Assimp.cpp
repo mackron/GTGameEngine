@@ -330,8 +330,6 @@ namespace GTEngine
                 newMesh.geometry->UnmapVertexData();
                 newMesh.geometry->UnmapIndexData();
 
-                definition.meshGeometries.PushBack(newMesh.geometry);
-
 
                 // Here is where we create all of the bones for the mesh.
                 if (mesh->mNumBones > 0)
@@ -351,8 +349,6 @@ namespace GTEngine
                             }
                         }
                     }
-
-                    definition.meshSkinningVertexAttributes.PushBack(newMesh.skinningVertexAttributes);
                 }
 
 
@@ -388,13 +384,15 @@ namespace GTEngine
             auto root = scene->mRootNode;
             if (root != nullptr)
             {
-                size_t oldMeshCount = this->meshGeometries.count;
+                //size_t oldMeshCount = this->meshes.count;
 
                 // At this point we're going to be re-creating the skinning and animation data. These need clearing.
-                this->ClearMeshGeometries();
-                this->ClearMeshSkinningVertexAttributes();
+                //this->ClearMeshGeometries();
+                //this->ClearMeshSkinningVertexAttributes();
+                this->ClearMeshes();
                 this->ClearBones();
                 this->ClearAnimations();
+                
 
                 // This is where we take the assimp meshes and create the GTEngine meshes.
                 aiMatrix4x4 transform;
@@ -404,19 +402,19 @@ namespace GTEngine
                 // we do this after creating the local bones of the mesh so that we get the correct indices.
                 //
                 // If the number of meshes is different to the old one, we want to reset materials. Otherwise, we leave the materials alone.
-                bool resetMaterials = oldMeshCount != this->meshGeometries.count;
-                if (resetMaterials)
-                {
-                    this->ClearMaterials();
-                }
+                //bool resetMaterials = oldMeshCount != this->meshes.count;
+                //if (resetMaterials)
+                //{
+                //    this->ClearMaterials();
+                //}
 
-                for (size_t i = 0; i < this->meshGeometries.count; ++i)
+                for (size_t i = 0; i < this->meshes.count; ++i)
                 {
                     // Material.
-                    if (resetMaterials)
-                    {
-                        this->meshMaterials.PushBack(MaterialLibrary::Create("engine/materials/simple-diffuse.material"));
-                    }
+                    //if (resetMaterials)
+                    //{
+                    this->meshes[i].material = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
+                    //}
                 }
 
 

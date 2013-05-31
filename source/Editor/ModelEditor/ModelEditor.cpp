@@ -223,9 +223,16 @@ namespace GTEngine
             {
                 auto &definition = model->GetDefinition();
 
-                for (size_t i = 0; i < definition.meshMaterials.count; ++i)
+                for (size_t i = 0; i < definition.meshes.count; ++i)
                 {
-                    materialsOut.PushBack(definition.meshMaterials[i]->GetDefinition().relativePath);
+                    if (definition.meshes[i].material != nullptr)
+                    {
+                        materialsOut.PushBack(definition.meshes[i].material->GetDefinition().relativePath);
+                    }
+                    else
+                    {
+                        materialsOut.PushBack("");
+                    }
                 }
             }
         }
@@ -343,8 +350,8 @@ namespace GTEngine
         auto newMaterial = MaterialLibrary::Create(relativePath);
         if (newMaterial)
         {
-            MaterialLibrary::Delete(this->modelDefinition.meshMaterials[index]);
-            this->modelDefinition.meshMaterials[index] = newMaterial;
+            MaterialLibrary::Delete(this->modelDefinition.meshes[index].material);
+            this->modelDefinition.meshes[index].material = newMaterial;
 
             this->RefreshViewport();
 
