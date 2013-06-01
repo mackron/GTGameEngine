@@ -230,9 +230,7 @@ namespace GTEngine
 
 namespace GTEngine
 {
-    static const uint32_t SceneMagicNumber = 0x4f25a8b0;
-
-    static const bool     DoNotPostEvents  = false;              // <-- For Scene::OnSceneNodeComponentAdded() and Scene::OnSceneNodeComponentRemoved().
+    static const bool DoNotPostEvents = false;              // <-- For Scene::OnSceneNodeComponentAdded() and Scene::OnSceneNodeComponentRemoved().
 
 
     Scene::Scene()
