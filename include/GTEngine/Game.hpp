@@ -353,10 +353,25 @@ namespace GTEngine
 
 
 
+        ////////////////////////////////////
+        // Public Events.
+
+        /// Called when a scene is loaded via the scripting environment.
+        ///
+        /// @param sceneRelativePath [in] The relative path of the scene that wants to load.
+        ///
+        /// @return True if the scene is loaded and switched successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     Games should handle this themselves to enable support for loading scenes via the scripting environment.
+        ///     @par
+        ///     Do not call this directly.
+        virtual bool OnLoadScene(const char* sceneRelativePath);
+
+
     protected:
 
         void CacheMousePosition();
-
 
         
     protected:  // Event handlers.

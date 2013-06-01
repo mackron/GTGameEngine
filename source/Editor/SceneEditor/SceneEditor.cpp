@@ -261,6 +261,22 @@ namespace GTEngine
                     "end"
                 );
 
+                // Game.LoadScene needs to be overridden, also. What we will do is load the file, switch to it, and then run it.
+                script.Execute
+                (
+                    "Game.LoadScene = function(sceneRelativePath)"
+                    "    local currentEditor = Editor.GetCurrentlyShownEditor();"
+                    "    if currentEditor and currentEditor.StopPlaying then"
+                    "        currentEditor:StopPlaying();"
+                    "    end;"
+                    ""
+                    "    local sceneEditorElement = Editor.OpenFile(sceneRelativePath);"
+                    "    if sceneEditorElement then"
+                    "        sceneEditorElement:StartPlaying();"
+                    "    end;"
+                    "end"
+                );
+
 
                 // All particle system should be reset.
                 this->ResetAllParticleSystems();
@@ -322,12 +338,13 @@ namespace GTEngine
                 this->isPaused  = false;
 
 
-                // The game window GUI element needs to be restored.
+                // Some functions need to be restored.
                 auto &script = this->GetScript();
                 script.GetGlobal("Game");
                 assert(script.IsTable(-1));
                 {
                     script.SetTableFunction(-1, "GetGameWindowGUIElement", Scripting::GameFFI::GetGameWindowGUIElement);
+                    script.SetTableFunction(-1, "LoadScene",               Scripting::GameFFI::LoadScene);
                 }
                 script.Pop(1);
 

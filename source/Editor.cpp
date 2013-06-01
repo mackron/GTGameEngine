@@ -203,7 +203,7 @@ namespace GTEngine
     }
 
 
-    bool Editor::OpenFile(const char* path, const char* relativeTo)
+    SubEditor* Editor::OpenFile(const char* path, const char* relativeTo)
     {
         // We need to make sure we have an absolute and relative path.
         GTCore::String absolutePath;
@@ -219,7 +219,7 @@ namespace GTEngine
             else
             {
                 // We're unable to retrieve the relative path because 'path' is absolute and 'relativeTo' is null.
-                return false;
+                return nullptr;
             }
         }
         else
@@ -232,19 +232,20 @@ namespace GTEngine
             else
             {
                 GTEngine::PostError("Editor: Can not open file '%s'. Check that the file exists or if it's already in use.\n", path);
-                return false;
+                return nullptr;
             }
         }
 
 
         // At this point, we will have absolute and relative paths. We now need to check if the file is already open. If so, we just switch to it. Otherwise, we need
         // to open it.
-        if (this->openedFiles.Find(absolutePath.c_str()) == nullptr)
+        SubEditor* newSubEditor = nullptr;
+
+        auto iExistingSubEditor = this->openedFiles.Find(absolutePath.c_str());
+        if (iExistingSubEditor == nullptr)
         {
             if (GTCore::IO::FileExists(absolutePath.c_str()))
             {
-                SubEditor* newSubEditor = nullptr;
-
                 // The file exists, so now we just create our sub-editor. The specific sub-editor will be based on the file name.
                 auto type = GTEngine::IO::GetAssetTypeFromExtension(absolutePath.c_str());
 
@@ -311,15 +312,18 @@ namespace GTEngine
             else
             {
                 GTEngine::PostError("Editor: Can not open file '%s'. Does not exist.\n", path);
-                return false;
+                return nullptr;
             }
         }
-
+        else
+        {
+            newSubEditor = iExistingSubEditor->value;
+        }
 
         // Now we just to need show the newly opened file.
         this->ShowFile(absolutePath.c_str());
 
-        return true;
+        return newSubEditor;
     }
 
     void Editor::CloseFile(const char* path, const char* relativeTo)
@@ -701,6 +705,36 @@ namespace GTEngine
     }
 
 
+    GTGUI::Element* Editor::GetFileEditorElement(const char* path, const char* relativeTo)
+    {
+        GTCore::String absolutePath(path);
+
+        if (GTCore::Path::IsRelative(path))
+        {
+            if (relativeTo != nullptr)
+            {
+                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+            }
+            else
+            {
+                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                return nullptr;
+            }
+        }
+
+
+        auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
+        if (iSubEditor != nullptr)
+        {
+            auto subEditor = iSubEditor->value;
+            assert(subEditor != nullptr);
+            {
+                return subEditor->GetMainElement();
+            }
+        }
+
+        return nullptr;
+    }
 
 
     void Editor::Update(double deltaTimeInSeconds)
@@ -915,6 +949,7 @@ namespace GTEngine
             script.SetTableFunction(-1, "MarkFileAsModified",       FFI::MarkFileAsModified);
             script.SetTableFunction(-1, "UnmarkFileAsModified",     FFI::UnmarkFileAsModified);
             script.SetTableFunction(-1, "IsFileMarkedAsModified",   FFI::IsFileMarkedAsModified);
+            script.SetTableFunction(-1, "GetCurrentlyShownEditor",  FFI::GetCurrentlyShownEditor);
         }
         script.Pop(1);
     }
@@ -954,7 +989,43 @@ namespace GTEngine
 
     int Editor::FFI::OpenFile(GTCore::Script &script)
     {
-        script.Push(FFI::GetEditor(script).OpenFile(script.ToString(1), script.ToString(2)));
+        auto subEditor = FFI::GetEditor(script).OpenFile(script.ToString(1), script.ToString(2));
+        if (subEditor != nullptr)
+        {
+            auto element = subEditor->GetMainElement();
+            if (element != nullptr)
+            {
+                script.GetGlobal("GTGUI");
+                assert(script.IsTable(-1));
+                {
+                    script.Push("Server");
+                    script.GetTableValue(-2);
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("GetElementByID");
+                        script.GetTableValue(-2);
+                        assert(script.IsFunction(-1));
+                        {
+                            script.Push(element->id);
+                            script.Call(1, 1);
+
+                            script.InsertIntoStack(-3);     // <-- The final return value.
+                        }
+                    }
+                    script.Pop(1);
+                }
+                script.Pop(1);
+            }
+            else
+            {
+                script.PushNil();
+            }
+        }
+        else
+        {
+            script.PushNil();
+        }
+
         return 1;
     }
 
@@ -1021,6 +1092,48 @@ namespace GTEngine
     int Editor::FFI::IsFileMarkedAsModified(GTCore::Script &script)
     {
         script.Push(FFI::GetEditor(script).IsFileMarkedAsModified(script.ToString(1), script.ToString(2)));
+        return 1;
+    }
+
+    int Editor::FFI::GetCurrentlyShownEditor(GTCore::Script &script)
+    {
+        auto subEditor = FFI::GetEditor(script).GetCurrentlyShownEditor();
+        if (subEditor != nullptr)
+        {
+            auto element = subEditor->GetMainElement();
+            if (element != nullptr)
+            {
+                script.GetGlobal("GTGUI");
+                assert(script.IsTable(-1));
+                {
+                    script.Push("Server");
+                    script.GetTableValue(-2);
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("GetElementByID");
+                        script.GetTableValue(-2);
+                        assert(script.IsFunction(-1));
+                        {
+                            script.Push(element->id);
+                            script.Call(1, 1);
+
+                            script.InsertIntoStack(-3);     // <-- The final return value.
+                        }
+                    }
+                    script.Pop(1);
+                }
+                script.Pop(1);
+            }
+            else
+            {
+                script.PushNil();
+            }
+        }
+        else
+        {
+            script.PushNil();
+        }
+
         return 1;
     }
 }

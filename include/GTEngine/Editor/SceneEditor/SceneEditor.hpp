@@ -339,6 +339,10 @@ namespace GTEngine
         ///////////////////////////////////////////////////
         // Virtual Methods.
 
+        /// SubEditor::GetMainElement()
+              GTGUI::Element* GetMainElement()        { return this->GUI.Main; }
+        const GTGUI::Element* GetMainElement( ) const { return this->GUI.Main; }
+
         /// SubEditor::Show()
         void Show();
 

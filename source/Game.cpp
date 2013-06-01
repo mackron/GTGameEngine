@@ -680,6 +680,12 @@ namespace GTEngine
     }
 
 
+    bool Game::OnLoadScene(const char*)
+    {
+        return false;
+    }
+
+
     bool Game::OnEditorOpening()
     {
         return true;

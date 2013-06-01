@@ -145,7 +145,7 @@ namespace GTEngine
                 script.SetTableFunction(-1, "GetMouseOffset",          GameFFI::GetMouseOffset);
                 script.SetTableFunction(-1, "ScanDataFilesForChanges", GameFFI::ScanDataFilesForChanges);
                 script.SetTableFunction(-1, "GetGameWindowGUIElement", GameFFI::GetGameWindowGUIElement);
-               
+                script.SetTableFunction(-1, "LoadScene",               GameFFI::LoadScene);
 
                 // TODO: Move these to GTEngine.
                 script.SetTableFunction(-1, "ExecuteFile",        GameFFI::ExecuteFile);
@@ -298,6 +298,12 @@ namespace GTEngine
                 return 1;
             }
 
+
+            int LoadScene(GTCore::Script &script)
+            {
+                script.Push(GetGame(script).OnLoadScene(script.ToString(1)));
+                return 1;
+            }
 
 
 
