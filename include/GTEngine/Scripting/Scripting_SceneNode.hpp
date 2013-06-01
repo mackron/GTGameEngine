@@ -46,16 +46,26 @@ namespace GTEngine
         ///     This is only performed if the owner scene is registered and the given scene node has a script component.
         void UpdatePublicVariables(GTCore::Script &script, SceneNode &sceneNode);
 
-        /// Updates the Lua representation of a registered scene node so that it is synced with the current state of the attached script component.
+
+        /// Registers the given component with the Lua representation of the given scene node.
         ///
-        /// @param script    [in] A reference to the main script object.
-        /// @param sceneNode [in] A reference to the scene node whose public variables are being updated.
+        /// @param script      [in] A reference to the script object.
+        /// @param sceneNode   [in] A reference to the scene node whose Lua representation is being updated.
+        /// @param componentID [in] The ID of the component that is being registered.
         ///
         /// @remarks
-        ///     This is only performed if the owner scene is registered and the given scene node has a script component.
+        ///     This is only performed if the owner scene is registered and the given scene node actually has the component.
         ///     @par
         ///     This does not change the state of any variables.
-        void RegisterScriptComponent(GTCore::Script &script, SceneNode &sceneNode);
+        void RegisterComponent(GTCore::Script &script, SceneNode &sceneNode, const char* componentID);
+
+        /// Unregisters the given component from the Lua representation of the given scene node.
+        ///
+        /// @param script      [in] A reference to the script objec.t
+        /// @param sceneNode   [in] A reference to the scene node whose Lua representation is being updated.
+        /// @param componentID [in] The ID of the component that is being unregistered.
+        void UnregisterComponent(GTCore::Script &script, SceneNode &sceneNode, const char* componentID);
+
 
         /// Pushes a scene node object to the top of the stack.
         ///

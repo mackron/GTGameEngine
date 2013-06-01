@@ -2971,7 +2971,7 @@ namespace GTEngine
                                 // After the script component itself has been reloaded we want to update the Lua object as well if the scene is currently registered.
                                 if (this->scene.GetRegisteredScript() != nullptr)
                                 {
-                                    Scripting::RegisterScriptComponent(*this->scene.GetRegisteredScript(), *sceneNode);
+                                    Scripting::RegisterComponent(*this->scene.GetRegisteredScript(), *sceneNode, ScriptComponent::Name);
                                 }
 
 

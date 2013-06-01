@@ -2034,11 +2034,16 @@ namespace GTEngine
                         if (this->registeredScript != nullptr)
                         {
                             Scripting::InstantiateSceneNode(*this->registeredScript, node);
-                            Scripting::RegisterScriptComponent(*this->registeredScript, node);
                         }
                     }
                 }
             }
+        }
+
+        // The component may need to be registered.
+        if (this->registeredScript != nullptr && node.HasComponent<ScriptComponent>())
+        {
+            Scripting::RegisterComponent(*this->registeredScript, node, component.GetName());
         }
 
 
@@ -2128,6 +2133,12 @@ namespace GTEngine
                     }
                 }
             }
+        }
+
+        // The component will need to be unregistered from the Lua representation, if applicable.
+        if (this->registeredScript != nullptr && node.HasComponent<ScriptComponent>())
+        {
+            Scripting::UnregisterComponent(*this->registeredScript, node, component.GetName());
         }
 
 
@@ -2228,17 +2239,15 @@ namespace GTEngine
                     {
                         this->updateManager.AddSceneNode(node);
                     }
-
-
-                    // If we're registered to a script we will want to re-register the component to ensure it is all up-to-date.
-                    if (this->registeredScript != nullptr)
-                    {
-                        Scripting::RegisterScriptComponent(*this->registeredScript, node);
-                    }
                 }
             }
         }
 
+        // We will re-register the component, if applicable. We do this to ensure the scripting representation of the scene node is up-to-date.
+        if (this->registeredScript != nullptr && node.HasComponent<ScriptComponent>())
+        {
+            Scripting::RegisterComponent(*this->registeredScript, node, component.GetName());
+        }
 
 
         // The event handler needs to know about this.
