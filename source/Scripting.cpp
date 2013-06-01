@@ -138,14 +138,18 @@ namespace GTEngine
             {
                 script.SetTableFunction(-1, "GetExecutableDirectory", FFI::GetExecutableDirectory);
 
-                script.SetTableFunction(-1, "IsModelFile",  FFI::IsModelFile);
-                script.SetTableFunction(-1, "IsImageFile",  FFI::IsImageFile);
-                script.SetTableFunction(-1, "IsSoundFile",  FFI::IsSoundFile);
-                script.SetTableFunction(-1, "IsSceneFile",  FFI::IsSceneFile);
-                script.SetTableFunction(-1, "IsPrefabFile", FFI::IsPrefabFile);
-                script.SetTableFunction(-1, "IsScriptFile", FFI::IsScriptFile);
+                script.SetTableFunction(-1, "IsModelFile",        FFI::IsModelFile);
+                script.SetTableFunction(-1, "IsImageFile",        FFI::IsImageFile);
+                script.SetTableFunction(-1, "IsSoundFile",        FFI::IsSoundFile);
+                script.SetTableFunction(-1, "IsSceneFile",        FFI::IsSceneFile);
+                script.SetTableFunction(-1, "IsPrefabFile",       FFI::IsPrefabFile);
+                script.SetTableFunction(-1, "IsScriptFile",       FFI::IsScriptFile);
 
-                script.SetTableFunction(-1, "CreatePrefab", FFI::CreatePrefab);
+                script.SetTableFunction(-1, "CreatePrefab",       FFI::CreatePrefab);
+
+                script.SetTableFunction(-1, "ExecuteFile",        FFI::ExecuteFile);
+                script.SetTableFunction(-1, "ExecuteScript",      FFI::ExecuteScript);
+                script.SetTableFunction(-1, "GetLastScriptError", FFI::GetLastScriptError);
             }
             script.Pop(1);
 
@@ -711,6 +715,24 @@ namespace GTEngine
                 }
 
                 return 0;
+            }
+
+            int ExecuteFile(GTCore::Script &script)
+            {
+                script.Push(GameFFI::GetGame(script).GetScript().ExecuteFile(script.ToString(1)));
+                return 1;
+            }
+
+            int ExecuteScript(GTCore::Script &script)
+            {
+                script.Push(GameFFI::GetGame(script).ExecuteScript(script.ToString(1)));
+                return 1;
+            }
+
+            int GetLastScriptError(GTCore::Script &script)
+            {
+                script.Push(GameFFI::GetGame(script).GetScript().GetLastError());
+                return 1;
             }
         }
     }

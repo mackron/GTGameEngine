@@ -23,6 +23,10 @@ namespace GTEngine
 
         namespace GameFFI
         {
+            /// Retrieves a reference to the global game object.
+            Game & GetGame(GTCore::Script &script);
+
+
             /// Closes the game.
             int Close(GTCore::Script &script);
 
@@ -91,7 +95,7 @@ namespace GTEngine
 
 
 
-            // TODO: Move these to GTEngine.
+            // TODO: These are now in GTEngine, but are still used in the editor. These references need to be deleted at some point.
 
             /// Executes the script defined in the given file.
             ///
