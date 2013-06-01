@@ -62,13 +62,13 @@ namespace GTEngine
         /// @param path       [in] The path of the file. Can be relative or absolute; see remarks.
         /// @param relativeTo [in] If 'path' is absolute, defines the base path that will be used to retrieve the relative path.
         ///
-        /// @return True if the file is opened successfully; false otherwise.
+        /// @return A pointer to the main GUI element if the file is opened successfully; null otherwise.
         ///
         /// @remarks
         ///     The editor must be aware of the files absolute AND relative paths. If 'path' is absolute, it needs to have it's relative path
         ///     extracted from that. In order to do that, we need the base part of the path that is used to make it relative. If is an error
         ///     for 'path' to be absolute while 'relativeTo' is null.
-        bool OpenFile(const char* path, const char* relativeTo = nullptr);
+        SubEditor* OpenFile(const char* path, const char* relativeTo = nullptr);
 
         /// Closes a file.
         ///
@@ -171,6 +171,22 @@ namespace GTEngine
         /// Updates the menu buttons by enabling and disabling the buttons based on the modification state.
         void UpdateMenuButtonEnableStates();
 
+
+        /// Retrieves the main GUI element of the sub editor of the given file.
+        ///
+        /// @param path       [in] The path of the file. Can be relative or absolute; see remarks.
+        /// @param relativeTo [in] If 'path' is relative, defines the base path to will be used to make it absolute.
+        ///
+        /// @remarks
+        ///     Internally, the editor uses absolute paths to associate editors with files. If 'path' is relative, it will need to be converted
+        ///     to an absolute path in order for the editor to do correct identification. To do this, 'relativeTo' must be set when 'path' is
+        ///     relative.
+        GTGUI::Element* GetFileEditorElement(const char* path, const char* relativeTo = nullptr);
+
+
+        /// Retrieves a pointer to the editor that is currently being shown.
+              SubEditor* GetCurrentlyShownEditor()       { return this->currentlyShownEditor; }
+        const SubEditor* GetCurrentlyShownEditor() const { return this->currentlyShownEditor; }
 
 
         ///////////////////////////////////////////////
@@ -334,6 +350,7 @@ namespace GTEngine
             static int MarkFileAsModified(GTCore::Script &script);
             static int UnmarkFileAsModified(GTCore::Script &script);
             static int IsFileMarkedAsModified(GTCore::Script &script);
+            static int GetCurrentlyShownEditor(GTCore::Script &script);
         };
 
 

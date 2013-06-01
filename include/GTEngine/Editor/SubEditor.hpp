@@ -76,6 +76,10 @@ namespace GTEngine
         ///////////////////////////////////////////////////
         // Virtual Methods.
 
+        /// Retrieves the main GUI element of the editor.
+        virtual       GTGUI::Element* GetMainElement()        { return nullptr; }
+        virtual const GTGUI::Element* GetMainElement( ) const { return nullptr; }
+
         /// Called when the editor needs to be shown.
         virtual void Show();
 

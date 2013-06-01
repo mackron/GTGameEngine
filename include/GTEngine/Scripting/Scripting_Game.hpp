@@ -83,6 +83,12 @@ namespace GTEngine
             /// Retrieves the GUI element of the main game window.
             int GetGameWindowGUIElement(GTCore::Script &script);
 
+            /// Loads the given scene.
+            ///
+            /// @remarks
+            ///     Argument 1: A string containing the path of the scene to load.
+            int LoadScene(GTCore::Script &script);
+
 
 
             // TODO: Move these to GTEngine.
