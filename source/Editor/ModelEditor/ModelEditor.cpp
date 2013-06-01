@@ -16,10 +16,10 @@ namespace GTEngine
     ModelEditor::ModelEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
           modelDefinition(), model(modelDefinition),
-          scene(), viewport(), camera(),
+          scene(), camera(),
           modelNode(), convexHullParentNode(), convexHullNodes(),
           mainElement(nullptr), viewportElement(nullptr), timelineElement(nullptr),
-          viewportEventHandler(ownerEditor.GetGame(), viewport),
+          viewportEventHandler(ownerEditor.GetGame(), scene.GetDefaultViewport()),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
           grid(0.25f, 8, 32),
           random(),
@@ -32,8 +32,7 @@ namespace GTEngine
         this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.6f, 0.6f, 0.6f);
 
         // Viewport and Renderer.
-        this->viewport.SetCameraNode(this->camera);
-        this->scene.AddViewport(this->viewport);
+        this->scene.SetDefaultViewportCamera(this->camera);
         this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
 
 

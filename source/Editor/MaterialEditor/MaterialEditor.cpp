@@ -14,8 +14,8 @@ namespace GTEngine
 {
     MaterialEditor::MaterialEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
-          scene(), viewport(), camera(), modelNode(),
-          mainElement(nullptr), scriptTextBoxElement(nullptr), scriptTextBoxEventHandler(*this), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), this->viewport),
+          scene(), camera(), modelNode(),
+          mainElement(nullptr), scriptTextBoxElement(nullptr), scriptTextBoxEventHandler(*this), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), scene.GetDefaultViewport()),
           cameraXRotation(0.0f), cameraYRotation(0.0f), material(nullptr),
           isSaving(false), isReloading(false)
     {
@@ -25,8 +25,7 @@ namespace GTEngine
         this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.25f, 0.25f, 0.25f);
 
         // Viewport and Renderer.
-        this->viewport.SetCameraNode(this->camera);
-        this->scene.AddViewport(this->viewport);
+        this->scene.SetDefaultViewportCamera(this->camera);
         this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
 
 

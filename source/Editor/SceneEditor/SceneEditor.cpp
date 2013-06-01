@@ -31,7 +31,7 @@ namespace GTEngine
     // Scene Editor
     SceneEditor::SceneEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
-          viewport(), camera(), cameraEventHandler(*this), cameraXRotation(0.0f), cameraYRotation(0.0f),
+          camera(), cameraEventHandler(*this), cameraXRotation(0.0f), cameraYRotation(0.0f),
           updateManager(camera), physicsManager(), cullingManager(),
           scene(updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
           selectedNodes(), selectedNodesBeforePlaying(), selectedNodesBeforePhysicsSimulation(),
@@ -43,10 +43,11 @@ namespace GTEngine
           transformedObjectWithGizmo(false),
           isDeserializing(false), isUpdatingFromStateStack(false),
           isPlaying(false), isPaused(false), wasPlayingBeforeHide(false),
-          GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), viewport),
+          GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), scene.GetDefaultViewport()),
           grid(1.0f, 8, 32), isShowingGrid(false), wasShowingGridBeforePlaying(false),
           axisArrows(), isShowingAxisArrows(false), wasShowingAxisArrowsBeforePlaying(false)
     {
+        this->scene.SetDefaultViewportCamera(this->camera);
         this->scene.AttachEventHandler(this->sceneEventHandler);
 
         // We're going to register the scene to the scripting environment right from the start.
@@ -549,7 +550,7 @@ namespace GTEngine
 
             glm::vec3 rayStart;
             glm::vec3 rayEnd;
-            this->viewport.CalculatePickingRay(clickPosX, clickPosY, rayStart, rayEnd);
+            this->scene.GetDefaultViewport().CalculatePickingRay(clickPosX, clickPosY, rayStart, rayEnd);
 
 
             CollisionWorld::ClosestRayTestCallback rayTestCallback(rayStart, rayEnd);
@@ -591,8 +592,8 @@ namespace GTEngine
                     // The mouse dragging has a different level of influence depending on the direction of the axis. We need to calculate that now. We project two points - the
                     // center of the gizmo and the end point of the selected axis. From that we can get a normalised direction vector and use that as the influence.
                     glm::vec3 gizmoWorldPos        = this->transformGizmo.GetPosition();
-                    glm::vec3 gizmoCenterWindowPos = this->viewport.Project(gizmoWorldPos);
-                    glm::vec3 axisTipWindowPos     = this->viewport.Project(gizmoWorldPos + (handle->GetForwardVector() * this->transformGizmo.GetScale()));
+                    glm::vec3 gizmoCenterWindowPos = this->scene.GetDefaultViewport().Project(gizmoWorldPos);
+                    glm::vec3 axisTipWindowPos     = this->scene.GetDefaultViewport().Project(gizmoWorldPos + (handle->GetForwardVector() * this->transformGizmo.GetScale()));
 
                     this->gizmoDragFactor = glm::vec2(axisTipWindowPos - gizmoCenterWindowPos);
                     if (glm::dot(this->gizmoDragFactor, this->gizmoDragFactor) > 0.0f)
@@ -632,7 +633,7 @@ namespace GTEngine
 
             glm::vec3 rayStart;
             glm::vec3 rayEnd;
-            this->viewport.CalculatePickingRay(clickPosX, clickPosY, rayStart, rayEnd);
+            this->scene.GetDefaultViewport().CalculatePickingRay(clickPosX, clickPosY, rayStart, rayEnd);
 
 
             CollisionWorld::ClosestRayTestCallback rayTestCallback(rayStart, rayEnd);
@@ -1650,12 +1651,12 @@ namespace GTEngine
         glm::vec3 cameraForward       = this->camera.GetWorldForwardVector();
         glm::vec3 arrowsWorldPosition = cameraPosition + (cameraForward * 1.0f);
 
-        glm::vec3 windowPos      = this->viewport.Project(arrowsWorldPosition);
-        glm::vec3 arrowsPosition = this->viewport.Unproject(glm::vec3(screenPositionX, screenPositionY, windowPos.z));
+        glm::vec3 windowPos      = this->scene.GetDefaultViewport().Project(arrowsWorldPosition);
+        glm::vec3 arrowsPosition = this->scene.GetDefaultViewport().Unproject(glm::vec3(screenPositionX, screenPositionY, windowPos.z));
         
 
         // We actually need to scale this a bit to keep it a constant size.
-        glm::vec3 arrowsScale(glm::distance(this->viewport.Unproject(glm::vec3(screenPositionX, screenPositionY + screenSize, windowPos.z)), arrowsPosition));
+        glm::vec3 arrowsScale(glm::distance(this->scene.GetDefaultViewport().Unproject(glm::vec3(screenPositionX, screenPositionY + screenSize, windowPos.z)), arrowsPosition));
 
 
         // World Space -> Local Space.
@@ -2076,8 +2077,8 @@ namespace GTEngine
             this->camera.DisableStateStackStaging();
 
 
-            this->viewport.SetCameraNode(this->camera);
-            this->scene.AddViewport(this->viewport);
+            this->scene.GetDefaultViewport().SetCameraNode(this->camera);
+            this->scene.AddViewport(this->scene.GetDefaultViewport());
             this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
         }
     }
@@ -2284,10 +2285,10 @@ namespace GTEngine
         glm::quat orientation = this->GetGizmoRotation();
 
         // Scale.
-        glm::vec3 windowPos = this->viewport.Project(position);
+        glm::vec3 windowPos = this->scene.GetDefaultViewport().Project(position);
         windowPos.y += 64.0f;
 
-        glm::vec3 scale(glm::distance(this->viewport.Unproject(windowPos), position));
+        glm::vec3 scale(glm::distance(this->scene.GetDefaultViewport().Unproject(windowPos), position));
 
 
         // Now we just update in one go.

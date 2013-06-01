@@ -184,9 +184,6 @@ namespace GTEngine
         /// The scene containing the model.
         Scene scene;
 
-        /// The viewport that the scene will be drawn from.
-        SceneViewport viewport;
-
         /// The scene node acting as the camera for the viewport.
         SceneNode camera;
 

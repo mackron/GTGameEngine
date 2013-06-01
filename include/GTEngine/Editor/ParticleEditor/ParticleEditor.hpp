@@ -82,9 +82,6 @@ namespace GTEngine
         /// The scene for the preview window.
         Scene scene;
 
-        /// The viewport that the preview scene will be drawn from.
-        SceneViewport viewport;
-
         /// The scene node acting as the camera for the preview window viewport.
         SceneNode camera;
 
