@@ -132,6 +132,22 @@ namespace GTEngine
             ///     Argument 2: The path to make the absolute path relative to.
             ///     Argument 3: A pointer to the scene node to create the prefrab file from.
             int CreatePrefab(GTCore::Script &script);
+
+
+            /// Executes the script defined in the given file.
+            ///
+            /// @remarks
+            ///     Argument 1: The name of the script file to load and execute.
+            int ExecuteFile(GTCore::Script &script);
+
+            /// Executes the given script text.
+            ///
+            /// @remarks
+            ///     Argument 1: The script text to execute.
+            int ExecuteScript(GTCore::Script &script);
+
+            /// Retrieves the last script error.
+            int GetLastScriptError(GTCore::Script &script);
         }
     }
 }
