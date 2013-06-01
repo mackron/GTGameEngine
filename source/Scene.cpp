@@ -238,13 +238,14 @@ namespace GTEngine
           updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
           deleteRenderer(true), deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
           paused(false),
-          viewports(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(),
+          viewports(), defaultViewport(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(),
           sceneNodesWithProximityComponents(), sceneNodesWithParticleSystemComponents(),
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true),
           registeredScript(nullptr), isScriptEventsBlocked(false)
     {
+        this->AddViewport(this->defaultViewport);
     }
 
     Scene::Scene(SceneUpdateManager &updateManagerIn, ScenePhysicsManager &physicsManagerIn, SceneCullingManager &cullingManagerIn)
@@ -252,13 +253,14 @@ namespace GTEngine
           updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
           deleteRenderer(true), deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
           paused(false),
-          viewports(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(),
+          viewports(), defaultViewport(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(),
           sceneNodesWithProximityComponents(), sceneNodesWithParticleSystemComponents(),
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true),
           registeredScript(nullptr), isScriptEventsBlocked(false)
     {
+        this->AddViewport(this->defaultViewport);
     }
 
     Scene::~Scene()
@@ -291,6 +293,24 @@ namespace GTEngine
         {
             delete &this->cullingManager;
         }
+    }
+
+
+    bool Scene::LoadFromFile(const char* relativeFilePath)
+    {
+        auto file = GTCore::IO::Open(relativeFilePath, GTCore::IO::OpenMode::Read);
+        if (file != nullptr)
+        {
+            bool result = false;
+
+            GTCore::FileDeserializer deserializer(file);
+            result = this->Deserialize(deserializer);
+
+            GTCore::IO::Close(file);
+            return result;
+        }
+
+        return false;
     }
 
 
@@ -830,6 +850,11 @@ namespace GTEngine
     const SceneViewport & Scene::GetViewportByIndex(size_t index) const
     {
         return *this->viewports[index];
+    }
+
+    void Scene::SetViewportCamera(size_t index, SceneNode &cameraNode)
+    {
+        this->viewports[index]->SetCameraNode(cameraNode);
     }
 
 

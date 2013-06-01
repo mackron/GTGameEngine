@@ -15,8 +15,8 @@ namespace GTEngine
     ParticleEditor::ParticleEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
           particleSystemDefinition(), particleSystem(particleSystemDefinition),
-          scene(), viewport(), camera(), particleNode(),
-          mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), this->viewport),
+          scene(), camera(), particleNode(),
+          mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), scene.GetDefaultViewport()),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
           grid(0.25f, 8, 32),
           isSaving(false), isReloading(false)
@@ -27,8 +27,7 @@ namespace GTEngine
         this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.25f, 0.25f, 0.25f);
 
         // Viewport and Renderer.
-        this->viewport.SetCameraNode(this->camera);
-        this->scene.AddViewport(this->viewport);
+        this->scene.SetDefaultViewportCamera(this->camera);
         this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
         
 

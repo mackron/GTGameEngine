@@ -211,7 +211,8 @@ namespace GTEngine
                 "end;"
 
                 "function GTEngine.Scene:SetViewportCameraByPtr(cameraNodePtr, viewportIndex)"
-                "    return GTEngine.System.Scene.SetViewportCamera(self._internalPtr, cameraNodePtr, viewportIndex);"
+                "    GTEngine.System.Scene.SetViewportCamera(self._internalPtr, cameraNodePtr, viewportIndex);"
+                "    self:ApplyViewportCameraAspectRatio(viewportIndex);"
                 "end;"
 
                 "function GTEngine.Scene:ApplyViewportCameraAspectRatio(viewportIndex)"

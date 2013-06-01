@@ -242,6 +242,14 @@ namespace GTEngine
         virtual ~Scene();
 
 
+        /// Loads a file into the scene.
+        ///
+        /// @param relativePath [in] The relative path of the file to load.
+        ///
+        /// @remarks
+        ///     This will simply do a standard deserialization from a file.
+        bool LoadFromFile(const char* relativePath);
+
 
         /// Adds a scene node to the scene.
         ///
@@ -378,6 +386,16 @@ namespace GTEngine
         /// Retrieves a reference to the viewport at the given index.
               SceneViewport & GetViewportByIndex(size_t index);
         const SceneViewport & GetViewportByIndex(size_t index) const;
+
+        /// Retrieves a reference to the default viewport.
+              SceneViewport & GetDefaultViewport()       { return this->defaultViewport; }
+        const SceneViewport & GetDefaultViewport() const { return this->defaultViewport; }
+
+        /// Sets the scene node to act as the camera on the given viewport.
+        void SetViewportCamera(size_t index, SceneNode &cameraNode);
+
+        /// Sets the scene node to act as the camera on the default viewport.
+        void SetDefaultViewportCamera(SceneNode &cameraNode) { this->SetViewportCamera(0, cameraNode); }
 
 
         /// Retrieves the AABB of the scene.
@@ -888,8 +906,12 @@ namespace GTEngine
         bool paused;
 
 
-        /// The list of viewports currently attached to this scene.
+        /// The list of viewports currently attached to this scene. There will always be at least one viewport. The default viewport will be positioned
+        /// at index 0.
         GTCore::Vector<SceneViewport*> viewports;
+
+        /// The default viewport.
+        SceneViewport defaultViewport;
 
 
         /// The list of scene nodes in the scene. This contains every scene node, including those connected to a parent. This is indexed by the unique ID of the scene node.
