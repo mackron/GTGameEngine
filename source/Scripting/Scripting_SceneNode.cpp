@@ -29,7 +29,7 @@ namespace GTEngine
                 "        new._scriptVariables = {};"
                 "        new.Scene            = nil;"
                 ""
-                "        new:RegisterScriptComponent();"
+                "        new:RegisterComponents();"
                 "    return new;"
                 "end;"
 
@@ -37,6 +37,33 @@ namespace GTEngine
                 "    if self._deleteInternalPtr then"
                 "        GTEngine.System.SceneNode.Delete(self._internalPtr);"
                 "    end;"
+                "end;"
+
+
+                "function GTEngine.SceneNode:RegisterComponents()"
+                "    local componentIDs = self:GetAttachedComponentIDs();"
+                "    for i,componentID in ipairs(componentIDs) do"
+                "        self:RegisterComponent(componentID);"
+                "    end;"
+                "end;"
+
+                "function GTEngine.SceneNode:RegisterComponent(componentID)"
+                "    if componentID == GTEngine.Components.Script then"
+                "        self:RegisterScriptComponent();"
+                "    else"
+                "        self[componentID] = self:GetComponent(componentID);"
+                "    end;"
+                "end;"
+                
+                "function GTEngine.SceneNode:UnregisterComponents()"
+                "    local componentIDs = self:GetAttachedComponentIDs();"
+                "    for i,componentID in ipairs(componentIDs) do"
+                "        self:UnregisterComponent(componentID);"
+                "    end;"
+                "end;"
+
+                "function GTEngine.SceneNode:UnregisterComponent(componentID)"
+                "    self[componentID] = nil;"
                 "end;"
 
 
@@ -556,17 +583,35 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void RegisterScriptComponent(GTCore::Script &script, SceneNode &sceneNode)
+        void RegisterComponent(GTCore::Script &script, SceneNode &sceneNode, const char* componentID)
         {
             Scripting::PushSceneNode(script, sceneNode);
             assert(script.IsTable(-1));
             {
-                script.Push("RegisterScriptComponent");
+                script.Push("RegisterComponent");
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
-                    script.PushValue(-2);                   // <-- 'self'
-                    script.Call(1, 0);
+                    script.PushValue(-2);           // <-- 'self'
+                    script.Push(componentID);       // <-- 'componentID'
+                    script.Call(2, 0);
+                }
+            }
+            script.Pop(1);
+        }
+
+        void UnregisterComponent(GTCore::Script &script, SceneNode &sceneNode, const char* componentID)
+        {
+            Scripting::PushSceneNode(script, sceneNode);
+            assert(script.IsTable(-1));
+            {
+                script.Push("UnregisterComponent");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);           // <-- 'self'
+                    script.Push(componentID);       // <-- 'componentID'
+                    script.Call(2, 0);
                 }
             }
             script.Pop(1);
