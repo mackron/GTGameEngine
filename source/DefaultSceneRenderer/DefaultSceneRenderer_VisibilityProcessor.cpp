@@ -19,10 +19,10 @@ namespace GTEngine
           projectionMatrix(), viewMatrix(), projectionViewMatrix()
     {
         auto cameraNode = viewportIn.GetCameraNode();
-        assert(cameraNode != nullptr);
+        if (cameraNode != nullptr)
         {
             auto camera = cameraNode->GetComponent<CameraComponent>();
-            assert(camera != nullptr);
+            if (camera != nullptr)
             {
                 this->projectionMatrix     = camera->GetProjectionMatrix();
                 this->viewMatrix           = camera->GetViewMatrix();

@@ -513,6 +513,89 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the scene editor.
             int IsBloomEnabled(GTCore::Script &script);
+
+
+
+            /// Sets the name of the scene.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: The new name of the scene.
+            ///
+            ///     The name of a scene is just metadata that games can use if needed. This is not the file name.
+            int SetSceneName(GTCore::Script &script);
+
+            /// Retrieves the name of the scene.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///
+            ///     The name of a scene is just metadata that games can use if needed. This is not the file name.
+            int GetSceneName(GTCore::Script &script);
+
+
+            /// Enables background clearing.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: A math.vec3 containing the new clear colour.
+            int EnableSceneBackgroundClearing(GTCore::Script &script);
+
+            /// Disables background clearing.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int DisableSceneBackgroundClearing(GTCore::Script &script);
+
+            /// Determines whether or not background clearing is enabled.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int IsSceneBackgroundClearingEnabled(GTCore::Script &script);
+
+            /// Retrieves a math.vec3 containing the background clear colour.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int GetSceneBackgroundClearColour(GTCore::Script &script);
+
+
+            /// Enables HDR on the scene.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int EnableSceneHDR(GTCore::Script &script);
+
+            /// Disables HDR on the scene.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int DisableSceneHDR(GTCore::Script &script);
+
+            /// Determines whether or not HDR is enabled on the scene.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int IsSceneHDREnabled(GTCore::Script &script);
+
+
+            /// Enables bloom on the scene.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int EnableSceneBloom(GTCore::Script &script);
+
+            /// Disables bloom on the scene.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int DisableSceneBloom(GTCore::Script &script);
+
+            /// Determines whether or not bloom is enabled on the scene.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int IsSceneBloomEnabled(GTCore::Script &script);
         }
 
 

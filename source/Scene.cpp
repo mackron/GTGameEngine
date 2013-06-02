@@ -243,7 +243,10 @@ namespace GTEngine
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true),
-          registeredScript(nullptr), isScriptEventsBlocked(false)
+          registeredScript(nullptr), isScriptEventsBlocked(false),
+          name(),
+          isBackgroundClearEnabled(true), backgroundClearColour(0.5f),
+          isHDREnabled(false), isBloomEnabled(false)
     {
         this->AddViewport(this->defaultViewport);
     }
@@ -258,7 +261,10 @@ namespace GTEngine
           navigationMesh(),
           eventHandlers(),
           stateStack(*this), isStateStackStagingEnabled(true),
-          registeredScript(nullptr), isScriptEventsBlocked(false)
+          registeredScript(nullptr), isScriptEventsBlocked(false),
+          name(),
+          isBackgroundClearEnabled(true), backgroundClearColour(0.5f),
+          isHDREnabled(false), isBloomEnabled(false)
     {
         this->AddViewport(this->defaultViewport);
     }
@@ -1082,6 +1088,94 @@ namespace GTEngine
 
 
 
+    ////////////////////////////////////////////
+    // Properties
+
+    void Scene::SetName(const char* nameIn)
+    {
+        this->name = nameIn;
+    }
+
+    const char* Scene::GetName() const
+    {
+        return this->name.c_str();
+    }
+
+
+    void Scene::EnableBackgroundClearing(float r, float g, float b)
+    {
+        this->isBackgroundClearEnabled = true;
+        this->backgroundClearColour = glm::vec3(r, g, b);
+    }
+
+    void Scene::DisableBackgroundClearing()
+    {
+        this->isBackgroundClearEnabled = false;
+    }
+
+    bool Scene::IsBackgroundClearingEnabled() const
+    {
+        return this->isBackgroundClearEnabled;
+    }
+
+    const glm::vec3 & Scene::GetBackgroundClearColour() const
+    {
+        return this->backgroundClearColour;
+    }
+
+
+    void Scene::EnableHDR()
+    {
+        this->isHDREnabled = true;
+        
+        /*if (this->renderer != nullptr)
+        {
+            this->renderer->SetProperty("IsHDREnabled", true);
+        }*/
+    }
+
+    void Scene::DisableHDR()
+    {
+        this->isHDREnabled = false;
+
+        /*if (this->renderer != nullptr)
+        {
+            this->renderer->SetProperty("IsHDREnabled", false);
+        }*/
+    }
+
+    bool Scene::IsHDREnabled() const
+    {
+        return this->isHDREnabled;
+    }
+
+
+    void Scene::EnableBloom()
+    {
+        this->isBloomEnabled = true;
+
+        /*if (this->renderer != nullptr)
+        {
+            this->renderer->SetProperty("IsBloomEnabled", true);
+        }*/
+    }
+
+    void Scene::DisableBloom()
+    {
+        this->isBloomEnabled = false;
+
+        /*if (this->renderer != nullptr)
+        {
+            this->renderer->SetProperty("IsBloomEnabled", false);
+        }*/
+    }
+
+    bool Scene::IsBloomEnabled() const
+    {
+        return this->isBloomEnabled;
+    }
+
+
 
     SceneNode* Scene::RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, RayTestCallback &callback)
     {
@@ -1311,6 +1405,25 @@ namespace GTEngine
         serializer.Write(header);
         serializer.Write(childParentPairs.buffer, header.sizeInBytes);
 
+
+        // Properties.
+        secondarySerializer.Clear();
+        secondarySerializer.WriteString(this->name);
+        
+        secondarySerializer.Write(this->isBackgroundClearEnabled);
+        secondarySerializer.Write(this->backgroundClearColour);
+        secondarySerializer.Write(this->isHDREnabled);
+        secondarySerializer.Write(this->isBloomEnabled);
+
+
+        header.id          = Serialization::ChunkID_Scene_Properties;
+        header.version     = 1;
+        header.sizeInBytes = secondarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(secondarySerializer.GetBuffer(), header.sizeInBytes);
+
+
         return true;
     }
 
@@ -1322,6 +1435,7 @@ namespace GTEngine
         bool readInfo                = false;
         bool readSceneNodes          = false;
         bool readSceneNodesHierarchy = false;
+        bool readSceneProperties     = false;
 
 
         Serialization::ChunkHeader header;
@@ -1415,6 +1529,23 @@ namespace GTEngine
                     }
                 }
             }
+            else if (header.id == Serialization::ChunkID_Scene_Properties)
+            {
+                if (header.version == 1)
+                {
+                    deserializer.ReadString(this->name);
+
+                    deserializer.Read(this->isBackgroundClearEnabled);
+                    deserializer.Read(this->backgroundClearColour);
+                    deserializer.Read(this->isHDREnabled);
+                    deserializer.Read(this->isBloomEnabled);
+                }
+                else
+                {
+                    GTEngine::Log("Error deserializing scene properties. Unsupported version (%d). Properties have been skipped.", header.version);
+                    deserializer.Seek(header.sizeInBytes);
+                }
+            }
             else
             {
                 deserializer.Seek(header.sizeInBytes);
@@ -1422,7 +1553,7 @@ namespace GTEngine
 
 
             // We can break if all the chunks we need have been read.
-            if (readSceneNodes && readSceneNodesHierarchy)
+            if (readSceneNodes && readSceneNodesHierarchy && readSceneProperties)
             {
                 break;
             }
