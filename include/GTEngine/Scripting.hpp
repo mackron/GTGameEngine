@@ -106,6 +106,9 @@ namespace GTEngine
             /// Retrieves the executable directory.
             int GetExecutableDirectory(GTCore::Script &script);
 
+            /// Retrieves the version string.
+            int GetVersionString(GTCore::Script &script);
+
             /// Determines if the given file path is a model file, based on it's extension.
             int IsModelFile(GTCore::Script &script);
 
