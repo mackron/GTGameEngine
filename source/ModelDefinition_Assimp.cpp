@@ -242,6 +242,8 @@ namespace GTEngine
             auto mesh = scene.mMeshes[node.mMeshes[iMesh]];
             assert(mesh != nullptr);
 
+            printf("Mesh: %s\n", mesh->mName.C_Str());
+
             auto positions = mesh->mVertices;
             auto normals   = mesh->mNormals;
             auto texCoords = mesh->mTextureCoords;
@@ -356,13 +358,27 @@ namespace GTEngine
                 auto existingMesh = definition.GetMeshByName(newMesh.name.c_str());
                 if (existingMesh != nullptr)
                 {
-                    assert(existingMesh->geometry                 == nullptr);
-                    assert(existingMesh->skinningVertexAttributes == nullptr);
+                    // If we get here it means a mesh with the same name already exists. If that mesh already has geometry associated with it, it means
+                    // two meshes of the same name are present. We want unique names, so we're going to generate a new name. We're just going to append
+                    // a number to the end of the original name in this case.
+                    if (existingMesh->geometry != nullptr)
+                    {
+                        newMesh.name = GTCore::String::CreateFormatted("%s_%d", newMesh.name.c_str(), static_cast<int>(definition.GetMeshCount()));
 
-                    existingMesh->geometry                 = newMesh.geometry;
-                    existingMesh->skinningVertexAttributes = newMesh.skinningVertexAttributes;
+                        // Set the default material before adding the mesh.
+                        newMesh.material = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
+                        definition.AddMesh(newMesh);
+                    }
+                    else
+                    {
+                        assert(existingMesh->geometry                 == nullptr);
+                        assert(existingMesh->skinningVertexAttributes == nullptr);
 
-                    // Don't change the material. We want to maintain this to play nicely with auto-reloading.
+                        existingMesh->geometry                 = newMesh.geometry;
+                        existingMesh->skinningVertexAttributes = newMesh.skinningVertexAttributes;
+
+                        // Don't change the material. We want to maintain this to play nicely with auto-reloading.
+                    }
                 }
                 else
                 {

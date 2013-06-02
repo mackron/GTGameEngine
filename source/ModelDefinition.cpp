@@ -278,6 +278,10 @@ namespace GTEngine
         return nullptr;
     }
 
+    size_t ModelDefinition::GetMeshCount() const
+    {
+        return this->meshes.count;
+    }
 
 
     size_t ModelDefinition::AddBone(Bone* bone)
