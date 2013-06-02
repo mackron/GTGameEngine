@@ -41,7 +41,7 @@ function GTGUI.Element:SceneEditorContextMenu(sceneEditor)
     self:AppendItem("Add Point Light"):OnPressed(function()
         local newNode = sceneEditor.Scene:CreateNewSceneNode();
         newNode:SetName("PointLight");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
+        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/editor/images/light-sprite.png");
         newNode:AddComponent(GTEngine.Components.PointLight);
         
         sceneEditor:PositionSceneNodeInFrontOfCamera(newNode);
@@ -55,7 +55,7 @@ function GTGUI.Element:SceneEditorContextMenu(sceneEditor)
     self:AppendItem("Add Spot Light"):OnPressed(function()
         local newNode = sceneEditor.Scene:CreateNewSceneNode();
         newNode:SetName("SpotLight");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
+        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/editor/images/light-sprite.png");
         newNode:AddComponent(GTEngine.Components.SpotLight);
         
         sceneEditor:PositionSceneNodeInFrontOfCamera(newNode);
@@ -69,7 +69,7 @@ function GTGUI.Element:SceneEditorContextMenu(sceneEditor)
     self:AppendItem("Add Directional Light"):OnPressed(function()
         local newNode = sceneEditor.Scene:CreateNewSceneNode();
         newNode:SetName("DirectionalLight");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
+        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/editor/images/light-sprite.png");
         newNode:AddComponent(GTEngine.Components.DirectionalLight);
         
         sceneEditor:PositionSceneNodeInFrontOfCamera(newNode);
@@ -83,7 +83,7 @@ function GTGUI.Element:SceneEditorContextMenu(sceneEditor)
     self:AppendItem("Add Ambient Light"):OnPressed(function()
         local newNode = sceneEditor.Scene:CreateNewSceneNode();
         newNode:SetName("AmbientLight");
-        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/textures/light-sprite.png");
+        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/editor/images/light-sprite.png");
         newNode:AddComponent(GTEngine.Components.AmbientLight);
         
         sceneEditor:PositionSceneNodeInFrontOfCamera(newNode);
