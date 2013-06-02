@@ -126,20 +126,20 @@ namespace GTEngine
 
         
         /// Marks HDR as enabled on the scene.
-        void EnableSceneHDR();
+        void EnableSceneHDR(bool markAsModified = true);
 
         /// Marks HDR as disabled on the scene.
-        void DisableSceneHDR();
+        void DisableSceneHDR(bool markAsModified = true);
 
         /// Determines whether or not HDR is enabled on the scene.
         bool IsSceneHDREnabled() const;
 
 
         /// Marks bloom as enabled on the scene.
-        void EnableSceneBloom();
+        void EnableSceneBloom(bool markAsModified = true);
 
         /// Marks bloom as disabled on the scene.
-        void DisableSceneBloom();
+        void DisableSceneBloom(bool markAsModified = true);
 
         /// Determines whether or not bloom is enabled on the scene.
         bool IsSceneBloomEnabled() const;

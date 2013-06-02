@@ -143,9 +143,9 @@ namespace GTEngine
             this->ShowAxisArrows();
 
 
-            // HDR+Bloom should be disabled by default.
-            this->DisableSceneHDR();
-            this->DisableSceneBloom();
+            // HDR+Bloom should be disabled by default. The 'false' arguments means that the scene should NOT be marked as modified.
+            this->DisableSceneHDR(false);
+            this->DisableSceneBloom(false);
 
 
 
@@ -538,16 +538,24 @@ namespace GTEngine
     }
 
         
-    void SceneEditor::EnableSceneHDR()
+    void SceneEditor::EnableSceneHDR(bool markAsModified)
     {
         this->scene.EnableHDR();
-        this->MarkAsModified();
+        
+        if (markAsModified)
+        {
+            this->MarkAsModified();
+        }
     }
 
-    void SceneEditor::DisableSceneHDR()
+    void SceneEditor::DisableSceneHDR(bool markAsModified)
     {
         this->scene.DisableHDR();
-        this->MarkAsModified();
+
+        if (markAsModified)
+        {
+            this->MarkAsModified();
+        }
     }
 
     bool SceneEditor::IsSceneHDREnabled() const
@@ -556,16 +564,24 @@ namespace GTEngine
     }
 
 
-    void SceneEditor::EnableSceneBloom()
+    void SceneEditor::EnableSceneBloom(bool markAsModified)
     {
         this->scene.EnableBloom();
-        this->MarkAsModified();
+        
+        if (markAsModified)
+        {
+            this->MarkAsModified();
+        }
     }
 
-    void SceneEditor::DisableSceneBloom()
+    void SceneEditor::DisableSceneBloom(bool markAsModified)
     {
         this->scene.DisableBloom();
-        this->MarkAsModified();
+
+        if (markAsModified)
+        {
+            this->MarkAsModified();
+        }
     }
 
     bool SceneEditor::IsSceneBloomEnabled() const
