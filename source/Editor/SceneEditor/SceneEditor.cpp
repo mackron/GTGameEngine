@@ -144,8 +144,8 @@ namespace GTEngine
 
 
             // HDR+Bloom should be disabled by default.
-            this->DisableHDR();
-            this->DisableBloom();
+            this->DisableSceneHDR();
+            this->DisableSceneBloom();
 
 
 
@@ -500,39 +500,6 @@ namespace GTEngine
     bool SceneEditor::IsShowingAxisArrows() const
     {
         return this->isShowingAxisArrows;
-    }
-
-
-    // TODO: Improve the ways these properties are set so that custom renderers can be used.
-    void SceneEditor::EnableHDR()
-    {
-        static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).EnableHDR();
-    }
-
-    void SceneEditor::DisableHDR()
-    {
-        static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).DisableHDR();
-    }
-    
-    bool SceneEditor::IsHDREnabled() const
-    {
-        return static_cast<const DefaultSceneRenderer &>(this->scene.GetRenderer()).IsHDREnabled();
-    }
-
-
-    void SceneEditor::EnableBloom()
-    {
-        static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).EnableBloom();
-    }
-
-    void SceneEditor::DisableBloom()
-    {
-        static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).DisableBloom();
-    }
-    
-    bool SceneEditor::IsBloomEnabled() const
-    {
-        return static_cast<const DefaultSceneRenderer &>(this->scene.GetRenderer()).IsBloomEnabled();
     }
 
 
@@ -2179,8 +2146,7 @@ namespace GTEngine
 
             // View settings.
             metadataSerializer.Write(this->IsShowingGrid());
-            metadataSerializer.Write(this->IsHDREnabled());
-            metadataSerializer.Write(this->IsBloomEnabled());
+            metadataSerializer.Write(this->IsShowingAxisArrows());
 
 
             // We're going to serialize the state stack, too.
@@ -2234,11 +2200,9 @@ namespace GTEngine
 
                 // "View" settings.
                 bool isShowingGrid;
-                bool isHDREnabled;
-                bool isBloomEnabled;
+                bool isShowingAxisArrows;
                 deserializer.Read(isShowingGrid);
-                deserializer.Read(isHDREnabled);
-                deserializer.Read(isBloomEnabled);
+                deserializer.Read(isShowingAxisArrows);
 
                 if (isShowingGrid)
                 {
@@ -2249,23 +2213,15 @@ namespace GTEngine
                     this->HideGrid();
                 }
 
-                if (isHDREnabled)
+                if (isShowingAxisArrows)
                 {
-                    this->EnableHDR();
+                    this->ShowAxisArrows();
                 }
                 else
                 {
-                    this->DisableHDR();
+                    this->HideAxisArrows();
                 }
 
-                if (isBloomEnabled)
-                {
-                    this->EnableBloom();
-                }
-                else
-                {
-                    this->DisableBloom();
-                }
 
 
                 // We need to peek at the next bytes. If it's a state stack, we need to deserialize it.
