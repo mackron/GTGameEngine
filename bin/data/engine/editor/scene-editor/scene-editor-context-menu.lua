@@ -95,6 +95,23 @@ function GTGUI.Element:SceneEditorContextMenu(sceneEditor)
         
         sceneEditor:CommitStateStackFrame();
     end);
+    
+    self:AppendSeparator();
+    
+    self:AppendItem("Add Camera"):OnPressed(function()
+        local newNode = sceneEditor.Scene:CreateNewSceneNode();
+        newNode:SetName("Camera");
+        newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/editor/images/camera-sprite.png");
+        newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowDirectionArrow();
+        newNode:AddComponent(GTEngine.Components.Camera):Set3DProjection(90.0, 16/9, 0.1, 1000.0);
+        
+        sceneEditor:PositionSceneNodeInFrontOfCamera(newNode);
+        
+        sceneEditor:DeselectAll();
+        sceneEditor:SelectSceneNode(newNode);
+        
+        sceneEditor:CommitStateStackFrame();
+    end);
 
     return self;
 end
