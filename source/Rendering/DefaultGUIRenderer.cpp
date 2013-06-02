@@ -67,9 +67,13 @@ namespace GTEngine
     {
         // Some state needs to be restored as per protocol.
         GTEngine::Renderer::DisableScissorTest();
-        GTEngine::Renderer::DisableBlending();
         GTEngine::Renderer::EnableDepthTest();
         GTEngine::Renderer::EnableDepthWrites();
+
+        if (this->isBlendingEnabled)
+        {
+            GTEngine::Renderer::DisableBlending();
+        }
     }
 
     void DefaultGUIRenderer::BeginElementOnDrawEvent(GTGUI::Element &)
