@@ -357,12 +357,12 @@ function GTGUI.Element:CameraComponentPanel()
     end);
     
     self.NearInput:OnValueChanged(function(data)
-        self.Update3DProjection();
+        self:Update3DProjection();
         self.ParentPanel:OnSceneNodeChanged();
     end);
     
     self.FarInput:OnValueChanged(function(data)
-        self.Update3DProjection();
+        self:Update3DProjection();
         self.ParentPanel:OnSceneNodeChanged();
     end);
     
