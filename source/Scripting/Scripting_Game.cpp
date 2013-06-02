@@ -135,6 +135,8 @@ namespace GTEngine
                 script.SetTableFunction(-1, "Resume",                  GameFFI::Resume);
                 script.SetTableFunction(-1, "EnableFullscreen",        GameFFI::EnableFullscreen);
                 script.SetTableFunction(-1, "DisableFullscreen",       GameFFI::DisableFullscreen);
+                script.SetTableFunction(-1, "OpenEditor",              GameFFI::OpenEditor);
+                script.SetTableFunction(-1, "CloseEditor",             GameFFI::CloseEditor);
                 script.SetTableFunction(-1, "ShowDebug",               GameFFI::ShowDebug);
                 script.SetTableFunction(-1, "HideDebug",               GameFFI::HideDebug);
                 script.SetTableFunction(-1, "IsKeyDown",               GameFFI::IsKeyDown);
@@ -206,6 +208,20 @@ namespace GTEngine
                 GetGame(script).DisableFullscreen();
                 return 0;
             }
+
+
+            int OpenEditor(GTCore::Script &script)
+            {
+                GetGame(script).OpenEditor();
+                return 0;
+            }
+
+            int CloseEditor(GTCore::Script &script)
+            {
+                GetGame(script).CloseEditor();
+                return 0;
+            }
+
 
             int ShowDebug(GTCore::Script &script)
             {
