@@ -160,6 +160,9 @@ namespace GTEngine
               ModelDefinition::Mesh* GetMeshByName(const char* meshName);
         const ModelDefinition::Mesh* GetMeshByName(const char* meshName) const;
 
+        /// Retrieves the number of meshes in the definition.
+        size_t GetMeshCount() const;
+
 
         /// Adds a bone to the definition.
         ///
