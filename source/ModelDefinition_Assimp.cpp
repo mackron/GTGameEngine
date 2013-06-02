@@ -242,8 +242,6 @@ namespace GTEngine
             auto mesh = scene.mMeshes[node.mMeshes[iMesh]];
             assert(mesh != nullptr);
 
-            printf("Mesh: %s\n", mesh->mName.C_Str());
-
             auto positions = mesh->mVertices;
             auto normals   = mesh->mNormals;
             auto texCoords = mesh->mTextureCoords;
