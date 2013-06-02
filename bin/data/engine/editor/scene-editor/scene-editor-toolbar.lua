@@ -27,29 +27,6 @@ function GTGUI.Element:SceneEditorToolBar(sceneEditor)
     end);
 
     
-    GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "scene-editor-toolbar-viewport-menu-separator");
-    
-
-    self.MenuBar.Viewport.EnableHDRCheckBox = GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "checkbox");
-    self.MenuBar.Viewport.EnableHDRCheckBox:CheckBox("Enable HDR");
-    self.MenuBar.Viewport.EnableHDRCheckBox:OnChecked(function()
-        sceneEditor:EnableHDR();
-    end);
-    self.MenuBar.Viewport.EnableHDRCheckBox:OnUnchecked(function()
-        sceneEditor:DisableHDR();
-    end);
-    
-    self.MenuBar.Viewport.EnableBloomCheckBox = GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "checkbox");
-    self.MenuBar.Viewport.EnableBloomCheckBox:SetStyle("margin-top", "4px");
-    self.MenuBar.Viewport.EnableBloomCheckBox:CheckBox("Enable Bloom");
-    self.MenuBar.Viewport.EnableBloomCheckBox:OnChecked(function()
-        sceneEditor:EnableBloom();
-    end);
-    self.MenuBar.Viewport.EnableBloomCheckBox:OnUnchecked(function()
-        sceneEditor:DisableBloom();
-    end);
-    
-    
     
     self.PlaybackContainer = GTGUI.Server.CreateElement(self,                   "scene-editor-toolbar-playback-container");
     self.PlayPauseButton   = GTGUI.Server.CreateElement(self.PlaybackContainer, "scene-editor-toolbar-play-button");
@@ -91,8 +68,6 @@ function GTGUI.Element:SceneEditorToolBar(sceneEditor)
     function self:UpdateViewportMenu()
         self.MenuBar.Viewport.GridCheckBox:SetChecked(sceneEditor:IsShowingGrid(), true);
         self.MenuBar.Viewport.AxisArrowsCheckBox:SetChecked(sceneEditor:IsShowingAxisArrows(), true);
-        self.MenuBar.Viewport.EnableHDRCheckBox:SetChecked(sceneEditor:IsHDREnabled(), true);
-        self.MenuBar.Viewport.EnableBloomCheckBox:SetChecked(sceneEditor:IsBloomEnabled(), true);
     end
     
     

@@ -102,12 +102,6 @@ namespace GTEngine
                         script.SetTableFunction(-1, "ShowAxisArrows",                      SceneEditorFFI::ShowAxisArrows);
                         script.SetTableFunction(-1, "HideAxisArrows",                      SceneEditorFFI::HideAxisArrows);
                         script.SetTableFunction(-1, "IsShowingAxisArrows",                 SceneEditorFFI::IsShowingAxisArrows);
-                        script.SetTableFunction(-1, "EnableHDR",                           SceneEditorFFI::EnableHDR);
-                        script.SetTableFunction(-1, "DisableHDR",                          SceneEditorFFI::DisableHDR);
-                        script.SetTableFunction(-1, "IsHDREnabled",                        SceneEditorFFI::IsHDREnabled);
-                        script.SetTableFunction(-1, "EnableBloom",                         SceneEditorFFI::EnableBloom);
-                        script.SetTableFunction(-1, "DisableBloom",                        SceneEditorFFI::DisableBloom);
-                        script.SetTableFunction(-1, "IsBloomEnabled",                      SceneEditorFFI::IsBloomEnabled);
 
                         script.SetTableFunction(-1, "SetSceneName",                        SceneEditorFFI::SetSceneName);
                         script.SetTableFunction(-1, "GetSceneName",                        SceneEditorFFI::GetSceneName);
@@ -1116,82 +1110,6 @@ namespace GTEngine
                 if (sceneEditor != nullptr)
                 {
                     script.Push(sceneEditor->IsShowingAxisArrows());
-                }
-                else
-                {
-                    script.Push(false);
-                }
-
-                return 1;
-            }
-
-
-            int EnableHDR(GTCore::Script &script)
-            {
-                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
-                if (sceneEditor != nullptr)
-                {
-                    sceneEditor->EnableHDR();
-                }
-
-                return 0;
-            }
-
-            int DisableHDR(GTCore::Script &script)
-            {
-                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
-                if (sceneEditor != nullptr)
-                {
-                    sceneEditor->DisableHDR();
-                }
-
-                return 0;
-            }
-
-            int IsHDREnabled(GTCore::Script &script)
-            {
-                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
-                if (sceneEditor != nullptr)
-                {
-                    script.Push(sceneEditor->IsHDREnabled());
-                }
-                else
-                {
-                    script.Push(false);
-                }
-
-                return 1;
-            }
-
-
-            int EnableBloom(GTCore::Script &script)
-            {
-                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
-                if (sceneEditor != nullptr)
-                {
-                    sceneEditor->EnableBloom();
-                }
-
-                return 0;
-            }
-
-            int DisableBloom(GTCore::Script &script)
-            {
-                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
-                if (sceneEditor != nullptr)
-                {
-                    sceneEditor->DisableBloom();
-                }
-
-                return 0;
-            }
-
-            int IsBloomEnabled(GTCore::Script &script)
-            {
-                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
-                if (sceneEditor != nullptr)
-                {
-                    script.Push(sceneEditor->IsBloomEnabled());
                 }
                 else
                 {

@@ -104,26 +104,6 @@ namespace GTEngine
 
 
 
-        /// Enables HDR.
-        void EnableHDR();
-
-        /// Disables HDR.
-        void DisableHDR();
-
-        /// Determines whether or not HDR is enabled.
-        bool IsHDREnabled() const;
-
-
-        /// Enables bloom.
-        void EnableBloom();
-
-        /// Disable bloom.
-        void DisableBloom();
-
-        /// Determines whether or not bloom is enabled.
-        bool IsBloomEnabled() const;
-
-
         /// Sets the scene name.
         void SetSceneName(const char* sceneName);
 

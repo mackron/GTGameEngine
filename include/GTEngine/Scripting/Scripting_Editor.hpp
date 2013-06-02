@@ -477,44 +477,6 @@ namespace GTEngine
             int IsShowingAxisArrows(GTCore::Script &script);
 
 
-            /// Enables HDR.
-            ///
-            /// @remarks
-            ///     Argument 1: A pointer to the scene editor.
-            int EnableHDR(GTCore::Script &script);
-
-            /// Disables HDR.
-            ///
-            /// @remarks
-            ///     Argument 1: A pointer to the scene editor.
-            int DisableHDR(GTCore::Script &script);
-
-            /// Determines whether or not HDR is enabled.
-            ///
-            /// @remarks
-            ///     Argument 1: A pointer to the scene editor.
-            int IsHDREnabled(GTCore::Script &script);
-
-
-            /// Enables bloom.
-            ///
-            /// @remarks
-            ///     Argument 1: A pointer to the scene editor.
-            int EnableBloom(GTCore::Script &script);
-
-            /// Disables bloom.
-            ///
-            /// @remarks
-            ///     Argument 1: A pointer to the scene editor.
-            int DisableBloom(GTCore::Script &script);
-
-            /// Determines whether or not bloom is enabled.
-            ///
-            /// @remarks
-            ///     Argument 1: A pointer to the scene editor.
-            int IsBloomEnabled(GTCore::Script &script);
-
-
 
             /// Sets the name of the scene.
             ///
