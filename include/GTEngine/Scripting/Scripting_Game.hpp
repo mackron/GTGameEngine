@@ -43,6 +43,13 @@ namespace GTEngine
             int DisableFullscreen(GTCore::Script &script);
 
 
+            /// Opens the editor.
+            int OpenEditor(GTCore::Script &script);
+
+            /// Closes the editor.
+            int CloseEditor(GTCore::Script &script);
+
+
             /// Shows the debugging information.
             int ShowDebug(GTCore::Script &script);
 
