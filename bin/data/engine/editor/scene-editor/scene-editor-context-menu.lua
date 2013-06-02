@@ -56,6 +56,7 @@ function GTGUI.Element:SceneEditorContextMenu(sceneEditor)
         local newNode = sceneEditor.Scene:CreateNewSceneNode();
         newNode:SetName("SpotLight");
         newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/editor/images/light-sprite.png");
+        newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowDirectionArrow();
         newNode:AddComponent(GTEngine.Components.SpotLight);
         
         sceneEditor:PositionSceneNodeInFrontOfCamera(newNode);
@@ -70,6 +71,7 @@ function GTGUI.Element:SceneEditorContextMenu(sceneEditor)
         local newNode = sceneEditor.Scene:CreateNewSceneNode();
         newNode:SetName("DirectionalLight");
         newNode:AddComponent(GTEngine.Components.EditorMetadata):ShowSprite("engine/editor/images/light-sprite.png");
+        newNode:GetComponent(GTEngine.Components.EditorMetadata):ShowDirectionArrow();
         newNode:AddComponent(GTEngine.Components.DirectionalLight);
         
         sceneEditor:PositionSceneNodeInFrontOfCamera(newNode);
