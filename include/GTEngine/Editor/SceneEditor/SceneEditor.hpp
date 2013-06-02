@@ -112,11 +112,11 @@ namespace GTEngine
 
         
         /// Marks background clearing as enabled on the scene.
-        void EnableSceneBackgroundClearing(float r, float g, float b);
-        void EnableSceneBackgroundClearing(const glm::vec3 &colour) { this->EnableSceneBackgroundClearing(colour.x, colour.y, colour.z); }
+        void EnableSceneBackgroundClearing(float r, float g, float b, bool markAsModified = true);
+        void EnableSceneBackgroundClearing(const glm::vec3 &colour, bool markAsModified = true) { this->EnableSceneBackgroundClearing(colour.x, colour.y, colour.z, markAsModified); }
         
         /// Marks background clearing as disabled on the scene.
-        void DisableSceneBackgroundClearing();
+        void DisableSceneBackgroundClearing(bool markAsModified = true);
 
         /// Determines whether or not background clearing is enabled on the scene.
         bool IsSceneBackgroundClearingEnabled() const;
