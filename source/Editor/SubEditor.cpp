@@ -129,7 +129,6 @@ namespace GTEngine
     }
 
     
-    // TODO: Fix up this whole firstChild thing that's going on here. It's just hacky, ugly and inflexible. Will want to use the scripting interface.
     void SubEditor::MarkAsModified()
     {
         if (!this->isMarkedAsModified)
