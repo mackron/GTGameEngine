@@ -524,7 +524,7 @@ function GTGUI.Element:SceneEditorSceneDetailsPropertiesPanel(sceneEditor)
     end);
     
     function self:Refresh()
-        self.NameTextBox:SetText(sceneEditor:GetSceneName(), true);         -- 'true' means to block posting the event.
+        self.NameTextBox:SetText(sceneEditor:GetSceneName());
     end
     
     return self;
