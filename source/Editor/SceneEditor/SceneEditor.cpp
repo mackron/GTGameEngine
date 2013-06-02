@@ -515,16 +515,24 @@ namespace GTEngine
     }
 
 
-    void SceneEditor::EnableSceneBackgroundClearing(float r, float g, float b)
+    void SceneEditor::EnableSceneBackgroundClearing(float r, float g, float b, bool markAsModified)
     {
         this->scene.EnableBackgroundClearing(r, g, b);
-        this->MarkAsModified();
+
+        if (markAsModified)
+        {
+            this->MarkAsModified();
+        }
     }
         
-    void SceneEditor::DisableSceneBackgroundClearing()
+    void SceneEditor::DisableSceneBackgroundClearing(bool markAsModified)
     {
         this->scene.DisableBackgroundClearing();
-        this->MarkAsModified();
+
+        if (markAsModified)
+        {
+            this->MarkAsModified();
+        }
     }
 
     bool SceneEditor::IsSceneBackgroundClearingEnabled() const
