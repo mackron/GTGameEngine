@@ -137,6 +137,7 @@ namespace GTEngine
             if (script.IsTable(-1))
             {
                 script.SetTableFunction(-1, "GetExecutableDirectory", FFI::GetExecutableDirectory);
+                script.SetTableFunction(-1, "GetVersionString",       FFI::GetVersionString);
 
                 script.SetTableFunction(-1, "IsModelFile",        FFI::IsModelFile);
                 script.SetTableFunction(-1, "IsImageFile",        FFI::IsImageFile);
@@ -600,6 +601,12 @@ namespace GTEngine
             int GetExecutableDirectory(GTCore::Script &script)
             {
                 script.Push(GTEngine::GetExecutableDirectory());
+                return 1;
+            }
+
+            int GetVersionString(GTCore::Script &script)
+            {
+                script.Push(GTEngine::GetVersionString());
                 return 1;
             }
 

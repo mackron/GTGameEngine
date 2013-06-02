@@ -28,6 +28,8 @@ THE SOFTWARE.
 
 #include "Game.hpp"
 
+#define GTENGINE_VERSION_STRING "0.0.1"
+
 namespace GTEngine
 {
     extern Game* GlobalGame;
@@ -83,6 +85,10 @@ namespace GTEngine
     ///
     /// @return The directory containing the executable.
     const char* GetExecutableDirectory();
+
+    
+    /// Retrieves the version string.
+    inline const char* GetVersionString() { return GTENGINE_VERSION_STRING; }
 }
 
 #endif
