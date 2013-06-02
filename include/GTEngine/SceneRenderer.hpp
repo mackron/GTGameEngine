@@ -204,7 +204,17 @@ namespace GTEngine
 
 
 
-    /// Class responsible for the rendering a scene.
+    /// Base class for rendering a scene.
+    ///
+    /// The engine supports the idea of implementing completely custom renderers. Because some renderers have properties that don't make
+    /// any sense to other types of renderers, there exists a way of generically settings properties where the names of those properties
+    /// are just strings. A property is set with the SetProperty() method and retrieved with the Get*Property() methods.
+    ///
+    /// There are some standard properties that will be used by most renderers:
+    ///     - IsBackgroundClearEnabled (boolean)
+    ///     - BackgroundClearColour (vec3)
+    ///     - IsHDREnabled (boolean)
+    ///     - IsBloomEnabled (boolean)
     class SceneRenderer
     {
     public:
@@ -276,8 +286,33 @@ namespace GTEngine
 
 
 
+        /// Sets a rendering property.
+        ///
+        /// @param name  [in] The name of the property to set.
+        /// @param value [in] The value of the property.
+        ///
+        /// @remarks
+        ///     Because the engine is designed to allow custom renderers, sometimes some properties will be unique to that particular
+        ///     renderer. To make it possible to set properties arbitrarily, we use a key/value type system, where the key is just a
+        ///     string and the value is any basic type (string, number, boolean, vector2/3/4).
+        virtual void SetProperty(const char* name, const char* value);
+        virtual void SetProperty(const char* name, int value);
+        virtual void SetProperty(const char* name, float value);
+        virtual void SetProperty(const char* name, bool value);
+        virtual void SetProperty(const char* name, const glm::vec2 &value);
+        virtual void SetProperty(const char* name, const glm::vec3 &value);
+        virtual void SetProperty(const char* name, const glm::vec4 &value);
 
-
+        /// Retrieves the value of a generic property.
+        ///
+        /// @param name [in] The name of the property to retrieve.
+        virtual GTCore::String GetStringProperty(const char* name) const;
+        virtual int            GetIntegerProperty(const char* name) const;
+        virtual float          GetFloatProperty(const char* name) const;
+        virtual bool           GetBooleanProperty(const char* name) const;
+        virtual glm::vec2      GetVector2Property(const char* name) const;
+        virtual glm::vec3      GetVector3Property(const char* name) const;
+        virtual glm::vec4      GetVector4Property(const char* name) const;
 
 
         /// Enables background colour clearing.
@@ -286,6 +321,7 @@ namespace GTEngine
         /// @param g [in] The green component of the clear colour.
         /// @param b [in] The blue component of the clear colour.
         virtual void EnableBackgroundColourClearing(float r, float g, float b);
+                void EnableBackgroundColourClearing(const glm::vec3 &colour) { this->EnableBackgroundColourClearing(colour.x, colour.y, colour.z); }
 
         /// Disables background colour clearing.
         virtual void DisableBackgroundColourClearing();

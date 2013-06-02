@@ -259,6 +259,169 @@ namespace GTEngine
 
 
     ////////////////////////////////////////////////////////////////
+    // Properties
+
+    void DefaultSceneRenderer::SetProperty(const char* name, const char* value)
+    {
+        (void)name;
+        (void)value;
+    }
+
+    void DefaultSceneRenderer::SetProperty(const char* name, int value)
+    {
+        (void)name;
+        (void)value;
+    }
+
+    void DefaultSceneRenderer::SetProperty(const char* name, float value)
+    {
+        if (GTCore::Strings::Equal(name, "HDRExposure"))
+        {
+            this->SetHDRExposure(value);
+        }
+        else if (GTCore::Strings::Equal(name, "BloomFactor"))
+        {
+            this->SetBloomFactor(value);
+        }
+    }
+
+    void DefaultSceneRenderer::SetProperty(const char* name, bool value)
+    {
+        if (GTCore::Strings::Equal(name, "IsBackgroundClearEnabled"))
+        {
+            if (value)
+            {
+                this->EnableBackgroundColourClearing(this->GetBackgroundClearColour());
+            }
+            else
+            {
+                this->DisableBackgroundColourClearing();
+            }
+        }
+        else if (GTCore::Strings::Equal(name, "IsHDREnabled"))
+        {
+            if (value)
+            {
+                this->EnableHDR();
+            }
+            else
+            {
+                this->DisableHDR();
+            }
+        }
+        else if (GTCore::Strings::Equal(name, "IsBloomEnabled"))
+        {
+            if (value)
+            {
+                this->EnableBloom();
+            }
+            else
+            {
+                this->DisableBloom();
+            }
+        }
+    }
+
+    void DefaultSceneRenderer::SetProperty(const char* name, const glm::vec2 &value)
+    {
+        (void)name;
+        (void)value;
+    }
+
+    void DefaultSceneRenderer::SetProperty(const char* name, const glm::vec3 &value)
+    {
+        if (GTCore::Strings::Equal(name, "BackgroundClearColour"))
+        {
+            bool isEnabled = this->IsBackgroundColourClearingEnabled();
+            this->EnableBackgroundColourClearing(value);
+
+            if (!isEnabled)
+            {
+                this->DisableBackgroundColourClearing();
+            }
+        }
+    }
+
+    void DefaultSceneRenderer::SetProperty(const char* name, const glm::vec4 &value)
+    {
+        (void)name;
+        (void)value;
+    }
+
+
+    GTCore::String DefaultSceneRenderer::GetStringProperty(const char* name) const
+    {
+        (void)name;
+
+        return "";
+    }
+
+    int DefaultSceneRenderer::GetIntegerProperty(const char* name) const
+    {
+        (void)name;
+
+        return 0;
+    }
+
+    float DefaultSceneRenderer::GetFloatProperty(const char* name) const
+    {
+        if (GTCore::Strings::Equal(name, "HDRExposure"))
+        {
+            return this->GetHDRExposure();
+        }
+        else if (GTCore::Strings::Equal(name, "BloomFactor"))
+        {
+            return this->GetBloomFactor();
+        }
+
+        return 0.0f;
+    }
+
+    bool DefaultSceneRenderer::GetBooleanProperty(const char* name) const
+    {
+        if (GTCore::Strings::Equal(name, "IsBackgroundClearEnabled"))
+        {
+            return this->IsBackgroundColourClearingEnabled();
+        }
+        else if (GTCore::Strings::Equal(name, "IsHDREnabled"))
+        {
+            return this->IsHDREnabled();
+        }
+        else if (GTCore::Strings::Equal(name, "IsBloomEnabled"))
+        {
+            return this->IsBloomEnabled();
+        }
+
+        return false;
+    }
+
+    glm::vec2 DefaultSceneRenderer::GetVector2Property(const char* name) const
+    {
+        (void)name;
+
+        return glm::vec2();
+    }
+
+    glm::vec3 DefaultSceneRenderer::GetVector3Property(const char* name) const
+    {
+        if (GTCore::Strings::Equal(name, "BackgroundClearColour"))
+        {
+            return this->GetBackgroundClearColour();
+        }
+
+        return glm::vec3();
+    }
+
+    glm::vec4 DefaultSceneRenderer::GetVector4Property(const char* name) const
+    {
+        (void)name;
+
+        return glm::vec4();
+    }
+
+
+
+    ////////////////////////////////////////////////////////////////
     // Settings.
 
     void DefaultSceneRenderer::EnableHDR()
