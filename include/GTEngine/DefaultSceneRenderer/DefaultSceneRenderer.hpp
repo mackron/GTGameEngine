@@ -416,6 +416,29 @@ namespace GTEngine
         void RemoveExternalMesh(const SceneRendererMesh &meshToRemove);
 
 
+        ////////////////////////////////////////////////////////////////
+        // Properties (Overridden from virtual methods from SceneRenderer)
+
+        /// SceneRenderer::SetProperty()
+        void SetProperty(const char* name, const char* value);
+        void SetProperty(const char* name, int value);
+        void SetProperty(const char* name, float value);
+        void SetProperty(const char* name, bool value);
+        void SetProperty(const char* name, const glm::vec2 &value);
+        void SetProperty(const char* name, const glm::vec3 &value);
+        void SetProperty(const char* name, const glm::vec4 &value);
+
+        /// SceneRenderer::Get*Property()
+        GTCore::String GetStringProperty(const char* name) const;
+        int            GetIntegerProperty(const char* name) const;
+        float          GetFloatProperty(const char* name) const;
+        bool           GetBooleanProperty(const char* name) const;
+        glm::vec2      GetVector2Property(const char* name) const;
+        glm::vec3      GetVector3Property(const char* name) const;
+        glm::vec4      GetVector4Property(const char* name) const;
+
+
+
 
         ////////////////////////////////////////////////////////////////
         // Settings.

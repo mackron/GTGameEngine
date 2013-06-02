@@ -1106,11 +1106,22 @@ namespace GTEngine
     {
         this->isBackgroundClearEnabled = true;
         this->backgroundClearColour = glm::vec3(r, g, b);
+
+        if (this->renderer != nullptr)
+        {
+            this->renderer->SetProperty("IsBackgroundClearEnabled", true);
+            this->renderer->SetProperty("BackgroundClearColour", glm::vec3(r, g, b));
+        }
     }
 
     void Scene::DisableBackgroundClearing()
     {
         this->isBackgroundClearEnabled = false;
+
+        if (this->renderer != nullptr)
+        {
+            this->renderer->SetProperty("IsBackgroundClearEnabled", false);
+        }
     }
 
     bool Scene::IsBackgroundClearingEnabled() const
@@ -1128,20 +1139,20 @@ namespace GTEngine
     {
         this->isHDREnabled = true;
         
-        /*if (this->renderer != nullptr)
+        if (this->renderer != nullptr)
         {
             this->renderer->SetProperty("IsHDREnabled", true);
-        }*/
+        }
     }
 
     void Scene::DisableHDR()
     {
         this->isHDREnabled = false;
 
-        /*if (this->renderer != nullptr)
+        if (this->renderer != nullptr)
         {
             this->renderer->SetProperty("IsHDREnabled", false);
-        }*/
+        }
     }
 
     bool Scene::IsHDREnabled() const
@@ -1154,20 +1165,20 @@ namespace GTEngine
     {
         this->isBloomEnabled = true;
 
-        /*if (this->renderer != nullptr)
+        if (this->renderer != nullptr)
         {
             this->renderer->SetProperty("IsBloomEnabled", true);
-        }*/
+        }
     }
 
     void Scene::DisableBloom()
     {
         this->isBloomEnabled = false;
 
-        /*if (this->renderer != nullptr)
+        if (this->renderer != nullptr)
         {
             this->renderer->SetProperty("IsBloomEnabled", false);
-        }*/
+        }
     }
 
     bool Scene::IsBloomEnabled() const
@@ -1535,10 +1546,49 @@ namespace GTEngine
                 {
                     deserializer.ReadString(this->name);
 
-                    deserializer.Read(this->isBackgroundClearEnabled);
-                    deserializer.Read(this->backgroundClearColour);
-                    deserializer.Read(this->isHDREnabled);
-                    deserializer.Read(this->isBloomEnabled);
+
+                    // Read.
+                    bool isBackgroundClearingEnabledIn;
+                    deserializer.Read(isBackgroundClearingEnabledIn);
+
+                    glm::vec3 backgroundClearColourIn;
+                    deserializer.Read(backgroundClearColourIn);
+
+                    bool isHDREnabledIn;
+                    deserializer.Read(isHDREnabledIn);
+
+                    bool isBloomEnabledIn;
+                    deserializer.Read(isBloomEnabledIn);
+
+
+                    // Set.
+                    if (isBackgroundClearingEnabledIn)
+                    {
+                        this->EnableBackgroundClearing(backgroundClearColourIn);
+                    }
+                    else
+                    {
+                        this->DisableBackgroundClearing();
+                        this->backgroundClearColour = backgroundClearColourIn;
+                    }
+
+                    if (isHDREnabledIn)
+                    {
+                        this->EnableHDR();
+                    }
+                    else
+                    {
+                        this->DisableHDR();
+                    }
+
+                    if (isBloomEnabledIn)
+                    {
+                        this->EnableBloom();
+                    }
+                    else
+                    {
+                        this->DisableBloom();
+                    }
                 }
                 else
                 {

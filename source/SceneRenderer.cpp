@@ -25,6 +25,72 @@ namespace GTEngine
 
 
 
+    void SceneRenderer::SetProperty(const char*, const char*)
+    {
+    }
+
+    void SceneRenderer::SetProperty(const char*, int)
+    {
+    }
+
+    void SceneRenderer::SetProperty(const char*, float)
+    {
+    }
+
+    void SceneRenderer::SetProperty(const char*, bool)
+    {
+    }
+
+    void SceneRenderer::SetProperty(const char*, const glm::vec2 &)
+    {
+    }
+
+    void SceneRenderer::SetProperty(const char*, const glm::vec3 &)
+    {
+    }
+
+    void SceneRenderer::SetProperty(const char*, const glm::vec4 &)
+    {
+    }
+
+
+    GTCore::String SceneRenderer::GetStringProperty(const char*) const
+    {
+        return "";
+    }
+
+    int SceneRenderer::GetIntegerProperty(const char*) const
+    {
+        return 0;
+    }
+
+    float SceneRenderer::GetFloatProperty(const char*) const
+    {
+        return 0.0f;
+    }
+
+    bool SceneRenderer::GetBooleanProperty(const char*) const
+    {
+        return false;
+    }
+
+    glm::vec2 SceneRenderer::GetVector2Property(const char*) const
+    {
+        return glm::vec2();
+    }
+
+    glm::vec3 SceneRenderer::GetVector3Property(const char*) const
+    {
+        return glm::vec3();
+    }
+
+    glm::vec4 SceneRenderer::GetVector4Property(const char*) const
+    {
+        return glm::vec4();
+    }
+
+
+
     void SceneRenderer::EnableBackgroundColourClearing(float r, float g, float b)
     {
         this->isColourClearingEnabled = true;
