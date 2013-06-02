@@ -124,6 +124,47 @@ namespace GTEngine
         bool IsBloomEnabled() const;
 
 
+        /// Sets the scene name.
+        void SetSceneName(const char* sceneName);
+
+        /// Retrieves the scene name.
+        const char* GetSceneName() const;
+
+        
+        /// Marks background clearing as enabled on the scene.
+        void EnableSceneBackgroundClearing(float r, float g, float b);
+        void EnableSceneBackgroundClearing(const glm::vec3 &colour) { this->EnableSceneBackgroundClearing(colour.x, colour.y, colour.z); }
+        
+        /// Marks background clearing as disabled on the scene.
+        void DisableSceneBackgroundClearing();
+
+        /// Determines whether or not background clearing is enabled on the scene.
+        bool IsSceneBackgroundClearingEnabled() const;
+
+        /// Retrieves the scene's background clear colour.
+        const glm::vec3 GetSceneBackgroundClearColour() const;
+
+        
+        /// Marks HDR as enabled on the scene.
+        void EnableSceneHDR();
+
+        /// Marks HDR as disabled on the scene.
+        void DisableSceneHDR();
+
+        /// Determines whether or not HDR is enabled on the scene.
+        bool IsSceneHDREnabled() const;
+
+
+        /// Marks bloom as enabled on the scene.
+        void EnableSceneBloom();
+
+        /// Marks bloom as disabled on the scene.
+        void DisableSceneBloom();
+
+        /// Determines whether or not bloom is enabled on the scene.
+        bool IsSceneBloomEnabled() const;
+        
+
 
 
         ///////////////////////////////////////////////////
@@ -452,6 +493,9 @@ namespace GTEngine
 
         /// Updates the view menu on the editor GUI.
         void UpdateViewportMenuGUI();
+
+        /// Refreshes the scene properties panel.
+        void RefreshScenePropertiesPanel();
 
 
         /// Refreshes the selections.

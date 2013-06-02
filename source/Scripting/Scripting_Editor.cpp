@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Scripting/Scripting_Editor.hpp>
+#include <GTEngine/Scripting/Scripting_Math.hpp>
 #include <GTEngine/Editor.hpp>
 
 namespace GTEngine
@@ -107,6 +108,19 @@ namespace GTEngine
                         script.SetTableFunction(-1, "EnableBloom",                         SceneEditorFFI::EnableBloom);
                         script.SetTableFunction(-1, "DisableBloom",                        SceneEditorFFI::DisableBloom);
                         script.SetTableFunction(-1, "IsBloomEnabled",                      SceneEditorFFI::IsBloomEnabled);
+
+                        script.SetTableFunction(-1, "SetSceneName",                        SceneEditorFFI::SetSceneName);
+                        script.SetTableFunction(-1, "GetSceneName",                        SceneEditorFFI::GetSceneName);
+                        script.SetTableFunction(-1, "EnableSceneBackgroundClearing",       SceneEditorFFI::EnableSceneBackgroundClearing);
+                        script.SetTableFunction(-1, "DisableSceneBackgroundClearing",      SceneEditorFFI::DisableSceneBackgroundClearing);
+                        script.SetTableFunction(-1, "IsSceneBackgroundClearingEnabled",    SceneEditorFFI::IsSceneBackgroundClearingEnabled);
+                        script.SetTableFunction(-1, "GetSceneBackgroundClearColour",       SceneEditorFFI::GetSceneBackgroundClearColour);
+                        script.SetTableFunction(-1, "EnableSceneHDR",                      SceneEditorFFI::EnableSceneHDR);
+                        script.SetTableFunction(-1, "DisableSceneHDR",                     SceneEditorFFI::DisableSceneHDR);
+                        script.SetTableFunction(-1, "IsSceneHDREnabled",                   SceneEditorFFI::IsSceneHDREnabled);
+                        script.SetTableFunction(-1, "EnableSceneBloom",                    SceneEditorFFI::EnableSceneBloom);
+                        script.SetTableFunction(-1, "DisableSceneBloom",                   SceneEditorFFI::DisableSceneBloom);
+                        script.SetTableFunction(-1, "IsSceneBloomEnabled",                 SceneEditorFFI::IsSceneBloomEnabled);
                     }
                     script.SetTableValue(-3);
 
@@ -1178,6 +1192,163 @@ namespace GTEngine
                 if (sceneEditor != nullptr)
                 {
                     script.Push(sceneEditor->IsBloomEnabled());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+
+
+            int SetSceneName(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->SetSceneName(script.ToString(2));
+                }
+
+                return 0;
+            }
+
+            int GetSceneName(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    script.Push(sceneEditor->GetSceneName());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+
+            int EnableSceneBackgroundClearing(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->EnableSceneBackgroundClearing(Scripting::ToVector3(script, 2));
+                }
+
+                return 0;
+            }
+
+            int DisableSceneBackgroundClearing(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->DisableSceneBackgroundClearing();
+                }
+
+                return 0;
+            }
+
+            int IsSceneBackgroundClearingEnabled(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    script.Push(sceneEditor->IsSceneBackgroundClearingEnabled());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+            int GetSceneBackgroundClearColour(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    Scripting::PushNewVector3(script, sceneEditor->GetSceneBackgroundClearColour());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+
+            int EnableSceneHDR(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->EnableSceneHDR();
+                }
+
+                return 0;
+            }
+
+            int DisableSceneHDR(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->DisableSceneHDR();
+                }
+
+                return 0;
+            }
+
+            int IsSceneHDREnabled(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    script.Push(sceneEditor->IsSceneHDREnabled());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+
+            int EnableSceneBloom(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->EnableSceneBloom();
+                }
+
+                return 0;
+            }
+
+            int DisableSceneBloom(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->DisableSceneBloom();
+                }
+
+                return 0;
+            }
+
+            int IsSceneBloomEnabled(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    script.Push(sceneEditor->IsSceneBloomEnabled());
                 }
                 else
                 {

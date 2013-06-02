@@ -513,11 +513,139 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
 end
 
 
+function GTGUI.Element:SceneEditorSceneDetailsPropertiesPanel(sceneEditor)
+    self:PanelGroupBox("Details");
+    
+    self.NameTextBox = GTGUI.Server.CreateElement(self.Body, "labelled-textbox");
+    self.NameTextBox:LabelledTextBox("Name", "");
+    
+    self.NameTextBox:OnTextChanged(function()
+        sceneEditor:SetSceneName(self.NameTextBox:GetText());
+    end);
+    
+    function self:Refresh()
+        self.NameTextBox:SetText(sceneEditor:GetSceneName(), true);         -- 'true' means to block posting the event.
+    end
+    
+    return self;
+end
+
+function GTGUI.Element:SceneEditorSceneRenderingPropertiesPanel(sceneEditor)
+    self:PanelGroupBox("Rendering");
+    
+    -- Clear Background
+    self.ClearBackgroundCheckBox = GTGUI.Server.CreateElement(self.Body, "checkbox");
+    self.ClearBackgroundCheckBox:CheckBox("Clear Background");
+    self.ClearBackgroundCheckBox:Check();
+    
+    self.ClearBackgroundColour = GTGUI.Server.CreateElement(self.Body, "vector3-input");
+    self.ClearBackgroundColour:Vector3Input();
+    self.ClearBackgroundColour:SetValue(0.5);
+    self.ClearBackgroundColour:SetStyle("margin-top", "2px");
+    
+    self.ClearBackgroundCheckBox:OnChecked(function()
+        self.ClearBackgroundColour:Enable();
+        sceneEditor:EnableSceneBackgroundClearing(self.ClearBackgroundColour:GetValue());
+    end);
+    
+    self.ClearBackgroundCheckBox:OnUnchecked(function()
+        self.ClearBackgroundColour:Disable();
+        sceneEditor:DisableSceneBackgroundClearing();
+    end);
+    
+    self.ClearBackgroundColour:OnValueChanged(function()
+        sceneEditor:EnableSceneBackgroundClearing(self.ClearBackgroundColour:GetValue());
+    end);
+    
+    
+    -- HDR
+    self.EnableHDRCheckBox = GTGUI.Server.CreateElement(self.Body, "checkbox");
+    self.EnableHDRCheckBox:CheckBox("Enable HDR");
+    self.EnableHDRCheckBox:Uncheck();
+    self.EnableHDRCheckBox:SetStyle("margin-top", "8px");
+    
+    self.EnableHDRCheckBox:OnChecked(function()
+        sceneEditor:EnableSceneHDR();
+    end);
+    
+    self.EnableHDRCheckBox:OnUnchecked(function()
+        sceneEditor:DisableSceneHDR();
+    end);
+    
+    
+    -- Bloom
+    self.EnableBloomCheckBox = GTGUI.Server.CreateElement(self.Body, "checkbox");
+    self.EnableBloomCheckBox:CheckBox("Enable Bloom");
+    self.EnableBloomCheckBox:Uncheck();
+    self.EnableBloomCheckBox:SetStyle("margin-top", "8px");
+    
+    self.EnableBloomCheckBox:OnChecked(function()
+        sceneEditor:EnableSceneBloom();
+    end);
+    
+    self.EnableBloomCheckBox:OnUnchecked(function()
+        sceneEditor:DisableSceneBloom();
+    end);
+    
+    
+    function self:Refresh()
+        if sceneEditor:IsSceneBackgroundClearingEnabled() then
+            self.ClearBackgroundCheckBox:Check(true);       -- 'true' means to block posting the event.
+            self.ClearBackgroundColour:Enable();
+        else
+            self.ClearBackgroundCheckBox:Uncheck(false);    -- 'true' means to block posting the event.
+            self.ClearBackgroundColour:Disable();
+        end
+        self.ClearBackgroundColour:SetValue(sceneEditor:GetSceneBackgroundClearColour());
+        
+        
+        if sceneEditor:IsSceneHDREnabled() then
+            self.EnableHDRCheckBox:Check(true);             -- 'true' means to block posting the event.
+        else
+            self.EnableHDRCheckBox:Uncheck(true);           -- 'true' means to block posting the event.
+        end
+        
+        if sceneEditor:IsSceneBloomEnabled() then
+            self.EnableBloomCheckBox:Check(true);           -- 'true' means to block posting the event.
+        else
+            self.EnableBloomCheckBox:Uncheck(true);         -- 'true' means to block posting the event.
+        end
+    end
+    
+    return self;
+end
+
+function GTGUI.Element:SceneEditorScenePropertiesPanel(sceneEditor)
+    self:EditorPanel();
+    self.SceneEditor = sceneEditor;
+
+    self.PanelsContainer = GTGUI.Server.CreateElement(self.Body);
+    
+    self.DetailsPanel   = GTGUI.Server.CreateElement(self.PanelsContainer, "panel-groupbox");
+    self.DetailsPanel:SceneEditorSceneDetailsPropertiesPanel(sceneEditor);
+    
+    self.RenderingPanel = GTGUI.Server.CreateElement(self.PanelsContainer, "panel-groupbox");
+    self.RenderingPanel:SceneEditorSceneRenderingPropertiesPanel(sceneEditor);
+
+    
+    
+    
+    function self:Refresh()
+        self.DetailsPanel:Refresh();
+        self.RenderingPanel:Refresh();
+    end
+    
+
+    return self;
+end
+
+
 function GTGUI.Element:SceneEditorPanel(sceneEditor)
     self.TabBar          = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-panel-tabbar'        style='' />");
     self.Body            = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-panel-body'          style='' />");
     self.PropertiesPanel = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='scene-editor-properties-panel'    style='visible:false' />");
     self.HierarchyPanel  = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='scene-editor-hierarchy-panel'     style='visible:false' />");
+    self.ScenePropertiesPanel = GTGUI.Server.CreateElement(self.Body, "scene-editor-properties-panel");
     self.SceneEditor     = sceneEditor;
     
     
@@ -526,8 +654,9 @@ function GTGUI.Element:SceneEditorPanel(sceneEditor)
     self.TabBar.HoveredTabBorderColor    = "#222";
     self.TabBar.ActiveTabBackgroundColor = "#363636";
     
-    self.HierarchyTab  = self.TabBar:AddTab("Hierarchy");
-    self.PropertiesTab = self.TabBar:AddTab("Properties");
+    self.ScenePropertiesTab = self.TabBar:AddTab("Scene Properties");
+    self.HierarchyTab       = self.TabBar:AddTab("Hierarchy");
+    self.PropertiesTab      = self.TabBar:AddTab("Properties");
     
     
     self.TabBar:OnTabActivated(function(data)
@@ -536,6 +665,8 @@ function GTGUI.Element:SceneEditorPanel(sceneEditor)
         elseif data.tab == self.HierarchyTab then
             self.HierarchyPanel:Show();
             self.HierarchyPanel.TreeView:UpdateScrollbars();
+        elseif data.tab == self.ScenePropertiesTab then
+            self.ScenePropertiesPanel:Show();
         end
     end);
     
@@ -544,6 +675,8 @@ function GTGUI.Element:SceneEditorPanel(sceneEditor)
             self.PropertiesPanel:Hide();
         elseif data.tab == self.HierarchyTab then
             self.HierarchyPanel:Hide();
+        elseif data.tab == self.ScenePropertiesTab then
+            self.ScenePropertiesPanel:Hide();
         end
     end);
     
@@ -574,6 +707,7 @@ function GTGUI.Element:SceneEditorPanel(sceneEditor)
     
     self.PropertiesPanel:SceneEditorPropertiesPanel(sceneEditor);
     self.HierarchyPanel:SceneEditorHierarchyPanel(sceneEditor);
+    self.ScenePropertiesPanel:SceneEditorScenePropertiesPanel(sceneEditor);
     
     
     -- Properties Panel Events.

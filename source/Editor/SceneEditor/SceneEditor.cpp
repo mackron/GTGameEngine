@@ -536,6 +536,77 @@ namespace GTEngine
     }
 
 
+    void SceneEditor::SetSceneName(const char* sceneName)
+    {
+        this->scene.SetName(sceneName);
+        this->MarkAsModified();
+    }
+
+    const char* SceneEditor::GetSceneName() const
+    {
+        return this->scene.GetName();
+    }
+
+
+    void SceneEditor::EnableSceneBackgroundClearing(float r, float g, float b)
+    {
+        this->scene.EnableBackgroundClearing(r, g, b);
+        this->MarkAsModified();
+    }
+        
+    void SceneEditor::DisableSceneBackgroundClearing()
+    {
+        this->scene.DisableBackgroundClearing();
+        this->MarkAsModified();
+    }
+
+    bool SceneEditor::IsSceneBackgroundClearingEnabled() const
+    {
+        return this->scene.IsBackgroundClearingEnabled();
+    }
+
+    const glm::vec3 SceneEditor::GetSceneBackgroundClearColour() const
+    {
+        return this->scene.GetBackgroundClearColour();
+    }
+
+        
+    void SceneEditor::EnableSceneHDR()
+    {
+        this->scene.EnableHDR();
+        this->MarkAsModified();
+    }
+
+    void SceneEditor::DisableSceneHDR()
+    {
+        this->scene.DisableHDR();
+        this->MarkAsModified();
+    }
+
+    bool SceneEditor::IsSceneHDREnabled() const
+    {
+        return this->scene.IsHDREnabled();
+    }
+
+
+    void SceneEditor::EnableSceneBloom()
+    {
+        this->scene.EnableBloom();
+        this->MarkAsModified();
+    }
+
+    void SceneEditor::DisableSceneBloom()
+    {
+        this->scene.DisableBloom();
+        this->MarkAsModified();
+    }
+
+    bool SceneEditor::IsSceneBloomEnabled() const
+    {
+        return this->scene.IsBloomEnabled();
+    }
+
+
 
     ///////////////////////////////////////////////////
     // Scene Events
@@ -2229,6 +2300,9 @@ namespace GTEngine
 
         // We'll let the editor do it's thing with selections.
         this->PostOnSelectionChangedEventToScript();
+
+        // We'll also want to update the properties panel.
+        this->RefreshScenePropertiesPanel();
     }
 
     void SceneEditor::SerializeSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs, GTCore::Serializer &serializer)
@@ -2537,6 +2611,25 @@ namespace GTEngine
         assert(script.IsTable(-1));
         {
             script.Push("UpdateViewportMenu");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);   // <-- 'self'.
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
+    }
+
+
+    void SceneEditor::RefreshScenePropertiesPanel()
+    {
+        auto &script = this->GetScript();
+
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("RefreshSceneProperties");
             script.GetTableValue(-2);
             assert(script.IsFunction(-1));
             {

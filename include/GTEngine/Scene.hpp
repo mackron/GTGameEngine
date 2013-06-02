@@ -545,6 +545,62 @@ namespace GTEngine
         bool IsScriptEventsBlocked() const;
 
 
+
+        ////////////////////////////////////////////
+        // Properties
+
+        /// Sets the name of the scene.
+        ///
+        /// @param name [in] The new name.
+        ///
+        /// @remarks
+        ///     The name of a scene is just metadata that games can gain access to. It is not the file name.
+        void SetName(const char* name);
+
+        /// Retrieves the name of the scene.
+        ///
+        /// @return The name of the scene.
+        ///
+        /// @remarks
+        ///     The name of a scene is just metadata that games can gain access to. It is not the file name.
+        const char* GetName() const;
+
+
+        /// Enables background clearing.
+        void EnableBackgroundClearing(float r, float g, float b);
+        void EnableBackgroundClearing(const glm::vec3 &colour) { this->EnableBackgroundClearing(colour.x, colour.y, colour.z); }
+
+        /// Disables background clearing.
+        void DisableBackgroundClearing();
+
+        /// Determines whether or not background colour clearing is enabled.
+        bool IsBackgroundClearingEnabled() const;
+
+        /// Retrieves the colour of the background clear colour.
+        const glm::vec3 & GetBackgroundClearColour() const;
+
+
+        /// Enables HDR.
+        void EnableHDR();
+
+        /// Disables HDR.
+        void DisableHDR();
+
+        /// Determines whether or not HDR is enabled.
+        bool IsHDREnabled() const;
+
+
+        /// Enables bloom.
+        void EnableBloom();
+
+        /// Disables bloom.
+        void DisableBloom();
+
+        /// Determines whether or not bloom is enabled.
+        bool IsBloomEnabled() const;
+
+
+
     // Collision Tests.
     public:
 
@@ -955,6 +1011,23 @@ namespace GTEngine
 
         /// Keeps track of whether or not script events are blocked. False by default.
         bool isScriptEventsBlocked;
+
+
+        /// The name of the scene.
+        GTCore::String name;
+
+
+        /// Whether or not colour clearing should be enabled.
+        bool isBackgroundClearEnabled;
+
+        /// The background clear colour.
+        glm::vec3 backgroundClearColour;
+
+        /// Whether or not HDR is enabled.
+        bool isHDREnabled;
+
+        /// Whether or not Bloom is enabled.
+        bool isBloomEnabled;
 
 
     private:    // No copying.

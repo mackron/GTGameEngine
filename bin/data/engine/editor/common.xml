@@ -18,6 +18,8 @@
 <style  url="common/labelled-vector4-input.style" />
 <script url="common/labelled-vector4-input.lua"   />
 
+<style  url="common/labelled-textbox.style"       />
+<script url="common/labelled-textbox.lua"         />
 
 
 <style  url="common/editor-panel.style"           />

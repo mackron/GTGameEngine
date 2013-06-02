@@ -2260,6 +2260,59 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
     function sceneEditor:IsBloomEnabled()
         return GTEngine.System.SceneEditor.IsBloomEnabled(self._internalPtr);
     end
+    
+    
+    
+    function sceneEditor:SetSceneName(name)
+        GTEngine.System.SceneEditor.SetSceneName(self._internalPtr, name);
+    end
+    
+    function sceneEditor:GetSceneName()
+        return GTEngine.System.SceneEditor.GetSceneName(self._internalPtr);
+    end
+    
+    
+    function sceneEditor:EnableSceneBackgroundClearing(colour)
+        GTEngine.System.SceneEditor.EnableSceneBackgroundClearing(self._internalPtr, colour);
+    end
+    
+    function sceneEditor:DisableSceneBackgroundClearing()
+        GTEngine.System.SceneEditor.DisableSceneBackgroundClearing(self._internalPtr);
+    end
+    
+    function sceneEditor:IsSceneBackgroundClearingEnabled()
+        return GTEngine.System.SceneEditor.IsSceneBackgroundClearingEnabled(self._internalPtr);
+    end
+    
+    function sceneEditor:GetSceneBackgroundClearColour()
+        return GTEngine.System.SceneEditor.GetSceneBackgroundClearColour(self._internalPtr);
+    end
+    
+    
+    function sceneEditor:EnableSceneHDR(colour)
+        GTEngine.System.SceneEditor.EnableSceneHDR(self._internalPtr, colour);
+    end
+    
+    function sceneEditor:DisableSceneHDR(colour)
+        GTEngine.System.SceneEditor.DisableSceneHDR(self._internalPtr, colour);
+    end
+    
+    function sceneEditor:IsSceneHDREnabled()
+        return GTEngine.System.SceneEditor.IsSceneHDREnabled(self._internalPtr);
+    end
+    
+    
+    function sceneEditor:EnableSceneBloom(colour)
+        GTEngine.System.SceneEditor.EnableSceneBloom(self._internalPtr, colour);
+    end
+    
+    function sceneEditor:DisableSceneBloom(colour)
+        GTEngine.System.SceneEditor.DisableSceneBloom(self._internalPtr, colour);
+    end
+    
+    function sceneEditor:IsSceneBloomEnabled()
+        return GTEngine.System.SceneEditor.IsSceneBloomEnabled(self._internalPtr);
+    end
 end
 
 
@@ -2272,8 +2325,9 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     self.Panel           = GTGUI.Server.CreateElement(self, "scene-editor-panel");
     self.Panel:SceneEditorPanel(self);
-    self.PropertiesPanel = self.Panel.PropertiesPanel;
-    self.HierarchyPanel  = self.Panel.HierarchyPanel;
+    self.PropertiesPanel      = self.Panel.PropertiesPanel;
+    self.HierarchyPanel       = self.Panel.HierarchyPanel;
+    self.ScenePropertiesPanel = self.Panel.ScenePropertiesPanel;
     
     self.ToolBar:SceneEditorToolBar(self);
     
@@ -2369,7 +2423,9 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     end
     
     
-    
+    function self:RefreshSceneProperties()
+        self.ScenePropertiesPanel:Refresh();
+    end
     
     
     
