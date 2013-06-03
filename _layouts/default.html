@@ -1,50 +1,138 @@
+{% assign home_url          = "/"              %}
+{% assign getstarted_url    = "/getstarted"    %}
+{% assign documentation_url = "/documentation" %}
+{% assign download_url      = "/download"      %}
+
+{% assign home_class          = "" %}
+{% assign getstarted_class    = "" %}
+{% assign documentation_class = "" %}
+{% assign download_class      = "" %}
+
+{% if page.url == home_url %}
+    {% assign home_class = "active" %}
+{% endif %}
+
+{% if page.url contains getstarted_url %}
+    {% assign getstarted_class = "active" %}
+{% endif %}
+
+{% if page.url contains documentation_url %}
+    {% assign documentation_class = "active" %}
+{% endif %}
+
+{% if page.url contains download_url %}
+    {% assign download_class = "active" %}
+{% endif %}
+
+
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8">
-    <title>{{ site.name }}</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="{{ site.description }}">
+    <head>
+        <meta charset="utf-8">
+        <title>{{ site.name }}</title>
+        <meta name="viewport"    content="width=device-width, initial-scale=1.0">
+        <meta name="description" content="{{ site.description }}">
 
-    <link href="css/bootstrap.css" type="text/css" rel="stylesheet">
-    <style>
-      body {
-        padding-top: 60px;
-      }
-    </style>
-    <link href="css/bootstrap-responsive.css" type="text/css" rel="stylesheet">
+        <link href="/css/bootstrap.min.css" type="text/css" rel="stylesheet">
+        <style>
+            body {
+                padding-top: 60px;
+            }
 
-    <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
-    <!--[if lt IE 9]>
-      <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
-    <![endif]-->
-  </head>
+            .jumbotron {
+                margin: 60px 0;
+                text-align: center;
+            }
+            .jumbotron h1 {
+                font-size: 72px;
+                line-height: 1;
+            }
+            .jumbotron .btn {
+                font-size: 21px;
+                padding: 14px 24px;
+            }
 
-  <body>
+            .masthead {
+                padding: 70px 0 80px;
+                margin-bottom: 0;
+                color: #fff;
+            }
+            .masthead h1 {
+                font-size: 120px;
+                line-height: 1;
+                letter-spacing: -2px;
+            }
+            .masthead p {
+                font-size: 40px;
+                font-weight: 200;
+                line-height: 1.25;
+            }
 
-    <div class="navbar navbar-inverse navbar-fixed-top">
-      <div class="navbar-inner">
-        <div class="container">
-          <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </a>
-          <a class="brand" href="#">{{ site.name }}</a>
-          <div class="nav-collapse collapse">
-            <ul class="nav">
-              <li class="active"><a href="/">Home</a></li>
-            </ul>
-          </div>
+            .masthead-links {
+                margin-top: 40px
+            }
+            .masthead-links ul {
+                margin:     0;
+                list-style: none;
+            }
+            .masthead-links li {
+                display: inline;
+                padding: 0 10px;
+                color:   rgba(128,128,128,1);
+            }
+            
+            .btn-large-subtext {
+                font-size:  14px;
+                color:      rgba(255,255,255,0.5);
+                margin-top: 4px;
+            }
+        </style>
+        <link href="/css/bootstrap-responsive.min.css" type="text/css" rel="stylesheet">
+
+        <!-- HTML5 shim, for IE6-8 support of HTML5 elements -->
+        <!--[if lt IE 9]>
+            <script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+        <![endif]-->
+    </head>
+
+    <body>
+        <div class="navbar navbar-inverse navbar-fixed-top">
+            <div class="navbar-inner">
+                <div class="container-fluid">
+                    <a class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                        <span class="icon-bar"></span>
+                    </a>
+                    <div class="nav-collapse collapse">
+                        <ul class="nav">
+                            <li class="{{ home_class }}">
+                                <a href="{{ home_url }}">Home</a>
+                            </li>
+                            <li class="{{ getstarted_class }}">
+                                <a href="{{ getstarted_url }}">Get Started</a>
+                            </li>
+                            <li class="{{ download_class }}">
+                                <a href="{{ download_url }}">Download</a>
+                            </li>
+                            <li class="{{ documentation_class }}">
+                                <a href="{{ documentation_url }}">Documentation</a>
+                            </li>
+                            <li class="">
+                                <a href="https://github.com/mackron/GTGameEngine">GitHub Project</a>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
         </div>
-      </div>
-    </div>
 
-    <div class="container">
-
-      {{ content }}
-
-    </div>
-
-  </body>
+        <div class="container-fluid">
+            {{ content }}
+        </div>
+        
+        
+        <!-- Scripts -->
+        <script src="/js/jquery.js"></script>
+    </body>
 </html>
