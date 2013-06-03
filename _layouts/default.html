@@ -8,19 +8,19 @@
 {% assign documentation_class = "" %}
 {% assign download_class      = "" %}
 
-{% if page.url == home_url %}
+{% if page.url == "/" %}
     {% assign home_class = "active" %}
 {% endif %}
 
-{% if page.url contains getstarted_url %}
+{% if page.url contains "/getstarted" %}
     {% assign getstarted_class = "active" %}
 {% endif %}
 
-{% if page.url contains documentation_url %}
+{% if page.url contains "/documentation" %}
     {% assign documentation_class = "active" %}
 {% endif %}
 
-{% if page.url contains download_url %}
+{% if page.url contains "/download" %}
     {% assign download_class = "active" %}
 {% endif %}
 
@@ -128,7 +128,6 @@
         </div>
 
         <div class="container-fluid">
-            {{ page.url }}
             {{ content }}
         </div>
         
