@@ -36,6 +36,17 @@ namespace GTEngine
                 : name(other.name), geometry(other.geometry), material(other.material), skinningVertexAttributes(other.skinningVertexAttributes)
             {
             }
+            
+            /// Assignment operator.
+            Mesh & operator=(const Mesh &other)
+            {
+                this->name                     = other.name;
+                this->geometry                 = other.geometry;
+                this->material                 = other.material;
+                this->skinningVertexAttributes = other.skinningVertexAttributes;
+                
+                return *this;
+            }
 
             /// The name of the mesh.
             GTCore::String name;

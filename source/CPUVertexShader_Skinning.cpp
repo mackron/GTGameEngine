@@ -19,7 +19,8 @@ namespace GTEngine
 
     CPUVertexShader_Skinning::CPUVertexShader_Skinning()
         : CPUVertexShader(),
-          bones(nullptr), skinningVertexAttributes(nullptr)
+          bones(nullptr), skinningVertexAttributes(nullptr),
+          aabbMin(FLT_MAX), aabbMax(-FLT_MAX)
     {
     }
 

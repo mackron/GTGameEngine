@@ -12,7 +12,7 @@ namespace GTEngine
     ///
     /// The bones affecting each vertex is stored as a vertex attribute, which is simply an array that's indexable by the
     /// vertex ID.
-    GLM_ALIGN(16) class CPUVertexShader_Skinning : public CPUVertexShader
+    class GLM_ALIGN(16) CPUVertexShader_Skinning : public CPUVertexShader
     {
     public:
 
