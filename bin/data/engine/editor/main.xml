@@ -380,6 +380,9 @@ hidden by default.
                 All assets open to their own sub-editor, tabbed along the top. Not all sub-editors are implemented.
             </div>
             <div style="font-size:inherit; margin-top:16px;">
+                Right click on a folder to create a new file. No need to supply an extension except for text files.
+            </div>
+            <div style="font-size:inherit; margin-top:16px;">
                 Assets should automatically reload, except for scenes and audio.
             </div>
             <div style="font-size:inherit; margin-top:16px;">
