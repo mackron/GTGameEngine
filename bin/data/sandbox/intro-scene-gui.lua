@@ -32,7 +32,7 @@ function self:OnStartup()
         self.GUIGetStartedButton:SetText("Get Started");
         self.GUIGetStartedButton:SetStyle("margin-top", "0px");
         self.GUIGetStartedButton:OnPressed(function()
-            GTCore.System.OpenFileOrURL("http://mackron.github.com/GTGameEngine");
+            GTCore.System.OpenFileOrURL("http://mackron.github.io/GTGameEngine/getstarted/");
         end);
         self.GUIGetStartedButton:OnMouseEnter(function()
             self.GUIGetStartedInfo:Show();
@@ -66,6 +66,12 @@ function self:OnStartup()
             "Edit data/sandbox-config.lua to set the\nstartup scene.\n\n"
         );
 
+
+        self.GUIHomePage = GTGUI.Server.CreateElement(self.GUIContainerFooterLeft, "intro-scene-url");
+        self.GUIHomePage:SetText("Home Page");
+        self.GUIHomePage:OnPressed(function()
+            GTCore.System.OpenFileOrURL("http://mackron.github.io/GTGameEngine");
+        end);
 
         self.GUIWebSite = GTGUI.Server.CreateElement(self.GUIContainerFooterLeft, "intro-scene-url");
         self.GUIWebSite:SetText("GitHub Project");
