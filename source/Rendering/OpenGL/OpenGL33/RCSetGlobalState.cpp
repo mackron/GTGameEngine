@@ -35,7 +35,11 @@ namespace GTEngine
     /// Just a helper function so we can set a break point for when a redundancy message is received.
     void PostRedundancyMessage(const char* message)
     {
+#if 0
         GTEngine::Log(message);
+#else
+        (void)message;
+#endif
     }
 
 #ifdef NDEBUG
