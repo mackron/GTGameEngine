@@ -172,6 +172,11 @@ private:
 
     /// The aspect ratio to use. If this is 0, the aspect ratio will be re-calculated dynamically when the window is resized.
     float aspectRatio;
+    
+    
+private:    // No copying.
+    SandboxGame(const SandboxGame &);
+    SandboxGame & operator=(const SandboxGame &);
 };
 
 

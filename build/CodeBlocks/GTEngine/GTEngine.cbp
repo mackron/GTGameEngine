@@ -342,6 +342,7 @@
 		<Unit filename="../../../include/GTEngine/ScriptVariable.hpp" />
 		<Unit filename="../../../include/GTEngine/ScriptVariableTypes.hpp" />
 		<Unit filename="../../../include/GTEngine/Scripting.hpp" />
+		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Animation.hpp" />
 		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Audio.hpp" />
 		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Components.hpp" />
 		<Unit filename="../../../include/GTEngine/Scripting/Scripting_Editor.hpp" />
@@ -462,6 +463,7 @@
 		<Unit filename="../../../source/MeshBuilder.cpp" />
 		<Unit filename="../../../source/Model.cpp" />
 		<Unit filename="../../../source/ModelDefinition.cpp" />
+		<Unit filename="../../../source/ModelDefinition_Assimp.cpp" />
 		<Unit filename="../../../source/ModelLibrary.cpp" />
 		<Unit filename="../../../source/NavigationMesh.cpp" />
 		<Unit filename="../../../source/Particle.cpp" />
@@ -602,6 +604,7 @@
 		<Unit filename="../../../source/ScriptLibrary.cpp" />
 		<Unit filename="../../../source/ScriptVariable.cpp" />
 		<Unit filename="../../../source/Scripting.cpp" />
+		<Unit filename="../../../source/Scripting/Scripting_Animation.cpp" />
 		<Unit filename="../../../source/Scripting/Scripting_Audio.cpp" />
 		<Unit filename="../../../source/Scripting/Scripting_Components.cpp" />
 		<Unit filename="../../../source/Scripting/Scripting_Editor.cpp" />
