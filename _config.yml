@@ -1,8 +1,7 @@
 name:        "GT Game Engine"
 description: "GT Game Engine"
 
-#url:         "http://mackron.github.io/gtgameengine"
-url:         "http://localhost:4000"
+url:         "http://mackron.github.io/GTGameEngine"
 
 paginate:    10
 
