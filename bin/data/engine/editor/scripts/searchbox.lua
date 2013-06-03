@@ -17,7 +17,8 @@ function GTGUI.Element:SearchBox()
     end);
     
     self.TextBox:OnBlur(function()
-        if not self.TextBox:GetText() then
+        local text = self.TextBox:GetText();
+        if text == nil or text == "" then
             self.TextBox.HasContent = false;
             self.TextBox:SetStyle("font-style", "italic");
             self.TextBox:SetText("Search...");
