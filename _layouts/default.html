@@ -38,9 +38,31 @@
             body {
                 padding-top: 60px;
             }
+            
+            .footer {
+                text-align: center;
+                padding: 30px 0;
+                margin-top: 70px;
+                border-top: 1px solid #e5e5e5;
+                background-color: #f5f5f5;
+            }
+            .footer p {
+                margin-bottom: 0;
+                color: #777;
+            }
+            .footer-links {
+                margin: 10px 0;
+            }
+            .footer-links li {
+                display: inline;
+                padding: 0 2px;
+            }
+            .footer-links li:first-child {
+                padding-left: 0;
+            }
 
             .jumbotron {
-                margin: 60px 0;
+                margin:     60px 0;
                 text-align: center;
             }
             .jumbotron h1 {
@@ -50,6 +72,41 @@
             .jumbotron .btn {
                 font-size: 21px;
                 padding: 14px 24px;
+            }
+            
+            .page-title {
+                margin:      30px 30px;
+                margin-bottom: 60px;
+                font-size:   60px;
+                font-weight: bold;
+            }
+            .page-title h1 {
+                font-size:   60px;
+                font-weight: bold;
+            }
+            
+            .page-body {
+            }
+            
+            .page-section {
+                font-size:     20px;
+                line-height:   28px;
+                color:         rgba(96,96,96,1);
+                margin-bottom: 80px;
+            }
+            .page-section h1 {
+                font-size: 40px
+            }
+            .page-section p {
+                margin-left: 20px;
+                margin-top:  20px;
+            }
+            .page-section ul {
+                margin-left: 60px;
+                line-height: 28px;
+            }
+            .page-section li {
+                line-height: 28px;
             }
 
             .masthead {
@@ -131,6 +188,18 @@
             {{ content }}
         </div>
         
+        <footer class="footer">
+            <div class="container">
+                <p>Developed by David Reid (<a href="http://twitter.com/kookaburragamer" target="_blank">@kookaburragamer</a>)</p>
+                <p>
+                Main code-base is licenced under <a href="http://opensource.org/licenses/MIT" target="_blank">the MIT licence</a>. Third party licences
+                can be viewed in the readme file <a href="https://github.com/mackron/GTGameEngine" target="_blank">here</a>.
+                </p>
+                <ul class="footer-links">
+                    <li><a href="https://github.com/mackron/GTGameEngine/issues?state=open">Issues</a></li>
+                </ul>
+            </div>
+        </footer>
         
         <!-- Scripts -->
         <script src="{{ site.baseurl }}/js/jquery.js"></script>

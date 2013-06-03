@@ -2,4 +2,100 @@
 title:  "Get Started"
 layout: default
 ---
-Get Started
+<div class="page-title">
+    <h1>Getting Started</h1>
+</div>
+<div class="container-fluid">
+    <div style="padding:0px 80px;">
+        <div class="page-section">
+            <h1>0. Understand the Limitations</h1>
+            <p>
+            GTGameEngine is very early in development and is being developed by a one man army. Expect many bugs and lots of missing
+            features and functionality.
+            </p>
+            <p>
+            Of particular importance is that <i>I am <b>not</b> currently concerned with backwards compatibility</i>, so don't do
+            anything serious for the time being. If you just can't wait and want to jump right in, you have the following options:
+                <ul>
+                    <li>Stay on the old version (definately not recommended)</li>
+                    <li>Wait until I decide to worry about it</li>
+                    <li>Pitch your case and try to convince me (probably wouldn't take much)</li>
+                </ul>
+            </p>
+        </div>
+        <div class="page-section">
+            <h1>1. Download</h1>
+            <p>
+            If you're new GTGameEngine it'll be best to start off with the sandbox. If you're feeling adventurous feel free to download
+            the source and build your own application for maximum flexibility. You're on your own if you take that option. Here, we are
+            going to focus on the sandbox.
+            </p>
+            <div style="margin: 0 auto; margin-top:20px; text-align:center;">
+                <a class="btn btn-large btn-primary" target="_blank" href="{{ site.baseurl }}/download">
+                    Download Sandbox
+                </a>
+            </div>
+            <p>
+            After you've downloaded, extract the package into an empty folder with an appropriate name.
+            </p>
+        </div>
+        <div class="page-section">
+            <h1>2. Game Structure</h1>
+            <p>
+            All assets are stored in "data" directories. These directories are configured in the "config.lua" file which is located in the
+            same directory as the executable.
+            </p>
+            <div style="margin-left:60px; margin-top:16px;">
+                <a href="http://i.imgur.com/gIeGlrG.png"><img src="http://i.imgur.com/gIeGlrG.png" title="Hosted by imgur.com"/></a>
+            </div>
+            <p>
+            The image above is all that's contained in the sandbox download package.
+            </p>
+            <p>
+            The sandbox will execute a script ("data/sandbox-config.lua") on startup. From this script you can configure the startup scene
+            (among other things). You will usually want to set the startup scene to the main menu.
+            </p>
+            <p>
+            Some assets are used by the engine and will be needed by every game. These assets are located in "data/engine". The sandbox has
+            it's own set of assets in "data/sandbox", but you are free to remove anything from here that's not needed.
+            </p>
+        </div>
+        <div class="page-section">
+            <h1>3. Development</h1>
+            <p>
+            Scenes (or levels, maps, etc) are built using the engine's built-in editing tools. Every GTGameEngine game has the editor built
+            into the executable. You can toggle the editor using <i>Shift+Tab</i>.
+            </p>
+            <p>
+            Every asset has it's own sub-editor. Think of the editor as a container for the sub-editors of each type of asset. When an asset
+            is opened in the editor, it will be associated with it's own tab.
+            </p>
+            <div style="margin-left:60px; margin-top:16px;">
+                <a href="http://i.imgur.com/7oAqX3T.png"><img src="http://i.imgur.com/7oAqX3T.png" width="700" title="GTGameEngine Editor"/></a>
+            </div>
+            <p>
+            In the image above, we have two assets open: a model called "default.dae" and the sandbox intro scene called "intro.gtscene".
+            You can switch between assets by just cycling between their tabs. You can have multiple scenes open at a time, too.
+            </p>
+            <p>
+            The scene editor is the most important editor. In addition to the game world(s), menu's (such as your main menu) are implemented
+            as scenes. The idea is that you add scene nodes to the scene, and then attach components to each scene node. Scripts can be
+            attached to scene nodes via the Script component. Scripts then handle events posted by the engine.
+            </p>
+        </div>
+        <div class="page-section">
+            <h1>4. Deployment</h1>
+            <p>
+            When you've finished developing your game, you can set the startup scene by editing "data/sandbox-config.lua" and changing the
+            <code>Game.StartupScene</code> property. You'll probably want to set this to your main menu.
+            </p>
+            <p>
+            The engine uses it's own model format in the background with the .gtmodel extension. You may want to consider removing your source
+            models (leaving only .gtmodel files) manually before deploying. This is not strictly required, however.
+            </p>
+            <p>
+            Unfortunately there does not yet exist an automated packaging tool. This is planned for the future.
+            </p>
+        </div>
+    </div>
+</div>
