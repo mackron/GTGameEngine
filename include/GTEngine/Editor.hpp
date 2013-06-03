@@ -258,7 +258,7 @@ namespace GTEngine
         struct _GUI
         {
             _GUI()
-                : EditorMain(nullptr), EditorCenterCenterPanel(nullptr),
+                : EditorMain(nullptr), EditorCenterCenterPanel(nullptr), EditorCenterCenterPanelHelp(nullptr),
                   File_Save(nullptr), File_SaveAll(nullptr), File_Close(nullptr), File_CloseAll(nullptr),
                   Editor_Delta(nullptr), Editor_FPS(nullptr)
             {
@@ -269,6 +269,10 @@ namespace GTEngine
 
             /// The center, center panel element. This will be dynamically shown and hidden as tabs are added or removed.
             GTGUI::Element* EditorCenterCenterPanel;
+
+            /// The center, center panel element for showing a small help cheat-sheet type thing. When this is shown, EditorCenterCenterPanel
+            /// will be hidden, and vice versa.
+            GTGUI::Element* EditorCenterCenterPanelHelp;
 
             // Menu buttons.
             GTGUI::Element* File_Save;

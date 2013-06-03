@@ -46,10 +46,11 @@ namespace GTEngine
             // We need to grab the main elements from the server.
             if (guiServer.LoadFromFile("engine/editor/main.xml"))
             {
-                this->GUI.EditorMain              = guiServer.GetElementByID("EditorMain");
-                this->GUI.EditorCenterCenterPanel = guiServer.GetElementByID("EditorCenterCenterPanel");
-                this->GUI.Editor_Delta            = guiServer.GetElementByID("Editor_Delta");
-                this->GUI.Editor_FPS              = guiServer.GetElementByID("Editor_FPS");
+                this->GUI.EditorMain                  = guiServer.GetElementByID("EditorMain");
+                this->GUI.EditorCenterCenterPanel     = guiServer.GetElementByID("EditorCenterCenterPanel");
+                this->GUI.EditorCenterCenterPanelHelp = guiServer.GetElementByID("EditorCenterCenterPanelHelp");
+                this->GUI.Editor_Delta                = guiServer.GetElementByID("Editor_Delta");
+                this->GUI.Editor_FPS                  = guiServer.GetElementByID("Editor_FPS");
 
                 // We need to grab the GUI elements for the menu buttons.
                 script.Get("GTGUI.Server.GetElementByID('Editor_MenuBar')");
@@ -308,6 +309,7 @@ namespace GTEngine
 
                 // There is a center panel that needs to be shown. It is the center, center panel.
                 this->GUI.EditorCenterCenterPanel->Show();
+                this->GUI.EditorCenterCenterPanelHelp->Hide();
             }
             else
             {
@@ -372,6 +374,7 @@ namespace GTEngine
                     if (this->openedFiles.count == 0)
                     {
                         this->GUI.EditorCenterCenterPanel->Hide();
+                        this->GUI.EditorCenterCenterPanelHelp->Show();
                     }
 
 
