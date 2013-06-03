@@ -250,6 +250,16 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         flex-child-height: true
     }
     
+    #EditorCenterCenterPanelHelp
+    {
+        visible:           true
+        width:             100%
+        height:            100%
+        padding:           8px
+        font-size:         14pt
+        text-color:        #999
+    }
+    
     #EditorTabPanel
     {
         width:            100%
@@ -356,6 +366,30 @@ hidden by default.
             <div id="EditorBody">
                 <div id="Editor_SubEditorContainer" styleclass='sub-editor' style='visible:true'>
                 </div>
+            </div>
+        </div>
+        
+        <div id="EditorCenterCenterPanelHelp">
+            <div style="font-size:inherit">
+                Shift + TAB to Toggle Editor
+            </div>
+            <div style="font-size:inherit; margin-top:20;">
+                All assets are located on the panel to the left. Only shows assets in the data directories.
+            </div>
+            <div style="font-size:inherit; margin-top:16px;">
+                All assets open to their own sub-editor, tabbed along the top. Not all sub-editors are implemented.
+            </div>
+            <div style="font-size:inherit; margin-top:16px;">
+                Assets should automatically reload, except for scenes and audio.
+            </div>
+            <div style="font-size:inherit; margin-top:16px;">
+                Left panel should automatically synchronize with changes to the file system.
+            </div>
+            <div style="font-size:inherit; margin-top:16px;">
+                Search functionality is not currently implemented.
+            </div>
+            <div style="font-size:inherit; font-style:bold; margin-top:32px;">
+                Expect many bugs and missing functionality.
             </div>
         </div>
     </div>
