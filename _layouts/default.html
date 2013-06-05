@@ -2,11 +2,13 @@
 {% capture getstarted_url    %}{{ site.baseurl }}{{ "/getstarted"    }}{% endcapture %}
 {% capture documentation_url %}{{ site.baseurl }}{{ "/documentation" }}{% endcapture %}
 {% capture download_url      %}{{ site.baseurl }}{{ "/download"      }}{% endcapture %}
+{% capture team_url          %}{{ site.baseurl }}{{ "/team"          }}{% endcapture %}
 
 {% assign home_class          = "" %}
 {% assign getstarted_class    = "" %}
 {% assign documentation_class = "" %}
 {% assign download_class      = "" %}
+{% assign team_class          = "" %}
 
 {% if page.url == "/" %}
     {% assign home_class = "active" %}
@@ -22,6 +24,10 @@
 
 {% if page.url contains "/download" %}
     {% assign download_class = "active" %}
+{% endif %}
+
+{% if page.url contains "/team" %}
+    {% assign team_class = "active" %}
 {% endif %}
 
 
@@ -41,7 +47,7 @@
             
             .footer {
                 text-align: center;
-                padding: 30px 0;
+                padding: 20px 0;
                 margin-top: 70px;
                 border-top: 1px solid #e5e5e5;
                 background-color: #f5f5f5;
@@ -51,7 +57,8 @@
                 color: #777;
             }
             .footer-links {
-                margin: 10px 0;
+                margin:        0px;
+                margin-bottom: 10px;
             }
             .footer-links li {
                 display: inline;
@@ -175,8 +182,8 @@
                             <li class="{{ documentation_class }}">
                                 <a href="{{ documentation_url }}">Documentation</a>
                             </li>
-                            <li class="">
-                                <a href="https://github.com/mackron/GTGameEngine">GitHub Project</a>
+                            <li class="{{ team_class }}">
+                                <a href="{{ team_url }}">Development Team</a>
                             </li>
                         </ul>
                     </div>
@@ -190,14 +197,14 @@
         
         <footer class="footer">
             <div class="container">
-                <p>Developed by David Reid (<a href="http://twitter.com/kookaburragamer" target="_blank">@kookaburragamer</a>)</p>
-                <p>
-                Main code-base is licenced under <a href="http://opensource.org/licenses/MIT" target="_blank">the MIT licence</a>. Third party licences
-                can be viewed in the readme file <a href="https://github.com/mackron/GTGameEngine" target="_blank">here</a>.
-                </p>
                 <ul class="footer-links">
+                    <li><a href="https://github.com/mackron/GTGameEngine">GitHub Project</a></li>
+                    <li>&middot;</li>
                     <li><a href="https://github.com/mackron/GTGameEngine/issues?state=open">Issues</a></li>
+                    <li>&middot;</li>
+                    <li><a href="https://github.com/mackron/GTGameEngine/blob/master/LICENCE">Licence</a></li>
                 </ul>
+                <p>Developed by David Reid - mackron@gmail.com &middot; <a href="http://twitter.com/kookaburragamer" target="_blank">@kookaburragamer</a></p>
             </div>
         </footer>
         
