@@ -12,6 +12,28 @@ intro-scene-container-body
     height: 100%
 }
 
+intro-scene-container-header
+{
+    height:           auto
+    padding:          4px
+    font-size:        10pt
+    child-plane:      horizontal
+}
+
+intro-scene-container-header-left
+{
+    width:            50%
+    child-plane:      horizontal
+    horizontal-align: left
+}
+
+intro-scene-container-header-right
+{
+    width:            50%
+    child-plane:      horizontal
+    horizontal-align: right
+}
+
 intro-scene-container-footer
 {
     height:           auto
