@@ -10,7 +10,16 @@ function self:OnStartup()
     local parentElement = Game.GetGameWindowGUIElement();
     if parentElement ~= nil then
         self.GUIContainer            = GTGUI.Server.CreateElement(parentElement, "intro-scene-container");
+        
+        -- Header (tiny bar along the top)
+        self.GUIContainerHeader      = GTGUI.Server.CreateElement(self.GUIContainer, "intro-scene-container-header");
+        self.GUIContainerHeaderLeft  = GTGUI.Server.CreateElement(self.GUIContainerHeader, "intro-scene-container-header-left");
+        self.GUIContainerHeaderRight = GTGUI.Server.CreateElement(self.GUIContainerHeader, "intro-scene-container-header-right");
+
+        -- Body.
         self.GUIContainerBody        = GTGUI.Server.CreateElement(self.GUIContainer, "intro-scene-container-body");
+        
+        -- Footer.
         self.GUIContainerFooter      = GTGUI.Server.CreateElement(self.GUIContainer, "intro-scene-container-footer");
         self.GUIContainerFooterLeft  = GTGUI.Server.CreateElement(self.GUIContainerFooter, "intro-scene-container-footer-left");
         self.GUIContainerFooterRight = GTGUI.Server.CreateElement(self.GUIContainerFooter, "intro-scene-container-footer-right");
@@ -66,7 +75,16 @@ function self:OnStartup()
             "Edit data/sandbox-config.lua to set the\nstartup scene.\n\n"
         );
 
-
+        
+        -- Header Content
+        self.GUICloseButton = GTGUI.Server.CreateElement(self.GUIContainerHeaderRight, "intro-scene-url");
+        self.GUICloseButton:SetStyle("margin", "0px");
+        self.GUICloseButton:SetText("Close");
+        self.GUICloseButton:OnPressed(function()
+            Game.Close();
+        end);
+        
+        -- Footer Content
         self.GUIHomePage = GTGUI.Server.CreateElement(self.GUIContainerFooterLeft, "intro-scene-url");
         self.GUIHomePage:SetText("Home Page");
         self.GUIHomePage:OnPressed(function()
