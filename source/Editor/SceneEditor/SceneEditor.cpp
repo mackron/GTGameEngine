@@ -2202,67 +2202,68 @@ namespace GTEngine
             // We now want to load the metadata chunk. We'll peek at the next chunk and see if that's it. We should probably do an iteration type
             // system later on.
             Serialization::ChunkHeader header;
-            deserializer.Peek(&header, sizeof(Serialization::ChunkHeader));
-
-            if (header.id == Serialization::ChunkID_Scene_EditorMetadata)
+            if (deserializer.Peek(&header, sizeof(Serialization::ChunkHeader)) == sizeof(Serialization::ChunkHeader))
             {
-                // Since we only peeked at the header, we'll need to now seek past it.
-                deserializer.Seek(sizeof(Serialization::ChunkHeader));
-
-                // The camera node needs to be deserialized.
-                this->camera.Deserialize(deserializer);
-                deserializer.Read(this->cameraXRotation);
-                deserializer.Read(this->cameraYRotation);
-
-                this->camera.DisableSerialization();
-                this->camera.DisableStateStackStaging();
-
-                // The projection and aspect ratios of the camera may not be correct for the viewport dimensions, so we'll simulate
-                // a viewport resize by calling the OnSize event directly.
-                this->viewportEventHandler.OnSize(*this->GUI.Viewport);
-
-
-                // "View" settings.
-                bool isShowingGrid;
-                bool isShowingAxisArrows;
-                deserializer.Read(isShowingGrid);
-                deserializer.Read(isShowingAxisArrows);
-
-                if (isShowingGrid)
+                if (header.id == Serialization::ChunkID_Scene_EditorMetadata)
                 {
-                    this->ShowGrid();
-                }
-                else
-                {
-                    this->HideGrid();
-                }
+                    // Since we only peeked at the header, we'll need to now seek past it.
+                    deserializer.Seek(sizeof(Serialization::ChunkHeader));
 
-                if (isShowingAxisArrows)
-                {
-                    this->ShowAxisArrows();
-                }
-                else
-                {
-                    this->HideAxisArrows();
-                }
+                    // The camera node needs to be deserialized.
+                    this->camera.Deserialize(deserializer);
+                    deserializer.Read(this->cameraXRotation);
+                    deserializer.Read(this->cameraYRotation);
 
+                    this->camera.DisableSerialization();
+                    this->camera.DisableStateStackStaging();
+
+                    // The projection and aspect ratios of the camera may not be correct for the viewport dimensions, so we'll simulate
+                    // a viewport resize by calling the OnSize event directly.
+                    this->viewportEventHandler.OnSize(*this->GUI.Viewport);
 
 
-                // We need to peek at the next bytes. If it's a state stack, we need to deserialize it.
-                if (deserializer.Peek(&header, sizeof(header)) == sizeof(header) && header.id == Serialization::ChunkID_SceneStateStack)
-                {
-                    this->scene.DeserializeStateStack(deserializer);
+                    // "View" settings.
+                    bool isShowingGrid;
+                    bool isShowingAxisArrows;
+                    deserializer.Read(isShowingGrid);
+                    deserializer.Read(isShowingAxisArrows);
+
+                    if (isShowingGrid)
+                    {
+                        this->ShowGrid();
+                    }
+                    else
+                    {
+                        this->HideGrid();
+                    }
+
+                    if (isShowingAxisArrows)
+                    {
+                        this->ShowAxisArrows();
+                    }
+                    else
+                    {
+                        this->HideAxisArrows();
+                    }
+
+
+
+                    // We need to peek at the next bytes. If it's a state stack, we need to deserialize it.
+                    if (deserializer.Peek(&header, sizeof(header)) == sizeof(header) && header.id == Serialization::ChunkID_SceneStateStack)
+                    {
+                        this->scene.DeserializeStateStack(deserializer);
+                    }
+                    else
+                    {
+                        // We need an initial commit.
+                        this->scene.CommitStateStackFrame();
+                    }
                 }
                 else
                 {
                     // We need an initial commit.
                     this->scene.CommitStateStackFrame();
                 }
-            }
-            else
-            {
-                // We need an initial commit.
-                this->scene.CommitStateStackFrame();
             }
 
 
