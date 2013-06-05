@@ -1542,6 +1542,8 @@ namespace GTEngine
             }
             else if (header.id == Serialization::ChunkID_Scene_Properties)
             {
+                readSceneProperties = true;
+
                 if (header.version == 1)
                 {
                     deserializer.ReadString(this->name);
