@@ -53,7 +53,7 @@ layout: default
             </p>
             <p>
             The sandbox will execute a script ("data/sandbox-config.lua") on startup. From this script you can configure the startup scene
-            (among other things). You will usually want to set the startup scene to the main menu.
+            (among other things). You will usually want to set the startup scene to your game's main menu.
             </p>
             <p>
             Some assets are used by the engine and will be needed by every game. These assets are located in "data/engine". The sandbox has
@@ -81,6 +81,15 @@ layout: default
             The scene editor is the most important editor. In addition to the game world(s), menu's (such as your main menu) are implemented
             as scenes. The idea is that you add scene nodes to the scene, and then attach components to each scene node. Scripts can be
             attached to scene nodes via the Script component. Scripts then handle events posted by the engine.
+            </p>
+            <p>
+            Importing assets is done by simply placing them into the data directory. The editor will automatically pick them up. Any conversion
+            to native formats or whatnot are done in the background.
+            </p>
+            <p>
+            Models are converted to the engine's native format (.gtmodel) which will be placed in the same directory as the source model. They
+            will be automatically synchronized when the source model is changed. Come distribution time, you can simply remove the oringal
+            source models.
             </p>
         </div>
         <div class="page-section">
