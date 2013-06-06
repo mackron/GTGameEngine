@@ -54,6 +54,7 @@ function self:OnStartup()
         self.GUIEditorButton:SetText("Open Editor");
         self.GUIEditorButton:OnPressed(function()
             Game.OpenEditor();
+            Editor.OpenFile("engine/editor-notes.txt");
         end);
         self.GUIEditorButton:OnMouseEnter(function()
             self.GUIEditorInfo:Show();
