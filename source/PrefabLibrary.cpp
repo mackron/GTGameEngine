@@ -15,7 +15,7 @@ namespace GTEngine
     typedef std::pair<Prefab*, size_t> PrefabReference;
 
     /// The list of loaded classes, indexed by the absolute path.
-    static GTCore::Dictionary<PrefabReference> LoadedClasses;
+    static GTCore::Dictionary<PrefabReference> LoadedPrefabs;
 
 
 
@@ -30,11 +30,11 @@ namespace GTEngine
 
     void PrefabLibrary::Shutdown()
     {
-        for (size_t i = 0; i < LoadedClasses.count; ++i)
+        for (size_t i = 0; i < LoadedPrefabs.count; ++i)
         {
-            delete LoadedClasses.buffer[i]->value.first;
+            delete LoadedPrefabs.buffer[i]->value.first;
         }
-        LoadedClasses.Clear();
+        LoadedPrefabs.Clear();
     }
 
 
@@ -63,8 +63,8 @@ namespace GTEngine
         GTCore::String absolutePath;
         if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
         {
-            auto iLoadedClass = LoadedClasses.Find(absolutePath.c_str());
-            if (iLoadedClass == nullptr)
+            auto iLoadedPrefab = LoadedPrefabs.Find(absolutePath.c_str());
+            if (iLoadedPrefab == nullptr)
             {
                 // Does not exist. Needs to be loaded.
                 auto file = GTCore::IO::Open(absolutePath.c_str(), GTCore::IO::OpenMode::Read);
@@ -76,7 +76,7 @@ namespace GTEngine
                     auto newPrefab = new Prefab(absolutePath.c_str(), relativePath.c_str());
                     newPrefab->Deserialize(deserializer);
 
-                    LoadedClasses.Add(absolutePath.c_str(), PrefabReference(newPrefab, 1));
+                    LoadedPrefabs.Add(absolutePath.c_str(), PrefabReference(newPrefab, 1));
 
                     // Can't forget to close the file.
                     GTCore::IO::Close(file);
@@ -91,9 +91,9 @@ namespace GTEngine
             else
             {
                 // Already exists, so we just increment the counter.
-                ++iLoadedClass->value.second;
+                ++iLoadedPrefab->value.second;
 
-                return iLoadedClass->value.first;
+                return iLoadedPrefab->value.first;
             }
         }
         else
@@ -105,15 +105,15 @@ namespace GTEngine
         return nullptr;
     }
 
-    void PrefabLibrary::Unacquire(const Prefab* sceneNodeClassToUnacquire)
+    void PrefabLibrary::Unacquire(const Prefab* prefabToUnacquire)
     {
-        if (sceneNodeClassToUnacquire != nullptr)
+        if (prefabToUnacquire != nullptr)
         {
             // We need to search by value.
-            for (size_t i = 0; i < LoadedClasses.count; ++i)
+            for (size_t i = 0; i < LoadedPrefabs.count; ++i)
             {
-                auto &value = LoadedClasses.buffer[i]->value;
-                if (value.first == sceneNodeClassToUnacquire)
+                auto &value = LoadedPrefabs.buffer[i]->value;
+                if (value.first == prefabToUnacquire)
                 {
                     assert(value.second > 0);
                     {
@@ -122,7 +122,7 @@ namespace GTEngine
                         if (value.second == 0)
                         {
                             delete value.first;
-                            LoadedClasses.RemoveByIndex(i);
+                            LoadedPrefabs.RemoveByIndex(i);
                         }
 
                         break;
