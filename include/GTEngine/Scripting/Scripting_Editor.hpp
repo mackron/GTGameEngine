@@ -438,6 +438,34 @@ namespace GTEngine
             ///     Argument 2: A pointer to the scene node.
             int PositionSceneNodeInFrontOfCamera(GTCore::Script &script);
 
+            /// Sets the transform of the given scene node to that of the camera.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: A pointer to the scene node.
+            int SetSceneNodeTransformToCamera(GTCore::Script &script);
+
+            /// Sets the position of the given scene node to that of the camera.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: A pointer to the scene node.
+            int SetSceneNodePositionToCamera(GTCore::Script &script);
+
+            /// Sets the orientation of the given scene node to that of the camera.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: A pointer to the scene node.
+            int SetSceneNodeOrientationToCamera(GTCore::Script &script);
+
+            /// Sets the scale of the given scene ndoe to that of the camera.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: A pointer to the scene node.
+            int SetSceneNodeScaleToCamera(GTCore::Script &script);
+
 
             /// Shows the grid if it isn't showing already.
             ///
@@ -475,6 +503,13 @@ namespace GTEngine
             /// @remakrs
             ///     Argument 1: A pointer to the scene editor.
             int IsShowingAxisArrows(GTCore::Script &script);
+
+
+            /// Resets the camera.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int ResetCamera(GTCore::Script &script);
 
 
 

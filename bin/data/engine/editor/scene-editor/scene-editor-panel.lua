@@ -10,10 +10,10 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
     self.Body.PanelsContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='height:auto; width:100%;' />")
     
     self.Body.DetailsPanel   = GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID() .. "' styleclass='panel-groupbox' />");
-    self.Body.DetailsPanel:SceneEditorDetailsPanel(self);
+    self.Body.DetailsPanel:SceneEditorDetailsPanel(self, sceneEditor);
 
     self.Body.TransformPanel = GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID() .. "' styleclass='panel-groupbox' />");
-    self.Body.TransformPanel:SceneEditorTransformPanel(self);
+    self.Body.TransformPanel:SceneEditorTransformPanel(self, sceneEditor);
     
     
     self.CurrentSceneNode = nil;            -- The scene node whose details are currently being shown on this panel.

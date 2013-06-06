@@ -1,8 +1,9 @@
 -- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
-function GTGUI.Element:SceneEditorTransformPanel(parentPanel)
+function GTGUI.Element:SceneEditorTransformPanel(parentPanel, sceneEditor)
     self:PanelGroupBox("Transform");
     self.ParentPanel = parentPanel;
+    self.SceneNode   = nil;
     
     self.Container = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()      .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true;' />");
     self.Left      = GTGUI.Server.New("<div parentid='" .. self.Container:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
@@ -16,7 +17,14 @@ function GTGUI.Element:SceneEditorTransformPanel(parentPanel)
     self.RotationInput = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true; margin-bottom:4px;' />"):Vector3Input();
     self.ScaleInput    = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true;' />"):Vector3Input();
     
-    self.SceneNode = nil;
+    self.SetToCameraButton = GTGUI.Server.CreateElement(self.Body, "scene-editor-transform-panel-settocamera-button");
+    self.SetToCameraButton:SetText("Set to Camera");
+    self.SetToCameraButton:OnPressed(function()
+        sceneEditor:SetSceneNodeTransformToCamera(self.SceneNode);
+        sceneEditor:OnSceneNodeChanged();
+    end);
+    
+    
 
     
     function self:Update(node)

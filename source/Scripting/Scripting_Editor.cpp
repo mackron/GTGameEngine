@@ -95,6 +95,10 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetSceneNodePtrByID",                 SceneEditorFFI::GetSceneNodePtrByID);
                         script.SetTableFunction(-1, "GetSceneNodes",                       SceneEditorFFI::GetSceneNodes);
                         script.SetTableFunction(-1, "PositionSceneNodeInFrontOfCamera",    SceneEditorFFI::PositionSceneNodeInFrontOfCamera);
+                        script.SetTableFunction(-1, "SetSceneNodeTransformToCamera",       SceneEditorFFI::SetSceneNodeTransformToCamera);
+                        script.SetTableFunction(-1, "SetSceneNodePositionToCamera",        SceneEditorFFI::SetSceneNodePositionToCamera);
+                        script.SetTableFunction(-1, "SetSceneNodeOrientationToCamera",     SceneEditorFFI::SetSceneNodeOrientationToCamera);
+                        script.SetTableFunction(-1, "SetSceneNodeScaleToCamera",           SceneEditorFFI::SetSceneNodeScaleToCamera);
 
                         script.SetTableFunction(-1, "ShowGrid",                            SceneEditorFFI::ShowGrid);
                         script.SetTableFunction(-1, "HideGrid",                            SceneEditorFFI::HideGrid);
@@ -102,6 +106,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "ShowAxisArrows",                      SceneEditorFFI::ShowAxisArrows);
                         script.SetTableFunction(-1, "HideAxisArrows",                      SceneEditorFFI::HideAxisArrows);
                         script.SetTableFunction(-1, "IsShowingAxisArrows",                 SceneEditorFFI::IsShowingAxisArrows);
+                        script.SetTableFunction(-1, "ResetCamera",                         SceneEditorFFI::ResetCamera);
 
                         script.SetTableFunction(-1, "SetSceneName",                        SceneEditorFFI::SetSceneName);
                         script.SetTableFunction(-1, "GetSceneName",                        SceneEditorFFI::GetSceneName);
@@ -1043,6 +1048,65 @@ namespace GTEngine
                 return 0;
             }
 
+            int SetSceneNodeTransformToCamera(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+
+                if (sceneEditor != nullptr && sceneNode != nullptr)
+                {
+                    glm::vec3 position;
+                    glm::quat orientation;
+                    glm::vec3 scale;
+                    sceneEditor->GetCameraSceneNode().GetWorldTransformComponents(position, orientation, scale);
+
+                    sceneNode->SetWorldPosition(position);
+                    sceneNode->SetWorldOrientation(orientation);
+                    sceneNode->SetWorldScale(scale);
+                }
+
+                return 0;
+            }
+
+            int SetSceneNodePositionToCamera(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+
+                if (sceneEditor != nullptr && sceneNode != nullptr)
+                {
+                    sceneNode->SetWorldPosition(sceneEditor->GetCameraSceneNode().GetWorldPosition());
+                }
+
+                return 0;
+            }
+
+            int SetSceneNodeOrientationToCamera(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+
+                if (sceneEditor != nullptr && sceneNode != nullptr)
+                {
+                    sceneNode->SetWorldOrientation(sceneEditor->GetCameraSceneNode().GetWorldOrientation());
+                }
+
+                return 0;
+            }
+
+            int SetSceneNodeScaleToCamera(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+
+                if (sceneEditor != nullptr && sceneNode != nullptr)
+                {
+                    sceneNode->SetWorldScale(sceneEditor->GetCameraSceneNode().GetWorldScale());
+                }
+
+                return 0;
+            }
+
 
             int ShowGrid(GTCore::Script &script)
             {
@@ -1119,6 +1183,17 @@ namespace GTEngine
                 return 1;
             }
 
+
+            int ResetCamera(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->ResetCamera();
+                }
+
+                return 0;
+            }
 
 
             int SetSceneName(GTCore::Script &script)

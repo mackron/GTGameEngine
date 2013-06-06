@@ -26,6 +26,13 @@ function GTGUI.Element:SceneEditorToolBar(sceneEditor)
         sceneEditor:HideAxisArrows();
     end);
 
+    GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "scene-editor-toolbar-viewport-menu-separator");
+
+    self.MenuBar.Viewport.ResetCameraButton = GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "button");
+    self.MenuBar.Viewport.ResetCameraButton:SetText("Reset Camera");
+    self.MenuBar.Viewport.ResetCameraButton:OnPressed(function()
+        sceneEditor:ResetCamera();
+    end);
     
     
     self.PlaybackContainer = GTGUI.Server.CreateElement(self,                   "scene-editor-toolbar-playback-container");

@@ -1,6 +1,6 @@
 -- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
-function GTGUI.Element:SceneEditorDetailsPanel(parentPanel)
+function GTGUI.Element:SceneEditorDetailsPanel(parentPanel, sceneEditor)
     self:PanelGroupBox("Details");
     self.ParentPanel = parentPanel;
     
