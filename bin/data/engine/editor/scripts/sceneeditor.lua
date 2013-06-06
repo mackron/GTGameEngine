@@ -2154,29 +2154,8 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
     end
     
     
-    function sceneEditor:EnableHDR()
-        GTEngine.System.SceneEditor.EnableHDR(self._internalPtr);
-    end
-    
-    function sceneEditor:DisableHDR()
-        GTEngine.System.SceneEditor.DisableHDR(self._internalPtr);
-    end
-    
-    function sceneEditor:IsHDREnabled()
-        return GTEngine.System.SceneEditor.IsHDREnabled(self._internalPtr);
-    end
-    
-    
-    function sceneEditor:EnableBloom()
-        GTEngine.System.SceneEditor.EnableBloom(self._internalPtr);
-    end
-    
-    function sceneEditor:DisableBloom()
-        GTEngine.System.SceneEditor.DisableBloom(self._internalPtr);
-    end
-    
-    function sceneEditor:IsBloomEnabled()
-        return GTEngine.System.SceneEditor.IsBloomEnabled(self._internalPtr);
+    function sceneEditor:ResetCamera()
+        return GTEngine.System.SceneEditor.ResetCamera(self._internalPtr);
     end
     
     
@@ -2230,6 +2209,11 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
     
     function sceneEditor:IsSceneBloomEnabled()
         return GTEngine.System.SceneEditor.IsSceneBloomEnabled(self._internalPtr);
+    end
+    
+    
+    function sceneEditor:SetSceneNodeTransformToCamera(sceneNode)
+        return GTEngine.System.SceneEditor.SetSceneNodeTransformToCamera(self._internalPtr, sceneNode._internalPtr);
     end
 end
 
@@ -2372,6 +2356,11 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     function self:OnSceneNodeRemoved(sceneNodePtr)
         self.HierarchyPanel:RemoveSceneNode(sceneNodePtr);
+    end
+    
+    
+    function self:OnSceneNodeChanged(sceneNodePtr)
+        self:CommitStateStackFrame();
     end
     
     function self:OnSceneNodeNameChanged(sceneNodePtr)
