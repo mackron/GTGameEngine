@@ -45,7 +45,8 @@ namespace GTEngine
         /// Retrieves a serializer by it's ID.
         ///
         /// @param id [in] The ID of the serializer to retrieve.
-        GTCore::BasicSerializer* GetSerializerByID(uint64_t id);
+              GTCore::BasicSerializer* GetSerializerByID(uint64_t id);
+        const GTCore::BasicSerializer* GetSerializerByID(uint64_t id) const;
 
         /// Retrieves the ID of the root item.
         uint64_t GetRootID() const;
@@ -77,7 +78,10 @@ namespace GTEngine
 
 
         /// Retrieves the IDs of the children of the given node.
-        void GetChildIDs(uint64_t parentID, GTCore::Vector<uint64_t> &childIDs);
+        ///
+        /// @param parentID [in ] The local ID of the parent.
+        /// @param childIDs [out] A reference to the vector that will receive the child IDs.
+        void GetChildIDs(uint64_t parentID, GTCore::Vector<uint64_t> &childIDs) const;
 
 
 

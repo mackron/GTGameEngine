@@ -43,6 +43,17 @@ namespace GTEngine
         return nullptr;
     }
 
+    const GTCore::BasicSerializer* Prefab::GetSerializerByID(uint64_t id) const
+    {
+        auto iSerializer = this->serializers.Find(id);
+        if (iSerializer != nullptr)
+        {
+            return iSerializer->value;
+        }
+
+        return nullptr;
+    }
+
 
     uint64_t Prefab::GetRootID() const
     {
@@ -110,7 +121,7 @@ namespace GTEngine
     }
 
 
-    void Prefab::GetChildIDs(uint64_t parentID, GTCore::Vector<uint64_t> &childIDs)
+    void Prefab::GetChildIDs(uint64_t parentID, GTCore::Vector<uint64_t> &childIDs) const
     {
         for (size_t i = 0; i < this->hierarchy.count; ++i)
         {

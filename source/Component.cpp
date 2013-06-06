@@ -82,6 +82,10 @@ namespace GTEngine
         {
             return new ScriptComponent(hostSceneNode);
         }
+        else if (GTCore::Strings::Equal(componentName, PrefabComponent::Name))
+        {
+            return new PrefabComponent(hostSceneNode);
+        }
         else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
         {
             return new EditorMetadataComponent(hostSceneNode);

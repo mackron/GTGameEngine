@@ -16,8 +16,9 @@
 #include "Components/GenericConstraintComponent.hpp"
 #include "Components/ConeTwistConstraintComponent.hpp"
 #include "Components/PointToPointConstraintComponent.hpp"
-#include "Components/ScriptComponent.hpp"
 #include "Components/ParticleSystemComponent.hpp"
+#include "Components/ScriptComponent.hpp"
+#include "Components/PrefabComponent.hpp"
 #include "Components/EditorMetadataComponent.hpp"
 
 #include <GTCore/Dictionary.hpp>
@@ -310,6 +311,9 @@ namespace GTEngine
 
         /// Retrieves the position, orientation and scale components of the scene node in a single call.
         void GetWorldTransformComponents(glm::vec3 &position, glm::quat &orientation, glm::vec3 &scale) const;
+
+        /// Sets the position, orientation and scale components of the scene node in a single call.
+        void SetWorldTransformComponents(const glm::vec3 &position, const glm::quat &orientation, const glm::vec3 &scale, bool updateDynamicsObject = true);
 
 
         /// Calculates a transformation matrix for this object, in world space.
