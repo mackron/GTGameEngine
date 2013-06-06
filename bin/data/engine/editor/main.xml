@@ -153,6 +153,12 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     -- Help
     Editor_MenuBar.Help = Editor_MenuBar:AppendItem("Help");
+    
+    Editor_MenuBar.Help.GetStarted = Editor_MenuBar.Help.menu:AppendItem("Show Usage Notes"):OnPressed(function()
+        Editor.OpenFile("engine/editor-notes.txt");
+        Editor_MenuBar:CollapseMenu();
+    end);
+    Editor_MenuBar.Help.menu:AppendSeparator();
     Editor_MenuBar.Help.GetStarted = Editor_MenuBar.Help.menu:AppendItem("Get Started..."):OnPressed(function()
         GTCore.System.OpenFileOrURL("http://mackron.github.io/GTGameEngine/getstarted");
         Editor_MenuBar:CollapseMenu();
