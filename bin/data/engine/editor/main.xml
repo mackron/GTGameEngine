@@ -77,6 +77,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     local Editor_MenuBar      = GTGUI.Server.GetElementByID("Editor_MenuBar");
     local Editor_DataExplorer = GTGUI.Server.GetElementByID("Editor_DataExplorer");
     local Editor_TabBar       = GTGUI.Server.GetElementByID("Editor_TabBar");
+    local Editor_AboutDialog  = GTGUI.Server.GetElementByID("Editor_AboutDialog");
 
 
     function Editor.ShowSaveFileDialog(absolutePath)
@@ -109,6 +110,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     -- The menu bar.
     Editor_MenuBar:MenuBar();
+    
+    -- File
     Editor_MenuBar.File = Editor_MenuBar:AppendItem("File");
     Editor_MenuBar.File.Save = Editor_MenuBar.File.menu:AppendItem("Save"):OnPressed(function()
         Editor.SaveCurrentlyShownFile();
@@ -142,9 +145,27 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     Editor_MenuBar.File.Close:Disable();
     Editor_MenuBar.File.CloseAll:Disable();
     
-    --Editor_MenuBar:AppendItem("Edit");
-    --Editor_MenuBar:AppendItem("View");
+    -- Game
+    Editor_MenuBar.Game = Editor_MenuBar:AppendItem("Game");
+    Editor_MenuBar.Game.Package = Editor_MenuBar.Game.menu:AppendItem("Package for Distribution..."):OnPressed(function()
+        print("Not Yet Implemented...");
+    end);
     
+    -- Help
+    Editor_MenuBar.Help = Editor_MenuBar:AppendItem("Help");
+    Editor_MenuBar.Help.GetStarted = Editor_MenuBar.Help.menu:AppendItem("Get Started..."):OnPressed(function()
+        GTCore.System.OpenFileOrURL("http://mackron.github.io/GTGameEngine/getstarted");
+        Editor_MenuBar:CollapseMenu();
+    end);
+    Editor_MenuBar.Help.Documentation = Editor_MenuBar.Help.menu:AppendItem("Documentation..."):OnPressed(function()
+        GTCore.System.OpenFileOrURL("http://mackron.github.io/GTGameEngine/documentation");
+        Editor_MenuBar:CollapseMenu();
+    end);
+    Editor_MenuBar.Help.menu:AppendSeparator();
+    Editor_MenuBar.Help.About = Editor_MenuBar.Help.menu:AppendItem("About GTGameEngine"):OnPressed(function()
+        Editor_AboutDialog:Show();
+        Editor_MenuBar:CollapseMenu();
+    end);
     
     
     
@@ -161,6 +182,30 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     
     Editor_TabBar:OnTabDeactivated(function(data)
         Editor.HideCurrentlyShownFile();
+    end);
+    
+    
+    -- About Dialog box.
+    GTGUI.Server.GetElementByID("Editor_AboutDialog_Version"):SetText(GTEngine.GetVersionString());
+    
+    GTGUI.Server.GetElementByID("Editor_AboutDialog_GitHubProject"):OnPressed(function()
+        GTCore.System.OpenFileOrURL("https://github.com/mackron/GTGameEngine");
+    end);
+    
+    GTGUI.Server.GetElementByID("Editor_AboutDialog_Issues"):OnPressed(function()
+        GTCore.System.OpenFileOrURL("https://github.com/mackron/GTGameEngine/issues?state=open");
+    end);
+    
+    GTGUI.Server.GetElementByID("Editor_AboutDialog_Licence"):OnPressed(function()
+        GTCore.System.OpenFileOrURL("https://github.com/mackron/GTGameEngine/blob/master/LICENCE");
+    end);
+    
+    GTGUI.Server.GetElementByID("Editor_AboutDialog_ThirdParty"):OnPressed(function()
+        GTCore.System.OpenFileOrURL("http://mackron.github.io/GTGameEngine/team");
+    end);
+    
+    GTGUI.Server.GetElementByID("Editor_AboutDialog_Close"):OnPressed(function()
+        Editor_AboutDialog:Hide();
     end);
 ]]>
 </script>
@@ -274,6 +319,21 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
         border:           1px #555
         
         padding:          4px
+    }
+    
+    
+    editor-about-dialog-link
+    {
+        width:       auto
+        text-color:  #999
+        cursor:      hand
+        margin-top:  4px
+        margin-left: 4px
+        font-style:  underline
+    }
+    editor-about-dialog-link:hovered
+    {
+        text-color: #bbb
     }
 </style>
     
@@ -415,6 +475,24 @@ hidden by default.
     </div>
   
     <!-- This section contains relative positioned controls. Usually dialog boxes. -->
+    <div id="Editor_AboutDialog" styleclass="dialog-container" style="vertical-align:center; horizontal-align:center;">
+        <div styleclass="dialog" style="width:400px; height:200px; background-color:#3a3a3a; flex-child-height:true; padding:16px;">
+            <div id="Editor_AboutDialog_Body" style="height:100%; text-color:#aaa;">
+                <div style="font-size:11pt">GTGameEngine</div>
+                <div style="child-plane:horizontal; margin-top:0px; font-size:9pt; margin-left:60px;">
+                    <div style="width:auto;">Version</div><div id="Editor_AboutDialog_Version" style="width:auto; margin-left:8px;"></div>
+                </div>
+                <div id="Editor_AboutDialog_GitHubProject" styleclass="editor-about-dialog-link" style="margin-top:16px">GitHub Project</div>
+                <div id="Editor_AboutDialog_Issues"        styleclass="editor-about-dialog-link">Issues</div>
+                <div id="Editor_AboutDialog_Licence"       styleclass="editor-about-dialog-link">Licence</div>
+                <div id="Editor_AboutDialog_ThirdParty"    styleclass="editor-about-dialog-link">Third-Party Libraries (Thankyou!)</div>
+            </div>
+            <div id="Editor_AboutDialog_Footer" style="horizontal-align:center; vertical-align:center;">
+                <div id="Editor_AboutDialog_Close" styleclass="dialog-button">Close</div>
+            </div>
+        </div>
+    </div>
+    
     <div id="YesNoCancelDialog" style="positioning:absolute; width:100%; height:100%; z-index:1000; background-color:#000; opacity:50%; vertical-align:center; horizontal-align:center; visible:false;">
         <div styleclass='dialog' style="width:400px; height:200px; background-color:#3a3a3a; flex-child-height:true; padding:16px;">
             <div id="YesNoCancelDialog_TextBox" style="width:100%; height:100%; vertical-align:center; font-size:10pt; text-color:#ccc;" />
