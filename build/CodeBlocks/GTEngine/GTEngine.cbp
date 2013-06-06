@@ -161,6 +161,7 @@
 		<Unit filename="../../../include/GTEngine/Components/OccluderComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/Components/ParticleSystemComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/Components/PointToPointConstraintComponent.hpp" />
+		<Unit filename="../../../include/GTEngine/Components/PrefabComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/Components/ProximityComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/Components/ScriptComponent.hpp" />
 		<Unit filename="../../../include/GTEngine/ConvexHull.hpp" />
@@ -265,6 +266,9 @@
 		<Unit filename="../../../include/GTEngine/Physics/SceneNodeMotionState.hpp" />
 		<Unit filename="../../../include/GTEngine/Physics/StaticMeshCollisionShape.hpp" />
 		<Unit filename="../../../include/GTEngine/Physics/btEllipsoidShape.hpp" />
+		<Unit filename="../../../include/GTEngine/Prefab.hpp" />
+		<Unit filename="../../../include/GTEngine/PrefabLibrary.hpp" />
+		<Unit filename="../../../include/GTEngine/PrefabLinker.hpp" />
 		<Unit filename="../../../include/GTEngine/Profiler.hpp" />
 		<Unit filename="../../../include/GTEngine/Projectile.hpp" />
 		<Unit filename="../../../include/GTEngine/Random/Floor/FloorDefinition.hpp" />
@@ -323,8 +327,6 @@
 		<Unit filename="../../../include/GTEngine/SceneCullingManager.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneEventHandler.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneNode.hpp" />
-		<Unit filename="../../../include/GTEngine/SceneNodeClass.hpp" />
-		<Unit filename="../../../include/GTEngine/SceneNodeClassLibrary.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneNodeEventHandler.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneNodeMap.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneObject.hpp" />
@@ -395,6 +397,7 @@
 		<Unit filename="../../../source/Components/OccluderComponent.cpp" />
 		<Unit filename="../../../source/Components/ParticleSystemComponent.cpp" />
 		<Unit filename="../../../source/Components/PointToPointConstraintComponent.cpp" />
+		<Unit filename="../../../source/Components/PrefabComponent.cpp" />
 		<Unit filename="../../../source/Components/ProximityComponent.cpp" />
 		<Unit filename="../../../source/Components/ScriptComponent.cpp" />
 		<Unit filename="../../../source/ConvexHull.cpp" />
@@ -486,6 +489,9 @@
 		<Unit filename="../../../source/Physics/SceneNodeMotionState.cpp" />
 		<Unit filename="../../../source/Physics/StaticMeshCollisionShape.cpp" />
 		<Unit filename="../../../source/Physics/btEllipsoidShape.cpp" />
+		<Unit filename="../../../source/Prefab.cpp" />
+		<Unit filename="../../../source/PrefabLibrary.cpp" />
+		<Unit filename="../../../source/PrefabLinker.cpp" />
 		<Unit filename="../../../source/Profiler.cpp" />
 		<Unit filename="../../../source/Projectile.cpp" />
 		<Unit filename="../../../source/Random/Floor/FloorDefinition.cpp" />
@@ -589,8 +595,6 @@
 		<Unit filename="../../../source/SceneCullingDbvtPolicy.cpp" />
 		<Unit filename="../../../source/SceneEventHandler.cpp" />
 		<Unit filename="../../../source/SceneNode.cpp" />
-		<Unit filename="../../../source/SceneNodeClass.cpp" />
-		<Unit filename="../../../source/SceneNodeClassLibrary.cpp" />
 		<Unit filename="../../../source/SceneNodeEventHandler.cpp" />
 		<Unit filename="../../../source/SceneNodeMap.cpp" />
 		<Unit filename="../../../source/SceneRenderer.cpp" />
