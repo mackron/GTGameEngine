@@ -134,6 +134,9 @@ namespace GTEngine
         // ScriptComponent
         static const uint32_t ChunkID_ScriptComponent_Main                    = CHUNK_ID(0x00000220U);
 
+        // PrefabComponent
+        static const uint32_t ChunkID_PrefabComponent_Main                    = CHUNK_ID(0x00000230U);
+
         // --- Leave a bit of space for future non-editor component types ---
 
         // EditorMetadataComponent.

@@ -665,6 +665,27 @@ namespace GTEngine
         }
     }
 
+    void SceneNode::SetWorldTransformComponents(const glm::vec3 &position, const glm::quat &orientation, const glm::vec3 &scale, bool updateDynamicsObject)
+    {
+        if (this->parent != nullptr)
+        {
+            glm::vec3 Pp;
+            glm::quat Po;
+            glm::vec3 Ps;
+            this->parent->GetWorldTransformComponents(Pp, Po, Ps);
+
+            this->SetPosition(((position - Pp) * Po) / Ps, updateDynamicsObject);
+            this->SetOrientation(glm::inverse(Po) * orientation, updateDynamicsObject);
+            this->SetScale(scale / Ps);
+        }
+        else
+        {
+            this->SetPosition(position, updateDynamicsObject);
+            this->SetOrientation(orientation, updateDynamicsObject);
+            this->SetScale(scale);
+        }
+    }
+
 
     glm::mat4 SceneNode::GetWorldTransform() const
     {

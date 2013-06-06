@@ -189,6 +189,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\OccluderComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\ParticleSystemComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\PointToPointConstraintComponent.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Components\PrefabComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\ProximityComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Components\ScriptComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ConvexHull.hpp" />
@@ -296,6 +297,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\StaticMeshCollisionShape.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Prefab.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\PrefabLibrary.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\PrefabLinker.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Profiler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Projectile.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorDefinition.hpp" />
@@ -448,6 +450,7 @@
     <ClCompile Include="..\..\..\source\Components\OccluderComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\ParticleSystemComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\PointToPointConstraintComponent.cpp" />
+    <ClCompile Include="..\..\..\source\Components\PrefabComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\ProximityComponent.cpp" />
     <ClCompile Include="..\..\..\source\Components\ScriptComponent.cpp" />
     <ClCompile Include="..\..\..\source\ConvexHull.cpp" />
@@ -543,6 +546,7 @@
     <ClCompile Include="..\..\..\source\Physics\StaticMeshCollisionShape.cpp" />
     <ClCompile Include="..\..\..\source\Prefab.cpp" />
     <ClCompile Include="..\..\..\source\PrefabLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\PrefabLinker.cpp" />
     <ClCompile Include="..\..\..\source\Profiler.cpp" />
     <ClCompile Include="..\..\..\source\Projectile.cpp" />
     <ClCompile Include="..\..\..\source\Random\Floor\FloorDefinition.cpp" />
