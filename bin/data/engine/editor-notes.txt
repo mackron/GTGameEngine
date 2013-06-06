@@ -1,0 +1,43 @@
+# GTGameEngine Editor Usage Notes
+
+EXPECT MANY BUGS AND MISSING FEATURES AND FUNCTIONALITY
+
+
+## General
+- Use Shift+Tab to toggle the editor
+- All assets are located on the panel to the left. Only assets in the 'data' directories are shown
+- All assets open to their own sub-editor, tabbed along the top. Middle click to close
+- Right click on a folder to create a new file. No need to supply an extension except for text files
+- Assets should automatically reload, except for scenes and audio
+- Left panel should automatically synchronize with changes to the file system. As files are added to the 'data'
+  directory, the editor will automatically pick them up
+- Search functionality is not currently implemented
+- Text editor is very bare bones. Consider using an external editor for now
+
+
+## Scene Editor
+- Move camera forward/back, turn left/right = LMB + Drag
+- Turn camera = RMB + Drag
+- Pan camera = LMB + RMB + Drag
+- Select = LMB without dragging
+- Translate, Rotate, Scale toggle = T, R and S
+- Local, Global translation mode toggle = Q
+    - Local = L
+    - Global = G
+- Add a new scene node by right clicking in the scene
+- New scene nodes will be added about 10 units in front of the camera. Watch out for perspective illusions!
+- Add components to scene nodes to give them certain functionality
+    - Add a model component to have the scene node draw a model/mesh
+    - Add a light to have the scene node emit light
+    - Add a dynamics component to have the scene node interact with physics
+    - Add a script component to give event-driven programmatic functionality
+    - Add a proximity component to detect collisions (collision handling must be done in script)
+- Use the "Hierarchy" panel to modify scene node hierarchies.
+    - Right click on a scene node to orphan or
+    - Drag-and-drop into a black space to orphan
+- Create a prefab in the asset explorer (left-side panel)
+    - Drag a scene node from the Hierarchy panel to the prefab file to update the prefab
+    - Adding or removing components from scene nodes that are attached to a prefab without updating the prefab is unreliable
+- Use the playback controls along the top to play the game from inside the editor viewport
+- Use the Editor Metadata panel to assign icons and show/hide the direction arrow for scene nodes
+- Use the "Scene Properties" tab on the right-side panel to control rendering options (very basic so far)

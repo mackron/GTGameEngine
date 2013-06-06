@@ -430,33 +430,6 @@ hidden by default.
         </div>
         
         <div id="EditorCenterCenterPanelHelp">
-            <div style="font-size:inherit">
-                Shift + TAB to Toggle Editor
-            </div>
-            <div style="font-size:inherit; margin-top:20;">
-                All assets are located on the panel to the left. Only shows assets in the data directories.
-            </div>
-            <div style="font-size:inherit; margin-top:16px;">
-                All assets open to their own sub-editor, tabbed along the top. Not all sub-editors are implemented.
-            </div>
-            <div style="font-size:inherit; margin-top:16px;">
-                Right click on a folder to create a new file. No need to supply an extension except for text files.
-            </div>
-            <div style="font-size:inherit; margin-top:16px;">
-                Assets should automatically reload, except for scenes and audio.
-            </div>
-            <div style="font-size:inherit; margin-top:16px;">
-                Left panel should automatically synchronize with changes to the file system.
-            </div>
-            <div style="font-size:inherit; margin-top:16px;">
-                Search functionality is not currently implemented.
-            </div>
-            <div style="font-size:inherit; margin-top:16px;">
-                Text editor is very bare bones. Consider using an external editor for now.
-            </div>
-            <div style="font-size:inherit; font-style:bold; margin-top:32px;">
-                Expect many bugs and missing functionality.
-            </div>
         </div>
     </div>
 
