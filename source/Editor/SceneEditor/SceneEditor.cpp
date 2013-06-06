@@ -4,7 +4,7 @@
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Logging.hpp>
-#include <GTEngine/SceneNodeClassLibrary.hpp>
+#include <GTEngine/PrefabLibrary.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/Scripting.hpp>
@@ -1166,7 +1166,7 @@ namespace GTEngine
 
     SceneNode* SceneEditor::InstantiatePrefab(const char* relativePath)
     {
-        auto prefab = SceneNodeClassLibrary::Acquire(relativePath);
+        auto prefab = PrefabLibrary::Acquire(relativePath);
         if (prefab != nullptr)
         {
             auto rootSceneNode = this->scene.CreateNewSceneNode(*prefab);
@@ -1183,7 +1183,7 @@ namespace GTEngine
 
 
                 // We don't need the prefab anymore, so we can unacquire.
-                SceneNodeClassLibrary::Unacquire(prefab);
+                PrefabLibrary::Unacquire(prefab);
 
 
                 return rootSceneNode;
@@ -2745,7 +2745,7 @@ namespace GTEngine
     }
 
 
-    void SceneEditor::MapSceneNodeToPrefab(SceneNode &sceneNode, SceneNodeClass &prefab, size_t &prefabSceneNodeIndex)
+    void SceneEditor::MapSceneNodeToPrefab(SceneNode &sceneNode, Prefab &prefab, size_t &prefabSceneNodeIndex)
     {
         auto metadata = sceneNode.GetComponent<EditorMetadataComponent>();
         assert(metadata != nullptr);
@@ -2761,7 +2761,7 @@ namespace GTEngine
         }
     }
 
-    void SceneEditor::CreateMissingChildPrefabSceneNodes(SceneNodeClass &prefab, const SceneNode &sceneNode, uint64_t sceneNodePrefabID, GTCore::Vector<SceneNode*> &newSceneNodes)
+    void SceneEditor::CreateMissingChildPrefabSceneNodes(Prefab &prefab, const SceneNode &sceneNode, uint64_t sceneNodePrefabID, GTCore::Vector<SceneNode*> &newSceneNodes)
     {
         GTCore::Vector<uint64_t> childIDs;
         prefab.GetChildIDs(sceneNodePrefabID, childIDs);
@@ -2876,7 +2876,7 @@ namespace GTEngine
     void SceneEditor::UpdateAllSceneNodesLinkedToPrefab(const char* prefabRelativePath)
     {
         // It's a prefab. We need to update any scene node that uses this prefab.
-        auto prefab = SceneNodeClassLibrary::Acquire(prefabRelativePath);
+        auto prefab = PrefabLibrary::Acquire(prefabRelativePath);
         if (prefab != nullptr)
         {
             // The new scene nodes to be added after the main iteration. The key is the node in question and the value is the parent.

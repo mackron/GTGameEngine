@@ -15,7 +15,7 @@
 #include "Serialization.hpp"
 #include "SceneNodeMap.hpp"
 #include "SceneStateStack.hpp"
-#include "SceneNodeClass.hpp"
+#include "Prefab.hpp"
 #include <GTCore/SortedVector.hpp>
 #include <GTCore/Script.hpp>
 
@@ -297,7 +297,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     All definitions have only a single node as the top-level node.
-        SceneNode* CreateNewSceneNode(const SceneNodeClass &sceneNodeClass);
+        SceneNode* CreateNewSceneNode(const Prefab &sceneNodeClass);
 
 
         

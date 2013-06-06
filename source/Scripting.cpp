@@ -3,7 +3,7 @@
 #include <GTEngine/Scripting.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/IO.hpp>
-#include <GTEngine/SceneNodeClassLibrary.hpp>
+#include <GTEngine/PrefabLibrary.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Physics/CollisionShapeTypes.hpp>
 
@@ -668,7 +668,7 @@ namespace GTEngine
 
 
 
-            void AddSceneNodeAndChildrenToPrefab(SceneNodeClass &prefab, SceneNode &sceneNode, uint64_t parentID)
+            void AddSceneNodeAndChildrenToPrefab(Prefab &prefab, SceneNode &sceneNode, uint64_t parentID)
             {
                 auto metadata = sceneNode.GetComponent<EditorMetadataComponent>();
                 assert(metadata != nullptr);
@@ -709,7 +709,7 @@ namespace GTEngine
 
                 if (absolutePath != nullptr && makeRelativeTo != nullptr && sceneNode != nullptr)
                 {
-                    auto prefab = SceneNodeClassLibrary::Acquire(absolutePath, makeRelativeTo);
+                    auto prefab = PrefabLibrary::Acquire(absolutePath, makeRelativeTo);
                     if (prefab != nullptr)
                     {
                         prefab->Clear();
@@ -717,7 +717,7 @@ namespace GTEngine
 
                         prefab->WriteToFile();
 
-                        SceneNodeClassLibrary::Unacquire(prefab);
+                        PrefabLibrary::Unacquire(prefab);
                     }
                 }
 

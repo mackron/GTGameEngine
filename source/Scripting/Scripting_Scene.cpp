@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Scripting/Scripting_Scene.hpp>
-#include <GTEngine/SceneNodeClassLibrary.hpp>
+#include <GTEngine/PrefabLibrary.hpp>
 
 namespace GTEngine
 {
@@ -367,7 +367,7 @@ namespace GTEngine
                 {
                     if (script.IsString(2))
                     {
-                        auto prefab = SceneNodeClassLibrary::Acquire(script.ToString(2));
+                        auto prefab = PrefabLibrary::Acquire(script.ToString(2));
                         if (prefab != nullptr)
                         {
                             auto sceneNode = scene->CreateNewSceneNode(*prefab);
