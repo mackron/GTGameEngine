@@ -8,6 +8,12 @@ function GTGUI.Element:SceneEditorDetailsPanel(parentPanel, sceneEditor)
     self.NameLabel     = GTGUI.Server.New("<div parentid='" .. self.NameContainer:GetID() .. "' style='width:auto; margin-right:4px; text-color:std-text-color;'>Name</div>");
     self.NameTextBox   = GTGUI.Server.New("<div parentid='" .. self.NameContainer:GetID() .. "' styleclass='textbox' style='width:100%;' />");
     
+    self.PrefabContainer = GTGUI.Server.CreateElement(self.Body,            "scene-editor-details-panel-prefab-container");
+    self.PrefabLabel     = GTGUI.Server.CreateElement(self.PrefabContainer, "scene-editor-details-panel-prefab-label");
+    self.PrefabLabel:SetText("Prefab");
+    self.PrefabName      = GTGUI.Server.CreateElement(self.PrefabContainer, "scene-editor-details-panel-prefab-name");
+    self.PrefabName:SetText("None");
+    
     self.SceneNode = nil;
     
     

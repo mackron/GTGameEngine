@@ -1,1 +1,26 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+scene-editor-details-panel-prefab-container
+{
+    width:            100%
+    height:           auto
+    margin-top:       8px
+    child-plane:      horizontal
+    flex-child-width: true
+    vertical-align:   center
+}
+
+scene-editor-details-panel-prefab-label
+{
+    width:        auto
+    margin-right: 4px
+    text-color:   std-text-color
+}
+
+scene-editor-details-panel-prefab-name
+{
+    width:        100%
+    margin-right: 4px
+    text-color:   std-text-color
+    font-style:   bold
+}
