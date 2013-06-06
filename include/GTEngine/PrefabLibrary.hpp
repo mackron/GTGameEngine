@@ -8,7 +8,7 @@
 
 namespace GTEngine
 {
-    /// Class representing the library of scene node classes.
+    /// Class representing the library of prefabs.
     class PrefabLibrary
     {
     public:
@@ -29,10 +29,10 @@ namespace GTEngine
 
         /// Acquires a prefab by it's file name.
         ///
-        /// @param fileName       [in] The file name of the class being loaded, relative to the data directory.
+        /// @param fileName       [in] The file name of the prefab being loaded, relative to the data directory.
         /// @param makeRelativeTo [in] If 'fileName' is absolute, this will be used to turn it into a relative path.
         ///
-        /// @return A pointer to the class, or null if an error occurs.
+        /// @return A pointer to the prefab, or null if an error occurs.
         ///
         /// @remarks
         ///     Each call to this function must match up to an Unacquire().
@@ -41,10 +41,10 @@ namespace GTEngine
         ///     this will return null if 'fileName' is absolute and 'makeRelativeTo' is null.
         static Prefab* Acquire(const char* fileName, const char* makeRelativeTo = nullptr);
 
-        /// Unacquires a class that was first acquired by Acquire().
+        /// Unacquires a prefab that was first acquired by Acquire().
         ///
-        /// @param sceneNodeClassToUnacquire [in] A pointer to the scene node class to unacquire.
-        static void Unacquire(const Prefab* sceneNodeClassToUnacquire);
+        /// @param prefabToUnacquire [in] A pointer to the scene node class to unacquire.
+        static void Unacquire(const Prefab* prefabToUnacquire);
     };
 }
 
