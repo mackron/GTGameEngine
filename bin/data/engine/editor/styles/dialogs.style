@@ -10,7 +10,7 @@ dialog-container
     opacity:          0.50
         
     visible: false
-        
+    
     z-index: 100
 }
     
