@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
-#ifndef __GTEngine_SceneNodeClass_hpp_
-#define __GTEngine_SceneNodeClass_hpp_
+#ifndef __GTEngine_Prefab_hpp_
+#define __GTEngine_Prefab_hpp_
 
 #include "Serialization.hpp"
 #include "SceneNode.hpp"
@@ -14,15 +14,15 @@ namespace GTEngine
     /// Class representing the definition of a hierarchy of scene nodes.
     ///
     /// Think of this class as a "prefab".
-    class SceneNodeClass
+    class Prefab
     {
     public:
 
         /// Constructor.
-        SceneNodeClass(const char* absolutePath, const char* relativePath);
+        Prefab(const char* absolutePath, const char* relativePath);
         
         /// Destructor.
-        ~SceneNodeClass();
+        ~Prefab();
 
 
         /// Retrieves the relative path of the prefab.

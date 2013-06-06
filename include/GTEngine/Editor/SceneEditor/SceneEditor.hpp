@@ -501,13 +501,13 @@ namespace GTEngine
 
 
         /// Recursively maps a scene node to a prefab.
-        void MapSceneNodeToPrefab(SceneNode &sceneNode, SceneNodeClass &prefab, size_t &prefabSceneNodeIndex);
+        void MapSceneNodeToPrefab(SceneNode &sceneNode, Prefab &prefab, size_t &prefabSceneNodeIndex);
 
         /// Recursively creates the missing children from the prefab, but does not add them to the scene straight away.
         ///
         /// @remarks
         ///     This does not link the new nodes to the parent. Needs to be done at a higher level.
-        void CreateMissingChildPrefabSceneNodes(SceneNodeClass &prefab, const SceneNode &sceneNode, uint64_t sceneNodePrefabID, GTCore::Vector<SceneNode*> &newSceneNodes);
+        void CreateMissingChildPrefabSceneNodes(Prefab &prefab, const SceneNode &sceneNode, uint64_t sceneNodePrefabID, GTCore::Vector<SceneNode*> &newSceneNodes);
 
         /// Determines whether or not a descendant scene node is linked to a different prefab.
         bool IsDescendantLinkedToDifferentPrefab(SceneNode &sceneNode) const;

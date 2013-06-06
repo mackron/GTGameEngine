@@ -11,7 +11,7 @@
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/VertexArrayLibrary.hpp>
-#include <GTEngine/SceneNodeClassLibrary.hpp>
+#include <GTEngine/PrefabLibrary.hpp>
 #include <GTEngine/ParticleSystemLibrary.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/ThreadCache.hpp>
@@ -125,8 +125,8 @@ namespace GTEngine
         Log("Initializing Model Library...");
         ModelLibrary::Startup();
 
-        Log("Initializing Scene Node Class Library...");
-        SceneNodeClassLibrary::Startup();
+        Log("Initializing Prefab Library...");
+        PrefabLibrary::Startup();
 
         Log("Initializing Particle System Library...");
         ParticleSystemLibrary::Startup();
@@ -166,7 +166,7 @@ namespace GTEngine
         ShaderLibrary::Shutdown();
         Texture2DLibrary::Shutdown();
         VertexArrayLibrary::Shutdown();
-        SceneNodeClassLibrary::Shutdown();
+        PrefabLibrary::Shutdown();
         ParticleSystemLibrary::Shutdown();
         ScriptLibrary::Shutdown();
 

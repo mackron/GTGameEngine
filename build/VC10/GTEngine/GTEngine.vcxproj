@@ -294,6 +294,8 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\RigidBody.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Physics\StaticMeshCollisionShape.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Prefab.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\PrefabLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Profiler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Projectile.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Random\Floor\FloorDefinition.hpp" />
@@ -347,8 +349,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\SceneCullingManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneNode.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeClass.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeClassLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneNodeEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneNodeMap.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ScenePhysicsManager.hpp" />
@@ -541,6 +541,8 @@
     <ClCompile Include="..\..\..\source\Physics\RigidBody.cpp" />
     <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp" />
     <ClCompile Include="..\..\..\source\Physics\StaticMeshCollisionShape.cpp" />
+    <ClCompile Include="..\..\..\source\Prefab.cpp" />
+    <ClCompile Include="..\..\..\source\PrefabLibrary.cpp" />
     <ClCompile Include="..\..\..\source\Profiler.cpp" />
     <ClCompile Include="..\..\..\source\Projectile.cpp" />
     <ClCompile Include="..\..\..\source\Random\Floor\FloorDefinition.cpp" />
@@ -612,8 +614,6 @@
     <ClCompile Include="..\..\..\source\SceneCullingDbvtPolicy.cpp" />
     <ClCompile Include="..\..\..\source\SceneEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\SceneNode.cpp" />
-    <ClCompile Include="..\..\..\source\SceneNodeClass.cpp" />
-    <ClCompile Include="..\..\..\source\SceneNodeClassLibrary.cpp" />
     <ClCompile Include="..\..\..\source\SceneNodeEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\SceneNodeMap.cpp" />
     <ClCompile Include="..\..\..\source\SceneRenderer.cpp" />

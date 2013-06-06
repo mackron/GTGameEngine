@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
-#include <GTEngine/SceneNodeClassLibrary.hpp>
+#include <GTEngine/PrefabLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTCore/Path.hpp>
 #include <GTCore/Dictionary.hpp>
@@ -12,10 +12,10 @@ namespace GTEngine
     //////////////////////////////////////
     // Globals.
 
-    typedef std::pair<SceneNodeClass*, size_t> SceneNodeClassReference;
+    typedef std::pair<Prefab*, size_t> PrefabReference;
 
     /// The list of loaded classes, indexed by the absolute path.
-    static GTCore::Dictionary<SceneNodeClassReference> LoadedClasses;
+    static GTCore::Dictionary<PrefabReference> LoadedClasses;
 
 
 
@@ -23,12 +23,12 @@ namespace GTEngine
     //////////////////////////////////////
     // Startup/Shutdown.
 
-    bool SceneNodeClassLibrary::Startup()
+    bool PrefabLibrary::Startup()
     {
         return true;
     }
 
-    void SceneNodeClassLibrary::Shutdown()
+    void PrefabLibrary::Shutdown()
     {
         for (size_t i = 0; i < LoadedClasses.count; ++i)
         {
@@ -42,7 +42,7 @@ namespace GTEngine
     //////////////////////////////////////
     // Acquire/Unacquire
 
-    SceneNodeClass* SceneNodeClassLibrary::Acquire(const char* fileName, const char* makeRelativeTo)
+    Prefab* PrefabLibrary::Acquire(const char* fileName, const char* makeRelativeTo)
     {
         GTCore::String relativePath(fileName);
 
@@ -73,15 +73,15 @@ namespace GTEngine
                     // We use a file deserializer for this.
                     GTCore::FileDeserializer deserializer(file);
                     
-                    auto newSceneNodeClass = new SceneNodeClass(absolutePath.c_str(), relativePath.c_str());
-                    newSceneNodeClass->Deserialize(deserializer);
+                    auto newPrefab = new Prefab(absolutePath.c_str(), relativePath.c_str());
+                    newPrefab->Deserialize(deserializer);
 
-                    LoadedClasses.Add(absolutePath.c_str(), SceneNodeClassReference(newSceneNodeClass, 1));
+                    LoadedClasses.Add(absolutePath.c_str(), PrefabReference(newPrefab, 1));
 
                     // Can't forget to close the file.
                     GTCore::IO::Close(file);
 
-                    return newSceneNodeClass;
+                    return newPrefab;
                 }
                 else
                 {
@@ -105,7 +105,7 @@ namespace GTEngine
         return nullptr;
     }
 
-    void SceneNodeClassLibrary::Unacquire(const SceneNodeClass* sceneNodeClassToUnacquire)
+    void PrefabLibrary::Unacquire(const Prefab* sceneNodeClassToUnacquire)
     {
         if (sceneNodeClassToUnacquire != nullptr)
         {
@@ -131,48 +131,4 @@ namespace GTEngine
             }
         }
     }
-
-
-#if 0
-    bool SceneNodeClassLibrary::Create(const char* absolutePath, const char* relativePath, const SceneNode &sceneNode)
-    {
-        assert(GTCore::Path::IsAbsolute(absolutePath));
-        assert(GTCore::Path::IsRelative(relativePath));
-        {
-            // First we try acquiring. If this succeeds, we actually want to return false.
-            auto existingClass = SceneNodeClassLibrary::Acquire(relativePath);
-            if (existingClass != nullptr)
-            {
-                SceneNodeClassLibrary::Unacquire(existingClass);
-                return false;
-            }
-
-
-        
-            auto file = GTCore::IO::Open(absolutePath, GTCore::IO::OpenMode::Write);
-            if (file != nullptr)
-            {
-                SceneNodeClass dummyClass(relativePath);
-                dummyClass.SetFromSceneNode(sceneNode);
-
-                GTCore::FileSerializer serializer(file);
-                dummyClass.Serialize(serializer);
-
-
-                // Can't forget to close the file...
-                GTCore::IO::Close(file);
-
-
-                return true;
-            }
-            else
-            {
-                GTEngine::PostError("Can not open file for writing: %s", absolutePath);
-            }
-        }
-
-
-        return nullptr;
-    }
-#endif
 }

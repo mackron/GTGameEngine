@@ -1,28 +1,28 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
-#include <GTEngine/SceneNodeClass.hpp>
+#include <GTEngine/Prefab.hpp>
 #include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
-    SceneNodeClass::SceneNodeClass(const char* absolutePathIn, const char* relativePathIn)
+    Prefab::Prefab(const char* absolutePathIn, const char* relativePathIn)
         : absolutePath(absolutePathIn), relativePath(relativePathIn), serializers(), hierarchy(), nextID(0)
     {
     }
 
-    SceneNodeClass::~SceneNodeClass()
+    Prefab::~Prefab()
     {
         this->Clear();
     }
 
 
-    const char* SceneNodeClass::GetRelativePath() const
+    const char* Prefab::GetRelativePath() const
     {
         return this->relativePath.c_str();
     }
 
 
-    void SceneNodeClass::SetFromSceneNode(const SceneNode &sceneNode)
+    void Prefab::SetFromSceneNode(const SceneNode &sceneNode)
     {
         // First, we clear everything.
         this->Clear();
@@ -32,7 +32,7 @@ namespace GTEngine
     }
 
 
-    GTCore::BasicSerializer* SceneNodeClass::GetSerializerByID(uint64_t id)
+    GTCore::BasicSerializer* Prefab::GetSerializerByID(uint64_t id)
     {
         auto iSerializer = this->serializers.Find(id);
         if (iSerializer != nullptr)
@@ -44,13 +44,13 @@ namespace GTEngine
     }
 
 
-    uint64_t SceneNodeClass::GetRootID() const
+    uint64_t Prefab::GetRootID() const
     {
         return 1;
     }
 
 
-    void SceneNodeClass::Clear()
+    void Prefab::Clear()
     {
         // Serializers.
         for (size_t i = 0; i < this->serializers.count; ++i)
@@ -64,7 +64,7 @@ namespace GTEngine
         this->hierarchy.Clear();
     }
 
-    void SceneNodeClass::AddSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID)
+    void Prefab::AddSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID)
     {
         id = this->AddSingleSceneNode(sceneNode, id, parentID);
 
@@ -74,7 +74,7 @@ namespace GTEngine
         }
     }
 
-    uint64_t SceneNodeClass::AddSingleSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID)
+    uint64_t Prefab::AddSingleSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID)
     {
         auto serializer = new GTCore::BasicSerializer;
         sceneNode.Serialize(*serializer, SceneNode::NoID);
@@ -110,7 +110,7 @@ namespace GTEngine
     }
 
 
-    void SceneNodeClass::GetChildIDs(uint64_t parentID, GTCore::Vector<uint64_t> &childIDs)
+    void Prefab::GetChildIDs(uint64_t parentID, GTCore::Vector<uint64_t> &childIDs)
     {
         for (size_t i = 0; i < this->hierarchy.count; ++i)
         {
@@ -126,7 +126,7 @@ namespace GTEngine
     ////////////////////////////////////////////
     // Serialization.
 
-    bool SceneNodeClass::Serialize(GTCore::Serializer &serializer)
+    bool Prefab::Serialize(GTCore::Serializer &serializer)
     {
         // We'll need to use an intermediary serializer so we can get an accurate size.
         GTCore::BasicSerializer intermediarySerializer;
@@ -169,7 +169,7 @@ namespace GTEngine
 
 
         Serialization::ChunkHeader header;
-        header.id          = Serialization::ChunkID_SceneNodeClass;
+        header.id          = Serialization::ChunkID_Prefab;
         header.version     = 1;
         header.sizeInBytes = static_cast<uint32_t>(intermediarySerializer.GetBufferSizeInBytes());
 
@@ -180,7 +180,7 @@ namespace GTEngine
         return true;
     }
 
-    bool SceneNodeClass::Deserialize(GTCore::Deserializer &deserializer)
+    bool Prefab::Deserialize(GTCore::Deserializer &deserializer)
     {
         // We want to clear first.
         this->Clear();
@@ -188,7 +188,7 @@ namespace GTEngine
         Serialization::ChunkHeader header;
         if (deserializer.Read(header) > 0)
         {
-            assert(header.id == Serialization::ChunkID_SceneNodeClass);
+            assert(header.id == Serialization::ChunkID_Prefab);
             {
                 switch (header.version)
                 {
@@ -260,7 +260,7 @@ namespace GTEngine
     }
 
 
-    bool SceneNodeClass::WriteToFile()
+    bool Prefab::WriteToFile()
     {
         auto file = GTCore::IO::Open(this->absolutePath.c_str(), GTCore::IO::OpenMode::Write);
         if (file != nullptr)

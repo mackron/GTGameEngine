@@ -487,7 +487,7 @@ namespace GTEngine
     }
 
 
-    SceneNode* Scene::CreateNewSceneNode(const SceneNodeClass &sceneNodeClass)
+    SceneNode* Scene::CreateNewSceneNode(const Prefab &sceneNodeClass)
     {
         auto &serializers = sceneNodeClass.GetSerializers();
         auto &hierarchy   = sceneNodeClass.GetHierarchy();
