@@ -75,7 +75,7 @@ menubar-item-border-mask
     visible:          false
 
     positioning:      relative
-    //z-index:          2
+    z-index:          101
 
     bottom:           1px
     left:             0px

@@ -7,7 +7,7 @@ var menuBorder:           1px #666
 menu
 {
     positioning: relative
-    //z-index:     1
+    z-index:     100            // Always show on top of everything.
         
     min-width:  192px
     width:      auto
