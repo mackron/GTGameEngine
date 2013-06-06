@@ -1,0 +1,22 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+scene-editor-script-component-panel-edit-button
+{
+    width:                  12px
+    height:                 12px
+    
+    margin-left:            4px
+    
+    background-image:       file-icon
+    background-image-color: #999
+}
+
+scene-editor-script-component-panel-edit-button:hovered
+{
+    background-image-color: #ccc
+}
+
+scene-editor-script-component-panel-edit-button:pushed
+{
+    background-image-color: #eee
+}

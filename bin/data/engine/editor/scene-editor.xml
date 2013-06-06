@@ -2,21 +2,23 @@
 
 <include url="sub-editor.xml" />
 
-<style  url="scene-editor/scene-editor.style"                 />
-<style  url="scene-editor/scene-editor-panel.style"           />
-<style  url="scene-editor/scene-editor-details-panel.style"   />
-<style  url="scene-editor/scene-editor-transform-panel.style" />
-<style  url="scene-editor/scene-editor-viewport.style"        />
-<style  url="scene-editor/scene-editor-toolbar.style"         />
-<style  url="scene-editor/scene-editor-context-menu.style"    />
+<style  url="scene-editor/scene-editor.style"                        />
+<style  url="scene-editor/scene-editor-panel.style"                  />
+<style  url="scene-editor/scene-editor-details-panel.style"          />
+<style  url="scene-editor/scene-editor-transform-panel.style"        />
+<style  url="scene-editor/scene-editor-script-component-panel.style" />
+<style  url="scene-editor/scene-editor-viewport.style"               />
+<style  url="scene-editor/scene-editor-toolbar.style"                />
+<style  url="scene-editor/scene-editor-context-menu.style"           />
 
-<script url="scene-editor/scene-editor.lua"                   />
-<script url="scene-editor/scene-editor-panel.lua"             />
-<script url="scene-editor/scene-editor-details-panel.lua"     />
-<script url="scene-editor/scene-editor-transform-panel.lua"   />
-<script url="scene-editor/scene-editor-viewport.lua"          />
-<script url="scene-editor/scene-editor-toolbar.lua"           />
-<script url="scene-editor/scene-editor-context-menu.lua"      />
+<script url="scene-editor/scene-editor.lua"                          />
+<script url="scene-editor/scene-editor-panel.lua"                    />
+<script url="scene-editor/scene-editor-details-panel.lua"            />
+<script url="scene-editor/scene-editor-transform-panel.lua"          />
+<script url="scene-editor/scene-editor-script-component-panel.lua"   />
+<script url="scene-editor/scene-editor-viewport.lua"                 />
+<script url="scene-editor/scene-editor-toolbar.lua"                  />
+<script url="scene-editor/scene-editor-context-menu.lua"             />
 
 
 
