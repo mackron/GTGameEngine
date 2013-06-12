@@ -110,7 +110,7 @@ namespace GTEngine
                 "end;"
 
                 "math.__vec2.normalize = function(self)"
-                "    local invLenth = 1.0 /  math.vec2_length(self);"
+                "    local invLength = 1.0 /  math.vec2_length(self);"
                 "    self.x = self.x * invLength;"
                 "    self.y = self.y * invLength;"
                 ""
@@ -153,7 +153,7 @@ namespace GTEngine
                 "end;"
 
                 "function math.vec2_normalize(a)"
-                "    local invLenth = 1.0 /  math.vec2_length(a);"
+                "    local invLength = 1.0 /  math.vec2_length(a);"
                 "    return math.vec2("
                 "        a.x * invLength,"
                 "        a.y * invLength"
@@ -262,7 +262,7 @@ namespace GTEngine
                 "end;"
 
                 "math.__vec3.normalize = function(self)"
-                "    local invLenth = 1.0 /  math.vec3_length(self);"
+                "    local invLength = 1.0 /  math.vec3_length(self);"
                 "    self.x = self.x * invLength;"
                 "    self.y = self.y * invLength;"
                 "    self.z = self.z * invLength;"
@@ -319,7 +319,7 @@ namespace GTEngine
                 "end;"
 
                 "function math.vec3_normalize(a)"
-                "    local invLenth = 1.0 /  math.vec3_length(a);"
+                "    local invLength = 1.0 /  math.vec3_length(a);"
                 "    return math.vec3("
                 "        a.x * invLength,"
                 "        a.y * invLength,"
@@ -434,7 +434,7 @@ namespace GTEngine
                 "end;"
 
                 "math.__vec4.normalize = function(self)"
-                "    local invLenth = 1.0 /  math.vec4_length(self);"
+                "    local invLength = 1.0 /  math.vec4_length(self);"
                 "    self.x = self.x * invLength;"
                 "    self.y = self.y * invLength;"
                 "    self.z = self.z * invLength;"
@@ -483,7 +483,7 @@ namespace GTEngine
                 "end;"
 
                 "function math.vec4_normalize(a)"
-                "    local invLenth = 1.0 /  math.vec4_length(a);"
+                "    local invLength = 1.0 /  math.vec4_length(a);"
                 "    return math.vec4("
                 "        a.x * invLength,"
                 "        a.y * invLength,"
@@ -563,10 +563,10 @@ namespace GTEngine
                 "        if a.isQuat then"
                 "            if b.isQuat then"
                 "                return math.quat("
-                "                    b.w * a.w - b.x * a.x - b.y * a.y - b.z * a.z,"
-			    "                    b.w * a.x + b.x * a.w + b.y * a.z - b.z * a.y,"
-			    "                    b.w * a.y + b.y * a.w + b.z * a.x - b.x * a.z,"
-			    "                    b.w * a.z + b.z * a.w + b.x * a.y - b.y * a.x"
+                "                    a.w * b.x + a.x * b.w + a.y * b.z - a.z * b.y,"
+			    "                    a.w * b.y + a.y * b.w + a.z * b.x - a.x * b.z,"
+			    "                    a.w * b.z + a.z * b.w + a.x * b.y - a.y * b.x,"
+                "                    a.w * b.w - a.x * b.x - a.y * b.y - a.z * b.z"
                 "                );"
                 "            else"
                 "                local uv  = math.vec3_cross(a, b);"
@@ -705,6 +705,20 @@ namespace GTEngine
 
                 "function math.quat_inverse(q)"
                 "    return math.quat_conjugate(q) / math.quat_dot(q, q);"
+                "end;"
+
+                "function math.quat_length(q)"
+                "    return math.sqrt(math.quat_dot(q, q));"
+                "end;"
+
+                "function math.quat_normalize(q)"
+                "    local invLength = 1.0 /  math.quat_length(q);"
+                "    return math.quat("
+                "        q.x * invLength,"
+                "        q.y * invLength,"
+                "        q.z * invLength,"
+                "        q.w * invLength"
+                "    );"
                 "end;"
             );
 
