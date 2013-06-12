@@ -137,11 +137,13 @@ namespace GTEngine
             /// Sets the colour of the light.
             ///
             /// @remarks
-            ///     Argument 1:     A pointer to the component whose colour is being set.
-            ///     Argument 2,3,4: The red, green and blue colour components, respectively.
+            ///     Argument 1: A pointer to the component whose colour is being set.
+            ///     Argument 2: The red colour component, or a math.vec3 containing the colours.
+            ///     Argument 3: The green colour component.
+            ///     Argument 4: The blue colour component.
             int SetColour(GTCore::Script &script);
 
-            /// Retrieves the colour of the light as 3 floats.
+            /// Retrieves the colour of the light as a math.vec3.
             int GetColour(GTCore::Script &script);
 
 
@@ -174,11 +176,13 @@ namespace GTEngine
             /// Sets the colour of the light.
             ///
             /// @remarks
-            ///     Argument 1:     A pointer to the component whose colour is being set.
-            ///     Argument 2,3,4: The red, green and blue colour components, respectively.
+            ///     Argument 1: A pointer to the component whose colour is being set.
+            ///     Argument 2: The red colour component, or a math.vec3 containing the colours.
+            ///     Argument 3: The green colour component.
+            ///     Argument 4: The blue colour component.
             int SetColour(GTCore::Script &script);
 
-            /// Retrieves the colour of the light as 3 floats.
+            /// Retrieves the colour of the light as a math.vec3.
             int GetColour(GTCore::Script &script);
 
 
@@ -226,11 +230,13 @@ namespace GTEngine
             /// Sets the colour of the light.
             ///
             /// @remarks
-            ///     Argument 1:     A pointer to the component whose colour is being set.
-            ///     Argument 2,3,4: The red, green and blue colour components, respectively.
+            ///     Argument 1: A pointer to the component whose colour is being set.
+            ///     Argument 2: The red colour component, or a math.vec3 containing the colours.
+            ///     Argument 3: The green colour component.
+            ///     Argument 4: The blue colour component.
             int SetColour(GTCore::Script &script);
 
-            /// Retrieves the colour of the light as 3 floats.
+            /// Retrieves the colour of the light as a math.vec3.
             int GetColour(GTCore::Script &script);
 
 
@@ -249,11 +255,13 @@ namespace GTEngine
             /// Sets the colour of the light.
             ///
             /// @remarks
-            ///     Argument 1:     A pointer to the component whose colour is being set.
-            ///     Argument 2,3,4: The red, green and blue colour components, respectively.
+            ///     Argument 1: A pointer to the component whose colour is being set.
+            ///     Argument 2: The red colour component, or a math.vec3 containing the colours.
+            ///     Argument 3: The green colour component.
+            ///     Argument 4: The blue colour component.
             int SetColour(GTCore::Script &script);
 
-            /// Retrieves the colour of the light as 3 floats.
+            /// Retrieves the colour of the light as a math.vec3.
             int GetColour(GTCore::Script &script);
         }
 
@@ -285,8 +293,8 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The half x extent.
-            ///     Argument 3: The half y extent.
+            ///     Argument 2: The half x extent or a math.vec3 containing the half extents.
+            ///     Argument 3: The half y extent or a math.vec3 containing the offset.
             ///     Argument 4: The half z extent.
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
@@ -298,7 +306,7 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The radius.
-            ///     Argument 5: Optional x offset.
+            ///     Argument 5: Optional x offset or a math.vec3 containing the offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
             int AddSphereShape(GTCore::Script &script);
@@ -307,8 +315,8 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The x radius.
-            ///     Argument 3: The y radius.
+            ///     Argument 2: The x radius or a math.vec3 containing the radius.
+            ///     Argument 3: The y radius or a math.vec3 containing the offset.
             ///     Argument 4: The z radius.
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
@@ -319,8 +327,8 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The half x extent.
-            ///     Argument 3: The half y extent.
+            ///     Argument 2: The half x extent or a math.vec3 containing the half extents.
+            ///     Argument 3: The half y extent or a math.vec3 containing the offset.
             ///     Argument 4: The half z extent.
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
@@ -335,7 +343,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The radius.
             ///     Argument 3: The length.
-            ///     Argument 5: Optional x offset.
+            ///     Argument 5: Optional x offset or a math.vec3.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
             int AddCapsuleXShape(GTCore::Script &script);
@@ -386,7 +394,7 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape whose offset is being changed.
-            ///     Argument 3, 4, 5: The new offset, as 3 floats
+            ///     Argument 3, 4, 5: The new offset, as 3 floats, or a math.vec3
             int SetShapeOffset(GTCore::Script &script);
 
             /// Sets the extents of the box shape at the given index.
@@ -396,7 +404,7 @@ namespace GTEngine
             ///     @par
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
-            ///     Argument 3, 4, 5: The new half extents.
+            ///     Argument 3, 4, 5: The new half extents or a math.vec3.
             int SetBoxShapeHalfExtents(GTCore::Script &script);
 
             /// Sets the radius of the sphere shape at the given index.
@@ -416,7 +424,7 @@ namespace GTEngine
             ///     @par
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
-            ///     Argument 3, 4, 5: The new radius as 3 floats.
+            ///     Argument 3, 4, 5: The new radius as 3 floats, or a math.vec3.
             int SetEllipsoidShapeRadius(GTCore::Script &script);
 
             /// Sets the extents of the cylinder shape at the given index.
@@ -426,7 +434,7 @@ namespace GTEngine
             ///     @par
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
-            ///     Argument 3, 4, 5: The new half extents.
+            ///     Argument 3, 4, 5: The new half extents or a math.vec3.
             int SetCylinderShapeHalfExtents(GTCore::Script &script);
 
             /// Sets the size of the capsule shape at the given index.
@@ -524,7 +532,7 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The x velocity.
+            ///     Argument 2: The x velocity or a math.vec3().
             ///     Argument 3: The y velocity.
             ///     Argument 4: The z velocity.
             int SetLinearVelocity(GTCore::Script &script);
@@ -534,14 +542,14 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     @par
-            ///     The return value will be 3 floats.
+            ///     The return value will be a math.vec3()
             int GetLinearVelocity(GTCore::Script &script);
 
             /// Sets the angular velocity.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The x velocity.
+            ///     Argument 2: The x velocity or a math.vec3().
             ///     Argument 3: The y velocity.
             ///     Argument 4: The z velocity.
             int SetAngularVelocity(GTCore::Script &script);
@@ -551,7 +559,7 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     @par
-            ///     The return value will be 3 floats.
+            ///     The return value will be a math.vec3()
             int GetAngularVelocity(GTCore::Script &script);
 
 
@@ -559,7 +567,7 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The x factor.
+            ///     Argument 2: The x factor or a math.vec3().
             ///     Argument 3: The y factor.
             ///     Argument 4: The z factor.
             int SetLinearFactor(GTCore::Script &script);
@@ -568,7 +576,7 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The x factor.
+            ///     Argument 2: The x factor or a math.vec3().
             ///     Argument 3: The y factor.
             ///     Argument 4: The z factor.
             int SetAngularFactor(GTCore::Script &script);
@@ -578,7 +586,7 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The x gravity.
+            ///     Argument 2: The x gravity or a math.vec3().
             ///     Argument 3: The y gravity.
             ///     Argument 4: The z gravity.
             int SetGravity(GTCore::Script &script);
@@ -588,7 +596,7 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     @par
-            ///     The return value will be 3 floats.
+            ///     The return value will be a math.vec3()
             int GetGravity(GTCore::Script &script);
 
             /// Applies the gravity of the object.
@@ -602,7 +610,7 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The x force.
+            ///     Argument 2: The x force or a math.vec3().
             ///     Argument 3: The y force.
             ///     Argument 4: The z force.
             int ApplyCentralForce(GTCore::Script &script);
@@ -611,7 +619,7 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The x torque.
+            ///     Argument 2: The x torque or a math.vec3().
             ///     Argument 3: The y torque.
             ///     Argument 4: The z torque.
             int ApplyTorque(GTCore::Script &script);
@@ -620,19 +628,15 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The x impulse.
-            ///     Argument 3: The y impulse.
-            ///     Argument 4: The z impulse.
-            ///     Argument 5: The relative x position to apply the impulse.
-            ///     Argument 6: The relative y position to apply the impulse.
-            ///     Argument 7: The relative z position to apply the impulse.
+            ///     Argument 2: A math.vec3() containing the impule.
+            ///     Argument 3: A math.vec3() containing the relative position to apply the impulse.
             int ApplyImpulse(GTCore::Script &script);
 
             /// Applies a central impulse to the object.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The x impulse.
+            ///     Argument 2: The x impulse or a math.vec3().
             ///     Argument 3: The y impulse.
             ///     Argument 4: The z impulse.
             int ApplyCentralImpulse(GTCore::Script &script);
@@ -641,7 +645,7 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The x impulse.
+            ///     Argument 2: The x impulse or a math.vec3().
             ///     Argument 3: The y impulse.
             ///     Argument 4: The z impulse.
             int ApplyTorqueImpulse(GTCore::Script &script);
