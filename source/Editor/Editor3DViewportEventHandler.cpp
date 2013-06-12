@@ -28,10 +28,12 @@ namespace GTEngine
     {
         this->isMouseCaptureEnabled = false;
         
+        /*
         if (!this->game.IsMouseButtonDown(GTCore::MouseButton_Right))
         {
             this->game.ReleaseMouse();
         }
+        */
     }
 
 
