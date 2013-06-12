@@ -2,6 +2,7 @@
 
 #include <GTEngine/Scripting/Scripting_Components.hpp>
 #include <GTEngine/Scripting/Scripting_Animation.hpp>
+#include <GTEngine/Scripting/Scripting_Math.hpp>
 #include <GTEngine/SceneNode.hpp>
 
 namespace GTEngine
@@ -1401,7 +1402,20 @@ namespace GTEngine
                 auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->SetColour(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    glm::vec3 colour;
+
+                    if (script.IsTable(2))
+                    {
+                        colour = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        colour.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        colour.y = script.IsNumber(3) ? script.ToFloat(3) : colour.x;
+                        colour.z = script.IsNumber(4) ? script.ToFloat(4) : colour.x;
+                    }
+
+                    component->SetColour(colour);
                 }
 
                 return 0;
@@ -1412,20 +1426,14 @@ namespace GTEngine
                 auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    auto &colour = component->GetColour();
-
-                    script.Push(colour.x);
-                    script.Push(colour.y);
-                    script.Push(colour.z);
+                    Scripting::PushNewVector3(script, component->GetColour());
                 }
                 else
                 {
-                    script.Push(0.0f);
-                    script.Push(0.0f);
-                    script.Push(0.0f);
+                    Scripting::PushNewVector3(script, glm::vec3(0.0f, 0.0f, 0.0f));
                 }
 
-                return 3;
+                return 1;
             }
 
 
@@ -1532,7 +1540,20 @@ namespace GTEngine
                 auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->SetColour(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    glm::vec3 colour;
+
+                    if (script.IsTable(2))
+                    {
+                        colour = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        colour.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        colour.y = script.IsNumber(3) ? script.ToFloat(3) : colour.x;
+                        colour.z = script.IsNumber(4) ? script.ToFloat(4) : colour.x;
+                    }
+
+                    component->SetColour(colour);
                 }
 
                 return 0;
@@ -1543,20 +1564,14 @@ namespace GTEngine
                 auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    auto &colour = component->GetColour();
-
-                    script.Push(colour.x);
-                    script.Push(colour.y);
-                    script.Push(colour.z);
+                    Scripting::PushNewVector3(script, component->GetColour());
                 }
                 else
                 {
-                    script.Push(0.0f);
-                    script.Push(0.0f);
-                    script.Push(0.0f);
+                    Scripting::PushNewVector3(script, glm::vec3(0.0f, 0.0f, 0.0f));
                 }
 
-                return 3;
+                return 1;
             }
 
 
@@ -1693,7 +1708,20 @@ namespace GTEngine
                 auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->SetColour(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    glm::vec3 colour;
+
+                    if (script.IsTable(2))
+                    {
+                        colour = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        colour.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        colour.y = script.IsNumber(3) ? script.ToFloat(3) : colour.x;
+                        colour.z = script.IsNumber(4) ? script.ToFloat(4) : colour.x;
+                    }
+
+                    component->SetColour(colour);
                 }
 
                 return 0;
@@ -1704,17 +1732,11 @@ namespace GTEngine
                 auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    auto &colour = component->GetColour();
-
-                    script.Push(colour.x);
-                    script.Push(colour.y);
-                    script.Push(colour.z);
+                    Scripting::PushNewVector3(script, component->GetColour());
                 }
                 else
                 {
-                    script.Push(0.0f);
-                    script.Push(0.0f);
-                    script.Push(0.0f);
+                    Scripting::PushNewVector3(script, glm::vec3(0.0f, 0.0f, 0.0f));
                 }
 
                 return 3;
@@ -1768,7 +1790,20 @@ namespace GTEngine
                 auto component = reinterpret_cast<AmbientLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->SetColour(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    glm::vec3 colour;
+
+                    if (script.IsTable(2))
+                    {
+                        colour = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        colour.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        colour.y = script.IsNumber(3) ? script.ToFloat(3) : colour.x;
+                        colour.z = script.IsNumber(4) ? script.ToFloat(4) : colour.x;
+                    }
+
+                    component->SetColour(colour);
                 }
 
                 return 0;
@@ -1779,20 +1814,14 @@ namespace GTEngine
                 auto component = reinterpret_cast<AmbientLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    auto &colour = component->GetColour();
-
-                    script.Push(colour.x);
-                    script.Push(colour.y);
-                    script.Push(colour.z);
+                    Scripting::PushNewVector3(script, component->GetColour());
                 }
                 else
                 {
-                    script.Push(0.0f);
-                    script.Push(0.0f);
-                    script.Push(0.0f);
+                    Scripting::PushNewVector3(script, glm::vec3(0.0f, 0.0f, 0.0f));
                 }
 
-                return 3;
+                return 1;
             }
         }
 
@@ -1848,14 +1877,43 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    float halfX   = script.ToFloat(2);
-                    float halfY   = script.ToFloat(3);
-                    float halfZ   = script.ToFloat(4);
-                    float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                    float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
-                    float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+                    glm::vec3 extents;
+                    glm::vec3 offset;
 
-                    component->AddBoxCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
+                    if (script.IsTable(2))
+                    {
+                        extents = Scripting::ToVector3(script, 2);
+                        
+                        if (script.IsTable(4))
+                        {
+                            offset = Scripting::ToVector3(script, 3);
+                        }
+                        else
+                        {
+                            offset.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                            offset.y = script.IsNumber(4) ? script.ToFloat(4) : offset.x;
+                            offset.z = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                        }
+                    }
+                    else
+                    {
+                        extents.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        extents.y = script.IsNumber(3) ? script.ToFloat(3) : extents.x;
+                        extents.z = script.IsNumber(4) ? script.ToFloat(4) : extents.x;
+
+                        if (script.IsTable(5))
+                        {
+                            offset = Scripting::ToVector3(script, 5);
+                        }
+                        else
+                        {
+                            offset.x = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            offset.y = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
+                            offset.z = script.IsNumber(7) ? script.ToFloat(7) : offset.x;
+                        }
+                    }
+
+                    component->AddBoxCollisionShape(extents.x, extents.y, extents.z, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
@@ -1866,12 +1924,21 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    float radius  = script.ToFloat(2);
-                    float offsetX = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
-                    float offsetY = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
-                    float offsetZ = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                    float     radius = script.ToFloat(2);
+                    glm::vec3 offset;
 
-                    component->AddSphereCollisionShape(radius, offsetX, offsetY, offsetZ);
+                    if (script.IsTable(3))
+                    {
+                        offset = Scripting::ToVector3(script, 3);
+                    }
+                    else
+                    {
+                        offset.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                        offset.y = script.IsNumber(4) ? script.ToFloat(4) : offset.x;
+                        offset.z = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                    }
+
+                    component->AddSphereCollisionShape(radius, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
@@ -1882,14 +1949,43 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    float radiusX = script.ToFloat(2);
-                    float radiusY = script.ToFloat(3);
-                    float radiusZ = script.ToFloat(4);
-                    float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                    float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
-                    float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+                    glm::vec3 extents;
+                    glm::vec3 offset;
 
-                    component->AddEllipsoidCollisionShape(radiusX, radiusY, radiusZ, offsetX, offsetY, offsetZ);
+                    if (script.IsTable(2))
+                    {
+                        extents = Scripting::ToVector3(script, 2);
+                        
+                        if (script.IsTable(4))
+                        {
+                            offset = Scripting::ToVector3(script, 3);
+                        }
+                        else
+                        {
+                            offset.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                            offset.y = script.IsNumber(4) ? script.ToFloat(4) : offset.x;
+                            offset.z = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                        }
+                    }
+                    else
+                    {
+                        extents.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        extents.y = script.IsNumber(3) ? script.ToFloat(3) : extents.x;
+                        extents.z = script.IsNumber(4) ? script.ToFloat(4) : extents.x;
+
+                        if (script.IsTable(5))
+                        {
+                            offset = Scripting::ToVector3(script, 5);
+                        }
+                        else
+                        {
+                            offset.x = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            offset.y = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
+                            offset.z = script.IsNumber(7) ? script.ToFloat(7) : offset.x;
+                        }
+                    }
+
+                    component->AddEllipsoidCollisionShape(extents.x, extents.y, extents.z, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
@@ -1900,14 +1996,43 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    float halfX   = script.ToFloat(2);
-                    float halfY   = script.ToFloat(3);
-                    float halfZ   = script.ToFloat(4);
-                    float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                    float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
-                    float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+                    glm::vec3 extents;
+                    glm::vec3 offset;
 
-                    component->AddCylinderXCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
+                    if (script.IsTable(2))
+                    {
+                        extents = Scripting::ToVector3(script, 2);
+                        
+                        if (script.IsTable(4))
+                        {
+                            offset = Scripting::ToVector3(script, 3);
+                        }
+                        else
+                        {
+                            offset.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                            offset.y = script.IsNumber(4) ? script.ToFloat(4) : offset.x;
+                            offset.z = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                        }
+                    }
+                    else
+                    {
+                        extents.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        extents.y = script.IsNumber(3) ? script.ToFloat(3) : extents.x;
+                        extents.z = script.IsNumber(4) ? script.ToFloat(4) : extents.x;
+
+                        if (script.IsTable(5))
+                        {
+                            offset = Scripting::ToVector3(script, 5);
+                        }
+                        else
+                        {
+                            offset.x = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            offset.y = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
+                            offset.z = script.IsNumber(7) ? script.ToFloat(7) : offset.x;
+                        }
+                    }
+
+                    component->AddCylinderXCollisionShape(extents.x, extents.y, extents.z, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
@@ -1918,14 +2043,43 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    float halfX   = script.ToFloat(2);
-                    float halfY   = script.ToFloat(3);
-                    float halfZ   = script.ToFloat(4);
-                    float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                    float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
-                    float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+                    glm::vec3 extents;
+                    glm::vec3 offset;
 
-                    component->AddCylinderYCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
+                    if (script.IsTable(2))
+                    {
+                        extents = Scripting::ToVector3(script, 2);
+                        
+                        if (script.IsTable(4))
+                        {
+                            offset = Scripting::ToVector3(script, 3);
+                        }
+                        else
+                        {
+                            offset.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                            offset.y = script.IsNumber(4) ? script.ToFloat(4) : offset.x;
+                            offset.z = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                        }
+                    }
+                    else
+                    {
+                        extents.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        extents.y = script.IsNumber(3) ? script.ToFloat(3) : extents.x;
+                        extents.z = script.IsNumber(4) ? script.ToFloat(4) : extents.x;
+
+                        if (script.IsTable(5))
+                        {
+                            offset = Scripting::ToVector3(script, 5);
+                        }
+                        else
+                        {
+                            offset.x = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            offset.y = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
+                            offset.z = script.IsNumber(7) ? script.ToFloat(7) : offset.x;
+                        }
+                    }
+
+                    component->AddCylinderYCollisionShape(extents.x, extents.y, extents.z, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
@@ -1936,14 +2090,43 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    float halfX   = script.ToFloat(2);
-                    float halfY   = script.ToFloat(3);
-                    float halfZ   = script.ToFloat(4);
-                    float offsetX = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                    float offsetY = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
-                    float offsetZ = script.IsNumber(7) ? script.ToFloat(7) : 0.0f;
+                    glm::vec3 extents;
+                    glm::vec3 offset;
 
-                    component->AddCylinderZCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ);
+                    if (script.IsTable(2))
+                    {
+                        extents = Scripting::ToVector3(script, 2);
+                        
+                        if (script.IsTable(4))
+                        {
+                            offset = Scripting::ToVector3(script, 3);
+                        }
+                        else
+                        {
+                            offset.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                            offset.y = script.IsNumber(4) ? script.ToFloat(4) : offset.x;
+                            offset.z = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                        }
+                    }
+                    else
+                    {
+                        extents.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        extents.y = script.IsNumber(3) ? script.ToFloat(3) : extents.x;
+                        extents.z = script.IsNumber(4) ? script.ToFloat(4) : extents.x;
+
+                        if (script.IsTable(5))
+                        {
+                            offset = Scripting::ToVector3(script, 5);
+                        }
+                        else
+                        {
+                            offset.x = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
+                            offset.y = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
+                            offset.z = script.IsNumber(7) ? script.ToFloat(7) : offset.x;
+                        }
+                    }
+
+                    component->AddCylinderZCollisionShape(extents.x, extents.y, extents.z, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
@@ -1954,13 +2137,22 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    float radius  = script.ToFloat(2);
-                    float length  = script.ToFloat(3);
-                    float offsetX = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
-                    float offsetY = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                    float offsetZ = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                    float radius = script.ToFloat(2);
+                    float length = script.ToFloat(3);
+                    glm::vec3 offset;
 
-                    component->AddCapsuleXCollisionShape(radius, length, offsetX, offsetY, offsetZ);
+                    if (script.IsTable(4))
+                    {
+                        offset = Scripting::ToVector3(script, 4);
+                    }
+                    else
+                    {
+                        offset.x = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                        offset.y = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                        offset.z = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
+                    }
+
+                    component->AddCapsuleXCollisionShape(radius, length, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
@@ -1971,13 +2163,22 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    float radius  = script.ToFloat(2);
-                    float length  = script.ToFloat(3);
-                    float offsetX = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
-                    float offsetY = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                    float offsetZ = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                    float radius = script.ToFloat(2);
+                    float length = script.ToFloat(3);
+                    glm::vec3 offset;
 
-                    component->AddCapsuleYCollisionShape(radius, length, offsetX, offsetY, offsetZ);
+                    if (script.IsTable(4))
+                    {
+                        offset = Scripting::ToVector3(script, 4);
+                    }
+                    else
+                    {
+                        offset.x = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                        offset.y = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                        offset.z = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
+                    }
+
+                    component->AddCapsuleYCollisionShape(radius, length, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
@@ -1988,13 +2189,22 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    float radius  = script.ToFloat(2);
-                    float length  = script.ToFloat(3);
-                    float offsetX = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
-                    float offsetY = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                    float offsetZ = script.IsNumber(6) ? script.ToFloat(6) : 0.0f;
+                    float radius = script.ToFloat(2);
+                    float length = script.ToFloat(3);
+                    glm::vec3 offset;
 
-                    component->AddCapsuleZCollisionShape(radius, length, offsetX, offsetY, offsetZ);
+                    if (script.IsTable(4))
+                    {
+                        offset = Scripting::ToVector3(script, 4);
+                    }
+                    else
+                    {
+                        offset.x = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                        offset.y = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                        offset.z = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
+                    }
+
+                    component->AddCapsuleZCollisionShape(radius, length, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
@@ -2180,11 +2390,20 @@ namespace GTEngine
                 if (component != nullptr)
                 {
                     size_t shapeIndex = static_cast<size_t>(script.ToInteger(2)) - 1;        // Minus 1 because Lua is 1 based.
-                    float  offsetX    = script.ToFloat(3);
-                    float  offsetY    = script.ToFloat(4);
-                    float  offsetZ    = script.ToFloat(5);
+                    glm::vec3 offset;
 
-                    component->SetCollisionShapeOffset(shapeIndex, offsetX, offsetY, offsetZ);
+                    if (script.IsTable(3))
+                    {
+                        offset = Scripting::ToVector3(script, 3);
+                    }
+                    else
+                    {
+                        offset.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                        offset.y = script.IsNumber(4) ? script.ToFloat(4) : offset.x;
+                        offset.z = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                    }
+
+                    component->SetCollisionShapeOffset(shapeIndex, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
@@ -2197,11 +2416,20 @@ namespace GTEngine
                 if (component != nullptr)
                 {
                     size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
-                    float  halfX      = script.ToFloat(3);
-                    float  halfY      = script.ToFloat(4);
-                    float  halfZ      = script.ToFloat(5);
+                    glm::vec3 extents;
 
-                    script.Push(component->SetBoxCollisionShapeHalfExtents(shapeIndex, halfX, halfY, halfZ));
+                    if (script.IsTable(3))
+                    {
+                        extents = Scripting::ToVector3(script, 3);
+                    }
+                    else
+                    {
+                        extents.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                        extents.y = script.IsNumber(4) ? script.ToFloat(4) : extents.x;
+                        extents.z = script.IsNumber(5) ? script.ToFloat(5) : extents.x;
+                    }
+
+                    script.Push(component->SetBoxCollisionShapeHalfExtents(shapeIndex, extents.x, extents.y, extents.z));
                 }
                 else
                 {
@@ -2235,11 +2463,20 @@ namespace GTEngine
                 if (component != nullptr)
                 {
                     size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
-                    float  radiusX    = script.ToFloat(3);
-                    float  radiusY    = script.ToFloat(4);
-                    float  radiusZ    = script.ToFloat(5);
+                    glm::vec3 extents;
 
-                    script.Push(component->SetEllipsoidCollisionShapeRadius(shapeIndex, radiusX, radiusY, radiusZ));
+                    if (script.IsTable(3))
+                    {
+                        extents = Scripting::ToVector3(script, 3);
+                    }
+                    else
+                    {
+                        extents.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                        extents.y = script.IsNumber(4) ? script.ToFloat(4) : extents.x;
+                        extents.z = script.IsNumber(5) ? script.ToFloat(5) : extents.x;
+                    }
+
+                    script.Push(component->SetEllipsoidCollisionShapeRadius(shapeIndex, extents.x, extents.y, extents.z));
                 }
                 else
                 {
@@ -2255,11 +2492,20 @@ namespace GTEngine
                 if (component != nullptr)
                 {
                     size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
-                    float  halfX      = script.ToFloat(3);
-                    float  halfY      = script.ToFloat(4);
-                    float  halfZ      = script.ToFloat(5);
+                    glm::vec3 extents;
 
-                    script.Push(component->SetCylinderCollisionShapeHalfExtents(shapeIndex, halfX, halfY, halfZ));
+                    if (script.IsTable(3))
+                    {
+                        extents = Scripting::ToVector3(script, 3);
+                    }
+                    else
+                    {
+                        extents.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                        extents.y = script.IsNumber(4) ? script.ToFloat(4) : extents.x;
+                        extents.z = script.IsNumber(5) ? script.ToFloat(5) : extents.x;
+                    }
+
+                    script.Push(component->SetCylinderCollisionShapeHalfExtents(shapeIndex, extents.x, extents.y, extents.z));
                 }
                 else
                 {
@@ -2455,7 +2701,20 @@ namespace GTEngine
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->SetLinearVelocity(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    glm::vec3 value;
+
+                    if (script.IsTable(2))
+                    {
+                        value = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        value.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        value.y = script.IsNumber(3) ? script.ToFloat(3) : value.x;
+                        value.z = script.IsNumber(4) ? script.ToFloat(4) : value.x;
+                    }
+
+                    component->SetLinearVelocity(value);
                 }
 
                 return 0;
@@ -2466,20 +2725,14 @@ namespace GTEngine
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    glm::vec3 velocity = component->GetLinearVelocity();
-
-                    script.Push(velocity.x);
-                    script.Push(velocity.y);
-                    script.Push(velocity.z);
+                    Scripting::PushNewVector3(script, component->GetLinearVelocity());
                 }
                 else
                 {
-                    script.Push(0.0f);
-                    script.Push(0.0f);
-                    script.Push(0.0f);
+                    Scripting::PushNewVector3(script, glm::vec3(0.0f, 0.0f, 0.0f));
                 }
 
-                return 3;
+                return 1;
             }
 
             int SetAngularVelocity(GTCore::Script &script)
@@ -2487,7 +2740,20 @@ namespace GTEngine
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->SetAngularVelocity(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    glm::vec3 value;
+
+                    if (script.IsTable(2))
+                    {
+                        value = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        value.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        value.y = script.IsNumber(3) ? script.ToFloat(3) : value.x;
+                        value.z = script.IsNumber(4) ? script.ToFloat(4) : value.x;
+                    }
+
+                    component->SetAngularVelocity(value);
                 }
 
                 return 0;
@@ -2498,20 +2764,14 @@ namespace GTEngine
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    glm::vec3 velocity = component->GetAngularVelocity();
-
-                    script.Push(velocity.x);
-                    script.Push(velocity.y);
-                    script.Push(velocity.z);
+                    Scripting::PushNewVector3(script, component->GetAngularVelocity());
                 }
                 else
                 {
-                    script.Push(0.0f);
-                    script.Push(0.0f);
-                    script.Push(0.0f);
+                    Scripting::PushNewVector3(script, glm::vec3(0.0f, 0.0f, 0.0f));
                 }
 
-                return 3;
+                return 1;
             }
 
 
@@ -2520,7 +2780,20 @@ namespace GTEngine
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->SetLinearFactor(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    glm::vec3 value;
+
+                    if (script.IsTable(2))
+                    {
+                        value = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        value.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        value.y = script.IsNumber(3) ? script.ToFloat(3) : value.x;
+                        value.z = script.IsNumber(4) ? script.ToFloat(4) : value.x;
+                    }
+
+                    component->SetLinearFactor(value);
                 }
 
                 return 0;
@@ -2531,14 +2804,20 @@ namespace GTEngine
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    if (script.IsNil(3))
+                    glm::vec3 value;
+
+                    if (script.IsTable(2))
                     {
-                        component->SetAngularFactor(script.ToFloat(2));
+                        value = Scripting::ToVector3(script, 2);
                     }
                     else
                     {
-                        component->SetAngularFactor(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                        value.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        value.y = script.IsNumber(3) ? script.ToFloat(3) : value.x;
+                        value.z = script.IsNumber(4) ? script.ToFloat(4) : value.x;
                     }
+
+                    component->SetAngularFactor(value);
                 }
 
                 return 0;
@@ -2550,7 +2829,20 @@ namespace GTEngine
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->SetGravity(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    glm::vec3 value;
+
+                    if (script.IsTable(2))
+                    {
+                        value = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        value.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        value.y = script.IsNumber(3) ? script.ToFloat(3) : value.x;
+                        value.z = script.IsNumber(4) ? script.ToFloat(4) : value.x;
+                    }
+
+                    component->SetGravity(value);
                 }
 
                 return 0;
@@ -2561,20 +2853,14 @@ namespace GTEngine
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    glm::vec3 gravity = component->GetGravity();
-
-                    script.Push(gravity.x);
-                    script.Push(gravity.y);
-                    script.Push(gravity.z);
+                    Scripting::PushNewVector3(script, component->GetGravity());
                 }
                 else
                 {
-                    script.Push(0.0f);
-                    script.Push(0.0f);
-                    script.Push(0.0f);
+                    Scripting::PushNewVector3(script, glm::vec3(0.0f, 0.0f, 0.0f));
                 }
 
-                return 3;
+                return 1;
             }
 
             int ApplyGravity(GTCore::Script &script)
@@ -2594,7 +2880,20 @@ namespace GTEngine
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->ApplyCentralForce(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    glm::vec3 value;
+
+                    if (script.IsTable(2))
+                    {
+                        value = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        value.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        value.y = script.IsNumber(3) ? script.ToFloat(3) : value.x;
+                        value.z = script.IsNumber(4) ? script.ToFloat(4) : value.x;
+                    }
+
+                    component->ApplyCentralForce(value);
                 }
 
                 return 0;
@@ -2605,18 +2904,20 @@ namespace GTEngine
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->ApplyTorque(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
-                }
+                    glm::vec3 value;
 
-                return 0;
-            }
+                    if (script.IsTable(2))
+                    {
+                        value = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        value.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        value.y = script.IsNumber(3) ? script.ToFloat(3) : value.x;
+                        value.z = script.IsNumber(4) ? script.ToFloat(4) : value.x;
+                    }
 
-            int ApplyCentralImpulse(GTCore::Script &script)
-            {
-                auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
-                if (component != nullptr)
-                {
-                    component->ApplyCentralImpulse(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    component->ApplyTorque(value);
                 }
 
                 return 0;
@@ -2627,7 +2928,34 @@ namespace GTEngine
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->ApplyImpulse(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4), script.ToFloat(5), script.ToFloat(6), script.ToFloat(7));
+                    glm::vec3 impulse = Scripting::ToVector3(script, 2);
+                    glm::vec3 offset  = Scripting::ToVector3(script, 3);
+
+                    component->ApplyImpulse(impulse, offset);
+                }
+
+                return 0;
+            }
+
+            int ApplyCentralImpulse(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    glm::vec3 value;
+
+                    if (script.IsTable(2))
+                    {
+                        value = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        value.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        value.y = script.IsNumber(3) ? script.ToFloat(3) : value.x;
+                        value.z = script.IsNumber(4) ? script.ToFloat(4) : value.x;
+                    }
+
+                    component->ApplyCentralImpulse(value);
                 }
 
                 return 0;
@@ -2638,7 +2966,20 @@ namespace GTEngine
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->ApplyTorqueImpulse(script.ToFloat(2), script.ToFloat(3), script.ToFloat(4));
+                    glm::vec3 value;
+
+                    if (script.IsTable(2))
+                    {
+                        value = Scripting::ToVector3(script, 2);
+                    }
+                    else
+                    {
+                        value.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
+                        value.y = script.IsNumber(3) ? script.ToFloat(3) : value.x;
+                        value.z = script.IsNumber(4) ? script.ToFloat(4) : value.x;
+                    }
+
+                    component->ApplyTorqueImpulse(value);
                 }
 
                 return 0;

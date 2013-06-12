@@ -44,7 +44,7 @@ function GTGUI.Element:CollisionShapePanel(title, hideOffset)
     function self:UpdateOffset(shape)
         if self.OffsetInput ~= nil then
             if shape.offsetX ~= nil and shape.offsetY ~= nil and shape.offsetZ ~= nil then
-                self.OffsetInput:SetFromXYZ(shape.offsetX, shape.offsetY, shape.offsetZ);
+                self.OffsetInput:SetValue(shape.offsetX, shape.offsetY, shape.offsetZ);
             end
         end
     end
@@ -77,7 +77,7 @@ function GTGUI.Element:CollisionShapePanel_Box()
     
     function self:Update(shape)
         self:UpdateOffset(shape);
-        self.ExtentsInput:SetFromXYZ(shape.halfX * 2.0, shape.halfY * 2.0, shape.halfZ * 2.0);
+        self.ExtentsInput:SetValue(shape.halfX * 2.0, shape.halfY * 2.0, shape.halfZ * 2.0);
     end
     
     function self:OnExtentsChanged(arg1)
@@ -128,7 +128,7 @@ function GTGUI.Element:CollisionShapePanel_Ellipsoid()
     
     function self:Update(shape)
         self:UpdateOffset(shape);
-        self.RadiusInput:SetFromXYZ(shape.radiusX, shape.radiusY, shape.radiusZ);
+        self.RadiusInput:SetValue(shape.radiusX, shape.radiusY, shape.radiusZ);
     end
     
     
@@ -155,7 +155,7 @@ function GTGUI.Element:CollisionShapePanel_Cylinder(title)
     
     function self:Update(shape)
         self:UpdateOffset(shape);
-        self.ExtentsInput:SetFromXYZ(shape.halfX * 2.0, shape.halfY * 2.0, shape.halfZ * 2.0);
+        self.ExtentsInput:SetValue(shape.halfX * 2.0, shape.halfY * 2.0, shape.halfZ * 2.0);
     end
     
     
@@ -604,7 +604,7 @@ function GTGUI.Element:PointLightComponentPanel()
         self.CurrentComponent = node:GetComponent(GTEngine.Components.PointLight);
         
         if self.CurrentComponent ~= nil then
-            self.ColourInput:SetFromXYZ(self.CurrentComponent:GetColour());
+            self.ColourInput:SetValue(self.CurrentComponent:GetColour());
             
             self.LockAttenuationEvents = true;
                 self.RadiusInput:SetText( string.format("%.4f", self.CurrentComponent:GetRadius()));
@@ -745,7 +745,7 @@ function GTGUI.Element:SpotLightComponentPanel()
         self.CurrentComponent = node:GetComponent(GTEngine.Components.SpotLight);
         
         if self.CurrentComponent ~= nil then
-            self.ColourInput:SetFromXYZ(self.CurrentComponent:GetColour());
+            self.ColourInput:SetValue(self.CurrentComponent:GetColour());
             
             self.LockAttenuationEvents = true;
                 self.LengthInput:SetText( string.format("%.4f", self.CurrentComponent:GetLength()));
@@ -854,7 +854,7 @@ function GTGUI.Element:DirectionalLightComponentPanel()
         self.CurrentComponent = node:GetComponent(GTEngine.Components.DirectionalLight);
         
         if self.CurrentComponent ~= nil then
-            self.ColourInput:SetFromXYZ(self.CurrentComponent:GetColour());
+            self.ColourInput:SetValue(self.CurrentComponent:GetColour());
             
             if self.CurrentComponent:IsShadowCastingEnabled() then
                 self.CastShadows:Check(true);
@@ -894,7 +894,7 @@ function GTGUI.Element:AmbientLightComponentPanel()
         self.CurrentComponent = node:GetComponent(GTEngine.Components.AmbientLight);
         
         if self.CurrentComponent ~= nil then
-            self.ColourInput:SetFromXYZ(self.CurrentComponent:GetColour());
+            self.ColourInput:SetValue(self.CurrentComponent:GetColour());
         end
     end
     
