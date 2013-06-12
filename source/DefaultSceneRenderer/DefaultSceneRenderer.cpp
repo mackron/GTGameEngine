@@ -563,6 +563,10 @@ namespace GTEngine
         assert(shadowMapIndex == 0);    // <-- temp assert until we add support for multiple shadow maps.
         (void)shadowMapIndex;
 
+        // State setup.
+        Renderer::DisableBlending();
+        Renderer::EnableDepthWrites();
+
         // Framebuffer setup.
         Renderer::SetCurrentFramebuffer(this->directionalShadowMapFramebuffer.framebuffer);
         Renderer::SetViewport(0, 0, this->directionalShadowMapFramebuffer.width, this->directionalShadowMapFramebuffer.height);
@@ -575,10 +579,6 @@ namespace GTEngine
         int colourBufferIndex = 0;
         int blurBufferIndex   = 1;
         Renderer::SetDrawBuffers(1, &colourBufferIndex);
-
-        // State setup.
-        Renderer::DisableBlending();
-        Renderer::EnableDepthWrites();
 
         // Shader setup.
         Renderer::SetCurrentShader(this->shadowMapShader);
@@ -645,13 +645,13 @@ namespace GTEngine
         assert(shadowMapIndex == 0);    // <-- temp assert until we add support for multiple shadow maps.
         (void)shadowMapIndex;
 
-        // Framebuffer setup.
-        Renderer::SetCurrentFramebuffer(this->pointShadowMapFramebuffer.framebuffer);
-        Renderer::SetViewport(0, 0, this->pointShadowMapFramebuffer.width, this->pointShadowMapFramebuffer.height);
-
         // State setup.
         Renderer::DisableBlending();
         Renderer::EnableDepthWrites();
+
+        // Framebuffer setup.
+        Renderer::SetCurrentFramebuffer(this->pointShadowMapFramebuffer.framebuffer);
+        Renderer::SetViewport(0, 0, this->pointShadowMapFramebuffer.width, this->pointShadowMapFramebuffer.height);
 
         this->RenderPointShapowMapFace(light, light.positiveXView, 0, light.containedMeshesPositiveX.meshes);
         this->RenderPointShapowMapFace(light, light.negativeXView, 1, light.containedMeshesNegativeX.meshes);
@@ -669,6 +669,10 @@ namespace GTEngine
         assert(shadowMapIndex == 0);    // <-- temp assert until we add support for multiple shadow maps.
         (void)shadowMapIndex;
 
+        // State setup.
+        Renderer::DisableBlending();
+        Renderer::EnableDepthWrites();
+
         // Framebuffer setup.
         Renderer::SetCurrentFramebuffer(this->spotShadowMapFramebuffer.framebuffer);
         Renderer::SetViewport(0, 0, this->spotShadowMapFramebuffer.width, this->spotShadowMapFramebuffer.height);
@@ -681,10 +685,6 @@ namespace GTEngine
         int colourBufferIndex = 0;
         int blurBufferIndex   = 1;
         Renderer::SetDrawBuffers(1, &colourBufferIndex);
-
-        // State setup.
-        Renderer::DisableBlending();
-        Renderer::EnableDepthWrites();
 
         // Shader setup.
         Renderer::SetCurrentShader(this->shadowMapShader);
@@ -838,7 +838,7 @@ namespace GTEngine
         auto spotLightStartIndex              = lightGroup.GetSpotLightStartIndex();
         auto shadowDirectionalLightStartIndex = lightGroup.GetShadowDirectionalLightStartIndex();
         auto shadowPointLightStartIndex       = lightGroup.GetShadowPointLightStartIndex();
-        auto shadowSpotLightStartIndex        = lightGroup.GetSpotLightStartIndex();
+        auto shadowSpotLightStartIndex        = lightGroup.GetShadowSpotLightStartIndex();
 
         // Ambient Lights.
         for (int i = 0; i < ambientLightCount; ++i)
