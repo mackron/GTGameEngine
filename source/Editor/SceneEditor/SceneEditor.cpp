@@ -13,6 +13,8 @@
 #include <GTCore/Path.hpp>
 #include <GTCore/String.hpp>
 
+#undef min
+#undef max
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -45,7 +47,8 @@ namespace GTEngine
           isPlaying(false), isPaused(false), wasPlayingBeforeHide(false),
           GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), scene.GetDefaultViewport()),
           grid(1.0f, 8, 32), isShowingGrid(false), wasShowingGridBeforePlaying(false),
-          axisArrows(), isShowingAxisArrows(false), wasShowingAxisArrowsBeforePlaying(false)
+          axisArrows(), isShowingAxisArrows(false), wasShowingAxisArrowsBeforePlaying(false),
+          prefabLinker()
     {
         this->scene.SetDefaultViewportCamera(this->camera);
         this->scene.AttachEventHandler(this->sceneEventHandler);

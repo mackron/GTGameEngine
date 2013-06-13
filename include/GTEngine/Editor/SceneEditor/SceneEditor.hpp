@@ -4,6 +4,7 @@
 #define __GTEngine_SceneEditor_hpp_
 
 #include "SceneEditorCommand.hpp"
+#include "SceneEditorPrefabLinker.hpp"
 #include "../SubEditor.hpp"
 #include "../TransformGizmo.hpp"
 #include "../EditorGrid.hpp"
@@ -740,6 +741,10 @@ namespace GTEngine
 
         /// Keeps track of whether or not the axis arrows showing before playing.
         bool wasShowingAxisArrowsBeforePlaying;
+
+
+        /// The prefab linker for managing the linking of scene nodes to prefabs.
+        SceneEditorPrefabLinker prefabLinker;
     };
 }
 

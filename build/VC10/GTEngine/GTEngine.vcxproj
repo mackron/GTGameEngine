@@ -227,6 +227,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorCommand.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorPhysicsManager.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorPrefabLinker.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorSceneEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorSceneUpdateManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SubEditor.hpp" />
@@ -486,6 +487,7 @@
     <ClCompile Include="..\..\..\source\Editor\ParticleEditor\ParticleEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorPhysicsManager.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorPrefabLinker.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorSceneEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorSceneUpdateManager.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SubEditor.cpp" />
