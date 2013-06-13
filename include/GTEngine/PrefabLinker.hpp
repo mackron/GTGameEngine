@@ -100,7 +100,6 @@ namespace GTEngine
         /// @param prefabRelativePath [in] The relative path of the prefab.
         SceneNode* FindRootSceneNode(SceneNode &sceneNode, const char* prefabRelativePath) const;
 
-
         /// Deserializes the scene node based on prefab.
         ///
         /// @param sceneNode [in] The scene node being deserialized.
