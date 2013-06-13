@@ -89,6 +89,29 @@ namespace GTEngine
     ////////////////////////////////////////////////
     // Private
 
+    SceneNode* PrefabLinker::FindRootSceneNode(SceneNode &sceneNode, const char* prefabRelativePath) const
+    {
+        auto parent = sceneNode.GetParent();
+        if (parent != nullptr)
+        {
+            auto parentPrefabComponent = parent->GetComponent<PrefabComponent>();
+            if (parentPrefabComponent != nullptr)
+            {
+                if (GTCore::Strings::Equal(parentPrefabComponent->GetPrefabRelativePath(), prefabRelativePath))
+                {
+                    if (parentPrefabComponent->GetLocalHierarchyID() == 1)
+                    {
+                        return parent;
+                    }
+                }
+            }
+
+            return this->FindRootSceneNode(*parent, prefabRelativePath);
+        }
+
+        return nullptr;
+    }
+
     bool PrefabLinker::DeserializeSceneNode(SceneNode &sceneNode, uint64_t localID, const Prefab &prefab) const
     {
         auto serializer = prefab.GetSerializerByID(localID);
