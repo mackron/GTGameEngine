@@ -947,6 +947,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Components\PrefabComponent.hpp">
       <Filter>include\Components</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorPrefabLinker.hpp">
+      <Filter>include\Editor\SceneEditor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1620,6 +1623,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Components\PrefabComponent.cpp">
       <Filter>source\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorPrefabLinker.cpp">
+      <Filter>source\Editor\SceneEditor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
