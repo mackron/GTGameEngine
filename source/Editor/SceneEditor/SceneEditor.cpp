@@ -48,7 +48,7 @@ namespace GTEngine
           GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), scene.GetDefaultViewport()),
           grid(1.0f, 8, 32), isShowingGrid(false), wasShowingGridBeforePlaying(false),
           axisArrows(), isShowingAxisArrows(false), wasShowingAxisArrowsBeforePlaying(false),
-          prefabLinker()
+          prefabLinker(*this)
     {
         this->scene.SetDefaultViewportCamera(this->camera);
         this->scene.AttachEventHandler(this->sceneEventHandler);

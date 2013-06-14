@@ -138,7 +138,8 @@ namespace GTEngine
             sceneNode.SetWorldTransformComponents(worldPosition, worldOrientation, worldScale);
 
 
-            // Now we want to do the same with the children.
+            // Now we want to do the same with the children. Missing children need to be created. What we do, is we grab the list
+            // of child IDs from the prefab and remove those that exist. Any left overs need to be created.
             GTCore::Vector<uint64_t> childIDs;
             prefab.GetChildIDs(localID, childIDs);
 
@@ -150,9 +151,11 @@ namespace GTEngine
                     if (GTCore::Strings::Equal(childPrefabComponent->GetPrefabRelativePath(), prefab.GetRelativePath()))
                     {
                         // If the child has a local ID that is not the the child ID list, it will be unlinked. Otherwise, it will be deserialized.
-                        if (childIDs.Exists(childPrefabComponent->GetLocalHierarchyID()))
+                        uint64_t childID = childPrefabComponent->GetLocalHierarchyID();
+                        if (childIDs.Exists(childID))
                         {
-                            this->DeserializeSceneNode(*child, childPrefabComponent->GetLocalHierarchyID(), prefab);
+                            this->DeserializeSceneNode(*child, childID, prefab);
+                            childIDs.RemoveFirstOccuranceOf(childID);
                         }
                         else
                         {
@@ -161,6 +164,21 @@ namespace GTEngine
                     }
                 }
             }
+
+            // Some children need to be created and in turn deserialized.
+            for (size_t iChild = 0; iChild < childIDs.count; ++iChild)
+            {
+                auto newSceneNode = this->CreateSceneNode();
+                assert(newSceneNode != nullptr);
+                {
+                    this->DeserializeSceneNode(*newSceneNode, childIDs[iChild], prefab);
+
+                    // The new scene node needs to be attached to it's parent.
+                    sceneNode.AttachChild(*newSceneNode);
+                }
+            }
+
+
 
             return true;
         }

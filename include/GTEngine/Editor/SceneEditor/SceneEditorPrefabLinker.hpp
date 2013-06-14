@@ -7,12 +7,14 @@
 
 namespace GTEngine
 {
+    class SceneEditor;
+
     class SceneEditorPrefabLinker : public PrefabLinker
     {
     public:
 
         /// Constructor.
-        SceneEditorPrefabLinker();
+        SceneEditorPrefabLinker(SceneEditor &sceneEditor);
 
         /// Destructor.
         ~SceneEditorPrefabLinker();
@@ -28,7 +30,13 @@ namespace GTEngine
 
     private:
 
+        /// A reference to the scene editor that owns this linker.
+        SceneEditor &sceneEditor;
 
+
+    private:    // No copying.
+        SceneEditorPrefabLinker(const SceneEditorPrefabLinker &);
+        SceneEditorPrefabLinker & operator=(const SceneEditorPrefabLinker &);
     };
 }
 
