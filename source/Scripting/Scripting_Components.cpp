@@ -31,6 +31,7 @@ namespace GTEngine
                     script.SetTableValue(-1, "Proximity",         ProximityComponent::Name);
                     script.SetTableValue(-1, "Script",            ScriptComponent::Name);
                     script.SetTableValue(-1, "ParticleSystem",    ParticleSystemComponent::Name);
+                    script.SetTableValue(-1, "Prefab",            PrefabComponent::Name);
                     script.SetTableValue(-1, "EditorMetadata",    EditorMetadataComponent::Name);
                 }
                 script.SetTableValue(-3);
@@ -779,6 +780,27 @@ namespace GTEngine
 
 
 
+                //PrefabComponent
+                "GTEngine.PrefabComponent = {};"
+                "GTEngine.PrefabComponent.__index = GTEngine.PrefabComponent;"
+
+                "function GTEngine.PrefabComponent.Create(internalPtr)"
+                "    local new = {};"
+                "    setmetatable(new, GTEngine.PrefabComponent);"
+                "        new._internalPtr = internalPtr;"
+                "    return new;"
+                "end;"
+
+                "function GTEngine.PrefabComponent:GetPrefabRelativePath()"
+                "    return GTEngine.System.PrefabComponent.GetPrefabRelativePath(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.PrefabComponent:GetLocalHierarchyID()"
+                "    return GTEngine.System.PrefabComponent.GetLocalHierarchyID(self._internalPtr);"
+                "end;"
+
+
+
                 // EditorMetadataComponent
                 "GTEngine.EditorMetadataComponent = {};"
                 "GTEngine.EditorMetadataComponent.__index = GTEngine.EditorMetadataComponent;"
@@ -1072,6 +1094,16 @@ namespace GTEngine
                             script.SetTableFunction(-1, "GetPublicVariableNamesAndValues",          ScriptComponentFFI::GetPublicVariableNamesAndValues);
                             script.SetTableFunction(-1, "GetPublicVariableValue",                   ScriptComponentFFI::GetPublicVariableValue);
                             script.SetTableFunction(-1, "SetPublicVariableValue",                   ScriptComponentFFI::SetPublicVariableValue);
+                        }
+                        script.Pop(1);
+
+
+                        script.Push("PrefabComponent");
+                        script.GetTableValue(-2);
+                        assert(script.IsTable(-1));
+                        {
+                            script.SetTableFunction(-1, "GetPrefabRelativePath", PrefabComponentFFI::GetPrefabRelativePath);
+                            script.SetTableFunction(-1, "GetLocalHierarchyID",   PrefabComponentFFI::GetLocalHierarchyID);
                         }
                         script.Pop(1);
 
@@ -3829,6 +3861,42 @@ namespace GTEngine
             }
         }
 
+
+        //////////////////////////////////////////////////
+        // GTEngine.System.PrefabComponent
+        
+        namespace PrefabComponentFFI
+        {
+            int GetPrefabRelativePath(GTCore::Script &script)
+            {
+                auto component = static_cast<PrefabComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    script.Push(component->GetPrefabRelativePath());
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
+            }
+
+            int GetLocalHierarchyID(GTCore::Script &script)
+            {
+                auto component = static_cast<PrefabComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    script.Push(static_cast<int>(component->GetLocalHierarchyID()));
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
+            }
+        }
 
 
         //////////////////////////////////////////////////

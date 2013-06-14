@@ -7,14 +7,20 @@
 
 
 #define GTENGINE_IMPL_COMPONENT_ATTRIBS(className, name) \
-    const char* const className::Name = name;
+    const char* const className::Name      = name; \
+    const char* const className::ClassName = #className; \
 
 #define GTENGINE_DECL_COMPONENT_ATTRIBS(className) \
     public: \
         static const char* const Name; \
+        static const char* const ClassName; \
         const char* GetName() const \
         { \
             return className::Name; \
+        } \
+        const char* GetClassName() const \
+        { \
+            return className::ClassName; \
         } \
     private: \
         className(const className &);   \
@@ -48,6 +54,10 @@ namespace GTEngine
 
         /// Retrieves the name of this component.
         virtual const char* GetName() const = 0;
+
+        /// Retrieves the class name of this component.
+        virtual const char* GetClassName() const = 0;
+
         
         /// Retrieves a pointer to the node that this component is attached to.
               SceneNode & GetNode()       { return this->node; }

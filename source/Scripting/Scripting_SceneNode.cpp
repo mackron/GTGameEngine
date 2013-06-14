@@ -1008,61 +1008,18 @@ namespace GTEngine
                 auto sceneNode     = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 auto componentName = script.ToString(2);
 
-                if (GTCore::Strings::Equal(componentName, CameraComponent::Name))
-                {
-                    PushComponent(script, "CameraComponent", sceneNode->AddComponent<CameraComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, ModelComponent::Name))
-                {
-                    PushComponent(script, "ModelComponent", sceneNode->AddComponent<ModelComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, PointLightComponent::Name))
-                {
-                    PushComponent(script, "PointLightComponent", sceneNode->AddComponent<PointLightComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, SpotLightComponent::Name))
-                {
-                    PushComponent(script, "SpotLightComponent", sceneNode->AddComponent<SpotLightComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, DirectionalLightComponent::Name))
-                {
-                    PushComponent(script, "DirectionalLightComponent", sceneNode->AddComponent<DirectionalLightComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, AmbientLightComponent::Name))
-                {
-                    PushComponent(script, "AmbientLightComponent", sceneNode->AddComponent<AmbientLightComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, DynamicsComponent::Name))
-                {
-                    PushComponent(script, "DynamicsComponent", sceneNode->AddComponent<DynamicsComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, ProximityComponent::Name))
-                {
-                    PushComponent(script, "ProximityComponent", sceneNode->AddComponent<ProximityComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, ScriptComponent::Name))
-                {
-                    PushComponent(script, "ScriptComponent", sceneNode->AddComponent<ScriptComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, ParticleSystemComponent::Name))
-                {
-                    PushComponent(script, "ParticleSystemComponent", sceneNode->AddComponent<ParticleSystemComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
-                {
-                    PushComponent(script, "EditorMetadataComponent", sceneNode->AddComponent<EditorMetadataComponent>());
-                }
-                else
-                {
-                    script.PushNil();
-                }
+                PushComponent(script, sceneNode->AddComponentByName(componentName));
 
                 return 1;
             }
 
             int RemoveComponent(GTCore::Script &script)
             {
-                reinterpret_cast<SceneNode*>(script.ToPointer(1))->RemoveComponentByName(script.ToString(2));
+                auto sceneNode     = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                auto componentName = script.ToString(2);
+
+                sceneNode->RemoveComponentByName(componentName);
+                
                 return 0;
             }
 
@@ -1071,54 +1028,7 @@ namespace GTEngine
                 auto sceneNode     = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 auto componentName = script.ToString(2);
 
-                if (GTCore::Strings::Equal(componentName, CameraComponent::Name))
-                {
-                    PushComponent(script, "CameraComponent", sceneNode->GetComponent<CameraComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, ModelComponent::Name))
-                {
-                    PushComponent(script, "ModelComponent", sceneNode->GetComponent<ModelComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, PointLightComponent::Name))
-                {
-                    PushComponent(script, "PointLightComponent", sceneNode->GetComponent<PointLightComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, SpotLightComponent::Name))
-                {
-                    PushComponent(script, "SpotLightComponent", sceneNode->GetComponent<SpotLightComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, DirectionalLightComponent::Name))
-                {
-                    PushComponent(script, "DirectionalLightComponent", sceneNode->GetComponent<DirectionalLightComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, AmbientLightComponent::Name))
-                {
-                    PushComponent(script, "AmbientLightComponent", sceneNode->GetComponent<AmbientLightComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, DynamicsComponent::Name))
-                {
-                    PushComponent(script, "DynamicsComponent", sceneNode->GetComponent<DynamicsComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, ProximityComponent::Name))
-                {
-                    PushComponent(script, "ProximityComponent", sceneNode->GetComponent<ProximityComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, ScriptComponent::Name))
-                {
-                    PushComponent(script, "ScriptComponent", sceneNode->GetComponent<ScriptComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, ParticleSystemComponent::Name))
-                {
-                    PushComponent(script, "ParticleSystemComponent", sceneNode->GetComponent<ParticleSystemComponent>());
-                }
-                else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
-                {
-                    PushComponent(script, "EditorMetadataComponent", sceneNode->GetComponent<EditorMetadataComponent>());
-                }
-                else
-                {
-                    script.PushNil();
-                }
+                PushComponent(script, sceneNode->GetComponentByName(componentName));
 
                 return 1;
             }
@@ -1913,16 +1823,16 @@ namespace GTEngine
             }
 
 
-            void PushComponent(GTCore::Script &script, const char* componentClassName, Component* component)
+            void PushComponent(GTCore::Script &script, Component* component)
             {
                 if (component != nullptr)
                 {
-                    // GTEngine.<componentClassName>.Create(component);
+                    // GTEngine.<component->GetClassName()>.Create(component);
 
                     script.GetGlobal("GTEngine");
                     assert(script.IsTable(-1));
                     {
-                        script.Push(componentClassName);
+                        script.Push(component->GetClassName());
                         script.GetTableValue(-2);
                         assert(script.IsTable(-1));
                         {
