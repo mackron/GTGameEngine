@@ -105,7 +105,7 @@ namespace GTEngine
         /// Sets the angular factor.
         void SetAngularFactor(float factor);
         void SetAngularFactor(float x, float y, float z);
-        void SetAngularFactor(const glm::vec3 &factor) { this->SetLinearFactor(factor.x, factor.y, factor.z); }
+        void SetAngularFactor(const glm::vec3 &factor) { this->SetAngularFactor(factor.x, factor.y, factor.z); }
 
         /// Retrieves the angular factor.
         glm::vec3 GetAngularFactor() const;
