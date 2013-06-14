@@ -27,18 +27,20 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
     -- This will create the panels for every registered component. We always want the editor metadata to be last.
     self.ComponentPanels = {};
     for key,value in pairs(GTEngine.Components) do
-        if value ~= GTEngine.Components.EditorMetadata then
+        if value ~= GTEngine.Components.EditorMetadata and value ~= GTEngine.Components.Prefab then
             local panel = Editor.SceneEditor.CreateComponentPanel(self, value);
-            self.ComponentPanels[value] = panel;
-            
-            -- We need to attach an event handler to each component panel for when it is closed. When closing a component panel, that component
-            -- will be removed from the scene node. Note that closing a panel is not the same as collapsing it.
-            panel:OnClose(function()
-                self.CurrentSceneNode:RemoveComponent(value);
+            if panel then
+                self.ComponentPanels[value] = panel;
+                
+                -- We need to attach an event handler to each component panel for when it is closed. When closing a component panel, that component
+                -- will be removed from the scene node. Note that closing a panel is not the same as collapsing it.
+                panel:OnClose(function()
+                    self.CurrentSceneNode:RemoveComponent(value);
 
-                self:UpdateComponentPanels();
-                self:OnSceneNodeChanged();
-            end);
+                    self:UpdateComponentPanels();
+                    self:OnSceneNodeChanged();
+                end);
+            end
         end
     end
     

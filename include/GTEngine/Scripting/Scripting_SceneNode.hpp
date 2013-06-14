@@ -600,10 +600,9 @@ namespace GTEngine
 
             /// A helper function for pushing a new instantiation of script-side component object.
             ///
-            /// @param script             [in] The script where the result will be pushed to.
-            /// @param componentClassName [in] The class name of the component being pushed.
-            /// @param component          [in] A pointer to the C++ component.
-            void PushComponent(GTCore::Script &script, const char* componentClassName, Component* component);
+            /// @param script    [in] The script where the result will be pushed to.
+            /// @param component [in] A pointer to the C++ component.
+            void PushComponent(GTCore::Script &script, Component* component);
         }
     }
 }

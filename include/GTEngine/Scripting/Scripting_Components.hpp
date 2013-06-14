@@ -1198,6 +1198,21 @@ namespace GTEngine
         }
 
 
+        namespace PrefabComponentFFI
+        {
+            /// Retrieve the relative path of the prefab.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int GetPrefabRelativePath(GTCore::Script &script);
+
+            /// Retrieves the local ID of the scene node this component is linked to in the prefab.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int GetLocalHierarchyID(GTCore::Script &script);
+        }
+
 
         namespace EditorMetadataComponentFFI
         {
