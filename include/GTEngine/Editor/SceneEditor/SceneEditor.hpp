@@ -266,6 +266,18 @@ namespace GTEngine
         /// Instantiates a scene prefab, positioning the root node at the origin.
         SceneNode* InstantiatePrefab(const char* relativePath);
 
+        
+        /// Links a scene node to a prefab.
+        ///
+        /// @param sceneNode          [in] A reference to the scene node to link.
+        /// @param prefabRelativePath [in] The relative path of the prefab to link to.
+        bool LinkSceneNodeToPrefab(SceneNode &sceneNode, const char* prefabRelativePath);
+
+        /// Unlinks a scene node from it's prefab.
+        ///
+        /// @param sceneNode [in] A reference to the scene node that is being unlinked.
+        void UnlinkSceneNodeFromPrefab(SceneNode &sceneNode);
+
 
 
         ///////////////////////////////////////////////////
@@ -501,6 +513,16 @@ namespace GTEngine
         void UpdatePlaybackControls();
 
 
+        /// Re-links all scene nodes that are linked to the given prefab.
+        ///
+        /// @param prefabRelativePath [in] The relative path of the prefab.
+        void RelinkSceneNodesLinkedToPrefab(const char* prefabRelativePath);
+
+        /// Re-links all scene nodes that are linked to prefabs.
+        void RelinkSceneNodesLinkedToPrefabs();
+
+
+#if 0
         /// Recursively maps a scene node to a prefab.
         void MapSceneNodeToPrefab(SceneNode &sceneNode, Prefab &prefab, size_t &prefabSceneNodeIndex);
 
@@ -521,6 +543,8 @@ namespace GTEngine
 
         /// Retrieves the relative paths of every prefab that is referenced by the scene.
         void GetAllReferencedPrefabs(GTCore::Vector<GTCore::String> &prefabRelativePaths);
+#endif
+
 
         /// Updates every scene node linked to the given script.
         void UpdateAllSceneNodesLinkedToScript(const char* scriptRelativePath);

@@ -20,6 +20,13 @@ function GTGUI.Element:SceneEditorDetailsPanel(parentPanel, sceneEditor)
     function self:Update(node)
         self.SceneNode = node;
         self.NameTextBox:SetText(node:GetName());
+        
+        if self.SceneNode.Prefab then
+            self.PrefabName.RelativePath = self.SceneNode.Prefab:GetPrefabRelativePath();
+            self.PrefabName:SetText(GTCore.IO.GetFileNameFromPath(self.PrefabName.RelativePath));
+        else
+            self.PrefabName:SetText("None");
+        end
     end
     
     

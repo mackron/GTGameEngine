@@ -91,7 +91,11 @@ namespace GTEngine
                         script.SetTableFunction(-1, "CommitStateStackFrame",               SceneEditorFFI::CommitStateStackFrame);
                         script.SetTableFunction(-1, "Undo",                                SceneEditorFFI::Undo);
                         script.SetTableFunction(-1, "Redo",                                SceneEditorFFI::Redo);
+
                         script.SetTableFunction(-1, "InstantiatePrefab",                   SceneEditorFFI::InstantiatePrefab);
+                        script.SetTableFunction(-1, "LinkSceneNodeToPrefab",               SceneEditorFFI::LinkSceneNodeToPrefab);
+                        script.SetTableFunction(-1, "UnlinkSceneNodeFromPrefab",           SceneEditorFFI::UnlinkSceneNodeFromPrefab);
+
                         script.SetTableFunction(-1, "GetSceneNodePtrByID",                 SceneEditorFFI::GetSceneNodePtrByID);
                         script.SetTableFunction(-1, "GetSceneNodes",                       SceneEditorFFI::GetSceneNodes);
                         script.SetTableFunction(-1, "PositionSceneNodeInFrontOfCamera",    SceneEditorFFI::PositionSceneNodeInFrontOfCamera);
@@ -993,6 +997,38 @@ namespace GTEngine
                 }
 
                 return 1;
+            }
+
+            int LinkSceneNodeToPrefab(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    auto sceneNode          = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+                    auto prefabRelativePath = script.ToString(3);
+
+                    if (sceneNode != nullptr)
+                    {
+                        sceneEditor->LinkSceneNodeToPrefab(*sceneNode, prefabRelativePath);
+                    }
+                }
+
+                return 0;
+            }
+
+            int UnlinkSceneNodeFromPrefab(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+                    if (sceneNode != nullptr)
+                    {
+                        sceneEditor->UnlinkSceneNodeFromPrefab(*sceneNode);
+                    }
+                }
+
+                return 0;
             }
 
 
