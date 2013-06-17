@@ -416,6 +416,21 @@ namespace GTEngine
             ///     This leaves the prefab positioned at the origin. Reposition the scene node manually if needed.
             int InstantiatePrefab(GTCore::Script &script);
 
+            /// Links a scene node to a prefab.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: A pointer to the scene node being linked.
+            ///     Argument 3: The relative path of the prefab to link to.
+            int LinkSceneNodeToPrefab(GTCore::Script &script);
+
+            /// Unlinks a scene node from a prefab.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: A pointer to the scene node being unlinked.
+            int UnlinkSceneNodeFromPrefab(GTCore::Script &script);
+
 
             /// Retrieves a pointer to the scene node of the given ID.
             ///

@@ -230,8 +230,11 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
         if self.CurrentSceneNode ~= nil then
             local componentIDs = self.CurrentSceneNode:GetAttachedComponentIDs();
             for i,value in ipairs(componentIDs) do
-                self.ComponentPanels[value]:Show();
-                self.ComponentPanels[value]:Update(self.CurrentSceneNode);
+                local panel = self.ComponentPanels[value];
+                if panel then
+                    panel:Show();
+                    panel:Update(self.CurrentSceneNode);
+                end
             end
         end
     end

@@ -1169,6 +1169,24 @@ namespace GTEngine
 
     SceneNode* SceneEditor::InstantiatePrefab(const char* relativePath)
     {
+        auto rootSceneNode = this->scene.CreateNewSceneNode();
+        assert(rootSceneNode != nullptr);
+        {
+            if (this->LinkSceneNodeToPrefab(*rootSceneNode, relativePath))
+            {
+                // We also want to recursively deselect the scene nodes. The reason we do this is because the metadata component may have
+                // left it marked as selected, which we don't want. We don't post notifications to the editor about this.
+                this->DeselectSceneNodeAndChildren(*rootSceneNode, SelectionOption_NoScriptNotify);
+                return rootSceneNode;
+            }
+            else
+            {
+                this->scene.RemoveSceneNode(*rootSceneNode);
+                return nullptr;
+            }
+        }
+
+#if 0
         auto prefab = PrefabLibrary::Acquire(relativePath);
         if (prefab != nullptr)
         {
@@ -1194,6 +1212,18 @@ namespace GTEngine
         }
 
         return nullptr;
+#endif
+    }
+
+
+    bool SceneEditor::LinkSceneNodeToPrefab(SceneNode &sceneNode, const char* prefabRelativePath)
+    {
+        return this->prefabLinker.LinkSceneNodeToPrefab(sceneNode, prefabRelativePath);
+    }
+
+    void SceneEditor::UnlinkSceneNodeFromPrefab(SceneNode &sceneNode)
+    {
+        this->prefabLinker.UnlinkSceneNodeFromPrefab(sceneNode, false);
     }
 
 
@@ -2109,7 +2139,8 @@ namespace GTEngine
         }
         else if (GTEngine::IO::IsSupportedPrefabExtension(item.relativePath.c_str()))
         {
-            this->UpdateAllSceneNodesLinkedToPrefab(item.relativePath.c_str());
+            this->RelinkSceneNodesLinkedToPrefab(item.relativePath.c_str());
+            //this->UpdateAllSceneNodesLinkedToPrefab(item.relativePath.c_str());
         }
         else
         {
@@ -2276,7 +2307,8 @@ namespace GTEngine
 
 
             // We need to make sure all scene nodes are brought up-to-date with their prefabs.
-            this->UpdateAllSceneNodesLinkedToPrefabs();
+            this->RelinkSceneNodesLinkedToPrefabs();
+            //this->UpdateAllSceneNodesLinkedToPrefabs();
         }
         this->isDeserializing = false;
         this->scene.EnableStateStackStaging();
@@ -2747,7 +2779,77 @@ namespace GTEngine
         }
     }
 
+    void SceneEditor::RelinkSceneNodesLinkedToPrefab(const char* prefabRelativePath)
+    {
+        // The first step is to extract the root nodes that are linked to the prefab.
+        GTCore::Vector<SceneNode*> rootSceneNodes;
+        for (size_t iSceneNode = 0; iSceneNode < this->scene.GetSceneNodeCount(); ++iSceneNode)
+        {
+            auto sceneNode = this->scene.GetSceneNodeByIndex(iSceneNode);
+            assert(sceneNode != nullptr);
+            {
+                auto prefabComponent = sceneNode->GetComponent<PrefabComponent>();
+                if (prefabComponent != nullptr)
+                {
+                    if (GTCore::Strings::Equal(prefabComponent->GetPrefabRelativePath(), prefabRelativePath))
+                    {
+                        if (prefabComponent->GetLocalHierarchyID() == 1)    // Is it the root node in the prefab?
+                        {
+                            rootSceneNodes.PushBack(sceneNode);
+                        }
+                    }
+                }
+            }
+        }
 
+
+        // Now we just iterate over the root nodes and re-link, deleting children that should no longer exist.
+        for (size_t iSceneNode = 0; iSceneNode < rootSceneNodes.count; ++iSceneNode)
+        {
+            auto sceneNode = this->scene.GetSceneNodeByIndex(iSceneNode);
+            assert(sceneNode != nullptr);
+            {
+                this->LinkSceneNodeToPrefab(*sceneNode, prefabRelativePath);
+            }
+        }
+    }
+
+    void SceneEditor::RelinkSceneNodesLinkedToPrefabs()
+    {
+        // First step is to extract the scene nodes that are linked to a prefab, but only those that root it.
+        GTCore::Vector<SceneNode*> rootSceneNodes;
+        for (size_t iSceneNode = 0; iSceneNode < this->scene.GetSceneNodeCount(); ++iSceneNode)
+        {
+            auto sceneNode = this->scene.GetSceneNodeByIndex(iSceneNode);
+            assert(sceneNode != nullptr);
+            {
+                auto prefabComponent = sceneNode->GetComponent<PrefabComponent>();
+                if (prefabComponent != nullptr)
+                {
+                    if (prefabComponent->GetLocalHierarchyID() == 1)    // Is it the root node in the prefab?
+                    {
+                        rootSceneNodes.PushBack(sceneNode);
+                    }
+                }
+            }
+        }
+
+        // Now we just iterate over the root nodes and re-link, deleting children that should no longer exist.
+        for (size_t iSceneNode = 0; iSceneNode < rootSceneNodes.count; ++iSceneNode)
+        {
+            auto sceneNode = this->scene.GetSceneNodeByIndex(iSceneNode);
+            assert(sceneNode != nullptr);
+            {
+                auto prefabComponent = sceneNode->GetComponent<PrefabComponent>();
+                assert(prefabComponent != nullptr);
+                {
+                    this->LinkSceneNodeToPrefab(*sceneNode, prefabComponent->GetPrefabRelativePath());
+                }
+            }
+        }
+    }
+
+#if 0
     void SceneEditor::MapSceneNodeToPrefab(SceneNode &sceneNode, Prefab &prefab, size_t &prefabSceneNodeIndex)
     {
         auto metadata = sceneNode.GetComponent<EditorMetadataComponent>();
@@ -3021,6 +3123,8 @@ namespace GTEngine
             }
         }
     }
+#endif
+
 
     void SceneEditor::UpdateAllSceneNodesLinkedToScript(const char* scriptRelativePath)
     {
