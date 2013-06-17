@@ -1,0 +1,12 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+scene-editor-hierarchy-panel-item-prefab
+{
+    text-color: #99b
+    font-style: bold
+}
+
+scene-editor-hierarchy-panel-item-prefab-selected
+{
+    text-color: #aac
+}

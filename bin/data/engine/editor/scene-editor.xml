@@ -4,6 +4,7 @@
 
 <style  url="scene-editor/scene-editor.style"                        />
 <style  url="scene-editor/scene-editor-panel.style"                  />
+<style  url="scene-editor/scene-editor-hierarchy-panel.style"        />
 <style  url="scene-editor/scene-editor-details-panel.style"          />
 <style  url="scene-editor/scene-editor-transform-panel.style"        />
 <style  url="scene-editor/scene-editor-script-component-panel.style" />
@@ -13,6 +14,7 @@
 
 <script url="scene-editor/scene-editor.lua"                          />
 <script url="scene-editor/scene-editor-panel.lua"                    />
+<script url="scene-editor/scene-editor-hierarchy-panel.lua"          />
 <script url="scene-editor/scene-editor-details-panel.lua"            />
 <script url="scene-editor/scene-editor-transform-panel.lua"          />
 <script url="scene-editor/scene-editor-script-component-panel.lua"   />
