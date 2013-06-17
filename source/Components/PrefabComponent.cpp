@@ -72,7 +72,7 @@ namespace GTEngine
                 GTCore::String relativePath;
                 uint64_t       id;
 
-                deserializer.Read(relativePath);
+                deserializer.ReadString(relativePath);
                 deserializer.Read(id);
 
                 this->SetPrefabRelativePath(relativePath.c_str());
