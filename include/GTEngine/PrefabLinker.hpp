@@ -67,6 +67,8 @@ namespace GTEngine
         bool IsSceneNodeLinkedToPrefab(SceneNode &sceneNode, const char* prefabRelativePath);
 
 
+    protected:
+
         ///////////////////////////////////////////////////
         // Virtual Methods
         
@@ -79,7 +81,7 @@ namespace GTEngine
         ///     @par
         ///     This will be called when a scene node is linked to a prefab, but that scene node needs to have children
         ///     created in order to satisfy the sycnrhonization.
-        virtual SceneNode* CreateSceneNode() const = 0;
+        virtual SceneNode* CreateSceneNode() = 0;
 
         /// Called when a scene node needs to be deleted.
         ///
@@ -88,8 +90,20 @@ namespace GTEngine
         /// @remarks
         ///     This will be called when a scene node is linked to a prefab, but that scene node needs to have children
         ///     deleted in order to satify the synchronization.
-        virtual void DeleteSceneNode(SceneNode* sceneNode) const = 0;
+        virtual void DeleteSceneNode(SceneNode* sceneNode) = 0;
 
+        /// Called just before a scene node is deserialized.
+        ///
+        /// @param sceneNode [in] A reference to the scene node that is about to be deserialized.
+        virtual void OnSceneNodeDeserializeStart(SceneNode &sceneNode) = 0;
+
+        /// Called after a scene node is deserialized.
+        ///
+        /// @param sceneNode [in] A reference to the scene node that has just been deserialized.
+        ///
+        /// @remarks
+        ///     This will be called before any children have been deserialized.
+        virtual void OnSceneNodeDeserializeEnd(SceneNode &sceneNode) = 0;
 
 
     private:
@@ -110,7 +124,7 @@ namespace GTEngine
         ///     This is recursive.
         ///     @par
         ///     This may call CreateSceneNode().
-        bool DeserializeSceneNode(SceneNode &sceneNode, uint64_t localID, const Prefab &prefab) const;
+        bool DeserializeSceneNode(SceneNode &sceneNode, uint64_t localID, const Prefab &prefab);
     };
 }
 
