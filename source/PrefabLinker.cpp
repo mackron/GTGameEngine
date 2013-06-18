@@ -112,16 +112,13 @@ namespace GTEngine
         return nullptr;
     }
 
-    bool PrefabLinker::DeserializeSceneNode(SceneNode &sceneNode, uint64_t localID, const Prefab &prefab) const
+    bool PrefabLinker::DeserializeSceneNode(SceneNode &sceneNode, uint64_t localID, const Prefab &prefab)
     {
         auto serializer = prefab.GetSerializerByID(localID);
         if (serializer != nullptr)
         {
-            // The world transformation is going to be maintained for now. Not sure if this will stay.
-            glm::vec3 worldPosition;
-            glm::quat worldOrientation;
-            glm::vec3 worldScale;
-            sceneNode.GetWorldTransformComponents(worldPosition, worldOrientation, worldScale);
+            // Before deserializing, we need to let the derived class know about it.
+            this->OnSceneNodeDeserializeStart(sceneNode);
 
             GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
             sceneNode.Deserialize(deserializer, SceneNode::NoID | SceneNode::NoScriptPublicVariableOverride);       // <-- Super important! We need the ID to be maintained!
@@ -134,8 +131,8 @@ namespace GTEngine
                 prefabComponent->SetLocalHierarchyID(localID);
             }
 
-            // Restore the transformation.
-            sceneNode.SetWorldTransformComponents(worldPosition, worldOrientation, worldScale);
+            // We need to let derived classes know when a scene node has finished deserializing.
+            this->OnSceneNodeDeserializeEnd(sceneNode);
 
 
             // Now we want to do the same with the children. Missing children need to be created. What we do, is we grab the list
@@ -177,8 +174,6 @@ namespace GTEngine
                     sceneNode.AttachChild(*newSceneNode);
                 }
             }
-
-
 
             return true;
         }

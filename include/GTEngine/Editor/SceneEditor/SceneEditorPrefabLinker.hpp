@@ -20,18 +20,70 @@ namespace GTEngine
         ~SceneEditorPrefabLinker();
 
 
+    private:
+
         /// PrefabLinker::CreateSceneNode()
-        SceneNode* CreateSceneNode() const;
+        SceneNode* CreateSceneNode();
 
         /// PrefabLinker::DeleteSceneNode()
-        void DeleteSceneNode(SceneNode* sceneNode) const;
+        void DeleteSceneNode(SceneNode* sceneNode);
 
+        /// PrefabLinker::OnSceneNodeDeserializeStart()
+        void OnSceneNodeDeserializeStart(SceneNode &sceneNode);
+
+        /// PrefabLinker::OnSceneNodeDeserializeEnd()
+        void OnSceneNodeDeserializeEnd(SceneNode &sceneNode);
 
 
     private:
 
         /// A reference to the scene editor that owns this linker.
         SceneEditor &sceneEditor;
+
+
+        /// Structure containing information about the scene node that is currently being deserialized.
+        struct DeserializingSceneNodeData
+        {
+            DeserializingSceneNodeData()
+                : sceneNode(nullptr), wasSelected(false),
+                  worldPosition(), worldOrientation(), worldScale()
+            {
+            }
+
+            DeserializingSceneNodeData(const DeserializingSceneNodeData &other)
+                : sceneNode(other.sceneNode), wasSelected(other.wasSelected),
+                  worldPosition(other.worldPosition), worldOrientation(other.worldOrientation), worldScale(other.worldScale)
+            {
+            }
+
+            DeserializingSceneNodeData & operator=(const DeserializingSceneNodeData &other)
+            {
+                this->sceneNode        = other.sceneNode;
+                this->wasSelected      = other.wasSelected;
+                this->worldPosition    = other.worldPosition;
+                this->worldOrientation = other.worldOrientation;
+                this->worldScale       = other.worldScale;
+
+                return *this;
+            }
+
+
+            /// A pointer to the scene node currently being deserialized.
+            SceneNode* sceneNode;
+
+            /// Keeps track of whether or not the scene was selected before deserializing.
+            bool wasSelected;
+
+            /// The world position of the scene node before deserialization.
+            glm::vec3 worldPosition;
+
+            /// The world orientation of the scene node before deserialization.
+            glm::quat worldOrientation;
+
+            /// The worls scale of the scene node before deserialization.
+            glm::vec3 worldScale;
+
+        }deserializingSceneNodeData;
 
 
     private:    // No copying.
