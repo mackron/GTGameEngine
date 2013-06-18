@@ -2473,147 +2473,112 @@ namespace GTEngine
 
     void SceneEditor::PostOnSceneNodeAddedToScript(SceneNode &node)
     {
-        auto metadata = node.GetComponent<EditorMetadataComponent>();
-        assert(metadata != nullptr);
+        assert(this->GUI.Main != nullptr);
         {
-            if (!metadata->IsSystemNode())
-            {
-                assert(this->GUI.Main != nullptr);
-                {
-                    auto &script = this->GetScript();
+            auto &script = this->GetScript();
 
-                    script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
-                    assert(script.IsTable(-1));
-                    {
-                        script.Push("OnSceneNodeAdded");
-                        script.GetTableValue(-2);
-                        assert(script.IsFunction(-1));
-                        {
-                            script.PushValue(-2);   // <-- 'self'.
-                            script.Push(&node);
-                            script.Call(2, 0);
-                        }
-                    }
-                    script.Pop(1);
+            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnSceneNodeAdded");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);   // <-- 'self'.
+                    script.Push(&node);
+                    script.Call(2, 0);
                 }
             }
+            script.Pop(1);
         }
     }
 
     void SceneEditor::PostOnSceneNodeRemovedToScript(SceneNode &node)
     {
-        auto metadata = node.GetComponent<EditorMetadataComponent>();
-        assert(metadata != nullptr);
+        assert(this->GUI.Main != nullptr);
         {
-            if (!metadata->IsSystemNode())
-            {
-                assert(this->GUI.Main != nullptr);
-                {
-                    auto &script = this->GetScript();
+            auto &script = this->GetScript();
 
-                    script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
-                    assert(script.IsTable(-1));
-                    {
-                        script.Push("OnSceneNodeRemoved");
-                        script.GetTableValue(-2);
-                        assert(script.IsFunction(-1));
-                        {
-                            script.PushValue(-2);   // <-- 'self'.
-                            script.Push(&node);
-                            script.Call(2, 0);
-                        }
-                    }
-                    script.Pop(1);
+            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnSceneNodeRemoved");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);   // <-- 'self'.
+                    script.Push(&node);
+                    script.Call(2, 0);
                 }
             }
+            script.Pop(1);
         }
     }
 
     void SceneEditor::PostOnSceneNodeNameChangedToScript(SceneNode &node)
     {
-        auto metadata = node.GetComponent<EditorMetadataComponent>();
-        assert(metadata != nullptr);
+        assert(this->GUI.Main != nullptr);
         {
-            if (!metadata->IsSystemNode())
-            {
-                assert(this->GUI.Main != nullptr);
-                {
-                    auto &script = this->GetScript();
+            auto &script = this->GetScript();
 
-                    script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
-                    assert(script.IsTable(-1));
-                    {
-                        script.Push("OnSceneNodeNameChanged");
-                        script.GetTableValue(-2);
-                        assert(script.IsFunction(-1));
-                        {
-                            script.PushValue(-2);   // <-- 'self'.
-                            script.Push(&node);
-                            script.Call(2, 0);
-                        }
-                    }
-                    script.Pop(1);
+            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnSceneNodeNameChanged");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);   // <-- 'self'.
+                    script.Push(&node);
+                    script.Call(2, 0);
                 }
             }
+            script.Pop(1);
         }
     }
 
     void SceneEditor::PostOnSceneNodeParentChangedToScript(SceneNode &node, SceneNode* previousParent)
     {
-        auto metadata = node.GetComponent<EditorMetadataComponent>();
-        assert(metadata != nullptr);
+        assert(this->GUI.Main != nullptr);
         {
-            if (!metadata->IsSystemNode())
-            {
-                assert(this->GUI.Main != nullptr);
-                {
-                    auto &script = this->GetScript();
+            auto &script = this->GetScript();
 
-                    script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
-                    assert(script.IsTable(-1));
-                    {
-                        script.Push("OnSceneNodeParentChanged");
-                        script.GetTableValue(-2);
-                        assert(script.IsFunction(-1));
-                        {
-                            script.PushValue(-2);   // <-- 'self'.
-                            script.Push(&node);
-                            script.Push(previousParent);
-                            script.Call(3, 0);
-                        }
-                    }
-                    script.Pop(1);
+            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnSceneNodeParentChanged");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);   // <-- 'self'.
+                    script.Push(&node);
+                    script.Push(previousParent);
+                    script.Call(3, 0);
                 }
             }
+            script.Pop(1);
         }
     }
 
     void SceneEditor::PostOnSceneNodePrefabChanged(SceneNode &node)
     {
-        auto metadata = node.GetComponent<EditorMetadataComponent>();
-        assert(metadata != nullptr);
+        assert(this->GUI.Main != nullptr);
         {
-            if (!metadata->IsSystemNode())
-            {
-                assert(this->GUI.Main != nullptr);
-                {
-                    auto &script = this->GetScript();
+            auto &script = this->GetScript();
 
-                    script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
-                    assert(script.IsTable(-1));
-                    {
-                        script.Push("OnSceneNodePrefabChanged");
-                        script.GetTableValue(-2);
-                        assert(script.IsFunction(-1));
-                        {
-                            script.PushValue(-2);   // <-- 'self'.
-                            script.Push(&node);
-                            script.Call(2, 0);
-                        }
-                    }
-                    script.Pop(1);
+            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnSceneNodePrefabChanged");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);   // <-- 'self'.
+                    script.Push(&node);
+                    script.Call(2, 0);
                 }
             }
+            script.Pop(1);
         }
     }
 
