@@ -477,6 +477,9 @@ namespace GTEngine
         /// Posts an OnSceneNodeParentChanged() event to the scene editor.
         void PostOnSceneNodeParentChangedToScript(SceneNode &node, SceneNode* previousParent);
 
+        /// Posts an OnSceneNodePrefabChanged() event to the scene editor.
+        void PostOnSceneNodePrefabChanged(SceneNode &node);
+
 
         /// Updates the Transform panel for the selected node, if any.
         void UpdatePropertiesTransformPanel();

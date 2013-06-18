@@ -1720,6 +1720,10 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
         GTEngine.System.SceneEditor.CommitStateStackFrame(self._internalPtr);
     end
     
+    function sceneEditor:PushUndoRedoPoint()
+        sceneEditor:CommitStateStackFrame();
+    end
+    
     function sceneEditor:Undo()
         GTEngine.System.SceneEditor.Undo(self._internalPtr);
     end
@@ -2006,6 +2010,10 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     function self:OnSceneNodeParentChanged(sceneNodePtr)
         self.HierarchyPanel:RemoveSceneNode(sceneNodePtr);
         self.HierarchyPanel:AddSceneNode(sceneNodePtr);
+    end
+    
+    function self:OnSceneNodePrefabChanged(sceneNodePtr)
+        self.HierarchyPanel:UpdateSceneNode(sceneNodePtr);
     end
     
     

@@ -1177,11 +1177,13 @@ namespace GTEngine
                 // We also want to recursively deselect the scene nodes. The reason we do this is because the metadata component may have
                 // left it marked as selected, which we don't want. We don't post notifications to the editor about this.
                 this->DeselectSceneNodeAndChildren(*rootSceneNode, SelectionOption_NoScriptNotify);
+
                 return rootSceneNode;
             }
             else
             {
                 this->scene.RemoveSceneNode(*rootSceneNode);
+                
                 return nullptr;
             }
         }
@@ -1223,7 +1225,11 @@ namespace GTEngine
 
     void SceneEditor::UnlinkSceneNodeFromPrefab(SceneNode &sceneNode)
     {
-        this->prefabLinker.UnlinkSceneNodeFromPrefab(sceneNode, false);
+        auto rootSceneNode = this->prefabLinker.FindRootSceneNode(sceneNode);
+        if (rootSceneNode != nullptr)
+        {
+            this->prefabLinker.UnlinkSceneNodeFromPrefab(*rootSceneNode, false);
+        }
     }
 
 
@@ -2574,6 +2580,35 @@ namespace GTEngine
                             script.Push(&node);
                             script.Push(previousParent);
                             script.Call(3, 0);
+                        }
+                    }
+                    script.Pop(1);
+                }
+            }
+        }
+    }
+
+    void SceneEditor::PostOnSceneNodePrefabChanged(SceneNode &node)
+    {
+        auto metadata = node.GetComponent<EditorMetadataComponent>();
+        assert(metadata != nullptr);
+        {
+            if (!metadata->IsSystemNode())
+            {
+                assert(this->GUI.Main != nullptr);
+                {
+                    auto &script = this->GetScript();
+
+                    script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("OnSceneNodePrefabChanged");
+                        script.GetTableValue(-2);
+                        assert(script.IsFunction(-1));
+                        {
+                            script.PushValue(-2);   // <-- 'self'.
+                            script.Push(&node);
+                            script.Call(2, 0);
                         }
                     }
                     script.Pop(1);
