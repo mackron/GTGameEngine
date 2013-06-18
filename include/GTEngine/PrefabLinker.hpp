@@ -67,6 +67,35 @@ namespace GTEngine
         bool IsSceneNodeLinkedToPrefab(SceneNode &sceneNode, const char* prefabRelativePath);
 
 
+        /// Determines whether or not the given scene node is the top level root node of the prefab it is currently linked to.
+        ///
+        /// @param sceneNode [in] The scene node in question.
+        bool IsRootSceneNode(SceneNode &sceneNode) const;
+
+        /// Determines whether or not the given scene node is the top level root node of the given prefab.
+        ///
+        /// @param sceneNode          [in] The scene node in question.
+        /// @param prefabRelativePath [in] The relative path of the prefab.
+        bool IsRootSceneNode(SceneNode &sceneNode, const char* prefabRelativePath) const;
+
+        /// Performs a upwards recursive traversal and returns a pointer to the scene node that roots the prefab instantiation.
+        ///
+        /// @param sceneNode          [in] The scene node where the traversal will begin.
+        /// @param prefabRelativePath [in] The relative path of the prefab.
+        ///
+        /// @remarks
+        ///     If 'sceneNode' itself is the root node, a pointer to 'sceneNode' will be returned.
+        SceneNode* FindRootSceneNode(SceneNode &sceneNode, const char* prefabRelativePath) const;
+
+        /// Performs an upwards recursive traversal and returns a pointer to the scene node that roots the prefab instantiation.
+        ///
+        /// @param sceneNode [in] A reference to the scene node where the traversal will begin.
+        ///
+        /// @remarks
+        ///     If 'sceneNode' itself is the root node, a pointer to 'sceneNode' will be returned.
+        SceneNode* FindRootSceneNode(SceneNode &sceneNode) const;
+
+
     protected:
 
         ///////////////////////////////////////////////////
@@ -107,12 +136,6 @@ namespace GTEngine
 
 
     private:
-
-        /// Performs a upwards recursive traversal and returns a pointer to the scene node that roots the prefab instantiation.
-        ///
-        /// @param sceneNode          [in] The scene node where the traversal will begin.
-        /// @param prefabRelativePath [in] The relative path of the prefab.
-        SceneNode* FindRootSceneNode(SceneNode &sceneNode, const char* prefabRelativePath) const;
 
         /// Deserializes the scene node based on prefab.
         ///

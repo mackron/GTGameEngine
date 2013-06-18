@@ -34,6 +34,7 @@ namespace GTEngine
         ~EditorMetadataComponent();
 
 
+        // TODO: Remove these IsSystemNode() methods.
         /// Determines whether or not the node is a system node (used for editor tools such as the gizmo and camera).
         bool IsSystemNode() const { return this->isSystemNode; }
 

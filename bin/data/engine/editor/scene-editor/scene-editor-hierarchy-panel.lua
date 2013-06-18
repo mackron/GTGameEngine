@@ -33,7 +33,7 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
         self.SceneEditor:DuplicateSceneNode(self.ContextMenu.SceneNodeID);
     end);
     
-    self.ContextMenu.Duplicate = self.ContextMenu:AppendItem("Delete"):OnPressed(function()
+    self.ContextMenu.Delete = self.ContextMenu:AppendItem("Delete"):OnPressed(function()
         self.SceneEditor:DeleteSceneNode(self.ContextMenu.SceneNodeID);
     end);
     
@@ -43,20 +43,32 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
     self.ContextMenu.Orphan = self.ContextMenu:AppendItem("Orphan"):OnPressed(function()
         self.SceneEditor:OrphanSceneNode(self.ContextMenu.SceneNodeID);
         self.SceneEditor:SelectSceneNode(self.ContextMenu.SceneNodeID);
-        
-        -- Undo/Redo point.
-        self.SceneEditor:CommitStateStackFrame();
+        self.SceneEditor:PushUndoRedoPoint();
     end);
+    
+    self.ContextMenu:AppendSeparator();
+    
+    self.ContextMenu.UnlinkFromPrefab = self.ContextMenu:AppendItem("Unlink from Prefab"):OnPressed(function()
+        self.SceneEditor:UnlinkSceneNodeFromPrefab(self.ContextMenu.SceneNodeID);
+        self.SceneEditor:PushUndoRedoPoint();
+    end);
+    
     
     
     function self:ShowContextMenu(item)
         self.ContextMenu.SceneNodeID = item.SceneNodeID;
         
         -- Some buttons might need to be disabled.
-        if self.SceneEditor:GetParentSceneNodePtr(item.SceneNodeID) == nil then
-            self.ContextMenu.Orphan:Disable();
-        else
+        if self.SceneEditor:GetParentSceneNodePtr(item.SceneNodeID) ~= nil then
             self.ContextMenu.Orphan:Enable();
+        else
+            self.ContextMenu.Orphan:Disable();
+        end
+        
+        if item.PrefabRelativePath then
+            self.ContextMenu.UnlinkFromPrefab:Enable();
+        else
+            self.ContextMenu.UnlinkFromPrefab:Disable();
         end
         
         
@@ -240,6 +252,13 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             
             item.SceneNodeName = sceneNodeName
             item:SetText(sceneNodeName or "Unnamed");
+            
+            local prefabComponent = GTEngine.System.SceneNode.GetComponent(GTEngine.Components.Prefab);
+            if prefabComponent then
+                item.PrefabRelativePath = prefabComponent:GetComponentRelativePath();
+            else
+                item.PrefabRelativePath = nil;
+            end
             
             self:ApplyPrefabStyling();
         end

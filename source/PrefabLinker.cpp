@@ -18,7 +18,7 @@ namespace GTEngine
         auto prefab = PrefabLibrary::Acquire(prefabRelativePath);
         if (prefab != nullptr)
         {
-            // If the scene node is already linked to another prefab, but it is not the root, we need to fail.
+            // If the scene node is already linked to another prefab, but it is not the root, we need to unlink it first.
             auto prefabComponent = baseSceneNode.GetComponent<PrefabComponent>();
             if (prefabComponent != nullptr)
             {
@@ -86,31 +86,76 @@ namespace GTEngine
     }
 
 
-    ////////////////////////////////////////////////
-    // Private
+    bool PrefabLinker::IsRootSceneNode(SceneNode &sceneNode) const
+    {
+        auto prefabComponent = sceneNode.GetComponent<PrefabComponent>();
+        if (prefabComponent != nullptr)
+        {
+            if (prefabComponent->GetLocalHierarchyID() != 1)
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    bool PrefabLinker::IsRootSceneNode(SceneNode &sceneNode, const char* prefabRelativePath) const
+    {
+        auto prefabComponent = sceneNode.GetComponent<PrefabComponent>();
+        if (prefabComponent != nullptr)
+        {
+            if (prefabComponent->GetLocalHierarchyID() != 1)
+            {
+                if (GTCore::Strings::Equal(prefabComponent->GetPrefabRelativePath(), prefabRelativePath))
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
 
     SceneNode* PrefabLinker::FindRootSceneNode(SceneNode &sceneNode, const char* prefabRelativePath) const
     {
-        auto parent = sceneNode.GetParent();
-        if (parent != nullptr)
+        if (this->IsRootSceneNode(sceneNode, prefabRelativePath))
         {
-            auto parentPrefabComponent = parent->GetComponent<PrefabComponent>();
-            if (parentPrefabComponent != nullptr)
+            return &sceneNode;
+        }
+        else
+        {
+            auto parent = sceneNode.GetParent();
+            if (parent != nullptr)
             {
-                if (GTCore::Strings::Equal(parentPrefabComponent->GetPrefabRelativePath(), prefabRelativePath))
-                {
-                    if (parentPrefabComponent->GetLocalHierarchyID() == 1)
-                    {
-                        return parent;
-                    }
-                }
+                return this->FindRootSceneNode(*parent, prefabRelativePath);
             }
-
-            return this->FindRootSceneNode(*parent, prefabRelativePath);
         }
 
         return nullptr;
     }
+
+    SceneNode* PrefabLinker::FindRootSceneNode(SceneNode &sceneNode) const
+    {
+        if (this->IsRootSceneNode(sceneNode))
+        {
+            return &sceneNode;
+        }
+        else
+        {
+            auto parent = sceneNode.GetParent();
+            if (parent != nullptr)
+            {
+                return this->FindRootSceneNode(*parent);
+            }
+        }
+
+        return nullptr;
+    }
+
+
+    ////////////////////////////////////////////////
+    // Private
 
     bool PrefabLinker::DeserializeSceneNode(SceneNode &sceneNode, uint64_t localID, const Prefab &prefab)
     {
