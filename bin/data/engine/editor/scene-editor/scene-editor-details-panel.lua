@@ -4,9 +4,8 @@ function GTGUI.Element:SceneEditorDetailsPanel(parentPanel, sceneEditor)
     self:PanelGroupBox("Details");
     self.ParentPanel = parentPanel;
     
-    self.NameContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()          .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; vertical-align:center;' />");
-    self.NameLabel     = GTGUI.Server.New("<div parentid='" .. self.NameContainer:GetID() .. "' style='width:auto; margin-right:4px; text-color:std-text-color;'>Name</div>");
-    self.NameTextBox   = GTGUI.Server.New("<div parentid='" .. self.NameContainer:GetID() .. "' styleclass='textbox' style='width:100%;' />");
+    self.NameTextBox = GTGUI.Server.CreateElement(self.Body, "labelled-textbox");
+    self.NameTextBox:LabelledTextBox("Name");
     
     self.PrefabContainer    = GTGUI.Server.CreateElement(self.Body,            "scene-editor-details-panel-prefab-container");
     self.PrefabLabel        = GTGUI.Server.CreateElement(self.PrefabContainer, "scene-editor-details-panel-prefab-label");
@@ -21,6 +20,8 @@ function GTGUI.Element:SceneEditorDetailsPanel(parentPanel, sceneEditor)
     self.PrefabCrossButton:OnPressed(function()
         sceneEditor:UnlinkSceneNodeFromPrefab(self.SceneNode);
     end);
+    
+    
     
     self.SceneNode = nil;
     
