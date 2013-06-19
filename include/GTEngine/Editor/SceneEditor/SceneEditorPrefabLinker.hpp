@@ -45,13 +45,13 @@ namespace GTEngine
         struct DeserializingSceneNodeData
         {
             DeserializingSceneNodeData()
-                : sceneNode(nullptr), wasSelected(false),
+                : sceneNode(nullptr), wasSelected(false), name(),
                   worldPosition(), worldOrientation(), worldScale()
             {
             }
 
             DeserializingSceneNodeData(const DeserializingSceneNodeData &other)
-                : sceneNode(other.sceneNode), wasSelected(other.wasSelected),
+                : sceneNode(other.sceneNode), wasSelected(other.wasSelected), name(other.name),
                   worldPosition(other.worldPosition), worldOrientation(other.worldOrientation), worldScale(other.worldScale)
             {
             }
@@ -60,6 +60,7 @@ namespace GTEngine
             {
                 this->sceneNode        = other.sceneNode;
                 this->wasSelected      = other.wasSelected;
+                this->name             = other.name;
                 this->worldPosition    = other.worldPosition;
                 this->worldOrientation = other.worldOrientation;
                 this->worldScale       = other.worldScale;
@@ -73,6 +74,9 @@ namespace GTEngine
 
             /// Keeps track of whether or not the scene was selected before deserializing.
             bool wasSelected;
+
+            /// The name of the scene node before deserialization.
+            GTCore::String name;
 
             /// The world position of the scene node before deserialization.
             glm::vec3 worldPosition;
