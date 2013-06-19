@@ -1720,8 +1720,16 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
         GTEngine.System.SceneEditor.CommitStateStackFrame(self._internalPtr);
     end
     
+    function sceneEditor:ClearStateStackStagingArea()
+        GTEngine.System.SceneEditor.ClearStateStackStagingArea(self._internalPtr);
+    end
+    
     function sceneEditor:PushUndoRedoPoint()
         sceneEditor:CommitStateStackFrame();
+    end
+    
+    function sceneEditor:ClearUndoRedoStagingArea()
+        sceneEditor:ClearStateStackStagingArea();
     end
     
     function sceneEditor:Undo()
@@ -2014,6 +2022,10 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     function self:OnSceneNodePrefabChanged(sceneNodePtr)
         self.HierarchyPanel:UpdateSceneNode(sceneNodePtr);
+        
+        if self.PropertiesPanel.CurrentSceneNode and self.PropertiesPanel.CurrentSceneNode._internalPtr == sceneNodePtr then
+            self.PropertiesPanel:UpdateDetailsPanel();
+        end
     end
     
     

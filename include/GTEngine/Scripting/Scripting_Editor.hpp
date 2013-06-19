@@ -394,6 +394,12 @@ namespace GTEngine
             ///     Argument 1: A pointer to the scene editor.
             int CommitStateStackFrame(GTCore::Script &script);
 
+            /// Clears the state stack staging area for undo/redo operations.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int ClearStateStackStagingArea(GTCore::Script &script);
+
             /// Performs an undo operation.
             ///
             /// @remarks

@@ -920,12 +920,6 @@ namespace GTEngine
         auto component = this->GetComponentByName(componentName);
         if (component != nullptr)
         {
-            if (this->scene != nullptr)
-            {
-                this->scene->OnSceneNodeComponentRemoved(*this, *component);
-            }
-
-
             if (component == this->modelComponent)
             {
                 this->modelComponent = nullptr;
@@ -944,6 +938,16 @@ namespace GTEngine
             }
 
             this->components.Remove(componentName);
+
+            
+            // Post the event after the component has been removed, but before it is deleted.
+            if (this->scene != nullptr)
+            {
+                this->scene->OnSceneNodeComponentRemoved(*this, *component);
+            }
+
+
+            // Important that the component is deleted only after everything else is finished.
             delete component;
         }
     }

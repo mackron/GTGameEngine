@@ -112,6 +112,14 @@ namespace GTEngine
         }
     }
 
+    void SceneStateStack::ClearStagingArea()
+    {
+        assert(this->currentBranch != nullptr);
+        {
+            this->currentBranch->ClearStagingArea();
+        }
+    }
+
     void SceneStateStack::ApplyToScene()
     {
         assert(this->currentBranch != nullptr);

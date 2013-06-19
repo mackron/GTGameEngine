@@ -107,6 +107,9 @@ namespace GTEngine
         /// Reverts the staging area of the current branch.
         void RevertStagingArea();
 
+        /// Clears the staging area (does not revert anything).
+        void ClearStagingArea();
+
 
         /// Applies the current state of the stack to the scene.
         void ApplyToScene();

@@ -1008,6 +1008,11 @@ namespace GTEngine
         this->PostEvent_OnStateStackFrameCommitted();
     }
 
+    void Scene::ClearStateStackStagingArea()
+    {
+        this->stateStack.ClearStagingArea();
+    }
+
     size_t Scene::GetStateStackFrameCount() const
     {
         auto currentBranch = this->stateStack.GetCurrentBranch();
@@ -2247,7 +2252,7 @@ namespace GTEngine
         }
 
         // The component may need to be registered.
-        if (this->registeredScript != nullptr && node.HasComponent<ScriptComponent>())
+        if (this->registeredScript != nullptr/* && node.HasComponent<ScriptComponent>()*/)
         {
             Scripting::RegisterComponent(*this->registeredScript, node, component.GetName());
         }
@@ -2342,7 +2347,7 @@ namespace GTEngine
         }
 
         // The component will need to be unregistered from the Lua representation, if applicable.
-        if (this->registeredScript != nullptr && node.HasComponent<ScriptComponent>())
+        if (this->registeredScript != nullptr/* && node.HasComponent<ScriptComponent>()*/)
         {
             Scripting::UnregisterComponent(*this->registeredScript, node, component.GetName());
         }
@@ -2450,7 +2455,7 @@ namespace GTEngine
         }
 
         // We will re-register the component, if applicable. We do this to ensure the scripting representation of the scene node is up-to-date.
-        if (this->registeredScript != nullptr && node.HasComponent<ScriptComponent>())
+        if (this->registeredScript != nullptr/* && node.HasComponent<ScriptComponent>()*/)
         {
             Scripting::RegisterComponent(*this->registeredScript, node, component.GetName());
         }
