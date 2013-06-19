@@ -1,9 +1,9 @@
 -- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
 function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
-    self.Body      = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='scene-editor-properties-panel-body' style='' />");
-    self.Scrollbar = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='vertical-scrollbar'      style='' />");
-    
+    self:EditorPanel();
+
+
     self.Body.MessageContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='height:auto; width:100%; margin-top:8px; horizontal-align:center; font-style:bold; text-color:#555; visible:false;' />")
     
     
@@ -18,11 +18,7 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
     
     self.CurrentSceneNode = nil;            -- The scene node whose details are currently being shown on this panel.
     self.SceneEditor      = sceneEditor;
-    
-    self.IsMouseOver           = false;
-    self.MouseWheelScrollSpeed = 32;
-    
-    
+
     
     -- This will create the panels for every registered component. We always want the editor metadata to be last.
     self.ComponentPanels = {};
@@ -155,20 +151,7 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
     end);
     
     
-    
-    
-    
 
-    
-    self.Scrollbar:VerticalScrollbar();
-    self.Scrollbar:SetPageSize(self:GetHeight());
-    self.Scrollbar:EnableAutoVisibility();
-    self.Scrollbar:OnScroll(function(data)
-        local offset = -data.position;
-        self.Body:SetStyle("inner-offset-y", tostring(offset));
-    end)
-    
-    
     
     -- Clears the panels and shows a message.
     function self:HidePanels(message)
@@ -254,37 +237,7 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
         end
     end
     
-    
-    
-    self:OnSize(function()
-        if self:IsVisible() then
-            self.Scrollbar:SetPageSize(self:GetHeight());
-        end
-    end);
-    
-    self.Body:OnSize(function()
-        if self.Body:IsVisible() then
-            self.Scrollbar:SetRange(self.Body:GetHeight());
-        end
-    end)
-    
 
-    self:OnMouseEnter(function()
-        self.IsMouseOver = true;
-    end);
-    
-    self:OnMouseLeave(function()
-        self.IsMouseOver = false;
-    end);
-    
-    self:WatchMouseWheel(function(data)
-        if self.IsMouseOver then
-            self.Scrollbar:Scroll(-data.delta * self.MouseWheelScrollSpeed);
-        end
-    end);
-
-    
-    
     function self:OnSceneNodeChanged(arg1)
         self.Callbacks:BindOrCall("OnSceneNodeChanged", arg1);
     end
