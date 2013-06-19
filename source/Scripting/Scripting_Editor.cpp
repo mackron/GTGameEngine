@@ -88,7 +88,9 @@ namespace GTEngine
                         script.SetTableFunction(-1, "EnablePhysicsSimulation",             SceneEditorFFI::EnablePhysicsSimulation);
                         script.SetTableFunction(-1, "DisablePhysicsSimulation",            SceneEditorFFI::DisablePhysicsSimulation);
                         script.SetTableFunction(-1, "IsPhysicsSimulationEnabled",          SceneEditorFFI::IsPhysicsSimulationEnabled);
+
                         script.SetTableFunction(-1, "CommitStateStackFrame",               SceneEditorFFI::CommitStateStackFrame);
+                        script.SetTableFunction(-1, "ClearStateStackStagingArea",          SceneEditorFFI::ClearStateStackStagingArea);
                         script.SetTableFunction(-1, "Undo",                                SceneEditorFFI::Undo);
                         script.SetTableFunction(-1, "Redo",                                SceneEditorFFI::Redo);
 
@@ -956,6 +958,17 @@ namespace GTEngine
                 if (sceneEditor != nullptr)
                 {
                     sceneEditor->CommitStateStackFrame();
+                }
+
+                return 0;
+            }
+
+            int ClearStateStackStagingArea(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->ClearStateStackStagingArea();
                 }
 
                 return 0;

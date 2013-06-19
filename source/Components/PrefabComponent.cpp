@@ -26,6 +26,7 @@ namespace GTEngine
     void PrefabComponent::SetPrefabRelativePath(const char* relativePath)
     {
         this->prefabRelativePath = relativePath;
+        this->OnChanged();
     }
 
 
@@ -37,6 +38,7 @@ namespace GTEngine
     void PrefabComponent::SetLocalHierarchyID(uint64_t id)
     {
         this->localHierarchyID = id;
+        this->OnChanged();
     }
 
 

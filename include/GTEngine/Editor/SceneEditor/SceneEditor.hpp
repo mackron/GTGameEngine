@@ -262,6 +262,9 @@ namespace GTEngine
         /// Commits a new frame to the current branch of the scene's state stack.
         void CommitStateStackFrame();
 
+        /// Clears the staging area of the current branch of the scene's state stack.
+        void ClearStateStackStagingArea();
+
 
         /// Instantiates a scene prefab, positioning the root node at the origin.
         SceneNode* InstantiatePrefab(const char* relativePath);

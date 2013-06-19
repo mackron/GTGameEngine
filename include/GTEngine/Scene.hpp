@@ -494,6 +494,9 @@ namespace GTEngine
         /// Performs a commit on the state stack.
         void CommitStateStackFrame();
 
+        /// Clears the staging area of the state stack.
+        void ClearStateStackStagingArea();
+
         /// Retrieves the number of stack frames on the current branch.
         ///
         /// @remarks

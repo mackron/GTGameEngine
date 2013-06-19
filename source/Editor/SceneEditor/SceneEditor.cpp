@@ -1167,6 +1167,11 @@ namespace GTEngine
         }
     }
 
+    void SceneEditor::ClearStateStackStagingArea()
+    {
+        this->scene.ClearStateStackStagingArea();
+    }
+
     SceneNode* SceneEditor::InstantiatePrefab(const char* relativePath)
     {
         auto rootSceneNode = this->scene.CreateNewSceneNode();
@@ -1607,6 +1612,10 @@ namespace GTEngine
                 }
             }
         }
+        else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))     // Prefab
+        {
+            this->PostOnSceneNodePrefabChanged(node);
+        }
     }
 
     void SceneEditor::OnSceneNodeComponentRemoved(SceneNode &node, Component &component)
@@ -1629,6 +1638,10 @@ namespace GTEngine
                 {
                     metadata->ClearPickingCollisionShape();
                 }
+            }
+            else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))    // Prefab
+            {
+                this->PostOnSceneNodePrefabChanged(node);
             }
         }
     }
@@ -1720,6 +1733,10 @@ namespace GTEngine
                         }
                     }
                 }
+            }
+            else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))
+            {
+                this->PostOnSceneNodePrefabChanged(node);
             }
         }
     }

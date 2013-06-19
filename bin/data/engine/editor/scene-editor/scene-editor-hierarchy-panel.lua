@@ -141,6 +141,7 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
                 
                 dragAndDropElement.sceneNodeID  = item.SceneNodeID;
                 dragAndDropElement.sceneNodePtr = self.SceneEditor:GetSceneNodePtrByID(item.SceneNodeID);
+                dragAndDropElement.sceneEditor  = sceneEditor;
             end);
             
             item.titleContainer:OnDrop(function(data)
@@ -253,14 +254,14 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             item.SceneNodeName = sceneNodeName
             item:SetText(sceneNodeName or "Unnamed");
             
-            local prefabComponent = GTEngine.System.SceneNode.GetComponent(GTEngine.Components.Prefab);
+            local prefabComponent = GTEngine.System.SceneNode.GetComponent(sceneNodePtr, GTEngine.Components.Prefab);
             if prefabComponent then
-                item.PrefabRelativePath = prefabComponent:GetComponentRelativePath();
+                item.PrefabRelativePath = prefabComponent:GetPrefabRelativePath();
             else
                 item.PrefabRelativePath = nil;
             end
             
-            self:ApplyPrefabStyling();
+            self:ApplyPrefabStyling(item);
         end
     end
 end

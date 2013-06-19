@@ -57,6 +57,8 @@ namespace GTEngine
         auto prefabComponent = baseSceneNode.GetComponent<PrefabComponent>();
         if (prefabComponent != nullptr)
         {
+            GTCore::Vector<SceneNode*> childrenToDelete;
+
             for (auto child = baseSceneNode.GetFirstChild(); child != nullptr; child = child->GetNextSibling())
             {
                 if (this->IsSceneNodeLinkedToPrefab(*child, prefabComponent->GetPrefabRelativePath()))
@@ -65,9 +67,15 @@ namespace GTEngine
 
                     if (deleteChildrenLinkedToSamePrefab)
                     {
-                        this->DeleteSceneNode(child);
+                        childrenToDelete.PushBack(child);
                     }
                 }
+            }
+
+            // Delete children.
+            for (size_t iChild = 0; iChild < childrenToDelete.count; ++iChild)
+            {
+                this->DeleteSceneNode(childrenToDelete[iChild]);
             }
 
             baseSceneNode.RemoveComponent<PrefabComponent>();
@@ -91,7 +99,7 @@ namespace GTEngine
         auto prefabComponent = sceneNode.GetComponent<PrefabComponent>();
         if (prefabComponent != nullptr)
         {
-            if (prefabComponent->GetLocalHierarchyID() != 1)
+            if (prefabComponent->GetLocalHierarchyID() == 1)
             {
                 return true;
             }
@@ -105,7 +113,7 @@ namespace GTEngine
         auto prefabComponent = sceneNode.GetComponent<PrefabComponent>();
         if (prefabComponent != nullptr)
         {
-            if (prefabComponent->GetLocalHierarchyID() != 1)
+            if (prefabComponent->GetLocalHierarchyID() == 1)
             {
                 if (GTCore::Strings::Equal(prefabComponent->GetPrefabRelativePath(), prefabRelativePath))
                 {
