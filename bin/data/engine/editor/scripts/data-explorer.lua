@@ -134,21 +134,6 @@ function GTGUI.Element:DataExplorer()
                         GTEngine.CreatePrefab(item.path, item:GetRootPath(), data.droppedElement.sceneNodePtr);
                         Game.ScanDataFilesForChanges();     -- This will force the data files watcher to update, which will in turn notify the scene of the changes to it can update any nodes linked to this prefab.
                     end
-                
-                    
-                    
-                    -- If this was created from via the scene editor, we want to make sure any scene nodes that have updated in accordance
-                    -- with the new prefab definition are not part of the undo/redo stack. To do this, we just clear the undo/redo staging
-                    -- area. If we don't do this, the next undo will actually revert the changed scene nodes to their previous state, which
-                    -- is definately not what we want.
-                    --
-                    -- Also, we wan to link the source scene node to the new prefab.
-                    --if data.droppedElement.sceneEditor then
-                    --    data.droppedElement.sceneEditor:ClearUndoRedoStagingArea();
-                        
-                    --    data.droppedElement.sceneEditor:LinkSceneNodeToPrefab(data.droppedElement.sceneNodePtr, item:GetRelativePath(), true);
-                    --    data.droppedElement.sceneEditor:PushUndoRedoPoint();
-                    --end
                 end
             end
         end);
