@@ -157,8 +157,7 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
                             GTEngine.System.SceneNode.AttachChild(parentSceneNodePtr, childSceneNodePtr, true);
                             self.SceneEditor:SelectSceneNode(childSceneNodeID);
                             
-                            -- Undo/Redo point.
-                            self.SceneEditor:CommitStateStackFrame();
+                            self.SceneEditor:PushUndoRedoPoint();
                         end
                     end
                 end
