@@ -41,11 +41,14 @@ namespace GTEngine
     {
         assert(this->deserializingSceneNodeData.sceneNode != nullptr);
         {
-            // The world transform needs to be restored, but only if the scene node is not a newly created one.
+            // The world transform needs to be restored, but only if the scene node is the root and not a newly created one.
             bool isNewlyCreatedSceneNode = this->lastCreatedSceneNode == &sceneNode;
             if (!isNewlyCreatedSceneNode)
             {
-                sceneNode.SetWorldTransformComponents(this->deserializingSceneNodeData.worldPosition, this->deserializingSceneNodeData.worldOrientation, this->deserializingSceneNodeData.worldScale);
+                if (this->IsRootSceneNode(sceneNode))
+                {
+                    sceneNode.SetWorldTransformComponents(this->deserializingSceneNodeData.worldPosition, this->deserializingSceneNodeData.worldOrientation, this->deserializingSceneNodeData.worldScale);
+                }
             }
 
             // We need to make sure the selection flag in the editor metadata is unset.
