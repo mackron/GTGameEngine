@@ -7,9 +7,9 @@ function GTGUI.Element:EditorPanel()
     self.MouseWheelScrollSpeed = 32;
 
 
-    self.Body = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='editor-panel-body'      />");
+    self.Body = GTGUI.Server.CreateElement(self, "editor-panel-body");
     
-    self.Scrollbar = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='editor-panel-scrollbar' />");
+    self.Scrollbar = GTGUI.Server.CreateElement(self, "editor-panel-scrollbar");
     self.Scrollbar:VerticalScrollbar();
     self.Scrollbar:EnableAutoVisibility();
     self.Scrollbar:SetPageSize(self:GetHeight());
@@ -19,19 +19,25 @@ function GTGUI.Element:EditorPanel()
     end);
     
     
-    
-    self:OnSize(function()
-        if self:IsVisible() then
-            print("Testing...");
-            self.Scrollbar:SetPageSize(self:GetHeight());
-        end
-    end);
-    
     self.Body:OnSize(function()
         if self.Body:IsVisible() then
             self.Scrollbar:SetRange(self.Body:GetHeight());
         end
-    end)
+    end);
+    
+    self.Body:OnShow(function()
+        self.Scrollbar:SetRange(self.Body:GetHeight());
+    end);
+    
+    self:OnSize(function()
+        if self:IsVisible() then
+            self.Scrollbar:SetPageSize(self:GetHeight());
+        end
+    end);
+    
+    self:OnShow(function()
+        self.Scrollbar:SetPageSize(self:GetHeight());
+    end);
     
     self:OnMouseEnter(function()
         self.IsMouseOver = true;
