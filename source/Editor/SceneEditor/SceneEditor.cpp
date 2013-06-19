@@ -2823,7 +2823,7 @@ namespace GTEngine
         // Now we just iterate over the root nodes and re-link, deleting children that should no longer exist.
         for (size_t iSceneNode = 0; iSceneNode < rootSceneNodes.count; ++iSceneNode)
         {
-            auto sceneNode = this->scene.GetSceneNodeByIndex(iSceneNode);
+            auto sceneNode = rootSceneNodes[iSceneNode];
             assert(sceneNode != nullptr);
             {
                 this->LinkSceneNodeToPrefab(*sceneNode, prefabRelativePath);
