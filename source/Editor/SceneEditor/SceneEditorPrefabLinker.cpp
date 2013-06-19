@@ -68,7 +68,7 @@ namespace GTEngine
 
             if (this->deserializingSceneNodeData.wasSelected)
             {
-                this->sceneEditor.SelectSceneNode(sceneNode, 0);
+                this->sceneEditor.SelectSceneNode(sceneNode, SceneEditor::SelectionOption_Force);
             }
         }
 
