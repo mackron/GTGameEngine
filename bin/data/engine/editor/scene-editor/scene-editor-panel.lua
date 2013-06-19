@@ -424,12 +424,13 @@ end
 
 
 function GTGUI.Element:SceneEditorPanel(sceneEditor)
-    self.TabBar          = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-panel-tabbar'        style='' />");
-    self.Body            = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-panel-body'          style='' />");
-    self.PropertiesPanel = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='scene-editor-properties-panel'    style='visible:false' />");
-    self.HierarchyPanel  = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='scene-editor-hierarchy-panel'     style='visible:false' />");
+    self.TabBar               = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-panel-tabbar'        style='' />");
+    self.Body                 = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-panel-body'          style='' />");
+    self.PropertiesPanel      = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='scene-editor-properties-panel'    style='visible:false' />");
+    self.HierarchyPanel       = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='scene-editor-hierarchy-panel'     style='visible:false' />");
     self.ScenePropertiesPanel = GTGUI.Server.CreateElement(self.Body, "scene-editor-properties-panel");
-    self.SceneEditor     = sceneEditor;
+    
+    self.SceneEditor          = sceneEditor;
     
     
     self.TabBar:TabBar();
@@ -447,7 +448,6 @@ function GTGUI.Element:SceneEditorPanel(sceneEditor)
             self.PropertiesPanel:Show();
         elseif data.tab == self.HierarchyTab then
             self.HierarchyPanel:Show();
-            self.HierarchyPanel.TreeView:UpdateScrollbars();
         elseif data.tab == self.ScenePropertiesTab then
             self.ScenePropertiesPanel:Show();
         end

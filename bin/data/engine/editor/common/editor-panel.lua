@@ -22,6 +22,7 @@ function GTGUI.Element:EditorPanel()
     
     self:OnSize(function()
         if self:IsVisible() then
+            print("Testing...");
             self.Scrollbar:SetPageSize(self:GetHeight());
         end
     end);
