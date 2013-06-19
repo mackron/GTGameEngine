@@ -37,6 +37,8 @@ EXPECT MANY BUGS AND MISSING FEATURES AND FUNCTIONALITY
     - Drag-and-drop into a black space to orphan
 - Create a prefab in the asset explorer (left-side panel)
     - Drag a scene node from the Hierarchy panel to the prefab file to update the prefab
+    - You can also update a prefab by hitting the "up" arrow in the properties panel of the scene node that roots the prefab instantiation
+    - Scene nodes connected to a prefab will be highlighted in the hierarchy panel
     - Adding or removing components from scene nodes that are attached to a prefab without updating the prefab is unreliable
 - Use the playback controls along the top to play the game from inside the editor viewport
 - Use the Editor Metadata panel to assign icons and show/hide the direction arrow for scene nodes
