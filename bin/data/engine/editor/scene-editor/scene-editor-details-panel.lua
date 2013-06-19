@@ -33,13 +33,18 @@ function GTGUI.Element:SceneEditorDetailsPanel(parentPanel, sceneEditor)
             self.PrefabName.RelativePath = self.SceneNode.Prefab:GetPrefabRelativePath();
             self.PrefabName:SetText(GTCore.IO.GetFileNameFromPath(self.PrefabName.RelativePath));
             
-            self.PrefabUpdateButton:Enable();
-            self.PrefabCrossButton:Enable();
+            self.PrefabCrossButton:Show();      -- It's possible for the cross button to be hidden, so ensure it's shown here.
+            
+            if self.SceneNode.Prefab:GetLocalHierarchyID() == 1 then
+                self.PrefabUpdateButton:Show();
+            else
+                self.PrefabUpdateButton:Hide();
+            end
         else
             self.PrefabName:SetText("None");
             
-            self.PrefabUpdateButton:Disable();
-            self.PrefabCrossButton:Disable();
+            self.PrefabUpdateButton:Hide();
+            self.PrefabCrossButton:Hide();
         end
     end
     
