@@ -43,8 +43,9 @@ namespace GTEngine
           snapTranslation(), snapAngle(0.0f), snapScale(), isSnapping(false),
           translateSnapSize(0.25f),/* rotateSnapSize(5.625f), scaleSnapSize(0.25f),*/
           transformedObjectWithGizmo(false),
-          isDeserializing(false), isUpdatingFromStateStack(false),
+          isDeserializing(false), isInstantiatingPrefab(false), isUpdatingFromStateStack(false),
           isPlaying(false), isPaused(false), wasPlayingBeforeHide(false),
+          parentChangedLockCounter(0),
           GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), scene.GetDefaultViewport()),
           grid(1.0f, 8, 32), isShowingGrid(false), wasShowingGridBeforePlaying(false),
           axisArrows(), isShowingAxisArrows(false), wasShowingAxisArrowsBeforePlaying(false),
@@ -329,6 +330,7 @@ namespace GTEngine
     {
         if (this->IsPlaying())
         {
+            this->LockParentChangedEvents();
             this->isUpdatingFromStateStack = true;
             {
                 // We'll call OnShutdown on all scene nodes here.
@@ -397,6 +399,7 @@ namespace GTEngine
                 this->UpdatePlaybackControls();
             }
             this->isUpdatingFromStateStack = false;
+            this->UnlockParentChangedEvents();
         }
     }
 
@@ -425,6 +428,7 @@ namespace GTEngine
     {
         if (this->IsPhysicsSimulationEnabled())
         {
+            this->LockParentChangedEvents();
             this->isUpdatingFromStateStack = true;
             {
                 this->physicsManager.DisableSimulation();
@@ -438,6 +442,7 @@ namespace GTEngine
                 this->SelectSceneNodes(this->selectedNodesBeforePhysicsSimulation, SelectionOption_NoStateStaging);
             }
             this->isUpdatingFromStateStack = false;
+            this->UnlockParentChangedEvents();
         }
     }
 
@@ -1101,6 +1106,7 @@ namespace GTEngine
         // Don't bother doing anything if we're already at the start of the current branch.
         if (this->scene.GetStateStackCurrentFrameIndex() > 0)
         {
+            this->LockParentChangedEvents();
             this->isUpdatingFromStateStack = true;
             {
                 // If the physics simulation is running or the game is playing, it needs to be stopped first.
@@ -1124,6 +1130,7 @@ namespace GTEngine
                 this->ReselectSceneNodes(SelectionOption_NoStateStaging);
             }
             this->isUpdatingFromStateStack = false;
+            this->UnlockParentChangedEvents();
         }
     }
 
@@ -1131,6 +1138,7 @@ namespace GTEngine
     {
         if (this->scene.GetStateStackCurrentFrameIndex() < this->scene.GetStateStackMaxFrameIndex())
         {
+            this->LockParentChangedEvents();
             this->isUpdatingFromStateStack = true;
             {
                 // If the physics simulation is running or the game is playing, it needs to be stopped first.
@@ -1154,6 +1162,7 @@ namespace GTEngine
                 this->ReselectSceneNodes(SelectionOption_NoStateStaging);
             }
             this->isUpdatingFromStateStack = false;
+            this->UnlockParentChangedEvents();
         }
     }
 
@@ -1210,24 +1219,31 @@ namespace GTEngine
 
     SceneNode* SceneEditor::InstantiatePrefab(const char* relativePath)
     {
-        auto rootSceneNode = this->scene.CreateNewSceneNode();
-        assert(rootSceneNode != nullptr);
-        {
-            if (this->LinkSceneNodeToPrefab(*rootSceneNode, relativePath))
-            {
-                // We also want to recursively deselect the scene nodes. The reason we do this is because the metadata component may have
-                // left it marked as selected, which we don't want. We don't post notifications to the editor about this.
-                this->DeselectSceneNodeAndChildren(*rootSceneNode, SelectionOption_NoScriptNotify);
+        SceneNode* rootSceneNode = nullptr;
 
-                return rootSceneNode;
-            }
-            else
+        this->LockParentChangedEvents();
+        this->isInstantiatingPrefab = true;
+        {
+            rootSceneNode = this->scene.CreateNewSceneNode();
+            assert(rootSceneNode != nullptr);
             {
-                this->scene.RemoveSceneNode(*rootSceneNode);
-                
-                return nullptr;
+                if (this->LinkSceneNodeToPrefab(*rootSceneNode, relativePath))
+                {
+                    // We also want to recursively deselect the scene nodes. The reason we do this is because the metadata component may have
+                    // left it marked as selected, which we don't want. We don't post notifications to the editor about this.
+                    this->DeselectSceneNodeAndChildren(*rootSceneNode, SelectionOption_NoScriptNotify);
+                }
+                else
+                {
+                    this->scene.RemoveSceneNode(*rootSceneNode);
+                    rootSceneNode = nullptr;
+                }
             }
         }
+        this->isInstantiatingPrefab = false;
+        this->UnlockParentChangedEvents();
+
+        return rootSceneNode;
 
 #if 0
         auto prefab = PrefabLibrary::Acquire(relativePath);
@@ -1270,6 +1286,12 @@ namespace GTEngine
         if (rootSceneNode != nullptr)
         {
             this->prefabLinker.UnlinkSceneNodeFromPrefab(*rootSceneNode, false);
+        }
+        else
+        {
+            // If we get here it means the scene node is linked to a prefab, but is not longer a child to the root node of the prefab. In this case
+            // we just unlink as if it was the base node.
+            this->prefabLinker.UnlinkSceneNodeFromPrefab(sceneNode, false);
         }
     }
 
@@ -1471,7 +1493,23 @@ namespace GTEngine
 
     void SceneEditor::OnSceneNodeParentChanged(SceneNode &node, SceneNode* previousParent)
     {
-        this->PostOnSceneNodeParentChangedToScript(node, previousParent);
+        this->PostOnSceneNodeParentChangedToScript(node, previousParent);       // <-- Should probably move this into the conditional below, but it will break the hierarchy tree-view updates when things like undo/redo, etc are performed.
+
+        if (!this->IsParentChangedEventsLocked())
+        {
+            auto prefabComponent = node.GetComponent<PrefabComponent>();
+            if (prefabComponent != nullptr)
+            {
+                if (prefabComponent->GetLocalHierarchyID() != 1)
+                {
+                    assert(previousParent != nullptr);
+                    {
+                        this->UnlinkSceneNodeFromPrefab(*previousParent);
+                        this->UnlinkSceneNodeFromPrefab(node);
+                    }
+                }
+            }
+        }
     }
 
     void SceneEditor::OnSceneNodeTransform(SceneNode &node)
@@ -2284,6 +2322,7 @@ namespace GTEngine
     void SceneEditor::DeserializeScene(GTCore::Deserializer &deserializer)
     {
         this->scene.DisableStateStackStaging();
+        this->LockParentChangedEvents();
         this->isDeserializing = true;
         {
             this->transformGizmo.Hide(this->scene.GetRenderer(), this->pickingWorld);
@@ -2367,9 +2406,9 @@ namespace GTEngine
 
             // We need to make sure all scene nodes are brought up-to-date with their prefabs.
             this->RelinkSceneNodesLinkedToPrefabs();
-            //this->UpdateAllSceneNodesLinkedToPrefabs();
         }
         this->isDeserializing = false;
+        this->UnlockParentChangedEvents();
         this->scene.EnableStateStackStaging();
 
 
@@ -2757,33 +2796,41 @@ namespace GTEngine
 
     SceneNode & SceneEditor::CopySceneNodeAndChildren(SceneNode &nodeToCopy, SceneNode* parentNode)
     {
-        GTCore::BasicSerializer serializer;
-        nodeToCopy.Serialize(serializer);
+        SceneNode* newNode = nullptr;
 
 
-        GTCore::BasicDeserializer deserializer(serializer.GetBuffer(), serializer.GetBufferSizeInBytes());
-        auto newNode = this->scene.CreateNewSceneNode(deserializer, true);      // <-- 'true' means to generate a new ID if a node of the same ID already exists (spoiler: it does already exist).
-
-
-
-        // We now want to link the new node to the parent, if we have one.
-        if (parentNode != nullptr)
+        this->LockParentChangedEvents();
         {
-            parentNode->AttachChild(*newNode);     // <-- This does an implicit Scene::AddSceneNode().
+            GTCore::BasicSerializer serializer;
+            nodeToCopy.Serialize(serializer);
+
+
+            GTCore::BasicDeserializer deserializer(serializer.GetBuffer(), serializer.GetBufferSizeInBytes());
+            newNode = this->scene.CreateNewSceneNode(deserializer, true);      // <-- 'true' means to generate a new ID if a node of the same ID already exists (spoiler: it does already exist).
+
+
+
+            // We now want to link the new node to the parent, if we have one.
+            if (parentNode != nullptr)
+            {
+                parentNode->AttachChild(*newNode);     // <-- This does an implicit Scene::AddSceneNode().
+            }
+
+            // Node needs to be selected, but we don't want to notify the editor yet (we'll do it in one go at a higher level).
+            this->SelectSceneNode(*newNode, SelectionOption_NoScriptNotify);
+
+
+
+            // And now we need to make a copy of the children. The parent will be the new node.
+            for (auto childNode = nodeToCopy.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
+            {
+                this->CopySceneNodeAndChildren(*childNode, newNode);
+            }
         }
-
-        // Node needs to be selected, but we don't want to notify the editor yet (we'll do it in one go at a higher level).
-        this->SelectSceneNode(*newNode, SelectionOption_NoScriptNotify);
+        this->UnlockParentChangedEvents();
 
 
-
-        // And now we need to make a copy of the children. The parent will be the new node.
-        for (auto childNode = nodeToCopy.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
-        {
-            this->CopySceneNodeAndChildren(*childNode, newNode);
-        }
-
-
+        assert(newNode != nullptr);
         return *newNode;
     }
 
@@ -3268,6 +3315,24 @@ namespace GTEngine
                 }
             }
         }
+    }
+
+
+    void SceneEditor::LockParentChangedEvents()
+    {
+        this->parentChangedLockCounter += 1;
+    }
+
+    void SceneEditor::UnlockParentChangedEvents()
+    {
+        assert(this->parentChangedLockCounter > 0);
+
+        this->parentChangedLockCounter -= 1;
+    }
+
+    bool SceneEditor::IsParentChangedEventsLocked() const
+    {
+        return this->parentChangedLockCounter > 0;
     }
 }
 

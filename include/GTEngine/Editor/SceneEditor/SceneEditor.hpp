@@ -569,6 +569,16 @@ namespace GTEngine
         void ResetAllParticleSystems();
 
 
+        /// Increments the lock counter for preventing scene node parent change events.
+        void LockParentChangedEvents();
+
+        /// Decrements the lock counter for preventing scene node parent change events.
+        void UnlockParentChangedEvents();
+
+        /// Determines whether or not scene node parent change events are locked.
+        bool IsParentChangedEventsLocked() const;
+
+
     private:
 
         /// The viewport that the scene will be drawn from.
@@ -699,6 +709,9 @@ namespace GTEngine
         /// frames committed.
         bool isDeserializing;
 
+        /// Keeps track of whether or not we are instantiating a prefab.
+        bool isInstantiatingPrefab;
+
         /// Keeps track of whether or not we are changing the scene via the state stack.
         bool isUpdatingFromStateStack;
 
@@ -713,6 +726,15 @@ namespace GTEngine
         /// Keeps track of whether or not the game was playing when the editor is hidden.
         bool wasPlayingBeforeHide;
 
+
+        /// A counter for blocking scene node parent change events. When this is larger than 0, the events
+        /// will be locked. Otherwise, they will be unlocked.
+        ///
+        /// Calling LockParentChangedEvents will increment this value. Calling UnlockParentChangedEvents()
+        /// will decrement it.
+        ///
+        /// The purpose behind this lock is to prevent 
+        unsigned int parentChangedLockCounter;
 
 
         /// Structure containing the GUI elements of the editor.

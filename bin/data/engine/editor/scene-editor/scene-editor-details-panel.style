@@ -24,3 +24,27 @@ scene-editor-details-panel-prefab-name
     text-color:   std-text-color
     font-style:   bold
 }
+
+scene-editor-details-panel-prefab-update-icon
+{
+    width:                  12px
+    height:                 12px
+    background-image:       std-direction-arrow-up-8x8
+    background-image-color: #999
+    margin-right:           2px
+}
+
+scene-editor-details-panel-prefab-update-icon:hovered
+{
+    background-image-color: #ddd
+}
+
+scene-editor-details-panel-prefab-update-icon:pushed
+{
+    background-image-color: #fff
+}
+
+scene-editor-details-panel-prefab-update-icon:disabled
+{
+    background-image-color: #555
+}
