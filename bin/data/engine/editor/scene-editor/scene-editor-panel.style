@@ -25,27 +25,23 @@ scene-editor-panel-body
     
     border: 1px #222
     background-color: #363636
-    
-    transparent-mouse-input:true
 }
 
 scene-editor-properties-panel
 {
-    width:  100%
-    height: 100%
+    width:                   100%
+    height:                  100%
     
-    child-plane:        horizontal
-    flex-child-width:   true
+    child-plane:             horizontal
+    flex-child-width:        true
     
-    transparent-mouse-input: true
+    visible:                 false
 }
 
 scene-editor-properties-panel-body
 {
     width:  100%
     height: auto
-    
-    transparent-mouse-input: true
 }
 
 
