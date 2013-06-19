@@ -13,7 +13,7 @@ namespace GTEngine
     }
 
 
-    bool PrefabLinker::LinkSceneNodeToPrefab(SceneNode &baseSceneNode, const char* prefabRelativePath)
+    bool PrefabLinker::LinkSceneNodeToPrefab(SceneNode &baseSceneNode, const char* prefabRelativePath, bool isSourceSceneNode)
     {
         auto prefab = PrefabLibrary::Acquire(prefabRelativePath);
         if (prefab != nullptr)
@@ -42,8 +42,17 @@ namespace GTEngine
             }
 
 
-            // Now we need to deserialize the root node, which will be baseSceneNode.
-            this->DeserializeSceneNode(baseSceneNode, prefab->GetRootID(), *prefab);
+            // Now we need to deserialize the root node, which will be baseSceneNode. If the scene node is the source scene node (the scene node that
+            // was used to create the prefab), we don't actually want to deserialize. Instead, we just recursively iterate over the children and just
+            // link them via prefab components.
+            if (isSourceSceneNode)
+            {
+                this->LinkSceneNodeToPrefab(baseSceneNode, prefab->GetRootID(), *prefab);
+            }
+            else
+            {
+                this->DeserializeSceneNode(baseSceneNode, prefab->GetRootID(), *prefab);
+            }
 
 
             return true;
@@ -164,6 +173,31 @@ namespace GTEngine
 
     ////////////////////////////////////////////////
     // Private
+
+    void PrefabLinker::LinkSceneNodeToPrefab(SceneNode &sceneNode, uint64_t localID, const Prefab &prefab)
+    {
+        auto prefabComponent = sceneNode.AddComponent<PrefabComponent>();
+        assert(prefabComponent != nullptr);
+        {
+            prefabComponent->SetPrefabRelativePath(prefab.GetRelativePath());
+            prefabComponent->SetLocalHierarchyID(localID);
+
+
+            // Children.
+            GTCore::Vector<uint64_t> childIDs;
+            prefab.GetChildIDs(localID, childIDs);
+
+            size_t iChild = 0;
+            for (auto child = sceneNode.GetFirstChild(); child != nullptr; child = child->GetNextSibling())
+            {
+                assert(iChild < childIDs.count);        // <-- If this assert fails, it means DeserializeSceneNode() should have been called instead. This method (LinkSceneNodeToPrefab) should only be called when the scene node is the source scene node that created the prefab.
+                {
+                    this->LinkSceneNodeToPrefab(*child, childIDs[iChild], prefab);
+                    ++iChild;
+                }
+            }
+        }
+    }
 
     bool PrefabLinker::DeserializeSceneNode(SceneNode &sceneNode, uint64_t localID, const Prefab &prefab)
     {

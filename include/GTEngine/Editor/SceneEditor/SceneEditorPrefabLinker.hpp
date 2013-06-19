@@ -85,6 +85,11 @@ namespace GTEngine
 
         }deserializingSceneNodeData;
 
+        /// A pointer to the last scene node that was created. This is used by the deserialization event handlers
+        /// so that they can determine whether or not the deserialization is happening for a newly created scene
+        /// node or not.
+        SceneNode* lastCreatedSceneNode;
+
 
     private:    // No copying.
         SceneEditorPrefabLinker(const SceneEditorPrefabLinker &);

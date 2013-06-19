@@ -1741,6 +1741,10 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
     end
     
     
+    function sceneEditor:CreatePrefab(path, makeRelativeTo, sceneNode)
+        return GTEngine.System.SceneEditor.CreatePrefab(self._internalPtr, path, makeRelativeTo, self:GetSceneNodePtr(sceneNode));
+    end
+    
     function sceneEditor:InstantiatePrefab(relativePath)
         local rootSceneNodePtr = GTEngine.System.SceneEditor.InstantiatePrefab(self._internalPtr, relativePath);
         
@@ -1749,8 +1753,8 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
         return rootSceneNodePtr;
     end
     
-    function sceneEditor:LinkSceneNodeToPrefab(sceneNode, prefabRelativePath)
-        return GTEngine.System.SceneEditor.LinkSceneNodeToPrefab(self._internalPtr, sceneEditor:GetSceneNodePtr(sceneNode), prefabRelativePath);
+    function sceneEditor:LinkSceneNodeToPrefab(sceneNode, prefabRelativePath, isSourceSceneNode)
+        return GTEngine.System.SceneEditor.LinkSceneNodeToPrefab(self._internalPtr, sceneEditor:GetSceneNodePtr(sceneNode), prefabRelativePath, isSourceSceneNode);
     end
     
     function sceneEditor:UnlinkSceneNodeFromPrefab(sceneNode)

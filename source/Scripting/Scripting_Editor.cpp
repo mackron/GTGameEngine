@@ -94,6 +94,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "Undo",                                SceneEditorFFI::Undo);
                         script.SetTableFunction(-1, "Redo",                                SceneEditorFFI::Redo);
 
+                        script.SetTableFunction(-1, "CreatePrefab",                        SceneEditorFFI::CreatePrefab);
                         script.SetTableFunction(-1, "InstantiatePrefab",                   SceneEditorFFI::InstantiatePrefab);
                         script.SetTableFunction(-1, "LinkSceneNodeToPrefab",               SceneEditorFFI::LinkSceneNodeToPrefab);
                         script.SetTableFunction(-1, "UnlinkSceneNodeFromPrefab",           SceneEditorFFI::UnlinkSceneNodeFromPrefab);
@@ -997,6 +998,24 @@ namespace GTEngine
             }
 
 
+            int CreatePrefab(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    auto absolutePath   = script.ToString(2);
+                    auto makeRelativeTo = script.ToString(3);
+                    auto sceneNode      = reinterpret_cast<SceneNode*>(script.ToPointer(4));
+
+                    if (sceneNode != nullptr)
+                    {
+                        script.Push(sceneEditor->CreatePrefab(absolutePath, makeRelativeTo, *sceneNode));
+                    }
+                }
+
+                return 1;
+            }
+
             int InstantiatePrefab(GTCore::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
@@ -1019,10 +1038,11 @@ namespace GTEngine
                 {
                     auto sceneNode          = reinterpret_cast<SceneNode*>(script.ToPointer(2));
                     auto prefabRelativePath = script.ToString(3);
+                    auto isSourceSceneNode  = script.ToBoolean(4);
 
                     if (sceneNode != nullptr)
                     {
-                        sceneEditor->LinkSceneNodeToPrefab(*sceneNode, prefabRelativePath);
+                        sceneEditor->LinkSceneNodeToPrefab(*sceneNode, prefabRelativePath, isSourceSceneNode);
                     }
                 }
 

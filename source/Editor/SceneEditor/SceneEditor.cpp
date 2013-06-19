@@ -1172,6 +1172,42 @@ namespace GTEngine
         this->scene.ClearStateStackStagingArea();
     }
 
+
+    bool SceneEditor::CreatePrefab(const char* absolutePath, const char* makeRelativeTo, SceneNode &sceneNode)
+    {
+        bool successful = false;
+
+        auto prefab = PrefabLibrary::Acquire(absolutePath, makeRelativeTo);
+        if (prefab != nullptr)
+        {
+            prefab->SetFromSceneNode(sceneNode);
+
+            // We want to link the scene node to the prefab.
+            this->LinkSceneNodeToPrefab(sceneNode, GTCore::IO::ToRelativePath(absolutePath, makeRelativeTo).c_str(), true);
+            this->CommitStateStackFrame();      // <-- Undo/Redo point.
+
+            if (prefab->WriteToFile())
+            {
+                // With the prefab written to the file, we now need to force a check of the file system so that events are posted which in turn
+                // will cause the scene editor to update anything linked to the prefab.
+                this->GetOwnerEditor().GetGame().GetDataFilesWatcher().CheckForChangesAndDispatchEvents();
+
+                // If this was created from via the scene editor, we want to make sure any scene nodes that have updated in accordance
+                // with the new prefab definition are not part of the undo/redo stack. To do this, we just clear the undo/redo staging
+                // area. If we don't do this, the next undo will actually revert the changed scene nodes to their previous state, which
+                // is definately not what we want.
+                this->ClearStateStackStagingArea();
+
+                successful = true;
+            }
+
+            PrefabLibrary::Unacquire(prefab);
+        }
+
+
+        return successful;
+    }
+
     SceneNode* SceneEditor::InstantiatePrefab(const char* relativePath)
     {
         auto rootSceneNode = this->scene.CreateNewSceneNode();
@@ -1223,9 +1259,9 @@ namespace GTEngine
     }
 
 
-    bool SceneEditor::LinkSceneNodeToPrefab(SceneNode &sceneNode, const char* prefabRelativePath)
+    bool SceneEditor::LinkSceneNodeToPrefab(SceneNode &sceneNode, const char* prefabRelativePath, bool isSourceSceneNode)
     {
-        return this->prefabLinker.LinkSceneNodeToPrefab(sceneNode, prefabRelativePath);
+        return this->prefabLinker.LinkSceneNodeToPrefab(sceneNode, prefabRelativePath, isSourceSceneNode);
     }
 
     void SceneEditor::UnlinkSceneNodeFromPrefab(SceneNode &sceneNode)
