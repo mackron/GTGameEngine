@@ -266,15 +266,24 @@ namespace GTEngine
         void ClearStateStackStagingArea();
 
 
+        /// Creates a prefab from the given scene node.
+        ///
+        /// @param absolutePath   [in] The absolute path to write the prefab file to.
+        /// @param makeRelativeTo [in] The base path to use in order to create a relative path from the absolute path.
+        /// @param sceneNode      [in] A reference to the source scene node.
+        bool CreatePrefab(const char* absolutePath, const char* makeRelativeTo, SceneNode &sceneNode);
+
         /// Instantiates a scene prefab, positioning the root node at the origin.
+        ///
+        /// @param relativePath [in] The relative path of the prefab to instantiate.
         SceneNode* InstantiatePrefab(const char* relativePath);
 
-        
         /// Links a scene node to a prefab.
         ///
         /// @param sceneNode          [in] A reference to the scene node to link.
         /// @param prefabRelativePath [in] The relative path of the prefab to link to.
-        bool LinkSceneNodeToPrefab(SceneNode &sceneNode, const char* prefabRelativePath);
+        /// @param isSourceSceneNode  [in] Whether or not the given scene node was the scene node that was used to create the prefab.
+        bool LinkSceneNodeToPrefab(SceneNode &sceneNode, const char* prefabRelativePath, bool isSourceSceneNode = false);
 
         /// Unlinks a scene node from it's prefab.
         ///

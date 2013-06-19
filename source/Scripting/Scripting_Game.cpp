@@ -289,12 +289,7 @@ namespace GTEngine
 
             int ScanDataFilesForChanges(GTCore::Script &script)
             {
-                auto &game = GetGame(script);
-
-                // TODO: Implement DataFilesWatcher::CheckForChangesAndDispatchEvents()
-                game.GetDataFilesWatcher().CheckForChanges(false);
-                game.GetDataFilesWatcher().DispatchEvents();
-
+                GetGame(script).GetDataFilesWatcher().CheckForChangesAndDispatchEvents();
                 return 0;
             }
 

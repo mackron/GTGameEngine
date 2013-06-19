@@ -44,7 +44,7 @@ namespace GTEngine
         ///     @par
         ///     It is OK to call this on a scene node that is already linked to the prefab. In this case, it will just be
         ///     synchronized.
-        bool LinkSceneNodeToPrefab(SceneNode &baseSceneNode, const char* prefabRelativePath);
+        bool LinkSceneNodeToPrefab(SceneNode &baseSceneNode, const char* prefabRelativePath, bool isSourceSceneNode = false);
 
         /// Unlinks a scene node from the prefab it is currently linked to.
         ///
@@ -136,6 +136,18 @@ namespace GTEngine
 
 
     private:
+
+        /// Recursively links scene nodes to the given prefab.
+        ///
+        /// @param sceneNode [in] The scene node being linked.
+        /// @param localID   [in] The local hierarchy ID of the node in the prefab.
+        /// @param prefab    [in] A reference to the source prefab.
+        ///
+        /// @remarks
+        ///     This is recursive.
+        ///     @par
+        ///     This does not do any deserialization, but instead simply adds a prefab component and sets the appropriate properties.
+        void LinkSceneNodeToPrefab(SceneNode &sceneNode, uint64_t localID, const Prefab &prefab);
 
         /// Deserializes the scene node based on prefab.
         ///

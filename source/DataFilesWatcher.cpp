@@ -121,6 +121,12 @@ namespace GTEngine
         return true;
     }
 
+    void DataFilesWatcher::CheckForChangesAndDispatchEvents()
+    {
+        this->CheckForChanges(false);
+        this->DispatchEvents();
+    }
+
     bool DataFilesWatcher::EventsReady()
     {
         return !this->thread.Busy();

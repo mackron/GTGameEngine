@@ -413,6 +413,15 @@ namespace GTEngine
             int Redo(GTCore::Script &script);
 
 
+            /// Creates a prefab from the given scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: The absolute path to save the prefab file at.
+            ///     Argument 3: The base path to use to convert the absolute path to a relative path.
+            ///     Argument 4: A pointer to the scene node.
+            int CreatePrefab(GTCore::Script &script);
+
             /// Instantiates a prefab, returning a pointer to the root node.
             ///
             /// @remarks
@@ -428,6 +437,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the scene editor.
             ///     Argument 2: A pointer to the scene node being linked.
             ///     Argument 3: The relative path of the prefab to link to.
+            ///     Argument 4: Whether or not the given scene node is the source scene node.
             int LinkSceneNodeToPrefab(GTCore::Script &script);
 
             /// Unlinks a scene node from a prefab.

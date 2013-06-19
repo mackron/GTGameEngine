@@ -70,9 +70,10 @@ namespace GTEngine
         }
         this->serializers.Clear();
 
-
         // Hierarchy.
         this->hierarchy.Clear();
+
+        this->nextID = 0;
     }
 
     void Prefab::AddSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID)

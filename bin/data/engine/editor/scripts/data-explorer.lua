@@ -127,9 +127,15 @@ function GTGUI.Element:DataExplorer()
         
         item.titleContainer:OnDrop(function(data)
             if not item.isDirectory and GTEngine.IsPrefabFile(item.path) then
-                if data.droppedElement.sceneNodePtr ~= nil then
-                    GTEngine.CreatePrefab(item.path, item:GetRootPath(), data.droppedElement.sceneNodePtr);
-                    Game.ScanDataFilesForChanges();     -- This will force the data files watcher to update, which will in turn notify the scene of the changes to it can update any nodes linked to this prefab.
+                if data.droppedElement.sceneNodePtr then
+                    if data.droppedElement.sceneEditor then
+                        data.droppedElement.sceneEditor:CreatePrefab(item.path, item:GetRootPath(), data.droppedElement.sceneNodePtr);
+                    else
+                        GTEngine.CreatePrefab(item.path, item:GetRootPath(), data.droppedElement.sceneNodePtr);
+                        Game.ScanDataFilesForChanges();     -- This will force the data files watcher to update, which will in turn notify the scene of the changes to it can update any nodes linked to this prefab.
+                    end
+                
+                    
                     
                     -- If this was created from via the scene editor, we want to make sure any scene nodes that have updated in accordance
                     -- with the new prefab definition are not part of the undo/redo stack. To do this, we just clear the undo/redo staging
@@ -137,12 +143,12 @@ function GTGUI.Element:DataExplorer()
                     -- is definately not what we want.
                     --
                     -- Also, we wan to link the source scene node to the new prefab.
-                    if data.droppedElement.sceneEditor then
-                        data.droppedElement.sceneEditor:ClearUndoRedoStagingArea();
+                    --if data.droppedElement.sceneEditor then
+                    --    data.droppedElement.sceneEditor:ClearUndoRedoStagingArea();
                         
-                        data.droppedElement.sceneEditor:LinkSceneNodeToPrefab(data.droppedElement.sceneNodePtr, item:GetRelativePath());
-                        data.droppedElement.sceneEditor:PushUndoRedoPoint();
-                    end
+                    --    data.droppedElement.sceneEditor:LinkSceneNodeToPrefab(data.droppedElement.sceneNodePtr, item:GetRelativePath(), true);
+                    --    data.droppedElement.sceneEditor:PushUndoRedoPoint();
+                    --end
                 end
             end
         end);

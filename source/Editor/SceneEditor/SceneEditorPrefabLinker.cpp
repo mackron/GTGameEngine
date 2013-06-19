@@ -6,7 +6,7 @@
 namespace GTEngine
 {
     SceneEditorPrefabLinker::SceneEditorPrefabLinker(SceneEditor &sceneEditorIn)
-        : PrefabLinker(), sceneEditor(sceneEditorIn), deserializingSceneNodeData()
+        : PrefabLinker(), sceneEditor(sceneEditorIn), deserializingSceneNodeData(), lastCreatedSceneNode(nullptr)
     {
     }
 
@@ -17,7 +17,9 @@ namespace GTEngine
 
     SceneNode* SceneEditorPrefabLinker::CreateSceneNode()
     {
-        return this->sceneEditor.GetScene().CreateNewSceneNode();
+        this->lastCreatedSceneNode = this->sceneEditor.GetScene().CreateNewSceneNode();
+
+        return this->lastCreatedSceneNode;
     }
 
     void SceneEditorPrefabLinker::DeleteSceneNode(SceneNode* sceneNode)
@@ -39,8 +41,12 @@ namespace GTEngine
     {
         assert(this->deserializingSceneNodeData.sceneNode != nullptr);
         {
-            // The world transform needs to be restored.
-            sceneNode.SetWorldTransformComponents(this->deserializingSceneNodeData.worldPosition, this->deserializingSceneNodeData.worldOrientation, this->deserializingSceneNodeData.worldScale);
+            // The world transform needs to be restored, but only if the scene node is not a newly created one.
+            bool isNewlyCreatedSceneNode = this->lastCreatedSceneNode == &sceneNode;
+            if (!isNewlyCreatedSceneNode)
+            {
+                sceneNode.SetWorldTransformComponents(this->deserializingSceneNodeData.worldPosition, this->deserializingSceneNodeData.worldOrientation, this->deserializingSceneNodeData.worldScale);
+            }
 
             // We need to make sure the selection flag in the editor metadata is unset.
             auto editorMetadata = sceneNode.GetComponent<EditorMetadataComponent>();

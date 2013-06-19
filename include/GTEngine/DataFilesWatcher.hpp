@@ -207,6 +207,9 @@ namespace GTEngine
         ///     This will return false if changes are in the process of being checked and 'wait' is set to false.
         bool DispatchEvents(bool wait = true);
 
+        /// Synchronously calls CheckForChanges() and DispatchEvents().
+        void CheckForChangesAndDispatchEvents();
+
         /// Determines whether or not the events from the previous call to CheckForChanges() are ready.
         bool EventsReady();
 

@@ -666,41 +666,6 @@ namespace GTEngine
             }
 
 
-
-
-            void AddSceneNodeAndChildrenToPrefab(Prefab &prefab, SceneNode &sceneNode, uint64_t parentID)
-            {
-                auto metadata = sceneNode.GetComponent<EditorMetadataComponent>();
-                assert(metadata != nullptr);
-                {
-                    uint64_t id = 0;
-
-                    // If the prefab is already linked to a different node, we actually want to auto-generate every ID by leaving the IDs set at 0.
-                    if (GTCore::Strings::Equal<false>(prefab.GetRelativePath(), metadata->GetPrefabRelativePath()))
-                    {
-                        // If a prefab scene node of the same ID already exists, we'll need to regenerate an ID for that node.
-                        if (prefab.GetSerializerByID(metadata->GetPrefabID()) == nullptr)
-                        {
-                            id = metadata->GetPrefabID();
-                        }
-                    }
-
-                    id = prefab.AddSingleSceneNode(sceneNode, id, parentID);
-
-
-                    // The scene node needs to be linked to the prefab.
-                    metadata->LinkToPrefab(prefab.GetRelativePath(), id);
-
-
-                    // And now we need to add the children.
-                    for (auto childNode = sceneNode.GetFirstChild(); childNode != nullptr; childNode = childNode->GetNextSibling())
-                    {
-                        AddSceneNodeAndChildrenToPrefab(prefab, *childNode, id);
-                    }
-                }
-            }
-
-            // TODO: Move this to GTEngine.Editor (not SceneEditor). Rename to UpdatePrefab().
             int CreatePrefab(GTCore::Script &script)
             {
                 auto absolutePath   = script.ToString(1);
@@ -712,9 +677,7 @@ namespace GTEngine
                     auto prefab = PrefabLibrary::Acquire(absolutePath, makeRelativeTo);
                     if (prefab != nullptr)
                     {
-                        prefab->Clear();
-                        AddSceneNodeAndChildrenToPrefab(*prefab, *sceneNode, 0);
-
+                        prefab->SetFromSceneNode(*sceneNode);
                         prefab->WriteToFile();
 
                         PrefabLibrary::Unacquire(prefab);
