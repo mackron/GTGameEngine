@@ -20,5 +20,17 @@ function GTGUI.Element:LabelledTextBox(title, initialValue)
         self:OnTextChanged(data);
     end);
     
+    self.TextBox:OnKeyPressed(function(data)
+        return self:OnKeyPressed(data);
+    end);
+    
+    self.TextBox:OnKeyDown(function(data)
+        return self:OnKeyDown(data);
+    end);
+    
+    self.TextBox:OnKeyUp(function(data)
+        return self:OnKeyUp(data);
+    end);
+    
     return self;
 end
