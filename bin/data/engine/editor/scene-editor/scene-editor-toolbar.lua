@@ -36,8 +36,13 @@ function GTGUI.Element:SceneEditorToolBar(sceneEditor)
     
     
     self.PlaybackContainer = GTGUI.Server.CreateElement(self,                   "scene-editor-toolbar-playback-container");
+    
     self.PlayPauseButton   = GTGUI.Server.CreateElement(self.PlaybackContainer, "scene-editor-toolbar-play-button");
+    self.PlayPauseButton:SetTooltip("Play/Pause/Resume playback of the scene. CTRL+Break to stop.\n\nShortcut: Break");
+    
     self.StopButton        = GTGUI.Server.CreateElement(self.PlaybackContainer, "scene-editor-toolbar-stop-button");
+    self.StopButton:SetTooltip("Stop playback.\n\nShortcut: CTRL+Break");
+    
     self.StopButton:Disable();
     
     
