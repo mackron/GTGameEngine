@@ -45,6 +45,7 @@ namespace GTEngine
           transformedObjectWithGizmo(false),
           isDeserializing(false), isInstantiatingPrefab(false), isUpdatingFromStateStack(false),
           isPlaying(false), isPaused(false), wasPlayingBeforeHide(false),
+          isViewportMouseControlsEnabled(false),
           parentChangedLockCounter(0),
           GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), scene.GetDefaultViewport()),
           grid(1.0f, 8, 32), isShowingGrid(false), wasShowingGridBeforePlaying(false),
@@ -3006,6 +3007,22 @@ namespace GTEngine
     bool SceneEditor::IsParentChangedEventsLocked() const
     {
         return this->parentChangedLockCounter > 0;
+    }
+
+
+    void SceneEditor::DisableViewportMouseControls()
+    {
+        this->isViewportMouseControlsEnabled = false;
+    }
+
+    void SceneEditor::EnableViewportMouseControls()
+    {
+        this->isViewportMouseControlsEnabled = true;
+    }
+
+    bool SceneEditor::IsViewportMouseControlsEnabled() const
+    {
+        return this->isViewportMouseControlsEnabled;
     }
 }
 

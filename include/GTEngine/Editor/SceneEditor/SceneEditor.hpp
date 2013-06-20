@@ -556,6 +556,28 @@ namespace GTEngine
         bool IsParentChangedEventsLocked() const;
 
 
+        /// Disables viewport mouse controls.
+        ///
+        /// @remarks
+        ///     Mouse controls will be disabled when a game is playing.
+        void DisableViewportMouseControls();
+
+        /// Enables viewport mouse controls.
+        ///
+        /// @remarks
+        ///     Mouse controls will be disabled when a game is playing. This will re-enable them for when the game
+        ///     is paused or stopped.
+        void EnableViewportMouseControls();
+
+        /// Determines whether or not viewport mouse controls are enabled.
+        ///
+        /// @return True if the viewport mouse controls are enabled; false otherwise.
+        ///
+        /// @remarks
+        ///     Mouse controls will be enabled by default. When a scene is playing, they will be disabled.
+        bool IsViewportMouseControlsEnabled() const;
+
+
     private:
 
         /// The viewport that the scene will be drawn from.
@@ -702,6 +724,10 @@ namespace GTEngine
 
         /// Keeps track of whether or not the game was playing when the editor is hidden.
         bool wasPlayingBeforeHide;
+
+
+        /// Keeps track of whether or not the viewport mouse controls are enabled. True by default.
+        bool isViewportMouseControlsEnabled;
 
 
         /// A counter for blocking scene node parent change events. When this is larger than 0, the events

@@ -27,13 +27,6 @@ namespace GTEngine
     void Editor3DViewportEventHandler::DisableMouseCapture()
     {
         this->isMouseCaptureEnabled = false;
-        
-        /*
-        if (!this->game.IsMouseButtonDown(GTCore::MouseButton_Right))
-        {
-            this->game.ReleaseMouse();
-        }
-        */
     }
 
 
