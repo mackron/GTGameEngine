@@ -5,17 +5,20 @@ function GTGUI.Element:SceneEditorTransformPanel(parentPanel, sceneEditor)
     self.ParentPanel = parentPanel;
     self.SceneNode   = nil;
     
-    self.Container = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()      .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true;' />");
-    self.Left      = GTGUI.Server.New("<div parentid='" .. self.Container:GetID() .. "' style='width:auto; height:auto; margin-right:4px;' />");
-    self.Right     = GTGUI.Server.New("<div parentid='" .. self.Container:GetID() .. "' style='width:100%; height:auto;' />");
+    self.PositionInput = GTGUI.Server.CreateElement(self.Body, "labelled-vector3-input");
+    self.PositionInput:LabelledVector3Input("Position");
+    self.PositionInput:SetTooltip("Relative position. Forward is -Z. X/Y/Z.");
     
-    self.PositionLabel = GTGUI.Server.New("<div parentid='" .. self.Left:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 3px; margin-bottom:4px;'>Position</div>");
-    self.RotationLabel = GTGUI.Server.New("<div parentid='" .. self.Left:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 3px; margin-bottom:4px;'>Rotation</div>");
-    self.ScaleLabel    = GTGUI.Server.New("<div parentid='" .. self.Left:GetID()  .. "' style='width:auto; text-color:std-text-color; padding:0px 3px; padding-bottom:0px'>Scale</div>");
+    self.RotationInput = GTGUI.Server.CreateElement(self.Body, "labelled-vector3-input");
+    self.RotationInput:LabelledVector3Input("Rotation");
+    self.RotationInput:SetStyle("margin-top", "2px");
+    self.RotationInput:SetTooltip("Relative rotation in degrees. X/Y/Z.");
     
-    self.PositionInput = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true; margin-bottom:4px;' />"):Vector3Input();
-    self.RotationInput = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true; margin-bottom:4px;' />"):Vector3Input();
-    self.ScaleInput    = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' style='width:100%; height:auto; horizontal-align:right; child-plane:horizontal; flex-child-width:true;' />"):Vector3Input();
+    self.ScaleInput = GTGUI.Server.CreateElement(self.Body, "labelled-vector3-input");
+    self.ScaleInput:LabelledVector3Input("Scale");
+    self.ScaleInput:SetStyle("margin-top", "2px");
+    self.ScaleInput:SetTooltip("Relative scale. X/Y/Z.");
+    
     
     self.SetToCameraButton = GTGUI.Server.CreateElement(self.Body, "scene-editor-transform-panel-settocamera-button");
     self.SetToCameraButton:SetText("Set to Camera");
@@ -23,6 +26,7 @@ function GTGUI.Element:SceneEditorTransformPanel(parentPanel, sceneEditor)
         sceneEditor:SetSceneNodeTransformToCamera(self.SceneNode);
         sceneEditor:OnSceneNodeChanged();
     end);
+    self.SetToCameraButton:SetTooltip("Sets the position and orientation of the selected node\nto that of the viewport camera.");
     
     
 
