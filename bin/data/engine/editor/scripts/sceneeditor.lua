@@ -2151,7 +2151,13 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     self:WatchKeyPressed(function(data)
         if data.key == GTCore.Keys.Pause then
-            self:PausePlaying();
+            if self:IsPlaying() then
+                if self:IsPaused() then
+                    self:StartPlaying();
+                else
+                    self:PausePlaying();
+                end
+            end
         elseif data.key == GTCore.Keys.Break then
             self:StopPlaying();
         end
