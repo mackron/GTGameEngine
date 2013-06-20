@@ -51,6 +51,15 @@ namespace GTEngine
         /// Retrieves a reference ot the camera scene node.
         const SceneNode & GetCameraSceneNode() const { return this->camera; }
 
+        
+        /// Sets the camera to use with the viewport.
+        ///
+        /// @param cameraNode [in] A reference to the scene node to use as the camera.
+        void SetViewportCamera(SceneNode &cameraNode);
+
+        /// Sets the viewport camera to the default camera.
+        void SetViewportCameraToDefault() { this->SetViewportCamera(this->camera); }
+
 
         /// Starts playing the game.
         void StartPlaying();
@@ -84,6 +93,29 @@ namespace GTEngine
 
 
 
+        /// Disables viewport mouse controls.
+        ///
+        /// @remarks
+        ///     Mouse controls will be disabled when a game is playing.
+        void DisableViewportMouseControls();
+
+        /// Enables viewport mouse controls.
+        ///
+        /// @remarks
+        ///     Mouse controls will be disabled when a game is playing. This will re-enable them for when the game
+        ///     is paused or stopped.
+        void EnableViewportMouseControls();
+
+        /// Determines whether or not viewport mouse controls are enabled.
+        ///
+        /// @return True if the viewport mouse controls are enabled; false otherwise.
+        ///
+        /// @remarks
+        ///     Mouse controls will be enabled by default. When a scene is playing, they will be disabled.
+        bool IsViewportMouseControlsEnabled() const;
+
+
+
         /// Shows the grid.
         void ShowGrid();
 
@@ -110,6 +142,7 @@ namespace GTEngine
 
         /// Retrieves the scene name.
         const char* GetSceneName() const;
+
 
         
         /// Marks background clearing as enabled on the scene.
@@ -556,26 +589,14 @@ namespace GTEngine
         bool IsParentChangedEventsLocked() const;
 
 
-        /// Disables viewport mouse controls.
-        ///
-        /// @remarks
-        ///     Mouse controls will be disabled when a game is playing.
-        void DisableViewportMouseControls();
+        /// Captures/saves the pause state for restoration when the game is resumed.
+        void CapturePauseState();
 
-        /// Enables viewport mouse controls.
+        /// Restores the pause state.
         ///
         /// @remarks
-        ///     Mouse controls will be disabled when a game is playing. This will re-enable them for when the game
-        ///     is paused or stopped.
-        void EnableViewportMouseControls();
-
-        /// Determines whether or not viewport mouse controls are enabled.
-        ///
-        /// @return True if the viewport mouse controls are enabled; false otherwise.
-        ///
-        /// @remarks
-        ///     Mouse controls will be enabled by default. When a scene is playing, they will be disabled.
-        bool IsViewportMouseControlsEnabled() const;
+        ///     This will be called when the game is resumed from a previously paused state.
+        void RestorePauseState();
 
 
     private:
@@ -809,6 +830,30 @@ namespace GTEngine
 
         /// The prefab linker for managing the linking of scene nodes to prefabs.
         SceneEditorPrefabLinker prefabLinker;
+
+
+        /// Structure containing data that will be restored when a scene goes from a paused to resumed state.
+        struct PauseState
+        {
+            /// Constructor.
+            PauseState()
+                : wasMouseCaptured(false), cameraNode(false)
+            {
+            }
+
+            /// Whether or not the mouse was captured.
+            bool wasMouseCaptured;
+
+            /// A pointer to the camera node before pausing.
+            SceneNode* cameraNode;
+
+
+
+        private:    // No copying.
+            PauseState(const PauseState &);
+            PauseState & operator=(const PauseState &);
+
+        }pauseState;
     };
 }
 
