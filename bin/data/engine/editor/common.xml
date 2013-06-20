@@ -36,3 +36,6 @@
 
 <style  url="common/cross-button.style"           />
 <script url="common/cross-button.lua"             />
+
+<style  url="common/tooltip.style"                />
+<script url="common/tooltip.lua"                  />

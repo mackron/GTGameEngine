@@ -6,20 +6,27 @@ function GTGUI.Element:SceneEditorDetailsPanel(parentPanel, sceneEditor)
     
     self.NameTextBox = GTGUI.Server.CreateElement(self.Body, "labelled-textbox");
     self.NameTextBox:LabelledTextBox("Name");
+    self.NameTextBox:SetTooltip("The name of the scene node. Does not need to be unique.");
     
     self.PrefabContainer    = GTGUI.Server.CreateElement(self.Body,            "scene-editor-details-panel-prefab-container");
     self.PrefabLabel        = GTGUI.Server.CreateElement(self.PrefabContainer, "scene-editor-details-panel-prefab-label");
     self.PrefabLabel:SetText("Prefab");
+    
     self.PrefabName         = GTGUI.Server.CreateElement(self.PrefabContainer, "scene-editor-details-panel-prefab-name");
     self.PrefabName:SetText("None");
+    self.PrefabName:SetTooltip("The prefab this node is linked to.");
+    
     self.PrefabUpdateButton = GTGUI.Server.CreateElement(self.PrefabContainer, "scene-editor-details-panel-prefab-update-icon");
     self.PrefabUpdateButton:OnPressed(function()
         sceneEditor:UpdatePrefab(self.PrefabName.RelativePath, nil, self.SceneNode);
     end);
+    self.PrefabUpdateButton:SetTooltip("Update the prefab.");
+    
     self.PrefabCrossButton  = GTGUI.Server.CreateElement(self.PrefabContainer, "cross-button");
     self.PrefabCrossButton:OnPressed(function()
         sceneEditor:UnlinkSceneNodeFromPrefab(self.SceneNode);
     end);
+    self.PrefabCrossButton:SetTooltip("Unlink from prefab.");
     
     
     
