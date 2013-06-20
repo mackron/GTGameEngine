@@ -10,7 +10,7 @@ namespace GTEngine
     Editor3DViewportEventHandler::Editor3DViewportEventHandler(Game &game, SceneViewport &viewport)
         : game(game), viewport(viewport),
           mousePosX(0), mousePosY(0),
-          isMouseCaptureEnabled(true)
+          isMouseControlsEnabled(true)
     {
     }
 
@@ -19,14 +19,14 @@ namespace GTEngine
     }
 
     
-    void Editor3DViewportEventHandler::EnableMouseCapture()
+    void Editor3DViewportEventHandler::EnableMouseControls()
     {
-        this->isMouseCaptureEnabled = true;
+        this->isMouseControlsEnabled = true;
     }
 
-    void Editor3DViewportEventHandler::DisableMouseCapture()
+    void Editor3DViewportEventHandler::DisableMouseControls()
     {
-        this->isMouseCaptureEnabled = false;
+        this->isMouseControlsEnabled = false;
     }
 
 
@@ -91,7 +91,7 @@ namespace GTEngine
 
     void Editor3DViewportEventHandler::OnLMBDown(GTGUI::Element &, int, int)
     {
-        if (!this->game.IsMouseCaptured() && this->isMouseCaptureEnabled)
+        if (!this->game.IsMouseCaptured() && this->isMouseControlsEnabled)
         {
             this->game.CaptureMouse();
         }
@@ -99,7 +99,7 @@ namespace GTEngine
 
     void Editor3DViewportEventHandler::OnLMBUp(GTGUI::Element &, int, int)
     {
-        if (!this->game.IsMouseButtonDown(GTCore::MouseButton_Right))
+        if (!this->game.IsMouseButtonDown(GTCore::MouseButton_Right) && this->isMouseControlsEnabled)
         {
             this->game.ReleaseMouse();
         }
@@ -107,7 +107,7 @@ namespace GTEngine
 
     void Editor3DViewportEventHandler::OnRMBDown(GTGUI::Element &, int, int)
     {
-        if (!this->game.IsMouseCaptured() && this->isMouseCaptureEnabled)
+        if (!this->game.IsMouseCaptured() && this->isMouseControlsEnabled)
         {
             this->game.CaptureMouse();
         }
@@ -115,7 +115,7 @@ namespace GTEngine
 
     void Editor3DViewportEventHandler::OnRMBUp(GTGUI::Element &, int, int)
     {
-        if (!this->game.IsMouseButtonDown(GTCore::MouseButton_Left))
+        if (!this->game.IsMouseButtonDown(GTCore::MouseButton_Left) && this->isMouseControlsEnabled)
         {
             this->game.ReleaseMouse();
         }
@@ -132,6 +132,9 @@ namespace GTEngine
         (void)x;
         (void)y;
 
-        this->viewport.GetCameraNode()->MoveForward(delta * 1.0f);
+        if (this->isMouseControlsEnabled)
+        {
+            this->viewport.GetCameraNode()->MoveForward(delta * 1.0f);
+        }
     }
 }

@@ -2118,7 +2118,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
             self:DoMouseSelection();
         end
         
-        if not GTGUI.Server.IsRMBDown() then
+        if not GTGUI.Server.IsRMBDown() and (not self:IsPlaying() or self:IsPaused()) then
             Game.ReleaseMouse();
             self.HasMouseCapture         = false;
             self.MouseMovedWhileCaptured = false;
@@ -2133,7 +2133,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
             self.ContextMenu:Show();
         end
         
-        if not GTGUI.Server.IsLMBDown() then
+        if not GTGUI.Server.IsLMBDown() and (not self:IsPlaying() or self:IsPaused()) then
             Game.ReleaseMouse();
             self.HasMouseCapture         = false;
             self.MouseMovedWhileCaptured = false;

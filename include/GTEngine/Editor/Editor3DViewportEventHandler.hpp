@@ -32,10 +32,10 @@ namespace GTEngine
 
 
         /// Enables mouse capture.
-        void EnableMouseCapture();
+        void EnableMouseControls();
 
         /// Disables mouse capture.
-        void DisableMouseCapture();
+        void DisableMouseControls();
 
 
 
@@ -86,7 +86,7 @@ namespace GTEngine
 
 
         /// Whether or not mouse capture is enabled.
-        bool isMouseCaptureEnabled;
+        bool isMouseControlsEnabled;
 
 
     private:    // No copying.

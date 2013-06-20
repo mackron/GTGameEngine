@@ -226,6 +226,12 @@ namespace GTEngine
     }
 
 
+    void SceneEditor::SetViewportCamera(SceneNode &sceneNode)
+    {
+        this->scene.GetDefaultViewport().SetCameraNode(sceneNode);
+        this->viewportEventHandler.OnSize(*this->GUI.Viewport);         // <-- Ensure the projection is set correctly.
+    }
+
 
     void SceneEditor::StartPlaying()
     {
@@ -233,6 +239,8 @@ namespace GTEngine
         {
             if (this->IsPaused())
             {
+                this->RestorePauseState();
+
                 this->updateManager.Enable();
                 this->updateManager.EnableParticles();
                 this->physicsManager.EnableSimulation();
@@ -298,7 +306,7 @@ namespace GTEngine
                 // If the camera is not he main camera, we want to disable mouse capture in the viewport.
                 if (this->scene.GetViewportByIndex(0).GetCameraNode() != &this->camera)
                 {
-                    this->viewportEventHandler.DisableMouseCapture();
+                    this->viewportEventHandler.DisableMouseControls();
                 }
 
 
@@ -318,6 +326,13 @@ namespace GTEngine
         if (this->IsPlaying() && !this->IsPaused())
         {
             this->isPaused = true;
+            this->CapturePauseState();
+
+            this->GetOwnerEditor().GetGame().ReleaseMouse();
+            this->EnableViewportMouseControls();
+
+            this->SetViewportCameraToDefault();
+
 
             this->updateManager.Disable();
             this->updateManager.DisableParticles();
@@ -357,14 +372,13 @@ namespace GTEngine
 
 
                 // The scripting environment might have changed the main camera. We need to revert back just in case.
-                this->scene.GetViewportByIndex(0).SetCameraNode(this->camera);
-                this->viewportEventHandler.OnSize(*this->GUI.Viewport);
+                this->SetViewportCameraToDefault();
 
                 // A game may have captured the mouse. We'll force a release just in case it doesn't handle it correctly.
                 this->GetOwnerEditor().GetGame().ReleaseMouse();
 
                 // We will also want to make sure mouse capture is re-enabled.
-                this->viewportEventHandler.EnableMouseCapture();
+                this->viewportEventHandler.EnableMouseControls();
 
 
                 // The grid might need to be shown.
@@ -462,6 +476,26 @@ namespace GTEngine
     {
         return this->scene.GetSceneNodeByID(id);
     }
+
+
+
+    void SceneEditor::DisableViewportMouseControls()
+    {
+        this->viewportEventHandler.DisableMouseControls();
+        this->isViewportMouseControlsEnabled = false;
+    }
+
+    void SceneEditor::EnableViewportMouseControls()
+    {
+        this->viewportEventHandler.EnableMouseControls();
+        this->isViewportMouseControlsEnabled = true;
+    }
+
+    bool SceneEditor::IsViewportMouseControlsEnabled() const
+    {
+        return this->isViewportMouseControlsEnabled;
+    }
+
 
 
     void SceneEditor::ShowGrid()
@@ -3010,19 +3044,35 @@ namespace GTEngine
     }
 
 
-    void SceneEditor::DisableViewportMouseControls()
+    void SceneEditor::CapturePauseState()
     {
-        this->isViewportMouseControlsEnabled = false;
+        this->pauseState.wasMouseCaptured = this->GetOwnerEditor().GetGame().IsMouseCaptured();
+        this->pauseState.cameraNode       = this->scene.GetDefaultViewport().GetCameraNode();
     }
 
-    void SceneEditor::EnableViewportMouseControls()
+    void SceneEditor::RestorePauseState()
     {
-        this->isViewportMouseControlsEnabled = true;
-    }
+        // Mouse capture
+        if (this->pauseState.wasMouseCaptured)
+        {
+            this->GetOwnerEditor().GetGame().CaptureMouse();
+        }
+        else
+        {
+            this->GetOwnerEditor().GetGame().ReleaseMouse();
+        }
 
-    bool SceneEditor::IsViewportMouseControlsEnabled() const
-    {
-        return this->isViewportMouseControlsEnabled;
+        // Camera
+        if (this->pauseState.cameraNode != nullptr)
+        {
+            this->SetViewportCamera(*this->pauseState.cameraNode);
+        }
+
+
+
+        // Defaults.
+        this->pauseState.wasMouseCaptured = false;
+        this->pauseState.cameraNode       = nullptr;
     }
 }
 
