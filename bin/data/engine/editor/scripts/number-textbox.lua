@@ -40,7 +40,7 @@ function GTGUI.Element:NumberTextBox(defaultValue)
                 end
             else    -- Default
                 if newValue ~= 0.0 then
-                    self:SetText(tostring(newValue), true);
+                    self:SetText(string.format("%.4g", newValue), true);
                 else
                     self:SetText("0", true);
                 end
