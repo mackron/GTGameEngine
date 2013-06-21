@@ -25,8 +25,8 @@ namespace GTEngine
         // Virtual Methods.
 
         /// SubEditor::GetMainElement()
-              GTGUI::Element* GetMainElement()        { return this->textBox; }
-        const GTGUI::Element* GetMainElement( ) const { return this->textBox; }
+              GTGUI::Element* GetMainElement()        { return this->mainElement; }
+        const GTGUI::Element* GetMainElement( ) const { return this->mainElement; }
 
         /// SubEditor::Show()
         void Show();
@@ -41,7 +41,7 @@ namespace GTEngine
     private:
 
         /// The main text box element.
-        GTGUI::Element* textBox;
+        GTGUI::Element* mainElement;
 
         /// The text area element. This is a child of textBox.
         GTGUI::Element* textArea;

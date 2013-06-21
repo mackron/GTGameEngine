@@ -1,0 +1,9 @@
+<!-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file. -->
+
+<include url="../sub-editor.xml" />
+
+<style  url="text-editor.style"            />
+<style  url="text-editor-error-list.style" />
+
+<script url="text-editor.lua"              />
+<script url="text-editor-error-list.lua"   />
