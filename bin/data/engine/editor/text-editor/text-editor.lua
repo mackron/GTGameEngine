@@ -4,5 +4,14 @@ function GTGUI.Element:TextEditor()
     self.TextBox = GTGUI.Server.CreateElement(self, "text-editor-textbox");
     self.TextBox:MultiLineTextBox();
     
+    self.Panel = GTGUI.Server.CreateElement(self, "text-editor-panel");
+    self.Panel:TextEditorPanel(self);
+    
+    
+    function self:OnErrorSelected(lineNumber, message)
+        self.TextBox:GoToLine(lineNumber);
+    end
+    
+    
     return self;
 end

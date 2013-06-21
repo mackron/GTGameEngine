@@ -14,13 +14,25 @@ namespace GTEngine
 {
     TextEditor::TextEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
-          mainElement(nullptr), textArea(nullptr), textAreaEventHandler(new TextAreaEventHandler(this))
+          mainElement(nullptr), textArea(nullptr), panelElement(nullptr), errorListElement(nullptr),
+          textAreaEventHandler(new TextAreaEventHandler(this)),
+          compilationErrorHandler(*this),
+          isScriptFile(false)
     {
         GTCore::String fileContent;
         if (GTCore::IO::OpenAndReadTextFile(absolutePath, fileContent))
         {
             auto &gui    = this->GetGUI();
             auto &script = this->GetScript();
+
+            // We need to determine whether or not we are running a script.
+            auto extension = GTCore::Path::Extension(absolutePath);
+            assert(extension != nullptr);
+            {
+                this->isScriptFile = GTCore::Strings::Equal<false>(extension, "lua")    ||
+                                     GTCore::Strings::Equal<false>(extension, "script") ||
+                                     GTCore::Strings::Equal<false>(extension, "gtscript");
+            }
 
 
             // The file contents have been loaded, so now we need to create the text-box element that will display it.
@@ -48,7 +60,29 @@ namespace GTEngine
                     // environment so that the owner tab can be marked as modified.
                     this->textArea->AttachEventHandler(*this->textAreaEventHandler);
                 }
+
+                
+                // The panel.
+                this->panelElement = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').Panel:GetID();", this->mainElement->id).c_str()));
+                assert(this->panelElement != nullptr);
+                {
+                    // If we're editting a regular text file (not a script), we don't want to show the panel.
+                    if (!this->IsScriptFile())
+                    {
+                        this->panelElement->Hide();
+                    }
+                }
+
+
+                // Error list.
+                this->errorListElement = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').ErrorList:GetID();", this->panelElement->id).c_str()));
+                assert(this->errorListElement != nullptr);
+                {
+                }
             }
+
+            // Do an initial compilation.
+            this->CompileAndUpdateErrorOutput();
         }
     }
 
@@ -59,6 +93,39 @@ namespace GTEngine
     }
 
 
+    bool TextEditor::IsScriptFile() const
+    {
+        return this->isScriptFile;
+    }
+
+    void TextEditor::CompileAndUpdateErrorOutput()
+    {
+        if (this->IsScriptFile())
+        {
+            // The the error list first.
+            this->ClearErrorList();
+
+
+            // We use an isolated script here for compilation.
+            GTCore::Script script;
+            script.AttachErrorHandler(this->compilationErrorHandler);
+
+            script.Execute("self = {}");
+            script.Execute(this->textArea->GetText());
+        }
+    }
+
+    void TextEditor::OnScriptError(GTCore::Script &script, const char* message)
+    {
+        (void)script;
+
+        GTCore::ScriptErrorMessageIterator iError(message);
+        while (iError)
+        {
+            this->AddItemToErrorList(iError.lineNumber, iError.message.c_str());
+            ++iError;
+        }
+    }
 
 
     ///////////////////////////////////////////////////
@@ -95,13 +162,10 @@ namespace GTEngine
 
             // If the file was a script file, we want to do an immediate check for modifications so that any open scene editors can see
             // the changes seemlessly.
-            if (GTCore::Strings::Equal<false>(GTCore::Path::Extension(this->GetRelativePath()), "lua")    ||
-                GTCore::Strings::Equal<false>(GTCore::Path::Extension(this->GetRelativePath()), "script") ||
-                GTCore::Strings::Equal<false>(GTCore::Path::Extension(this->GetRelativePath()), "gtscript"))
+            if (this->IsScriptFile())
             {
-                auto &dataFilesWatcher = this->GetOwnerEditor().GetGame().GetDataFilesWatcher();
-                dataFilesWatcher.CheckForChanges(false);
-                dataFilesWatcher.DispatchEvents();
+                this->CompileAndUpdateErrorOutput();
+                this->GetOwnerEditor().GetGame().GetDataFilesWatcher().CheckForChangesAndDispatchEvents();
             }
         }
 
@@ -109,7 +173,54 @@ namespace GTEngine
     }
 
 
+    ///////////////////////////////////////////////////
+    // Private
 
+    void TextEditor::AddItemToErrorList(int lineNumber, const char* message)
+    {
+        auto &script = this->GetScript();
+
+        script.GetGlobal("GTGUI");
+        assert(script.IsTable(-1));
+        {
+            script.Push("Server");
+            script.GetTableValue(-2);
+            assert(script.IsTable(-1));
+            {
+                script.Push("GetElementByID");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.Push(this->errorListElement->id);
+                    script.Call(1, 1);
+                    {
+                        assert(script.IsTable(-1));
+                        {
+                            script.Push("AddItem");
+                            script.GetTableValue(-2);
+                            assert(script.IsFunction(-1));
+                            {
+                                script.PushValue(-2);    // 'self'
+                                script.Push(lineNumber);
+                                script.Push(message);
+                                script.Call(3, 0);
+                            }
+                        }
+                        script.Pop(1);      // <-- return value from GetElementByID().
+                    }
+                }
+            }
+            script.Pop(1);
+        }
+        script.Pop(1);
+    }
+
+    void TextEditor::ClearErrorList()
+    {
+        auto &script = this->GetScript();
+
+        script.Execute(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s'):Clear();", this->errorListElement->id).c_str());
+    }
 
 
 

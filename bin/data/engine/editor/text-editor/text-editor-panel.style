@@ -1,0 +1,27 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+text-editor-panel
+{
+    height:            200px
+    padding-top:       2px
+    
+    flex-child-height: true
+    
+    allow-mouse-resize: true
+    top-gripper-width:  4px
+}
+
+text-editor-panel-tabbar includes tabbar
+{
+    width:  100%
+    height: 22px
+}
+
+text-editor-panel-body
+{
+    width:            100%
+    height:           100%
+    
+    border:           1px #222
+    background-color: #363636
+}

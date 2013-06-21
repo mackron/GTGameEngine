@@ -3,7 +3,9 @@
 <include url="../sub-editor.xml" />
 
 <style  url="text-editor.style"            />
+<style  url="text-editor-panel.style"      />
 <style  url="text-editor-error-list.style" />
 
 <script url="text-editor.lua"              />
+<script url="text-editor-panel.lua"        />
 <script url="text-editor-error-list.lua"   />

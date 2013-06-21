@@ -6,6 +6,8 @@ text-editor
     height:            100%
     
     flex-child-height: true
+    
+    vertical-align:    bottom
 }
 
 text-editor-textbox includes multiline-textbox
