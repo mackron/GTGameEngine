@@ -19,14 +19,28 @@ namespace GTEngine
         ~TextEditor();
 
 
+        /// Determines whether or not the file being edited is a script file.
+        bool IsScriptFile() const;
+
+
+        /// Compiles the script file and updates the error output.
+        ///
+        /// @remarks
+        ///     This won't do anything if the file is not a script file.
+        void CompileAndUpdateErrorOutput();
+
+        /// Called by the compilation script error handler when there is an error.
+        ///
+        /// @param message [in] The error message.
+        void OnScriptError(GTCore::Script &script, const char* message);
 
 
         ///////////////////////////////////////////////////
         // Virtual Methods.
 
         /// SubEditor::GetMainElement()
-              GTGUI::Element* GetMainElement()        { return this->mainElement; }
-        const GTGUI::Element* GetMainElement( ) const { return this->mainElement; }
+              GTGUI::Element* GetMainElement()       { return this->mainElement; }
+        const GTGUI::Element* GetMainElement() const { return this->mainElement; }
 
         /// SubEditor::Show()
         void Show();
@@ -38,6 +52,19 @@ namespace GTEngine
         bool Save();
 
 
+
+    private:
+
+        /// Adds an error to the error list.
+        ///
+        /// @param lineNumber [in] The line number the error occurs on.
+        /// @param message    [in] The error message.
+        void AddItemToErrorList(int lineNumber, const char* message);
+
+        /// Clears the error list.
+        void ClearErrorList();
+
+
     private:
 
         /// The main text box element.
@@ -45,6 +72,13 @@ namespace GTEngine
 
         /// The text area element. This is a child of textBox.
         GTGUI::Element* textArea;
+
+        /// The panel element.
+        GTGUI::Element* panelElement;
+
+        /// The error list element.
+        GTGUI::Element* errorListElement;
+
 
         /// The event handler attached to the text area.
         struct TextAreaEventHandler : public GTGUI::ElementEventHandler
@@ -65,6 +99,37 @@ namespace GTEngine
             TextAreaEventHandler & operator=(const TextAreaEventHandler &);
 
         }*textAreaEventHandler;
+
+
+        /// The script compilation error handler that will be attached to the compilation script.
+        struct ScriptCompilationErrorHandler : public GTCore::ScriptErrorHandler
+        {
+            /// Constructor.
+            ScriptCompilationErrorHandler(TextEditor &ownerTextEditorIn)
+                : ownerTextEditor(ownerTextEditorIn)
+            {
+            }
+
+
+            /// ScriptErrorHandler::OnError()
+            void OnError(GTCore::Script &script, const char* message)
+            {
+                this->ownerTextEditor.OnScriptError(script, message);
+            }
+
+
+            /// A reference to the text editor that owns this error handler.
+            TextEditor &ownerTextEditor;
+
+        public:     // No copying
+            ScriptCompilationErrorHandler(const ScriptCompilationErrorHandler &);
+            ScriptCompilationErrorHandler & operator=(const ScriptCompilationErrorHandler &);
+
+        }compilationErrorHandler;
+
+
+        /// Keeps track of whether or not we are editting a script file.
+        bool isScriptFile;
 
 
     private:    // No copying.
