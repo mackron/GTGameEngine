@@ -222,7 +222,24 @@ function GTGUI.Element:DataExplorer()
     -- Shows the right-click context menu for the given item.
     function self:ShowContextMenu(item)
         if item.isDirectory then
-            self.FolderMenu:SetPosition(GTGUI.Server.GetMousePosition());
+            local mousePosX, mousePosY = GTGUI.Server.GetMousePosition();
+            local xPos           = mousePosX;
+            local yPos           = mousePosY;
+            local width          = self.FolderMenu:GetWidth();
+            local height         = self.FolderMenu:GetHeight();
+            local viewportWidth  = GTGUI.Server.GetViewportWidth();
+            local viewportHeight = GTGUI.Server.GetViewportHeight();
+        
+            if xPos + width > viewportWidth then
+                xPos = xPos - width;
+            end
+            
+            if yPos + height > viewportHeight then
+                yPos = yPos - height;
+            end
+        
+        
+            self.FolderMenu:SetPosition(xPos, yPos);
             self.FolderMenu:Show();
             self.FolderMenu.DestinationDirectory = item.path;
         end
