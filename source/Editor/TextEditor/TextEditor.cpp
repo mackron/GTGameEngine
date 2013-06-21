@@ -3,6 +3,7 @@
 #include <GTEngine/Editor/TextEditor/TextEditor.hpp>
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
+#include <GTEngine/Scripting.hpp>
 #include <GTCore/Path.hpp>
 
 #if defined(_MSC_VER)
@@ -16,7 +17,7 @@ namespace GTEngine
         : SubEditor(ownerEditor, absolutePath, relativePath),
           mainElement(nullptr), textArea(nullptr), panelElement(nullptr), errorListElement(nullptr),
           textAreaEventHandler(new TextAreaEventHandler(this)),
-          compilationErrorHandler(*this),
+          compilationErrorHandler(*this), compilationScript(),
           isScriptFile(false)
     {
         GTCore::String fileContent;
@@ -82,7 +83,19 @@ namespace GTEngine
             }
 
             // Do an initial compilation.
-            this->CompileAndUpdateErrorOutput();
+            if (this->IsScriptFile())
+            {
+                // We want to register the entire GTEngine scripting library here. The reason for this is that we want to allow scripts to be
+                // error free when they do stuff such as assign a variable to a math.vec3().
+                if (Scripting::LoadGTEngineScriptLibrary(this->compilationScript))
+                {
+                    // We need an error handler on the compilation script.
+                    this->compilationScript.AttachErrorHandler(this->compilationErrorHandler);
+
+                    // Only after we have registered the engine library do we want to try to compile.
+                    this->CompileAndUpdateErrorOutput();
+                }
+            }
         }
     }
 
@@ -105,26 +118,17 @@ namespace GTEngine
             // The the error list first.
             this->ClearErrorList();
 
-
-            // We use an isolated script here for compilation.
-            GTCore::Script script;
-            script.AttachErrorHandler(this->compilationErrorHandler);
-
-            script.Execute("self = {}");
-            script.Execute(this->textArea->GetText());
+            // Now we compile.
+            this->compilationScript.Execute("self = {}");
+            this->compilationScript.Execute(this->textArea->GetText(), this->GetAbsolutePath());
         }
     }
 
-    void TextEditor::OnScriptError(GTCore::Script &script, const char* message)
+    void TextEditor::OnScriptSyntaxError(GTCore::Script &script, int lineNumber, const char* message)
     {
         (void)script;
 
-        GTCore::ScriptErrorMessageIterator iError(message);
-        while (iError)
-        {
-            this->AddItemToErrorList(iError.lineNumber, iError.message.c_str());
-            ++iError;
-        }
+        this->AddItemToErrorList(lineNumber, message);
     }
 
 

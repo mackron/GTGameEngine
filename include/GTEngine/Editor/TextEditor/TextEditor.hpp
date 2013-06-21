@@ -32,7 +32,7 @@ namespace GTEngine
         /// Called by the compilation script error handler when there is an error.
         ///
         /// @param message [in] The error message.
-        void OnScriptError(GTCore::Script &script, const char* message);
+        void OnScriptSyntaxError(GTCore::Script &script, int lineNumber, const char* message);
 
 
         ///////////////////////////////////////////////////
@@ -112,9 +112,23 @@ namespace GTEngine
 
 
             /// ScriptErrorHandler::OnError()
-            void OnError(GTCore::Script &script, const char* message)
+            void OnError(GTCore::Script &, const char* message)
             {
-                this->ownerTextEditor.OnScriptError(script, message);
+                printf("%s\n", message);
+            }
+
+            /// ScriptErrorHandler::OnSyntaxError()
+            void OnSyntaxError(GTCore::Script &script, int lineNumber, const char* message)
+            {
+                this->ownerTextEditor.OnScriptSyntaxError(script, lineNumber, message);
+            }
+
+            /// ScriptErrorHandler::OnRuntimeError()
+            void OnRuntimeError(GTCore::Script &script, const char* sourceName, int lineNumber, const char* message, const GTCore::Vector<GTCore::ScriptCallstackItem> &callstack)
+            {
+                (void)sourceName;
+                (void)callstack;
+                this->ownerTextEditor.OnScriptSyntaxError(script, lineNumber, message);
             }
 
 
@@ -126,6 +140,11 @@ namespace GTEngine
             ScriptCompilationErrorHandler & operator=(const ScriptCompilationErrorHandler &);
 
         }compilationErrorHandler;
+
+
+        /// The script to use for doing the compilation check. This will have the standard library registered to it.
+        GTCore::Script compilationScript;
+
 
 
         /// Keeps track of whether or not we are editting a script file.
