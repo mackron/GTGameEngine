@@ -114,7 +114,8 @@ namespace GTEngine
             /// ScriptErrorHandler::OnError()
             void OnError(GTCore::Script &, const char* message)
             {
-                printf("%s\n", message);
+                (void)message;
+                //printf("%s\n", message);
             }
 
             /// ScriptErrorHandler::OnSyntaxError()
