@@ -159,6 +159,12 @@
     <Filter Include="source\DefaultSceneRenderer">
       <UniqueIdentifier>{db3e3a5b-d5b4-410f-bf2d-4c03dd205964}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\Editor\PackagingToolEditor">
+      <UniqueIdentifier>{eaef5642-dc6e-45ff-9c02-6246edf521e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Editor\PackagingToolEditor">
+      <UniqueIdentifier>{b7ab4d9d-8ce2-4f32-a2cf-9fb59978a7eb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
@@ -950,6 +956,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorPrefabLinker.hpp">
       <Filter>include\Editor\SceneEditor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\PackagingToolEditor\PackagingToolEditor.hpp">
+      <Filter>include\Editor\PackagingToolEditor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1626,6 +1635,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorPrefabLinker.cpp">
       <Filter>source\Editor\SceneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\PackagingToolEditor\PackagingToolEditor.cpp">
+      <Filter>source\Editor\PackagingToolEditor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

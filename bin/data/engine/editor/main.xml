@@ -33,6 +33,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <include url="particle-editor.xml" />
 <include url="scene-editor.xml"    />
 <include url="text-editor/text-editor.xml" />
+<include url="packaging-tool-editor/packaging-tool-editor.xml" />
 
 
 <script url="scripts/number-textbox.lua" />
@@ -149,7 +150,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
     -- Game
     Editor_MenuBar.Game = Editor_MenuBar:AppendItem("Game");
     Editor_MenuBar.Game.Package = Editor_MenuBar.Game.menu:AppendItem("Package for Distribution..."):OnPressed(function()
-        print("Not Yet Implemented...");
+        Editor.OpenPackagingTool();
+        Editor_MenuBar:CollapseMenu();
     end);
     
     -- Help

@@ -9,6 +9,7 @@
 #include "Editor/SceneEditor/SceneEditor.hpp"
 #include "Editor/ParticleEditor/ParticleEditor.hpp"
 #include "Editor/TextEditor/TextEditor.hpp"
+#include "Editor/PackagingToolEditor/PackagingToolEditor.hpp"
 #include "DataFilesWatcher.hpp"
 
 namespace GTGUI
@@ -93,6 +94,7 @@ namespace GTEngine
         /// Closes the currently shown file.
         void CloseCurrentlyShownFile();
 
+
         /// Shows the given file.
         ///
         /// @param path       [in] The path of the file. Can be relative or absolute; see remarks.
@@ -167,6 +169,9 @@ namespace GTEngine
         bool IsAnyOpenFileMarkedAsModified();
 
 
+        /// Opens the packaging tool.
+        SubEditor* OpenPackagingTool();
+
 
         /// Updates the menu buttons by enabling and disabling the buttons based on the modification state.
         void UpdateMenuButtonEnableStates();
@@ -237,6 +242,11 @@ namespace GTEngine
 
         /// Starts up the scripting environment for the editor.
         void StartupScripting();
+
+        /// Determines whether or not the given path is that of a special editor (packaging tool, etc).
+        ///
+        /// @param path [in] The path to check.
+        bool IsSpecialPath(const char* path) const;
 
 
     private:
@@ -339,6 +349,9 @@ namespace GTEngine
             static Game   & GetGame(GTCore::Script &script);
             static Editor & GetEditor(GTCore::Script &script);
 
+            static void PushElement(GTCore::Script &script, GTGUI::Element* element);
+
+
             static int Open(GTCore::Script &script);
             static int Close(GTCore::Script &script);
 
@@ -355,6 +368,7 @@ namespace GTEngine
             static int UnmarkFileAsModified(GTCore::Script &script);
             static int IsFileMarkedAsModified(GTCore::Script &script);
             static int GetCurrentlyShownEditor(GTCore::Script &script);
+            static int OpenPackagingTool(GTCore::Script &script);
         };
 
 

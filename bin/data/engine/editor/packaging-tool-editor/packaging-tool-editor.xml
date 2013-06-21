@@ -1,0 +1,7 @@
+<!-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file. -->
+
+<include url="../sub-editor.xml" />
+
+<style  url="packaging-tool-editor.style" />
+
+<script url="packaging-tool-editor.lua"   />
