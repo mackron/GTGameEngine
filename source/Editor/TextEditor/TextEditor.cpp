@@ -219,7 +219,37 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Execute(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s'):Clear();", this->errorListElement->id).c_str());
+        script.GetGlobal("GTGUI");
+        assert(script.IsTable(-1));
+        {
+            script.Push("Server");
+            script.GetTableValue(-2);
+            assert(script.IsTable(-1));
+            {
+                script.Push("GetElementByID");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.Push(this->errorListElement->id);
+                    script.Call(1, 1);
+                    {
+                        assert(script.IsTable(-1));
+                        {
+                            script.Push("Clear");
+                            script.GetTableValue(-2);
+                            assert(script.IsFunction(-1));
+                            {
+                                script.PushValue(-2);    // 'self'
+                                script.Call(1, 0);
+                            }
+                        }
+                        script.Pop(1);      // <-- return value from GetElementByID().
+                    }
+                }
+            }
+            script.Pop(1);
+        }
+        script.Pop(1);
     }
 
 
