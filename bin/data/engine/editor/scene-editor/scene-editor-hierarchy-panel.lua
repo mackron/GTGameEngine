@@ -73,9 +73,20 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
         
         
         -- The position of the context menu will depend on whether or not it fits in the viewport.
-        local xPos, yPos = GTGUI.Server.GetMousePosition();
-        if (xPos + self.ContextMenu:GetWidth()) > GTGUI.Server.GetViewportWidth() then
-            xPos = xPos - self.ContextMenu:GetWidth();
+        local mousePosX, mousePosY = GTGUI.Server.GetMousePosition();
+        local xPos           = mousePosX;
+        local yPos           = mousePosY;
+        local width          = self.ContextMenu:GetWidth();
+        local height         = self.ContextMenu:GetHeight();
+        local viewportWidth  = GTGUI.Server.GetViewportWidth();
+        local viewportHeight = GTGUI.Server.GetViewportHeight();
+    
+        if xPos + width > viewportWidth then
+            xPos = xPos - width;
+        end
+        
+        if yPos + height > viewportHeight then
+            yPos = yPos - height;
         end
         
         self.ContextMenu:SetPosition(xPos, yPos);
