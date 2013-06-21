@@ -17,6 +17,10 @@
 
 namespace GTEngine
 {
+    // The "paths" of special editors such as the packaging tool.
+    static const char* PackagingToolPath = "@PackagingTool";
+
+
     Editor::Editor(Game &game)
         : game(game),
           openedFiles(), currentlyShownEditor(nullptr),
@@ -206,35 +210,46 @@ namespace GTEngine
 
     SubEditor* Editor::OpenFile(const char* path, const char* relativeTo)
     {
+        bool isSpecialEditor = this->IsSpecialPath(path);
+
+
         // We need to make sure we have an absolute and relative path.
         GTCore::String absolutePath;
         GTCore::String relativePath;
 
-        if (GTCore::Path::IsAbsolute(path))
+        if (!isSpecialEditor)
         {
-            if (relativeTo != nullptr)
+            if (GTCore::Path::IsAbsolute(path))
             {
-                absolutePath = path;
-                relativePath = GTCore::IO::ToRelativePath(path, relativeTo);
+                if (relativeTo != nullptr)
+                {
+                    absolutePath = path;
+                    relativePath = GTCore::IO::ToRelativePath(path, relativeTo);
+                }
+                else
+                {
+                    // We're unable to retrieve the relative path because 'path' is absolute and 'relativeTo' is null.
+                    return nullptr;
+                }
             }
             else
             {
-                // We're unable to retrieve the relative path because 'path' is absolute and 'relativeTo' is null.
-                return nullptr;
+                // The file needs to exist. If it doesn't, we need to return false.
+                if (GTCore::IO::FindAbsolutePath(path, absolutePath))
+                {
+                    relativePath = path;
+                }
+                else
+                {
+                    GTEngine::PostError("Editor: Can not open file '%s'. Check that the file exists or if it's already in use.\n", path);
+                    return nullptr;
+                }
             }
         }
         else
         {
-            // The file needs to exist. If it doesn't, we need to return false.
-            if (GTCore::IO::FindAbsolutePath(path, absolutePath))
-            {
-                relativePath = path;
-            }
-            else
-            {
-                GTEngine::PostError("Editor: Can not open file '%s'. Check that the file exists or if it's already in use.\n", path);
-                return nullptr;
-            }
+            absolutePath = path;
+            relativePath = path;
         }
 
 
@@ -245,76 +260,90 @@ namespace GTEngine
         auto iExistingSubEditor = this->openedFiles.Find(absolutePath.c_str());
         if (iExistingSubEditor == nullptr)
         {
-            if (GTCore::IO::FileExists(absolutePath.c_str()))
+            if (!isSpecialEditor)
             {
-                // The file exists, so now we just create our sub-editor. The specific sub-editor will be based on the file name.
-                auto type = GTEngine::IO::GetAssetTypeFromExtension(absolutePath.c_str());
-
-                switch (type)
+                if (GTCore::IO::FileExists(absolutePath.c_str()))
                 {
-                case AssetType_Image:
+                    // The file exists, so now we just create our sub-editor. The specific sub-editor will be based on the file name.
+                    auto type = GTEngine::IO::GetAssetTypeFromExtension(absolutePath.c_str());
+
+                    switch (type)
                     {
-                        newSubEditor = new ImageEditor(*this, absolutePath.c_str(), relativePath.c_str());
-                        break;
-                    }
+                    case AssetType_Image:
+                        {
+                            newSubEditor = new ImageEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                            break;
+                        }
 
-                case AssetType_Model:
-                    {
-                        newSubEditor = new ModelEditor(*this, absolutePath.c_str(), relativePath.c_str());
-                        break;
-                    }
+                    case AssetType_Model:
+                        {
+                            newSubEditor = new ModelEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                            break;
+                        }
 
-                case AssetType_Material:
-                    {
-                        newSubEditor = new MaterialEditor(*this, absolutePath.c_str(), relativePath.c_str());
-                        break;
-                    }
-
-
-                case AssetType_Scene:
-                    {
-                        newSubEditor = new SceneEditor(*this, absolutePath.c_str(), relativePath.c_str());
-                        break;
-                    }
-
-                case AssetType_ParticleSystem:
-                    {
-                        newSubEditor = new ParticleEditor(*this, absolutePath.c_str(), relativePath.c_str());
-                        break;
-                    }
-
-                case AssetType_Script:
-                case AssetType_TextFile:
-                    {
-                        newSubEditor = new TextEditor(*this, absolutePath.c_str(), relativePath.c_str());
-                        break;
-                    }
+                    case AssetType_Material:
+                        {
+                            newSubEditor = new MaterialEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                            break;
+                        }
 
 
+                    case AssetType_Scene:
+                        {
+                            newSubEditor = new SceneEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                            break;
+                        }
 
-                case AssetType_Sound:
-                case AssetType_Prefab:
-                case AssetType_None:
-                default:
-                    {
-                        // If we get here it means we don't have a sub editor for the given asset type. We will post a warning and just create
-                        // a SubEditor object for it.
-                        GTEngine::Log("Warning: Editor: An editor is not currently supported for the given asset. '%s'.", path);
-                        newSubEditor = new SubEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                    case AssetType_ParticleSystem:
+                        {
+                            newSubEditor = new ParticleEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                            break;
+                        }
+
+                    case AssetType_Script:
+                    case AssetType_TextFile:
+                        {
+                            newSubEditor = new TextEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                            break;
+                        }
+
+
+                    case AssetType_Sound:
+                    case AssetType_Prefab:
+                    case AssetType_None:
+                    default:
+                        {
+                            // If we get here it means we don't have a sub editor for the given asset type. We will post a warning and just create
+                            // a SubEditor object for it.
+                            GTEngine::Log("Warning: Editor: An editor is not currently supported for the given asset. '%s'.", path);
+                            newSubEditor = new SubEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        }
                     }
                 }
+                else
+                {
+                    GTEngine::PostError("Editor: Can not open file '%s'. Does not exist.\n", path);
+                    return nullptr;
+                }
+            }
+            else
+            {
+                // Specials.
+                if (GTCore::Strings::Equal<false>(absolutePath.c_str(), PackagingToolPath))
+                {
+                    newSubEditor = new PackagingToolEditor(*this, absolutePath.c_str());
+                }
+            }
 
+
+            if (newSubEditor != nullptr)
+            {
                 // At this point we will have a sub-editor and all we need to do is add it to our list and show it.
                 this->openedFiles.Add(absolutePath.c_str(), newSubEditor);
 
                 // There is a center panel that needs to be shown. It is the center, center panel.
                 this->GUI.EditorCenterCenterPanel->Show();
                 this->GUI.EditorCenterCenterPanelHelp->Hide();
-            }
-            else
-            {
-                GTEngine::PostError("Editor: Can not open file '%s'. Does not exist.\n", path);
-                return nullptr;
             }
         }
         else
@@ -332,19 +361,21 @@ namespace GTEngine
     {
         GTCore::String absolutePath(path);
 
-        if (GTCore::Path::IsRelative(path))
+        if (!this->IsSpecialPath(path))
         {
-            if (relativeTo != nullptr)
+            if (GTCore::Path::IsRelative(path))
             {
-                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
-            }
-            else
-            {
-                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
-                return;
+                if (relativeTo != nullptr)
+                {
+                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                }
+                else
+                {
+                    // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                    return;
+                }
             }
         }
-
 
         // At this point we will have our absolute path. We need to retrieve the sub editor, and call it's hide function before we completely delete it.
         auto iEditor = this->openedFiles.Find(absolutePath.c_str());
@@ -410,23 +441,26 @@ namespace GTEngine
         }
     }
 
+
     bool Editor::ShowFile(const char* path, const char* relativeTo)
     {
         GTCore::String absolutePath(path);
 
-        if (GTCore::Path::IsRelative(path))
+        if (!this->IsSpecialPath(path))
         {
-            if (relativeTo != nullptr)
+            if (GTCore::Path::IsRelative(path))
             {
-                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
-            }
-            else
-            {
-                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
-                return false;
+                if (relativeTo != nullptr)
+                {
+                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                }
+                else
+                {
+                    // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                    return false;
+                }
             }
         }
-
 
         auto iEditorToShow = this->openedFiles.Find(absolutePath.c_str());
         if (iEditorToShow != nullptr)
@@ -509,19 +543,21 @@ namespace GTEngine
     {
         GTCore::String absolutePath(path);
 
-        if (GTCore::Path::IsRelative(path))
+        if (!this->IsSpecialPath(path))
         {
-            if (relativeTo != nullptr)
+            if (GTCore::Path::IsRelative(path))
             {
-                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
-            }
-            else
-            {
-                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
-                return false;
+                if (relativeTo != nullptr)
+                {
+                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                }
+                else
+                {
+                    // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                    return false;
+                }
             }
         }
-
 
         auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
         if (iSubEditor != nullptr)
@@ -570,19 +606,21 @@ namespace GTEngine
     {
         GTCore::String absolutePath(path);
 
-        if (GTCore::Path::IsRelative(path))
+        if (!this->IsSpecialPath(path))
         {
-            if (relativeTo != nullptr)
+            if (GTCore::Path::IsRelative(path))
             {
-                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
-            }
-            else
-            {
-                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
-                return;
+                if (relativeTo != nullptr)
+                {
+                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                }
+                else
+                {
+                    // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                    return;
+                }
             }
         }
-
 
         auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
         if (iSubEditor != nullptr)
@@ -600,19 +638,21 @@ namespace GTEngine
     {
         GTCore::String absolutePath(path);
 
-        if (GTCore::Path::IsRelative(path))
+        if (!this->IsSpecialPath(path))
         {
-            if (relativeTo != nullptr)
+            if (GTCore::Path::IsRelative(path))
             {
-                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
-            }
-            else
-            {
-                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
-                return;
+                if (relativeTo != nullptr)
+                {
+                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                }
+                else
+                {
+                    // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                    return;
+                }
             }
         }
-
 
         auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
         if (iSubEditor != nullptr)
@@ -631,19 +671,21 @@ namespace GTEngine
     {
         GTCore::String absolutePath(path);
 
-        if (GTCore::Path::IsRelative(path))
+        if (!this->IsSpecialPath(path))
         {
-            if (relativeTo != nullptr)
+            if (GTCore::Path::IsRelative(path))
             {
-                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
-            }
-            else
-            {
-                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
-                return false;
+                if (relativeTo != nullptr)
+                {
+                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                }
+                else
+                {
+                    // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                    return false;
+                }
             }
         }
-
 
         auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
         if (iSubEditor != nullptr)
@@ -673,6 +715,12 @@ namespace GTEngine
         }
 
         return false;
+    }
+
+
+    SubEditor* Editor::OpenPackagingTool()
+    {
+        return this->OpenFile(PackagingToolPath);
     }
 
 
@@ -712,19 +760,21 @@ namespace GTEngine
     {
         GTCore::String absolutePath(path);
 
-        if (GTCore::Path::IsRelative(path))
+        if (!this->IsSpecialPath(path))
         {
-            if (relativeTo != nullptr)
+            if (GTCore::Path::IsRelative(path))
             {
-                absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
-            }
-            else
-            {
-                // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
-                return nullptr;
+                if (relativeTo != nullptr)
+                {
+                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                }
+                else
+                {
+                    // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                    return nullptr;
+                }
             }
         }
-
 
         auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
         if (iSubEditor != nullptr)
@@ -925,13 +975,14 @@ namespace GTEngine
 
         script.Execute
         (
-            "Editor.ImageEditor    = {};"
-            "Editor.ModelEditor    = {};"
-            "Editor.MaterialEditor = {};"
-            "Editor.SoundEditor    = {};"
-            "Editor.ParticleEditor = {};"
-            "Editor.SceneEditor    = {};"
-            "Editor.TextEditor     = {};"
+            "Editor.ImageEditor       = {};"
+            "Editor.ModelEditor       = {};"
+            "Editor.MaterialEditor    = {};"
+            "Editor.SoundEditor       = {};"
+            "Editor.ParticleEditor    = {};"
+            "Editor.SceneEditor       = {};"
+            "Editor.TextEditor        = {};"
+            "Editor.PackingToolEditor = {};"
         );
 
         script.GetGlobal("Editor");
@@ -953,10 +1004,16 @@ namespace GTEngine
             script.SetTableFunction(-1, "UnmarkFileAsModified",     FFI::UnmarkFileAsModified);
             script.SetTableFunction(-1, "IsFileMarkedAsModified",   FFI::IsFileMarkedAsModified);
             script.SetTableFunction(-1, "GetCurrentlyShownEditor",  FFI::GetCurrentlyShownEditor);
+            script.SetTableFunction(-1, "OpenPackagingTool",        FFI::OpenPackagingTool);
         }
         script.Pop(1);
     }
 
+
+    bool Editor::IsSpecialPath(const char* path) const
+    {
+        return GTCore::Strings::Equal<false>(path, PackagingToolPath);
+    }
 
 
     /////////////////////////////////////////////
@@ -974,6 +1031,38 @@ namespace GTEngine
     Editor & Editor::FFI::GetEditor(GTCore::Script &script)
     {
         return GetGame(script).GetEditor();
+    }
+
+
+    void Editor::FFI::PushElement(GTCore::Script &script, GTGUI::Element* element)
+    {
+        if (element != nullptr)
+        {
+            script.GetGlobal("GTGUI");
+            assert(script.IsTable(-1));
+            {
+                script.Push("Server");
+                script.GetTableValue(-2);
+                assert(script.IsTable(-1));
+                {
+                    script.Push("GetElementByID");
+                    script.GetTableValue(-2);
+                    assert(script.IsFunction(-1));
+                    {
+                        script.Push(element->id);
+                        script.Call(1, 1);
+
+                        script.InsertIntoStack(-3);     // <-- The final return value.
+                    }
+                }
+                script.Pop(1);
+            }
+            script.Pop(1);
+        }
+        else
+        {
+            script.PushNil();
+        }
     }
 
 
@@ -995,34 +1084,7 @@ namespace GTEngine
         auto subEditor = FFI::GetEditor(script).OpenFile(script.ToString(1), script.ToString(2));
         if (subEditor != nullptr)
         {
-            auto element = subEditor->GetMainElement();
-            if (element != nullptr)
-            {
-                script.GetGlobal("GTGUI");
-                assert(script.IsTable(-1));
-                {
-                    script.Push("Server");
-                    script.GetTableValue(-2);
-                    assert(script.IsTable(-1));
-                    {
-                        script.Push("GetElementByID");
-                        script.GetTableValue(-2);
-                        assert(script.IsFunction(-1));
-                        {
-                            script.Push(element->id);
-                            script.Call(1, 1);
-
-                            script.InsertIntoStack(-3);     // <-- The final return value.
-                        }
-                    }
-                    script.Pop(1);
-                }
-                script.Pop(1);
-            }
-            else
-            {
-                script.PushNil();
-            }
+            Editor::FFI::PushElement(script, subEditor->GetMainElement());
         }
         else
         {
@@ -1103,34 +1165,22 @@ namespace GTEngine
         auto subEditor = FFI::GetEditor(script).GetCurrentlyShownEditor();
         if (subEditor != nullptr)
         {
-            auto element = subEditor->GetMainElement();
-            if (element != nullptr)
-            {
-                script.GetGlobal("GTGUI");
-                assert(script.IsTable(-1));
-                {
-                    script.Push("Server");
-                    script.GetTableValue(-2);
-                    assert(script.IsTable(-1));
-                    {
-                        script.Push("GetElementByID");
-                        script.GetTableValue(-2);
-                        assert(script.IsFunction(-1));
-                        {
-                            script.Push(element->id);
-                            script.Call(1, 1);
+            Editor::FFI::PushElement(script, subEditor->GetMainElement());
+        }
+        else
+        {
+            script.PushNil();
+        }
 
-                            script.InsertIntoStack(-3);     // <-- The final return value.
-                        }
-                    }
-                    script.Pop(1);
-                }
-                script.Pop(1);
-            }
-            else
-            {
-                script.PushNil();
-            }
+        return 1;
+    }
+
+    int Editor::FFI::OpenPackagingTool(GTCore::Script &script)
+    {
+        auto subEditor = FFI::GetEditor(script).OpenPackagingTool();
+        if (subEditor != nullptr)
+        {
+            Editor::FFI::PushElement(script, subEditor->GetMainElement());
         }
         else
         {
