@@ -14,7 +14,7 @@ namespace GTEngine
 {
     TextEditor::TextEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
-          textBox(nullptr), textArea(nullptr), textAreaEventHandler(new TextAreaEventHandler(this))
+          mainElement(nullptr), textArea(nullptr), textAreaEventHandler(new TextAreaEventHandler(this))
     {
         GTCore::String fileContent;
         if (GTCore::IO::OpenAndReadTextFile(absolutePath, fileContent))
@@ -24,16 +24,16 @@ namespace GTEngine
 
 
             // The file contents have been loaded, so now we need to create the text-box element that will display it.
-            this->textBox = gui.CreateElement("<div parentid='Editor_SubEditorContainer' styleclass='text-editor-text-area' />");
-            assert(this->textBox != nullptr);
+            this->mainElement = gui.CreateElement("<div parentid='Editor_SubEditorContainer' styleclass='text-editor' />");
+            assert(this->mainElement != nullptr);
             {
                 // The element has been created, but we need to execute a script to have it turn into a proper multi-line text box.
-                script.Execute(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s'):MultiLineTextBox();", this->textBox->id).c_str());
+                script.Execute(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s'):TextEditor();", this->mainElement->id).c_str());
 
 
                 // Now what we need to do is actually set the text. This will be much quicker if done on the C++ side so that the script parser doesn't need to
                 // parse potentially very large files.
-                this->textArea = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextArea:GetID();", this->textBox->id).c_str()));
+                this->textArea = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextBox.TextArea:GetID();", this->mainElement->id).c_str()));
                 assert(this->textArea != nullptr);
                 {
                     this->textArea->SetText(fileContent.c_str());
@@ -54,7 +54,7 @@ namespace GTEngine
 
     TextEditor::~TextEditor()
     {
-        this->GetGUI().DeleteElement(this->textBox);
+        this->GetGUI().DeleteElement(this->mainElement);
         delete this->textAreaEventHandler;
     }
 
@@ -66,13 +66,13 @@ namespace GTEngine
 
     void TextEditor::Show()
     {
-        this->textBox->Show();
+        this->mainElement->Show();
         this->GetGUI().FocusElement(this->textArea);
     }
 
     void TextEditor::Hide()
     {
-        this->textBox->Hide();
+        this->mainElement->Hide();
     }
 
     bool TextEditor::Save()

@@ -32,6 +32,7 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <include url="material-editor.xml" />
 <include url="particle-editor.xml" />
 <include url="scene-editor.xml"    />
+<include url="text-editor/text-editor.xml" />
 
 
 <script url="scripts/number-textbox.lua" />
