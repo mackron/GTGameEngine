@@ -102,7 +102,7 @@ packaging-tool-editor-build-button:pushed
 
 packaging-tool-editor-build-message
 {
-    margin-top:  10px
+    margin-top:  20px
     margin-left: 20px
     
     text-color:  #aaa

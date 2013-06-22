@@ -544,18 +544,6 @@ namespace GTEngine
             for (size_t iDataDirectory = 0; iDataDirectory < absoluteDataDirectories.count; ++iDataDirectory)
             {
                 packager.CopyDataDirectory(absoluteDataDirectories[iDataDirectory].c_str());
-
-                /*
-                GTCore::String absoluteDataDirectory = absoluteDataDirectories[iDataDirectory];
-                GTCore::String directoryName         = GTCore::IO::FileName(absoluteDataDirectory.c_str());
-
-                GTCore::IO::FileIterator iFile((absoluteDataDirectory + "/.*").c_str());
-                while (iFile)
-                {
-                    printf("%s\n", iFile.name);
-                    ++iFile;
-                }
-                */
             }
         }
 
@@ -569,6 +557,16 @@ namespace GTEngine
             {
                 packager.CopyExecutable(this->GetExecutableAbsolutePath(), (GTCore::String(executableName) + ".exe").c_str());
             }
+
+            // This is the Windows build. We need to check for OpenAL32.dll, also.
+            GTCore::Path openAL32SourcePath(this->GetExecutableDirectoryAbsolutePath());
+            openAL32SourcePath.Append("OpenAL32.dll");
+
+            GTCore::Path openAL32DestinationPath(executableName);
+            openAL32DestinationPath.RemoveLast();
+            openAL32DestinationPath.Append("OpenAL32.dll");
+
+            packager.CopyFile(openAL32SourcePath.c_str(), openAL32DestinationPath.c_str());
         }
         else
         {
@@ -579,6 +577,7 @@ namespace GTEngine
 
         return true;
     }
+
 
 
     void Game::OnFileInsert(const DataFilesWatcher::Item &item)
