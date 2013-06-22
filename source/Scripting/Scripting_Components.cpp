@@ -144,6 +144,10 @@ namespace GTEngine
                 "    GTEngine.System.ModelComponent.StopAnimation(self._internalPtr);"
                 "end;"
 
+                "function GTEngine.ModelComponent:GetBoneTransformByName(boneName)"
+                "    return GTEngine.System.ModelComponent.GetBoneTransformByName(self._internalPtr, boneName);"
+                "end;"
+
 
 
 
@@ -895,6 +899,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "PlayAnimationSequence",      ModelComponentFFI::PlayAnimationSequence);
                             script.SetTableFunction(-1, "PauseAnimation",             ModelComponentFFI::PauseAnimation);
                             script.SetTableFunction(-1, "StopAnimation",              ModelComponentFFI::StopAnimation);
+                            script.SetTableFunction(-1, "GetBoneTransformByName",     ModelComponentFFI::GetBoneTransformByName);
                         }
                         script.Pop(1);
 
@@ -1421,6 +1426,55 @@ namespace GTEngine
                 }
 
                 return 0;
+            }
+
+
+            int GetBoneTransformByName(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    auto model = component->GetModel();
+                    if (model != nullptr)
+                    {
+                        auto bone = model->GetBoneByName(script.ToString(2), nullptr);
+                        if (bone != nullptr)
+                        {
+                            glm::vec3 position;
+                            glm::quat orientation;
+                            glm::vec3 scale;
+                            bone->GetAbsoluteTransformComponents(position, orientation, scale);
+
+                            script.PushNewTable();
+                            
+                            script.Push("position");
+                            PushNewVector3(script, position);
+                            script.SetTableValue(-3);
+
+                            script.Push("orientation");
+                            PushNewQuaternion(script, orientation);
+                            script.SetTableValue(-3);
+
+                            script.Push("scale");
+                            PushNewVector3(script, scale);
+                            script.SetTableValue(-3);
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+                    }
+                    else
+                    {
+                        script.PushNil();
+                    }
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
             }
         }
 
