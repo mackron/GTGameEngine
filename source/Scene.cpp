@@ -593,6 +593,30 @@ namespace GTEngine
     }
 
 
+    SceneNode* Scene::GetSceneNodeByName(const char* sceneNodeName)
+    {
+        return this->sceneNodes.FindByName(sceneNodeName);
+    }
+
+    const SceneNode* Scene::GetSceneNodeByName(const char* sceneNodeName) const
+    {
+        return this->sceneNodes.FindByName(sceneNodeName);
+    }
+
+
+    uint64_t Scene::GetSceneNodeIDByName(const char* sceneNodeName) const
+    {
+        auto sceneNode = this->GetSceneNodeByName(sceneNodeName);
+        if (sceneNode != nullptr)
+        {
+            return sceneNode->GetID();
+        }
+
+        return 0;
+    }
+
+
+
     size_t Scene::GetSceneNodeCount() const
     {
         return this->sceneNodes.GetCount();

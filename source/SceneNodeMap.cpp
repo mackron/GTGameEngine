@@ -163,6 +163,32 @@ namespace GTEngine
     }
 
 
+    SceneNode* SceneNodeMap::FindByName(const char* sceneNodeName, size_t &index) const
+    {
+        for (size_t i = 0; i < this->count; ++i)
+        {
+            auto sceneNode = this->buffer[i];
+            assert(sceneNode != nullptr);
+            {
+                if (GTCore::Strings::Equal(sceneNode->GetName(), sceneNodeName))
+                {
+                    index = i;
+                    return sceneNode;
+                }
+            }
+        }
+
+        index = 0;
+        return nullptr;
+    }
+
+    SceneNode* SceneNodeMap::FindByName(const char* sceneNodeName) const
+    {
+        size_t devnull;
+        return this->FindByName(sceneNodeName, devnull);
+    }
+
+
     bool SceneNodeMap::Exists(uint64_t sceneNodeID) const
     {
         return this->FindByID(sceneNodeID) != nullptr;

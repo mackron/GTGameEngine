@@ -55,7 +55,7 @@ namespace GTEngine
 
         /// Finds a scene node by it's ID.
         ///
-        /// @param sceneNodeID [in] The id of the scene node to search for.
+        /// @param sceneNodeID [in] The ID of the scene node to search for.
         /// @param index       [out] A reference to the variable that will receive the buffer index of the scene node, or the index to insert a new item at.
         ///
         /// @return A pointer to the scene node
@@ -64,6 +64,17 @@ namespace GTEngine
         ///     If this returns null, 'index' will receive the index to insert a new scene node at.
         SceneNode* FindByID(uint64_t sceneNodeID, size_t &index) const;
         SceneNode* FindByID(uint64_t sceneNodeID) const;
+
+        /// Finds the first scene node with the given name.
+        ///
+        /// @param sceneNodeName [in] The name of the scene node to search for.
+        /// @param index         [out] A reference to the variable that will receive the buffer index of the scene node.
+        ///
+        /// @remarks
+        ///     This runs in linear time.
+        SceneNode* FindByName(const char* sceneNodeName, size_t &index) const;
+        SceneNode* FindByName(const char* sceneNodeName) const;
+
 
 
         /// Determines whether or not a scene node of the given ID exists in the container.

@@ -306,6 +306,15 @@ namespace GTEngine
               SceneNode* GetSceneNodeByID(uint64_t sceneNodeID);
         const SceneNode* GetSceneNodeByID(uint64_t sceneNodeID) const;
 
+        /// Retrieves the first scene node with the given name.
+              SceneNode* GetSceneNodeByName(const char* sceneNode);
+        const SceneNode* GetSceneNodeByName(const char* sceneNode) const;
+
+        /// Retrieves the ID of the first scene node with the given name.
+        ///
+        /// @return The ID of the first scene node with the given name, or 0 if the scene node can not be found.
+        uint64_t GetSceneNodeIDByName(const char* sceneNode) const;
+
 
         /// Retrieves the number of scene nodes in the scene.
         size_t GetSceneNodeCount() const;
