@@ -87,8 +87,20 @@ namespace GTEngine
                 "    return self:InstantiateSceneNode(sceneNodeID);"
                 "end;"
 
+                "function GTEngine.Scene:GetSceneNodeByName(sceneNodeName)"
+                "    return self:GetSceneNodeByID(self:GetSceneNodeIDByName(sceneNodeName));"
+                "end;"
+
                 "function GTEngine.Scene:GetSceneNodePtrByID(sceneNodeID)"
                 "    return GTEngine.System.Scene.GetSceneNodePtrByID(self._internalPtr, sceneNodeID);"
+                "end;"
+
+                "function GTEngine.Scene:GetSceneNodePtrByName(sceneNodeName)"
+                "    return GTEngine.System.Scene.GetSceneNodePtrByName(self._internalPtr, sceneNodeName);"
+                "end;"
+
+                "function GTEngine.Scene:GetSceneNodeIDByName(sceneNodeName)"
+                "    return GTEngine.System.Scene.GetSceneNodeIDByName(self._internalPtr, sceneNodeName);"
                 "end;"
 
 
@@ -245,6 +257,8 @@ namespace GTEngine
                             script.SetTableFunction(-1, "CreateNewSceneNode",             SceneFFI::CreateNewSceneNode);
                             script.SetTableFunction(-1, "GetSceneNodePtrs",               SceneFFI::GetSceneNodePtrs);
                             script.SetTableFunction(-1, "GetSceneNodePtrByID",            SceneFFI::GetSceneNodePtrByID);
+                            script.SetTableFunction(-1, "GetSceneNodePtrByName",          SceneFFI::GetSceneNodePtrByName);
+                            script.SetTableFunction(-1, "GetSceneNodeIDByName",           SceneFFI::GetSceneNodeIDByName);
                             script.SetTableFunction(-1, "IsPaused",                       SceneFFI::IsPaused);
                             script.SetTableFunction(-1, "SetViewportCamera",              SceneFFI::SetViewportCamera);
                             script.SetTableFunction(-1, "ApplyViewportCameraAspectRatio", SceneFFI::ApplyViewportCameraAspectRatio);
@@ -427,6 +441,36 @@ namespace GTEngine
                 if (scene != nullptr)
                 {
                     script.Push(scene->GetSceneNodeByID(static_cast<uint64_t>(script.ToInteger(2))));
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
+            }
+
+            int GetSceneNodePtrByName(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    script.Push(scene->GetSceneNodeByName(script.ToString(2)));
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
+            }
+
+            int GetSceneNodeIDByName(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    script.Push(static_cast<int>(scene->GetSceneNodeIDByName(script.ToString(2))));
                 }
                 else
                 {

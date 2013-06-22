@@ -71,6 +71,20 @@ namespace GTEngine
             ///     Argument 2: The scene node ID.
             int GetSceneNodePtrByID(GTCore::Script &script);
 
+            /// Retrieves the first occurance of the scene node with the given name.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            ///     Argument 2: The name of the scene node.
+            int GetSceneNodePtrByName(GTCore::Script &script);
+
+            /// Retrieves the ID of the first occurance of the scene node with the given name.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            ///     Argument 2: The name of the scene node.
+            int GetSceneNodeIDByName(GTCore::Script &script);
+
 
             /// Determines if the scene is paused.
             ///
