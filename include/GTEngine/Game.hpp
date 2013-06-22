@@ -92,6 +92,17 @@ namespace GTEngine
         ///     the game has actually closed.
         void Close();
 
+
+        /// Retrieves the absolute path of the directory containing the executable.
+        ///
+        /// @remarks
+        ///     The return value will not include the executable file name.
+        const char* GetExecutableDirectoryAbsolutePath() const;
+
+        /// Retrieves the absolute path of the executable file.
+        const char* GetExecutableAbsolutePath() const;
+
+
         /// Sends an event to the game.
         ///
         /// @remarks
@@ -309,6 +320,13 @@ namespace GTEngine
               Profiler & GetProfiler()       { return this->profiler; }
         const Profiler & GetProfiler() const { return this->profiler; }
 
+
+
+        /// Packages the game for distribution.
+        ///
+        /// @param outputDirectory [in] The output directory, relative to the running directory.
+        /// @param executableName  [in] The name of the executable.
+        bool PackageForDistribution(const char* outputDirectory, const char* executableName);
 
 
 
@@ -603,6 +621,14 @@ namespace GTEngine
 
         /// Keeps track of whether or not the game is closing.
         bool closing;
+
+        
+        /// The absolute path of the executable.
+        GTCore::String executablePath;
+
+        /// The absolute path of the directory containing the executable.
+        GTCore::String executableDirectoryPath;
+
 
         /// The list of events that are queued and ready for processing.
         GameEventQueue eventQueue;

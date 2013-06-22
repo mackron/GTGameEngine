@@ -15,6 +15,7 @@
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Scripting.hpp>
 #include <GTEngine/IO.hpp>
+#include <GTEngine/GamePackager.hpp>
 #include <GTCore/System.hpp>
 #include <GTCore/Strings/Tokenizer.hpp>
 #include <GTCore/String.hpp>
@@ -32,7 +33,9 @@
 namespace GTEngine
 {
     Game::Game()
-        : isInitialised(false), closing(false), eventQueue(), eventQueueLock(),
+        : isInitialised(false), closing(false),
+          executablePath(), executableDirectoryPath(),
+          eventQueue(), eventQueueLock(),
           window(nullptr), windowEventHandler(*this),
           script(*this),
           updateThread(nullptr), updateJob(*this),
@@ -88,6 +91,18 @@ namespace GTEngine
         // There's no need to cache this event...
         this->closing = true;
     }
+
+
+    const char* Game::GetExecutableDirectoryAbsolutePath() const
+    {
+        return this->executableDirectoryPath.c_str();
+    }
+
+    const char* Game::GetExecutableAbsolutePath() const
+    {
+        return this->executablePath.c_str();
+    }
+
 
     void Game::SendEvent(const GameEvent &e)
     {
@@ -504,6 +519,68 @@ namespace GTEngine
 
 
 
+    bool Game::PackageForDistribution(const char* outputDirectory, const char* executableName)
+    {
+        GTCore::Path absoluteOutputDirectory(this->GetExecutableDirectoryAbsolutePath());
+        absoluteOutputDirectory.Append(outputDirectory);
+
+        // We will start by creating the output directory.
+        if (!GTCore::IO::DirectoryExists(absoluteOutputDirectory.c_str()))
+        {
+            if (!GTCore::IO::CreateDirectory(absoluteOutputDirectory.c_str()))
+            {
+                // Failed to create the output directory.
+                return false;
+            }
+        }
+
+
+        GTEngine::GamePackager packager(absoluteOutputDirectory.c_str());
+
+
+        // We will start by copying over the data directories.
+        auto &absoluteDataDirectories = ApplicationConfig::GetDataDirectories();
+        {
+            for (size_t iDataDirectory = 0; iDataDirectory < absoluteDataDirectories.count; ++iDataDirectory)
+            {
+                packager.CopyDataDirectory(absoluteDataDirectories[iDataDirectory].c_str());
+
+                /*
+                GTCore::String absoluteDataDirectory = absoluteDataDirectories[iDataDirectory];
+                GTCore::String directoryName         = GTCore::IO::FileName(absoluteDataDirectory.c_str());
+
+                GTCore::IO::FileIterator iFile((absoluteDataDirectory + "/.*").c_str());
+                while (iFile)
+                {
+                    printf("%s\n", iFile.name);
+                    ++iFile;
+                }
+                */
+            }
+        }
+
+        if (GTCore::Path::ExtensionEqual(this->GetExecutableAbsolutePath(), "exe"))
+        {
+            if (GTCore::Path::ExtensionEqual(executableName, "exe"))
+            {
+                packager.CopyExecutable(this->GetExecutableAbsolutePath(), executableName);
+            }
+            else
+            {
+                packager.CopyExecutable(this->GetExecutableAbsolutePath(), (GTCore::String(executableName) + ".exe").c_str());
+            }
+        }
+        else
+        {
+            packager.CopyExecutable(this->GetExecutableAbsolutePath(), executableName);
+        }
+
+        packager.WriteConfig();
+
+        return true;
+    }
+
+
     void Game::OnFileInsert(const DataFilesWatcher::Item &item)
     {
         (void)item;
@@ -711,6 +788,9 @@ namespace GTEngine
     {
         // We'll need to grab the command line because the first thing we're going to do is load any user scripts into the scripting environment.
         GTCore::CommandLine cmdLine(argc, argv);
+
+        this->executablePath          = cmdLine.GetExecutablePath();
+        this->executableDirectoryPath = cmdLine.GetApplicationDirectory();
 
         // The first thing we do is load up the scripting environment. We do this first because it will contain configuration properties
         // for things later on.

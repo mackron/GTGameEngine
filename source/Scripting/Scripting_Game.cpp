@@ -130,24 +130,27 @@ namespace GTEngine
             script.GetGlobal("Game");
             assert(script.IsTable(-1));
             {
-                script.SetTableFunction(-1, "Close",                   GameFFI::Close);
-                script.SetTableFunction(-1, "Pause",                   GameFFI::Pause);
-                script.SetTableFunction(-1, "Resume",                  GameFFI::Resume);
-                script.SetTableFunction(-1, "EnableFullscreen",        GameFFI::EnableFullscreen);
-                script.SetTableFunction(-1, "DisableFullscreen",       GameFFI::DisableFullscreen);
-                script.SetTableFunction(-1, "OpenEditor",              GameFFI::OpenEditor);
-                script.SetTableFunction(-1, "CloseEditor",             GameFFI::CloseEditor);
-                script.SetTableFunction(-1, "ShowDebug",               GameFFI::ShowDebug);
-                script.SetTableFunction(-1, "HideDebug",               GameFFI::HideDebug);
-                script.SetTableFunction(-1, "IsKeyDown",               GameFFI::IsKeyDown);
-                script.SetTableFunction(-1, "IsMouseButtonDown",       GameFFI::IsMouseButtonDown);
-                script.SetTableFunction(-1, "CaptureMouse",            GameFFI::CaptureMouse);
-                script.SetTableFunction(-1, "ReleaseMouse",            GameFFI::ReleaseMouse);
-                script.SetTableFunction(-1, "IsMouseCaptured",         GameFFI::IsMouseCaptured);
-                script.SetTableFunction(-1, "GetMouseOffset",          GameFFI::GetMouseOffset);
-                script.SetTableFunction(-1, "ScanDataFilesForChanges", GameFFI::ScanDataFilesForChanges);
-                script.SetTableFunction(-1, "GetGameWindowGUIElement", GameFFI::GetGameWindowGUIElement);
-                script.SetTableFunction(-1, "LoadScene",               GameFFI::LoadScene);
+                script.SetTableFunction(-1, "GetExecutableDirectoryAbsolutePath", GameFFI::GetExecutableDirectoryAbsolutePath);
+                script.SetTableFunction(-1, "GetExecutableAbsolutePath",          GameFFI::GetExecutableAbsolutePath);
+                script.SetTableFunction(-1, "Close",                              GameFFI::Close);
+                script.SetTableFunction(-1, "Pause",                              GameFFI::Pause);
+                script.SetTableFunction(-1, "Resume",                             GameFFI::Resume);
+                script.SetTableFunction(-1, "EnableFullscreen",                   GameFFI::EnableFullscreen);
+                script.SetTableFunction(-1, "DisableFullscreen",                  GameFFI::DisableFullscreen);
+                script.SetTableFunction(-1, "OpenEditor",                         GameFFI::OpenEditor);
+                script.SetTableFunction(-1, "CloseEditor",                        GameFFI::CloseEditor);
+                script.SetTableFunction(-1, "ShowDebug",                          GameFFI::ShowDebug);
+                script.SetTableFunction(-1, "HideDebug",                          GameFFI::HideDebug);
+                script.SetTableFunction(-1, "IsKeyDown",                          GameFFI::IsKeyDown);
+                script.SetTableFunction(-1, "IsMouseButtonDown",                  GameFFI::IsMouseButtonDown);
+                script.SetTableFunction(-1, "CaptureMouse",                       GameFFI::CaptureMouse);
+                script.SetTableFunction(-1, "ReleaseMouse",                       GameFFI::ReleaseMouse);
+                script.SetTableFunction(-1, "IsMouseCaptured",                    GameFFI::IsMouseCaptured);
+                script.SetTableFunction(-1, "GetMouseOffset",                     GameFFI::GetMouseOffset);
+                script.SetTableFunction(-1, "ScanDataFilesForChanges",            GameFFI::ScanDataFilesForChanges);
+                script.SetTableFunction(-1, "GetGameWindowGUIElement",            GameFFI::GetGameWindowGUIElement);
+                script.SetTableFunction(-1, "LoadScene",                          GameFFI::LoadScene);
+                script.SetTableFunction(-1, "PackageForDistribution",             GameFFI::PackageForDistribution);
 
                 // TODO: Move these to GTEngine.
                 script.SetTableFunction(-1, "ExecuteFile",        GameFFI::ExecuteFile);
@@ -176,6 +179,19 @@ namespace GTEngine
 
                 assert(game != nullptr);
                 return *game;
+            }
+
+
+            int GetExecutableDirectoryAbsolutePath(GTCore::Script &script)
+            {
+                script.Push(GetGame(script).GetExecutableDirectoryAbsolutePath());
+                return 1;
+            }
+
+            int GetExecutableAbsolutePath(GTCore::Script &script)
+            {
+                script.Push(GetGame(script).GetExecutableAbsolutePath());
+                return 1;
             }
 
 
@@ -316,6 +332,12 @@ namespace GTEngine
                 return 1;
             }
 
+
+            int PackageForDistribution(GTCore::Script &script)
+            {
+                script.Push(GetGame(script).PackageForDistribution(script.ToString(1), script.ToString(2)));
+                return 1;
+            }
 
 
 
