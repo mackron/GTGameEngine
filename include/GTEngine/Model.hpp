@@ -154,6 +154,12 @@ namespace GTEngine
         Bone* GetBoneByName(const char* name, size_t* indexOut);
         Bone* GetBoneByName(const char* name) { return this->GetBoneByName(name, nullptr); }
 
+        /// Retrieves a bone by it's index.
+        ///
+        /// @param index [in] The index of the bone.
+        Bone* GetBoneByIndex(size_t index);
+
+
 
     private:
 

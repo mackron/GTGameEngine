@@ -660,6 +660,11 @@ namespace GTEngine
 
         return nullptr;
     }
+
+    Bone* Model::GetBoneByIndex(size_t boneIndex)
+    {
+        return this->bones[boneIndex];
+    }
 }
 
 

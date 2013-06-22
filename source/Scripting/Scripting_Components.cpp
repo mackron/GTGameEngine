@@ -148,6 +148,14 @@ namespace GTEngine
                 "    return GTEngine.System.ModelComponent.GetBoneTransformByName(self._internalPtr, boneName);"
                 "end;"
 
+                "function GTEngine.ModelComponent:GetBoneTransformByIndex(boneIndex)"
+                "    return GTEngine.System.ModelComponent.GetBoneTransformByIndex(self._internalPtr, boneIndex);"
+                "end;"
+
+                "function GTEngine.ModelComponent:GetBoneIndexByName(boneName)"
+                "    return GTEngine.System.ModelComponent.GetBoneIndexByName(self._internalPtr, boneName);"
+                "end;"
+
 
 
 
@@ -900,6 +908,8 @@ namespace GTEngine
                             script.SetTableFunction(-1, "PauseAnimation",             ModelComponentFFI::PauseAnimation);
                             script.SetTableFunction(-1, "StopAnimation",              ModelComponentFFI::StopAnimation);
                             script.SetTableFunction(-1, "GetBoneTransformByName",     ModelComponentFFI::GetBoneTransformByName);
+                            script.SetTableFunction(-1, "GetBoneTransformByIndex",    ModelComponentFFI::GetBoneTransformByIndex);
+                            script.SetTableFunction(-1, "GetBoneIndexByName",         ModelComponentFFI::GetBoneIndexByName);
                         }
                         script.Pop(1);
 
@@ -1458,6 +1468,87 @@ namespace GTEngine
                             script.Push("scale");
                             PushNewVector3(script, scale);
                             script.SetTableValue(-3);
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+                    }
+                    else
+                    {
+                        script.PushNil();
+                    }
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
+            }
+
+
+            int GetBoneTransformByIndex(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    auto model = component->GetModel();
+                    if (model != nullptr)
+                    {
+                        auto bone = model->GetBoneByIndex(static_cast<size_t>(script.ToInteger(2)));
+                        if (bone != nullptr)
+                        {
+                            glm::vec3 position;
+                            glm::quat orientation;
+                            glm::vec3 scale;
+                            bone->GetAbsoluteTransformComponents(position, orientation, scale);
+
+                            script.PushNewTable();
+                            
+                            script.Push("position");
+                            PushNewVector3(script, position);
+                            script.SetTableValue(-3);
+
+                            script.Push("orientation");
+                            PushNewQuaternion(script, orientation);
+                            script.SetTableValue(-3);
+
+                            script.Push("scale");
+                            PushNewVector3(script, scale);
+                            script.SetTableValue(-3);
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+                    }
+                    else
+                    {
+                        script.PushNil();
+                    }
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
+            }
+
+            int GetBoneIndexByName(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    auto model = component->GetModel();
+                    if (model != nullptr)
+                    {
+                        size_t boneIndex;
+                        auto bone = model->GetBoneByName(script.ToString(2), &boneIndex);
+                        if (bone != nullptr)
+                        {
+                            script.Push(static_cast<int>(boneIndex));
                         }
                         else
                         {
