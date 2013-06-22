@@ -241,8 +241,16 @@ namespace GTEngine
                 }
                 else
                 {
-                    GTEngine::PostError("Editor: Can not open file '%s'. Check that the file exists or if it's already in use.\n", path);
-                    return nullptr;
+                    // The file might have an associated .gtmodel file. We'll let it pass if so.
+                    if (GTEngine::IO::IsSupportedModelExtension(path) && GTCore::IO::FindAbsolutePath((GTCore::String(path) + ".gtmodel").c_str(), absolutePath))
+                    {
+                        relativePath = path;
+                    }
+                    else
+                    {
+                        GTEngine::PostError("Editor: Can not open file '%s'. Check that the file exists or if it's already in use.\n", path);
+                        return nullptr;
+                    }
                 }
             }
         }
@@ -262,68 +270,80 @@ namespace GTEngine
         {
             if (!isSpecialEditor)
             {
-                if (GTCore::IO::FileExists(absolutePath.c_str()))
+                // We'll check if the file exists from here.
+                if (!GTCore::IO::FileExists(absolutePath.c_str()))
                 {
-                    // The file exists, so now we just create our sub-editor. The specific sub-editor will be based on the file name.
-                    auto type = GTEngine::IO::GetAssetTypeFromExtension(absolutePath.c_str());
-
-                    switch (type)
+                    // The file doesn't exist, but it might be a model so we'll need to check if it's got an associated .gtmodel file.
+                    if (GTEngine::IO::IsSupportedModelExtension(absolutePath.c_str()))
                     {
-                    case AssetType_Image:
+                        if (!GTCore::IO::FileExists((absolutePath + ".gtmodel").c_str()))
                         {
-                            newSubEditor = new ImageEditor(*this, absolutePath.c_str(), relativePath.c_str());
-                            break;
-                        }
-
-                    case AssetType_Model:
-                        {
-                            newSubEditor = new ModelEditor(*this, absolutePath.c_str(), relativePath.c_str());
-                            break;
-                        }
-
-                    case AssetType_Material:
-                        {
-                            newSubEditor = new MaterialEditor(*this, absolutePath.c_str(), relativePath.c_str());
-                            break;
-                        }
-
-
-                    case AssetType_Scene:
-                        {
-                            newSubEditor = new SceneEditor(*this, absolutePath.c_str(), relativePath.c_str());
-                            break;
-                        }
-
-                    case AssetType_ParticleSystem:
-                        {
-                            newSubEditor = new ParticleEditor(*this, absolutePath.c_str(), relativePath.c_str());
-                            break;
-                        }
-
-                    case AssetType_Script:
-                    case AssetType_TextFile:
-                        {
-                            newSubEditor = new TextEditor(*this, absolutePath.c_str(), relativePath.c_str());
-                            break;
-                        }
-
-
-                    case AssetType_Sound:
-                    case AssetType_Prefab:
-                    case AssetType_None:
-                    default:
-                        {
-                            // If we get here it means we don't have a sub editor for the given asset type. We will post a warning and just create
-                            // a SubEditor object for it.
-                            GTEngine::Log("Warning: Editor: An editor is not currently supported for the given asset. '%s'.", path);
-                            newSubEditor = new SubEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                            GTEngine::PostError("Editor: Can not open model file '%s'. Associated .gtmodel file does not exist.\n", path);
+                            return nullptr;
                         }
                     }
+                    else
+                    {
+                        GTEngine::PostError("Editor: Can not open file '%s'. Does not exist.\n", path);
+                        return nullptr;
+                    }
                 }
-                else
+
+
+                // The file exists, so now we just create our sub-editor. The specific sub-editor will be based on the file name.
+                auto type = GTEngine::IO::GetAssetTypeFromExtension(absolutePath.c_str());
+
+                switch (type)
                 {
-                    GTEngine::PostError("Editor: Can not open file '%s'. Does not exist.\n", path);
-                    return nullptr;
+                case AssetType_Image:
+                    {
+                        newSubEditor = new ImageEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        break;
+                    }
+
+                case AssetType_Model:
+                    {
+                        newSubEditor = new ModelEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        break;
+                    }
+
+                case AssetType_Material:
+                    {
+                        newSubEditor = new MaterialEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        break;
+                    }
+
+
+                case AssetType_Scene:
+                    {
+                        newSubEditor = new SceneEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        break;
+                    }
+
+                case AssetType_ParticleSystem:
+                    {
+                        newSubEditor = new ParticleEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        break;
+                    }
+
+                case AssetType_Script:
+                case AssetType_TextFile:
+                    {
+                        newSubEditor = new TextEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        break;
+                    }
+
+
+                case AssetType_Sound:
+                case AssetType_Prefab:
+                case AssetType_None:
+                default:
+                    {
+                        // If we get here it means we don't have a sub editor for the given asset type. We will post a warning and just create
+                        // a SubEditor object for it.
+                        GTEngine::Log("Warning: Editor: An editor is not currently supported for the given asset. '%s'.", path);
+                        newSubEditor = new SubEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                    }
                 }
             }
             else
