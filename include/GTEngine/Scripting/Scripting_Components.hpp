@@ -141,6 +141,25 @@ namespace GTEngine
             ///
             ///     The returned values are the absolute transformation.
             int GetBoneTransformByName(GTCore::Script &script);
+
+            /// Retrieves the transformation of the bone at the given index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the bone.
+            ///     Return:     A table containing the attributes "position", "orientation" and "scale"
+            ///
+            ///     The returned values are the absolute transformation.
+            int GetBoneTransformByIndex(GTCore::Script &script);
+
+            /// Retrieves the index of the bone of the given name.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the bone whose index is being retrieved.
+            ///
+            ///     If the bone does not exist, nil will be returned.
+            int GetBoneIndexByName(GTCore::Script &script);
         }
 
         namespace PointLightComponentFFI
