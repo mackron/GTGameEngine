@@ -959,6 +959,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\PackagingToolEditor\PackagingToolEditor.hpp">
       <Filter>include\Editor\PackagingToolEditor</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GamePackager.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1638,6 +1641,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\PackagingToolEditor\PackagingToolEditor.cpp">
       <Filter>source\Editor\PackagingToolEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GamePackager.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

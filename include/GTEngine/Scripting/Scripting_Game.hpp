@@ -27,6 +27,13 @@ namespace GTEngine
             Game & GetGame(GTCore::Script &script);
 
 
+            /// Retrieves the absolute path of the directory containing the game executable.
+            int GetExecutableDirectoryAbsolutePath(GTCore::Script &script);
+
+            /// Retrieves the absolute path of the game executable.
+            int GetExecutableAbsolutePath(GTCore::Script &script);
+
+
             /// Closes the game.
             int Close(GTCore::Script &script);
 
@@ -100,6 +107,16 @@ namespace GTEngine
             ///     Argument 1: A string containing the path of the scene to load.
             int LoadScene(GTCore::Script &script);
 
+
+            /// Packages the game for distribution.
+            ///
+            /// @remarks
+            ///     This should only be called by editting tools.
+            ///     @par
+            ///     Argument 1: The path of the destination directory, relative to the running executable.
+            ///     Argument 2: The new name of the executable, not including the path.
+            ///     Return:     True if successful.
+            int PackageForDistribution(GTCore::Script &script);
 
 
             // TODO: These are now in GTEngine, but are still used in the editor. These references need to be deleted at some point.

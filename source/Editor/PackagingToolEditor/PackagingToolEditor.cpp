@@ -9,11 +9,13 @@ namespace GTEngine
           mainElement(nullptr)
     {
         auto &gui    = this->GetGUI();
-        //auto &script = this->GetScript();
+        auto &script = this->GetScript();
 
         this->mainElement = gui.CreateElement("<div parentid='Editor_SubEditorContainer' styleclass='packaging-tool-editor' />");
         assert(this->mainElement != nullptr);
         {
+            // The element has been created, but we need to execute a script to have it turn into a proper sub-editor
+            script.Execute(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s'):PackagingToolEditor();", this->mainElement->id).c_str());
         }
     }
 
