@@ -641,12 +641,8 @@ namespace GTEngine
     {
         this->animationPlaybackSpeed = speed;
     }
-}
 
 
-// Private
-namespace GTEngine
-{
     Bone* Model::GetBoneByName(const char* name, size_t* indexOut)
     {
         for (size_t i = 0; i < this->bones.count; ++i)
@@ -664,8 +660,12 @@ namespace GTEngine
 
         return nullptr;
     }
+}
 
 
+// Private
+namespace GTEngine
+{
     void Model::Clear()
     {
         // Meshes.

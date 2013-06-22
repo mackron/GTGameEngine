@@ -130,6 +130,17 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             int StopAnimation(GTCore::Script &script);
+
+
+            /// Retrieves the transformation of the bone of the given name.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the bone.
+            ///     Return:     A table containing the attributes "position", "orientation" and "scale"
+            ///
+            ///     The returned values are the absolute transformation.
+            int GetBoneTransformByName(GTCore::Script &script);
         }
 
         namespace PointLightComponentFFI

@@ -147,15 +147,15 @@ namespace GTEngine
         /// Sets the playback speed.
         void SetAnimationPlaybackSpeed(double speed);
 
-
-
-    private:
-
         /// Finds a bone by name.
         ///
         /// @param name     [in] The name of the bone to retrieve.
         /// @param indexOut [in] A pointer to the variable that will receive the index.
-        Bone* GetBoneByName(const char* name, size_t* indexOut = nullptr);
+        Bone* GetBoneByName(const char* name, size_t* indexOut);
+        Bone* GetBoneByName(const char* name) { return this->GetBoneByName(name, nullptr); }
+
+
+    private:
 
         /// Clears meshes, bones, etc.
         void Clear();
