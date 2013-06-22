@@ -12,7 +12,7 @@ function GTGUI.Element:PackagingToolEditor()
     self.Title:SetText("Package for Distribution");
     
     self.Info  = GTGUI.Server.CreateElement(self, "packaging-tool-editor-info");
-    self.Info:SetText("Note: This tool is currently very bare-bones. A complete overhaul will be done later on.");
+    self.Info:SetText("Note: This tool is currently very bare bones. A complete overhaul will be done later on.");
 
     
     self.Body = GTGUI.Server.CreateElement(self, "packaging-tool-editor-body");
@@ -45,7 +45,11 @@ function GTGUI.Element:PackagingToolEditor()
     self.BuildButton:SetText("Build");
     self.BuildButton:OnPressed(function()
         if self:DoBuild() then
-            self.ResultMessage:SetText("Game built successfully.");
+            self.ResultMessage:SetText(
+                "Game built successfully.\n\n" .. 
+                "You may need to manually copy over files like readme and licence files. The output is located relative to\n" .. 
+                "the executable that is running right now.\n\n" .. 
+                "Remember, this packaging tool is very bare bones. Make sure you test!");
         else
             self.ResultMessage:SetText("An error occured.");
         end
