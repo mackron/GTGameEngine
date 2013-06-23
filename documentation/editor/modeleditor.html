@@ -17,5 +17,55 @@ layout: editor
         <div class="documentation-img-container">
             <a href="{{ site.baseurl }}/img/documentation/editor/model-editor-2.png"><img src="{{ site.baseurl }}/img/documentation/editor/model-editor-2.png" width="700" title="GTGameEngine Model Editor"/></a>
         </div>
+        <p>
+        The viewport has the same movement controls as the scene editor:
+        </p>
+        <table class="shortcuts-table">
+            <tr>
+                <td><b>LMB + Move Up/Down</b></td><td>Move camera forward/backward</td>
+            </tr>
+            <tr>
+                <td><b>LMB + Move Left/Right</b></td><td>Turn camera left/right</td>
+            </tr>
+            <tr>
+                <td><b>RMB + Move</b></td><td>Turn camera</td>
+            </tr>
+            <tr>
+                <td><b>LMB + RMB + Move</b></td><td>Pan camera</td>
+            </tr>
+        </table>
+        <p>
+        To open a model in the editor, all you need to do is make sure the file exists in the game's data directory - the editor will automatically pick
+        it up and list it in the asset explorer.
+        </p>
+        <p>
+        The engine will transparently convert the source model to it's own native format. This native model will have the same name and path as the source
+        model, except that it will have the ".gtmodel" extension. For example, a source model called "default.dae" (a COLLADA file) will have an associated
+        native model in the same directory called "default.dae.gtmodel". You will rarely need to concern yourself with .gtmodel files because the engine
+        will handle everything in the background, but it is still important to know how properties are saved.
+        </p>
+        <p>
+        When changing properties in the model editor, you are actually editing the native .gtmodel file. The engine will maintain these properties even
+        after modifying the source file.
+        </p>
+        <p>
+        The right-side panel contains the properties that can be modified.
+        </p>
+        <p>
+        Materials can be set in the <b>Materials</b> group box. To set a material, either type the relative path or just drag a material from the asset
+        explorer (left-side panel).
+        </p>
+        <p>
+        You can give a name to a range of animation key frames. Use the <b>Animation Segments</b> to create or delete these. Animation segments will be used
+        when playing an animation from within the scripting or C++ environment. When an animation segment is played, use the playback controls at the bottom
+        to stop playback.
+        </p>
+        <p>
+        The engine can do a convex decomposition (thanks to HACD) of the model. To do this, use the <b>Convex Decomposition</b> group box. Be aware that
+        this can take a long time, so don't be alarmed if the editor seems to freeze for a long time.
+        </p>
+        <p>
+        The bottom panel with the playback controls is a work-in-progress animation timeline. Ignore this for now.
+        </p>
     </div>
 </div>
