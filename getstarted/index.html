@@ -10,8 +10,8 @@ layout: default
         <div class="page-section">
             <h1>0. Understand the Limitations</h1>
             <p>
-            GTGameEngine is very early in development and is being developed by a one man army. Expect many bugs and lots of missing
-            features and functionality.
+            GTGameEngine is very early in development and currently being developed by just one guy. Expect many bugs and lots of
+            missing features and functionality.
             </p>
             <p>
             Of particular importance is that <i>I am <b>not</b> currently concerned with backwards compatibility</i>, so don't do
@@ -42,6 +42,9 @@ layout: default
         <div class="page-section">
             <h1>2. Game Structure</h1>
             <p>
+            First of all, know that the sandbox <i><b>is</b></i> your game. The editing tools are built into and part of your game.
+            </p>
+            <p>
             All assets are stored in "data" directories. These directories are configured in the "config.lua" file which is located in the
             same directory as the executable.
             </p>
@@ -56,8 +59,8 @@ layout: default
             (among other things). You will usually want to set the startup scene to your game's main menu.
             </p>
             <p>
-            Some assets are used by the engine and will be needed by every game. These assets are located in "data/engine". The sandbox has
-            it's own set of assets in "data/sandbox", but you are free to remove anything from here that's not needed.
+            The assets located in "data/engine" are used by the engine and will be needed by every game. The sandbox has it's own set of
+            assets in "data/sandbox", but you are free to remove anything from here that's not needed.
             </p>
         </div>
         <div class="page-section">
@@ -103,7 +106,9 @@ layout: default
             models (leaving only .gtmodel files) manually before deploying. This is not strictly required, however.
             </p>
             <p>
-            Unfortunately there does not yet exist an automated packaging tool. This is planned for the future.
+            The editor includes a very bare bones packaging tool (Game -> Package for Distribution). You can use this for packaging, but be
+            aware that this tool is very basic and might have some issues. Of particular note, there may be some subtle differences when
+            packaging for different platforms. Be sure to test properly if you use this tool.
             </p>
         </div>
     </div>
