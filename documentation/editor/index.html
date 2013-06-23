@@ -1,23 +1,14 @@
 ---
 title:  "Editor Reference"
-layout: default
+layout: editor
 ---
 <style>
-    .reference-section {
-        margin-top:  30px;
-    }
-    .reference-section h1 {
-        font-size:     20px;
-        font-weight:   bold;
-        color:         rgba(96,96,96,1);
-        line-height:   26px;
-    }
 </style>
 <div class="page-title-small">
     <h1>Editor Reference</h1>
 </div>
 <div class="container-fluid">
-    <div style="padding:0px 80px;">
+    <div style="padding:0px 20px;">
         <p>
             The editor is built into every GTGameEngine game. There is no need for a separate editor executable, but it is perfectly
             acceptable if it suits your development pipeline. When the editor is opened, the main game is paused, but still active
@@ -48,19 +39,16 @@ layout: default
             something more of a utility bar for error notifications, a command propt, etc. The command prompt is simply a place for you to
             call scripting functions which will run on the game's scripting environment.
         </p>
-        <div class="reference-section">
+        <div class="documentation-section">
             <h1>Sub Editors</h1>
             <p>
-            The main part of the editor are the sub-editors. there is a sub-editor for each type of asset. The reference pages below will
-            go into more detail for each editor type.
+            The main part of the editor are the sub-editors. there is a sub-editor for each type of asset. When an asset is opened it will
+            be assigned it's own tab. You can then cycle between assets by simply selecting it's tab. You can also just re-open the asset
+            to select the tab again.
             </p>
-            <ul style="list-style:none;">
-                <li><a href="{{ documentation_url }}sceneeditor.html">Scene Editor</a></li>
-                <li><a href="{{ documentation_url }}modeleditor.html">Model Editor</a></li>
-                <li><a href="{{ documentation_url }}imageeditor.html">Image Editor</a></li>
-                <li><a href="{{ documentation_url }}materialeditor.html">Material Editor</a></li>
-                <li><a href="{{ documentation_url }}texteditor.html">Text Editor</a></li>
-            </ul>
+            <p>
+            Refer to the navigation panel for detailed reference pages of each sub-editor.
+            </p>
         </div>
     </div>
 </div>
