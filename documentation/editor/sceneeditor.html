@@ -1,0 +1,190 @@
+---
+title:  "Scene Editor Reference"
+layout: editor
+---
+<style>
+    .shortcuts-table {
+        margin-left:   16px;
+        margin-top:    16px;
+        margin-bottom: 16px;
+    }
+    .shortcuts-table td {
+        padding: 2px 8px;
+    }
+</style>
+<div class="page-title-small">
+    <h1>Scene Editor Reference</h1>
+</div>
+<div class="container-fluid">
+    <div style="padding:0px 20px;">
+        <p>
+            The scene editor is the most important editor and is used to create scenes/levels/maps. GUI's are also handled in the scene
+            editor which will be explained later. Below is a screenshot of the scene editor. Specifically, it is a screenshot of the
+            main editor with a scene asset open and active.
+        </p>
+        <div class="documentation-img-container">
+            <a href="http://i.imgur.com/7oAqX3T.png"><img src="http://i.imgur.com/7oAqX3T.png" width="700" title="GTGameEngine Editor"/></a>
+        </div>
+        <p>
+            The two main parts of the scene editor are the viewport and the properties panel on the right. There is currently only a
+            single viewport (no orthograpic top/side/front views). The panel on the right has several tabs which will be explained later.
+        </p>
+        <div class="documentation-section">
+            <h1>Workflow</h1>
+            <p>
+            To build a scene, you place scene nodes into the scene and then attach components to those scene noes to define their behaviour
+            and appearance.
+            </p>
+            <p>
+            To add a scene node:
+            </p>
+            <ul>
+                <li>Right-click in the viewport or</li>
+                <li>Drag a model from the asset explorer or</li>
+                <li>Drag a prefab from the asset explorer or</li>
+                <li>Duplicate an existing scene node (<b>CTRL+D</b> while selected)</li>
+            </ul>
+            <p>
+            Use <b>Delete</b> to delete selected scene nodes.
+            </p>
+            <p>
+            To add a component, select the scene node and hit the "New Component" button in the Properties panel (right-hand side). Below
+            is a quick reference on the different engine-defined prefabs:
+            </p>
+            <table class="shortcuts-table">
+                <tr>
+                    <td><b>Model</b></td><td>Give the scene node a model/mesh</td>
+                </tr>
+                <tr>
+                    <td><b>Ambient Light</b></td><td>Have the scene node cast an ambient light</td>
+                </tr>
+                <tr>
+                    <td><b>Directional Light</b></td><td>Have the scene node cast a directional light</td>
+                </tr>
+                <tr>
+                    <td><b>Point Light</b></td><td>Have the scene node cast a point light</td>
+                </tr>
+                <tr>
+                    <td><b>Dynamics</b></td><td>Have the scene node interact with physics (both dynamic and static)</td>
+                </tr>
+                <tr>
+                    <td><b>Proximity</b></td><td>Have the scene node be able to detect when other scene nodes enter it's proximity</td>
+                </tr>
+                <tr>
+                    <td><b>Script</b></td><td>Give the scene node the ability to execute scripts in response to events posted by the engine</td>
+                </tr>
+                <tr>
+                    <td><b>Camera</b></td><td>Allow the scene node to be used as a camera</td>
+                </tr>
+                <tr>
+                    <td><b>Particle System</b></td><td>Give the scene node a particle system</td>
+                </tr>
+            </table>
+            <p>
+            When a component is added to a scene node, a properties group box will be added to the scene node's properties panel. It should be
+            simple enough to understand the meaning of the properties of a component.
+            </p>
+            <p>
+            The scene editor also supports prefabs which are basically just templates to make reusability easier. A dedicated section for
+            prefabs can be found further down on this page.
+            </p>
+            <p>
+            Use the <i>Hierarchy</i> panel (right-side panel) to modify the parent/child relationship of scene nodes. Use drag-and-drop and the
+            right-click context menu.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>Viewport</h1>
+            <p>
+            There is currently only a single viewport (no orthograpic top/side/front views). Below is a quick reference on the controls:
+            </p>
+            <table class="shortcuts-table">
+                <tr>
+                    <td><b>LMB + Move Up/Down</b></td><td>Move camera forward/backward</td>
+                </tr>
+                <tr>
+                    <td><b>LMB + Move Left/Right</b></td><td>Turn camera left/right</td>
+                </tr>
+                <tr>
+                    <td><b>RMB + Move</b></td><td>Turn camera</td>
+                </tr>
+                <tr>
+                    <td><b>LMB + RMB + Move</b></td><td>Pan camera</td>
+                </tr>
+                <tr>
+                    <td><b>LMB (No Move)</b></td><td>Select</td>
+                </tr>
+                <tr>
+                    <td><b>RMB (No Move)</b></td><td>Context Menu</td>
+                </tr>
+            </table>
+            <p>
+            To move, rotate or scale a scene node you need to use the transformation handles that show when the scene node is selected.
+            You can switch between translate, rotate and scale modes and also global and local modes.
+            </p>
+            <table class="shortcuts-table">
+                <tr>
+                    <td><b>T, R, S</b></td><td>Translate, Rotate, Scale transform modes, respectively</td>
+                </tr>
+                <tr>
+                    <td><b>G, L</b></td><td>Global, Local transform modes, respectively</td>
+                </tr>
+                <tr>
+                    <td><b>Q</b></td><td>Toggle between Global and Local transform modes</td>
+                </tr>
+                <tr>
+                    <td><b>CTRL</b></td><td>Snap while translating (no current support for snapping rotation and scale)</td>
+                </tr>
+            </table>
+            <p>
+            The <i>Viewport</i> menu on the toolbar can be used to control some properites of the viewport.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>Panel</h1>
+            <p>
+            The right-side panel is where various properties are modified.
+            </p>
+            <p>
+            The <b>Properties</b> tab is where the properties of the selected scene node are viewed and modified. Unfortunately there is not
+            currently support for viewing/modifying common properties of multiple scene nodes at a time.
+            </p>
+            <p>
+            The <b>Hierarchy</b> tab is where the parent/child relationships of scene nodes are handled. It also allows you to do miscellaneous
+            stuff such as selecting and deleting scene nodes. There is not currently any search functionality here, but it is planed for the
+            future.
+            </p>
+            <p>
+            Scene nodes that are linked to a prefab will be highlighted blue in the hierarchy panel. You can unlink a scene node from a prefab
+            from the hierarchy by right-clicking on the scene node and selecting "Unlink from Prefab".
+            </p>
+            <p>
+            The <b>Scene Properties</b> tab is where various properties of the scene itself can be modified. This is currently very bare bones
+            and only includes a few properties. Currently, you can only modify the name (not the file name) and a very limited number of
+            rendering properties.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>Prefabs</h1>
+            <p>
+            A prefab can be thought of as a template creating and updating scene nodes. When a scene node is linked to a prefab, it will be
+            updated when the prefab is updated.
+            </p>
+            <p>
+            Prefabs are created from a source scene node. The definition of a prefab is stored in a file which can be reused across multiple
+            scenes. A prefab can only be created and updated via a scene editor.
+            </p>
+            <p>
+            To create a prefab, first create a new prefab file by right-clicking on a folder in the asset explorer and choosing "New Prefab".
+            Do not include the .gtprefab extension when specifying the file name. After the file is created, you drag the source scene node
+            from the <i>Hierarchy</i> panel onto the prefab file in the asset explorer. This will automatically link the source node to the
+            newly update prefab.
+            </p>
+            <p>
+            To instantiate a prefab, you simple drag it from the asset explorer into the scene. This will place it just in front of the
+            camera. Watch out for perspective illusions - it often feels like a scene node can appear closer or further away than it actually
+            is.
+            </p>
+        </div>
+    </div>
+</div>
