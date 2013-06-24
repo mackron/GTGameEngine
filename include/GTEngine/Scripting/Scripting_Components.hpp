@@ -101,6 +101,21 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             int GetMaterialCount(GTCore::Script &script);
 
+            /// Sets the uniform parameter of the given material.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the material whose uniform is being set.
+            ///     Argument 3: The name of the uniform being set.
+            ///     Argument 4: The value of the uniform.
+            ///
+            ///     Allowable values types are:
+            ///       - Scalar
+            ///       - math.vec2
+            ///       - math.vec3
+            ///       - math.vec4
+            int SetMaterialParameter(GTCore::Script &script);
+
 
             /// Plays an animation segment by it's name.
             ///
