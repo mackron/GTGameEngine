@@ -126,10 +126,6 @@ function GTGUI.Element:ModelEditor_AnimationSegmentsPanel(_internalPtr)
         end
     end
     
-    
-    -- We just refresh to get the panel into the correct state.
-    self:Refresh();
-    
-    
+
     return self;
 end

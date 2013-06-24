@@ -324,6 +324,18 @@ namespace GTEngine
         return nullptr;
     }
 
+
+    Bone* ModelDefinition::GetBoneByIndex(size_t boneIndex)
+    {
+        return this->bones[boneIndex];
+    }
+
+    const Bone* ModelDefinition::GetBoneByIndex(size_t boneIndex) const
+    {
+        return this->bones[boneIndex];
+    }
+
+
     bool ModelDefinition::FindBoneIndex(const Bone* bone, size_t &indexOut) const
     {
         for (size_t iBone = 0; iBone < this->bones.count; ++iBone)

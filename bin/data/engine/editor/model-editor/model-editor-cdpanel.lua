@@ -105,9 +105,5 @@ function GTGUI.Element:ModelEditor_CDPanel(_internalPtr)
     end);
     
     
-    
-    -- We just do a refresh to get everything setup correctly.
-    self:Refresh();
-    
     return self;
 end
