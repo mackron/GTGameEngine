@@ -190,6 +190,14 @@ namespace GTEngine
               Bone* GetBoneByName(const char* boneName);
         const Bone* GetBoneByName(const char* boneName) const;
 
+        /// Retrieves a pointer to the bone at the given index.
+        ///
+        /// @param boneIndex [in] The index of the bone to retrieve.
+        ///
+        /// @return A pointer to the bone.
+              Bone* GetBoneByIndex(size_t boneIndex);
+        const Bone* GetBoneByIndex(size_t boneIndex) const;
+
         /// Finds the index of the given bone.
         ///
         /// @param bone     [in] A reference to the bone to search for.

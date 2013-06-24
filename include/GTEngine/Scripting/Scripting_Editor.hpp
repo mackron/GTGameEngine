@@ -62,6 +62,21 @@ namespace GTEngine
             int SetMaterial(GTCore::Script &script);
             
 
+            /// Retrieves the number of bones containing the in the model of the given model editor.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            int GetBoneCount(GTCore::Script &script);
+
+            /// Retrieves an array containing the names of every bone.
+            ///
+            /// @remarks
+            ///     There is 1 table for every bone in the array. Each item contains two properties which should be self explanatory: 'name' and 'parentName'.
+            ///
+            ///     Argument 1: A pointer to the model editor.
+            int GetBones(GTCore::Script &script);
+
+
             /// Plays the animation segment.
             ///
             /// @remarks

@@ -32,6 +32,8 @@ namespace GTEngine
                     {
                         script.SetTableFunction(-1, "GetMaterials",                    ModelEditorFFI::GetMaterials);
                         script.SetTableFunction(-1, "SetMaterial",                     ModelEditorFFI::SetMaterial);
+                        script.SetTableFunction(-1, "GetBoneCount",                    ModelEditorFFI::GetBoneCount);
+                        script.SetTableFunction(-1, "GetBones",                        ModelEditorFFI::GetBones);
                         script.SetTableFunction(-1, "PlayAnimationSegmentByIndex",     ModelEditorFFI::PlayAnimationSegmentByIndex);
                         script.SetTableFunction(-1, "PlayAnimation",                   ModelEditorFFI::PlayAnimation);
                         script.SetTableFunction(-1, "ResumeAnimation",                 ModelEditorFFI::ResumeAnimation);
@@ -238,6 +240,66 @@ namespace GTEngine
                 else
                 {
                     script.Push(false);
+                }
+
+                return 1;
+            }
+
+
+            int GetBoneCount(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    script.Push(static_cast<int>(modelEditor->GetModelDefinition().GetBoneCount()));
+                }
+                else
+                {
+                    script.Push(0);
+                }
+
+                return 1;
+            }
+
+            int GetBones(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    script.PushNewTable();
+
+                    auto &definition = modelEditor->GetModelDefinition();
+                    for (size_t iBone = 0; iBone < definition.GetBoneCount(); ++iBone)
+                    {
+                        auto bone = definition.GetBoneByIndex(iBone);
+                        assert(bone != nullptr);
+                        {
+                            script.Push(static_cast<int>(iBone) + 1);     // +1 because Lua is 1 based.
+                            script.PushNewTable();
+
+                            // name
+                            script.SetTableValue(-1, "name", bone->GetName());
+
+                            // parentName
+                            auto parentBone = bone->GetParent();
+                            if (parentBone != nullptr)
+                            {
+                                script.SetTableValue(-1, "parentName", parentBone->GetName());
+                            }
+                            else
+                            {
+                                script.Push("parentName");
+                                script.PushNil();
+                                script.SetTableValue(-3);
+                            }
+
+                            script.SetTableValue(-3);
+                        }
+                    }
+                }
+                else
+                {
+                    script.PushNil();
                 }
 
                 return 1;
