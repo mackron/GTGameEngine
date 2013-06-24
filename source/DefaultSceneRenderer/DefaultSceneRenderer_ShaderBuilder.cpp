@@ -374,9 +374,14 @@ namespace GTEngine
                 fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetShininessShaderID()));
             }
 
-            if (lightCount - ambientLightCount > 0 && doNormalMapping)     // <-- Ambient lights don't use normals, so don't want to include that.
+            if (lightCount - ambientLightCount > 0)     // <-- Ambient lights don't use specular or normals, so don't want to include that.
             {
-                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetNormalShaderID()));
+                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetSpecularShaderID()));
+
+                if (doNormalMapping)
+                {
+                    fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetNormalShaderID()));
+                }
             }
         }
         
@@ -463,7 +468,7 @@ namespace GTEngine
                     "    vec3 H = normalize(L - normalize(VertexOutput_PositionVS.xyz));\n"
                     ""
                     "    float diffuse  = DiffuseFactor(N, L);\n"
-                    "    float specular = SpecularFactor(N, H, 64.0f);\n"
+                    "    float specular = SpecularFactor(N, H, Specular());\n"
                     ""
                     "    diffuseOut  += light.Colour * diffuse;\n"
                     "    specularOut += light.Colour * specular;\n"
@@ -504,7 +509,7 @@ namespace GTEngine
                     "    vec3 H = normalize(L - normalize(VertexOutput_PositionVS.xyz));\n"
                     ""
                     "    float diffuse  = DiffuseFactor(N, L);\n"
-                    "    float specular = SpecularFactor(N, H, 64.0f);\n"
+                    "    float specular = SpecularFactor(N, H, Specular());\n"
                     "    float shadow   = CalculateDirectionalShadow(shadowMap, lightSpacePosition);\n"
                     ""
                     "    diffuseOut  += light.Colour * (diffuse  * shadow);\n"
@@ -535,7 +540,7 @@ namespace GTEngine
                     "    vec3 H = normalize(L - normalize(VertexOutput_PositionVS.xyz));\n"
                     ""
                     "    float diffuse     = DiffuseFactor(N, L);\n"
-                    "    float specular    = SpecularFactor(N, H, 64.0f);\n"
+                    "    float specular    = SpecularFactor(N, H, Specular());\n"
                     "    float attenuation = AttenuationFactor(light.Radius, light.Falloff, length(lightVector));\n"
                     ""
                     "    diffuseOut  += light.Colour * (diffuse  * attenuation);\n"
@@ -576,7 +581,7 @@ namespace GTEngine
                     "    vec3 H = normalize(L - normalize(VertexOutput_PositionVS.xyz));\n"
                     ""
                     "    float diffuse     = DiffuseFactor(N, L);\n"
-                    "    float specular    = SpecularFactor(N, H, 64.0f);\n"
+                    "    float specular    = SpecularFactor(N, H, Specular());\n"
                     "    float attenuation = AttenuationFactor(light.Radius, light.Falloff, length(lightVector));\n"
                     "    float shadow      = CalculatePointShadow(shadowMap, shadowCoord);\n"
                     ""
@@ -613,7 +618,7 @@ namespace GTEngine
                     "    vec3 H = normalize(normalize(L) - normalize(VertexOutput_PositionVS.xyz));\n"
                     ""
                     "    float diffuse     = DiffuseFactor(N, normalize(L));\n"
-                    "    float specular    = SpecularFactor(N, H, 64.0f);\n"
+                    "    float specular    = SpecularFactor(N, H, Specular());\n"
                     "    float attenuation = AttenuationFactor(light.Length, light.Falloff, length(L));\n"
                     "    float spot        = SpotFactor(normalize(L), light.Direction, light.CosAngleInner, light.CosAngleOuter);\n"
                     ""
@@ -661,7 +666,7 @@ namespace GTEngine
                     "    vec3 H = normalize(normalize(L) - normalize(VertexOutput_PositionVS.xyz));\n"
                     ""
                     "    float diffuse     = DiffuseFactor(N, normalize(L));\n"
-                    "    float specular    = SpecularFactor(N, H, 64.0f);\n"
+                    "    float specular    = SpecularFactor(N, H, Specular());\n"
                     "    float attenuation = AttenuationFactor(light.Length, light.Falloff, length(L));\n"
                     "    float spot        = SpotFactor(normalize(L), light.Direction, light.CosAngleInner, light.CosAngleOuter);\n"
                     "    float shadow      = CalculateSpotShadow(shadowMap, lightSpacePosition);\n"

@@ -1,5 +1,4 @@
 
-
 <!-- Default material shaders. These shaders will be used when the applicable shader is omitted in a material definition. -->
 <shader id="Material_DefaultDiffuse">
     vec4 Diffuse()
@@ -103,7 +102,7 @@
     
     float Specular()
     {
-        return ShininessFactor;
+        return SpecularPower;
     }
 </shader>
 
