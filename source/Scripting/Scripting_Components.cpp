@@ -127,6 +127,10 @@ namespace GTEngine
                 "    return GTEngine.System.ModelComponent.GetMaterialCount(self._internalPtr);"
                 "end;"
 
+                "function GTEngine.ModelComponent:SetMaterialParameter(index, name, value)"
+                "    return GTEngine.System.ModelComponent.SetMaterialParameter(self._internalPtr, index, name, value);"
+                "end;"
+
 
                 "function GTEngine.ModelComponent:PlayAnimationSegmentByName(segmentName, loop)"
                 "    GTEngine.System.ModelComponent.PlayAnimationSegmentByName(self._internalPtr, segmentName, loop);"
@@ -903,6 +907,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "SetMaterial",                ModelComponentFFI::SetMaterial);
                             script.SetTableFunction(-1, "GetMaterialPath",            ModelComponentFFI::GetMaterialPath);
                             script.SetTableFunction(-1, "GetMaterialCount",           ModelComponentFFI::GetMaterialCount);
+                            script.SetTableFunction(-1, "SetMaterialParameter",       ModelComponentFFI::SetMaterialParameter);
                             script.SetTableFunction(-1, "PlayAnimationSegmentByName", ModelComponentFFI::PlayAnimationSegmentByName);
                             script.SetTableFunction(-1, "PlayAnimationSequence",      ModelComponentFFI::PlayAnimationSequence);
                             script.SetTableFunction(-1, "PauseAnimation",             ModelComponentFFI::PauseAnimation);
@@ -1372,6 +1377,55 @@ namespace GTEngine
                 }
 
                 return 1;
+            }
+
+            int SetMaterialParameter(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    auto model = component->GetModel();
+                    if (model != nullptr)
+                    {
+                        auto index = script.ToInteger(2);
+                        auto name  = script.ToString(3);
+
+                        if (model->meshes.count > static_cast<size_t>(index))
+                        {
+                            auto mesh = model->meshes[index];
+                            assert(mesh != nullptr);
+                            {
+                                auto material = mesh->GetMaterial();
+                                if (material != nullptr)
+                                {
+                                    if (script.IsNumber(4))
+                                    {
+                                        // It's a scalar.
+                                        material->SetParameter(name, script.ToFloat(4));
+                                    }
+                                    else
+                                    {
+                                        // Check for math.vec2, math.vec3 or math.vec4.
+                                        if (Scripting::IsVector2(script, 4))
+                                        {
+                                            material->SetParameter(name, Scripting::ToVector2(script, 4));
+                                        }
+                                        else if (Scripting::IsVector3(script, 4))
+                                        {
+                                            material->SetParameter(name, Scripting::ToVector3(script, 4));
+                                        }
+                                        else if (Scripting::IsVector4(script, 4))
+                                        {
+                                            material->SetParameter(name, Scripting::ToVector4(script, 4));
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                return 0;
             }
 
 
@@ -3638,9 +3692,7 @@ namespace GTEngine
                                     auto variableVec2 = static_cast<ScriptVariable_Vec2*>(variable);
 
                                     script.Push(variable->GetName());
-                                    script.PushNewTable();
-                                    script.SetTableValue(-1, "x", variableVec2->GetX());
-                                    script.SetTableValue(-1, "y", variableVec2->GetY());
+                                    Scripting::PushNewVector2(script, static_cast<float>(variableVec2->GetX()), static_cast<float>(variableVec2->GetY()));
 
                                     script.SetTableValue(-3);
 
@@ -3652,10 +3704,7 @@ namespace GTEngine
                                     auto variableVec3 = static_cast<ScriptVariable_Vec3*>(variable);
 
                                     script.Push(variable->GetName());
-                                    script.PushNewTable();
-                                    script.SetTableValue(-1, "x", variableVec3->GetX());
-                                    script.SetTableValue(-1, "y", variableVec3->GetY());
-                                    script.SetTableValue(-1, "z", variableVec3->GetZ());
+                                    Scripting::PushNewVector3(script, static_cast<float>(variableVec3->GetX()), static_cast<float>(variableVec3->GetY()), static_cast<float>(variableVec3->GetZ()));
 
                                     script.SetTableValue(-3);
 
@@ -3667,11 +3716,7 @@ namespace GTEngine
                                     auto variableVec4 = static_cast<ScriptVariable_Vec4*>(variable);
 
                                     script.Push(variable->GetName());
-                                    script.PushNewTable();
-                                    script.SetTableValue(-1, "x", variableVec4->GetX());
-                                    script.SetTableValue(-1, "y", variableVec4->GetY());
-                                    script.SetTableValue(-1, "z", variableVec4->GetZ());
-                                    script.SetTableValue(-1, "w", variableVec4->GetW());
+                                    Scripting::PushNewVector4(script, static_cast<float>(variableVec4->GetX()), static_cast<float>(variableVec4->GetY()), static_cast<float>(variableVec4->GetZ()), static_cast<float>(variableVec4->GetW()));
 
                                     script.SetTableValue(-3);
 

@@ -92,6 +92,31 @@ namespace GTEngine
         inline void PushNewQuaternion(GTCore::Script &script, const glm::quat &value) { PushNewQuaternion(script, value.x, value.y, value.z, value.w); }
 
 
+        /// Determines whether or not the value at the given index is a math.vec2.
+        ///
+        /// @param script [in] The script object.
+        /// @param index  [in] The index of the item to check.
+        ///
+        /// @return 'true' if the item is a math.vec2; false otherwise.
+        bool IsVector2(GTCore::Script &script, int index);
+
+        /// Determines whether or not the value at the given index is a math.vec3.
+        ///
+        /// @param script [in] The script object.
+        /// @param index  [in] The index of the item to check.
+        ///
+        /// @return 'true' if the item is a math.vec3; false otherwise.
+        bool IsVector3(GTCore::Script &script, int index);
+
+        /// Determines whether or not the value at the given index is a math.vec4.
+        ///
+        /// @param script [in] The script object.
+        /// @param index  [in] The index of the item to check.
+        ///
+        /// @return 'true' if the item is a math.vec4; false otherwise.
+        bool IsVector4(GTCore::Script &script, int index);
+
+
         namespace FFI
         {
             namespace MathFFI

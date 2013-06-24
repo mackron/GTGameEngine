@@ -972,5 +972,54 @@ namespace GTEngine
             }
             script.Pop(1);
         }
+
+
+        bool IsVector2(GTCore::Script &script, int index)
+        {
+            if (script.IsTable(index))
+            {
+                script.Push("isVec2");
+                script.GetTableValue((index < 0) ? index - 1 : index);
+                
+                bool result = script.ToBoolean(-1);
+
+                script.Pop(1);
+                return result;
+            }
+
+            return false;
+        }
+
+        bool IsVector3(GTCore::Script &script, int index)
+        {
+            if (script.IsTable(index))
+            {
+                script.Push("isVec3");
+                script.GetTableValue((index < 0) ? index - 1 : index);
+                
+                bool result = script.ToBoolean(-1);
+
+                script.Pop(1);
+                return result;
+            }
+
+            return false;
+        }
+
+        bool IsVector4(GTCore::Script &script, int index)
+        {
+            if (script.IsTable(index))
+            {
+                script.Push("isVec4");
+                script.GetTableValue((index < 0) ? index - 1 : index);
+                
+                bool result = script.ToBoolean(-1);
+
+                script.Pop(1);
+                return result;
+            }
+
+            return false;
+        }
     }
 }
