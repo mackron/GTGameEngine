@@ -17,5 +17,251 @@ layout: editor
         <div class="documentation-img-container">
             <a href="{{ site.baseurl }}/img/documentation/editor/material-editor-1.png"><img src="{{ site.baseurl }}/img/documentation/editor/material-editor-1.png" width="700" title="GTGameEngine Material Editor"/></a>
         </div>
+        <p>
+        The 3D viewport is a preview view and will be updated whenever the material is saved. It has the same movement controls as the scene editor:
+        </p>
+        <table class="shortcuts-table">
+            <tr>
+                <td><b>LMB + Move Up/Down</b></td><td>Move camera forward/backward</td>
+            </tr>
+            <tr>
+                <td><b>LMB + Move Left/Right</b></td><td>Turn camera left/right</td>
+            </tr>
+            <tr>
+                <td><b>RMB + Move</b></td><td>Turn camera</td>
+            </tr>
+            <tr>
+                <td><b>LMB + RMB + Move</b></td><td>Pan camera</td>
+            </tr>
+        </table>
+        <p>
+        The empty space to the right of the 3D viewport is reserved for a future planned feature.
+        </p>
+        <p>
+        Materials are currently defined as XML with manually written shaders. You currently need a programmer to write more complex materials, but
+        they can often be made generically for copy-and-pasting, requiring only minor changes. Materials can also have mutable public variables,
+        but support for this via the editing tools and scripting environment is not very complete right now.
+        </p>
+        <p>
+        A material has a set of "channels" that define it's appearance. Below is a table of the standard channels of a material.
+        </p>
+        <table class="shortcuts-table">
+            <tr>
+                <td><b>Diffuse</b></td><td>The appearance of the material as if lit by a uniform white light. Think of it as the texture.</td>
+            </tr>
+            <tr>
+                <td><b>Emissive</b></td><td>The colours emitted by the material irrespective of lighting. The appearance of the material as if completely unlit.</td>
+            </tr>
+            <tr>
+                <td><b>Specular</b></td><td>The specular power. Smaller values means a bigger specular highlight.</td>
+            </tr>
+            <tr>
+                <td><b>Shininess</b></td><td>The shininess of the material. The specular contribution will be multiplied by this value.</td>
+            </tr>
+            <tr>
+                <td><b>Normal</b></td><td>The normals to use when applying normal mapping. Usually this will be defined by a simple normal map image.</td>
+            </tr>
+            <tr>
+                <td><b>Refraction</b></td><td>The same as <b>Normal</b>, except for refraction.</td>
+            </tr>
+        </table>
+        <p>
+        A possible future feature is to allow games to define their own channels to help support a custom renderer, but this feature is not
+        currently implemented.
+        </p>
+        <p>
+        A channel is defined by a shader function that is usually run on the fragment shader. There are two ways to define the function. The first
+        is to define the function in a shader file and then specify the ID of the shader. The other is to simply inline the shader.
+        </p>
+        <p>
+        You must be aware that the shader language used depends on the renderer. The default renderer uses GLSL, so examples on this page will be
+        using that. It should be easy to translate these to other shader languages.
+        </p>
+        <p>
+        Below is an example for defining the diffuse channel using the first technique:
+        </p>
+<pre>&lt;material&gt;
+    &lt;diffuse id="Material_WhiteDiffuse" /&gt;
+&lt;/material&gt;</pre>
+        <p>
+        Below is an example for inlining the shader code directly:
+        </p>
+<pre>&lt;material&gt;
+    &lt;diffuse&gt;
+        vec4 Diffuse()
+        {
+            return vec4(1.0, 1.0, 1.0, 1.0);
+        }
+    &lt;/diffuse&gt;
+&lt;/material&gt;</pre>
+        <p>
+        You can specify variables that can be set externally. For you shader programmers, these are uniform variables. The next example shows how
+        you can use one of these variables with a texture.
+        </p>
+<pre>&lt;material&gt;
+    &lt;diffuse&gt;
+        uniform sampler2D DiffuseTexture;
+
+        vec4 Diffuse()
+        {
+            return texture2D(DiffuseTexture, VertexOutput_TexCoord.xy);
+        }
+    &lt;/diffuse&gt;
+
+    &lt;defaultproperties&gt;
+        &lt;texture2D name="DiffuseTexture">engine/textures/default.png&lt;/texture2D&gt;
+    &lt;/defaultproperties&gt;
+&lt;/material></pre>
+        <p>
+        There are several things that need to be explained here. First, variables will be passed to the fragment shader from the vertex shader. These
+        are prefixed with "VertexOutput_". You will see in the "Diffuse()" function that we use one of these variables. Below is a table of every
+        variable passed in from the vertex shader.
+        </p>
+        <table class="shortcuts-table">
+            <tr>
+                <td><b>VertexOutput_Position</b></td><td>The position of the vertex in clip space.</td>
+            </tr>
+            <tr>
+                <td><b>VertexOutput_PositionVS</b></td><td>The position of the vertex in view space.</td>
+            </tr>
+            <tr>
+                <td><b>VertexOutput_PositionWS</b></td><td>The position of the vertex in world space.</td>
+            </tr>
+            <tr>
+                <td><b>VertexOutput_TexCoord</b></td><td>The main texture coordinate for texturing and normal mapping.</td>
+            </tr>
+            <tr>
+                <td><b>VertexOutput_Normal</b></td><td>The normal for lighting and normal mapping.</td>
+            </tr>
+            <tr>
+                <td><b>VertexOutput_Tangent</b></td><td>The tangent for normal mapping and refraction.</td>
+            </tr>
+            <tr>
+                <td><b>VertexOutput_Bitangent</b></td><td>The bitangent for normal mapping and refraction.</td>
+            </tr>
+        </table>
+        <p>
+        The next thing of note in the above example if the use of public variables. These are just uniform variables. A default value for uniforms should
+        be specified in the "defaultproperties" tag. It should be easy enough to understand how to define the defaults. Below are examples for different
+        data types.
+        </p>
+<pre>&lt;texture2D name="MyVariable"&gt;engine/textures/default.png&lt;/texture2D&gt;</pre>
+<pre>&lt;float name="MyVariable"&gt;1&lt;/float&gt;</pre>
+<pre>&lt;float2 name="MyVariable"&gt;1 2&lt;/float2&gt;</pre>
+<pre>&lt;float3 name="MyVariable"&gt;1 2 3&lt;/float3&gt;</pre>
+<pre>&lt;float4 name="MyVariable"&gt;1 2 3 4&lt;/float4&gt;</pre>
+        <div class="documentation-section">
+            <h1>Blending</h1>
+            <p>
+            To enable blending, you specify the "blending" tag inside the main "material" tag. Below is an example:
+            </p>
+<pre>&lt;blending&gt;
+    &lt;equation&gt;Add&lt;/equation&gt;
+    &lt;sourcefactor&gt;SourceAlpha&lt;/sourcefactor&gt;
+    &lt;destinationfactor&gt;OneMinusSourceAlpha&lt;/destinationfactor&gt;
+&lt;/blending&gt;</pre>
+            <p>
+            The above example is standard alpha blending. Below is a table defining the allowable blending properties:
+            </p>
+            <table class="shortcuts-table">
+                <tr>
+                    <td><b>equation</b></td><td>The blending equation to use. See table below.</td>
+                </tr>
+                <tr>
+                    <td><b>sourcefactor</b></td><td>The property of the incoming colour to use in the chosen blending equation.</td>
+                </tr>
+                <tr>
+                    <td><b>destinationfactor</b></td><td>The property of the colour currently stored in the colour buffer to use in the chosen blending equation.</td>
+                </tr>
+                <tr>
+                    <td><b>colour</b></td><td>The colour to use when <b>sourcefactor</b> is set to <b>ConstantColour</b>, <b>OneMinusConstantColour</b>, <b>ConstantAlpha</b> or <b>OneMinusConstantAlpha</b>.</td>
+                </tr>
+            </table>
+            <p>
+            The table below are the allowable values for <b>equation</b>. 
+            </p>
+            <table class="shortcuts-table">
+                <tr>
+                    <td><b>Add</b></td><td>Ct = (Cs * S) + (Cd * D)</td>
+                </tr>
+                <tr>
+                    <td><b>Subtract</b></td><td>Ct = (Cs * S) - (Cd * D)</td>
+                </tr>
+                <tr>
+                    <td><b>ReverseSubtract</b></td><td>Ct = (Cd * D) - (Cs * S)</td>
+                </tr>
+                <tr>
+                    <td><b>Min</b></td><td>Ct = min(Cs, Cd)</td>
+                </tr>
+                <tr>
+                    <td><b>Max</b></td><td>Ct = max(Cs, Cd)</td>
+                </tr>
+            </table>
+            <p>
+            In the above equations:
+            <ul style="list-style:none;">
+                <li><b>Cs</b> is the incoming colour.</li>
+                <li><b>Cd</b> is the colour currently stored in the colour buffer.</li>
+                <li><b>C</b> is the property defined by <b>sourcefactor.</b></li>
+                <li><b>D</b> is the property defined by <b>destinationfactor.</b></li>
+            </ul>
+            </p>
+            <p>
+            Allowable values of <b>sourcefactor</b> and <b>destinationfactor</b>
+            </p>
+            <table class="shortcuts-table">
+                <tr>
+                    <td><b>Zero</b></td><td>0, 0, 0, 0</td>
+                </tr>
+                <tr>
+                    <td><b>One</b></td><td>1, 1, 1, 1</td>
+                </tr>
+                <tr>
+                    <td><b>SourceColour</b></td><td>Srgb</td>
+                </tr>
+                <tr>
+                    <td><b>OneMinusSourceColour</b></td><td>1 - Srgb</td>
+                </tr>
+                <tr>
+                    <td><b>SourceAlpha</b></td><td>Sa</td>
+                </tr>
+                <tr>
+                    <td><b>OneMinusSourceAlpha</b></td><td>1 - Sa</td>
+                </tr>
+                <tr>
+                    <td><b>DestColour</b></td><td>Drgb</td>
+                </tr>
+                <tr>
+                    <td><b>OneMinusDestColour</b></td><td>1 - Drgb</td>
+                </tr>
+                <tr>
+                    <td><b>DestAlpha</b></td><td>Da</td>
+                </tr>
+                <tr>
+                    <td><b>OneMinusDestAlpha</b></td><td>1 - Da</td>
+                </tr>
+                <tr>
+                    <td><b>ConstantColour</b></td><td>RGB components of the value defined by <b>colour</b></td>
+                </tr>
+                <tr>
+                    <td><b>OneMinusConstantColour</b></td><td>1 minus RGB components of the value defined by <b>colour</b></td>
+                </tr>
+                <tr>
+                    <td><b>ConstantAlpha</b></td><td>Alpha component of the value defined by <b>colour</b></td>
+                </tr>
+                <tr>
+                    <td><b>OneMinusConstantAlpha</b></td><td>1 minus alpha component of the value defined by <b>colour</b></td>
+                </tr>
+            </table>
+            <p>
+            In the above equations:
+            <ul style="list-style:none;">
+                <li><b>Crgb</b> is the red, green and blue components of the source colour.</li>
+                <li><b>Ca</b> is the alpha component of the source colour.</li>
+                <li><b>Drgb</b> is the red, green and blue components of the destination colour.</li>
+                <li><b>Da</b> is the alpha component of the destination colour.</li>
+            </ul>
+            </p>
+        </div>
     </div>
 </div>
