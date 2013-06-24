@@ -56,6 +56,22 @@ namespace GTEngine
 
     bool MaterialDefinition::LoadFromXML(char* xml)
     {
+        this->diffuseShaderID   = "Material_DefaultDiffuse";
+        this->emissiveShaderID  = "Material_DefaultEmissive";
+        this->shininessShaderID = "Material_DefaultShininess";
+        this->normalShaderID    = "Material_DefaultNormal";
+        this->specularShaderID  = "Material_DefaultSpecular";
+        this->isRefractive      = false;
+        this->isBlended         = false;
+        this->defaultParams.Clear();
+
+        if (xml == nullptr || *xml == '\0')
+        {
+            // It's an empty file. This is valid.
+            this->xmlString = "";
+            return true;
+        }
+
         GTCore::String newXMLString(xml);
 
 
