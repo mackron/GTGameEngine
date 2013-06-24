@@ -128,4 +128,23 @@ namespace GTEngine
         this->rangeMinQuat = glm::simdQuat(glm::radians(rangeMin));
         this->rangeMaxQuat = glm::simdQuat(glm::radians(rangeMax));
     }
+
+
+
+    ///////////////////////////////////////
+    // Colour over Time
+
+    void ParticleFunction_ColourOverTime::Execute(Particle &particle, float lifetimeRatio)
+    {
+        glm::vec3 temp = this->Evaluate(lifetimeRatio);
+        particle.colour = glm::simdVec4(temp.x, temp.y, temp.z, particle.colour.w);
+    }
+
+    ///////////////////////////////////////
+    // Alpha over Time
+
+    void ParticleFunction_AlphaOverTime::Execute(Particle &particle, float lifetimeRatio)
+    {
+        particle.colour.w = this->Evaluate(lifetimeRatio);
+    }
 }

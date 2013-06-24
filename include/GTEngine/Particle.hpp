@@ -17,6 +17,7 @@ namespace GTEngine
             : position(0.0f, 0.0f, 0.0f, 1.0f), orientation(1.0f, 0.0f, 0.0f, 0.0f), scale(1.0f, 1.0f, 1.0f, 1.0f),
               linearVelocity(0.0f, 0.0f, 0.0f, 1.0f), angularVelocity(1.0f, 0.0f, 0.0f, 0.0f),
               spawnLinearVelocity(0.0f, 0.0f, 0.0f, 1.0f), gravityLinearVelocity(0.0f, 0.0f, 0.0f, 1.0f), functionLinearVelocity(0.0f, 0.0f, 0.0f, 1.0f),
+              colour(1.0f, 1.0f, 1.0f, 1.0f),
               lifetime(1.0), timeLeftToDeath(1.0),
               uvTileInterpolationFactor(0.0f),
               uTexCoordMin0(0.0f), uTexCoordMax0(1.0f),
@@ -53,6 +54,10 @@ namespace GTEngine
 
         /// The linear velocity of the particle as defined by the linear-velocity functions.
         glm::simdVec4 functionLinearVelocity;
+
+
+        /// The current colour of the particle.
+        glm::simdVec4 colour;
 
 
         /// The lifetime of the particle.

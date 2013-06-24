@@ -134,6 +134,18 @@ namespace GTEngine
                         break;
                     }
 
+                case ParticleFunctionType_ColourOverTime:
+                    {
+                        this->functions.PushBack(new ParticleFunction_ColourOverTime(reinterpret_cast<const ParticleFunction_ColourOverTime &>(functionToCopy)));
+                        break;
+                    }
+
+                case ParticleFunctionType_AlphaOverTime:
+                    {
+                        this->functions.PushBack(new ParticleFunction_AlphaOverTime(reinterpret_cast<const ParticleFunction_AlphaOverTime &>(functionToCopy)));
+                        break;
+                    }
+
 
                 default:
                     {
@@ -960,6 +972,7 @@ namespace GTEngine
         switch (function.GetType())
         {
         case ParticleFunctionType_SizeOverTime:
+        case ParticleFunctionType_AlphaOverTime:
             {
                 float rangeMin;
                 float rangeMax;
@@ -973,6 +986,7 @@ namespace GTEngine
 
         case ParticleFunctionType_LinearVelocityOverTime:
         case ParticleFunctionType_AngularVelocityOverTime:
+        case ParticleFunctionType_ColourOverTime:
             {
                 glm::vec3 rangeMin;
                 glm::vec3 rangeMax;
@@ -1004,6 +1018,7 @@ namespace GTEngine
             switch (function->GetType())
             {
             case ParticleFunctionType_SizeOverTime:
+            case ParticleFunctionType_AlphaOverTime:
                 {
                     float rangeMin;
                     float rangeMax;
@@ -1017,6 +1032,7 @@ namespace GTEngine
 
             case ParticleFunctionType_LinearVelocityOverTime:
             case ParticleFunctionType_AngularVelocityOverTime:
+            case ParticleFunctionType_ColourOverTime:
                 {
                     glm::vec3 rangeMin;
                     glm::vec3 rangeMax;
@@ -1074,6 +1090,18 @@ namespace GTEngine
         case ParticleFunctionType_AngularVelocityOverTime:
             {
                 newFunction = new ParticleFunction_AngularVelocityOverTime;
+                break;
+            }
+
+        case ParticleFunctionType_ColourOverTime:
+            {
+                newFunction = new ParticleFunction_ColourOverTime;
+                break;
+            }
+
+        case ParticleFunctionType_AlphaOverTime:
+            {
+                newFunction = new ParticleFunction_AlphaOverTime;
                 break;
             }
 

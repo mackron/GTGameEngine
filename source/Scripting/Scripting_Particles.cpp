@@ -387,6 +387,8 @@ namespace GTEngine
                         script.SetTableValue(-1, "SizeOverTime",            ParticleFunctionType_SizeOverTime);
                         script.SetTableValue(-1, "LinearVelocityOverTime",  ParticleFunctionType_LinearVelocityOverTime);
                         script.SetTableValue(-1, "AngularVelocityOverTime", ParticleFunctionType_AngularVelocityOverTime);
+                        script.SetTableValue(-1, "ColourOverTime",          ParticleFunctionType_ColourOverTime);
+                        script.SetTableValue(-1, "AlphaOverTime",           ParticleFunctionType_AlphaOverTime);
                     }
                     script.SetTableValue(-3);
                 }
@@ -948,6 +950,7 @@ namespace GTEngine
                         switch (function.GetType())
                         {
                         case ParticleFunctionType_SizeOverTime:
+                        case ParticleFunctionType_AlphaOverTime:
                             {
                                 float rangeMin;
                                 float rangeMax;
@@ -961,6 +964,7 @@ namespace GTEngine
 
                         case ParticleFunctionType_LinearVelocityOverTime:
                         case ParticleFunctionType_AngularVelocityOverTime:
+                        case ParticleFunctionType_ColourOverTime:
                             {
                                 glm::vec3 rangeMin;
                                 glm::vec3 rangeMax;
@@ -1031,6 +1035,7 @@ namespace GTEngine
                             switch (function.GetType())
                             {
                             case ParticleFunctionType_SizeOverTime:
+                            case ParticleFunctionType_AlphaOverTime:
                                 {
                                     float rangeMin = script.ToFloat(3);
                                     float rangeMax = script.IsNil(4) ? rangeMin : script.ToFloat(4);
@@ -1041,6 +1046,7 @@ namespace GTEngine
 
                             case ParticleFunctionType_LinearVelocityOverTime:
                             case ParticleFunctionType_AngularVelocityOverTime:
+                            case ParticleFunctionType_ColourOverTime:
                                 {
                                     glm::vec3 rangeMin = ToVector3(script, 3);
                                     glm::vec3 rangeMax = script.IsNil(4) ? rangeMin : ToVector3(script, 4);
