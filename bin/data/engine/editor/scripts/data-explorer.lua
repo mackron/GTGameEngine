@@ -49,6 +49,32 @@ function GTGUI.Element:DataExplorer()
         end
     end);
     
+    self.FolderMenu:AppendItem("New Material..."):OnPressed(function()
+        if self.FolderMenu.DestinationDirectory ~= nil then
+            Editor.ShowNewFileDialog("Create New Material...", self.FolderMenu.DestinationDirectory, "material", function(result, absolutePath)
+                if result == Editor.NewFileDialogResult.Create then
+                    GTCore.IO.CreateEmptyFile(absolutePath);
+                    Game.ScanDataFilesForChanges();
+                    
+                    Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
+                end
+            end);
+        end
+    end);
+    
+    self.FolderMenu:AppendItem("New Particle System..."):OnPressed(function()
+        if self.FolderMenu.DestinationDirectory ~= nil then
+            Editor.ShowNewFileDialog("Create New Particle System...", self.FolderMenu.DestinationDirectory, "gtparticle", function(result, absolutePath)
+                if result == Editor.NewFileDialogResult.Create then
+                    GTCore.IO.CreateEmptyFile(absolutePath);
+                    Game.ScanDataFilesForChanges();
+                    
+                    Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
+                end
+            end);
+        end
+    end);
+    
     self.FolderMenu:AppendItem("New Text File..."):OnPressed(function()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Text File...", self.FolderMenu.DestinationDirectory, nil, function(result, absolutePath)
