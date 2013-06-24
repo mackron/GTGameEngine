@@ -119,6 +119,24 @@ namespace GTEngine
             script.SetGlobal("GTEngine");
 
 
+            ///////////////////////////////////////////
+            // GUI Helpers.
+
+            successful = successful && script.Execute
+            (
+                "GTEngine.CreateGUIElement                        = GTGUI.Server.CreateElement;"
+                "GTEngine.DeleteGUIElement                        = GTGUI.Server.DeleteElement;"
+                "GTEngine.GetGUIElementByID                       = GTGUI.Server.GetElementByID;"
+                "GTEngine.GetRootGUIElement                       = GTGUI.Server.GetRootElement;"
+                "GTEngine.LoadGUIStyleScriptFromFile              = GTGUI.Server.LoadStyleScriptFromFile;"
+                "GTEngine.SetGUIDragAndDropProxyElement           = GTGUI.Server.SetDragAndDropProxyElement;"
+                "GTEngine.GetGUIDragAndDropProxyElement           = GTGUI.Server.GetDragAndDropProxyElement;"
+                "GTEngine.RemoveCurrentGUIDragAndDropProxyElement = GTGUI.Server.RemoveCurrentDragAndDropProxyElement;"
+                "GTEngine.SetGUIDragAndDropProxyElementOffset     = GTGUI.Server.SetDragAndDropProxyElementOffset;"
+                "GTEngine.GetGUIViewportWidth                     = GTGUI.Server.GetViewportWidth;"
+                "GTEngine.GetGUIViewportHeight                    = GTGUI.Server.SetDragAndDropProxyElementOffset;"
+            );
+
 
 
             successful = successful && LoadRenderingLibrary(script);
