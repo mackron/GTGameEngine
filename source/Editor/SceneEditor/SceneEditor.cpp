@@ -306,7 +306,7 @@ namespace GTEngine
                 // If the camera is not he main camera, we want to disable mouse capture in the viewport.
                 if (this->scene.GetViewportByIndex(0).GetCameraNode() != &this->camera)
                 {
-                    this->viewportEventHandler.DisableMouseControls();
+                    this->DisableViewportMouseControls();
                 }
 
 
@@ -378,7 +378,7 @@ namespace GTEngine
                 this->GetOwnerEditor().GetGame().ReleaseMouse();
 
                 // We will also want to make sure mouse capture is re-enabled.
-                this->viewportEventHandler.EnableMouseControls();
+                this->EnableViewportMouseControls();
 
 
                 // The grid might need to be shown.
