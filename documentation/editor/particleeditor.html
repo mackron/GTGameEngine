@@ -33,5 +33,51 @@ layout: editor
                 <td><b>LMB + RMB + Move</b></td><td>Pan camera</td>
             </tr>
         </table>
+        <p>
+        The particles are emitted as if the scene node is facing the +Y direction. Keep this in mind because scene nodes in the scene editor face -Z
+        by default. 
+        </p>
+        <p>
+        To create a new particle system, right-click on a directory in the asset explorer and create an empty particle system file. Upon creation,
+        the particle system will open automatically.
+        </p>
+        <p>
+        A particle system is essentially just a container of a number of emitters. The properties you are modifying are actually the properties of
+        each emitter.
+        </p>
+        <div class="documentation-section">
+            <h1>Properties Panel</h1>
+            <p>
+            The properties panel (right-side panel) is the main part of the editor. It is, as the name suggests, where the properties of the
+            particle system are modified.
+            </p>
+            <p>
+            The first thing to know is that you create a new emitter by hitting the <b>New Emitter</b> button. This will create a default emitter with
+            a few generic properties set. To delete an emitter, you simply hit the cross button next to the emitter name. You can collapse and expand
+            emitter properties panels by simply clicking on the title.
+            </p>
+            <p>
+            To define the behaviour of particles, you attach <b>functions</b> to the emitter. Below is a table the available functions. There are not
+            many yet, but this is obviously planned to be expanded in the future.
+            </p>
+            <table class="shortcuts-table">
+                <tr>
+                    <td><b>Size over Time</b></td><td>Changes the size of the particle over it's lifetime.</td>
+                </tr>
+                <tr>
+                    <td><b>Linear Velocity over Time</b></td><td>The velocity to apply to the position of the particle over it's lifetime.</td>
+                </tr>
+                <tr>
+                    <td><b>Angular Velocity over Time</b></td><td>The velocity to apply to the orientation of the particle over it's lifetime.</td>
+                </tr>
+            </table>
+            <p>
+            Currently all functions use a simple linear interpolation. A graph/spline based solution is planned for the future. The <b>Min</b> and <b>Max</b>
+            values refer to the spawn and death times of each particle respectively.
+            </p>
+            <p>
+            For billboard shaped particles, you'll probably only care about the Z-axis for the rotation.
+            </p>
+        </div>
     </div>
 </div>
