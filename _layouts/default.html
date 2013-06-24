@@ -3,12 +3,14 @@
 {% capture documentation_url %}{{ site.baseurl }}{{ "/documentation" }}{% endcapture %}
 {% capture download_url      %}{{ site.baseurl }}{{ "/download"      }}{% endcapture %}
 {% capture team_url          %}{{ site.baseurl }}{{ "/team"          }}{% endcapture %}
+{% capture thirdparty_url    %}{{ site.baseurl }}{{ "/thirdparty"    }}{% endcapture %}
 
 {% assign home_class          = "" %}
 {% assign getstarted_class    = "" %}
 {% assign documentation_class = "" %}
 {% assign download_class      = "" %}
 {% assign team_class          = "" %}
+{% assign thirdparty_class    = "" %}
 
 {% if page.url == "/" %}
     {% assign home_class = "active" %}
@@ -28,6 +30,10 @@
 
 {% if page.url contains "/team" %}
     {% assign team_class = "active" %}
+{% endif %}
+
+{% if page.url contains "/thirdparty" %}
+    {% assign thirdparty_class = "active" %}
 {% endif %}
 
 
@@ -206,6 +212,9 @@
                             </li>
                             <li class="{{ team_class }}">
                                 <a href="{{ team_url }}">Development Team</a>
+                            </li>
+                            <li class="{{ thirdparty_class }}">
+                                <a href="{{ thirdparty_url }}">Third-Party Libraries</a>
                             </li>
                         </ul>
                     </div>
