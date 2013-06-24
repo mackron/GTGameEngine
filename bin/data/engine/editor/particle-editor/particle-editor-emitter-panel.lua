@@ -116,6 +116,12 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.NewFunctionDropDownBox:AppendItem("Angular Velocity over Time"):OnPressed(function(data)
         self:AddFunction(GTEngine.ParticleFunctionTypes.AngularVelocityOverTime);
     end);
+    self.NewFunctionDropDownBox:AppendItem("Colour over Time"):OnPressed(function(data)
+        self:AddFunction(GTEngine.ParticleFunctionTypes.ColourOverTime);
+    end);
+    self.NewFunctionDropDownBox:AppendItem("Alpha over Time"):OnPressed(function(data)
+        self:AddFunction(GTEngine.ParticleFunctionTypes.AlphaOverTime);
+    end);
     
     
     
@@ -241,6 +247,8 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
             if     functionType == GTEngine.ParticleFunctionTypes.SizeOverTime            then newPanel:ScalarParticleFunctionPanel( "Size over Time",             particleFunction.rangeMin, particleFunction.rangeMax);
             elseif functionType == GTEngine.ParticleFunctionTypes.LinearVelocityOverTime  then newPanel:Vector3ParticleFunctionPanel("Linear Velocity over Time",  particleFunction.rangeMin, particleFunction.rangeMax);
             elseif functionType == GTEngine.ParticleFunctionTypes.AngularVelocityOverTime then newPanel:Vector3ParticleFunctionPanel("Angular Velocity over Time", particleFunction.rangeMin, particleFunction.rangeMax);
+            elseif functionType == GTEngine.ParticleFunctionTypes.ColourOverTime          then newPanel:Vector3ParticleFunctionPanel("Colour over Time",           particleFunction.rangeMin, particleFunction.rangeMax);
+            elseif functionType == GTEngine.ParticleFunctionTypes.AlphaOverTime           then newPanel:ScalarParticleFunctionPanel( "Alpha over Time",            particleFunction.rangeMin, particleFunction.rangeMax);
             end
             
             

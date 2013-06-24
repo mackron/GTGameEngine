@@ -243,6 +243,53 @@ namespace GTEngine
         /// The max value in the range, as a quaternion.
         glm::simdQuat rangeMaxQuat;
     };
+
+
+    /// The Colour over Time particle function.
+    class ParticleFunction_ColourOverTime : public ParticleFunction_Vector3
+    {
+    public:
+
+        /// Constructor.
+        ParticleFunction_ColourOverTime()
+            : ParticleFunction_Vector3(ParticleFunctionType_ColourOverTime, glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f))
+        {
+        }
+
+        /// Copy constructor.
+        ParticleFunction_ColourOverTime(const ParticleFunction_ColourOverTime &other)
+            : ParticleFunction_Vector3(other)
+        {
+        }
+
+
+        /// ParticleFunction::Execute()
+        void Execute(Particle &particle, float lifetimeRatio);
+    };
+
+
+    /// The Alpha over Time particle function.
+    class ParticleFunction_AlphaOverTime : public ParticleFunction_Scalar
+    {
+    public:
+
+        /// Constructor.
+        ParticleFunction_AlphaOverTime()
+            : ParticleFunction_Scalar(ParticleFunctionType_AlphaOverTime, 1.0f, 1.0f)
+        {
+        }
+
+        /// Copy constructor.
+        ParticleFunction_AlphaOverTime(const ParticleFunction_AlphaOverTime &other)
+            : ParticleFunction_Scalar(other)
+        {
+        }
+
+
+
+        /// ParticleFunction::Execute().
+        void Execute(Particle &particle, float lifetimeRatio);
+    };
 }
 
 #endif

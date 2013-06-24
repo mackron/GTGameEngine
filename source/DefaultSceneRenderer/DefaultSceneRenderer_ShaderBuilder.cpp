@@ -105,6 +105,12 @@ namespace GTEngine
             );
         }
 
+        vertexSource.Append
+        (
+            "in  vec4 VertexInput_Colour;\n"
+            "out vec4 VertexOutput_Colour;\n"
+        );
+
 
         // Light structures.
         if (directionalLightCount > 0)
@@ -214,6 +220,7 @@ namespace GTEngine
             "    VertexOutput_PositionVS = ViewModelMatrix * vec4(VertexInput_Position, 1.0);\n"
             "    VertexOutput_PositionWS = ModelMatrix     * vec4(VertexInput_Position, 1.0);\n"
             "    VertexOutput_TexCoord   = VertexInput_TexCoord;\n"
+            "    VertexOutput_Colour     = VertexInput_Colour;\n"
             "    VertexOutput_Normal.xyz = normalize(NormalMatrix * VertexInput_Normal.xyz); VertexOutput_Normal.w = VertexInput_Normal.w;\n"
             "\n"
         );
@@ -313,6 +320,11 @@ namespace GTEngine
                 "in vec3 VertexOutput_Bitangent;\n"
             );
         }
+
+        fragmentSource.Append
+        (
+            "in vec4 VertexOutput_Colour;\n"
+        );
 
         // Output
         if (includeMaterialPass)

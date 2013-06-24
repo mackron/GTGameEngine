@@ -456,11 +456,10 @@ namespace GTEngine
                                                 glm::simdVec4 normal2   = normal0;
                                                 glm::simdVec4 normal3   = normal0;
 
-                                                glm::vec4 colour0       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-                                                glm::vec4 colour1       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-                                                glm::vec4 colour2       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-                                                glm::vec4 colour3       = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
+                                                glm::simdVec4 colour0   = particle.colour;
+                                                glm::simdVec4 colour1   = particle.colour;
+                                                glm::simdVec4 colour2   = particle.colour;
+                                                glm::simdVec4 colour3   = particle.colour;
 
                                                 vertex0[0]  = position0.x; vertex0[1]  = position0.y; vertex0[2]  = position0.z; vertex0[3]  = 1.0f;
                                                 vertex0[4]  = texcoord0.x; vertex0[5]  = texcoord0.y; vertex0[6]  = texcoord0.z; vertex0[7]  = texcoord0.w;

@@ -11,6 +11,8 @@ namespace GTEngine
         ParticleFunctionType_SizeOverTime             = 1,
         ParticleFunctionType_LinearVelocityOverTime   = 2,
         ParticleFunctionType_AngularVelocityOverTime  = 3,
+        ParticleFunctionType_ColourOverTime           = 4,
+        ParticleFunctionType_AlphaOverTime            = 5,
     };
 }
 
