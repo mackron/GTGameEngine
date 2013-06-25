@@ -6,7 +6,9 @@ function GTGUI.Element:ModelEditor_Timeline(_internalPtr)
     
     self.PlaybackContainer = GTGUI.Server.CreateElement(self.ControlsContainer, "model-editor-timeline-playback-container");
     self.PlayPauseButton   = GTGUI.Server.CreateElement(self.PlaybackContainer, "model-editor-timeline-play-button");
+    self.PlayPauseButton:SetTooltip("Play/Pause/Resume animation playback.");
     self.StopButton        = GTGUI.Server.CreateElement(self.PlaybackContainer, "model-editor-timeline-stop-button");
+    self.StopButton:SetTooltip("Stop animation playback.");
     self.StopButton:Disable();
     
     

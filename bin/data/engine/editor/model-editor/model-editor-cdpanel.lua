@@ -4,6 +4,7 @@ function GTGUI.Element:ModelEditor_CDPanel(_internalPtr)
     self:PanelGroupBox("Convex Decomposition");
     
     self.ShowConvexDecomposition = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' />");
+    self.ShowConvexDecomposition:SetTooltip("Show the convext decomposition. This will hide the main model");
     
     GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='width:100%; height:1px; margin:0px 8px; background-color:#444;' />");
     
@@ -22,6 +23,7 @@ function GTGUI.Element:ModelEditor_CDPanel(_internalPtr)
     GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='width:100%; height:1px; margin:0px 8px; background-color:#444;' />");
     
     self.BuildButton             = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='button' style='width:100%;' />");
+    self.BuildButton:SetTooltip("Build the convex decomposition. This can take a while and the\neditor will appear to freeze.");
     
     
     -- "Show in Viewport" CheckBox.
