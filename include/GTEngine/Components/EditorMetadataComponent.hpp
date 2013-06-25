@@ -181,6 +181,28 @@ namespace GTEngine
         void UpdateCollisionShapeMeshTransform();
 
 
+        /// Show the proximity shape mesh.
+        ///
+        /// @remarks
+        ///     This does not have picking collision info.
+        void ShowProximityShapeMesh();
+
+        /// Hides the collision shape mesh.
+        void HideProximityShapeMesh();
+
+        /// Determines whether or not the collision shape mesh is being shown.
+        bool IsShowingProximityShapeMesh() const;
+
+        /// Retrieves a reference to the collision shape mesh.
+        const SceneRendererMesh & GetProximityShapeMesh() const { return this->proximityShapeMesh; }
+
+        /// Updates the collision shape mesh geometry.
+        void UpdateProximityShapeMeshGeometry(const btCollisionShape &shape);
+
+        /// Updates the collision shape transform.
+        void UpdateProximityShapeMeshTransform();
+
+
 
         /// Retrieves the relative path of the prefab the scene node is linked to.
         const char* GetPrefabRelativePath() const;
@@ -298,6 +320,13 @@ namespace GTEngine
 
         /// Keeps track of whether or not the collision shape mesh is being shown.
         bool isShowingCollisionShapeMesh;
+
+
+        /// The proximity shape mesh.
+        SceneRendererMesh proximityShapeMesh;
+
+        /// Keeps track of whether or not the proximity shape mesh is being shown.
+        bool isShowingProximityShapeMesh;
 
 
         /// The name of the prefab the scene node is part of. If this is empty, it means it is not linked to a prefab.
