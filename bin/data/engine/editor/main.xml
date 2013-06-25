@@ -5,17 +5,11 @@
 The editor is made up of 5 sections: Top, bottom, center, left and right. The center section is the main viewport.
 -->
 
-<style   url="theme.style" />
-<include url="common.xml"  />
+<style   url="theme.style"     />
+<include url="common.xml"      />
+<include url="sub-editors.xml" />
 
 <script url="scripts/datafileswatcher.lua" />
-
-<include url="model-editor.xml"                                />
-<include url="material-editor.xml"                             />
-<include url="particle-editor.xml"                             />
-<include url="scene-editor.xml"                                />
-<include url="text-editor/text-editor.xml"                     />
-<include url="packaging-tool-editor/packaging-tool-editor.xml" />
 
 
 
