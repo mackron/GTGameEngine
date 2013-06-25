@@ -6,10 +6,11 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 -->
 
 <style   url="theme.style"     />
+
 <include url="common.xml"      />
 <include url="sub-editors.xml" />
 
-<script url="scripts/datafileswatcher.lua" />
+<script url="data-files-watcher.lua" />
 
 
 
