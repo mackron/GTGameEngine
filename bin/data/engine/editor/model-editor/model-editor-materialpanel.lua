@@ -7,6 +7,7 @@ function GTGUI.Element:ModelEditor_MaterialsPanel(_internalPtr)
     
     function self:AddMaterial(path)
         local new = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='textbox' style='width:100%; margin:0px 2px;'>" .. path .. "</div>");
+        new:SetTooltip(path);
         new.index = #self.MaterialTextBoxes + 1;
         
         new:OnKeyPressed(function(data)

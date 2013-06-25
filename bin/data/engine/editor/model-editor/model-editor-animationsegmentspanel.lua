@@ -13,12 +13,15 @@ function GTGUI.Element:ModelEditor_AnimationSegment(name, rangeMin, rangeMax)
     self.Range:SetStyle("width", "80px");
     self.Range:SetStyle("margin-left", "4px");
     self.Range:SetValue(rangeMin, rangeMax);
+    self.Range:SetTooltip("The start and end frames.");
     
     self.PlayButton = GTGUI.Server.CreateElement(self, "model-editor-play-button-small");
     self.PlayButton:SetStyle("margin-left", "4px");
+    self.PlayButton:SetTooltip("Play this animation segment. Use the controls on the\ntimeline to stop or pause playback.");
     
     self.Cross = GTGUI.Server.CreateElement(self, "cross-button");
     self.Cross:SetStyle("margin-left", "4px");
+    self.Cross:SetTooltip("Delete this animation segment.");
 
     
     return self;
@@ -32,6 +35,7 @@ function GTGUI.Element:ModelEditor_AnimationSegmentsPanel(_internalPtr)
     self.AddSegmentButton = GTGUI.Server.CreateElement(self.Body, "add-button");
     self.AddSegmentButton:AddButton("New Segment");
     self.AddSegmentButton:SetStyle("margin-top", "8px");
+    self.AddSegmentButton:SetTooltip("Add a new animation segment.");
     
     self.AddSegmentButton:OnPressed(function()
         self:AddNewSegment("Unnamed", 0, 0, true);
