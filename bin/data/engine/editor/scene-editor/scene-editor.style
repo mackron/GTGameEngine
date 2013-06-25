@@ -10,3 +10,377 @@ scene-editor-main
     
     horizontal-align: right     // Need this for allowing resizing.
 }
+
+
+
+
+
+
+
+
+collision-shape-panel
+{
+    width:         100%
+    text-color:    #bbb
+    padding:       0px 4px
+    padding-left:  4px
+    border-bottom: 1px #4a4a4a
+}
+
+collision-shape-panel-delete-button
+{
+    width:                  12px
+    height:                 12px
+    background-image:       std-cross
+    background-image-color: std-text-color
+}
+
+collision-shape-panel-delete-button:hovered
+{
+    background-image-color: #f99
+}
+
+collision-shape-panel-delete-button:pushed
+{
+    background-image-color: #f66
+}
+
+
+collision-shape-panel-new
+{
+    width:            auto
+    height:           auto
+    child-plane:      horizontal
+    flex-child-width: true
+    horizontal-align: left
+    vertical-align:   center
+    margin-top:       2px
+    padding:          6px 4px
+    font-style:       bold
+    
+
+    background-image-color: std-text-color
+    text-color:             std-text-color
+}
+
+collision-shape-panel-new:hovered
+{
+    background-image-color: #ccc
+    text-color:             #ccc
+}
+
+collision-shape-panel-new-open
+{
+    background-color:       #444
+    
+    border:                 1px #777
+    border-bottom:          none
+    
+    text-color:             #ccc
+    background-image-color: #ccc
+    
+    padding:                5px 3px
+    padding-bottom:         4px
+}
+
+
+
+collision-shape-panel-new-icon
+{
+    width:                   8px
+    height:                  12px
+    background-image:        std-plus
+    background-image-color:  inherit
+    transparent-mouse-input: true
+}
+
+collision-shape-panel-new-icon-open
+{
+    background-image: std-minus
+}
+
+
+collision-shape-panel-new-label
+{
+    width:                   auto
+    text-color:              inherit
+    margin-left:             4px
+    transparent-mouse-input: true
+}
+
+collision-shape-panel-new-bottom-border
+{
+    visible:             false;
+
+    positioning:         relative
+    width:               100%
+    height:              1px
+    bottom:              1px
+    relative-width-mode: inner-border
+    position-origin:     inner-border
+    background-color:    #444
+}
+
+
+collision-shape-panel-new-menu
+{
+    background-color: #444
+    
+    width:            100%
+    height:           auto
+    
+    border:           1px #777
+}
+
+collision-shape-panel-new-menu-item
+{
+    width:            100%
+    height:           auto
+    
+    vertical-align:   center
+    padding:          4px
+    
+    text-color:       #bbb
+    background-color: #444
+}
+
+collision-shape-panel-new-menu-item:hovered
+{
+    text-color:       #ccc
+    background-color: #555
+}
+
+collision-shape-panel-new-menu-item:pushed
+{
+    text-color:       #ddd
+    background-color: #666
+}
+
+
+
+
+
+
+new-component-container
+{
+    padding:4px;
+}
+
+
+new-component-title-container
+{
+    width:            auto
+    height:           auto
+    child-plane:      horizontal
+    flex-child-width: true
+    horizontal-align: left
+    vertical-align:   center
+    margin-top:       2px
+    padding:          6px 4px
+    font-style:       bold
+    
+
+    background-image-color: std-text-color
+    text-color:             std-text-color
+}
+
+new-component-title-container:hovered
+{
+    background-image-color: #ccc
+    text-color:             #ccc
+}
+
+new-component-title-container-open
+{
+    background-color:       #444
+    
+    border:                 1px #777
+    border-bottom:          none
+    
+    text-color:             #ccc
+    background-image-color: #ccc
+    
+    padding:                5px 3px
+    padding-bottom:         4px
+}
+
+new-component-title-container-icon
+{
+    width:                   8px
+    height:                  12px
+    background-image:        std-plus
+    background-image-color:  inherit
+    transparent-mouse-input: true
+}
+
+new-component-title-container-icon-open
+{
+    background-image: std-minus
+}
+
+
+new-component-title-container-label
+{
+    width:                   auto
+    text-color:              inherit
+    margin-left:             4px
+    transparent-mouse-input: true
+}
+
+new-component-title-container-bottom-border
+{
+    visible:             false;
+
+    positioning:         relative
+    width:               100%
+    height:              1px
+    bottom:              1px
+    relative-width-mode: inner-border
+    position-origin:     inner-border
+    background-color:    #444
+}
+
+
+new-component-menu
+{
+    background-color: #444
+    
+    width:            100%
+    height:           auto
+    
+    border:           1px #777
+}
+
+new-component-menu-item
+{
+    width:            100%
+    height:           auto
+    
+    vertical-align:   center
+    padding:          4px
+    
+    text-color:       #bbb
+    background-color: #444
+}
+
+new-component-menu-item:hovered
+{
+    text-color:       #ccc
+    background-color: #555
+}
+
+new-component-menu-item:pushed
+{
+    text-color:       #ddd
+    background-color: #666
+}
+
+
+// TODO: Delete new-script-button
+new-script-button
+{
+    width:                  auto
+    height:                 auto
+    
+    font-style:             bold
+    text-color:             std-text-color
+    background-image-color: std-text-color
+    
+    child-plane:            horizontal
+    vertical-align:         center
+}
+
+new-script-button:hovered
+{
+    text-color:             #ccc
+    background-image-color: #ccc
+}
+
+new-script-button:pushed
+{
+    text-color:             #eee
+    background-image-color: #eee
+}
+
+
+
+new-script-container
+{
+    width:            100%
+    child-plane:      horizontal
+    flex-child-width: true
+    vertical-align:   center
+}
+
+new-script-textbox includes textbox
+{
+    width: 100%
+}
+
+new-script-icon
+{
+    width:                   16px
+    height:                  16px
+    background-image:        std-plus
+    background-image-color:  std-text-color
+    margin-left:             4px
+}
+
+new-script-icon:hovered
+{
+    background-image-color: #ccc
+}
+
+new-script-icon:pushed
+{
+    background-image-color: #eee
+}
+
+
+
+
+script-variable-container
+{
+    child-plane:      horizontal
+    vertical-align:   center
+    horizontal-align: right
+    text-color:       #999
+    padding:          0px 2px;
+    flex-child-width: true
+}
+
+
+
+vector-container
+{
+}
+
+vector-label
+{
+    width:          auto
+    text-color:     std-text-color
+    vertical-align: center
+    margin-right:   8px
+}
+
+vector-input
+{
+    horizontal-align: right
+    child-plane:      horizontal
+    flex-child-width: true
+}
+
+
+vector3-container includes vector-container
+{
+}
+
+vector3-label includes vector-label
+{
+}
+
+vector3-input includes vector-input
+{
+}
+
+

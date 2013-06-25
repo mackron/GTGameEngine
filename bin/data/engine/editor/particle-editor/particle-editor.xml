@@ -1,0 +1,10 @@
+<!-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file. -->
+
+<style  url="particle-editor.style" />
+
+<script url="particle-editor.lua"                       />
+<script url="particle-editor-viewport.lua"              />
+<script url="particle-editor-panel.lua"                 />
+<script url="particle-editor-newemitter-button.lua"     />
+<script url="particle-editor-emitter-panel.lua"         />
+<script url="particle-editor-function-panel.lua"        />
