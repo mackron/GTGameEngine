@@ -261,25 +261,27 @@ namespace GTEngine
                         for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
                         {
                             auto &mesh = meshList->buffer[iMesh];
-
-                            if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
+                            if (mesh.vertexArray != nullptr)
                             {
-                                // Shader setup.
-                                Renderer::SetCurrentShader(shader);
-                                shader->SetUniform("PVMMatrix", this->visibleObjects.projectionViewMatrix * mesh.transform);
-                                Renderer::PushPendingUniforms(*shader);
-
-
-                                // Draw.
-                                if ((mesh.flags & SceneRendererMesh::NoDepthTest))  Renderer::DisableDepthTest();
+                                if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
                                 {
-                                    Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
+                                    // Shader setup.
+                                    Renderer::SetCurrentShader(shader);
+                                    shader->SetUniform("PVMMatrix", this->visibleObjects.projectionViewMatrix * mesh.transform);
+                                    Renderer::PushPendingUniforms(*shader);
+
+
+                                    // Draw.
+                                    if ((mesh.flags & SceneRendererMesh::NoDepthTest))  Renderer::DisableDepthTest();
+                                    {
+                                        Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
+                                    }
+                                    if ((mesh.flags & SceneRendererMesh::NoDepthTest))  Renderer::EnableDepthTest();
                                 }
-                                if ((mesh.flags & SceneRendererMesh::NoDepthTest))  Renderer::EnableDepthTest();
-                            }
-                            else
-                            {
-                                this->opaqueMeshesWithNoDepthWrites.PushBack(&mesh);
+                                else
+                                {
+                                    this->opaqueMeshesWithNoDepthWrites.PushBack(&mesh);
+                                }
                             }
                         }
                     }
@@ -776,65 +778,68 @@ namespace GTEngine
 
     void DefaultSceneRenderer_MultiPassPipeline::RenderMesh(const DefaultSceneRendererMesh &mesh, const DefaultSceneRenderer_LightGroup &lightGroup, uint32_t shaderFlags)
     {
-        if ((mesh.flags & SceneRendererMesh::NoNormalMapping))
+        if (mesh.vertexArray != nullptr)
         {
-            shaderFlags |= DefaultSceneRenderer_MaterialShaderID::NoNormalMapping;
-        }
-
-        auto shader = this->renderer.GetMaterialShader(*mesh.material, lightGroup.id, shaderFlags);
-        if (shader != nullptr)
-        {
-            glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
-            glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
-
-
-            // Shader setup.
-            Renderer::SetCurrentShader(shader);
-            this->renderer.SetMaterialShaderUniforms(*shader, *mesh.material, lightGroup, shaderFlags, this->visibleObjects);
-
-            // For now, we will just set the shadow maps manually.
-            if (lightGroup.GetShadowDirectionalLightCount() > 0)
+            if ((mesh.flags & SceneRendererMesh::NoNormalMapping))
             {
-                shader->SetUniform(GTCore::String::CreateFormatted("ShadowDirectionalLightFS%d_ShadowMap", 0).c_str(), this->renderer.GetDirectionalShadowMapByIndex(0));
+                shaderFlags |= DefaultSceneRenderer_MaterialShaderID::NoNormalMapping;
             }
 
-            if (lightGroup.GetShadowPointLightCount() > 0)
+            auto shader = this->renderer.GetMaterialShader(*mesh.material, lightGroup.id, shaderFlags);
+            if (shader != nullptr)
             {
-                shader->SetUniform(GTCore::String::CreateFormatted("ShadowPointLightFS%d_ShadowMap", 0).c_str(), this->renderer.GetPointShadowMapByIndex(0));
+                glm::mat4 viewModelMatrix = visibleObjects.viewMatrix * mesh.transform;
+                glm::mat3 normalMatrix    = glm::inverse(glm::transpose(glm::mat3(viewModelMatrix)));
+
+
+                // Shader setup.
+                Renderer::SetCurrentShader(shader);
+                this->renderer.SetMaterialShaderUniforms(*shader, *mesh.material, lightGroup, shaderFlags, this->visibleObjects);
+
+                // For now, we will just set the shadow maps manually.
+                if (lightGroup.GetShadowDirectionalLightCount() > 0)
+                {
+                    shader->SetUniform(GTCore::String::CreateFormatted("ShadowDirectionalLightFS%d_ShadowMap", 0).c_str(), this->renderer.GetDirectionalShadowMapByIndex(0));
+                }
+
+                if (lightGroup.GetShadowPointLightCount() > 0)
+                {
+                    shader->SetUniform(GTCore::String::CreateFormatted("ShadowPointLightFS%d_ShadowMap", 0).c_str(), this->renderer.GetPointShadowMapByIndex(0));
+                }
+
+                if (lightGroup.GetShadowSpotLightCount() > 0)
+                {
+                    shader->SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d_ShadowMap", 0).c_str(), this->renderer.GetSpotShadowMapByIndex(0));
+                }
+
+                shader->SetUniform("ModelMatrix",       mesh.transform);
+                shader->SetUniform("ViewModelMatrix",   viewModelMatrix);
+                shader->SetUniform("NormalMatrix",      normalMatrix);
+                shader->SetUniform("PVMMatrix",         visibleObjects.projectionViewMatrix * mesh.transform);
+
+                if ((shaderFlags & DefaultSceneRenderer_MaterialShaderID::GetLightingFromTextures))
+                {
+                    shader->SetUniform("DiffuseLighting",  this->viewportFramebuffer.lightingBuffer0);
+                    shader->SetUniform("SpecularLighting", this->viewportFramebuffer.lightingBuffer1);
+                }
+
+                if (mesh.material->IsRefractive())
+                {
+                    shader->SetUniform("BackgroundTexture", this->viewportFramebuffer.colourBuffer1);
+                }
+
+
+                Renderer::PushPendingUniforms(*shader);
+
+
+
+                // Draw.
+                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer::DisableDepthTest();
+                {
+                    Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
+                }
+                if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer::EnableDepthTest();
             }
-
-            if (lightGroup.GetShadowSpotLightCount() > 0)
-            {
-                shader->SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d_ShadowMap", 0).c_str(), this->renderer.GetSpotShadowMapByIndex(0));
-            }
-
-            shader->SetUniform("ModelMatrix",       mesh.transform);
-            shader->SetUniform("ViewModelMatrix",   viewModelMatrix);
-            shader->SetUniform("NormalMatrix",      normalMatrix);
-            shader->SetUniform("PVMMatrix",         visibleObjects.projectionViewMatrix * mesh.transform);
-
-            if ((shaderFlags & DefaultSceneRenderer_MaterialShaderID::GetLightingFromTextures))
-            {
-                shader->SetUniform("DiffuseLighting",  this->viewportFramebuffer.lightingBuffer0);
-                shader->SetUniform("SpecularLighting", this->viewportFramebuffer.lightingBuffer1);
-            }
-
-            if (mesh.material->IsRefractive())
-            {
-                shader->SetUniform("BackgroundTexture", this->viewportFramebuffer.colourBuffer1);
-            }
-
-
-            Renderer::PushPendingUniforms(*shader);
-
-
-
-            // Draw.
-            if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer::DisableDepthTest();
-            {
-                Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
-            }
-            if ((mesh.flags & SceneRendererMesh::NoDepthTest)) Renderer::EnableDepthTest();
         }
     }
 
@@ -871,21 +876,24 @@ namespace GTEngine
 
     void DefaultSceneRenderer_MultiPassPipeline::RenderMeshHighlight(const DefaultSceneRendererMesh &mesh)
     {
-        Renderer::SetBlendColour(mesh.highlightColour.x, mesh.highlightColour.y, mesh.highlightColour.z, 1.0f);
-        Renderer::SetBlendFunction(BlendFunc_Zero, BlendFunc_ConstantColour);
-
-
-        // Shader.
-        auto highlightShader = this->renderer.GetHighlightShader();
-        assert(highlightShader != nullptr);
+        if (mesh.vertexArray != nullptr)
         {
-            Renderer::SetCurrentShader(highlightShader);
-            highlightShader->SetUniform("PVMMatrix", visibleObjects.projectionViewMatrix * mesh.transform);
-            Renderer::PushPendingUniforms(*highlightShader);
+            Renderer::SetBlendColour(mesh.highlightColour.x, mesh.highlightColour.y, mesh.highlightColour.z, 1.0f);
+            Renderer::SetBlendFunction(BlendFunc_Zero, BlendFunc_ConstantColour);
 
 
-            // Draw.
-            Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
+            // Shader.
+            auto highlightShader = this->renderer.GetHighlightShader();
+            assert(highlightShader != nullptr);
+            {
+                Renderer::SetCurrentShader(highlightShader);
+                highlightShader->SetUniform("PVMMatrix", visibleObjects.projectionViewMatrix * mesh.transform);
+                Renderer::PushPendingUniforms(*highlightShader);
+
+
+                // Draw.
+                Renderer::Draw(*mesh.vertexArray, mesh.drawMode);
+            }
         }
     }
 
