@@ -39,3 +39,6 @@
 
 <style  url="common/tooltip.style"                />
 <script url="common/tooltip.lua"                  />
+
+<style  url="common/menu.style"                   />
+<script url="common/menu.lua"                     />

@@ -1,6 +1,4 @@
 <!-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file. -->
 
-<include url="menu.xml" />
-
 <script url="scripts/menubar.lua" />
 <style  url="styles/menubar.style" />
