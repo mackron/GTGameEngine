@@ -10,6 +10,10 @@
 <style  url="common/labelled-element.style"       />
 <script url="common/labelled-element.lua"         />
 
+<script url="common/number-textbox.lua"           />
+<script url="common/vector2-input.lua"            />
+<script url="common/vector3-input.lua"            />
+<script url="common/vector4-input.lua"            />
 <style  url="common/labelled-vector-input.style"  />
 <style  url="common/labelled-vector2-input.style" />
 <script url="common/labelled-vector2-input.lua"   />
@@ -20,7 +24,6 @@
 
 <style  url="common/labelled-textbox.style"       />
 <script url="common/labelled-textbox.lua"         />
-
 
 <style  url="common/editor-panel.style"           />
 <script url="common/editor-panel.lua"             />
@@ -64,7 +67,6 @@
 
 <style  url="common/data-explorer.style"          />
 <script url="common/data-explorer.lua"            />
-
 
 
 
