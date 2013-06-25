@@ -472,68 +472,69 @@ namespace GTEngine
             auto vertexArray = this->meshes[iMesh].geometry;
             assert(vertexArray != nullptr);
             {
-                assert(vertexArray->GetFormat().GetSize() == VertexFormat::P3T2N3T3B3.GetSize());
+                // Vertex Format.
+                vertexArray->GetFormat().Serialize(intermediarySerializer);
+
+
+                // Vertices.
+                intermediarySerializer.Write(static_cast<uint32_t>(vertexArray->GetVertexCount()));
+
+                if (vertexArray->GetVertexCount() > 0)
                 {
-                    // Vertices.
+                    intermediarySerializer.Write(vertexArray->GetVertexDataPtr(), vertexArray->GetFormat().GetSizeInBytes() * vertexArray->GetVertexCount());
+                }
+
+
+                // Indices.
+                intermediarySerializer.Write(static_cast<uint32_t>(vertexArray->GetIndexCount()));
+
+                if (vertexArray->GetIndexCount() > 0)
+                {
+                    intermediarySerializer.Write(vertexArray->GetIndexDataPtr(), sizeof(uint32_t) * vertexArray->GetIndexCount());
+                }
+
+
+                // Skinning Vertex Attributes.
+                if (this->meshes[iMesh].skinningVertexAttributes != nullptr)
+                {
                     intermediarySerializer.Write(static_cast<uint32_t>(vertexArray->GetVertexCount()));
 
                     if (vertexArray->GetVertexCount() > 0)
                     {
-                        intermediarySerializer.Write(vertexArray->GetVertexDataPtr(), vertexArray->GetFormat().GetSizeInBytes() * vertexArray->GetVertexCount());
-                    }
+                        uint32_t totalBoneWeights = 0;
 
 
-                    // Indices.
-                    intermediarySerializer.Write(static_cast<uint32_t>(vertexArray->GetIndexCount()));
-
-                    if (vertexArray->GetIndexCount() > 0)
-                    {
-                        intermediarySerializer.Write(vertexArray->GetIndexDataPtr(), sizeof(uint32_t) * vertexArray->GetIndexCount());
-                    }
-
-
-                    // Skinning Vertex Attributes.
-                    if (this->meshes[iMesh].skinningVertexAttributes != nullptr)
-                    {
-                        intermediarySerializer.Write(static_cast<uint32_t>(vertexArray->GetVertexCount()));
-
-                        if (vertexArray->GetVertexCount() > 0)
+                        // Bone Counts.
+                        for (size_t iVertex = 0; iVertex < vertexArray->GetVertexCount(); ++iVertex)
                         {
-                            uint32_t totalBoneWeights = 0;
+                            uint16_t count = static_cast<uint16_t>(this->meshes[iMesh].skinningVertexAttributes[iVertex].bones.count);
+                            intermediarySerializer.Write(count);
 
-
-                            // Bone Counts.
-                            for (size_t iVertex = 0; iVertex < vertexArray->GetVertexCount(); ++iVertex)
-                            {
-                                uint16_t count = static_cast<uint16_t>(this->meshes[iMesh].skinningVertexAttributes[iVertex].bones.count);
-                                intermediarySerializer.Write(count);
-
-                                totalBoneWeights += count;
-                            }
+                            totalBoneWeights += count;
+                        }
 
                             
-                            // Bone/Weight Pairs.
-                            intermediarySerializer.Write(totalBoneWeights);
+                        // Bone/Weight Pairs.
+                        intermediarySerializer.Write(totalBoneWeights);
 
-                            for (size_t iVertex = 0; iVertex < vertexArray->GetVertexCount(); ++iVertex)
+                        for (size_t iVertex = 0; iVertex < vertexArray->GetVertexCount(); ++iVertex)
+                        {
+                            auto &bones = this->meshes[iMesh].skinningVertexAttributes[iVertex].bones;
                             {
-                                auto &bones = this->meshes[iMesh].skinningVertexAttributes[iVertex].bones;
+                                for (size_t iBone = 0; iBone < bones.count; ++iBone)
                                 {
-                                    for (size_t iBone = 0; iBone < bones.count; ++iBone)
-                                    {
-                                        auto &bone = bones[iBone];
+                                    auto &bone = bones[iBone];
 
-                                        intermediarySerializer.Write(static_cast<uint32_t>(bone.boneIndex));
-                                        intermediarySerializer.Write(static_cast<float   >(bone.weight));
-                                    }
+                                    intermediarySerializer.Write(static_cast<uint32_t>(bone.boneIndex));
+                                    intermediarySerializer.Write(static_cast<float   >(bone.weight));
                                 }
                             }
                         }
                     }
-                    else
-                    {
-                        intermediarySerializer.Write(static_cast<uint32_t>(0));
-                    }
+                }
+                else
+                {
+                    intermediarySerializer.Write(static_cast<uint32_t>(0));
                 }
             }
         }
@@ -835,7 +836,9 @@ namespace GTEngine
 
 
                             // Geometry
-                            newMesh.geometry = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2N3T3B3);
+                            VertexFormat vertexFormat;
+                            vertexFormat.Deserialize(deserializer);
+                            newMesh.geometry = Renderer::CreateVertexArray(VertexArrayUsage_Static, vertexFormat);
                             
                             // Vertices.
                             uint32_t vertexCount;
@@ -846,7 +849,7 @@ namespace GTEngine
                                 newMesh.geometry->SetVertexData(nullptr, static_cast<size_t>(vertexCount));
                                 auto vertexData = newMesh.geometry->MapVertexData();
                                 {
-                                    deserializer.Read(vertexData, vertexCount * VertexFormat::P3T2N3T3B3.GetSizeInBytes());
+                                    deserializer.Read(vertexData, vertexCount * vertexFormat.GetSizeInBytes());
                                 }
                                 newMesh.geometry->UnmapVertexData();
                             }
