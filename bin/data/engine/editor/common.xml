@@ -42,3 +42,9 @@
 
 <style  url="common/menu.style"                   />
 <script url="common/menu.lua"                     />
+
+<style  url="common/menubar.style"                />
+<script url="common/menubar.lua"                  />
+
+<style  url="common/tabbar.style"                 />
+<script url="common/tabbar.lua"                   />

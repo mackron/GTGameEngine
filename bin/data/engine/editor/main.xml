@@ -14,7 +14,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <include url="common-controls.xml" />
 <include url="dialogs.xml"         />
 
-<include url="menubar.xml"       />
 <include url="combobox.xml"      />
 
 <style  url="styles/searchbox.style" />
@@ -22,9 +21,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 
 <style  url="styles/data-explorer.style" />
 <script url="scripts/data-explorer.lua"  />
-
-<style  url="styles/tabbar.style" />
-<script url="scripts/tabbar.lua"  />
 
 
 
