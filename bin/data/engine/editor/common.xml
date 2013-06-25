@@ -48,3 +48,6 @@
 
 <style  url="common/tabbar.style"                 />
 <script url="common/tabbar.lua"                   />
+
+<style  url="common/combobox.style"               />
+<script url="common/combobox.lua"                 />
