@@ -51,3 +51,23 @@
 
 <style  url="common/combobox.style"               />
 <script url="common/combobox.lua"                 />
+
+<style  url="common/dialogs.style"                />
+<script url="common/dialogs.lua"                  />
+
+<!-- This needs to be renamed to labelled-number-input -->
+<style  url="common/panel-number-input.style"     />
+<script url="common/panel-number-input.lua"       />
+
+<style  url="common/searchbox.style"              />
+<script url="common/searchbox.lua"                />
+
+<style  url="common/data-explorer.style"          />
+<script url="common/data-explorer.lua"            />
+
+
+
+
+
+
+
