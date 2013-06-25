@@ -18,22 +18,28 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     
     self.Burst = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='checkbox' style='margin-bottom:4px' />");
     self.Burst:CheckBox("Burst");
+    self.Burst:SetTooltip("When enabled, all particles will be emitted at once. The number\nof particles will be equal to that set in Emission Rate.");
     self.Burst:SetChecked(self.Emitter:IsBurstModeEnabled());
     
     self.Duration = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
     self.Duration:PanelNumberInput("Duration", emitter:GetDurationInSeconds());
+    self.Duration:SetTooltip("When burst mode is enabled, defines the time in seconds between loop\niterations. Set to 0 to disable looping.");
     
     self.Delay = GTGUI.Server.CreateElement(self.Body, "panel-number-input");
     self.Delay:PanelNumberInput("Delay", emitter:GetDelayInSeconds());
+    self.Delay:SetTooltip("The amount of time in seconds to wait before the first particle is emitted.");
     
     self.GravityFactor = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
     self.GravityFactor:PanelNumberInput("Gravity Factor", emitter:GetGravityFactor());
+    self.GravityFactor:SetTooltip("The amount of gravitational influence to apply to particles. The gravity\ndirection is determined by the gravity settings of the scene.");
     
     self.EmissionRate = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
     self.EmissionRate:PanelNumberInput("Emission Rate", emitter:GetEmissionRatePerSecond());
+    self.EmissionRate:SetTooltip("The number of particles to emit per second. When burst mode is enabled, the\nnumber of particles to emit on each burst.");
     
     self.EmissionShape = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-dropdown-box' />");
     self.EmissionShape:PanelDropDownBox("Emission Shape");
+    self.EmissionShape.Label:SetTooltip("The shape to use when determining the initial position and velocity of particles.");
     self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Cone]   = self.EmissionShape:AppendItem("Cone");
     self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Sphere] = self.EmissionShape:AppendItem("Sphere");
     self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Box]    = self.EmissionShape:AppendItem("Box");
@@ -44,36 +50,46 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.ConeShapeProperties        = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                .. "' styleclass='particle-editor-panel-emitter-shape-container' />");
     self.ConeShapeProperties.Radius = GTGUI.Server.New("<div parentid='" .. self.ConeShapeProperties:GetID() .. "' styleclass='panel-number-input' />");
     self.ConeShapeProperties.Radius:PanelNumberInput("Radius", 0.0);
+    self.ConeShapeProperties.Radius:SetTooltip("The radius of the base.");
     self.ConeShapeProperties.Angle  = GTGUI.Server.New("<div parentid='" .. self.ConeShapeProperties:GetID() .. "' styleclass='panel-number-input' />");
     self.ConeShapeProperties.Angle:PanelNumberInput("Angle", 0.0);
+    self.ConeShapeProperties.Angle:SetTooltip("The cone angle in degrees.");
     
     self.SphereShapeProperties        = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                  .. "' styleclass='particle-editor-panel-emitter-shape-container' />");
     self.SphereShapeProperties.Radius = GTGUI.Server.New("<div parentid='" .. self.SphereShapeProperties:GetID() .. "' styleclass='panel-number-input' />");
     self.SphereShapeProperties.Radius:PanelNumberInput("Radius", 0.0);
+    self.SphereShapeProperties.Radius:SetTooltip("The radius of the sphere.");
     
     self.BoxShapeProperties   = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()               .. "' styleclass='particle-editor-panel-emitter-shape-container' />");
     self.BoxShapeProperties.X = GTGUI.Server.New("<div parentid='" .. self.BoxShapeProperties:GetID() .. "' styleclass='panel-number-input' />");
     self.BoxShapeProperties.X:PanelNumberInput("X", 0.0);
+    self.BoxShapeProperties.X:SetTooltip("The length of the box on the X axis.");
     self.BoxShapeProperties.Y = GTGUI.Server.New("<div parentid='" .. self.BoxShapeProperties:GetID() .. "' styleclass='panel-number-input' />");
     self.BoxShapeProperties.Y:PanelNumberInput("Y", 0.0);
+    self.BoxShapeProperties.Y:SetTooltip("The length of the box on the Y axis.");
     self.BoxShapeProperties.Z = GTGUI.Server.New("<div parentid='" .. self.BoxShapeProperties:GetID() .. "' styleclass='panel-number-input' />");
     self.BoxShapeProperties.Z:PanelNumberInput("Z", 0.0);
+    self.BoxShapeProperties.Z:SetTooltip("The length of the box on the Z axis.");
     
     
     
     self.Lifetime = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
     self.Lifetime:PanelNumberInput("Lifetime", emitter:GetLifetime());
     self.Lifetime:SetStyle("margin-top", "8px");
+    self.Lifetime:SetTooltip("The lifetime of each particle in seconds.");
     
     self.StartSpeed = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
     self.StartSpeed:PanelNumberInput("Start Speed", emitter:GetStartSpeed());
+    self.StartSpeed:SetTooltip("The initial speed of the particle. The direction is determined by the emission shape.");
     
     self.StartScale    = GTGUI.Server.CreateElement(self.Body, "panel-number-input");
     self.StartScale:PanelNumberInput("Start Size", emitter:GetStartScale().x);
+    self.StartScale:SetTooltip("The initial scale of each particle. This will be overridden by\nthe Scale over Time function if present.");
     
     self.StartRotation = GTGUI.Server.CreateElement(self.Body, "labelled-vector3-input");
     self.StartRotation:LabelledVector3Input("Start Rotation", emitter:GetStartRotation());
     self.StartRotation:SetStyle("margin-top", "4px");
+    self.StartRotation:SetTooltip("The initial rotation of each particle. This will be overridden\nby any rotation based function if present.");
     
     
     
@@ -82,6 +98,7 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
 
     self.ParticleShape = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-dropdown-box' />");
     self.ParticleShape:PanelDropDownBox("Particle Shape");
+    self.ParticleShape.Label:SetTooltip("The shape of each individual particle. Setting this to an arbitrary mesh\nis not yet supported.");
     self.ParticleShapeDropDownItems[GTEngine.ParticleShapeTypes.Billboard] = self.ParticleShape:AppendItem("Billboard");
     self.ParticleShapeDropDownItems[GTEngine.ParticleShapeTypes.Model]     = self.ParticleShape:AppendItem("Model");
     self.ParticleShapeDropDownItems[GTEngine.ParticleShapeTypes.Billboard].ShapeType = GTEngine.ParticleShapeTypes.Billboard;
@@ -89,10 +106,12 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     
     self.BillboardShapeProperties               = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                     .. "' styleclass='particle-editor-panel-particle-shape-container' />");
     self.BillboardShapeProperties.Material      = GTGUI.Server.New("<div parentid='" .. self.BillboardShapeProperties:GetID() .. "' styleclass='textbox' style='width:100%; margin:0px 2px;' />");
+    self.BillboardShapeProperties.Material:SetTooltip("The material to apply to each particle.");
     self.BillboardShapeProperties.TextureTiling = GTGUI.Server.CreateElement(self.BillboardShapeProperties, "labelled-vector2-input");
     self.BillboardShapeProperties.TextureTiling:LabelledVector2Input("Texture Tiling");
     self.BillboardShapeProperties.TextureTiling:SetValue(math.vec2(emitter:GetTextureTiling()));
     self.BillboardShapeProperties.TextureTiling:SetStyle("margin-top", "4px");
+    self.BillboardShapeProperties.TextureTiling:SetTooltip("For animated textures, the number of tiles on the X and Y axis.");
     
     self.ModelShapeProperties          = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                 .. "' styleclass='particle-editor-panel-particle-shape-container' />");
     self.ModelShapeProperties.Message  = GTGUI.Server.New("<div parentid='" .. self.ModelShapeProperties:GetID() .. "' style='margin:0px 2px; text-color:#666; font-style:bold; horizontal-align:center;'>Not currently supported.</div>");
