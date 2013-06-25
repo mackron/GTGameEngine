@@ -14,8 +14,6 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
 <include url="common-controls.xml" />
 <include url="dialogs.xml"         />
 
-<include url="combobox.xml"      />
-
 <style  url="styles/searchbox.style" />
 <script url="scripts/searchbox.lua"  />
 
