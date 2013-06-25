@@ -8,6 +8,7 @@ function GTGUI.Element:ParticleEditorFunctionPanelTitle(text, showCross)
     
     if showCross then
         self.Cross = GTGUI.Server.CreateElement(self, "particle-editor-function-panel-title-cross");
+        self.Cross:SetTooltip("Delete this function.");
         
         self.Cross:OnPressed(function()
             self.Parent:OnClose();
@@ -89,9 +90,11 @@ function GTGUI.Element:ScalarParticleFunctionPanel(titleText, minValue, maxValue
     
     self.MinInput = GTGUI.Server.CreateElement(self.Body:GetID(), "panel-number-input");
     self.MinInput:PanelNumberInput("Min", minValue);
+    self.MinInput:SetTooltip("The value at the start of the particle's life.");
     
     self.MaxInput = GTGUI.Server.CreateElement(self.Body:GetID(), "panel-number-input");
     self.MaxInput:PanelNumberInput("Max", maxValue);
+    self.MaxInput:SetTooltip("The value at the end of the particle's life.");
     
     
     self.MinInput:OnValueChanged(function(data)
@@ -125,10 +128,12 @@ function GTGUI.Element:Vector3ParticleFunctionPanel(titleText, minValue, maxValu
     self.MinInput = GTGUI.Server.CreateElement(self.Body:GetID(), "labelled-vector3-input");
     self.MinInput:LabelledVector3Input("Min", minValue);
     self.MinInput:SetStyle("margin-top", "4px");
+    self.MinInput:SetTooltip("The value at the start of the particle's life.");
     
     self.MaxInput = GTGUI.Server.CreateElement(self.Body:GetID(), "labelled-vector3-input");
     self.MaxInput:LabelledVector3Input("Max", maxValue);
     self.MaxInput:SetStyle("margin-top", "4px");
+    self.MaxInput:SetTooltip("The value at the end of the particle's life.");
     
     
     self.MinInput:OnValueChanged(function(data)
