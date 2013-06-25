@@ -19,6 +19,7 @@ namespace GTEngine
           spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTexturePath(), spriteTexture(nullptr), spriteMesh(),
           directionArrowMesh(),
           collisionShapeMesh(), isShowingCollisionShapeMesh(false),
+          proximityShapeMesh(), isShowingProximityShapeMesh(false),
           prefabRelativePath(), prefabID(0),
           sceneNodeEventHandler()
     {
@@ -26,6 +27,7 @@ namespace GTEngine
 
         // The collision shape meshes need to use wireframe mode.
         this->collisionShapeMesh.drawMode = DrawMode_Lines;
+        this->proximityShapeMesh.drawMode = DrawMode_Lines;
 
         // Need an event handler for transformations.
         node.AttachEventHandler(this->sceneNodeEventHandler);
@@ -451,6 +453,40 @@ namespace GTEngine
 
 
 
+    void EditorMetadataComponent::ShowProximityShapeMesh()
+    {
+        this->isShowingProximityShapeMesh = true;
+    }
+
+    void EditorMetadataComponent::HideProximityShapeMesh()
+    {
+        this->isShowingProximityShapeMesh = false;
+    }
+
+    bool EditorMetadataComponent::IsShowingProximityShapeMesh() const
+    {
+        return this->isShowingProximityShapeMesh;
+    }
+
+    void EditorMetadataComponent::UpdateProximityShapeMeshGeometry(const btCollisionShape &shape)
+    {
+        VertexArrayLibrary::Delete(this->proximityShapeMesh.vertexArray);
+        this->proximityShapeMesh.vertexArray = VertexArrayLibrary::CreateWireframeFromShape(shape);
+
+        if (this->proximityShapeMesh.material == nullptr)
+        {
+            this->proximityShapeMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
+            this->proximityShapeMesh.material->SetParameter("EmissiveColour", 0.75f, 0.75f, 0.25f);
+        }
+    }
+
+    void EditorMetadataComponent::UpdateProximityShapeMeshTransform()
+    {
+        this->proximityShapeMesh.transform = this->node.GetWorldTransform();
+    }
+
+
+
     const char* EditorMetadataComponent::GetPrefabRelativePath() const
     {
         return this->prefabRelativePath.c_str();
@@ -498,6 +534,7 @@ namespace GTEngine
         // The transform of the external meshes needs to be updated.
         this->UpdateDirectionArrowTransform();
         this->UpdateCollisionShapeMeshTransform();
+        this->UpdateProximityShapeMeshTransform();
     }
 
     void EditorMetadataComponent::OnSceneNodeScale()
