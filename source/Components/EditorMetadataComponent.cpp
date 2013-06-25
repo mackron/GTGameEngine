@@ -18,10 +18,14 @@ namespace GTEngine
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionShapeType(PickingCollisionShapeType_None), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
           spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTexturePath(), spriteTexture(nullptr), spriteMesh(),
           directionArrowMesh(),
+          collisionShapeMesh(), isShowingCollisionShapeMesh(false),
           prefabRelativePath(), prefabID(0),
           sceneNodeEventHandler()
     {
         pickingCollisionObject.setUserPointer(this);
+
+        // The collision shape meshes need to use wireframe mode.
+        this->collisionShapeMesh.drawMode = DrawMode_Lines;
 
         // Need an event handler for transformations.
         node.AttachEventHandler(this->sceneNodeEventHandler);
@@ -32,6 +36,9 @@ namespace GTEngine
         this->DeleteCollisionShape();
         this->HideSprite();             // <-- This will make sure everything to do with the sprite is deallocated.
         this->HideDirectionArrow();     // <-- This will delete the model.
+
+        VertexArrayLibrary::Delete(this->collisionShapeMesh.vertexArray);
+        MaterialLibrary::Delete(this->collisionShapeMesh.material);
     }
 
 
@@ -410,6 +417,39 @@ namespace GTEngine
 
 
 
+    void EditorMetadataComponent::ShowCollisionShapeMesh()
+    {
+        this->isShowingCollisionShapeMesh = true;
+    }
+
+    void EditorMetadataComponent::HideCollisionShapeMesh()
+    {
+        this->isShowingCollisionShapeMesh = false;
+    }
+
+    bool EditorMetadataComponent::IsShowingCollisionShapeMesh() const
+    {
+        return this->isShowingCollisionShapeMesh;
+    }
+
+    void EditorMetadataComponent::UpdateCollisionShapeMeshGeometry(const btCollisionShape &shape)
+    {
+        VertexArrayLibrary::Delete(this->collisionShapeMesh.vertexArray);
+        this->collisionShapeMesh.vertexArray = VertexArrayLibrary::CreateWireframeFromShape(shape);
+
+        if (this->collisionShapeMesh.material == nullptr)
+        {
+            this->collisionShapeMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
+            this->collisionShapeMesh.material->SetParameter("EmissiveColour", 0.25f, 0.75f, 0.25f);
+        }
+    }
+
+    void EditorMetadataComponent::UpdateCollisionShapeMeshTransform()
+    {
+        this->collisionShapeMesh.transform = this->node.GetWorldTransform();
+    }
+
+
 
     const char* EditorMetadataComponent::GetPrefabRelativePath() const
     {
@@ -457,6 +497,7 @@ namespace GTEngine
     {
         // The transform of the external meshes needs to be updated.
         this->UpdateDirectionArrowTransform();
+        this->UpdateCollisionShapeMeshTransform();
     }
 
     void EditorMetadataComponent::OnSceneNodeScale()

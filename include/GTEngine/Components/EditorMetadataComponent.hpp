@@ -159,6 +159,29 @@ namespace GTEngine
 
 
 
+        /// Show the collision shape mesh.
+        ///
+        /// @remarks
+        ///     This does not have picking collision info.
+        void ShowCollisionShapeMesh();
+
+        /// Hides the collision shape mesh.
+        void HideCollisionShapeMesh();
+
+        /// Determines whether or not the collision shape mesh is being shown.
+        bool IsShowingCollisionShapeMesh() const;
+
+        /// Retrieves a reference to the collision shape mesh.
+        const SceneRendererMesh & GetCollisionShapeMesh() const { return this->collisionShapeMesh; }
+
+        /// Updates the collision shape mesh geometry.
+        void UpdateCollisionShapeMeshGeometry(const btCollisionShape &shape);
+
+        /// Updates the collision shape transform.
+        void UpdateCollisionShapeMeshTransform();
+
+
+
         /// Retrieves the relative path of the prefab the scene node is linked to.
         const char* GetPrefabRelativePath() const;
 
@@ -268,6 +291,13 @@ namespace GTEngine
 
         /// The direction arrow mesh object that'll be added to the scene.
         SceneRendererMesh directionArrowMesh;
+
+
+        /// The collision volume mesh.
+        SceneRendererMesh collisionShapeMesh;
+
+        /// Keeps track of whether or not the collision shape mesh is being shown.
+        bool isShowingCollisionShapeMesh;
 
 
         /// The name of the prefab the scene node is part of. If this is empty, it means it is not linked to a prefab.
