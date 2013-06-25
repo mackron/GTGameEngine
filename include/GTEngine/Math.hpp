@@ -129,6 +129,15 @@ namespace GTEngine
         }
 
 
+        inline btTransform btTransform_cast(const glm::mat4 &other)
+        {
+            btTransform result;
+            result.setFromOpenGLMatrix(&other[0][0]);
+
+            return result;
+        }
+
+
 
         // Bullet -> GLM casts.
         
@@ -156,6 +165,15 @@ namespace GTEngine
         inline glm::simdQuat quatSIMD_cast(const btQuaternion &other)
         {
             return glm::simdQuat(other.w(), other.x(), other.y(), other.z());
+        }
+
+
+        inline glm::mat4 mat4_cast(const btTransform &other)
+        {
+            glm::mat4 result;
+            other.getOpenGLMatrix(&result[0][0]);
+
+            return result;
         }
 
 

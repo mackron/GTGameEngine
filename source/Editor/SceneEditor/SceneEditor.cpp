@@ -871,6 +871,15 @@ namespace GTEngine
             {
                 metadata->Select();
 
+                if (node.HasComponent<DynamicsComponent>())
+                {
+                    metadata->ShowCollisionShapeMesh();
+                    metadata->UpdateCollisionShapeMeshGeometry(node.GetComponent<DynamicsComponent>()->GetCollisionShape());
+
+                    this->scene.GetRenderer().AddExternalMesh(metadata->GetCollisionShapeMesh());
+                }
+
+
                 if (!this->selectedNodes.Exists(node.GetID()))
                 {
                     this->selectedNodes.PushBack(node.GetID());
@@ -923,6 +932,13 @@ namespace GTEngine
             if (metadata != nullptr)
             {
                 metadata->Deselect();
+
+                if (node.HasComponent<DynamicsComponent>())
+                {
+                    metadata->HideCollisionShapeMesh();
+
+                    this->scene.GetRenderer().RemoveExternalMesh(metadata->GetCollisionShapeMesh());
+                }
 
 
                 this->selectedNodes.RemoveFirstOccuranceOf(node.GetID());
@@ -1693,6 +1709,15 @@ namespace GTEngine
                 }
             }
         }
+        else if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+        {
+            auto metadata = node.GetComponent<EditorMetadataComponent>();
+            if (metadata != nullptr)
+            {
+                metadata->ShowCollisionShapeMesh();
+                metadata->UpdateCollisionShapeMeshGeometry(static_cast<DynamicsComponent &>(component).GetCollisionShape());
+            }
+        }
         else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))     // Prefab
         {
             this->PostOnSceneNodePrefabChanged(node);
@@ -1719,6 +1744,11 @@ namespace GTEngine
                 {
                     metadata->ClearPickingCollisionShape();
                 }
+            }
+            else if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+            {
+                metadata->HideCollisionShapeMesh();
+                this->scene.GetRenderer().RemoveExternalMesh(metadata->GetCollisionShapeMesh());
             }
             else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))    // Prefab
             {
@@ -1813,6 +1843,14 @@ namespace GTEngine
                             this->pickingWorld.AddCollisionObject(metadata->GetPickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
                         }
                     }
+                }
+            }
+            else if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+            {
+                auto metadata = node.GetComponent<EditorMetadataComponent>();
+                assert(metadata != nullptr);
+                {
+                    metadata->UpdateCollisionShapeMeshGeometry(static_cast<DynamicsComponent &>(component).GetCollisionShape());
                 }
             }
             else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))
