@@ -4,10 +4,10 @@ layout: default
 ---
 <style>
     .features-container {
-        border-top:  solid 1px #ccc;
-        margin:      0px 0px;
-        padding:     40px 0px;
-        padding-top: 80px;
+        border-top:     solid 1px #ccc;
+        margin:         0px 0px;
+        padding-bottom: 80px;
+        padding-top:    80px;
     }
     
     .feature-box {
@@ -20,6 +20,33 @@ layout: default
     }
     .feature-box p {
         font-size:   16px;
+    }
+    
+    .helpme-container {
+    }
+    .helpme-container h1 {
+        font-size:     60px;
+        color:         rgba(96,96,96,1);
+        line-height:   60px;
+        margin-bottom: 20px;
+    }
+    .helpme-container p {
+        font-size:   16px;
+        line-height: 26px;
+        color:       rgba(128,128,128,1);
+    }
+    
+    .helpme-box {
+        text-align: center;
+    }
+    .helpme-box h1 {
+        font-size:     20px;
+        color:         rgba(128,128,128,1);
+        line-height:   18px;
+        margin-bottom: 8px;
+    }
+    .helpme-box p {
+        line-height: 20px;
     }
 </style>
 <div class="jumbotron">
@@ -52,7 +79,7 @@ layout: default
             <div class="span4 feature-box">
                 <img src="{{ site.baseurl }}/img/osi_standard_logo_150px_h.png"></img>
                 <img src="{{ site.baseurl }}/img/octocat_150px_h.png"></img>
-                <h1>100% Free and Open Source.</h1>
+                <h1>100% free and open source.</h1>
                 <p>
                 Released under the MIT Licence for true freedom. Go commercial, fork it, do whatever you want. Even better, it's all hosted on GitHub.
                 </p>
@@ -71,6 +98,46 @@ layout: default
                 <p>
                 Works on both Windows and Linux. No support for phones, but here's the spin: it's built for PC. No compromises.
                 </p>
+            </div>
+        </div>
+    </div>
+</div>
+<div class="features-container">
+    <div class="container helpme-container">
+        <div class="row" style="margin:auto 0; text-align:center">
+            <h1>I could use your help.</h1>
+            <p>
+            It takes a lot of work to build the worlds best game engine, and I'm doing it alone. If you think you can help, in any way at all, I could really
+            use it. And with GitHub hosting, it's as easy as ever to help.
+            </p>
+            <p>
+            Here are some additional ways you can help.
+            </p>
+            <div class="row-fluid" style="padding-top:32px;">
+                <div class="span3 helpme-box">
+                    <h1>Spread the word.</h1>
+                    <p>
+                    More people using it, the better it becomes.
+                    </p>
+                </div>
+                <div class="span3 helpme-box">
+                    <h1>Post bug reports.</h1>
+                    <p>
+                    They will always exist, and I'm sure to miss some.
+                    </p>
+                </div>
+                <div class="span3 helpme-box">
+                    <h1>Reguest a feature.</h1>
+                    <p>
+                    More feedback from developers means a better product.
+                    </p>
+                </div>
+                <div class="span3 helpme-box">
+                    <h1>Follow the project.</h1>
+                    <p>
+                    It's motivating to see people following the project.
+                    </p>
+                </div>
             </div>
         </div>
     </div>
