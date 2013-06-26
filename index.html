@@ -2,6 +2,26 @@
 title:  "GTGameEngine"
 layout: default
 ---
+<style>
+    .features-container {
+        border-top:  solid 1px #ccc;
+        margin:      0px 0px;
+        padding:     40px 0px;
+        padding-top: 80px;
+    }
+    
+    .feature-box {
+        text-align: center;
+    }
+    .feature-box h1 {
+        font-size:   24px;
+        color:       rgba(96,96,96,1);
+        line-height: 24px;
+    }
+    .feature-box p {
+        font-size:   16px;
+    }
+</style>
 <div class="jumbotron">
     <div class="container">
         <h1>GTGameEngine</h1>
@@ -23,6 +43,35 @@ layout: default
                 <a href="{{ site.baseurl }}/team">Development Team</a>
               </li>
             </ul>
+        </div>
+    </div>
+</div>
+<div class="features-container">
+    <div class="container">
+        <div class="row">
+            <div class="span4 feature-box">
+                <img src="{{ site.baseurl }}/img/osi_standard_logo_150px_h.png"></img>
+                <img src="{{ site.baseurl }}/img/octocat_150px_h.png"></img>
+                <h1>100% Free and Open Source.</h1>
+                <p>
+                Released under the MIT Licence for true freedom. Go commercial, fork it, do whatever you want. Even better, it's all hosted on GitHub.
+                </p>
+            </div>
+            <div class="span4 feature-box">
+                <img src="{{ site.baseurl }}/img/editor_collage_150px_h.png"></img>
+                <h1>Built-in editing tools.</h1>
+                <p>
+                Every game has the engine's editing tools built right in. Just hit Shift+Tab and enter the editing universe. Start editing whenever you want.
+                </p>
+            </div>
+            <div class="span4 feature-box">
+                <img src="{{ site.baseurl }}/img/windows_logo_150px_h.png"></img>
+                <img src="{{ site.baseurl }}/img/tux_150px_h.png"></img>
+                <h1>Cross platform. Kind of.</h1>
+                <p>
+                Works on both Windows and Linux. No support for phones, but here's the spin: it's built for PC. No compromises.
+                </p>
+            </div>
         </div>
     </div>
 </div>
