@@ -837,7 +837,7 @@ namespace GTEngine
         {
             /// Constructor.
             PauseState()
-                : wasMouseCaptured(false), cameraNode(false)
+                : wasMouseCaptured(false), cameraNode(nullptr)
             {
             }
 

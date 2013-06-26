@@ -38,6 +38,11 @@ namespace GTEngine
 
         /// The main GUI element.
         GTGUI::Element* mainElement;
+        
+        
+    private:    // No copying.
+        PackagingToolEditor(const PackagingToolEditor &);
+        PackagingToolEditor & operator=(const PackagingToolEditor &);
     };
 }
 

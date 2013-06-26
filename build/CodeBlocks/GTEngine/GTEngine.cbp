@@ -193,10 +193,12 @@
 		<Unit filename="../../../include/GTEngine/Editor/ImageEditor/ImageEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/MaterialEditor/MaterialEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/ModelEditor/ModelEditor.hpp" />
+		<Unit filename="../../../include/GTEngine/Editor/PackagingToolEditor/PackagingToolEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/ParticleEditor/ParticleEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditorCommand.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditorPhysicsManager.hpp" />
+		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditorPrefabLinker.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditorSceneEventHandler.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditorSceneUpdateManager.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SubEditor.hpp" />
@@ -213,6 +215,7 @@
 		<Unit filename="../../../include/GTEngine/GameEventQueue.hpp" />
 		<Unit filename="../../../include/GTEngine/GameObject.hpp" />
 		<Unit filename="../../../include/GTEngine/GameObjectGC.hpp" />
+		<Unit filename="../../../include/GTEngine/GamePackager.hpp" />
 		<Unit filename="../../../include/GTEngine/GameScript.hpp" />
 		<Unit filename="../../../include/GTEngine/GameState.hpp" />
 		<Unit filename="../../../include/GTEngine/GameUpdateJob.hpp" />
@@ -427,10 +430,12 @@
 		<Unit filename="../../../source/Editor/ImageEditor/ImageEditor.cpp" />
 		<Unit filename="../../../source/Editor/MaterialEditor/MaterialEditor.cpp" />
 		<Unit filename="../../../source/Editor/ModelEditor/ModelEditor.cpp" />
+		<Unit filename="../../../source/Editor/PackagingToolEditor/PackagingToolEditor.cpp" />
 		<Unit filename="../../../source/Editor/ParticleEditor/ParticleEditor.cpp" />
 		<Unit filename="../../../source/Editor/SceneEditor/SceneEditor.cpp" />
 		<Unit filename="../../../source/Editor/SceneEditor/SceneEditorCommand.cpp" />
 		<Unit filename="../../../source/Editor/SceneEditor/SceneEditorPhysicsManager.cpp" />
+		<Unit filename="../../../source/Editor/SceneEditor/SceneEditorPrefabLinker.cpp" />
 		<Unit filename="../../../source/Editor/SceneEditor/SceneEditorSceneEventHandler.cpp" />
 		<Unit filename="../../../source/Editor/SceneEditor/SceneEditorSceneUpdateManager.cpp" />
 		<Unit filename="../../../source/Editor/SubEditor.cpp" />
@@ -445,6 +450,7 @@
 		<Unit filename="../../../source/GameEventQueue.cpp" />
 		<Unit filename="../../../source/GameObject.cpp" />
 		<Unit filename="../../../source/GameObjectGC.cpp" />
+		<Unit filename="../../../source/GamePackager.cpp" />
 		<Unit filename="../../../source/GameScript.cpp" />
 		<Unit filename="../../../source/GameState.cpp" />
 		<Unit filename="../../../source/GameUpdateJob.cpp" />
