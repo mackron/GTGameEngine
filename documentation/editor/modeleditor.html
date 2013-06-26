@@ -12,7 +12,7 @@ layout: editor
         it does let you modify some engine-specific properties such as animation segments and convex decomposition.
         </p>
         <p>
-        Below is a screenshot of the model editor showing the default cube model:
+        Below is a screenshot of the model editor:
         </p>
         <div class="documentation-img-container">
             <a href="{{ site.baseurl }}/img/documentation/editor/model-editor-2.png"><img src="{{ site.baseurl }}/img/documentation/editor/model-editor-2.png" width="700" title="GTGameEngine Model Editor"/></a>
@@ -59,11 +59,25 @@ layout: editor
             </p>
         </div>
         <div class="documentation-section">
+            <h1>Bones</h1>
+            <p>
+            The bones of the model are listed in a tree-view under the <b>Bones</b> group box. Selecting a bone does not currently do anything, but it's planned
+            for the future to actually show the bones in the viewport. The main purpose of this for the time being is to allow developers to easily see the name
+            of bones so they can do things like attach a scene nodes to a bone, etc.
+            </p>
+            <p>
+            The <b>Bones</b> group box will only be shown if the model contains bones.
+            </p>
+        </div>
+        <div class="documentation-section">
             <h1>Animations</h1>
             <p>
             You can give a name to a range of animation key frames. Use the <b>Animation Segments</b> panel to create or delete these. Animation segments will be
             used when playing an animation from within the scripting or C++ environment. When an animation segment is played, use the playback controls at the
             bottom to stop playback.
+            </p>
+            <p>
+            The <b>Animation Segments</b> group box will only be shown if the model has an animation track.
             </p>
             <p>
             The bottom panel with the playback controls is a work-in-progress animation timeline. Ignore this for now.

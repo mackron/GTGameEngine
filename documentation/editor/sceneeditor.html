@@ -159,8 +159,8 @@ layout: editor
         <div class="documentation-section">
             <h1>Prefabs</h1>
             <p>
-            A prefab can be thought of as a template for creating and updating scene nodes. When a scene node is linked to a prefab, it will be
-            updated when the prefab is updated.
+            A prefab can be thought of as the definition of a scene node to use when creating and updating scene nodes. When a scene node is
+            linked to a prefab, it will be updated when the prefab is updated.
             </p>
             <p>
             Prefabs are created from a source scene node. The definition of a prefab is stored in a file which can be reused across multiple
@@ -176,6 +176,14 @@ layout: editor
             To instantiate a prefab, you simple drag it from the asset explorer into the scene. This will place it just in front of the
             camera. Watch out for perspective illusions - it often feels like a scene node can appear closer or further away than it actually
             is.
+            </p>
+            <p>
+            Modifying a linked scene node will not automatically update the prefab file. To do so, either drag-and-drop the scene node from
+            the hierarchy panel onto the prefab file in the same way as creating the prefab. An alternative is to use the "Update" button in
+            the <b>Details</b> group box of the scene nodes properties.
+            </p>
+            <p>
+            When a prefab is updated, all scene nodes that are linked to it will be updated also.
             </p>
         </div>
     </div>
