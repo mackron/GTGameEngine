@@ -142,10 +142,8 @@ namespace GTEngine
     ////////////////////////////////////////////////////////////////////////
     // Playback.
 
-    void Animation::Play(const AnimationSequence &sequence, double transitionTime)
+    void Animation::Play(const AnimationSequence &sequence, double transitionTimeIn)
     {
-        (void)transitionTime;
-
         // First we need to make sure our queue is reset.
         this->keyFrameQueue.RemoveAll();
 
@@ -204,7 +202,7 @@ namespace GTEngine
                             }
                             else
                             {
-                                transitionTime = transitionTime;
+                                transitionTime = transitionTimeIn;
                             }
 
                             // Extra frame for looping at the beginning. Instant transition.
