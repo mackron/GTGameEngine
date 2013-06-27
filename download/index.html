@@ -2,16 +2,42 @@
 title:  "Download GTGameEngine"
 layout: default
 ---
+<style>
+    .downloads-container {
+    }
+    .downloads-container h1 {
+        color:rgba(96,96,96,1);
+    }
+    .downloads-container h2 {
+        font-size:   22px;
+        line-height: 22px;
+        margin-top:  32px;
+        color:       rgba(128,128,128,1);
+    }
+</style>
 <div class="page-title">
     <h1>Download</h1>
 </div>
 <div class="container-fluid">
-    <div style="padding:0px 80px;">
+    <div class="downloads-container" style="padding:0px 80px;">
         <div class="row">
-            <div class="span9">
-                <h1 style="color:rgba(96,96,96,1);">Sandbox</h1>
-                <a href="{{ site.baseurl }}/download/GTGameEngine-Sandbox-0.0.1.zip">GTGameEngine Sandbox 0.0.1 (Windows 64-Bit)</a>
+            <div class="span8">
+                <h1>Sandbox</h1>
+                <div style="margin-left:20px">
+                    <h2>Windows 64 bit</h2>
+                    <p><a href="{{ site.baseurl }}/download/gtgameengine-sandbox-0.0.1-windows-64bit.zip">GTGameEngine Sandbox 0.0.1</a></p>
+                    <h2>Linux 64 bit</h2>
+                    <p><a href="{{ site.baseurl }}/download/gtgameengine-sandbox-0.0.1-linux-64bit.tar.gz">GTGameEngine Sandbox 0.0.1</a></p>
+                    <p>
+                    You will need to download and install OpenAL. Try <code>sudo apt-get install libopenal1</code> if you're running a Ubuntu flavour.
+                    </p>
+                    <p>
+                    Please note that Linux is not my primary platform, so there may be some annoyances and bugs. It would be great if you could send me a quick tweet
+                    or email and let me know if you find a problem.
+                    </p>
+                </div>
             </div>
+            <div class="span1"></div>
             <div class="span3">
                 <h1 style="color:rgba(96,96,96,1);">Source</h1>
                 There is not currently a packaged source distribution. Instead, head over to the <a href="https://github.com/mackron/GTGameEngine" target="_blank">GitHub project page</a>.
