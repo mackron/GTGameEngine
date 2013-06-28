@@ -76,6 +76,9 @@ namespace GTEngine
         /// Determines whether or not the game is paused.
         bool IsPaused() const;
 
+        /// Determines whether or not the game is stopped (the default state).
+        bool IsStopped() const;
+
 
         /// Enables physics simulation of the entire scene.
         void EnablePhysicsSimulation();
@@ -736,11 +739,23 @@ namespace GTEngine
         bool isUpdatingFromStateStack;
 
 
+        /// Enumerator for the different playback states.
+        enum PlaybackState
+        {
+            PlaybackState_Stopped = 0,
+            PlaybackState_Playing = 1,
+            PlaybackState_Paused  = 2
+        };
+
+        /// The current playback state of the scene.
+        PlaybackState playbackState;
+
+
         /// Keeps track of whether or not the game is playing.
-        bool isPlaying;
+        //bool isPlaying;
 
         /// Keeps track of whether or not the game is paused.
-        bool isPaused;
+        //bool isPaused;
 
 
         /// Keeps track of whether or not the game was playing when the editor is hidden.

@@ -44,7 +44,7 @@ namespace GTEngine
           translateSnapSize(0.25f),/* rotateSnapSize(5.625f), scaleSnapSize(0.25f),*/
           transformedObjectWithGizmo(false),
           isDeserializing(false), isInstantiatingPrefab(false), isUpdatingFromStateStack(false),
-          isPlaying(false), isPaused(false), wasPlayingBeforeHide(false), wasPlayingBeforeLosingFocus(false),
+          playbackState(PlaybackState_Stopped), /*isPlaying(false), isPaused(false),*/ wasPlayingBeforeHide(false), wasPlayingBeforeLosingFocus(false),
           isViewportMouseControlsEnabled(false),
           parentChangedLockCounter(0),
           GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), scene.GetDefaultViewport()),
@@ -183,10 +183,7 @@ namespace GTEngine
     SceneEditor::~SceneEditor()
     {
         // If we're playing, we need to stop. If we don't do this there are a few things that won't get restored correctly.
-        if (this->IsPlaying())
-        {
-            this->StopPlaying();
-        }
+        this->StopPlaying();
 
 
         // GUI elements need to be deleted. We will delete the toolbar first, via the scripting interface.
@@ -238,7 +235,7 @@ namespace GTEngine
 
     void SceneEditor::StartPlaying()
     {
-        if (!this->IsPlaying() || this->IsPaused())
+        if (this->IsStopped() || this->IsPaused())
         {
             if (this->IsPaused())
             {
@@ -250,7 +247,7 @@ namespace GTEngine
             }
             else
             {
-                this->isPlaying                  = true;
+                //this->isPlaying                  = true;
                 this->selectedNodesBeforePlaying = this->selectedNodes;
 
                 // We want to deselect everything to begin with.
@@ -319,16 +316,21 @@ namespace GTEngine
                 this->physicsManager.ActivateAllRigidBodies();
             }
 
-            this->isPaused = false;
+            //this->isPaused = false;
+            this->playbackState = PlaybackState_Playing;
+
+            // This must be done after setting the playback state because otherwise the controls will think it's in the old state.
             this->UpdatePlaybackControls();
         }
     }
 
     void SceneEditor::PausePlaying()
     {
-        if (this->IsPlaying() && !this->IsPaused())
+        if (this->IsPlaying())
         {
-            this->isPaused = true;
+            //this->isPaused = true;
+
+            this->playbackState = PlaybackState_Paused;
             this->CapturePauseState();
 
             this->GetOwnerEditor().GetGame().ReleaseMouse();
@@ -347,7 +349,7 @@ namespace GTEngine
 
     void SceneEditor::StopPlaying()
     {
-        if (this->IsPlaying())
+        if (this->IsPlaying() || this->IsPaused())
         {
             this->LockParentChangedEvents();
             this->isUpdatingFromStateStack = true;
@@ -359,8 +361,9 @@ namespace GTEngine
                 this->scene.BlockScriptEvents();
 
 
-                this->isPlaying = false;
-                this->isPaused  = false;
+                //this->isPlaying = false;
+                //this->isPaused  = false;
+                this->playbackState = PlaybackState_Stopped;
 
 
                 // Some functions need to be restored.
@@ -423,12 +426,17 @@ namespace GTEngine
 
     bool SceneEditor::IsPlaying() const
     {
-        return this->isPlaying;
+        return this->playbackState == PlaybackState_Playing;
     }
 
     bool SceneEditor::IsPaused() const
     {
-        return this->isPaused;
+        return this->playbackState == PlaybackState_Paused;
+    }
+
+    bool SceneEditor::IsStopped() const
+    {
+        return this->playbackState == PlaybackState_Stopped;
     }
 
 
@@ -1179,7 +1187,7 @@ namespace GTEngine
             this->isUpdatingFromStateStack = true;
             {
                 // If the physics simulation is running or the game is playing, it needs to be stopped first.
-                if (this->IsPlaying())
+                if (this->IsPlaying() || this->IsPaused())
                 {
                     this->StopPlaying();
                 }
@@ -1211,7 +1219,7 @@ namespace GTEngine
             this->isUpdatingFromStateStack = true;
             {
                 // If the physics simulation is running or the game is playing, it needs to be stopped first.
-                if (this->IsPlaying())
+                if (this->IsPlaying() || this->IsPaused())
                 {
                     this->StopPlaying();
                 }
@@ -1238,7 +1246,7 @@ namespace GTEngine
     void SceneEditor::CommitStateStackFrame()
     {
         // We will never do this if a simulation is running.
-        if (!this->IsPlaying())
+        if (this->IsStopped())
         {
             this->scene.CommitStateStackFrame();
             this->MarkAsModified();
@@ -1479,7 +1487,7 @@ namespace GTEngine
             // Select the scene node if it's marked as such, but only if we're running. Indeed, if we're running, we actually want to explicitly deselect.
             if (metadata->IsSelected())
             {
-                if (this->IsPlaying())
+                if (this->IsPlaying() || this->IsPaused())
                 {
                     metadata->Deselect();
                 }
@@ -1993,7 +2001,7 @@ namespace GTEngine
     void SceneEditor::Hide()
     {
         // When the editor is hidden, we need to pause playback, but not stop entirely. When the editor is re-shown, it will be resumed.
-        if (this->IsPlaying() && !this->IsPaused())
+        if (this->IsPlaying())
         {
             this->PausePlaying();
             this->wasPlayingBeforeHide = true;
@@ -2025,7 +2033,7 @@ namespace GTEngine
         if (file != nullptr)
         {
             // If the physics simulation is running or the game is playing, it needs to be stopped first.
-            if (this->IsPlaying())
+            if (this->IsPlaying() || this->IsPaused())
             {
                 this->StopPlaying();
             }

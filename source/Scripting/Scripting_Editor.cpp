@@ -86,6 +86,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "StopPlaying",                         SceneEditorFFI::StopPlaying);
                         script.SetTableFunction(-1, "IsPlaying",                           SceneEditorFFI::IsPlaying);
                         script.SetTableFunction(-1, "IsPaused",                            SceneEditorFFI::IsPaused);
+                        script.SetTableFunction(-1, "IsStopped",                           SceneEditorFFI::IsStopped);
 
                         script.SetTableFunction(-1, "EnablePhysicsSimulation",             SceneEditorFFI::EnablePhysicsSimulation);
                         script.SetTableFunction(-1, "DisablePhysicsSimulation",            SceneEditorFFI::DisablePhysicsSimulation);
@@ -967,6 +968,21 @@ namespace GTEngine
                 if (sceneEditor != nullptr)
                 {
                     script.Push(sceneEditor->IsPaused());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+            int IsStopped(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    script.Push(sceneEditor->IsStopped());
                 }
                 else
                 {

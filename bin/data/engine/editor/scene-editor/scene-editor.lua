@@ -1699,6 +1699,10 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
         return GTEngine.System.SceneEditor.IsPaused(self._internalPtr);
     end
     
+    function sceneEditor:IsStopped()
+        return GTEngine.System.SceneEditor.IsStopped(self._internalPtr);
+    end
+    
     
     function sceneEditor:EnablePhysicsSimulation()
         GTEngine.System.SceneEditor.EnablePhysicsSimulation(self._internalPtr);
