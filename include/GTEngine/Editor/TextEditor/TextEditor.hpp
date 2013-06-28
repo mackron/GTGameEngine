@@ -143,8 +143,13 @@ namespace GTEngine
         }compilationErrorHandler;
 
 
+        /// When compiling a script, we need to use an actual script object. In order to avoid as many false-positive errors as
+        /// possible, we need to register the engine's scripting library onto that script. To do this, we're going to create a
+        /// Game object which will act as a proxy. We will not call Game::Startup().
+        Game* proxyGame;
+
         /// The script to use for doing the compilation check. This will have the standard library registered to it.
-        GTCore::Script compilationScript;
+        GTCore::Script* compilationScript;
 
 
 
