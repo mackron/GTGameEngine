@@ -14,6 +14,14 @@ namespace GTEngine
     RCDraw::RCDraw()
         : drawType(DRAW_TYPE_NONE), drawVA(), drawRaw()
     {
+        this->drawRaw.vertices = nullptr;
+        this->drawRaw.indices  = nullptr;
+    }
+
+    RCDraw::~RCDraw()
+    {
+        free(this->drawRaw.vertices);
+        free(this->drawRaw.indices);
     }
 
     void RCDraw::Draw(GLuint* vertexArrayObjectIn, GLuint* vertexBufferObjectIn, GLenum drawModeIn, GLsizei indexCountIn)
@@ -135,12 +143,6 @@ namespace GTEngine
             // Set State.
             ServerState_GL_VERTEX_ARRAY_BINDING = ServerState_DefaultVAO;
             ServerState_GL_ARRAY_BUFFER_BINDING = ServerState_DefaultVBO;
-
-
-
-            // Free data.
-            free(this->drawRaw.vertices);
-            free(this->drawRaw.indices);
         }
     }
 }

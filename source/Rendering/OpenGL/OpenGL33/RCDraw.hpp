@@ -18,6 +18,9 @@ namespace GTEngine
         /// Constructor.
         RCDraw();
 
+        /// Destructor.
+        ~RCDraw();
+
         /// Renderer::Draw()
         void Draw(GLuint* vertexArrayObjectIn, GLuint* vertexBufferObjectIn, GLenum drawModeIn, GLsizei indexCountIn);
 
