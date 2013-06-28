@@ -114,12 +114,12 @@ namespace GTEngine
 
         /// Called when a scene node needs to be deleted.
         ///
-        /// @param sceneNode [in] A pointer to the scene node to delete.
+        /// @param sceneNode [in] A reference to the scene node to delete.
         ///
         /// @remarks
         ///     This will be called when a scene node is linked to a prefab, but that scene node needs to have children
         ///     deleted in order to satify the synchronization.
-        virtual void DeleteSceneNode(SceneNode* sceneNode) = 0;
+        virtual void DeleteSceneNode(SceneNode &sceneNode) = 0;
 
         /// Called just before a scene node is deserialized.
         ///

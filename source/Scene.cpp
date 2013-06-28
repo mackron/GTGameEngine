@@ -236,7 +236,8 @@ namespace GTEngine
     Scene::Scene()
         : renderer(new DefaultSceneRenderer),
           updateManager(*new DefaultSceneUpdateManager), physicsManager(*new DefaultScenePhysicsManager), cullingManager(*new DefaultSceneCullingManager),
-          deleteRenderer(true), deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true),
+          prefabLinker(new DefaultPrefabLinker(*this)),
+          deleteRenderer(true), deleteUpdateManager(true), deletePhysicsManager(true), deleteCullingManager(true), deletePrefabLinker(true),
           paused(false),
           viewports(), defaultViewport(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(),
           sceneNodesWithProximityComponents(), sceneNodesWithParticleSystemComponents(),
@@ -254,7 +255,8 @@ namespace GTEngine
     Scene::Scene(SceneUpdateManager &updateManagerIn, ScenePhysicsManager &physicsManagerIn, SceneCullingManager &cullingManagerIn)
         : renderer(new DefaultSceneRenderer),
           updateManager(updateManagerIn), physicsManager(physicsManagerIn), cullingManager(cullingManagerIn),
-          deleteRenderer(true), deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false),
+          prefabLinker(new DefaultPrefabLinker(*this)),
+          deleteRenderer(true), deleteUpdateManager(false), deletePhysicsManager(false), deleteCullingManager(false), deletePrefabLinker(true),
           paused(false),
           viewports(), defaultViewport(), sceneNodes(), nextSceneNodeID(0), minAutoSceneNodeID(1), sceneNodesCreatedByScene(),
           sceneNodesWithProximityComponents(), sceneNodesWithParticleSystemComponents(),
@@ -279,25 +281,31 @@ namespace GTEngine
         this->UnregisterFromScript();
 
 
-        if (deleteRenderer)
+        if (this->deleteRenderer)
         {
             delete this->renderer;
         }
 
 
-        if (deleteUpdateManager)
+        if (this->deleteUpdateManager)
         {
             delete &this->updateManager;
         }
 
-        if (deletePhysicsManager)
+        if (this->deletePhysicsManager)
         {
             delete &this->physicsManager;
         }
 
-        if (deleteCullingManager)
+        if (this->deleteCullingManager)
         {
             delete &this->cullingManager;
+        }
+
+
+        if (this->deletePrefabLinker)
+        {
+            delete this->prefabLinker;
         }
     }
 
@@ -932,6 +940,17 @@ namespace GTEngine
         }
     }
 
+
+    void Scene::SetPrefabLinker(PrefabLinker &newPrefabLinker)
+    {
+        if (this->deletePrefabLinker)
+        {
+            delete this->prefabLinker;
+        }
+
+        this->prefabLinker       = &newPrefabLinker;
+        this->deletePrefabLinker = false;
+    }
 
 
     void Scene::AttachEventHandler(SceneEventHandler &eventHandler)

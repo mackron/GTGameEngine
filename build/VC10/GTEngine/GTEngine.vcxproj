@@ -198,6 +198,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader_SimpleTransform.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader_Skinning.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DataFilesWatcher.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultPrefabLinker.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneCullingManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultScenePhysicsManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer.hpp" />
@@ -461,6 +462,7 @@
     <ClCompile Include="..\..\..\source\CPUVertexShader_SimpleTransform.cpp" />
     <ClCompile Include="..\..\..\source\CPUVertexShader_Skinning.cpp" />
     <ClCompile Include="..\..\..\source\DataFilesWatcher.cpp" />
+    <ClCompile Include="..\..\..\source\DefaultPrefabLinker.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneCullingManager.cpp" />
     <ClCompile Include="..\..\..\source\DefaultScenePhysicsManager.cpp" />
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer.cpp" />
