@@ -1489,6 +1489,7 @@ namespace GTEngine
     bool Scene::Deserialize(GTCore::Deserializer &deserializer)
     {
         GTCore::Vector<SceneNode*>                        deserializedNodes;
+        GTCore::Vector<SceneNode*>                        rootSceneNodesLinkedToPrefabs;
         GTCore::Vector<Serialization::SceneNodeIndexPair> childParentPairs;
 
         bool readInfo                = false;
@@ -1540,6 +1541,13 @@ namespace GTEngine
                         {
                             auto node = new SceneNode;
                             node->Deserialize(deserializer);
+
+                            // If the new scene node is linked to a prefab and it's the root, we need to keep track of it. We will later be re-linking
+                            // it to ensure it is up-to-date.
+                            if (this->GetPrefabLinker().IsRootSceneNode(*node))
+                            {
+                                rootSceneNodesLinkedToPrefabs.PushBack(node);
+                            }
 
                             deserializedNodes.PushBack(node);
                         }
@@ -1720,6 +1728,21 @@ namespace GTEngine
             assert(parentSceneNode != nullptr);
             {
                 parentSceneNode->AttachChild(*childSceneNode);
+            }
+        }
+
+
+        // Now we need to re-link all relevant scene nodes to their prefabs. If we don't do this, they will not be using the potentially new prefab definition.
+        for (size_t iSceneNode = 0; iSceneNode < rootSceneNodesLinkedToPrefabs.count; ++iSceneNode)
+        {
+            auto node = rootSceneNodesLinkedToPrefabs[iSceneNode];
+            assert(node != nullptr);
+            {
+                auto prefabComponent = node->GetComponent<PrefabComponent>();
+                assert(prefabComponent != nullptr);
+                {
+                    this->GetPrefabLinker().LinkSceneNodeToPrefab(*node, prefabComponent->GetPrefabRelativePath());
+                }
             }
         }
 

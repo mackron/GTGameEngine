@@ -566,9 +566,6 @@ namespace GTEngine
         /// @param prefabRelativePath [in] The relative path of the prefab.
         void RelinkSceneNodesLinkedToPrefab(const char* prefabRelativePath);
 
-        /// Re-links all scene nodes that are linked to prefabs.
-        void RelinkSceneNodesLinkedToPrefabs();
-
 
 
         /// Updates every scene node linked to the given script.
