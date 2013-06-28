@@ -1,5 +1,5 @@
--- This script will be executed when the sandbox is first run. You can execute your own scripts by calling
--- GTEngine.ExecuteFile("my-script-file").
+-- This script will be executed when the sandbox is started. You can execute your own scripts by calling
+-- GTEngine.ExecuteFile("my-script-file"), or simply adding it to the end of this file.
 --
 -- These scripts are executed on the main game script which means your game objects can access any properties
 -- declared here whenever they are needed.

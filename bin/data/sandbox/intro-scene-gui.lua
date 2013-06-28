@@ -5,39 +5,39 @@ self.TargetMarginTop         = 20;
 self.StartMarginTop          = 100;
 
 function self:OnStartup()
-    GTGUI.Server.LoadStyleScriptFromFile("sandbox/intro-scene-gui.style");
+    GTEngine.LoadGUIStyleScriptFromFile("sandbox/intro-scene-gui.style");
 
     local parentElement = Game.GetGameWindowGUIElement();
     if parentElement ~= nil then
-        self.GUIContainer            = GTGUI.Server.CreateElement(parentElement, "intro-scene-container");
+        self.GUIContainer            = GTEngine.CreateGUIElement(parentElement, "intro-scene-container");
         
         -- Header (tiny bar along the top)
-        self.GUIContainerHeader      = GTGUI.Server.CreateElement(self.GUIContainer, "intro-scene-container-header");
-        self.GUIContainerHeaderLeft  = GTGUI.Server.CreateElement(self.GUIContainerHeader, "intro-scene-container-header-left");
-        self.GUIContainerHeaderRight = GTGUI.Server.CreateElement(self.GUIContainerHeader, "intro-scene-container-header-right");
+        self.GUIContainerHeader      = GTEngine.CreateGUIElement(self.GUIContainer, "intro-scene-container-header");
+        self.GUIContainerHeaderLeft  = GTEngine.CreateGUIElement(self.GUIContainerHeader, "intro-scene-container-header-left");
+        self.GUIContainerHeaderRight = GTEngine.CreateGUIElement(self.GUIContainerHeader, "intro-scene-container-header-right");
 
         -- Body.
-        self.GUIContainerBody        = GTGUI.Server.CreateElement(self.GUIContainer, "intro-scene-container-body");
+        self.GUIContainerBody        = GTEngine.CreateGUIElement(self.GUIContainer, "intro-scene-container-body");
         
         -- Footer.
-        self.GUIContainerFooter      = GTGUI.Server.CreateElement(self.GUIContainer, "intro-scene-container-footer");
-        self.GUIContainerFooterLeft  = GTGUI.Server.CreateElement(self.GUIContainerFooter, "intro-scene-container-footer-left");
-        self.GUIContainerFooterRight = GTGUI.Server.CreateElement(self.GUIContainerFooter, "intro-scene-container-footer-right");
+        self.GUIContainerFooter      = GTEngine.CreateGUIElement(self.GUIContainer, "intro-scene-container-footer");
+        self.GUIContainerFooterLeft  = GTEngine.CreateGUIElement(self.GUIContainerFooter, "intro-scene-container-footer-left");
+        self.GUIContainerFooterRight = GTEngine.CreateGUIElement(self.GUIContainerFooter, "intro-scene-container-footer-right");
         
-        self.GUITitle = GTGUI.Server.CreateElement(self.GUIContainerBody, "intro-scene-jumbo-title");
+        self.GUITitle = GTEngine.CreateGUIElement(self.GUIContainerBody, "intro-scene-jumbo-title");
         self.GUITitle:SetText("Welcome");
 
-        self.GUIInfo = GTGUI.Server.CreateElement(self.GUIContainerBody, "intro-scene-info");
+        self.GUIInfo = GTEngine.CreateGUIElement(self.GUIContainerBody, "intro-scene-info");
         
-        GTGUI.Server.CreateElement(self.GUIInfo, "intro-scene-info-line"):SetText(
+        GTEngine.CreateGUIElement(self.GUIInfo, "intro-scene-info-line"):SetText(
             "to the GTGameEngine Sandbox."
         );
 
-        self.GUILinksContainer = GTGUI.Server.CreateElement(self.GUIContainerBody, "intro-scene-links-container");
-        self.GUILinksContainerLeft  = GTGUI.Server.CreateElement(self.GUILinksContainer, "intro-scene-links-container-left");
-        self.GUILinksContainerRight = GTGUI.Server.CreateElement(self.GUILinksContainer, "intro-scene-links-container-right");
+        self.GUILinksContainer      = GTEngine.CreateGUIElement(self.GUIContainerBody, "intro-scene-links-container");
+        self.GUILinksContainerLeft  = GTEngine.CreateGUIElement(self.GUILinksContainer, "intro-scene-links-container-left");
+        self.GUILinksContainerRight = GTEngine.CreateGUIElement(self.GUILinksContainer, "intro-scene-links-container-right");
 
-        self.GUIGetStartedButton = GTGUI.Server.CreateElement(self.GUILinksContainerLeft, "intro-scene-link");
+        self.GUIGetStartedButton = GTEngine.CreateGUIElement(self.GUILinksContainerLeft, "intro-scene-link");
         self.GUIGetStartedButton:SetText("Get Started");
         self.GUIGetStartedButton:SetStyle("margin-top", "0px");
         self.GUIGetStartedButton:OnPressed(function()
@@ -50,7 +50,7 @@ function self:OnStartup()
             self.GUIGetStartedInfo:Hide();
         end);
         
-        self.GUIEditorButton = GTGUI.Server.CreateElement(self.GUILinksContainerLeft, "intro-scene-link");
+        self.GUIEditorButton = GTEngine.CreateGUIElement(self.GUILinksContainerLeft, "intro-scene-link");
         self.GUIEditorButton:SetText("Open Editor");
         self.GUIEditorButton:OnPressed(function()
             Game.OpenEditor();
@@ -63,14 +63,14 @@ function self:OnStartup()
             self.GUIEditorInfo:Hide();
         end);
 
-        self.GUIGetStartedInfo = GTGUI.Server.CreateElement(self.GUILinksContainerRight, "intro-scene-link-info");
+        self.GUIGetStartedInfo = GTEngine.CreateGUIElement(self.GUILinksContainerRight, "intro-scene-link-info");
         self.GUIGetStartedInfo:SetText(
             "If you're new to GTGameEngine, you'll probably\n" ..
             "want to start here.\n\n" ..
             "(Opens in a browser window.)"
         );
 
-        self.GUIEditorInfo = GTGUI.Server.CreateElement(self.GUILinksContainerRight, "intro-scene-link-info");
+        self.GUIEditorInfo = GTEngine.CreateGUIElement(self.GUILinksContainerRight, "intro-scene-link-info");
         self.GUIEditorInfo:SetText(
             "Jump right in and start making some scenes.\n\n" ..
             "Edit data/sandbox-config.lua to set the\nstartup scene.\n\n"
@@ -78,7 +78,7 @@ function self:OnStartup()
 
         
         -- Header Content
-        self.GUICloseButton = GTGUI.Server.CreateElement(self.GUIContainerHeaderRight, "intro-scene-url");
+        self.GUICloseButton = GTEngine.CreateGUIElement(self.GUIContainerHeaderRight, "intro-scene-url");
         self.GUICloseButton:SetStyle("margin", "0px");
         self.GUICloseButton:SetText("Close");
         self.GUICloseButton:OnPressed(function()
@@ -86,22 +86,22 @@ function self:OnStartup()
         end);
         
         -- Footer Content
-        self.GUIHomePage = GTGUI.Server.CreateElement(self.GUIContainerFooterLeft, "intro-scene-url");
+        self.GUIHomePage = GTEngine.CreateGUIElement(self.GUIContainerFooterLeft, "intro-scene-url");
         self.GUIHomePage:SetText("Home Page");
         self.GUIHomePage:OnPressed(function()
             GTCore.System.OpenFileOrURL("http://mackron.github.io/GTGameEngine");
         end);
 
-        self.GUIWebSite = GTGUI.Server.CreateElement(self.GUIContainerFooterLeft, "intro-scene-url");
+        self.GUIWebSite = GTEngine.CreateGUIElement(self.GUIContainerFooterLeft, "intro-scene-url");
         self.GUIWebSite:SetText("GitHub Project");
         self.GUIWebSite:OnPressed(function()
             GTCore.System.OpenFileOrURL("https://github.com/mackron/GTGameEngine");
         end);
 
-        self.GUIEmail   = GTGUI.Server.CreateElement(self.GUIContainerFooterRight, "intro-scene-email");
+        self.GUIEmail   = GTEngine.CreateGUIElement(self.GUIContainerFooterRight, "intro-scene-email");
         self.GUIEmail:SetText("mackron@gmail.com");
 
-        self.GUIVersion = GTGUI.Server.CreateElement(self.GUIContainerFooterRight, "intro-scene-version");
+        self.GUIVersion = GTEngine.CreateGUIElement(self.GUIContainerFooterRight, "intro-scene-version");
         self.GUIVersion:SetText("Version " .. GTEngine.GetVersionString());
     end
 
