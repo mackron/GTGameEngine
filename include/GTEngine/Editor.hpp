@@ -214,6 +214,11 @@ namespace GTEngine
         /// @param y      [in] The y position of the mouse at the time it was released.
         void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
 
+        /// Called when the main window received focus.
+        void OnReceiveFocus();
+
+        /// Called when the main window loses focus.
+        void OnLoseFocus();
 
 
         ///////////////////////////////////////////////

@@ -213,6 +213,14 @@ namespace GTEngine
     {
     }
 
+    void SubEditor::OnMainWindowReceiveFocus()
+    {
+    }
+
+    void SubEditor::OnMainWindowLoseFocus()
+    {
+    }
+
 
 
     void SubEditor::OnFileInsert(const DataFilesWatcher::Item &)

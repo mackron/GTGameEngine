@@ -44,7 +44,7 @@ namespace GTEngine
           translateSnapSize(0.25f),/* rotateSnapSize(5.625f), scaleSnapSize(0.25f),*/
           transformedObjectWithGizmo(false),
           isDeserializing(false), isInstantiatingPrefab(false), isUpdatingFromStateStack(false),
-          isPlaying(false), isPaused(false), wasPlayingBeforeHide(false),
+          isPlaying(false), isPaused(false), wasPlayingBeforeHide(false), wasPlayingBeforeLosingFocus(false),
           isViewportMouseControlsEnabled(false),
           parentChangedLockCounter(0),
           GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), scene.GetDefaultViewport()),
@@ -2284,6 +2284,26 @@ namespace GTEngine
             }
         }
     }
+
+    void SceneEditor::OnMainWindowReceiveFocus()
+    {
+        if (this->wasPlayingBeforeLosingFocus)
+        {
+            this->StartPlaying();
+            this->wasPlayingBeforeLosingFocus = false;
+        }
+    }
+
+    void SceneEditor::OnMainWindowLoseFocus()
+    {
+        this->wasPlayingBeforeLosingFocus = this->IsPlaying();
+        
+        if (this->IsPlaying())
+        {
+            this->PausePlaying();
+        }
+    }
+
 
     void SceneEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {

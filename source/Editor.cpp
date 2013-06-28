@@ -862,6 +862,22 @@ namespace GTEngine
         }
     }
 
+    void Editor::OnReceiveFocus()
+    {
+        for (size_t iSubEditor = 0; iSubEditor < this->openedFiles.count; ++iSubEditor)
+        {
+            this->openedFiles.buffer[iSubEditor]->value->OnMainWindowReceiveFocus();
+        }
+    }
+
+    void Editor::OnLoseFocus()
+    {
+        for (size_t iSubEditor = 0; iSubEditor < this->openedFiles.count; ++iSubEditor)
+        {
+            this->openedFiles.buffer[iSubEditor]->value->OnMainWindowLoseFocus();
+        }
+    }
+
 
     // FIXME: There's a bug here where if a file path includes double quotes, the script will fail to execute.
     void Editor::OnFileInsert(const DataFilesWatcher::Item &item)
