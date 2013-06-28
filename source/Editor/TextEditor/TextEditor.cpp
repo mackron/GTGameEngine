@@ -17,7 +17,9 @@ namespace GTEngine
         : SubEditor(ownerEditor, absolutePath, relativePath),
           mainElement(nullptr), textArea(nullptr), panelElement(nullptr), errorListElement(nullptr),
           textAreaEventHandler(new TextAreaEventHandler(this)),
-          compilationErrorHandler(*this), compilationScript(),
+          compilationErrorHandler(*this),
+          proxyGame(nullptr),
+          compilationScript(nullptr),
           isScriptFile(false)
     {
         GTCore::String fileContent;
@@ -85,14 +87,13 @@ namespace GTEngine
             // Do an initial compilation.
             if (this->IsScriptFile())
             {
-                // We want to register the entire GTEngine scripting library here. The reason for this is that we want to allow scripts to be
-                // error free when they do stuff such as assign a variable to a math.vec3().
-                if (Scripting::LoadGTEngineScriptLibrary(this->compilationScript))
+                this->proxyGame = new Game;
+                if (this->proxyGame->GetScript().Startup())
                 {
-                    // We need an error handler on the compilation script.
-                    this->compilationScript.AttachErrorHandler(this->compilationErrorHandler);
+                    // We need to setup a few things with the scripting.
+                    this->compilationScript = &this->proxyGame->GetScript();
+                    this->compilationScript->AttachErrorHandler(this->compilationErrorHandler);
 
-                    // Only after we have registered the engine library do we want to try to compile.
                     this->CompileAndUpdateErrorOutput();
                 }
             }
@@ -103,6 +104,8 @@ namespace GTEngine
     {
         this->GetGUI().DeleteElement(this->mainElement);
         delete this->textAreaEventHandler;
+
+        delete this->proxyGame;
     }
 
 
@@ -115,12 +118,16 @@ namespace GTEngine
     {
         if (this->IsScriptFile())
         {
+            assert(this->proxyGame         != nullptr);
+            assert(this->compilationScript != nullptr);
+
+
             // The the error list first.
             this->ClearErrorList();
 
             // Now we compile.
-            this->compilationScript.Execute("self = {}");
-            this->compilationScript.Execute(this->textArea->GetText(), this->GetAbsolutePath());
+            this->compilationScript->Execute("self = {}");
+            this->compilationScript->Execute(this->textArea->GetText(), this->GetAbsolutePath());
         }
     }
 
