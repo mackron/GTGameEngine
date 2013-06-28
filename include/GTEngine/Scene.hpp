@@ -16,6 +16,7 @@
 #include "SceneNodeMap.hpp"
 #include "SceneStateStack.hpp"
 #include "Prefab.hpp"
+#include "DefaultPrefabLinker.hpp"
 #include <GTCore/SortedVector.hpp>
 #include <GTCore/Script.hpp>
 
@@ -432,6 +433,15 @@ namespace GTEngine
         /// Retrieves a reference to the culling manager.
               SceneCullingManager & GetCullingManager()       { return this->cullingManager; }
         const SceneCullingManager & GetCullingManager() const { return this->cullingManager; }
+
+
+
+        /// Retrieves a reference to the prefab linker.
+              PrefabLinker & GetPrefabLinker()       { assert(this->prefabLinker != nullptr); return *this->prefabLinker; }
+        const PrefabLinker & GetPrefabLinker() const { assert(this->prefabLinker != nullptr); return *this->prefabLinker; }
+
+        /// Sets the prefab linker.
+        void SetPrefabLinker(PrefabLinker &newPrefabLinker);
 
 
 
@@ -957,6 +967,9 @@ namespace GTEngine
         /// A reference to the culling manager.
         SceneCullingManager &cullingManager;
 
+        /// A reference to the prefab linker. This can be changed dynamically so we need to use a pointer instead of a reference. This will never be null.
+        PrefabLinker* prefabLinker;
+
 
         /// Keeps track of whether or not the renderer needs to be deleted when it changes or the scene is destructed.
         bool deleteRenderer;
@@ -969,6 +982,9 @@ namespace GTEngine
 
         /// Keeps track of whether or not the culling manager needs to be deleted by the destructor.
         bool deleteCullingManager;
+
+        /// Keeps track of whether or not the prefab linker needs to be deleted by the destructor.
+        bool deletePrefabLinker;
 
         /// Whether or not the scene is paused.
         bool paused;
@@ -1000,7 +1016,6 @@ namespace GTEngine
 
         /// The list of scene nodes with particle system components. We keep track of this so we can post AABB updates to the culling manager more efficiently.
         GTCore::Map<uint64_t, ParticleSystemComponent*> sceneNodesWithParticleSystemComponents;
-
 
 
         /// The navigation mesh for doing navigation paths.

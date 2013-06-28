@@ -84,7 +84,11 @@ namespace GTEngine
             // Delete children.
             for (size_t iChild = 0; iChild < childrenToDelete.count; ++iChild)
             {
-                this->DeleteSceneNode(childrenToDelete[iChild]);
+                auto child = childrenToDelete[iChild];
+                assert(child != nullptr);
+                {
+                    this->DeleteSceneNode(*child);
+                }
             }
 
             baseSceneNode.RemoveComponent<PrefabComponent>();
