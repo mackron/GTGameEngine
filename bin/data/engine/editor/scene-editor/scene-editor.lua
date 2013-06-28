@@ -1880,7 +1880,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     LinkSceneEditorToSystemAPI(self);
     
     self.Viewport        = GTGUI.Server.CreateElement(self, "scene-editor-viewport");
-    self.Viewport:SceneEditorViewport();
+    self.Viewport:SceneEditorViewport(self);
     
     self.Panel           = GTGUI.Server.CreateElement(self, "scene-editor-panel");
     self.Panel:SceneEditorPanel(self);
@@ -1894,14 +1894,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.ContextMenu:SceneEditorContextMenu(self);
     
 
-    self.Scene                   = GTEngine.RegisteredScenes[GTEngine.System.SceneEditor.GetScenePtr(_internalPtr)];
-    self.SelectedSceneNode       = nil;
-    self.IsLMBDown               = false;
-    self.IsRMBDown               = false;
-    self.MouseMovedWhileCaptured = false;                -- Used to determine whether or not to show the right-click context menu.
-    self.HasMouseCapture         = false;
-    self.IsMouseOverViewport     = false;
-    
+    self.Scene             = GTEngine.RegisteredScenes[GTEngine.System.SceneEditor.GetScenePtr(_internalPtr)];
+    self.SelectedSceneNode = nil;
 
     
     -- Updates the playback control buttons.
@@ -1987,6 +1981,14 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     end
     
     
+    function self:EnableViewportControls()
+        self.Viewport:EnableControls();
+    end
+    
+    function self:DisableViewportControls()
+        self.Viewport:DisableControls();
+    end
+    
     
     function self:OnSelectionChanged()
         local selectedNodeCount = self:GetSelectedSceneNodeCount();
@@ -2039,15 +2041,6 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     
 
-    
-    self.Viewport:OnMouseEnter(function()
-        self.IsMouseOverViewport = true;
-    end);
-    
-    self.Viewport:OnMouseLeave(function()
-        self.IsMouseOverViewport = false;
-    end);
-    
     self.Viewport:OnDrop(function(data)
         if data.droppedElement.isAsset then
             if GTEngine.IsModelFile(data.droppedElement.path) then
@@ -2074,79 +2067,30 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     end);
     
     
-    
-    
-    
+
     self.Viewport:OnLMBDown(function()
-        self.IsLMBDown       = true;
-        self.HasMouseCapture = true;
         self:Focus();
-        
-        -- We will check for a selection on the gizmo. If we click on a gizmo, we don't want to do a mouse selection when the 
-        -- button is raised. What we'll do is trick it into thinking the mouse was moved while it was captured which will
-        -- cause the editor to not try and select anything.
-        if self:TryGizmoMouseSelect() then
-            self.MouseMovedWhileCaptured = true;
-        end
     end);
     
     self.Viewport:OnRMBDown(function()
-        self.IsRMBDown       = true;
-        self.HasMouseCapture = true;
+        self:Focus();
+    end);
+    
+    self.Viewport:OnMMBDown(function()
         self:Focus();
     end);
 
-    
-    
+
     self:WatchLMBDown(function(data)
-        if not self.ContextMenu:IsChild(data.receiver) then self.ContextMenu:Hide(); end
-        
-        if self.HasMouseCapture then
-            self.IsLMBDown = true;
-        end
+        if not self.ContextMenu:IsChild(data.receiver) then self.ContextMenu:Hide() end
     end);
     
     self:WatchRMBDown(function(data)
-        if not self.ContextMenu:IsChild(data.receiver) then self.ContextMenu:Hide(); end
-        
-        if self.HasMouseCapture then
-            self.IsRMBDown = true;
-        end
+        if not self.ContextMenu:IsChild(data.receiver) then self.ContextMenu:Hide() end
     end);
     
-    self:WatchLMBUp(function(data)
-        if not self.MouseMovedWhileCaptured and self.HasMouseCapture and not self.IsRMBDown then
-            self:DoMouseSelection();
-        end
-        
-        if not GTGUI.Server.IsRMBDown() and (not self:IsPlaying() or self:IsPaused()) then
-            Game.ReleaseMouse();
-            self.HasMouseCapture         = false;
-            self.MouseMovedWhileCaptured = false;
-        end
-        
-        self.IsLMBDown = false;
-    end);
-    
-    self:WatchRMBUp(function(data)
-        if not self.MouseMovedWhileCaptured and self.HasMouseCapture and not self.IsLMBDown then
-            self.ContextMenu:SetPosition(GTGUI.Server.GetMousePosition());
-            self.ContextMenu:Show();
-        end
-        
-        if not GTGUI.Server.IsLMBDown() and (not self:IsPlaying() or self:IsPaused()) then
-            Game.ReleaseMouse();
-            self.HasMouseCapture         = false;
-            self.MouseMovedWhileCaptured = false;
-        end
-        
-        self.IsRMBDown = false;
-    end);
-    
-    self:WatchMouseMove(function(data)
-        if self.HasMouseCapture then
-            self.MouseMovedWhileCaptured = true;
-        end
+    self:WatchMMBDown(function(data)
+        if not self.ContextMenu:IsChild(data.receiver) then self.ContextMenu:Hide() end
     end);
     
     

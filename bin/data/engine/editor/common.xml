@@ -28,6 +28,9 @@
 <style  url="common/editor-panel.style"           />
 <script url="common/editor-panel.lua"             />
 
+<script url="common/editor-3d-viewport.lua"       />
+
+
 <style  url="common/panel-groupbox.style"         />
 <script url="common/panel-groupbox.lua"           />
 

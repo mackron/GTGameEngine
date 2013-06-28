@@ -67,18 +67,18 @@ function GTGUI.Element:ModelEditorPanel(_internalPtr)
 end
 
 function GTGUI.Element:ModelEditor(_internalPtr)
+    self._internalPtr = _internalPtr;
+    
     self.ViewportTimelineContainer = GTGUI.Server.CreateElement(self, "model-editor-viewport-timeline-container");
     self.Viewport = GTGUI.Server.CreateElement(self.ViewportTimelineContainer, "model-editor-viewport");
     self.Timeline = GTGUI.Server.CreateElement(self.ViewportTimelineContainer, "model-editor-timeline");
+    self.Panel    = GTGUI.Server.CreateElement(self,                           "model-editor-panel");
+    
+    
+    
 
-    self.Panel    = GTGUI.Server.CreateElement(self, "model-editor-panel");
     
-    
-    self._internalPtr    = _internalPtr;
-    self.IsLMBDown       = false;
-    self.IsRMBDown       = false;
-    self.HasMouseCapture = false;
-    
+    self.Viewport:DefaultEditor3DViewport();
     self.Panel:ModelEditorPanel(_internalPtr);
     self.Timeline:ModelEditor_Timeline(_internalPtr);
     
@@ -98,53 +98,6 @@ function GTGUI.Element:ModelEditor(_internalPtr)
             self.Timeline:Show();
         end
     end
-    
-    
-    
-    
-    self.Viewport:OnLMBDown(function()
-        self.IsLMBDown       = true;
-        self.HasMouseCapture = true;
-        self:Focus();
-    end);
-    
-    self.Viewport:OnRMBDown(function()
-        self.IsRMBDown       = true;
-        self.HasMouseCapture = true;
-        self:Focus();
-    end);
-
-    
-    
-    self:WatchLMBDown(function(data)
-        if self.HasMouseCapture then
-            self.IsLMBDown = true;
-        end
-    end);
-    
-    self:WatchRMBDown(function(data)
-        if self.HasMouseCapture then
-            self.IsRMBDown = true;
-        end
-    end);
-    
-    self:WatchLMBUp(function(data)
-        if not GTGUI.Server.IsRMBDown() then
-            Game.ReleaseMouse();
-            self.HasMouseCapture = false;
-        end
-        
-        self.IsLMBDown = false;
-    end);
-    
-    self:WatchRMBUp(function(data)
-        if not GTGUI.Server.IsLMBDown() then
-            Game.ReleaseMouse();
-            self.HasMouseCapture = false;
-        end
-        
-        self.IsRMBDown = false;
-    end);
     
     
     -- We'll do a refresh to get ourself into the correct state.

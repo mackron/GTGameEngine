@@ -89,38 +89,6 @@ namespace GTEngine
         }
     }
 
-    void Editor3DViewportEventHandler::OnLMBDown(GTGUI::Element &, int, int)
-    {
-        if (!this->game.IsMouseCaptured() && this->isMouseControlsEnabled)
-        {
-            this->game.CaptureMouse();
-        }
-    }
-
-    void Editor3DViewportEventHandler::OnLMBUp(GTGUI::Element &, int, int)
-    {
-        if (!this->game.IsMouseButtonDown(GTCore::MouseButton_Right) && this->isMouseControlsEnabled)
-        {
-            this->game.ReleaseMouse();
-        }
-    }
-
-    void Editor3DViewportEventHandler::OnRMBDown(GTGUI::Element &, int, int)
-    {
-        if (!this->game.IsMouseCaptured() && this->isMouseControlsEnabled)
-        {
-            this->game.CaptureMouse();
-        }
-    }
-
-    void Editor3DViewportEventHandler::OnRMBUp(GTGUI::Element &, int, int)
-    {
-        if (!this->game.IsMouseButtonDown(GTCore::MouseButton_Left) && this->isMouseControlsEnabled)
-        {
-            this->game.ReleaseMouse();
-        }
-    }
-
     void Editor3DViewportEventHandler::OnMouseMove(GTGUI::Element &, int x, int y)
     {
         this->mousePosX = x;
