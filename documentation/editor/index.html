@@ -3,6 +3,19 @@ title:  "Editor Reference"
 layout: editor
 ---
 <style>
+    .subeditor-box {
+        text-align: center;
+        margin-top: 30px;
+    }
+    .subeditor-box h1 {
+        display:       inline;
+        font-size:     16px;
+        color:         rgba(96,96,96,1);
+        line-height:   32px;
+    }
+    .subeditor-box p {
+        font-size:   12px;
+    }
 </style>
 <div class="page-title-small">
     <h1>Editor Reference</h1>
@@ -10,9 +23,9 @@ layout: editor
 <div class="container-fluid">
     <div style="padding:0px 20px;">
         <p>
-            The editor is built into every GTGameEngine game. There is no need for a separate editor executable, but it is perfectly
-            acceptable if it suits your development pipeline. When the editor is opened, the main game is paused, but still active
-            in the background. The default shortcut for toggling the editor is Shift+TAB.
+            The editor is built into every GTGameEngine game - it's a <b><i>part and feature</i></b> of the game. There is no need
+            for a separate editor executable, but it is perfectly acceptable if it suits your development pipeline. When the editor
+            is opened, the main game is paused, but still active in the background. The default shortcut for toggling the editor is Shift+TAB.
         </p>
         <p>
             The editor is essentially a container for sub-editors. There is a sub-editor for most types of assets. Below is a screenshot
@@ -36,7 +49,7 @@ layout: editor
         </p>
         <p>
             The bar along the bottom is currently only used for the command prompt. This will change in the future and will probably become
-            something more of a utility bar for error notifications, a command propt, etc. The command prompt is simply a place for you to
+            something more of a utility bar for error notifications, a command prompt, etc. The command prompt is simply a place for you to
             call scripting functions which will run on the game's scripting environment.
         </p>
         <div class="documentation-section">
@@ -46,9 +59,34 @@ layout: editor
             be assigned it's own tab. You can then cycle between assets by simply selecting it's tab. You can also just re-open the asset
             to select the tab again.
             </p>
-            <p>
-            Refer to the navigation panel for detailed reference pages of each sub-editor.
-            </p>
+            <div class="row">
+                <div class="span4 subeditor-box">
+                    <a href="{{ site.baseurl }}/documentation/editor/sceneeditor"><h1>Scene Editor</h1></a></br>
+                    <a href="{{ site.baseurl }}/documentation/editor/sceneeditor"><img src="{{ site.baseurl }}/img/documentation/editor/scene-editor-1.png" width="180px;"></img></a>
+                </div>
+                <div class="span4 subeditor-box">
+                    <a href="{{ site.baseurl }}/documentation/editor/modeleditor"><h1>Model Editor</h1></a></br>
+                    <a href="{{ site.baseurl }}/documentation/editor/modeleditor"><img src="{{ site.baseurl }}/img/documentation/editor/model-editor-2.png" width="180px;"></img></a>
+                </div>
+                <div class="span4 subeditor-box">
+                    <a href="{{ site.baseurl }}/documentation/editor/imageeditor"><h1>Image Editor</h1></a></br>
+                    <a href="{{ site.baseurl }}/documentation/editor/imageeditor"><img src="{{ site.baseurl }}/img/documentation/editor/image-editor-2.png" width="180px;"></img></a>
+                </div>
+            </div>
+            <div class="row">
+                <div class="span4 subeditor-box">
+                    <a href="{{ site.baseurl }}/documentation/editor/materialeditor"><h1>Material Editor</h1></a></br>
+                    <a href="{{ site.baseurl }}/documentation/editor/materialeditor"><img src="{{ site.baseurl }}/img/documentation/editor/material-editor-1.png" width="180px;"></img></a>
+                </div>
+                <div class="span4 subeditor-box">
+                    <a href="{{ site.baseurl }}/documentation/editor/particleeditor"><h1>Particle Editor</h1></a></br>
+                    <a href="{{ site.baseurl }}/documentation/editor/particleeditor"><img src="{{ site.baseurl }}/img/documentation/editor/particle-editor-1.png" width="180px;"></img></a>
+                </div>
+                <div class="span4 subeditor-box">
+                    <a href="{{ site.baseurl }}/documentation/editor/texteditor"><h1>Text Editor</h1></a></br>
+                    <a href="{{ site.baseurl }}/documentation/editor/texteditor"><img src="{{ site.baseurl }}/img/documentation/editor/text-editor-1.png" width="180px;"></img></a>
+                </div>
+            </div>
         </div>
     </div>
 </div>
