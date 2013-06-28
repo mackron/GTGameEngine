@@ -100,6 +100,12 @@ namespace GTEngine
         /// Called when a mouse button is released.
         virtual void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
 
+        /// Called when the main window received focus.
+        virtual void OnMainWindowReceiveFocus();
+
+        /// Called when the main window loses focus.
+        virtual void OnMainWindowLoseFocus();
+
 
         /// Called when a file is added to a data directory.
         ///

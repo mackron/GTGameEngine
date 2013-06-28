@@ -1434,6 +1434,11 @@ namespace GTEngine
             this->captureMouseOnReceiveFocus = false;
         }
 
+        if (this->editor.IsOpen())
+        {
+            this->editor.OnReceiveFocus();
+        }
+
         this->OnReceiveFocus();
         this->PostScriptEvent_OnReceiveFocus(e);
     }
@@ -1462,6 +1467,11 @@ namespace GTEngine
         // We'll need to release the mouse.
         this->captureMouseOnReceiveFocus = this->IsMouseCaptured();
         this->ReleaseMouse();
+
+        if (this->editor.IsOpen())
+        {
+            this->editor.OnLoseFocus();
+        }
 
         this->OnLoseFocus();
         this->PostScriptEvent_OnLoseFocus(e);

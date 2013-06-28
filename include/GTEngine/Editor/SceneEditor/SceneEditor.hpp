@@ -440,6 +440,12 @@ namespace GTEngine
         /// SubEditor::OnMouseButtonUp()
         void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
 
+        /// SubEditor::OnMainWindowReceiveFocus()
+        void OnMainWindowReceiveFocus();
+
+        /// SubEditor::OnMainWindowLoseFocus()
+        void OnMainWindowLoseFocus();
+
         /// SubEditor::OnFileUpdate()
         void OnFileUpdate(const DataFilesWatcher::Item &item);
 
@@ -742,6 +748,9 @@ namespace GTEngine
 
         /// Keeps track of whether or not the game was playing when the editor is hidden.
         bool wasPlayingBeforeHide;
+
+        /// Keeps track of whether or not the game was playing before the main window lost focus.
+        bool wasPlayingBeforeLosingFocus;
 
 
         /// Keeps track of whether or not the viewport mouse controls are enabled. True by default.
