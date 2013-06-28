@@ -47,21 +47,21 @@ function GTGUI.Element:SceneEditorToolBar(sceneEditor)
     
     
     self.PlayPauseButton:OnPressed(function()
-        if not GTEngine.System.SceneEditor.IsPlaying(sceneEditor._internalPtr) or GTEngine.System.SceneEditor.IsPaused(sceneEditor._internalPtr) then
-            GTEngine.System.SceneEditor.StartPlaying(sceneEditor._internalPtr);
-        else
-            GTEngine.System.SceneEditor.PausePlaying(sceneEditor._internalPtr);
+        if sceneEditor:IsPlaying() then
+            sceneEditor:PausePlaying();
+        elseif sceneEditor:IsPaused() or sceneEditor:IsStopped() then
+            sceneEditor:StartPlaying();
         end
     end);
     
     self.StopButton:OnPressed(function()
-        GTEngine.System.SceneEditor.StopPlaying(sceneEditor._internalPtr);
+        sceneEditor:StopPlaying();
     end);
     
     
     
     function self:UpdatePlaybackControls()
-        if not GTEngine.System.SceneEditor.IsPlaying(sceneEditor._internalPtr) or GTEngine.System.SceneEditor.IsPaused(sceneEditor._internalPtr) then
+        if sceneEditor:IsPaused() or sceneEditor:IsStopped() then
             self.PlayPauseButton:DetachStyleClass("scene-editor-toolbar-pause-button");
             self.PlayPauseButton:AttachStyleClass("scene-editor-toolbar-play-button");
         else
@@ -69,10 +69,10 @@ function GTGUI.Element:SceneEditorToolBar(sceneEditor)
             self.PlayPauseButton:AttachStyleClass("scene-editor-toolbar-pause-button");
         end
         
-        if GTEngine.System.SceneEditor.IsPlaying(sceneEditor._internalPtr) then
-            self.StopButton:Enable();
-        else
+        if sceneEditor:IsStopped() then
             self.StopButton:Disable();
+        else
+            self.StopButton:Enable();
         end
     end
     

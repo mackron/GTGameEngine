@@ -383,6 +383,12 @@ namespace GTEngine
             ///     Argument 1: A pointer to the scene editor.
             int IsPaused(GTCore::Script &script);
 
+            /// Determines whether or not the game is stopped (the default state).
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int IsStopped(GTCore::Script &script);
+
 
             /// Enables physics simulation.
             ///
