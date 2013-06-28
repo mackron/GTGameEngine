@@ -30,7 +30,6 @@ namespace GTEngine
             mousePosYOut = this->mousePosY;
         }
 
-
         /// Enables mouse capture.
         void EnableMouseControls();
 
@@ -48,18 +47,6 @@ namespace GTEngine
         /// OnDraw.
         virtual void OnDraw(GTGUI::Element &element);
         virtual bool ImplementsOnDraw() const { return true; }
-
-        /// OnLMBDown.
-        virtual void OnLMBDown(GTGUI::Element &element, int x, int y);
-
-        /// OnLMBUp.
-        virtual void OnLMBUp(GTGUI::Element &element, int x, int y);
-
-        /// OnRMBDown.
-        virtual void OnRMBDown(GTGUI::Element &element, int x, int y);
-
-        /// OnRMBUp.
-        virtual void OnRMBUp(GTGUI::Element &element, int x, int y);
 
         /// OnMouseMove
         virtual void OnMouseMove(GTGUI::Element &element, int x, int y);

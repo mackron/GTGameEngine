@@ -1447,6 +1447,11 @@ namespace GTEngine
     {
         this->focused = false;
 
+        if (this->editor.IsOpen())
+        {
+            this->editor.OnLoseFocus();
+        }
+
         // We need to post key released/up events for any key that is currently down.
         for (size_t i = 0; i < this->keyDownMap.count; ++i)
         {
@@ -1467,11 +1472,6 @@ namespace GTEngine
         // We'll need to release the mouse.
         this->captureMouseOnReceiveFocus = this->IsMouseCaptured();
         this->ReleaseMouse();
-
-        if (this->editor.IsOpen())
-        {
-            this->editor.OnLoseFocus();
-        }
 
         this->OnLoseFocus();
         this->PostScriptEvent_OnLoseFocus(e);
