@@ -845,6 +845,7 @@ namespace GTEngine
 
 
         bool mouseCaptured;
+        bool captureMouseOnReceiveFocus;            ///< Keeps track of whether or not the capture the mouse when the main window receives focus.
         int mouseCapturePosX;
         int mouseCapturePosY;
 

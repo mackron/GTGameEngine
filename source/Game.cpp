@@ -49,7 +49,7 @@ namespace GTEngine
           editor(*this),
           profiler(),
           DebuggingGUI(*this),
-          mouseCaptured(false), mouseCapturePosX(0), mouseCapturePosY(0),
+          mouseCaptured(false), captureMouseOnReceiveFocus(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0),
           mousePosX(0), mousePosY(0), mouseMoveLockCounter(0),
@@ -1428,6 +1428,12 @@ namespace GTEngine
             this->dataFilesWatcher.DispatchEvents();
         }
 
+        if (this->captureMouseOnReceiveFocus)
+        {
+            this->CaptureMouse();
+            this->captureMouseOnReceiveFocus = false;
+        }
+
         this->OnReceiveFocus();
         this->PostScriptEvent_OnReceiveFocus(e);
     }
@@ -1452,6 +1458,10 @@ namespace GTEngine
         }
 
         this->DisableFullscreen();
+
+        // We'll need to release the mouse.
+        this->captureMouseOnReceiveFocus = this->IsMouseCaptured();
+        this->ReleaseMouse();
 
         this->OnLoseFocus();
         this->PostScriptEvent_OnLoseFocus(e);
