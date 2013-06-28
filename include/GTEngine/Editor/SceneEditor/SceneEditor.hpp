@@ -751,13 +751,6 @@ namespace GTEngine
         PlaybackState playbackState;
 
 
-        /// Keeps track of whether or not the game is playing.
-        //bool isPlaying;
-
-        /// Keeps track of whether or not the game is paused.
-        //bool isPaused;
-
-
         /// Keeps track of whether or not the game was playing when the editor is hidden.
         bool wasPlayingBeforeHide;
 
