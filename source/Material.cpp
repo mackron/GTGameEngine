@@ -43,7 +43,7 @@ namespace GTEngine
         : absolutePath(), relativePath(), xmlString(),
           diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(), refractionShaderID(), specularShaderID(),
           defaultParams(),
-          isBlended(false), isRefractive(false),
+          hasNormalChannel(false), isRefractive(false), isBlended(false),
           blendEquation(BlendEquation_Add), blendSourceFactor(BlendFunc_One), blendDestinationFactor(BlendFunc_Zero), blendColour(0.0f, 0.0f, 0.0f, 0.0f)
     {
     }
@@ -56,13 +56,15 @@ namespace GTEngine
 
     bool MaterialDefinition::LoadFromXML(char* xml)
     {
-        this->diffuseShaderID   = "Material_DefaultDiffuse";
-        this->emissiveShaderID  = "Material_DefaultEmissive";
-        this->shininessShaderID = "Material_DefaultShininess";
-        this->normalShaderID    = "Material_DefaultNormal";
-        this->specularShaderID  = "Material_DefaultSpecular";
-        this->isRefractive      = false;
-        this->isBlended         = false;
+        this->diffuseShaderID    = "Material_DefaultDiffuse";
+        this->emissiveShaderID   = "Material_DefaultEmissive";
+        this->shininessShaderID  = "Material_DefaultShininess";
+        this->normalShaderID     = "";
+        this->specularShaderID   = "Material_DefaultSpecular";
+        this->refractionShaderID = "";
+        this->hasNormalChannel   = false;
+        this->isRefractive       = false;
+        this->isBlended          = false;
         this->defaultParams.Clear();
 
         if (xml == nullptr || *xml == '\0')
@@ -188,10 +190,12 @@ namespace GTEngine
                 {
                     ShaderLibrary::AddShaderString(this->normalShaderID.c_str(), normalNode->value());
                 }
+
+                this->hasNormalChannel = true;
             }
             else
             {
-                this->normalShaderID = "Material_DefaultNormal";
+                this->hasNormalChannel = false;
             }
 
             // <refraction>
@@ -489,6 +493,10 @@ namespace GTEngine
         this->normalShaderID     = "";
         this->refractionShaderID = "";
         this->specularShaderID   = "";
+
+        this->hasNormalChannel   = false;
+        this->isRefractive       = false;
+        this->isBlended          = false;
 
         this->defaultParams.Clear();
     }

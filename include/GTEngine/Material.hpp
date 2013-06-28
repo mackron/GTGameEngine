@@ -80,6 +80,8 @@ namespace GTEngine
         const glm::vec4 & GetBlendColour() const { return this->blendColour; }
 
 
+        /// Determines whether or not the material has a normal channel.
+        bool HasNormalChannel() const { return this->hasNormalChannel; }
 
         /// Determines whether or not the material is refractive.
         bool IsRefractive() const { return this->isRefractive; }
@@ -131,11 +133,14 @@ namespace GTEngine
 
     private:
 
-        /// Keeps track of whether or not the material is blended.
-        bool isBlended;
+        /// Keeps track of whether or not the material has a normal channel.
+        bool hasNormalChannel;
 
         /// Keeps track of whether or not the material is refractive.
         bool isRefractive;
+
+        /// Keeps track of whether or not the material is blended.
+        bool isBlended;
 
 
         /// The blending equation.

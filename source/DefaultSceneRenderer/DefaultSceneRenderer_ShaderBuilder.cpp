@@ -93,7 +93,7 @@ namespace GTEngine
             "uniform mat3 NormalMatrix;\n"
         );
 
-        if (!(shaderID.flags & DefaultSceneRenderer_MaterialShaderID::NoNormalMapping))
+        if (!(shaderID.flags & DefaultSceneRenderer_MaterialShaderID::NoNormalMapping) || material->HasNormalChannel())
         {
             vertexSource.Append
             (
@@ -290,7 +290,7 @@ namespace GTEngine
         
 
         bool includeMaterialPass        =  (shaderID.flags & DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass)     && material != nullptr;
-        bool doNormalMapping            = !(shaderID.flags & DefaultSceneRenderer_MaterialShaderID::NoNormalMapping)         && material != nullptr/* && material->IsNormalDefined()*/;
+        bool doNormalMapping            = !(shaderID.flags & DefaultSceneRenderer_MaterialShaderID::NoNormalMapping)         && material != nullptr && material->HasNormalChannel();
         bool sourceLightingFromTextures =  (shaderID.flags & DefaultSceneRenderer_MaterialShaderID::GetLightingFromTextures) && includeMaterialPass;
 
         // We won't be doing normal mapping if all we are using is an ambient light.
@@ -816,8 +816,8 @@ namespace GTEngine
             {
                 fragmentSource.Append
                 (
-                    "    vec4  materialDiffuse    = Diffuse();\n"
-                    "    vec3  materialEmissive   = Emissive();\n"
+                    "    vec4  materialDiffuse  = Diffuse();\n"
+                    "    vec3  materialEmissive = Emissive();\n"
                 );
 
                 if (material->IsRefractive())
