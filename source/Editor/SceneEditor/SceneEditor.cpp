@@ -2486,11 +2486,6 @@ namespace GTEngine
 
             // Gizmo should be updated now.
             this->UpdateGizmo();
-
-
-
-            // We need to make sure all scene nodes are brought up-to-date with their prefabs.
-            this->RelinkSceneNodesLinkedToPrefabs();
         }
         this->isDeserializing = false;
         this->UnlockParentChangedEvents();
@@ -2972,41 +2967,6 @@ namespace GTEngine
             assert(sceneNode != nullptr);
             {
                 this->LinkSceneNodeToPrefab(*sceneNode, prefabRelativePath);
-            }
-        }
-    }
-
-    void SceneEditor::RelinkSceneNodesLinkedToPrefabs()
-    {
-        // First step is to extract the scene nodes that are linked to a prefab, but only those that root it.
-        GTCore::Vector<SceneNode*> rootSceneNodes;
-        for (size_t iSceneNode = 0; iSceneNode < this->scene.GetSceneNodeCount(); ++iSceneNode)
-        {
-            auto sceneNode = this->scene.GetSceneNodeByIndex(iSceneNode);
-            assert(sceneNode != nullptr);
-            {
-                auto prefabComponent = sceneNode->GetComponent<PrefabComponent>();
-                if (prefabComponent != nullptr)
-                {
-                    if (prefabComponent->GetLocalHierarchyID() == 1)    // Is it the root node in the prefab?
-                    {
-                        rootSceneNodes.PushBack(sceneNode);
-                    }
-                }
-            }
-        }
-
-        // Now we just iterate over the root nodes and re-link, deleting children that should no longer exist.
-        for (size_t iSceneNode = 0; iSceneNode < rootSceneNodes.count; ++iSceneNode)
-        {
-            auto sceneNode = rootSceneNodes[iSceneNode];
-            assert(sceneNode != nullptr);
-            {
-                auto prefabComponent = sceneNode->GetComponent<PrefabComponent>();
-                assert(prefabComponent != nullptr);
-                {
-                    this->LinkSceneNodeToPrefab(*sceneNode, prefabComponent->GetPrefabRelativePath());
-                }
             }
         }
     }
