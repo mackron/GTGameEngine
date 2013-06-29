@@ -67,7 +67,7 @@ function GTGUI.Element:ModelEditorPanel(_internalPtr)
 end
 
 function GTGUI.Element:ModelEditor(_internalPtr)
-    self._internalPtr = _internalPtr;
+    self:SubEditor(_internalPtr);
     
     self.ViewportTimelineContainer = GTGUI.Server.CreateElement(self, "model-editor-viewport-timeline-container");
     self.Viewport = GTGUI.Server.CreateElement(self.ViewportTimelineContainer, "model-editor-viewport");

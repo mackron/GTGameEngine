@@ -18,11 +18,26 @@ namespace GTEngine
     {
         if (this->image != nullptr)
         {
-            auto &gui = this->GetGUI();
+            auto &gui    = this->GetGUI();
+            auto &script = this->GetScript();
 
-            this->viewportElement = gui.CreateElement("<div parentid='Editor_SubEditorContainer' style='width:100%; height:100%; border:1px #222;' />");
+            this->viewportElement = gui.CreateElement("<div parentid='Editor_SubEditorContainer' styleclass='image-editor' />");
             assert(this->viewportElement != nullptr);
             {
+                // The element has been created, but we need to execute a script to have it turn into a proper image editor.
+                script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->viewportElement->id).c_str());
+                assert(script.IsTable(-1));
+                {
+                    script.Push("ImageEditor");
+                    script.GetTableValue(-2);
+                    assert(script.IsFunction(-1));
+                    {
+                        script.PushValue(-2);   // <-- 'self'.
+                        script.Push(this);      // <-- '_internalPtr'
+                        script.Call(2, 0);
+                    }
+                }
+
                 this->viewportElement->AttachEventHandler(this->viewportEventHandler);
             }
         }

@@ -43,8 +43,18 @@ namespace GTEngine
             assert(this->mainElement != nullptr);
             {
                 // The element has been created, but we need to execute a script to have it turn into a proper multi-line text box.
-                script.Execute(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s'):TextEditor();", this->mainElement->id).c_str());
-
+                script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+                assert(script.IsTable(-1));
+                {
+                    script.Push("TextEditor");
+                    script.GetTableValue(-2);
+                    assert(script.IsFunction(-1));
+                    {
+                        script.PushValue(-2);   // <-- 'self'.
+                        script.Push(this);      // <-- '_internalPtr'
+                        script.Call(2, 0);
+                    }
+                }
 
                 // Now what we need to do is actually set the text. This will be much quicker if done on the C++ side so that the script parser doesn't need to
                 // parse potentially very large files.

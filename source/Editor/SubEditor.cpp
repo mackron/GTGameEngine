@@ -170,6 +170,28 @@ namespace GTEngine
         this->ownerEditor.CloseFile(this->absolutePath.c_str());
     }
 
+    void SubEditor::DeleteToolbar()
+    {
+        auto &script = this->GetScript();
+
+        auto mainElement = this->GetMainElement();
+        if (mainElement != nullptr)
+        {
+            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", mainElement->id).c_str());
+            assert(script.IsTable(-1));
+            {
+                script.Push("DeleteToolBar");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);   // 'self'.
+                    script.Call(1, 0);
+                }
+            }
+            script.Pop(1);
+        }
+    }
+
 
 
     GTEngine::GameScript & SubEditor::GetScript()

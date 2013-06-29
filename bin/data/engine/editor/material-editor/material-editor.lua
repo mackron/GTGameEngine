@@ -1,7 +1,7 @@
 -- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
 function GTGUI.Element:MaterialEditor(_internalPtr)
-    self._internalPtr    = _internalPtr;
+    self:SubEditor(_internalPtr);
     
     ----------------------------------------------
     -- Preview  --          Properties          --

@@ -8,3 +8,6 @@
 <script url="particle-editor-newemitter-button.lua"     />
 <script url="particle-editor-emitter-panel.lua"         />
 <script url="particle-editor-function-panel.lua"        />
+
+<style  url="particle-editor-toolbar.style"             />
+<script url="particle-editor-toolbar.lua"               />

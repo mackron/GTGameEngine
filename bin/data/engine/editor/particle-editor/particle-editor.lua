@@ -13,6 +13,8 @@ function GTGUI.Element:ParticleEditor(_internalPtr)
     self.Panel    = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='particle-editor-panel' />");
     self.Panel:ParticleEditorPanel(self);
     
+    self.ToolBar:ParticleEditorToolbar(self);
+    
 
 
     function self:AppendNewEmitter()

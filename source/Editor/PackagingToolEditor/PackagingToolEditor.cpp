@@ -15,7 +15,18 @@ namespace GTEngine
         assert(this->mainElement != nullptr);
         {
             // The element has been created, but we need to execute a script to have it turn into a proper sub-editor
-            script.Execute(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s'):PackagingToolEditor();", this->mainElement->id).c_str());
+            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+            assert(script.IsTable(-1));
+            {
+                script.Push("PackagingToolEditor");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);   // <-- 'self'.
+                    script.Push(this);      // <-- '_internalPtr'
+                    script.Call(2, 0);
+                }
+            }
         }
     }
 

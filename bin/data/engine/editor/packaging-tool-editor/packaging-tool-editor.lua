@@ -7,7 +7,9 @@ function GTGUI.Element:PackagingToolField()
     return self;
 end
 
-function GTGUI.Element:PackagingToolEditor()
+function GTGUI.Element:PackagingToolEditor(_internalPtr)
+    self:SubEditor(_internalPtr);
+
     self.Title = GTGUI.Server.CreateElement(self, "packaging-tool-editor-title");
     self.Title:SetText("Package for Distribution");
     
