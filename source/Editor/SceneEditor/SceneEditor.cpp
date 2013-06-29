@@ -185,23 +185,6 @@ namespace GTEngine
         // If we're playing, we need to stop. If we don't do this there are a few things that won't get restored correctly.
         this->StopPlaying();
 
-
-        // GUI elements need to be deleted. We will delete the toolbar first, via the scripting interface.
-        auto &script = this->GetScript();
-
-        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
-        assert(script.IsTable(-1));
-        {
-            script.Push("DeleteToolBar");
-            script.GetTableValue(-2);
-            assert(script.IsFunction(-1));
-            {
-                script.PushValue(-2);   // 'self'.
-                script.Call(1, 0);
-            }
-        }
-        script.Pop(1);
-
         // We need to delete the main GUI element, along with it's children.
         this->GetGUI().DeleteElement(this->GUI.Main);
     }
@@ -2012,23 +1995,6 @@ namespace GTEngine
             this->wasPlayingBeforeHide = false;
         }
 
-
-        auto &script = this->GetScript();
-
-        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
-        assert(script.IsTable(-1));
-        {
-            script.Push("ShowToolBar");
-            script.GetTableValue(-2);
-            assert(script.IsFunction(-1));
-            {
-                script.PushValue(-2);   // 'self'.
-                script.Call(1, 0);
-            }
-        }
-        script.Pop(1);
-
-
         this->GUI.Main->Show();
     }
 
@@ -2040,23 +2006,6 @@ namespace GTEngine
             this->PausePlaying();
             this->wasPlayingBeforeHide = true;
         }
-
-
-        auto &script = this->GetScript();
-
-        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
-        assert(script.IsTable(-1));
-        {
-            script.Push("HideToolBar");
-            script.GetTableValue(-2);
-            assert(script.IsFunction(-1));
-            {
-                script.PushValue(-2);   // 'self'.
-                script.Call(1, 0);
-            }
-        }
-        script.Pop(1);
-
 
         this->GUI.Main->Hide();
     }

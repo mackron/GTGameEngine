@@ -63,6 +63,8 @@ namespace GTEngine
         ///     This will tell the owner editor that this sub-editor should be removed.
         void Close();
 
+        /// Deletes the sub-editor's toolbar. Should not be called directly.
+        void DeleteToolbar();
 
 
         /// A helper function for retrieving the game script object.

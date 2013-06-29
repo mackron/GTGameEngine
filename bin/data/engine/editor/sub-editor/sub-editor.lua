@@ -2,10 +2,10 @@
 
 function GTGUI.Element:SubEditor(_internalPtr)
     self._internalPtr = _internalPtr;
+    
+    self.ToolBar = GTGUI.Server.CreateElement("EditorTopPanel_Right", "sub-editor-toolbar");
 
     
-    self.ToolBar = GTGUI.Server.New("<div parentid='EditorTopPanel_Right' style='width:auto; visible:false; height:100%; vertical-align:center; child-plane:horizontal;' />");
-
     function self:DeleteToolBar()
         GTGUI.Server.DeleteElement(self.ToolBar);
     end
@@ -19,6 +19,13 @@ function GTGUI.Element:SubEditor(_internalPtr)
     end
     
     
+    function self:OnShow()
+        self:ShowToolBar();
+    end
+    
+    function self:OnHide()
+        self:HideToolBar();
+    end
     
     
     -------------------------------

@@ -417,6 +417,8 @@ namespace GTEngine
                         this->HideCurrentlyShownFile();
                     }
 
+                    editor->DeleteToolbar();
+
                     delete editor;
                     this->openedFiles.RemoveByIndex(iEditor->index);
 

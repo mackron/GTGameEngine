@@ -1,6 +1,8 @@
 -- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
-function GTGUI.Element:TextEditor()
+function GTGUI.Element:TextEditor(_internalPtr)
+    self:SubEditor(_internalPtr);
+
     self.TextBox = GTGUI.Server.CreateElement(self, "text-editor-textbox");
     self.TextBox:MultiLineTextBox();
     
