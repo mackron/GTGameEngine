@@ -25,6 +25,9 @@
 <style  url="common/labelled-textbox.style"       />
 <script url="common/labelled-textbox.lua"         />
 
+<style  url="common/labelled-number-input.style"  />
+<script url="common/labelled-number-input.lua"    />
+
 <style  url="common/editor-panel.style"           />
 <script url="common/editor-panel.lua"             />
 
@@ -60,10 +63,6 @@
 
 <style  url="common/dialogs.style"                />
 <script url="common/dialogs.lua"                  />
-
-<!-- This needs to be renamed to labelled-number-input -->
-<style  url="common/panel-number-input.style"     />
-<script url="common/panel-number-input.lua"       />
 
 <style  url="common/searchbox.style"              />
 <script url="common/searchbox.lua"                />
