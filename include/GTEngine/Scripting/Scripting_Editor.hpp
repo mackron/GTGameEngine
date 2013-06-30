@@ -664,6 +664,58 @@ namespace GTEngine
             ///
             ///     Argument 1: A pointer to the particle editor.
             int RefreshViewport(GTCore::Script &script);
+
+
+            /// Sets the orientation of the preview particle system.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int SetOrientation(GTCore::Script &script);
+
+
+            /// Shows the grid if it isn't showing already.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int ShowGrid(GTCore::Script &script);
+
+            /// Hides the grid if it isn't hidden already.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int HideGrid(GTCore::Script &script);
+
+            /// Determines whether or not the grid is showing.
+            ///
+            /// @remakrs
+            ///     Argument 1: A pointer to the scene editor.
+            int IsShowingGrid(GTCore::Script &script);
+
+
+            /// Shows the axis arrows if it isn't showing already.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int ShowAxisArrows(GTCore::Script &script);
+
+            /// Hides the axis arrows if it isn't hidden already.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int HideAxisArrows(GTCore::Script &script);
+
+            /// Determines whether or not the grid is showing.
+            ///
+            /// @remakrs
+            ///     Argument 1: A pointer to the scene editor.
+            int IsShowingAxisArrows(GTCore::Script &script);
+
+
+            /// Resets the camera.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int ResetCamera(GTCore::Script &script);
         }
     }
 }

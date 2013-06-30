@@ -16,10 +16,11 @@ namespace GTEngine
         : SubEditor(ownerEditor, absolutePath, relativePath),
           particleSystemDefinition(), particleSystem(particleSystemDefinition),
           scene(), camera(), particleNode(),
-          mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(ownerEditor.GetGame(), scene.GetDefaultViewport()),
+          mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(*this, ownerEditor.GetGame(), scene.GetDefaultViewport()),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
           grid(0.25f, 8, 32),
-          isSaving(false), isReloading(false)
+          isSaving(false), isReloading(false),
+          isShowingGrid(false), isShowingAxisArrows(false)
     {
         // We use the camera for our lights.
         this->camera.AddComponent<GTEngine::CameraComponent>();
@@ -34,8 +35,9 @@ namespace GTEngine
         // HDR should be disabled for this.
         static_cast<DefaultSceneRenderer &>(this->scene.GetRenderer()).DisableHDR();
 
-        // Show the grid.
-        this->grid.Show(this->scene.GetRenderer());
+        // Show the grid and axis arrows.
+        this->ShowGrid();
+        this->ShowAxisArrows();
 
 
         // Load the particle system.
@@ -138,6 +140,100 @@ namespace GTEngine
     {
         this->particleSystem.Refresh();
     }
+
+
+    void ParticleEditor::SetOrientation(const glm::quat &orientation)
+    {
+        this->particleNode.SetWorldOrientation(orientation);
+    }
+
+
+    void ParticleEditor::ShowGrid()
+    {
+        if (!this->isShowingGrid)
+        {
+            this->grid.Show(this->scene.GetRenderer());
+            this->isShowingGrid = true;
+        }
+    }
+
+    void ParticleEditor::HideGrid()
+    {
+        if (this->isShowingGrid)
+        {
+            this->grid.Hide(this->scene.GetRenderer());
+            this->isShowingGrid = false;
+        }
+    }
+
+    bool ParticleEditor::IsShowingGrid() const
+    {
+        return this->isShowingGrid;
+    }
+
+
+    void ParticleEditor::ShowAxisArrows()
+    {
+        if (!this->isShowingAxisArrows)
+        {
+            this->axisArrows.Show(this->scene.GetRenderer());
+            this->isShowingAxisArrows = true;
+        }
+    }
+
+    void ParticleEditor::HideAxisArrows()
+    {
+        if (this->isShowingAxisArrows)
+        {
+            this->axisArrows.Hide(this->scene.GetRenderer());
+            this->isShowingAxisArrows = false;
+        }
+    }
+
+    bool ParticleEditor::IsShowingAxisArrows() const
+    {
+        return this->isShowingAxisArrows;
+    }
+
+
+
+    void ParticleEditor::OnViewportSize()
+    {
+        float screenPositionX = 48.0f;
+        float screenPositionY = 48.0f;
+        float screenSize      = 32.0f;
+        
+
+
+        // We need to update the position of the gizmo so that it's positioned in the appropriate corner.
+        glm::vec3 cameraPosition      = this->camera.GetWorldPosition();
+        glm::vec3 cameraForward       = this->camera.GetWorldForwardVector();
+        glm::vec3 arrowsWorldPosition = cameraPosition + (cameraForward * 1.0f);
+
+        glm::vec3 windowPos      = this->scene.GetDefaultViewport().Project(arrowsWorldPosition);
+        glm::vec3 arrowsPosition = this->scene.GetDefaultViewport().Unproject(glm::vec3(screenPositionX, screenPositionY, windowPos.z));
+        
+
+        // We actually need to scale this a bit to keep it a constant size.
+        glm::vec3 arrowsScale(glm::distance(this->scene.GetDefaultViewport().Unproject(glm::vec3(screenPositionX, screenPositionY + screenSize, windowPos.z)), arrowsPosition));
+
+
+        // World Space -> Local Space.
+        arrowsPosition -= cameraPosition;
+        arrowsPosition  = glm::inverse(this->camera.GetWorldOrientation()) * arrowsPosition;
+        
+
+        this->axisArrows.SetLocalPosition(arrowsPosition);
+        this->axisArrows.SetLocalScale(arrowsScale);
+        this->axisArrows.UpdateTransform(this->camera);
+    }
+
+    void ParticleEditor::OnViewportMouseWheel()
+    {
+        // This just forces camera-dependant stuff to have the appropriate properties applied.
+        this->ApplyCameraRotation();
+    }
+
 
 
     ///////////////////////////////////////////////////
@@ -243,6 +339,8 @@ namespace GTEngine
         this->camera.SetOrientation(glm::quat());
         this->camera.RotateY(this->cameraYRotation);
         this->camera.RotateX(this->cameraXRotation);
+
+        this->axisArrows.UpdateTransform(this->camera);
     }
 }
 
