@@ -1,10 +1,10 @@
 -- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
 -- An input control for simple numbers in a properties panel.
-function GTGUI.Element:PanelNumberInput(title, initialValue)
+function GTGUI.Element:LabelledNumberInput(title, initialValue)
     self:LabelledElement(title);
     
-    self.Input = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' styleclass='panel-number-input-textbox' />");
+    self.Input = GTGUI.Server.CreateElement(self.Right, "labelled-number-input-textbox");
     self.Input:NumberTextBox(initialValue);
     
     -- Sets the value of the input.

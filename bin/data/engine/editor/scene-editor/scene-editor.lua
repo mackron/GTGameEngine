@@ -332,18 +332,18 @@ function GTGUI.Element:CameraComponentPanel()
     self:PanelGroupBox("Camera", true);
     
     -- FOV
-    self.FOVInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.FOVInput:PanelNumberInput("FOV");
+    self.FOVInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-number-input' />");
+    self.FOVInput:LabelledNumberInput("FOV");
     self.FOVInput:UseFloatFormat();
     
     -- zNear
-    self.NearInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.NearInput:PanelNumberInput("Near Plane");
+    self.NearInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-number-input' />");
+    self.NearInput:LabelledNumberInput("Near Plane");
     self.NearInput:UseFloatFormat();
     
     -- zFar
-    self.FarInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.FarInput:PanelNumberInput("Far Plane");
+    self.FarInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-number-input' />");
+    self.FarInput:LabelledNumberInput("Far Plane");
     self.FarInput:UseFloatFormat();
     
     
@@ -1131,25 +1131,25 @@ function GTGUI.Element:DynamicsComponentPanel()
     self.IsKinematic:CheckBox("Is Kinematic");
     
     -- Mass
-    self.MassInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.MassInput:PanelNumberInput("Mass");
+    self.MassInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-number-input' />");
+    self.MassInput:LabelledNumberInput("Mass");
     
     -- Friction
-    self.FrictionInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.FrictionInput:PanelNumberInput("Friction");
+    self.FrictionInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-number-input' />");
+    self.FrictionInput:LabelledNumberInput("Friction");
     
     -- Restitution
-    self.RestitutionInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.RestitutionInput:PanelNumberInput("Restitution", 0.0);
+    self.RestitutionInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-number-input' />");
+    self.RestitutionInput:LabelledNumberInput("Restitution", 0.0);
 
     
     -- Linear Damping.
-    self.LinearDampingInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.LinearDampingInput:PanelNumberInput("Linear Damping", 0.0);
+    self.LinearDampingInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-number-input' />");
+    self.LinearDampingInput:LabelledNumberInput("Linear Damping", 0.0);
     
     -- Angular Damping.
-    self.AngularDampingInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.AngularDampingInput:PanelNumberInput("Angular Damping", 0.0);
+    self.AngularDampingInput = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-number-input' />");
+    self.AngularDampingInput:LabelledNumberInput("Angular Damping", 0.0);
     
     
     -- Collision Shapes

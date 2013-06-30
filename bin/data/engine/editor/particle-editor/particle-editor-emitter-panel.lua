@@ -21,20 +21,20 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.Burst:SetTooltip("When enabled, all particles will be emitted at once. The number\nof particles will be equal to that set in Emission Rate.");
     self.Burst:SetChecked(self.Emitter:IsBurstModeEnabled());
     
-    self.Duration = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.Duration:PanelNumberInput("Duration", emitter:GetDurationInSeconds());
+    self.Duration = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-number-input' />");
+    self.Duration:LabelledNumberInput("Duration", emitter:GetDurationInSeconds());
     self.Duration:SetTooltip("When burst mode is enabled, defines the time in seconds between loop\niterations. Set to 0 to disable looping.");
     
-    self.Delay = GTGUI.Server.CreateElement(self.Body, "panel-number-input");
-    self.Delay:PanelNumberInput("Delay", emitter:GetDelayInSeconds());
+    self.Delay = GTGUI.Server.CreateElement(self.Body, "labelled-number-input");
+    self.Delay:LabelledNumberInput("Delay", emitter:GetDelayInSeconds());
     self.Delay:SetTooltip("The amount of time in seconds to wait before the first particle is emitted.");
     
-    self.GravityFactor = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.GravityFactor:PanelNumberInput("Gravity Factor", emitter:GetGravityFactor());
+    self.GravityFactor = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-number-input' />");
+    self.GravityFactor:LabelledNumberInput("Gravity Factor", emitter:GetGravityFactor());
     self.GravityFactor:SetTooltip("The amount of gravitational influence to apply to particles. The gravity\ndirection is determined by the gravity settings of the scene.");
     
-    self.EmissionRate = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.EmissionRate:PanelNumberInput("Emission Rate", emitter:GetEmissionRatePerSecond());
+    self.EmissionRate = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-number-input' />");
+    self.EmissionRate:LabelledNumberInput("Emission Rate", emitter:GetEmissionRatePerSecond());
     self.EmissionRate:SetTooltip("The number of particles to emit per second. When burst mode is enabled, the\nnumber of particles to emit on each burst.");
     
     self.EmissionShape = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-dropdown-box' />");
@@ -48,42 +48,42 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Box].ShapeType    = GTEngine.ParticleEmissionShapes.Box;
     
     self.ConeShapeProperties        = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                .. "' styleclass='particle-editor-panel-emitter-shape-container' />");
-    self.ConeShapeProperties.Radius = GTGUI.Server.New("<div parentid='" .. self.ConeShapeProperties:GetID() .. "' styleclass='panel-number-input' />");
-    self.ConeShapeProperties.Radius:PanelNumberInput("Radius", 0.0);
+    self.ConeShapeProperties.Radius = GTGUI.Server.New("<div parentid='" .. self.ConeShapeProperties:GetID() .. "' styleclass='labelled-number-input' />");
+    self.ConeShapeProperties.Radius:LabelledNumberInput("Radius", 0.0);
     self.ConeShapeProperties.Radius:SetTooltip("The radius of the base.");
-    self.ConeShapeProperties.Angle  = GTGUI.Server.New("<div parentid='" .. self.ConeShapeProperties:GetID() .. "' styleclass='panel-number-input' />");
-    self.ConeShapeProperties.Angle:PanelNumberInput("Angle", 0.0);
+    self.ConeShapeProperties.Angle  = GTGUI.Server.New("<div parentid='" .. self.ConeShapeProperties:GetID() .. "' styleclass='labelled-number-input' />");
+    self.ConeShapeProperties.Angle:LabelledNumberInput("Angle", 0.0);
     self.ConeShapeProperties.Angle:SetTooltip("The cone angle in degrees.");
     
     self.SphereShapeProperties        = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                  .. "' styleclass='particle-editor-panel-emitter-shape-container' />");
-    self.SphereShapeProperties.Radius = GTGUI.Server.New("<div parentid='" .. self.SphereShapeProperties:GetID() .. "' styleclass='panel-number-input' />");
-    self.SphereShapeProperties.Radius:PanelNumberInput("Radius", 0.0);
+    self.SphereShapeProperties.Radius = GTGUI.Server.New("<div parentid='" .. self.SphereShapeProperties:GetID() .. "' styleclass='labelled-number-input' />");
+    self.SphereShapeProperties.Radius:LabelledNumberInput("Radius", 0.0);
     self.SphereShapeProperties.Radius:SetTooltip("The radius of the sphere.");
     
     self.BoxShapeProperties   = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()               .. "' styleclass='particle-editor-panel-emitter-shape-container' />");
-    self.BoxShapeProperties.X = GTGUI.Server.New("<div parentid='" .. self.BoxShapeProperties:GetID() .. "' styleclass='panel-number-input' />");
-    self.BoxShapeProperties.X:PanelNumberInput("X", 0.0);
+    self.BoxShapeProperties.X = GTGUI.Server.New("<div parentid='" .. self.BoxShapeProperties:GetID() .. "' styleclass='labelled-number-input' />");
+    self.BoxShapeProperties.X:LabelledNumberInput("X", 0.0);
     self.BoxShapeProperties.X:SetTooltip("The length of the box on the X axis.");
-    self.BoxShapeProperties.Y = GTGUI.Server.New("<div parentid='" .. self.BoxShapeProperties:GetID() .. "' styleclass='panel-number-input' />");
-    self.BoxShapeProperties.Y:PanelNumberInput("Y", 0.0);
+    self.BoxShapeProperties.Y = GTGUI.Server.New("<div parentid='" .. self.BoxShapeProperties:GetID() .. "' styleclass='labelled-number-input' />");
+    self.BoxShapeProperties.Y:LabelledNumberInput("Y", 0.0);
     self.BoxShapeProperties.Y:SetTooltip("The length of the box on the Y axis.");
-    self.BoxShapeProperties.Z = GTGUI.Server.New("<div parentid='" .. self.BoxShapeProperties:GetID() .. "' styleclass='panel-number-input' />");
-    self.BoxShapeProperties.Z:PanelNumberInput("Z", 0.0);
+    self.BoxShapeProperties.Z = GTGUI.Server.New("<div parentid='" .. self.BoxShapeProperties:GetID() .. "' styleclass='labelled-number-input' />");
+    self.BoxShapeProperties.Z:LabelledNumberInput("Z", 0.0);
     self.BoxShapeProperties.Z:SetTooltip("The length of the box on the Z axis.");
     
     
     
-    self.Lifetime = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.Lifetime:PanelNumberInput("Lifetime", emitter:GetLifetime());
+    self.Lifetime = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-number-input' />");
+    self.Lifetime:LabelledNumberInput("Lifetime", emitter:GetLifetime());
     self.Lifetime:SetStyle("margin-top", "8px");
     self.Lifetime:SetTooltip("The lifetime of each particle in seconds.");
     
-    self.StartSpeed = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-number-input' />");
-    self.StartSpeed:PanelNumberInput("Start Speed", emitter:GetStartSpeed());
+    self.StartSpeed = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-number-input' />");
+    self.StartSpeed:LabelledNumberInput("Start Speed", emitter:GetStartSpeed());
     self.StartSpeed:SetTooltip("The initial speed of the particle. The direction is determined by the emission shape.");
     
-    self.StartScale    = GTGUI.Server.CreateElement(self.Body, "panel-number-input");
-    self.StartScale:PanelNumberInput("Start Size", emitter:GetStartScale().x);
+    self.StartScale    = GTGUI.Server.CreateElement(self.Body, "labelled-number-input");
+    self.StartScale:LabelledNumberInput("Start Size", emitter:GetStartScale().x);
     self.StartScale:SetTooltip("The initial scale of each particle. This will be overridden by\nthe Scale over Time function if present.");
     
     self.StartRotation = GTGUI.Server.CreateElement(self.Body, "labelled-vector3-input");
