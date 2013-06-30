@@ -88,12 +88,12 @@ end
 function GTGUI.Element:ScalarParticleFunctionPanel(titleText, minValue, maxValue)
     self:ParticleEditorFunctionPanel(titleText);
     
-    self.MinInput = GTGUI.Server.CreateElement(self.Body:GetID(), "panel-number-input");
-    self.MinInput:PanelNumberInput("Min", minValue);
+    self.MinInput = GTGUI.Server.CreateElement(self.Body:GetID(), "labelled-number-input");
+    self.MinInput:LabelledNumberInput("Min", minValue);
     self.MinInput:SetTooltip("The value at the start of the particle's life.");
     
-    self.MaxInput = GTGUI.Server.CreateElement(self.Body:GetID(), "panel-number-input");
-    self.MaxInput:PanelNumberInput("Max", maxValue);
+    self.MaxInput = GTGUI.Server.CreateElement(self.Body:GetID(), "labelled-number-input");
+    self.MaxInput:LabelledNumberInput("Max", maxValue);
     self.MaxInput:SetTooltip("The value at the end of the particle's life.");
     
     
