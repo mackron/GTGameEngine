@@ -1,10 +1,10 @@
 -- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
-function GTGUI.Element:PanelDropDownBox(title)
+function GTGUI.Element:LabelledDropDownBox(title)
     self.Left        = GTGUI.Server.New("<div parentid='" .. self:GetID()       .. "' style='width:auto; height:auto; margin-right:4px;' />");
     self.Right       = GTGUI.Server.New("<div parentid='" .. self:GetID()       .. "' style='width:100%; height:auto; horizontal-align:right;' />");
-    self.Label       = GTGUI.Server.New("<div parentid='" .. self.Left:GetID()  .. "' styleclass='panel-dropdown-box-label'        />");
-    self.DropDownBox = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' styleclass='panel-dropdown-box-dropdown-box' />");
+    self.Label       = GTGUI.Server.New("<div parentid='" .. self.Left:GetID()  .. "' styleclass='labelled-dropdown-box-label'        />");
+    self.DropDownBox = GTGUI.Server.New("<div parentid='" .. self.Right:GetID() .. "' styleclass='labelled-dropdown-box-dropdown-box' />");
     self.DropDownBox:DropDownBox();
     
     self.Locked = false;

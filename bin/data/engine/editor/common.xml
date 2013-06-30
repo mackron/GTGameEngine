@@ -28,17 +28,16 @@
 <style  url="common/labelled-number-input.style"  />
 <script url="common/labelled-number-input.lua"    />
 
+<style  url="common/labelled-dropdown-box.style"  />
+<script url="common/labelled-dropdown-box.lua"    />
+
 <style  url="common/editor-panel.style"           />
 <script url="common/editor-panel.lua"             />
 
 <script url="common/editor-3d-viewport.lua"       />
 
-
 <style  url="common/panel-groupbox.style"         />
 <script url="common/panel-groupbox.lua"           />
-
-<style  url="common/panel-dropdown-box.style"     />
-<script url="common/panel-dropdown-box.lua"       />
 
 <style  url="common/add-button.style"             />
 <script url="common/add-button.lua"               />
