@@ -2,7 +2,7 @@
 
 editor-panel
 {
-    width:              250px
+    width:              280px
     height:             100%
     min-width:          32px
     

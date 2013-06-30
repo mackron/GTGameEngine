@@ -139,6 +139,15 @@ namespace GTEngine
                     {
                         script.SetTableFunction(-1, "GetParticleSystemDefinitionPtr",      ParticleEditorFFI::GetParticleSystemDefinitionPtr);
                         script.SetTableFunction(-1, "RefreshViewport",                     ParticleEditorFFI::RefreshViewport);
+
+                        script.SetTableFunction(-1, "SetOrientation",                      ParticleEditorFFI::SetOrientation);
+                        script.SetTableFunction(-1, "ShowGrid",                            ParticleEditorFFI::ShowGrid);
+                        script.SetTableFunction(-1, "HideGrid",                            ParticleEditorFFI::HideGrid);
+                        script.SetTableFunction(-1, "IsShowingGrid",                       ParticleEditorFFI::IsShowingGrid);
+                        script.SetTableFunction(-1, "ShowAxisArrows",                      ParticleEditorFFI::ShowAxisArrows);
+                        script.SetTableFunction(-1, "HideAxisArrows",                      ParticleEditorFFI::HideAxisArrows);
+                        script.SetTableFunction(-1, "IsShowingAxisArrows",                 ParticleEditorFFI::IsShowingAxisArrows);
+                        script.SetTableFunction(-1, "ResetCamera",                         ParticleEditorFFI::ResetCamera);
                     }
                     script.SetTableValue(-3);
                 }
@@ -1523,6 +1532,106 @@ namespace GTEngine
                 if (particleEditor != nullptr)
                 {
                     particleEditor->RefreshViewport();
+                }
+
+                return 0;
+            }
+
+
+            int SetOrientation(GTCore::Script &script)
+            {
+                auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
+                if (particleEditor != nullptr)
+                {
+                    particleEditor->SetOrientation(Scripting::ToQuaternion(script, 2));
+                }
+
+                return 0;
+            }
+
+
+            int ShowGrid(GTCore::Script &script)
+            {
+                auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
+                if (particleEditor != nullptr)
+                {
+                    particleEditor->ShowGrid();
+                }
+
+                return 0;
+            }
+
+            int HideGrid(GTCore::Script &script)
+            {
+                auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
+                if (particleEditor != nullptr)
+                {
+                    particleEditor->HideGrid();
+                }
+
+                return 0;
+            }
+
+            int IsShowingGrid(GTCore::Script &script)
+            {
+                auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
+                if (particleEditor != nullptr)
+                {
+                    script.Push(particleEditor->IsShowingGrid());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+
+            int ShowAxisArrows(GTCore::Script &script)
+            {
+                auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
+                if (particleEditor != nullptr)
+                {
+                    particleEditor->ShowAxisArrows();
+                }
+
+                return 0;
+            }
+
+            int HideAxisArrows(GTCore::Script &script)
+            {
+                auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
+                if (particleEditor != nullptr)
+                {
+                    particleEditor->HideAxisArrows();
+                }
+
+                return 0;
+            }
+
+            int IsShowingAxisArrows(GTCore::Script &script)
+            {
+                auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
+                if (particleEditor != nullptr)
+                {
+                    script.Push(particleEditor->IsShowingAxisArrows());
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+
+            int ResetCamera(GTCore::Script &script)
+            {
+                auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
+                if (particleEditor != nullptr)
+                {
+                    particleEditor->ResetCamera();
                 }
 
                 return 0;
