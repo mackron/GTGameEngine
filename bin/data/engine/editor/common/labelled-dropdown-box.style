@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
-panel-dropdown-box
+labelled-dropdown-box
 {
     width:            100%
     height:           auto
@@ -10,19 +10,19 @@ panel-dropdown-box
     margin-top:       4px
 }
 
-panel-dropdown-box-label
+labelled-dropdown-box-label
 {
     width:      auto
     text-color: std-text-color
     padding:    0px 2px
 }
 
-panel-dropdown-box:disabled
+labelled-dropdown-box:disabled
 {
     text-color: #5a5a5a
 }
 
-panel-dropdown-box-dropdown-box includes dropdown-box
+labelled-dropdown-box-dropdown-box includes dropdown-box
 {
     
 }

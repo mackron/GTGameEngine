@@ -37,8 +37,8 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.EmissionRate:LabelledNumberInput("Emission Rate", emitter:GetEmissionRatePerSecond());
     self.EmissionRate:SetTooltip("The number of particles to emit per second. When burst mode is enabled, the\nnumber of particles to emit on each burst.");
     
-    self.EmissionShape = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-dropdown-box' />");
-    self.EmissionShape:PanelDropDownBox("Emission Shape");
+    self.EmissionShape = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-dropdown-box' />");
+    self.EmissionShape:LabelledDropDownBox("Emission Shape");
     self.EmissionShape.Label:SetTooltip("The shape to use when determining the initial position and velocity of particles.");
     self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Cone]   = self.EmissionShape:AppendItem("Cone");
     self.EmissionShapeDropDownItems[GTEngine.ParticleEmissionShapes.Sphere] = self.EmissionShape:AppendItem("Sphere");
@@ -96,8 +96,8 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     
     
 
-    self.ParticleShape = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='panel-dropdown-box' />");
-    self.ParticleShape:PanelDropDownBox("Particle Shape");
+    self.ParticleShape = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='labelled-dropdown-box' />");
+    self.ParticleShape:LabelledDropDownBox("Particle Shape");
     self.ParticleShape.Label:SetTooltip("The shape of each individual particle. Setting this to an arbitrary mesh\nis not yet supported.");
     self.ParticleShapeDropDownItems[GTEngine.ParticleShapeTypes.Billboard] = self.ParticleShape:AppendItem("Billboard");
     self.ParticleShapeDropDownItems[GTEngine.ParticleShapeTypes.Model]     = self.ParticleShape:AppendItem("Model");
