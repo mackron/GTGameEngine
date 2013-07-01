@@ -16,6 +16,11 @@ function GTGUI.Element:SceneEditorViewport(sceneEditor)
         return sceneEditor:TryGizmoMouseSelect();
     end
     
+    
+    function self:OnCameraTransformed()
+        sceneEditor:UpdateSelectionGizmoTransform();
+    end
+    
 
     return self;
 end

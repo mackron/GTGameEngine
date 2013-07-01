@@ -27,6 +27,10 @@ namespace GTEngine
         /// Resets the camera.
         void ResetCamera();
 
+        /// Retrieves a reference tothe camera scene node.
+              SceneNode & GetCameraSceneNode()       { return this->camera; }
+        const SceneNode & GetCameraSceneNode() const { return this->camera; }
+
 
         /// Retrieves a reference to the particle system definition being editted.
         ParticleSystemDefinition & GetParticleSystemDefinition();
@@ -71,17 +75,14 @@ namespace GTEngine
         /// Called when the main viewport is resized.
         void OnViewportSize();
 
-        /// Called when the main viewport has the mouse wheel turned while hovered over it.
-        void OnViewportMouseWheel();
-
 
 
         ///////////////////////////////////////////////////
         // Virtual Methods.
 
         /// SubEditor::GetMainElement()
-              GTGUI::Element* GetMainElement()        { return this->mainElement; }
-        const GTGUI::Element* GetMainElement( ) const { return this->mainElement; }
+              GTGUI::Element* GetMainElement()       { return this->mainElement; }
+        const GTGUI::Element* GetMainElement() const { return this->mainElement; }
 
         /// SubEditor::Show()
         void Show();
@@ -103,8 +104,6 @@ namespace GTEngine
 
     private:
 
-        /// Applies the camera rotation to the camera node.
-        void ApplyCameraRotation();
 
 
     private:
@@ -149,13 +148,6 @@ namespace GTEngine
             {
                 Editor3DViewportEventHandler::OnSize(element);
                 owner.OnViewportSize();
-            }
-
-            /// Called when the mouse wheel is moved.
-            void OnMouseWheel(GTGUI::Element &element, int delta, int x, int y)
-            {
-                Editor3DViewportEventHandler::OnMouseWheel(element, delta, x, y);
-                owner.OnViewportMouseWheel();
             }
 
 

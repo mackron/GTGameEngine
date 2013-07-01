@@ -193,19 +193,20 @@ namespace GTEngine
 
     void SceneEditor::ResetCamera()
     {
-        this->camera.SetPosition(32.0f, 20.0f, 32.0f);
-        this->camera.LookAt(0.0f, 0.0f, 0.0f);
-        
+        auto &script = this->GetScript();
 
-        glm::vec3 euler = glm::eulerAngles(this->camera.GetOrientation());
-        this->SetCameraRotation(euler.x, euler.y);
-    }
-
-    void SceneEditor::SetCameraRotation(float xRotation, float yRotation)
-    {
-        this->cameraXRotation = xRotation;
-        this->cameraYRotation = yRotation;
-        this->ApplyCameraRotation();
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("ResetCamera");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);   // <-- 'self'.
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
     }
 
 
@@ -741,6 +742,10 @@ namespace GTEngine
 
 
                     handle->SetColour(glm::vec3(1.0f, 1.0f, 1.0f));
+
+
+                    // We need to disable camera controls so that it doesn't move as we're transforming the gizmo.
+                    this->DisableViewportCameraControls();
                 }
 
                 return true;
@@ -748,6 +753,9 @@ namespace GTEngine
             else
             {
                 this->gizmoDragMode = GizmoDragMode_None;
+
+                // We need to re-enable camera controls because we may have disabled them earlier.
+                this->EnableViewportCameraControls();
             }
         }
 
@@ -1418,6 +1426,25 @@ namespace GTEngine
         return this->gizmoTransformSpace == GizmoTransformSpace_Global;
     }
 
+    void SceneEditor::UpdateGizmoTransform(bool onlyUpdateVisibleHandles)
+    {
+        // Position.
+        glm::vec3 position = this->GetSelectionCenterPoint();
+        
+        // Orientation.
+        glm::quat orientation = this->GetGizmoRotation();
+
+        // Scale.
+        glm::vec3 windowPos = this->scene.GetDefaultViewport().Project(position);
+        windowPos.y += 64.0f;
+
+        glm::vec3 scale(glm::distance(this->scene.GetDefaultViewport().Unproject(windowPos), position));
+
+
+        // Now we just update in one go.
+        this->transformGizmo.SetTransform(position, orientation, scale, *this->scene.GetViewportByIndex(0).GetCameraNode(), onlyUpdateVisibleHandles);
+    }
+
 
     ///////////////////////////////////////////////////
     // Scene Events
@@ -1971,12 +1998,6 @@ namespace GTEngine
         this->axisArrows.UpdateTransform(this->camera);
     }
 
-    void SceneEditor::OnViewportMouseWheel()
-    {
-        // This just forces camera-dependant stuff to have the appropriate properties applied.
-        this->ApplyCameraRotation();
-    }
-
 
     void SceneEditor::OnCameraTransformed()
     {
@@ -2212,27 +2233,33 @@ namespace GTEngine
                         {
                             if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
                             {
-                                this->camera.MoveUp(  -mouseOffsetY * moveSpeed);
-                                this->camera.MoveRight(mouseOffsetX * moveSpeed);
+                                //this->camera.MoveUp(  -mouseOffsetY * moveSpeed);
+                                //this->camera.MoveRight(mouseOffsetX * moveSpeed);
                             }
                             else
                             {
-                                this->camera.MoveForward(-mouseOffsetY * moveSpeed);
-                                this->cameraYRotation += -mouseOffsetX * rotateSpeed;
+                                //this->camera.MoveForward(-mouseOffsetY * moveSpeed);
+                                //this->cameraYRotation += -mouseOffsetX * rotateSpeed;
                             }
                         }
                         else
                         {
                             if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
                             {
-                                this->cameraXRotation += -mouseOffsetY * rotateSpeed;
-                                this->cameraYRotation += -mouseOffsetX * rotateSpeed;
+                                //this->cameraXRotation += -mouseOffsetY * rotateSpeed;
+                                //this->cameraYRotation += -mouseOffsetX * rotateSpeed;
                             }
                         }
 
-                        this->ApplyCameraRotation();
+                        //this->ApplyCameraRotation();
                     }
                 }
+            }
+
+            // We'll update the axis arrows every frame. This was previously event driven, but it's proving to be too much of a hassle.
+            if (this->isShowingAxisArrows)
+            {
+                this->axisArrows.UpdateTransform(this->camera);
             }
 
 
@@ -2267,6 +2294,10 @@ namespace GTEngine
         {
             this->gizmoDragMode = GizmoDragMode_None;
             this->transformGizmo.RestoreColours();
+
+            // If the gizmo was previously being dragged, we will have disabled the viewport camera controls. They need to be re-enabled.
+            this->EnableViewportCameraControls();
+
 
             if (this->transformedObjectWithGizmo)
             {
@@ -2374,12 +2405,12 @@ namespace GTEngine
 
     void SceneEditor::ApplyCameraRotation()
     {
+        /*
         this->camera.SetOrientation(glm::quat());
         this->camera.RotateY(this->cameraYRotation);
         this->camera.RotateX(this->cameraXRotation);
+        */
         this->UpdateGizmoTransform();
-
-        this->axisArrows.UpdateTransform(this->camera);
     }
 
     void SceneEditor::SerializeScene(GTCore::Serializer &serializer, bool serializeMetadata) const
@@ -2392,8 +2423,13 @@ namespace GTEngine
             GTCore::BasicSerializer metadataSerializer;
 
             this->camera.Serialize(metadataSerializer);
-            metadataSerializer.Write(this->cameraXRotation);
-            metadataSerializer.Write(this->cameraYRotation);
+
+            float cameraXRotation;
+            float cameraYRotation;
+            this->GetViewportCameraRotation(cameraXRotation, cameraYRotation);
+
+            metadataSerializer.Write(cameraXRotation);
+            metadataSerializer.Write(cameraYRotation);
 
             // View settings.
             metadataSerializer.Write(this->IsShowingGrid());
@@ -2439,8 +2475,12 @@ namespace GTEngine
 
                     // The camera node needs to be deserialized.
                     this->camera.Deserialize(deserializer);
-                    deserializer.Read(this->cameraXRotation);
-                    deserializer.Read(this->cameraYRotation);
+
+                    float cameraXRotation;
+                    float cameraYRotation;
+                    deserializer.Read(cameraXRotation);
+                    deserializer.Read(cameraYRotation);
+                    this->SetViewportCameraRotation(cameraXRotation, cameraYRotation);
 
                     this->camera.DisableSerialization();
                     this->camera.DisableStateStackStaging();
@@ -2552,26 +2592,6 @@ namespace GTEngine
     void SceneEditor::HideGizmo()
     {
         this->transformGizmo.Hide(this->scene.GetRenderer(), this->pickingWorld);
-    }
-
-
-    void SceneEditor::UpdateGizmoTransform(bool onlyUpdateVisibleHandles)
-    {
-        // Position.
-        glm::vec3 position = this->GetSelectionCenterPoint();
-        
-        // Orientation.
-        glm::quat orientation = this->GetGizmoRotation();
-
-        // Scale.
-        glm::vec3 windowPos = this->scene.GetDefaultViewport().Project(position);
-        windowPos.y += 64.0f;
-
-        glm::vec3 scale(glm::distance(this->scene.GetDefaultViewport().Unproject(windowPos), position));
-
-
-        // Now we just update in one go.
-        this->transformGizmo.SetTransform(position, orientation, scale, *this->scene.GetViewportByIndex(0).GetCameraNode(), onlyUpdateVisibleHandles);
     }
 
 
@@ -2834,6 +2854,87 @@ namespace GTEngine
             {
                 script.PushValue(-2);   // <-- 'self'.
                 script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
+    }
+
+
+    void SceneEditor::EnableViewportCameraControls()
+    {
+        auto &script = this->GetScript();
+
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("EnableViewportCameraControls");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);   // <-- 'self'.
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
+    }
+
+    void SceneEditor::DisableViewportCameraControls()
+    {
+        auto &script = this->GetScript();
+
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("DisableViewportCameraControls");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);   // <-- 'self'.
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
+    }
+
+
+    void SceneEditor::SetViewportCameraRotation(float rotationX, float rotationY)
+    {
+        auto &script = this->GetScript();
+
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("SetViewportCameraRotation");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);   // <-- 'self'.
+                script.Push(rotationX);
+                script.Push(rotationY);
+                script.Call(3, 0);
+            }
+        }
+        script.Pop(1);
+    }
+
+    void SceneEditor::GetViewportCameraRotation(float &rotationX, float &rotationY) const
+    {
+        auto &script = const_cast<GTEngine::GameScript &>(this->GetScript());
+
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GUI.Main->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("GetViewportCameraRotation");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);   // <-- 'self'.
+                script.Call(1, 2);
+
+                rotationX = script.ToFloat(-2);
+                rotationY = script.ToFloat(-1);
+
+                script.Pop(2);  // The two return values.
             }
         }
         script.Pop(1);

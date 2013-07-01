@@ -27,8 +27,21 @@ namespace GTEngine
         void ResetCamera();
 
 
+        /// Retrieves a reference to the viewport camera scene node.
+              SceneNode & GetViewportCameraSceneNode()       { return this->camera; }
+        const SceneNode & GetViewportCameraSceneNode() const { return this->camera; }
+
+
         /// Retrieves a reference to the model definition being modified.
         ModelDefinition & GetModelDefinition();
+
+
+        /// Retrieves the AABB of the model.
+        ///
+        /// @param aabbMin [in] A reference to the variable that will receive the lower bounds.
+        /// @param aabbMax [in] A reference to the variable that will receive the upper bounds.
+        void GetModelAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax);
+
 
         /// Refreshes the viewport so that it shows the current state of the model being editted.
         ///
@@ -155,9 +168,6 @@ namespace GTEngine
 
 
     private:
-
-        /// Applies the camera rotation to the camera node.
-        void ApplyCameraRotation();
 
         /// Deletes the convex hulls for the currently loaded model.
         void DeleteConvexHulls();

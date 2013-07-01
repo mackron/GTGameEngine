@@ -204,6 +204,31 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the model editor.
             int BuildConvexDecomposition(GTCore::Script &script);
+
+
+            /// Retrieves a pointer to the viewport camera scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            int GetViewportCameraSceneNodePtr(GTCore::Script &script);
+
+
+            /// Retrieves the AABB of the model of the given model editor as two math.vec3s.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            ///
+            ///     The return value is two math.vec3s. The first is the lower bounds and the second is the upper bounds.
+            int GetModelAABB(GTCore::Script &script);
+        }
+
+        namespace MaterialEditorFFI
+        {
+            /// Retrieves a pointer to the viewport camera scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int GetViewportCameraSceneNodePtr(GTCore::Script &script);
         }
 
         namespace SceneEditorFFI
@@ -351,6 +376,13 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the scene editor.
             int IsGizmoInGlobalSpace(GTCore::Script &script);
+
+
+            /// Updates the transformation of the selection gizmo.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int UpdateSelectionGizmoTransform(GTCore::Script &script);
 
 
             /// Plays the game.
@@ -557,12 +589,11 @@ namespace GTEngine
             int IsShowingAxisArrows(GTCore::Script &script);
 
 
-            /// Resets the camera.
+            /// Retrieves a pointer to the viewport camera scene node.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the scene editor.
-            int ResetCamera(GTCore::Script &script);
-
+            int GetViewportCameraSceneNodePtr(GTCore::Script &script);
 
 
             /// Sets the name of the scene.
@@ -669,53 +700,53 @@ namespace GTEngine
             /// Sets the orientation of the preview particle system.
             ///
             /// @remarks
-            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 1: A pointer to the particle editor.
             int SetOrientation(GTCore::Script &script);
 
 
             /// Shows the grid if it isn't showing already.
             ///
             /// @remarks
-            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 1: A pointer to the particle editor.
             int ShowGrid(GTCore::Script &script);
 
             /// Hides the grid if it isn't hidden already.
             ///
             /// @remarks
-            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 1: A pointer to the particle editor.
             int HideGrid(GTCore::Script &script);
 
             /// Determines whether or not the grid is showing.
             ///
             /// @remakrs
-            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 1: A pointer to the particle editor.
             int IsShowingGrid(GTCore::Script &script);
 
 
             /// Shows the axis arrows if it isn't showing already.
             ///
             /// @remarks
-            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 1: A pointer to the particle editor.
             int ShowAxisArrows(GTCore::Script &script);
 
             /// Hides the axis arrows if it isn't hidden already.
             ///
             /// @remarks
-            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 1: A pointer to the particle editor.
             int HideAxisArrows(GTCore::Script &script);
 
             /// Determines whether or not the grid is showing.
             ///
             /// @remakrs
-            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 1: A pointer to the particle editor.
             int IsShowingAxisArrows(GTCore::Script &script);
 
 
-            /// Resets the camera.
+            /// Retrieves a pointer to the viewport camera scene node.
             ///
             /// @remarks
-            ///     Argument 1: A pointer to the scene editor.
-            int ResetCamera(GTCore::Script &script);
+            ///     Argument 1: A pointer to the particle editor.
+            int GetViewportCameraSceneNodePtr(GTCore::Script &script);
         }
     }
 }

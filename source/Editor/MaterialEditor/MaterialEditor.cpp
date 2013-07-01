@@ -144,14 +144,22 @@ namespace GTEngine
 
     void MaterialEditor::ResetCamera()
     {
-        this->camera.SetPosition(3.5f, 2.0f, 3.5f);
-        this->camera.LookAt(0.0f, 0.0f, 0.0f);
+        auto &script = this->GetScript();
 
-        glm::vec3 cameraRotation = glm::eulerAngles(this->camera.GetWorldOrientation());
-        this->cameraXRotation = cameraRotation.x;
-        this->cameraYRotation = cameraRotation.y;
-        this->ApplyCameraRotation();
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        assert(script.IsTable(-1));
+        {
+            script.Push("ResetCamera");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
+            {
+                script.PushValue(-2);   // <-- 'self'.
+                script.Call(1, 0);
+            }
+        }
+        script.Pop(1);
     }
+
 
 
 
@@ -216,43 +224,6 @@ namespace GTEngine
     {
         if (this->viewportElement->IsVisible())
         {
-            auto &game = this->GetOwnerEditor().GetGame();       // <-- For ease of use.
-
-            // If the mouse is captured we may need to move the screen around.
-            if (game.IsMouseCaptured())
-            {
-                const float moveSpeed   = 0.05f;
-                const float rotateSpeed = 0.1f;
-
-                float mouseOffsetX;
-                float mouseOffsetY;
-                game.GetSmoothedMouseOffset(mouseOffsetX, mouseOffsetY);
-
-                if (game.IsMouseButtonDown(GTCore::MouseButton_Left))
-                {
-                    if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
-                    {
-                        this->camera.MoveUp(  -mouseOffsetY * moveSpeed);
-                        this->camera.MoveRight(mouseOffsetX * moveSpeed);
-                    }
-                    else
-                    {
-                        this->camera.MoveForward(-mouseOffsetY * moveSpeed);
-                        this->cameraYRotation += -mouseOffsetX * rotateSpeed;
-                    }
-                }
-                else
-                {
-                    if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
-                    {
-                        this->cameraXRotation += -mouseOffsetY * rotateSpeed;
-                        this->cameraYRotation += -mouseOffsetX * rotateSpeed;
-                    }
-                }
-
-                this->ApplyCameraRotation();
-            }
-
             this->scene.Update(deltaTimeInSeconds);
         }
     }
@@ -280,13 +251,6 @@ namespace GTEngine
 
     ///////////////////////////////////////////////////
     // Private Methods.
-
-    void MaterialEditor::ApplyCameraRotation()
-    {
-        this->camera.SetOrientation(glm::quat());
-        this->camera.RotateY(this->cameraYRotation);
-        this->camera.RotateX(this->cameraXRotation);
-    }
 }
 
 

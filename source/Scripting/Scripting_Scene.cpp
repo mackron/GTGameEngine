@@ -86,10 +86,15 @@ namespace GTEngine
                 "function GTEngine.Scene:GetSceneNodeByID(sceneNodeID)"
                 "    return self:InstantiateSceneNode(sceneNodeID);"
                 "end;"
-
+                
                 "function GTEngine.Scene:GetSceneNodeByName(sceneNodeName)"
                 "    return self:GetSceneNodeByID(self:GetSceneNodeIDByName(sceneNodeName));"
                 "end;"
+
+                "function GTEngine.Scene:GetSceneNodeByPtr(sceneNodePtr)"
+                "    return self:GetSceneNodeByID(self:GetSceneNodeIDByPtr(sceneNodePtr));"
+                "end;"
+
 
                 "function GTEngine.Scene:GetSceneNodePtrByID(sceneNodeID)"
                 "    return GTEngine.System.Scene.GetSceneNodePtrByID(self._internalPtr, sceneNodeID);"
@@ -99,9 +104,15 @@ namespace GTEngine
                 "    return GTEngine.System.Scene.GetSceneNodePtrByName(self._internalPtr, sceneNodeName);"
                 "end;"
 
+
                 "function GTEngine.Scene:GetSceneNodeIDByName(sceneNodeName)"
                 "    return GTEngine.System.Scene.GetSceneNodeIDByName(self._internalPtr, sceneNodeName);"
                 "end;"
+
+                "function GTEngine.Scene.GetSceneNodeIDByPtr(sceneNodePtr)"
+                "    return GTEngine.System.SceneNode.GetID(sceneNodePtr);"
+                "end;"
+
 
 
                 "function GTEngine.Scene:CreateNewSceneNode(prefabFileName)"

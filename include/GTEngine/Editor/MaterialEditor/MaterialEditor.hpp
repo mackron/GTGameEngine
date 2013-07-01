@@ -24,6 +24,9 @@ namespace GTEngine
         /// Resets the camera.
         void ResetCamera();
 
+        /// Retrieves a reference to the viewport camera scene node.
+              SceneNode & GetViewportCameraSceneNode()       { return this->camera; }
+        const SceneNode & GetViewportCameraSceneNode() const { return this->camera; }
 
 
         ///////////////////////////////////////////////////
@@ -60,11 +63,6 @@ namespace GTEngine
 
 
     private:
-
-        /// Applies the camera rotation to the camera node.
-        void ApplyCameraRotation();
-
-
 
 
     private:

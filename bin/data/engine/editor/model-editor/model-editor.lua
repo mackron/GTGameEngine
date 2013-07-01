@@ -66,8 +66,21 @@ function GTGUI.Element:ModelEditorPanel(_internalPtr)
     return self;
 end
 
+
+function LinkModelEditorToSystemAPI(modelEditor)
+    function modelEditor:GetViewportCameraSceneNodePtr()
+        return GTEngine.System.ModelEditor.GetViewportCameraSceneNodePtr(self._internalPtr);
+    end
+    
+    function modelEditor:GetModelAABB()
+        return GTEngine.System.ModelEditor.GetModelAABB(self._internalPtr);
+    end
+end
+
+
 function GTGUI.Element:ModelEditor(_internalPtr)
     self:SubEditor(_internalPtr);
+    LinkModelEditorToSystemAPI(self);
     
     self.ViewportTimelineContainer = GTGUI.Server.CreateElement(self, "model-editor-viewport-timeline-container");
     self.Viewport = GTGUI.Server.CreateElement(self.ViewportTimelineContainer, "model-editor-viewport");
@@ -79,6 +92,8 @@ function GTGUI.Element:ModelEditor(_internalPtr)
 
     
     self.Viewport:DefaultEditor3DViewport();
+    self.Viewport:SetCameraSceneNodePtr(self:GetViewportCameraSceneNodePtr());
+    
     self.Panel:ModelEditorPanel(_internalPtr);
     self.Timeline:ModelEditor_Timeline(_internalPtr);
     
@@ -97,6 +112,43 @@ function GTGUI.Element:ModelEditor(_internalPtr)
         else
             self.Timeline:Show();
         end
+    end
+    
+    
+    function self:ResetCamera()
+        local cameraSceneNodePtr = self:GetViewportCameraSceneNodePtr();
+        if cameraSceneNodePtr then
+            local aabbMin, aabbMax = self:GetModelAABB();
+        
+            -- Center point (camera look-at target).
+            local cameraLookAtTarget = (aabbMin + aabbMax) * 0.5;
+
+
+            -- Camera position.
+            local aabbSize     = aabbMax - aabbMin;
+            local maxDimension = math.max(math.max(aabbSize.x, math.max(aabbSize.y, aabbSize.z), 0.01));
+
+            local cameraPosition = cameraLookAtTarget;
+            cameraPosition = cameraPosition + math.vec3_normalize(math.vec3(1, 0.5, 1)) * maxDimension * 2;
+
+
+
+            -- Position and rotate the camera.
+            GTEngine.System.SceneNode.SetPosition(cameraSceneNodePtr, cameraPosition);
+            GTEngine.System.SceneNode.LookAt(cameraSceneNodePtr, cameraLookAtTarget);
+        
+            local eulerRotation = GTEngine.System.SceneNode.GetWorldEulerRotation(cameraSceneNodePtr);
+            self:SetViewportCameraRotation(eulerRotation.x, eulerRotation.y);
+        end
+    end
+    
+    function self:SetViewportCameraRotation(rotationX, rotationY)
+        self.Viewport:SetCameraRotation(rotationX, rotationY);
+        self.Viewport:OnCameraTransformed();
+    end
+    
+    function self:GetViewportCameraRotation()
+        return self.Viewport:GetCameraRotation();
     end
     
     

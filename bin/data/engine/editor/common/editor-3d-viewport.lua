@@ -2,12 +2,19 @@
 
 function GTGUI.Element:DefaultEditor3DViewport()
     self.isControlsEnabled         = true;
+    self.isCameraControlsEnabled   = true;
     self.isLMBDown                 = false;
     self.isRMBDown                 = false;
     self.isMMBDown                 = false;
     self.isMouseOver               = false;
     self.hasMouseCapture           = false;
     self.mouseMovedWhileButtonDown = false;
+    self.cameraSceneNodePtr        = nil;
+    self.cameraXRotation           = 0;
+    self.cameraYRotation           = 0;
+    self.cameraRotationSpeed       = 0.1;
+    self.cameraMoveSpeed           = 0.05;
+    
     
     
     -- Virtual Methods
@@ -45,6 +52,72 @@ function GTGUI.Element:DefaultEditor3DViewport()
     end
     
     
+    -- Called when the camera has been transformed.
+    function self:OnCameraTransformed()
+    end
+    
+    
+    
+    -- Camera
+    function self:SetCameraSceneNodePtr(cameraSceneNodePtr)
+        self.cameraSceneNodePtr = cameraSceneNodePtr;
+        
+        -- The X and Y rotations need to be set.
+        local eulerRotation = GTEngine.System.SceneNode.GetWorldEulerRotation(cameraSceneNodePtr);
+        self.cameraXRotation = eulerRotation.x;
+        self.cameraYRotation = eulerRotation.y;
+    end
+    
+    function self:GetCameraSceneNodePtr()
+        return self.cameraSceneNodePtr;
+    end
+    
+    function self:MoveCameraForward(distance)
+        if self:IsCameraControlsEnabled() then
+            GTEngine.System.SceneNode.Translate(self.cameraSceneNodePtr, math.vec3(0, 0, -distance));
+        end
+    end
+    
+    function self:MoveCameraUp(distance)
+        if self:IsCameraControlsEnabled() then
+            GTEngine.System.SceneNode.Translate(self.cameraSceneNodePtr, math.vec3(0, distance, 0));
+        end
+    end
+    
+    function self:MoveCameraRight(distance)
+        if self:IsCameraControlsEnabled() then
+            GTEngine.System.SceneNode.Translate(self.cameraSceneNodePtr, math.vec3(distance, 0, 0));
+        end
+    end
+    
+    function self:RotateCamera(rotationX, rotationY)
+        if self:IsCameraControlsEnabled() then
+            self.cameraXRotation = self.cameraXRotation + rotationX;
+            self.cameraYRotation = self.cameraYRotation + rotationY;
+            self:ApplyCameraRotation();
+        end
+    end
+    
+    function self:SetCameraRotation(rotationX, rotationY)
+        if self:IsCameraControlsEnabled() then
+            self.cameraXRotation = rotationX;
+            self.cameraYRotation = rotationY;
+            self:ApplyCameraRotation();
+        end
+    end
+    
+    function self:GetCameraRotation()
+        return self.cameraXRotation, self.cameraYRotation;
+    end
+    
+    function self:ApplyCameraRotation()
+        if self.cameraSceneNodePtr then
+            GTEngine.System.SceneNode.SetOrientation(self.cameraSceneNodePtr, math.quat_angleaxis(self.cameraYRotation, math.vec3(0, 1, 0)) * math.quat_angleaxis(self.cameraXRotation, math.vec3(1, 0, 0)));
+        end
+    end
+    
+    
+    
     
     -- Enable/Disable
     function self:EnableControls()
@@ -57,6 +130,19 @@ function GTGUI.Element:DefaultEditor3DViewport()
     
     function self:IsControlsEnabled()
         return self.isControlsEnabled;
+    end
+    
+    
+    function self:EnableCameraControls()
+        self.isCameraControlsEnabled = true;
+    end
+    
+    function self:DisableCameraControls()
+        self.isCameraControlsEnabled = false;
+    end
+    
+    function self:IsCameraControlsEnabled()
+        return self.isCameraControlsEnabled and self.cameraSceneNodePtr and self:IsControlsEnabled();
     end
     
     
@@ -204,6 +290,54 @@ function GTGUI.Element:DefaultEditor3DViewport()
     self:WatchMouseMove(function(data)
         if self:IsLMBDown() or self:IsRMBDown() or self:IsMMBDown() then
             self.mouseMovedWhileButtonDown = true;
+            
+            local cameraTransformed = false;
+            local mouseOffsetX, mouseOffsetY = Game.GetMouseOffset();
+            
+            if self:IsLMBDown() then
+                if self:IsRMBDown() then
+                    if self:IsMMBDown() then
+                        -- Left, middle and right buttons are down.
+                    else
+                        -- Left and right buttons are down.
+                        self:MoveCameraUp(  -mouseOffsetY * self.cameraMoveSpeed);
+                        self:MoveCameraRight(mouseOffsetX * self.cameraMoveSpeed);
+                        cameraTransformed = true;
+                    end
+                else
+                    if self:IsMMBDown() then
+                        -- Left and middle buttons are down.
+                    else
+                        -- Only the left button is down.
+                        self:MoveCameraForward(-mouseOffsetY * self.cameraMoveSpeed);
+                        self:RotateCamera(0, -mouseOffsetX * self.cameraRotationSpeed);
+                        cameraTransformed = true;
+                    end
+                end
+            else
+                if self:IsRMBDown() then
+                    if self:IsMMBDown() then
+                        -- Middle and right buttons are down.
+                    else
+                        -- Only the right button is down.
+                        self:RotateCamera(-mouseOffsetY * self.cameraRotationSpeed, -mouseOffsetX * self.cameraRotationSpeed);
+                        cameraTransformed = true;
+                    end
+                else
+                    -- Only the middle mouse button is down.
+                end
+            end
+            
+            if cameraTransformed then
+                self:OnCameraTransformed();
+            end
         end
+    end)
+    
+    
+    self:OnMouseWheel(function(data)
+        self:MoveCameraForward(data.delta * 1.0);
+        self:ApplyCameraRotation();
+        self:OnCameraTransformed();
     end)
 end
