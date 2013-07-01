@@ -97,12 +97,8 @@ namespace GTEngine
 
     void Editor3DViewportEventHandler::OnMouseWheel(GTGUI::Element &, int delta, int x, int y)
     {
+        (void)delta;
         (void)x;
         (void)y;
-
-        if (this->isMouseControlsEnabled)
-        {
-            this->viewport.GetCameraNode()->MoveForward(delta * 1.0f);
-        }
     }
 }

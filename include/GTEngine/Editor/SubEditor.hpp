@@ -68,7 +68,8 @@ namespace GTEngine
 
 
         /// A helper function for retrieving the game script object.
-        GTEngine::GameScript & GetScript();
+              GTEngine::GameScript & GetScript();
+        const GTEngine::GameScript & GetScript() const;
 
         /// A helper function for retreiving the game GUI object.
         GTGUI::Server & GetGUI();

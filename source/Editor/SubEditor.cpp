@@ -199,6 +199,11 @@ namespace GTEngine
         return this->ownerEditor.GetGame().GetScript();
     }
 
+    const GTEngine::GameScript & SubEditor::GetScript() const
+    {
+        return this->ownerEditor.GetGame().GetScript();
+    }
+
     GTGUI::Server & SubEditor::GetGUI()
     {
         return this->ownerEditor.GetGame().GetGUI();

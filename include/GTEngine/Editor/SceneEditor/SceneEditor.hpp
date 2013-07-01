@@ -42,13 +42,8 @@ namespace GTEngine
         /// Resets the camera to the default position.
         void ResetCamera();
 
-        /// Sets the rotation of the camera.
-        ///
-        /// @param xRotation [in] The new x rotation.
-        /// @param yRotation [in] The new y rotation.
-        void SetCameraRotation(float xRotation, float yRotation);
-
         /// Retrieves a reference ot the camera scene node.
+              SceneNode & GetCameraSceneNode()       { return this->camera; }
         const SceneNode & GetCameraSceneNode() const { return this->camera; }
 
         
@@ -355,6 +350,8 @@ namespace GTEngine
         /// Determines whether or not the gizmo of the current state is in global space.s
         bool IsGizmoInGlobalSpace() const;
 
+        /// Updates the transformation of the gizmo.
+        void UpdateGizmoTransform(bool onlyUpdateVisibleHandles = true);
 
 
         ///////////////////////////////////////////////////
@@ -406,9 +403,6 @@ namespace GTEngine
 
         /// Called when the main viewport is resized.
         void OnViewportSize();
-
-        /// Called when the main viewport has the mouse wheel turned while hovered over it.
-        void OnViewportMouseWheel();
 
 
         ///////////////////////////////////////////////////
@@ -501,10 +495,7 @@ namespace GTEngine
 
         /// Hides whatever gizmo is currently showing.
         void HideGizmo();
-
-
-        /// Updates the transformation of the gizmo.
-        void UpdateGizmoTransform(bool onlyUpdateVisibleHandles = true);
+        
 
         /// Updates the gizmo so that it's scaled, positioned and rotated properly.
         void UpdateGizmo();
@@ -546,6 +537,32 @@ namespace GTEngine
 
         /// Refreshes the scene properties panel.
         void RefreshScenePropertiesPanel();
+
+
+        /// Enables camera controls in the viewport.
+        ///
+        /// @remarks
+        ///     Camera controls will be disabled when transforming the selection gizmo.
+        void EnableViewportCameraControls();
+
+        /// Disables camera controls in the viewport.
+        ///
+        /// @remarks
+        ///     Camera controls will be disabled when transforming the selection gizmo.
+        void DisableViewportCameraControls();
+
+        /// Sets the rotation of the viewport camera.
+        ///
+        /// @param rotationX [in] The rotation of the camera on the x axis in degrees.
+        /// @param rotationY [in] The rotation of the camera on the y axis in degrees.
+        void SetViewportCameraRotation(float rotationX, float rotationY);
+
+        /// Retrieves the rotation of the viewport camera.
+        ///
+        /// @param rotationX [out] A reference to the variable that will receive the camera's x axis rotation.
+        /// @param rotationY [out] A reference to the variable that will receive the camera's y axis rotation.
+        void GetViewportCameraRotation(float &rotationX, float &rotationY) const;
+        
 
 
         /// Refreshes the selections.
@@ -802,13 +819,6 @@ namespace GTEngine
             {
                 Editor3DViewportEventHandler::OnSize(element);
                 owner.OnViewportSize();
-            }
-
-            /// Called when the mouse wheel is moved.
-            void OnMouseWheel(GTGUI::Element &element, int delta, int x, int y)
-            {
-                Editor3DViewportEventHandler::OnMouseWheel(element, delta, x, y);
-                owner.OnViewportMouseWheel();
             }
 
 

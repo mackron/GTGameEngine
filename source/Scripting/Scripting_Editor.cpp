@@ -52,8 +52,19 @@ namespace GTEngine
                         script.SetTableFunction(-1, "ShowConvexDecomposition",         ModelEditorFFI::ShowConvexDecomposition);
                         script.SetTableFunction(-1, "HideConvexDecomposition",         ModelEditorFFI::HideConvexDecomposition);
                         script.SetTableFunction(-1, "BuildConvexDecomposition",        ModelEditorFFI::BuildConvexDecomposition);
+                        script.SetTableFunction(-1, "GetViewportCameraSceneNodePtr",   ModelEditorFFI::GetViewportCameraSceneNodePtr);
+                        script.SetTableFunction(-1, "GetModelAABB",                    ModelEditorFFI::GetModelAABB);
                     }
                     script.SetTableValue(-3);
+
+
+                    script.Push("MaterialEditor");
+                    script.PushNewTable();
+                    {
+                        script.SetTableFunction(-1, "GetViewportCameraSceneNodePtr",   MaterialEditorFFI::GetViewportCameraSceneNodePtr);
+                    }
+                    script.SetTableValue(-3);
+
 
                     script.Push("SceneEditor");
                     script.PushNewTable();
@@ -80,6 +91,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "ToggleGizmoSpace",                    SceneEditorFFI::ToggleGizmoSpace);
                         script.SetTableFunction(-1, "IsGizmoInLocalSpace",                 SceneEditorFFI::IsGizmoInLocalSpace);
                         script.SetTableFunction(-1, "IsGizmoInGlobalSpace",                SceneEditorFFI::IsGizmoInGlobalSpace);
+                        script.SetTableFunction(-1, "UpdateSelectionGizmoTransform",       SceneEditorFFI::UpdateSelectionGizmoTransform);
 
                         script.SetTableFunction(-1, "StartPlaying",                        SceneEditorFFI::StartPlaying);
                         script.SetTableFunction(-1, "PausePlaying",                        SceneEditorFFI::PausePlaying);
@@ -116,7 +128,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "ShowAxisArrows",                      SceneEditorFFI::ShowAxisArrows);
                         script.SetTableFunction(-1, "HideAxisArrows",                      SceneEditorFFI::HideAxisArrows);
                         script.SetTableFunction(-1, "IsShowingAxisArrows",                 SceneEditorFFI::IsShowingAxisArrows);
-                        script.SetTableFunction(-1, "ResetCamera",                         SceneEditorFFI::ResetCamera);
+                        script.SetTableFunction(-1, "GetViewportCameraSceneNodePtr",       SceneEditorFFI::GetViewportCameraSceneNodePtr);
 
                         script.SetTableFunction(-1, "SetSceneName",                        SceneEditorFFI::SetSceneName);
                         script.SetTableFunction(-1, "GetSceneName",                        SceneEditorFFI::GetSceneName);
@@ -147,7 +159,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "ShowAxisArrows",                      ParticleEditorFFI::ShowAxisArrows);
                         script.SetTableFunction(-1, "HideAxisArrows",                      ParticleEditorFFI::HideAxisArrows);
                         script.SetTableFunction(-1, "IsShowingAxisArrows",                 ParticleEditorFFI::IsShowingAxisArrows);
-                        script.SetTableFunction(-1, "ResetCamera",                         ParticleEditorFFI::ResetCamera);
+                        script.SetTableFunction(-1, "GetViewportCameraSceneNodePtr",       ParticleEditorFFI::GetViewportCameraSceneNodePtr);
                     }
                     script.SetTableValue(-3);
                 }
@@ -595,8 +607,60 @@ namespace GTEngine
 
                 return 0;
             }
+
+
+            int GetViewportCameraSceneNodePtr(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    script.Push(&modelEditor->GetViewportCameraSceneNode());
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
+            }
+
+
+            int GetModelAABB(GTCore::Script &script)
+            {
+                glm::vec3 aabbMin;
+                glm::vec3 aabbMax;
+
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    modelEditor->GetModelAABB(aabbMin, aabbMax);
+                }
+
+                Scripting::PushNewVector3(script, aabbMin);
+                Scripting::PushNewVector3(script, aabbMax);
+
+                return 2;
+            }
         }
 
+
+        namespace MaterialEditorFFI
+        {
+            int GetViewportCameraSceneNodePtr(GTCore::Script &script)
+            {
+                auto materialEditor = reinterpret_cast<MaterialEditor*>(script.ToPointer(1));
+                if (materialEditor != nullptr)
+                {
+                    script.Push(&materialEditor->GetViewportCameraSceneNode());
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
+            }
+        }
 
 
         namespace SceneEditorFFI
@@ -920,6 +984,18 @@ namespace GTEngine
                 }
 
                 return 1;
+            }
+
+
+            int UpdateSelectionGizmoTransform(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->UpdateGizmoTransform();
+                }
+
+                return 0;
             }
 
 
@@ -1340,15 +1416,19 @@ namespace GTEngine
             }
 
 
-            int ResetCamera(GTCore::Script &script)
+            int GetViewportCameraSceneNodePtr(GTCore::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
                 {
-                    sceneEditor->ResetCamera();
+                    script.Push(&sceneEditor->GetCameraSceneNode());
+                }
+                else
+                {
+                    script.PushNil();
                 }
 
-                return 0;
+                return 1;
             }
 
 
@@ -1626,15 +1706,19 @@ namespace GTEngine
             }
 
 
-            int ResetCamera(GTCore::Script &script)
+            int GetViewportCameraSceneNodePtr(GTCore::Script &script)
             {
                 auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
                 if (particleEditor != nullptr)
                 {
-                    particleEditor->ResetCamera();
+                    script.Push(&particleEditor->GetCameraSceneNode());
+                }
+                else
+                {
+                    script.PushNil();
                 }
 
-                return 0;
+                return 1;
             }
         }
     }

@@ -157,47 +157,20 @@ namespace GTEngine
 
     void ModelEditor::ResetCamera()
     {
-        // The camera needs to be positioned based on the bounding volume. We will position the camera at the +Z/+X edge of a scaled bounding volume.
-        glm::vec3 aabbMin;
-        glm::vec3 aabbMax;
+        auto &script = this->GetScript();
 
-        auto modelComponent = this->modelNode.GetComponent<ModelComponent>();
-        assert(modelComponent != nullptr);
+        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        assert(script.IsTable(-1));
         {
-            auto model = modelComponent->GetModel();
-            if (model != nullptr)
+            script.Push("ResetCamera");
+            script.GetTableValue(-2);
+            assert(script.IsFunction(-1));
             {
-                model->GetAABB(aabbMin, aabbMax);
-
-                // Center point (camera look-at target).
-                glm::vec3 cameraLookAtTarget = (aabbMin + aabbMax) * 0.5f;
-
-
-                // Camera position.
-                glm::vec3 aabbSize = aabbMax - aabbMin;
-                float maxDimension = glm::max(aabbSize.x, glm::max(aabbSize.y, aabbSize.z));
-
-                glm::vec3 cameraPosition = cameraLookAtTarget;
-                cameraPosition += glm::normalize(glm::vec3(1.0f, 0.5f, 1.0f)) * maxDimension * 2.0f;
-
-
-
-                // Position and rotate the camera.
-                this->camera.SetPosition(cameraPosition);
-                this->camera.LookAt(cameraLookAtTarget);
-            }
-            else
-            {
-                this->camera.SetPosition(10.0f, 5.0f, 10.0f);
-                this->camera.LookAt(0.0f, 0.0f, 0.0f);
+                script.PushValue(-2);   // <-- 'self'.
+                script.Call(1, 0);
             }
         }
-
-
-        glm::vec3 cameraRotation = glm::eulerAngles(this->camera.GetWorldOrientation());
-        this->cameraXRotation = cameraRotation.x;
-        this->cameraYRotation = cameraRotation.y;
-        this->ApplyCameraRotation();
+        script.Pop(1);
     }
 
 
@@ -205,6 +178,21 @@ namespace GTEngine
     {
         return this->modelDefinition;
     }
+
+
+    void ModelEditor::GetModelAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax)
+    {
+        auto modelComponent = this->modelNode.GetComponent<ModelComponent>();
+        assert(modelComponent != nullptr);
+        {
+            auto model = modelComponent->GetModel();
+            if (model != nullptr)
+            {
+                model->GetAABB(aabbMin, aabbMax);
+            }
+        }
+    }
+
 
     void ModelEditor::RefreshViewport()
     {
@@ -470,43 +458,6 @@ namespace GTEngine
     {
         if (this->viewportElement->IsVisible())
         {
-            auto &game = this->GetOwnerEditor().GetGame();       // <-- For ease of use.
-
-            // If the mouse is captured we may need to move the screen around.
-            if (game.IsMouseCaptured())
-            {
-                const float moveSpeed   = 0.05f;
-                const float rotateSpeed = 0.1f;
-
-                float mouseOffsetX;
-                float mouseOffsetY;
-                game.GetSmoothedMouseOffset(mouseOffsetX, mouseOffsetY);
-
-                if (game.IsMouseButtonDown(GTCore::MouseButton_Left))
-                {
-                    if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
-                    {
-                        this->camera.MoveUp(  -mouseOffsetY * moveSpeed);
-                        this->camera.MoveRight(mouseOffsetX * moveSpeed);
-                    }
-                    else
-                    {
-                        this->camera.MoveForward(-mouseOffsetY * moveSpeed);
-                        this->cameraYRotation += -mouseOffsetX * rotateSpeed;
-                    }
-                }
-                else
-                {
-                    if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
-                    {
-                        this->cameraXRotation += -mouseOffsetY * rotateSpeed;
-                        this->cameraYRotation += -mouseOffsetX * rotateSpeed;
-                    }
-                }
-
-                this->ApplyCameraRotation();
-            }
-
             this->scene.Update(deltaTimeInSeconds);
         }
     }
@@ -536,13 +487,6 @@ namespace GTEngine
 
     ///////////////////////////////////////////////////
     // Private Methods.
-
-    void ModelEditor::ApplyCameraRotation()
-    {
-        this->camera.SetOrientation(glm::quat());
-        this->camera.RotateY(this->cameraYRotation);
-        this->camera.RotateX(this->cameraXRotation);
-    }
 
     void ModelEditor::DeleteConvexHulls()
     {

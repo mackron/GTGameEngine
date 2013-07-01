@@ -1679,6 +1679,11 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
     end
     
     
+    function sceneEditor:UpdateSelectionGizmoTransform()
+        return GTEngine.System.SceneEditor.UpdateSelectionGizmoTransform(self._internalPtr);
+    end
+    
+    
     function sceneEditor:StartPlaying()
         GTEngine.System.SceneEditor.StartPlaying(self._internalPtr);
     end
@@ -1811,8 +1816,8 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
     end
     
     
-    function sceneEditor:ResetCamera()
-        return GTEngine.System.SceneEditor.ResetCamera(self._internalPtr);
+    function sceneEditor:GetViewportCameraSceneNodePtr()
+        return GTEngine.System.SceneEditor.GetViewportCameraSceneNodePtr(self._internalPtr);
     end
     
     
@@ -1879,8 +1884,12 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self:SubEditor(_internalPtr);
     LinkSceneEditorToSystemAPI(self);
     
+    self.Scene             = GTEngine.RegisteredScenes[GTEngine.System.SceneEditor.GetScenePtr(_internalPtr)];
+    self.SelectedSceneNode = nil;
+    
     self.Viewport        = GTGUI.Server.CreateElement(self, "scene-editor-viewport");
     self.Viewport:SceneEditorViewport(self);
+    self.Viewport:SetCameraSceneNodePtr(self:GetViewportCameraSceneNodePtr());
     
     self.Panel           = GTGUI.Server.CreateElement(self, "scene-editor-panel");
     self.Panel:SceneEditorPanel(self);
@@ -1894,8 +1903,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     self.ContextMenu:SceneEditorContextMenu(self);
     
 
-    self.Scene             = GTEngine.RegisteredScenes[GTEngine.System.SceneEditor.GetScenePtr(_internalPtr)];
-    self.SelectedSceneNode = nil;
+    
 
     
     -- Updates the playback control buttons.
@@ -1981,12 +1989,43 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     end
     
     
+    
     function self:EnableViewportControls()
         self.Viewport:EnableControls();
     end
     
     function self:DisableViewportControls()
         self.Viewport:DisableControls();
+    end
+    
+    
+    function self:EnableViewportCameraControls()
+        self.Viewport:EnableCameraControls();
+    end
+    
+    function self:DisableViewportCameraControls()
+        self.Viewport:DisableCameraControls();
+    end
+    
+    
+    function self:ResetCamera()
+        local cameraSceneNodePtr = self:GetViewportCameraSceneNodePtr();
+        if cameraSceneNodePtr then
+            GTEngine.System.SceneNode.SetPosition(cameraSceneNodePtr, math.vec3(32, 20, 32));
+            GTEngine.System.SceneNode.LookAt(cameraSceneNodePtr, math.vec3(0, 0, 0));
+            
+            local eulerRotation = GTEngine.System.SceneNode.GetWorldEulerRotation(cameraSceneNodePtr);
+            self:SetViewportCameraRotation(eulerRotation.x, eulerRotation.y);
+        end
+    end
+    
+    function self:SetViewportCameraRotation(rotationX, rotationY)
+        self.Viewport:SetCameraRotation(rotationX, rotationY);
+        self.Viewport:OnCameraTransformed();
+    end
+    
+    function self:GetViewportCameraRotation()
+        return self.Viewport:GetCameraRotation();
     end
     
     
@@ -2105,7 +2144,7 @@ function GTGUI.Element:SceneEditor(_internalPtr)
             self:StopPlaying();
         end
     
-        if self.IsMouseOverViewport and not GTGUI.Server.DoesFocusedElementHaveEditableText() and not self:IsPlaying() then
+        if not GTGUI.Server.DoesFocusedElementHaveEditableText() and not self:IsPlaying() then
             if not GTGUI.Server.IsCTRLKeyDown() then
                 if data.key == GTCore.Keys.Delete then
                     self:DeleteSelectedSceneNodes();
@@ -2135,6 +2174,8 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     end);
     
     
+    -- We'll reset the camera to give it it's initial transform.
+    self:ResetCamera();
     
     -- We're going to hide the panels by default since nothing is selected right now.
     self:HidePropertyPanels("Nothing Selected");
