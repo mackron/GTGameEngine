@@ -64,6 +64,17 @@ namespace GTEngine
         const char* GetRefractionShaderID() const { return this->refractionShaderID.c_str(); }
 
 
+        /// Retrieves the shader ID of the given channel.
+        ///
+        /// @param channelName [in] The name of the channel whose shader ID is being retrieved.
+        ///
+        /// @return A string containing the shader ID. The string will be empty if the channel is undefined.
+        ///
+        /// @remarks
+        ///     When a channel is not specified, this will return an empty string, in which case the renderer can choose what to do by default.
+        GTCore::String GetChannelShaderID(const char* channelName) const;
+
+
         /// Determines whether or not the material is blended.
         bool IsBlended() const { return this->isBlended && !this->isRefractive; }
 
@@ -124,6 +135,9 @@ namespace GTEngine
         /// The ID of the specular shader.
         GTCore::String specularShaderID;
 
+
+        /// The list of channels, keyed by the channel name.
+        GTCore::Dictionary<GTCore::String> channelShaderIDs;
 
 
         /// The default parameters.
