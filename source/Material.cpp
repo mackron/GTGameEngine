@@ -56,6 +56,9 @@ namespace GTEngine
 
     bool MaterialDefinition::LoadFromXML(char* xml)
     {
+        // We need to reset the definition.
+        this->Reset();
+
         this->diffuseShaderID    = "Material_DefaultDiffuse";
         this->emissiveShaderID   = "Material_DefaultEmissive";
         this->shininessShaderID  = "Material_DefaultShininess";
@@ -92,282 +95,254 @@ namespace GTEngine
         auto materialNode = document.first_node("material");
         if (materialNode != nullptr)
         {
-            // We need to reset the definition.
-            this->Reset();
-
-
             // We need to keep track of the XML string.
             this->xmlString = newXMLString;
 
 
-            // <diffuse>
-            auto diffuseNode = materialNode->first_node("diffuse");
-            if (diffuseNode != nullptr)
+            // We need to iterate over each node.
+            auto childNode = materialNode->first_node();
+            while (childNode != nullptr)
             {
-                auto idAttr = diffuseNode->first_attribute("id");
-                if (idAttr != nullptr)
+                // <diffuse>
+                if (GTCore::Strings::Equal(childNode->name(), "diffuse"))
                 {
-                    this->diffuseShaderID = idAttr->value();
-                }
-                else
-                {
-                    GenerateAnonymousShaderID(this->diffuseShaderID);
-                }
-
-                if (diffuseNode->value_size() > 0)
-                {
-                    ShaderLibrary::AddShaderString(this->diffuseShaderID.c_str(), diffuseNode->value());
-                }
-            }
-            else
-            {
-                this->diffuseShaderID = "Material_DefaultDiffuse";
-            }
-
-            // <emissive>
-            auto emissiveNode = materialNode->first_node("emissive");
-            if (emissiveNode != nullptr)
-            {
-                auto idAttr = emissiveNode->first_attribute("id");
-                if (idAttr != nullptr)
-                {
-                    this->emissiveShaderID = idAttr->value();
-                }
-                else
-                {
-                    GenerateAnonymousShaderID(this->emissiveShaderID);
-                }
-
-                if (emissiveNode->value_size() > 0)
-                {
-                    ShaderLibrary::AddShaderString(this->emissiveShaderID.c_str(), emissiveNode->value());
-                }
-            }
-            else
-            {
-                this->emissiveShaderID = "Material_DefaultEmissive";
-            }
-
-            // <shininess>
-            auto shininessNode = materialNode->first_node("shininess");
-            if (shininessNode != nullptr)
-            {
-                auto idAttr = shininessNode->first_attribute("id");
-                if (idAttr != nullptr)
-                {
-                    this->shininessShaderID = idAttr->value();
-                }
-                else
-                {
-                    GenerateAnonymousShaderID(this->shininessShaderID);
-                }
-
-                if (shininessNode->value_size() > 0)
-                {
-                    ShaderLibrary::AddShaderString(this->shininessShaderID.c_str(), shininessNode->value());
-                }
-            }
-            else
-            {
-                this->shininessShaderID = "Material_DefaultShininess";
-            }
-
-            // <normal>
-            auto normalNode = materialNode->first_node("normal");
-            if (normalNode != nullptr)
-            {
-                auto idAttr = normalNode->first_attribute("id");
-                if (idAttr != nullptr)
-                {
-                    this->normalShaderID = idAttr->value();
-                }
-                else
-                {
-                    GenerateAnonymousShaderID(this->normalShaderID);
-                }
-
-                if (normalNode->value_size() > 0)
-                {
-                    ShaderLibrary::AddShaderString(this->normalShaderID.c_str(), normalNode->value());
-                }
-
-                this->hasNormalChannel = true;
-            }
-            else
-            {
-                this->hasNormalChannel = false;
-            }
-
-            // <refraction>
-            auto refractionNode = materialNode->first_node("refraction");
-            if (refractionNode != nullptr)
-            {
-                auto idAttr = refractionNode->first_attribute("id");
-                if (idAttr != nullptr)
-                {
-                    this->refractionShaderID = idAttr->value();
-                }
-                else
-                {
-                    GenerateAnonymousShaderID(this->refractionShaderID);
-                }
-
-                if (refractionNode->value_size() > 0)
-                {
-                    ShaderLibrary::AddShaderString(this->refractionShaderID.c_str(), refractionNode->value());
-                }
-
-
-                this->isRefractive = true;
-            }
-            else
-            {
-                // Note how we don't set a default ID here.
-                this->isRefractive = false;
-            }
-
-
-            // <specular>
-            auto specularNode = materialNode->first_node("specular");
-            if (specularNode != nullptr)
-            {
-                auto idAttr = specularNode->first_attribute("id");
-                if (idAttr != nullptr)
-                {
-                    this->specularShaderID = idAttr->value();
-                }
-                else
-                {
-                    GenerateAnonymousShaderID(this->specularShaderID);
-                }
-
-                if (specularNode->value_size() > 0)
-                {
-                    ShaderLibrary::AddShaderString(this->specularShaderID.c_str(), specularNode->value());
-                }
-            }
-            else
-            {
-                this->specularShaderID = "Material_DefaultSpecular";
-            }
-
-
-            // <blending>. Optional. If ommitted, blending is disabled (it's an opaque material).
-            auto blendingNode = materialNode->first_node("blending");
-            if (blendingNode != nullptr)
-            {
-                this->isBlended = true;
-
-                // <equation>
-                auto equationNode = blendingNode->first_node("equation");
-                if (equationNode != nullptr)
-                {
-                    this->blendEquation = ToBlendEquation(equationNode->value());
-                }
-
-                // <sourcefactor>
-                auto sourcefactorNode = blendingNode->first_node("sourcefactor");
-                if (sourcefactorNode != nullptr)
-                {
-                    this->blendSourceFactor = ToBlendFunction(sourcefactorNode->value());
-                }
-
-                // <destinationfactor>
-                auto destinationfactorNode = blendingNode->first_node("destinationfactor");
-                if (destinationfactorNode != nullptr)
-                {
-                    this->blendDestinationFactor = ToBlendFunction(destinationfactorNode->value());
-                }
-
-                // <colour>
-                auto colourNode = blendingNode->first_node("colour");
-                if (colourNode != nullptr)
-                {
-                    float colour[4];
-                    MaterialDefinition::ParseFloatArray(colourNode->value(), colour, 4);
-
-                    this->blendColour = glm::vec4(colour[0], colour[1], colour[2], colour[3]);
-                }
-            }
-
-
-
-            // <defaultproperties>. Optional.
-            auto defaultpropertiesNode = materialNode->first_node("defaultproperties");
-            if (defaultpropertiesNode != nullptr)
-            {
-                auto child = defaultpropertiesNode->first_node();
-                while (child != nullptr)
-                {
-                    if (GTCore::Strings::Equal("float", child->name()))
+                    auto idAttr = childNode->first_attribute("id");
+                    if (idAttr != nullptr)
                     {
-                        auto nameAttr = child->first_attribute("name");
-                        if (nameAttr != nullptr)
-                        {
-                            auto valueStr = child->value();
-
-                            float value[1];
-                            MaterialDefinition::ParseFloatArray(valueStr, value, 1);
-
-                            this->defaultParams.Set(nameAttr->value(), value[0]);
-                        }
+                        this->diffuseShaderID = idAttr->value();
                     }
-                    else if (GTCore::Strings::Equal("float2", child->name()))
+                    else
                     {
-                        auto nameAttr = child->first_attribute("name");
-                        if (nameAttr != nullptr)
-                        {
-                            auto valueStr = child->value();
-
-                            float value[2];
-                            MaterialDefinition::ParseFloatArray(valueStr, value, 2);
-
-                            this->defaultParams.Set(nameAttr->value(), value[0], value[1]);
-                        }
+                        GenerateAnonymousShaderID(this->diffuseShaderID);
                     }
-                    else if (GTCore::Strings::Equal("float3", child->name()))
+
+                    if (childNode->value_size() > 0)
                     {
-                        auto nameAttr = child->first_attribute("name");
-                        if (nameAttr != nullptr)
-                        {
-                            auto valueStr = child->value();
-
-                            float value[3];
-                            MaterialDefinition::ParseFloatArray(valueStr, value, 3);
-
-                            this->defaultParams.Set(nameAttr->value(), value[0], value[1], value[2]);
-                        }
+                        ShaderLibrary::AddShaderString(this->diffuseShaderID.c_str(), childNode->value());
                     }
-                    else if (GTCore::Strings::Equal("float4", child->name()))
+                }
+                
+                // <emissive>
+                if (GTCore::Strings::Equal(childNode->name(), "emissive"))
+                {
+                    auto idAttr = childNode->first_attribute("id");
+                    if (idAttr != nullptr)
                     {
-                        auto nameAttr = child->first_attribute("name");
-                        if (nameAttr != nullptr)
-                        {
-                            auto valueStr = child->value();
-
-                            float value[4];
-                            MaterialDefinition::ParseFloatArray(valueStr, value, 4);
-
-                            this->defaultParams.Set(nameAttr->value(), value[0], value[1], value[2], value[3]);
-                        }
+                        this->emissiveShaderID = idAttr->value();
                     }
-                    else if (GTCore::Strings::Equal("texture2D", child->name()))
+                    else
                     {
-                        auto nameAttr = child->first_attribute("name");
-                        if (nameAttr != nullptr)
-                        {
-                            auto valueStr = child->value();
+                        GenerateAnonymousShaderID(this->emissiveShaderID);
+                    }
 
-                            auto texture = Texture2DLibrary::Acquire(valueStr);
+                    if (childNode->value_size() > 0)
+                    {
+                        ShaderLibrary::AddShaderString(this->emissiveShaderID.c_str(), childNode->value());
+                    }
+                }
+
+                // <shininess>
+                if (GTCore::Strings::Equal(childNode->name(), "shininess"))
+                {
+                    auto idAttr = childNode->first_attribute("id");
+                    if (idAttr != nullptr)
+                    {
+                        this->shininessShaderID = idAttr->value();
+                    }
+                    else
+                    {
+                        GenerateAnonymousShaderID(this->shininessShaderID);
+                    }
+
+                    if (childNode->value_size() > 0)
+                    {
+                        ShaderLibrary::AddShaderString(this->shininessShaderID.c_str(), childNode->value());
+                    }
+                }
+
+                // <normal>
+                if (GTCore::Strings::Equal(childNode->name(), "normal"))
+                {
+                    auto idAttr = childNode->first_attribute("id");
+                    if (idAttr != nullptr)
+                    {
+                        this->normalShaderID = idAttr->value();
+                    }
+                    else
+                    {
+                        GenerateAnonymousShaderID(this->normalShaderID);
+                    }
+
+                    if (childNode->value_size() > 0)
+                    {
+                        ShaderLibrary::AddShaderString(this->normalShaderID.c_str(), childNode->value());
+                    }
+
+                    this->hasNormalChannel = true;
+                }
+
+                // <refraction>
+                if (GTCore::Strings::Equal(childNode->name(), "refraction"))
+                {
+                    auto idAttr = childNode->first_attribute("id");
+                    if (idAttr != nullptr)
+                    {
+                        this->refractionShaderID = idAttr->value();
+                    }
+                    else
+                    {
+                        GenerateAnonymousShaderID(this->refractionShaderID);
+                    }
+
+                    if (childNode->value_size() > 0)
+                    {
+                        ShaderLibrary::AddShaderString(this->refractionShaderID.c_str(), childNode->value());
+                    }
+
+
+                    this->isRefractive = true;
+                }
+
+                // <specular>
+                if (GTCore::Strings::Equal(childNode->name(), "specular"))
+                {
+                    auto idAttr = childNode->first_attribute("id");
+                    if (idAttr != nullptr)
+                    {
+                        this->specularShaderID = idAttr->value();
+                    }
+                    else
+                    {
+                        GenerateAnonymousShaderID(this->specularShaderID);
+                    }
+
+                    if (childNode->value_size() > 0)
+                    {
+                        ShaderLibrary::AddShaderString(this->specularShaderID.c_str(), childNode->value());
+                    }
+                }
+
+
+
+                // <blending>. Optional. If ommitted, blending is disabled (it's an opaque material).
+                if (GTCore::Strings::Equal(childNode->name(), "blending"))
+                {
+                    this->isBlended = true;
+
+                    // <equation>
+                    auto equationNode = childNode->first_node("equation");
+                    if (equationNode != nullptr)
+                    {
+                        this->blendEquation = ToBlendEquation(equationNode->value());
+                    }
+
+                    // <sourcefactor>
+                    auto sourcefactorNode = childNode->first_node("sourcefactor");
+                    if (sourcefactorNode != nullptr)
+                    {
+                        this->blendSourceFactor = ToBlendFunction(sourcefactorNode->value());
+                    }
+
+                    // <destinationfactor>
+                    auto destinationfactorNode = childNode->first_node("destinationfactor");
+                    if (destinationfactorNode != nullptr)
+                    {
+                        this->blendDestinationFactor = ToBlendFunction(destinationfactorNode->value());
+                    }
+
+                    // <colour>
+                    auto colourNode = childNode->first_node("colour");
+                    if (colourNode != nullptr)
+                    {
+                        float colour[4];
+                        MaterialDefinition::ParseFloatArray(colourNode->value(), colour, 4);
+
+                        this->blendColour = glm::vec4(colour[0], colour[1], colour[2], colour[3]);
+                    }
+                }
+
+
+
+                // <defaultproperties>. Optional.
+                if (GTCore::Strings::Equal(childNode->name(), "defaultproperties"))
+                {
+                    auto propertyNode = childNode->first_node();
+                    while (propertyNode != nullptr)
+                    {
+                        if (GTCore::Strings::Equal("float", propertyNode->name()))
+                        {
+                            auto nameAttr = propertyNode->first_attribute("name");
+                            if (nameAttr != nullptr)
                             {
-                                this->defaultParams.Set(nameAttr->value(), texture);
-                            }
-                            Texture2DLibrary::Unacquire(texture);
-                        }
-                    }
+                                auto valueStr = propertyNode->value();
 
-                    child = child->next_sibling();
+                                float value[1];
+                                MaterialDefinition::ParseFloatArray(valueStr, value, 1);
+
+                                this->defaultParams.Set(nameAttr->value(), value[0]);
+                            }
+                        }
+                        else if (GTCore::Strings::Equal("float2", propertyNode->name()))
+                        {
+                            auto nameAttr = propertyNode->first_attribute("name");
+                            if (nameAttr != nullptr)
+                            {
+                                auto valueStr = propertyNode->value();
+
+                                float value[2];
+                                MaterialDefinition::ParseFloatArray(valueStr, value, 2);
+
+                                this->defaultParams.Set(nameAttr->value(), value[0], value[1]);
+                            }
+                        }
+                        else if (GTCore::Strings::Equal("float3", propertyNode->name()))
+                        {
+                            auto nameAttr = propertyNode->first_attribute("name");
+                            if (nameAttr != nullptr)
+                            {
+                                auto valueStr = propertyNode->value();
+
+                                float value[3];
+                                MaterialDefinition::ParseFloatArray(valueStr, value, 3);
+
+                                this->defaultParams.Set(nameAttr->value(), value[0], value[1], value[2]);
+                            }
+                        }
+                        else if (GTCore::Strings::Equal("float4", propertyNode->name()))
+                        {
+                            auto nameAttr = propertyNode->first_attribute("name");
+                            if (nameAttr != nullptr)
+                            {
+                                auto valueStr = propertyNode->value();
+
+                                float value[4];
+                                MaterialDefinition::ParseFloatArray(valueStr, value, 4);
+
+                                this->defaultParams.Set(nameAttr->value(), value[0], value[1], value[2], value[3]);
+                            }
+                        }
+                        else if (GTCore::Strings::Equal("texture2D", propertyNode->name()))
+                        {
+                            auto nameAttr = propertyNode->first_attribute("name");
+                            if (nameAttr != nullptr)
+                            {
+                                auto valueStr = propertyNode->value();
+
+                                auto texture = Texture2DLibrary::Acquire(valueStr);
+                                {
+                                    this->defaultParams.Set(nameAttr->value(), texture);
+                                }
+                                Texture2DLibrary::Unacquire(texture);
+                            }
+                        }
+
+                        propertyNode = propertyNode->next_sibling();
+                    }
                 }
+
+
+
+                childNode = childNode->next_sibling();
             }
 
             return true;
@@ -457,23 +432,15 @@ namespace GTEngine
     }
 
 
-    void MaterialDefinition::ParseFloatArray(const char* str, float* dest, size_t count)
+    GTCore::String MaterialDefinition::GetChannelShaderID(const char* channelName) const
     {
-        assert(str != nullptr);
-        assert(dest != nullptr);
-
-        char tempStr[16];
-
-        GTCore::Strings::Tokenizer tokens(str);
-        while (tokens && count > 0)
+        auto iChannel = this->channelShaderIDs.Find(channelName);
+        if (iChannel != nullptr)
         {
-            GTCore::Strings::Copy(tempStr, tokens.start, tokens.GetSizeInTs());
-
-            *dest++ = GTCore::Parse<float>(tempStr);
-
-            ++tokens;
-            --count;
+            return iChannel->value;
         }
+
+        return "";
     }
 
 
@@ -499,6 +466,25 @@ namespace GTEngine
         this->isBlended          = false;
 
         this->defaultParams.Clear();
+    }
+
+    void MaterialDefinition::ParseFloatArray(const char* str, float* dest, size_t count)
+    {
+        assert(str != nullptr);
+        assert(dest != nullptr);
+
+        char tempStr[16];
+
+        GTCore::Strings::Tokenizer tokens(str);
+        while (tokens && count > 0)
+        {
+            GTCore::Strings::Copy(tempStr, tokens.start, tokens.GetSizeInTs());
+
+            *dest++ = GTCore::Parse<float>(tempStr);
+
+            ++tokens;
+            --count;
+        }
     }
 }
 
