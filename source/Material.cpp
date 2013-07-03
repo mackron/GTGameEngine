@@ -223,6 +223,42 @@ namespace GTEngine
                 }
 
 
+                // <channel>
+                if (GTCore::Strings::Equal(childNode->name(), "channel"))
+                {
+                    auto iNameAttribute = childNode->first_attribute("name");
+                    if (iNameAttribute != nullptr)
+                    {
+                        // Retrieve the shader information.
+                        GTCore::String shaderID;
+
+                        auto iShaderIDAttribute = childNode->first_attribute("shaderid");
+                        if (iShaderIDAttribute != nullptr)
+                        {
+                            shaderID = iShaderIDAttribute->value();
+                        }
+                        else
+                        {
+                            GenerateAnonymousShaderID(shaderID);
+                        }
+
+                        if (childNode->value_size() > 0)
+                        {
+                            ShaderLibrary::AddShaderString(shaderID.c_str(), childNode->value());
+                        }
+
+
+                        // Add the channel.
+                        this->channelShaderIDs.Add(iNameAttribute->value(), shaderID);
+                    }
+                    else
+                    {
+                        // It is an error for a <channel> tag to not have a name.
+                        GTEngine::PostError("Material: Warning: Missing 'name' attribute from a <channel> tag. Ignoring.");
+                    }
+                }
+
+
 
                 // <blending>. Optional. If ommitted, blending is disabled (it's an opaque material).
                 if (GTCore::Strings::Equal(childNode->name(), "blending"))
