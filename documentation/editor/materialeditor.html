@@ -43,31 +43,31 @@ layout: editor
         but support for this via the editing tools and scripting environment is not very complete right now.
         </p>
         <p>
-        A material has a set of "channels" that define it's appearance. Below is a table of the standard channels of a material.
+        A material has a set of "channels" that define it's appearance. Below is a table of the channels used by the default renderer.
         </p>
         <table class="shortcuts-table">
             <tr>
-                <td><b>Diffuse</b></td><td>The appearance of the material as if lit by a uniform white light. Think of it as the texture.</td>
+                <td><b>diffuse</b></td><td>The appearance of the material as if lit by a uniform white light. Think of it as the texture.</td>
             </tr>
             <tr>
-                <td><b>Emissive</b></td><td>The colours emitted by the material irrespective of lighting. The appearance of the material as if completely unlit.</td>
+                <td><b>emissive</b></td><td>The colours emitted by the material irrespective of lighting. The appearance of the material as if completely unlit.</td>
             </tr>
             <tr>
-                <td><b>Specular</b></td><td>The specular power. Smaller values means a bigger specular highlight.</td>
+                <td><b>specular</b></td><td>The specular power. Smaller values means a bigger specular highlight.</td>
             </tr>
             <tr>
-                <td><b>Shininess</b></td><td>The shininess of the material. The specular contribution will be multiplied by this value.</td>
+                <td><b>shininess</b></td><td>The shininess of the material. The specular contribution will be multiplied by this value.</td>
             </tr>
             <tr>
-                <td><b>Normal</b></td><td>The normals to use when applying normal mapping. Usually this will be defined by a simple normal map image.</td>
+                <td><b>normal</b></td><td>The normals to use when applying normal mapping. Usually this will be defined by a simple normal map image.</td>
             </tr>
             <tr>
-                <td><b>Refraction</b></td><td>The same as <b>Normal</b>, except for refraction.</td>
+                <td><b>refraction</b></td><td>The same as <b>normal</b>, except for refraction.</td>
             </tr>
         </table>
         <p>
-        A possible future feature is to allow games to define their own channels to help support a custom renderer, but this feature is not
-        currently implemented.
+        Renderer's are free to define their own channels. For example, a cartoon renderer might have a "line_colour" channel to define the colour
+        edge lines. The name of the channel is set with the "name" property of the "channel" tag.
         </p>
         <p>
         A channel is defined by a shader function that is usually run on the fragment shader. There are two ways to define the function. The first
@@ -81,32 +81,36 @@ layout: editor
         Below is an example for defining the diffuse channel using the first technique:
         </p>
 <pre>&lt;material&gt;
-    &lt;diffuse id="Material_WhiteDiffuse" /&gt;
+    &lt;channel name="diffuse" shaderid="Material_WhiteDiffuse" /&gt;
 &lt;/material&gt;</pre>
         <p>
         Below is an example for inlining the shader code directly:
         </p>
 <pre>&lt;material&gt;
-    &lt;diffuse&gt;
+    &lt;channel name="diffuse"&gt;
         vec4 Diffuse()
         {
             return vec4(1.0, 1.0, 1.0, 1.0);
         }
-    &lt;/diffuse&gt;
+    &lt;/channel&gt;
 &lt;/material&gt;</pre>
+        <p>
+        The entry point function and return type will depend on the renderer. For the default renderer, it must be named the same as the channel,
+        but with a capitalized first letter.
+        </p>
         <p>
         You can specify variables that can be set externally. For you shader programmers, these are uniform variables. The next example shows how
         you can use one of these variables with a texture.
         </p>
 <pre>&lt;material&gt;
-    &lt;diffuse&gt;
+    &lt;channel name="diffuse"&gt;
         uniform sampler2D DiffuseTexture;
 
         vec4 Diffuse()
         {
             return texture2D(DiffuseTexture, VertexOutput_TexCoord.xy);
         }
-    &lt;/diffuse&gt;
+    &lt;/channel&gt;
 
     &lt;defaultproperties&gt;
         &lt;texture2D name="DiffuseTexture">engine/textures/default.png&lt;/texture2D&gt;
