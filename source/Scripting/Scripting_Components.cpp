@@ -912,9 +912,11 @@ namespace GTEngine
                             script.SetTableFunction(-1, "PlayAnimationSequence",      ModelComponentFFI::PlayAnimationSequence);
                             script.SetTableFunction(-1, "PauseAnimation",             ModelComponentFFI::PauseAnimation);
                             script.SetTableFunction(-1, "StopAnimation",              ModelComponentFFI::StopAnimation);
+                            script.SetTableFunction(-1, "GetBoneIndexByName",         ModelComponentFFI::GetBoneIndexByName);
                             script.SetTableFunction(-1, "GetBoneTransformByName",     ModelComponentFFI::GetBoneTransformByName);
                             script.SetTableFunction(-1, "GetBoneTransformByIndex",    ModelComponentFFI::GetBoneTransformByIndex);
-                            script.SetTableFunction(-1, "GetBoneIndexByName",         ModelComponentFFI::GetBoneIndexByName);
+                            script.SetTableFunction(-1, "SetBoneTransformByName",     ModelComponentFFI::SetBoneTransformByName);
+                            script.SetTableFunction(-1, "SetBoneTransformByIndex",    ModelComponentFFI::SetBoneTransformByIndex);
                         }
                         script.Pop(1);
 
@@ -1493,6 +1495,38 @@ namespace GTEngine
             }
 
 
+            int GetBoneIndexByName(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    auto model = component->GetModel();
+                    if (model != nullptr)
+                    {
+                        size_t boneIndex;
+                        auto bone = model->GetBoneByName(script.ToString(2), &boneIndex);
+                        if (bone != nullptr)
+                        {
+                            script.Push(static_cast<int>(boneIndex));
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
+                    }
+                    else
+                    {
+                        script.PushNil();
+                    }
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
+            }
+
             int GetBoneTransformByName(GTCore::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
@@ -1540,7 +1574,6 @@ namespace GTEngine
 
                 return 1;
             }
-
 
             int GetBoneTransformByIndex(GTCore::Script &script)
             {
@@ -1590,7 +1623,8 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetBoneIndexByName(GTCore::Script &script)
+
+            int SetBoneTransformByName(GTCore::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1598,28 +1632,56 @@ namespace GTEngine
                     auto model = component->GetModel();
                     if (model != nullptr)
                     {
-                        size_t boneIndex;
-                        auto bone = model->GetBoneByName(script.ToString(2), &boneIndex);
+                        auto bone = model->GetBoneByName(script.ToString(2), nullptr);
                         if (bone != nullptr)
                         {
-                            script.Push(static_cast<int>(boneIndex));
-                        }
-                        else
-                        {
-                            script.PushNil();
+                            glm::vec3 absolutePosition = Scripting::ToVector3(script, 3);
+                            glm::quat absoluteRotation = Scripting::ToQuaternion(script, 4);
+
+                            if (Scripting::IsVector3(script, 5))
+                            {
+                                glm::vec3 absoluteScale = Scripting::ToVector3(script, 5);
+                                bone->SetAbsoluteTransform(absolutePosition, absoluteRotation, absoluteScale);
+                            }
+                            else
+                            {
+                                bone->SetAbsoluteTransform(absolutePosition, absoluteRotation);
+                            }
                         }
                     }
-                    else
-                    {
-                        script.PushNil();
-                    }
-                }
-                else
-                {
-                    script.PushNil();
                 }
 
-                return 1;
+                return 0;
+            }
+
+            int SetBoneTransformByIndex(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    auto model = component->GetModel();
+                    if (model != nullptr)
+                    {
+                        auto bone = model->GetBoneByIndex(static_cast<size_t>(script.ToInteger(2)));
+                        if (bone != nullptr)
+                        {
+                            glm::vec3 absolutePosition = Scripting::ToVector3(script, 3);
+                            glm::quat absoluteRotation = Scripting::ToQuaternion(script, 4);
+
+                            if (Scripting::IsVector3(script, 5))
+                            {
+                                glm::vec3 absoluteScale = Scripting::ToVector3(script, 5);
+                                bone->SetAbsoluteTransform(absolutePosition, absoluteRotation, absoluteScale);
+                            }
+                            else
+                            {
+                                bone->SetAbsoluteTransform(absolutePosition, absoluteRotation);
+                            }
+                        }
+                    }
+                }
+
+                return 0;
             }
         }
 

@@ -137,7 +137,6 @@ namespace GTEngine
     }
 
 
-
     glm::mat4 Bone::GetTransform() const
     {
         glm::mat4 result;
@@ -163,6 +162,48 @@ namespace GTEngine
 
         return result;
     }
+
+
+    void Bone::SetAbsoluteTransform(const glm::vec3 &absolutePosition, const glm::quat &absoluteRotation, const glm::vec3 &absoluteScale)
+    {
+        if (this->parent != nullptr)
+        {
+            glm::vec3 Pp;
+            glm::quat Po;
+            glm::vec3 Ps;
+            this->parent->GetAbsoluteTransformComponents(Pp, Po, Ps);
+
+            this->position = ((absolutePosition - Pp) * Po) / Ps;
+            this->rotation = glm::inverse(Po) * absoluteRotation;
+            this->scale    = absoluteScale / Ps;
+        }
+        else
+        {
+            this->position = absolutePosition;
+            this->rotation = absoluteRotation;
+            this->scale    = absoluteScale;
+        }
+    }
+
+    void Bone::SetAbsoluteTransform(const glm::vec3 &absolutePosition, const glm::quat &absoluteRotation)
+    {
+        if (this->parent != nullptr)
+        {
+            glm::vec3 Pp;
+            glm::quat Po;
+            glm::vec3 Ps;
+            this->parent->GetAbsoluteTransformComponents(Pp, Po, Ps);
+
+            this->position = ((absolutePosition - Pp) * Po) / Ps;
+            this->rotation = glm::inverse(Po) * absoluteRotation;
+        }
+        else
+        {
+            this->position = absolutePosition;
+            this->rotation = absoluteRotation;
+        }
+    }
+
 
     void Bone::UpdateSkinningTransform()
     {
