@@ -138,7 +138,7 @@ namespace GTEngine
 
 
 
-
+#if 0
         /// The ID of the diffuse shader.
         GTCore::String diffuseShaderID;
 
@@ -156,6 +156,7 @@ namespace GTEngine
 
         /// The ID of the specular shader.
         GTCore::String specularShaderID;
+#endif
 
 
 
@@ -189,25 +190,6 @@ namespace GTEngine
         const MaterialDefinition & GetDefinition() const { return this->definition; }
 
 
-#if 0
-        /// Retrieves the ID of the diffuse shader.
-        GTCore::String GetDiffuseShaderID() const { return this->definition.GetDiffuseShaderID(); }
-
-        /// Retrieves the ID of the emissive shader.
-        GTCore::String GetEmissiveShaderID() const { return this->definition.GetEmissiveShaderID(); }
-
-        /// Retrieves the ID of the shininess shader.
-        GTCore::String GetShininessShaderID() const { return this->definition.GetShininessShaderID(); }
-
-        /// Retrieves the ID of the normals shader.
-        GTCore::String GetNormalShaderID() const { return this->definition.GetNormalShaderID(); }
-
-        /// Retrieves the ID of the specular shader.
-        GTCore::String GetSpecularShaderID() const { return this->definition.GetSpecularShaderID(); }
-
-        /// Retrieves the ID of the refraction shader.
-        GTCore::String GetRefractionShaderID() const { return this->definition.GetRefractionShaderID(); }
-#endif
 
         /// Retrieves the shader ID of the given channel.
         ///

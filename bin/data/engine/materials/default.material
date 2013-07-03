@@ -1,15 +1,12 @@
-
 <material>
-    <diffuse   id='Material_TexturedDiffuse' />
-    <normal    id='Material_TexturedNormal'  />
-    <emissive  id='Material_SimpleEmissive'  />
-    <shininess id='Material_SimpleShininess' />
-    <specular  id='Material_DefaultSpecular' />
+    <channel name="diffuse"   shaderid="Material_TexturedDiffuse" />
+    <channel name="shininess" shaderid="Material_SimpleShininess" />
+    <channel name="specular"  shaderid="Material_DefaultSpecular" />
+    <channel name="normal"    shaderid="Material_TexturedNormal"  />
     
     <defaultproperties>
         <texture2D name="DiffuseTexture">engine/textures/default.png</texture2D>
         <texture2D name="NormalMap">engine/textures/default-normal.png</texture2D>
-        <float3    name="EmissiveColour">0.0 0.0 0.0</float3>
         <float     name="ShininessFactor">0.5</float>
         <float     name="SpecularPower">64.0</float>
     </defaultproperties>

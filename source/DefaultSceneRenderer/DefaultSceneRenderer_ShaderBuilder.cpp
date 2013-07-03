@@ -290,7 +290,7 @@ namespace GTEngine
         
 
         bool includeMaterialPass        =  (shaderID.flags & DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass)     && material != nullptr;
-        bool doNormalMapping            = !(shaderID.flags & DefaultSceneRenderer_MaterialShaderID::NoNormalMapping)         && material != nullptr && material->HasNormalChannel();
+        bool doNormalMapping            = !(shaderID.flags & DefaultSceneRenderer_MaterialShaderID::NoNormalMapping)         && material != nullptr && material->IsChannelDefined("normal");
         bool sourceLightingFromTextures =  (shaderID.flags & DefaultSceneRenderer_MaterialShaderID::GetLightingFromTextures) && includeMaterialPass;
 
         // We won't be doing normal mapping if all we are using is an ambient light.
@@ -359,28 +359,28 @@ namespace GTEngine
         {
             if (includeMaterialPass)
             {
-                if (material->IsRefractive())
+                if (material->IsChannelDefined("refraction"))
                 {
                     fragmentSource.Append
                     (
                         "uniform sampler2D BackgroundTexture;\n"
                     );
 
-                    fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetChannelShaderID("refraction").c_str()));
+                    fragmentSource.Append(this->GetMaterialShaderString_Refraction(*material));
                 }
 
-                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetChannelShaderID("diffuse").c_str()));
-                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetChannelShaderID("emissive").c_str()));
-                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetChannelShaderID("shininess").c_str()));
+                fragmentSource.Append(this->GetMaterialShaderString_Diffuse(*material));
+                fragmentSource.Append(this->GetMaterialShaderString_Emissive(*material));
+                fragmentSource.Append(this->GetMaterialShaderString_Shininess(*material));
             }
 
             if (lightCount - ambientLightCount > 0)     // <-- Ambient lights don't use specular or normals, so don't want to include that.
             {
-                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetChannelShaderID("specular").c_str()));
+                fragmentSource.Append(this->GetMaterialShaderString_Specular(*material));
 
                 if (doNormalMapping)
                 {
-                    fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetChannelShaderID("normal").c_str()));
+                    fragmentSource.Append(this->GetMaterialShaderString_Normal(*material));
                 }
             }
         }
@@ -1220,5 +1220,68 @@ namespace GTEngine
             lightIndex,
             lightIndex
         );
+    }
+
+
+
+
+    const char* DefaultSceneRenderer_ShaderBuilder::GetMaterialShaderString_Diffuse(const MaterialDefinition &material) const
+    {
+        if (material.IsChannelDefined("diffuse"))
+        {
+            return ShaderLibrary::GetShaderString(material.GetChannelShaderID("diffuse").c_str());
+        }
+
+        return "vec4 Diffuse() { return vec4(0.0, 0.0, 0.0, 1.0); }";
+    }
+
+    const char* DefaultSceneRenderer_ShaderBuilder::GetMaterialShaderString_Emissive(const MaterialDefinition &material) const
+    {
+        if (material.IsChannelDefined("emissive"))
+        {
+            return ShaderLibrary::GetShaderString(material.GetChannelShaderID("emissive").c_str());
+        }
+
+        return "vec3 Emissive() { return vec3(0.0, 0.0, 0.0); }";
+    }
+
+    const char* DefaultSceneRenderer_ShaderBuilder::GetMaterialShaderString_Shininess(const MaterialDefinition &material) const
+    {
+        if (material.IsChannelDefined("shininess"))
+        {
+            return ShaderLibrary::GetShaderString(material.GetChannelShaderID("shininess").c_str());
+        }
+
+        return "float Shininess() { return 0.0; }";
+    }
+
+    const char* DefaultSceneRenderer_ShaderBuilder::GetMaterialShaderString_Specular(const MaterialDefinition &material) const
+    {
+        if (material.IsChannelDefined("specular"))
+        {
+            return ShaderLibrary::GetShaderString(material.GetChannelShaderID("specular").c_str());
+        }
+
+        return "float Specular() { return 64.0; }";
+    }
+
+    const char* DefaultSceneRenderer_ShaderBuilder::GetMaterialShaderString_Normal(const MaterialDefinition &material) const
+    {
+        if (material.IsChannelDefined("normal"))
+        {
+            return ShaderLibrary::GetShaderString(material.GetChannelShaderID("normal").c_str());
+        }
+
+        return "vec3 Normal() { return vec3(0.0, 0.0, 1.0); }";
+    }
+
+    const char* DefaultSceneRenderer_ShaderBuilder::GetMaterialShaderString_Refraction(const MaterialDefinition &material) const
+    {
+        if (material.IsChannelDefined("refraction"))
+        {
+            return ShaderLibrary::GetShaderString(material.GetChannelShaderID("refraction").c_str());
+        }
+
+        return "vec3 Refraction() { return vec3(0.0, 0.0, 1.0); }";
     }
 }
