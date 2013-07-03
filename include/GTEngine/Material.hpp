@@ -45,25 +45,6 @@ namespace GTEngine
         const char* GetXMLString() const;
 
 
-        /// Retrieves the ID of the diffuse shader.
-        const char* GetDiffuseShaderID() const { return this->diffuseShaderID.c_str(); }
-
-        /// Retrieves the ID of the emissive shader.
-        const char* GetEmissiveShaderID() const { return this->emissiveShaderID.c_str(); }
-
-        /// Retrieves the ID of the shininess shader.
-        const char* GetShininessShaderID() const { return this->shininessShaderID.c_str(); }
-
-        /// Retrieves the ID of the normals shader.
-        const char* GetNormalShaderID() const { return this->normalShaderID.c_str(); }
-
-        /// Retrieves the ID of the specular shader.
-        const char* GetSpecularShaderID() const { return this->specularShaderID.c_str(); }
-
-        /// Retrieves the ID of the refraction shader.
-        const char* GetRefractionShaderID() const { return this->refractionShaderID.c_str(); }
-
-
         /// Retrieves the shader ID of the given channel.
         ///
         /// @param channelName [in] The name of the channel whose shader ID is being retrieved.
@@ -73,6 +54,12 @@ namespace GTEngine
         /// @remarks
         ///     When a channel is not specified, this will return an empty string, in which case the renderer can choose what to do by default.
         GTCore::String GetChannelShaderID(const char* channelName) const;
+
+        /// Determines whether or not the ID of the given channel is defind.
+        ///
+        /// @param channelName [in] The name of the channel.
+        bool IsChannelDefined(const char* channelName) const;
+
 
 
         /// Determines whether or not the material is blended.
@@ -117,32 +104,12 @@ namespace GTEngine
         GTCore::String xmlString;
 
 
-        /// The ID of the diffuse shader.
-        GTCore::String diffuseShaderID;
-
-        /// The ID of the emissive shader.
-        GTCore::String emissiveShaderID;
-
-        /// The ID of the shininess shader.
-        GTCore::String shininessShaderID;
-
-        /// The ID of the normal shader.
-        GTCore::String normalShaderID;
-
-        /// The ID of the refraction shader. This can actually be null if this->refractive is false.
-        GTCore::String refractionShaderID;
-
-        /// The ID of the specular shader.
-        GTCore::String specularShaderID;
-
-
         /// The list of channels, keyed by the channel name.
         GTCore::Dictionary<GTCore::String> channelShaderIDs;
 
 
         /// The default parameters.
         ShaderParameterCache defaultParams;
-
 
 
     private:
@@ -168,6 +135,28 @@ namespace GTEngine
 
         /// The colour to use with the "constant" blending factors.
         glm::vec4 blendColour;
+
+
+
+
+        /// The ID of the diffuse shader.
+        GTCore::String diffuseShaderID;
+
+        /// The ID of the emissive shader.
+        GTCore::String emissiveShaderID;
+
+        /// The ID of the shininess shader.
+        GTCore::String shininessShaderID;
+
+        /// The ID of the normal shader.
+        GTCore::String normalShaderID;
+
+        /// The ID of the refraction shader. This can actually be null if this->refractive is false.
+        GTCore::String refractionShaderID;
+
+        /// The ID of the specular shader.
+        GTCore::String specularShaderID;
+
 
 
     private:
@@ -199,23 +188,42 @@ namespace GTEngine
         /// Retrieves a reference to the material's definition.
         const MaterialDefinition & GetDefinition() const { return this->definition; }
 
+
+#if 0
         /// Retrieves the ID of the diffuse shader.
-        const char* GetDiffuseShaderID() const { return this->definition.diffuseShaderID.c_str(); }
+        GTCore::String GetDiffuseShaderID() const { return this->definition.GetDiffuseShaderID(); }
 
         /// Retrieves the ID of the emissive shader.
-        const char* GetEmissiveShaderID() const { return this->definition.emissiveShaderID.c_str(); }
+        GTCore::String GetEmissiveShaderID() const { return this->definition.GetEmissiveShaderID(); }
 
         /// Retrieves the ID of the shininess shader.
-        const char* GetShininessShaderID() const { return this->definition.shininessShaderID.c_str(); }
+        GTCore::String GetShininessShaderID() const { return this->definition.GetShininessShaderID(); }
 
         /// Retrieves the ID of the normals shader.
-        const char* GetNormalShaderID() const { return this->definition.normalShaderID.c_str(); }
+        GTCore::String GetNormalShaderID() const { return this->definition.GetNormalShaderID(); }
 
         /// Retrieves the ID of the specular shader.
-        const char* GetSpecularShaderID() const { return this->definition.specularShaderID.c_str(); }
+        GTCore::String GetSpecularShaderID() const { return this->definition.GetSpecularShaderID(); }
 
         /// Retrieves the ID of the refraction shader.
-        const char* GetRefractionShaderID() const { return this->definition.refractionShaderID.c_str(); }
+        GTCore::String GetRefractionShaderID() const { return this->definition.GetRefractionShaderID(); }
+#endif
+
+        /// Retrieves the shader ID of the given channel.
+        ///
+        /// @param channelName [in] The name of the channel whose shader ID is being retrieved.
+        ///
+        /// @return A string containing the shader ID. The string will be empty if the channel is undefined.
+        ///
+        /// @remarks
+        ///     When a channel is not specified, this will return an empty string, in which case the renderer can choose what to do by default.
+        GTCore::String GetChannelShaderID(const char* channelName) const { return this->definition.GetChannelShaderID(channelName); }
+
+        /// Determines whether or not the ID of the given channel is defind.
+        ///
+        /// @param channelName [in] The name of the channel.
+        bool IsChannelDefined(const char* channelName) const { return this->definition.IsChannelDefined(channelName); }
+
 
 
         /// Retrieves a reference to the list of default parameters.

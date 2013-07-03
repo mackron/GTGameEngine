@@ -366,21 +366,21 @@ namespace GTEngine
                         "uniform sampler2D BackgroundTexture;\n"
                     );
 
-                    fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetRefractionShaderID()));
+                    fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetChannelShaderID("refraction").c_str()));
                 }
 
-                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetDiffuseShaderID()));
-                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetEmissiveShaderID()));
-                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetShininessShaderID()));
+                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetChannelShaderID("diffuse").c_str()));
+                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetChannelShaderID("emissive").c_str()));
+                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetChannelShaderID("shininess").c_str()));
             }
 
             if (lightCount - ambientLightCount > 0)     // <-- Ambient lights don't use specular or normals, so don't want to include that.
             {
-                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetSpecularShaderID()));
+                fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetChannelShaderID("specular").c_str()));
 
                 if (doNormalMapping)
                 {
-                    fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetNormalShaderID()));
+                    fragmentSource.Append(ShaderLibrary::GetShaderString(material->GetChannelShaderID("normal").c_str()));
                 }
             }
         }

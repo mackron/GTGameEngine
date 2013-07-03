@@ -199,7 +199,6 @@ namespace GTEngine
                         ShaderLibrary::AddShaderString(this->refractionShaderID.c_str(), childNode->value());
                     }
 
-
                     this->isRefractive = true;
                 }
 
@@ -381,6 +380,13 @@ namespace GTEngine
                 childNode = childNode->next_sibling();
             }
 
+            this->channelShaderIDs.Add("diffuse", this->diffuseShaderID);
+            this->channelShaderIDs.Add("emissive", this->emissiveShaderID);
+            this->channelShaderIDs.Add("shininess", this->shininessShaderID);
+            this->channelShaderIDs.Add("normal", this->normalShaderID);
+            this->channelShaderIDs.Add("refraction", this->refractionShaderID);
+            this->channelShaderIDs.Add("specular", this->specularShaderID);
+
             return true;
         }
 
@@ -468,6 +474,7 @@ namespace GTEngine
     }
 
 
+
     GTCore::String MaterialDefinition::GetChannelShaderID(const char* channelName) const
     {
         auto iChannel = this->channelShaderIDs.Find(channelName);
@@ -479,6 +486,11 @@ namespace GTEngine
         return "";
     }
 
+    bool MaterialDefinition::IsChannelDefined(const char* channelName) const
+    {
+        return this->channelShaderIDs.Exists(channelName);
+    }
+
 
     //////////////////////////////////
     // Private
@@ -487,8 +499,13 @@ namespace GTEngine
     {
         this->absolutePath       = "";
         this->relativePath       = "";
-
         this->xmlString          = "";
+        this->isBlended          = false;
+        this->channelShaderIDs.Clear();
+        this->defaultParams.Clear();
+
+        
+
 
         this->diffuseShaderID    = "";
         this->emissiveShaderID   = "";
@@ -499,9 +516,6 @@ namespace GTEngine
 
         this->hasNormalChannel   = false;
         this->isRefractive       = false;
-        this->isBlended          = false;
-
-        this->defaultParams.Clear();
     }
 
     void MaterialDefinition::ParseFloatArray(const char* str, float* dest, size_t count)
