@@ -41,7 +41,8 @@ namespace GTEngine
 
     MaterialDefinition::MaterialDefinition()
         : absolutePath(), relativePath(), xmlString(),
-          diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(), refractionShaderID(), specularShaderID(),
+          //diffuseShaderID(), emissiveShaderID(), shininessShaderID(), normalShaderID(), refractionShaderID(), specularShaderID(),
+          channelShaderIDs(),
           defaultParams(),
           hasNormalChannel(false), isRefractive(false), isBlended(false),
           blendEquation(BlendEquation_Add), blendSourceFactor(BlendFunc_One), blendDestinationFactor(BlendFunc_Zero), blendColour(0.0f, 0.0f, 0.0f, 0.0f)
@@ -59,16 +60,15 @@ namespace GTEngine
         // We need to reset the definition.
         this->Reset();
 
-        this->diffuseShaderID    = "Material_DefaultDiffuse";
-        this->emissiveShaderID   = "Material_DefaultEmissive";
-        this->shininessShaderID  = "Material_DefaultShininess";
-        this->normalShaderID     = "";
-        this->specularShaderID   = "Material_DefaultSpecular";
-        this->refractionShaderID = "";
+        GTCore::String diffuseShaderID    = "Material_DefaultDiffuse";
+        GTCore::String emissiveShaderID   = "Material_DefaultEmissive";
+        GTCore::String shininessShaderID  = "Material_DefaultShininess";
+        GTCore::String normalShaderID     = "";
+        GTCore::String refractionShaderID = "";
+        GTCore::String specularShaderID   = "Material_DefaultSpecular";
         this->hasNormalChannel   = false;
         this->isRefractive       = false;
-        this->isBlended          = false;
-        this->defaultParams.Clear();
+
 
         if (xml == nullptr || *xml == '\0')
         {
@@ -103,125 +103,6 @@ namespace GTEngine
             auto childNode = materialNode->first_node();
             while (childNode != nullptr)
             {
-                // <diffuse>
-                if (GTCore::Strings::Equal(childNode->name(), "diffuse"))
-                {
-                    auto idAttr = childNode->first_attribute("id");
-                    if (idAttr != nullptr)
-                    {
-                        this->diffuseShaderID = idAttr->value();
-                    }
-                    else
-                    {
-                        GenerateAnonymousShaderID(this->diffuseShaderID);
-                    }
-
-                    if (childNode->value_size() > 0)
-                    {
-                        ShaderLibrary::AddShaderString(this->diffuseShaderID.c_str(), childNode->value());
-                    }
-                }
-                
-                // <emissive>
-                if (GTCore::Strings::Equal(childNode->name(), "emissive"))
-                {
-                    auto idAttr = childNode->first_attribute("id");
-                    if (idAttr != nullptr)
-                    {
-                        this->emissiveShaderID = idAttr->value();
-                    }
-                    else
-                    {
-                        GenerateAnonymousShaderID(this->emissiveShaderID);
-                    }
-
-                    if (childNode->value_size() > 0)
-                    {
-                        ShaderLibrary::AddShaderString(this->emissiveShaderID.c_str(), childNode->value());
-                    }
-                }
-
-                // <shininess>
-                if (GTCore::Strings::Equal(childNode->name(), "shininess"))
-                {
-                    auto idAttr = childNode->first_attribute("id");
-                    if (idAttr != nullptr)
-                    {
-                        this->shininessShaderID = idAttr->value();
-                    }
-                    else
-                    {
-                        GenerateAnonymousShaderID(this->shininessShaderID);
-                    }
-
-                    if (childNode->value_size() > 0)
-                    {
-                        ShaderLibrary::AddShaderString(this->shininessShaderID.c_str(), childNode->value());
-                    }
-                }
-
-                // <normal>
-                if (GTCore::Strings::Equal(childNode->name(), "normal"))
-                {
-                    auto idAttr = childNode->first_attribute("id");
-                    if (idAttr != nullptr)
-                    {
-                        this->normalShaderID = idAttr->value();
-                    }
-                    else
-                    {
-                        GenerateAnonymousShaderID(this->normalShaderID);
-                    }
-
-                    if (childNode->value_size() > 0)
-                    {
-                        ShaderLibrary::AddShaderString(this->normalShaderID.c_str(), childNode->value());
-                    }
-
-                    this->hasNormalChannel = true;
-                }
-
-                // <refraction>
-                if (GTCore::Strings::Equal(childNode->name(), "refraction"))
-                {
-                    auto idAttr = childNode->first_attribute("id");
-                    if (idAttr != nullptr)
-                    {
-                        this->refractionShaderID = idAttr->value();
-                    }
-                    else
-                    {
-                        GenerateAnonymousShaderID(this->refractionShaderID);
-                    }
-
-                    if (childNode->value_size() > 0)
-                    {
-                        ShaderLibrary::AddShaderString(this->refractionShaderID.c_str(), childNode->value());
-                    }
-
-                    this->isRefractive = true;
-                }
-
-                // <specular>
-                if (GTCore::Strings::Equal(childNode->name(), "specular"))
-                {
-                    auto idAttr = childNode->first_attribute("id");
-                    if (idAttr != nullptr)
-                    {
-                        this->specularShaderID = idAttr->value();
-                    }
-                    else
-                    {
-                        GenerateAnonymousShaderID(this->specularShaderID);
-                    }
-
-                    if (childNode->value_size() > 0)
-                    {
-                        ShaderLibrary::AddShaderString(this->specularShaderID.c_str(), childNode->value());
-                    }
-                }
-
-
                 // <channel>
                 if (GTCore::Strings::Equal(childNode->name(), "channel"))
                 {
@@ -380,13 +261,6 @@ namespace GTEngine
                 childNode = childNode->next_sibling();
             }
 
-            this->channelShaderIDs.Add("diffuse", this->diffuseShaderID);
-            this->channelShaderIDs.Add("emissive", this->emissiveShaderID);
-            this->channelShaderIDs.Add("shininess", this->shininessShaderID);
-            this->channelShaderIDs.Add("normal", this->normalShaderID);
-            this->channelShaderIDs.Add("refraction", this->refractionShaderID);
-            this->channelShaderIDs.Add("specular", this->specularShaderID);
-
             return true;
         }
 
@@ -506,13 +380,14 @@ namespace GTEngine
 
         
 
-
+#if 0
         this->diffuseShaderID    = "";
         this->emissiveShaderID   = "";
         this->shininessShaderID  = "";
         this->normalShaderID     = "";
         this->refractionShaderID = "";
         this->specularShaderID   = "";
+#endif
 
         this->hasNormalChannel   = false;
         this->isRefractive       = false;

@@ -1,5 +1,5 @@
 <material>
-    <emissive>
+    <channel name="emissive">
         uniform sampler2D SpriteTexture;
         uniform vec3      SpriteColour;
     
@@ -7,10 +7,7 @@
         {
             return texture2D(SpriteTexture, VertexOutput_TexCoord.xy).rgb * SpriteColour;
         }
-    </emissive>
-    
-    <diffuse   id='Material_NoDiffuse' />
-    <shininess id='Material_NoShininess' />
+    </channel>
     
     <defaultproperties>
         <texture2D name='SpriteTexture'>engine/textures/default.png</texture2D>

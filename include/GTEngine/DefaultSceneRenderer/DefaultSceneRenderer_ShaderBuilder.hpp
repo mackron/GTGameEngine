@@ -183,6 +183,39 @@ namespace GTEngine
 
 
 
+        /// Retrieves the shader string of the given material's diffuse channel.
+        ///
+        /// @param material [in] A reference to the material whose shader string is being retrieved.
+        const char* GetMaterialShaderString_Diffuse(const MaterialDefinition &material) const;
+
+        /// Retrieves the shader string of the given material's emissive channel.
+        ///
+        /// @param material [in] A reference to the material whose shader string is being retrieved.
+        const char* GetMaterialShaderString_Emissive(const MaterialDefinition &material) const;
+
+        /// Retrieves the shader string of the given material's shininess channel.
+        ///
+        /// @param material [in] A reference to the material whose shader string is being retrieved.
+        const char* GetMaterialShaderString_Shininess(const MaterialDefinition &material) const;
+
+        /// Retrieves the shader string of the given material's specular channel.
+        ///
+        /// @param material [in] A reference to the material whose shader string is being retrieved.
+        const char* GetMaterialShaderString_Specular(const MaterialDefinition &material) const;
+
+        /// Retrieves the shader string of the given material's normal channel.
+        ///
+        /// @param material [in] A reference to the material whose shader string is being retrieved.
+        const char* GetMaterialShaderString_Normal(const MaterialDefinition &material) const;
+
+        /// Retrieves the shader string of the given material's refraction channel.
+        ///
+        /// @param material [in] A reference to the material whose shader string is being retrieved.
+        const char* GetMaterialShaderString_Refraction(const MaterialDefinition &material) const;
+
+        
+
+
     private:
 
         /// Structure representing the key for cached shaders.

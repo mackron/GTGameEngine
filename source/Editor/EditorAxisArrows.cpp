@@ -13,12 +13,10 @@ namespace GTEngine
         this->materialDefinition.LoadFromXML
         (
             "<material>"
-                "<diffuse   id='Material_NoDiffuse' />"
-                "<shininess id='Material_NoShininess' />"
-                "<emissive  id='Material_SimpleEmissive' />"
+                "<channel name='emissive' shaderid='Material_SimpleEmissive' />"
             
                 "<defaultproperties>"
-                    "<float3 name='EmissiveColour' >1.0 1.0 1.0</float3>"
+                    "<float3 name='EmissiveColour'>1.0 1.0 1.0</float3>"
                 "</defaultproperties>:"
             "</material>"
         );
