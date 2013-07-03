@@ -147,6 +147,15 @@ namespace GTEngine
             int StopAnimation(GTCore::Script &script);
 
 
+            /// Retrieves the index of the bone of the given name.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the bone whose index is being retrieved.
+            ///
+            ///     If the bone does not exist, nil will be returned.
+            int GetBoneIndexByName(GTCore::Script &script);
+
             /// Retrieves the transformation of the bone of the given name.
             ///
             /// @remarks
@@ -166,15 +175,26 @@ namespace GTEngine
             ///
             ///     The returned values are the absolute transformation.
             int GetBoneTransformByIndex(GTCore::Script &script);
-
-            /// Retrieves the index of the bone of the given name.
+            
+            /// Sets the absolute transformation of the bone of the given name.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The name of the bone whose index is being retrieved.
+            ///     Argument 2: The name of the bone.
+            ///     Argument 3: The new absolute position of the bone.
+            ///     Argument 4: The new absolute orientation of the bone.
+            ///     Argument 5: The new absolute scale of the bone (can be nil).
+            int SetBoneTransformByName(GTCore::Script &script);
+
+            /// Sets the absolute transformation of the bone of the given index.
             ///
-            ///     If the bone does not exist, nil will be returned.
-            int GetBoneIndexByName(GTCore::Script &script);
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the bone.
+            ///     Argument 3: The new absolute position of the bone.
+            ///     Argument 4: The new absolute orientation of the bone.
+            ///     Argument 5: The new absolute scale of the bone (can be nil).
+            int SetBoneTransformByIndex(GTCore::Script &script);
         }
 
         namespace PointLightComponentFFI

@@ -135,6 +135,18 @@ namespace GTEngine
         glm::mat4 GetAbsoluteTransform(glm::vec3 &absolutePositionOut, glm::quat &absoluteRotationOut, glm::vec3 &absoluteScaleOut) const;
 
 
+        /// Sets the absolute transformation of the bone based on the given components.
+        ///
+        /// @param absolutePosition [in] The new absolute position of the bone.
+        /// @param absoluteRotation [in] The new absolute rotation of the bone.
+        /// @param absoluteScale    [in] The new absolute scale of the bone.
+        ///
+        /// @remarks
+        ///     The relative position of child bones will not be modified. Because of this the absolute position of the children will change after calling this method.
+        void SetAbsoluteTransform(const glm::vec3 &absolutePosition, const glm::quat &absoluteRotation, const glm::vec3 &absoluteScale);
+        void SetAbsoluteTransform(const glm::vec3 &absolutePosition, const glm::quat &absoluteRotation);
+
+
         /// Updates the skinning transformation matrix.
         ///
         /// @param
