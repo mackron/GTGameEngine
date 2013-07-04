@@ -8,6 +8,9 @@
 <script url="model-editor-animationsequencespanel.lua" />
 <script url="model-editor-cdpanel.lua"                 />
 
+<script url="model-editor-meshes-panel.lua"            />
+<style  url="model-editor-meshes-panel.style"          />
+
 <script url="model-editor-bones-panel.lua"             />
 <style  url="model-editor-bones-panel.style"           />
 

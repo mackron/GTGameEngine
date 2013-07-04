@@ -1,0 +1,10 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+model-editor-meshes-panel-treeview includes treeview
+{
+    height:               150px
+    min-height:           20px
+
+    allow-mouse-resize:   true
+    bottom-gripper-width: 4px
+}
