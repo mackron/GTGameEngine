@@ -32,6 +32,7 @@ namespace GTEngine
                     {
                         script.SetTableFunction(-1, "GetMeshNames",                    ModelEditorFFI::GetMeshNames);
                         script.SetTableFunction(-1, "GetMaterials",                    ModelEditorFFI::GetMaterials);
+                        script.SetTableFunction(-1, "GetMaterialRelativePath",         ModelEditorFFI::GetMaterialRelativePath);
                         script.SetTableFunction(-1, "SetMaterial",                     ModelEditorFFI::SetMaterial);
                         script.SetTableFunction(-1, "GetBoneCount",                    ModelEditorFFI::GetBoneCount);
                         script.SetTableFunction(-1, "GetBones",                        ModelEditorFFI::GetBones);
@@ -267,6 +268,24 @@ namespace GTEngine
                     {
                         script.SetTableValue(-1, static_cast<int>(i + 1), materials[i].c_str());
                     }
+                }
+
+                return 1;
+            }
+
+            int GetMaterialRelativePath(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];     // Minus 1 because Lua is 1-based.
+                    {
+                        script.Push(mesh.material->GetDefinition().relativePath.c_str());
+                    }
+                }
+                else
+                {
+                    script.PushNil();
                 }
 
                 return 1;

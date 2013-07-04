@@ -2,9 +2,37 @@
 
 model-editor-meshes-panel-treeview includes treeview
 {
-    height:               150px
+    height:               60px
     min-height:           20px
 
     allow-mouse-resize:   true
     bottom-gripper-width: 4px
+}
+
+model-editor-meshes-panel-properties
+{
+    height:  auto
+    
+}
+
+model-editor-meshes-panel-properties-noselection
+{
+    padding:          8px
+
+    font-style:       bold
+    font-size:        10pt
+    text-color:       #777
+    
+    horizontal-align: center
+}
+
+model-editor-meshes-panel-properties-container
+{
+    text-color:  #999
+    padding:     4px 4px
+    
+    border:      1px #666
+    border-top:  none
+    
+    visible:     false           // Nothing selected by default, so needs to be hidden.
 }
