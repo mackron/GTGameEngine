@@ -30,6 +30,7 @@ namespace GTEngine
                     script.Push("ModelEditor");
                     script.PushNewTable();
                     {
+                        script.SetTableFunction(-1, "GetMeshNames",                    ModelEditorFFI::GetMeshNames);
                         script.SetTableFunction(-1, "GetMaterials",                    ModelEditorFFI::GetMaterials);
                         script.SetTableFunction(-1, "SetMaterial",                     ModelEditorFFI::SetMaterial);
                         script.SetTableFunction(-1, "GetBoneCount",                    ModelEditorFFI::GetBoneCount);
@@ -233,6 +234,25 @@ namespace GTEngine
 
         namespace ModelEditorFFI
         {
+            int GetMeshNames(GTCore::Script &script)
+            {
+                script.PushNewTable();
+
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    auto &definition = modelEditor->GetModelDefinition();
+
+                    for (size_t i = 0; i < definition.meshes.count; ++i)
+                    {
+                        script.SetTableValue(-1, static_cast<int>(i + 1), definition.meshes[i].name.c_str());
+                    }
+                }
+
+                return 1;
+            }
+
+
             int GetMaterials(GTCore::Script &script)
             {
                 script.PushNewTable();

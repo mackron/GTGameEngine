@@ -47,6 +47,13 @@ namespace GTEngine
 
         namespace ModelEditorFFI
         {
+            /// Retrieves the names of every mesh making up the model of the given model editor.
+            ///
+            /// @remark
+            ///     Argument 1: A pointer to the model editor.
+            int GetMeshNames(GTCore::Script &script);
+
+
             /// Retrieves the relative names of all of the materials in the model of the given model editor.
             ///
             /// @remarks
