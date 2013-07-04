@@ -3,6 +3,7 @@
 model-editor-bones-panel-treeview includes treeview
 {
     height:               150px
+    min-height:           20px
 
     allow-mouse-resize:   true
     bottom-gripper-width: 4px
