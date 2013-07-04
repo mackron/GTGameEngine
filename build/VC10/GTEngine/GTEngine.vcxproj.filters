@@ -395,9 +395,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationSegment.hpp">
       <Filter>include\Animation</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKeyFrameQueue.hpp">
-      <Filter>include\Animation</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Components\OccluderComponent.hpp">
       <Filter>include\Components</Filter>
     </ClInclude>
@@ -965,6 +962,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultPrefabLinker.hpp">
       <Filter>include</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationTrack.hpp">
+      <Filter>include\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1160,9 +1160,6 @@
       <Filter>source\Animation</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Animation\Animation.cpp">
-      <Filter>source\Animation</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Animation\AnimationKeyFrameQueue.cpp">
       <Filter>source\Animation</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Components\OccluderComponent.cpp">
@@ -1650,6 +1647,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\DefaultPrefabLinker.cpp">
       <Filter>source</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Animation\AnimationTrack.cpp">
+      <Filter>source\Animation</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
