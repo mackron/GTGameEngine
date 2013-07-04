@@ -5,13 +5,11 @@ function GTGUI.Element:ModelEditorPanel(_internalPtr)
     self.Scrollbar = GTGUI.Server.CreateElement(self, "vertical-scrollbar");
     
     self.MeshesPanel            = GTGUI.Server.CreateElement(self.Body, "panel-groupbox");
-    self.MaterialsPanel         = GTGUI.Server.CreateElement(self.Body, "panel-groupbox");
     self.BonesPanel             = GTGUI.Server.CreateElement(self.Body, "panel-groupbox");
     self.AnimationSegmentsPanel = GTGUI.Server.CreateElement(self.Body, "panel-groupbox");
     self.CDPanel                = GTGUI.Server.CreateElement(self.Body, "panel-groupbox");
     
     self.MeshesPanel:ModelEditor_MeshesPanel(_internalPtr);
-    self.MaterialsPanel:ModelEditor_MaterialsPanel(_internalPtr);
     self.BonesPanel:ModelEditor_BonesPanel(_internalPtr);
     self.AnimationSegmentsPanel:ModelEditor_AnimationSegmentsPanel(_internalPtr);
     self.CDPanel:ModelEditor_CDPanel(_internalPtr);
@@ -35,7 +33,6 @@ function GTGUI.Element:ModelEditorPanel(_internalPtr)
     
     function self:Refresh()
         self.MeshesPanel:Refresh();
-        self.MaterialsPanel:Refresh();
         self.BonesPanel:Refresh();
         self.AnimationSegmentsPanel:Refresh();
         self.CDPanel:Refresh();

@@ -60,6 +60,13 @@ namespace GTEngine
             ///     Argument 1: A pointer to the model editor.
             int GetMaterials(GTCore::Script &script);
 
+            /// Retrieves the relative path of the material at the given index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            ///     Argument 2: The index of the mesh whose material is being retrieved.
+            int GetMaterialRelativePath(GTCore::Script &script);
+
             /// Sets a material on the model loaded in the given model editor.
             ///
             /// @remarks

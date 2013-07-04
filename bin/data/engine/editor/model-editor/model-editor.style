@@ -27,19 +27,8 @@ model-editor-viewport
     border: 1px #222
 }
 
-model-editor-panel
+model-editor-panel includes editor-panel
 {
-    width:              250px
-    height:             100%
-    min-width:          32px
-    
-    border:             1px #222
-    
-    child-plane:        horizontal
-    flex-child-width:   true
-    
-    allow-mouse-resize: true
-    left-gripper-width: 4px
 }
 
 model-editor-panel-body

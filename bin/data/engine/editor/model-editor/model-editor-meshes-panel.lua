@@ -2,6 +2,8 @@
 
 function GTGUI.Element:ModelEditor_MeshesPanelTreeView()
     self:TreeView();
+    self:DisableMultiSelect();
+    
     self.vertScrollbar:SetStyle("border-right",  "none");
     self.vertScrollbar:SetStyle("border-top",    "none");
     self.vertScrollbar:SetStyle("border-bottom", "none");
@@ -21,58 +23,88 @@ function GTGUI.Element:ModelEditor_MeshesPanel(_internalPtr)
     self.TreeView = GTGUI.Server.CreateElement(self.Body, "model-editor-meshes-panel-treeview");
     self.TreeView:ModelEditor_MeshesPanelTreeView();
     
-    --[[
-    self.MaterialTextBoxes = {};    -- An array of elements.
+    self.MeshProperties = GTGUI.Server.CreateElement(self.Body, "model-editor-meshes-panel-properties");
+    self.MeshProperties.NoSelectionLabel = GTGUI.Server.CreateElement(self.MeshProperties, "model-editor-meshes-panel-properties-noselection");
+    self.MeshProperties.NoSelectionLabel:SetText("No Mesh Selected");
     
-    function self:AddMaterial(path)
-        local new = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='textbox' style='width:100%; margin:0px 2px;'>" .. path .. "</div>");
-        new:SetTooltip(path);
-        new.index = #self.MaterialTextBoxes + 1;
-        
-        new:OnKeyPressed(function(data)
-            if data.key == GTGUI.Keys.Enter then
-                new:ApplyMaterial();
-            end
-        end)
-        
-        new:OnDrop(function(data)
-            if data.droppedElement.isAsset then
-                new:SetText(data.droppedElement.path);
-                new:ApplyMaterial();
-            end
-        end)
-        
-        
-        function new:ApplyMaterial()
-            if GTEngine.System.ModelEditor.SetMaterial(_internalPtr, self.index, self:GetText()) then
-                self:SetStyle("border-color", "#6a6a6a");
-            else
-                self:SetStyle("border-color", "#cc6a6a");
-            end
-            
-            Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(_internalPtr));
-        end
-        
-        
-        self.MaterialTextBoxes[new.index] = new;
-    end
-    --]]
+    self.MeshProperties.Container        = GTGUI.Server.CreateElement(self.MeshProperties, "model-editor-meshes-panel-properties-container");
+    self.MeshProperties.MaterialTextBox  = GTGUI.Server.CreateElement(self.MeshProperties.Container, "labelled-textbox");
+    self.MeshProperties.MaterialTextBox:LabelledTextBox("Material");
 
     
-    function self:AddMesh(meshName)
-        self.TreeView:AddItem(meshName);
+    
+    function self:UpdateProperties(meshTreeViewItem)
+        self.MeshProperties.MeshIndex = meshTreeViewItem.MeshIndex;
+    
+        self.MeshProperties.MaterialTextBox.TextBox:UnbindEvent("OnDrop");
+        self.MeshProperties.MaterialTextBox.TextBox:OnDrop(function(data)
+            if data.droppedElement.isAsset then
+                self:ApplyMaterial(self.MeshProperties.MeshIndex, data.droppedElement.path);
+            end
+        end)
+        
+        self.MeshProperties.MaterialTextBox:OnKeyPressed(function(data)
+            if data.key == GTGUI.Keys.Enter then
+                self:ApplyMaterial(self.MeshProperties.MeshIndex, self.MeshProperties.MaterialTextBox:GetText());
+            end
+        end)
+        
+        
+        local materialRelativePath = GTEngine.System.ModelEditor.GetMaterialRelativePath(_internalPtr, self.MeshProperties.MeshIndex);
+        
+        self.MeshProperties.MaterialTextBox:SetText(materialRelativePath);
+        self.MeshProperties.MaterialTextBox.TextBox:SetTooltip(materialRelativePath);
+    end
+    
+    function self:ShowProperties(meshTreeViewItem)
+        self:UpdateProperties(meshTreeViewItem);
+            
+        self.MeshProperties.NoSelectionLabel:Hide();
+        self.MeshProperties.Container:Show();
+    end
+    
+    function self:HideProperties()
+        self.MeshProperties.MeshIndex = nil;
+        
+        self.MeshProperties.Container:Hide();
+        self.MeshProperties.NoSelectionLabel:Show();
+    end
+    
+    
+    function self:AddMesh(meshName, meshIndex)
+        local newItem = self.TreeView:AddItem(meshName);
+        if newItem then
+            newItem.MeshIndex = meshIndex;
+        
+            newItem:OnSelected(function()
+                self:ShowProperties(newItem);
+            end)
+            
+            newItem:OnDeselected(function()
+                self:HideProperties();
+            end)
+        end
+        
+        return newItem;
     end
     
     function self:RemoveAllMeshes()
         self.TreeView:RemoveAllItems();
     end
     
-    --[[
-    function self:GetMaterial(index)
-        assert(index <= #self.MaterialTextBoxes, "MaterialPanel:GetMaterial() - index out or range (index = " .. tostring(index) .. ", table size = " .. tostring(#self.MaterialTextBoxes));
-        return self.MaterialTextBoxes[index]:GetText();
+    
+    function self:ApplyMaterial(meshIndex, materialRelativePath)
+        self.MeshProperties.MaterialTextBox:SetText(materialRelativePath);
+    
+        if GTEngine.System.ModelEditor.SetMaterial(_internalPtr, meshIndex, materialRelativePath) then
+            self.MeshProperties.MaterialTextBox.TextBox:SetStyle("border-color", "#6a6a6a");
+        else
+            self.MeshProperties.MaterialTextBox.TextBox:SetStyle("border-color", "#cc6a6a");
+        end
+        
+        Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(_internalPtr));
     end
-    ]]
+    
     
     function self:Refresh()
         self:RemoveAllMeshes();
@@ -80,8 +112,7 @@ function GTGUI.Element:ModelEditor_MeshesPanel(_internalPtr)
         -- We need to add all of the meshes.
         local meshes = GTEngine.System.ModelEditor.GetMeshNames(_internalPtr);
         for i,meshName in ipairs(meshes) do
-            print("TESTING " .. meshName);
-            self:AddMesh(meshName);
+            self:AddMesh(meshName, i);
         end
     end
     
