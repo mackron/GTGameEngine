@@ -6,7 +6,7 @@
 #include "AnimationChannel.hpp"
 #include "AnimationSegment.hpp"
 #include "AnimationSequence.hpp"
-#include "AnimationKeyFrameQueue.hpp"
+#include "AnimationTrack.hpp"
 #include "../Serialization.hpp"
 #include <GTCore/Vector.hpp>
 
@@ -219,8 +219,8 @@ namespace GTEngine
         GTCore::Vector<AnimationSegment> segments;
 
 
-        /// The key frame queue for the currently running animation. This is modified as the animation changes playing states.
-        AnimationKeyFrameQueue keyFrameQueue;
+        /// The animation track of the currently running animation.
+        AnimationTrack currentAnimationTrack;
 
 
         /// Keeps track of whether or not the animation is playing.
@@ -229,15 +229,11 @@ namespace GTEngine
         /// Keeps track of whether or not the animation is paused. If this is true, 'isPlaying' will also be true.
         bool isPaused;
 
-        /// Keeps track of whether or not the animation has looped.
-        bool hasLooped;
-
         /// The current playback time in the currently running animation.
         double playbackTime;
 
-
-        /// The index in keyFrameQueue to loop back to when looping.
-        size_t loopStartQueueIndex;
+        /// The index of the local key frame in the current animation track to loop back to when looping.
+        size_t loopStartIndex;
     };
 }
 

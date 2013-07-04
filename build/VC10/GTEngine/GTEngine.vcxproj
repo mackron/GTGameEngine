@@ -166,9 +166,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationChannel.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKey.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKeyFrame.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKeyFrameQueue.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationSegment.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationSequence.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationTrack.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\AssetTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp" />
@@ -433,8 +433,8 @@
     <ClCompile Include="..\..\..\source\Animation\AnimationChannel.cpp" />
     <ClCompile Include="..\..\..\source\Animation\AnimationKey.cpp" />
     <ClCompile Include="..\..\..\source\Animation\AnimationKeyFrame.cpp" />
-    <ClCompile Include="..\..\..\source\Animation\AnimationKeyFrameQueue.cpp" />
     <ClCompile Include="..\..\..\source\Animation\AnimationSequence.cpp" />
+    <ClCompile Include="..\..\..\source\Animation\AnimationTrack.cpp" />
     <ClCompile Include="..\..\..\source\ApplicationConfig.cpp" />
     <ClCompile Include="..\..\..\source\Audio\AudioComposer.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Sound.cpp" />

@@ -6,9 +6,10 @@ namespace GTEngine
 {
     Animation::Animation()
         : keyFrames(), channels(),
-          segments(), keyFrameQueue(),
-          isPlaying(false), isPaused(false), hasLooped(false), playbackTime(0.0),
-          loopStartQueueIndex(static_cast<size_t>(-1))
+          segments(),
+          currentAnimationTrack(),
+          isPlaying(false), isPaused(false), playbackTime(0.0),
+          loopStartIndex(static_cast<size_t>(-1))
     {
     }
 
@@ -144,131 +145,75 @@ namespace GTEngine
 
     void Animation::Play(const AnimationSequence &sequence, double transitionTimeIn)
     {
-        // First we need to make sure our queue is reset.
-        this->keyFrameQueue.RemoveAll();
+        // The animation track needs to be reset.
+        this->currentAnimationTrack.Clear();
 
         /// The loop index needs to reset.
-        this->loopStartQueueIndex = static_cast<size_t>(-1);
+        this->loopStartIndex = static_cast<size_t>(-1);
 
-        /// Need to let the animation know that we haven't yet looped anything.
-        this->hasLooped = false;
 
         // If we don't have any key frames, we won't bother doing anything.
         if (this->keyFrames.count > 0)
         {
-            // We loop through each frame in the sequence an then add them to the queue.
+            // We need to loop over each fraame in the input animation segments and add them to the track.
             for (size_t iSequenceFrame = 0U; iSequenceFrame < sequence.GetFrameCount(); ++iSequenceFrame)
             {
                 auto &sequenceFrame = sequence.GetFrame(iSequenceFrame);
+
+                size_t keyFrameStart = sequenceFrame.startKeyFrame;
+                size_t keyFrameEnd   = sequenceFrame.endKeyFrame;
+                if (sequenceFrame.segmentName.GetLength() > 0)
                 {
-                    size_t keyFrameStart = sequenceFrame.startKeyFrame;
-                    size_t keyFrameEnd   = sequenceFrame.endKeyFrame;
-                    if (sequenceFrame.segmentName.GetLength() > 0)
+                    auto segment = this->GetNamedSegment(sequenceFrame.segmentName.c_str());
+                    if (segment != nullptr)
                     {
-                        // We're looking at a named segment.
-                        auto segment = this->GetNamedSegment(sequenceFrame.segmentName.c_str());
-                        if (segment != nullptr)
-                        {
-                            keyFrameStart = segment->startKeyFrame;
-                            keyFrameEnd   = segment->endKeyFrame;
-                        }
+                        keyFrameStart = segment->startKeyFrame;
+                        keyFrameEnd   = segment->endKeyFrame;
                     }
+                }
 
-                    // We will clamp the start and end frames against the timeline so we don't crash.
-                    keyFrameStart = GTCore::Clamp(keyFrameStart, static_cast<size_t>(0U), this->keyFrames.count - 1);
-                    keyFrameEnd   = GTCore::Clamp(keyFrameEnd,   static_cast<size_t>(0U), this->keyFrames.count - 1);
+                // We will clamp the start and end frames against the timeline so we don't crash.
+                keyFrameStart = GTCore::Clamp(keyFrameStart, static_cast<size_t>(0U), this->keyFrames.count - 1);
+                keyFrameEnd   = GTCore::Clamp(keyFrameEnd,   static_cast<size_t>(0U), this->keyFrames.count - 1);
 
 
-                    // Here we check if this frame is looping. If so, we need to set the index of the item in the key frame queue. The value will be the
-                    // current count.
-                    if (sequenceFrame.loop)
+                // Here we check if this frame is looping. If so, we need to set the index of the item in the key frame queue. The value will be the
+                // current count.
+                if (sequenceFrame.loop)
+                {
+                    this->loopStartIndex = this->currentAnimationTrack.GetKeyFrameCount();
+                }
+
+
+                // Now we need to loop over and add the key frames to the queue.
+                for (size_t jKeyFrame = keyFrameStart; jKeyFrame <= keyFrameEnd; ++jKeyFrame)
+                {
+                    double transitionTime = 0.0;
+
+                    if (jKeyFrame == keyFrameStart)         // <-- The first key frame in the current segment?
                     {
-                        this->loopStartQueueIndex = this->keyFrameQueue.GetCount();
-                    }
-
-
-                    // Now we need to loop over and add the key frames to the queue.
-                    //
-                    // If we are looping, we need to add an extra key frame at both the beginning and the end of that segment.
-                    for (size_t jKeyFrame = keyFrameStart; jKeyFrame <= keyFrameEnd; ++jKeyFrame)
-                    {
-                        double transitionTime = 0.0;
-
-                        if (jKeyFrame == keyFrameStart)
+                        if (iSequenceFrame == 0)            // <-- The first segment in the animation sequence?
                         {
-                            if (iSequenceFrame > 0)
-                            {
-                                transitionTime = sequenceFrame.transitionTime;
-                            }
-                            else
-                            {
-                                transitionTime = transitionTimeIn;
-                            }
-
-                            // Extra frame for looping at the beginning. Instant transition.
-                            /*if (sequenceFrame.loop)
-                            {
-                                this->keyFrameQueue.Append(keyFrameStart, 0.0);
-                            }*/
+                            transitionTime = transitionTimeIn;
                         }
                         else
-                        {
-                            transitionTime = this->keyFrames.buffer[jKeyFrame]->value.GetTime() - this->keyFrames.buffer[jKeyFrame - 1]->value.GetTime();
-                        }
-
-                        
-                        this->keyFrameQueue.Append(jKeyFrame, transitionTime);
-                    }
-
-                    /*
-                    if (sequenceFrame.loop)
-                    {
-                        if (this->keyFrameQueue.GetCount() >= 2)
-                        {
-                            auto &lastKeyFrame       = this->keyFrames.buffer[keyFrameEnd    ]->value;
-                            auto &secondLastKeyFrame = this->keyFrames.buffer[keyFrameEnd - 1]->value;
-
-                            this->keyFrameQueue.Append(keyFrameStart, lastKeyFrame.GetTime() - secondLastKeyFrame.GetTime());
-                        }
-                    }
-                    */
-
-
-                    /*
-                    // We calculate transition times for frames by looking at the times of each and getting the difference. This variable keeps track of
-                    // the previous frame's time.
-                    double prevFrameTime = 0.0f;
-                    if (keyFrameStart > 0)
-                    {
-                        prevFrameTime = this->keyFrames.buffer[keyFrameStart - 1]->value.GetTime();
-                    }
-
-                    // Now we can loop through each remaining key frame.
-                    for (size_t j = keyFrameStart; j <= keyFrameEnd; ++j)
-                    {
-                        double transitionTime = 0.0f;
-                        if (iSequenceFrame > 0 && j == keyFrameStart)
                         {
                             transitionTime = sequenceFrame.transitionTime;
                         }
-                        else
-                        {
-                            auto jTime = this->keyFrames.buffer[j]->value.GetTime();
-                            
-                            transitionTime = jTime - prevFrameTime;
-                            prevFrameTime  = jTime;
-                        }
-
-                        this->keyFrameQueue.Append(j, transitionTime);
                     }
-                    */
-                }
+                    else
+                    {
+                        transitionTime = this->keyFrames.buffer[jKeyFrame]->value.GetTime() - this->keyFrames.buffer[jKeyFrame - 1]->value.GetTime();
+                    }
 
-                this->playbackTime = this->keyFrameQueue.GetKeyFramePlaybackTime(0);
+                        
+                    this->currentAnimationTrack.AppendKeyFrame(jKeyFrame, static_cast<float>(transitionTime));
+                }
             }
 
-            this->isPlaying = true;
-            this->isPaused  = false;
+            this->playbackTime = 0.0;
+            this->isPlaying    = true;
+            this->isPaused     = false;
         }
     }
 
@@ -303,40 +248,22 @@ namespace GTEngine
     void Animation::SetPlaybackTime(double time)
     {
         this->playbackTime = time;
-
-        // We need to check if we've passed the looping point. If so, we need to modify the transition time of the first key frame in the looping segment.
-        if (time > this->keyFrameQueue.GetTotalDuration())
-        {
-            if (this->loopStartQueueIndex != static_cast<size_t>(-1) && !this->hasLooped && this->keyFrameQueue.GetCount() > 1)
-            {
-                //this->keyFrameQueue.SetKeyFrameTransitionTime(this->loopStartQueueIndex, this->keyFrameQueue.GetKeyFrameTransitionTime(this->loopStartQueueIndex + 1));
-                //this->keyFrameQueue.SetKeyFrameTransitionTime(this->loopStartQueueIndex, 0.0);
-                this->hasLooped = true;
-                //this->loopStartQueueIndex += 1;
-            }
-        }
     }
 
 
     float Animation::GetKeyFramesAtTime(double time, size_t &startKeyFrame, size_t &endKeyFrame)
     {
-        double totalDuration = this->keyFrameQueue.GetTotalDuration();
+        double totalDuration = this->currentAnimationTrack.GetTotalDuration();
         if (time > totalDuration)
         {
             // If we're looping, we just mod the value. Otherwise we will clamp to the end.
-            if (this->loopStartQueueIndex != static_cast<size_t>(-1))
+            if (this->loopStartIndex != static_cast<size_t>(-1))
             {
-                double loopStartTime = this->keyFrameQueue.GetKeyFramePlaybackTime(this->loopStartQueueIndex);
+                double loopStartTime = this->currentAnimationTrack.GetKeyFramePlaybackTime(this->loopStartIndex);
                 double loopDuration  = totalDuration - loopStartTime;
 
                 double devnull;
-                time = loopStartTime + std::modf(this->playbackTime / loopDuration, &devnull) * loopDuration;
-
-                if (!this->hasLooped)
-                {
-                    this->keyFrameQueue.SetKeyFrameTransitionTime(this->loopStartQueueIndex, 0.0);
-                    this->hasLooped = true;
-                }
+                time = loopStartTime + std::modf((this->playbackTime - loopStartTime) / loopDuration, &devnull) * loopDuration;
             }
             else
             {
@@ -345,7 +272,7 @@ namespace GTEngine
             }
         }
 
-        return this->keyFrameQueue.GetKeyFramesAtTime(time, this->loopStartQueueIndex, startKeyFrame, endKeyFrame);
+        return this->currentAnimationTrack.GetKeyFramesAtTime(static_cast<float>(time), this->loopStartIndex, startKeyFrame, endKeyFrame);
     }
 
     float Animation::GetKeyFramesAtCurrentPlayback(size_t &startKeyFrame, size_t &endKeyFrame)
@@ -387,12 +314,12 @@ namespace GTEngine
     {
         GTCore::BasicSerializer playbackSerializer;
 
-        this->keyFrameQueue.Serialize(playbackSerializer);
+        this->currentAnimationTrack.Serialize(playbackSerializer);
 
         playbackSerializer.Write(this->isPlaying);
         playbackSerializer.Write(this->isPaused);
         playbackSerializer.Write(this->playbackTime);
-        playbackSerializer.Write(static_cast<uint32_t>(this->loopStartQueueIndex));
+        playbackSerializer.Write(static_cast<uint32_t>(this->loopStartIndex));
 
 
         // The current playback state chunk.
@@ -426,7 +353,7 @@ namespace GTEngine
             {
             case Serialization::ChunkID_Animation_PlaybackState:
                 {
-                    this->keyFrameQueue.Deserialize(deserializer);
+                    this->currentAnimationTrack.Deserialize(deserializer);
 
                     deserializer.Read(this->isPlaying);
                     deserializer.Read(this->isPaused);
@@ -435,7 +362,7 @@ namespace GTEngine
                     uint32_t newLoopStartQueueIndex;
                     deserializer.Read(newLoopStartQueueIndex);
 
-                    this->loopStartQueueIndex = static_cast<size_t>(newLoopStartQueueIndex);
+                    this->loopStartIndex = static_cast<size_t>(newLoopStartQueueIndex);
 
                     break;
                 }
