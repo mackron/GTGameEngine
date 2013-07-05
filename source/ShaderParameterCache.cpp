@@ -247,6 +247,75 @@ namespace GTEngine
     }
 
 
+    void ShaderParameterCache::SetParameters(const ShaderParameterCache &other)
+    {
+        auto &otherFloatParameters       = other.GetFloatParameters();
+        auto &otherFloat2Parameters      = other.GetFloat2Parameters();
+        auto &otherFloat3Parameters      = other.GetFloat3Parameters();
+        auto &otherFloat4Parameters      = other.GetFloat4Parameters();
+        auto &otherFloat2x2Parameters    = other.GetFloat2x2Parameters();
+        auto &otherFloat3x3Parameters    = other.GetFloat3x3Parameters();
+        auto &otherFloat4x4Parameters    = other.GetFloat4x4Parameters();
+        auto &otherTexture2DParameters   = other.GetTexture2DParameters();
+        auto &otherTextureCubeParameters = other.GetTextureCubeParameters();
+
+
+        // Float
+        for (size_t i = 0; i < otherFloatParameters.count; ++i)
+        {
+            this->Set(otherFloatParameters.buffer[i]->key, otherFloatParameters.buffer[i]->value.value);
+        }
+
+        // Float2
+        for (size_t i = 0; i < otherFloat2Parameters.count; ++i)
+        {
+            this->Set(otherFloat2Parameters.buffer[i]->key, otherFloat2Parameters.buffer[i]->value.value);
+        }
+
+        // Float3
+        for (size_t i = 0; i < otherFloat3Parameters.count; ++i)
+        {
+            this->Set(otherFloat3Parameters.buffer[i]->key, otherFloat3Parameters.buffer[i]->value.value);
+        }
+
+        // Float4
+        for (size_t i = 0; i < otherFloat4Parameters.count; ++i)
+        {
+            this->Set(otherFloat4Parameters.buffer[i]->key, otherFloat4Parameters.buffer[i]->value.value);
+        }
+
+
+        // Float2x2
+        for (size_t i = 0; i < otherFloat2x2Parameters.count; ++i)
+        {
+            this->Set(otherFloat2x2Parameters.buffer[i]->key, otherFloat2x2Parameters.buffer[i]->value.value);
+        }
+
+        // Float3x3
+        for (size_t i = 0; i < otherFloat3x3Parameters.count; ++i)
+        {
+            this->Set(otherFloat3x3Parameters.buffer[i]->key, otherFloat3x3Parameters.buffer[i]->value.value);
+        }
+
+        // Float4x4
+        for (size_t i = 0; i < otherFloat4x4Parameters.count; ++i)
+        {
+            this->Set(otherFloat4x4Parameters.buffer[i]->key, otherFloat4x4Parameters.buffer[i]->value.value);
+        }
+
+
+        // Texture2D
+        for (size_t i = 0; i < otherTexture2DParameters.count; ++i)
+        {
+            this->Set(otherTexture2DParameters.buffer[i]->key, otherTexture2DParameters.buffer[i]->value.value);
+        }
+
+        // TextureCube
+        for (size_t i = 0; i < otherTextureCubeParameters.count; ++i)
+        {
+            this->Set(otherTextureCubeParameters.buffer[i]->key, otherTextureCubeParameters.buffer[i]->value.value);
+        }
+    }
 
     void ShaderParameterCache::UnsetParameters(const ShaderParameterCache &other)
     {

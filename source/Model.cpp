@@ -246,13 +246,31 @@ namespace GTEngine
         // Now we need to create the meshes. This must be done after adding the bones.
         for (size_t i = 0; i < this->definition.meshes.count; ++i)
         {
-            if (this->definition.meshes[i].skinningVertexAttributes != nullptr)
+            auto &definitionMesh = this->definition.meshes[i];
+            Mesh* newMesh = nullptr;
+
+            if (definitionMesh.skinningVertexAttributes != nullptr)
             {
-                this->AttachMesh(this->definition.meshes[i].geometry, this->definition.meshes[i].material->GetDefinition().relativePath.c_str(), this->definition.meshes[i].skinningVertexAttributes);
+                newMesh = this->AttachMesh(definitionMesh.geometry, definitionMesh.material->GetDefinition().relativePath.c_str(), definitionMesh.skinningVertexAttributes);
             }
             else
             {
-                this->AttachMesh(this->definition.meshes[i].geometry, this->definition.meshes[i].material->GetDefinition().relativePath.c_str());
+                newMesh = this->AttachMesh(definitionMesh.geometry, definitionMesh.material->GetDefinition().relativePath.c_str());
+            }
+
+            // Material parameters.
+            if (newMesh != nullptr)
+            {
+                auto newMeshMaterial = newMesh->GetMaterial();
+                if (newMeshMaterial != nullptr)
+                {
+                    if (definitionMesh.material != nullptr)
+                    {
+                        newMeshMaterial->SetParameters(definitionMesh.material->GetParameters());
+                    }
+
+                    newMeshMaterial->SetParameters(definitionMesh.defaultUniforms);
+                }
             }
         }
     }

@@ -83,6 +83,9 @@ namespace GTEngine
         const ShaderParameter_Texture2D*   GetTexture2DParameter(const char* name) const;
         const ShaderParameter_TextureCube* GetTextureCubeParameter(const char* name) const;
 
+        
+        /// Sets the parameters from another parameter list.
+        void SetParameters(const ShaderParameterCache &other);
 
         /// Unsets the given parameters.
         void UnsetParameters(const ShaderParameterCache &other);
