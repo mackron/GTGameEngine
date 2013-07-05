@@ -67,6 +67,16 @@ namespace GTEngine
             ///     Argument 2: The index of the mesh whose material is being retrieved.
             int GetMaterialRelativePath(GTCore::Script &script);
 
+            /// Retrieves a table containing the uniforms of a material.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            ///     Argument 2: The index of the mesh whose material's uniforms are being retrieved.
+            ///
+            ///     The return value is a table. Each item in the table is another table with the properties 'type' and 'value'. For textures, the
+            ///     value is a string containing the relative path of the texture.
+            int GetMaterialUniformValues(GTCore::Script &script);
+
             /// Sets a material on the model loaded in the given model editor.
             ///
             /// @remarks

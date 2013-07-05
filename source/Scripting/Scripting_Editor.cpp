@@ -33,6 +33,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetMeshNames",                    ModelEditorFFI::GetMeshNames);
                         script.SetTableFunction(-1, "GetMaterials",                    ModelEditorFFI::GetMaterials);
                         script.SetTableFunction(-1, "GetMaterialRelativePath",         ModelEditorFFI::GetMaterialRelativePath);
+                        script.SetTableFunction(-1, "GetMaterialUniformValues",        ModelEditorFFI::GetMaterialUniformValues);
                         script.SetTableFunction(-1, "SetMaterial",                     ModelEditorFFI::SetMaterial);
                         script.SetTableFunction(-1, "GetBoneCount",                    ModelEditorFFI::GetBoneCount);
                         script.SetTableFunction(-1, "GetBones",                        ModelEditorFFI::GetBones);
@@ -286,6 +287,164 @@ namespace GTEngine
                 else
                 {
                     script.PushNil();
+                }
+
+                return 1;
+            }
+
+            int GetMaterialUniformValues(GTCore::Script &script)
+            {
+                script.PushNewTable();
+
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];     // Minus 1 because Lua is 1-based.
+
+                    if (mesh.material != nullptr)
+                    {
+                        auto &defaultParameters = mesh.material->GetDefaultParameters();
+
+                        // float
+                        auto &floatParameters = defaultParameters.GetFloatParameters();
+                        for (size_t iUniform = 0; iUniform < floatParameters.count; ++iUniform)
+                        {
+                            auto name  = floatParameters.buffer[iUniform]->key;
+                            auto value = floatParameters.buffer[iUniform]->value;
+
+                            auto meshValue = mesh.defaultUniforms.GetFloatParameter(name);
+                            if (meshValue != nullptr)
+                            {
+                                value = *meshValue;
+                            }
+
+
+                            script.Push(name);
+                            script.PushNewTable();
+                            {
+                                script.Push("type");
+                                script.Push(value.type);
+                                script.SetTableValue(-3);
+
+                                script.Push("value");
+                                script.Push(value.value);
+                                script.SetTableValue(-3);
+                            }
+                            script.SetTableValue(-3);
+                        }
+
+                        // float2
+                        auto &float2Parameters = defaultParameters.GetFloat2Parameters();
+                        for (size_t iUniform = 0; iUniform < float2Parameters.count; ++iUniform)
+                        {
+                            auto name  = float2Parameters.buffer[iUniform]->key;
+                            auto value = float2Parameters.buffer[iUniform]->value;
+
+                            auto meshValue = mesh.defaultUniforms.GetFloat2Parameter(name);
+                            if (meshValue != nullptr)
+                            {
+                                value = *meshValue;
+                            }
+
+
+                            script.Push(name);
+                            script.PushNewTable();
+                            {
+                                script.Push("type");
+                                script.Push(value.type);
+                                script.SetTableValue(-3);
+
+                                script.Push("value");
+                                Scripting::PushNewVector2(script, value.value);
+                                script.SetTableValue(-3);
+                            }
+                            script.SetTableValue(-3);
+                        }
+
+                        // float3
+                        auto &float3Parameters = defaultParameters.GetFloat3Parameters();
+                        for (size_t iUniform = 0; iUniform < float3Parameters.count; ++iUniform)
+                        {
+                            auto name  = float3Parameters.buffer[iUniform]->key;
+                            auto value = float3Parameters.buffer[iUniform]->value;
+
+                            auto meshValue = mesh.defaultUniforms.GetFloat3Parameter(name);
+                            if (meshValue != nullptr)
+                            {
+                                value = *meshValue;
+                            }
+
+
+                            script.Push(name);
+                            script.PushNewTable();
+                            {
+                                script.Push("type");
+                                script.Push(value.type);
+                                script.SetTableValue(-3);
+
+                                script.Push("value");
+                                Scripting::PushNewVector3(script, value.value);
+                                script.SetTableValue(-3);
+                            }
+                            script.SetTableValue(-3);
+                        }
+
+                        // float4
+                        auto &float4Parameters = defaultParameters.GetFloat4Parameters();
+                        for (size_t iUniform = 0; iUniform < float4Parameters.count; ++iUniform)
+                        {
+                            auto name  = float4Parameters.buffer[iUniform]->key;
+                            auto value = float4Parameters.buffer[iUniform]->value;
+
+                            auto meshValue = mesh.defaultUniforms.GetFloat4Parameter(name);
+                            if (meshValue != nullptr)
+                            {
+                                value = *meshValue;
+                            }
+
+
+                            script.Push(name);
+                            script.PushNewTable();
+                            {
+                                script.Push("type");
+                                script.Push(value.type);
+                                script.SetTableValue(-3);
+
+                                script.Push("value");
+                                Scripting::PushNewVector4(script, value.value);
+                                script.SetTableValue(-3);
+                            }
+                            script.SetTableValue(-3);
+                        }
+
+                        // texture2D
+                        auto &texture2DParameters = defaultParameters.GetTexture2DParameters();
+                        for (size_t iUniform = 0; iUniform < texture2DParameters.count; ++iUniform)
+                        {
+                            auto name  = texture2DParameters.buffer[iUniform]->key;
+                            auto value = texture2DParameters.buffer[iUniform]->value;
+
+                            auto meshValue = mesh.defaultUniforms.GetTexture2DParameter(name);
+                            if (meshValue != nullptr)
+                            {
+                                value = *meshValue;
+                            }
+
+
+                            script.Push(name);
+                            script.PushNewTable();
+                            {
+                                script.Push("type");
+                                script.Push(value.type);
+                                script.SetTableValue(-3);
+
+                                script.Push("value");
+                                script.Push(value.value->GetRelativePath());
+                                script.SetTableValue(-3);
+                            }
+                            script.SetTableValue(-3);
+                        }
+                    }
                 }
 
                 return 1;

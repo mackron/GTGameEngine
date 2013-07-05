@@ -17,6 +17,50 @@ function GTGUI.Element:ModelEditor_MeshesPanelTreeView()
     return self;
 end
 
+function GTGUI.Element:ModelEditorUniform(uniformName, uniformValue, uniformType)
+    self.Name  = uniformName;
+    self.Value = uniformValue;
+    self.Type  = uniformType;
+    
+    return self;
+end
+
+function GTGUI.Element:ModelEditorUniform_Float(name, value)
+    self:ModelEditorUniform(name, value, GTEngine.ShaderParameterTypes.Float);
+    self:LabelledNumberInput(name, value);
+    
+    return self;
+end
+
+function GTGUI.Element:ModelEditorUniform_Float2(name, value)
+    self:ModelEditorUniform(name, value, GTEngine.ShaderParameterTypes.Float2);
+    self:LabelledVector2Input(name, value);
+    
+    return self;
+end
+
+function GTGUI.Element:ModelEditorUniform_Float3(name, value)
+    self:ModelEditorUniform(name, value, GTEngine.ShaderParameterTypes.Float3);
+    self:LabelledVector3Input(name, value);
+    
+    return self;
+end
+
+function GTGUI.Element:ModelEditorUniform_Float4(name, value)
+    self:ModelEditorUniform(name, value, GTEngine.ShaderParameterTypes.Float4);
+    self:LabelledVector4Input(name, value);
+    
+    return self;
+end
+
+function GTGUI.Element:ModelEditorUniform_Texture2D(name, value)
+    self:ModelEditorUniform(name, value, GTEngine.ShaderParameterTypes.Texture2D);
+    self:LabelledTextBox(name, value);
+    
+    return self;
+end
+
+
 function GTGUI.Element:ModelEditor_MeshesPanel(_internalPtr)
     self:PanelGroupBox("Meshes");
     
@@ -28,10 +72,30 @@ function GTGUI.Element:ModelEditor_MeshesPanel(_internalPtr)
     self.MeshProperties.NoSelectionLabel:SetText("No Mesh Selected");
     
     self.MeshProperties.Container        = GTGUI.Server.CreateElement(self.MeshProperties, "model-editor-meshes-panel-properties-container");
+    
     self.MeshProperties.MaterialTextBox  = GTGUI.Server.CreateElement(self.MeshProperties.Container, "labelled-textbox");
     self.MeshProperties.MaterialTextBox:LabelledTextBox("Material");
+    
+    self.MeshProperties.UniformsContainer = GTGUI.Server.CreateElement(self.MeshProperties.Container, "model-editor-meshes-panel-uniforms-container");
 
     
+    function self:UpdateMaterialUniforms()
+        self.MeshProperties.UniformsContainer:DeleteAllChildren();
+    
+        local uniforms = GTEngine.System.ModelEditor.GetMaterialUniformValues(_internalPtr, self.MeshProperties.MeshIndex);
+        if uniforms then
+            for name,value in pairs(uniforms) do
+                local uniformElement = GTGUI.Server.CreateElement(self.MeshProperties.UniformsContainer, "model-editor-meshes-panel-uniform");
+            
+                if     value.type == GTEngine.ShaderParameterTypes.Float     then uniformElement:ModelEditorUniform_Float(name, value.value)
+                elseif value.type == GTEngine.ShaderParameterTypes.Float2    then uniformElement:ModelEditorUniform_Float2(name, value.value)
+                elseif value.type == GTEngine.ShaderParameterTypes.Float3    then uniformElement:ModelEditorUniform_Float3(name, value.value)
+                elseif value.type == GTEngine.ShaderParameterTypes.Float4    then uniformElement:ModelEditorUniform_Float4(name, value.value)
+                elseif value.type == GTEngine.ShaderParameterTypes.Texture2D then uniformElement:ModelEditorUniform_Texture2D(name, value.value)
+                end
+            end
+        end
+    end
     
     function self:UpdateProperties(meshTreeViewItem)
         self.MeshProperties.MeshIndex = meshTreeViewItem.MeshIndex;
@@ -54,6 +118,8 @@ function GTGUI.Element:ModelEditor_MeshesPanel(_internalPtr)
         
         self.MeshProperties.MaterialTextBox:SetText(materialRelativePath);
         self.MeshProperties.MaterialTextBox.TextBox:SetTooltip(materialRelativePath);
+        
+        self:UpdateMaterialUniforms();
     end
     
     function self:ShowProperties(meshTreeViewItem)
@@ -102,6 +168,7 @@ function GTGUI.Element:ModelEditor_MeshesPanel(_internalPtr)
             self.MeshProperties.MaterialTextBox.TextBox:SetStyle("border-color", "#cc6a6a");
         end
         
+        self:UpdateMaterialUniforms();
         Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(_internalPtr));
     end
     

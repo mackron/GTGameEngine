@@ -110,6 +110,32 @@ namespace GTEngine
 
 
                 ///////////////////////////////////////////////////
+                // GTEngine.ScriptVariableTypes
+
+                script.Push("ShaderParameterTypes");
+                script.PushNewTable();
+                {
+                    script.SetTableValue(-1, "Float",       ShaderParameterType_Float);
+                    script.SetTableValue(-1, "Float2",      ShaderParameterType_Float2);
+                    script.SetTableValue(-1, "Float3",      ShaderParameterType_Float3);
+                    script.SetTableValue(-1, "Float4",      ShaderParameterType_Float4);
+                    script.SetTableValue(-1, "Integer",     ShaderParameterType_Integer);
+                    script.SetTableValue(-1, "Integer2",    ShaderParameterType_Integer2);
+                    script.SetTableValue(-1, "Integer3",    ShaderParameterType_Integer3);
+                    script.SetTableValue(-1, "Integer4",    ShaderParameterType_Integer4);
+                    script.SetTableValue(-1, "Float2x2",    ShaderParameterType_Float2x2);
+                    script.SetTableValue(-1, "Float3x3",    ShaderParameterType_Float3x3);
+                    script.SetTableValue(-1, "Float4x4",    ShaderParameterType_Float4x4);
+                    script.SetTableValue(-1, "Texture1D",   ShaderParameterType_Texture1D);
+                    script.SetTableValue(-1, "Texture2D",   ShaderParameterType_Texture2D);
+                    script.SetTableValue(-1, "Texture3D",   ShaderParameterType_Texture3D);
+                    script.SetTableValue(-1, "TextureCube", ShaderParameterType_TextureCube);
+                }
+                script.SetTableValue(-3);
+
+
+
+                ///////////////////////////////////////////////////
                 // GTEngine.<Misc>
 
                 script.Push("ScriptDefinitions");

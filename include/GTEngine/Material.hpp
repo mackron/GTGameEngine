@@ -138,28 +138,6 @@ namespace GTEngine
 
 
 
-#if 0
-        /// The ID of the diffuse shader.
-        GTCore::String diffuseShaderID;
-
-        /// The ID of the emissive shader.
-        GTCore::String emissiveShaderID;
-
-        /// The ID of the shininess shader.
-        GTCore::String shininessShaderID;
-
-        /// The ID of the normal shader.
-        GTCore::String normalShaderID;
-
-        /// The ID of the refraction shader. This can actually be null if this->refractive is false.
-        GTCore::String refractionShaderID;
-
-        /// The ID of the specular shader.
-        GTCore::String specularShaderID;
-#endif
-
-
-
     private:
 
         /// Parses a list of floats.
@@ -209,7 +187,7 @@ namespace GTEngine
 
 
         /// Retrieves a reference to the list of default parameters.
-        const ShaderParameterCache & DetDefaultParameters() const { return this->definition.defaultParams; }
+        const ShaderParameterCache & GetDefaultParameters() const { return this->definition.defaultParams; }
 
         /// Retrieves a reference to the list of parameters for this material.
         const ShaderParameterCache & GetParameters() const { return this->parameters; }

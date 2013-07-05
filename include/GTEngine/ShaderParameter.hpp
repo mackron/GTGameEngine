@@ -16,6 +16,9 @@ namespace GTEngine
     class TextureCube;
 
     /// Enumerator for the different types of material properties.
+    ///
+    /// @remarks
+    ///     This enumerator needs to be synchronized with the version in the scripting environment.
     enum ShaderParameterType
     {
         ShaderParameterType_Float,
