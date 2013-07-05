@@ -536,6 +536,10 @@ namespace GTEngine
                 {
                     intermediarySerializer.Write(static_cast<uint32_t>(0));
                 }
+
+
+                // Default uniforms.
+                this->meshes[iMesh].defaultUniforms.Serialize(intermediarySerializer);
             }
         }
 
@@ -906,6 +910,11 @@ namespace GTEngine
                                 free(counts);
                                 free(boneWeights);
                             }
+
+
+                            // Uniforms.
+                            newMesh.defaultUniforms.Deserialize(deserializer);
+
 
                             // Finally, add the mesh.
                             this->AddMesh(newMesh);

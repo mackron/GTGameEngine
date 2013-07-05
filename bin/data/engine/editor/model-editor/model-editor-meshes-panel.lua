@@ -25,37 +25,106 @@ function GTGUI.Element:ModelEditorUniform(uniformName, uniformValue, uniformType
     return self;
 end
 
-function GTGUI.Element:ModelEditorUniform_Float(name, value)
+function GTGUI.Element:ModelEditorUniform_Float(name, value, modelEditorPtr, materialIndex)
     self:ModelEditorUniform(name, value, GTEngine.ShaderParameterTypes.Float);
     self:LabelledNumberInput(name, value);
     
+    self:OnValueChanged(function()
+        self:SetUniformValue(self:GetValue());
+    end)
+    
+    function self:SetUniformValue(newValue)
+        if GTEngine.System.ModelEditor.SetMaterialUniform_Float(modelEditorPtr, materialIndex, name, newValue) then
+            Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(modelEditorPtr));
+            return true;
+        end
+        
+        return false;
+    end
+    
     return self;
 end
 
-function GTGUI.Element:ModelEditorUniform_Float2(name, value)
+function GTGUI.Element:ModelEditorUniform_Float2(name, value, modelEditorPtr, materialIndex)
     self:ModelEditorUniform(name, value, GTEngine.ShaderParameterTypes.Float2);
     self:LabelledVector2Input(name, value);
     
+    self:OnValueChanged(function()
+        self:SetUniformValue(self:GetValue());
+    end)
+    
+    function self:SetUniformValue(newValue)
+        if GTEngine.System.ModelEditor.SetMaterialUniform_Float2(modelEditorPtr, materialIndex, name, newValue) then
+            Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(modelEditorPtr));
+            return true;
+        end
+        
+        return false;
+    end
+    
     return self;
 end
 
-function GTGUI.Element:ModelEditorUniform_Float3(name, value)
+function GTGUI.Element:ModelEditorUniform_Float3(name, value, modelEditorPtr, materialIndex)
     self:ModelEditorUniform(name, value, GTEngine.ShaderParameterTypes.Float3);
     self:LabelledVector3Input(name, value);
     
-    return self;
-end
-
-function GTGUI.Element:ModelEditorUniform_Float4(name, value)
-    self:ModelEditorUniform(name, value, GTEngine.ShaderParameterTypes.Float4);
-    self:LabelledVector4Input(name, value);
+    self:OnValueChanged(function()
+        self:SetUniformValue(self:GetValue());
+    end)
+    
+    function self:SetUniformValue(newValue)
+        if GTEngine.System.ModelEditor.SetMaterialUniform_Float3(modelEditorPtr, materialIndex, name, newValue) then
+            Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(modelEditorPtr));
+            return true;
+        end
+        
+        return false;
+    end
     
     return self;
 end
 
-function GTGUI.Element:ModelEditorUniform_Texture2D(name, value)
+function GTGUI.Element:ModelEditorUniform_Float4(name, value, modelEditorPtr, materialIndex)
+    self:ModelEditorUniform(name, value, GTEngine.ShaderParameterTypes.Float4);
+    self:LabelledVector4Input(name, value);
+    
+    self:OnValueChanged(function()
+        self:SetUniformValue(self:GetValue());
+    end)
+    
+    function self:SetUniformValue(newValue)
+        if GTEngine.System.ModelEditor.SetMaterialUniform_Float4(modelEditorPtr, materialIndex, name, newValue) then
+            Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(modelEditorPtr));
+            return true;
+        end
+        
+        return false;
+    end
+    
+    return self;
+end
+
+function GTGUI.Element:ModelEditorUniform_Texture2D(name, value, modelEditorPtr, materialIndex)
     self:ModelEditorUniform(name, value, GTEngine.ShaderParameterTypes.Texture2D);
     self:LabelledTextBox(name, value);
+    
+    self.TextBox:OnDrop(function(data)
+        if data.droppedElement.isAsset then
+            if self:SetUniformValue(data.droppedElement.path) then
+                self.TextBox:SetText(data.droppedElement.path);
+            end
+        end
+    end)
+    
+    function self:SetUniformValue(newValue)
+        if GTEngine.System.ModelEditor.SetMaterialUniform_Texture2D(modelEditorPtr, materialIndex, name, newValue) then
+            Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(modelEditorPtr));
+            return true;
+        end
+        
+        return false;
+    end
     
     return self;
 end
@@ -87,11 +156,11 @@ function GTGUI.Element:ModelEditor_MeshesPanel(_internalPtr)
             for name,value in pairs(uniforms) do
                 local uniformElement = GTGUI.Server.CreateElement(self.MeshProperties.UniformsContainer, "model-editor-meshes-panel-uniform");
             
-                if     value.type == GTEngine.ShaderParameterTypes.Float     then uniformElement:ModelEditorUniform_Float(name, value.value)
-                elseif value.type == GTEngine.ShaderParameterTypes.Float2    then uniformElement:ModelEditorUniform_Float2(name, value.value)
-                elseif value.type == GTEngine.ShaderParameterTypes.Float3    then uniformElement:ModelEditorUniform_Float3(name, value.value)
-                elseif value.type == GTEngine.ShaderParameterTypes.Float4    then uniformElement:ModelEditorUniform_Float4(name, value.value)
-                elseif value.type == GTEngine.ShaderParameterTypes.Texture2D then uniformElement:ModelEditorUniform_Texture2D(name, value.value)
+                if     value.type == GTEngine.ShaderParameterTypes.Float     then uniformElement:ModelEditorUniform_Float(name, value.value, _internalPtr, self.MeshProperties.MeshIndex)
+                elseif value.type == GTEngine.ShaderParameterTypes.Float2    then uniformElement:ModelEditorUniform_Float2(name, value.value, _internalPtr, self.MeshProperties.MeshIndex)
+                elseif value.type == GTEngine.ShaderParameterTypes.Float3    then uniformElement:ModelEditorUniform_Float3(name, value.value, _internalPtr, self.MeshProperties.MeshIndex)
+                elseif value.type == GTEngine.ShaderParameterTypes.Float4    then uniformElement:ModelEditorUniform_Float4(name, value.value, _internalPtr, self.MeshProperties.MeshIndex)
+                elseif value.type == GTEngine.ShaderParameterTypes.Texture2D then uniformElement:ModelEditorUniform_Texture2D(name, value.value, _internalPtr, self.MeshProperties.MeshIndex)
                 end
             end
         end
@@ -160,16 +229,12 @@ function GTGUI.Element:ModelEditor_MeshesPanel(_internalPtr)
     
     
     function self:ApplyMaterial(meshIndex, materialRelativePath)
-        self.MeshProperties.MaterialTextBox:SetText(materialRelativePath);
-    
         if GTEngine.System.ModelEditor.SetMaterial(_internalPtr, meshIndex, materialRelativePath) then
-            self.MeshProperties.MaterialTextBox.TextBox:SetStyle("border-color", "#6a6a6a");
-        else
-            self.MeshProperties.MaterialTextBox.TextBox:SetStyle("border-color", "#cc6a6a");
+            self.MeshProperties.MaterialTextBox:SetText(materialRelativePath);
+            
+            self:UpdateMaterialUniforms();
+            Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(_internalPtr));
         end
-        
-        self:UpdateMaterialUniforms();
-        Editor.MarkFileAsModified(GTEngine.System.SubEditor.GetAbsolutePath(_internalPtr));
     end
     
     

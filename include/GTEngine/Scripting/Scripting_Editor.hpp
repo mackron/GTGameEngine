@@ -84,6 +84,19 @@ namespace GTEngine
             ///     Argument 2: The index of the material being set.
             ///     Argument 3: The relative path of the material to use.
             int SetMaterial(GTCore::Script &script);
+
+            /// Sets the value of a uniform of the given meshes material.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the model editor.
+            ///     Argument 2: The index of the material/mesh whose uniform is getting set.
+            ///     Argument 3: The name of the uniform getting set.
+            ///     Argument 4: The value of the uniform.
+            int SetMaterialUniform_Float(GTCore::Script &script);
+            int SetMaterialUniform_Float2(GTCore::Script &script);
+            int SetMaterialUniform_Float3(GTCore::Script &script);
+            int SetMaterialUniform_Float4(GTCore::Script &script);
+            int SetMaterialUniform_Texture2D(GTCore::Script &script);
             
 
             /// Retrieves the number of bones containing the in the model of the given model editor.

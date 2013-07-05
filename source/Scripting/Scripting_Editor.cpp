@@ -35,6 +35,11 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetMaterialRelativePath",         ModelEditorFFI::GetMaterialRelativePath);
                         script.SetTableFunction(-1, "GetMaterialUniformValues",        ModelEditorFFI::GetMaterialUniformValues);
                         script.SetTableFunction(-1, "SetMaterial",                     ModelEditorFFI::SetMaterial);
+                        script.SetTableFunction(-1, "SetMaterialUniform_Float",        ModelEditorFFI::SetMaterialUniform_Float);
+                        script.SetTableFunction(-1, "SetMaterialUniform_Float2",       ModelEditorFFI::SetMaterialUniform_Float2);
+                        script.SetTableFunction(-1, "SetMaterialUniform_Float3",       ModelEditorFFI::SetMaterialUniform_Float3);
+                        script.SetTableFunction(-1, "SetMaterialUniform_Float4",       ModelEditorFFI::SetMaterialUniform_Float4);
+                        script.SetTableFunction(-1, "SetMaterialUniform_Texture2D",    ModelEditorFFI::SetMaterialUniform_Texture2D);
                         script.SetTableFunction(-1, "GetBoneCount",                    ModelEditorFFI::GetBoneCount);
                         script.SetTableFunction(-1, "GetBones",                        ModelEditorFFI::GetBones);
                         script.SetTableFunction(-1, "PlayAnimationSegmentByIndex",     ModelEditorFFI::PlayAnimationSegmentByIndex);
@@ -456,6 +461,136 @@ namespace GTEngine
                 if (modelEditor != nullptr)
                 {
                     script.Push(modelEditor->SetMaterial(script.ToInteger(2) - 1, script.ToString(3)));     // Minus 1 in the first argument because Lua is 1 based.
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+
+            int SetMaterialUniform_Float(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];         // Minus 1 because Lua is 1 based.
+
+                    auto uniformName  = script.ToString(3);
+                    auto uniformValue = script.ToFloat(4);
+
+                    mesh.defaultUniforms.Set(uniformName, uniformValue);
+                    mesh.material->SetParameter(uniformName, uniformValue);
+                    modelEditor->RefreshViewport();
+
+                    script.Push(true);
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+            int SetMaterialUniform_Float2(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];         // Minus 1 because Lua is 1 based.
+
+                    auto uniformName  = script.ToString(3);
+                    auto uniformValue = Scripting::ToVector2(script, 4);
+
+                    mesh.defaultUniforms.Set(uniformName, uniformValue);
+                    mesh.material->SetParameter(uniformName, uniformValue);
+                    modelEditor->RefreshViewport();
+
+                    script.Push(true);
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+            int SetMaterialUniform_Float3(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];         // Minus 1 because Lua is 1 based.
+
+                    auto uniformName  = script.ToString(3);
+                    auto uniformValue = Scripting::ToVector3(script, 4);
+
+                    mesh.defaultUniforms.Set(uniformName, uniformValue);
+                    mesh.material->SetParameter(uniformName, uniformValue);
+                    modelEditor->RefreshViewport();
+
+                    script.Push(true);
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+            int SetMaterialUniform_Float4(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];         // Minus 1 because Lua is 1 based.
+
+                    auto uniformName  = script.ToString(3);
+                    auto uniformValue = Scripting::ToVector4(script, 4);
+
+                    mesh.defaultUniforms.Set(uniformName, uniformValue);
+                    mesh.material->SetParameter(uniformName, uniformValue);
+                    modelEditor->RefreshViewport();
+
+                    script.Push(true);
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+            int SetMaterialUniform_Texture2D(GTCore::Script &script)
+            {
+                auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
+                if (modelEditor != nullptr)
+                {
+                    auto &mesh = modelEditor->GetModelDefinition().meshes[script.ToInteger(2) - 1];         // Minus 1 because Lua is 1 based.
+
+                    auto uniformName         = script.ToString(3);
+                    auto textureRelativePath = script.ToString(4);
+
+                    auto texture = Texture2DLibrary::Acquire(textureRelativePath);
+                    if (texture != nullptr)
+                    {
+                        mesh.defaultUniforms.Set(uniformName, texture);
+                        mesh.material->SetParameter(uniformName, texture);
+                        modelEditor->RefreshViewport();
+
+                        Texture2DLibrary::Unacquire(texture);
+                        script.Push(true);
+                    }
+                    else
+                    {
+                        script.Push(false);
+                    }
                 }
                 else
                 {

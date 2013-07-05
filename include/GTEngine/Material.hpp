@@ -193,6 +193,8 @@ namespace GTEngine
         const ShaderParameterCache & GetParameters() const { return this->parameters; }
 
 
+        /// Sets the parameters from another parameter list.
+        void SetParameters(const ShaderParameterCache &other);
 
         /// Removes the parameters by name in the given parameters.
         void UnsetParameters(const ShaderParameterCache &parametersToUnset);

@@ -427,6 +427,11 @@ namespace GTEngine
     }
 
 
+    void Material::SetParameters(const ShaderParameterCache &other)
+    {
+        this->parameters.SetParameters(other);
+    }
+
     void Material::UnsetParameters(const ShaderParameterCache &parametersToUnset)
     {
         this->parameters.UnsetParameters(parametersToUnset);
