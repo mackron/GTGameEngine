@@ -1,0 +1,40 @@
+-------------------------------------------------------------------------------
+- Changelog
+-------------------------------------------------------------------------------
+
+0.0.2 ()
+
+BREAKING CHANGES:
+    - The .gtmodel file format has changed. All .gtmodel files need to be
+      deleted to allow the engine to re-create them.
+      
+
+FEATURES:
+    - If a scene is playing inside the scene editor, it will be paused when the
+      main window loses focus.
+    - Added a "Viewport" menu to the particle editor.
+          - Allow the user to change the orientation of the preview particle
+            system.
+          - Allow the user to show/hide the grid and axis arrows.
+          - Allow the user to reset the camera
+    - Material channels are no longer pre-defined. This means materials can
+      more easily be used by custom renderers.
+    - Bones can now have their absolute position, rotation and scale set via
+      both C++ and Lua.
+    - The way materials are set in the model editor has been changed. The new
+      system allows the user to easily set default values for material uniforms
+      to be used by the model.
+    
+    
+FIXES/IMPROVEMENTS:
+    - Fixed a prefab updating bug (issue #59).
+    - Fixed a memory leak.
+    - Partly fixed a script compilation issue (issue #45).
+    - Fixed a bug where the mouse would sometimes not be released when playing
+      a scene from inside the scene editor.
+    - Fixed an animation looping bug.
+    - Fixed a bad bug where keyboard shortcuts would be handled by all open
+      scenes instead of only the currently focused one.
+    - Internal cleanup of the editor code.
+    - Update a few minor things with the sandbox, mostly with the intro scene.
+    - A small, barely noticeable optimization to the default renderer.
