@@ -1,0 +1,94 @@
+---
+title:  "Known Limitations"
+layout: miscref
+---
+<div class="page-title-small">
+    <h1>Known Limitations</h1>
+</div>
+<div class="container-fluid">
+    <div style="padding:0px 20px;">
+        <p>
+        GTGameEngine is still very young. This page lists some known limitations. For the most part this will list only the most major limitations. For
+        general bugs and issues, check the <a href="https://github.com/mackron/GTGameEngine/issues?state=open">GitHub Issues page</a>. Every issue listed
+        here is planned to be addressed in the future, but are usually longer-term.
+        </p>
+        <div class="documentation-section">
+            <h1>Documentation</h1>
+            <p>
+            Documentation, in particular the C++ and Lua references, are extremely lacking. Work on this continues, but there is a lot to do. Future plans
+            are to add an in-editor reference feature where the C++ and Lua references are available from inside the editor without needing to go to the
+            reference website.
+            </p>
+            <p>
+            A "reference editor" will be added to the main editor which will allow users to create and modify reference files. A tool will then convert the
+            reference files to HTML for online access.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>Backwards Compatibility</h1>
+            <p>
+            There is currently no effort being put into backwards compatibility. Backwards compatibility will probably begin when version 0.1.0 is released or
+            when there is enough demand.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>Networking</h1>
+            <p>
+            There is currently no networking functionality whatsoever. This is the biggest major feature missing from the engine right now.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>Performance</h1>
+            <p>
+            No real-world or stress testing has been performed on the engine, so there is most likely quite a few lingering performance and efficiency issue
+            still needing to be ironed out.
+            </p>
+            <p>
+            Of particular note, rendering performance and memory consumption are most likely the biggest issues.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>File Formats</h1>
+            <p>
+            There aren't many supported file formats for images, models and sounds. There are plans for adding more formats, but there are no plans on
+            adding redundant formats that don't solve a problem already solved by an already-supported format. For example, it's unlikely the engine will
+            add MP3 support because OGG (which is planned) already serves the same purpose.
+            </p>
+            <p>
+            Check the <a href="{{ site.baseurl }}/documentation/misc/fileformats">Supported File Formats</a> section for more information.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>Scripting</h1>
+            <p>
+            There is a lot of functionality not yet exposed to the scripting environment. This is an ongoing issue that is constantly being worked on.
+            </p>
+            <p>
+            Support for debugging scripts is virtually non-existant. The future plans are to incorporate debugging directly into the main editor, with all
+            of the normal debugging functionality you would expect such as call stack and variable inspection, break-points, etc.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>Particle Systems</h1>
+            <p>
+            Currently, particle systems are very bare-bones. Of particular note, there are not many emission shape and function options available.
+            </p>
+            <p>
+            Future plans include:
+            <ul>
+                <li>Spline based interpolation curves for behavioural functions</li>
+                <li>GPU accelerated particles</li>
+                <li>Physics based particles</li>
+                <li>Level of detail</li>
+            </ul>
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>Physics Constraints</h1>
+            <p>
+            There is currently no support for setting up constraints between physics objects via the scene editor or even the scripting environment. This
+            is a major issue that will be fixed fairly soon.
+            </p>
+        </div>
+    </div>
+</div>
