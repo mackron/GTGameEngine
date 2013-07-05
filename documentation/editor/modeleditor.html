@@ -46,20 +46,34 @@ layout: editor
         </p>
         <p>
         When changing properties in the model editor, you are actually editing the native .gtmodel file. The engine will maintain these properties even
-        after modifying the source file.
+        after modifying the source file. If the .gtmodel file is deleted, the properties will need to be re-set. Think of the .gtmodel file as metadata.
         </p>
         <p>
         The right-side panel contains the properties that can be modified.
         </p>
         <div class="documentation-section">
-            <h1>Materials</h1>
+            <h1>Meshes</h1>
+            <div class="documentation-img-container">
+                <img src="{{ site.baseurl }}/img/documentation/editor/model-editor-meshes-1.png" title="GTGameEngine Model Editor" style="margin-right:16px;" />
+                <img src="{{ site.baseurl }}/img/documentation/editor/model-editor-meshes-2.png" title="GTGameEngine Model Editor" />
+            </div>
             <p>
-            Materials can be set in the <b>Materials</b> group box. To set a material, either type the relative path or just drag a material from the asset
-            explorer (left-side panel). Note that specifying a texture will <b>not</b> work. You must specify a material.
+            A model is made up of a number of meshes. Each mesh is just a piece of geometry with a material and skinning information. Meshes are listed in
+            the <b>Meshes</b> group box. To set the material of a mesh, just click the mesh in the mesh list and drag-and-drop a material file into the
+            "Material" text box.
+            </p>
+            <p>
+            Every material has a set of publicly visible variables (uniform variables) that can be changed at any point. A model can define a set of default
+            values that differ from those defined by the material itself. These will be displayed underneath the "Material" text box when a mesh is select
+            from the mesh list. What this system allows is for a game to have a small set of generic materials, with developers only needing to update some
+            basic variables without having to dig into the material editor for every single model.
             </p>
         </div>
         <div class="documentation-section">
             <h1>Bones</h1>
+            <div class="documentation-img-container">
+                <img src="{{ site.baseurl }}/img/documentation/editor/model-editor-bones.png" title="GTGameEngine Model Editor" />
+            </div>
             <p>
             The bones of the model are listed in a tree-view under the <b>Bones</b> group box. Selecting a bone does not currently do anything, but it's planned
             for the future to actually show the bones in the viewport. The main purpose of this for the time being is to allow developers to easily see the name
@@ -71,6 +85,9 @@ layout: editor
         </div>
         <div class="documentation-section">
             <h1>Animations</h1>
+            <div class="documentation-img-container">
+                <img src="{{ site.baseurl }}/img/documentation/editor/model-editor-animation-segments.png" title="GTGameEngine Model Editor" />
+            </div>
             <p>
             You can give a name to a range of animation key frames. Use the <b>Animation Segments</b> panel to create or delete these. Animation segments will be
             used when playing an animation from within the scripting or C++ environment. When an animation segment is played, use the playback controls at the
@@ -85,6 +102,9 @@ layout: editor
         </div>
         <div class="documentation-section">
             <h1>Convex Decomposition</h1>
+            <div class="documentation-img-container">
+                <img src="{{ site.baseurl }}/img/documentation/editor/model-editor-cd.png" title="GTGameEngine Model Editor" />
+            </div>
             <p>
             The engine can do a convex decomposition (thanks to HACD) of the model. To do this, use the <b>Convex Decomposition</b> group box. Be aware that
             this can take a long time, so don't be alarmed if the editor seems to freeze for a long time.
