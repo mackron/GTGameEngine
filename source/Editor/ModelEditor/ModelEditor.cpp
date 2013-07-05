@@ -339,6 +339,7 @@ namespace GTEngine
         {
             MaterialLibrary::Delete(this->modelDefinition.meshes[index].material);
             this->modelDefinition.meshes[index].material = newMaterial;
+            this->modelDefinition.meshes[index].defaultUniforms.Clear();
 
             this->RefreshViewport();
 
