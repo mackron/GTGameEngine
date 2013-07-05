@@ -27,13 +27,13 @@ namespace GTEngine
         {
             /// Constructor.
             Mesh()
-                : name(), geometry(nullptr), material(nullptr), skinningVertexAttributes(nullptr)
+                : name(), geometry(nullptr), material(nullptr), skinningVertexAttributes(nullptr), defaultUniforms()
             {
             }
 
             /// Copy constructor.
             Mesh(const Mesh &other)
-                : name(other.name), geometry(other.geometry), material(other.material), skinningVertexAttributes(other.skinningVertexAttributes)
+                : name(other.name), geometry(other.geometry), material(other.material), skinningVertexAttributes(other.skinningVertexAttributes), defaultUniforms(other.defaultUniforms)
             {
             }
             
@@ -44,6 +44,7 @@ namespace GTEngine
                 this->geometry                 = other.geometry;
                 this->material                 = other.material;
                 this->skinningVertexAttributes = other.skinningVertexAttributes;
+                this->defaultUniforms          = other.defaultUniforms;
                 
                 return *this;
             }
@@ -60,6 +61,9 @@ namespace GTEngine
             /// The skinning vertex attributes. This is a pointer to an array buffer whose size is equal to the number of vertices in the mesh. This can
             /// be null, in which case it is considered a static mesh.
             SkinningVertexAttribute* skinningVertexAttributes;
+
+            /// The default values for material uniforms. If the uniform is not present here, the value specified in the material definition is used instead.
+            ShaderParameterCache defaultUniforms;
         };
 
 
