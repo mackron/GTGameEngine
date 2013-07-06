@@ -622,6 +622,10 @@ namespace GTEngine
         void RestorePauseState();
 
 
+        /// Hides the sprites and directional arrows of every scene node.
+        void HideAllSpritesAndDirectionalArrows();
+
+
     private:
 
         /// The scene node acting as the camera for the viewport.

@@ -247,6 +247,11 @@ namespace GTEngine
                 this->HideAxisArrows();
 
 
+                // We will hide the icons and directional arrows of every scene node. These will naturally be restored when the state stack is restored.
+                // which will happen when playback is stopped.
+                this->HideAllSpritesAndDirectionalArrows();
+
+
                 // We need to make it so Game.GetGameWindowGUIElement() is our own implementation. We restore it later. Our version returns an element
                 // that is contained within the viewport.
                 auto &script = this->GetScript();
@@ -3223,6 +3228,24 @@ namespace GTEngine
         // Defaults.
         this->pauseState.wasMouseCaptured = false;
         this->pauseState.cameraNode       = nullptr;
+    }
+
+
+    void SceneEditor::HideAllSpritesAndDirectionalArrows()
+    {
+        for (size_t iSceneNode = 0; iSceneNode < this->scene.GetSceneNodeCount(); ++iSceneNode)
+        {
+            auto sceneNode = this->scene.GetSceneNodeByIndex(iSceneNode);
+            assert(sceneNode != nullptr);
+            {
+                auto metadata = sceneNode->GetComponent<EditorMetadataComponent>();
+                if (metadata != nullptr)
+                {
+                    metadata->HideSprite();
+                    metadata->HideDirectionArrow();
+                }
+            }
+        }
     }
 }
 
