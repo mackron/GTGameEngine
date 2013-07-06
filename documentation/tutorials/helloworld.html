@@ -1,0 +1,226 @@
+---
+title:  "Hello, World Tutorial"
+layout: tutorials
+---
+<div class="page-title-small">
+    <h1>Hello, World Tutorial</h1>
+</div>
+<div class="container-fluid">
+    <div style="padding:0px 20px;">
+        <p>
+        The purpose of this tutorial is to get you started with the general workflow of making a game in GTGameEngine. This is not a complete game, but
+        instead just an introduction to the very basics.
+        </p>
+        <p>
+        All we'll be doing in this tutorial is placing a box into a scene that the player will move around with the arrow keys. We'll cover the following:
+        </p>
+        <ul>
+            <li>Creating a scene</li>
+            <li>Creating scene nodes</li>
+            <li>Attaching scripts to scene nodes</li>
+            <li>Setting up the game camera</li>
+            <li>Setting up the game's startup scene</li>
+        </ul>
+        <div class="documentation-section">
+            <h1>1. Download the Sandbox</h1>
+            <p>
+            We're going to be using the sandbox for this tutorial, so if you haven't yet done so, <a href="{{ site.baseurl }}/download" target="_blank">download</a> a
+            copy. Remember, the sandbox <b><i>is</i></b> your game, so rename the directory to something appropriate.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>2. Open the Editor</h1>
+            <p>
+            The editor is built into the game. To access it, simply open the sandbox. When you first start it up, you'll be greeted with it's introduction
+            screen. Later we'll be changing the startup scene, but for now just go straight into the editor.
+            </p>
+            <p>
+            When you enter the editor, you'll be greeted with a simple text file explaining a few things. Hopefully this tutorial is written well enough
+            that you can just close that file.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>3. Create a New Scene</h1>
+            <p>
+            To create a scene, just right click on the directory you want it placed in (through the asset explorer on the left) and select the "New Scene"
+            button. You may want to place this in it's own directory, which is created in the same way.
+            </p>
+            <div class="documentation-img-container">
+                <img src="{{ site.baseurl }}/img/documentation/tutorials/helloworld/create-scene-1.png" />
+            </div>
+            <p>
+            You'll be asked for a file name. We'll just call it "game", but you can name it whatever you like. Don't include the extension. The new scene
+            will be opened automatically which will present you with an empty scene like the one below.
+            </p>
+            <div class="documentation-img-container">
+                <img src="{{ site.baseurl }}/img/documentation/tutorials/helloworld/create-scene-2.png" />
+            </div>
+        </div>
+        <div class="documentation-section">
+            <h1>4. Create a Scene Node</h1>
+            <p>
+            The content of a scene is made up of scene nodes. We'll add a scene node that simply shows a model. There are multiple ways to do this, but the
+            easiest way is to simply drag-and-drop from the asset explorer. We'll add the engine's default cube model, but feel free to use whatever you
+            like:
+            </p>
+            <div class="documentation-img-container">
+                <img src="{{ site.baseurl }}/img/documentation/tutorials/helloworld/create-scene-node-1.gif" />
+            </div>
+            <p>
+            When a scene node is added, it is placed a number units in front of the camera. It will appear that the model is placed in the middle, but it
+            actually isn't. Move the scene node to the origin by selecting the node if it isn't already (left-click without moving the camera) and then set
+            the position in the "Transform" pannel on the properties panel on the right.
+            </p>
+            <div class="documentation-img-container">
+                <img src="{{ site.baseurl }}/img/documentation/tutorials/helloworld/create-scene-node-2.gif" />
+            </div>
+            <p>
+            You'll notice that the new model is completely black. That's because there are no lights in the scene yet. We won't be covering lighting here,
+            but it's super easy to add them - just right click in the viewport and add them via the context menu. (There is currently no unlit, texture-only
+            view. Sorry!)
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>5. Create a Script</h1>
+            <p>
+            We will make it so the box moves with the arrow keys. To do this, we need to create a script and attach it to the box using a Script component.
+            </p>
+            <p>
+            Create a script file called "controller.lua" in the same way as you created the scene, only this time create it as a text file and include the
+            extension. The file will open automatically after creating it:
+            </p>
+            <div class="documentation-img-container">
+                <img src="{{ site.baseurl }}/img/documentation/tutorials/helloworld/create-script-1.png" />
+            </div>
+            <p>
+            Copy this script over to your new script file:
+            </p>
+<pre>
+--[[public:number]] self.MoveSpeed = 5.0;
+
+function self:OnUpdate(deltaTimeInSeconds)
+    local newPosition = self:GetPosition();
+
+    if Game.IsKeyDown(GTEngine.Keys.ArrowUp) then
+        newPosition.z = newPosition.z - self.MoveSpeed * deltaTimeInSeconds;
+    end
+
+    if Game.IsKeyDown(GTEngine.Keys.ArrowDown) then
+        newPosition.z = newPosition.z + self.MoveSpeed * deltaTimeInSeconds;
+    end
+
+    if Game.IsKeyDown(GTEngine.Keys.ArrowLeft) then
+        newPosition.x = newPosition.x - self.MoveSpeed * deltaTimeInSeconds;
+    end
+
+    if Game.IsKeyDown(GTEngine.Keys.ArrowRight) then
+        newPosition.x = newPosition.x + self.MoveSpeed * deltaTimeInSeconds;
+    end
+
+    self:SetPosition(newPosition);
+end
+</pre>
+            <p>
+            There are a few things of note here. First of all, you need to think of the script in the context of it being attached to a scene node. The "self" keyword
+            is the scene node the script is attached to. When you declare a member variable, it needs to be declared in "self". If you declare it globally, it will
+            be made public to the entire game script. <b><i>Always</i></b> declare you member variables inside "self".
+            </p>
+            <p>
+            You'll notice that the very first line has a special block comment in front of it. This is how the engine knows to make the variable available for
+            modification from inside the scene editor. It's a hacky system, but it allows the engine to use standard Lua without modification which keeps the engine
+            simpler.
+            </p>
+            <p>
+            Scripts are executed in response to events posted by the engine. The above script handles only one event which is the OnUpdate event. This is posted every
+            frame when the scene node needs to be updated. What we're doing in this event is simply checking which arrow keys are down and changing the position of
+            the scene node appropriately.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>6. Attach the Script</h1>
+            <p>
+            With the script created, we now need to attach it to a scene node. We are, of course, going to attach it to the box we added earlier. To do this, we need
+            attach a <b>Script</b> component. Do this by selecting the box and hitting the <b>New Component</b> button in the properties panel and selecting <b>Script</b>.
+            </p>
+            <p>
+            Once the <b>Script</b> component has been attached, we just drag-and-drop our script file like so:
+            </p>
+            <div class="documentation-img-container">
+                <img src="{{ site.baseurl }}/img/documentation/tutorials/helloworld/attach-script-1.gif" />
+            </div>
+            <p>
+            You can attach multiple script files to a single scene node.
+            </p>
+            <p>
+            You'll notice that we can modify the "MoveSpeed" variable from inside the editor. It's value can be changed at any time, and is unique to each individual
+            scene node the script is attached to.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>7. Test the Script</h1>
+            <p>
+            We can now test the script (spoiler: it works) by hitting the "Play" button located in the toolbar along the top. This will start playing the scene from
+            inside the editor. Simply hit the arrow keys and watch the box move around.
+            </p>
+            <p>
+            You can stop playing the scene by hitting the "Stop" button or CTRL+Break. You can also pause by hitting the "Pause" button or the Break key.
+            </p>
+            <p>
+            If you have a runtime error in the script it will be posted to the console window. The error will not be shown inside the editor. This is a known limitation
+            and will hopefully be addressed in the near future.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>8. Create a Camera</h1>
+            <p>
+            You'll notice that when we played the game, it used the editor's viewport camera. When we play the game for real from outside the editor, what camera does
+            it use? Well, we need to create one and let the scene know that that is the one to use.
+            </p>
+            <p>
+            A camera is just a scene node with a <b>Camera</b> component attached. To create a camera, simply right-click in the viewport and hit "Add Camera". This will
+            position the new camera scene node just in front of the viewport camera. You can position the camera however you like, but in this tutorial we'll place it
+            just above the origin, pointing downwards. Below is a screenshot of the camera's transform for you to copy:
+            </p>
+            <div class="documentation-img-container">
+                <img src="{{ site.baseurl }}/img/documentation/tutorials/helloworld/create-camera-1.png" />
+            </div>
+            <p>
+            So how do we let the scene know that this is the camera to use? We create a script. The script will handle the OnStartup event which will simply set the
+            current camera to whatever scene node the script is attached to. We create and attach the script in exactly the same way as we did the first one, only this
+            time we'll be attaching it to the camera scene node. This is the script:
+            </p>
+<pre>
+function self:OnStartup()
+    self.Scene:SetViewportCamera(self);
+end
+</pre>
+            <p>
+            Attach the script to the camera like normal and play the scene again. You'll notice that the new camera is used instead of the editor's viewport camera. As
+            you might be able to imagine, this is essential for testing your game from inside the editor.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>9. Set the Startup Scene</h1>
+            <p>
+            We now have the scene for our "game" done, so now we need to tell the game to use that scene as the startup scene. Doing this is super simple - you simply
+            modify the "data/sandbox-config.lua" file.
+            </p>
+            <p>
+            Open "data/sandbox-config.lua" and change the "Game.StartupScene" property to your own scene. You'll notice that the default is the sandbox's intro scene -
+            feel free to open that scene and check it out if you're curious.
+            </p>
+            <p>
+            After you've changed the config file restart the game and check that it's working. Instead of showing the sandbox intro, it should show your own scene. If
+            you stuffed up and the game can't find the startup scene, it'll just go straight to the editor. In a real game, you'll want to have the startup scene set
+            to your main menu.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>10. Conclusion</h1>
+            <p>
+            You should now have a good enough idea on the general workflow for creating a scene. Obviously, not everything is covered in this tutorial, but the idea is
+            to just introduce you to the absolute basics. Future tutorials will cover more things like setting up GUIs.
+            </p>
+        </div>
+    </div>
+</div>

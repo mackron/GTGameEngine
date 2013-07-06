@@ -3,6 +3,11 @@ title:  "Tutorials"
 layout: tutorials
 ---
 <style>
+    .tutorial-container {
+    }
+    .tutorial-container p {
+        margin-left:20px;
+    }
 </style>
 <div class="page-title-small">
     <h1>Tutorials</h1>
@@ -10,6 +15,16 @@ layout: tutorials
 <div class="container-fluid">
     <div style="padding:0px 20px;">
         <p>
+        Here you'll find a few tutorials for getting started with the engine. There isn't many yet, but plans are in place to add a lot
+        more going forward.
         </p>
+        <div class="tutorial-container" style="margin-top:20px;">
+            <a href="{{ site.baseurl }}/documentation/tutorials/helloworld">Hello, World!</a>
+            <p>A simple introduction to the very basics of the engine. This will help you understand the general workflow of making a game.</p>
+        </div>
+        <div class="tutorial-container">
+            <a href="{{ site.baseurl }}/documentation/tutorials/gui">GUI Basics</a>
+            <p>A simple introduction to adding a GUI into your game.</p>
+        </div>
     </div>
 </div>
