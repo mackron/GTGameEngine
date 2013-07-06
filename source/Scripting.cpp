@@ -161,6 +161,8 @@ namespace GTEngine
                 "GTEngine.SetGUIDragAndDropProxyElementOffset     = GTGUI.Server.SetDragAndDropProxyElementOffset;"
                 "GTEngine.GetGUIViewportWidth                     = GTGUI.Server.GetViewportWidth;"
                 "GTEngine.GetGUIViewportHeight                    = GTGUI.Server.SetDragAndDropProxyElementOffset;"
+
+                "GTEngine.Keys = GTGUI.Keys;"
             );
 
 
