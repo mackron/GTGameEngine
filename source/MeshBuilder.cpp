@@ -197,8 +197,7 @@ namespace GTEngine
     void WireframeSphereMeshBuilder::BuildRing(const glm::mat4 &cameraView, const glm::mat4 &transform, const glm::mat4 &ringTransform, bool cullBackFacingSegments, MeshBuilderP3 &ringOut)
     {
         // All we care about is the orientation.
-        glm::mat3 cameraView3    = glm::mat3(cameraView);
-        glm::mat3 ringTransform3 = glm::mat3(ringTransform);
+        glm::mat3 cameraView3 = glm::mat3(cameraView);
 
         float circleRadius       = 1.0f;
         float circleSegmentAngle = glm::radians(360.0f / static_cast<float>(this->ringSegmentsCount));

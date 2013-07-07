@@ -18,7 +18,7 @@ namespace GTEngine
           scene(), camera(), particleNode(),
           mainElement(nullptr), viewportElement(nullptr), viewportEventHandler(*this, ownerEditor.GetGame(), scene.GetDefaultViewport()),
           cameraXRotation(0.0f), cameraYRotation(0.0f),
-          grid(0.25f, 8, 32),
+          grid(0.25f, 8, 32), axisArrows(),
           isSaving(false), isReloading(false),
           isShowingGrid(false), isShowingAxisArrows(false)
     {
