@@ -68,6 +68,10 @@ namespace GTEngine
         size_t GetIndexCount() const { return this->indexBuffer.count; }
 
 
+        /// Clears the mesh builder.
+        void Clear();
+
+
     protected:
 
         /// The number of floats making up each vertex.
@@ -98,6 +102,75 @@ namespace GTEngine
 
         /// Emits a vertex with a position, texture coordinate and normal.
         void EmitVertex(const glm::vec3 &position, const glm::vec2 &texCoord, const glm::vec3 &normal);
+    };
+
+
+    /// Mesh builder optimized for a simple P3 format. Useful for wireframes.
+    class MeshBuilderP3 : public MeshBuilder
+    {
+    public:
+
+        /// Default constructor.
+        MeshBuilderP3();
+
+        /// Destructor.
+        ~MeshBuilderP3();
+
+
+        /// Emits a vertex with a position.
+        void EmitVertex(const glm::vec3 &position);
+    };
+
+
+    /// A special mesh builder for building wireframe spheres.
+    ///
+    /// A wireframe sphere is made up of 4 rings. 3 of the rings are in a fixed orientation, but the fourth is orientated based on a
+    /// camera orientation. Each ring will have it's own mesh builder object assigned to it, which means you are free to only use the
+    /// rings you want.
+    ///
+    /// In order for the sphere to read properly to the viewer, it is best to hide the back facing part of the applicable rings. This
+    /// is enabled by default if a camera transform is specified, but otherwise it can be disabled.
+    class WireframeSphereMeshBuilder
+    {
+    public:
+
+        /// Constructor.
+        WireframeSphereMeshBuilder(unsigned int ringSegments = 32);
+
+        /// Destructor.
+        ~WireframeSphereMeshBuilder();
+
+
+        /// Builds the sphere.
+        ///
+        /// @remarks
+        ///     There sphere will be a unit sphere and positioned at the origin. The back-side line segments will not be included.
+        void Build(const glm::mat4 &cameraView);
+
+
+
+    private:
+
+        /// Generic method for building a ring with the given transform.
+        void BuildRing(const glm::mat4 &cameraView, const glm::mat4 &ringTransform, bool cullBackFacingSegments, MeshBuilderP3 &ringOut);
+
+
+    private:
+
+        /// The number of segments to use with each ring.
+        unsigned int ringSegmentsCount;
+
+        /// The ring on the X/Y plane.
+        MeshBuilderP3 xyRing;
+
+        /// The ring on the X/Z plane.
+        MeshBuilderP3 xzRing;
+
+        /// The ring on the Y/Z plane.
+        MeshBuilderP3 yzRing;
+
+        /// The ring orientated towards the camera.
+        MeshBuilderP3 cameraRing;
     };
 }
 

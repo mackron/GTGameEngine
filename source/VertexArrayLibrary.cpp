@@ -334,6 +334,24 @@ namespace GTEngine
 
             return va;
         }
+        else if (shape.getShapeType() == SPHERE_SHAPE_PROXYTYPE)
+        {
+        }
+        else if (shape.getShapeType() == CUSTOM_CONVEX_SHAPE_TYPE)          // Ellipsoid. This should be given a proper type.
+        {
+            auto va = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+            assert(va != nullptr);
+            {
+            }
+
+            return va;
+        }
+        else if (shape.getShapeType() == CAPSULE_SHAPE_PROXYTYPE)
+        {
+        }
+        else if (shape.getShapeType() == CYLINDER_SHAPE_PROXYTYPE)
+        {
+        }
 
         return nullptr;
     }
