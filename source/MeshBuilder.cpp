@@ -181,7 +181,6 @@ namespace GTEngine
     {
     }
 
-
     void WireframeSphereMeshBuilder::Build(const glm::mat4 &cameraView, const glm::mat4 &transform)
     {
         glm::mat4 xyTransform           = glm::mat4();
