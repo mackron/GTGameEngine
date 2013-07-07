@@ -2,7 +2,7 @@
 - Changelog
 -------------------------------------------------------------------------------
 
-0.0.2 ()
+0.0.2 (July 8th, 2013)
 
 BREAKING CHANGES:
     - The serialized format of Dynamics and Proximity components has changed.
@@ -46,3 +46,5 @@ FIXES/IMPROVEMENTS:
     - A small, barely noticeable optimization to the default renderer.
     - Sprites and direction arrows are now hidden when playing a scene from
       inside the scene editor.
+    - More work on documentation.
+          - Hello, World! and GUI Basics tutorials.
