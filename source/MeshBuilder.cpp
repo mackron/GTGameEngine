@@ -136,6 +136,8 @@ namespace GTEngine
 
     void WireframeBoxMeshBuilder::Build(const glm::vec3 &halfExtents, const glm::mat4 &transform)
     {
+        this->Clear();
+
         glm::vec3 vertex0 = glm::vec3(transform * glm::vec4(-halfExtents.x, -halfExtents.y,  halfExtents.z, 1.0f));
         glm::vec3 vertex1 = glm::vec3(transform * glm::vec4( halfExtents.x, -halfExtents.y,  halfExtents.z, 1.0f));
         glm::vec3 vertex2 = glm::vec3(transform * glm::vec4( halfExtents.x,  halfExtents.y,  halfExtents.z, 1.0f));
@@ -248,6 +250,71 @@ namespace GTEngine
 
 
 
+    /// WireframeBoxMeshBuilder
+    WireframeCylinderMeshBuilder::WireframeCylinderMeshBuilder(unsigned int ringSegmentsCountIn)
+        : ringSegmentsCount(ringSegmentsCountIn)
+    {
+    }
+
+    WireframeCylinderMeshBuilder::~WireframeCylinderMeshBuilder()
+    {
+    }
+
+    void WireframeCylinderMeshBuilder::Build(float radius, float length, const glm::mat4 &transform)
+    {
+        this->Clear();
+
+        // Rings.
+        this->CreateRing(radius, transform * glm::translate(0.0f, 0.0f,  length * 0.5f));
+        this->CreateRing(radius, transform * glm::translate(0.0f, 0.0f, -length * 0.5f));
+
+        // Connection lines.
+        int   connectionCount = 8;
+        float connectionAngle = glm::radians(360.0f / static_cast<float>(connectionCount));
+
+        for (int iLine = 0; iLine < connectionCount; ++iLine)
+        {
+            float x = std::cos(connectionAngle * iLine) * radius;
+            float y = std::sin(connectionAngle * iLine) * radius;
+
+            glm::vec3 vertex0 = glm::vec3(transform * glm::vec4(x, y,  length * 0.5f, 1.0f));
+            glm::vec3 vertex1 = glm::vec3(transform * glm::vec4(x, y, -length * 0.5f, 1.0f));
+
+            this->EmitVertex(vertex0);
+            this->EmitVertex(vertex1);
+        }
+    }
+
+    void WireframeCylinderMeshBuilder::CreateRing(float radius, const glm::mat4 &transform)
+    {
+        float circleSegmentAngle = glm::radians(360.0f / static_cast<float>(this->ringSegmentsCount));
+
+        GTCore::Vector<glm::vec3> vertices(this->ringSegmentsCount);
+        for (unsigned int iSegment = 0; iSegment < this->ringSegmentsCount; ++iSegment)
+        {
+            glm::vec3 position;
+            position.x = std::cos(circleSegmentAngle * iSegment) * radius;
+            position.y = std::sin(circleSegmentAngle * iSegment) * radius;
+            position.z = 0.0f;
+            position = glm::vec3(transform * glm::vec4(position, 1.0f));
+
+            vertices.PushBack(position);
+        }
+
+
+        // Now we need to cull any back-facing segments, if applicable.
+        for (size_t iVertex = 0; iVertex < vertices.count; ++iVertex)
+        {
+            size_t index0 = iVertex;
+            size_t index1 = (iVertex + 1) % vertices.count;
+
+            this->EmitVertex(vertices[index0]);
+            this->EmitVertex(vertices[index1]);
+        }
+    }
+
+
+
     /// CollisionShapeWireframeMeshBuilder
     WireframeCollisionShapeMeshBuilder::WireframeCollisionShapeMeshBuilder(unsigned int circleSegmentsCountIn)
         : circleSegmentsCount(circleSegmentsCountIn)
@@ -314,6 +381,31 @@ namespace GTEngine
         }
         else if (shape.getShapeType() == CYLINDER_SHAPE_PROXYTYPE)
         {
+            auto &cylinder = static_cast<const btCylinderShape &>(shape);
+
+            float length;
+            glm::mat4 orientation;
+            
+            if (cylinder.getUpAxis() == 0)          // X
+            {
+                length      = cylinder.getHalfExtentsWithMargin().x() * 2.0f;
+                orientation = glm::rotate(90.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+            }
+            else if (cylinder.getUpAxis() == 1)     // Y
+            {
+                length      = cylinder.getHalfExtentsWithMargin().y() * 2.0f;
+                orientation = glm::rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+            }
+            else if (cylinder.getUpAxis() == 2)     // Z
+            {
+                length      = cylinder.getHalfExtentsWithMargin().z() * 2.0f;
+                orientation = glm::mat4();
+            }
+
+            WireframeCylinderMeshBuilder mesh;
+            mesh.Build(cylinder.getRadius(), length, transform * orientation);
+
+            this->Merge(mesh);
         }
     }
 }
