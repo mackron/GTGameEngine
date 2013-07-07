@@ -749,8 +749,8 @@ namespace GTEngine
 
                     serializer.Write(header);
                     serializer.Write(upAxis);
-                    serializer.Write(static_cast<float>(capsule.getRadius()     / capsule.getLocalScaling()[radiusAxis]));
-                    serializer.Write(static_cast<float>(capsule.getHalfHeight() / capsule.getLocalScaling()[upAxis]));
+                    serializer.Write(static_cast<float>(capsule.getRadius()            / capsule.getLocalScaling()[radiusAxis]));
+                    serializer.Write(static_cast<float>(capsule.getHalfHeight() * 2.0f / capsule.getLocalScaling()[upAxis]));
                     
                     auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape.getUserPointer());
                     assert(metadata != nullptr);

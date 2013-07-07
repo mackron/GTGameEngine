@@ -250,7 +250,7 @@ namespace GTEngine
 
 
 
-    /// WireframeBoxMeshBuilder
+    /// WireframeCylinderMeshBuilder
     WireframeCylinderMeshBuilder::WireframeCylinderMeshBuilder(unsigned int ringSegmentsCountIn)
         : ringSegmentsCount(ringSegmentsCountIn)
     {
@@ -301,8 +301,6 @@ namespace GTEngine
             vertices.PushBack(position);
         }
 
-
-        // Now we need to cull any back-facing segments, if applicable.
         for (size_t iVertex = 0; iVertex < vertices.count; ++iVertex)
         {
             size_t index0 = iVertex;
@@ -311,6 +309,89 @@ namespace GTEngine
             this->EmitVertex(vertices[index0]);
             this->EmitVertex(vertices[index1]);
         }
+    }
+
+
+
+    /// WireframeCapsuleMeshBuilder
+    WireframeCapsuleMeshBuilder::WireframeCapsuleMeshBuilder(unsigned int ringSegmentsCountIn)
+        : circleSegmentsCount(ringSegmentsCountIn)
+    {
+    }
+
+    WireframeCapsuleMeshBuilder::~WireframeCapsuleMeshBuilder()
+    {
+    }
+
+    void WireframeCapsuleMeshBuilder::Build(float radius, float length, const glm::mat4 &transform)
+    {
+        this->Clear();
+
+        // Rings.
+        this->CreateRing(radius, length, transform);
+        this->CreateRing(radius, length, transform * glm::rotate(45.0f,  glm::vec3(0.0f, 0.0f, 1.0f)));
+        this->CreateRing(radius, length, transform * glm::rotate(90.0f,  glm::vec3(0.0f, 0.0f, 1.0f)));
+        this->CreateRing(radius, length, transform * glm::rotate(135.0f, glm::vec3(0.0f, 0.0f, 1.0f)));
+    }
+
+    void WireframeCapsuleMeshBuilder::CreateRing(float radius, float length, const glm::mat4 &transform)
+    {
+        float circleSegmentAngle = glm::radians(180.0f / static_cast<float>(this->circleSegmentsCount - 1));
+
+        GTCore::Vector<glm::vec3> vertices(this->circleSegmentsCount);
+        for (unsigned int iSegment = 0; iSegment < this->circleSegmentsCount; ++iSegment)
+        {
+            glm::vec3 position;
+            position.x = std::cos(circleSegmentAngle * iSegment - glm::radians(180.0f)) * radius;
+            position.y = 0.0f;
+            position.z = std::sin(circleSegmentAngle * iSegment - glm::radians(180.0f)) * radius - length * 0.5f;
+            position = glm::vec3(transform * glm::vec4(position, 1.0f));
+
+            vertices.PushBack(position);
+        }
+
+        for (size_t iVertex = 0; iVertex < vertices.count - 1; ++iVertex)
+        {
+            size_t index0 = iVertex;
+            size_t index1 = (iVertex + 1) % vertices.count;
+
+            this->EmitVertex(vertices[index0]);
+            this->EmitVertex(vertices[index1]);
+        }
+
+
+        vertices.Clear();
+        for (unsigned int iSegment = 0; iSegment < this->circleSegmentsCount; ++iSegment)
+        {
+            glm::vec3 position;
+            position.x = std::cos(circleSegmentAngle * iSegment) * radius;
+            position.y = 0.0f;
+            position.z = std::sin(circleSegmentAngle * iSegment) * radius + length * 0.5f;
+            position = glm::vec3(transform * glm::vec4(position, 1.0f));
+
+            vertices.PushBack(position);
+        }
+
+        for (size_t iVertex = 0; iVertex < vertices.count - 1; ++iVertex)
+        {
+            size_t index0 = iVertex;
+            size_t index1 = (iVertex + 1) % vertices.count;
+
+            this->EmitVertex(vertices[index0]);
+            this->EmitVertex(vertices[index1]);
+        }
+
+
+        // Connectors.
+        glm::vec3 negVertex0 = glm::vec3(transform * glm::vec4(-radius, 0.0f, -length * 0.5f, 1.0f));
+        glm::vec3 negVertex1 = glm::vec3(transform * glm::vec4(-radius, 0.0f,  length * 0.5f, 1.0f));
+        this->EmitVertex(negVertex0);
+        this->EmitVertex(negVertex1);
+
+        glm::vec3 posVertex0 = glm::vec3(transform * glm::vec4(radius, 0.0f, -length * 0.5f, 1.0f));
+        glm::vec3 posVertex1 = glm::vec3(transform * glm::vec4(radius, 0.0f,  length * 0.5f, 1.0f));
+        this->EmitVertex(posVertex0);
+        this->EmitVertex(posVertex1);
     }
 
 
@@ -378,6 +459,33 @@ namespace GTEngine
         }
         else if (shape.getShapeType() == CAPSULE_SHAPE_PROXYTYPE)
         {
+            auto &capsule = static_cast<const btCapsuleShape &>(shape);
+
+            float length = capsule.getHalfHeight() * 2.0f;
+            glm::mat4 orientation;
+            
+            if (capsule.getUpAxis() == 0)          // X
+            {
+                orientation = glm::rotate(90.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+            }
+            else if (capsule.getUpAxis() == 1)     // Y
+            {
+                orientation = glm::rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+            }
+            else if (capsule.getUpAxis() == 2)     // Z
+            {
+                orientation = glm::mat4();
+            }
+            else
+            {
+                length = 1.0f;      // <-- Warning silencer.
+                assert(false);
+            }
+
+            WireframeCapsuleMeshBuilder mesh(this->circleSegmentsCount / 2);
+            mesh.Build(capsule.getRadius(), length, transform * orientation);
+
+            this->Merge(mesh);
         }
         else if (shape.getShapeType() == CYLINDER_SHAPE_PROXYTYPE)
         {
@@ -407,7 +515,7 @@ namespace GTEngine
                 assert(false);
             }
 
-            WireframeCylinderMeshBuilder mesh;
+            WireframeCylinderMeshBuilder mesh(this->circleSegmentsCount);
             mesh.Build(cylinder.getRadius(), length, transform * orientation);
 
             this->Merge(mesh);
