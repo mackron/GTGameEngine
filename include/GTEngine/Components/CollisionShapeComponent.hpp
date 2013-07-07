@@ -36,9 +36,9 @@ namespace GTEngine
         void AddEllipsoidCollisionShape(float radiusX, float radiusY, float radiusZ, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
 
         /// Adds a cylinder collision shape.
-        void AddCylinderXCollisionShape(float halfX, float halfY, float halfZ, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
-        void AddCylinderYCollisionShape(float halfX, float halfY, float halfZ, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
-        void AddCylinderZCollisionShape(float halfX, float halfY, float halfZ, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
+        void AddCylinderXCollisionShape(float radius, float length, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
+        void AddCylinderYCollisionShape(float radius, float length, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
+        void AddCylinderZCollisionShape(float radius, float length, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
 
         /// Adds a capsule collision shape.
         void AddCapsuleXCollisionShape(float radius, float length, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
@@ -84,12 +84,18 @@ namespace GTEngine
         void RemoveCollisionShapeAtIndex(size_t index);
 
 
+        /// Retrieves the unscaled offset of the shape at the given index.
+        ///
+        /// @param index [in] The idnex of the shape whose offset if being retrieved.
+        glm::vec3 GetCollisionShapeOffset(size_t index) const;
 
-        /// Sets the offset to use for the shape at the given index.
+        /// Sets the unscaled offset to use for the shape at the given index.
         ///
         /// @param index  [in] The index of the shape whose offset is being changed.
         /// @param offset [in] The new offset.
-        void SetCollisionShapeOffset(size_t index, float offsetX, float offsetY, float offsetZ);
+        void SetCollisionShapeOffset(size_t index, float offsetX, float offsetY, float offsetZ, bool postOnChanged = true);
+        void SetCollisionShapeOffset(size_t index, const glm::vec3 &offset, bool postOnChanged = true) { this->SetCollisionShapeOffset(index, offset.x, offset.y, offset.z, postOnChanged); }
+
 
         /// Sets the half extents of the box shape at the given index.
         ///
@@ -121,7 +127,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If the shape at the given index is not a cylinder, this method will fail and return false.
-        bool SetCylinderCollisionShapeHalfExtents(size_t index, float halfX, float halfY, float halfZ);
+        bool SetCylinderCollisionShapeSize(size_t index, float radius, float length);
 
         /// Sets the half extents of the capsule shape at the given index.
         ///

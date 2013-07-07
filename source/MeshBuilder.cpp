@@ -401,6 +401,11 @@ namespace GTEngine
                 length      = cylinder.getHalfExtentsWithMargin().z() * 2.0f;
                 orientation = glm::mat4();
             }
+            else
+            {
+                length = 1.0f;      // <-- Warning silencer.
+                assert(false);
+            }
 
             WireframeCylinderMeshBuilder mesh;
             mesh.Build(cylinder.getRadius(), length, transform * orientation);

@@ -7,6 +7,27 @@
 
 namespace GTEngine
 {
+    /// Some metadata to associate with each child shape of a base collision shape.
+    ///
+    /// A metadata structure is allocated for each shape, and deleted when they are removed.
+    struct ChildCollisionShapeMetadata
+    {
+        /// Constructor.
+        ChildCollisionShapeMetadata(const glm::vec3 &unscaledOffsetIn, const glm::vec3 &rotationIn = glm::vec3(0.0f, 0.0f, 0.0f))
+            : unscaledOffset(unscaledOffsetIn), rotation(rotationIn)
+        {
+        }
+
+
+        /// The unscaled offset of the shape.
+        glm::vec3 unscaledOffset;
+
+        /// The rotational offset, as euler angles in degrees.
+        glm::vec3 rotation;
+    };
+
+
+
     CollisionShapeComponent::CollisionShapeComponent(SceneNode &node)
         : Component(node),
           collisionShape(true),
@@ -18,13 +39,7 @@ namespace GTEngine
     CollisionShapeComponent::~CollisionShapeComponent()
     {
         // Now we need to delete the collision shapes.
-        while (this->collisionShape.getNumChildShapes() > 0)
-        {
-            auto child = this->collisionShape.getChildShape(0);
-            this->collisionShape.removeChildShapeByIndex(0);
-
-            delete child;
-        }
+        this->RemoveAllCollisionShapes(false);
     }
 
 
@@ -45,17 +60,17 @@ namespace GTEngine
     }
 
 
-    void CollisionShapeComponent::AddCylinderXCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
+    void CollisionShapeComponent::AddCylinderXCollisionShape(float radius, float length, float offsetX, float offsetY, float offsetZ)
     {
-        this->AddCollisionShape(new btCylinderShapeX(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
+        this->AddCollisionShape(new btCylinderShapeX(btVector3(length * 0.5f, radius, radius)), offsetX, offsetY, offsetZ);
     }
-    void CollisionShapeComponent::AddCylinderYCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
+    void CollisionShapeComponent::AddCylinderYCollisionShape(float radius, float length, float offsetX, float offsetY, float offsetZ)
     {
-        this->AddCollisionShape(new btCylinderShape(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
+        this->AddCollisionShape(new btCylinderShape(btVector3(radius, length * 0.5f, radius)), offsetX, offsetY, offsetZ);
     }
-    void CollisionShapeComponent::AddCylinderZCollisionShape(float halfX, float halfY, float halfZ, float offsetX, float offsetY, float offsetZ)
+    void CollisionShapeComponent::AddCylinderZCollisionShape(float radius, float length, float offsetX, float offsetY, float offsetZ)
     {
-        this->AddCollisionShape(new btCylinderShapeZ(btVector3(halfX, halfY, halfZ)), offsetX, offsetY, offsetZ);
+        this->AddCollisionShape(new btCylinderShapeZ(btVector3(radius, radius, length * 0.5f)), offsetX, offsetY, offsetZ);
     }
 
 
@@ -111,6 +126,9 @@ namespace GTEngine
                 auto shape = new btConvexHullShape(static_cast<const btScalar*>(hull->GetVertices()), hull->GetVertexCount(), 12);
                 shape->setMargin(margin);
 
+                /// The child collision shape needs metadata.
+                shape->setUserPointer(new ChildCollisionShapeMetadata(glm::vec3(0.0f, 0.0f, 0.0f)));
+
                 // All we need to do is add the new shape to the compound shape...
                 this->collisionShape.addChildShape(btTransform::getIdentity(), shape);
             }
@@ -149,8 +167,9 @@ namespace GTEngine
             while (this->collisionShape.getNumChildShapes() > 0)
             {
                 auto child = this->collisionShape.getChildShape(0);
-                this->collisionShape.removeChildShapeByIndex(0);
+                delete reinterpret_cast<ChildCollisionShapeMetadata*>(child->getUserPointer());
 
+                this->collisionShape.removeChildShapeByIndex(0);
                 delete child;
             }
 
@@ -165,7 +184,12 @@ namespace GTEngine
         this->OnPreCollisionShapeChanged();
         {
             // All children need to be removed from the shape.
+            auto child = this->collisionShape.getChildShape(static_cast<int>(index));
+            delete reinterpret_cast<ChildCollisionShapeMetadata*>(child->getUserPointer());
+            
             this->collisionShape.removeChildShapeByIndex(static_cast<int>(index));
+            delete child;
+
             this->usingConvexHullsOfModel = false;
         }
         this->OnPostCollisionShapeChanged();
@@ -173,20 +197,51 @@ namespace GTEngine
     }
 
 
+    glm::vec3 CollisionShapeComponent::GetCollisionShapeOffset(size_t index) const
+    {
+        auto childShape = this->collisionShape.getChildShape(static_cast<int>(index));
+        if (childShape != nullptr)
+        {
+            auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(childShape->getUserPointer());
+            if (metadata != nullptr)
+            {
+                return metadata->unscaledOffset;
+            }
+            else
+            {
+                return Math::vec3_cast(this->collisionShape.getChildTransform(static_cast<int>(index)).getOrigin());
+            }
+        }
+        
+        return glm::vec3(0.0f, 0.0f, 0.0f);
+    }
 
-
-    void CollisionShapeComponent::SetCollisionShapeOffset(size_t index, float offsetX, float offsetY, float offsetZ)
+    void CollisionShapeComponent::SetCollisionShapeOffset(size_t index, float offsetX, float offsetY, float offsetZ, bool postOnChanged)
     {
         this->OnPreCollisionShapeChanged();
         {
+            auto childShape = this->collisionShape.getChildShape(static_cast<int>(index));
+            if (childShape != nullptr)
+            {
+                auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(childShape->getUserPointer());
+                if (metadata != nullptr)
+                {
+                    metadata->unscaledOffset = glm::vec3(offsetX, offsetY, offsetZ);
+                }
+            }
+
             btTransform newTransform;
             newTransform.setIdentity();
-            newTransform.setOrigin(btVector3(offsetX, offsetY, offsetZ));
+            newTransform.setOrigin(btVector3(offsetX, offsetY, offsetZ) * this->collisionShape.getLocalScaling());
 
             this->collisionShape.updateChildTransform(index, newTransform);
         }
         this->OnPostCollisionShapeChanged();
-        this->OnChanged();
+
+        if (postOnChanged)
+        {
+            this->OnChanged();
+        }
     }
 
 
@@ -197,14 +252,21 @@ namespace GTEngine
             this->OnPreCollisionShapeChanged();
             {
                 auto shape = static_cast<btBoxShape*>(this->collisionShape.getChildShape(index));
+                auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape->getUserPointer());
+                auto scale    = shape->getLocalScaling();
 
                 // And this is how we are going to change the extents... Can't find a better way to do this
                 shape->~btBoxShape();
                 new (shape) btBoxShape(btVector3(halfX, halfY, halfZ));
+                shape->setLocalScaling(scale);
+                shape->setUserPointer(metadata);
 
 
-                // We need to call this in order to get everything looking correct.
-                this->collisionShape.updateChildTransform(index, this->collisionShape.getChildTransform(index));
+                // We need to update the child's transform
+                btTransform childTransform;
+                childTransform.setBasis(Math::btMatrix3x3_cast(glm::quat(glm::radians(metadata->rotation))));
+                childTransform.setOrigin(Math::btVector3_cast(metadata->unscaledOffset));
+                this->collisionShape.updateChildTransform(index, childTransform);
             }
             this->OnPostCollisionShapeChanged();
             this->OnChanged();
@@ -223,10 +285,14 @@ namespace GTEngine
             this->OnPreCollisionShapeChanged();
             {
                 auto shape = static_cast<btSphereShape*>(this->collisionShape.getChildShape(index));
+                auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape->getUserPointer());
+                auto scale    = shape->getLocalScaling();
 
                 // And this is how we are going to change the extents... Can't find a better way to do this
                 shape->~btSphereShape();
                 new (shape) btSphereShape(radius);
+                shape->setLocalScaling(scale);
+                shape->setUserPointer(metadata);
 
 
                 // We need to call this in order to get everything looking correct.
@@ -249,10 +315,14 @@ namespace GTEngine
             this->OnPreCollisionShapeChanged();
             {
                 auto shape = static_cast<btEllipsoidShape*>(this->collisionShape.getChildShape(index));
+                auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape->getUserPointer());
+                auto scale    = shape->getLocalScaling();
 
                 // And this is how we are going to change the extents... Can't find a better way to do this
                 shape->~btEllipsoidShape();
                 new (shape) btEllipsoidShape(btVector3(radiusX, radiusY, radiusZ));
+                shape->setLocalScaling(scale);
+                shape->setUserPointer(metadata);
 
 
                 // We need to call this in order to get everything looking correct.
@@ -268,7 +338,7 @@ namespace GTEngine
         return false;
     }
 
-    bool CollisionShapeComponent::SetCylinderCollisionShapeHalfExtents(size_t index, float halfX, float halfY, float halfZ)
+    bool CollisionShapeComponent::SetCylinderCollisionShapeSize(size_t index, float radius, float length)
     {
         auto type = GetCollisionShapeType(this->collisionShape.getChildShape(index));
 
@@ -279,26 +349,38 @@ namespace GTEngine
                 if (type == CollisionShapeType_CylinderX)
                 {
                     auto shape = static_cast<btCylinderShapeX*>(this->collisionShape.getChildShape(index));
+                    auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape->getUserPointer());
+                    auto scale    = shape->getLocalScaling();
 
                     // And this is how we are going to change the extents... Can't find a better way to do this
                     shape->~btCylinderShapeX();
-                    new (shape) btCylinderShapeX(btVector3(halfX, halfY, halfZ));
+                    new (shape) btCylinderShapeX(btVector3(length * 0.5f, radius, radius));
+                    shape->setLocalScaling(scale);
+                    shape->setUserPointer(metadata);
                 }
                 else if (type == CollisionShapeType_CylinderY)
                 {
                     auto shape = static_cast<btCylinderShape*>(this->collisionShape.getChildShape(index));
+                    auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape->getUserPointer());
+                    auto scale    = shape->getLocalScaling();
 
                     // And this is how we are going to change the extents... Can't find a better way to do this
                     shape->~btCylinderShape();
-                    new (shape) btCylinderShape(btVector3(halfX, halfY, halfZ));
+                    new (shape) btCylinderShape(btVector3(radius, length * 0.5f, radius));
+                    shape->setLocalScaling(scale);
+                    shape->setUserPointer(metadata);
                 }
                 else if (type == CollisionShapeType_CylinderZ)
                 {
                     auto shape = static_cast<btCylinderShapeZ*>(this->collisionShape.getChildShape(index));
+                    auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape->getUserPointer());
+                    auto scale    = shape->getLocalScaling();
 
                     // And this is how we are going to change the extents... Can't find a better way to do this
                     shape->~btCylinderShapeZ();
-                    new (shape) btCylinderShapeZ(btVector3(halfX, halfY, halfZ));
+                    new (shape) btCylinderShapeZ(btVector3(radius, radius, length * 0.5f));
+                    shape->setLocalScaling(scale);
+                    shape->setUserPointer(metadata);
                 }
 
 
@@ -326,26 +408,38 @@ namespace GTEngine
                 if (type == CollisionShapeType_CapsuleX)
                 {
                     auto shape = static_cast<btCapsuleShapeX*>(this->collisionShape.getChildShape(index));
+                    auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape->getUserPointer());
+                    auto scale    = shape->getLocalScaling();
 
                     // And this is how we are going to change the extents... Can't find a better way to do this
                     shape->~btCapsuleShapeX();
                     new (shape) btCapsuleShapeX(radius, height);
+                    shape->setLocalScaling(scale);
+                    shape->setUserPointer(metadata);
                 }
                 else if (type == CollisionShapeType_CapsuleY)
                 {
                     auto shape = static_cast<btCapsuleShape*>(this->collisionShape.getChildShape(index));
+                    auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape->getUserPointer());
+                    auto scale    = shape->getLocalScaling();
 
                     // And this is how we are going to change the extents... Can't find a better way to do this
                     shape->~btCapsuleShape();
                     new (shape) btCapsuleShape(radius, height);
+                    shape->setLocalScaling(scale);
+                    shape->setUserPointer(metadata);
                 }
                 else if (type == CollisionShapeType_CapsuleZ)
                 {
                     auto shape = static_cast<btCapsuleShapeZ*>(this->collisionShape.getChildShape(index));
+                    auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape->getUserPointer());
+                    auto scale    = shape->getLocalScaling();
 
                     // And this is how we are going to change the extents... Can't find a better way to do this
                     shape->~btCapsuleShapeZ();
                     new (shape) btCapsuleShapeZ(radius, height);
+                    shape->setLocalScaling(scale);
+                    shape->setUserPointer(metadata);
                 }
 
 
@@ -421,6 +515,20 @@ namespace GTEngine
 
             // Now we simply apply the scaling to the shape.
             this->collisionShape.setLocalScaling(btVector3(x, y, z));
+
+            // Changing the scale can cause issues with the offset of child shapes. We need to re-apply the unscaled offset of every child shape.
+            for (int iChild = 0; iChild < this->collisionShape.getNumChildShapes(); ++iChild)
+            {
+                auto childShape = this->collisionShape.getChildShape(iChild);
+                assert(childShape != nullptr);
+                {
+                    auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(childShape->getUserPointer());
+                    if (metadata != nullptr)
+                    {
+                        this->SetCollisionShapeOffset(static_cast<size_t>(iChild), metadata->unscaledOffset, false);        // <-- 'false' means to no post OnChanged.
+                    }
+                }
+            }
         }
         this->OnPostCollisionShapeChanged();
     }
@@ -528,12 +636,18 @@ namespace GTEngine
                     header.id          = Serialization::ChunkID_CollisionShapeComponent_BoxShape;
                     header.version     = 1;
                     header.sizeInBytes =
-                        sizeof(glm::vec3) +     // <-- Half extents
-                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+                        sizeof(glm::vec3) +                         // <-- Half extents.
+                        sizeof(glm::vec3) + sizeof(glm::vec3);      // <-- Unscaled offset and rotation.
 
                     serializer.Write(header);
                     serializer.Write(ToGLMVector3(box.getHalfExtentsWithMargin() / box.getLocalScaling()));
-                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
+                    
+                    auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape.getUserPointer());
+                    assert(metadata != nullptr);
+                    {
+                        serializer.Write(metadata->unscaledOffset);
+                        serializer.Write(metadata->rotation);
+                    }
 
 
                     break;
@@ -546,12 +660,18 @@ namespace GTEngine
                     header.id          = Serialization::ChunkID_CollisionShapeComponent_SphereShape;
                     header.version     = 1;
                     header.sizeInBytes =
-                        sizeof(float) +         // <-- Radius.
-                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+                        sizeof(float) +                             // <-- Radius.
+                        sizeof(glm::vec3) + sizeof(glm::vec3);      // <-- Unscaled offset and rotation.
 
                     serializer.Write(header);
                     serializer.Write(static_cast<float>(sphere.getRadius() / sphere.getLocalScaling().getX()));
-                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
+                    
+                    auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape.getUserPointer());
+                    assert(metadata != nullptr);
+                    {
+                        serializer.Write(metadata->unscaledOffset);
+                        serializer.Write(metadata->rotation);
+                    }
 
                     break;
                 }
@@ -565,12 +685,18 @@ namespace GTEngine
                     header.id          = Serialization::ChunkID_CollisionShapeComponent_EllipsoidShape;
                     header.version     = 1;
                     header.sizeInBytes =
-                        sizeof(glm::vec3) +     // <-- Half extents
-                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+                        sizeof(glm::vec3) +                         // <-- Half extents
+                        sizeof(glm::vec3) + sizeof(glm::vec3);      // <-- Unscaled offset and rotation.
 
                     serializer.Write(header);
                     serializer.Write(ToGLMVector3((ellipsoid.getImplicitShapeDimensions() + margin) / ellipsoid.getLocalScaling()));
-                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
+                    
+                    auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape.getUserPointer());
+                    assert(metadata != nullptr);
+                    {
+                        serializer.Write(metadata->unscaledOffset);
+                        serializer.Write(metadata->rotation);
+                    }
 
                     break;
                 }
@@ -586,14 +712,20 @@ namespace GTEngine
                     header.id          = Serialization::ChunkID_CollisionShapeComponent_CylinderShape;
                     header.version     = 1;
                     header.sizeInBytes =
-                        sizeof(uint32_t)  +     // <-- Axis - 0 = X, 1 = Y, 2 = Z
-                        sizeof(glm::vec3) +     // <-- Half extents
-                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+                        sizeof(uint32_t)  +                         // <-- Axis - 0 = X, 1 = Y, 2 = Z
+                        sizeof(glm::vec3) +                         // <-- Half extents
+                        sizeof(glm::vec3) + sizeof(glm::vec3);      // <-- Unscaled offset and rotation.
 
                     serializer.Write(header);
                     serializer.Write(upAxis);
                     serializer.Write(ToGLMVector3(cylinder.getHalfExtentsWithMargin() / cylinder.getLocalScaling()));
-                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
+                    
+                    auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape.getUserPointer());
+                    assert(metadata != nullptr);
+                    {
+                        serializer.Write(metadata->unscaledOffset);
+                        serializer.Write(metadata->rotation);
+                    }
 
                     break;
                 }
@@ -610,16 +742,22 @@ namespace GTEngine
                     header.id          = Serialization::ChunkID_CollisionShapeComponent_CapsuleShape;
                     header.version     = 1;
                     header.sizeInBytes =
-                        sizeof(uint32_t) +      // <-- Axis - 0 = X, 1 = Y, 2 = Z
-                        sizeof(float)    +      // <-- Radius
-                        sizeof(float)    +      // <-- Height
-                        sizeof(glm::mat4);      // <-- Offset transform, as an OpenGL matrix.
+                        sizeof(uint32_t) +                          // <-- Axis - 0 = X, 1 = Y, 2 = Z
+                        sizeof(float)    +                          // <-- Radius
+                        sizeof(float)    +                          // <-- Height
+                        sizeof(glm::vec3) + sizeof(glm::vec3);      // <-- Unscaled offset and rotation.
 
                     serializer.Write(header);
                     serializer.Write(upAxis);
                     serializer.Write(static_cast<float>(capsule.getRadius()     / capsule.getLocalScaling()[radiusAxis]));
                     serializer.Write(static_cast<float>(capsule.getHalfHeight() / capsule.getLocalScaling()[upAxis]));
-                    serializer.Write(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
+                    
+                    auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape.getUserPointer());
+                    assert(metadata != nullptr);
+                    {
+                        serializer.Write(metadata->unscaledOffset);
+                        serializer.Write(metadata->rotation);
+                    }
 
                     break;
                 }
@@ -632,7 +770,7 @@ namespace GTEngine
                     header.version     = 1;
                     header.sizeInBytes =
                         sizeof(uint32_t)  +                                     // <-- Vertex count.
-                        sizeof(glm::vec3) * convexHull.getNumVertices() +      // <-- Each vertex.
+                        sizeof(glm::vec3) * convexHull.getNumVertices() +       // <-- Each vertex.
                         sizeof(float);                                          // <-- Margin. Important for convex hulls.
 
                     serializer.Write(header);
@@ -714,13 +852,7 @@ namespace GTEngine
 
 
         // The next chunks will be the shapes. The old shapes need to be removed.
-        while (this->collisionShape.getNumChildShapes() > 0)
-        {
-            auto child = this->collisionShape.getChildShape(0);
-            this->collisionShape.removeChildShapeByIndex(0);
-
-            delete child;
-        }
+        this->RemoveAllCollisionShapes(false);
 
 
         for (uint32_t i = 0; i < deserializedShapeCount; ++i)
@@ -736,12 +868,21 @@ namespace GTEngine
                     case 1:
                         {
                             glm::vec3 halfExtents;
-                            glm::mat4 transform;
+                            glm::vec3 unscaledOffset;
+                            glm::vec3 rotation;
 
                             deserializer.Read(halfExtents);
-                            deserializer.Read(transform);
+                            deserializer.Read(unscaledOffset);
+                            deserializer.Read(rotation);
 
-                            this->collisionShape.addChildShape(ToBulletTransform(transform), new btBoxShape(ToBulletVector3(halfExtents)));
+                            btTransform childTransform;
+                            childTransform.setBasis(Math::btMatrix3x3_cast(glm::quat(glm::radians(rotation))));
+                            childTransform.setOrigin(Math::btVector3_cast(unscaledOffset));
+
+                            auto childShape = new btBoxShape(ToBulletVector3(halfExtents));
+                            childShape->setUserPointer(new ChildCollisionShapeMetadata(unscaledOffset, rotation));
+
+                            this->collisionShape.addChildShape(childTransform, childShape);
 
                             break;
                         }
@@ -765,12 +906,21 @@ namespace GTEngine
                     case 1:
                         {
                             float     radius;
-                            glm::mat4 transform;
+                            glm::vec3 unscaledOffset;
+                            glm::vec3 rotation;
 
                             deserializer.Read(radius);
-                            deserializer.Read(transform);
+                            deserializer.Read(unscaledOffset);
+                            deserializer.Read(rotation);
 
-                            this->collisionShape.addChildShape(ToBulletTransform(transform), new btSphereShape(radius));
+                            btTransform childTransform;
+                            childTransform.setBasis(Math::btMatrix3x3_cast(glm::quat(glm::radians(rotation))));
+                            childTransform.setOrigin(Math::btVector3_cast(unscaledOffset));
+
+                            auto childShape = new btSphereShape(radius);
+                            childShape->setUserPointer(new ChildCollisionShapeMetadata(unscaledOffset, rotation));
+
+                            this->collisionShape.addChildShape(childTransform, childShape);
 
                             break;
                         }
@@ -794,12 +944,21 @@ namespace GTEngine
                     case 1:
                         {
                             glm::vec3 halfExtents;
-                            glm::mat4 transform;
+                            glm::vec3 unscaledOffset;
+                            glm::vec3 rotation;
 
                             deserializer.Read(halfExtents);
-                            deserializer.Read(transform);
+                            deserializer.Read(unscaledOffset);
+                            deserializer.Read(rotation);
 
-                            this->collisionShape.addChildShape(ToBulletTransform(transform), new btEllipsoidShape(ToBulletVector3(halfExtents)));
+                            btTransform childTransform;
+                            childTransform.setBasis(Math::btMatrix3x3_cast(glm::quat(glm::radians(rotation))));
+                            childTransform.setOrigin(Math::btVector3_cast(unscaledOffset));
+
+                            auto childShape = new btEllipsoidShape(ToBulletVector3(halfExtents));
+                            childShape->setUserPointer(new ChildCollisionShapeMetadata(unscaledOffset, rotation));
+
+                            this->collisionShape.addChildShape(childTransform, childShape);
 
                             break;
                         }
@@ -824,23 +983,38 @@ namespace GTEngine
                         {
                             uint32_t  upAxis;
                             glm::vec3 halfExtents;
-                            glm::mat4 transform;
+                            glm::vec3 unscaledOffset;
+                            glm::vec3 rotation;
 
                             deserializer.Read(upAxis);
                             deserializer.Read(halfExtents);
-                            deserializer.Read(transform);
+                            deserializer.Read(unscaledOffset);
+                            deserializer.Read(rotation);
+
+                            btTransform childTransform;
+                            childTransform.setBasis(Math::btMatrix3x3_cast(glm::quat(glm::radians(rotation))));
+                            childTransform.setOrigin(Math::btVector3_cast(unscaledOffset));
 
                             if (upAxis == 0)
                             {
-                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCylinderShapeX(ToBulletVector3(halfExtents)));
+                                auto childShape = new btCylinderShapeX(ToBulletVector3(halfExtents));
+                                childShape->setUserPointer(new ChildCollisionShapeMetadata(unscaledOffset, rotation));
+
+                                this->collisionShape.addChildShape(childTransform, childShape);
                             }
                             else if (upAxis == 1)
                             {
-                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCylinderShape(ToBulletVector3(halfExtents)));
+                                auto childShape = new btCylinderShape(ToBulletVector3(halfExtents));
+                                childShape->setUserPointer(new ChildCollisionShapeMetadata(unscaledOffset, rotation));
+
+                                this->collisionShape.addChildShape(childTransform, childShape);
                             }
                             else
                             {
-                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCylinderShapeZ(ToBulletVector3(halfExtents)));
+                                auto childShape = new btCylinderShapeZ(ToBulletVector3(halfExtents));
+                                childShape->setUserPointer(new ChildCollisionShapeMetadata(unscaledOffset, rotation));
+
+                                this->collisionShape.addChildShape(childTransform, childShape);
                             }
 
                             break;
@@ -867,24 +1041,39 @@ namespace GTEngine
                             uint32_t upAxis;
                             float    radius;
                             float    height;
-                            glm::mat4 transform;
+                            glm::vec3 unscaledOffset;
+                            glm::vec3 rotation;
 
                             deserializer.Read(upAxis);
                             deserializer.Read(radius);
                             deserializer.Read(height);
-                            deserializer.Read(transform);
+                            deserializer.Read(unscaledOffset);
+                            deserializer.Read(rotation);
+
+                            btTransform childTransform;
+                            childTransform.setBasis(Math::btMatrix3x3_cast(glm::quat(glm::radians(rotation))));
+                            childTransform.setOrigin(Math::btVector3_cast(unscaledOffset));
 
                             if (upAxis == 0)
                             {
-                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCapsuleShapeX(radius, height));
+                                auto childShape = new btCapsuleShapeX(radius, height);
+                                childShape->setUserPointer(new ChildCollisionShapeMetadata(unscaledOffset, rotation));
+
+                                this->collisionShape.addChildShape(childTransform, childShape);
                             }
                             else if (upAxis == 1)
                             {
-                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCapsuleShape(radius, height));
+                                auto childShape = new btCapsuleShape(radius, height);
+                                childShape->setUserPointer(new ChildCollisionShapeMetadata(unscaledOffset, rotation));
+
+                                this->collisionShape.addChildShape(childTransform, childShape);
                             }
                             else
                             {
-                                this->collisionShape.addChildShape(ToBulletTransform(transform), new btCapsuleShapeZ(radius, height));
+                                auto childShape = new btCapsuleShapeZ(radius, height);
+                                childShape->setUserPointer(new ChildCollisionShapeMetadata(unscaledOffset, rotation));
+
+                                this->collisionShape.addChildShape(childTransform, childShape);
                             }
 
                             break;
@@ -961,6 +1150,10 @@ namespace GTEngine
     {
         this->OnPreCollisionShapeChanged();
         {
+            /// The child collision shape needs metadata.
+            shape->setUserPointer(new ChildCollisionShapeMetadata(glm::vec3(offsetX, offsetY, offsetZ)));
+
+
             // Before adding the shape, we need to temporarily reset the scale back to 1,1,1. If we don't do this, the child shape will
             // not have the correct scale applied to it when we update the scale properly.
             this->collisionShape.setLocalScaling(btVector3(1.0f, 1.0f, 1.0f));

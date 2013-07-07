@@ -568,8 +568,8 @@ namespace GTEngine
                 "    return GTEngine.System.DynamicsComponent.SetEllipsoidCollisionShapeRadius(self._internalPtr, index, radiusX, radiusY, radiusZ);"
                 "end;"
 
-                "function GTEngine.DynamicsComponent:SetCylinderCollisionShapeHalfExtents(index, halfX, halfY, halfZ)"
-                "    return GTEngine.System.DynamicsComponent.SetCylinderCollisionShapeHalfExtents(self._internalPtr, index, halfX, halfY, halfZ);"
+                "function GTEngine.DynamicsComponent:SetCylinderCollisionShapeSize(index, radius, length)"
+                "    return GTEngine.System.DynamicsComponent.SetCylinderCollisionShapeSize(self._internalPtr, index, radius, length);"
                 "end;"
 
                 "function GTEngine.DynamicsComponent:SetCapsuleCollisionShapeSize(index, radius, height)"
@@ -685,8 +685,8 @@ namespace GTEngine
                 "    return GTEngine.System.ProximityComponent.SetEllipsoidCollisionShapeRadius(self._internalPtr, index, radiusX, radiusY, radiusZ);"
                 "end;"
 
-                "function GTEngine.ProximityComponent:SetCylinderCollisionShapeHalfExtents(index, halfX, halfY, halfZ)"
-                "    return GTEngine.System.ProximityComponent.SetCylinderCollisionShapeHalfExtents(self._internalPtr, index, halfX, halfY, halfZ);"
+                "function GTEngine.ProximityComponent:SetCylinderCollisionShapeSize(index, radius, length)"
+                "    return GTEngine.System.ProximityComponent.SetCylinderCollisionShapeSize(self._internalPtr, index, radius, length);"
                 "end;"
 
                 "function GTEngine.ProximityComponent:SetCapsuleCollisionShapeSize(index, radius, height)"
@@ -1047,7 +1047,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "SetBoxCollisionShapeHalfExtents",                DynamicsComponentFFI::SetBoxCollisionShapeHalfExtents);
                             script.SetTableFunction(-1, "SetSphereCollisionShapeRadius",                  DynamicsComponentFFI::SetSphereCollisionShapeRadius);
                             script.SetTableFunction(-1, "SetEllipsoidCollisionShapeRadius",               DynamicsComponentFFI::SetEllipsoidCollisionShapeRadius);
-                            script.SetTableFunction(-1, "SetCylinderCollisionShapeHalfExtents",           DynamicsComponentFFI::SetCylinderCollisionShapeHalfExtents);
+                            script.SetTableFunction(-1, "SetCylinderCollisionShapeSize",                  DynamicsComponentFFI::SetCylinderCollisionShapeSize);
                             script.SetTableFunction(-1, "SetCapsuleCollisionShapeSize",                   DynamicsComponentFFI::SetCapsuleCollisionShapeSize);
                         }
                         script.Pop(1);
@@ -1080,7 +1080,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "SetBoxCollisionShapeHalfExtents",                ProximityComponentFFI::SetBoxCollisionShapeHalfExtents);
                             script.SetTableFunction(-1, "SetSphereCollisionShapeRadius",                  ProximityComponentFFI::SetSphereCollisionShapeRadius);
                             script.SetTableFunction(-1, "SetEllipsoidCollisionShapeRadius",               ProximityComponentFFI::SetEllipsoidCollisionShapeRadius);
-                            script.SetTableFunction(-1, "SetCylinderCollisionShapeHalfExtents",           ProximityComponentFFI::SetCylinderCollisionShapeHalfExtents);
+                            script.SetTableFunction(-1, "SetCylinderCollisionShapeSize",                  ProximityComponentFFI::SetCylinderCollisionShapeSize);
                             script.SetTableFunction(-1, "SetCapsuleCollisionShapeSize",                   ProximityComponentFFI::SetCapsuleCollisionShapeSize);
                         }
                         script.Pop(1);
@@ -2289,43 +2289,22 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    glm::vec3 extents;
+                    float radius = script.ToFloat(2);
+                    float length = script.ToFloat(3);
                     glm::vec3 offset;
 
-                    if (script.IsTable(2))
+                    if (script.IsTable(4))
                     {
-                        extents = Scripting::ToVector3(script, 2);
-                        
-                        if (script.IsTable(4))
-                        {
-                            offset = Scripting::ToVector3(script, 3);
-                        }
-                        else
-                        {
-                            offset.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
-                            offset.y = script.IsNumber(4) ? script.ToFloat(4) : offset.x;
-                            offset.z = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
-                        }
+                        offset = Scripting::ToVector3(script, 4);
                     }
                     else
                     {
-                        extents.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
-                        extents.y = script.IsNumber(3) ? script.ToFloat(3) : extents.x;
-                        extents.z = script.IsNumber(4) ? script.ToFloat(4) : extents.x;
-
-                        if (script.IsTable(5))
-                        {
-                            offset = Scripting::ToVector3(script, 5);
-                        }
-                        else
-                        {
-                            offset.x = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                            offset.y = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
-                            offset.z = script.IsNumber(7) ? script.ToFloat(7) : offset.x;
-                        }
+                        offset.x = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                        offset.y = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                        offset.z = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
                     }
 
-                    component->AddCylinderXCollisionShape(extents.x, extents.y, extents.z, offset.x, offset.y, offset.z);
+                    component->AddCylinderXCollisionShape(radius, length, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
@@ -2336,43 +2315,22 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    glm::vec3 extents;
+                    float radius = script.ToFloat(2);
+                    float length = script.ToFloat(3);
                     glm::vec3 offset;
 
-                    if (script.IsTable(2))
+                    if (script.IsTable(4))
                     {
-                        extents = Scripting::ToVector3(script, 2);
-                        
-                        if (script.IsTable(4))
-                        {
-                            offset = Scripting::ToVector3(script, 3);
-                        }
-                        else
-                        {
-                            offset.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
-                            offset.y = script.IsNumber(4) ? script.ToFloat(4) : offset.x;
-                            offset.z = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
-                        }
+                        offset = Scripting::ToVector3(script, 4);
                     }
                     else
                     {
-                        extents.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
-                        extents.y = script.IsNumber(3) ? script.ToFloat(3) : extents.x;
-                        extents.z = script.IsNumber(4) ? script.ToFloat(4) : extents.x;
-
-                        if (script.IsTable(5))
-                        {
-                            offset = Scripting::ToVector3(script, 5);
-                        }
-                        else
-                        {
-                            offset.x = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                            offset.y = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
-                            offset.z = script.IsNumber(7) ? script.ToFloat(7) : offset.x;
-                        }
+                        offset.x = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                        offset.y = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                        offset.z = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
                     }
 
-                    component->AddCylinderYCollisionShape(extents.x, extents.y, extents.z, offset.x, offset.y, offset.z);
+                    component->AddCylinderYCollisionShape(radius, length, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
@@ -2383,43 +2341,22 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    glm::vec3 extents;
+                    float radius = script.ToFloat(2);
+                    float length = script.ToFloat(3);
                     glm::vec3 offset;
 
-                    if (script.IsTable(2))
+                    if (script.IsTable(4))
                     {
-                        extents = Scripting::ToVector3(script, 2);
-                        
-                        if (script.IsTable(4))
-                        {
-                            offset = Scripting::ToVector3(script, 3);
-                        }
-                        else
-                        {
-                            offset.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
-                            offset.y = script.IsNumber(4) ? script.ToFloat(4) : offset.x;
-                            offset.z = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
-                        }
+                        offset = Scripting::ToVector3(script, 4);
                     }
                     else
                     {
-                        extents.x = script.IsNumber(2) ? script.ToFloat(2) : 0.0f;
-                        extents.y = script.IsNumber(3) ? script.ToFloat(3) : extents.x;
-                        extents.z = script.IsNumber(4) ? script.ToFloat(4) : extents.x;
-
-                        if (script.IsTable(5))
-                        {
-                            offset = Scripting::ToVector3(script, 5);
-                        }
-                        else
-                        {
-                            offset.x = script.IsNumber(5) ? script.ToFloat(5) : 0.0f;
-                            offset.y = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
-                            offset.z = script.IsNumber(7) ? script.ToFloat(7) : offset.x;
-                        }
+                        offset.x = script.IsNumber(4) ? script.ToFloat(4) : 0.0f;
+                        offset.y = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                        offset.z = script.IsNumber(6) ? script.ToFloat(6) : offset.x;
                     }
 
-                    component->AddCylinderZCollisionShape(extents.x, extents.y, extents.z, offset.x, offset.y, offset.z);
+                    component->AddCylinderZCollisionShape(radius, length, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
@@ -2569,11 +2506,11 @@ namespace GTEngine
                             script.SetTableValue(-1, "type", type);
 
                             // Now the shape offset.
-                            auto &offset = component->GetCollisionShape().getChildTransform(shapeIndex).getOrigin();
+                            auto offset = component->GetCollisionShapeOffset(shapeIndex);
 
-                            script.SetTableValue(-1, "offsetX", offset.getX());
-                            script.SetTableValue(-1, "offsetY", offset.getY());
-                            script.SetTableValue(-1, "offsetZ", offset.getZ());
+                            script.SetTableValue(-1, "offsetX", offset.x);
+                            script.SetTableValue(-1, "offsetY", offset.y);
+                            script.SetTableValue(-1, "offsetZ", offset.z);
 
                             // We now need to do shape-specific properties.
                             switch (type)
@@ -2622,9 +2559,21 @@ namespace GTEngine
 
                                     btVector3 halfExtents = cylinder.getHalfExtentsWithMargin() / cylinder.getLocalScaling();
 
-                                    script.SetTableValue(-1, "halfX", halfExtents.getX());
-                                    script.SetTableValue(-1, "halfY", halfExtents.getY());
-                                    script.SetTableValue(-1, "halfZ", halfExtents.getZ());
+                                    if (type == CollisionShapeType_CylinderX)
+                                    {
+                                        script.SetTableValue(-1, "length", halfExtents.getX() * 2.0f);
+                                        script.SetTableValue(-1, "radius", halfExtents.getY());
+                                    }
+                                    else if (type == CollisionShapeType_CylinderY)
+                                    {
+                                        script.SetTableValue(-1, "length", halfExtents.getY() * 2.0f);
+                                        script.SetTableValue(-1, "radius", halfExtents.getZ());
+                                    }
+                                    else if (type == CollisionShapeType_CylinderZ)
+                                    {
+                                        script.SetTableValue(-1, "length", halfExtents.getZ() * 2.0f);
+                                        script.SetTableValue(-1, "radius", halfExtents.getX());
+                                    }
 
                                     break;
                                 }
@@ -2779,26 +2728,16 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetCylinderShapeHalfExtents(GTCore::Script &script)
+            int SetCylinderShapeSize(GTCore::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
                     size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
-                    glm::vec3 extents;
+                    float  radius     = script.ToFloat(3);
+                    float  length     = script.ToFloat(4);
 
-                    if (script.IsTable(3))
-                    {
-                        extents = Scripting::ToVector3(script, 3);
-                    }
-                    else
-                    {
-                        extents.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
-                        extents.y = script.IsNumber(4) ? script.ToFloat(4) : extents.x;
-                        extents.z = script.IsNumber(5) ? script.ToFloat(5) : extents.x;
-                    }
-
-                    script.Push(component->SetCylinderCollisionShapeHalfExtents(shapeIndex, extents.x, extents.y, extents.z));
+                    script.Push(component->SetCylinderCollisionShapeSize(shapeIndex, radius, length));
                 }
                 else
                 {
@@ -3479,9 +3418,9 @@ namespace GTEngine
                 return CollisionShapeComponentFFI::SetEllipsoidShapeRadius(script);
             }
 
-            int SetCylinderCollisionShapeHalfExtents(GTCore::Script &script)
+            int SetCylinderCollisionShapeSize(GTCore::Script &script)
             {
-                return CollisionShapeComponentFFI::SetCylinderShapeHalfExtents(script);
+                return CollisionShapeComponentFFI::SetCylinderShapeSize(script);
             }
 
             int SetCapsuleCollisionShapeSize(GTCore::Script &script)
@@ -3606,9 +3545,9 @@ namespace GTEngine
                 return CollisionShapeComponentFFI::SetEllipsoidShapeRadius(script);
             }
 
-            int SetCylinderCollisionShapeHalfExtents(GTCore::Script &script)
+            int SetCylinderCollisionShapeSize(GTCore::Script &script)
             {
-                return CollisionShapeComponentFFI::SetCylinderShapeHalfExtents(script);
+                return CollisionShapeComponentFFI::SetCylinderShapeSize(script);
             }
 
             int SetCapsuleCollisionShapeSize(GTCore::Script &script)

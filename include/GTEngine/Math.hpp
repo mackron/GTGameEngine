@@ -129,6 +129,25 @@ namespace GTEngine
         }
 
 
+        inline btMatrix3x3 btMatrix3x3_cast(const glm::mat3 &other)
+        {
+            btMatrix3x3 result;
+            result.setFromOpenGLSubMatrix(&other[0][0]);
+
+            return result;
+        }
+
+        inline btMatrix3x3 btMatrix3x3_cast(const glm::mat4 &other)
+        {
+            return btMatrix3x3_cast(glm::mat3(other));
+        }
+
+        inline btMatrix3x3 btMatrix3x3_cast(const glm::quat &other)
+        {
+            return btMatrix3x3_cast(glm::mat3_cast(other));
+        }
+
+
         inline btTransform btTransform_cast(const glm::mat4 &other)
         {
             btTransform result;
@@ -166,6 +185,32 @@ namespace GTEngine
         {
             return glm::simdQuat(other.w(), other.x(), other.y(), other.z());
         }
+
+
+        inline glm::mat3 mat3_cast(const btMatrix3x3 &other)
+        {
+            glm::mat3 result;
+            other.getOpenGLSubMatrix(&result[0][0]);
+
+            return result;
+        }
+
+        inline glm::mat3 mat3_cast(const btQuaternion &other)
+        {
+            return glm::mat3_cast(quat_cast(other));
+        }
+
+        inline glm::mat4 mat4_cast(const btMatrix3x3 &other)
+        {
+            return glm::mat4(mat3_cast(other));
+        }
+
+        inline glm::mat4 mat4_cast(const btQuaternion &other)
+        {
+            return glm::mat4_cast(quat_cast(other));
+        }
+
+        
 
 
         inline glm::mat4 mat4_cast(const btTransform &other)

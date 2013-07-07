@@ -423,6 +423,7 @@ namespace GTEngine
     void EditorMetadataComponent::ShowCollisionShapeMesh()
     {
         this->isShowingCollisionShapeMesh = true;
+        this->UpdateCollisionShapeMeshTransform();
     }
 
     void EditorMetadataComponent::HideCollisionShapeMesh()
@@ -473,7 +474,7 @@ namespace GTEngine
 
     void EditorMetadataComponent::UpdateCollisionShapeMeshTransform()
     {
-        this->collisionShapeMesh.transform = this->node.GetWorldTransform();
+        this->collisionShapeMesh.transform = this->node.GetWorldTransformWithoutScale();
     }
 
 
@@ -481,6 +482,7 @@ namespace GTEngine
     void EditorMetadataComponent::ShowProximityShapeMesh()
     {
         this->isShowingProximityShapeMesh = true;
+        this->UpdateProximityShapeMeshTransform();
     }
 
     void EditorMetadataComponent::HideProximityShapeMesh()
@@ -532,7 +534,7 @@ namespace GTEngine
 
     void EditorMetadataComponent::UpdateProximityShapeMeshTransform()
     {
-        this->proximityShapeMesh.transform = this->node.GetWorldTransform();
+        this->proximityShapeMesh.transform = this->node.GetWorldTransformWithoutScale();
     }
 
 
@@ -589,6 +591,8 @@ namespace GTEngine
 
     void EditorMetadataComponent::OnSceneNodeScale()
     {
+        this->UpdateCollisionShapeMeshTransform();
+        this->UpdateProximityShapeMeshTransform();
     }
 
 
