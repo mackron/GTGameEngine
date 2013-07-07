@@ -8,6 +8,8 @@
 #include "Rendering/VertexFormat.hpp"
 #include "Math.hpp"
 
+class btCollisionShape;
+
 namespace GTEngine
 {
     /// Class used for building meshes.
@@ -31,6 +33,14 @@ namespace GTEngine
         /// @remarks
         ///     If an identical vertex has already been emitted, that one will be used instead of adding a duplicate vertex.
         void EmitVertex(const float* vertexData);
+
+        /// Merges another mesh builder into this one.
+        ///
+        /// @param other [in] The other mesh builder to add to this one.
+        ///
+        /// @remarks
+        ///     Both mesh builders MUST be in the same format.
+        void Merge(const MeshBuilder &other);
 
 
         /// Finds the index of the given vertex.
@@ -70,6 +80,13 @@ namespace GTEngine
 
         /// Clears the mesh builder.
         void Clear();
+
+
+        /// Retrieves the size of each vertex in floats.
+        ///
+        /// @remarks
+        ///     The return value will always be the same as the value passed to the constructor.
+        size_t GetVertexSizeInFloats() const { return this->vertexSizeInFloats; }
 
 
     protected:
@@ -122,6 +139,28 @@ namespace GTEngine
     };
 
 
+    /// A special mesh builder for constructing wireframe boxes.
+    ///
+    /// The mesh is in P3 format.
+    class WireframeBoxMeshBuilder : public MeshBuilderP3
+    {
+    public:
+
+        /// Constructor.
+        WireframeBoxMeshBuilder();
+
+        /// Destructor.
+        ~WireframeBoxMeshBuilder();
+
+
+        /// Builds the box.
+        ///
+        /// @param halfExtents [in] The half extents of the box.
+        void Build(const glm::vec3 &halfExtents, const glm::mat4 &transform = glm::mat4());
+        void Build(float halfX, float halfY, float halfZ, const glm::mat4 &transform = glm::mat4()) { this->Build(glm::vec3(halfX, halfY, halfZ), transform); }
+    };
+
+
     /// A special mesh builder for building wireframe spheres.
     ///
     /// A wireframe sphere is made up of 4 rings. 3 of the rings are in a fixed orientation, but the fourth is orientated based on a
@@ -135,7 +174,7 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        WireframeSphereMeshBuilder(unsigned int ringSegments = 32);
+        WireframeSphereMeshBuilder(unsigned int ringSegments = 64);
 
         /// Destructor.
         ~WireframeSphereMeshBuilder();
@@ -145,14 +184,27 @@ namespace GTEngine
         ///
         /// @remarks
         ///     There sphere will be a unit sphere and positioned at the origin. The back-side line segments will not be included.
-        void Build(const glm::mat4 &cameraView);
+        void Build(const glm::mat4 &cameraView, const glm::mat4 &transform = glm::mat4());
+
+
+        /// Retrieves the mesh builder of the X/Y ring.
+        const MeshBuilderP3 & GetXYRing() const { return this->xyRing; }
+
+        /// Retrieves the mesh builder of the X/Z ring.
+        const MeshBuilderP3 & GetXZRing() const { return this->xzRing; }
+
+        /// Retrieves the mesh builder of the X/Y ring.
+        const MeshBuilderP3 & GetYZRing() const { return this->yzRing; }
+
+        /// Retrieves the mesh builder of the ring that's facing the camera.
+        const MeshBuilderP3 & GetCameraFacingRing() const { return this->cameraRing; }
 
 
 
     private:
 
         /// Generic method for building a ring with the given transform.
-        void BuildRing(const glm::mat4 &cameraView, const glm::mat4 &ringTransform, bool cullBackFacingSegments, MeshBuilderP3 &ringOut);
+        void BuildRing(const glm::mat4 &cameraView, const glm::mat4 &transform, const glm::mat4 &ringTransform, bool cullBackFacingSegments, MeshBuilderP3 &ringOut);
 
 
     private:
@@ -171,6 +223,53 @@ namespace GTEngine
 
         /// The ring orientated towards the camera.
         MeshBuilderP3 cameraRing;
+    };
+
+
+    /// A special mesh builder for constructing a wireframe mesh from a collision shape.
+    ///
+    /// The mesh is in P3 format.
+    ///
+    /// When constructing the mesh, some wireframe shapes will need the camera view transform in order for the
+    /// builder to build the geometry in a way the mesh can read properly in the viewport. Therefore the
+    class WireframeCollisionShapeMeshBuilder : public MeshBuilderP3
+    {
+    public:
+
+        /// Constructor.
+        WireframeCollisionShapeMeshBuilder(unsigned int circleSegmentsCount = 64);
+
+        /// Destructor.
+        ~WireframeCollisionShapeMeshBuilder();
+
+
+        /// Builds the mesh.
+        ///
+        /// @param shape      [in] The collision shape to build the goemtry from.
+        /// @param cameraView [in] The camera's view matrix.
+        ///
+        /// @remarks
+        ///     The mesh will be positioned at the origin.
+        void Build(const btCollisionShape &shape, const glm::mat4 &cameraView);
+
+        /// Builds and merges a mesh representing the given shape.
+        ///
+        /// @param shape      [in] The collision shape to build the goemtry from.
+        /// @param cameraView [in] The camera's view matrix.
+        /// @param transform  [in] The local transform to apply to the collision shape.
+        ///
+        /// @remarks
+        ///     The mesh will be positioned at the origin.
+        void BuildAndMerge(const btCollisionShape &shape, const glm::mat4 &cameraView, const glm::mat4 &transform = glm::mat4());
+
+
+
+
+
+    private:
+
+        /// The number of segments to use with circular geometry.
+        unsigned int circleSegmentsCount;
     };
 }
 

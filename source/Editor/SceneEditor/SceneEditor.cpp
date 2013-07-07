@@ -915,16 +915,12 @@ namespace GTEngine
                 if (node.HasComponent<DynamicsComponent>())
                 {
                     metadata->ShowCollisionShapeMesh();
-                    metadata->UpdateCollisionShapeMeshGeometry(node.GetComponent<DynamicsComponent>()->GetCollisionShape());
-
                     this->scene.GetRenderer().AddExternalMesh(metadata->GetCollisionShapeMesh());
                 }
 
                 if (node.HasComponent<ProximityComponent>())
                 {
                     metadata->ShowProximityShapeMesh();
-                    metadata->UpdateProximityShapeMeshGeometry(node.GetComponent<ProximityComponent>()->GetCollisionShape());
-
                     this->scene.GetRenderer().AddExternalMesh(metadata->GetProximityShapeMesh());
                 }
 
@@ -1790,7 +1786,6 @@ namespace GTEngine
             if (metadata != nullptr)
             {
                 metadata->ShowCollisionShapeMesh();
-                metadata->UpdateCollisionShapeMeshGeometry(static_cast<DynamicsComponent &>(component).GetCollisionShape());
             }
         }
         else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
@@ -1799,7 +1794,6 @@ namespace GTEngine
             if (metadata != nullptr)
             {
                 metadata->ShowProximityShapeMesh();
-                metadata->UpdateProximityShapeMeshGeometry(static_cast<ProximityComponent &>(component).GetCollisionShape());
             }
         }
         else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))     // Prefab
@@ -1936,19 +1930,21 @@ namespace GTEngine
             }
             else if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
             {
+                /*
                 auto metadata = node.GetComponent<EditorMetadataComponent>();
                 assert(metadata != nullptr);
                 {
-                    metadata->UpdateCollisionShapeMeshGeometry(static_cast<DynamicsComponent &>(component).GetCollisionShape());
                 }
+                */
             }
             else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
+                /*
                 auto metadata = node.GetComponent<EditorMetadataComponent>();
                 assert(metadata != nullptr);
                 {
-                    metadata->UpdateProximityShapeMeshGeometry(static_cast<ProximityComponent &>(component).GetCollisionShape());
                 }
+                */
             }
             else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))
             {
