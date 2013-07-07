@@ -1,0 +1,25 @@
+main-menu
+{
+    width:            100%
+    height:           100%
+    background-color: #eee
+    horizontal-align: center
+    vertical-align:   center
+}
+
+main-menu-button
+{
+    width:      auto
+    padding:    8px
+    cursor:     hand
+    font-size:  16pt
+    text-color: #666
+}
+main-menu-button:hovered
+{
+    text-color: #333
+}
+main-menu-button:pushed
+{
+    text-color: #000
+}
