@@ -8,7 +8,126 @@ layout: tutorials
 <div class="container-fluid">
     <div style="padding:0px 20px;">
         <p>
-        The purpose of this tutorial is to get you started with creating and working with GUIs in the engine.
+        The purpose of this tutorial is to get you started with creating and working with GUIs in the engine. If you haven't done so yet, go ahead
+        and read the <a href="{{ site.baseurl }}/documentation/tutorials/helloworld">first tutorial</a>. This tutorial will assume you know the
+        absolute basics like creating a scene and scene nodes.
         </p>
+        <p>
+        We'll be creating a main menu which will have "Start Game", "Open Editor" and "Exit to Desktop" buttons. The "Start Game" button will
+        simply load an empty scene - it's intended only to show you how to load and start a scene from another scene. We are not concerning
+        ourselves with making the GUI look pretty.
+        </p>
+        <div class="documentation-section">
+            <h1>0. How it Works</h1>
+            <p>
+            There is one particular detail about how the engine handles GUIs that you must be aware of - the engine has a single, shared GUI
+            environment for the entire game, including the editor. What this means, is that whenever a GUI element is created, it will linger
+            around until it's deleted. This is especially important when playing scenes from inside the editor.
+            </p>
+            <p>
+            Another detail is that GUIs are just part of a scene like anything else. You will probably have "GUI" scene nodes in the scene. For
+            example, your HUD will probably be represented with a scene node.
+            </p>
+            <p>
+            GUI's are created via the scripting environment. You attach a script to a scene node and create the GUI elements in OnStartup() and
+            delete them in OnShutdown(). GUI elements <b><i>must</i></b> be deleted, usually in OnShutdown().
+            </p>
+            <p>
+            GUIs work in a similar way to websites. When you create the element, you attach any number of CSS-like style classes for positioning
+            and styling. The style classes are written in a CSS-like language and can be loaded from files.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>1. Get the Sandbox</h1>
+            <p>
+            As usual, if you haven't yet done so, go grab yourself (hehe) a <a href="{{ site.baseurl }}/download" target="_blank">copy of the sandbox</a>.
+            If you've already got a copy of the sandbox lying around somewhere (such as from the previous tutorial), go ahead and used that
+            instead if you like.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>2. Setup the Scene</h1>
+            <p>
+            First, go ahead and create a new empty scene in any location you like. Then, create an empty node. You'll notice that the new node
+            has no visual representation. To make things a bit easier, you can assign a sprite to the node by expanding the <b>Editor Metadata</b>
+            panel, checking the <b>Show Sprite</b> check box, and then drag-and-dropping a texture (not a material!) into the text box. Use
+            "engine/editor/images/gui-sprite.png" for a sprite that shows the words "GUI" on it.
+            </p>
+            <p>
+            GUIs are handled via the scripting environment. So go ahead and attach a <b>Script</b> component to your GUI node. While you're at
+            it, you might as well create an empty script file and drag-and-drop it into the Script component. Call the script file whatever you
+            want, but we'll call it "main-menu.lua".
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>3. Write the Script</h1>
+            <p>
+            The best way for you to learn how to create a GUI is with an example. Put this script into your "main-menu.lua" script file:
+            </p>
+<pre>
+function self:OnStartup()
+end
+
+function self:OnShutdown()
+end
+</pre>
+            <p>
+            You might have noticed that the script tried to load a style script called "main-menu.style". Go ahead and create that file and
+            place this code into it:
+            </p>
+<pre>
+main-menu
+{
+}
+</pre>
+            <p>
+            If you're familiar with web development (I mean, come on, who isn't?), you'll notice that the styling is very similar to CSS. But
+            don't expect it to be exactly the same. The main thing of note is that a normal style class is not prefixed with a period. Also,
+            handling the layout of elements is a fair bit different (and better).
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>4. Create the Game Scene</h1>
+            <p>
+            When we hit the "Start Game" button, we want to load another scene. Go ahead and create an empty scene called "game.gtscene" (don't
+            include the extension when creating it). You can leave this scene empty if you like.
+            </p>
+            <p>
+            A real game will have an in-game menu like a pause menu, score screen, HUD, etc. You can easily do this in the same way as the main
+            menu. Elements can have transparent backgrounds with the "opacity" style attribute (the value is a float between 0 and 1). We'll
+            leave this as an exercise for you to figure out.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>5. Test</h1>
+            <p>
+            Now go ahead an test the main menu scene by playing it from within the editor. When you hit the "Start Game" button, it should load
+            up the main game scene in a new tab and automatically play it.
+            </p>
+            <p>
+            As a little side note, if you notice that after you stop playing the scene the GUI elements remain in the viewport, it means you
+            haven't deleted them. Remember, you <b><i>must</i></b> delete your GUI elements!
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>6. Conclusion</h1>
+            <p>
+            The purpose of this little "tutorial" was to show the absolute basics of the workflow for creating GUIs in your game. Obviously
+            there is a lot more to explain, but having a basic idea on things should make moving forward a bit easier.
+            </p>
+            <p>
+            The main takeaway from this is to remember that all GUIs are part of the same GUI environment which means you <b><i>must</i></b>
+            delete your GUI elements!
+            </p>
+        </div>
     </div>
 </div>
+
+
+
+
+
+
+
+
+
