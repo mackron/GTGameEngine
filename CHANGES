@@ -5,6 +5,9 @@
 0.0.2 ()
 
 BREAKING CHANGES:
+    - The serialized format of Dynamics and Proximity components has changed.
+      Any scenes with scene nodes using Dynamics and Proximity components are
+      now invalid and will crash on load.
     - The .gtmodel file format has changed. All .gtmodel files need to be
       deleted to allow the engine to re-create them.
       
@@ -24,6 +27,8 @@ FEATURES:
     - The way materials are set in the model editor has been changed. The new
       system allows the user to easily set default values for material uniforms
       to be used by the model.
+    - Wireframes are now displayed for all collision shapes in Dynamics and
+      Proximity components.
     
     
 FIXES/IMPROVEMENTS:
@@ -35,6 +40,7 @@ FIXES/IMPROVEMENTS:
     - Fixed an animation looping bug.
     - Fixed a bad bug where keyboard shortcuts would be handled by all open
       scenes instead of only the currently focused one.
+    - Fixed a heap of bugs with collision shapes.
     - Internal cleanup of the editor code.
     - Update a few minor things with the sandbox, mostly with the intro scene.
     - A small, barely noticeable optimization to the default renderer.
