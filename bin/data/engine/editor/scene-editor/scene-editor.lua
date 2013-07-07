@@ -140,24 +140,33 @@ end
 function GTGUI.Element:CollisionShapePanel_Cylinder(title)
     self:CollisionShapePanel(title);
     
-    self.ExtentsContainer = GTGUI.Server.New("<div parentid='" .. self:GetID()                  .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; padding-left:4px; margin-top:4px;' />");
-    self.ExtentsLabel     = GTGUI.Server.New("<div parentid='" .. self.ExtentsContainer:GetID() .. "' styleclass='vector3-label' style='width:50px; height:100%'>Extents:</div>");
-    self.ExtentsInput     = GTGUI.Server.New("<div parentid='" .. self.ExtentsContainer:GetID() .. "' styleclass='vector3-input' style='width:100%; height:auto;' />"):Vector3Input();
+    self.RadiusInput = GTGUI.Server.CreateElement(self, "labelled-number-input");
+    self.RadiusInput:LabelledNumberInput("Radius");
+    self.RadiusInput:SetStyle("padding-left", "4px");
+    
+    self.LengthInput = GTGUI.Server.CreateElement(self, "labelled-number-input");
+    self.LengthInput:LabelledNumberInput("Length");
+    self.LengthInput:SetStyle("padding-left", "4px");
     
     
-    self.ExtentsInput:OnValueChanged(function(data)
-        self:OnExtentsChanged(data);
+    self.RadiusInput:OnValueChanged(function(data)
+        self:OnSizeChanged({radius = self.RadiusInput:GetValue(); length = self.LengthInput:GetValue()});
+    end);
+    
+    self.LengthInput:OnValueChanged(function(data)
+        self:OnSizeChanged({radius = self.RadiusInput:GetValue(); length = self.LengthInput:GetValue()});
     end);
     
     
     function self:Update(shape)
         self:UpdateOffset(shape);
-        self.ExtentsInput:SetValue(shape.halfX * 2.0, shape.halfY * 2.0, shape.halfZ * 2.0);
+        self.RadiusInput:SetValue(shape.radius);
+        self.LengthInput:SetValue(shape.length);
     end
     
     
-    function self:OnExtentsChanged(arg1)
-        self.Callbacks:BindOrCall("OnExtentsChanged", arg1);
+    function self:OnSizeChanged(arg1)
+        self.Callbacks:BindOrCall("OnSizeChanged", arg1);
     end
     
     return self;
@@ -959,7 +968,7 @@ function GTGUI.Element:CollisionShapesPanel()
     
     self.NewCollisionShapeMenu:AppendNewItem("Cylinder X"):OnPressed(function()
         if self.Component ~= nil then
-            self.Component:AddCylinderXCollisionShape(1.0, 0.5, 0.5);
+            self.Component:AddCylinderXCollisionShape(0.5, 1.0);
             self:Update(self.Component);
             
             self:OnShapesChanged();
@@ -968,7 +977,7 @@ function GTGUI.Element:CollisionShapesPanel()
     
     self.NewCollisionShapeMenu:AppendNewItem("Cylinder Y"):OnPressed(function()
         if self.Component ~= nil then
-            self.Component:AddCylinderYCollisionShape(0.0, 1.5, 0.5);
+            self.Component:AddCylinderYCollisionShape(0.5, 1.0);
             self:Update(self.Component);
             
             self:OnShapesChanged();
@@ -977,7 +986,7 @@ function GTGUI.Element:CollisionShapesPanel()
     
     self.NewCollisionShapeMenu:AppendNewItem("Cylinder Z"):OnPressed(function()
         if self.Component ~= nil then
-            self.Component:AddCylinderZCollisionShape(0.0, 0.5, 1.5);
+            self.Component:AddCylinderZCollisionShape(0.5, 1.0);
             self:Update(self.Component);
             
             self:OnShapesChanged();
@@ -1047,20 +1056,20 @@ function GTGUI.Element:CollisionShapesPanel()
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CylinderX        then
                         panel:CollisionShapePanel_CylinderX():Update(shape);
-                        panel:OnExtentsChanged(function(data)
-                            self.Component:SetCylinderCollisionShapeHalfExtents(i, data.x, data.y, data.z);
+                        panel:OnSizeChanged(function(data)
+                            self.Component:SetCylinderCollisionShapeSize(i, data.radius, data.length);
                             self:OnShapesChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CylinderY        then
                         panel:CollisionShapePanel_CylinderY():Update(shape);
-                        panel:OnExtentsChanged(function(data)
-                            self.Component:SetCylinderCollisionShapeHalfExtents(i, data.x, data.y, data.z);
+                        panel:OnSizeChanged(function(data)
+                            self.Component:SetCylinderCollisionShapeSize(i, data.radius, data.length);
                             self:OnShapesChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CylinderZ        then
                         panel:CollisionShapePanel_CylinderZ():Update(shape);
-                        panel:OnExtentsChanged(function(data)
-                            self.Component:SetCylinderCollisionShapeHalfExtents(i, data.x, data.y, data.z);
+                        panel:OnSizeChanged(function(data)
+                            self.Component:SetCylinderCollisionShapeSize(i, data.radius, data.length);
                             self:OnShapesChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CapsuleX         then

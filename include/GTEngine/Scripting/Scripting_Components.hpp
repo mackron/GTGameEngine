@@ -500,7 +500,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
             ///     Argument 3, 4, 5: The new half extents or a math.vec3.
-            int SetCylinderShapeHalfExtents(GTCore::Script &script);
+            int SetCylinderShapeSize(GTCore::Script &script);
 
             /// Sets the size of the capsule shape at the given index.
             ///
@@ -928,7 +928,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
             ///     Argument 3, 4, 5: The new half extents.
-            int SetCylinderCollisionShapeHalfExtents(GTCore::Script &script);
+            int SetCylinderCollisionShapeSize(GTCore::Script &script);
 
             /// Sets the size of the capsule shape at the given index.
             ///
@@ -1111,7 +1111,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
             ///     Argument 3, 4, 5: The new half extents.
-            int SetCylinderCollisionShapeHalfExtents(GTCore::Script &script);
+            int SetCylinderCollisionShapeSize(GTCore::Script &script);
 
             /// Sets the size of the capsule shape at the given index.
             ///
