@@ -134,9 +134,9 @@
 		<Unit filename="../../../include/GTEngine/Animation/AnimationChannel.hpp" />
 		<Unit filename="../../../include/GTEngine/Animation/AnimationKey.hpp" />
 		<Unit filename="../../../include/GTEngine/Animation/AnimationKeyFrame.hpp" />
-		<Unit filename="../../../include/GTEngine/Animation/AnimationKeyFrameQueue.hpp" />
 		<Unit filename="../../../include/GTEngine/Animation/AnimationSegment.hpp" />
 		<Unit filename="../../../include/GTEngine/Animation/AnimationSequence.hpp" />
+		<Unit filename="../../../include/GTEngine/Animation/AnimationTrack.hpp" />
 		<Unit filename="../../../include/GTEngine/ApplicationConfig.hpp" />
 		<Unit filename="../../../include/GTEngine/AssetTypes.hpp" />
 		<Unit filename="../../../include/GTEngine/Audio.hpp" />
@@ -167,6 +167,7 @@
 		<Unit filename="../../../include/GTEngine/ConvexHull.hpp" />
 		<Unit filename="../../../include/GTEngine/ConvexHullBuildSettings.hpp" />
 		<Unit filename="../../../include/GTEngine/DataFilesWatcher.hpp" />
+		<Unit filename="../../../include/GTEngine/DefaultPrefabLinker.hpp" />
 		<Unit filename="../../../include/GTEngine/DefaultSceneCullingManager.hpp" />
 		<Unit filename="../../../include/GTEngine/DefaultScenePhysicsManager.hpp" />
 		<Unit filename="../../../include/GTEngine/DefaultSceneRenderer.hpp" />
@@ -374,8 +375,8 @@
 		<Unit filename="../../../source/Animation/AnimationChannel.cpp" />
 		<Unit filename="../../../source/Animation/AnimationKey.cpp" />
 		<Unit filename="../../../source/Animation/AnimationKeyFrame.cpp" />
-		<Unit filename="../../../source/Animation/AnimationKeyFrameQueue.cpp" />
 		<Unit filename="../../../source/Animation/AnimationSequence.cpp" />
+		<Unit filename="../../../source/Animation/AnimationTrack.cpp" />
 		<Unit filename="../../../source/ApplicationConfig.cpp" />
 		<Unit filename="../../../source/Audio/AudioComposer.cpp" />
 		<Unit filename="../../../source/Audio/Sound.cpp" />
@@ -405,6 +406,7 @@
 		<Unit filename="../../../source/Components/ScriptComponent.cpp" />
 		<Unit filename="../../../source/ConvexHull.cpp" />
 		<Unit filename="../../../source/DataFilesWatcher.cpp" />
+		<Unit filename="../../../source/DefaultPrefabLinker.cpp" />
 		<Unit filename="../../../source/DefaultSceneCullingManager.cpp" />
 		<Unit filename="../../../source/DefaultScenePhysicsManager.cpp" />
 		<Unit filename="../../../source/DefaultSceneRenderer/DefaultSceneRenderer.cpp" />
