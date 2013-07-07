@@ -175,7 +175,8 @@ namespace GTEngine
         const SceneRendererMesh & GetCollisionShapeMesh() const { return this->collisionShapeMesh; }
 
         /// Updates the collision shape mesh geometry.
-        void UpdateCollisionShapeMeshGeometry(const btCollisionShape &shape);
+        void UpdateCollisionShapeMeshGeometry(const SceneNode &cameraNode, const btCollisionShape &shape);
+        void UpdateCollisionShapeMeshGeometry(const SceneNode &cameraNode);
 
         /// Updates the collision shape transform.
         void UpdateCollisionShapeMeshTransform();
@@ -197,7 +198,8 @@ namespace GTEngine
         const SceneRendererMesh & GetProximityShapeMesh() const { return this->proximityShapeMesh; }
 
         /// Updates the collision shape mesh geometry.
-        void UpdateProximityShapeMeshGeometry(const btCollisionShape &shape);
+        void UpdateProximityShapeMeshGeometry(const SceneNode &cameraNode, const btCollisionShape &shape);
+        void UpdateProximityShapeMeshGeometry(const SceneNode &cameraNode);
 
         /// Updates the collision shape transform.
         void UpdateProximityShapeMeshTransform();

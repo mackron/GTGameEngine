@@ -46,6 +46,20 @@ namespace GTEngine
             {
                 metadata->UpdateSpriteTransform(this->cameraNode);
             }
+
+            // If we have dynamics or proximity component, we should update the wireframe meshes.
+            if (metadata->IsSelected())
+            {
+                if (node.HasComponent<DynamicsComponent>())
+                {
+                    metadata->UpdateCollisionShapeMeshGeometry(this->cameraNode);
+                }
+
+                if (node.HasComponent<ProximityComponent>())
+                {
+                    metadata->UpdateProximityShapeMeshGeometry(this->cameraNode);
+                }
+            }
         }
 
 

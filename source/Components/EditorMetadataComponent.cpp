@@ -6,6 +6,7 @@
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Logging.hpp>
+#include <GTEngine/MeshBuilder.hpp>
 
 namespace GTEngine
 {
@@ -434,15 +435,39 @@ namespace GTEngine
         return this->isShowingCollisionShapeMesh;
     }
 
-    void EditorMetadataComponent::UpdateCollisionShapeMeshGeometry(const btCollisionShape &shape)
+    void EditorMetadataComponent::UpdateCollisionShapeMeshGeometry(const SceneNode &cameraNode, const btCollisionShape &shape)
     {
-        VertexArrayLibrary::Delete(this->collisionShapeMesh.vertexArray);
-        this->collisionShapeMesh.vertexArray = VertexArrayLibrary::CreateWireframeFromShape(shape);
-
-        if (this->collisionShapeMesh.material == nullptr)
+        auto cameraComponent = cameraNode.GetComponent<CameraComponent>();
+        if (cameraComponent != nullptr)
         {
-            this->collisionShapeMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
-            this->collisionShapeMesh.material->SetParameter("EmissiveColour", 0.25f, 0.75f, 0.25f);
+            // Geometry.
+            if (this->collisionShapeMesh.vertexArray == nullptr)
+            {
+                this->collisionShapeMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3);
+            }
+
+            WireframeCollisionShapeMeshBuilder mesh(128);
+            mesh.Build(shape, cameraComponent->GetViewMatrix());
+
+            this->collisionShapeMesh.vertexArray->SetVertexData(mesh.GetVertexData(), mesh.GetVertexCount());
+            this->collisionShapeMesh.vertexArray->SetIndexData( mesh.GetIndexData(),  mesh.GetIndexCount());
+
+
+            // Material.
+            if (this->collisionShapeMesh.material == nullptr)
+            {
+                this->collisionShapeMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
+                this->collisionShapeMesh.material->SetParameter("EmissiveColour", 0.25f, 0.75f, 0.25f);
+            }
+        }
+    }
+
+    void EditorMetadataComponent::UpdateCollisionShapeMeshGeometry(const SceneNode &cameraNode)
+    {
+        auto dynamicsComponent = this->node.GetComponent<DynamicsComponent>();
+        if (dynamicsComponent != nullptr)
+        {
+            this->UpdateCollisionShapeMeshGeometry(cameraNode, dynamicsComponent->GetCollisionShape());
         }
     }
 
@@ -468,17 +493,42 @@ namespace GTEngine
         return this->isShowingProximityShapeMesh;
     }
 
-    void EditorMetadataComponent::UpdateProximityShapeMeshGeometry(const btCollisionShape &shape)
+    void EditorMetadataComponent::UpdateProximityShapeMeshGeometry(const SceneNode &cameraNode, const btCollisionShape &shape)
     {
-        VertexArrayLibrary::Delete(this->proximityShapeMesh.vertexArray);
-        this->proximityShapeMesh.vertexArray = VertexArrayLibrary::CreateWireframeFromShape(shape);
-
-        if (this->proximityShapeMesh.material == nullptr)
+        auto cameraComponent = cameraNode.GetComponent<CameraComponent>();
+        if (cameraComponent != nullptr)
         {
-            this->proximityShapeMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
-            this->proximityShapeMesh.material->SetParameter("EmissiveColour", 0.75f, 0.75f, 0.25f);
+            // Geometry.
+            if (this->proximityShapeMesh.vertexArray == nullptr)
+            {
+                this->proximityShapeMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3);
+            }
+
+            WireframeCollisionShapeMeshBuilder mesh(128);
+            mesh.Build(shape, cameraComponent->GetViewMatrix());
+
+            this->proximityShapeMesh.vertexArray->SetVertexData(mesh.GetVertexData(), mesh.GetVertexCount());
+            this->proximityShapeMesh.vertexArray->SetIndexData( mesh.GetIndexData(),  mesh.GetIndexCount());
+
+
+            // Material.
+            if (this->proximityShapeMesh.material == nullptr)
+            {
+                this->proximityShapeMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
+                this->proximityShapeMesh.material->SetParameter("EmissiveColour", 0.75f, 0.75f, 0.25f);
+            }
         }
     }
+
+    void EditorMetadataComponent::UpdateProximityShapeMeshGeometry(const SceneNode &cameraNode)
+    {
+        auto proximityComponent = this->node.GetComponent<ProximityComponent>();
+        if (proximityComponent != nullptr)
+        {
+            this->UpdateProximityShapeMeshGeometry(cameraNode, proximityComponent->GetCollisionShape());
+        }
+    }
+
 
     void EditorMetadataComponent::UpdateProximityShapeMeshTransform()
     {
