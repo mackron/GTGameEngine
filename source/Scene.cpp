@@ -2001,7 +2001,7 @@ namespace GTEngine
             dynamics->ApplyScaling(node.GetWorldScale());
         }
 
-        auto proximity = node.GetComponent<DynamicsComponent>();
+        auto proximity = node.GetComponent<ProximityComponent>();
         if (proximity != nullptr)
         {
             proximity->ApplyScaling(node.GetWorldScale());
