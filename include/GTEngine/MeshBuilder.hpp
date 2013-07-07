@@ -262,6 +262,42 @@ namespace GTEngine
     };
 
 
+    /// A special mesh builder for constructing wireframe capsules.
+    ///
+    /// The mesh is in P3 format.
+    class WireframeCapsuleMeshBuilder : public MeshBuilderP3
+    {
+    public:
+
+        /// Constructor.
+        WireframeCapsuleMeshBuilder(unsigned int circleSegmentsCount = 64);
+
+        /// Destructor.
+        ~WireframeCapsuleMeshBuilder();
+
+
+        /// Builds the box.
+        ///
+        /// @param halfExtents [in] The half extents of the box.
+        ///
+        /// @remarks
+        ///     The cylinder will be orientated such that it is running along the Z axis.
+        void Build(float radius, float height, const glm::mat4 &transform = glm::mat4());
+
+
+    private:
+
+        /// Adds a ring segment to the mesh.
+        void CreateRing(float radius, float length, const glm::mat4 &transform);
+
+
+    private:
+
+        /// The number of segments to use with each ring.
+        unsigned int circleSegmentsCount;
+    };
+
+
     /// A special mesh builder for constructing a wireframe mesh from a collision shape.
     ///
     /// The mesh is in P3 format.

@@ -447,7 +447,7 @@ namespace GTEngine
                 this->collisionShapeMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3);
             }
 
-            WireframeCollisionShapeMeshBuilder mesh(128);
+            WireframeCollisionShapeMeshBuilder mesh(32);
             mesh.Build(shape, cameraComponent->GetViewMatrix());
 
             this->collisionShapeMesh.vertexArray->SetVertexData(mesh.GetVertexData(), mesh.GetVertexCount());
@@ -506,7 +506,7 @@ namespace GTEngine
                 this->proximityShapeMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3);
             }
 
-            WireframeCollisionShapeMeshBuilder mesh(128);
+            WireframeCollisionShapeMeshBuilder mesh(32);
             mesh.Build(shape, cameraComponent->GetViewMatrix());
 
             this->proximityShapeMesh.vertexArray->SetVertexData(mesh.GetVertexData(), mesh.GetVertexCount());
