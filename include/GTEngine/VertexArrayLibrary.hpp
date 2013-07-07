@@ -56,14 +56,6 @@ namespace GTEngine
         /// Creates a wireframe AABB.
         static VertexArray* CreateWireframeFromAABB(const btAABB &aabb);
 
-        /// Creates a wireframe box.
-        ///
-        /// @param shape [in] A reference to the shape whose wireframe is being created.
-        ///
-        /// @remarks
-        ///     The only vertex attributes in this is positions. The resulting vertex array should be drawn in line mode.
-        static VertexArray* CreateWireframeFromShape(const btCollisionShape &shape);
-
 
 
         ////////////////////////////////////////////////////////////////
