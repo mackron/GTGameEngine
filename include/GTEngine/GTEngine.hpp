@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "Game.hpp"
 
-#define GTENGINE_VERSION_STRING "0.0.1"
+#define GTENGINE_VERSION_STRING "0.0.3"
 
 namespace GTEngine
 {
