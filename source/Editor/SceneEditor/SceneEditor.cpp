@@ -1786,6 +1786,7 @@ namespace GTEngine
             if (metadata != nullptr)
             {
                 metadata->ShowCollisionShapeMesh();
+                this->scene.GetRenderer().AddExternalMesh(metadata->GetCollisionShapeMesh());
             }
         }
         else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
@@ -1794,6 +1795,7 @@ namespace GTEngine
             if (metadata != nullptr)
             {
                 metadata->ShowProximityShapeMesh();
+                this->scene.GetRenderer().AddExternalMesh(metadata->GetProximityShapeMesh());
             }
         }
         else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))     // Prefab
