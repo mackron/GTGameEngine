@@ -2,6 +2,21 @@
 - Changelog
 -------------------------------------------------------------------------------
 
+0.0.3 ()
+
+BREAKING CHANGES:
+
+
+FEATURES:
+
+
+FIXES/IMPROVEMENTS:
+    - Fixed a bug where the wireframes for collision shapes in Dynamics and
+      Proximity components would not show up.
+
+
+-------------------------------------------------------------------------------
+
 0.0.2 (July 8th, 2013)
 
 BREAKING CHANGES:
