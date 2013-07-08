@@ -29,8 +29,9 @@ layout: tutorials
             example, your HUD will probably be represented with a scene node.
             </p>
             <p>
-            GUI's are created via the scripting environment. You attach a script to a scene node and create the GUI elements in OnStartup() and
-            delete them in OnShutdown(). GUI elements <b><i>must</i></b> be deleted, usually in OnShutdown().
+            GUI's are created via the scripting environment. You attach a script to a scene node and create and delete the GUI elements via that
+            script. You will usually create the GUI elements in OnStartup() and delete them in OnShutdown(). GUI elements <b><i>must</i></b> be
+            deleted!
             </p>
             <p>
             GUIs work in a similar way to websites. When you create the element, you attach any number of CSS-like style classes for positioning
@@ -41,7 +42,7 @@ layout: tutorials
             <h1>1. Get the Sandbox</h1>
             <p>
             As usual, if you haven't yet done so, go grab yourself (hehe) a <a href="{{ site.baseurl }}/download" target="_blank">copy of the sandbox</a>.
-            If you've already got a copy of the sandbox lying around somewhere (such as from the previous tutorial), go ahead and used that
+            If you've already got a copy of the sandbox lying around somewhere (such as from the previous tutorial), go ahead and use that
             instead if you like.
             </p>
         </div>
@@ -66,18 +67,80 @@ layout: tutorials
             </p>
 <pre>
 function self:OnStartup()
+    GTEngine.LoadGUIStyleScriptFromFile("tutorials/gui_basics/main-menu.style");
+
+    local parentElement = Game.GetGameWindowGUIElement();
+    if parentElement ~= nil then
+        self.GUIContainer = GTEngine.CreateGUIElement(parentElement, "main-menu");
+
+        self.StartGameButton = GTEngine.CreateGUIElement(self.GUIContainer, "main-menu-button");
+        self.StartGameButton:SetText("Start Game");
+        self.StartGameButton:OnPressed(function()
+            Game.LoadScene("tutorials/gui_basics/game.gtscene");
+        end);
+
+        self.OpenEditorButton = GTEngine.CreateGUIElement(self.GUIContainer, "main-menu-button");
+        self.OpenEditorButton:SetText("Open Editor");
+        self.OpenEditorButton:OnPressed(function()
+            Game.OpenEditor();
+        end);
+
+        self.ExitButton = GTEngine.CreateGUIElement(self.GUIContainer, "main-menu-button");
+        self.ExitButton:SetText("Exit to Desktop");
+        self.ExitButton:OnPressed(function()
+            Game.Close();
+        end);
+    end
 end
 
 function self:OnShutdown()
+    GTEngine.DeleteGUIElement(self.GUIContainer);
 end
 </pre>
             <p>
-            You might have noticed that the script tried to load a style script called "main-menu.style". Go ahead and create that file and
-            place this code into it:
+            Let us run through this code and explain everything. First, you'll see that we're creating the GUI in OnStartup() and deleting
+            it in OnShutdown(). This is usually the best way to create your GUI. You can still dynamically create and delete element in
+            response to any of event and any time, but OnStartup() and OnShutdown() will be the most common.
+            </p>
+            <p>
+            The first thing we do in OnStartup() is load a style script:
+            </p>
+<pre>
+GTEngine.LoadGUIStyleScriptFromFile("tutorials/gui_basics/main-menu.style");
+</pre>
+            <p>
+            GUI elements are styled using CSS-like style classes. We need to load those classes into the environment before we can use them. Be
+            aware of <a href="https://github.com/mackron/GTGameEngine/issues/63" target="_blank">this bug</a>.
+            </p>
+            <p>
+            Feel free to change the name and path to whatever you like. Go ahead and create the file if you haven't yet done so and copy the
+            following code:
             </p>
 <pre>
 main-menu
 {
+    width:            100%
+    height:           100%
+    background-color: #eee
+    horizontal-align: center
+    vertical-align:   center
+}
+
+main-menu-button
+{
+    width:      auto
+    padding:    8px
+    cursor:     hand
+    font-size:  16pt
+    text-color: #666
+}
+main-menu-button:hovered
+{
+    text-color: #333
+}
+main-menu-button:pushed
+{
+    text-color: #000
 }
 </pre>
             <p>
@@ -85,24 +148,83 @@ main-menu
             don't expect it to be exactly the same. The main thing of note is that a normal style class is not prefixed with a period. Also,
             handling the layout of elements is a fair bit different (and better).
             </p>
+            <p>
+            Every GUI element should usually have a parent. Every game will have a container GUI that you use as the parent for your own game
+            GUI. You retrieve this like so:
+            </p>
+<pre>
+local parentElement = Game.GetGameWindowGUIElement();
+</pre>
+            <p>
+            To make things easy to delete later on, you'll probably want to create your own container element. When you delete the container, it'll
+            delete the children. We create our own container like so:
+            </p>
+<pre>
+self.GUIContainer = GTEngine.CreateGUIElement(parentElement, "main-menu");
+</pre>
+            <p>
+            The first argument to "Engine.CreateGUIElement()" is the parent element. The second is a space-delimited list of style classes to
+            use with the new element.
+            </p>
+            <p>
+            After the container has been created, we create our buttons:
+            </p>
+<pre>
+self.StartGameButton = GTEngine.CreateGUIElement(self.GUIContainer, "main-menu-button");
+self.StartGameButton:SetText("Start Game");
+self.StartGameButton:OnPressed(function()
+    Game.LoadScene("tutorials/gui_basics/game.gtscene");
+end);
+
+self.OpenEditorButton = GTEngine.CreateGUIElement(self.GUIContainer, "main-menu-button");
+self.OpenEditorButton:SetText("Open Editor");
+self.OpenEditorButton:OnPressed(function()
+    Game.OpenEditor();
+end);
+
+self.ExitButton = GTEngine.CreateGUIElement(self.GUIContainer, "main-menu-button");
+self.ExitButton:SetText("Exit to Desktop");
+self.ExitButton:OnPressed(function()
+    Game.Close();
+end);
+</pre>
+            <p>
+            It should be easy enough to understand what's going on here. Every GUI element will have OnPressed events posted to it when it is
+            clicked with the mouse.
+            </p>
+            <p>
+            The last part of the script might be the most important - it deletes the GUI elements that this script created:
+            </p>
+<pre>
+function self:OnShutdown()
+    GTEngine.DeleteGUIElement(self.GUIContainer);
+end
+</pre>
+            <p>
+            When you delete an element it will delete it's children, so no need to delete each individual button because they are a child of our
+            container.
+            </p>
+            <p>
+            As an experiment, comment out the delete the statement and see what happens - you should see that the GUI will remain in the viewport
+            even after you have stopped playing the scene. You <b><i>must</i></b> delete your GUI elements!
+            </p>
         </div>
         <div class="documentation-section">
             <h1>4. Create the Game Scene</h1>
             <p>
             When we hit the "Start Game" button, we want to load another scene. Go ahead and create an empty scene called "game.gtscene" (don't
-            include the extension when creating it). You can leave this scene empty if you like.
+            include the extension when creating it). There's no need to add any content to the scene, but feel free to do so if you want.
             </p>
             <p>
             A real game will have an in-game menu like a pause menu, score screen, HUD, etc. You can easily do this in the same way as the main
-            menu. Elements can have transparent backgrounds with the "opacity" style attribute (the value is a float between 0 and 1). We'll
-            leave this as an exercise for you to figure out.
+            menu.
             </p>
         </div>
         <div class="documentation-section">
             <h1>5. Test</h1>
             <p>
             Now go ahead an test the main menu scene by playing it from within the editor. When you hit the "Start Game" button, it should load
-            up the main game scene in a new tab and automatically play it.
+            up the new scene in a new tab and automatically play it.
             </p>
             <p>
             As a little side note, if you notice that after you stop playing the scene the GUI elements remain in the viewport, it means you
@@ -112,7 +234,7 @@ main-menu
         <div class="documentation-section">
             <h1>6. Conclusion</h1>
             <p>
-            The purpose of this little "tutorial" was to show the absolute basics of the workflow for creating GUIs in your game. Obviously
+            The purpose of this little "tutorial" is to show the absolute basics of the workflow for creating GUIs in your game. Obviously
             there is a lot more to explain, but having a basic idea on things should make moving forward a bit easier.
             </p>
             <p>
