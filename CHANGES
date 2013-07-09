@@ -13,6 +13,8 @@ FEATURES:
 FIXES/IMPROVEMENTS:
     - Fixed a bug where the wireframes for collision shapes in Dynamics and
       Proximity components would not show up.
+    - Fixed a few Linux issues, but still a bit of work to go, especially with
+      the clipboard/copy+paste.
 
 
 -------------------------------------------------------------------------------
