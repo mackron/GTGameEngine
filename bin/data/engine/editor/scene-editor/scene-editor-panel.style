@@ -44,11 +44,30 @@ scene-editor-properties-panel-body
     height: auto
 }
 
+scene-editor-properties-panel-body-message
+{
+    height:           auto
+    width:            100%
+    margin-top:       8px
+    horizontal-align: center
+    font-style:       bold
+    text-color:       #555
+    visible:          false
+}
+
+scene-editor-properties-panel-panels-container
+{
+    height: auto
+    width:  100%
+}
+
 
 scene-editor-hierarchy-panel
 {
-    width:  100%
-    height: 100%
+    width:   100%
+    height:  100%
+    
+    visible: false
 }
 
 scene-editor-hierarchy-treeview includes treeview
