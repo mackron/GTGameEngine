@@ -3,16 +3,13 @@
 function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
     self:EditorPanel();
 
-
-    self.Body.MessageContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='height:auto; width:100%; margin-top:8px; horizontal-align:center; font-style:bold; text-color:#555; visible:false;' />")
+    self.Body.MessageContainer = GTGUI.Server.CreateElement(self.Body, "scene-editor-properties-panel-body-message");
+    self.Body.PanelsContainer  = GTGUI.Server.CreateElement(self.Body, "scene-editor-properties-panel-panels-container");
     
-    
-    self.Body.PanelsContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='height:auto; width:100%;' />")
-    
-    self.Body.DetailsPanel   = GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID() .. "' styleclass='panel-groupbox' />");
+    self.Body.DetailsPanel     = GTGUI.Server.CreateElement(self.Body.PanelsContainer, "panel-groupbox");
     self.Body.DetailsPanel:SceneEditorDetailsPanel(self, sceneEditor);
 
-    self.Body.TransformPanel = GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID() .. "' styleclass='panel-groupbox' />");
+    self.Body.TransformPanel   = GTGUI.Server.CreateElement(self.Body.PanelsContainer, "panel-groupbox");
     self.Body.TransformPanel:SceneEditorTransformPanel(self, sceneEditor);
     
     
@@ -44,34 +41,13 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
     
     
     
-    -- New Component Button/Menu
-    self.NewComponentContainer      = GTGUI.Server.New("<div parentid='" .. self.Body.PanelsContainer:GetID()       .. "' styleclass='new-component-container'             style='' />");
-    self.NewComponentTitleContainer = GTGUI.Server.New("<div parentid='" .. self.NewComponentContainer:GetID()      .. "' styleclass='new-component-title-container'       style='' />");
-    self.NewComponentIcon           = GTGUI.Server.New("<div parentid='" .. self.NewComponentTitleContainer:GetID() .. "' styleclass='new-component-title-container-icon'  style='' />");
-    self.NewComponentLabel          = GTGUI.Server.New("<div parentid='" .. self.NewComponentTitleContainer:GetID() .. "' styleclass='new-component-title-container-label' style=''>New Component</div>");
-    self.NewComponentBottomBorder   = GTGUI.Server.New("<div parentid='" .. self.NewComponentTitleContainer:GetID() .. "' styleclass='new-component-title-container-bottom-border' />");
+    ---------------------------------------------------
+    -- New Component Drop-Down Box.
+    self.NewComponentDropDownBox = GTGUI.Server.CreateElement(self.Body.PanelsContainer, "picking-dropdown-box");
+    self.NewComponentDropDownBox:PickingDropDownBox("New Component");
+    self.NewComponentDropDownBox:SetStyle("margin", "4px 8px");
     
-    self.NewComponentMenu           = GTGUI.Server.New("<div parentid='" .. self.NewComponentContainer:GetID()      .. "' styleclass='new-component-menu'  style='visible:false;' />");
-    self.NewComponentMenu:NewComponentMenu();
-    
-    self.NewComponentTitleContainer:OnLMBDown(function()
-        if not self.NewComponentTitleContainer.IsOpen then
-            self.NewComponentTitleContainer.IsOpen = true;
-            self.NewComponentTitleContainer:AttachStyleClass("new-component-title-container-open");
-            self.NewComponentIcon:AttachStyleClass("new-component-title-container-icon-open");
-            self.NewComponentBottomBorder:Show();
-            self.NewComponentMenu:Show();
-        else
-            self.NewComponentTitleContainer.IsOpen = false;
-            self.NewComponentTitleContainer:DetachStyleClass("new-component-title-container-open");
-            self.NewComponentIcon:DetachStyleClass("new-component-title-container-icon-open");
-            self.NewComponentBottomBorder:Hide();
-            self.NewComponentMenu:Hide();
-        end
-    end);
-    
-    
-    self.NewComponentMenu:AppendNewItem("Camera"):OnPressed(function()
+    self.NewComponentDropDownBox:AppendItem("Camera"):OnPressed(function()
         local component = self.CurrentSceneNode:AddComponent(GTEngine.Components.Camera);
         if component ~= nil then
             component:Set3DProjection(90.0, 16.0 / 9.0, 0.1, 1000.0);
@@ -79,9 +55,9 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
         
         self:UpdateComponentPanels();
         self:OnSceneNodeChanged();
-    end);
+    end)
     
-    self.NewComponentMenu:AppendNewItem("Model"):OnPressed(function()
+    self.NewComponentDropDownBox:AppendItem("Model"):OnPressed(function()
         local component = self.CurrentSceneNode:AddComponent(GTEngine.Components.Model);
         if component ~= nil then
             component:SetModel("engine/models/default.dae");
@@ -89,30 +65,30 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
         
         self:UpdateComponentPanels();
         self:OnSceneNodeChanged();
-    end);
+    end)
     
-    self.NewComponentMenu:AppendNewItem("Point Light"):OnPressed(function()
+    self.NewComponentDropDownBox:AppendItem("Point Light"):OnPressed(function()
         self.CurrentSceneNode:AddComponent(GTEngine.Components.PointLight);
 
         self:UpdateComponentPanels();        
         self:OnSceneNodeChanged();
-    end);
+    end)
     
-    self.NewComponentMenu:AppendNewItem("Spot Light"):OnPressed(function()
+    self.NewComponentDropDownBox:AppendItem("Spot Light"):OnPressed(function()
         self.CurrentSceneNode:AddComponent(GTEngine.Components.SpotLight);
         
         self:UpdateComponentPanels();
         self:OnSceneNodeChanged();
-    end);
+    end)
     
-    self.NewComponentMenu:AppendNewItem("Directional Light"):OnPressed(function()
+    self.NewComponentDropDownBox:AppendItem("Directional Light"):OnPressed(function()
         self.CurrentSceneNode:AddComponent(GTEngine.Components.DirectionalLight);
         
         self:UpdateComponentPanels();
         self:OnSceneNodeChanged();
-    end);
+    end)
     
-    self.NewComponentMenu:AppendNewItem("Ambient Light"):OnPressed(function()
+    self.NewComponentDropDownBox:AppendItem("Ambient Light"):OnPressed(function()
         local component = self.CurrentSceneNode:AddComponent(GTEngine.Components.AmbientLight);
         if component ~= nil then
             component:SetColour(0.25, 0.25, 0.25);
@@ -120,35 +96,35 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
         
         self:UpdateComponentPanels();
         self:OnSceneNodeChanged();
-    end);
+    end)
     
-    self.NewComponentMenu:AppendNewItem("Dynamics (Collision and Physics)"):OnPressed(function()
+    self.NewComponentDropDownBox:AppendItem("Dynamics (Collision and Physics)"):OnPressed(function()
         self.CurrentSceneNode:AddComponent(GTEngine.Components.Dynamics);
         
         self:UpdateComponentPanels();
         self:OnSceneNodeChanged();
-    end);
+    end)
     
-    self.NewComponentMenu:AppendNewItem("Proximity"):OnPressed(function()
+    self.NewComponentDropDownBox:AppendItem("Proximity"):OnPressed(function()
         self.CurrentSceneNode:AddComponent(GTEngine.Components.Proximity);
         
         self:UpdateComponentPanels();
         self:OnSceneNodeChanged();
-    end);
+    end)
     
-    self.NewComponentMenu:AppendNewItem("Particle System"):OnPressed(function()
+    self.NewComponentDropDownBox:AppendItem("Particle System"):OnPressed(function()
         self.CurrentSceneNode:AddComponent(GTEngine.Components.ParticleSystem);
 
         self:UpdateComponentPanels();
         self:OnSceneNodeChanged();
-    end);
+    end)
     
-    self.NewComponentMenu:AppendNewItem("Script"):OnPressed(function()
+    self.NewComponentDropDownBox:AppendItem("Script"):OnPressed(function()
         self.CurrentSceneNode:AddComponent(GTEngine.Components.Script);
         
         self:UpdateComponentPanels();
         self:OnSceneNodeChanged();
-    end);
+    end)
     
     
 
@@ -377,10 +353,10 @@ end
 
 
 function GTGUI.Element:SceneEditorPanel(sceneEditor)
-    self.TabBar               = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-panel-tabbar'        style='' />");
-    self.Body                 = GTGUI.Server.New("<div parentid='" .. self:GetID()      .. "' styleclass='scene-editor-panel-body'          style='' />");
-    self.PropertiesPanel      = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='scene-editor-properties-panel'    style='visible:false' />");
-    self.HierarchyPanel       = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass='scene-editor-hierarchy-panel'     style='visible:false' />");
+    self.TabBar               = GTGUI.Server.CreateElement(self, "scene-editor-panel-tabbar");
+    self.Body                 = GTGUI.Server.CreateElement(self, "scene-editor-panel-body");
+    self.PropertiesPanel      = GTGUI.Server.CreateElement(self.Body, "scene-editor-properties-panel");
+    self.HierarchyPanel       = GTGUI.Server.CreateElement(self.Body, "scene-editor-hierarchy-panel");
     self.ScenePropertiesPanel = GTGUI.Server.CreateElement(self.Body, "scene-editor-properties-panel");
     
     self.SceneEditor          = sceneEditor;
