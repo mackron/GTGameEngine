@@ -914,111 +914,91 @@ function GTGUI.Element:CollisionShapesPanel()
     self.CollisionShapesContainer      = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' />");
     self.CollisionShapePanels          = {};
     
-    self.NewCollisionShapeContainer    = GTGUI.Server.New("<div parentid='" .. self:GetID()                            .. "' styleclass='collision-shape-panel-new'       style='' />");
-    self.NewCollisionShapeIcon         = GTGUI.Server.New("<div parentid='" .. self.NewCollisionShapeContainer:GetID() .. "' styleclass='collision-shape-panel-new-icon'  style='' />");
-    self.NewCollisionShapeLabel        = GTGUI.Server.New("<div parentid='" .. self.NewCollisionShapeContainer:GetID() .. "' styleclass='collision-shape-panel-new-label' style=''>Add Shape</div>");
-    self.NewCollisionShapeBottomBorder = GTGUI.Server.New("<div parentid='" .. self.NewCollisionShapeContainer:GetID() .. "' styleclass='collision-shape-panel-new-bottom-border' />");
+    self.NewCollisionShapeDropDownBox  = GTGUI.Server.CreateElement(self, "picking-dropdown-box");
+    self.NewCollisionShapeDropDownBox:PickingDropDownBox("Add Shape");
+    self.NewCollisionShapeDropDownBox:SetStyle("margin-top", "8px");
     
-    self.NewCollisionShapeMenu         = GTGUI.Server.New("<div parentid='" .. self:GetID()                            .. "' styleclass='collision-shape-panel-new-menu'  style='visible:false;' />");
-    
-    self.NewCollisionShapeContainer:OnLMBDown(function()
-        if not self.NewCollisionShapeContainer.IsOpen then
-            self.NewCollisionShapeContainer.IsOpen = true;
-            self.NewCollisionShapeContainer:AttachStyleClass("collision-shape-panel-new-open");
-            self.NewCollisionShapeIcon:AttachStyleClass("collision-shape-panel-new-icon-open");
-            self.NewCollisionShapeBottomBorder:Show();
-            self.NewCollisionShapeMenu:Show();
-        else
-            self.NewCollisionShapeContainer.IsOpen = false;
-            self.NewCollisionShapeContainer:DetachStyleClass("collision-shape-panel-new-open");
-            self.NewCollisionShapeIcon:DetachStyleClass("collision-shape-panel-new-icon-open");
-            self.NewCollisionShapeBottomBorder:Hide();
-            self.NewCollisionShapeMenu:Hide();
-        end
-    end);
-    
-    self.NewCollisionShapeMenu:NewCollisionShapeMenu();
-    
-    self.NewCollisionShapeMenu:AppendNewItem("Box"):OnPressed(function()
+    self.NewCollisionShapeDropDownBox:AppendItem("Box"):OnPressed(function()
         if self.Component ~= nil then
             self.Component:AddBoxCollisionShape(0.5, 0.5, 0.5);
             self:Update(self.Component);
             
             self:OnShapesChanged();
         end
-    end);
+    end)
     
-    self.NewCollisionShapeMenu:AppendNewItem("Sphere (Does not scale. Try Ellipsoid.)"):OnPressed(function()
+    self.NewCollisionShapeDropDownBox:AppendItem("Sphere (Does not scale. Try Ellipsoid.)"):OnPressed(function()
         if self.Component ~= nil then
             self.Component:AddSphereCollisionShape(1.0);
             self:Update(self.Component);
             
             self:OnShapesChanged();
         end
-    end);
-
-    self.NewCollisionShapeMenu:AppendNewItem("Ellipsoid"):OnPressed(function()
+    end)
+    
+    self.NewCollisionShapeDropDownBox:AppendItem("Ellipsoid"):OnPressed(function()
         if self.Component ~= nil then
             self.Component:AddEllipsoidCollisionShape(1.0, 1.0, 1.0);
             self:Update(self.Component);
             
             self:OnShapesChanged();
         end
-    end);
+    end)
     
-    self.NewCollisionShapeMenu:AppendNewItem("Cylinder X"):OnPressed(function()
+    self.NewCollisionShapeDropDownBox:AppendItem("Cylinder X"):OnPressed(function()
         if self.Component ~= nil then
             self.Component:AddCylinderXCollisionShape(0.5, 1.0);
             self:Update(self.Component);
             
             self:OnShapesChanged();
         end
-    end);
+    end)
     
-    self.NewCollisionShapeMenu:AppendNewItem("Cylinder Y"):OnPressed(function()
+    self.NewCollisionShapeDropDownBox:AppendItem("Cylinder Y"):OnPressed(function()
         if self.Component ~= nil then
             self.Component:AddCylinderYCollisionShape(0.5, 1.0);
             self:Update(self.Component);
             
             self:OnShapesChanged();
         end
-    end);
+    end)
     
-    self.NewCollisionShapeMenu:AppendNewItem("Cylinder Z"):OnPressed(function()
+    self.NewCollisionShapeDropDownBox:AppendItem("Cylinder Z"):OnPressed(function()
         if self.Component ~= nil then
             self.Component:AddCylinderZCollisionShape(0.5, 1.0);
             self:Update(self.Component);
             
             self:OnShapesChanged();
         end
-    end);
+    end)
     
-    self.NewCollisionShapeMenu:AppendNewItem("Capsule X"):OnPressed(function()
+    self.NewCollisionShapeDropDownBox:AppendItem("Capsule X"):OnPressed(function()
         if self.Component ~= nil then
             self.Component:AddCapsuleXCollisionShape(0.5, 1.0);
             self:Update(self.Component);
             
             self:OnShapesChanged();
         end
-    end);
+    end)
     
-    self.NewCollisionShapeMenu:AppendNewItem("Capsule Y"):OnPressed(function()
+    self.NewCollisionShapeDropDownBox:AppendItem("Capsule Y"):OnPressed(function()
         if self.Component ~= nil then
             self.Component:AddCapsuleYCollisionShape(0.5, 1.0);
             self:Update(self.Component);
             
             self:OnShapesChanged();
         end
-    end);
+    end)
     
-    self.NewCollisionShapeMenu:AppendNewItem("Capsule Z"):OnPressed(function()
+    self.NewCollisionShapeDropDownBox:AppendItem("Capsule Z"):OnPressed(function()
         if self.Component ~= nil then
             self.Component:AddCapsuleZCollisionShape(0.5, 1.0);
             self:Update(self.Component);
             
             self:OnShapesChanged();
         end
-    end);
+    end)
+    
     
     
 
