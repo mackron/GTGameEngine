@@ -1,0 +1,25 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+model-component-panel-materials-label
+{
+    width:      auto
+    text-color: #999
+    font-style: bold
+    margin-top: 8px
+}
+
+model-component-panel-model-textbox includes textbox
+{
+    width: 100%
+}
+
+model-component-panel-cast-shadows-checkbox includes checkbox
+{
+    margin-top: 8px
+}
+
+model-component-panel-material-textbox includes textbox
+{
+    width:  100%
+    margin: 0px 2px
+}
