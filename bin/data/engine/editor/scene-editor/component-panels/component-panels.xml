@@ -2,3 +2,6 @@
 
 <style  url="camera-component-panel.style"           />
 <script url="camera-component-panel.lua"             />
+
+<style  url="model-component-panel.style"            />
+<script url="model-component-panel.lua"              />
