@@ -9,5 +9,8 @@
 <style  url="light-component-panel.style"            />
 <script url="light-component-panel.lua"              />
 
+<style  url="particle-component-panel.style"         />
+<script url="particle-component-panel.lua"           />
+
 <style  url="script-component-panel.style"           />
 <script url="script-component-panel.lua"             />
