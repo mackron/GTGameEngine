@@ -5,3 +5,6 @@
 
 <style  url="model-component-panel.style"            />
 <script url="model-component-panel.lua"              />
+
+<style  url="light-component-panel.style"            />
+<script url="light-component-panel.lua"              />
