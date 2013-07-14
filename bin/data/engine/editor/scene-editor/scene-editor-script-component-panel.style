@@ -1,6 +1,58 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
-scene-editor-script-component-panel-edit-button
+new-script-container
+{
+    width:            100%
+    margin-top:       4px
+    child-plane:      horizontal
+    flex-child-width: true
+    vertical-align:   center
+}
+
+new-script-textbox includes textbox
+{
+    width: 100%
+}
+
+new-script-icon
+{
+    width:                   16px
+    height:                  16px
+    background-image:        std-plus
+    background-image-color:  std-text-color
+    margin-left:             4px
+}
+new-script-icon:hovered
+{
+    background-image-color: #ccc
+}
+new-script-icon:pushed
+{
+    background-image-color: #eee
+}
+
+
+
+script-component-panel-script-container
+{
+    margin-bottom: 4px
+}
+
+script-component-panel-script-container-header
+{
+    child-plane:      horizontal
+    flex-child-width: true
+    vertical-align:   center
+}
+
+script-component-panel-script-container-text-box
+{
+    width:      100%
+    text-color: std-text-color
+    font-style: bold
+}
+
+script-component-panel-script-container-edit-button
 {
     width:                  12px
     height:                 12px
@@ -10,13 +62,31 @@ scene-editor-script-component-panel-edit-button
     background-image:       file-icon
     background-image-color: #999
 }
-
-scene-editor-script-component-panel-edit-button:hovered
+script-component-panel-script-container-edit-button:hovered
 {
     background-image-color: #ccc
 }
-
-scene-editor-script-component-panel-edit-button:pushed
+script-component-panel-script-container-edit-button:pushed
 {
     background-image-color: #eee
 }
+
+script-component-panel-variables-container
+{
+    padding:       4px
+    padding-left:  8px
+    padding-right: 0px
+    border-bottom: 1px #444
+}
+
+
+script-component-panel-variable
+{
+    child-plane:      horizontal
+    vertical-align:   center
+    horizontal-align: right
+    text-color:       #999
+    padding:          0px 2px;
+    flex-child-width: true
+}
+

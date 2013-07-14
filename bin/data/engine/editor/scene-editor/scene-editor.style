@@ -27,7 +27,7 @@ collision-shape-panel-delete-button
     width:                  12px
     height:                 12px
     background-image:       std-cross
-    background-image-color: #333
+    background-image-color: #555
 }
 
 collision-shape-panel-delete-button:hovered
@@ -42,51 +42,9 @@ collision-shape-panel-delete-button:pushed
 
 
 
-// TODO: Move this to the script component panel file.
-new-script-container
-{
-    width:            100%
-    child-plane:      horizontal
-    flex-child-width: true
-    vertical-align:   center
-}
-
-new-script-textbox includes textbox
-{
-    width: 100%
-}
-
-new-script-icon
-{
-    width:                   16px
-    height:                  16px
-    background-image:        std-plus
-    background-image-color:  std-text-color
-    margin-left:             4px
-}
-
-new-script-icon:hovered
-{
-    background-image-color: #ccc
-}
-
-new-script-icon:pushed
-{
-    background-image-color: #eee
-}
 
 
 
-
-script-variable-container
-{
-    child-plane:      horizontal
-    vertical-align:   center
-    horizontal-align: right
-    text-color:       #999
-    padding:          0px 2px;
-    flex-child-width: true
-}
 
 
 
