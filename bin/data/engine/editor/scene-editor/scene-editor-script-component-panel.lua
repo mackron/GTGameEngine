@@ -1,185 +1,183 @@
 -- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
-function GTGUI.Element:ScriptVariableContainer(name, component)
-    self.Component = component;
+function GTGUI.Element:ScriptComponentPanelVariable(name, component)
     self.Name      = name;
+    self.Component = component;
     
-    self.NameValueContainer = GTGUI.Server.New("<div parentid='" .. self:GetID()                    .. "' styleclass='' style='child-plane:horizontal; flex-child-width:true; vertical-align:center;' />");
-    self.NameContainer      = GTGUI.Server.New("<div parentid='" .. self.NameValueContainer:GetID() .. "' styleclass='' style='width:auto; vertical-align:center; padding-right:4px;' />");
-    self.ValueContainer     = GTGUI.Server.New("<div parentid='" .. self.NameValueContainer:GetID() .. "' styleclass='' style='width:100%; vertical-align:center; horizontal-align:right;' />");
-    
-    self.NameLabel = GTGUI.Server.New("<div parentid='" .. self.NameContainer:GetID() .. "' styleclass='' style='width:auto;' />");
-    self.NameLabel:SetText(name .. ":");
-    
-    
-    function self:OnValueChanged(arg1)
-        self.Callbacks:BindOrCall("OnValueChanged", arg1);
+    if self.OnValueChanged == nil then
+        function self:OnValueChanged(arg1)
+            self.Callbacks:BindOrCall("OnValueChanged", arg1);
+        end
     end
 end
 
-function GTGUI.Element:ScriptVariableContainer_Number(name, component)
-    self:ScriptVariableContainer(name, component);
+
+function GTGUI.Element:ScriptComponentPanelVariable_Number(name, component)
+    self:ScriptComponentPanelVariable(name, component);
+    self:LabelledNumberInput(name);
     
     function self:UpdateValue()
-        self.ValueTextBox:SetValue(component:GetPublicVariableValue(name));
+        self:SetValue(component:GetPublicVariableValue(name));
     end
     
+    self:OnValueChanged(function()
+        component:SetPublicVariableValue(name, self:GetValue());
+    end)
     
-    self.ValueTextBox = GTGUI.Server.New("<div parentid='" .. self.ValueContainer:GetID() .. "' styleclass='textbox' style='width:100%; max-width:72px' />");
-    self.ValueTextBox:NumberTextBox();
+    
     self:UpdateValue();
-    
-    self.ValueTextBox:OnTextChanged(function()
-        self.Component:SetPublicVariableValue(self.Name, tonumber(self.ValueTextBox:GetText()) or 0.0);
-        self:OnValueChanged();
-    end);
+    return self;
 end
 
-function GTGUI.Element:ScriptVariableContainer_Vec2(name, component)
-    self:ScriptVariableContainer(name, component);
+function GTGUI.Element:ScriptComponentPanelVariable_Vec2(name, component)
+    self:ScriptComponentPanelVariable(name, component);
+    self:LabelledVector2Input(name);
     
     function self:UpdateValue()
-        self.ValueInput:SetFromXYTable(component:GetPublicVariableValue(name));
+        self:SetValue(component:GetPublicVariableValue(name));
     end
     
-    
-    self.ValueInput = GTGUI.Server.New("<div parentid='" .. self.ValueContainer:GetID() .. "' styleclass='vector-input' style='width:100%; max-width:146px' />");
-    self.ValueInput:Vector2Input()
-    self:UpdateValue();
-    
-    self.ValueInput:OnValueChanged(function()
-        self.Component:SetPublicVariableValue(self.Name, self.ValueInput:GetXYTable());
-        self:OnValueChanged();
+    self:OnValueChanged(function()
+        component:SetPublicVariableValue(name, self:GetValue());
     end);
+    
+    
+    self:UpdateValue();
+    return self;
 end
 
-function GTGUI.Element:ScriptVariableContainer_Vec3(name, component)
-    self:ScriptVariableContainer(name, component);
+function GTGUI.Element:ScriptComponentPanelVariable_Vec3(name, component)
+    self:ScriptComponentPanelVariable(name, component);
+    self:LabelledVector3Input(name);
     
     function self:UpdateValue()
-        self.ValueInput:SetFromXYZTable(component:GetPublicVariableValue(name));
+        self:SetValue(component:GetPublicVariableValue(name));
     end
     
-    
-    self.ValueInput = GTGUI.Server.New("<div parentid='" .. self.ValueContainer:GetID() .. "' styleclass='vector-input' style='width:100%; max-width:220px' />");
-    self.ValueInput:Vector3Input()
-    self:UpdateValue();
-    
-    self.ValueInput:OnValueChanged(function()
-        self.Component:SetPublicVariableValue(self.Name, self.ValueInput:GetXYZTable());
-        self:OnValueChanged();
+    self:OnValueChanged(function()
+        component:SetPublicVariableValue(name, self:GetValue());
     end);
+    
+    
+    self:UpdateValue();
+    return self;
 end
 
-function GTGUI.Element:ScriptVariableContainer_Vec4(name, component)
-    self:ScriptVariableContainer(name, component);
+function GTGUI.Element:ScriptComponentPanelVariable_Vec4(name, component)
+    self:ScriptComponentPanelVariable(name, component);
+    self:LabelledVector4Input(name);
     
     function self:UpdateValue()
-        self.ValueInput:SetFromXYZWTable(component:GetPublicVariableValue(name));
+        self:SetValue(component:GetPublicVariableValue(name));
     end
     
-    
-    self.ValueInput = GTGUI.Server.New("<div parentid='" .. self.ValueContainer:GetID() .. "' styleclass='vector-input' style='width:100%; max-width:296px' />");
-    self.ValueInput:Vector4Input();
-    self:UpdateValue();
-    
-    self.ValueInput:OnValueChanged(function()
-        self.Component:SetPublicVariableValue(self.Name, self.ValueInput:GetXYZWTable());
-        self:OnValueChanged();
+    self:OnValueChanged(function()
+        component:SetPublicVariableValue(name, self:GetValue());
     end);
+    
+    
+    self:UpdateValue();
+    return self;
 end
 
-function GTGUI.Element:ScriptVariableContainer_Boolean(name, component)
-    self:ScriptVariableContainer(name, component);
+function GTGUI.Element:ScriptComponentPanelVariable_Boolean(name, component)
+    self:ScriptComponentPanelVariable(name, component);
+    self:LabelledElement(name);
+    
+    self.CheckBox = GTGUI.Server.CreateElement(self.Right, "checkbox");
+    self.CheckBox:CheckBox();
+    self.CheckBox.text:Hide();          -- This removes the little margin so that it lies flush with the edge.
     
     function self:UpdateValue()
-        self.ValueInput:SetChecked(component:GetPublicVariableValue(name));
+        self.CheckBox:SetChecked(component:GetPublicVariableValue(name));
     end
     
+    self.CheckBox:OnChecked(function()
+        component:SetPublicVariableValue(name, self.CheckBox:IsChecked());
+        self:OnValueChanged();
+    end)
     
-    self.ValueInput = GTGUI.Server.New("<div parentid='" .. self.ValueContainer:GetID() .. "' styleclass='checkbox' style='' />");
-    self.ValueInput:CheckBox();
-    self.ValueInput.text:Hide();        -- This removes the little margin so that it lies flush with the edge.
+    self.CheckBox:OnUnchecked(function()
+        component:SetPublicVariableValue(name, self.CheckBox:IsChecked());
+        self:OnValueChanged();
+    end)
+    
+    
     self:UpdateValue();
-    
-    
-    self.ValueInput:OnChecked(function()
-        self.Component:SetPublicVariableValue(self.Name, self.ValueInput:IsChecked());
-        self:OnValueChanged();
-    end);
-    
-    self.ValueInput:OnUnchecked(function()
-        self.Component:SetPublicVariableValue(self.Name, self.ValueInput:IsChecked());
-        self:OnValueChanged();
-    end);
+    return self;
 end
 
-function GTGUI.Element:ScriptVariableContainer_String(name, component)
-    self:ScriptVariableContainer(name, component);
+function GTGUI.Element:ScriptComponentPanelVariable_String(name, component)
+    self:ScriptComponentPanelVariable(name, component);
+    self:LabelledTextBox(name);
     
     function self:UpdateValue()
         local newValue = component:GetPublicVariableValue(name);
-        if self.ValueTextBox:GetText() ~= newValue then
-            self.ValueTextBox:SetText(newValue);
+        if self:GetText() ~= newValue then
+            self:SetText(newValue);
         end
     end
     
-    
-    self.ValueTextBox = GTGUI.Server.New("<div parentid='" .. self.ValueContainer:GetID() .. "' styleclass='textbox' style='width:100%;' />");
-    self:UpdateValue();
-    
-    self.ValueTextBox:OnTextChanged(function()
-        self.Component:SetPublicVariableValue(self.Name, self.ValueTextBox:GetText() or "");
+
+    self:OnTextChanged(function()
+        component:SetPublicVariableValue(name, self:GetText() or "");
         self:OnValueChanged();
     end);
     
-    self.ValueTextBox:OnDrop(function(data)
+    self.TextBox:OnDrop(function(data)
         if data.droppedElement.isAsset then
-            self.ValueTextBox:SetText(data.droppedElement.path);
+            self:SetText(data.droppedElement.path);
+            self:OnTextChanged();                       -- Need to explicitly call this because SetText() won't.
+            
             -- TODO: When we implement the multi-line text box feature for strings we'll want to do explicit SetPublicVariableValue() and OnValueChanged commands.
         end
     end);
+    
+    
+    self:UpdateValue();
+    return self;
 end
 
-function GTGUI.Element:ScriptVariableContainer_Prefab(name, component)
-    self:ScriptVariableContainer(name, component);
+function GTGUI.Element:ScriptComponentPanelVariable_Prefab(name, component)
+    self:ScriptComponentPanelVariable(name, component);
+    self:LabelledTextBox(name);
     
     function self:UpdateValue()
         local newValue = component:GetPublicVariableValue(name);
-        if self.ValueTextBox:GetText() ~= newValue then
-            self.ValueTextBox:SetText(newValue);
+        if self:GetText() ~= newValue then
+            self:SetText(newValue);
         end
     end
     
-    
-    self.ValueTextBox = GTGUI.Server.New("<div parentid='" .. self.ValueContainer:GetID() .. "' styleclass='textbox' style='width:100%;' />");
-    self:UpdateValue();
-    
-    self.ValueTextBox:OnKeyPressed(function(data)
+
+    self:OnKeyPressed(function(data)
         if data.key == GTGUI.Keys.Enter then
-            self.Component:SetPublicVariableValue(self.Name, self.ValueTextBox:GetText() or "");
+            component:SetPublicVariableValue(name, self:GetText() or "");
             self:OnValueChanged();
         end
     end);
     
-    self.ValueTextBox:OnDrop(function(data)
+    self.TextBox:OnDrop(function(data)
         if data.droppedElement.isAsset then
-            self.ValueTextBox:SetText(data.droppedElement.path);
-            self.Component:SetPublicVariableValue(self.Name, self.ValueTextBox:GetText() or "");
+            self:SetText(data.droppedElement.path);
+            component:SetPublicVariableValue(name, self:GetText() or "");
             self:OnValueChanged();
         end
     end);
+    
+    
+    self:UpdateValue();
+    return self;
 end
 
 
 function GTGUI.Element:ScriptComponentPanel()
     self:PanelGroupBox("Script", true);
-    self.ScriptsContainer   = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' styleclass=''                  style='' />");
+    self.ScriptsContainer   = GTGUI.Server.CreateElement(self.Body);
 
-    
-    self.NewScriptContainer = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()               .. "' styleclass='new-script-container' style='margin-top:4px' />");
-    self.NewScriptTextBox   = GTGUI.Server.New("<div parentid='" .. self.NewScriptContainer:GetID() .. "' styleclass='new-script-textbox'   style='' />");
-    self.NewScriptIcon      = GTGUI.Server.New("<div parentid='" .. self.NewScriptContainer:GetID() .. "' styleclass='new-script-icon'      style='' />");
+    self.NewScriptContainer = GTGUI.Server.CreateElement(self.Body, "new-script-container");
+    self.NewScriptTextBox   = GTGUI.Server.CreateElement(self.NewScriptContainer, "new-script-textbox");
+    self.NewScriptIcon      = GTGUI.Server.CreateElement(self.NewScriptContainer, "new-script-icon");
     self.ScriptPanels       = {};
     
     self.CurrentNode        = nil;
@@ -231,38 +229,34 @@ function GTGUI.Element:ScriptComponentPanel()
         end
         
     
-        local new = GTGUI.Server.New("<div parentid='" .. self.ScriptsContainer:GetID() .. "' styleclass='' style='margin-bottom:4px;' />");
+        local new = GTGUI.Server.CreateElement(self.ScriptsContainer, "script-component-panel-script-container");
         
         ---------------------------------
         -- Header
-        new.Header             = GTGUI.Server.New("<div parentid='" .. new:GetID()        .. "' styleclass=''                           style='child-plane:horizontal; flex-child-width:true; vertical-align:center;' />");
+        new.Header             = GTGUI.Server.CreateElement(new, "script-component-panel-script-container-header");
         
-        new.FilePathTextBox    = GTGUI.Server.New("<div parentid='" .. new.Header:GetID() .. "' styleclass=''                           style='width:100%; text-color:std-text-color; font-style:bold;' />");
+        new.FilePathTextBox    = GTGUI.Server.CreateElement(new.Header, "script-component-panel-script-container-text-box");
         new.FilePathTextBox:SetText(name);
         
-        new.EditButton         = GTGUI.Server.CreateElement(new.Header, "scene-editor-script-component-panel-edit-button");
+        new.EditButton         = GTGUI.Server.CreateElement(new.Header, "script-component-panel-script-container-edit-button");
         new.EditButton:OnPressed(function()
             Editor.OpenFile(new.FilePathTextBox:GetText());
         end);
         
-        new.CloseButton        = GTGUI.Server.New("<div parentid='" .. new.Header:GetID() .. "' styleclass='panel-groupbox-title-cross' style='margin-left:4px;' />");
+        new.CloseButton        = GTGUI.Server.CreateElement(new.Header, "panel-groupbox-title-cross");
+        new.CloseButton:SetStyle("margin-left", "4px");
         new.CloseButton:OnPressed(function()
             self:RemoveScript(new);
         end);
         
-        
-
         self.ScriptPanels[#self.ScriptPanels + 1] = new;
         
-        
-        
-        
-        
+
         ---------------------------------
         -- Variables.
         --
         -- These need to be done after adding the script to the component.
-        new.VariablesContainer = GTGUI.Server.New("<div parentid='" .. new:GetID() .. "' styleclass='' style='padding:4px; padding-left:8px; padding-right:0px; border-bottom:1px #444' />");
+        new.VariablesContainer = GTGUI.Server.CreateElement(new, "script-component-panel-variables-container");
         new.Variables          = {};
         
         -- We initialize the variables by just "reloading" them.
@@ -326,15 +320,15 @@ function GTGUI.Element:ScriptComponentPanel()
         local publicVariableNamesAndTypes = self.CurrentComponent:GetPublicVariableNamesAndTypesByIndex(#self.ScriptPanels);
         for i,nameAndType in ipairs(publicVariableNamesAndTypes) do
             if nameAndType.type ~= GTEngine.ScriptVariableTypes.Unknown and nameAndType.type ~= GTEngine.ScriptVariableTypes.None then
-                local variableContainer = GTGUI.Server.New("<div parentid='" .. panel.VariablesContainer:GetID() .. "' styleclass='script-variable-container' style='' />");
+                local variableContainer = GTGUI.Server.CreateElement(panel.VariablesContainer, "script-component-panel-variable");
             
-                if     nameAndType.type == GTEngine.ScriptVariableTypes.Number  then variableContainer:ScriptVariableContainer_Number( nameAndType.name, self.CurrentComponent);
-                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec2    then variableContainer:ScriptVariableContainer_Vec2(   nameAndType.name, self.CurrentComponent);
-                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec3    then variableContainer:ScriptVariableContainer_Vec3(   nameAndType.name, self.CurrentComponent);
-                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec4    then variableContainer:ScriptVariableContainer_Vec4(   nameAndType.name, self.CurrentComponent);
-                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Boolean then variableContainer:ScriptVariableContainer_Boolean(nameAndType.name, self.CurrentComponent);
-                elseif nameAndType.type == GTEngine.ScriptVariableTypes.String  then variableContainer:ScriptVariableContainer_String( nameAndType.name, self.CurrentComponent);
-                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Prefab  then variableContainer:ScriptVariableContainer_Prefab( nameAndType.name, self.CurrentComponent);
+                if     nameAndType.type == GTEngine.ScriptVariableTypes.Number  then variableContainer:ScriptComponentPanelVariable_Number( nameAndType.name, self.CurrentComponent);
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec2    then variableContainer:ScriptComponentPanelVariable_Vec2(   nameAndType.name, self.CurrentComponent);
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec3    then variableContainer:ScriptComponentPanelVariable_Vec3(   nameAndType.name, self.CurrentComponent);
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Vec4    then variableContainer:ScriptComponentPanelVariable_Vec4(   nameAndType.name, self.CurrentComponent);
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Boolean then variableContainer:ScriptComponentPanelVariable_Boolean(nameAndType.name, self.CurrentComponent);
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.String  then variableContainer:ScriptComponentPanelVariable_String( nameAndType.name, self.CurrentComponent);
+                elseif nameAndType.type == GTEngine.ScriptVariableTypes.Prefab  then variableContainer:ScriptComponentPanelVariable_Prefab( nameAndType.name, self.CurrentComponent);
                 end
                 
                 variableContainer:OnValueChanged(function()
