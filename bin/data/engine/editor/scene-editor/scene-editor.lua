@@ -338,10 +338,6 @@ end
 
 
 
-
-
-
-
 function GTGUI.Element:CollisionShapesPanel()
     self.Component = nil;
 

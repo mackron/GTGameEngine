@@ -8,3 +8,6 @@
 
 <style  url="light-component-panel.style"            />
 <script url="light-component-panel.lua"              />
+
+<style  url="script-component-panel.style"           />
+<script url="script-component-panel.lua"             />
