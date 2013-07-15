@@ -147,9 +147,6 @@
     <Filter Include="source\Scripting">
       <UniqueIdentifier>{3d65def6-a3c5-4d08-99db-f01d36558573}</UniqueIdentifier>
     </Filter>
-    <Filter Include="source\Rendering\OpenGL\OpenGL33">
-      <UniqueIdentifier>{31bc8600-c0b2-4301-a7ec-d9e12782b992}</UniqueIdentifier>
-    </Filter>
     <Filter Include="include\Scripting">
       <UniqueIdentifier>{7a3aedfc-b891-4947-899d-bf130afabfc1}</UniqueIdentifier>
     </Filter>
@@ -164,6 +161,9 @@
     </Filter>
     <Filter Include="source\Editor\PackagingToolEditor">
       <UniqueIdentifier>{b7ab4d9d-8ce2-4f32-a2cf-9fb59978a7eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="source\Rendering\OpenGL\OpenGL21">
+      <UniqueIdentifier>{a73f7619-68fb-48e8-afa2-0722f156455e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -704,32 +704,8 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.hpp">
       <Filter>source\Rendering\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\State_OpenGL33.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCClear.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetGlobalState.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\CapabilityBits.hpp">
       <Filter>source\Rendering\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\VertexArray_OpenGL33.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCCreateVertexArray.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteVertexArray.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDraw.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetVertexArrayState.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\BlendEquations.hpp">
       <Filter>include\Rendering</Filter>
@@ -748,51 +724,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\BufferTypes.hpp">
       <Filter>include\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCCreateTexture.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteTexture.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Texture2D_OpenGL33.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetTextureState.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCCreateShader.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteShader.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Shader_OpenGL33.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetShaderState.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\ShaderState_OpenGL33.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCCreateFramebuffer.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteFramebuffer.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Framebuffer_OpenGL33.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetFramebufferState.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\FramebufferState_OpenGL33.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\TextureCube_OpenGL33.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Rendering\DefaultGUIRenderer.hpp">
       <Filter>include\Rendering</Filter>
@@ -817,9 +748,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\RenderCommand.hpp">
       <Filter>source\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\ServerState_OpenGL33.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorGrid.hpp">
       <Filter>include\Editor</Filter>
@@ -850,9 +778,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Particle.hpp">
       <Filter>include</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL33\TextureState_OpenGL33.hpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Game.hpp">
       <Filter>include\Scripting</Filter>
@@ -964,6 +889,81 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationTrack.hpp">
       <Filter>include\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Framebuffer_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\FramebufferState_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCClear_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateFramebuffer_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateShader_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateTexture_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateVertexArray_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteFramebuffer_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteShader_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteTexture_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteVertexArray_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDraw_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetFramebufferState_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetGlobalState_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetShaderState_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetTextureState_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetVertexArrayState_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\ServerState_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Shader_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\ShaderState_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\State_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Texture2D_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\TextureCube_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\TextureState_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\VertexArray_OpenGL21.hpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1426,80 +1426,8 @@
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Game.cpp">
       <Filter>source\Scripting</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Renderer_OpenGL33.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.cpp">
       <Filter>source\Rendering\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\State_OpenGL33.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCClear.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetGlobalState.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\VertexArray_OpenGL33.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCCreateVertexArray.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteVertexArray.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDraw.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetVertexArrayState.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCCreateTexture.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteTexture.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Texture2D_OpenGL33.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetTextureState.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCCreateShader.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteShader.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Shader_OpenGL33.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetShaderState.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\ShaderState_OpenGL33.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCCreateFramebuffer.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCDeleteFramebuffer.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\Framebuffer_OpenGL33.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\RCSetFramebufferState.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\FramebufferState_OpenGL33.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\TextureCube_OpenGL33.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\DefaultGUIRenderer.cpp">
       <Filter>source\Rendering</Filter>
@@ -1509,9 +1437,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp">
       <Filter>source\Rendering</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\ServerState_OpenGL33.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\EditorGrid.cpp">
       <Filter>source\Editor</Filter>
@@ -1542,9 +1467,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Particle.cpp">
       <Filter>source</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL33\TextureState_OpenGL33.cpp">
-      <Filter>source\Rendering\OpenGL\OpenGL33</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Scripting\Scripting_Audio.cpp">
       <Filter>source\Scripting</Filter>
@@ -1650,6 +1572,84 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Animation\AnimationTrack.cpp">
       <Filter>source\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Framebuffer_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\FramebufferState_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCClear_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateFramebuffer_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateShader_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateTexture_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateVertexArray_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteFramebuffer_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteShader_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteTexture_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteVertexArray_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDraw_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetFramebufferState_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetGlobalState_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetShaderState_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetTextureState_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetVertexArrayState_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Renderer_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\ServerState_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Shader_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\ShaderState_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\State_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Texture2D_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\TextureCube_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\TextureState_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\VertexArray_OpenGL21.cpp">
+      <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
