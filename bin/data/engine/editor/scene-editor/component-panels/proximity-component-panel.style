@@ -1,0 +1,9 @@
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+
+proximity-component-panel-shapes-label
+{
+    width:      auto
+    text-color: #999
+    font-style: bold
+    margin-top: 8px
+}
