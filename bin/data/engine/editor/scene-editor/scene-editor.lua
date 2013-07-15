@@ -1,20 +1,16 @@
 -- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
 function GTGUI.Element:CollisionShapePanel(title, hideOffset)
-    self.TitleContainer = GTGUI.Server.New("<div parentid='" .. self:GetID()                .. "' style='width:100%; flex-child-width:true; child-plane:horizontal; vertical-align:center; margin-bottom:4px;' />");
-    self.Title          = GTGUI.Server.New("<div parentid='" .. self.TitleContainer:GetID() .. "' style='width:100%; vertical-align:center; text-color:std-text-color; font-style:bold;' />");
-    self.DeleteButton   = GTGUI.Server.New("<div parentid='" .. self.TitleContainer:GetID() .. "' styleclass='collision-shape-panel-delete-button' style='' />");
+    self.TitleContainer = GTGUI.Server.CreateElement(self, "collision-shape-panel-title-container");
+    self.Title          = GTGUI.Server.CreateElement(self.TitleContainer, "collision-shape-panel-title");
+    self.DeleteButton   = GTGUI.Server.CreateElement(self.TitleContainer, "collision-shape-panel-delete-button");
     
     self.Title:SetText(title);
 
-    -- TODO: Looks like a layout bug. self.Title is being left with a height of 0...
-    --         Only happens when the parent has flex-child-width set to true.
-    --         Only happens when the width of self.DeleteButton is auto.
-    
+
     if not hideOffset then
-        self.OffsetContainer = GTGUI.Server.New("<div parentid='" .. self:GetID()                 .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; padding-left:4px' />");
-        self.OffsetLabel     = GTGUI.Server.New("<div parentid='" .. self.OffsetContainer:GetID() .. "' styleclass='vector3-label' style='width:50px; height:100%'>Offset:</div>");
-        self.OffsetInput     = GTGUI.Server.New("<div parentid='" .. self.OffsetContainer:GetID() .. "' styleclass='vector3-input' style='width:100%; height:auto;' />"):Vector3Input();
+        self.OffsetInput = GTGUI.Server.CreateElement(self, "labelled-vector3-input");
+        self.OffsetInput:LabelledVector3Input("Offset:");
         
         self.OffsetInput:OnValueChanged(function(data)
             self:OnOffsetChanged(data);
@@ -63,9 +59,9 @@ end
 function GTGUI.Element:CollisionShapePanel_Box()
     self:CollisionShapePanel("Box");
 
-    self.ExtentsContainer = GTGUI.Server.New("<div parentid='" .. self:GetID()                  .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; padding-left:4px; margin-top:4px;' />");
-    self.ExtentsLabel     = GTGUI.Server.New("<div parentid='" .. self.ExtentsContainer:GetID() .. "' styleclass='vector3-label' style='width:50px; height:100%'>Extents:</div>");
-    self.ExtentsInput     = GTGUI.Server.New("<div parentid='" .. self.ExtentsContainer:GetID() .. "' styleclass='vector3-input' style='width:100%; height:auto;' />"):Vector3Input();
+    self.ExtentsInput = GTGUI.Server.CreateElement(self, "labelled-vector3-input");
+    self.ExtentsInput:LabelledVector3Input("Extents:");
+    self.ExtentsInput:SetStyle("margin-top", "4px");
     
     self.ExtentsInput:OnValueChanged(function(data)
         self:OnExtentsChanged(data);
@@ -87,19 +83,17 @@ end
 function GTGUI.Element:CollisionShapePanel_Sphere()
     self:CollisionShapePanel("Sphere");
     
-    self.RadiusContainer = GTGUI.Server.New("<div parentid='" .. self:GetID()                 .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; padding-left:4px; margin-top:4px;' />");
-    self.RadiusLabel     = GTGUI.Server.New("<div parentid='" .. self.RadiusContainer:GetID() .. "' styleclass='vector3-label' style='width:50px; height:100%; horizontal-align:left;'>Radius:</div>");
-    self.RadiusInput     = GTGUI.Server.New("<div parentid='" .. self.RadiusContainer:GetID() .. "' styleclass='textbox' style='width:100%; max-width:72px; height:auto;' />");
+    self.RadiusInput = GTGUI.Server.CreateElement(self, "labelled-number-input");
+    self.RadiusInput:LabelledNumberInput("Radius:");
     
-    
-    self.RadiusInput:OnTextChanged(function()
-        self:OnRadiusChanged({radius = tonumber(self.RadiusInput:GetText())});
+    self.RadiusInput:OnValueChanged(function()
+        self:OnRadiusChanged({radius = self.RadiusInput:GetValue()});
     end);
     
     
     function self:Update(shape)
         self:UpdateOffset(shape);
-        self.RadiusInput:SetText(string.format("%.4f", shape.radius));
+        self.RadiusInput:SetValue(shape.radius);
     end
     
     
@@ -113,11 +107,11 @@ end
 function GTGUI.Element:CollisionShapePanel_Ellipsoid()
     self:CollisionShapePanel("Ellipsoid");
     
-    self.RadiusContainer = GTGUI.Server.New("<div parentid='" .. self:GetID()                 .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; padding-left:4px; margin-top:4px;' />");
-    self.RadiusLabel     = GTGUI.Server.New("<div parentid='" .. self.RadiusContainer:GetID() .. "' styleclass='vector3-label' style='width:50px; height:100%'>Extents:</div>");
-    self.RadiusInput     = GTGUI.Server.New("<div parentid='" .. self.RadiusContainer:GetID() .. "' styleclass='vector3-input' style='width:100%; height:auto;' />"):Vector3Input();
+    self.RadiusInput = GTGUI.Server.CreateElement(self, "labelled-vector3-input");
+    self.RadiusInput:LabelledVector3Input("Radius:");
+    self.RadiusInput:SetStyle("margin-top", "4px");
     
-    
+
     self.RadiusInput:OnValueChanged(function(data)
         self:OnRadiusChanged(data);
     end);
@@ -141,12 +135,10 @@ function GTGUI.Element:CollisionShapePanel_Cylinder(title)
     self:CollisionShapePanel(title);
     
     self.RadiusInput = GTGUI.Server.CreateElement(self, "labelled-number-input");
-    self.RadiusInput:LabelledNumberInput("Radius");
-    self.RadiusInput:SetStyle("padding-left", "4px");
+    self.RadiusInput:LabelledNumberInput("Radius:");
     
     self.LengthInput = GTGUI.Server.CreateElement(self, "labelled-number-input");
-    self.LengthInput:LabelledNumberInput("Length");
-    self.LengthInput:SetStyle("padding-left", "4px");
+    self.LengthInput:LabelledNumberInput("Length:");
     
     
     self.RadiusInput:OnValueChanged(function(data)
@@ -194,28 +186,26 @@ end
 function GTGUI.Element:CollisionShapePanel_Capsule(title)
     self:CollisionShapePanel(title);
     
-    self.RadiusContainer = GTGUI.Server.New("<div parentid='" .. self:GetID()                 .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; padding-left:4px; margin-top:4px;' />");
-    self.RadiusLabel     = GTGUI.Server.New("<div parentid='" .. self.RadiusContainer:GetID() .. "' styleclass='vector3-label' style='width:50px; height:100%; horizontal-align:left;'>Radius:</div>");
-    self.RadiusInput     = GTGUI.Server.New("<div parentid='" .. self.RadiusContainer:GetID() .. "' styleclass='textbox' style='width:100%; max-width:72px; height:auto;' />");
+    self.RadiusInput = GTGUI.Server.CreateElement(self, "labelled-number-input");
+    self.RadiusInput:LabelledNumberInput("Radius:");
     
-    self.HeightContainer = GTGUI.Server.New("<div parentid='" .. self:GetID()                 .. "' style='width:100%; height:auto; child-plane:horizontal; flex-child-width:true; padding-left:4px; margin-top:4px;' />");
-    self.HeightLabel     = GTGUI.Server.New("<div parentid='" .. self.HeightContainer:GetID() .. "' styleclass='vector3-label' style='width:50px; height:100%; horizontal-align:left;'>Height:</div>");
-    self.HeightInput     = GTGUI.Server.New("<div parentid='" .. self.HeightContainer:GetID() .. "' styleclass='textbox' style='width:100%; max-width:72px; height:auto;' />");
+    self.HeightInput = GTGUI.Server.CreateElement(self, "labelled-number-input");
+    self.HeightInput:LabelledNumberInput("Height:");
+
     
-    
-    self.RadiusInput:OnTextChanged(function()
-        self:OnSizeChanged({radius = tonumber(self.RadiusInput:GetText()), height = tonumber(self.HeightInput:GetText())});
+    self.RadiusInput:OnValueChanged(function()
+        self:OnSizeChanged({radius = self.RadiusInput:GetValue(), height = self.HeightInput:GetValue()});
     end);
     
-    self.HeightInput:OnTextChanged(function()
-        self:OnSizeChanged({radius = tonumber(self.RadiusInput:GetText()), height = tonumber(self.HeightInput:GetText())});
+    self.HeightInput:OnValueChanged(function()
+        self:OnSizeChanged({radius = self.RadiusInput:GetValue(), height = self.HeightInput:GetValue()});
     end);
     
     
     function self:Update(shape)
         self:UpdateOffset(shape);
-        self.RadiusInput:SetText(string.format("%.4f", shape.radius));
-        self.HeightInput:SetText(string.format("%.4f", shape.height));
+        self.RadiusInput:SetValue(shape.radius);
+        self.HeightInput:SetValue(shape.height);
     end
     
     
@@ -263,7 +253,7 @@ function GTGUI.Element:NewCollisionShapeMenu()
     self.Items = {}
     
     function self:AppendNewItem(title)
-        local newItem = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='collision-shape-panel-new-menu-item' />");
+        local newItem = GTGUI.Server.CreateElement(self, "collision-shape-panel-new-menu-item");
         newItem:SetText(title);
         
         self.Items[newItem:GetID()] = newItem;
@@ -277,7 +267,7 @@ function GTGUI.Element:NewComponentMenu()
     self.Items = {}
     
     function self:AppendNewItem(title)
-        local newItem = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='new-component-menu-item' />");
+        local newItem = GTGUI.Server.CreateElement(self, "new-component-menu-item");
         newItem:SetText(title);
         
         self.Items[newItem:GetID()] = newItem;
@@ -294,7 +284,7 @@ function Editor.SceneEditor.CreateCustomComponentPanel(panelElement, componentID
 end
 
 function Editor.SceneEditor.CreateComponentPanel(parentPanel, componentID)
-    local element = GTGUI.Server.New("<div parentid='" .. parentPanel.Body.PanelsContainer:GetID() .. "' styleclass='panel-groupbox' />");
+    local element = GTGUI.Server.CreateElement(parentPanel.Body.PanelsContainer, "panel-groupbox");
     element.ParentPanel = parentPanel;
     
     
@@ -341,12 +331,12 @@ end
 function GTGUI.Element:CollisionShapesPanel()
     self.Component = nil;
 
-    self.CollisionShapesContainer      = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' />");
+    self.CollisionShapesContainer      = GTGUI.Server.CreateElement(self);
     self.CollisionShapePanels          = {};
     
     self.NewCollisionShapeDropDownBox  = GTGUI.Server.CreateElement(self, "picking-dropdown-box");
     self.NewCollisionShapeDropDownBox:PickingDropDownBox("Add Shape");
-    self.NewCollisionShapeDropDownBox:SetStyle("margin-top", "8px");
+    self.NewCollisionShapeDropDownBox:SetStyle("margin-top", "4px");
     
     self.NewCollisionShapeDropDownBox:AppendItem("Box"):OnPressed(function()
         if self.Component ~= nil then
@@ -444,7 +434,7 @@ function GTGUI.Element:CollisionShapesPanel()
             for i=1,shapeCount do
                 local shape = self.Component:GetCollisionShapeAtIndex(i);
                 if shape then
-                    local panel = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesContainer:GetID() .. "' styleclass='collision-shape-panel' />");
+                    local panel = GTGUI.Server.CreateElement(self.CollisionShapesContainer, "collision-shape-panel");
 
                     if     shape.type == GTEngine.CollisionShapeTypes.Box              then
                         panel:CollisionShapePanel_Box():Update(shape);
@@ -522,6 +512,11 @@ function GTGUI.Element:CollisionShapesPanel()
                     self.CollisionShapePanels[#self.CollisionShapePanels + 1] = panel;
                 end
             end
+        end
+        
+        -- Add the bottom border for the last collision shape.
+        if #self.CollisionShapePanels > 0 then
+            self.CollisionShapePanels[#self.CollisionShapePanels]:SetStyle("border-bottom", "1px #2a2a2a");
         end
     end
     

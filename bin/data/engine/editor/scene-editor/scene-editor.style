@@ -17,9 +17,26 @@ collision-shape-panel
 {
     width:         100%
     text-color:    #bbb
-    padding:       0px 4px
-    padding-left:  4px
-    border-bottom: 1px #4a4a4a
+    padding:       4px
+    border:        1px #2a2a2a
+    border-bottom: none
+}
+
+collision-shape-panel-title-container
+{
+    width:            100%
+    flex-child-width: true
+    child-plane:      horizontal
+    vertical-align:   center
+    margin-bottom:    4px
+}
+
+collision-shape-panel-title
+{
+    width:          100%
+    vertical-align: center
+    text-color:     std-text-color
+    font-style:     bold;
 }
 
 collision-shape-panel-delete-button
@@ -29,12 +46,10 @@ collision-shape-panel-delete-button
     background-image:       std-cross
     background-image-color: #555
 }
-
 collision-shape-panel-delete-button:hovered
 {
     background-image-color: #f99
 }
-
 collision-shape-panel-delete-button:pushed
 {
     background-image-color: #f66
