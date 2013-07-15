@@ -74,18 +74,16 @@ namespace GTEngine
         
         GTCore::String vertexSource
         (
-            "#version 330\n"
+            "attribute vec3 VertexInput_Position;\n"
+            "attribute vec3 VertexInput_PositionVS;\n"
+            "attribute vec4 VertexInput_TexCoord;\n"
+            "attribute vec4 VertexInput_Normal;\n"
             ""
-            "in  vec3 VertexInput_Position;\n"
-            "in  vec3 VertexInput_PositionVS;\n"
-            "in  vec4 VertexInput_TexCoord;\n"
-            "in  vec4 VertexInput_Normal;\n"
-            ""
-            "out vec4 VertexOutput_Position;\n"
-            "out vec4 VertexOutput_PositionVS;\n"
-            "out vec4 VertexOutput_PositionWS;\n"
-            "out vec4 VertexOutput_TexCoord;\n"
-            "out vec4 VertexOutput_Normal;\n"
+            "varying vec4 VertexOutput_Position;\n"
+            "varying vec4 VertexOutput_PositionVS;\n"
+            "varying vec4 VertexOutput_PositionWS;\n"
+            "varying vec4 VertexOutput_TexCoord;\n"
+            "varying vec4 VertexOutput_Normal;\n"
             ""
             "uniform mat4 PVMMatrix;\n"
             "uniform mat4 ViewModelMatrix;\n"
@@ -97,18 +95,18 @@ namespace GTEngine
         {
             vertexSource.Append
             (
-                "in  vec3 VertexInput_Tangent;\n"
-                "in  vec3 VertexInput_Bitangent;\n"
+                "attribute vec3 VertexInput_Tangent;\n"
+                "attribute vec3 VertexInput_Bitangent;\n"
                 ""
-                "out vec3 VertexOutput_Tangent;\n"
-                "out vec3 VertexOutput_Bitangent;\n"
+                "varying vec3 VertexOutput_Tangent;\n"
+                "varying vec3 VertexOutput_Bitangent;\n"
             );
         }
 
         vertexSource.Append
         (
-            "in  vec4 VertexInput_Colour;\n"
-            "out vec4 VertexOutput_Colour;\n"
+            "attribute vec4 VertexInput_Colour;\n"
+            "varying vec4 VertexOutput_Colour;\n"
         );
 
 
@@ -303,29 +301,28 @@ namespace GTEngine
         // Input
         GTCore::String fragmentSource
         (
-            "#version 330\n"
-            ""
-            "in vec4 VertexOutput_Position;\n"
-            "in vec4 VertexOutput_PositionVS;\n"
-            "in vec4 VertexOutput_PositionWS;\n"
-            "in vec4 VertexOutput_TexCoord;\n"
-            "in vec4 VertexOutput_Normal;\n"
+            "varying vec4 VertexOutput_Position;\n"
+            "varying vec4 VertexOutput_PositionVS;\n"
+            "varying vec4 VertexOutput_PositionWS;\n"
+            "varying vec4 VertexOutput_TexCoord;\n"
+            "varying vec4 VertexOutput_Normal;\n"
         );
 
         if (doNormalMapping)
         {
             fragmentSource.Append
             (
-                "in vec3 VertexOutput_Tangent;\n"
-                "in vec3 VertexOutput_Bitangent;\n"
+                "varying vec3 VertexOutput_Tangent;\n"
+                "varying vec3 VertexOutput_Bitangent;\n"
             );
         }
 
         fragmentSource.Append
         (
-            "in vec4 VertexOutput_Colour;\n"
+            "varying vec4 VertexOutput_Colour;\n"
         );
 
+#if 0
         // Output
         if (includeMaterialPass)
         {
@@ -342,6 +339,7 @@ namespace GTEngine
                 "layout(location = 1) out vec4 SpecularOut;\n"
             );
         }
+#endif
 
         // Uniforms
         if (sourceLightingFromTextures)
@@ -846,14 +844,14 @@ namespace GTEngine
                 
                     fragmentSource.Append
                     (
-                        "    ColourOut.rgb = (materialDiffuse.rgb * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;\n"
+                        "    gl_FragData[0].rgb = (materialDiffuse.rgb * lightDiffuse) + (materialShininess * lightSpecular) + materialEmissive;\n"
                     );
                 }
                 else
                 {
                     fragmentSource.Append
                     (
-                        "    ColourOut.rgb = materialEmissive;\n"
+                        "    gl_FragData[0].rgb = materialEmissive;\n"
                     );
                 }
 
@@ -861,14 +859,14 @@ namespace GTEngine
                 {
                     fragmentSource.Append
                     (
-                        "    ColourOut.rgb += texture2D(BackgroundTexture, screenUV + (normalize(materialRefraction).xy * 0.01)).rgb * (1.0 - materialDiffuse.a);\n"
+                        "    gl_FragData[0].rgb += texture2D(BackgroundTexture, screenUV + (normalize(materialRefraction).xy * 0.01)).rgb * (1.0 - materialDiffuse.a);\n"
                     );
                 }
                 else
                 {
                     fragmentSource.Append
                     (
-                        "    ColourOut.a = materialDiffuse.a;\n"
+                        "    gl_FragData[0].a = materialDiffuse.a;\n"
                     );
                 }
             }
@@ -878,16 +876,16 @@ namespace GTEngine
                 {
                     fragmentSource.Append
                     (
-                        "    DiffuseOut  = vec4(lightDiffuse,  1.0);\n"
-                        "    SpecularOut = vec4(lightSpecular, 1.0);\n"
+                        "    gl_FragData[0] = vec4(lightDiffuse,  1.0);\n"
+                        "    gl_FragData[1] = vec4(lightSpecular, 1.0);\n"
                     );
                 }
                 else
                 {
                     fragmentSource.Append
                     (
-                        "    DiffuseOut  = vec4(0.0, 0.0, 0.0, 1.0);\n"
-                        "    SpecularOut = vec4(0.0, 0.0, 0.0, 1.0);\n"
+                        "    gl_FragData[0] = vec4(0.0, 0.0, 0.0, 1.0);\n"
+                        "    gl_FragData[1] = vec4(0.0, 0.0, 0.0, 1.0);\n"
                     );
                 }
             }
@@ -908,7 +906,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "out vec4 DirectionalLight%d_VertexPositionLS;\n"
+            "varying vec4 DirectionalLight%d_VertexPositionLS;\n"
             "uniform DirectionalLightVS DirectionalLightVS%d;\n",
 
             lightIndex,
@@ -920,7 +918,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "out vec3 PointLight%d_L;\n"
+            "varying vec3 PointLight%d_L;\n"
             "uniform PointLightVS PointLightVS%d;\n",
 
             lightIndex,
@@ -932,7 +930,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "out vec4 SpotLight%d_VertexPositionLS;\n"
+            "varying vec4 SpotLight%d_VertexPositionLS;\n"
             "uniform SpotLightVS SpotLightVS%d;\n",
 
             lightIndex,
@@ -944,7 +942,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "out vec4 ShadowDirectionalLight%d_VertexPositionLS;\n"
+            "varying vec4 ShadowDirectionalLight%d_VertexPositionLS;\n"
             "uniform ShadowDirectionalLightVS ShadowDirectionalLightVS%d;\n",
 
             lightIndex,
@@ -956,8 +954,8 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "out vec3 ShadowPointLight%d_L;\n"
-            "out vec3 ShadowPointLight%d_ShadowCoord;\n"
+            "varying vec3 ShadowPointLight%d_L;\n"
+            "varying vec3 ShadowPointLight%d_ShadowCoord;\n"
             "uniform ShadowPointLightVS ShadowPointLightVS%d;\n",
 
             lightIndex,
@@ -970,7 +968,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "out vec4 ShadowSpotLight%d_VertexPositionLS;\n"
+            "varying vec4 ShadowSpotLight%d_VertexPositionLS;\n"
             "uniform ShadowSpotLightVS ShadowSpotLightVS%d;\n",
 
             lightIndex,
@@ -1066,7 +1064,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "in vec4 DirectionalLight%d_VertexPositionLS;\n"
+            "varying vec4 DirectionalLight%d_VertexPositionLS;\n"
             "uniform DirectionalLightFS DirectionalLightFS%d;\n",
 
             lightIndex,
@@ -1078,7 +1076,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "in vec3 PointLight%d_L;\n"
+            "varying vec3 PointLight%d_L;\n"
             "uniform PointLightFS PointLightFS%d;\n",
 
             lightIndex,
@@ -1090,7 +1088,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "in vec4 SpotLight%d_VertexPositionLS;\n"
+            "varying vec4 SpotLight%d_VertexPositionLS;\n"
             "uniform SpotLightFS SpotLightFS%d;\n",
 
             lightIndex,
@@ -1102,7 +1100,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "in vec4 ShadowDirectionalLight%d_VertexPositionLS;\n"
+            "varying vec4 ShadowDirectionalLight%d_VertexPositionLS;\n"
             "uniform ShadowDirectionalLightFS ShadowDirectionalLightFS%d;\n"
             "uniform sampler2D                ShadowDirectionalLightFS%d_ShadowMap;\n",
 
@@ -1116,8 +1114,8 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "in vec3 ShadowPointLight%d_L;\n"
-            "in vec3 ShadowPointLight%d_ShadowCoord;\n"
+            "varying vec3 ShadowPointLight%d_L;\n"
+            "varying vec3 ShadowPointLight%d_ShadowCoord;\n"
             "uniform ShadowPointLightFS ShadowPointLightFS%d;\n"
             "uniform samplerCube        ShadowPointLightFS%d_ShadowMap;\n",
 
@@ -1132,7 +1130,7 @@ namespace GTEngine
     {
         return GTCore::String::CreateFormatted
         (
-            "in vec4 ShadowSpotLight%d_VertexPositionLS;\n"
+            "varying vec4 ShadowSpotLight%d_VertexPositionLS;\n"
             "uniform ShadowSpotLightFS ShadowSpotLightFS%d;\n"
             "uniform sampler2D         ShadowSpotLightFS%d_ShadowMap;\n",
 
