@@ -14,3 +14,6 @@
 
 <style  url="script-component-panel.style"           />
 <script url="script-component-panel.lua"             />
+
+<style  url="editor-metadata-component-panel.style"  />
+<script url="editor-metadata-component-panel.lua"    />
