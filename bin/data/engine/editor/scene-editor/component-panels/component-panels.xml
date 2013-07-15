@@ -9,6 +9,9 @@
 <style  url="light-component-panel.style"            />
 <script url="light-component-panel.lua"              />
 
+<style  url="dynamics-component-panel.style"         />
+<script url="dynamics-component-panel.lua"           />
+
 <style  url="proximity-component-panel.style"        />
 <script url="proximity-component-panel.lua"          />
 
