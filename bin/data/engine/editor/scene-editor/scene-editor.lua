@@ -728,43 +728,6 @@ function GTGUI.Element:DynamicsComponentPanel()
     return self;
 end
 
-function GTGUI.Element:ProximityComponentPanel()
-    self:PanelGroupBox("Proximity", true);
-    
-    -- Shapes
-    self.CollisionShapesTitle = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' style='width:100%; text-color:#bbb; margin-top:0px; flex-child-width:true; child-plane:horizontal; vertical-align:center;' />");
-    self.CollisionShapesLeft  = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:100%; height:1px; background-color:#4a4a4a;' />");
-    self.CollisionShapesLabel = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:auto; text-color:#777; margin:4px 0px; vertical-align:center;'>Shapes</div>");
-    self.CollisionShapesRight = GTGUI.Server.New("<div parentid='" .. self.CollisionShapesTitle:GetID() .. "' style='width:100%; height:1px; background-color:#4a4a4a;' />");
-    
-    self.CollisionShapes = GTGUI.Server.New("<div parentid='" .. self.Body:GetID() .. "' />");
-    self.CollisionShapes:CollisionShapesPanel();
-    
-    self.CollisionShapes:OnShapesChanged(function()
-        self.ParentPanel:OnSceneNodeChanged();
-    end);
-    
-    
-    self.CurrentNode      = nil;
-    self.CurrentComponent = nil;
-    self.IsUpdating       = false;
-    
-    
-    function self:Update(node)
-        self.CurrentNode      = node;
-        self.CurrentComponent = node:GetComponent(GTEngine.Components.Proximity);
-        self.IsUpdating       = true;
-        
-        if self.CurrentComponent ~= nil then
-            self.CollisionShapes:Update(self.CurrentComponent);
-        end
-        
-        self.IsUpdating = false;
-    end
-    
-    return self;
-end
-
 
 
 
