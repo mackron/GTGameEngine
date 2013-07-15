@@ -181,8 +181,8 @@ namespace GTEngine
         {
             size_t contextAttribs[] =
             {
-                GTGL_CONTEXT_MAJOR_VERSION,      3,
-                GTGL_CONTEXT_MINOR_VERSION,      3,
+                GTGL_CONTEXT_MAJOR_VERSION,      2,
+                GTGL_CONTEXT_MINOR_VERSION,      1,
                 GTGL_CONTEXT_FORWARD_COMPATIBLE, GL_TRUE,
 
             #if !defined(NDEBUG)
