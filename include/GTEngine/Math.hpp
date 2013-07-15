@@ -131,20 +131,25 @@ namespace GTEngine
 
         inline btMatrix3x3 btMatrix3x3_cast(const glm::mat3 &other)
         {
+            glm::mat4 other4(other);
+
             btMatrix3x3 result;
-            result.setFromOpenGLSubMatrix(&other[0][0]);
+            result.setFromOpenGLSubMatrix(&other4[0][0]);
 
             return result;
         }
 
         inline btMatrix3x3 btMatrix3x3_cast(const glm::mat4 &other)
         {
-            return btMatrix3x3_cast(glm::mat3(other));
+            btMatrix3x3 result;
+            result.setFromOpenGLSubMatrix(&other[0][0]);
+
+            return result;
         }
 
         inline btMatrix3x3 btMatrix3x3_cast(const glm::quat &other)
         {
-            return btMatrix3x3_cast(glm::mat3_cast(other));
+            return btMatrix3x3_cast(glm::mat4_cast(other));
         }
 
 
