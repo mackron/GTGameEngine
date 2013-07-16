@@ -25,12 +25,10 @@
 
 
 <shader id="Engine_Textured2DQuad_VS">
-    #version 330
-
-    in vec2 VertexInput_Position;
-    in vec2 VertexInput_TexCoord;
+    attribute vec2 VertexInput_Position;
+    attribute vec2 VertexInput_TexCoord;
     
-    out vec2 VertexOutput_TexCoord;
+    varying vec2 VertexOutput_TexCoord;
     
     uniform mat4 Projection;
 
@@ -42,16 +40,12 @@
 </shader>
 
 <shader id="Engine_Textured2DQuad_FS">
-    #version 330
-    
-    in vec2 VertexOutput_TexCoord;
-    
-    layout(location = 0) out vec4 ColourOut0;
+    varying vec2 VertexOutput_TexCoord;
     
     uniform sampler2D Texture;
 
 	void main()
 	{
-		ColourOut0 = texture2D(Texture, VertexOutput_TexCoord);
+		gl_FragData[0] = texture2D(Texture, VertexOutput_TexCoord);
 	}
 </shader>
