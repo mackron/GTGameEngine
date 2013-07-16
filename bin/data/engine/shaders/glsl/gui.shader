@@ -1,13 +1,11 @@
 
 <shader id="Engine_GUI_VS">
-    #version 330
-
-    in vec2 VertexInput_Position;
-    in vec2 VertexInput_TexCoord;
-    in vec4 VertexInput_Colour;
+    attribute vec2 VertexInput_Position;
+    attribute vec2 VertexInput_TexCoord;
+    attribute vec4 VertexInput_Colour;
     
-    out vec2 VertexOutput_TexCoord;
-    out vec4 VertexOutput_Colour;
+    varying vec2 VertexOutput_TexCoord;
+    varying vec4 VertexOutput_Colour;
     
     uniform mat4 Projection;
     uniform vec2 Offset;
@@ -21,17 +19,13 @@
 </shader>
 
 <shader id="Engine_GUI_FS">
-    #version 330
-
-    in vec2 VertexOutput_TexCoord;
-    in vec4 VertexOutput_Colour;
-    
-    layout(location = 0) out vec4 ColourOut0;
+    varying vec2 VertexOutput_TexCoord;
+    varying vec4 VertexOutput_Colour;
     
     uniform sampler2D Texture;
     
     void main()
     {
-        ColourOut0 = texture2D(Texture, VertexOutput_TexCoord) * VertexOutput_Colour;
+        gl_FragData[0] = texture2D(Texture, VertexOutput_TexCoord) * VertexOutput_Colour;
     }
 </shader>
