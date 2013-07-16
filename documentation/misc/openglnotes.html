@@ -1,0 +1,65 @@
+---
+title:  "OpenGL Notes"
+layout: miscref
+---
+<div class="page-title-small">
+    <h1>OpenGL Notes</h1>
+</div>
+<div class="container-fluid">
+    <div style="padding:0px 20px;">
+        <p>
+        This page is used simply as a place to document notable issues with OpenGL that I've discovered in my travels. I want to keep track of this
+        stuff in case I encounter them again, and maybe somebody else might find some of this stuff useful, too.
+        </p>
+        <div class="documentation-section">
+            <h1>Depth/Stencil texture buffers do not work with EXT_framebuffer_object on Intel.</h1>
+            <p>
+            When setting up the depth/stencil buffer of an EXT framebuffer using a renderbuffer instead of a texture, this is valid on all GPUs:
+            </p>
+<pre>
+glRenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, depthStencilWidth, depthStencilHeight);
+...
+glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,   GL_RENDERBUFFER_EXT, depthStencilRenderbuffer);
+glFramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, depthStencilRenderbuffer);
+</pre>
+            <p>
+            Using the same technique, only with a texture instead will <b><i>not</i></b> work on Intel:
+            </p>
+<pre>
+glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, depthStencilWidth, depthStencilHeight, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+...
+glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,   GL_TEXTURE_2D, depthStencilTexture, 0);
+glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_TEXTURE_2D, depthStencilTexture, 0);
+</pre>
+            <p>
+            The above works fine with NVIDIA and AMD, but will crash on Intel as soon as you try to draw anything to the framebuffer (including glClear). The
+            real culprit with the above code is the stencil attachment. Simply not attaching a stencil buffer will work, but you'll be sacrificing stencil
+            operations.
+            </p>
+            <p>
+            The engine works around this issue by introducing the notion of "write-only" depth/stencil buffers. These are just renderbuffers instead of
+            textures. These write-only buffers offer the best compatibility, but sacrifices the ability to read the depth and stencil values.
+            </p>
+            <p>
+            When using ARB_framebuffer_object, a depth/stencil texture works fine on all platforms:
+            </p>
+<pre>
+glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH24_STENCIL8, depthStencilWidth, depthStencilHeight, 0, GL_DEPTH_STENCIL, GL_UNSIGNED_INT_24_8, NULL);
+...
+glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTURE_2D, depthStencilTexture, 0);
+</pre>
+            <p>
+            The GL_DEPTH_STENCIL_ATTACHMENT attachment point is not available in EXT_framebuffer_object, so the way the engine does things is it does not allow
+            depth/stencil textures when only EXT_framebuffer_object is available, and will instead only allow it when ARB_framebuffer_object is available.
+            </p>
+        </div>
+        <div class="documentation-section">
+            <h1>In OpenGL 3.?+ you <i>must</i> use vertex array objects.</h1>
+            <p>
+            I forget the exact version, but you must use vertex arrays when using a core OpenGL 3+ profile. glVertexAttribPointer can only take an offset. You
+            can setup a default VAO during initialization, but you must place vertex and index data into buffer objects before setting up the attribute offsets
+            and drawing.
+            </p>
+        </div>
+    </div>
+</div>
