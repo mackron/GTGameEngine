@@ -1764,10 +1764,13 @@ namespace GTEngine
 
                     // Depth/Stencil Texture.
                     auto depthStencilAttachment = static_cast<const Texture2D_OpenGL21*>(framebufferGL33.GetDepthStencilBuffer());
-                    if (depthStencilAttachment != nullptr)
+                    if (depthStencilAttachment != nullptr && GTGL_ARB_framebuffer_object)
                     {
-                        State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_DEPTH_ATTACHMENT_EXT,   depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
-                        State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_STENCIL_ATTACHMENT_EXT, depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
+                        State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_DEPTH_STENCIL_ATTACHMENT, depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
+                        
+                        // This technique causes a crash on Intel's Windows drivers (not tested with Linux drivers). Leaving this here for future reference.
+                        //State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_DEPTH_ATTACHMENT_EXT,   depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
+                        //State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_STENCIL_ATTACHMENT_EXT, depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
                     }
 
                     // Write-Only Depth/Stencil Renderbuffer.

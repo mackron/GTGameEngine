@@ -28,7 +28,7 @@ namespace GTEngine
 
 
         /// The depth/stencil buffer.
-        Texture2D* depthStencilBuffer;
+        //Texture2D* depthStencilBuffer;
 
         /// The main colour buffer (RGBA16F). This is the HDR buffer.
         Texture2D* colourBuffer0;
@@ -77,7 +77,7 @@ namespace GTEngine
         /// Constructor
         DefaultSceneRendererFramebuffer(unsigned int widthIn, unsigned int heightIn)
             : framebuffer(nullptr),
-              depthStencilBuffer(nullptr), colourBuffer0(nullptr), colourBuffer1(nullptr),
+              /*depthStencilBuffer(nullptr),*/ colourBuffer0(nullptr), colourBuffer1(nullptr),
               lightingBuffer0(nullptr), lightingBuffer1(nullptr),
               finalColourBuffer(nullptr),
               bloomFramebuffer(nullptr), bloomBuffer(nullptr), bloomBlurBuffer(nullptr),
