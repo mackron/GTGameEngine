@@ -2,6 +2,7 @@
 
 #include "RCCreateShader_OpenGL21.hpp"
 #include <GTEngine/Logging.hpp>
+#include <GTCore/Strings/Find.hpp>          // For checking the compilation output.
 #include <gtgl/gtgl.h>
 
 namespace GTEngine
@@ -171,42 +172,46 @@ namespace GTEngine
         // Here we need to log any details.
         GLint compileStatus;
         glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &compileStatus);
+        
+        GLint logLength;
+        glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &logLength);
 
-        if (compileStatus == GL_FALSE)
+        if (logLength > 1)
         {
-            GLint shaderType;
-            glGetShaderiv(shaderObject, GL_SHADER_TYPE, &shaderType);
-
-            GLint logLength;
-            glGetShaderiv(shaderObject, GL_INFO_LOG_LENGTH, &logLength);
-
             auto log = static_cast<char*>(malloc(static_cast<size_t>(logLength)));
             glGetShaderInfoLog(shaderObject, logLength, nullptr, log);
 
-
-            GTCore::String title;
-            if (shaderType == GL_VERTEX_SHADER)
+            // Whether or not we output the error message depends on the message. Some drivers output messages like "No errors." when there are no
+            // errors or warnings.
+            if (GTCore::Strings::FindFirst(log, "No errors.") != log)
             {
-                title = "Vertex Shader Info Log";
-            }
-            else if (shaderType == GL_FRAGMENT_SHADER)
-            {
-                title = "Fragment Shader Info Log";
-            }
-            else
-            {
-                title = "Geometry Shader Info Log";
-            }
+                GTCore::String title;
+                if (type == GL_VERTEX_SHADER)
+                {
+                    title = "Vertex Shader Info Log";
+                }
+                else if (type == GL_FRAGMENT_SHADER)
+                {
+                    title = "Fragment Shader Info Log";
+                }
+                else
+                {
+                    title = "Geometry Shader Info Log";
+                }
 
-            GTEngine::Log("--- %s ---\n%s\n%s", title.c_str(), log, source);
+                GTEngine::Log("--- %s ---\n%s%s", title.c_str(), log, source);
 
 
-            glDeleteShader(shaderObject);
-            shaderObject = 0;
+                // We only delete the shader object if we failed the compilation.
+                if (compileStatus == GL_FALSE)
+                {
+                    glDeleteShader(shaderObject);
+                    shaderObject = 0;
+                }
+            }
 
             free(log);
         }
-
 
         return shaderObject;
     }
