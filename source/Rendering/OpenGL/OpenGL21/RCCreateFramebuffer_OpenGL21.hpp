@@ -16,6 +16,9 @@ namespace GTEngine
         /// Constructor.
         RCCreateFramebuffer();
 
+        /// Destructor.
+        virtual ~RCCreateFramebuffer();
+
         
         /// Renderer::CreateFramebuffer().
         void CreateFramebuffer(FramebufferState_OpenGL21* framebufferStateIn);
@@ -25,6 +28,11 @@ namespace GTEngine
         /// RenderCommand::Execute()
         void Execute();
 
+
+    protected:
+
+        /// glGenFramebuffers.
+        virtual void __glGenFramebuffers(GLsizei n, GLuint *framebuffers) = 0;
 
 
     private:
@@ -36,6 +44,44 @@ namespace GTEngine
     private:    // No copying.
         RCCreateFramebuffer(const RCCreateFramebuffer &);
         RCCreateFramebuffer & operator=(const RCCreateFramebuffer &);
+    };
+
+
+
+    /// EXT_framebuffer_object version of RCCreateFramebuffer.
+    class RCCreateFramebufferEXT : public RCCreateFramebuffer
+    {
+    public:
+
+        /// Constructor.
+        RCCreateFramebufferEXT()
+            : RCCreateFramebuffer()
+        {
+        }
+
+
+    private:
+
+        /// glGenFramebuffers.
+        void __glGenFramebuffers(GLsizei n, GLuint *framebuffers);
+    };
+
+    /// ARB_framebuffer_object version of RCCreateFramebuffer.
+    class RCCreateFramebufferARB : public RCCreateFramebuffer
+    {
+    public:
+
+        /// Constructor.
+        RCCreateFramebufferARB()
+            : RCCreateFramebuffer()
+        {
+        }
+
+
+    private:
+
+        /// glGenFramebuffers.
+        void __glGenFramebuffers(GLsizei n, GLuint *framebuffers);
     };
 }
 

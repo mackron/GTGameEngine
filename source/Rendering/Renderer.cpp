@@ -26,6 +26,27 @@ namespace GTEngine
                     GTEngine::Renderer::DisableDepthTest();
                     GTEngine::Renderer::DisableDepthWrites();
                     GTEngine::Renderer::Draw(*fullscreenQuadVA);
+
+#if 0
+                    float triangleVertices[] =
+                    {
+                        -3.0f, -1.0f,
+                        -1.0f,  0.0f,
+
+                         1.0f, -1.0f,
+                         1.0f,  0.0f,
+
+                         1.0f,  3.0f,
+                         1.0f,  2.0f,
+                    };
+
+                    unsigned int triangleIndices[] =
+                    {
+                        0, 1, 2
+                    };
+
+                    GTEngine::Renderer::Draw(triangleVertices, triangleIndices, 3, VertexFormat::P2T2);
+#endif
                 }
             }
         }

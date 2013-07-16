@@ -16,14 +16,11 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        VertexArray_OpenGL21(VertexArrayUsage usage, const VertexFormat &format, GLuint* objectGLIn, GLuint* vertexObjectIn, GLuint* indexObjectIn);
+        VertexArray_OpenGL21(VertexArrayUsage usage, const VertexFormat &format, GLuint* vertexObjectIn, GLuint* indexObjectIn);
 
         /// Destructor.
         ~VertexArray_OpenGL21();
 
-
-        /// Retrieves a pointer to the main OpenGL VAO object.
-        GLuint* GetOpenGLObjectPtr() const { return this->objectGL; }
 
         /// Retrieves a pointer to the OpenGL object containing the vertex data.
         GLuint* GetOpenGLVertexObjectPtr() const { return this->vertexObjectGL; }
@@ -60,9 +57,6 @@ namespace GTEngine
 
 
     private:
-
-        /// A pointer to the main VAO object.
-        GLuint* objectGL;
 
         /// A pointer to the OpenGL object containing the vertex VBO object.
         GLuint* vertexObjectGL;

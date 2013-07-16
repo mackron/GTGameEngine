@@ -22,6 +22,15 @@ namespace GTEngine
         /// The OpenGL object of the framebuffers.
         GLuint framebufferObject;
 
+        /// The OpenGL object of the depth/stencil renderbuffer. If a texture is being used, this will be 0.
+        GLuint depthStencilRenderbuffer;
+
+        /// The width of the write-only depth/stencil renderbuffer.
+        GLsizei depthStencilRenderbufferWidth;
+
+        /// The height of the write-only depth/stencil renderbuffer.
+        GLsizei depthStencilRenderbufferHeight;
+
 
         /// Structure containing information about a colour buffer attached to the framebuffer.
         struct Attachment
@@ -42,7 +51,7 @@ namespace GTEngine
 
         /// Constructor.
         FramebufferState_OpenGL21()
-            : framebufferObject(0), attachments()
+            : framebufferObject(0), depthStencilRenderbuffer(0), depthStencilRenderbufferWidth(0), depthStencilRenderbufferHeight(0), attachments()
         {
         }
     };

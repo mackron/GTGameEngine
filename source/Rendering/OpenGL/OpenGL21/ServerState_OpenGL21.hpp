@@ -9,9 +9,9 @@
 namespace GTEngine
 {
     // Default objects.
-    extern GLuint ServerState_DefaultVAO;
-    extern GLuint ServerState_DefaultVBO;
-    extern GLuint ServerState_DefaultIBO;
+    //extern GLuint ServerState_DefaultVAO;
+    //extern GLuint ServerState_DefaultVBO;
+    //extern GLuint ServerState_DefaultIBO;
 
 
     // Current Objects.
@@ -19,8 +19,9 @@ namespace GTEngine
     extern GLuint ServerState_GL_TEXTURE_BINDING_2D;
     extern GLuint ServerState_GL_TEXTURE_BINDING_3D;
     extern GLuint ServerState_GL_TEXTURE_BINDING_CUBE;
-    extern GLuint ServerState_GL_VERTEX_ARRAY_BINDING;
+    //extern GLuint ServerState_GL_VERTEX_ARRAY_BINDING;
     extern GLuint ServerState_GL_ARRAY_BUFFER_BINDING;
+    extern GLuint ServerState_GL_ELEMENT_ARRAY_BUFFER_BINDING;      // <-- Indices.
     extern GLuint ServerState_GL_CURRENT_PROGRAM;
     extern GLuint ServerState_GL_FRAMEBUFFER_BINDING;
 

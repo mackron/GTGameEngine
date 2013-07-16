@@ -22,7 +22,7 @@ namespace GTEngine
         ~RCDraw();
 
         /// Renderer::Draw()
-        void Draw(GLuint* vertexArrayObjectIn, GLuint* vertexBufferObjectIn, GLenum drawModeIn, GLsizei indexCountIn);
+        void Draw(GLuint* vertexBufferObjectIn, GLuint* indexBufferObjectIn, GLsizei indexCount, const VertexFormat &format, GLenum drawMode);
 
         /// Renderer::Draw()
         void Draw(const float* vertices, GLsizei vertexCount, const unsigned int* indices, GLsizei indexCount, const VertexFormat &format, GLenum drawMode);
@@ -31,6 +31,15 @@ namespace GTEngine
 
         /// RenderCommand::Execute()
         void Execute();
+
+
+    private:
+
+        /// Sets the vertex attribute state from the given format and vertex pointer.
+        ///
+        /// @param format   [in] The vertex format.
+        /// @param vertices [in] A pointer to the buffer containing the vertices. Can be null.
+        void SetVertexAttribState(const VertexFormat &format, const float* vertices);
 
 
     private:
@@ -46,17 +55,21 @@ namespace GTEngine
         /// Structure for drawing from a vertex array.
         struct
         {
-            /// The vertex array object.
-            GLuint* vertexArrayObject;
-
             /// The vertex buffer object bound to GL_ARRAY_BUFFER. For some insane reason this is not part of VAO state so it also needs to be bound...
             GLuint* vertexBufferObject;
+
+            /// The vertex buffer object bound to GL_ELEMENT_ARRAY_BUFFER.
+            GLuint* indexBufferObject;
+
+            /// The index count.
+            GLsizei indexCount;
+
+            /// The vertex format.
+            VertexFormat format;
 
             /// The draw mode.
             GLenum drawMode;
 
-            /// The index count.
-            GLsizei indexCount;
 
         }drawVA;
 

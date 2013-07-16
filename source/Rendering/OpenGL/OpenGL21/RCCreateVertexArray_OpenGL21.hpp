@@ -19,7 +19,7 @@ namespace GTEngine
 
 
         /// Renderer::CreateVertexArray()
-        void CreateVertexArray(GLuint* vertexArrayObject, GLuint* vertexBufferObject, GLuint* indexBufferObjectIn, const VertexFormat &formatIn);
+        void CreateVertexArray(GLuint* vertexBufferObject, GLuint* indexBufferObjectIn, const VertexFormat &formatIn);
 
 
         /// RenderCommand::Execute()
@@ -27,9 +27,6 @@ namespace GTEngine
 
 
     private:
-
-        /// A pointer to the OpenGL vertex array object.
-        GLuint* vertexArrayObject;
 
         /// A pointer to the OpenGL vertex buffer object.
         GLuint* vertexBufferObject;

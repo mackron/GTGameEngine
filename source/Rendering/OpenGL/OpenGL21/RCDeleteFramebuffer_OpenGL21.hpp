@@ -16,6 +16,9 @@ namespace GTEngine
         /// Constructor.
         RCDeleteFramebuffer();
 
+        /// Destructor.
+        virtual ~RCDeleteFramebuffer();
+
 
         /// Renderer::DeleteFramebuffer()
         void DeleteFramebuffer(FramebufferState_OpenGL21* framebufferStateIn);
@@ -23,6 +26,15 @@ namespace GTEngine
 
         /// RenderCommand::Execute()
         void Execute();
+
+
+    protected:
+
+        /// glDeleteFramebuffers.
+        virtual void __glDeleteFramebuffers(GLsizei n, const GLuint *renderbuffers) = 0;
+
+        /// glDeleteRenderbuffers.
+        virtual void __glDeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers) = 0;
 
 
     private:
@@ -35,6 +47,51 @@ namespace GTEngine
     private:    // No copying.
         RCDeleteFramebuffer(const RCDeleteFramebuffer &);
         RCDeleteFramebuffer & operator=(const RCDeleteFramebuffer &);
+    };
+
+
+
+    /// EXT_framebuffer_object version of RCDeleteFramebuffer.
+    class RCDeleteFramebufferEXT : public RCDeleteFramebuffer
+    {
+    public:
+
+        /// Constructor.
+        RCDeleteFramebufferEXT()
+            : RCDeleteFramebuffer()
+        {
+        }
+
+
+    private:
+
+        /// glDeleteFramebuffers.
+        void __glDeleteFramebuffers(GLsizei n, const GLuint *framebuffers);
+
+        /// glDeleteRenderbuffers.
+        void __glDeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers);
+    };
+
+
+    /// ARB_framebuffer_object version of RCDeleteFramebuffer.
+    class RCDeleteFramebufferARB : public RCDeleteFramebuffer
+    {
+    public:
+
+        /// Constructor.
+        RCDeleteFramebufferARB()
+            : RCDeleteFramebuffer()
+        {
+        }
+
+
+    private:
+
+        /// glDeleteFramebuffers.
+        void __glDeleteFramebuffers(GLsizei n, const GLuint *framebuffers);
+
+        /// glDeleteRenderbuffers.
+        void __glDeleteRenderbuffers(GLsizei n, const GLuint *renderbuffers);
     };
 }
 

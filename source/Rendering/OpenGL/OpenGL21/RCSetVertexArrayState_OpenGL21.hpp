@@ -19,14 +19,10 @@ namespace GTEngine
         RCSetVertexArrayState();
 
         /// Renderer::SetVertexArrayVertexData()
-        void SetVertexData(GLuint* vertexArrayObject, GLuint* vertexBufferObject, const float* vertices, size_t vertexCount, size_t vertexSizeInBytes, GLenum usage);
+        void SetVertexData(GLuint* vertexBufferObject, const float* vertices, size_t vertexCount, size_t vertexSizeInBytes, GLenum usage);
 
         /// Renderer::SetVertexArrayIndexData()
-        void SetIndexData(GLuint* vertexArrayObject, const unsigned int* indices, size_t indexCount, GLenum usage);
-
-
-        /// Retrieves the vertex array object whose state is being set.
-        GLuint* GetVertexArrayObject();
+        void SetIndexData(GLuint* indexBufferObject, const unsigned int* indices, size_t indexCount, GLenum usage);
 
 
         /// RenderCommand::Execute()
@@ -39,11 +35,11 @@ namespace GTEngine
         uint32_t operationBitfield;
 
 
-        /// The vertex array object whose state is being modified.
-        GLuint* vertexArrayObject;
-
         /// The vertex buffer object that would usually be bound to GL_ARRAY_BUFFER.
         GLuint* vertexBufferObject;
+
+        /// The vertex buffer object that would usually be bound to GL_ELEMENT_ARRAY_BUFFER which contains the vertex array indices.
+        GLuint* indexBufferObject;
 
 
         /// The vertex data to set.

@@ -13,111 +13,88 @@ namespace GTEngine
 
     RCSetVertexArrayState::RCSetVertexArrayState()
         : operationBitfield(0),
-          vertexArrayObject(nullptr), vertexBufferObject(nullptr),
+          vertexBufferObject(nullptr), indexBufferObject(nullptr),
           vertexData(), indexData()
     {
     }
 
-    void RCSetVertexArrayState::SetVertexData(GLuint* vertexArrayObjectIn, GLuint* vertexBufferObjectIn, const float* vertices, size_t vertexCount, size_t vertexSizeInBytes, GLenum usage)
+    void RCSetVertexArrayState::SetVertexData(GLuint* vertexBufferObjectIn, const float* vertices, size_t vertexCount, size_t vertexSizeInBytes, GLenum usage)
     {
-        assert(this->vertexArrayObject == nullptr || this->vertexArrayObject == vertexArrayObjectIn);
+        free(this->vertexData.vertices);
+
+        if (vertices != nullptr)
         {
-            free(this->vertexData.vertices);
-
-            if (vertices != nullptr)
-            {
-                this->vertexData.vertices = static_cast<float*>(malloc(vertexCount * vertexSizeInBytes));
-                memcpy(this->vertexData.vertices, vertices, vertexCount * vertexSizeInBytes);
-            }
-            else
-            {
-                this->vertexData.vertices = nullptr;
-            }
-
-            this->vertexData.count             = vertexCount;
-            this->vertexData.vertexSizeInBytes = vertexSizeInBytes;
-            this->vertexData.usage             = usage;
-
-
-            this->vertexArrayObject  = vertexArrayObjectIn;
-            this->vertexBufferObject = vertexBufferObjectIn;
-            this->operationBitfield |= VERTEX_DATA_BIT;
+            this->vertexData.vertices = static_cast<float*>(malloc(vertexCount * vertexSizeInBytes));
+            memcpy(this->vertexData.vertices, vertices, vertexCount * vertexSizeInBytes);
         }
+        else
+        {
+            this->vertexData.vertices = nullptr;
+        }
+
+        this->vertexData.count             = vertexCount;
+        this->vertexData.vertexSizeInBytes = vertexSizeInBytes;
+        this->vertexData.usage             = usage;
+
+
+        this->vertexBufferObject = vertexBufferObjectIn;
+        this->operationBitfield |= VERTEX_DATA_BIT;
     }
 
-    void RCSetVertexArrayState::SetIndexData(GLuint* vertexArrayObjectIn, const unsigned int* indices, size_t indexCount, GLenum usage)
+    void RCSetVertexArrayState::SetIndexData(GLuint* indexBufferObjectIn, const unsigned int* indices, size_t indexCount, GLenum usage)
     {
-        assert(this->vertexArrayObject == nullptr || this->vertexArrayObject == vertexArrayObjectIn);
+        free(this->indexData.indices);
+
+        if (indices != nullptr)
         {
-            free(this->indexData.indices);
-
-            if (indices != nullptr)
-            {
-                this->indexData.indices = static_cast<unsigned int*>(malloc(indexCount * sizeof(unsigned int)));
-                memcpy(this->indexData.indices, indices, indexCount * sizeof(unsigned int));
-            }
-            else
-            {
-                this->indexData.indices = nullptr;
-            }
-
-            this->indexData.count = indexCount;
-            this->indexData.usage = usage;
-
-
-            this->vertexArrayObject  = vertexArrayObjectIn;
-            this->operationBitfield |= INDEX_DATA_BIT;
+            this->indexData.indices = static_cast<unsigned int*>(malloc(indexCount * sizeof(unsigned int)));
+            memcpy(this->indexData.indices, indices, indexCount * sizeof(unsigned int));
         }
-    }
+        else
+        {
+            this->indexData.indices = nullptr;
+        }
+
+        this->indexData.count = indexCount;
+        this->indexData.usage = usage;
 
 
-    GLuint* RCSetVertexArrayState::GetVertexArrayObject()
-    {
-        return this->vertexArrayObject;
+        this->indexBufferObject  = indexBufferObjectIn;
+        this->operationBitfield |= INDEX_DATA_BIT;
     }
 
 
     void RCSetVertexArrayState::Execute()
     {
-        assert(this->vertexArrayObject != nullptr);
+        if ((this->operationBitfield & VERTEX_DATA_BIT))
         {
-            // We need to maintain the integrity of the global state, so we'll have to grab the previous vertex array binding.
-            if (ServerState_GL_VERTEX_ARRAY_BINDING != *this->vertexArrayObject)
+            if (ServerState_GL_ARRAY_BUFFER_BINDING != *this->vertexBufferObject)
             {
-                glBindVertexArray(*this->vertexArrayObject);
+                glBindBuffer(GL_ARRAY_BUFFER, *this->vertexBufferObject);
             }
 
+            glBufferData(GL_ARRAY_BUFFER, this->vertexData.count * this->vertexData.vertexSizeInBytes, this->vertexData.vertices, this->vertexData.usage);
+            free(this->vertexData.vertices);
 
-            if ((this->operationBitfield & VERTEX_DATA_BIT))
+            if (ServerState_GL_ARRAY_BUFFER_BINDING != *this->vertexBufferObject)
             {
-                // Unfortunately GL_ARRAY_BUFFER is not stored in the VAO state so we need to bind it here. As usual, the global state needs to remain in tact.
-                if (ServerState_GL_ARRAY_BUFFER_BINDING != *this->vertexBufferObject)
-                {
-                    glBindBuffer(GL_ARRAY_BUFFER, *this->vertexBufferObject);
-                }
+                glBindBuffer(GL_ARRAY_BUFFER, ServerState_GL_ARRAY_BUFFER_BINDING);
+            }
+        }
 
-
-                glBufferData(GL_ARRAY_BUFFER, this->vertexData.count * this->vertexData.vertexSizeInBytes, this->vertexData.vertices, this->vertexData.usage);
-                free(this->vertexData.vertices);
-
-
-                if (ServerState_GL_ARRAY_BUFFER_BINDING != *this->vertexBufferObject)
-                {
-                    glBindBuffer(GL_ARRAY_BUFFER, ServerState_GL_ARRAY_BUFFER_BINDING);
-                }
+        if ((this->operationBitfield & INDEX_DATA_BIT))
+        {
+            if (ServerState_GL_ELEMENT_ARRAY_BUFFER_BINDING != *this->indexBufferObject)
+            {
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *this->indexBufferObject);
             }
 
-            if ((this->operationBitfield & INDEX_DATA_BIT))
-            {
-                glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indexData.count * sizeof(unsigned int), this->indexData.indices, this->indexData.usage);
-                free(this->indexData.indices);
-            }
+            glBufferData(GL_ELEMENT_ARRAY_BUFFER, this->indexData.count * sizeof(unsigned int), this->indexData.indices, this->indexData.usage);
+            free(this->indexData.indices);
 
-
-            // Global state needs to be restored.
-            if (ServerState_GL_VERTEX_ARRAY_BINDING != *this->vertexArrayObject)
+            if (ServerState_GL_ELEMENT_ARRAY_BUFFER_BINDING != *this->indexBufferObject)
             {
-                glBindVertexArray(ServerState_GL_VERTEX_ARRAY_BINDING);
+                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ServerState_GL_ELEMENT_ARRAY_BUFFER_BINDING);
             }
         }
     }

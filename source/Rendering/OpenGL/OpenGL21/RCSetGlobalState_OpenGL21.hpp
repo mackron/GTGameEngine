@@ -43,7 +43,8 @@ namespace GTEngine
         void SetCurrentShader(ShaderState_OpenGL21* programState);
 
         /// Renderer::SetCurrentFramebuffer()
-        void SetCurrentFramebuffer(FramebufferState_OpenGL21* framebufferObject);
+        void SetCurrentFramebufferEXT(FramebufferState_OpenGL21* framebufferObject);
+        void SetCurrentFramebufferARB(FramebufferState_OpenGL21* framebufferObject);
 
 
         /// Renderer::SetBlendFunction()

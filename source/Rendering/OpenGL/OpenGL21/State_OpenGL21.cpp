@@ -11,8 +11,8 @@ namespace GTEngine
           stencilMask(-1),
           currentRCSetGlobalState(nullptr), currentRCSetVertexArrayState(nullptr), currentRCSetTextureState(nullptr), currentRCSetShaderState(nullptr), currentRCSetFramebufferState(nullptr),
           currentRCClear(nullptr), currentRCDraw(nullptr),
-          instantiatedTextureObjects(), instantiatedProgramObjects(), instantiatedVertexArrayObjects(), instantiatedBufferObjects(), instantiatedFramebufferObjects(),
-          deletedTextureObjects(),      deletedProgramObjects(),      deletedVertexArrayObjects(),      deletedBufferObjects(),      deletedFramebufferObjects(),
+          instantiatedTextureObjects(), instantiatedProgramObjects(), instantiatedBufferObjects(), instantiatedFramebufferObjects(),
+          deletedTextureObjects(),      deletedProgramObjects(),      deletedBufferObjects(),      deletedFramebufferObjects(),
           swapInterval(1), swapIntervalNeedsUpdate(false),
           backIndex(0)
     {
@@ -38,15 +38,6 @@ namespace GTEngine
         {
             this->instantiatedProgramObjects.RemoveFirstOccuranceOf(programObject);
             this->deletedProgramObjects[this->backIndex].PushBack(programObject);
-        }
-    }
-
-    void State_OpenGL21::MarkVertexArrayObjectAsDeleted(GLuint* vertexArrayObject)
-    {
-        assert(this->instantiatedVertexArrayObjects.Exists(vertexArrayObject));
-        {
-            this->instantiatedVertexArrayObjects.RemoveFirstOccuranceOf(vertexArrayObject);
-            this->deletedVertexArrayObjects[this->backIndex].PushBack(vertexArrayObject);
         }
     }
 
@@ -100,15 +91,6 @@ namespace GTEngine
             }
         }
         this->deletedProgramObjects[!this->backIndex].Clear();
-
-
-
-        // Vertex arrays.
-        for (size_t i = 0; i < this->deletedVertexArrayObjects[!this->backIndex].count; ++i)
-        {
-            delete this->deletedVertexArrayObjects[!this->backIndex][i];
-        }
-        this->deletedVertexArrayObjects[!this->backIndex].Clear();
 
 
 

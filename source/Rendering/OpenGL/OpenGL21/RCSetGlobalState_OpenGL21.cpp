@@ -15,21 +15,22 @@ namespace GTEngine
     #define CLEAR_DEPTH_BIT                 (1 << 4)
     #define CLEAR_STENCIL_BIT               (1 << 5)
     #define SET_CURRENT_SHADER_BIT          (1 << 6)
-    #define SET_CURRENT_FRAMEBUFFER_BIT     (1 << 7)
-    #define SET_BLEND_FUNCTION_BIT          (1 << 8)
-    #define SET_BLEND_EQUATION_BIT          (1 << 9)
-    #define SET_BLEND_COLOUR_BIT            (1 << 10)
-    #define SET_ALPHA_FUNCTION_BIT          (1 << 11)
-    #define SET_DEPTH_FUNCTION_BIT          (1 << 12)
-    #define SET_STENCIL_MASK_BIT            (1 << 13)
-    #define SET_STENCIL_FUNC_BIT            (1 << 14)
-    #define SET_STENCIL_OP_BIT              (1 << 15)
-    #define SET_FACE_CULLING_BIT            (1 << 16)
-    #define SET_POLYGON_MODE_BIT            (1 << 17)
-    #define SET_POLYGON_OFFSET_BIT          (1 << 18)
-    #define SET_DRAW_BUFFERS_BIT            (1 << 19)
-    #define ENABLE_BIT                      (1 << 20)
-    #define DISABLE_BIT                     (1 << 21)
+    #define SET_CURRENT_FRAMEBUFFER_EXT_BIT (1 << 7)
+    #define SET_CURRENT_FRAMEBUFFER_ARB_BIT (1 << 8)
+    #define SET_BLEND_FUNCTION_BIT          (1 << 9)
+    #define SET_BLEND_EQUATION_BIT          (1 << 10)
+    #define SET_BLEND_COLOUR_BIT            (1 << 11)
+    #define SET_ALPHA_FUNCTION_BIT          (1 << 12)
+    #define SET_DEPTH_FUNCTION_BIT          (1 << 13)
+    #define SET_STENCIL_MASK_BIT            (1 << 14)
+    #define SET_STENCIL_FUNC_BIT            (1 << 15)
+    #define SET_STENCIL_OP_BIT              (1 << 16)
+    #define SET_FACE_CULLING_BIT            (1 << 17)
+    #define SET_POLYGON_MODE_BIT            (1 << 18)
+    #define SET_POLYGON_OFFSET_BIT          (1 << 19)
+    #define SET_DRAW_BUFFERS_BIT            (1 << 20)
+    #define ENABLE_BIT                      (1 << 21)
+    #define DISABLE_BIT                     (1 << 22)
 
 
     /// Just a helper function so we can set a break point for when a redundancy message is received.
@@ -158,14 +159,25 @@ namespace GTEngine
         this->operationBitfield |= SET_CURRENT_SHADER_BIT;
     }
 
-    void RCSetGlobalState::SetCurrentFramebuffer(FramebufferState_OpenGL21* framebufferState)
+
+    void RCSetGlobalState::SetCurrentFramebufferEXT(FramebufferState_OpenGL21* framebufferState)
     {
-        CHECK_REDUNDANCY(SET_CURRENT_FRAMEBUFFER_BIT, "Warning: Renderer: Redundant call to SetCurrentFramebuffer().");
+        CHECK_REDUNDANCY(SET_CURRENT_FRAMEBUFFER_EXT_BIT, "Warning: Renderer: Redundant call to SetCurrentFramebuffer().");
 
 
         this->currentFramebufferParams.framebufferState = framebufferState;
 
-        this->operationBitfield |= SET_CURRENT_FRAMEBUFFER_BIT;
+        this->operationBitfield |= SET_CURRENT_FRAMEBUFFER_EXT_BIT;
+    }
+
+    void RCSetGlobalState::SetCurrentFramebufferARB(FramebufferState_OpenGL21* framebufferState)
+    {
+        CHECK_REDUNDANCY(SET_CURRENT_FRAMEBUFFER_ARB_BIT, "Warning: Renderer: Redundant call to SetCurrentFramebuffer().");
+
+
+        this->currentFramebufferParams.framebufferState = framebufferState;
+
+        this->operationBitfield |= SET_CURRENT_FRAMEBUFFER_ARB_BIT;
     }
 
 
@@ -302,7 +314,7 @@ namespace GTEngine
 
     void RCSetGlobalState::SetDrawBuffers(size_t count, const int* buffers)
     {
-        CHECK_REDUNDANCY(SCISSOR_BIT, "Warning: Renderer: Redundant call to SetDrawBuffers().");
+        CHECK_REDUNDANCY(SET_DRAW_BUFFERS_BIT, "Warning: Renderer: Redundant call to SetDrawBuffers().");
 
 
         this->drawBuffersParams.buffers.Clear();
@@ -527,7 +539,22 @@ namespace GTEngine
             ServerState_GL_CURRENT_PROGRAM = this->currentShaderParams.programState->programObject;
         }
 
-        if ((this->operationBitfield & SET_CURRENT_FRAMEBUFFER_BIT))
+
+        if ((this->operationBitfield & SET_CURRENT_FRAMEBUFFER_EXT_BIT))
+        {
+            if (this->currentFramebufferParams.framebufferState != nullptr)
+            {
+                glBindFramebufferEXT(GL_FRAMEBUFFER, this->currentFramebufferParams.framebufferState->framebufferObject);
+                ServerState_GL_FRAMEBUFFER_BINDING = this->currentFramebufferParams.framebufferState->framebufferObject;
+            }
+            else
+            {
+                glBindFramebufferEXT(GL_FRAMEBUFFER, 0);
+                ServerState_GL_FRAMEBUFFER_BINDING = 0;
+            }
+        }
+
+        if ((this->operationBitfield & SET_CURRENT_FRAMEBUFFER_ARB_BIT))
         {
             if (this->currentFramebufferParams.framebufferState != nullptr)
             {
