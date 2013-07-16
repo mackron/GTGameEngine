@@ -47,6 +47,9 @@ namespace GTEngine
         /// @param immediateRendererUpdate [in] Whether or not the renderer-side state should be updated immediately.
         ///
         /// @return Always returns true. We return a boolean to keep it consistent with AttachColourBuffer(), which requires a boolean return value.
+        ///
+        /// @remarks
+        ///     If a write-only depth/stencil buffer is already attached, it will be detached.
         bool AttachDepthStencilBuffer(Texture2D* buffer);
 
         /// Detaches the colour buffer at the given index.
@@ -60,6 +63,8 @@ namespace GTEngine
         /// @param immediateRendererUpdate [in] Whether or not the renderer-side state should be updated immediately.
         void DetachDepthStencilBuffer();
 
+        
+
         /// Generically detaches a buffer based on it's object pointer.
         ///
         /// @remarks
@@ -70,9 +75,40 @@ namespace GTEngine
         void DetachAllColourBuffers();
 
 
-
         /// Detaches every buffer.
         void DetachAllBuffers();
+
+
+        /// Attaches a write-only depth/stencil buffer.
+        ///
+        /// @param width  [in] The initial width of the depth/stencil buffer.
+        /// @param height [in] The initial height of the depth/stencil buffer.
+        ///
+        /// @remarks
+        ///     If a depth/stencil texture has already been attached, it will be detached.
+        ///     @par
+        ///     The buffer can be resized with ResizeWriteOnlyDepthStencilBuffer().
+        ///     @par
+        ///     Detach the buffer with DetachWriteOnlyDepthStencilBuffer().
+        bool AttachWriteOnlyDepthStencilBuffer(unsigned int width, unsigned int height);
+
+        /// Detaches the write-only depth/stencil buffer.
+        void DetachWriteOnlyDepthStencilBuffer();
+
+        /// Determines whether or not a write-only depth/stencil buffer is attached.
+        bool IsWriteOnlyDepthStencilBufferAttached() const { return this->usingWriteOnlyDepthStencilBuffer; }
+
+        /// Resizes the write-only depth/stencil buffer.
+        ///
+        /// @param width  [in] the new width of the depth/stencil buffer.
+        /// @param height [in] The new height of the depth/stencil buffer.
+        void ResizeWriteOnlyDepthStencilBuffer(unsigned int width, unsigned int height);
+
+        /// Retrieves the width of the write-only depth/stencil buffer.
+        unsigned int GetWriteOnlyDepthStencilBufferWidth() const { return this->writeOnlyDepthStencilBufferWidth; }
+
+        /// Retrieves the height of the write-only depth/stencil buffer.
+        unsigned int GetWriteOnlyDepthStencilBufferHeight() const { return this->writeOnlyDepthStencilBufferHeight; }
 
 
         /// Retrieves a colour buffer attachment.
@@ -110,6 +146,16 @@ namespace GTEngine
 
         /// There can only be one depth/stencil texture.
         Texture2D* depthStencilAttachment;
+
+        
+        /// Whether or not we are using a write-only depth/stencil buffer.
+        bool usingWriteOnlyDepthStencilBuffer;
+
+        /// The width of the write-only depth/stencil buffer.
+        unsigned int writeOnlyDepthStencilBufferWidth;
+
+        /// The height of the write-only depth/stencil buffer.
+        unsigned int writeOnlyDepthStencilBufferHeight;
 
 
     private:    // No copying.

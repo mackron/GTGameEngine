@@ -10,6 +10,10 @@ namespace GTEngine
     {
     }
 
+    RCCreateFramebuffer::~RCCreateFramebuffer()
+    {
+    }
+
 
     void RCCreateFramebuffer::CreateFramebuffer(FramebufferState_OpenGL21* framebufferStateIn)
     {
@@ -19,6 +23,27 @@ namespace GTEngine
 
     void RCCreateFramebuffer::Execute()
     {
-        glGenFramebuffers(1, &this->framebufferState->framebufferObject);
+        this->__glGenFramebuffers(1, &this->framebufferState->framebufferObject);
+    }
+
+
+
+
+    ///////////////////////////////
+    // EXT_framebuffer_object
+
+    void RCCreateFramebufferEXT::__glGenFramebuffers(GLsizei n, GLuint *framebuffers)
+    {
+        glGenFramebuffersEXT(n, framebuffers);
+    }
+
+
+
+    ///////////////////////////////
+    // ARB_framebuffer_object
+
+    void RCCreateFramebufferARB::__glGenFramebuffers(GLsizei n, GLuint *framebuffers)
+    {
+        glGenFramebuffers(n, framebuffers);
     }
 }

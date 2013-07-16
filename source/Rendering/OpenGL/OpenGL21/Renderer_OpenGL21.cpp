@@ -104,34 +104,37 @@ namespace GTEngine
     static struct _RCCaches
     {
         // State RCs.
-        RCCache<RCSetGlobalState>      RCSetGlobalStateCache;
-        RCCache<RCSetVertexArrayState> RCSetVertexArrayStateCache;
-        RCCache<RCSetTextureState>     RCSetTextureStateCache;
-        RCCache<RCSetShaderState>      RCSetShaderStateCache;
-        RCCache<RCSetFramebufferState> RCSetFramebufferStateCache;
+        RCCache<RCSetGlobalState>         RCSetGlobalStateCache;
+        RCCache<RCSetVertexArrayState>    RCSetVertexArrayStateCache;
+        RCCache<RCSetTextureState>        RCSetTextureStateCache;
+        RCCache<RCSetShaderState>         RCSetShaderStateCache;
+        RCCache<RCSetFramebufferStateEXT> RCSetFramebufferStateCacheEXT;
+        RCCache<RCSetFramebufferStateARB> RCSetFramebufferStateCacheARB;
 
         // Drawing RCs.
         RCCache<RCClear>               RCClearCache;
         RCCache<RCDraw>                RCDrawCache;
 
         // Create and Delete RCs.
-        RCCache<RCCreateVertexArray>   RCCreateVertexArrayCache;
-        RCCache<RCDeleteVertexArray>   RCDeleteVertexArrayCache;
-        RCCache<RCCreateTexture>       RCCreateTextureCache;
-        RCCache<RCDeleteTexture>       RCDeleteTextureCache;
-        RCCache<RCCreateShader>        RCCreateShaderCache;
-        RCCache<RCDeleteShader>        RCDeleteShaderCache;
-        RCCache<RCCreateFramebuffer>   RCCreateFramebufferCache;
-        RCCache<RCDeleteFramebuffer>   RCDeleteFramebufferCache;
+        RCCache<RCCreateVertexArray>    RCCreateVertexArrayCache;
+        RCCache<RCDeleteVertexArray>    RCDeleteVertexArrayCache;
+        RCCache<RCCreateTexture>        RCCreateTextureCache;
+        RCCache<RCDeleteTexture>        RCDeleteTextureCache;
+        RCCache<RCCreateShader>         RCCreateShaderCache;
+        RCCache<RCDeleteShader>         RCDeleteShaderCache;
+        RCCache<RCCreateFramebufferEXT> RCCreateFramebufferCacheEXT;
+        RCCache<RCCreateFramebufferARB> RCCreateFramebufferCacheARB;
+        RCCache<RCDeleteFramebufferEXT> RCDeleteFramebufferCacheEXT;
+        RCCache<RCDeleteFramebufferARB> RCDeleteFramebufferCacheARB;
 
 
         _RCCaches()
-            : RCSetGlobalStateCache(), RCSetVertexArrayStateCache(), RCSetTextureStateCache(), RCSetShaderStateCache(), RCSetFramebufferStateCache(),
+            : RCSetGlobalStateCache(), RCSetVertexArrayStateCache(), RCSetTextureStateCache(), RCSetShaderStateCache(), RCSetFramebufferStateCacheEXT(), RCSetFramebufferStateCacheARB(),
               RCClearCache(), RCDrawCache(),
               RCCreateVertexArrayCache(), RCDeleteVertexArrayCache(),
               RCCreateTextureCache(),     RCDeleteTextureCache(),
               RCCreateShaderCache(),      RCDeleteShaderCache(),
-              RCCreateFramebufferCache(), RCDeleteFramebufferCache()
+              RCCreateFramebufferCacheEXT(), RCCreateFramebufferCacheARB(), RCDeleteFramebufferCacheEXT(), RCDeleteFramebufferCacheARB()
         {
         }
 
@@ -141,7 +144,8 @@ namespace GTEngine
             this->RCSetVertexArrayStateCache.Reset();
             this->RCSetTextureStateCache.Reset();
             this->RCSetShaderStateCache.Reset();
-            this->RCSetFramebufferStateCache.Reset();
+            this->RCSetFramebufferStateCacheEXT.Reset();
+            this->RCSetFramebufferStateCacheARB.Reset();
 
 
             this->RCClearCache.Reset();
@@ -155,7 +159,8 @@ namespace GTEngine
                     this->RCCreateVertexArrayCache.Reset();
                     this->RCCreateTextureCache.Reset();
                     this->RCCreateShaderCache.Reset();
-                    this->RCCreateFramebufferCache.Reset();
+                    this->RCCreateFramebufferCacheEXT.Reset();
+                    this->RCCreateFramebufferCacheARB.Reset();
                 }
                 ResourceCreationLock.Unlock();
 
@@ -165,7 +170,8 @@ namespace GTEngine
                     this->RCDeleteVertexArrayCache.Reset();
                     this->RCDeleteTextureCache.Reset();
                     this->RCDeleteShaderCache.Reset();
-                    this->RCDeleteFramebufferCache.Reset();
+                    this->RCDeleteFramebufferCacheEXT.Reset();
+                    this->RCDeleteFramebufferCacheARB.Reset();
                 }
                 ResourceDeletionLock.Unlock();
             }
@@ -206,9 +212,15 @@ namespace GTEngine
                 Log("OpenGL Extensions:");
                 Log("    ARB_vertex_program:                 %s", GTGL_ARB_vertex_program                 ? "yes" : "no");
                 Log("    ARB_fragment_program:               %s", GTGL_ARB_fragment_program               ? "yes" : "no");
+                Log("    ARB_texture_rg:                     %s", GTGL_ARB_texture_rg                     ? "yes" : "no");
+                Log("    ARB_texture_float:                  %s", GTGL_ARB_texture_float                  ? "yes" : "no");
+                Log("    ARB_vertex_buffer_object:           %s", GTGL_ARB_vertex_buffer_object           ? "yes" : "no");
+                Log("    ARB_framebuffer_object:             %s", GTGL_ARB_framebuffer_object             ? "yes" : "no");
                 Log("    ARB_get_program_binary:             %s", GTGL_ARB_get_program_binary             ? "yes" : "no");
                 Log("    ARB_separate_shader_objects:        %s", GTGL_ARB_separate_shader_objects        ? "yes" : "no");
                 Log("    ARB_ES2_compatibility:              %s", GTGL_ARB_ES2_compatibility              ? "yes" : "no");
+                Log("    EXT_framebuffer_object:             %s", GTGL_EXT_framebuffer_object             ? "yes" : "no");
+                Log("    EXT_packed_depth_stencil:           %s", GTGL_EXT_packed_depth_stencil           ? "yes" : "no");
                 Log("    EXT_texture_compression_s3tc:       %s", GTGL_EXT_texture_compression_s3tc       ? "yes" : "no");
                 Log("    EXT_texture_filter_anisotropic:     %s", GTGL_EXT_texture_filter_anisotropic     ? "yes" : "no");
                 Log("    NV_bindless_texture:                %s", GTGL_NV_bindless_texture                ? "yes" : "no");
@@ -224,6 +236,10 @@ namespace GTEngine
             #endif
 
 
+                // Uncomment this line to test the EXT_framebuffer_object path.
+                //GTGL_ARB_framebuffer_object = GL_FALSE;
+
+
                 // Here we'll grab the renderer's capabilities.
                 glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS,   &RendererCaps.MaxColourAttachments);
                 glGetIntegerv(GL_MAX_DRAW_BUFFERS,        &RendererCaps.MaxDrawBuffers);
@@ -235,20 +251,6 @@ namespace GTEngine
                 glEnable(GL_DEPTH_TEST);
                 glEnable(GL_CULL_FACE);
                 //glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
-
-                // The default VAO/VBO.
-                glGenVertexArrays(1, &ServerState_DefaultVAO);
-                glGenBuffers(1, &ServerState_DefaultVBO);
-                glGenBuffers(1, &ServerState_DefaultIBO);
-
-                glBindVertexArray(ServerState_DefaultVAO);
-                glBindBuffer(GL_ARRAY_BUFFER,         ServerState_DefaultVBO);
-                glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ServerState_DefaultIBO);
-
-                ServerState_GL_VERTEX_ARRAY_BINDING = ServerState_DefaultVAO;
-                ServerState_GL_ARRAY_BUFFER_BINDING = ServerState_DefaultVBO;
-
 
 
                 // We're going to initialise the X11 sub-system from here.
@@ -271,8 +273,9 @@ namespace GTEngine
     {
         assert(IsInitialised);
         {
-            // TODO: Delete renderer-created objects.
-
+            // Objects created by the renderer need to be deleted. If this doesn't happen, Intel drivers will sometimes have a whinge after shutdown.
+            ResourceDeletionCallCaches[ BackCallCacheIndex].Execute();
+            ResourceDeletionCallCaches[!BackCallCacheIndex].Execute();
 
             // Both caches should be cleared.
             CallCaches[0].Clear();
@@ -286,6 +289,12 @@ namespace GTEngine
 
             // The client-side state needs to be shutdown.
             State.Shutdown();
+
+
+            // Delete the default VAO.
+            //glDeleteBuffers(1, &ServerState_DefaultIBO);
+            //glDeleteBuffers(1, &ServerState_DefaultVBO);
+            //glDeleteVertexArrays(1, &ServerState_DefaultVAO);
 
 
             // GTGL needs to be shutdown.
@@ -527,7 +536,17 @@ namespace GTEngine
             UPDATE_CURRENT_RC(RCSetGlobalState);
             assert(State.currentRCSetGlobalState != nullptr);
             {
-                State.currentRCSetGlobalState->SetCurrentFramebuffer(framebufferState);
+                if (GTGL_ARB_framebuffer_object)
+                {
+                    // Primary (ARB_framebuffer_object).
+                    State.currentRCSetGlobalState->SetCurrentFramebufferARB(framebufferState);
+                }
+                else
+                {
+                    // Secondary (EXT_framebuffer_object).
+                    State.currentRCSetGlobalState->SetCurrentFramebufferEXT(framebufferState);
+                }
+
                 State.currentFramebufferState = framebufferState;
             }
         }
@@ -999,7 +1018,7 @@ namespace GTEngine
         UPDATE_CURRENT_RC(RCDraw);
         assert(State.currentRCDraw != nullptr);
         {
-            State.currentRCDraw->Draw(vertexArrayGL33.GetOpenGLObjectPtr(), vertexArrayGL33.GetOpenGLVertexObjectPtr(), ToOpenGLDrawMode(mode), static_cast<GLsizei>(vertexArrayGL33.GetIndexCount()));
+            State.currentRCDraw->Draw(vertexArrayGL33.GetOpenGLVertexObjectPtr(), vertexArrayGL33.GetOpenGLIndexObjectPtr(), static_cast<GLsizei>(vertexArrayGL33.GetIndexCount()), vertexArrayGL33.GetFormat(), ToOpenGLDrawMode(mode));
         }
 
         State.currentRCSetGlobalState      = nullptr;
@@ -1057,9 +1076,6 @@ namespace GTEngine
 
     VertexArray* Renderer::CreateVertexArray(VertexArrayUsage usage, const VertexFormat &format)
     {
-        State.instantiatedVertexArrayObjects.PushBack(new GLuint(0));
-        GLuint* vertexArrayObject  = State.instantiatedVertexArrayObjects.GetBack();
-
         State.instantiatedBufferObjects.PushBack(new GLuint(0));
         GLuint* vertexBufferObject = State.instantiatedBufferObjects.GetBack();
 
@@ -1070,16 +1086,14 @@ namespace GTEngine
         ResourceCreationLock.Lock();
         {
             auto &command = RCCaches[BackCallCacheIndex].RCCreateVertexArrayCache.Acquire();
-            command.CreateVertexArray(vertexArrayObject, vertexBufferObject, indexBufferObject, format);
+            command.CreateVertexArray(vertexBufferObject, indexBufferObject, format);
 
             ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
         }
         ResourceCreationLock.Unlock();
 
 
-
-
-        return new VertexArray_OpenGL21(usage, format, vertexArrayObject, vertexBufferObject, indexBufferObject);
+        return new VertexArray_OpenGL21(usage, format, vertexBufferObject, indexBufferObject);
     }
 
     void Renderer::DeleteVertexArray(VertexArray* vertexArrayToDelete)
@@ -1088,18 +1102,16 @@ namespace GTEngine
         if (vertexArrayToDeleteGL33 != nullptr)
         {
             // The OpenGL objects need to be marked for deletion.
-            GLuint* vertexArrayObject  = vertexArrayToDeleteGL33->GetOpenGLObjectPtr();
             GLuint* vertexBufferObject = vertexArrayToDeleteGL33->GetOpenGLVertexObjectPtr();
             GLuint* indexBufferObject  = vertexArrayToDeleteGL33->GetOpenGLIndexObjectPtr();
 
-            assert(vertexArrayObject  != nullptr);
             assert(vertexBufferObject != nullptr);
             assert(indexBufferObject  != nullptr);
             {
                 ResourceDeletionLock.Lock();
                 {
                     auto &command = RCCaches[BackCallCacheIndex].RCDeleteVertexArrayCache.Acquire();
-                    command.DeleteVertexArray(vertexArrayObject, vertexBufferObject, indexBufferObject);
+                    command.DeleteVertexArray(vertexBufferObject, indexBufferObject);
 
                     ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
                 }
@@ -1108,7 +1120,6 @@ namespace GTEngine
 
 
                 // The objects need to be marked for deletion, but not actually deleted yet.
-                State.MarkVertexArrayObjectAsDeleted(vertexArrayObject);
                 State.MarkBufferObjectAsDeleted(vertexBufferObject);
                 State.MarkBufferObjectAsDeleted(indexBufferObject);
             }
@@ -1123,22 +1134,18 @@ namespace GTEngine
     {
         auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL21 &>(vertexArray);
         {
-            GLuint* vertexArrayObject  = vertexArrayGL33.GetOpenGLObjectPtr();
             GLuint* vertexBufferObject = vertexArrayGL33.GetOpenGLVertexObjectPtr();
-
-            assert(vertexArrayObject  != nullptr);
             assert(vertexBufferObject != nullptr);
             {
-                if (State.currentRCSetVertexArrayState == nullptr || State.currentRCSetVertexArrayState->GetVertexArrayObject() != vertexArrayObject)
+                //if (State.currentRCSetVertexArrayState == nullptr)
                 {
                     State.currentRCSetVertexArrayState = &RCCaches[BackCallCacheIndex].RCSetVertexArrayStateCache.Acquire();
                     CallCaches[BackCallCacheIndex].Append(*State.currentRCSetVertexArrayState);
                 }
 
-
                 assert(State.currentRCSetVertexArrayState != nullptr);
                 {
-                    State.currentRCSetVertexArrayState->SetVertexData(vertexArrayObject, vertexBufferObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
+                    State.currentRCSetVertexArrayState->SetVertexData(vertexBufferObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
                     vertexArrayGL33.MarkVertexDataAsUpdated();
                 }
             }
@@ -1149,10 +1156,10 @@ namespace GTEngine
     {
         auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL21 &>(vertexArray);
         {
-            GLuint* vertexArrayObject = vertexArrayGL33.GetOpenGLObjectPtr();
-            assert(vertexArrayObject != nullptr);
+            GLuint* indexBufferObject = vertexArrayGL33.GetOpenGLIndexObjectPtr();
+            assert(indexBufferObject != nullptr);
             {
-                if (State.currentRCSetVertexArrayState == nullptr || State.currentRCSetVertexArrayState->GetVertexArrayObject() != vertexArrayObject)
+                //if (State.currentRCSetVertexArrayState == nullptr)
                 {
                     State.currentRCSetVertexArrayState = &RCCaches[BackCallCacheIndex].RCSetVertexArrayStateCache.Acquire();
                     CallCaches[BackCallCacheIndex].Append(*State.currentRCSetVertexArrayState);
@@ -1161,7 +1168,7 @@ namespace GTEngine
 
                 assert(State.currentRCSetVertexArrayState != nullptr);
                 {
-                    State.currentRCSetVertexArrayState->SetIndexData(vertexArrayObject, vertexArray.GetIndexDataPtr(), vertexArray.GetIndexCount(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
+                    State.currentRCSetVertexArrayState->SetIndexData(indexBufferObject, vertexArray.GetIndexDataPtr(), vertexArray.GetIndexCount(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
                     vertexArrayGL33.MarkIndexDataAsUpdated();
                 }
             }
@@ -1172,13 +1179,13 @@ namespace GTEngine
     {
         auto &vertexArrayGL33 = static_cast<const VertexArray_OpenGL21 &>(vertexArray);
         {
-            GLuint* vertexArrayObject  = vertexArrayGL33.GetOpenGLObjectPtr();
             GLuint* vertexBufferObject = vertexArrayGL33.GetOpenGLVertexObjectPtr();
+            GLuint* indexBufferObject  = vertexArrayGL33.GetOpenGLIndexObjectPtr();
 
-            assert(vertexArrayObject  != nullptr);
             assert(vertexBufferObject != nullptr);
+            assert(indexBufferObject  != nullptr);
             {
-                if (State.currentRCSetVertexArrayState == nullptr || State.currentRCSetVertexArrayState->GetVertexArrayObject() != vertexArrayObject)
+                //if (State.currentRCSetVertexArrayState == nullptr)
                 {
                     State.currentRCSetVertexArrayState = &RCCaches[BackCallCacheIndex].RCSetVertexArrayStateCache.Acquire();
                     CallCaches[BackCallCacheIndex].Append(*State.currentRCSetVertexArrayState);
@@ -1187,8 +1194,8 @@ namespace GTEngine
 
                 assert(State.currentRCSetVertexArrayState != nullptr);
                 {
-                    State.currentRCSetVertexArrayState->SetVertexData(vertexArrayObject, vertexBufferObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
-                    State.currentRCSetVertexArrayState->SetIndexData( vertexArrayObject, vertexArray.GetIndexDataPtr(),  vertexArray.GetIndexCount(),  ToOpenGLBufferUsage(vertexArray.GetUsage()));
+                    State.currentRCSetVertexArrayState->SetVertexData(vertexBufferObject, vertexArray.GetVertexDataPtr(), vertexArray.GetVertexCount(), vertexArray.GetFormat().GetSizeInBytes(), ToOpenGLBufferUsage(vertexArray.GetUsage()));
+                    State.currentRCSetVertexArrayState->SetIndexData( indexBufferObject,  vertexArray.GetIndexDataPtr(),  vertexArray.GetIndexCount(),  ToOpenGLBufferUsage(vertexArray.GetUsage()));
 
                     vertexArrayGL33.MarkVertexDataAsUpdated();
                     vertexArrayGL33.MarkIndexDataAsUpdated();
@@ -1640,10 +1647,24 @@ namespace GTEngine
 
         ResourceCreationLock.Lock();
         {
-            auto &command = RCCaches[BackCallCacheIndex].RCCreateFramebufferCache.Acquire();
-            command.CreateFramebuffer(framebufferState);
+            RCCreateFramebuffer* command = nullptr;
+            
+            if (GTGL_ARB_framebuffer_object)
+            {
+                // Primary (ARB_framebuffer_object).
+                command = &RCCaches[BackCallCacheIndex].RCCreateFramebufferCacheARB.Acquire();
+            }
+            else
+            {
+                // Secondary (EXT_framebuffer_object).
+                command = &RCCaches[BackCallCacheIndex].RCCreateFramebufferCacheEXT.Acquire();
+            }
 
-            ResourceCreationCallCaches[BackCallCacheIndex].Append(command);
+            assert(command != nullptr);
+            {
+                command->CreateFramebuffer(framebufferState);
+                ResourceCreationCallCaches[BackCallCacheIndex].Append(*command);
+            }
         }
         ResourceCreationLock.Unlock();
 
@@ -1664,10 +1685,24 @@ namespace GTEngine
             {
                 ResourceDeletionLock.Lock();
                 {
-                    auto &command = RCCaches[BackCallCacheIndex].RCDeleteFramebufferCache.Acquire();
-                    command.DeleteFramebuffer(framebufferState);
+                    RCDeleteFramebuffer* command = nullptr;
 
-                    ResourceDeletionCallCaches[BackCallCacheIndex].Append(command);
+                    if (GTGL_ARB_framebuffer_object)
+                    {
+                        // Primary (ARB_framebuffer_object).
+                        command = &RCCaches[BackCallCacheIndex].RCDeleteFramebufferCacheARB.Acquire();
+                    }
+                    else
+                    {
+                        // Secondary (EXT_framebuffer_object).
+                        command = &RCCaches[BackCallCacheIndex].RCDeleteFramebufferCacheEXT.Acquire();
+                    }
+
+                    assert(command != nullptr);
+                    {
+                        command->DeleteFramebuffer(framebufferState);
+                        ResourceDeletionCallCaches[BackCallCacheIndex].Append(*command);
+                    }
                 }
                 ResourceDeletionLock.Unlock();
 
@@ -1693,7 +1728,17 @@ namespace GTEngine
             {
                 if (State.currentRCSetFramebufferState == nullptr || State.currentRCSetFramebufferState->GetFramebufferState() != framebufferState)
                 {
-                    State.currentRCSetFramebufferState = &RCCaches[BackCallCacheIndex].RCSetFramebufferStateCache.Acquire();
+                    if (GTGL_ARB_framebuffer_object)
+                    {
+                        // Primary (ARB_framebuffer_object).
+                        State.currentRCSetFramebufferState = &RCCaches[BackCallCacheIndex].RCSetFramebufferStateCacheARB.Acquire();
+                    }
+                    else
+                    {
+                        // Secondary (EXT_framebuffer_object).
+                        State.currentRCSetFramebufferState = &RCCaches[BackCallCacheIndex].RCSetFramebufferStateCacheEXT.Acquire();
+                    }
+
                     CallCaches[BackCallCacheIndex].Append(*State.currentRCSetFramebufferState);
                 }
 
@@ -1717,13 +1762,19 @@ namespace GTEngine
                         }
                     }
 
-                    // Depth/Stencil.
+                    // Depth/Stencil Texture.
                     auto depthStencilAttachment = static_cast<const Texture2D_OpenGL21*>(framebufferGL33.GetDepthStencilBuffer());
                     if (depthStencilAttachment != nullptr)
                     {
                         State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_DEPTH_ATTACHMENT_EXT,   depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
                         State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_STENCIL_ATTACHMENT_EXT, depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
                     }
+
+                    // Write-Only Depth/Stencil Renderbuffer.
+                    GLboolean writeOnlyDepthStencilAttached = framebufferGL33.IsWriteOnlyDepthStencilBufferAttached();
+                    GLsizei   writeOnlyDepthStencilWidth    = framebufferGL33.GetWriteOnlyDepthStencilBufferWidth();
+                    GLsizei   writeOnlyDepthStencilHeight   = framebufferGL33.GetWriteOnlyDepthStencilBufferHeight();
+                    State.currentRCSetFramebufferState->SetWriteOnlyDepthStencilBuffer(framebufferState, writeOnlyDepthStencilAttached, writeOnlyDepthStencilWidth, writeOnlyDepthStencilHeight);
                 }
             }
         }

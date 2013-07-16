@@ -6,20 +6,18 @@
 namespace GTEngine
 {
     RCDeleteVertexArray::RCDeleteVertexArray()
-        : vertexArrayObject(nullptr), vertexBufferObject(nullptr), indexBufferObject(nullptr)
+        : vertexBufferObject(nullptr), indexBufferObject(nullptr)
     {
     }
 
-    void RCDeleteVertexArray::DeleteVertexArray(GLuint* vertexArrayObjectIn, GLuint* vertexBufferObjectIn, GLuint* indexBufferObjectIn)
+    void RCDeleteVertexArray::DeleteVertexArray(GLuint* vertexBufferObjectIn, GLuint* indexBufferObjectIn)
     {
-        this->vertexArrayObject  = vertexArrayObjectIn;
         this->vertexBufferObject = vertexBufferObjectIn;
         this->indexBufferObject  = indexBufferObjectIn;
     }
 
     void RCDeleteVertexArray::Execute()
     {
-        glDeleteVertexArrays(1, this->vertexArrayObject);
         glDeleteBuffers(1, this->vertexBufferObject);
         glDeleteBuffers(1, this->indexBufferObject);
     }

@@ -84,7 +84,7 @@ namespace GTEngine
               width(widthIn), height(heightIn)
         {
             this->framebuffer             = Renderer::CreateFramebuffer();
-            this->depthStencilBuffer      = Renderer::CreateTexture2D();
+            //this->depthStencilBuffer      = Renderer::CreateTexture2D();
             this->colourBuffer0           = Renderer::CreateTexture2D();
             this->colourBuffer1           = Renderer::CreateTexture2D();
             this->lightingBuffer0         = Renderer::CreateTexture2D();
@@ -117,12 +117,12 @@ namespace GTEngine
 
 
             // Attach to the main framebuffer.
-            this->framebuffer->AttachDepthStencilBuffer(this->depthStencilBuffer);
+            //this->framebuffer->AttachDepthStencilBuffer(this->depthStencilBuffer);
+            this->framebuffer->AttachWriteOnlyDepthStencilBuffer(0, 0);
             this->framebuffer->AttachColourBuffer(this->colourBuffer0,        ColourBuffer0Index);
             this->framebuffer->AttachColourBuffer(this->colourBuffer1,        ColourBuffer1Index);
             this->framebuffer->AttachColourBuffer(this->lightingBuffer0,      LightingBuffer0Index);
             this->framebuffer->AttachColourBuffer(this->lightingBuffer1,      LightingBuffer1Index);
-            
             this->framebuffer->AttachColourBuffer(this->finalColourBuffer,    FinalColourIndex);
             Renderer::PushAttachments(*this->framebuffer);
 
@@ -134,7 +134,7 @@ namespace GTEngine
         /// Destructor
         ~DefaultSceneRendererFramebuffer()
         {
-            Renderer::DeleteTexture2D(this->depthStencilBuffer);
+            //Renderer::DeleteTexture2D(this->depthStencilBuffer);
             Renderer::DeleteTexture2D(this->colourBuffer0);
             Renderer::DeleteTexture2D(this->colourBuffer1);
             Renderer::DeleteTexture2D(this->lightingBuffer0);
@@ -155,14 +155,15 @@ namespace GTEngine
             this->height = newHeight;
 
 
-            this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
-            this->colourBuffer0->SetData(     newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->colourBuffer1->SetData(     newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->lightingBuffer0->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->lightingBuffer1->SetData(   newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->finalColourBuffer->SetData( newWidth, newHeight, GTImage::ImageFormat_RGB8);
+            //this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
+            this->framebuffer->ResizeWriteOnlyDepthStencilBuffer(newWidth, newHeight);
+            this->colourBuffer0->SetData(    newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->colourBuffer1->SetData(    newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->lightingBuffer0->SetData(  newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->lightingBuffer1->SetData(  newWidth, newHeight, GTImage::ImageFormat_RGB16F);
+            this->finalColourBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_RGB8);
 
-            Renderer::PushTexture2DData(*this->depthStencilBuffer);
+            //Renderer::PushTexture2DData(*this->depthStencilBuffer);
             Renderer::PushTexture2DData(*this->colourBuffer0);
             Renderer::PushTexture2DData(*this->colourBuffer1);
             Renderer::PushTexture2DData(*this->lightingBuffer0);
@@ -177,6 +178,9 @@ namespace GTEngine
 
             Renderer::PushTexture2DData(*this->bloomBuffer);
             Renderer::PushTexture2DData(*this->bloomBlurBuffer);
+
+            // For the write-only depth/stencil buffer. Might need to implement something more optimized here.
+            Renderer::PushAttachments(*this->framebuffer);
         }
 
 
@@ -193,7 +197,7 @@ namespace GTEngine
         Framebuffer* framebuffer;
 
         /// The depth/stencil buffer.
-        Texture2D* depthStencilBuffer;
+        //Texture2D* depthStencilBuffer;
 
         /// The main colour output buffer (RG32F)
         Texture2D* colourBuffer;
@@ -211,11 +215,11 @@ namespace GTEngine
 
         /// Constructor.
         DefaultSceneRendererShadowFramebuffer(unsigned int widthIn, unsigned int heightIn)
-            : framebuffer(nullptr), depthStencilBuffer(nullptr), colourBuffer(nullptr), blurBuffer(nullptr),
+            : framebuffer(nullptr), /*depthStencilBuffer(nullptr),*/ colourBuffer(nullptr), blurBuffer(nullptr),
               width(widthIn), height(heightIn)
         {
             this->framebuffer        = Renderer::CreateFramebuffer();
-            this->depthStencilBuffer = Renderer::CreateTexture2D();
+            //this->depthStencilBuffer = Renderer::CreateTexture2D();
             this->colourBuffer       = Renderer::CreateTexture2D();
             this->blurBuffer         = Renderer::CreateTexture2D();
 
@@ -228,7 +232,8 @@ namespace GTEngine
             Renderer::SetTexture2DWrapMode(*this->colourBuffer, TextureWrapMode_ClampToEdge);
             Renderer::SetTexture2DWrapMode(*this->blurBuffer,   TextureWrapMode_ClampToEdge);
 
-            this->framebuffer->AttachDepthStencilBuffer(this->depthStencilBuffer);
+            //this->framebuffer->AttachDepthStencilBuffer(this->depthStencilBuffer);
+            this->framebuffer->AttachWriteOnlyDepthStencilBuffer(0, 0);
             this->framebuffer->AttachColourBuffer(this->colourBuffer, 0);
             this->framebuffer->AttachColourBuffer(this->blurBuffer,   1);
 
@@ -240,7 +245,7 @@ namespace GTEngine
         {
             Renderer::DeleteTexture2D(this->blurBuffer);
             Renderer::DeleteTexture2D(this->colourBuffer);
-            Renderer::DeleteTexture2D(this->depthStencilBuffer);
+            //Renderer::DeleteTexture2D(this->depthStencilBuffer);
             Renderer::DeleteFramebuffer(this->framebuffer);
         }
 
@@ -253,13 +258,16 @@ namespace GTEngine
             this->width  = newWidth;
             this->height = newHeight;
 
-            this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
+            //this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
+            this->framebuffer->ResizeWriteOnlyDepthStencilBuffer(newWidth, newHeight);
             this->colourBuffer->SetData(      newWidth, newHeight, GTImage::ImageFormat_RG32F);
             this->blurBuffer->SetData(        newWidth, newHeight, GTImage::ImageFormat_RG32F);
 
-            Renderer::PushTexture2DData(*this->depthStencilBuffer);
+            //Renderer::PushTexture2DData(*this->depthStencilBuffer);
             Renderer::PushTexture2DData(*this->colourBuffer);
             Renderer::PushTexture2DData(*this->blurBuffer);
+
+            Renderer::PushAttachments(*this->framebuffer);
         }
 
 
@@ -275,7 +283,7 @@ namespace GTEngine
         Framebuffer* framebuffer;
 
         /// The depth/stencil buffer. This is cleared and reused for each face.
-        Texture2D* depthStencilBuffer;
+        //Texture2D* depthStencilBuffer;
 
         /// The cube map that will contain the shadow information. RG32F.
         TextureCube* colourBuffer;
@@ -295,11 +303,11 @@ namespace GTEngine
 
         /// Constructor.
         DefaultSceneRendererPointShadowFramebuffer(unsigned int widthIn, unsigned int heightIn)
-            : framebuffer(nullptr), depthStencilBuffer(nullptr), colourBuffer(nullptr), blurBuffer0(nullptr), blurBuffer1(nullptr),
+            : framebuffer(nullptr), /*depthStencilBuffer(nullptr),*/ colourBuffer(nullptr), blurBuffer0(nullptr), blurBuffer1(nullptr),
               width(widthIn), height(heightIn)
         {
             this->framebuffer        = Renderer::CreateFramebuffer();
-            this->depthStencilBuffer = Renderer::CreateTexture2D();
+            //this->depthStencilBuffer = Renderer::CreateTexture2D();
             this->colourBuffer       = Renderer::CreateTextureCube();
             this->blurBuffer0        = Renderer::CreateTexture2D();
             this->blurBuffer1        = Renderer::CreateTexture2D();
@@ -320,7 +328,8 @@ namespace GTEngine
 
 
             // Attach.
-            this->framebuffer->AttachDepthStencilBuffer(this->depthStencilBuffer);
+            //this->framebuffer->AttachDepthStencilBuffer(this->depthStencilBuffer);
+            this->framebuffer->AttachWriteOnlyDepthStencilBuffer(0, 0);
             this->framebuffer->AttachColourBuffer(this->colourBuffer->PositiveX, 0);
             this->framebuffer->AttachColourBuffer(this->colourBuffer->NegativeX, 1);
             this->framebuffer->AttachColourBuffer(this->colourBuffer->PositiveY, 2);
@@ -339,7 +348,7 @@ namespace GTEngine
             Renderer::DeleteTexture2D(this->blurBuffer0);
             Renderer::DeleteTexture2D(this->blurBuffer1);
             Renderer::DeleteTextureCube(this->colourBuffer);
-            Renderer::DeleteTexture2D(this->depthStencilBuffer);
+            //Renderer::DeleteTexture2D(this->depthStencilBuffer);
             Renderer::DeleteFramebuffer(this->framebuffer);
         }
 
@@ -350,7 +359,8 @@ namespace GTEngine
             this->width  = newWidth;
             this->height = newHeight;
 
-            this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
+            //this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
+            this->framebuffer->ResizeWriteOnlyDepthStencilBuffer(newWidth, newHeight);
             this->colourBuffer->PositiveX->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
             this->colourBuffer->NegativeX->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
             this->colourBuffer->PositiveY->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
@@ -360,10 +370,12 @@ namespace GTEngine
             this->blurBuffer0->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
             this->blurBuffer1->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
 
-            Renderer::PushTexture2DData(  *this->depthStencilBuffer, 0);
+            //Renderer::PushTexture2DData(  *this->depthStencilBuffer, 0);
             Renderer::PushTextureCubeData(*this->colourBuffer);
             Renderer::PushTexture2DData(  *this->blurBuffer0);
             Renderer::PushTexture2DData(  *this->blurBuffer1);
+
+            Renderer::PushAttachments(*this->framebuffer);
         }
 
 

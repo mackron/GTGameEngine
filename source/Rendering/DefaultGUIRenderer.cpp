@@ -48,7 +48,6 @@ namespace GTEngine
         GTEngine::Renderer::DisableDepthTest();
         GTEngine::Renderer::DisableDepthWrites();
 
-
         // The viewport must be set each time.
         GTEngine::Renderer::SetViewport(0, 0, this->viewportWidth, this->viewportHeight);
 

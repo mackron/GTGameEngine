@@ -166,7 +166,6 @@ namespace GTEngine
         Renderer::SetDepthFunction(RendererFunction_LEqual);
 
 
-
         // With the visible objects determined we can now choose a pipeline to run rendering operations through. We want to use fast paths where
         // they're available.
         if (visibleObjects.lightManager.shadowDirectionalLights.count <= 1 && 
@@ -197,8 +196,6 @@ namespace GTEngine
             DefaultSceneRenderer_MultiPassPipeline pipeline(*this, *framebuffer, visibleObjects, SplitShadowLights);
             pipeline.Execute();
         }
-
-
 
 
         // Here we just render the final image. Basically, this is just the post-process step. This will eventually be made into a proper
@@ -994,7 +991,6 @@ namespace GTEngine
         Renderer::DisableDepthTest();
         Renderer::DisableDepthWrites();
         Renderer::DisableStencilTest();
-
 
         if (this->IsHDREnabled())
         {

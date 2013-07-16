@@ -37,8 +37,6 @@ namespace GTEngine
         Renderer::SetClearStencil(0);
         Renderer::Clear(BufferType_Colour | BufferType_Depth | BufferType_Stencil);
 
-
-
         // There is two groups of meshes. The regular group and the "draw last" group.
         this->BindObjects(&this->visibleObjects.opaqueObjects, &this->visibleObjects.transparentObjects);
         {

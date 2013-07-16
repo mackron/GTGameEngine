@@ -70,9 +70,6 @@ namespace GTEngine
         /// The list of currently instantiated shader programs.
         GTCore::Vector<ShaderState_OpenGL21*> instantiatedProgramObjects;
 
-        /// The list of currently instantiated VAO's.
-        GTCore::Vector<GLuint*> instantiatedVertexArrayObjects;
-
         /// The list of currently instantiated buffer objects.
         GTCore::Vector<GLuint*> instantiatedBufferObjects;
 
@@ -85,9 +82,6 @@ namespace GTEngine
 
         /// The list of shader programs that need to be deleted.
         GTCore::Vector<ShaderState_OpenGL21*> deletedProgramObjects[2];
-
-        /// The list of VAO's that need to be deleted.
-        GTCore::Vector<GLuint*> deletedVertexArrayObjects[2];
 
         /// The list of buffer objects that need to be deleted.
         GTCore::Vector<GLuint*> deletedBufferObjects[2];
@@ -120,9 +114,6 @@ namespace GTEngine
 
         /// Marks a shader program as deleted.
         void MarkProgramObjectAsDeleted(ShaderState_OpenGL21* programObject);
-
-        /// Marks a vertex array as deleted.
-        void MarkVertexArrayObjectAsDeleted(GLuint* vertexArrayObject);
 
         /// Marks a buffer object as deleted.
         void MarkBufferObjectAsDeleted(GLuint* bufferObject);

@@ -6,7 +6,8 @@
 namespace GTEngine
 {
     Framebuffer::Framebuffer()
-        : colourAttachments(), depthStencilAttachment(nullptr)
+        : colourAttachments(), depthStencilAttachment(nullptr),
+          usingWriteOnlyDepthStencilBuffer(false), writeOnlyDepthStencilBufferWidth(0), writeOnlyDepthStencilBufferHeight(0)
     {
     }
 
@@ -51,6 +52,9 @@ namespace GTEngine
     bool Framebuffer::AttachDepthStencilBuffer(Texture2D *buffer)
     {
         assert(buffer != nullptr);      // <-- Should use DetachDepthStencilBuffer() to remove a buffer. Will probably turn this argument into a reference instead of a pointer.
+
+        // The write-only depth/stencil buffer needs to be detached.
+        this->DetachWriteOnlyDepthStencilBuffer();
 
         if (this->depthStencilAttachment != buffer)
         {
@@ -124,6 +128,32 @@ namespace GTEngine
     {
         this->DetachAllColourBuffers();
         this->DetachDepthStencilBuffer();
+        this->DetachWriteOnlyDepthStencilBuffer();
+    }
+
+
+    bool Framebuffer::AttachWriteOnlyDepthStencilBuffer(unsigned int width, unsigned int height)
+    {
+        // First we want to detach the already-attached depth/stencil buffer if there is one.
+        this->DetachDepthStencilBuffer();
+
+        this->usingWriteOnlyDepthStencilBuffer = true;
+        this->ResizeWriteOnlyDepthStencilBuffer(width, height);
+
+        return true;
+    }
+
+    void Framebuffer::DetachWriteOnlyDepthStencilBuffer()
+    {
+        this->usingWriteOnlyDepthStencilBuffer  = false;
+        this->writeOnlyDepthStencilBufferWidth  = 0;
+        this->writeOnlyDepthStencilBufferHeight = 0;
+    }
+
+    void Framebuffer::ResizeWriteOnlyDepthStencilBuffer(unsigned int width, unsigned int height)
+    {
+        this->writeOnlyDepthStencilBufferWidth  = width;
+        this->writeOnlyDepthStencilBufferHeight = height;
     }
 
 

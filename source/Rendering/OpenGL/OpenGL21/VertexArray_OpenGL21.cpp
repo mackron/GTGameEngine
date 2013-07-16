@@ -4,9 +4,9 @@
 
 namespace GTEngine
 {
-    VertexArray_OpenGL21::VertexArray_OpenGL21(VertexArrayUsage usage, const VertexFormat &format, GLuint* objectGLIn, GLuint* vertexObjectIn, GLuint* indexObjectIn)
+    VertexArray_OpenGL21::VertexArray_OpenGL21(VertexArrayUsage usage, const VertexFormat &format, GLuint* vertexObjectIn, GLuint* indexObjectIn)
         : VertexArray(usage, format),
-          objectGL(objectGLIn), vertexObjectGL(vertexObjectIn), indexObjectGL(indexObjectIn),
+          vertexObjectGL(vertexObjectIn), indexObjectGL(indexObjectIn),
           vertexDataNeedsUpdating(false), indexDataNeedsUpdating(false)
     {
     }
