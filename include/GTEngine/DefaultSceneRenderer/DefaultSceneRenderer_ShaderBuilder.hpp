@@ -29,6 +29,13 @@ namespace GTEngine
         Shader* CreateShader(const DefaultSceneRenderer_MaterialShaderID &shaderID);
 
 
+        /// Creates a gaussian blur shader.
+        ///
+        /// @param pixelCount   [in] The number of pixels in the blur kernal.
+        /// @param sigmaSquared [in] The sigma factor, squared.
+        Shader* CreateXGaussianBlurShader(unsigned int pixelCount, float sigmaSquared);
+        Shader* CreateYGaussianBlurShader(unsigned int pixelCount, float sigmaSquared);
+
 
 
     private:
