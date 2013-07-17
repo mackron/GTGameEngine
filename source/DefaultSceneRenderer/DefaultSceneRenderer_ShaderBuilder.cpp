@@ -59,6 +59,23 @@ namespace GTEngine
     }
 
 
+    Shader* DefaultSceneRenderer_ShaderBuilder::CreateXGaussianBlurShader(unsigned int pixelCount, float sigmaSquared)
+    {
+        (void)pixelCount;
+        (void)sigmaSquared;
+
+        return nullptr;
+    }
+
+    Shader* DefaultSceneRenderer_ShaderBuilder::CreateYGaussianBlurShader(unsigned int pixelCount, float sigmaSquared)
+    {
+        (void)pixelCount;
+        (void)sigmaSquared;
+
+        return nullptr;
+    }
+
+
 
     GTCore::String DefaultSceneRenderer_ShaderBuilder::CreateVertexShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const
     {
