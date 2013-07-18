@@ -85,6 +85,8 @@ namespace GTEngine
         // Vertex Shader.
         GTCore::String vertexSource
         (
+            "#version 120\n"
+            
             "attribute vec3 VertexInput_Position;\n"
             "attribute vec4 VertexInput_TexCoord;\n"
 
@@ -99,6 +101,8 @@ namespace GTEngine
 
         GTCore::String fragmentSource
         (
+            "#version 120\n"
+            
             "varying vec4 VertexOutput_TexCoord;\n"
         
             "uniform sampler2D Texture;\n"
@@ -112,9 +116,9 @@ namespace GTEngine
             "    vec4  outputColour = vec4(0.0, 0.0, 0.0, 0.0);\n"
         );
 
-        for (unsigned int iCoefficient = 0; iCoefficient < kernelSize; ++iCoefficient)
+        for (int iCoefficient = 0; iCoefficient < static_cast<int>(kernelSize); ++iCoefficient)
         {
-            const double x = static_cast<double>(iCoefficient - (kernelSize / 2));
+            const double x = static_cast<double>(iCoefficient - static_cast<int>(kernelSize / 2));
             const double coefficient = (1.0 / (glm::sqrt(2.0 * pi * s2))) * (glm::pow(e, -((x*x) / (2.0 * s2))));
 
             if (xAxis)
@@ -122,7 +126,7 @@ namespace GTEngine
                 // X Axis.
                 fragmentSource.AppendFormatted
                 (
-                    "outputColour += texture2D(Texture, vec2(uv.x + (%f * uvOffset), uv.y)) * %f;", x, coefficient
+                    "    outputColour += texture2D(Texture, vec2(uv.x + (%.10f * uvOffset), uv.y)) * %.10f;\n", x, coefficient
                 );
             }
             else
@@ -130,7 +134,7 @@ namespace GTEngine
                 // Y Axis.
                 fragmentSource.AppendFormatted
                 (
-                    "outputColour += texture2D(Texture, vec2(uv.x, uv.y + (%f * uvOffset))) * %f;", x, coefficient
+                    "    outputColour += texture2D(Texture, vec2(uv.x, uv.y + (%.10f * uvOffset))) * %.10f;\n", x, coefficient
                 );
             }
         }
@@ -141,7 +145,6 @@ namespace GTEngine
             "}\n"
         );
 
-        // TODO: Cache this so the shader builder can manage the creation and deletion of shaders itself. Also, don't want to create the same blur shaders if it's not needed.
         return Renderer::CreateShader(vertexSource.c_str(), fragmentSource.c_str());
     }
 
@@ -160,6 +163,8 @@ namespace GTEngine
         
         GTCore::String vertexSource
         (
+            "#version 120\n"
+            
             "attribute vec3 VertexInput_Position;\n"
             "attribute vec3 VertexInput_PositionVS;\n"
             "attribute vec4 VertexInput_TexCoord;\n"
@@ -387,6 +392,8 @@ namespace GTEngine
         // Input
         GTCore::String fragmentSource
         (
+            "#version 120\n"
+            
             "varying vec4 VertexOutput_Position;\n"
             "varying vec4 VertexOutput_PositionVS;\n"
             "varying vec4 VertexOutput_PositionWS;\n"
