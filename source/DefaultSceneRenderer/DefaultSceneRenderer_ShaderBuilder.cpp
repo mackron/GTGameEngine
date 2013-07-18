@@ -656,7 +656,7 @@ namespace GTEngine
                     "    float fragmentDepth = length(shadowCoord);\n"
                     ""
                     "    float bias     = 0.04 * fragmentDepth;\n"                      // This can affect seams. Lower value = more seams.
-                    "    vec2  moments  = texture(shadowMap, shadowCoord).xy;\n"
+                    "    vec2  moments  = textureCube(shadowMap, shadowCoord).xy;\n"
                     "    float variance = moments.y - (moments.x * moments.x);\n"
                     "    float d        = fragmentDepth - moments.x;\n"
                     "    float p        = smoothstep(fragmentDepth - bias, fragmentDepth, moments.x);\n"
