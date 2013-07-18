@@ -31,14 +31,25 @@ namespace GTEngine
 
         /// Creates a gaussian blur shader.
         ///
-        /// @param pixelCount   [in] The number of pixels in the blur kernal.
+        /// @param kernelSize   [in] The number of pixels in the blur kernal.
         /// @param sigmaSquared [in] The sigma factor, squared.
-        Shader* CreateXGaussianBlurShader(unsigned int pixelCount, float sigmaSquared);
-        Shader* CreateYGaussianBlurShader(unsigned int pixelCount, float sigmaSquared);
+        ///
+        /// @remarks
+        ///     The kernel size should be an odd number so that there is a center pixel.
+        Shader* CreateXGaussianBlurShader(unsigned int kernelSize, float sigmaSquared);
+        Shader* CreateYGaussianBlurShader(unsigned int kernelSize, float sigmaSquared);
 
 
 
     private:
+
+        /// A generic function for creating a gaussian blur shader on either the X or Y axis.
+        ///
+        /// @param kernelSize   [in] The number of pixels in the blur kernal.
+        /// @param sigmaSquared [in] The sigma factor, squared.
+        /// @param xAxis        [in] Whether or not this is for the x axis. When set to false, it'll consider it the Y axis.
+        Shader* CreateGaussianBlurShader(unsigned int kernelSize, float sigmaSquared, bool xAxis);
+
 
         /// Creates a vertex shader string.
         ///
