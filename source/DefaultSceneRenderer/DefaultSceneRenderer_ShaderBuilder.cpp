@@ -61,20 +61,89 @@ namespace GTEngine
 
     Shader* DefaultSceneRenderer_ShaderBuilder::CreateXGaussianBlurShader(unsigned int pixelCount, float sigmaSquared)
     {
-        (void)pixelCount;
-        (void)sigmaSquared;
-
-        return nullptr;
+        return this->CreateGaussianBlurShader(pixelCount, sigmaSquared, true);
     }
 
     Shader* DefaultSceneRenderer_ShaderBuilder::CreateYGaussianBlurShader(unsigned int pixelCount, float sigmaSquared)
     {
-        (void)pixelCount;
-        (void)sigmaSquared;
-
-        return nullptr;
+        return this->CreateGaussianBlurShader(pixelCount, sigmaSquared, false);
     }
 
+
+
+    //////////////////////////////////////////////////////
+    // Private
+
+    Shader* DefaultSceneRenderer_ShaderBuilder::CreateGaussianBlurShader(unsigned int kernelSize, float sigmaSquared, bool xAxis)
+    {
+        // Some constants to make things easier later on.
+        const double pi = glm::pi<double>();
+        const double e  = glm::e<double>();
+        const double s2 = static_cast<double>(sigmaSquared);
+
+
+        // Vertex Shader.
+        GTCore::String vertexSource
+        (
+            "attribute vec3 VertexInput_Position;\n"
+            "attribute vec4 VertexInput_TexCoord;\n"
+
+            "varying vec4 VertexOutput_TexCoord;\n"
+
+            "void main()\n"
+            "{\n"
+            "    VertexOutput_TexCoord = VertexInput_TexCoord;\n"
+            "    gl_Position           = vec4(VertexInput_Position, 1.0);\n"
+            "}"
+        );
+
+        GTCore::String fragmentSource
+        (
+            "varying vec4 VertexOutput_TexCoord;\n"
+        
+            "uniform sampler2D Texture;\n"
+            "uniform float     TextureSizeReciprocal;\n"
+
+            "void main()\n"
+            "{\n"
+            "    vec2  uv       = VertexOutput_TexCoord.xy;\n"
+            "    float uvOffset = TextureSizeReciprocal;\n"
+            
+            "    vec4  outputColour = vec4(0.0, 0.0, 0.0, 0.0);\n"
+        );
+
+        for (unsigned int iCoefficient = 0; iCoefficient < kernelSize; ++iCoefficient)
+        {
+            const double x = static_cast<double>(iCoefficient - (kernelSize / 2));
+            const double coefficient = (1.0 / (glm::sqrt(2.0 * pi * s2))) * (glm::pow(e, -((x*x) / (2.0 * s2))));
+
+            if (xAxis)
+            {
+                // X Axis.
+                fragmentSource.AppendFormatted
+                (
+                    "outputColour += texture2D(Texture, vec2(uv.x + (%f * uvOffset), uv.y)) * %f;", x, coefficient
+                );
+            }
+            else
+            {
+                // Y Axis.
+                fragmentSource.AppendFormatted
+                (
+                    "outputColour += texture2D(Texture, vec2(uv.x, uv.y + (%f * uvOffset))) * %f;", x, coefficient
+                );
+            }
+        }
+
+        fragmentSource.Append
+        (
+            "    gl_FragData[0] = outputColour;\n"
+            "}\n"
+        );
+
+        // TODO: Cache this so the shader builder can manage the creation and deletion of shaders itself. Also, don't want to create the same blur shaders if it's not needed.
+        return Renderer::CreateShader(vertexSource.c_str(), fragmentSource.c_str());
+    }
 
 
     GTCore::String DefaultSceneRenderer_ShaderBuilder::CreateVertexShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const
