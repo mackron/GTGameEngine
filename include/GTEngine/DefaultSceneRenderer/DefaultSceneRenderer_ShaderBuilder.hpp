@@ -40,6 +40,9 @@ namespace GTEngine
         Shader* CreateYGaussianBlurShader(unsigned int kernelSize, float sigmaSquared);
 
 
+        /// Creates the shader to use when doing the depth pass.
+        Shader* CreateDepthPassShader();
+
 
     private:
 

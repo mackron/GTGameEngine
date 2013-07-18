@@ -70,6 +70,38 @@ namespace GTEngine
     }
 
 
+    Shader* DefaultSceneRenderer_ShaderBuilder::CreateDepthPassShader()
+    {
+        // Vertex Shader.
+        GTCore::String vertexSource
+        (
+            "#version 120\n"
+
+            "attribute vec3 VertexInput_Position;\n"
+            "uniform   mat4 PVMMatrix;\n"
+    
+            "void main()\n"
+            "{\n"
+            "    gl_Position = PVMMatrix * vec4(VertexInput_Position, 1.0);\n"
+            "}\n"
+        );
+
+
+        // Fragment Shader.
+        GTCore::String fragmentSource
+        (
+            "#version 120\n"
+
+            "void main()\n"
+            "{\n"
+            "}\n"
+        );
+
+
+        return Renderer::CreateShader(vertexSource.c_str(), fragmentSource.c_str());
+    }
+
+
 
     //////////////////////////////////////////////////////
     // Private

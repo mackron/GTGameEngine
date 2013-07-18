@@ -33,7 +33,6 @@ namespace GTEngine
         this->spotShadowMapFramebuffer.Resize(this->spotShadowMapSize, this->spotShadowMapSize);
 
 
-        this->depthPassShader                  = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_DepthPassFS"));
         this->shadowMapShader                  = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_ShadowMapFS"));
         this->pointShadowMapShader             = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapVS"),   ShaderLibrary::GetShaderString("DefaultSceneRenderer_PointShadowMapFS"));
         this->finalCompositionShaderHDR        = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionHDRFS"));
@@ -43,6 +42,7 @@ namespace GTEngine
         this->highlightShader                  = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_HighlightVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_HighlightFS"));
         
 
+        this->depthPassShader  = this->shaderBuilder.CreateDepthPassShader();
         this->blurShaderX      = this->shaderBuilder.CreateXGaussianBlurShader(21, 8.0f);
         this->blurShaderY      = this->shaderBuilder.CreateYGaussianBlurShader(21, 8.0f);
         this->blurShaderX11x11 = this->shaderBuilder.CreateXGaussianBlurShader(11, 2.0f);
@@ -603,6 +603,7 @@ namespace GTEngine
             // Shader.
             Renderer::SetCurrentShader(this->blurShaderX11x11);
             this->blurShaderX11x11->SetUniform("Texture", this->directionalShadowMapFramebuffer.colourBuffer);
+            this->blurShaderX11x11->SetUniform("TextureSizeReciprocal", 1.0f / static_cast<float>(this->directionalShadowMapFramebuffer.colourBuffer->GetWidth()));
             Renderer::PushPendingUniforms(*this->blurShaderX11x11);
 
             // Draw.
@@ -616,6 +617,7 @@ namespace GTEngine
             // Shader.
             Renderer::SetCurrentShader(this->blurShaderY11x11);
             this->blurShaderY11x11->SetUniform("Texture", this->directionalShadowMapFramebuffer.blurBuffer);
+            this->blurShaderX11x11->SetUniform("TextureSizeReciprocal", 1.0f / static_cast<float>(this->directionalShadowMapFramebuffer.colourBuffer->GetHeight()));
             Renderer::PushPendingUniforms(*this->blurShaderY11x11);
 
             // Draw.
@@ -786,6 +788,7 @@ namespace GTEngine
             // Shader.
             Renderer::SetCurrentShader(this->blurShaderX11x11);
             this->blurShaderX11x11->SetUniform("Texture", this->pointShadowMapFramebuffer.blurBuffer0);
+            this->blurShaderX11x11->SetUniform("TextureSizeReciprocal", 1.0f / static_cast<float>(this->pointShadowMapFramebuffer.blurBuffer0->GetWidth()));
             Renderer::PushPendingUniforms(*this->blurShaderX11x11);
 
             // Draw.
@@ -799,6 +802,7 @@ namespace GTEngine
             // Shader.
             Renderer::SetCurrentShader(this->blurShaderY11x11);
             this->blurShaderY11x11->SetUniform("Texture", this->pointShadowMapFramebuffer.blurBuffer1);
+            this->blurShaderY11x11->SetUniform("TextureSizeReciprocal", 1.0f / static_cast<float>(this->pointShadowMapFramebuffer.blurBuffer1->GetHeight()));
             Renderer::PushPendingUniforms(*this->blurShaderY11x11);
 
             // Draw.
