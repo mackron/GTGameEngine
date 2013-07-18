@@ -663,12 +663,8 @@ namespace GTEngine
         /// The shader use for doing a gaussian blur.
         Shader* blurShaderX;
         Shader* blurShaderY;
-        Shader* blurShaderX7x7;
-        Shader* blurShaderY7x7;
         Shader* blurShaderX11x11;
         Shader* blurShaderY11x11;
-        Shader* blurShaderX15x15;
-        Shader* blurShaderY15x15;
 
 
         /// The shader builder for dynamically building shaders for various things.

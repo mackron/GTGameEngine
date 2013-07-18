@@ -22,7 +22,7 @@ namespace GTEngine
           shadowMapShader(nullptr), pointShadowMapShader(nullptr),
           finalCompositionShaderHDR(nullptr), finalCompositionShaderHDRNoBloom(nullptr), finalCompositionShaderLDR(nullptr),
           bloomShader(nullptr), highlightShader(nullptr),
-          blurShaderX(nullptr), blurShaderY(nullptr), blurShaderX7x7(nullptr), blurShaderY7x7(nullptr), blurShaderX11x11(nullptr), blurShaderY11x11(nullptr), blurShaderX15x15(nullptr), blurShaderY15x15(nullptr),
+          blurShaderX(nullptr), blurShaderY(nullptr), blurShaderX11x11(nullptr), blurShaderY11x11(nullptr),
           shaderBuilder(),
           isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(1.0f),
           directionalShadowMapSize(1024), pointShadowMapSize(256), spotShadowMapSize(512),
@@ -41,15 +41,12 @@ namespace GTEngine
         this->finalCompositionShaderLDR        = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionLDRFS"));
         this->bloomShader                      = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_BloomFS"));
         this->highlightShader                  = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_HighlightVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_HighlightFS"));
-        this->blurShaderX                      = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurXFS"));
-        this->blurShaderY                      = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurYFS"));
-        this->blurShaderX7x7                   = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurX7x7FS"));
-        this->blurShaderY7x7                   = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurY7x7FS"));
-        this->blurShaderX11x11                 = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurX11x11FS"));
-        this->blurShaderY11x11                 = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurY11x11FS"));
-        this->blurShaderX15x15                 = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurX15x15FS"));
-        this->blurShaderY15x15                 = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurVS"),             ShaderLibrary::GetShaderString("DefaultSceneRenderer_BlurY15x15FS"));
+        
 
+        this->blurShaderX      = this->shaderBuilder.CreateXGaussianBlurShader(21, 8.0f);
+        this->blurShaderY      = this->shaderBuilder.CreateYGaussianBlurShader(21, 8.0f);
+        this->blurShaderX11x11 = this->shaderBuilder.CreateXGaussianBlurShader(11, 2.0f);
+        this->blurShaderY11x11 = this->shaderBuilder.CreateYGaussianBlurShader(11, 2.0f);
 
 
         /// Fullscreen Triangle Vertex Array.
@@ -94,12 +91,8 @@ namespace GTEngine
         Renderer::DeleteShader(this->highlightShader);
         Renderer::DeleteShader(this->blurShaderX);
         Renderer::DeleteShader(this->blurShaderY);
-        Renderer::DeleteShader(this->blurShaderX7x7);
-        Renderer::DeleteShader(this->blurShaderY7x7);
         Renderer::DeleteShader(this->blurShaderX11x11);
         Renderer::DeleteShader(this->blurShaderY11x11);
-        Renderer::DeleteShader(this->blurShaderX15x15);
-        Renderer::DeleteShader(this->blurShaderY15x15);
 
         for (size_t i = 0; i < this->materialShaders.count; ++i)
         {
@@ -716,6 +709,7 @@ namespace GTEngine
             // Shader.
             Renderer::SetCurrentShader(this->blurShaderX11x11);
             this->blurShaderX11x11->SetUniform("Texture", this->spotShadowMapFramebuffer.colourBuffer);
+            this->blurShaderX11x11->SetUniform("TextureSizeReciprocal", 1.0f / static_cast<float>(this->spotShadowMapFramebuffer.colourBuffer->GetWidth()));
             Renderer::PushPendingUniforms(*this->blurShaderX11x11);
 
             // Draw.
@@ -729,6 +723,7 @@ namespace GTEngine
             // Shader.
             Renderer::SetCurrentShader(this->blurShaderY11x11);
             this->blurShaderY11x11->SetUniform("Texture", this->spotShadowMapFramebuffer.blurBuffer);
+            this->blurShaderY11x11->SetUniform("TextureSizeReciprocal", 1.0f / static_cast<float>(this->spotShadowMapFramebuffer.colourBuffer->GetHeight()));
             Renderer::PushPendingUniforms(*this->blurShaderY11x11);
 
             // Draw.
@@ -1087,7 +1082,8 @@ namespace GTEngine
 
             // Shader.
             Renderer::SetCurrentShader(this->blurShaderX);
-            this->blurShaderX->SetUniform("Texture", framebuffer->bloomBuffer);
+            this->blurShaderX->SetUniform("Texture",               framebuffer->bloomBuffer);
+            this->blurShaderX->SetUniform("TextureSizeReciprocal", 1.0f / static_cast<float>(framebuffer->bloomBlurBuffer->GetWidth()));
             Renderer::PushPendingUniforms(*this->blurShaderX);
 
             // Draw.
@@ -1100,7 +1096,8 @@ namespace GTEngine
 
             // Shader.
             Renderer::SetCurrentShader(this->blurShaderY);
-            this->blurShaderY->SetUniform("Texture", framebuffer->bloomBlurBuffer);
+            this->blurShaderY->SetUniform("Texture",               framebuffer->bloomBlurBuffer);
+            this->blurShaderY->SetUniform("TextureSizeReciprocal", 1.0f / static_cast<float>(framebuffer->bloomBlurBuffer->GetHeight()));
             Renderer::PushPendingUniforms(*this->blurShaderY);
 
             // Draw.
