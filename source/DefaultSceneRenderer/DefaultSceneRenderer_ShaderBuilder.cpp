@@ -158,7 +158,7 @@ namespace GTEngine
                 // X Axis.
                 fragmentSource.AppendFormatted
                 (
-                    "    outputColour += texture2D(Texture, vec2(uv.x + (%.10f * uvOffset), uv.y)) * %.10f;\n", x, coefficient
+                    "    outputColour = texture2D(Texture, vec2(uv.x + (%.10f * uvOffset), uv.y)) * %.10f + outputColour;\n", x, coefficient
                 );
             }
             else
@@ -166,7 +166,7 @@ namespace GTEngine
                 // Y Axis.
                 fragmentSource.AppendFormatted
                 (
-                    "    outputColour += texture2D(Texture, vec2(uv.x, uv.y + (%.10f * uvOffset))) * %.10f;\n", x, coefficient
+                    "    outputColour = texture2D(Texture, vec2(uv.x, uv.y + (%.10f * uvOffset))) * %.10f + outputColour;\n", x, coefficient
                 );
             }
         }
