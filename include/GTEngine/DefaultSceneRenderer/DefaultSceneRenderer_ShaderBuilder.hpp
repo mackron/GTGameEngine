@@ -46,6 +46,12 @@ namespace GTEngine
         /// Creates the shader to use when doing the highlight effect on objects.
         Shader* CreateHighlightShader();
 
+        /// Creates the shadow-map shader for directional and spot lights.
+        Shader* CreateShadowMapShader();
+
+        /// Creaets the shadow-map shader for point lights.
+        Shader* CreatePointShadowMapShader();
+
 
     private:
 

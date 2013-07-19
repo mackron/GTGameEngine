@@ -135,6 +135,83 @@ namespace GTEngine
     }
 
 
+    Shader* DefaultSceneRenderer_ShaderBuilder::CreateShadowMapShader()
+    {
+        // Vertex Shader.
+        GTCore::String vertexSource
+        (
+            "#version 120\n"
+
+            "attribute vec3 VertexInput_Position;\n"
+            "varying   vec4 ShadowCoord;\n"
+            "uniform   mat4 PVMMatrix;\n"
+    
+            "void main()\n"
+            "{\n"
+            "    gl_Position = PVMMatrix * vec4(VertexInput_Position, 1.0);\n"
+            "    ShadowCoord = gl_Position;\n"
+            "}"
+        );
+
+
+        // Fragment Shader.
+        GTCore::String fragmentSource
+        (
+            "#version 120\n"
+
+            "varying vec4 VertexOutput_Position;\n"
+            "varying vec4 ShadowCoord;\n"
+    
+            "void main()\n"
+            "{\n"
+            "    float depth = ShadowCoord.z / ShadowCoord.w;\n"
+            "    gl_FragData[0] = vec4(depth, depth * depth, 0.0, 1.0);\n"
+            "}"
+        );
+
+
+        return Renderer::CreateShader(vertexSource.c_str(), fragmentSource.c_str());
+    }
+
+    Shader* DefaultSceneRenderer_ShaderBuilder::CreatePointShadowMapShader()
+    {
+        // Vertex Shader.
+        GTCore::String vertexSource
+        (
+            "#version 120\n"
+
+            "attribute vec3 VertexInput_Position;\n"
+            "varying   vec4 ShadowCoord;\n"
+    
+            "uniform mat4 PVMMatrix;\n"
+            "uniform mat4 ViewModelMatrix;\n"
+    
+            "void main()\n"
+            "{\n"
+            "    gl_Position = PVMMatrix       * vec4(VertexInput_Position, 1.0);\n"
+            "    ShadowCoord = ViewModelMatrix * vec4(VertexInput_Position, 1.0);\n"
+            "}"
+        );
+
+
+        // Fragment Shader.
+        GTCore::String fragmentSource
+        (
+            "#version 120\n"
+
+            "varying vec4 ShadowCoord;\n"
+
+            "void main()\n"
+            "{\n"
+            "    float depth = length(ShadowCoord.xyz);\n"
+            "    gl_FragData[0] = vec4(depth, depth * depth, 0.0, 1.0);\n"
+            "}"
+        );
+
+
+        return Renderer::CreateShader(vertexSource.c_str(), fragmentSource.c_str());
+    }
+
 
     //////////////////////////////////////////////////////
     // Private
