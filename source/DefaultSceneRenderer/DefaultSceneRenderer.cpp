@@ -39,10 +39,10 @@ namespace GTEngine
         this->finalCompositionShaderHDRNoBloom = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionHDRNoBloomFS"));
         this->finalCompositionShaderLDR        = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionLDRFS"));
         this->bloomShader                      = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_BloomFS"));
-        this->highlightShader                  = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_HighlightVS"),        ShaderLibrary::GetShaderString("DefaultSceneRenderer_HighlightFS"));
         
 
         this->depthPassShader  = this->shaderBuilder.CreateDepthPassShader();
+        this->highlightShader  = this->shaderBuilder.CreateHighlightShader();
         this->blurShaderX      = this->shaderBuilder.CreateXGaussianBlurShader(21, 8.0f);
         this->blurShaderY      = this->shaderBuilder.CreateYGaussianBlurShader(21, 8.0f);
         this->blurShaderX11x11 = this->shaderBuilder.CreateXGaussianBlurShader(11, 2.0f);
