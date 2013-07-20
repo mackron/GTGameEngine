@@ -183,7 +183,21 @@ namespace GTEngine
 
             // Whether or not we output the error message depends on the message. Some drivers output messages like "No errors." when there are no
             // errors or warnings.
-            if (GTCore::Strings::FindFirst(log, "No errors.") != log)
+
+            const char* successStringIntel = GTCore::Strings::FindFirst(log, "No errors.");
+            
+            const char* successStringAMD   = nullptr;
+            if (type == GL_VERTEX_SHADER)
+            {
+                successStringAMD = GTCore::Strings::FindFirst(log, "Vertex shader was successfully compiled");
+            }
+            else if (type == GL_FRAGMENT_SHADER)
+            {
+                successStringAMD = GTCore::Strings::FindFirst(log, "Fragment shader was successfully compiled");
+            }
+
+            // If we can't find one of the success strings, we'll need to log the output.
+            if (!(successStringIntel == log || successStringAMD == log))
             {
                 GTCore::String title;
                 if (type == GL_VERTEX_SHADER)
