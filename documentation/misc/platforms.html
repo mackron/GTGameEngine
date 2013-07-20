@@ -1,0 +1,51 @@
+---
+title:  "Platforms and Requirements"
+layout: miscref
+---
+<div class="page-title-small">
+    <h1>Platforms and Requirements</h1>
+</div>
+<div class="container-fluid">
+    <div style="padding:0px 20px;">
+        <p>
+        This page contains information the engine's supported platforms and requirements.
+        </p>
+        <div class="documentation-section">
+            <h1>Operating Systems</h1>
+            <ul>
+                <li>Windows</li>
+                <li>Linux</li>
+            </ul>
+            <p>
+            Planned for the future:
+            </p>
+            <ul>
+                <li>OSX and iOS</li>
+                <li>Android</li>
+            </ul>
+        </div>
+        <div class="documentation-section">
+            <h1>Hardware</h1>
+            <p>
+            The engine supports custom renderers, so GPU hardware support can vary. However, the engine's default renderer requires support for 
+            OpenGL 2.1 and the following extensions at a minimum:
+            </p>
+            <ul>
+                <li>EXT_framebuffer_object or ARB_framebuffer_object</li>
+                <li>ARB_texture_rg</li>
+                <li>ARB_texture_float</li>
+            </ul>
+        </div>
+        <div class="documentation-section">
+            <h1>Software</h1>
+            <p>
+            Currently, DirectX is not needed on Windows, but future plans include adding support for Xbox controllers, so this may change in the future.
+            </p>
+            <p>
+            For audio, the engine currently uses OpenAL. The engine does not statically link an OpenAL implementation into the main executable, so your
+            game will need to install or distribute an OpenAL DLL or SO. <a href="http://kcat.strangesoft.net/openal.html" target="_blank">OpenAL Soft</a>
+            is a free and open-source (LGPL) implementation.
+            </p>
+        </div>
+    </div>
+</div>
