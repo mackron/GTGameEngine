@@ -52,6 +52,20 @@ namespace GTEngine
         /// Creaets the shadow-map shader for point lights.
         Shader* CreatePointShadowMapShader();
 
+        
+        /// Creates the shader for calculating the bloom intensity.
+        Shader* CreateBloomShader();
+
+
+        /// Creates the shader for doing the LDR final composition.
+        Shader* CreateLDRFinalCompositionShader();
+
+        /// Creates the shader for doing the HDR final composition.
+        Shader* CreateHDRFinalCompositionShader();
+
+        /// Creates the shader for doing the HDR without bloom final composition.
+        Shader* CreateHDRNoBloomFinalCompositionShader();
+
 
     private:
 
@@ -244,6 +258,10 @@ namespace GTEngine
         const char* GetMaterialShaderString_Refraction(const MaterialDefinition &material) const;
 
         
+
+        /// Retrieves a shader string for the vertex shader of a fullscreen quad or triangle.
+        GTCore::String GetFullscreenPrimitiveVertexShader() const;
+
 
 
     private:

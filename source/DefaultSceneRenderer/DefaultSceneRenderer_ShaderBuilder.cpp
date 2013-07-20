@@ -213,6 +213,122 @@ namespace GTEngine
     }
 
 
+    Shader* DefaultSceneRenderer_ShaderBuilder::CreateBloomShader()
+    {
+        // Vertex Shader.
+        GTCore::String vertexSource(this->GetFullscreenPrimitiveVertexShader());
+
+
+        // Fragment Shader.
+        GTCore::String fragmentSource
+        (
+            "#version 120\n"
+
+            "varying vec2 VertexOutput_TexCoord;\n"
+    
+            "uniform sampler2D ColourBuffer;\n"
+    
+            "void main()\n"
+            "{\n"
+            "    gl_FragData[0] = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 0) - vec4(1.0, 1.0, 1.0, 0.0));\n"
+            "}"
+        );
+
+
+        return Renderer::CreateShader(vertexSource.c_str(), fragmentSource.c_str());
+    }
+
+
+    Shader* DefaultSceneRenderer_ShaderBuilder::CreateLDRFinalCompositionShader()
+    {
+        // Vertex Shader.
+        GTCore::String vertexSource(this->GetFullscreenPrimitiveVertexShader());
+
+
+        // Fragment Shader.
+        GTCore::String fragmentSource
+        (
+            "#version 120\n"
+
+            "varying vec2 VertexOutput_TexCoord;\n"
+    
+            "uniform sampler2D ColourBuffer;\n"
+    
+            "void main()\n"
+            "{\n"
+            "    gl_FragData[0] = texture2D(ColourBuffer, VertexOutput_TexCoord);\n"
+            "}"
+        );
+
+
+        return Renderer::CreateShader(vertexSource.c_str(), fragmentSource.c_str());
+    }
+
+    Shader* DefaultSceneRenderer_ShaderBuilder::CreateHDRFinalCompositionShader()
+    {
+        // Vertex Shader.
+        GTCore::String vertexSource(this->GetFullscreenPrimitiveVertexShader());
+
+
+        // Fragment Shader.
+        GTCore::String fragmentSource
+        (
+            "#version 120\n"
+
+            "varying vec2 VertexOutput_TexCoord;\n"
+    
+            "uniform sampler2D ColourBuffer;\n"
+            "uniform sampler2D BloomBuffer;\n"
+            "uniform float     Exposure;\n"
+            "uniform float     BloomFactor;\n"
+    
+            "void main()\n"
+            "{\n"
+            "    vec4  bloom     = texture2D(BloomBuffer, VertexOutput_TexCoord, 0);\n"
+            "    float luminance = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));\n"
+        
+            // Bloom.
+            "    gl_FragData[0] = (bloom * BloomFactor) + texture2D(ColourBuffer, VertexOutput_TexCoord);\n"
+        
+            // Tone Mapping.
+            "    gl_FragData[0] = gl_FragData[0] * min(5.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));\n"
+            "}"
+        );
+
+
+        return Renderer::CreateShader(vertexSource.c_str(), fragmentSource.c_str());
+    }
+
+    Shader* DefaultSceneRenderer_ShaderBuilder::CreateHDRNoBloomFinalCompositionShader()
+    {
+        // Vertex Shader.
+        GTCore::String vertexSource(this->GetFullscreenPrimitiveVertexShader());
+
+
+        // Fragment Shader.
+        GTCore::String fragmentSource
+        (
+            "#version 120\n"
+
+            "varying vec2 VertexOutput_TexCoord;\n"
+    
+            "uniform sampler2D ColourBuffer;\n"
+            "uniform float     Exposure;\n"
+    
+            "void main()\n"
+            "{\n"
+            "    float luminance = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));\n"
+
+            // Tone Mapping.
+            "    gl_FragData[0] = texture2D(ColourBuffer, VertexOutput_TexCoord) * min(5.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));\n"
+            "}\n"
+        );
+
+
+        return Renderer::CreateShader(vertexSource.c_str(), fragmentSource.c_str());
+    }
+
+
     //////////////////////////////////////////////////////
     // Private
 
@@ -1516,5 +1632,26 @@ namespace GTEngine
         }
 
         return "vec3 Refraction() { return vec3(0.0, 0.0, 1.0); }";
+    }
+
+
+
+    GTCore::String DefaultSceneRenderer_ShaderBuilder::GetFullscreenPrimitiveVertexShader() const
+    {
+        return GTCore::String
+        (
+            "#version 120\n"
+
+            "attribute vec3 VertexInput_Position;\n"
+            "attribute vec2 VertexInput_TexCoord;\n"
+
+            "varying vec2 VertexOutput_TexCoord;\n"
+    
+            "void main()\n"
+            "{\n"
+            "    VertexOutput_TexCoord = VertexInput_TexCoord;\n"
+            "    gl_Position           = vec4(VertexInput_Position, 1.0);\n"
+            "}"
+        );
     }
 }
