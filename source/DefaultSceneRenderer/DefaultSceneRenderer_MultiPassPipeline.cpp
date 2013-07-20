@@ -29,25 +29,37 @@ namespace GTEngine
     void DefaultSceneRenderer_MultiPassPipeline::Execute()
     {
         // Clear.
-        int lightingBuffers[] = {DiffuseLightingBufferIndex, SpecularLightingBufferIndex};
-        Renderer::SetDrawBuffers(2, lightingBuffers);
-
-        Renderer::SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
-        Renderer::SetClearDepth(1.0f);
-        Renderer::SetClearStencil(0);
-        Renderer::Clear(BufferType_Colour | BufferType_Depth | BufferType_Stencil);
-
-        // There is two groups of meshes. The regular group and the "draw last" group.
-        this->BindObjects(&this->visibleObjects.opaqueObjects, &this->visibleObjects.transparentObjects);
+        if (this->visibleObjects.opaqueObjects.count     > 0 || this->visibleObjects.transparentObjects.count     > 0 ||
+            this->visibleObjects.opaqueObjectsLast.count > 0 || this->visibleObjects.transparentObjectsLast.count > 0)
         {
-            this->OpaquePass();
-            this->TransparentPass();
+            int lightingBuffers[] = {DiffuseLightingBufferIndex, SpecularLightingBufferIndex};
+            Renderer::SetDrawBuffers(2, lightingBuffers);
+
+            Renderer::SetClearColour(0.0f, 0.0f, 0.0f, 1.0f);
+            Renderer::SetClearDepth(1.0f);
+            Renderer::SetClearStencil(0);
+            Renderer::Clear(BufferType_Colour | BufferType_Depth | BufferType_Stencil);
+
+            // There is two groups of meshes. The regular group and the "draw last" group.
+            this->BindObjects(&this->visibleObjects.opaqueObjects, &this->visibleObjects.transparentObjects);
+            {
+                this->OpaquePass();
+                this->TransparentPass();
+            }
+
+            this->BindObjects(&this->visibleObjects.opaqueObjectsLast, &this->visibleObjects.transparentObjectsLast);
+            {
+                this->OpaquePass();
+                this->TransparentPass();
+            }
         }
-
-        this->BindObjects(&this->visibleObjects.opaqueObjectsLast, &this->visibleObjects.transparentObjectsLast);
+        else
         {
-            this->OpaquePass();
-            this->TransparentPass();
+            // Just clear, if applicable.
+            int outputBuffer[] = {ColourBuffer0Index};
+            Renderer::SetDrawBuffers(1, outputBuffer);
+
+            this->TryClearBackground();
         }
     }
 
