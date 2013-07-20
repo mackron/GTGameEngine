@@ -13,6 +13,7 @@ FEATURES:
       the future is to have a "legacy" renderer which is OpenGL 2.1 and a
       "default" renderer which is OpenGL 4.3 based. OpenGL 3.3 does not add
       anything worth justifying it's own code path.
+    - Added the ability to control whether or not mouse smoothing is enabled.
 
 
 FIXES/IMPROVEMENTS:
