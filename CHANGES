@@ -5,9 +5,14 @@
 0.0.3 ()
 
 BREAKING CHANGES:
+    - None
 
 
 FEATURES:
+    - Added an OpenGL 2.1 renderer and dropped the OpenGL 3.3 one. The plan for
+      the future is to have a "legacy" renderer which is OpenGL 2.1 and a
+      "default" renderer which is OpenGL 4.3 based. OpenGL 3.3 does not add
+      anything worth justifying it's own code path.
 
 
 FIXES/IMPROVEMENTS:
@@ -35,10 +40,10 @@ FEATURES:
     - If a scene is playing inside the scene editor, it will be paused when the
       main window loses focus.
     - Added a "Viewport" menu to the particle editor.
-          - Allow the user to change the orientation of the preview particle
+        - Allow the user to change the orientation of the preview particle
             system.
-          - Allow the user to show/hide the grid and axis arrows.
-          - Allow the user to reset the camera
+        - Allow the user to show/hide the grid and axis arrows.
+        - Allow the user to reset the camera
     - Material channels are no longer pre-defined. This means materials can
       more easily be used by custom renderers.
     - Bones can now have their absolute position, rotation and scale set via
@@ -66,6 +71,6 @@ FIXES/IMPROVEMENTS:
     - Sprites and direction arrows are now hidden when playing a scene from
       inside the scene editor.
     - More work on documentation.
-          - Hello, World! and GUI Basics tutorials.
-          - Known Limitations
-          - Supported File Formats
+        - Hello, World! and GUI Basics tutorials.
+        - Known Limitations
+        - Supported File Formats
