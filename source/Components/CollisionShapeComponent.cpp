@@ -94,7 +94,7 @@ namespace GTEngine
     }
 
 
-    void CollisionShapeComponent::AddConvexHullShape(const float* points, size_t pointCount, size_t stride, float margin)
+    void CollisionShapeComponent::AddConvexHullCollisionShape(const float* points, size_t pointCount, size_t stride, float margin)
     {
         auto shape = new btConvexHullShape(static_cast<const btScalar*>(points), pointCount, stride);
         shape->setMargin(margin);
@@ -102,9 +102,52 @@ namespace GTEngine
         this->AddCollisionShape(shape, 0.0f, 0.0f, 0.0f);
     }
 
-    void CollisionShapeComponent::AddConvexHullShape(const ConvexHull &convexHull, float margin)
+    void CollisionShapeComponent::AddConvexHullCollisionShape(const ConvexHull &convexHull, float margin)
     {
-        this->AddConvexHullShape(convexHull.GetVertices(), convexHull.GetVertexCount(), sizeof(glm::vec3), margin);
+        this->AddConvexHullCollisionShape(convexHull.GetVertices(), convexHull.GetVertexCount(), sizeof(glm::vec3), margin);
+    }
+
+
+    void CollisionShapeComponent::AddModelConvexHullsCollisionShape(float margin, float offsetX, float offsetY, float offsetZ)
+    {
+        // Even if we don't have an attached model comonent, we still want to add the collision shape.
+        auto shape = new btCompoundShape(false);
+        this->AddModelConvexHullsToCompoundShape(shape, margin);
+
+        this->AddCollisionShape(shape, offsetX, offsetY, offsetZ);
+    }
+
+
+    void CollisionShapeComponent::RefreshModelConvexHullsShapes()
+    {
+        for (int iChildShape = 0; iChildShape < this->collisionShape.getNumChildShapes(); ++iChildShape)
+        {
+            // If the child shape is another compound shape, we can assume it's the shape of a model convex hulls.
+            auto childShape = this->collisionShape.getChildShape(iChildShape);
+            assert(childShape != nullptr);
+            {
+                if (childShape->getShapeType() == COMPOUND_SHAPE_PROXYTYPE)
+                {
+                    // This is a shape containing the model convex hulls. We just delete all of the shapes and re-create them, giving them the same margin
+                    // as the parent compound shape.
+                    auto convexHullsParentShape = static_cast<btCompoundShape*>(childShape);
+
+                    while (convexHullsParentShape->getNumChildShapes() > 0)
+                    {
+                        auto convexHullShape = convexHullsParentShape->getChildShape(0);
+                        assert(convexHullShape != nullptr);
+                        {
+                            convexHullsParentShape->removeChildShapeByIndex(0);
+                            delete convexHullShape;
+                        }
+                    }
+
+                    
+                    // Now we need to re-attach new convex hull shapes.
+                    this->AddModelConvexHullsToCompoundShape(convexHullsParentShape, convexHullsParentShape->getMargin());
+                }
+            }
+        }
     }
 
 
@@ -792,8 +835,28 @@ namespace GTEngine
                     break;
                 }
 
-
             case CollisionShapeType_ModelConvexHulls:
+                {
+                    header.id          = Serialization::ChunkID_CollisionShapeComponent_ModelConvexHullShape;
+                    header.version     = 1;
+                    header.sizeInBytes =
+                        sizeof(float) +                             // <-- Margin.
+                        sizeof(glm::vec3) + sizeof(glm::vec3);      // <-- Unscaled offset and rotation.
+
+                    serializer.Write(header);
+                    serializer.Write(shape.getMargin());
+                    
+                    auto metadata = reinterpret_cast<ChildCollisionShapeMetadata*>(shape.getUserPointer());
+                    assert(metadata != nullptr);
+                    {
+                        serializer.Write(metadata->unscaledOffset);
+                        serializer.Write(metadata->rotation);
+                    }
+
+                    break;
+                }
+
+
             case CollisionShapeType_None:
             default: break;
             }
@@ -1119,11 +1182,30 @@ namespace GTEngine
 
                     default:
                         {
-                            GTEngine::Log("Error deserializing CollisionShapeComponent. Box shape chunk version (%d) is unknown. Skipping.", header.version);
+                            GTEngine::Log("Error deserializing CollisionShapeComponent. Convex hull chunk version (%d) is unknown. Skipping.", header.version);
 
                             deserializer.Seek(header.sizeInBytes);
                             break;
                         }
+                    }
+
+                    break;
+                }
+
+
+            case Serialization::ChunkID_CollisionShapeComponent_ModelConvexHullShape:
+                {
+                    if (header.version == 1)
+                    {
+                        float margin;
+                        deserializer.Read(margin);
+
+                        this->AddModelConvexHullsCollisionShape(margin);
+                    }
+                    else
+                    {
+                        GTEngine::Log("Error deserializing CollisionShapeComponent. Model convex hull chunk version (%d) is unknown. Skipping.", header.version);
+                        deserializer.Seek(header.sizeInBytes);
                     }
 
                     break;
@@ -1167,5 +1249,37 @@ namespace GTEngine
         }
         this->OnPostCollisionShapeChanged();
         this->OnChanged();
+    }
+
+
+    void CollisionShapeComponent::AddModelConvexHullsToCompoundShape(btCompoundShape* shape, float margin)
+    {
+        assert(shape != nullptr);
+        {
+            auto modelComponent = this->node.GetComponent<ModelComponent>();
+            if (modelComponent != nullptr)
+            {
+                auto model = modelComponent->GetModel();
+                if (model != nullptr)
+                {
+                    auto &definition = model->GetDefinition();
+
+                    for (size_t iConvexHull = 0; iConvexHull < definition.convexHulls.count; ++iConvexHull)
+                    {
+                        auto convexHull = definition.convexHulls[iConvexHull];
+                        assert(convexHull != nullptr);
+                        {
+                            auto convexHullShape = new btConvexHullShape(static_cast<const btScalar*>(convexHull->GetVertices()), convexHull->GetVertexCount(), 12);
+                            convexHullShape->setMargin(margin);
+
+                            shape->addChildShape(btTransform::getIdentity(), convexHullShape);
+                        }
+                    }
+                }
+            }
+
+            // The local AABB must be recalculated because we passed 'false' to the shape's constructor (no dynamic recalculating of the local AABB).
+            shape->recalculateLocalAabb();
+        }
     }
 }

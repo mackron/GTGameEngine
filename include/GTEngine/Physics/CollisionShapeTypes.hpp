@@ -82,6 +82,11 @@ namespace GTEngine
                     return CollisionShapeType_ConvexHull;
                 }
 
+            case COMPOUND_SHAPE_PROXYTYPE:                  // <-- Will be the model convex hulls.
+                {
+                    return CollisionShapeType_ModelConvexHulls;
+                }
+
 
             default:
                 {
