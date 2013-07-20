@@ -14,7 +14,10 @@ namespace GTEngine
     RCSetFramebufferState::RCSetFramebufferState()
         : operationBitfield(0),
           framebufferState(nullptr),
-          attachments()
+          attachments(),
+          attachWriteOnlyDepthStencilBuffer(GL_FALSE),
+          writeOnlyDepthStencilBufferWidth(0),
+          writeOnlyDepthStencilBufferHeight(0)
     {
     }
 
