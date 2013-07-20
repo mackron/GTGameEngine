@@ -32,21 +32,18 @@ namespace GTEngine
         this->pointShadowMapFramebuffer.Resize(this->pointShadowMapSize, this->pointShadowMapSize);
         this->spotShadowMapFramebuffer.Resize(this->spotShadowMapSize, this->spotShadowMapSize);
 
-
-        this->finalCompositionShaderHDR        = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionHDRFS"));
-        this->finalCompositionShaderHDRNoBloom = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionHDRNoBloomFS"));
-        this->finalCompositionShaderLDR        = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionLDRFS"));
-        this->bloomShader                      = Renderer::CreateShader(ShaderLibrary::GetShaderString("DefaultSceneRenderer_FinalCompositionVS"), ShaderLibrary::GetShaderString("DefaultSceneRenderer_BloomFS"));
-        
-
-        this->depthPassShader      = this->shaderBuilder.CreateDepthPassShader();
-        this->highlightShader      = this->shaderBuilder.CreateHighlightShader();
-        this->blurShaderX          = this->shaderBuilder.CreateXGaussianBlurShader(21, 8.0f);
-        this->blurShaderY          = this->shaderBuilder.CreateYGaussianBlurShader(21, 8.0f);
-        this->blurShaderX11x11     = this->shaderBuilder.CreateXGaussianBlurShader(11, 2.0f);
-        this->blurShaderY11x11     = this->shaderBuilder.CreateYGaussianBlurShader(11, 2.0f);
-        this->shadowMapShader      = this->shaderBuilder.CreateShadowMapShader();
-        this->pointShadowMapShader = this->shaderBuilder.CreatePointShadowMapShader();
+        this->depthPassShader                  = this->shaderBuilder.CreateDepthPassShader();
+        this->highlightShader                  = this->shaderBuilder.CreateHighlightShader();
+        this->blurShaderX                      = this->shaderBuilder.CreateXGaussianBlurShader(21, 8.0f);
+        this->blurShaderY                      = this->shaderBuilder.CreateYGaussianBlurShader(21, 8.0f);
+        this->blurShaderX11x11                 = this->shaderBuilder.CreateXGaussianBlurShader(11, 2.0f);
+        this->blurShaderY11x11                 = this->shaderBuilder.CreateYGaussianBlurShader(11, 2.0f);
+        this->shadowMapShader                  = this->shaderBuilder.CreateShadowMapShader();
+        this->pointShadowMapShader             = this->shaderBuilder.CreatePointShadowMapShader();
+        this->bloomShader                      = this->shaderBuilder.CreateBloomShader();
+        this->finalCompositionShaderLDR        = this->shaderBuilder.CreateLDRFinalCompositionShader();
+        this->finalCompositionShaderHDR        = this->shaderBuilder.CreateHDRFinalCompositionShader();
+        this->finalCompositionShaderHDRNoBloom = this->shaderBuilder.CreateHDRNoBloomFinalCompositionShader();
 
 
         /// Fullscreen Triangle Vertex Array.
