@@ -2600,6 +2600,10 @@ namespace GTEngine
 
                             case CollisionShapeType_ModelConvexHulls:
                                 {
+                                    auto &compound = static_cast<const btCompoundShape &>(shape);
+
+                                    script.SetTableValue(-1, "margin", compound.getMargin());
+
                                     break;
                                 }
 

@@ -100,13 +100,14 @@ namespace GTEngine
         static const uint32_t ChunkID_AmbientLightComponent_Main              = CHUNK_ID(0x00000150U);
 
         // CollisionShapeComponent
-        static const uint32_t ChunkID_CollisionShapeComponent_Main            = CHUNK_ID(0x00000160U);
-        static const uint32_t ChunkID_CollisionShapeComponent_BoxShape        = CHUNK_ID(0x00000161U);
-        static const uint32_t ChunkID_CollisionShapeComponent_SphereShape     = CHUNK_ID(0x00000162U);
-        static const uint32_t ChunkID_CollisionShapeComponent_EllipsoidShape  = CHUNK_ID(0x00000163U);
-        static const uint32_t ChunkID_CollisionShapeComponent_CylinderShape   = CHUNK_ID(0x00000164U);
-        static const uint32_t ChunkID_CollisionShapeComponent_CapsuleShape    = CHUNK_ID(0x00000165U);
-        static const uint32_t ChunkID_CollisionShapeComponent_ConvexHullShape = CHUNK_ID(0x00000166U);
+        static const uint32_t ChunkID_CollisionShapeComponent_Main                 = CHUNK_ID(0x00000160U);
+        static const uint32_t ChunkID_CollisionShapeComponent_BoxShape             = CHUNK_ID(0x00000161U);
+        static const uint32_t ChunkID_CollisionShapeComponent_SphereShape          = CHUNK_ID(0x00000162U);
+        static const uint32_t ChunkID_CollisionShapeComponent_EllipsoidShape       = CHUNK_ID(0x00000163U);
+        static const uint32_t ChunkID_CollisionShapeComponent_CylinderShape        = CHUNK_ID(0x00000164U);
+        static const uint32_t ChunkID_CollisionShapeComponent_CapsuleShape         = CHUNK_ID(0x00000165U);
+        static const uint32_t ChunkID_CollisionShapeComponent_ConvexHullShape      = CHUNK_ID(0x00000166U);
+        static const uint32_t ChunkID_CollisionShapeComponent_ModelConvexHullShape = CHUNK_ID(0x00000167U);
 
         // DynamicsComponent
         static const uint32_t ChunkID_DynamicsComponent_Main                  = CHUNK_ID(0x00000170U);

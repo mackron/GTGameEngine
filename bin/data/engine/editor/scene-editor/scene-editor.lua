@@ -245,6 +245,23 @@ end
 function GTGUI.Element:CollisionShapePanel_ModelConvexHulls()
     self:CollisionShapePanel("Model Convex Hulls", true);       -- 'true' means to hide the offset properties since they're not used with convex hulls at the moment.
     
+    self.MarginInput = GTGUI.Server.CreateElement(self, "labelled-number-input");
+    self.MarginInput:LabelledNumberInput("Margin:");
+    
+    self.MarginInput:OnValueChanged(function()
+        self:OnSizeChanged({margin = self.MarginInput:GetValue()});
+    end);
+    
+    
+    function self:Update(shape)
+        self:UpdateOffset(shape);
+        self.MarginInput:SetValue(shape.margin);
+    end
+    
+    function self:OnSizeChanged(arg1)
+        self.Callbacks:BindOrCall("OnSizeChanged", arg1);
+    end
+    
     return self;
 end
 
@@ -413,6 +430,15 @@ function GTGUI.Element:CollisionShapesPanel()
     self.NewCollisionShapeDropDownBox:AppendItem("Capsule Z"):OnPressed(function()
         if self.Component ~= nil then
             self.Component:AddCapsuleZCollisionShape(0.5, 1.0);
+            self:Update(self.Component);
+            
+            self:OnShapesChanged();
+        end
+    end)
+    
+    self.NewCollisionShapeDropDownBox:AppendItem("Model Convex Hulls"):OnPressed(function()
+        if self.Component ~= nil then
+            self.Component:SetCollisionShapesToModelConvexHulls(0.0);
             self:Update(self.Component);
             
             self:OnShapesChanged();

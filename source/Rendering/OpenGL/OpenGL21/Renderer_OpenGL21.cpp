@@ -214,8 +214,9 @@ namespace GTEngine
                 Log("    ARB_fragment_program:               %s", GTGL_ARB_fragment_program               ? "yes" : "no");
                 Log("    ARB_texture_rg:                     %s", GTGL_ARB_texture_rg                     ? "yes" : "no");
                 Log("    ARB_texture_float:                  %s", GTGL_ARB_texture_float                  ? "yes" : "no");
-                Log("    ARB_vertex_buffer_object:           %s", GTGL_ARB_vertex_buffer_object           ? "yes" : "no");
                 Log("    ARB_framebuffer_object:             %s", GTGL_ARB_framebuffer_object             ? "yes" : "no");
+                Log("    ARB_timer_query:                    %s", GTGL_ARB_timer_query                    ? "yes" : "no");
+                Log("    ARB_vertex_buffer_object:           %s", GTGL_ARB_vertex_buffer_object           ? "yes" : "no");
                 Log("    ARB_get_program_binary:             %s", GTGL_ARB_get_program_binary             ? "yes" : "no");
                 Log("    ARB_separate_shader_objects:        %s", GTGL_ARB_separate_shader_objects        ? "yes" : "no");
                 Log("    ARB_ES2_compatibility:              %s", GTGL_ARB_ES2_compatibility              ? "yes" : "no");
@@ -223,6 +224,7 @@ namespace GTEngine
                 Log("    EXT_packed_depth_stencil:           %s", GTGL_EXT_packed_depth_stencil           ? "yes" : "no");
                 Log("    EXT_texture_compression_s3tc:       %s", GTGL_EXT_texture_compression_s3tc       ? "yes" : "no");
                 Log("    EXT_texture_filter_anisotropic:     %s", GTGL_EXT_texture_filter_anisotropic     ? "yes" : "no");
+                Log("    EXT_timer_query:                    %s", GTGL_EXT_timer_query                    ? "yes" : "no");
                 Log("    NV_bindless_texture:                %s", GTGL_NV_bindless_texture                ? "yes" : "no");
                 Log("    NV_shader_buffer_load:              %s", GTGL_NV_shader_buffer_load              ? "yes" : "no");
                 Log("    NV_vertex_buffer_unified_memory:    %s", GTGL_NV_vertex_buffer_unified_memory    ? "yes" : "no");

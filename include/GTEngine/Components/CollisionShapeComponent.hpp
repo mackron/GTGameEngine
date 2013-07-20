@@ -54,8 +54,21 @@ namespace GTEngine
         /// @param points     [in] A pointer to the buffer containing the points to build the hull from.
         /// @param pointCount [in] The number of points in the buffer.
         /// @param stride     [in] The vertex stride.
-        void AddConvexHullShape(const float* points, size_t pointCount, size_t stride, float margin = 0.0);
-        void AddConvexHullShape(const ConvexHull &convexHull, float margin = 0.0);
+        void AddConvexHullCollisionShape(const float* points, size_t pointCount, size_t stride, float margin = 0.0);
+        void AddConvexHullCollisionShape(const ConvexHull &convexHull, float margin = 0.0);
+
+
+        /// Adds a shape containing the convex hulls of the attached model component, if any.
+        ///
+        /// @param margin [in] The margin to apply to the convex hulls.
+        void AddModelConvexHullsCollisionShape(float margin = 0.0f, float offsetX = 0.0f, float offsetY = 0.0f, float offsetZ = 0.0f);
+
+        /// Refreshes model convex hull shapes based on the current state of the model component.
+        ///
+        /// @remarks
+        ///     This will want to be done whenever the scene node is deserialized of the model definition changes.
+        void RefreshModelConvexHullsShapes();
+
 
         /// Sets the collision shapes to the convex hulls of the given model.
         ///
@@ -221,6 +234,8 @@ namespace GTEngine
         /// Helper method for generically adding a collision shape.
         void AddCollisionShape(btCollisionShape* shape, float offsetX, float offsetY, float offsetZ);
 
+        /// Helper method for attaching the convex hulls of the attached model component to the given compound shape.
+        void AddModelConvexHullsToCompoundShape(btCompoundShape* shape, float margin);
 
 
     protected:
