@@ -49,6 +49,7 @@ namespace GTEngine
           editor(*this),
           profiler(),
           DebuggingGUI(*this),
+          isMouseSmoothingEnabled(false),
           mouseCaptured(false), captureMouseOnReceiveFocus(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0),
@@ -190,30 +191,38 @@ namespace GTEngine
     }
 
 
-    void Game::GetSmoothedMouseOffset(float &x, float &y)
+    void Game::GetMouseOffset(float &x, float &y)
     {
         if (this->mouseCaptured)
         {
-            // We don't actually do a simple average over the entire buffer. Instead each value is given a weight as it's contribution towards
-            // the average amount.
-            float totalX        = 0.0f;
-            float totalY        = 0.0f;
-            float averageFactor = 0.0f;
-            float iFactor       = 1.0f;
-
-            for (size_t i = 0; i < MouseBufferSize; ++i)
+            if (this->IsMouseSmoothingEnabled())
             {
-                size_t bufferIndex = (this->mousePosBufferIndex - i) % MouseBufferSize;
+                // We don't actually do a simple average over the entire buffer. Instead each value is given a weight as it's contribution towards
+                // the average amount.
+                float totalX        = 0.0f;
+                float totalY        = 0.0f;
+                float averageFactor = 0.0f;
+                float iFactor       = 1.0f;
 
-                totalX += static_cast<float>(this->mousePosXBuffer[bufferIndex] * iFactor);
-                totalY += static_cast<float>(this->mousePosYBuffer[bufferIndex] * iFactor);
+                for (size_t i = 0; i < MouseBufferSize; ++i)
+                {
+                    size_t bufferIndex = (this->mousePosBufferIndex - i) % MouseBufferSize;
 
-                averageFactor += 1.0; //iFactor;
-                iFactor *= MouseSmoothFactor;
+                    totalX += static_cast<float>(this->mousePosXBuffer[bufferIndex] * iFactor);
+                    totalY += static_cast<float>(this->mousePosYBuffer[bufferIndex] * iFactor);
+
+                    averageFactor += iFactor;
+                    iFactor *= MouseSmoothFactor;
+                }
+
+                x = totalX / averageFactor;
+                y = totalY / averageFactor;
             }
-
-            x = totalX / averageFactor;
-            y = totalY / averageFactor;
+            else
+            {
+                x = static_cast<float>(this->mousePosXBuffer[this->mousePosBufferIndex]);
+                y = static_cast<float>(this->mousePosYBuffer[this->mousePosBufferIndex]);
+            }
         }
         else
         {
@@ -229,6 +238,23 @@ namespace GTEngine
             this->window->SetMousePosition(x, y);
         }
     }
+
+    
+    void Game::EnableMouseSmoothing()
+    {
+        this->isMouseSmoothingEnabled = true;
+    }
+
+    void Game::DisableMouseSmoothing()
+    {
+        this->isMouseSmoothingEnabled = false;
+    }
+
+    bool Game::IsMouseSmoothingEnabled() const
+    {
+        return this->isMouseSmoothingEnabled;
+    }
+
 
     void Game::CaptureMouse()
     {

@@ -2077,7 +2077,7 @@ namespace GTEngine
 
                 float mouseOffsetX;
                 float mouseOffsetY;
-                game.GetSmoothedMouseOffset(mouseOffsetX, mouseOffsetY);
+                game.GetMouseOffset(mouseOffsetX, mouseOffsetY);
 
                 if (this->IsDraggingGizmo())
                 {

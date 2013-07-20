@@ -90,6 +90,15 @@ namespace GTEngine
             ///     This returns nil if the mouse is not captured.
             int GetMouseOffset(GTCore::Script &script);
 
+            /// Enables mouse smoothing.
+            int EnableMouseSmoothing(GTCore::Script &script);
+
+            /// Disables mouse smoothing.
+            int DisableMouseSmoothing(GTCore::Script &script);
+
+            /// Determines whether or not mouse smoothing is enabled.
+            int IsMouseSmoothingEnabled(GTCore::Script &script);
+
 
             /// Scans the data files for changes and posts the relevant events.
             ///
