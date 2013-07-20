@@ -147,6 +147,9 @@ namespace GTEngine
                 script.SetTableFunction(-1, "ReleaseMouse",                       GameFFI::ReleaseMouse);
                 script.SetTableFunction(-1, "IsMouseCaptured",                    GameFFI::IsMouseCaptured);
                 script.SetTableFunction(-1, "GetMouseOffset",                     GameFFI::GetMouseOffset);
+                script.SetTableFunction(-1, "EnableMouseSmoothing",               GameFFI::EnableMouseSmoothing);
+                script.SetTableFunction(-1, "DisableMouseSmoothing",              GameFFI::DisableMouseSmoothing);
+                script.SetTableFunction(-1, "IsMouseSmoothingEnabled",            GameFFI::IsMouseSmoothingEnabled);
                 script.SetTableFunction(-1, "ScanDataFilesForChanges",            GameFFI::ScanDataFilesForChanges);
                 script.SetTableFunction(-1, "GetGameWindowGUIElement",            GameFFI::GetGameWindowGUIElement);
                 script.SetTableFunction(-1, "LoadScene",                          GameFFI::LoadScene);
@@ -289,7 +292,7 @@ namespace GTEngine
                 {
                     float xOffset;
                     float yOffset;
-                    game.GetSmoothedMouseOffset(xOffset, yOffset);
+                    game.GetMouseOffset(xOffset, yOffset);
 
                     script.Push(xOffset);
                     script.Push(yOffset);
@@ -300,6 +303,24 @@ namespace GTEngine
                 {
                     return 0;
                 }
+            }
+
+            int EnableMouseSmoothing(GTCore::Script &script)
+            {
+                GetGame(script).EnableMouseSmoothing();
+                return 0;
+            }
+
+            int DisableMouseSmoothing(GTCore::Script &script)
+            {
+                GetGame(script).DisableMouseSmoothing();
+                return 0;
+            }
+
+            int IsMouseSmoothingEnabled(GTCore::Script &script)
+            {
+                script.Push(GetGame(script).IsMouseSmoothingEnabled());
+                return 1;
             }
 
 

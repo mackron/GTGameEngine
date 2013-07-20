@@ -146,11 +146,26 @@ namespace GTEngine
         /// Retrieves the current position of the mouse. This is relative to the main game window.
         void GetMousePosition(int &x, int &y);
 
-        /// Retrieves the smoothed position of the mouse. This is required when the mouse is captured.
-        void GetSmoothedMouseOffset(float &x, float &y);
+        /// Retrieves the offset of the mouse when captured.
+        ///
+        /// @remarks
+        ///     When the mouse is captured, you use an offset instead of an absolute position. This is the function to use
+        ///     when the mouse offset is needed.
+        ///     @par
+        ///     This will use a smoothed value is mouse smoothing is enabled.
+        void GetMouseOffset(float &x, float &y);
 
         /// Sets the position of the mouse relative to the game's main window.
         void SetMousePosition(int x, int y);
+
+        /// Enables mouse smoothing.
+        void EnableMouseSmoothing();
+
+        /// Disables mouse smoothing.
+        void DisableMouseSmoothing();
+
+        /// Determines whether or not mouse smoothing is enabled.
+        bool IsMouseSmoothingEnabled() const;
 
 
         /// Retrieves the scripting environment of the game.
@@ -844,6 +859,7 @@ namespace GTEngine
         }DebuggingGUI;
 
 
+        bool isMouseSmoothingEnabled;
         bool mouseCaptured;
         bool captureMouseOnReceiveFocus;            ///< Keeps track of whether or not the capture the mouse when the main window receives focus.
         int mouseCapturePosX;
