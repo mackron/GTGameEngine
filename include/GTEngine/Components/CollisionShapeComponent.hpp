@@ -175,10 +175,6 @@ namespace GTEngine
         short GetCollisionMask() const { return this->collisionMask; }
 
 
-        /// Determines whether or not the convex hulls of a model is being used for the collision shape.
-        bool IsUsingConvexHullsFromModel() const { return this->usingConvexHullsOfModel; }
-
-
 
         /// Applies a scale to the collision shape.
         void ApplyScaling(float x, float y, float z);
@@ -256,9 +252,6 @@ namespace GTEngine
 
         /// The collision mask for controlling the collision groups the scene node can collide with. This is set with SetCollisionFilter(). Defaults to -1 (collides with everything).
         short collisionMask;
-
-        /// Keeps track of whether or not this object is using the convex hulls from the attached model for it's convex hulls.
-        bool usingConvexHullsOfModel;
     };
 }
 
