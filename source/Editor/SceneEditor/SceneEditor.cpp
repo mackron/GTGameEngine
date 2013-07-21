@@ -2380,7 +2380,6 @@ namespace GTEngine
         else if (GTEngine::IO::IsSupportedPrefabExtension(item.relativePath.c_str()))
         {
             this->RelinkSceneNodesLinkedToPrefab(item.relativePath.c_str());
-            //this->UpdateAllSceneNodesLinkedToPrefab(item.relativePath.c_str());
         }
         else
         {
