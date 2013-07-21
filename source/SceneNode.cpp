@@ -1240,6 +1240,9 @@ namespace GTEngine
         glm::quat newOrientation;
         glm::vec3 newScale;
 
+        // This list is used at the end to iterate over and post the OnPostSceneNodeDeserialized() event to each component.
+        GTCore::Vector<Component*> deserializedComponents;
+
         Serialization::ChunkHeader header;
         deserializer.Read(header);
         {
@@ -1309,6 +1312,9 @@ namespace GTEngine
                         {
                             component->Deserialize(deserializer);
                         }
+
+                        // We need to keep track of the deserialized component for use later on at the end.
+                        deserializedComponents.PushBack(component);
                     }
                     else
                     {
@@ -1351,6 +1357,17 @@ namespace GTEngine
         if (wasVisible != this->IsVisible())
         {
             this->OnVisibleChanged();
+        }
+
+
+        // We now want to iterate over each component and let them know the scene node has finished deserializing.
+        for (size_t iComponent = 0; iComponent < deserializedComponents.count; ++iComponent)
+        {
+            auto component = deserializedComponents[iComponent];
+            assert(component != nullptr);
+            {
+                component->OnPostSceneNodeDeserialized();
+            }
         }
     }
 

@@ -13,6 +13,9 @@ namespace GTEngine
     {
     }
 
+    void Component::OnPostSceneNodeDeserialized()
+    {
+    }
 
     void Component::OnChanged()
     {
