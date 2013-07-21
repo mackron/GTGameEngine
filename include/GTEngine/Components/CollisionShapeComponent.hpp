@@ -70,31 +70,13 @@ namespace GTEngine
         void RefreshModelConvexHullsShapes();
 
 
-        /// Sets the collision shapes to the convex hulls of the given model.
-        ///
-        /// @param model  [in] A reference to the model whose convex hulls are being added.
-        /// @param margin [in] The margin to apply. This default to 0.0, but it may change later if we have issues.
-        ///
-        /// @remarks
-        ///     This removes all already attached shapes before adding the new ones.
-        void SetCollisionShapesToModelConvexHulls(const Model &model, float margin = 0.0f);
-
-        /// Sets the collision shapes to the convex hulls of the model of the attached Model component, if any.
-        ///
-        /// @param margin [in] The margin to apply.
-        ///
-        /// @remarks
-        ///     This removes all already attached shapes before adding the new ones.
-        void SetCollisionShapesToModelConvexHulls(float margin = 0.0f);
-
-
         /// Removes every collision shape.
         void RemoveAllCollisionShapes(bool postEvent = true);
 
         /// Removes the collision shape at the given index.
         ///
         /// @param index [in] The index of the shape to remove.
-        void RemoveCollisionShapeAtIndex(size_t index);
+        void RemoveCollisionShapeAtIndex(size_t index, bool postEvent = true);
 
 
         /// Retrieves the unscaled offset of the shape at the given index.
@@ -150,6 +132,11 @@ namespace GTEngine
         ///     If the shape at the given index is not a capsule, this method will fail and return false.
         bool SetCapsuleCollisionShapeSize(size_t index, float radius, float height);
 
+        /// Sets the margins of the convex hull of the model convex hull collision shapes.
+        ///
+        /// @param index  [in] The index of the shape.
+        /// @param margin [in] The new margin.
+        bool SetModelConvexHullsMargins(size_t index, float margin);
 
 
         /// Retrieves a reference to the main collision shape.
@@ -227,6 +214,12 @@ namespace GTEngine
         /// @remarks
         ///     This will be called from inheritted classes. This will not call OnPreCollisionShapeChanged() or OnPostCollisionShapeChanged().
         virtual void Deserialize(GTCore::Deserializer &deserializer);
+
+        /// Called when the owner scene node has finished deserializing.
+        ///
+        /// @remarks
+        ///     We need to handle this so we can update the model convex hull shapes.
+        virtual void OnPostSceneNodeDeserialized();
 
 
     private:

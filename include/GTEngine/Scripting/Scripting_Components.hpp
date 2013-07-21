@@ -415,12 +415,16 @@ namespace GTEngine
             int AddCapsuleYShape(GTCore::Script &script);
             int AddCapsuleZShape(GTCore::Script &script);
 
-            /// Sets the collision shapes of the object to that of the convex hulls of the model in the Model component.
+            /// Adds a set of convex hull collision shapes from the model defined in the attached model comonent, if any.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The margin to apply to the collision shapes.
-            int SetCollisionShapesToModelConvexHulls(GTCore::Script &script);
+            ///     Argument 2: The margin to apply to the convex hulls.
+            ///     Argument 3: Optional x offset or a math.vec3.
+            ///     Argument 4: Optional y offset.
+            ///     Argument 5: Optional z offset.
+            int AddModelConvexHullsCollisionShape(GTCore::Script &script);
+
 
             /// Removes every collision shape.
             ///
@@ -448,11 +452,6 @@ namespace GTEngine
             ///     Argument 2: The index of the shape whose information is being retrieved.
             int GetShapeAtIndex(GTCore::Script &script);
 
-            /// Determines whether or not we are using the convex hull of a model.
-            ///
-            /// @remarks
-            ///     Argument 1: A pointer to the component.
-            int IsUsingConvexHullsFromModel(GTCore::Script &script);
 
             /// Sets the offset for the collision shape at the given index.
             ///
@@ -512,6 +511,16 @@ namespace GTEngine
             ///     Argument 3: The radius of the shape.
             ///     Argument 4: The height of the shape.
             int SetCapsuleShapeSize(GTCore::Script &script);
+
+            /// Sets the size of the margins of the model convex hull shapes.
+            ///
+            /// @remarks
+            ///     If the shape at the given index is not a model convex hulls compound shape, this function will fail.
+            ///     @par
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the shape.
+            ///     Argument 3: The new margin to use with the convex hulls.
+            int SetModelConvexHullsMargins(GTCore::Script &script);
         }
 
 
@@ -843,12 +852,16 @@ namespace GTEngine
             int AddCapsuleYCollisionShape(GTCore::Script &script);
             int AddCapsuleZCollisionShape(GTCore::Script &script);
 
-            /// Sets the collision shapes of the object to that of the convex hulls of the model in the Model component.
+            /// Adds a set of convex hull collision shapes from the model defined in the attached model comonent, if any.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The margin to apply to the collision shapes.
-            int SetCollisionShapesToModelConvexHulls(GTCore::Script &script);
+            ///     Argument 2: The margin to apply to the convex hulls.
+            ///     Argument 3: Optional x offset or a math.vec3.
+            ///     Argument 4: Optional y offset.
+            ///     Argument 5: Optional z offset.
+            int AddModelConvexHullsCollisionShape(GTCore::Script &script);
+
 
             /// Removes every collision shape.
             ///
@@ -876,11 +889,6 @@ namespace GTEngine
             ///     Argument 2: The index of the shape whose information is being retrieved.
             int GetCollisionShapeAtIndex(GTCore::Script &script);
 
-            /// Determines whether or not we are using the convex hull of a model.
-            ///
-            /// @remarks
-            ///     Argument 1: A pointer to the component.
-            int IsUsingConvexHullsFromModel(GTCore::Script &script);
 
             /// Sets the offset for the collision shape at the given index.
             ///
@@ -940,6 +948,16 @@ namespace GTEngine
             ///     Argument 3: The radius of the shape.
             ///     Argument 4: The height of the shape.
             int SetCapsuleCollisionShapeSize(GTCore::Script &script);
+
+            /// Sets the size of the margins of the model convex hull shapes.
+            ///
+            /// @remarks
+            ///     If the shape at the given index is not a model convex hulls compound shape, this function will fail.
+            ///     @par
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the shape.
+            ///     Argument 3: The new margin to use with the convex hulls.
+            int SetModelConvexHullsMargins(GTCore::Script &script);
         }
 
         namespace ProximityComponentFFI
@@ -1026,12 +1044,16 @@ namespace GTEngine
             int AddCapsuleYCollisionShape(GTCore::Script &script);
             int AddCapsuleZCollisionShape(GTCore::Script &script);
 
-            /// Sets the collision shapes of the object to that of the convex hulls of the model in the Model component.
+            /// Adds a set of convex hull collision shapes from the model defined in the attached model comonent, if any.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            ///     Argument 2: The margin to apply to the collision shapes.
-            int SetCollisionShapesToModelConvexHulls(GTCore::Script &script);
+            ///     Argument 2: The margin to apply to the convex hulls.
+            ///     Argument 3: Optional x offset or a math.vec3.
+            ///     Argument 4: Optional y offset.
+            ///     Argument 5: Optional z offset.
+            int AddModelConvexHullsCollisionShape(GTCore::Script &script);
+
 
             /// Removes every collision shape.
             ///
@@ -1059,11 +1081,6 @@ namespace GTEngine
             ///     Argument 2: The index of the shape whose information is being retrieved.
             int GetCollisionShapeAtIndex(GTCore::Script &script);
 
-            /// Determines whether or not we are using the convex hull of a model.
-            ///
-            /// @remarks
-            ///     Argument 1: A pointer to the component.
-            int IsUsingConvexHullsFromModel(GTCore::Script &script);
 
             /// Sets the offset for the collision shape at the given index.
             ///
@@ -1123,6 +1140,16 @@ namespace GTEngine
             ///     Argument 3: The radius of the shape.
             ///     Argument 4: The height of the shape.
             int SetCapsuleCollisionShapeSize(GTCore::Script &script);
+
+            /// Sets the size of the margins of the model convex hull shapes.
+            ///
+            /// @remarks
+            ///     If the shape at the given index is not a model convex hulls compound shape, this function will fail.
+            ///     @par
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the shape.
+            ///     Argument 3: The new margin to use with the convex hulls.
+            int SetModelConvexHullsMargins(GTCore::Script &script);
         }
 
 

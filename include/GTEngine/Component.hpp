@@ -77,6 +77,11 @@ namespace GTEngine
         /// @param deserializer [in] A reference to the deserializer to read data from.
         virtual void Deserialize(GTCore::Deserializer &deserializer);
 
+        /// Called after the owner scene node has finished deserializing.
+        ///
+        /// @remarks
+        ///     This is needed so that components that depend on other components can do a post-processing step.
+        virtual void OnPostSceneNodeDeserialized();
 
         /// Called by inheritted classes when the component has changed so that the scene can be notified and events posted.
         virtual void OnChanged();

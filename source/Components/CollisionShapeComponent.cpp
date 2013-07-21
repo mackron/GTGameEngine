@@ -111,7 +111,8 @@ namespace GTEngine
     void CollisionShapeComponent::AddModelConvexHullsCollisionShape(float margin, float offsetX, float offsetY, float offsetZ)
     {
         // Even if we don't have an attached model comonent, we still want to add the collision shape.
-        auto shape = new btCompoundShape(false);
+        auto shape = new btCompoundShape(true);
+        shape->setMargin(margin);
         this->AddModelConvexHullsToCompoundShape(shape, margin);
 
         this->AddCollisionShape(shape, offsetX, offsetY, offsetZ);
@@ -120,87 +121,39 @@ namespace GTEngine
 
     void CollisionShapeComponent::RefreshModelConvexHullsShapes()
     {
-        for (int iChildShape = 0; iChildShape < this->collisionShape.getNumChildShapes(); ++iChildShape)
+        this->OnPreCollisionShapeChanged();
         {
-            // If the child shape is another compound shape, we can assume it's the shape of a model convex hulls.
-            auto childShape = this->collisionShape.getChildShape(iChildShape);
-            assert(childShape != nullptr);
+            for (int iChildShape = 0; iChildShape < this->collisionShape.getNumChildShapes(); ++iChildShape)
             {
-                if (childShape->getShapeType() == COMPOUND_SHAPE_PROXYTYPE)
+                // If the child shape is another compound shape, we can assume it's the shape of a model convex hulls.
+                auto childShape = this->collisionShape.getChildShape(iChildShape);
+                assert(childShape != nullptr);
                 {
-                    // This is a shape containing the model convex hulls. We just delete all of the shapes and re-create them, giving them the same margin
-                    // as the parent compound shape.
-                    auto convexHullsParentShape = static_cast<btCompoundShape*>(childShape);
-
-                    while (convexHullsParentShape->getNumChildShapes() > 0)
+                    if (childShape->getShapeType() == COMPOUND_SHAPE_PROXYTYPE)
                     {
-                        auto convexHullShape = convexHullsParentShape->getChildShape(0);
-                        assert(convexHullShape != nullptr);
+                        // This is a shape containing the model convex hulls. We just delete all of the shapes and re-create them, giving them the same margin
+                        // as the parent compound shape.
+                        auto convexHullsParentShape = static_cast<btCompoundShape*>(childShape);
+
+                        while (convexHullsParentShape->getNumChildShapes() > 0)
                         {
-                            convexHullsParentShape->removeChildShapeByIndex(0);
-                            delete convexHullShape;
+                            auto convexHullShape = convexHullsParentShape->getChildShape(0);
+                            assert(convexHullShape != nullptr);
+                            {
+                                convexHullsParentShape->removeChildShapeByIndex(0);
+                                delete convexHullShape;
+                            }
                         }
-                    }
 
                     
-                    // Now we need to re-attach new convex hull shapes.
-                    this->AddModelConvexHullsToCompoundShape(convexHullsParentShape, convexHullsParentShape->getMargin());
+                        // Now we need to re-attach new convex hull shapes.
+                        this->AddModelConvexHullsToCompoundShape(convexHullsParentShape, convexHullsParentShape->getMargin());
+                    }
                 }
             }
         }
-    }
-
-
-    void CollisionShapeComponent::SetCollisionShapesToModelConvexHulls(const Model &model, float margin)
-    {
-        this->OnPreCollisionShapeChanged();
-        {
-            this->RemoveAllCollisionShapes(false);      // <-- 'false' prevents events from getting posted.
-            auto &definition = model.GetDefinition();
-
-            // Unintuitively, we're not actually going to use AddConvexHullShape() here. Instead, we're going to go a little lower-level here
-            // to avoid some unnecessary calculations.
-
-            for (size_t i = 0; i < definition.convexHulls.count; ++i)
-            {
-                auto hull = definition.convexHulls[i];
-                assert(hull != nullptr);
-
-                auto shape = new btConvexHullShape(static_cast<const btScalar*>(hull->GetVertices()), hull->GetVertexCount(), 12);
-                shape->setMargin(margin);
-
-                /// The child collision shape needs metadata.
-                shape->setUserPointer(new ChildCollisionShapeMetadata(glm::vec3(0.0f, 0.0f, 0.0f)));
-
-                // All we need to do is add the new shape to the compound shape...
-                this->collisionShape.addChildShape(btTransform::getIdentity(), shape);
-            }
-
-
-            // We need to make sure the shape is scaled correctly.
-            glm::vec3 nodeScale = glm::max(glm::vec3(0.0001f), this->node.GetWorldScale());
-            this->collisionShape.setLocalScaling(btVector3(nodeScale.x, nodeScale.y, nodeScale.z));
-
-
-            this->usingConvexHullsOfModel = true;
-        }
         this->OnPostCollisionShapeChanged();
-        this->OnChanged();
     }
-
-    void CollisionShapeComponent::SetCollisionShapesToModelConvexHulls(float margin)
-    {
-        auto modelComponent = this->node.GetComponent<ModelComponent>();
-        if (modelComponent != nullptr)
-        {
-            auto model = modelComponent->GetModel();
-            if (model != nullptr)
-            {
-                this->SetCollisionShapesToModelConvexHulls(*model, margin);
-            }
-        }
-    }
-
 
     void CollisionShapeComponent::RemoveAllCollisionShapes(bool postEvent)
     {
@@ -209,34 +162,40 @@ namespace GTEngine
             // All children need to be removed from the shape.
             while (this->collisionShape.getNumChildShapes() > 0)
             {
-                auto child = this->collisionShape.getChildShape(0);
-                delete reinterpret_cast<ChildCollisionShapeMetadata*>(child->getUserPointer());
-
-                this->collisionShape.removeChildShapeByIndex(0);
-                delete child;
+                this->RemoveCollisionShapeAtIndex(0, false);        // <-- 'false' is important here - it prevents posting Change events.
             }
-
-            this->usingConvexHullsOfModel = false;
         }
         if (postEvent) this->OnPostCollisionShapeChanged();
         if (postEvent) this->OnChanged();
     }
 
-    void CollisionShapeComponent::RemoveCollisionShapeAtIndex(size_t index)
+    void CollisionShapeComponent::RemoveCollisionShapeAtIndex(size_t index, bool postEvent)
     {
-        this->OnPreCollisionShapeChanged();
+        if (postEvent) this->OnPreCollisionShapeChanged();
         {
             // All children need to be removed from the shape.
             auto child = this->collisionShape.getChildShape(static_cast<int>(index));
             delete reinterpret_cast<ChildCollisionShapeMetadata*>(child->getUserPointer());
+
+            // If the child is a compound shape, we assert that it is a model convex hulls shape, which means we need to also delete it's children.
+            if (child->getShapeType() == COMPOUND_SHAPE_PROXYTYPE)
+            {
+                while (static_cast<btCompoundShape*>(child)->getNumChildShapes() > 0)
+                {
+                    auto convexHullChildShape = static_cast<btCompoundShape*>(child)->getChildShape(0);
+
+                    static_cast<btCompoundShape*>(child)->removeChildShapeByIndex(0);
+                    delete convexHullChildShape;
+                }
+            }
             
             this->collisionShape.removeChildShapeByIndex(static_cast<int>(index));
             delete child;
 
             this->usingConvexHullsOfModel = false;
         }
-        this->OnPostCollisionShapeChanged();
-        this->OnChanged();
+        if (postEvent) this->OnPostCollisionShapeChanged();
+        if (postEvent) this->OnChanged();
     }
 
 
@@ -492,6 +451,38 @@ namespace GTEngine
             this->OnPostCollisionShapeChanged();
             this->OnChanged();
 
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool CollisionShapeComponent::SetModelConvexHullsMargins(size_t index, float margin)
+    {
+        auto type = GetCollisionShapeType(this->collisionShape.getChildShape(index));
+
+        if (type == CollisionShapeType_ModelConvexHulls)
+        {
+            this->OnPreCollisionShapeChanged();
+            {
+                auto convexHullsParentShape = static_cast<btCompoundShape*>(this->collisionShape.getChildShape(index));
+                assert(convexHullsParentShape != nullptr);
+                {
+                    convexHullsParentShape->setMargin(margin);
+
+                    for (int iChildShape = 0; iChildShape < convexHullsParentShape->getNumChildShapes(); ++iChildShape)
+                    {
+                        auto childShape = convexHullsParentShape->getChildShape(iChildShape);
+                        assert(childShape != nullptr);
+                        {
+                            childShape->setMargin(margin);
+                        }
+                    }
+                }
+            }
+            this->OnPostCollisionShapeChanged();
+            this->OnChanged();
 
             return true;
         }
@@ -1198,7 +1189,12 @@ namespace GTEngine
                     if (header.version == 1)
                     {
                         float margin;
+                        glm::vec3 unscaledOffset;
+                        glm::vec3 rotation;
+
                         deserializer.Read(margin);
+                        deserializer.Read(unscaledOffset);
+                        deserializer.Read(rotation);
 
                         this->AddModelConvexHullsCollisionShape(margin);
                     }
@@ -1221,6 +1217,11 @@ namespace GTEngine
                 }
             }
         }
+    }
+
+    void CollisionShapeComponent::OnPostSceneNodeDeserialized()
+    {
+        this->RefreshModelConvexHullsShapes();
     }
 
 
@@ -1251,7 +1252,6 @@ namespace GTEngine
         this->OnChanged();
     }
 
-
     void CollisionShapeComponent::AddModelConvexHullsToCompoundShape(btCompoundShape* shape, float margin)
     {
         assert(shape != nullptr);
@@ -1278,7 +1278,7 @@ namespace GTEngine
                 }
             }
 
-            // The local AABB must be recalculated because we passed 'false' to the shape's constructor (no dynamic recalculating of the local AABB).
+            // The local AABB must be recalculated because we may have passed 'false' to the shape's constructor (no dynamic recalculating of the local AABB).
             shape->recalculateLocalAabb();
         }
     }

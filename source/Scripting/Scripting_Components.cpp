@@ -524,8 +524,8 @@ namespace GTEngine
                 "end;"
 
 
-                "function GTEngine.DynamicsComponent:AddConvexHullCollisionShapesFromModelComponent(margin)"
-                "    GTEngine.System.DynamicsComponent.AddConvexHullCollisionShapesFromModelComponent(self._internalPtr, margin);"
+                "function GTEngine.DynamicsComponent:AddModelConvexHullsCollisionShape(margin, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.DynamicsComponent.AddModelConvexHullsCollisionShape(self._internalPtr, margin, offsetX, offsetY, offsetZ);"
                 "end;"
 
 
@@ -574,6 +574,10 @@ namespace GTEngine
 
                 "function GTEngine.DynamicsComponent:SetCapsuleCollisionShapeSize(index, radius, height)"
                 "    return GTEngine.System.DynamicsComponent.SetCapsuleCollisionShapeSize(self._internalPtr, index, radius, height);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:SetModelConvexHullsMargins(index, margin)"
+                "    return GTEngine.System.DynamicsComponent.SetModelConvexHullsMargins(self._internalPtr, index, margin);"
                 "end;"
 
 
@@ -641,8 +645,8 @@ namespace GTEngine
                 "end;"
 
 
-                "function GTEngine.ProximityComponent:AddConvexHullCollisionShapesFromModelComponent(margin)"
-                "    GTEngine.System.ProximityComponent.AddConvexHullCollisionShapesFromModelComponent(self._internalPtr, margin);"
+                "function GTEngine.ProximityComponent:AddModelConvexHullsCollisionShape(margin, offsetX, offsetY, offsetZ)"
+                "    GTEngine.System.ProximityComponent.AddModelConvexHullsCollisionShape(self._internalPtr, offsetX, offsetY, offsetZ);"
                 "end;"
 
 
@@ -691,6 +695,10 @@ namespace GTEngine
 
                 "function GTEngine.ProximityComponent:SetCapsuleCollisionShapeSize(index, radius, height)"
                 "    return GTEngine.System.ProximityComponent.SetCapsuleCollisionShapeSize(self._internalPtr, index, radius, height);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:SetModelConvexHullsMargins(index, margin)"
+                "    return GTEngine.System.ProximityComponent.SetModelConvexHullsMargins(self._internalPtr, index, margin);"
                 "end;"
 
 
@@ -1037,18 +1045,18 @@ namespace GTEngine
                             script.SetTableFunction(-1, "AddCapsuleXCollisionShape",                      DynamicsComponentFFI::AddCapsuleXCollisionShape);
                             script.SetTableFunction(-1, "AddCapsuleYCollisionShape",                      DynamicsComponentFFI::AddCapsuleYCollisionShape);
                             script.SetTableFunction(-1, "AddCapsuleZCollisionShape",                      DynamicsComponentFFI::AddCapsuleZCollisionShape);
-                            script.SetTableFunction(-1, "SetCollisionShapesToModelConvexHulls",           DynamicsComponentFFI::SetCollisionShapesToModelConvexHulls);
+                            script.SetTableFunction(-1, "AddModelConvexHullsCollisionShape",              DynamicsComponentFFI::AddModelConvexHullsCollisionShape);
                             script.SetTableFunction(-1, "RemoveAllCollisionShapes",                       DynamicsComponentFFI::RemoveAllCollisionShapes);
                             script.SetTableFunction(-1, "RemoveCollisionShapeAtIndex",                    DynamicsComponentFFI::RemoveCollisionShapeAtIndex);
                             script.SetTableFunction(-1, "GetCollisionShapeCount",                         DynamicsComponentFFI::GetCollisionShapeCount);
                             script.SetTableFunction(-1, "GetCollisionShapeAtIndex",                       DynamicsComponentFFI::GetCollisionShapeAtIndex);
-                            script.SetTableFunction(-1, "IsUsingConvexHullsFromModel",                    DynamicsComponentFFI::IsUsingConvexHullsFromModel);
                             script.SetTableFunction(-1, "SetCollisionShapeOffset",                        DynamicsComponentFFI::SetCollisionShapeOffset);
                             script.SetTableFunction(-1, "SetBoxCollisionShapeHalfExtents",                DynamicsComponentFFI::SetBoxCollisionShapeHalfExtents);
                             script.SetTableFunction(-1, "SetSphereCollisionShapeRadius",                  DynamicsComponentFFI::SetSphereCollisionShapeRadius);
                             script.SetTableFunction(-1, "SetEllipsoidCollisionShapeRadius",               DynamicsComponentFFI::SetEllipsoidCollisionShapeRadius);
                             script.SetTableFunction(-1, "SetCylinderCollisionShapeSize",                  DynamicsComponentFFI::SetCylinderCollisionShapeSize);
                             script.SetTableFunction(-1, "SetCapsuleCollisionShapeSize",                   DynamicsComponentFFI::SetCapsuleCollisionShapeSize);
+                            script.SetTableFunction(-1, "SetModelConvexHullsMargins",                     DynamicsComponentFFI::SetModelConvexHullsMargins);
                         }
                         script.Pop(1);
 
@@ -1070,18 +1078,18 @@ namespace GTEngine
                             script.SetTableFunction(-1, "AddCapsuleXCollisionShape",                      ProximityComponentFFI::AddCapsuleXCollisionShape);
                             script.SetTableFunction(-1, "AddCapsuleYCollisionShape",                      ProximityComponentFFI::AddCapsuleYCollisionShape);
                             script.SetTableFunction(-1, "AddCapsuleZCollisionShape",                      ProximityComponentFFI::AddCapsuleZCollisionShape);
-                            script.SetTableFunction(-1, "SetCollisionShapesToModelConvexHulls",           ProximityComponentFFI::SetCollisionShapesToModelConvexHulls);
+                            script.SetTableFunction(-1, "AddModelConvexHullsCollisionShape",              ProximityComponentFFI::AddModelConvexHullsCollisionShape);
                             script.SetTableFunction(-1, "RemoveAllCollisionShapes",                       ProximityComponentFFI::RemoveAllCollisionShapes);
                             script.SetTableFunction(-1, "RemoveCollisionShapeAtIndex",                    ProximityComponentFFI::RemoveCollisionShapeAtIndex);
                             script.SetTableFunction(-1, "GetCollisionShapeCount",                         ProximityComponentFFI::GetCollisionShapeCount);
                             script.SetTableFunction(-1, "GetCollisionShapeAtIndex",                       ProximityComponentFFI::GetCollisionShapeAtIndex);
-                            script.SetTableFunction(-1, "IsUsingConvexHullsFromModel",                    ProximityComponentFFI::IsUsingConvexHullsFromModel);
                             script.SetTableFunction(-1, "SetCollisionShapeOffset",                        ProximityComponentFFI::SetCollisionShapeOffset);
                             script.SetTableFunction(-1, "SetBoxCollisionShapeHalfExtents",                ProximityComponentFFI::SetBoxCollisionShapeHalfExtents);
                             script.SetTableFunction(-1, "SetSphereCollisionShapeRadius",                  ProximityComponentFFI::SetSphereCollisionShapeRadius);
                             script.SetTableFunction(-1, "SetEllipsoidCollisionShapeRadius",               ProximityComponentFFI::SetEllipsoidCollisionShapeRadius);
                             script.SetTableFunction(-1, "SetCylinderCollisionShapeSize",                  ProximityComponentFFI::SetCylinderCollisionShapeSize);
                             script.SetTableFunction(-1, "SetCapsuleCollisionShapeSize",                   ProximityComponentFFI::SetCapsuleCollisionShapeSize);
+                            script.SetTableFunction(-1, "SetModelConvexHullsMargins",                     ProximityComponentFFI::SetModelConvexHullsMargins);
                         }
                         script.Pop(1);
 
@@ -2440,16 +2448,31 @@ namespace GTEngine
                 return 0;
             }
 
-            int SetCollisionShapesToModelConvexHulls(GTCore::Script &script)
+            int AddModelConvexHullsCollisionShape(GTCore::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->SetCollisionShapesToModelConvexHulls(script.ToFloat(2));
+                    float margin = script.ToFloat(2);
+                    glm::vec3 offset;
+
+                    if (script.IsTable(3))
+                    {
+                        offset = Scripting::ToVector3(script, 3);
+                    }
+                    else
+                    {
+                        offset.x = script.IsNumber(3) ? script.ToFloat(3) : 0.0f;
+                        offset.y = script.IsNumber(4) ? script.ToFloat(4) : offset.x;
+                        offset.z = script.IsNumber(5) ? script.ToFloat(5) : offset.x;
+                    }
+
+                    component->AddModelConvexHullsCollisionShape(margin, offset.x, offset.y, offset.z);
                 }
 
                 return 0;
             }
+
 
             int RemoveAllShapes(GTCore::Script &script)
             {
@@ -2619,16 +2642,6 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsUsingConvexHullsFromModel(GTCore::Script &script)
-            {
-                auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
-                if (component != nullptr)
-                {
-                    script.Push(static_cast<int>(component->IsUsingConvexHullsFromModel()));
-                }
-
-                return 1;
-            }
 
             int SetShapeOffset(GTCore::Script &script)
             {
@@ -2761,6 +2774,24 @@ namespace GTEngine
                     float  height     = script.ToFloat(4);
 
                     script.Push(component->SetCapsuleCollisionShapeSize(shapeIndex, radius, height));
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
+
+            int SetModelConvexHullsMargins(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    size_t shapeIndex = static_cast<size_t>(script.ToInteger(2) - 1);
+                    float  margin     = script.ToFloat(3);
+
+                    script.Push(component->SetModelConvexHullsMargins(shapeIndex, margin));
                 }
                 else
                 {
@@ -3371,10 +3402,11 @@ namespace GTEngine
                 return CollisionShapeComponentFFI::AddCapsuleZShape(script);
             }
 
-            int SetCollisionShapesToModelConvexHulls(GTCore::Script &script)
+            int AddModelConvexHullsCollisionShape(GTCore::Script &script)
             {
-                return CollisionShapeComponentFFI::SetCollisionShapesToModelConvexHulls(script);
+                return CollisionShapeComponentFFI::AddModelConvexHullsCollisionShape(script);
             }
+
 
             int RemoveAllCollisionShapes(GTCore::Script &script)
             {
@@ -3396,10 +3428,6 @@ namespace GTEngine
                 return CollisionShapeComponentFFI::GetShapeAtIndex(script);
             }
 
-            int IsUsingConvexHullsFromModel(GTCore::Script &script)
-            {
-                return CollisionShapeComponentFFI::IsUsingConvexHullsFromModel(script);
-            }
 
             int SetCollisionShapeOffset(GTCore::Script &script)
             {
@@ -3430,6 +3458,11 @@ namespace GTEngine
             int SetCapsuleCollisionShapeSize(GTCore::Script &script)
             {
                 return CollisionShapeComponentFFI::SetCapsuleShapeSize(script);
+            }
+
+            int SetModelConvexHullsMargins(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::SetModelConvexHullsMargins(script);
             }
         }
 
@@ -3498,10 +3531,11 @@ namespace GTEngine
                 return CollisionShapeComponentFFI::AddCapsuleZShape(script);
             }
 
-            int SetCollisionShapesToModelConvexHulls(GTCore::Script &script)
+            int AddModelConvexHullsCollisionShape(GTCore::Script &script)
             {
-                return CollisionShapeComponentFFI::SetCollisionShapesToModelConvexHulls(script);
+                return CollisionShapeComponentFFI::AddModelConvexHullsCollisionShape(script);
             }
+
 
             int RemoveAllCollisionShapes(GTCore::Script &script)
             {
@@ -3523,10 +3557,6 @@ namespace GTEngine
                 return CollisionShapeComponentFFI::GetShapeAtIndex(script);
             }
 
-            int IsUsingConvexHullsFromModel(GTCore::Script &script)
-            {
-                return CollisionShapeComponentFFI::IsUsingConvexHullsFromModel(script);
-            }
 
             int SetCollisionShapeOffset(GTCore::Script &script)
             {
@@ -3557,6 +3587,11 @@ namespace GTEngine
             int SetCapsuleCollisionShapeSize(GTCore::Script &script)
             {
                 return CollisionShapeComponentFFI::SetCapsuleShapeSize(script);
+            }
+
+            int SetModelConvexHullsMargins(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::SetModelConvexHullsMargins(script);
             }
         }
 

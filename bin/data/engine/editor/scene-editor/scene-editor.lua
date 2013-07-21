@@ -438,7 +438,7 @@ function GTGUI.Element:CollisionShapesPanel()
     
     self.NewCollisionShapeDropDownBox:AppendItem("Model Convex Hulls"):OnPressed(function()
         if self.Component ~= nil then
-            self.Component:SetCollisionShapesToModelConvexHulls(0.0);
+            self.Component:AddModelConvexHullsCollisionShape(0.0);
             self:Update(self.Component);
             
             self:OnShapesChanged();
@@ -520,6 +520,10 @@ function GTGUI.Element:CollisionShapesPanel()
                         panel:CollisionShapePanel_ConvexHull():Update(shape);
                     elseif shape.type == GTEngine.CollisionShapeTypes.ModelConvexHulls then
                         panel:CollisionShapePanel_ModelConvexHulls():Update(shape);
+                        panel:OnSizeChanged(function(data)
+                            self.Component:SetModelConvexHullsMargins(i, data.margin);
+                            self:OnShapesChanged();
+                        end);
                     end
                 
                     panel:OnDelete(function()
