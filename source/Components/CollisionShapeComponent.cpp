@@ -31,8 +31,7 @@ namespace GTEngine
     CollisionShapeComponent::CollisionShapeComponent(SceneNode &node)
         : Component(node),
           collisionShape(true),
-          collisionGroup(1), collisionMask(-1),
-          usingConvexHullsOfModel(false)
+          collisionGroup(1), collisionMask(-1)
     {
     }
 
@@ -191,8 +190,6 @@ namespace GTEngine
             
             this->collisionShape.removeChildShapeByIndex(static_cast<int>(index));
             delete child;
-
-            this->usingConvexHullsOfModel = false;
         }
         if (postEvent) this->OnPostCollisionShapeChanged();
         if (postEvent) this->OnChanged();
@@ -644,7 +641,7 @@ namespace GTEngine
         intermediarySerializer.Write(static_cast<uint32_t>(this->GetCollisionShapeCount()));
         intermediarySerializer.Write(static_cast<uint32_t>(this->collisionGroup));
         intermediarySerializer.Write(static_cast<uint32_t>(this->collisionMask));
-        intermediarySerializer.Write(this->usingConvexHullsOfModel);
+        intermediarySerializer.Write(false);        // <-- An unused dummy value for backwards compatibility.
         
 
         Serialization::ChunkHeader header;
@@ -868,7 +865,6 @@ namespace GTEngine
         uint32_t deserializedShapeCount;
         uint32_t deserializedCollisionGroup;
         uint32_t deserializedCollisionMask;
-        bool     deserializedUsingConvexHullsOfModel;
 
         // The first chunk must the main one. It will contain the shape count.
         if (header.id == Serialization::ChunkID_CollisionShapeComponent_Main)
@@ -880,7 +876,10 @@ namespace GTEngine
                     deserializer.Read(deserializedShapeCount);
                     deserializer.Read(deserializedCollisionGroup);
                     deserializer.Read(deserializedCollisionMask);
-                    deserializer.Read(deserializedUsingConvexHullsOfModel);
+
+                    // An unused dummy value for backwards compatibility.
+                    bool devnull;
+                    deserializer.Read(devnull);
 
                     break;
                 }
