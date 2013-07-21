@@ -1048,6 +1048,43 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     end
     
     
+    function self:SetSceneWalkableHeight(value)
+        self.Scene:SetWalkableHeight(value);
+        self:MarkAsModified();
+    end
+    
+    function self:SetSceneWalkableRadius(value)
+        self.Scene:SetWalkableRadius(value);
+        self:MarkAsModified();
+    end
+    
+    function self:SetSceneWalkableSlopeAngle(value)
+        self.Scene:SetWalkableSlopeAngle(value);
+        self:MarkAsModified();
+    end
+    
+    function self:SetSceneWalkableClimbHeight(value)
+        self.Scene:SetWalkableClimbHeight(value);
+        self:MarkAsModified();
+    end
+    
+    function self:GetSceneWalkableHeight()
+        return self.Scene:GetWalkableHeight();
+    end
+    
+    function self:GetSceneWalkableRadius()
+        return self.Scene:GetWalkableRadius();
+    end
+    
+    function self:GetSceneWalkableSlopeAngle()
+        return self.Scene:GetWalkableSlopeAngle();
+    end
+    
+    function self:GetSceneWalkableClimbHeight()
+        return self.Scene:GetWalkableClimbHeight();
+    end
+    
+    
     function self:OnSelectionChanged()
         local selectedNodeCount = self:GetSelectedSceneNodeCount();
         

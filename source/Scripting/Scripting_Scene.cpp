@@ -248,6 +248,40 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.Scene:SetWalkableHeight(value)"
+                "    return GTEngine.System.Scene.SetWalkableHeight(self._internalPtr, value);"
+                "end;"
+
+                "function GTEngine.Scene:SetWalkableRadius(value)"
+                "    return GTEngine.System.Scene.SetWalkableRadius(self._internalPtr, value);"
+                "end;"
+
+                "function GTEngine.Scene:SetWalkableSlopeAngle(value)"
+                "    return GTEngine.System.Scene.SetWalkableSlopeAngle(self._internalPtr, value);"
+                "end;"
+
+                "function GTEngine.Scene:SetWalkableClimbHeight(value)"
+                "    return GTEngine.System.Scene.SetWalkableClimbHeight(self._internalPtr, value);"
+                "end;"
+
+                "function GTEngine.Scene:GetWalkableHeight()"
+                "    return GTEngine.System.Scene.GetWalkableHeight(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.Scene:GetWalkableRadius()"
+                "    return GTEngine.System.Scene.GetWalkableRadius(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.Scene:GetWalkableSlopeAngle()"
+                "    return GTEngine.System.Scene.GetWalkableSlopeAngle(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.Scene:GetWalkableClimbHeight()"
+                "    return GTEngine.System.Scene.GetWalkableClimbHeight(self._internalPtr);"
+                "end;"
+
+
+
                 "GTEngine.RegisteredScenes = {};"
             );
 
@@ -274,6 +308,14 @@ namespace GTEngine
                             script.SetTableFunction(-1, "SetViewportCamera",              SceneFFI::SetViewportCamera);
                             script.SetTableFunction(-1, "ApplyViewportCameraAspectRatio", SceneFFI::ApplyViewportCameraAspectRatio);
                             script.SetTableFunction(-1, "IsScriptEventsBlocked",          SceneFFI::IsScriptEventsBlocked);
+                            script.SetTableFunction(-1, "SetWalkableHeight",              SceneFFI::SetWalkableHeight);
+                            script.SetTableFunction(-1, "SetWalkableRadius",              SceneFFI::SetWalkableRadius);
+                            script.SetTableFunction(-1, "SetWalkableSlopeAngle",          SceneFFI::SetWalkableSlopeAngle);
+                            script.SetTableFunction(-1, "SetWalkableClimbHeight",         SceneFFI::SetWalkableClimbHeight);
+                            script.SetTableFunction(-1, "GetWalkableHeight",              SceneFFI::GetWalkableHeight);
+                            script.SetTableFunction(-1, "GetWalkableRadius",              SceneFFI::GetWalkableRadius);
+                            script.SetTableFunction(-1, "GetWalkableSlopeAngle",          SceneFFI::GetWalkableSlopeAngle);
+                            script.SetTableFunction(-1, "GetWalkableClimbHeight",         SceneFFI::GetWalkableClimbHeight);
                         }
                         script.SetTableValue(-3);
                     }
@@ -564,6 +606,111 @@ namespace GTEngine
                 else
                 {
                     script.Push(false);
+                }
+
+                return 1;
+            }
+
+
+            int SetWalkableHeight(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    scene->SetWalkableHeight(script.ToFloat(2));
+                }
+
+                return 0;
+            }
+
+            int SetWalkableRadius(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    scene->SetWalkableRadius(script.ToFloat(2));
+                }
+
+                return 0;
+            }
+
+            int SetWalkableSlopeAngle(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    scene->SetWalkableSlopeAngle(script.ToFloat(2));
+                }
+
+                return 0;
+            }
+
+            int SetWalkableClimbHeight(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    scene->SetWalkableClimbHeight(script.ToFloat(2));
+                }
+
+                return 0;
+            }
+
+            int GetWalkableHeight(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    script.Push(scene->GetWalkableHeight());
+                }
+                else
+                {
+                    script.Push(0.0f);
+                }
+
+                return 1;
+            }
+
+            int GetWalkableRadius(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    script.Push(scene->GetWalkableRadius());
+                }
+                else
+                {
+                    script.Push(0.0f);
+                }
+
+                return 1;
+            }
+
+            int GetWalkableSlopeAngle(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    script.Push(scene->GetWalkableSlopeAngle());
+                }
+                else
+                {
+                    script.Push(0.0f);
+                }
+
+                return 1;
+            }
+
+            int GetWalkableClimbHeight(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    script.Push(scene->GetWalkableClimbHeight());
+                }
+                else
+                {
+                    script.Push(0.0f);
                 }
 
                 return 1;

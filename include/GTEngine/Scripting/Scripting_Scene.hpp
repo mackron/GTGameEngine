@@ -116,6 +116,59 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the scene.
             int IsScriptEventsBlocked(GTCore::Script &script);
+
+
+            /// Sets the walkable height for navigation.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            ///     Argument 2: The new walkable height.
+            int SetWalkableHeight(GTCore::Script &script);
+
+            /// Sets the walkable radius for navigation.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            ///     Argument 2: The new walkable radius.
+            int SetWalkableRadius(GTCore::Script &script);
+
+            /// Sets the walkable slope angle for navigation.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            ///     Argument 2: The new walkable slope angle.
+            int SetWalkableSlopeAngle(GTCore::Script &script);
+
+            /// Sets the walkable climb height for navigation.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            ///     Argument 2: The new walkable climb height.
+            int SetWalkableClimbHeight(GTCore::Script &script);
+
+            /// Retrieves the walkable height for navigation.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            int GetWalkableHeight(GTCore::Script &script);
+
+            /// Retrieves the walkable radius for navigation.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            int GetWalkableRadius(GTCore::Script &script);
+
+            /// Retrieves the walkable slope angle for navigation.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            int GetWalkableSlopeAngle(GTCore::Script &script);
+
+            /// Retrieves the walkable climb height for navigation.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            int GetWalkableClimbHeight(GTCore::Script &script);
         }
     }
 }
