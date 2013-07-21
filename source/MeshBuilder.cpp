@@ -2,6 +2,7 @@
 
 #include <GTEngine/MeshBuilder.hpp>
 #include <GTEngine/Physics.hpp>
+#include <BulletCollision/CollisionShapes/btShapeHull.h>
 
 namespace GTEngine
 {
@@ -522,15 +523,25 @@ namespace GTEngine
         {
             auto &convexHullShape = static_cast<const btConvexHullShape &>(shape);
 
-            int edgeCount = convexHullShape.getNumEdges();
-            for (int iEdge = 0; iEdge < edgeCount; ++iEdge)
-            {
-                btVector3 vertex0;
-                btVector3 vertex1;
-                convexHullShape.getEdge(iEdge, vertex0, vertex1);
+            btShapeHull hull(&convexHullShape);
+            hull.buildHull(convexHullShape.getMargin());
 
-                this->EmitVertex(Math::vec3_cast(vertex0));
-                this->EmitVertex(Math::vec3_cast(vertex1));
+            auto indices  = hull.getIndexPointer();
+            auto vertices = hull.getVertexPointer();
+
+            for (int iIndex = 0; iIndex < hull.numIndices(); iIndex += 3)
+            {
+                auto index0 = indices[iIndex + 0];
+                auto index1 = indices[iIndex + 1];
+                auto index2 = indices[iIndex + 2];
+
+                auto vertex0 = Math::vec3_cast(vertices[index0]);
+                auto vertex1 = Math::vec3_cast(vertices[index1]);
+                auto vertex2 = Math::vec3_cast(vertices[index2]);
+
+                this->EmitVertex(vertex0); this->EmitVertex(vertex1);
+                this->EmitVertex(vertex1); this->EmitVertex(vertex2);
+                this->EmitVertex(vertex2); this->EmitVertex(vertex0);
             }
         }
     }
