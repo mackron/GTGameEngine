@@ -3,6 +3,7 @@
 #include <GTEngine/NavigationMesh.hpp>
 #include <GTEngine/Scene.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
@@ -362,8 +363,146 @@ namespace GTEngine
     }
 
 
+    /////////////////////////////////////////////
+    // Serialization/Deserialization
 
-    ////////////////////////////////////////////////////////////////////////////
+    void NavigationMesh::Serialize(GTCore::Serializer &serializer) const
+    {
+        GTCore::BasicSerializer intermediarySerializer;
+        Serialization::ChunkHeader header;
+
+
+        // General variables.
+        {
+            intermediarySerializer.Clear();
+            intermediarySerializer.Write(this->config);
+            intermediarySerializer.Write(this->walkableHeight);
+            intermediarySerializer.Write(this->walkableRadius);
+            intermediarySerializer.Write(this->walkableSlope);
+            intermediarySerializer.Write(this->walkableClimb);
+
+
+            header.id          = Serialization::ChunkID_NavigationMesh_Main;
+            header.version     = 1;
+            header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+            serializer.Write(header);
+            serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
+        }
+
+
+        // The recast poly-mesh.
+        if (this->mesh != nullptr)
+        {
+            intermediarySerializer.Clear();
+
+            header.id          = Serialization::ChunkID_NavigationMesh_RecastPolyMesh;
+            header.version     = 1;
+            header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+            serializer.Write(header);
+            serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
+        }
+
+
+        // The detour nav-mesh
+        if (this->detourNavMesh != nullptr)
+        {
+            intermediarySerializer.Clear();
+
+            header.id          = Serialization::ChunkID_NavigationMesh_DetourNavMesh;
+            header.version     = 1;
+            header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
+
+            serializer.Write(header);
+            serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
+        }
+
+
+        // Null-terminating chunk.
+        {
+            header.id          = Serialization::ChunkID_Null;
+            header.version     = 1;
+            header.sizeInBytes = 0;
+            serializer.Write(header);
+        }
+    }
+
+    bool NavigationMesh::Deserialize(GTCore::Deserializer &deserializer)
+    {
+        bool successful = true;
+
+        // We keep looping until we hit the null-terminating chunk.
+        Serialization::ChunkHeader header;
+        while (deserializer.Peek(&header, sizeof(header)) == sizeof(header) && header.id != Serialization::ChunkID_Null)
+        {
+            deserializer.Seek(sizeof(header));
+
+            switch (header.id)
+            {
+            case Serialization::ChunkID_NavigationMesh_Main:
+                {
+                    if (header.version == 1)
+                    {
+                        deserializer.Read(this->config);
+                        deserializer.Read(this->walkableHeight);
+                        deserializer.Read(this->walkableRadius);
+                        deserializer.Read(this->walkableSlope);
+                        deserializer.Read(this->walkableClimb);
+                    }
+                    else
+                    {
+                        GTEngine::Log("Error deserializing main chunk of navigation mesh. Unsupported version (%d).", header.version);
+                        successful = false;
+                    }
+
+                    break;
+                }
+
+            case Serialization::ChunkID_NavigationMesh_RecastPolyMesh:
+                {
+                    if (header.version == 1)
+                    {
+                        deserializer.Seek(header.sizeInBytes);
+                    }
+                    else
+                    {
+                        GTEngine::Log("Error deserializing Recast Poly Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
+                        successful = false;
+                    }
+
+                    break;
+                }
+
+            case Serialization::ChunkID_NavigationMesh_DetourNavMesh:
+                {
+                    if (header.version == 1)
+                    {
+                        deserializer.Seek(header.sizeInBytes);
+                    }
+                    else
+                    {
+                        GTEngine::Log("Error deserializing Detour Nav Mesh chunk of navigation mesh. Unsupported version (%d).", header.version);
+                        successful = false;
+                    }
+
+                    break;
+                }
+
+
+            default:
+                {
+                    break;
+                }
+            }
+        }
+
+        return successful;
+    }
+
+
+
+    /////////////////////////////////////////////
     // Private
 
     void NavigationMesh::RebuildVisualVA()

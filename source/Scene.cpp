@@ -1466,22 +1466,43 @@ namespace GTEngine
 
 
         // Properties.
-        secondarySerializer.Clear();
-        secondarySerializer.WriteString(this->name);
+        {
+            secondarySerializer.Clear();
+            secondarySerializer.WriteString(this->name);
         
-        secondarySerializer.Write(this->isBackgroundClearEnabled);
-        secondarySerializer.Write(this->backgroundClearColour);
-        secondarySerializer.Write(this->isHDREnabled);
-        secondarySerializer.Write(this->isBloomEnabled);
+            secondarySerializer.Write(this->isBackgroundClearEnabled);
+            secondarySerializer.Write(this->backgroundClearColour);
+            secondarySerializer.Write(this->isHDREnabled);
+            secondarySerializer.Write(this->isBloomEnabled);
 
 
-        header.id          = Serialization::ChunkID_Scene_Properties;
-        header.version     = 1;
-        header.sizeInBytes = secondarySerializer.GetBufferSizeInBytes();
+            header.id          = Serialization::ChunkID_Scene_Properties;
+            header.version     = 1;
+            header.sizeInBytes = secondarySerializer.GetBufferSizeInBytes();
 
-        serializer.Write(header);
-        serializer.Write(secondarySerializer.GetBuffer(), header.sizeInBytes);
+            serializer.Write(header);
+            serializer.Write(secondarySerializer.GetBuffer(), header.sizeInBytes);
+        }
 
+
+        /// Navigation.
+        {
+            secondarySerializer.Clear();
+
+            // The navigation mesh count. This is always 1 for now.
+            uint32_t navigationMeshCount = 1;
+            secondarySerializer.Write(navigationMeshCount);
+
+            // Each navigation mesh. Just the one for now.
+            this->navigationMesh.Serialize(secondarySerializer);
+
+            header.id          = Serialization::ChunkID_Scene_Navigation;
+            header.version     = 1;
+            header.sizeInBytes = secondarySerializer.GetBufferSizeInBytes();
+
+            serializer.Write(header);
+            serializer.Write(secondarySerializer.GetBuffer(), header.sizeInBytes);
+        }
 
         return true;
     }
@@ -1496,6 +1517,7 @@ namespace GTEngine
         bool readSceneNodes          = false;
         bool readSceneNodesHierarchy = false;
         bool readSceneProperties     = false;
+        bool readNavigation          = false;
 
 
         Serialization::ChunkHeader header;
@@ -1654,6 +1676,24 @@ namespace GTEngine
                     deserializer.Seek(header.sizeInBytes);
                 }
             }
+            else if (header.id == Serialization::ChunkID_Scene_Navigation)
+            {
+                readNavigation = true;
+
+                if (header.version == 1)
+                {
+                    // The navigation mesh count isn't actually used at the moment, but plans are in place for supporting multiple navigation meshes. This will be needed.
+                    uint32_t navigationMeshCount;
+                    deserializer.Read(navigationMeshCount);
+
+                    this->navigationMesh.Deserialize(deserializer);
+                }
+                else
+                {
+                    GTEngine::Log("Error deserializing scene navigation. Unsupported version (%d). Navigation has been skipped.", header.version);
+                    deserializer.Seek(header.sizeInBytes);
+                }
+            }
             else
             {
                 deserializer.Seek(header.sizeInBytes);
@@ -1661,7 +1701,7 @@ namespace GTEngine
 
 
             // We can break if all the chunks we need have been read.
-            if (readSceneNodes && readSceneNodesHierarchy && readSceneProperties)
+            if (readSceneNodes && readSceneNodesHierarchy && readSceneProperties && readNavigation)
             {
                 break;
             }
