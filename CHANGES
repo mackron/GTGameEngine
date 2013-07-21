@@ -14,6 +14,8 @@ FEATURES:
       "default" renderer which is OpenGL 4.3 based. OpenGL 3.3 does not add
       anything worth justifying it's own code path.
     - Added the ability to control whether or not mouse smoothing is enabled.
+    - Added the ability to set the shape of dynamics and proximity components
+      to the convex hulls of the model defined in the model component, if any.
 
 
 FIXES/IMPROVEMENTS:
