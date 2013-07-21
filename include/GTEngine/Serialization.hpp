@@ -68,6 +68,7 @@ namespace GTEngine
         static const uint32_t ChunkID_Scene_Nodes                             = CHUNK_ID(0x00000002U);
         static const uint32_t ChunkID_Scene_NodesHierarchy                    = CHUNK_ID(0x00000003U);
         static const uint32_t ChunkID_Scene_Properties                        = CHUNK_ID(0x00000004U);
+        static const uint32_t ChunkID_Scene_Navigation                        = CHUNK_ID(0x00000005U);
         static const uint32_t ChunkID_Scene_EditorMetadata                    = CHUNK_ID(0x0000000FU);
 
         // SceneObject
@@ -177,6 +178,13 @@ namespace GTEngine
         static const uint32_t ChunkID_SceneStateStackFrame                    = CHUNK_ID(0x00000802U);
         static const uint32_t ChunkID_SceneStateStackStagingArea              = CHUNK_ID(0x00000803U);
 
+
+        /////////////////////////////////////////////////////
+        // Navigation Mesh
+
+        static const uint32_t ChunkID_NavigationMesh_Main                     = CHUNK_ID(0x00000810U);
+        static const uint32_t ChunkID_NavigationMesh_RecastPolyMesh           = CHUNK_ID(0x00000811U);
+        static const uint32_t ChunkID_NavigationMesh_DetourNavMesh            = CHUNK_ID(0x00000812U);
 
 
         /////////////////////////////////////////////////////

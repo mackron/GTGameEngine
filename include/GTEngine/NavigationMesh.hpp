@@ -21,7 +21,9 @@
 
 #include <GTCore/Vector.hpp>
 #include "Math.hpp"
+#include "Serialization.hpp"
 #include "Rendering/VertexArray.hpp"
+
 
 namespace GTEngine
 {
@@ -83,6 +85,15 @@ namespace GTEngine
         /// @return True if the path is generated successfully; false otherwise.
         bool FindPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output);
 
+
+        /////////////////////////////////////////////
+        // Serialization/Deserialization
+
+        /// Serializes the navigation mesh.
+        void Serialize(GTCore::Serializer &serializer) const;
+
+        /// Deserializes the navigation mesh.
+        bool Deserialize(GTCore::Deserializer &deserializer);
 
 
     private:
