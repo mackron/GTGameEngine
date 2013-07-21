@@ -2420,11 +2420,6 @@ namespace GTEngine
 
     void SceneEditor::ApplyCameraRotation()
     {
-        /*
-        this->camera.SetOrientation(glm::quat());
-        this->camera.RotateY(this->cameraYRotation);
-        this->camera.RotateX(this->cameraXRotation);
-        */
         this->UpdateGizmoTransform();
     }
 
