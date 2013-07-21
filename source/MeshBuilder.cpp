@@ -518,5 +518,20 @@ namespace GTEngine
 
             this->Merge(mesh);
         }
+        else if (shape.getShapeType() == CONVEX_HULL_SHAPE_PROXYTYPE)
+        {
+            auto &convexHullShape = static_cast<const btConvexHullShape &>(shape);
+
+            int edgeCount = convexHullShape.getNumEdges();
+            for (int iEdge = 0; iEdge < edgeCount; ++iEdge)
+            {
+                btVector3 vertex0;
+                btVector3 vertex1;
+                convexHullShape.getEdge(iEdge, vertex0, vertex1);
+
+                this->EmitVertex(Math::vec3_cast(vertex0));
+                this->EmitVertex(Math::vec3_cast(vertex1));
+            }
+        }
     }
 }
