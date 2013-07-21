@@ -2358,6 +2358,19 @@ namespace GTEngine
                                 {
                                     this->PostOnSelectionChangedEventToScript();
                                 }
+
+                                // If this scene node also has a proximity or dynamics component, we'll need to refresh the model convex hulls for them.
+                                auto proximityComponent = sceneNode->GetComponent<ProximityComponent>();
+                                if (proximityComponent != nullptr)
+                                {
+                                    proximityComponent->RefreshModelConvexHullsShapes();
+                                }
+
+                                auto dynamicsComponent = sceneNode->GetComponent<DynamicsComponent>();
+                                if (dynamicsComponent != nullptr)
+                                {
+                                    dynamicsComponent->RefreshModelConvexHullsShapes();
+                                }
                             }
                         }
                     }
