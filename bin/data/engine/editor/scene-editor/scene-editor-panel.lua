@@ -327,27 +327,62 @@ function GTGUI.Element:SceneEditorSceneRenderingPropertiesPanel(sceneEditor)
     return self;
 end
 
+function GTGUI.Element:SceneEditorSceneNavigationPropertiesPanel(sceneEditor)
+    self:PanelGroupBox("Navigation");
+    
+    self.WalkableHeight       = GTGUI.Server.CreateElement(self.Body, "labelled-number-input");
+    self.WalkableHeight:LabelledNumberInput("Walkable Height");
+    
+    self.WalkableRadius       = GTGUI.Server.CreateElement(self.Body, "labelled-number-input");
+    self.WalkableRadius:LabelledNumberInput("Walkable Radius");
+    
+    self.WalkableSlopeAngle   = GTGUI.Server.CreateElement(self.Body, "labelled-number-input");
+    self.WalkableSlopeAngle:LabelledNumberInput("Walkable Slope Angle");
+    
+    self.WalkableClimbHeight  = GTGUI.Server.CreateElement(self.Body, "labelled-number-input");
+    self.WalkableClimbHeight:LabelledNumberInput("Walkable Climb Height");
+    
+
+    self.WalkableHeight:OnValueChanged(function()
+        sceneEditor:SetSceneWalkableHeight(self.WalkableHeight:GetValue());
+        sceneEditor:SetSceneWalkableRadius(self.WalkableRadius:GetValue());
+        sceneEditor:SetSceneWalkableSlopeAngle(self.WalkableSlopeAngle:GetValue());
+        sceneEditor:SetSceneWalkableClimbHeight(self.WalkableClimbHeight:GetValue());
+    end);
+    
+    function self:Refresh()
+        self.WalkableHeight:SetValue(sceneEditor:GetSceneWalkableHeight());
+        self.WalkableRadius:SetValue(sceneEditor:GetSceneWalkableRadius());
+        self.WalkableSlopeAngle:SetValue(sceneEditor:GetSceneWalkableSlopeAngle());
+        self.WalkableClimbHeight:SetValue(sceneEditor:GetSceneWalkableClimbHeight());
+    end
+    
+    return self;
+end
+
 function GTGUI.Element:SceneEditorScenePropertiesPanel(sceneEditor)
     self:EditorPanel();
     self.SceneEditor = sceneEditor;
 
     self.PanelsContainer = GTGUI.Server.CreateElement(self.Body);
     
-    self.DetailsPanel   = GTGUI.Server.CreateElement(self.PanelsContainer, "panel-groupbox");
+    self.DetailsPanel    = GTGUI.Server.CreateElement(self.PanelsContainer, "panel-groupbox");
     self.DetailsPanel:SceneEditorSceneDetailsPropertiesPanel(sceneEditor);
     
-    self.RenderingPanel = GTGUI.Server.CreateElement(self.PanelsContainer, "panel-groupbox");
+    self.RenderingPanel  = GTGUI.Server.CreateElement(self.PanelsContainer, "panel-groupbox");
     self.RenderingPanel:SceneEditorSceneRenderingPropertiesPanel(sceneEditor);
+    
+    self.NavigationPanel = GTGUI.Server.CreateElement(self.PanelsContainer, "panel-groupbox");
+    self.NavigationPanel:SceneEditorSceneNavigationPropertiesPanel(sceneEditor);
 
-    
-    
-    
+
+
     function self:Refresh()
         self.DetailsPanel:Refresh();
         self.RenderingPanel:Refresh();
+        self.NavigationPanel:Refresh();
     end
     
-
     return self;
 end
 
