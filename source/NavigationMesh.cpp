@@ -396,6 +396,28 @@ namespace GTEngine
         {
             intermediarySerializer.Clear();
 
+            intermediarySerializer.Write(static_cast<uint32_t>(this->mesh->nverts));
+            intermediarySerializer.Write(static_cast<uint32_t>(this->mesh->npolys));
+            intermediarySerializer.Write(static_cast<uint32_t>(this->mesh->maxpolys));
+            intermediarySerializer.Write(static_cast<uint32_t>(this->mesh->nvp));
+            intermediarySerializer.Write(static_cast<float>(this->mesh->bmin[0]));
+            intermediarySerializer.Write(static_cast<float>(this->mesh->bmin[1]));
+            intermediarySerializer.Write(static_cast<float>(this->mesh->bmin[2]));
+            intermediarySerializer.Write(static_cast<float>(this->mesh->bmax[0]));
+            intermediarySerializer.Write(static_cast<float>(this->mesh->bmax[1]));
+            intermediarySerializer.Write(static_cast<float>(this->mesh->bmax[2]));
+            intermediarySerializer.Write(static_cast<float>(this->mesh->cs));
+            intermediarySerializer.Write(static_cast<float>(this->mesh->ch));
+            intermediarySerializer.Write(static_cast<uint32_t>(this->mesh->borderSize));
+
+            intermediarySerializer.Write(this->mesh->verts, sizeof(uint16_t) * this->mesh->nverts * 3);     // <-- 3 components for each vertex (x, y, z).
+            intermediarySerializer.Write(this->mesh->polys, sizeof(uint16_t) * this->mesh->maxpolys * 2 * this->mesh->nvp);
+            intermediarySerializer.Write(this->mesh->regs,  sizeof(uint16_t) * this->mesh->maxpolys);
+            intermediarySerializer.Write(this->mesh->flags, sizeof(uint16_t) * this->mesh->maxpolys);
+            intermediarySerializer.Write(this->mesh->areas, sizeof(uint8_t)  * this->mesh->maxpolys);
+
+
+
             header.id          = Serialization::ChunkID_NavigationMesh_RecastPolyMesh;
             header.version     = 1;
             header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
