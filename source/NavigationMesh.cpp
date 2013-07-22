@@ -4,6 +4,7 @@
 #include <GTEngine/Scene.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
+#include <GTEngine/Recast/RecastAlloc.h>
 
 namespace GTEngine
 {
@@ -396,10 +397,10 @@ namespace GTEngine
         {
             intermediarySerializer.Clear();
 
-            intermediarySerializer.Write(static_cast<uint32_t>(this->mesh->nverts));
-            intermediarySerializer.Write(static_cast<uint32_t>(this->mesh->npolys));
-            intermediarySerializer.Write(static_cast<uint32_t>(this->mesh->maxpolys));
-            intermediarySerializer.Write(static_cast<uint32_t>(this->mesh->nvp));
+            intermediarySerializer.Write(static_cast<int32_t>(this->mesh->nverts));
+            intermediarySerializer.Write(static_cast<int32_t>(this->mesh->npolys));
+            intermediarySerializer.Write(static_cast<int32_t>(this->mesh->maxpolys));
+            intermediarySerializer.Write(static_cast<int32_t>(this->mesh->nvp));
             intermediarySerializer.Write(static_cast<float>(this->mesh->bmin[0]));
             intermediarySerializer.Write(static_cast<float>(this->mesh->bmin[1]));
             intermediarySerializer.Write(static_cast<float>(this->mesh->bmin[2]));
@@ -408,7 +409,7 @@ namespace GTEngine
             intermediarySerializer.Write(static_cast<float>(this->mesh->bmax[2]));
             intermediarySerializer.Write(static_cast<float>(this->mesh->cs));
             intermediarySerializer.Write(static_cast<float>(this->mesh->ch));
-            intermediarySerializer.Write(static_cast<uint32_t>(this->mesh->borderSize));
+            intermediarySerializer.Write(static_cast<int32_t>(this->mesh->borderSize));
 
             intermediarySerializer.Write(this->mesh->verts, sizeof(uint16_t) * this->mesh->nverts * 3);     // <-- 3 components for each vertex (x, y, z).
             intermediarySerializer.Write(this->mesh->polys, sizeof(uint16_t) * this->mesh->maxpolys * 2 * this->mesh->nvp);
@@ -485,7 +486,93 @@ namespace GTEngine
                 {
                     if (header.version == 1)
                     {
-                        deserializer.Seek(header.sizeInBytes);
+                        //deserializer.Seek(header.sizeInBytes);
+
+                        // Old mesh must be deleted.
+                        if (this->mesh != nullptr)
+                        {
+                            rcFreePolyMesh(this->mesh);
+                            this->mesh = rcAllocPolyMesh();
+                        }
+
+
+                        int32_t nverts;
+                        int32_t npolys;
+                        int32_t maxpolys;
+                        int32_t nvp;
+                        deserializer.Read(nverts);
+                        deserializer.Read(npolys);
+                        deserializer.Read(maxpolys);
+                        deserializer.Read(nvp);
+
+                        float bmin[3];
+                        float bmax[3];
+                        deserializer.Read(bmin[0]);
+                        deserializer.Read(bmin[1]);
+                        deserializer.Read(bmin[2]);
+                        deserializer.Read(bmax[0]);
+                        deserializer.Read(bmax[1]);
+                        deserializer.Read(bmax[2]);
+
+                        float cs;
+                        float ch;
+                        deserializer.Read(cs);
+                        deserializer.Read(ch);
+
+                        int32_t borderSize;
+                        deserializer.Read(borderSize);
+
+
+                        GTCore::Vector<uint16_t> verts;
+                        GTCore::Vector<uint16_t> polys;
+                        GTCore::Vector<uint16_t> regs;
+                        GTCore::Vector<uint16_t> flags;
+                        GTCore::Vector<uint8_t> areas;
+
+                        verts.Resize(nverts * 3);
+                        deserializer.Read(verts.buffer, sizeof(uint16_t) * verts.count);
+
+                        polys.Resize(npolys * 2 * nvp);
+                        deserializer.Read(polys.buffer, sizeof(uint16_t) * polys.count);
+
+                        regs.Resize(npolys);
+                        deserializer.Read(regs.buffer, sizeof(uint16_t) * regs.count);
+
+                        flags.Resize(npolys);
+                        deserializer.Read(flags.buffer, sizeof(uint16_t) * flags.count);
+
+                        areas.Resize(npolys);
+                        deserializer.Read(areas.buffer, sizeof(uint16_t) * areas.count);
+
+
+                        // I'm unaware of a public API for creating a mesh from raw data like this, so we're going to copy the implementation of
+                        // rcCopyPolyMesh(). We use the same memory allocation routines as that function.
+
+                        this->mesh->nverts     = static_cast<int>(nverts);
+                        this->mesh->npolys     = static_cast<int>(npolys);
+                        this->mesh->maxpolys   = static_cast<int>(maxpolys);
+                        this->mesh->nvp        = static_cast<int>(nvp);
+                        this->mesh->bmin[0]    = bmin[0];
+                        this->mesh->bmin[1]    = bmin[1];
+                        this->mesh->bmin[2]    = bmin[2];
+                        this->mesh->bmax[0]    = bmax[0];
+                        this->mesh->bmax[1]    = bmax[1];
+                        this->mesh->bmax[2]    = bmax[2];
+                        this->mesh->cs         = cs;
+                        this->mesh->ch         = ch;
+                        this->mesh->borderSize = static_cast<int>(borderSize);
+
+                        this->mesh->verts = static_cast<unsigned short*>(rcAlloc(sizeof(unsigned short) * verts.count, RC_ALLOC_PERM));
+                        this->mesh->polys = static_cast<unsigned short*>(rcAlloc(sizeof(unsigned short) * polys.count, RC_ALLOC_PERM));
+                        this->mesh->regs  = static_cast<unsigned short*>(rcAlloc(sizeof(unsigned short) * regs.count,  RC_ALLOC_PERM));
+                        this->mesh->flags = static_cast<unsigned short*>(rcAlloc(sizeof(unsigned short) * flags.count, RC_ALLOC_PERM));
+                        this->mesh->areas = static_cast<unsigned char* >(rcAlloc(sizeof(unsigned char)  * areas.count, RC_ALLOC_PERM));
+
+                        memcpy(this->mesh->verts, verts.buffer, sizeof(unsigned short) * verts.count);
+                        memcpy(this->mesh->polys, polys.buffer, sizeof(unsigned short) * polys.count);
+                        memcpy(this->mesh->regs,  regs.buffer,  sizeof(unsigned short) * regs.count);
+                        memcpy(this->mesh->flags, flags.buffer, sizeof(unsigned short) * flags.count);
+                        memcpy(this->mesh->areas, areas.buffer, sizeof(unsigned short) * areas.count);
                     }
                     else
                     {
