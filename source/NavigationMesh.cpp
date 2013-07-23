@@ -433,6 +433,42 @@ namespace GTEngine
         {
             intermediarySerializer.Clear();
 
+            int32_t tileCount = 0;
+            for (int iTile = 0; iTile < this->detourNavMesh->getMaxTiles(); ++iTile)
+            {
+                auto tile = const_cast<const dtNavMesh*>(this->detourNavMesh)->getTile(iTile);
+                if (tile != nullptr && tile->header != nullptr && tile->dataSize > 0)
+                {
+                    tileCount += 1;
+                }
+            }
+
+            auto params = this->detourNavMesh->getParams();
+            assert(params != nullptr);
+            {
+                intermediarySerializer.Write(params->orig[0]);
+                intermediarySerializer.Write(params->orig[1]);
+                intermediarySerializer.Write(params->orig[2]);
+                intermediarySerializer.Write(params->tileWidth);
+                intermediarySerializer.Write(params->tileHeight);
+                intermediarySerializer.Write(static_cast<int32_t>(params->maxTiles));
+                intermediarySerializer.Write(static_cast<int32_t>(params->maxPolys));
+            }
+
+            intermediarySerializer.Write(tileCount);
+            
+            for (int iTile = 0; iTile < this->detourNavMesh->getMaxTiles(); ++iTile)
+            {
+                auto tile = const_cast<const dtNavMesh*>(this->detourNavMesh)->getTile(iTile);
+                if (tile != nullptr && tile->header != nullptr && tile->dataSize > 0)
+                {
+                    intermediarySerializer.Write(static_cast<uint32_t>(this->detourNavMesh->getTileRef(tile)));
+                    intermediarySerializer.Write(static_cast<uint32_t>(tile->dataSize));
+                    intermediarySerializer.Write(tile->data, static_cast<size_t>(tile->dataSize));
+                }
+            }
+
+
             header.id          = Serialization::ChunkID_NavigationMesh_DetourNavMesh;
             header.version     = 1;
             header.sizeInBytes = intermediarySerializer.GetBufferSizeInBytes();
@@ -587,7 +623,18 @@ namespace GTEngine
                 {
                     if (header.version == 1)
                     {
-                        deserializer.Seek(header.sizeInBytes);
+                        //deserializer.Seek(header.sizeInBytes);
+
+                        // Old mesh must be deleted.
+                        if (this->detourNavMesh != nullptr)
+                        {
+                            dtFreeNavMesh(this->detourNavMesh);
+                            this->detourNavMesh = dtAllocNavMesh();
+                        }
+
+
+                        //dtNavMeshParams params;
+
                     }
                     else
                     {
