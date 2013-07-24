@@ -524,13 +524,15 @@ namespace GTEngine
                     {
                         //deserializer.Seek(header.sizeInBytes);
 
+
                         // Old mesh must be deleted.
                         if (this->mesh != nullptr)
                         {
                             rcFreePolyMesh(this->mesh);
-                            this->mesh = rcAllocPolyMesh();
                         }
 
+                        // New mesh must be created.
+                        this->mesh = rcAllocPolyMesh();
 
                         int32_t nverts;
                         int32_t npolys;
@@ -625,16 +627,60 @@ namespace GTEngine
                     {
                         //deserializer.Seek(header.sizeInBytes);
 
+
                         // Old mesh must be deleted.
                         if (this->detourNavMesh != nullptr)
                         {
                             dtFreeNavMesh(this->detourNavMesh);
-                            this->detourNavMesh = dtAllocNavMesh();
                         }
 
+                        // New mesh must be created.
+                        this->detourNavMesh = dtAllocNavMesh();
 
-                        //dtNavMeshParams params;
 
+                        dtNavMeshParams params;
+                        deserializer.Read(params.orig[0]);
+                        deserializer.Read(params.orig[1]);
+                        deserializer.Read(params.orig[2]);
+                        deserializer.Read(params.tileWidth);
+                        deserializer.Read(params.tileHeight);
+                        
+                        int32_t maxTiles;
+                        int32_t maxPolys;
+                        deserializer.Read(maxTiles);
+                        deserializer.Read(maxPolys);
+
+                        params.maxTiles = static_cast<int>(maxTiles);
+                        params.maxPolys = static_cast<int>(maxPolys);
+
+                        if (this->detourNavMesh->init(&params))
+                        {
+                            int32_t tileCount;
+                            deserializer.Read(tileCount);
+
+                            for (int32_t iTile = 0; iTile < tileCount; ++iTile)
+                            {
+                                uint32_t tileRef;
+                                deserializer.Read(tileRef);
+
+                                uint32_t dataSize;
+                                deserializer.Read(dataSize);
+
+                                auto data = rcAlloc(dataSize, RC_ALLOC_PERM);
+                                assert(data != nullptr);
+                                {
+                                    deserializer.Read(data, dataSize);
+
+                                    // Everything has been read, now we just read the tile.
+                                    this->detourNavMesh->addTile(reinterpret_cast<unsigned char*>(data), static_cast<int>(dataSize), DT_TILE_FREE_DATA, static_cast<dtTileRef>(tileRef), nullptr);
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // Failed to initialize the nav mesh for whatever reason. We'll skip over the rest of the chunk.
+                            deserializer.Seek(header.sizeInBytes - 28);
+                        }
                     }
                     else
                     {
