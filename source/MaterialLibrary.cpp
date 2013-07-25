@@ -316,9 +316,10 @@ namespace GTEngine
             (
                 "<material>"
                     "<channel name='diffuse'>"
+                    "    uniform float Alpha;"
                     "    vec4 Diffuse()"
                     "    {"
-                    "        return vec4(0.0, 0.0, 0.0, 0.5);"
+                    "        return vec4(0.0, 0.0, 0.0, Alpha);"
                     "    }"
                     "</channel>"
 
@@ -337,6 +338,7 @@ namespace GTEngine
                     "</blending>"
 
                     "<defaultproperties>"
+                    "    <float  name='Alpha' >0.5</float>"
                     "    <float3 name='Colour'>0.75 0.75 1.0</float3>"
                     "</defaultproperties>"
                 "</material>"

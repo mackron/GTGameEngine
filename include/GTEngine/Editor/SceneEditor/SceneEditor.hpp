@@ -891,9 +891,42 @@ namespace GTEngine
         }pauseState;
 
 
+        /// Structure containing pointers to the meshes to use when visualizing the navigation mesh.
+        struct NavigationMeshRendererMeshes
+        {
+            SceneRendererMesh* m_mainMesh;
+            SceneRendererMesh* m_innerEdgeMesh;
+            SceneRendererMesh* m_outerEdgeMesh;
+
+            NavigationMeshRendererMeshes(SceneRendererMesh* mainMesh, SceneRendererMesh* innerEdgeMesh, SceneRendererMesh* outerEdgeMesh)
+                : m_mainMesh(mainMesh),
+                  m_innerEdgeMesh(innerEdgeMesh),
+                  m_outerEdgeMesh(outerEdgeMesh)
+            {
+            }
+
+            NavigationMeshRendererMeshes(const NavigationMeshRendererMeshes &other)
+                : m_mainMesh(other.m_mainMesh),
+                  m_innerEdgeMesh(other.m_innerEdgeMesh),
+                  m_outerEdgeMesh(other.m_outerEdgeMesh)
+            {
+            }
+
+            NavigationMeshRendererMeshes & operator=(const NavigationMeshRendererMeshes &other)
+            {
+                if (this != &other)
+                {
+                    this->m_mainMesh      = other.m_mainMesh;
+                    this->m_innerEdgeMesh = other.m_innerEdgeMesh;
+                    this->m_outerEdgeMesh = other.m_outerEdgeMesh;
+                }
+
+                return *this;
+            }
+        };
 
         /// The external meshes for each navigation mesh in the scene. This is keyed by the index of the navigation mesh.
-        GTCore::Map<size_t, SceneRendererMesh*> navigationMeshRendererMeshes;
+        GTCore::Map<size_t, NavigationMeshRendererMeshes> navigationMeshRendererMeshes;
     };
 }
 
