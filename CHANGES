@@ -25,6 +25,7 @@ FIXES/IMPROVEMENTS:
       the clipboard/copy+paste.
     - Fixed a GUI bug where deleted style attributes would not be handled
       correctly.
+    - Fixed a transparency bug.
 
 
 -------------------------------------------------------------------------------
