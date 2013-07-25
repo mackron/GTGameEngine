@@ -129,6 +129,10 @@ namespace GTEngine
         /// @remarks
         ///     This will update every material using the given file.
         static bool Reload(const char* fileName);
+
+
+        /// Creates a material for use with navigation meshes.
+        static Material* CreateNavigationMeshMaterial();
     };
 }
 

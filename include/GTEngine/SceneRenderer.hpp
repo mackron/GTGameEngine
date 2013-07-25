@@ -39,6 +39,22 @@ namespace GTEngine
         }
 
 
+        /// Assignment.
+        SceneRendererMesh & operator=(const SceneRendererMesh &other)
+        {
+            if (this != &other)
+            {
+                this->vertexArray = other.vertexArray;
+                this->drawMode    = other.drawMode;
+                this->material    = other.material;
+                this->transform   = other.transform;
+                this->flags       = other.flags;
+            }
+
+            return *this;
+        }
+
+
         /// The vertex array containing the mesh data.
         VertexArray* vertexArray;
 
@@ -65,10 +81,6 @@ namespace GTEngine
 
             DrawHighlight = (1 << 31)           // <-- This is temporary and is only used for the editor.
         };
-
-
-    private:    // No copying.
-        SceneRendererMesh & operator=(const SceneRendererMesh &);
     };
 
 

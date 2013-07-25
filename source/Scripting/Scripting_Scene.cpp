@@ -280,6 +280,10 @@ namespace GTEngine
                 "    return GTEngine.System.Scene.GetWalkableClimbHeight(self._internalPtr);"
                 "end;"
 
+                "function GTEngine.Scene:BuildNavigationMesh(index)"
+                "    return GTEngine.System.Scene.BuildNavigationMesh(self._internalPtr, index);"
+                "end;"
+
 
 
                 "GTEngine.RegisteredScenes = {};"
@@ -316,6 +320,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "GetWalkableRadius",              SceneFFI::GetWalkableRadius);
                             script.SetTableFunction(-1, "GetWalkableSlopeAngle",          SceneFFI::GetWalkableSlopeAngle);
                             script.SetTableFunction(-1, "GetWalkableClimbHeight",         SceneFFI::GetWalkableClimbHeight);
+                            script.SetTableFunction(-1, "BuildNavigationMesh",            SceneFFI::BuildNavigationMesh);
                         }
                         script.SetTableValue(-3);
                     }
@@ -714,6 +719,17 @@ namespace GTEngine
                 }
 
                 return 1;
+            }
+
+            int BuildNavigationMesh(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    scene->BuildNavigationMesh(static_cast<size_t>(script.ToInteger(2)));
+                }
+
+                return 0;
             }
         }
     }

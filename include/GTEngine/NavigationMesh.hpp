@@ -22,7 +22,9 @@
 #include <GTCore/Vector.hpp>
 #include "Math.hpp"
 #include "Serialization.hpp"
-#include "Rendering/VertexArray.hpp"
+#include "MeshBuilder.hpp"
+
+#include "Rendering/VertexArray.hpp"    // <-- Remove this later.
 
 
 namespace GTEngine
@@ -84,6 +86,14 @@ namespace GTEngine
         ///
         /// @return True if the path is generated successfully; false otherwise.
         bool FindPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output);
+
+
+        /// Builds the visualization of the navigation mesh into a mesh builder.
+        ///
+        /// @param mainMesh      [in] A reference to the mesh builder that will receive the geometric data for the main mesh.
+        /// @param innerEdgeMesh [in] A reference to the mesh builder that will receive the wireframe geometric data of the polygons in the main mesh.
+        /// @param outerEdgeMesh [in] A reference to the mesh builder that will receive the wireframe geometric data of the outer edges of the outer polygons.
+        void BuildMeshVisualization(MeshBuilderP3 &mainMesh) const;
 
 
         /////////////////////////////////////////////
