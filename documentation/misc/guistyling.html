@@ -1,0 +1,650 @@
+---
+title:  "GUI Styling"
+layout: miscref
+---
+<style>
+    .documentation-section-ul {
+    }
+    .documentation-section-ul ul {
+    }
+    .documentation-section-ul li {
+        margin-top: 8px;
+    }
+
+    .gui-style-property {
+        margin-left: 4px;
+        margin-top:  48px;
+    }
+    .gui-style-property h1 {
+        font-size:   12pt;
+        line-height: 12pt;
+        color:       #444;
+    }
+    .gui-style-property table {
+        margin-left: 8px;
+        margin-top:  8px
+    }
+    .gui-style-property td {
+        padding-right: 16px;
+    }
+    .gui-style-property p {
+        margin-left:   8px;
+    }
+</style>
+<div class="page-title-small">
+    <h1>GUI Styling</h1>
+</div>
+<div class="container-fluid">
+    <div style="padding:0px 20px;">
+        <p>
+        GUI elements are styled using a CSS-like system. You load style scripts in the GUI environment, and then specify the names of the style classes to use with
+        a given element.
+        </p>
+        <div class="documentation-section documentation-section-ul">
+            <h1>A Simple Example</h1>
+            <p>
+            Here is a simple example of a style script:
+            </p>
+<pre>
+my-button
+{
+    width:      auto
+    padding:    8px
+    cursor:     hand
+    font-size:  16pt
+    text-color: #666
+}
+my-button:hovered
+{
+    text-color: #333
+}
+my-button:pushed
+{
+    text-color: #000
+}
+</pre>
+            <p>
+            The above script defines a style class called "my-button" that could be used for a button element. You can see that this is very similar to CSS, but with
+            a few minor differences (see below).
+            </p>
+            <p>
+            You will notice the "hovered" and "pushed" keywords. These allow a style class to mutate in response to certain events. The engine refers to these as
+            "event classes". The identifiers for these events are in past-tense.
+            </p>
+        </div>
+        <div class="documentation-section documentation-section-ul">
+            <h1>Differences with CSS</h1>
+            <p>
+            Disclaimer: There are likely a few things missing from this list.
+            </p>
+            <ul>
+                <li>Style classes should never be prefixed with a period.</li>
+                <li>Semi-colons are allowed, but not required at the end of a property definition.</li>
+                <li>There is support for line comments with "//" and block comments with "/* ... */".</li>
+                <li>The size of an element can be set to that of it's children by setting the "width" and/or "height" properties to "auto".</li>
+                <li>When doing something such as "padding:2px 4px", the values are the opposite way around - the first number is the X axis (horizontal) and the second is the Y axis (vertical).</li>
+                <li>Child elements can be aligned with the "horizontal-align" and "vertical-align" properties which can be set to "left", "right", "top", "bottom" or "center".</li>
+                <li>The colour of the element's text is controlled with "text-color" instead of just "color".</li>
+                <li>There is no support for rounded corners (yet).</li>
+                <li>Controlling the weight of a font (whether or not it is bold) is controlled with "font-style" instead of "font-weight". This might change in the future.</li>
+            </ul>
+        </div>
+        <div class="documentation-section">
+            <h1>Properties</h1>
+            <p>
+            This section is a quick reference of each style attribute.
+            </p>
+            <div class="gui-style-property">
+                <h1>width, height</h1>
+                <p>
+                Controls the size of the element. When set to <b>auto</b>, it is set to the size of the auto-positioned child elements. When set to a percentage value, it's
+                based on the size of the parent. A <b>px</b> value is an absolute size.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>width:100%, height:auto</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>auto, *%, *px</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>min-width, max-width, min-height, max-width</h1>
+                <p>
+                Controls the minimum and maximum size of an element. Accepts the same values as <b>width</b> and <b>height</b>.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>auto</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>auto, *%, *px</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>relative-width-mode, relative-height-mode</h1>
+                <p>
+                Controls where on the element percentaged-sized children will be sized on. The default value is <b>inner</b> which means a 100% sized child element will be the
+                size of the inner part of the element, on the inside of the padding.
+                </p>
+                <p>
+                When set to <b>inner-border</b>, a 100% sized child element will be the size of the parent element, on the outside of the padding, but the inside of the border.
+                </p>
+                <p>
+                When set to <b>outer</b>, a 100% sized child element will be the size of the parent element, on the outside of the padding, and the outside of the border.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>inner</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>inner, inner-border, outer</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>flex-child-width, flex-child-height</h1>
+                <p>
+                Controls whether or not the width of a percentage-sized child should be flexed so that it never goes beyond the clipping area.
+                </p>
+                <p>
+                Consider two elements with a height of 100%. By default, this would cause the second element to be clipped entirely because the space is being used up by the
+                first element. By enabling flexing, both children will be flexed so that they are both visible. In this example, it would be equivalent to each element being
+                sized as 50%.
+                </p>
+                <p>
+                The best use case for this is to make it easier to support a variable sized element with a fixed size sibling. You could set the element to 100% and let the
+                layout manager handle the rest.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>false</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>true, false</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>background-color</h1>
+                <p>
+                Controls the colour of the background. Takes a CSS/HTML style value.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>none</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>CSS/HTML style colour value. E.g. #000, #ffffff, etc</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>background-image</h1>
+                <p>
+                Controls the image to use as the background of the element. The value can be a URL value such as <b>url("path/to/my-image.png")</b> or the identifier of a pre-defined
+                image.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>none</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>A URL value or pre-defined identifier.</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>background-image-color</h1>
+                <p>
+                Controls the colour to modulate the background image with.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>inherit, #fff</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>A CSS/HTML style colour value. E.g. #000, #ffffff, etc</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>background-align-x, background-align-y</h1>
+                <p>
+                Controls the alignment of the background image.
+                </p>
+                <p>
+                You can use <b>background-align</b> as shorthand which takes the X value as the first argument and the Y value as the second.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>center</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>center, left, right, top, bottom</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>background-repeat-x, background-repeat-y</h1>
+                <p>
+                Controls how the background image is repeated.
+                </p>
+                <p>
+                You can use <b>background-repeat</b> as shorthand which takes the X value as the first argument and the Y value as the second.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>none</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>none, stetch, repeat</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>border-left-width, border-right-width, border-top-width, border-bottom-width</h1>
+                <p>
+                Controls the size of the border. Borders can only a take an absolute <b>px</b> value.
+                </p>
+                <p>
+                You can use <b>border-width</b> as shorthand which takes the left, right, top and bottom values respectively.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>0px</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>*px</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>border-left-color, border-right-color, border-top-color, border-bottom-color</h1>
+                <p>
+                Controls the colour of the border. Values are defined as CSS/HTML style colours.
+                </p>
+                <p>
+                You can use <b>border-color</b> as shorthand which takes the left, right, top and bottom values respectively.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>none</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>none, CSS/HTML style colour.</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>border-left, border-right, border-top, border-bottom</h1>
+                <p>
+                Shorthand for controlling the width and colour of the border as a single statement.
+                </p>
+                <p>
+                You can use <b>border</b> as shorthand for setting the values of all four borders.
+                </p>
+                <table>
+                    <tr><td><b>Example:</b></td><td>border-left:1px #000</td></tr>
+                    <tr><td><b>Example:</b></td><td>border:1px #000</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>padding-left, padding-right, padding-top, padding-bottom</h1>
+                <p>
+                Controls the amount of space between the inside of the border and the inner clipping area. Padding can only take an absolute <b>px</b> value.
+                </p>
+                <p>
+                You can use <b>padding</b> as shorthand for setting the values of all four sides.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>0px</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>*px</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>margin-left, margin-right, margin-top, margin-bottom</h1>
+                <p>
+                Controls the amount of space between the outside of the border and elements around it. Margins can only take an absolute <b>px</b> value.
+                </p>
+                <p>
+                You can use <b>margin</b> as shorthand for setting the values of all four sides.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>0px</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>*px</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>child-plane</h1>
+                <p>
+                Controls the axis each successive child to be placed along.
+                </p>
+                <p>
+                When set to <b>vertical</b> (default), each child will be positioned to the bottom of the previous child.
+                </p>
+                <p>
+                When set to <b>hotizontal</b>, each child will be positioned to the right of the previous child.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>vertical</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>vertical, horizontal</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>horizontal-align, vertical-align</h1>
+                <p>
+                Controls the alignment of children.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>left, top</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>left, right, top, bottom, center</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>cursor</h1>
+                <p>
+                Controls the cursor to show when hovered over the element. Currently, only pre-defined cursors can be used. Support for custom cursors is
+                planned for the future.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>arrow</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>arrow, beam, hand, cross, vert-double-arrow, horz-double-arrow, size-top, size-bottom, size-left, size-right</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>visible</h1>
+                <p>
+                Controls whether or not the element is visible.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>true</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>true, false</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>enabled</h1>
+                <p>
+                Controls whether or not the element is enabled. When disabled, the element will not receive most events. The <b>disabled</b> event class will be activated when an
+                element is disabled.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>true</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>true, false</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>z-index</h1>
+                <p>
+                Controls the priority of an element when concerned with which elements should show on top of other elements. Only used with <b>absolute</b> and <b>relative</b> elements. Larger
+                values means higher priority.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>auto</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>auto, integer value</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>transparent-mouse-input</h1>
+                <p>
+                Controls whether or not mouse events should fall through to elements underneath. This is useful for container and alignment elements, among others.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>false</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>true, false</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>text-cursor-color</h1>
+                <p>
+                Controls the colour of the blinking cursor for text input (the caret).
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>inherit, #000</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>inherit, CSS/HTML style colour.</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>positioning</h1>
+                <p>
+                Controls how an element is positioned relative to the parent.
+                </p>
+                <p>
+                When set to <b>auto</b> (default), the layout manager controls the position.
+                </p>
+                <p>
+                When set to <b>relative</b>, the position is relative to the position of the parent and controlled with <b>left</b>, <b>top</b>, <b>right</b> and <b>bottom</b>.
+                </p>
+                <p>
+                When set to <b>absolute</b>, the position is relative to the top/left of the main viewport and controlled with <b>left</b>, <b>top</b>, <b>right</b> and <b>bottom</b>.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>auto</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>auto, relative, absolute</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>left, top, right, bottom</h1>
+                <p>
+                Controls the position of a <b>relative</b> or <b>absolute</b> positioned element. These do nothing when the <b>positioning</b> property is set to <b>auto</b>
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>0px</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>*%, *px</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>position-origin</h1>
+                <p>
+                Controls the position the element is relative to when <b>positioning</b> is set to <b>relative</b>
+                </p>
+                <p>
+                When set to <b>inner</b> (inner), the element will be positioned relative to the inside of the padding
+                </p>
+                <p>
+                When set to <b>inner-border</b>, the element will be positioned relative to the outside of the padding, but the inside of the border.
+                </p>
+                <p>
+                When set to <b>outer</b>, the element will be positioned relative to the the outside of the padding, and the outside of the border.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>inner</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>inner, inner-border, outer</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>inner-offset-x, inner-offset-y</h1>
+                <p>
+                Controls the offset to apply to the position of everything positioned on the inside of the element. This is how you would implement scrolling.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>0px</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>*px</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>font-family</h1>
+                <p>
+                Controls the font to use with the element.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>"dejavu sans"</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>Any text value.</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>font-size</h1>
+                <p>
+                Controls the size of the font.
+                </p>
+                <p>
+                When set to a percentage value, it is based on the size of the host element.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>9pt</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>*%, *px, *pt</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>font-style</h1>
+                <p>
+                A space-delimited list of styles to apply to the font.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>none</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>none, bold, italic</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>text-color</h1>
+                <p>
+                The colour of regular, unselected text.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>#000</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>CSS/HTML style colour.</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>text-selection-color</h1>
+                <p>
+                The colour of selected text.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>#000</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>CSS/HTML style colour.</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>text-selection-background-color</h1>
+                <p>
+                The colour of the background of selected text (the selection highlight).
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>#55a</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>CSS/HTML style colour.</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>text-selection-background-color-blurred</h1>
+                <p>
+                The colour of the background of selected text (the selection highlight) when the element does not have focus.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>#338</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>CSS/HTML style colour.</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>editable-text</h1>
+                <p>
+                Controls whether or not the element allows it's text to be edited.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>false</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>true, false</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>single-line-text</h1>
+                <p>
+                Controls whether or not the text of an element should be constrained to a single line. Only really used with elements that allow text editing.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>false</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>true, false</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>opacity</h1>
+                <p>
+                Controls the opacity of the element.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>1.0</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>A real number, typically between 0 and 1</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>compound-opacity</h1>
+                <p>
+                Controls whether or not the element should inherit the opacity of it's parent.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>true</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>true, false</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>enable-shadow</h1>
+                <p>
+                Controls whether or not the element should cast a shadow.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>false</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>true, false</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>shadow-blur-radius</h1>
+                <p>
+                Controls how much blurring to apply to the edges of the shadow.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>4px</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>*px</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>shadow-offset-x, shadow-offset-y</h1>
+                <p>
+                Controls how much to offset the shadow.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>0px</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>*px</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>shadow-extrusion-x, shadow-extrusion-y</h1>
+                <p>
+                Controls how much to extrude the shadow volume. By default, the shadow is the same size of the element. This controls how much bigger to make it on each side.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>8px</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>*px</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>shadow-opacity</h1>
+                <p>
+                Controls the opacity of the shadow.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>50%</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>*% or a real number, typically between 0 and 1</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>enable-mouse-drag</h1>
+                <p>
+                Controls whether or not to allow a <b>relative</b> or <b>absolute</b> positioned element by dragging it with the mouse. This is ignored with <b>auto</b> positioned elements.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>false</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>true, false</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>constraing-mouse-drag-x, constrain-mouse-drag-y</h1>
+                <p>
+                Controls whether or not mouse dragging should be constrained on a particular axis. By default, neither access is constrained.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>false</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>true, false</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>mouse-drag-clamp-mode-x, mouse-drag-clamp-mode-y</h1>
+                <p>
+                Controls how to clamp mouse dragging of an element against it's parent.
+                </p>
+                <p>
+                When set to <b>none</b>, no clamping is applied.
+                </p>
+                <p>
+                When set to <b>clickpos</b> (default), the element will be clamped against the click position and the inner area of the parent.
+                </p>
+                <p>
+                When set to <b>border</b>, the element will be clamped against the border and the inner area of the parent.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>clickpos</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>none, clickpos, border</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>allow-mouse-resize</h1>
+                <p>
+                Controls whether or not to allow the element to be resized using the mouse.
+                </p>
+                <p>
+                This depends on the values of <b>left-gripper-width</b>, <b>right-gripper-width</b>, <b>top-gripper-width</b> and <b>bottom-gripper-width</b>.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>false</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>true, false</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>left-gripper-width, right-gripper-width, top-gripper-width, bottom-gripper-width</h1>
+                <p>
+                Controls the margin to use when determining whether or not to allow mouse resizing.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>0px</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>*px</td></tr>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
