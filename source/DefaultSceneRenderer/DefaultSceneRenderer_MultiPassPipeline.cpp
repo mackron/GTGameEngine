@@ -238,8 +238,6 @@ namespace GTEngine
                         Renderer::SetBlendColour(mesh.material->GetBlendColour());
                     }
 
-                    Renderer::DisableDepthTest();
-
 
                     // Draw.
                     this->RenderMesh(mesh, lightGroups[0], DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass | DefaultSceneRenderer_MaterialShaderID::NoNormalMapping); // <-- take away NoNormalMapping here and have it use the material in determining whether or not to use normal mapping.
