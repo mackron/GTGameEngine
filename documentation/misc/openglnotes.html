@@ -8,8 +8,8 @@ layout: miscref
 <div class="container-fluid">
     <div style="padding:0px 20px;">
         <p>
-        This page is used simply as a place to document notable issues with OpenGL that I've discovered in my travels. I want to keep track of this
-        stuff in case I encounter them again, and maybe somebody else might find some of this stuff useful, too.
+        This page is used as a place to document notable issues with OpenGL that I've discovered in my travels. I want to keep track of this stuff
+        in case I encounter them again. Maybe somebody else might find some of this stuff useful, too.
         </p>
         <div class="documentation-section">
             <h1>Depth/Stencil texture buffers do not work with EXT_framebuffer_object on Intel.</h1>
@@ -50,7 +50,7 @@ glFramebufferTexture2D(GL_FRAMEBUFFER_EXT, GL_DEPTH_STENCIL_ATTACHMENT, GL_TEXTU
 </pre>
             <p>
             The GL_DEPTH_STENCIL_ATTACHMENT attachment point is not available in EXT_framebuffer_object, so the way the engine does things is it does not allow
-            depth/stencil textures when only EXT_framebuffer_object is available, and will instead only allow it when ARB_framebuffer_object is available.
+            depth/stencil textures when only EXT_framebuffer_object is available, but allow it when ARB_framebuffer_object is available.
             </p>
         </div>
         <div class="documentation-section">
