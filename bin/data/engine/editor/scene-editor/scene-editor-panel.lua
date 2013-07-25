@@ -346,10 +346,14 @@ function GTGUI.Element:SceneEditorSceneNavigationPropertiesPanel(sceneEditor)
     self.WalkableClimbHeight  = GTGUI.Server.CreateElement(self.Body, "labelled-number-input");
     self.WalkableClimbHeight:LabelledNumberInput("Walkable Climb Height");
     
-    self.BuildButton = GTGUI.Server.CreateElement(self.Body, "button");
+    
+    self.BuildButtonContainer = GTGUI.Server.CreateElement(self.Body, "");
+    self.BuildButtonContainer:SetStyle("horizontal-align", "center");
+    
+    self.BuildButton = GTGUI.Server.CreateElement(self.BuildButtonContainer, "button");
     self.BuildButton:Button("Build");
-    self.BuildButton:SetStyle("margin-top", "4px");
-    self.BuildButton:SetStyle("padding", "16px 4px");
+    self.BuildButton:SetStyle("margin-top", "8px");
+    self.BuildButton:SetStyle("padding", "32px 4px");
     self.BuildButton:OnPressed(function()
         sceneEditor:BuildNavigationMesh(0);
         
