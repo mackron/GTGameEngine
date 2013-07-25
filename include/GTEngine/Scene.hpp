@@ -734,7 +734,9 @@ namespace GTEngine
 
 
         /// Rebuilds the navigation mesh that will be used for doing navigation paths.
-        void BuildNavigationMesh();
+        ///
+        /// @param index [in] The index of the navigation mesh to build.
+        void BuildNavigationMesh(size_t index);
 
         /// Retrieves the points on a navigation path between the given start and end positions.
         ///
@@ -747,6 +749,13 @@ namespace GTEngine
               SceneNodeMap & GetSceneNodes()       { return this->sceneNodes; }
         const SceneNodeMap & GetSceneNodes() const { return this->sceneNodes; }
 
+
+        /// Retrieves a reference to the navigation mesh at the given index.
+        ///
+        /// @param index [in] The index of the navigation mesh to retrieve.
+              NavigationMesh & GetNavigationMesh(size_t index);        
+        const NavigationMesh & GetNavigationMesh(size_t index) const;
+              
 
 
     // Serialization/Deserialization.

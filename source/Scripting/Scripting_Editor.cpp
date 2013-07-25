@@ -150,6 +150,9 @@ namespace GTEngine
                         script.SetTableFunction(-1, "EnableSceneBloom",                    SceneEditorFFI::EnableSceneBloom);
                         script.SetTableFunction(-1, "DisableSceneBloom",                   SceneEditorFFI::DisableSceneBloom);
                         script.SetTableFunction(-1, "IsSceneBloomEnabled",                 SceneEditorFFI::IsSceneBloomEnabled);
+
+                        script.SetTableFunction(-1, "ShowNavigationMesh",                  SceneEditorFFI::ShowNavigationMesh);
+                        script.SetTableFunction(-1, "HideNavigationMesh",                  SceneEditorFFI::HideNavigationMesh);
                     }
                     script.SetTableValue(-3);
 
@@ -1918,6 +1921,29 @@ namespace GTEngine
                 }
 
                 return 1;
+            }
+
+
+            int ShowNavigationMesh(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->ShowNavigationMesh(static_cast<size_t>(script.ToInteger(2)));
+                }
+
+                return 0;
+            }
+
+            int HideNavigationMesh(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->HideNavigationMesh(static_cast<size_t>(script.ToInteger(2)));
+                }
+
+                return 0;
             }
         }
 

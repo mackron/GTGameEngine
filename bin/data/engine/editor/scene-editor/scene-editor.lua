@@ -893,6 +893,15 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
     end
     
     
+    function sceneEditor:ShowNavigationMesh(index)
+        GTEngine.System.SceneEditor.ShowNavigationMesh(self._internalPtr, index);
+    end
+    
+    function sceneEditor:HideNavigationMesh(index)
+        GTEngine.System.SceneEditor.HideNavigationMesh(self._internalPtr, index);
+    end
+    
+    
     function sceneEditor:SetSceneNodeTransformToCamera(sceneNode)
         return GTEngine.System.SceneEditor.SetSceneNodeTransformToCamera(self._internalPtr, sceneNode._internalPtr);
     end
@@ -1082,6 +1091,11 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     function self:GetSceneWalkableClimbHeight()
         return self.Scene:GetWalkableClimbHeight();
+    end
+    
+    function self:BuildNavigationMesh(index)
+        self.Scene:BuildNavigationMesh(index);
+        self:MarkAsModified();
     end
     
     

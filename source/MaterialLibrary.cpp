@@ -301,4 +301,64 @@ namespace GTEngine
 
         return false;
     }
+
+
+
+    Material* MaterialLibrary::CreateNavigationMeshMaterial()
+    {
+        MaterialDefinition* definition = nullptr;
+
+        auto iMaterialDefinition = MaterialDefinitions.Find("@NavigationMesh");
+        if (iMaterialDefinition == nullptr)
+        {
+            definition = new MaterialDefinition;
+            definition->LoadFromXML
+            (
+                "<material>"
+                    "<channel name='diffuse'>"
+                    "    vec4 Diffuse()"
+                    "    {"
+                    "        return vec4(0.0, 0.0, 0.0, 0.5);"
+                    "    }"
+                    "</channel>"
+
+                    "<channel name='emissive'>"
+                    "    uniform vec3 Colour;"
+                    "    vec3 Emissive()"
+                    "    {"
+                    "        return Colour;"
+                    "    }"
+                    "</channel>"
+
+                    "<blending>"
+                    "    <equation>Add</equation>"
+                    "    <sourcefactor>SourceAlpha</sourcefactor>"
+                    "    <destinationfactor>OneMinusSourceAlpha</destinationfactor>"
+                    "</blending>"
+
+                    "<defaultproperties>"
+                    "    <float3 name='Colour'>0.75 0.75 1.0</float3>"
+                    "</defaultproperties>"
+                "</material>"
+            );
+
+            MaterialDefinitions.Add("@NavigationMesh", MaterialDefinitionReference(definition, 1));
+        }
+        else
+        {
+            iMaterialDefinition->value.referenceCount += 1;
+            definition = iMaterialDefinition->value.definition;
+        }
+
+
+        assert(definition != nullptr);
+        {
+            auto material = new Material(*definition);
+            LoadedMaterials.Append(material);
+
+            MaterialLibrary_OnCreateMaterial(*material);
+
+            return material;
+        }
+    }
 }

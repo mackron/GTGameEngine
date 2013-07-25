@@ -330,6 +330,10 @@ end
 function GTGUI.Element:SceneEditorSceneNavigationPropertiesPanel(sceneEditor)
     self:PanelGroupBox("Navigation");
     
+    self.ShowInViewport = GTGUI.Server.CreateElement(self.Body, "checkbox");
+    self.ShowInViewport:CheckBox("Show in Viewport");
+    self.ShowInViewport:SetStyle("margin-bottom", "4px");
+    
     self.WalkableHeight       = GTGUI.Server.CreateElement(self.Body, "labelled-number-input");
     self.WalkableHeight:LabelledNumberInput("Walkable Height");
     
@@ -341,6 +345,30 @@ function GTGUI.Element:SceneEditorSceneNavigationPropertiesPanel(sceneEditor)
     
     self.WalkableClimbHeight  = GTGUI.Server.CreateElement(self.Body, "labelled-number-input");
     self.WalkableClimbHeight:LabelledNumberInput("Walkable Climb Height");
+    
+    self.BuildButton = GTGUI.Server.CreateElement(self.Body, "button");
+    self.BuildButton:Button("Build");
+    self.BuildButton:SetStyle("margin-top", "4px");
+    self.BuildButton:SetStyle("padding", "16px 4px");
+    self.BuildButton:OnPressed(function()
+        sceneEditor:BuildNavigationMesh(0);
+        
+        -- If the "Show in Viewport" checkbox is checked, we want to show it after building. It looks strange, but hiding before showing will ensure
+        -- that the visualization is refreshed and up-to-date.
+        if self.ShowInViewport:IsChecked() then
+            sceneEditor:HideNavigationMesh(0);
+            sceneEditor:ShowNavigationMesh(0);
+        end
+    end)
+    
+    
+    self.ShowInViewport:OnChecked(function()
+        sceneEditor:ShowNavigationMesh(0);      -- '0' is the navigation mesh index. Always 0 for now, but will change later on when we add support for multiple navigation meshes.
+    end)
+    
+    self.ShowInViewport:OnUnchecked(function()
+        sceneEditor:HideNavigationMesh(0);      -- '0' has the same meaning as above.
+    end)
     
 
     self.WalkableHeight:OnValueChanged(function()

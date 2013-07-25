@@ -675,6 +675,69 @@ namespace GTEngine
     }
 
 
+    void SceneEditor::ShowNavigationMesh(size_t index)
+    {
+        assert(index == 0);     // <-- Temp assert until we implement support for multiple navigation meshes.
+
+        
+        // Get the mesh.
+        SceneRendererMesh* meshToShow = nullptr;
+
+        auto iNavigationMesh = this->navigationMeshRendererMeshes.Find(index);
+        if (iNavigationMesh == nullptr)
+        {
+            // The renderer mesh doesn't exists. Create it.
+            meshToShow = new SceneRendererMesh;
+            meshToShow->material    = MaterialLibrary::CreateNavigationMeshMaterial();
+            meshToShow->vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+
+
+            MeshBuilderP3 navMeshVisualization;
+            this->scene.GetNavigationMesh(index).BuildMeshVisualization(navMeshVisualization);
+
+            meshToShow->vertexArray->SetVertexData(navMeshVisualization.GetVertexData(), navMeshVisualization.GetVertexCount());
+            meshToShow->vertexArray->SetIndexData( navMeshVisualization.GetIndexData(),  navMeshVisualization.GetIndexCount());
+
+
+            //meshToShow.vertexArray = this->scene.GetNavigationMesh(index).GetVertexArray();
+            this->navigationMeshRendererMeshes.Add(index, meshToShow);
+        }
+        else
+        {
+            meshToShow = iNavigationMesh->value;
+        }
+
+
+        // Show the mesh.
+        assert(meshToShow != nullptr);
+        {
+            this->scene.GetRenderer().AddExternalMesh(*meshToShow);
+        }
+    }
+
+    void SceneEditor::HideNavigationMesh(size_t index)
+    {
+        assert(index == 0);     // <-- Temp assert until we implement support for multiple navigation meshes.
+
+        auto iNavigationMesh = this->navigationMeshRendererMeshes.Find(index);
+        if (iNavigationMesh != nullptr)
+        {
+            auto rendererMesh = iNavigationMesh->value;
+            assert(rendererMesh != nullptr);
+            {
+                this->scene.GetRenderer().RemoveExternalMesh(*rendererMesh);
+                this->navigationMeshRendererMeshes.RemoveByIndex(iNavigationMesh->index);
+
+
+                // Delete the renderer mesh.
+                MaterialLibrary::Delete(rendererMesh->material);
+                VertexArrayLibrary::Delete(rendererMesh->vertexArray);
+                delete rendererMesh;
+            }
+        }
+    }
+
+
 
     ///////////////////////////////////////////////////
     // Scene Events

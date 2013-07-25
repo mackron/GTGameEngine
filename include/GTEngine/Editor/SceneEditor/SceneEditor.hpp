@@ -177,6 +177,16 @@ namespace GTEngine
         bool IsSceneBloomEnabled() const;
         
 
+        /// Shows the navigation mesh at the given index.
+        ///
+        /// @param index [in] The index of the navigation mesh.
+        void ShowNavigationMesh(size_t index);
+
+        /// Hides the navigation mesh at the given index.
+        ///
+        /// @param index [in] The index of the navigation mesh.
+        void HideNavigationMesh(size_t index);
+
 
 
         ///////////////////////////////////////////////////
@@ -879,6 +889,11 @@ namespace GTEngine
             PauseState & operator=(const PauseState &);
 
         }pauseState;
+
+
+
+        /// The external meshes for each navigation mesh in the scene. This is keyed by the index of the navigation mesh.
+        GTCore::Map<size_t, SceneRendererMesh*> navigationMeshRendererMeshes;
     };
 }
 

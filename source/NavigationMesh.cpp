@@ -364,6 +364,52 @@ namespace GTEngine
     }
 
 
+    void NavigationMesh::BuildMeshVisualization(MeshBuilderP3 &mainMesh) const
+    {
+        mainMesh.Clear();
+
+        if (this->detourNavMesh != nullptr)
+        {
+            for (int i = 0; i < this->detourNavMesh->getMaxTiles(); ++i)
+            {
+                auto tile = const_cast<const dtNavMesh*>(this->detourNavMesh)->getTile(i);
+                if (tile->header != nullptr)
+                {
+                    for (int j = 0; j < tile->header->polyCount; ++j)
+                    {
+                        auto &poly = tile->polys[j];
+
+                        if (poly.getType() != DT_POLYTYPE_OFFMESH_CONNECTION)
+                        {
+		                    auto &pd = tile->detailMeshes[j];
+
+                            for (int k = 0; k < pd.triCount; ++k)
+		                    {
+			                    const unsigned char* t = &tile->detailTris[(pd.triBase+k)*4];
+			                    for (int l = 0; l < 3; ++l)
+			                    {
+                                    float* vertex = nullptr;
+
+				                    if (t[l] < poly.vertCount)
+                                    {
+                                        vertex = &tile->verts[poly.verts[t[l]] * 3];
+                                    }
+				                    else
+                                    {
+                                        vertex = &tile->detailVerts[(pd.vertBase + t[l] - poly.vertCount) * 3];
+                                    }
+
+                                    mainMesh.EmitVertex(glm::vec3(vertex[0], vertex[1], vertex[2]));
+			                    }
+		                    }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+
     /////////////////////////////////////////////
     // Serialization/Deserialization
 
@@ -580,7 +626,7 @@ namespace GTEngine
                         deserializer.Read(flags.buffer, sizeof(uint16_t) * flags.count);
 
                         areas.Resize(npolys);
-                        deserializer.Read(areas.buffer, sizeof(uint16_t) * areas.count);
+                        deserializer.Read(areas.buffer, sizeof(uint8_t) * areas.count);
 
 
                         // I'm unaware of a public API for creating a mesh from raw data like this, so we're going to copy the implementation of

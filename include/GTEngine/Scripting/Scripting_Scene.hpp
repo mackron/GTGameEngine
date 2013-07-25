@@ -169,6 +169,12 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the scene.
             int GetWalkableClimbHeight(GTCore::Script &script);
+
+            /// Builds the navigation mesh at the given index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            int BuildNavigationMesh(GTCore::Script &script);
         }
     }
 }

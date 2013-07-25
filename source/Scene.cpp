@@ -1358,14 +1358,34 @@ namespace GTEngine
     }
 
 
-    void Scene::BuildNavigationMesh()
+    void Scene::BuildNavigationMesh(size_t index)
     {
+        assert(index == 0);     // <-- Temp assert until we add support for multiple navigation meshes.
+        (void)index;
+
         this->navigationMesh.Build(*this);
     }
 
     void Scene::FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output)
     {
         this->navigationMesh.FindPath(start, end, output);
+    }
+
+
+    NavigationMesh & Scene::GetNavigationMesh(size_t index)
+    {
+        assert(index == 0);     // <-- Temp assert until we add support for multiple navigation meshes.
+        (void)index;
+
+        return this->navigationMesh;
+    }
+
+    const NavigationMesh & Scene::GetNavigationMesh(size_t index) const
+    {
+        assert(index == 0);     // <-- Temp assert until we add support for multiple navigation meshes.
+        (void)index;
+
+        return this->navigationMesh;
     }
 
 

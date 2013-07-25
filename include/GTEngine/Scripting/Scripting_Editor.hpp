@@ -713,6 +713,21 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the scene editor.
             int IsSceneBloomEnabled(GTCore::Script &script);
+
+
+            /// Shows the navigation mesh at the given index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: The index of the navigation mesh to show.
+            int ShowNavigationMesh(GTCore::Script &script);
+
+            /// Hides the navigation mesh at the given index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: The index of the navigation mesh to hide.
+            int HideNavigationMesh(GTCore::Script &script);
         }
 
 

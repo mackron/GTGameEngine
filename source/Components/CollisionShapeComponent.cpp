@@ -612,13 +612,9 @@ namespace GTEngine
 
             if (applyNodeTransform)
             {
-                combined->ApplyTransform(this->node.GetWorldTransform());
+                combined->ApplyTransform(this->node.GetWorldTransformWithoutScale());
             }
-            else
-            {
-                // We still need to apply the scaling in any case.
-                combined->ApplyTransform(glm::scale(this->node.GetWorldScale()));
-            }
+
 
             // Here we optimize the vertex array to remove duplicate values.
             combined->Optimize();
