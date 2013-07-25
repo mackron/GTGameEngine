@@ -93,7 +93,7 @@ namespace GTEngine
         /// @param mainMesh      [in] A reference to the mesh builder that will receive the geometric data for the main mesh.
         /// @param innerEdgeMesh [in] A reference to the mesh builder that will receive the wireframe geometric data of the polygons in the main mesh.
         /// @param outerEdgeMesh [in] A reference to the mesh builder that will receive the wireframe geometric data of the outer edges of the outer polygons.
-        void BuildMeshVisualization(MeshBuilderP3 &mainMesh) const;
+        void BuildMeshVisualization(MeshBuilderP3 &mainMesh, MeshBuilderP3 &innerEdgeMesh, MeshBuilderP3 &outerEdgeMesh) const;
 
 
         /////////////////////////////////////////////

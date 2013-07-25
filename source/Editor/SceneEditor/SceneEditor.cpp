@@ -681,37 +681,64 @@ namespace GTEngine
 
         
         // Get the mesh.
-        SceneRendererMesh* meshToShow = nullptr;
+        SceneRendererMesh* mainMesh      = nullptr;
+        SceneRendererMesh* innerEdgeMesh = nullptr;
+        SceneRendererMesh* outerEdgeMesh = nullptr;
 
         auto iNavigationMesh = this->navigationMeshRendererMeshes.Find(index);
         if (iNavigationMesh == nullptr)
         {
             // The renderer mesh doesn't exists. Create it.
-            meshToShow = new SceneRendererMesh;
-            meshToShow->material    = MaterialLibrary::CreateNavigationMeshMaterial();
-            meshToShow->vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+            mainMesh = new SceneRendererMesh;
+            mainMesh->vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+            mainMesh->material    = MaterialLibrary::CreateNavigationMeshMaterial();
+            
+            innerEdgeMesh = new SceneRendererMesh;
+            innerEdgeMesh->vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+            innerEdgeMesh->material    = MaterialLibrary::CreateNavigationMeshMaterial();
+            innerEdgeMesh->material->SetParameter("Colour", glm::vec3(0.0f, 0.0f, 0.25f));
+            innerEdgeMesh->material->SetParameter("Alpha",  0.05f);
+            innerEdgeMesh->drawMode    = DrawMode_Lines;
+
+            outerEdgeMesh = new SceneRendererMesh;
+            outerEdgeMesh->vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+            outerEdgeMesh->material    = MaterialLibrary::CreateNavigationMeshMaterial();
+            outerEdgeMesh->material->SetParameter("Colour", glm::vec3(0.0f, 0.0f, 0.25f));
+            outerEdgeMesh->material->SetParameter("Alpha",  0.5f);
+            outerEdgeMesh->drawMode    = DrawMode_Lines;
 
 
-            MeshBuilderP3 navMeshVisualization;
-            this->scene.GetNavigationMesh(index).BuildMeshVisualization(navMeshVisualization);
+            MeshBuilderP3 mainMeshBuilder;
+            MeshBuilderP3 innerEdgeMeshBuilder;
+            MeshBuilderP3 outerEdgeMeshBuilder;
+            this->scene.GetNavigationMesh(index).BuildMeshVisualization(mainMeshBuilder, innerEdgeMeshBuilder, outerEdgeMeshBuilder);
 
-            meshToShow->vertexArray->SetVertexData(navMeshVisualization.GetVertexData(), navMeshVisualization.GetVertexCount());
-            meshToShow->vertexArray->SetIndexData( navMeshVisualization.GetIndexData(),  navMeshVisualization.GetIndexCount());
+            mainMesh->vertexArray->SetVertexData(mainMeshBuilder.GetVertexData(), mainMeshBuilder.GetVertexCount());
+            mainMesh->vertexArray->SetIndexData( mainMeshBuilder.GetIndexData(),  mainMeshBuilder.GetIndexCount());
+
+            innerEdgeMesh->vertexArray->SetVertexData(innerEdgeMeshBuilder.GetVertexData(), innerEdgeMeshBuilder.GetVertexCount());
+            innerEdgeMesh->vertexArray->SetIndexData( innerEdgeMeshBuilder.GetIndexData(),  innerEdgeMeshBuilder.GetIndexCount());
+
+            outerEdgeMesh->vertexArray->SetVertexData(outerEdgeMeshBuilder.GetVertexData(), outerEdgeMeshBuilder.GetVertexCount());
+            outerEdgeMesh->vertexArray->SetIndexData( outerEdgeMeshBuilder.GetIndexData(),  outerEdgeMeshBuilder.GetIndexCount());
 
 
-            //meshToShow.vertexArray = this->scene.GetNavigationMesh(index).GetVertexArray();
-            this->navigationMeshRendererMeshes.Add(index, meshToShow);
+            this->navigationMeshRendererMeshes.Add(index, NavigationMeshRendererMeshes(mainMesh, innerEdgeMesh, outerEdgeMesh));
         }
         else
         {
-            meshToShow = iNavigationMesh->value;
+            mainMesh      = iNavigationMesh->value.m_mainMesh;
+            innerEdgeMesh = iNavigationMesh->value.m_innerEdgeMesh;
+            outerEdgeMesh = iNavigationMesh->value.m_outerEdgeMesh;
         }
 
 
         // Show the mesh.
-        assert(meshToShow != nullptr);
+        assert(mainMesh != nullptr);
         {
-            this->scene.GetRenderer().AddExternalMesh(*meshToShow);
+            this->scene.GetRenderer().AddExternalMesh(*mainMesh);
+            this->scene.GetRenderer().AddExternalMesh(*innerEdgeMesh);
+            this->scene.GetRenderer().AddExternalMesh(*outerEdgeMesh);
         }
     }
 
@@ -722,17 +749,30 @@ namespace GTEngine
         auto iNavigationMesh = this->navigationMeshRendererMeshes.Find(index);
         if (iNavigationMesh != nullptr)
         {
-            auto rendererMesh = iNavigationMesh->value;
-            assert(rendererMesh != nullptr);
-            {
-                this->scene.GetRenderer().RemoveExternalMesh(*rendererMesh);
-                this->navigationMeshRendererMeshes.RemoveByIndex(iNavigationMesh->index);
+            auto &rendererMesh = iNavigationMesh->value;
 
+            assert(rendererMesh.m_mainMesh);
+            assert(rendererMesh.m_innerEdgeMesh);
+            assert(rendererMesh.m_outerEdgeMesh);
+            {
+                this->scene.GetRenderer().RemoveExternalMesh(*rendererMesh.m_mainMesh);
+                this->scene.GetRenderer().RemoveExternalMesh(*rendererMesh.m_innerEdgeMesh);
+                this->scene.GetRenderer().RemoveExternalMesh(*rendererMesh.m_outerEdgeMesh);
 
                 // Delete the renderer mesh.
-                MaterialLibrary::Delete(rendererMesh->material);
-                VertexArrayLibrary::Delete(rendererMesh->vertexArray);
-                delete rendererMesh;
+                MaterialLibrary::Delete(rendererMesh.m_mainMesh->material);
+                MaterialLibrary::Delete(rendererMesh.m_innerEdgeMesh->material);
+                MaterialLibrary::Delete(rendererMesh.m_outerEdgeMesh->material);
+
+                VertexArrayLibrary::Delete(rendererMesh.m_mainMesh->vertexArray);
+                VertexArrayLibrary::Delete(rendererMesh.m_innerEdgeMesh->vertexArray);
+                VertexArrayLibrary::Delete(rendererMesh.m_outerEdgeMesh->vertexArray);
+
+                delete rendererMesh.m_mainMesh;
+                delete rendererMesh.m_innerEdgeMesh;
+                delete rendererMesh.m_outerEdgeMesh;
+
+                this->navigationMeshRendererMeshes.RemoveByIndex(iNavigationMesh->index);
             }
         }
     }

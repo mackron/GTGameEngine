@@ -8,6 +8,22 @@
 
 namespace GTEngine
 {
+    // A function taken from the Recast/Detour source for use when drawing the navigation mesh.
+    float distancePtLine2d(const float* pt, const float* p, const float* q)
+    {
+        float pqx = q[0] - p[0];
+        float pqz = q[2] - p[2];
+        float dx = pt[0] - p[0];
+        float dz = pt[2] - p[2];
+        float d = pqx*pqx + pqz*pqz;
+        float t = pqx*dx + pqz*dz;
+        if (d != 0) t /= d;
+        dx = p[0] + t*pqx - pt[0];
+        dz = p[2] + t*pqz - pt[2];
+        return dx*dx + dz*dz;
+    }
+
+
     NavigationMesh::NavigationMesh()
         : config(),
           mesh(nullptr), detailMesh(nullptr),
@@ -364,9 +380,11 @@ namespace GTEngine
     }
 
 
-    void NavigationMesh::BuildMeshVisualization(MeshBuilderP3 &mainMesh) const
+    void NavigationMesh::BuildMeshVisualization(MeshBuilderP3 &mainMesh, MeshBuilderP3 &innerEdgeMesh, MeshBuilderP3 &outerEdgeMesh) const
     {
         mainMesh.Clear();
+        innerEdgeMesh.Clear();
+        outerEdgeMesh.Clear();
 
         if (this->detourNavMesh != nullptr)
         {
@@ -375,17 +393,18 @@ namespace GTEngine
                 auto tile = const_cast<const dtNavMesh*>(this->detourNavMesh)->getTile(i);
                 if (tile->header != nullptr)
                 {
+                    // Main mesh.
                     for (int j = 0; j < tile->header->polyCount; ++j)
                     {
                         auto &poly = tile->polys[j];
+                        auto &pd   = tile->detailMeshes[j];
 
                         if (poly.getType() != DT_POLYTYPE_OFFMESH_CONNECTION)
                         {
-		                    auto &pd = tile->detailMeshes[j];
-
+                            // Main mesh.
                             for (int k = 0; k < pd.triCount; ++k)
 		                    {
-			                    const unsigned char* t = &tile->detailTris[(pd.triBase+k)*4];
+			                    const unsigned char* t = &tile->detailTris[(pd.triBase+k) * 4];
 			                    for (int l = 0; l < 3; ++l)
 			                    {
                                     float* vertex = nullptr;
@@ -402,6 +421,85 @@ namespace GTEngine
                                     mainMesh.EmitVertex(glm::vec3(vertex[0], vertex[1], vertex[2]));
 			                    }
 		                    }
+
+
+                            // Inner edges mesh.
+                            for (int iVert = 0; iVert < poly.vertCount; ++iVert)
+                            {
+                                const auto v0 = &tile->verts[poly.verts[iVert] * 3];
+                                const auto v1 = &tile->verts[poly.verts[(iVert + 1) % poly.vertCount] * 3];
+
+                                for (int k = 0; k < pd.triCount; ++k)
+                                {
+                                    const auto t = &tile->detailTris[(pd.triBase + k) * 4];
+                                    const float* tv[3];
+
+                                    for (int m = 0; m < 3; ++m)
+                                    {
+                                        if (t[m] < poly.vertCount)
+                                        {
+                                            tv[m] = &tile->verts[poly.verts[t[m]] * 3];
+                                        }
+                                        else
+                                        {
+                                            tv[m] = &tile->detailVerts[(pd.vertBase+(t[m] - poly.vertCount)) * 3];
+                                        }
+                                    }
+
+                                    for (int m = 0, n = 2; m < 3; n = m++)
+                                    {
+                                        if (((t[3] >> (n * 2)) & 0x3) != 0)     // Skip inner detail edges.
+                                        {
+                                            if (distancePtLine2d(tv[n], v0, v1) < 0.01f && distancePtLine2d(tv[m], v0, v1) < 0.01f)
+                                            {
+                                                innerEdgeMesh.EmitVertex(glm::vec3(tv[n][0], tv[n][1], tv[n][2]));
+                                                innerEdgeMesh.EmitVertex(glm::vec3(tv[m][0], tv[m][1], tv[m][2]));
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+
+
+                            // Outer edges mesh.
+                            for (int iVert = 0; iVert < poly.vertCount; ++iVert)
+                            {
+                                if (poly.neis[iVert] == 0)
+                                {
+                                    const auto v0 = &tile->verts[poly.verts[iVert] * 3];
+                                    const auto v1 = &tile->verts[poly.verts[(iVert + 1) % poly.vertCount] * 3];
+
+                                    for (int k = 0; k < pd.triCount; ++k)
+                                    {
+                                        const auto t = &tile->detailTris[(pd.triBase + k) * 4];
+                                        const float* tv[3];
+
+                                        for (int m = 0; m < 3; ++m)
+                                        {
+                                            if (t[m] < poly.vertCount)
+                                            {
+                                                tv[m] = &tile->verts[poly.verts[t[m]] * 3];
+                                            }
+                                            else
+                                            {
+                                                tv[m] = &tile->detailVerts[(pd.vertBase+(t[m] - poly.vertCount)) * 3];
+                                            }
+                                        }
+
+                                        for (int m = 0, n = 2; m < 3; n = m++)
+                                        {
+                                            if (((t[3] >> (n * 2)) & 0x3) != 0)     // Skip inner detail edges.
+                                            {
+                                                if (distancePtLine2d(tv[n], v0, v1) < 0.01f && distancePtLine2d(tv[m], v0, v1) < 0.01f)
+                                                {
+                                                    outerEdgeMesh.EmitVertex(glm::vec3(tv[n][0], tv[n][1], tv[n][2]));
+                                                    outerEdgeMesh.EmitVertex(glm::vec3(tv[m][0], tv[m][1], tv[m][2]));
+                                                }
+                                            }
+                                        }
+                                    }
+                                }
+                            }
                         }
                     }
                 }
