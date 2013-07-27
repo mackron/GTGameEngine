@@ -346,6 +346,7 @@ namespace GTEngine
         /// @param vertexArray [in] A reference to the vertex array to draw.
         /// @param mode        [in] The primitives to draw (triangles or lines).
         static void Draw(const VertexArray &vertexArray, DrawMode mode = DrawMode_Triangles);
+        static void Draw(const VertexArray* vertexArray, DrawMode mode = DrawMode_Triangles) { assert(vertexArray != nullptr); Draw(*vertexArray, mode); }
         
         /// Draws the elements defined in the given vertex data.
         ///
@@ -457,6 +458,7 @@ namespace GTEngine
         /// @remarks
         ///     This will immediately make a copy of the data, so it is safe to delete the local copy if needed.
         static void PushTexture2DData(const Texture2D &texture, int mipmap = -1);
+        static void PushTexture2DData(const Texture2D* texture, int mipmap = -1) { assert(texture != nullptr); PushTexture2DData(*texture, mipmap); }
 
         /// Pushes the image data of the given 3D texture to the renderer.
         ///
@@ -483,7 +485,9 @@ namespace GTEngine
         /// @param minification  [in] The minification filter to use with the texture.
         /// @param magnification [in] The magnification filter to use with the texture.
         static void SetTexture2DFilter(const Texture2D &texture, TextureFilter minification, TextureFilter magnification);
+        static void SetTexture2DFilter(const Texture2D* texture, TextureFilter minification, TextureFilter magnification) { assert(texture != nullptr); SetTexture2DFilter(*texture, minification, magnification); }
         static void SetTextureCubeFilter(const TextureCube &texture, TextureFilter minification, TextureFilter magnification);
+        static void SetTextureCubeFilter(const TextureCube* texture, TextureFilter minification, TextureFilter magnification) { assert(texture != nullptr); SetTextureCubeFilter(*texture, minification, magnification); }
 
         /// Sets the level of anisotropic filter to use with the given texture.
         ///
@@ -546,6 +550,7 @@ namespace GTEngine
         /// @remarks
         ///     This will clear any pending uniforms.
         static void PushPendingUniforms(const Shader &shader);
+        static void PushPendingUniforms(const Shader* shader) { assert(shader != nullptr); PushPendingUniforms(*shader); }
 
 
 
@@ -601,6 +606,11 @@ namespace GTEngine
         ///
         /// @return The maximum number of texture units that can be used simultaneously.
         static unsigned int GetMaxTextureUnits();
+
+        /// Determines whether or not different sized buffers can be attached to a framebuffer.
+        ///
+        /// @return True if the renderer has support for attaching buffers of different sizes to a framebuffer.
+        static bool SupportsMixedSizedBufferAttachments();
 
 
 

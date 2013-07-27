@@ -24,6 +24,7 @@ namespace GTEngine
           bloomShader(nullptr), highlightShader(nullptr),
           bloomBlurShaderX(nullptr), bloomBlurShaderY(nullptr), shadowBlurShaderX(nullptr), shadowBlurShaderY(nullptr),
           shaderBuilder(),
+          luminanceChain(),
           isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(1.0f),
           directionalShadowMapSize(1024), pointShadowMapSize(256), spotShadowMapSize(512),
           materialLibraryEventHandler(*this)
@@ -990,9 +991,8 @@ namespace GTEngine
 
         if (this->IsHDREnabled())
         {
-            // HDR requires luminosity. We downsample the colour buffer to 1x1 to get this. Mipmap generation will do it for us.
-            Renderer::SetTexture2DFilter(*sourceColourBuffer, TextureFilter_NearestNearest, TextureFilter_Nearest);
-            Renderer::GenerateTexture2DMipmaps(*sourceColourBuffer);
+            // HDR requires luminocity.
+            this->luminanceChain.ComputeLuminance(*sourceColourBuffer, this->hdrExposure);
 
 
             // Might need a bloom buffer.
@@ -1016,17 +1016,17 @@ namespace GTEngine
             if (this->IsBloomEnabled())
             {
                 Renderer::SetCurrentShader(this->finalCompositionShaderHDR);
-                this->finalCompositionShaderHDR->SetUniform("ColourBuffer", sourceColourBuffer);
-                this->finalCompositionShaderHDR->SetUniform("BloomBuffer",  framebuffer->bloomBuffer);
-                this->finalCompositionShaderHDR->SetUniform("Exposure",     this->hdrExposure);
-                this->finalCompositionShaderHDR->SetUniform("BloomFactor",  this->bloomFactor);
+                this->finalCompositionShaderHDR->SetUniform("ColourBuffer",    sourceColourBuffer);
+                this->finalCompositionShaderHDR->SetUniform("LuminanceBuffer", this->luminanceChain.GetLuminanceBuffer());
+                this->finalCompositionShaderHDR->SetUniform("BloomBuffer",     framebuffer->bloomBuffer);
+                this->finalCompositionShaderHDR->SetUniform("BloomFactor",     this->bloomFactor);
                 Renderer::PushPendingUniforms(*this->finalCompositionShaderHDR);
             }
             else
             {
                 Renderer::SetCurrentShader(this->finalCompositionShaderHDRNoBloom);
-                this->finalCompositionShaderHDRNoBloom->SetUniform("ColourBuffer", sourceColourBuffer);
-                this->finalCompositionShaderHDRNoBloom->SetUniform("Exposure",     this->hdrExposure);
+                this->finalCompositionShaderHDRNoBloom->SetUniform("ColourBuffer",    sourceColourBuffer);
+                this->finalCompositionShaderHDRNoBloom->SetUniform("LuminanceBuffer", this->luminanceChain.GetLuminanceBuffer());
                 Renderer::PushPendingUniforms(*this->finalCompositionShaderHDRNoBloom);
             }
         }

@@ -11,6 +11,7 @@
 #include "DefaultSceneRenderer_VisibilityProcessor.hpp"
 #include "DefaultSceneRenderer_MaterialShaders.hpp"
 #include "DefaultSceneRenderer_ShaderBuilder.hpp"
+#include "DefaultSceneRenderer_LuminanceChain.hpp"
 
 
 #include <GTCore/Map.hpp>
@@ -101,13 +102,13 @@ namespace GTEngine
 
 
             // Filters.
-            Renderer::SetTexture2DFilter(*this->colourBuffer0,     TextureFilter_NearestNearest, TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->colourBuffer1,     TextureFilter_NearestNearest, TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->lightingBuffer0,   TextureFilter_Nearest,        TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->lightingBuffer1,   TextureFilter_Nearest,        TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->finalColourBuffer, TextureFilter_Nearest,        TextureFilter_Nearest);
-            Renderer::SetTexture2DFilter(*this->bloomBuffer,       TextureFilter_Linear,         TextureFilter_Linear);
-            Renderer::SetTexture2DFilter(*this->bloomBlurBuffer,   TextureFilter_Nearest,        TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->colourBuffer0,     TextureFilter_Nearest, TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->colourBuffer1,     TextureFilter_Nearest, TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->lightingBuffer0,   TextureFilter_Nearest, TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->lightingBuffer1,   TextureFilter_Nearest, TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->finalColourBuffer, TextureFilter_Nearest, TextureFilter_Nearest);
+            Renderer::SetTexture2DFilter(*this->bloomBuffer,       TextureFilter_Linear,  TextureFilter_Linear);
+            Renderer::SetTexture2DFilter(*this->bloomBlurBuffer,   TextureFilter_Nearest, TextureFilter_Nearest);
 
             // Wrap Modes.
             Renderer::SetTexture2DWrapMode(*this->colourBuffer0,   TextureWrapMode_ClampToEdge);
@@ -670,7 +671,8 @@ namespace GTEngine
         /// The shader builder for dynamically building shaders for various things.
         DefaultSceneRenderer_ShaderBuilder shaderBuilder;
 
-
+        /// The luminance chain for computing the luminance of the scene.
+        DefaultSceneRenderer_LuminanceChain luminanceChain;
 
 
         ///////////////////////////////////////////////////////

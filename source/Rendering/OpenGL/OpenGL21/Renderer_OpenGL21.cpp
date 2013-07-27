@@ -215,6 +215,7 @@ namespace GTEngine
                 Log("    ARB_texture_rg:                     %s", GTGL_ARB_texture_rg                     ? "yes" : "no");
                 Log("    ARB_texture_float:                  %s", GTGL_ARB_texture_float                  ? "yes" : "no");
                 Log("    ARB_framebuffer_object:             %s", GTGL_ARB_framebuffer_object             ? "yes" : "no");
+                Log("    ARB_cl_event:                       %s", GTGL_ARB_cl_event                       ? "yes" : "no");
                 Log("    ARB_timer_query:                    %s", GTGL_ARB_timer_query                    ? "yes" : "no");
                 Log("    ARB_vertex_buffer_object:           %s", GTGL_ARB_vertex_buffer_object           ? "yes" : "no");
                 Log("    ARB_get_program_binary:             %s", GTGL_ARB_get_program_binary             ? "yes" : "no");
@@ -246,6 +247,7 @@ namespace GTEngine
                 glGetIntegerv(GL_MAX_COLOR_ATTACHMENTS,   &RendererCaps.MaxColourAttachments);
                 glGetIntegerv(GL_MAX_DRAW_BUFFERS,        &RendererCaps.MaxDrawBuffers);
                 glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &RendererCaps.MaxTextureUnits);
+                RendererCaps.SupportsMixedSizedBufferAttachments = GTGL_ARB_framebuffer_object;
 
 
                 // Now we'll set some defaults.
@@ -1809,5 +1811,10 @@ namespace GTEngine
     unsigned int Renderer::GetMaxTextureUnits()
     {
         return static_cast<unsigned int>(RendererCaps.MaxTextureUnits);
+    }
+
+    bool Renderer::SupportsMixedSizedBufferAttachments()
+    {
+        return RendererCaps.SupportsMixedSizedBufferAttachments != 0;
     }
 }
