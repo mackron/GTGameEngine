@@ -11,7 +11,7 @@ BREAKING CHANGES:
 FEATURES:
     - Added an OpenGL 2.1 renderer and dropped the OpenGL 3.3 one. The plan for
       the future is to have a "legacy" renderer which is OpenGL 2.1 and a
-      "default" renderer which is OpenGL 4.3 based. OpenGL 3.3 does not add
+      "default" renderer which is OpenGL 4.4 based. OpenGL 3.3 does not add
       anything worth justifying it's own code path.
     - Added the ability to control whether or not mouse smoothing is enabled.
     - Added the ability to set the shape of dynamics and proximity components
@@ -27,6 +27,12 @@ FIXES/IMPROVEMENTS:
     - Fixed a GUI bug where deleted style attributes would not be handled
       correctly.
     - Fixed a transparency bug.
+    - Fixed an OpenGL rendering error message.
+    - Fixed an issue where HDR was prohibitively slow on Intel GPUs.
+    - More work on documentation
+        - Tips, Tricks and Quirks
+        - GUI Styling
+        - OpenGL Notes
 
 
 -------------------------------------------------------------------------------
@@ -46,7 +52,7 @@ FEATURES:
       main window loses focus.
     - Added a "Viewport" menu to the particle editor.
         - Allow the user to change the orientation of the preview particle
-            system.
+          system.
         - Allow the user to show/hide the grid and axis arrows.
         - Allow the user to reset the camera
     - Material channels are no longer pre-defined. This means materials can
