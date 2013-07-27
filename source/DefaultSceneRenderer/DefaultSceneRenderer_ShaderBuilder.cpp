@@ -230,7 +230,7 @@ namespace GTEngine
     
             "void main()\n"
             "{\n"
-            "    gl_FragData[0] = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 0) - vec4(1.0, 1.0, 1.0, 0.0));\n"
+            "    gl_FragData[0] = max(vec4(0.0), texture2D(ColourBuffer, VertexOutput_TexCoord) - vec4(1.0, 1.0, 1.0, 0.0));\n"
             "}"
         );
 
@@ -278,20 +278,17 @@ namespace GTEngine
             "varying vec2 VertexOutput_TexCoord;\n"
     
             "uniform sampler2D ColourBuffer;\n"
+            "uniform sampler2D LuminanceBuffer;\n"
             "uniform sampler2D BloomBuffer;\n"
-            "uniform float     Exposure;\n"
             "uniform float     BloomFactor;\n"
     
             "void main()\n"
             "{\n"
-            "    vec4  bloom     = texture2D(BloomBuffer, VertexOutput_TexCoord, 0);\n"
-            "    float luminance = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));\n"
+            "    vec4  bloom     = texture2D(BloomBuffer, VertexOutput_TexCoord);\n"
+            "    float luminance = texture2D(LuminanceBuffer, vec2(0.0, 0.0)).r;\n"
         
-            // Bloom.
             "    gl_FragData[0] = (bloom * BloomFactor) + texture2D(ColourBuffer, VertexOutput_TexCoord);\n"
-        
-            // Tone Mapping.
-            "    gl_FragData[0] = gl_FragData[0] * min(5.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));\n"
+            "    gl_FragData[0] = gl_FragData[0] * luminance;\n"
             "}"
         );
 
@@ -313,14 +310,11 @@ namespace GTEngine
             "varying vec2 VertexOutput_TexCoord;\n"
     
             "uniform sampler2D ColourBuffer;\n"
-            "uniform float     Exposure;\n"
+            "uniform sampler2D LuminanceBuffer;\n"
     
             "void main()\n"
             "{\n"
-            "    float luminance = dot(vec4(0.30, 0.59, 0.11, 0.0), texture2D(ColourBuffer, VertexOutput_TexCoord, 1000.0));\n"
-
-            // Tone Mapping.
-            "    gl_FragData[0] = texture2D(ColourBuffer, VertexOutput_TexCoord) * min(5.0, Exposure * (Exposure / luminance + 1.0) / (Exposure + 1.0));\n"
+            "    gl_FragData[0] = texture2D(ColourBuffer, VertexOutput_TexCoord) * texture2D(LuminanceBuffer, vec2(0.0, 0.0)).r;\n"
             "}\n"
         );
 
