@@ -559,14 +559,14 @@ namespace GTEngine
         Renderer::SetCurrentFramebuffer(this->directionalShadowMapFramebuffer.framebuffer);
         Renderer::SetViewport(0, 0, this->directionalShadowMapFramebuffer.width, this->directionalShadowMapFramebuffer.height);
 
+        int colourBufferIndex = 0;
+        int blurBufferIndex   = 1;
+        Renderer::SetDrawBuffers(1, &colourBufferIndex);
+
         // Clear.
         Renderer::SetClearColour(1.0f, 1.0f, 1.0f, 1.0f);
         Renderer::SetClearDepth(1.0f);
         Renderer::Clear(BufferType_Colour | BufferType_Depth);
-
-        int colourBufferIndex = 0;
-        int blurBufferIndex   = 1;
-        Renderer::SetDrawBuffers(1, &colourBufferIndex);
 
         // Shader setup.
         Renderer::SetCurrentShader(this->shadowMapShader);
@@ -667,14 +667,14 @@ namespace GTEngine
         Renderer::SetCurrentFramebuffer(this->spotShadowMapFramebuffer.framebuffer);
         Renderer::SetViewport(0, 0, this->spotShadowMapFramebuffer.width, this->spotShadowMapFramebuffer.height);
 
+        int colourBufferIndex = 0;
+        int blurBufferIndex   = 1;
+        Renderer::SetDrawBuffers(1, &colourBufferIndex);
+
         // Clear.
         Renderer::SetClearColour(1.0f, 1.0f, 1.0f, 1.0f);
         Renderer::SetClearDepth(1.0f);
         Renderer::Clear(BufferType_Colour | BufferType_Depth);
-
-        int colourBufferIndex = 0;
-        int blurBufferIndex   = 1;
-        Renderer::SetDrawBuffers(1, &colourBufferIndex);
 
         // Shader setup.
         Renderer::SetCurrentShader(this->shadowMapShader);
