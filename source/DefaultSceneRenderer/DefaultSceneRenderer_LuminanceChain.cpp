@@ -307,10 +307,6 @@ namespace GTEngine
                 "    luminance = dot(vec4(0.2126, 0.7152, 0.0722, 0.0), totalColour);\n"
             );
         }
-        else
-        {
-            
-        }
 
 
         fragmentSource.AppendFormatted
