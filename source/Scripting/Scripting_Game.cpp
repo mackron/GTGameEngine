@@ -159,6 +159,15 @@ namespace GTEngine
                 script.SetTableFunction(-1, "ExecuteFile",        GameFFI::ExecuteFile);
                 script.SetTableFunction(-1, "ExecuteScript",      GameFFI::ExecuteScript);
                 script.SetTableFunction(-1, "GetLastScriptError", GameFFI::GetLastScriptError);
+
+
+                script.Push("CollisionGroups");
+                script.PushNewTable();
+                {
+                    script.SetTableValue(-1, "All",  static_cast<int>(-1));
+                    script.SetTableValue(-1, "None", static_cast<int>( 0));
+                }
+                script.SetTableValue(-3);
             }
             script.Pop(1);
 
