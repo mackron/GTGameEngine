@@ -189,6 +189,20 @@ namespace GTEngine
 
 
 
+        /// Pauses scene updates while the game is being played in-editor.
+        ///
+        /// @remarks
+        ///     This is not the same as pausing the scene when playing it from inside the editor.
+        void PauseSceneUpdates();
+
+        /// Resumes scene updates while the game is being played in-editor.
+        ///
+        /// @remarks
+        ///     This is not the same as resuming the scene when playing it from inside the editor.
+        void ResumeSceneUpdates();
+
+
+
         ///////////////////////////////////////////////////
         // Selections
         //

@@ -108,6 +108,9 @@ namespace GTEngine
                         script.SetTableFunction(-1, "IsPaused",                            SceneEditorFFI::IsPaused);
                         script.SetTableFunction(-1, "IsStopped",                           SceneEditorFFI::IsStopped);
 
+                        script.SetTableFunction(-1, "PauseSceneUpdates",                   SceneEditorFFI::PauseSceneUpdates);
+                        script.SetTableFunction(-1, "ResumeSceneUpdates",                  SceneEditorFFI::ResumeSceneUpdates);
+
                         script.SetTableFunction(-1, "EnablePhysicsSimulation",             SceneEditorFFI::EnablePhysicsSimulation);
                         script.SetTableFunction(-1, "DisablePhysicsSimulation",            SceneEditorFFI::DisablePhysicsSimulation);
                         script.SetTableFunction(-1, "IsPhysicsSimulationEnabled",          SceneEditorFFI::IsPhysicsSimulationEnabled);
@@ -1411,6 +1414,29 @@ namespace GTEngine
                 }
 
                 return 1;
+            }
+
+
+            int PauseSceneUpdates(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->PauseSceneUpdates();
+                }
+
+                return 0;
+            }
+
+            int ResumeSceneUpdates(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->ResumeSceneUpdates();
+                }
+
+                return 0;
             }
 
 

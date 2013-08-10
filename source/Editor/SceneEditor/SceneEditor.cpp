@@ -221,6 +221,8 @@ namespace GTEngine
     {
         if (this->IsStopped() || this->IsPaused())
         {
+            this->ResumeSceneUpdates();
+
             if (this->IsPaused())
             {
                 this->RestorePauseState();
@@ -278,6 +280,24 @@ namespace GTEngine
                     "        sceneEditorElement:StartPlaying();"
                     "    end;"
                     "end"
+                );
+
+                // The editor needs to intercept calls to Game.Pause and Game.Resume to simulate the functionality when playing from in-editor.
+                script.Execute
+                (
+                    "Game.Pause = function()"
+                    "    local currentEditor = Editor.GetCurrentlyShownEditor();"
+                    "    if currentEditor and currentEditor.IsPlaying and currentEditor:IsPlaying() then"
+                    "        currentEditor:PauseSceneUpdates();"
+                    "    end;"
+                    "end;"
+
+                    "Game.Resume = function()"
+                    "    local currentEditor = Editor.GetCurrentlyShownEditor();"
+                    "    if currentEditor and currentEditor.IsPlaying and currentEditor:IsPlaying() then"
+                    "        currentEditor:ResumeSceneUpdates();"
+                    "    end;"
+                    "end;"
                 );
 
 
@@ -343,6 +363,9 @@ namespace GTEngine
             this->LockParentChangedEvents();
             this->isUpdatingFromStateStack = true;
             {
+                this->ResumeSceneUpdates();
+
+
                 // We'll call OnShutdown on all scene nodes here.
                 this->scene.PostSceneNodeScriptEvent_OnShutdown();
 
@@ -362,6 +385,8 @@ namespace GTEngine
                 {
                     script.SetTableFunction(-1, "GetGameWindowGUIElement", Scripting::GameFFI::GetGameWindowGUIElement);
                     script.SetTableFunction(-1, "LoadScene",               Scripting::GameFFI::LoadScene);
+                    script.SetTableFunction(-1, "Pause",                   Scripting::GameFFI::Pause);
+                    script.SetTableFunction(-1, "Resume",                  Scripting::GameFFI::Resume);
                 }
                 script.Pop(1);
 
@@ -775,6 +800,17 @@ namespace GTEngine
                 this->navigationMeshRendererMeshes.RemoveByIndex(iNavigationMesh->index);
             }
         }
+    }
+
+
+    void SceneEditor::PauseSceneUpdates()
+    {
+        this->scene.Pause();
+    }
+
+    void SceneEditor::ResumeSceneUpdates()
+    {
+        this->scene.Resume();
     }
 
 

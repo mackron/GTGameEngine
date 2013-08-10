@@ -65,6 +65,7 @@ namespace GTEngine
 
         if (this->isEnabled)
         {
+            
             DefaultSceneUpdateManager::StepSceneNode(node, deltaTimeInSeconds, cullingManager);
         }
         else

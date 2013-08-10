@@ -901,6 +901,14 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
         GTEngine.System.SceneEditor.HideNavigationMesh(self._internalPtr, index);
     end
     
+    function sceneEditor:PauseSceneUpdates()
+        GTEngine.System.SceneEditor.PauseSceneUpdates(self._internalPtr);
+    end
+    
+    function sceneEditor:ResumeSceneUpdates()
+        GTEngine.System.SceneEditor.ResumeSceneUpdates(self._internalPtr);
+    end
+    
     
     function sceneEditor:SetSceneNodeTransformToCamera(sceneNode)
         return GTEngine.System.SceneEditor.SetSceneNodeTransformToCamera(self._internalPtr, sceneNode._internalPtr);
