@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Scripting/Scripting_Scene.hpp>
+#include <GTEngine/Scripting/Scripting_Math.hpp>
 #include <GTEngine/PrefabLibrary.hpp>
 
 namespace GTEngine
@@ -109,7 +110,7 @@ namespace GTEngine
                 "    return GTEngine.System.Scene.GetSceneNodeIDByName(self._internalPtr, sceneNodeName);"
                 "end;"
 
-                "function GTEngine.Scene.GetSceneNodeIDByPtr(sceneNodePtr)"
+                "function GTEngine.Scene:GetSceneNodeIDByPtr(sceneNodePtr)"
                 "    return GTEngine.System.SceneNode.GetID(sceneNodePtr);"
                 "end;"
 
@@ -285,6 +286,19 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.Scene:CalculateViewportPickingRay(x, y, viewportIndex)"
+                "    return GTEngine.System.Scene.CalculateViewportPickingRay(self._internalPtr, x, y, viewportIndex);"
+                "end;"
+
+                "function GTEngine.Scene:RayTest(rayNear, rayFar)"
+                "    local sceneNodePtr = GTEngine.System.Scene.RayTest(self._internalPtr, rayNear, rayFar);"
+                "    if sceneNodePtr ~= nil then"
+                "        return self:GetSceneNodeByPtr(sceneNodePtr);"
+                "    end;"
+                ""
+                "    return nil;"
+                "end;"
+
 
                 "GTEngine.RegisteredScenes = {};"
             );
@@ -321,6 +335,8 @@ namespace GTEngine
                             script.SetTableFunction(-1, "GetWalkableSlopeAngle",          SceneFFI::GetWalkableSlopeAngle);
                             script.SetTableFunction(-1, "GetWalkableClimbHeight",         SceneFFI::GetWalkableClimbHeight);
                             script.SetTableFunction(-1, "BuildNavigationMesh",            SceneFFI::BuildNavigationMesh);
+                            script.SetTableFunction(-1, "CalculateViewportPickingRay",    SceneFFI::CalculateViewportPickingRay);
+                            script.SetTableFunction(-1, "RayTest",                        SceneFFI::RayTest);
                         }
                         script.SetTableValue(-3);
                     }
@@ -730,6 +746,51 @@ namespace GTEngine
                 }
 
                 return 0;
+            }
+
+
+
+            int CalculateViewportPickingRay(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    glm::vec3 rayStart;
+                    glm::vec3 rayEnd;
+                    scene->GetViewportByIndex(script.ToInteger(4)).CalculatePickingRay(script.ToInteger(2), script.ToInteger(3), rayStart, rayEnd);
+                
+                    Scripting::PushNewVector3(script, rayStart);
+                    Scripting::PushNewVector3(script, rayEnd);
+
+                    return 2;
+                }
+
+                return 0;
+            }
+
+            int RayTest(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    glm::vec3 rayNear = Scripting::ToVector3(script, 2);
+                    glm::vec3 rayFar  = Scripting::ToVector3(script, 3);
+                    auto result = scene->RayTest(rayNear, rayFar);
+                    if (result != nullptr)
+                    {
+                        script.Push(result);
+                    }
+                    else
+                    {
+                        script.PushNil();
+                    }
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
             }
         }
     }
