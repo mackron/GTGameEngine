@@ -1751,12 +1751,11 @@ namespace GTEngine
 
             int GetAttachedComponentIDs(GTCore::Script &script)
             {
+                script.PushNewTable();
+
                 auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
                 if (sceneNode != nullptr)
                 {
-                    script.PushNewTable();
-
-
                     GTCore::Vector<GTCore::String> componentNames;
                     sceneNode->GetAttachedComponentNames(componentNames);
 

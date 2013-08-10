@@ -175,6 +175,26 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the scene.
             int BuildNavigationMesh(GTCore::Script &script);
+
+
+            /// Calculates the ray to use for picking on the given viewport.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            ///     Argument 2: The x position of the mouse on the viewport.
+            ///     Argument 3: The y position of the mouse on the viewport.
+            ///     Argument 4: The index of the viewport whose picking ray is being retrieved.
+            int CalculateViewportPickingRay(GTCore::Script &script);
+
+            /// Performs a simple ray test on the scene.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            ///     Argument 2: The start position of the ray as a math.vec3.
+            ///     Argument 3: The end position of the ray as a math.vec3.
+            ///
+            ///     This returns a pointer to the scene node that is closest to the start position of the ray.
+            int RayTest(GTCore::Script &script);
         }
     }
 }
