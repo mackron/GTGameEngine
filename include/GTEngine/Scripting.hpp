@@ -151,6 +151,15 @@ namespace GTEngine
 
             /// Retrieves the last script error.
             int GetLastScriptError(GTCore::Script &script);
+
+
+            /// Generates a random number between the two given numbers.
+            ///
+            /// @remarks
+            ///     Argument 1: The low bound.
+            ///     Argument 2: The high bound.
+            int RandomInteger(GTCore::Script &script);
+            int RandomFloat(GTCore::Script &script);
         }
     }
 }
