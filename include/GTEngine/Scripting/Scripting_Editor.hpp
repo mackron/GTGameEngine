@@ -459,6 +459,19 @@ namespace GTEngine
             int IsStopped(GTCore::Script &script);
 
 
+            /// Pauses updating of the scene that's currently being played.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int PauseSceneUpdates(GTCore::Script &script);
+
+            /// Resumes updating of the scene that's currently being played.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int ResumeSceneUpdates(GTCore::Script &script);
+
+
             /// Enables physics simulation.
             ///
             /// @remarks
