@@ -385,7 +385,18 @@ namespace GTEngine
                     definition.AddMesh(newMesh);
                 }
             }
+
+            // Add the mesh's bones.
+            for (unsigned int iBone = 0; iBone < mesh->mNumBones; ++iBone)
+            {
+                auto bone = mesh->mBones[iBone];
+                assert(bone != nullptr);
+                {
+                    GTEngine::AddBone(scene, *bone, definition);
+                }
+            }
         }
+
 
         // Now we need to iterate over the children and copy them.
         for (unsigned int iChild = 0; iChild < node.mNumChildren; ++iChild)
@@ -449,6 +460,8 @@ namespace GTEngine
                     }
                 }
 
+
+                // We want to go ahead and add every bone, recursively.
 
 
                 // Here is where we load up the animations. Assimp has multiple animations, but GTEngine uses only a single animation. To
