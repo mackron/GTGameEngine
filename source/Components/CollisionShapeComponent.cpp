@@ -1212,6 +1212,10 @@ namespace GTEngine
                 }
             }
         }
+
+        
+        // Can't forget to set the collision filter.
+        this->SetCollisionFilter(static_cast<short>(deserializedCollisionGroup), static_cast<short>(deserializedCollisionMask));
     }
 
     void CollisionShapeComponent::OnPostSceneNodeDeserialized()
