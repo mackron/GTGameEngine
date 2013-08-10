@@ -119,7 +119,7 @@ namespace GTEngine
                 "function GTEngine.Scene:CreateNewSceneNode(prefabFileName)"
                 "    local sceneNodePtr = GTEngine.System.Scene.CreateNewSceneNode(self._internalPtr, prefabFileName);"
                 "    if sceneNodePtr ~= nil then"
-                "        return GTEngine.SceneNode:Create(sceneNodePtr);"
+                "        return self:InstantiateSceneNode(GTEngine.System.SceneNode.GetID(sceneNodePtr), sceneNodePtr);"
                 "    end;"
                 ""
                 "    return nil;"
