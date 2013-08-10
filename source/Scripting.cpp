@@ -14,6 +14,8 @@ namespace GTEngine
 {
     namespace Scripting
     {
+        static GTCore::RandomLCG g_Random;
+
         bool LoadGTEngineScriptLibrary(GTCore::Script &script)
         {
             bool successful = LoadExtendedMathLibrary(script);
@@ -197,6 +199,9 @@ namespace GTEngine
                 script.SetTableFunction(-1, "ExecuteFile",        FFI::ExecuteFile);
                 script.SetTableFunction(-1, "ExecuteScript",      FFI::ExecuteScript);
                 script.SetTableFunction(-1, "GetLastScriptError", FFI::GetLastScriptError);
+
+                script.SetTableFunction(-1, "RandomInteger",      FFI::RandomInteger);
+                script.SetTableFunction(-1, "RandomFloat",        FFI::RandomFloat);
             }
             script.Pop(1);
 
@@ -748,6 +753,19 @@ namespace GTEngine
             int GetLastScriptError(GTCore::Script &script)
             {
                 script.Push(GameFFI::GetGame(script).GetScript().GetLastError());
+                return 1;
+            }
+
+
+            int RandomInteger(GTCore::Script &script)
+            {
+                script.Push(g_Random.Next(script.ToInteger(1), script.ToInteger(2)));
+                return 1;
+            }
+
+            int RandomFloat(GTCore::Script &script)
+            {
+                script.Push(g_Random.Next(script.ToDouble(1), script.ToDouble(2)));
                 return 1;
             }
         }
