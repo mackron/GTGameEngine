@@ -50,7 +50,7 @@ namespace GTEngine
           profiler(),
           DebuggingGUI(*this),
           isMouseSmoothingEnabled(false),
-          mouseCaptured(false), captureMouseOnReceiveFocus(false), mouseCapturePosX(0), mouseCapturePosY(0),
+          mouseCaptured(false), captureMouseOnReceiveFocus(false), captureMouseOnEditorClose(false), mouseCapturePosX(0), mouseCapturePosY(0),
           mouseCenterX(0), mouseCenterY(0),
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0),
           mousePosX(0), mousePosY(0), mouseMoveLockCounter(0),
@@ -406,7 +406,13 @@ namespace GTEngine
             this->profiler.Enable();
 
 
-            this->Pause();  // The game is always paused while the editor is running.
+            // The game is always paused while the editor is running.
+            this->Pause();
+
+            // The mouse must be released.
+            this->captureMouseOnEditorClose = this->IsMouseCaptured();
+            this->ReleaseMouse();
+
 
             if (!this->editor.IsStarted())
             {
@@ -430,6 +436,13 @@ namespace GTEngine
 
             // We can now unpause the game.
             this->Resume();
+
+            // If the mouse was captured before we opened the editor, we'll want to re-capture it.
+            if (this->captureMouseOnEditorClose)
+            {
+                this->CaptureMouse();
+            }
+
 
             if (this->DebuggingGUI.isShowing)
             {
