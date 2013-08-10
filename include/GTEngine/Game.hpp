@@ -861,7 +861,8 @@ namespace GTEngine
 
         bool isMouseSmoothingEnabled;
         bool mouseCaptured;
-        bool captureMouseOnReceiveFocus;            ///< Keeps track of whether or not the capture the mouse when the main window receives focus.
+        bool captureMouseOnReceiveFocus;            ///< Keeps track of whether or not to capture the mouse when the main window receives focus.
+        bool captureMouseOnEditorClose;             ///< Keeps track of whether or not to capture the mouse when the editor is closed. 
         int mouseCapturePosX;
         int mouseCapturePosY;
 
