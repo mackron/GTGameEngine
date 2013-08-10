@@ -185,6 +185,10 @@ namespace GTEngine
                 "    return GTEngine.System.SceneNode.GetChildIDByName(self._internalPtr, name);"
                 "end;"
 
+                "function GTEngine.SceneNode:GetDescendantIDByName(name)"
+                "    return GTEngine.System.SceneNode.GetDescendantIDByName(self._internalPtr, name);"
+                "end;"
+
 
 
                 "function GTEngine.SceneNode:GetPosition()"
@@ -445,6 +449,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "IsRelative",              SceneNodeFFI::IsRelative);
                             script.SetTableFunction(-1, "GetChildrenIDs",          SceneNodeFFI::GetChildrenIDs);
                             script.SetTableFunction(-1, "GetChildIDByName",        SceneNodeFFI::GetChildIDByName);
+                            script.SetTableFunction(-1, "GetDescendantIDByName",   SceneNodeFFI::GetDescendantIDByName);
 
                             // Components.
                             script.SetTableFunction(-1, "AddComponent",            SceneNodeFFI::AddComponent);
@@ -984,6 +989,29 @@ namespace GTEngine
                 if (sceneNode != nullptr)
                 {
                     auto child = sceneNode->FindFirstChild(script.ToString(2));
+                    if (child != nullptr)
+                    {
+                        script.Push(static_cast<int>(child->GetID()));
+                    }
+                    else
+                    {
+                        script.Push(0);
+                    }
+                }
+                else
+                {
+                    script.Push(0);
+                }
+
+                return 1;
+            }
+
+            int GetDescendantIDByName(GTCore::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    auto child = sceneNode->FindFirstChild(script.ToString(2), true);
                     if (child != nullptr)
                     {
                         script.Push(static_cast<int>(child->GetID()));
