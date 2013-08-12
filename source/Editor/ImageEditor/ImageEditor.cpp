@@ -3,6 +3,7 @@
 #include <GTEngine/Editor/ImageEditor/ImageEditor.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
+#include <GTEngine/IO.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -14,7 +15,7 @@ namespace GTEngine
     ImageEditor::ImageEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
           viewportElement(nullptr), viewportEventHandler(*this),
-          image(Texture2DLibrary::Acquire(absolutePath, relativePath)), zoom(1.0f)
+          image(Texture2DLibrary::Acquire(absolutePath, GTEngine::IO::GetBasePath(absolutePath, relativePath).c_str())), zoom(1.0f)
     {
         if (this->image != nullptr)
         {
