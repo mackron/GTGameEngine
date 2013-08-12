@@ -503,7 +503,15 @@ namespace GTEngine
             auto value = this->texture2DParameters.buffer[i]->value.value;
 
             intermediarySerializer.WriteString(name);
-            intermediarySerializer.WriteString(value->GetRelativePath());
+
+            if (value != nullptr)
+            {
+                intermediarySerializer.WriteString(value->GetRelativePath());
+            }
+            else
+            {
+                intermediarySerializer.WriteString(value->GetRelativePath());
+            }
         }
 
 

@@ -450,7 +450,14 @@ namespace GTEngine
                                 script.SetTableValue(-3);
 
                                 script.Push("value");
-                                script.Push(value.value->GetRelativePath());
+                                if (value.value != nullptr)
+                                {
+                                    script.Push(value.value->GetRelativePath());
+                                }
+                                else
+                                {
+                                    script.Push("engine/textures/default.png");
+                                }
                                 script.SetTableValue(-3);
                             }
                             script.SetTableValue(-3);
