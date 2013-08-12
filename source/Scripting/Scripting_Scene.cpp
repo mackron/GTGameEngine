@@ -291,12 +291,12 @@ namespace GTEngine
                 "end;"
 
                 "function GTEngine.Scene:RayTest(rayNear, rayFar)"
-                "    local sceneNodePtr = GTEngine.System.Scene.RayTest(self._internalPtr, rayNear, rayFar);"
+                "    local sceneNodePtr, hitPosition, hitNormal = GTEngine.System.Scene.RayTest(self._internalPtr, rayNear, rayFar);"
                 "    if sceneNodePtr ~= nil then"
-                "        return self:GetSceneNodeByPtr(sceneNodePtr);"
+                "        return self:GetSceneNodeByPtr(sceneNodePtr), hitPosition, hitNormal;"
                 "    end;"
                 ""
-                "    return nil;"
+                "    return nil, math.vec3(), math.vec3();"
                 "end;"
 
 
@@ -775,22 +775,30 @@ namespace GTEngine
                 {
                     glm::vec3 rayNear = Scripting::ToVector3(script, 2);
                     glm::vec3 rayFar  = Scripting::ToVector3(script, 3);
-                    auto result = scene->RayTest(rayNear, rayFar);
+                    ClosestRayExceptMeTestCallback callback;
+
+                    auto result = scene->RayTest(rayNear, rayFar, callback);
                     if (result != nullptr)
                     {
                         script.Push(result);
+                        Scripting::PushNewVector3(script, callback.worldHitPosition);
+                        Scripting::PushNewVector3(script, callback.worldHitNormal);
                     }
                     else
                     {
                         script.PushNil();
+                        Scripting::PushNewVector3(script, glm::vec3());
+                        Scripting::PushNewVector3(script, glm::vec3());
                     }
                 }
                 else
                 {
                     script.PushNil();
+                    Scripting::PushNewVector3(script, glm::vec3());
+                    Scripting::PushNewVector3(script, glm::vec3());
                 }
 
-                return 1;
+                return 3;
             }
         }
     }
