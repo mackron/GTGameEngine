@@ -217,7 +217,7 @@ namespace GTEngine
 
     void CollisionShapeComponent::SetCollisionShapeOffset(size_t index, float offsetX, float offsetY, float offsetZ, bool postOnChanged)
     {
-        this->OnPreCollisionShapeChanged();
+        if (postOnChanged) this->OnPreCollisionShapeChanged();
         {
             auto childShape = this->collisionShape.getChildShape(static_cast<int>(index));
             if (childShape != nullptr)
@@ -235,12 +235,8 @@ namespace GTEngine
 
             this->collisionShape.updateChildTransform(index, newTransform);
         }
-        this->OnPostCollisionShapeChanged();
-
-        if (postOnChanged)
-        {
-            this->OnChanged();
-        }
+        if (postOnChanged) this->OnPostCollisionShapeChanged();
+        if (postOnChanged) this->OnChanged();
     }
 
 

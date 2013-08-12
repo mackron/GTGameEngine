@@ -536,7 +536,7 @@ namespace GTEngine
         this->world = this->rigidBody->GetWorld();
         if (this->world != nullptr)
         {
-            world->RemoveRigidBody(*this->rigidBody);
+            this->world->RemoveRigidBody(*this->rigidBody);
         }
     }
 

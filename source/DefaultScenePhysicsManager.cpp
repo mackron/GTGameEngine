@@ -45,7 +45,7 @@ namespace GTEngine
 
 
 
-    void DefaultScenePhysicsManager::UpdateTransform(RigidBody &object, const glm::mat4 &newTransform)
+    void DefaultScenePhysicsManager::UpdateTransform(RigidBody &object, const glm::mat4 &newTransform, short group, short mask)
     {
         auto linearVelocity  = object.getLinearVelocity();
         auto angularVelocity = object.getAngularVelocity();
@@ -67,7 +67,7 @@ namespace GTEngine
 
         if (objectWorld == &this->world)
         {
-            this->world.AddRigidBody(object);
+            this->world.AddRigidBody(object, group, mask);
         }
 
 
