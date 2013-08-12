@@ -29,7 +29,7 @@ namespace GTEngine
 
 
         /// Updates the transformation of a rigid body.
-        virtual void UpdateTransform(RigidBody &object,   const glm::mat4 &newTransform) = 0;
+        virtual void UpdateTransform(RigidBody &object,   const glm::mat4 &newTransform, short group, short mask) = 0;
         virtual void UpdateTransform(GhostObject &object, const glm::mat4 &newTransform) = 0;
 
 

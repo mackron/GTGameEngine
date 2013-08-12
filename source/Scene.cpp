@@ -1958,7 +1958,6 @@ namespace GTEngine
         this->OnSceneNodeTransform(node, true);
         this->OnSceneNodeScale(node);
 
-
         this->PostEvent_OnSceneNodeParentChanged(node, previousParent);
     }
 
@@ -2013,7 +2012,7 @@ namespace GTEngine
             auto dynamicsComponent = node.GetComponent<DynamicsComponent>();
             if (dynamicsComponent != nullptr)
             {
-                this->physicsManager.UpdateTransform(dynamicsComponent->GetRigidBody(), node.GetWorldTransformWithoutScale());
+                this->physicsManager.UpdateTransform(dynamicsComponent->GetRigidBody(), node.GetWorldTransformWithoutScale(), dynamicsComponent->GetCollisionGroup(), dynamicsComponent->GetCollisionMask());
             }
         }
 
