@@ -803,6 +803,11 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.ParticleSystemComponent:GetEmitterLifetime(emitterIndex)"
+                "    return GTEngine.System.ParticleSystemComponent.GetEmitterLifetime(self._internalPtr, emitterIndex);"
+                "end;"
+
+
 
                 //PrefabComponent
                 "GTEngine.PrefabComponent = {};"
@@ -1106,6 +1111,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "PlayOnStartup",       ParticleSystemComponentFFI::PlayOnStartup);
                             script.SetTableFunction(-1, "IsPlayingOnStartup",  ParticleSystemComponentFFI::IsPlayingOnStartup);
                             script.SetTableFunction(-1, "Reset",               ParticleSystemComponentFFI::Reset);
+                            script.SetTableFunction(-1, "GetEmitterLifetime",  ParticleSystemComponentFFI::GetEmitterLifetime);
                         }
                         script.Pop(1);
 
@@ -4081,6 +4087,28 @@ namespace GTEngine
                 }
 
                 return 0;
+            }
+
+
+            int GetEmitterLifetime(GTCore::Script &script)
+            {
+                auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    double lifetimeMin;
+                    double lifetimeMax;
+                    component->GetEmitterLifetime(script.ToInteger(2), lifetimeMin, lifetimeMax);
+
+                    script.Push(lifetimeMin);
+                    script.Push(lifetimeMax);
+                }
+                else
+                {
+                    script.Push(0.0);
+                    script.Push(0.0);
+                }
+
+                return 2;
             }
         }
 

@@ -1287,6 +1287,14 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the particle system.
             int Reset(GTCore::Script &script);
+
+
+            /// Retrieves the lifetime of the particle system.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the particle system.
+            ///     Argument 2: The index of the emitter whose lifetime is being retrieved.
+            int GetEmitterLifetime(GTCore::Script &script);
         }
 
 

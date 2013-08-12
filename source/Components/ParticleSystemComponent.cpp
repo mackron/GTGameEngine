@@ -3,6 +3,7 @@
 #include <GTEngine/Components/ParticleSystemComponent.hpp>
 #include <GTEngine/ParticleSystemLibrary.hpp>
 #include <GTEngine/SceneNode.hpp>
+#include <GTEngine/Scene.hpp>
 #include <GTEngine/Errors.hpp>
 
 namespace GTEngine
@@ -81,6 +82,11 @@ namespace GTEngine
     {
         if (!this->isPlaying)
         {
+            if (this->particleSystem != nullptr && this->node.GetScene() != nullptr)
+            {
+                this->particleSystem->SetGravity(this->node.GetScene()->GetGravity());
+            }
+
             this->isPlaying = true;
             this->OnChanged();
         }
@@ -133,6 +139,19 @@ namespace GTEngine
         }
     }
 
+
+    void ParticleSystemComponent::GetEmitterLifetime(size_t emitterIndex, double &lifetimeMinOut, double &lifetimeMaxOut) const
+    {
+        if (this->particleSystem != nullptr)
+        {
+            this->particleSystem->GetEmitter(emitterIndex)->GetLifetime(lifetimeMinOut, lifetimeMaxOut);
+        }
+        else
+        {
+            lifetimeMinOut = 0.0;
+            lifetimeMaxOut = 0.0;
+        }
+    }
 
 
     ///////////////////////////////////////////////////////

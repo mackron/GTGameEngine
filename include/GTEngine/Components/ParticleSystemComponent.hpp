@@ -76,6 +76,14 @@ namespace GTEngine
         void Reset();
 
 
+        /// Retrieves the lifetime of the particle system.
+        ///
+        /// @param emitterIndex   [in]  The index of the emitter whose lifetime is being retrieved.
+        /// @param lifetimeMinOut [out] A reference to the variable that will receive the min lifetime.
+        /// @param lifetimeMaxOut [out] A reference to the variable that will receive the max lifetime.
+        void GetEmitterLifetime(size_t emitterIndex, double &lifetimeMinOut, double &lifetimeMaxOut) const;
+
+
         ///////////////////////////////////////////////////////
         // Serialization/Deserialization.
 
