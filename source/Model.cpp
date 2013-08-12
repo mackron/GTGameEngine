@@ -461,6 +461,7 @@ namespace GTEngine
                                         if (newMaterial != nullptr)
                                         {
                                             mesh->SetMaterial(newMaterial->GetDefinition().relativePath.c_str());
+                                            mesh->GetMaterial()->SetParameters(this->definition.meshes[iMesh].defaultUniforms);
                                         }
                                     }
                                 }

@@ -412,7 +412,6 @@ namespace GTEngine
                 }
 
 
-
                 this->updateManager.Disable();
                 this->physicsManager.DisableSimulation();
 
@@ -428,6 +427,7 @@ namespace GTEngine
                 // We want to revert the selections, but we don't want to stage these on the state stack.
                 this->DeselectAll(SelectionOption_NoStateStaging);
                 this->SelectSceneNodes(this->selectedNodesBeforePlaying, SelectionOption_NoStateStaging);
+
 
                 this->UpdatePlaybackControls();
             }
