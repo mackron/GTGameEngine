@@ -39,6 +39,16 @@ namespace GTEngine
         bool IsParticlesEnabled() const { return this->isParticlesEnabled; }
 
 
+        /// Pauses scene updates.
+        void PauseSceneUpdates();
+
+        /// Resumes scene updates.
+        void ResumeSceneUpdates();
+
+        /// Determines whether or not scene updates are enabled.
+        bool IsSceneUpdatesPaused() const { return this->isSceneUpdatesPaused; }
+
+
         /// DefaultSceneUpdateManager::Step()
         void StepSceneNode(SceneNode &node, double deltaTimeInSeconds, SceneCullingManager &cullingManager);
 
@@ -53,6 +63,9 @@ namespace GTEngine
 
         /// Keeps track of whether or not particles are being updated while editting.
         bool isParticlesEnabled;
+
+        /// Keeps track of whether or not scene updating is paused.
+        bool isSceneUpdatesPaused;
 
 
     private:    // No copying.
