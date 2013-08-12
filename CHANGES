@@ -29,6 +29,12 @@ FIXES/IMPROVEMENTS:
     - Fixed a transparency bug.
     - Fixed an OpenGL rendering error message.
     - Fixed an issue where HDR was prohibitively slow on Intel GPUs.
+    - Fixed a bug where material parameters were not getting set correctly.
+    - Fixed a crash when closing a scene from the editor while it was playing.
+    - Fixed a bug where physics objects were not getting added to the world
+      when the owner scene node had a parent.
+    - Fixed an issue where doing Game.Pause() and Game.Resume() would not work
+      as expected when playing a scene from inside the editor.
     - More work on documentation
         - Tips, Tricks and Quirks
         - GUI Styling
