@@ -36,6 +36,21 @@ namespace GTEngine
         this->cubeMapData.negativeZData = nullptr;
     }
 
+    RCSetTextureState::~RCSetTextureState()
+    {
+        free(this->cubeMapData.positiveXData);
+        free(this->cubeMapData.negativeXData);
+        free(this->cubeMapData.positiveYData);
+        free(this->cubeMapData.negativeYData);
+        free(this->cubeMapData.positiveZData);
+        free(this->cubeMapData.negativeZData);
+
+        for (size_t i = 0; i < this->mipmapDatas.count; ++i)
+        {
+            free(this->mipmapDatas.buffer[i]->value.data);
+        }
+    }
+
 
     void RCSetTextureState::SetTexture1DData(TextureState_OpenGL21* textureStateIn, GLenum targetIn, int mipmap, GTImage::ImageFormat format, unsigned int width, const void* data, size_t dataSizeInBytes)
     {
@@ -394,9 +409,6 @@ namespace GTEngine
                         glTexImage1D(this->target, mipmapLevel, mipmapData.internalFormat, mipmapData.width, 0, mipmapData.format, mipmapData.type, mipmapData.data);
                     }
                     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
-                    
-                    free(mipmapData.data);
                 }
             }
 
@@ -412,9 +424,6 @@ namespace GTEngine
                         glTexImage2D(this->target, mipmapLevel, mipmapData.internalFormat, mipmapData.width, mipmapData.height, 0, mipmapData.format, mipmapData.type, mipmapData.data);
                     }
                     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
-                    
-                    free(mipmapData.data);
                 }
             }
 
@@ -430,9 +439,6 @@ namespace GTEngine
                         glTexImage3D(this->target, mipmapLevel, mipmapData.internalFormat, mipmapData.width, mipmapData.height, mipmapData.depth, 0, mipmapData.format, mipmapData.type, mipmapData.data);
                     }
                     glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
-
-                    
-                    free(mipmapData.data);
                 }
             }
 
@@ -447,13 +453,6 @@ namespace GTEngine
                     glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Y, 0, this->cubeMapData.internalFormat, this->cubeMapData.width, this->cubeMapData.height, 0, this->cubeMapData.format, this->cubeMapData.type, this->cubeMapData.negativeYData);
                     glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_Z, 0, this->cubeMapData.internalFormat, this->cubeMapData.width, this->cubeMapData.height, 0, this->cubeMapData.format, this->cubeMapData.type, this->cubeMapData.positiveZData);
                     glTexImage2D(GL_TEXTURE_CUBE_MAP_NEGATIVE_Z, 0, this->cubeMapData.internalFormat, this->cubeMapData.width, this->cubeMapData.height, 0, this->cubeMapData.format, this->cubeMapData.type, this->cubeMapData.negativeZData);
-
-                    free(this->cubeMapData.positiveXData);
-                    free(this->cubeMapData.negativeXData);
-                    free(this->cubeMapData.positiveYData);
-                    free(this->cubeMapData.negativeYData);
-                    free(this->cubeMapData.positiveZData);
-                    free(this->cubeMapData.negativeZData);
                 }
                 glPixelStorei(GL_UNPACK_ALIGNMENT, 4);
             }
