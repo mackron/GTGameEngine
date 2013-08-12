@@ -7,18 +7,6 @@
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/Path.hpp>
 
-
-
-// Engine textures.
-namespace GTEngine
-{
-    
-
-    
-}
-
-
-// *** Globals ***
 namespace GTEngine
 {
     /// The list of loaded textures, indexed by file name.
