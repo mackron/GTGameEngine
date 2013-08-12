@@ -201,6 +201,9 @@ namespace GTEngine
         ///     This is not the same as resuming the scene when playing it from inside the editor.
         void ResumeSceneUpdates();
 
+        /// Determines whether or not scene updating is paused.
+        bool IsSceneUpdatesPaused() const;
+
 
 
         ///////////////////////////////////////////////////

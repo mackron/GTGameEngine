@@ -5,7 +5,7 @@
 namespace GTEngine
 {
     SceneEditorSceneUpdateManager::SceneEditorSceneUpdateManager(const SceneNode &cameraNodeIn)
-        : DefaultSceneUpdateManager(), cameraNode(cameraNodeIn), isEnabled(false), isParticlesEnabled(true)
+        : DefaultSceneUpdateManager(), cameraNode(cameraNodeIn), isEnabled(false), isParticlesEnabled(true), isSceneUpdatesPaused(false)
     {
     }
 
@@ -36,6 +36,17 @@ namespace GTEngine
     }
 
 
+    void SceneEditorSceneUpdateManager::PauseSceneUpdates()
+    {
+        this->isSceneUpdatesPaused = true;
+    }
+
+    void SceneEditorSceneUpdateManager::ResumeSceneUpdates()
+    {
+        this->isSceneUpdatesPaused = false;
+    }
+
+
     void SceneEditorSceneUpdateManager::StepSceneNode(SceneNode &node, double deltaTimeInSeconds, SceneCullingManager &cullingManager)
     {
         // We need to orientate any sprites to face the camera.
@@ -63,26 +74,28 @@ namespace GTEngine
         }
 
 
-        if (this->isEnabled)
+        if (!this->isSceneUpdatesPaused)
         {
-            
-            DefaultSceneUpdateManager::StepSceneNode(node, deltaTimeInSeconds, cullingManager);
-        }
-        else
-        {
-            // If the particles are being updated, we should do that now.
-            if (this->isParticlesEnabled)
+            if (this->isEnabled)
             {
-                auto particleSystemComponent = node.GetComponent<ParticleSystemComponent>();
-                if (particleSystemComponent != nullptr)
+                DefaultSceneUpdateManager::StepSceneNode(node, deltaTimeInSeconds, cullingManager);
+            }
+            else
+            {
+                // If the particles are being updated, we should do that now.
+                if (this->isParticlesEnabled)
                 {
-                    if (particleSystemComponent->IsPlayingOnStartup())      // Prevents particles from playing in-editor when not playing on startup. Unlikely deseriable.
+                    auto particleSystemComponent = node.GetComponent<ParticleSystemComponent>();
+                    if (particleSystemComponent != nullptr)
                     {
-                        auto particleSystem = particleSystemComponent->GetParticleSystem();
-                        if (particleSystem != nullptr)
+                        if (particleSystemComponent->IsPlayingOnStartup())      // Prevents particles from playing in-editor when not playing on startup. Unlikely deseriable.
                         {
-                            particleSystem->Update(deltaTimeInSeconds);
-                            cullingManager.UpdateParticleSystemAABB(node);
+                            auto particleSystem = particleSystemComponent->GetParticleSystem();
+                            if (particleSystem != nullptr)
+                            {
+                                particleSystem->Update(deltaTimeInSeconds);
+                                cullingManager.UpdateParticleSystemAABB(node);
+                            }
                         }
                     }
                 }

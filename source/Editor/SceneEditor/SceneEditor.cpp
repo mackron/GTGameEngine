@@ -221,8 +221,6 @@ namespace GTEngine
     {
         if (this->IsStopped() || this->IsPaused())
         {
-            this->ResumeSceneUpdates();
-
             if (this->IsPaused())
             {
                 this->RestorePauseState();
@@ -805,12 +803,17 @@ namespace GTEngine
 
     void SceneEditor::PauseSceneUpdates()
     {
-        this->scene.Pause();
+        this->updateManager.PauseSceneUpdates();
     }
 
     void SceneEditor::ResumeSceneUpdates()
     {
-        this->scene.Resume();
+        this->updateManager.ResumeSceneUpdates();
+    }
+
+    bool SceneEditor::IsSceneUpdatesPaused() const
+    {
+        return this->updateManager.IsSceneUpdatesPaused();
     }
 
 
