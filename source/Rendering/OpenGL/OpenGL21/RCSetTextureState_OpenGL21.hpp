@@ -22,6 +22,9 @@ namespace GTEngine
         /// Constructor.
         RCSetTextureState();
 
+        /// Destructor.
+        ~RCSetTextureState();
+
 
         /// Renderer::PushTexture1DData().
         void SetTexture1DData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, const void* data, size_t dataSizeInBytes);
