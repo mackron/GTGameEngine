@@ -7,6 +7,9 @@
 
 namespace GTEngine
 {
+    #define GTENGINE_MIN_CONVEX_HULL_MARGIN     0.0001f
+
+
     /// Some metadata to associate with each child shape of a base collision shape.
     ///
     /// A metadata structure is allocated for each shape, and deleted when they are removed.
@@ -95,6 +98,8 @@ namespace GTEngine
 
     void CollisionShapeComponent::AddConvexHullCollisionShape(const float* points, size_t pointCount, size_t stride, float margin)
     {
+        if (margin < GTENGINE_MIN_CONVEX_HULL_MARGIN) margin = GTENGINE_MIN_CONVEX_HULL_MARGIN;
+
         auto shape = new btConvexHullShape(static_cast<const btScalar*>(points), pointCount, stride);
         shape->setMargin(margin);
 
@@ -109,6 +114,8 @@ namespace GTEngine
 
     void CollisionShapeComponent::AddModelConvexHullsCollisionShape(float margin, float offsetX, float offsetY, float offsetZ)
     {
+        if (margin < GTENGINE_MIN_CONVEX_HULL_MARGIN) margin = GTENGINE_MIN_CONVEX_HULL_MARGIN;
+
         // Even if we don't have an attached model comonent, we still want to add the collision shape.
         auto shape = new btCompoundShape(true);
         shape->setMargin(margin);
@@ -453,6 +460,8 @@ namespace GTEngine
 
     bool CollisionShapeComponent::SetModelConvexHullsMargins(size_t index, float margin)
     {
+        if (margin < GTENGINE_MIN_CONVEX_HULL_MARGIN) margin = GTENGINE_MIN_CONVEX_HULL_MARGIN;
+
         auto type = GetCollisionShapeType(this->collisionShape.getChildShape(index));
 
         if (type == CollisionShapeType_ModelConvexHulls)
