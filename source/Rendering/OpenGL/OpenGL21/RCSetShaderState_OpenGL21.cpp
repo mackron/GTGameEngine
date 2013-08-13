@@ -458,8 +458,6 @@ namespace GTEngine
                 }
                 else
                 {
-                    setBinding = true;
-
                     iExistingParameter->value.textureState->shaders.RemoveFirstOccuranceOf(this->programState);
                     iExistingParameter->value.textureState = value.textureState;
                     iExistingParameter->value.textureState->shaders.PushBack(this->programState);
@@ -471,13 +469,12 @@ namespace GTEngine
             else
             {
                 // The parameter has not been set before. We need to set the uniform and bind.
-                value.textureUnit = static_cast<GLint>(this->programState->currentTextureUniforms.count);
+                value.textureUnit = this->programState->FindAvailableTextureUnit();
                 value.location    = location;
                 value.textureState->shaders.PushBack(this->programState);
 
-                this->programState->currentTextureUniforms.Add(location, value);
+                this->programState->currentTextureUniforms.Add(value.location, value);
             }
-
 
 
             // If this program state is the current one, we'll need to bind the texture straight away.

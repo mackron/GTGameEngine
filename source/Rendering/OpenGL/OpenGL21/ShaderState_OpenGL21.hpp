@@ -4,6 +4,7 @@
 #define __GTEngine_Rendering_ShaderState_OpenGL21_hpp_
 
 #include <GTEngine/Math.hpp>
+#include <GTEngine/Rendering/Renderer.hpp>
 #include <GTCore/Dictionary.hpp>
 #include <GTCore/Map.hpp>
 #include <GTCore/Vector.hpp>
@@ -431,6 +432,40 @@ namespace GTEngine
             return this->GetUniformLocation(name, this->textureUniformLocations);
         }
 
+
+        /// Retrieves a pointer to the texture uniform at the given texture unit.
+        const TextureParameter* FindTextureUniformByUnit(GLint unit) const
+        {
+            for (size_t i = 0; i < this->currentTextureUniforms.count; ++i)
+            {
+                auto &uniform = this->currentTextureUniforms.buffer[i]->value;
+                {
+                    if (uniform.textureUnit == unit)
+                    {
+                        return &uniform;
+                    }
+                }
+            }
+
+            return nullptr;
+        }
+
+        /// Finds an available texture unit.
+        ///
+        /// @remarks
+        ///     This will return -1 if no texture unit is available.
+        GLint FindAvailableTextureUnit()
+        {
+            for (GLuint i = 0; i < Renderer::GetMaxTextureUnits(); ++i)
+            {
+                if (this->FindTextureUniformByUnit(static_cast<GLint>(i)) == nullptr)
+                {
+                    return i;
+                }
+            }
+
+            return -1;
+        }
 
 
     private:
