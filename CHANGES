@@ -30,6 +30,7 @@ FIXES/IMPROVEMENTS:
     - Fixed an OpenGL rendering error message.
     - Fixed an issue where HDR was prohibitively slow on Intel GPUs.
     - Fixed a bug where material parameters were not getting set correctly.
+    - Fixed a bug where materials would sometimes use incorrect textures.
     - Fixed a crash when closing a scene from the editor while it was playing.
     - Fixed a bug where physics objects were not getting added to the world
       when the owner scene node had a parent.
