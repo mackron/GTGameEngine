@@ -1211,7 +1211,16 @@ namespace GTEngine
             assert(component != nullptr);
             {
                 GTCore::BasicSerializer componentSubSerializer;
-                component->Serialize(componentSubSerializer);
+             
+                // Special cases.
+                if (GTCore::Strings::Equal(component->GetName(), EditorMetadataComponent::Name))
+                {
+                    static_cast<const EditorMetadataComponent*>(component)->Serialize(componentSubSerializer, flags);
+                }
+                else
+                {
+                    component->Serialize(componentSubSerializer);
+                }
 
                 // We write the name, the size, then the actual data.
                 componentSerializer.WriteString(component->GetName());

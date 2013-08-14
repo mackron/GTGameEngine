@@ -89,7 +89,7 @@ namespace GTEngine
     uint64_t Prefab::AddSingleSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID)
     {
         auto serializer = new GTCore::BasicSerializer;
-        sceneNode.Serialize(*serializer, SceneNode::NoID);
+        sceneNode.Serialize(*serializer, SceneNode::NoID | SceneNode::ForceDeselected);
 
         if (id == 0)
         {

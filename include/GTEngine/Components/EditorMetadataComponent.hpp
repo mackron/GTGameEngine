@@ -244,7 +244,7 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTCore::Serializer &serializer, unsigned int flags = 0U) const;
 
         /// Component::Deserialize()
         void Deserialize(GTCore::Deserializer &deserializer);
