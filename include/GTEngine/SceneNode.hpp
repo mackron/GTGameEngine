@@ -863,9 +863,10 @@ namespace GTEngine
 
         enum SerializationFlags
         {
-            NoID                           = (1 << 1),           // <-- Set the ID to 0 when serializing.
-            NoEditorMetadataComponent      = (1 << 2),           // <-- Do not save the EditorMetadataComponent if it exists.
-            NoScriptPublicVariableOverride = (1 << 3),           // <-- Do not override public variables of a script component.
+            NoID                           = (1 << 1),          // <-- Set the ID to 0 when serializing.
+            NoEditorMetadataComponent      = (1 << 2),          // <-- Do not save the EditorMetadataComponent if it exists.
+            NoScriptPublicVariableOverride = (1 << 3),          // <-- Do not override public variables of a script component.
+            ForceDeselected                = (1 << 4)           // <-- Force the scene node to be serialized as deselected. Needed for prefabs.
         };
 
 

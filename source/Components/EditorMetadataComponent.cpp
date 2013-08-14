@@ -600,13 +600,20 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void EditorMetadataComponent::Serialize(GTCore::Serializer &serializer) const
+    void EditorMetadataComponent::Serialize(GTCore::Serializer &serializer, unsigned int flags) const
     {
         GTCore::BasicSerializer intermediarySerializer;
 
         intermediarySerializer.Write(this->alwaysShowOnTop);
         intermediarySerializer.Write(this->useModelForPickingShape);
-        intermediarySerializer.Write(this->isSelected);
+        if ((flags & SceneNode::ForceDeselected) != 0)
+        {
+            intermediarySerializer.Write(false);
+        }
+        else
+        {
+            intermediarySerializer.Write(this->isSelected);
+        }
         intermediarySerializer.Write(this->selectionWireframeColour);
         intermediarySerializer.Write(static_cast<uint32_t>(this->pickingCollisionShapeType));
         intermediarySerializer.Write(this->pickingCollisionGroup);
