@@ -1419,6 +1419,11 @@ namespace GTEngine
                                         // It's a scalar.
                                         material->SetParameter(name, script.ToFloat(4));
                                     }
+                                    else if (script.IsString(4))
+                                    {
+                                        // It's a string. Assume a path to a texture.
+                                        material->SetParameter(name, Texture2DLibrary::Acquire(script.ToString(4)));
+                                    }
                                     else
                                     {
                                         // Check for math.vec2, math.vec3 or math.vec4.

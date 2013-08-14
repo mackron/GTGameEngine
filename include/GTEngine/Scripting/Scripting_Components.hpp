@@ -114,6 +114,7 @@ namespace GTEngine
             ///       - math.vec2
             ///       - math.vec3
             ///       - math.vec4
+            ///       - string (assumed to be a path to a texture)
             int SetMaterialParameter(GTCore::Script &script);
 
 
