@@ -510,7 +510,7 @@ namespace GTEngine
             }
             else
             {
-                intermediarySerializer.WriteString(value->GetRelativePath());
+                intermediarySerializer.WriteString("engine/textures/default.png");
             }
         }
 
