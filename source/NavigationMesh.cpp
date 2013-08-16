@@ -103,24 +103,32 @@ namespace GTEngine
                     auto dynamics = node->GetComponent<GTEngine::DynamicsComponent>();
                     if (dynamics != nullptr && dynamics->IsNavigationMeshGenerationEnabled())
                     {
-                        auto mesh = dynamics->CreateCollisionShapeMesh(true);   // <-- 'true' means to apply the scene node's transformation.
-                        if (mesh != nullptr)
+                        CollisionShapeMeshBuilder mesh;
+                        mesh.Build(dynamics->GetCollisionShape(), dynamics->GetNode().GetWorldTransform());
+
+                        // With the mesh information retrieved we can now rasterize the mesh on the heightfield.
+                        auto vertices      = mesh.GetVertexData();
+                        auto vertexCount   = mesh.GetVertexCount();
+                        auto indices       = reinterpret_cast<const int*>(mesh.GetIndexData());
+                        auto indexCount    = mesh.GetIndexCount();
+                        auto triangleCount = indexCount / 3;
+
+                        //auto walkableAreas = new unsigned char[triangleCount];
+                        auto walkableAreas = static_cast<unsigned char*>(malloc(sizeof(unsigned char) * triangleCount));
+                        memset(walkableAreas, 0, triangleCount * sizeof(unsigned char));
+
+                        rcMarkWalkableTriangles(&context, this->config.walkableSlopeAngle, vertices, vertexCount, indices, triangleCount, walkableAreas);
+                        rcRasterizeTriangles(&context, vertices, vertexCount, indices, walkableAreas, triangleCount, *heightfield, this->config.walkableClimb);
+
+                        free(walkableAreas);
+                        //delete [] walkableAreas;
+
+
+                        //auto mesh = dynamics->CreateCollisionShapeMesh(true);   // <-- 'true' means to apply the scene node's transformation.
+                        //if (mesh != nullptr)
                         {
-                            // With the mesh information retrieved we can now rasterize the mesh on the heightfield.
-                            auto vertices      = mesh->GetVertexDataPtr();
-                            auto vertexCount   = mesh->GetVertexCount();
-                            auto indices       = reinterpret_cast<const int*>(mesh->GetIndexDataPtr());
-                            auto indexCount    = mesh->GetIndexCount();
-                            auto triangleCount = indexCount / 3;
-
-                            auto walkableAreas = new unsigned char[triangleCount];
-                            memset(walkableAreas, 0, triangleCount * sizeof(unsigned char));
-
-                            rcMarkWalkableTriangles(&context, this->config.walkableSlopeAngle, vertices, vertexCount, indices, triangleCount, walkableAreas);
-                            rcRasterizeTriangles(&context, vertices, vertexCount, indices, walkableAreas, triangleCount, *heightfield, this->config.walkableClimb);
-
-                            delete [] walkableAreas;
-                            delete mesh;
+                            
+                            //delete mesh;
                         }
                     }
                 }
@@ -754,7 +762,7 @@ namespace GTEngine
                         memcpy(this->mesh->polys, polys.buffer, sizeof(unsigned short) * polys.count);
                         memcpy(this->mesh->regs,  regs.buffer,  sizeof(unsigned short) * regs.count);
                         memcpy(this->mesh->flags, flags.buffer, sizeof(unsigned short) * flags.count);
-                        memcpy(this->mesh->areas, areas.buffer, sizeof(unsigned short) * areas.count);
+                        memcpy(this->mesh->areas, areas.buffer, sizeof(unsigned char)  * areas.count);
                     }
                     else
                     {

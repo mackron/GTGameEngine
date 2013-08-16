@@ -9,6 +9,7 @@
 #include "Math.hpp"
 
 class btCollisionShape;
+class btConvexHullShape;
 
 namespace GTEngine
 {
@@ -342,6 +343,57 @@ namespace GTEngine
 
         /// The number of segments to use with circular geometry.
         unsigned int circleSegmentsCount;
+    };
+
+
+
+
+
+    /////////////////////////////////////////
+    // Solid triangle-mesh shapes.
+
+    /// Class for constructing a simple P3 convex hull mesh.
+    class ConvexHullMeshBuilder : public MeshBuilderP3
+    {
+    public:
+
+        /// Constructor
+        ConvexHullMeshBuilder();
+
+        /// Destructor.
+        ~ConvexHullMeshBuilder();
+
+
+        /// Builds the mesh.
+        ///
+        /// @param convexHull [in] A reference to the convex hull to construct.
+        /// @param transform  [in] The transform to apply to the convex hull.
+        void Build(const btConvexHullShape &shape, const glm::mat4 &transform);
+    };
+
+    /// Class for constructing a simple P3 mesh representation of the given collision shape.
+    class CollisionShapeMeshBuilder : public MeshBuilderP3
+    {
+    public:
+
+        /// Constructor.
+        CollisionShapeMeshBuilder();
+
+        /// Destructor.
+        ~CollisionShapeMeshBuilder();
+
+
+        /// Buildes the mesh.
+        ///
+        /// @param shape     [in] The collision shape whose mesh representation is being built.
+        /// @param transform [in] The transform to apply to the mesh.
+        void Build(const btCollisionShape &shape, const glm::mat4 &transform = glm::mat4());
+
+        /// Builds and merges a mesh representing the given shape.
+        ///
+        /// @param shape     [in] The collision shape to build the goemtry from.
+        /// @param transform [in] The local transform to apply to the collision shape.
+        void BuildAndMerge(const btCollisionShape &shape, const glm::mat4 &transform = glm::mat4());
     };
 }
 
