@@ -968,6 +968,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_LuminanceChain.hpp">
       <Filter>include\DefaultSceneRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_MaterialUniformNameCache.hpp">
+      <Filter>include\DefaultSceneRenderer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1655,6 +1658,9 @@
       <Filter>source\Rendering\OpenGL\OpenGL21</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_LuminanceChain.cpp">
+      <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_MaterialUniformNameCache.cpp">
       <Filter>source\DefaultSceneRenderer</Filter>
     </ClCompile>
   </ItemGroup>

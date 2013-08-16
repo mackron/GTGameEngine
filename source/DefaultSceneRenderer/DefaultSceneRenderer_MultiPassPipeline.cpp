@@ -809,17 +809,17 @@ namespace GTEngine
                 // For now, we will just set the shadow maps manually.
                 if (lightGroup.GetShadowDirectionalLightCount() > 0)
                 {
-                    shader->SetUniform(GTCore::String::CreateFormatted("ShadowDirectionalLightFS%d_ShadowMap", 0).c_str(), this->renderer.GetDirectionalShadowMapByIndex(0));
+                    shader->SetUniform(this->renderer.GetMaterialUniformNameCache().GetLightUniformName(MaterialUniform_ShaderDirectionalLightFS_ShadowMap, 0), this->renderer.GetDirectionalShadowMapByIndex(0));
                 }
 
                 if (lightGroup.GetShadowPointLightCount() > 0)
                 {
-                    shader->SetUniform(GTCore::String::CreateFormatted("ShadowPointLightFS%d_ShadowMap", 0).c_str(), this->renderer.GetPointShadowMapByIndex(0));
+                    shader->SetUniform(this->renderer.GetMaterialUniformNameCache().GetLightUniformName(MaterialUniform_ShadowPointLightFS_ShadowMap, 0), this->renderer.GetPointShadowMapByIndex(0));
                 }
 
                 if (lightGroup.GetShadowSpotLightCount() > 0)
                 {
-                    shader->SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d_ShadowMap", 0).c_str(), this->renderer.GetSpotShadowMapByIndex(0));
+                    shader->SetUniform(this->renderer.GetMaterialUniformNameCache().GetLightUniformName(MaterialUniforms_ShadowSpotLightFS_ShadowMap, 0), this->renderer.GetSpotShadowMapByIndex(0));
                 }
 
                 shader->SetUniform("ModelMatrix",       mesh.transform);

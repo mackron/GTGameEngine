@@ -12,6 +12,7 @@
 #include "DefaultSceneRenderer_MaterialShaders.hpp"
 #include "DefaultSceneRenderer_ShaderBuilder.hpp"
 #include "DefaultSceneRenderer_LuminanceChain.hpp"
+#include "DefaultSceneRenderer_MaterialUniformNameCache.hpp"
 
 
 #include <GTCore/Map.hpp>
@@ -400,6 +401,12 @@ namespace GTEngine
         virtual ~DefaultSceneRenderer();
 
 
+        /// Retrieves a reference to the internal cache of material names.
+        ///
+        /// @remarks
+        ///     This should only be used internally by components of the default renderer.
+        DefaultSceneRenderer_MaterialUniformNameCache & GetMaterialUniformNameCache() { return this->materialUniformNames; } 
+
 
         ////////////////////////////////////////////////////////////////
         // Virtual Methods.
@@ -673,6 +680,10 @@ namespace GTEngine
 
         /// The luminance chain for computing the luminance of the scene.
         DefaultSceneRenderer_LuminanceChain luminanceChain;
+
+
+        /// The cache for material uniform names so we don't need to keep generating them with sprintf().
+        DefaultSceneRenderer_MaterialUniformNameCache materialUniformNames;
 
 
         ///////////////////////////////////////////////////////
