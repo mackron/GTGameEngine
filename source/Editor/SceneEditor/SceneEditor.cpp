@@ -185,6 +185,9 @@ namespace GTEngine
         // If we're playing, we need to stop. If we don't do this there are a few things that won't get restored correctly.
         this->StopPlaying();
 
+        // Hide the navigation meshes.
+        this->HideAllNavigationMeshes();
+
         // We need to delete the main GUI element, along with it's children.
         this->GetGUI().DeleteElement(this->GUI.Main);
     }
@@ -798,6 +801,19 @@ namespace GTEngine
                 this->navigationMeshRendererMeshes.RemoveByIndex(iNavigationMesh->index);
             }
         }
+    }
+
+    void SceneEditor::HideAllNavigationMeshes()
+    {
+        while (this->GetNavigationMeshCount() > 0)
+        {
+            this->HideNavigationMesh(0);
+        }
+    }
+
+    size_t SceneEditor::GetNavigationMeshCount() const
+    {
+        return this->navigationMeshRendererMeshes.count;
     }
 
 

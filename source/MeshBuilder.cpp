@@ -548,4 +548,104 @@ namespace GTEngine
             }
         }
     }
+
+
+
+
+
+    // ConvexHullMeshBuilder
+    ConvexHullMeshBuilder::ConvexHullMeshBuilder()
+        : MeshBuilderP3()
+    {
+    }
+
+    ConvexHullMeshBuilder::~ConvexHullMeshBuilder()
+    {
+    }
+
+    void ConvexHullMeshBuilder::Build(const btConvexHullShape &shape, const glm::mat4 &transform)
+    {
+        btShapeHull hull(&shape);
+        hull.buildHull(shape.getMargin());
+
+        if (hull.numIndices() > 0 && hull.numVertices() > 0)
+        {
+            auto indices  = hull.getIndexPointer();
+            auto vertices = hull.getVertexPointer();
+
+            for (int iIndex = 0; iIndex < hull.numIndices(); iIndex += 3)
+            {
+                auto index0 = indices[iIndex + 0];
+                auto index1 = indices[iIndex + 1];
+                auto index2 = indices[iIndex + 2];
+
+                auto vertex0 = glm::vec3(transform * glm::vec4(Math::vec3_cast(vertices[index0]), 1.0f));
+                auto vertex1 = glm::vec3(transform * glm::vec4(Math::vec3_cast(vertices[index1]), 1.0f));
+                auto vertex2 = glm::vec3(transform * glm::vec4(Math::vec3_cast(vertices[index2]), 1.0f));
+
+                this->EmitVertex(vertex2);
+                this->EmitVertex(vertex1);
+                this->EmitVertex(vertex0);
+            }
+        }
+    }
+
+    
+
+    // CollisionShapeMeshBuilder
+    CollisionShapeMeshBuilder::CollisionShapeMeshBuilder()
+        : MeshBuilderP3()
+    {
+    }
+
+    CollisionShapeMeshBuilder::~CollisionShapeMeshBuilder()
+    {
+    }
+
+    void CollisionShapeMeshBuilder::Build(const btCollisionShape &shape, const glm::mat4 &transform)
+    {
+        this->BuildAndMerge(shape, transform);
+    }
+
+    void CollisionShapeMeshBuilder::BuildAndMerge(const btCollisionShape &shape, const glm::mat4 &transform)
+    {
+        if (shape.getShapeType() == COMPOUND_SHAPE_PROXYTYPE)
+        {
+            auto &compound = static_cast<const btCompoundShape &>(shape);
+
+            // Create the child shapes.
+            for (int iShape = 0; iShape < compound.getNumChildShapes(); ++iShape)
+            {
+                auto childShape = compound.getChildShape(iShape);
+                assert(childShape != nullptr);
+                {
+                    this->BuildAndMerge(*childShape, transform * Math::mat4_cast(compound.getChildTransform(iShape)));
+                }
+            }
+        }
+        else if (shape.getShapeType() == BOX_SHAPE_PROXYTYPE)
+        {
+        }
+        else if (shape.getShapeType() == SPHERE_SHAPE_PROXYTYPE)
+        {
+        }
+        else if (shape.getShapeType() == CUSTOM_CONVEX_SHAPE_TYPE)          // Ellipsoid. This should be given a proper type.
+        {
+        }
+        else if (shape.getShapeType() == CAPSULE_SHAPE_PROXYTYPE)
+        {
+        }
+        else if (shape.getShapeType() == CYLINDER_SHAPE_PROXYTYPE)
+        {
+        }
+        else if (shape.getShapeType() == CONVEX_HULL_SHAPE_PROXYTYPE)
+        {
+            auto &convexHullShape = static_cast<const btConvexHullShape &>(shape);
+
+            ConvexHullMeshBuilder builder;
+            builder.Build(convexHullShape, transform);
+
+            this->Merge(builder);
+        }
+    }
 }

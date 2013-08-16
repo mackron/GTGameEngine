@@ -187,6 +187,12 @@ namespace GTEngine
         /// @param index [in] The index of the navigation mesh.
         void HideNavigationMesh(size_t index);
 
+        /// Hides every navigation mesh.
+        void HideAllNavigationMeshes();
+
+        /// Retrieves the number of navigation meshes attached to the scene.
+        size_t GetNavigationMeshCount() const;
+
 
 
         /// Pauses scene updates while the game is being played in-editor.
