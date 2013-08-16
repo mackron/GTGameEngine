@@ -25,6 +25,7 @@ namespace GTEngine
           bloomBlurShaderX(nullptr), bloomBlurShaderY(nullptr), shadowBlurShaderX(nullptr), shadowBlurShaderY(nullptr),
           shaderBuilder(),
           luminanceChain(),
+          materialUniformNames(),
           isHDREnabled(true), isBloomEnabled(true), hdrExposure(1.0f), bloomFactor(1.0f),
           directionalShadowMapSize(1024), pointShadowMapSize(256), spotShadowMapSize(512),
           materialLibraryEventHandler(*this)
@@ -816,8 +817,6 @@ namespace GTEngine
     {
         (void)flags;
 
-        // TODO: This needs a speedup. Too slow to create formatted strings for each light uniform. Should consider uniform buffers, a faster way of constructing the strings or just cache the strings.
-
         uint16_t ambientLightCount            = lightGroup.GetAmbientLightCount();
         uint16_t directionalLightCount        = lightGroup.GetDirectionalLightCount();
         uint16_t pointLightCount              = lightGroup.GetPointLightCount();
@@ -840,7 +839,7 @@ namespace GTEngine
             auto light = visibleObjects.lightManager.ambientLights.buffer[lightGroup.lightIDs[ambientLightStartIndex + i]]->value;
             assert(light != nullptr);
             {
-                shader.SetUniform(GTCore::String::CreateFormatted("AmbientLightFS%d.Colour", i).c_str(), light->colour);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_AmbientLightFS_Colour, i), light->colour);
             }
         }
 
@@ -850,8 +849,8 @@ namespace GTEngine
             auto light = visibleObjects.lightManager.directionalLights.buffer[lightGroup.lightIDs[directionalLightStartIndex + i]]->value;
             assert(light != nullptr);
             {
-                shader.SetUniform(GTCore::String::CreateFormatted("DirectionalLightFS%d.Colour",    i).c_str(), light->colour);
-                shader.SetUniform(GTCore::String::CreateFormatted("DirectionalLightFS%d.Direction", i).c_str(), glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_DirectionalLightFS_Colour,    i), light->colour);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_DirectionalLightFS_Direction, i), glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
             }
         }
 
@@ -861,10 +860,10 @@ namespace GTEngine
             auto light = visibleObjects.lightManager.pointLights.buffer[lightGroup.lightIDs[pointLightStartIndex + i]]->value;
             assert(light != nullptr);
             {
-                shader.SetUniform(GTCore::String::CreateFormatted("PointLightVS%d.PositionVS", i).c_str(), glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
-                shader.SetUniform(GTCore::String::CreateFormatted("PointLightFS%d.Colour",     i).c_str(), light->colour);
-                shader.SetUniform(GTCore::String::CreateFormatted("PointLightFS%d.Radius",     i).c_str(), light->radius);
-                shader.SetUniform(GTCore::String::CreateFormatted("PointLightFS%d.Falloff",    i).c_str(), light->falloff);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_PointLightVS_PositionVS, i), glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_PointLightFS_Colour,     i), light->colour);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_PointLightFS_Radius,     i), light->radius);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_PointLightFS_Falloff,    i), light->falloff);
             }
         }
 
@@ -874,13 +873,13 @@ namespace GTEngine
             auto light = visibleObjects.lightManager.spotLights.buffer[lightGroup.lightIDs[spotLightStartIndex + i]]->value;
             assert(light != nullptr);
             {
-                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.Position",      i).c_str(), glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
-                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.Colour",        i).c_str(), light->colour);
-                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.Direction",     i).c_str(), glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
-                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.Length",        i).c_str(), light->length);
-                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.Falloff",       i).c_str(), light->falloff);
-                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.CosAngleInner", i).c_str(), glm::cos(glm::radians(light->innerAngle)));
-                shader.SetUniform(GTCore::String::CreateFormatted("SpotLightFS%d.CosAngleOuter", i).c_str(), glm::cos(glm::radians(light->outerAngle)));
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_SpotLightFS_Position,      i), glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_SpotLightFS_Colour,        i), light->colour);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_SpotLightFS_Direction,     i), glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_SpotLightFS_Length,        i), light->length);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_SpotLightFS_Falloff,       i), light->falloff);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_SpotLightFS_CosAngleInner, i), glm::cos(glm::radians(light->innerAngle)));
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_SpotLightFS_CosAngleOuter, i), glm::cos(glm::radians(light->outerAngle)));
             }
         }
 
@@ -890,9 +889,9 @@ namespace GTEngine
             auto light = visibleObjects.lightManager.directionalLights.buffer[lightGroup.lightIDs[shadowDirectionalLightStartIndex + i]]->value;
             assert(light != nullptr);
             {
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowDirectionalLightVS%d.ProjectionView", i).c_str(), light->projection * light->view);
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowDirectionalLightFS%d.Colour",         i).c_str(), light->colour);
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowDirectionalLightFS%d.Direction",      i).c_str(), glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_ShadowDirectionalLightVS_ProjectionView, i), light->projection * light->view);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_ShaderDirectionalLightFS_Colour,         i), light->colour);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_ShaderDirectionalLightFS_Direction,      i), glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
                 
                 // TODO: set the shadow map.
             }
@@ -904,11 +903,11 @@ namespace GTEngine
             auto light = visibleObjects.lightManager.pointLights.buffer[lightGroup.lightIDs[shadowPointLightStartIndex + i]]->value;
             assert(light != nullptr);
             {
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowPointLightVS%d.PositionVS", i).c_str(), glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowPointLightVS%d.PositionWS", i).c_str(), light->position);
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowPointLightFS%d.Colour",     i).c_str(), light->colour);
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowPointLightFS%d.Radius",     i).c_str(), light->radius);
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowPointLightFS%d.Falloff",    i).c_str(), light->falloff);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_ShadowPointLightFS_PositionVS, i), glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_ShadowPointLightFS_PositionWS, i), light->position);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_ShadowPointLightFS_Colour,     i), light->colour);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_ShadowPointLightFS_Radius,     i), light->radius);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniform_ShadowPointLightFS_Falloff,    i), light->falloff);
 
                 // TODO: set the shadow map.
             }
@@ -920,14 +919,14 @@ namespace GTEngine
             auto light = visibleObjects.lightManager.spotLights.buffer[lightGroup.lightIDs[shadowSpotLightStartIndex + i]]->value;
             assert(light != nullptr);
             {
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightVS%d.ProjectionView", i).c_str(), light->projection * light->view);
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.Position",       i).c_str(), glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.Colour",         i).c_str(), light->colour);
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.Direction",      i).c_str(), glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.Length",         i).c_str(), light->length);
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.Falloff",        i).c_str(), light->falloff);
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.CosAngleInner",  i).c_str(), glm::cos(glm::radians(light->innerAngle)));
-                shader.SetUniform(GTCore::String::CreateFormatted("ShadowSpotLightFS%d.CosAngleOuter",  i).c_str(), glm::cos(glm::radians(light->outerAngle)));
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniforms_ShadowSpotLightVS_ProjectionView, i), light->projection * light->view);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniforms_ShadowSpotLightFS_Position,       i), glm::vec3(visibleObjects.viewMatrix * glm::vec4(light->position, 1.0f)));
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniforms_ShadowSpotLightFS_Colour,         i), light->colour);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniforms_ShadowSpotLightFS_Direction,      i), glm::normalize(glm::mat3(visibleObjects.viewMatrix) * light->GetForwardVector()));
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniforms_ShadowSpotLightFS_Length,         i), light->length);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniforms_ShadowSpotLightFS_Falloff,        i), light->falloff);
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniforms_ShadowSpotLightFS_CosAngleInner,  i), glm::cos(glm::radians(light->innerAngle)));
+                shader.SetUniform(this->materialUniformNames.GetLightUniformName(MaterialUniforms_ShadowSpotLightFS_CosAngleOuter,  i), glm::cos(glm::radians(light->outerAngle)));
 
                 // TODO: set the shadow map.
             }
