@@ -1589,6 +1589,17 @@ namespace GTEngine
     }
 
 
+    void SceneEditor::SetTranslationSnapSize(float snapSize)
+    {
+        this->translateSnapSize = snapSize;
+    }
+
+    float SceneEditor::GetTranslationSnapSize() const
+    {
+        return this->translateSnapSize;
+    }
+
+
     ///////////////////////////////////////////////////
     // Scene Events
     //

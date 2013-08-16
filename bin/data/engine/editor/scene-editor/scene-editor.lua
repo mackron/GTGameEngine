@@ -697,10 +697,18 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
         return GTEngine.System.SceneEditor.IsGizmoInGlobalSpace(self._internalPtr);
     end
     
-    
     function sceneEditor:UpdateSelectionGizmoTransform()
         return GTEngine.System.SceneEditor.UpdateSelectionGizmoTransform(self._internalPtr);
     end
+    
+    function sceneEditor:SetTranslationSnapSize(snapSize)
+        return GTEngine.System.SceneEditor.SetTranslationSnapSize(self._internalPtr, snapSize);
+    end
+    
+    function sceneEditor:GetTranslationSnapSize(snapSize)
+        return GTEngine.System.SceneEditor.GetTranslationSnapSize(self._internalPtr);
+    end
+    
     
     
     function sceneEditor:StartPlaying()

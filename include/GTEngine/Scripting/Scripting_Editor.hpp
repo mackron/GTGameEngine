@@ -414,12 +414,24 @@ namespace GTEngine
             ///     Argument 1: A pointer to the scene editor.
             int IsGizmoInGlobalSpace(GTCore::Script &script);
 
-
             /// Updates the transformation of the selection gizmo.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the scene editor.
             int UpdateSelectionGizmoTransform(GTCore::Script &script);
+
+            /// Sets the translation snap size.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: The new snapping size.
+            int SetTranslationSnapSize(GTCore::Script &script);
+
+            /// Retrieves the translation snap size.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int GetTranslationSnapSize(GTCore::Script &script);
 
 
             /// Plays the game.
