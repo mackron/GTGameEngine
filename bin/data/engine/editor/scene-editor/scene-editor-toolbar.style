@@ -63,3 +63,26 @@ scene-editor-toolbar-stop-icon
     background-repeat:       stretch
 }
 
+
+scene-editor-toolbar-snapping-container
+{
+    width:          auto
+    height:         22px
+    child-plane:    horizontal
+    vertical-align: center
+    margin-left:    16px
+}
+
+scene-editor-toolbar-snapping-label
+{
+    width:      auto
+    text-color: #aaa
+}
+
+scene-editor-toolbar-snapping-textbox includes textbox
+{
+    width:       64px
+    height:      18px
+    margin-left: 4px
+}
+

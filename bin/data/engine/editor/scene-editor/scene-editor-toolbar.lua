@@ -60,6 +60,22 @@ function GTGUI.Element:SceneEditorToolBar(sceneEditor)
     
     
     
+    -- Snapping.
+    self.SnappingContainer = GTGUI.Server.CreateElement(self, "scene-editor-toolbar-snapping-container");
+    
+    self.SnappingLabel = GTGUI.Server.CreateElement(self.SnappingContainer, "scene-editor-toolbar-snapping-label");
+    self.SnappingLabel:SetText("Snapping");
+    
+    self.SnappingTextBox = GTGUI.Server.CreateElement(self.SnappingContainer, "scene-editor-toolbar-snapping-textbox");
+    self.SnappingTextBox:SetText(string.format("%.4g", sceneEditor:GetTranslationSnapSize()));
+    
+    self.SnappingTextBox:OnTextChanged(function()
+        sceneEditor:SetTranslationSnapSize(tonumber(self.SnappingTextBox:GetText()));
+    end);
+    
+    
+    
+    
     function self:UpdatePlaybackControls()
         if sceneEditor:IsPaused() or sceneEditor:IsStopped() then
             self.PlayPauseButton:DetachStyleClass("scene-editor-toolbar-pause-button");

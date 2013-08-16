@@ -381,6 +381,16 @@ namespace GTEngine
         void UpdateGizmoTransform(bool onlyUpdateVisibleHandles = true);
 
 
+        /// Sets the snapping size for translations.
+        ///
+        /// @param snapSize [in] The new snapping size.
+        void SetTranslationSnapSize(float snapSize);
+
+        /// Retrieves the current snapping size for translations.
+        float GetTranslationSnapSize() const;
+
+
+
         ///////////////////////////////////////////////////
         // Scene Events
         //
