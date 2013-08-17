@@ -355,6 +355,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Scene.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneCullingDbvtPolicy.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneCullingManager.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\SceneDeserializeCallback.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneNode.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\SceneNodeEventHandler.hpp" />
@@ -628,6 +629,7 @@
     <ClCompile Include="..\..\..\source\Rendering\VertexFormat.cpp" />
     <ClCompile Include="..\..\..\source\Scene.cpp" />
     <ClCompile Include="..\..\..\source\SceneCullingDbvtPolicy.cpp" />
+    <ClCompile Include="..\..\..\source\SceneDeserializeCallback.cpp" />
     <ClCompile Include="..\..\..\source\SceneEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\SceneNode.cpp" />
     <ClCompile Include="..\..\..\source\SceneNodeEventHandler.cpp" />

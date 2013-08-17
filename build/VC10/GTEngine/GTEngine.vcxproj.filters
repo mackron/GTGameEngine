@@ -971,6 +971,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_MaterialUniformNameCache.hpp">
       <Filter>include\DefaultSceneRenderer</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneDeserializeCallback.hpp">
+      <Filter>include</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
@@ -1662,6 +1665,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_MaterialUniformNameCache.cpp">
       <Filter>source\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneDeserializeCallback.cpp">
+      <Filter>source</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

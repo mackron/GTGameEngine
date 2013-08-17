@@ -6,6 +6,7 @@
 #include "SceneNode.hpp"
 #include "SceneViewport.hpp"
 #include "SceneEventHandler.hpp"
+#include "SceneDeserializeCallback.hpp"
 #include "Physics.hpp"
 #include "DefaultSceneUpdateManager.hpp"
 #include "DefaultScenePhysicsManager.hpp"
@@ -774,7 +775,12 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If deserialization fails, the scene will be left completely unmodified.
-        bool Deserialize(GTCore::Deserializer &deserializer);
+        bool Deserialize(GTCore::Deserializer &deserializer, SceneDeserializeCallback &callback);
+        bool Deserialize(GTCore::Deserializer &deserializer)
+        {
+            SceneDeserializeCallback devnull;
+            return this->Deserialize(deserializer, devnull);
+        }
 
 
         /// Serializes the scene's state stack.
