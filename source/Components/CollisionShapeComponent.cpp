@@ -754,13 +754,8 @@ namespace GTEngine
 
                     for (int iVertex = 0; iVertex < convexHull.getNumVertices(); ++iVertex)
                     {
-                        btVector3 vertex;
-                        convexHull.getVertex(iVertex, vertex);
-
                         // We want this unscaled.
-                        vertex = vertex / convexHull.getLocalScaling();
-
-                        serializer.Write(ToGLMVector3(vertex));
+                        serializer.Write(ToGLMVector3(convexHull.getUnscaledPoints()[iVertex]));
                     }
 
                     serializer.Write(static_cast<float>(convexHull.getMargin()));
@@ -1212,6 +1207,11 @@ namespace GTEngine
                 {
                     auto &definition = model->GetDefinition();
 
+                    // Before adding the children, what we do is set the local scaling to 1, then restore it after the children are added. This
+                    // will properly preserve the scaling.
+                    btVector3 localScaling = shape->getLocalScaling();
+                    shape->setLocalScaling(btVector3(1.0f, 1.0f, 1.0f));
+
                     for (size_t iConvexHull = 0; iConvexHull < definition.convexHulls.count; ++iConvexHull)
                     {
                         auto convexHull = definition.convexHulls[iConvexHull];
@@ -1223,6 +1223,8 @@ namespace GTEngine
                             shape->addChildShape(btTransform::getIdentity(), convexHullShape);
                         }
                     }
+
+                    shape->setLocalScaling(localScaling);
                 }
             }
 
