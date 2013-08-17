@@ -169,6 +169,8 @@ namespace GTEngine
 
                         // The local data should be deleted to save on some memory.
                         texture->DeleteLocalData();
+
+                        return true;
                     }
                 }
             }
