@@ -17,6 +17,8 @@ FEATURES:
     - Added the ability to set the shape of dynamics and proximity components
       to the convex hulls of the model defined in the model component, if any.
     - Added navigation mesh integration into the scene editor.
+    - Added support for controlling the translation snapping size in the scene
+      editor.
 
 
 FIXES/IMPROVEMENTS:
@@ -36,6 +38,7 @@ FIXES/IMPROVEMENTS:
       when the owner scene node had a parent.
     - Fixed an issue where doing Game.Pause() and Game.Resume() would not work
       as expected when playing a scene from inside the editor.
+    - Back faces are no longer selected in the scene editor.
     - More work on documentation
         - Tips, Tricks and Quirks
         - GUI Styling
