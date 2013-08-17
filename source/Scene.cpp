@@ -1723,7 +1723,14 @@ namespace GTEngine
             else
             {
                 // It's an unknown chunk. We need to push this over to the callback and let it handle the chunk.
-                deserializer.Seek(header.sizeInBytes);
+                if (callback.IsChunkHandled(header))
+                {
+                    callback.HandleChunk(header, deserializer);
+                }
+                else
+                {
+                    deserializer.Seek(header.sizeInBytes);
+                }
             }
 
             // We need to check the target read pointer and validate.
@@ -1741,7 +1748,7 @@ namespace GTEngine
             // We can break if all the chunks we need have been read.
             if (readSceneNodes && readSceneNodesHierarchy && readSceneProperties && readNavigation)
             {
-                break;
+                //break;
             }
         }
 
