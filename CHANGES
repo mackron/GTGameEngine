@@ -38,7 +38,11 @@ FIXES/IMPROVEMENTS:
       when the owner scene node had a parent.
     - Fixed an issue where doing Game.Pause() and Game.Resume() would not work
       as expected when playing a scene from inside the editor.
+    - Fixed an issue with loading images in the GUI when it is not found in the
+      highest priority path.
+    - Sounds now use the search paths when loading.
     - Back faces are no longer selected in the scene editor.
+    - Detaching a scene node from it's prefab now created an undo/redo point.
     - More work on documentation
         - Tips, Tricks and Quirks
         - GUI Styling
