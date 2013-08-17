@@ -25,6 +25,7 @@ function GTGUI.Element:SceneEditorDetailsPanel(parentPanel, sceneEditor)
     self.PrefabCrossButton  = GTGUI.Server.CreateElement(self.PrefabContainer, "cross-button");
     self.PrefabCrossButton:OnPressed(function()
         sceneEditor:UnlinkSceneNodeFromPrefab(self.SceneNode);
+        sceneEditor:PushUndoRedoPoint();
     end);
     self.PrefabCrossButton:SetTooltip("Unlink from prefab.");
     
