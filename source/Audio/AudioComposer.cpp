@@ -9,6 +9,7 @@
 #include <GTEngine/Errors.hpp>
 
 #include <GTCore/Threading.hpp>
+#include <GTCore/IO.hpp>
 #include <GTCore/Path.hpp>
 #include <GTCore/Strings/Equal.hpp>
 
@@ -317,11 +318,16 @@ namespace GTEngine
 {
     SoundStreamer* AudioComposer::CreateStreamer(const char* fileName)
     {
-        const char* ext = GTCore::Path::Extension(fileName);
-
-        if (GTCore::Strings::Equal<false>(ext, "wav"))
+        // We want the absolute path to make sure we get the correctly prioritized sound.
+        GTCore::String absolutePath;
+        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
         {
-            return new SoundStreamer_WAV(fileName);
+            auto ext = GTCore::Path::Extension(fileName);
+
+            if (GTCore::Strings::Equal<false>(ext, "wav"))
+            {
+                return new SoundStreamer_WAV(absolutePath.c_str());
+            }
         }
 
         return nullptr;
