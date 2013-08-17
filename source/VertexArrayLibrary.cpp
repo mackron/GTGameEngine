@@ -90,16 +90,6 @@ namespace GTEngine
     ////////////////////////////////////////////////////////////////
     // Primitive Shapes
 
-    VertexArray* VertexArrayLibrary::CreateFromShape(const btCollisionShape &shape)
-    {
-        if (shape.getShapeType() == BOX_SHAPE_PROXYTYPE)
-        {
-            return VertexArrayLibrary::CreateBox(static_cast<const btBoxShape &>(shape).getHalfExtentsWithMargin());
-        }
-
-        return nullptr;
-    }
-
     VertexArray* VertexArrayLibrary::CreateBox(float halfWidth, float halfHeight, float halfDepth)
     {
         // A box will have 24 unique vertices. We first calculate the positions of each corner and then build the texture coordinates and normals.

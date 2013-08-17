@@ -30,12 +30,6 @@ namespace GTEngine
         ////////////////////////////////////////////////////////////////
         // Primitive Shapes
 
-        /// Creates a vertex array for the given shape.
-        ///
-        /// @param shape [in] A reference to the shape whose having a vertex array created.
-        static VertexArray* CreateFromShape(const btCollisionShape &shape);
-
-
         /// Creates a box shape.
         ///
         /// @param halfWidth  [in] The half width of the box to create.
