@@ -55,60 +55,6 @@ namespace GTEngine
 
 
 
-
-
-
-        /// Retrieves a reference the main scene node.
-        //      SceneNode & GetSceneNode()       { return this->sceneNode; }
-        //const SceneNode & GetSceneNode() const { return this->sceneNode; }
-
-        /// Retrieves a reference to the x axis arrow scene node.
-        //      SceneNode & GetXArrowSceneNode()       { return this->xArrowSceneNode; }
-        //const SceneNode & GetXArrowSceneNode() const { return this->xArrowSceneNode; }
-
-        /// Retrieves a reference to the y axis arrow scene node.
-        //      SceneNode & GetYArrowSceneNode()       { return this->yArrowSceneNode; }
-        //const SceneNode & GetYArrowSceneNode() const { return this->yArrowSceneNode; }
-
-        /// Retrieves a reference to the z axis arrow scene node.
-        //      SceneNode & GetZArrowSceneNode()       { return this->zArrowSceneNode; }
-        //const SceneNode & GetZArrowSceneNode() const { return this->zArrowSceneNode; }
-
-
-        /*
-        /// Retrieves a reference to the y axis circle scene node.
-              SceneNode & GetXCircleSceneNode()       { return this->xCircleSceneNode; }
-        const SceneNode & GetXCircleSceneNode() const { return this->xCircleSceneNode; }
-
-        /// Retrieves a reference to the y axis circle scene node.
-              SceneNode & GetYCircleSceneNode()       { return this->yCircleSceneNode; }
-        const SceneNode & GetYCircleSceneNode() const { return this->yCircleSceneNode; }
-
-        /// Retrieves a reference to the z axis circle scene node.
-              SceneNode & GetZCircleSceneNode()       { return this->zCircleSceneNode; }
-        const SceneNode & GetZCircleSceneNode() const { return this->zCircleSceneNode; }
-
-        /// Retrieves a reference to the y axis circle scene node.
-              SceneNode & GetCameraFacingCircleSceneNode()       { return this->cameraFacingCircleSceneNode; }
-        const SceneNode & GetCameraFacingCircleSceneNode() const { return this->cameraFacingCircleSceneNode; }
-        */
-
-        /*
-        /// Retrieves a reference to the x axis arrow scene node.
-              SceneNode & GetXScaleSceneNode()       { return this->xScaleSceneNode; }
-        const SceneNode & GetXScaleSceneNode() const { return this->xScaleSceneNode; }
-
-        /// Retrieves a reference to the y axis arrow scene node.
-              SceneNode & GetYScaleSceneNode()       { return this->yScaleSceneNode; }
-        const SceneNode & GetYScaleSceneNode() const { return this->yScaleSceneNode; }
-
-        /// Retrieves a reference to the z axis arrow scene node.
-              SceneNode & GetZScaleSceneNode()       { return this->zScaleSceneNode; }
-        const SceneNode & GetZScaleSceneNode() const { return this->zScaleSceneNode; }
-        */
-
-
-
         /// Shows the gizmo.
         void Show(SceneRenderer &renderer, CollisionWorld &pickingWorld);
 
@@ -134,24 +80,8 @@ namespace GTEngine
         /// Restores the colours of the gizmo axes to their defaults.
         void RestoreColours();
 
-        /// Changes the colour of the given scene node.
-        ///
-        /// @param axisSceneNode [in] A reference to the scene node of the axis whose colour is being changed.
-        //void ChangeAxisColour(SceneNode &axisSceneNode, float r, float g, float b);
-
 
     private:
-
-        /// Updates the picking volumes of the arrows.
-        //void UpdatePickingVolumes();
-
-        /// Updates the vertex arrays of the given circles so that only the front facing lines are shown.
-        ///
-        /// @remarks
-        ///     This does not change the vertices, only the indices.
-        //void UpdateCircleVertexArray(VertexArray* vertexArray, const SceneNode &circleNode, const SceneNode &cameraNode);
-
-
 
 
     public:
