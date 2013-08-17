@@ -645,16 +645,16 @@ namespace GTEngine
 
         // We keep looping until we hit the null-terminating chunk.
         Serialization::ChunkHeader header;
-        while (deserializer.Peek(&header, sizeof(header)) == sizeof(header) && header.id != Serialization::ChunkID_Null)
+        while (deserializer.Read(&header, sizeof(header)) == sizeof(header) && header.id != Serialization::ChunkID_Null)
         {
-            deserializer.Seek(sizeof(header));
-
             switch (header.id)
             {
             case Serialization::ChunkID_NavigationMesh_Main:
                 {
                     if (header.version == 1)
                     {
+                        //deserializer.Seek(header.sizeInBytes);
+
                         deserializer.Read(this->config);
                         deserializer.Read(this->walkableHeight);
                         deserializer.Read(this->walkableRadius);
@@ -675,7 +675,6 @@ namespace GTEngine
                     if (header.version == 1)
                     {
                         //deserializer.Seek(header.sizeInBytes);
-
 
                         // Old mesh must be deleted.
                         if (this->mesh != nullptr)
@@ -779,7 +778,6 @@ namespace GTEngine
                     {
                         //deserializer.Seek(header.sizeInBytes);
 
-
                         // Old mesh must be deleted.
                         if (this->detourNavMesh != nullptr)
                         {
@@ -846,6 +844,10 @@ namespace GTEngine
 
             default:
                 {
+                    // We don't know the chunk. It needs to be skipped.
+                    assert(false);
+                    deserializer.Seek(header.sizeInBytes);
+
                     break;
                 }
             }
