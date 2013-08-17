@@ -10,6 +10,7 @@
 
 class btCollisionShape;
 class btConvexHullShape;
+class btBoxShape;
 
 namespace GTEngine
 {
@@ -137,6 +138,7 @@ namespace GTEngine
 
         /// Emits a vertex with a position.
         void EmitVertex(const glm::vec3 &position);
+        void EmitVertex(const float x, const float y, const float z) { this->EmitVertex(glm::vec3(x, y, z)); }
     };
 
 
@@ -349,25 +351,44 @@ namespace GTEngine
 
 
 
-    /////////////////////////////////////////
-    // Solid triangle-mesh shapes.
+    //////////////////////////////////////////////////////////////////////////////////////
+    // Solid triangle-meshes for collision shapes. All of these are in simple P3 format.
 
-    /// Class for constructing a simple P3 convex hull mesh.
-    class ConvexHullMeshBuilder : public MeshBuilderP3
+    /// Class for constructing a simple P3 mesh from a box collision shape.
+    class BoxCollisionShapeMeshBuilder : public MeshBuilderP3
     {
     public:
 
-        /// Constructor
-        ConvexHullMeshBuilder();
+        /// Constructor.
+        BoxCollisionShapeMeshBuilder();
 
         /// Destructor.
-        ~ConvexHullMeshBuilder();
+        ~BoxCollisionShapeMeshBuilder();
 
 
         /// Builds the mesh.
         ///
-        /// @param convexHull [in] A reference to the convex hull to construct.
-        /// @param transform  [in] The transform to apply to the convex hull.
+        /// @param shape     [in] A reference to the box shape to construct.
+        /// @param transform [in] The transform to apply to the box.
+        void Build(const btBoxShape &shape, const glm::mat4 &transform);
+    };
+
+    /// Class for constructing a simple P3 convex hull mesh.
+    class ConvexHullCollisionShapeMeshBuilder : public MeshBuilderP3
+    {
+    public:
+
+        /// Constructor
+        ConvexHullCollisionShapeMeshBuilder();
+
+        /// Destructor.
+        ~ConvexHullCollisionShapeMeshBuilder();
+
+
+        /// Builds the mesh.
+        ///
+        /// @param shape     [in] A reference to the convex hull to construct.
+        /// @param transform [in] The transform to apply to the convex hull.
         void Build(const btConvexHullShape &shape, const glm::mat4 &transform);
     };
 
