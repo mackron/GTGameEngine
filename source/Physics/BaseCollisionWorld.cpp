@@ -80,6 +80,7 @@ namespace GTEngine
 
     void BaseCollisionWorld::RayTest(const glm::vec3 &rayStart, const glm::vec3 &rayEnd, btCollisionWorld::RayResultCallback &resultCallback) const
     {
+        resultCallback.m_flags |= btTriangleRaycastCallback::kF_FilterBackfaces;
         this->GetInternalWorld().rayTest(ToBulletVector3(rayStart), ToBulletVector3(rayEnd), resultCallback);
     }
 
