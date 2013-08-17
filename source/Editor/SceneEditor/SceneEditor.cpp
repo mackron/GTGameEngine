@@ -29,6 +29,9 @@
 
 namespace GTEngine
 {
+    static const bool DontMarkAsModified = false;   // <-- Passed to 'markAsModified' boolean parameters.
+
+
     //////////////////////////////////////////////
     // Scene Editor
     SceneEditor::SceneEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
@@ -1427,13 +1430,17 @@ namespace GTEngine
         }
     }
 
-    void SceneEditor::CommitStateStackFrame()
+    void SceneEditor::CommitStateStackFrame(bool markAsModified)
     {
         // We will never do this if a simulation is running.
         if (this->IsStopped())
         {
             this->scene.CommitStateStackFrame();
-            this->MarkAsModified();
+
+            if (markAsModified)
+            {
+                this->MarkAsModified();
+            }
         }
     }
 
@@ -2273,7 +2280,7 @@ namespace GTEngine
                         bool wasSnapping = this->isSnapping;
                         this->isSnapping = this->GetOwnerEditor().GetGame().IsKeyDown(GTCore::Keys::Ctrl);
 
-                        if (!wasSnapping && this->isSnapping)
+                        //if (!wasSnapping && this->isSnapping)
                         {
                             // If we get here, we've just started snapping.
                             this->snapTranslation = startPosition;
@@ -2615,9 +2622,6 @@ namespace GTEngine
             metadataSerializer.Write(this->IsShowingAxisArrows());
 
 
-            // We're going to serialize the state stack, too.
-            this->scene.SerializeStateStack(metadataSerializer);
-
 
             Serialization::ChunkHeader header;
             header.id          = Serialization::ChunkID_Scene_EditorMetadata;
@@ -2639,9 +2643,95 @@ namespace GTEngine
             this->transformGizmo.Hide(this->scene.GetRenderer(), this->pickingWorld);
 
 
-            // With pre-deserialization done, we can now do a full deserialization of the scene.
-            this->scene.Deserialize(deserializer);
+            // The scene deserialize callback for handling non-standard chunks.
+            struct MySceneDeserializeCallback : public SceneDeserializeCallback
+            {
+                SceneEditor &m_sceneEditor;
 
+
+                MySceneDeserializeCallback(SceneEditor &sceneEditor)
+                    : m_sceneEditor(sceneEditor)
+                {
+                }
+
+                bool IsChunkHandled(const Serialization::ChunkHeader &header) const
+                {
+                    return header.id == Serialization::ChunkID_Scene_EditorMetadata;
+                }
+
+                bool HandleChunk(const Serialization::ChunkHeader &header, GTCore::Deserializer &deserializer)
+                {
+                    if (header.id == Serialization::ChunkID_Scene_EditorMetadata)
+                    {
+                        auto &camera = m_sceneEditor.GetCameraSceneNode();
+
+                        camera.Deserialize(deserializer);
+                        camera.DisableSerialization();
+                        camera.DisableStateStackStaging();
+
+                        float cameraXRotation;
+                        float cameraYRotation;
+                        deserializer.Read(cameraXRotation);
+                        deserializer.Read(cameraYRotation);
+                        m_sceneEditor.SetViewportCameraRotation(cameraXRotation, cameraYRotation);
+
+                        bool isShowingGrid;
+                        bool isShowingAxisArrows;
+                        deserializer.Read(isShowingGrid);
+                        deserializer.Read(isShowingAxisArrows);
+
+                        if (isShowingGrid)
+                        {
+                            m_sceneEditor.ShowGrid();
+                        }
+                        else
+                        {
+                            m_sceneEditor.HideGrid();
+                        }
+
+                        if (isShowingAxisArrows)
+                        {
+                            m_sceneEditor.ShowAxisArrows();
+                        }
+                        else
+                        {
+                            m_sceneEditor.HideAxisArrows();
+                        }
+
+
+                        // TODO: Delete this later. It only exists for backwards compatibility.
+                        // We need to peek at the next bytes. If it's a state stack, we need to deserialize it.
+                        Serialization::ChunkHeader stateStackHeader;
+                        if (deserializer.Peek(&stateStackHeader, sizeof(stateStackHeader)) == sizeof(stateStackHeader) && stateStackHeader.id == Serialization::ChunkID_SceneStateStack)
+                        {
+                            deserializer.Seek(sizeof(stateStackHeader));
+                            deserializer.Seek(stateStackHeader.sizeInBytes);
+                        }
+
+                        return true;
+                    }
+
+                    return false;
+                }
+
+
+            private:    // No copying. Warning silencers.
+                MySceneDeserializeCallback(const MySceneDeserializeCallback &other) : m_sceneEditor(other.m_sceneEditor) {}
+                MySceneDeserializeCallback & operator=(const MySceneDeserializeCallback &) { return *this; }
+            }deserializeCallback(*this);
+
+
+            // With pre-deserialization done, we can now do a full deserialization of the scene.
+            this->scene.Deserialize(deserializer, deserializeCallback);
+
+            // The projection and aspect ratios of the camera may not be correct for the viewport dimensions, so we'll simulate
+            // a viewport resize by calling the OnSize event directly.
+            this->viewportEventHandler.OnSize(*this->GUI.Viewport);
+
+            // Need an initial commit.
+            this->CommitStateStackFrame(DontMarkAsModified);
+
+#if 0
             // We now want to load the metadata chunk. We'll peek at the next chunk and see if that's it. We should probably do an iteration type
             // system later on.
             Serialization::ChunkHeader header;
@@ -2712,6 +2802,7 @@ namespace GTEngine
                     this->scene.CommitStateStackFrame();
                 }
             }
+#endif
 
 
             // Gizmo should be updated now.

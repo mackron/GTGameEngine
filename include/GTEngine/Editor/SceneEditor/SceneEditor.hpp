@@ -324,7 +324,9 @@ namespace GTEngine
         void Redo();
 
         /// Commits a new frame to the current branch of the scene's state stack.
-        void CommitStateStackFrame();
+        ///
+        /// @param markAsModified [in] Whether or not to mark the scene as modified.
+        void CommitStateStackFrame(bool markAsModified = true);
 
         /// Clears the staging area of the current branch of the scene's state stack.
         void ClearStateStackStagingArea();
