@@ -1224,7 +1224,7 @@ namespace GTEngine
         }
         ResourceCreationLock.Unlock();
 
-
+        assert(textureState != nullptr);
         return textureState;
     }
 
@@ -1416,6 +1416,10 @@ namespace GTEngine
                 {
                     if (mipmapIndex == -1)
                     {
+                        // If you fail this assert it means you haven't got any texture data, which in turn means you're calling this function unnecessarily. For performance,
+                        // the renderer assumes this function will be called when there is actually data to push, and thus will crash when there is none.
+                        assert(texture.GetMipmapCount() > 0);
+
                         for (size_t i = 0; i < texture.GetMipmapCount(); ++i)
                         {
                             auto &mipmap = texture.GetMipmap(i);
