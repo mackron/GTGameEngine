@@ -35,6 +35,7 @@
 #include <BulletCollision/CollisionDispatch/btCollisionDispatcher.h>
 
 #include <BulletCollision/BroadphaseCollision/btDbvtBroadphase.h>
+#include <BulletCollision/NarrowPhaseCollision/btRaycastCallback.h>
 
 #include <BulletCollision/CollisionShapes/btBoxShape.h>
 #include <BulletCollision/CollisionShapes/btSphereShape.h>
