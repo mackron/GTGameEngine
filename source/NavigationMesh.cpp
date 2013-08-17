@@ -104,7 +104,7 @@ namespace GTEngine
                     if (dynamics != nullptr && dynamics->IsNavigationMeshGenerationEnabled())
                     {
                         CollisionShapeMeshBuilder mesh;
-                        mesh.Build(dynamics->GetCollisionShape(), dynamics->GetNode().GetWorldTransform());
+                        mesh.Build(dynamics->GetCollisionShape(), dynamics->GetNode().GetWorldTransformWithoutScale());     // Don't want to include the scale in the transform because shapes are already pre-scaled.
 
                         // With the mesh information retrieved we can now rasterize the mesh on the heightfield.
                         auto vertices      = mesh.GetVertexData();
