@@ -551,19 +551,68 @@ namespace GTEngine
 
 
 
-
-
-    // ConvexHullMeshBuilder
-    ConvexHullMeshBuilder::ConvexHullMeshBuilder()
+    // BoxCollisionShapeMeshBuilder
+    BoxCollisionShapeMeshBuilder::BoxCollisionShapeMeshBuilder()
         : MeshBuilderP3()
     {
     }
 
-    ConvexHullMeshBuilder::~ConvexHullMeshBuilder()
+    BoxCollisionShapeMeshBuilder::~BoxCollisionShapeMeshBuilder()
     {
     }
 
-    void ConvexHullMeshBuilder::Build(const btConvexHullShape &shape, const glm::mat4 &transform)
+    void BoxCollisionShapeMeshBuilder::Build(const btBoxShape &shape, const glm::mat4 &transform)
+    {
+        const btVector3 halfExtents = shape.getImplicitShapeDimensions();
+
+        glm::vec3 positions[8];
+        positions[0] = glm::vec3(transform * glm::vec4(-halfExtents.x(),  halfExtents.y(),  halfExtents.z(), 1.0f));
+        positions[1] = glm::vec3(transform * glm::vec4(-halfExtents.x(), -halfExtents.y(),  halfExtents.z(), 1.0f));
+        positions[2] = glm::vec3(transform * glm::vec4( halfExtents.x(), -halfExtents.y(),  halfExtents.z(), 1.0f));
+        positions[3] = glm::vec3(transform * glm::vec4( halfExtents.x(),  halfExtents.y(),  halfExtents.z(), 1.0f));
+        positions[4] = glm::vec3(transform * glm::vec4(-halfExtents.x(),  halfExtents.y(), -halfExtents.z(), 1.0f));
+        positions[5] = glm::vec3(transform * glm::vec4(-halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f));
+        positions[6] = glm::vec3(transform * glm::vec4( halfExtents.x(), -halfExtents.y(), -halfExtents.z(), 1.0f));
+        positions[7] = glm::vec3(transform * glm::vec4( halfExtents.x(),  halfExtents.y(), -halfExtents.z(), 1.0f));
+
+
+        // Front.
+        this->EmitVertex(positions[0]); this->EmitVertex(positions[1]); this->EmitVertex(positions[2]);
+        this->EmitVertex(positions[2]); this->EmitVertex(positions[3]); this->EmitVertex(positions[0]);
+
+        // Right.
+        this->EmitVertex(positions[3]); this->EmitVertex(positions[2]); this->EmitVertex(positions[6]);
+        this->EmitVertex(positions[6]); this->EmitVertex(positions[7]); this->EmitVertex(positions[3]);
+
+        // Back.
+        this->EmitVertex(positions[7]); this->EmitVertex(positions[6]); this->EmitVertex(positions[5]);
+        this->EmitVertex(positions[5]); this->EmitVertex(positions[4]); this->EmitVertex(positions[7]);
+
+        // Left.
+        this->EmitVertex(positions[4]); this->EmitVertex(positions[5]); this->EmitVertex(positions[1]);
+        this->EmitVertex(positions[1]); this->EmitVertex(positions[0]); this->EmitVertex(positions[4]);
+
+        // Top.
+        this->EmitVertex(positions[4]); this->EmitVertex(positions[0]); this->EmitVertex(positions[3]);
+        this->EmitVertex(positions[3]); this->EmitVertex(positions[7]); this->EmitVertex(positions[4]);
+
+        // Bottom.
+        this->EmitVertex(positions[1]); this->EmitVertex(positions[5]); this->EmitVertex(positions[6]);
+        this->EmitVertex(positions[6]); this->EmitVertex(positions[2]); this->EmitVertex(positions[1]);
+    }
+
+
+    // ConvexHullCollisionShapeMeshBuilder
+    ConvexHullCollisionShapeMeshBuilder::ConvexHullCollisionShapeMeshBuilder()
+        : MeshBuilderP3()
+    {
+    }
+
+    ConvexHullCollisionShapeMeshBuilder::~ConvexHullCollisionShapeMeshBuilder()
+    {
+    }
+
+    void ConvexHullCollisionShapeMeshBuilder::Build(const btConvexHullShape &shape, const glm::mat4 &transform)
     {
         btShapeHull hull(&shape);
         hull.buildHull(shape.getMargin());
@@ -590,7 +639,6 @@ namespace GTEngine
         }
     }
 
-    
 
     // CollisionShapeMeshBuilder
     CollisionShapeMeshBuilder::CollisionShapeMeshBuilder()
@@ -625,6 +673,12 @@ namespace GTEngine
         }
         else if (shape.getShapeType() == BOX_SHAPE_PROXYTYPE)
         {
+            auto &boxShape = static_cast<const btBoxShape &>(shape);
+
+            BoxCollisionShapeMeshBuilder builder;
+            builder.Build(boxShape, transform);
+
+            this->Merge(builder);
         }
         else if (shape.getShapeType() == SPHERE_SHAPE_PROXYTYPE)
         {
@@ -642,7 +696,7 @@ namespace GTEngine
         {
             auto &convexHullShape = static_cast<const btConvexHullShape &>(shape);
 
-            ConvexHullMeshBuilder builder;
+            ConvexHullCollisionShapeMeshBuilder builder;
             builder.Build(convexHullShape, transform);
 
             this->Merge(builder);
