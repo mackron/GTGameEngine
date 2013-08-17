@@ -7,7 +7,7 @@
 
 namespace GTEngine
 {
-    #define GTENGINE_MIN_CONVEX_HULL_MARGIN     0.0001f
+    #define GTENGINE_MIN_CONVEX_HULL_MARGIN     0.005f
 
 
     /// Some metadata to associate with each child shape of a base collision shape.
@@ -572,62 +572,6 @@ namespace GTEngine
     void CollisionShapeComponent::ApplySceneNodeScaling()
     {
         this->ApplyScaling(this->node.GetWorldScale());
-    }
-
-
-
-    VertexArray* CollisionShapeComponent::CreateCollisionShapeMesh(bool applyNodeTransform) const
-    {
-        int shapeCount = this->collisionShape.getNumChildShapes();
-
-        // The way we do things is we first build vertex arrays for each individual shape. We that combine them all into a single
-        // vertex array to produce the final array.
-        GTCore::Vector<VertexArray*> shapeGeometry(shapeCount);
-
-        for (int i = 0; i < shapeCount; ++i)
-        {
-            auto shape = this->collisionShape.getChildShape(i);
-            assert(shape != nullptr);
-
-            auto va = VertexArrayLibrary::CreateFromShape(*shape);
-            if (va != nullptr)
-            {
-                va->ApplyTransform(ToGLMMatrix4(this->collisionShape.getChildTransform(i)));
-                shapeGeometry.PushBack(va);
-            }
-        }
-
-        // At this point we will have a list of vertex arrays for each shape. We need to combine them into a single vertex array.
-        if (shapeGeometry.count > 0)
-        {
-            // TODO:
-            //
-            // If later one we decide to return a format other than P3, we can do an optimization where we just return shapeGeometry[0] in cases where there is only
-            // a single vertex array.
-
-            // Need to combine.
-            auto combined = VertexArrayLibrary::CreateCombined(shapeGeometry.buffer, shapeGeometry.count, VertexFormat::P3);
-            assert(combined != nullptr);
-
-            // We need to ensure the temp vertex arrays are deleted...
-            for (size_t i = 0; i < shapeGeometry.count; ++i)
-            {
-                delete shapeGeometry[i];
-            }
-
-            if (applyNodeTransform)
-            {
-                combined->ApplyTransform(this->node.GetWorldTransformWithoutScale());
-            }
-
-
-            // Here we optimize the vertex array to remove duplicate values.
-            combined->Optimize();
-
-            return combined;
-        }
-
-        return nullptr;
     }
 
 

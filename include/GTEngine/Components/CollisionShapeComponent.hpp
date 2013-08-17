@@ -184,17 +184,6 @@ namespace GTEngine
         void ApplySceneNodeScaling();
 
 
-        /// Creates a vertex array containing the collision mesh vertices.
-        ///
-        /// @param applyNodeTransform [in] Whether or not the scene node's world transformation should be applied.
-        ///
-        /// @remarks
-        ///     This only contains vertex positions. No texture coordinates. No normals.
-        ///     @par
-        ///     This is useful for use by Recast (for navigation mesh generation).
-        VertexArray* CreateCollisionShapeMesh(bool applyNodeTransform = false) const;
-
-
 
         ///////////////////////////////////////////////////////
         // Serialization/Deserialization.
