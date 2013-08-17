@@ -1527,7 +1527,7 @@ namespace GTEngine
         return true;
     }
 
-    bool Scene::Deserialize(GTCore::Deserializer &deserializer)
+    bool Scene::Deserialize(GTCore::Deserializer &deserializer, SceneDeserializeCallback &callback)
     {
         GTCore::Vector<SceneNode*>                        deserializedNodes;
         GTCore::Vector<SceneNode*>                        rootSceneNodesLinkedToPrefabs;
@@ -1543,6 +1543,10 @@ namespace GTEngine
         Serialization::ChunkHeader header;
         while (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
         {
+            // We need to grab the read pointer we should be sitting on after reading this chunk. We use this for error checking and
+            // basic recovery.
+            size_t targetReadPosition = deserializer.Tell() + header.sizeInBytes;
+
             if (header.id == Serialization::ChunkID_Scene_Info)
             {
                 readInfo = true;
@@ -1702,6 +1706,8 @@ namespace GTEngine
 
                 if (header.version == 1)
                 {
+                    //deserializer.Seek(header.sizeInBytes);
+
                     // The navigation mesh count isn't actually used at the moment, but plans are in place for supporting multiple navigation meshes. This will be needed.
                     uint32_t navigationMeshCount;
                     deserializer.Read(navigationMeshCount);
@@ -1716,9 +1722,21 @@ namespace GTEngine
             }
             else
             {
+                // It's an unknown chunk. We need to push this over to the callback and let it handle the chunk.
                 deserializer.Seek(header.sizeInBytes);
             }
 
+            // We need to check the target read pointer and validate.
+            size_t currentReadPosition = deserializer.Tell();
+            if (currentReadPosition != targetReadPosition)
+            {
+                assert(false);      // <-- If you've hit this assert, you've got a serialization/deserialization error.
+
+                // We're going to try to recover by seeking the difference.
+                deserializer.Seek(targetReadPosition - currentReadPosition);
+
+                assert(deserializer.Tell() == currentReadPosition);
+            }
 
             // We can break if all the chunks we need have been read.
             if (readSceneNodes && readSceneNodesHierarchy && readSceneProperties && readNavigation)
