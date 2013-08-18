@@ -433,6 +433,24 @@ namespace GTEngine
             ///     Argument 1: A pointer to the scene editor.
             int GetTranslationSnappingInterval(GTCore::Script &script);
 
+            /// Enables snapping to the grid.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int EnableSnapToGrid(GTCore::Script &script);
+
+            /// Disables snapping to the grid.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int DisableSnapToGrid(GTCore::Script &script);
+
+            /// Determines whether or not the editor is snapping to the grid.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int IsSnappingToGrid(GTCore::Script &script);
+
 
             /// Plays the game.
             ///

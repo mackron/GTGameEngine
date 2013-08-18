@@ -1625,6 +1625,22 @@ namespace GTEngine
     }
 
 
+    void SceneEditor::EnableSnapToGrid()
+    {
+        this->pivotPoint.EnableSnapToGrid();
+    }
+
+    void SceneEditor::DisableSnapToGrid()
+    {
+        this->pivotPoint.DisableSnapToGrid();
+    }
+
+    bool SceneEditor::IsSnappingToGrid() const
+    {
+        return this->pivotPoint.IsSnappingToGrid();
+    }
+
+
     ///////////////////////////////////////////////////
     // Scene Events
     //

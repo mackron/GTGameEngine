@@ -133,6 +133,16 @@ namespace GTEngine
 
 
 
+        /// Enables snapping to the grid.
+        void EnableSnapToGrid();
+
+        /// Disables snapping to the grid.
+        void DisableSnapToGrid();
+
+        /// Determines whether or not snapping to the grid is enabled.
+        bool IsSnappingToGrid() const;
+
+
     private:
         
         /// The position of the pivot point in world space.

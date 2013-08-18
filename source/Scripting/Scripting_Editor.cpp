@@ -102,6 +102,9 @@ namespace GTEngine
                         script.SetTableFunction(-1, "UpdateSelectionGizmoTransform",       SceneEditorFFI::UpdateSelectionGizmoTransform);
                         script.SetTableFunction(-1, "SetTranslationSnappingInterval",      SceneEditorFFI::SetTranslationSnappingInterval);
                         script.SetTableFunction(-1, "GetTranslationSnappingInterval",      SceneEditorFFI::GetTranslationSnappingInterval);
+                        script.SetTableFunction(-1, "EnableSnapToGrid",                    SceneEditorFFI::EnableSnapToGrid);
+                        script.SetTableFunction(-1, "DisableSnapToGrid",                   SceneEditorFFI::DisableSnapToGrid);
+                        script.SetTableFunction(-1, "IsSnappingToGrid",                    SceneEditorFFI::IsSnappingToGrid);
 
                         script.SetTableFunction(-1, "StartPlaying",                        SceneEditorFFI::StartPlaying);
                         script.SetTableFunction(-1, "PausePlaying",                        SceneEditorFFI::PausePlaying);
@@ -1366,6 +1369,44 @@ namespace GTEngine
                 else
                 {
                     script.Push(0.25f);
+                }
+
+                return 1;
+            }
+
+
+            int EnableSnapToGrid(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->EnableSnapToGrid();
+                }
+
+                return 0;
+            }
+
+            int DisableSnapToGrid(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->DisableSnapToGrid();
+                }
+
+                return 0;
+            }
+
+            int IsSnappingToGrid(GTCore::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    script.Push(sceneEditor->IsSnappingToGrid());
+                }
+                else
+                {
+                    script.Push(true);      // <-- Snap to grid by default.
                 }
 
                 return 1;

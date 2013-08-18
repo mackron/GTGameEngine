@@ -399,6 +399,16 @@ namespace GTEngine
         float GetTranslationSnappingInterval() const;
 
 
+        /// Enables snapping to the grid.
+        void EnableSnapToGrid();
+
+        /// Disables snapping to the grid.
+        void DisableSnapToGrid();
+
+        /// Determines whether or not snapping to the grid is enabled.
+        bool IsSnappingToGrid() const;
+
+
 
         ///////////////////////////////////////////////////
         // Scene Events
