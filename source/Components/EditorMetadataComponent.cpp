@@ -19,8 +19,8 @@ namespace GTEngine
           pickingCollisionObject(), pickingCollisionShape(nullptr), pickingCollisionShapeType(PickingCollisionShapeType_None), pickingCollisionGroup(CollisionGroups::EditorSelectionVolume),
           spritePickingCollisionObject(nullptr), spritePickingCollisionShape(nullptr), spriteTexturePath(), spriteTexture(nullptr), spriteMesh(),
           directionArrowMesh(),
-          collisionShapeMesh(), isShowingCollisionShapeMesh(false),
-          proximityShapeMesh(), isShowingProximityShapeMesh(false),
+          collisionShapeMesh(), isShowingCollisionShapeMesh(false), isCollisionShapeMeshDirty(true),
+          proximityShapeMesh(), isShowingProximityShapeMesh(false), isProximityShapeMeshDirty(true),
           prefabRelativePath(), prefabID(0),
           sceneNodeEventHandler()
     {
@@ -438,28 +438,33 @@ namespace GTEngine
 
     void EditorMetadataComponent::UpdateCollisionShapeMeshGeometry(const SceneNode &cameraNode, const btCollisionShape &shape)
     {
-        auto cameraComponent = cameraNode.GetComponent<CameraComponent>();
-        if (cameraComponent != nullptr)
+        if (this->isCollisionShapeMeshDirty)
         {
-            // Geometry.
-            if (this->collisionShapeMesh.vertexArray == nullptr)
+            auto cameraComponent = cameraNode.GetComponent<CameraComponent>();
+            if (cameraComponent != nullptr)
             {
-                this->collisionShapeMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3);
+                // Geometry.
+                if (this->collisionShapeMesh.vertexArray == nullptr)
+                {
+                    this->collisionShapeMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3);
+                }
+
+                WireframeCollisionShapeMeshBuilder mesh(64);
+                mesh.Build(shape, cameraComponent->GetViewMatrix());
+
+                this->collisionShapeMesh.vertexArray->SetVertexData(mesh.GetVertexData(), mesh.GetVertexCount());
+                this->collisionShapeMesh.vertexArray->SetIndexData( mesh.GetIndexData(),  mesh.GetIndexCount());
+
+
+                // Material.
+                if (this->collisionShapeMesh.material == nullptr)
+                {
+                    this->collisionShapeMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
+                    this->collisionShapeMesh.material->SetParameter("EmissiveColour", 0.25f, 0.75f, 0.25f);
+                }
             }
-
-            WireframeCollisionShapeMeshBuilder mesh(32);
-            mesh.Build(shape, cameraComponent->GetViewMatrix());
-
-            this->collisionShapeMesh.vertexArray->SetVertexData(mesh.GetVertexData(), mesh.GetVertexCount());
-            this->collisionShapeMesh.vertexArray->SetIndexData( mesh.GetIndexData(),  mesh.GetIndexCount());
-
-
-            // Material.
-            if (this->collisionShapeMesh.material == nullptr)
-            {
-                this->collisionShapeMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
-                this->collisionShapeMesh.material->SetParameter("EmissiveColour", 0.25f, 0.75f, 0.25f);
-            }
+            
+            this->isCollisionShapeMeshDirty = false;
         }
     }
 
@@ -475,6 +480,11 @@ namespace GTEngine
     void EditorMetadataComponent::UpdateCollisionShapeMeshTransform()
     {
         this->collisionShapeMesh.transform = this->node.GetWorldTransformWithoutScale();
+    }
+
+    void EditorMetadataComponent::MarkCollisionShapeMeshAsDirty()
+    {
+        this->isCollisionShapeMeshDirty = true;
     }
 
 
@@ -497,28 +507,33 @@ namespace GTEngine
 
     void EditorMetadataComponent::UpdateProximityShapeMeshGeometry(const SceneNode &cameraNode, const btCollisionShape &shape)
     {
-        auto cameraComponent = cameraNode.GetComponent<CameraComponent>();
-        if (cameraComponent != nullptr)
+        if (this->isProximityShapeMeshDirty)
         {
-            // Geometry.
-            if (this->proximityShapeMesh.vertexArray == nullptr)
+            auto cameraComponent = cameraNode.GetComponent<CameraComponent>();
+            if (cameraComponent != nullptr)
             {
-                this->proximityShapeMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3);
+                // Geometry.
+                if (this->proximityShapeMesh.vertexArray == nullptr)
+                {
+                    this->proximityShapeMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P3);
+                }
+
+                WireframeCollisionShapeMeshBuilder mesh(64);
+                mesh.Build(shape, cameraComponent->GetViewMatrix());
+
+                this->proximityShapeMesh.vertexArray->SetVertexData(mesh.GetVertexData(), mesh.GetVertexCount());
+                this->proximityShapeMesh.vertexArray->SetIndexData( mesh.GetIndexData(),  mesh.GetIndexCount());
+
+
+                // Material.
+                if (this->proximityShapeMesh.material == nullptr)
+                {
+                    this->proximityShapeMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
+                    this->proximityShapeMesh.material->SetParameter("EmissiveColour", 0.75f, 0.75f, 0.25f);
+                }
             }
 
-            WireframeCollisionShapeMeshBuilder mesh(32);
-            mesh.Build(shape, cameraComponent->GetViewMatrix());
-
-            this->proximityShapeMesh.vertexArray->SetVertexData(mesh.GetVertexData(), mesh.GetVertexCount());
-            this->proximityShapeMesh.vertexArray->SetIndexData( mesh.GetIndexData(),  mesh.GetIndexCount());
-
-
-            // Material.
-            if (this->proximityShapeMesh.material == nullptr)
-            {
-                this->proximityShapeMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
-                this->proximityShapeMesh.material->SetParameter("EmissiveColour", 0.75f, 0.75f, 0.25f);
-            }
+            this->isProximityShapeMeshDirty = false;
         }
     }
 
@@ -529,6 +544,11 @@ namespace GTEngine
         {
             this->UpdateProximityShapeMeshGeometry(cameraNode, proximityComponent->GetCollisionShape());
         }
+    }
+
+    void EditorMetadataComponent::MarkProximityShapeMeshAsDirty()
+    {
+        this->isProximityShapeMeshDirty = true;
     }
 
 

@@ -187,27 +187,31 @@ namespace GTEngine
         ///
         /// @remarks
         ///     There sphere will be a unit sphere and positioned at the origin. The back-side line segments will not be included.
-        void Build(const glm::mat4 &cameraView, const glm::mat4 &transform = glm::mat4());
+        void Build(const glm::mat4 &transform = glm::mat4());
 
 
         /// Retrieves the mesh builder of the X/Y ring.
-        const MeshBuilderP3 & GetXYRing() const { return this->xyRing; }
+        const MeshBuilderP3 & GetXYRing() const { return this->rings[0]; }
 
         /// Retrieves the mesh builder of the X/Z ring.
-        const MeshBuilderP3 & GetXZRing() const { return this->xzRing; }
+        const MeshBuilderP3 & GetXZRing() const { return this->rings[1]; }
 
         /// Retrieves the mesh builder of the X/Y ring.
-        const MeshBuilderP3 & GetYZRing() const { return this->yzRing; }
+        const MeshBuilderP3 & GetYZRing() const { return this->rings[2]; }
 
-        /// Retrieves the mesh builder of the ring that's facing the camera.
-        const MeshBuilderP3 & GetCameraFacingRing() const { return this->cameraRing; }
 
+        /// Retrieves the number of rings making up the sphere.
+        size_t GetRingCount() const { return this->rings.count; }
+
+        /// Retrieves a reference to the mesh builder of the ring at the given index.
+              MeshBuilderP3 & GetRing(size_t index)       { return this->rings[index]; }
+        const MeshBuilderP3 & GetRing(size_t index) const { return this->rings[index]; }
 
 
     private:
 
         /// Generic method for building a ring with the given transform.
-        void BuildRing(const glm::mat4 &cameraView, const glm::mat4 &transform, const glm::mat4 &ringTransform, bool cullBackFacingSegments, MeshBuilderP3 &ringOut);
+        void BuildRing(const glm::mat4 &transform, const glm::mat4 &ringTransform, MeshBuilderP3 &ringOut);
 
 
     private:
@@ -215,17 +219,8 @@ namespace GTEngine
         /// The number of segments to use with each ring.
         unsigned int ringSegmentsCount;
 
-        /// The ring on the X/Y plane.
-        MeshBuilderP3 xyRing;
-
-        /// The ring on the X/Z plane.
-        MeshBuilderP3 xzRing;
-
-        /// The ring on the Y/Z plane.
-        MeshBuilderP3 yzRing;
-
-        /// The ring orientated towards the camera.
-        MeshBuilderP3 cameraRing;
+        /// The list of mesh builders for each ring.
+        GTCore::Vector<MeshBuilderP3> rings;
     };
 
 
