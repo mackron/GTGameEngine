@@ -67,10 +67,10 @@ function GTGUI.Element:SceneEditorToolBar(sceneEditor)
     self.SnappingLabel:SetText("Snapping");
     
     self.SnappingTextBox = GTGUI.Server.CreateElement(self.SnappingContainer, "scene-editor-toolbar-snapping-textbox");
-    self.SnappingTextBox:SetText(string.format("%.4g", sceneEditor:GetTranslationSnapSize()));
+    self.SnappingTextBox:SetText(string.format("%.4g", sceneEditor:GetTranslationSnappingInterval()));
     
     self.SnappingTextBox:OnTextChanged(function()
-        sceneEditor:SetTranslationSnapSize(tonumber(self.SnappingTextBox:GetText()));
+        sceneEditor:SetTranslationSnappingInterval(tonumber(self.SnappingTextBox:GetText()));
     end);
     
     

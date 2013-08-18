@@ -232,6 +232,14 @@ namespace GTEngine
     {
     }
 
+    void SubEditor::OnKeyPressed(GTCore::Key)
+    {
+    }
+
+    void SubEditor::OnKeyReleased(GTCore::Key)
+    {
+    }
+
     void SubEditor::OnMouseButtonDown(GTCore::MouseButton, int, int)
     {
     }
