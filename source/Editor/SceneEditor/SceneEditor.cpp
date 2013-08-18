@@ -1564,12 +1564,14 @@ namespace GTEngine
     {
         this->gizmoTransformSpace = GizmoTransformSpace_Local;
         this->UpdateGizmo();
+        this->UpdatePivotPoint();
     }
 
     void SceneEditor::SwitchGizmoToGlobalSpace()
     {
         this->gizmoTransformSpace = GizmoTransformSpace_Global;
         this->UpdateGizmo();
+        this->UpdatePivotPoint();
     }
 
     void SceneEditor::ToggleGizmoSpace()
@@ -2268,6 +2270,7 @@ namespace GTEngine
             {
                 const float moveSpeed   = 0.05f;
                 const float rotateSpeed = 0.1f;
+                const float scaleSpeed  = 0.05f;
 
                 float mouseOffsetX;
                 float mouseOffsetY;
@@ -2298,7 +2301,7 @@ namespace GTEngine
 
                             if (this->gizmoTransformSpace == GizmoTransformSpace_Local && this->selectedNodes.count == 1)
                             {
-                                dragAxis = this->GetGizmoRotation() * dragAxis;    // <-- TODO: Change this to the pivot rotation.
+                                dragAxis = this->pivotPoint.GetOrientation() * dragAxis;
                             }
 
 
@@ -2322,36 +2325,43 @@ namespace GTEngine
                         }
                         else if (this->gizmoDragMode == GizmoDragMode_Rotate)
                         {
-                            float dragAngle = dragDirection * dragDistance * rotateSpeed;
+                            glm::quat pivotStartOrientation = this->pivotPoint.GetOrientation();
 
-                            // If we have multiple selections, we only ever do a world rotation. Otherwise, we'll do a local rotation.
-                            if (this->selectedNodes.count == 1)
+                            if (this->gizmoTransformSpace == GizmoTransformSpace_Global || this->selectedNodes.count > 1)
                             {
-                                auto node = this->GetSceneNodeByID(this->selectedNodes[0]);
+                                dragAxis = dragAxis * this->pivotPoint.GetOrientation();
+                            }
+
+
+                            float dragAngle = dragDirection * dragDistance * rotateSpeed;
+                            this->pivotPoint.Rotate(dragAngle, dragAxis);
+
+                            
+                            // The selected nodes need to be re-orientated based on the pivot point.
+                            for (size_t i = 0; i < this->selectedNodes.count; ++i)
+                            {
+                                auto node = this->GetSceneNodeByID(this->selectedNodes[i]);
                                 assert(node != nullptr);
                                 {
-                                    if (this->gizmoTransformSpace == GizmoTransformSpace_Global)
+                                    // We change the world position here. If the node has a parent who is also selected, and position inheritance is enabled, we ignore it.
+                                    if (!this->IsAncestorSelected(*node) || !node->IsPositionInheritanceEnabled())
                                     {
-                                        node->RotateAroundWorldAxis(dragAngle, dragAxis);
-                                    }
-                                    else
-                                    {
-                                        node->Rotate(dragAngle, dragAxis);
-                                    }
-                                }
-                            }
-                            else
-                            {
-                                glm::vec3 pivot = this->GetSelectionCenterPoint();
-
-                                for (size_t i = 0; i < this->selectedNodes.count; ++i)
-                                {
-                                    auto node = this->GetSceneNodeByID(this->selectedNodes[i]);
-                                    assert(node != nullptr);
-                                    {
-                                        if (!this->IsAncestorSelected(*node) || !node->IsOrientationInheritanceEnabled())
+                                        if (this->gizmoTransformSpace == GizmoTransformSpace_Global || this->selectedNodes.count > 1)
                                         {
-                                            node->RotateAtPivotAroundWorldAxis(dragAngle, dragAxis, pivot);
+                                            // Global axis.
+                                            const glm::quat offsetOrientationFromPivot = glm::inverse(pivotStartOrientation) * node->GetWorldOrientation();
+
+                                            const glm::quat oldOrientation = node->GetWorldOrientation();
+                                            const glm::quat newOrientation = this->pivotPoint.GetOrientation() * offsetOrientationFromPivot;
+                                            node->SetWorldOrientation(newOrientation);
+                                            
+                                            const glm::quat orientationDifference = newOrientation * glm::inverse(oldOrientation);
+                                            node->SetWorldPosition(this->pivotPoint.GetPosition() + (orientationDifference * (node->GetWorldPosition() - this->pivotPoint.GetPosition())));
+                                        }
+                                        else
+                                        {
+                                            // Local axis.
+                                            node->SetWorldOrientation(this->pivotPoint.GetOrientation());
                                         }
                                     }
                                 }
@@ -2360,27 +2370,25 @@ namespace GTEngine
                         else if (this->gizmoDragMode == GizmoDragMode_Scale)
                         {
                             // Scaling is always done in local space. Global space scaling is sheering, which will never be supported.
+                            dragAxis = this->pivotPoint.GetOrientation() * dragAxis;
 
-                            glm::vec3 dragAxis      = this->gizmoDragAxis;
-                            float     dragDistance  = glm::length(glm::vec2(mouseOffsetX, -mouseOffsetY));
-                            float     dragDirection = glm::dot(glm::normalize(glm::vec2(mouseOffsetX, -mouseOffsetY)), this->gizmoDragFactor);
-                            float     dragSpeed     = 0.05f;
+                            glm::vec3 pivotStartScale = this->pivotPoint.GetScale();
 
-                            glm::vec3 scaleOffset = dragAxis * (dragDirection * dragDistance * dragSpeed);
 
+                            // We want to use an additive scale here.
+                            this->pivotPoint.AdditiveScale(dragAxis * (dragDirection * dragDistance * moveSpeed));
+                            
+                            // The selected nodes need to be re-positioned based on the pivot point.
                             for (size_t i = 0; i < this->selectedNodes.count; ++i)
                             {
                                 auto node = this->GetSceneNodeByID(this->selectedNodes[i]);
                                 assert(node != nullptr);
                                 {
-                                    if (!this->IsAncestorSelected(*node) || !node->IsScaleInheritanceEnabled())
+                                    // We change the world position here. If the node has a parent who is also selected, and position inheritance is enabled, we ignore it.
+                                    if (!this->IsAncestorSelected(*node) || !node->IsPositionInheritanceEnabled())
                                     {
-                                        glm::vec3 newScale = node->GetWorldScale() + scaleOffset;
-
-                                        // Negative scaling not yet supported.
-                                        newScale = glm::max(newScale, glm::vec3(0.0f, 0.0f, 0.0f));
-
-                                        node->SetWorldScale(newScale);
+                                        const glm::vec3 offsetFromPivot = node->GetWorldScale() - pivotStartScale;
+                                        node->SetWorldScale(glm::max(this->pivotPoint.GetScale() + offsetFromPivot, glm::vec3(0.0f, 0.0f, 0.0f)));
                                     }
                                 }
                             }
@@ -2931,9 +2939,30 @@ namespace GTEngine
         // The position of the pivot point needs to be the center of the selected objects.
         this->pivotPoint.SetPosition(this->GetSelectionCenterPoint());
 
-        // The orientation and scale shoudl be reset to defaults. Unlike positioning, we use an offset based system for rotations and scale.
-        this->pivotPoint.SetOrientation(glm::quat());
-        this->pivotPoint.SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+        // The orientation and scale will depend on what's selected. If we only have one thing selected, we'll set it to that. Otherwise we
+        // set it to the respective identities.
+        if (this->selectedNodes.count == 1)
+        {
+            const auto selectedNode = this->GetSceneNodeByID(this->selectedNodes[0]);
+            assert(selectedNode != nullptr);
+            {
+                if (this->gizmoTransformSpace == GizmoTransformSpace_Local)
+                {
+                    this->pivotPoint.SetOrientation(selectedNode->GetWorldOrientation());
+                }
+                else
+                {
+                    this->pivotPoint.SetOrientation(glm::quat());
+                }
+
+                this->pivotPoint.SetScale(selectedNode->GetWorldScale());
+            }
+        }
+        else
+        {
+            this->pivotPoint.SetOrientation(glm::quat());
+            this->pivotPoint.SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
+        }
     }
 
 

@@ -62,6 +62,17 @@ namespace GTEngine
         ///     This is done in global space.
         void Translate(const glm::vec3 &translation);
 
+        /// Rotates the pivot point.
+        ///
+        /// @param rotation [in] The amount of rotation to apply to each axis.
+        void Rotate(const glm::quat &rotation);
+        void Rotate(const float angle, const glm::vec3 &axis) { this->Rotate(glm::angleAxis(angle, axis)); }
+
+        /// Scales the pivot point by the given amount.
+        ///
+        /// @param additiveScale [in] The amount of scale to add to the current scale.
+        void AdditiveScale(const glm::vec3 &additiveScale);
+
 
 
         /////////////////////////////////////////////
