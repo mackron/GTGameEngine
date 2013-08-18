@@ -1244,33 +1244,30 @@ namespace GTEngine
 
     void Game::HandleEvent_OnMouseMove(GameEvent &e)
     {
-        if (this->mousePosX != e.mousemove.x || this->mousePosY != e.mousemove.y)
+        this->mousePosX = e.mousemove.x;
+        this->mousePosY = e.mousemove.y;
+
+        // If we're captured and blocking, we don't want to post anything.
+        if (this->mouseMoveLockCounter == 0)
         {
-            this->mousePosX = e.mousemove.x;
-            this->mousePosY = e.mousemove.y;
+            this->gui.OnMouseMove(e.mousemove.x, e.mousemove.y);
 
-            // If we're captured and blocking, we don't want to post anything.
-            if (this->mouseMoveLockCounter == 0)
+
+            // We don't post mouse events if the mouse is captured.
+            if (!this->mouseCaptured)
             {
-                this->gui.OnMouseMove(e.mousemove.x, e.mousemove.y);
+                this->OnMouseMove(e.mousemove.x, e.mousemove.y);
+                this->PostScriptEvent_OnMouseMove(e);
 
-
-                // We don't post mouse events if the mouse is captured.
-                if (!this->mouseCaptured)
+                if (this->currentGameState != nullptr)
                 {
-                    this->OnMouseMove(e.mousemove.x, e.mousemove.y);
-                    this->PostScriptEvent_OnMouseMove(e);
-
-                    if (this->currentGameState != nullptr)
-                    {
-                        this->currentGameState->OnMouseMove(e.mousemove.x, e.mousemove.y);
-                    }
+                    this->currentGameState->OnMouseMove(e.mousemove.x, e.mousemove.y);
                 }
             }
-            else
-            {
-                --this->mouseMoveLockCounter;
-            }
+        }
+        else
+        {
+            --this->mouseMoveLockCounter;
         }
     }
 
