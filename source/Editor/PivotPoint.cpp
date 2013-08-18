@@ -131,7 +131,7 @@ namespace GTEngine
                 {
                     const float snappingIntervals = glm::round(distanceToRealPosition / m_translationSnappingInterval);
 
-                    m_position          = glm::normalize(m_imaginaryPosition - m_position) * snappingIntervals;
+                    m_position          = m_position + glm::normalize(translation) * m_translationSnappingInterval * snappingIntervals;
                     m_imaginaryPosition = m_position;
                 }
             }
@@ -242,5 +242,22 @@ namespace GTEngine
     float PivotPoint::GetScaleSnappingInterval() const
     {
         return m_scaleSnappingInterval;
+    }
+
+
+
+    void PivotPoint::EnableSnapToGrid()
+    {
+        m_snapToGrid = true;
+    }
+
+    void PivotPoint::DisableSnapToGrid()
+    {
+        m_snapToGrid = false;
+    }
+
+    bool PivotPoint::IsSnappingToGrid() const
+    {
+        return m_snapToGrid;
     }
 }

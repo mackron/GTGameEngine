@@ -27,6 +27,18 @@ function GTGUI.Element:SceneEditorToolBar(sceneEditor)
     end);
 
     GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "scene-editor-toolbar-viewport-menu-separator");
+    
+    self.MenuBar.Viewport.SnapToGrid = GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "checkbox");
+    self.MenuBar.Viewport.SnapToGrid:CheckBox("Snap to Grid");
+    self.MenuBar.Viewport.SnapToGrid:SetTooltip("When disabled, snapping will not be clamped to grid lines.");
+    self.MenuBar.Viewport.SnapToGrid:OnChecked(function()
+        sceneEditor:EnableSnapToGrid();
+    end);
+    self.MenuBar.Viewport.SnapToGrid:OnUnchecked(function()
+        sceneEditor:DisableSnapToGrid();
+    end);
+    
+    GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "scene-editor-toolbar-viewport-menu-separator");
 
     self.MenuBar.Viewport.ResetCameraButton = GTGUI.Server.CreateElement(self.MenuBar.Viewport.menu, "button");
     self.MenuBar.Viewport.ResetCameraButton:SetText("Reset Camera");
@@ -96,6 +108,7 @@ function GTGUI.Element:SceneEditorToolBar(sceneEditor)
     function self:UpdateViewportMenu()
         self.MenuBar.Viewport.GridCheckBox:SetChecked(sceneEditor:IsShowingGrid(), true);
         self.MenuBar.Viewport.AxisArrowsCheckBox:SetChecked(sceneEditor:IsShowingAxisArrows(), true);
+        self.MenuBar.Viewport.SnapToGrid:SetChecked(sceneEditor:IsSnappingToGrid(), true);
     end
     
     

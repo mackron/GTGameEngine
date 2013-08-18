@@ -709,6 +709,18 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
         return GTEngine.System.SceneEditor.GetTranslationSnappingInterval(self._internalPtr);
     end
     
+    function sceneEditor:EnableSnapToGrid()
+        GTEngine.System.SceneEditor.EnableSnapToGrid(self._internalPtr);
+    end
+    
+    function sceneEditor:DisableSnapToGrid()
+        GTEngine.System.SceneEditor.DisableSnapToGrid(self._internalPtr);
+    end
+    
+    function sceneEditor:IsSnappingToGrid()
+        return GTEngine.System.SceneEditor.IsSnappingToGrid(self._internalPtr);
+    end
+    
     
     
     function sceneEditor:StartPlaying()
