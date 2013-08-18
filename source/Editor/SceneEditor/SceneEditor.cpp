@@ -2395,37 +2395,6 @@ namespace GTEngine
                         }
                     }
                 }
-                else
-                {
-                    // If we make it here it means we are just moving the camera around like normal. We only want to rotate the camera if the viewport camera
-                    // is the main camera. The camera can be changed by a script when the game is played.
-                    if (this->scene.GetViewportByIndex(0).GetCameraNode() == &this->camera)     
-                    {
-                        if (game.IsMouseButtonDown(GTCore::MouseButton_Left))
-                        {
-                            if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
-                            {
-                                //this->camera.MoveUp(  -mouseOffsetY * moveSpeed);
-                                //this->camera.MoveRight(mouseOffsetX * moveSpeed);
-                            }
-                            else
-                            {
-                                //this->camera.MoveForward(-mouseOffsetY * moveSpeed);
-                                //this->cameraYRotation += -mouseOffsetX * rotateSpeed;
-                            }
-                        }
-                        else
-                        {
-                            if (game.IsMouseButtonDown(GTCore::MouseButton_Right))
-                            {
-                                //this->cameraXRotation += -mouseOffsetY * rotateSpeed;
-                                //this->cameraYRotation += -mouseOffsetX * rotateSpeed;
-                            }
-                        }
-
-                        //this->ApplyCameraRotation();
-                    }
-                }
             }
 
             // We'll update the axis arrows every frame. This was previously event driven, but it's proving to be too much of a hassle.
