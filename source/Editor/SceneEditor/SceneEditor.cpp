@@ -1981,8 +1981,13 @@ namespace GTEngine
             auto metadata = node.GetComponent<EditorMetadataComponent>();
             if (metadata != nullptr)
             {
-                metadata->ShowCollisionShapeMesh();
-                this->scene.GetRenderer().AddExternalMesh(metadata->GetCollisionShapeMesh());
+                metadata->MarkCollisionShapeMeshAsDirty();
+
+                if (metadata->IsSelected())
+                {
+                    metadata->ShowCollisionShapeMesh();
+                    this->scene.GetRenderer().AddExternalMesh(metadata->GetCollisionShapeMesh());
+                }
             }
         }
         else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
@@ -1990,8 +1995,13 @@ namespace GTEngine
             auto metadata = node.GetComponent<EditorMetadataComponent>();
             if (metadata != nullptr)
             {
-                metadata->ShowProximityShapeMesh();
-                this->scene.GetRenderer().AddExternalMesh(metadata->GetProximityShapeMesh());
+                metadata->MarkProximityShapeMeshAsDirty();
+
+                if (metadata->IsSelected())
+                {
+                    metadata->ShowProximityShapeMesh();
+                    this->scene.GetRenderer().AddExternalMesh(metadata->GetProximityShapeMesh());
+                }
             }
         }
         else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))     // Prefab
@@ -2023,13 +2033,19 @@ namespace GTEngine
             }
             else if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
             {
-                metadata->HideCollisionShapeMesh();
-                this->scene.GetRenderer().RemoveExternalMesh(metadata->GetCollisionShapeMesh());
+                if (metadata->IsSelected())
+                {
+                    metadata->HideCollisionShapeMesh();
+                    this->scene.GetRenderer().RemoveExternalMesh(metadata->GetCollisionShapeMesh());
+                }
             }
             else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
-                metadata->HideProximityShapeMesh();
-                this->scene.GetRenderer().RemoveExternalMesh(metadata->GetProximityShapeMesh());
+                if (metadata->IsSelected())
+                {
+                    metadata->HideProximityShapeMesh();
+                    this->scene.GetRenderer().RemoveExternalMesh(metadata->GetProximityShapeMesh());
+                }
             }
             else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))    // Prefab
             {
@@ -2128,21 +2144,19 @@ namespace GTEngine
             }
             else if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
             {
-                /*
                 auto metadata = node.GetComponent<EditorMetadataComponent>();
                 assert(metadata != nullptr);
                 {
+                    metadata->MarkCollisionShapeMeshAsDirty();
                 }
-                */
             }
             else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
-                /*
                 auto metadata = node.GetComponent<EditorMetadataComponent>();
                 assert(metadata != nullptr);
                 {
+                    metadata->MarkProximityShapeMeshAsDirty();
                 }
-                */
             }
             else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))
             {
@@ -2376,7 +2390,7 @@ namespace GTEngine
 
 
                             // We want to use an additive scale here.
-                            this->pivotPoint.AdditiveScale(dragAxis * (dragDirection * dragDistance * moveSpeed));
+                            this->pivotPoint.AdditiveScale(dragAxis * (dragDirection * dragDistance * scaleSpeed));
                             
                             // The selected nodes need to be re-positioned based on the pivot point.
                             for (size_t i = 0; i < this->selectedNodes.count; ++i)

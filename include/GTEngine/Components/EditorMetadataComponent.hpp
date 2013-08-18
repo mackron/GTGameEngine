@@ -181,6 +181,9 @@ namespace GTEngine
         /// Updates the collision shape transform.
         void UpdateCollisionShapeMeshTransform();
 
+        /// Marks the collision shape mesh as needing to be updated.
+        void MarkCollisionShapeMeshAsDirty();
+
 
         /// Show the proximity shape mesh.
         ///
@@ -203,6 +206,9 @@ namespace GTEngine
 
         /// Updates the collision shape transform.
         void UpdateProximityShapeMeshTransform();
+
+        /// Marks the proximity shape mesh as needing to be updated.
+        void MarkProximityShapeMeshAsDirty();
 
 
 
@@ -323,12 +329,20 @@ namespace GTEngine
         /// Keeps track of whether or not the collision shape mesh is being shown.
         bool isShowingCollisionShapeMesh;
 
+        /// Keeps track of whether or not the collision shape mesh needs updating.
+        bool isCollisionShapeMeshDirty;
+
+        /// Keeps track of whether or not the collision shape has a child shape whose visual representation depends on the 
+
 
         /// The proximity shape mesh.
         SceneRendererMesh proximityShapeMesh;
 
         /// Keeps track of whether or not the proximity shape mesh is being shown.
         bool isShowingProximityShapeMesh;
+
+        /// Keeps track of whether or not the proximity shape mesh needs updating.
+        bool isProximityShapeMeshDirty;
 
 
         /// The name of the prefab the scene node is part of. If this is empty, it means it is not linked to a prefab.

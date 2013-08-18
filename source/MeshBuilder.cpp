@@ -170,8 +170,10 @@ namespace GTEngine
 
     /// WireframeSphereMeshBuilder
     WireframeSphereMeshBuilder::WireframeSphereMeshBuilder(unsigned int ringSegmentsCountIn)
-        : ringSegmentsCount(ringSegmentsCountIn), xyRing(), xzRing(), yzRing(), cameraRing()
+        : ringSegmentsCount(ringSegmentsCountIn), rings(5)
     {
+        this->rings.Resize(5);
+
         if (this->ringSegmentsCount < 3)
         {
             this->ringSegmentsCount = 3;
@@ -182,24 +184,18 @@ namespace GTEngine
     {
     }
 
-    void WireframeSphereMeshBuilder::Build(const glm::mat4 &cameraView, const glm::mat4 &transform)
+    void WireframeSphereMeshBuilder::Build(const glm::mat4 &transform)
     {
-        glm::mat4 xyTransform           = glm::mat4();
-        glm::mat4 xzTransform           = glm::rotate( 90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
-        glm::mat4 yzTransform           = glm::rotate(-90.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-        glm::mat4 cameraFacingTransform = glm::mat4(glm::inverse(glm::mat3(cameraView)));
-
-        this->BuildRing(cameraView, transform, xyTransform,           false, this->xyRing);
-        this->BuildRing(cameraView, transform, xzTransform,           false, this->xzRing);
-        this->BuildRing(cameraView, transform, yzTransform,           false, this->yzRing);
-        this->BuildRing(cameraView, transform, cameraFacingTransform, false, this->cameraRing);
+        // 5 rings. One on the X/Z plane, and the other 4 on the X/Y plane.
+        this->BuildRing(transform, glm::mat4(),                                      this->rings[0]);
+        this->BuildRing(transform, glm::rotate( 90.0f, glm::vec3(1.0f, 0.0f, 0.0f)), this->rings[1]);
+        this->BuildRing(transform, glm::rotate(-90.0f, glm::vec3(0.0f, 1.0f, 0.0f)), this->rings[2]);
+        this->BuildRing(transform, glm::rotate( 45.0f, glm::vec3(0.0f, 1.0f, 0.0f)), this->rings[3]);
+        this->BuildRing(transform, glm::rotate(135.0f, glm::vec3(0.0f, 1.0f, 0.0f)), this->rings[4]);
     }
 
-    void WireframeSphereMeshBuilder::BuildRing(const glm::mat4 &cameraView, const glm::mat4 &transform, const glm::mat4 &ringTransform, bool cullBackFacingSegments, MeshBuilderP3 &ringOut)
+    void WireframeSphereMeshBuilder::BuildRing(const glm::mat4 &transform, const glm::mat4 &ringTransform, MeshBuilderP3 &ringOut)
     {
-        // All we care about is the orientation.
-        glm::mat3 cameraView3 = glm::mat3(cameraView);
-
         float circleRadius       = 1.0f;
         float circleSegmentAngle = glm::radians(360.0f / static_cast<float>(this->ringSegmentsCount));
 
@@ -228,22 +224,8 @@ namespace GTEngine
             size_t index0 = iVertex;
             size_t index1 = (iVertex + 1) % vertices.count;
 
-            if (cullBackFacingSegments)
-            {
-                glm::vec3 vertex0(cameraView3 * vertices[index0]);
-                glm::vec3 vertex1(cameraView3 * vertices[index1]);
-
-                if (vertex0.z >= 0.0f || vertex1.z >= 0.0f)
-                {
-                    ringOut.EmitVertex(vertices[index0]);
-                    ringOut.EmitVertex(vertices[index1]);
-                }
-            }
-            else
-            {
-                ringOut.EmitVertex(vertices[index0]);
-                ringOut.EmitVertex(vertices[index1]);
-            }
+            ringOut.EmitVertex(vertices[index0]);
+            ringOut.EmitVertex(vertices[index1]);
         }
     }
 
@@ -437,24 +419,24 @@ namespace GTEngine
         else if (shape.getShapeType() == SPHERE_SHAPE_PROXYTYPE)
         {
             WireframeSphereMeshBuilder mesh(this->circleSegmentsCount);
-            mesh.Build(cameraView, transform * glm::scale(glm::vec3(static_cast<const btSphereShape &>(shape).getRadius())));
+            mesh.Build(transform * glm::scale(glm::vec3(static_cast<const btSphereShape &>(shape).getRadius())));
 
-            this->Merge(mesh.GetXYRing());
-            this->Merge(mesh.GetXZRing());
-            this->Merge(mesh.GetYZRing());
-            this->Merge(mesh.GetCameraFacingRing());
+            for (size_t iRing = 0; iRing < mesh.GetRingCount(); ++iRing)
+            {
+                this->Merge(mesh.GetRing(iRing));
+            }
         }
         else if (shape.getShapeType() == CUSTOM_CONVEX_SHAPE_TYPE)          // Ellipsoid. This should be given a proper type.
         {
             auto &ellipsoid = static_cast<const btEllipsoidShape &>(shape);
 
             WireframeSphereMeshBuilder mesh(this->circleSegmentsCount);
-            mesh.Build(cameraView, transform * glm::scale(Math::vec3_cast(ellipsoid.getImplicitShapeDimensions() + btVector3(ellipsoid.getMargin(), ellipsoid.getMargin(), ellipsoid.getMargin()))));
+            mesh.Build(transform * glm::scale(Math::vec3_cast(ellipsoid.getImplicitShapeDimensions() + btVector3(ellipsoid.getMargin(), ellipsoid.getMargin(), ellipsoid.getMargin()))));
 
-            this->Merge(mesh.GetXYRing());
-            this->Merge(mesh.GetXZRing());
-            this->Merge(mesh.GetYZRing());
-            this->Merge(mesh.GetCameraFacingRing());
+            for (size_t iRing = 0; iRing < mesh.GetRingCount(); ++iRing)
+            {
+                this->Merge(mesh.GetRing(iRing));
+            }
         }
         else if (shape.getShapeType() == CAPSULE_SHAPE_PROXYTYPE)
         {
