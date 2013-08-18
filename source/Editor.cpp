@@ -848,6 +848,22 @@ namespace GTEngine
         }
     }
 
+    void Editor::OnKeyPressed(GTCore::Key key)
+    {
+        if (this->currentlyShownEditor != nullptr)
+        {
+            this->currentlyShownEditor->OnKeyPressed(key);
+        }
+    }
+
+    void Editor::OnKeyReleased(GTCore::Key key)
+    {
+        if (this->currentlyShownEditor != nullptr)
+        {
+            this->currentlyShownEditor->OnKeyReleased(key);
+        }
+    }
+
     void Editor::OnMouseButtonDown(GTCore::MouseButton button, int x, int y)
     {
         if (this->currentlyShownEditor != nullptr)

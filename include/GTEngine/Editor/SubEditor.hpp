@@ -97,6 +97,12 @@ namespace GTEngine
         /// @param deltaTimeInSeconds [in] The time since the last frame, in seconds.
         virtual void OnUpdate(double deltaTimeInSeconds);
 
+        /// Called when a key is pressed.
+        virtual void OnKeyPressed(GTCore::Key key);
+
+        /// Called when a key is released.
+        virtual void OnKeyReleased(GTCore::Key key);
+
         /// Called when a mouse button is pressed.
         virtual void OnMouseButtonDown(GTCore::MouseButton button, int x, int y);
 

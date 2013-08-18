@@ -701,12 +701,12 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
         return GTEngine.System.SceneEditor.UpdateSelectionGizmoTransform(self._internalPtr);
     end
     
-    function sceneEditor:SetTranslationSnapSize(snapSize)
-        return GTEngine.System.SceneEditor.SetTranslationSnapSize(self._internalPtr, snapSize);
+    function sceneEditor:SetTranslationSnappingInterval(interval)
+        return GTEngine.System.SceneEditor.SetTranslationSnappingInterval(self._internalPtr, interval);
     end
     
-    function sceneEditor:GetTranslationSnapSize(snapSize)
-        return GTEngine.System.SceneEditor.GetTranslationSnapSize(self._internalPtr);
+    function sceneEditor:GetTranslationSnappingInterval(interval)
+        return GTEngine.System.SceneEditor.GetTranslationSnappingInterval(self._internalPtr);
     end
     
     

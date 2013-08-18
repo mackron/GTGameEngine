@@ -200,6 +200,19 @@ namespace GTEngine
         /// Updates the editor so that it can do rendering and whatnot.
         void Update(double deltaTimeInSeconds);
 
+        /// Called when a key is pressed.
+        ///
+        /// @param key [in] The key that was just pressed.
+        ///
+        /// @remarks
+        ///     This does not auto repeat.
+        void OnKeyPressed(GTCore::Key key);
+
+        /// Called when a key is released.
+        ///
+        /// @param key [in] The key that was just released.
+        void OnKeyReleased(GTCore::Key Key);
+
         /// Called when a mouse button is pusehd.
         ///
         /// @param button [in] The button that was pushed.

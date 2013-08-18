@@ -10,6 +10,7 @@
 #include "SceneEditorPhysicsManager.hpp"
 #include "../SubEditor.hpp"
 #include "../TransformGizmo.hpp"
+#include "../PivotPoint.hpp"
 #include "../EditorGrid.hpp"
 #include "../EditorAxisArrows.hpp"
 #include "../Editor3DViewportEventHandler.hpp"
@@ -389,13 +390,13 @@ namespace GTEngine
         void UpdateGizmoTransform(bool onlyUpdateVisibleHandles = true);
 
 
-        /// Sets the snapping size for translations.
+        /// Sets the snapping interval for translations.
         ///
-        /// @param snapSize [in] The new snapping size.
-        void SetTranslationSnapSize(float snapSize);
+        /// @param interval [in] The new snapping interval.
+        void SetTranslationSnappingInterval(float interval);
 
         /// Retrieves the current snapping size for translations.
-        float GetTranslationSnapSize() const;
+        float GetTranslationSnappingInterval() const;
 
 
 
@@ -476,6 +477,12 @@ namespace GTEngine
         /// SubEditor::Update()
         void OnUpdate(double deltaTimeInSeconds);
 
+        /// SubEditor::OnKeyPressed()
+        void OnKeyPressed(GTCore::Key key);
+
+        /// SubEditor::OnKeyReleased()
+        void OnKeyReleased(GTCore::Key key);
+
         /// SubEditor::OnMouseButtonDown()
         void OnMouseButtonDown(GTCore::MouseButton button, int x, int y);
 
@@ -550,6 +557,10 @@ namespace GTEngine
 
         /// Determines whether or not the transform gizmo is being dragged.
         bool IsDraggingGizmo() const;
+
+
+        /// Updates the pivot point based on the current selection.
+        void UpdatePivotPoint();
 
 
         /// Posts an OnSelectionChanged() event to the scene editor.
@@ -770,27 +781,12 @@ namespace GTEngine
         }gizmoTransformSpace;
 
 
-        /// The position to use for when we snap objects to the grid. The way it works that when we are snap-dragging, we move this
-        /// and then have the positions of selected objects snap to the closest grid position.
-        glm::vec3 snapTranslation;
-        float     snapAngle;
-        glm::vec3 snapScale;
-
-        /// Keeps track of whether or not we are snapping.
-        bool isSnapping;
+        /// The pivot point. We use this for helping us do scene node transformations.
+        PivotPoint pivotPoint;
 
 
-        /// The size of a snapping segment for translations.
-        float translateSnapSize;
-
-        /// the size of a snapping segment for rotations.
-        //float rotateSnapSize;
-
-        /// The size of a snapping segment for scale.
-        //float scaleSnapSize;
-            
-
-        /// Keeps track of whether or not an object was transformed with the gizmo.
+        /// Keeps track of whether or not an object was transformed with the gizmo. We use this to detect whether or not to create an
+        /// undo/redo point.
         bool transformedObjectWithGizmo;
 
 

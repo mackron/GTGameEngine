@@ -43,8 +43,7 @@ namespace GTEngine
           pickingWorld(),
           transformGizmo(), gizmoDragAxis(1.0f, 0.0f, 0.0f), gizmoDragFactor(1.0f, 0.0f),
           gizmoDragMode(GizmoDragMode_None), gizmoTransformMode(GizmoTransformMode_Translate), gizmoTransformSpace(GizmoTransformSpace_Global),
-          snapTranslation(), snapAngle(0.0f), snapScale(), isSnapping(false),
-          translateSnapSize(0.25f),/* rotateSnapSize(5.625f), scaleSnapSize(0.25f),*/
+          pivotPoint(),
           transformedObjectWithGizmo(false),
           isDeserializing(false), isInstantiatingPrefab(false), isUpdatingFromStateStack(false),
           playbackState(PlaybackState_Stopped), wasPlayingBeforeHide(false), wasPlayingBeforeLosingFocus(false),
@@ -1098,6 +1097,9 @@ namespace GTEngine
                 }
 
 
+                // We will need to update the pivot point.
+                this->UpdatePivotPoint();
+
                 // With a change in selection, we will need to update the position of the gizmos.
                 this->ShowGizmo();
 
@@ -1612,14 +1614,14 @@ namespace GTEngine
     }
 
 
-    void SceneEditor::SetTranslationSnapSize(float snapSize)
+    void SceneEditor::SetTranslationSnappingInterval(float interval)
     {
-        this->translateSnapSize = snapSize;
+        this->pivotPoint.SetTranslationSnappingInterval(interval);
     }
 
-    float SceneEditor::GetTranslationSnapSize() const
+    float SceneEditor::GetTranslationSnappingInterval() const
     {
-        return this->translateSnapSize;
+        return this->pivotPoint.GetTranslationSnappingInterval();
     }
 
 
@@ -2272,56 +2274,22 @@ namespace GTEngine
                         }
 
 
-                        glm::vec3 startPosition = this->GetSelectionCenterPoint();
-                        float     startAngle    = glm::length(glm::eulerAngles(this->GetGizmoRotation()) * dragAxis);
-
-
-
-                        bool wasSnapping = this->isSnapping;
-                        this->isSnapping = this->GetOwnerEditor().GetGame().IsKeyDown(GTCore::Keys::Ctrl);
-
-                        //if (!wasSnapping && this->isSnapping)
-                        {
-                            // If we get here, we've just started snapping.
-                            this->snapTranslation = startPosition;
-                            this->snapAngle       = startAngle;
-                        }
-
 
                         // We need to drag the selected objects.
                         if (this->gizmoDragMode == GizmoDragMode_Translate)
                         {
-                            glm::vec3 translation = dragAxis * (dragDirection * dragDistance * moveSpeed);
+                            glm::vec3 pivotStartPosition = this->pivotPoint.GetPosition();
 
-                            // What we do is simulate us moving the gizmo and then move the selected nodes by the offset.
-                            glm::vec3 endPosition = startPosition;
-
-                            if (this->gizmoTransformSpace == GizmoTransformSpace_Global || this->selectedNodes.count > 1)
+                            if (this->gizmoTransformSpace == GizmoTransformSpace_Local && this->selectedNodes.count == 1)
                             {
-                                endPosition           = startPosition         + translation;
-                                this->snapTranslation = this->snapTranslation + translation;
-                            }
-                            else
-                            {
-                                endPosition           = startPosition         + (this->GetGizmoRotation() * translation);
-                                this->snapTranslation = this->snapTranslation + (this->GetGizmoRotation() * translation);
+                                dragAxis = this->GetGizmoRotation() * dragAxis;    // <-- TODO: Change this to the pivot rotation.
                             }
 
-                            // If we're snapping, we need to offset the endPosition in such a way that it causes it to snap to the "grid".
-                            if (this->isSnapping)
-                            {
-                                glm::vec3 gridPosition = this->translateSnapSize * glm::floor(this->snapTranslation / glm::vec3(this->translateSnapSize));
 
-                                // At this point we have an end position without snapping, and that same position by snapped to the grid ('gridPosition'). We need
-                                // to get the difference, multiply it by the drag axis, and then add that different to the endPosition.
-                                endPosition += (gridPosition - endPosition) * dragAxis;
-                            }
-
-                            // We we need to grab the difference between the start and end positions and add to the positions of the selected nodes.
-                            translation = endPosition - startPosition;
-
-
-
+                            // We just move the pivot point. After the pivot has been moved, we just re-position the scene nodes relative to it's new position.
+                            this->pivotPoint.Translate(dragAxis * (dragDirection * dragDistance * moveSpeed));
+                            
+                            // The selected nodes need to be re-positioned based on the pivot point.
                             for (size_t i = 0; i < this->selectedNodes.count; ++i)
                             {
                                 auto node = this->GetSceneNodeByID(this->selectedNodes[i]);
@@ -2330,7 +2298,8 @@ namespace GTEngine
                                     // We change the world position here. If the node has a parent who is also selected, and position inheritance is enabled, we ignore it.
                                     if (!this->IsAncestorSelected(*node) || !node->IsPositionInheritanceEnabled())
                                     {
-                                        node->SetWorldPosition(node->GetWorldPosition() + translation);
+                                        const glm::vec3 offsetFromPivot = node->GetWorldPosition() - pivotStartPosition;
+                                        node->SetWorldPosition(this->pivotPoint.GetPosition() + offsetFromPivot);
                                     }
                                 }
                             }
@@ -2462,6 +2431,24 @@ namespace GTEngine
             }
         }
     }
+
+
+    void SceneEditor::OnKeyPressed(GTCore::Key key)
+    {
+        if (key == GTCore::Keys::Ctrl)
+        {
+            this->pivotPoint.EnableAllSnapping();
+        }
+    }
+
+    void SceneEditor::OnKeyReleased(GTCore::Key key)
+    {
+        if (key == GTCore::Keys::Ctrl)
+        {
+            this->pivotPoint.DisableAllSnapping();
+        }
+    }
+
 
     void SceneEditor::OnMouseButtonDown(GTCore::MouseButton, int, int)
     {
@@ -2920,6 +2907,17 @@ namespace GTEngine
     bool SceneEditor::IsDraggingGizmo() const
     {
         return this->gizmoDragMode != GizmoDragMode_None;
+    }
+
+
+    void SceneEditor::UpdatePivotPoint()
+    {
+        // The position of the pivot point needs to be the center of the selected objects.
+        this->pivotPoint.SetPosition(this->GetSelectionCenterPoint());
+
+        // The orientation and scale shoudl be reset to defaults. Unlike positioning, we use an offset based system for rotations and scale.
+        this->pivotPoint.SetOrientation(glm::quat());
+        this->pivotPoint.SetScale(glm::vec3(1.0f, 1.0f, 1.0f));
     }
 
 

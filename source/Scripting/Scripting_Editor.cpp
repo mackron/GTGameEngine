@@ -100,8 +100,8 @@ namespace GTEngine
                         script.SetTableFunction(-1, "IsGizmoInLocalSpace",                 SceneEditorFFI::IsGizmoInLocalSpace);
                         script.SetTableFunction(-1, "IsGizmoInGlobalSpace",                SceneEditorFFI::IsGizmoInGlobalSpace);
                         script.SetTableFunction(-1, "UpdateSelectionGizmoTransform",       SceneEditorFFI::UpdateSelectionGizmoTransform);
-                        script.SetTableFunction(-1, "SetTranslationSnapSize",              SceneEditorFFI::SetTranslationSnapSize);
-                        script.SetTableFunction(-1, "GetTranslationSnapSize",              SceneEditorFFI::GetTranslationSnapSize);
+                        script.SetTableFunction(-1, "SetTranslationSnappingInterval",      SceneEditorFFI::SetTranslationSnappingInterval);
+                        script.SetTableFunction(-1, "GetTranslationSnappingInterval",      SceneEditorFFI::GetTranslationSnappingInterval);
 
                         script.SetTableFunction(-1, "StartPlaying",                        SceneEditorFFI::StartPlaying);
                         script.SetTableFunction(-1, "PausePlaying",                        SceneEditorFFI::PausePlaying);
@@ -1345,23 +1345,23 @@ namespace GTEngine
                 return 0;
             }
 
-            int SetTranslationSnapSize(GTCore::Script &script)
+            int SetTranslationSnappingInterval(GTCore::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
                 {
-                    sceneEditor->SetTranslationSnapSize(script.ToFloat(2));
+                    sceneEditor->SetTranslationSnappingInterval(script.ToFloat(2));
                 }
 
                 return 0;
             }
 
-            int GetTranslationSnapSize(GTCore::Script &script)
+            int GetTranslationSnappingInterval(GTCore::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
                 {
-                    script.Push(sceneEditor->GetTranslationSnapSize());
+                    script.Push(sceneEditor->GetTranslationSnappingInterval());
                 }
                 else
                 {

@@ -1397,6 +1397,11 @@ namespace GTEngine
 
 
         // Editor.
+        if (this->editor.IsOpen())
+        {
+            this->editor.OnKeyPressed(e.keypressed.key);
+        }
+        
         if (this->editorToggleKeyCombination.IsPrintableKey(e.keypressed.key) && this->IsKeyCombinationDown(this->editorToggleKeyCombination))
         {
             if (!this->IsEditorOpen())
@@ -1437,6 +1442,11 @@ namespace GTEngine
         if (this->currentGameState != nullptr)
         {
             this->currentGameState->OnKeyReleased(e.keyreleased.key);
+        }
+
+        if (this->editor.IsOpen())
+        {
+            this->editor.OnKeyReleased(e.keypressed.key);
         }
     }
 
