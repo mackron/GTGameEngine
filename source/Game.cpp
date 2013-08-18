@@ -260,8 +260,6 @@ namespace GTEngine
     {
         if (!this->mouseCaptured)
         {
-            this->mouseMoveLockCounter = 1;         // We want to skip the next mouse move message which will be posted by the call to SetMousePosition() below.
-
             this->HideCursor();
             this->mouseCaptured = true;
             this->GetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
@@ -284,12 +282,12 @@ namespace GTEngine
         if (this->mouseCaptured)
         {
             this->ShowCursor();
-            this->mouseCaptured        = false;
-            this->mouseMoveLockCounter = 1;
+            this->mouseCaptured = false;
 
+            // Mouse position needs to be restored.
             this->SetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
 
-            // A MouseMove event will not be posted here, but we need to let the GUI know that the mouse might have a new position.
+            // The GUI needs to know about this.
             this->gui.SetMousePosition(this->mouseCapturePosX, this->mouseCapturePosY);
             this->gui.UnmarkMouseAsCaptured();
         }
@@ -1246,6 +1244,8 @@ namespace GTEngine
     {
         this->mousePosX = e.mousemove.x;
         this->mousePosY = e.mousemove.y;
+
+        
 
         // If we're captured and blocking, we don't want to post anything.
         if (this->mouseMoveLockCounter == 0)
