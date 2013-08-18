@@ -12,7 +12,7 @@ namespace GTEngine
           m_imaginaryOrientation(m_orientation),
           m_imaginaryScale(m_scale),
           m_translationSnappingInterval(0.25f),
-          m_rotationSnappingInterval(1.0f),
+          m_rotationSnappingInterval(27.5f),
           m_scaleSnappingInterval(0.25f),
           m_isTranslationSnappingEnabled(false),
           m_isRotationSnappingEnabled(false),
@@ -141,6 +141,19 @@ namespace GTEngine
             m_position += translation;
             m_imaginaryPosition = m_position;
         }
+    }
+
+    void PivotPoint::Rotate(const glm::quat &rotation)
+    {
+        // No support for snapping for the moment.
+        m_orientation          = m_orientation * rotation;
+        m_imaginaryOrientation = m_orientation;
+    }
+
+    void PivotPoint::AdditiveScale(const glm::vec3 &additiveScale)
+    {
+        m_scale += additiveScale;
+        m_imaginaryScale = m_scale;
     }
 
 
