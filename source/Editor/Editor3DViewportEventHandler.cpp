@@ -91,8 +91,11 @@ namespace GTEngine
 
     void Editor3DViewportEventHandler::OnMouseMove(GTGUI::Element &, int x, int y)
     {
-        this->mousePosX = x;
-        this->mousePosY = y;
+        if (!this->game.IsMouseCaptured())
+        {
+            this->mousePosX = x;
+            this->mousePosY = y;
+        }
     }
 
     void Editor3DViewportEventHandler::OnMouseWheel(GTGUI::Element &, int delta, int x, int y)

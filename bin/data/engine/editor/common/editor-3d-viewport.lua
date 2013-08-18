@@ -252,11 +252,14 @@ function GTGUI.Element:DefaultEditor3DViewport()
     
     self:WatchLMBUp(function()
         if self:HasMouseCapture() and not self:IsRMBDown() and not self:IsMMBDown() and self:IsControlsEnabled() then
-            if not self:MouseMovedWhileButtonDown() and self:IsVisible() then
+            local mouseMoved = self:MouseMovedWhileButtonDown();
+            
+            -- Release the mouse before posting the event. This will move the mouse, so we need to check for mouse movement before releasing.
+            self:ReleaseMouse();
+            
+            if not mouseMoved and self:IsVisible() then
                 self:OnViewportLMBUpWithoutMovement();
             end
-            
-            self:ReleaseMouse();
         end
         
         self.isLMBDown = false;
@@ -264,11 +267,14 @@ function GTGUI.Element:DefaultEditor3DViewport()
     
     self:WatchRMBUp(function()
         if self:HasMouseCapture() and not self:IsLMBDown() and not self:IsMMBDown() and self:IsControlsEnabled() then
-            if not self:MouseMovedWhileButtonDown() and self:IsVisible() then
+            local mouseMoved = self:MouseMovedWhileButtonDown();
+            
+            -- Release the mouse before posting the event. This will move the mouse, so we need to check for mouse movement before releasing.
+            self:ReleaseMouse();
+            
+            if not mouseMoved and self:IsVisible() then
                 self:OnViewportRMBUpWithoutMovement();
             end
-            
-            self:ReleaseMouse();
         end
         
         self.isRMBDown = false;
@@ -276,11 +282,14 @@ function GTGUI.Element:DefaultEditor3DViewport()
     
     self:WatchMMBUp(function()
         if self:HasMouseCapture() and not self:IsLMBDown() and not self:IsRMBDown() and self:IsControlsEnabled() then
-            if not self:MouseMovedWhileButtonDown() and self:IsVisible() then
+            local mouseMoved = self:MouseMovedWhileButtonDown();
+            
+            -- Release the mouse before posting the event. This will move the mouse, so we need to check for mouse movement before releasing.
+            self:ReleaseMouse();
+            
+            if not mouseMoved and self:IsVisible() then
                 self:OnViewportMMBUpWithoutMovement();
             end
-            
-            self:ReleaseMouse();
         end
         
         self.isMMBDown = false;
@@ -289,47 +298,49 @@ function GTGUI.Element:DefaultEditor3DViewport()
     
     self:WatchMouseMove(function(data)
         if self:IsLMBDown() or self:IsRMBDown() or self:IsMMBDown() then
-            self.mouseMovedWhileButtonDown = true;
-            
             local cameraTransformed = false;
             local mouseOffsetX, mouseOffsetY = Game.GetMouseOffset();
             
-            if self:IsLMBDown() then
-                if self:IsRMBDown() then
-                    if self:IsMMBDown() then
-                        -- Left, middle and right buttons are down.
-                    else
-                        -- Left and right buttons are down.
-                        self:MoveCameraUp(  -mouseOffsetY * self.cameraMoveSpeed);
-                        self:MoveCameraRight(mouseOffsetX * self.cameraMoveSpeed);
-                        cameraTransformed = true;
-                    end
-                else
-                    if self:IsMMBDown() then
-                        -- Left and middle buttons are down.
-                    else
-                        -- Only the left button is down.
-                        self:MoveCameraForward(-mouseOffsetY * self.cameraMoveSpeed);
-                        self:RotateCamera(0, -mouseOffsetX * self.cameraRotationSpeed);
-                        cameraTransformed = true;
-                    end
-                end
-            else
-                if self:IsRMBDown() then
-                    if self:IsMMBDown() then
-                        -- Middle and right buttons are down.
-                    else
-                        -- Only the right button is down.
-                        self:RotateCamera(-mouseOffsetY * self.cameraRotationSpeed, -mouseOffsetX * self.cameraRotationSpeed);
-                        cameraTransformed = true;
-                    end
-                else
-                    -- Only the middle mouse button is down.
-                end
-            end
+            if mouseOffsetX ~= 0 or mouseOffsetY ~= 0 then
+                self.mouseMovedWhileButtonDown = true;
             
-            if cameraTransformed then
-                self:OnCameraTransformed();
+                if self:IsLMBDown() then
+                    if self:IsRMBDown() then
+                        if self:IsMMBDown() then
+                            -- Left, middle and right buttons are down.
+                        else
+                            -- Left and right buttons are down.
+                            self:MoveCameraUp(  -mouseOffsetY * self.cameraMoveSpeed);
+                            self:MoveCameraRight(mouseOffsetX * self.cameraMoveSpeed);
+                            cameraTransformed = true;
+                        end
+                    else
+                        if self:IsMMBDown() then
+                            -- Left and middle buttons are down.
+                        else
+                            -- Only the left button is down.
+                            self:MoveCameraForward(-mouseOffsetY * self.cameraMoveSpeed);
+                            self:RotateCamera(0, -mouseOffsetX * self.cameraRotationSpeed);
+                            cameraTransformed = true;
+                        end
+                    end
+                else
+                    if self:IsRMBDown() then
+                        if self:IsMMBDown() then
+                            -- Middle and right buttons are down.
+                        else
+                            -- Only the right button is down.
+                            self:RotateCamera(-mouseOffsetY * self.cameraRotationSpeed, -mouseOffsetX * self.cameraRotationSpeed);
+                            cameraTransformed = true;
+                        end
+                    else
+                        -- Only the middle mouse button is down.
+                    end
+                end
+                
+                if cameraTransformed then
+                    self:OnCameraTransformed();
+                end
             end
         end
     end)
