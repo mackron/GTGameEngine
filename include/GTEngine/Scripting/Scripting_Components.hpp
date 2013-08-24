@@ -1151,6 +1151,17 @@ namespace GTEngine
             ///     Argument 2: The index of the shape.
             ///     Argument 3: The new margin to use with the convex hulls.
             int SetModelConvexHullsMargins(GTCore::Script &script);
+
+
+            /// Determines if anything is contained inside the collision volume.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///
+            ///     The return value is a simple boolean.
+            ///     @par
+            ///     This does not include scene nodes that are related to the scene node that owns the component.
+            int IsAnythingInside(GTCore::Script &script);
         }
 
 
