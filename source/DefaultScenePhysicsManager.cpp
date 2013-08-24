@@ -151,7 +151,7 @@ namespace GTEngine
 
     void DefaultScenePhysicsManager::Step(double deltaTimeInSeconds)
     {
-        this->world.Step(static_cast<btScalar>(deltaTimeInSeconds * this->speedScale), 4);
+        this->world.Step(static_cast<btScalar>(deltaTimeInSeconds * this->speedScale), 10, 0.00833f);
     }
 
 
