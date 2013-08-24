@@ -682,17 +682,16 @@ namespace GTEngine
         this->OnUpdate(deltaTimeInSeconds);
 
 
-        // Before doing anything we're going to step the dynamics.
-        if (!this->IsPaused())
-        {
-            this->physicsManager.Step(deltaTimeInSeconds);
-        }
-
-
         // Now we need to update via the update manager.
         if (!this->IsPaused())
         {
             this->updateManager.Step(deltaTimeInSeconds, this->GetCullingManager());
+        }
+
+        // Physics. We do this after updating because the update might set velocity or whatnot.
+        if (!this->IsPaused())
+        {
+            this->physicsManager.Step(deltaTimeInSeconds);
         }
 
 
@@ -775,6 +774,8 @@ namespace GTEngine
                 }
             }
         }
+
+        
 
 
         // Now we need to render.
