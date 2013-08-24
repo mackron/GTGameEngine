@@ -11,6 +11,7 @@ namespace GTEngine
         : CollisionShapeComponent(node), ghostObject(), world(nullptr), sceneNodesInsideVolume()
     {
         this->ghostObject.setCollisionShape(&this->collisionShape);
+        this->ghostObject.setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
         this->ghostObject.setUserPointer(&node);
     }
 
@@ -156,10 +157,18 @@ namespace GTEngine
             auto world = this->component->ghostObject.GetWorld();
             if (world != nullptr)
             {
-                auto &pairArray = this->component->ghostObject.getOverlappingPairCache()->getOverlappingPairArray();
+                auto overlappingPairCache = this->component->ghostObject.getOverlappingPairCache();
+
+                // If it's the first iteration, we need to enable narrow-phase collision detection.
+                if (this->i == 0)
+                {
+                    world->GetCollisionDispatcher().dispatchAllCollisionPairs(overlappingPairCache, world->GetInternalDynamicsWorld().getDispatchInfo(), &world->GetCollisionDispatcher());
+                }
+
+
+                auto &pairArray = overlappingPairCache->getOverlappingPairArray();
 
                 GTEngine::SceneNode* nextNode = nullptr;
-
                 while (nextNode == nullptr && this->i < pairArray.size())
                 {
                     this->manifoldArray.clear();
@@ -196,13 +205,20 @@ namespace GTEngine
                                     collisionPair->m_algorithm->getAllContactManifolds(manifoldArray);
                                 }
 
-                                for (int j = 0; j < manifoldArray.size(); ++j)
+                                if (manifoldArray.size() > 0)
                                 {
-                                    auto manifold = manifoldArray[j];
-                                    if (manifold->getNumContacts() == 0)
+                                    for (int j = 0; j < manifoldArray.size(); ++j)
                                     {
-                                        nextNode = nullptr;
+                                        auto manifold = manifoldArray[j];
+                                        if (manifold->getNumContacts() == 0)
+                                        {
+                                            nextNode = nullptr;
+                                        }
                                     }
+                                }
+                                else
+                                {
+                                    nextNode = nullptr;
                                 }
                             }
                         }
