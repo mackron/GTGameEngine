@@ -195,6 +195,22 @@ namespace GTEngine
             ///
             ///     This returns a pointer to the scene node that is closest to the start position of the ray.
             int RayTest(GTCore::Script &script);
+
+
+            /// Sets the gravity of the scene.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            ///     Argument 2: A math.vec3 containing the new gravity value.
+            int SetGravity(GTCore::Script &script);
+
+            /// Retrieves the gravity of the scene.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene.
+            ///
+            ///     The return value is a math.vec3.
+            int GetGravity(GTCore::Script &script);
         }
     }
 }

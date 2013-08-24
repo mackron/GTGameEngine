@@ -300,6 +300,15 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.Scene:SetGravity(gravity)"
+                "    return GTEngine.System.Scene.SetGravity(self._internalPtr, gravity);"
+                "end;"
+
+                "function GTEngine.Scene:GetGravity()"
+                "    return GTEngine.System.Scene.GetGravity(self._internalPtr);"
+                "end;"
+
+
                 "GTEngine.RegisteredScenes = {};"
             );
 
@@ -337,6 +346,8 @@ namespace GTEngine
                             script.SetTableFunction(-1, "BuildNavigationMesh",            SceneFFI::BuildNavigationMesh);
                             script.SetTableFunction(-1, "CalculateViewportPickingRay",    SceneFFI::CalculateViewportPickingRay);
                             script.SetTableFunction(-1, "RayTest",                        SceneFFI::RayTest);
+                            script.SetTableFunction(-1, "SetGravity",                     SceneFFI::SetGravity);
+                            script.SetTableFunction(-1, "GetGravity",                     SceneFFI::GetGravity);
                         }
                         script.SetTableValue(-3);
                     }
@@ -799,6 +810,34 @@ namespace GTEngine
                 }
 
                 return 3;
+            }
+
+
+
+            int SetGravity(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    scene->SetGravity(Scripting::ToVector3(script, 2));
+                }
+
+                return 0;
+            }
+
+            int GetGravity(GTCore::Script &script)
+            {
+                auto scene = reinterpret_cast<Scene*>(script.ToPointer(1));
+                if (scene != nullptr)
+                {
+                    Scripting::PushNewVector3(script, scene->GetGravity());
+                }
+                else
+                {
+                    Scripting::PushNewVector3(script, 0.0f, -9.81f, 0.0f);
+                }
+
+                return 1;
             }
         }
     }
