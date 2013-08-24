@@ -1876,6 +1876,9 @@ namespace GTEngine
             {
                 this->UpdatePropertiesTransformPanel();
             }
+
+            metadata->MarkCollisionShapeMeshAsDirty();
+            metadata->MarkProximityShapeMeshAsDirty();
         }
     }
 
