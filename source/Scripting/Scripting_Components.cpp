@@ -702,6 +702,11 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.ProximityComponent:IsAnythingInside()"
+                "    return GTEngine.System.ProximityComponent.IsAnythingInside(self._internalPtr);"
+                "end;"
+
+
 
                 // ScriptComponent
                 "GTEngine.ScriptComponent = {};"
@@ -1095,6 +1100,8 @@ namespace GTEngine
                             script.SetTableFunction(-1, "SetCylinderCollisionShapeSize",                  ProximityComponentFFI::SetCylinderCollisionShapeSize);
                             script.SetTableFunction(-1, "SetCapsuleCollisionShapeSize",                   ProximityComponentFFI::SetCapsuleCollisionShapeSize);
                             script.SetTableFunction(-1, "SetModelConvexHullsMargins",                     ProximityComponentFFI::SetModelConvexHullsMargins);
+
+                            script.SetTableFunction(-1, "IsAnythingInside",                               ProximityComponentFFI::IsAnythingInside);
                         }
                         script.Pop(1);
 
@@ -2051,7 +2058,7 @@ namespace GTEngine
                     Scripting::PushNewVector3(script, glm::vec3(0.0f, 0.0f, 0.0f));
                 }
 
-                return 3;
+                return 1;
             }
 
             int EnableShadowCasting(GTCore::Script &script)
@@ -3597,6 +3604,23 @@ namespace GTEngine
             {
                 return CollisionShapeComponentFFI::SetModelConvexHullsMargins(script);
             }
+
+
+
+            int IsAnythingInside(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<ProximityComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    script.Push(component->GetSceneNodesInsideVolume().count > 0);
+                }
+                else
+                {
+                    script.Push(false);
+                }
+
+                return 1;
+            }
         }
 
 
@@ -3610,6 +3634,10 @@ namespace GTEngine
                 if (component != nullptr)
                 {
                     script.Push(component->AddScript(script.ToString(2)) != nullptr);
+                }
+                else
+                {
+                    script.Push(false);
                 }
 
                 return 1;
