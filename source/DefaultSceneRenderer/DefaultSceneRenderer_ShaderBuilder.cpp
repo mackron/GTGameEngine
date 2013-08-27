@@ -159,7 +159,6 @@ namespace GTEngine
         (
             "#version 120\n"
 
-            "varying vec4 VertexOutput_Position;\n"
             "varying vec4 ShadowCoord;\n"
     
             "void main()\n"
@@ -840,7 +839,7 @@ namespace GTEngine
                     "    float variance = moments.y - (moments.x * moments.x);\n"
                     "    float d        = fragmentDepth - moments.x;\n"
                     "    float p        = smoothstep(fragmentDepth - bias, fragmentDepth, moments.x);\n"
-                    "    float pMax     = linstep(0.2, 1.0, variance / (variance + (d * d)));\n"
+                    "    float pMax     = linstep(1.0, 1.0, variance / (variance + (d * d)));\n"
                     ""
                     "    return clamp(max(p, pMax), 0.0, 1.0);\n"
                     "}\n"
@@ -997,7 +996,7 @@ namespace GTEngine
                     "    float variance = moments.y - (moments.x * moments.x);\n"
                     "    float d        = fragmentDepth - moments.x;\n"
                     "    float p        = smoothstep(fragmentDepth - bias, fragmentDepth, moments.x);\n"
-                    "    float pMax     = linstep(0.2, 1.0, variance / (variance + (d * d)));\n"
+                    "    float pMax     = linstep(0.4, 1.0, variance / (variance + (d * d)));\n"
                     ""
                     "    return clamp(max(p, pMax), 0.0, 1.0);\n"
                     "}\n"
