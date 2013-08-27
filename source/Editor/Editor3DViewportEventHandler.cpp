@@ -38,7 +38,7 @@ namespace GTEngine
         this->viewport.Resize(newWidth, newHeight);
 
         auto camera = this->viewport.GetCameraNode()->GetComponent<GTEngine::CameraComponent>();
-        camera->Set3DProjection(90.0f, static_cast<float>(newWidth) / static_cast<float>(newHeight), 0.1f, 1000.0f);
+        camera->Set3DProjection(camera->perspective.fov, static_cast<float>(newWidth) / static_cast<float>(newHeight), camera->zNear, camera->zFar);
     }
 
     void Editor3DViewportEventHandler::OnDraw(GTGUI::Element &element)
