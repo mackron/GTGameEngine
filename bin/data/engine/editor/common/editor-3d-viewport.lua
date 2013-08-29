@@ -297,7 +297,7 @@ function GTGUI.Element:DefaultEditor3DViewport()
     
     
     self:WatchMouseMove(function(data)
-        if self:IsLMBDown() or self:IsRMBDown() or self:IsMMBDown() then
+        if (self:IsLMBDown() or self:IsRMBDown() or self:IsMMBDown()) and Game.IsMouseCaptured() then
             local cameraTransformed = false;
             local mouseOffsetX, mouseOffsetY = Game.GetMouseOffset();
             
