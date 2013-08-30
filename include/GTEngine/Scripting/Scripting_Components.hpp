@@ -355,6 +355,77 @@ namespace GTEngine
             int GetCollisionMask(GTCore::Script &script);
 
 
+            /// Adds a collision group, making the object part of that group.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the collision group to make the object part of.
+            int AddCollisionGroup(GTCore::Script &script);
+
+            /// Removes a collision group, removing the object from that group.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the collision group to remove the object from.
+            int RemoveCollisionGroup(GTCore::Script &script);
+
+            /// Removes a collision group by it's index, removing the object from that group.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the collision group to remove the object from.
+            int RemoveCollisionGroupByIndex(GTCore::Script &script);
+
+            /// Retrieves the number of collision groups the object is part of.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int GetCollisionGroupCount(GTCore::Script &script);
+
+            /// Retrieves the name of the collision group at the given index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the collision group.
+            int GetCollisionGroupName(GTCore::Script &script);
+
+
+            /// Adds a collision group to those the object allowed to collision with.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the collision group to allow the object to collide with.
+            int AddCollisionGroupMask(GTCore::Script &script);
+
+            /// Removes a collision group to those the object is allowed to collide with.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the collision group to no longer allow the object to collide with.
+            int RemoveCollisionGroupMask(GTCore::Script &script);
+
+            /// Removes a collision group to those the object is allowed to collide with, by it's index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the collision group to no longer allow the object to collide with.
+            int RemoveCollisionGroupMaskByIndex(GTCore::Script &script);
+
+            /// Retrieves the number of collision groups the object is allowed to collide with.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int GetCollisionGroupMaskCount(GTCore::Script &script);
+
+            /// Retrieves the name of the collision group mask at the given index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the collision group mask.
+            int GetCollisionGroupMaskName(GTCore::Script &script);
+
+
+
             /// Adds a box collision shape to the component.
             ///
             /// @remarks
@@ -792,6 +863,76 @@ namespace GTEngine
             int GetCollisionMask(GTCore::Script &script);
 
 
+            /// Adds a collision group, making the object part of that group.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the collision group to make the object part of.
+            int AddCollisionGroup(GTCore::Script &script);
+
+            /// Removes a collision group, removing the object from that group.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the collision group to remove the object from.
+            int RemoveCollisionGroup(GTCore::Script &script);
+
+            /// Removes a collision group by it's index, removing the object from that group.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the collision group to remove the object from.
+            int RemoveCollisionGroupByIndex(GTCore::Script &script);
+
+            /// Retrieves the number of collision groups the object is part of.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int GetCollisionGroupCount(GTCore::Script &script);
+
+            /// Retrieves the name of the collision group at the given index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the collision group.
+            int GetCollisionGroupName(GTCore::Script &script);
+
+
+            /// Adds a collision group to those the object allowed to collision with.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the collision group to allow the object to collide with.
+            int AddCollisionGroupMask(GTCore::Script &script);
+
+            /// Removes a collision group to those the object is allowed to collide with.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the collision group to no longer allow the object to collide with.
+            int RemoveCollisionGroupMask(GTCore::Script &script);
+
+            /// Removes a collision group to those the object is allowed to collide with, by it's index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the collision group to no longer allow the object to collide with.
+            int RemoveCollisionGroupMaskByIndex(GTCore::Script &script);
+
+            /// Retrieves the number of collision groups the object is allowed to collide with.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int GetCollisionGroupMaskCount(GTCore::Script &script);
+
+            /// Retrieves the name of the collision group mask at the given index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the collision group mask.
+            int GetCollisionGroupMaskName(GTCore::Script &script);
+
+
             /// Adds a box collision shape to the component.
             ///
             /// @remarks
@@ -982,6 +1123,77 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             int GetCollisionMask(GTCore::Script &script);
+
+
+            /// Adds a collision group, making the object part of that group.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the collision group to make the object part of.
+            int AddCollisionGroup(GTCore::Script &script);
+
+            /// Removes a collision group, removing the object from that group.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the collision group to remove the object from.
+            int RemoveCollisionGroup(GTCore::Script &script);
+
+            /// Removes a collision group by it's index, removing the object from that group.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the collision group to remove the object from.
+            int RemoveCollisionGroupByIndex(GTCore::Script &script);
+
+            /// Retrieves the number of collision groups the object is part of.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int GetCollisionGroupCount(GTCore::Script &script);
+
+            /// Retrieves the name of the collision group at the given index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the collision group.
+            int GetCollisionGroupName(GTCore::Script &script);
+
+
+            /// Adds a collision group to those the object allowed to collision with.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the collision group to allow the object to collide with.
+            int AddCollisionGroupMask(GTCore::Script &script);
+
+            /// Removes a collision group to those the object is allowed to collide with.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The name of the collision group to no longer allow the object to collide with.
+            int RemoveCollisionGroupMask(GTCore::Script &script);
+
+            /// Removes a collision group to those the object is allowed to collide with, by it's index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the collision group to no longer allow the object to collide with.
+            int RemoveCollisionGroupMaskByIndex(GTCore::Script &script);
+
+            /// Retrieves the number of collision groups the object is allowed to collide with.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            int GetCollisionGroupMaskCount(GTCore::Script &script);
+
+            /// Retrieves the name of the collision group mask at the given index.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The index of the collision group mask.
+            int GetCollisionGroupMaskName(GTCore::Script &script);
+
 
 
             /// Adds a box collision shape to the component.

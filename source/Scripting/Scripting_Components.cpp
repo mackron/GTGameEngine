@@ -395,6 +395,48 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.DynamicsComponent:AddCollisionGroup(groupName)"
+                "    return GTEngine.System.DynamicsComponent.AddCollisionGroup(self._internalPtr, groupName);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:RemoveCollisionGroup(groupName)"
+                "    return GTEngine.System.DynamicsComponent.RemoveCollisionGroup(self._internalPtr, groupName);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:RemoveCollisionGroupByIndex(groupIndex)"
+                "    return GTEngine.System.DynamicsComponent.RemoveCollisionGroupByIndex(self._internalPtr, groupIndex);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetCollisionGroupCount()"
+                "    return GTEngine.System.DynamicsComponent.GetCollisionGroupCount(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetCollisionGroupName(groupIndex)"
+                "    return GTEngine.System.DynamicsComponent.GetCollisionGroupName(self._internalPtr, groupIndex);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:AddCollisionGroupMask(groupName)"
+                "    return GTEngine.System.DynamicsComponent.AddCollisionGroupMask(self._internalPtr, groupName);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:RemoveCollisionGroupMask(groupName)"
+                "    return GTEngine.System.DynamicsComponent.RemoveCollisionGroupMask(self._internalPtr, groupName);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:RemoveCollisionGroupMaskByIndex(groupIndex)"
+                "    return GTEngine.System.DynamicsComponent.RemoveCollisionGroupMaskByIndex(self._internalPtr, groupIndex);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetCollisionGroupMaskCount()"
+                "    return GTEngine.System.DynamicsComponent.GetCollisionGroupMaskCount(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.DynamicsComponent:GetCollisionGroupMaskName(groupIndex)"
+                "    return GTEngine.System.DynamicsComponent.GetCollisionGroupMaskName(self._internalPtr, groupIndex);"
+                "end;"
+
+
+
                 "function GTEngine.DynamicsComponent:SetLinearVelocity(x, y, z)"
                 "    GTEngine.System.DynamicsComponent.SetLinearVelocity(self._internalPtr, x, y, z);"
                 "end;"
@@ -604,6 +646,48 @@ namespace GTEngine
                 "function GTEngine.ProximityComponent:GetCollisionMask()"
                 "    return GTEngine.System.ProximityComponent.GetCollisionMask(self._internalPtr);"
                 "end;"
+
+
+                "function GTEngine.ProximityComponent:AddCollisionGroup(groupName)"
+                "    return GTEngine.System.ProximityComponent.AddCollisionGroup(self._internalPtr, groupName);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:RemoveCollisionGroup(groupName)"
+                "    return GTEngine.System.ProximityComponent.RemoveCollisionGroup(self._internalPtr, groupName);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:RemoveCollisionGroupByIndex(groupIndex)"
+                "    return GTEngine.System.ProximityComponent.RemoveCollisionGroupByIndex(self._internalPtr, groupIndex);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:GetCollisionGroupCount()"
+                "    return GTEngine.System.ProximityComponent.GetCollisionGroupCount(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:GetCollisionGroupName(groupIndex)"
+                "    return GTEngine.System.ProximityComponent.GetCollisionGroupName(self._internalPtr, groupIndex);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:AddCollisionGroupMask(groupName)"
+                "    return GTEngine.System.ProximityComponent.AddCollisionGroupMask(self._internalPtr, groupName);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:RemoveCollisionGroupMask(groupName)"
+                "    return GTEngine.System.ProximityComponent.RemoveCollisionGroupMask(self._internalPtr, groupName);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:RemoveCollisionGroupMaskByIndex(groupIndex)"
+                "    return GTEngine.System.ProximityComponent.RemoveCollisionGroupMaskByIndex(self._internalPtr, groupIndex);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:GetCollisionGroupMaskCount()"
+                "    return GTEngine.System.ProximityComponent.GetCollisionGroupMaskCount(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.ProximityComponent:GetCollisionGroupMaskName(groupIndex)"
+                "    return GTEngine.System.ProximityComponent.GetCollisionGroupMaskName(self._internalPtr, groupIndex);"
+                "end;"
+
 
 
                 "function GTEngine.ProximityComponent:AddBoxCollisionShape(halfX, halfY, halfZ, offsetX, offsetY, offsetZ)"
@@ -1046,6 +1130,17 @@ namespace GTEngine
                             script.SetTableFunction(-1, "GetCollisionGroup",                              DynamicsComponentFFI::GetCollisionGroup);
                             script.SetTableFunction(-1, "GetCollisionMask",                               DynamicsComponentFFI::GetCollisionMask);
 
+                            script.SetTableFunction(-1, "AddCollisionGroup",                              DynamicsComponentFFI::AddCollisionGroup);
+                            script.SetTableFunction(-1, "RemoveCollisionGroup",                           DynamicsComponentFFI::RemoveCollisionGroup);
+                            script.SetTableFunction(-1, "RemoveCollisionGroupByIndex",                    DynamicsComponentFFI::RemoveCollisionGroupByIndex);
+                            script.SetTableFunction(-1, "GetCollisionGroupCount",                         DynamicsComponentFFI::GetCollisionGroupCount);
+                            script.SetTableFunction(-1, "GetCollisionGroupName",                          DynamicsComponentFFI::GetCollisionGroupName);
+                            script.SetTableFunction(-1, "AddCollisionGroupMask",                          DynamicsComponentFFI::AddCollisionGroupMask);
+                            script.SetTableFunction(-1, "RemoveCollisionGroupMask",                       DynamicsComponentFFI::RemoveCollisionGroupMask);
+                            script.SetTableFunction(-1, "RemoveCollisionGroupMaskByIndex",                DynamicsComponentFFI::RemoveCollisionGroupMaskByIndex);
+                            script.SetTableFunction(-1, "GetCollisionGroupMaskCount",                     DynamicsComponentFFI::GetCollisionGroupMaskCount);
+                            script.SetTableFunction(-1, "GetCollisionGroupMaskName",                      DynamicsComponentFFI::GetCollisionGroupMaskName);
+
                             script.SetTableFunction(-1, "AddBoxCollisionShape",                           DynamicsComponentFFI::AddBoxCollisionShape);
                             script.SetTableFunction(-1, "AddSphereCollisionShape",                        DynamicsComponentFFI::AddSphereCollisionShape);
                             script.SetTableFunction(-1, "AddEllipsoidCollisionShape",                     DynamicsComponentFFI::AddEllipsoidCollisionShape);
@@ -1078,6 +1173,17 @@ namespace GTEngine
                             script.SetTableFunction(-1, "SetCollisionFilter",                             ProximityComponentFFI::SetCollisionFilter);
                             script.SetTableFunction(-1, "GetCollisionGroup",                              ProximityComponentFFI::GetCollisionGroup);
                             script.SetTableFunction(-1, "GetCollisionMask",                               ProximityComponentFFI::GetCollisionMask);
+
+                            script.SetTableFunction(-1, "AddCollisionGroup",                              ProximityComponentFFI::AddCollisionGroup);
+                            script.SetTableFunction(-1, "RemoveCollisionGroup",                           ProximityComponentFFI::RemoveCollisionGroup);
+                            script.SetTableFunction(-1, "RemoveCollisionGroupByIndex",                    ProximityComponentFFI::RemoveCollisionGroupByIndex);
+                            script.SetTableFunction(-1, "GetCollisionGroupCount",                         ProximityComponentFFI::GetCollisionGroupCount);
+                            script.SetTableFunction(-1, "GetCollisionGroupName",                          ProximityComponentFFI::GetCollisionGroupName);
+                            script.SetTableFunction(-1, "AddCollisionGroupMask",                          ProximityComponentFFI::AddCollisionGroupMask);
+                            script.SetTableFunction(-1, "RemoveCollisionGroupMask",                       ProximityComponentFFI::RemoveCollisionGroupMask);
+                            script.SetTableFunction(-1, "RemoveCollisionGroupMaskByIndex",                ProximityComponentFFI::RemoveCollisionGroupMaskByIndex);
+                            script.SetTableFunction(-1, "GetCollisionGroupMaskCount",                     ProximityComponentFFI::GetCollisionGroupMaskCount);
+                            script.SetTableFunction(-1, "GetCollisionGroupMaskName",                      ProximityComponentFFI::GetCollisionGroupMaskName);
 
                             script.SetTableFunction(-1, "AddBoxCollisionShape",                           ProximityComponentFFI::AddBoxCollisionShape);
                             script.SetTableFunction(-1, "AddSphereCollisionShape",                        ProximityComponentFFI::AddSphereCollisionShape);
@@ -2185,6 +2291,135 @@ namespace GTEngine
                 else
                 {
                     script.Push(static_cast<int>(-1));
+                }
+
+                return 1;
+            }
+
+
+
+            int AddCollisionGroup(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    component->AddCollisionGroup(script.ToString(2));
+                }
+
+                return 0;
+            }
+
+            int RemoveCollisionGroup(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    component->RemoveCollisionGroup(script.ToString(2));
+                }
+
+                return 0;
+            }
+
+            int RemoveCollisionGroupByIndex(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    component->RemoveCollisionGroupByIndex(static_cast<size_t>(script.ToInteger(2)));
+                }
+
+                return 0;
+            }
+
+            int GetCollisionGroupCount(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    script.Push(static_cast<int>(component->GetCollisionGroupCount()));
+                }
+                else
+                {
+                    script.Push(0);
+                }
+
+                return 1;
+            }
+
+            int GetCollisionGroupName(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    script.Push(component->GetCollisionGroup(static_cast<size_t>(script.ToInteger(2))));
+                }
+                else
+                {
+                    script.PushNil();
+                }
+
+                return 1;
+            }
+
+
+            int AddCollisionGroupMask(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    component->AddCollisionGroupMask(script.ToString(2));
+                }
+
+                return 0;
+            }
+
+            int RemoveCollisionGroupMask(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    component->RemoveCollisionGroupMask(script.ToString(2));
+                }
+
+                return 0;
+            }
+
+            int RemoveCollisionGroupMaskByIndex(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    component->RemoveCollisionGroupMaskByIndex(static_cast<size_t>(script.ToInteger(2)));
+                }
+
+                return 0;
+            }
+
+            int GetCollisionGroupMaskCount(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    script.Push(static_cast<int>(component->GetCollisionGroupMaskCount()));
+                }
+                else
+                {
+                    script.Push(0);
+                }
+
+                return 1;
+            }
+
+            int GetCollisionGroupMaskName(GTCore::Script &script)
+            {
+                auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    script.Push(component->GetCollisionGroupMask(static_cast<size_t>(script.ToInteger(2))));
+                }
+                else
+                {
+                    script.PushNil();
                 }
 
                 return 1;
@@ -3368,6 +3603,59 @@ namespace GTEngine
             }
 
 
+            int AddCollisionGroup(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::AddCollisionGroup(script);
+            }
+
+            int RemoveCollisionGroup(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::RemoveCollisionGroup(script);
+            }
+
+            int RemoveCollisionGroupByIndex(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::RemoveCollisionGroupByIndex(script);
+            }
+
+            int GetCollisionGroupCount(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::GetCollisionGroupCount(script);
+            }
+
+            int GetCollisionGroupName(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::GetCollisionGroupName(script);
+            }
+
+
+            int AddCollisionGroupMask(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::AddCollisionGroupMask(script);
+            }
+
+            int RemoveCollisionGroupMask(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::RemoveCollisionGroupMask(script);
+            }
+
+            int RemoveCollisionGroupMaskByIndex(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::RemoveCollisionGroupMaskByIndex(script);
+            }
+
+            int GetCollisionGroupMaskCount(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::GetCollisionGroupMaskCount(script);
+            }
+
+            int GetCollisionGroupMaskName(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::GetCollisionGroupMaskName(script);
+            }
+
+
+
             int AddBoxCollisionShape(GTCore::Script &script)
             {
                 return CollisionShapeComponentFFI::AddBoxShape(script);
@@ -3495,6 +3783,59 @@ namespace GTEngine
             {
                 return CollisionShapeComponentFFI::GetCollisionMask(script);
             }
+
+
+            int AddCollisionGroup(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::AddCollisionGroup(script);
+            }
+
+            int RemoveCollisionGroup(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::RemoveCollisionGroup(script);
+            }
+
+            int RemoveCollisionGroupByIndex(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::RemoveCollisionGroupByIndex(script);
+            }
+
+            int GetCollisionGroupCount(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::GetCollisionGroupCount(script);
+            }
+
+            int GetCollisionGroupName(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::GetCollisionGroupName(script);
+            }
+
+
+            int AddCollisionGroupMask(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::AddCollisionGroupMask(script);
+            }
+
+            int RemoveCollisionGroupMask(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::RemoveCollisionGroupMask(script);
+            }
+
+            int RemoveCollisionGroupMaskByIndex(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::RemoveCollisionGroupMaskByIndex(script);
+            }
+
+            int GetCollisionGroupMaskCount(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::GetCollisionGroupMaskCount(script);
+            }
+
+            int GetCollisionGroupMaskName(GTCore::Script &script)
+            {
+                return CollisionShapeComponentFFI::GetCollisionGroupMaskName(script);
+            }
+
 
 
             int AddBoxCollisionShape(GTCore::Script &script)

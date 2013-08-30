@@ -176,6 +176,56 @@ namespace GTEngine
 
 
 
+        /// Adds a collision group to the shape, making the shape a member of that group.
+        ///
+        /// @param groupName [in] The name of the collision group to make this shape a part of.
+        void AddCollisionGroup(const char* groupName);
+
+        /// Removes a collision group from the shape, removing the shape from that group.
+        ///
+        /// @param groupName [in] The name of the collision group to remove this shape from.
+        void RemoveCollisionGroup(const char* groupName);
+
+        /// Removes a collision group from the shape by it's index. This will remove the shape from that group.
+        ///
+        /// @param groupIndex [in] The index of the collision group to remove the shape from.
+        void RemoveCollisionGroupByIndex(size_t groupIndex);
+
+        /// Retrieves the number of collision groups this shape is part of.
+        size_t GetCollisionGroupCount() const;
+
+        /// Retrieves the name of the collision group at the given index.
+        ///
+        /// @param groupIndex [in] The index of the collision group whose name is being retrieved.
+        const char* GetCollisionGroup(size_t groupIndex) const;
+
+
+        /// Adds a collision mask to the shape. This allows the shape to collide with other shapes of that group.
+        ///
+        /// @param groupName [in] The name of the collision group to allow this shape to collide with.
+        void AddCollisionGroupMask(const char* groupName);
+
+        /// Removes a collision group mask from the shape. This disallows the shape to collide with other shapes of that group.
+        ///
+        /// @param groupName [in] The name of the collision group to prevent this shape from colliding with.
+        void RemoveCollisionGroupMask(const char* groupName);
+
+        /// Removes a collision group mask from the shape by it's index. This will disallow the shape to collide with other shapes of that group.
+        ///
+        /// @param groupIndex [in] The index of the collision group mask to prevent this shape from colliding with.
+        void RemoveCollisionGroupMaskByIndex(size_t groupIndex);
+
+        /// Retrieves the number of collision group masks this shape is allowed to collide with.
+        size_t GetCollisionGroupMaskCount() const;
+
+        /// Retrieves the name of the collision group mask at the given index.
+        ///
+        /// @param groupIndex [in] The index of the collision group mask whose name is being retrieved.
+        const char* GetCollisionGroupMask(size_t groupIndex) const;
+
+
+
+
         /// Applies a scale to the collision shape.
         void ApplyScaling(float x, float y, float z);
         void ApplyScaling(const glm::vec3 &scale) { this->ApplyScaling(scale.x, scale.y, scale.z); }
@@ -236,11 +286,19 @@ namespace GTEngine
         /// The collision shape. This is always a compound shape.
         btCompoundShape collisionShape;
 
+
         /// The collision group the scene node is part of. This is set with SetCollisionFilter(). Defaults to 1.
         short collisionGroup;
 
         /// The collision mask for controlling the collision groups the scene node can collide with. This is set with SetCollisionFilter(). Defaults to -1 (collides with everything).
         short collisionMask;
+
+
+        /// The list of strings representing the collision groups this object is part of.
+        GTCore::Vector<GTCore::String> collisionGroupStrings;
+
+        /// The list of strings representing the collision groups this object will collide with.
+        GTCore::Vector<GTCore::String> collisionGroupMaskStrings;
     };
 }
 

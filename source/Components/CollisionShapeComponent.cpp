@@ -541,6 +541,66 @@ namespace GTEngine
     }
 
 
+
+    void CollisionShapeComponent::AddCollisionGroup(const char* groupName)
+    {
+        if (!this->collisionGroupStrings.Exists(groupName))
+        {
+            this->collisionGroupStrings.PushBack(groupName);
+        }
+    }
+
+    void CollisionShapeComponent::RemoveCollisionGroup(const char* groupName)
+    {
+        this->collisionGroupStrings.RemoveFirstOccuranceOf(groupName);
+    }
+
+    void CollisionShapeComponent::RemoveCollisionGroupByIndex(size_t groupIndex)
+    {
+        this->collisionGroupStrings.Remove(groupIndex);
+    }
+
+    size_t CollisionShapeComponent::GetCollisionGroupCount() const
+    {
+        return this->collisionGroupStrings.count;
+    }
+
+    const char* CollisionShapeComponent::GetCollisionGroup(size_t groupIndex) const
+    {
+        return this->collisionGroupStrings[groupIndex].c_str();
+    }
+
+
+    void CollisionShapeComponent::AddCollisionGroupMask(const char* groupName)
+    {
+        if (!this->collisionGroupMaskStrings.Exists(groupName))
+        {
+            this->collisionGroupMaskStrings.PushBack(groupName);
+        }
+    }
+
+    void CollisionShapeComponent::RemoveCollisionGroupMask(const char* groupName)
+    {
+        this->collisionGroupMaskStrings.RemoveFirstOccuranceOf(groupName);
+    }
+
+    void CollisionShapeComponent::RemoveCollisionGroupMaskByIndex(size_t groupIndex)
+    {
+        this->collisionGroupMaskStrings.Remove(groupIndex);
+    }
+
+    size_t CollisionShapeComponent::GetCollisionGroupMaskCount() const
+    {
+        return this->collisionGroupMaskStrings.count;
+    }
+
+    const char* CollisionShapeComponent::GetCollisionGroupMask(size_t groupIndex) const
+    {
+        return this->collisionGroupMaskStrings[groupIndex].c_str();
+    }
+
+
+
     void CollisionShapeComponent::ApplyScaling(float x, float y, float z)
     {
         this->OnPreCollisionShapeChanged();
