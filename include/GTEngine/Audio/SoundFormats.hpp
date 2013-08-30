@@ -9,14 +9,17 @@ namespace GTEngine
     */
     enum SoundFormat
     {
-        SoundFormat_Mono8,         ///< 8-bit, single channel.
-        SoundFormat_Stereo8,       ///< 8-bit, stereo channel.
+        SoundFormat_Mono8,          ///< 8-bit, single channel.
+        SoundFormat_Stereo8,        ///< 8-bit, stereo channel.
 
-        SoundFormat_Mono16,        ///< 16-bit, single channel.
-        SoundFormat_Stereo16,      ///< 16-bit, stereo channel.
+        SoundFormat_Mono16,         ///< 16-bit, single channel.
+        SoundFormat_Stereo16,       ///< 16-bit, stereo channel.
 
-        SoundFormat_Mono24,        ///< 24-bit, single channel.
-        SoundFormat_Stereo24,      ///< 24-bit, stereo channel.
+        SoundFormat_Mono24,         ///< 24-bit, single channel.
+        SoundFormat_Stereo24,       ///< 24-bit, stereo channel.
+
+        SoundFormat_Mono32Float,    ///< 32-bit float, single channel.
+        SoundFormat_Stereo32Float,  ///< 32-bit float, stereo channel.
     };
 }
 
