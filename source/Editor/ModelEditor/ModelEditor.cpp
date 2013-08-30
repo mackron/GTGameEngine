@@ -27,7 +27,7 @@ namespace GTEngine
           isSaving(false), isReloading(false)
     {
         // We use the camera for our lights.
-        this->camera.AddComponent<GTEngine::CameraComponent>();
+        this->camera.AddComponent<GTEngine::CameraComponent>()->Set3DProjection(90.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
         this->camera.AddComponent<GTEngine::DirectionalLightComponent>()->SetColour(0.25f, 0.25f, 0.25f);
         this->camera.AddComponent<GTEngine::AmbientLightComponent>()->SetColour(0.6f, 0.6f, 0.6f);
 
