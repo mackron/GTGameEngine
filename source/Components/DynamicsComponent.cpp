@@ -14,7 +14,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(DynamicsComponent, "Dynamics");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(DynamicsComponent, "Dynamics")
 
     DynamicsComponent::DynamicsComponent(SceneNode &node)
         : CollisionShapeComponent(node),
@@ -148,7 +148,7 @@ namespace GTEngine
     }
 
 
-    
+
 
     void DynamicsComponent::ApplySceneNodeTransformation()
     {

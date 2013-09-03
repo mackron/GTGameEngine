@@ -5,7 +5,8 @@
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
-    //#pragma GCC diagnostic ignored "-Wstrict-aliasing"
+    #pragma GCC diagnostic ignored "-Wundef"        // <-- Temp until bug is fixed.
+    #pragma GCC diagnostic ignored "-Wpedantic"
     #pragma GCC diagnostic ignored "-Winline"
     #pragma GCC diagnostic ignored "-Weffc++"
 
@@ -164,7 +165,7 @@ namespace GTEngine
 
 
         // Bullet -> GLM casts.
-        
+
         inline glm::vec3 vec3_cast(const btVector3 &other)
         {
             return glm::vec3(other.x(), other.y(), other.z());
@@ -174,7 +175,7 @@ namespace GTEngine
         {
             return glm::vec4(other.x(), other.y(), other.z(), 0.0f);
         }
-        
+
         inline glm::simdVec4 vec4SIMD_cast(const btVector3 &other)
         {
             return glm::simdVec4(other.x(), other.y(), other.z(), 0.0f);
@@ -215,7 +216,7 @@ namespace GTEngine
             return glm::mat4_cast(quat_cast(other));
         }
 
-        
+
 
 
         inline glm::mat4 mat4_cast(const btTransform &other)

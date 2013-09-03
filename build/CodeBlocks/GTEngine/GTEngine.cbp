@@ -46,6 +46,15 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add directory="../../../include" />
+					<Add directory="../../../../GTCore/include" />
+					<Add directory="../../../../GTGUI/include" />
+					<Add directory="../../../../GTImage/include" />
+					<Add directory="../../../../GTType/include" />
+					<Add directory="../../../../GTGL/include" />
+					<Add directory="../../../../External/repos/glm" />
+					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src" />
+					<Add directory="../../../../External/repos/assimp/include" />
 				</Compiler>
 			</Target>
 			<Target title="release-linux-gcc">
@@ -53,35 +62,6 @@
 				<Option output="../../../lib/linux-gcc/GTEngine" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="obj/release-linux-gcc/" />
-				<Option type="2" />
-				<Option compiler="gcc" />
-				<Option createDefFile="1" />
-				<Compiler>
-					<Add option="-O2" />
-					<Add option="-Wall" />
-				</Compiler>
-				<Linker>
-					<Add option="-s" />
-				</Linker>
-			</Target>
-			<Target title="debug-linux-gcc-x64">
-				<Option platforms="Unix;" />
-				<Option output="../../../lib/linux-gcc/GTEngine-debug-x64" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="" />
-				<Option object_output="obj/debug-linux-gcc-x64/" />
-				<Option type="2" />
-				<Option compiler="gcc" />
-				<Option createDefFile="1" />
-				<Compiler>
-					<Add option="-Wall" />
-					<Add option="-g" />
-				</Compiler>
-			</Target>
-			<Target title="release-linux-gcc-x64">
-				<Option platforms="Unix;" />
-				<Option output="../../../lib/linux-gcc/GTEngine-x64" prefix_auto="1" extension_auto="1" />
-				<Option working_dir="" />
-				<Option object_output="obj/release-linux-gcc-x64/" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -631,6 +611,15 @@
 			<envvars />
 			<debugger />
 			<lib_finder disable_auto="1" />
+			<DoxyBlocks>
+				<comment_style block="0" line="0" />
+				<doxyfile_project />
+				<doxyfile_build />
+				<doxyfile_warnings />
+				<doxyfile_output />
+				<doxyfile_dot />
+				<general />
+			</DoxyBlocks>
 		</Extensions>
 	</Project>
 </CodeBlocks_project_file>

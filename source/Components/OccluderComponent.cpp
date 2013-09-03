@@ -5,7 +5,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(OccluderComponent, "Occluder");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(OccluderComponent, "Occluder")
 
     OccluderComponent::OccluderComponent(SceneNode &node)
         : Component(node), collisionObject(), collisionShape(nullptr)
@@ -48,7 +48,7 @@ namespace GTEngine
         this->OnChanged();
     }
 
-  
+
     void OccluderComponent::ApplyScaling(float x, float y, float z)
     {
         if (this->collisionShape != nullptr)

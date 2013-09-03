@@ -8,7 +8,7 @@
 // PointLight
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(PointLightComponent, "PointLight");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(PointLightComponent, "PointLight")
 
     PointLightComponent::PointLightComponent(SceneNode &node)
         : Component(node), colour(1.0f, 1.0f, 1.0f),
@@ -119,7 +119,7 @@ namespace GTEngine
 // SpotLight
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(SpotLightComponent, "SpotLight");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(SpotLightComponent, "SpotLight")
 
     SpotLightComponent::SpotLightComponent(SceneNode &node)
         : Component(node), innerAngle(40.0f), outerAngle(45.0f), colour(1.0f, 1.0f, 1.0f), length(16.0f), falloff(1.0f),
@@ -252,7 +252,7 @@ namespace GTEngine
 // DirectionalLight
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(DirectionalLightComponent, "DirectionalLight");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(DirectionalLightComponent, "DirectionalLight")
 
     DirectionalLightComponent::DirectionalLightComponent(SceneNode &node)
         : Component(node),
@@ -336,7 +336,7 @@ namespace GTEngine
 // AmbientLight
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(AmbientLightComponent, "AmbientLight");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(AmbientLightComponent, "AmbientLight")
 
     AmbientLightComponent::AmbientLightComponent(SceneNode &node)
         : Component(node),

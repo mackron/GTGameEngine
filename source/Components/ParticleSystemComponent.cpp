@@ -8,7 +8,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(ParticleSystemComponent, "ParticleSystem");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(ParticleSystemComponent, "ParticleSystem")
 
     ParticleSystemComponent::ParticleSystemComponent(SceneNode &sceneNode)
         : Component(sceneNode),
@@ -36,7 +36,7 @@ namespace GTEngine
         {
             ParticleSystemLibrary::Delete(this->particleSystem);
         }
-        
+
         this->particleSystem = newParticleSystem;
         this->isOwner        = takeOwnership;
 

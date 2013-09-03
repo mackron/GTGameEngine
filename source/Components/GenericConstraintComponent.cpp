@@ -5,7 +5,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(GenericConstraintComponent, "GenericConstraint");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(GenericConstraintComponent, "GenericConstraint")
 
     GenericConstraintComponent::GenericConstraintComponent(SceneNode &node)
         : Component(node),

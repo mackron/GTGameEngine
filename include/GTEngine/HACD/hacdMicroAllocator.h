@@ -204,7 +204,7 @@ void performUnitTests(void);
 
 //
 
-}; // end of namespace
+} // end of namespace
 
 
 #if defined(__GNUC__)
