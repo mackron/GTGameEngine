@@ -59,7 +59,7 @@ namespace GTEngine
         MeshSkinningData(const MeshSkinningData &);
         MeshSkinningData & operator=(const MeshSkinningData &);
     };
-};
+}
 
 namespace GTEngine
 {

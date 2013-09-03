@@ -21,7 +21,7 @@
     #pragma warning(disable:4355)   // 'this' used in initialise list.
 #elif defined(__GNUC__)
     #pragma GCC diagnostic push
-    
+
     #if defined(__clang__)
         #pragma GCC diagnostic ignored "-Wcast-align"
     #endif
@@ -53,7 +53,8 @@ namespace GTEngine
           grid(1.0f, 8, 32), isShowingGrid(false), wasShowingGridBeforePlaying(false),
           axisArrows(), isShowingAxisArrows(false), wasShowingAxisArrowsBeforePlaying(false),
           prefabLinker(scene, *this),
-          pauseState()
+          pauseState(),
+          navigationMeshRendererMeshes()
     {
         this->scene.SetPrefabLinker(this->prefabLinker);
 
@@ -629,7 +630,7 @@ namespace GTEngine
             this->MarkAsModified();
         }
     }
-        
+
     void SceneEditor::DisableSceneBackgroundClearing(bool markAsModified)
     {
         this->scene.DisableBackgroundClearing();
@@ -650,11 +651,11 @@ namespace GTEngine
         return this->scene.GetBackgroundClearColour();
     }
 
-        
+
     void SceneEditor::EnableSceneHDR(bool markAsModified)
     {
         this->scene.EnableHDR();
-        
+
         if (markAsModified)
         {
             this->MarkAsModified();
@@ -680,7 +681,7 @@ namespace GTEngine
     void SceneEditor::EnableSceneBloom(bool markAsModified)
     {
         this->scene.EnableBloom();
-        
+
         if (markAsModified)
         {
             this->MarkAsModified();
@@ -707,7 +708,7 @@ namespace GTEngine
     {
         assert(index == 0);     // <-- Temp assert until we implement support for multiple navigation meshes.
 
-        
+
         // Get the mesh.
         SceneRendererMesh* mainMesh      = nullptr;
         SceneRendererMesh* innerEdgeMesh = nullptr;
@@ -720,7 +721,7 @@ namespace GTEngine
             mainMesh = new SceneRendererMesh;
             mainMesh->vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
             mainMesh->material    = MaterialLibrary::CreateNavigationMeshMaterial();
-            
+
             innerEdgeMesh = new SceneRendererMesh;
             innerEdgeMesh->vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
             innerEdgeMesh->material    = MaterialLibrary::CreateNavigationMeshMaterial();
@@ -1311,7 +1312,7 @@ namespace GTEngine
 
             // What we're going to do is grab the IDs of all of the scene nodes we want to copy. We include all descendants.
             GTCore::Vector<SceneNode*> sceneNodesToCopy;
-            
+
             for (size_t iNode = 0; iNode < prevSelectedNodes.count; ++iNode)
             {
                 auto nodeToCopy = this->GetSceneNodeByID(prevSelectedNodes[iNode]);
@@ -1600,7 +1601,7 @@ namespace GTEngine
     {
         // Position.
         glm::vec3 position = this->GetSelectionCenterPoint();
-        
+
         // Orientation.
         glm::quat orientation = this->GetGizmoRotation();
 
@@ -1722,7 +1723,7 @@ namespace GTEngine
                 }
             }
 
-                
+
 
 
             // Select the scene node if it's marked as such, but only if we're running. Indeed, if we're running, we actually want to explicitly deselect.
@@ -2188,7 +2189,7 @@ namespace GTEngine
         float screenPositionX = 48.0f;
         float screenPositionY = 48.0f;
         float screenSize      = 32.0f;
-        
+
 
 
         // We need to update the position of the gizmo so that it's positioned in the appropriate corner.
@@ -2198,7 +2199,7 @@ namespace GTEngine
 
         glm::vec3 windowPos      = this->scene.GetDefaultViewport().Project(arrowsWorldPosition);
         glm::vec3 arrowsPosition = this->scene.GetDefaultViewport().Unproject(glm::vec3(screenPositionX, screenPositionY, windowPos.z));
-        
+
 
         // We actually need to scale this a bit to keep it a constant size.
         glm::vec3 arrowsScale(glm::distance(this->scene.GetDefaultViewport().Unproject(glm::vec3(screenPositionX, screenPositionY + screenSize, windowPos.z)), arrowsPosition));
@@ -2207,7 +2208,7 @@ namespace GTEngine
         // World Space -> Local Space.
         arrowsPosition -= cameraPosition;
         arrowsPosition  = glm::inverse(this->camera.GetWorldOrientation()) * arrowsPosition;
-        
+
 
         this->axisArrows.SetLocalPosition(arrowsPosition);
         this->axisArrows.SetLocalScale(arrowsScale);
@@ -2324,7 +2325,7 @@ namespace GTEngine
 
                             // We just move the pivot point. After the pivot has been moved, we just re-position the scene nodes relative to it's new position.
                             this->pivotPoint.Translate(dragAxis * (dragDirection * dragDistance * moveSpeed));
-                            
+
                             // The selected nodes need to be re-positioned based on the pivot point.
                             for (size_t i = 0; i < this->selectedNodes.count; ++i)
                             {
@@ -2353,7 +2354,7 @@ namespace GTEngine
                             float dragAngle = dragDirection * dragDistance * rotateSpeed;
                             this->pivotPoint.Rotate(dragAngle, dragAxis);
 
-                            
+
                             // The selected nodes need to be re-orientated based on the pivot point.
                             for (size_t i = 0; i < this->selectedNodes.count; ++i)
                             {
@@ -2371,7 +2372,7 @@ namespace GTEngine
                                             const glm::quat oldOrientation = node->GetWorldOrientation();
                                             const glm::quat newOrientation = this->pivotPoint.GetOrientation() * offsetOrientationFromPivot;
                                             node->SetWorldOrientation(newOrientation);
-                                            
+
                                             const glm::quat orientationDifference = newOrientation * glm::inverse(oldOrientation);
                                             node->SetWorldPosition(this->pivotPoint.GetPosition() + (orientationDifference * (node->GetWorldPosition() - this->pivotPoint.GetPosition())));
                                         }
@@ -2394,7 +2395,7 @@ namespace GTEngine
 
                             // We want to use an additive scale here.
                             this->pivotPoint.AdditiveScale(dragAxis * (dragDirection * dragDistance * scaleSpeed));
-                            
+
                             // The selected nodes need to be re-positioned based on the pivot point.
                             for (size_t i = 0; i < this->selectedNodes.count; ++i)
                             {
@@ -2495,7 +2496,7 @@ namespace GTEngine
     void SceneEditor::OnMainWindowLoseFocus()
     {
         this->wasPlayingBeforeLosingFocus = this->IsPlaying();
-        
+
         if (this->IsPlaying())
         {
             this->PausePlaying();
@@ -2820,12 +2821,12 @@ namespace GTEngine
         default: break;
         }
     }
-    
+
 #if defined(__clang__)
     #pragma GCC diagnostic pop
 #endif
-    
-    
+
+
 
     void SceneEditor::UpdateGizmo()
     {
@@ -3047,7 +3048,7 @@ namespace GTEngine
         script.Pop(1);
     }
 
-    
+
     void SceneEditor::UpdateViewportMenuGUI()
     {
         auto &script = this->GetScript();
@@ -3171,7 +3172,7 @@ namespace GTEngine
     {
         // Grab the nodes marked as selected.
         GTCore::Vector<SceneNode*> nodesForReselection;
-        
+
         size_t sceneNodeCount = this->scene.GetSceneNodeCount();
         for (size_t i = 0; i < sceneNodeCount; ++i)
         {
@@ -3364,7 +3365,7 @@ namespace GTEngine
                                 {
                                     notifyScriptingEnvironment = true;
                                 }
-                                
+
                                 // We can break from the iScript loop because we should not logically have a script of the same name.
                                 break;
                             }

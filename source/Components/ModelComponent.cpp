@@ -7,7 +7,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(ModelComponent, "Model");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(ModelComponent, "Model")
 
     ModelComponent::ModelComponent(SceneNode &node)
         : Component(node), model(nullptr),
@@ -29,7 +29,7 @@ namespace GTEngine
         {
             ModelLibrary::Delete(this->model);
         }
-        
+
         this->model   = model;
 
         if (takeOwnership)
@@ -72,7 +72,7 @@ namespace GTEngine
                 return true;
             }
         }
-        
+
         return false;
     }
 
@@ -128,7 +128,7 @@ namespace GTEngine
 
         // We'll save the flags first.
         intermediarySerializer.Write(static_cast<uint32_t>(this->flags));
-        
+
         // Now we save the model. It's possible that there isn't any model set at the moment, so we need to write a boolean indicating
         // whether or not we are saving one.
         if (this->model != nullptr)

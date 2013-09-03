@@ -5,7 +5,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(CameraComponent, "Camera");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(CameraComponent, "Camera")
 
     CameraComponent::CameraComponent(SceneNode &node)
         : Component(node), projection(),
@@ -21,7 +21,7 @@ namespace GTEngine
 
         this->zNear  = zNear;
         this->zFar   = zFar;
-        
+
         this->projection = glm::perspective(fov * 0.5f, aspect, zNear, zFar);   // Although unintuitive, halving the FOV here is correct.
 
 
@@ -49,7 +49,7 @@ namespace GTEngine
         // We will need the world position and orientation for this camera.
         glm::vec3 position    = this->node.GetWorldPosition();
         glm::quat orientation = this->node.GetWorldOrientation();
-        
+
         return glm::mat4_cast(glm::inverse(orientation)) * glm::translate(-position);
     }
 

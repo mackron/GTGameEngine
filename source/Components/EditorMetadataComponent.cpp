@@ -10,7 +10,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(EditorMetadataComponent, "EditorMetadata");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(EditorMetadataComponent, "EditorMetadata")
 
     EditorMetadataComponent::EditorMetadataComponent(SceneNode &node)
         : Component(node),
@@ -463,7 +463,7 @@ namespace GTEngine
                     this->collisionShapeMesh.material->SetParameter("EmissiveColour", 0.25f, 0.75f, 0.25f);
                 }
             }
-            
+
             this->isCollisionShapeMeshDirty = false;
         }
     }

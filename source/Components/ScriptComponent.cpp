@@ -9,7 +9,7 @@ namespace GTEngine
 {
     static const bool DontPostOnChange = true;
 
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(ScriptComponent, "Script");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(ScriptComponent, "Script")
 
     ScriptComponent::ScriptComponent(SceneNode &node)
         : Component(node), scripts(), publicVariables(), hasOnStartupBeenCalled(false)
@@ -604,10 +604,10 @@ namespace GTEngine
         // We will use an intermediary serializer like normal. All we need to save is the relative paths of the scripts we're using.
         GTCore::BasicSerializer intermediarySerializer;
 
-        
+
         // Script paths.
         intermediarySerializer.Write(static_cast<uint32_t>(this->scripts.count));
-        
+
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
@@ -643,7 +643,7 @@ namespace GTEngine
                         auto variableVec2 = static_cast<ScriptVariable_Vec2*>(variable);
                         intermediarySerializer.Write(variableVec2->GetX());
                         intermediarySerializer.Write(variableVec2->GetY());
-                        
+
                         break;
                     }
 
@@ -878,7 +878,7 @@ namespace GTEngine
             }
         }
 
-        
+
     }
 
 
