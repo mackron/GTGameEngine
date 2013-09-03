@@ -235,7 +235,7 @@ public:
 
   bool isInside(const NxU8 *p) const
   {
-	  return p>=mData && p < mDataEnd; 
+	  return p>=mData && p < mDataEnd;
   }
 
 private:
@@ -451,7 +451,7 @@ public:
     }
   }
 
-  virtual NxU32           getChunkSize(MemoryChunk *chunk) 
+  virtual NxU32           getChunkSize(MemoryChunk *chunk)
   {
 	  return chunk ? chunk->getChunkSize() : 0;
   }
@@ -542,7 +542,7 @@ public:
 				{
 					assert( ret->isInside(s) );
 				}
-				else 
+				else
 				{
 					for (NxU32 i=0; i<mMicroChunkCount; i++)
 					{
@@ -997,7 +997,7 @@ void * heap_realloc(HeapManager *hm,void *oldMem,size_t newSize)
     return hm->heap_realloc(oldMem,newSize);
 }
 
-}; // end of namespace
+} // end of namespace
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic pop

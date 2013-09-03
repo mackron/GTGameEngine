@@ -5,7 +5,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(PrefabComponent, "Prefab");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(PrefabComponent, "Prefab")
 
     PrefabComponent::PrefabComponent(SceneNode &node)
         : Component(node),

@@ -5,7 +5,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(PointToPointConstraintComponent, "PointToPointConstraint");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(PointToPointConstraintComponent, "PointToPointConstraint")
 
     PointToPointConstraintComponent::PointToPointConstraintComponent(SceneNode &node)
         : Component(node),
@@ -30,7 +30,7 @@ namespace GTEngine
             dynamicsComponent->ApplySceneNodeTransformation();
             bodyA = &dynamicsComponent->GetRigidBody();
         }
-        
+
         dynamicsComponent = sceneNodeB.GetComponent<GTEngine::DynamicsComponent>();
         if (dynamicsComponent != nullptr)
         {

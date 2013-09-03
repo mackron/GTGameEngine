@@ -82,6 +82,11 @@ namespace GTEngine
 
         /// The base height that was used when the chain was last initialized.
         unsigned int m_baseHeight;
+
+
+    private:    // No copying.
+        DefaultSceneRenderer_LuminanceChain(const DefaultSceneRenderer_LuminanceChain &);
+        DefaultSceneRenderer_LuminanceChain & operator=(const DefaultSceneRenderer_LuminanceChain &);
     };
 }
 
