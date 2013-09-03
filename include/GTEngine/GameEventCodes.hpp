@@ -27,7 +27,7 @@ namespace GTEngine
         static const EventCode OnLoseFocus              = 13;
 
         static const EventCode Custom                   = 1024;
-    };
+    }
 }
 
 #endif

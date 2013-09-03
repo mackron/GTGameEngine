@@ -2,7 +2,15 @@
 
 #include <GTEngine/MeshBuilder.hpp>
 #include <GTEngine/Physics.hpp>
+
+#if defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Weffc++"
+#endif
 #include <BulletCollision/CollisionShapes/btShapeHull.h>
+#if defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 
 namespace GTEngine
 {
@@ -28,7 +36,7 @@ namespace GTEngine
                 this->vertexBuffer.PushBack(vertexData[i]);
             }
         }
-        
+
         // Now we just add the index to the end.
         this->indexBuffer.PushBack(index);
     }
@@ -246,8 +254,8 @@ namespace GTEngine
         this->Clear();
 
         // Rings.
-        this->CreateRing(radius, transform * glm::translate(0.0f, 0.0f,  length * 0.5f));
-        this->CreateRing(radius, transform * glm::translate(0.0f, 0.0f, -length * 0.5f));
+        this->CreateRing(radius, transform * glm::translate(glm::vec3(0.0f, 0.0f,  length * 0.5f)));
+        this->CreateRing(radius, transform * glm::translate(glm::vec3(0.0f, 0.0f, -length * 0.5f)));
 
         // Connection lines.
         int   connectionCount = 8;
@@ -444,7 +452,7 @@ namespace GTEngine
 
             float length = capsule.getHalfHeight() * 2.0f;
             glm::mat4 orientation;
-            
+
             if (capsule.getUpAxis() == 0)          // X
             {
                 orientation = glm::rotate(90.0f, glm::vec3(0.0f, 1.0f, 0.0f));
@@ -474,7 +482,7 @@ namespace GTEngine
 
             float length;
             glm::mat4 orientation;
-            
+
             if (cylinder.getUpAxis() == 0)          // X
             {
                 length      = cylinder.getHalfExtentsWithMargin().x() * 2.0f;

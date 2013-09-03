@@ -3,12 +3,16 @@
 #ifndef __GTEngine_Plane_hpp_
 #define __GTEngine_Plane_hpp_
 
-#include <glm/glm.hpp>
-
 #if defined(_MSC_VER)
     #pragma warning(push)
-    #pragma warning(disable:4201)   // nonstandard extension used : nameless struct/union
+    #pragma warning(disable:4201)                   // nonstandard extension used : nameless struct/union
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wpedantic"     // nameless struct.
+    #pragma GCC diagnostic ignored "-Wundef"        // <-- Temp until GLM bug is fixed.
 #endif
+
+#include <glm/glm.hpp>
 
 namespace GTEngine
 {
@@ -118,6 +122,8 @@ namespace GTEngine
 
 #if defined(_MSC_VER)
     #pragma warning(pop)
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic pop
 #endif
 
 #endif

@@ -5,7 +5,7 @@
 
 namespace GTEngine
 {
-    GTENGINE_IMPL_COMPONENT_ATTRIBS(ProximityComponent, "Proximity");
+    GTENGINE_IMPL_COMPONENT_ATTRIBS(ProximityComponent, "Proximity")
 
     ProximityComponent::ProximityComponent(SceneNode &node)
         : CollisionShapeComponent(node), ghostObject(), world(nullptr), sceneNodesInsideVolume()
@@ -24,7 +24,7 @@ namespace GTEngine
         }
     }
 
-    
+
     void ProximityComponent::ApplySceneNodeTransformation()
     {
         btTransform transform;
@@ -190,7 +190,7 @@ namespace GTEngine
                             nextNode = static_cast<GTEngine::SceneNode*>(bodyA->getUserPointer());
                         }
 
-                        
+
                         if (nextNode != nullptr)
                         {
                             if (this->component->node.IsRelated(*nextNode))

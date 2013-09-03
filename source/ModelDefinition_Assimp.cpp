@@ -74,9 +74,9 @@ namespace GTEngine
         inputBone.mOffsetMatrix.Decompose(scale, rotation, position);
 
         outputBone.SetOffsetMatrix(
-            glm::translate(position.x, position.y, position.z) *
+            glm::translate(glm::vec3(position.x, position.y, position.z)) *
             glm::mat4_cast(quat_cast(rotation) * glm::angleAxis(90.0f, glm::vec3(1.0f, 0.0f, 0.0f))) *        // <-- TODO: Check if this rotation is a bug in Assimp or Blender.
-            glm::scale(scale.x, scale.y, scale.z));
+            glm::scale(glm::vec3(scale.x, scale.y, scale.z)));
     }
 
     Bone* CreateEmptyBone(const aiNode &inputNode)
@@ -225,7 +225,7 @@ namespace GTEngine
         normalTransform.Transpose();
         normalTransform.Inverse();
 
-        
+
         // If the scale has a negative component we need to reverse the polygon winding.
         aiVector3t<float>    scale;
         aiQuaterniont<float> rotation;
@@ -342,7 +342,7 @@ namespace GTEngine
                         assert(sourceBone != nullptr);
                         {
                             size_t boneIndex = AddBone(scene, *sourceBone, definition);
-                            
+
                             for (unsigned int iWeight = 0; iWeight < sourceBone->mNumWeights; ++iWeight)
                             {
                                 newMesh.skinningVertexAttributes[sourceBone->mWeights[iWeight].mVertexId].AddBoneWeightPair(boneIndex, sourceBone->mWeights[iWeight].mWeight);
