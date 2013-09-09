@@ -155,8 +155,10 @@
 		<Unit filename="../../../include/GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_Framebuffers.hpp" />
 		<Unit filename="../../../include/GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_LightGroup.hpp" />
 		<Unit filename="../../../include/GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_LightManager.hpp" />
+		<Unit filename="../../../include/GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_LuminanceChain.hpp" />
 		<Unit filename="../../../include/GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_MaterialShaderID.hpp" />
 		<Unit filename="../../../include/GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_MaterialShaders.hpp" />
+		<Unit filename="../../../include/GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_MaterialUniformNameCache.hpp" />
 		<Unit filename="../../../include/GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_Mesh.hpp" />
 		<Unit filename="../../../include/GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_MultiPassPipeline.hpp" />
 		<Unit filename="../../../include/GTEngine/DefaultSceneRenderer/DefaultSceneRenderer_PointLight.hpp" />
@@ -175,6 +177,7 @@
 		<Unit filename="../../../include/GTEngine/Editor/ModelEditor/ModelEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/PackagingToolEditor/PackagingToolEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/ParticleEditor/ParticleEditor.hpp" />
+		<Unit filename="../../../include/GTEngine/Editor/PivotPoint.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditorCommand.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditorPhysicsManager.hpp" />
@@ -302,6 +305,7 @@
 		<Unit filename="../../../include/GTEngine/Scene.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneCullingDbvtPolicy.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneCullingManager.hpp" />
+		<Unit filename="../../../include/GTEngine/SceneDeserializeCallback.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneEventHandler.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneNode.hpp" />
 		<Unit filename="../../../include/GTEngine/SceneNodeEventHandler.hpp" />
@@ -386,8 +390,10 @@
 		<Unit filename="../../../source/DefaultSceneRenderer/DefaultSceneRenderer_Framebuffers.cpp" />
 		<Unit filename="../../../source/DefaultSceneRenderer/DefaultSceneRenderer_LightGroup.cpp" />
 		<Unit filename="../../../source/DefaultSceneRenderer/DefaultSceneRenderer_LightManager.cpp" />
+		<Unit filename="../../../source/DefaultSceneRenderer/DefaultSceneRenderer_LuminanceChain.cpp" />
 		<Unit filename="../../../source/DefaultSceneRenderer/DefaultSceneRenderer_MaterialShaderID.cpp" />
 		<Unit filename="../../../source/DefaultSceneRenderer/DefaultSceneRenderer_MaterialShaders.cpp" />
+		<Unit filename="../../../source/DefaultSceneRenderer/DefaultSceneRenderer_MaterialUniformNameCache.cpp" />
 		<Unit filename="../../../source/DefaultSceneRenderer/DefaultSceneRenderer_Mesh.cpp" />
 		<Unit filename="../../../source/DefaultSceneRenderer/DefaultSceneRenderer_MultiPassPipeline.cpp" />
 		<Unit filename="../../../source/DefaultSceneRenderer/DefaultSceneRenderer_PointLight.cpp" />
@@ -406,6 +412,7 @@
 		<Unit filename="../../../source/Editor/ModelEditor/ModelEditor.cpp" />
 		<Unit filename="../../../source/Editor/PackagingToolEditor/PackagingToolEditor.cpp" />
 		<Unit filename="../../../source/Editor/ParticleEditor/ParticleEditor.cpp" />
+		<Unit filename="../../../source/Editor/PivotPoint.cpp" />
 		<Unit filename="../../../source/Editor/SceneEditor/SceneEditor.cpp" />
 		<Unit filename="../../../source/Editor/SceneEditor/SceneEditorCommand.cpp" />
 		<Unit filename="../../../source/Editor/SceneEditor/SceneEditorPhysicsManager.cpp" />
@@ -573,6 +580,7 @@
 		<Unit filename="../../../source/Rendering/VertexFormat.cpp" />
 		<Unit filename="../../../source/Scene.cpp" />
 		<Unit filename="../../../source/SceneCullingDbvtPolicy.cpp" />
+		<Unit filename="../../../source/SceneDeserializeCallback.cpp" />
 		<Unit filename="../../../source/SceneEventHandler.cpp" />
 		<Unit filename="../../../source/SceneNode.cpp" />
 		<Unit filename="../../../source/SceneNodeEventHandler.cpp" />
