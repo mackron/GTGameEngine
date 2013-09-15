@@ -189,9 +189,9 @@
 		<Unit filename="../../../include/GTEngine/Editor/TextEditor/TextEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/TransformGizmo.hpp" />
 		<Unit filename="../../../include/GTEngine/Errors.hpp" />
-		<Unit filename="../../../include/GTEngine/FontManager.hpp" />
 		<Unit filename="../../../include/GTEngine/GTEngine.hpp" />
 		<Unit filename="../../../include/GTEngine/GUIEventHandler.hpp" />
+		<Unit filename="../../../include/GTEngine/GUIImageManager.hpp" />
 		<Unit filename="../../../include/GTEngine/Game.hpp" />
 		<Unit filename="../../../include/GTEngine/GameEvent.hpp" />
 		<Unit filename="../../../include/GTEngine/GameEventCodes.hpp" />
@@ -424,9 +424,9 @@
 		<Unit filename="../../../source/Editor/TextEditor/TextEditor.cpp" />
 		<Unit filename="../../../source/Editor/TransformGizmo.cpp" />
 		<Unit filename="../../../source/Errors.cpp" />
-		<Unit filename="../../../source/FontManager.cpp" />
 		<Unit filename="../../../source/GTEngine.cpp" />
 		<Unit filename="../../../source/GUIEventHandler.cpp" />
+		<Unit filename="../../../source/GUIImageManager.cpp" />
 		<Unit filename="../../../source/Game.cpp" />
 		<Unit filename="../../../source/GameEventQueue.cpp" />
 		<Unit filename="../../../source/GameObject.cpp" />

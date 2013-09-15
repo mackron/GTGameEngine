@@ -10,21 +10,26 @@
 namespace GTEngine
 {
     DefaultGUIRenderer::DefaultGUIRenderer()
-        : shader(ShaderLibrary::GetGUIShader()),
+        : shader(ShaderLibrary::GetGUIShader()), defaultTexture(nullptr),
           viewportWidth(0), viewportHeight(0), projection(0),
-          textures(),
           currentOffsetX(0.0f), currentOffsetY(0.0f), currentTexture(nullptr), isBlendingEnabled(false),
           uniformsRequirePush(true)
     {
         assert(shader != nullptr);
+        
+        
+        // We need a default texture.
+        this->defaultTexture = GTEngine::Renderer::CreateTexture2D();
+        
+        uint8_t texel[] = {0xFF, 0xFF, 0xFF};
+        this->defaultTexture->SetData(1, 1, GTImage::ImageFormat_RGB8, texel);
+
+        GTEngine::Renderer::PushTexture2DData(this->defaultTexture);
+        GTEngine::Renderer::SetTexture2DFilter(this->defaultTexture, TextureFilter_Nearest, TextureFilter_Nearest);
     }
 
     DefaultGUIRenderer::~DefaultGUIRenderer()
     {
-        for (size_t i = 0; i < this->textures.count; ++i)
-        {
-            GTEngine::Renderer::DeleteTexture2D(this->textures.buffer[i]->value);
-        }
     }
 
 
@@ -100,11 +105,18 @@ namespace GTEngine
         this->uniformsRequirePush = true;
     }
 
-    void DefaultGUIRenderer::SetTexture(const GTImage::Image* texture)
+    void DefaultGUIRenderer::SetTexture(GTGUI::ImageHandle image)
     {
-        this->currentTexture = texture;
-
-        this->shader->SetUniform("Texture", this->AcquireTexture2DFromImage(texture));
+        if (image == 0)
+        {
+            this->currentTexture = this->defaultTexture;
+        }
+        else
+        {
+            this->currentTexture = reinterpret_cast<Texture2D*>(image);
+        }
+        
+        this->shader->SetUniform("Texture", this->currentTexture);
         this->uniformsRequirePush = true;
     }
 
@@ -143,45 +155,11 @@ namespace GTEngine
     /////////////////////////////////////////
     // Private.
 
-    Texture2D* DefaultGUIRenderer::AcquireTexture2DFromImage(const GTImage::Image* image)
-    {
-        auto iTexture = this->textures.Find(image);
-        if (iTexture != nullptr)
-        {
-            return iTexture->value;
-        }
-        else
-        {
-            auto newTexture = GTEngine::Renderer::CreateTexture2D();
-            
-            if (image != nullptr)
-            {
-                newTexture->SetData(image->GetWidth(), image->GetHeight(), image->GetFormat(), image->GetBaseMipmapData());
-            }
-            else
-            {
-                uint8_t texel[] = {0xFF, 0xFF, 0xFF};
-                newTexture->SetData(1, 1, GTImage::ImageFormat_RGB8, texel);
-            }
-            
-            GTEngine::Renderer::PushTexture2DData(*newTexture);
-            GTEngine::Renderer::SetTexture2DFilter(*newTexture, TextureFilter_Nearest, TextureFilter_Nearest);
-
-
-            // We don't need the local data, so it should be deleted. If we don't delete, we'll have a copy in GTGUI, here, and in the renderer. Removing one is nice.
-            newTexture->DeleteLocalData();
-            
-
-            this->textures.Add(image, newTexture);
-            return newTexture;
-        }
-    }
-
     void DefaultGUIRenderer::RestoreCurrentState()
     {
         GTEngine::Renderer::SetCurrentShader(this->shader);
         this->SetOffset(this->currentOffsetX, this->currentOffsetY);
-        this->SetTexture(this->currentTexture);
+        this->SetTexture(reinterpret_cast<GTGUI::ImageHandle>(this->currentTexture));
 
         if (this->isBlendingEnabled)
         {

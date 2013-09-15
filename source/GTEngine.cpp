@@ -136,8 +136,8 @@ namespace GTEngine
 
 
         // The font manager.
-        Log("Initializing Font Manager...");
-        FontManager::Startup();
+        //Log("Initializing Font Manager...");
+        //FontManager::Startup();
 
 
         return true;
@@ -157,7 +157,7 @@ namespace GTEngine
 
 
         // Font manager.
-        FontManager::Shutdown();
+        //FontManager::Shutdown();
 
 
         // We kill our libraries before the major sub-systems.

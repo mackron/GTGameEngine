@@ -39,7 +39,7 @@ namespace GTEngine
         virtual void SetOffset(float offsetX, float offsetY);
 
         /// GTGUI::Renderer::SetTexture()
-        virtual void SetTexture(const GTImage::Image* image);
+        virtual void SetTexture(GTGUI::ImageHandle image);
 
         /// GTGUI::Renderer::EnableBlending()
         virtual void EnableBlending();
@@ -54,7 +54,7 @@ namespace GTEngine
     private:
 
         /// Retrieves a texture for the given image.
-        Texture2D* AcquireTexture2DFromImage(const GTImage::Image* image);
+        //Texture2D* AcquireTexture2DFromImage(const GTImage::Image* image);
 
         /// A helper for enabled all of the current state.
         void RestoreCurrentState();
@@ -64,6 +64,10 @@ namespace GTEngine
 
         /// The main shader.
         Shader* shader;
+        
+        /// The default texture.
+        Texture2D* defaultTexture;
+        
 
         /// The viewport width.
         unsigned int viewportWidth;
@@ -74,11 +78,6 @@ namespace GTEngine
         /// The projection matrix.
         glm::mat4 projection;
 
-        /// The list of textures currently loaded by the GUI.
-        GTCore::Map<const GTImage::Image*, Texture2D*> textures;
-
-        
-
 
         /// The current x offset to apply to geometry.
         float currentOffsetX;
@@ -87,7 +86,7 @@ namespace GTEngine
         float currentOffsetY;
 
         /// The current texture to apply to geometry.
-        const GTImage::Image* currentTexture;
+        Texture2D* currentTexture;
 
         /// Whether or not blending is currently enabled.
         bool isBlendingEnabled;

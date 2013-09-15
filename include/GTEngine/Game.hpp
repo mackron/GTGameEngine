@@ -12,6 +12,7 @@
 #include "DataFilesWatcher.hpp"
 #include "GameState.hpp"
 #include "Profiler.hpp"
+#include "GUIImageManager.hpp"
 #include "Rendering/DefaultGUIRenderer.hpp"
 #include <GTCore/Threading.hpp>
 #include <GTCore/Timing.hpp>
@@ -685,6 +686,9 @@ namespace GTEngine
         /// The generic font we'll use for basically everything.
         GTType::Font* defaultFont;
 
+
+        /// The GUI image manager.
+        GUIImageManager guiImageManager;
 
         /// The GUI of this game. There is only a single GUI for every game. A game should dynamically show and hide root elements
         /// to show different GUI's for different game states.

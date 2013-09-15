@@ -20,8 +20,6 @@ namespace GTEngine
         void OnWarning(const char *msg);
         void OnLog(const char *msg);
         void OnChangeCursor(GTGUI::Cursor cursor);
-        void OnLoadFont(GTType::Font &font);
-        void OnUnloadFont(GTType::Font &font);
 
     public:
 
