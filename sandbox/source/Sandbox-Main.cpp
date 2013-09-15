@@ -1,6 +1,7 @@
 
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Game.hpp>
+#include <GTCore/Profiling/valgrind/callgrind.h>
 
 class SandboxGame : public GTEngine::Game
 {
@@ -98,6 +99,8 @@ public:
                 GTEngine::Renderer::Utils::DrawFullscreenQuad(this->currentScene->GetDefaultViewport().GetColourBuffer());
             }
         }
+        
+        CALLGRIND_STOP_INSTRUMENTATION;
     }
 
     void OnSize(unsigned int newWidth, unsigned int newHeight)
@@ -182,6 +185,8 @@ private:    // No copying.
 
 int main(int argc, char** argv)
 {
+    CALLGRIND_ZERO_STATS;
+    
 #if defined(GTCORE_PLATFORM_LINUX)
     XInitThreads();
 #endif

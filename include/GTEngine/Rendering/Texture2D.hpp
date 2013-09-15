@@ -66,6 +66,18 @@ namespace GTEngine
         /// @remarks
         ///     If 'data' is null, the storage will be allocated, but will remain undefined. Very useful for framebuffer targets.
         void SetData(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data = nullptr);
+        
+        /// Sets a sub-region of data.
+        ///
+        /// @param xPos   [in] The x offset of the rectangle region to update.
+        /// @param yPos   [in] The y offset of the rectangle region to update.
+        /// @param width  [in] The width of the rectangle region to update.
+        /// @param height [in] The height of the rectangle region to update.
+        /// @param data   [in] A pointer to the new data to use in the rectangle region.
+        ///
+        /// @remarks
+        ///     'data' can not be null.
+        void SetSubData(unsigned int xPos, unsigned int yPos, unsigned int width, unsigned int height, const void* data = nullptr);
 
         /// Resizes the texture.
         ///

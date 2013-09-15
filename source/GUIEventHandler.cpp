@@ -57,14 +57,4 @@ namespace GTEngine
         default: break;
         }
     }
-
-    void GUIEventHandler::OnLoadFont(GTType::Font &font)
-    {
-        FontManager::OnCreateFont(font);
-    }
-
-    void GUIEventHandler::OnUnloadFont(GTType::Font &font)
-    {
-        FontManager::OnDeleteFont(font);
-    }
 }

@@ -41,7 +41,7 @@ namespace GTEngine
           updateThread(nullptr), updateJob(*this),
           deltaTimeInSeconds(0.0), totalRunninTimeInSeconds(0.0), updateTimer(),
           fontServer("var/fonts.cache"), defaultFont(nullptr),
-          gui(&script, &fontServer), guiEventHandler(*this), guiRenderer(), gameWindowGUIElement(nullptr),
+          guiImageManager(), gui(&script, &fontServer, &guiImageManager), guiEventHandler(*this), guiRenderer(), gameWindowGUIElement(nullptr),
           paused(false), focused(true),
           isCursorVisible(true),
           isAutoScriptReloadEnabled(false),

@@ -54,6 +54,12 @@ namespace GTEngine
     {
         GTImage::Image::Load(width, height, format, data);
     }
+    
+    void Texture2D::SetSubData(unsigned int xPos, unsigned int yPos, unsigned int width, unsigned int height, const void* data)
+    {
+        GTImage::Image::SetSubData(xPos, yPos, width, height, data);
+    }
+    
 
     void Texture2D::Resize(unsigned int newWidth, unsigned int newHeight)
     {
