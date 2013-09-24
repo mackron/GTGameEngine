@@ -43,8 +43,12 @@ namespace GTEngine
         auto texture = Renderer::CreateTexture2D();
         assert(texture != nullptr);
         {
-            texture->SetData(width, height, translatedFormat, data);
-            Renderer::PushTexture2DData(texture);
+            // We don't care about local content with GUI images, but we do need to keep track of the size so we can do an accurate size
+            // retrieval. To do this, we just pass null to SetData(), and then make sure the local data is deleted with DeleteLocalData().
+            texture->SetData(width, height, translatedFormat, nullptr);     // <-- Important we pass null here.
+            texture->DeleteLocalData();
+            
+            Renderer::SetTexture2DData(texture, 0, width, height, translatedFormat, data, Renderer::HasFlippedTextures());
             Renderer::SetTexture2DFilter(texture, TextureFilter_Nearest, TextureFilter_Nearest);
         }
         
@@ -53,7 +57,7 @@ namespace GTEngine
     
     GTGUI::ImageHandle GUIImageManager::LoadImage(const char* filePath)
     {
-        auto loader = GTImage::Loader::Create(filePath, true);      // <-- 'true' means to flip upside down, which is needed for our OpenGL renderer.
+        auto loader = GTImage::Loader::Create(filePath);
         if (loader != nullptr)
         {
             GTImage::ImageFileInfo info;
@@ -98,8 +102,7 @@ namespace GTEngine
         auto texture = reinterpret_cast<Texture2D*>(image);
         assert(texture != nullptr);
         {
-            texture->SetSubData(xPos, yPos, width, height, data);
-            Renderer::PushTexture2DData(texture);
+            Renderer::SetTexture2DSubData(texture, 0, xPos, yPos, width, height, texture->GetFormat(), data, Renderer::HasFlippedTextures());
         }
     }
 

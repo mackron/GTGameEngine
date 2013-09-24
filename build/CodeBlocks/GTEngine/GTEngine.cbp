@@ -68,6 +68,15 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add option="-Wall" />
+					<Add directory="../../../include" />
+					<Add directory="../../../../GTCore/include" />
+					<Add directory="../../../../GTGUI/include" />
+					<Add directory="../../../../GTImage/include" />
+					<Add directory="../../../../GTType/include" />
+					<Add directory="../../../../GTGL/include" />
+					<Add directory="../../../../External/repos/glm" />
+					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src" />
+					<Add directory="../../../../External/repos/assimp/include" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />

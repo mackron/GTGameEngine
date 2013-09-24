@@ -224,6 +224,13 @@ namespace GTEngine
         const char* GetCollisionGroupMask(size_t groupIndex) const;
 
 
+        /// Updates the collision filters based on the current collision group strings.
+        ///
+        /// @remarks
+        ///     The values are determined by the values defined in the scripting environment. The scripting environment will map an integer value
+        ///     to each string. Each of these integer strings are bitwise-or'd to produce the final group and mask.s
+        void UpdateCollisionFilter();
+
 
 
         /// Applies a scale to the collision shape.

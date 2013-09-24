@@ -4,11 +4,8 @@
 #define __GTEngine_ShaderParameter_hpp_
 
 #include "Texture2DLibrary.hpp"
+#include "Math.hpp"
 #include "Rendering/TextureCube.hpp"
-
-#define GLM_FORCE_ONLY_XYZW
-#include <glm/glm.hpp>
-
 
 namespace GTEngine
 {

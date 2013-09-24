@@ -15,7 +15,6 @@
 #include <GTEngine/ParticleSystemLibrary.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/ThreadCache.hpp>
-#include <GTEngine/FontManager.hpp>
 #include <GTCore/CommandLine.hpp>
 #include <GTCore/IO.hpp>
 

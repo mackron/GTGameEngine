@@ -9,6 +9,7 @@ namespace GTEngine
     DefaultSceneRenderer_LuminanceChain::DefaultSceneRenderer_LuminanceChain()
         : m_framebuffer(),
           m_buffers(),
+          m_shaders(),
           m_baseWidth(0),
           m_baseHeight(0)
     {

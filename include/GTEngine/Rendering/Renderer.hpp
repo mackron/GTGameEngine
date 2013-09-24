@@ -450,6 +450,7 @@ namespace GTEngine
         ///     This will immediately make a copy of the data, so it is safe to delete the local copy is needed.
         //static void PushTexture1DData(const Texture1D &texture, int mipmap = -1);
 
+
         /// Pushes the image data of the given 2D texture to the renderer.
         ///
         /// @param texture [in] A reference to the texture whose data is being pushed.
@@ -459,6 +460,45 @@ namespace GTEngine
         ///     This will immediately make a copy of the data, so it is safe to delete the local copy if needed.
         static void PushTexture2DData(const Texture2D &texture, int mipmap = -1);
         static void PushTexture2DData(const Texture2D* texture, int mipmap = -1) { assert(texture != nullptr); PushTexture2DData(*texture, mipmap); }
+        
+        /// Sets the server-side image data of the given texture.
+        ///
+        /// @param texture [in] A reference to the texture whose server-side image data is getting set.
+        /// @param mipmap  [in] The mipmap index whose data is being set.
+        /// @param width   [in] The image width.
+        /// @param height  [in] The image height.
+        /// @param format  [in] The format of the image data.
+        /// @param data    [in] The image data.
+        ///
+        /// @remarks
+        ///     This does not update the client-side data. The main purpose of this method is to avoid the need to an unecessary copy
+        ///     to the client side buffer before doing yet another copy when caching the draw call in preparation for executaion by
+        ///     the renderer.
+        ///     @par
+        ///     Unlike PushTexture2DData(), 'mipmap' can not be -1. It must be a valid mipmap index.
+        static void SetTexture2DData(const Texture2D &texture, int mipmap, unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data, bool flip = false);
+        static void SetTexture2DData(const Texture2D* texture, int mipmap, unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data, bool flip = false) { assert(texture != nullptr); SetTexture2DData(*texture, mipmap, width, height, format, data, flip); }
+        
+        /// Sets the server-side image data of a sub-region of the given texture.
+        ///
+        /// @param texture [in] A reference to the texture whose server-side image data is getting set.
+        /// @param mipmap  [in] The mipmap index whose data is being set.
+        /// @param xOffset [in] The x position of the sub-region to update.
+        /// @param yOffset [in] The y position of the sub-region to update.
+        /// @param width   [in] The width of the sub-region to update.
+        /// @param height  [in] The height of the sub-region to update.
+        /// @param format  [in] The format of the image data.
+        /// @param data    [in] The image data.
+        ///
+        /// @remarks
+        ///     This does not update the client-side data. The main purpose of this method is to avoid the need to an unecessary copy
+        ///     to the client side buffer before doing yet another copy when caching the draw call in preparation for executaion by
+        ///     the renderer.
+        ///     @par
+        ///     Unlike PushTexture2DData(), 'mipmap' can not be -1. It must be a valid mipmap index.
+        static void SetTexture2DSubData(const Texture2D &texture, int mipmap, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data, bool flip = false);
+        static void SetTexture2DSubData(const Texture2D* texture, int mipmap, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data, bool flip = false) { assert(texture != nullptr); SetTexture2DSubData(*texture, mipmap, xOffset, yOffset, width, height, format, data, flip); }
+        
 
         /// Pushes the image data of the given 3D texture to the renderer.
         ///

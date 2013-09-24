@@ -3,6 +3,7 @@
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTImage/Utils.hpp>
 
 
 #include <gtgl/gtgl.h>
@@ -1251,91 +1252,86 @@ namespace GTEngine
     void Renderer_SetOpenGL21TextureFilter(TextureState_OpenGL21* textureState, GLenum textureTarget, TextureFilter minification, TextureFilter magnification)
     {
         assert(textureState != nullptr);
+        assert(State.currentRCSetTextureState == nullptr);
         {
-            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureState() != textureState || State.currentRCSetTextureState->GetTarget() != textureTarget))
-            {
-                State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-                CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-            }
-
+            State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
+            CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
 
             assert(State.currentRCSetTextureState != nullptr);
             {
                 State.currentRCSetTextureState->SetTextureFilter(textureState, textureTarget, ToOpenGLTextureFilter(minification), ToOpenGLTextureFilter(magnification));
             }
         }
+        
+        State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
     void Renderer_SetOpenGL21TextureAnisotropy(TextureState_OpenGL21* textureState, GLenum textureTarget, unsigned int anisotropy)
     {
         assert(textureState != nullptr);
+        assert(State.currentRCSetTextureState == nullptr);
         {
-            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureState() != textureState || State.currentRCSetTextureState->GetTarget() != textureTarget))
-            {
-                State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-                CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-            }
-
+            State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
+            CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
 
             assert(State.currentRCSetTextureState != nullptr);
             {
                 State.currentRCSetTextureState->SetTextureAnisotropy(textureState, textureTarget, static_cast<GLint>(anisotropy));
             }
         }
+        
+        State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
     void Renderer_SetOpenGL21TextureWrapMode(TextureState_OpenGL21* textureState, GLenum textureTarget, TextureWrapMode wrapMode)
     {
         assert(textureState != nullptr);
+        assert(State.currentRCSetTextureState == nullptr);
         {
-            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureState() != textureState || State.currentRCSetTextureState->GetTarget() != textureTarget))
-            {
-                State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-                CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-            }
-
+            State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
+            CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
 
             assert(State.currentRCSetTextureState != nullptr);
             {
                 State.currentRCSetTextureState->SetTextureWrapMode(textureState, textureTarget, ToOpenGLWrapMode(wrapMode));
             }
         }
+        
+        State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
     void Renderer_SetOpenGL21TextureMipmapLevels(TextureState_OpenGL21* textureState, GLenum textureTarget, unsigned int baseLevel, unsigned int maxLevel)
     {
         assert(textureState != nullptr);
+        assert(State.currentRCSetTextureState == nullptr);
         {
-            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureState() != textureState || State.currentRCSetTextureState->GetTarget() != textureTarget))
-            {
-                State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-                CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-            }
-
+            State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
+            CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
 
             assert(State.currentRCSetTextureState != nullptr);
             {
                 State.currentRCSetTextureState->SetTextureMipmapLevels(textureState, textureTarget, static_cast<GLint>(baseLevel), static_cast<GLint>(maxLevel));
             }
         }
+        
+        State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
     void Renderer_GenerateOpenGL21TextureMipmaps(TextureState_OpenGL21* textureState, GLenum textureTarget)
     {
         assert(textureState != nullptr);
+        assert(State.currentRCSetTextureState == nullptr);
         {
-            if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureState() != textureState || State.currentRCSetTextureState->GetTarget() != textureTarget))
-            {
-                State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-                CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-            }
-
+            State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
+            CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
 
             assert(State.currentRCSetTextureState != nullptr);
             {
                 State.currentRCSetTextureState->GenerateTextureMipmaps(textureState, textureTarget);
             }
         }
+        
+        State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
 
@@ -1398,59 +1394,84 @@ namespace GTEngine
 
     void Renderer::PushTexture2DData(const Texture2D &texture, int mipmapIndex)
     {
-        auto &textureGL33 = static_cast<const Texture2D_OpenGL21 &>(texture);
+        if (mipmapIndex == -1)
         {
-            GLenum textureTarget = textureGL33.GetTarget();
-            auto   textureState  = textureGL33.GetOpenGLState();
+            // If you fail this assert it means you haven't got any texture data, which in turn means you're calling this function unnecessarily. For performance,
+            // the renderer assumes this function will be called when there is actually data to push, and thus will crash when there is none.
+            assert(texture.GetMipmapCount() > 0);
+            
+            for (size_t i = 0; i < texture.GetMipmapCount(); ++i)
+            {
+                auto &mipmap = texture.GetMipmap(i);
+                SetTexture2DData(texture, i, mipmap.width, mipmap.height, mipmap.format, mipmap.data);
+            }
+        }
+        else
+        {
+            auto &mipmap = texture.GetMipmap(mipmapIndex);
+            SetTexture2DData(texture, mipmapIndex, mipmap.width, mipmap.height, mipmap.format, mipmap.data);
+        }
+    }
+    
+    void Renderer::SetTexture2DData(const Texture2D &texture, int mipmapIndex, unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data, bool flip)
+    {
+        auto &textureGL21 = static_cast<const Texture2D_OpenGL21 &>(texture);
+        {
+            GLenum textureTarget = textureGL21.GetTarget();
+            auto   textureState  = textureGL21.GetOpenGLState();
 
             assert(textureState != nullptr);
+            assert(State.currentRCSetTextureState == nullptr);
             {
-                if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureState() != textureState || State.currentRCSetTextureState->GetTarget() != textureTarget))
-                {
-                    State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-                    CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-                }
-
+                State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
+                CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
 
                 assert(State.currentRCSetTextureState != nullptr);
+                assert(mipmapIndex >= 0);
                 {
-                    if (mipmapIndex == -1)
-                    {
-                        // If you fail this assert it means you haven't got any texture data, which in turn means you're calling this function unnecessarily. For performance,
-                        // the renderer assumes this function will be called when there is actually data to push, and thus will crash when there is none.
-                        assert(texture.GetMipmapCount() > 0);
-
-                        for (size_t i = 0; i < texture.GetMipmapCount(); ++i)
-                        {
-                            auto &mipmap = texture.GetMipmap(i);
-                            State.currentRCSetTextureState->SetTexture2DData(textureState, textureTarget, static_cast<int>(i), mipmap.format, mipmap.width, mipmap.height, mipmap.data, mipmap.GetDataSizeInBytes());
-                        }
-                    }
-                    else
-                    {
-                        auto &mipmap = texture.GetMipmap(mipmapIndex);
-                        State.currentRCSetTextureState->SetTexture2DData(textureState, textureTarget, mipmapIndex, mipmap.format, mipmap.width, mipmap.height, mipmap.data, mipmap.GetDataSizeInBytes());
-                    }
+                    State.currentRCSetTextureState->SetTexture2DData(textureState, textureTarget, mipmapIndex, format, width, height, data, GTImage::Utils::CalculateDataSize(width, height, format), flip);
                 }
             }
         }
+        
+        State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
+    }
+    
+    void Renderer::SetTexture2DSubData(const Texture2D &texture, int mipmapIndex, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data, bool flip)
+    {
+        auto &textureGL21 = static_cast<const Texture2D_OpenGL21 &>(texture);
+        {
+            GLenum textureTarget = textureGL21.GetTarget();
+            auto   textureState  = textureGL21.GetOpenGLState();
+
+            assert(textureState != nullptr);
+            assert(State.currentRCSetTextureState == nullptr);
+            {
+                State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
+                CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
+
+                assert(State.currentRCSetTextureState != nullptr);
+                assert(mipmapIndex >= 0);
+                {
+                    State.currentRCSetTextureState->SetTexture2DSubData(textureState, textureTarget, mipmapIndex, format, xOffset, yOffset, width, height, data, GTImage::Utils::CalculateDataSize(width, height, format), flip);
+                }
+            }
+        }
+        
+        State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
     void Renderer::PushTextureCubeData(const TextureCube &texture)
     {
         auto &textureGL33 = static_cast<const TextureCube_OpenGL21 &>(texture);
         {
-            GLenum textureTarget = GL_TEXTURE_CUBE_MAP;
-            auto   textureState  = textureGL33.GetOpenGLState();
+            auto textureState = textureGL33.GetOpenGLState();
 
             assert(textureState != nullptr);
+            assert(State.currentRCSetTextureState == nullptr);
             {
-                if (State.currentRCSetTextureState == nullptr || (State.currentRCSetTextureState->GetTextureState() != textureState || State.currentRCSetTextureState->GetTarget() != textureTarget))
-                {
-                    State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
-                    CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
-                }
-
+                State.currentRCSetTextureState = &RCCaches[BackCallCacheIndex].RCSetTextureStateCache.Acquire();
+                CallCaches[BackCallCacheIndex].Append(*State.currentRCSetTextureState);
 
                 assert(State.currentRCSetTextureState != nullptr);
                 {
@@ -1473,6 +1494,8 @@ namespace GTEngine
                 }
             }
         }
+        
+        State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
 

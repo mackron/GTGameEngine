@@ -134,6 +134,14 @@
 				<Option use_console_runner="0" />
 				<Compiler>
 					<Add option="-O2" />
+					<Add directory="../../../include" />
+					<Add directory="../../../../GTCore/include" />
+					<Add directory="../../../../GTImage/include" />
+					<Add directory="../../../../GTType/include" />
+					<Add directory="../../../../GTGUI/include" />
+					<Add directory="../../../../GTGL/include" />
+					<Add directory="../../../../External/repos/glm" />
+					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
@@ -158,6 +166,22 @@
 					<Add library="dl" />
 					<Add library="pthread" />
 					<Add library="Xxf86vm" />
+					<Add library="GTEngine-debug" />
+					<Add library="GTGUI-debug" />
+					<Add library="GTType-debug" />
+					<Add library="GTImage-debug" />
+					<Add library="GTCore-debug" />
+					<Add library="GTGL-debug" />
+					<Add directory="../../../../GTCore/lib/linux-gcc" />
+					<Add directory="../../../../GTImage/lib/linux-gcc" />
+					<Add directory="../../../../GTType/lib/linux-gcc" />
+					<Add directory="../../../../GTGUI/lib/linux-gcc" />
+					<Add directory="../../../../GTGameEngine/lib/linux-gcc" />
+					<Add directory="../../../../GTGL/lib/linux-gcc" />
+					<Add directory="../../../../External/repos/assimp/lib" />
+					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src/BulletCollision" />
+					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src/BulletDynamics" />
+					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src/LinearMath" />
 				</Linker>
 			</Target>
 			<Target title="debug-windows-clang">

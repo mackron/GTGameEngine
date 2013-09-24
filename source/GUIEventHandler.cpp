@@ -4,7 +4,6 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
-#include <GTEngine/FontManager.hpp>
 
 namespace GTEngine
 {
