@@ -5,10 +5,10 @@
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wundef"        // <-- Temp until bug is fixed.
     #pragma GCC diagnostic ignored "-Wpedantic"
     #pragma GCC diagnostic ignored "-Winline"
     #pragma GCC diagnostic ignored "-Weffc++"
+    #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 
     #if defined(__clang__)
         #pragma GCC diagnostic ignored "-Wunused-parameter"

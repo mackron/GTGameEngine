@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Game.hpp>
-#include <GTEngine/FontManager.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/ThreadCache.hpp>

@@ -9,7 +9,7 @@
 #elif defined(__GNUC__)
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wpedantic"     // nameless struct.
-    #pragma GCC diagnostic ignored "-Wundef"        // <-- Temp until GLM bug is fixed.
+    #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
 #include <glm/glm.hpp>

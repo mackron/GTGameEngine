@@ -29,11 +29,17 @@ namespace GTEngine
         /// Renderer::PushTexture1DData().
         void SetTexture1DData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, const void* data, size_t dataSizeInBytes);
 
+
         /// Renderer::PushTexture2DData().
-        void SetTexture2DData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes);
+        void SetTexture2DData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes, bool flip);
+        
+        /// Renderer::PushTexture2DSubData().
+        void SetTexture2DSubData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes, bool flip);
+
 
         /// Renderer::PushTexture3DData().
         void SetTexture3DData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, unsigned int depth, const void* data, size_t dataSizeInBytes);
+
 
         /// Renderer::PushTextureCubeData().
         void SetTextureCubeData(TextureState_OpenGL21* textureState, GTImage::ImageFormat format, unsigned int width, unsigned int height, size_t dataSizeInBytes,
@@ -86,18 +92,19 @@ namespace GTEngine
         /// The texture data to set. This does not do cube maps.
         struct TextureData
         {
+            GLint   mipmapIndex;
             GLint   internalFormat;
             GLenum  format;
             GLenum  type;
+            GLint   xOffset;    // <-- Only used with sub-region sets.
+            GLint   yOffset;    // <-- Only used with sub-region sets.
+            GLint   zOffset;    // <-- Only used with sub-region sets.
             GLsizei width;
             GLsizei height;
             GLsizei depth;
             GLvoid* data;
-        };
-
-        /// The map of TextureData objects for each mipmap whose data is getting set. The key is the mipmap level.
-        GTCore::Map<GLint, TextureData> mipmapDatas;
-
+            
+        }textureData;
 
 
         /// The cube map texture data.

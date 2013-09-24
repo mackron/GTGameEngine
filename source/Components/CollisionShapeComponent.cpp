@@ -1,8 +1,10 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
+
 #include <GTEngine/Components/CollisionShapeComponent.hpp>
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/GTEngine.hpp>
 #undef max
 
 namespace GTEngine
@@ -34,7 +36,8 @@ namespace GTEngine
     CollisionShapeComponent::CollisionShapeComponent(SceneNode &node)
         : Component(node),
           collisionShape(true),
-          collisionGroup(1), collisionMask(-1)
+          collisionGroup(1),       collisionMask(-1),
+          collisionGroupStrings(), collisionGroupMaskStrings()
     {
     }
 
@@ -600,6 +603,25 @@ namespace GTEngine
     }
 
 
+    void CollisionShapeComponent::UpdateCollisionFilter()
+    {
+        this->collisionGroup = 0;
+        this->collisionMask  = 0;
+        
+        GTCore::String base("Game.CollisionGroups.");
+        
+        for (size_t iGroup = 0; iGroup < this->collisionGroupStrings.count; ++iGroup)
+        {
+            this->collisionGroup |= static_cast<short>(GlobalGame->GetScript().GetInteger((base + this->collisionGroupStrings[iGroup]).c_str()));
+        }
+        
+        for (size_t iMask = 0; iMask < this->collisionGroupMaskStrings.count; ++iMask)
+        {
+            this->collisionMask |= static_cast<short>(GlobalGame->GetScript().GetInteger((base + this->collisionGroupMaskStrings[iMask]).c_str()));
+        }
+    }
+
+
 
     void CollisionShapeComponent::ApplyScaling(float x, float y, float z)
     {
@@ -646,7 +668,26 @@ namespace GTEngine
         intermediarySerializer.Write(static_cast<uint32_t>(this->GetCollisionShapeCount()));
         intermediarySerializer.Write(static_cast<uint32_t>(this->collisionGroup));
         intermediarySerializer.Write(static_cast<uint32_t>(this->collisionMask));
-        intermediarySerializer.Write(false);        // <-- An unused dummy value for backwards compatibility.
+        
+        // TODO: Clean up this boolean backwards compatibility thing.
+        //
+        // The boolean was previously just a dummy value for backwards compatibility. We're still going to use this for
+        // the sake of backwards compatibility, only this time we're going to set it to true, which will indicate there
+        // is some collision strings that need to be read.
+        intermediarySerializer.Write(true);
+        
+        intermediarySerializer.Write(static_cast<uint32_t>(this->collisionGroupStrings.count));
+        for (size_t iGroup = 0; iGroup < this->collisionGroupStrings.count; ++iGroup)
+        {
+            intermediarySerializer.WriteString(this->collisionGroupStrings[iGroup]);
+        }
+        
+        intermediarySerializer.Write(static_cast<uint32_t>(this->collisionGroupMaskStrings.count));
+        for (size_t iGroup = 0; iGroup < this->collisionGroupMaskStrings.count; ++iGroup)
+        {
+            intermediarySerializer.WriteString(this->collisionGroupMaskStrings[iGroup]);
+        }
+        
         
 
         Serialization::ChunkHeader header;
@@ -865,6 +906,8 @@ namespace GTEngine
         uint32_t deserializedShapeCount;
         uint32_t deserializedCollisionGroup;
         uint32_t deserializedCollisionMask;
+        GTCore::Vector<GTCore::String> deserializedCollisionGroupStrings;
+        GTCore::Vector<GTCore::String> deserializedCollisionGroupMaskStrings;
 
         // The first chunk must the main one. It will contain the shape count.
         if (header.id == Serialization::ChunkID_CollisionShapeComponent_Main)
@@ -877,9 +920,37 @@ namespace GTEngine
                     deserializer.Read(deserializedCollisionGroup);
                     deserializer.Read(deserializedCollisionMask);
 
-                    // An unused dummy value for backwards compatibility.
-                    bool devnull;
-                    deserializer.Read(devnull);
+                    // The next boolean is a backwards compatibility flag. If set to true, it means there are string collision groups that
+                    // need to be read.
+                    bool readCollisionGroupStrings;
+                    deserializer.Read(readCollisionGroupStrings);
+                    
+                    if (readCollisionGroupStrings)
+                    {
+                        uint32_t collisionGroupStringsCount;
+                        deserializer.Read(collisionGroupStringsCount);
+                        
+                        for (uint32_t iGroup = 0; iGroup < collisionGroupStringsCount; ++iGroup)
+                        {
+                            GTCore::String group;
+                            deserializer.ReadString(group);
+                            
+                            deserializedCollisionGroupStrings.PushBack(group);
+                        }
+                        
+                        
+                        uint32_t collisionGroupMaskStringsCount;
+                        deserializer.Read(collisionGroupMaskStringsCount);
+                        
+                        for (uint32_t iGroup = 0; iGroup < collisionGroupMaskStringsCount; ++iGroup)
+                        {
+                            GTCore::String group;
+                            deserializer.ReadString(group);
+                            
+                            deserializedCollisionGroupMaskStrings.PushBack(group);
+                        }
+                    }
+                    
 
                     break;
                 }
@@ -1220,6 +1291,10 @@ namespace GTEngine
         
         // Can't forget to set the collision filter.
         this->SetCollisionFilter(static_cast<short>(deserializedCollisionGroup), static_cast<short>(deserializedCollisionMask));
+        
+        // The collision group strings need to be set, too.
+        this->collisionGroupStrings     = deserializedCollisionGroupStrings;
+        this->collisionGroupMaskStrings = deserializedCollisionGroupMaskStrings;
     }
 
     void CollisionShapeComponent::OnPostSceneNodeDeserialized()
