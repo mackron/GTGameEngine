@@ -160,6 +160,8 @@ namespace GTEngine
 
         assert(header.id == Serialization::ChunkID_ModelComponent_Main);
         {
+            size_t deserializerStart = deserializer.Tell();
+            
             switch (header.version)
             {
             case 1:
@@ -180,13 +182,26 @@ namespace GTEngine
                         if (!modelPath.IsEmpty())
                         {
                             this->SetModel(modelPath.c_str());
+                            
+                            // If we failed to set the model (most likely due to the file not existing) we need to skip this chunk and return.
+                            if (this->model == nullptr)
+                            {
+                                const size_t bytesReadSoFar = deserializer.Tell() - deserializerStart;
+                                
+                                deserializer.Seek(header.sizeInBytes - bytesReadSoFar);
+                                return;
+                            }
                         }
                         else
                         {
                             this->SetModel(new Model, true);
                         }
 
-                        this->model->Deserialize(deserializer);
+
+                        assert(this->model != nullptr);
+                        {
+                            this->model->Deserialize(deserializer);
+                        }
                     }
 
 
