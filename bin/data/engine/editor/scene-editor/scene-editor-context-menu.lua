@@ -25,8 +25,8 @@ function GTGUI.Element:SceneEditorContextMenu(sceneEditor)
         local newNode = sceneEditor.Scene:CreateNewSceneNode();
         newNode:SetName("Cube");
         newNode:AddComponent(GTEngine.Components.EditorMetadata);
-        newNode:AddComponent(GTEngine.Components.Model):SetModel("engine/models/default-1x1.dae");
-        newNode:AddComponent(GTEngine.Components.Dynamics):AddBoxCollisionShape(0.5, 0.5, 0.5);
+        newNode:AddComponent(GTEngine.Components.Model):SetModel("engine/models/default.dae");
+        newNode:AddComponent(GTEngine.Components.Dynamics):AddBoxCollisionShape(1, 1, 1);
         
         sceneEditor:PositionSceneNodeInFrontOfCamera(newNode);
         
