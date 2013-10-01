@@ -31,6 +31,9 @@
 <style  url="common/labelled-dropdown-box.style"  />
 <script url="common/labelled-dropdown-box.lua"    />
 
+<style  url="common/labelled-collision-group-selector.style"  />
+<script url="common/labelled-collision-group-selector.lua"    />
+
 <style  url="common/editor-panel.style"           />
 <script url="common/editor-panel.lua"             />
 
