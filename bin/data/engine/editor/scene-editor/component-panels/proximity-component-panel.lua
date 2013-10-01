@@ -3,11 +3,6 @@
 function GTGUI.Element:ProximityComponentPanel()
     self:PanelGroupBox("Proximity", true);
     
-    -- Shapes
-    self.CollisionShapesLabel = GTGUI.Server.CreateElement(self.Body, "proximity-component-panel-shapes-label");
-    self.CollisionShapesLabel:SetText("Shapes:");
-
-    
     self.CollisionShapes = GTGUI.Server.CreateElement(self.Body);
     self.CollisionShapes:CollisionShapesPanel();
     

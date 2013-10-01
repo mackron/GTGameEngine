@@ -348,7 +348,14 @@ end
 function GTGUI.Element:CollisionShapesPanel()
     self.Component = nil;
 
+    self.CollisionGroupSelector     = GTGUI.Server.CreateElement(self, "labelled-collision-group-selector");
+    self.CollisionGroupSelector:LabelledCollisionGroupSelector("Collision Group");
+
+    self.CollisionGroupMaskSelector = GTGUI.Server.CreateElement(self, "labelled-collision-group-selector");
+    self.CollisionGroupMaskSelector:LabelledCollisionGroupSelector("Collides With");
+
     self.CollisionShapesContainer      = GTGUI.Server.CreateElement(self);
+    self.CollisionShapesContainer:SetStyle("margin-top", "4px");
     self.CollisionShapePanels          = {};
     
     self.NewCollisionShapeDropDownBox  = GTGUI.Server.CreateElement(self, "picking-dropdown-box");

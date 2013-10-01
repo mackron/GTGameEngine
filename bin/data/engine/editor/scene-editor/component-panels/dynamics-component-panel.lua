@@ -29,13 +29,9 @@ function GTGUI.Element:DynamicsComponentPanel()
     self.AngularDampingInput = GTGUI.Server.CreateElement(self.Body, "labelled-number-input");
     self.AngularDampingInput:LabelledNumberInput("Angular Damping", 0.0);
     
-    
-    -- Collision Shapes
-    self.CollisionShapesLabel = GTGUI.Server.CreateElement(self.Body, "dynamics-component-panel-shapes-label");
-    self.CollisionShapesLabel:SetText("Collision Shapes:");
-    
     self.CollisionShapes = GTGUI.Server.CreateElement(self.Body);
     self.CollisionShapes:CollisionShapesPanel();
+    self.CollisionShapes:SetStyle("margin-top", "2px");
     
     self.CollisionShapes:OnShapesChanged(function()
         self.ParentPanel:OnSceneNodeChanged();
