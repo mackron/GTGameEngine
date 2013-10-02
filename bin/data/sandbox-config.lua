@@ -15,3 +15,8 @@ Game.Fullscreen   = false;                          -- Whether or not to start i
 Game.EnableVSync  = false;                          -- Whether or not to enable v-sync.
 Game.AspectRatio  = 0;                              -- If set to 0, the aspect ratio will be re-calculated whenever the game window is resized as the window width divided by height.
 --Game.AspectRatio  = Game.Width / Game.Height;       -- Use this to use a constant aspect ratio. Might also like to use "16 / 9", "4 / 3", etc (without quotes).
+
+Game.CollisionGroups.Static  = 1;
+Game.CollisionGroups.Dynamic = 2;
+Game.CollisionGroups.Player  = 3;
+Game.CollisionGroups.Bullet  = 4;
