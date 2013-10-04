@@ -350,9 +350,25 @@ function GTGUI.Element:CollisionShapesPanel()
 
     self.CollisionGroupSelector     = GTGUI.Server.CreateElement(self, "labelled-collision-group-selector");
     self.CollisionGroupSelector:LabelledCollisionGroupSelector("Collision Group");
+    self.CollisionGroupSelector:OnSelectionAdded(function(data)
+        self.Component:AddCollisionGroup(data.name);
+        self:OnCollisionGroupChanged();
+    end);
+    self.CollisionGroupSelector:OnSelectionRemoved(function(data)
+        self.Component:RemoveCollisionGroup(data.name);
+        self:OnCollisionGroupChanged();
+    end);
 
     self.CollisionGroupMaskSelector = GTGUI.Server.CreateElement(self, "labelled-collision-group-selector");
     self.CollisionGroupMaskSelector:LabelledCollisionGroupSelector("Collides With");
+    self.CollisionGroupMaskSelector:OnSelectionAdded(function(data)
+        self.Component:AddCollisionGroupMask(data.name);
+        self:OnCollisionGroupMaskChanged();
+    end);
+    self.CollisionGroupMaskSelector:OnSelectionRemoved(function(data)
+        self.Component:RemoveCollisionGroupMask(data.name);
+        self:OnCollisionGroupMaskChanged();
+    end);
 
     self.CollisionShapesContainer      = GTGUI.Server.CreateElement(self);
     self.CollisionShapesContainer:SetStyle("margin-top", "4px");
@@ -555,6 +571,17 @@ function GTGUI.Element:CollisionShapesPanel()
         if #self.CollisionShapePanels > 0 then
             self.CollisionShapePanels[#self.CollisionShapePanels]:SetStyle("border-bottom", "1px #2a2a2a");
         end
+
+        -- We need to add groups to the collision groups and masks.
+        local collisionGroupCount = self.Component:GetCollisionGroupCount();
+        for i=1,collisionGroupCount do
+            self.CollisionGroupSelector:AddSelectedGroup(self.Component:GetCollisionGroupName(i), true);             -- 'true' means to block the event.
+        end
+
+        local collisionGroupMaskCount = self.Component:GetCollisionGroupMaskCount();
+        for i=1,collisionGroupMaskCount do
+            self.CollisionGroupMaskSelector:AddSelectedGroup(self.Component:GetCollisionGroupMaskName(i), true);    -- 'true' means to block the event.
+        end
     end
     
     
@@ -562,11 +589,23 @@ function GTGUI.Element:CollisionShapesPanel()
         for i,value in ipairs(self.CollisionShapePanels) do
             GTGUI.Server.DeleteElement(value);
         end
+
+        self.CollisionGroupSelector:RemoveAllSelectedGroups(true);          -- 'true' means to block the event.
+        self.CollisionGroupMaskSelector:RemoveAllSelectedGroups(true);      -- 'true' means to block the event.
         
         self.CollisionShapePanels = {};
     end
     
     
+    -- Event called when the collision group has changed.
+    function self:OnCollisionGroupChanged(arg1)
+        self.Callbacks:BindOrCall("OnCollisionGroupChanged", arg1);
+    end
+
+    -- Event called when the collision group mask has changed.
+    function self:OnCollisionGroupMaskChanged(arg1)
+        self.Callbacks:BindOrCall("OnCollisionGroupMaskChanged", arg1);
+    end
     
     -- Event called when the shapes are changed in some way. The editor needs to know about this so it can setup undo/redo points.
     function self:OnShapesChanged(arg1)

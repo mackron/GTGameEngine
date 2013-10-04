@@ -47,15 +47,31 @@ function GTGUI.Element:LabelledCollisionGroupSelector(title)
     end
 
 
-    function self:RemoveAllSelectedGroups()
+    function self:RemoveAllSelectedGroups(blockEvent)
+        -- We just loop over each child and called the OnSelectionRemoved event, and then delete all children in one go.
+        if not blockEvent then
+            for id,element in pairs(self.SelectedItemsContainer.Children) do
+                if element.Label then
+                    self:OnSelectionRemoved({name = element.Label:GetText()});
+                end
+            end
+        end
+
         self.SelectedItemsContainer:DeleteAllChildren();
     end
 
-    function self:RemoveSelectedGroupByName(name)
-        GTGUI.Server.DeleteElement(self:GetSelectedGroupByName(name));
+    function self:RemoveSelectedGroupByName(name, blockEvent)
+        local groupToDelete = self:GetSelectedGroupByName(name);
+        if groupToDelete then
+            if not blockEvent then
+                self:OnSelectionRemoved({name = name});
+            end
+
+            GTGUI.Server.DeleteElement(groupToDelete);
+        end
     end
 
-    function self:AddSelectedGroup(name)
+    function self:AddSelectedGroup(name, blockEvent)
         -- If we already have a selection of the same name, we just return the existing one instead of re-adding it.
         local existingItem = self:GetSelectedGroupByName(name);
         if existingItem then
@@ -70,9 +86,13 @@ function GTGUI.Element:LabelledCollisionGroupSelector(title)
         newItem:LabelledCollisionGroupSelectorItem(name);
 
         newItem.Cross:OnPressed(function()
-            GTGUI.Server.DeleteElement(newItem);
+            self:RemoveSelectedGroupByName(name);
         end);
 
+
+        if not blockEvent then
+            self:OnSelectionAdded({name = name});
+        end
         
         return newItem;
     end
@@ -85,6 +105,17 @@ function GTGUI.Element:LabelledCollisionGroupSelector(title)
         end
 
         return nil;
+    end
+
+
+    -- Event handler called when a selection is added.
+    function self:OnSelectionAdded(arg1)
+        self.Callbacks:BindOrCall("OnSelectionAdded", arg1);
+    end
+
+    -- Event handler called when a selection is removed.
+    function self:OnSelectionRemoved(arg1)
+        self.Callbacks:BindOrCall("OnSelectionRemoved", arg1);
     end
 
     return self;

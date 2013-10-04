@@ -33,6 +33,14 @@ function GTGUI.Element:DynamicsComponentPanel()
     self.CollisionShapes:CollisionShapesPanel();
     self.CollisionShapes:SetStyle("margin-top", "2px");
     
+    self.CollisionShapes:OnCollisionGroupChanged(function()
+        self.ParentPanel:OnSceneNodeChanged();
+    end);
+
+    self.CollisionShapes:OnCollisionGroupMaskChanged(function()
+        self.ParentPanel:OnSceneNodeChanged();
+    end);
+
     self.CollisionShapes:OnShapesChanged(function()
         self.ParentPanel:OnSceneNodeChanged();
     end);
