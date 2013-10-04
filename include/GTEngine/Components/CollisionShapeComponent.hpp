@@ -271,7 +271,7 @@ namespace GTEngine
 
         /// Helper method for attaching the convex hulls of the attached model component to the given compound shape.
         void AddModelConvexHullsToCompoundShape(btCompoundShape* shape, float margin);
-
+        
 
     protected:
 

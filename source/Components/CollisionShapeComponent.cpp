@@ -39,6 +39,8 @@ namespace GTEngine
           collisionGroup(1),       collisionMask(-1),
           collisionGroupStrings(), collisionGroupMaskStrings()
     {
+        collisionGroupStrings.PushBack("All");
+        collisionGroupMaskStrings.PushBack("All");
     }
 
     CollisionShapeComponent::~CollisionShapeComponent()
@@ -550,17 +552,20 @@ namespace GTEngine
         if (!this->collisionGroupStrings.Exists(groupName))
         {
             this->collisionGroupStrings.PushBack(groupName);
+            this->UpdateCollisionFilter();      // <-- This is O(n). Can be optimized if it becomes an issue. Shouldn't be a problem in practice.
         }
     }
 
     void CollisionShapeComponent::RemoveCollisionGroup(const char* groupName)
     {
         this->collisionGroupStrings.RemoveFirstOccuranceOf(groupName);
+        this->UpdateCollisionFilter();          // <-- This is O(n). Can be optimized if it becomes an issue. Shouldn't be a problem in practice.
     }
 
     void CollisionShapeComponent::RemoveCollisionGroupByIndex(size_t groupIndex)
     {
         this->collisionGroupStrings.Remove(groupIndex);
+        this->UpdateCollisionFilter();          // <-- This is O(n). Can be optimized if it becomes an issue. Shouldn't be a problem in practice.
     }
 
     size_t CollisionShapeComponent::GetCollisionGroupCount() const
@@ -579,17 +584,20 @@ namespace GTEngine
         if (!this->collisionGroupMaskStrings.Exists(groupName))
         {
             this->collisionGroupMaskStrings.PushBack(groupName);
+            this->UpdateCollisionFilter();      // <-- This is O(n). Can be optimized if it becomes an issue. Shouldn't be a problem in practice.
         }
     }
 
     void CollisionShapeComponent::RemoveCollisionGroupMask(const char* groupName)
     {
         this->collisionGroupMaskStrings.RemoveFirstOccuranceOf(groupName);
+        this->UpdateCollisionFilter();          // <-- This is O(n). Can be optimized if it becomes an issue. Shouldn't be a problem in practice.
     }
 
     void CollisionShapeComponent::RemoveCollisionGroupMaskByIndex(size_t groupIndex)
     {
         this->collisionGroupMaskStrings.Remove(groupIndex);
+        this->UpdateCollisionFilter();          // <-- This is O(n). Can be optimized if it becomes an issue. Shouldn't be a problem in practice.
     }
 
     size_t CollisionShapeComponent::GetCollisionGroupMaskCount() const
@@ -605,20 +613,46 @@ namespace GTEngine
 
     void CollisionShapeComponent::UpdateCollisionFilter()
     {
-        this->collisionGroup = 0;
-        this->collisionMask  = 0;
+        short newCollisionGroup = 0;
+        short newCollisionMask  = 0;
         
         GTCore::String base("Game.CollisionGroups.");
         
         for (size_t iGroup = 0; iGroup < this->collisionGroupStrings.count; ++iGroup)
         {
-            this->collisionGroup |= static_cast<short>(GlobalGame->GetScript().GetInteger((base + this->collisionGroupStrings[iGroup]).c_str()));
+            int group = GlobalGame->GetScript().GetInteger((base + this->collisionGroupStrings[iGroup]).c_str());
+            if (group == -1)
+            {
+                newCollisionGroup = static_cast<short>(-1);
+            }
+            else if (group == 0)
+            {
+                newCollisionGroup = 0;
+            }
+            else
+            {
+                newCollisionGroup |= static_cast<short>(1 << (group - 1));
+            }
         }
         
         for (size_t iMask = 0; iMask < this->collisionGroupMaskStrings.count; ++iMask)
         {
-            this->collisionMask |= static_cast<short>(GlobalGame->GetScript().GetInteger((base + this->collisionGroupMaskStrings[iMask]).c_str()));
+            int group = GlobalGame->GetScript().GetInteger((base + this->collisionGroupMaskStrings[iMask]).c_str());
+            if (group == -1)
+            {
+                newCollisionMask = -1;
+            }
+            else if (group == 0)
+            {
+                newCollisionMask = 0;
+            }
+            else
+            {
+                newCollisionMask |= static_cast<short>(1 << (group - 1));
+            }
         }
+        
+        this->SetCollisionFilter(newCollisionGroup, newCollisionMask);
     }
 
 
@@ -1295,6 +1329,7 @@ namespace GTEngine
         // The collision group strings need to be set, too.
         this->collisionGroupStrings     = deserializedCollisionGroupStrings;
         this->collisionGroupMaskStrings = deserializedCollisionGroupMaskStrings;
+        this->UpdateCollisionFilter();
     }
 
     void CollisionShapeComponent::OnPostSceneNodeDeserialized()

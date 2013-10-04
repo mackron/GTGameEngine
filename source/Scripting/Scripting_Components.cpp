@@ -2325,7 +2325,7 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->RemoveCollisionGroupByIndex(static_cast<size_t>(script.ToInteger(2)));
+                    component->RemoveCollisionGroupByIndex(static_cast<size_t>(script.ToInteger(2) - 1));
                 }
 
                 return 0;
@@ -2351,7 +2351,7 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    script.Push(component->GetCollisionGroup(static_cast<size_t>(script.ToInteger(2))));
+                    script.Push(component->GetCollisionGroup(static_cast<size_t>(script.ToInteger(2) - 1)));
                 }
                 else
                 {
@@ -2389,7 +2389,7 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    component->RemoveCollisionGroupMaskByIndex(static_cast<size_t>(script.ToInteger(2)));
+                    component->RemoveCollisionGroupMaskByIndex(static_cast<size_t>(script.ToInteger(2) - 1));
                 }
 
                 return 0;
@@ -2415,7 +2415,7 @@ namespace GTEngine
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
                 {
-                    script.Push(component->GetCollisionGroupMask(static_cast<size_t>(script.ToInteger(2))));
+                    script.Push(component->GetCollisionGroupMask(static_cast<size_t>(script.ToInteger(2) - 1)));
                 }
                 else
                 {
