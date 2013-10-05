@@ -19,6 +19,10 @@ FEATURES:
     - Added navigation mesh integration into the scene editor.
     - Added support for controlling the translation snapping size in the scene
       editor.
+    - Added support for setting collision groups to dynamics and proximity
+      components from the editor and scripting environment.
+    - Added support for callbacks to ray-tests performed through the scripting
+      environment.
 
 
 FIXES/IMPROVEMENTS:
@@ -43,6 +47,9 @@ FIXES/IMPROVEMENTS:
     - Sounds now use the search paths when loading.
     - Back faces are no longer selected in the scene editor.
     - Detaching a scene node from it's prefab now created an undo/redo point.
+    - Optimizations and improvements to font loading.
+    - Removed default-1x1.dae and sphere.dae from the repository.
+        - Changed the default mesh for cubes to default.dae.
     - More work on documentation
         - Tips, Tricks and Quirks
         - GUI Styling
