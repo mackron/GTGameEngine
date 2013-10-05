@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Scripting/Scripting_Scene.hpp>
+#include <GTEngine/Scripting/Scripting_SceneNode.hpp>
 #include <GTEngine/Scripting/Scripting_Math.hpp>
 #include <GTEngine/PrefabLibrary.hpp>
 
@@ -8,6 +9,131 @@ namespace GTEngine
 {
     namespace Scripting
     {
+        /// The ray test callback structure for performing a ray test from the scripting environment.
+        ///
+        /// This structure is not intended to be used externally.
+        struct ScriptRayTestCallback : public RayTestCallback
+        {
+        public:
+            
+            /// Constructor.
+            ///
+            /// @remarks
+            ///     The 'script' object should have the callback structure sitting at the top of the stack at index -1.
+            ScriptRayTestCallback(GTCore::Script &script)
+                : RayTestCallback(), m_script(script)
+            {
+                // The top item should be a table. We can assert this because this check should have been done at a higher level. In this table we will check
+                // for the 'collisionGroup' and 'collidesWith' fields. If these are present, we do an optimized NeedsCollision() implementation.
+                assert(m_script.IsTable(-1));
+                {
+                    m_script.Push("collisionGroup");
+                    m_script.GetTableValue(-2);
+                    if (m_script.IsTable(-1))
+                    {
+                        m_script.Push("bitfield");
+                        m_script.GetTableValue(-2);
+                        if (m_script.IsNumber(-1))
+                        {
+                            this->collisionGroup = static_cast<short>(m_script.ToInteger(-1));
+                        }
+                        m_script.Pop(1);
+                    }
+                    m_script.Pop(1);
+                    
+                    m_script.Push("collidesWith");
+                    m_script.GetTableValue(-2);
+                    if (m_script.IsTable(-1))
+                    {
+                        m_script.Push("bitfield");
+                        m_script.GetTableValue(-2);
+                        if (m_script.IsNumber(-1))
+                        {
+                            this->collisionMask = static_cast<short>(m_script.ToInteger(-1));
+                        }
+                        m_script.Pop(1);
+                    }
+                    m_script.Pop(1);
+                }
+            }
+            
+            /// Destructor.
+            ~ScriptRayTestCallback()
+            {
+            }
+            
+            
+            /// RayTestCallback::NeedsCollision()
+            bool NeedsCollision(short collisionGroup, short collisionMask, SceneNode &otherSceneNode)
+            {
+                bool result = RayTestCallback::NeedsCollision(collisionGroup, collisionMask, otherSceneNode);
+                if (result)
+                {
+                    // We now need to check if the table at the top of the stack on the script contains the method "NeedsCollision". If so, call it and look
+                    // at the return value.
+                    assert(m_script.IsTable(-1));
+                    {
+                        m_script.Push("NeedsCollision");
+                        m_script.GetTableValue(-2);
+                        if (m_script.IsFunction(-1))
+                        {
+                            // We want to pass a reference to the scripting representation of the scene node. To do this, we first need to grab the scene, and then
+                            // from that grab the scene node by it's ID.
+                            m_script.Push(-2);                                      // self
+                            Scripting::PushSceneNode(m_script, otherSceneNode);     // otherSceneNode
+                            m_script.Call(2, 1);
+                            {
+                                result = m_script.ToBoolean(-1);
+                            }
+                            m_script.Pop(1);    // The return value of NeedsCollision().
+                        }
+                        else
+                        {
+                            // NeedsCollision is not a function (probably nil), so it needs to be popped. We don't do this when it is a function, because the call
+                            // will pop the function automatically.
+                            m_script.Pop(1);
+                        }
+                    }
+                }
+                
+                return result;
+            }
+            
+            /// RayTestCallback::ProcessResult()
+            void ProcessResult(SceneNode &sceneNode, const glm::vec3 &worldPosition, const glm::vec3 &worldNormal)
+            {
+                assert(m_script.IsTable(-1));
+                {
+                    m_script.Push("ProcessResult");
+                    m_script.GetTableValue(-2);
+                    if (m_script.IsFunction(-1))
+                    {
+                        m_script.Push(-2);                                      // self
+                        Scripting::PushSceneNode(m_script, sceneNode);          // sceneNode
+                        Scripting::PushNewVector3(m_script, worldPosition);     // worldPosition
+                        Scripting::PushNewVector3(m_script, worldNormal);       // worldNormal
+                        m_script.Call(4, 0);
+                    }
+                    else
+                    {
+                        m_script.Pop(1);
+                    }
+                }
+            }
+            
+            
+        private:
+            
+            /// A reference to the script object which will have functions called on it.
+            GTCore::Script &m_script;
+            
+            
+        private:    // No copyiong.
+            ScriptRayTestCallback(const ScriptRayTestCallback &);
+            ScriptRayTestCallback & operator=(const ScriptRayTestCallback &);
+        };
+        
+        
         bool LoadSceneLibrary(GTCore::Script &script)
         {
             bool successful = script.Execute
@@ -290,13 +416,13 @@ namespace GTEngine
                 "    return GTEngine.System.Scene.CalculateViewportPickingRay(self._internalPtr, x, y, viewportIndex);"
                 "end;"
 
-                "function GTEngine.Scene:RayTest(rayNear, rayFar)"
-                "    local sceneNodePtr, hitPosition, hitNormal = GTEngine.System.Scene.RayTest(self._internalPtr, rayNear, rayFar);"
+                "function GTEngine.Scene:RayTest(rayNear, rayFar, callback)"
+                "    local sceneNodePtr = GTEngine.System.Scene.RayTest(self._internalPtr, rayNear, rayFar, callback);"
                 "    if sceneNodePtr ~= nil then"
-                "        return self:GetSceneNodeByPtr(sceneNodePtr), hitPosition, hitNormal;"
+                "        return self:GetSceneNodeByPtr(sceneNodePtr);"
                 "    end;"
                 ""
-                "    return nil, math.vec3(), math.vec3();"
+                "    return nil;"
                 "end;"
 
 
@@ -786,30 +912,45 @@ namespace GTEngine
                 {
                     glm::vec3 rayNear = Scripting::ToVector3(script, 2);
                     glm::vec3 rayFar  = Scripting::ToVector3(script, 3);
-                    ClosestRayExceptMeTestCallback callback;
-
-                    auto result = scene->RayTest(rayNear, rayFar, callback);
-                    if (result != nullptr)
+                    
+                    // We should usually have a table as the fourth parameter. If not we just do a test against all objects
+                    // and return the closest scene node.
+                    if (script.IsTable(4))
                     {
-                        script.Push(result);
-                        Scripting::PushNewVector3(script, callback.worldHitPosition);
-                        Scripting::PushNewVector3(script, callback.worldHitNormal);
+                        script.PushValue(4);    // We want the callback to be at -1.
+                        Scripting::ScriptRayTestCallback callback(script);
+                        
+                        auto result = scene->RayTest(rayNear, rayFar, callback);
+                        if (result != nullptr)
+                        {
+                            Scripting::PushSceneNode(script, *result);
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
                     }
                     else
                     {
-                        script.PushNil();
-                        Scripting::PushNewVector3(script, glm::vec3());
-                        Scripting::PushNewVector3(script, glm::vec3());
+                        ClosestRayExceptMeTestCallback callback;
+
+                        auto result = scene->RayTest(rayNear, rayFar, callback);
+                        if (result != nullptr)
+                        {
+                            Scripting::PushSceneNode(script, *result);
+                        }
+                        else
+                        {
+                            script.PushNil();
+                        }
                     }
                 }
                 else
                 {
                     script.PushNil();
-                    Scripting::PushNewVector3(script, glm::vec3());
-                    Scripting::PushNewVector3(script, glm::vec3());
                 }
 
-                return 3;
+                return 1;
             }
 
 
