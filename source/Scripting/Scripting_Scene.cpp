@@ -79,7 +79,7 @@ namespace GTEngine
                         {
                             // We want to pass a reference to the scripting representation of the scene node. To do this, we first need to grab the scene, and then
                             // from that grab the scene node by it's ID.
-                            m_script.Push(-2);                                      // self
+                            m_script.PushValue(-2);                                 // self
                             Scripting::PushSceneNode(m_script, otherSceneNode);     // otherSceneNode
                             m_script.Call(2, 1);
                             {
@@ -108,7 +108,7 @@ namespace GTEngine
                     m_script.GetTableValue(-2);
                     if (m_script.IsFunction(-1))
                     {
-                        m_script.Push(-2);                                      // self
+                        m_script.PushValue(-2);                                 // self
                         Scripting::PushSceneNode(m_script, sceneNode);          // sceneNode
                         Scripting::PushNewVector3(m_script, worldPosition);     // worldPosition
                         Scripting::PushNewVector3(m_script, worldNormal);       // worldNormal
@@ -436,6 +436,29 @@ namespace GTEngine
 
 
                 "GTEngine.RegisteredScenes = {};"
+            );
+            
+            successful = successful & script.Execute
+            (
+                "GTEngine.__DefaultRayTestCallback = {};"
+                "GTEngine.__DefaultRayTestCallback.__index = GTEngine.__DefaultRayTestCallback;"
+                
+                "function GTEngine.__DefaultRayTestCallback.ProcessResult(self, sceneNode, worldPosition, worldNormal)"
+                "    self.sceneNode     = sceneNode;"
+                "    self.worldPosition = worldPosition;"
+                "    self.worldNormal   = worldNormal;"
+                "end;"
+                
+                "function GTEngine.DefaultRayTestCallback()"
+                "    local new = {};"
+                "    setmetatable(new, GTEngine.__DefaultRayTestCallback);"
+                "        new.collisionGroup = GTEngine.CollisionGroupMask();"
+                "        new.collidesWith   = GTEngine.CollisionGroupMask();"
+                "        new.sceneNode      = nil;"
+                "        new.worldPosition  = math.vec3(0.0, 0.0,  0.0);"
+                "        new.worldNormal    = math.vec3(0.0, 0.0, -1.0)"
+                "    return new;"
+                "end;"
             );
 
             if (successful)
