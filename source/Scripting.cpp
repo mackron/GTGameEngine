@@ -169,6 +169,32 @@ namespace GTEngine
 
 
 
+            ///////////////////////////////////////////
+            // CollisionGroupMask.
+            
+            successful = successful & script.Execute
+            (
+                "GTEngine.__CollisionGroupMask = {};"
+                "GTEngine.__CollisionGroupMask.__index = GTEngine.__CollisionGroupMask;"
+                
+                "GTEngine.__CollisionGroupMask.Add = function(self, groupIndex)"
+                "    self.bitfield = bit.bor(self.bitfield, bit.lshift(1, groupIndex - 1));"
+                "end;"
+                
+                "GTEngine.__CollisionGroupMask.Remove = function(self, groupIndex)"
+                "    self.bitfield = bit.band(self.bitfield, bit.bswap(bit.lshift(1, groupIndex - 1)));"
+                "end;"
+                
+                "function GTEngine.CollisionGroupMask()"
+                "    local new = {};"
+                "    setmetadata(new, GTEngine.__CollisionGroupMask);"
+                "        new.bitfield = 0;"
+                "    return new;"
+                "end;"
+            );
+
+
+
             successful = successful && LoadRenderingLibrary(script);
             successful = successful && LoadAudioLibrary(script);
             successful = successful && LoadSceneLibrary(script);
