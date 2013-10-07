@@ -22,6 +22,8 @@
 #include <set>
 #include <vector>
 #include <queue>
+#include <algorithm>
+#include <functional>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
