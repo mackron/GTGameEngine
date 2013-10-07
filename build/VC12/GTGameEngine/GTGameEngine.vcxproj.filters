@@ -1,0 +1,1636 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Animation">
+      <UniqueIdentifier>{8e628f37-8d48-49e7-bf8a-b09bcc94cdc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Audio">
+      <UniqueIdentifier>{dd598d5d-39a5-423f-b24a-dd5184e2f92a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Components">
+      <UniqueIdentifier>{829d3a3f-4934-4071-8e8a-f29119b1df09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\DefaultSceneRenderer">
+      <UniqueIdentifier>{c638d4c9-3d3c-43e8-9d7d-a8e4eee4c315}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Editor">
+      <UniqueIdentifier>{4e0803e0-0027-4cf5-a92b-91caeb1d7631}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\HACD">
+      <UniqueIdentifier>{0661b68a-b91f-4bf8-8437-9ff2d90243ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Math">
+      <UniqueIdentifier>{eced791c-0c22-4a0d-9fc1-e3ac95128344}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Physics">
+      <UniqueIdentifier>{ae817934-b2c5-4a03-95b1-acff1124a153}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Recast">
+      <UniqueIdentifier>{52a2e2dd-6732-4322-bd25-47db0b4f6133}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Rendering">
+      <UniqueIdentifier>{1b39ad96-2911-4b46-aafe-b3509fcf9b0a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scripting">
+      <UniqueIdentifier>{80472dbe-e23a-4f47-ad82-c00b36d4b4b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utilities">
+      <UniqueIdentifier>{4d0038a2-28ce-4db7-959a-2690e174cd6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Editor\ImageEditor">
+      <UniqueIdentifier>{a0970ab0-a212-4ba6-b089-9965996eaecf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Editor\MaterialEditor">
+      <UniqueIdentifier>{2d4b43de-0ef1-4a57-95a5-6d036382cdde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Editor\ModelEditor">
+      <UniqueIdentifier>{8638d66d-ab49-4273-9eea-3551bdee0413}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Editor\PackagingToolEditor">
+      <UniqueIdentifier>{582c8ae8-d2f3-4abd-a99e-2531bf8fdd64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Editor\ParticleEditor">
+      <UniqueIdentifier>{5035deaa-62f2-4a5e-a7c8-2aa21b083bf1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Editor\SceneEditor">
+      <UniqueIdentifier>{af4476f8-f3f3-4741-a21d-f0d303e15875}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Editor\SoundEditor">
+      <UniqueIdentifier>{fd118ae1-8854-46ef-af39-94db8cdfbc4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Editor\TextEditor">
+      <UniqueIdentifier>{03a3d90e-61d1-49f6-9475-60d4c19b6385}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Animation">
+      <UniqueIdentifier>{cf4a9ab3-ae0b-461f-80af-f326cda02420}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Audio">
+      <UniqueIdentifier>{6a341c4c-477f-48e6-acc6-b425e1e50de4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Components">
+      <UniqueIdentifier>{0a6765b5-f8d1-40a2-96e3-0b8a812c3aff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\DefaultSceneRenderer">
+      <UniqueIdentifier>{237f2986-5fa6-44c1-9639-7216e51a9d63}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor">
+      <UniqueIdentifier>{d71bc81c-03da-4300-8c7d-7663c28a6f02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\HACD">
+      <UniqueIdentifier>{3025a566-8cb6-4400-8f5a-6b3e04612c9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Math">
+      <UniqueIdentifier>{30a453e6-ebb8-4602-801f-790c5c0b2d9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utilities">
+      <UniqueIdentifier>{8a51aff0-b9d2-423b-8c30-6bf91204996b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scripting">
+      <UniqueIdentifier>{d07f2069-54d0-4b8d-80c5-aa1b0e94f365}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering">
+      <UniqueIdentifier>{9ba803f1-9d03-4d9b-9d02-7dd3c7569b36}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Recast">
+      <UniqueIdentifier>{a64c8739-5fb4-4a98-82b9-b08f42ad19a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Physics">
+      <UniqueIdentifier>{4df256d7-9fb7-46d4-bf7f-1e043230ad94}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Audio\Streamers">
+      <UniqueIdentifier>{f90abb92-258e-41f5-bd1b-c2117ec635f7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor\ImageEditor">
+      <UniqueIdentifier>{5fb977e6-759c-43cc-b9a3-d52ff5b16e69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor\MaterialEditor">
+      <UniqueIdentifier>{413c194f-bd55-457f-8382-1b17503ddc61}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor\ModelEditor">
+      <UniqueIdentifier>{6e8d2fc1-3f33-4dd9-8284-96ed66a0bc0b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor\TextEditor">
+      <UniqueIdentifier>{e11a319c-920c-4505-94ab-cd0e63e28603}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor\SoundEditor">
+      <UniqueIdentifier>{25ceda9b-1521-47d0-9999-d7ba12e9c034}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor\SceneEditor">
+      <UniqueIdentifier>{7d6cba63-307f-4899-9814-2dc217c2195a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor\ParticleEditor">
+      <UniqueIdentifier>{93b0335c-a9f2-49cf-bb4c-950cce698134}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor\PackagingToolEditor">
+      <UniqueIdentifier>{5c36ea15-cf85-4713-9d6a-71e56c6df868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering\OpenGL">
+      <UniqueIdentifier>{9b2f85c3-7571-494f-b367-158277b067ef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering\OpenGL\OpenGL21">
+      <UniqueIdentifier>{418791b1-2f60-4cdc-b175-23fa70cd1b66}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\GTEngine\AABB.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\AssetTypes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Bone.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\CollisionGroups.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Component.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ConvexHull.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ConvexHullBuildSettings.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader_SimpleTransform.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\CPUVertexShader_Skinning.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DataFilesWatcher.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultPrefabLinker.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneCullingManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultScenePhysicsManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneUpdateManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Errors.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Game.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameEvent.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameEventCodes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameEventQueue.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameObject.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameObjectGC.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GamePackager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameScript.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameUpdateJob.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameWindowEventHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GTEngine.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GUIEventHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GUIImageManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\IO.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Logging.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Material.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\MaterialLibrary.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\MaterialShaderCache.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Math.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Mesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\MeshBuilder.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Model.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ModelDefinition.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ModelLibrary.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\NavigationMesh.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Particle.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleEmitter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleFunction.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleFunctionTypes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleList.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleSystemDefinition.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ParticleSystemLibrary.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Prefab.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\PrefabLibrary.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\PrefabLinker.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Profiler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Projectile.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\rapidxml.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scene.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneCullingDbvtPolicy.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneCullingManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneDeserializeCallback.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneEventHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneNode.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeEventHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneNodeMap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ScenePhysicsManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneRenderer.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneStateStack.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneStateStackBranch.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneStateStackFrame.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneStateStackRestoreCommands.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneStateStackStagingArea.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneUpdateManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SceneViewport.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ScriptDefinition.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ScriptLibrary.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ScriptVariable.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ScriptVariableTypes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Serialization.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ShaderLibrary.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ShaderParameter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ShaderParameterCache.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ShadowVolume.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SimpleQuadtree.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\SkinningVertexAttribute.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Texture2DLibrary.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\ThreadCache.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\VertexArrayLibrary.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\Animation.hpp">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationChannel.hpp">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKey.hpp">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationKeyFrame.hpp">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationSegment.hpp">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationSequence.hpp">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationTrack.hpp">
+      <Filter>Header Files\Animation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioComposer.hpp">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\Sound.hpp">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundFormats.hpp">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundStreamer.hpp">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\CameraComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\CollisionShapeComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\ConeTwistConstraintComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\DynamicsComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\EditorMetadataComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\GenericConstraintComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\LightComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\ModelComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\OccluderComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\ParticleSystemComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\PointToPointConstraintComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\PrefabComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\ProximityComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Components\ScriptComponent.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_DirectionalLight.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_Framebuffers.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_LightGroup.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_LightManager.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_LuminanceChain.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaderID.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaders.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_MaterialUniformNameCache.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_Mesh.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_MultiPassPipeline.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_PointLight.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShaderBuilder.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_ShadowVisibilityProcessor.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_SinglePassPipeline.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_SpotLight.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\DefaultSceneRenderer\DefaultSceneRenderer_VisibilityProcessor.hpp">
+      <Filter>Header Files\DefaultSceneRenderer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\CollisionShapeWireframeMesh.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\Editor3DViewportEventHandler.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorAxisArrows.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\EditorGrid.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\PivotPoint.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SubEditor.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SubEditorTabEventHandler.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\TransformGizmo.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\ImageEditor\ImageEditor.hpp">
+      <Filter>Header Files\Editor\ImageEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\MaterialEditor\MaterialEditor.hpp">
+      <Filter>Header Files\Editor\MaterialEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\ModelEditor\ModelEditor.hpp">
+      <Filter>Header Files\Editor\ModelEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\PackagingToolEditor\PackagingToolEditor.hpp">
+      <Filter>Header Files\Editor\PackagingToolEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\ParticleEditor\ParticleEditor.hpp">
+      <Filter>Header Files\Editor\ParticleEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditor.hpp">
+      <Filter>Header Files\Editor\SceneEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorCommand.hpp">
+      <Filter>Header Files\Editor\SceneEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorPhysicsManager.hpp">
+      <Filter>Header Files\Editor\SceneEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorPrefabLinker.hpp">
+      <Filter>Header Files\Editor\SceneEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorSceneEventHandler.hpp">
+      <Filter>Header Files\Editor\SceneEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorSceneUpdateManager.hpp">
+      <Filter>Header Files\Editor\SceneEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\TextEditor\TextEditor.hpp">
+      <Filter>Header Files\Editor\TextEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdCircularList.h">
+      <Filter>Header Files\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdGraph.h">
+      <Filter>Header Files\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdHACD.h">
+      <Filter>Header Files\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdICHull.h">
+      <Filter>Header Files\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdManifoldMesh.h">
+      <Filter>Header Files\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdMeshDecimator.h">
+      <Filter>Header Files\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdMicroAllocator.h">
+      <Filter>Header Files\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdRaycastMesh.h">
+      <Filter>Header Files\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdSArray.h">
+      <Filter>Header Files\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdVector.h">
+      <Filter>Header Files\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\HACD\hacdVersion.h">
+      <Filter>Header Files\HACD</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Math\Plane.hpp">
+      <Filter>Header Files\Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Utilities\CharacterControllerEventHandler.hpp">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Utilities\DynamicCharacterController.hpp">
+      <Filter>Header Files\Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Animation.hpp">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Audio.hpp">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Components.hpp">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Editor.hpp">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Game.hpp">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Math.hpp">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Particles.hpp">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Rendering.hpp">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_Scene.hpp">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Scripting\Scripting_SceneNode.hpp">
+      <Filter>Header Files\Scripting</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\BlendEquations.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\BlendFunctions.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\BufferTypes.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DefaultGUIRenderer.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\DrawModes.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Framebuffer.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\PolygonModes.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Renderer.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\RendererFunctions.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Shader.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\ShaderStages.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\StencilOperations.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\Texture2D.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\TextureCube.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\TextureFilters.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\TextureWrapModes.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexArray.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexAttributes.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Rendering\VertexFormat.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourAlloc.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourAssert.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourCommon.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourCrowd.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourLocalBoundary.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourNavMesh.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourNavMeshBuilder.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourNavMeshQuery.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourNode.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourObstacleAvoidance.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourPathCorridor.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourPathQueue.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourProximityGrid.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourStatus.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourTileCache.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourTileCacheBuilder.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\Recast.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\RecastAlloc.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Recast\RecastAssert.h">
+      <Filter>Header Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\BaseCollisionWorld.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\btEllipsoidShape.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\Bullet.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionObject.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionShapeTypes.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\CollisionWorld.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\ConeTwistConstraint.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\DynamicsWorld.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\GenericConstraint.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\GhostObject.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\MeshCollisionShape.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\PointToPointConstraint.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\RigidBody.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\SceneNodeMotionState.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Physics\StaticMeshCollisionShape.hpp">
+      <Filter>Header Files\Physics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp">
+      <Filter>Source Files\Audio\Streamers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp">
+      <Filter>Source Files\Audio\Streamers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\RCCache.hpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\RCQueue.hpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\RenderCommand.hpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\CapabilityBits.hpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.hpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\RendererCaps.hpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\TypeConversion.hpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Framebuffer_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\FramebufferState_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCClear_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateFramebuffer_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateShader_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateTexture_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateVertexArray_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteFramebuffer_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteShader_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteTexture_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteVertexArray_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDraw_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetFramebufferState_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetGlobalState_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetShaderState_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetTextureState_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetVertexArrayState_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\ServerState_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Shader_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\ShaderState_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\State_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Texture2D_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\TextureCube_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\TextureState_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\VertexArray_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\include\GTEngine\HACD\hacdCircularList.inl">
+      <Filter>Header Files\HACD</Filter>
+    </None>
+    <None Include="..\..\..\include\GTEngine\HACD\hacdVector.inl">
+      <Filter>Header Files\HACD</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\source\ApplicationConfig.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Bone.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Component.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ConvexHull.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\CPUVertexShader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\CPUVertexShader_SimpleTransform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\CPUVertexShader_Skinning.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DataFilesWatcher.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultPrefabLinker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneCullingManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultScenePhysicsManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneUpdateManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Errors.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Game.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameEventQueue.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameObjectGC.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GamePackager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameScript.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameUpdateJob.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameWindowEventHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GTEngine.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUIEventHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUIImageManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\IO.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Logging.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Material.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MaterialLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MaterialShaderCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Mesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\MeshBuilder.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ModelDefinition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ModelDefinition_Assimp.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ModelLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\NavigationMesh.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Particle.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ParticleEmitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ParticleFunction.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ParticleList.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ParticleSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ParticleSystemDefinition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ParticleSystemLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Prefab.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\PrefabLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\PrefabLinker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Profiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Projectile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneCullingDbvtPolicy.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneDeserializeCallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneEventHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneNode.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneNodeEventHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneNodeMap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneRenderer.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneStateStack.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneStateStackBranch.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneStateStackFrame.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneStateStackRestoreCommands.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneStateStackStagingArea.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\SceneViewport.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ScriptDefinition.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ScriptLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ScriptVariable.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ShaderLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ShaderParameter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ShaderParameterCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ShadowVolume.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Texture2DLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ThreadCache.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\VertexArrayLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Animation\Animation.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Animation\AnimationChannel.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Animation\AnimationKey.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Animation\AnimationKeyFrame.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Animation\AnimationSequence.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Animation\AnimationTrack.cpp">
+      <Filter>Source Files\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\AudioComposer.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\Sound.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\SoundStreamer.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.cpp">
+      <Filter>Source Files\Audio\Streamers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.cpp">
+      <Filter>Source Files\Audio\Streamers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\CollisionShapeComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\ConeTwistConstraintComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\DynamicsComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\EditorMetadataComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\GenericConstraintComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\LightComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\ModelComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\OccluderComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\ParticleSystemComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\PointToPointConstraintComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\PrefabComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\ProximityComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Components\ScriptComponent.cpp">
+      <Filter>Source Files\Components</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_DirectionalLight.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_Framebuffers.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_LightGroup.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_LightManager.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_LuminanceChain.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaderID.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_MaterialShaders.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_MaterialUniformNameCache.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_Mesh.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_MultiPassPipeline.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_PointLight.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShaderBuilder.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_ShadowVisibilityProcessor.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_SinglePassPipeline.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_SpotLight.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\DefaultSceneRenderer\DefaultSceneRenderer_VisibilityProcessor.cpp">
+      <Filter>Source Files\DefaultSceneRenderer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Editor3DViewportEventHandler.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\EditorAxisArrows.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\EditorGrid.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\PivotPoint.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SubEditor.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SubEditorTabEventHandler.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\TransformGizmo.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\ImageEditor\ImageEditor.cpp">
+      <Filter>Source Files\Editor\ImageEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\MaterialEditor\MaterialEditor.cpp">
+      <Filter>Source Files\Editor\MaterialEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\ModelEditor\ModelEditor.cpp">
+      <Filter>Source Files\Editor\ModelEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\PackagingToolEditor\PackagingToolEditor.cpp">
+      <Filter>Source Files\Editor\PackagingToolEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\ParticleEditor\ParticleEditor.cpp">
+      <Filter>Source Files\Editor\ParticleEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditor.cpp">
+      <Filter>Source Files\Editor\SceneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorCommand.cpp">
+      <Filter>Source Files\Editor\SceneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorPhysicsManager.cpp">
+      <Filter>Source Files\Editor\SceneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorPrefabLinker.cpp">
+      <Filter>Source Files\Editor\SceneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorSceneEventHandler.cpp">
+      <Filter>Source Files\Editor\SceneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorSceneUpdateManager.cpp">
+      <Filter>Source Files\Editor\SceneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\TextEditor\TextEditor.cpp">
+      <Filter>Source Files\Editor\TextEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdGraph.cpp">
+      <Filter>Source Files\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdHACD.cpp">
+      <Filter>Source Files\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdICHull.cpp">
+      <Filter>Source Files\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdManifoldMesh.cpp">
+      <Filter>Source Files\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdMeshDecimator.cpp">
+      <Filter>Source Files\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdMicroAllocator.cpp">
+      <Filter>Source Files\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HACD\hacdRaycastMesh.cpp">
+      <Filter>Source Files\HACD</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\BaseCollisionWorld.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\btEllipsoidShape.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\CollisionObject.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\CollisionWorld.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\ConeTwistConstraint.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\DynamicsWorld.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\GenericConstraint.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\GhostObject.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\MeshCollisionShape.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\PointToPointConstraint.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\RigidBody.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\SceneNodeMotionState.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Physics\StaticMeshCollisionShape.cpp">
+      <Filter>Source Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourAlloc.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourCommon.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourCrowd.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourLocalBoundary.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourNavMesh.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourNavMeshBuilder.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourNavMeshQuery.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourNode.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourObstacleAvoidance.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourPathCorridor.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourPathQueue.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourProximityGrid.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourTileCache.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\DetourTileCacheBuilder.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\Recast.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastAlloc.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastArea.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastContour.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastFilter.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastLayers.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastMesh.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastMeshDetail.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastRasterization.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Recast\RecastRegion.cpp">
+      <Filter>Source Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\DefaultGUIRenderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\RCQueue.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\Renderer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\Shader.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\Texture2D.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\TextureCube.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\VertexArray.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\VertexFormat.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\Debugging_OpenGL.cpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Framebuffer_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\FramebufferState_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCClear_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateFramebuffer_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateShader_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateTexture_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCCreateVertexArray_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteFramebuffer_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteShader_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteTexture_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDeleteVertexArray_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCDraw_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetFramebufferState_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetGlobalState_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetShaderState_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetTextureState_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RCSetVertexArrayState_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Renderer_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\ServerState_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Shader_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\ShaderState_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\State_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\Texture2D_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\TextureCube_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\TextureState_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\VertexArray_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Animation.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Audio.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Components.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Editor.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Game.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Math.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Particles.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Rendering.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_Scene.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scripting\Scripting_SceneNode.cpp">
+      <Filter>Source Files\Scripting</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Utilities\DynamicCharacterController.cpp">
+      <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
