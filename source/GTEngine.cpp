@@ -17,6 +17,7 @@
 #include <GTEngine/ThreadCache.hpp>
 #include <GTCore/CommandLine.hpp>
 #include <GTCore/IO.hpp>
+#include <GTCore/WindowManagement.hpp>
 
 // Basic globals.
 namespace GTEngine
@@ -75,6 +76,10 @@ namespace GTEngine
         {
             Logging::Startup("var/logs/engine.html");
         }
+        
+        
+        // Before we can do any windowing operations we will need to initialise the window management module of GTCore.
+        GTCore::StartupWindowManager();
 
 
         // Here we'll startup the thread cache. We will do this before starting the sub-systems so that they themselves can do some
@@ -179,6 +184,9 @@ namespace GTEngine
 
         // Thread cache.
         ThreadCache::Shutdown();
+        
+        // GTCore's window management module.
+        GTCore::ShutdownWindowManager();
 
         // Application config.
         ApplicationConfig::Close();
