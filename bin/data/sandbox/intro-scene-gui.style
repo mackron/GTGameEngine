@@ -59,7 +59,7 @@ intro-scene-container-footer-right
 intro-scene-jumbo-title
 {
     font-size:   80pt
-    font-style:  bold
+    font-weight: bold
     text-color:  #555
     margin-left: 40px
     width:       auto
@@ -105,7 +105,7 @@ intro-scene-link
 {
     width:        auto
     font-size:    14pt
-    font-style:   bold
+    font-weight:  bold
     text-color:   #777
     cursor:       hand
     margin-top:   8px

@@ -134,7 +134,7 @@ function GTGUI.Element:DataExplorer()
         item.titleContainer:OnTear(function()
             if not item:GetParent().isRoot then
                 -- We need to create an element that we'll use as the drag-and-drop element.
-                local dragAndDropElement = GTGUI.Server.New("<div style='visible:false; positioning:absolute; z-index:100; opacity:50%; width:auto; padding:4px 2px; text-color:#ccc; font-style:bold; background-color:#666; vertical-align:center;' />");
+                local dragAndDropElement = GTGUI.Server.New("<div style='visible:false; positioning:absolute; z-index:100; opacity:50%; width:auto; padding:4px 2px; text-color:#ccc; font-weight:bold; background-color:#666; vertical-align:center;' />");
                 dragAndDropElement:SetText(item:GetText());
                 dragAndDropElement:OnSize(function()
                     GTGUI.Server.SetDragAndDropProxyElementOffset(-(dragAndDropElement:GetWidth() / 2), -(dragAndDropElement:GetHeight() / 2));

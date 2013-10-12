@@ -5,14 +5,14 @@ function GTGUI.Element:SearchBox()
     self.Icon    = GTGUI.Server.New("<div parentid='" .. self:GetID() .. "' styleclass='searchbox-icon' />");
     
     self.HasContent = false;
-    self.TextBox:SetStyle("font-style", "italic");
+    self.TextBox:SetStyle("font-slant", "italic");
     
     self.TextBox:OnFocus(function()
         if not self.TextBox.HasContent then
             self.TextBox:SetText("");
         end
         
-        self.TextBox:SetStyle("font-style", "none");
+        self.TextBox:SetStyle("font-slant", "default");
         self.Icon:SetStyle("background-image-color", "#aaa");
     end);
     
@@ -20,7 +20,7 @@ function GTGUI.Element:SearchBox()
         local text = self.TextBox:GetText();
         if text == nil or text == "" then
             self.TextBox.HasContent = false;
-            self.TextBox:SetStyle("font-style", "italic");
+            self.TextBox:SetStyle("font-slant", "italic");
             self.TextBox:SetText("Search...");
         else
             self.TextBox.HasContent = true;

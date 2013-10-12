@@ -47,9 +47,9 @@ script-component-panel-script-container-header
 
 script-component-panel-script-container-text-box
 {
-    width:      100%
-    text-color: std-text-color
-    font-style: bold
+    width:       100%
+    text-color:  std-text-color
+    font-weight: bold
 }
 
 script-component-panel-script-container-edit-button

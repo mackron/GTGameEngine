@@ -2,10 +2,10 @@
 
 scene-editor-transform-panel-settocamera-button
 {
-    width:      auto
-    margin-top: 8px
-    text-color: #999
-    font-style: bold
+    width:       auto
+    margin-top:  8px
+    text-color:  #999
+    font-weight: bold
 }
 
 scene-editor-transform-panel-settocamera-button:hovered

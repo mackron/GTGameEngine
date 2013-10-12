@@ -31,7 +31,7 @@ panel-groupbox-title-arrow
 panel-groupbox-title-text
 {
     text-color:              #bbb
-    font-style:              bold
+    font-weight:             bold
     
     transparent-mouse-input: true
 }

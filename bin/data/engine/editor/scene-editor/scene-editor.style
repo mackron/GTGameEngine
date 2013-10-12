@@ -36,7 +36,7 @@ collision-shape-panel-title
     width:          100%
     vertical-align: center
     text-color:     std-text-color
-    font-style:     bold;
+    font-weight:    bold;
 }
 
 collision-shape-panel-delete-button

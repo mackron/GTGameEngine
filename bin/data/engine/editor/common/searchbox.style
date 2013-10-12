@@ -19,7 +19,7 @@ searchbox-textbox includes textbox
 
 searchbox-textbox : focused
 {
-    font-style:       none
+    font-slant:       default
     text-color:       #aaa
     background-color: inherit
 }

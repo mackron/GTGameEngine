@@ -15,7 +15,7 @@ packaging-tool-editor-title
     margin-bottom: 10px
 
     font-size:     30pt
-    font-style:    bold
+    font-weight:   bold
     text-color:    #888
 }
 
@@ -76,7 +76,7 @@ packaging-tool-editor-build-button
     padding:     30px 4px
     
     font-size:   12pt
-    font-style:  bold
+    font-weight: bold
     text-color:  #999
     
     border:           1px #666

@@ -33,7 +33,7 @@ combobox-expanded:hovered
 
 combobox-title
 {
-    font-style:              bold
+    font-weight:             bold
     text-color:              #bbb
 
     width:                   140px
