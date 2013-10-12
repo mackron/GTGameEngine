@@ -2,10 +2,10 @@
 
 model-component-panel-materials-label
 {
-    width:      auto
-    text-color: #999
-    font-style: bold
-    margin-top: 8px
+    width:       auto
+    text-color:  #999
+    font-weight: bold
+    margin-top:  8px
 }
 
 model-component-panel-model-textbox includes textbox

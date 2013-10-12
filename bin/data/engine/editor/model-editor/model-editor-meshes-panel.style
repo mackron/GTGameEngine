@@ -19,7 +19,7 @@ model-editor-meshes-panel-properties-noselection
 {
     padding:          8px
 
-    font-style:       bold
+    font-weight:      bold
     font-size:        10pt
     text-color:       #777
     

@@ -22,7 +22,7 @@ scene-editor-details-panel-prefab-name
     width:        100%
     margin-right: 4px
     text-color:   std-text-color
-    font-style:   bold
+    font-weight:  bold
 }
 
 scene-editor-details-panel-prefab-update-icon

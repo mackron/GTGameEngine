@@ -50,7 +50,7 @@ scene-editor-properties-panel-body-message
     width:            100%
     margin-top:       8px
     horizontal-align: center
-    font-style:       bold
+    font-weight:      bold
     text-color:       #555
     visible:          false
 }

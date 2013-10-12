@@ -2,8 +2,8 @@
 
 scene-editor-hierarchy-panel-item-prefab
 {
-    text-color: #99b
-    font-style: bold
+    text-color:  #99b
+    font-weight: bold
 }
 
 scene-editor-hierarchy-panel-item-prefab-selected

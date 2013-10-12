@@ -21,6 +21,7 @@
 #include <GTCore/CommandLine.hpp>
 #include <GTCore/Path.hpp>
 #include <GTCore/Keyboard.hpp>
+#include <GTCore/Profiling/valgrind/callgrind.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -390,6 +391,7 @@ namespace GTEngine
 
     void Game::OpenEditor()
     {
+        CALLGRIND_ZERO_STATS;
         if (this->OnEditorOpening())
         {
             // The main game window GUI element needs to be hidden.
@@ -420,6 +422,7 @@ namespace GTEngine
 
             this->OnEditorOpen();
         }
+        CALLGRIND_STOP_INSTRUMENTATION;
     }
 
     void Game::CloseEditor()

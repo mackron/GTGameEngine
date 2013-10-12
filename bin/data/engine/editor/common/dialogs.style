@@ -34,7 +34,7 @@ dialog-title
 {
     padding-bottom: 4px
     margin-bottom:  8px
-    font-style:     bold
+    font-weight:    bold
     border-bottom:  1px #999
 }
     

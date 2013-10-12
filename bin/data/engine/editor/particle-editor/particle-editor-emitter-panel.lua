@@ -114,7 +114,7 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     self.BillboardShapeProperties.TextureTiling:SetTooltip("For animated textures, the number of tiles on the X and Y axis.");
     
     self.ModelShapeProperties          = GTGUI.Server.New("<div parentid='" .. self.Body:GetID()                 .. "' styleclass='particle-editor-panel-particle-shape-container' />");
-    self.ModelShapeProperties.Message  = GTGUI.Server.New("<div parentid='" .. self.ModelShapeProperties:GetID() .. "' style='margin:0px 2px; text-color:#666; font-style:bold; horizontal-align:center;'>Not currently supported.</div>");
+    self.ModelShapeProperties.Message  = GTGUI.Server.New("<div parentid='" .. self.ModelShapeProperties:GetID() .. "' style='margin:0px 2px; text-color:#666; font-weight:bold; horizontal-align:center;'>Not currently supported.</div>");
     
     
     self.FunctionsLabel = GTGUI.Server.CreateElement(self.Body, "particle-editor-panel-functions-label");
