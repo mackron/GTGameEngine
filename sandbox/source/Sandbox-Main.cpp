@@ -100,7 +100,7 @@ public:
             }
         }
         
-        //CALLGRIND_STOP_INSTRUMENTATION;
+        CALLGRIND_STOP_INSTRUMENTATION;
     }
 
     void OnSize(unsigned int newWidth, unsigned int newHeight)
@@ -185,7 +185,7 @@ private:    // No copying.
 
 int main(int argc, char** argv)
 {
-    //CALLGRIND_ZERO_STATS;
+    CALLGRIND_ZERO_STATS;
     
 #if defined(GTCORE_PLATFORM_LINUX)
     XInitThreads();

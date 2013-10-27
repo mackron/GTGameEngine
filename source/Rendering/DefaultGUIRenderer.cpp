@@ -10,12 +10,14 @@
 namespace GTEngine
 {
     DefaultGUIRenderer::DefaultGUIRenderer()
-        : shader(ShaderLibrary::GetGUIShader()), defaultTexture(nullptr),
+        : shader(ShaderLibrary::GetGUIShader()), shaderA8(ShaderLibrary::GetGUIShaderA8()),
+          defaultTexture(nullptr),
           viewportWidth(0), viewportHeight(0), projection(0),
-          currentOffsetX(0.0f), currentOffsetY(0.0f), currentTexture(nullptr), isBlendingEnabled(false),
+          currentOffsetX(0.0f), currentOffsetY(0.0f), currentShader(nullptr), currentTexture(nullptr), isBlendingEnabled(false),
           uniformsRequirePush(true)
     {
-        assert(shader != nullptr);
+        assert(shader   != nullptr);
+        assert(shaderA8 != nullptr);
         
         
         // We need a default texture.
@@ -61,6 +63,7 @@ namespace GTEngine
 
         // We need to set the projection uniform on the main shader. Slightly more efficient if we do this after making it current.
         this->shader->SetUniform("Projection", this->projection);
+        this->shaderA8->SetUniform("Projection", this->projection);
 
 
         // Set the default state.
@@ -102,6 +105,7 @@ namespace GTEngine
         this->currentOffsetY = offsetY;
 
         this->shader->SetUniform("Offset", offsetX, offsetY);
+        this->shaderA8->SetUniform("Offset", offsetX, offsetY);
         this->uniformsRequirePush = true;
     }
 
@@ -116,7 +120,19 @@ namespace GTEngine
             this->currentTexture = reinterpret_cast<Texture2D*>(image);
         }
         
-        this->shader->SetUniform("Texture", this->currentTexture);
+        
+        if (this->currentTexture->GetFormat() == GTImage::ImageFormat_R8)
+        {
+            this->SetCurrentShader(this->shaderA8);
+            this->shaderA8->SetUniform("Texture", this->currentTexture);
+        }
+        else
+        {
+            this->SetCurrentShader(this->shader);
+            this->shader->SetUniform("Texture", this->currentTexture);
+        }
+        
+        
         this->uniformsRequirePush = true;
     }
 
@@ -142,6 +158,7 @@ namespace GTEngine
         if (this->uniformsRequirePush)
         {
             GTEngine::Renderer::PushPendingUniforms(*this->shader);
+            GTEngine::Renderer::PushPendingUniforms(*this->shaderA8);
             this->uniformsRequirePush = false;
         }
 
@@ -157,7 +174,7 @@ namespace GTEngine
 
     void DefaultGUIRenderer::RestoreCurrentState()
     {
-        GTEngine::Renderer::SetCurrentShader(this->shader);
+        GTEngine::Renderer::SetCurrentShader(this->currentShader);          // <-- Don't use this->SetCurrentShader() here.
         this->SetOffset(this->currentOffsetX, this->currentOffsetY);
         this->SetTexture(reinterpret_cast<GTGUI::ImageHandle>(this->currentTexture));
 
@@ -168,6 +185,15 @@ namespace GTEngine
         else
         {
             this->DisableBlending();
+        }
+    }
+    
+    void DefaultGUIRenderer::SetCurrentShader(Shader* shader)
+    {
+        if (this->currentShader != shader)
+        {
+            GTEngine::Renderer::SetCurrentShader(shader);
+            this->currentShader = shader;
         }
     }
 }

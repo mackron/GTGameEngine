@@ -65,3 +65,19 @@
     }
 </shader>
 
+<shader id="Engine_GUI_FS_A8">
+    #version 120
+    
+    varying vec2 VertexOutput_TexCoord;
+    varying vec4 VertexOutput_Colour;
+    
+    uniform sampler2D Texture;
+    
+    void main()
+    {
+        gl_FragData[0] = texture2D(Texture, VertexOutput_TexCoord).aaar * VertexOutput_Colour;
+
+        //gl_FragData[0] = vec4(1, 1, 1, texture2D(Texture, VertexOutput_TexCoord).x) * VertexOutput_Colour;
+    }
+</shader>
+

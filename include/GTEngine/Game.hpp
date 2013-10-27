@@ -185,12 +185,6 @@ namespace GTEngine
         double GetTimeInSeconds() const { return this->totalRunninTimeInSeconds; }
 
 
-        /// Retrieves a pointer to the games font cache.
-        GTType::FontServer & GetFontServer() { return this->fontServer; }
-
-        /// Retrieves a pointer to the default font.
-        GTType::Font* GetDefaultFont() { return this->defaultFont; }
-
 
         /// Captures the mouse.
         void CaptureMouse();
@@ -521,11 +515,6 @@ namespace GTEngine
 
 
         /**
-        *   \brief  Helper method for initialising the font cache.
-        */
-        bool InitialiseFonts();
-
-        /**
         *   \brief  Initialises the GUI server.
         *
         *   \remarks
@@ -679,13 +668,7 @@ namespace GTEngine
 
         /// The timer for timing updates. This is needed for retrieving the delta time.
         GTCore::Timer updateTimer;
-
-        /// The font server to use with this game.
-        GTType::FontServer fontServer;
-
-        /// The generic font we'll use for basically everything.
-        GTType::Font* defaultFont;
-
+        
 
         /// The GUI image manager.
         GUIImageManager guiImageManager;

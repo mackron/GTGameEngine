@@ -35,6 +35,10 @@ namespace GTEngine
         {
             translatedFormat = GTImage::ImageFormat_RGBA8;
         }
+        else if (format == GTGUI::ImageFormat_A8)
+        {
+            translatedFormat = GTImage::ImageFormat_R8;
+        }
         else
         {
             return 0;
@@ -63,12 +67,34 @@ namespace GTEngine
             GTImage::ImageFileInfo info;
             loader->GetImageInfo(info);
             
-            if (info.format == GTImage::ImageFormat_RGB8 || info.format == GTImage::ImageFormat_RGBA8)      // <-- Only supporting RGB8 and RGBA8 formats.
+            if (info.format == GTImage::ImageFormat_RGB8 || info.format == GTImage::ImageFormat_RGBA8 || info.format == GTImage::ImageFormat_R8)      // <-- Only supporting RGB8, RGBA8 and A8 formats.
             {
                 GTImage::Mipmap mipmap;
                 if (loader->LoadMipmap(0, mipmap))      // <-- '0' means the base mipmap.
                 {
-                    return this->CreateImage(mipmap.width, mipmap.height, (info.format == GTImage::ImageFormat_RGB8) ? GTGUI::ImageFormat_RGB8 : GTGUI::ImageFormat_RGBA8, mipmap.data);
+                    GTGUI::ImageFormat format;
+                    switch (info.format)
+                    {
+                    case GTImage::ImageFormat_RGBA8:
+                        {
+                            format = GTGUI::ImageFormat_RGBA8;
+                            break;
+                        }
+                        
+                    case GTImage::ImageFormat_R8:
+                        {
+                            format = GTGUI::ImageFormat_A8;
+                            break;
+                        }
+                        
+                    default:
+                        {
+                            format = GTGUI::ImageFormat_RGB8;
+                            break;
+                        }
+                    }
+
+                    return this->CreateImage(mipmap.width, mipmap.height, format, mipmap.data);
                 }
                 else
                 {
@@ -133,6 +159,10 @@ namespace GTEngine
             else if (format == GTImage::ImageFormat_RGBA8)
             {
                 return GTGUI::ImageFormat_RGBA8;
+            }
+            else if (format == GTImage::ImageFormat_R8)
+            {
+                return GTGUI::ImageFormat_A8;
             }
         }
         

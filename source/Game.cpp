@@ -40,8 +40,7 @@ namespace GTEngine
           script(*this),
           updateThread(nullptr), updateJob(*this),
           deltaTimeInSeconds(0.0), totalRunninTimeInSeconds(0.0), updateTimer(),
-          fontServer("var/fonts.cache"), defaultFont(nullptr),
-          guiImageManager(), gui(&script, &fontServer, &guiImageManager), guiEventHandler(*this), guiRenderer(), gameWindowGUIElement(nullptr),
+          guiImageManager(), gui(&script, &guiImageManager), guiEventHandler(*this), guiRenderer(), gameWindowGUIElement(nullptr),
           paused(false), focused(true),
           isCursorVisible(true),
           isAutoScriptReloadEnabled(false),
@@ -870,14 +869,6 @@ namespace GTEngine
                 this->window->Show();
 
 
-                // Here we'll initialise the font cache. We purposly do it after moving into the Data directory.
-                Log("Loading Fonts...");
-                if (!this->InitialiseFonts())
-                {
-                    Log("Error loading fonts.");
-                }
-
-
                 // Here we initialise the GUI. We need a font server for this, so it needs to be done after initialising fonts.
                 Log("Loading GUI...");
                 if (!this->InitialiseGUI())
@@ -919,29 +910,6 @@ namespace GTEngine
     }
 
 
-    bool Game::InitialiseFonts()
-    {
-        // We're currently in the Data directory as definied by the application configuration. In this directory
-        // should be a fonts directory. We'll load that up into the font cache.
-        if (!this->fontServer.LoadDirectory("engine/fonts"))
-        {
-            // We failed to load the "fonts" directory, so we'll try just loading the system fonts. If this fails,
-            // we have to return false. On Windows, the system fonts are all fonts in the "Windows/Fonts" directory.
-            if (!this->fontServer.LoadSystemFonts())
-            {
-                return false;
-            }
-        }
-
-
-        GTType::FontInfo fi;
-        fi.family         = "Liberation Sans";
-        fi.sizeInPoints   = 10;
-        this->defaultFont = &this->fontServer.AcquireFont(fi);
-
-        return true;
-    }
-
     bool Game::InitialiseGUI()
     {
         this->gui.SetEventHandler(this->guiEventHandler);
@@ -976,12 +944,9 @@ namespace GTEngine
         this->OnShutdown();
         this->script.Execute("Game.OnShutdown();");
 
-        if (this->defaultFont != nullptr)
-        {
-            this->fontServer.UnacquireFont(*this->defaultFont);
-        }
 
         delete this->window;
+
 
         ThreadCache::UnacquireThread(this->updateThread);
 
