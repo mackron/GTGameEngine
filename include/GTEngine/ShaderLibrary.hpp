@@ -119,8 +119,11 @@ namespace GTEngine
     // Retrieval functions for GTEngine shaders.
     public:
 
-        /// Retrieves the shader that is used with the RCDraw rendering command from GTGUI.
+        /// Retrieves the shader that is used for drawing GUI elements using RGB8 or RGBA8 texture formats.
         static Shader* GetGUIShader();
+        
+        /// Retrieves the shader that is used for drawing GUI elements that use an A8 texture format.
+        static Shader* GetGUIShaderA8();
 
 
         /// Retrieves the shader that is used to draw a simple textured fullscreen quad.

@@ -628,6 +628,7 @@ namespace GTEngine
 namespace GTEngine
 {
     static Shader* GUIShader            = nullptr;
+    static Shader* GUIShaderA8          = nullptr;
     static Shader* Textured2DQuadShader = nullptr;
 
     Shader* ShaderLibrary::GetGUIShader()
@@ -639,6 +640,17 @@ namespace GTEngine
 
         return GUIShader;
     }
+    
+    Shader* ShaderLibrary::GetGUIShaderA8()
+    {
+        if (GUIShaderA8 == nullptr)
+        {
+            GUIShaderA8 = Renderer::CreateShader(ShaderLibrary::GetShaderString("Engine_GUI_VS"), ShaderLibrary::GetShaderString("Engine_GUI_FS_A8"), nullptr);
+        }
+
+        return GUIShaderA8;
+    }
+
 
     Shader* ShaderLibrary::GetTextured2DQuadShader()
     {
@@ -658,9 +670,11 @@ namespace GTEngine
     void ShaderLibrary::Shutdown()
     {
         Renderer::DeleteShader(GUIShader);
+        Renderer::DeleteShader(GUIShaderA8);
         Renderer::DeleteShader(Textured2DQuadShader);
 
         GUIShader            = nullptr;
+        GUIShaderA8          = nullptr;
         Textured2DQuadShader = nullptr;
 
         ShaderLibraryShaders::Clear();

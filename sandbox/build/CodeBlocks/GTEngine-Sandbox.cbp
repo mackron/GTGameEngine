@@ -101,6 +101,7 @@
 					<Add library="BulletCollision" />
 					<Add library="LinearMath" />
 					<Add library="assimp" />
+					<Add library="fontconfig" />
 					<Add library="freetype" />
 					<Add library="png" />
 					<Add library="z" />
@@ -155,6 +156,7 @@
 					<Add library="BulletCollision" />
 					<Add library="LinearMath" />
 					<Add library="assimp" />
+					<Add library="fontconfig" />
 					<Add library="freetype" />
 					<Add library="png" />
 					<Add library="z" />
@@ -166,12 +168,6 @@
 					<Add library="dl" />
 					<Add library="pthread" />
 					<Add library="Xxf86vm" />
-					<Add library="GTEngine-debug" />
-					<Add library="GTGUI-debug" />
-					<Add library="GTType-debug" />
-					<Add library="GTImage-debug" />
-					<Add library="GTCore-debug" />
-					<Add library="GTGL-debug" />
 					<Add directory="../../../../GTCore/lib/linux-gcc" />
 					<Add directory="../../../../GTImage/lib/linux-gcc" />
 					<Add directory="../../../../GTType/lib/linux-gcc" />

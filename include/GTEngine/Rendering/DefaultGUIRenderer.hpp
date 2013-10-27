@@ -58,12 +58,22 @@ namespace GTEngine
 
         /// A helper for enabled all of the current state.
         void RestoreCurrentState();
+        
+        /// Sets the current shader.
+        ///
+        /// @remarks
+        ///     If the current shader is already set to the input shader, this will return immediately.
+        void SetCurrentShader(Shader* shader);
 
 
     private:
 
         /// The main shader.
         Shader* shader;
+        
+        /// The shader to use when A8 texture formats.
+        Shader* shaderA8;
+        
         
         /// The default texture.
         Texture2D* defaultTexture;
@@ -84,6 +94,9 @@ namespace GTEngine
 
         /// The current y offset to apply to geometry.
         float currentOffsetY;
+        
+        /// The current shader.
+        Shader* currentShader;
 
         /// The current texture to apply to geometry.
         Texture2D* currentTexture;
