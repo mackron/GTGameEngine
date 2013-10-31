@@ -17,7 +17,7 @@ text-editor-textbox includes multiline-textbox
     border:           1px #222
     background-color: #333
     vertical-align:   top
-    font-family:      source code pro
+    font-family:      Source Code Pro
     font-size:        10pt
     text-color:       #bbb
 }
