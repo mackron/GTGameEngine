@@ -46,8 +46,13 @@ FIXES/IMPROVEMENTS:
       highest priority path.
     - Sounds now use the search paths when loading.
     - Back faces are no longer selected in the scene editor.
-    - Detaching a scene node from it's prefab now created an undo/redo point.
+    - Detaching a scene node from it's prefab now creates an undo/redo point.
     - Optimizations and improvements to font loading.
+        - Fonts now load based on those installed on the system.
+        - The data/engine/fonts directory has been removed.
+        - The Windows build no longer depends on FreeType.
+    - Optimizations to the GUI system, mostly with loading. A lot of work still
+      to go here.
     - Removed default-1x1.dae and sphere.dae from the repository.
         - Changed the default mesh for cubes to default.dae.
     - More work on documentation
