@@ -53,7 +53,7 @@ be best to build your own to match your own configuration.
 
 GTGameEngine is licenced under the MIT licence:
 
-Copyright (C) 2012 David Reid
+Copyright (C) 2013 David Reid
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
