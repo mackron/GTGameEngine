@@ -259,10 +259,11 @@ namespace GTEngine
                 auto newSceneNode = this->CreateSceneNode();
                 assert(newSceneNode != nullptr);
                 {
-                    this->DeserializeSceneNode(*newSceneNode, childIDs[iChild], prefab);
-
                     // The new scene node needs to be attached to it's parent.
                     sceneNode.AttachChild(*newSceneNode);
+                    
+                    // After the scene node is attached, we can just deserialize.
+                    this->DeserializeSceneNode(*newSceneNode, childIDs[iChild], prefab);
                 }
             }
 

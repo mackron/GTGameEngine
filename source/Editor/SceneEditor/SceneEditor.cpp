@@ -54,7 +54,8 @@ namespace GTEngine
           axisArrows(), isShowingAxisArrows(false), wasShowingAxisArrowsBeforePlaying(false),
           prefabLinker(scene, *this),
           pauseState(),
-          navigationMeshRendererMeshes()
+          navigationMeshRendererMeshes(),
+          prefabDeserializingCount(0)
     {
         this->scene.SetPrefabLinker(this->prefabLinker);
 
@@ -1453,17 +1454,17 @@ namespace GTEngine
     }
 
 
-    bool SceneEditor::CreatePrefab(const char* absolutePath, const char* makeRelativeTo, SceneNode &sceneNode)
+    bool SceneEditor::CreatePrefab(const char* filePath, const char* makeRelativeTo, SceneNode &sceneNode)
     {
         bool successful = false;
 
-        auto prefab = PrefabLibrary::Acquire(absolutePath, makeRelativeTo);
+        auto prefab = PrefabLibrary::Acquire(filePath, makeRelativeTo);
         if (prefab != nullptr)
         {
             prefab->SetFromSceneNode(sceneNode);
 
             // We want to link the scene node to the prefab.
-            this->LinkSceneNodeToPrefab(sceneNode, GTCore::IO::ToRelativePath(absolutePath, makeRelativeTo).c_str(), true);
+            this->LinkSceneNodeToPrefab(sceneNode, prefab->GetRelativePath(), true);
             this->CommitStateStackFrame();      // <-- Undo/Redo point.
 
             if (prefab->WriteToFile())
@@ -1536,6 +1537,23 @@ namespace GTEngine
             // we just unlink as if it was the base node.
             this->prefabLinker.UnlinkSceneNodeFromPrefab(sceneNode, false);
         }
+    }
+    
+    void SceneEditor::OnPrefabDeserializeStart(SceneNode &)
+    {
+        this->prefabDeserializingCount += 1;
+    }
+    
+    void SceneEditor::OnPrefabDeserializeEnd(SceneNode &)
+    {
+        assert(this->prefabDeserializingCount > 0);
+        this->prefabDeserializingCount -= 1;
+    }
+    
+    bool SceneEditor::IsPrefabDeserializing() const
+    {
+        assert(this->prefabDeserializingCount >= 0);
+        return this->prefabDeserializingCount > 0;
     }
 
 
@@ -1780,12 +1798,19 @@ namespace GTEngine
     {
         // We need to let the scripting environment know about this change.
         this->PostOnSceneNodeNameChangedToScript(node);
+        
+        if (this->IsStopped() && !this->IsPrefabDeserializing())
+        {
+            this->UpdateSceneNodesPrefabIfNotRoot(node);
+        }
     }
 
     void SceneEditor::OnSceneNodeParentChanged(SceneNode &node, SceneNode* previousParent)
     {
         this->PostOnSceneNodeParentChangedToScript(node, previousParent);       // <-- Should probably move this into the conditional below, but it will break the hierarchy tree-view updates when things like undo/redo, etc are performed.
 
+
+        // A change to the parent will cause the node and the previous parent to lose their prefab connections.
         if (!this->IsParentChangedEventsLocked())
         {
             auto prefabComponent = node.GetComponent<PrefabComponent>();
@@ -1843,6 +1868,13 @@ namespace GTEngine
             {
                 this->UpdatePropertiesTransformPanel();
             }
+            
+            
+            // The prefab may need to be updated.
+            if (this->IsStopped() && !this->IsPrefabDeserializing())
+            {
+                //this->UpdateSceneNodesPrefabIfNotRoot(node);
+            }
         }
     }
 
@@ -1880,6 +1912,13 @@ namespace GTEngine
 
             metadata->MarkCollisionShapeMeshAsDirty();
             metadata->MarkProximityShapeMeshAsDirty();
+            
+            
+            // The prefab may need to be updated.
+            if (this->IsStopped() && !this->IsPrefabDeserializing())
+            {
+                //this->UpdateSceneNodesPrefabIfNotRoot(node);
+            }
         }
     }
 
@@ -1915,6 +1954,13 @@ namespace GTEngine
                     scene->GetRenderer().RemoveExternalMesh(metadata->GetDirectionArrowMesh());
                 }
             }
+        }
+        
+        
+        // The prefab may need to be updated.
+        if (this->IsStopped() && !this->IsPrefabDeserializing())
+        {
+            this->UpdateSceneNodesPrefabIfNotRoot(node);
         }
     }
 
@@ -1961,56 +2007,76 @@ namespace GTEngine
                 }
             }
         }
+        
+        
+        // The prefab may need to be updated.
+        if (this->IsStopped() && !this->IsPrefabDeserializing())
+        {
+            this->UpdateSceneNodesPrefabIfNotRoot(node);
+        }
     }
 
     void SceneEditor::OnSceneNodeComponentAdded(SceneNode &node, Component &component)
     {
-        if (GTCore::Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
-        {
-            auto &metadata = static_cast<EditorMetadataComponent &>(component);
-
-            auto scene = node.GetScene();
-            assert(scene != nullptr);
-            {
-                auto &renderer = scene->GetRenderer();
-
-                if (metadata.IsUsingSprite())
-                {
-                    renderer.AddExternalMesh(metadata.GetSpriteMesh());
-                }
-            }
-        }
-        else if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
-        {
-            auto metadata = node.GetComponent<EditorMetadataComponent>();
-            if (metadata != nullptr)
-            {
-                metadata->MarkCollisionShapeMeshAsDirty();
-
-                if (metadata->IsSelected())
-                {
-                    metadata->ShowCollisionShapeMesh();
-                    this->scene.GetRenderer().AddExternalMesh(metadata->GetCollisionShapeMesh());
-                }
-            }
-        }
-        else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
-        {
-            auto metadata = node.GetComponent<EditorMetadataComponent>();
-            if (metadata != nullptr)
-            {
-                metadata->MarkProximityShapeMeshAsDirty();
-
-                if (metadata->IsSelected())
-                {
-                    metadata->ShowProximityShapeMesh();
-                    this->scene.GetRenderer().AddExternalMesh(metadata->GetProximityShapeMesh());
-                }
-            }
-        }
-        else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))     // Prefab
+        if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))     // Prefab
         {
             this->PostOnSceneNodePrefabChanged(node);
+        }
+        else
+        {
+            if (GTCore::Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
+            {
+                auto &metadata = static_cast<EditorMetadataComponent &>(component);
+
+                auto scene = node.GetScene();
+                assert(scene != nullptr);
+                {
+                    auto &renderer = scene->GetRenderer();
+
+                    if (metadata.IsUsingSprite())
+                    {
+                        renderer.AddExternalMesh(metadata.GetSpriteMesh());
+                    }
+                }
+            }
+            else
+            {
+                if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+                {
+                    auto metadata = node.GetComponent<EditorMetadataComponent>();
+                    if (metadata != nullptr)
+                    {
+                        metadata->MarkCollisionShapeMeshAsDirty();
+
+                        if (metadata->IsSelected())
+                        {
+                            metadata->ShowCollisionShapeMesh();
+                            this->scene.GetRenderer().AddExternalMesh(metadata->GetCollisionShapeMesh());
+                        }
+                    }
+                }
+                else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
+                {
+                    auto metadata = node.GetComponent<EditorMetadataComponent>();
+                    if (metadata != nullptr)
+                    {
+                        metadata->MarkProximityShapeMeshAsDirty();
+
+                        if (metadata->IsSelected())
+                        {
+                            metadata->ShowProximityShapeMesh();
+                            this->scene.GetRenderer().AddExternalMesh(metadata->GetProximityShapeMesh());
+                        }
+                    }
+                }
+                
+                
+                // If the scene node is linked to a prefab, that prefab needs to be updated.
+                if (this->IsStopped() && !this->IsPrefabDeserializing())
+                {
+                    this->UpdateSceneNodesPrefab(node);
+                }
+            }
         }
     }
 
@@ -2019,41 +2085,54 @@ namespace GTEngine
         auto metadata = node.GetComponent<EditorMetadataComponent>();
         assert(metadata != nullptr);
         {
-            if (GTCore::Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
-            {
-                auto scene = node.GetScene();
-                assert(scene != nullptr);
-                {
-                    scene->GetRenderer().RemoveExternalMesh(metadata->GetSpriteMesh());
-                    scene->GetRenderer().RemoveExternalMesh(metadata->GetDirectionArrowMesh());
-                }
-            }
-            else if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
-            {
-                if (metadata->UseModelForPickingShape())
-                {
-                    metadata->ClearPickingCollisionShape();
-                }
-            }
-            else if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
-            {
-                if (metadata->IsSelected())
-                {
-                    metadata->HideCollisionShapeMesh();
-                    this->scene.GetRenderer().RemoveExternalMesh(metadata->GetCollisionShapeMesh());
-                }
-            }
-            else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
-            {
-                if (metadata->IsSelected())
-                {
-                    metadata->HideProximityShapeMesh();
-                    this->scene.GetRenderer().RemoveExternalMesh(metadata->GetProximityShapeMesh());
-                }
-            }
-            else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))    // Prefab
+            if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))    // Prefab
             {
                 this->PostOnSceneNodePrefabChanged(node);
+            }
+            else
+            {
+                if (GTCore::Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
+                {
+                    auto scene = node.GetScene();
+                    assert(scene != nullptr);
+                    {
+                        scene->GetRenderer().RemoveExternalMesh(metadata->GetSpriteMesh());
+                        scene->GetRenderer().RemoveExternalMesh(metadata->GetDirectionArrowMesh());
+                    }
+                }
+                else
+                {
+                    if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
+                    {
+                        if (metadata->UseModelForPickingShape())
+                        {
+                            metadata->ClearPickingCollisionShape();
+                        }
+                    }
+                    else if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+                    {
+                        if (metadata->IsSelected())
+                        {
+                            metadata->HideCollisionShapeMesh();
+                            this->scene.GetRenderer().RemoveExternalMesh(metadata->GetCollisionShapeMesh());
+                        }
+                    }
+                    else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
+                    {
+                        if (metadata->IsSelected())
+                        {
+                            metadata->HideProximityShapeMesh();
+                            this->scene.GetRenderer().RemoveExternalMesh(metadata->GetProximityShapeMesh());
+                        }
+                    }
+                    
+                    
+                    // The prefab needs to be updated.
+                    if (this->IsStopped() && !this->IsPrefabDeserializing())
+                    {
+                        this->UpdateSceneNodesPrefab(node);
+                    }
+                }
             }
         }
     }
@@ -2129,42 +2208,51 @@ namespace GTEngine
         }
         else
         {
-            if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
+            if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))
             {
-                // The picking shape needs to be updated.
-                auto metadata = node.GetComponent<EditorMetadataComponent>();
-                assert(metadata != nullptr);
+                this->PostOnSceneNodePrefabChanged(node);
+            }
+            else
+            {
+                if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
                 {
-                    if (metadata->UseModelForPickingShape())
+                    // The picking shape needs to be updated.
+                    auto metadata = node.GetComponent<EditorMetadataComponent>();
+                    assert(metadata != nullptr);
                     {
-                        metadata->SetPickingCollisionShapeToModel();
-
-                        if (metadata->GetPickingCollisionShape() != nullptr && metadata->GetPickingCollisionObject().GetWorld() == nullptr)
+                        if (metadata->UseModelForPickingShape())
                         {
-                            this->pickingWorld.AddCollisionObject(metadata->GetPickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                            metadata->SetPickingCollisionShapeToModel();
+
+                            if (metadata->GetPickingCollisionShape() != nullptr && metadata->GetPickingCollisionObject().GetWorld() == nullptr)
+                            {
+                                this->pickingWorld.AddCollisionObject(metadata->GetPickingCollisionObject(), metadata->GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                            }
                         }
                     }
                 }
-            }
-            else if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
-            {
-                auto metadata = node.GetComponent<EditorMetadataComponent>();
-                assert(metadata != nullptr);
+                else if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
                 {
-                    metadata->MarkCollisionShapeMeshAsDirty();
+                    auto metadata = node.GetComponent<EditorMetadataComponent>();
+                    assert(metadata != nullptr);
+                    {
+                        metadata->MarkCollisionShapeMeshAsDirty();
+                    }
                 }
-            }
-            else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
-            {
-                auto metadata = node.GetComponent<EditorMetadataComponent>();
-                assert(metadata != nullptr);
+                else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
                 {
-                    metadata->MarkProximityShapeMeshAsDirty();
+                    auto metadata = node.GetComponent<EditorMetadataComponent>();
+                    assert(metadata != nullptr);
+                    {
+                        metadata->MarkProximityShapeMeshAsDirty();
+                    }
                 }
-            }
-            else if (GTCore::Strings::Equal(component.GetName(), PrefabComponent::Name))
-            {
-                this->PostOnSceneNodePrefabChanged(node);
+                
+                // The prefab needs to be updated.
+                if (this->IsStopped() && !this->IsPrefabDeserializing())
+                {
+                    this->UpdateSceneNodesPrefab(node);
+                }
             }
         }
     }
@@ -2480,6 +2568,19 @@ namespace GTEngine
             {
                 this->CommitStateStackFrame();
                 this->transformedObjectWithGizmo = false;
+                
+                
+                if (this->IsStopped() && !this->IsPrefabDeserializing())
+                {
+                    for (size_t i = 0; i < selectedNodes.count; ++i)
+                    {
+                        auto selectedSceneNode = this->GetSceneNodeByID(selectedNodes[i]);
+                        assert(selectedSceneNode != nullptr);
+                        {
+                            this->UpdateSceneNodesPrefabIfNotRoot(*selectedSceneNode);
+                        }
+                    }
+                }
             }
         }
     }
@@ -3466,6 +3567,28 @@ namespace GTEngine
                     metadata->HideSprite();
                     metadata->HideDirectionArrow();
                 }
+            }
+        }
+    }
+    
+    
+    void SceneEditor::UpdateSceneNodesPrefab(SceneNode &sceneNode)
+    {
+        auto prefabComponent = sceneNode.GetComponent<PrefabComponent>();
+        if (prefabComponent != nullptr)
+        {
+            this->CreatePrefab(prefabComponent->GetPrefabRelativePath(), nullptr, prefabComponent->GetRootSceneNode());
+        }
+    }
+    
+    void SceneEditor::UpdateSceneNodesPrefabIfNotRoot(SceneNode &sceneNode)
+    {
+        auto prefabComponent = sceneNode.GetComponent<PrefabComponent>();
+        if (prefabComponent != nullptr)
+        {
+            if (prefabComponent->GetLocalHierarchyID() != 1)
+            {
+                this->CreatePrefab(prefabComponent->GetPrefabRelativePath(), nullptr, prefabComponent->GetRootSceneNode());
             }
         }
     }

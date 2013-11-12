@@ -335,10 +335,10 @@ namespace GTEngine
 
         /// Creates a prefab from the given scene node.
         ///
-        /// @param absolutePath   [in] The absolute path to write the prefab file to.
+        /// @param filePath       [in] The path to write the prefab file to. When absolute, 'makeRelativeTo' must be non-null.
         /// @param makeRelativeTo [in] The base path to use in order to create a relative path from the absolute path.
         /// @param sceneNode      [in] A reference to the source scene node.
-        bool CreatePrefab(const char* absolutePath, const char* makeRelativeTo, SceneNode &sceneNode);
+        bool CreatePrefab(const char* filePath, const char* makeRelativeTo, SceneNode &sceneNode);
 
         /// Instantiates a scene prefab, positioning the root node at the origin.
         ///
@@ -356,6 +356,19 @@ namespace GTEngine
         ///
         /// @param sceneNode [in] A reference to the scene node that is being unlinked.
         void UnlinkSceneNodeFromPrefab(SceneNode &sceneNode);
+
+        /// Called by the prefab linker when a prefab starts deserializing.
+        ///
+        /// @param sceneNode [in] The scene node being deserialized by the prefab linker.
+        void OnPrefabDeserializeStart(SceneNode &sceneNode);
+        
+        /// Called by the prefab linker when a prefab finishes deserializing.
+        ///
+        /// @param sceneNode [in] The scene node that has just finished deserializing by the prefab linker.
+        void OnPrefabDeserializeEnd(SceneNode &sceneNode);
+        
+        /// Determines whether or not any scene node is being deserialized.
+        bool IsPrefabDeserializing() const;
 
 
 
@@ -690,6 +703,26 @@ namespace GTEngine
 
         /// Hides the sprites and directional arrows of every scene node.
         void HideAllSpritesAndDirectionalArrows();
+        
+        
+        /// Updates the prefab the given scene node is linked to.
+        ///
+        /// @param sceneNode [in] The scene node whose prefab is being updated.
+        ///
+        /// @remarks
+        ///     If the scene node is not linked to a prefab, nothing is done.
+        ///     @par
+        ///     If the scene node is not the root node of the prefab, the prefab will be updated from the root node.
+        void UpdateSceneNodesPrefab(SceneNode &sceneNode);
+        
+        /// Updates the prefab the given scene node is linked to, but only if the scene node is not the root.
+        ///
+        /// @param sceneNode [in] The scene node whose prefab is being updated.
+        ///
+        /// @remarks
+        /// @remarks
+        ///     If the scene node is not linked to a prefab, or it's the root node of the prefab, nothing is done.
+        void UpdateSceneNodesPrefabIfNotRoot(SceneNode &sceneNode);
 
 
     private:
@@ -968,6 +1001,11 @@ namespace GTEngine
 
         /// The external meshes for each navigation mesh in the scene. This is keyed by the index of the navigation mesh.
         GTCore::Map<size_t, NavigationMeshRendererMeshes> navigationMeshRendererMeshes;
+        
+        
+        /// A counter for keeping track of when scene nodes are in the process of being deserialized. We need this so we
+        /// can avoid doing certain things in the scene node events when a node is deserialized.
+        int prefabDeserializingCount;
     };
 }
 

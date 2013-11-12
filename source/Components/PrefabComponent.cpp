@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Components/PrefabComponent.hpp>
+#include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Logging.hpp>
 
 namespace GTEngine
@@ -39,6 +40,20 @@ namespace GTEngine
     {
         this->localHierarchyID = id;
         this->OnChanged();
+    }
+    
+    
+    SceneNode & PrefabComponent::GetRootSceneNode()
+    {
+        SceneNode* root = &this->node;
+        while (root->GetComponent<PrefabComponent>()->GetLocalHierarchyID() != 1)
+        {
+            root = this->node.GetParent();
+        }
+        
+        
+        assert(root != nullptr);
+        return *root;
     }
 
 
