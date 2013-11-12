@@ -18,7 +18,10 @@ namespace GTEngine
     {
         DefaultPrefabLinker::OnSceneNodeDeserializeStart(sceneNode);
         {
-            this->wasSelected = this->sceneEditor.IsSceneNodeSelected(sceneNode);
+            this->sceneEditor.OnPrefabDeserializeStart(sceneNode);
+            {
+                this->wasSelected = this->sceneEditor.IsSceneNodeSelected(sceneNode);
+            }
         }
     }
 
@@ -26,16 +29,19 @@ namespace GTEngine
     {
         DefaultPrefabLinker::OnSceneNodeDeserializeEnd(sceneNode);
         {
-            // We need to make sure the selection flag in the editor metadata is unset.
-            auto editorMetadata = sceneNode.GetComponent<EditorMetadataComponent>();
-            assert(editorMetadata != nullptr);
+            this->sceneEditor.OnPrefabDeserializeEnd(sceneNode);
             {
-                editorMetadata->Deselect();
-            }
+                // We need to make sure the selection flag in the editor metadata is unset.
+                auto editorMetadata = sceneNode.GetComponent<EditorMetadataComponent>();
+                assert(editorMetadata != nullptr);
+                {
+                    editorMetadata->Deselect();
+                }
 
-            if (this->wasSelected)
-            {
-                this->sceneEditor.SelectSceneNode(sceneNode, SceneEditor::SelectionOption_Force);
+                if (this->wasSelected)
+                {
+                    this->sceneEditor.SelectSceneNode(sceneNode, SceneEditor::SelectionOption_Force);
+                }
             }
         }
     }

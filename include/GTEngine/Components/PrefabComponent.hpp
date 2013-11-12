@@ -37,6 +37,10 @@ namespace GTEngine
         ///
         /// @param id [in] The new local hierarchy ID.
         void SetLocalHierarchyID(uint64_t id);
+        
+        
+        /// A helper method for finding the scene node that roots the prefab.
+        SceneNode & GetRootSceneNode();
 
 
 

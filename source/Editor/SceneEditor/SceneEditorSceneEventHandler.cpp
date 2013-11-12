@@ -26,51 +26,51 @@ namespace GTEngine
     }
 
 
-    void SceneEditorSceneEventHandler::OnSceneNodeNameChanged(SceneNode &node)
+    void SceneEditorSceneEventHandler::OnSceneNodeNameChanged(SceneNode &sceneNode)
     {
-        this->sceneEditor.OnSceneNodeNameChanged(node);
+        this->sceneEditor.OnSceneNodeNameChanged(sceneNode);
     }
 
-    void SceneEditorSceneEventHandler::OnSceneNodeParentChanged(SceneNode &node, SceneNode* previousParent)
+    void SceneEditorSceneEventHandler::OnSceneNodeParentChanged(SceneNode &sceneNode, SceneNode* previousParent)
     {
-        this->sceneEditor.OnSceneNodeParentChanged(node, previousParent);
-    }
-
-
-    void SceneEditorSceneEventHandler::OnSceneNodeTransform(SceneNode &node)
-    {
-        this->sceneEditor.OnSceneNodeTransform(node);
-    }
-
-    void SceneEditorSceneEventHandler::OnSceneNodeScale(SceneNode &node)
-    {
-        this->sceneEditor.OnSceneNodeScale(node);
-    }
-
-    void SceneEditorSceneEventHandler::OnSceneNodeHide(SceneNode &node)
-    {
-        this->sceneEditor.OnSceneNodeHide(node);
-    }
-
-    void SceneEditorSceneEventHandler::OnSceneNodeShow(SceneNode &node)
-    {
-        this->sceneEditor.OnSceneNodeShow(node);
+        this->sceneEditor.OnSceneNodeParentChanged(sceneNode, previousParent);
     }
 
 
-    void SceneEditorSceneEventHandler::OnSceneNodeComponentAdded(SceneNode &node, Component &component)
+    void SceneEditorSceneEventHandler::OnSceneNodeTransform(SceneNode &sceneNode)
     {
-        this->sceneEditor.OnSceneNodeComponentAdded(node, component);
+        this->sceneEditor.OnSceneNodeTransform(sceneNode);
     }
 
-    void SceneEditorSceneEventHandler::OnSceneNodeComponentRemoved(SceneNode &node, Component &component)
+    void SceneEditorSceneEventHandler::OnSceneNodeScale(SceneNode &sceneNode)
     {
-        this->sceneEditor.OnSceneNodeComponentRemoved(node, component);
+        this->sceneEditor.OnSceneNodeScale(sceneNode);
     }
 
-    void SceneEditorSceneEventHandler::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
+    void SceneEditorSceneEventHandler::OnSceneNodeHide(SceneNode &sceneNode)
     {
-        this->sceneEditor.OnSceneNodeComponentChanged(node, component);
+        this->sceneEditor.OnSceneNodeHide(sceneNode);
+    }
+
+    void SceneEditorSceneEventHandler::OnSceneNodeShow(SceneNode &sceneNode)
+    {
+        this->sceneEditor.OnSceneNodeShow(sceneNode);
+    }
+
+
+    void SceneEditorSceneEventHandler::OnSceneNodeComponentAdded(SceneNode &sceneNode, Component &component)
+    {
+        this->sceneEditor.OnSceneNodeComponentAdded(sceneNode, component);
+    }
+
+    void SceneEditorSceneEventHandler::OnSceneNodeComponentRemoved(SceneNode &sceneNode, Component &component)
+    {
+        this->sceneEditor.OnSceneNodeComponentRemoved(sceneNode, component);
+    }
+
+    void SceneEditorSceneEventHandler::OnSceneNodeComponentChanged(SceneNode &sceneNode, Component &component)
+    {
+        this->sceneEditor.OnSceneNodeComponentChanged(sceneNode, component);
     }
 
     void SceneEditorSceneEventHandler::OnStateStackFrameCommitted()
