@@ -4,6 +4,7 @@
 #define __GTEngine_Game_hpp_
 
 #include "GameEventQueue.hpp"
+#include "GameEventFilter.hpp"
 #include "GameWindowEventHandler.hpp"
 #include "GameScript.hpp"
 #include "Editor.hpp"
@@ -109,6 +110,17 @@ namespace GTEngine
         /// @remarks
         ///     This function is thread-safe.
         void SendEvent(const GameEvent &e);
+        
+        
+        /// Sets the event filter to filter events with.
+        ///
+        /// @param filter [in] A reference to the new filter. Can be null, in which case all events will be dispatched without filtering.
+        void SetEventFilter(GameEventFilter* filter);
+        void SetEventFilter(GameEventFilter &filter) { this->SetEventFilter(&filter); }
+        
+        /// Retrieves a pointer to the current event filter.
+        GameEventFilter* GetEventFilter();
+        
 
 
         /// Retrieves a reference to the internal GUI server.
@@ -640,6 +652,9 @@ namespace GTEngine
 
         /// The mutex for protecting access to the event queue.
         GTCore::Mutex eventQueueLock;
+        
+        /// A pointer to the event filter to filter events with. This can be null, in which case events will be dispatched without filtering. Defaults to null.
+        GameEventFilter* eventFilter;
 
         /// The game's window.
         GTCore::Window* window;

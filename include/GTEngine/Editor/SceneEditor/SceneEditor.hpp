@@ -8,6 +8,7 @@
 #include "SceneEditorSceneEventHandler.hpp"
 #include "SceneEditorSceneUpdateManager.hpp"
 #include "SceneEditorPhysicsManager.hpp"
+#include "SceneEditorGameEventFilter.hpp"
 #include "../SubEditor.hpp"
 #include "../TransformGizmo.hpp"
 #include "../PivotPoint.hpp"
@@ -770,6 +771,12 @@ namespace GTEngine
 
         /// The event handler to attach to the scene.
         SceneEditorSceneEventHandler sceneEventHandler;
+        
+        /// The event filter to use when playing the scene.
+        SceneEditorGameEventFilter playbackEventFilter;
+        
+        /// A pointer to the event filter that was set before playing.
+        GameEventFilter* eventFilterBeforePlaying;
 
 
         /// The list of selected nodes.
@@ -1006,6 +1013,11 @@ namespace GTEngine
         /// A counter for keeping track of when scene nodes are in the process of being deserialized. We need this so we
         /// can avoid doing certain things in the scene node events when a node is deserialized.
         int prefabDeserializingCount;
+        
+        
+    private:    // No copying.
+        SceneEditor(const SceneEditor &);
+        SceneEditor & operator=(const SceneEditor &);
     };
 }
 
