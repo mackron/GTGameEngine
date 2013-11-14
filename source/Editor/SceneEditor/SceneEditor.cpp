@@ -39,6 +39,7 @@ namespace GTEngine
           camera(), cameraEventHandler(*this), cameraXRotation(0.0f), cameraYRotation(0.0f),
           updateManager(camera), physicsManager(), cullingManager(),
           scene(updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
+          playbackEventFilter(), eventFilterBeforePlaying(nullptr),
           selectedNodes(), selectedNodesBeforePlaying(), selectedNodesBeforePhysicsSimulation(),
           pickingWorld(),
           transformGizmo(), gizmoDragAxis(1.0f, 0.0f, 0.0f), gizmoDragFactor(1.0f, 0.0f),
@@ -144,6 +145,9 @@ namespace GTEngine
             }
 
 
+            // The event filter should have it's viewport element set once, right here.
+            this->playbackEventFilter.SetViewportElement(this->GUI.Viewport);
+
 
             // To place the camera correctly, we'll just reset it.
             this->ResetCamera();
@@ -238,7 +242,12 @@ namespace GTEngine
             }
             else
             {
-                //this->isPlaying                  = true;
+                // We need to set the event filter
+                this->eventFilterBeforePlaying = this->GetGame().GetEventFilter();
+                this->GetGame().SetEventFilter(this->playbackEventFilter);
+                
+                
+                // We want to restore the selected nodes when we stop playing.
                 this->selectedNodesBeforePlaying = this->selectedNodes;
 
                 // We want to deselect everything to begin with.
@@ -342,8 +351,6 @@ namespace GTEngine
     {
         if (this->IsPlaying())
         {
-            //this->isPaused = true;
-
             this->playbackState = PlaybackState_Paused;
             this->CapturePauseState();
 
@@ -378,8 +385,6 @@ namespace GTEngine
                 this->scene.BlockScriptEvents();
 
 
-                //this->isPlaying = false;
-                //this->isPaused  = false;
                 this->playbackState = PlaybackState_Stopped;
 
 
@@ -436,6 +441,11 @@ namespace GTEngine
                 this->SelectSceneNodes(this->selectedNodesBeforePlaying, SelectionOption_NoStateStaging);
 
 
+                // The event filter needs to be restored.
+                this->GetGame().SetEventFilter(this->eventFilterBeforePlaying);
+
+
+                // Playback controls should be updated last.
                 this->UpdatePlaybackControls();
             }
             this->isUpdatingFromStateStack = false;

@@ -73,6 +73,12 @@ namespace GTEngine
 
         /// A helper function for retreiving the game GUI object.
         GTGUI::Server & GetGUI();
+        
+        
+        
+        /// A helper method for retrieving a reference to the game.
+              Game & GetGame();
+        const Game & GetGame() const;
 
 
 
@@ -80,8 +86,8 @@ namespace GTEngine
         // Virtual Methods.
 
         /// Retrieves the main GUI element of the editor.
-        virtual       GTGUI::Element* GetMainElement()        { return nullptr; }
-        virtual const GTGUI::Element* GetMainElement( ) const { return nullptr; }
+        virtual       GTGUI::Element* GetMainElement()       { return nullptr; }
+        virtual const GTGUI::Element* GetMainElement() const { return nullptr; }
 
         /// Called when the editor needs to be shown.
         virtual void Show();

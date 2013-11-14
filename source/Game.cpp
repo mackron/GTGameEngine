@@ -36,6 +36,7 @@ namespace GTEngine
         : isInitialised(false), closing(false),
           executablePath(), executableDirectoryPath(),
           eventQueue(), eventQueueLock(),
+          eventFilter(nullptr),
           window(nullptr), windowEventHandler(*this),
           script(*this),
           updateThread(nullptr), updateJob(*this),
@@ -107,9 +108,23 @@ namespace GTEngine
     void Game::SendEvent(const GameEvent &e)
     {
         this->eventQueueLock.Lock();
+        {
             this->eventQueue.Push(e);
+        }
         this->eventQueueLock.Unlock();
     }
+    
+    
+    void Game::SetEventFilter(GameEventFilter* filter)
+    {
+        this->eventFilter = filter;
+    }
+    
+    GameEventFilter* Game::GetEventFilter()
+    {
+        return this->eventFilter;
+    }
+    
 
 
     GTGUI::Server & Game::GetGUI()
@@ -1198,12 +1213,15 @@ namespace GTEngine
     {
         this->gui.SetViewportSize(e.size.width, e.size.height);
 
-        this->OnSize(e.size.width, e.size.height);
-        this->PostScriptEvent_OnSize(e);
-
-        if (this->currentGameState != nullptr)
+        if (this->eventFilter == nullptr || this->eventFilter->OnSize(e.size.width, e.size.height))
         {
-            this->currentGameState->OnSize(e.size.width, e.size.height);
+            this->OnSize(e.size.width, e.size.height);
+            this->PostScriptEvent_OnSize(e);
+
+            if (this->currentGameState != nullptr)
+            {
+                this->currentGameState->OnSize(e.size.width, e.size.height);
+            }
         }
     }
 
@@ -1223,12 +1241,15 @@ namespace GTEngine
             // We don't post mouse events if the mouse is captured.
             if (!this->mouseCaptured)
             {
-                this->OnMouseMove(e.mousemove.x, e.mousemove.y);
-                this->PostScriptEvent_OnMouseMove(e);
-
-                if (this->currentGameState != nullptr)
+                if (this->eventFilter == nullptr || this->eventFilter->OnMouseMove(e.mousemove.x, e.mousemove.y))
                 {
-                    this->currentGameState->OnMouseMove(e.mousemove.x, e.mousemove.y);
+                    this->OnMouseMove(e.mousemove.x, e.mousemove.y);
+                    this->PostScriptEvent_OnMouseMove(e);
+
+                    if (this->currentGameState != nullptr)
+                    {
+                        this->currentGameState->OnMouseMove(e.mousemove.x, e.mousemove.y);
+                    }
                 }
             }
         }
@@ -1242,12 +1263,15 @@ namespace GTEngine
     {
         this->gui.OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
 
-        this->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
-        this->PostScriptEvent_OnMouseWheel(e);
-
-        if (this->currentGameState != nullptr)
+        if (this->eventFilter == nullptr || this->eventFilter->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y))
         {
-            this->currentGameState->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
+            this->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
+            this->PostScriptEvent_OnMouseWheel(e);
+
+            if (this->currentGameState != nullptr)
+            {
+                this->currentGameState->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
+            }
         }
     }
 
@@ -1276,12 +1300,15 @@ namespace GTEngine
         }
 
 
-        this->OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y);
-        this->PostScriptEvent_OnMouseButtonDown(e);
-
-        if (this->currentGameState != nullptr)
+        if (this->eventFilter == nullptr || this->eventFilter->OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y))
         {
-            this->currentGameState->OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y);
+            this->OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y);
+            this->PostScriptEvent_OnMouseButtonDown(e);
+
+            if (this->currentGameState != nullptr)
+            {
+                this->currentGameState->OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y);
+            }
         }
     }
 
@@ -1312,12 +1339,16 @@ namespace GTEngine
             this->editor.OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y);
         }
 
-        this->OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y);
-        this->PostScriptEvent_OnMouseButtonUp(e);
 
-        if (this->currentGameState != nullptr)
+        if (this->eventFilter == nullptr || this->eventFilter->OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y))
         {
-            this->currentGameState->OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y);
+            this->OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y);
+            this->PostScriptEvent_OnMouseButtonUp(e);
+
+            if (this->currentGameState != nullptr)
+            {
+                this->currentGameState->OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y);
+            }
         }
     }
 
@@ -1336,12 +1367,16 @@ namespace GTEngine
             this->gui.OnMMBDoubleClick();
         }
 
-        this->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y);
-        this->PostScriptEvent_OnMouseButtonDoubleClick(e);
 
-        if (this->currentGameState != nullptr)
+        if (this->eventFilter == nullptr || this->eventFilter->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y))
         {
-            this->currentGameState->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y);
+            this->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y);
+            this->PostScriptEvent_OnMouseButtonDoubleClick(e);
+
+            if (this->currentGameState != nullptr)
+            {
+                this->currentGameState->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y);
+            }
         }
     }
 
@@ -1351,13 +1386,18 @@ namespace GTEngine
 
         this->gui.OnKeyPressed(e.keypressed.key);
 
-        this->OnKeyPressed(e.keypressed.key);
-        this->PostScriptEvent_OnKeyPressed(e);
 
-        if (this->currentGameState != nullptr)
+        if (this->eventFilter == nullptr || this->eventFilter->OnKeyPressed(e.keypressed.key))
         {
-            this->currentGameState->OnKeyPressed(e.keypressed.key);
+            this->OnKeyPressed(e.keypressed.key);
+            this->PostScriptEvent_OnKeyPressed(e);
+
+            if (this->currentGameState != nullptr)
+            {
+                this->currentGameState->OnKeyPressed(e.keypressed.key);
+            }
         }
+
 
 
         // Editor.
@@ -1400,13 +1440,18 @@ namespace GTEngine
             iKeyDown->value = false;
         }
 
-        this->OnKeyReleased(e.keyreleased.key);
-        this->PostScriptEvent_OnKeyReleased(e);
 
-        if (this->currentGameState != nullptr)
+        if (this->eventFilter != nullptr || this->eventFilter->OnKeyReleased(e.keyreleased.key))
         {
-            this->currentGameState->OnKeyReleased(e.keyreleased.key);
+            this->OnKeyReleased(e.keyreleased.key);
+            this->PostScriptEvent_OnKeyReleased(e);
+
+            if (this->currentGameState != nullptr)
+            {
+                this->currentGameState->OnKeyReleased(e.keyreleased.key);
+            }
         }
+        
 
         if (this->editor.IsOpen())
         {
@@ -1418,16 +1463,24 @@ namespace GTEngine
     {
         this->gui.OnKeyDown(e.keydown.key);
 
-        this->OnKeyDown(e.keydown.key);
-        this->PostScriptEvent_OnKeyDown(e);
+
+        if (this->eventFilter == nullptr || this->eventFilter->OnKeyDown(e.keydown.key))
+        {
+            this->OnKeyDown(e.keydown.key);
+            this->PostScriptEvent_OnKeyDown(e);
+        }
     }
 
     void Game::HandleEvent_OnKeyUp(GameEvent &e)
     {
         this->gui.OnKeyUp(e.keyup.key);
 
-        this->OnKeyUp(e.keyup.key);
-        this->PostScriptEvent_OnKeyUp(e);
+        
+        if (this->eventFilter == nullptr || this->eventFilter->OnKeyUp(e.keyup.key))
+        {
+            this->OnKeyUp(e.keyup.key);
+            this->PostScriptEvent_OnKeyUp(e);
+        }
     }
 
     void Game::HandleEvent_OnReceiveFocus(GameEvent &e)
@@ -1452,8 +1505,12 @@ namespace GTEngine
             this->editor.OnReceiveFocus();
         }
 
-        this->OnReceiveFocus();
-        this->PostScriptEvent_OnReceiveFocus(e);
+
+        if (this->eventFilter == nullptr || this->eventFilter->OnReceiveFocus())
+        {
+            this->OnReceiveFocus();
+            this->PostScriptEvent_OnReceiveFocus(e);
+        }
     }
 
     void Game::HandleEvent_OnLoseFocus(GameEvent &e)
@@ -1486,8 +1543,12 @@ namespace GTEngine
         this->captureMouseOnReceiveFocus = this->IsMouseCaptured();
         this->ReleaseMouse();
 
-        this->OnLoseFocus();
-        this->PostScriptEvent_OnLoseFocus(e);
+
+        if (this->eventFilter == nullptr || this->eventFilter->OnLoseFocus())
+        {
+            this->OnLoseFocus();
+            this->PostScriptEvent_OnLoseFocus(e);
+        }
     }
 
 
