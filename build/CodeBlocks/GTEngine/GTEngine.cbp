@@ -189,6 +189,7 @@
 		<Unit filename="../../../include/GTEngine/Editor/PivotPoint.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditor.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditorCommand.hpp" />
+		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditorGameEventFilter.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditorPhysicsManager.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditorPrefabLinker.hpp" />
 		<Unit filename="../../../include/GTEngine/Editor/SceneEditor/SceneEditorSceneEventHandler.hpp" />
@@ -204,6 +205,7 @@
 		<Unit filename="../../../include/GTEngine/Game.hpp" />
 		<Unit filename="../../../include/GTEngine/GameEvent.hpp" />
 		<Unit filename="../../../include/GTEngine/GameEventCodes.hpp" />
+		<Unit filename="../../../include/GTEngine/GameEventFilter.hpp" />
 		<Unit filename="../../../include/GTEngine/GameEventQueue.hpp" />
 		<Unit filename="../../../include/GTEngine/GameObject.hpp" />
 		<Unit filename="../../../include/GTEngine/GameObjectGC.hpp" />
@@ -424,6 +426,7 @@
 		<Unit filename="../../../source/Editor/PivotPoint.cpp" />
 		<Unit filename="../../../source/Editor/SceneEditor/SceneEditor.cpp" />
 		<Unit filename="../../../source/Editor/SceneEditor/SceneEditorCommand.cpp" />
+		<Unit filename="../../../source/Editor/SceneEditor/SceneEditorGameEventFilter.cpp" />
 		<Unit filename="../../../source/Editor/SceneEditor/SceneEditorPhysicsManager.cpp" />
 		<Unit filename="../../../source/Editor/SceneEditor/SceneEditorPrefabLinker.cpp" />
 		<Unit filename="../../../source/Editor/SceneEditor/SceneEditorSceneEventHandler.cpp" />
@@ -437,6 +440,7 @@
 		<Unit filename="../../../source/GUIEventHandler.cpp" />
 		<Unit filename="../../../source/GUIImageManager.cpp" />
 		<Unit filename="../../../source/Game.cpp" />
+		<Unit filename="../../../source/GameEventFilter.cpp" />
 		<Unit filename="../../../source/GameEventQueue.cpp" />
 		<Unit filename="../../../source/GameObject.cpp" />
 		<Unit filename="../../../source/GameObjectGC.cpp" />
