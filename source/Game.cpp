@@ -1441,7 +1441,7 @@ namespace GTEngine
         }
 
 
-        if (this->eventFilter != nullptr || this->eventFilter->OnKeyReleased(e.keyreleased.key))
+        if (this->eventFilter == nullptr || this->eventFilter->OnKeyReleased(e.keyreleased.key))
         {
             this->OnKeyReleased(e.keyreleased.key);
             this->PostScriptEvent_OnKeyReleased(e);
