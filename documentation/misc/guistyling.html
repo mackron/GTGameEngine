@@ -86,7 +86,7 @@ my-button:pushed
                 <li>Child elements can be aligned with the "horizontal-align" and "vertical-align" properties which can be set to "left", "right", "top", "bottom" or "center".</li>
                 <li>The colour of the element's text is controlled with "text-color" instead of just "color".</li>
                 <li>There is no support for rounded corners (yet).</li>
-                <li>Controlling the weight of a font (whether or not it is bold) is controlled with "font-style" instead of "font-weight". This might change in the future.</li>
+                <li>Controlling the slant of a font (whether or not it is italic) is controlled with "font-slant". The font weight (boldness) is controlled with "font-weight".</li>
             </ul>
         </div>
         <div class="documentation-section">
@@ -363,6 +363,22 @@ my-button:pushed
                 </table>
             </div>
             <div class="gui-style-property">
+                <h1>can-receive-focus-from-mouse</h1>
+                <p>
+                Controls whether or not the element should receive focus when it is clicked by the mouse.
+                </p>
+                <p>
+                When an element is disabled, it will not receive focus when clicked regardless of how this value is set.
+                </p>
+                <p>
+                When the element has editable-text enabled, it will still receive focus when clicked even if this is set to false.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>false</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>true, false</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
                 <h1>positioning</h1>
                 <p>
                 Controls how an element is positioned relative to the parent.
@@ -444,13 +460,30 @@ my-button:pushed
                 </table>
             </div>
             <div class="gui-style-property">
-                <h1>font-style</h1>
+                <h1>font-weight</h1>
                 <p>
-                A space-delimited list of styles to apply to the font.
+                Controls the weight (boldness) of the font.
+                </p>
+                <p>
+                It is not guaranteed that the font family will support all font weights, but it should at the very least support "default" and "bold". If the
+                weight is not supported by the font family, the font mapper should find the closest match.
+                </p>
+                <p>
+                The "medium" weight is <b><i>not</i></b> the same as "default" - it is slightly heavier.
                 </p>
                 <table>
-                    <tr><td><b>Default Value:</b></td><td>none</td></tr>
-                    <tr><td><b>Allowable Values:</b></td><td>none, bold, italic</td></tr>
+                    <tr><td><b>Default Value:</b></td><td>default</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>thin, extra-light, light, default, medium, semi-bold, bold, extra-bold, heavy</td></tr>
+                </table>
+            </div>
+            <div class="gui-style-property">
+                <h1>font-slant</h1>
+                <p>
+                Controls the slant (whether or not it is italic) of a font.
+                </p>
+                <table>
+                    <tr><td><b>Default Value:</b></td><td>default</td></tr>
+                    <tr><td><b>Allowable Values:</b></td><td>default, italic</td></tr>
                 </table>
             </div>
             <div class="gui-style-property">

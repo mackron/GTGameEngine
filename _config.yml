@@ -1,7 +1,7 @@
 name:        "GTGameEngine"
 description: "GTGameEngine"
-baseurl:     "http://mackron.github.io/GTGameEngine"
-#baseurl:     ""
+#baseurl:     "http://mackron.github.io/GTGameEngine"
+baseurl:     ""
 
 paginate:    10
 
