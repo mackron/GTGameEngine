@@ -23,6 +23,9 @@ FEATURES:
       components from the editor and scripting environment.
     - Added support for callbacks to ray-tests performed through the scripting
       environment.
+    - Added the ability to filter events that are dispatched by the game. This
+      allows games and parts of the engine itself to modify the event inputs
+      and to also prevent events from getting dispatched at all.
 
 
 FIXES/IMPROVEMENTS:
@@ -44,9 +47,13 @@ FIXES/IMPROVEMENTS:
       as expected when playing a scene from inside the editor.
     - Fixed an issue with loading images in the GUI when it is not found in the
       highest priority path.
+    - Fixed an issue where every GUI element would receive the keyboard focus
+      when it was clicked on by the mouse.
     - Sounds now use the search paths when loading.
     - Back faces are no longer selected in the scene editor.
     - Detaching a scene node from it's prefab now creates an undo/redo point.
+    - Prefabs are now automatically updated when a scene node that is linked to
+      it is changed.
     - Optimizations and improvements to font loading.
         - Fonts now load based on those installed on the system.
         - The data/engine/fonts directory has been removed.
