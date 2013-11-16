@@ -901,6 +901,7 @@ namespace GTEngine
 
 
                 // Here is where we let the game object do some startup stuff.
+                Log("Executing OnStartup()...");
                 if (this->OnStartup(argc, argv))
                 {
                     this->script.Execute("Game.OnStartup();");
@@ -1278,19 +1279,9 @@ namespace GTEngine
     void Game::HandleEvent_OnMouseButtonDown(GameEvent &e)
     {
         this->mouseButtonDownMap.Add(e.mousedown.button, true);
+        
+        this->gui.OnMouseButtonDown(static_cast<int>(e.mousedown.button));
 
-        if (e.mousedown.button == GTCore::MouseButton_Left)
-        {
-            this->gui.OnLMBDown();
-        }
-        else if (e.mousedown.button == GTCore::MouseButton_Right)
-        {
-            this->gui.OnRMBDown();
-        }
-        else if (e.mousedown.button == GTCore::MouseButton_Middle)
-        {
-            this->gui.OnMMBDown();
-        }
 
 
         // If the editor is open, we'll want to post this event to that too.
@@ -1319,19 +1310,10 @@ namespace GTEngine
         {
             iButtonDown->value = false;
         }
+        
 
-        if (e.mouseup.button == GTCore::MouseButton_Left)
-        {
-            this->gui.OnLMBUp();
-        }
-        else if (e.mouseup.button == GTCore::MouseButton_Right)
-        {
-            this->gui.OnRMBUp();
-        }
-        else if (e.mouseup.button == GTCore::MouseButton_Middle)
-        {
-            this->gui.OnMMBUp();
-        }
+        this->gui.OnMouseButtonUp(static_cast<int>(e.mouseup.button));
+
 
         // If the editor is open, we'll want to post this event to that too.
         if (this->editor.IsOpen())
@@ -1354,18 +1336,7 @@ namespace GTEngine
 
     void Game::HandleEvent_OnMouseButtonDoubleClick(GameEvent &e)
     {
-        if (e.mousedoubleclick.button == GTCore::MouseButton_Left)
-        {
-            this->gui.OnLMBDoubleClick();
-        }
-        else if (e.mousedoubleclick.button == GTCore::MouseButton_Right)
-        {
-            this->gui.OnRMBDoubleClick();
-        }
-        else if (e.mousedoubleclick.button == GTCore::MouseButton_Middle)
-        {
-            this->gui.OnMMBDoubleClick();
-        }
+        this->gui.OnMouseButtonDoubleClick(static_cast<int>(e.mousedoubleclick.button));
 
 
         if (this->eventFilter == nullptr || this->eventFilter->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y))

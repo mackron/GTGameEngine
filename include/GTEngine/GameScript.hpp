@@ -36,7 +36,10 @@ namespace GTEngine
 
         /// GTCore::Script::LoadFile().
         ///
-        /// This is a special implementation that keeps track of the file so we can do auto-reloading.
+        /// @remarks
+        ///     This is a special implementation that keeps track of the file so we can do auto-reloading.
+        ///     @par
+        ///     This will also look for the absolute path using the search directories system.
         bool LoadFile(const char* fileName);
 
 
