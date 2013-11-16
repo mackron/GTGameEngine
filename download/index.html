@@ -25,13 +25,29 @@ layout: default
                 <h1>Sandbox</h1>
                 <div style="margin-left:20px">
                     <h2>Windows 64 bit</h2>
-                    <p><a href="{{ site.baseurl }}/download/gtgameengine-sandbox-0.0.2-windows-64bit.zip">GTGameEngine Sandbox 0.0.2</a></p>
+                    <p><a href="{{ site.baseurl }}/download/gtgameengine-sandbox-0.0.3-windows-64bit.zip">GTGameEngine Sandbox 0.0.3</a></p>
+                    <!--<p><a href="{{ site.baseurl }}/download/gtgameengine-sandbox-0.0.2-windows-64bit.zip">GTGameEngine Sandbox 0.0.2</a></p>-->
                     <!--<p><a href="{{ site.baseurl }}/download/gtgameengine-sandbox-0.0.1-windows-64bit.zip">GTGameEngine Sandbox 0.0.1</a></p>-->
                     <h2>Linux 64 bit</h2>
-                    <p><a href="{{ site.baseurl }}/download/gtgameengine-sandbox-0.0.2-linux-64bit.tar.gz">GTGameEngine Sandbox 0.0.2</a></p>
+                    <p><a href="{{ site.baseurl }}/download/gtgameengine-sandbox-0.0.3-linux-64bit.tar.gz">GTGameEngine Sandbox 0.0.3</a></p>
+                    <!--<p><a href="{{ site.baseurl }}/download/gtgameengine-sandbox-0.0.2-linux-64bit.tar.gz">GTGameEngine Sandbox 0.0.2</a></p>-->
                     <!--<p><a href="{{ site.baseurl }}/download/gtgameengine-sandbox-0.0.1-linux-64bit.tar.gz">GTGameEngine Sandbox 0.0.1</a></p>-->
                     <p>
-                    You will need to download and install OpenAL. Try <code>sudo apt-get install libopenal1</code> if you're running a Ubuntu flavour.
+                    You probably already have most prerequisite packages already installed. You will need to install packages for the following libraries:
+                    </p>
+                    <p>
+                        <ul>
+                            <li>PCRE</li>
+                            <li>FreeType 2</li>
+                            <li>libpng/zlib</li>
+                            <li>OpenAL</li>
+                        </ul>
+                    </p>
+                    <p>
+                    On Arch Linux, use the following command to install the prerequisite packages.
+                    </p>
+                    <p>
+                    <code>sudo pacman -S pcre freetype2 libpng zlib openal</code>
                     </p>
                     <p>
                     Please note that Linux is not my primary platform, so there may be some annoyances and bugs. It would be great if you could send me a quick tweet
