@@ -901,7 +901,6 @@ namespace GTEngine
 
 
                 // Here is where we let the game object do some startup stuff.
-                Log("Executing OnStartup()...");
                 if (this->OnStartup(argc, argv))
                 {
                     this->script.Execute("Game.OnStartup();");
