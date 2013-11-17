@@ -184,7 +184,7 @@ function GTGUI.Element:DefaultEditor3DViewport()
     
     
     -- Mouse Events
-    
+
     self:OnMouseEnter(function()
         self.isMouseOver = true;
     end)
@@ -193,106 +193,82 @@ function GTGUI.Element:DefaultEditor3DViewport()
         self.isMouseOver = false;
     end)
     
-    
-    self:OnLMBDown(function()
-        self.isLMBDown = true;
-        
-        if self:IsControlsEnabled() then
-            self:CaptureMouse();
-            
-            if self:OnViewportLMBDown() then
-                self.mouseMovedWhileButtonDown = true;      -- Trick the viewport into thinking the mouse was moved so that the next OnViewport*WithoutMovement() is disabled.
-            end
-        end
-    end)
-    
-    self:OnRMBDown(function()
-        self.isRMBDown = true;
-        
-        if self:IsControlsEnabled() then
-            self:CaptureMouse();
-            
-            if self:OnViewportRMBDown() then
-                self.mouseMoveWhileButtonDown = true;      -- Trick the viewport into thinking the mouse was moved so that the next OnViewport*WithoutMovement() is disabled.
-            end
-        end
-    end)
-    
-    self:OnMMBDown(function()
-        self.isMMBDown = true;
-        
-        if self:IsControlsEnabled() then
-            self:CaptureMouse();
-            
-            if self:OnViewportMMBDown() then
-                self.mouseMoveWhileButtonDown = true;      -- Trick the viewport into thinking the mouse was moved so that the next OnViewport*WithoutMovement() is disabled.
-            end
-        end
-    end)
-    
-    
-    self:WatchLMBDown(function()
-        if self:HasMouseCapture() then
+
+    self:OnMouseButtonDown(function(data)
+        if data.button == GTCore.MouseButtons.Left then
             self.isLMBDown = true;
-        end
-    end)
-    
-    self:WatchRMBDown(function()
-        if self:HasMouseCapture() then
+        
+            if self:IsControlsEnabled() then
+                self:CaptureMouse();
+                
+                if self:OnViewportLMBDown() then
+                    self.mouseMovedWhileButtonDown = true;      -- Trick the viewport into thinking the mouse was moved so that the next OnViewport*WithoutMovement() is disabled.
+                end
+            end
+        elseif data.button == GTCore.MouseButtons.Right then
             self.isRMBDown = true;
-        end
-    end)
-    
-    self:WatchMMBDown(function()
-        if self:HasMouseCapture() then
+        
+            if self:IsControlsEnabled() then
+                self:CaptureMouse();
+                
+                if self:OnViewportRMBDown() then
+                    self.mouseMoveWhileButtonDown = true;      -- Trick the viewport into thinking the mouse was moved so that the next OnViewport*WithoutMovement() is disabled.
+                end
+            end
+        elseif data.button == GTCore.MouseButtons.Middle then
             self.isMMBDown = true;
+        
+            if self:IsControlsEnabled() then
+                self:CaptureMouse();
+                
+                if self:OnViewportMMBDown() then
+                    self.mouseMoveWhileButtonDown = true;      -- Trick the viewport into thinking the mouse was moved so that the next OnViewport*WithoutMovement() is disabled.
+                end
+            end
+        end
+    end)
+
+    self:WatchMouseButtonDown(function(data)
+        if self:HasMouseCapture() then
+            if data.button == GTCore.MouseButtons.Left then
+                self.isLMBDown = true;
+            elseif data.button == GTCore.MouseButtons.Right then
+                self.isRMBDown = true;
+            elseif data.button == GTCore.MouseButtons.Middle then
+                self.isMMBDown = true;
+            end
         end
     end)
     
-    
-    self:WatchLMBUp(function()
-        if self:HasMouseCapture() and not self:IsRMBDown() and not self:IsMMBDown() and self:IsControlsEnabled() then
-            local mouseMoved = self:MouseMovedWhileButtonDown();
-            
-            -- Release the mouse before posting the event. This will move the mouse, so we need to check for mouse movement before releasing.
-            self:ReleaseMouse();
-            
-            if not mouseMoved and self:IsVisible() then
-                self:OnViewportLMBUpWithoutMovement();
+    self:WatchMouseButtonUp(function(data)
+        if self:HasMouseCapture() and self:IsControlsEnabled() then
+            if ((data.button == GTCore.MouseButtons.Left   and not self:IsRMBDown() and not self:IsMMBDown()) or
+                (data.button == GTCore.MouseButtons.Right  and not self:IsLMBDown() and not self:IsMMBDown()) or 
+                (data.button == GTCore.MouseButtons.Middle and not self:IsLMBDown() and not self:IsRMBDown())) then
+                local mouseMoved = self:MouseMovedWhileButtonDown();
+
+                -- Release the mouse before posting the event. This will move the mouse, so we need to check for mouse movement before releasing.
+                self:ReleaseMouse();
+
+                if not mouseMoved and self:IsVisible() then
+                    if data.button == GTCore.MouseButtons.Left then
+                        self:OnViewportLMBUpWithoutMovement();
+                    elseif data.button == GTCore.MouseButtons.Right then
+                        self:OnViewportRMBUpWithoutMovement();
+                    elseif data.button == GTCore.MouseButtons.Middle then
+                        self:OnViewportMMBUpWithoutMovement();
+                    end
+                end
             end
         end
-        
-        self.isLMBDown = false;
-    end)
-    
-    self:WatchRMBUp(function()
-        if self:HasMouseCapture() and not self:IsLMBDown() and not self:IsMMBDown() and self:IsControlsEnabled() then
-            local mouseMoved = self:MouseMovedWhileButtonDown();
-            
-            -- Release the mouse before posting the event. This will move the mouse, so we need to check for mouse movement before releasing.
-            self:ReleaseMouse();
-            
-            if not mouseMoved and self:IsVisible() then
-                self:OnViewportRMBUpWithoutMovement();
-            end
+
+        if data.button == GTCore.MouseButtons.Left then
+            self.isLMBDown = false;
+        elseif data.button == GTCore.MouseButtons.Right then
+            self.isRMBDown = false;
+        elseif data.button == GTCore.MouseButtons.Middle then
+            self.isMMBDown = false;
         end
-        
-        self.isRMBDown = false;
-    end)
-    
-    self:WatchMMBUp(function()
-        if self:HasMouseCapture() and not self:IsLMBDown() and not self:IsRMBDown() and self:IsControlsEnabled() then
-            local mouseMoved = self:MouseMovedWhileButtonDown();
-            
-            -- Release the mouse before posting the event. This will move the mouse, so we need to check for mouse movement before releasing.
-            self:ReleaseMouse();
-            
-            if not mouseMoved and self:IsVisible() then
-                self:OnViewportMMBUpWithoutMovement();
-            end
-        end
-        
-        self.isMMBDown = false;
     end)
     
     

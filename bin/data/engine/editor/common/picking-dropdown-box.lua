@@ -86,39 +86,22 @@ function GTGUI.Element:PickingDropDownBox(titleText)
     end
     
     
-    
-    self:OnLMBDown(function(data)
+
+    self:OnMouseButtonDown(function(data)
         if not self:IsOpen() then
             self:Open();
         else
             self:Close();
         end
-    end);
-    
-    self:WatchLMBDown(function(data)
+    end)    
+
+    self:WatchMouseButtonDown(function(data)
         if self:IsOpen() then
             if data.receiver ~= self and not self:IsChild(data.receiver) then
                 self:Close();
             end
         end
-    end);
-    
-    self:WatchRMBDown(function(data)
-        if self:IsOpen() then
-            if data.receiver ~= self and not self:IsChild(data.receiver) then
-                self:Close();
-            end
-        end
-    end);
-    
-    self:WatchMMBDown(function(data)
-        if self:IsOpen() then
-            if data.receiver ~= self and not self:IsChild(data.receiver) then
-                self:Close();
-            end
-        end
-    end);
-    
+    end)
     
     function self:OnItemPicked(arg1)
         self.Locked = true;

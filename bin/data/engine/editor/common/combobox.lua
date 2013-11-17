@@ -84,13 +84,15 @@ function GTGUI.Element:ComboBox()
         end
     end
 
-    -- Called when the left mouse button is pressed somewhere.
-    self:WatchLMBDown(function(data)
-        if self.MenuElement:IsVisible() and data.receiver ~= self and self:IsChild(data.receiver) == false then
-            self:Collapse();
+
+    -- Called when the a mouse button is pressed somewhere.
+    self:WatchMouseButtonDown(function(data)
+        if data.button == GTCore.MouseButtons.Left then
+            if self.MenuElement:IsVisible() and data.receiver ~= self and self:IsChild(data.receiver) == false then
+                self:Collapse();
+            end
         end
     end)
-
 end
 
 

@@ -1251,28 +1251,11 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     
 
-    self.Viewport:OnLMBDown(function()
+    self.Viewport:OnMouseButtonDown(function(data)
         self:Focus();
     end);
     
-    self.Viewport:OnRMBDown(function()
-        self:Focus();
-    end);
-    
-    self.Viewport:OnMMBDown(function()
-        self:Focus();
-    end);
-
-
-    self:WatchLMBDown(function(data)
-        if not self.ContextMenu:IsChild(data.receiver) then self.ContextMenu:Hide() end
-    end);
-    
-    self:WatchRMBDown(function(data)
-        if not self.ContextMenu:IsChild(data.receiver) then self.ContextMenu:Hide() end
-    end);
-    
-    self:WatchMMBDown(function(data)
+    self:WatchMouseButtonDown(function(data)
         if not self.ContextMenu:IsChild(data.receiver) then self.ContextMenu:Hide() end
     end);
     

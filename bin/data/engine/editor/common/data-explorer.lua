@@ -123,12 +123,13 @@ function GTGUI.Element:DataExplorer()
         
         
         -- Called when an item is right clicked.
-        item.titleContainer:OnRMBUp(function()
-            self.TreeView:DeselectAllItems();
-            item:Select();
-            self:ShowContextMenu(item);
-        end);
-        
+        item.titleContainer:OnMouseButtonUp(function(data)
+            if data.button == GTCore.MouseButtons.Right then
+                self.TreeView:DeselectAllItems();
+                item:Select();
+                self:ShowContextMenu(item);
+            end
+        end)    
         
         -- Called when the item is torn for drag-and-drop.
         item.titleContainer:OnTear(function()

@@ -23,8 +23,10 @@ function GTGUI.Element:TabBarTab(text)
     end
     
     
-    self:OnLMBDown(function()
-        self:Activate();
+    self:OnMouseButtonDown(function(data)
+        if data.button == GTCore.MouseButtons.Left then
+            self:Activate();
+        end
     end)
     
     self.text:SetText(text);

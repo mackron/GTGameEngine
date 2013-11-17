@@ -49,16 +49,13 @@ function GTGUI.Element:Menu()
     end
     
     
-    function self.MouseDownEvent(data)
+
+
+    self:WatchMouseButtonDown(function(data)
         if self.isDefaultEventsEnabled then
             if not self:IsChild(data.receiver) and data.receiver ~= GTGUI.Server.GetRootElement() then self:Hide() end
         end
-    end
-    
-    
-    self:WatchLMBDown(self.MouseDownEvent);
-    self:WatchRMBDown(self.MouseDownEvent);
-    self:WatchMMBDown(self.MouseDownEvent);
+    end)
 end
 
 
