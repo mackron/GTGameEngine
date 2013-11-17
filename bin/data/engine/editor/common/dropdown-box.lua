@@ -75,33 +75,18 @@ function GTGUI.Element:DropDownBox()
         return self.ListBox:IsVisible();
     end
     
-    
-    
-    self:OnLMBDown(function(data)
-        if not self:IsOpen() then
-            self:Open();
-        else
-            self:Close();
-        end
-    end);
-    
-    self:WatchLMBDown(function(data)
-        if self:IsOpen() then
-            if data.receiver ~= self and not self:IsChild(data.receiver) then
+
+    self:OnMouseButtonDown(function(data)
+        if data.button == GTCore.MouseButtons.Left then
+            if not self:IsOpen() then
+                self:Open();
+            else
                 self:Close();
             end
         end
     end);
-    
-    self:WatchRMBDown(function(data)
-        if self:IsOpen() then
-            if data.receiver ~= self and not self:IsChild(data.receiver) then
-                self:Close();
-            end
-        end
-    end);
-    
-    self:WatchMMBDown(function(data)
+
+    self:WatchMouseButtonDown(function(data)
         if self:IsOpen() then
             if data.receiver ~= self and not self:IsChild(data.receiver) then
                 self:Close();
