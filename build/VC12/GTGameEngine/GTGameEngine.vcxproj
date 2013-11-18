@@ -156,6 +156,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Editor\PivotPoint.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditor.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorCommand.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorGameEventFilter.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorPhysicsManager.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorPrefabLinker.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorSceneEventHandler.hpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Game.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameEvent.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameEventCodes.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\GameEventFilter.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameEventQueue.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameObject.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\GameObjectGC.hpp" />
@@ -422,6 +424,7 @@
     <ClCompile Include="..\..\..\source\Editor\PivotPoint.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorCommand.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorGameEventFilter.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorPhysicsManager.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorPrefabLinker.cpp" />
     <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorSceneEventHandler.cpp" />
@@ -432,6 +435,7 @@
     <ClCompile Include="..\..\..\source\Editor\TransformGizmo.cpp" />
     <ClCompile Include="..\..\..\source\Errors.cpp" />
     <ClCompile Include="..\..\..\source\Game.cpp" />
+    <ClCompile Include="..\..\..\source\GameEventFilter.cpp" />
     <ClCompile Include="..\..\..\source\GameEventQueue.cpp" />
     <ClCompile Include="..\..\..\source\GameObject.cpp" />
     <ClCompile Include="..\..\..\source\GameObjectGC.cpp" />
