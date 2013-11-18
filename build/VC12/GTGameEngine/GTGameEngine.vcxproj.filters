@@ -938,6 +938,12 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\VertexArray_OpenGL21.hpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Editor\SceneEditor\SceneEditorGameEventFilter.hpp">
+      <Filter>Header Files\Editor\SceneEditor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameEventFilter.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\include\GTEngine\HACD\hacdCircularList.inl">
@@ -1631,6 +1637,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Utilities\DynamicCharacterController.cpp">
       <Filter>Source Files\Utilities</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\SceneEditor\SceneEditorGameEventFilter.cpp">
+      <Filter>Source Files\Editor\SceneEditor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameEventFilter.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
