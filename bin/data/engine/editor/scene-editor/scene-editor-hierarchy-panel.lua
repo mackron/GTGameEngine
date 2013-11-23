@@ -180,11 +180,13 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             item.titleContainer:OnDragAndDropLeave(function(data)
             end);
             
-            item.titleContainer:OnRMBUp(function()
-                self.TreeView:DeselectAllItemsExcept(item);
-                item:Select();
-                
-                self:ShowContextMenu(item);
+            item.titleContainer:OnMouseButtonUp(function(data)
+                if data.button == GTCore.MouseButtons.Middle then
+                    self.TreeView:DeselectAllItemsExcept(item);
+                    item:Select();
+                    
+                    self:ShowContextMenu(item);
+                end
             end);
             
             
