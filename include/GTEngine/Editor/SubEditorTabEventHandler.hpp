@@ -21,8 +21,8 @@ namespace GTEngine
         ~SubEditorTabEventHandler();
 
 
-        /// GTGUI::ElementEventHandler::OnMMBDown().
-        void OnMMBDown(GTGUI::Element &element, int x, int y);
+        /// GTGUI::ElementEventHandler::OnMouseButtonDown().
+        void OnMouseButtonDown(GTGUI::Element &element, int button, int x, int y);
 
 
     private:

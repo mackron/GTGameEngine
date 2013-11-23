@@ -15,8 +15,11 @@ namespace GTEngine
     }
 
 
-    void SubEditorTabEventHandler::OnMMBDown(GTGUI::Element &, int, int)
+    void SubEditorTabEventHandler::OnMouseButtonDown(GTGUI::Element &, int button, int, int)
     {
-        this->owner.Close();
+        if (button == GTCore::MouseButton_Middle)
+        {
+            this->owner.Close();
+        }
     }
 }
