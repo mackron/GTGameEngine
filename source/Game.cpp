@@ -140,6 +140,7 @@ namespace GTEngine
     void Game::StepGUI(double deltaTimeInSeconds)
     {
         this->gui.Step(deltaTimeInSeconds);
+        this->gui.Paint();
     }
 
 
