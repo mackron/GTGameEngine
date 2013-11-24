@@ -406,7 +406,7 @@ namespace GTEngine
 
     void Game::OpenEditor()
     {
-        //CALLGRIND_ZERO_STATS;
+        CALLGRIND_ZERO_STATS;
         if (this->OnEditorOpening())
         {
             // The main game window GUI element needs to be hidden.
@@ -437,7 +437,7 @@ namespace GTEngine
 
             this->OnEditorOpen();
         }
-        //CALLGRIND_STOP_INSTRUMENTATION;
+        CALLGRIND_STOP_INSTRUMENTATION;
     }
 
     void Game::CloseEditor()
@@ -1008,11 +1008,13 @@ namespace GTEngine
             // We want our events to be handled synchronously on the main thread.
             this->HandleEvents();
 
+
+            // TODO: Remove this little section when the new GUI event handling system is in place.
             // The GUI events can be handled here. If it turns out that they're best handled on the update thread, all we need
             // to do is remove this line - GTGUI::Server::Step() will also handle any pending events. I like to handle the GUI
             // events from here because it's nice to have GUI events handled at the same time as window events, since they're
             // kind of related.
-            this->gui.HandleEvents();
+            //this->gui.HandleEvents();
 
 
             // Here we want to start the next frame. Everything between StartFrame() and EndFrame() will be executed at the same
