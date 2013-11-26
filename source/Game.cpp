@@ -21,7 +21,8 @@
 #include <GTCore/CommandLine.hpp>
 #include <GTCore/Path.hpp>
 #include <GTCore/Keyboard.hpp>
-#include <GTCore/Profiling/valgrind/callgrind.h>
+//#include <GTCore/Profiling/valgrind/callgrind.h>
+#include <gperftools/profiler.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -406,7 +407,7 @@ namespace GTEngine
 
     void Game::OpenEditor()
     {
-        CALLGRIND_ZERO_STATS;
+        //CALLGRIND_ZERO_STATS;
         if (this->OnEditorOpening())
         {
             // The main game window GUI element needs to be hidden.
@@ -437,7 +438,7 @@ namespace GTEngine
 
             this->OnEditorOpen();
         }
-        CALLGRIND_STOP_INSTRUMENTATION;
+        //CALLGRIND_STOP_INSTRUMENTATION;
     }
 
     void Game::CloseEditor()
@@ -720,7 +721,7 @@ namespace GTEngine
     {
     }
 
-    bool Game::OnStartup(int, char**)
+    bool Game::OnStartup(const GTCore::CommandLine &)
     {
         return true;
     }
@@ -837,13 +838,10 @@ namespace GTEngine
 
 
 
-    bool Game::Startup(int argc, char **argv)
+    bool Game::Startup(const GTCore::CommandLine &commandLine)
     {
-        // We'll need to grab the command line because the first thing we're going to do is load any user scripts into the scripting environment.
-        GTCore::CommandLine cmdLine(argc, argv);
-
-        this->executablePath          = cmdLine.GetExecutablePath();
-        this->executableDirectoryPath = cmdLine.GetApplicationDirectory();
+        this->executablePath          = commandLine.GetExecutablePath();
+        this->executableDirectoryPath = commandLine.GetApplicationDirectory();
 
         // The first thing we do is load up the scripting environment. We do this first because it will contain configuration properties
         // for things later on.
@@ -853,7 +851,7 @@ namespace GTEngine
             this->OnLoadConfigs();
 
             // This is where the user config scripts are loaded.
-            const char** cmdLine_config = cmdLine.GetArgument("config");
+            const char** cmdLine_config = commandLine.GetArgument("config");
             if (cmdLine_config != nullptr)
             {
                 for (int i = 0; cmdLine_config[i] != nullptr; ++i)
@@ -902,7 +900,7 @@ namespace GTEngine
 
 
                 // Here is where we let the game object do some startup stuff.
-                if (this->OnStartup(argc, argv))
+                if (this->OnStartup(commandLine))
                 {
                     this->script.Execute("Game.OnStartup();");
                     return true;
