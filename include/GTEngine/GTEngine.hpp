@@ -37,11 +37,10 @@ namespace GTEngine
 
     /// Starts up the engine.
     ///
-    /// @param argc [in] The argument count.
-    /// @param argv [in] The argument strings.
+    /// @param commandLine [in] A reference to the command line.
     ///
     /// @return True if the engine is initialised successfully; false otherwise.
-    bool _PreStartup(int argc, char** argv);
+    bool _PreStartup(const GTCore::CommandLine &commandLine);
 
 
     /// Starts up the engine, returning an instance of the given game class (T).
@@ -59,10 +58,11 @@ namespace GTEngine
     {
         if (GlobalGame == nullptr)
         {
-            if (_PreStartup(argc, argv))
+            GTCore::CommandLine commandLine(argc, argv);
+            if (_PreStartup(commandLine))
             {
                 GlobalGame = new T;
-                if (!GlobalGame->Startup(argc, argv))
+                if (!GlobalGame->Startup(commandLine))
                 {
                     delete GlobalGame;
                     GlobalGame = nullptr;

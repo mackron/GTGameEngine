@@ -31,14 +31,13 @@ namespace GTEngine
 
 namespace GTEngine
 {
-    bool _PreStartup(int argc, char** argv)
+    bool _PreStartup(const GTCore::CommandLine &commandLine)
     {
         // First this is to more into the applications directory. We get this from the command line.
-        GTCore::CommandLine cmdLine(argc, argv);
-        GTCore::IO::SetCurrentDirectory(cmdLine.GetApplicationDirectory());
+        GTCore::IO::SetCurrentDirectory(commandLine.GetApplicationDirectory());
 
         // We need to keep hold of the executable directory for GetExecutableDirectory().
-        ExecutableDirectory = GTCore::IO::ToAbsolutePath(cmdLine.GetApplicationDirectory(), GTCore::IO::GetCurrentDirectory());
+        ExecutableDirectory = GTCore::IO::ToAbsolutePath(commandLine.GetApplicationDirectory(), GTCore::IO::GetCurrentDirectory());
 
         // After moving into the application directory, we need to load up the config file and move into the data directory. From
         // there we can read the user configs and setup the log file.
@@ -67,7 +66,7 @@ namespace GTEngine
 
         // We need to initialise our logging stuff before starting up any major sub-systems, such as the renderer. The log file will be specified
         // as a command line option, else we will use the default value of 'var/logs/engine.html'
-        const char** cmdLine_logfile = cmdLine.GetArgument("logfile");
+        const char** cmdLine_logfile = commandLine.GetArgument("logfile");
         if (cmdLine_logfile != nullptr)
         {
             Logging::Startup(cmdLine_logfile[0]);

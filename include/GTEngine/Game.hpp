@@ -17,6 +17,7 @@
 #include "Rendering/DefaultGUIRenderer.hpp"
 #include <GTCore/Threading.hpp>
 #include <GTCore/Timing.hpp>
+#include <GTCore/CommandLine.hpp>
 #include <GTType/FontServer.hpp>
 #include <GTGUI/Server.hpp>
 
@@ -65,7 +66,7 @@ namespace GTEngine
         ///     This will call OnLoadConfigs() and OnStartup().
         ///     @par
         ///     Client application should not call this method directly. It will instead be called internally by GTEngine::Startup().
-        bool Startup(int argc, char** argv);
+        bool Startup(const GTCore::CommandLine &commandLine);
 
         /// Shuts down the game.
         ///
@@ -434,7 +435,7 @@ namespace GTEngine
         ///     This is called after the window has been created and shown.
         ///     @par
         ///     The return value is true if the startup is successful; false otherwise.
-        virtual bool OnStartup(int argc, char** argv);
+        virtual bool OnStartup(const GTCore::CommandLine &commandLine);
 
         /// Called when the game is shutting down.
         virtual void OnShutdown();
