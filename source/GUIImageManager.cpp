@@ -73,25 +73,18 @@ namespace GTEngine
                 if (loader->LoadMipmap(0, mipmap))      // <-- '0' means the base mipmap.
                 {
                     GTGUI::ImageFormat format;
-                    switch (info.format)
+                    
+                    if (info.format == GTImage::ImageFormat_RGBA8)
                     {
-                    case GTImage::ImageFormat_RGBA8:
-                        {
-                            format = GTGUI::ImageFormat_RGBA8;
-                            break;
-                        }
-                        
-                    case GTImage::ImageFormat_R8:
-                        {
-                            format = GTGUI::ImageFormat_A8;
-                            break;
-                        }
-                        
-                    default:
-                        {
-                            format = GTGUI::ImageFormat_RGB8;
-                            break;
-                        }
+                        format = GTGUI::ImageFormat_RGBA8;
+                    }
+                    else if (info.format == GTImage::ImageFormat_R8)
+                    {
+                        format = GTGUI::ImageFormat_A8;
+                    }
+                    else
+                    {
+                        format = GTGUI::ImageFormat_RGB8;
                     }
 
                     return this->CreateImage(mipmap.width, mipmap.height, format, mipmap.data);
