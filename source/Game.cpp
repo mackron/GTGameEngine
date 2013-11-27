@@ -21,8 +21,7 @@
 #include <GTCore/CommandLine.hpp>
 #include <GTCore/Path.hpp>
 #include <GTCore/Keyboard.hpp>
-//#include <GTCore/Profiling/valgrind/callgrind.h>
-#include <gperftools/profiler.h>
+#include <GTCore/Profiling/valgrind/callgrind.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
