@@ -58,10 +58,10 @@ namespace GTEngine
                 if (GTEngine::IO::IsSupportedModelExtension(fileName) && !GTCore::Path::ExtensionEqual(fileName, ".gtmodel"))
                 {
                     // It's a non-gtmodel file. We need to look for an associated .gtmodel file.
-                    GTCore::IO::FileInfo gtmodelInfo;
+                    GTCore::FileInfo gtmodelInfo;
                     if (GTCore::IO::GetFileInfo((GTCore::String(fileAbsolutePath) + ".gtmodel").c_str(), gtmodelInfo))
                     {
-                        GTCore::IO::FileInfo originalInfo;
+                        GTCore::FileInfo originalInfo;
                         if (GTCore::IO::GetFileInfo(fileAbsolutePath, originalInfo))
                         {
                             if (gtmodelInfo.lastModifiedTime > originalInfo.lastModifiedTime)
