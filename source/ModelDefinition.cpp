@@ -79,10 +79,10 @@ namespace GTEngine
 
         // We need file info of both the foreign and native files. If the foreign file is different to the file that would used to generate
         // the existing native file, it will be reloaded. 
-        GTCore::IO::FileInfo foreignFileInfo;
+        GTCore::FileInfo foreignFileInfo;
         GTCore::IO::GetFileInfo(newAbsolutePath.c_str(), foreignFileInfo);
 
-        GTCore::IO::FileInfo nativeFileInfo;
+        GTCore::FileInfo nativeFileInfo;
         GTCore::IO::GetFileInfo(nativeAbsolutePath.c_str(), nativeFileInfo);
 
         if (!foreignFileInfo.exists && !nativeFileInfo.exists)

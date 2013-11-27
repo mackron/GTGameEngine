@@ -24,6 +24,7 @@ function GTGUI.Element:SubEditor(_internalPtr)
     end
     
     function self:OnHide()
+        print("HIDING!");
         self:HideToolBar();
     end
     

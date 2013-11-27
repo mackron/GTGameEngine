@@ -39,7 +39,7 @@ namespace GTEngine
                         this->CalculateFormat();
 
                         // Now we need to seek to the start of our data so that we can start reading it.
-                        GTCore::IO::Seek(this->file, this->dataStartPos, GTCore::IO::Start);
+                        GTCore::IO::Seek(this->file, this->dataStartPos, GTCore::SeekOrigin::Start);
 
                         return true;
                     }
@@ -81,7 +81,7 @@ namespace GTEngine
             }
             else
             {
-                GTCore::IO::Seek(this->file, this->dataStartPos, GTCore::IO::Start);
+                GTCore::IO::Seek(this->file, this->dataStartPos, GTCore::SeekOrigin::Start);
             }
         }
 
@@ -118,7 +118,7 @@ namespace GTEngine
         uint32_t bytes_per_mill = this->GetBytesPerSecond() / 1000;
 
         uint32_t new_position = bytes_per_mill * time_mills;
-        GTCore::IO::Seek(this->file, this->dataStartPos + new_position, GTCore::IO::Start);
+        GTCore::IO::Seek(this->file, this->dataStartPos + new_position, GTCore::SeekOrigin::Start);
     }
 
     uint64_t SoundStreamer_WAV::GetTotalPCMDataSize()
@@ -202,8 +202,8 @@ namespace GTEngine
                 GTCore::IO::Read(this->file, &this->sampleRate, 4);
 
 			    // We can skip over our bytes per second and block align. These can be calculated from other properties.
-                GTCore::IO::Seek(this->file, 4, GTCore::IO::Current);   // <-- bytes-per-second
-                GTCore::IO::Seek(this->file, 2, GTCore::IO::Current);   // <-- block align
+                GTCore::IO::Seek(this->file, 4, GTCore::SeekOrigin::Current);   // <-- bytes-per-second
+                GTCore::IO::Seek(this->file, 2, GTCore::SeekOrigin::Current);   // <-- block align
 
 			    // Read the significant bits per sample.
                 GTCore::IO::Read(this->file, &this->bitsPerSample, 2);
@@ -216,7 +216,7 @@ namespace GTEngine
 				    // Read in the extra bytes and skip over them.
 				    uint16_t extra = 0;
                     GTCore::IO::Read(this->file, &extra, 2);
-                    GTCore::IO::Seek(this->file, extra, GTCore::IO::Current);
+                    GTCore::IO::Seek(this->file, extra, GTCore::SeekOrigin::Current);
 			    }
 		    }
             else if (GTCore::Strings::Equal<false>(chunk_name, "data"))
@@ -231,12 +231,12 @@ namespace GTEngine
 			    this->dataSize = chunk_size;
 
 			    // Skip over the data. We will move back here when it is time to read the data.
-                GTCore::IO::Seek(this->file, this->dataSize, GTCore::IO::Current);
+                GTCore::IO::Seek(this->file, this->dataSize, GTCore::SeekOrigin::Current);
 		    }
 		    else
 		    {
 			    // We're not interested in the chunk, so skip over it.
-                GTCore::IO::Seek(this->file, chunk_size, GTCore::IO::Current);
+                GTCore::IO::Seek(this->file, chunk_size, GTCore::SeekOrigin::Current);
 		    }
 	    }
 

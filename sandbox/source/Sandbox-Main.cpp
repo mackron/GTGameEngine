@@ -20,7 +20,7 @@ public:
     ////////////////////////////////////////////
     // Event handlers.
 
-    bool OnStartup(int, char**)
+    bool OnStartup(const GTCore::CommandLine &)
     {
         auto &script = this->GetScript();
         script.ExecuteFile("sandbox-config.lua");

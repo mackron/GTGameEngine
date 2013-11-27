@@ -27,7 +27,7 @@ namespace GTEngine
 
     void DataFilesWatcher::AddRootDirectory(const char* directory)
     {
-        this->root.InsertChild(GTCore::IO::FileInfo(directory));
+        this->root.InsertChild(GTCore::FileInfo(directory));
     }
 
     void DataFilesWatcher::RemoveRootDirectory(const char* directory)
@@ -149,7 +149,7 @@ namespace GTEngine
         if (this->isActive)
         {
             // We first check ourselves for changes. 'root' will be the old info.
-            GTCore::IO::FileInfo newInfo;
+            GTCore::FileInfo newInfo;
             GTCore::IO::GetFileInfo(root.info.absolutePath.c_str(), newInfo);
 
             if (newInfo.lastModifiedTime != root.info.lastModifiedTime)
@@ -211,7 +211,7 @@ namespace GTEngine
             GTCore::List<Item*> addedChildren;
             for (auto iChild = currentChildren.root; iChild != nullptr; iChild = iChild->next)
             {
-                GTCore::IO::FileInfo info;
+                GTCore::FileInfo info;
                 GTCore::IO::GetFileInfo(iChild->value.c_str(), info);
 
                 if (root.children.Find(info.absolutePath.c_str()) == nullptr)

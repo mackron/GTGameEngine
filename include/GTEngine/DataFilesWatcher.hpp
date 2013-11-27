@@ -33,7 +33,7 @@ namespace GTEngine
             {
             }
 
-            Item(const GTCore::IO::FileInfo &infoIn, Item* parent)
+            Item(const GTCore::FileInfo &infoIn, Item* parent)
                 : info(infoIn),
                   relativePath(), absolutePath(),
                   parent(parent), children()
@@ -52,7 +52,7 @@ namespace GTEngine
             /// Adds a child item.
             ///
             /// @param info [in] The file info of the child.
-            void InsertChild(const GTCore::IO::FileInfo &info)
+            void InsertChild(const GTCore::FileInfo &info)
             {
                 this->children.Add(info.path.c_str(), new Item(info, this));
             }
@@ -101,7 +101,7 @@ namespace GTEngine
 
 
             /// The file info.
-            GTCore::IO::FileInfo info;
+            GTCore::FileInfo info;
 
             /// The relative path.
             GTCore::String relativePath;
