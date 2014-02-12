@@ -18,6 +18,7 @@
 #include <GTCore/CommandLine.hpp>
 #include <GTCore/IO.hpp>
 #include <GTCore/WindowManagement.hpp>
+#include "Audio/OpenAL/AudioEngine_OpenAL.hpp"
 
 // Basic globals.
 namespace GTEngine
@@ -33,6 +34,28 @@ namespace GTEngine
 {
     bool _PreStartup(const GTCore::CommandLine &commandLine)
     {
+        AudioEngine_OpenAL audioEngine;
+        if (audioEngine.Startup())
+        {
+            PlaybackDeviceHandle device = audioEngine.OpenPlaybackDevice(0);
+            if (device != 0)
+            {
+                audioEngine.ClosePlaybackDevice(device);
+            }
+            else
+            {
+                printf("Failed to open playback device.\n");
+            }
+
+            audioEngine.Shutdown();
+        }
+        else
+        {
+            printf("Failed to initialize OpenAL audio engine.\n");
+        }
+
+
+
         // First this is to more into the applications directory. We get this from the command line.
         GTCore::IO::SetCurrentDirectory(commandLine.GetApplicationDirectory());
 

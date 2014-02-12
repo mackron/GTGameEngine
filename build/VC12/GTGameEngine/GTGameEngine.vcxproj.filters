@@ -138,6 +138,9 @@
     <Filter Include="Source Files\Rendering\OpenGL\OpenGL21">
       <UniqueIdentifier>{418791b1-2f60-4cdc-b175-23fa70cd1b66}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Audio\OpenAL">
+      <UniqueIdentifier>{c13877dc-3242-4ca6-8401-b30b0cb9c026}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\AABB.hpp">
@@ -944,6 +947,12 @@
     <ClInclude Include="..\..\..\include\GTEngine\GameEventFilter.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioEngine.hpp">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Audio\OpenAL\AudioEngine_OpenAL.hpp">
+      <Filter>Source Files\Audio\OpenAL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\include\GTEngine\HACD\hacdCircularList.inl">
@@ -1643,6 +1652,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\GameEventFilter.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\AudioEngine.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\OpenAL\AudioEngine_OpenAL.cpp">
+      <Filter>Source Files\Audio\OpenAL</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
