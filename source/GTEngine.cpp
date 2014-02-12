@@ -18,7 +18,7 @@
 #include <GTCore/CommandLine.hpp>
 #include <GTCore/IO.hpp>
 #include <GTCore/WindowManagement.hpp>
-#include "Audio/OpenAL/AudioEngine_OpenAL.hpp"
+//#include "Audio/OpenAL/AudioEngine_OpenAL.hpp"
 
 // Basic globals.
 namespace GTEngine
@@ -34,6 +34,7 @@ namespace GTEngine
 {
     bool _PreStartup(const GTCore::CommandLine &commandLine)
     {
+#if 0
         AudioEngine_OpenAL audioEngine;
         if (audioEngine.Startup())
         {
@@ -53,6 +54,7 @@ namespace GTEngine
         {
             printf("Failed to initialize OpenAL audio engine.\n");
         }
+#endif
 
 
 
