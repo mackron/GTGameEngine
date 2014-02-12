@@ -112,7 +112,7 @@ namespace GTEngine
         /// Swaps the back and front buffers.
         void SwapBuffers()
         {
-            // We need to wait for the front buffer to finish processing before returning. We'll through ourselves into a slow loop for this.
+            // We need to wait for the front buffer to finish processing before returning. We'll throw ourselves into a slow loop for this.
             for (;;)
             {
                 // Check our state. If we need to restart, do so.

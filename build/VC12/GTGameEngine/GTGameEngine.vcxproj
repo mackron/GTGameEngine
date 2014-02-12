@@ -96,6 +96,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\AssetTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioComposer.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioEngine.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\Sound.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundFormats.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundStreamer.hpp" />
@@ -318,6 +319,7 @@
     <ClInclude Include="..\..\..\include\GTEngine\Utilities\CharacterControllerEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Utilities\DynamicCharacterController.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\VertexArrayLibrary.hpp" />
+    <ClInclude Include="..\..\..\source\Audio\OpenAL\AudioEngine_OpenAL.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\CapabilityBits.hpp" />
@@ -366,6 +368,8 @@
     <ClCompile Include="..\..\..\source\Animation\AnimationTrack.cpp" />
     <ClCompile Include="..\..\..\source\ApplicationConfig.cpp" />
     <ClCompile Include="..\..\..\source\Audio\AudioComposer.cpp" />
+    <ClCompile Include="..\..\..\source\Audio\AudioEngine.cpp" />
+    <ClCompile Include="..\..\..\source\Audio\OpenAL\AudioEngine_OpenAL.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Sound.cpp" />
     <ClCompile Include="..\..\..\source\Audio\SoundStreamer.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.cpp" />
