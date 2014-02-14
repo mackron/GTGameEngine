@@ -300,85 +300,107 @@ namespace GTEngine
         if (positionStride != -1 && normalStride != -1 && texCoordStride != -1 && tangentStride != -1 && bitangentStride != -1)
         {
             auto vertexSize = format.GetSize();
-            auto indexCount = this->GetIndexCount();
-            auto indexData  = this->MapIndexData();
-            auto vertexData = this->MapVertexData();
+            auto indexCount  = this->GetIndexCount();
+            auto indexData   = this->MapIndexData();
+            auto vertexCount = this->GetVertexCount();
+            auto vertexData  = this->MapVertexData();
+
+            glm::vec3* tan = new glm::vec3[vertexCount];
 
             // We need to loop over each triangle, which is every 3 indices.
             for (size_t iVertex = 0; iVertex < indexCount; iVertex += 3)
             {
-                auto vertex0Src = vertexData + (indexData[iVertex + 0] * vertexSize);
-                auto vertex1Src = vertexData + (indexData[iVertex + 1] * vertexSize);
-                auto vertex2Src = vertexData + (indexData[iVertex + 2] * vertexSize);
+                unsigned int i0 = indexData[iVertex + 0];
+                unsigned int i1 = indexData[iVertex + 1];
+                unsigned int i2 = indexData[iVertex + 2];
+
+                auto vertex0Src = vertexData + (i0 * vertexSize);
+                auto vertex1Src = vertexData + (i1 * vertexSize);
+                auto vertex2Src = vertexData + (i2 * vertexSize);
 
                 auto p0Src = vertex0Src + positionStride;
                 auto p1Src = vertex1Src + positionStride;
                 auto p2Src = vertex2Src + positionStride;
-
-                auto n0Src = vertex0Src + normalStride;
-                auto n1Src = vertex1Src + normalStride;
-                auto n2Src = vertex2Src + normalStride;
-
                 auto t0Src = vertex0Src + texCoordStride;
                 auto t1Src = vertex1Src + texCoordStride;
                 auto t2Src = vertex2Src + texCoordStride;
 
-                glm::vec3 p0(p0Src[0], p0Src[1], p0Src[2]);
-                glm::vec3 p1(p1Src[0], p1Src[1], p1Src[2]);
-                glm::vec3 p2(p2Src[0], p2Src[1], p2Src[2]);
+                glm::vec3 v1(p0Src[0], p0Src[1], p0Src[2]);
+                glm::vec3 v2(p1Src[0], p1Src[1], p1Src[2]);
+                glm::vec3 v3(p2Src[0], p2Src[1], p2Src[2]);
+                glm::vec2 w1(t0Src[0], t0Src[1]);
+                glm::vec2 w2(t1Src[0], t1Src[1]);
+                glm::vec2 w3(t2Src[0], t2Src[1]);
 
-                glm::vec3 n0(n0Src[0], n0Src[1], n0Src[2]);
-                glm::vec3 n1(n1Src[0], n1Src[1], n1Src[2]);
-                glm::vec3 n2(n2Src[0], n2Src[1], n2Src[2]);
+                float x1 = v2.x - v1.x;
+                float x2 = v3.x - v1.x;
+                float y1 = v2.y - v1.y;
+                float y2 = v3.y - v1.y;
+                float z1 = v2.z - v1.z;
+                float z2 = v3.z - v1.z;
+        
+                float s1 = w2.x - w1.x;
+                float s2 = w3.x - w1.x;
+                float t1 = w2.y - w1.y;
+                float t2 = w3.y - w1.y;
 
-                glm::vec2 t0(t0Src[0], t0Src[1]);
-                glm::vec2 t1(t1Src[0], t1Src[1]);
-                glm::vec2 t2(t2Src[0], t2Src[1]);
 
-
-                glm::vec3 p10 = p1 - p0;
-                glm::vec3 p20 = p2 - p0;
-                glm::vec2 t10 = t1 - t0;
-                glm::vec2 t20 = t2 - t0;
-
-                float r = 1.0F / (t10.x * t20.y - t20.x * t10.y);
-
-                glm::vec3 tangent  = glm::normalize((p10 * t20.y) - (p20 * t10.y)) * r;
-                glm::vec3 tangent0 = glm::orthonormalize(tangent, n0);
-                glm::vec3 tangent1 = glm::orthonormalize(tangent, n1);
-                glm::vec3 tangent2 = glm::orthonormalize(tangent, n2);
-
-                glm::vec3 bitangent0 = glm::normalize(glm::cross(n0, tangent0));
-                glm::vec3 bitangent1 = glm::normalize(glm::cross(n1, tangent1));
-                glm::vec3 bitangent2 = glm::normalize(glm::cross(n2, tangent2));
-
-                if (glm::dot(glm::cross(n0, tangent0), bitangent0) < 0)
+                float r = s1 * t2 - s2 * t1;
+                if (r != 0)
                 {
-                    bitangent0 *= -1.0f;
-                }
-                if (glm::dot(glm::cross(n1, tangent1), bitangent1) < 0)
-                {
-                    bitangent1 *= -1.0f;
-                }
-                if (glm::dot(glm::cross(n2, tangent2), bitangent2) < 0)
-                {
-                    bitangent2 *= -1.0f;
+                    r = 1.0f / r;
                 }
 
-                auto tangent0Src = vertex0Src + tangentStride;
-                auto tangent1Src = vertex1Src + tangentStride;
-                auto tangent2Src = vertex2Src + tangentStride;
-                tangent0Src[0] = tangent0.x; tangent0Src[1] = tangent0.y; tangent0Src[2] = tangent0.z;
-                tangent1Src[0] = tangent1.x; tangent1Src[1] = tangent1.y; tangent1Src[2] = tangent1.z;
-                tangent2Src[0] = tangent2.x; tangent2Src[1] = tangent2.y; tangent2Src[2] = tangent2.z;
+                glm::vec3 sdir((t2 * x1 - t1 * x2) * r, (t2 * y1 - t1 * y2) * r, (t2 * z1 - t1 * z2) * r);
+                glm::vec3 tdir((s1 * x2 - s2 * x1) * r, (s1 * y2 - s2 * y1) * r, (s1 * z2 - s2 * z1) * r);
+        
 
-                auto bitangent0Src = vertex0Src + bitangentStride;
-                auto bitangent1Src = vertex1Src + bitangentStride;
-                auto bitangent2Src = vertex2Src + bitangentStride;
-                bitangent0Src[0] = bitangent0.x; bitangent0Src[1] = bitangent0.y; bitangent0Src[2] = bitangent0.z;
-                bitangent1Src[0] = bitangent1.x; bitangent1Src[1] = bitangent1.y; bitangent1Src[2] = bitangent1.z;
-                bitangent2Src[0] = bitangent2.x; bitangent2Src[1] = bitangent2.y; bitangent2Src[2] = bitangent2.z;
+                tan[i0] += sdir;
+                tan[i1] += sdir;
+                tan[i2] += sdir;
             }
+
+            for (size_t iVertex = 0; iVertex < vertexCount; ++iVertex)
+            {
+                auto vertexPtr = vertexData + (iVertex * vertexSize);
+
+                auto normalPtr    = vertexPtr + normalStride;
+                auto tangentPtr   = vertexPtr + tangentStride;
+                auto bitangentPtr = vertexPtr + bitangentStride;
+
+
+                glm::vec3 n(normalPtr[0], normalPtr[1], normalPtr[2]);
+                glm::vec3 t(tan[iVertex]);
+                
+
+                glm::vec3 tangent;
+                glm::vec3 bitangent;
+
+                if (glm::length2(t) > 0)
+                {
+                    // Tangent.
+                    tangent = glm::orthonormalize(t, n);
+
+
+                    // Bitangent.
+                    bitangent = glm::normalize(glm::cross(n, tangent));
+                    if (glm::dot(glm::cross(n, tangent), bitangent) < 0)
+                    {
+                        bitangent *= -1.0f;
+                    }
+                }
+
+                
+                tangentPtr[0] = tangent.x;
+                tangentPtr[1] = tangent.y; 
+                tangentPtr[2] = tangent.z;
+
+                bitangentPtr[0] = bitangent.x;
+                bitangentPtr[1] = bitangent.y;
+                bitangentPtr[2] = bitangent.z;
+            }
+
+            delete [] tan;
 
 
             this->UnmapIndexData();

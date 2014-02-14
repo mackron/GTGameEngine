@@ -272,6 +272,12 @@ namespace GTEngine
                     auto texCoordDst = vertexDst + texCoordOffset;
                     auto normalDst   = vertexDst + normalOffset;
 
+
+                    // It's possible that the mesh won't store texture coordinates, so we want to set some default ones.
+                    texCoordDst[0] = 0.0f;
+                    texCoordDst[1] = 0.0f;
+
+
                     // First the position.
                     if (positions != nullptr)
                     {
