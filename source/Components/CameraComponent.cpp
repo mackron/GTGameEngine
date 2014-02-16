@@ -18,11 +18,32 @@ namespace GTEngine
     {
         this->perspective.fov    = fov;
         this->perspective.aspect = aspect;
+        this->zNear              = zNear;
+        this->zFar               = zFar;
+        
+        // The aspect ratio must be larger than 0. If it's not, we'll default to 16/9.
+        if (this->perspective.aspect <= 0)
+        {
+            this->perspective.aspect = 16.0f / 9.0f;
+        }
+        
+        // We can't let the near and far planes equal each other. If this is the case, we're going to take the near plane and multiply it
+        // by 100 to get the far plane.
+        if (this->zNear == this->zFar)
+        {
+            if (this->zNear != 0)
+            {
+                this->zFar = this->zNear * 100;
+            }
+            else
+            {
+                this->zNear = 0.1f;
+                this->zFar  = 1000.0f;
+            }
+        }
+        
 
-        this->zNear  = zNear;
-        this->zFar   = zFar;
-
-        this->projection = glm::perspective(fov * 0.5f, aspect, zNear, zFar);   // Although unintuitive, halving the FOV here is correct.
+        this->projection = glm::perspective(this->perspective.fov * 0.5f, this->perspective.aspect, this->zNear, this->zFar);   // Although unintuitive, halving the FOV here is correct.
 
 
         this->OnChanged();
@@ -34,11 +55,27 @@ namespace GTEngine
         this->ortho.right  = right;
         this->ortho.bottom = bottom;
         this->ortho.top    = top;
+        this->zNear        = zNear;
+        this->zFar         = zFar;
+        
+        
+        // We can't let the near and far planes equal each other. If this is the case, we're going to take the near plane and multiply it
+        // by 100 to get the far plane.
+        if (this->zNear == this->zFar)
+        {
+            if (this->zNear != 0)
+            {
+                this->zFar = this->zNear * 100;
+            }
+            else
+            {
+                this->zNear = 0.1f;
+                this->zFar  = 1000.0f;
+            }
+        }
+        
 
-        this->zNear  = zNear;
-        this->zFar   = zFar;
-
-        this->projection = glm::ortho(left, right, bottom, top, zNear, zFar);
+        this->projection = glm::ortho(this->ortho.left, this->ortho.right, this->ortho.bottom, this->ortho.top, this->zNear, this->zFar);
 
 
         this->OnChanged();
