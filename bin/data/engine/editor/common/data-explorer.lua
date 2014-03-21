@@ -33,6 +33,7 @@ function GTGUI.Element:DataExplorer()
                     Game.ScanDataFilesForChanges();
                     
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
+                    self:SelectAndExpandItemByPath(absolutePath);
                 end
             end);
         end
@@ -57,6 +58,7 @@ function GTGUI.Element:DataExplorer()
                     Game.ScanDataFilesForChanges();
                     
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
+                    self:SelectAndExpandItemByPath(absolutePath);
                 end
             end);
         end
@@ -70,6 +72,7 @@ function GTGUI.Element:DataExplorer()
                     Game.ScanDataFilesForChanges();
                     
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
+                    self:SelectAndExpandItemByPath(absolutePath);
                 end
             end);
         end
@@ -83,6 +86,7 @@ function GTGUI.Element:DataExplorer()
                     Game.ScanDataFilesForChanges();
                     
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
+                    self:SelectAndExpandItemByPath(absolutePath);
                 end
             end);
         end
@@ -218,6 +222,21 @@ function GTGUI.Element:DataExplorer()
         return nil;
     end
     
+	
+	function self:SelectAndExpandItemByPath(path)
+		local item = self:FindItemByPath(path);
+		if item then
+			local parentItem = item:GetParent();
+			while parentItem do
+				parentItem:Expand();
+				parentItem = parentItem:GetParent();
+			end
+			
+			self.TreeView:DeselectAllItems();
+			item:Select();
+		end
+	end
+	
     
     function self:IsFileIgnored(fileInfo)
         -- Here we'll check the extensions.
