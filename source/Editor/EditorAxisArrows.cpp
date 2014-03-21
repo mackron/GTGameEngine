@@ -56,9 +56,9 @@ namespace GTEngine
 
 
         /// The meshes need to be created properly here.
-        this->CreateArrowVertexArray(glm::mat4_cast(glm::angleAxis(-90.0f,  glm::vec3(0.0f, 1.0f, 0.0f))), this->xArrowLine.vertexArray, this->xArrowHead.vertexArray);
-        this->CreateArrowVertexArray(glm::mat4_cast(glm::angleAxis( 90.0f,  glm::vec3(1.0f, 0.0f, 0.0f))), this->yArrowLine.vertexArray, this->yArrowHead.vertexArray);
-        this->CreateArrowVertexArray(glm::mat4_cast(glm::angleAxis( 180.0f, glm::vec3(1.0f, 0.0f, 0.0f))), this->zArrowLine.vertexArray, this->zArrowHead.vertexArray);
+        this->CreateArrowVertexArray(glm::mat4_cast(glm::angleAxis(glm::radians(-90.0f),  glm::vec3(0.0f, 1.0f, 0.0f))), this->xArrowLine.vertexArray, this->xArrowHead.vertexArray);
+        this->CreateArrowVertexArray(glm::mat4_cast(glm::angleAxis(glm::radians( 90.0f),  glm::vec3(1.0f, 0.0f, 0.0f))), this->yArrowLine.vertexArray, this->yArrowHead.vertexArray);
+        this->CreateArrowVertexArray(glm::mat4_cast(glm::angleAxis(glm::radians( 180.0f), glm::vec3(1.0f, 0.0f, 0.0f))), this->zArrowLine.vertexArray, this->zArrowHead.vertexArray);
     }
 
 

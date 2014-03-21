@@ -271,9 +271,9 @@ namespace GTEngine
     {
         switch (axis)
         {
-        case HandleAxis_X: this->localOrientation = glm::mat3_cast(glm::angleAxis(-90.0f,  glm::vec3(0.0f, 1.0f, 0.0f))); break;
-        case HandleAxis_Y: this->localOrientation = glm::mat3_cast(glm::angleAxis( 90.0f,  glm::vec3(1.0f, 0.0f, 0.0f))); break;
-        case HandleAxis_Z: this->localOrientation = glm::mat3_cast(glm::angleAxis( 180.0f, glm::vec3(1.0f, 0.0f, 0.0f))); break;
+        case HandleAxis_X: this->localOrientation = glm::mat3_cast(glm::angleAxis(glm::radians(-90.0f),  glm::vec3(0.0f, 1.0f, 0.0f))); break;
+        case HandleAxis_Y: this->localOrientation = glm::mat3_cast(glm::angleAxis(glm::radians( 90.0f),  glm::vec3(1.0f, 0.0f, 0.0f))); break;
+        case HandleAxis_Z: this->localOrientation = glm::mat3_cast(glm::angleAxis(glm::radians( 180.0f), glm::vec3(1.0f, 0.0f, 0.0f))); break;
 
         case HandleAxis_FrontFacing:
         default:
@@ -470,9 +470,9 @@ namespace GTEngine
     {
         switch (axis)
         {
-        case HandleAxis_X:           this->localOrientation = glm::mat3_cast(glm::angleAxis(-90.0f,  glm::vec3(0.0f, 1.0f, 0.0f))); break;
-        case HandleAxis_Y:           this->localOrientation = glm::mat3_cast(glm::angleAxis( 90.0f,  glm::vec3(1.0f, 0.0f, 0.0f))); break;
-        case HandleAxis_Z:           this->localOrientation = glm::mat3_cast(glm::angleAxis( 180.0f, glm::vec3(1.0f, 0.0f, 0.0f))); break;
+        case HandleAxis_X:           this->localOrientation = glm::mat3_cast(glm::angleAxis(glm::radians(-90.0f),  glm::vec3(0.0f, 1.0f, 0.0f))); break;
+        case HandleAxis_Y:           this->localOrientation = glm::mat3_cast(glm::angleAxis(glm::radians( 90.0f),  glm::vec3(1.0f, 0.0f, 0.0f))); break;
+        case HandleAxis_Z:           this->localOrientation = glm::mat3_cast(glm::angleAxis(glm::radians( 180.0f), glm::vec3(1.0f, 0.0f, 0.0f))); break;
         case HandleAxis_FrontFacing: break;
 
         default:
@@ -685,9 +685,9 @@ namespace GTEngine
     {
         switch (axis)
         {
-        case HandleAxis_X: this->localOrientation = glm::mat3_cast(glm::angleAxis(-90.0f,  glm::vec3(0.0f, 1.0f, 0.0f))); break;
-        case HandleAxis_Y: this->localOrientation = glm::mat3_cast(glm::angleAxis( 90.0f,  glm::vec3(1.0f, 0.0f, 0.0f))); break;
-        case HandleAxis_Z: this->localOrientation = glm::mat3_cast(glm::angleAxis( 180.0f, glm::vec3(1.0f, 0.0f, 0.0f))); break;
+        case HandleAxis_X: this->localOrientation = glm::mat3_cast(glm::angleAxis(glm::radians(-90.0f),  glm::vec3(0.0f, 1.0f, 0.0f))); break;
+        case HandleAxis_Y: this->localOrientation = glm::mat3_cast(glm::angleAxis(glm::radians( 90.0f),  glm::vec3(1.0f, 0.0f, 0.0f))); break;
+        case HandleAxis_Z: this->localOrientation = glm::mat3_cast(glm::angleAxis(glm::radians( 180.0f), glm::vec3(1.0f, 0.0f, 0.0f))); break;
 
         case HandleAxis_FrontFacing:
         default:

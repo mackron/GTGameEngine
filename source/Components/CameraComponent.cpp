@@ -1,6 +1,8 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/SceneNode.hpp>
+
+#define GLM_FORCE_RADIANS
 #include <glm/gtx/transform.hpp>
 
 namespace GTEngine
@@ -43,7 +45,7 @@ namespace GTEngine
         }
         
 
-        this->projection = glm::perspective(this->perspective.fov * 0.5f, this->perspective.aspect, this->zNear, this->zFar);   // Although unintuitive, halving the FOV here is correct.
+        this->projection = glm::perspective(glm::radians(this->perspective.fov * 0.5f), this->perspective.aspect, this->zNear, this->zFar);   // Although unintuitive, halving the FOV here is correct.
 
 
         this->OnChanged();

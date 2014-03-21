@@ -285,7 +285,7 @@ namespace GTEngine
                     float rotationAngle    = this->emissionShapeCone.angle * distanceFactor;
                     glm::simdVec4 rotationAxis = glm::cross(glm::simdVec4(0.0f, 0.0f, -1.0f, 1.0f), glm::normalize(normalizedPosition));
                     
-                    spawnDirection = glm::normalize(glm::angleAxisSIMD(rotationAngle, glm::vec3(rotationAxis.x, rotationAxis.y, rotationAxis.z)) * glm::simdVec4(0.0f, 0.0f, -1.0f, 0.0f));
+                    spawnDirection = glm::normalize(glm::angleAxisSIMD(glm::radians(rotationAngle), glm::vec3(rotationAxis.x, rotationAxis.y, rotationAxis.z)) * glm::simdVec4(0.0f, 0.0f, -1.0f, 0.0f));
 
 
                     break;
