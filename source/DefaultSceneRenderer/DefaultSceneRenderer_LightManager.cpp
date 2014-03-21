@@ -86,7 +86,7 @@ namespace GTEngine
             
             if (lightComponent->IsShadowCastingEnabled())
             {
-                light->projection = glm::perspective(90.0f, 1.0f, 0.1f, light->radius);
+                light->projection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, light->radius);
 
                 glm::vec3 origin(light->position);
                 glm::vec3 posx(  1.0f, 0.0f, 0.0f);
@@ -128,7 +128,7 @@ namespace GTEngine
 
             if (lightComponent->IsShadowCastingEnabled())
             {
-                light->projection = glm::perspective(light->outerAngle * 2.0f, 1.0f, 0.1f, light->length);
+                light->projection = glm::perspective(glm::radians(light->outerAngle * 2.0f), 1.0f, 0.1f, light->length);
                 light->view       = glm::mat4_cast(glm::inverse(light->orientation)) * glm::translate(-light->position);
             }
 

@@ -66,7 +66,12 @@ namespace GTEngine
         ///
         /// @param rotation [in] The amount of rotation to apply to each axis.
         void Rotate(const glm::quat &rotation);
-        void Rotate(const float angle, const glm::vec3 &axis) { this->Rotate(glm::angleAxis(angle, axis)); }
+
+        /// Rotates the pivot point.
+        ///
+        /// @param angle [in] The angle in degrees to rotate.
+        /// @param axis  [in] The axis to rotate around.
+        void Rotate(const float angle, const glm::vec3 &axis) { this->Rotate(glm::angleAxis(glm::radians(angle), axis)); }
 
         /// Scales the pivot point by the given amount.
         ///

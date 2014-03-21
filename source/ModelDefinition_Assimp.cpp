@@ -75,7 +75,7 @@ namespace GTEngine
 
         outputBone.SetOffsetMatrix(
             glm::translate(glm::vec3(position.x, position.y, position.z)) *
-            glm::mat4_cast(quat_cast(rotation) * glm::angleAxis(90.0f, glm::vec3(1.0f, 0.0f, 0.0f))) *        // <-- TODO: Check if this rotation is a bug in Assimp or Blender.
+            glm::mat4_cast(quat_cast(rotation) * glm::angleAxis(glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f))) *        // <-- TODO: Check if this rotation is a bug in Assimp or Blender.
             glm::scale(glm::vec3(scale.x, scale.y, scale.z)));
     }
 

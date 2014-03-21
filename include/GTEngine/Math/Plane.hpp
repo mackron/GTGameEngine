@@ -12,6 +12,7 @@
     #pragma GCC diagnostic ignored "-Wstrict-aliasing"
 #endif
 
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
 namespace GTEngine

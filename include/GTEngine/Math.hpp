@@ -18,7 +18,9 @@
 #define GLM_FORCE_SSE2
 #define GLM_SIMD_ENABLE_XYZW_UNION
 #define GLM_SIMD_ENABLE_DEFAULT_INIT
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+#include <glm/gtc/epsilon.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/transform.hpp>
@@ -227,6 +229,16 @@ namespace GTEngine
             return result;
         }
 
+
+
+
+        // Comparisons with epsilons.
+        inline bool epsilon_equal(const glm::vec3 &v1, const glm::vec3 &v2)
+        {
+            auto result = glm::epsilonEqual(v1, v2, glm::epsilon<float>());
+
+            return result.x && result.y && result.z;
+        }
 
 
 

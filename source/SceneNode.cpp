@@ -750,7 +750,7 @@ namespace GTEngine
 
     void SceneNode::Rotate(float angle, const glm::vec3 &axis)
     {
-        this->SetOrientation(this->orientation * glm::angleAxis(angle, axis));
+        this->SetOrientation(this->orientation * glm::angleAxis(glm::radians(angle), axis));
     }
 
     void SceneNode::Scale(const glm::vec3 &scale)
@@ -800,12 +800,12 @@ namespace GTEngine
 
     void SceneNode::RotateAroundWorldAxis(float angle, const glm::vec3 &axis)
     {
-        this->SetOrientation(glm::angleAxis(angle, axis) * this->GetOrientation());
+        this->SetOrientation(glm::angleAxis(glm::radians(angle), axis) * this->GetOrientation());
     }
 
     void SceneNode::RotateAtPivotAroundWorldAxis(float angle, const glm::vec3 &axis, const glm::vec3 &pivot)
     {
-        glm::quat rotation       = glm::angleAxis(angle, axis);
+        glm::quat rotation       = glm::angleAxis(glm::radians(angle), axis);
         glm::quat newOrientation = rotation * this->GetOrientation();
         glm::vec3 newPosition    = rotation * (this->GetPosition() - pivot) + pivot;
 

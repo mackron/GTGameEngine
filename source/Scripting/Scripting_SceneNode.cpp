@@ -1232,7 +1232,7 @@ namespace GTEngine
                 if (sceneNode != nullptr)
                 {
                     auto &orientation = sceneNode->GetOrientation();
-                    Scripting::PushNewVector3(script, glm::pitch(orientation), glm::yaw(orientation), glm::roll(orientation));
+                    Scripting::PushNewVector3(script, glm::degrees(glm::pitch(orientation)), glm::degrees(glm::yaw(orientation)), glm::degrees(glm::roll(orientation)));
                 }
                 else
                 {
@@ -1248,7 +1248,7 @@ namespace GTEngine
                 if (sceneNode != nullptr)
                 {
                     auto orientation = sceneNode->GetWorldOrientation();
-                    Scripting::PushNewVector3(script, glm::pitch(orientation), glm::yaw(orientation), glm::roll(orientation));
+                    Scripting::PushNewVector3(script, glm::degrees(glm::pitch(orientation)), glm::degrees(glm::yaw(orientation)), glm::degrees(glm::roll(orientation)));
                 }
                 else
                 {

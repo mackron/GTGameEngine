@@ -3,6 +3,9 @@
 #include <GTEngine/SceneViewport.hpp>
 #include <GTEngine/Scene.hpp>
 
+#define GLM_FORCE_RADIANS
+#include <glm/gtc/epsilon.hpp>
+
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable:4351)   // Unsigned is still unsigned after negation.
@@ -121,7 +124,7 @@ namespace GTEngine
         {
             // If the point we want to project is at exactly the same position as the camera, we'll end up with a dodgy result from glm::project. Therefore we need to
             // manually handle this case by simply returning the center point of the viewport.
-            if (cameraNode->GetWorldPosition() == position)
+            if (Math::epsilon_equal(cameraNode->GetWorldPosition(), position))
             {
                 return glm::vec3(this->width * 0.5f, this->height * 0.5f, 0.0f);
             }

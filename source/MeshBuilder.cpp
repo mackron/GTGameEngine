@@ -195,11 +195,11 @@ namespace GTEngine
     void WireframeSphereMeshBuilder::Build(const glm::mat4 &transform)
     {
         // 5 rings. One on the X/Z plane, and the other 4 on the X/Y plane.
-        this->BuildRing(transform, glm::mat4(),                                      this->rings[0]);
-        this->BuildRing(transform, glm::rotate( 90.0f, glm::vec3(1.0f, 0.0f, 0.0f)), this->rings[1]);
-        this->BuildRing(transform, glm::rotate(-90.0f, glm::vec3(0.0f, 1.0f, 0.0f)), this->rings[2]);
-        this->BuildRing(transform, glm::rotate( 45.0f, glm::vec3(0.0f, 1.0f, 0.0f)), this->rings[3]);
-        this->BuildRing(transform, glm::rotate(135.0f, glm::vec3(0.0f, 1.0f, 0.0f)), this->rings[4]);
+        this->BuildRing(transform, glm::mat4(),                                                    this->rings[0]);
+        this->BuildRing(transform, glm::rotate(glm::radians( 90.0f), glm::vec3(1.0f, 0.0f, 0.0f)), this->rings[1]);
+        this->BuildRing(transform, glm::rotate(glm::radians(-90.0f), glm::vec3(0.0f, 1.0f, 0.0f)), this->rings[2]);
+        this->BuildRing(transform, glm::rotate(glm::radians( 45.0f), glm::vec3(0.0f, 1.0f, 0.0f)), this->rings[3]);
+        this->BuildRing(transform, glm::rotate(glm::radians(135.0f), glm::vec3(0.0f, 1.0f, 0.0f)), this->rings[4]);
     }
 
     void WireframeSphereMeshBuilder::BuildRing(const glm::mat4 &transform, const glm::mat4 &ringTransform, MeshBuilderP3 &ringOut)
@@ -318,9 +318,9 @@ namespace GTEngine
 
         // Rings.
         this->CreateRing(radius, length, transform);
-        this->CreateRing(radius, length, transform * glm::rotate(45.0f,  glm::vec3(0.0f, 0.0f, 1.0f)));
-        this->CreateRing(radius, length, transform * glm::rotate(90.0f,  glm::vec3(0.0f, 0.0f, 1.0f)));
-        this->CreateRing(radius, length, transform * glm::rotate(135.0f, glm::vec3(0.0f, 0.0f, 1.0f)));
+        this->CreateRing(radius, length, transform * glm::rotate(glm::radians(45.0f),  glm::vec3(0.0f, 0.0f, 1.0f)));
+        this->CreateRing(radius, length, transform * glm::rotate(glm::radians(90.0f),  glm::vec3(0.0f, 0.0f, 1.0f)));
+        this->CreateRing(radius, length, transform * glm::rotate(glm::radians(135.0f), glm::vec3(0.0f, 0.0f, 1.0f)));
     }
 
     void WireframeCapsuleMeshBuilder::CreateRing(float radius, float length, const glm::mat4 &transform)
@@ -455,11 +455,11 @@ namespace GTEngine
 
             if (capsule.getUpAxis() == 0)          // X
             {
-                orientation = glm::rotate(90.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+                orientation = glm::rotate(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
             }
             else if (capsule.getUpAxis() == 1)     // Y
             {
-                orientation = glm::rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+                orientation = glm::rotate(glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
             }
             else if (capsule.getUpAxis() == 2)     // Z
             {
@@ -486,12 +486,12 @@ namespace GTEngine
             if (cylinder.getUpAxis() == 0)          // X
             {
                 length      = cylinder.getHalfExtentsWithMargin().x() * 2.0f;
-                orientation = glm::rotate(90.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+                orientation = glm::rotate(glm::radians(90.0f), glm::vec3(0.0f, 1.0f, 0.0f));
             }
             else if (cylinder.getUpAxis() == 1)     // Y
             {
                 length      = cylinder.getHalfExtentsWithMargin().y() * 2.0f;
-                orientation = glm::rotate(90.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+                orientation = glm::rotate(glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
             }
             else if (cylinder.getUpAxis() == 2)     // Z
             {

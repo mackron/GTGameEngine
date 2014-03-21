@@ -4,6 +4,8 @@
 #define __GTGameEngine_AudioEngine_hpp_
 
 #include <GTCore/String.hpp>
+
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 
 namespace GTEngine
