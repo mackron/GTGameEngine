@@ -122,19 +122,10 @@ namespace GTEngine
         auto cameraNode = this->GetCameraNode(layer);
         if (cameraNode != nullptr)
         {
-            // If the point we want to project is at exactly the same position as the camera, we'll end up with a dodgy result from glm::project. Therefore we need to
-            // manually handle this case by simply returning the center point of the viewport.
-            if (Math::epsilon_equal(cameraNode->GetWorldPosition(), position))
-            {
-                return glm::vec3(this->width * 0.5f, this->height * 0.5f, 0.0f);
-            }
-            else
-            {
-                auto viewportCamera = cameraNode->GetComponent<GTEngine::CameraComponent>();
-                assert(viewportCamera != nullptr);
+            auto viewportCamera = cameraNode->GetComponent<GTEngine::CameraComponent>();
+            assert(viewportCamera != nullptr);
 
-                return glm::project(position, viewportCamera->GetViewMatrix(), viewportCamera->GetProjectionMatrix(), glm::uvec4(0, 0, this->width, this->height));
-            }
+            return glm::project(position, viewportCamera->GetViewMatrix(), viewportCamera->GetProjectionMatrix(), glm::uvec4(0, 0, this->width, this->height));
         }
 
         return position;
