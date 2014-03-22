@@ -1173,6 +1173,8 @@ namespace GTEngine
 
     void Game::HandleEvents()
     {
+        GTGUI::EventContext eventContext = this->gui.BeginPostingEvents();
+
         GameEvent e;
         while (this->eventQueue.Next(e))
         {
@@ -1186,18 +1188,18 @@ namespace GTEngine
                     break;
                 }
 
-            case EventCodes::OnSize:                      this->HandleEvent_OnSize(e);                    break;
-            case EventCodes::OnMouseMove:                 this->HandleEvent_OnMouseMove(e);               break;
-            case EventCodes::OnMouseWheel:                this->HandleEvent_OnMouseWheel(e);              break;
-            case EventCodes::OnMouseButtonDown:           this->HandleEvent_OnMouseButtonDown(e);         break;
-            case EventCodes::OnMouseButtonUp:             this->HandleEvent_OnMouseButtonUp(e);           break;
-            case EventCodes::OnMouseButtonDoubleClick:    this->HandleEvent_OnMouseButtonDoubleClick(e);  break;
-            case EventCodes::OnKeyPressed:                this->HandleEvent_OnKeyPressed(e);              break;
-            case EventCodes::OnKeyReleased:               this->HandleEvent_OnKeyReleased(e);             break;
-            case EventCodes::OnKeyDown:                   this->HandleEvent_OnKeyDown(e);                 break;
-            case EventCodes::OnKeyUp:                     this->HandleEvent_OnKeyUp(e);                   break;
-            case EventCodes::OnReceiveFocus:              this->HandleEvent_OnReceiveFocus(e);            break;
-            case EventCodes::OnLoseFocus:                 this->HandleEvent_OnLoseFocus(e);               break;
+            case EventCodes::OnSize:                      this->HandleEvent_OnSize(e);                                  break;
+            case EventCodes::OnMouseMove:                 this->HandleEvent_OnMouseMove(e, eventContext);               break;
+            case EventCodes::OnMouseWheel:                this->HandleEvent_OnMouseWheel(e, eventContext);              break;
+            case EventCodes::OnMouseButtonDown:           this->HandleEvent_OnMouseButtonDown(e, eventContext);         break;
+            case EventCodes::OnMouseButtonUp:             this->HandleEvent_OnMouseButtonUp(e, eventContext);           break;
+            case EventCodes::OnMouseButtonDoubleClick:    this->HandleEvent_OnMouseButtonDoubleClick(e, eventContext);  break;
+            case EventCodes::OnKeyPressed:                this->HandleEvent_OnKeyPressed(e, eventContext);              break;
+            case EventCodes::OnKeyReleased:               this->HandleEvent_OnKeyReleased(e, eventContext);             break;
+            case EventCodes::OnKeyDown:                   this->HandleEvent_OnKeyDown(e, eventContext);                 break;
+            case EventCodes::OnKeyUp:                     this->HandleEvent_OnKeyUp(e, eventContext);                   break;
+            case EventCodes::OnReceiveFocus:              this->HandleEvent_OnReceiveFocus(e);                          break;
+            case EventCodes::OnLoseFocus:                 this->HandleEvent_OnLoseFocus(e);                             break;
 
             // Any generic events are posted as an event to the game so that an application can handle it itself.
             default:
@@ -1207,6 +1209,8 @@ namespace GTEngine
                 }
             }
         }
+
+        this->gui.EndPostingEvents(eventContext);
     }
 
     void Game::HandleEvent_OnSize(GameEvent &e)
@@ -1225,7 +1229,7 @@ namespace GTEngine
         }
     }
 
-    void Game::HandleEvent_OnMouseMove(GameEvent &e)
+    void Game::HandleEvent_OnMouseMove(GameEvent &e, GTGUI::EventContext eventContext)
     {
         this->mousePosX = e.mousemove.x;
         this->mousePosY = e.mousemove.y;
@@ -1235,7 +1239,7 @@ namespace GTEngine
         // If we're captured and blocking, we don't want to post anything.
         if (this->mouseMoveLockCounter == 0)
         {
-            this->gui.OnMouseMove(e.mousemove.x, e.mousemove.y);
+            this->gui.OnMouseMove(eventContext, e.mousemove.x, e.mousemove.y);
 
 
             // We don't post mouse events if the mouse is captured.
@@ -1259,9 +1263,9 @@ namespace GTEngine
         }
     }
 
-    void Game::HandleEvent_OnMouseWheel(GameEvent &e)
+    void Game::HandleEvent_OnMouseWheel(GameEvent &e, GTGUI::EventContext eventContext)
     {
-        this->gui.OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
+        this->gui.OnMouseWheel(eventContext, e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
 
         if (this->eventFilter == nullptr || this->eventFilter->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y))
         {
@@ -1275,11 +1279,11 @@ namespace GTEngine
         }
     }
 
-    void Game::HandleEvent_OnMouseButtonDown(GameEvent &e)
+    void Game::HandleEvent_OnMouseButtonDown(GameEvent &e, GTGUI::EventContext eventContext)
     {
         this->mouseButtonDownMap.Add(e.mousedown.button, true);
         
-        this->gui.OnMouseButtonDown(static_cast<int>(e.mousedown.button));
+        this->gui.OnMouseButtonDown(eventContext, static_cast<int>(e.mousedown.button));
 
 
 
@@ -1302,7 +1306,7 @@ namespace GTEngine
         }
     }
 
-    void Game::HandleEvent_OnMouseButtonUp(GameEvent &e)
+    void Game::HandleEvent_OnMouseButtonUp(GameEvent &e, GTGUI::EventContext eventContext)
     {
         auto iButtonDown = this->mouseButtonDownMap.Find(e.mouseup.button);
         if (iButtonDown != nullptr)
@@ -1311,7 +1315,7 @@ namespace GTEngine
         }
         
 
-        this->gui.OnMouseButtonUp(static_cast<int>(e.mouseup.button));
+        this->gui.OnMouseButtonUp(eventContext, static_cast<int>(e.mouseup.button));
 
 
         // If the editor is open, we'll want to post this event to that too.
@@ -1333,9 +1337,9 @@ namespace GTEngine
         }
     }
 
-    void Game::HandleEvent_OnMouseButtonDoubleClick(GameEvent &e)
+    void Game::HandleEvent_OnMouseButtonDoubleClick(GameEvent &e, GTGUI::EventContext eventContext)
     {
-        this->gui.OnMouseButtonDoubleClick(static_cast<int>(e.mousedoubleclick.button));
+        this->gui.OnMouseButtonDoubleClick(eventContext, static_cast<int>(e.mousedoubleclick.button));
 
 
         if (this->eventFilter == nullptr || this->eventFilter->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y))
@@ -1350,11 +1354,11 @@ namespace GTEngine
         }
     }
 
-    void Game::HandleEvent_OnKeyPressed(GameEvent &e)
+    void Game::HandleEvent_OnKeyPressed(GameEvent &e, GTGUI::EventContext eventContext)
     {
         this->keyDownMap.Add(e.keypressed.key, true);
 
-        this->gui.OnKeyPressed(e.keypressed.key);
+        this->gui.OnKeyPressed(eventContext, e.keypressed.key);
 
 
         if (this->eventFilter == nullptr || this->eventFilter->OnKeyPressed(e.keypressed.key))
@@ -1402,8 +1406,10 @@ namespace GTEngine
         }
     }
 
-    void Game::HandleEvent_OnKeyReleased(GameEvent &e)
+    void Game::HandleEvent_OnKeyReleased(GameEvent &e, GTGUI::EventContext eventContext)
     {
+        (void)eventContext;
+
         auto iKeyDown = this->keyDownMap.Find(e.keyreleased.key);
         if (iKeyDown != nullptr)
         {
@@ -1429,9 +1435,9 @@ namespace GTEngine
         }
     }
 
-    void Game::HandleEvent_OnKeyDown(GameEvent &e)
+    void Game::HandleEvent_OnKeyDown(GameEvent &e, GTGUI::EventContext eventContext)
     {
-        this->gui.OnKeyDown(e.keydown.key);
+        this->gui.OnKeyDown(eventContext, e.keydown.key);
 
 
         if (this->eventFilter == nullptr || this->eventFilter->OnKeyDown(e.keydown.key))
@@ -1441,9 +1447,9 @@ namespace GTEngine
         }
     }
 
-    void Game::HandleEvent_OnKeyUp(GameEvent &e)
+    void Game::HandleEvent_OnKeyUp(GameEvent &e, GTGUI::EventContext eventContext)
     {
-        this->gui.OnKeyUp(e.keyup.key);
+        this->gui.OnKeyUp(eventContext, e.keyup.key);
 
         
         if (this->eventFilter == nullptr || this->eventFilter->OnKeyUp(e.keyup.key))

@@ -601,15 +601,15 @@ namespace GTEngine
         void HandleEvents();
 
         void HandleEvent_OnSize(GameEvent &e);
-        void HandleEvent_OnMouseMove(GameEvent &e);
-        void HandleEvent_OnMouseWheel(GameEvent &e);
-        void HandleEvent_OnMouseButtonDown(GameEvent &e);
-        void HandleEvent_OnMouseButtonUp(GameEvent &e);
-        void HandleEvent_OnMouseButtonDoubleClick(GameEvent &e);
-        void HandleEvent_OnKeyPressed(GameEvent &e);
-        void HandleEvent_OnKeyReleased(GameEvent &e);
-        void HandleEvent_OnKeyDown(GameEvent &e);
-        void HandleEvent_OnKeyUp(GameEvent &e);
+        void HandleEvent_OnMouseMove(GameEvent &e, GTGUI::EventContext eventContext);
+        void HandleEvent_OnMouseWheel(GameEvent &e, GTGUI::EventContext eventContext);
+        void HandleEvent_OnMouseButtonDown(GameEvent &e, GTGUI::EventContext eventContext);
+        void HandleEvent_OnMouseButtonUp(GameEvent &e, GTGUI::EventContext eventContext);
+        void HandleEvent_OnMouseButtonDoubleClick(GameEvent &e, GTGUI::EventContext eventContext);
+        void HandleEvent_OnKeyPressed(GameEvent &e, GTGUI::EventContext eventContext);
+        void HandleEvent_OnKeyReleased(GameEvent &e, GTGUI::EventContext eventContext);
+        void HandleEvent_OnKeyDown(GameEvent &e, GTGUI::EventContext eventContext);
+        void HandleEvent_OnKeyUp(GameEvent &e, GTGUI::EventContext eventContext);
         void HandleEvent_OnReceiveFocus(GameEvent &e);
         void HandleEvent_OnLoseFocus(GameEvent &e);
 
