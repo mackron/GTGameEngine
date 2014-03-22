@@ -26,6 +26,8 @@ FEATURES:
     - Added the ability to filter events that are dispatched by the game. This
       allows games and parts of the engine itself to modify the event inputs
       and to also prevent events from getting dispatched at all.
+    - Added the ability to delete files and folders from the data explorer in
+      the editor.
 
 
 FIXES/IMPROVEMENTS:
@@ -64,6 +66,8 @@ FIXES/IMPROVEMENTS:
       to go here.
     - Removed default-1x1.dae and sphere.dae from the repository.
         - Changed the default mesh for cubes to default.dae.
+    - When creating an asset from inside the editor, it will be expanded and
+      selected in the data explorer.
     - More work on documentation
         - Tips, Tricks and Quirks
         - GUI Styling
