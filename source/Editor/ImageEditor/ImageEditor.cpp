@@ -118,7 +118,7 @@ namespace GTEngine
                     unsigned int imageWidth  = image->GetWidth();
                     unsigned int imageHeight = image->GetHeight();
 
-                    GTGUI::Rect viewportRect;
+                    GTLib::Rect<int> viewportRect;
                     element.GetAbsoluteRect(viewportRect);
 
                     float viewportWidth  = static_cast<float>(viewportRect.right  - viewportRect.left);

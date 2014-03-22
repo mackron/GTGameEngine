@@ -54,7 +54,7 @@ namespace GTEngine
             Renderer::PushPendingUniforms(*shader);
 
             
-            GTGUI::Rect viewportRect;
+            GTLib::Rect<int> viewportRect;
             element.GetAbsoluteRect(viewportRect);
 
             float quadLeft   = static_cast<float>(viewportRect.left);
