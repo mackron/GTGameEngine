@@ -171,7 +171,7 @@ namespace GTEngine
                 // Texture data has changed, so the renderer needs to know.
                 assert(texture != nullptr);
                 {
-                    texture->SetData(nextWidth, nextHeight, GTImage::ImageFormat_R16F);
+                    texture->SetData(nextWidth, nextHeight, GTLib::ImageFormat_R16F);
                     Renderer::PushTexture2DData(texture);
                 }
 

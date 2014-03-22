@@ -157,13 +157,13 @@ namespace GTEngine
             this->height = newHeight;
 
 
-            //this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
+            //this->depthStencilBuffer->SetData(newWidth, newHeight, GTLib::ImageFormat_Depth24_Stencil8);
             this->framebuffer->ResizeWriteOnlyDepthStencilBuffer(newWidth, newHeight);
-            this->colourBuffer0->SetData(    newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->colourBuffer1->SetData(    newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->lightingBuffer0->SetData(  newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->lightingBuffer1->SetData(  newWidth, newHeight, GTImage::ImageFormat_RGB16F);
-            this->finalColourBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_RGB8);
+            this->colourBuffer0->SetData(    newWidth, newHeight, GTLib::ImageFormat_RGB16F);
+            this->colourBuffer1->SetData(    newWidth, newHeight, GTLib::ImageFormat_RGB16F);
+            this->lightingBuffer0->SetData(  newWidth, newHeight, GTLib::ImageFormat_RGB16F);
+            this->lightingBuffer1->SetData(  newWidth, newHeight, GTLib::ImageFormat_RGB16F);
+            this->finalColourBuffer->SetData(newWidth, newHeight, GTLib::ImageFormat_RGB8);
 
             //Renderer::PushTexture2DData(*this->depthStencilBuffer);
             Renderer::PushTexture2DData(*this->colourBuffer0);
@@ -175,8 +175,8 @@ namespace GTEngine
 
             unsigned int bloomWidth  = GTLib::Max(1U, newWidth  / 4);
             unsigned int bloomHeight = GTLib::Max(1U, newHeight / 4);
-            this->bloomBuffer->SetData(bloomWidth, bloomHeight, GTImage::ImageFormat_RGB8);
-            this->bloomBlurBuffer->SetData(bloomWidth, bloomHeight, GTImage::ImageFormat_RGB8);
+            this->bloomBuffer->SetData(bloomWidth, bloomHeight, GTLib::ImageFormat_RGB8);
+            this->bloomBlurBuffer->SetData(bloomWidth, bloomHeight, GTLib::ImageFormat_RGB8);
 
             Renderer::PushTexture2DData(*this->bloomBuffer);
             Renderer::PushTexture2DData(*this->bloomBlurBuffer);
@@ -260,10 +260,10 @@ namespace GTEngine
             this->width  = newWidth;
             this->height = newHeight;
 
-            //this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
+            //this->depthStencilBuffer->SetData(newWidth, newHeight, GTLib::ImageFormat_Depth24_Stencil8);
             this->framebuffer->ResizeWriteOnlyDepthStencilBuffer(newWidth, newHeight);
-            this->colourBuffer->SetData(      newWidth, newHeight, GTImage::ImageFormat_RG32F);
-            this->blurBuffer->SetData(        newWidth, newHeight, GTImage::ImageFormat_RG32F);
+            this->colourBuffer->SetData(      newWidth, newHeight, GTLib::ImageFormat_RG32F);
+            this->blurBuffer->SetData(        newWidth, newHeight, GTLib::ImageFormat_RG32F);
 
             //Renderer::PushTexture2DData(*this->depthStencilBuffer);
             Renderer::PushTexture2DData(*this->colourBuffer);
@@ -361,16 +361,16 @@ namespace GTEngine
             this->width  = newWidth;
             this->height = newHeight;
 
-            //this->depthStencilBuffer->SetData(newWidth, newHeight, GTImage::ImageFormat_Depth24_Stencil8);
+            //this->depthStencilBuffer->SetData(newWidth, newHeight, GTLib::ImageFormat_Depth24_Stencil8);
             this->framebuffer->ResizeWriteOnlyDepthStencilBuffer(newWidth, newHeight);
-            this->colourBuffer->PositiveX->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
-            this->colourBuffer->NegativeX->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
-            this->colourBuffer->PositiveY->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
-            this->colourBuffer->NegativeY->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
-            this->colourBuffer->PositiveZ->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
-            this->colourBuffer->NegativeZ->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
-            this->blurBuffer0->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
-            this->blurBuffer1->SetData(newWidth, newHeight, GTImage::ImageFormat_RG32F);
+            this->colourBuffer->PositiveX->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
+            this->colourBuffer->NegativeX->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
+            this->colourBuffer->PositiveY->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
+            this->colourBuffer->NegativeY->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
+            this->colourBuffer->PositiveZ->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
+            this->colourBuffer->NegativeZ->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
+            this->blurBuffer0->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
+            this->blurBuffer1->SetData(newWidth, newHeight, GTLib::ImageFormat_RG32F);
 
             //Renderer::PushTexture2DData(  *this->depthStencilBuffer, 0);
             Renderer::PushTextureCubeData(*this->colourBuffer);

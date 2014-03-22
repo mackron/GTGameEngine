@@ -3,7 +3,7 @@
 #include <GTEngine/Rendering/Renderer.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTImage/Utils.hpp>
+#include <GTLib/ImageUtils.hpp>
 
 
 #include <gtgl/gtgl.h>
@@ -1413,7 +1413,7 @@ namespace GTEngine
         }
     }
     
-    void Renderer::SetTexture2DData(const Texture2D &texture, int mipmapIndex, unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data, bool flip)
+    void Renderer::SetTexture2DData(const Texture2D &texture, int mipmapIndex, unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data, bool flip)
     {
         auto &textureGL21 = static_cast<const Texture2D_OpenGL21 &>(texture);
         {
@@ -1429,7 +1429,7 @@ namespace GTEngine
                 assert(State.currentRCSetTextureState != nullptr);
                 assert(mipmapIndex >= 0);
                 {
-                    State.currentRCSetTextureState->SetTexture2DData(textureState, textureTarget, mipmapIndex, format, width, height, data, GTImage::Utils::CalculateDataSize(width, height, format), flip);
+                    State.currentRCSetTextureState->SetTexture2DData(textureState, textureTarget, mipmapIndex, format, width, height, data, GTLib::ImageUtils::CalculateDataSize(width, height, format), flip);
                 }
             }
         }
@@ -1437,7 +1437,7 @@ namespace GTEngine
         State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
     
-    void Renderer::SetTexture2DSubData(const Texture2D &texture, int mipmapIndex, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data, bool flip)
+    void Renderer::SetTexture2DSubData(const Texture2D &texture, int mipmapIndex, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data, bool flip)
     {
         auto &textureGL21 = static_cast<const Texture2D_OpenGL21 &>(texture);
         {
@@ -1453,7 +1453,7 @@ namespace GTEngine
                 assert(State.currentRCSetTextureState != nullptr);
                 assert(mipmapIndex >= 0);
                 {
-                    State.currentRCSetTextureState->SetTexture2DSubData(textureState, textureTarget, mipmapIndex, format, xOffset, yOffset, width, height, data, GTImage::Utils::CalculateDataSize(width, height, format), flip);
+                    State.currentRCSetTextureState->SetTexture2DSubData(textureState, textureTarget, mipmapIndex, format, xOffset, yOffset, width, height, data, GTLib::ImageUtils::CalculateDataSize(width, height, format), flip);
                 }
             }
         }

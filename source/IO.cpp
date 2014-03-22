@@ -3,7 +3,7 @@
 #include <GTEngine/IO.hpp>
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/Audio/AudioComposer.hpp>
-#include <GTImage/Loader.hpp>
+#include <GTLib/ImageLoader.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/Strings/Find.hpp>
 
@@ -13,7 +13,7 @@ namespace GTEngine
     {
         bool IsSupportedImageExtension(const char* fileName)
         {
-            return GTImage::Loader::IsExtensionSupported(GTLib::Path::Extension(fileName));
+            return GTLib::ImageLoader::IsExtensionSupported(GTLib::Path::Extension(fileName));
         }
 
         bool IsSupportedModelExtension(const char* fileName)
