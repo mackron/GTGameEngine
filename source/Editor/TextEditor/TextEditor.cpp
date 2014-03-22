@@ -156,6 +156,7 @@ namespace GTEngine
     {
         this->mainElement->Show();
         this->GetGUI().FocusElement(this->textArea);
+        this->GetGUI().PositionCaret(false, false);
     }
 
     void TextEditor::Hide()
