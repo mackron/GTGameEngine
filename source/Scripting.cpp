@@ -7,16 +7,16 @@
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Physics/CollisionShapeTypes.hpp>
 
-#include <GTCore/Path.hpp>
+#include <GTLib/Path.hpp>
 
 
 namespace GTEngine
 {
     namespace Scripting
     {
-        static GTCore::RandomLCG g_Random;
+        static GTLib::RandomLCG g_Random;
 
-        bool LoadGTEngineScriptLibrary(GTCore::Script &script)
+        bool LoadGTEngineScriptLibrary(GTLib::Script &script)
         {
             bool successful = LoadExtendedMathLibrary(script);
 
@@ -246,7 +246,7 @@ namespace GTEngine
         
 
 
-        void PostEvent_OnMouseMove(GTCore::Script &script, int mousePosX, int mousePosY)
+        void PostEvent_OnMouseMove(GTLib::Script &script, int mousePosX, int mousePosY)
         {
             // Game.
             script.GetGlobal("Game");
@@ -301,7 +301,7 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void PostEvent_OnMouseWheel(GTCore::Script &script, int mousePosX, int mousePosY, int delta)
+        void PostEvent_OnMouseWheel(GTLib::Script &script, int mousePosX, int mousePosY, int delta)
         {
             // Game.
             script.GetGlobal("Game");
@@ -361,7 +361,7 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void PostEvent_OnMouseButtonDown(GTCore::Script &script, int mousePosX, int mousePosY, GTCore::MouseButton button)
+        void PostEvent_OnMouseButtonDown(GTLib::Script &script, int mousePosX, int mousePosY, GTLib::MouseButton button)
         {
             // Game.
             script.GetGlobal("Game");
@@ -422,7 +422,7 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void PostEvent_OnMouseButtonUp(GTCore::Script &script, int mousePosX, int mousePosY, GTCore::MouseButton button)
+        void PostEvent_OnMouseButtonUp(GTLib::Script &script, int mousePosX, int mousePosY, GTLib::MouseButton button)
         {
             // Game.
             script.GetGlobal("Game");
@@ -483,7 +483,7 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void PostEvent_OnMouseButtonDoubleClick(GTCore::Script &script, int mousePosX, int mousePosY, GTCore::MouseButton button)
+        void PostEvent_OnMouseButtonDoubleClick(GTLib::Script &script, int mousePosX, int mousePosY, GTLib::MouseButton button)
         {
             // Game.
             script.GetGlobal("Game");
@@ -544,7 +544,7 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void PostEvent_OnKeyPressed(GTCore::Script &script, GTCore::Key key)
+        void PostEvent_OnKeyPressed(GTLib::Script &script, GTLib::Key key)
         {
             // Game.
             script.GetGlobal("Game");
@@ -595,7 +595,7 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void PostEvent_OnKeyReleased(GTCore::Script &script, GTCore::Key key)
+        void PostEvent_OnKeyReleased(GTLib::Script &script, GTLib::Key key)
         {
             // Game.
             script.GetGlobal("Game");
@@ -648,10 +648,10 @@ namespace GTEngine
 
 
 
-        bool LoadScriptDefinition(GTCore::Script &script, const char* scriptRelativePath, const char* scriptString)
+        bool LoadScriptDefinition(GTLib::Script &script, const char* scriptRelativePath, const char* scriptString)
         {
             // We actually want to do this as a text script for now.
-            GTCore::Strings::List<char> fullScriptString;
+            GTLib::Strings::List<char> fullScriptString;
             fullScriptString.Append("GTEngine.__CreateScriptClass = function()");
             fullScriptString.Append("    local self = {}");
             fullScriptString.Append("    "); fullScriptString.Append(scriptString);
@@ -662,7 +662,7 @@ namespace GTEngine
             return script.Execute(fullScriptString.c_str());
         }
 
-        void UnloadScriptDefinition(GTCore::Script &script, const char* scriptRelativePath)
+        void UnloadScriptDefinition(GTLib::Script &script, const char* scriptRelativePath)
         {
             script.GetGlobal("GTEngine");
             assert(script.IsTable(-1));
@@ -683,75 +683,75 @@ namespace GTEngine
 
         namespace FFI
         {
-            int GetExecutableDirectory(GTCore::Script &script)
+            int GetExecutableDirectory(GTLib::Script &script)
             {
                 script.Push(GTEngine::GetExecutableDirectory());
                 return 1;
             }
 
-            int GetVersionString(GTCore::Script &script)
+            int GetVersionString(GTLib::Script &script)
             {
                 script.Push(GTEngine::GetVersionString());
                 return 1;
             }
 
 
-            int IsModelFile(GTCore::Script &script)
+            int IsModelFile(GTLib::Script &script)
             {
                 script.Push(IO::IsSupportedModelExtension(script.ToString(1)));
                 return 1;
             }
 
-            int IsImageFile(GTCore::Script &script)
+            int IsImageFile(GTLib::Script &script)
             {
                 script.Push(IO::IsSupportedImageExtension(script.ToString(1)));
                 return 1;
             }
 
-            int IsSoundFile(GTCore::Script &script)
+            int IsSoundFile(GTLib::Script &script)
             {
                 script.Push(IO::IsSupportedSoundExtension(script.ToString(1)));
                 return 1;
             }
 
-            int IsSceneFile(GTCore::Script &script)
+            int IsSceneFile(GTLib::Script &script)
             {
                 script.Push(IO::IsSupportedSceneExtension(script.ToString(1)));
                 return 1;
             }
 
-            int IsPrefabFile(GTCore::Script &script)
+            int IsPrefabFile(GTLib::Script &script)
             {
                 script.Push(IO::IsSupportedPrefabExtension(script.ToString(1)));
                 return 1;
             }
 
-            int IsScriptFile(GTCore::Script &script)
+            int IsScriptFile(GTLib::Script &script)
             {
                 script.Push(IO::IsSupportedScriptExtension(script.ToString(1)));
                 return 1;
             }
 
-            int IsTextFile(GTCore::Script &script)
+            int IsTextFile(GTLib::Script &script)
             {
                 // There can be any number of text files. Perhaps we should assume that if it's not a resouce file like a model and texture, we should assume a text file?
 
-                auto extension = GTCore::Path::Extension(script.ToString(1));
+                auto extension = GTLib::Path::Extension(script.ToString(1));
 
-                bool result = GTCore::Strings::Equal<false>(extension, "")       ||
-                              GTCore::Strings::Equal<false>(extension, "txt")    ||
-                              GTCore::Strings::Equal<false>(extension, "lua")    ||
-                              GTCore::Strings::Equal<false>(extension, "cfg")    ||
-                              GTCore::Strings::Equal<false>(extension, "xml")    ||
-                              GTCore::Strings::Equal<false>(extension, "script") ||
-                              GTCore::Strings::Equal<false>(extension, "style");
+                bool result = GTLib::Strings::Equal<false>(extension, "")       ||
+                              GTLib::Strings::Equal<false>(extension, "txt")    ||
+                              GTLib::Strings::Equal<false>(extension, "lua")    ||
+                              GTLib::Strings::Equal<false>(extension, "cfg")    ||
+                              GTLib::Strings::Equal<false>(extension, "xml")    ||
+                              GTLib::Strings::Equal<false>(extension, "script") ||
+                              GTLib::Strings::Equal<false>(extension, "style");
 
                 script.Push(result);
                 return 1;
             }
 
 
-            int CreatePrefab(GTCore::Script &script)
+            int CreatePrefab(GTLib::Script &script)
             {
                 auto absolutePath   = script.ToString(1);
                 auto makeRelativeTo = script.ToString(2);
@@ -772,32 +772,32 @@ namespace GTEngine
                 return 0;
             }
 
-            int ExecuteFile(GTCore::Script &script)
+            int ExecuteFile(GTLib::Script &script)
             {
                 script.Push(GameFFI::GetGame(script).GetScript().ExecuteFile(script.ToString(1)));
                 return 1;
             }
 
-            int ExecuteScript(GTCore::Script &script)
+            int ExecuteScript(GTLib::Script &script)
             {
                 script.Push(GameFFI::GetGame(script).ExecuteScript(script.ToString(1)));
                 return 1;
             }
 
-            int GetLastScriptError(GTCore::Script &script)
+            int GetLastScriptError(GTLib::Script &script)
             {
                 script.Push(GameFFI::GetGame(script).GetScript().GetLastError());
                 return 1;
             }
 
 
-            int RandomInteger(GTCore::Script &script)
+            int RandomInteger(GTLib::Script &script)
             {
                 script.Push(g_Random.Next(script.ToInteger(1), script.ToInteger(2)));
                 return 1;
             }
 
-            int RandomFloat(GTCore::Script &script)
+            int RandomFloat(GTLib::Script &script)
             {
                 script.Push(g_Random.Next(script.ToDouble(1), script.ToDouble(2)));
                 return 1;

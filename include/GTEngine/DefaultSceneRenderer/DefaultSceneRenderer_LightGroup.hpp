@@ -3,7 +3,7 @@
 #ifndef __GTEngine_DefaultSceneRenderer_LightGroup_hpp_
 #define __GTEngine_DefaultSceneRenderer_LightGroup_hpp_
 
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -283,7 +283,7 @@ namespace GTEngine
         DefaultSceneRenderer_LightGroupID id;
 
         /// The list of light IDs.
-        GTCore::Vector<uint32_t> lightIDs;
+        GTLib::Vector<uint32_t> lightIDs;
 
 
 

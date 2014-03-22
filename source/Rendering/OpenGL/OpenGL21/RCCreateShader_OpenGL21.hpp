@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_OpenGL21_RCCreateShader_hpp_
 #define __GTEngine_Rendering_OpenGL21_RCCreateShader_hpp_
 
-#include <GTCore/String.hpp>
+#include <GTLib/String.hpp>
 #include <gtgl/gtgl.h>
 
 #include "../../RenderCommand.hpp"
@@ -39,7 +39,7 @@ namespace GTEngine
         ///     This does not create the main program object, but the individual vertex, fragment or geometry shader object.
         ///     @par
         ///     The compilation log is output to the engines main log.
-        GLuint CreateShader(GLenum type, const GTCore::String &source);
+        GLuint CreateShader(GLenum type, const GTLib::String &source);
 
         /// Links the given shaders to create the main shader program.
         ///
@@ -55,13 +55,13 @@ namespace GTEngine
 
 
         /// The vertex shader source.
-        GTCore::String vertexShaderSource;
+        GTLib::String vertexShaderSource;
 
         /// The fragment shader source.
-        GTCore::String fragmentShaderSource;
+        GTLib::String fragmentShaderSource;
 
         /// The geometry shader source. Can be null.
-        GTCore::String geometryShaderSource;
+        GTLib::String geometryShaderSource;
 
 
     private:    // No copying.

@@ -18,8 +18,8 @@
 #include "SceneStateStack.hpp"
 #include "Prefab.hpp"
 #include "DefaultPrefabLinker.hpp"
-#include <GTCore/SortedVector.hpp>
-#include <GTCore/Script.hpp>
+#include <GTLib/SortedVector.hpp>
+#include <GTLib/Script.hpp>
 
 
 /// Contact test callbacks.
@@ -289,7 +289,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If a scene node of the same ID already exists, this will return nullptr.
-        SceneNode* CreateNewSceneNode(GTCore::Deserializer &deserializer, bool createNewIDIfExists = false);
+        SceneNode* CreateNewSceneNode(GTLib::Deserializer &deserializer, bool createNewIDIfExists = false);
 
         /// Creates a new scene node hierarchy from the given scene node class (prefab).
         ///
@@ -469,13 +469,13 @@ namespace GTEngine
         ///
         /// @remarks
         ///     It is up to the user to make sure the scene is unregistered before destroying the script. Use Scene::UnregisterFromScript() to do this.
-        void RegisterToScript(GTCore::Script &script);
+        void RegisterToScript(GTLib::Script &script);
 
         /// Unregisters the scene from the script it is currently registered to.
         void UnregisterFromScript();
 
         /// Retrieves a pointer ot the script that this scene is current registered to, if any.
-        GTCore::Script* GetRegisteredScript() const { return this->registeredScript; }
+        GTLib::Script* GetRegisteredScript() const { return this->registeredScript; }
         
 
 
@@ -744,7 +744,7 @@ namespace GTEngine
         /// @param start  [in]  The start position.
         /// @param end    [in]  The end position.
         /// @param output [out] A reference to the vector that will receive the navigation points.
-        void FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output);
+        void FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTLib::Vector<glm::vec3> &output);
 
         /// A hacky temp method for retrieving a reference to the internal list of scene nodes. (Used with NavigationMesh. Will be replaced later.)
               SceneNodeMap & GetSceneNodes()       { return this->sceneNodes; }
@@ -765,7 +765,7 @@ namespace GTEngine
         /// Serializes the scene using the given serializer.
         ///
         /// @param serializer [in] The serializer to write the data to.
-        bool Serialize(GTCore::Serializer &serializer) const;
+        bool Serialize(GTLib::Serializer &serializer) const;
 
         /// Deserializes the scene using the given deserializer.
         ///
@@ -775,8 +775,8 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If deserialization fails, the scene will be left completely unmodified.
-        bool Deserialize(GTCore::Deserializer &deserializer, SceneDeserializeCallback &callback);
-        bool Deserialize(GTCore::Deserializer &deserializer)
+        bool Deserialize(GTLib::Deserializer &deserializer, SceneDeserializeCallback &callback);
+        bool Deserialize(GTLib::Deserializer &deserializer)
         {
             SceneDeserializeCallback devnull;
             return this->Deserialize(deserializer, devnull);
@@ -786,7 +786,7 @@ namespace GTEngine
         /// Serializes the scene's state stack.
         ///
         /// @param serializer [in] A reference ot the serializer to write the data to.
-        bool SerializeStateStack(GTCore::Serializer &serializer) const;
+        bool SerializeStateStack(GTLib::Serializer &serializer) const;
 
         /// Deserializes the scene's state stack.
         ///
@@ -796,7 +796,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will not change the current state of the scene.
-        bool DeserializeStateStack(GTCore::Deserializer &deserializer);
+        bool DeserializeStateStack(GTLib::Deserializer &deserializer);
 
 
 
@@ -1007,7 +1007,7 @@ namespace GTEngine
 
         /// The list of viewports currently attached to this scene. There will always be at least one viewport. The default viewport will be positioned
         /// at index 0.
-        GTCore::Vector<SceneViewport*> viewports;
+        GTLib::Vector<SceneViewport*> viewports;
 
         /// The default viewport.
         SceneViewport defaultViewport;
@@ -1024,13 +1024,13 @@ namespace GTEngine
 
 
         /// The list of scene nodes created by the scene.
-        GTCore::SortedVector<uint64_t> sceneNodesCreatedByScene;
+        GTLib::SortedVector<uint64_t> sceneNodesCreatedByScene;
 
         /// The list of scene nodes with proximity components. We keep track of this so we can do OnObjectEnter, etc checks. We map the IDs to a pointer to the proximity component.
-        GTCore::Map<uint64_t, ProximityComponent*> sceneNodesWithProximityComponents;
+        GTLib::Map<uint64_t, ProximityComponent*> sceneNodesWithProximityComponents;
 
         /// The list of scene nodes with particle system components. We keep track of this so we can post AABB updates to the culling manager more efficiently.
-        GTCore::Map<uint64_t, ParticleSystemComponent*> sceneNodesWithParticleSystemComponents;
+        GTLib::Map<uint64_t, ParticleSystemComponent*> sceneNodesWithParticleSystemComponents;
 
 
         /// The navigation mesh for doing navigation paths.
@@ -1038,7 +1038,7 @@ namespace GTEngine
 
 
         /// The list of event handlers current attached to the scene.
-        GTCore::Vector<SceneEventHandler*> eventHandlers;
+        GTLib::Vector<SceneEventHandler*> eventHandlers;
 
 
         /// The state stack.
@@ -1049,14 +1049,14 @@ namespace GTEngine
 
 
         /// A pointer to the script the scene is current registered to.
-        GTCore::Script* registeredScript;
+        GTLib::Script* registeredScript;
 
         /// Keeps track of whether or not script events are blocked. False by default.
         bool isScriptEventsBlocked;
 
 
         /// The name of the scene.
-        GTCore::String name;
+        GTLib::String name;
 
 
         /// Whether or not colour clearing should be enabled.

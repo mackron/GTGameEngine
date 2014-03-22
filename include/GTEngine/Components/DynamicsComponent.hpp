@@ -5,7 +5,7 @@
 
 #include "CollisionShapeComponent.hpp"
 #include "../VertexArrayLibrary.hpp"        // TODO: Check if we can remove this.
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GTEngine
 {
@@ -172,10 +172,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
 

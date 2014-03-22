@@ -5,7 +5,7 @@
 
 #include "DefaultSceneRenderer_MaterialShaderID.hpp"
 #include "../Material.hpp"
-#include <GTCore/Map.hpp>
+#include <GTLib/Map.hpp>
 
 namespace GTEngine
 {
@@ -81,75 +81,75 @@ namespace GTEngine
         ///
         /// @param shaderID [in] The shader ID containing details about the material and lights.
         /// @param material [in] A pointer to the material in question.
-        GTCore::String CreateVertexShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const;
+        GTLib::String CreateVertexShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const;
 
         /// Creates a fragment shader string.
         ///
         /// @param shaderID [in] The shader ID containing details about the material and lights.
         /// @param material [in] A pointer to the material in question.
-        GTCore::String CreateFragmentShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const;
+        GTLib::String CreateFragmentShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const;
 
 
         /// Retrieves a string segment containing the declaration of globals needs for a directional light.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String VertexShader_DeclareDirectionalLight(int lightIndex) const;
+        GTLib::String VertexShader_DeclareDirectionalLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the declaration of globals needs for a point light.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String VertexShader_DeclarePointLight(int lightIndex) const;
+        GTLib::String VertexShader_DeclarePointLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the declaration of globals needs for a spot light.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String VertexShader_DeclareSpotLight(int lightIndex) const;
+        GTLib::String VertexShader_DeclareSpotLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the declaration of globals needs for a shadow-casting directional light.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String VertexShader_DeclareShadowDirectionalLight(int lightIndex) const;
+        GTLib::String VertexShader_DeclareShadowDirectionalLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the declaration of globals needs for a shadow-casting point light.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String VertexShader_DeclareShadowPointLight(int lightIndex) const;
+        GTLib::String VertexShader_DeclareShadowPointLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the declaration of globals needs for a shadow-casting spot light.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String VertexShader_DeclareShadowSpotLight(int lightIndex) const;
+        GTLib::String VertexShader_DeclareShadowSpotLight(int lightIndex) const;
 
 
         /// Retrieves a string segment containing the assignment operation string for a directional light in a vertex shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String VertexShader_AssignDirectionalLight(int lightIndex) const;
+        GTLib::String VertexShader_AssignDirectionalLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the assignment operation string for a point light in a vertex shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String VertexShader_AssignPointLight(int lightIndex) const;
+        GTLib::String VertexShader_AssignPointLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the assignment operation string for a spot light in a vertex shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String VertexShader_AssignSpotLight(int lightIndex) const;
+        GTLib::String VertexShader_AssignSpotLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the assignment operation string for a shadow-casting directional light in a vertex shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String VertexShader_AssignShadowDirectionalLight(int lightIndex) const;
+        GTLib::String VertexShader_AssignShadowDirectionalLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the assignment operation string for a shadow-casting point light in a vertex shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String VertexShader_AssignShadowPointLight(int lightIndex) const;
+        GTLib::String VertexShader_AssignShadowPointLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the assignment operation string for a shadow-casting spot light in a vertex shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String VertexShader_AssignShadowSpotLight(int lightIndex) const;
+        GTLib::String VertexShader_AssignShadowSpotLight(int lightIndex) const;
 
 
 
@@ -157,73 +157,73 @@ namespace GTEngine
         /// Retrieves a string segment containing the declaration of globals needs for an ambient light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_DeclareAmbientLight(int lightIndex) const;
+        GTLib::String FragmentShader_DeclareAmbientLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the declaration of globals needs for a directional light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_DeclareDirectionalLight(int lightIndex) const;
+        GTLib::String FragmentShader_DeclareDirectionalLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the declaration of globals needs for a point light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_DeclarePointLight(int lightIndex) const;
+        GTLib::String FragmentShader_DeclarePointLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the declaration of globals needs for a spot light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_DeclareSpotLight(int lightIndex) const;
+        GTLib::String FragmentShader_DeclareSpotLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the declaration of globals needs for a shadow-casting directional light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_DeclareShadowDirectionalLight(int lightIndex) const;
+        GTLib::String FragmentShader_DeclareShadowDirectionalLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the declaration of globals needs for a shadow-casting point light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_DeclareShadowPointLight(int lightIndex) const;
+        GTLib::String FragmentShader_DeclareShadowPointLight(int lightIndex) const;
 
         /// Retrieves a string segment containing the declaration of globals needs for a shadow-casting spot light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_DeclareShadowSpotLight(int lightIndex) const;
+        GTLib::String FragmentShader_DeclareShadowSpotLight(int lightIndex) const;
 
 
         /// Retrieves a string segment containing the light accumulation operation for an ambient light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_AccumulateAmbientLighting(int lightIndex) const;
+        GTLib::String FragmentShader_AccumulateAmbientLighting(int lightIndex) const;
 
         /// Retrieves a string segment containing the light accumulation operation for a directional light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_AccumulateDirectionalLighting(int lightIndex) const;
+        GTLib::String FragmentShader_AccumulateDirectionalLighting(int lightIndex) const;
 
         /// Retrieves a string segment containing the light accumulation operation for a point light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_AccumulatePointLighting(int lightIndex) const;
+        GTLib::String FragmentShader_AccumulatePointLighting(int lightIndex) const;
 
         /// Retrieves a string segment containing the light accumulation operation for a spot light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_AccumulateSpotLighting(int lightIndex) const;
+        GTLib::String FragmentShader_AccumulateSpotLighting(int lightIndex) const;
 
         /// Retrieves a string segment containing the light accumulation operation for a shadow-casting directional light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_AccumulateShadowDirectionalLighting(int lightIndex) const;
+        GTLib::String FragmentShader_AccumulateShadowDirectionalLighting(int lightIndex) const;
 
         /// Retrieves a string segment containing the light accumulation operation for a shadow-casting point light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_AccumulateShadowPointLighting(int lightIndex) const;
+        GTLib::String FragmentShader_AccumulateShadowPointLighting(int lightIndex) const;
 
         /// Retrieves a string segment containing the light accumulation operation for a shadow-casting spot light in a fragment shader.
         ///
         /// @param lightIndex [in] The index of the light.
-        GTCore::String FragmentShader_AccumulateShadowSpotLighting(int lightIndex) const;
+        GTLib::String FragmentShader_AccumulateShadowSpotLighting(int lightIndex) const;
 
 
 
@@ -260,7 +260,7 @@ namespace GTEngine
         
 
         /// Retrieves a shader string for the vertex shader of a fullscreen quad or triangle.
-        GTCore::String GetFullscreenPrimitiveVertexShader() const;
+        GTLib::String GetFullscreenPrimitiveVertexShader() const;
 
 
 
@@ -315,7 +315,7 @@ namespace GTEngine
 
 
         /// The map of shaders that have been built.
-        GTCore::Map<ShaderKey, Shader*> cachedMaterialShaders;
+        GTLib::Map<ShaderKey, Shader*> cachedMaterialShaders;
     };
 }
 

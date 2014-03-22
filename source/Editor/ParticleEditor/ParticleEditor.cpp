@@ -63,7 +63,7 @@ namespace GTEngine
         assert(this->mainElement != nullptr);
         {
             // The main element is the ModelEditor element. We need to pass 'this' as the '_internalPtr' argument.
-            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("ParticleEditor");
@@ -122,7 +122,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("ResetCamera");
@@ -256,15 +256,15 @@ namespace GTEngine
 
         this->isSaving = true;
         {
-            auto file = GTCore::IO::Open(this->GetAbsolutePath(), GTCore::IO::OpenMode::Write);
+            auto file = GTLib::IO::Open(this->GetAbsolutePath(), GTLib::IO::OpenMode::Write);
             if (file != nullptr)
             {
-                GTCore::FileSerializer serializer(file);
+                GTLib::FileSerializer serializer(file);
                 this->particleSystemDefinition.Serialize(serializer);
 
                 this->UnmarkAsModified();
 
-                GTCore::IO::Close(file);
+                GTLib::IO::Close(file);
                 wasSaved = true;
 
 

@@ -14,7 +14,7 @@ namespace GTEngine
         /// @param script [in] A reference to the script to load the library into.
         ///
         /// @return True if the library is loaded successfully; false otherwise.
-        bool LoadComponentsLibrary(GTCore::Script &script);
+        bool LoadComponentsLibrary(GTLib::Script &script);
 
 
 
@@ -28,31 +28,31 @@ namespace GTEngine
             ///     Argument 3: The aspect ratio.
             ///     Argument 4: The near clipping plane.
             ///     Argument 5: The far clipping plane.
-            int Set3DProjection(GTCore::Script &script);
+            int Set3DProjection(GTLib::Script &script);
 
             /// Retrieves the field of view of the given camera.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetFOV(GTCore::Script &script);
+            int GetFOV(GTLib::Script &script);
 
             /// Retrieves the aspect ratio of the given camera.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetAspectRatio(GTCore::Script &script);
+            int GetAspectRatio(GTLib::Script &script);
 
             /// Retrieves the near clipping plane of the given camera.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetNearClippingPlane(GTCore::Script &script);
+            int GetNearClippingPlane(GTLib::Script &script);
 
             /// Retrieves the far clipping plane of the given camera.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetFarClippingPlane(GTCore::Script &script);
+            int GetFarClippingPlane(GTLib::Script &script);
         }
 
 
@@ -63,22 +63,22 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component whose model is being set.
             ///     Argument 2: The file path of the model being set.
-            int SetModel(GTCore::Script &script);
+            int SetModel(GTLib::Script &script);
 
             /// Retrieves the path of the model currently set on the given model component.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component whose model's path is being retrieved.
-            int GetModelPath(GTCore::Script &script);
+            int GetModelPath(GTLib::Script &script);
 
             /// Enables shadow casting.
-            int EnableShadowCasting(GTCore::Script &script);
+            int EnableShadowCasting(GTLib::Script &script);
 
             /// Disables shadow casting.
-            int DisableShadowCasting(GTCore::Script &script);
+            int DisableShadowCasting(GTLib::Script &script);
 
             /// Determines whether or not shadow casting is enabled.
-            int IsShadowCastingEnabled(GTCore::Script &script);
+            int IsShadowCastingEnabled(GTLib::Script &script);
 
 
             /// Sets a material of the model currently set on the given model component.
@@ -87,19 +87,19 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the material being set.
             ///     Argument 3: The name of the new material.
-            int SetMaterial(GTCore::Script &script);
+            int SetMaterial(GTLib::Script &script);
 
             /// Retrieves the name of the material at the given index of the model currently set on the given model component.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetMaterialPath(GTCore::Script &script);
+            int GetMaterialPath(GTLib::Script &script);
 
             /// Retrieves the number of materials on the model currently attached to the given model component.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetMaterialCount(GTCore::Script &script);
+            int GetMaterialCount(GTLib::Script &script);
 
             /// Sets the uniform parameter of the given material.
             ///
@@ -115,7 +115,7 @@ namespace GTEngine
             ///       - math.vec3
             ///       - math.vec4
             ///       - string (assumed to be a path to a texture)
-            int SetMaterialParameter(GTCore::Script &script);
+            int SetMaterialParameter(GTLib::Script &script);
 
 
             /// Plays an animation segment by it's name.
@@ -126,26 +126,26 @@ namespace GTEngine
             ///     Argument 3: A boolean controlling whether or not to loop the animation.
             ///
             ///     It is possible for segments to share the same name. This will play the first occurance.
-            int PlayAnimationSegmentByName(GTCore::Script &script);
+            int PlayAnimationSegmentByName(GTLib::Script &script);
 
             /// Plays the given animation sequence.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The AnimationSequence object to play.
-            int PlayAnimationSequence(GTCore::Script &script);
+            int PlayAnimationSequence(GTLib::Script &script);
 
             /// Pauses the currently playing animation, if any.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int PauseAnimation(GTCore::Script &script);
+            int PauseAnimation(GTLib::Script &script);
 
             /// Stops the currently playing animation, returning it to it's original pose.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int StopAnimation(GTCore::Script &script);
+            int StopAnimation(GTLib::Script &script);
 
 
             /// Retrieves the index of the bone of the given name.
@@ -155,7 +155,7 @@ namespace GTEngine
             ///     Argument 2: The name of the bone whose index is being retrieved.
             ///
             ///     If the bone does not exist, nil will be returned.
-            int GetBoneIndexByName(GTCore::Script &script);
+            int GetBoneIndexByName(GTLib::Script &script);
 
             /// Retrieves the transformation of the bone of the given name.
             ///
@@ -165,7 +165,7 @@ namespace GTEngine
             ///     Return:     A table containing the attributes "position", "orientation" and "scale"
             ///
             ///     The returned values are the absolute transformation.
-            int GetBoneTransformByName(GTCore::Script &script);
+            int GetBoneTransformByName(GTLib::Script &script);
 
             /// Retrieves the transformation of the bone at the given index.
             ///
@@ -175,7 +175,7 @@ namespace GTEngine
             ///     Return:     A table containing the attributes "position", "orientation" and "scale"
             ///
             ///     The returned values are the absolute transformation.
-            int GetBoneTransformByIndex(GTCore::Script &script);
+            int GetBoneTransformByIndex(GTLib::Script &script);
             
             /// Sets the absolute transformation of the bone of the given name.
             ///
@@ -185,7 +185,7 @@ namespace GTEngine
             ///     Argument 3: The new absolute position of the bone.
             ///     Argument 4: The new absolute orientation of the bone.
             ///     Argument 5: The new absolute scale of the bone (can be nil).
-            int SetBoneTransformByName(GTCore::Script &script);
+            int SetBoneTransformByName(GTLib::Script &script);
 
             /// Sets the absolute transformation of the bone of the given index.
             ///
@@ -195,7 +195,7 @@ namespace GTEngine
             ///     Argument 3: The new absolute position of the bone.
             ///     Argument 4: The new absolute orientation of the bone.
             ///     Argument 5: The new absolute scale of the bone (can be nil).
-            int SetBoneTransformByIndex(GTCore::Script &script);
+            int SetBoneTransformByIndex(GTLib::Script &script);
         }
 
         namespace PointLightComponentFFI
@@ -207,34 +207,34 @@ namespace GTEngine
             ///     Argument 2: The red colour component, or a math.vec3 containing the colours.
             ///     Argument 3: The green colour component.
             ///     Argument 4: The blue colour component.
-            int SetColour(GTCore::Script &script);
+            int SetColour(GTLib::Script &script);
 
             /// Retrieves the colour of the light as a math.vec3.
-            int GetColour(GTCore::Script &script);
+            int GetColour(GTLib::Script &script);
 
 
             /// Retrieves the radius of the light.
-            int GetRadius(GTCore::Script &script);
+            int GetRadius(GTLib::Script &script);
 
             /// Sets the radius of the light.
-            int SetRadius(GTCore::Script &script);
+            int SetRadius(GTLib::Script &script);
 
 
             /// Retrieves the exponential falloff factor.
-            int GetFalloff(GTCore::Script &script);
+            int GetFalloff(GTLib::Script &script);
 
             /// Sets the exponential falloff factor.
-            int SetFalloff(GTCore::Script &script);
+            int SetFalloff(GTLib::Script &script);
 
 
             /// Enables shadow casting on the light.
-            int EnableShadowCasting(GTCore::Script &script);
+            int EnableShadowCasting(GTLib::Script &script);
 
             /// Disables shadow casting on the light.
-            int DisableShadowCasting(GTCore::Script &script);
+            int DisableShadowCasting(GTLib::Script &script);
 
             /// Determines whether or not shadow casting is enabled.
-            int IsShadowCastingEnabled(GTCore::Script &script);
+            int IsShadowCastingEnabled(GTLib::Script &script);
         }
 
         namespace SpotLightComponentFFI
@@ -246,34 +246,34 @@ namespace GTEngine
             ///     Argument 2: The red colour component, or a math.vec3 containing the colours.
             ///     Argument 3: The green colour component.
             ///     Argument 4: The blue colour component.
-            int SetColour(GTCore::Script &script);
+            int SetColour(GTLib::Script &script);
 
             /// Retrieves the colour of the light as a math.vec3.
-            int GetColour(GTCore::Script &script);
+            int GetColour(GTLib::Script &script);
 
 
             /// Retrieves the length of the light.
-            int GetLength(GTCore::Script &script);
+            int GetLength(GTLib::Script &script);
 
             /// Sets the length of the light.
-            int SetLength(GTCore::Script &script);
+            int SetLength(GTLib::Script &script);
 
 
             /// Retrieves the exponential falloff factor.
-            int GetFalloff(GTCore::Script &script);
+            int GetFalloff(GTLib::Script &script);
 
             /// Sets the exponential falloff factor.
-            int SetFalloff(GTCore::Script &script);
+            int SetFalloff(GTLib::Script &script);
 
 
             /// Enables shadow casting on the light.
-            int EnableShadowCasting(GTCore::Script &script);
+            int EnableShadowCasting(GTLib::Script &script);
 
             /// Disables shadow casting on the light.
-            int DisableShadowCasting(GTCore::Script &script);
+            int DisableShadowCasting(GTLib::Script &script);
 
             /// Determines whether or not shadow casting is enabled.
-            int IsShadowCastingEnabled(GTCore::Script &script);
+            int IsShadowCastingEnabled(GTLib::Script &script);
 
 
             /// Sets the inner and outer angles of the spot light.
@@ -282,13 +282,13 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The inner angle.
             ///     Argument 3: The outer angle.
-            int SetAngles(GTCore::Script &script);
+            int SetAngles(GTLib::Script &script);
 
             /// Retrieves the inner and outer angles of the spot light, as two floats.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetAngles(GTCore::Script &script);
+            int GetAngles(GTLib::Script &script);
         }
 
         namespace DirectionalLightComponentFFI
@@ -300,20 +300,20 @@ namespace GTEngine
             ///     Argument 2: The red colour component, or a math.vec3 containing the colours.
             ///     Argument 3: The green colour component.
             ///     Argument 4: The blue colour component.
-            int SetColour(GTCore::Script &script);
+            int SetColour(GTLib::Script &script);
 
             /// Retrieves the colour of the light as a math.vec3.
-            int GetColour(GTCore::Script &script);
+            int GetColour(GTLib::Script &script);
 
 
             /// Enables shadow casting on the light.
-            int EnableShadowCasting(GTCore::Script &script);
+            int EnableShadowCasting(GTLib::Script &script);
 
             /// Disables shadow casting on the light.
-            int DisableShadowCasting(GTCore::Script &script);
+            int DisableShadowCasting(GTLib::Script &script);
 
             /// Determines whether or not shadow casting is enabled.
-            int IsShadowCastingEnabled(GTCore::Script &script);
+            int IsShadowCastingEnabled(GTLib::Script &script);
         }
 
         namespace AmbientLightComponentFFI
@@ -325,10 +325,10 @@ namespace GTEngine
             ///     Argument 2: The red colour component, or a math.vec3 containing the colours.
             ///     Argument 3: The green colour component.
             ///     Argument 4: The blue colour component.
-            int SetColour(GTCore::Script &script);
+            int SetColour(GTLib::Script &script);
 
             /// Retrieves the colour of the light as a math.vec3.
-            int GetColour(GTCore::Script &script);
+            int GetColour(GTLib::Script &script);
         }
 
 
@@ -340,19 +340,19 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The collision group. Only the first 16 bits are used.
             ///     Argument 3: The collision mask. Only the first 16 bits are used.
-            int SetCollisionFilter(GTCore::Script &script);
+            int SetCollisionFilter(GTLib::Script &script);
 
             /// Retrieves the collision group.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionGroup(GTCore::Script &script);
+            int GetCollisionGroup(GTLib::Script &script);
 
             /// Retrieves the collision mask.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionMask(GTCore::Script &script);
+            int GetCollisionMask(GTLib::Script &script);
 
 
             /// Adds a collision group, making the object part of that group.
@@ -360,34 +360,34 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The name of the collision group to make the object part of.
-            int AddCollisionGroup(GTCore::Script &script);
+            int AddCollisionGroup(GTLib::Script &script);
 
             /// Removes a collision group, removing the object from that group.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The name of the collision group to remove the object from.
-            int RemoveCollisionGroup(GTCore::Script &script);
+            int RemoveCollisionGroup(GTLib::Script &script);
 
             /// Removes a collision group by it's index, removing the object from that group.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the collision group to remove the object from.
-            int RemoveCollisionGroupByIndex(GTCore::Script &script);
+            int RemoveCollisionGroupByIndex(GTLib::Script &script);
 
             /// Retrieves the number of collision groups the object is part of.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionGroupCount(GTCore::Script &script);
+            int GetCollisionGroupCount(GTLib::Script &script);
 
             /// Retrieves the name of the collision group at the given index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the collision group.
-            int GetCollisionGroupName(GTCore::Script &script);
+            int GetCollisionGroupName(GTLib::Script &script);
 
 
             /// Adds a collision group to those the object allowed to collision with.
@@ -395,34 +395,34 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The name of the collision group to allow the object to collide with.
-            int AddCollisionGroupMask(GTCore::Script &script);
+            int AddCollisionGroupMask(GTLib::Script &script);
 
             /// Removes a collision group to those the object is allowed to collide with.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The name of the collision group to no longer allow the object to collide with.
-            int RemoveCollisionGroupMask(GTCore::Script &script);
+            int RemoveCollisionGroupMask(GTLib::Script &script);
 
             /// Removes a collision group to those the object is allowed to collide with, by it's index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the collision group to no longer allow the object to collide with.
-            int RemoveCollisionGroupMaskByIndex(GTCore::Script &script);
+            int RemoveCollisionGroupMaskByIndex(GTLib::Script &script);
 
             /// Retrieves the number of collision groups the object is allowed to collide with.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionGroupMaskCount(GTCore::Script &script);
+            int GetCollisionGroupMaskCount(GTLib::Script &script);
 
             /// Retrieves the name of the collision group mask at the given index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the collision group mask.
-            int GetCollisionGroupMaskName(GTCore::Script &script);
+            int GetCollisionGroupMaskName(GTLib::Script &script);
 
 
 
@@ -436,7 +436,7 @@ namespace GTEngine
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddBoxShape(GTCore::Script &script);
+            int AddBoxShape(GTLib::Script &script);
 
             /// Adds a sphere collision shape to the component.
             ///
@@ -446,7 +446,7 @@ namespace GTEngine
             ///     Argument 5: Optional x offset or a math.vec3 containing the offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddSphereShape(GTCore::Script &script);
+            int AddSphereShape(GTLib::Script &script);
 
             /// Adds an ellipsoid collision shape to the component.
             ///
@@ -458,7 +458,7 @@ namespace GTEngine
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddEllipsoidShape(GTCore::Script &script);
+            int AddEllipsoidShape(GTLib::Script &script);
 
             /// Adds a cylinder collision shape to the component.
             ///
@@ -470,9 +470,9 @@ namespace GTEngine
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddCylinderXShape(GTCore::Script &script);
-            int AddCylinderYShape(GTCore::Script &script);
-            int AddCylinderZShape(GTCore::Script &script);
+            int AddCylinderXShape(GTLib::Script &script);
+            int AddCylinderYShape(GTLib::Script &script);
+            int AddCylinderZShape(GTLib::Script &script);
 
             /// Adds a capsure collision shape to the component.
             ///
@@ -483,9 +483,9 @@ namespace GTEngine
             ///     Argument 5: Optional x offset or a math.vec3.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddCapsuleXShape(GTCore::Script &script);
-            int AddCapsuleYShape(GTCore::Script &script);
-            int AddCapsuleZShape(GTCore::Script &script);
+            int AddCapsuleXShape(GTLib::Script &script);
+            int AddCapsuleYShape(GTLib::Script &script);
+            int AddCapsuleZShape(GTLib::Script &script);
 
             /// Adds a set of convex hull collision shapes from the model defined in the attached model comonent, if any.
             ///
@@ -495,34 +495,34 @@ namespace GTEngine
             ///     Argument 3: Optional x offset or a math.vec3.
             ///     Argument 4: Optional y offset.
             ///     Argument 5: Optional z offset.
-            int AddModelConvexHullsCollisionShape(GTCore::Script &script);
+            int AddModelConvexHullsCollisionShape(GTLib::Script &script);
 
 
             /// Removes every collision shape.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int RemoveAllShapes(GTCore::Script &script);
+            int RemoveAllShapes(GTLib::Script &script);
 
             /// Removes the collision shape at the given index.
             ///
             /// @remarks
             ///     Argument 1: A pointer ot the component to delete.
             ///     Argument 2: The index of the shape to delete.
-            int RemoveShapeAtIndex(GTCore::Script &script);
+            int RemoveShapeAtIndex(GTLib::Script &script);
 
             /// Retrieves the number of collision shapes.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetShapeCount(GTCore::Script &script);
+            int GetShapeCount(GTLib::Script &script);
 
             /// Retrieves a table containing information about the collision shape of the given index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the shape whose information is being retrieved.
-            int GetShapeAtIndex(GTCore::Script &script);
+            int GetShapeAtIndex(GTLib::Script &script);
 
 
             /// Sets the offset for the collision shape at the given index.
@@ -531,7 +531,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape whose offset is being changed.
             ///     Argument 3, 4, 5: The new offset, as 3 floats, or a math.vec3
-            int SetShapeOffset(GTCore::Script &script);
+            int SetShapeOffset(GTLib::Script &script);
 
             /// Sets the extents of the box shape at the given index.
             ///
@@ -541,7 +541,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
             ///     Argument 3, 4, 5: The new half extents or a math.vec3.
-            int SetBoxShapeHalfExtents(GTCore::Script &script);
+            int SetBoxShapeHalfExtents(GTLib::Script &script);
 
             /// Sets the radius of the sphere shape at the given index.
             ///
@@ -551,7 +551,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the shape.
             ///     Argument 3: The new radius.
-            int SetSphereShapeRadius(GTCore::Script &script);
+            int SetSphereShapeRadius(GTLib::Script &script);
 
             /// Sets the radius of the ellipsoid shape at the given index.
             ///
@@ -561,7 +561,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
             ///     Argument 3, 4, 5: The new radius as 3 floats, or a math.vec3.
-            int SetEllipsoidShapeRadius(GTCore::Script &script);
+            int SetEllipsoidShapeRadius(GTLib::Script &script);
 
             /// Sets the extents of the cylinder shape at the given index.
             ///
@@ -571,7 +571,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
             ///     Argument 3, 4, 5: The new half extents or a math.vec3.
-            int SetCylinderShapeSize(GTCore::Script &script);
+            int SetCylinderShapeSize(GTLib::Script &script);
 
             /// Sets the size of the capsule shape at the given index.
             ///
@@ -582,7 +582,7 @@ namespace GTEngine
             ///     Argument 2: The index of the shape.
             ///     Argument 3: The radius of the shape.
             ///     Argument 4: The height of the shape.
-            int SetCapsuleShapeSize(GTCore::Script &script);
+            int SetCapsuleShapeSize(GTLib::Script &script);
 
             /// Sets the size of the margins of the model convex hull shapes.
             ///
@@ -592,7 +592,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the shape.
             ///     Argument 3: The new margin to use with the convex hulls.
-            int SetModelConvexHullsMargins(GTCore::Script &script);
+            int SetModelConvexHullsMargins(GTLib::Script &script);
         }
 
 
@@ -603,19 +603,19 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component whose mass is being set.
             ///     Argument 2: The new mass.
-            int SetMass(GTCore::Script &script);
+            int SetMass(GTLib::Script &script);
 
             /// Retrieves the mass of the object.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the componen whose mass is being retrieved.
-            int GetMass(GTCore::Script &script);
+            int GetMass(GTLib::Script &script);
 
             /// Determines whether or not the object is static.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int IsStatic(GTCore::Script &script);
+            int IsStatic(GTLib::Script &script);
 
             /// Determines or sets whether or not the object is kinematic.
             ///
@@ -624,7 +624,7 @@ namespace GTEngine
             ///     Argument 2: Whether or not the object should be made kinematic, or nil.
             ///
             ///     If the second argument is nil, this will act as a getter.
-            int IsKinematic(GTCore::Script &script);
+            int IsKinematic(GTLib::Script &script);
 
 
             /// Sets the friction.
@@ -632,26 +632,26 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer ot the component.
             ///     Argument 2: The friction to apply to the value.
-            int SetFriction(GTCore::Script &script);
+            int SetFriction(GTLib::Script &script);
 
             /// Retrieves the friction.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetFriction(GTCore::Script &script);
+            int GetFriction(GTLib::Script &script);
 
             /// Sets the restituion (bounciness).
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The restitution.
-            int SetRestitution(GTCore::Script &script);
+            int SetRestitution(GTLib::Script &script);
 
             /// Retrieves the restitution (bounciness).
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetRestitution(GTCore::Script &script);
+            int GetRestitution(GTLib::Script &script);
 
             /// Sets the damping.
             ///
@@ -659,19 +659,19 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The linear damping.
             ///     Argument 3: The angular damping.
-            int SetDamping(GTCore::Script &script);
+            int SetDamping(GTLib::Script &script);
 
             /// Retrieves the linear damping.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetLinearDamping(GTCore::Script &script);
+            int GetLinearDamping(GTLib::Script &script);
 
             /// Retrieves the angular damping.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetAngularDamping(GTCore::Script &script);
+            int GetAngularDamping(GTLib::Script &script);
 
 
             /// Sets the linear velocity.
@@ -681,7 +681,7 @@ namespace GTEngine
             ///     Argument 2: The x velocity or a math.vec3().
             ///     Argument 3: The y velocity.
             ///     Argument 4: The z velocity.
-            int SetLinearVelocity(GTCore::Script &script);
+            int SetLinearVelocity(GTLib::Script &script);
 
             /// Retrieves the linear velocity as 3 floats.
             ///
@@ -689,7 +689,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     @par
             ///     The return value will be a math.vec3()
-            int GetLinearVelocity(GTCore::Script &script);
+            int GetLinearVelocity(GTLib::Script &script);
 
             /// Sets the angular velocity.
             ///
@@ -698,7 +698,7 @@ namespace GTEngine
             ///     Argument 2: The x velocity or a math.vec3().
             ///     Argument 3: The y velocity.
             ///     Argument 4: The z velocity.
-            int SetAngularVelocity(GTCore::Script &script);
+            int SetAngularVelocity(GTLib::Script &script);
 
             /// Retrieves the linear velocity as 3 floats.
             ///
@@ -706,7 +706,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     @par
             ///     The return value will be a math.vec3()
-            int GetAngularVelocity(GTCore::Script &script);
+            int GetAngularVelocity(GTLib::Script &script);
 
 
             /// Sets the linear factor.
@@ -716,7 +716,7 @@ namespace GTEngine
             ///     Argument 2: The x factor or a math.vec3().
             ///     Argument 3: The y factor.
             ///     Argument 4: The z factor.
-            int SetLinearFactor(GTCore::Script &script);
+            int SetLinearFactor(GTLib::Script &script);
 
             /// Sets the angular factor.
             ///
@@ -725,7 +725,7 @@ namespace GTEngine
             ///     Argument 2: The x factor or a math.vec3().
             ///     Argument 3: The y factor.
             ///     Argument 4: The z factor.
-            int SetAngularFactor(GTCore::Script &script);
+            int SetAngularFactor(GTLib::Script &script);
 
 
             /// Sets the gravity to use with the object.
@@ -735,7 +735,7 @@ namespace GTEngine
             ///     Argument 2: The x gravity or a math.vec3().
             ///     Argument 3: The y gravity.
             ///     Argument 4: The z gravity.
-            int SetGravity(GTCore::Script &script);
+            int SetGravity(GTLib::Script &script);
 
             /// Retrieves the gravity being used with the object, as 3 floats.
             ///
@@ -743,13 +743,13 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     @par
             ///     The return value will be a math.vec3()
-            int GetGravity(GTCore::Script &script);
+            int GetGravity(GTLib::Script &script);
 
             /// Applies the gravity of the object.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int ApplyGravity(GTCore::Script &script);
+            int ApplyGravity(GTLib::Script &script);
 
 
             /// Applies a central force to the object.
@@ -759,7 +759,7 @@ namespace GTEngine
             ///     Argument 2: The x force or a math.vec3().
             ///     Argument 3: The y force.
             ///     Argument 4: The z force.
-            int ApplyCentralForce(GTCore::Script &script);
+            int ApplyCentralForce(GTLib::Script &script);
 
             /// Applies a torque to the object.
             ///
@@ -768,7 +768,7 @@ namespace GTEngine
             ///     Argument 2: The x torque or a math.vec3().
             ///     Argument 3: The y torque.
             ///     Argument 4: The z torque.
-            int ApplyTorque(GTCore::Script &script);
+            int ApplyTorque(GTLib::Script &script);
 
             /// Applies an impulse to the object.
             ///
@@ -776,7 +776,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: A math.vec3() containing the impule.
             ///     Argument 3: A math.vec3() containing the relative position to apply the impulse.
-            int ApplyImpulse(GTCore::Script &script);
+            int ApplyImpulse(GTLib::Script &script);
 
             /// Applies a central impulse to the object.
             ///
@@ -785,7 +785,7 @@ namespace GTEngine
             ///     Argument 2: The x impulse or a math.vec3().
             ///     Argument 3: The y impulse.
             ///     Argument 4: The z impulse.
-            int ApplyCentralImpulse(GTCore::Script &script);
+            int ApplyCentralImpulse(GTLib::Script &script);
 
             /// Applies a torque impulse.
             ///
@@ -794,51 +794,51 @@ namespace GTEngine
             ///     Argument 2: The x impulse or a math.vec3().
             ///     Argument 3: The y impulse.
             ///     Argument 4: The z impulse.
-            int ApplyTorqueImpulse(GTCore::Script &script);
+            int ApplyTorqueImpulse(GTLib::Script &script);
 
 
             /// Disables deactivation of the object.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int DisableDeactivation(GTCore::Script &script);
+            int DisableDeactivation(GTLib::Script &script);
 
             /// Enables deactivation of an object.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int EnableDeactivation(GTCore::Script &script);
+            int EnableDeactivation(GTLib::Script &script);
 
             /// Determines whether or not deactivation is enabled.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int IsDeactivationEnabled(GTCore::Script &script);
+            int IsDeactivationEnabled(GTLib::Script &script);
 
             /// Activates the object.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int Activate(GTCore::Script &script);
+            int Activate(GTLib::Script &script);
 
 
             /// Enables navigation mesh generation for this object.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int EnableNavigationMeshGeneration(GTCore::Script &script);
+            int EnableNavigationMeshGeneration(GTLib::Script &script);
 
             /// Disables navigation mesh generation for this object.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int DisableNavigationMeshGeneration(GTCore::Script &script);
+            int DisableNavigationMeshGeneration(GTLib::Script &script);
 
             /// Determines whether or not navigation mesh generation is enabled.
             ///
             /// @remakrs
             ///     Argument 1: A pointer to the component.
-            int IsNavigationMeshGenerationEnabled(GTCore::Script &script);
+            int IsNavigationMeshGenerationEnabled(GTLib::Script &script);
 
 
 
@@ -848,19 +848,19 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The collision group. Only the first 16 bits are used.
             ///     Argument 3: The collision mask. Only the first 16 bits are used.
-            int SetCollisionFilter(GTCore::Script &script);
+            int SetCollisionFilter(GTLib::Script &script);
 
             /// Retrieves the collision group.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionGroup(GTCore::Script &script);
+            int GetCollisionGroup(GTLib::Script &script);
 
             /// Retrieves the collision mask.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionMask(GTCore::Script &script);
+            int GetCollisionMask(GTLib::Script &script);
 
 
             /// Adds a collision group, making the object part of that group.
@@ -868,34 +868,34 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The name of the collision group to make the object part of.
-            int AddCollisionGroup(GTCore::Script &script);
+            int AddCollisionGroup(GTLib::Script &script);
 
             /// Removes a collision group, removing the object from that group.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The name of the collision group to remove the object from.
-            int RemoveCollisionGroup(GTCore::Script &script);
+            int RemoveCollisionGroup(GTLib::Script &script);
 
             /// Removes a collision group by it's index, removing the object from that group.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the collision group to remove the object from.
-            int RemoveCollisionGroupByIndex(GTCore::Script &script);
+            int RemoveCollisionGroupByIndex(GTLib::Script &script);
 
             /// Retrieves the number of collision groups the object is part of.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionGroupCount(GTCore::Script &script);
+            int GetCollisionGroupCount(GTLib::Script &script);
 
             /// Retrieves the name of the collision group at the given index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the collision group.
-            int GetCollisionGroupName(GTCore::Script &script);
+            int GetCollisionGroupName(GTLib::Script &script);
 
 
             /// Adds a collision group to those the object allowed to collision with.
@@ -903,34 +903,34 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The name of the collision group to allow the object to collide with.
-            int AddCollisionGroupMask(GTCore::Script &script);
+            int AddCollisionGroupMask(GTLib::Script &script);
 
             /// Removes a collision group to those the object is allowed to collide with.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The name of the collision group to no longer allow the object to collide with.
-            int RemoveCollisionGroupMask(GTCore::Script &script);
+            int RemoveCollisionGroupMask(GTLib::Script &script);
 
             /// Removes a collision group to those the object is allowed to collide with, by it's index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the collision group to no longer allow the object to collide with.
-            int RemoveCollisionGroupMaskByIndex(GTCore::Script &script);
+            int RemoveCollisionGroupMaskByIndex(GTLib::Script &script);
 
             /// Retrieves the number of collision groups the object is allowed to collide with.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionGroupMaskCount(GTCore::Script &script);
+            int GetCollisionGroupMaskCount(GTLib::Script &script);
 
             /// Retrieves the name of the collision group mask at the given index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the collision group mask.
-            int GetCollisionGroupMaskName(GTCore::Script &script);
+            int GetCollisionGroupMaskName(GTLib::Script &script);
 
 
             /// Adds a box collision shape to the component.
@@ -943,7 +943,7 @@ namespace GTEngine
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddBoxCollisionShape(GTCore::Script &script);
+            int AddBoxCollisionShape(GTLib::Script &script);
 
             /// Adds a sphere collision shape to the component.
             ///
@@ -953,7 +953,7 @@ namespace GTEngine
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddSphereCollisionShape(GTCore::Script &script);
+            int AddSphereCollisionShape(GTLib::Script &script);
 
             /// Adds an ellipsoid collision shape to the component.
             ///
@@ -965,7 +965,7 @@ namespace GTEngine
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddEllipsoidCollisionShape(GTCore::Script &script);
+            int AddEllipsoidCollisionShape(GTLib::Script &script);
 
             /// Adds a cylinder collision shape to the component.
             ///
@@ -977,9 +977,9 @@ namespace GTEngine
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddCylinderXCollisionShape(GTCore::Script &script);
-            int AddCylinderYCollisionShape(GTCore::Script &script);
-            int AddCylinderZCollisionShape(GTCore::Script &script);
+            int AddCylinderXCollisionShape(GTLib::Script &script);
+            int AddCylinderYCollisionShape(GTLib::Script &script);
+            int AddCylinderZCollisionShape(GTLib::Script &script);
 
             /// Adds a capsure collision shape to the component.
             ///
@@ -990,9 +990,9 @@ namespace GTEngine
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddCapsuleXCollisionShape(GTCore::Script &script);
-            int AddCapsuleYCollisionShape(GTCore::Script &script);
-            int AddCapsuleZCollisionShape(GTCore::Script &script);
+            int AddCapsuleXCollisionShape(GTLib::Script &script);
+            int AddCapsuleYCollisionShape(GTLib::Script &script);
+            int AddCapsuleZCollisionShape(GTLib::Script &script);
 
             /// Adds a set of convex hull collision shapes from the model defined in the attached model comonent, if any.
             ///
@@ -1002,34 +1002,34 @@ namespace GTEngine
             ///     Argument 3: Optional x offset or a math.vec3.
             ///     Argument 4: Optional y offset.
             ///     Argument 5: Optional z offset.
-            int AddModelConvexHullsCollisionShape(GTCore::Script &script);
+            int AddModelConvexHullsCollisionShape(GTLib::Script &script);
 
 
             /// Removes every collision shape.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int RemoveAllCollisionShapes(GTCore::Script &script);
+            int RemoveAllCollisionShapes(GTLib::Script &script);
 
             /// Removes the collision shape at the given index.
             ///
             /// @remarks
             ///     Argument 1: A pointer ot the component to delete.
             ///     Argument 2: The index of the shape to delete.
-            int RemoveCollisionShapeAtIndex(GTCore::Script &script);
+            int RemoveCollisionShapeAtIndex(GTLib::Script &script);
 
             /// Retrieves the number of collision shapes.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionShapeCount(GTCore::Script &script);
+            int GetCollisionShapeCount(GTLib::Script &script);
 
             /// Retrieves a table containing information about the collision shape of the given index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the shape whose information is being retrieved.
-            int GetCollisionShapeAtIndex(GTCore::Script &script);
+            int GetCollisionShapeAtIndex(GTLib::Script &script);
 
 
             /// Sets the offset for the collision shape at the given index.
@@ -1038,7 +1038,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape whose offset is being changed.
             ///     Argument 3, 4, 5: The new offset, as 3 floats
-            int SetCollisionShapeOffset(GTCore::Script &script);
+            int SetCollisionShapeOffset(GTLib::Script &script);
 
             /// Sets the extents of the box shape at the given index.
             ///
@@ -1048,7 +1048,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
             ///     Argument 3, 4, 5: The new half extents.
-            int SetBoxCollisionShapeHalfExtents(GTCore::Script &script);
+            int SetBoxCollisionShapeHalfExtents(GTLib::Script &script);
 
             /// Sets the radius of the sphere shape at the given index.
             ///
@@ -1058,7 +1058,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the shape.
             ///     Argument 3: The new radius.
-            int SetSphereCollisionShapeRadius(GTCore::Script &script);
+            int SetSphereCollisionShapeRadius(GTLib::Script &script);
 
             /// Sets the radius of the ellipsoid shape at the given index.
             ///
@@ -1068,7 +1068,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
             ///     Argument 3, 4, 5: The new radius as 3 floats.
-            int SetEllipsoidCollisionShapeRadius(GTCore::Script &script);
+            int SetEllipsoidCollisionShapeRadius(GTLib::Script &script);
 
             /// Sets the extents of the cylinder shape at the given index.
             ///
@@ -1078,7 +1078,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
             ///     Argument 3, 4, 5: The new half extents.
-            int SetCylinderCollisionShapeSize(GTCore::Script &script);
+            int SetCylinderCollisionShapeSize(GTLib::Script &script);
 
             /// Sets the size of the capsule shape at the given index.
             ///
@@ -1089,7 +1089,7 @@ namespace GTEngine
             ///     Argument 2: The index of the shape.
             ///     Argument 3: The radius of the shape.
             ///     Argument 4: The height of the shape.
-            int SetCapsuleCollisionShapeSize(GTCore::Script &script);
+            int SetCapsuleCollisionShapeSize(GTLib::Script &script);
 
             /// Sets the size of the margins of the model convex hull shapes.
             ///
@@ -1099,7 +1099,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the shape.
             ///     Argument 3: The new margin to use with the convex hulls.
-            int SetModelConvexHullsMargins(GTCore::Script &script);
+            int SetModelConvexHullsMargins(GTLib::Script &script);
         }
 
         namespace ProximityComponentFFI
@@ -1110,19 +1110,19 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The collision group. Only the first 16 bits are used.
             ///     Argument 3: The collision mask. Only the first 16 bits are used.
-            int SetCollisionFilter(GTCore::Script &script);
+            int SetCollisionFilter(GTLib::Script &script);
 
             /// Retrieves the collision group.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionGroup(GTCore::Script &script);
+            int GetCollisionGroup(GTLib::Script &script);
 
             /// Retrieves the collision mask.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionMask(GTCore::Script &script);
+            int GetCollisionMask(GTLib::Script &script);
 
 
             /// Adds a collision group, making the object part of that group.
@@ -1130,34 +1130,34 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The name of the collision group to make the object part of.
-            int AddCollisionGroup(GTCore::Script &script);
+            int AddCollisionGroup(GTLib::Script &script);
 
             /// Removes a collision group, removing the object from that group.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The name of the collision group to remove the object from.
-            int RemoveCollisionGroup(GTCore::Script &script);
+            int RemoveCollisionGroup(GTLib::Script &script);
 
             /// Removes a collision group by it's index, removing the object from that group.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the collision group to remove the object from.
-            int RemoveCollisionGroupByIndex(GTCore::Script &script);
+            int RemoveCollisionGroupByIndex(GTLib::Script &script);
 
             /// Retrieves the number of collision groups the object is part of.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionGroupCount(GTCore::Script &script);
+            int GetCollisionGroupCount(GTLib::Script &script);
 
             /// Retrieves the name of the collision group at the given index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the collision group.
-            int GetCollisionGroupName(GTCore::Script &script);
+            int GetCollisionGroupName(GTLib::Script &script);
 
 
             /// Adds a collision group to those the object allowed to collision with.
@@ -1165,34 +1165,34 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The name of the collision group to allow the object to collide with.
-            int AddCollisionGroupMask(GTCore::Script &script);
+            int AddCollisionGroupMask(GTLib::Script &script);
 
             /// Removes a collision group to those the object is allowed to collide with.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The name of the collision group to no longer allow the object to collide with.
-            int RemoveCollisionGroupMask(GTCore::Script &script);
+            int RemoveCollisionGroupMask(GTLib::Script &script);
 
             /// Removes a collision group to those the object is allowed to collide with, by it's index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the collision group to no longer allow the object to collide with.
-            int RemoveCollisionGroupMaskByIndex(GTCore::Script &script);
+            int RemoveCollisionGroupMaskByIndex(GTLib::Script &script);
 
             /// Retrieves the number of collision groups the object is allowed to collide with.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionGroupMaskCount(GTCore::Script &script);
+            int GetCollisionGroupMaskCount(GTLib::Script &script);
 
             /// Retrieves the name of the collision group mask at the given index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the collision group mask.
-            int GetCollisionGroupMaskName(GTCore::Script &script);
+            int GetCollisionGroupMaskName(GTLib::Script &script);
 
 
 
@@ -1206,7 +1206,7 @@ namespace GTEngine
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddBoxCollisionShape(GTCore::Script &script);
+            int AddBoxCollisionShape(GTLib::Script &script);
 
             /// Adds a sphere collision shape to the component.
             ///
@@ -1216,7 +1216,7 @@ namespace GTEngine
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddSphereCollisionShape(GTCore::Script &script);
+            int AddSphereCollisionShape(GTLib::Script &script);
 
             /// Adds an ellipsoid collision shape to the component.
             ///
@@ -1228,7 +1228,7 @@ namespace GTEngine
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddEllipsoidCollisionShape(GTCore::Script &script);
+            int AddEllipsoidCollisionShape(GTLib::Script &script);
 
             /// Adds a cylinder collision shape to the component.
             ///
@@ -1240,9 +1240,9 @@ namespace GTEngine
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddCylinderXCollisionShape(GTCore::Script &script);
-            int AddCylinderYCollisionShape(GTCore::Script &script);
-            int AddCylinderZCollisionShape(GTCore::Script &script);
+            int AddCylinderXCollisionShape(GTLib::Script &script);
+            int AddCylinderYCollisionShape(GTLib::Script &script);
+            int AddCylinderZCollisionShape(GTLib::Script &script);
 
             /// Adds a capsure collision shape to the component.
             ///
@@ -1253,9 +1253,9 @@ namespace GTEngine
             ///     Argument 5: Optional x offset.
             ///     Argument 6: Optional y offset.
             ///     Argument 7: Optional z offset.
-            int AddCapsuleXCollisionShape(GTCore::Script &script);
-            int AddCapsuleYCollisionShape(GTCore::Script &script);
-            int AddCapsuleZCollisionShape(GTCore::Script &script);
+            int AddCapsuleXCollisionShape(GTLib::Script &script);
+            int AddCapsuleYCollisionShape(GTLib::Script &script);
+            int AddCapsuleZCollisionShape(GTLib::Script &script);
 
             /// Adds a set of convex hull collision shapes from the model defined in the attached model comonent, if any.
             ///
@@ -1265,34 +1265,34 @@ namespace GTEngine
             ///     Argument 3: Optional x offset or a math.vec3.
             ///     Argument 4: Optional y offset.
             ///     Argument 5: Optional z offset.
-            int AddModelConvexHullsCollisionShape(GTCore::Script &script);
+            int AddModelConvexHullsCollisionShape(GTLib::Script &script);
 
 
             /// Removes every collision shape.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int RemoveAllCollisionShapes(GTCore::Script &script);
+            int RemoveAllCollisionShapes(GTLib::Script &script);
 
             /// Removes the collision shape at the given index.
             ///
             /// @remarks
             ///     Argument 1: A pointer ot the component to delete.
             ///     Argument 2: The index of the shape to delete.
-            int RemoveCollisionShapeAtIndex(GTCore::Script &script);
+            int RemoveCollisionShapeAtIndex(GTLib::Script &script);
 
             /// Retrieves the number of collision shapes.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetCollisionShapeCount(GTCore::Script &script);
+            int GetCollisionShapeCount(GTLib::Script &script);
 
             /// Retrieves a table containing information about the collision shape of the given index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the shape whose information is being retrieved.
-            int GetCollisionShapeAtIndex(GTCore::Script &script);
+            int GetCollisionShapeAtIndex(GTLib::Script &script);
 
 
             /// Sets the offset for the collision shape at the given index.
@@ -1301,7 +1301,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape whose offset is being changed.
             ///     Argument 3, 4, 5: The new offset, as 3 floats
-            int SetCollisionShapeOffset(GTCore::Script &script);
+            int SetCollisionShapeOffset(GTLib::Script &script);
 
             /// Sets the extents of the box shape at the given index.
             ///
@@ -1311,7 +1311,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
             ///     Argument 3, 4, 5: The new half extents.
-            int SetBoxCollisionShapeHalfExtents(GTCore::Script &script);
+            int SetBoxCollisionShapeHalfExtents(GTLib::Script &script);
 
             /// Sets the radius of the sphere shape at the given index.
             ///
@@ -1321,7 +1321,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the shape.
             ///     Argument 3: The new radius.
-            int SetSphereCollisionShapeRadius(GTCore::Script &script);
+            int SetSphereCollisionShapeRadius(GTLib::Script &script);
 
             /// Sets the radius of the ellipsoid shape at the given index.
             ///
@@ -1331,7 +1331,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
             ///     Argument 3, 4, 5: The new radius as 3 floats.
-            int SetEllipsoidCollisionShapeRadius(GTCore::Script &script);
+            int SetEllipsoidCollisionShapeRadius(GTLib::Script &script);
 
             /// Sets the extents of the cylinder shape at the given index.
             ///
@@ -1341,7 +1341,7 @@ namespace GTEngine
             ///     Argument 1:       A pointer to the component.
             ///     Argument 2:       The index of the shape.
             ///     Argument 3, 4, 5: The new half extents.
-            int SetCylinderCollisionShapeSize(GTCore::Script &script);
+            int SetCylinderCollisionShapeSize(GTLib::Script &script);
 
             /// Sets the size of the capsule shape at the given index.
             ///
@@ -1352,7 +1352,7 @@ namespace GTEngine
             ///     Argument 2: The index of the shape.
             ///     Argument 3: The radius of the shape.
             ///     Argument 4: The height of the shape.
-            int SetCapsuleCollisionShapeSize(GTCore::Script &script);
+            int SetCapsuleCollisionShapeSize(GTLib::Script &script);
 
             /// Sets the size of the margins of the model convex hull shapes.
             ///
@@ -1362,7 +1362,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the shape.
             ///     Argument 3: The new margin to use with the convex hulls.
-            int SetModelConvexHullsMargins(GTCore::Script &script);
+            int SetModelConvexHullsMargins(GTLib::Script &script);
 
 
             /// Determines if anything is contained inside the collision volume.
@@ -1373,7 +1373,7 @@ namespace GTEngine
             ///     The return value is a simple boolean.
             ///     @par
             ///     This does not include scene nodes that are related to the scene node that owns the component.
-            int IsAnythingInside(GTCore::Script &script);
+            int IsAnythingInside(GTLib::Script &script);
         }
 
 
@@ -1384,41 +1384,41 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The relative path of the script file being added.
-            int AddScript(GTCore::Script &script);
+            int AddScript(GTLib::Script &script);
 
             /// Removes a script file from the component by it's relative path.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The relative path of the script file being removed.
-            int RemoveScriptByRelativePath(GTCore::Script &script);
+            int RemoveScriptByRelativePath(GTLib::Script &script);
 
             /// Removes a script file by it's index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the script being removed.
-            int RemoveScriptByIndex(GTCore::Script &script);
+            int RemoveScriptByIndex(GTLib::Script &script);
 
             /// Reloads a script at the given index with a new file.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The index of the script being reloaded.
-            int ReloadScript(GTCore::Script &script);
+            int ReloadScript(GTLib::Script &script);
 
             /// Retrieves the names of the script files the given script component uses.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetScriptFilePaths(GTCore::Script &script);
+            int GetScriptFilePaths(GTLib::Script &script);
 
             /// Determines if the script component is using the given script file.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The relative path of the script.
-            int IsUsingScript(GTCore::Script &script);
+            int IsUsingScript(GTLib::Script &script);
 
             /// Retrieves an array containing the names and types of the public variables of the script definition at the given index.
             ///
@@ -1427,7 +1427,7 @@ namespace GTEngine
             ///     Argument 2: The index of the script definition whose public variables are being retried.
             ///
             ///     The return value is an array of {name, type} types.
-            int GetPublicVariableNamesAndTypesByIndex(GTCore::Script &script);
+            int GetPublicVariableNamesAndTypesByIndex(GTLib::Script &script);
 
 
             /// Retrieves the names and values of every public variable.
@@ -1436,14 +1436,14 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///
             ///     The returned table is keyed by the name. Note that this is out of order.
-            int GetPublicVariableNamesAndValues(GTCore::Script &script);
+            int GetPublicVariableNamesAndValues(GTLib::Script &script);
 
             /// Retrieves the value of the public variable with the given name.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The name of the variable whose value is being retrieved.
-            int GetPublicVariableValue(GTCore::Script &script);
+            int GetPublicVariableValue(GTLib::Script &script);
 
             /// Sets the value of the public variable with the given name.
             ///
@@ -1453,7 +1453,7 @@ namespace GTEngine
             ///     Argument 3: The value to assign to the variable.
             ///
             ///     If the value is an unsupported type, nothing will be changed.
-            int SetPublicVariableValue(GTCore::Script &script);
+            int SetPublicVariableValue(GTLib::Script &script);
         }
 
 
@@ -1464,32 +1464,32 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: The relative path of the particle system to set.
-            int SetFromFile(GTCore::Script &script);
+            int SetFromFile(GTLib::Script &script);
 
             /// Retrieves the relative file path of the attached particle system.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetRelativeFilePath(GTCore::Script &script);
+            int GetRelativeFilePath(GTLib::Script &script);
 
 
             /// Marks the particle system as playing.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int Play(GTCore::Script &script);
+            int Play(GTLib::Script &script);
 
             /// Marks the particle system as paused.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int Pause(GTCore::Script &script);
+            int Pause(GTLib::Script &script);
 
             /// Determines whether or not the particle system is playing.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int IsPlaying(GTCore::Script &script);
+            int IsPlaying(GTLib::Script &script);
 
 
             /// Sets whether or not the particle system should be played on startup.
@@ -1497,20 +1497,20 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the component.
             ///     Argument 2: Boolean: True if the particle system should be played on startup.
-            int PlayOnStartup(GTCore::Script &script);
+            int PlayOnStartup(GTLib::Script &script);
 
             /// Determines whether or not the particle system is playing on startup.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int IsPlayingOnStartup(GTCore::Script &script);
+            int IsPlayingOnStartup(GTLib::Script &script);
 
 
             /// Resets the particle system.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle system.
-            int Reset(GTCore::Script &script);
+            int Reset(GTLib::Script &script);
 
 
             /// Retrieves the lifetime of the particle system.
@@ -1518,7 +1518,7 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the particle system.
             ///     Argument 2: The index of the emitter whose lifetime is being retrieved.
-            int GetEmitterLifetime(GTCore::Script &script);
+            int GetEmitterLifetime(GTLib::Script &script);
         }
 
 
@@ -1528,13 +1528,13 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetPrefabRelativePath(GTCore::Script &script);
+            int GetPrefabRelativePath(GTLib::Script &script);
 
             /// Retrieves the local ID of the scene node this component is linked to in the prefab.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetLocalHierarchyID(GTCore::Script &script);
+            int GetLocalHierarchyID(GTLib::Script &script);
         }
 
 
@@ -1546,7 +1546,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     @par
             ///     Note that this isn't enough to fully select the node. Instead, this simply marks the node as selected.
-            int Select(GTCore::Script &script);
+            int Select(GTLib::Script &script);
 
             /// Marks the node as deselected.
             ///
@@ -1554,7 +1554,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     @par
             ///     Note that this isn't enough to fully deselect the node. Instead, this simply marks the node as selected.
-            int Deselect(GTCore::Script &script);
+            int Deselect(GTLib::Script &script);
 
             /// Determines whether or not the node is marked as selected.
             ///
@@ -1562,7 +1562,7 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component.
             ///     @par
             ///     Returns a boolean.
-            int IsSelected(GTCore::Script &script);
+            int IsSelected(GTLib::Script &script);
 
 
             /// Shows a sprite on the object while it's shown in the editor.
@@ -1571,44 +1571,44 @@ namespace GTEngine
             ///     Argument 1: A pointer to the component whose sprite is being shown.
             ///     Argument 2: The file path of the texture to use on the sprite.
             ///     Argument 3: A table containing the colour to use with the sprite. Keys are r, g and b.
-            int ShowSprite(GTCore::Script &script);
+            int ShowSprite(GTLib::Script &script);
 
             /// Hides the sprite.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component whose sprite is being hidden.
-            int HideSprite(GTCore::Script &script);
+            int HideSprite(GTLib::Script &script);
 
             /// Determines whether or not a sprite is being shown.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int IsShowingSprite(GTCore::Script &script);
+            int IsShowingSprite(GTLib::Script &script);
 
             /// Retrieves the path of the texture being used for the sprite.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component whose sprite texture is being retrieved.
-            int GetSpriteTexturePath(GTCore::Script &script);
+            int GetSpriteTexturePath(GTLib::Script &script);
 
 
             /// Shows a direction on the object while it's shown in the editor.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component whose direction arrow is being shown.
-            int ShowDirectionArrow(GTCore::Script &script);
+            int ShowDirectionArrow(GTLib::Script &script);
 
             /// Hides the direction arrow.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component whose direction arrow is being hidden.
-            int HideDirectionArrow(GTCore::Script &script);
+            int HideDirectionArrow(GTLib::Script &script);
 
             /// Determines whether or not the direction arrow is being shown.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int IsShowingDirectionArrow(GTCore::Script &script);
+            int IsShowingDirectionArrow(GTLib::Script &script);
         }
     }
 }

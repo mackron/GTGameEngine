@@ -2,7 +2,7 @@
 
 #include <GTEngine/CPUVertexShader.hpp>
 #include <GTEngine/ThreadCache.hpp>
-#include <GTCore/Timing.hpp>
+#include <GTLib/Timing.hpp>
 
 // Benchmarking Notes:
 //
@@ -142,7 +142,7 @@ namespace GTEngine
 
 
     /// Class representing the threading job to execute for processing a chunk of vertices.
-    class ProcessVertexShaderJob : public GTCore::Threading::Job
+    class ProcessVertexShaderJob : public GTLib::Threading::Job
     {
     public:
 
@@ -199,7 +199,7 @@ namespace GTEngine
 namespace GTEngine
 {
     // Temp benchmarker.
-    GTCore::Benchmarker benchmarker;
+    GTLib::Benchmarker benchmarker;
 
     CPUVertexShader::CPUVertexShader()
         : input(nullptr), vertexCount(0), format(), vertexSizeInFloats(format.GetSize()), output(nullptr),
@@ -245,7 +245,7 @@ namespace GTEngine
                 --threadCount;
 
                 // This is a temporary buffer containing the threads we've acquired.
-                GTCore::Thread** threads      = new GTCore::Thread*[threadCount];
+                GTLib::Thread** threads      = new GTLib::Thread*[threadCount];
                 ProcessVertexShaderJob** jobs = new ProcessVertexShaderJob*[threadCount];
 
 
@@ -282,7 +282,7 @@ namespace GTEngine
 
                     assert(thread != nullptr && job != nullptr);
 
-                    size_t lastVertexID = GTCore::Min(firstVertexID + vertexChunkSize, this->vertexCount - 1);
+                    size_t lastVertexID = GTLib::Min(firstVertexID + vertexChunkSize, this->vertexCount - 1);
                     job->SetVertexRange(*this, firstVertexID, lastVertexID);
                         
                     thread->Start(*job, false);     // <-- second argument specifies not to wait for the execution of the current procedure to complete. It will be guaranteed that the thread won't already be running.

@@ -4,11 +4,11 @@
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
-#include <GTCore/IO.hpp>
-#include <GTCore/Path.hpp>
-#include <GTCore/Dictionary.hpp>
-#include <GTCore/Vector.hpp>
-#include <GTCore/String.hpp>
+#include <GTLib/IO.hpp>
+#include <GTLib/Path.hpp>
+#include <GTLib/Dictionary.hpp>
+#include <GTLib/Vector.hpp>
+#include <GTLib/String.hpp>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -131,7 +131,7 @@ namespace GTEngine
         void ConstructContent()
         {
             // We will use a string list for constructing the content string.
-            GTCore::Strings::List<char> contentList;
+            GTLib::Strings::List<char> contentList;
             for (auto i = this->includes.root; i != nullptr; i = i->next)
             {
                 const char *iContent = i->value->GetContent();
@@ -166,18 +166,18 @@ namespace GTEngine
     private:
 
         /// The ID of the shader. All shaders need an ID for loading/retrieval purposes.
-        GTCore::String id;
+        GTLib::String id;
 
         /// The list of includes making up this shader. This includes both named and anonymous includes.
-        GTCore::List<ShaderLibraryShader*> includes;
+        GTLib::List<ShaderLibraryShader*> includes;
 
         /// The list containing pointers to the anonymous includes. These includes are tied to this shader, and
         /// only this shader.
-        GTCore::List<ShaderLibraryShader*> anonIncludes;
+        GTLib::List<ShaderLibraryShader*> anonIncludes;
 
         /// The content of the shader. This will start out as empty, but will be given content when the
         /// shader content is constructed with ConstructContent(), or SetContent() is called.
-        GTCore::String content;
+        GTLib::String content;
 
 
     private:    // No copying.
@@ -264,9 +264,9 @@ namespace GTEngine
     private:
 
         /// The map containing pointers to each of the loaded shaders, indexed by their ID.
-        static GTCore::Dictionary<ShaderLibraryShader*> Shaders;
+        static GTLib::Dictionary<ShaderLibraryShader*> Shaders;
     };
-    GTCore::Dictionary<ShaderLibraryShader*> ShaderLibraryShaders::Shaders;
+    GTLib::Dictionary<ShaderLibraryShader*> ShaderLibraryShaders::Shaders;
 }
 
 namespace GTEngine
@@ -274,10 +274,10 @@ namespace GTEngine
     bool ShaderLibrary::LoadFromDirectory(const char* directory, bool recursive)
     {
         // We need to do this for every data directory, including the current directory.
-        GTCore::Vector<const char*> baseDirectories;
-        baseDirectories.PushBack(GTCore::IO::GetCurrentDirectory());
+        GTLib::Vector<const char*> baseDirectories;
+        baseDirectories.PushBack(GTLib::IO::GetCurrentDirectory());
 
-        if (!GTCore::Path::IsAbsolute(directory))
+        if (!GTLib::Path::IsAbsolute(directory))
         {
             ApplicationConfig::GetDataDirectories(baseDirectories);
         }
@@ -286,14 +286,14 @@ namespace GTEngine
         for (size_t iBaseDirectory = 0; iBaseDirectory < baseDirectories.count; ++iBaseDirectory)
         {
             // Here we save and then set the current directory.
-            GTCore::IO::PushCurrentDirectory();
-            GTCore::IO::SetCurrentDirectory(baseDirectories[iBaseDirectory]);
+            GTLib::IO::PushCurrentDirectory();
+            GTLib::IO::SetCurrentDirectory(baseDirectories[iBaseDirectory]);
 
             // First we need the files in the directory.
-            GTCore::Path searchQuery(directory);
+            GTLib::Path searchQuery(directory);
             searchQuery.Append(".*");                   // <-- This means to iterate over every file in the directory.
 
-            GTCore::IO::FileIterator i(searchQuery.c_str());
+            GTLib::IO::FileIterator i(searchQuery.c_str());
             while (i)
             {
                 if (i.isDirectory)
@@ -312,7 +312,7 @@ namespace GTEngine
             }
 
             // Can't forget to restore the previous directory.
-            GTCore::IO::PopCurrentDirectory();
+            GTLib::IO::PopCurrentDirectory();
         }
         
         return true;
@@ -320,18 +320,18 @@ namespace GTEngine
 
     bool ShaderLibrary::LoadFromFile(const char* fileName)
     {
-        auto file = GTCore::IO::Open(fileName, GTCore::IO::OpenMode::Read);
+        auto file = GTLib::IO::Open(fileName, GTLib::IO::OpenMode::Read);
         if (file)
         {
             // We need to read the content of the file and then load it as XML. We cast the size to a size_t to
             // play nicely with 32-bit compilations. We can pretty safely assume the XML file will not exceed that.
-            size_t fileSize = static_cast<size_t>(GTCore::IO::Size(file));
+            size_t fileSize = static_cast<size_t>(GTLib::IO::Size(file));
             
             auto fileData = static_cast<char*>(malloc(fileSize + 1));
-            GTCore::IO::Read(file, fileData, fileSize);
+            GTLib::IO::Read(file, fileData, fileSize);
             fileData[fileSize] = '\0';
             
-            GTCore::IO::Close(file);
+            GTLib::IO::Close(file);
             
             bool result = ShaderLibrary::LoadFromXML(fileData);
             
@@ -345,11 +345,11 @@ namespace GTEngine
     bool ShaderLibrary::LoadFromXML(const char *xml)
     {
         // We need to create a non-const copy because LoadFromXML() is destructive.
-        auto input = GTCore::Strings::Create(xml);
+        auto input = GTLib::Strings::Create(xml);
         
         bool result = ShaderLibrary::LoadFromXML(input);
         
-        GTCore::Strings::Delete(input);
+        GTLib::Strings::Delete(input);
         return result;
     }
 
@@ -379,7 +379,7 @@ namespace GTEngine
                                 // We have children.
                                 while (childNode != nullptr)
                                 {
-                                    if (GTCore::Strings::Equal(childNode->name(), "include"))
+                                    if (GTLib::Strings::Equal(childNode->name(), "include"))
                                     {
                                         // If the include node has a 'url' attribute, it means it's using an external, named include. Otherwise, it's
                                         // assumed to be an anonymous include.
@@ -517,8 +517,8 @@ namespace GTEngine
         }
         
         Shader*        shader;
-        GTCore::String vertexShaderID;
-        GTCore::String fragmentShaderID;
+        GTLib::String vertexShaderID;
+        GTLib::String fragmentShaderID;
         int            refCount;
         
         
@@ -526,7 +526,7 @@ namespace GTEngine
         ShaderInfo(const ShaderInfo &);
         ShaderInfo & operator=(const ShaderInfo &);
     };
-    GTCore::Vector<ShaderInfo*> AcquiredShaders;
+    GTLib::Vector<ShaderInfo*> AcquiredShaders;
 
     ShaderInfo* ShaderLibrary_FindShaderInfo(const char* vertexShaderID, const char* fragmentShaderID)
     {

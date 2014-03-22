@@ -217,26 +217,26 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This does not auto repeat.
-        void OnKeyPressed(GTCore::Key key);
+        void OnKeyPressed(GTLib::Key key);
 
         /// Called when a key is released.
         ///
         /// @param key [in] The key that was just released.
-        void OnKeyReleased(GTCore::Key Key);
+        void OnKeyReleased(GTLib::Key Key);
 
         /// Called when a mouse button is pusehd.
         ///
         /// @param button [in] The button that was pushed.
         /// @param x      [in] The x position of the mouse at the time it was pushed.
         /// @param y      [in] The y position of the mouse at the time it was pushed.
-        void OnMouseButtonDown(GTCore::MouseButton button, int x, int y);
+        void OnMouseButtonDown(GTLib::MouseButton button, int x, int y);
 
         /// Called when a mouse button is released.
         ///
         /// @param button [in] The button that was released.
         /// @param x      [in] The x position of the mouse at the time it was released.
         /// @param y      [in] The y position of the mouse at the time it was released.
-        void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
+        void OnMouseButtonUp(GTLib::MouseButton button, int x, int y);
 
         /// Called when the main window received focus.
         void OnReceiveFocus();
@@ -286,7 +286,7 @@ namespace GTEngine
 
         /// The list of open files. This is indexed by the full, absolute file path. We need to index like this since we need to support
         /// multiple data directories, which may result in something having the same relative path.
-        GTCore::Dictionary<SubEditor*> openedFiles;
+        GTLib::Dictionary<SubEditor*> openedFiles;
 
         /// A pointer to the sub-editor that is currently being shown.
         SubEditor* currentlyShownEditor;
@@ -375,30 +375,30 @@ namespace GTEngine
         /// The scripting FFI.
         struct FFI
         {
-            static Game   & GetGame(GTCore::Script &script);
-            static Editor & GetEditor(GTCore::Script &script);
+            static Game   & GetGame(GTLib::Script &script);
+            static Editor & GetEditor(GTLib::Script &script);
 
-            static void PushElement(GTCore::Script &script, GTGUI::Element* element);
+            static void PushElement(GTLib::Script &script, GTGUI::Element* element);
 
 
-            static int Open(GTCore::Script &script);
-            static int Close(GTCore::Script &script);
+            static int Open(GTLib::Script &script);
+            static int Close(GTLib::Script &script);
 
-            static int OpenFile(GTCore::Script &script);
-            static int CloseFile(GTCore::Script &script);
-            static int ForceCloseFile(GTCore::Script &script);
-            static int CloseAllOpenFiles(GTCore::Script &script);
-            static int CloseCurrentlyShownFile(GTCore::Script &script);
-            static int ShowFile(GTCore::Script &script);
-            static int HideCurrentlyShownFile(GTCore::Script &script);
-            static int SaveFile(GTCore::Script &script);
-            static int SaveAllOpenModifiedFiles(GTCore::Script &script);
-            static int SaveCurrentlyShownFile(GTCore::Script &script);
-            static int MarkFileAsModified(GTCore::Script &script);
-            static int UnmarkFileAsModified(GTCore::Script &script);
-            static int IsFileMarkedAsModified(GTCore::Script &script);
-            static int GetCurrentlyShownEditor(GTCore::Script &script);
-            static int OpenPackagingTool(GTCore::Script &script);
+            static int OpenFile(GTLib::Script &script);
+            static int CloseFile(GTLib::Script &script);
+            static int ForceCloseFile(GTLib::Script &script);
+            static int CloseAllOpenFiles(GTLib::Script &script);
+            static int CloseCurrentlyShownFile(GTLib::Script &script);
+            static int ShowFile(GTLib::Script &script);
+            static int HideCurrentlyShownFile(GTLib::Script &script);
+            static int SaveFile(GTLib::Script &script);
+            static int SaveAllOpenModifiedFiles(GTLib::Script &script);
+            static int SaveCurrentlyShownFile(GTLib::Script &script);
+            static int MarkFileAsModified(GTLib::Script &script);
+            static int UnmarkFileAsModified(GTLib::Script &script);
+            static int IsFileMarkedAsModified(GTLib::Script &script);
+            static int GetCurrentlyShownEditor(GTLib::Script &script);
+            static int OpenPackagingTool(GTLib::Script &script);
         };
 
 

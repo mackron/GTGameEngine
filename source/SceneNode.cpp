@@ -37,7 +37,7 @@ namespace GTEngine
 
     void SceneNode::SetName(const char* newName)
     {
-        if (!GTCore::Strings::Equal(newName, this->name.c_str()))
+        if (!GTLib::Strings::Equal(newName, this->name.c_str()))
         {
             this->name = newName;
 
@@ -341,7 +341,7 @@ namespace GTEngine
     {
         for (auto iChild = this->firstChild; iChild != nullptr; iChild = iChild->GetNextSibling())
         {
-            if (GTCore::Strings::Equal(iChild->GetName(), name))
+            if (GTLib::Strings::Equal(iChild->GetName(), name))
             {
                 return iChild;
             }
@@ -826,22 +826,22 @@ namespace GTEngine
 
     Component* SceneNode::GetComponentByName(const char* componentName)
     {
-        if (GTCore::Strings::Equal(componentName, ModelComponent::Name))
+        if (GTLib::Strings::Equal(componentName, ModelComponent::Name))
         {
             return this->modelComponent;
         }
 
-        if (GTCore::Strings::Equal(componentName, PointLightComponent::Name))
+        if (GTLib::Strings::Equal(componentName, PointLightComponent::Name))
         {
             return this->pointLightComponent;
         }
 
-        if (GTCore::Strings::Equal(componentName, SpotLightComponent::Name))
+        if (GTLib::Strings::Equal(componentName, SpotLightComponent::Name))
         {
             return this->spotLightComponent;
         }
 
-        if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
+        if (GTLib::Strings::Equal(componentName, EditorMetadataComponent::Name))
         {
             return this->editorMetadataComponent;
         }
@@ -862,28 +862,28 @@ namespace GTEngine
         auto component = this->GetComponentByName(componentName);
         if (component == nullptr)
         {
-            if (GTCore::Strings::Equal(componentName, ModelComponent::Name))
+            if (GTLib::Strings::Equal(componentName, ModelComponent::Name))
             {
                 assert(this->modelComponent == nullptr);
                 {
                     component = this->modelComponent = new ModelComponent(*this);
                 }
             }
-            else if (GTCore::Strings::Equal(componentName, PointLightComponent::Name))
+            else if (GTLib::Strings::Equal(componentName, PointLightComponent::Name))
             {
                 assert(this->pointLightComponent == nullptr);
                 {
                     component = this->pointLightComponent = new PointLightComponent(*this);
                 }
             }
-            else if (GTCore::Strings::Equal(componentName, SpotLightComponent::Name))
+            else if (GTLib::Strings::Equal(componentName, SpotLightComponent::Name))
             {
                 assert(this->spotLightComponent == nullptr);
                 {
                     component = this->spotLightComponent = new SpotLightComponent(*this);
                 }
             }
-            else if (GTCore::Strings::Equal(componentName, EditorMetadataComponent::Name))
+            else if (GTLib::Strings::Equal(componentName, EditorMetadataComponent::Name))
             {
                 assert(this->editorMetadataComponent == nullptr);
                 {
@@ -959,7 +959,7 @@ namespace GTEngine
         //
         // What we'll do is just retrieve the names of all of the attached components, and then iterate over that
         // and remove by name.
-        GTCore::Vector<GTCore::String> componentNames;
+        GTLib::Vector<GTLib::String> componentNames;
         this->GetAttachedComponentNames(componentNames);
 
         for (size_t i = 0; i < componentNames.count; ++i)
@@ -972,7 +972,7 @@ namespace GTEngine
         assert(this->components.count == 0);
     }
 
-    void SceneNode::GetAttachedComponentNames(GTCore::Vector<GTCore::String> &output) const
+    void SceneNode::GetAttachedComponentNames(GTLib::Vector<GTLib::String> &output) const
     {
         // First is our specialised cases.
         if (this->modelComponent          != nullptr) { output.PushBack(ModelComponent::Name);          }
@@ -1152,11 +1152,11 @@ namespace GTEngine
     //////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void SceneNode::Serialize(GTCore::Serializer &serializer, unsigned int flags) const
+    void SceneNode::Serialize(GTLib::Serializer &serializer, unsigned int flags) const
     {
         // The first scene node chunk, besides SceneObject, is the general attributes. We're going to use an intermediate serializer here
         // because we're writing a string.
-        GTCore::BasicSerializer secondarySerializer;
+        GTLib::BasicSerializer secondarySerializer;
 
         if ((flags & NoID) == 0)
         {
@@ -1189,9 +1189,9 @@ namespace GTEngine
         // the size of the component data, which is what we'll be doing.
         //
         // We need to use an intermediary serializer to do this so we can obtain an exact chunk size.
-        GTCore::BasicSerializer componentSerializer;
+        GTLib::BasicSerializer componentSerializer;
 
-        GTCore::Vector<GTCore::String> componentNames;
+        GTLib::Vector<GTLib::String> componentNames;
         this->GetAttachedComponentNames(componentNames);
 
         if ((flags & NoEditorMetadataComponent) != 0)
@@ -1210,10 +1210,10 @@ namespace GTEngine
             auto component = this->GetComponentByName(componentNames[iComponent].c_str());
             assert(component != nullptr);
             {
-                GTCore::BasicSerializer componentSubSerializer;
+                GTLib::BasicSerializer componentSubSerializer;
              
                 // Special cases.
-                if (GTCore::Strings::Equal(component->GetName(), EditorMetadataComponent::Name))
+                if (GTLib::Strings::Equal(component->GetName(), EditorMetadataComponent::Name))
                 {
                     static_cast<const EditorMetadataComponent*>(component)->Serialize(componentSubSerializer, flags);
                 }
@@ -1239,9 +1239,9 @@ namespace GTEngine
         serializer.Write(componentSerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void SceneNode::Deserialize(GTCore::Deserializer &deserializer, unsigned int flags)
+    void SceneNode::Deserialize(GTLib::Deserializer &deserializer, unsigned int flags)
     {
-        GTCore::String newName;
+        GTLib::String newName;
         auto wasStatic  = this->IsStatic();
         auto wasVisible = this->IsVisible();
         
@@ -1250,7 +1250,7 @@ namespace GTEngine
         glm::vec3 newScale;
 
         // This list is used at the end to iterate over and post the OnPostSceneNodeDeserialized() event to each component.
-        GTCore::Vector<Component*> deserializedComponents;
+        GTLib::Vector<Component*> deserializedComponents;
 
         Serialization::ChunkHeader header;
         deserializer.Read(header);
@@ -1294,7 +1294,7 @@ namespace GTEngine
             assert(header.id == Serialization::ChunkID_SceneNode_Components);
             {
                 // We need to remove components that were not part of the serialized data. Otherwise, the scene node won't be in the correct state.
-                GTCore::Vector<GTCore::String> componentsToRemove;
+                GTLib::Vector<GTLib::String> componentsToRemove;
                 this->GetAttachedComponentNames(componentsToRemove);
 
 
@@ -1303,7 +1303,7 @@ namespace GTEngine
 
                 for (uint32_t iComponent = 0; iComponent < componentCount; ++iComponent)
                 {
-                    GTCore::String name;
+                    GTLib::String name;
                     deserializer.ReadString(name);
 
                     uint32_t componentDataSizeInBytes;

@@ -332,7 +332,7 @@ namespace GTEngine
 
 
 
-    bool NavigationMesh::FindPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output)
+    bool NavigationMesh::FindPath(const glm::vec3 &start, const glm::vec3 &end, GTLib::Vector<glm::vec3> &output)
     {
         bool success = false;
 
@@ -519,9 +519,9 @@ namespace GTEngine
     /////////////////////////////////////////////
     // Serialization/Deserialization
 
-    void NavigationMesh::Serialize(GTCore::Serializer &serializer) const
+    void NavigationMesh::Serialize(GTLib::Serializer &serializer) const
     {
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
         Serialization::ChunkHeader header;
 
 
@@ -639,7 +639,7 @@ namespace GTEngine
         }
     }
 
-    bool NavigationMesh::Deserialize(GTCore::Deserializer &deserializer)
+    bool NavigationMesh::Deserialize(GTLib::Deserializer &deserializer)
     {
         bool successful = true;
 
@@ -712,11 +712,11 @@ namespace GTEngine
                         deserializer.Read(borderSize);
 
 
-                        GTCore::Vector<uint16_t> verts;
-                        GTCore::Vector<uint16_t> polys;
-                        GTCore::Vector<uint16_t> regs;
-                        GTCore::Vector<uint16_t> flags;
-                        GTCore::Vector<uint8_t> areas;
+                        GTLib::Vector<uint16_t> verts;
+                        GTLib::Vector<uint16_t> polys;
+                        GTLib::Vector<uint16_t> regs;
+                        GTLib::Vector<uint16_t> flags;
+                        GTLib::Vector<uint8_t> areas;
 
                         verts.Resize(nverts * 3);
                         deserializer.Read(verts.buffer, sizeof(uint16_t) * verts.count);

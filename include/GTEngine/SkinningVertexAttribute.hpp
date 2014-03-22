@@ -4,7 +4,7 @@
 #define __GTEngine_SkinningVertexAttribute_hpp_
 
 #include <GTEngine/Bone.hpp>
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GTEngine
 {
@@ -50,7 +50,7 @@ namespace GTEngine
             this->bones.OptimizeBuffer();                               // <-- we do this to ensure we keep the buffer tightly bound to the data. Avoids wastage since there will be a lot of instantiations here (one for each vertex).
         }
 
-        GTCore::Vector<BoneWeightPair> bones;
+        GTLib::Vector<BoneWeightPair> bones;
     };
 }
 

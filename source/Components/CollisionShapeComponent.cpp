@@ -616,7 +616,7 @@ namespace GTEngine
         short newCollisionGroup = 0;
         short newCollisionMask  = 0;
         
-        GTCore::String base("Game.CollisionGroups.");
+        GTLib::String base("Game.CollisionGroups.");
         
         for (size_t iGroup = 0; iGroup < this->collisionGroupStrings.count; ++iGroup)
         {
@@ -661,9 +661,9 @@ namespace GTEngine
     {
         this->OnPreCollisionShapeChanged();
         {
-            x = GTCore::Max(x, 0.0001f);
-            y = GTCore::Max(y, 0.0001f);
-            z = GTCore::Max(z, 0.0001f);
+            x = GTLib::Max(x, 0.0001f);
+            y = GTLib::Max(y, 0.0001f);
+            z = GTLib::Max(z, 0.0001f);
 
             // Now we simply apply the scaling to the shape.
             this->collisionShape.setLocalScaling(btVector3(x, y, z));
@@ -695,10 +695,10 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void CollisionShapeComponent::Serialize(GTCore::Serializer &serializer) const
+    void CollisionShapeComponent::Serialize(GTLib::Serializer &serializer) const
     {
         // We'll need to use an intermediary serializer for getting accurate sizes.
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
         intermediarySerializer.Write(static_cast<uint32_t>(this->GetCollisionShapeCount()));
         intermediarySerializer.Write(static_cast<uint32_t>(this->collisionGroup));
         intermediarySerializer.Write(static_cast<uint32_t>(this->collisionMask));
@@ -926,7 +926,7 @@ namespace GTEngine
         }
     }
 
-    void CollisionShapeComponent::Deserialize(GTCore::Deserializer &deserializer)
+    void CollisionShapeComponent::Deserialize(GTLib::Deserializer &deserializer)
     {
         // Before deserializing, we need to revert the scaling back to 1.0, 1.0, 1.0f. If we don't do this, the scale won't be
         // be set correctly because of the way the shapes are used.
@@ -940,8 +940,8 @@ namespace GTEngine
         uint32_t deserializedShapeCount;
         uint32_t deserializedCollisionGroup;
         uint32_t deserializedCollisionMask;
-        GTCore::Vector<GTCore::String> deserializedCollisionGroupStrings;
-        GTCore::Vector<GTCore::String> deserializedCollisionGroupMaskStrings;
+        GTLib::Vector<GTLib::String> deserializedCollisionGroupStrings;
+        GTLib::Vector<GTLib::String> deserializedCollisionGroupMaskStrings;
 
         // The first chunk must the main one. It will contain the shape count.
         if (header.id == Serialization::ChunkID_CollisionShapeComponent_Main)
@@ -966,7 +966,7 @@ namespace GTEngine
                         
                         for (uint32_t iGroup = 0; iGroup < collisionGroupStringsCount; ++iGroup)
                         {
-                            GTCore::String group;
+                            GTLib::String group;
                             deserializer.ReadString(group);
                             
                             deserializedCollisionGroupStrings.PushBack(group);
@@ -978,7 +978,7 @@ namespace GTEngine
                         
                         for (uint32_t iGroup = 0; iGroup < collisionGroupMaskStringsCount; ++iGroup)
                         {
-                            GTCore::String group;
+                            GTLib::String group;
                             deserializer.ReadString(group);
                             
                             deserializedCollisionGroupMaskStrings.PushBack(group);
@@ -1257,7 +1257,7 @@ namespace GTEngine
                     case 1:
                         {
                             uint32_t                  vertexCount;
-                            GTCore::Vector<glm::vec3> vertices;
+                            GTLib::Vector<glm::vec3> vertices;
                             float                     margin;
 
                             deserializer.Read(vertexCount);

@@ -60,9 +60,9 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void PrefabComponent::Serialize(GTCore::Serializer &serializer) const
+    void PrefabComponent::Serialize(GTLib::Serializer &serializer) const
     {
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
 
         intermediarySerializer.WriteString(this->prefabRelativePath);
         intermediarySerializer.Write(this->localHierarchyID);
@@ -78,7 +78,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void PrefabComponent::Deserialize(GTCore::Deserializer &deserializer)
+    void PrefabComponent::Deserialize(GTLib::Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);
@@ -86,7 +86,7 @@ namespace GTEngine
         {
             if (header.version == 1)
             {
-                GTCore::String relativePath;
+                GTLib::String relativePath;
                 uint64_t       id;
 
                 deserializer.ReadString(relativePath);

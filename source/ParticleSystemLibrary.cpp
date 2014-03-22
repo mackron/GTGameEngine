@@ -2,9 +2,9 @@
 
 #include <GTEngine/ParticleSystemLibrary.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTCore/Dictionary.hpp>
-#include <GTCore/Vector.hpp>
-#include <GTCore/Path.hpp>
+#include <GTLib/Dictionary.hpp>
+#include <GTLib/Vector.hpp>
+#include <GTLib/Path.hpp>
 
 namespace GTEngine
 {
@@ -39,10 +39,10 @@ namespace GTEngine
 
 
     /// The list of loaded particle system definitions, indexed by their absolute path.
-    static GTCore::Dictionary<ParticleSystemDefinitionReference> LoadedDefinitions;
+    static GTLib::Dictionary<ParticleSystemDefinitionReference> LoadedDefinitions;
 
     /// The list of instantiated particle system objects. We need this so we can delete them on shutdown.
-    static GTCore::Vector<ParticleSystem*> InstantiatedParticleSystems;
+    static GTLib::Vector<ParticleSystem*> InstantiatedParticleSystems;
 
 
 
@@ -79,13 +79,13 @@ namespace GTEngine
 
     ParticleSystem* ParticleSystemLibrary::Create(const char* fileName, const char* makeRelativeTo)
     {
-        GTCore::String relativePath(fileName);
+        GTLib::String relativePath(fileName);
 
-        if (GTCore::Path::IsAbsolute(fileName))
+        if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTCore::IO::ToRelativePath(fileName, makeRelativeTo);
+                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
             }
             else
             {
@@ -95,8 +95,8 @@ namespace GTEngine
         }
 
 
-        GTCore::String absolutePath;
-        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        GTLib::String absolutePath;
+        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
         {
             ParticleSystemDefinition* definition = nullptr;
 
@@ -161,7 +161,7 @@ namespace GTEngine
 
 
             // The reference counter needs to be decremented. If this is the last reference to the particle system we'll delete it.
-            GTCore::String absolutePath(particleSystemToDelete->GetDefinition().GetAbsolutePath());
+            GTLib::String absolutePath(particleSystemToDelete->GetDefinition().GetAbsolutePath());
 
             auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
             if (iDefinition != nullptr)
@@ -185,8 +185,8 @@ namespace GTEngine
 
     bool ParticleSystemLibrary::Reload(const char* fileName)
     {
-        GTCore::String absolutePath;
-        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        GTLib::String absolutePath;
+        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
         {
             auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
             if (iDefinition != nullptr)

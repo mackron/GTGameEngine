@@ -116,7 +116,7 @@ namespace GTEngine
 
 
 
-    void ModelComponent::Serialize(GTCore::Serializer &serializer) const
+    void ModelComponent::Serialize(GTLib::Serializer &serializer) const
     {
         // The model component is simple. We have only a single chunk here. The content on this chunk will depend on the state of the
         // model. If we have a model that was loaded from a file, we need to save the file name. If it was not loaded from a file (a
@@ -124,7 +124,7 @@ namespace GTEngine
         //
         // As usual, the header of this chunk needs an exact data size, so we'll need to use an intermediary serializer.
 
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
 
         // We'll save the flags first.
         intermediarySerializer.Write(static_cast<uint32_t>(this->flags));
@@ -153,7 +153,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void ModelComponent::Deserialize(GTCore::Deserializer &deserializer)
+    void ModelComponent::Deserialize(GTLib::Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);
@@ -176,7 +176,7 @@ namespace GTEngine
                     // We will only have additional data at this point if we have actually have a model defined.
                     if (hasModel)
                     {
-                        GTCore::String modelPath;
+                        GTLib::String modelPath;
                         deserializer.ReadString(modelPath);
 
                         if (!modelPath.IsEmpty())

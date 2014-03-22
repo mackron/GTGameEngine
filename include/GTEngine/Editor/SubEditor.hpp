@@ -3,7 +3,7 @@
 #ifndef __GTEngine_SubEditor_hpp_
 #define __GTEngine_SubEditor_hpp_
 
-#include <GTCore/String.hpp>
+#include <GTLib/String.hpp>
 #include <GTGUI/Server.hpp>
 
 #include "SubEditorTabEventHandler.hpp"
@@ -104,16 +104,16 @@ namespace GTEngine
         virtual void OnUpdate(double deltaTimeInSeconds);
 
         /// Called when a key is pressed.
-        virtual void OnKeyPressed(GTCore::Key key);
+        virtual void OnKeyPressed(GTLib::Key key);
 
         /// Called when a key is released.
-        virtual void OnKeyReleased(GTCore::Key key);
+        virtual void OnKeyReleased(GTLib::Key key);
 
         /// Called when a mouse button is pressed.
-        virtual void OnMouseButtonDown(GTCore::MouseButton button, int x, int y);
+        virtual void OnMouseButtonDown(GTLib::MouseButton button, int x, int y);
 
         /// Called when a mouse button is released.
-        virtual void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
+        virtual void OnMouseButtonUp(GTLib::MouseButton button, int x, int y);
 
         /// Called when the main window received focus.
         virtual void OnMainWindowReceiveFocus();
@@ -152,10 +152,10 @@ namespace GTEngine
         Editor &ownerEditor;
 
         /// The absolute path of the file this editor is editting.
-        GTCore::String absolutePath;
+        GTLib::String absolutePath;
 
         /// The relative path of the file this editor is editting.
-        GTCore::String relativePath;
+        GTLib::String relativePath;
 
         /// A pointer to the tab element associated with this editor.
         GTGUI::Element* tabElement;

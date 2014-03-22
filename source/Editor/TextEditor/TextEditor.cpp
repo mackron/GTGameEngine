@@ -4,7 +4,7 @@
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Scripting.hpp>
-#include <GTCore/Path.hpp>
+#include <GTLib/Path.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -22,19 +22,19 @@ namespace GTEngine
           compilationScript(nullptr),
           isScriptFile(false)
     {
-        GTCore::String fileContent;
-        if (GTCore::IO::OpenAndReadTextFile(absolutePath, fileContent))
+        GTLib::String fileContent;
+        if (GTLib::IO::OpenAndReadTextFile(absolutePath, fileContent))
         {
             auto &gui    = this->GetGUI();
             auto &script = this->GetScript();
 
             // We need to determine whether or not we are running a script.
-            auto extension = GTCore::Path::Extension(absolutePath);
+            auto extension = GTLib::Path::Extension(absolutePath);
             assert(extension != nullptr);
             {
-                this->isScriptFile = GTCore::Strings::Equal<false>(extension, "lua")    ||
-                                     GTCore::Strings::Equal<false>(extension, "script") ||
-                                     GTCore::Strings::Equal<false>(extension, "gtscript");
+                this->isScriptFile = GTLib::Strings::Equal<false>(extension, "lua")    ||
+                                     GTLib::Strings::Equal<false>(extension, "script") ||
+                                     GTLib::Strings::Equal<false>(extension, "gtscript");
             }
 
 
@@ -43,7 +43,7 @@ namespace GTEngine
             assert(this->mainElement != nullptr);
             {
                 // The element has been created, but we need to execute a script to have it turn into a proper multi-line text box.
-                script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+                script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
                 assert(script.IsTable(-1));
                 {
                     script.Push("TextEditor");
@@ -58,7 +58,7 @@ namespace GTEngine
 
                 // Now what we need to do is actually set the text. This will be much quicker if done on the C++ side so that the script parser doesn't need to
                 // parse potentially very large files.
-                this->textArea = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextBox.TextArea:GetID();", this->mainElement->id).c_str()));
+                this->textArea = gui.GetElementByID(script.GetString(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextBox.TextArea:GetID();", this->mainElement->id).c_str()));
                 assert(this->textArea != nullptr);
                 {
                     this->textArea->SetText(fileContent.c_str());
@@ -76,7 +76,7 @@ namespace GTEngine
 
                 
                 // The panel.
-                this->panelElement = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').Panel:GetID();", this->mainElement->id).c_str()));
+                this->panelElement = gui.GetElementByID(script.GetString(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').Panel:GetID();", this->mainElement->id).c_str()));
                 assert(this->panelElement != nullptr);
                 {
                     // If we're editting a regular text file (not a script), we don't want to show the panel.
@@ -88,7 +88,7 @@ namespace GTEngine
 
 
                 // Error list.
-                this->errorListElement = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').ErrorList:GetID();", this->panelElement->id).c_str()));
+                this->errorListElement = gui.GetElementByID(script.GetString(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').ErrorList:GetID();", this->panelElement->id).c_str()));
                 assert(this->errorListElement != nullptr);
                 {
                 }
@@ -141,7 +141,7 @@ namespace GTEngine
         }
     }
 
-    void TextEditor::OnScriptSyntaxError(GTCore::Script &script, int lineNumber, const char* message)
+    void TextEditor::OnScriptSyntaxError(GTLib::Script &script, int lineNumber, const char* message)
     {
         (void)script;
 
@@ -171,11 +171,11 @@ namespace GTEngine
         auto text = this->textArea->GetText();
         if (text != nullptr)
         {
-            wasSaved = GTCore::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), text);
+            wasSaved = GTLib::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), text);
         }
         else
         {
-            wasSaved = GTCore::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), "");
+            wasSaved = GTLib::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), "");
         }
 
         if (wasSaved)

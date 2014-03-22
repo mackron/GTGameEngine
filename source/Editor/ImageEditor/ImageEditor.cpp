@@ -26,7 +26,7 @@ namespace GTEngine
             assert(this->viewportElement != nullptr);
             {
                 // The element has been created, but we need to execute a script to have it turn into a proper image editor.
-                script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->viewportElement->id).c_str());
+                script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->viewportElement->id).c_str());
                 assert(script.IsTable(-1));
                 {
                     script.Push("ImageEditor");

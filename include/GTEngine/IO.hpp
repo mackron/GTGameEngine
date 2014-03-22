@@ -3,7 +3,7 @@
 #ifndef __GTEngine_IO_hpp_
 #define __GTEngine_IO_hpp_
 
-#include <GTCore/IO.hpp>
+#include <GTLib/IO.hpp>
 #include <GTEngine/AssetTypes.hpp>
 
 namespace GTEngine
@@ -87,7 +87,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     The relative path can not contain '.' and '..' characters.
-        GTCore::String GetBasePath(const char* absolutePath, const char* relativePath);
+        GTLib::String GetBasePath(const char* absolutePath, const char* relativePath);
     }
 }
 

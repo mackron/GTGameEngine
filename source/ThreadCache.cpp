@@ -1,21 +1,21 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/ThreadCache.hpp>
-#include <GTCore/Map.hpp>
-#include <GTCore/System.hpp>
+#include <GTLib/Map.hpp>
+#include <GTLib/System.hpp>
 
 
 // Globals.
 namespace GTEngine
 {
     /// The map of instantiated threads. The value here is a boolean specifying whether or not the thread is acquired.
-    static GTCore::Map<GTCore::Thread*, bool>* Threads;
+    static GTLib::Map<GTLib::Thread*, bool>* Threads;
 
     /// The map of threads that were acquired forcefully. We keep this separate from the main list so that it's easier to distinguish between the two.
-    static GTCore::Map<GTCore::Thread*, bool>* ForcedThreads;
+    static GTLib::Map<GTLib::Thread*, bool>* ForcedThreads;
 
     /// The lock we'll use to guard AcquireThread() and UnacquireThread().
-    static GTCore::Mutex AcquireLock;
+    static GTLib::Mutex AcquireLock;
 }
 
 /// Startup/Shutdown.
@@ -23,13 +23,13 @@ namespace GTEngine
 {
     bool ThreadCache::Startup(size_t minThreadCount)
     {
-        Threads       = new GTCore::Map<GTCore::Thread*, bool>;
-        ForcedThreads = new GTCore::Map<GTCore::Thread*, bool>;
+        Threads       = new GTLib::Map<GTLib::Thread*, bool>;
+        ForcedThreads = new GTLib::Map<GTLib::Thread*, bool>;
 
-        unsigned int threadCount = GTCore::Max(minThreadCount, static_cast<size_t>(GTCore::System::GetCPUCount() - 1));
+        unsigned int threadCount = GTLib::Max(minThreadCount, static_cast<size_t>(GTLib::System::GetCPUCount() - 1));
         for (unsigned int i = 0; i < threadCount; ++i)
         {
-            Threads->Add(new GTCore::Thread, false);
+            Threads->Add(new GTLib::Thread, false);
         }
 
         return true;
@@ -58,12 +58,12 @@ namespace GTEngine
 /// Acquire/Unacquire
 namespace GTEngine
 {
-    GTCore::Thread* ThreadCache::AcquireThread(bool force)
+    GTLib::Thread* ThreadCache::AcquireThread(bool force)
     {
         assert(Threads       != nullptr);
         assert(ForcedThreads != nullptr);
 
-        GTCore::Thread* thread = nullptr;
+        GTLib::Thread* thread = nullptr;
 
         AcquireLock.Lock();
         {
@@ -83,7 +83,7 @@ namespace GTEngine
             // If we still don't have a thread at this point we need check if <force> is set to true. If so, we will force create the thread.
             if (thread == nullptr && force)
             {
-                thread = new GTCore::Thread;
+                thread = new GTLib::Thread;
                 ForcedThreads->Add(thread, true);
             }
         }
@@ -92,7 +92,7 @@ namespace GTEngine
         return thread;
     }
 
-    void ThreadCache::UnacquireThread(GTCore::Thread* thread)
+    void ThreadCache::UnacquireThread(GTLib::Thread* thread)
     {
         AcquireLock.Lock();
         {

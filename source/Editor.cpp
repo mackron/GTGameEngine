@@ -6,8 +6,8 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTGUI/Server.hpp>
-#include <GTCore/Path.hpp>
-#include <GTCore/Keyboard.hpp>
+#include <GTLib/Path.hpp>
+#include <GTLib/Keyboard.hpp>
 
 
 #if defined(_MSC_VER)
@@ -214,17 +214,17 @@ namespace GTEngine
 
 
         // We need to make sure we have an absolute and relative path.
-        GTCore::String absolutePath;
-        GTCore::String relativePath;
+        GTLib::String absolutePath;
+        GTLib::String relativePath;
 
         if (!isSpecialEditor)
         {
-            if (GTCore::Path::IsAbsolute(path))
+            if (GTLib::Path::IsAbsolute(path))
             {
                 if (relativeTo != nullptr)
                 {
                     absolutePath = path;
-                    relativePath = GTCore::IO::ToRelativePath(path, relativeTo);
+                    relativePath = GTLib::IO::ToRelativePath(path, relativeTo);
                 }
                 else
                 {
@@ -235,14 +235,14 @@ namespace GTEngine
             else
             {
                 // The file needs to exist. If it doesn't, we need to return false.
-                if (GTCore::IO::FindAbsolutePath(path, absolutePath))
+                if (GTLib::IO::FindAbsolutePath(path, absolutePath))
                 {
                     relativePath = path;
                 }
                 else
                 {
                     // The file might have an associated .gtmodel file. We'll let it pass if so.
-                    if (GTEngine::IO::IsSupportedModelExtension(path) && GTCore::IO::FindAbsolutePath((GTCore::String(path) + ".gtmodel").c_str(), absolutePath))
+                    if (GTEngine::IO::IsSupportedModelExtension(path) && GTLib::IO::FindAbsolutePath((GTLib::String(path) + ".gtmodel").c_str(), absolutePath))
                     {
                         relativePath = path;
                     }
@@ -271,12 +271,12 @@ namespace GTEngine
             if (!isSpecialEditor)
             {
                 // We'll check if the file exists from here.
-                if (!GTCore::IO::FileExists(absolutePath.c_str()))
+                if (!GTLib::IO::FileExists(absolutePath.c_str()))
                 {
                     // The file doesn't exist, but it might be a model so we'll need to check if it's got an associated .gtmodel file.
                     if (GTEngine::IO::IsSupportedModelExtension(absolutePath.c_str()))
                     {
-                        if (!GTCore::IO::FileExists((absolutePath + ".gtmodel").c_str()))
+                        if (!GTLib::IO::FileExists((absolutePath + ".gtmodel").c_str()))
                         {
                             GTEngine::PostError("Editor: Can not open model file '%s'. Associated .gtmodel file does not exist.\n", path);
                             return nullptr;
@@ -349,7 +349,7 @@ namespace GTEngine
             else
             {
                 // Specials.
-                if (GTCore::Strings::Equal<false>(absolutePath.c_str(), PackagingToolPath))
+                if (GTLib::Strings::Equal<false>(absolutePath.c_str(), PackagingToolPath))
                 {
                     newSubEditor = new PackagingToolEditor(*this, absolutePath.c_str());
                 }
@@ -379,15 +379,15 @@ namespace GTEngine
 
     void Editor::CloseFile(const char* path, const char* relativeTo)
     {
-        GTCore::String absolutePath(path);
+        GTLib::String absolutePath(path);
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTCore::Path::IsRelative(path))
+            if (GTLib::Path::IsRelative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
                 }
                 else
                 {
@@ -420,15 +420,15 @@ namespace GTEngine
 
     void Editor::ForceCloseFile(const char* path, const char* relativeTo)
     {
-        GTCore::String absolutePath(path);
+        GTLib::String absolutePath(path);
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTCore::Path::IsRelative(path))
+            if (GTLib::Path::IsRelative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
                 }
                 else
                 {
@@ -498,15 +498,15 @@ namespace GTEngine
 
     bool Editor::ShowFile(const char* path, const char* relativeTo)
     {
-        GTCore::String absolutePath(path);
+        GTLib::String absolutePath(path);
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTCore::Path::IsRelative(path))
+            if (GTLib::Path::IsRelative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
                 }
                 else
                 {
@@ -595,15 +595,15 @@ namespace GTEngine
 
     bool Editor::SaveFile(const char* path, const char* relativeTo)
     {
-        GTCore::String absolutePath(path);
+        GTLib::String absolutePath(path);
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTCore::Path::IsRelative(path))
+            if (GTLib::Path::IsRelative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
                 }
                 else
                 {
@@ -658,15 +658,15 @@ namespace GTEngine
 
     void Editor::MarkFileAsModified(const char* path, const char* relativeTo)
     {
-        GTCore::String absolutePath(path);
+        GTLib::String absolutePath(path);
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTCore::Path::IsRelative(path))
+            if (GTLib::Path::IsRelative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
                 }
                 else
                 {
@@ -690,15 +690,15 @@ namespace GTEngine
 
     void Editor::UnmarkFileAsModified(const char* path, const char* relativeTo)
     {
-        GTCore::String absolutePath(path);
+        GTLib::String absolutePath(path);
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTCore::Path::IsRelative(path))
+            if (GTLib::Path::IsRelative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
                 }
                 else
                 {
@@ -723,15 +723,15 @@ namespace GTEngine
 
     bool Editor::IsFileMarkedAsModified(const char* path, const char* relativeTo)
     {
-        GTCore::String absolutePath(path);
+        GTLib::String absolutePath(path);
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTCore::Path::IsRelative(path))
+            if (GTLib::Path::IsRelative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
                 }
                 else
                 {
@@ -812,15 +812,15 @@ namespace GTEngine
 
     GTGUI::Element* Editor::GetFileEditorElement(const char* path, const char* relativeTo)
     {
-        GTCore::String absolutePath(path);
+        GTLib::String absolutePath(path);
 
         if (!this->IsSpecialPath(path))
         {
-            if (GTCore::Path::IsRelative(path))
+            if (GTLib::Path::IsRelative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
                 }
                 else
                 {
@@ -854,9 +854,9 @@ namespace GTEngine
 
 
         // We need to update the profiling GUI.
-        if (GTCore::Timing::GetTimeInSeconds() - this->lastProfilingUpdateTime > 1.0)
+        if (GTLib::Timing::GetTimeInSeconds() - this->lastProfilingUpdateTime > 1.0)
         {
-            this->lastProfilingUpdateTime = GTCore::Timing::GetTimeInSeconds();
+            this->lastProfilingUpdateTime = GTLib::Timing::GetTimeInSeconds();
 
 
             double delta = this->game.GetProfiler().GetAverageFrameTime();
@@ -869,10 +869,10 @@ namespace GTEngine
 
 
             char deltaStr[64];
-            GTCore::IO::snprintf(deltaStr, 64, "%f", delta);
+            GTLib::IO::snprintf(deltaStr, 64, "%f", delta);
 
             char fpsStr[64];
-            GTCore::IO::snprintf(fpsStr, 64, "%.1f", fps);
+            GTLib::IO::snprintf(fpsStr, 64, "%.1f", fps);
 
 
             this->GUI.Editor_Delta->SetText(deltaStr);
@@ -880,7 +880,7 @@ namespace GTEngine
         }
     }
 
-    void Editor::OnKeyPressed(GTCore::Key key)
+    void Editor::OnKeyPressed(GTLib::Key key)
     {
         if (this->currentlyShownEditor != nullptr)
         {
@@ -888,7 +888,7 @@ namespace GTEngine
         }
     }
 
-    void Editor::OnKeyReleased(GTCore::Key key)
+    void Editor::OnKeyReleased(GTLib::Key key)
     {
         if (this->currentlyShownEditor != nullptr)
         {
@@ -896,7 +896,7 @@ namespace GTEngine
         }
     }
 
-    void Editor::OnMouseButtonDown(GTCore::MouseButton button, int x, int y)
+    void Editor::OnMouseButtonDown(GTLib::MouseButton button, int x, int y)
     {
         if (this->currentlyShownEditor != nullptr)
         {
@@ -904,7 +904,7 @@ namespace GTEngine
         }
     }
 
-    void Editor::OnMouseButtonUp(GTCore::MouseButton button, int x, int y)
+    void Editor::OnMouseButtonUp(GTLib::MouseButton button, int x, int y)
     {
         if (this->currentlyShownEditor != nullptr)
         {
@@ -932,7 +932,7 @@ namespace GTEngine
     // FIXME: There's a bug here where if a file path includes double quotes, the script will fail to execute.
     void Editor::OnFileInsert(const DataFilesWatcher::Item &item)
     {
-        GTCore::String script;
+        GTLib::String script;
         script.AssignFormatted
         (
             "local info = GTCore.IO.FileInfo:New();"
@@ -966,7 +966,7 @@ namespace GTEngine
 
     void Editor::OnFileRemove(const DataFilesWatcher::Item &item)
     {
-        GTCore::String script;
+        GTLib::String script;
         script.AssignFormatted
         (
             "local info = GTCore.IO.FileInfo:New();"
@@ -1000,7 +1000,7 @@ namespace GTEngine
 
     void Editor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
-        GTCore::String script;
+        GTLib::String script;
         script.AssignFormatted
         (
             "local info = GTCore.IO.FileInfo:New();"
@@ -1099,13 +1099,13 @@ namespace GTEngine
 
     bool Editor::IsSpecialPath(const char* path) const
     {
-        return GTCore::Strings::Equal<false>(path, PackagingToolPath);
+        return GTLib::Strings::Equal<false>(path, PackagingToolPath);
     }
 
 
     /////////////////////////////////////////////
     // FFI.
-    Game & Editor::FFI::GetGame(GTCore::Script &script)
+    Game & Editor::FFI::GetGame(GTLib::Script &script)
     {
         script.GetGlobal("__GamePtr");
         auto game = static_cast<Game*>(script.ToPointer(-1));
@@ -1115,13 +1115,13 @@ namespace GTEngine
         return *game;
     }
 
-    Editor & Editor::FFI::GetEditor(GTCore::Script &script)
+    Editor & Editor::FFI::GetEditor(GTLib::Script &script)
     {
         return GetGame(script).GetEditor();
     }
 
 
-    void Editor::FFI::PushElement(GTCore::Script &script, GTGUI::Element* element)
+    void Editor::FFI::PushElement(GTLib::Script &script, GTGUI::Element* element)
     {
         if (element != nullptr)
         {
@@ -1153,20 +1153,20 @@ namespace GTEngine
     }
 
 
-    int Editor::FFI::Open(GTCore::Script &script)
+    int Editor::FFI::Open(GTLib::Script &script)
     {
         GetGame(script).OpenEditor();
         return 0;
     }
 
-    int Editor::FFI::Close(GTCore::Script &script)
+    int Editor::FFI::Close(GTLib::Script &script)
     {
         GetGame(script).CloseEditor();
         return 0;
     }
 
 
-    int Editor::FFI::OpenFile(GTCore::Script &script)
+    int Editor::FFI::OpenFile(GTLib::Script &script)
     {
         auto subEditor = FFI::GetEditor(script).OpenFile(script.ToString(1), script.ToString(2));
         if (subEditor != nullptr)
@@ -1181,79 +1181,79 @@ namespace GTEngine
         return 1;
     }
 
-    int Editor::FFI::CloseFile(GTCore::Script &script)
+    int Editor::FFI::CloseFile(GTLib::Script &script)
     {
         FFI::GetEditor(script).CloseFile(script.ToString(1), script.ToString(2));
         return 0;
     }
 
-    int Editor::FFI::ForceCloseFile(GTCore::Script &script)
+    int Editor::FFI::ForceCloseFile(GTLib::Script &script)
     {
         FFI::GetEditor(script).ForceCloseFile(script.ToString(1), script.ToString(2));
         return 0;
     }
 
-    int Editor::FFI::CloseAllOpenFiles(GTCore::Script &script)
+    int Editor::FFI::CloseAllOpenFiles(GTLib::Script &script)
     {
         FFI::GetEditor(script).CloseAllOpenFiles();
         return 0;
     }
 
-    int Editor::FFI::CloseCurrentlyShownFile(GTCore::Script &script)
+    int Editor::FFI::CloseCurrentlyShownFile(GTLib::Script &script)
     {
         FFI::GetEditor(script).CloseCurrentlyShownFile();
         return 0;
     }
 
-    int Editor::FFI::ShowFile(GTCore::Script &script)
+    int Editor::FFI::ShowFile(GTLib::Script &script)
     {
         script.Push(FFI::GetEditor(script).ShowFile(script.ToString(1), script.ToString(2)));
         return 1;
     }
 
-    int Editor::FFI::HideCurrentlyShownFile(GTCore::Script &script)
+    int Editor::FFI::HideCurrentlyShownFile(GTLib::Script &script)
     {
         FFI::GetEditor(script).HideCurrentlyShownFile();
         return 0;
     }
 
-    int Editor::FFI::SaveFile(GTCore::Script &script)
+    int Editor::FFI::SaveFile(GTLib::Script &script)
     {
         script.Push(FFI::GetEditor(script).SaveFile(script.ToString(1), script.ToString(2)));
         return 1;
     }
 
-    int Editor::FFI::SaveAllOpenModifiedFiles(GTCore::Script &script)
+    int Editor::FFI::SaveAllOpenModifiedFiles(GTLib::Script &script)
     {
         FFI::GetEditor(script).SaveAllOpenModifiedFiles();
         return 0;
     }
 
-    int Editor::FFI::SaveCurrentlyShownFile(GTCore::Script &script)
+    int Editor::FFI::SaveCurrentlyShownFile(GTLib::Script &script)
     {
         script.Push(FFI::GetEditor(script).SaveCurrentlyShownFile());
         return 1;
     }
 
-    int Editor::FFI::MarkFileAsModified(GTCore::Script &script)
+    int Editor::FFI::MarkFileAsModified(GTLib::Script &script)
     {
         FFI::GetEditor(script).MarkFileAsModified(script.ToString(1), script.ToString(2));
         return 0;
     }
 
-    int Editor::FFI::UnmarkFileAsModified(GTCore::Script &script)
+    int Editor::FFI::UnmarkFileAsModified(GTLib::Script &script)
     {
         FFI::GetEditor(script).UnmarkFileAsModified(script.ToString(1), script.ToString(2));
         return 0;
     }
 
-    int Editor::FFI::IsFileMarkedAsModified(GTCore::Script &script)
+    int Editor::FFI::IsFileMarkedAsModified(GTLib::Script &script)
     {
         script.Push(FFI::GetEditor(script).IsFileMarkedAsModified(script.ToString(1), script.ToString(2)));
         return 1;
     }
 
-    int Editor::FFI::GetCurrentlyShownEditor(GTCore::Script &script)
+    int Editor::FFI::GetCurrentlyShownEditor(GTLib::Script &script)
     {
         auto subEditor = FFI::GetEditor(script).GetCurrentlyShownEditor();
         if (subEditor != nullptr)
@@ -1268,7 +1268,7 @@ namespace GTEngine
         return 1;
     }
 
-    int Editor::FFI::OpenPackagingTool(GTCore::Script &script)
+    int Editor::FFI::OpenPackagingTool(GTLib::Script &script)
     {
         auto subEditor = FFI::GetEditor(script).OpenPackagingTool();
         if (subEditor != nullptr)

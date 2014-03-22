@@ -8,7 +8,7 @@ namespace GTEngine
 {
     namespace Scripting
     {
-        bool LoadAudioLibrary(GTCore::Script &script)
+        bool LoadAudioLibrary(GTLib::Script &script)
         {
             script.GetGlobal("GTEngine");
             assert(script.IsTable(-1));
@@ -26,7 +26,7 @@ namespace GTEngine
 
         namespace AudioFFI
         {
-            int Play(GTCore::Script &script)
+            int Play(GTLib::Script &script)
             {
                 auto fileName = script.ToString(1);
                 auto position = Scripting::ToVector3(script, 2);
@@ -36,13 +36,13 @@ namespace GTEngine
                 return 0;
             }
 
-            int SetListenerPosition(GTCore::Script &script)
+            int SetListenerPosition(GTLib::Script &script)
             {
                 AudioComposer::SetListenerPosition(Scripting::ToVector3(script, 1));
                 return 0;
             }
 
-            int SetListenerOrientation(GTCore::Script &script)
+            int SetListenerOrientation(GTLib::Script &script)
             {
                 AudioComposer::SetListenerOrientation(Scripting::ToQuaternion(script, 1));
                 return 0;

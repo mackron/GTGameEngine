@@ -207,7 +207,7 @@ namespace GTEngine
         float circleRadius       = 1.0f;
         float circleSegmentAngle = glm::radians(360.0f / static_cast<float>(this->ringSegmentsCount));
 
-        GTCore::Vector<glm::vec3> vertices(this->ringSegmentsCount);
+        GTLib::Vector<glm::vec3> vertices(this->ringSegmentsCount);
 
 
         // Important that we clear.
@@ -278,7 +278,7 @@ namespace GTEngine
     {
         float circleSegmentAngle = glm::radians(360.0f / static_cast<float>(this->ringSegmentsCount));
 
-        GTCore::Vector<glm::vec3> vertices(this->ringSegmentsCount);
+        GTLib::Vector<glm::vec3> vertices(this->ringSegmentsCount);
         for (unsigned int iSegment = 0; iSegment < this->ringSegmentsCount; ++iSegment)
         {
             glm::vec3 position;
@@ -327,7 +327,7 @@ namespace GTEngine
     {
         float circleSegmentAngle = glm::radians(180.0f / static_cast<float>(this->circleSegmentsCount - 1));
 
-        GTCore::Vector<glm::vec3> vertices(this->circleSegmentsCount);
+        GTLib::Vector<glm::vec3> vertices(this->circleSegmentsCount);
         for (unsigned int iSegment = 0; iSegment < this->circleSegmentsCount; ++iSegment)
         {
             glm::vec3 position;

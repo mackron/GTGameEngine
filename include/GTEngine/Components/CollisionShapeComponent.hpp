@@ -249,13 +249,13 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will be called from inheritted classes.
-        virtual void Serialize(GTCore::Serializer &serializer) const;
+        virtual void Serialize(GTLib::Serializer &serializer) const;
 
         /// Deserializes the collision shapes.
         ///
         /// @remarks
         ///     This will be called from inheritted classes. This will not call OnPreCollisionShapeChanged() or OnPostCollisionShapeChanged().
-        virtual void Deserialize(GTCore::Deserializer &deserializer);
+        virtual void Deserialize(GTLib::Deserializer &deserializer);
 
         /// Called when the owner scene node has finished deserializing.
         ///
@@ -302,10 +302,10 @@ namespace GTEngine
 
 
         /// The list of strings representing the collision groups this object is part of.
-        GTCore::Vector<GTCore::String> collisionGroupStrings;
+        GTLib::Vector<GTLib::String> collisionGroupStrings;
 
         /// The list of strings representing the collision groups this object will collide with.
-        GTCore::Vector<GTCore::String> collisionGroupMaskStrings;
+        GTLib::Vector<GTLib::String> collisionGroupMaskStrings;
     };
 }
 

@@ -8,10 +8,10 @@
 
 #include <GTEngine/Errors.hpp>
 
-#include <GTCore/Threading.hpp>
-#include <GTCore/IO.hpp>
-#include <GTCore/Path.hpp>
-#include <GTCore/Strings/Equal.hpp>
+#include <GTLib/Threading.hpp>
+#include <GTLib/IO.hpp>
+#include <GTLib/Path.hpp>
+#include <GTLib/Strings/Equal.hpp>
 
 namespace GTEngine
 {
@@ -36,7 +36,7 @@ namespace GTEngine
 namespace GTEngine
 {
     /// The thread job that will play a sound.
-    class PlaySoundThreadJob : public GTCore::Threading::Job
+    class PlaySoundThreadJob : public GTLib::Threading::Job
     {
     public:
 
@@ -162,7 +162,7 @@ namespace GTEngine
                 }
 
                 // Don't use up too much CPU...
-                GTCore::Threading::Sleep(10);
+                GTLib::Threading::Sleep(10);
             }
         }
 
@@ -270,7 +270,7 @@ namespace GTEngine
             alGenBuffers(2, buffers);
 
             // Here we start running a thread that will play the sound.
-            GTCore::Thread(*(new PlaySoundThreadJob(*streamer, source, buffers)));
+            GTLib::Thread(*(new PlaySoundThreadJob(*streamer, source, buffers)));
 
             return true;
         }
@@ -319,12 +319,12 @@ namespace GTEngine
     SoundStreamer* AudioComposer::CreateStreamer(const char* fileName)
     {
         // We want the absolute path to make sure we get the correctly prioritized sound.
-        GTCore::String absolutePath;
-        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        GTLib::String absolutePath;
+        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
         {
-            auto ext = GTCore::Path::Extension(fileName);
+            auto ext = GTLib::Path::Extension(fileName);
 
-            if (GTCore::Strings::Equal<false>(ext, "wav"))
+            if (GTLib::Strings::Equal<false>(ext, "wav"))
             {
                 return new SoundStreamer_WAV(absolutePath.c_str());
             }
@@ -345,6 +345,6 @@ namespace GTEngine
 {
     bool AudioComposer::IsFileExtensionSupported(const char* extension)
     {
-        return GTCore::Strings::Equal<false>(extension, "wav");
+        return GTLib::Strings::Equal<false>(extension, "wav");
     }
 }

@@ -78,11 +78,11 @@ namespace GTEngine
         float bottomEdge =  halfLineCount * spacing;
 
 
-        GTCore::Vector<glm::vec3> innerSpacingVertices;
-        GTCore::Vector<glm::vec3> subdivisionVertices;
+        GTLib::Vector<glm::vec3> innerSpacingVertices;
+        GTLib::Vector<glm::vec3> subdivisionVertices;
         
-        GTCore::Vector<unsigned int> innerSpacingIndices;
-        GTCore::Vector<unsigned int> subdivisionIndices;
+        GTLib::Vector<unsigned int> innerSpacingIndices;
+        GTLib::Vector<unsigned int> subdivisionIndices;
 
 
 

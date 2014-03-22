@@ -3,8 +3,8 @@
 #include <GTEngine/Editor/SubEditor.hpp>
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
-#include <GTCore/IO.hpp>
-#include <GTCore/Path.hpp>
+#include <GTLib/IO.hpp>
+#include <GTLib/Path.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -33,7 +33,7 @@ namespace GTEngine
             assert(script.IsFunction(-1));
             {
                 script.PushValue(-2);
-                script.Push(GTCore::IO::FileName(this->absolutePath.c_str()));
+                script.Push(GTLib::IO::FileName(this->absolutePath.c_str()));
                 script.Call(2, 1);
 
                 // The top item on the stack is the tab GUI element. We now need to set the 'absolutePath' and 'relativePath' attributes.
@@ -136,7 +136,7 @@ namespace GTEngine
             this->isMarkedAsModified = true;
 
             // We will modify the text of the tab to show a star to the right.
-            GTCore::String tabText(GTCore::IO::FileName(this->GetRelativePath())); tabText += "*";
+            GTLib::String tabText(GTLib::IO::FileName(this->GetRelativePath())); tabText += "*";
             this->SetTabText(tabText.c_str());
 
 
@@ -151,7 +151,7 @@ namespace GTEngine
             this->isMarkedAsModified = false;
 
             // Now we want to remove the star.
-            this->SetTabText(GTCore::IO::FileName(this->GetRelativePath()));
+            this->SetTabText(GTLib::IO::FileName(this->GetRelativePath()));
 
 
             this->ownerEditor.UpdateMenuButtonEnableStates();
@@ -177,7 +177,7 @@ namespace GTEngine
         auto mainElement = this->GetMainElement();
         if (mainElement != nullptr)
         {
-            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", mainElement->id).c_str());
+            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", mainElement->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("DeleteToolBar");
@@ -242,19 +242,19 @@ namespace GTEngine
     {
     }
 
-    void SubEditor::OnKeyPressed(GTCore::Key)
+    void SubEditor::OnKeyPressed(GTLib::Key)
     {
     }
 
-    void SubEditor::OnKeyReleased(GTCore::Key)
+    void SubEditor::OnKeyReleased(GTLib::Key)
     {
     }
 
-    void SubEditor::OnMouseButtonDown(GTCore::MouseButton, int, int)
+    void SubEditor::OnMouseButtonDown(GTLib::MouseButton, int, int)
     {
     }
 
-    void SubEditor::OnMouseButtonUp(GTCore::MouseButton, int, int)
+    void SubEditor::OnMouseButtonUp(GTLib::MouseButton, int, int)
     {
     }
 
@@ -289,7 +289,7 @@ namespace GTEngine
     {
         // This is slightly annoying because the text needs to be set on a child of the main tab. We do it all via the scripting interface.
         auto &script = this->GetScript();
-        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GetTabElement()->id).c_str());
+        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->GetTabElement()->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("text");

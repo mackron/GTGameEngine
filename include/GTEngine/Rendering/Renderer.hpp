@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Renderer_hpp_
 #define __GTEngine_Renderer_hpp_
 
-#include <GTCore/Window.hpp>
+#include <GTLib/Window.hpp>
 #include "Texture2D.hpp"
 #include "TextureCube.hpp"
 #include "Shader.hpp"
@@ -80,7 +80,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This function asserts that the renderer has been successfully initialised with Startup().
-        static GTCore::Window* CreateWindow();
+        static GTLib::Window* CreateWindow();
 
         /// Sets the window that future rendering operations should take place on.
         ///
@@ -88,7 +88,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This function asserts that the renderer has been successfully initialised with Startup().
-        static void SetCurrentWindow(GTCore::Window* window);
+        static void SetCurrentWindow(GTLib::Window* window);
 
 
         /// Swaps the call caches.

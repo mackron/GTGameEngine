@@ -18,7 +18,7 @@ namespace GTEngine
         return false;
     }
 
-    bool SceneDeserializeCallback::HandleChunk(const Serialization::ChunkHeader &, GTCore::Deserializer &)
+    bool SceneDeserializeCallback::HandleChunk(const Serialization::ChunkHeader &, GTLib::Deserializer &)
     {
         return false;
     }

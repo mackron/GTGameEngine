@@ -31,10 +31,10 @@ namespace GTEngine
 
 
         /// The list of instantiated listeners that belong to this device.
-        GTCore::Vector<ListenerHandle> listeners;
+        GTLib::Vector<ListenerHandle> listeners;
 
         /// The list of instantiated sounds that belong to this device.
-        GTCore::Vector<SoundHandle> sounds;
+        GTLib::Vector<SoundHandle> sounds;
 
 
         /// The current listener. We need to keep track of this so that when the listener is changed while current, it will be updated on the OpenAL side immediately.

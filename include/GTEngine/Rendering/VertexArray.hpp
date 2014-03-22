@@ -123,12 +123,12 @@ namespace GTEngine
         /// Serializes the vertex array.
         ///
         /// @param serializer [in] A reference to the serializer to write to.
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const;
 
         /// Deserializes the vertex array.
         ///
         /// @param deserializer [in] A reference to the deserializer to read from.
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
 

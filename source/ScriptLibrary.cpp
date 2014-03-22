@@ -4,9 +4,9 @@
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Scripting.hpp>
-#include <GTCore/IO.hpp>
-#include <GTCore/Path.hpp>
-#include <GTCore/Dictionary.hpp>
+#include <GTLib/IO.hpp>
+#include <GTLib/Path.hpp>
+#include <GTLib/Dictionary.hpp>
 #include <utility>
 
 namespace GTEngine
@@ -17,10 +17,10 @@ namespace GTEngine
     typedef std::pair<ScriptDefinition*, size_t> ScriptDefinitionReference;
 
     /// The list of loaded classes, indexed by the absolute path.
-    static GTCore::Dictionary<ScriptDefinitionReference> LoadedDefinitions;
+    static GTLib::Dictionary<ScriptDefinitionReference> LoadedDefinitions;
 
     /// A pointer to the working script. This is instantiated in Startup() and deleted in Shutdown().
-    static GTCore::Script* WorkingScript = nullptr;
+    static GTLib::Script* WorkingScript = nullptr;
 
 
 
@@ -29,7 +29,7 @@ namespace GTEngine
 
     bool ScriptLibrary::Startup()
     {
-        WorkingScript = new GTCore::Script;
+        WorkingScript = new GTLib::Script;
         if (!Scripting::LoadExtendedMathLibrary(*WorkingScript))
         {
             delete WorkingScript;
@@ -58,13 +58,13 @@ namespace GTEngine
 
     ScriptDefinition* ScriptLibrary::Acquire(const char* fileName, const char* makeRelativeTo, bool silenceMissingFileWarning)
     {
-        GTCore::String relativePath(fileName);
+        GTLib::String relativePath(fileName);
 
-        if (GTCore::Path::IsAbsolute(fileName))
+        if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTCore::IO::ToRelativePath(fileName, makeRelativeTo);
+                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
             }
             else
             {
@@ -74,15 +74,15 @@ namespace GTEngine
         }
 
 
-        GTCore::String absolutePath;
-        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        GTLib::String absolutePath;
+        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
         {
             auto iLoadedClass = LoadedDefinitions.Find(absolutePath.c_str());
             if (iLoadedClass == nullptr)
             {
                 // Does not exist. Needs to be loaded.
-                GTCore::String scriptString;
-                if (GTCore::IO::OpenAndReadTextFile(absolutePath.c_str(), scriptString))
+                GTLib::String scriptString;
+                if (GTLib::IO::OpenAndReadTextFile(absolutePath.c_str(), scriptString))
                 {
                     auto newDefinition = new ScriptDefinition(absolutePath.c_str(), relativePath.c_str(), scriptString.c_str());
                     LoadedDefinitions.Add(absolutePath.c_str(), ScriptDefinitionReference(newDefinition, 1));
@@ -156,13 +156,13 @@ namespace GTEngine
 
     bool ScriptLibrary::IsLoaded(const char* fileName, const char* makeRelativeTo)
     {
-        GTCore::String relativePath(fileName);
+        GTLib::String relativePath(fileName);
 
-        if (GTCore::Path::IsAbsolute(fileName))
+        if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTCore::IO::ToRelativePath(fileName, makeRelativeTo);
+                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
             }
             else
             {
@@ -173,8 +173,8 @@ namespace GTEngine
 
 
         // We key the definitions by their absolute path, so we'll need to retrieve that.
-        GTCore::String absolutePath;
-        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        GTLib::String absolutePath;
+        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
         {
             return LoadedDefinitions.Exists(absolutePath.c_str());
         }
@@ -184,13 +184,13 @@ namespace GTEngine
 
     bool ScriptLibrary::Reload(const char* fileName, const char* makeRelativeTo)
     {
-        GTCore::String relativePath(fileName);
+        GTLib::String relativePath(fileName);
 
-        if (GTCore::Path::IsAbsolute(fileName))
+        if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTCore::IO::ToRelativePath(fileName, makeRelativeTo);
+                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
             }
             else
             {
@@ -201,8 +201,8 @@ namespace GTEngine
 
 
         // We key the definitions by their absolute path, so we'll need to retrieve that.
-        GTCore::String absolutePath;
-        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        GTLib::String absolutePath;
+        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
         {
             auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
             if (iDefinition != nullptr)
@@ -212,8 +212,8 @@ namespace GTEngine
                 {
                     // This next part is easy. We just destruct and reconstruct, while leaving the pointer as-is. It's important that we keep the same pointer because
                     // other objects may be referencing it.
-                    GTCore::String scriptString;
-                    if (GTCore::IO::OpenAndReadTextFile(absolutePath.c_str(), scriptString))
+                    GTLib::String scriptString;
+                    if (GTLib::IO::OpenAndReadTextFile(absolutePath.c_str(), scriptString))
                     {
                         definition->~ScriptDefinition();
                         new (definition) ScriptDefinition(absolutePath.c_str(), relativePath.c_str(), scriptString.c_str());
@@ -256,7 +256,7 @@ namespace GTEngine
     /////////////////////////////////////////////////
     // Misc.
 
-    GTCore::Script & ScriptLibrary::GetWorkingScript()
+    GTLib::Script & ScriptLibrary::GetWorkingScript()
     {
         assert(WorkingScript != nullptr);
         return *WorkingScript;

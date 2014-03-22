@@ -3,8 +3,8 @@
 #ifndef __GTEngine_DefaultSceneRenderer_MultiPassPipeline_hpp_
 #define __GTEngine_DefaultSceneRenderer_MultiPassPipeline_hpp_
 
-#include <GTCore/Map.hpp>
-#include <GTCore/Vector.hpp>
+#include <GTLib/Map.hpp>
+#include <GTLib/Vector.hpp>
 #include <GTEngine/Material.hpp>
 
 namespace GTEngine
@@ -36,7 +36,7 @@ namespace GTEngine
         ///
         /// @param opaqueObjects      [in] A pointer to the list of opaque objects.
         /// @param transparentObjects [in] A pointer to the list of blended transparent objects.
-        void BindObjects(const GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*>* opaqueObjects, const GTCore::Vector<DefaultSceneRendererMesh>* transparentObjects);
+        void BindObjects(const GTLib::Map<const MaterialDefinition*, GTLib::Vector<DefaultSceneRendererMesh>*>* opaqueObjects, const GTLib::Vector<DefaultSceneRendererMesh>* transparentObjects);
 
 
         /// Performs the opaque pass on the currently bound objects.
@@ -65,7 +65,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will always return at least 1 light group. If there are no lights, it will just be an empty group.
-        void SubdivideLightGroup(const DefaultSceneRenderer_LightGroup* sourceLightGroup, GTCore::Vector<DefaultSceneRenderer_LightGroup> &lightGroupsOut, uint32_t options);
+        void SubdivideLightGroup(const DefaultSceneRenderer_LightGroup* sourceLightGroup, GTLib::Vector<DefaultSceneRenderer_LightGroup> &lightGroupsOut, uint32_t options);
 
 
         ///////////////////////////////////////////
@@ -97,7 +97,7 @@ namespace GTEngine
         ///
         /// @param mesh        [in] A reference to the mesh whose lighting is being drawn.
         /// @param lightGroups [in] A reference to the list of light groups.
-        void RenderMeshLighting(const DefaultSceneRendererMesh &mesh, const GTCore::Vector<DefaultSceneRenderer_LightGroup> &lightGroups);
+        void RenderMeshLighting(const DefaultSceneRendererMesh &mesh, const GTLib::Vector<DefaultSceneRenderer_LightGroup> &lightGroups);
 
         /// Helper for rendering the highlight effect of the given mesh.
         ///
@@ -135,10 +135,10 @@ namespace GTEngine
 
 
         /// A pointer to the currently bound opaque objects.
-        const GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*>* opaqueObjects;
+        const GTLib::Map<const MaterialDefinition*, GTLib::Vector<DefaultSceneRendererMesh>*>* opaqueObjects;
         
         /// A pointer to the currently bound blended transparent objects.
-        const GTCore::Vector<DefaultSceneRendererMesh>* transparentObjects;
+        const GTLib::Vector<DefaultSceneRendererMesh>* transparentObjects;
 
 
         /// Keeps track of whether or not the background has been cleared.
@@ -155,7 +155,7 @@ namespace GTEngine
 
         /// A list of opaque meshes that are not having their depth written. This will be cleared when new objects are
         /// bound with BindObjects(). We need to keep track of these because they are rendered differently.
-        GTCore::Vector<DefaultSceneRendererMesh*> opaqueMeshesWithNoDepthWrites;
+        GTLib::Vector<DefaultSceneRendererMesh*> opaqueMeshesWithNoDepthWrites;
 
 
         /// Enumerator containing flags for light group subdivision options.

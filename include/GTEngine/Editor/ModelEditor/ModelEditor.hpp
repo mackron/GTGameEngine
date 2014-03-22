@@ -7,7 +7,7 @@
 #include "../Editor3DViewportEventHandler.hpp"
 #include "../EditorGrid.hpp"
 #include "../../Scene.hpp"
-#include <GTCore/Random.hpp>
+#include <GTLib/Random.hpp>
 
 namespace GTEngine
 {
@@ -53,7 +53,7 @@ namespace GTEngine
         /// Retrieves the relative paths of the materials attached to the model.
         ///
         /// @param materialsOut [out] A reference to the vector that will receive the material paths.
-        void GetMaterials(GTCore::Vector<GTCore::String> &materialsOut);
+        void GetMaterials(GTLib::Vector<GTLib::String> &materialsOut);
 
 
         /// Adds a new animation segment to the model.
@@ -205,7 +205,7 @@ namespace GTEngine
         GTEngine::SceneNode convexHullParentNode;
 
         /// The list of scene nodes containing the models for the visual representation of the convex hulls.
-        GTCore::Vector<GTEngine::SceneNode*> convexHullNodes;
+        GTLib::Vector<GTEngine::SceneNode*> convexHullNodes;
 
 
         /// The main container element.
@@ -233,7 +233,7 @@ namespace GTEngine
 
 
         /// The random number generator for convex hull colours, and whatever else we may need.
-        GTCore::Random random;
+        GTLib::Random random;
 
 
         /// The index of the segment that is currently being played. Set to -1 when nothing is playing.

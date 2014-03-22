@@ -9,7 +9,7 @@ namespace GTEngine
 {
     namespace Scripting
     {
-        bool LoadComponentsLibrary(GTCore::Script &script)
+        bool LoadComponentsLibrary(GTLib::Script &script)
         {
             script.GetGlobal("GTEngine");
             assert(script.IsTable(-1));
@@ -1291,7 +1291,7 @@ namespace GTEngine
 
         namespace CameraComponentFFI
         {
-            int Set3DProjection(GTCore::Script &script)
+            int Set3DProjection(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1306,7 +1306,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetFOV(GTCore::Script &script)
+            int GetFOV(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1321,7 +1321,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetAspectRatio(GTCore::Script &script)
+            int GetAspectRatio(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1336,7 +1336,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetNearClippingPlane(GTCore::Script &script)
+            int GetNearClippingPlane(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1351,7 +1351,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetFarClippingPlane(GTCore::Script &script)
+            int GetFarClippingPlane(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CameraComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1372,7 +1372,7 @@ namespace GTEngine
         // GTEngine.System.ModelComponent
         namespace ModelComponentFFI
         {
-            int SetModel(GTCore::Script &script)
+            int SetModel(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 auto filePath  = script.ToString(2);
@@ -1385,7 +1385,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetModelPath(GTCore::Script &script)
+            int GetModelPath(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1404,7 +1404,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int EnableShadowCasting(GTCore::Script &script)
+            int EnableShadowCasting(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1415,7 +1415,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int DisableShadowCasting(GTCore::Script &script)
+            int DisableShadowCasting(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1426,7 +1426,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsShadowCastingEnabled(GTCore::Script &script)
+            int IsShadowCastingEnabled(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1442,7 +1442,7 @@ namespace GTEngine
             }
 
 
-            int SetMaterial(GTCore::Script &script)
+            int SetMaterial(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1460,7 +1460,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetMaterialPath(GTCore::Script &script)
+            int GetMaterialPath(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1485,7 +1485,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetMaterialCount(GTCore::Script &script)
+            int GetMaterialCount(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1508,7 +1508,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetMaterialParameter(GTCore::Script &script)
+            int SetMaterialParameter(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1563,7 +1563,7 @@ namespace GTEngine
             }
 
 
-            int PlayAnimationSegmentByName(GTCore::Script &script)
+            int PlayAnimationSegmentByName(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1581,7 +1581,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int PlayAnimationSequence(GTCore::Script &script)
+            int PlayAnimationSequence(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1596,7 +1596,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int PauseAnimation(GTCore::Script &script)
+            int PauseAnimation(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1611,7 +1611,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int StopAnimation(GTCore::Script &script)
+            int StopAnimation(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1627,7 +1627,7 @@ namespace GTEngine
             }
 
 
-            int GetBoneIndexByName(GTCore::Script &script)
+            int GetBoneIndexByName(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1659,7 +1659,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetBoneTransformByName(GTCore::Script &script)
+            int GetBoneTransformByName(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1707,7 +1707,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetBoneTransformByIndex(GTCore::Script &script)
+            int GetBoneTransformByIndex(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1756,7 +1756,7 @@ namespace GTEngine
             }
 
 
-            int SetBoneTransformByName(GTCore::Script &script)
+            int SetBoneTransformByName(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1786,7 +1786,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SetBoneTransformByIndex(GTCore::Script &script)
+            int SetBoneTransformByIndex(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ModelComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1822,7 +1822,7 @@ namespace GTEngine
         // GTEngine.System.PointLightComponent
         namespace PointLightComponentFFI
         {
-            int SetColour(GTCore::Script &script)
+            int SetColour(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1846,7 +1846,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetColour(GTCore::Script &script)
+            int GetColour(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1862,7 +1862,7 @@ namespace GTEngine
             }
 
 
-            int GetRadius(GTCore::Script &script)
+            int GetRadius(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1877,7 +1877,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetRadius(GTCore::Script &script)
+            int SetRadius(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1889,7 +1889,7 @@ namespace GTEngine
             }
 
 
-            int GetFalloff(GTCore::Script &script)
+            int GetFalloff(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1904,7 +1904,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetFalloff(GTCore::Script &script)
+            int SetFalloff(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1917,7 +1917,7 @@ namespace GTEngine
 
 
 
-            int EnableShadowCasting(GTCore::Script &script)
+            int EnableShadowCasting(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1928,7 +1928,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int DisableShadowCasting(GTCore::Script &script)
+            int DisableShadowCasting(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1939,7 +1939,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsShadowCastingEnabled(GTCore::Script &script)
+            int IsShadowCastingEnabled(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<PointLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1960,7 +1960,7 @@ namespace GTEngine
         // GTEngine.System.SpotLightComponent
         namespace SpotLightComponentFFI
         {
-            int SetColour(GTCore::Script &script)
+            int SetColour(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -1984,7 +1984,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetColour(GTCore::Script &script)
+            int GetColour(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2000,7 +2000,7 @@ namespace GTEngine
             }
 
 
-            int GetLength(GTCore::Script &script)
+            int GetLength(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2015,7 +2015,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetLength(GTCore::Script &script)
+            int SetLength(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2027,7 +2027,7 @@ namespace GTEngine
             }
 
 
-            int GetFalloff(GTCore::Script &script)
+            int GetFalloff(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2042,7 +2042,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetFalloff(GTCore::Script &script)
+            int SetFalloff(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2054,7 +2054,7 @@ namespace GTEngine
             }
 
 
-            int EnableShadowCasting(GTCore::Script &script)
+            int EnableShadowCasting(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2065,7 +2065,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int DisableShadowCasting(GTCore::Script &script)
+            int DisableShadowCasting(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2076,7 +2076,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsShadowCastingEnabled(GTCore::Script &script)
+            int IsShadowCastingEnabled(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2092,7 +2092,7 @@ namespace GTEngine
             }
 
 
-            int SetAngles(GTCore::Script &script)
+            int SetAngles(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2105,7 +2105,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetAngles(GTCore::Script &script)
+            int GetAngles(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<SpotLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2128,7 +2128,7 @@ namespace GTEngine
         // GTEngine.System.DirectionalLightComponent
         namespace DirectionalLightComponentFFI
         {
-            int SetColour(GTCore::Script &script)
+            int SetColour(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2152,7 +2152,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetColour(GTCore::Script &script)
+            int GetColour(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2167,7 +2167,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int EnableShadowCasting(GTCore::Script &script)
+            int EnableShadowCasting(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2178,7 +2178,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int DisableShadowCasting(GTCore::Script &script)
+            int DisableShadowCasting(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2189,7 +2189,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsShadowCastingEnabled(GTCore::Script &script)
+            int IsShadowCastingEnabled(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DirectionalLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2210,7 +2210,7 @@ namespace GTEngine
         // GTEngine.System.AmbientLightComponent
         namespace AmbientLightComponentFFI
         {
-            int SetColour(GTCore::Script &script)
+            int SetColour(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<AmbientLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2234,7 +2234,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetColour(GTCore::Script &script)
+            int GetColour(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<AmbientLightComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2255,7 +2255,7 @@ namespace GTEngine
         // GTEngine.System.CollisionShapeComponent
         namespace CollisionShapeComponentFFI
         {
-            int SetCollisionFilter(GTCore::Script &script)
+            int SetCollisionFilter(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2266,7 +2266,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetCollisionGroup(GTCore::Script &script)
+            int GetCollisionGroup(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2281,7 +2281,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetCollisionMask(GTCore::Script &script)
+            int GetCollisionMask(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2298,7 +2298,7 @@ namespace GTEngine
 
 
 
-            int AddCollisionGroup(GTCore::Script &script)
+            int AddCollisionGroup(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2309,7 +2309,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int RemoveCollisionGroup(GTCore::Script &script)
+            int RemoveCollisionGroup(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2320,7 +2320,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int RemoveCollisionGroupByIndex(GTCore::Script &script)
+            int RemoveCollisionGroupByIndex(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2331,7 +2331,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetCollisionGroupCount(GTCore::Script &script)
+            int GetCollisionGroupCount(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2346,7 +2346,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetCollisionGroupName(GTCore::Script &script)
+            int GetCollisionGroupName(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2362,7 +2362,7 @@ namespace GTEngine
             }
 
 
-            int AddCollisionGroupMask(GTCore::Script &script)
+            int AddCollisionGroupMask(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2373,7 +2373,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int RemoveCollisionGroupMask(GTCore::Script &script)
+            int RemoveCollisionGroupMask(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2384,7 +2384,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int RemoveCollisionGroupMaskByIndex(GTCore::Script &script)
+            int RemoveCollisionGroupMaskByIndex(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2395,7 +2395,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetCollisionGroupMaskCount(GTCore::Script &script)
+            int GetCollisionGroupMaskCount(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2410,7 +2410,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetCollisionGroupMaskName(GTCore::Script &script)
+            int GetCollisionGroupMaskName(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2426,7 +2426,7 @@ namespace GTEngine
             }
 
 
-            int AddBoxShape(GTCore::Script &script)
+            int AddBoxShape(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2473,7 +2473,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int AddSphereShape(GTCore::Script &script)
+            int AddSphereShape(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2498,7 +2498,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int AddEllipsoidShape(GTCore::Script &script)
+            int AddEllipsoidShape(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2545,7 +2545,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int AddCylinderXShape(GTCore::Script &script)
+            int AddCylinderXShape(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2571,7 +2571,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int AddCylinderYShape(GTCore::Script &script)
+            int AddCylinderYShape(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2597,7 +2597,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int AddCylinderZShape(GTCore::Script &script)
+            int AddCylinderZShape(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2623,7 +2623,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int AddCapsuleXShape(GTCore::Script &script)
+            int AddCapsuleXShape(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2649,7 +2649,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int AddCapsuleYShape(GTCore::Script &script)
+            int AddCapsuleYShape(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2675,7 +2675,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int AddCapsuleZShape(GTCore::Script &script)
+            int AddCapsuleZShape(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2701,7 +2701,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int AddModelConvexHullsCollisionShape(GTCore::Script &script)
+            int AddModelConvexHullsCollisionShape(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2727,7 +2727,7 @@ namespace GTEngine
             }
 
 
-            int RemoveAllShapes(GTCore::Script &script)
+            int RemoveAllShapes(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2738,7 +2738,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int RemoveShapeAtIndex(GTCore::Script &script)
+            int RemoveShapeAtIndex(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2749,7 +2749,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetShapeCount(GTCore::Script &script)
+            int GetShapeCount(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2760,7 +2760,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetShapeAtIndex(GTCore::Script &script)
+            int GetShapeAtIndex(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2889,7 +2889,7 @@ namespace GTEngine
             }
 
 
-            int SetShapeOffset(GTCore::Script &script)
+            int SetShapeOffset(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2915,7 +2915,7 @@ namespace GTEngine
             }
 
 
-            int SetBoxShapeHalfExtents(GTCore::Script &script)
+            int SetBoxShapeHalfExtents(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2944,7 +2944,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetSphereShapeRadius(GTCore::Script &script)
+            int SetSphereShapeRadius(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2962,7 +2962,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetEllipsoidShapeRadius(GTCore::Script &script)
+            int SetEllipsoidShapeRadius(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -2991,7 +2991,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetCylinderShapeSize(GTCore::Script &script)
+            int SetCylinderShapeSize(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3010,7 +3010,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetCapsuleShapeSize(GTCore::Script &script)
+            int SetCapsuleShapeSize(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3029,7 +3029,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetModelConvexHullsMargins(GTCore::Script &script)
+            int SetModelConvexHullsMargins(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<CollisionShapeComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3053,7 +3053,7 @@ namespace GTEngine
         // GTEngine.System.DynamicsComponent
         namespace DynamicsComponentFFI
         {
-            int SetMass(GTCore::Script &script)
+            int SetMass(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3064,7 +3064,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetMass(GTCore::Script &script)
+            int GetMass(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3079,7 +3079,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int IsStatic(GTCore::Script &script)
+            int IsStatic(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3094,7 +3094,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int IsKinematic(GTCore::Script &script)
+            int IsKinematic(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3114,7 +3114,7 @@ namespace GTEngine
             }
 
 
-            int SetFriction(GTCore::Script &script)
+            int SetFriction(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3125,7 +3125,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetFriction(GTCore::Script &script)
+            int GetFriction(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3140,7 +3140,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetRestitution(GTCore::Script &script)
+            int SetRestitution(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3151,7 +3151,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetRestitution(GTCore::Script &script)
+            int GetRestitution(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3166,7 +3166,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetDamping(GTCore::Script &script)
+            int SetDamping(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3177,7 +3177,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetLinearDamping(GTCore::Script &script)
+            int GetLinearDamping(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3192,7 +3192,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetAngularDamping(GTCore::Script &script)
+            int GetAngularDamping(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3209,7 +3209,7 @@ namespace GTEngine
 
 
 
-            int SetLinearVelocity(GTCore::Script &script)
+            int SetLinearVelocity(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3233,7 +3233,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetLinearVelocity(GTCore::Script &script)
+            int GetLinearVelocity(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3248,7 +3248,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetAngularVelocity(GTCore::Script &script)
+            int SetAngularVelocity(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3272,7 +3272,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetAngularVelocity(GTCore::Script &script)
+            int GetAngularVelocity(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3288,7 +3288,7 @@ namespace GTEngine
             }
 
 
-            int SetLinearFactor(GTCore::Script &script)
+            int SetLinearFactor(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3312,7 +3312,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SetAngularFactor(GTCore::Script &script)
+            int SetAngularFactor(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3337,7 +3337,7 @@ namespace GTEngine
             }
 
 
-            int SetGravity(GTCore::Script &script)
+            int SetGravity(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3361,7 +3361,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetGravity(GTCore::Script &script)
+            int GetGravity(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3376,7 +3376,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int ApplyGravity(GTCore::Script &script)
+            int ApplyGravity(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3388,7 +3388,7 @@ namespace GTEngine
             }
 
 
-            int ApplyCentralForce(GTCore::Script &script)
+            int ApplyCentralForce(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3412,7 +3412,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int ApplyTorque(GTCore::Script &script)
+            int ApplyTorque(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3436,7 +3436,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int ApplyImpulse(GTCore::Script &script)
+            int ApplyImpulse(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3450,7 +3450,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int ApplyCentralImpulse(GTCore::Script &script)
+            int ApplyCentralImpulse(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3474,7 +3474,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int ApplyTorqueImpulse(GTCore::Script &script)
+            int ApplyTorqueImpulse(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3499,7 +3499,7 @@ namespace GTEngine
             }
 
 
-            int DisableDeactivation(GTCore::Script &script)
+            int DisableDeactivation(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3510,7 +3510,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int EnableDeactivation(GTCore::Script &script)
+            int EnableDeactivation(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3521,7 +3521,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsDeactivationEnabled(GTCore::Script &script)
+            int IsDeactivationEnabled(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3536,7 +3536,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int Activate(GTCore::Script &script)
+            int Activate(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3548,7 +3548,7 @@ namespace GTEngine
             }
 
 
-            int EnableNavigationMeshGeneration(GTCore::Script &script)
+            int EnableNavigationMeshGeneration(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3559,7 +3559,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int DisableNavigationMeshGeneration(GTCore::Script &script)
+            int DisableNavigationMeshGeneration(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3570,7 +3570,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsNavigationMeshGenerationEnabled(GTCore::Script &script)
+            int IsNavigationMeshGenerationEnabled(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<DynamicsComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3587,179 +3587,179 @@ namespace GTEngine
 
 
 
-            int SetCollisionFilter(GTCore::Script &script)
+            int SetCollisionFilter(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetCollisionFilter(script);
             }
 
-            int GetCollisionGroup(GTCore::Script &script)
+            int GetCollisionGroup(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetCollisionGroup(script);
             }
 
-            int GetCollisionMask(GTCore::Script &script)
+            int GetCollisionMask(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetCollisionMask(script);
             }
 
 
-            int AddCollisionGroup(GTCore::Script &script)
+            int AddCollisionGroup(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCollisionGroup(script);
             }
 
-            int RemoveCollisionGroup(GTCore::Script &script)
+            int RemoveCollisionGroup(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::RemoveCollisionGroup(script);
             }
 
-            int RemoveCollisionGroupByIndex(GTCore::Script &script)
+            int RemoveCollisionGroupByIndex(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::RemoveCollisionGroupByIndex(script);
             }
 
-            int GetCollisionGroupCount(GTCore::Script &script)
+            int GetCollisionGroupCount(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetCollisionGroupCount(script);
             }
 
-            int GetCollisionGroupName(GTCore::Script &script)
+            int GetCollisionGroupName(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetCollisionGroupName(script);
             }
 
 
-            int AddCollisionGroupMask(GTCore::Script &script)
+            int AddCollisionGroupMask(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCollisionGroupMask(script);
             }
 
-            int RemoveCollisionGroupMask(GTCore::Script &script)
+            int RemoveCollisionGroupMask(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::RemoveCollisionGroupMask(script);
             }
 
-            int RemoveCollisionGroupMaskByIndex(GTCore::Script &script)
+            int RemoveCollisionGroupMaskByIndex(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::RemoveCollisionGroupMaskByIndex(script);
             }
 
-            int GetCollisionGroupMaskCount(GTCore::Script &script)
+            int GetCollisionGroupMaskCount(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetCollisionGroupMaskCount(script);
             }
 
-            int GetCollisionGroupMaskName(GTCore::Script &script)
+            int GetCollisionGroupMaskName(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetCollisionGroupMaskName(script);
             }
 
 
 
-            int AddBoxCollisionShape(GTCore::Script &script)
+            int AddBoxCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddBoxShape(script);
             }
 
-            int AddSphereCollisionShape(GTCore::Script &script)
+            int AddSphereCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddSphereShape(script);
             }
 
-            int AddEllipsoidCollisionShape(GTCore::Script &script)
+            int AddEllipsoidCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddEllipsoidShape(script);
             }
 
-            int AddCylinderXCollisionShape(GTCore::Script &script)
+            int AddCylinderXCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCylinderXShape(script);
             }
 
-            int AddCylinderYCollisionShape(GTCore::Script &script)
+            int AddCylinderYCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCylinderYShape(script);
             }
 
-            int AddCylinderZCollisionShape(GTCore::Script &script)
+            int AddCylinderZCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCylinderZShape(script);
             }
 
-            int AddCapsuleXCollisionShape(GTCore::Script &script)
+            int AddCapsuleXCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCapsuleXShape(script);
             }
 
-            int AddCapsuleYCollisionShape(GTCore::Script &script)
+            int AddCapsuleYCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCapsuleYShape(script);
             }
 
-            int AddCapsuleZCollisionShape(GTCore::Script &script)
+            int AddCapsuleZCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCapsuleZShape(script);
             }
 
-            int AddModelConvexHullsCollisionShape(GTCore::Script &script)
+            int AddModelConvexHullsCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddModelConvexHullsCollisionShape(script);
             }
 
 
-            int RemoveAllCollisionShapes(GTCore::Script &script)
+            int RemoveAllCollisionShapes(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::RemoveAllShapes(script);
             }
 
-            int RemoveCollisionShapeAtIndex(GTCore::Script &script)
+            int RemoveCollisionShapeAtIndex(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::RemoveShapeAtIndex(script);
             }
 
-            int GetCollisionShapeCount(GTCore::Script &script)
+            int GetCollisionShapeCount(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetShapeCount(script);
             }
 
-            int GetCollisionShapeAtIndex(GTCore::Script &script)
+            int GetCollisionShapeAtIndex(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetShapeAtIndex(script);
             }
 
 
-            int SetCollisionShapeOffset(GTCore::Script &script)
+            int SetCollisionShapeOffset(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetShapeOffset(script);
             }
 
 
-            int SetBoxCollisionShapeHalfExtents(GTCore::Script &script)
+            int SetBoxCollisionShapeHalfExtents(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetBoxShapeHalfExtents(script);
             }
 
-            int SetSphereCollisionShapeRadius(GTCore::Script &script)
+            int SetSphereCollisionShapeRadius(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetSphereShapeRadius(script);
             }
 
-            int SetEllipsoidCollisionShapeRadius(GTCore::Script &script)
+            int SetEllipsoidCollisionShapeRadius(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetEllipsoidShapeRadius(script);
             }
 
-            int SetCylinderCollisionShapeSize(GTCore::Script &script)
+            int SetCylinderCollisionShapeSize(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetCylinderShapeSize(script);
             }
 
-            int SetCapsuleCollisionShapeSize(GTCore::Script &script)
+            int SetCapsuleCollisionShapeSize(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetCapsuleShapeSize(script);
             }
 
-            int SetModelConvexHullsMargins(GTCore::Script &script)
+            int SetModelConvexHullsMargins(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetModelConvexHullsMargins(script);
             }
@@ -3769,186 +3769,186 @@ namespace GTEngine
         // GTEngine.System.ProximityComponent
         namespace ProximityComponentFFI
         {
-            int SetCollisionFilter(GTCore::Script &script)
+            int SetCollisionFilter(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetCollisionFilter(script);
             }
 
-            int GetCollisionGroup(GTCore::Script &script)
+            int GetCollisionGroup(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetCollisionGroup(script);
             }
 
-            int GetCollisionMask(GTCore::Script &script)
+            int GetCollisionMask(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetCollisionMask(script);
             }
 
 
-            int AddCollisionGroup(GTCore::Script &script)
+            int AddCollisionGroup(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCollisionGroup(script);
             }
 
-            int RemoveCollisionGroup(GTCore::Script &script)
+            int RemoveCollisionGroup(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::RemoveCollisionGroup(script);
             }
 
-            int RemoveCollisionGroupByIndex(GTCore::Script &script)
+            int RemoveCollisionGroupByIndex(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::RemoveCollisionGroupByIndex(script);
             }
 
-            int GetCollisionGroupCount(GTCore::Script &script)
+            int GetCollisionGroupCount(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetCollisionGroupCount(script);
             }
 
-            int GetCollisionGroupName(GTCore::Script &script)
+            int GetCollisionGroupName(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetCollisionGroupName(script);
             }
 
 
-            int AddCollisionGroupMask(GTCore::Script &script)
+            int AddCollisionGroupMask(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCollisionGroupMask(script);
             }
 
-            int RemoveCollisionGroupMask(GTCore::Script &script)
+            int RemoveCollisionGroupMask(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::RemoveCollisionGroupMask(script);
             }
 
-            int RemoveCollisionGroupMaskByIndex(GTCore::Script &script)
+            int RemoveCollisionGroupMaskByIndex(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::RemoveCollisionGroupMaskByIndex(script);
             }
 
-            int GetCollisionGroupMaskCount(GTCore::Script &script)
+            int GetCollisionGroupMaskCount(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetCollisionGroupMaskCount(script);
             }
 
-            int GetCollisionGroupMaskName(GTCore::Script &script)
+            int GetCollisionGroupMaskName(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetCollisionGroupMaskName(script);
             }
 
 
 
-            int AddBoxCollisionShape(GTCore::Script &script)
+            int AddBoxCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddBoxShape(script);
             }
 
-            int AddSphereCollisionShape(GTCore::Script &script)
+            int AddSphereCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddSphereShape(script);
             }
 
-            int AddEllipsoidCollisionShape(GTCore::Script &script)
+            int AddEllipsoidCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddEllipsoidShape(script);
             }
 
-            int AddCylinderXCollisionShape(GTCore::Script &script)
+            int AddCylinderXCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCylinderXShape(script);
             }
 
-            int AddCylinderYCollisionShape(GTCore::Script &script)
+            int AddCylinderYCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCylinderYShape(script);
             }
 
-            int AddCylinderZCollisionShape(GTCore::Script &script)
+            int AddCylinderZCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCylinderZShape(script);
             }
 
-            int AddCapsuleXCollisionShape(GTCore::Script &script)
+            int AddCapsuleXCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCapsuleXShape(script);
             }
 
-            int AddCapsuleYCollisionShape(GTCore::Script &script)
+            int AddCapsuleYCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCapsuleYShape(script);
             }
 
-            int AddCapsuleZCollisionShape(GTCore::Script &script)
+            int AddCapsuleZCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddCapsuleZShape(script);
             }
 
-            int AddModelConvexHullsCollisionShape(GTCore::Script &script)
+            int AddModelConvexHullsCollisionShape(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::AddModelConvexHullsCollisionShape(script);
             }
 
 
-            int RemoveAllCollisionShapes(GTCore::Script &script)
+            int RemoveAllCollisionShapes(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::RemoveAllShapes(script);
             }
 
-            int RemoveCollisionShapeAtIndex(GTCore::Script &script)
+            int RemoveCollisionShapeAtIndex(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::RemoveShapeAtIndex(script);
             }
 
-            int GetCollisionShapeCount(GTCore::Script &script)
+            int GetCollisionShapeCount(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetShapeCount(script);
             }
 
-            int GetCollisionShapeAtIndex(GTCore::Script &script)
+            int GetCollisionShapeAtIndex(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::GetShapeAtIndex(script);
             }
 
 
-            int SetCollisionShapeOffset(GTCore::Script &script)
+            int SetCollisionShapeOffset(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetShapeOffset(script);
             }
 
 
-            int SetBoxCollisionShapeHalfExtents(GTCore::Script &script)
+            int SetBoxCollisionShapeHalfExtents(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetBoxShapeHalfExtents(script);
             }
 
-            int SetSphereCollisionShapeRadius(GTCore::Script &script)
+            int SetSphereCollisionShapeRadius(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetSphereShapeRadius(script);
             }
 
-            int SetEllipsoidCollisionShapeRadius(GTCore::Script &script)
+            int SetEllipsoidCollisionShapeRadius(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetEllipsoidShapeRadius(script);
             }
 
-            int SetCylinderCollisionShapeSize(GTCore::Script &script)
+            int SetCylinderCollisionShapeSize(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetCylinderShapeSize(script);
             }
 
-            int SetCapsuleCollisionShapeSize(GTCore::Script &script)
+            int SetCapsuleCollisionShapeSize(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetCapsuleShapeSize(script);
             }
 
-            int SetModelConvexHullsMargins(GTCore::Script &script)
+            int SetModelConvexHullsMargins(GTLib::Script &script)
             {
                 return CollisionShapeComponentFFI::SetModelConvexHullsMargins(script);
             }
 
 
 
-            int IsAnythingInside(GTCore::Script &script)
+            int IsAnythingInside(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ProximityComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3969,7 +3969,7 @@ namespace GTEngine
         // GTEngine.System.ScriptComponent
         namespace ScriptComponentFFI
         {
-            int AddScript(GTCore::Script &script)
+            int AddScript(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3984,7 +3984,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int RemoveScriptByRelativePath(GTCore::Script &script)
+            int RemoveScriptByRelativePath(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -3995,7 +3995,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int RemoveScriptByIndex(GTCore::Script &script)
+            int RemoveScriptByIndex(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4006,7 +4006,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int ReloadScript(GTCore::Script &script)
+            int ReloadScript(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4018,7 +4018,7 @@ namespace GTEngine
             }
 
 
-            int GetScriptFilePaths(GTCore::Script &script)
+            int GetScriptFilePaths(GTLib::Script &script)
             {
                 script.PushNewTable();
 
@@ -4037,7 +4037,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int IsUsingScript(GTCore::Script &script)
+            int IsUsingScript(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4048,7 +4048,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetPublicVariableNamesAndTypesByIndex(GTCore::Script &script)
+            int GetPublicVariableNamesAndTypesByIndex(GTLib::Script &script)
             {
                 script.PushNewTable();
 
@@ -4079,7 +4079,7 @@ namespace GTEngine
             }
 
 
-            int GetPublicVariableNamesAndValues(GTCore::Script &script)
+            int GetPublicVariableNamesAndValues(GTLib::Script &script)
             {
                 script.PushNewTable();
 
@@ -4164,7 +4164,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetPublicVariableValue(GTCore::Script &script)
+            int GetPublicVariableValue(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4257,7 +4257,7 @@ namespace GTEngine
             }
 
 
-            int SetPublicVariableValue(GTCore::Script &script)
+            int SetPublicVariableValue(GTLib::Script &script)
             {
                 auto component = static_cast<ScriptComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4269,7 +4269,7 @@ namespace GTEngine
                     else if (script.IsTable(3))
                     {
                         // Value could be a vector type. We'll need to look at the contents of the table to determine the type.
-                        GTCore::Map<int, double> values;
+                        GTLib::Map<int, double> values;
 
                         int i = 0;
                         script.PushNil();
@@ -4289,19 +4289,19 @@ namespace GTEngine
                                 else if (script.IsString(-2))
                                 {
                                     auto key = script.ToString(-2);
-                                    if (GTCore::Strings::Equal<false>(key, "x"))
+                                    if (GTLib::Strings::Equal<false>(key, "x"))
                                     {
                                         mapIndex = 0;
                                     }
-                                    else if (GTCore::Strings::Equal<false>(key, "y"))
+                                    else if (GTLib::Strings::Equal<false>(key, "y"))
                                     {
                                         mapIndex = 1;
                                     }
-                                    else if (GTCore::Strings::Equal<false>(key, "z"))
+                                    else if (GTLib::Strings::Equal<false>(key, "z"))
                                     {
                                         mapIndex = 2;
                                     }
-                                    else if (GTCore::Strings::Equal<false>(key, "w"))
+                                    else if (GTLib::Strings::Equal<false>(key, "w"))
                                     {
                                         mapIndex = 3;
                                     }
@@ -4352,7 +4352,7 @@ namespace GTEngine
 
         namespace ParticleSystemComponentFFI
         {
-            int SetFromFile(GTCore::Script &script)
+            int SetFromFile(GTLib::Script &script)
             {
                 auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4363,7 +4363,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetRelativeFilePath(GTCore::Script &script)
+            int GetRelativeFilePath(GTLib::Script &script)
             {
                 auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4387,7 +4387,7 @@ namespace GTEngine
             }
 
 
-            int Play(GTCore::Script &script)
+            int Play(GTLib::Script &script)
             {
                 auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4398,7 +4398,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int Pause(GTCore::Script &script)
+            int Pause(GTLib::Script &script)
             {
                 auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4409,7 +4409,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsPlaying(GTCore::Script &script)
+            int IsPlaying(GTLib::Script &script)
             {
                 auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4425,7 +4425,7 @@ namespace GTEngine
             }
 
 
-            int PlayOnStartup(GTCore::Script &script)
+            int PlayOnStartup(GTLib::Script &script)
             {
                 auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4436,7 +4436,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsPlayingOnStartup(GTCore::Script &script)
+            int IsPlayingOnStartup(GTLib::Script &script)
             {
                 auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4452,7 +4452,7 @@ namespace GTEngine
             }
 
 
-            int Reset(GTCore::Script &script)
+            int Reset(GTLib::Script &script)
             {
                 auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4464,7 +4464,7 @@ namespace GTEngine
             }
 
 
-            int GetEmitterLifetime(GTCore::Script &script)
+            int GetEmitterLifetime(GTLib::Script &script)
             {
                 auto component = static_cast<ParticleSystemComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4492,7 +4492,7 @@ namespace GTEngine
         
         namespace PrefabComponentFFI
         {
-            int GetPrefabRelativePath(GTCore::Script &script)
+            int GetPrefabRelativePath(GTLib::Script &script)
             {
                 auto component = static_cast<PrefabComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4507,7 +4507,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetLocalHierarchyID(GTCore::Script &script)
+            int GetLocalHierarchyID(GTLib::Script &script)
             {
                 auto component = static_cast<PrefabComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4529,7 +4529,7 @@ namespace GTEngine
 
         namespace EditorMetadataComponentFFI
         {
-            int Select(GTCore::Script &script)
+            int Select(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4540,7 +4540,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int Deselect(GTCore::Script &script)
+            int Deselect(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4551,7 +4551,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsSelected(GTCore::Script &script)
+            int IsSelected(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4563,7 +4563,7 @@ namespace GTEngine
             }
 
 
-            int ShowSprite(GTCore::Script &script)
+            int ShowSprite(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4602,7 +4602,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int HideSprite(GTCore::Script &script)
+            int HideSprite(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4613,7 +4613,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsShowingSprite(GTCore::Script &script)
+            int IsShowingSprite(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4628,7 +4628,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetSpriteTexturePath(GTCore::Script &script)
+            int GetSpriteTexturePath(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4644,7 +4644,7 @@ namespace GTEngine
             }
 
 
-            int ShowDirectionArrow(GTCore::Script &script)
+            int ShowDirectionArrow(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4655,7 +4655,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int HideDirectionArrow(GTCore::Script &script)
+            int HideDirectionArrow(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
                 if (component != nullptr)
@@ -4666,7 +4666,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsShowingDirectionArrow(GTCore::Script &script)
+            int IsShowingDirectionArrow(GTLib::Script &script)
             {
                 auto component = reinterpret_cast<EditorMetadataComponent*>(script.ToPointer(1));
                 if (component != nullptr)

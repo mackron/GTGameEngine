@@ -318,7 +318,7 @@ namespace GTEngine
         /// Retrieves the value of a generic property.
         ///
         /// @param name [in] The name of the property to retrieve.
-        virtual GTCore::String GetStringProperty(const char* name) const;
+        virtual GTLib::String GetStringProperty(const char* name) const;
         virtual int            GetIntegerProperty(const char* name) const;
         virtual float          GetFloatProperty(const char* name) const;
         virtual bool           GetBooleanProperty(const char* name) const;

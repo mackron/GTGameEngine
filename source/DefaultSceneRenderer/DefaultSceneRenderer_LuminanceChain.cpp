@@ -142,8 +142,8 @@ namespace GTEngine
             unsigned int nextHeight = baseHeight;
             while (nextWidth > 1 && nextHeight > 1)
             {
-                nextWidth  = GTCore::Max(1U, nextWidth  / 4);
-                nextHeight = GTCore::Max(1U, nextHeight / 4);
+                nextWidth  = GTLib::Max(1U, nextWidth  / 4);
+                nextHeight = GTLib::Max(1U, nextHeight / 4);
 
                 // If it's the first link in the chain, we will raise to the closes power of 4.
                 if (chainCount == 0)
@@ -151,7 +151,7 @@ namespace GTEngine
                     nextWidth  = static_cast<unsigned int>(glm::pow(4.0f, glm::ceil(glm::log(static_cast<float>(nextWidth))  / glm::log(4.0f))));
                     nextHeight = static_cast<unsigned int>(glm::pow(4.0f, glm::ceil(glm::log(static_cast<float>(nextHeight)) / glm::log(4.0f))));
 
-                    nextWidth = nextHeight = GTCore::Min(nextWidth, nextHeight);
+                    nextWidth = nextHeight = GTLib::Min(nextWidth, nextHeight);
                 }
 
 
@@ -219,7 +219,7 @@ namespace GTEngine
     Shader* DefaultSceneRenderer_LuminanceChain::CreateShader(unsigned int inputTextureWidth, unsigned int inputTextureHeight, bool encodeLuminance, bool decodeLuminance)
     {
         // Vertex Shader.
-        GTCore::String vertexSource
+        GTLib::String vertexSource
         (
             "#version 120\n"
 
@@ -240,7 +240,7 @@ namespace GTEngine
 
 
         // Fragment Shader.
-        GTCore::String fragmentSource
+        GTLib::String fragmentSource
         (
             "#version 120\n"
 
@@ -274,8 +274,8 @@ namespace GTEngine
             );
         }
 
-        unsigned int xSize = GTCore::Min(4U, inputTextureWidth);
-        unsigned int ySize = GTCore::Min(4U, inputTextureHeight);
+        unsigned int xSize = GTLib::Min(4U, inputTextureWidth);
+        unsigned int ySize = GTLib::Min(4U, inputTextureHeight);
 
         for (unsigned int x = 0; x < xSize; ++x)
         {

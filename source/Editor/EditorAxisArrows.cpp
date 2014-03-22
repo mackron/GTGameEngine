@@ -168,8 +168,8 @@ namespace GTEngine
         unsigned int arrowHeadSegments     = 16;
         float        arrowHeadSegmentAngle = glm::radians(360.0f / static_cast<float>(arrowHeadSegments));
 
-        GTCore::Vector<glm::vec3>    arrowHeadVertices;
-        GTCore::Vector<unsigned int> arrowHeadIndices;
+        GTLib::Vector<glm::vec3>    arrowHeadVertices;
+        GTLib::Vector<unsigned int> arrowHeadIndices;
 
         arrowHeadVertices.PushBack(glm::vec3(localTransform * glm::vec4(0.0f, 0.0f, -1.0f,                   1.0f)));       // First vertex is the point.
         arrowHeadVertices.PushBack(glm::vec3(localTransform * glm::vec4(0.0f, 0.0f, -1.0f + arrowHeadLength, 1.0f)));       // Second vertex is the center of the base.

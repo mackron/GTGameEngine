@@ -3,8 +3,8 @@
 #ifndef __GTEngine_SceneEditorCommand_hpp_
 #define __GTEngine_SceneEditorCommand_hpp_
 
-#include <GTCore/Vector.hpp>
-#include <GTCore/Serializer.hpp>
+#include <GTLib/Vector.hpp>
+#include <GTLib/Serializer.hpp>
 
 namespace GTEngine
 {
@@ -24,13 +24,13 @@ namespace GTEngine
 
         /// The unique ID's of the relevant scene nodes for this command. We need to use IDs here because sometimes the actual C++ objects
         /// won't actually exist and will need to be recreated.
-        GTCore::Vector<size_t> sceneNodeIDs;
+        GTLib::Vector<size_t> sceneNodeIDs;
 
         /// The nodes that were selected at the time of this command.
-        GTCore::Vector<size_t> selectedNodes;
+        GTLib::Vector<size_t> selectedNodes;
 
         /// The serialized data. This will be deserialized where appropriate.
-        GTCore::BasicSerializer serializer;
+        GTLib::BasicSerializer serializer;
     };
 }
 

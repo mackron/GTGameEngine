@@ -4,14 +4,14 @@
 #define __GTGameEngine_AudioEngine_OpenAL_hpp_
 
 #include <GTEngine/Audio/AudioEngine.hpp>
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 
 #define AL_NO_PROTOTYPES
 #include <AL/al.h>
 #include <AL/alc.h>
 
 #if defined(GTCORE_PLATFORM_WINDOWS)
-#include <GTCore/windows.hpp>
+#include <GTLib/windows.hpp>
 #endif
 
 namespace GTEngine
@@ -135,17 +135,17 @@ namespace GTEngine
 #endif
 
         /// The list of playback device info structures.
-        GTCore::Vector<PlaybackDeviceInfo> m_playbackDevices;
+        GTLib::Vector<PlaybackDeviceInfo> m_playbackDevices;
 
         /// The list of capture device info structures.
-        GTCore::Vector<CaptureDeviceInfo> m_captureDevices;
+        GTLib::Vector<CaptureDeviceInfo> m_captureDevices;
 
 
         /// The list of instantiated playback devices.
-        GTCore::Vector<PlaybackDeviceHandle> m_instantiatedPlaybackDevices;
+        GTLib::Vector<PlaybackDeviceHandle> m_instantiatedPlaybackDevices;
 
         /// The list of instantiated capture devices.
-        GTCore::Vector<CaptureDeviceHandle> m_instantiatedCaptureDevices;
+        GTLib::Vector<CaptureDeviceHandle> m_instantiatedCaptureDevices;
 
 
 

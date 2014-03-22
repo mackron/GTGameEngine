@@ -6,7 +6,7 @@ namespace GTEngine
 {
     namespace Scripting
     {
-        bool LoadAnimationLibrary(GTCore::Script &script)
+        bool LoadAnimationLibrary(GTLib::Script &script)
         {
             script.Execute
             (
@@ -38,7 +38,7 @@ namespace GTEngine
         }
 
 
-        AnimationSequence ToAnimationSequence(GTCore::Script &script, int position)
+        AnimationSequence ToAnimationSequence(GTLib::Script &script, int position)
         {
             AnimationSequence result;
 
@@ -59,7 +59,7 @@ namespace GTEngine
                 {
                     for (script.PushNil(); script.Next(-2); script.Pop(1))
                     {
-                        GTCore::String segmentName;
+                        GTLib::String segmentName;
                         double         transitionTime = 0.0;
                         bool           loop = false;
 

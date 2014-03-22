@@ -120,7 +120,7 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void AnimationTrack::Serialize(GTCore::Serializer &serializer) const
+    void AnimationTrack::Serialize(GTLib::Serializer &serializer) const
     {
         Serialization::ChunkHeader header;
         header.id = Serialization::ChunkID_AnimationKeyFrameQueue;
@@ -138,7 +138,7 @@ namespace GTEngine
         }
     }
 
-    void AnimationTrack::Deserialize(GTCore::Deserializer &deserializer)
+    void AnimationTrack::Deserialize(GTLib::Deserializer &deserializer)
     {
         this->localKeyFrames.Clear();
 

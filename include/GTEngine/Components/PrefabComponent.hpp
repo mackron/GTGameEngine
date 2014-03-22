@@ -48,17 +48,17 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
 
     private:
 
         /// The relative path of the prefab the scene node is linked to.
-        GTCore::String prefabRelativePath;
+        GTLib::String prefabRelativePath;
 
         /// The local hierarchy ID of the scene node. This maps to an ID from the prefab.
         uint64_t localHierarchyID;

@@ -5,7 +5,7 @@
 
 #include "../Component.hpp"
 #include "../ScriptDefinition.hpp"
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GTEngine
 {
@@ -236,11 +236,11 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTCore::Deserializer &deserializer, bool noPublicVariableOverride);
-        void Deserialize(GTCore::Deserializer &deserializer) { this->Deserialize(deserializer, false); }
+        void Deserialize(GTLib::Deserializer &deserializer, bool noPublicVariableOverride);
+        void Deserialize(GTLib::Deserializer &deserializer) { this->Deserialize(deserializer, false); }
 
 
 
@@ -271,11 +271,11 @@ namespace GTEngine
     private:
 
         /// The list of scripts attached to the component.
-        GTCore::Vector<ScriptDefinition*> scripts;
+        GTLib::Vector<ScriptDefinition*> scripts;
 
         /// We keep a list of every public variable here. We keep these separate from the definitions because we want to allow these to have
         /// their own values.
-        GTCore::Vector<ScriptVariable*> publicVariables;
+        GTLib::Vector<ScriptVariable*> publicVariables;
 
         /// This keeps track of whether or not the OnStartup event has been called. When OnStartup is called, this will be set to true. When
         /// OnShutdown has been called, it will revert back to false. We use this for keeping track of whether or not OnStartup and OnShutdown

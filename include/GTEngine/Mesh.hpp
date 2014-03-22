@@ -182,12 +182,12 @@ namespace GTEngine
         ///
         /// @param serializer        [in] A reference ot the serializer to write to.
         /// @param serializeGeometry [in] Whether or not the geometry should be serialized.
-        void Serialize(GTCore::Serializer &serializer, bool serializeGeometry) const;
+        void Serialize(GTLib::Serializer &serializer, bool serializeGeometry) const;
 
         /// Deserializes the mesh.
         ///
         /// @param deserializer [in] A reference to the deserializer for reading the data from.
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
 

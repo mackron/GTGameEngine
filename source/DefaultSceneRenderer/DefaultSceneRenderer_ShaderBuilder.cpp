@@ -36,8 +36,8 @@ namespace GTEngine
 
 
         // If we made it here it means that we need to create a new shader.
-        GTCore::String vertexSource   = this->CreateVertexShaderString(shaderID, material);
-        GTCore::String fragmentSource = this->CreateFragmentShaderString(shaderID, material);
+        GTLib::String vertexSource   = this->CreateVertexShaderString(shaderID, material);
+        GTLib::String fragmentSource = this->CreateFragmentShaderString(shaderID, material);
 
         auto shader = Renderer::CreateShader(vertexSource.c_str(), fragmentSource.c_str());
         if (shader != nullptr)
@@ -73,7 +73,7 @@ namespace GTEngine
     Shader* DefaultSceneRenderer_ShaderBuilder::CreateDepthPassShader()
     {
         // Vertex Shader.
-        GTCore::String vertexSource
+        GTLib::String vertexSource
         (
             "#version 120\n"
 
@@ -88,7 +88,7 @@ namespace GTEngine
 
 
         // Fragment Shader.
-        GTCore::String fragmentSource
+        GTLib::String fragmentSource
         (
             "#version 120\n"
 
@@ -105,7 +105,7 @@ namespace GTEngine
     Shader* DefaultSceneRenderer_ShaderBuilder::CreateHighlightShader()
     {
         // Vertex Shader.
-        GTCore::String vertexSource
+        GTLib::String vertexSource
         (
             "#version 120\n"
 
@@ -120,7 +120,7 @@ namespace GTEngine
 
 
         // Fragment Shader.
-        GTCore::String fragmentSource
+        GTLib::String fragmentSource
         (
             "#version 120\n"
 
@@ -138,7 +138,7 @@ namespace GTEngine
     Shader* DefaultSceneRenderer_ShaderBuilder::CreateShadowMapShader()
     {
         // Vertex Shader.
-        GTCore::String vertexSource
+        GTLib::String vertexSource
         (
             "#version 120\n"
 
@@ -155,7 +155,7 @@ namespace GTEngine
 
 
         // Fragment Shader.
-        GTCore::String fragmentSource
+        GTLib::String fragmentSource
         (
             "#version 120\n"
 
@@ -175,7 +175,7 @@ namespace GTEngine
     Shader* DefaultSceneRenderer_ShaderBuilder::CreatePointShadowMapShader()
     {
         // Vertex Shader.
-        GTCore::String vertexSource
+        GTLib::String vertexSource
         (
             "#version 120\n"
 
@@ -194,7 +194,7 @@ namespace GTEngine
 
 
         // Fragment Shader.
-        GTCore::String fragmentSource
+        GTLib::String fragmentSource
         (
             "#version 120\n"
 
@@ -215,11 +215,11 @@ namespace GTEngine
     Shader* DefaultSceneRenderer_ShaderBuilder::CreateBloomShader()
     {
         // Vertex Shader.
-        GTCore::String vertexSource(this->GetFullscreenPrimitiveVertexShader());
+        GTLib::String vertexSource(this->GetFullscreenPrimitiveVertexShader());
 
 
         // Fragment Shader.
-        GTCore::String fragmentSource
+        GTLib::String fragmentSource
         (
             "#version 120\n"
 
@@ -241,11 +241,11 @@ namespace GTEngine
     Shader* DefaultSceneRenderer_ShaderBuilder::CreateLDRFinalCompositionShader()
     {
         // Vertex Shader.
-        GTCore::String vertexSource(this->GetFullscreenPrimitiveVertexShader());
+        GTLib::String vertexSource(this->GetFullscreenPrimitiveVertexShader());
 
 
         // Fragment Shader.
-        GTCore::String fragmentSource
+        GTLib::String fragmentSource
         (
             "#version 120\n"
 
@@ -266,11 +266,11 @@ namespace GTEngine
     Shader* DefaultSceneRenderer_ShaderBuilder::CreateHDRFinalCompositionShader()
     {
         // Vertex Shader.
-        GTCore::String vertexSource(this->GetFullscreenPrimitiveVertexShader());
+        GTLib::String vertexSource(this->GetFullscreenPrimitiveVertexShader());
 
 
         // Fragment Shader.
-        GTCore::String fragmentSource
+        GTLib::String fragmentSource
         (
             "#version 120\n"
 
@@ -298,11 +298,11 @@ namespace GTEngine
     Shader* DefaultSceneRenderer_ShaderBuilder::CreateHDRNoBloomFinalCompositionShader()
     {
         // Vertex Shader.
-        GTCore::String vertexSource(this->GetFullscreenPrimitiveVertexShader());
+        GTLib::String vertexSource(this->GetFullscreenPrimitiveVertexShader());
 
 
         // Fragment Shader.
-        GTCore::String fragmentSource
+        GTLib::String fragmentSource
         (
             "#version 120\n"
 
@@ -334,7 +334,7 @@ namespace GTEngine
 
 
         // Vertex Shader.
-        GTCore::String vertexSource
+        GTLib::String vertexSource
         (
             "#version 120\n"
             
@@ -350,7 +350,7 @@ namespace GTEngine
             "}"
         );
 
-        GTCore::String fragmentSource
+        GTLib::String fragmentSource
         (
             "#version 120\n"
             
@@ -400,7 +400,7 @@ namespace GTEngine
     }
 
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::CreateVertexShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::CreateVertexShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const
     {
         (void)material;
 
@@ -412,7 +412,7 @@ namespace GTEngine
         uint16_t shadowSpotLightCount        = shaderID.lightGroupID.GetShadowSpotLightCount();
         
         
-        GTCore::String vertexSource
+        GTLib::String vertexSource
         (
             "#version 120\n"
             
@@ -615,7 +615,7 @@ namespace GTEngine
         return vertexSource;
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::CreateFragmentShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::CreateFragmentShaderString(const DefaultSceneRenderer_MaterialShaderID &shaderID, const MaterialDefinition* material) const
     {
         uint16_t ambientLightCount           = shaderID.lightGroupID.GetAmbientLightCount();
         uint16_t directionalLightCount       = shaderID.lightGroupID.GetDirectionalLightCount();
@@ -641,7 +641,7 @@ namespace GTEngine
 
 
         // Input
-        GTCore::String fragmentSource
+        GTLib::String fragmentSource
         (
             "#version 120\n"
             
@@ -1246,9 +1246,9 @@ namespace GTEngine
 
 
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::VertexShader_DeclareDirectionalLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::VertexShader_DeclareDirectionalLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "varying vec4 DirectionalLight%d_VertexPositionLS;\n"
             "uniform DirectionalLightVS DirectionalLightVS%d;\n",
@@ -1258,9 +1258,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::VertexShader_DeclarePointLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::VertexShader_DeclarePointLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "varying vec3 PointLight%d_L;\n"
             "uniform PointLightVS PointLightVS%d;\n",
@@ -1270,9 +1270,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::VertexShader_DeclareSpotLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::VertexShader_DeclareSpotLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "varying vec4 SpotLight%d_VertexPositionLS;\n"
             "uniform SpotLightVS SpotLightVS%d;\n",
@@ -1282,9 +1282,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::VertexShader_DeclareShadowDirectionalLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::VertexShader_DeclareShadowDirectionalLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "varying vec4 ShadowDirectionalLight%d_VertexPositionLS;\n"
             "uniform ShadowDirectionalLightVS ShadowDirectionalLightVS%d;\n",
@@ -1294,9 +1294,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::VertexShader_DeclareShadowPointLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::VertexShader_DeclareShadowPointLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "varying vec3 ShadowPointLight%d_L;\n"
             "varying vec3 ShadowPointLight%d_ShadowCoord;\n"
@@ -1308,9 +1308,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::VertexShader_DeclareShadowSpotLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::VertexShader_DeclareShadowSpotLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "varying vec4 ShadowSpotLight%d_VertexPositionLS;\n"
             "uniform ShadowSpotLightVS ShadowSpotLightVS%d;\n",
@@ -1321,9 +1321,9 @@ namespace GTEngine
     }
 
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::VertexShader_AssignDirectionalLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::VertexShader_AssignDirectionalLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "    DirectionalLight%d_VertexPositionLS = DirectionalLightVS%d.ProjectionView * ModelMatrix * vec4(VertexInput_Position, 1.0);\n",
 
@@ -1332,9 +1332,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::VertexShader_AssignPointLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::VertexShader_AssignPointLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "    PointLight%d_L = PointLightVS%d.PositionVS - VertexOutput_PositionVS.xyz;\n",
 
@@ -1343,9 +1343,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::VertexShader_AssignSpotLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::VertexShader_AssignSpotLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "    SpotLight%d_VertexPositionLS = SpotLightVS%d.ProjectionView * ModelMatrix * vec4(VertexInput_Position, 1.0);\n",
 
@@ -1354,9 +1354,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::VertexShader_AssignShadowDirectionalLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::VertexShader_AssignShadowDirectionalLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "    ShadowDirectionalLight%d_VertexPositionLS = ShadowDirectionalLightVS%d.ProjectionView * ModelMatrix * vec4(VertexInput_Position, 1.0);\n",
 
@@ -1365,9 +1365,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::VertexShader_AssignShadowPointLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::VertexShader_AssignShadowPointLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "    ShadowPointLight%d_L           = ShadowPointLightVS%d.PositionVS - VertexOutput_PositionVS.xyz;\n"
             "    ShadowPointLight%d_ShadowCoord = VertexOutput_PositionWS.xyz     - ShadowPointLightVS%d.PositionWS;\n",
@@ -1379,9 +1379,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::VertexShader_AssignShadowSpotLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::VertexShader_AssignShadowSpotLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "    ShadowSpotLight%d_VertexPositionLS = ShadowSpotLightVS%d.ProjectionView * ModelMatrix * vec4(VertexInput_Position, 1.0);\n",
 
@@ -1394,9 +1394,9 @@ namespace GTEngine
 
 
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclareAmbientLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclareAmbientLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "uniform AmbientLightFS AmbientLightFS%d;\n",
 
@@ -1404,9 +1404,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclareDirectionalLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclareDirectionalLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "varying vec4 DirectionalLight%d_VertexPositionLS;\n"
             "uniform DirectionalLightFS DirectionalLightFS%d;\n",
@@ -1416,9 +1416,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclarePointLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclarePointLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "varying vec3 PointLight%d_L;\n"
             "uniform PointLightFS PointLightFS%d;\n",
@@ -1428,9 +1428,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclareSpotLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclareSpotLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "varying vec4 SpotLight%d_VertexPositionLS;\n"
             "uniform SpotLightFS SpotLightFS%d;\n",
@@ -1440,9 +1440,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclareShadowDirectionalLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclareShadowDirectionalLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "varying vec4 ShadowDirectionalLight%d_VertexPositionLS;\n"
             "uniform ShadowDirectionalLightFS ShadowDirectionalLightFS%d;\n"
@@ -1454,9 +1454,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclareShadowPointLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclareShadowPointLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "varying vec3 ShadowPointLight%d_L;\n"
             "varying vec3 ShadowPointLight%d_ShadowCoord;\n"
@@ -1470,9 +1470,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclareShadowSpotLight(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_DeclareShadowSpotLight(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "varying vec4 ShadowSpotLight%d_VertexPositionLS;\n"
             "uniform ShadowSpotLightFS ShadowSpotLightFS%d;\n"
@@ -1486,9 +1486,9 @@ namespace GTEngine
 
 
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulateAmbientLighting(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulateAmbientLighting(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "    AccumulateAmbientLighting(AmbientLightFS%d, lightDiffuse);\n",
 
@@ -1496,9 +1496,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulateDirectionalLighting(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulateDirectionalLighting(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "    AccumulateDirectionalLighting(DirectionalLightFS%d, normal, lightDiffuse, lightSpecular);\n",
 
@@ -1506,9 +1506,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulatePointLighting(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulatePointLighting(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "    AccumulatePointLighting(PointLightFS%d, normal, PointLight%d_L, lightDiffuse, lightSpecular);\n",
 
@@ -1517,9 +1517,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulateSpotLighting(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulateSpotLighting(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "    AccumulateSpotLighting(SpotLightFS%d, normal, lightDiffuse, lightSpecular);\n",
 
@@ -1527,9 +1527,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulateShadowDirectionalLighting(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulateShadowDirectionalLighting(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "    AccumulateShadowDirectionalLighting(ShadowDirectionalLightFS%d, normal, ShadowDirectionalLightFS%d_ShadowMap, ShadowDirectionalLight%d_VertexPositionLS, lightDiffuse, lightSpecular);\n",
 
@@ -1539,9 +1539,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulateShadowPointLighting(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulateShadowPointLighting(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "    AccumulateShadowPointLighting(ShadowPointLightFS%d, normal, ShadowPointLight%d_L, ShadowPointLightFS%d_ShadowMap, ShadowPointLight%d_ShadowCoord, lightDiffuse, lightSpecular);\n",
 
@@ -1552,9 +1552,9 @@ namespace GTEngine
         );
     }
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulateShadowSpotLighting(int lightIndex) const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::FragmentShader_AccumulateShadowSpotLighting(int lightIndex) const
     {
-        return GTCore::String::CreateFormatted
+        return GTLib::String::CreateFormatted
         (
             "    AccumulateShadowSpotLighting(ShadowSpotLightFS%d, normal, ShadowSpotLightFS%d_ShadowMap, ShadowSpotLight%d_VertexPositionLS, lightDiffuse, lightSpecular);\n",
 
@@ -1629,9 +1629,9 @@ namespace GTEngine
 
 
 
-    GTCore::String DefaultSceneRenderer_ShaderBuilder::GetFullscreenPrimitiveVertexShader() const
+    GTLib::String DefaultSceneRenderer_ShaderBuilder::GetFullscreenPrimitiveVertexShader() const
     {
-        return GTCore::String
+        return GTLib::String
         (
             "#version 120\n"
 

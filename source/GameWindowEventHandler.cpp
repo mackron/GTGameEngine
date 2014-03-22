@@ -49,7 +49,7 @@ namespace GTEngine
         this->game.SendEvent(e);
     }
 
-    void GameWindowEventHandler::OnMouseButtonDown(GTCore::MouseButton button, int x, int y)
+    void GameWindowEventHandler::OnMouseButtonDown(GTLib::MouseButton button, int x, int y)
     {
         GameEvent e;
         e.code = EventCodes::OnMouseButtonDown;
@@ -60,7 +60,7 @@ namespace GTEngine
         this->game.SendEvent(e);
     }
 
-    void GameWindowEventHandler::OnMouseButtonUp(GTCore::MouseButton button, int x, int y)
+    void GameWindowEventHandler::OnMouseButtonUp(GTLib::MouseButton button, int x, int y)
     {
         GameEvent e;
         e.code = EventCodes::OnMouseButtonUp;
@@ -71,7 +71,7 @@ namespace GTEngine
         this->game.SendEvent(e);
     }
 
-    void GameWindowEventHandler::OnMouseButtonDoubleClick(GTCore::MouseButton button, int x, int y)
+    void GameWindowEventHandler::OnMouseButtonDoubleClick(GTLib::MouseButton button, int x, int y)
     {
         GameEvent e;
         e.code = EventCodes::OnMouseButtonDoubleClick;
@@ -82,7 +82,7 @@ namespace GTEngine
         this->game.SendEvent(e);
     }
 
-    void GameWindowEventHandler::OnKeyPressed(GTCore::Key key)
+    void GameWindowEventHandler::OnKeyPressed(GTLib::Key key)
     {
         GameEvent e;
         e.code           = EventCodes::OnKeyPressed;
@@ -91,7 +91,7 @@ namespace GTEngine
         this->game.SendEvent(e);
     }
 
-    void GameWindowEventHandler::OnKeyReleased(GTCore::Key key)
+    void GameWindowEventHandler::OnKeyReleased(GTLib::Key key)
     {
         GameEvent e;
         e.code           = EventCodes::OnKeyReleased;
@@ -100,7 +100,7 @@ namespace GTEngine
         this->game.SendEvent(e);
     }
 
-    void GameWindowEventHandler::OnKeyDown(GTCore::Key key, unsigned int repeatCount)
+    void GameWindowEventHandler::OnKeyDown(GTLib::Key key, unsigned int repeatCount)
     {
         GameEvent e;
         e.code        = EventCodes::OnKeyDown;
@@ -112,7 +112,7 @@ namespace GTEngine
         }
     }
 
-    void GameWindowEventHandler::OnKeyUp(GTCore::Key key)
+    void GameWindowEventHandler::OnKeyUp(GTLib::Key key)
     {
         GameEvent e;
         e.code = EventCodes::OnKeyUp;

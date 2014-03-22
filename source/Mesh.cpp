@@ -144,12 +144,12 @@ namespace GTEngine
 
 
 
-    void Mesh::Serialize(GTCore::Serializer &serializer, bool serializeGeometry) const
+    void Mesh::Serialize(GTLib::Serializer &serializer, bool serializeGeometry) const
     {
         // We'll write the material chunk first.
         if (this->material != nullptr && !this->material->GetDefinition().relativePath.IsEmpty())
         {
-            GTCore::BasicSerializer materialSerializer;
+            GTLib::BasicSerializer materialSerializer;
             
             materialSerializer.WriteString(this->material->GetDefinition().relativePath);
             this->material->Serialize(materialSerializer);
@@ -168,7 +168,7 @@ namespace GTEngine
         // Now the geometry.
         if (this->geometry != nullptr && serializeGeometry)
         {
-            GTCore::BasicSerializer geometrySerializer;
+            GTLib::BasicSerializer geometrySerializer;
 
             this->geometry->Serialize(geometrySerializer);
 
@@ -192,7 +192,7 @@ namespace GTEngine
         serializer.Write(header);
     }
 
-    void Mesh::Deserialize(GTCore::Deserializer &deserializer)
+    void Mesh::Deserialize(GTLib::Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
 
@@ -208,7 +208,7 @@ namespace GTEngine
                     {
                     case 1:
                         {
-                            GTCore::String materialPath;
+                            GTLib::String materialPath;
                             deserializer.ReadString(materialPath);
 
                             this->SetMaterial(materialPath.c_str());

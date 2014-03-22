@@ -3,7 +3,7 @@
 #ifndef __PAG1_MeshBuilder_hpp_
 #define __PAG1_MeshBuilder_hpp_
 
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 #include "Rendering/DrawModes.hpp"
 #include "Rendering/VertexFormat.hpp"
 #include "Math.hpp"
@@ -97,10 +97,10 @@ namespace GTEngine
         size_t vertexSizeInFloats;
 
         /// The buffer containing the vertex data.
-        GTCore::Vector<float> vertexBuffer;
+        GTLib::Vector<float> vertexBuffer;
 
         /// The buffer containing the indices.
-        GTCore::Vector<unsigned int> indexBuffer;
+        GTLib::Vector<unsigned int> indexBuffer;
     };
 }
 
@@ -220,7 +220,7 @@ namespace GTEngine
         unsigned int ringSegmentsCount;
 
         /// The list of mesh builders for each ring.
-        GTCore::Vector<MeshBuilderP3> rings;
+        GTLib::Vector<MeshBuilderP3> rings;
     };
 
 

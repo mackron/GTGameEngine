@@ -263,7 +263,7 @@ namespace GTEngine
         /// Selects the given scene nodes.
         ///
         /// @param sceneNodeIDs [in] The IDs of the scene nodes to select.
-        void SelectSceneNodes(const GTCore::Vector<uint64_t> &selectedNodeIDs, unsigned int options);
+        void SelectSceneNodes(const GTLib::Vector<uint64_t> &selectedNodeIDs, unsigned int options);
 
         /// Deselects the given scene node.
         ///
@@ -291,7 +291,7 @@ namespace GTEngine
         SceneNode* GetFirstSelectedSceneNode();
 
         /// Fills a vector with the IDs of the selected nodes.
-        void GetSelectedSceneNodeIDs(GTCore::Vector<uint64_t> &sceneNodeIDsOut);
+        void GetSelectedSceneNodeIDs(GTLib::Vector<uint64_t> &sceneNodeIDsOut);
 
 
 
@@ -308,7 +308,7 @@ namespace GTEngine
         /// Deletes the given scene nodes.
         ///
         /// @param sceneNodeIDs [in] A constant reference to the vector containing the scene nodes to delete.
-        void RemoveSceneNodes(const GTCore::Vector<uint64_t> &sceneNodeIDs);
+        void RemoveSceneNodes(const GTLib::Vector<uint64_t> &sceneNodeIDs);
 
         /// Duplicates the selected scene nodes, deselects them and then selects the new ones.
         void DuplicateSelectedSceneNodes();
@@ -502,16 +502,16 @@ namespace GTEngine
         void OnUpdate(double deltaTimeInSeconds);
 
         /// SubEditor::OnKeyPressed()
-        void OnKeyPressed(GTCore::Key key);
+        void OnKeyPressed(GTLib::Key key);
 
         /// SubEditor::OnKeyReleased()
-        void OnKeyReleased(GTCore::Key key);
+        void OnKeyReleased(GTLib::Key key);
 
         /// SubEditor::OnMouseButtonDown()
-        void OnMouseButtonDown(GTCore::MouseButton button, int x, int y);
+        void OnMouseButtonDown(GTLib::MouseButton button, int x, int y);
 
         /// SubEditor::OnMouseButtonUp()
-        void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
+        void OnMouseButtonUp(GTLib::MouseButton button, int x, int y);
 
         /// SubEditor::OnMainWindowReceiveFocus()
         void OnMainWindowReceiveFocus();
@@ -539,12 +539,12 @@ namespace GTEngine
         ///
         /// @param serializer        [in] A reference to the serializer to write to.
         /// @param serializeMetadata [in] Whether or not metadata such as the camera position should be serialized.
-        void SerializeScene(GTCore::Serializer &serializer, bool serializeMetadata = true) const;
+        void SerializeScene(GTLib::Serializer &serializer, bool serializeMetadata = true) const;
 
         /// Deserializes the scene.
         ///
         /// @param deserializer [in] A reference to the deserializer to read from.
-        void DeserializeScene(GTCore::Deserializer &deserializer);
+        void DeserializeScene(GTLib::Deserializer &deserializer);
 
         /// Helper method for serializing the nodes defined in the given vector.
         ///
@@ -553,7 +553,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This just does a simple for loop over the scene nodes and serializes each one.
-        void SerializeSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs, GTCore::Serializer &serializer);
+        void SerializeSceneNodes(const GTLib::Vector<size_t> &sceneNodeIDs, GTLib::Serializer &serializer);
 
         /// Helper method for deserializing the nodes defined in the given vector, adding them to the scene if necessary.
         ///
@@ -562,7 +562,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     For any nodes that are not in the scene, they will be instantiated and re-added.
-        void DeserializeSceneNodes(const GTCore::Vector<size_t> &sceneNodeIDs, GTCore::Deserializer &deserializer);
+        void DeserializeSceneNodes(const GTLib::Vector<size_t> &sceneNodeIDs, GTLib::Deserializer &deserializer);
 
 
 
@@ -780,13 +780,13 @@ namespace GTEngine
 
 
         /// The list of selected nodes.
-        GTCore::Vector<uint64_t> selectedNodes;
+        GTLib::Vector<uint64_t> selectedNodes;
 
         /// The list of selected nodes before playing. This is used to reselect the nodes when playing is stopped.
-        GTCore::Vector<uint64_t> selectedNodesBeforePlaying;
+        GTLib::Vector<uint64_t> selectedNodesBeforePlaying;
 
         /// The list of selected nodes before doing the physics simulation.
-        GTCore::Vector<uint64_t> selectedNodesBeforePhysicsSimulation;
+        GTLib::Vector<uint64_t> selectedNodesBeforePhysicsSimulation;
 
 
         /// The collision world for doing picking/selecting.
@@ -1007,7 +1007,7 @@ namespace GTEngine
         };
 
         /// The external meshes for each navigation mesh in the scene. This is keyed by the index of the navigation mesh.
-        GTCore::Map<size_t, NavigationMeshRendererMeshes> navigationMeshRendererMeshes;
+        GTLib::Map<size_t, NavigationMeshRendererMeshes> navigationMeshRendererMeshes;
         
         
         /// A counter for keeping track of when scene nodes are in the process of being deserialized. We need this so we

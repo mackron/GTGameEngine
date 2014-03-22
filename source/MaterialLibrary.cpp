@@ -2,10 +2,10 @@
 
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTCore/Dictionary.hpp>
-#include <GTCore/List.hpp>
-#include <GTCore/Vector.hpp>
-#include <GTCore/Path.hpp>
+#include <GTLib/Dictionary.hpp>
+#include <GTLib/List.hpp>
+#include <GTLib/Vector.hpp>
+#include <GTLib/Path.hpp>
 #include <utility>
 
 namespace GTEngine
@@ -41,15 +41,15 @@ namespace GTEngine
 
 
     /// The list of loaded material definitions, indexed by their absolute path.
-    static GTCore::Dictionary<MaterialDefinitionReference> MaterialDefinitions;
+    static GTLib::Dictionary<MaterialDefinitionReference> MaterialDefinitions;
 
     /// The list of loaded materials.
-    static GTCore::List<Material*> LoadedMaterials;
+    static GTLib::List<Material*> LoadedMaterials;
 
 
 
     /// The list of event handlers.
-    static GTCore::Vector<MaterialLibrary::EventHandler*> EventHandlers;
+    static GTLib::Vector<MaterialLibrary::EventHandler*> EventHandlers;
 
     /// Helper function for calling the OnCreateMaterial() event.
     void MaterialLibrary_OnCreateMaterial(Material &material)
@@ -145,13 +145,13 @@ namespace GTEngine
 
     Material* MaterialLibrary::Create(const char* fileName, const char* makeRelativeTo)
     {
-        GTCore::String relativePath(fileName);
+        GTLib::String relativePath(fileName);
 
-        if (GTCore::Path::IsAbsolute(fileName))
+        if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTCore::IO::ToRelativePath(fileName, makeRelativeTo);
+                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
             }
             else
             {
@@ -161,8 +161,8 @@ namespace GTEngine
         }
 
 
-        GTCore::String absolutePath;
-        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        GTLib::String absolutePath;
+        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
         {
             MaterialDefinition* definition = nullptr;
 
@@ -235,7 +235,7 @@ namespace GTEngine
 
 
             // The reference counter needs to be decremented. If this is the last reference to the material we'll delete it.
-            GTCore::String absolutePath(material->GetDefinition().absolutePath);
+            GTLib::String absolutePath(material->GetDefinition().absolutePath);
 
             auto iMaterialDefinition = MaterialDefinitions.Find(absolutePath.c_str());
             if (iMaterialDefinition != nullptr)
@@ -260,8 +260,8 @@ namespace GTEngine
 
     bool MaterialLibrary::Reload(const char* fileName)
     {
-        GTCore::String absolutePath;
-        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        GTLib::String absolutePath;
+        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
         {
             auto iDefinition = MaterialDefinitions.Find(absolutePath.c_str());
             if (iDefinition != nullptr)

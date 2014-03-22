@@ -4,7 +4,7 @@
 #define __GTEngine_ScriptLibrary_hpp_
 
 #include "ScriptDefinition.hpp"
-#include <GTCore/Script.hpp>
+#include <GTLib/Script.hpp>
 
 namespace GTEngine
 {
@@ -92,7 +92,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This script does not contain any high-level script functionality.
-        static GTCore::Script & GetWorkingScript();
+        static GTLib::Script & GetWorkingScript();
     };
 }
 

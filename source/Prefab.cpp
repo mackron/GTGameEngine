@@ -32,7 +32,7 @@ namespace GTEngine
     }
 
 
-    GTCore::BasicSerializer* Prefab::GetSerializerByID(uint64_t id)
+    GTLib::BasicSerializer* Prefab::GetSerializerByID(uint64_t id)
     {
         auto iSerializer = this->serializers.Find(id);
         if (iSerializer != nullptr)
@@ -43,7 +43,7 @@ namespace GTEngine
         return nullptr;
     }
 
-    const GTCore::BasicSerializer* Prefab::GetSerializerByID(uint64_t id) const
+    const GTLib::BasicSerializer* Prefab::GetSerializerByID(uint64_t id) const
     {
         auto iSerializer = this->serializers.Find(id);
         if (iSerializer != nullptr)
@@ -88,7 +88,7 @@ namespace GTEngine
 
     uint64_t Prefab::AddSingleSceneNode(const SceneNode &sceneNode, uint64_t id, uint64_t parentID)
     {
-        auto serializer = new GTCore::BasicSerializer;
+        auto serializer = new GTLib::BasicSerializer;
         sceneNode.Serialize(*serializer, SceneNode::NoID | SceneNode::ForceDeselected);
 
         if (id == 0)
@@ -122,7 +122,7 @@ namespace GTEngine
     }
 
 
-    void Prefab::GetChildIDs(uint64_t parentID, GTCore::Vector<uint64_t> &childIDs) const
+    void Prefab::GetChildIDs(uint64_t parentID, GTLib::Vector<uint64_t> &childIDs) const
     {
         for (size_t i = 0; i < this->hierarchy.count; ++i)
         {
@@ -138,10 +138,10 @@ namespace GTEngine
     ////////////////////////////////////////////
     // Serialization.
 
-    bool Prefab::Serialize(GTCore::Serializer &serializer)
+    bool Prefab::Serialize(GTLib::Serializer &serializer)
     {
         // We'll need to use an intermediary serializer so we can get an accurate size.
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
         
         // Serializers first.
         intermediarySerializer.Write(static_cast<uint32_t>(this->serializers.count));
@@ -192,7 +192,7 @@ namespace GTEngine
         return true;
     }
 
-    bool Prefab::Deserialize(GTCore::Deserializer &deserializer)
+    bool Prefab::Deserialize(GTLib::Deserializer &deserializer)
     {
         // We want to clear first.
         this->Clear();
@@ -222,7 +222,7 @@ namespace GTEngine
                             auto buffer = malloc(serializerSizeInBytes);
                             deserializer.Read(buffer, serializerSizeInBytes);
 
-                            auto serializer = new GTCore::BasicSerializer;
+                            auto serializer = new GTLib::BasicSerializer;
                             serializer->Write(buffer, serializerSizeInBytes);
 
                             free(buffer);
@@ -274,14 +274,14 @@ namespace GTEngine
 
     bool Prefab::WriteToFile()
     {
-        auto file = GTCore::IO::Open(this->absolutePath.c_str(), GTCore::IO::OpenMode::Write);
+        auto file = GTLib::IO::Open(this->absolutePath.c_str(), GTLib::IO::OpenMode::Write);
         if (file != nullptr)
         {
-            GTCore::FileSerializer serializer(file);
+            GTLib::FileSerializer serializer(file);
             this->Serialize(serializer);
 
 
-            GTCore::IO::Close(file);
+            GTLib::IO::Close(file);
             return true;
         }
         else

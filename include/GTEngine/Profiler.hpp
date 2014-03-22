@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Profiler_hpp_
 #define __GTEngine_Profiler_hpp_
 
-#include <GTCore/Timing.hpp>
+#include <GTLib/Timing.hpp>
 
 namespace GTEngine
 {
@@ -112,13 +112,13 @@ namespace GTEngine
 
 
         /// The benchmarker for the whole frame.
-        GTCore::Benchmarker frameBenchmarker;
+        GTLib::Benchmarker frameBenchmarker;
 
         /// The benchmarker for the update thread.
-        GTCore::Benchmarker updateBenchmarker;
+        GTLib::Benchmarker updateBenchmarker;
 
         /// the benchmarker for the rendering thread.
-        GTCore::Benchmarker renderingBenchmarker;
+        GTLib::Benchmarker renderingBenchmarker;
 
 
 

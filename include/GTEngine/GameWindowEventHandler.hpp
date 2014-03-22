@@ -3,13 +3,13 @@
 #ifndef __GTEngine_GameWindowEventHandler_hpp_
 #define __GTEngine_GameWindowEventHandler_hpp_
 
-#include <GTCore/Window.hpp>
+#include <GTLib/Window.hpp>
 
 namespace GTEngine
 {
     class Game;
 
-    class GameWindowEventHandler : public GTCore::WindowEventHandler
+    class GameWindowEventHandler : public GTLib::WindowEventHandler
     {
     public:
 
@@ -31,14 +31,14 @@ namespace GTEngine
         
         void OnMouseMove(int x, int y);
         void OnMouseWheel(int delta, int x, int y);
-        void OnMouseButtonDown(GTCore::MouseButton button, int x, int y);
-        void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
-        void OnMouseButtonDoubleClick(GTCore::MouseButton button, int x, int y);
+        void OnMouseButtonDown(GTLib::MouseButton button, int x, int y);
+        void OnMouseButtonUp(GTLib::MouseButton button, int x, int y);
+        void OnMouseButtonDoubleClick(GTLib::MouseButton button, int x, int y);
 
-        void OnKeyPressed(GTCore::Key key);
-        void OnKeyReleased(GTCore::Key key);
-        void OnKeyDown(GTCore::Key key, unsigned int repeatCount);
-        void OnKeyUp(GTCore::Key key);
+        void OnKeyPressed(GTLib::Key key);
+        void OnKeyReleased(GTLib::Key key);
+        void OnKeyDown(GTLib::Key key, unsigned int repeatCount);
+        void OnKeyUp(GTLib::Key key);
         
         void OnReceiveFocus();
         void OnLoseFocus();

@@ -4,7 +4,7 @@
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/IO.hpp>
-#include <GTCore/Path.hpp>
+#include <GTLib/Path.hpp>
 
 namespace GTEngine
 {
@@ -33,10 +33,10 @@ namespace GTEngine
 
     bool ModelDefinition::LoadFromFile(const char* fileNameIn, const char* relativePathIn, bool &needsSerialize)
     {
-        GTCore::String newAbsolutePath;
-        GTCore::String newRelativePath;
+        GTLib::String newAbsolutePath;
+        GTLib::String newRelativePath;
 
-        if (GTCore::Path::IsAbsolute(fileNameIn))
+        if (GTLib::Path::IsAbsolute(fileNameIn))
         {
             newAbsolutePath = fileNameIn;
 
@@ -54,20 +54,20 @@ namespace GTEngine
         {
             newRelativePath = fileNameIn;
 
-            if (!GTCore::IO::FindAbsolutePath(fileNameIn, newAbsolutePath))
+            if (!GTLib::IO::FindAbsolutePath(fileNameIn, newAbsolutePath))
             {
                 return false;
             }
         }
 
 
-        GTCore::String nativeAbsolutePath;
-        if (GTCore::Path::ExtensionEqual(newAbsolutePath.c_str(), "gtmodel"))
+        GTLib::String nativeAbsolutePath;
+        if (GTLib::Path::ExtensionEqual(newAbsolutePath.c_str(), "gtmodel"))
         {
             nativeAbsolutePath = newAbsolutePath;
 
-            newAbsolutePath = GTCore::IO::RemoveExtension(newAbsolutePath.c_str());
-            newRelativePath = GTCore::IO::RemoveExtension(newRelativePath.c_str());
+            newAbsolutePath = GTLib::IO::RemoveExtension(newAbsolutePath.c_str());
+            newRelativePath = GTLib::IO::RemoveExtension(newRelativePath.c_str());
         }
         else
         {
@@ -79,11 +79,11 @@ namespace GTEngine
 
         // We need file info of both the foreign and native files. If the foreign file is different to the file that would used to generate
         // the existing native file, it will be reloaded. 
-        GTCore::FileInfo foreignFileInfo;
-        GTCore::IO::GetFileInfo(newAbsolutePath.c_str(), foreignFileInfo);
+        GTLib::FileInfo foreignFileInfo;
+        GTLib::IO::GetFileInfo(newAbsolutePath.c_str(), foreignFileInfo);
 
-        GTCore::FileInfo nativeFileInfo;
-        GTCore::IO::GetFileInfo(nativeAbsolutePath.c_str(), nativeFileInfo);
+        GTLib::FileInfo nativeFileInfo;
+        GTLib::IO::GetFileInfo(nativeAbsolutePath.c_str(), nativeFileInfo);
 
         if (!foreignFileInfo.exists && !nativeFileInfo.exists)
         {
@@ -297,7 +297,7 @@ namespace GTEngine
             auto bone = this->bones[iBone];
             assert(bone != nullptr);
             {
-                if (GTCore::Strings::Equal(bone->GetName(), boneName))
+                if (GTLib::Strings::Equal(bone->GetName(), boneName))
                 {
                     return bone;
                 }
@@ -314,7 +314,7 @@ namespace GTEngine
             auto bone = this->bones[iBone];
             assert(bone != nullptr);
             {
-                if (GTCore::Strings::Equal(bone->GetName(), boneName))
+                if (GTLib::Strings::Equal(bone->GetName(), boneName))
                 {
                     return bone;
                 }
@@ -357,7 +357,7 @@ namespace GTEngine
             auto bone = this->bones[iBone];
             assert(bone != nullptr);
             {
-                if (GTCore::Strings::Equal(bone->GetName(), boneName))
+                if (GTLib::Strings::Equal(bone->GetName(), boneName))
                 {
                     indexOut = iBone;
                     return true;
@@ -388,9 +388,9 @@ namespace GTEngine
     ////////////////////////////////////////////////////////
     // Serialization/Deserialization
 
-    void ModelDefinition::Serialize(GTCore::Serializer &serializer) const
+    void ModelDefinition::Serialize(GTLib::Serializer &serializer) const
     {
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
 
 
         /////////////////////////////////////
@@ -669,10 +669,10 @@ namespace GTEngine
         intermediarySerializer.Clear();
         intermediarySerializer.Write(static_cast<uint32_t>(this->convexHulls.count));
 
-        GTCore::Vector<uint32_t> vertexCounts(this->convexHulls.count);
-        GTCore::Vector<uint32_t> indexCounts( this->convexHulls.count);
-        GTCore::Vector<float>    vertices;
-        GTCore::Vector<uint32_t> indices;
+        GTLib::Vector<uint32_t> vertexCounts(this->convexHulls.count);
+        GTLib::Vector<uint32_t> indexCounts( this->convexHulls.count);
+        GTLib::Vector<float>    vertices;
+        GTLib::Vector<uint32_t> indices;
 
         for (size_t iConvexHull = 0; iConvexHull < this->convexHulls.count; ++iConvexHull)
         {
@@ -728,7 +728,7 @@ namespace GTEngine
         serializer.Write(header);
     }
 
-    bool ModelDefinition::Deserialize(GTCore::Deserializer &deserializer)
+    bool ModelDefinition::Deserialize(GTLib::Deserializer &deserializer)
     {
         // Clear everything.
         this->ClearMeshes();
@@ -757,7 +757,7 @@ namespace GTEngine
                         for (uint32_t iBone = 0; iBone < boneCount; ++iBone)
                         {
                             // Name.
-                            GTCore::String name;
+                            GTLib::String name;
                             deserializer.ReadString(name);
 
                             // Local transform.
@@ -832,7 +832,7 @@ namespace GTEngine
 
 
                             // Material
-                            GTCore::String materialName;
+                            GTLib::String materialName;
                             deserializer.ReadString(materialName);
 
                             newMesh.material = MaterialLibrary::Create(materialName.c_str());
@@ -1004,7 +1004,7 @@ namespace GTEngine
                         
                         for (uint32_t iSegment = 0; iSegment < animationSegmentCount; ++iSegment)
                         {
-                            GTCore::String name;
+                            GTLib::String name;
                             uint32_t startKeyFrame;
                             uint32_t endKeyFrame;
 
@@ -1136,24 +1136,24 @@ namespace GTEngine
     ////////////////////////////////////////////////////////
     // Private
 
-    bool ModelDefinition::LoadFromNativeFile(const GTCore::String &absolutePathIn)
+    bool ModelDefinition::LoadFromNativeFile(const GTLib::String &absolutePathIn)
     {
         // When loading from a native file, all we need to do is deserialize.
         bool successful = false;
 
-        auto file = GTCore::IO::Open(absolutePathIn.c_str(), GTCore::IO::OpenMode::Read);
+        auto file = GTLib::IO::Open(absolutePathIn.c_str(), GTLib::IO::OpenMode::Read);
         if (file != nullptr)
         {
-            GTCore::FileDeserializer deserializer(file);
+            GTLib::FileDeserializer deserializer(file);
             successful = this->Deserialize(deserializer);
 
-            GTCore::IO::Close(file);
+            GTLib::IO::Close(file);
         }
 
         return successful;
     }
 
-    bool ModelDefinition::LoadFromForeignFile(const GTCore::String &absolutePathIn)
+    bool ModelDefinition::LoadFromForeignFile(const GTLib::String &absolutePathIn)
     {
         // Currently, all foreign formats are loaded via Assimp.
         return this->LoadFromAssimpFile(absolutePathIn);

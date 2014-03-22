@@ -4,8 +4,8 @@
 #define __GTEngine_VertexFormat_hpp_
 
 #include "VertexAttributes.hpp"
-#include <GTCore/Serializer.hpp>
-#include <GTCore/Deserializer.hpp>
+#include <GTLib/Serializer.hpp>
+#include <GTLib/Deserializer.hpp>
 #include <cstddef>
 
 #define GTENGINE_MAX_VERTEX_ATTRIBS       16
@@ -111,12 +111,12 @@ namespace GTEngine
         /// Serializes the vertex array.
         ///
         /// @param serializer [in] A reference to the serializer to write to.
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const;
 
         /// Deserializes the vertex array.
         ///
         /// @param deserializer [in] A reference to the deserializer to read from.
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
         
 
     private:

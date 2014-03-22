@@ -33,9 +33,9 @@ namespace GTEngine
     }
 
 
-    void ProximityComponent::UpdateContainment(GTCore::Vector<uint64_t> &sceneNodesEntered, GTCore::Vector<uint64_t> &sceneNodesLeft)
+    void ProximityComponent::UpdateContainment(GTLib::Vector<uint64_t> &sceneNodesEntered, GTLib::Vector<uint64_t> &sceneNodesLeft)
     {
-        GTCore::SortedVector<uint64_t> sceneNodesLeaving(this->sceneNodesInsideVolume);
+        GTLib::SortedVector<uint64_t> sceneNodesLeaving(this->sceneNodesInsideVolume);
 
         ProximityComponent::Iterator i(*this);
         while (i)
@@ -74,13 +74,13 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void ProximityComponent::Serialize(GTCore::Serializer &serializer) const
+    void ProximityComponent::Serialize(GTLib::Serializer &serializer) const
     {
         // All we actually want to write is the collision shapes.
         CollisionShapeComponent::Serialize(serializer);
     }
 
-    void ProximityComponent::Deserialize(GTCore::Deserializer &deserializer)
+    void ProximityComponent::Deserialize(GTLib::Deserializer &deserializer)
     {
         auto world = this->ghostObject.GetWorld();
         if (world != nullptr)

@@ -4,7 +4,7 @@
 #define __GTEngine_GameObjectGC_hpp_
 
 #include "GameObject.hpp"
-#include <GTCore/List.hpp>
+#include <GTLib/List.hpp>
 
 namespace GTEngine
 {
@@ -45,7 +45,7 @@ namespace GTEngine
     private:
 
         /// The list of game objects that are marked for deletion.
-        GTCore::List<GameObject*> objects;
+        GTLib::List<GameObject*> objects;
     };
 }
 

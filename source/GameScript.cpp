@@ -59,22 +59,22 @@ namespace GTEngine
     {
         if (!this->HasFileBeenLoaded(fileName))
         {
-            GTCore::String absolutePath;
-            if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+            GTLib::String absolutePath;
+            if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
             {
                 this->loadedFiles.PushBack(absolutePath);
             }
         }
 
-        return GTCore::Script::LoadFile(fileName);
+        return GTLib::Script::LoadFile(fileName);
     }
 
 
 
     bool GameScript::HasFileBeenLoaded(const char* fileName) const
     {
-        GTCore::String absolutePath;
-        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        GTLib::String absolutePath;
+        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
         {
             return this->loadedFiles.Exists(absolutePath);
         }
@@ -92,7 +92,7 @@ namespace GTEngine
     {
     }
 
-    void GameScript::ErrorHandler::OnError(GTCore::Script &, const char* message)
+    void GameScript::ErrorHandler::OnError(GTLib::Script &, const char* message)
     {
         this->script.SetLastError(message);
         PostError("Script Error: %s", message);

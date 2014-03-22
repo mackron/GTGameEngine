@@ -4,13 +4,13 @@
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
-#include <GTCore/Dictionary.hpp>
-#include <GTCore/Path.hpp>
+#include <GTLib/Dictionary.hpp>
+#include <GTLib/Path.hpp>
 
 namespace GTEngine
 {
     /// The list of loaded textures, indexed by file name.
-    static GTCore::Dictionary<Texture2D*> LoadedTextures;
+    static GTLib::Dictionary<Texture2D*> LoadedTextures;
 
     /// The default level of anistropy to apply to all textures.
     static unsigned int DefaultAnisotropy = 1;
@@ -51,13 +51,13 @@ namespace GTEngine
 
     Texture2D* Texture2DLibrary::Acquire(const char* fileName, const char* makeRelativeTo)
     {
-        GTCore::String relativePath(fileName);
+        GTLib::String relativePath(fileName);
 
-        if (GTCore::Path::IsAbsolute(fileName))
+        if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTCore::IO::ToRelativePath(fileName, makeRelativeTo);
+                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
             }
             else
             {
@@ -67,8 +67,8 @@ namespace GTEngine
         }
 
 
-        GTCore::String absFileName;
-        if (GTCore::IO::FindAbsolutePath(fileName, absFileName))
+        GTLib::String absFileName;
+        if (GTLib::IO::FindAbsolutePath(fileName, absFileName))
         {
             auto iTexture = LoadedTextures.Find(absFileName.c_str());
             if (iTexture == nullptr)
@@ -151,8 +151,8 @@ namespace GTEngine
 
     bool Texture2DLibrary::Reload(const char* fileName)
     {
-        GTCore::String absFileName;
-        if (GTCore::IO::FindAbsolutePath(fileName, absFileName))
+        GTLib::String absFileName;
+        if (GTLib::IO::FindAbsolutePath(fileName, absFileName))
         {
             auto iTexture = LoadedTextures.Find(absFileName.c_str());
             if (iTexture != nullptr)

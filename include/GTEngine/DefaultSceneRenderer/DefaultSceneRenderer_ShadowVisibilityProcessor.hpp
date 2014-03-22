@@ -32,7 +32,7 @@ namespace GTEngine
         // Member Variables.
 
         /// The list of visible meshes.
-        GTCore::Vector<DefaultSceneRendererMesh> meshes;
+        GTLib::Vector<DefaultSceneRendererMesh> meshes;
 
 
     private:

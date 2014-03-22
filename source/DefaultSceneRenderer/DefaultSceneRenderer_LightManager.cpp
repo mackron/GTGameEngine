@@ -150,7 +150,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer_LightManager::SubdivideLightGroup(const DefaultSceneRenderer_LightGroup &source, GTCore::Vector<DefaultSceneRenderer_LightGroup> &output, unsigned int options)
+    void DefaultSceneRenderer_LightManager::SubdivideLightGroup(const DefaultSceneRenderer_LightGroup &source, GTLib::Vector<DefaultSceneRenderer_LightGroup> &output, unsigned int options)
     {
         output.Clear();     // TODO: Check that we actually need this clear.
 

@@ -32,8 +32,8 @@ namespace GTEngine
 
     void Editor3DViewportEventHandler::OnSize(GTGUI::Element &element)
     {
-        int newWidth  = GTCore::Max(element.GetInnerWidth(),  1);
-        int newHeight = GTCore::Max(element.GetInnerHeight(), 1);
+        int newWidth  = GTLib::Max(element.GetInnerWidth(),  1);
+        int newHeight = GTLib::Max(element.GetInnerHeight(), 1);
 
         this->viewport.Resize(newWidth, newHeight);
 

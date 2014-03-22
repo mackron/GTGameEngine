@@ -295,8 +295,8 @@ namespace GTEngine
         unsigned int arrowHeadSegments     = 16;
         float        arrowHeadSegmentAngle = glm::radians(360.0f / static_cast<float>(arrowHeadSegments));
 
-        GTCore::Vector<glm::vec3>    arrowHeadVertices;
-        GTCore::Vector<unsigned int> arrowHeadIndices;
+        GTLib::Vector<glm::vec3>    arrowHeadVertices;
+        GTLib::Vector<unsigned int> arrowHeadIndices;
 
         arrowHeadVertices.PushBack(this->localOrientation * glm::vec3(0.0f, 0.0f, -1.0f));                       // First vertex is the point.
         arrowHeadVertices.PushBack(this->localOrientation * glm::vec3(0.0f, 0.0f, -1.0f + arrowHeadLength));     // Second vertex is the center of the base.
@@ -489,7 +489,7 @@ namespace GTEngine
         unsigned int circleSegmentCount = 64;
         float        circleSegmentAngle = glm::radians(360.0f / static_cast<float>(circleSegmentCount));
 
-        GTCore::Vector<glm::vec3> circleVertices;
+        GTLib::Vector<glm::vec3> circleVertices;
         for (unsigned int i = 0; i < circleSegmentCount; ++i)
         {
             glm::vec3 position;
@@ -501,7 +501,7 @@ namespace GTEngine
             circleVertices.PushBack(this->localOrientation * position);
         }
 
-        GTCore::Vector<unsigned int> circleIndices;
+        GTLib::Vector<unsigned int> circleIndices;
         for (unsigned int i = 0; i < circleSegmentCount; ++i)
         {
             circleIndices.PushBack(i);
@@ -560,7 +560,7 @@ namespace GTEngine
 
             // All we do is start from the start and work our way around. If a line segment has both vertices facing away from the camera,
             // we'll ignore it and move on.
-            GTCore::Vector<unsigned int> circleIndices;
+            GTLib::Vector<unsigned int> circleIndices;
             for (unsigned int i = 0; i < vertexCount; ++i)
             {
                 size_t index0 = i;

@@ -27,7 +27,7 @@ namespace GTEngine
 
     void DataFilesWatcher::AddRootDirectory(const char* directory)
     {
-        this->root.InsertChild(GTCore::FileInfo(directory));
+        this->root.InsertChild(GTLib::FileInfo(directory));
     }
 
     void DataFilesWatcher::RemoveRootDirectory(const char* directory)
@@ -149,8 +149,8 @@ namespace GTEngine
         if (this->isActive)
         {
             // We first check ourselves for changes. 'root' will be the old info.
-            GTCore::FileInfo newInfo;
-            GTCore::IO::GetFileInfo(root.info.absolutePath.c_str(), newInfo);
+            GTLib::FileInfo newInfo;
+            GTLib::IO::GetFileInfo(root.info.absolutePath.c_str(), newInfo);
 
             if (newInfo.lastModifiedTime != root.info.lastModifiedTime)
             {
@@ -165,13 +165,13 @@ namespace GTEngine
             // compare that to the old one. We will do something special for the root item where we won't actually check
             // the file system, but instead trick it into thinking it has done so.
 
-            GTCore::List<GTCore::String> currentChildren;
+            GTLib::List<GTLib::String> currentChildren;
 
             if (&this->root != &root)
             {
                 if (newInfo.isDirectory)
                 {
-                    GTCore::IO::FileIterator i((root.info.absolutePath + "/.*").c_str());
+                    GTLib::IO::FileIterator i((root.info.absolutePath + "/.*").c_str());
                     while (i)
                     {
                         currentChildren.Append(i.name);
@@ -190,7 +190,7 @@ namespace GTEngine
 
             // We now have our list of children. We need to cross reference the new list of children against the list
             // currently in memory and post the appropriate events. We'll start with the children that have been removed.
-            GTCore::List<Item*> removedChildren;
+            GTLib::List<Item*> removedChildren;
             for (size_t i = 0; i < root.children.count; ++i)
             {
                 auto  iItem = root.children.buffer[i]->value;
@@ -208,18 +208,18 @@ namespace GTEngine
             }
 
             // Now we find the new files.
-            GTCore::List<Item*> addedChildren;
+            GTLib::List<Item*> addedChildren;
             for (auto iChild = currentChildren.root; iChild != nullptr; iChild = iChild->next)
             {
-                GTCore::FileInfo info;
-                GTCore::IO::GetFileInfo(iChild->value.c_str(), info);
+                GTLib::FileInfo info;
+                GTLib::IO::GetFileInfo(iChild->value.c_str(), info);
 
                 if (root.children.Find(info.absolutePath.c_str()) == nullptr)
                 {
                     auto newItem = new Item(info, &root);
                     addedChildren.Append(newItem);
 
-                    newItem->relativePath = GTCore::IO::ToRelativePath(info.absolutePath.c_str(), newItem->GetRootDirectory().c_str());
+                    newItem->relativePath = GTLib::IO::ToRelativePath(info.absolutePath.c_str(), newItem->GetRootDirectory().c_str());
                     newItem->absolutePath = info.absolutePath;
 
                     Event e;

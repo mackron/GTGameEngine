@@ -18,103 +18,103 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will create the global Game object.
-        bool LoadGameLibrary(GTCore::Script &script, Game &game);
+        bool LoadGameLibrary(GTLib::Script &script, Game &game);
 
 
         namespace GameFFI
         {
             /// Retrieves a reference to the global game object.
-            Game & GetGame(GTCore::Script &script);
+            Game & GetGame(GTLib::Script &script);
 
 
             /// Retrieves the absolute path of the directory containing the game executable.
-            int GetExecutableDirectoryAbsolutePath(GTCore::Script &script);
+            int GetExecutableDirectoryAbsolutePath(GTLib::Script &script);
 
             /// Retrieves the absolute path of the game executable.
-            int GetExecutableAbsolutePath(GTCore::Script &script);
+            int GetExecutableAbsolutePath(GTLib::Script &script);
 
 
             /// Closes the game.
-            int Close(GTCore::Script &script);
+            int Close(GTLib::Script &script);
 
             /// Pauses the game.
-            int Pause(GTCore::Script &script);
+            int Pause(GTLib::Script &script);
 
             /// Resumes the game.
-            int Resume(GTCore::Script &script);
+            int Resume(GTLib::Script &script);
 
             /// Enables fullscreen mode.
-            int EnableFullscreen(GTCore::Script &script);
+            int EnableFullscreen(GTLib::Script &script);
 
             /// Disable fullscreen mode.
-            int DisableFullscreen(GTCore::Script &script);
+            int DisableFullscreen(GTLib::Script &script);
 
 
             /// Opens the editor.
-            int OpenEditor(GTCore::Script &script);
+            int OpenEditor(GTLib::Script &script);
 
             /// Closes the editor.
-            int CloseEditor(GTCore::Script &script);
+            int CloseEditor(GTLib::Script &script);
 
 
             /// Shows the debugging information.
-            int ShowDebug(GTCore::Script &script);
+            int ShowDebug(GTLib::Script &script);
 
             /// Hides the debugging information.
-            int HideDebug(GTCore::Script &script);
+            int HideDebug(GTLib::Script &script);
 
             /// Determines if the given key is down.
             ///
             /// @remarks
             ///     Argument 1: The key code of the key to check.
-            int IsKeyDown(GTCore::Script &script);
+            int IsKeyDown(GTLib::Script &script);
 
             /// Determines if the given mouse button is down.
             ///
             /// @remarks
             ///     Argument 1: the mouse button to check.
-            int IsMouseButtonDown(GTCore::Script &script);
+            int IsMouseButtonDown(GTLib::Script &script);
 
             /// Captures the mouse.
-            int CaptureMouse(GTCore::Script &script);
+            int CaptureMouse(GTLib::Script &script);
 
             /// Releases the mouse.
-            int ReleaseMouse(GTCore::Script &script);
+            int ReleaseMouse(GTLib::Script &script);
 
             /// Determines whether or not the mouse is captured.
-            int IsMouseCaptured(GTCore::Script &script);
+            int IsMouseCaptured(GTLib::Script &script);
 
             /// Retrieves the mouse offset for when it is captured as two floats.
             ///
             /// @remarks
             ///     This returns nil if the mouse is not captured.
-            int GetMouseOffset(GTCore::Script &script);
+            int GetMouseOffset(GTLib::Script &script);
 
             /// Enables mouse smoothing.
-            int EnableMouseSmoothing(GTCore::Script &script);
+            int EnableMouseSmoothing(GTLib::Script &script);
 
             /// Disables mouse smoothing.
-            int DisableMouseSmoothing(GTCore::Script &script);
+            int DisableMouseSmoothing(GTLib::Script &script);
 
             /// Determines whether or not mouse smoothing is enabled.
-            int IsMouseSmoothingEnabled(GTCore::Script &script);
+            int IsMouseSmoothingEnabled(GTLib::Script &script);
 
 
             /// Scans the data files for changes and posts the relevant events.
             ///
             /// @remarks
             ///     This happens immediately and synchronously.
-            int ScanDataFilesForChanges(GTCore::Script &script);
+            int ScanDataFilesForChanges(GTLib::Script &script);
 
 
             /// Retrieves the GUI element of the main game window.
-            int GetGameWindowGUIElement(GTCore::Script &script);
+            int GetGameWindowGUIElement(GTLib::Script &script);
 
             /// Loads the given scene.
             ///
             /// @remarks
             ///     Argument 1: A string containing the path of the scene to load.
-            int LoadScene(GTCore::Script &script);
+            int LoadScene(GTLib::Script &script);
 
 
             /// Packages the game for distribution.
@@ -125,7 +125,7 @@ namespace GTEngine
             ///     Argument 1: The path of the destination directory, relative to the running executable.
             ///     Argument 2: The new name of the executable, not including the path.
             ///     Return:     True if successful.
-            int PackageForDistribution(GTCore::Script &script);
+            int PackageForDistribution(GTLib::Script &script);
 
 
             // TODO: These are now in GTEngine, but are still used in the editor. These references need to be deleted at some point.
@@ -134,16 +134,16 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: The name of the script file to load and execute.
-            int ExecuteFile(GTCore::Script &script);
+            int ExecuteFile(GTLib::Script &script);
 
             /// Executes the given script text.
             ///
             /// @remarks
             ///     Argument 1: The script text to execute.
-            int ExecuteScript(GTCore::Script &script);
+            int ExecuteScript(GTLib::Script &script);
 
             /// Retrieves the last script error.
-            int GetLastScriptError(GTCore::Script &script);
+            int GetLastScriptError(GTLib::Script &script);
 
         }
     }

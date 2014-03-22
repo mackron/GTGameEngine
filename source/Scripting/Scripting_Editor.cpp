@@ -8,7 +8,7 @@ namespace GTEngine
 {
     namespace Scripting
     {
-        bool LoadEditorLibrary(GTCore::Script &script)
+        bool LoadEditorLibrary(GTLib::Script &script)
         {
             script.GetGlobal("GTEngine");
             assert(script.IsTable(-1));
@@ -194,7 +194,7 @@ namespace GTEngine
 
         namespace SubEditorFFI
         {
-            int GetAbsolutePath(GTCore::Script &script)
+            int GetAbsolutePath(GTLib::Script &script)
             {
                 auto subEditor = reinterpret_cast<SubEditor*>(script.ToPointer(1));
                 if (subEditor != nullptr)
@@ -209,7 +209,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetRelativePath(GTCore::Script &script)
+            int GetRelativePath(GTLib::Script &script)
             {
                 auto subEditor = reinterpret_cast<SubEditor*>(script.ToPointer(1));
                 if (subEditor != nullptr)
@@ -225,7 +225,7 @@ namespace GTEngine
             }
 
 
-            int MarkAsModified(GTCore::Script &script)
+            int MarkAsModified(GTLib::Script &script)
             {
                 auto subEditor = reinterpret_cast<SubEditor*>(script.ToPointer(1));
                 if (subEditor != nullptr)
@@ -236,7 +236,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int UnmarkAsModified(GTCore::Script &script)
+            int UnmarkAsModified(GTLib::Script &script)
             {
                 auto subEditor = reinterpret_cast<SubEditor*>(script.ToPointer(1));
                 if (subEditor != nullptr)
@@ -252,7 +252,7 @@ namespace GTEngine
 
         namespace ModelEditorFFI
         {
-            int GetMeshNames(GTCore::Script &script)
+            int GetMeshNames(GTLib::Script &script)
             {
                 script.PushNewTable();
 
@@ -271,14 +271,14 @@ namespace GTEngine
             }
 
 
-            int GetMaterials(GTCore::Script &script)
+            int GetMaterials(GTLib::Script &script)
             {
                 script.PushNewTable();
 
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
                 {
-                    GTCore::Vector<GTCore::String> materials;
+                    GTLib::Vector<GTLib::String> materials;
                     modelEditor->GetMaterials(materials);
 
                     for (size_t i = 0; i < materials.count; ++i)
@@ -290,7 +290,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetMaterialRelativePath(GTCore::Script &script)
+            int GetMaterialRelativePath(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -308,7 +308,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetMaterialUniformValues(GTCore::Script &script)
+            int GetMaterialUniformValues(GTLib::Script &script)
             {
                 script.PushNewTable();
 
@@ -473,7 +473,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetMaterial(GTCore::Script &script)
+            int SetMaterial(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -489,7 +489,7 @@ namespace GTEngine
             }
 
 
-            int SetMaterialUniform_Float(GTCore::Script &script)
+            int SetMaterialUniform_Float(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -513,7 +513,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetMaterialUniform_Float2(GTCore::Script &script)
+            int SetMaterialUniform_Float2(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -537,7 +537,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetMaterialUniform_Float3(GTCore::Script &script)
+            int SetMaterialUniform_Float3(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -561,7 +561,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetMaterialUniform_Float4(GTCore::Script &script)
+            int SetMaterialUniform_Float4(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -585,7 +585,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetMaterialUniform_Texture2D(GTCore::Script &script)
+            int SetMaterialUniform_Texture2D(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -619,7 +619,7 @@ namespace GTEngine
             }
 
 
-            int GetBoneCount(GTCore::Script &script)
+            int GetBoneCount(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -634,7 +634,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetBones(GTCore::Script &script)
+            int GetBones(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -679,7 +679,7 @@ namespace GTEngine
             }
 
             
-            int PlayAnimationSegmentByIndex(GTCore::Script &script)
+            int PlayAnimationSegmentByIndex(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -690,7 +690,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int PlayAnimation(GTCore::Script &script)
+            int PlayAnimation(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -701,7 +701,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int ResumeAnimation(GTCore::Script &script)
+            int ResumeAnimation(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -712,7 +712,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int StopAnimation(GTCore::Script &script)
+            int StopAnimation(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -723,7 +723,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int PauseAnimation(GTCore::Script &script)
+            int PauseAnimation(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -734,7 +734,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsAnimationPlaying(GTCore::Script &script)
+            int IsAnimationPlaying(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -749,7 +749,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int IsAnimationPaused(GTCore::Script &script)
+            int IsAnimationPaused(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -765,7 +765,7 @@ namespace GTEngine
             }
 
 
-            int AddNewAnimationSegment(GTCore::Script &script)
+            int AddNewAnimationSegment(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -780,7 +780,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int RemoveAnimationSegmentByIndex(GTCore::Script &script)
+            int RemoveAnimationSegmentByIndex(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -791,7 +791,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SetAnimationSegmentName(GTCore::Script &script)
+            int SetAnimationSegmentName(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -805,7 +805,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetAnimationSegmentName(GTCore::Script &script)
+            int GetAnimationSegmentName(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -820,7 +820,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetAnimationSegmentFrameIndices(GTCore::Script &script)
+            int SetAnimationSegmentFrameIndices(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -835,7 +835,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetAnimationSegmentFrameIndices(GTCore::Script &script)
+            int GetAnimationSegmentFrameIndices(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -856,7 +856,7 @@ namespace GTEngine
                 return 2;
             }
 
-            int GetAnimationSegments(GTCore::Script &script)
+            int GetAnimationSegments(GTLib::Script &script)
             {
                 script.PushNewTable();
 
@@ -889,7 +889,7 @@ namespace GTEngine
             }
 
 
-            int GetConvexHullBuildSettings(GTCore::Script &script)
+            int GetConvexHullBuildSettings(GTLib::Script &script)
             {
                 ConvexHullBuildSettings settings;
 
@@ -914,7 +914,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int ShowConvexDecomposition(GTCore::Script &script)
+            int ShowConvexDecomposition(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -925,7 +925,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int HideConvexDecomposition(GTCore::Script &script)
+            int HideConvexDecomposition(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -936,7 +936,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int BuildConvexDecomposition(GTCore::Script &script)
+            int BuildConvexDecomposition(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -960,7 +960,7 @@ namespace GTEngine
             }
 
 
-            int GetViewportCameraSceneNodePtr(GTCore::Script &script)
+            int GetViewportCameraSceneNodePtr(GTLib::Script &script)
             {
                 auto modelEditor = reinterpret_cast<ModelEditor*>(script.ToPointer(1));
                 if (modelEditor != nullptr)
@@ -976,7 +976,7 @@ namespace GTEngine
             }
 
 
-            int GetModelAABB(GTCore::Script &script)
+            int GetModelAABB(GTLib::Script &script)
             {
                 glm::vec3 aabbMin;
                 glm::vec3 aabbMax;
@@ -997,7 +997,7 @@ namespace GTEngine
 
         namespace MaterialEditorFFI
         {
-            int GetViewportCameraSceneNodePtr(GTCore::Script &script)
+            int GetViewportCameraSceneNodePtr(GTLib::Script &script)
             {
                 auto materialEditor = reinterpret_cast<MaterialEditor*>(script.ToPointer(1));
                 if (materialEditor != nullptr)
@@ -1016,7 +1016,7 @@ namespace GTEngine
 
         namespace SceneEditorFFI
         {
-            int GetScenePtr(GTCore::Script &script)
+            int GetScenePtr(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1031,7 +1031,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int DeselectAll(GTCore::Script &script)
+            int DeselectAll(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1042,7 +1042,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SelectSceneNode(GTCore::Script &script)
+            int SelectSceneNode(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1063,7 +1063,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int DeselectSceneNode(GTCore::Script &script)
+            int DeselectSceneNode(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1084,7 +1084,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetSelectedSceneNodeCount(GTCore::Script &script)
+            int GetSelectedSceneNodeCount(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1099,7 +1099,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetFirstSelectedSceneNodePtr(GTCore::Script &script)
+            int GetFirstSelectedSceneNodePtr(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1115,12 +1115,12 @@ namespace GTEngine
             }
 
 
-            int GetSelectedSceneNodeIDs(GTCore::Script &script)
+            int GetSelectedSceneNodeIDs(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
                 {
-                    GTCore::Vector<uint64_t> selectedSceneNodeIDs;
+                    GTLib::Vector<uint64_t> selectedSceneNodeIDs;
                     sceneEditor->GetSelectedSceneNodeIDs(selectedSceneNodeIDs);
 
                     script.PushNewTable();
@@ -1139,7 +1139,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int IsSceneNodeSelectedByID(GTCore::Script &script)
+            int IsSceneNodeSelectedByID(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1163,7 +1163,7 @@ namespace GTEngine
             }
 
 
-            int TryGizmoMouseSelect(GTCore::Script &script)
+            int TryGizmoMouseSelect(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1178,7 +1178,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int DoMouseSelection(GTCore::Script &script)
+            int DoMouseSelection(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1190,7 +1190,7 @@ namespace GTEngine
             }
 
 
-            int RemoveSelectedSceneNodes(GTCore::Script &script)
+            int RemoveSelectedSceneNodes(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1201,7 +1201,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int RemoveSceneNode(GTCore::Script &script)
+            int RemoveSceneNode(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
@@ -1215,7 +1215,7 @@ namespace GTEngine
             }
 
 
-            int DuplicateSelectedSceneNodes(GTCore::Script &script)
+            int DuplicateSelectedSceneNodes(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1226,7 +1226,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int DuplicateSceneNode(GTCore::Script &script)
+            int DuplicateSceneNode(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
@@ -1241,7 +1241,7 @@ namespace GTEngine
 
 
 
-            int SwitchGizmoToTranslateMode(GTCore::Script &script)
+            int SwitchGizmoToTranslateMode(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1252,7 +1252,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SwitchGizmoToRotateMode(GTCore::Script &script)
+            int SwitchGizmoToRotateMode(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1263,7 +1263,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SwitchGizmoToScaleMode(GTCore::Script &script)
+            int SwitchGizmoToScaleMode(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1274,7 +1274,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SwitchGizmoToLocalSpace(GTCore::Script &script)
+            int SwitchGizmoToLocalSpace(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1285,7 +1285,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SwitchGizmoToGlobalSpace(GTCore::Script &script)
+            int SwitchGizmoToGlobalSpace(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1296,7 +1296,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int ToggleGizmoSpace(GTCore::Script &script)
+            int ToggleGizmoSpace(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1307,7 +1307,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsGizmoInLocalSpace(GTCore::Script &script)
+            int IsGizmoInLocalSpace(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1322,7 +1322,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int IsGizmoInGlobalSpace(GTCore::Script &script)
+            int IsGizmoInGlobalSpace(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1337,7 +1337,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int UpdateSelectionGizmoTransform(GTCore::Script &script)
+            int UpdateSelectionGizmoTransform(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1348,7 +1348,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SetTranslationSnappingInterval(GTCore::Script &script)
+            int SetTranslationSnappingInterval(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1359,7 +1359,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetTranslationSnappingInterval(GTCore::Script &script)
+            int GetTranslationSnappingInterval(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1375,7 +1375,7 @@ namespace GTEngine
             }
 
 
-            int EnableSnapToGrid(GTCore::Script &script)
+            int EnableSnapToGrid(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1386,7 +1386,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int DisableSnapToGrid(GTCore::Script &script)
+            int DisableSnapToGrid(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1397,7 +1397,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsSnappingToGrid(GTCore::Script &script)
+            int IsSnappingToGrid(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1413,7 +1413,7 @@ namespace GTEngine
             }
 
 
-            int StartPlaying(GTCore::Script &script)
+            int StartPlaying(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1424,7 +1424,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int PausePlaying(GTCore::Script &script)
+            int PausePlaying(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1435,7 +1435,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int StopPlaying(GTCore::Script &script)
+            int StopPlaying(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1446,7 +1446,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsPlaying(GTCore::Script &script)
+            int IsPlaying(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1461,7 +1461,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int IsPaused(GTCore::Script &script)
+            int IsPaused(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1476,7 +1476,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int IsStopped(GTCore::Script &script)
+            int IsStopped(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1492,7 +1492,7 @@ namespace GTEngine
             }
 
 
-            int PauseSceneUpdates(GTCore::Script &script)
+            int PauseSceneUpdates(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1503,7 +1503,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int ResumeSceneUpdates(GTCore::Script &script)
+            int ResumeSceneUpdates(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1515,7 +1515,7 @@ namespace GTEngine
             }
 
 
-            int EnablePhysicsSimulation(GTCore::Script &script)
+            int EnablePhysicsSimulation(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1526,7 +1526,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int DisablePhysicsSimulation(GTCore::Script &script)
+            int DisablePhysicsSimulation(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1537,7 +1537,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsPhysicsSimulationEnabled(GTCore::Script &script)
+            int IsPhysicsSimulationEnabled(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1553,7 +1553,7 @@ namespace GTEngine
             }
 
 
-            int CommitStateStackFrame(GTCore::Script &script)
+            int CommitStateStackFrame(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1564,7 +1564,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int ClearStateStackStagingArea(GTCore::Script &script)
+            int ClearStateStackStagingArea(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1575,7 +1575,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int Undo(GTCore::Script &script)
+            int Undo(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1586,7 +1586,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int Redo(GTCore::Script &script)
+            int Redo(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1598,7 +1598,7 @@ namespace GTEngine
             }
 
 
-            int CreatePrefab(GTCore::Script &script)
+            int CreatePrefab(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1616,7 +1616,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int InstantiatePrefab(GTCore::Script &script)
+            int InstantiatePrefab(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1631,7 +1631,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int LinkSceneNodeToPrefab(GTCore::Script &script)
+            int LinkSceneNodeToPrefab(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1649,7 +1649,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int UnlinkSceneNodeFromPrefab(GTCore::Script &script)
+            int UnlinkSceneNodeFromPrefab(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1665,7 +1665,7 @@ namespace GTEngine
             }
 
 
-            int GetSceneNodePtrByID(GTCore::Script &script)
+            int GetSceneNodePtrByID(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1682,7 +1682,7 @@ namespace GTEngine
             }
 
 
-            int GetSceneNodes(GTCore::Script &script)
+            int GetSceneNodes(GTLib::Script &script)
             {
                 script.PushNewTable();
 
@@ -1701,7 +1701,7 @@ namespace GTEngine
             }
 
 
-            int PositionSceneNodeInFrontOfCamera(GTCore::Script &script)
+            int PositionSceneNodeInFrontOfCamera(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
@@ -1717,7 +1717,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SetSceneNodeTransformToCamera(GTCore::Script &script)
+            int SetSceneNodeTransformToCamera(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
@@ -1737,7 +1737,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SetSceneNodePositionToCamera(GTCore::Script &script)
+            int SetSceneNodePositionToCamera(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
@@ -1750,7 +1750,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SetSceneNodeOrientationToCamera(GTCore::Script &script)
+            int SetSceneNodeOrientationToCamera(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
@@ -1763,7 +1763,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SetSceneNodeScaleToCamera(GTCore::Script &script)
+            int SetSceneNodeScaleToCamera(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
@@ -1777,7 +1777,7 @@ namespace GTEngine
             }
 
 
-            int ShowGrid(GTCore::Script &script)
+            int ShowGrid(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1788,7 +1788,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int HideGrid(GTCore::Script &script)
+            int HideGrid(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1799,7 +1799,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsShowingGrid(GTCore::Script &script)
+            int IsShowingGrid(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1815,7 +1815,7 @@ namespace GTEngine
             }
 
 
-            int ShowAxisArrows(GTCore::Script &script)
+            int ShowAxisArrows(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1826,7 +1826,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int HideAxisArrows(GTCore::Script &script)
+            int HideAxisArrows(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1837,7 +1837,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsShowingAxisArrows(GTCore::Script &script)
+            int IsShowingAxisArrows(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1853,7 +1853,7 @@ namespace GTEngine
             }
 
 
-            int GetViewportCameraSceneNodePtr(GTCore::Script &script)
+            int GetViewportCameraSceneNodePtr(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1869,7 +1869,7 @@ namespace GTEngine
             }
 
 
-            int SetSceneName(GTCore::Script &script)
+            int SetSceneName(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1880,7 +1880,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetSceneName(GTCore::Script &script)
+            int GetSceneName(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1896,7 +1896,7 @@ namespace GTEngine
             }
 
 
-            int EnableSceneBackgroundClearing(GTCore::Script &script)
+            int EnableSceneBackgroundClearing(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1907,7 +1907,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int DisableSceneBackgroundClearing(GTCore::Script &script)
+            int DisableSceneBackgroundClearing(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1918,7 +1918,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsSceneBackgroundClearingEnabled(GTCore::Script &script)
+            int IsSceneBackgroundClearingEnabled(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1933,7 +1933,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetSceneBackgroundClearColour(GTCore::Script &script)
+            int GetSceneBackgroundClearColour(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1949,7 +1949,7 @@ namespace GTEngine
             }
 
 
-            int EnableSceneHDR(GTCore::Script &script)
+            int EnableSceneHDR(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1960,7 +1960,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int DisableSceneHDR(GTCore::Script &script)
+            int DisableSceneHDR(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1971,7 +1971,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsSceneHDREnabled(GTCore::Script &script)
+            int IsSceneHDREnabled(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1987,7 +1987,7 @@ namespace GTEngine
             }
 
 
-            int EnableSceneBloom(GTCore::Script &script)
+            int EnableSceneBloom(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -1998,7 +1998,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int DisableSceneBloom(GTCore::Script &script)
+            int DisableSceneBloom(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -2009,7 +2009,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsSceneBloomEnabled(GTCore::Script &script)
+            int IsSceneBloomEnabled(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -2025,7 +2025,7 @@ namespace GTEngine
             }
 
 
-            int ShowNavigationMesh(GTCore::Script &script)
+            int ShowNavigationMesh(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -2036,7 +2036,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int HideNavigationMesh(GTCore::Script &script)
+            int HideNavigationMesh(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
                 if (sceneEditor != nullptr)
@@ -2051,7 +2051,7 @@ namespace GTEngine
 
         namespace ParticleEditorFFI
         {
-            int GetParticleSystemDefinitionPtr(GTCore::Script &script)
+            int GetParticleSystemDefinitionPtr(GTLib::Script &script)
             {
                 auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
                 if (particleEditor != nullptr)
@@ -2066,7 +2066,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int RefreshViewport(GTCore::Script &script)
+            int RefreshViewport(GTLib::Script &script)
             {
                 auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
                 if (particleEditor != nullptr)
@@ -2078,7 +2078,7 @@ namespace GTEngine
             }
 
 
-            int SetOrientation(GTCore::Script &script)
+            int SetOrientation(GTLib::Script &script)
             {
                 auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
                 if (particleEditor != nullptr)
@@ -2090,7 +2090,7 @@ namespace GTEngine
             }
 
 
-            int ShowGrid(GTCore::Script &script)
+            int ShowGrid(GTLib::Script &script)
             {
                 auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
                 if (particleEditor != nullptr)
@@ -2101,7 +2101,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int HideGrid(GTCore::Script &script)
+            int HideGrid(GTLib::Script &script)
             {
                 auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
                 if (particleEditor != nullptr)
@@ -2112,7 +2112,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsShowingGrid(GTCore::Script &script)
+            int IsShowingGrid(GTLib::Script &script)
             {
                 auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
                 if (particleEditor != nullptr)
@@ -2128,7 +2128,7 @@ namespace GTEngine
             }
 
 
-            int ShowAxisArrows(GTCore::Script &script)
+            int ShowAxisArrows(GTLib::Script &script)
             {
                 auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
                 if (particleEditor != nullptr)
@@ -2139,7 +2139,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int HideAxisArrows(GTCore::Script &script)
+            int HideAxisArrows(GTLib::Script &script)
             {
                 auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
                 if (particleEditor != nullptr)
@@ -2150,7 +2150,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsShowingAxisArrows(GTCore::Script &script)
+            int IsShowingAxisArrows(GTLib::Script &script)
             {
                 auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
                 if (particleEditor != nullptr)
@@ -2166,7 +2166,7 @@ namespace GTEngine
             }
 
 
-            int GetViewportCameraSceneNodePtr(GTCore::Script &script)
+            int GetViewportCameraSceneNodePtr(GTLib::Script &script)
             {
                 auto particleEditor = reinterpret_cast<ParticleEditor*>(script.ToPointer(1));
                 if (particleEditor != nullptr)

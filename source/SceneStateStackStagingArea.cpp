@@ -77,7 +77,7 @@ namespace GTEngine
                 auto sceneNode = this->GetScene().GetSceneNodeByID(sceneNodeID);
                 assert(sceneNode != nullptr);
                 {
-                    auto sceneNodeSerializer = new GTCore::BasicSerializer;
+                    auto sceneNodeSerializer = new GTLib::BasicSerializer;
                     sceneNode->Serialize(*sceneNodeSerializer);
 
                     this->deletes.Add(sceneNodeID, sceneNodeSerializer);
@@ -164,10 +164,10 @@ namespace GTEngine
     /////////////////////////////////////////////////
     // Serialization/Deserialization
 
-    void SceneStateStackStagingArea::Serialize(GTCore::Serializer &serializer) const
+    void SceneStateStackStagingArea::Serialize(GTLib::Serializer &serializer) const
     {
         // We need to use an intermediary serializer to get an accurate size.
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
 
 
         // Inserts.
@@ -224,7 +224,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), intermediarySerializer.GetBufferSizeInBytes());
     }
 
-    void SceneStateStackStagingArea::Deserialize(GTCore::Deserializer &deserializer)
+    void SceneStateStackStagingArea::Deserialize(GTLib::Deserializer &deserializer)
     {
         // We should clear the staging area just in case.
         this->Clear();
@@ -262,7 +262,7 @@ namespace GTEngine
                             deserializer.Read(sceneNodeID);
 
                             // The next chunk of data is the serialized data of the scene node. What we do here is ready the data into a temp buffer, and then
-                            // write that to a new GTCore::BasicSerializer object.
+                            // write that to a new GTLib::BasicSerializer object.
                             uint32_t serializerSizeInBytes;
                             deserializer.Read(serializerSizeInBytes);
 
@@ -270,7 +270,7 @@ namespace GTEngine
                             deserializer.Read(serializerData, serializerSizeInBytes);
 
 
-                            auto sceneNodeSerializer = new GTCore::BasicSerializer;
+                            auto sceneNodeSerializer = new GTLib::BasicSerializer;
                             sceneNodeSerializer->Write(serializerData, serializerSizeInBytes);
 
 

@@ -77,7 +77,7 @@ namespace GTEngine
             SceneNode* sceneNode;
 
             /// The name of the scene node before deserialization.
-            GTCore::String name;
+            GTLib::String name;
 
             /// The world position of the scene node before deserialization.
             glm::vec3 worldPosition;

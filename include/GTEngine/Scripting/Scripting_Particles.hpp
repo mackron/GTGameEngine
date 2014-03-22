@@ -14,7 +14,7 @@ namespace GTEngine
         /// @param script [in] A reference to the script to load the library into.
         ///
         /// @return True if the library is loaded successfully; false otherwise.
-        bool LoadParticlesLibrary(GTCore::Script &script);
+        bool LoadParticlesLibrary(GTLib::Script &script);
 
 
         namespace ParticleEmitterFFI
@@ -23,14 +23,14 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int GetName(GTCore::Script &script);
+            int GetName(GTLib::Script &script);
 
             /// Sets the name of the given particle emitter.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The new name.
-            int SetName(GTCore::Script &script);
+            int SetName(GTLib::Script &script);
 
 
 
@@ -38,19 +38,19 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int EnableBurstMode(GTCore::Script &script);
+            int EnableBurstMode(GTLib::Script &script);
 
             /// Disables burst mode.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int DisableBurstMode(GTCore::Script &script);
+            int DisableBurstMode(GTLib::Script &script);
 
             /// Determines whether or not burst mode is enabled.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int IsBurstModeEnabled(GTCore::Script &script);
+            int IsBurstModeEnabled(GTLib::Script &script);
 
 
             /// Sets the duration in seconds.
@@ -58,13 +58,13 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The duration in seconds.
-            int SetDurationInSeconds(GTCore::Script &script);
+            int SetDurationInSeconds(GTLib::Script &script);
 
             /// Retrieves the duration in seconds.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int GetDurationInSeconds(GTCore::Script &script);
+            int GetDurationInSeconds(GTLib::Script &script);
 
 
             /// Sets the delay in seconds.
@@ -72,13 +72,13 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The delay in seconds.
-            int SetDelayInSeconds(GTCore::Script &script);
+            int SetDelayInSeconds(GTLib::Script &script);
 
             /// Retrieves the delay in seconds.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int GetDelayInSeconds(GTCore::Script &script);
+            int GetDelayInSeconds(GTLib::Script &script);
 
 
             /// Sets the emission rate per second.
@@ -86,13 +86,13 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The emission rate per second.
-            int SetEmissionRatePerSecond(GTCore::Script &script);
+            int SetEmissionRatePerSecond(GTLib::Script &script);
 
             /// Retrieves the emission rate per second.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int GetEmissionRatePerSecond(GTCore::Script &script);
+            int GetEmissionRatePerSecond(GTLib::Script &script);
 
 
             /// Sets the start speed of the particles of the emitter.
@@ -101,13 +101,13 @@ namespace GTEngine
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The new minimum start speed.
             ///     Argument 3: The new maximum start speed.
-            int SetStartSpeed(GTCore::Script &script);
+            int SetStartSpeed(GTLib::Script &script);
 
             /// Retrieves the start speed range of the particles of the emitter.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int GetStartSpeed(GTCore::Script &script);
+            int GetStartSpeed(GTLib::Script &script);
 
 
             /// Sets the start rotation of the particles of the given emitter.
@@ -116,13 +116,13 @@ namespace GTEngine
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The new minimum start rotation.
             ///     Argument 3: The new maximum start rotation.
-            int SetStartRotation(GTCore::Script &script);
+            int SetStartRotation(GTLib::Script &script);
 
             /// Retrieves the start rotation of the particles of the given emitter.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int GetStartRotation(GTCore::Script &script);
+            int GetStartRotation(GTLib::Script &script);
 
             /// Sets the start scale of the particles of the given emitter.
             ///
@@ -130,13 +130,13 @@ namespace GTEngine
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The new minimum start scale.
             ///     Argument 3: The new maximum start scale.
-            int SetStartScale(GTCore::Script &script);
+            int SetStartScale(GTLib::Script &script);
 
             /// Retrieves the start scale of the particles of the given emitter.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int GetStartScale(GTCore::Script &script);
+            int GetStartScale(GTLib::Script &script);
 
 
             /// Sets the lifetime of the particles of the emitter.
@@ -145,13 +145,13 @@ namespace GTEngine
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The new minimum lifetime.
             ///     Argument 3: The new maximum lifetime.
-            int SetLifetime(GTCore::Script &script);
+            int SetLifetime(GTLib::Script &script);
 
             /// Retrieves the lifetime of the particles of the emitter.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int GetLifetime(GTCore::Script &script);
+            int GetLifetime(GTLib::Script &script);
 
 
             /// Sets the gravity factor.
@@ -159,26 +159,26 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The new gravity factor.
-            int SetGravityFactor(GTCore::Script &script);
+            int SetGravityFactor(GTLib::Script &script);
 
             /// Retrieves the gravity factor.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int GetGravityFactor(GTCore::Script &script);
+            int GetGravityFactor(GTLib::Script &script);
 
 
             /// Retrieves the emission shape type.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int GetEmissionShapeType(GTCore::Script &script);
+            int GetEmissionShapeType(GTLib::Script &script);
 
             /// Sets the emission shape type.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int SetEmissionShapeType(GTCore::Script &script);
+            int SetEmissionShapeType(GTLib::Script &script);
 
 
             /// Sets the emission shape to a cone.
@@ -187,14 +187,14 @@ namespace GTEngine
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The radius of the cone shape.
             ///     Argument 3: The angle of the cone shape.
-            int SetConeEmissionShape(GTCore::Script &script);
+            int SetConeEmissionShape(GTLib::Script &script);
 
             /// Sets the emission shape to a sphere.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The radius of the sphere.
-            int SetSphereEmissionShape(GTCore::Script &script);
+            int SetSphereEmissionShape(GTLib::Script &script);
 
             /// Sets the emission shape to a box.
             ///
@@ -203,7 +203,7 @@ namespace GTEngine
             ///     Argument 2: The x dimensions of the box.
             ///     Argument 3: The y dimensions of the box.
             ///     Argument 4: The z dimensions of the box.
-            int SetBoxEmissionShape(GTCore::Script &script);
+            int SetBoxEmissionShape(GTLib::Script &script);
 
             /// Retrieves the properties of the current emission shape.
             ///
@@ -217,7 +217,7 @@ namespace GTEngine
             ///         Cone Shape: radius, angle
             ///         Sphere Shape: radius
             ///         Box Shape: x, y, z extents.
-            int GetEmissionShapeProperties(GTCore::Script &script);
+            int GetEmissionShapeProperties(GTLib::Script &script);
 
 
             /// Sets the material of the billboard shape.
@@ -225,13 +225,13 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The relative path of the material.
-            int SetBillboardMaterial(GTCore::Script &script);
+            int SetBillboardMaterial(GTLib::Script &script);
 
             /// Retrieves the relative path of the billboard material.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int GetBillboardMaterialRelativePath(GTCore::Script &script);
+            int GetBillboardMaterialRelativePath(GTLib::Script &script);
 
             
             /// Sets the texture tiling counts.
@@ -240,13 +240,13 @@ namespace GTEngine
             ///     Argument 1: A pointer to the particle system.
             ///     Argument 2: The x tile count.
             ///     Argument 3: The y tile count.
-            int SetTextureTiling(GTCore::Script &script);
+            int SetTextureTiling(GTLib::Script &script);
 
             /// Retrieves the texture tiling counts, as two integers.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle system.
-            int GetTextureTiling(GTCore::Script &script);
+            int GetTextureTiling(GTLib::Script &script);
 
 
 
@@ -254,7 +254,7 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
-            int GetFunctionCount(GTCore::Script &script);
+            int GetFunctionCount(GTLib::Script &script);
 
             /// Retrieves the properties of the function at the given index.
             ///
@@ -266,21 +266,21 @@ namespace GTEngine
             ///     so it is up to the script to handle the types manually. The type will be specified in the 'type' field in the returned table.
             ///
             ///     Typically this function should only ever be used by editting tool.
-            int GetFunctionByIndex(GTCore::Script &script);
+            int GetFunctionByIndex(GTLib::Script &script);
 
             /// Removes a function by it's index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The index of the function to remove.
-            int RemoveFunctionByIndex(GTCore::Script &script);
+            int RemoveFunctionByIndex(GTLib::Script &script);
 
             /// Adds a new function.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle emitter.
             ///     Argument 2: The type of function to add.
-            int AddFunction(GTCore::Script &script);
+            int AddFunction(GTLib::Script &script);
 
             /// Sets the range of the function at the given index.
             ///
@@ -289,7 +289,7 @@ namespace GTEngine
             ///     Argument 2: The index of the function whose range is being set.
             ///     Argument 3: The min value in the range.
             ///     Argument 4: The max value in the range.
-            int SetFunctionRangeByIndex(GTCore::Script &script);
+            int SetFunctionRangeByIndex(GTLib::Script &script);
         }
 
         namespace ParticleSystemFFI
@@ -302,20 +302,20 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle system definition.
-            int GetEmitterCount(GTCore::Script &script);
+            int GetEmitterCount(GTLib::Script &script);
 
             /// Retrieves a pointer to the emitter at the given index.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle system definition.
             ///     Argument 2: The index of the emitter to retrieve.
-            int GetEmitterPtrByIndex(GTCore::Script &script);
+            int GetEmitterPtrByIndex(GTLib::Script &script);
 
             /// Appends a new emitter, returning a pointer to it.
             ///
             /// @remarks
             ///     Argument 1: A pointer to the particle system definition.
-            int AppendNewEmitter(GTCore::Script &script);
+            int AppendNewEmitter(GTLib::Script &script);
 
             /// Removes an emitter by it's index.
             ///
@@ -324,7 +324,7 @@ namespace GTEngine
             ///
             ///     Argument 1: A pointer to the particle system definition.
             ///     Argument 2: The index of the emitter to delete.
-            int DeleteEmitterByIndex(GTCore::Script &script);
+            int DeleteEmitterByIndex(GTLib::Script &script);
         }
     }
 }

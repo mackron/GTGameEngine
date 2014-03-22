@@ -38,7 +38,7 @@ namespace GTEngine
 
 
         // We'll load the material here. What we want to do is pass an absolute path, which will in turn require us to specify the base part of the path that would be used to make it relative.
-        GTCore::String basePath = GTEngine::IO::GetBasePath(absolutePath, relativePath);
+        GTLib::String basePath = GTEngine::IO::GetBasePath(absolutePath, relativePath);
         this->material = MaterialLibrary::Create(absolutePath, basePath.c_str());
 
         // Now we apply the material to the model.
@@ -60,7 +60,7 @@ namespace GTEngine
         assert(this->mainElement != nullptr);
         {
             // The main element is the ModelEditor element. We need to pass 'this' as the '_internalPtr' argument.
-            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("MaterialEditor");
@@ -108,7 +108,7 @@ namespace GTEngine
                             script.Call(1, 1);
                             assert(script.IsString(-1));
                             {
-                                this->scriptTextBoxElement = gui.GetElementByID(script.GetString(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextArea:GetID();", script.ToString(-1)).c_str()));
+                                this->scriptTextBoxElement = gui.GetElementByID(script.GetString(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextArea:GetID();", script.ToString(-1)).c_str()));
                                 this->scriptTextBoxElement->SetText(this->material->GetDefinition().GetXMLString());
 
                                 // We want to attach this after setting the initial text so that is isn't marked as modified.
@@ -146,7 +146,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("ResetCamera");
@@ -198,11 +198,11 @@ namespace GTEngine
             auto xmlString = this->scriptTextBoxElement->GetText();
             if (xmlString != nullptr)
             {
-                wasSaved = GTCore::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), xmlString);
+                wasSaved = GTLib::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), xmlString);
             }
             else
             {
-                wasSaved = GTCore::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), "");
+                wasSaved = GTLib::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), "");
             }
 
             if (wasSaved)
@@ -230,7 +230,7 @@ namespace GTEngine
 
     void MaterialEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
-        if (GTCore::Strings::Equal(item.absolutePath.c_str(), this->GetAbsolutePath()))
+        if (GTLib::Strings::Equal(item.absolutePath.c_str(), this->GetAbsolutePath()))
         {
             if (!this->isSaving)
             {

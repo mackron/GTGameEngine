@@ -1,11 +1,11 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/ApplicationConfig.hpp>
-#include <GTCore/Script.hpp>
-#include <GTCore/Errors.hpp>
-#include <GTCore/String.hpp>
-#include <GTCore/Path.hpp>
-#include <GTCore/stdlib.hpp>
+#include <GTLib/Script.hpp>
+#include <GTLib/Errors.hpp>
+#include <GTLib/String.hpp>
+#include <GTLib/Path.hpp>
+#include <GTLib/stdlib.hpp>
 
 #include <cstring>
 
@@ -16,17 +16,17 @@ namespace GTEngine
 
 
     /// The script for the config file. If this is null, we know the configuration is not yet loaded.
-    static GTCore::Script* ConfigScript = nullptr;
+    static GTLib::Script* ConfigScript = nullptr;
 
     /// The list of data directories.
-    static GTCore::Vector<GTCore::String> DataDirectories;
+    static GTLib::Vector<GTLib::String> DataDirectories;
 
 
     bool ApplicationConfig::Open(const char* fileName)
     {
         if (!ConfigScript)
         {
-            ConfigScript = new GTCore::Script;
+            ConfigScript = new GTLib::Script;
             ConfigScript->LoadAndExecute
             (
                 "Directories = \n"
@@ -55,12 +55,12 @@ namespace GTEngine
         ConfigScript = nullptr;
     }
 
-    const GTCore::Vector<GTCore::String> & ApplicationConfig::GetDataDirectories()
+    const GTLib::Vector<GTLib::String> & ApplicationConfig::GetDataDirectories()
     {
         return DataDirectories;
     }
 
-    void ApplicationConfig::GetDataDirectories(GTCore::Vector<const char*> &directories)
+    void ApplicationConfig::GetDataDirectories(GTLib::Vector<const char*> &directories)
     {
         for (size_t i = 0; i < DataDirectories.count; ++i)
         {
@@ -79,7 +79,7 @@ namespace GTEngine
                 ConfigScript->GetTableValue(-2);
                 if (ConfigScript->IsString(-1))
                 {
-                    GTCore::Path absPath(ConfigScript->ToString(-1));
+                    GTLib::Path absPath(ConfigScript->ToString(-1));
                     absPath.MakeAbsolute();
 
                     DataDirectories.PushBack(absPath.c_str());
@@ -91,7 +91,7 @@ namespace GTEngine
                     {
                         if (ConfigScript->IsString(-1))
                         {
-                            GTCore::Path absPath(ConfigScript->ToString(-1));
+                            GTLib::Path absPath(ConfigScript->ToString(-1));
                             absPath.MakeAbsolute();
 
                             DataDirectories.PushBack(absPath.c_str());

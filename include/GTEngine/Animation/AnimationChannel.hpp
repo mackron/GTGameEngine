@@ -5,7 +5,7 @@
 
 #include "AnimationKeyFrame.hpp"
 #include "AnimationKey.hpp"
-#include <GTCore/Map.hpp>
+#include <GTLib/Map.hpp>
 
 namespace GTEngine
 {
@@ -39,13 +39,13 @@ namespace GTEngine
 
         
         /// Retrieves a constant reference to the internal key map.
-        const GTCore::Map<size_t, AnimationKey*> & GetKeys() const { return this->keys; }
+        const GTLib::Map<size_t, AnimationKey*> & GetKeys() const { return this->keys; }
 
 
     private:
 
         /// The map of keys, each of which are linked to a key frame by the key frame's index.
-        GTCore::Map<size_t, AnimationKey*> keys;
+        GTLib::Map<size_t, AnimationKey*> keys;
     };
 }
 

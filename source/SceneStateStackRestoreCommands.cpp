@@ -16,7 +16,7 @@ namespace GTEngine
     }
 
 
-    void SceneStateStackRestoreCommands::AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer)
+    void SceneStateStackRestoreCommands::AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTLib::BasicSerializer* sceneNodeSerializer)
     {
         // If a delete command with the scene node is already staged, all we want to do is remove it from the deletes and just
         // ignore everything.
@@ -38,7 +38,7 @@ namespace GTEngine
         }
     }
 
-    void SceneStateStackRestoreCommands::AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer)
+    void SceneStateStackRestoreCommands::AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTLib::BasicSerializer* sceneNodeSerializer)
     {
         (void)parentSceneNodeID;
 
@@ -64,7 +64,7 @@ namespace GTEngine
         this->RemoveFromHierarchy(sceneNodeID);
     }
 
-    void SceneStateStackRestoreCommands::AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer)
+    void SceneStateStackRestoreCommands::AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTLib::BasicSerializer* sceneNodeSerializer)
     {
         // We ignore update commands if an insert or delete command is already present.
         if (!this->inserts.Exists(sceneNodeID) &&
@@ -170,7 +170,7 @@ namespace GTEngine
             auto serializer = this->inserts.buffer[i]->value;
             assert(serializer != nullptr);
             {
-                GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
+                GTLib::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
                 scene.CreateNewSceneNode(deserializer);
             }
         }
@@ -195,7 +195,7 @@ namespace GTEngine
                 auto sceneNode = scene.GetSceneNodeByID(sceneNodeID);
                 assert(sceneNode != nullptr);
                 {
-                    GTCore::BasicDeserializer deserializer(sceneNodeSerializer->GetBuffer(), sceneNodeSerializer->GetBufferSizeInBytes());
+                    GTLib::BasicDeserializer deserializer(sceneNodeSerializer->GetBuffer(), sceneNodeSerializer->GetBufferSizeInBytes());
                     sceneNode->Deserialize(deserializer);
                 }
             }

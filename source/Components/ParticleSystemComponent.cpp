@@ -157,9 +157,9 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void ParticleSystemComponent::Serialize(GTCore::Serializer &serializer) const
+    void ParticleSystemComponent::Serialize(GTLib::Serializer &serializer) const
     {
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
 
         if (this->particleSystem != nullptr)
         {
@@ -184,14 +184,14 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void ParticleSystemComponent::Deserialize(GTCore::Deserializer &deserializer)
+    void ParticleSystemComponent::Deserialize(GTLib::Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);
 
         if (header.id == Serialization::ChunkID_ParticleSystemComponent_Main)
         {
-            GTCore::String relativeFilePath;
+            GTLib::String relativeFilePath;
             deserializer.ReadString(relativeFilePath);
 
             this->SetParticleSystem(relativeFilePath.c_str());

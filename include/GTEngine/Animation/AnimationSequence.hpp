@@ -3,8 +3,8 @@
 #ifndef __GTEngine_AnimationSequence_hpp_
 #define __GTEngine_AnimationSequence_hpp_
 
-#include <GTCore/String.hpp>
-#include <GTCore/Vector.hpp>
+#include <GTLib/String.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GTEngine
 {
@@ -19,7 +19,7 @@ namespace GTEngine
         }
 
         /// The name of the segment to play. Can be an empty string, in which case startKeyFrame and endKeyFrame will be used instead.
-        GTCore::String segmentName;
+        GTLib::String segmentName;
 
         /// The index of the key frame to start at.
         size_t startKeyFrame;
@@ -83,7 +83,7 @@ namespace GTEngine
 
 
         /// Returns a constant reference to the internal list of frames.
-        const GTCore::Vector<AnimationSequenceFrame> & GetFrames() const { return this->frames; }
+        const GTLib::Vector<AnimationSequenceFrame> & GetFrames() const { return this->frames; }
 
         /// Retrieves the number of frames.
         size_t GetFrameCount() const { return this->frames.count; }
@@ -98,10 +98,10 @@ namespace GTEngine
     private:
 
         /// The name of the animation sequence.
-        GTCore::String name;
+        GTLib::String name;
 
         /// The list of sequence frames.
-        GTCore::Vector<AnimationSequenceFrame> frames;
+        GTLib::Vector<AnimationSequenceFrame> frames;
     };
 }
 

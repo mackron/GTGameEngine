@@ -143,10 +143,10 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void VertexArray::Serialize(GTCore::Serializer &serializer) const
+    void VertexArray::Serialize(GTLib::Serializer &serializer) const
     {
         // The info chunk is always first.
-        GTCore::BasicSerializer infoSerializer;
+        GTLib::BasicSerializer infoSerializer;
         infoSerializer.Write(static_cast<uint32_t>(this->usage));
         this->format.Serialize(infoSerializer);
 
@@ -190,7 +190,7 @@ namespace GTEngine
         }
     }
 
-    void VertexArray::Deserialize(GTCore::Deserializer &deserializer)
+    void VertexArray::Deserialize(GTLib::Deserializer &deserializer)
     {
         assert(this->verticesMapped == false);
         assert(this->indicesMapped  == false);

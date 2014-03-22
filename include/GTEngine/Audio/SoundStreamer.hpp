@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Audio_SoundStreamer_hpp_
 #define __GTEngine_Audio_SoundStreamer_hpp_
 
-#include <GTCore/String.hpp>
+#include <GTLib/String.hpp>
 #include "SoundFormats.hpp"
 
 namespace GTEngine
@@ -106,7 +106,7 @@ namespace GTEngine
     protected:
 
         /// The path of the file being streamed.
-        GTCore::String absolutePath;
+        GTLib::String absolutePath;
 
         /// The number of channels in the sound.
 	    uint16_t numChannels;

@@ -20,7 +20,7 @@ namespace GTEngine
 
 
         /// The map of shaders, keyed by a material shader ID.
-        GTCore::Map<DefaultSceneRenderer_MaterialShaderID, Shader*> shaders;
+        GTLib::Map<DefaultSceneRenderer_MaterialShaderID, Shader*> shaders;
 
 
     private:    // No copying.

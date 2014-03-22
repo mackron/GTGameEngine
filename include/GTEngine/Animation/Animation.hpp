@@ -8,7 +8,7 @@
 #include "AnimationSequence.hpp"
 #include "AnimationTrack.hpp"
 #include "../Serialization.hpp"
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GTEngine
 {
@@ -198,25 +198,25 @@ namespace GTEngine
         /// @remarks
         ///     Currently, this only saves the current playback state. It does not save the key frames, channels and named segments. The serialized data
         ///     is marked with a version number, which will make this easy enough to change in the future if required.
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const;
 
         /// Deserializes the animation state.
         ///
         /// @param deserializer [in] A reference to the deserializer for reading the data from.
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
 
     private:
 
         /// The map of key frames, sorted by time.
-        GTCore::Map<double, AnimationKeyFrame> keyFrames;
+        GTLib::Map<double, AnimationKeyFrame> keyFrames;
 
         /// The list of channels attached to the animation.
-        GTCore::Vector<AnimationChannel*> channels;
+        GTLib::Vector<AnimationChannel*> channels;
 
         /// The list of animation segments.
-        GTCore::Vector<AnimationSegment> segments;
+        GTLib::Vector<AnimationSegment> segments;
 
 
         /// The animation track of the currently running animation.

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Audio/SoundStreamer.hpp>
-#include <GTCore/Path.hpp>
+#include <GTLib/Path.hpp>
 
 namespace GTEngine
 {
@@ -9,7 +9,7 @@ namespace GTEngine
         : absolutePath(),
           numChannels(0), bitsPerSample(0), sampleRate(0), format(SoundFormat_Mono8)
     {
-        GTCore::Path path(fileName);
+        GTLib::Path path(fileName);
         path.MakeAbsolute();
 
         this->absolutePath = path.c_str();
