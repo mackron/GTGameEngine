@@ -56,9 +56,8 @@ The editor is made up of 5 sections: Top, bottom, center, left and right. The ce
             
             if result ~= Editor.YesNoCancelDialogResult.Cancel then
                 -- We'll get here if the result was 'Yes' or 'No', in which case we want to close the file. The catch is that when Editor.CloseFile() is called,
-                -- it will try to show this dialog again. To fix, we're going to unmark the file as modified.
-                Editor.UnmarkFileAsModified(absolutePath);
-                Editor.CloseFile(absolutePath);
+                -- it will try to show this dialog again. To fix, we're going to force the file closed which will close the file without a confirmation dialog.
+                Editor.ForceCloseFile(absolutePath);
             end
         end);
     end
@@ -435,6 +434,16 @@ hidden by default.
             </div>
             <div id="Editor_AboutDialog_Footer" style="horizontal-align:center; vertical-align:center;">
                 <div id="Editor_AboutDialog_Close" styleclass="dialog-button">Close</div>
+            </div>
+        </div>
+    </div>
+    
+    <div id="YesNoDialog" style="positioning:absolute; width:100%; height:100%; z-index:1000; background-color:#000; opacity:50%; vertical-align:center; horizontal-align:center; visible:false;">
+        <div styleclass='dialog' style="width:400px; height:200px; background-color:#3a3a3a; flex-child-height:true; padding:16px;">
+            <div id="YesNoDialog_TextBox" style="width:100%; height:100%; vertical-align:center; font-size:10pt; text-color:#ccc;" />
+            <div style="width:100%; height:auto%; border-top:1px #333; vertical-align:bottom; horizontal-align:right; child-plane:horizontal; padding-top:16px;">
+                <div id="YesNoDialog_Yes"    styleclass='button dialog-button' />
+                <div id="YesNoDialog_No"     styleclass='button dialog-button' />
             </div>
         </div>
     </div>

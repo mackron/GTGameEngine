@@ -412,28 +412,60 @@ namespace GTEngine
                 }
                 else
                 {
-                    if (this->currentlyShownEditor != nullptr && absolutePath == this->currentlyShownEditor->GetAbsolutePath())
-                    {
-                        this->HideCurrentlyShownFile();
-                    }
-
-                    editor->DeleteToolbar();
-
-                    delete editor;
-                    this->openedFiles.RemoveByIndex(iEditor->index);
-
-
-                    // If there are no files open, we need to hide the center, center panel.
-                    if (this->openedFiles.count == 0)
-                    {
-                        this->GUI.EditorCenterCenterPanel->Hide();
-                        this->GUI.EditorCenterCenterPanelHelp->Show();
-                    }
-
-
-                    // Menu buttons need to be updated.
-                    this->UpdateMenuButtonEnableStates();
+                    this->ForceCloseFile(absolutePath.c_str());
                 }
+            }
+        }
+    }
+
+    void Editor::ForceCloseFile(const char* path, const char* relativeTo)
+    {
+        GTCore::String absolutePath(path);
+
+        if (!this->IsSpecialPath(path))
+        {
+            if (GTCore::Path::IsRelative(path))
+            {
+                if (relativeTo != nullptr)
+                {
+                    absolutePath = GTCore::IO::ToAbsolutePath(path, relativeTo);
+                }
+                else
+                {
+                    // We can not find the absolute path because 'path' is relative and 'relativeTo' is null.
+                    return;
+                }
+            }
+        }
+
+        // At this point we will have our absolute path. We need to retrieve the sub editor, and call it's hide function before we completely delete it.
+        auto iEditor = this->openedFiles.Find(absolutePath.c_str());
+        if (iEditor != nullptr)
+        {
+            auto editor = iEditor->value;
+            assert(editor != nullptr);
+            {
+                if (this->currentlyShownEditor != nullptr && absolutePath == this->currentlyShownEditor->GetAbsolutePath())
+                {
+                    this->HideCurrentlyShownFile();
+                }
+
+                editor->DeleteToolbar();
+
+                delete editor;
+                this->openedFiles.RemoveByIndex(iEditor->index);
+
+
+                // If there are no files open, we need to hide the center, center panel.
+                if (this->openedFiles.count == 0)
+                {
+                    this->GUI.EditorCenterCenterPanel->Hide();
+                    this->GUI.EditorCenterCenterPanelHelp->Show();
+                }
+
+
+                // Menu buttons need to be updated.
+                this->UpdateMenuButtonEnableStates();
             }
         }
     }
@@ -1047,6 +1079,7 @@ namespace GTEngine
 
             script.SetTableFunction(-1, "OpenFile",                 FFI::OpenFile);
             script.SetTableFunction(-1, "CloseFile",                FFI::CloseFile);
+            script.SetTableFunction(-1, "ForceCloseFile",           FFI::ForceCloseFile);
             script.SetTableFunction(-1, "CloseAllOpenFiles",        FFI::CloseAllOpenFiles);
             script.SetTableFunction(-1, "CloseCurrentlyShownFile",  FFI::CloseCurrentlyShownFile);
             script.SetTableFunction(-1, "ShowFile",                 FFI::ShowFile);
@@ -1151,6 +1184,12 @@ namespace GTEngine
     int Editor::FFI::CloseFile(GTCore::Script &script)
     {
         FFI::GetEditor(script).CloseFile(script.ToString(1), script.ToString(2));
+        return 0;
+    }
+
+    int Editor::FFI::ForceCloseFile(GTCore::Script &script)
+    {
+        FFI::GetEditor(script).ForceCloseFile(script.ToString(1), script.ToString(2));
         return 0;
     }
 

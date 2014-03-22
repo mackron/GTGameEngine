@@ -18,6 +18,8 @@ function GTGUI.Element:DataExplorer()
                 if result == Editor.NewFileDialogResult.Create then
                     GTCore.IO.CreateDirectory(absolutePath);
                     Game.ScanDataFilesForChanges();                 -- This will force the files watcher to update.
+                    
+                    self:SelectAndExpandItemByPath(absolutePath);
                 end;
             end);
         end
@@ -92,8 +94,20 @@ function GTGUI.Element:DataExplorer()
         end
     end);
     
-    --self.FolderMenu:AppendSeparator();
-    --self.FolderMenu:AppendItem("Delete...");
+    self.FolderMenu:AppendSeparator();
+    self.FolderMenu:AppendItem("Delete..."):OnPressed(function()
+        Editor.ShowYesNoDialog("Are you sure you want to delete '" .. self.FolderMenu.DestinationDirectoryShort .. "'?", function(result)
+            if result == Editor.YesNoDialogResult.Yes then
+                -- Recursively force close every file in the directory.
+                self:ForceCloseFilesInDirectory(self:FindItemByPath(self.FolderMenu.DestinationDirectory));
+            
+                GTCore.IO.DeleteDirectory(self.FolderMenu.DestinationDirectory);
+                Game.ScanDataFilesForChanges();
+            end
+        end);
+    end);
+    
+    
     
     self.FileMenu:Menu();
     self.FileMenu:EnableDefaultEvents();
@@ -236,6 +250,18 @@ function GTGUI.Element:DataExplorer()
 			item:Select();
 		end
 	end
+    
+    
+    function self:ForceCloseFilesInDirectory(directoryItem)
+        local children = directoryItem:GetChildren();
+        for key,childItem in pairs(children) do
+            if childItem.isDirectory then
+                self:ForceCloseFilesInDirectory(childItem);
+            else
+                Editor.ForceCloseFile(childItem.path);
+            end
+        end
+    end
 	
     
     function self:IsFileIgnored(fileInfo)
@@ -288,6 +314,12 @@ function GTGUI.Element:DataExplorer()
             self.FolderMenu:SetPosition(xPos, yPos);
             self.FolderMenu:Show();
             self.FolderMenu.DestinationDirectory = item.path;
+            
+            if not item:GetParent().isRoot then
+                self.FolderMenu.DestinationDirectoryShort = item:GetRelativePath();
+            else
+                self.FolderMenu.DestinationDirectoryShort = "";
+            end
         end
     end
     

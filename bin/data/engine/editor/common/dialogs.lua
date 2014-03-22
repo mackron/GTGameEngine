@@ -1,5 +1,12 @@
 -- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
+-- Enumerator representing the result from the Yes/No dialog.
+Editor.YesNoDialogResult =
+{
+    No  = 0,
+    Yes = 1,
+}
+
 -- Enumerator representing the result from the Yes/No/Cancel dialog.
 Editor.YesNoCancelDialogResult = 
 {
@@ -22,6 +29,11 @@ Editor.AreDialogsInitialised = false;
 
 
 -- The dialog box components.
+YesNoDialog                 = nil;
+YesNoDialog_TextBox         = nil;
+YesNoDialog_Yes             = nil;
+YesNoDialog_No              = nil;
+
 YesNoCancelDialog           = nil;
 YesNoCancelDialog_TextBox   = nil;
 YesNoCancelDialog_Yes       = nil;
@@ -40,6 +52,11 @@ NewFileDialog_StatusTextBox = nil;
 -- Initialises the dialog boxes, if needed.
 function Editor.InitialiseDialogs()
     if Editor.AreDialogsInitialised == false then
+        YesNoDialog                 = GTGUI.Server.GetElementByID("YesNoDialog");
+        YesNoDialog_TextBox         = GTGUI.Server.GetElementByID("YesNoDialog_TextBox");
+        YesNoDialog_Yes             = GTGUI.Server.GetElementByID("YesNoDialog_Yes");
+        YesNoDialog_No              = GTGUI.Server.GetElementByID("YesNoDialog_No");
+    
         YesNoCancelDialog           = GTGUI.Server.GetElementByID("YesNoCancelDialog");
         YesNoCancelDialog_TextBox   = GTGUI.Server.GetElementByID("YesNoCancelDialog_TextBox");
         YesNoCancelDialog_Yes       = GTGUI.Server.GetElementByID("YesNoCancelDialog_Yes");
@@ -52,6 +69,24 @@ function Editor.InitialiseDialogs()
         NewFileDialog_Create        = GTGUI.Server.GetElementByID("NewFileDialog_Create");
         NewFileDialog_Cancel        = GTGUI.Server.GetElementByID("NewFileDialog_Cancel");
         NewFileDialog_StatusTextBox = GTGUI.Server.GetElementByID("NewFileDialog_StatusTextBox");
+        
+        
+        -- Yes/No
+        YesNoDialog_Yes:Button("Yes"):OnPressed(function()
+            YesNoDialog:Hide();
+            
+            if YesNoDialog_Yes.Callback ~= nil then
+                YesNoDialog_Yes.Callback(Editor.YesNoDialogResult.Yes);
+            end
+        end);
+        
+        YesNoDialog_No:Button("No"):OnPressed(function()
+            YesNoDialog:Hide();
+            
+            if YesNoDialog_No.Callback ~= nil then
+                YesNoDialog_No.Callback(Editor.YesNoDialogResult.No);
+            end
+        end);
         
         
         -- Yes/No/Cancel
@@ -133,6 +168,26 @@ function Editor.InitialiseDialogs()
         
         Editor.AreDialogsInitialised = true;
     end
+end
+
+
+-- Opens a Yes/No dialog box.
+--
+-- @param text     [in] The text to show on the dialog.
+-- @param callback [in] The function that will be called when the user hits one of the buttons. The argument is an integer representing the result. See remarks.
+--
+-- @remarks
+--      'callback' will be passed one argument, which is an integer representing the value
+function Editor.ShowYesNoDialog(text, callback)
+    Editor.InitialiseDialogs();
+    
+    GTGUI.Server.BlurFocusedElement();
+    
+    YesNoDialog_TextBox:SetText(text);
+    YesNoDialog_Yes.Callback = callback;
+    YesNoDialog_No.Callback  = callback;
+    
+    YesNoDialog:Show();
 end
 
 

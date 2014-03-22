@@ -85,6 +85,17 @@ namespace GTEngine
         ///     should be done at a higher level.
         void CloseFile(const char* path, const char* relativeTo = nullptr);
 
+        /// Same as CloseFile(), except does not show the prompt to save.
+        ///
+        /// @param path       [in] The path of the file. Can be relative or absolute; see remarks.
+        /// @param relativeTo [in] If 'path' is relative, defines the base path to will be used to make it absolute.
+        ///
+        /// @remarks
+        ///     Internally, the editor uses absolute paths to associate editors with files. If 'path' is relative, it will need to be converted
+        ///     to an absolute path in order for the editor to do correct identification. To do this, 'relativeTo' must be set when 'path' is
+        ///     relative.
+        void ForceCloseFile(const char* path, const char* relativeTo = nullptr);
+
         /// Closes every open file.
         ///
         /// @remarks
@@ -375,6 +386,7 @@ namespace GTEngine
 
             static int OpenFile(GTCore::Script &script);
             static int CloseFile(GTCore::Script &script);
+            static int ForceCloseFile(GTCore::Script &script);
             static int CloseAllOpenFiles(GTCore::Script &script);
             static int CloseCurrentlyShownFile(GTCore::Script &script);
             static int ShowFile(GTCore::Script &script);
