@@ -341,9 +341,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Projectile.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\rapidxml.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Rendering.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
