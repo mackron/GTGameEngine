@@ -235,7 +235,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\PrefabLinker.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Profiler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Projectile.hpp" />
-    <ClInclude Include="..\..\..\include\GTEngine\rapidxml.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourAlloc.h" />
     <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourAssert.h" />
     <ClInclude Include="..\..\..\include\GTEngine\Recast\DetourCommon.h" />
