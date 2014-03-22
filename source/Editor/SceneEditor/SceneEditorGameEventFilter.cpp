@@ -35,19 +35,19 @@ namespace GTEngine
         return true;
     }
     
-    bool SceneEditorGameEventFilter::OnMouseButtonDown(GTCore::MouseButton &, int &mousePosX, int &mousePosY)
+    bool SceneEditorGameEventFilter::OnMouseButtonDown(GTLib::MouseButton &, int &mousePosX, int &mousePosY)
     {
         this->NormalizeMouseCoordinates(mousePosX, mousePosY);
         return true;
     }
     
-    bool SceneEditorGameEventFilter::OnMouseButtonUp(GTCore::MouseButton &, int &mousePosX, int &mousePosY)
+    bool SceneEditorGameEventFilter::OnMouseButtonUp(GTLib::MouseButton &, int &mousePosX, int &mousePosY)
     {
         this->NormalizeMouseCoordinates(mousePosX, mousePosY);
         return true;
     }
     
-    bool SceneEditorGameEventFilter::OnMouseButtonDoubleClick(GTCore::MouseButton &, int &mousePosX, int &mousePosY)
+    bool SceneEditorGameEventFilter::OnMouseButtonDoubleClick(GTLib::MouseButton &, int &mousePosX, int &mousePosY)
     {
         this->NormalizeMouseCoordinates(mousePosX, mousePosY);
         return true;

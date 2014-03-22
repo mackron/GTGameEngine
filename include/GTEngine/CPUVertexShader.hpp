@@ -5,8 +5,8 @@
 
 #include "Rendering/VertexFormat.hpp"
 #include "Math.hpp"
-#include <GTCore/Vector.hpp>
-#include <GTCore/Threading.hpp>
+#include <GTLib/Vector.hpp>
+#include <GTLib/Threading.hpp>
 
 namespace GTEngine
 {

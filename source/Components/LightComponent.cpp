@@ -61,9 +61,9 @@ namespace GTEngine
         this->OnChanged();
     }
 
-    void PointLightComponent::Serialize(GTCore::Serializer &serializer) const
+    void PointLightComponent::Serialize(GTLib::Serializer &serializer) const
     {
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
         intermediarySerializer.Write(this->colour);
         intermediarySerializer.Write(this->radius);
         intermediarySerializer.Write(this->falloff);
@@ -79,7 +79,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void PointLightComponent::Deserialize(GTCore::Deserializer &deserializer)
+    void PointLightComponent::Deserialize(GTLib::Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);
@@ -188,9 +188,9 @@ namespace GTEngine
     }
 
 
-    void SpotLightComponent::Serialize(GTCore::Serializer &serializer) const
+    void SpotLightComponent::Serialize(GTLib::Serializer &serializer) const
     {
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
         intermediarySerializer.Write(this->innerAngle);
         intermediarySerializer.Write(this->outerAngle);
         intermediarySerializer.Write(this->colour);
@@ -208,7 +208,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void SpotLightComponent::Deserialize(GTCore::Deserializer &deserializer)
+    void SpotLightComponent::Deserialize(GTLib::Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);
@@ -282,9 +282,9 @@ namespace GTEngine
     }
 
 
-    void DirectionalLightComponent::Serialize(GTCore::Serializer &serializer) const
+    void DirectionalLightComponent::Serialize(GTLib::Serializer &serializer) const
     {
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
         intermediarySerializer.Write(this->colour);
         intermediarySerializer.Write(this->castShadows);
 
@@ -298,7 +298,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void DirectionalLightComponent::Deserialize(GTCore::Deserializer &deserializer)
+    void DirectionalLightComponent::Deserialize(GTLib::Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);
@@ -352,9 +352,9 @@ namespace GTEngine
     }
 
 
-    void AmbientLightComponent::Serialize(GTCore::Serializer &serializer) const
+    void AmbientLightComponent::Serialize(GTLib::Serializer &serializer) const
     {
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
         intermediarySerializer.Write(this->colour);
 
 
@@ -367,7 +367,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void AmbientLightComponent::Deserialize(GTCore::Deserializer &deserializer)
+    void AmbientLightComponent::Deserialize(GTLib::Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);

@@ -15,7 +15,7 @@
 #include "DefaultSceneRenderer_MaterialUniformNameCache.hpp"
 
 
-#include <GTCore/Map.hpp>
+#include <GTLib/Map.hpp>
 #include <utility>
 
 namespace GTEngine
@@ -173,8 +173,8 @@ namespace GTEngine
             Renderer::PushTexture2DData(*this->finalColourBuffer);
 
 
-            unsigned int bloomWidth  = GTCore::Max(1U, newWidth  / 4);
-            unsigned int bloomHeight = GTCore::Max(1U, newHeight / 4);
+            unsigned int bloomWidth  = GTLib::Max(1U, newWidth  / 4);
+            unsigned int bloomHeight = GTLib::Max(1U, newHeight / 4);
             this->bloomBuffer->SetData(bloomWidth, bloomHeight, GTImage::ImageFormat_RGB8);
             this->bloomBlurBuffer->SetData(bloomWidth, bloomHeight, GTImage::ImageFormat_RGB8);
 
@@ -449,7 +449,7 @@ namespace GTEngine
         void SetProperty(const char* name, const glm::vec4 &value);
 
         /// SceneRenderer::Get*Property()
-        GTCore::String GetStringProperty(const char* name) const;
+        GTLib::String GetStringProperty(const char* name) const;
         int            GetIntegerProperty(const char* name) const;
         float          GetFloatProperty(const char* name) const;
         bool           GetBooleanProperty(const char* name) const;
@@ -558,7 +558,7 @@ namespace GTEngine
         /// @param faceViewMatrix [in] The view matrix of the face being drawn.
         /// @param faceIndex      [in] The index of the face being drawn.
         /// @param meshes         [in] The list of meshes to draw.
-        void RenderPointShapowMapFace(const DefaultSceneRendererPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<DefaultSceneRendererMesh> &meshes);
+        void RenderPointShapowMapFace(const DefaultSceneRendererPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTLib::Vector<DefaultSceneRendererMesh> &meshes);
 
         /// Sets the uniforms of the given material shader using the given data.
         ///
@@ -622,17 +622,17 @@ namespace GTEngine
     private:
 
         /// The framebuffers for each attached viewport. Keyed by the viewport.
-        GTCore::Map<SceneViewport*, DefaultSceneRendererFramebuffer*> viewportFramebuffers;
+        GTLib::Map<SceneViewport*, DefaultSceneRendererFramebuffer*> viewportFramebuffers;
 
         /// Keeps track of the shaders associated with each referenced material definition. Keyed by the material definition.
-        GTCore::Map<const MaterialDefinition*, DefaultSceneRenderer_MaterialShaders*> materialShaders;
+        GTLib::Map<const MaterialDefinition*, DefaultSceneRenderer_MaterialShaders*> materialShaders;
 
 
         /// The shader to use with the depth pre-pass.
         Shader* depthPassShader;
 
         /// The list of external meshes.
-        GTCore::Vector<const SceneRendererMesh*> externalMeshes;
+        GTLib::Vector<const SceneRendererMesh*> externalMeshes;
 
 
         /// The framebuffer for drawing shadow maps.

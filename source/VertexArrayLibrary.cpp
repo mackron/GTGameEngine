@@ -2,7 +2,7 @@
 
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/MeshBuilder.hpp>
-#include <GTCore/Math.hpp>
+#include <GTLib/Math.hpp>
 
 
 namespace GTEngine
@@ -376,7 +376,7 @@ namespace GTEngine
                                 memcpy(
                                     destVertexData   + iAttributeOffset,
                                     sourceVertexData + sourceOffset,
-                                    sizeof(float) * GTCore::Min(static_cast<size_t>(format[iAttribute + 1]), sourceComponentCount));
+                                    sizeof(float) * GTLib::Min(static_cast<size_t>(format[iAttribute + 1]), sourceComponentCount));
                             }
 
                             iAttributeOffset += format[iAttribute + 1];

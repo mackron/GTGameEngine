@@ -97,7 +97,7 @@ namespace GTEngine
 
 
         /// The list of emitters making up this particle system.
-        GTCore::Vector<ParticleEmitter*> emitters;
+        GTLib::Vector<ParticleEmitter*> emitters;
 
 
         /// The position of the particle system.

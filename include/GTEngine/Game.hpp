@@ -15,9 +15,9 @@
 #include "Profiler.hpp"
 #include "GUIImageManager.hpp"
 #include "Rendering/DefaultGUIRenderer.hpp"
-#include <GTCore/Threading.hpp>
-#include <GTCore/Timing.hpp>
-#include <GTCore/CommandLine.hpp>
+#include <GTLib/Threading.hpp>
+#include <GTLib/Timing.hpp>
+#include <GTLib/CommandLine.hpp>
 #include <GTType/FontServer.hpp>
 #include <GTGUI/Server.hpp>
 
@@ -66,7 +66,7 @@ namespace GTEngine
         ///     This will call OnLoadConfigs() and OnStartup().
         ///     @par
         ///     Client application should not call this method directly. It will instead be called internally by GTEngine::Startup().
-        bool Startup(const GTCore::CommandLine &commandLine);
+        bool Startup(const GTLib::CommandLine &commandLine);
 
         /// Shuts down the game.
         ///
@@ -136,7 +136,7 @@ namespace GTEngine
         GTGUI::Element* GetGameWindowGUIElement() { return this->gameWindowGUIElement; }
 
         /// Retrieves a pointer to the main game window.
-        GTCore::Window* GetWindow() { return this->window; }
+        GTLib::Window* GetWindow() { return this->window; }
 
 
         /// Enables fullscreen mode.
@@ -221,14 +221,14 @@ namespace GTEngine
         /// @param key [in] The key code to check.
         ///
         /// @return True if the key is currently held down.
-        bool IsKeyDown(GTCore::Key key) const;
+        bool IsKeyDown(GTLib::Key key) const;
 
         /// Determines if a mouse button is currently pressed.
         ///
         /// @param button [in] The mouse button code to check.
         ///
         /// @return True if the mouse button is currently held down.
-        bool IsMouseButtonDown(GTCore::MouseButton button) const;
+        bool IsMouseButtonDown(GTLib::MouseButton button) const;
 
 
         /// Pauses the game.
@@ -371,17 +371,17 @@ namespace GTEngine
         // Key Bindings.
 
         /// Retrieves the key for toggling the profiler.
-        GTCore::Key GetProfilerToggleKey() const;
+        GTLib::Key GetProfilerToggleKey() const;
 
         /// Sets the key for toggling the profiler.
-        void SetProfilerToggleKey(GTCore::Key key);
+        void SetProfilerToggleKey(GTLib::Key key);
 
 
         /// Retrieves the key combination for toggling the editor.
-        const GTCore::KeyCombination & GetEditorToggleKeyCombination() const;
+        const GTLib::KeyCombination & GetEditorToggleKeyCombination() const;
 
         /// Sets the key combination for toggling the editor.
-        void SetEditorToggleKeyCombination(const GTCore::KeyCombination &newCombination);
+        void SetEditorToggleKeyCombination(const GTLib::KeyCombination &newCombination);
 
 
 
@@ -435,7 +435,7 @@ namespace GTEngine
         ///     This is called after the window has been created and shown.
         ///     @par
         ///     The return value is true if the startup is successful; false otherwise.
-        virtual bool OnStartup(const GTCore::CommandLine &commandLine);
+        virtual bool OnStartup(const GTLib::CommandLine &commandLine);
 
         /// Called when the game is shutting down.
         virtual void OnShutdown();
@@ -479,13 +479,13 @@ namespace GTEngine
         virtual void OnSize(unsigned int width, unsigned int height);
         virtual void OnMouseMove(int x, int y);
         virtual void OnMouseWheel(int delta, int x, int y);
-        virtual void OnMouseButtonDown(GTCore::MouseButton button, int x, int y);
-        virtual void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
-        virtual void OnMouseButtonDoubleClick(GTCore::MouseButton button, int x, int y);
-        virtual void OnKeyPressed(GTCore::Key key);
-        virtual void OnKeyReleased(GTCore::Key key);
-        virtual void OnKeyDown(GTCore::Key key);
-        virtual void OnKeyUp(GTCore::Key key);
+        virtual void OnMouseButtonDown(GTLib::MouseButton button, int x, int y);
+        virtual void OnMouseButtonUp(GTLib::MouseButton button, int x, int y);
+        virtual void OnMouseButtonDoubleClick(GTLib::MouseButton button, int x, int y);
+        virtual void OnKeyPressed(GTLib::Key key);
+        virtual void OnKeyReleased(GTLib::Key key);
+        virtual void OnKeyDown(GTLib::Key key);
+        virtual void OnKeyUp(GTLib::Key key);
         virtual void OnReceiveFocus();
         virtual void OnLoseFocus();
 
@@ -586,7 +586,7 @@ namespace GTEngine
 
 
         /// Determines whether or not all of the keys in the given key combination are down.
-        bool IsKeyCombinationDown(const GTCore::KeyCombination &combination) const;
+        bool IsKeyCombinationDown(const GTLib::KeyCombination &combination) const;
 
 
     // The methods below are used to handle events.
@@ -642,23 +642,23 @@ namespace GTEngine
 
         
         /// The absolute path of the executable.
-        GTCore::String executablePath;
+        GTLib::String executablePath;
 
         /// The absolute path of the directory containing the executable.
-        GTCore::String executableDirectoryPath;
+        GTLib::String executableDirectoryPath;
 
 
         /// The list of events that are queued and ready for processing.
         GameEventQueue eventQueue;
 
         /// The mutex for protecting access to the event queue.
-        GTCore::Mutex eventQueueLock;
+        GTLib::Mutex eventQueueLock;
         
         /// A pointer to the event filter to filter events with. This can be null, in which case events will be dispatched without filtering. Defaults to null.
         GameEventFilter* eventFilter;
 
         /// The game's window.
-        GTCore::Window* window;
+        GTLib::Window* window;
 
         /// The event handler for the main window.
         GameWindowEventHandler windowEventHandler;
@@ -669,7 +669,7 @@ namespace GTEngine
 
 
         /// A pointer to the update thread. This will point to a member in the 'threads' array.
-        GTCore::Thread* updateThread;
+        GTLib::Thread* updateThread;
 
         /// The job that will do the game updates.
         GameUpdateJob updateJob;
@@ -683,7 +683,7 @@ namespace GTEngine
 
 
         /// The timer for timing updates. This is needed for retrieving the delta time.
-        GTCore::Timer updateTimer;
+        GTLib::Timer updateTimer;
         
 
         /// The GUI image manager.
@@ -717,11 +717,11 @@ namespace GTEngine
 
 
         /// A map of key states. This is modified as keys are pushed and released.
-        GTCore::Map<char32_t, bool> keyDownMap;
+        GTLib::Map<char32_t, bool> keyDownMap;
 
         /// A map containing mouse button states. This is modified as mouse buttons are pushed and released. These are index by
-        /// the GTCore::MouseButton enum.
-        GTCore::Map<GTCore::MouseButton, bool> mouseButtonDownMap;
+        /// the GTLib::MouseButton enum.
+        GTLib::Map<GTLib::MouseButton, bool> mouseButtonDownMap;
 
 
         /// Class representing the editor.
@@ -767,9 +767,9 @@ namespace GTEngine
             // Updates the debugging information. This should be called once per frame.
             void Update(Profiler &profiler)
             {
-                if (GTCore::Timing::GetTimeInSeconds() - this->lastUpdateTime >= this->updateIntervalInSeconds)
+                if (GTLib::Timing::GetTimeInSeconds() - this->lastUpdateTime >= this->updateIntervalInSeconds)
                 {
-                    this->lastUpdateTime = GTCore::Timing::GetTimeInSeconds();
+                    this->lastUpdateTime = GTLib::Timing::GetTimeInSeconds();
 
                     double delta = profiler.GetAverageFrameTime();
                     double fps   = 0.0;
@@ -780,7 +780,7 @@ namespace GTEngine
                     }
 
                     char valueStr[64];
-                    GTCore::IO::snprintf(valueStr, 64, "%.1f / %.4f", fps, delta * 1000.0);
+                    GTLib::IO::snprintf(valueStr, 64, "%.1f / %.4f", fps, delta * 1000.0);
 
                     if (this->FPSValue != nullptr)
                     {
@@ -793,10 +793,10 @@ namespace GTEngine
                     double updateTime = profiler.GetAverageUpdateTime();
                     double renderTime = profiler.GetAverageRenderingTime();
 
-                    GTCore::IO::snprintf(valueStr, 64, "%.4f (%.1f%%)", updateTime * 1000, updateTime / delta * 100.0);
+                    GTLib::IO::snprintf(valueStr, 64, "%.4f (%.1f%%)", updateTime * 1000, updateTime / delta * 100.0);
                     this->UpdateTime->SetText(valueStr);
 
-                    GTCore::IO::snprintf(valueStr, 64, "%.4f (%.1f%%)", renderTime * 1000, renderTime / delta * 100.0);
+                    GTLib::IO::snprintf(valueStr, 64, "%.4f (%.1f%%)", renderTime * 1000, renderTime / delta * 100.0);
                     this->RenderTime->SetText(valueStr);
                 }
             }
@@ -934,11 +934,11 @@ namespace GTEngine
 
 
         /// The key binding for toggling the profiler.
-        GTCore::Key profilerToggleKey;
+        GTLib::Key profilerToggleKey;
 
 
         /// The key combination for toggling the editor.
-        GTCore::KeyCombination editorToggleKeyCombination;
+        GTLib::KeyCombination editorToggleKeyCombination;
 
 
 

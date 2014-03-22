@@ -4,7 +4,7 @@
 #define __GTEngine_MaterialShaderCache_hpp_
 
 #include "Material.hpp"
-#include <GTCore/Map.hpp>
+#include <GTLib/Map.hpp>
 
 namespace GTEngine
 {
@@ -45,14 +45,14 @@ namespace GTEngine
         ///         delete shaders.buffer[i]->value;
         ///     }
         ///     \endcode
-        GTCore::Map<const MaterialDefinition*, Shader*> & GetShaders() { return this->shaders; }
+        GTLib::Map<const MaterialDefinition*, Shader*> & GetShaders() { return this->shaders; }
 
 
     private:
 
         /// A map of MaterialDefinition/Shader combinations. We index with a material definition point, with the shader as
         /// the value. We use a map here for fast searching.
-        GTCore::Map<const MaterialDefinition*, Shader*> shaders;
+        GTLib::Map<const MaterialDefinition*, Shader*> shaders;
     };
 }
 #endif

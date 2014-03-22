@@ -9,7 +9,7 @@
 #include "Mesh.hpp"
 #include "ConvexHull.hpp"
 #include "Animation/Animation.hpp"
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 
 
 namespace GTEngine
@@ -50,7 +50,7 @@ namespace GTEngine
             }
 
             /// The name of the mesh.
-            GTCore::String name;
+            GTLib::String name;
 
             /// The vertex array containing the base geeometry of the mesh.
             GTEngine::VertexArray* geometry;
@@ -134,7 +134,7 @@ namespace GTEngine
         void BuildConvexHulls(ConvexHullBuildSettings &settings) { this->BuildConvexDecomposition(settings); }
 
         /// Retrieves a constant reference to the internal list of convex hulls for this model.
-        const GTCore::Vector<ConvexHull*> & GetConvexHulls() const { return this->convexHulls; }
+        const GTLib::Vector<ConvexHull*> & GetConvexHulls() const { return this->convexHulls; }
 
 
 
@@ -241,12 +241,12 @@ namespace GTEngine
         // Serialization/Deserialization
 
         /// Serializes the model definition.
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const;
 
         /// Deserializes the model definition.
         ///
         /// @return True if successful; false otherwise.
-        bool Deserialize(GTCore::Deserializer &deserializer);
+        bool Deserialize(GTLib::Deserializer &deserializer);
 
 
     private:
@@ -256,48 +256,48 @@ namespace GTEngine
         /// @param absolutePathIn [in] The absolute path of the file to load.
         ///
         /// @return True if successful; false otherwise.
-        bool LoadFromNativeFile(const GTCore::String &absolutePathIn);
+        bool LoadFromNativeFile(const GTLib::String &absolutePathIn);
 
         /// Loads a model definition from a non-native file (a non-gtmodel file).
         ///
         /// @param absolutePathIn [in] The absolute path of the file to load.
         ///
         /// @return True if successful; false otherwise.
-        bool LoadFromForeignFile(const GTCore::String &absolutePathIn);
+        bool LoadFromForeignFile(const GTLib::String &absolutePathIn);
 
         /// Loads a model definition from an Assimp-supported file.
         ///
         /// @param absolutePathIn [in] the absolute path of the file to load.
         ///
         /// @return True if successful; false otherwise.
-        bool LoadFromAssimpFile(const GTCore::String &absolutePathIn);
+        bool LoadFromAssimpFile(const GTLib::String &absolutePathIn);
 
 
     public:
 
         /// The absolute file path. This is of the foreign (source) file.
-        GTCore::String absolutePath;
+        GTLib::String absolutePath;
 
         /// The relative file path. This is of the foreign (source) file.
-        GTCore::String relativePath;
+        GTLib::String relativePath;
 
 
         /// The list of meshes.
-        GTCore::Vector<ModelDefinition::Mesh> meshes;
+        GTLib::Vector<ModelDefinition::Mesh> meshes;
 
         /// A map of every bone of the model, indexed by it's name. We use a map here to make it easier for avoiding duplication and
         /// also fast lookups.
-        GTCore::Vector<Bone*> bones;
+        GTLib::Vector<Bone*> bones;
 
 
         /// The model's animation object.
         Animation animation;
 
         /// The map for mapping a bone to an animation channel.
-        GTCore::Map<Bone*, AnimationChannel*> animationChannelBones;
+        GTLib::Map<Bone*, AnimationChannel*> animationChannelBones;
 
         /// The cache of animation keys.
-        GTCore::Vector<TransformAnimationKey*> animationKeyCache;
+        GTLib::Vector<TransformAnimationKey*> animationKeyCache;
 
 
         /// The padding to apply to the animated AABB.
@@ -306,7 +306,7 @@ namespace GTEngine
 
         /// The list of the convex hulls making up the convex decomposition of this model. This is either loaded from the model's file or
         /// generated with BuildConvexDecomposition().
-        GTCore::Vector<ConvexHull*> convexHulls;
+        GTLib::Vector<ConvexHull*> convexHulls;
 
         /// The settings that were used to build the convex hulls.
         ConvexHullBuildSettings convexHullBuildSettings;

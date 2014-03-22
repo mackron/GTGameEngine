@@ -7,7 +7,7 @@
 #include "Mesh.hpp"
 #include "Animation/Animation.hpp"
 #include "Serialization.hpp"
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 
 
 namespace GTEngine
@@ -55,11 +55,11 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If a bone of the same name already exists, this method will do nothing.
-        void CopyAndAttachBones(const GTCore::Vector<Bone*> &bones);
+        void CopyAndAttachBones(const GTLib::Vector<Bone*> &bones);
 
 
         /// Copies the given animation.
-        void CopyAnimation(const Animation &sourceAnimation, const GTCore::Map<Bone*, AnimationChannel*> &sourceAnimationChannelBones);
+        void CopyAnimation(const Animation &sourceAnimation, const GTLib::Map<Bone*, AnimationChannel*> &sourceAnimationChannelBones);
 
 
         /// Applies a transformation to the model's geometric data.
@@ -83,7 +83,7 @@ namespace GTEngine
 
 
         /// Retrieves the internal list of convex hulls of this model.
-        const GTCore::Vector<ConvexHull*> & GetConvexHulls() const { return this->definition.GetConvexHulls(); }
+        const GTLib::Vector<ConvexHull*> & GetConvexHulls() const { return this->definition.GetConvexHulls(); }
 
 
 
@@ -105,7 +105,7 @@ namespace GTEngine
         /// @remarks
         ///     This is only used for saving the state of the model, and not for saving an actual .gtmodel file. This does not save vertex information and whatnot.
         ///     Instead it just saves the state that makes this instantiation different from other instantiations.
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const;
 
         /// Deserializes the state of the model.
         ///
@@ -116,7 +116,7 @@ namespace GTEngine
         ///     @par
         ///     The way deserialization should work is that the model should already be loaded and instantiated before restoring the state. This should NOT be used
         ///     as a generic loading function for a mesh.
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
 
@@ -175,10 +175,10 @@ namespace GTEngine
 
 
         /// The list of meshes making up the model.
-        GTCore::Vector<Mesh*> meshes;
+        GTLib::Vector<Mesh*> meshes;
 
         /// The list of bones in the model.
-        GTCore::Vector<Bone*> bones;
+        GTLib::Vector<Bone*> bones;
 
 
 
@@ -196,10 +196,10 @@ namespace GTEngine
         Animation animation;
 
         /// The bones associated with each channel in the animation.
-        GTCore::Map<Bone*, AnimationChannel*> animationChannelBones;
+        GTLib::Map<Bone*, AnimationChannel*> animationChannelBones;
 
         /// The cache of animation keys.
-        GTCore::Vector<TransformAnimationKey*> animationKeyCache;
+        GTLib::Vector<TransformAnimationKey*> animationKeyCache;
 
         /// The playback speed of animations.
         double animationPlaybackSpeed;

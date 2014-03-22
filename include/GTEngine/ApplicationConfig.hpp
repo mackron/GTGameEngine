@@ -3,8 +3,8 @@
 #ifndef __GTEngine_ApplicationConfig_hpp_
 #define __GTEngine_ApplicationConfig_hpp_
 
-#include <GTCore/Vector.hpp>
-#include <GTCore/String.hpp>
+#include <GTLib/Vector.hpp>
+#include <GTLib/String.hpp>
 
 namespace GTEngine
 {
@@ -25,8 +25,8 @@ namespace GTEngine
 
 
         /// Retrieves a reference to the list containing the data directories.
-        static const GTCore::Vector<GTCore::String> & GetDataDirectories();
-        static void GetDataDirectories(GTCore::Vector<const char*> &directories);
+        static const GTLib::Vector<GTLib::String> & GetDataDirectories();
+        static void GetDataDirectories(GTLib::Vector<const char*> &directories);
     };
 }
 

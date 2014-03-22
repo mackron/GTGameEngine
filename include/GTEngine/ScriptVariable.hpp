@@ -4,7 +4,7 @@
 #define __GTEngine_ScriptVariable_hpp_
 
 #include "ScriptVariableTypes.hpp"
-#include <GTCore/String.hpp>
+#include <GTLib/String.hpp>
 
 namespace GTEngine
 {
@@ -55,7 +55,7 @@ namespace GTEngine
         ScriptVariableType type;
 
         /// The name of the variable.
-        GTCore::String name;
+        GTLib::String name;
     };
 
 
@@ -324,7 +324,7 @@ namespace GTEngine
     private:
 
         /// The value.
-        GTCore::String value;
+        GTLib::String value;
     };
 
 
@@ -355,7 +355,7 @@ namespace GTEngine
     private:
 
         /// The value.
-        GTCore::String value;
+        GTLib::String value;
     };
 }
 

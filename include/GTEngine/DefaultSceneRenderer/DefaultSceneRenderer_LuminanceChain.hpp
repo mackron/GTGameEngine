@@ -3,7 +3,7 @@
 #ifndef __GTEngine_DefaultSceneRenderer_LuminanceChain_hpp_
 #define __GTEngine_DefaultSceneRenderer_LuminanceChain_hpp_
 
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GTEngine
 {
@@ -71,11 +71,11 @@ namespace GTEngine
         Framebuffer* m_framebuffer;
 
         /// The list of buffers to use in the downsampling. This does not include the original image.
-        GTCore::Vector<Texture2D*> m_buffers;
+        GTLib::Vector<Texture2D*> m_buffers;
 
         /// The list of shaders to use in the downsampling. There is one of these for each buffer. Each item maps to the
         /// corresponding item in m_buffers;
-        GTCore::Vector<Shader*> m_shaders;
+        GTLib::Vector<Shader*> m_shaders;
 
         /// The base width that was used when the chain was last initialized.
         unsigned int m_baseWidth;

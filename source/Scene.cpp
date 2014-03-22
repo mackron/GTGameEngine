@@ -7,7 +7,7 @@
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Scripting.hpp>
-#include <GTCore/ToString.hpp>
+#include <GTLib/ToString.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -21,8 +21,8 @@ namespace GTEngine
     struct SceneCullingCallback : SceneCullingManager::VisibilityCallback
     {
         /// Constructor
-        SceneCullingCallback(GTCore::Vector<const ModelComponent*> &modelComponentsOut, GTCore::Vector<const PointLightComponent*> &pointLightComponentsOut, GTCore::Vector<const SpotLightComponent*> &spotLightComponentsOut,
-                             GTCore::Vector<const AmbientLightComponent*> &ambientLightComponentsOut, GTCore::Vector<const DirectionalLightComponent*> &directionalLightComponentsOut)
+        SceneCullingCallback(GTLib::Vector<const ModelComponent*> &modelComponentsOut, GTLib::Vector<const PointLightComponent*> &pointLightComponentsOut, GTLib::Vector<const SpotLightComponent*> &spotLightComponentsOut,
+                             GTLib::Vector<const AmbientLightComponent*> &ambientLightComponentsOut, GTLib::Vector<const DirectionalLightComponent*> &directionalLightComponentsOut)
             : modelComponents(modelComponentsOut), pointLightComponents(pointLightComponentsOut), spotLightComponents(spotLightComponentsOut),
               ambientLightComponents(ambientLightComponentsOut), directionalLightComponents(directionalLightComponentsOut)
         {
@@ -87,11 +87,11 @@ namespace GTEngine
 
 
     private:
-        GTCore::Vector<const ModelComponent*>            &modelComponents;
-        GTCore::Vector<const PointLightComponent*>       &pointLightComponents;
-        GTCore::Vector<const SpotLightComponent*>        &spotLightComponents;
-        GTCore::Vector<const AmbientLightComponent*>     &ambientLightComponents;
-        GTCore::Vector<const DirectionalLightComponent*> &directionalLightComponents;
+        GTLib::Vector<const ModelComponent*>            &modelComponents;
+        GTLib::Vector<const PointLightComponent*>       &pointLightComponents;
+        GTLib::Vector<const SpotLightComponent*>        &spotLightComponents;
+        GTLib::Vector<const AmbientLightComponent*>     &ambientLightComponents;
+        GTLib::Vector<const DirectionalLightComponent*> &directionalLightComponents;
 
 
     private:    // No copying.
@@ -312,15 +312,15 @@ namespace GTEngine
 
     bool Scene::LoadFromFile(const char* relativeFilePath)
     {
-        auto file = GTCore::IO::Open(relativeFilePath, GTCore::IO::OpenMode::Read);
+        auto file = GTLib::IO::Open(relativeFilePath, GTLib::IO::OpenMode::Read);
         if (file != nullptr)
         {
             bool result = false;
 
-            GTCore::FileDeserializer deserializer(file);
+            GTLib::FileDeserializer deserializer(file);
             result = this->Deserialize(deserializer);
 
-            GTCore::IO::Close(file);
+            GTLib::IO::Close(file);
             return result;
         }
 
@@ -346,7 +346,7 @@ namespace GTEngine
                 // If a scene node of the same ID already exists, we have a bug somewhere.
                 if (this->sceneNodes.Exists(uniqueID))
                 {
-                    GTEngine::PostError("Error adding scene node to scene. A scene node of the same ID (%s) already exists. The scene node was not added.", GTCore::ToString(uniqueID).c_str());
+                    GTEngine::PostError("Error adding scene node to scene. A scene node of the same ID (%s) already exists. The scene node was not added.", GTLib::ToString(uniqueID).c_str());
                     return;
                 }
             }
@@ -387,7 +387,7 @@ namespace GTEngine
             assert(this->sceneNodes.Exists(node.GetID()));
             {
                 // Children need to be removed first.
-                GTCore::Vector<SceneNode*> children;
+                GTLib::Vector<SceneNode*> children;
 
                 for (auto iChild = node.GetFirstChild(); iChild != nullptr; iChild = iChild->GetNextSibling())
                 {
@@ -462,7 +462,7 @@ namespace GTEngine
         return sceneNode;
     }
 
-    SceneNode* Scene::CreateNewSceneNode(GTCore::Deserializer &deserializer, bool createNewIDIfExists)
+    SceneNode* Scene::CreateNewSceneNode(GTLib::Deserializer &deserializer, bool createNewIDIfExists)
     {
         auto sceneNode = new SceneNode;
         sceneNode->Deserialize(deserializer);
@@ -476,7 +476,7 @@ namespace GTEngine
             }
             else
             {
-                Log("Scene::CreateNewSceneNode(GTCore::Deserializer &) - A scene node of the same ID already exists. This is an erroneous condition. Instead, try 'Scene::CreateNewSceneNode()' followed by 'newSceneNode->Deserialize(deserializer)'");
+                Log("Scene::CreateNewSceneNode(GTLib::Deserializer &) - A scene node of the same ID already exists. This is an erroneous condition. Instead, try 'Scene::CreateNewSceneNode()' followed by 'newSceneNode->Deserialize(deserializer)'");
 
                 delete sceneNode;
                 return nullptr;
@@ -502,7 +502,7 @@ namespace GTEngine
 
         if (serializers.count > 0)
         {
-            GTCore::Map<uint64_t, SceneNode*> newSceneNodes;
+            GTLib::Map<uint64_t, SceneNode*> newSceneNodes;
             SceneNode*                        rootSceneNode = nullptr;
 
             // We will iterate over each serializer and create nodes from them, ensuring we set the ID to 0 so that a new one is generated when we add them.
@@ -514,7 +514,7 @@ namespace GTEngine
                 assert(id         != 0);
                 assert(serializer != nullptr);
                 {
-                    GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
+                    GTLib::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
 
                     auto newSceneNode = new SceneNode;
                     newSceneNode->Deserialize(deserializer);
@@ -703,8 +703,8 @@ namespace GTEngine
             {
                 auto sceneNode = &proximityComponent->GetNode();
 
-                GTCore::Vector<uint64_t> sceneNodesEntered;
-                GTCore::Vector<uint64_t> sceneNodesLeft;
+                GTLib::Vector<uint64_t> sceneNodesEntered;
+                GTLib::Vector<uint64_t> sceneNodesLeft;
                 proximityComponent->UpdateContainment(sceneNodesEntered, sceneNodesLeft);
 
                 for (size_t iEntered = 0; iEntered < sceneNodesEntered.count; ++iEntered)
@@ -802,7 +802,7 @@ namespace GTEngine
             auto node = this->sceneNodes.GetSceneNodeAtIndex(i);
             assert(node != nullptr);
             {
-                if (GTCore::Strings::Equal(node->GetName(), name))
+                if (GTLib::Strings::Equal(node->GetName(), name))
                 {
                     return node;
                 }
@@ -969,7 +969,7 @@ namespace GTEngine
 
 
 
-    void Scene::RegisterToScript(GTCore::Script &script)
+    void Scene::RegisterToScript(GTLib::Script &script)
     {
         if (this->registeredScript != &script)
         {
@@ -1367,7 +1367,7 @@ namespace GTEngine
         this->navigationMesh.Build(*this);
     }
 
-    void Scene::FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTCore::Vector<glm::vec3> &output)
+    void Scene::FindNavigationPath(const glm::vec3 &start, const glm::vec3 &end, GTLib::Vector<glm::vec3> &output)
     {
         this->navigationMesh.FindPath(start, end, output);
     }
@@ -1394,7 +1394,7 @@ namespace GTEngine
     ////////////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    bool Scene::Serialize(GTCore::Serializer &serializer) const
+    bool Scene::Serialize(GTLib::Serializer &serializer) const
     {
         Serialization::ChunkHeader header;
 
@@ -1415,7 +1415,7 @@ namespace GTEngine
         // This chunk is the flat list of scene nodes. Not every scene node should be serialized here, so what we'll do is create
         // a flat vector containing pointers to the scene nodes that should be written. We use a vector here to make it easier to
         // grab the indices for the hierarchy.
-        GTCore::Vector<const SceneNode*> serializedNodes;
+        GTLib::Vector<const SceneNode*> serializedNodes;
         for (size_t i = 0; i < this->sceneNodes.GetCount(); ++i)
         {
             auto node = this->sceneNodes.GetSceneNodeAtIndex(i);
@@ -1432,8 +1432,8 @@ namespace GTEngine
         // a body size in bytes. What we will do is use a second basic serializer, and then copy that data into the main serializer. While
         // we're in this loop, we're actually going to construct data for the next chunk, which is the hierarchy chunk. We do this here
         // to save us from another loop later on.
-        GTCore::BasicSerializer secondarySerializer;
-        GTCore::Vector<Serialization::SceneNodeIndexPair> childParentPairs(serializedNodes.count);
+        GTLib::BasicSerializer secondarySerializer;
+        GTLib::Vector<Serialization::SceneNodeIndexPair> childParentPairs(serializedNodes.count);
 
         // We need a count here so we can deserialize effectively.
         secondarySerializer.Write(static_cast<uint32_t>(serializedNodes.count));
@@ -1528,11 +1528,11 @@ namespace GTEngine
         return true;
     }
 
-    bool Scene::Deserialize(GTCore::Deserializer &deserializer, SceneDeserializeCallback &callback)
+    bool Scene::Deserialize(GTLib::Deserializer &deserializer, SceneDeserializeCallback &callback)
     {
-        GTCore::Vector<SceneNode*>                        deserializedNodes;
-        GTCore::Vector<SceneNode*>                        rootSceneNodesLinkedToPrefabs;
-        GTCore::Vector<Serialization::SceneNodeIndexPair> childParentPairs;
+        GTLib::Vector<SceneNode*>                        deserializedNodes;
+        GTLib::Vector<SceneNode*>                        rootSceneNodesLinkedToPrefabs;
+        GTLib::Vector<Serialization::SceneNodeIndexPair> childParentPairs;
 
         bool readInfo                = false;
         bool readSceneNodes          = false;
@@ -1837,14 +1837,14 @@ namespace GTEngine
     }
 
 
-    bool Scene::SerializeStateStack(GTCore::Serializer &serializer) const
+    bool Scene::SerializeStateStack(GTLib::Serializer &serializer) const
     {
         this->stateStack.Serialize(serializer);
 
         return true;
     }
 
-    bool Scene::DeserializeStateStack(GTCore::Deserializer &deserializer)
+    bool Scene::DeserializeStateStack(GTLib::Deserializer &deserializer)
     {
         this->stateStack.Deserialize(deserializer);
 
@@ -1876,7 +1876,7 @@ namespace GTEngine
 
 
         // What we're now going to do is call this->OnSceneNodeComponentAdded() for every component. This allows us to avoid a lot of annoying code duplication.
-        GTCore::Vector<GTCore::String> componentNames;
+        GTLib::Vector<GTLib::String> componentNames;
         node.GetAttachedComponentNames(componentNames);
 
         for (size_t i = 0; i < componentNames.count; ++i)
@@ -1924,7 +1924,7 @@ namespace GTEngine
 
 
         // What we're now going to do is call this->OnSceneNodeComponentRemoved() for every component. This allows us to avoid a lot of annoying code duplication.
-        GTCore::Vector<GTCore::String> componentNames;
+        GTLib::Vector<GTLib::String> componentNames;
         node.GetAttachedComponentNames(componentNames);
 
         for (size_t i = 0; i < componentNames.count; ++i)
@@ -2227,7 +2227,7 @@ namespace GTEngine
         }
 
 
-        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
+        if (GTLib::Strings::Equal(component.GetName(), ModelComponent::Name))
         {
             if (node.IsVisible())
             {
@@ -2237,35 +2237,35 @@ namespace GTEngine
                 }
             }
         }
-        else if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), PointLightComponent::Name))
         {
             if (node.IsVisible())
             {
                 this->cullingManager.AddPointLight(node);
             }
         }
-        else if (GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), SpotLightComponent::Name))
         {
             if (node.IsVisible())
             {
                 this->cullingManager.AddSpotLight(node);
             }
         }
-        else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
         {
             if (node.IsVisible())
             {
                 this->cullingManager.AddDirectionalLight(node);
             }
         }
-        else if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
         {
             if (node.IsVisible())
             {
                 this->cullingManager.AddAmbientLight(node);
             }
         }
-        else if (GTCore::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
         {
             auto &particleSystemComponent = static_cast<ParticleSystemComponent &>(component);
 
@@ -2290,7 +2290,7 @@ namespace GTEngine
             // We want the scene know about this scene node so we can easily update AABBs.
             this->sceneNodesWithParticleSystemComponents.Add(node.GetID(), &particleSystemComponent);
         }
-        else if (GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), OccluderComponent::Name))
         {
             if (node.IsVisible())
             {
@@ -2299,7 +2299,7 @@ namespace GTEngine
         }
         else
         {
-            if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+            if (GTLib::Strings::Equal(component.GetName(), DynamicsComponent::Name))
             {
                 auto &dynamicsComponent = static_cast<DynamicsComponent &>(component);
 
@@ -2318,7 +2318,7 @@ namespace GTEngine
                     }
                 }
             }
-            else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
+            else if (GTLib::Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
                 auto &proximityComponent = static_cast<ProximityComponent &>(component);
 
@@ -2344,7 +2344,7 @@ namespace GTEngine
             else
             {
                 // Constraints.
-                if (GTCore::Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
+                if (GTLib::Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
                 {
                     auto constraint = static_cast<GenericConstraintComponent &>(component).GetConstraint();
                     if (constraint != nullptr)
@@ -2356,7 +2356,7 @@ namespace GTEngine
                         Log("Warning: Attempting to add a generic constraint component without attachments. Ignoring.");
                     }
                 }
-                else if (GTCore::Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
+                else if (GTLib::Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
                 {
                     auto constraint = static_cast<ConeTwistConstraintComponent &>(component).GetConstraint();
                     if (constraint != nullptr)
@@ -2368,7 +2368,7 @@ namespace GTEngine
                         Log("Warning: Attempting to add a cone twist constraint component without attachments. Ignoring.");
                     }
                 }
-                else if (GTCore::Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
+                else if (GTLib::Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
                 {
                     auto constraint = static_cast<PointToPointConstraintComponent &>(component).GetConstraint();
                     if (constraint != nullptr)
@@ -2382,7 +2382,7 @@ namespace GTEngine
                 }
                 else
                 {
-                    if (GTCore::Strings::Equal(component.GetName(), ScriptComponent::Name))
+                    if (GTLib::Strings::Equal(component.GetName(), ScriptComponent::Name))
                     {
                         this->updateManager.RemoveSceneNode(node);
 
@@ -2423,44 +2423,44 @@ namespace GTEngine
         }
 
 
-        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
+        if (GTLib::Strings::Equal(component.GetName(), ModelComponent::Name))
         {
             this->cullingManager.RemoveModel(node);
         }
-        else if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), PointLightComponent::Name))
         {
             this->cullingManager.RemovePointLight(node);
         }
-        else if (GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), SpotLightComponent::Name))
         {
             this->cullingManager.RemoveSpotLight(node);
         }
-        else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
         {
             this->cullingManager.RemoveDirectionalLight(node);
         }
-        else if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
         {
             this->cullingManager.RemoveAmbientLight(node);
         }
-        else if (GTCore::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
         {
             this->cullingManager.RemoveParticleSystem(node);
 
             // The scene needs to know about this.
             this->sceneNodesWithParticleSystemComponents.RemoveByKey(node.GetID());
         }
-        else if (GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), OccluderComponent::Name))
         {
             this->cullingManager.RemoveOccluder(node);
         }
         else
         {
-            if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+            if (GTLib::Strings::Equal(component.GetName(), DynamicsComponent::Name))
             {
                 this->physicsManager.RemoveRigidBody(static_cast<DynamicsComponent &>(component).GetRigidBody());
             }
-            else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
+            else if (GTLib::Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
                 this->physicsManager.RemoveGhostObject(static_cast<ProximityComponent &>(component).GetGhostObject());
 
@@ -2469,21 +2469,21 @@ namespace GTEngine
             }
             else
             {
-                if (GTCore::Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
+                if (GTLib::Strings::Equal(component.GetName(), GenericConstraintComponent::Name))
                 {
                     this->physicsManager.RemoveConstraint(*static_cast<GenericConstraintComponent &>(component).GetConstraint());
                 }
-                else if (GTCore::Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
+                else if (GTLib::Strings::Equal(component.GetName(), ConeTwistConstraintComponent::Name))
                 {
                     this->physicsManager.RemoveConstraint(*static_cast<ConeTwistConstraintComponent &>(component).GetConstraint());
                 }
-                else if (GTCore::Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
+                else if (GTLib::Strings::Equal(component.GetName(), PointToPointConstraintComponent::Name))
                 {
                     this->physicsManager.RemoveConstraint(*static_cast<PointToPointConstraintComponent &>(component).GetConstraint());
                 }
                 else
                 {
-                    if (GTCore::Strings::Equal(component.GetName(), ScriptComponent::Name))
+                    if (GTLib::Strings::Equal(component.GetName(), ScriptComponent::Name))
                     {
                         // We do this exactly the same as when the script component is changed.
                         this->updateManager.RemoveSceneNode(node);
@@ -2519,7 +2519,7 @@ namespace GTEngine
         }
 
 
-        if (GTCore::Strings::Equal(component.GetName(), ModelComponent::Name))
+        if (GTLib::Strings::Equal(component.GetName(), ModelComponent::Name))
         {
             this->cullingManager.RemoveModel(node);
 
@@ -2528,39 +2528,39 @@ namespace GTEngine
                 this->cullingManager.AddModel(node);
             }
         }
-        else if (GTCore::Strings::Equal(component.GetName(), PointLightComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), PointLightComponent::Name))
         {
             this->cullingManager.RemovePointLight(node);
             this->cullingManager.AddPointLight(node);
         }
-        else if (GTCore::Strings::Equal(component.GetName(), SpotLightComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), SpotLightComponent::Name))
         {
             this->cullingManager.RemoveSpotLight(node);
             this->cullingManager.AddSpotLight(node);
         }
-        else if (GTCore::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), DirectionalLightComponent::Name))
         {
             this->cullingManager.RemoveDirectionalLight(node);
             this->cullingManager.AddDirectionalLight(node);
         }
-        else if (GTCore::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), AmbientLightComponent::Name))
         {
             this->cullingManager.RemoveAmbientLight(node);
             this->cullingManager.AddAmbientLight(node);
         }
-        else if (GTCore::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), ParticleSystemComponent::Name))
         {
             this->cullingManager.RemoveParticleSystem(node);
             this->cullingManager.AddParticleSystem(node);
         }
-        else if (GTCore::Strings::Equal(component.GetName(), OccluderComponent::Name))
+        else if (GTLib::Strings::Equal(component.GetName(), OccluderComponent::Name))
         {
             this->cullingManager.RemoveOccluder(node);
             this->cullingManager.AddOccluder(node);
         }
         else
         {
-            if (GTCore::Strings::Equal(component.GetName(), DynamicsComponent::Name))
+            if (GTLib::Strings::Equal(component.GetName(), DynamicsComponent::Name))
             {
                 auto &dynamicsComponent = static_cast<DynamicsComponent &>(component);
 
@@ -2577,7 +2577,7 @@ namespace GTEngine
                     }
                 }
             }
-            else if (GTCore::Strings::Equal(component.GetName(), ProximityComponent::Name))
+            else if (GTLib::Strings::Equal(component.GetName(), ProximityComponent::Name))
             {
                 auto &proximityComponent = static_cast<ProximityComponent &>(component);
 
@@ -2590,7 +2590,7 @@ namespace GTEngine
             }
             else
             {
-                if (GTCore::Strings::Equal(component.GetName(), ScriptComponent::Name))
+                if (GTLib::Strings::Equal(component.GetName(), ScriptComponent::Name))
                 {
                     // In this case of a script, there's a chance that it won't want to be updated anymore or vice versa. We can get around this easily
                     // enough by just removing and re-adding it.

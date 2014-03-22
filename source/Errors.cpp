@@ -3,7 +3,7 @@
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 
-#include <GTCore/Strings/Create.hpp>
+#include <GTLib/Strings/Create.hpp>
 #include <cstdarg>
 
 namespace GTEngine
@@ -18,7 +18,7 @@ namespace GTEngine
         va_start(argList1, format);
         va_start(argList2, format);
         {
-            formattedStr = GTCore::Strings::CreateFormatted(format, argList1, argList2);
+            formattedStr = GTLib::Strings::CreateFormatted(format, argList1, argList2);
         }
         va_end(argList1);
         va_end(argList2);
@@ -28,6 +28,6 @@ namespace GTEngine
 
 
         // We're finished with the formatted string, so it needs to be deleted.
-        GTCore::Strings::Delete(formattedStr);
+        GTLib::Strings::Delete(formattedStr);
     }
 }

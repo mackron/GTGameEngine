@@ -87,7 +87,7 @@ namespace GTEngine
         unsigned int anisotropy;
 
         /// The list of shaders that this texture is attached to.
-        GTCore::List<Shader*> shaders;
+        GTLib::List<Shader*> shaders;
         
         
         

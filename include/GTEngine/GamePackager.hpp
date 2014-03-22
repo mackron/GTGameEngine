@@ -3,8 +3,8 @@
 #ifndef __GTEngine_GamePackager_hpp_
 #define __GTEngine_GamePackager_hpp_
 
-#include <GTCore/String.hpp>
-#include <GTCore/Vector.hpp>
+#include <GTLib/String.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GTEngine
 {
@@ -69,13 +69,13 @@ namespace GTEngine
     private:
 
         /// The absolute path of the output directory.
-        GTCore::String outputDirectoryAbsolutePath;
+        GTLib::String outputDirectoryAbsolutePath;
 
         /// The paths of data directories relative to 'outputDirectoryAbsolutePath'. These will be used when writing the config file.
-        GTCore::Vector<GTCore::String> dataDirectoryRelativePaths;
+        GTLib::Vector<GTLib::String> dataDirectoryRelativePaths;
 
         /// The relative path of the executable.
-        GTCore::String executableRelativePath;
+        GTLib::String executableRelativePath;
     };
 }
 

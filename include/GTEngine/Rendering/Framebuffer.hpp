@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Framebuffer_hpp_
 #define __GTEngine_Framebuffer_hpp_
 
-#include <GTCore/Map.hpp>
+#include <GTLib/Map.hpp>
 #include <cstddef>
 
 namespace GTEngine
@@ -135,14 +135,14 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This is mainly for use by renderers.
-        const GTCore::Map<unsigned int, Texture2D*> & GetAttachedColourBuffers() const { return this->colourAttachments; }
+        const GTLib::Map<unsigned int, Texture2D*> & GetAttachedColourBuffers() const { return this->colourAttachments; }
 
 
 
     private:
 
         /// The current colour attachments. This is keyed by their index.
-        GTCore::Map<unsigned int, Texture2D*> colourAttachments;
+        GTLib::Map<unsigned int, Texture2D*> colourAttachments;
 
         /// There can only be one depth/stencil texture.
         Texture2D* depthStencilAttachment;

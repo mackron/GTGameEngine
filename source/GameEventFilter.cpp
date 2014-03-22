@@ -28,38 +28,38 @@ namespace GTEngine
         return true;
     }
     
-    bool GameEventFilter::OnMouseButtonDown(GTCore::MouseButton &, int &, int &)
+    bool GameEventFilter::OnMouseButtonDown(GTLib::MouseButton &, int &, int &)
     {
         return true;
     }
     
-    bool GameEventFilter::OnMouseButtonUp(GTCore::MouseButton &, int &, int &)
+    bool GameEventFilter::OnMouseButtonUp(GTLib::MouseButton &, int &, int &)
     {
         return true;
     }
     
-    bool GameEventFilter::OnMouseButtonDoubleClick(GTCore::MouseButton &, int &, int &)
+    bool GameEventFilter::OnMouseButtonDoubleClick(GTLib::MouseButton &, int &, int &)
     {
         return true;
     }
     
     
-    bool GameEventFilter::OnKeyPressed(GTCore::Key &)
+    bool GameEventFilter::OnKeyPressed(GTLib::Key &)
     {
         return true;
     }
     
-    bool GameEventFilter::OnKeyReleased(GTCore::Key &)
+    bool GameEventFilter::OnKeyReleased(GTLib::Key &)
     {
         return true;
     }
     
-    bool GameEventFilter::OnKeyDown(GTCore::Key &)
+    bool GameEventFilter::OnKeyDown(GTLib::Key &)
     {
         return true;
     }
     
-    bool GameEventFilter::OnKeyUp(GTCore::Key &)
+    bool GameEventFilter::OnKeyUp(GTLib::Key &)
     {
         return true;
     }

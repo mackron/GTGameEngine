@@ -4,7 +4,7 @@
 #define __GTEngine_AnimationSegment_hpp_
 
 #include <cstdint>
-#include <GTCore/String.hpp>
+#include <GTLib/String.hpp>
 
 namespace GTEngine
 {
@@ -35,7 +35,7 @@ namespace GTEngine
 
 
         /// The name of the animation segment.
-        GTCore::String name;
+        GTLib::String name;
 
         /// The first key frame of the segment.
         size_t startKeyFrame;

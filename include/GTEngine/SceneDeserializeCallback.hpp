@@ -40,6 +40,6 @@ namespace GTEngine
         /// @remarks
         ///     This deserializer will be sitting at the first byte of the main chunk data, just past the header. Implementations
         ///     of this method should not deserialize the header.
-        virtual bool HandleChunk(const Serialization::ChunkHeader &header, GTCore::Deserializer &deserializer);
+        virtual bool HandleChunk(const Serialization::ChunkHeader &header, GTLib::Deserializer &deserializer);
     };
 }

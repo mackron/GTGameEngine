@@ -3,7 +3,7 @@
 #ifndef __GTEngine_ParticleSystemDefinition_hpp_
 #define __GTEngine_ParticleSystemDefinition_hpp_
 
-#include <GTCore/String.hpp>
+#include <GTLib/String.hpp>
 #include "ParticleEmitter.hpp"
 
 namespace GTEngine
@@ -66,10 +66,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Serializes the particle system definition.
-        void Serialize(GTCore::Serializer &serializer);
+        void Serialize(GTLib::Serializer &serializer);
 
         /// Deserializes the particle system definition.
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
 
@@ -83,15 +83,15 @@ namespace GTEngine
     private:
 
         /// The absolute paht of the particle system.
-        GTCore::String absolutePath;
+        GTLib::String absolutePath;
 
         /// The relative path of the particle system.
-        GTCore::String relativePath;
+        GTLib::String relativePath;
 
 
         /// The list of particle emitters making up the particle system. These emitters will always remain in their default state and
         /// should never be updated. Instead, they will be source of a copy operation which ParticleSystem instantiations will inherit.
-        GTCore::Vector<ParticleEmitter*> emitters;
+        GTLib::Vector<ParticleEmitter*> emitters;
     };
 }
 

@@ -4,8 +4,8 @@
 #define __GTEngine_GameEvent_hpp_
 
 #include "GameEventCodes.hpp"
-#include <GTCore/Windowing/Keys.hpp>
-#include <GTCore/Windowing/MouseButtons.hpp>
+#include <GTLib/Windowing/Keys.hpp>
+#include <GTLib/Windowing/MouseButtons.hpp>
 
 namespace GTEngine
 {
@@ -27,12 +27,12 @@ namespace GTEngine
 
             struct
             {
-                GTCore::Key key;
+                GTLib::Key key;
             }keypressed, keyreleased;
 
             struct
             {
-                GTCore::Key key;
+                GTLib::Key key;
             }keydown, keyup;
 
             struct
@@ -50,7 +50,7 @@ namespace GTEngine
 
             struct
             {
-                GTCore::MouseButton button;
+                GTLib::MouseButton button;
                 int x;
                 int y;
             }mousedown, mouseup, mousedoubleclick;

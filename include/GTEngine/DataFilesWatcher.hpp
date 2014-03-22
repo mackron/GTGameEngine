@@ -3,9 +3,9 @@
 #ifndef __GTEngine_DataFilesWatcher_hpp_
 #define __GTEngine_DataFilesWatcher_hpp_
 
-#include <GTCore/IO.hpp>
-#include <GTCore/Dictionary.hpp>
-#include <GTCore/Threading.hpp>
+#include <GTLib/IO.hpp>
+#include <GTLib/Dictionary.hpp>
+#include <GTLib/Threading.hpp>
 
 namespace GTEngine
 {
@@ -33,7 +33,7 @@ namespace GTEngine
             {
             }
 
-            Item(const GTCore::FileInfo &infoIn, Item* parent)
+            Item(const GTLib::FileInfo &infoIn, Item* parent)
                 : info(infoIn),
                   relativePath(), absolutePath(),
                   parent(parent), children()
@@ -52,7 +52,7 @@ namespace GTEngine
             /// Adds a child item.
             ///
             /// @param info [in] The file info of the child.
-            void InsertChild(const GTCore::FileInfo &info)
+            void InsertChild(const GTLib::FileInfo &info)
             {
                 this->children.Add(info.path.c_str(), new Item(info, this));
             }
@@ -87,7 +87,7 @@ namespace GTEngine
             }
 
             /// Retrieves the absolute directory of the top level root item.
-            const GTCore::String & GetRootDirectory()
+            const GTLib::String & GetRootDirectory()
             {
                 if (this->parent != nullptr && this->parent->parent == nullptr)
                 {
@@ -101,20 +101,20 @@ namespace GTEngine
 
 
             /// The file info.
-            GTCore::FileInfo info;
+            GTLib::FileInfo info;
 
             /// The relative path.
-            GTCore::String relativePath;
+            GTLib::String relativePath;
 
             /// The absolute path.
-            GTCore::String absolutePath;
+            GTLib::String absolutePath;
 
 
             /// A pointer to the parent item. Can be null.
             Item* parent;
 
             /// The list of children. We use a dictionary here in order to keep everything in alphabetical order and to also allow fast searching.
-            GTCore::Dictionary<Item*> children;
+            GTLib::Dictionary<Item*> children;
             
             
         private:    // No copying.
@@ -257,11 +257,11 @@ namespace GTEngine
         Item root;
 
         /// The thread that will perform the asynchronous file checks.
-        GTCore::Thread thread;
+        GTLib::Thread thread;
 
 
         /// The list of event handlers currently attached.
-        GTCore::List<EventHandler*> eventHandlers;
+        GTLib::List<EventHandler*> eventHandlers;
 
 
         /// Structure representing an event.
@@ -272,7 +272,7 @@ namespace GTEngine
         };
 
         /// The list of events waiting to be dispatched.
-        GTCore::List<Event> events;
+        GTLib::List<Event> events;
 
 
         /// This keeps track of whether or not the data files watcher is still active.

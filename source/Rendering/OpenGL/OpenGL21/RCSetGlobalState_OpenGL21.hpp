@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_OpenGL21_RCSetGlobalState_hpp_
 #define __GTEngine_Rendering_OpenGL21_RCSetGlobalState_hpp_
 
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 #include <gtgl/gtgl.h>
 #include <cstdint>
 
@@ -285,7 +285,7 @@ namespace GTEngine
         /// glDrawBuffers params.
         struct
         {
-            GTCore::Vector<GLenum> buffers;
+            GTLib::Vector<GLenum> buffers;
 
         }drawBuffersParams;
 

@@ -11,7 +11,7 @@
 #if defined(GTCORE_PLATFORM_WINDOWS)
 #include <WinGDI.h>
 #else
-#include <GTCore/Windowing/X11/X11.hpp>
+#include <GTLib/Windowing/X11/X11.hpp>
 #endif
 
 
@@ -95,10 +95,10 @@ namespace GTEngine
 
 
     /// The mutex for synching applicable resource creation operations.
-    static GTCore::Mutex ResourceCreationLock;
+    static GTLib::Mutex ResourceCreationLock;
 
     /// The mutex for synching applicable resource deletion operations.
-    static GTCore::Mutex ResourceDeletionLock;
+    static GTLib::Mutex ResourceDeletionLock;
 
 
     /// The caches for individual commands. There are two of each - one for the back and one for the front.
@@ -260,7 +260,7 @@ namespace GTEngine
 
                 // We're going to initialise the X11 sub-system from here.
             #ifdef GTGL_GLX
-                GTCore::X11::Initialize(gtglGetDisplay());
+                GTLib::X11::Initialize(gtglGetDisplay());
             #endif
 
                 IsInitialised = true;
@@ -313,25 +313,25 @@ namespace GTEngine
     }
 
 
-    GTCore::Window* Renderer::CreateWindow()
+    GTLib::Window* Renderer::CreateWindow()
     {
         assert(IsInitialised);
         {
             // When creating a window, we use GTCore to create the main window. Then we do platform specific stuff to get it working with the GTGL context.
         #ifdef GTCORE_PLATFORM_WINDOWS
-            GTCore::Window *window = new GTCore::Window();
-            const GTCore::InternalWindowObjects &iwo = window->GetInternalObjects();
+            GTLib::Window *window = new GTLib::Window();
+            const GTLib::InternalWindowObjects &iwo = window->GetInternalObjects();
 
             ::SetPixelFormat(iwo.hDC, gtglGetPixelFormat(), gtglGetPFD());
 
             // We now need to make the window current.
             gtglSetCurrentDC(iwo.hDC);
         #else
-            GTCore::InternalWindowObjects iwo;
+            GTLib::InternalWindowObjects iwo;
             iwo.vi       = gtglGetVisualInfo();
             iwo.colormap = gtglGetColormap();
 
-            GTCore::Window *window = new GTCore::Window(iwo);
+            GTLib::Window *window = new GTLib::Window(iwo);
 
             // The window needs to be made current...
             gtglSetCurrentWindow(window->GetInternalObjects().window);
@@ -341,7 +341,7 @@ namespace GTEngine
         }
     }
 
-    void Renderer::SetCurrentWindow(GTCore::Window *window)
+    void Renderer::SetCurrentWindow(GTLib::Window *window)
     {
     #ifdef GTCORE_PLATFORM_WINDOWS
         if (window != nullptr)

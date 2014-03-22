@@ -74,8 +74,8 @@ namespace GTEngine
 
     void SceneViewport::Resize(unsigned int newWidth, unsigned int newHeight)
     {
-        this->width  = GTCore::Max(newWidth,  1U);
-        this->height = GTCore::Max(newHeight, 1U);
+        this->width  = GTLib::Max(newWidth,  1U);
+        this->height = GTLib::Max(newHeight, 1U);
 
 
         // If the viewport is attached to a scene, we will let it's renderer know that the viewport needs a resize.

@@ -4,8 +4,8 @@
 #define __GTEngine_ScriptDefinition_hpp_
 
 #include "ScriptVariable.hpp"
-#include <GTCore/String.hpp>
-#include <GTCore/Vector.hpp>
+#include <GTLib/String.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GTEngine
 {
@@ -113,13 +113,13 @@ namespace GTEngine
     private:
 
         /// The absolute path of the script.
-        GTCore::String absolutePath;
+        GTLib::String absolutePath;
 
         /// The relative path of the script.
-        GTCore::String relativePath;
+        GTLib::String relativePath;
 
         /// The script string.
-        GTCore::String scriptString;
+        GTLib::String scriptString;
 
         
         /// Keeps track of whether or not this definition has an OnUpdate event handler.
@@ -172,7 +172,7 @@ namespace GTEngine
 
 
         /// The list of public variables, in the order they are defined (hopefully).
-        GTCore::Vector<ScriptVariable*> publicVariables;
+        GTLib::Vector<ScriptVariable*> publicVariables;
     };
 }
 

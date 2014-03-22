@@ -105,7 +105,7 @@ namespace GTEngine
             auto definition = this->scripts[i];
             if (definition != nullptr)
             {
-                if (GTCore::Strings::Equal(definition->GetAbsolutePath(), absolutePath))
+                if (GTLib::Strings::Equal(definition->GetAbsolutePath(), absolutePath))
                 {
                     indexOut = i;
                     return definition;
@@ -123,7 +123,7 @@ namespace GTEngine
             auto definition = this->scripts[i];
             if (definition != nullptr)
             {
-                if (GTCore::Strings::Equal(definition->GetRelativePath(), relativePath))
+                if (GTLib::Strings::Equal(definition->GetRelativePath(), relativePath))
                 {
                     indexOut = i;
                     return definition;
@@ -480,7 +480,7 @@ namespace GTEngine
             auto variable = this->publicVariables[i];
             assert(variable != nullptr);
             {
-                if (GTCore::Strings::Equal(variable->GetName(), name))
+                if (GTLib::Strings::Equal(variable->GetName(), name))
                 {
                     indexOut = i;
                     return variable;
@@ -599,10 +599,10 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void ScriptComponent::Serialize(GTCore::Serializer &serializer) const
+    void ScriptComponent::Serialize(GTLib::Serializer &serializer) const
     {
         // We will use an intermediary serializer like normal. All we need to save is the relative paths of the scripts we're using.
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
 
 
         // Script paths.
@@ -703,7 +703,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void ScriptComponent::Deserialize(GTCore::Deserializer &deserializer, bool noPublicVariableOverride)
+    void ScriptComponent::Deserialize(GTLib::Deserializer &deserializer, bool noPublicVariableOverride)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);
@@ -722,7 +722,7 @@ namespace GTEngine
 
                     for (uint32_t i = 0; i < scriptCount; ++i)
                     {
-                        GTCore::String relativePath;
+                        GTLib::String relativePath;
                         deserializer.ReadString(relativePath);
 
                         this->AddScript(relativePath.c_str(), DontPostOnChange);
@@ -737,7 +737,7 @@ namespace GTEngine
                         uint32_t type;
                         deserializer.Read(type);
 
-                        GTCore::String name;
+                        GTLib::String name;
                         deserializer.ReadString(name);
 
 
@@ -831,7 +831,7 @@ namespace GTEngine
 
                         case ScriptVariableType_String:
                             {
-                                GTCore::String value;
+                                GTLib::String value;
                                 deserializer.ReadString(value);
 
                                 auto variable = this->GetPublicVariableByName(name.c_str());
@@ -846,7 +846,7 @@ namespace GTEngine
 
                         case ScriptVariableType_Prefab:
                             {
-                                GTCore::String value;
+                                GTLib::String value;
                                 deserializer.ReadString(value);
 
                                 auto variable = this->GetPublicVariableByName(name.c_str());

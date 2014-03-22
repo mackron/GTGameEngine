@@ -3,8 +3,8 @@
 #ifndef __GTEngine_GameState_hpp_
 #define __GTEngine_GameState_hpp_
 
-#include <GTCore/Windowing/Keys.hpp>
-#include <GTCore/Windowing/MouseButtons.hpp>
+#include <GTLib/Windowing/Keys.hpp>
+#include <GTLib/Windowing/MouseButtons.hpp>
 
 namespace GTEngine
 {
@@ -69,31 +69,31 @@ namespace GTEngine
         /// @param button [in] The button that was pressed.
         /// @param x      [in] The x position of the mouse.
         /// @param y      [in] The y position of the mouse.
-        virtual void OnMouseButtonDown(GTCore::MouseButton button, int x, int y);
+        virtual void OnMouseButtonDown(GTLib::MouseButton button, int x, int y);
 
         /// Called when a mouse button has been released.
         ///
         /// @param button [in] The button that was released.
         /// @param x      [in] The x position of the mouse.
         /// @param y      [in] The y position of the mouse.
-        virtual void OnMouseButtonUp(GTCore::MouseButton button, int x, int y);
+        virtual void OnMouseButtonUp(GTLib::MouseButton button, int x, int y);
 
         /// Called when a mouse button has been double-clicked.
         ///
         /// @param button [in] The button that was double-clicked.
         /// @param x      [in] The x position of the mouse.
         /// @param y      [in] The y position of the mouse.
-        virtual void OnMouseButtonDoubleClick(GTCore::MouseButton button, int x, int y);
+        virtual void OnMouseButtonDoubleClick(GTLib::MouseButton button, int x, int y);
 
         /// Called when a key is pressed.
         ///
         /// @param key [in] The key that was pressed.
-        virtual void OnKeyPressed(GTCore::Key key);
+        virtual void OnKeyPressed(GTLib::Key key);
 
         /// Called when a key is released.
         ///
         /// @param key [in] The key that was released.
-        virtual void OnKeyReleased(GTCore::Key key);
+        virtual void OnKeyReleased(GTLib::Key key);
 
         /// Called when the game is paused.
         virtual void OnPause();

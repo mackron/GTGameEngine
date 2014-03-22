@@ -4,7 +4,7 @@
 #define __GTEngine_Rendering_OpenGL21_RCSetTextureState_hpp_
 
 #include <GTImage/ImageFormats.hpp>
-#include <GTCore/Map.hpp>
+#include <GTLib/Map.hpp>
 #include <gtgl/gtgl.h>
 #include <cstdint>
 

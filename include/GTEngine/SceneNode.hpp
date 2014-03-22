@@ -21,10 +21,10 @@
 #include "Components/PrefabComponent.hpp"
 #include "Components/EditorMetadataComponent.hpp"
 
-#include <GTCore/Dictionary.hpp>
-#include <GTCore/List.hpp>
-#include <GTCore/Map.hpp>
-#include <GTCore/String.hpp>
+#include <GTLib/Dictionary.hpp>
+#include <GTLib/List.hpp>
+#include <GTLib/Map.hpp>
+#include <GTLib/String.hpp>
 
 namespace GTEngine
 {
@@ -534,7 +534,7 @@ namespace GTEngine
 
 
         /// Retrieves a list containing the names of the components that are currently attached to the scene node.
-        void GetAttachedComponentNames(GTCore::Vector<GTCore::String> &output) const;
+        void GetAttachedComponentNames(GTLib::Vector<GTLib::String> &output) const;
 
 
 
@@ -674,7 +674,7 @@ namespace GTEngine
         ///     This ignores children. Serialization of children should be done at a higher level.
         ///     @par
         ///     This will serialize every attached component also.
-        void Serialize(GTCore::Serializer &serializer, unsigned int flags = 0) const;
+        void Serialize(GTLib::Serializer &serializer, unsigned int flags = 0) const;
 
         /// Deserializes the scene node, ignoring children.
         ///
@@ -684,7 +684,7 @@ namespace GTEngine
         ///     This will not deserialize children. That should be done at a higher level.
         ///     @par
         ///     This is the opposite of Serialize(), so for any rule that applies to Serialize(), it will also apply here.
-        void Deserialize(GTCore::Deserializer &deserializer, unsigned int flags = 0);
+        void Deserialize(GTLib::Deserializer &deserializer, unsigned int flags = 0);
 
 
         /// Disables serialization of the scene node when serialized from a scene.
@@ -769,7 +769,7 @@ namespace GTEngine
 
         /// The name of this node. Should usually be unique, but doesn't need to be. This can be modified, so we'll use a String object
         /// to make things easier.
-        GTCore::String name;
+        GTLib::String name;
 
         /// The parent of the scene node. If this is null, it is a root object.
         SceneNode* parent;
@@ -800,15 +800,15 @@ namespace GTEngine
 
         /// The list of pointers of the event handlers that are attached to this node. This should usually always have at
         /// least a single entry, but doesn't have to.
-        GTCore::List<SceneNodeEventHandler*> eventHandlers;
+        GTLib::List<SceneNodeEventHandler*> eventHandlers;
 
         /// A map of components. More than one type of component is not allowed. We index this map by the component name.
-        GTCore::Dictionary<Component*> components;
+        GTLib::Dictionary<Component*> components;
 
         /// A map of data pointers. A SceneNode should not be inheritted. Instead, additional data can be attached to the scene
         /// node with a size_t as it's key. We use a size_t so we can use a pointer as a key if needed. This could be useful for
         /// component-specific data (use a key equal to the pointer to the component).
-        GTCore::Map<size_t, void*> dataPointers;
+        GTLib::Map<size_t, void*> dataPointers;
 
 
         /// The scene this node is attached to, if any. Usually, a scene node is part of a scene. We need to keep track of the

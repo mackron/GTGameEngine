@@ -9,7 +9,7 @@ namespace GTEngine
 {
     namespace Scripting
     {
-        bool LoadParticlesLibrary(GTCore::Script &script)
+        bool LoadParticlesLibrary(GTLib::Script &script)
         {
             bool successful = true;
 
@@ -403,7 +403,7 @@ namespace GTEngine
 
         namespace ParticleEmitterFFI
         {
-            int GetName(GTCore::Script &script)
+            int GetName(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -418,7 +418,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetName(GTCore::Script &script)
+            int SetName(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -430,7 +430,7 @@ namespace GTEngine
             }
 
 
-            int EnableBurstMode(GTCore::Script &script)
+            int EnableBurstMode(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -441,7 +441,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int DisableBurstMode(GTCore::Script &script)
+            int DisableBurstMode(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -452,7 +452,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int IsBurstModeEnabled(GTCore::Script &script)
+            int IsBurstModeEnabled(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -468,7 +468,7 @@ namespace GTEngine
             }
 
 
-            int SetDurationInSeconds(GTCore::Script &script)
+            int SetDurationInSeconds(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -479,7 +479,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetDurationInSeconds(GTCore::Script &script)
+            int GetDurationInSeconds(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -495,7 +495,7 @@ namespace GTEngine
             }
 
 
-            int SetDelayInSeconds(GTCore::Script &script)
+            int SetDelayInSeconds(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -506,7 +506,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetDelayInSeconds(GTCore::Script &script)
+            int GetDelayInSeconds(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -522,7 +522,7 @@ namespace GTEngine
             }
 
 
-            int SetEmissionRatePerSecond(GTCore::Script &script)
+            int SetEmissionRatePerSecond(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -533,7 +533,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetEmissionRatePerSecond(GTCore::Script &script)
+            int GetEmissionRatePerSecond(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -549,7 +549,7 @@ namespace GTEngine
             }
 
 
-            int SetStartSpeed(GTCore::Script &script)
+            int SetStartSpeed(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -563,7 +563,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetStartSpeed(GTCore::Script &script)
+            int GetStartSpeed(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -585,7 +585,7 @@ namespace GTEngine
             }
 
 
-            int SetStartRotation(GTCore::Script &script)
+            int SetStartRotation(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -599,7 +599,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetStartRotation(GTCore::Script &script)
+            int GetStartRotation(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -621,7 +621,7 @@ namespace GTEngine
             }
 
 
-            int SetStartScale(GTCore::Script &script)
+            int SetStartScale(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -635,7 +635,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetStartScale(GTCore::Script &script)
+            int GetStartScale(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -657,7 +657,7 @@ namespace GTEngine
             }
 
 
-            int SetLifetime(GTCore::Script &script)
+            int SetLifetime(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -671,7 +671,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetLifetime(GTCore::Script &script)
+            int GetLifetime(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -693,7 +693,7 @@ namespace GTEngine
             }
 
 
-            int SetGravityFactor(GTCore::Script &script)
+            int SetGravityFactor(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -704,7 +704,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetGravityFactor(GTCore::Script &script)
+            int GetGravityFactor(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -720,7 +720,7 @@ namespace GTEngine
             }
 
 
-            int GetEmissionShapeType(GTCore::Script &script)
+            int GetEmissionShapeType(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -735,7 +735,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int SetEmissionShapeType(GTCore::Script &script)
+            int SetEmissionShapeType(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -747,7 +747,7 @@ namespace GTEngine
             }
 
 
-            int SetConeEmissionShape(GTCore::Script &script)
+            int SetConeEmissionShape(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -761,7 +761,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SetSphereEmissionShape(GTCore::Script &script)
+            int SetSphereEmissionShape(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -774,7 +774,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int SetBoxEmissionShape(GTCore::Script &script)
+            int SetBoxEmissionShape(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -789,7 +789,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetEmissionShapeProperties(GTCore::Script &script)
+            int GetEmissionShapeProperties(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -845,7 +845,7 @@ namespace GTEngine
             }
 
 
-            int SetBillboardMaterial(GTCore::Script &script)
+            int SetBillboardMaterial(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -860,7 +860,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetBillboardMaterialRelativePath(GTCore::Script &script)
+            int GetBillboardMaterialRelativePath(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -884,7 +884,7 @@ namespace GTEngine
             }
 
 
-            int SetTextureTiling(GTCore::Script &script)
+            int SetTextureTiling(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -897,7 +897,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int GetTextureTiling(GTCore::Script &script)
+            int GetTextureTiling(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -919,7 +919,7 @@ namespace GTEngine
             }
 
 
-            int GetFunctionCount(GTCore::Script &script)
+            int GetFunctionCount(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -934,7 +934,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetFunctionByIndex(GTCore::Script &script)
+            int GetFunctionByIndex(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -1000,7 +1000,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int RemoveFunctionByIndex(GTCore::Script &script)
+            int RemoveFunctionByIndex(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -1011,7 +1011,7 @@ namespace GTEngine
                 return 0;
             }
 
-            int AddFunction(GTCore::Script &script)
+            int AddFunction(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -1023,7 +1023,7 @@ namespace GTEngine
             }
 
 
-            int SetFunctionRangeByIndex(GTCore::Script &script)
+            int SetFunctionRangeByIndex(GTLib::Script &script)
             {
                 auto emitter = static_cast<ParticleEmitter*>(script.ToPointer(1));
                 if (emitter != nullptr)
@@ -1077,7 +1077,7 @@ namespace GTEngine
 
         namespace ParticleSystemDefinitionFFI
         {
-            int GetEmitterCount(GTCore::Script &script)
+            int GetEmitterCount(GTLib::Script &script)
             {
                 auto definition = static_cast<ParticleSystemDefinition*>(script.ToPointer(1));
                 if (definition != nullptr)
@@ -1092,7 +1092,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int GetEmitterPtrByIndex(GTCore::Script &script)
+            int GetEmitterPtrByIndex(GTLib::Script &script)
             {
                 auto definition = static_cast<ParticleSystemDefinition*>(script.ToPointer(1));
                 if (definition != nullptr)
@@ -1107,7 +1107,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int AppendNewEmitter(GTCore::Script &script)
+            int AppendNewEmitter(GTLib::Script &script)
             {
                 auto definition = static_cast<ParticleSystemDefinition*>(script.ToPointer(1));
                 if (definition != nullptr)
@@ -1122,7 +1122,7 @@ namespace GTEngine
                 return 1;
             }
 
-            int DeleteEmitterByIndex(GTCore::Script &script)
+            int DeleteEmitterByIndex(GTLib::Script &script)
             {
                 auto definition = static_cast<ParticleSystemDefinition*>(script.ToPointer(1));
                 if (definition != nullptr)

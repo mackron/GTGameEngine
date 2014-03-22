@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Material_hpp_
 #define __GTEngine_Material_hpp_
 
-#include <GTCore/String.hpp>
+#include <GTLib/String.hpp>
 #include "ShaderParameterCache.hpp"
 #include "Serialization.hpp"
 #include "Rendering/BlendEquations.hpp"
@@ -53,7 +53,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     When a channel is not specified, this will return an empty string, in which case the renderer can choose what to do by default.
-        GTCore::String GetChannelShaderID(const char* channelName) const;
+        GTLib::String GetChannelShaderID(const char* channelName) const;
 
         /// Determines whether or not the ID of the given channel is defind.
         ///
@@ -94,18 +94,18 @@ namespace GTEngine
     public:
 
         /// The absolute paht of the material.
-        GTCore::String absolutePath;
+        GTLib::String absolutePath;
 
         /// The relative path of the material.
-        GTCore::String relativePath;
+        GTLib::String relativePath;
 
 
         /// The XML string of the material.
-        GTCore::String xmlString;
+        GTLib::String xmlString;
 
 
         /// The list of channels, keyed by the channel name.
-        GTCore::Dictionary<GTCore::String> channelShaderIDs;
+        GTLib::Dictionary<GTLib::String> channelShaderIDs;
 
 
         /// The default parameters.
@@ -177,7 +177,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     When a channel is not specified, this will return an empty string, in which case the renderer can choose what to do by default.
-        GTCore::String GetChannelShaderID(const char* channelName) const { return this->definition.GetChannelShaderID(channelName); }
+        GTLib::String GetChannelShaderID(const char* channelName) const { return this->definition.GetChannelShaderID(channelName); }
 
         /// Determines whether or not the ID of the given channel is defind.
         ///
@@ -235,7 +235,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This does not save an actual .material file. Instead it will just save the parameters and their values.
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const;
 
         /// Deserializes the state of the material.
         ///
@@ -243,7 +243,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This does NOT load an actual .material file. It just restores parameter states.
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
 

@@ -2,7 +2,7 @@
 
 #include "RCCreateShader_OpenGL21.hpp"
 #include <GTEngine/Logging.hpp>
-#include <GTCore/Strings/Find.hpp>          // For checking the compilation output.
+#include <GTLib/Strings/Find.hpp>          // For checking the compilation output.
 #include <gtgl/gtgl.h>
 
 namespace GTEngine
@@ -159,7 +159,7 @@ namespace GTEngine
     ////////////////////////////////////////////////////
     // Private
 
-    GLuint RCCreateShader::CreateShader(GLenum type, const GTCore::String &sourceIn)
+    GLuint RCCreateShader::CreateShader(GLenum type, const GTLib::String &sourceIn)
     {
         auto source       = sourceIn.c_str();
         auto sourceLength = static_cast<GLint>(sourceIn.GetLengthInTs());
@@ -184,22 +184,22 @@ namespace GTEngine
             // Whether or not we output the error message depends on the message. Some drivers output messages like "No errors." when there are no
             // errors or warnings.
 
-            const char* successStringIntel = GTCore::Strings::FindFirst(log, "No errors.");
+            const char* successStringIntel = GTLib::Strings::FindFirst(log, "No errors.");
             
             const char* successStringAMD   = nullptr;
             if (type == GL_VERTEX_SHADER)
             {
-                successStringAMD = GTCore::Strings::FindFirst(log, "Vertex shader was successfully compiled");
+                successStringAMD = GTLib::Strings::FindFirst(log, "Vertex shader was successfully compiled");
             }
             else if (type == GL_FRAGMENT_SHADER)
             {
-                successStringAMD = GTCore::Strings::FindFirst(log, "Fragment shader was successfully compiled");
+                successStringAMD = GTLib::Strings::FindFirst(log, "Fragment shader was successfully compiled");
             }
 
             // If we can't find one of the success strings, we'll need to log the output.
             if (!(successStringIntel == log || successStringAMD == log))
             {
-                GTCore::String title;
+                GTLib::String title;
                 if (type == GL_VERTEX_SHADER)
                 {
                     title = "Vertex Shader Info Log";

@@ -34,7 +34,7 @@ namespace GTEngine
                 }
                 else
                 {
-                    if (!GTCore::Strings::Equal(prefabComponent->GetPrefabRelativePath(), prefabRelativePath))
+                    if (!GTLib::Strings::Equal(prefabComponent->GetPrefabRelativePath(), prefabRelativePath))
                     {
                         this->UnlinkSceneNodeFromPrefab(baseSceneNode, true);
                     }
@@ -66,7 +66,7 @@ namespace GTEngine
         auto prefabComponent = baseSceneNode.GetComponent<PrefabComponent>();
         if (prefabComponent != nullptr)
         {
-            GTCore::Vector<SceneNode*> childrenToDelete;
+            GTLib::Vector<SceneNode*> childrenToDelete;
 
             for (auto child = baseSceneNode.GetFirstChild(); child != nullptr; child = child->GetNextSibling())
             {
@@ -100,7 +100,7 @@ namespace GTEngine
         auto prefabComponent = sceneNode.GetComponent<PrefabComponent>();
         if (prefabComponent != nullptr)
         {
-            return GTCore::Strings::Equal(prefabComponent->GetPrefabRelativePath(), prefabRelativePath);
+            return GTLib::Strings::Equal(prefabComponent->GetPrefabRelativePath(), prefabRelativePath);
         }
 
         return false;
@@ -128,7 +128,7 @@ namespace GTEngine
         {
             if (prefabComponent->GetLocalHierarchyID() == 1)
             {
-                if (GTCore::Strings::Equal(prefabComponent->GetPrefabRelativePath(), prefabRelativePath))
+                if (GTLib::Strings::Equal(prefabComponent->GetPrefabRelativePath(), prefabRelativePath))
                 {
                     return true;
                 }
@@ -188,7 +188,7 @@ namespace GTEngine
 
 
             // Children.
-            GTCore::Vector<uint64_t> childIDs;
+            GTLib::Vector<uint64_t> childIDs;
             prefab.GetChildIDs(localID, childIDs);
 
             size_t iChild = 0;
@@ -211,7 +211,7 @@ namespace GTEngine
             // Before deserializing, we need to let the derived class know about it.
             this->OnSceneNodeDeserializeStart(sceneNode);
 
-            GTCore::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
+            GTLib::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
             sceneNode.Deserialize(deserializer, SceneNode::NoID | SceneNode::NoScriptPublicVariableOverride);       // <-- Super important! We need the ID to be maintained!
 
             // The link to the prefab will have been broken with deserialization, so that will need to be restored.
@@ -228,7 +228,7 @@ namespace GTEngine
 
             // Now we want to do the same with the children. Missing children need to be created. What we do, is we grab the list
             // of child IDs from the prefab and remove those that exist. Any left overs need to be created.
-            GTCore::Vector<uint64_t> childIDs;
+            GTLib::Vector<uint64_t> childIDs;
             prefab.GetChildIDs(localID, childIDs);
 
             for (auto child = sceneNode.GetFirstChild(); child != nullptr; child = child->GetNextSibling())
@@ -236,7 +236,7 @@ namespace GTEngine
                 auto childPrefabComponent = child->GetComponent<PrefabComponent>();
                 if (childPrefabComponent != nullptr)
                 {
-                    if (GTCore::Strings::Equal(childPrefabComponent->GetPrefabRelativePath(), prefab.GetRelativePath()))
+                    if (GTLib::Strings::Equal(childPrefabComponent->GetPrefabRelativePath(), prefab.GetRelativePath()))
                     {
                         // If the child has a local ID that is not the the child ID list, it will be unlinked. Otherwise, it will be deserialized.
                         uint64_t childID = childPrefabComponent->GetLocalHierarchyID();

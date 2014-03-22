@@ -367,7 +367,7 @@ namespace GTEngine
                     // a number to the end of the original name in this case.
                     if (existingMesh->geometry != nullptr)
                     {
-                        newMesh.name = GTCore::String::CreateFormatted("%s_%d", newMesh.name.c_str(), static_cast<int>(definition.GetMeshCount()));
+                        newMesh.name = GTLib::String::CreateFormatted("%s_%d", newMesh.name.c_str(), static_cast<int>(definition.GetMeshCount()));
 
                         // Set the default material before adding the mesh.
                         newMesh.material = MaterialLibrary::Create("engine/materials/simple-diffuse.material");
@@ -420,7 +420,7 @@ namespace GTEngine
 
 
 
-    bool ModelDefinition::LoadFromAssimpFile(const GTCore::String &absolutePathIn)
+    bool ModelDefinition::LoadFromAssimpFile(const GTLib::String &absolutePathIn)
     {
         Assimp::Importer importer;
         importer.SetPropertyInteger(AI_CONFIG_PP_RVC_FLAGS, AssimpRemovedComponentsFlags);

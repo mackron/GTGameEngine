@@ -59,23 +59,23 @@ namespace GTEngine
     {
     }
 
-    void GameState::OnMouseButtonDown(GTCore::MouseButton, int, int)
+    void GameState::OnMouseButtonDown(GTLib::MouseButton, int, int)
     {
     }
 
-    void GameState::OnMouseButtonUp(GTCore::MouseButton, int, int)
+    void GameState::OnMouseButtonUp(GTLib::MouseButton, int, int)
     {
     }
 
-    void GameState::OnMouseButtonDoubleClick(GTCore::MouseButton, int, int)
+    void GameState::OnMouseButtonDoubleClick(GTLib::MouseButton, int, int)
     {
     }
 
-    void GameState::OnKeyPressed(GTCore::Key)
+    void GameState::OnKeyPressed(GTLib::Key)
     {
     }
 
-    void GameState::OnKeyReleased(GTCore::Key)
+    void GameState::OnKeyReleased(GTLib::Key)
     {
     }
     

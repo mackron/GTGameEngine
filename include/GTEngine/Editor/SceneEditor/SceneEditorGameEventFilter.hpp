@@ -36,13 +36,13 @@ namespace GTEngine
         bool OnMouseWheel(int &delta, int &mousePosX, int &mousePosY);
 
         /// GameEventFilter::OnMouseButtonDown().
-        bool OnMouseButtonDown(GTCore::MouseButton &button, int &mousePosX, int &mousePosY);
+        bool OnMouseButtonDown(GTLib::MouseButton &button, int &mousePosX, int &mousePosY);
 
         /// GameEventFilter::OnMouseButtonUp().
-        bool OnMouseButtonUp(GTCore::MouseButton &button, int &mousePosX, int &mousePosY);
+        bool OnMouseButtonUp(GTLib::MouseButton &button, int &mousePosX, int &mousePosY);
 
         /// GameEventFilter::OnMouseButtonDoubleClick().
-        bool OnMouseButtonDoubleClick(GTCore::MouseButton &button, int &mousePosX, int &mousePosY);
+        bool OnMouseButtonDoubleClick(GTLib::MouseButton &button, int &mousePosX, int &mousePosY);
         
         
     private:

@@ -4,10 +4,10 @@
 #define __GTEngine_Bone_hpp_
 
 #include "Math.hpp"
-#include <GTCore/Vector.hpp>
-#include <GTCore/String.hpp>
-#include <GTCore/Serializer.hpp>
-#include <GTCore/Deserializer.hpp>
+#include <GTLib/Vector.hpp>
+#include <GTLib/String.hpp>
+#include <GTLib/Serializer.hpp>
+#include <GTLib/Deserializer.hpp>
 
 namespace GTEngine
 {
@@ -41,10 +41,10 @@ namespace GTEngine
         }
 
         /// The name of the bone these weights are referring to.
-        GTCore::String name;
+        GTLib::String name;
 
         /// The lsit of vertex/weight pairs.
-        GTCore::Vector<VertexWeightPair> weights;
+        GTLib::Vector<VertexWeightPair> weights;
     };
 }
 
@@ -81,8 +81,8 @@ namespace GTEngine
         Bone* GetParent() { return this->parent; }
 
         /// Retrieves a direct reference to the internal vector containing the pointers to the child bones.
-              GTCore::Vector<Bone*> & GetChildren()       { return this->children; }
-        const GTCore::Vector<Bone*> & GetChildren() const { return this->children; }
+              GTLib::Vector<Bone*> & GetChildren()       { return this->children; }
+        const GTLib::Vector<Bone*> & GetChildren() const { return this->children; }
 
 
         /// Sets the name of the bone.
@@ -181,12 +181,12 @@ namespace GTEngine
         /// Serializes the bone, not including hierarchy information (parent, children).
         ///
         /// @param serializer [in] A reference to the serializer to write to.
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const;
 
         /// Deserializes the bone, not including hierarchy information (parent, children).
         ///
         /// @param deserializer [in] A reference to the deserializer to read from.
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
 
@@ -197,11 +197,11 @@ namespace GTEngine
         Bone* parent;
 
         /// The children.
-        GTCore::Vector<Bone*> children;
+        GTLib::Vector<Bone*> children;
 
 
         /// The name of the bone.
-        GTCore::String name;
+        GTLib::String name;
 
 
         /// The relative position of the bone.

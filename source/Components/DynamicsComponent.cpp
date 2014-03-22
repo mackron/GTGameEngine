@@ -314,7 +314,7 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void DynamicsComponent::Serialize(GTCore::Serializer &serializer) const
+    void DynamicsComponent::Serialize(GTLib::Serializer &serializer) const
     {
         // The collision shapes need to be serialized first.
         CollisionShapeComponent::Serialize(serializer);
@@ -355,7 +355,7 @@ namespace GTEngine
         }
     }
 
-    void DynamicsComponent::Deserialize(GTCore::Deserializer &deserializer)
+    void DynamicsComponent::Deserialize(GTLib::Deserializer &deserializer)
     {
         // When deserializing, it's much, much more efficient to first remove the object from the existing scene, change the settings, and then
         // re-add it than it is to call each individual method. Thus, that's what we're doing here.

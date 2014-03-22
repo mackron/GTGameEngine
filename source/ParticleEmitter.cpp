@@ -752,9 +752,9 @@ namespace GTEngine
     ////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void ParticleEmitter::Serialize(GTCore::Serializer &serializer, bool serializeParticles)
+    void ParticleEmitter::Serialize(GTLib::Serializer &serializer, bool serializeParticles)
     {
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
 
         // First chunk is the main information.
         intermediarySerializer.WriteString(this->name.c_str());
@@ -834,7 +834,7 @@ namespace GTEngine
     }
 
 
-    void ParticleEmitter::Deserialize(GTCore::Deserializer &deserializer)
+    void ParticleEmitter::Deserialize(GTLib::Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);
@@ -878,7 +878,7 @@ namespace GTEngine
                 deserializer.Read(this->lifetimeMin);
                 deserializer.Read(this->lifetimeMax);
 
-                GTCore::String materialRelativePath;
+                GTLib::String materialRelativePath;
                 deserializer.ReadString(materialRelativePath);
                 this->SetMaterial(materialRelativePath.c_str());
 
@@ -965,7 +965,7 @@ namespace GTEngine
 
 
 
-    void ParticleEmitter::SerializeFunction(GTCore::Serializer &serializer, const ParticleFunction &function)
+    void ParticleEmitter::SerializeFunction(GTLib::Serializer &serializer, const ParticleFunction &function)
     {
         serializer.Write(static_cast<uint32_t>(function.GetType()));
 
@@ -1007,7 +1007,7 @@ namespace GTEngine
         }
     }
 
-    ParticleFunction* ParticleEmitter::DeserializeFunction(GTCore::Deserializer &deserializer)
+    ParticleFunction* ParticleEmitter::DeserializeFunction(GTLib::Deserializer &deserializer)
     {
         uint32_t serializedType;
         deserializer.Read(serializedType);
@@ -1058,12 +1058,12 @@ namespace GTEngine
     }
 
 
-    void ParticleEmitter::SerializeParticle(GTCore::Serializer &serializer, const Particle &particle)
+    void ParticleEmitter::SerializeParticle(GTLib::Serializer &serializer, const Particle &particle)
     {
         serializer.Write(particle);
     }
 
-    void ParticleEmitter::DeserializeParticle(GTCore::Deserializer &deserializer, Particle &particle)
+    void ParticleEmitter::DeserializeParticle(GTLib::Deserializer &deserializer, Particle &particle)
     {
         deserializer.Read(particle);
     }

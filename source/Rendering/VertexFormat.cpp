@@ -156,13 +156,13 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void VertexFormat::Serialize(GTCore::Serializer &serializer) const
+    void VertexFormat::Serialize(GTLib::Serializer &serializer) const
     {
         serializer.Write(this->attributes, sizeof(int) * GTENGINE_VERTEX_FORMAT_SIZE);
         serializer.Write(static_cast<uint32_t>(this->count));
     }
 
-    void VertexFormat::Deserialize(GTCore::Deserializer &deserializer)
+    void VertexFormat::Deserialize(GTLib::Deserializer &deserializer)
     {
         deserializer.Read(this->attributes, sizeof(int) * GTENGINE_VERTEX_FORMAT_SIZE);
         

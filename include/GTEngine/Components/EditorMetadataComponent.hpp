@@ -250,10 +250,10 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTCore::Serializer &serializer, unsigned int flags = 0U) const;
+        void Serialize(GTLib::Serializer &serializer, unsigned int flags = 0U) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
 
@@ -310,7 +310,7 @@ namespace GTEngine
         btBoxShape* spritePickingCollisionShape;
 
         /// The path of the texture to use for the sprite.
-        GTCore::String spriteTexturePath;
+        GTLib::String spriteTexturePath;
 
         /// A pointer to the texture being used with the sprite.
         Texture2D* spriteTexture;
@@ -346,7 +346,7 @@ namespace GTEngine
 
 
         /// The name of the prefab the scene node is part of. If this is empty, it means it is not linked to a prefab.
-        GTCore::String prefabRelativePath;
+        GTLib::String prefabRelativePath;
 
         /// The index of the node in the prefab. If this is 0, it is the root.
         uint64_t prefabID;

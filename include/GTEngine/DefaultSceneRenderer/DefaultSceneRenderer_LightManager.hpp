@@ -50,7 +50,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     The renderer will use the smaller chunks when doing rendering.
-        void SubdivideLightGroup(const DefaultSceneRenderer_LightGroup &source, GTCore::Vector<DefaultSceneRenderer_LightGroup> &output, unsigned int options = 0);
+        void SubdivideLightGroup(const DefaultSceneRenderer_LightGroup &source, GTLib::Vector<DefaultSceneRenderer_LightGroup> &output, unsigned int options = 0);
 
 
 
@@ -62,26 +62,26 @@ namespace GTEngine
 
 
         /// The list of ambient lights.
-        GTCore::Map<const AmbientLightComponent*, SceneRendererAmbientLight*> ambientLights;
+        GTLib::Map<const AmbientLightComponent*, SceneRendererAmbientLight*> ambientLights;
 
         /// The list of directional lights.
-        GTCore::Map<const DirectionalLightComponent*, DefaultSceneRendererDirectionalLight*> directionalLights;
+        GTLib::Map<const DirectionalLightComponent*, DefaultSceneRendererDirectionalLight*> directionalLights;
 
         /// The list of point lights.
-        GTCore::Map<const PointLightComponent*, DefaultSceneRendererPointLight*> pointLights;
+        GTLib::Map<const PointLightComponent*, DefaultSceneRendererPointLight*> pointLights;
 
         /// The list of spot lights.
-        GTCore::Map<const SpotLightComponent*, DefaultSceneRendererSpotLight*> spotLights;
+        GTLib::Map<const SpotLightComponent*, DefaultSceneRendererSpotLight*> spotLights;
 
 
         /// The list of light indices of shadow-casting directional lights.
-        GTCore::Vector<const DirectionalLightComponent*> shadowDirectionalLights;
+        GTLib::Vector<const DirectionalLightComponent*> shadowDirectionalLights;
 
         /// The list of light indices of shadow-casting point lights.
-        GTCore::Vector<const PointLightComponent*> shadowPointLights;
+        GTLib::Vector<const PointLightComponent*> shadowPointLights;
 
         /// The list of light indices of shadow-casting spot lights.
-        GTCore::Vector<const SpotLightComponent*> shadowSpotLights;
+        GTLib::Vector<const SpotLightComponent*> shadowSpotLights;
     };
 }
 

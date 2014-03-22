@@ -7,7 +7,7 @@ namespace GTEngine
 {
     namespace Scripting
     {
-        bool LoadGameLibrary(GTCore::Script &script, Game &game)
+        bool LoadGameLibrary(GTLib::Script &script, Game &game)
         {
             bool successful = true;
 
@@ -183,7 +183,7 @@ namespace GTEngine
 
         namespace GameFFI
         {
-            Game & GetGame(GTCore::Script &script)
+            Game & GetGame(GTLib::Script &script)
             {
                 script.GetGlobal("__GamePtr");
                 auto game = static_cast<Game*>(script.ToPointer(-1));
@@ -194,106 +194,106 @@ namespace GTEngine
             }
 
 
-            int GetExecutableDirectoryAbsolutePath(GTCore::Script &script)
+            int GetExecutableDirectoryAbsolutePath(GTLib::Script &script)
             {
                 script.Push(GetGame(script).GetExecutableDirectoryAbsolutePath());
                 return 1;
             }
 
-            int GetExecutableAbsolutePath(GTCore::Script &script)
+            int GetExecutableAbsolutePath(GTLib::Script &script)
             {
                 script.Push(GetGame(script).GetExecutableAbsolutePath());
                 return 1;
             }
 
 
-            int Close(GTCore::Script &script)
+            int Close(GTLib::Script &script)
             {
                 GetGame(script).Close();
                 return 0;
             }
 
-            int Pause(GTCore::Script &script)
+            int Pause(GTLib::Script &script)
             {
                 GetGame(script).Pause();
                 return 0;
             }
 
-            int Resume(GTCore::Script &script)
+            int Resume(GTLib::Script &script)
             {
                 GetGame(script).Resume();
                 return 0;
             }
 
-            int EnableFullscreen(GTCore::Script &script)
+            int EnableFullscreen(GTLib::Script &script)
             {
                 GetGame(script).EnableFullscreen();
                 return 0;
             }
 
-            int DisableFullscreen(GTCore::Script &script)
+            int DisableFullscreen(GTLib::Script &script)
             {
                 GetGame(script).DisableFullscreen();
                 return 0;
             }
 
 
-            int OpenEditor(GTCore::Script &script)
+            int OpenEditor(GTLib::Script &script)
             {
                 GetGame(script).OpenEditor();
                 return 0;
             }
 
-            int CloseEditor(GTCore::Script &script)
+            int CloseEditor(GTLib::Script &script)
             {
                 GetGame(script).CloseEditor();
                 return 0;
             }
 
 
-            int ShowDebug(GTCore::Script &script)
+            int ShowDebug(GTLib::Script &script)
             {
                 GetGame(script).ShowDebugging();
                 return 0;
             }
 
-            int HideDebug(GTCore::Script &script)
+            int HideDebug(GTLib::Script &script)
             {
                 GetGame(script).HideDebugging();
                 return 0;
             }
 
-            int IsKeyDown(GTCore::Script &script)
+            int IsKeyDown(GTLib::Script &script)
             {
-                script.Push(GetGame(script).IsKeyDown(static_cast<GTCore::Key>(script.ToInteger(1))));
+                script.Push(GetGame(script).IsKeyDown(static_cast<GTLib::Key>(script.ToInteger(1))));
                 return 1;
             }
 
-            int IsMouseButtonDown(GTCore::Script &script)
+            int IsMouseButtonDown(GTLib::Script &script)
             {
-                script.Push(GetGame(script).IsMouseButtonDown(static_cast<GTCore::MouseButton>(script.ToInteger(1))));
+                script.Push(GetGame(script).IsMouseButtonDown(static_cast<GTLib::MouseButton>(script.ToInteger(1))));
                 return 1;
             }
 
-            int CaptureMouse(GTCore::Script &script)
+            int CaptureMouse(GTLib::Script &script)
             {
                 GetGame(script).CaptureMouse();
                 return 0;
             }
 
-            int ReleaseMouse(GTCore::Script &script)
+            int ReleaseMouse(GTLib::Script &script)
             {
                 GetGame(script).ReleaseMouse();
                 return 0;
             }
 
-            int IsMouseCaptured(GTCore::Script &script)
+            int IsMouseCaptured(GTLib::Script &script)
             {
                 script.Push(GetGame(script).IsMouseCaptured());
                 return 1;
             }
 
-            int GetMouseOffset(GTCore::Script &script)
+            int GetMouseOffset(GTLib::Script &script)
             {
                 auto &game = GetGame(script);
 
@@ -314,38 +314,38 @@ namespace GTEngine
                 }
             }
 
-            int EnableMouseSmoothing(GTCore::Script &script)
+            int EnableMouseSmoothing(GTLib::Script &script)
             {
                 GetGame(script).EnableMouseSmoothing();
                 return 0;
             }
 
-            int DisableMouseSmoothing(GTCore::Script &script)
+            int DisableMouseSmoothing(GTLib::Script &script)
             {
                 GetGame(script).DisableMouseSmoothing();
                 return 0;
             }
 
-            int IsMouseSmoothingEnabled(GTCore::Script &script)
+            int IsMouseSmoothingEnabled(GTLib::Script &script)
             {
                 script.Push(GetGame(script).IsMouseSmoothingEnabled());
                 return 1;
             }
 
 
-            int ScanDataFilesForChanges(GTCore::Script &script)
+            int ScanDataFilesForChanges(GTLib::Script &script)
             {
                 GetGame(script).GetDataFilesWatcher().CheckForChangesAndDispatchEvents();
                 return 0;
             }
 
 
-            int GetGameWindowGUIElement(GTCore::Script &script)
+            int GetGameWindowGUIElement(GTLib::Script &script)
             {
                 auto element = GetGame(script).GetGameWindowGUIElement();
                 if (element != nullptr)
                 {
-                    script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", element->id).c_str());
+                    script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", element->id).c_str());
                 }
                 else
                 {
@@ -356,14 +356,14 @@ namespace GTEngine
             }
 
 
-            int LoadScene(GTCore::Script &script)
+            int LoadScene(GTLib::Script &script)
             {
                 script.Push(GetGame(script).OnLoadScene(script.ToString(1)));
                 return 1;
             }
 
 
-            int PackageForDistribution(GTCore::Script &script)
+            int PackageForDistribution(GTLib::Script &script)
             {
                 script.Push(GetGame(script).PackageForDistribution(script.ToString(1), script.ToString(2)));
                 return 1;
@@ -371,19 +371,19 @@ namespace GTEngine
 
 
 
-            int ExecuteFile(GTCore::Script &script)
+            int ExecuteFile(GTLib::Script &script)
             {
                 script.Push(GetGame(script).GetScript().ExecuteFile(script.ToString(1)));
                 return 1;
             }
 
-            int ExecuteScript(GTCore::Script &script)
+            int ExecuteScript(GTLib::Script &script)
             {
                 script.Push(GetGame(script).ExecuteScript(script.ToString(1)));
                 return 1;
             }
 
-            int GetLastScriptError(GTCore::Script &script)
+            int GetLastScriptError(GTLib::Script &script)
             {
                 script.Push(GetGame(script).GetScript().GetLastError());
                 return 1;

@@ -254,7 +254,7 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void Bone::Serialize(GTCore::Serializer &serializer) const
+    void Bone::Serialize(GTLib::Serializer &serializer) const
     {
         serializer.WriteString(this->name);
         serializer.Write(this->position);
@@ -264,7 +264,7 @@ namespace GTEngine
         serializer.Write(this->skinningMatrix);
     }
 
-    void Bone::Deserialize(GTCore::Deserializer &deserializer)
+    void Bone::Deserialize(GTLib::Deserializer &deserializer)
     {
         deserializer.ReadString(this->name);
         deserializer.Read(this->position);

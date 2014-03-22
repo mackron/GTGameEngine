@@ -6,7 +6,7 @@
 #include "ShaderStages.hpp"
 #include "../Math.hpp"
 #include "../ShaderParameterCache.hpp"
-#include <GTCore/String.hpp>
+#include <GTLib/String.hpp>
 
 namespace GTEngine
 {
@@ -64,9 +64,9 @@ namespace GTEngine
     private:
 
         /// The source of the shader.
-        GTCore::String vertexSource;
-        GTCore::String fragmentSource;
-        GTCore::String geometrySource;
+        GTLib::String vertexSource;
+        GTLib::String fragmentSource;
+        GTLib::String geometrySource;
 
 
 

@@ -5,7 +5,7 @@
 
 #include "../../RenderCommand.hpp"
 #include "FramebufferState_OpenGL21.hpp"
-#include <GTCore/Map.hpp>
+#include <GTLib/Map.hpp>
 #include <cstdint>
 
 namespace GTEngine
@@ -87,7 +87,7 @@ namespace GTEngine
 
 
         /// The list of attachments. We use a map here just to make it easier to overwrite existing attachments. Keyed by the attachment point.
-        GTCore::Map<GLenum, FramebufferState_OpenGL21::Attachment> attachments;
+        GTLib::Map<GLenum, FramebufferState_OpenGL21::Attachment> attachments;
 
 
         /// Whether or not the write-only depth/stencil buffer should be attached.

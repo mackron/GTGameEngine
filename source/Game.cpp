@@ -15,13 +15,13 @@
 #include <GTEngine/Scripting.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GamePackager.hpp>
-#include <GTCore/System.hpp>
-#include <GTCore/Strings/Tokenizer.hpp>
-#include <GTCore/String.hpp>
-#include <GTCore/CommandLine.hpp>
-#include <GTCore/Path.hpp>
-#include <GTCore/Keyboard.hpp>
-#include <GTCore/Profiling/valgrind/callgrind.h>
+#include <GTLib/System.hpp>
+#include <GTLib/Strings/Tokenizer.hpp>
+#include <GTLib/String.hpp>
+#include <GTLib/CommandLine.hpp>
+#include <GTLib/Path.hpp>
+#include <GTLib/Keyboard.hpp>
+#include <GTLib/Profiling/valgrind/callgrind.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -57,8 +57,8 @@ namespace GTEngine
           dataFilesWatcher(), lastDataFilesWatchTime(0.0f), isDataFilesWatchingEnabled(false),
           currentGameState(nullptr), previousGameState(nullptr),
           dataFilesWatcherEventHandler(*this),
-          profilerToggleKey(GTCore::Keys::F11),
-          editorToggleKeyCombination(GTCore::Keys::Shift, GTCore::Keys::Tab)
+          profilerToggleKey(GTLib::Keys::F11),
+          editorToggleKeyCombination(GTLib::Keys::Shift, GTLib::Keys::Tab)
     {
         // The main game window GUI element needs to be created. It is just a 100% x 100% invisible element off the root element.
         this->gui.Load("<div id='MainGameWindow' style='width:100%; height:100%' />");
@@ -327,7 +327,7 @@ namespace GTEngine
     }
 
 
-    bool Game::IsKeyDown(GTCore::Key key) const
+    bool Game::IsKeyDown(GTLib::Key key) const
     {
         if (this->focused)  // Keys will never be down if we're not focused...
         {
@@ -341,7 +341,7 @@ namespace GTEngine
         return false;
     }
 
-    bool Game::IsMouseButtonDown(GTCore::MouseButton button) const
+    bool Game::IsMouseButtonDown(GTLib::MouseButton button) const
     {
         if (this->focused)  // Keys will never be down if we're not focused...
         {
@@ -575,13 +575,13 @@ namespace GTEngine
 
     bool Game::PackageForDistribution(const char* outputDirectory, const char* executableName)
     {
-        GTCore::Path absoluteOutputDirectory(this->GetExecutableDirectoryAbsolutePath());
+        GTLib::Path absoluteOutputDirectory(this->GetExecutableDirectoryAbsolutePath());
         absoluteOutputDirectory.Append(outputDirectory);
 
         // We will start by creating the output directory.
-        if (!GTCore::IO::DirectoryExists(absoluteOutputDirectory.c_str()))
+        if (!GTLib::IO::DirectoryExists(absoluteOutputDirectory.c_str()))
         {
-            if (!GTCore::IO::CreateDirectory(absoluteOutputDirectory.c_str()))
+            if (!GTLib::IO::CreateDirectory(absoluteOutputDirectory.c_str()))
             {
                 // Failed to create the output directory.
                 return false;
@@ -601,22 +601,22 @@ namespace GTEngine
             }
         }
 
-        if (GTCore::Path::ExtensionEqual(this->GetExecutableAbsolutePath(), "exe"))
+        if (GTLib::Path::ExtensionEqual(this->GetExecutableAbsolutePath(), "exe"))
         {
-            if (GTCore::Path::ExtensionEqual(executableName, "exe"))
+            if (GTLib::Path::ExtensionEqual(executableName, "exe"))
             {
                 packager.CopyExecutable(this->GetExecutableAbsolutePath(), executableName);
             }
             else
             {
-                packager.CopyExecutable(this->GetExecutableAbsolutePath(), (GTCore::String(executableName) + ".exe").c_str());
+                packager.CopyExecutable(this->GetExecutableAbsolutePath(), (GTLib::String(executableName) + ".exe").c_str());
             }
 
             // This is the Windows build. We need to check for OpenAL32.dll, also.
-            GTCore::Path openAL32SourcePath(this->GetExecutableDirectoryAbsolutePath());
+            GTLib::Path openAL32SourcePath(this->GetExecutableDirectoryAbsolutePath());
             openAL32SourcePath.Append("OpenAL32.dll");
 
-            GTCore::Path openAL32DestinationPath(executableName);
+            GTLib::Path openAL32DestinationPath(executableName);
             openAL32DestinationPath.RemoveLast();
             openAL32DestinationPath.Append("OpenAL32.dll");
 
@@ -649,7 +649,7 @@ namespace GTEngine
         // If the file is an asset, we need to update everything that is using it. We do this via the asset libraries.
         if (!item.info.isDirectory)
         {
-            auto extension = GTCore::Path::Extension(item.info.path.c_str());
+            auto extension = GTLib::Path::Extension(item.info.path.c_str());
 
             if (ModelLibrary::IsExtensionSupported(extension))
             {
@@ -685,23 +685,23 @@ namespace GTEngine
     }
 
 
-    GTCore::Key Game::GetProfilerToggleKey() const
+    GTLib::Key Game::GetProfilerToggleKey() const
     {
         return this->profilerToggleKey;
     }
 
-    void Game::SetProfilerToggleKey(GTCore::Key key)
+    void Game::SetProfilerToggleKey(GTLib::Key key)
     {
         this->profilerToggleKey = key;
     }
 
 
-    const GTCore::KeyCombination & Game::GetEditorToggleKeyCombination() const
+    const GTLib::KeyCombination & Game::GetEditorToggleKeyCombination() const
     {
         return this->editorToggleKeyCombination;
     }
 
-    void Game::SetEditorToggleKeyCombination(const GTCore::KeyCombination &newCombination)
+    void Game::SetEditorToggleKeyCombination(const GTLib::KeyCombination &newCombination)
     {
         this->editorToggleKeyCombination = newCombination;
     }
@@ -720,7 +720,7 @@ namespace GTEngine
     {
     }
 
-    bool Game::OnStartup(const GTCore::CommandLine &)
+    bool Game::OnStartup(const GTLib::CommandLine &)
     {
         return true;
     }
@@ -761,31 +761,31 @@ namespace GTEngine
     {
     }
 
-    void Game::OnMouseButtonDown(GTCore::MouseButton, int, int)
+    void Game::OnMouseButtonDown(GTLib::MouseButton, int, int)
     {
     }
 
-    void Game::OnMouseButtonUp(GTCore::MouseButton, int, int)
+    void Game::OnMouseButtonUp(GTLib::MouseButton, int, int)
     {
     }
 
-    void Game::OnMouseButtonDoubleClick(GTCore::MouseButton, int, int)
+    void Game::OnMouseButtonDoubleClick(GTLib::MouseButton, int, int)
     {
     }
 
-    void Game::OnKeyPressed(GTCore::Key)
+    void Game::OnKeyPressed(GTLib::Key)
     {
     }
 
-    void Game::OnKeyReleased(GTCore::Key)
+    void Game::OnKeyReleased(GTLib::Key)
     {
     }
 
-    void Game::OnKeyDown(GTCore::Key)
+    void Game::OnKeyDown(GTLib::Key)
     {
     }
 
-    void Game::OnKeyUp(GTCore::Key)
+    void Game::OnKeyUp(GTLib::Key)
     {
     }
 
@@ -837,7 +837,7 @@ namespace GTEngine
 
 
 
-    bool Game::Startup(const GTCore::CommandLine &commandLine)
+    bool Game::Startup(const GTLib::CommandLine &commandLine)
     {
         this->executablePath          = commandLine.GetExecutablePath();
         this->executableDirectoryPath = commandLine.GetApplicationDirectory();
@@ -981,7 +981,7 @@ namespace GTEngine
 
 
             // First we need to handle any pending window messages. We do not want to wait here (first argument).
-            while (GTCore::PumpNextWindowEvent(false));
+            while (GTLib::PumpNextWindowEvent(false));
 
 
             // If we're watching the data directories, we want to check for changes now.
@@ -989,7 +989,7 @@ namespace GTEngine
             {
                 float checkInterval = this->GetDataFilesWatchInterval();
 
-                if (GTCore::Timing::GetTimeInSeconds() - this->lastDataFilesWatchTime >= checkInterval)
+                if (GTLib::Timing::GetTimeInSeconds() - this->lastDataFilesWatchTime >= checkInterval)
                 {
                     if (this->dataFilesWatcher.EventsReady())
                     {
@@ -997,7 +997,7 @@ namespace GTEngine
                         this->dataFilesWatcher.CheckForChanges(true);       // <-- 'true' means to go asynchronous.
                     }
 
-                    this->lastDataFilesWatchTime = static_cast<float>(GTCore::Timing::GetTimeInSeconds());
+                    this->lastDataFilesWatchTime = static_cast<float>(GTLib::Timing::GetTimeInSeconds());
                 }
             }
 
@@ -1034,7 +1034,7 @@ namespace GTEngine
     void Game::StartFrame() // [Main Thread]
     {
         // The first thing we do is retrieve the delta time...
-        this->deltaTimeInSeconds = GTCore::Min(this->updateTimer.Update(), 1.0);
+        this->deltaTimeInSeconds = GTLib::Min(this->updateTimer.Update(), 1.0);
 
         // We also need to increment the total running time, but only if we're not paused.
         if (!this->IsPaused())
@@ -1151,7 +1151,7 @@ namespace GTEngine
     }
 
 
-    bool Game::IsKeyCombinationDown(const GTCore::KeyCombination &combination) const
+    bool Game::IsKeyCombinationDown(const GTLib::KeyCombination &combination) const
     {
         // We ignore keys that are set to null, but we need to always return false if all of them are null.
         if (!combination.IsAnyKeySet())
@@ -1162,10 +1162,10 @@ namespace GTEngine
 
         bool down = true;
 
-        down = down && (combination.systemKey1    == GTCore::Keys::Null || this->IsKeyDown(combination.systemKey1));
-        down = down && (combination.systemKey2    == GTCore::Keys::Null || this->IsKeyDown(combination.systemKey2));
-        down = down && (combination.printableKey1 == GTCore::Keys::Null || this->IsKeyDown(combination.printableKey1));
-        down = down && (combination.printableKey2 == GTCore::Keys::Null || this->IsKeyDown(combination.printableKey2));
+        down = down && (combination.systemKey1    == GTLib::Keys::Null || this->IsKeyDown(combination.systemKey1));
+        down = down && (combination.systemKey2    == GTLib::Keys::Null || this->IsKeyDown(combination.systemKey2));
+        down = down && (combination.printableKey1 == GTLib::Keys::Null || this->IsKeyDown(combination.printableKey1));
+        down = down && (combination.printableKey2 == GTLib::Keys::Null || this->IsKeyDown(combination.printableKey2));
 
         return down;
     }

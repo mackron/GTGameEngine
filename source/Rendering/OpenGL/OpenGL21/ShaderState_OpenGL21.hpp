@@ -5,10 +5,10 @@
 
 #include <GTEngine/Math.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
-#include <GTCore/Dictionary.hpp>
-#include <GTCore/Map.hpp>
-#include <GTCore/Vector.hpp>
-#include <GTCore/String.hpp>
+#include <GTLib/Dictionary.hpp>
+#include <GTLib/Map.hpp>
+#include <GTLib/Vector.hpp>
+#include <GTLib/String.hpp>
 #include <gtgl/gtgl.h>
 
 #include "TextureState_OpenGL21.hpp"
@@ -285,41 +285,41 @@ namespace GTEngine
         };
 
         /// The list of texture parameters currently set on the shader on the server side. Keyed by the location of the uniform.
-        GTCore::Map<GLint, TextureParameter> currentTextureUniforms;
+        GTLib::Map<GLint, TextureParameter> currentTextureUniforms;
 
 
 
         // The locations of every parameter used by the shader. These are intentionally separated into types for faster searching.
-        GTCore::Dictionary<GLint> floatUniformLocations;
-        GTCore::Dictionary<GLint> float2UniformLocations;
-        GTCore::Dictionary<GLint> float3UniformLocations;
-        GTCore::Dictionary<GLint> float4UniformLocations;
-        GTCore::Dictionary<GLint> float2x2UniformLocations;
-        GTCore::Dictionary<GLint> float3x3UniformLocations;
-        GTCore::Dictionary<GLint> float4x4UniformLocations;
-        GTCore::Dictionary<GLint> textureUniformLocations;
+        GTLib::Dictionary<GLint> floatUniformLocations;
+        GTLib::Dictionary<GLint> float2UniformLocations;
+        GTLib::Dictionary<GLint> float3UniformLocations;
+        GTLib::Dictionary<GLint> float4UniformLocations;
+        GTLib::Dictionary<GLint> float2x2UniformLocations;
+        GTLib::Dictionary<GLint> float3x3UniformLocations;
+        GTLib::Dictionary<GLint> float4x4UniformLocations;
+        GTLib::Dictionary<GLint> textureUniformLocations;
 
 
         // Parameters that have changed and need to be applied on the server side.
-        GTCore::Vector<FloatParameter>    pendingFloatUniformsByLocation;
-        GTCore::Vector<Float2Parameter>   pendingFloat2UniformsByLocation;
-        GTCore::Vector<Float3Parameter>   pendingFloat3UniformsByLocation;
-        GTCore::Vector<Float4Parameter>   pendingFloat4UniformsByLocation;
-        GTCore::Vector<Float2x2Parameter> pendingFloat2x2UniformsByLocation;
-        GTCore::Vector<Float3x3Parameter> pendingFloat3x3UniformsByLocation;
-        GTCore::Vector<Float4x4Parameter> pendingFloat4x4UniformsByLocation;
-        GTCore::Vector<TextureParameter>  pendingTextureUniformsByLocation;
+        GTLib::Vector<FloatParameter>    pendingFloatUniformsByLocation;
+        GTLib::Vector<Float2Parameter>   pendingFloat2UniformsByLocation;
+        GTLib::Vector<Float3Parameter>   pendingFloat3UniformsByLocation;
+        GTLib::Vector<Float4Parameter>   pendingFloat4UniformsByLocation;
+        GTLib::Vector<Float2x2Parameter> pendingFloat2x2UniformsByLocation;
+        GTLib::Vector<Float3x3Parameter> pendingFloat3x3UniformsByLocation;
+        GTLib::Vector<Float4x4Parameter> pendingFloat4x4UniformsByLocation;
+        GTLib::Vector<TextureParameter>  pendingTextureUniformsByLocation;
 
 
         // Parameters that were set before the shader has had a chance to allocate storage for the parameters.
-        GTCore::Dictionary<FloatParameter>    pendingFloatUniformsByName;
-        GTCore::Dictionary<Float2Parameter>   pendingFloat2UniformsByName;
-        GTCore::Dictionary<Float3Parameter>   pendingFloat3UniformsByName;
-        GTCore::Dictionary<Float4Parameter>   pendingFloat4UniformsByName;
-        GTCore::Dictionary<Float2x2Parameter> pendingFloat2x2UniformsByName;
-        GTCore::Dictionary<Float3x3Parameter> pendingFloat3x3UniformsByName;
-        GTCore::Dictionary<Float4x4Parameter> pendingFloat4x4UniformsByName;
-        GTCore::Dictionary<TextureParameter>  pendingTextureUniformsByName;
+        GTLib::Dictionary<FloatParameter>    pendingFloatUniformsByName;
+        GTLib::Dictionary<Float2Parameter>   pendingFloat2UniformsByName;
+        GTLib::Dictionary<Float3Parameter>   pendingFloat3UniformsByName;
+        GTLib::Dictionary<Float4Parameter>   pendingFloat4UniformsByName;
+        GTLib::Dictionary<Float2x2Parameter> pendingFloat2x2UniformsByName;
+        GTLib::Dictionary<Float3x3Parameter> pendingFloat3x3UniformsByName;
+        GTLib::Dictionary<Float4x4Parameter> pendingFloat4x4UniformsByName;
+        GTLib::Dictionary<TextureParameter>  pendingTextureUniformsByName;
 
 
         /// Constructor.
@@ -471,7 +471,7 @@ namespace GTEngine
     private:
 
         /// Generic function for retrieving a uniform location from the given list.
-        GLint GetUniformLocation(const char* name, const GTCore::Dictionary<GLint> &uniformLocations)
+        GLint GetUniformLocation(const char* name, const GTLib::Dictionary<GLint> &uniformLocations)
         {
             if (this->programObject != 0)
             {

@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_FramebufferState_OpenGL21_hpp_
 #define __GTEngine_Rendering_FramebufferState_OpenGL21_hpp_
 
-#include <GTCore/Map.hpp>
+#include <GTLib/Map.hpp>
 #include <gtgl/gtgl.h>
 
 #include "TextureState_OpenGL21.hpp"
@@ -46,7 +46,7 @@ namespace GTEngine
         };
 
         /// The map containing the attached colour buffers. This is keyed by the attachment point.
-        GTCore::Map<GLenum, Attachment> attachments;
+        GTLib::Map<GLenum, Attachment> attachments;
 
 
         /// Constructor.

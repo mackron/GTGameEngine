@@ -5,8 +5,8 @@
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
-#include <GTCore/Path.hpp>
-#include <GTCore/IO.hpp>
+#include <GTLib/Path.hpp>
+#include <GTLib/IO.hpp>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -52,10 +52,10 @@ namespace GTEngine
     };
 
     /// The list of loaded model definitions, index by the absolute path of the original source file.
-    static GTCore::Dictionary<ModelDefinitionReference> LoadedDefinitions;
+    static GTLib::Dictionary<ModelDefinitionReference> LoadedDefinitions;
 
     /// The list of instantiated models. we need this so we can delete them on shutdown.
-    static GTCore::Vector<Model*> InstantiatedModels;
+    static GTLib::Vector<Model*> InstantiatedModels;
 
 
     /// Creates a model from a primitive's vertex array.
@@ -98,13 +98,13 @@ namespace GTEngine
 
     Model* ModelLibrary::Create(const char* fileName, const char* makeRelativeTo)
     {
-        GTCore::String relativePath(fileName);
+        GTLib::String relativePath(fileName);
 
-        if (GTCore::Path::IsAbsolute(fileName))
+        if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTCore::IO::ToRelativePath(fileName, makeRelativeTo);
+                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
             }
             else
             {
@@ -115,7 +115,7 @@ namespace GTEngine
 
 
         // We will first find an existing model definition. If we don't find it, we create one and the load into it.
-        GTCore::String absolutePath;
+        GTLib::String absolutePath;
         if (ModelLibrary::FindAbsolutePath(fileName, absolutePath))
         {
             ModelDefinition* definition = nullptr;
@@ -175,7 +175,7 @@ namespace GTEngine
     {
         // We need a unique identifier for this mesh. We will base it on the size of the box.
         char name[128];
-        GTCore::IO::snprintf(name, 128, "convexhull(%d)", ConvexHullCount++);
+        GTLib::IO::snprintf(name, 128, "convexhull(%d)", ConvexHullCount++);
 
         // We create the model from a primitive. To do this we need a non-const vertex array.
         VertexArray* va = nullptr;
@@ -198,7 +198,7 @@ namespace GTEngine
 
 
             // The reference counter needs to be decremented. If this is the last reference to the model we'll delete it.
-            GTCore::String absolutePath(model->GetDefinition().GetAbsolutePath());
+            GTLib::String absolutePath(model->GetDefinition().GetAbsolutePath());
 
             auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
             if (iDefinition != nullptr)
@@ -223,10 +223,10 @@ namespace GTEngine
 
     bool ModelLibrary::Reload(const char* fileNameIn)
     {
-        GTCore::String fileName;
-        if (GTCore::Path::ExtensionEqual(fileNameIn, "gtmodel"))
+        GTLib::String fileName;
+        if (GTLib::Path::ExtensionEqual(fileNameIn, "gtmodel"))
         {
-            fileName = GTCore::IO::RemoveExtension(fileNameIn);
+            fileName = GTLib::IO::RemoveExtension(fileNameIn);
         }
         else
         {
@@ -273,19 +273,19 @@ namespace GTEngine
     bool ModelLibrary::WriteToFile(const ModelDefinition &definition, const char* fileNameIn)
     {
         // We have a model, so now we need to check that we can open the file.
-        GTCore::String fileName(fileNameIn);
-        if (!GTCore::Path::ExtensionEqual(fileNameIn, "gtmodel"))
+        GTLib::String fileName(fileNameIn);
+        if (!GTLib::Path::ExtensionEqual(fileNameIn, "gtmodel"))
         {
             fileName += ".gtmodel";
         }
 
-        auto file = GTCore::IO::Open(fileName.c_str(), GTCore::IO::OpenMode::Write);
+        auto file = GTLib::IO::Open(fileName.c_str(), GTLib::IO::OpenMode::Write);
         if (file != nullptr)
         {
-            GTCore::FileSerializer serializer(file);
+            GTLib::FileSerializer serializer(file);
             definition.Serialize(serializer);
 
-            GTCore::IO::Close(file);
+            GTLib::IO::Close(file);
             return true;
         }
 
@@ -303,9 +303,9 @@ namespace GTEngine
         auto iDefinition = LoadedDefinitions.Find(fileName);
         if (iDefinition == nullptr)
         {
-            if (GTCore::Path::ExtensionEqual(fileName, "gtmodel"))
+            if (GTLib::Path::ExtensionEqual(fileName, "gtmodel"))
             {
-                iDefinition = LoadedDefinitions.Find(GTCore::IO::RemoveExtension(fileName).c_str());
+                iDefinition = LoadedDefinitions.Find(GTLib::IO::RemoveExtension(fileName).c_str());
             }
         }
 
@@ -324,7 +324,7 @@ namespace GTEngine
 
     bool ModelLibrary::IsExtensionSupported(const char* extension)
     {
-        if (GTCore::Strings::Equal<false>(extension, "gtmodel"))
+        if (GTLib::Strings::Equal<false>(extension, "gtmodel"))
         {
             return true;
         }
@@ -332,12 +332,12 @@ namespace GTEngine
         {
             // Assimp actually supports XML by default, but we would rather them be text files. Thus, we're going
             // to return false if XML is specified.
-            if (GTCore::Strings::Equal<false>(extension, "xml"))
+            if (GTLib::Strings::Equal<false>(extension, "xml"))
             {
                 return false;
             }
 
-            GTCore::String assimpExt(".");
+            GTLib::String assimpExt(".");
             assimpExt += extension;
 
             Assimp::Importer importer;
@@ -350,18 +350,18 @@ namespace GTEngine
     ////////////////////////////////////////////////////////
     // Private
 
-    bool ModelLibrary::FindAbsolutePath(const char* relativePath, GTCore::String &absolutePath)
+    bool ModelLibrary::FindAbsolutePath(const char* relativePath, GTLib::String &absolutePath)
     {
-        if (!GTCore::IO::FindAbsolutePath(relativePath, absolutePath))
+        if (!GTLib::IO::FindAbsolutePath(relativePath, absolutePath))
         {
             // The file doesn't exist. We need to either remove or add the .gtmodel extension and try again.
-            if (GTCore::Path::ExtensionEqual(relativePath, "gtmodel"))
+            if (GTLib::Path::ExtensionEqual(relativePath, "gtmodel"))
             {
-                return GTCore::IO::FindAbsolutePath(GTCore::IO::RemoveExtension(relativePath).c_str(), absolutePath);
+                return GTLib::IO::FindAbsolutePath(GTLib::IO::RemoveExtension(relativePath).c_str(), absolutePath);
             }
             else
             {
-                return GTCore::IO::FindAbsolutePath((GTCore::String(relativePath) + ".gtmodel").c_str(), absolutePath);
+                return GTLib::IO::FindAbsolutePath((GTLib::String(relativePath) + ".gtmodel").c_str(), absolutePath);
             }
         }
 

@@ -172,7 +172,7 @@ namespace GTEngine
         {
             auto &materialDefinition = mesh.material->GetDefinition();
             {
-                GTCore::Vector<DefaultSceneRendererMesh>* objectList = nullptr;
+                GTLib::Vector<DefaultSceneRendererMesh>* objectList = nullptr;
 
                 if (mesh.material->IsBlended() || mesh.material->IsRefractive())
                 {
@@ -196,7 +196,7 @@ namespace GTEngine
                         }
                         else
                         {
-                            objectList = new GTCore::Vector<DefaultSceneRendererMesh>(100);
+                            objectList = new GTLib::Vector<DefaultSceneRendererMesh>(100);
                             this->opaqueObjects.Add(&materialDefinition, objectList);
                         }
                     }
@@ -209,7 +209,7 @@ namespace GTEngine
                         }
                         else
                         {
-                            objectList = new GTCore::Vector<DefaultSceneRendererMesh>(100);
+                            objectList = new GTLib::Vector<DefaultSceneRendererMesh>(100);
                             this->opaqueObjectsLast.Add(&materialDefinition, objectList);
                         }
                     }

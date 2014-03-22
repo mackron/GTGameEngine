@@ -20,7 +20,7 @@ namespace GTEngine
     {
     }
 
-    SceneStateStackBranch::SceneStateStackBranch(SceneStateStack &stateStackIn, SceneStateStackBranch* parentIn, GTCore::Deserializer &deserializer)
+    SceneStateStackBranch::SceneStateStackBranch(SceneStateStack &stateStackIn, SceneStateStackBranch* parentIn, GTLib::Deserializer &deserializer)
         : stateStack(stateStackIn),
           parent(parentIn), children(), rootFrameIndex(0),
           frames(), currentFrameIndex(0),
@@ -137,7 +137,7 @@ namespace GTEngine
         }
     }
 
-    SceneStateStackBranch* SceneStateStackBranch::CreateBranch(GTCore::Deserializer &deserializer)
+    SceneStateStackBranch* SceneStateStackBranch::CreateBranch(GTLib::Deserializer &deserializer)
     {
         auto child = new SceneStateStackBranch(this->stateStack, this, deserializer);
         this->children.PushBack(child);
@@ -260,7 +260,7 @@ namespace GTEngine
         bool reenableStaging = scene.IsStateStackStagingEnabled();
         scene.DisableStateStackStaging();
         {
-            auto newFrameIndex = static_cast<uint32_t>(GTCore::Clamp(static_cast<int>(this->currentFrameIndex) + step, 0, static_cast<int>(this->GetMaxFrameIndex())));
+            auto newFrameIndex = static_cast<uint32_t>(GTLib::Clamp(static_cast<int>(this->currentFrameIndex) + step, 0, static_cast<int>(this->GetMaxFrameIndex())));
 
 
             // The first thing to do is revert the staging area.
@@ -452,7 +452,7 @@ namespace GTEngine
     }
 
 
-    GTCore::BasicSerializer* SceneStateStackBranch::FindMostRecentSerializer(uint64_t sceneNodeID, uint32_t startFrameIndex) const
+    GTLib::BasicSerializer* SceneStateStackBranch::FindMostRecentSerializer(uint64_t sceneNodeID, uint32_t startFrameIndex) const
     {
         // We start from the current frame and then loop backwards until we find a frame with serialized data for the given scene node.
 
@@ -495,10 +495,10 @@ namespace GTEngine
     /////////////////////////////////////////////////
     // Serialization/Deserialization
 
-    void SceneStateStackBranch::Serialize(GTCore::Serializer &serializer) const
+    void SceneStateStackBranch::Serialize(GTLib::Serializer &serializer) const
     {
         // We need to use an intermediary serializer here so we can get an exact size.
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
 
 
         // Root and current frame indices.
@@ -534,7 +534,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void SceneStateStackBranch::Deserialize(GTCore::Deserializer &deserializer)
+    void SceneStateStackBranch::Deserialize(GTLib::Deserializer &deserializer)
     {
         this->ClearLocalFrames();
         this->ClearStagingArea();

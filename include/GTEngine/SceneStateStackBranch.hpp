@@ -24,7 +24,7 @@ namespace GTEngine
 
         /// Constructor.
         SceneStateStackBranch(SceneStateStack &stateStack, SceneStateStackBranch* parent, uint32_t rootFrameIndex);
-        SceneStateStackBranch(SceneStateStack &stateStack, SceneStateStackBranch* parent, GTCore::Deserializer &deserializer);
+        SceneStateStackBranch(SceneStateStack &stateStack, SceneStateStackBranch* parent, GTLib::Deserializer &deserializer);
 
         /// Destructor.
         ~SceneStateStackBranch();
@@ -93,7 +93,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     The root and current frame indexes are retrieved from the deserializer.
-        SceneStateStackBranch* CreateBranch(GTCore::Deserializer &deserializer);
+        SceneStateStackBranch* CreateBranch(GTLib::Deserializer &deserializer);
 
 
 
@@ -164,7 +164,7 @@ namespace GTEngine
         ///
         /// @param sceneNodeID     [in] The ID of the scene node whose most recent serializer is being retrieved.
         /// @param startFrameIndex [in] The index of the frame to start at.
-        GTCore::BasicSerializer* FindMostRecentSerializer(uint64_t sceneNodeID, uint32_t startFrameIndex) const;
+        GTLib::BasicSerializer* FindMostRecentSerializer(uint64_t sceneNodeID, uint32_t startFrameIndex) const;
 
         /// Finds the ID of the most recent parent for the given scene node, starting from the current frame.
         ///
@@ -178,10 +178,10 @@ namespace GTEngine
         // Serialization/Deserialization
 
         /// Serializes the state stack branch.
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const;
 
         /// Deserializes the state stack branch.
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
 
@@ -213,14 +213,14 @@ namespace GTEngine
         SceneStateStackBranch* parent;
 
         /// The list of children.
-        GTCore::Vector<SceneStateStackBranch*> children;
+        GTLib::Vector<SceneStateStackBranch*> children;
 
         /// The index of the frame of the parent branch that this branch begins from.
         uint32_t rootFrameIndex;
 
 
         /// The flat list of frames belonging to this branch.
-        GTCore::Vector<SceneStateStackFrame*> frames;
+        GTLib::Vector<SceneStateStackFrame*> frames;
 
         /// The index of the current frame.
         uint32_t currentFrameIndex;

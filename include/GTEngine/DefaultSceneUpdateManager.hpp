@@ -6,7 +6,7 @@
 #include "SceneUpdateManager.hpp"
 #include "SceneNode.hpp"
 #include "Physics/DynamicsWorld.hpp"
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GTEngine
 {
@@ -53,7 +53,7 @@ namespace GTEngine
     protected:
 
         /// The list of every scene node that should be updated.
-        GTCore::Vector<SceneNode*> sceneNodes;
+        GTLib::Vector<SceneNode*> sceneNodes;
     };
 }
 

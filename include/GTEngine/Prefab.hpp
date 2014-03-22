@@ -5,8 +5,8 @@
 
 #include "Serialization.hpp"
 #include "SceneNode.hpp"
-#include <GTCore/Vector.hpp>
-#include <GTCore/Map.hpp>
+#include <GTLib/Vector.hpp>
+#include <GTLib/Map.hpp>
 
 
 namespace GTEngine
@@ -36,17 +36,17 @@ namespace GTEngine
 
 
         /// Retrieves a reference to the internal list of serializers.
-        const GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetSerializers() const { return this->serializers; }
+        const GTLib::Map<uint64_t, GTLib::BasicSerializer*> & GetSerializers() const { return this->serializers; }
 
         /// Retrieves a reference to the hierarchy.
-        const GTCore::Map<uint64_t, uint64_t> & GetHierarchy() const { return this->hierarchy; }
+        const GTLib::Map<uint64_t, uint64_t> & GetHierarchy() const { return this->hierarchy; }
 
 
         /// Retrieves a serializer by it's ID.
         ///
         /// @param id [in] The ID of the serializer to retrieve.
-              GTCore::BasicSerializer* GetSerializerByID(uint64_t id);
-        const GTCore::BasicSerializer* GetSerializerByID(uint64_t id) const;
+              GTLib::BasicSerializer* GetSerializerByID(uint64_t id);
+        const GTLib::BasicSerializer* GetSerializerByID(uint64_t id) const;
 
         /// Retrieves the ID of the root item.
         uint64_t GetRootID() const;
@@ -81,7 +81,7 @@ namespace GTEngine
         ///
         /// @param parentID [in ] The local ID of the parent.
         /// @param childIDs [out] A reference to the vector that will receive the child IDs.
-        void GetChildIDs(uint64_t parentID, GTCore::Vector<uint64_t> &childIDs) const;
+        void GetChildIDs(uint64_t parentID, GTLib::Vector<uint64_t> &childIDs) const;
 
 
 
@@ -89,10 +89,10 @@ namespace GTEngine
         // Serialization.
 
         /// Serializes the scene node class.
-        bool Serialize(GTCore::Serializer &serializer);
+        bool Serialize(GTLib::Serializer &serializer);
 
         /// Deserializes the scene node class.
-        bool Deserialize(GTCore::Deserializer &deserializer);
+        bool Deserialize(GTLib::Deserializer &deserializer);
 
         /// A helper for serializing the prefab to the file.
         bool WriteToFile();
@@ -102,16 +102,16 @@ namespace GTEngine
     private:
 
         /// The absolute path of the prefab.
-        GTCore::String absolutePath;
+        GTLib::String absolutePath;
 
         /// The relative path of the prefab.
-        GTCore::String relativePath;
+        GTLib::String relativePath;
 
         /// The serialized data of every scene node, mapped to a persistent ID.
-        GTCore::Map<uint64_t, GTCore::BasicSerializer*> serializers;
+        GTLib::Map<uint64_t, GTLib::BasicSerializer*> serializers;
 
         /// The hierarchy. These point to indexes in sceneNodeSerializers.
-        GTCore::Map<uint64_t, uint64_t> hierarchy;
+        GTLib::Map<uint64_t, uint64_t> hierarchy;
 
         /// The next unique ID.
         uint64_t nextID;

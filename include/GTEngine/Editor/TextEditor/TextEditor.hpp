@@ -32,7 +32,7 @@ namespace GTEngine
         /// Called by the compilation script error handler when there is an error.
         ///
         /// @param message [in] The error message.
-        void OnScriptSyntaxError(GTCore::Script &script, int lineNumber, const char* message);
+        void OnScriptSyntaxError(GTLib::Script &script, int lineNumber, const char* message);
 
 
         ///////////////////////////////////////////////////
@@ -102,7 +102,7 @@ namespace GTEngine
 
 
         /// The script compilation error handler that will be attached to the compilation script.
-        struct ScriptCompilationErrorHandler : public GTCore::ScriptErrorHandler
+        struct ScriptCompilationErrorHandler : public GTLib::ScriptErrorHandler
         {
             /// Constructor.
             ScriptCompilationErrorHandler(TextEditor &ownerTextEditorIn)
@@ -112,20 +112,20 @@ namespace GTEngine
 
 
             /// ScriptErrorHandler::OnError()
-            void OnError(GTCore::Script &, const char* message)
+            void OnError(GTLib::Script &, const char* message)
             {
                 (void)message;
                 //printf("%s\n", message);
             }
 
             /// ScriptErrorHandler::OnSyntaxError()
-            void OnSyntaxError(GTCore::Script &script, int lineNumber, const char* message)
+            void OnSyntaxError(GTLib::Script &script, int lineNumber, const char* message)
             {
                 this->ownerTextEditor.OnScriptSyntaxError(script, lineNumber, message);
             }
 
             /// ScriptErrorHandler::OnRuntimeError()
-            void OnRuntimeError(GTCore::Script &script, const char* sourceName, int lineNumber, const char* message, const GTCore::Vector<GTCore::ScriptCallstackItem> &callstack)
+            void OnRuntimeError(GTLib::Script &script, const char* sourceName, int lineNumber, const char* message, const GTLib::Vector<GTLib::ScriptCallstackItem> &callstack)
             {
                 (void)sourceName;
                 (void)callstack;
@@ -149,7 +149,7 @@ namespace GTEngine
         Game* proxyGame;
 
         /// The script to use for doing the compilation check. This will have the standard library registered to it.
-        GTCore::Script* compilationScript;
+        GTLib::Script* compilationScript;
 
 
 

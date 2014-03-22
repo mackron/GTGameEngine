@@ -16,7 +16,7 @@ namespace GTEngine
 
         /// Constructor.
         SceneStateStackFrame(SceneStateStackBranch &branch, const SceneStateStackStagingArea &stagingArea);
-        SceneStateStackFrame(SceneStateStackBranch &branch, GTCore::Deserializer &deserializer);
+        SceneStateStackFrame(SceneStateStackBranch &branch, GTLib::Deserializer &deserializer);
 
         /// Destructor.
         ~SceneStateStackFrame();
@@ -33,27 +33,27 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If the scene node is not featured in this frame null will be returned.
-        GTCore::BasicSerializer* GetSerializer(uint64_t sceneNodeID) const;
+        GTLib::BasicSerializer* GetSerializer(uint64_t sceneNodeID) const;
 
         /// Retrieves the ID of the parent scene node.
         bool GetParentSceneNodeID(uint64_t sceneNodeID, uint64_t &parentSceneNodeIDOut) const;
 
 
         /// Retrieves a reference to the internal list of insert commands.
-              GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetInserts()       { return this->serializedInserts; }
-        const GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetInserts() const { return this->serializedInserts; }
+              GTLib::Map<uint64_t, GTLib::BasicSerializer*> & GetInserts()       { return this->serializedInserts; }
+        const GTLib::Map<uint64_t, GTLib::BasicSerializer*> & GetInserts() const { return this->serializedInserts; }
 
         /// Retrieves a reference to the internal list of delete commands.
-              GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetDeletes()       { return this->serializedDeletes; }
-        const GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetDeletes() const { return this->serializedDeletes; }
+              GTLib::Map<uint64_t, GTLib::BasicSerializer*> & GetDeletes()       { return this->serializedDeletes; }
+        const GTLib::Map<uint64_t, GTLib::BasicSerializer*> & GetDeletes() const { return this->serializedDeletes; }
 
         /// Retrieves a reference to the internal list of update commands.
-              GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetUpdates()       { return this->serializedUpdates; }
-        const GTCore::Map<uint64_t, GTCore::BasicSerializer*> & GetUpdates() const { return this->serializedUpdates; }
+              GTLib::Map<uint64_t, GTLib::BasicSerializer*> & GetUpdates()       { return this->serializedUpdates; }
+        const GTLib::Map<uint64_t, GTLib::BasicSerializer*> & GetUpdates() const { return this->serializedUpdates; }
 
         /// Retrieves a reference to the hierarchy map.
-              GTCore::Map<uint64_t, uint64_t> & GetHierarchy()       { return this->hierarchy; }
-        const GTCore::Map<uint64_t, uint64_t> & GetHierarchy() const { return this->hierarchy; }
+              GTLib::Map<uint64_t, uint64_t> & GetHierarchy()       { return this->hierarchy; }
+        const GTLib::Map<uint64_t, uint64_t> & GetHierarchy() const { return this->hierarchy; }
 
 
 
@@ -61,17 +61,17 @@ namespace GTEngine
         // Serialization/Deserialization
 
         /// Serializes the state stack frame.
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const;
 
         /// Deserializes the state stack frame.
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
 
     private:
 
         /// Serializes the given scene node.
-        bool SerializeSceneNode(uint64_t sceneNodeID, GTCore::Serializer &serializer) const;
+        bool SerializeSceneNode(uint64_t sceneNodeID, GTLib::Serializer &serializer) const;
 
         /// Clears the frame.
         void Clear();
@@ -83,16 +83,16 @@ namespace GTEngine
         SceneStateStackBranch &branch;
 
         /// The map containing the serialized data of inserted scene nodes. Indexed by the scene node ID.
-        GTCore::Map<uint64_t, GTCore::BasicSerializer*> serializedInserts;
+        GTLib::Map<uint64_t, GTLib::BasicSerializer*> serializedInserts;
 
         /// The map containing the serialized data of deleted scene nodes. Indexed by the scene node ID.
-        GTCore::Map<uint64_t, GTCore::BasicSerializer*> serializedDeletes;
+        GTLib::Map<uint64_t, GTLib::BasicSerializer*> serializedDeletes;
 
         /// The map containing the serialized data of updated scene nodes. Indexed by the scene node ID.
-        GTCore::Map<uint64_t, GTCore::BasicSerializer*> serializedUpdates;
+        GTLib::Map<uint64_t, GTLib::BasicSerializer*> serializedUpdates;
 
         /// The hierarchy. The key is the child ID and the value is the parent ID. If the node does not have a parent, the value will be 0.
-        GTCore::Map<uint64_t, uint64_t> hierarchy;
+        GTLib::Map<uint64_t, uint64_t> hierarchy;
 
 
 

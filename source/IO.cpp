@@ -4,8 +4,8 @@
 #include <GTEngine/ModelLibrary.hpp>
 #include <GTEngine/Audio/AudioComposer.hpp>
 #include <GTImage/Loader.hpp>
-#include <GTCore/Path.hpp>
-#include <GTCore/Strings/Find.hpp>
+#include <GTLib/Path.hpp>
+#include <GTLib/Strings/Find.hpp>
 
 namespace GTEngine
 {
@@ -13,49 +13,49 @@ namespace GTEngine
     {
         bool IsSupportedImageExtension(const char* fileName)
         {
-            return GTImage::Loader::IsExtensionSupported(GTCore::Path::Extension(fileName));
+            return GTImage::Loader::IsExtensionSupported(GTLib::Path::Extension(fileName));
         }
 
         bool IsSupportedModelExtension(const char* fileName)
         {
-            return ModelLibrary::IsExtensionSupported(GTCore::Path::Extension(fileName));
+            return ModelLibrary::IsExtensionSupported(GTLib::Path::Extension(fileName));
         }
 
         bool IsSupportedMaterialExtension(const char* fileName)
         {
-            auto extension = GTCore::Path::Extension(fileName);
+            auto extension = GTLib::Path::Extension(fileName);
 
-            return GTCore::Strings::Equal<false>(extension, "material") ||
-                   GTCore::Strings::Equal<false>(extension, "gtmaterial");
+            return GTLib::Strings::Equal<false>(extension, "material") ||
+                   GTLib::Strings::Equal<false>(extension, "gtmaterial");
         }
 
         bool IsSupportedSoundExtension(const char* fileName)
         {
-            return AudioComposer::IsFileExtensionSupported(GTCore::Path::Extension(fileName));
+            return AudioComposer::IsFileExtensionSupported(GTLib::Path::Extension(fileName));
         }
 
         bool IsSupportedParticleSystemExtension(const char* fileName)
         {
-            return GTCore::Strings::Equal<false>(GTCore::Path::Extension(fileName), "gtparticle");
+            return GTLib::Strings::Equal<false>(GTLib::Path::Extension(fileName), "gtparticle");
         }
 
         bool IsSupportedSceneExtension(const char* fileName)
         {
-            return GTCore::Strings::Equal<false>(GTCore::Path::Extension(fileName), "gtscene");
+            return GTLib::Strings::Equal<false>(GTLib::Path::Extension(fileName), "gtscene");
         }
 
         bool IsSupportedPrefabExtension(const char* fileName)
         {
-            return GTCore::Strings::Equal<false>(GTCore::Path::Extension(fileName), "gtprefab");
+            return GTLib::Strings::Equal<false>(GTLib::Path::Extension(fileName), "gtprefab");
         }
 
         bool IsSupportedScriptExtension(const char* fileName)
         {
-            auto extension = GTCore::Path::Extension(fileName);
+            auto extension = GTLib::Path::Extension(fileName);
 
-            return GTCore::Strings::Equal<false>(extension, "gtscript") ||
-                   GTCore::Strings::Equal<false>(extension, "script")   ||
-                   GTCore::Strings::Equal<false>(extension, "lua");
+            return GTLib::Strings::Equal<false>(extension, "gtscript") ||
+                   GTLib::Strings::Equal<false>(extension, "script")   ||
+                   GTLib::Strings::Equal<false>(extension, "lua");
         }
 
 
@@ -102,13 +102,13 @@ namespace GTEngine
 
 
 
-        GTCore::String GetBasePath(const char* absolutePath, const char* relativePath)
+        GTLib::String GetBasePath(const char* absolutePath, const char* relativePath)
         {
             // All we're going to do is remove the 'relativePath' part from the absolute path.
             const char* start = absolutePath;
-            const char* end   = GTCore::Strings::FindFirst(absolutePath, relativePath);
+            const char* end   = GTLib::Strings::FindFirst(absolutePath, relativePath);
 
-            return GTCore::String(start, end - start - 1);      // Minus 1 to remove the trailing slash.
+            return GTLib::String(start, end - start - 1);      // Minus 1 to remove the trailing slash.
         }
     }
 }

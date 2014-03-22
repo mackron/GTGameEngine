@@ -3,8 +3,8 @@
 #ifndef __GTEngine_RCQueue_hpp_
 #define __GTEngine_RCQueue_hpp_
 
-#include <GTCore/Vector.hpp>
-#include <GTCore/Threading/Mutex.hpp>
+#include <GTLib/Vector.hpp>
+#include <GTLib/Threading/Mutex.hpp>
 
 namespace GTEngine
 {
@@ -61,7 +61,7 @@ namespace GTEngine
     private:
 
         /// The list containing all of the rendering commands.
-        GTCore::Vector<RenderCommand*> commands;
+        GTLib::Vector<RenderCommand*> commands;
 
 
     private:    // No copying.
@@ -98,7 +98,7 @@ namespace GTEngine
     private:
 
         /// The synchronization lock.
-        mutable GTCore::Mutex lock;
+        mutable GTLib::Mutex lock;
 
 
     private:    // No copying.

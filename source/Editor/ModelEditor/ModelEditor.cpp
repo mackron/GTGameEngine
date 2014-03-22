@@ -4,7 +4,7 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
-#include <GTCore/Path.hpp>
+#include <GTLib/Path.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -67,7 +67,7 @@ namespace GTEngine
         assert(this->mainElement != nullptr);
         {
             // The main element is the ModelEditor element. We need to pass 'this' as the '_internalPtr' argument.
-            script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+            script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
             assert(script.IsTable(-1));
             {
                 script.Push("ModelEditor");
@@ -159,7 +159,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("ResetCamera");
@@ -200,7 +200,7 @@ namespace GTEngine
     }
 
 
-    void ModelEditor::GetMaterials(GTCore::Vector<GTCore::String> &materialsOut)
+    void ModelEditor::GetMaterials(GTLib::Vector<GTLib::String> &materialsOut)
     {
         auto modelComponent = this->modelNode.GetComponent<ModelComponent>();
         if (modelComponent != nullptr)
@@ -474,7 +474,7 @@ namespace GTEngine
             }
             else
             {
-                if (GTCore::Path::ExtensionEqual(item.info.absolutePath.c_str(), "gtmodel") && GTCore::IO::RemoveExtension(item.info.absolutePath.c_str()) == this->GetAbsolutePath())
+                if (GTLib::Path::ExtensionEqual(item.info.absolutePath.c_str(), "gtmodel") && GTLib::IO::RemoveExtension(item.info.absolutePath.c_str()) == this->GetAbsolutePath())
                 {
                     this->Reload();
                 }
@@ -529,7 +529,7 @@ namespace GTEngine
 
         auto &script = this->GetScript();
 
-        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("Refresh");
@@ -566,7 +566,7 @@ namespace GTEngine
     {
         auto &script = this->GetScript();
 
-        script.Get(GTCore::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
+        script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->mainElement->id).c_str());
         assert(script.IsTable(-1));
         {
             script.Push("UpdateAnimationPlaybackControls");

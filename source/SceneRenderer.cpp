@@ -54,7 +54,7 @@ namespace GTEngine
     }
 
 
-    GTCore::String SceneRenderer::GetStringProperty(const char*) const
+    GTLib::String SceneRenderer::GetStringProperty(const char*) const
     {
         return "";
     }

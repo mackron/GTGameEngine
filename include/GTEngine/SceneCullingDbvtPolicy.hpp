@@ -4,7 +4,7 @@
 #define __GTEngine_SceneCullingDbvtPolicy_hpp_
 
 #include "Physics.hpp"
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GTEngine
 {

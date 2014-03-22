@@ -3,7 +3,7 @@
 #ifndef __GTEngine_AnimationTrack_hpp_
 #define __GTEngine_AnimationTrack_hpp_
 
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 #include <GTEngine/Serialization.hpp>
 
 namespace GTEngine
@@ -67,12 +67,12 @@ namespace GTEngine
         /// Serializes the animation track.
         ///
         /// @param serializer [in] A reference ot the serializer to write to.
-        void Serialize(GTCore::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const;
 
         /// Deserializes the animation track.
         ///
         /// @param deserializer [in] A reference to the deserializer for reading the data from.
-        void Deserialize(GTCore::Deserializer &deserializer);
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
 
@@ -96,7 +96,7 @@ namespace GTEngine
         };
 
         /// The list of local key frames, sorted by time.
-        GTCore::Vector<LocalKeyFrame> localKeyFrames;
+        GTLib::Vector<LocalKeyFrame> localKeyFrames;
 
 
 

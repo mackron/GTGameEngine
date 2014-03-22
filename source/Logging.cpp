@@ -1,19 +1,19 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Logging.hpp>
-#include <GTCore/Strings/Create.hpp>
-#include <GTCore/Log.hpp>
+#include <GTLib/Strings/Create.hpp>
+#include <GTLib/Log.hpp>
 
 namespace GTEngine
 {
     namespace Logging
     {
         /// A pointer to the global log object.
-        GTCore::Log* EngineLog = nullptr;
+        GTLib::Log* EngineLog = nullptr;
 
         void Startup(const char* filename)
         {
-            EngineLog = new GTCore::Log(filename, "GTEngine");
+            EngineLog = new GTLib::Log(filename, "GTEngine");
         }
 
         void Shutdown()
@@ -47,7 +47,7 @@ namespace GTEngine
         va_start(argList1, format);
         va_start(argList2, format);
         {
-            formattedStr = GTCore::Strings::CreateFormatted(format, argList1, argList2);
+            formattedStr = GTLib::Strings::CreateFormatted(format, argList1, argList2);
         }
         va_end(argList1);
         va_end(argList2);
@@ -65,6 +65,6 @@ namespace GTEngine
 
 
         // We're finished with the formatted string, so it needs to be deleted.
-        GTCore::Strings::Delete(formattedStr);
+        GTLib::Strings::Delete(formattedStr);
     }
 }

@@ -4,7 +4,7 @@
 #define __GTEngine_Rendering_OpenGL21_RCSetShaderState_hpp_
 
 #include <GTEngine/ShaderParameterCache.hpp>
-#include <GTCore/Dictionary.hpp>
+#include <GTLib/Dictionary.hpp>
 #include <gtgl/gtgl.h>
 #include <cstdint>
 
@@ -63,25 +63,25 @@ namespace GTEngine
 
 
         /// The parameters that should be set by name. These default to null. We use pointers here so make it easier to determine whether or not a group can be ignored.
-        GTCore::Dictionary<ShaderState_OpenGL21::FloatParameter>*    floatUniformsToSetByName;
-        GTCore::Dictionary<ShaderState_OpenGL21::Float2Parameter>*   float2UniformsToSetByName;
-        GTCore::Dictionary<ShaderState_OpenGL21::Float3Parameter>*   float3UniformsToSetByName;
-        GTCore::Dictionary<ShaderState_OpenGL21::Float4Parameter>*   float4UniformsToSetByName;
-        GTCore::Dictionary<ShaderState_OpenGL21::Float2x2Parameter>* float2x2UniformsToSetByName;
-        GTCore::Dictionary<ShaderState_OpenGL21::Float3x3Parameter>* float3x3UniformsToSetByName;
-        GTCore::Dictionary<ShaderState_OpenGL21::Float4x4Parameter>* float4x4UniformsToSetByName;
-        GTCore::Dictionary<ShaderState_OpenGL21::TextureParameter>*  textureUniformsToSetByName;
+        GTLib::Dictionary<ShaderState_OpenGL21::FloatParameter>*    floatUniformsToSetByName;
+        GTLib::Dictionary<ShaderState_OpenGL21::Float2Parameter>*   float2UniformsToSetByName;
+        GTLib::Dictionary<ShaderState_OpenGL21::Float3Parameter>*   float3UniformsToSetByName;
+        GTLib::Dictionary<ShaderState_OpenGL21::Float4Parameter>*   float4UniformsToSetByName;
+        GTLib::Dictionary<ShaderState_OpenGL21::Float2x2Parameter>* float2x2UniformsToSetByName;
+        GTLib::Dictionary<ShaderState_OpenGL21::Float3x3Parameter>* float3x3UniformsToSetByName;
+        GTLib::Dictionary<ShaderState_OpenGL21::Float4x4Parameter>* float4x4UniformsToSetByName;
+        GTLib::Dictionary<ShaderState_OpenGL21::TextureParameter>*  textureUniformsToSetByName;
 
 
         /// The uniforms that should be set by their location. These default to null. We use pointers here so make it easier to determine whether or not a group can be ignored.
-        GTCore::Vector<ShaderState_OpenGL21::FloatParameter>*    floatUniformsToSetByLocation;
-        GTCore::Vector<ShaderState_OpenGL21::Float2Parameter>*   float2UniformsToSetByLocation;
-        GTCore::Vector<ShaderState_OpenGL21::Float3Parameter>*   float3UniformsToSetByLocation;
-        GTCore::Vector<ShaderState_OpenGL21::Float4Parameter>*   float4UniformsToSetByLocation;
-        GTCore::Vector<ShaderState_OpenGL21::Float2x2Parameter>* float2x2UniformsToSetByLocation;
-        GTCore::Vector<ShaderState_OpenGL21::Float3x3Parameter>* float3x3UniformsToSetByLocation;
-        GTCore::Vector<ShaderState_OpenGL21::Float4x4Parameter>* float4x4UniformsToSetByLocation;
-        GTCore::Vector<ShaderState_OpenGL21::TextureParameter>*  textureUniformsToSetByLocation;
+        GTLib::Vector<ShaderState_OpenGL21::FloatParameter>*    floatUniformsToSetByLocation;
+        GTLib::Vector<ShaderState_OpenGL21::Float2Parameter>*   float2UniformsToSetByLocation;
+        GTLib::Vector<ShaderState_OpenGL21::Float3Parameter>*   float3UniformsToSetByLocation;
+        GTLib::Vector<ShaderState_OpenGL21::Float4Parameter>*   float4UniformsToSetByLocation;
+        GTLib::Vector<ShaderState_OpenGL21::Float2x2Parameter>* float2x2UniformsToSetByLocation;
+        GTLib::Vector<ShaderState_OpenGL21::Float3x3Parameter>* float3x3UniformsToSetByLocation;
+        GTLib::Vector<ShaderState_OpenGL21::Float4x4Parameter>* float4x4UniformsToSetByLocation;
+        GTLib::Vector<ShaderState_OpenGL21::TextureParameter>*  textureUniformsToSetByLocation;
 
 
 

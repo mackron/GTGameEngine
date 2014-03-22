@@ -181,22 +181,22 @@ namespace GTEngine
         CollisionWorld world;
 
         /// A container for mapping metadata for models to scene nodes.
-        GTCore::Map<const SceneNode*, CullingObject*> models;
+        GTLib::Map<const SceneNode*, CullingObject*> models;
 
         /// A container for mapping metadata for point lights to scene nodes.
-        GTCore::Map<const SceneNode*, CullingObject*> pointLights;
+        GTLib::Map<const SceneNode*, CullingObject*> pointLights;
 
         /// A container for mapping metadata for spot lights to scene nodes.
-        GTCore::Map<const SceneNode*, CullingObject*> spotLights;
+        GTLib::Map<const SceneNode*, CullingObject*> spotLights;
 
         /// The ambient light objects.
-        GTCore::Vector<const SceneNode*> ambientLights;
+        GTLib::Vector<const SceneNode*> ambientLights;
 
         /// The directional light objects.
-        GTCore::Vector<const SceneNode*> directionalLights;
+        GTLib::Vector<const SceneNode*> directionalLights;
 
         /// The particle system objects.
-        GTCore::Map<const SceneNode*, CullingObject*> particleSystems;
+        GTLib::Map<const SceneNode*, CullingObject*> particleSystems;
 
 
 

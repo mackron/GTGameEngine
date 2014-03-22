@@ -1,7 +1,7 @@
 
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Game.hpp>
-#include <GTCore/Profiling/valgrind/callgrind.h>
+#include <GTLib/Profiling/valgrind/callgrind.h>
 
 class SandboxGame : public GTEngine::Game
 {
@@ -20,7 +20,7 @@ public:
     ////////////////////////////////////////////
     // Event handlers.
 
-    bool OnStartup(const GTCore::CommandLine &)
+    bool OnStartup(const GTLib::CommandLine &)
     {
         auto &script = this->GetScript();
         script.ExecuteFile("sandbox-config.lua");

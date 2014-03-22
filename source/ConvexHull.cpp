@@ -72,8 +72,8 @@ namespace GTEngine
             HACD::HACD* hacd = HACD::CreateHACD(nullptr);    // heh.
             if (hacd != nullptr)
             {
-                GTCore::Vector<HACD::Vec3<HACD::Real>> points(vertexCount);
-                GTCore::Vector<HACD::Vec3<long>>       triangles(indexCount / 3);
+                GTLib::Vector<HACD::Vec3<HACD::Real>> points(vertexCount);
+                GTLib::Vector<HACD::Vec3<long>>       triangles(indexCount / 3);
 
                 for (size_t i = 0; i < vertexCount; ++i)
                 {

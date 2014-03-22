@@ -2,8 +2,8 @@
 
 #include <GTEngine/ParticleSystemDefinition.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTCore/Path.hpp>
-#include <GTCore/IO.hpp>
+#include <GTLib/Path.hpp>
+#include <GTLib/IO.hpp>
 
 namespace GTEngine
 {
@@ -21,11 +21,11 @@ namespace GTEngine
 
     bool ParticleSystemDefinition::LoadFromFile(const char* fileNameIn, const char* relativePathIn)
     {
-        GTCore::String newAbsolutePath;
-        GTCore::String newRelativePath;
+        GTLib::String newAbsolutePath;
+        GTLib::String newRelativePath;
 
 
-        if (GTCore::Path::IsAbsolute(fileNameIn))
+        if (GTLib::Path::IsAbsolute(fileNameIn))
         {
             newAbsolutePath = fileNameIn;
 
@@ -43,24 +43,24 @@ namespace GTEngine
         {
             newRelativePath = fileNameIn;
 
-            if (!GTCore::IO::FindAbsolutePath(fileNameIn, newAbsolutePath))
+            if (!GTLib::IO::FindAbsolutePath(fileNameIn, newAbsolutePath))
             {
                 return false;
             }
         }
 
 
-        auto file = GTCore::IO::Open(newAbsolutePath.c_str(), GTCore::IO::OpenMode::Binary | GTCore::IO::OpenMode::Read);
+        auto file = GTLib::IO::Open(newAbsolutePath.c_str(), GTLib::IO::OpenMode::Binary | GTLib::IO::OpenMode::Read);
         if (file != nullptr)
         {
-            GTCore::FileDeserializer deserializer(file);
+            GTLib::FileDeserializer deserializer(file);
             this->Deserialize(deserializer);
 
 
             this->absolutePath = newAbsolutePath;
             this->relativePath = newRelativePath;
 
-            GTCore::IO::Close(file);
+            GTLib::IO::Close(file);
             return true;
         }
 
@@ -118,9 +118,9 @@ namespace GTEngine
     //////////////////////////////////////
     // Serialization/Deserialization
 
-    void ParticleSystemDefinition::Serialize(GTCore::Serializer &serializer)
+    void ParticleSystemDefinition::Serialize(GTLib::Serializer &serializer)
     {
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
 
         uint32_t emitterCount = static_cast<uint32_t>(this->emitters.count);
         intermediarySerializer.Write(emitterCount);
@@ -147,7 +147,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void ParticleSystemDefinition::Deserialize(GTCore::Deserializer &deserializer)
+    void ParticleSystemDefinition::Deserialize(GTLib::Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);

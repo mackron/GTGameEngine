@@ -15,9 +15,9 @@
 #include <GTEngine/ParticleSystemLibrary.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/ThreadCache.hpp>
-#include <GTCore/CommandLine.hpp>
-#include <GTCore/IO.hpp>
-#include <GTCore/WindowManagement.hpp>
+#include <GTLib/CommandLine.hpp>
+#include <GTLib/IO.hpp>
+#include <GTLib/WindowManagement.hpp>
 //#include "Audio/OpenAL/AudioEngine_OpenAL.hpp"
 
 // Basic globals.
@@ -27,12 +27,12 @@ namespace GTEngine
     Game* GlobalGame = nullptr;
 
     /// Keeps track of the executable directory.
-    static GTCore::String ExecutableDirectory;
+    static GTLib::String ExecutableDirectory;
 }
 
 namespace GTEngine
 {
-    bool _PreStartup(const GTCore::CommandLine &commandLine)
+    bool _PreStartup(const GTLib::CommandLine &commandLine)
     {
 #if 0
         AudioEngine_OpenAL audioEngine;
@@ -59,10 +59,10 @@ namespace GTEngine
 
 
         // First this is to more into the applications directory. We get this from the command line.
-        GTCore::IO::SetCurrentDirectory(commandLine.GetApplicationDirectory());
+        GTLib::IO::SetCurrentDirectory(commandLine.GetApplicationDirectory());
 
         // We need to keep hold of the executable directory for GetExecutableDirectory().
-        ExecutableDirectory = GTCore::IO::ToAbsolutePath(commandLine.GetApplicationDirectory(), GTCore::IO::GetCurrentDirectory());
+        ExecutableDirectory = GTLib::IO::ToAbsolutePath(commandLine.GetApplicationDirectory(), GTLib::IO::GetCurrentDirectory());
 
         // After moving into the application directory, we need to load up the config file and move into the data directory. From
         // there we can read the user configs and setup the log file.
@@ -77,13 +77,13 @@ namespace GTEngine
             auto &directories = ApplicationConfig::GetDataDirectories();
             if (directories.count > 0)
             {
-                GTCore::IO::SetCurrentDirectory(directories[0].c_str());
+                GTLib::IO::SetCurrentDirectory(directories[0].c_str());
 
                 // Here we are going to set additional search directories which will make GTCore search these directories if it can not
                 // open a file from the current directory. We intentionally don't include the first directory.
                 for (size_t i = 1; i < directories.count; ++i)
                 {
-                    GTCore::IO::AddAdditionalSearchPath(directories[i].c_str());
+                    GTLib::IO::AddAdditionalSearchPath(directories[i].c_str());
                 }
             }
         }
@@ -103,7 +103,7 @@ namespace GTEngine
         
         
         // Before we can do any windowing operations we will need to initialise the window management module of GTCore.
-        GTCore::StartupWindowManager();
+        GTLib::StartupWindowManager();
 
 
         // Here we'll startup the thread cache. We will do this before starting the sub-systems so that they themselves can do some
@@ -210,7 +210,7 @@ namespace GTEngine
         ThreadCache::Shutdown();
         
         // GTCore's window management module.
-        GTCore::ShutdownWindowManager();
+        GTLib::ShutdownWindowManager();
 
         // Application config.
         ApplicationConfig::Close();

@@ -3,10 +3,10 @@
 #ifndef __GTEngine_SceneStateStackRestoreCommands_hpp_
 #define __GTEngine_SceneStateStackRestoreCommands_hpp_
 
-#include <GTCore/Vector.hpp>
-#include <GTCore/Map.hpp>
-#include <GTCore/Serializer.hpp>
-#include <GTCore/Deserializer.hpp>
+#include <GTLib/Vector.hpp>
+#include <GTLib/Map.hpp>
+#include <GTLib/Serializer.hpp>
+#include <GTLib/Deserializer.hpp>
 
 namespace GTEngine
 {
@@ -24,13 +24,13 @@ namespace GTEngine
 
 
         /// Adds an insert command.
-        void AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer);
+        void AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTLib::BasicSerializer* sceneNodeSerializer);
 
         /// Adds a delete command.
-        void AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer);
+        void AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTLib::BasicSerializer* sceneNodeSerializer);
 
         /// Adds an update command.
-        void AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTCore::BasicSerializer* sceneNodeSerializer);
+        void AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTLib::BasicSerializer* sceneNodeSerializer);
 
         
         /// Adds a scene node to the hierarchy.
@@ -56,17 +56,17 @@ namespace GTEngine
 
 
         /// The insert commands.
-        GTCore::Map<uint64_t, GTCore::BasicSerializer*> inserts;
+        GTLib::Map<uint64_t, GTLib::BasicSerializer*> inserts;
 
         /// The deletes commands.
-        GTCore::Map<uint64_t, GTCore::BasicSerializer*> deletes;
+        GTLib::Map<uint64_t, GTLib::BasicSerializer*> deletes;
 
         /// The update commands.
-        GTCore::Map<uint64_t, GTCore::BasicSerializer*> updates;
+        GTLib::Map<uint64_t, GTLib::BasicSerializer*> updates;
 
 
         /// The hierarchy.
-        GTCore::Map<uint64_t, uint64_t> hierarchy;
+        GTLib::Map<uint64_t, uint64_t> hierarchy;
     };
 }
 

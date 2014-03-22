@@ -620,9 +620,9 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void EditorMetadataComponent::Serialize(GTCore::Serializer &serializer, unsigned int flags) const
+    void EditorMetadataComponent::Serialize(GTLib::Serializer &serializer, unsigned int flags) const
     {
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
 
         intermediarySerializer.Write(this->alwaysShowOnTop);
         intermediarySerializer.Write(this->useModelForPickingShape);
@@ -663,7 +663,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void EditorMetadataComponent::Deserialize(GTCore::Deserializer &deserializer)
+    void EditorMetadataComponent::Deserialize(GTLib::Deserializer &deserializer)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);

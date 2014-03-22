@@ -6,7 +6,7 @@
 #include "TextureFilters.hpp"
 #include "TextureWrapModes.hpp"
 #include <GTImage/Image.hpp>
-#include <GTCore/Map.hpp>
+#include <GTLib/Map.hpp>
 
 namespace GTEngine
 {
@@ -146,14 +146,14 @@ namespace GTEngine
     private:
 
         /// The relative path of the texture.
-        GTCore::String relativePath;
+        GTLib::String relativePath;
 
 
         /// The list of framebuffers that this texture is attached to.
-        GTCore::List<Framebuffer*> framebuffers;
+        GTLib::List<Framebuffer*> framebuffers;
 
         /// The list of shaders that this texture is attached to.
-        GTCore::List<Shader*> shaders;
+        GTLib::List<Shader*> shaders;
 
 
         /// We store a reference count which will be used by the Texture2DLibrary. Initializes to 1.

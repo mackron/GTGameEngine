@@ -60,17 +60,17 @@ namespace GTEngine
 
 
         /// The list of opaque mesh objects, sorted by material definition.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> opaqueObjects;
+        GTLib::Map<const MaterialDefinition*, GTLib::Vector<DefaultSceneRendererMesh>*> opaqueObjects;
 
         /// The list of transparent objects. This includes both blended and refracted transparent objects.
-        GTCore::Vector<DefaultSceneRendererMesh> transparentObjects;
+        GTLib::Vector<DefaultSceneRendererMesh> transparentObjects;
 
 
         /// The list of opaque mesh objects that should be drawn last.
-        GTCore::Map<const MaterialDefinition*, GTCore::Vector<DefaultSceneRendererMesh>*> opaqueObjectsLast;
+        GTLib::Map<const MaterialDefinition*, GTLib::Vector<DefaultSceneRendererMesh>*> opaqueObjectsLast;
 
         /// The list of transparent objects that should be drawn last.
-        GTCore::Vector<DefaultSceneRendererMesh> transparentObjectsLast;
+        GTLib::Vector<DefaultSceneRendererMesh> transparentObjectsLast;
 
 
         /// The light manager for managing lights.
@@ -79,19 +79,19 @@ namespace GTEngine
 
 
         /// A map structure for mapping a model's Mesh to a scene renderer mesh.
-        GTCore::Map<const Mesh*, DefaultSceneRendererMesh*> visibleMeshes;
+        GTLib::Map<const Mesh*, DefaultSceneRendererMesh*> visibleMeshes;
 
 
         /// The flat list of visible models, mapped to the indices of the lights that touch them. We want to store pointers to the component and
         /// not the actual model object because we will later want access to the scene node for it's transformation.
-        GTCore::Map<const ModelComponent*, DefaultSceneRenderer_LightGroup*> visibleModels;
+        GTLib::Map<const ModelComponent*, DefaultSceneRenderer_LightGroup*> visibleModels;
 
         /// The list of meshes whose skinning needs to be applied. The skinning will be applied in PostProcess().
-        GTCore::Vector<const ModelComponent*> modelsToAnimate;
+        GTLib::Vector<const ModelComponent*> modelsToAnimate;
 
 
         /// The flat list of visible particle systems, mapped to the indices of the lights that touch them.
-        GTCore::Map<const ParticleSystemComponent*, DefaultSceneRenderer_LightGroup*> visibleParticleSystems;
+        GTLib::Map<const ParticleSystemComponent*, DefaultSceneRenderer_LightGroup*> visibleParticleSystems;
 
 
 

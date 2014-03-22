@@ -2,8 +2,8 @@
 
 #include <GTEngine/PrefabLibrary.hpp>
 #include <GTEngine/Errors.hpp>
-#include <GTCore/Path.hpp>
-#include <GTCore/Dictionary.hpp>
+#include <GTLib/Path.hpp>
+#include <GTLib/Dictionary.hpp>
 #include <utility>
 
 
@@ -15,7 +15,7 @@ namespace GTEngine
     typedef std::pair<Prefab*, size_t> PrefabReference;
 
     /// The list of loaded classes, indexed by the absolute path.
-    static GTCore::Dictionary<PrefabReference> LoadedPrefabs;
+    static GTLib::Dictionary<PrefabReference> LoadedPrefabs;
 
 
 
@@ -44,13 +44,13 @@ namespace GTEngine
 
     Prefab* PrefabLibrary::Acquire(const char* fileName, const char* makeRelativeTo)
     {
-        GTCore::String relativePath(fileName);
+        GTLib::String relativePath(fileName);
 
-        if (GTCore::Path::IsAbsolute(fileName))
+        if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTCore::IO::ToRelativePath(fileName, makeRelativeTo);
+                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
             }
             else
             {
@@ -60,18 +60,18 @@ namespace GTEngine
         }
 
 
-        GTCore::String absolutePath;
-        if (GTCore::IO::FindAbsolutePath(fileName, absolutePath))
+        GTLib::String absolutePath;
+        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
         {
             auto iLoadedPrefab = LoadedPrefabs.Find(absolutePath.c_str());
             if (iLoadedPrefab == nullptr)
             {
                 // Does not exist. Needs to be loaded.
-                auto file = GTCore::IO::Open(absolutePath.c_str(), GTCore::IO::OpenMode::Read);
+                auto file = GTLib::IO::Open(absolutePath.c_str(), GTLib::IO::OpenMode::Read);
                 if (file != nullptr)
                 {
                     // We use a file deserializer for this.
-                    GTCore::FileDeserializer deserializer(file);
+                    GTLib::FileDeserializer deserializer(file);
                     
                     auto newPrefab = new Prefab(absolutePath.c_str(), relativePath.c_str());
                     newPrefab->Deserialize(deserializer);
@@ -79,7 +79,7 @@ namespace GTEngine
                     LoadedPrefabs.Add(absolutePath.c_str(), PrefabReference(newPrefab, 1));
 
                     // Can't forget to close the file.
-                    GTCore::IO::Close(file);
+                    GTLib::IO::Close(file);
 
                     return newPrefab;
                 }

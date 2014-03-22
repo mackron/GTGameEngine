@@ -7,7 +7,7 @@ namespace GTEngine
 {
     namespace Scripting
     {
-        bool LoadExtendedMathLibrary(GTCore::Script &script)
+        bool LoadExtendedMathLibrary(GTLib::Script &script)
         {
             //////////////////////////////////////////
             // Basic Functions.
@@ -730,7 +730,7 @@ namespace GTEngine
 
 
 
-        glm::vec2 ToVector2(GTCore::Script &script, int position)
+        glm::vec2 ToVector2(GTLib::Script &script, int position)
         {
             glm::vec2 result;
 
@@ -758,7 +758,7 @@ namespace GTEngine
         }
 
 
-        glm::vec3 ToVector3(GTCore::Script &script, int position)
+        glm::vec3 ToVector3(GTLib::Script &script, int position)
         {
             glm::vec3 result;
 
@@ -795,7 +795,7 @@ namespace GTEngine
         }
 
 
-        glm::vec4 ToVector4(GTCore::Script &script, int position)
+        glm::vec4 ToVector4(GTLib::Script &script, int position)
         {
             glm::vec4 result;
 
@@ -841,7 +841,7 @@ namespace GTEngine
         }
 
 
-        glm::quat ToQuaternion(GTCore::Script &script, int position)
+        glm::quat ToQuaternion(GTLib::Script &script, int position)
         {
             glm::quat result;
 
@@ -888,7 +888,7 @@ namespace GTEngine
 
 
 
-        void PushNewVector2(GTCore::Script &script, float x, float y)
+        void PushNewVector2(GTLib::Script &script, float x, float y)
         {
             script.GetGlobal("math");
             assert(script.IsTable(-1));
@@ -908,7 +908,7 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void PushNewVector3(GTCore::Script &script, float x, float y, float z)
+        void PushNewVector3(GTLib::Script &script, float x, float y, float z)
         {
             script.GetGlobal("math");
             assert(script.IsTable(-1));
@@ -929,7 +929,7 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void PushNewVector4(GTCore::Script &script, float x, float y, float z, float w)
+        void PushNewVector4(GTLib::Script &script, float x, float y, float z, float w)
         {
             script.GetGlobal("math");
             assert(script.IsTable(-1));
@@ -951,7 +951,7 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void PushNewQuaternion(GTCore::Script &script, float x, float y, float z, float w)
+        void PushNewQuaternion(GTLib::Script &script, float x, float y, float z, float w)
         {
             script.GetGlobal("math");
             assert(script.IsTable(-1));
@@ -974,7 +974,7 @@ namespace GTEngine
         }
 
 
-        bool IsVector2(GTCore::Script &script, int index)
+        bool IsVector2(GTLib::Script &script, int index)
         {
             if (script.IsTable(index))
             {
@@ -990,7 +990,7 @@ namespace GTEngine
             return false;
         }
 
-        bool IsVector3(GTCore::Script &script, int index)
+        bool IsVector3(GTLib::Script &script, int index)
         {
             if (script.IsTable(index))
             {
@@ -1006,7 +1006,7 @@ namespace GTEngine
             return false;
         }
 
-        bool IsVector4(GTCore::Script &script, int index)
+        bool IsVector4(GTLib::Script &script, int index)
         {
             if (script.IsTable(index))
             {

@@ -133,13 +133,13 @@ namespace GTEngine
     /////////////////////////////////////////////////
     // Serialization/Deserialization
 
-    void SceneStateStack::Serialize(GTCore::Serializer &serializer) const
+    void SceneStateStack::Serialize(GTLib::Serializer &serializer) const
     {
         // We need to use an intermediary here so we can grab the size properly.
-        GTCore::BasicSerializer intermediarySerializer;
+        GTLib::BasicSerializer intermediarySerializer;
 
         // The hierarchy.
-        GTCore::Map<uint32_t, uint32_t> hierarchy;
+        GTLib::Map<uint32_t, uint32_t> hierarchy;
 
         for (size_t i = 0; i < this->branches.count; ++i)
         {
@@ -198,7 +198,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void SceneStateStack::Deserialize(GTCore::Deserializer &deserializer)
+    void SceneStateStack::Deserialize(GTLib::Deserializer &deserializer)
     {
         // We need to clear the stack before deserializing.
         this->Clear();
@@ -214,7 +214,7 @@ namespace GTEngine
                 case 1:
                     {
                         // Hierarchy
-                        GTCore::Map<uint32_t, uint32_t> hierarchy;
+                        GTLib::Map<uint32_t, uint32_t> hierarchy;
 
                         uint32_t hierarchyCount;
                         deserializer.Read(hierarchyCount);

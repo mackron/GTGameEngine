@@ -197,7 +197,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer::AddViewport(SceneViewport &viewport)
     {
-        // We create a framebuffer for every viewport. We map these to viewports with a simple GTCore::Map container.
+        // We create a framebuffer for every viewport. We map these to viewports with a simple GTLib::Map container.
         auto framebuffer = new DefaultSceneRendererFramebuffer(viewport.GetWidth(), viewport.GetHeight());
         assert(framebuffer != nullptr);
         {
@@ -264,11 +264,11 @@ namespace GTEngine
 
     void DefaultSceneRenderer::SetProperty(const char* name, float value)
     {
-        if (GTCore::Strings::Equal(name, "HDRExposure"))
+        if (GTLib::Strings::Equal(name, "HDRExposure"))
         {
             this->SetHDRExposure(value);
         }
-        else if (GTCore::Strings::Equal(name, "BloomFactor"))
+        else if (GTLib::Strings::Equal(name, "BloomFactor"))
         {
             this->SetBloomFactor(value);
         }
@@ -276,7 +276,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer::SetProperty(const char* name, bool value)
     {
-        if (GTCore::Strings::Equal(name, "IsBackgroundClearEnabled"))
+        if (GTLib::Strings::Equal(name, "IsBackgroundClearEnabled"))
         {
             if (value)
             {
@@ -287,7 +287,7 @@ namespace GTEngine
                 this->DisableBackgroundColourClearing();
             }
         }
-        else if (GTCore::Strings::Equal(name, "IsHDREnabled"))
+        else if (GTLib::Strings::Equal(name, "IsHDREnabled"))
         {
             if (value)
             {
@@ -298,7 +298,7 @@ namespace GTEngine
                 this->DisableHDR();
             }
         }
-        else if (GTCore::Strings::Equal(name, "IsBloomEnabled"))
+        else if (GTLib::Strings::Equal(name, "IsBloomEnabled"))
         {
             if (value)
             {
@@ -319,7 +319,7 @@ namespace GTEngine
 
     void DefaultSceneRenderer::SetProperty(const char* name, const glm::vec3 &value)
     {
-        if (GTCore::Strings::Equal(name, "BackgroundClearColour"))
+        if (GTLib::Strings::Equal(name, "BackgroundClearColour"))
         {
             bool isEnabled = this->IsBackgroundColourClearingEnabled();
             this->EnableBackgroundColourClearing(value);
@@ -338,7 +338,7 @@ namespace GTEngine
     }
 
 
-    GTCore::String DefaultSceneRenderer::GetStringProperty(const char* name) const
+    GTLib::String DefaultSceneRenderer::GetStringProperty(const char* name) const
     {
         (void)name;
 
@@ -354,11 +354,11 @@ namespace GTEngine
 
     float DefaultSceneRenderer::GetFloatProperty(const char* name) const
     {
-        if (GTCore::Strings::Equal(name, "HDRExposure"))
+        if (GTLib::Strings::Equal(name, "HDRExposure"))
         {
             return this->GetHDRExposure();
         }
-        else if (GTCore::Strings::Equal(name, "BloomFactor"))
+        else if (GTLib::Strings::Equal(name, "BloomFactor"))
         {
             return this->GetBloomFactor();
         }
@@ -368,15 +368,15 @@ namespace GTEngine
 
     bool DefaultSceneRenderer::GetBooleanProperty(const char* name) const
     {
-        if (GTCore::Strings::Equal(name, "IsBackgroundClearEnabled"))
+        if (GTLib::Strings::Equal(name, "IsBackgroundClearEnabled"))
         {
             return this->IsBackgroundColourClearingEnabled();
         }
-        else if (GTCore::Strings::Equal(name, "IsHDREnabled"))
+        else if (GTLib::Strings::Equal(name, "IsHDREnabled"))
         {
             return this->IsHDREnabled();
         }
-        else if (GTCore::Strings::Equal(name, "IsBloomEnabled"))
+        else if (GTLib::Strings::Equal(name, "IsBloomEnabled"))
         {
             return this->IsBloomEnabled();
         }
@@ -393,7 +393,7 @@ namespace GTEngine
 
     glm::vec3 DefaultSceneRenderer::GetVector3Property(const char* name) const
     {
-        if (GTCore::Strings::Equal(name, "BackgroundClearColour"))
+        if (GTLib::Strings::Equal(name, "BackgroundClearColour"))
         {
             return this->GetBackgroundClearColour();
         }
@@ -739,7 +739,7 @@ namespace GTEngine
     }
 
 
-    void DefaultSceneRenderer::RenderPointShapowMapFace(const DefaultSceneRendererPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTCore::Vector<DefaultSceneRendererMesh> &meshes)
+    void DefaultSceneRenderer::RenderPointShapowMapFace(const DefaultSceneRendererPointLight &light, const glm::mat4 &faceViewMatrix, int faceIndex, const GTLib::Vector<DefaultSceneRendererMesh> &meshes)
     {
         // The draw buffer needs to be set. The appropriate framebuffer will have already been set.
         int blurBuffer0Index = 6;

@@ -26,7 +26,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This only loads the content in the GTEngine namespace/table. This will NOT load any game-specific functionality.
-        bool LoadGTEngineScriptLibrary(GTCore::Script &script);
+        bool LoadGTEngineScriptLibrary(GTLib::Script &script);
 
 
 
@@ -35,7 +35,7 @@ namespace GTEngine
         /// @param script    [in] A reference to the main script object.
         /// @param mousePosX [in] The x mouse position.
         /// @param mousePosY [in] The y mouse position.
-        void PostEvent_OnMouseMove(GTCore::Script &script, int mousePosX, int mousePosY);
+        void PostEvent_OnMouseMove(GTLib::Script &script, int mousePosX, int mousePosY);
 
         /// Post a global MouseWheel event to everything relevant.
         ///
@@ -43,7 +43,7 @@ namespace GTEngine
         /// @param mousePosX [in] The x mouse position.
         /// @param mousePosY [in] The y mouse position.
         /// @param delta     [in] The scroll delta.
-        void PostEvent_OnMouseWheel(GTCore::Script &script, int mousePosX, int mousePosY, int delta);
+        void PostEvent_OnMouseWheel(GTLib::Script &script, int mousePosX, int mousePosY, int delta);
 
         /// Post a global MouseButtonDown event to everything relevant.
         ///
@@ -51,7 +51,7 @@ namespace GTEngine
         /// @param mousePosX [in] The x mouse position.
         /// @param mousePosY [in] The y mouse position.
         /// @param button    [in] The button code.
-        void PostEvent_OnMouseButtonDown(GTCore::Script &script, int mousePosX, int mousePosY, GTCore::MouseButton button);
+        void PostEvent_OnMouseButtonDown(GTLib::Script &script, int mousePosX, int mousePosY, GTLib::MouseButton button);
 
         /// Post a global MouseButtonUp event to everything relevant.
         ///
@@ -59,7 +59,7 @@ namespace GTEngine
         /// @param mousePosX [in] The x mouse position.
         /// @param mousePosY [in] The y mouse position.
         /// @param button    [in] The button code.
-        void PostEvent_OnMouseButtonUp(GTCore::Script &script, int mousePosX, int mousePosY, GTCore::MouseButton button);
+        void PostEvent_OnMouseButtonUp(GTLib::Script &script, int mousePosX, int mousePosY, GTLib::MouseButton button);
 
         /// Post a global MouseButtonDoubleClick event to everything relevant.
         ///
@@ -67,19 +67,19 @@ namespace GTEngine
         /// @param mousePosX [in] The x mouse position.
         /// @param mousePosY [in] The y mouse position.
         /// @param button    [in] The button code.
-        void PostEvent_OnMouseButtonDoubleClick(GTCore::Script &script, int mousePosX, int mousePosY, GTCore::MouseButton button);
+        void PostEvent_OnMouseButtonDoubleClick(GTLib::Script &script, int mousePosX, int mousePosY, GTLib::MouseButton button);
 
         /// Post a global KeyPressed event to everything relevant.
         ///
         /// @param script [in] A reference to the main script object.
         /// @param key    [in] The key code.
-        void PostEvent_OnKeyPressed(GTCore::Script &script, GTCore::Key key);
+        void PostEvent_OnKeyPressed(GTLib::Script &script, GTLib::Key key);
 
         /// Post a global KeyReleased event to everything relevant.
         ///
         /// @param script [in] A reference to the main script object.
         /// @param key    [in] The key code.
-        void PostEvent_OnKeyReleased(GTCore::Script &script, GTCore::Key key);
+        void PostEvent_OnKeyReleased(GTLib::Script &script, GTLib::Key key);
 
 
 
@@ -91,41 +91,41 @@ namespace GTEngine
         /// @param script             [in] A reference to the script to load the scene node script into.
         /// @param scriptRelativePath [in] The relative path of the script.
         /// @param scriptString       [in] The actual script content.
-        bool LoadScriptDefinition(GTCore::Script &script, const char* scriptRelativePath, const char* scriptString);
+        bool LoadScriptDefinition(GTLib::Script &script, const char* scriptRelativePath, const char* scriptString);
 
         /// Unloads a scene node script.
         ///
         /// @param script             [in] A reference to the script to unload the scene node script from.
         /// @param scriptRelativePath [in] The relative path of the script to unload.
-        void UnloadScriptDefinition(GTCore::Script &script, const char* scriptRelativePath);
+        void UnloadScriptDefinition(GTLib::Script &script, const char* scriptRelativePath);
 
 
 
         namespace FFI
         {
             /// Retrieves the executable directory.
-            int GetExecutableDirectory(GTCore::Script &script);
+            int GetExecutableDirectory(GTLib::Script &script);
 
             /// Retrieves the version string.
-            int GetVersionString(GTCore::Script &script);
+            int GetVersionString(GTLib::Script &script);
 
             /// Determines if the given file path is a model file, based on it's extension.
-            int IsModelFile(GTCore::Script &script);
+            int IsModelFile(GTLib::Script &script);
 
             /// Determines if the given file path is an image file, based on it's extension.
-            int IsImageFile(GTCore::Script &script);
+            int IsImageFile(GTLib::Script &script);
 
             /// Determines if the given file path is a sound file, based on it's extension.
-            int IsSoundFile(GTCore::Script &script);
+            int IsSoundFile(GTLib::Script &script);
 
             /// Determines if the given file path is a scene file, based on it's extension.
-            int IsSceneFile(GTCore::Script &script);
+            int IsSceneFile(GTLib::Script &script);
 
             /// Determines if the given file path is a prefab file, based on it's extension.
-            int IsPrefabFile(GTCore::Script &script);
+            int IsPrefabFile(GTLib::Script &script);
 
             /// Determines if the given file path is a script file, based on it's extension.
-            int IsScriptFile(GTCore::Script &script);
+            int IsScriptFile(GTLib::Script &script);
 
 
             /// Creates a prefab file from a scene node.
@@ -134,23 +134,23 @@ namespace GTEngine
             ///     Argument 1: The absolute path of the file to create or replace.
             ///     Argument 2: The path to make the absolute path relative to.
             ///     Argument 3: A pointer to the scene node to create the prefrab file from.
-            int CreatePrefab(GTCore::Script &script);
+            int CreatePrefab(GTLib::Script &script);
 
 
             /// Executes the script defined in the given file.
             ///
             /// @remarks
             ///     Argument 1: The name of the script file to load and execute.
-            int ExecuteFile(GTCore::Script &script);
+            int ExecuteFile(GTLib::Script &script);
 
             /// Executes the given script text.
             ///
             /// @remarks
             ///     Argument 1: The script text to execute.
-            int ExecuteScript(GTCore::Script &script);
+            int ExecuteScript(GTLib::Script &script);
 
             /// Retrieves the last script error.
-            int GetLastScriptError(GTCore::Script &script);
+            int GetLastScriptError(GTLib::Script &script);
 
 
             /// Generates a random number between the two given numbers.
@@ -158,8 +158,8 @@ namespace GTEngine
             /// @remarks
             ///     Argument 1: The low bound.
             ///     Argument 2: The high bound.
-            int RandomInteger(GTCore::Script &script);
-            int RandomFloat(GTCore::Script &script);
+            int RandomInteger(GTLib::Script &script);
+            int RandomFloat(GTLib::Script &script);
         }
     }
 }

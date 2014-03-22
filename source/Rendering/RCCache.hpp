@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_RCCache_hpp_
 #define __GTEngine_Rendering_RCCache_hpp_
 
-#include <GTCore/Vector.hpp>
+#include <GTLib/Vector.hpp>
 #include <new>
 
 namespace GTEngine
@@ -105,7 +105,7 @@ namespace GTEngine
         /// Pushes a new block to the end of the block array.
         void PushNewBlock()
         {
-            auto newBlock = new GTCore::Vector<T>(BlockSize);   // <-- <BlockSize> here specifies the size of the internal buffer.
+            auto newBlock = new GTLib::Vector<T>(BlockSize);   // <-- <BlockSize> here specifies the size of the internal buffer.
 
             // It would be tempting to use newBlock->Resize(BlockSize) to allocate default Ts, however that will require copy
             // constructors on the render commands. To resolve, we're going to manipulate the buffer directly. The vectors will
@@ -122,7 +122,7 @@ namespace GTEngine
     private:
 
         /// The array of blocks. We need random access here, so a vector is appropriate.
-        GTCore::Vector<GTCore::Vector<T>*> blocks;
+        GTLib::Vector<GTLib::Vector<T>*> blocks;
 
         /// The number of Ts that are acquired.
         size_t acquiredCount;

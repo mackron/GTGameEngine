@@ -3,7 +3,7 @@
 #ifndef __GTGameEngine_AudioEngine_hpp_
 #define __GTGameEngine_AudioEngine_hpp_
 
-#include <GTCore/String.hpp>
+#include <GTLib/String.hpp>
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
@@ -34,7 +34,7 @@ namespace GTEngine
 
 
             /// The name of the device.
-            GTCore::String name;
+            GTLib::String name;
         };
 
 
@@ -48,7 +48,7 @@ namespace GTEngine
 
 
             /// The name of the device.
-            GTCore::String name;
+            GTLib::String name;
         };
 
 
