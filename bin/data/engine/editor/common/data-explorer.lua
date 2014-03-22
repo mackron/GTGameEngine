@@ -112,6 +112,16 @@ function GTGUI.Element:DataExplorer()
     self.FileMenu:Menu();
     self.FileMenu:EnableDefaultEvents();
     
+    self.FileMenu:AppendItem("Delete..."):OnPressed(function()
+        Editor.ShowYesNoDialog("Are you sure you want to delete '" .. self.FileMenu.DestinationRelativePath .. "'?", function(result)
+            if result == Editor.YesNoDialogResult.Yes then
+                Editor.ForceCloseFile(self.FileMenu.DestinationAbsolutePath);
+                GTCore.IO.DeleteFile(self.FileMenu.DestinationAbsolutePath);
+                Game.ScanDataFilesForChanges();
+            end
+        end);
+    end);
+    
     
     
     function self:InsertItemFromFileInfo(fileInfo, text)
@@ -319,6 +329,33 @@ function GTGUI.Element:DataExplorer()
                 self.FolderMenu.DestinationDirectoryShort = item:GetRelativePath();
             else
                 self.FolderMenu.DestinationDirectoryShort = "";
+            end
+        else
+            local mousePosX, mousePosY = GTGUI.Server.GetMousePosition();
+            local xPos           = mousePosX;
+            local yPos           = mousePosY;
+            local width          = self.FileMenu:GetWidth();
+            local height         = self.FileMenu:GetHeight();
+            local viewportWidth  = GTGUI.Server.GetViewportWidth();
+            local viewportHeight = GTGUI.Server.GetViewportHeight();
+        
+            if xPos + width > viewportWidth then
+                xPos = xPos - width;
+            end
+            
+            if yPos + height > viewportHeight then
+                yPos = yPos - height;
+            end
+        
+        
+            self.FileMenu:SetPosition(xPos, yPos);
+            self.FileMenu:Show();
+            self.FileMenu.DestinationAbsolutePath = item.path;
+            
+            if not item:GetParent().isRoot then
+                self.FileMenu.DestinationRelativePath = item:GetRelativePath();
+            else
+                self.FileMenu.DestinationRelativePath = "";
             end
         end
     end
