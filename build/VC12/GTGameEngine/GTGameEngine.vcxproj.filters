@@ -141,6 +141,27 @@
     <Filter Include="Source Files\Audio\OpenAL">
       <UniqueIdentifier>{c13877dc-3242-4ca6-8401-b30b0cb9c026}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\gtgl">
+      <UniqueIdentifier>{524e959d-3d8f-4e66-90e0-1144d8468ae1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gtgl\x11">
+      <UniqueIdentifier>{a25dbbc8-bee9-479c-a2b7-e03fef863677}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gtgl\win32">
+      <UniqueIdentifier>{f8edd4a8-bc32-46c3-9be6-31beaff47cb9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gtgl\debugging">
+      <UniqueIdentifier>{06ad5fde-fe1d-4e01-b300-f32280a22411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\gtgl\emulators">
+      <UniqueIdentifier>{1fcddb5d-0b47-4870-bb44-3e426f1a57ec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gtgl">
+      <UniqueIdentifier>{6b28c03a-b6f7-4a3b-ab90-a9902676c636}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\gtgl\GL">
+      <UniqueIdentifier>{9a58447b-b4d3-4187-8063-888e22858854}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\AABB.hpp">
@@ -953,6 +974,66 @@
     <ClInclude Include="..\..\..\source\Audio\OpenAL\AudioEngine_OpenAL.hpp">
       <Filter>Source Files\Audio\OpenAL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\gtgl\gtgl_context.h">
+      <Filter>Source Files\gtgl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gtgl\gtgl_contextmanager.h">
+      <Filter>Source Files\gtgl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gtgl\gtgl_errors.h">
+      <Filter>Source Files\gtgl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gtgl\gtgl_extensions.h">
+      <Filter>Source Files\gtgl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gtgl\gtgl_utils.h">
+      <Filter>Source Files\gtgl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gtgl\gtgl_window.h">
+      <Filter>Source Files\gtgl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gtgl\gtgl_windowmanager.h">
+      <Filter>Source Files\gtgl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gtgl\emulators\gtgl_arb_debug_output.h">
+      <Filter>Source Files\gtgl\emulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gtgl\emulators\gtgl_emulation_common.h">
+      <Filter>Source Files\gtgl\emulators</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\gtgl\debugging\gtgl_debugging_common.h">
+      <Filter>Source Files\gtgl\debugging</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\gtgl\gtgl.h">
+      <Filter>Header Files\gtgl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\gtgl\gtgl_gl.h">
+      <Filter>Header Files\gtgl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\gtgl\gtgl_glx.h">
+      <Filter>Header Files\gtgl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\gtgl\gtgl_wgl.h">
+      <Filter>Header Files\gtgl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\gtgl\GL\gl3.h">
+      <Filter>Header Files\gtgl\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\gtgl\GL\glext.h">
+      <Filter>Header Files\gtgl\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\gtgl\GL\glx.h">
+      <Filter>Header Files\gtgl\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\gtgl\GL\glxext.h">
+      <Filter>Header Files\gtgl\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\gtgl\GL\gtwgl_windef.h">
+      <Filter>Header Files\gtgl\GL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\gtgl\GL\wglext.h">
+      <Filter>Header Files\gtgl\GL</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\include\GTEngine\HACD\hacdCircularList.inl">
@@ -1658,6 +1739,66 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Audio\OpenAL\AudioEngine_OpenAL.cpp">
       <Filter>Source Files\Audio\OpenAL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\gtgl.c">
+      <Filter>Source Files\gtgl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\gtgl_context.c">
+      <Filter>Source Files\gtgl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\gtgl_contextmanager.c">
+      <Filter>Source Files\gtgl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\gtgl_errors.c">
+      <Filter>Source Files\gtgl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\gtgl_extensions.c">
+      <Filter>Source Files\gtgl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\gtgl_gl.c">
+      <Filter>Source Files\gtgl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\gtgl_glx.c">
+      <Filter>Source Files\gtgl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\gtgl_utils.c">
+      <Filter>Source Files\gtgl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\gtgl_wgl.c">
+      <Filter>Source Files\gtgl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\gtgl_window.c">
+      <Filter>Source Files\gtgl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\gtgl_windowmanager.c">
+      <Filter>Source Files\gtgl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\x11\gtgl_context_x11.c">
+      <Filter>Source Files\gtgl\x11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\x11\gtgl_window_x11.c">
+      <Filter>Source Files\gtgl\x11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\x11\gtgl_windowmanager_x11.c">
+      <Filter>Source Files\gtgl\x11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\win32\gtgl_context_win32.c">
+      <Filter>Source Files\gtgl\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\win32\gtgl_window_win32.c">
+      <Filter>Source Files\gtgl\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\win32\gtgl_windowmanager_win32.c">
+      <Filter>Source Files\gtgl\win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\emulators\gtgl_arb_debug_output.c">
+      <Filter>Source Files\gtgl\emulators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\emulators\gtgl_emulation_common.c">
+      <Filter>Source Files\gtgl\emulators</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\gtgl\debugging\gtgl_debugging_common.c">
+      <Filter>Source Files\gtgl\debugging</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
