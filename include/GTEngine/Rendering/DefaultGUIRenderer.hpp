@@ -54,7 +54,7 @@ namespace GTEngine
     private:
 
         /// Retrieves a texture for the given image.
-        //Texture2D* AcquireTexture2DFromImage(const GTImage::Image* image);
+        //Texture2D* AcquireTexture2DFromImage(const GTLib::Image* image);
 
         /// A helper for enabled all of the current state.
         void RestoreCurrentState();

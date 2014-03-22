@@ -73,7 +73,7 @@ namespace GTEngine
             auto iTexture = LoadedTextures.Find(absFileName.c_str());
             if (iTexture == nullptr)
             {
-                GTImage::Image image(absFileName.c_str());
+                GTLib::Image image(absFileName.c_str());
                 if (image.IsLinkedToFile())
                 {
                     image.PullAllMipmaps();     // <-- This loads the image data.
@@ -160,7 +160,7 @@ namespace GTEngine
                 auto texture = iTexture->value;
                 assert(texture != nullptr);
                 {
-                    GTImage::Image image(absFileName.c_str());
+                    GTLib::Image image(absFileName.c_str());
                     if (image.IsLinkedToFile())
                     {
                         texture->SetData(image.GetWidth(), image.GetHeight(), image.GetFormat(), image.GetBaseMipmapData());
@@ -191,7 +191,7 @@ namespace GTEngine
             uint32_t texel = 0xFF000000;
             Black1x1Texture = Renderer::CreateTexture2D();
 
-            Black1x1Texture->SetData(1, 1, GTImage::ImageFormat_RGBA8, &texel);
+            Black1x1Texture->SetData(1, 1, GTLib::ImageFormat_RGBA8, &texel);
             Renderer::PushTexture2DData(*Black1x1Texture);
         }
 
@@ -221,7 +221,7 @@ namespace GTEngine
 
     bool Texture2DLibrary::IsExtensionSupported(const char* extension)
     {
-        return GTImage::Loader::IsExtensionSupported(extension);
+        return GTLib::ImageLoader::IsExtensionSupported(extension);
     }
 }
 

@@ -24,7 +24,7 @@ namespace GTEngine
         this->defaultTexture = GTEngine::Renderer::CreateTexture2D();
         
         uint8_t texel[] = {0xFF, 0xFF, 0xFF};
-        this->defaultTexture->SetData(1, 1, GTImage::ImageFormat_RGB8, texel);
+        this->defaultTexture->SetData(1, 1, GTLib::ImageFormat_RGB8, texel);
 
         GTEngine::Renderer::PushTexture2DData(this->defaultTexture);
         GTEngine::Renderer::SetTexture2DFilter(this->defaultTexture, TextureFilter_Nearest, TextureFilter_Nearest);
@@ -121,7 +121,7 @@ namespace GTEngine
         }
         
         
-        if (this->currentTexture->GetFormat() == GTImage::ImageFormat_R8)
+        if (this->currentTexture->GetFormat() == GTLib::ImageFormat_R8)
         {
             this->SetCurrentShader(this->shaderA8);
             this->shaderA8->SetUniform("Texture", this->currentTexture);

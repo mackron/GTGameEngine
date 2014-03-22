@@ -3,7 +3,7 @@
 #ifndef __GTEngine_Rendering_OpenGL21_RCSetTextureState_hpp_
 #define __GTEngine_Rendering_OpenGL21_RCSetTextureState_hpp_
 
-#include <GTImage/ImageFormats.hpp>
+#include <GTLib/ImageFormats.hpp>
 #include <GTLib/Map.hpp>
 #include <gtgl/gtgl.h>
 #include <cstdint>
@@ -27,22 +27,22 @@ namespace GTEngine
 
 
         /// Renderer::PushTexture1DData().
-        void SetTexture1DData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, const void* data, size_t dataSizeInBytes);
+        void SetTexture1DData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTLib::ImageFormat format, unsigned int width, const void* data, size_t dataSizeInBytes);
 
 
         /// Renderer::PushTexture2DData().
-        void SetTexture2DData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes, bool flip);
+        void SetTexture2DData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTLib::ImageFormat format, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes, bool flip);
         
         /// Renderer::PushTexture2DSubData().
-        void SetTexture2DSubData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes, bool flip);
+        void SetTexture2DSubData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTLib::ImageFormat format, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, const void* data, size_t dataSizeInBytes, bool flip);
 
 
         /// Renderer::PushTexture3DData().
-        void SetTexture3DData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTImage::ImageFormat format, unsigned int width, unsigned int height, unsigned int depth, const void* data, size_t dataSizeInBytes);
+        void SetTexture3DData(TextureState_OpenGL21* textureState, GLenum target, int mipmap, GTLib::ImageFormat format, unsigned int width, unsigned int height, unsigned int depth, const void* data, size_t dataSizeInBytes);
 
 
         /// Renderer::PushTextureCubeData().
-        void SetTextureCubeData(TextureState_OpenGL21* textureState, GTImage::ImageFormat format, unsigned int width, unsigned int height, size_t dataSizeInBytes,
+        void SetTextureCubeData(TextureState_OpenGL21* textureState, GTLib::ImageFormat format, unsigned int width, unsigned int height, size_t dataSizeInBytes,
             const void* positiveXData, const void* negativeXData,
             const void* positiveYData, const void* negativeYData,
             const void* positiveZData, const void* negativeZData);

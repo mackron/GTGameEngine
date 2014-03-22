@@ -5,7 +5,7 @@
 
 #include "TextureFilters.hpp"
 #include "TextureWrapModes.hpp"
-#include <GTImage/Image.hpp>
+#include <GTLib/Image.hpp>
 #include <GTLib/Map.hpp>
 
 namespace GTEngine
@@ -20,7 +20,7 @@ namespace GTEngine
     ///
     /// When the data of a texture is changed, it needs to be pushed to the GPU with Renderer::PushTexture2DData() before those changes will
     /// appear during rendering.
-    class Texture2D : private GTImage::Image
+    class Texture2D : private GTLib::Image
     {
     protected:
 
@@ -28,7 +28,7 @@ namespace GTEngine
         Texture2D();
 
         /// Constructor.
-        Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data = nullptr);
+        Texture2D(unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data = nullptr);
 
 
 
@@ -65,7 +65,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If 'data' is null, the storage will be allocated, but will remain undefined. Very useful for framebuffer targets.
-        void SetData(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data = nullptr);
+        void SetData(unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data = nullptr);
         
         /// Sets a sub-region of data.
         ///
@@ -96,7 +96,7 @@ namespace GTEngine
         unsigned int GetHeight() const;
 
         /// Retrieves the format of the image data.
-        GTImage::ImageFormat GetFormat() const;
+        GTLib::ImageFormat GetFormat() const;
 
 
 
@@ -106,7 +106,7 @@ namespace GTEngine
         /// Retrieves the mipmap at the given index.
         ///
         /// @param index [in] The index of the mipmap to retrieve.
-        const GTImage::Mipmap & GetMipmap(size_t index) const;
+        const GTLib::Mipmap & GetMipmap(size_t index) const;
 
         
 

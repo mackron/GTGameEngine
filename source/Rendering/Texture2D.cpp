@@ -6,7 +6,7 @@
 namespace GTEngine
 {
     Texture2D::Texture2D()
-        : GTImage::Image(), relativePath(),
+        : GTLib::Image(), relativePath(),
           framebuffers(), shaders(),
           refCount(1)
     {
@@ -16,8 +16,8 @@ namespace GTEngine
         }
     }
 
-    Texture2D::Texture2D(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void *data)
-        : GTImage::Image(), relativePath(),
+    Texture2D::Texture2D(unsigned int width, unsigned int height, GTLib::ImageFormat format, const void *data)
+        : GTLib::Image(), relativePath(),
           framebuffers(), shaders(),
           refCount(1)
     {
@@ -50,14 +50,14 @@ namespace GTEngine
     }
 
 
-    void Texture2D::SetData(unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data)
+    void Texture2D::SetData(unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data)
     {
-        GTImage::Image::Load(width, height, format, data);
+        GTLib::Image::Load(width, height, format, data);
     }
     
     void Texture2D::SetSubData(unsigned int xPos, unsigned int yPos, unsigned int width, unsigned int height, const void* data)
     {
-        GTImage::Image::SetSubData(xPos, yPos, width, height, data);
+        GTLib::Image::SetSubData(xPos, yPos, width, height, data);
     }
     
 
@@ -70,28 +70,28 @@ namespace GTEngine
 
     unsigned int Texture2D::GetWidth() const
     {
-        return GTImage::Image::GetWidth();
+        return GTLib::Image::GetWidth();
     }
 
     unsigned int Texture2D::GetHeight() const
     {
-        return GTImage::Image::GetHeight();
+        return GTLib::Image::GetHeight();
     }
 
-    GTImage::ImageFormat Texture2D::GetFormat() const
+    GTLib::ImageFormat Texture2D::GetFormat() const
     {
-        return GTImage::Image::GetFormat();
+        return GTLib::Image::GetFormat();
     }
 
 
     size_t Texture2D::GetMipmapCount() const
     {
-        return GTImage::Image::GetMipmapCount();
+        return GTLib::Image::GetMipmapCount();
     }
 
-    const GTImage::Mipmap & Texture2D::GetMipmap(size_t index) const
+    const GTLib::Mipmap & Texture2D::GetMipmap(size_t index) const
     {
-        return GTImage::Image::GetMipmap(index);
+        return GTLib::Image::GetMipmap(index);
     }
 
 
@@ -101,7 +101,7 @@ namespace GTEngine
     {
         for (size_t i = 0; i < this->GetMipmapCount(); ++i)
         {
-            GTImage::Image::GetMipmap(i).DeleteLocalData();
+            GTLib::Image::GetMipmap(i).DeleteLocalData();
         }
     }
 

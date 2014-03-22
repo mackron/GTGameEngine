@@ -476,8 +476,8 @@ namespace GTEngine
         ///     the renderer.
         ///     @par
         ///     Unlike PushTexture2DData(), 'mipmap' can not be -1. It must be a valid mipmap index.
-        static void SetTexture2DData(const Texture2D &texture, int mipmap, unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data, bool flip = false);
-        static void SetTexture2DData(const Texture2D* texture, int mipmap, unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data, bool flip = false) { assert(texture != nullptr); SetTexture2DData(*texture, mipmap, width, height, format, data, flip); }
+        static void SetTexture2DData(const Texture2D &texture, int mipmap, unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data, bool flip = false);
+        static void SetTexture2DData(const Texture2D* texture, int mipmap, unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data, bool flip = false) { assert(texture != nullptr); SetTexture2DData(*texture, mipmap, width, height, format, data, flip); }
         
         /// Sets the server-side image data of a sub-region of the given texture.
         ///
@@ -496,8 +496,8 @@ namespace GTEngine
         ///     the renderer.
         ///     @par
         ///     Unlike PushTexture2DData(), 'mipmap' can not be -1. It must be a valid mipmap index.
-        static void SetTexture2DSubData(const Texture2D &texture, int mipmap, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data, bool flip = false);
-        static void SetTexture2DSubData(const Texture2D* texture, int mipmap, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, GTImage::ImageFormat format, const void* data, bool flip = false) { assert(texture != nullptr); SetTexture2DSubData(*texture, mipmap, xOffset, yOffset, width, height, format, data, flip); }
+        static void SetTexture2DSubData(const Texture2D &texture, int mipmap, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data, bool flip = false);
+        static void SetTexture2DSubData(const Texture2D* texture, int mipmap, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data, bool flip = false) { assert(texture != nullptr); SetTexture2DSubData(*texture, mipmap, xOffset, yOffset, width, height, format, data, flip); }
         
 
         /// Pushes the image data of the given 3D texture to the renderer.
