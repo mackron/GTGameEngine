@@ -18,7 +18,7 @@
 #include <GTLib/Threading.hpp>
 #include <GTLib/Timing.hpp>
 #include <GTLib/CommandLine.hpp>
-#include <GTType/FontServer.hpp>
+#include <GTLib/FontServer.hpp>
 #include <GTGUI/Server.hpp>
 
 namespace GTEngine
