@@ -116,6 +116,7 @@ void GTGLcontext_dtor(GTGLcontext self)
 
 void GTGLcontext_CreateDummyHWND(GTGLcontext self)
 {
+#if 0
     /* If the window count is zero we need to register the window class. */
     if (GTGL_WindowCount == 0)
     {
@@ -136,10 +137,14 @@ void GTGLcontext_CreateDummyHWND(GTGLcontext self)
     self->DummyHWND = CreateWindowExW(0, GTGL_WindowClass, L"GTGL Dummy Window", 
                                       WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_OVERLAPPEDWINDOW,
                                       0, 0, 0, 0, NULL, NULL, GetModuleHandle(NULL), NULL);
+#endif
+
+    self->DummyHWND = CreateWindowExW(0, L"STATIC", L"", 0, 0, 0, 0, 0, NULL, NULL, GetModuleHandle(NULL), NULL);
 }
 
 void GTGLcontext_DeleteDummyHWND(GTGLcontext self)
 {
+#if 0
     if (GTGL_WindowCount > 0)
     {
         --GTGL_WindowCount;
@@ -151,6 +156,9 @@ void GTGLcontext_DeleteDummyHWND(GTGLcontext self)
             UnregisterClassW(GTGL_WindowClass, GetModuleHandle(NULL));
         }
     }
+#endif
+
+    DestroyWindow(self->DummyHWND);
 }
 
 GLboolean GTGLcontext_EnableExtendedContext(GTGLcontext self)
