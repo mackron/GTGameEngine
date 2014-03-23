@@ -18,7 +18,6 @@ GTGameEngine depends on the following libraries:
 
 * GTLib (https://github.com/mackron/GTLib)
 * GTGUI (https://github.com/mackron/GTGUI)
-* GTGL (https://github.com/mackron/GTGL)
 * GLM (http://glm.g-truc.net)
 * Bullet (http://bulletphysics.org/wordpress)
 * assimp (http://assimp.sourceforge.net)
