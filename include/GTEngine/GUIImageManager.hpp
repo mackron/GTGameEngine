@@ -3,7 +3,7 @@
 #ifndef __GTEngine_GUIImageManager_hpp_
 #define __GTEngine_GUIImageManager_hpp_
 
-#include <GTGUI/ImageManager.hpp>
+#include <GTLib/GUI/ImageManager.hpp>
 #include "Rendering/Texture2D.hpp"
 
 namespace GTEngine

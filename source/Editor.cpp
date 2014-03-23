@@ -5,7 +5,7 @@
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/IO.hpp>
-#include <GTGUI/Server.hpp>
+#include <GTLib/GUI/Server.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/Keyboard.hpp>
 

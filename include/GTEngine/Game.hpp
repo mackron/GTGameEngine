@@ -19,7 +19,7 @@
 #include <GTLib/Timing.hpp>
 #include <GTLib/CommandLine.hpp>
 #include <GTLib/FontServer.hpp>
-#include <GTGUI/Server.hpp>
+#include <GTLib/GUI/Server.hpp>
 
 namespace GTEngine
 {
