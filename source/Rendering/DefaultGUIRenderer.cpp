@@ -32,6 +32,7 @@ namespace GTEngine
 
     DefaultGUIRenderer::~DefaultGUIRenderer()
     {
+        GTEngine::Renderer::DeleteTexture2D(this->defaultTexture);
     }
 
 
