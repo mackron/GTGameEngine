@@ -31,29 +31,45 @@ namespace GTEngine
         GTEngine::Log("%s", msg);
     }
 
-    void GUIEventHandler::OnChangeCursor(GTGUI::Cursor cursor)
+    void GUIEventHandler::OnChangeCursor(GTLib::Cursor cursor)
     {
         switch (cursor)
         {
-        case GTGUI::Cursor_Arrow:    game.GetWindow()->SetCursor(GTLib::SystemCursor_Arrow);       break;
-        case GTGUI::Cursor_Beam:     game.GetWindow()->SetCursor(GTLib::SystemCursor_Beam);        break;
-        case GTGUI::Cursor_Hand:     game.GetWindow()->SetCursor(GTLib::SystemCursor_Hand);        break;
-        case GTGUI::Cursor_Cross:    game.GetWindow()->SetCursor(GTLib::SystemCursor_Cross);       break;
+        case GTLib::Cursor_None:
+            {
+                break;
+            }
 
-        case GTGUI::Cursor_VertDoubleArrow: game.GetWindow()->SetCursor(GTLib::SystemCursor_VertDoubleArrow); break;
-        case GTGUI::Cursor_HorzDoubleArrow: game.GetWindow()->SetCursor(GTLib::SystemCursor_HorzDoubleArrow); break;
+        default:
+            {
+                game.GetWindow()->SetCursor(cursor);
+                break;
+            }
+        }
 
-        case GTGUI::Cursor_SizeArrowTop:         game.GetWindow()->SetCursor(GTLib::SystemCursor_SizeArrowTop);         break;
-        case GTGUI::Cursor_SizeArrowBottom:      game.GetWindow()->SetCursor(GTLib::SystemCursor_SizeArrowBottom);      break;
-        case GTGUI::Cursor_SizeArrowLeft:        game.GetWindow()->SetCursor(GTLib::SystemCursor_SizeArrowLeft);        break;
-        case GTGUI::Cursor_SizeArrowRight:       game.GetWindow()->SetCursor(GTLib::SystemCursor_SizeArrowRight);       break;
-        case GTGUI::Cursor_SizeArrowTopLeft:     game.GetWindow()->SetCursor(GTLib::SystemCursor_SizeArrowTopLeft);     break;
-        case GTGUI::Cursor_SizeArrowTopRight:    game.GetWindow()->SetCursor(GTLib::SystemCursor_SizeArrowTopRight);    break;
-        case GTGUI::Cursor_SizeArrowBottomLeft:  game.GetWindow()->SetCursor(GTLib::SystemCursor_SizeArrowBottomLeft);  break;
-        case GTGUI::Cursor_SizeArrowBottomRight: game.GetWindow()->SetCursor(GTLib::SystemCursor_SizeArrowBottomRight); break;
+#if 0
+        switch (cursor)
+        {
+        case GTLib::Cursor_Arrow:    game.GetWindow()->SetCursor(GTLib::Cursor_Arrow);       break;
+        case GTLib::Cursor_Beam:     game.GetWindow()->SetCursor(GTLib::Cursor_Beam);        break;
+        case GTLib::Cursor_Hand:     game.GetWindow()->SetCursor(GTLib::Cursor_Hand);        break;
+        case GTLib::Cursor_Cross:    game.GetWindow()->SetCursor(GTLib::Cursor_Cross);       break;
 
-        case GTGUI::Cursor_None:
+        case GTLib::Cursor_VertDoubleArrow: game.GetWindow()->SetCursor(GTLib::Cursor_VertDoubleArrow); break;
+        case GTLib::Cursor_HorzDoubleArrow: game.GetWindow()->SetCursor(GTLib::Cursor_HorzDoubleArrow); break;
+
+        case GTLib::Cursor_SizeArrowTop:         game.GetWindow()->SetCursor(GTLib::Cursor_SizeArrowTop);         break;
+        case GTLib::Cursor_SizeArrowBottom:      game.GetWindow()->SetCursor(GTLib::Cursor_SizeArrowBottom);      break;
+        case GTLib::Cursor_SizeArrowLeft:        game.GetWindow()->SetCursor(GTLib::Cursor_SizeArrowLeft);        break;
+        case GTLib::Cursor_SizeArrowRight:       game.GetWindow()->SetCursor(GTLib::Cursor_SizeArrowRight);       break;
+        case GTLib::Cursor_SizeArrowTopLeft:     game.GetWindow()->SetCursor(GTLib::Cursor_SizeArrowTopLeft);     break;
+        case GTLib::Cursor_SizeArrowTopRight:    game.GetWindow()->SetCursor(GTLib::Cursor_SizeArrowTopRight);    break;
+        case GTLib::Cursor_SizeArrowBottomLeft:  game.GetWindow()->SetCursor(GTLib::Cursor_SizeArrowBottomLeft);  break;
+        case GTLib::Cursor_SizeArrowBottomRight: game.GetWindow()->SetCursor(GTLib::Cursor_SizeArrowBottomRight); break;
+
+        case GTLib::Cursor_None:
         default: break;
         }
+#endif
     }
 }

@@ -19,7 +19,7 @@ namespace GTEngine
         void OnError(const char *msg);
         void OnWarning(const char *msg);
         void OnLog(const char *msg);
-        void OnChangeCursor(GTGUI::Cursor cursor);
+        void OnChangeCursor(GTLib::Cursor cursor);
 
     public:
 
