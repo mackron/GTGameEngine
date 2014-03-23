@@ -170,6 +170,11 @@ namespace GTEngine
         LPALSOURCEUNQUEUEBUFFERS m_alSourceUnqueueBuffers;
         LPALGENBUFFERS           m_alGenBuffers;
         LPALDELETEBUFFERS        m_alDeleteBuffers;
+        
+        
+    private:    // No copying.
+        AudioEngine_OpenAL(const AudioEngine_OpenAL &);
+        AudioEngine_OpenAL & operator=(const AudioEngine_OpenAL &);
     };
 }
 

@@ -11,6 +11,10 @@
     #pragma warning(disable:4351)   // new behavior: elements of array will be default initialized
 #endif
 
+#if defined(GTCORE_PLATFORM_LINUX)
+#include <dlfcn.h>
+#endif // defined
+
 namespace GTEngine
 {
     struct OpenALDevice
@@ -39,6 +43,11 @@ namespace GTEngine
 
         /// The current listener. We need to keep track of this so that when the listener is changed while current, it will be updated on the OpenAL side immediately.
         ListenerHandle currentListener;
+        
+        
+    private:    // No copying.
+        OpenALDevice(const OpenALDevice &);
+        OpenALDevice & operator=(const OpenALDevice &);
     };
 
     struct OpenALListener

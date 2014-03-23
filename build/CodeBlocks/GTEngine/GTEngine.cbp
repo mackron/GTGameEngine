@@ -47,11 +47,7 @@
 					<Add option="-Wall" />
 					<Add option="-g" />
 					<Add directory="../../../include" />
-					<Add directory="../../../../GTCore/include" />
-					<Add directory="../../../../GTGUI/include" />
-					<Add directory="../../../../GTImage/include" />
-					<Add directory="../../../../GTType/include" />
-					<Add directory="../../../../GTGL/include" />
+					<Add directory="../../../../GTLib/include" />
 					<Add directory="../../../../External/repos/glm" />
 					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src" />
 					<Add directory="../../../../External/repos/assimp/include" />
@@ -69,11 +65,7 @@
 					<Add option="-O2" />
 					<Add option="-Wall" />
 					<Add directory="../../../include" />
-					<Add directory="../../../../GTCore/include" />
-					<Add directory="../../../../GTGUI/include" />
-					<Add directory="../../../../GTImage/include" />
-					<Add directory="../../../../GTType/include" />
-					<Add directory="../../../../GTGL/include" />
+					<Add directory="../../../../GTLib/include" />
 					<Add directory="../../../../External/repos/glm" />
 					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src" />
 					<Add directory="../../../../External/repos/assimp/include" />
@@ -130,6 +122,7 @@
 		<Unit filename="../../../include/GTEngine/AssetTypes.hpp" />
 		<Unit filename="../../../include/GTEngine/Audio.hpp" />
 		<Unit filename="../../../include/GTEngine/Audio/AudioComposer.hpp" />
+		<Unit filename="../../../include/GTEngine/Audio/AudioEngine.hpp" />
 		<Unit filename="../../../include/GTEngine/Audio/Sound.hpp" />
 		<Unit filename="../../../include/GTEngine/Audio/SoundFormats.hpp" />
 		<Unit filename="../../../include/GTEngine/Audio/SoundStreamer.hpp" />
@@ -267,13 +260,6 @@
 		<Unit filename="../../../include/GTEngine/PrefabLinker.hpp" />
 		<Unit filename="../../../include/GTEngine/Profiler.hpp" />
 		<Unit filename="../../../include/GTEngine/Projectile.hpp" />
-		<Unit filename="../../../include/GTEngine/Random/Floor/FloorDefinition.hpp" />
-		<Unit filename="../../../include/GTEngine/Random/Floor/FloorGenerator.hpp" />
-		<Unit filename="../../../include/GTEngine/Random/Floor/FloorLobby.hpp" />
-		<Unit filename="../../../include/GTEngine/Random/Floor/FloorProperties.hpp" />
-		<Unit filename="../../../include/GTEngine/Random/Floor/FloorRoom.hpp" />
-		<Unit filename="../../../include/GTEngine/Random/Floor/FloorTile.hpp" />
-		<Unit filename="../../../include/GTEngine/Random/Floor/FloorTileFlags.hpp" />
 		<Unit filename="../../../include/GTEngine/Recast/DetourAlloc.h" />
 		<Unit filename="../../../include/GTEngine/Recast/DetourAssert.h" />
 		<Unit filename="../../../include/GTEngine/Recast/DetourCommon.h" />
@@ -358,6 +344,16 @@
 		<Unit filename="../../../include/GTEngine/Utilities/DynamicCharacterController.hpp" />
 		<Unit filename="../../../include/GTEngine/VertexArrayLibrary.hpp" />
 		<Unit filename="../../../include/GTEngine/rapidxml.hpp" />
+		<Unit filename="../../../include/gtgl/GL/gl3.h" />
+		<Unit filename="../../../include/gtgl/GL/glext.h" />
+		<Unit filename="../../../include/gtgl/GL/glx.h" />
+		<Unit filename="../../../include/gtgl/GL/glxext.h" />
+		<Unit filename="../../../include/gtgl/GL/gtwgl_windef.h" />
+		<Unit filename="../../../include/gtgl/GL/wglext.h" />
+		<Unit filename="../../../include/gtgl/gtgl.h" />
+		<Unit filename="../../../include/gtgl/gtgl_gl.h" />
+		<Unit filename="../../../include/gtgl/gtgl_glx.h" />
+		<Unit filename="../../../include/gtgl/gtgl_wgl.h" />
 		<Unit filename="../../../source/Animation/Animation.cpp" />
 		<Unit filename="../../../source/Animation/AnimationChannel.cpp" />
 		<Unit filename="../../../source/Animation/AnimationKey.cpp" />
@@ -366,6 +362,9 @@
 		<Unit filename="../../../source/Animation/AnimationTrack.cpp" />
 		<Unit filename="../../../source/ApplicationConfig.cpp" />
 		<Unit filename="../../../source/Audio/AudioComposer.cpp" />
+		<Unit filename="../../../source/Audio/AudioEngine.cpp" />
+		<Unit filename="../../../source/Audio/OpenAL/AudioEngine_OpenAL.cpp" />
+		<Unit filename="../../../source/Audio/OpenAL/AudioEngine_OpenAL.hpp" />
 		<Unit filename="../../../source/Audio/Sound.cpp" />
 		<Unit filename="../../../source/Audio/SoundStreamer.cpp" />
 		<Unit filename="../../../source/Audio/Streamers/SoundStreamer_OGG.cpp" />
@@ -494,11 +493,6 @@
 		<Unit filename="../../../source/PrefabLinker.cpp" />
 		<Unit filename="../../../source/Profiler.cpp" />
 		<Unit filename="../../../source/Projectile.cpp" />
-		<Unit filename="../../../source/Random/Floor/FloorDefinition.cpp" />
-		<Unit filename="../../../source/Random/Floor/FloorGenerator.cpp" />
-		<Unit filename="../../../source/Random/Floor/FloorLobby.cpp" />
-		<Unit filename="../../../source/Random/Floor/FloorRoom.cpp" />
-		<Unit filename="../../../source/Random/Floor/FloorTile.cpp" />
 		<Unit filename="../../../source/Recast/DetourAlloc.cpp" />
 		<Unit filename="../../../source/Recast/DetourCommon.cpp" />
 		<Unit filename="../../../source/Recast/DetourCrowd.cpp" />
@@ -627,6 +621,76 @@
 		<Unit filename="../../../source/ThreadCache.cpp" />
 		<Unit filename="../../../source/Utilities/DynamicCharacterController.cpp" />
 		<Unit filename="../../../source/VertexArrayLibrary.cpp" />
+		<Unit filename="../../../source/gtgl/debugging/gtgl_debugging_common.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/debugging/gtgl_debugging_common.h" />
+		<Unit filename="../../../source/gtgl/emulators/gtgl_arb_debug_output.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/emulators/gtgl_arb_debug_output.h" />
+		<Unit filename="../../../source/gtgl/emulators/gtgl_emulation_common.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/emulators/gtgl_emulation_common.h" />
+		<Unit filename="../../../source/gtgl/gtgl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/gtgl_context.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/gtgl_context.h" />
+		<Unit filename="../../../source/gtgl/gtgl_contextmanager.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/gtgl_contextmanager.h" />
+		<Unit filename="../../../source/gtgl/gtgl_errors.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/gtgl_errors.h" />
+		<Unit filename="../../../source/gtgl/gtgl_extensions.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/gtgl_extensions.h" />
+		<Unit filename="../../../source/gtgl/gtgl_gl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/gtgl_glx.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/gtgl_utils.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/gtgl_utils.h" />
+		<Unit filename="../../../source/gtgl/gtgl_wgl.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/gtgl_window.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/gtgl_window.h" />
+		<Unit filename="../../../source/gtgl/gtgl_windowmanager.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/gtgl_windowmanager.h" />
+		<Unit filename="../../../source/gtgl/win32/gtgl_context_win32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/win32/gtgl_window_win32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/win32/gtgl_windowmanager_win32.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/x11/gtgl_context_x11.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/x11/gtgl_window_x11.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/gtgl/x11/gtgl_windowmanager_x11.c">
+			<Option compilerVar="CC" />
+		</Unit>
 		<Extensions>
 			<code_completion />
 			<envvars />
