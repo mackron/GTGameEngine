@@ -4,7 +4,7 @@
 #define __GTGameEngine_SceneEditorGameEventFilter_hpp_
 
 #include "../../GameEventFilter.hpp"
-#include <GTGUI/Element.hpp>
+#include <GTLib/GUI/Element.hpp>
 
 namespace GTEngine
 {
