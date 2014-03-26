@@ -408,7 +408,7 @@ function GTGUI.Element:DataExplorer()
         end
         text = text .. ")";
         
-        local fileInfo = GTCore.IO.FileInfo:New(value);
+        local fileInfo = GTCore.IO.FileInfo.New(value);
         self:InsertItemFromFileInfo(fileInfo, text);
     end
     
