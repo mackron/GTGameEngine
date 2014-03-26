@@ -929,28 +929,62 @@ namespace GTEngine
     }
 
 
-    // FIXME: There's a bug here where if a file path includes double quotes, the script will fail to execute.
     void Editor::OnFileInsert(const DataFilesWatcher::Item &item)
     {
-        GTLib::String script;
-        script.AssignFormatted
-        (
-            "local info = GTCore.IO.FileInfo:New();"
-            "info.path             = \"%s\";"
-            "info.absolutePath     = \"%s\";"
-            "info.size             = %d;"
-            "info.lastModifiedTime = %d;"
-            "info.isDirectory      = %s;"
-            "Editor.DataFilesWatcher.OnInsert(info);",
+        auto &script = this->game.GetScript();
 
-            item.info.absolutePath.c_str(),
-            item.info.absolutePath.c_str(),
-            static_cast<int>(item.info.size),
-            static_cast<int>(item.info.lastModifiedTime),
-            item.info.isDirectory ? "true" : "false"
-        );
+        script.GetGlobal("Editor");
+        assert(script.IsTable(-1));
+        {
+            script.Push("DataFilesWatcher");
+            script.GetTableValue(-2);
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnInsert");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    // GTCore.IO.FileInfo.New()
+                    script.GetGlobal("GTCore");
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("IO");
+                        script.GetTableValue(-2);
+                        assert(script.IsTable(-1));
+                        {
+                            script.Push("FileInfo");
+                            script.GetTableValue(-2);
+                            assert(script.IsTable(-1));
+                            {
+                                script.Push("New");
+                                script.GetTableValue(-2);
+                                assert(script.IsFunction(-1));
+                                {
+                                    script.PushNewTable();
+                                    script.SetTableValue(-1, "path",             item.info.absolutePath.c_str());
+                                    script.SetTableValue(-1, "absolutePath",     item.info.absolutePath.c_str());
+                                    script.SetTableValue(-1, "size",             item.info.size);
+                                    script.SetTableValue(-1, "lastModifiedTime", item.info.lastModifiedTime);
+                                    script.SetTableValue(-1, "isDirectory",      item.info.isDirectory);
+                                    script.Call(1, 1);
 
-        this->game.GetScript().Execute(script.c_str());
+                                    script.InsertIntoStack(-4);
+                                }
+                            }
+                            script.Pop(1);
+                        }
+                        script.Pop(1);
+                    }
+                    script.Pop(1);
+
+                    // The top item in the stack should be the return value from GTLib.IO.FileInfo.New().
+                    script.Call(1, 0);
+                }
+            }
+            script.Pop(1);
+        }
+        script.Pop(1);
+        
 
 
         // We're now going to let every sub-editor know about this.
@@ -966,25 +1000,59 @@ namespace GTEngine
 
     void Editor::OnFileRemove(const DataFilesWatcher::Item &item)
     {
-        GTLib::String script;
-        script.AssignFormatted
-        (
-            "local info = GTCore.IO.FileInfo:New();"
-            "info.path             = \"%s\";"
-            "info.absolutePath     = \"%s\";"
-            "info.size             = %d;"
-            "info.lastModifiedTime = %d;"
-            "info.isDirectory      = %s;"
-            "Editor.DataFilesWatcher.OnRemove(info);",
+        auto &script = this->game.GetScript();
 
-            item.info.absolutePath.c_str(),
-            item.info.absolutePath.c_str(),
-            static_cast<int>(item.info.size),
-            static_cast<int>(item.info.lastModifiedTime),
-            item.info.isDirectory ? "true" : "false"
-        );
+        script.GetGlobal("Editor");
+        assert(script.IsTable(-1));
+        {
+            script.Push("DataFilesWatcher");
+            script.GetTableValue(-2);
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnRemove");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    // GTCore.IO.FileInfo.New()
+                    script.GetGlobal("GTCore");
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("IO");
+                        script.GetTableValue(-2);
+                        assert(script.IsTable(-1));
+                        {
+                            script.Push("FileInfo");
+                            script.GetTableValue(-2);
+                            assert(script.IsTable(-1));
+                            {
+                                script.Push("New");
+                                script.GetTableValue(-2);
+                                assert(script.IsFunction(-1));
+                                {
+                                    script.PushNewTable();
+                                    script.SetTableValue(-1, "path",             item.info.absolutePath.c_str());
+                                    script.SetTableValue(-1, "absolutePath",     item.info.absolutePath.c_str());
+                                    script.SetTableValue(-1, "size",             item.info.size);
+                                    script.SetTableValue(-1, "lastModifiedTime", item.info.lastModifiedTime);
+                                    script.SetTableValue(-1, "isDirectory",      item.info.isDirectory);
+                                    script.Call(1, 1);
 
-        this->game.GetScript().Execute(script.c_str());
+                                    script.InsertIntoStack(-4);
+                                }
+                            }
+                            script.Pop(1);
+                        }
+                        script.Pop(1);
+                    }
+                    script.Pop(1);
+
+                    // The top item in the stack should be the return value from GTLib.IO.FileInfo.New().
+                    script.Call(1, 0);
+                }
+            }
+            script.Pop(1);
+        }
+        script.Pop(1);
 
 
         // We're now going to let every sub-editor know about this.
@@ -1000,25 +1068,60 @@ namespace GTEngine
 
     void Editor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
-        GTLib::String script;
-        script.AssignFormatted
-        (
-            "local info = GTCore.IO.FileInfo:New();"
-            "info.path             = \"%s\";"
-            "info.absolutePath     = \"%s\";"
-            "info.size             = %d;"
-            "info.lastModifiedTime = %d;"
-            "info.isDirectory      = %s;"
-            "Editor.DataFilesWatcher.OnUpdate(info);",
+        auto &script = this->game.GetScript();
 
-            item.info.absolutePath.c_str(),
-            item.info.absolutePath.c_str(),
-            static_cast<int>(item.info.size),
-            static_cast<int>(item.info.lastModifiedTime),
-            item.info.isDirectory ? "true" : "false"
-        );
+        script.GetGlobal("Editor");
+        assert(script.IsTable(-1));
+        {
+            script.Push("DataFilesWatcher");
+            script.GetTableValue(-2);
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnUpdate");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    // GTCore.IO.FileInfo.New()
+                    script.GetGlobal("GTCore");
+                    assert(script.IsTable(-1));
+                    {
+                        script.Push("IO");
+                        script.GetTableValue(-2);
+                        assert(script.IsTable(-1));
+                        {
+                            script.Push("FileInfo");
+                            script.GetTableValue(-2);
+                            assert(script.IsTable(-1));
+                            {
+                                script.Push("New");
+                                script.GetTableValue(-2);
+                                assert(script.IsFunction(-1));
+                                {
+                                    script.PushNewTable();
+                                    script.SetTableValue(-1, "path",             item.info.absolutePath.c_str());
+                                    script.SetTableValue(-1, "absolutePath",     item.info.absolutePath.c_str());
+                                    script.SetTableValue(-1, "size",             item.info.size);
+                                    script.SetTableValue(-1, "lastModifiedTime", item.info.lastModifiedTime);
+                                    script.SetTableValue(-1, "isDirectory",      item.info.isDirectory);
+                                    script.Call(1, 1);
 
-        this->game.GetScript().Execute(script.c_str());
+                                    script.InsertIntoStack(-4);
+                                }
+                            }
+                            script.Pop(1);
+                        }
+                        script.Pop(1);
+                    }
+                    script.Pop(1);
+
+                    // The top item in the stack should be the return value from GTLib.IO.FileInfo.New().
+                    script.Call(1, 0);
+                }
+            }
+            script.Pop(1);
+        }
+        script.Pop(1);
+
 
 
         // We're now going to let every sub-editor know about this.
