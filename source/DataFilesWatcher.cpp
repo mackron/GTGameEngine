@@ -150,15 +150,21 @@ namespace GTEngine
         {
             // We first check ourselves for changes. 'root' will be the old info.
             GTLib::FileInfo newInfo;
-            GTLib::IO::GetFileInfo(root.info.absolutePath.c_str(), newInfo);
 
-            if (newInfo.lastModifiedTime != root.info.lastModifiedTime)
+            // The absolute root element will not have a valid path.
+            if (root.parent != nullptr)
             {
-                Event e;
-                e.type = 2;                 // <-- Update
-                e.item = &root;
-                this->events.Append(e);
+                GTLib::IO::GetFileInfoFromAbsolutePath(root.info.absolutePath.c_str(), newInfo);
+
+                if (newInfo.lastModifiedTime != root.info.lastModifiedTime)
+                {
+                    Event e;
+                    e.type = 2;                 // <-- Update
+                    e.item = &root;
+                    this->events.Append(e);
+                }
             }
+            
 
         
             // Now we need to check the children for modifications. We're going to build a new map of children and then
@@ -212,7 +218,7 @@ namespace GTEngine
             for (auto iChild = currentChildren.root; iChild != nullptr; iChild = iChild->next)
             {
                 GTLib::FileInfo info;
-                GTLib::IO::GetFileInfo(iChild->value.c_str(), info);
+                GTLib::IO::GetFileInfoFromAbsolutePath(iChild->value.c_str(), info);
 
                 if (root.children.Find(info.absolutePath.c_str()) == nullptr)
                 {
