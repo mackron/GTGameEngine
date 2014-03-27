@@ -14,29 +14,19 @@
 				<Option type="1" />
 				<Option compiler="mingww64" />
 				<Option use_console_runner="0" />
-				<Compiler>
-					<Add option="-g" />
-				</Compiler>
-				<Linker>
-					<Add library="GTEngine-debug-x64" />
-					<Add library="GTGUI-debug-x64" />
-					<Add library="GTType-debug-x64" />
-					<Add library="GTImage-debug-x64" />
-					<Add library="GTCore-debug-x64" />
-					<Add library="GTGL-debug-x64" />
-					<Add library="BulletDynamics-x64" />
-					<Add library="BulletCollision-x64" />
-					<Add library="LinearMath-x64" />
-					<Add library="OpenAL64" />
-					<Add library="Gdi32" />
-					<Add library="assimp-x64" />
-					<Add library="freetype-x64" />
-					<Add library="png-x64" />
-					<Add library="z-x64" />
-					<Add library="lua-x64" />
-					<Add library="pcre-x64" />
-					<Add library="winmm" />
-				</Linker>
+				<Option projectCompilerOptionsRelation="0" />
+				<Option projectLinkerOptionsRelation="0" />
+				<Option projectIncludeDirsRelation="0" />
+				<Option projectResourceIncludeDirsRelation="0" />
+				<Option projectLibDirsRelation="0" />
+				<MakeCommands>
+					<Build command="" />
+					<CompileFile command="" />
+					<Clean command="" />
+					<DistClean command="" />
+					<AskRebuildNeeded command="" />
+					<SilentBuild command=" &gt; $(CMD_NULL)" />
+				</MakeCommands>
 			</Target>
 			<Target title="release-windows-gcc">
 				<Option platforms="Windows;" />
@@ -82,21 +72,13 @@
 				<Compiler>
 					<Add option="-g" />
 					<Add directory="../../../include" />
-					<Add directory="../../../../GTCore/include" />
-					<Add directory="../../../../GTImage/include" />
-					<Add directory="../../../../GTType/include" />
-					<Add directory="../../../../GTGUI/include" />
-					<Add directory="../../../../GTGL/include" />
+					<Add directory="../../../../GTLib/include" />
 					<Add directory="../../../../External/repos/glm" />
 					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src" />
 				</Compiler>
 				<Linker>
 					<Add library="GTEngine-debug" />
-					<Add library="GTGUI-debug" />
-					<Add library="GTType-debug" />
-					<Add library="GTImage-debug" />
-					<Add library="GTCore-debug" />
-					<Add library="GTGL-debug" />
+					<Add library="GTLib-debug" />
 					<Add library="BulletDynamics" />
 					<Add library="BulletCollision" />
 					<Add library="LinearMath" />
@@ -113,12 +95,8 @@
 					<Add library="X11" />
 					<Add library="Xcursor" />
 					<Add library="dl" />
-					<Add directory="../../../../GTCore/lib/linux-gcc" />
-					<Add directory="../../../../GTImage/lib/linux-gcc" />
-					<Add directory="../../../../GTType/lib/linux-gcc" />
-					<Add directory="../../../../GTGUI/lib/linux-gcc" />
+					<Add directory="../../../../GTLib/lib/linux-gcc" />
 					<Add directory="../../../../GTGameEngine/lib/linux-gcc" />
-					<Add directory="../../../../GTGL/lib/linux-gcc" />
 					<Add directory="../../../../External/repos/assimp/lib" />
 					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src/BulletCollision" />
 					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src/BulletDynamics" />
@@ -136,22 +114,14 @@
 				<Compiler>
 					<Add option="-O2" />
 					<Add directory="../../../include" />
-					<Add directory="../../../../GTCore/include" />
-					<Add directory="../../../../GTImage/include" />
-					<Add directory="../../../../GTType/include" />
-					<Add directory="../../../../GTGUI/include" />
-					<Add directory="../../../../GTGL/include" />
+					<Add directory="../../../../GTLib/include" />
 					<Add directory="../../../../External/repos/glm" />
 					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src" />
 				</Compiler>
 				<Linker>
 					<Add option="-s" />
 					<Add library="GTEngine" />
-					<Add library="GTGUI" />
-					<Add library="GTType" />
-					<Add library="GTImage" />
-					<Add library="GTCore" />
-					<Add library="GTGL" />
+					<Add library="GTLib" />
 					<Add library="BulletDynamics" />
 					<Add library="BulletCollision" />
 					<Add library="LinearMath" />
@@ -168,12 +138,8 @@
 					<Add library="dl" />
 					<Add library="pthread" />
 					<Add library="Xxf86vm" />
-					<Add directory="../../../../GTCore/lib/linux-gcc" />
-					<Add directory="../../../../GTImage/lib/linux-gcc" />
-					<Add directory="../../../../GTType/lib/linux-gcc" />
-					<Add directory="../../../../GTGUI/lib/linux-gcc" />
+					<Add directory="../../../../GTLib/lib/linux-gcc" />
 					<Add directory="../../../../GTGameEngine/lib/linux-gcc" />
-					<Add directory="../../../../GTGL/lib/linux-gcc" />
 					<Add directory="../../../../External/repos/assimp/lib" />
 					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src/BulletCollision" />
 					<Add directory="../../../../External/repos/GTGameEngine-Bullet/src/BulletDynamics" />
