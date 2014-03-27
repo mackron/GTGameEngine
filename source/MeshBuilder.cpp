@@ -15,7 +15,7 @@
 namespace GTEngine
 {
     MeshBuilder::MeshBuilder(size_t vertexSizeInFloats)
-        : vertexSizeInFloats(vertexSizeInFloats), vertexBuffer(), indexBuffer()
+        : vertexSizeInFloats(vertexSizeInFloats), vertexBuffer(), indexBuffer(), checkDuplicatesOnEmit(true)
     {
     }
 
@@ -26,7 +26,7 @@ namespace GTEngine
     void MeshBuilder::EmitVertex(const float* vertexData)
     {
         unsigned int index;
-        if (!this->Find(vertexData, index))
+        if (!this->checkDuplicatesOnEmit || !this->Find(vertexData, index))
         {
             index = static_cast<unsigned int>(this->vertexBuffer.count) / vertexSizeInFloats;
 
@@ -389,6 +389,7 @@ namespace GTEngine
     WireframeCollisionShapeMeshBuilder::WireframeCollisionShapeMeshBuilder(unsigned int circleSegmentsCountIn)
         : circleSegmentsCount(circleSegmentsCountIn)
     {
+        this->checkDuplicatesOnEmit = false;
     }
 
     WireframeCollisionShapeMeshBuilder::~WireframeCollisionShapeMeshBuilder()

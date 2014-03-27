@@ -12,6 +12,12 @@ namespace GTEngine
 {
     GTENGINE_IMPL_COMPONENT_ATTRIBS(EditorMetadataComponent, "EditorMetadata")
 
+    const uint32_t EditorMetadataComponent::ChangeFlag_Sprite                = (1 << 0);
+    const uint32_t EditorMetadataComponent::ChangeFlag_DirectionArrow        = (1 << 1);
+    const uint32_t EditorMetadataComponent::ChangeFlag_WireframeColour       = (1 << 2);
+    const uint32_t EditorMetadataComponent::ChangeFlag_PickingCollisionGroup = (1 << 3);
+    const uint32_t EditorMetadataComponent::ChangeFlag_PickingMesh           = (1 << 4);
+
     EditorMetadataComponent::EditorMetadataComponent(SceneNode &node)
         : Component(node),
           alwaysShowOnTop(false), useModelForPickingShape(true),
@@ -91,6 +97,8 @@ namespace GTEngine
     void EditorMetadataComponent::SetSelectionWireframeColour(const glm::vec3 &newColour)
     {
         this->selectionWireframeColour = newColour;
+
+        this->changeFlags = ChangeFlag_WireframeColour;
         this->OnChanged();
     }
 
@@ -166,7 +174,7 @@ namespace GTEngine
                 world->AddCollisionObject(this->pickingCollisionObject, group, CollisionGroups::EditorSelectionRay);
             }
 
-
+            this->changeFlags = ChangeFlag_PickingCollisionGroup;
             this->OnChanged();
         }
     }
@@ -260,6 +268,9 @@ namespace GTEngine
 
 
         this->spriteTexturePath = texturePath;
+
+
+        this->changeFlags = ChangeFlag_Sprite;
         this->OnChanged();
     }
 
@@ -283,8 +294,9 @@ namespace GTEngine
         this->spriteMesh.material          = nullptr;
         this->spriteTexture                = nullptr;
 
-
         this->spriteTexturePath = "";
+
+        this->changeFlags = ChangeFlag_Sprite;
         this->OnChanged();
     }
 
@@ -392,6 +404,7 @@ namespace GTEngine
             this->UpdateDirectionArrowTransform();
 
 
+            this->changeFlags = ChangeFlag_DirectionArrow;
             this->OnChanged();
         }
     }
@@ -405,6 +418,7 @@ namespace GTEngine
         this->directionArrowMesh.material    = nullptr;
 
 
+        this->changeFlags = ChangeFlag_DirectionArrow;
         this->OnChanged();
     }
 

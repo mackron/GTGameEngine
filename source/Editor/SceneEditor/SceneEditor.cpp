@@ -12,6 +12,7 @@
 #include <GTLib/Deserializer.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/String.hpp>
+#include <ittnotify.h>
 
 #undef min
 #undef max
@@ -230,6 +231,7 @@ namespace GTEngine
 
     void SceneEditor::StartPlaying()
     {
+        __itt_resume();
         if (this->IsStopped() || this->IsPaused())
         {
             if (this->IsPaused())
@@ -345,6 +347,7 @@ namespace GTEngine
             // This must be done after setting the playback state because otherwise the controls will think it's in the old state.
             this->UpdatePlaybackControls();
         }
+        __itt_pause();
     }
 
     void SceneEditor::PausePlaying()
@@ -2156,6 +2159,7 @@ namespace GTEngine
 
 
             // We need to remove and re-add the collision object since it might have changed. We only re-add if it's visible.
+            /*
             auto &pickingCollisionObject = metadata.GetPickingCollisionObject();
 
             auto world = pickingCollisionObject.GetWorld();
@@ -2163,22 +2167,23 @@ namespace GTEngine
             {
                 world->RemoveCollisionObject(pickingCollisionObject);
             }
+            */
 
 
             // If the node is visible, we'll need to include the picking collision objects.
             if (node.IsVisible())
             {
                 // If the picking shape is set to the model, we want to update it here just to make sure everything is valid.
-                if (metadata.UseModelForPickingShape())
-                {
-                    metadata.SetPickingCollisionShapeToModel();
-                }
+                //if (metadata.UseModelForPickingShape())
+                //{
+                    //metadata.SetPickingCollisionShapeToModel();
+                //}
 
 
-                if (metadata.GetPickingCollisionShape() != nullptr)
-                {
-                    this->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata.GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
-                }
+                //if (metadata.GetPickingCollisionShape() != nullptr)
+                //{
+                    //this->pickingWorld.AddCollisionObject(pickingCollisionObject, metadata.GetPickingCollisionGroup(), CollisionGroups::EditorSelectionRay);
+                //}
 
 
                 // If we have a sprite, we'll want to add it's picking object to the picking world.

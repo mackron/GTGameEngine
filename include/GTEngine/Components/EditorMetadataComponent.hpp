@@ -25,6 +25,13 @@ namespace GTEngine
         };
 
 
+        static const uint32_t ChangeFlag_Sprite;
+        static const uint32_t ChangeFlag_DirectionArrow;
+        static const uint32_t ChangeFlag_WireframeColour;
+        static const uint32_t ChangeFlag_PickingCollisionGroup;
+        static const uint32_t ChangeFlag_PickingMesh;
+
+
     public:
 
         /// Constructor.
@@ -120,6 +127,7 @@ namespace GTEngine
         /// @return
         ///     True if the sprite is being shown.
         bool IsUsingSprite() const;
+        bool IsShowingSprite() const { return this->IsUsingSprite(); }
 
         /// Retrieves a reference to the sprite mesh.
         const SceneRendererMesh & GetSpriteMesh() const { return this->spriteMesh; }
@@ -232,6 +240,11 @@ namespace GTEngine
 
         /// Unlinkes the component from the prefab.
         void UnlinkFromPrefab();
+
+
+
+        /// Retrieves the flags that have been set for the call to OnChanged().
+        uint32_t GetOnChangeFlags() const { return this->changeFlags; }
 
 
 
@@ -350,6 +363,11 @@ namespace GTEngine
 
         /// The index of the node in the prefab. If this is 0, it is the root.
         uint64_t prefabID;
+
+
+
+        /// Flags that specify what has changed when OnChanged() is called. This is retrieved with GetOnChangeFlags().
+        uint32_t changeFlags;
 
 
 
