@@ -59,6 +59,7 @@ namespace GTEngine
           navigationMeshRendererMeshes(),
           prefabDeserializingCount(0)
     {
+        __itt_resume();
         this->scene.SetPrefabLinker(this->prefabLinker);
 
         this->scene.SetDefaultViewportCamera(this->camera);
@@ -187,6 +188,7 @@ namespace GTEngine
             // The scene will be done loading by this pointer, so we can close the file.
             GTLib::IO::Close(file);
         }
+        __itt_pause();
     }
 
     SceneEditor::~SceneEditor()
@@ -231,7 +233,7 @@ namespace GTEngine
 
     void SceneEditor::StartPlaying()
     {
-        __itt_resume();
+        //__itt_resume();
         if (this->IsStopped() || this->IsPaused())
         {
             if (this->IsPaused())
@@ -347,7 +349,7 @@ namespace GTEngine
             // This must be done after setting the playback state because otherwise the controls will think it's in the old state.
             this->UpdatePlaybackControls();
         }
-        __itt_pause();
+        //__itt_pause();
     }
 
     void SceneEditor::PausePlaying()
@@ -373,6 +375,7 @@ namespace GTEngine
 
     void SceneEditor::StopPlaying()
     {
+        __itt_resume();
         if (this->IsPlaying() || this->IsPaused())
         {
             this->LockParentChangedEvents();
@@ -454,6 +457,7 @@ namespace GTEngine
             this->isUpdatingFromStateStack = false;
             this->UnlockParentChangedEvents();
         }
+        __itt_pause();
     }
 
     bool SceneEditor::IsPlaying() const
@@ -1687,7 +1691,7 @@ namespace GTEngine
         if (metadata == nullptr)
         {
             metadata = sceneNode.AddComponent<EditorMetadataComponent>();
-            this->OnSceneNodeComponentChanged(sceneNode, *metadata);
+            this->OnSceneNodeComponentChanged(sceneNode, *metadata, static_cast<uint32_t>(-1));    // TODO: Look at 1) why we're calling this and 2) the best set of flags to pass here.
         }
 
 
@@ -2150,7 +2154,7 @@ namespace GTEngine
         }
     }
 
-    void SceneEditor::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
+    void SceneEditor::OnSceneNodeComponentChanged(SceneNode &node, Component &component, uint32_t whatChangedFlags)
     {
         // If the component is editor metadata, we need to check the selection state.
         if (GTLib::Strings::Equal(component.GetName(), EditorMetadataComponent::Name))
@@ -2274,7 +2278,7 @@ namespace GTEngine
 
     void SceneEditor::OnStateStackFrameCommitted()
     {
-        // We'll commit a new frame whenever something worth of an undo/redo operation has happened. And when that happens, we want the scene to be marked as modified.
+        // We'll commit a new frame whenever something worthy of an undo/redo operation has happened. And when that happens, we want the scene to be marked as modified.
         //
         // We only mark as modified if this is not the initial commit. We can determine this by looking at the number of frames. If there is only 1, it was the initial
         // commit and we don't want to mark as modified in that case.

@@ -42,14 +42,11 @@ namespace GTEngine
     {
     public:
 
-        Component(SceneNode &node)
-            : node(node)
-        {
-        }
+        /// Constructor.
+        Component(SceneNode &node);
         
-        virtual ~Component()
-        {
-        }
+        /// Destructor.
+        virtual ~Component();
 
 
         /// Retrieves the name of this component.
@@ -83,8 +80,26 @@ namespace GTEngine
         ///     This is needed so that components that depend on other components can do a post-processing step.
         virtual void OnPostSceneNodeDeserialized();
 
+
         /// Called by inheritted classes when the component has changed so that the scene can be notified and events posted.
-        virtual void OnChanged();
+        ///
+        /// @param flags [in] A set of flags that specify what has actually changed.
+        void OnChanged(uint32_t flags = 0);
+
+
+        /// Increments the OnChanged() lock counter by 1.
+        ///
+        /// @remarks
+        ///     OnChanged() calls will be locked so long as the lock counter is > 1. Make sure each call to LockOnChanged() has
+        ///     a corresponding call to UnlockOnChanged().
+        void LockOnChanged();
+
+        /// Decrements the OnChanged() lock counter by 1.
+        ///
+        /// @remarks
+        ///     This will never bring the counter down below 1. An assertion will fail if this is called while the lock counter
+        ///     is equal to 0.
+        void UnlockOnChanged();
 
 
     protected:
@@ -92,6 +107,11 @@ namespace GTEngine
         /// The node this component is attached to. This can not be changed after construction and can not be null. Thus,
         /// we can, and should, use a reference here.
         SceneNode &node;
+
+        /// A counter that is used to cancel calls to OnChanged(). When this is larger than 0, all calls to OnChanged() should
+        // do nothing. The purpose of this system is to allow components to essentially batch calls to OnChanged() instead of
+        // willy nilly posting it for every tiny change.
+        int onChangedLockCounter;
 
 
     private:    // No copying.

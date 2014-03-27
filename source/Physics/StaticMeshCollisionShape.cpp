@@ -5,18 +5,18 @@
 namespace GTEngine
 {
     StaticMeshCollisionShape::StaticMeshCollisionShape()
-        : btBvhTriangleMeshShape(new btTriangleIndexVertexArray, false, false)
+        : btBvhTriangleMeshShape(new btTriangleIndexVertexArray, true, false)
     {
     }
 
     StaticMeshCollisionShape::StaticMeshCollisionShape(const Model &model)
-        : btBvhTriangleMeshShape(new btTriangleIndexVertexArray, false, false)
+        : btBvhTriangleMeshShape(new btTriangleIndexVertexArray, true, false)
     {
         this->AddFromModel(model);
     }
 
     StaticMeshCollisionShape::StaticMeshCollisionShape(btTriangleIndexVertexArray* meshInterface, bool buildBvh)
-        : btBvhTriangleMeshShape(meshInterface, false, buildBvh)
+        : btBvhTriangleMeshShape(meshInterface, true, buildBvh)
     {
     }
 
@@ -41,6 +41,9 @@ namespace GTEngine
         auto vertexArray = reinterpret_cast<btTriangleIndexVertexArray*>(this->getMeshInterface());
         assert(vertexArray != nullptr);
         {
+            vertexArray->getIndexedMeshArray().clear();
+
+
             bool buildBvh = false;
 
             // We need to add a btIndexedMesh for each mesh in the model.

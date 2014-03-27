@@ -54,7 +54,7 @@ namespace GTEngine
         void OnSceneNodeComponentRemoved(SceneNode &node, Component &component);
 
         /// SceneEventHandler::OnSceneNodeComponentChanged()
-        void OnSceneNodeComponentChanged(SceneNode &node, Component &component);
+        void OnSceneNodeComponentChanged(SceneNode &node, Component &component, uint32_t whatChangedFlags);
 
         /// SceneEventHandler::OnStateStackFrameCommitted()
         void OnStateStackFrameCommitted();

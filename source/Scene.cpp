@@ -2510,7 +2510,7 @@ namespace GTEngine
         }
     }
 
-    void Scene::OnSceneNodeComponentChanged(SceneNode &node, Component &component)
+    void Scene::OnSceneNodeComponentChanged(SceneNode &node, Component &component, uint32_t whatChangedFlags)
     {
         // The node has been updated, so we need to stage it for the next commit.
         if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
@@ -2613,7 +2613,7 @@ namespace GTEngine
 
 
         // The event handler needs to know about this.
-        this->PostEvent_OnSceneNodeComponentChanged(node, component);
+        this->PostEvent_OnSceneNodeComponentChanged(node, component, whatChangedFlags);
     }
 
 
@@ -2814,11 +2814,11 @@ namespace GTEngine
         }
     }
 
-    void Scene::PostEvent_OnSceneNodeComponentChanged(SceneNode &node, Component &component)
+    void Scene::PostEvent_OnSceneNodeComponentChanged(SceneNode &node, Component &component, uint32_t whatChangedFlags)
     {
         for (size_t i = 0; i < this->eventHandlers.count; ++i)
         {
-            this->eventHandlers[i]->OnSceneNodeComponentChanged(node, component);
+            this->eventHandlers[i]->OnSceneNodeComponentChanged(node, component, whatChangedFlags);
         }
     }
 

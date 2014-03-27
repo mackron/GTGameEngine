@@ -866,12 +866,13 @@ namespace GTEngine
 
         /// Sometimes when a component changes, the scene needs to update some information.
         ///
-        /// @param node      [in] A reference to the node whose component has been modified.
-        /// @param component [in] A reference to the component has been modified.
+        /// @param node             [in] A reference to the node whose component has been modified.
+        /// @param component        [in] A reference to the component has been modified.
+        /// @param whatChangedFlags [in] A set of component-specific flags that specify what has actually changed.
         ///
         /// @remarks
         ///     An example is when the attenuation of a point light changes, the scene may need to update culling information.
-        void OnSceneNodeComponentChanged(SceneNode &node, Component &component);
+        void OnSceneNodeComponentChanged(SceneNode &node, Component &component, uint32_t whatChangedFlags);
 
 
 
@@ -959,9 +960,10 @@ namespace GTEngine
 
         /// Helper for posting an OnSceneNodeComponentChanged event.
         ///
-        /// @param node      [in] A reference to the scene node whose component has just been modified.
-        /// @param component [in] A reference to the component that was changed.
-        void PostEvent_OnSceneNodeComponentChanged(SceneNode &node, Component &component);
+        /// @param node             [in] A reference to the scene node whose component has just been modified.
+        /// @param component        [in] A reference to the component that was changed.
+        /// @param whatChangedFlags [in] A set of flags that specify what has actually changed.
+        void PostEvent_OnSceneNodeComponentChanged(SceneNode &node, Component &component, uint32_t whatChangedFlags);
 
         /// Helper for posting an OnStateStackFrameCommitted event.
         void PostEvent_OnStateStackFrameCommitted();

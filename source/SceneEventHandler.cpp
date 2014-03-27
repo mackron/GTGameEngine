@@ -54,7 +54,7 @@ namespace GTEngine
     {
     }
 
-    void SceneEventHandler::OnSceneNodeComponentChanged(SceneNode &, Component &)
+    void SceneEventHandler::OnSceneNodeComponentChanged(SceneNode &, Component &, uint32_t)
     {
     }
 

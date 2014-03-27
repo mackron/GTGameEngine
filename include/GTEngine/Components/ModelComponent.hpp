@@ -12,6 +12,12 @@ namespace GTEngine
     {
     public:
 
+        static const uint32_t ChangeFlag_Flags;
+        static const uint32_t ChangeFlag_Model;     // The model itself changed.
+        static const uint32_t ChangeFlag_Material;  // A material on the model changed.
+
+    public:
+
         ModelComponent(SceneNode &node);
         ~ModelComponent();
 
@@ -45,7 +51,7 @@ namespace GTEngine
         /// @param materialIndex        [in] The index of the material being changed.
         /// @param materialRelativePath [in] The relative path of the new material.
         ///
-        /// @return True if the material is set successfully; false otherwise.
+        /// @return True if the material is set successfully; false otherwise. If the material is the same, true will be returned.
         bool SetMaterial(size_t materialIndex, const char* materialRelativePath);
 
 

@@ -3,6 +3,8 @@
 #ifndef __GTEngine_SceneEventHandler_hpp_
 #define __GTEngine_SceneEventHandler_hpp_
 
+#include <cstdint>
+
 namespace GTEngine
 {
     class Scene;
@@ -81,9 +83,10 @@ namespace GTEngine
 
         /// Called when a component of a scene node has changed.
         ///
-        /// @param node      [in] A reference to the scene node whose component has just been modified.
-        /// @param component [in] A reference to the component that was changed.
-        virtual void OnSceneNodeComponentChanged(SceneNode &node, Component &component);
+        /// @param node             [in] A reference to the scene node whose component has just been modified.
+        /// @param component        [in] A reference to the component that was changed.
+        /// @param whatChangedFlags [in] A set of component-specific flags that specify what has actually changed.
+        virtual void OnSceneNodeComponentChanged(SceneNode &node, Component &component, uint32_t whatChangedFlags);
 
 
         /// Called when a frame is committed to the state stack.
