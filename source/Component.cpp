@@ -5,6 +5,15 @@
 
 namespace GTEngine
 {
+    Component::Component(SceneNode &node)
+        : node(node), onChangedLockCounter(0)
+    {
+    }
+
+    Component::~Component()
+    {
+    }
+
     void Component::Serialize(GTLib::Serializer &) const
     {
     }
@@ -17,15 +26,27 @@ namespace GTEngine
     {
     }
 
-    void Component::OnChanged()
+    void Component::OnChanged(uint32_t whatChangedFlags)
     {
         auto scene = this->node.GetScene();
         if (scene != nullptr)
         {
-            scene->OnSceneNodeComponentChanged(this->node, *this);
+            scene->OnSceneNodeComponentChanged(this->node, *this, whatChangedFlags);
         }
     }
 
+    void Component::LockOnChanged()
+    {
+        this->onChangedLockCounter += 1;
+    }
+
+    void Component::UnlockOnChanged()
+    {
+        assert(this->onChangedLockCounter > 0);
+        {
+            this->onChangedLockCounter -= 1;
+        }
+    }
 
     Component* CreateComponentByName(const char* componentName, SceneNode &hostSceneNode)
     {

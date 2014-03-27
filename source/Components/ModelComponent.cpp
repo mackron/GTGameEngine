@@ -9,6 +9,10 @@ namespace GTEngine
 {
     GTENGINE_IMPL_COMPONENT_ATTRIBS(ModelComponent, "Model")
 
+    const uint32_t ModelComponent::ChangeFlag_Flags    = (1 << 0);
+    const uint32_t ModelComponent::ChangeFlag_Model    = (1 << 1);
+    const uint32_t ModelComponent::ChangeFlag_Material = (1 << 2);
+
     ModelComponent::ModelComponent(SceneNode &node)
         : Component(node), model(nullptr),
           flags(CullBackFaces | CastShadow | Visible)
@@ -23,14 +27,22 @@ namespace GTEngine
         }
     }
 
-    void ModelComponent::SetModel(Model* model, bool takeOwnership)
+    void ModelComponent::SetModel(Model* newModel, bool takeOwnership)
     {
+        // Don't do anything if the models are the same.
+        if (this->model != nullptr && newModel != nullptr && this->model->GetDefinition().GetAbsolutePath() == newModel->GetDefinition().GetAbsolutePath())
+        {
+            return;
+        }
+
+
+
         if (this->flags & Owner)
         {
             ModelLibrary::Delete(this->model);
         }
 
-        this->model   = model;
+        this->model = newModel;
 
         if (takeOwnership)
         {
@@ -42,7 +54,7 @@ namespace GTEngine
         }
 
 
-        this->OnChanged();
+        this->OnChanged(ChangeFlag_Flags | ChangeFlag_Model);
     }
 
     void ModelComponent::SetModel(Model &model, bool takeOwnership)
@@ -66,9 +78,15 @@ namespace GTEngine
     {
         if (this->model != nullptr)
         {
+            auto oldMaterial = this->model->meshes[materialIndex]->GetMaterial();
+            if (oldMaterial != nullptr && oldMaterial->GetDefinition().relativePath == materialRelativePath)
+            {
+                return true;
+            }
+
             if (this->model->meshes[materialIndex]->SetMaterial(materialRelativePath))
             {
-                this->OnChanged();
+                this->OnChanged(ChangeFlag_Material);
                 return true;
             }
         }
@@ -98,20 +116,20 @@ namespace GTEngine
         }
 
 
-        this->OnChanged();
+        this->OnChanged(ChangeFlag_Flags);
     }
 
 
     void ModelComponent::EnableShadowCasting()
     {
         this->flags |= CastShadow;
-        this->OnChanged();
+        this->OnChanged(ChangeFlag_Flags);
     }
 
     void ModelComponent::DisableShadowCasting()
     {
         this->flags &= ~CastShadow;
-        this->OnChanged();
+        this->OnChanged(ChangeFlag_Flags);
     }
 
 
@@ -155,6 +173,10 @@ namespace GTEngine
 
     void ModelComponent::Deserialize(GTLib::Deserializer &deserializer)
     {
+        uint32_t whatChanged = 0;
+        this->LockOnChanged();
+
+
         Serialization::ChunkHeader header;
         deserializer.Read(header);
 
@@ -167,7 +189,15 @@ namespace GTEngine
             case 1:
                 {
                     // Flags are first.
-                    deserializer.Read(static_cast<uint32_t &>(this->flags));
+                    uint32_t newFlags;
+                    deserializer.Read(newFlags);
+
+                    if (newFlags != this->flags)
+                    {
+                        this->flags = newFlags;
+                        whatChanged |= ChangeFlag_Flags;
+                    }
+
 
                     // Next is a boolean indicating whether or not a model is defined here.
                     bool hasModel;
@@ -176,6 +206,9 @@ namespace GTEngine
                     // We will only have additional data at this point if we have actually have a model defined.
                     if (hasModel)
                     {
+                        auto oldModel = this->model;
+
+
                         GTLib::String modelPath;
                         deserializer.ReadString(modelPath);
 
@@ -202,6 +235,12 @@ namespace GTEngine
                         {
                             this->model->Deserialize(deserializer);
                         }
+
+
+                        if (this->model != oldModel)
+                        {
+                            whatChanged |= ChangeFlag_Model;
+                        }
                     }
 
 
@@ -217,7 +256,11 @@ namespace GTEngine
         }
 
 
-        this->OnChanged();
+        this->UnlockOnChanged();
+        if (whatChanged != 0)
+        {
+            this->OnChanged(whatChanged);
+        }
     }
 }
 

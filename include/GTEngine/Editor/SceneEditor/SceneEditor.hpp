@@ -460,7 +460,7 @@ namespace GTEngine
         void OnSceneNodeComponentRemoved(SceneNode &node, Component &component);
 
         /// SceneEditorSceneEventHandler::OnSceneNodeComponentChanged()
-        void OnSceneNodeComponentChanged(SceneNode &node, Component &component);
+        void OnSceneNodeComponentChanged(SceneNode &node, Component &component, uint32_t whatChangedFlags);
 
         /// SceneEditorSceneEventHandler::OnStateStackFrameCommitted()
         void OnStateStackFrameCommitted();

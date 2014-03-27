@@ -17,6 +17,9 @@ namespace GTEngine
     const uint32_t EditorMetadataComponent::ChangeFlag_WireframeColour       = (1 << 2);
     const uint32_t EditorMetadataComponent::ChangeFlag_PickingCollisionGroup = (1 << 3);
     const uint32_t EditorMetadataComponent::ChangeFlag_PickingMesh           = (1 << 4);
+    const uint32_t EditorMetadataComponent::ChangeFlag_AlwaysShowOnTop       = (1 << 5);
+    const uint32_t EditorMetadataComponent::ChangeFlag_IsSelected            = (1 << 6);
+    const uint32_t EditorMetadataComponent::ChangeFlag_Prefab                = (1 << 7);
 
     EditorMetadataComponent::EditorMetadataComponent(SceneNode &node)
         : Component(node),
@@ -98,8 +101,7 @@ namespace GTEngine
     {
         this->selectionWireframeColour = newColour;
 
-        this->changeFlags = ChangeFlag_WireframeColour;
-        this->OnChanged();
+        this->OnChanged(ChangeFlag_WireframeColour);
     }
 
 
@@ -174,8 +176,8 @@ namespace GTEngine
                 world->AddCollisionObject(this->pickingCollisionObject, group, CollisionGroups::EditorSelectionRay);
             }
 
-            this->changeFlags = ChangeFlag_PickingCollisionGroup;
-            this->OnChanged();
+
+            this->OnChanged(ChangeFlag_PickingCollisionGroup);
         }
     }
 
@@ -270,8 +272,7 @@ namespace GTEngine
         this->spriteTexturePath = texturePath;
 
 
-        this->changeFlags = ChangeFlag_Sprite;
-        this->OnChanged();
+        this->OnChanged(ChangeFlag_Sprite);
     }
 
     void EditorMetadataComponent::ShowSprite(const char* texturePath, float colourR, float colourG, float colourB)
@@ -296,8 +297,7 @@ namespace GTEngine
 
         this->spriteTexturePath = "";
 
-        this->changeFlags = ChangeFlag_Sprite;
-        this->OnChanged();
+        this->OnChanged(ChangeFlag_Sprite);
     }
 
     void EditorMetadataComponent::ApplyTransformToSprite()
@@ -404,8 +404,7 @@ namespace GTEngine
             this->UpdateDirectionArrowTransform();
 
 
-            this->changeFlags = ChangeFlag_DirectionArrow;
-            this->OnChanged();
+            this->OnChanged(ChangeFlag_DirectionArrow);
         }
     }
 
@@ -418,8 +417,7 @@ namespace GTEngine
         this->directionArrowMesh.material    = nullptr;
 
 
-        this->changeFlags = ChangeFlag_DirectionArrow;
-        this->OnChanged();
+        this->OnChanged(ChangeFlag_DirectionArrow);
     }
 
     bool EditorMetadataComponent::IsShowingDirectionArrow() const
@@ -679,6 +677,10 @@ namespace GTEngine
 
     void EditorMetadataComponent::Deserialize(GTLib::Deserializer &deserializer)
     {
+        uint32_t whatChanged = 0;
+        this->LockOnChanged();
+
+
         Serialization::ChunkHeader header;
         deserializer.Read(header);
 
@@ -688,16 +690,52 @@ namespace GTEngine
             {
             case 1:
                 {
-                    deserializer.Read(this->alwaysShowOnTop);
-                    deserializer.Read(this->useModelForPickingShape);
-                    deserializer.Read(this->isSelected);
-                    deserializer.Read(this->selectionWireframeColour);
+                    bool alwaysShowOnTop_New;
+                    deserializer.Read(alwaysShowOnTop_New);
+                    if (alwaysShowOnTop_New != this->alwaysShowOnTop)
+                    {
+                        this->alwaysShowOnTop = alwaysShowOnTop_New;
+                        whatChanged |= ChangeFlag_AlwaysShowOnTop;
+                    }
+
+                    bool useModelForPickingShape_New;
+                    deserializer.Read(useModelForPickingShape_New);
+                    if (useModelForPickingShape_New != this->useModelForPickingShape)
+                    {
+                        this->useModelForPickingShape = useModelForPickingShape_New;
+                        whatChanged |= ChangeFlag_PickingMesh;
+                    }
+
+                    bool isSelected_New;
+                    deserializer.Read(isSelected_New);
+                    if (isSelected_New != this->isSelected)
+                    {
+                        this->isSelected = isSelected_New;
+                        whatChanged |= ChangeFlag_IsSelected;
+                    }
+
+                    glm::vec3 selectionWireframeColour_New;
+                    deserializer.Read(selectionWireframeColour_New);
+                    if (selectionWireframeColour_New != this->selectionWireframeColour)
+                    {
+                        this->selectionWireframeColour = selectionWireframeColour_New;
+                        whatChanged |= ChangeFlag_WireframeColour;
+                    }
+
 
                     uint32_t pickingCollisionShapeTypeIn;
                     deserializer.Read(pickingCollisionShapeTypeIn);
                     this->pickingCollisionShapeType = static_cast<PickingCollisionShapeType>(pickingCollisionShapeTypeIn);
 
-                    deserializer.Read(this->pickingCollisionGroup);
+
+                    int16_t pickingCollisionGroup_New;
+                    deserializer.Read(pickingCollisionGroup_New);
+                    if (pickingCollisionGroup_New != this->pickingCollisionGroup)
+                    {
+                        this->pickingCollisionGroup = pickingCollisionGroup_New;
+                        whatChanged |= ChangeFlag_PickingCollisionGroup;
+                    }
+
 
                     bool isUsingSprite;
                     deserializer.Read(isUsingSprite);
@@ -707,6 +745,13 @@ namespace GTEngine
                         deserializer.ReadString(this->spriteTexturePath);
                         this->ShowSprite(this->spriteTexturePath.c_str());
                     }
+                    else
+                    {
+                        this->HideSprite();
+                    }
+
+                    whatChanged |= ChangeFlag_Sprite;
+
 
 
                     bool isShowingDirectionArrow;
@@ -716,15 +761,35 @@ namespace GTEngine
                     {
                         this->ShowDirectionArrow();
                     }
+                    else
+                    {
+                        this->HideDirectionArrow();
+                    }
+
+                    whatChanged |= ChangeFlag_DirectionArrow;
 
 
-                    deserializer.ReadString(this->prefabRelativePath);
-                    deserializer.Read(this->prefabID);
+
+                    GTLib::String prefabRelativePath_New;
+                    deserializer.ReadString(prefabRelativePath_New);
+                    if (prefabRelativePath_New != this->prefabRelativePath)
+                    {
+                        this->prefabRelativePath = prefabRelativePath_New;
+                        whatChanged |= ChangeFlag_Prefab;
+                    }
+
+                    uint64_t prefabID_New;
+                    deserializer.Read(prefabID_New);
+                    if (prefabID_New != this->prefabID)
+                    {
+                        this->prefabID = prefabID_New;
+                        whatChanged |= ChangeFlag_Prefab;
+                    }
 
 
 
                     // We'll try setting the model for the picking shape now.
-                    if (this->useModelForPickingShape)
+                    if (this->useModelForPickingShape && (whatChanged & ChangeFlag_PickingMesh))
                     {
                         this->SetPickingCollisionShapeToModel();
                     }
@@ -742,7 +807,11 @@ namespace GTEngine
         }
 
 
-        this->OnChanged();
+        this->UnlockOnChanged();
+        if (whatChanged != 0)
+        {
+            this->OnChanged(whatChanged);
+        }
     }
 
 
