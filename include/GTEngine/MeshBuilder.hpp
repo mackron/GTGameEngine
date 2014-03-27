@@ -101,6 +101,9 @@ namespace GTEngine
 
         /// The buffer containing the indices.
         GTLib::Vector<unsigned int> indexBuffer;
+
+        /// Whether or not the mesh builder should check for duplicate vertices. Defaults to true.
+        bool checkDuplicatesOnEmit;
     };
 }
 
