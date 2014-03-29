@@ -35,7 +35,7 @@ namespace GTEngine
 
             Item(const GTLib::FileInfo &infoIn, Item* parent)
                 : info(infoIn),
-                  relativePath(), absolutePath(),
+                  relativePath(infoIn.path), absolutePath(infoIn.absolutePath),
                   parent(parent), children()
             {
             }
@@ -91,7 +91,7 @@ namespace GTEngine
             {
                 if (this->parent != nullptr && this->parent->parent == nullptr)
                 {
-                    return this->parent->info.absolutePath;
+                    return this->info.absolutePath;
                 }
                 else
                 {
