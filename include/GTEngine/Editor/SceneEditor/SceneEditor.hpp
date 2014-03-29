@@ -76,6 +76,10 @@ namespace GTEngine
         /// Determines whether or not the game is stopped (the default state).
         bool IsStopped() const;
 
+        /// Determines whether or not the playback state is in the middle of transitioning. We need to keep track of this because we need
+        /// to sometimes change scene nodes during the transition (such as cameras), which will need special handling.
+        bool IsPlaybackTransitioning() const;
+
 
         /// Enables physics simulation of the entire scene.
         void EnablePhysicsSimulation();
@@ -371,6 +375,8 @@ namespace GTEngine
         /// Determines whether or not any scene node is being deserialized.
         bool IsPrefabDeserializing() const;
 
+        /// Determines whether or not the scene editor is in a state where a prefab is allowed to be updated.
+        bool IsPrefabUpdateAllowed() const;
 
 
         ///////////////////////////////////////////////////
@@ -856,7 +862,8 @@ namespace GTEngine
         {
             PlaybackState_Stopped = 0,
             PlaybackState_Playing = 1,
-            PlaybackState_Paused  = 2
+            PlaybackState_Paused  = 2,
+            PlaybackState_Transitioning = 3,
         };
 
         /// The current playback state of the scene.

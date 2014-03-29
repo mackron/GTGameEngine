@@ -238,6 +238,8 @@ namespace GTEngine
         {
             if (this->IsPaused())
             {
+                this->playbackState = PlaybackState_Transitioning;
+
                 this->RestorePauseState();
 
                 this->updateManager.Enable();
@@ -246,6 +248,8 @@ namespace GTEngine
             }
             else
             {
+                this->playbackState = PlaybackState_Transitioning;
+
                 // We need to set the event filter
                 this->eventFilterBeforePlaying = this->GetGame().GetEventFilter();
                 this->GetGame().SetEventFilter(this->playbackEventFilter);
@@ -343,7 +347,8 @@ namespace GTEngine
                 this->physicsManager.ActivateAllRigidBodies();
             }
 
-            //this->isPaused = false;
+            
+            // The playback state should be set after everything has changed. The state will be set to 'Transitioning' during the transition phase.
             this->playbackState = PlaybackState_Playing;
 
             // This must be done after setting the playback state because otherwise the controls will think it's in the old state.
@@ -356,7 +361,8 @@ namespace GTEngine
     {
         if (this->IsPlaying())
         {
-            this->playbackState = PlaybackState_Paused;
+            this->playbackState = PlaybackState_Transitioning;
+
             this->CapturePauseState();
 
             this->GetOwnerEditor().GetGame().ReleaseMouse();
@@ -369,6 +375,11 @@ namespace GTEngine
             this->updateManager.DisableParticles();
             this->physicsManager.DisableSimulation();
 
+
+            // The playback state should be set after everything has changed. The state will be set to 'Transitioning' during the transition phase.
+            this->playbackState = PlaybackState_Paused;
+
+            // This must be done after setting the playback state because otherwise the controls will think it's in the old state.
             this->UpdatePlaybackControls();
         }
     }
@@ -378,6 +389,8 @@ namespace GTEngine
         __itt_resume();
         if (this->IsPlaying() || this->IsPaused())
         {
+            this->playbackState = PlaybackState_Transitioning;
+
             this->LockParentChangedEvents();
             this->isUpdatingFromStateStack = true;
             {
@@ -389,9 +402,6 @@ namespace GTEngine
 
                 // Events need to be blocked from being posted to scripts since we're now in proper edit mode.
                 this->scene.BlockScriptEvents();
-
-
-                this->playbackState = PlaybackState_Stopped;
 
 
                 // Some functions need to be restored.
@@ -451,7 +461,10 @@ namespace GTEngine
                 this->GetGame().SetEventFilter(this->eventFilterBeforePlaying);
 
 
-                // Playback controls should be updated last.
+                // The playback state should be set after everything has changed. The state will be set to 'Transitioning' during the transition phase.
+                this->playbackState = PlaybackState_Stopped;
+
+                // This must be done after setting the playback state because otherwise the controls will think it's in the old state.
                 this->UpdatePlaybackControls();
             }
             this->isUpdatingFromStateStack = false;
@@ -473,6 +486,11 @@ namespace GTEngine
     bool SceneEditor::IsStopped() const
     {
         return this->playbackState == PlaybackState_Stopped;
+    }
+
+    bool SceneEditor::IsPlaybackTransitioning() const
+    {
+        return this->playbackState == PlaybackState_Transitioning;
     }
 
 
@@ -1573,6 +1591,26 @@ namespace GTEngine
         return this->prefabDeserializingCount > 0;
     }
 
+    bool SceneEditor::IsPrefabUpdateAllowed() const
+    {
+        // If any prefab is currently deserializing, we definately do not want to update the prefab of another node. If we allow this, we open the door
+        // to a cyclic operation where the scene node will change from a deserialization, which will then trigger a prefab update.
+        if (this->IsPrefabDeserializing())
+        {
+            return false;
+        }
+
+        // If we are playing, paused, or in playback transition, we don't want to allow updating.
+        if (this->IsPlaying() || this->IsPaused() || this->IsPlaybackTransitioning())
+        {
+            return false;
+        }
+
+
+
+        return true;
+    }
+
 
     ///////////////////////////////////////////////////
     // Gizmo Control
@@ -1816,7 +1854,7 @@ namespace GTEngine
         // We need to let the scripting environment know about this change.
         this->PostOnSceneNodeNameChangedToScript(node);
         
-        if (this->IsStopped() && !this->IsPrefabDeserializing())
+        if (this->IsPrefabUpdateAllowed())
         {
             this->UpdateSceneNodesPrefabIfNotRoot(node);
         }
@@ -1885,13 +1923,6 @@ namespace GTEngine
             {
                 this->UpdatePropertiesTransformPanel();
             }
-            
-            
-            // The prefab may need to be updated.
-            if (this->IsStopped() && !this->IsPrefabDeserializing())
-            {
-                //this->UpdateSceneNodesPrefabIfNotRoot(node);
-            }
         }
     }
 
@@ -1929,13 +1960,6 @@ namespace GTEngine
 
             metadata->MarkCollisionShapeMeshAsDirty();
             metadata->MarkProximityShapeMeshAsDirty();
-            
-            
-            // The prefab may need to be updated.
-            if (this->IsStopped() && !this->IsPrefabDeserializing())
-            {
-                //this->UpdateSceneNodesPrefabIfNotRoot(node);
-            }
         }
     }
 
@@ -1975,7 +1999,7 @@ namespace GTEngine
         
         
         // The prefab may need to be updated.
-        if (this->IsStopped() && !this->IsPrefabDeserializing())
+        if (this->IsPrefabUpdateAllowed())
         {
             this->UpdateSceneNodesPrefabIfNotRoot(node);
         }
@@ -2027,7 +2051,7 @@ namespace GTEngine
         
         
         // The prefab may need to be updated.
-        if (this->IsStopped() && !this->IsPrefabDeserializing())
+        if (this->IsPrefabUpdateAllowed())
         {
             this->UpdateSceneNodesPrefabIfNotRoot(node);
         }
@@ -2089,7 +2113,7 @@ namespace GTEngine
                 
                 
                 // If the scene node is linked to a prefab, that prefab needs to be updated.
-                if (this->IsStopped() && !this->IsPrefabDeserializing())
+                if (this->IsPrefabUpdateAllowed())
                 {
                     this->UpdateSceneNodesPrefab(node);
                 }
@@ -2145,7 +2169,7 @@ namespace GTEngine
                     
                     
                     // The prefab needs to be updated.
-                    if (this->IsStopped() && !this->IsPrefabDeserializing())
+                    if (this->IsPrefabUpdateAllowed())
                     {
                         this->UpdateSceneNodesPrefab(node);
                     }
@@ -2268,7 +2292,7 @@ namespace GTEngine
                 }
                 
                 // The prefab needs to be updated.
-                if (this->IsStopped() && !this->IsPrefabDeserializing())
+                if (this->IsPrefabUpdateAllowed())
                 {
                     this->UpdateSceneNodesPrefab(node);
                 }
@@ -2589,7 +2613,7 @@ namespace GTEngine
                 this->transformedObjectWithGizmo = false;
                 
                 
-                if (this->IsStopped() && !this->IsPrefabDeserializing())
+                if (this->IsPrefabUpdateAllowed())
                 {
                     for (size_t i = 0; i < selectedNodes.count; ++i)
                     {

@@ -737,6 +737,7 @@ namespace GTEngine
                     }
 
 
+
                     bool isUsingSprite;
                     deserializer.Read(isUsingSprite);
 
