@@ -1509,8 +1509,19 @@ namespace GTEngine
 
             if (iKey->value)
             {
-                this->OnKeyReleased(iKey->key);
-                this->OnKeyUp(iKey->key);
+                auto eventContext = this->gui.BeginPostingEvents();
+                {
+                    GameEvent e;
+
+                    e.code            = EventCodes::OnKeyReleased;
+                    e.keyreleased.key = iKey->key;
+                    this->HandleEvent_OnKeyReleased(e, eventContext);
+
+                    e.code      = EventCodes::OnKeyUp;
+                    e.keyup.key = iKey->key;
+                    this->HandleEvent_OnKeyUp(e, eventContext);
+                }
+                this->gui.EndPostingEvents(eventContext);
 
                 iKey->value = false;
             }
