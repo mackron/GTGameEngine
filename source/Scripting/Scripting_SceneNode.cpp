@@ -191,6 +191,47 @@ namespace GTEngine
 
 
 
+                "function GTEngine.SceneNode:DisablePositionInheritance()"
+                "    GTEngine.System.SceneNode.DisablePositionInheritance(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:EnablePositionInheritance()"
+                "    GTEngine.System.SceneNode.EnablePositionInheritance(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:IsPositionInheritanceEnabled()"
+                "    return GTEngine.System.SceneNode.IsPositionInheritanceEnabled(self._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.SceneNode:DisableOrientationInheritance()"
+                "    GTEngine.System.SceneNode.DisableOrientationInheritance(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:EnableOrientationInheritance()"
+                "    GTEngine.System.SceneNode.EnableOrientationInheritance(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:IsOrientationInheritanceEnabled()"
+                "    return GTEngine.System.SceneNode.IsOrientationInheritanceEnabled(self._internalPtr);"
+                "end;"
+
+
+                "function GTEngine.SceneNode:DisableScaleInheritance()"
+                "    GTEngine.System.SceneNode.DisableScaleInheritance(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:EnableScaleInheritance()"
+                "    GTEngine.System.SceneNode.EnableScaleInheritance(self._internalPtr);"
+                "end;"
+
+                "function GTEngine.SceneNode:IsScaleInheritanceEnabled()"
+                "    return GTEngine.System.SceneNode.IsScaleInheritanceEnabled(self._internalPtr);"
+                "end;"
+
+
+
+
                 "function GTEngine.SceneNode:GetPosition()"
                 "    return GTEngine.System.SceneNode.GetPosition(self._internalPtr);"
                 "end;"
@@ -456,6 +497,17 @@ namespace GTEngine
                             script.SetTableFunction(-1, "RemoveComponent",         SceneNodeFFI::RemoveComponent);
                             script.SetTableFunction(-1, "GetComponent",            SceneNodeFFI::GetComponent);
                             script.SetTableFunction(-1, "GetAttachedComponentIDs", SceneNodeFFI::GetAttachedComponentIDs);
+
+                            // Transformation Inheritance.
+                            script.SetTableFunction(-1, "DisablePositionInheritance",      SceneNodeFFI::DisablePositionInheritance);
+                            script.SetTableFunction(-1, "EnablePositionInheritance",       SceneNodeFFI::EnablePositionInheritance);
+                            script.SetTableFunction(-1, "IsPositionInheritanceEnabled",    SceneNodeFFI::IsPositionInheritanceEnabled);
+                            script.SetTableFunction(-1, "DisableOrientationInheritance",   SceneNodeFFI::DisableOrientationInheritance);
+                            script.SetTableFunction(-1, "EnableOrientationInheritance",    SceneNodeFFI::EnableOrientationInheritance);
+                            script.SetTableFunction(-1, "IsOrientationInheritanceEnabled", SceneNodeFFI::IsOrientationInheritanceEnabled);
+                            script.SetTableFunction(-1, "DisableScaleInheritance",         SceneNodeFFI::DisableScaleInheritance);
+                            script.SetTableFunction(-1, "EnableScaleInheritance",          SceneNodeFFI::EnableScaleInheritance);
+                            script.SetTableFunction(-1, "IsScaleInheritanceEnabled",       SceneNodeFFI::IsScaleInheritanceEnabled);
 
                             // Transformations.
                             script.SetTableFunction(-1, "GetPosition",             SceneNodeFFI::GetPosition);
@@ -1060,6 +1112,110 @@ namespace GTEngine
 
                 return 1;
             }
+
+
+
+            int DisablePositionInheritance(GTLib::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->DisablePositionInheritance();
+                }
+
+                return 0;
+            }
+
+            int EnablePositionInheritance(GTLib::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->EnablePositionInheritance();
+                }
+
+                return 0;
+            }
+
+            int IsPositionInheritanceEnabled(GTLib::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    script.Push(sceneNode->IsPositionInheritanceEnabled());
+                }
+
+                return 1;
+            }
+
+
+            int DisableOrientationInheritance(GTLib::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->DisableOrientationInheritance();
+                }
+
+                return 0;
+            }
+
+            int EnableOrientationInheritance(GTLib::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->EnableOrientationInheritance();
+                }
+
+                return 0;
+            }
+
+            int IsOrientationInheritanceEnabled(GTLib::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    script.Push(sceneNode->IsOrientationInheritanceEnabled());
+                }
+
+                return 1;
+            }
+
+
+            int DisableScaleInheritance(GTLib::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->DisableScaleInheritance();
+                }
+
+                return 0;
+            }
+
+            int EnableScaleInheritance(GTLib::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->EnableScaleInheritance();
+                }
+
+                return 0;
+            }
+
+            int IsScaleInheritanceEnabled(GTLib::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    script.Push(sceneNode->IsScaleInheritanceEnabled());
+                }
+
+                return 1;
+            }
+
 
 
 

@@ -294,6 +294,67 @@ namespace GTEngine
             int GetAttachedComponentIDs(GTLib::Script &script);
 
 
+            /// Disables position inheritance.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            int DisablePositionInheritance(GTLib::Script &script);
+
+            /// Enables position inheritance.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            int EnablePositionInheritance(GTLib::Script &script);
+
+            /// Determines whether or not position inheritance is enabled.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Return: True if position inheritance is enabled; false otherwise.
+            int IsPositionInheritanceEnabled(GTLib::Script &script);
+
+
+            /// Disables orientation inheritance.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            int DisableOrientationInheritance(GTLib::Script &script);
+
+            /// Enables orientation inheritance.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            int EnableOrientationInheritance(GTLib::Script &script);
+
+            /// Determines whether or not orientation inheritance is enabled.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Return: True if orientation inheritance is enabled; false otherwise.
+            int IsOrientationInheritanceEnabled(GTLib::Script &script);
+
+
+            /// Disables scale inheritance.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            int DisableScaleInheritance(GTLib::Script &script);
+
+            /// Enables scale inheritance.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            int EnableScaleInheritance(GTLib::Script &script);
+
+            /// Determines whether or not scale inheritance is enabled.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Return: True if scale inheritance is enabled; false otherwise.
+            int IsScaleInheritanceEnabled(GTLib::Script &script);
+
+
+
             /// Retrieves the local position of the given scene node as 3 return values.
             ///
             /// @remarks
