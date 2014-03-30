@@ -28,6 +28,9 @@ FEATURES:
       and to also prevent events from getting dispatched at all.
     - Added the ability to delete files and folders from the data explorer in
       the editor.
+    - Added the ability to control scene node transformation inheritance via
+      the scripting environment. This feature allows you to control whether
+      or not a child node inherits the transformation of it's parent.
 
 
 FIXES/IMPROVEMENTS:
