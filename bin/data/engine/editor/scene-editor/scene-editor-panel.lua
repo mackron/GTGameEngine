@@ -163,8 +163,27 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
     
     -- Updates the component panels.
     function self:UpdateComponentPanels()
-        self:HideAllComponentPanels();
-        self:ShowComponentPanels();
+        -- We need to determine which panels need to be shown and which need to be hidden. We'll hide and then show.
+        local componentIDs = {};
+        if self.CurrentSceneNode ~= nil then
+            componentIDs = self.CurrentSceneNode:GetAttachedComponentIDs();
+        end
+        
+        -- We need to hide every panel that is not contained in componentIDs.
+        for componentID,componentPanel in pairs(self.ComponentPanels) do
+            if table.indexof(componentIDs, componentID) == nil then
+                componentPanel:Hide();
+            end
+        end
+        
+        -- Now we need to show and update every panel that is contained in componentIDs.
+        for i,componentID in ipairs(componentIDs) do
+            local panel = self.ComponentPanels[componentID];
+            if panel then
+                panel:Show();
+                panel:Update(self.CurrentSceneNode);
+            end
+        end
     end
     
     
