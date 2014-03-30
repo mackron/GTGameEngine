@@ -53,6 +53,9 @@ FIXES/IMPROVEMENTS:
       when it was clicked on by the mouse.
     - Fixed an issue where the scrollbar in multi-line text boxes would not
       update when vertically scrolling while selecting text.
+    - Fixed an issue where keys were not correctly released when the game
+      window lost focus. This would cause issues where it appeared as though
+      keys would get stuck.
     - Sounds now use the search paths when loading.
     - Back faces are no longer selected in the scene editor.
     - Detaching a scene node from it's prefab now creates an undo/redo point.
