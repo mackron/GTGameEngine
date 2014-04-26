@@ -78,6 +78,12 @@ namespace GTEngine
                     script.PushNewTable();
                     {
                         script.SetTableFunction(-1, "GetScenePtr",                         SceneEditorFFI::GetScenePtr);
+
+                        script.SetTableFunction(-1, "SetInsertionPosition",                     SceneEditorFFI::SetInsertionPosition);
+                        script.SetTableFunction(-1, "GetInsertionPosition",                     SceneEditorFFI::GetInsertionPosition);
+                        script.SetTableFunction(-1, "UpdateInsertionPositionFromMouse",         SceneEditorFFI::UpdateInsertionPositionFromMouse);
+                        script.SetTableFunction(-1, "UpdateInsertionPositionToInFrontOfCamera", SceneEditorFFI::UpdateInsertionPositionToInFrontOfCamera);
+
                         script.SetTableFunction(-1, "DeselectAll",                         SceneEditorFFI::DeselectAll);
                         script.SetTableFunction(-1, "SelectSceneNode",                     SceneEditorFFI::SelectSceneNode);
                         script.SetTableFunction(-1, "DeselectSceneNode",                   SceneEditorFFI::DeselectSceneNode);
@@ -133,6 +139,7 @@ namespace GTEngine
                         script.SetTableFunction(-1, "GetSceneNodePtrByID",                 SceneEditorFFI::GetSceneNodePtrByID);
                         script.SetTableFunction(-1, "GetSceneNodes",                       SceneEditorFFI::GetSceneNodes);
                         script.SetTableFunction(-1, "PositionSceneNodeInFrontOfCamera",    SceneEditorFFI::PositionSceneNodeInFrontOfCamera);
+                        script.SetTableFunction(-1, "SetSceneNodePositionToInsertionPosition", SceneEditorFFI::SetSceneNodePositionToInsertionPosition);
                         script.SetTableFunction(-1, "SetSceneNodeTransformToCamera",       SceneEditorFFI::SetSceneNodeTransformToCamera);
                         script.SetTableFunction(-1, "SetSceneNodePositionToCamera",        SceneEditorFFI::SetSceneNodePositionToCamera);
                         script.SetTableFunction(-1, "SetSceneNodeOrientationToCamera",     SceneEditorFFI::SetSceneNodeOrientationToCamera);
@@ -1031,6 +1038,58 @@ namespace GTEngine
                 return 1;
             }
 
+
+
+            int SetInsertionPosition(GTLib::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->SetInsertionPosition(Scripting::ToVector3(script, 2));
+                }
+
+                return 0;
+            }
+
+            int GetInsertionPosition(GTLib::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    Scripting::PushNewVector3(script, sceneEditor->GetInsertionPosition());
+                }
+                else
+                {
+                    Scripting::PushNewVector3(script, 0.0f, 0.0f, 0.0f);
+                }
+
+                return 1;
+            }
+
+            int UpdateInsertionPositionFromMouse(GTLib::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->UpdateInsertionPositionFromMouse();
+                }
+                
+                return 0;
+            }
+
+            int UpdateInsertionPositionToInFrontOfCamera(GTLib::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                if (sceneEditor != nullptr)
+                {
+                    sceneEditor->UpdateInsertionPositionToInFrontOfCamera();
+                }
+
+                return 0;
+            }
+
+
+
             int DeselectAll(GTLib::Script &script)
             {
                 auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
@@ -1712,6 +1771,19 @@ namespace GTEngine
                     {
                         sceneNode->SetWorldPosition(cameraSceneNode.GetWorldPosition() + (cameraSceneNode.GetWorldForwardVector() * 15.0f));
                     }
+                }
+
+                return 0;
+            }
+
+            int SetSceneNodePositionToInsertionPosition(GTLib::Script &script)
+            {
+                auto sceneEditor = reinterpret_cast<SceneEditor*>(script.ToPointer(1));
+                auto sceneNode   = reinterpret_cast<SceneNode*>(script.ToPointer(2));
+
+                if (sceneEditor != nullptr && sceneNode != nullptr)
+                {
+                    sceneNode->SetWorldPosition(sceneEditor->GetInsertionPosition());
                 }
 
                 return 0;

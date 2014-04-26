@@ -8,6 +8,8 @@ function GTGUI.Element:SceneEditorViewport(sceneEditor)
     end
     
     function self:OnViewportRMBUpWithoutMovement()
+        sceneEditor:UpdateInsertionPositionFromMouse();
+    
         sceneEditor.ContextMenu:SetPosition(GTGUI.Server.GetMousePosition());
         sceneEditor.ContextMenu:Show();
     end

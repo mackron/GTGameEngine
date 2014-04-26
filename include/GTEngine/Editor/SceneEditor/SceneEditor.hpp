@@ -217,6 +217,40 @@ namespace GTEngine
         bool IsSceneUpdatesPaused() const;
 
 
+        /// Updates the insertion position based on the curren tposition of the mouse.
+        ///
+        /// @return The insertion position.
+        ///
+        /// @remarks
+        ///     The insertion position will be set to this value until it is updated again.
+        ///     @par
+        ///     This will cast a ray into the scene from the mouse and return the hit point of a scene node based on it's selection mesh. If it
+        ///     misses, it will test it against a plane running along the X/Z plane.
+        ///     @par
+        ///     If neither a scene node nor the X/Z plane is hit, the insertion position will be set to just in front of the camera.
+        glm::vec3 UpdateInsertionPositionFromMouse();
+
+        /// Updates the insertion position to be equal to the just in front of the camera.
+        ///
+        /// @return The insertion position.
+        ///
+        /// @remarks
+        ///     The insertion position will be set to this value until it is updated again.
+        ///     @par
+        ///     This will take the position and orientation of the camera and set the insertion position to just in front of it.
+        glm::vec3 UpdateInsertionPositionToInFrontOfCamera();
+
+        /// Retrieves the insertion position.
+        ///
+        /// @return The insertion position.
+        glm::vec3 GetInsertionPosition() const;
+
+        /// Sets the insertion position.
+        ///
+        /// @param newInsertionPosition [in] The new insertion position.
+        void SetInsertionPosition(const glm::vec3 &newInsertionPosition);
+
+
 
         ///////////////////////////////////////////////////
         // Selections
@@ -1020,6 +1054,19 @@ namespace GTEngine
         /// A counter for keeping track of when scene nodes are in the process of being deserialized. We need this so we
         /// can avoid doing certain things in the scene node events when a node is deserialized.
         int prefabDeserializingCount;
+
+
+        /// The position that objects should be inserted into the scene.
+        ///
+        /// This variable is used to make it easier for us to intelligently insert objects into the scene to make things a little more productive.
+        glm::vec3 insertionPosition;
+
+        /// The collision object we'll be using when finding an insertion point along the X/Z plane. This is a box of finite size.
+        CollisionObject insertionPlaneCollisionObject;
+
+        /// The shape to attach to the insertion plane collision shape.
+        btBoxShape insertionPlaneShape;
+
         
         
     private:    // No copying.
