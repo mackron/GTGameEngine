@@ -57,7 +57,8 @@ namespace GTEngine
           prefabLinker(scene, *this),
           pauseState(),
           navigationMeshRendererMeshes(),
-          prefabDeserializingCount(0)
+          prefabDeserializingCount(0),
+          insertionPosition(), insertionPlaneCollisionObject(), insertionPlaneShape(btVector3(32.0f, 0.0f, 32.0f))
     {
         __itt_resume();
         this->scene.SetPrefabLinker(this->prefabLinker);
@@ -165,6 +166,11 @@ namespace GTEngine
             this->DisableSceneHDR(false);
             this->DisableSceneBloom(false);
 
+
+
+            // Here we'll setup the insertion plane that'll be used for finding an insertion position on the X/Z plane.
+            this->insertionPlaneCollisionObject.setCollisionShape(&this->insertionPlaneShape);
+            this->pickingWorld.AddCollisionObject(this->insertionPlaneCollisionObject, CollisionGroups::EditorInsertionPointPlane, CollisionGroups::EditorSelectionRay);
 
 
 
@@ -873,8 +879,70 @@ namespace GTEngine
 
 
 
+    glm::vec3 SceneEditor::UpdateInsertionPositionFromMouse()
+    {
+        int mousePosX;
+        int mousePosY;
+        this->viewportEventHandler.GetMousePosition(mousePosX, mousePosY);
+
+        glm::vec3 rayStart;
+        glm::vec3 rayEnd;
+        this->scene.GetDefaultViewport().CalculatePickingRay(mousePosX, mousePosY, rayStart, rayEnd);
+
+        CollisionWorld::ClosestRayTestCallback rayTestCallback(rayStart, rayEnd);
+        rayTestCallback.m_collisionFilterGroup = CollisionGroups::EditorSelectionRay;
+        rayTestCallback.m_collisionFilterMask  = CollisionGroups::EditorSelectionVolume;
+        this->pickingWorld.RayTest(rayStart, rayEnd, rayTestCallback);
+        if (rayTestCallback.hasHit())
+        {
+            this->insertionPosition = Math::vec3_cast(rayTestCallback.m_hitPointWorld);
+        }
+        else
+        {
+            // Need to try again against the X/Y plane.
+            rayTestCallback.m_collisionFilterMask = CollisionGroups::EditorInsertionPointPlane;
+            this->pickingWorld.RayTest(rayStart, rayEnd, rayTestCallback);
+            if (rayTestCallback.hasHit())
+            {
+                this->insertionPosition = Math::vec3_cast(rayTestCallback.m_hitPointWorld);
+            }
+            else
+            {
+                // We didn't hit anything. Set the insertion position to just in front of the camera.
+                return this->UpdateInsertionPositionToInFrontOfCamera();
+            }
+        }
+
+
+        return this->insertionPosition;
+    }
+
+    glm::vec3 SceneEditor::UpdateInsertionPositionToInFrontOfCamera()
+    {
+        auto cameraNode = this->scene.GetDefaultViewport().GetCameraNode();
+        if (cameraNode != nullptr)
+        {
+            this->insertionPosition = cameraNode->GetWorldPosition() + (cameraNode->GetWorldForwardVector() * 15.0f);
+        }
+
+        return glm::vec3(0.0f, 0.0f, 0.0f);
+    }
+
+    glm::vec3 SceneEditor::GetInsertionPosition() const
+    {
+        return this->insertionPosition;
+    }
+
+    void SceneEditor::SetInsertionPosition(const glm::vec3 &newInsertionPosition)
+    {
+        this->insertionPosition = newInsertionPosition;
+    }
+
+
+
+
     ///////////////////////////////////////////////////
-    // Scene Events
+    // Selections
 
     bool SceneEditor::TryGizmoMouseSelect()
     {

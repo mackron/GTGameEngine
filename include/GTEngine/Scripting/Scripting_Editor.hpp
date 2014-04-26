@@ -276,6 +276,38 @@ namespace GTEngine
             ///     Argument 1: A pointer to the scene editor.
             int GetScenePtr(GTLib::Script &script);
 
+
+            /// Sets the insertion position.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: A math.vec3 containing the new insertion position.
+            int SetInsertionPosition(GTLib::Script &script);
+
+            /// Retrieves the insertion position.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Return: A math.vec3 containing the insertion position, in world space.
+            int GetInsertionPosition(GTLib::Script &script);
+
+            /// Updates the insertion position based on the current position of the mouse.
+            ///
+            /// @remarks
+            ///     This will perform a ray cast againt the selection volumes of every scene node, starting from the position of the mouse in the viewport. If
+            ///     nothing is hit, it will attempt a ray cast against a small section of the X/Z plane. If that is not hit, it will set the insertion position
+            ///     to just in front of the camera.
+            ///
+            ///     Argument 1: A pointer to the scene editor.
+            int UpdateInsertionPositionFromMouse(GTLib::Script &script);
+
+            /// Updates the insertion position such that it is placed just in front of the camera.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            int UpdateInsertionPositionToInFrontOfCamera(GTLib::Script &script);
+
+
             /// Deselects everything in the given scene editor.
             ///
             /// @remarks
@@ -601,6 +633,13 @@ namespace GTEngine
             ///     Argument 1: A pointer to the scene editor.
             ///     Argument 2: A pointer to the scene node.
             int PositionSceneNodeInFrontOfCamera(GTLib::Script &script);
+
+            /// Sets the position of the given scene node to the current insertion position of the camera.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Argument 2: A pointer to the scene node.
+            int SetSceneNodePositionToInsertionPosition(GTLib::Script &script);
 
             /// Sets the transform of the given scene node to that of the camera.
             ///

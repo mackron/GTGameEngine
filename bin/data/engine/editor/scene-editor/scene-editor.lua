@@ -639,6 +639,30 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
         return GTEngine.System.SceneEditor.GetScenePtr();
     end
     
+    
+    -- Insertion positions.
+    function sceneEditor:CalculateInsertionPointFromMouse()
+        return GTEngine.System.SceneEditor.CalculateInsertionPointFromMouse(self._internalPtr);
+    end
+    
+    function sceneEditor:SetInsertionPosition(newInsertionPosition)
+        return GTEngine.System.SceneEditor.SetInsertionPosition(self._internalPtr, newInsertionPosition);
+    end
+    
+    function sceneEditor:GetInsertionPosition()
+        return GTEngine.System.SceneEditor.GetInsertionPosition(self._internalPtr);
+    end
+    
+    function sceneEditor:UpdateInsertionPositionFromMouse()
+        return GTEngine.System.SceneEditor.UpdateInsertionPositionFromMouse(self._internalPtr);
+    end
+    
+    function sceneEditor:UpdateInsertionPositionToInFrontOfCamera()
+        return GTEngine.System.SceneEditor.UpdateInsertionPositionToInFrontOfCamera(self._internalPtr);
+    end
+    
+    
+    
     function sceneEditor:DeselectAll()
         GTEngine.System.SceneEditor.DeselectAll(self._internalPtr);
     end
@@ -871,6 +895,14 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
     
         if sceneNodePtr ~= nil then
             GTEngine.System.SceneEditor.PositionSceneNodeInFrontOfCamera(self._internalPtr, sceneNodePtr);
+        end
+    end
+    
+    function sceneEditor:SetSceneNodePositionToInsertionPosition(sceneNode)
+        local sceneNodePtr = self:GetSceneNodePtr(sceneNode);
+        
+        if sceneNodePtr ~= nil then
+            GTEngine.System.SceneEditor.SetSceneNodePositionToInsertionPosition(self._internalPtr, sceneNodePtr);
         end
     end
     

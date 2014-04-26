@@ -20,10 +20,10 @@ namespace GTEngine
         static const short ParticleSystem = (1 << 5);       ///< The collision object represents a particle system.
 
 
-        
-        static const short EditorGizmo           = (1 << 12);
-        static const short EditorSelectionVolume = (1 << 13);
-        static const short EditorSelectionRay    = (1 << 14);
+        static const short EditorInsertionPointPlane = (1 << 11);
+        static const short EditorGizmo               = (1 << 12);
+        static const short EditorSelectionVolume     = (1 << 13);
+        static const short EditorSelectionRay        = (1 << 14);
     }
 }
 
