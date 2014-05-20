@@ -62,41 +62,51 @@ namespace GTEngine
 
         AssetType GetAssetTypeFromExtension(const char* fileName)
         {
-            if (IsSupportedImageExtension(fileName))
+            // If the path is a directory instead of a file, we need to return AssetType_None.
+            if (GTLib::Strings::IsNullOrEmpty(GTLib::IO::FileName(fileName)))
             {
-                return AssetType_Image;
-            }
-            else if (IsSupportedModelExtension(fileName))
-            {
-                return AssetType_Model;
-            }
-            else if (IsSupportedMaterialExtension(fileName))
-            {
-                return AssetType_Material;
-            }
-            else if (IsSupportedSoundExtension(fileName))
-            {
-                return AssetType_Sound;
-            }
-            else if (IsSupportedParticleSystemExtension(fileName))
-            {
-                return AssetType_ParticleSystem;
-            }
-            else if (IsSupportedSceneExtension(fileName))
-            {
-                return AssetType_Scene;
-            }
-            else if (IsSupportedPrefabExtension(fileName))
-            {
-                return AssetType_Prefab;
-            }
-            else if (IsSupportedScriptExtension(fileName))
-            {
-                return AssetType_Script;
+                return AssetType_None;
             }
             else
             {
-                return AssetType_TextFile;
+                if (IsSupportedImageExtension(fileName))
+                {
+                    return AssetType_Image;
+                }
+                else if (IsSupportedModelExtension(fileName))
+                {
+                    return AssetType_Model;
+                }
+                else if (IsSupportedMaterialExtension(fileName))
+                {
+                    return AssetType_Material;
+                }
+                else if (IsSupportedSoundExtension(fileName))
+                {
+                    return AssetType_Sound;
+                }
+                else if (IsSupportedParticleSystemExtension(fileName))
+                {
+                    return AssetType_ParticleSystem;
+                }
+                else if (IsSupportedSceneExtension(fileName))
+                {
+                    return AssetType_Scene;
+                }
+                else if (IsSupportedPrefabExtension(fileName))
+                {
+                    return AssetType_Prefab;
+                }
+                else if (IsSupportedScriptExtension(fileName))
+                {
+                    return AssetType_Script;
+                }
+                else
+                {
+                    // If we don't have an extension, check that we actually have a file.
+
+                    return AssetType_TextFile;
+                }
             }
         }
 
