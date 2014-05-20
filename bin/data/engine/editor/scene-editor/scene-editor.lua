@@ -19,7 +19,7 @@ function GTGUI.Element:CollisionShapePanel(title, hideOffset)
     
     
     self.DeleteButton:OnPressed(function()
-        self:OnDelete();
+        self:OnDeleteButtonPressed();
     end);
     
     
@@ -44,8 +44,8 @@ function GTGUI.Element:CollisionShapePanel(title, hideOffset)
     
 
 
-    function self:OnDelete(arg1)
-        self.Callbacks:BindOrCall("OnDelete", arg1);
+    function self:OnDeleteButtonPressed(arg1)
+        self.Callbacks:BindOrCall("OnDeleteButtonPressed", arg1);
     end
     
     function self:OnOffsetChanged(arg1)
@@ -488,55 +488,55 @@ function GTGUI.Element:CollisionShapesPanel()
                     if     shape.type == GTEngine.CollisionShapeTypes.Box              then
                         panel:CollisionShapePanel_Box():Update(shape);
                         panel:OnExtentsChanged(function(data)
-                            self.Component:SetBoxCollisionShapeHalfExtents(i, data.x * 0.5, data.y * 0.5, data.z * 0.5);
+                            self.Component:SetBoxCollisionShapeHalfExtents(self:GetShapePanelIndex(panel), data.x * 0.5, data.y * 0.5, data.z * 0.5);
                             self:OnShapesChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.Sphere           then
                         panel:CollisionShapePanel_Sphere():Update(shape);
                         panel:OnRadiusChanged(function(data)
-                            self.Component:SetSphereCollisionShapeRadius(i, data.radius);
+                            self.Component:SetSphereCollisionShapeRadius(self:GetShapePanelIndex(panel), data.radius);
                             self:OnShapesChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.Ellipsoid        then
                         panel:CollisionShapePanel_Ellipsoid():Update(shape);
                         panel:OnRadiusChanged(function(data)
-                            self.Component:SetEllipsoidCollisionShapeRadius(i, data.x, data.y, data.z);
+                            self.Component:SetEllipsoidCollisionShapeRadius(self:GetShapePanelIndex(panel), data.x, data.y, data.z);
                             self:OnShapesChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CylinderX        then
                         panel:CollisionShapePanel_CylinderX():Update(shape);
                         panel:OnSizeChanged(function(data)
-                            self.Component:SetCylinderCollisionShapeSize(i, data.radius, data.length);
+                            self.Component:SetCylinderCollisionShapeSize(self:GetShapePanelIndex(panel), data.radius, data.length);
                             self:OnShapesChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CylinderY        then
                         panel:CollisionShapePanel_CylinderY():Update(shape);
                         panel:OnSizeChanged(function(data)
-                            self.Component:SetCylinderCollisionShapeSize(i, data.radius, data.length);
+                            self.Component:SetCylinderCollisionShapeSize(self:GetShapePanelIndex(panel), data.radius, data.length);
                             self:OnShapesChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CylinderZ        then
                         panel:CollisionShapePanel_CylinderZ():Update(shape);
                         panel:OnSizeChanged(function(data)
-                            self.Component:SetCylinderCollisionShapeSize(i, data.radius, data.length);
+                            self.Component:SetCylinderCollisionShapeSize(self:GetShapePanelIndex(panel), data.radius, data.length);
                             self:OnShapesChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CapsuleX         then
                         panel:CollisionShapePanel_CapsuleX():Update(shape);
                         panel:OnSizeChanged(function(data)
-                            self.Component:SetCapsuleCollisionShapeSize(i, data.radius, data.height);
+                            self.Component:SetCapsuleCollisionShapeSize(self:GetShapePanelIndex(panel), data.radius, data.height);
                             self:OnShapesChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CapsuleY         then
                         panel:CollisionShapePanel_CapsuleY():Update(shape);
                         panel:OnSizeChanged(function(data)
-                            self.Component:SetCapsuleCollisionShapeSize(i, data.radius, data.height);
+                            self.Component:SetCapsuleCollisionShapeSize(self:GetShapePanelIndex(panel), data.radius, data.height);
                             self:OnShapesChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.CapsuleZ         then
                         panel:CollisionShapePanel_CapsuleZ():Update(shape);
                         panel:OnSizeChanged(function(data)
-                            self.Component:SetCapsuleCollisionShapeSize(i, data.radius, data.height);
+                            self.Component:SetCapsuleCollisionShapeSize(self:GetShapePanelIndex(panel), data.radius, data.height);
                             self:OnShapesChanged();
                         end);
                     elseif shape.type == GTEngine.CollisionShapeTypes.ConvexHull       then
@@ -544,20 +544,19 @@ function GTGUI.Element:CollisionShapesPanel()
                     elseif shape.type == GTEngine.CollisionShapeTypes.ModelConvexHulls then
                         panel:CollisionShapePanel_ModelConvexHulls():Update(shape);
                         panel:OnSizeChanged(function(data)
-                            self.Component:SetModelConvexHullsMargins(i, data.margin);
+                            self.Component:SetModelConvexHullsMargins(self:GetShapePanelIndex(panel), data.margin);
                             self:OnShapesChanged();
                         end);
                     end
                 
-                    panel:OnDelete(function()
-                        self.Component:RemoveCollisionShapeAtIndex(i);
-                        self:Update(self.Component);
+                    panel:OnDeleteButtonPressed(function()
+                        self:RemoveCollisionShapeAtIndex(self:GetShapePanelIndex(panel));
                         self:OnShapesChanged();
                     end);
                     
                     panel:OnOffsetChanged(function(data)
                         if not self.IsUpdating then
-                            self.Component:SetCollisionShapeOffset(i, data.x, data.y, data.z);
+                            self.Component:SetCollisionShapeOffset(self:GetShapePanelIndex(panel), data.x, data.y, data.z);
                             self:OnShapesChanged();
                         end
                     end);
@@ -595,6 +594,25 @@ function GTGUI.Element:CollisionShapesPanel()
         
         self.CollisionShapePanels = {};
     end
+    
+    
+    function self:RemoveCollisionShapeAtIndex(panelIndex)
+        -- Remove the collision shape from the scene node itself.
+        self.Component:RemoveCollisionShapeAtIndex(panelIndex);
+        
+        -- Delete the GUI element.
+        GTGUI.Server.DeleteElement(self.CollisionShapePanels[panelIndex]);
+        
+        -- Remove the panel from our panels list.
+        table.remove(self.CollisionShapePanels, panelIndex);
+    end
+    
+    
+    function self:GetShapePanelIndex(shapePanel)
+        return table.indexof(self.CollisionShapePanels, shapePanel);
+    end
+    
+    
     
     
     -- Event called when the collision group has changed.
