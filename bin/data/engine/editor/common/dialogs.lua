@@ -233,8 +233,12 @@ function Editor.ShowNewFileDialog(titleText, destinationDir, extension, callback
     NewFileDialog_Create.Callback = callback;
     NewFileDialog_Cancel.Callback = callback;
     
+    NewFileDialog_Create:Disable();
+    NewFileDialog_StatusTextBox:SetText("");
+    
     NewFileDialog.DestinationDirectory = destinationDir;
     NewFileDialog.Extension            = extension;
+    
     
     NewFileDialog:Show();
 end
