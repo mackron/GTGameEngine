@@ -252,6 +252,13 @@ namespace GTEngine
                 ModelDefinition::Mesh newMesh;
                 newMesh.name = mesh->mName.C_Str();
 
+                // If the mesh has no name we will give it a default one.
+                if (newMesh.name.IsEmpty())
+                {
+                    newMesh.name = GTLib::String::CreateFormatted("Mesh_%d", iMesh);
+                }
+
+
                 newMesh.geometry = Renderer::CreateVertexArray(VertexArrayUsage_Static, vertexFormat);
                 newMesh.geometry->SetData(nullptr, mesh->mNumVertices, nullptr, mesh->mNumFaces * 3);
 
