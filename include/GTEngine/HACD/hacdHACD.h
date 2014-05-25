@@ -1,15 +1,15 @@
 /* Copyright (c) 2011 Khaled Mamou (kmamou at gmail dot com)
  All rights reserved.
- 
- 
+
+
  Redistribution and use in source and binary forms, with or without modification, are permitted provided that the following conditions are met:
- 
+
  1. Redistributions of source code must retain the above copyright notice, this list of conditions and the following disclaimer.
- 
+
  2. Redistributions in binary form must reproduce the above copyright notice, this list of conditions and the following disclaimer in the documentation and/or other materials provided with the distribution.
- 
+
  3. The names of the contributors may not be used to endorse or promote products derived from this software without specific prior written permission.
- 
+
  THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  */
 #pragma once
@@ -36,17 +36,17 @@ namespace HACD
 	class HACD;
 
 	// just to be able to set the capcity of the container
-	
+
 	template<class _Ty, class _Container = std::vector<_Ty>, class _Pr = std::less<typename _Container::value_type> >
-	class reservable_priority_queue: public std::priority_queue<_Ty, _Container, _Pr> 
+	class reservable_priority_queue: public std::priority_queue<_Ty, _Container, _Pr>
 	{
         typedef typename std::priority_queue<_Ty, _Container, _Pr>::size_type size_type;
 	public:
                                                     reservable_priority_queue(size_type capacity = 0) { reserve(capacity); };
-		void										reserve(size_type capacity) { this->c.reserve(capacity); } 
-        size_type									capacity() const { return this->c.capacity(); } 
+		void										reserve(size_type capacity) { this->c.reserve(capacity); }
+        size_type									capacity() const { return this->c.capacity(); }
 	};
-	
+
 	//! priority queque element
 	class HACD;
     class GraphEdgePriorityQueue
@@ -83,7 +83,7 @@ namespace HACD
 
 	//! Provides an implementation of the Hierarchical Approximate Convex Decomposition (HACD) technique described in "A Simple and Efficient Approach for 3D Mesh Approximate Convex Decomposition" Game Programming Gems 8 - Chapter 2.8, p.202. A short version of the chapter was published in ICIP09 and is available at ftp://ftp.elet.polimi.it/users/Stefano.Tubaro/ICIP_USB_Proceedings_v2/pdfs/0003501.pdf
     class HACD
-	{            
+	{
     public:
 		//! Gives the targeted number of triangles of the decimated mesh
 		//! @return targeted number of triangles of the decimated mesh
@@ -112,7 +112,7 @@ namespace HACD
 		//! Gives the call-back function
 		//! @return pointer to the call-back function
 		CallBackFunction                            GetCallBack() const { return m_callBack;}
-        
+
         //! Specifies whether faces points should be added when computing the concavity
 		//! @param addFacesPoints true = faces points should be added
 		void										SetAddFacesPoints(bool  addFacesPoints) { m_addFacesPoints = addFacesPoints;}
@@ -129,14 +129,14 @@ namespace HACD
 		//! @param points pointer to the input points
 		void										SetPoints(Vec3<Real>  * points) { m_points = points;}
 		//! Gives the points of the input mesh (Remark: the input points will be scaled and shifted. Use DenormalizeData() to invert those operations)
-		//! @return pointer to the input points 
+		//! @return pointer to the input points
 		const Vec3<Real> *                          GetPoints() const { return m_points;}
 		//! Gives the points of the decimated mesh
-		//! @return pointer to the decimated mesh points 
+		//! @return pointer to the decimated mesh points
 		const Vec3<Real> *                          GetDecimatedPoints() const { return m_pointsDecimated;}
-		//! Gives the triangles in the decimated mesh 
-		//! @return pointer to the decimated mesh triangles 
-		const Vec3<long>   *			            GetDecimatedTriangles() const { return m_trianglesDecimated;}        
+		//! Gives the triangles in the decimated mesh
+		//! @return pointer to the decimated mesh triangles
+		const Vec3<long>   *			            GetDecimatedTriangles() const { return m_trianglesDecimated;}
 		//! Gives the number of points in the decimated mesh.
 		//! @return number of points the decimated mesh mesh
 		size_t					        			GetNDecimatedPoints() const { return m_nPointsDecimated;}
@@ -146,8 +146,8 @@ namespace HACD
 		//! Sets the triangles of the input mesh.
 		//! @param triangles points pointer to the input points
 		void										SetTriangles(Vec3<long>  * triangles) { m_triangles = triangles;}
-		//! Gives the triangles in the input mesh 
-		//! @return pointer to the input triangles 
+		//! Gives the triangles in the input mesh
+		//! @return pointer to the input triangles
 		const Vec3<long>   *			            GetTriangles() const { return m_triangles;}
 		//! Sets the number of points in the input mesh.
 		//! @param nPoints number of points the input mesh
@@ -178,19 +178,19 @@ namespace HACD
 		void										SetConnectDist(double ccConnectDist) { m_ccConnectDist = ccConnectDist;}
 		//! Gives the maximum allowed distance to get CCs connected.
 		//! @return maximum distance to get CCs connected
-		double                                      GetConnectDist() const { return m_ccConnectDist;}        
+		double                                      GetConnectDist() const { return m_ccConnectDist;}
         //! Sets the volume weight.
 		//! @param beta volume weight
         void										SetVolumeWeight(double beta) { m_beta = beta;}
 		//! Gives the volume weight.
 		//! @return volume weight
-        double                                      GetVolumeWeight() const { return m_beta;}	
+        double                                      GetVolumeWeight() const { return m_beta;}
 		//! Sets the compacity weight (i.e. parameter alpha in ftp://ftp.elet.polimi.it/users/Stefano.Tubaro/ICIP_USB_Proceedings_v2/pdfs/0003501.pdf).
 		//! @param alpha compacity weight
         void										SetCompacityWeight(double alpha) { m_alpha = alpha;}
 		//! Gives the compacity weight (i.e. parameter alpha in ftp://ftp.elet.polimi.it/users/Stefano.Tubaro/ICIP_USB_Proceedings_v2/pdfs/0003501.pdf).
 		//! @return compacity weight
-        double                                      GetCompacityWeight() const { return m_alpha;}	
+        double                                      GetCompacityWeight() const { return m_alpha;}
 		//! Sets the maximum number of vertices for each generated convex-hull.
 		//! @param nVerticesPerCH maximum # vertices per CH
         void										SetNVerticesPerCH(size_t nVerticesPerCH) { m_nVerticesPerCH = nVerticesPerCH;}
@@ -209,7 +209,7 @@ namespace HACD
 		//! @param points pointer to the vector of points to be filled
 		//! @param triangles pointer to the vector of triangles to be filled
 		//! @return true if sucess
-        bool                                        GetCH(size_t numCH, Vec3<Real> * const points, Vec3<long> * const triangles);     
+        bool                                        GetCH(size_t numCH, Vec3<Real> * const points, Vec3<long> * const triangles);
 		//! Computes the HACD decomposition.
 		//! @param fullCH specifies whether to generate convex-hulls with a full or limited (i.e. < m_nVerticesPerCH) number of vertices
         //! @param exportDistPoints specifies wheter distance points should ne exported or not (used only for debugging).
@@ -236,23 +236,23 @@ namespace HACD
 		//! @param a first vertex id
 		//! @param b second vertex id
 		//! @return edge's index
-		static unsigned long long					GetEdgeIndex(unsigned long long a, unsigned long long b) 
-													{ 
+		static unsigned long long					GetEdgeIndex(unsigned long long a, unsigned long long b)
+													{
 														if (a > b) return (a << 32) + b;
 														else	   return (b << 32) + a;
 													}
 		//! Computes the concavity of a cluster.
 		//! @param ch the cluster's convex-hull
-		//! @param distPoints the cluster's points 
+		//! @param distPoints the cluster's points
 		//! @return cluster's concavity
 		double										Concavity(ICHull & ch, std::map<long, DPoint> & distPoints);
 		//! Computes the perimeter of a cluster.
 		//! @param triIndices the cluster's triangles
-		//! @param distPoints the cluster's points 
+		//! @param distPoints the cluster's points
 		//! @return cluster's perimeter
         double										ComputePerimeter(const std::vector<long> & triIndices) const;
 		//! Creates the Graph by associating to each mesh triangle a vertex in the graph and to each couple of adjacent triangles an edge in the graph.
-        void										CreateGraph();	
+        void										CreateGraph();
 		//! Initializes the graph costs and computes the vertices normals
         void										InitializeDualGraph();
 		//! Computes the cost of an edge
@@ -302,7 +302,7 @@ namespace HACD
         ICHull *                                    m_convexHulls;				//>! convex-hulls associated with the final HACD clusters
 		Graph										m_graph;					//>! simplification graph
         size_t                                      m_nVerticesPerCH;			//>! maximum number of vertices per convex-hull
-		reservable_priority_queue<GraphEdgePriorityQueue, 
+		reservable_priority_queue<GraphEdgePriorityQueue,
             std::vector<GraphEdgePriorityQueue>,
 			std::greater<std::vector<GraphEdgePriorityQueue>::value_type> > m_pqueue;		//!> priority queue
 													HACD(const HACD & rhs);
@@ -313,15 +313,15 @@ namespace HACD
         bool                                        m_addFacesPoints;           //>! specifies whether to add faces points or not
         bool                                        m_addExtraDistPoints;       //>! specifies whether to add extra points for concave shapes or not
 
-        friend HACD *                               CreateHACD(HeapManager * heapManager = 0);
+        friend HACD *                               CreateHACD(HeapManager * heapManager);
         friend void                                 DestroyHACD(HACD * const hacd);
 	};
-    inline HACD * CreateHACD(HeapManager * heapManager) 
-    { 
+    inline HACD * CreateHACD(HeapManager * heapManager)
+    {
         return new HACD(heapManager);
     }
-    inline void DestroyHACD(HACD * const hacd) 
-    { 
+    inline void DestroyHACD(HACD * const hacd)
+    {
         delete hacd;
     }
 }
