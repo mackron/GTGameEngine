@@ -136,6 +136,10 @@ function GTGUI.Element:DataExplorer()
         
         if text == nil then
             text = GTCore.IO.GetFileNameFromPath(fileInfo.absolutePath);
+            
+            if GTCore.IO.GetExtension(text) == "gtmodel" then
+                text = GTCore.IO.RemoveExtension(text);
+            end
         end
         
         local item = self.TreeView:AddItem(text, parentItem);
@@ -370,8 +374,9 @@ function GTGUI.Element:DataExplorer()
             -- the .gtmodel extension, leaving only the base name. Then, we check if a file of that new name already exists. If so, we just ignore everything,
             -- otherwise we add a file with that base name.
             if GTCore.IO.GetExtension(fileInfo.absolutePath) == "gtmodel" then
-                fileInfo.absolutePath = GTCore.IO.RemoveExtension(fileInfo.absolutePath);
-                if GTCore.IO.FileExists(fileInfo.absolutePath) then
+                local baseFileAbsolutePath = GTCore.IO.RemoveExtension(fileInfo.absolutePath);
+                if GTCore.IO.FileExists(baseFileAbsolutePath) then
+                    fileInfo.absolutePath = baseFileAbsolutePath;
                     return;
                 end
             end
