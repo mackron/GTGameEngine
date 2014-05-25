@@ -232,7 +232,7 @@ namespace GTEngine
 namespace GTEngine
 {
     const bool UseRelativePositioning = true;
-    const bool UseAbsolutePositioning = false;
+    //const bool UseAbsolutePositioning = false;
 
 
     bool AudioComposer::Play(const char* fileName)

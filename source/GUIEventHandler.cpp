@@ -33,18 +33,9 @@ namespace GTEngine
 
     void GUIEventHandler::OnChangeCursor(GTLib::Cursor cursor)
     {
-        switch (cursor)
+        if (cursor != GTLib::Cursor_None)
         {
-        case GTLib::Cursor_None:
-            {
-                break;
-            }
-
-        default:
-            {
-                game.GetWindow()->SetCursor(cursor);
-                break;
-            }
+            game.GetWindow()->SetCursor(cursor);
         }
 
 #if 0

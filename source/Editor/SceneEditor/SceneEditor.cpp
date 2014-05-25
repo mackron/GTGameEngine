@@ -12,7 +12,7 @@
 #include <GTLib/Deserializer.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/String.hpp>
-#include <ittnotify.h>
+//#include <ittnotify.h>
 
 #undef min
 #undef max
@@ -60,7 +60,7 @@ namespace GTEngine
           prefabDeserializingCount(0),
           insertionPosition(), insertionPlaneCollisionObject(), insertionPlaneShape(btVector3(32.0f, 0.0f, 32.0f))
     {
-        __itt_resume();
+        //__itt_resume();
         this->scene.SetPrefabLinker(this->prefabLinker);
 
         this->scene.SetDefaultViewportCamera(this->camera);
@@ -194,7 +194,7 @@ namespace GTEngine
             // The scene will be done loading by this pointer, so we can close the file.
             GTLib::IO::Close(file);
         }
-        __itt_pause();
+        //__itt_pause();
     }
 
     SceneEditor::~SceneEditor()
@@ -259,8 +259,8 @@ namespace GTEngine
                 // We need to set the event filter
                 this->eventFilterBeforePlaying = this->GetGame().GetEventFilter();
                 this->GetGame().SetEventFilter(this->playbackEventFilter);
-                
-                
+
+
                 // We want to restore the selected nodes when we stop playing.
                 this->selectedNodesBeforePlaying = this->selectedNodes;
 
@@ -353,7 +353,7 @@ namespace GTEngine
                 this->physicsManager.ActivateAllRigidBodies();
             }
 
-            
+
             // The playback state should be set after everything has changed. The state will be set to 'Transitioning' during the transition phase.
             this->playbackState = PlaybackState_Playing;
 
@@ -392,7 +392,7 @@ namespace GTEngine
 
     void SceneEditor::StopPlaying()
     {
-        __itt_resume();
+        //__itt_resume();
         if (this->IsPlaying() || this->IsPaused())
         {
             this->playbackState = PlaybackState_Transitioning;
@@ -476,7 +476,7 @@ namespace GTEngine
             this->isUpdatingFromStateStack = false;
             this->UnlockParentChangedEvents();
         }
-        __itt_pause();
+        //__itt_pause();
     }
 
     bool SceneEditor::IsPlaying() const
@@ -1641,18 +1641,18 @@ namespace GTEngine
             this->prefabLinker.UnlinkSceneNodeFromPrefab(sceneNode, false);
         }
     }
-    
+
     void SceneEditor::OnPrefabDeserializeStart(SceneNode &)
     {
         this->prefabDeserializingCount += 1;
     }
-    
+
     void SceneEditor::OnPrefabDeserializeEnd(SceneNode &)
     {
         assert(this->prefabDeserializingCount > 0);
         this->prefabDeserializingCount -= 1;
     }
-    
+
     bool SceneEditor::IsPrefabDeserializing() const
     {
         assert(this->prefabDeserializingCount >= 0);
@@ -1921,7 +1921,7 @@ namespace GTEngine
     {
         // We need to let the scripting environment know about this change.
         this->PostOnSceneNodeNameChangedToScript(node);
-        
+
         if (this->IsPrefabUpdateAllowed())
         {
             this->UpdateSceneNodesPrefabIfNotRoot(node);
@@ -2064,8 +2064,8 @@ namespace GTEngine
                 }
             }
         }
-        
-        
+
+
         // The prefab may need to be updated.
         if (this->IsPrefabUpdateAllowed())
         {
@@ -2116,8 +2116,8 @@ namespace GTEngine
                 }
             }
         }
-        
-        
+
+
         // The prefab may need to be updated.
         if (this->IsPrefabUpdateAllowed())
         {
@@ -2178,8 +2178,8 @@ namespace GTEngine
                         }
                     }
                 }
-                
-                
+
+
                 // If the scene node is linked to a prefab, that prefab needs to be updated.
                 if (this->IsPrefabUpdateAllowed())
                 {
@@ -2234,8 +2234,8 @@ namespace GTEngine
                             this->scene.GetRenderer().RemoveExternalMesh(metadata->GetProximityShapeMesh());
                         }
                     }
-                    
-                    
+
+
                     // The prefab needs to be updated.
                     if (this->IsPrefabUpdateAllowed())
                     {
@@ -2358,7 +2358,7 @@ namespace GTEngine
                         metadata->MarkProximityShapeMeshAsDirty();
                     }
                 }
-                
+
                 // The prefab needs to be updated.
                 if (this->IsPrefabUpdateAllowed())
                 {
@@ -2679,8 +2679,8 @@ namespace GTEngine
             {
                 this->CommitStateStackFrame();
                 this->transformedObjectWithGizmo = false;
-                
-                
+
+
                 if (this->IsPrefabUpdateAllowed())
                 {
                     for (size_t i = 0; i < selectedNodes.count; ++i)
@@ -3681,8 +3681,8 @@ namespace GTEngine
             }
         }
     }
-    
-    
+
+
     void SceneEditor::UpdateSceneNodesPrefab(SceneNode &sceneNode)
     {
         auto prefabComponent = sceneNode.GetComponent<PrefabComponent>();
@@ -3691,7 +3691,7 @@ namespace GTEngine
             this->CreatePrefab(prefabComponent->GetPrefabRelativePath(), nullptr, prefabComponent->GetRootSceneNode());
         }
     }
-    
+
     void SceneEditor::UpdateSceneNodesPrefabIfNotRoot(SceneNode &sceneNode)
     {
         auto prefabComponent = sceneNode.GetComponent<PrefabComponent>();

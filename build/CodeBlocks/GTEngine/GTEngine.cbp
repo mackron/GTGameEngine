@@ -4,7 +4,7 @@
 	<Project>
 		<Option title="GTEngine" />
 		<Option pch_mode="2" />
-		<Option compiler="mingww64" />
+		<Option compiler="clang" />
 		<Build>
 			<Target title="debug-windows-gcc">
 				<Option platforms="Windows;" />
@@ -12,7 +12,7 @@
 				<Option working_dir="" />
 				<Option object_output="obj/debug-windows-gcc/" />
 				<Option type="2" />
-				<Option compiler="mingww64" />
+				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-Wall" />
@@ -25,7 +25,7 @@
 				<Option working_dir="" />
 				<Option object_output="obj/release-windows-gcc/" />
 				<Option type="2" />
-				<Option compiler="mingww64" />
+				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-O2" />
@@ -41,7 +41,7 @@
 				<Option working_dir="" />
 				<Option object_output="obj/debug-linux-gcc/" />
 				<Option type="2" />
-				<Option compiler="gcc" />
+				<Option compiler="clang" />
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-Wall" />
@@ -59,7 +59,7 @@
 				<Option working_dir="" />
 				<Option object_output="obj/release-linux-gcc/" />
 				<Option type="2" />
-				<Option compiler="gcc" />
+				<Option compiler="clang" />
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-O2" />
@@ -109,6 +109,7 @@
 		<Compiler>
 			<Add option="-march=core2" />
 			<Add option="-DTARGET_OS_MAC=0" />
+			<Add directory="../../../include" />
 		</Compiler>
 		<Unit filename="../../../include/GTEngine/AABB.hpp" />
 		<Unit filename="../../../include/GTEngine/Animation/Animation.hpp" />
