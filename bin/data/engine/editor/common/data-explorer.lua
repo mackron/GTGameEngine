@@ -115,8 +115,29 @@ function GTGUI.Element:DataExplorer()
     self.FileMenu:AppendItem("Delete..."):OnPressed(function()
         Editor.ShowYesNoDialog("Are you sure you want to delete '" .. self.FileMenu.DestinationRelativePath .. "'?", function(result)
             if result == Editor.YesNoDialogResult.Yes then
-                Editor.ForceCloseFile(self.FileMenu.DestinationAbsolutePath);
-                GTCore.IO.DeleteFile(self.FileMenu.DestinationAbsolutePath);
+                local absolutePathToDelete = self.FileMenu.DestinationAbsolutePath;
+            
+                Editor.ForceCloseFile(absolutePathToDelete);
+                GTCore.IO.DeleteFile(absolutePathToDelete);
+                
+                -- If the file was a model, we need to look for a corresponding .gtmodel file. Also, if the file is a .gtmodel, we need to remove
+                -- the extension and also try deleted the base file.
+                if GTEngine.IsModelFile(absolutePathToDelete) then
+                    if GTCore.IO.GetExtension(absolutePathToDelete) == "gtmodel" then
+                        -- The file is a .gtmodel file. We need to remove the extension and delete the base file if it exists.
+                        absolutePathToDelete = GTCore.IO.RemoveExtension(absolutePathToDelete);
+                        if GTCore.IO.FileExists(absolutePathToDelete) then
+                            GTCore.IO.DeleteFile(absolutePathToDelete);
+                        end
+                    else
+                        -- The file is not a .gtmodel file. We need to append the .gtmodel extension and try deleting that file, too.
+                        absolutePathToDelete = absolutePathToDelete .. ".gtmodel";
+                        if GTCore.IO.FileExists(absolutePathToDelete) then
+                            GTCore.IO.DeleteFile(absolutePathToDelete);
+                        end
+                    end
+                end
+                
                 Game.ScanDataFilesForChanges();
             end
         end);
