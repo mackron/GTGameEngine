@@ -41,7 +41,7 @@
 				<Option working_dir="" />
 				<Option object_output="obj/debug-linux-gcc/" />
 				<Option type="2" />
-				<Option compiler="clang" />
+				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-Wall" />
@@ -59,7 +59,7 @@
 				<Option working_dir="" />
 				<Option object_output="obj/release-linux-gcc/" />
 				<Option type="2" />
-				<Option compiler="clang" />
+				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
 					<Add option="-O2" />
