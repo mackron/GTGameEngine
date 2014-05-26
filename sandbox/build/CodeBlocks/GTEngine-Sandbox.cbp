@@ -25,10 +25,9 @@
 					<Add library="LinearMath-x64" />
 					<Add library="OpenAL64" />
 					<Add library="assimp-x64" />
-					<Add library="freetype-x64" />
 					<Add library="png-x64" />
-					<Add library="z-x64" />
-					<Add library="lua-x64" />
+					<Add library="zlibstatic-x64" />
+					<Add library="lua51-x64" />
 					<Add library="pcre-x64" />
 					<Add library="Gdi32" />
 					<Add library="winmm" />
@@ -62,10 +61,9 @@
 					<Add library="LinearMath-x64" />
 					<Add library="OpenAL64" />
 					<Add library="assimp-x64" />
-					<Add library="freetype-x64" />
 					<Add library="png-x64" />
-					<Add library="z-x64" />
-					<Add library="lua-x64" />
+					<Add library="zlibstatic-x64" />
+					<Add library="lua51-x64" />
 					<Add library="pcre-x64" />
 					<Add library="Gdi32" />
 					<Add library="winmm" />
