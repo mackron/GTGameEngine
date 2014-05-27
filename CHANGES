@@ -2,7 +2,7 @@
 - Changelog
 -------------------------------------------------------------------------------
 
-0.0.3 ()
+0.0.3 (May 28th, 2014)
 
 BREAKING CHANGES:
     - None
@@ -11,7 +11,7 @@ BREAKING CHANGES:
 FEATURES:
     - Added an OpenGL 2.1 renderer and dropped the OpenGL 3.3 one. The plan for
       the future is to have a "legacy" renderer which is OpenGL 2.1 and a
-      "default" renderer which is OpenGL 4.4 based. OpenGL 3.3 does not add
+      "default" renderer which is OpenGL 4.x based. OpenGL 3.3 does not add
       anything worth justifying it's own code path.
     - Added the ability to control whether or not mouse smoothing is enabled.
     - Added the ability to set the shape of dynamics and proximity components
@@ -59,6 +59,8 @@ FIXES/IMPROVEMENTS:
     - Fixed an issue where keys were not correctly released when the game
       window lost focus. This would cause issues where it appeared as though
       keys would get stuck.
+    - Fixed an issue where a mesh could be assigned a blank name.
+    - Fixed a bug with the "New File" dialog in the editor.
     - Sounds now use the search paths when loading.
     - Back faces are no longer selected in the scene editor.
     - Detaching a scene node from it's prefab now creates an undo/redo point.
@@ -74,6 +76,8 @@ FIXES/IMPROVEMENTS:
         - Changed the default mesh for cubes to default.dae.
     - When creating an asset from inside the editor, it will be expanded and
       selected in the data explorer.
+    - Scene nodes are more intelligently placed when adding them from the
+      right-click menu.
     - More work on documentation
         - Tips, Tricks and Quirks
         - GUI Styling
