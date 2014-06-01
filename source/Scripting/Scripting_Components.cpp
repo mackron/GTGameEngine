@@ -819,8 +819,8 @@ namespace GTEngine
                 "    GTEngine.System.ScriptComponent.ReloadScript(self._internalPtr, index, newRelativePath);"
                 "end;"
 
-                "function GTEngine.ScriptComponent:GetScriptFilePaths()"
-                "    return GTEngine.System.ScriptComponent.GetScriptFilePaths(self._internalPtr);"
+                "function GTEngine.ScriptComponent:GetScriptRelativeFilePaths()"
+                "    return GTEngine.System.ScriptComponent.GetScriptRelativeFilePaths(self._internalPtr);"
                 "end;"
 
                 "function GTEngine.ScriptComponent:IsUsingScript(relativePath)"
@@ -1237,7 +1237,7 @@ namespace GTEngine
                             script.SetTableFunction(-1, "RemoveScriptByRelativePath",               ScriptComponentFFI::RemoveScriptByRelativePath);
                             script.SetTableFunction(-1, "RemoveScriptByIndex",                      ScriptComponentFFI::RemoveScriptByIndex);
                             script.SetTableFunction(-1, "ReloadScript",                             ScriptComponentFFI::ReloadScript);
-                            script.SetTableFunction(-1, "GetScriptFilePaths",                       ScriptComponentFFI::GetScriptFilePaths);
+                            script.SetTableFunction(-1, "GetScriptRelativeFilePaths",               ScriptComponentFFI::GetScriptRelativeFilePaths);
                             script.SetTableFunction(-1, "IsUsingScript",                            ScriptComponentFFI::IsUsingScript);
                             script.SetTableFunction(-1, "GetPublicVariableNamesAndTypesByIndex",    ScriptComponentFFI::GetPublicVariableNamesAndTypesByIndex);
                             script.SetTableFunction(-1, "GetPublicVariableNamesAndValues",          ScriptComponentFFI::GetPublicVariableNamesAndValues);
@@ -4018,7 +4018,7 @@ namespace GTEngine
             }
 
 
-            int GetScriptFilePaths(GTLib::Script &script)
+            int GetScriptRelativeFilePaths(GTLib::Script &script)
             {
                 script.PushNewTable();
 

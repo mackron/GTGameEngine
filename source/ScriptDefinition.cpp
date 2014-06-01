@@ -14,6 +14,7 @@ namespace GTEngine
           hasOnObjectEnter(false), hasOnEnterObject(false), hasOnObjectLeave(false), hasOnLeaveObject(false),
           hasOnMouseMove(false), hasOnMouseWheel(false), hasOnMouseButtonDown(false), hasOnMouseButtonUp(false), hasOnMouseButtonDoubleClick(false),
           hasOnKeyPressed(false), hasOnKeyReleased(false),
+          hasOnSerialize(false), hasOnDeserialize(false),
           publicVariables()
     {
         // We need to do a parse over the script and retrieve it's public variables.
@@ -110,6 +111,14 @@ namespace GTEngine
                     else if (GTLib::Strings::Equal(name, "OnKeyReleased"))
                     {
                         this->hasOnKeyReleased = true;
+                    }
+                    else if (GTLib::Strings::Equal(name, "OnSerialize"))
+                    {
+                        this->hasOnSerialize = true;
+                    }
+                    else if (GTLib::Strings::Equal(name, "OnDeserialize"))
+                    {
+                        this->hasOnDeserialize = true;
                     }
                 }
                 else
@@ -451,6 +460,15 @@ namespace GTEngine
         return this->hasOnKeyReleased;
     }
 
+    bool ScriptDefinition::HasOnSerialize() const
+    {
+        return this->hasOnSerialize;
+    }
+
+    bool ScriptDefinition::HasOnDeserialize() const
+    {
+        return this->hasOnDeserialize;
+    }
 
 
 

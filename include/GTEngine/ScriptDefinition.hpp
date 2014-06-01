@@ -80,6 +80,12 @@ namespace GTEngine
         /// Determines if the script has an OnKeyReleased event handler.
         bool HasOnKeyReleased() const;
 
+        /// Determines if the script has an OnSerialize event handler.
+        bool HasOnSerialize() const;
+
+        /// Determines if the script has an OnDeserialize event handler.
+        bool HasOnDeserialize() const;
+
 
 
         /// Retrieves the number of public variables.
@@ -169,6 +175,12 @@ namespace GTEngine
 
         /// Keeps track of whether of not this definition has an OnKeyReleased event handler.
         bool hasOnKeyReleased;
+
+        /// Keeps track of whether or not this definition has an OnSerialize event handler.
+        bool hasOnSerialize;
+
+        /// Keeps track of whether or not this definition has an OnDeserialize event handler.
+        bool hasOnDeserialize;
 
 
         /// The list of public variables, in the order they are defined (hopefully).

@@ -1411,7 +1411,7 @@ namespace GTEngine
             ///
             /// @remarks
             ///     Argument 1: A pointer to the component.
-            int GetScriptFilePaths(GTLib::Script &script);
+            int GetScriptRelativeFilePaths(GTLib::Script &script);
 
             /// Determines if the script component is using the given script file.
             ///

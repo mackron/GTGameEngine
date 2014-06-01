@@ -179,6 +179,19 @@ namespace GTEngine
         ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
         bool HasOnKeyReleased() const;
 
+        /// Determines if any of the attached scripts has an OnSerialize event handler.
+        ///
+        /// @remarks
+        ///     This is used to determine whether or not OnSerialize needs to be called.
+        bool HasOnSerialize() const;
+
+        /// Determines if any of the attached scripts has an OnDeserialize event handler.
+        ///
+        /// @remarks
+        ///     This is used to determine whether or not OnDeserialize needs to be called.
+        bool HasOnDeserialize() const;
+
+
 
 
         /// Clears the component of all scripts.

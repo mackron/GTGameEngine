@@ -1745,12 +1745,6 @@ namespace GTEngine
 
                 assert(deserializer.Tell() == currentReadPosition);
             }
-
-            // We can break if all the chunks we need have been read.
-            if (readSceneNodes && readSceneNodesHierarchy && readSceneProperties && readNavigation)
-            {
-                //break;
-            }
         }
 
 
@@ -2683,7 +2677,6 @@ namespace GTEngine
             }
         }
     }
-
 
 
 
