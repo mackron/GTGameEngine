@@ -892,7 +892,6 @@ namespace GTEngine
         void PostSceneNodeScriptEvent_OnShutdown(SceneNode &sceneNode);
 
 
-
     private:
 
 

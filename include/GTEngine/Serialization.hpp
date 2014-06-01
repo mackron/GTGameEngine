@@ -69,6 +69,7 @@ namespace GTEngine
         static const uint32_t ChunkID_Scene_NodesHierarchy                    = CHUNK_ID(0x00000003U);
         static const uint32_t ChunkID_Scene_Properties                        = CHUNK_ID(0x00000004U);
         static const uint32_t ChunkID_Scene_Navigation                        = CHUNK_ID(0x00000005U);
+        static const uint32_t ChunkID_Scene_ScriptComponentData               = CHUNK_ID(0x00000006U);
         static const uint32_t ChunkID_Scene_EditorMetadata                    = CHUNK_ID(0x0000000FU);
 
         // SceneNode
@@ -127,11 +128,12 @@ namespace GTEngine
         // OccluderComonent
         static const uint32_t ChunkID_OccluderComponent_Main                  = CHUNK_ID(0x00000200U);
 
-        // SpriteComponent
+        // ParticleSystemComponent
         static const uint32_t ChunkID_ParticleSystemComponent_Main            = CHUNK_ID(0x00000210U);
 
         // ScriptComponent
         static const uint32_t ChunkID_ScriptComponent_Main                    = CHUNK_ID(0x00000220U);
+        static const uint32_t ChunkID_ScriptComponent_OnSerialize             = CHUNK_ID(0x00000221U);
 
         // PrefabComponent
         static const uint32_t ChunkID_PrefabComponent_Main                    = CHUNK_ID(0x00000230U);

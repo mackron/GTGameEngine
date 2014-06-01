@@ -76,9 +76,30 @@ namespace GTEngine
         ///     The scene node must be instantiated on a registered scene for this to work.
         ///     @par
         ///     The scene node will need to be popped when no longer needed.
-        ///     @par
-        ///     This function asserts that the scene node has an OnUpdate function.
         void PushSceneNode(GTLib::Script &script, SceneNode &sceneNode);
+
+
+        /// Serializes the scene node based off the OnSerialize events.
+        ///
+        /// @param script     [in] A reference to the main script object.
+        /// @param sceneNode  [in] A reference to the scene node that is being serialized.
+        /// @param serializer [in] A reference to the serializer to write the data to.
+        ///
+        /// @remarks
+        ///     The scene node must be instantiated on a registered scene for this to work.
+        void DoOnSerialize(GTLib::Script &script, SceneNode &sceneNode, GTLib::Serializer &serializer);
+
+        /// Deserializes the scene node based off the OnDeserialize events and the data supplied by the given deserializer.
+        ///
+        /// @param script      [in] A reference to the main script object.
+        /// @param sceneNode   [in] A reference to the scene node that is being deserialized.
+        /// @param deserialier [in] A reference to the deserializer to retrieve the data from.
+        ///
+        /// @remarks
+        ///     The scene node must be instantiated on a registered scene for this to work.
+        ///     @par
+        ///     This should be called based on the data written by DoOnSerialize().
+        void DoOnDeserialize(GTLib::Script &script, SceneNode &sceneNode, GTLib::Deserializer &deserializer);
 
 
         /// Calls the OnUpdate event on the given scene node.

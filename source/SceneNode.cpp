@@ -995,6 +995,10 @@ namespace GTEngine
     {
         return this->scene;
     }
+    const Scene* SceneNode::GetScene() const
+    {
+        return this->scene;
+    }
 
     void SceneNode::_SetScene(Scene* newScene)
     {

@@ -366,7 +366,7 @@ function GTGUI.Element:ScriptComponentPanel()
         
         
         -- We need to determine which panels need to be shown and which need to be hidden. We'll hide and then show.
-        local scriptRelativePaths = self.CurrentComponent:GetScriptFilePaths();
+        local scriptRelativePaths = self.CurrentComponent:GetScriptRelativeFilePaths();
         
         -- We need to hide every panel that is not contained in scriptRelativePaths.
         local scriptRelativePathsToRemove = {};

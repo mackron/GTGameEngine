@@ -2,6 +2,7 @@
 
 #include <GTEngine/Scripting/Scripting_SceneNode.hpp>
 #include <GTEngine/Scripting/Scripting_Math.hpp>
+#include <GTLib/Scripting.hpp>
 
 namespace GTEngine
 {
@@ -74,9 +75,9 @@ namespace GTEngine
                 ""
                 "    local scriptComponent = self:GetComponent(GTEngine.Components.Script);"
                 "    if scriptComponent ~= nil then"
-                "        local scriptFilePaths = scriptComponent:GetScriptFilePaths();"
+                "        local scriptFilePaths = scriptComponent:GetScriptRelativeFilePaths();"
                 "        for i,scriptPath in ipairs(scriptFilePaths) do"
-                "            self:LinkToScript(GTEngine.ScriptDefinitions[scriptPath]);"
+                "            self:LinkToScript(GTEngine.ScriptDefinitions[scriptPath], scriptPath);"
                 "            self:UpdatePublicVariables();"
                 "        end;"
                 "    end;"
@@ -88,14 +89,14 @@ namespace GTEngine
                 "    end;"
                 "end;"
 
-                "function GTEngine.SceneNode:LinkToScript(script)"
+                "function GTEngine.SceneNode:LinkToScript(script, scriptRelativePath)"
                 "    if script ~= nil then"
                 "        for key,value in pairs(script) do"
                 "            if not GTEngine.IsSceneNodeEventHandler(key) then"
                 "                self[key] = value;"
                 "                self._scriptVariables[#self._scriptVariables + 1] = key;"
                 "            else"
-                "                self:RegisterEventHandler(key, value);"
+                "                self:RegisterEventHandler(key, value, scriptRelativePath);"
                 "            end;"
                 "        end;"
                 "    end;"
@@ -111,19 +112,23 @@ namespace GTEngine
                 "    end;"
                 "end;"
 
-                "function GTEngine.SceneNode:RegisterEventHandler(name, value)"
+                "function GTEngine.SceneNode:RegisterEventHandler(name, value, scriptRelativePath)"
                 "    if name ~= nil and value ~= nil then"
                 "        if self._eventHandlers[name] == nil then"
                 "            self._eventHandlers[name] = {};"
                 ""
                 "            self[name] = function(self, ...)"
                 "                for i,eventHandler in pairs(self._eventHandlers[name]) do"
-                "                    eventHandler(self, ...);"
+                "                    eventHandler.method(self, ...);"
                 "                end;"
                 "            end;"
                 "        end;"
                 ""
-                "        self._eventHandlers[name][#self._eventHandlers[name] + 1] = value;" 
+                "        local eventHandler = {};"
+                "        eventHandler.method             = value;"
+                "        eventHandler.scriptRelativePath = scriptRelativePath;"
+                ""
+                "        self._eventHandlers[name][#self._eventHandlers[name] + 1] = eventHandler;" 
                 "    end;"
                 "end;"
 
@@ -461,6 +466,8 @@ namespace GTEngine
                         script.SetTableValue(-1, 14, "OnMouseButtonDoubleClick");
                         script.SetTableValue(-1, 15, "OnKeyPressed");
                         script.SetTableValue(-1, 16, "OnKeyReleased");
+                        script.SetTableValue(-1, 17, "OnSerialize");
+                        script.SetTableValue(-1, 18, "OnDeserialize");
                     }
                     script.SetTableValue(-3);
 
@@ -706,6 +713,197 @@ namespace GTEngine
 
             assert(script.IsTable(-1));
         }
+
+
+        void DoOnSerialize(GTLib::Script &script, SceneNode &sceneNode, GTLib::Serializer &serializer)
+        {
+            // We want to keep track of the number of serialized data chunks that are written to the serializer so we can know how many iterations to do when deserializing.
+            uint32_t dataCount = 0;
+
+            // Because we want to store the count at the top, we will write our data to an intermediary serializer first. After serializing everything to that, we can then
+            // write the counter and then the data in the intermediary serializer.
+            GTLib::BasicSerializer intermediarySerializer;
+
+
+
+            Scripting::PushSceneNode(script, sceneNode);
+            assert(script.IsTable(-1));
+            {
+                script.Push("_eventHandlers");
+                script.GetTableValue(-2);
+                assert(script.IsTable(-1));
+                {
+                    script.Push("OnSerialize");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(1))  // <-- Could possiblu be null if there is no OnSerialize() implementation. This is a valid case, so don't want to use an assert here.
+                    {
+                        // At this point the top item on the stack is a table containing a list of tables, each representing an OnSerialize() implementation. We need to
+                        // keep track of both the method and the name because we'll be serializing that for use when doing deserialization.
+                        for (script.PushNil(); script.Next(-2); script.Pop(1))
+                        {
+                            if (script.IsTable(-1))
+                            {
+                                script.Push("scriptRelativePath");
+                                script.GetTableValue(-2);
+                                if (script.IsString(-1))
+                                {
+                                    GTLib::String scriptRelativePath = script.ToString(-1);
+
+                                    script.Push("method");
+                                    script.GetTableValue(-3);       // <-- -3 instead of -2 because we have scriptRelativePath on the stack, too.
+                                    if (script.IsFunction(-1))
+                                    {
+                                        // We have found the method. We need to call it, but we don't want to pass the input serializer. We instead want to pass an intermediary one
+                                        // so we can get an accurate size.
+                                        GTLib::BasicSerializer localSerializer;
+
+                                        script.PushValue(-7);                                                // <-- 'self'
+                                        GTLib::Scripting::FFI::PushNewSerializer(script, localSerializer);   // <-- 'serializer'
+
+                                        script.Call(2, 1);      // <-- Two arguments (self, serializer) and 1 return value (the version).
+
+                                            
+                                        // At this point, the top item on the stack (the return value from OnSerialize()) is the version number.
+                                        uint32_t version = static_cast<uint32_t>(script.ToInteger(-1));
+
+                                        // Now we want to write the data to the main serializer. The way we save the serialized data is as such:
+                                        //   - relative file name (string)
+                                        //   - version (int32)
+                                        //   - size of the data contained in 'intermediarySerializer' as a uint32_t
+                                        //   - actual data contained in 'intermediarySerializer'
+                                        intermediarySerializer.WriteString(scriptRelativePath);
+                                        intermediarySerializer.Write(version);
+                                        intermediarySerializer.Write(static_cast<uint32_t>(localSerializer.GetBufferSizeInBytes()));
+                                        intermediarySerializer.Write(localSerializer.GetBuffer(), localSerializer.GetBufferSizeInBytes());
+                                            
+
+                                        // The data counter needs to be incremented.
+                                        dataCount += 1;
+
+                                        script.Pop(1);  // <-- Pop the return value.
+                                    }
+                                    else
+                                    {
+                                        // 'method' was not found or was not a method. Should never get here, but good for sanity.
+                                        script.Pop(1);
+                                    }
+                                }
+                                script.Pop(1);
+                            }
+                        }
+                    }
+                    script.Pop(1);
+                }
+                script.Pop(1);
+            }
+            script.Pop(1);
+
+
+            // Now we just write the count and the main data.
+            serializer.Write(dataCount);
+            serializer.Write(intermediarySerializer.GetBuffer(), intermediarySerializer.GetBufferSizeInBytes());
+        }
+
+        void DoOnDeserialize(GTLib::Script &script, SceneNode &sceneNode, GTLib::Deserializer &deserializer)
+        {
+            uint32_t dataCount;
+            deserializer.Read(dataCount);
+
+
+            Scripting::PushSceneNode(script, sceneNode);
+            assert(script.IsTable(-1));
+            {
+                script.Push("_eventHandlers");
+                script.GetTableValue(-2);
+                assert(script.IsTable(-1));
+                {
+                    script.Push("OnDeserialize");
+                    script.GetTableValue(-2);
+                    if (script.IsTable(1))      // <-- Could possibly be null if there is no OnSerialize() implementation. This is a valid case, so don't want to use an assert here.
+                    {
+                        for (uint32_t i = 0; i < dataCount; ++i)
+                        {
+                            GTLib::String scriptRelativePath;
+                            uint32_t version;
+                            uint32_t dataSizeInBytes;
+
+                            deserializer.ReadString(scriptRelativePath);
+                            deserializer.Read(version);
+                            deserializer.Read(dataSizeInBytes);
+
+                            // We now need to find the specific event handler based on the relative path of the script.
+                            bool found = false;
+                            for (script.PushNil(); script.Next(-2); script.Pop(1))
+                            {
+                                if (script.IsTable(-1))
+                                {
+                                    script.Push("scriptRelativePath");
+                                    script.GetTableValue(-2);
+                                    if (script.IsString(-1))
+                                    {
+                                        if (scriptRelativePath == script.ToString(-1))
+                                        {
+                                            found = true;
+
+                                            // We have found the event handler, so now we need to call the method.
+                                            script.Push("method");
+                                            script.GetTableValue(-3);          // <-- -3 instead of -2 because we have scriptRelativePath on the stack, too.
+                                            if (script.IsFunction(-1))
+                                            {
+                                                // It is possible for an implementation of OnDeserialize() to read too little or too much data. We will handle this problem by using a discrete deserializer.
+                                                auto data = malloc(static_cast<size_t>(dataSizeInBytes));
+                                                deserializer.Read(data, static_cast<size_t>(dataSizeInBytes));
+                                                GTLib::BasicDeserializer localDeserializer(data, static_cast<size_t>(dataSizeInBytes));
+
+
+                                                script.PushValue(-7);                                                   // <-- 'self'
+                                                GTLib::Scripting::FFI::PushNewDeserializer(script, localDeserializer);  // <-- 'deserializer'
+                                                script.Push(static_cast<int>(version));                                 // <-- 'version'
+                                                
+                                                script.Call(3, 0);
+
+                                                free(data);
+                                            }
+
+                                            script.Pop(1);
+                                            break;
+                                        }
+                                    }
+                                }
+                            }
+
+
+                            // If the script was not found, just seek past the data.
+                            if (!found)
+                            {
+                                deserializer.Seek(static_cast<size_t>(dataSizeInBytes));
+                            }
+                        }
+
+
+                        return;     // <-- Important! If we don't return here we'll end up falling through to the error handler below.
+                    }
+                }
+            }
+
+
+            // Error
+            //
+            // If we get here there was some kind of high-level error. We need to loop through each chunk of data and seek past it based on the data size.
+
+            for (uint32_t i = 0; i < dataCount; ++i)
+            {
+                GTLib::String scriptRelativePath;
+                uint32_t version;
+                uint32_t dataSizeInBytes;
+
+                deserializer.ReadString(scriptRelativePath);
+                deserializer.Read(version);
+                deserializer.Read(dataSizeInBytes);
+                deserializer.Seek(dataSizeInBytes);     // <-- Just seek past the data. Don't waste time reading it.
+            }
+        }
+
 
         void PostSceneNodeEvent_OnUpdate(GTLib::Script &script, SceneNode &sceneNode, double deltaTimeInSeconds)
         {

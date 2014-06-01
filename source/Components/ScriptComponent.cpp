@@ -3,6 +3,7 @@
 #include <GTEngine/Components/ScriptComponent.hpp>
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
+#include <GTEngine/Scripting.hpp>
 #include <GTEngine/Logging.hpp>
 
 namespace GTEngine
@@ -426,6 +427,41 @@ namespace GTEngine
         return false;
     }
 
+    bool ScriptComponent::HasOnSerialize() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            assert(script != nullptr);
+            {
+                if (script->HasOnSerialize())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnDeserialize() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            assert(script != nullptr);
+            {
+                if (script->HasOnDeserialize())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+
 
     void ScriptComponent::Clear(bool clearPublicVariables)
     {
@@ -693,6 +729,35 @@ namespace GTEngine
         }
 
 
+        // OnSerialize
+        //
+        // This section needs to be skippable in case OnDeserialize() is not implemented properly. To do this we basically need to do this as a sub-chunk.
+        {
+            GTLib::BasicSerializer onSerializeSerializer;
+
+            // We want to use the scripting module to retrieve the serialized data because that is the part that's responsible for calling scene node events
+            // on the scripting side.
+            auto scene = this->GetNode().GetScene();
+            if (scene != nullptr)
+            {
+                auto registeredScript = scene->GetRegisteredScript();
+                if (registeredScript != nullptr)
+                {
+                    Scripting::DoOnSerialize(*registeredScript, const_cast<SceneNode &>(this->GetNode()), onSerializeSerializer);       // <-- Naughty const_cast here!
+                }
+            }
+
+
+            Serialization::ChunkHeader header;
+            header.id          = Serialization::ChunkID_ScriptComponent_OnSerialize;
+            header.version     = 1;
+            header.sizeInBytes = onSerializeSerializer.GetBufferSizeInBytes();
+
+            intermediarySerializer.Write(header);
+            intermediarySerializer.Write(onSerializeSerializer.GetBuffer(), header.sizeInBytes);
+        }
+
+
 
         Serialization::ChunkHeader header;
         header.id          = Serialization::ChunkID_ScriptComponent_Main;
@@ -860,6 +925,46 @@ namespace GTEngine
                             }
 
                         default: break;
+                        }
+                    }
+
+
+                    // OnDeserialize
+                    //
+                    // Need to consider making this an option.
+                    {
+                        // For backwards compatibility, we'll first peek at the header.
+                        if (deserializer.Peek(&header, sizeof(header)) == sizeof(header) && header.id == Serialization::ChunkID_ScriptComponent_OnSerialize)
+                        {
+                            deserializer.Seek(sizeof(header));
+
+                            if (header.version == 1)
+                            {
+                                auto scene = this->GetNode().GetScene();
+                                if (scene != nullptr)
+                                {
+                                    auto registeredScript = scene->GetRegisteredScript();
+                                    if (registeredScript != nullptr)
+                                    {
+                                        Scripting::DoOnDeserialize(*registeredScript, this->GetNode(), deserializer);
+                                    }
+                                    else
+                                    {
+                                        // The scene node is not part of a script. Just seek past the data.
+                                        deserializer.Seek(header.sizeInBytes);
+                                    }
+                                }
+                                else
+                                {
+                                    // The scene node is not part of a scene and thus not part of a script. Just seek past the data.
+                                    deserializer.Seek(header.sizeInBytes);
+                                }
+                            }
+                            else
+                            {
+                                // Unknown chunk version. Just seek past it.
+                                deserializer.Seek(header.sizeInBytes);
+                            }
                         }
                     }
 

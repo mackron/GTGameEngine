@@ -578,7 +578,8 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will transcend the parent nodes if required.
-        Scene* GetScene();
+              Scene* GetScene();
+        const Scene* GetScene() const;
 
         /// Simple scene setting for internal use only.
         ///
