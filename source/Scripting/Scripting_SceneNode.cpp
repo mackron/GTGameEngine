@@ -819,7 +819,7 @@ namespace GTEngine
                 {
                     script.Push("OnDeserialize");
                     script.GetTableValue(-2);
-                    if (script.IsTable(1))      // <-- Could possibly be null if there is no OnSerialize() implementation. This is a valid case, so don't want to use an assert here.
+                    if (script.IsTable(-1))      // <-- Could possibly be null if there is no OnDeserialize() implementation. This is a valid case, so don't want to use an assert here.
                     {
                         for (uint32_t i = 0; i < dataCount; ++i)
                         {

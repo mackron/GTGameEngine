@@ -947,6 +947,12 @@ namespace GTEngine
                                     auto registeredScript = scene->GetRegisteredScript();
                                     if (registeredScript != nullptr)
                                     {
+                                        // Before we actually do the OnDeserialize, we need to ensure the scene component has been registered with the scripting
+                                        // environment. We can assert that the scene node has been instantiated in the scripting environment because all scene
+                                        // nodes with a script component will be instantiated in the scripting environment straight after being added to the scene.
+                                        Scripting::RegisterComponent(*registeredScript, this->GetNode(), this->GetName());
+
+                                        // Now that the script component has been registered we can do the OnDeserialize().
                                         Scripting::DoOnDeserialize(*registeredScript, this->GetNode(), deserializer);
                                     }
                                     else
@@ -988,8 +994,6 @@ namespace GTEngine
                 }
             }
         }
-
-
     }
 
 
