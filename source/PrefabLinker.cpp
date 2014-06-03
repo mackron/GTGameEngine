@@ -212,7 +212,7 @@ namespace GTEngine
             this->OnSceneNodeDeserializeStart(sceneNode);
 
             GTLib::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
-            sceneNode.Deserialize(deserializer, SceneNode::NoID | SceneNode::NoScriptPublicVariableOverride);       // <-- Super important! We need the ID to be maintained!
+            sceneNode.Deserialize(deserializer, SceneNode::NoID | SceneNode::NoScriptPublicVariableOverride | SceneNode::NoScriptOnDeserialize);       // <-- Super important! We need the ID to be maintained!
 
             // The link to the prefab will have been broken with deserialization, so that will need to be restored.
             auto prefabComponent = sceneNode.AddComponent<PrefabComponent>();

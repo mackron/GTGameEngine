@@ -768,7 +768,7 @@ namespace GTEngine
         serializer.Write(intermediarySerializer.GetBuffer(), header.sizeInBytes);
     }
 
-    void ScriptComponent::Deserialize(GTLib::Deserializer &deserializer, bool noPublicVariableOverride)
+    void ScriptComponent::Deserialize(GTLib::Deserializer &deserializer, bool noPublicVariableOverride, bool noOnDeserialize)
     {
         Serialization::ChunkHeader header;
         deserializer.Read(header);
@@ -929,15 +929,16 @@ namespace GTEngine
                     }
 
 
+                    ///////////////////////////////////////////////
                     // OnDeserialize
-                    //
-                    // Need to consider making this an option.
-                    {
-                        // For backwards compatibility, we'll first peek at the header.
-                        if (deserializer.Peek(&header, sizeof(header)) == sizeof(header) && header.id == Serialization::ChunkID_ScriptComponent_OnSerialize)
-                        {
-                            deserializer.Seek(sizeof(header));
 
+                    // For backwards compatibility, we'll first peek at the header.
+                    if (deserializer.Peek(&header, sizeof(header)) == sizeof(header) && header.id == Serialization::ChunkID_ScriptComponent_OnSerialize)
+                    {
+                        deserializer.Seek(sizeof(header));
+
+                        if (!noOnDeserialize)
+                        {
                             if (header.version == 1)
                             {
                                 auto scene = this->GetNode().GetScene();
@@ -965,6 +966,11 @@ namespace GTEngine
                                 // Unknown chunk version. Just seek past it.
                                 deserializer.Seek(header.sizeInBytes);
                             }
+                        }
+                        else
+                        {
+                            // We don't want to do OnDeserialize(). Just seek past this chunk.
+                            deserializer.Seek(header.sizeInBytes);
                         }
                     }
 

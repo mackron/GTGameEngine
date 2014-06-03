@@ -1319,7 +1319,7 @@ namespace GTEngine
                         // Special cases.
                         if (name == ScriptComponent::Name)
                         {
-                            static_cast<ScriptComponent*>(component)->Deserialize(deserializer, (flags & SceneNode::NoScriptPublicVariableOverride) != 0);
+                            static_cast<ScriptComponent*>(component)->Deserialize(deserializer, (flags & SceneNode::NoScriptPublicVariableOverride) != 0, (flags & SceneNode::NoScriptOnDeserialize) != 0);
                         }
                         else
                         {
@@ -1383,6 +1383,31 @@ namespace GTEngine
             }
         }
     }
+
+    bool SceneNode::Deserialize_PeekID(GTLib::Deserializer &deserializer, uint64_t &idOut)
+    {
+        // The ID should be position right after the header. We're going to read straight into a structure.
+        struct ExtendedHeader
+        {
+            Serialization::ChunkHeader header;
+            uint64_t sceneNodeID;
+        }headerEX;
+
+        if (deserializer.Peek(&headerEX, sizeof(headerEX)) == sizeof(headerEX))
+        {
+            if (headerEX.header.id == Serialization::ChunkID_SceneNode_General)
+            {
+                if (headerEX.header.version == 1)
+                {
+                    idOut = headerEX.sceneNodeID;
+                    return true;
+                }
+            }
+        }
+        
+        return false;
+    }
+
 
     void SceneNode::DisableSerialization()
     {

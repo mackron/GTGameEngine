@@ -685,7 +685,22 @@ namespace GTEngine
         ///     This will not deserialize children. That should be done at a higher level.
         ///     @par
         ///     This is the opposite of Serialize(), so for any rule that applies to Serialize(), it will also apply here.
+        ///     @par
+        ///     Sometimes a scene will be deserialized before it's added to a scene. Therefore, the a reference to the scene that the
+        ///     scene node will eventually be made a part of will be passed to Deserialize().
         void Deserialize(GTLib::Deserializer &deserializer, unsigned int flags = 0);
+
+        /// A special deserialization method for deserializing just the ID of the scene node, but leaving the read pointer as it.
+        ///
+        /// @param deserializer [in] The deserializer to retrieve the ID from.
+        ///
+        /// @return True if the ID was found; false otherwise.
+        ///
+        /// @remarks
+        ///     This not change the state of either the deserializer nor the scene node. Indeed, this is actually a static function.
+        ///     @par
+        ///     If this function returns false, 'idOut' will be left unmodified.
+        static bool Deserialize_PeekID(GTLib::Deserializer &deserializer, uint64_t &idOut);
 
 
         /// Disables serialization of the scene node when serialized from a scene.
@@ -867,7 +882,8 @@ namespace GTEngine
             NoID                           = (1 << 1),          // <-- Set the ID to 0 when serializing.
             NoEditorMetadataComponent      = (1 << 2),          // <-- Do not save the EditorMetadataComponent if it exists.
             NoScriptPublicVariableOverride = (1 << 3),          // <-- Do not override public variables of a script component.
-            ForceDeselected                = (1 << 4)           // <-- Force the scene node to be serialized as deselected. Needed for prefabs.
+            NoScriptOnDeserialize          = (1 << 4),          // <-- Do not call OnDeserialize() on script components.
+            ForceDeselected                = (1 << 5)           // <-- Force the scene node to be serialized as deselected. Needed for prefabs.
         };
 
 
