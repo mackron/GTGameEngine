@@ -1956,7 +1956,7 @@ namespace GTEngine
                         auto sceneNode = deserializedNodes[iSceneNode];
                         if (sceneNode != nullptr)
                         {
-                            sceneNode->Deserialize(deserializer);
+                            sceneNode->Deserialize(deserializer, SceneNode::NoScriptOnDeserialize);
 
                             // If the new scene node is linked to a prefab and it's the root, we need to keep track of it. We will later be re-linking
                             // it to ensure it is up-to-date.
