@@ -1221,6 +1221,10 @@ namespace GTEngine
                 {
                     static_cast<const EditorMetadataComponent*>(component)->Serialize(componentSubSerializer, flags);
                 }
+                else if (GTLib::Strings::Equal(component->GetName(), ScriptComponent::Name))
+                {
+                    static_cast<const ScriptComponent*>(component)->Serialize(componentSubSerializer, flags);
+                }
                 else
                 {
                     component->Serialize(componentSubSerializer);
