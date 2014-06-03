@@ -249,7 +249,8 @@ namespace GTEngine
         // Serialization/Deserialization.
 
         /// Component::Serialize()
-        void Serialize(GTLib::Serializer &serializer) const;
+        void Serialize(GTLib::Serializer &serializer) const { this->Serialize(serializer, 0); }
+        void Serialize(GTLib::Serializer &serializer, unsigned int flags) const;
 
         /// Component::Deserialize()
         void Deserialize(GTLib::Deserializer &deserializer, bool noPublicVariableOverride, bool noOnDeserialize);

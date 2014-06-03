@@ -1661,7 +1661,7 @@ namespace GTEngine
             assert(node != nullptr);
             {
                 // Serialize first...
-                node->Serialize(sceneNodeSerializer);
+                node->Serialize(sceneNodeSerializer, SceneNode::NoScriptOnSerialize);
 
                 // And then find the index of the parent, if applicable.
                 if (node->GetParent() != nullptr)

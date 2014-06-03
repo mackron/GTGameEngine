@@ -635,7 +635,7 @@ namespace GTEngine
     ///////////////////////////////////////////////////////
     // Serialization/Deserialization.
 
-    void ScriptComponent::Serialize(GTLib::Serializer &serializer) const
+    void ScriptComponent::Serialize(GTLib::Serializer &serializer, unsigned int flags) const
     {
         // We will use an intermediary serializer like normal. All we need to save is the relative paths of the scripts we're using.
         GTLib::BasicSerializer intermediarySerializer;
@@ -732,6 +732,7 @@ namespace GTEngine
         // OnSerialize
         //
         // This section needs to be skippable in case OnDeserialize() is not implemented properly. To do this we basically need to do this as a sub-chunk.
+        if ((flags & SceneNode::NoScriptOnSerialize) == 0)
         {
             GTLib::BasicSerializer onSerializeSerializer;
 
@@ -932,7 +933,7 @@ namespace GTEngine
                     ///////////////////////////////////////////////
                     // OnDeserialize
 
-                    // For backwards compatibility, we'll first peek at the header.
+                    // There is a change the OnSerialize() data was not serialized. Thus, we need to peek first.
                     if (deserializer.Peek(&header, sizeof(header)) == sizeof(header) && header.id == Serialization::ChunkID_ScriptComponent_OnSerialize)
                     {
                         deserializer.Seek(sizeof(header));

@@ -882,8 +882,9 @@ namespace GTEngine
             NoID                           = (1 << 1),          // <-- Set the ID to 0 when serializing.
             NoEditorMetadataComponent      = (1 << 2),          // <-- Do not save the EditorMetadataComponent if it exists.
             NoScriptPublicVariableOverride = (1 << 3),          // <-- Do not override public variables of a script component.
-            NoScriptOnDeserialize          = (1 << 4),          // <-- Do not call OnDeserialize() on script components.
-            ForceDeselected                = (1 << 5)           // <-- Force the scene node to be serialized as deselected. Needed for prefabs.
+            NoScriptOnSerialize            = (1 << 4),          // <-- Do not call OnSerialize() on script components.
+            NoScriptOnDeserialize          = (1 << 5),          // <-- Do not call OnDeserialize() on script components.
+            ForceDeselected                = (1 << 6)           // <-- Force the scene node to be serialized as deselected. Needed for prefabs.
         };
 
 
