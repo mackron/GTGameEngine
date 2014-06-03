@@ -134,6 +134,12 @@ public:
     bool OnLoadScene(const char* sceneRelativePath)
     {
         auto newScene = new GTEngine::Scene;
+
+        // The scene should be registered to the script immediately. No real reason it shouldn't be. Later on, scenes will take an EngineContext object in their
+        // constructors which will then allow us to register it with the script in the constructor.
+        newScene->RegisterToScript(this->GetScript());
+        
+        // Only after registering the scene with the script should we do the load.
         if (newScene->LoadFromFile(sceneRelativePath))
         {
             // The scene loaded successfully. The old scene needs to be replaced.
@@ -147,7 +153,6 @@ public:
             this->OnSize(viewportWidth, viewportHeight);
 
             // In order for scripting to work we need to register it.
-            this->currentScene->RegisterToScript(this->GetScript());
             newScene->PostSceneNodeScriptEvent_OnStartup();
 
             return true;
