@@ -280,6 +280,16 @@ namespace GTEngine
         ///     This will add the scene node to the scene and will be memory managed by the scene.
         SceneNode* CreateNewSceneNode();
 
+        /// Creates a new empty scene node with the given ID.
+        ///
+        /// @param id [in] The ID to assign to the scene node.
+        ///
+        /// @return A pointer to the new scene node.
+        ///
+        /// @remarks
+        ///     This will add the scene node to the scene and will be memory managed by the scene.
+        SceneNode* CreateNewSceneNode(uint64_t id);
+
         /// Creates a new scene node from the given deserializer.
         ///
         /// @param deserializer        [in] A reference to the deserializer to create the scene node from.

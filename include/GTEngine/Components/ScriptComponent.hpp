@@ -252,8 +252,8 @@ namespace GTEngine
         void Serialize(GTLib::Serializer &serializer) const;
 
         /// Component::Deserialize()
-        void Deserialize(GTLib::Deserializer &deserializer, bool noPublicVariableOverride);
-        void Deserialize(GTLib::Deserializer &deserializer) { this->Deserialize(deserializer, false); }
+        void Deserialize(GTLib::Deserializer &deserializer, bool noPublicVariableOverride, bool noOnDeserialize);
+        void Deserialize(GTLib::Deserializer &deserializer) { this->Deserialize(deserializer, false, false); }
 
 
 
