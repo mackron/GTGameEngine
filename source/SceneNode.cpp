@@ -1391,10 +1391,11 @@ namespace GTEngine
     bool SceneNode::Deserialize_PeekID(GTLib::Deserializer &deserializer, uint64_t &idOut)
     {
         // The ID should be position right after the header. We're going to read straight into a structure.
-        struct ExtendedHeader
+        __declspec(align(4)) struct ExtendedHeader
         {
             Serialization::ChunkHeader header;
-            uint64_t sceneNodeID;
+            uint32_t sceneNodeID0;
+            uint32_t sceneNodeID1;
         }headerEX;
 
         if (deserializer.Peek(&headerEX, sizeof(headerEX)) == sizeof(headerEX))
@@ -1403,7 +1404,7 @@ namespace GTEngine
             {
                 if (headerEX.header.version == 1)
                 {
-                    idOut = headerEX.sceneNodeID;
+                    idOut = (static_cast<uint64_t>(headerEX.sceneNodeID1) << 32) | headerEX.sceneNodeID0;
                     return true;
                 }
             }

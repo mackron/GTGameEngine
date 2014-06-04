@@ -12,7 +12,7 @@ namespace GTEngine
     namespace Serialization
     {
         /// Structure representing the header of a chunk for serialization/deserialization.
-        struct ChunkHeader
+        __declspec(align(4)) struct ChunkHeader
         {
             uint32_t id;
             uint32_t version;
