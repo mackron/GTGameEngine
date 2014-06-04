@@ -490,11 +490,21 @@ namespace GTEngine
                 alreadyExists = true;
             }
         }
+        else
+        {
+            // If we got here, it means the deserialized format is incorrect. Need to return null.
+            return nullptr;
+        }
 
 
         // We need to create an empty node, add it to the scene, and then deserialize. Whether or not a scene node is deserialized with NoID is based on
         // whether or not a scene node of the same ID already exists.
         auto sceneNode = new SceneNode;
+        if (!alreadyExists)
+        {
+            sceneNode->SetID(newID);
+        }
+
         this->AddSceneNode(*sceneNode);
 
         // The scene node is added, so now we need to deserialize.
