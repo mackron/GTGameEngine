@@ -1065,7 +1065,7 @@ namespace GTEngine
         CollisionObject insertionPlaneCollisionObject;
 
         /// The shape to attach to the insertion plane collision shape.
-        btBoxShape insertionPlaneShape;
+        btStaticPlaneShape insertionPlaneShape;
 
         
         

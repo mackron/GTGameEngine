@@ -58,7 +58,7 @@ namespace GTEngine
           pauseState(),
           navigationMeshRendererMeshes(),
           prefabDeserializingCount(0),
-          insertionPosition(), insertionPlaneCollisionObject(), insertionPlaneShape(btVector3(32.0f, 0.0f, 32.0f))
+          insertionPosition(), insertionPlaneCollisionObject(), insertionPlaneShape(btVector3(0.0f, -1.0f, 0.0f), 0.0f)
     {
         //__itt_resume();
         this->scene.SetPrefabLinker(this->prefabLinker);
