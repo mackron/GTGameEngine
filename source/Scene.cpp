@@ -471,7 +471,7 @@ namespace GTEngine
         return sceneNode;
     }
 
-    SceneNode* Scene::CreateNewSceneNode(GTLib::Deserializer &deserializer, bool createNewIDIfExists)
+    SceneNode* Scene::CreateNewSceneNode(GTLib::Deserializer &deserializer, unsigned int flags, bool createNewIDIfExists)
     {
         bool alreadyExists = false;
 
@@ -508,7 +508,7 @@ namespace GTEngine
         this->AddSceneNode(*sceneNode);
 
         // The scene node is added, so now we need to deserialize.
-        unsigned int deserializeFlags = 0;
+        unsigned int deserializeFlags = flags;
         if (alreadyExists)
         {
             // A scene node with the ID specified in the deserializer already exists, so we don't want to set the ID to that. Instead, we just leave it as

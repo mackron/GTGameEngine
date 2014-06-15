@@ -78,7 +78,7 @@ namespace GTEngine
                 assert(sceneNode != nullptr);
                 {
                     auto sceneNodeSerializer = new GTLib::BasicSerializer;
-                    sceneNode->Serialize(*sceneNodeSerializer);
+                    sceneNode->Serialize(*sceneNodeSerializer, this->branch.GetStateStack().GetSceneNodeSerializationFlags());
 
                     this->deletes.Add(sceneNodeID, sceneNodeSerializer);
                     this->AddToHierarchy(sceneNodeID);

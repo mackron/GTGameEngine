@@ -6,8 +6,8 @@
 
 namespace GTEngine
 {
-    SceneStateStackRestoreCommands::SceneStateStackRestoreCommands()
-        : inserts(), deletes(), updates(), hierarchy()
+    SceneStateStackRestoreCommands::SceneStateStackRestoreCommands(unsigned int deserializationFlags)
+        : inserts(), deletes(), updates(), hierarchy(), deserializationFlags(deserializationFlags)
     {
     }
 
@@ -171,7 +171,7 @@ namespace GTEngine
             assert(serializer != nullptr);
             {
                 GTLib::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
-                scene.CreateNewSceneNode(deserializer);
+                scene.CreateNewSceneNode(deserializer, this->deserializationFlags);
             }
         }
 
@@ -196,7 +196,7 @@ namespace GTEngine
                 assert(sceneNode != nullptr);
                 {
                     GTLib::BasicDeserializer deserializer(sceneNodeSerializer->GetBuffer(), sceneNodeSerializer->GetBufferSizeInBytes());
-                    sceneNode->Deserialize(deserializer);
+                    sceneNode->Deserialize(deserializer, this->deserializationFlags);
                 }
             }
         }
