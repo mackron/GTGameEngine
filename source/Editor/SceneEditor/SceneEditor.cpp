@@ -3437,7 +3437,7 @@ namespace GTEngine
 
 
             GTLib::BasicDeserializer deserializer(serializer.GetBuffer(), serializer.GetBufferSizeInBytes());
-            newNode = this->scene.CreateNewSceneNode(deserializer, true);      // <-- 'true' means to generate a new ID if a node of the same ID already exists (spoiler: it does already exist).
+            newNode = this->scene.CreateNewSceneNode(deserializer, 0, true);      // <-- 'true' means to generate a new ID if a node of the same ID already exists (spoiler: it does already exist).
 
 
 

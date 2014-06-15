@@ -120,6 +120,28 @@ namespace GTEngine
 
 
 
+        /// Retrieves the scene node serialization flags.
+        ///
+        /// @return The flags to use when serializing scene nodes.
+        unsigned int GetSceneNodeSerializationFlags() const;
+
+        /// Sets the scene node serialization flags.
+        ///
+        /// @param flags [in] The new serialization flags to use when serializing scene nodes.
+        void SetSceneNodeSerializationFlags(unsigned int flags);
+
+        /// Retrieves the scene node deserialization flags.
+        ///
+        /// @return The flags to use when deserializing scene nodes.
+        unsigned int GetSceneNodeDeserializationFlags() const;
+
+        /// Sets the scene node deserialization flags.
+        ///
+        /// @param flags [in] The new deserialization flags to use when deserializing scene nodes.
+        void SetSceneNodeDeserializationFlags(unsigned int flags);
+
+
+
         /////////////////////////////////////////////////
         // Serialization/Deserialization
 
@@ -161,6 +183,12 @@ namespace GTEngine
         /// A pointer to the current branch.
         SceneStateStackBranch* currentBranch;
 
+
+        /// Serialization flags for scene nodes. Note, this is not used for the serialization of the stack itself, but for scene node serialization.
+        unsigned int sceneNodeSerializationFlags;
+
+        /// Deserialization flags for scene nodes. Note, this is not used for the deserialization of the stack itself, but for scene node deserialization.
+        unsigned int sceneNodeDeserializationFlags;
 
 
     private:    // No copying.

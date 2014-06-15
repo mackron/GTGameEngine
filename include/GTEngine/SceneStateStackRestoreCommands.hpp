@@ -17,7 +17,7 @@ namespace GTEngine
     struct SceneStateStackRestoreCommands
     {
         /// Constructor.
-        SceneStateStackRestoreCommands();
+        SceneStateStackRestoreCommands(unsigned int deserializationFlags);
 
         /// Destructor.
         ~SceneStateStackRestoreCommands();
@@ -67,6 +67,10 @@ namespace GTEngine
 
         /// The hierarchy.
         GTLib::Map<uint64_t, uint64_t> hierarchy;
+
+
+        /// The flags to use when deserializing scene nodes.
+        unsigned int deserializationFlags;
     };
 }
 

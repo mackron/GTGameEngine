@@ -12,7 +12,7 @@
 namespace GTEngine
 {
     SceneStateStack::SceneStateStack(Scene &sceneIn)
-        : scene(sceneIn), branches(), masterBranch(*this, nullptr, 0), currentBranch(&masterBranch)
+        : scene(sceneIn), branches(), masterBranch(*this, nullptr, 0), currentBranch(&masterBranch), sceneNodeSerializationFlags(0), sceneNodeDeserializationFlags(0)
     {
         // Add the master branch.
         this->branches.Add(0, &this->masterBranch);
@@ -290,6 +290,27 @@ namespace GTEngine
         this->branches.Add(0, &this->masterBranch);
 
         this->currentBranch = &this->masterBranch;
+    }
+
+
+    unsigned int SceneStateStack::GetSceneNodeSerializationFlags() const
+    {
+        return this->sceneNodeSerializationFlags;
+    }
+
+    void SceneStateStack::SetSceneNodeSerializationFlags(unsigned int flags)
+    {
+        this->sceneNodeSerializationFlags = flags;
+    }
+
+    unsigned int SceneStateStack::GetSceneNodeDeserializationFlags() const
+    {
+        return this->sceneNodeDeserializationFlags;
+    }
+
+    void SceneStateStack::SetSceneNodeDeserializationFlags(unsigned int flags)
+    {
+        this->sceneNodeDeserializationFlags = flags;
     }
 
 

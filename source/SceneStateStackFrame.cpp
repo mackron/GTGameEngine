@@ -341,7 +341,7 @@ namespace GTEngine
         auto sceneNode = this->GetScene().GetSceneNodeByID(sceneNodeID);
         if (sceneNode != nullptr)
         {
-            sceneNode->Serialize(serializer);
+            sceneNode->Serialize(serializer, this->branch.GetStateStack().GetSceneNodeSerializationFlags());
             return true;
         }
 

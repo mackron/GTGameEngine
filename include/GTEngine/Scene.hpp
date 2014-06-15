@@ -299,7 +299,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     If a scene node of the same ID already exists, this will return nullptr.
-        SceneNode* CreateNewSceneNode(GTLib::Deserializer &deserializer, bool createNewIDIfExists = false);
+        SceneNode* CreateNewSceneNode(GTLib::Deserializer &deserializer, unsigned int flags = 0, bool createNewIDIfExists = false);
 
         /// Creates a new scene node hierarchy from the given scene node class (prefab).
         ///
