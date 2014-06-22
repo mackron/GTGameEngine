@@ -725,12 +725,12 @@ namespace GTEngine
 
     bool Game::SerializeGameState(GTLib::Serializer &serializer)
     {
-        return m_gameStateManager.Serialize(serializer);
+        return m_gameStateManager.Serialize(*this, serializer);
     }
 
     bool Game::DeserializeGameState(GTLib::Deserializer &deserializer)
     {
-        return m_gameStateManager.Deserialize(deserializer);
+        return m_gameStateManager.Deserialize(*this, deserializer);
     }
 
     bool Game::SaveGameState(const char* destinationFilePath)
