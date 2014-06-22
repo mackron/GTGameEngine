@@ -1031,6 +1031,9 @@
     <ClInclude Include="..\..\..\include\gtgl\GL\wglext.h">
       <Filter>Header Files\gtgl\GL</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\GameStateManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\include\GTEngine\HACD\hacdCircularList.inl">
@@ -1796,6 +1799,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\gtgl\debugging\gtgl_debugging_common.c">
       <Filter>Source Files\gtgl\debugging</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameStateManager.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

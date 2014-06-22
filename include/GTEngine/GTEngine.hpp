@@ -28,7 +28,7 @@ THE SOFTWARE.
 
 #include "Game.hpp"
 
-#define GTENGINE_VERSION_STRING "0.0.3"
+#define GTENGINE_VERSION_STRING "0.0.4"
 
 namespace GTEngine
 {
@@ -54,14 +54,14 @@ namespace GTEngine
     ///     The 'T' template argument is the type of the game object to create. This will use the default constructor. Thus, the game
     ///     object MUST use a default constructor.
     template <typename T>
-    T* Startup(int argc, char** argv)
+    T* Startup(int argc, char** argv, GameStateManager &gameStateManager)
     {
         if (GlobalGame == nullptr)
         {
             GTLib::CommandLine commandLine(argc, argv);
             if (_PreStartup(commandLine))
             {
-                GlobalGame = new T;
+                GlobalGame = new T(gameStateManager);
                 if (!GlobalGame->Startup(commandLine))
                 {
                     delete GlobalGame;

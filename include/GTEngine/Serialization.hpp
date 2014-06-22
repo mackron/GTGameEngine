@@ -176,6 +176,7 @@ namespace GTEngine
         static const uint32_t ChunkID_SceneStateStackBranch                   = CHUNK_ID(0x00000801U);
         static const uint32_t ChunkID_SceneStateStackFrame                    = CHUNK_ID(0x00000802U);
         static const uint32_t ChunkID_SceneStateStackStagingArea              = CHUNK_ID(0x00000803U);
+        static const uint32_t ChunkID_SceneStateStackRestoreCommands          = CHUNK_ID(0x00000804U);
 
 
         /////////////////////////////////////////////////////

@@ -1256,6 +1256,11 @@ namespace GTEngine
         this->stateStack.RevertStagingArea();
     }
 
+    void Scene::GetStateStackStagingAreaRestoreCommands(SceneStateStackRestoreCommands &commands)
+    {
+        this->stateStack.GetCurrentBranch()->GetStagingArea().GetRestoreCommands(commands);
+    }
+
 
     void Scene::StageInsertOnStateStack(uint64_t sceneNodeID)
     {

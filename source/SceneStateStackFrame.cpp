@@ -29,7 +29,7 @@ namespace GTEngine
         {
             auto sceneNodeID         = stagedDeletes.buffer[i]->key;
             auto sceneNodeSerializer = new GTLib::BasicSerializer(*stagedDeletes.buffer[i]->value);
-            this->SerializeSceneNode(sceneNodeID, *sceneNodeSerializer);
+            this->SerializeSceneNode(sceneNodeID, *sceneNodeSerializer);        // <-- Do we need to do this? Don't think so...
 
             this->serializedDeletes.Add(sceneNodeID, sceneNodeSerializer);
         }

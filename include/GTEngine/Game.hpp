@@ -15,6 +15,7 @@
 #include "Profiler.hpp"
 #include "GUIImageManager.hpp"
 #include "Rendering/DefaultGUIRenderer.hpp"
+#include "GameStateManager.hpp"
 #include <GTLib/Threading.hpp>
 #include <GTLib/Timing.hpp>
 #include <GTLib/CommandLine.hpp>
@@ -51,7 +52,7 @@ namespace GTEngine
         ///     The constructor is where all initialisation takes place. Use operator bool or IsInitialised() to check if initialisation was successful.
         ///     @par
         ///     If initialisation was not successful, Run() will return immediately. Use Run() to start running the game.
-        Game();
+        Game(GameStateManager &gameStateManager);
 
         /// Destructor.
         ///
@@ -394,8 +395,63 @@ namespace GTEngine
 
 
 
+
+        /////////////////////////////////////
+        // Game State Management
+
+        /// Called when the game state needs to be serialized.
+        ///
+        /// @param serializer [in] A reference to the serializer to write the data to.
+        ///
+        /// @return True if the game state is serialized successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     This should not be called directly. This is simply a pass-through to the Serialize() method of the game's state manager.
+        bool SerializeGameState(GTLib::Serializer &serializer);
+
+        /// Called when the game state needs to be deserialized.
+        ///
+        /// @param deserializer [in] A reference to the deserializer to read the data from.
+        ///
+        /// @return True if the game state is deserialized successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     This should not be called directly. This is simply a pass-through to the Deserialize() method of the game's state manager.
+        bool DeserializeGameState(GTLib::Deserializer &deserializer);
+
+        /// A helper method for saving a game state to a file (doing a save game).
+        ///
+        /// @param destinationFilePath [in] The relative or absolute path of the file to save the game state to.
+        ///
+        /// @return True if the game was saved successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     If you want simple save game functionality, use this method.
+        bool SaveGameState(const char* destinationFilePath);
+
+        /// A helper method for loading a game state from a file (doing a load game).
+        ///
+        /// @param sourceFilePath [in] The relative or absolute path of the file to load the game state from.
+        ///
+        /// @return True if the game was loaded successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     If you want simple load game functionality, use this method.
+        bool LoadGameState(const char* sourceFilePath);
+
+        /// Loads a scene.
+        ///
+        /// @param sceneRelativePath [in] The relative path of the scene to load.
+        ///
+        /// @return True if the scene is loaded and switched successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     This is actually just a pass-through to the LoadScene() method of the game's state manager.
+        bool LoadScene(const char* sceneRelativePath);
+
+
         ////////////////////////////////////
-        // Public Events.
+        // Public Game State Management Events.
 
         /// Called when a scene is loaded via the scripting environment.
         ///
@@ -407,14 +463,17 @@ namespace GTEngine
         ///     Games should handle this themselves to enable support for loading scenes via the scripting environment.
         ///     @par
         ///     Do not call this directly.
-        virtual bool OnLoadScene(const char* sceneRelativePath);
+        //virtual bool OnLoadScene(const char* sceneRelativePath);
+
+        
 
 
     protected:
 
         void CacheMousePosition();
 
-        
+
+#if 0
     protected:  // Event handlers.
 
 
@@ -522,7 +581,7 @@ namespace GTEngine
 
         /// Called just after the editor has been closed.
         virtual void OnEditorClose();
-
+#endif
 
     private:
 
@@ -633,6 +692,10 @@ namespace GTEngine
 
 
     private:
+
+        /// The game state manager.
+        GameStateManager &m_gameStateManager;
+
 
         /// Keeps track of whether or not the game is initialised.
         bool isInitialised;

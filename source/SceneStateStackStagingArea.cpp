@@ -117,8 +117,10 @@ namespace GTEngine
     }
 
 
-    void SceneStateStackStagingArea::GetRestoreCommands(SceneStateStackRestoreCommands &commands)
+    void SceneStateStackStagingArea::GetRevertCommands(SceneStateStackRestoreCommands &commands)
     {
+        // TODO: Investigate why I'm not using commands.AddInsert(), .AddDelete() and .AddUpdate().
+
         // We need to do opposites. Inserts become deletes, deletes become inserts and updates are back traced until we find the most recent one.
         
         // Inserts
@@ -155,6 +157,33 @@ namespace GTEngine
             {
                 commands.hierarchy.Add(sceneNodeID, parentSceneNodeID);
             }
+        }
+    }
+
+    void SceneStateStackStagingArea::GetRestoreCommands(SceneStateStackRestoreCommands &commands)
+    {
+        // Inserts
+        for (size_t i = 0; i < this->inserts.count; ++i)
+        {
+            auto sceneNodeID       = this->inserts.buffer[i];
+            auto parentSceneNodeID = this->GetParentSceneNodeIDFromHierarchy(sceneNodeID);
+            commands.AddInsert(sceneNodeID, parentSceneNodeID, this->GetScene());
+        }
+
+        // Deletes
+        for (size_t i = 0; i < this->deletes.count; ++i)
+        {
+            auto sceneNodeID = this->deletes.buffer[i]->key;
+            auto parentSceneNodeID = this->GetParentSceneNodeIDFromHierarchy(sceneNodeID);
+            commands.AddDelete(sceneNodeID, parentSceneNodeID, nullptr, nullptr);
+        }
+
+        // Updates
+        for (size_t i = 0; i < this->updates.count; ++i)
+        {
+            auto sceneNodeID = this->updates.buffer[i];
+            auto parentSceneNodeID = this->GetParentSceneNodeIDFromHierarchy(sceneNodeID);
+            commands.AddUpdate(sceneNodeID, parentSceneNodeID, this->GetScene());
         }
     }
 
@@ -353,5 +382,16 @@ namespace GTEngine
     void SceneStateStackStagingArea::RemoveFromHierarchy(uint64_t sceneNodeID)
     {
         this->hierarchy.RemoveByKey(sceneNodeID);
+    }
+
+    uint64_t SceneStateStackStagingArea::GetParentSceneNodeIDFromHierarchy(uint64_t childSceneNodeID) const
+    {
+        auto iHierarchy = this->hierarchy.Find(childSceneNodeID);
+        if (iHierarchy != nullptr)
+        {
+            return iHierarchy->value;
+        }
+
+        return 0;
     }
 }
