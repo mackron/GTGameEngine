@@ -553,6 +553,14 @@ namespace GTEngine
         /// Reverts the staging area of the state stack.
         void RevertStateStackStagingArea();
 
+        /// Retrieves the commands that can be used to re-create the scene based on the content of the staging area.
+        ///
+        /// @param commands [out] A reference to the structure that will receive the restore commands.
+        ///
+        /// @remarks
+        ///     The returned commands can be used for saving the game state.
+        void GetStateStackStagingAreaRestoreCommands(SceneStateStackRestoreCommands &commands);
+
 
         /// Stages an insert command to the state stack's staging area.
         void StageInsertOnStateStack(uint64_t sceneNodeID);

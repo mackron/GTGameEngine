@@ -268,7 +268,7 @@ namespace GTEngine
 
 
             // With the staging area reverted, we can now grab the revert commands like normal.
-            SceneStateStackRestoreCommands restoreCommands(this->stateStack.GetSceneNodeDeserializationFlags());
+            SceneStateStackRestoreCommands restoreCommands(this->stateStack.GetSceneNodeSerializationFlags(), this->stateStack.GetSceneNodeDeserializationFlags());
             this->GetRestoreCommands(newFrameIndex, restoreCommands);
 
             // And now we just execute the commands.
@@ -289,8 +289,8 @@ namespace GTEngine
         scene.DisableStateStackStaging();
         {
             // We'll need to grab the revert commands first.
-            SceneStateStackRestoreCommands restoreCommands(this->stateStack.GetSceneNodeDeserializationFlags());
-            this->stagingArea.GetRestoreCommands(restoreCommands);
+            SceneStateStackRestoreCommands restoreCommands(this->stateStack.GetSceneNodeSerializationFlags(), this->stateStack.GetSceneNodeDeserializationFlags());
+            this->stagingArea.GetRevertCommands(restoreCommands);
 
             // Now we execute the commands.
             restoreCommands.Execute(this->GetScene());

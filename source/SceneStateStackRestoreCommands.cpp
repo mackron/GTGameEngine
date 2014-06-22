@@ -3,20 +3,47 @@
 #include <GTEngine/SceneStateStackRestoreCommands.hpp>
 #include <GTEngine/SceneStateStackBranch.hpp>
 #include <GTEngine/Scene.hpp>
+#include <GTEngine/Logging.hpp>
 
 namespace GTEngine
 {
-    SceneStateStackRestoreCommands::SceneStateStackRestoreCommands(unsigned int deserializationFlags)
-        : inserts(), deletes(), updates(), hierarchy(), deserializationFlags(deserializationFlags)
+    SceneStateStackRestoreCommands::SceneStateStackRestoreCommands(unsigned int serializationFlags, unsigned int deserializationFlags)
+        : inserts(), deletes(), updates(), hierarchy(), serializationFlags(serializationFlags), deserializationFlags(deserializationFlags)
     {
     }
 
     SceneStateStackRestoreCommands::~SceneStateStackRestoreCommands()
     {
+        for (size_t i = 0; i < this->inserts.count; ++i)
+        {
+            auto iCommand = this->inserts.buffer[i];
+            if (iCommand->value.isOwner)
+            {
+                delete iCommand->value.serializer;
+            }
+        }
+
+        for (size_t i = 0; i < this->deletes.count; ++i)
+        {
+            auto iCommand = this->deletes.buffer[i];
+            if (iCommand->value.isOwner)
+            {
+                delete iCommand->value.serializer;
+            }
+        }
+
+        for (size_t i = 0; i < this->updates.count; ++i)
+        {
+            auto iCommand = this->updates.buffer[i];
+            if (iCommand->value.isOwner)
+            {
+                delete iCommand->value.serializer;
+            }
+        }
     }
 
 
-    void SceneStateStackRestoreCommands::AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTLib::BasicSerializer* sceneNodeSerializer)
+    void SceneStateStackRestoreCommands::AddInsert(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, GTLib::BasicSerializer* sceneNodeSerializer)
     {
         // If a delete command with the scene node is already staged, all we want to do is remove it from the deletes and just
         // ignore everything.
@@ -32,15 +59,35 @@ namespace GTEngine
 
             if (!this->inserts.Exists(sceneNodeID))
             {
-                this->inserts.Add(sceneNodeID, sceneNodeSerializer);
+                bool ownsSerializer = false;
+
+                if (sceneNodeSerializer == nullptr)
+                {
+                    if (scene != nullptr)
+                    {
+                        auto sceneNode = scene->GetSceneNodeByID(sceneNodeID);
+                        if (sceneNode != nullptr)
+                        {
+                            sceneNodeSerializer = new GTLib::BasicSerializer;
+                            sceneNode->Serialize(*sceneNodeSerializer, this->serializationFlags);
+
+                            ownsSerializer = true;
+                        }
+                    }
+                }
+
+                this->inserts.Add(sceneNodeID, Command(sceneNodeSerializer, ownsSerializer));
                 this->AddToHierarchy(sceneNodeID, parentSceneNodeID);
             }
         }
     }
 
-    void SceneStateStackRestoreCommands::AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTLib::BasicSerializer* sceneNodeSerializer)
+    void SceneStateStackRestoreCommands::AddDelete(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, GTLib::BasicSerializer* sceneNodeSerializer)
     {
         (void)parentSceneNodeID;
+        (void)scene;
+        (void)sceneNodeSerializer;
+
 
         // If an insert command with the scene node is already staged, all we want to do is remove it from the inserts and just
         // ignore everything.
@@ -64,14 +111,31 @@ namespace GTEngine
         this->RemoveFromHierarchy(sceneNodeID);
     }
 
-    void SceneStateStackRestoreCommands::AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, GTLib::BasicSerializer* sceneNodeSerializer)
+    void SceneStateStackRestoreCommands::AddUpdate(uint64_t sceneNodeID, uint64_t parentSceneNodeID, Scene* scene, GTLib::BasicSerializer* sceneNodeSerializer)
     {
         // We ignore update commands if an insert or delete command is already present.
         if (!this->inserts.Exists(sceneNodeID) &&
             !this->deletes.Exists(sceneNodeID) &&
             !this->updates.Exists(sceneNodeID))
         {
-            this->updates.Add(sceneNodeID, sceneNodeSerializer);
+            bool ownsSerializer = false;
+
+            if (sceneNodeSerializer == nullptr)
+            {
+                if (scene != nullptr)
+                {
+                    auto sceneNode = scene->GetSceneNodeByID(sceneNodeID);
+                    if (sceneNode != nullptr)
+                    {
+                        sceneNodeSerializer = new GTLib::BasicSerializer;
+                        sceneNode->Serialize(*sceneNodeSerializer, this->serializationFlags);
+
+                        ownsSerializer = true;
+                    }
+                }
+            }
+
+            this->updates.Add(sceneNodeID, Command(sceneNodeSerializer, ownsSerializer));
         }
 
 
@@ -167,7 +231,7 @@ namespace GTEngine
     {
         for (size_t i = 0; i < this->inserts.count; ++i)
         {
-            auto serializer = this->inserts.buffer[i]->value;
+            auto serializer = this->inserts.buffer[i]->value.serializer;
             assert(serializer != nullptr);
             {
                 GTLib::BasicDeserializer deserializer(serializer->GetBuffer(), serializer->GetBufferSizeInBytes());
@@ -187,7 +251,7 @@ namespace GTEngine
         for (size_t i = 0; i < this->updates.count; ++i)
         {
             auto sceneNodeID         = this->updates.buffer[i]->key;
-            auto sceneNodeSerializer = this->updates.buffer[i]->value;
+            auto sceneNodeSerializer = this->updates.buffer[i]->value.serializer;
 
             assert(sceneNodeID         != 0);
             assert(sceneNodeSerializer != nullptr);
@@ -224,6 +288,214 @@ namespace GTEngine
                     else
                     {
                         sceneNode->DetachFromParent(false);
+                    }
+                }
+            }
+        }
+    }
+
+
+
+    /////////////////////////////////////////////////
+    // Serialization/Deserialization
+
+    void SceneStateStackRestoreCommands::Serialize(GTLib::Serializer &serializer) const
+    {
+        GTLib::BasicSerializer secondarySerializer;
+
+        // Inserts.
+        secondarySerializer.Write(static_cast<uint32_t>(this->inserts.count));
+
+        for (size_t i = 0; i < this->inserts.count; ++i)
+        {
+            uint64_t sceneNodeID         = this->inserts.buffer[i]->key;
+            auto     sceneNodeSerializer = this->inserts.buffer[i]->value.serializer;
+
+            secondarySerializer.Write(sceneNodeID);
+            
+            secondarySerializer.Write(static_cast<uint32_t>(sceneNodeSerializer->GetBufferSizeInBytes()));
+            secondarySerializer.Write(sceneNodeSerializer->GetBuffer(), sceneNodeSerializer->GetBufferSizeInBytes());
+        }
+
+
+        // Deletes.
+        secondarySerializer.Write(static_cast<uint32_t>(this->deletes.count));
+
+        for (size_t i = 0; i < this->deletes.count; ++i)
+        {
+            auto sceneNodeID         = this->deletes.buffer[i]->key;
+            auto sceneNodeSerializer = this->deletes.buffer[i]->value.serializer;
+
+            secondarySerializer.Write(sceneNodeID);
+
+            secondarySerializer.Write(static_cast<uint32_t>(sceneNodeSerializer->GetBufferSizeInBytes()));
+            secondarySerializer.Write(sceneNodeSerializer->GetBuffer(), sceneNodeSerializer->GetBufferSizeInBytes());
+        }
+
+
+        // Updates.
+        secondarySerializer.Write(static_cast<uint32_t>(this->updates.count));
+
+        for (size_t i = 0; i < this->updates.count; ++i)
+        {
+            uint64_t sceneNodeID         = this->updates.buffer[i]->key;
+            auto     sceneNodeSerializer = this->updates.buffer[i]->value.serializer;
+
+            secondarySerializer.Write(sceneNodeID);
+            
+            secondarySerializer.Write(static_cast<uint32_t>(sceneNodeSerializer->GetBufferSizeInBytes()));
+            secondarySerializer.Write(sceneNodeSerializer->GetBuffer(), sceneNodeSerializer->GetBufferSizeInBytes());
+        }
+
+
+
+        // Hierarchy.
+        secondarySerializer.Write(static_cast<uint32_t>(this->hierarchy.count));
+
+        for (size_t i = 0; i < this->hierarchy.count; ++i)
+        {
+            secondarySerializer.Write(this->hierarchy.buffer[i]->key);
+            secondarySerializer.Write(this->hierarchy.buffer[i]->value);
+        }
+
+
+
+
+        Serialization::ChunkHeader header;
+        header.id          = Serialization::ChunkID_SceneStateStackRestoreCommands;
+        header.version     = 1;
+        header.sizeInBytes = secondarySerializer.GetBufferSizeInBytes();
+
+        serializer.Write(header);
+        serializer.Write(secondarySerializer.GetBuffer(), secondarySerializer.GetBufferSizeInBytes());
+    }
+
+    void SceneStateStackRestoreCommands::Deserialize(GTLib::Deserializer &deserializer)
+    {
+        // Clear first, just in case.
+        this->Clear();
+
+        Serialization::ChunkHeader header;
+        deserializer.Read(header);
+        {
+            assert(header.id == Serialization::ChunkID_SceneStateStackRestoreCommands);
+            {
+                switch (header.version)
+                {
+                case 1:
+                    {
+                        // Inserts.
+                        uint32_t insertsCount;
+                        deserializer.Read(insertsCount);
+
+                        for (uint32_t i = 0; i < insertsCount; ++i)
+                        {
+                            uint64_t sceneNodeID;
+                            deserializer.Read(sceneNodeID);
+
+                            // The next chunk of data is the serialized data of the scene node. What we do here is ready the data into a temp buffer, and then
+                            // write that to a new GTLib::BasicSerializer object.
+                            uint32_t serializerSizeInBytes;
+                            deserializer.Read(serializerSizeInBytes);
+
+                            void* serializerData = malloc(serializerSizeInBytes);
+                            deserializer.Read(serializerData, serializerSizeInBytes);
+
+
+                            auto sceneNodeSerializer = new GTLib::BasicSerializer;
+                            sceneNodeSerializer->Write(serializerData, serializerSizeInBytes);
+
+                            this->inserts.Add(sceneNodeID, Command(sceneNodeSerializer, true));
+
+
+                            free(serializerData);
+                        }
+
+
+                        // Deletes.
+                        uint32_t deletesCount;
+                        deserializer.Read(deletesCount);
+
+                        for (uint32_t i = 0; i < deletesCount; ++i)
+                        {
+                            uint64_t sceneNodeID;
+                            deserializer.Read(sceneNodeID);
+
+                            // The next chunk of data is the serialized data of the scene node. What we do here is ready the data into a temp buffer, and then
+                            // write that to a new GTLib::BasicSerializer object.
+                            uint32_t serializerSizeInBytes;
+                            deserializer.Read(serializerSizeInBytes);
+
+                            void* serializerData = malloc(serializerSizeInBytes);
+                            deserializer.Read(serializerData, serializerSizeInBytes);
+
+
+                            auto sceneNodeSerializer = new GTLib::BasicSerializer;
+                            sceneNodeSerializer->Write(serializerData, serializerSizeInBytes);
+
+
+                            this->deletes.Add(sceneNodeID, Command(sceneNodeSerializer, true));
+
+
+                            free(serializerData);
+                        }
+
+
+                        // Updates.
+                        uint32_t updatesCount;
+                        deserializer.Read(updatesCount);
+
+                        for (uint32_t i = 0; i < updatesCount; ++i)
+                        {
+                            uint64_t sceneNodeID;
+                            deserializer.Read(sceneNodeID);
+
+                            // The next chunk of data is the serialized data of the scene node. What we do here is ready the data into a temp buffer, and then
+                            // write that to a new GTLib::BasicSerializer object.
+                            uint32_t serializerSizeInBytes;
+                            deserializer.Read(serializerSizeInBytes);
+
+                            void* serializerData = malloc(serializerSizeInBytes);
+                            deserializer.Read(serializerData, serializerSizeInBytes);
+
+
+                            auto sceneNodeSerializer = new GTLib::BasicSerializer;
+                            sceneNodeSerializer->Write(serializerData, serializerSizeInBytes);
+
+                            this->updates.Add(sceneNodeID, Command(sceneNodeSerializer, true));
+
+
+                            free(serializerData);
+                        }
+
+
+
+                        // Hierarchy.
+                        uint32_t hierarchyCount;
+                        deserializer.Read(hierarchyCount);
+
+                        for (uint32_t i = 0; i < hierarchyCount; ++i)
+                        {
+                            uint64_t sceneNodeID;
+                            deserializer.Read(sceneNodeID);
+
+                            uint64_t parentSceneNodeID;
+                            deserializer.Read(parentSceneNodeID);
+
+                            this->hierarchy.Add(sceneNodeID, parentSceneNodeID);
+                        }
+
+
+                        break;
+                    }
+
+
+                default:
+                    {
+                        GTEngine::Log("Error deserializing SceneStateStackRestoreCommands. The main chunk is an unsupported version (%d).", header.version);
+                        deserializer.Seek(header.sizeInBytes);
+
+                        break;
                     }
                 }
             }

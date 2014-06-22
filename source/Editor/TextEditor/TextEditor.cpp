@@ -97,7 +97,8 @@ namespace GTEngine
             // Do an initial compilation.
             if (this->IsScriptFile())
             {
-                this->proxyGame = new Game;
+                GameStateManager nullGameStateManager;
+                this->proxyGame = new Game(nullGameStateManager);
                 if (this->proxyGame->GetScript().Startup())
                 {
                     // We need to setup a few things with the scripting.

@@ -71,7 +71,12 @@ namespace GTEngine
 
 
 
-        /// Retrieves the set of commands to use to restore the scene from the changes in the staging area.
+        /// Retrieves the set of commands to use to revert the scene from the changes in the staging area.
+        ///
+        /// @param commands [out] A reference to the object that will receive the restore commands.
+        void GetRevertCommands(SceneStateStackRestoreCommands &commands);
+
+        /// Retrieves a set of commands that can be used to put the scene into a state as currently defined by the staging area.
         ///
         /// @param commands [out] A reference to the object that will receive the restore commands.
         void GetRestoreCommands(SceneStateStackRestoreCommands &commands);
@@ -104,6 +109,11 @@ namespace GTEngine
         /// @param sceneNodeID [in] The ID of the scene node that is being removed from the hierarchy.
         void RemoveFromHierarchy(uint64_t sceneNodeID);
 
+        /// Retrieves the ID of the parent node from the hierarchy, or 0 if it does not have a parent.
+        ///
+        /// @param childSceneNodeID [in] The ID of the scene node whose parent ID is being retrieved.
+        uint64_t GetParentSceneNodeIDFromHierarchy(uint64_t childSceneNodeID) const;
+
 
 
     private:
@@ -122,7 +132,7 @@ namespace GTEngine
         /// The list of scene node ID's of newly updated scene nodes in the staging area.
         GTLib::Vector<uint64_t> updates;
 
-        /// The hierarchy of the nodes containined in the staging area. The key is the main node ID and the value is the parent node ID.
+        /// The hierarchy of the nodes containined in the staging area. The key is the child node ID and the value is the parent node ID.
         GTLib::Map<uint64_t, uint64_t> hierarchy;
     };
 }

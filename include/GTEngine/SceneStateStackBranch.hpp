@@ -173,6 +173,10 @@ namespace GTEngine
         uint64_t FindMostRecentParentSceneNodeID(uint64_t sceneNodeID, uint32_t startFrameIndex) const;
 
 
+        /// Retrieves a reference to the staging area.
+              SceneStateStackStagingArea & GetStagingArea()       { return this->stagingArea; }
+        const SceneStateStackStagingArea & GetStagingArea() const { return this->stagingArea; }
+
 
         /////////////////////////////////////////////////
         // Serialization/Deserialization

@@ -33,8 +33,9 @@
 
 namespace GTEngine
 {
-    Game::Game()
-        : isInitialised(false), closing(false),
+    Game::Game(GameStateManager &gameStateManager)
+        : m_gameStateManager(gameStateManager),
+          isInitialised(false), closing(false),
           executablePath(), executableDirectoryPath(),
           eventQueue(), eventQueueLock(),
           eventFilter(nullptr),
@@ -381,7 +382,7 @@ namespace GTEngine
         if (!this->paused)
         {
             this->paused = true;
-            this->OnPause();
+            m_gameStateManager.OnPause(*this);
 
             if (this->currentGameState != nullptr)
             {
@@ -395,7 +396,7 @@ namespace GTEngine
         if (this->paused)
         {
             this->paused = false;
-            this->OnResume();
+            m_gameStateManager.OnResume(*this);
 
             if (this->currentGameState != nullptr)
             {
@@ -409,7 +410,7 @@ namespace GTEngine
     {
         //CALLGRIND_ZERO_STATS;
         //__itt_resume();
-        if (this->OnEditorOpening())
+        if (m_gameStateManager.OnEditorOpening(*this))
         {
             // The main game window GUI element needs to be hidden.
             this->gameWindowGUIElement->Hide();
@@ -437,7 +438,7 @@ namespace GTEngine
 
             this->editor.Open();
 
-            this->OnEditorOpen();
+            m_gameStateManager.OnEditorOpen(*this);
         }
         //CALLGRIND_STOP_INSTRUMENTATION;
         //__itt_pause();
@@ -445,7 +446,7 @@ namespace GTEngine
 
     void Game::CloseEditor()
     {
-        if (this->OnEditorClosing())
+        if (m_gameStateManager.OnEditorClosing(*this))
         {
             this->editor.Close();
 
@@ -472,7 +473,7 @@ namespace GTEngine
                 this->profiler.Disable();
             }
 
-            this->OnEditorClose();
+            m_gameStateManager.OnEditorClose(*this);
         }
     }
 
@@ -719,6 +720,57 @@ namespace GTEngine
 
 
 
+    /////////////////////////////////////
+    // Game State Management
+
+    bool Game::SerializeGameState(GTLib::Serializer &serializer)
+    {
+        return m_gameStateManager.Serialize(serializer);
+    }
+
+    bool Game::DeserializeGameState(GTLib::Deserializer &deserializer)
+    {
+        return m_gameStateManager.Deserialize(deserializer);
+    }
+
+    bool Game::SaveGameState(const char* destinationFilePath)
+    {
+        GTLib::FileHandle file = GTLib::OpenFile(destinationFilePath, GTLib::IO::OpenMode::Write | GTLib::IO::OpenMode::CreateDirs);
+        if (file)
+        {
+            GTLib::FileSerializer serializer(file);
+            bool result = this->SerializeGameState(serializer);
+
+            GTLib::CloseFile(file);
+            return result;
+        }
+
+        return false;
+    }
+
+    bool Game::LoadGameState(const char* sourceFilePath)
+    {
+        GTLib::FileHandle file = GTLib::OpenFile(sourceFilePath, GTLib::IO::OpenMode::Write | GTLib::IO::OpenMode::CreateDirs);
+        if (file)
+        {
+            GTLib::FileDeserializer deserializer(file);
+            bool result = this->DeserializeGameState(deserializer);
+
+            GTLib::CloseFile(file);
+            return result;
+        }
+
+        return false;
+    }
+
+    bool Game::LoadScene(const char* sceneRelativePath)
+    {
+        return m_gameStateManager.LoadScene(*this, sceneRelativePath);
+    }
+
+
+
+#if 0
     void Game::OnLoadConfigs()
     {
     }
@@ -836,7 +888,7 @@ namespace GTEngine
     void Game::OnEditorClose()
     {
     }
-
+#endif
 
 
 
@@ -850,7 +902,7 @@ namespace GTEngine
         if (this->script.Startup())
         {
             // We give the game an opportunity to load configs before processing --config arguments.
-            this->OnLoadConfigs();
+            m_gameStateManager.OnLoadConfigs(*this);
 
             // This is where the user config scripts are loaded.
             const char** cmdLine_config = commandLine.GetArgument("config");
@@ -902,7 +954,7 @@ namespace GTEngine
 
 
                 // Here is where we let the game object do some startup stuff.
-                if (this->OnStartup(commandLine))
+                if (m_gameStateManager.OnStartup(*this, commandLine))
                 {
                     this->script.Execute("Game.OnStartup();");
                     return true;
@@ -957,8 +1009,8 @@ namespace GTEngine
 
 
         // We first let the game know that we are shutting down. It's important that we do this before killing anything.
-        this->OnShutdown();
-        this->script.Execute("Game.OnShutdown();");
+        m_gameStateManager.OnShutdown(*this);
+        this->script.Execute("Game.OnShutdown();");     // <-- TODO: Don't use this inline style calling. Instead, properly call it through the C++ API.
 
 
         delete this->window;
@@ -1054,7 +1106,7 @@ namespace GTEngine
 
 
         // Now we let the game know that we're starting the frame.
-        this->OnStartFrame();
+        m_gameStateManager.OnStartFrame(*this);
 
         // Now we just run the job without attempting to block (second argument).
         this->updateThread->Start(this->updateJob, false);
@@ -1066,7 +1118,7 @@ namespace GTEngine
         this->updateThread->Wait();
 
         // Now we can let the game know that we've finished the frame...
-        this->OnEndFrame();
+        m_gameStateManager.OnEndFrame(*this);
     }
 
     void Game::Update() //[Update Thread]
@@ -1093,7 +1145,7 @@ namespace GTEngine
         }
 
         // The game needs to know that we're updating...
-        this->OnUpdate(deltaTimeInSeconds);
+        m_gameStateManager.OnUpdate(*this, deltaTimeInSeconds);
         this->PostScriptEvent_OnUpdate(deltaTimeInSeconds);
 
 
@@ -1124,17 +1176,16 @@ namespace GTEngine
 
         // NOTE:
         //
-        // We're not currently calling any scripting events on the rendering thread because of a few multithreading issues with the scripting environment. Need to
-        // look deeper into what's causing this. Initial guess is that the Lua implementation isn't completely thread safe, but not looked into it. For performance,
-        // can't use a mutex here.
+        // We're not currently calling any OnDraw events. The problem is with the multi-threading nature of the engine. Events here are called from a different thread
+        // to other events, so it's not a trivial matter of simply calling the function without any synchronization.
 
 
-        this->OnDraw();
+        //this->OnDraw();
         //this->script.Execute("Game.OnDraw();");
 
         Renderer::ExecuteCallCache();
 
-        this->OnPostDraw();
+        //this->OnPostDraw();
         //this->script.Execute("Game.OnPostDraw();");
 
 
@@ -1207,7 +1258,7 @@ namespace GTEngine
             // Any generic events are posted as an event to the game so that an application can handle it itself.
             default:
                 {
-                    this->OnHandleEvent(e);
+                    m_gameStateManager.OnHandleEvent(*this, e);
                     break;
                 }
             }
@@ -1222,7 +1273,7 @@ namespace GTEngine
 
         if (this->eventFilter == nullptr || this->eventFilter->OnSize(e.size.width, e.size.height))
         {
-            this->OnSize(e.size.width, e.size.height);
+            m_gameStateManager.OnSize(*this, e.size.width, e.size.height);
             this->PostScriptEvent_OnSize(e);
 
             if (this->currentGameState != nullptr)
@@ -1250,7 +1301,7 @@ namespace GTEngine
             {
                 if (this->eventFilter == nullptr || this->eventFilter->OnMouseMove(e.mousemove.x, e.mousemove.y))
                 {
-                    this->OnMouseMove(e.mousemove.x, e.mousemove.y);
+                    m_gameStateManager.OnMouseMove(*this, e.mousemove.x, e.mousemove.y);
                     this->PostScriptEvent_OnMouseMove(e);
 
                     if (this->currentGameState != nullptr)
@@ -1272,7 +1323,7 @@ namespace GTEngine
 
         if (this->eventFilter == nullptr || this->eventFilter->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y))
         {
-            this->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
+            m_gameStateManager.OnMouseWheel(*this, e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
             this->PostScriptEvent_OnMouseWheel(e);
 
             if (this->currentGameState != nullptr)
@@ -1299,7 +1350,7 @@ namespace GTEngine
 
         if (this->eventFilter == nullptr || this->eventFilter->OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y))
         {
-            this->OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y);
+            m_gameStateManager.OnMouseButtonDown(*this, e.mousedown.button, e.mousedown.x, e.mousedown.y);
             this->PostScriptEvent_OnMouseButtonDown(e);
 
             if (this->currentGameState != nullptr)
@@ -1330,7 +1381,7 @@ namespace GTEngine
 
         if (this->eventFilter == nullptr || this->eventFilter->OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y))
         {
-            this->OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y);
+            m_gameStateManager.OnMouseButtonUp(*this, e.mouseup.button, e.mouseup.x, e.mouseup.y);
             this->PostScriptEvent_OnMouseButtonUp(e);
 
             if (this->currentGameState != nullptr)
@@ -1347,7 +1398,7 @@ namespace GTEngine
 
         if (this->eventFilter == nullptr || this->eventFilter->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y))
         {
-            this->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y);
+            m_gameStateManager.OnMouseButtonDoubleClick(*this, e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y);
             this->PostScriptEvent_OnMouseButtonDoubleClick(e);
 
             if (this->currentGameState != nullptr)
@@ -1366,7 +1417,7 @@ namespace GTEngine
 
         if (this->eventFilter == nullptr || this->eventFilter->OnKeyPressed(e.keypressed.key))
         {
-            this->OnKeyPressed(e.keypressed.key);
+            m_gameStateManager.OnKeyPress(*this, e.keypressed.key);
             this->PostScriptEvent_OnKeyPressed(e);
 
             if (this->currentGameState != nullptr)
@@ -1422,7 +1473,7 @@ namespace GTEngine
 
         if (this->eventFilter == nullptr || this->eventFilter->OnKeyReleased(e.keyreleased.key))
         {
-            this->OnKeyReleased(e.keyreleased.key);
+            m_gameStateManager.OnKeyRelease(*this, e.keyreleased.key);
             this->PostScriptEvent_OnKeyReleased(e);
 
             if (this->currentGameState != nullptr)
@@ -1445,7 +1496,7 @@ namespace GTEngine
 
         if (this->eventFilter == nullptr || this->eventFilter->OnKeyDown(e.keydown.key))
         {
-            this->OnKeyDown(e.keydown.key);
+            m_gameStateManager.OnKeyDown(*this, e.keydown.key);
             this->PostScriptEvent_OnKeyDown(e);
         }
     }
@@ -1457,7 +1508,7 @@ namespace GTEngine
         
         if (this->eventFilter == nullptr || this->eventFilter->OnKeyUp(e.keyup.key))
         {
-            this->OnKeyUp(e.keyup.key);
+            m_gameStateManager.OnKeyUp(*this, e.keyup.key);
             this->PostScriptEvent_OnKeyUp(e);
         }
     }
@@ -1487,7 +1538,7 @@ namespace GTEngine
 
         if (this->eventFilter == nullptr || this->eventFilter->OnReceiveFocus())
         {
-            this->OnReceiveFocus();
+            m_gameStateManager.OnReceiveFocus(*this);
             this->PostScriptEvent_OnReceiveFocus(e);
         }
     }
@@ -1536,7 +1587,7 @@ namespace GTEngine
 
         if (this->eventFilter == nullptr || this->eventFilter->OnLoseFocus())
         {
-            this->OnLoseFocus();
+            m_gameStateManager.OnLoseFocus(*this);
             this->PostScriptEvent_OnLoseFocus(e);
         }
     }

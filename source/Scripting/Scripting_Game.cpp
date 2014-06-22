@@ -358,7 +358,7 @@ namespace GTEngine
 
             int LoadScene(GTLib::Script &script)
             {
-                script.Push(GetGame(script).OnLoadScene(script.ToString(1)));
+                script.Push(GetGame(script).LoadScene(script.ToString(1)));
                 return 1;
             }
 
