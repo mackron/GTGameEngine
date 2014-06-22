@@ -310,8 +310,9 @@ namespace GTEngine
 
         /// Serializes the game state.
         ///
+        /// @param game       [in] A reference to the applicable game object.
         /// @param serializer [in] The serializer to write the data to.
-        virtual bool Serialize(GTLib::Serializer &serializer);
+        virtual bool Serialize(Game &game, GTLib::Serializer &serializer);
 
 
         ///////////////////////////////////////
@@ -319,8 +320,9 @@ namespace GTEngine
 
         /// Deserializes the game state.
         ///
+        /// @param game       [in] A reference to the applicable game object.
         /// @param deserializer [in] The deserializer to write the data to.
-        virtual bool Deserialize(GTLib::Deserializer &deserializer);
+        virtual bool Deserialize(Game &game, GTLib::Deserializer &deserializer);
     };
 
 
@@ -372,7 +374,29 @@ namespace GTEngine
         // Serialization
 
         /// GameStateManager::Serialize()
-        virtual bool Serialize(GTLib::Serializer &serializer);
+        virtual bool Serialize(Game &game, GTLib::Serializer &serializer);
+
+        /// Serializes the header information.
+        ///
+        /// @param game       [in] A reference to the applicable game object.
+        /// @param serializer [in] The serializer to write the data to.
+        ///
+        /// @return The version of the data.
+        ///
+        /// @remarks
+        ///     The return value will be passed to DeserializeHeaderData().
+        virtual uint32_t SerializeHeaderData(Game &game, GTLib::Serializer &serializer);
+
+        /// Serializes the global data.
+        ///
+        /// @param game       [in] A reference to the applicable game object.
+        /// @param serializer [in] The serializer to write the data to.
+        ///
+        /// @return The version of the data.
+        ///
+        /// @remarks
+        ///     The return value will be passed to DeserializeGlobalData().
+        virtual uint32_t SerializeGlobalData(Game &game, GTLib::Serializer &serializer);
 
 
 
@@ -380,8 +404,19 @@ namespace GTEngine
         // Deserialization
 
         /// GameStateManager::Deserialize()
-        virtual bool Deserialize(GTLib::Deserializer &deserializer);
+        virtual bool Deserialize(Game &game, GTLib::Deserializer &deserializer);
 
+        /// Deserializes the header information.
+        ///
+        /// @param game       [in] A reference to the applicable game object.
+        /// @param deserializer [in] The deserializer to read the data from.
+        virtual bool DeserializeHeaderData(Game &game, GTLib::Deserializer &deserializer, uint32_t version);
+
+        /// Deserializes the global game data.
+        ///
+        /// @param game       [in] A reference to the applicable game object.
+        /// @param deserializer [in] The deserializer to read the data from.
+        virtual bool DeserializeGlobalData(Game &game, GTLib::Deserializer &deserializer, uint32_t version);
 
 
     private:

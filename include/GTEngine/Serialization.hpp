@@ -200,6 +200,9 @@ namespace GTEngine
         static const uint32_t ChunkID_Animation_PlaybackState                 = CHUNK_ID(0x00001015U);
         static const uint32_t ChunkID_AnimationKeyFrameQueue                  = CHUNK_ID(0x00001016U);
         static const uint32_t ChunkID_Prefab                                  = CHUNK_ID(0x00001017U);
+        static const uint32_t ChunkID_GameStateHeader                         = CHUNK_ID(0x00001018U);
+        static const uint32_t ChunkID_GameStateScenes                         = CHUNK_ID(0x00001019U);
+        static const uint32_t ChunkID_GameStateGlobal                         = CHUNK_ID(0x0000101AU);
 
     }
 }

@@ -130,13 +130,13 @@ namespace GTEngine
 
 
 
-    bool GameStateManager::Serialize(GTLib::Serializer &)
+    bool GameStateManager::Serialize(Game &, GTLib::Serializer &)
     {
         return false;
     }
 
     
-    bool GameStateManager::Deserialize(GTLib::Deserializer &)
+    bool GameStateManager::Deserialize(Game &, GTLib::Deserializer &)
     {
         return false;
     }
@@ -195,12 +195,168 @@ namespace GTEngine
     }
 
 
-    bool GenericGameStateManager::Serialize(GTLib::Serializer &serializer)
+
+    bool GenericGameStateManager::Serialize(Game &game, GTLib::Serializer &serializer)
+    {
+        // Three chunks:
+        //   1 - Header data
+        //   2 - Scene data
+        //   3 - Global game data
+
+        Serialization::ChunkHeader header;
+
+        // 1 - Header data.
+        {
+            GTLib::BasicSerializer headerSerializer;
+            uint32_t version = this->SerializeHeaderData(game, headerSerializer);
+
+            header.id          = Serialization::ChunkID_GameStateHeader;
+            header.sizeInBytes = headerSerializer.GetBufferSizeInBytes();
+            header.version     = version;
+
+            serializer.Write(header);
+            serializer.Write(headerSerializer.GetBuffer(), header.sizeInBytes);
+        }
+        
+
+        // 2 - Scene data.
+        {
+            GTLib::BasicSerializer sceneSerializer;
+
+            // The scene data count.
+            sceneSerializer.Write(static_cast<uint32_t>(m_sceneData.count));
+
+            // The actual scene data.
+            for (size_t iSceneData = 0; iSceneData < m_sceneData.count; ++iSceneData)
+            {
+                auto relativePath = m_sceneData.buffer[iSceneData]->key;
+                auto sceneData    = m_sceneData.buffer[iSceneData]->value;
+
+                sceneSerializer.WriteString(relativePath);
+                sceneData->Serialize(sceneSerializer);
+            }
+
+
+            header.id          = Serialization::ChunkID_GameStateScenes;
+            header.sizeInBytes = sceneSerializer.GetBufferSizeInBytes();
+            header.version     = 0;
+
+            serializer.Write(header);
+            serializer.Write(sceneSerializer.GetBuffer(), header.sizeInBytes);
+        }
+
+
+        // 3 - Global data.
+        {
+            GTLib::BasicSerializer globalSerializer;
+            uint32_t version = this->SerializeGlobalData(game, globalSerializer);
+
+            header.id          = Serialization::ChunkID_GameStateGlobal;
+            header.sizeInBytes = globalSerializer.GetBufferSizeInBytes();
+            header.version     = version;
+
+            serializer.Write(header);
+            serializer.Write(globalSerializer.GetBuffer(), header.sizeInBytes);
+        }
+        
+        
+
+
+        return true;
+    }
+
+    uint32_t GenericGameStateManager::SerializeHeaderData(Game &game, GTLib::Serializer &deserializer)
+    {
+        return 0;
+    }
+
+    uint32_t GenericGameStateManager::SerializeGlobalData(Game &game, GTLib::Serializer &serializer)
+    {
+        return 0;
+    }
+
+
+
+    bool GenericGameStateManager::Deserialize(Game &game, GTLib::Deserializer &deserializer)
+    {
+        Serialization::ChunkHeader header;
+
+
+        // 1 - Header data
+        {
+            if (deserializer.Peek(&header, sizeof(header)) == sizeof(header))
+            {
+                deserializer.Seek(sizeof(header));
+
+                deserializer.StartChunk(header.sizeInBytes);
+                {
+                    if (header.id == Serialization::ChunkID_GameStateHeader)
+                    {
+                        this->DeserializeHeaderData(game, deserializer, header.version);
+                    }
+                }
+                deserializer.EndChunk();
+            }
+        }
+
+
+        // 2 - Scene data
+        {
+            if (deserializer.Peek(&header, sizeof(header)) == sizeof(header))
+            {
+                deserializer.Seek(sizeof(header));
+
+                deserializer.StartChunk(header.sizeInBytes);
+                {
+                    if (header.id == Serialization::ChunkID_GameStateScenes)
+                    {
+                        uint32_t sceneDataCount;
+                        deserializer.Read(sceneDataCount);
+
+                        for (uint32_t iSceneData = 0; iSceneData < sceneDataCount; ++iSceneData)
+                        {
+                            GTLib::String sceneRelativePath;
+                            deserializer.Read(sceneRelativePath);
+
+                            auto sceneData = new SceneStateStackRestoreCommands(0, 0);
+                            sceneData->Deserialize(deserializer);
+
+                            m_sceneData.Add(sceneRelativePath.c_str(), sceneData);
+                        }
+                    }
+                }
+                deserializer.EndChunk();
+            }
+        }
+
+
+        // 3 - Global data
+        {
+            if (deserializer.Peek(&header, sizeof(header)) == sizeof(header))
+            {
+                deserializer.Seek(sizeof(header));
+
+                deserializer.StartChunk(header.sizeInBytes);
+                {
+                    if (header.id == Serialization::ChunkID_GameStateGlobal)
+                    {
+                        this->DeserializeGlobalData(game, deserializer, header.version);
+                    }
+                }
+                deserializer.EndChunk();
+            }
+        }
+
+
+        return true;
+    }
+
+    bool GenericGameStateManager::DeserializeHeaderData(Game &game, GTLib::Deserializer &deserializer, uint32_t version)
     {
         return true;
     }
 
-    bool GenericGameStateManager::Deserialize(GTLib::Deserializer &deserializer)
+    bool GenericGameStateManager::DeserializeGlobalData(Game &game, GTLib::Deserializer &serializer, uint32_t version)
     {
         return true;
     }
