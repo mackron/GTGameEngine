@@ -804,7 +804,7 @@ namespace GTEngine
                                         GTLib::BasicSerializer localSerializer;
 
                                         script.PushValue(-7);                                                // <-- 'self'
-                                        GTLib::Scripting::FFI::PushNewSerializer(script, localSerializer);   // <-- 'serializer'
+                                        GTLib::Scripting::PushNewSerializer(script, localSerializer);   // <-- 'serializer'
 
                                         script.Call(2, 1);      // <-- Two arguments (self, serializer) and 1 return value (the version).
 
@@ -903,7 +903,7 @@ namespace GTEngine
 
 
                                                 script.PushValue(-7);                                                   // <-- 'self'
-                                                GTLib::Scripting::FFI::PushNewDeserializer(script, localDeserializer);  // <-- 'deserializer'
+                                                GTLib::Scripting::PushNewDeserializer(script, localDeserializer);  // <-- 'deserializer'
                                                 script.Push(static_cast<int>(version));                                 // <-- 'version'
                                                 
                                                 script.Call(3, 0);

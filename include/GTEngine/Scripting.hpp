@@ -3,6 +3,7 @@
 #ifndef __GTEngine_Scripting_hpp_
 #define __GTEngine_Scripting_hpp_
 
+#include <GTLib/Scripting.hpp>
 #include "Scripting/Scripting_Game.hpp"
 #include "Scripting/Scripting_Math.hpp"
 #include "Scripting/Scripting_Rendering.hpp"
