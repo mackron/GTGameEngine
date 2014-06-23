@@ -145,25 +145,6 @@ namespace GTEngine
             ///     Argument 2: The new name of the executable, not including the path.
             ///     Return:     True if successful.
             int PackageForDistribution(GTLib::Script &script);
-
-
-            // TODO: These are now in GTEngine, but are still used in the editor. These references need to be deleted at some point.
-
-            /// Executes the script defined in the given file.
-            ///
-            /// @remarks
-            ///     Argument 1: The name of the script file to load and execute.
-            int ExecuteFile(GTLib::Script &script);
-
-            /// Executes the given script text.
-            ///
-            /// @remarks
-            ///     Argument 1: The script text to execute.
-            int ExecuteScript(GTLib::Script &script);
-
-            /// Retrieves the last script error.
-            int GetLastScriptError(GTLib::Script &script);
-
         }
     }
 }
