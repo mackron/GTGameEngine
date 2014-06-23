@@ -152,6 +152,8 @@ namespace GTEngine
                 script.SetTableFunction(-1, "IsMouseSmoothingEnabled",            GameFFI::IsMouseSmoothingEnabled);
                 script.SetTableFunction(-1, "ScanDataFilesForChanges",            GameFFI::ScanDataFilesForChanges);
                 script.SetTableFunction(-1, "GetGameWindowGUIElement",            GameFFI::GetGameWindowGUIElement);
+                script.SetTableFunction(-1, "SaveGameState",                      GameFFI::SaveGameState);
+                script.SetTableFunction(-1, "LoadGameState",                      GameFFI::LoadGameState);
                 script.SetTableFunction(-1, "LoadScene",                          GameFFI::LoadScene);
                 script.SetTableFunction(-1, "PackageForDistribution",             GameFFI::PackageForDistribution);
 
@@ -355,6 +357,18 @@ namespace GTEngine
                 return 1;
             }
 
+
+            int SaveGameState(GTLib::Script &script)
+            {
+                script.Push(GetGame(script).SaveGameState(script.ToString(1)));
+                return 1;
+            }
+
+            int LoadGameState(GTLib::Script &script)
+            {
+                script.Push(GetGame(script).LoadGameState(script.ToString(1)));
+                return 1;
+            }
 
             int LoadScene(GTLib::Script &script)
             {

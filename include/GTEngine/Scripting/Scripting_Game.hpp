@@ -110,6 +110,25 @@ namespace GTEngine
             /// Retrieves the GUI element of the main game window.
             int GetGameWindowGUIElement(GTLib::Script &script);
 
+
+            /// Saves the game state to the given file.
+            ///
+            /// @remarks
+            ///     Use this for doing save games.
+            ///     @par
+            ///     Argument 1: A string containing the destination file path for the save game. Can be relative or absolute.
+            ///     Return:     True if the file is saved successfully; false otherwise.
+            int SaveGameState(GTLib::Script &script);
+
+            /// Restores the game state from the given file.
+            ///
+            /// @remarks
+            ///     Use this for doing load games.
+            ///     @par
+            ///     Argument 1: A string containing the source file path for the save game. Can be relative or absolute.
+            ///     Return:     True if the game is loaded successfully; false otherwise.
+            int LoadGameState(GTLib::Script &script);
+
             /// Loads the given scene.
             ///
             /// @remarks
