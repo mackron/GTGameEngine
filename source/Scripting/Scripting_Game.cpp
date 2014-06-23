@@ -105,6 +105,15 @@ namespace GTEngine
                 "function Game.OnLoseFocus(arg)"
                 "    Game.Callbacks:BindOrCall('OnLoseFocus', arg);"
                 "end;"
+
+
+                "function Game.OnSerializeGameState(arg)"
+                "    Game.Callbacks:BindOrCall('OnSerializeGameState', arg);"
+                "end;"
+
+                "function Game.OnDeserializeGameState(arg)"
+                "    Game.Callbacks:BindOrCall('OnDeserializeGameState', arg);"
+                "end;"
             );
 
 
