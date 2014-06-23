@@ -166,11 +166,6 @@ namespace GTEngine
                 script.SetTableFunction(-1, "LoadScene",                          GameFFI::LoadScene);
                 script.SetTableFunction(-1, "PackageForDistribution",             GameFFI::PackageForDistribution);
 
-                // TODO: Move these to GTEngine.
-                script.SetTableFunction(-1, "ExecuteFile",        GameFFI::ExecuteFile);
-                script.SetTableFunction(-1, "ExecuteScript",      GameFFI::ExecuteScript);
-                script.SetTableFunction(-1, "GetLastScriptError", GameFFI::GetLastScriptError);
-
 
                 script.Push("CollisionGroups");
                 script.PushNewTable();
@@ -389,26 +384,6 @@ namespace GTEngine
             int PackageForDistribution(GTLib::Script &script)
             {
                 script.Push(GetGame(script).PackageForDistribution(script.ToString(1), script.ToString(2)));
-                return 1;
-            }
-
-
-
-            int ExecuteFile(GTLib::Script &script)
-            {
-                script.Push(GetGame(script).GetScript().ExecuteFile(script.ToString(1)));
-                return 1;
-            }
-
-            int ExecuteScript(GTLib::Script &script)
-            {
-                script.Push(GetGame(script).ExecuteScript(script.ToString(1)));
-                return 1;
-            }
-
-            int GetLastScriptError(GTLib::Script &script)
-            {
-                script.Push(GetGame(script).GetScript().GetLastError());
                 return 1;
             }
         }
