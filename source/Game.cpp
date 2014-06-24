@@ -57,7 +57,6 @@ namespace GTEngine
           mousePosXBuffer(), mousePosYBuffer(), mousePosBufferIndex(0),
           mousePosX(0), mousePosY(0), mouseMoveLockCounter(0),
           dataFilesWatcher(), lastDataFilesWatchTime(0.0f), isDataFilesWatchingEnabled(false),
-          currentGameState(nullptr), previousGameState(nullptr),
           dataFilesWatcherEventHandler(*this),
           profilerToggleKey(GTLib::Keys::F11),
           editorToggleKeyCombination(GTLib::Keys::Shift, GTLib::Keys::Tab)
@@ -383,11 +382,6 @@ namespace GTEngine
         {
             this->paused = true;
             m_gameStateManager.OnPause(*this);
-
-            if (this->currentGameState != nullptr)
-            {
-                this->currentGameState->OnPause();
-            }
         }
     }
 
@@ -397,11 +391,6 @@ namespace GTEngine
         {
             this->paused = false;
             m_gameStateManager.OnResume(*this);
-
-            if (this->currentGameState != nullptr)
-            {
-                this->currentGameState->OnResume();
-            }
         }
     }
 
@@ -528,40 +517,6 @@ namespace GTEngine
         return this->script.Execute(script);
     }
 
-
-    void Game::ActivateGameState(GameState &newGameState)
-    {
-        if (this->currentGameState != &newGameState)
-        {
-            this->DeactivateCurrentGameState();
-
-            this->currentGameState = &newGameState;
-            this->currentGameState->Activate();
-        }
-    }
-
-    void Game::ActivatePreviousGameState()
-    {
-        if (this->previousGameState != nullptr)
-        {
-            this->ActivateGameState(*this->previousGameState);
-        }
-        else
-        {
-            this->DeactivateCurrentGameState();
-        }
-    }
-
-    void Game::DeactivateCurrentGameState()
-    {
-        this->previousGameState = this->currentGameState;
-        if (this->previousGameState != nullptr)
-        {
-            this->previousGameState->Deactivate();
-        }
-
-        this->currentGameState = nullptr;
-    }
 
 
 
@@ -1149,13 +1104,6 @@ namespace GTEngine
         this->PostScriptEvent_OnUpdate(deltaTimeInSeconds);
 
 
-        // ... and the game state.
-        if (this->currentGameState != nullptr)
-        {
-            this->currentGameState->OnUpdate(deltaTimeInSeconds);
-        }
-
-
         // We will step the GUI after updating the game. This will call rendering functions.
         this->StepGUI(deltaTimeInSeconds);
 
@@ -1275,11 +1223,6 @@ namespace GTEngine
         {
             m_gameStateManager.OnSize(*this, e.size.width, e.size.height);
             this->PostScriptEvent_OnSize(e);
-
-            if (this->currentGameState != nullptr)
-            {
-                this->currentGameState->OnSize(e.size.width, e.size.height);
-            }
         }
     }
 
@@ -1303,11 +1246,6 @@ namespace GTEngine
                 {
                     m_gameStateManager.OnMouseMove(*this, e.mousemove.x, e.mousemove.y);
                     this->PostScriptEvent_OnMouseMove(e);
-
-                    if (this->currentGameState != nullptr)
-                    {
-                        this->currentGameState->OnMouseMove(e.mousemove.x, e.mousemove.y);
-                    }
                 }
             }
         }
@@ -1325,11 +1263,6 @@ namespace GTEngine
         {
             m_gameStateManager.OnMouseWheel(*this, e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
             this->PostScriptEvent_OnMouseWheel(e);
-
-            if (this->currentGameState != nullptr)
-            {
-                this->currentGameState->OnMouseWheel(e.mousewheel.delta, e.mousewheel.x, e.mousewheel.y);
-            }
         }
     }
 
@@ -1352,11 +1285,6 @@ namespace GTEngine
         {
             m_gameStateManager.OnMouseButtonDown(*this, e.mousedown.button, e.mousedown.x, e.mousedown.y);
             this->PostScriptEvent_OnMouseButtonDown(e);
-
-            if (this->currentGameState != nullptr)
-            {
-                this->currentGameState->OnMouseButtonDown(e.mousedown.button, e.mousedown.x, e.mousedown.y);
-            }
         }
     }
 
@@ -1383,11 +1311,6 @@ namespace GTEngine
         {
             m_gameStateManager.OnMouseButtonUp(*this, e.mouseup.button, e.mouseup.x, e.mouseup.y);
             this->PostScriptEvent_OnMouseButtonUp(e);
-
-            if (this->currentGameState != nullptr)
-            {
-                this->currentGameState->OnMouseButtonUp(e.mouseup.button, e.mouseup.x, e.mouseup.y);
-            }
         }
     }
 
@@ -1400,11 +1323,6 @@ namespace GTEngine
         {
             m_gameStateManager.OnMouseButtonDoubleClick(*this, e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y);
             this->PostScriptEvent_OnMouseButtonDoubleClick(e);
-
-            if (this->currentGameState != nullptr)
-            {
-                this->currentGameState->OnMouseButtonDoubleClick(e.mousedoubleclick.button, e.mousedoubleclick.x, e.mousedoubleclick.y);
-            }
         }
     }
 
@@ -1419,11 +1337,6 @@ namespace GTEngine
         {
             m_gameStateManager.OnKeyPress(*this, e.keypressed.key);
             this->PostScriptEvent_OnKeyPressed(e);
-
-            if (this->currentGameState != nullptr)
-            {
-                this->currentGameState->OnKeyPressed(e.keypressed.key);
-            }
         }
 
 
@@ -1475,11 +1388,6 @@ namespace GTEngine
         {
             m_gameStateManager.OnKeyRelease(*this, e.keyreleased.key);
             this->PostScriptEvent_OnKeyReleased(e);
-
-            if (this->currentGameState != nullptr)
-            {
-                this->currentGameState->OnKeyReleased(e.keyreleased.key);
-            }
         }
         
 

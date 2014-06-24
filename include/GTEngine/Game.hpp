@@ -11,7 +11,6 @@
 #include "GUIEventHandler.hpp"
 #include "GameUpdateJob.hpp"
 #include "DataFilesWatcher.hpp"
-#include "GameState.hpp"
 #include "Profiler.hpp"
 #include "GUIImageManager.hpp"
 #include "Rendering/DefaultGUIRenderer.hpp"
@@ -306,24 +305,6 @@ namespace GTEngine
 
             return interval;
         }
-
-
-        /// Generically activates the given game state.
-        ///
-        /// @param newGameState [in] A reference to the game state to activate.
-        void ActivateGameState(GameState &newGameState);
-
-        /// Activates the previous game state.
-        void ActivatePreviousGameState();
-
-        /// Deactivates the current game state.
-        ///
-        /// @remarks
-        ///     This will leave the game without a current game state, but will set the previous state. This is good for enabling the editor.
-        void DeactivateCurrentGameState();
-
-        /// Retrieves the currentnly active game state.
-        GameState* GetCurrentGameState() { return this->currentGameState; }
 
 
 
@@ -967,12 +948,6 @@ namespace GTEngine
         /// Controls whether or not the data directories should be dynamically watched. This should only really need to be enabled when running tools like the editor.
         bool isDataFilesWatchingEnabled;
 
-
-        /// The current game state.
-        GameState* currentGameState;
-
-        /// The previous game state (for toggling).
-        GameState* previousGameState;
 
 
         /// The event handler for the data files watcher. This will just dispatch the events to the main Game object.

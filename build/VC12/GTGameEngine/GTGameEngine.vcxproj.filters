@@ -245,9 +245,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\GameScript.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\GameState.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\GameUpdateJob.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -1102,9 +1099,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\GameScript.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\GameState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\GameUpdateJob.cpp">
