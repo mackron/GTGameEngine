@@ -75,7 +75,7 @@
     
     vec4 Diffuse()
     {
-        return vec4(DiffuseColour, 1.0f);
+        return vec4(DiffuseColour, 1.0);
     }
 </shader>
 
