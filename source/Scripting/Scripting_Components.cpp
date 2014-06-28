@@ -831,6 +831,10 @@ namespace GTEngine
                 "    return GTEngine.System.ScriptComponent.GetPublicVariableNamesAndTypesByIndex(self._internalPtr, index);"
                 "end;"
 
+                "function GTEngine.ScriptComponent:GetPublicVariableNamesAndTypesByRelativePath(index)"
+                "    return GTEngine.System.ScriptComponent.GetPublicVariableNamesAndTypesByRelativePath(self._internalPtr, index);"
+                "end;"
+
                 "function GTEngine.ScriptComponent:GetPublicVariableNamesAndValues()"
                 "    return GTEngine.System.ScriptComponent.GetPublicVariableNamesAndValues(self._internalPtr);"
                 "end;"
@@ -1233,16 +1237,17 @@ namespace GTEngine
                         script.GetTableValue(-2);
                         assert(script.IsTable(-1));
                         {
-                            script.SetTableFunction(-1, "AddScript",                                ScriptComponentFFI::AddScript);
-                            script.SetTableFunction(-1, "RemoveScriptByRelativePath",               ScriptComponentFFI::RemoveScriptByRelativePath);
-                            script.SetTableFunction(-1, "RemoveScriptByIndex",                      ScriptComponentFFI::RemoveScriptByIndex);
-                            script.SetTableFunction(-1, "ReloadScript",                             ScriptComponentFFI::ReloadScript);
-                            script.SetTableFunction(-1, "GetScriptRelativeFilePaths",               ScriptComponentFFI::GetScriptRelativeFilePaths);
-                            script.SetTableFunction(-1, "IsUsingScript",                            ScriptComponentFFI::IsUsingScript);
-                            script.SetTableFunction(-1, "GetPublicVariableNamesAndTypesByIndex",    ScriptComponentFFI::GetPublicVariableNamesAndTypesByIndex);
-                            script.SetTableFunction(-1, "GetPublicVariableNamesAndValues",          ScriptComponentFFI::GetPublicVariableNamesAndValues);
-                            script.SetTableFunction(-1, "GetPublicVariableValue",                   ScriptComponentFFI::GetPublicVariableValue);
-                            script.SetTableFunction(-1, "SetPublicVariableValue",                   ScriptComponentFFI::SetPublicVariableValue);
+                            script.SetTableFunction(-1, "AddScript",                                    ScriptComponentFFI::AddScript);
+                            script.SetTableFunction(-1, "RemoveScriptByRelativePath",                   ScriptComponentFFI::RemoveScriptByRelativePath);
+                            script.SetTableFunction(-1, "RemoveScriptByIndex",                          ScriptComponentFFI::RemoveScriptByIndex);
+                            script.SetTableFunction(-1, "ReloadScript",                                 ScriptComponentFFI::ReloadScript);
+                            script.SetTableFunction(-1, "GetScriptRelativeFilePaths",                   ScriptComponentFFI::GetScriptRelativeFilePaths);
+                            script.SetTableFunction(-1, "IsUsingScript",                                ScriptComponentFFI::IsUsingScript);
+                            script.SetTableFunction(-1, "GetPublicVariableNamesAndTypesByIndex",        ScriptComponentFFI::GetPublicVariableNamesAndTypesByIndex);
+                            script.SetTableFunction(-1, "GetPublicVariableNamesAndTypesByRelativePath", ScriptComponentFFI::GetPublicVariableNamesAndTypesByRelativePath);
+                            script.SetTableFunction(-1, "GetPublicVariableNamesAndValues",              ScriptComponentFFI::GetPublicVariableNamesAndValues);
+                            script.SetTableFunction(-1, "GetPublicVariableValue",                       ScriptComponentFFI::GetPublicVariableValue);
+                            script.SetTableFunction(-1, "SetPublicVariableValue",                       ScriptComponentFFI::SetPublicVariableValue);
                         }
                         script.Pop(1);
 
@@ -4048,6 +4053,7 @@ namespace GTEngine
                 return 1;
             }
 
+
             int GetPublicVariableNamesAndTypesByIndex(GTLib::Script &script)
             {
                 script.PushNewTable();
@@ -4077,6 +4083,37 @@ namespace GTEngine
 
                 return 1;
             }
+
+            int GetPublicVariableNamesAndTypesByRelativePath(GTLib::Script &script)
+            {
+                script.PushNewTable();
+
+                auto component = reinterpret_cast<ScriptComponent*>(script.ToPointer(1));
+                if (component != nullptr)
+                {
+                    auto definition = component->GetScriptDefinitionByRelativePath(script.ToString(2));
+                    if (definition != nullptr)
+                    {
+                        size_t variableCount = definition->GetPublicVariableCount();
+                        for (size_t i = 0; i < variableCount; ++i)
+                        {
+                            auto variable = definition->GetPublicVariableByIndex(i);
+                            assert(variable != nullptr);
+                            {
+                                script.Push(static_cast<int>(i + 1));       // <-- The index/key. +1 because Lua is 1 based.
+                                script.PushNewTable();
+                                script.SetTableValue(-1, "name", variable->GetName());
+                                script.SetTableValue(-1, "type", static_cast<int>(variable->GetType()));
+
+                                script.SetTableValue(-3);
+                            }
+                        }
+                    }
+                }
+
+                return 1;
+            }
+
 
 
             int GetPublicVariableNamesAndValues(GTLib::Script &script)

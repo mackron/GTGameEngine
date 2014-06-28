@@ -1420,6 +1420,7 @@ namespace GTEngine
             ///     Argument 2: The relative path of the script.
             int IsUsingScript(GTLib::Script &script);
 
+
             /// Retrieves an array containing the names and types of the public variables of the script definition at the given index.
             ///
             /// @remarks
@@ -1428,6 +1429,15 @@ namespace GTEngine
             ///
             ///     The return value is an array of {name, type} types.
             int GetPublicVariableNamesAndTypesByIndex(GTLib::Script &script);
+
+            /// Retrieves an array containing the names and types of the public variables of the script definition with the given relative path.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the component.
+            ///     Argument 2: The relative path of the script definition whose public variables are being retried.
+            ///
+            ///     The return value is an array of {name, type} types.
+            int GetPublicVariableNamesAndTypesByRelativePath(GTLib::Script &script);
 
 
             /// Retrieves the names and values of every public variable.
