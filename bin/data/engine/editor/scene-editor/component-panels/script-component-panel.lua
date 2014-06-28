@@ -228,44 +228,44 @@ function GTGUI.Element:ScriptComponentPanel()
             end
         end
         
-    
-        local new = GTGUI.Server.CreateElement(self.ScriptsContainer, "script-component-panel-script-container");
-        
-        ---------------------------------
-        -- Header
-        new.Header             = GTGUI.Server.CreateElement(new, "script-component-panel-script-container-header");
-        
-        new.FilePathTextBox    = GTGUI.Server.CreateElement(new.Header, "script-component-panel-script-container-text-box");
-        new.FilePathTextBox:SetText(relativePath);
-        
-        new.EditButton         = GTGUI.Server.CreateElement(new.Header, "script-component-panel-script-container-edit-button");
-        new.EditButton:OnPressed(function()
-            Editor.OpenFile(new.FilePathTextBox:GetText());
-        end);
-        
-        new.CloseButton        = GTGUI.Server.CreateElement(new.Header, "panel-groupbox-title-cross");
-        new.CloseButton:SetStyle("margin-left", "4px");
-        new.CloseButton:OnPressed(function()
-            self:RemoveScript(new);
-        end);
-        
-        self.ScriptPanels[#self.ScriptPanels + 1] = new;
-        
+        -- If a panel of the same relative path already exists, we'll update instead of inserting.
+        if self:GetScriptPanelByRelativePath(relativePath) == nil then
+            local new = GTGUI.Server.CreateElement(self.ScriptsContainer, "script-component-panel-script-container");
+            new.RelativePath = relativePath;
+            
+            ---------------------------------
+            -- Header
+            new.Header             = GTGUI.Server.CreateElement(new, "script-component-panel-script-container-header");
+            
+            new.FilePathTextBox    = GTGUI.Server.CreateElement(new.Header, "script-component-panel-script-container-text-box");
+            new.FilePathTextBox:SetText(relativePath);
+            
+            new.EditButton         = GTGUI.Server.CreateElement(new.Header, "script-component-panel-script-container-edit-button");
+            new.EditButton:OnPressed(function()
+                Editor.OpenFile(new.FilePathTextBox:GetText());
+            end);
+            
+            new.CloseButton        = GTGUI.Server.CreateElement(new.Header, "panel-groupbox-title-cross");
+            new.CloseButton:SetStyle("margin-left", "4px");
+            new.CloseButton:OnPressed(function()
+                self:RemoveScript(new);
+            end);
+            
+            self.ScriptPanels[#self.ScriptPanels + 1] = new;
+            
 
-        ---------------------------------
-        -- Variables.
-        --
-        -- These need to be done after adding the script to the component.
-        new.VariablesContainer = GTGUI.Server.CreateElement(new, "script-component-panel-variables-container");
-        new.Variables          = {};
-        
-        -- We initialize the variables by just "reloading" them.
-        self:ReloadVariables(new);
-        
-        
-        -- Other attributes.
-        new.RelativePath = relativePath;
-        
+            ---------------------------------
+            -- Variables.
+            --
+            -- These need to be done after adding the script to the component.
+            new.VariablesContainer = GTGUI.Server.CreateElement(new, "script-component-panel-variables-container");
+            new.Variables          = {};
+
+            -- We initialize the variables by just "reloading" them.
+            self:ReloadVariables(new);
+        else
+            self:UpdateScriptByRelativePath(relativePath);
+        end
         
         return true;    -- Successful.
     end
@@ -327,6 +327,16 @@ function GTGUI.Element:ScriptComponentPanel()
         return nil;
     end
     
+    function self:GetScriptRelativeFilePathsFromPanels()
+        local result = {};
+        
+        for i,panel in ipairs(self.ScriptPanels) do
+            result[#result + 1] = panel.RelativePath;
+        end
+        
+        return result;
+    end
+    
 
     
     function self:ReloadVariables(panel)
@@ -334,7 +344,7 @@ function GTGUI.Element:ScriptComponentPanel()
         panel.Variables = {};
     
         -- We need to grab the names and types of the public variables in the given script.
-        local publicVariableNamesAndTypes = self.CurrentComponent:GetPublicVariableNamesAndTypesByIndex(#self.ScriptPanels);
+        local publicVariableNamesAndTypes = self.CurrentComponent:GetPublicVariableNamesAndTypesByRelativePath(panel.RelativePath);
         for i,nameAndType in ipairs(publicVariableNamesAndTypes) do
             if nameAndType.type ~= GTEngine.ScriptVariableTypes.Unknown and nameAndType.type ~= GTEngine.ScriptVariableTypes.None then
                 local variableContainer = GTGUI.Server.CreateElement(panel.VariablesContainer, "script-component-panel-variable");
@@ -364,7 +374,29 @@ function GTGUI.Element:ScriptComponentPanel()
         self.IsUpdating       = true;
         
         
+        -- We need to determine which panels need to be removed, inserted and updated.
+        local newRelativePaths = self.CurrentComponent:GetScriptRelativeFilePaths();
+        local oldRelativePaths = self:GetScriptRelativeFilePathsFromPanels();
         
+        local pathsToRemove = GT.table.idifference(oldRelativePaths, newRelativePaths);
+        local pathsToInsert = GT.table.idifference(newRelativePaths, oldRelativePaths);
+        local pathsToUpdate = GT.table.iintersection(newRelativePaths, oldRelativePaths);
+        
+        
+        for i,relativePathToRemove in ipairs(pathsToRemove) do
+            self:RemoveScriptByRelativePath(relativePathToRemove);
+        end
+        
+        for i,relativePathToInsert in ipairs(pathsToInsert) do
+            self:AddScript(relativePathToInsert);
+        end
+        
+        for i,relativePathToUpdate in ipairs(pathsToUpdate) do
+            self:UpdateScriptByRelativePath(relativePathToUpdate);
+        end
+        
+        
+        --[[
         -- We need to determine which panels need to be shown and which need to be hidden. We'll hide and then show.
         local scriptRelativePaths = self.CurrentComponent:GetScriptRelativeFilePaths();
         
@@ -388,11 +420,21 @@ function GTGUI.Element:ScriptComponentPanel()
                 self:AddScript(relativePath);
             end
         end
-        
+        ]]
 
         
-        self.IsUpdating       = false;
+        self.IsUpdating = false;
     end
+    
+    
+    function self:UpdateScriptByRelativePath(relativePath)
+        local panel = self:GetScriptPanelByRelativePath(relativePath);
+        if panel then
+            self:ReloadVariables(panel);
+        end
+    end
+    
+    
     
     function self:UpdateVariables()
         for i,panel in ipairs(self.ScriptPanels) do
