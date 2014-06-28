@@ -908,8 +908,12 @@ namespace GTEngine
                                                 deserializer.EndChunk();
                                             }
 
-                                            script.Pop(1);
+                                            script.Pop(1);  // scriptRelativePath
                                             break;
+                                        }
+                                        else
+                                        {
+                                            script.Pop(1);  // scriptRelativePath
                                         }
                                     }
                                 }
