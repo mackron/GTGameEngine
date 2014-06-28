@@ -803,7 +803,7 @@ namespace GTEngine
                                         // so we can get an accurate size.
                                         GTLib::BasicSerializer localSerializer;
 
-                                        script.PushValue(-7);                                                // <-- 'self'
+                                        script.PushValue(-7);                                           // <-- 'self'
                                         GTLib::Scripting::PushNewSerializer(script, localSerializer);   // <-- 'serializer'
 
                                         script.Call(2, 1);      // <-- Two arguments (self, serializer) and 1 return value (the version).
@@ -896,19 +896,16 @@ namespace GTEngine
                                             script.GetTableValue(-3);          // <-- -3 instead of -2 because we have scriptRelativePath on the stack, too.
                                             if (script.IsFunction(-1))
                                             {
-                                                // It is possible for an implementation of OnDeserialize() to read too little or too much data. We will handle this problem by using a discrete deserializer.
-                                                auto data = malloc(static_cast<size_t>(dataSizeInBytes));
-                                                deserializer.Read(data, static_cast<size_t>(dataSizeInBytes));
-                                                GTLib::BasicDeserializer localDeserializer(data, static_cast<size_t>(dataSizeInBytes));
-
-
-                                                script.PushValue(-7);                                                   // <-- 'self'
-                                                GTLib::Scripting::PushNewDeserializer(script, localDeserializer);  // <-- 'deserializer'
-                                                script.Push(static_cast<int>(version));                                 // <-- 'version'
+                                                // It is possible for an implementation of OnDeserialize() to read too little or too much data. We will handle this problem by using the deserializer's chunk stack system.
+                                                deserializer.StartChunk(dataSizeInBytes);
+                                                {
+                                                    script.PushValue(-7);                                                   // <-- 'self'
+                                                    GTLib::Scripting::PushNewDeserializer(script, deserializer);            // <-- 'deserializer'
+                                                    script.Push(static_cast<int>(version));                                 // <-- 'version'
                                                 
-                                                script.Call(3, 0);
-
-                                                free(data);
+                                                    script.Call(3, 0);
+                                                }
+                                                deserializer.EndChunk();
                                             }
 
                                             script.Pop(1);
