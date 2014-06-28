@@ -394,7 +394,7 @@ function GTGUI.Element:ScriptComponentPanel()
         for i,relativePathToUpdate in ipairs(pathsToUpdate) do
             self:UpdateScriptByRelativePath(relativePathToUpdate);
         end
-        
+
         
         --[[
         -- We need to determine which panels need to be shown and which need to be hidden. We'll hide and then show.
