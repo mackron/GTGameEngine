@@ -781,7 +781,7 @@ namespace GTEngine
                 {
                     script.Push("OnSerialize");
                     script.GetTableValue(-2);
-                    if (script.IsTable(1))  // <-- Could possiblu be null if there is no OnSerialize() implementation. This is a valid case, so don't want to use an assert here.
+                    if (script.IsTable(-1))  // <-- Could possibly be null if there is no OnSerialize() implementation. This is a valid case, so don't want to use an assert here.
                     {
                         // At this point the top item on the stack is a table containing a list of tables, each representing an OnSerialize() implementation. We need to
                         // keep track of both the method and the name because we'll be serializing that for use when doing deserialization.
