@@ -257,8 +257,8 @@ namespace GTEngine
     {
         auto &scene = this->GetScene();
 
-        bool reenableStaging = scene.IsStateStackStagingEnabled();
-        scene.DisableStateStackStaging();
+        bool wasStateStackEnabled = scene.IsStateStackEnabled();
+        scene.DisableStateStack();
         {
             auto newFrameIndex = static_cast<uint32_t>(GTLib::Clamp(static_cast<int>(this->currentFrameIndex) + step, 0, static_cast<int>(this->GetMaxFrameIndex())));
 
@@ -278,15 +278,15 @@ namespace GTEngine
             // The current frame index can now be changed. This must be done last.
             this->currentFrameIndex = newFrameIndex;
         }
-        if (reenableStaging) { this->GetScene().EnableStateStackStaging(); }
+        if (wasStateStackEnabled) { scene.EnableStateStack(); }
     }
 
     void SceneStateStackBranch::RevertStagingArea()
     {
         auto &scene = this->GetScene();
 
-        bool reenableStaging = scene.IsStateStackStagingEnabled();
-        scene.DisableStateStackStaging();
+        bool wasStateStackEnabled = scene.IsStateStackEnabled();
+        scene.DisableStateStack();
         {
             // We'll need to grab the revert commands first.
             SceneStateStackRestoreCommands restoreCommands(this->stateStack.GetSceneNodeSerializationFlags(), this->stateStack.GetSceneNodeDeserializationFlags());
@@ -299,7 +299,7 @@ namespace GTEngine
             // The staging area needs to be cleared.
             this->stagingArea.Clear();
         }
-        if (reenableStaging) { this->GetScene().EnableStateStackStaging(); }
+        if (wasStateStackEnabled) { scene.EnableStateStack(); }
     }
 
     void SceneStateStackBranch::ApplyToScene()

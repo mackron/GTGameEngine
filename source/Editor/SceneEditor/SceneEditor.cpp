@@ -1542,11 +1542,14 @@ namespace GTEngine
         // We will never do this if a simulation is running.
         if (this->IsStopped())
         {
-            this->scene.CommitStateStackFrame();
-
-            if (markAsModified)
+            if (this->scene.IsStateStackEnabled())
             {
-                this->MarkAsModified();
+                this->scene.CommitStateStackFrame();
+
+                if (markAsModified)
+                {
+                    this->MarkAsModified();
+                }
             }
         }
     }
@@ -2370,11 +2373,13 @@ namespace GTEngine
 
     void SceneEditor::OnStateStackFrameCommitted()
     {
+        assert(this->scene.IsStateStackEnabled());
+
         // We'll commit a new frame whenever something worthy of an undo/redo operation has happened. And when that happens, we want the scene to be marked as modified.
         //
         // We only mark as modified if this is not the initial commit. We can determine this by looking at the number of frames. If there is only 1, it was the initial
         // commit and we don't want to mark as modified in that case.
-        if (!this->isDeserializing && this->scene.GetStateStackFrameCount() > 1 && this->scene.IsStateStackStagingEnabled())
+        if (!this->isDeserializing && this->scene.GetStateStackFrameCount() > 1)
         {
             this->MarkAsModified();
         }
@@ -2846,7 +2851,7 @@ namespace GTEngine
 
     void SceneEditor::DeserializeScene(GTLib::Deserializer &deserializer)
     {
-        this->scene.DisableStateStackStaging();
+        this->scene.DisableStateStack();
         this->LockParentChangedEvents();
         this->isDeserializing = true;
         {
@@ -2938,16 +2943,17 @@ namespace GTEngine
             // a viewport resize by calling the OnSize event directly.
             this->viewportEventHandler.OnSize(*this->GUI.Viewport);
 
-            // Need an initial commit.
-            this->CommitStateStackFrame(DontMarkAsModified);
-
 
             // Gizmo should be updated now.
             this->UpdateGizmo();
         }
         this->isDeserializing = false;
         this->UnlockParentChangedEvents();
-        this->scene.EnableStateStackStaging();
+        this->scene.EnableStateStack();
+
+
+        // There needs to be an initial commit on the state stack, but it needs to be done after enabling the state stack.
+        this->CommitStateStackFrame(DontMarkAsModified);
 
 
         // We'll let the editor do it's thing with selections.

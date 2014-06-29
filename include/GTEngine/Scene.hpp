@@ -504,22 +504,23 @@ namespace GTEngine
         /// @return True if the branch was switched; false otherwise. This will only fail if the branch does not exist.
         bool SwitchStateStackBranch(uint32_t branchID);
 
-        /// Determines whether or not staging of the state stack is enabled.
+
+        /// Determines whether or not the state stack is enabled.
         ///
         /// @remarks
-        ///     This will return true if there is at least one commit on the master branch. Thus, it is assumed that a scene
-        ///     will want to use the state stack if there is an initial commit. If there is no initial commit, it is assumed
-        ///     that the state stack is not being used and so staging is not performed.
-        bool IsStateStackStagingEnabled() const;
+        ///     When this returns true, any modifications to the state stack are disabled, including:
+        ///       - Insert/Delete/Update staging
+        ///       - Clearing the staging area
+        ///       - Committing
+        ///       - Seeking
+        bool IsStateStackEnabled() const;
 
-        /// Enable state stack staging.
-        ///
-        /// @remarks
-        ///     Note that an initial commit must also have been performed for state stack staging to be enabled.
-        void EnableStateStackStaging();
+        /// Enables the state stack.
+        void EnableStateStack();
 
-        /// Disables state stack staging.
-        void DisableStateStackStaging();
+        /// Disables the state stack.
+        void DisableStateStack();
+
 
         /// Performs a commit on the state stack.
         void CommitStateStackFrame();
@@ -1063,8 +1064,9 @@ namespace GTEngine
         /// The state stack.
         SceneStateStack stateStack;
 
-        /// Keeps track of whether or not staging should be enabled on the state stack.
-        bool isStateStackStagingEnabled;
+        /// Keeps track of whether or not the state stack is enabled. When the state stack is disabled, any modifications to the state stack will be disabled. This includes staging
+        /// updates/inserts/deletes, clearing the staging area and making commits.
+        bool isStateStackEnabled;
 
 
         /// A pointer to the script the scene is current registered to.
