@@ -201,78 +201,81 @@ namespace GTEngine
 
     void EditorMetadataComponent::ShowSprite(const char* texturePath, const glm::vec3 &colour)
     {
-        // Vertex Array.
-        if (this->spriteMesh.vertexArray == nullptr)
+        if (!this->IsShowingSprite())
         {
-            this->spriteMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2);
-
-            // X/Y plane facing +Z.
-            float vertices[] =
+            // Vertex Array.
+            if (this->spriteMesh.vertexArray == nullptr)
             {
-                -0.25f, -0.25f, 0.0f,
-                 0.0f,   0.0f,
+                this->spriteMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2);
 
-                 0.25f, -0.25f, 0.0f,
-                 1.0f,   0.0f,
+                // X/Y plane facing +Z.
+                float vertices[] =
+                {
+                    -0.25f, -0.25f, 0.0f,
+                     0.0f,   0.0f,
 
-                 0.25f,  0.25f, 0.0f,
-                 1.0f,   1.0f,
+                     0.25f, -0.25f, 0.0f,
+                     1.0f,   0.0f,
 
-                -0.25f,  0.25f, 0.0f,
-                 0.0f,   1.0f,
-            };
+                     0.25f,  0.25f, 0.0f,
+                     1.0f,   1.0f,
 
-            unsigned int indices[] =
-            {
-                0, 1, 2,
-                2, 3, 0
-            };
+                    -0.25f,  0.25f, 0.0f,
+                     0.0f,   1.0f,
+                };
 
-            this->spriteMesh.vertexArray->SetData(vertices, 4, indices, 6);
+                unsigned int indices[] =
+                {
+                    0, 1, 2,
+                    2, 3, 0
+                };
+
+                this->spriteMesh.vertexArray->SetData(vertices, 4, indices, 6);
 
 
-            // Picking Shapes.
-            assert(this->spritePickingCollisionShape  == nullptr);
-            assert(this->spritePickingCollisionObject == nullptr);
-            {
-                this->spritePickingCollisionShape = new btBoxShape(btVector3(0.25f, 0.25f, 0.0f));
+                // Picking Shapes.
+                assert(this->spritePickingCollisionShape  == nullptr);
+                assert(this->spritePickingCollisionObject == nullptr);
+                {
+                    this->spritePickingCollisionShape = new btBoxShape(btVector3(0.25f, 0.25f, 0.0f));
 
-                this->spritePickingCollisionObject = new CollisionObject;
-                this->spritePickingCollisionObject->setUserPointer(this);
-                this->spritePickingCollisionObject->setCollisionShape(this->spritePickingCollisionShape);
+                    this->spritePickingCollisionObject = new CollisionObject;
+                    this->spritePickingCollisionObject->setUserPointer(this);
+                    this->spritePickingCollisionObject->setCollisionShape(this->spritePickingCollisionShape);
+                }
             }
+
+
+            // Material.
+            if (this->spriteMesh.material == nullptr)
+            {
+                this->spriteMesh.material = MaterialLibrary::Create("engine/materials/editor-sprite.material");
+            }
+
+            auto newSpriteTexture = Texture2DLibrary::Acquire(texturePath);
+            if (newSpriteTexture != this->spriteTexture)
+            {
+                Texture2DLibrary::Unacquire(this->spriteTexture);
+                this->spriteTexture = newSpriteTexture;
+
+                this->spriteMesh.material->SetParameter("SpriteTexture", this->spriteTexture);
+            }
+
+            this->spriteMesh.material->SetParameter("SpriteColour", colour);
+
+
+
+            // Transform.
+            this->ApplyTransformToSprite();
+            this->ApplyScaleToSprite();
+
+
+
+            this->spriteTexturePath = texturePath;
+
+
+            this->OnChanged(ChangeFlag_Sprite);
         }
-
-
-        // Material.
-        if (this->spriteMesh.material == nullptr)
-        {
-            this->spriteMesh.material = MaterialLibrary::Create("engine/materials/editor-sprite.material");
-        }
-
-        auto newSpriteTexture = Texture2DLibrary::Acquire(texturePath);
-        if (newSpriteTexture != this->spriteTexture)
-        {
-            Texture2DLibrary::Unacquire(this->spriteTexture);
-            this->spriteTexture = newSpriteTexture;
-
-            this->spriteMesh.material->SetParameter("SpriteTexture", this->spriteTexture);
-        }
-
-        this->spriteMesh.material->SetParameter("SpriteColour", colour);
-
-
-
-        // Transform.
-        this->ApplyTransformToSprite();
-        this->ApplyScaleToSprite();
-
-
-
-        this->spriteTexturePath = texturePath;
-
-
-        this->OnChanged(ChangeFlag_Sprite);
     }
 
     void EditorMetadataComponent::ShowSprite(const char* texturePath, float colourR, float colourG, float colourB)
@@ -282,22 +285,25 @@ namespace GTEngine
 
     void EditorMetadataComponent::HideSprite()
     {
-        delete this->spritePickingCollisionObject;      // <-- the destructor will remove it from the scene.
-        delete this->spritePickingCollisionShape;
-        Renderer::DeleteVertexArray(this->spriteMesh.vertexArray);
-        MaterialLibrary::Delete(this->spriteMesh.material);
-        Texture2DLibrary::Unacquire(this->spriteTexture);
+        if (this->IsShowingSprite())
+        {
+            delete this->spritePickingCollisionObject;      // <-- the destructor will remove it from the scene.
+            delete this->spritePickingCollisionShape;
+            Renderer::DeleteVertexArray(this->spriteMesh.vertexArray);
+            MaterialLibrary::Delete(this->spriteMesh.material);
+            Texture2DLibrary::Unacquire(this->spriteTexture);
 
 
-        this->spritePickingCollisionObject = nullptr;
-        this->spritePickingCollisionShape  = nullptr;
-        this->spriteMesh.vertexArray       = nullptr;
-        this->spriteMesh.material          = nullptr;
-        this->spriteTexture                = nullptr;
+            this->spritePickingCollisionObject = nullptr;
+            this->spritePickingCollisionShape  = nullptr;
+            this->spriteMesh.vertexArray       = nullptr;
+            this->spriteMesh.material          = nullptr;
+            this->spriteTexture                = nullptr;
 
-        this->spriteTexturePath = "";
+            this->spriteTexturePath = "";
 
-        this->OnChanged(ChangeFlag_Sprite);
+            this->OnChanged(ChangeFlag_Sprite);
+        }
     }
 
     void EditorMetadataComponent::ApplyTransformToSprite()
@@ -369,55 +375,61 @@ namespace GTEngine
 
     void EditorMetadataComponent::ShowDirectionArrow()
     {
-        if (this->directionArrowMesh.vertexArray == nullptr)
+        if (!this->IsShowingDirectionArrow())
         {
-            this->directionArrowMesh.drawMode = DrawMode_Lines;
-
-
-            // Just a simple wirefram model here. Unit length, facing -Z.
-            float arrowHeadLength = 0.3f;
-            float arrowHeadWidth  = 0.2f;
-
-            glm::vec3 vertices[4];
-            vertices[0].x =  0.0f;                  vertices[0].y = 0.0f; vertices[0].z = -1.0f;
-            vertices[1].x =  0.0f;                  vertices[1].y = 0.0f; vertices[1].z =  0.0f;
-            vertices[2].x = -arrowHeadWidth * 0.5f; vertices[2].y = 0.0f; vertices[2].z = -1.0f + arrowHeadLength;
-            vertices[3].x =  arrowHeadWidth * 0.5f; vertices[3].y = 0.0f; vertices[3].z = -1.0f + arrowHeadLength;
-
-            unsigned int indices[6] =
+            if (this->directionArrowMesh.vertexArray == nullptr)
             {
-                0, 1,
-                0, 2,
-                0, 3
-            };
-
-            this->directionArrowMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
-            this->directionArrowMesh.vertexArray->SetData(&vertices[0].x, 4, indices, 6);
+                this->directionArrowMesh.drawMode = DrawMode_Lines;
 
 
-            // Material.
-            this->directionArrowMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
-            this->directionArrowMesh.material->SetParameter("EmissiveColour", 1.0f, 1.0f, 0.0f);
+                // Just a simple wirefram model here. Unit length, facing -Z.
+                float arrowHeadLength = 0.3f;
+                float arrowHeadWidth  = 0.2f;
+
+                glm::vec3 vertices[4];
+                vertices[0].x =  0.0f;                  vertices[0].y = 0.0f; vertices[0].z = -1.0f;
+                vertices[1].x =  0.0f;                  vertices[1].y = 0.0f; vertices[1].z =  0.0f;
+                vertices[2].x = -arrowHeadWidth * 0.5f; vertices[2].y = 0.0f; vertices[2].z = -1.0f + arrowHeadLength;
+                vertices[3].x =  arrowHeadWidth * 0.5f; vertices[3].y = 0.0f; vertices[3].z = -1.0f + arrowHeadLength;
+
+                unsigned int indices[6] =
+                {
+                    0, 1,
+                    0, 2,
+                    0, 3
+                };
+
+                this->directionArrowMesh.vertexArray = Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3);
+                this->directionArrowMesh.vertexArray->SetData(&vertices[0].x, 4, indices, 6);
 
 
-            // Transform.
-            this->UpdateDirectionArrowTransform();
+                // Material.
+                this->directionArrowMesh.material = MaterialLibrary::Create("engine/materials/simple-emissive.material");
+                this->directionArrowMesh.material->SetParameter("EmissiveColour", 1.0f, 1.0f, 0.0f);
 
 
-            this->OnChanged(ChangeFlag_DirectionArrow);
+                // Transform.
+                this->UpdateDirectionArrowTransform();
+
+
+                this->OnChanged(ChangeFlag_DirectionArrow);
+            }
         }
     }
 
     void EditorMetadataComponent::HideDirectionArrow()
     {
-        Renderer::DeleteVertexArray(this->directionArrowMesh.vertexArray);
-        MaterialLibrary::Delete(this->directionArrowMesh.material);
+        if (this->IsShowingDirectionArrow())
+        {
+            Renderer::DeleteVertexArray(this->directionArrowMesh.vertexArray);
+            MaterialLibrary::Delete(this->directionArrowMesh.material);
 
-        this->directionArrowMesh.vertexArray = nullptr;
-        this->directionArrowMesh.material    = nullptr;
+            this->directionArrowMesh.vertexArray = nullptr;
+            this->directionArrowMesh.material    = nullptr;
 
 
-        this->OnChanged(ChangeFlag_DirectionArrow);
+            this->OnChanged(ChangeFlag_DirectionArrow);
+        }
     }
 
     bool EditorMetadataComponent::IsShowingDirectionArrow() const

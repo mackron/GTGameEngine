@@ -243,7 +243,7 @@ namespace GTEngine
           sceneNodesWithProximityComponents(), sceneNodesWithParticleSystemComponents(),
           navigationMesh(),
           eventHandlers(),
-          stateStack(*this), isStateStackStagingEnabled(true),
+          stateStack(*this), isStateStackEnabled(true),
           registeredScript(nullptr), isScriptEventsBlocked(false),
           name(),
           isBackgroundClearEnabled(true), backgroundClearColour(0.5f),
@@ -262,7 +262,7 @@ namespace GTEngine
           sceneNodesWithProximityComponents(), sceneNodesWithParticleSystemComponents(),
           navigationMesh(),
           eventHandlers(),
-          stateStack(*this), isStateStackStagingEnabled(true),
+          stateStack(*this), isStateStackEnabled(true),
           registeredScript(nullptr), isScriptEventsBlocked(false),
           name(),
           isBackgroundClearEnabled(true), backgroundClearColour(0.5f),
@@ -1167,49 +1167,60 @@ namespace GTEngine
         return this->stateStack.SwitchBranch(branchID);
     }
 
-    bool Scene::IsStateStackStagingEnabled() const
+
+    bool Scene::IsStateStackEnabled() const
     {
-        return this->stateStack.HasInitialFrame() && this->isStateStackStagingEnabled;
+        return this->isStateStackEnabled;
     }
 
-    void Scene::EnableStateStackStaging()
+    void Scene::EnableStateStack()
     {
-        this->isStateStackStagingEnabled = true;
+        this->isStateStackEnabled = true;
     }
 
-    void Scene::DisableStateStackStaging()
+    void Scene::DisableStateStack()
     {
-        this->isStateStackStagingEnabled = false;
+        this->isStateStackEnabled = false;
     }
+
+
 
     void Scene::CommitStateStackFrame()
     {
-        // If this is the initial commit then we'll need to stage insert commands for every existing scene node.
-        if (!this->stateStack.HasInitialFrame())
+        if (this->IsStateStackEnabled())
         {
-            for (size_t iNode = 0; iNode < this->sceneNodes.GetCount(); ++iNode)
+            // If this is the initial commit then we'll need to stage insert commands for every existing scene node.
+            if (!this->stateStack.HasInitialFrame())
             {
-                auto node = this->sceneNodes.GetSceneNodeAtIndex(iNode);
-                assert(node != nullptr);
+                for (size_t iNode = 0; iNode < this->sceneNodes.GetCount(); ++iNode)
                 {
-                    if (node->IsStateStackStagingEnabled())
+                    auto node = this->sceneNodes.GetSceneNodeAtIndex(iNode);
+                    assert(node != nullptr);
                     {
-                        this->stateStack.StageInsert(node->GetID());
+                        if (node->IsStateStackStagingEnabled())
+                        {
+                            this->stateStack.StageInsert(node->GetID());
+                        }
                     }
                 }
             }
+
+
+
+            this->stateStack.Commit();
+
+
+            // We need to let the event handlers know about this.
+            this->PostEvent_OnStateStackFrameCommitted();
         }
-
-        this->stateStack.Commit();
-
-
-        // We need to let the event handlers know about this.
-        this->PostEvent_OnStateStackFrameCommitted();
     }
 
     void Scene::ClearStateStackStagingArea()
     {
-        this->stateStack.ClearStagingArea();
+        if (this->IsStateStackEnabled())
+        {
+            this->stateStack.ClearStagingArea();
+        }
     }
 
     size_t Scene::GetStateStackFrameCount() const
@@ -1243,7 +1254,10 @@ namespace GTEngine
 
     void Scene::SeekStateStack(int amount)
     {
-        this->stateStack.Seek(amount);
+        if (this->IsStateStackEnabled())
+        {
+            this->stateStack.Seek(amount);
+        }
     }
 
     void Scene::ApplyStateStack()
@@ -1253,7 +1267,10 @@ namespace GTEngine
 
     void Scene::RevertStateStackStagingArea()
     {
-        this->stateStack.RevertStagingArea();
+        if (this->IsStateStackEnabled())
+        {
+            this->stateStack.RevertStagingArea();
+        }
     }
 
     void Scene::GetStateStackStagingAreaRestoreCommands(SceneStateStackRestoreCommands &commands)
@@ -1264,17 +1281,26 @@ namespace GTEngine
 
     void Scene::StageInsertOnStateStack(uint64_t sceneNodeID)
     {
-        this->stateStack.StageInsert(sceneNodeID);
+        if (this->IsStateStackEnabled())
+        {
+            this->stateStack.StageInsert(sceneNodeID);
+        }
     }
 
     void Scene::StageDeleteOnStateStack(uint64_t sceneNodeID)
     {
-        this->stateStack.StageDelete(sceneNodeID);
+        if (this->IsStateStackEnabled())
+        {
+            this->stateStack.StageDelete(sceneNodeID);
+        }
     }
 
     void Scene::StageUpdateOnStateStack(uint64_t sceneNodeID)
     {
-        this->stateStack.StageUpdate(sceneNodeID);
+        if (this->IsStateStackEnabled())
+        {
+            this->stateStack.StageUpdate(sceneNodeID);
+        }
     }
 
 
@@ -2376,7 +2402,7 @@ namespace GTEngine
     void Scene::OnSceneNodeAdded(SceneNode &node)
     {
         // Can only stage this scene node after it's been given a valid ID.
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        if (this->IsStateStackEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageInsert(node.GetID());
         }
@@ -2422,7 +2448,7 @@ namespace GTEngine
     void Scene::OnSceneNodeRemoved(SceneNode &node)
     {
         // Important to stage this change before removing it.
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        if (this->IsStateStackEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageDelete(node.GetID());
         }
@@ -2467,7 +2493,7 @@ namespace GTEngine
 
     void Scene::OnSceneNodeNameChanged(SceneNode &node)
     {
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        if (this->IsStateStackEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
         }
@@ -2478,7 +2504,7 @@ namespace GTEngine
 
     void Scene::OnSceneNodeParentChanged(SceneNode &node, SceneNode* previousParent)
     {
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        if (this->IsStateStackEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
             
@@ -2503,7 +2529,7 @@ namespace GTEngine
 
     void Scene::OnSceneNodeTransform(SceneNode &node, bool updateDynamicsObject)
     {
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        if (this->IsStateStackEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
         }
@@ -2570,7 +2596,7 @@ namespace GTEngine
 
     void Scene::OnSceneNodeScale(SceneNode &node)
     {
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        if (this->IsStateStackEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
         }
@@ -2613,7 +2639,7 @@ namespace GTEngine
 
     void Scene::OnSceneNodeStaticChanged(SceneNode &node)
     {
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        if (this->IsStateStackEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
         }
@@ -2621,7 +2647,7 @@ namespace GTEngine
 
     void Scene::OnSceneNodeVisibleChanged(SceneNode &node)
     {
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        if (this->IsStateStackEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
         }
@@ -2735,7 +2761,7 @@ namespace GTEngine
 
     void Scene::OnSceneNodeComponentAdded(SceneNode &node, Component &component, bool postEvents)
     {
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        if (this->IsStateStackEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
         }
@@ -2931,7 +2957,7 @@ namespace GTEngine
 
     void Scene::OnSceneNodeComponentRemoved(SceneNode &node, Component &component, bool postEvents)
     {
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        if (this->IsStateStackEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
         }
@@ -3027,7 +3053,7 @@ namespace GTEngine
     void Scene::OnSceneNodeComponentChanged(SceneNode &node, Component &component, uint32_t whatChangedFlags)
     {
         // The node has been updated, so we need to stage it for the next commit.
-        if (this->IsStateStackStagingEnabled() && node.IsStateStackStagingEnabled())
+        if (this->IsStateStackEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
         }
