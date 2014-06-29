@@ -40,7 +40,8 @@ namespace GTEngine
 
                 if (this->wasSelected)
                 {
-                    this->sceneEditor.SelectSceneNode(sceneNode, SceneEditor::SelectionOption_Force);
+                    // The selection hasn't actually changed, we just simulate a re-selection so that things like the outline meshes are updated correctly.
+                    this->sceneEditor.SelectSceneNode(sceneNode, SceneEditor::SelectionOption_Force | SceneEditor::SelectionOption_NoScriptNotify);
                 }
             }
         }
