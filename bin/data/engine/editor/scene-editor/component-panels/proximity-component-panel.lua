@@ -6,6 +6,14 @@ function GTGUI.Element:ProximityComponentPanel()
     self.CollisionShapes = GTGUI.Server.CreateElement(self.Body);
     self.CollisionShapes:CollisionShapesPanel();
     
+    self.CollisionShapes:OnCollisionGroupChanged(function()
+        self.ParentPanel:OnSceneNodeChanged();
+    end);
+
+    self.CollisionShapes:OnCollisionGroupMaskChanged(function()
+        self.ParentPanel:OnSceneNodeChanged();
+    end);
+
     self.CollisionShapes:OnShapesChanged(function()
         self.ParentPanel:OnSceneNodeChanged();
     end);
