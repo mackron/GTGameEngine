@@ -1763,314 +1763,319 @@ namespace GTEngine
         // Everything needs to be cleared, including the state stack.
         this->RemoveAllSceneNodes();
         this->stateStack.Clear();
-
-
-        Serialization::ChunkHeader header;
-
-        // Info
-        if (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
+        
+        bool wasStateStackEnabled = this->IsStateStackEnabled();
+        this->DisableStateStack();
         {
-            if (header.id == Serialization::ChunkID_Scene_Info)
+            Serialization::ChunkHeader header;
+
+            // Info
+            if (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
             {
-                if (header.version == 1)
+                if (header.id == Serialization::ChunkID_Scene_Info)
                 {
-                    deserializer.Read(this->nextSceneNodeID);
-                    deserializer.Read(this->minAutoSceneNodeID);
-                }
-                else
-                {
-                    GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
-                    deserializer.Seek(header.sizeInBytes);
-
-                    return false;
-                }
-            }
-            else
-            {
-                GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Info, header.id);
-                deserializer.Seek(header.sizeInBytes);
-
-                return false;
-            }
-        }
-
-        // Properties
-        if (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
-        {
-            if (header.id == Serialization::ChunkID_Scene_Properties)
-            {
-                if (header.version == 1)
-                {
-                    deserializer.ReadString(this->name);
-
-
-                    // Read.
-                    bool isBackgroundClearingEnabledIn;
-                    deserializer.Read(isBackgroundClearingEnabledIn);
-
-                    glm::vec3 backgroundClearColourIn;
-                    deserializer.Read(backgroundClearColourIn);
-
-                    bool isHDREnabledIn;
-                    deserializer.Read(isHDREnabledIn);
-
-                    bool isBloomEnabledIn;
-                    deserializer.Read(isBloomEnabledIn);
-
-
-                    // Set.
-                    if (isBackgroundClearingEnabledIn)
+                    if (header.version == 1)
                     {
-                        this->EnableBackgroundClearing(backgroundClearColourIn);
+                        deserializer.Read(this->nextSceneNodeID);
+                        deserializer.Read(this->minAutoSceneNodeID);
                     }
                     else
                     {
-                        this->DisableBackgroundClearing();
-                        this->backgroundClearColour = backgroundClearColourIn;
-                    }
+                        GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        deserializer.Seek(header.sizeInBytes);
 
-                    if (isHDREnabledIn)
+                        return false;
+                    }
+                }
+                else
+                {
+                    GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Info, header.id);
+                    deserializer.Seek(header.sizeInBytes);
+
+                    return false;
+                }
+            }
+
+            // Properties
+            if (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
+            {
+                if (header.id == Serialization::ChunkID_Scene_Properties)
+                {
+                    if (header.version == 1)
                     {
-                        this->EnableHDR();
+                        deserializer.ReadString(this->name);
+
+
+                        // Read.
+                        bool isBackgroundClearingEnabledIn;
+                        deserializer.Read(isBackgroundClearingEnabledIn);
+
+                        glm::vec3 backgroundClearColourIn;
+                        deserializer.Read(backgroundClearColourIn);
+
+                        bool isHDREnabledIn;
+                        deserializer.Read(isHDREnabledIn);
+
+                        bool isBloomEnabledIn;
+                        deserializer.Read(isBloomEnabledIn);
+
+
+                        // Set.
+                        if (isBackgroundClearingEnabledIn)
+                        {
+                            this->EnableBackgroundClearing(backgroundClearColourIn);
+                        }
+                        else
+                        {
+                            this->DisableBackgroundClearing();
+                            this->backgroundClearColour = backgroundClearColourIn;
+                        }
+
+                        if (isHDREnabledIn)
+                        {
+                            this->EnableHDR();
+                        }
+                        else
+                        {
+                            this->DisableHDR();
+                        }
+
+                        if (isBloomEnabledIn)
+                        {
+                            this->EnableBloom();
+                        }
+                        else
+                        {
+                            this->DisableBloom();
+                        }
                     }
                     else
                     {
-                        this->DisableHDR();
-                    }
+                        GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        deserializer.Seek(header.sizeInBytes);
 
-                    if (isBloomEnabledIn)
+                        return false;
+                    }
+                }
+                else
+                {
+                    GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Properties, header.id);
+                    deserializer.Seek(header.sizeInBytes);
+
+                    return false;
+                }
+            }
+
+            // Navigation
+            if (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
+            {
+                if (header.id == Serialization::ChunkID_Scene_Navigation)
+                {
+                    if (header.version == 1)
                     {
-                        this->EnableBloom();
+                        // The navigation mesh count isn't actually used at the moment, but plans are in place for supporting multiple navigation meshes. This will be needed.
+                        uint32_t navigationMeshCount;
+                        deserializer.Read(navigationMeshCount);
+
+                        this->navigationMesh.Deserialize(deserializer);
                     }
                     else
                     {
-                        this->DisableBloom();
+                        GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        deserializer.Seek(header.sizeInBytes);
+
+                        return false;
                     }
                 }
                 else
                 {
-                    GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                    GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Navigation, header.id);
                     deserializer.Seek(header.sizeInBytes);
 
                     return false;
                 }
             }
-            else
-            {
-                GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Properties, header.id);
-                deserializer.Seek(header.sizeInBytes);
 
-                return false;
-            }
-        }
-
-        // Navigation
-        if (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
-        {
-            if (header.id == Serialization::ChunkID_Scene_Navigation)
+            // Hierarchy
+            GTLib::Vector<Serialization::SceneNodeIndexPair> childParentPairs;
+            if (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
             {
-                if (header.version == 1)
+                if (header.id == Serialization::ChunkID_Scene_NodesHierarchy)
                 {
-                    // The navigation mesh count isn't actually used at the moment, but plans are in place for supporting multiple navigation meshes. This will be needed.
-                    uint32_t navigationMeshCount;
-                    deserializer.Read(navigationMeshCount);
-
-                    this->navigationMesh.Deserialize(deserializer);
-                }
-                else
-                {
-                    GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
-                    deserializer.Seek(header.sizeInBytes);
-
-                    return false;
-                }
-            }
-            else
-            {
-                GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Navigation, header.id);
-                deserializer.Seek(header.sizeInBytes);
-
-                return false;
-            }
-        }
-
-        // Hierarchy
-        GTLib::Vector<Serialization::SceneNodeIndexPair> childParentPairs;
-        if (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
-        {
-            if (header.id == Serialization::ChunkID_Scene_NodesHierarchy)
-            {
-                if (header.version == 1)
-                {
-                    size_t pairCount = header.sizeInBytes / sizeof(Serialization::SceneNodeIndexPair);
-
-                    childParentPairs.Reserve(pairCount);
-                    childParentPairs.count = pairCount;
-                    deserializer.Read(childParentPairs.buffer, header.sizeInBytes);
-                }
-                else
-                {
-                    GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
-                    deserializer.Seek(header.sizeInBytes);
-
-                    return false;
-                }
-            }
-            else
-            {
-                GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_NodesHierarchy, header.id);
-                deserializer.Seek(header.sizeInBytes);
-
-                return false;
-            }
-        }
-
-        // Scene Nodes
-        GTLib::Vector<SceneNode*> deserializedNodes;
-        GTLib::Vector<SceneNode*> rootSceneNodesLinkedToPrefabs;
-        if (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
-        {
-            if (header.id == Serialization::ChunkID_Scene_Nodes)
-            {
-                if (header.version == 1)
-                {
-                    // First thing to do here is read the count and the list of scene node IDs.
-                    uint32_t sceneNodeCount;
-                    deserializer.Read(sceneNodeCount);
-
-                    // The scene node IDs
-                    GTLib::Vector<uint64_t> sceneNodeIDs;
-                    sceneNodeIDs.Reserve(sceneNodeCount);
-                    sceneNodeIDs.count = sceneNodeCount;
-                    deserializer.Read(sceneNodeIDs.buffer, sizeof(uint64_t) * sceneNodeCount);
-
-
-                    // The scene nodes need to be instantiated here.
-                    deserializedNodes.Reserve(sceneNodeCount);
-                    for (uint32_t iSceneNode = 0; iSceneNode < sceneNodeCount; ++iSceneNode)
+                    if (header.version == 1)
                     {
-                        auto sceneNode = new SceneNode;
-                        sceneNode->SetID(sceneNodeIDs[iSceneNode]);
+                        size_t pairCount = header.sizeInBytes / sizeof(Serialization::SceneNodeIndexPair);
 
-                        deserializedNodes.PushBack(sceneNode);
+                        childParentPairs.Reserve(pairCount);
+                        childParentPairs.count = pairCount;
+                        deserializer.Read(childParentPairs.buffer, header.sizeInBytes);
                     }
-
-                    // The new scene nodes now need to be linked to their parents.
-                    for (size_t i = 0; i < childParentPairs.count; ++i)
+                    else
                     {
-                        auto &pair = childParentPairs[i];
+                        GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        deserializer.Seek(header.sizeInBytes);
 
-                        auto childSceneNode  = deserializedNodes[pair.index0];
-                        auto parentSceneNode = deserializedNodes[pair.index1];
+                        return false;
+                    }
+                }
+                else
+                {
+                    GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_NodesHierarchy, header.id);
+                    deserializer.Seek(header.sizeInBytes);
+
+                    return false;
+                }
+            }
+
+            // Scene Nodes
+            GTLib::Vector<SceneNode*> deserializedNodes;
+            GTLib::Vector<SceneNode*> rootSceneNodesLinkedToPrefabs;
+            if (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
+            {
+                if (header.id == Serialization::ChunkID_Scene_Nodes)
+                {
+                    if (header.version == 1)
+                    {
+                        // First thing to do here is read the count and the list of scene node IDs.
+                        uint32_t sceneNodeCount;
+                        deserializer.Read(sceneNodeCount);
+
+                        // The scene node IDs
+                        GTLib::Vector<uint64_t> sceneNodeIDs;
+                        sceneNodeIDs.Reserve(sceneNodeCount);
+                        sceneNodeIDs.count = sceneNodeCount;
+                        deserializer.Read(sceneNodeIDs.buffer, sizeof(uint64_t) * sceneNodeCount);
+
+
+                        // The scene nodes need to be instantiated here.
+                        deserializedNodes.Reserve(sceneNodeCount);
+                        for (uint32_t iSceneNode = 0; iSceneNode < sceneNodeCount; ++iSceneNode)
+                        {
+                            auto sceneNode = new SceneNode;
+                            sceneNode->SetID(sceneNodeIDs[iSceneNode]);
+
+                            deserializedNodes.PushBack(sceneNode);
+                        }
+
+                        // The new scene nodes now need to be linked to their parents.
+                        for (size_t i = 0; i < childParentPairs.count; ++i)
+                        {
+                            auto &pair = childParentPairs[i];
+
+                            auto childSceneNode  = deserializedNodes[pair.index0];
+                            auto parentSceneNode = deserializedNodes[pair.index1];
             
-                        assert(childSceneNode  != nullptr);
-                        assert(parentSceneNode != nullptr);
+                            assert(childSceneNode  != nullptr);
+                            assert(parentSceneNode != nullptr);
+                            {
+                                parentSceneNode->AttachChild(*childSceneNode);
+                            }
+                        }
+
+                        // The empty nodes now need to be added to the scene. We only need to add those without parents - children will be added recursively.
+                        for (uint32_t iSceneNode = 0; iSceneNode < sceneNodeCount; ++iSceneNode)
                         {
-                            parentSceneNode->AttachChild(*childSceneNode);
+                            auto sceneNode = deserializedNodes[iSceneNode];
+                            if (sceneNode != nullptr)
+                            {
+                                if (sceneNode->GetParent() == nullptr)
+                                {
+                                    this->AddSceneNode(*sceneNode);
+                                }
+
+
+                                // The scene node must be memory managed by the scene.
+                                assert(!this->sceneNodesCreatedByScene.Exists(sceneNode->GetID()));
+                                {
+                                    this->sceneNodesCreatedByScene.Insert(sceneNode->GetID());
+                                }
+                            }
+                        }
+
+
+                        // At this point every scene node has been added to the scene, so now we need to deserialize them.
+                        for (uint32_t iSceneNode = 0; iSceneNode < sceneNodeCount; ++iSceneNode)
+                        {
+                            auto sceneNode = deserializedNodes[iSceneNode];
+                            if (sceneNode != nullptr)
+                            {
+                                sceneNode->Deserialize(deserializer, SceneNode::NoScriptOnDeserialize);
+
+                                // If the new scene node is linked to a prefab and it's the root, we need to keep track of it. We will later be re-linking
+                                // it to ensure it is up-to-date.
+                                if (this->GetPrefabLinker().IsRootSceneNode(*sceneNode))
+                                {
+                                    rootSceneNodesLinkedToPrefabs.PushBack(sceneNode);
+                                }
+                            }
                         }
                     }
-
-                    // The empty nodes now need to be added to the scene. We only need to add those without parents - children will be added recursively.
-                    for (uint32_t iSceneNode = 0; iSceneNode < sceneNodeCount; ++iSceneNode)
+                    else
                     {
-                        auto sceneNode = deserializedNodes[iSceneNode];
-                        if (sceneNode != nullptr)
-                        {
-                            if (sceneNode->GetParent() == nullptr)
-                            {
-                                this->AddSceneNode(*sceneNode);
-                            }
+                        GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                        deserializer.Seek(header.sizeInBytes);
 
-
-                            // The scene node must be memory managed by the scene.
-                            assert(!this->sceneNodesCreatedByScene.Exists(sceneNode->GetID()));
-                            {
-                                this->sceneNodesCreatedByScene.Insert(sceneNode->GetID());
-                            }
-                        }
-                    }
-
-
-                    // At this point every scene node has been added to the scene, so now we need to deserialize them.
-                    for (uint32_t iSceneNode = 0; iSceneNode < sceneNodeCount; ++iSceneNode)
-                    {
-                        auto sceneNode = deserializedNodes[iSceneNode];
-                        if (sceneNode != nullptr)
-                        {
-                            sceneNode->Deserialize(deserializer, SceneNode::NoScriptOnDeserialize);
-
-                            // If the new scene node is linked to a prefab and it's the root, we need to keep track of it. We will later be re-linking
-                            // it to ensure it is up-to-date.
-                            if (this->GetPrefabLinker().IsRootSceneNode(*sceneNode))
-                            {
-                                rootSceneNodesLinkedToPrefabs.PushBack(sceneNode);
-                            }
-                        }
+                        return false;
                     }
                 }
                 else
                 {
-                    GTEngine::Log("Error deserializing scene. The version of the info chunk (%d) is not supported.", header.version);
+                    GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Nodes, header.id);
                     deserializer.Seek(header.sizeInBytes);
 
                     return false;
                 }
             }
-            else
+
+
+            // Any other chunk we find needs to be handled seperately.
+            //
+            // TODO: Consider using a null chunk for terminating. Will need to have a callback system in the serialization routine so that custom chunks can be added.
+            while (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
             {
-                GTEngine::Log("Error deserializing scene. Expected chunk %d but got chunk %d instead.", Serialization::ChunkID_Scene_Nodes, header.id);
-                deserializer.Seek(header.sizeInBytes);
-
-                return false;
-            }
-        }
+                size_t targetReadPosition = deserializer.Tell() + header.sizeInBytes;
 
 
-        // Any other chunk we find needs to be handled seperately.
-        //
-        // TODO: Consider using a null chunk for terminating. Will need to have a callback system in the serialization routine so that custom chunks can be added.
-        while (deserializer.Read(header) == sizeof(Serialization::ChunkHeader))
-        {
-            size_t targetReadPosition = deserializer.Tell() + header.sizeInBytes;
-
-
-            if (callback.IsChunkHandled(header))
-            {
-                callback.HandleChunk(header, deserializer);
-            }
-            else
-            {
-                deserializer.Seek(header.sizeInBytes);
-            }
-
-
-            // We need to check the target read pointer and validate.
-            size_t currentReadPosition = deserializer.Tell();
-            if (currentReadPosition != targetReadPosition)
-            {
-                assert(false);      // <-- If you've hit this assert, you've got a serialization/deserialization error.
-
-                // We're going to try to recover by seeking the difference.
-                deserializer.Seek(targetReadPosition - currentReadPosition);
-
-                assert(deserializer.Tell() == currentReadPosition);
-            }
-        }
-
-
-        // Now we need to re-link all relevant scene nodes to their prefabs. If we don't do this, they may not be using the most up-to-date version of the prefab.
-        for (size_t iSceneNode = 0; iSceneNode < rootSceneNodesLinkedToPrefabs.count; ++iSceneNode)
-        {
-            auto sceneNode = rootSceneNodesLinkedToPrefabs[iSceneNode];
-            assert(sceneNode != nullptr);
-            {
-                auto prefabComponent = sceneNode->GetComponent<PrefabComponent>();
-                assert(prefabComponent != nullptr);
+                if (callback.IsChunkHandled(header))
                 {
-                    this->GetPrefabLinker().LinkSceneNodeToPrefab(*sceneNode, prefabComponent->GetPrefabRelativePath());
+                    callback.HandleChunk(header, deserializer);
+                }
+                else
+                {
+                    deserializer.Seek(header.sizeInBytes);
+                }
+
+
+                // We need to check the target read pointer and validate.
+                size_t currentReadPosition = deserializer.Tell();
+                if (currentReadPosition != targetReadPosition)
+                {
+                    assert(false);      // <-- If you've hit this assert, you've got a serialization/deserialization error.
+
+                    // We're going to try to recover by seeking the difference.
+                    deserializer.Seek(targetReadPosition - currentReadPosition);
+
+                    assert(deserializer.Tell() == currentReadPosition);
+                }
+            }
+
+
+            // Now we need to re-link all relevant scene nodes to their prefabs. If we don't do this, they may not be using the most up-to-date version of the prefab.
+            for (size_t iSceneNode = 0; iSceneNode < rootSceneNodesLinkedToPrefabs.count; ++iSceneNode)
+            {
+                auto sceneNode = rootSceneNodesLinkedToPrefabs[iSceneNode];
+                assert(sceneNode != nullptr);
+                {
+                    auto prefabComponent = sceneNode->GetComponent<PrefabComponent>();
+                    assert(prefabComponent != nullptr);
+                    {
+                        this->GetPrefabLinker().LinkSceneNodeToPrefab(*sceneNode, prefabComponent->GetPrefabRelativePath());
+                    }
                 }
             }
         }
+        if (wasStateStackEnabled) { this->EnableStateStack(); }
+        
 
 
 #if 0
