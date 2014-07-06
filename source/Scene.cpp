@@ -273,6 +273,10 @@ namespace GTEngine
 
     Scene::~Scene()
     {
+        // We want to disable the state stack here, otherwise we'll be wasting time adding delete commands to it as the scene nodes
+        // are removed. Should never care about that at destruction time.
+        this->DisableStateStack();
+
         this->RemoveAllViewports();
         this->RemoveAllSceneNodes();
 
