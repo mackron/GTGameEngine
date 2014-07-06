@@ -8,7 +8,7 @@
 
 --Game.StartupScene = "";
 Game.StartupScene = "sandbox/intro.gtscene";        -- The relative path of the initial scene to load. This is relative to the data directory. If this is not a valid scene, the editor will be opened.
-Game.Title        = "GTGameEngine Sandbox"          -- The title to show on the game window.
+Game.Title        = "GTGameEngine Sandbox";         -- The title to show on the game window.
 Game.Width        = 1280;                           -- The horiziontal resolution.
 Game.Height       = 720;                            -- The vertical resolution.
 Game.Fullscreen   = false;                          -- Whether or not to start in fullscreen mode.
