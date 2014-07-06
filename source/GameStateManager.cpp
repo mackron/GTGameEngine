@@ -194,6 +194,17 @@ namespace GTEngine
         return true;
     }
 
+    SceneStateStackRestoreCommands* GenericGameStateManager::GetSceneData(const char* relativeFilePath)
+    {
+        auto iSceneData = m_sceneData.Find(relativeFilePath);
+        if (iSceneData != nullptr)
+        {
+            return iSceneData->value;
+        }
+
+        return nullptr;
+    }
+
 
 
     bool GenericGameStateManager::Serialize(Game &game, GTLib::Serializer &serializer)

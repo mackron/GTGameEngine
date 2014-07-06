@@ -368,6 +368,15 @@ namespace GTEngine
         ///     The scene's file path is only used to map the scene's state to a file. It doesn't actually write to or load from the file.
         virtual bool UpdateSceneState(const char* relativeFilePath, Scene &scene);
 
+        /// Retrieves the data structure that can be used to restore the scene to it's appropriate state.
+        ///
+        /// @param relativeFilePath [in] The relative file path of the scene whose data is being retrieved.
+        ///
+        /// @return A pointer to the SceneStateStackRestoreCommands structure that contains the difference between the base scene and it's current state.
+        ///
+        /// @remarks
+        ///     If no difference data is stored for the given scene, the null will be returned.
+        virtual SceneStateStackRestoreCommands* GetSceneData(const char* relativeFilePath);
 
 
         ///////////////////////////////////////
