@@ -316,7 +316,7 @@ namespace GTEngine
                         for (uint32_t iSceneData = 0; iSceneData < sceneDataCount; ++iSceneData)
                         {
                             GTLib::String sceneRelativePath;
-                            deserializer.Read(sceneRelativePath);
+                            deserializer.ReadString(sceneRelativePath);
 
                             auto sceneData = new SceneStateStackRestoreCommands(0, 0);
                             sceneData->Deserialize(deserializer);
