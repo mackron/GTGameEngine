@@ -9,7 +9,7 @@ public:
 
     /// Constructor.
     SandboxGameStateManager()
-        : currentScene(nullptr), currentSceneRelativePath(), nextScene(nullptr), nextSceneRelativePath(), aspectRatio(0.0f)
+        : currentScene(nullptr), currentSceneRelativePath(), nextScene(nullptr), nextSceneRelativePath(), aspectRatio(0.0f), m_isDeserializing(false)
     {
     }
 
@@ -209,7 +209,15 @@ public:
             // The state of the previous scene needs to be updated in the game state manager.
             if (this->currentScene != nullptr)
             {
-                this->UpdateSceneState(this->currentSceneRelativePath.c_str(), *this->currentScene);
+                // We most likely don't want to update the scene state if we're reloading the same scene. Should probably handle this a bit better just in case
+                // this is a legitimate use case for a particular game.
+                if (this->currentSceneRelativePath != sceneRelativePath)
+                {
+                    if (!this->IsDeserializing())
+                    {
+                        this->UpdateSceneState(this->currentSceneRelativePath.c_str(), *this->currentScene);
+                    }
+                }
             }
 
 
@@ -268,14 +276,20 @@ public:
     /// GenericGameStateManager::Deserialize()
     virtual bool Deserialize(GTEngine::Game &game, GTLib::Deserializer &deserializer)
     {
-        // Call the base implementation of Deserialize(). This will call DeserializeHeaderData() and DeserializeGlobalData().
-        if (GenericGameStateManager::Deserialize(game, deserializer))
+        bool wasDeserializing = m_isDeserializing;
+        m_isDeserializing = true;
         {
-            // We want to now load the current scene - the path will be stored as this->nextSceneRelativePath.
-            this->LoadScene(game, this->nextSceneRelativePath.c_str());
+            // Call the base implementation of Deserialize(). This will call DeserializeHeaderData() and DeserializeGlobalData().
+            if (GenericGameStateManager::Deserialize(game, deserializer))
+            {
+                // We want to now load the current scene - the path will be stored as this->nextSceneRelativePath.
+                this->LoadScene(game, this->nextSceneRelativePath.c_str());
 
-            return true;
+                return true;
+            }
         }
+        m_isDeserializing = wasDeserializing;
+
 
         return false;
     }
@@ -309,6 +323,15 @@ public:
 
 private:
 
+    /// Determines whether or not the game state is deserializing.
+    bool IsDeserializing() const
+    {
+        return m_isDeserializing;
+    }
+
+
+private:
+
     /// A pointer to the current scene. We use a pointer because we'll be dynamically creating and deleting scenes.
     GTEngine::Scene* currentScene;
 
@@ -325,6 +348,10 @@ private:
 
     /// The aspect ratio to use. If this is 0, the aspect ratio will be re-calculated dynamically when the window is resized.
     float aspectRatio;
+
+    /// Whether or not the game state is in the process of deserializing. We use this in determining whether or not LoadScene()
+    /// should update the scene state - we don't want to bother doing it if we're deserializing.
+    bool m_isDeserializing;
 };
 
 
