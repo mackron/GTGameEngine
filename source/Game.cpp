@@ -705,7 +705,7 @@ namespace GTEngine
 
     bool Game::LoadGameState(const char* sourceFilePath)
     {
-        GTLib::FileHandle file = GTLib::OpenFile(sourceFilePath, GTLib::IO::OpenMode::Write | GTLib::IO::OpenMode::CreateDirs);
+        GTLib::FileHandle file = GTLib::OpenFile(sourceFilePath, GTLib::IO::OpenMode::Read | GTLib::IO::OpenMode::CreateDirs);
         if (file)
         {
             GTLib::FileDeserializer deserializer(file);
