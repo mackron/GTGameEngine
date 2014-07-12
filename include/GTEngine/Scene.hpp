@@ -910,6 +910,20 @@ namespace GTEngine
         void PostSceneNodeScriptEvent_OnShutdown();
         void PostSceneNodeScriptEvent_OnShutdown(SceneNode &sceneNode);
 
+        /// Posts the OnSerializeGlobalData event to all scene nodes with script components that define that event.
+        ///
+        /// @remarks
+        ///     This only works if the scene is registered to a script.
+        void PostSceneNodeScriptEvent_OnSerializeGlobalData(GTLib::Serializer &serializer);
+        void PostSceneNodeScriptEvent_OnSerializeGlobalData(SceneNode &sceneNode, GTLib::Serializer &serializer);
+        
+        /// Posts the OnDeserializeGlobalData event to all scene nodes with script components that define that event.
+        ///
+        /// @remarks
+        ///     This only works if the scene is registered to a script.
+        void PostSceneNodeScriptEvent_OnDeserializeGlobalData(GTLib::Deserializer &deserializer);
+        void PostSceneNodeScriptEvent_OnDeserializeGlobalData(SceneNode &sceneNode, GTLib::Deserializer &deserializer);
+
 
     private:
 

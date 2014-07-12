@@ -86,6 +86,12 @@ namespace GTEngine
         /// Determines if the script has an OnDeserialize event handler.
         bool HasOnDeserialize() const;
 
+        /// Determines if the script has an OnSerializeGlobalData event handler.
+        bool HasOnSerializeGlobalData() const;
+
+        /// Determines if the script has an OnDeserializeGlobalData event handler.
+        bool HasOnDeserializeGlobalData() const;
+
 
 
         /// Retrieves the number of public variables.
@@ -181,6 +187,12 @@ namespace GTEngine
 
         /// Keeps track of whether or not this definition has an OnDeserialize event handler.
         bool hasOnDeserialize;
+
+        /// Keeps track of whether or not this definition has an OnSerializeGlobalData event handler.
+        bool hasOnSerializeGlobalData;
+
+        /// Keeps track of whether or not this definition has an OnDeserializeGlobalData event handler.
+        bool hasOnDeserializeGlobalData;
 
 
         /// The list of public variables, in the order they are defined (hopefully).

@@ -514,6 +514,8 @@ namespace GTEngine
                         script.SetTableValue(-1, 16, "OnKeyReleased");
                         script.SetTableValue(-1, 17, "OnSerialize");
                         script.SetTableValue(-1, 18, "OnDeserialize");
+                        script.SetTableValue(-1, 19, "OnSerializeGlobalData");
+                        script.SetTableValue(-1, 20, "OnDeserializeGlobalData");
                     }
                     script.SetTableValue(-3);
 
@@ -1098,6 +1100,40 @@ namespace GTEngine
                 {
                     script.PushValue(-2);                               // <-- 'self'
                     Scripting::PushSceneNode(script, otherSceneNode);   // <-- 'otherSceneNode'
+                    script.Call(2, 0);
+                }
+            }
+            script.Pop(1);
+        }
+
+        void PostSceneNodeEvent_OnSerializeGlobalData(GTLib::Script &script, SceneNode &sceneNode, GTLib::Serializer &serializer)
+        {
+            Scripting::PushSceneNode(script, sceneNode);
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnSerializeGlobalData");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);                                       // <-- 'self'
+                    GTLib::Scripting::PushNewSerializer(script, serializer);    // <-- 'serializer'
+                    script.Call(2, 0);
+                }
+            }
+            script.Pop(1);
+        }
+
+        void PostSceneNodeEvent_OnDeserializeGlobalData(GTLib::Script &script, SceneNode &sceneNode, GTLib::Deserializer &deserializer)
+        {
+            Scripting::PushSceneNode(script, sceneNode);
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnDeserializeGlobalData");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.PushValue(-2);                                           // <-- 'self'
+                    GTLib::Scripting::PushNewDeserializer(script, deserializer);    // <-- 'deserializer'
                     script.Call(2, 0);
                 }
             }

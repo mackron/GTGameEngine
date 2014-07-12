@@ -461,6 +461,40 @@ namespace GTEngine
         return false;
     }
 
+    bool ScriptComponent::HasOnSerializeGlobalData() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            assert(script != nullptr);
+            {
+                if (script->HasOnSerializeGlobalData())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnDeserializeGlobalData() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            assert(script != nullptr);
+            {
+                if (script->HasOnDeserializeGlobalData())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
 
     void ScriptComponent::Clear(bool clearPublicVariables)
