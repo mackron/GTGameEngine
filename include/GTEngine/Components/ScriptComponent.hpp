@@ -191,6 +191,18 @@ namespace GTEngine
         ///     This is used to determine whether or not OnDeserialize needs to be called.
         bool HasOnDeserialize() const;
 
+        /// Determines if any of the attached scripts has an OnSerializeGlobalData event handler.
+        ///
+        /// @remarks
+        ///     This is used to determine whether or not OnSerializeGlobalData needs to be called.
+        bool HasOnSerializeGlobalData() const;
+
+        /// Determines if any of the attached scripts has an OnDeserializeGlobalData event handler.
+        ///
+        /// @remarks
+        ///     This is used to determine whether or not OnDeserializeGlobalData needs to be called.
+        bool HasOnDeserializeGlobalData() const;
+
 
 
 

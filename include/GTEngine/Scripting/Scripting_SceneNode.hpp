@@ -184,6 +184,25 @@ namespace GTEngine
         ///     The scene node must be instantiated on a registered scene for this to work.
         void PostSceneNodeEvent_OnLeaveObject(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode);
 
+        /// Calls the OnSerializeGlobalData event on the given scene node.
+        ///
+        /// @param script     [in] A reference to the main script object.
+        /// @param sceneNode  [in] A reference to the scene node that's having it's event called.
+        /// @param serializer [in] A reference to the serialize to write the data to.
+        ///
+        /// @remarks
+        ///     The scene node must be instantiated on a registered scene for this to work.
+        void PostSceneNodeEvent_OnSerializeGlobalData(GTLib::Script &script, SceneNode &sceneNode, GTLib::Serializer &serializer);
+
+        /// Calls the OnDeserializeGlobalData event on the given scene node.
+        ///
+        /// @param script       [in] A reference to the main script object.
+        /// @param sceneNode    [in] A reference to the scene node that's having it's event called.
+        /// @param deserializer [in] A reference to the deserializer to read the data from.
+        ///
+        /// @remarks
+        ///     The scene node must be instantiated on a registered scene for this to work.
+        void PostSceneNodeEvent_OnDeserializeGlobalData(GTLib::Script &script, SceneNode &sceneNode, GTLib::Deserializer &deserializer);
 
 
         namespace SceneNodeFFI

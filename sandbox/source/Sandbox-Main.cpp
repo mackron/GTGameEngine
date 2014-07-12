@@ -256,6 +256,9 @@ public:
     /// GenericGameStateManager::SerializeHeaderData()
     virtual uint32_t SerializeHeaderData(GTEngine::Game &game, GTLib::Serializer &serializer)
     {
+        (void)game;
+
+
         // The name of the current scene - we're going to load this when we deserialize.
         serializer.WriteString(this->currentSceneRelativePath);
 
@@ -265,6 +268,14 @@ public:
     /// GenericGameStateManager::SerializeGlobalData()
     virtual uint32_t SerializeGlobalData(GTEngine::Game &game, GTLib::Serializer &serializer)
     {
+        (void)game;
+
+
+        if (this->currentScene != nullptr)
+        {
+            this->currentScene->PostSceneNodeScriptEvent_OnSerializeGlobalData(serializer);
+        }
+
         return 1;
     }
 
@@ -276,22 +287,18 @@ public:
     /// GenericGameStateManager::Deserialize()
     virtual bool Deserialize(GTEngine::Game &game, GTLib::Deserializer &deserializer)
     {
+        bool result;
+
         bool wasDeserializing = m_isDeserializing;
         m_isDeserializing = true;
         {
             // Call the base implementation of Deserialize(). This will call DeserializeHeaderData() and DeserializeGlobalData().
-            if (GenericGameStateManager::Deserialize(game, deserializer))
-            {
-                // We want to now load the current scene - the path will be stored as this->nextSceneRelativePath.
-                this->LoadScene(game, this->nextSceneRelativePath.c_str());
-
-                return true;
-            }
+            result = GenericGameStateManager::Deserialize(game, deserializer);
         }
         m_isDeserializing = wasDeserializing;
 
 
-        return false;
+        return result;
     }
 
     /// GenericGameStateManager::DeserializeHeaderData()
@@ -302,9 +309,11 @@ public:
         if (version == 1)
         {
             deserializer.ReadString(this->nextSceneRelativePath);
+
+            return true;
         }
         
-        return true;
+        return false;
     }
 
     /// GenericGameStateManager::DeserializeGlobalData()
@@ -315,9 +324,19 @@ public:
 
         if (version == 1)
         {
+            // In order to deserialize the global game data, there needs to be a scene ready to go. We do this by loading the scene here.
+            if (this->LoadScene(game, this->nextSceneRelativePath.c_str()))
+            {
+                assert(this->nextScene != nullptr);
+                {
+                    this->nextScene->PostSceneNodeScriptEvent_OnDeserializeGlobalData(deserializer);
+                }
+
+                return true;
+            }
         }
 
-        return true;
+        return false;
     }
 
 

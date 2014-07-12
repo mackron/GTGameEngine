@@ -3234,6 +3234,64 @@ namespace GTEngine
     }
 
 
+    void Scene::PostSceneNodeScriptEvent_OnSerializeGlobalData(GTLib::Serializer &serializer)
+    {
+        if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
+        {
+            size_t sceneNodeCount = this->sceneNodes.GetCount();
+            for (size_t i = 0; i < sceneNodeCount; ++i)
+            {
+                auto sceneNode = this->sceneNodes.GetSceneNodeAtIndex(i);
+                assert(sceneNode != nullptr);
+                {
+                    this->PostSceneNodeScriptEvent_OnSerializeGlobalData(*sceneNode, serializer);
+                }
+            }
+        }
+    }
+
+    void Scene::PostSceneNodeScriptEvent_OnSerializeGlobalData(SceneNode &sceneNode, GTLib::Serializer &serializer)
+    {
+        auto scriptComponent = sceneNode.GetComponent<ScriptComponent>();
+        if (scriptComponent != nullptr)
+        {
+            if (scriptComponent->HasOnSerializeGlobalData())
+            {
+                Scripting::PostSceneNodeEvent_OnSerializeGlobalData(*this->registeredScript, sceneNode, serializer);
+            }
+        }
+    }
+
+
+    void Scene::PostSceneNodeScriptEvent_OnDeserializeGlobalData(GTLib::Deserializer &deserializer)
+    {
+        if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
+        {
+            size_t sceneNodeCount = this->sceneNodes.GetCount();
+            for (size_t i = 0; i < sceneNodeCount; ++i)
+            {
+                auto sceneNode = this->sceneNodes.GetSceneNodeAtIndex(i);
+                assert(sceneNode != nullptr);
+                {
+                    this->PostSceneNodeScriptEvent_OnDeserializeGlobalData(*sceneNode, deserializer);
+                }
+            }
+        }
+    }
+
+    void Scene::PostSceneNodeScriptEvent_OnDeserializeGlobalData(SceneNode &sceneNode, GTLib::Deserializer &deserializer)
+    {
+        auto scriptComponent = sceneNode.GetComponent<ScriptComponent>();
+        if (scriptComponent != nullptr)
+        {
+            if (scriptComponent->HasOnDeserializeGlobalData())
+            {
+                Scripting::PostSceneNodeEvent_OnDeserializeGlobalData(*this->registeredScript, sceneNode, deserializer);
+            }
+        }
+    }
+
+
 
     ///////////////////////////////////////////////////////
     // Private
