@@ -41,7 +41,7 @@ function self:OnStartup()
         self.GUIGetStartedButton:SetText("Get Started");
         self.GUIGetStartedButton:SetStyle("margin-top", "0px");
         self.GUIGetStartedButton:OnPressed(function()
-            GTCore.System.OpenFileOrURL("http://mackron.github.io/GTGameEngine/getstarted/");
+            GT.System.OpenFileOrURL("http://mackron.github.io/GTGameEngine/getstarted/");
         end);
         self.GUIGetStartedButton:OnMouseEnter(function()
             self.GUIGetStartedInfo:Show();
@@ -89,13 +89,13 @@ function self:OnStartup()
         self.GUIHomePage = GTEngine.CreateGUIElement(self.GUIContainerFooterLeft, "intro-scene-url");
         self.GUIHomePage:SetText("Home Page");
         self.GUIHomePage:OnPressed(function()
-            GTCore.System.OpenFileOrURL("http://mackron.github.io/GTGameEngine");
+            GT.System.OpenFileOrURL("http://mackron.github.io/GTGameEngine");
         end);
 
         self.GUIWebSite = GTEngine.CreateGUIElement(self.GUIContainerFooterLeft, "intro-scene-url");
         self.GUIWebSite:SetText("GitHub Project");
         self.GUIWebSite:OnPressed(function()
-            GTCore.System.OpenFileOrURL("https://github.com/mackron/GTGameEngine");
+            GT.System.OpenFileOrURL("https://github.com/mackron/GTGameEngine");
         end);
 
         self.GUIEmail   = GTEngine.CreateGUIElement(self.GUIContainerFooterRight, "intro-scene-email");

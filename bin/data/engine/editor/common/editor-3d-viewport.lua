@@ -195,7 +195,7 @@ function GTGUI.Element:DefaultEditor3DViewport()
     
 
     self:OnMouseButtonDown(function(data)
-        if data.button == GTCore.MouseButtons.Left then
+        if data.button == GT.MouseButtons.Left then
             self.isLMBDown = true;
         
             if self:IsControlsEnabled() then
@@ -205,7 +205,7 @@ function GTGUI.Element:DefaultEditor3DViewport()
                     self.mouseMovedWhileButtonDown = true;      -- Trick the viewport into thinking the mouse was moved so that the next OnViewport*WithoutMovement() is disabled.
                 end
             end
-        elseif data.button == GTCore.MouseButtons.Right then
+        elseif data.button == GT.MouseButtons.Right then
             self.isRMBDown = true;
         
             if self:IsControlsEnabled() then
@@ -215,7 +215,7 @@ function GTGUI.Element:DefaultEditor3DViewport()
                     self.mouseMoveWhileButtonDown = true;      -- Trick the viewport into thinking the mouse was moved so that the next OnViewport*WithoutMovement() is disabled.
                 end
             end
-        elseif data.button == GTCore.MouseButtons.Middle then
+        elseif data.button == GT.MouseButtons.Middle then
             self.isMMBDown = true;
         
             if self:IsControlsEnabled() then
@@ -230,11 +230,11 @@ function GTGUI.Element:DefaultEditor3DViewport()
 
     self:WatchMouseButtonDown(function(data)
         if self:HasMouseCapture() then
-            if data.button == GTCore.MouseButtons.Left then
+            if data.button == GT.MouseButtons.Left then
                 self.isLMBDown = true;
-            elseif data.button == GTCore.MouseButtons.Right then
+            elseif data.button == GT.MouseButtons.Right then
                 self.isRMBDown = true;
-            elseif data.button == GTCore.MouseButtons.Middle then
+            elseif data.button == GT.MouseButtons.Middle then
                 self.isMMBDown = true;
             end
         end
@@ -242,31 +242,31 @@ function GTGUI.Element:DefaultEditor3DViewport()
     
     self:WatchMouseButtonUp(function(data)
         if self:HasMouseCapture() and self:IsControlsEnabled() then
-            if ((data.button == GTCore.MouseButtons.Left   and not self:IsRMBDown() and not self:IsMMBDown()) or
-                (data.button == GTCore.MouseButtons.Right  and not self:IsLMBDown() and not self:IsMMBDown()) or 
-                (data.button == GTCore.MouseButtons.Middle and not self:IsLMBDown() and not self:IsRMBDown())) then
+            if ((data.button == GT.MouseButtons.Left   and not self:IsRMBDown() and not self:IsMMBDown()) or
+                (data.button == GT.MouseButtons.Right  and not self:IsLMBDown() and not self:IsMMBDown()) or 
+                (data.button == GT.MouseButtons.Middle and not self:IsLMBDown() and not self:IsRMBDown())) then
                 local mouseMoved = self:MouseMovedWhileButtonDown();
 
                 -- Release the mouse before posting the event. This will move the mouse, so we need to check for mouse movement before releasing.
                 self:ReleaseMouse();
 
                 if not mouseMoved and self:IsVisible() then
-                    if data.button == GTCore.MouseButtons.Left then
+                    if data.button == GT.MouseButtons.Left then
                         self:OnViewportLMBUpWithoutMovement();
-                    elseif data.button == GTCore.MouseButtons.Right then
+                    elseif data.button == GT.MouseButtons.Right then
                         self:OnViewportRMBUpWithoutMovement();
-                    elseif data.button == GTCore.MouseButtons.Middle then
+                    elseif data.button == GT.MouseButtons.Middle then
                         self:OnViewportMMBUpWithoutMovement();
                     end
                 end
             end
         end
 
-        if data.button == GTCore.MouseButtons.Left then
+        if data.button == GT.MouseButtons.Left then
             self.isLMBDown = false;
-        elseif data.button == GTCore.MouseButtons.Right then
+        elseif data.button == GT.MouseButtons.Right then
             self.isRMBDown = false;
-        elseif data.button == GTCore.MouseButtons.Middle then
+        elseif data.button == GT.MouseButtons.Middle then
             self.isMMBDown = false;
         end
     end)

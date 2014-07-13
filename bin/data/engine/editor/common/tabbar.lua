@@ -24,7 +24,7 @@ function GTGUI.Element:TabBarTab(text)
     
     
     self:OnMouseButtonDown(function(data)
-        if data.button == GTCore.MouseButtons.Left then
+        if data.button == GT.MouseButtons.Left then
             self:Activate();
         end
     end)

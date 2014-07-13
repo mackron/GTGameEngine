@@ -26,7 +26,7 @@ namespace GTEngine
             // Callbacks.
             successful = successful && script.Execute
             (
-                "Game.Callbacks = GTCore.CallbackManager:Create();"
+                "Game.Callbacks = GT.CallbackManager:Create();"
 
                 "function Game.ClearCallbacks(name)"
                 "    Game.Callbacks:Clear(name);"

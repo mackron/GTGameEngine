@@ -609,7 +609,7 @@ function GTGUI.Element:CollisionShapesPanel()
     
     
     function self:GetShapePanelIndex(shapePanel)
-        return table.indexof(self.CollisionShapePanels, shapePanel);
+        return GT.table.indexof(self.CollisionShapePanels, shapePanel);
     end
     
     
@@ -1312,39 +1312,39 @@ function GTGUI.Element:SceneEditor(_internalPtr)
     
     self:WatchKeyPressed(function(data)
         if self:IsVisible() then
-            if data.key == GTCore.Keys.Pause then
+            if data.key == GT.Keys.Pause then
                 if self:IsPaused() or not self:IsPlaying() then
                     self:StartPlaying();
                 else
                     self:PausePlaying();
                 end
-            elseif data.key == GTCore.Keys.Break then
+            elseif data.key == GT.Keys.Break then
                 self:StopPlaying();
             end
         
             if not GTGUI.Server.DoesFocusedElementHaveEditableText() and not self:IsPlaying() then
                 if not GTGUI.Server.IsCTRLKeyDown() then
-                    if data.key == GTCore.Keys.Delete then
+                    if data.key == GT.Keys.Delete then
                         self:DeleteSelectedSceneNodes();
-                    elseif data.key == GTCore.Keys.T then
+                    elseif data.key == GT.Keys.T then
                         self:SwitchGizmoToTranslateMode();
-                    elseif data.key == GTCore.Keys.R then
+                    elseif data.key == GT.Keys.R then
                         self:SwitchGizmoToRotateMode();
-                    elseif data.key == GTCore.Keys.S then
+                    elseif data.key == GT.Keys.S then
                         self:SwitchGizmoToScaleMode();
-                    elseif data.key == GTCore.Keys.L then
+                    elseif data.key == GT.Keys.L then
                         self:SwitchGizmoToLocalSpace();
-                    elseif data.key == GTCore.Keys.G then
+                    elseif data.key == GT.Keys.G then
                         self:SwitchGizmoToGlobalSpace();
-                    elseif data.key == GTCore.Keys.Q then
+                    elseif data.key == GT.Keys.Q then
                         self:ToggleGizmoSpace();
                     end
                 else
-                    if data.key == GTCore.Keys.D then
+                    if data.key == GT.Keys.D then
                         self:DuplicateSelectedSceneNodes();           -- This will deselect the source nodes and select the new ones.
-                    elseif data.key == GTCore.Keys.Z then
+                    elseif data.key == GT.Keys.Z then
                         self:Undo();
-                    elseif data.key == GTCore.Keys.Y then
+                    elseif data.key == GT.Keys.Y then
                         self:Redo();
                     end
                 end

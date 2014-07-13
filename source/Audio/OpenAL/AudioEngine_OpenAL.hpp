@@ -10,7 +10,7 @@
 #include <AL/al.h>
 #include <AL/alc.h>
 
-#if defined(GTCORE_PLATFORM_WINDOWS)
+#if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
 #endif
 
@@ -116,20 +116,20 @@ namespace GTEngine
         ///
         /// @remarks
         ///     The returned value can be cast to any other of the OpenAL function pointers.
-#if defined(GTCORE_PLATFORM_WINDOWS)
+#if defined(GT_PLATFORM_WINDOWS)
         static OpenALProc GetOpenALProc(HMODULE library, const char* procName);
 #endif
-#if defined(GTCORE_PLATFORM_LINUX)
+#if defined(GT_PLATFORM_LINUX)
         static OpenALProc GetOpenALProc(void* library, const char* procName);
 #endif
 
     private:
 
-#if defined(GTCORE_PLATFORM_WINDOWS)
+#if defined(GT_PLATFORM_WINDOWS)
         /// A handle to the OpenAL32.dll library to load the OpenAL functions from. This is created with LoadLibrary().
         HMODULE m_library;
 #endif
-#if defined(GTCORE_PLATFORM_LINUX)
+#if defined(GT_PLATFORM_LINUX)
         /// A pointer to the OpenAL shared object to load the OpenAL functions from. This is creatd with dlopen().
         void* m_library;
 #endif

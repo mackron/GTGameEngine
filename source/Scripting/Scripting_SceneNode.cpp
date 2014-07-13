@@ -483,7 +483,7 @@ namespace GTEngine
             successful = successful && script.Execute
             (
                 "function GTEngine.IsSceneNodeEventHandler(name)"
-                "    return table.indexof(GTEngine.SceneNodeEventHandlers, name) ~= nil;"
+                "    return GT.table.indexof(GTEngine.SceneNodeEventHandlers, name) ~= nil;"
                 "end;"
             );
 

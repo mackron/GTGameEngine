@@ -128,7 +128,7 @@ function Editor.InitialiseDialogs()
         NewFileDialog_NameTextBox:OnTextChanged(function()
             local text = NewFileDialog_NameTextBox:GetText();
             if text ~= nil and text ~= "" then
-                if not GTCore.IO.FileExists(NewFileDialog.GetAbsolutePath()) then
+                if not GT.IO.FileExists(NewFileDialog.GetAbsolutePath()) then
                     NewFileDialog_Create:Enable();
                     NewFileDialog_StatusTextBox:SetText("");
                 else
@@ -142,7 +142,7 @@ function Editor.InitialiseDialogs()
         end);
         
         NewFileDialog_NameTextBox:OnKeyPressed(function(data)
-            if data.key == GTCore.Keys.Enter or data.key == GTCore.Keys.Return then
+            if data.key == GT.Keys.Enter or data.key == GT.Keys.Return then
                 if NewFileDialog_Create:IsEnabled() then
                     NewFileDialog_Create:OnPressed();
                 end

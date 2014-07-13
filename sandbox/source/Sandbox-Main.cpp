@@ -379,7 +379,7 @@ int main(int argc, char** argv)
 {
     //CALLGRIND_ZERO_STATS;
     
-#if defined(GTCORE_PLATFORM_LINUX)
+#if defined(GT_PLATFORM_LINUX)
     XInitThreads();
 #endif
 

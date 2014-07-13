@@ -16,7 +16,7 @@ function GTGUI.Element:DataExplorer()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Folder...", self.FolderMenu.DestinationDirectory, nil, function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
-                    GTCore.IO.CreateDirectory(absolutePath);
+                    GT.IO.CreateDirectory(absolutePath);
                     Game.ScanDataFilesForChanges();                 -- This will force the files watcher to update.
                     
                     self:SelectAndExpandItemByPath(absolutePath);
@@ -31,7 +31,7 @@ function GTGUI.Element:DataExplorer()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Scene...", self.FolderMenu.DestinationDirectory, "gtscene", function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
-                    GTCore.IO.CreateEmptyFile(absolutePath);
+                    GT.IO.CreateEmptyFile(absolutePath);
                     Game.ScanDataFilesForChanges();
                     
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
@@ -45,7 +45,7 @@ function GTGUI.Element:DataExplorer()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Prefab...", self.FolderMenu.DestinationDirectory, "gtprefab", function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
-                    GTCore.IO.CreateEmptyFile(absolutePath);
+                    GT.IO.CreateEmptyFile(absolutePath);
                     Game.ScanDataFilesForChanges();
                 end
             end);
@@ -56,7 +56,7 @@ function GTGUI.Element:DataExplorer()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Material...", self.FolderMenu.DestinationDirectory, "material", function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
-                    GTCore.IO.CreateEmptyFile(absolutePath);
+                    GT.IO.CreateEmptyFile(absolutePath);
                     Game.ScanDataFilesForChanges();
                     
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
@@ -70,7 +70,7 @@ function GTGUI.Element:DataExplorer()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Particle System...", self.FolderMenu.DestinationDirectory, "gtparticle", function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
-                    GTCore.IO.CreateEmptyFile(absolutePath);
+                    GT.IO.CreateEmptyFile(absolutePath);
                     Game.ScanDataFilesForChanges();
                     
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
@@ -84,7 +84,7 @@ function GTGUI.Element:DataExplorer()
         if self.FolderMenu.DestinationDirectory ~= nil then
             Editor.ShowNewFileDialog("Create New Text File...", self.FolderMenu.DestinationDirectory, nil, function(result, absolutePath)
                 if result == Editor.NewFileDialogResult.Create then
-                    GTCore.IO.CreateEmptyFile(absolutePath);
+                    GT.IO.CreateEmptyFile(absolutePath);
                     Game.ScanDataFilesForChanges();
                     
                     Editor.OpenFile(absolutePath, self.FolderMenu.DestinationDirectory);
@@ -101,7 +101,7 @@ function GTGUI.Element:DataExplorer()
                 -- Recursively force close every file in the directory.
                 self:ForceCloseFilesInDirectory(self:FindItemByPath(self.FolderMenu.DestinationDirectory));
             
-                GTCore.IO.DeleteDirectory(self.FolderMenu.DestinationDirectory);
+                GT.IO.DeleteDirectory(self.FolderMenu.DestinationDirectory);
                 Game.ScanDataFilesForChanges();
             end
         end);
@@ -118,22 +118,22 @@ function GTGUI.Element:DataExplorer()
                 local absolutePathToDelete = self.FileMenu.DestinationAbsolutePath;
             
                 Editor.ForceCloseFile(absolutePathToDelete);
-                GTCore.IO.DeleteFile(absolutePathToDelete);
+                GT.IO.DeleteFile(absolutePathToDelete);
                 
                 -- If the file was a model, we need to look for a corresponding .gtmodel file. Also, if the file is a .gtmodel, we need to remove
                 -- the extension and also try deleted the base file.
                 if GTEngine.IsModelFile(absolutePathToDelete) then
-                    if GTCore.IO.GetExtension(absolutePathToDelete) == "gtmodel" then
+                    if GT.IO.GetExtension(absolutePathToDelete) == "gtmodel" then
                         -- The file is a .gtmodel file. We need to remove the extension and delete the base file if it exists.
-                        absolutePathToDelete = GTCore.IO.RemoveExtension(absolutePathToDelete);
-                        if GTCore.IO.FileExists(absolutePathToDelete) then
-                            GTCore.IO.DeleteFile(absolutePathToDelete);
+                        absolutePathToDelete = GT.IO.RemoveExtension(absolutePathToDelete);
+                        if GT.IO.FileExists(absolutePathToDelete) then
+                            GT.IO.DeleteFile(absolutePathToDelete);
                         end
                     else
                         -- The file is not a .gtmodel file. We need to append the .gtmodel extension and try deleting that file, too.
                         absolutePathToDelete = absolutePathToDelete .. ".gtmodel";
-                        if GTCore.IO.FileExists(absolutePathToDelete) then
-                            GTCore.IO.DeleteFile(absolutePathToDelete);
+                        if GT.IO.FileExists(absolutePathToDelete) then
+                            GT.IO.DeleteFile(absolutePathToDelete);
                         end
                     end
                 end
@@ -147,7 +147,7 @@ function GTGUI.Element:DataExplorer()
     
     function self:InsertItemFromFileInfo(fileInfo, text)
         -- The first step is to find the name of the parent.
-        local parentPath = GTCore.IO.GetParentDirectoryPath(fileInfo.absolutePath);
+        local parentPath = GT.IO.GetParentDirectoryPath(fileInfo.absolutePath);
         assert(parentPath ~= nil);
         
         -- Now we need to find the treeview item of the parent. Once we have this, we can look at the siblings and determine
@@ -156,10 +156,10 @@ function GTGUI.Element:DataExplorer()
 
         
         if text == nil then
-            text = GTCore.IO.GetFileNameFromPath(fileInfo.absolutePath);
+            text = GT.IO.GetFileNameFromPath(fileInfo.absolutePath);
             
-            if GTCore.IO.GetExtension(text) == "gtmodel" then
-                text = GTCore.IO.RemoveExtension(text);
+            if GT.IO.GetExtension(text) == "gtmodel" then
+                text = GT.IO.RemoveExtension(text);
             end
         end
         
@@ -177,7 +177,7 @@ function GTGUI.Element:DataExplorer()
         
         -- Called when an item is right clicked.
         item.titleContainer:OnMouseButtonUp(function(data)
-            if data.button == GTCore.MouseButtons.Right then
+            if data.button == GT.MouseButtons.Right then
                 self.TreeView:DeselectAllItems();
                 item:Select();
                 self:ShowContextMenu(item);
@@ -301,8 +301,8 @@ function GTGUI.Element:DataExplorer()
     
     function self:IsFileIgnored(fileInfo)
         -- Here we'll check the extensions.
-        local filename  = GTCore.IO.GetFileNameFromPath(fileInfo.absolutePath);
-        local extension = GTCore.IO.GetExtension(fileInfo.absolutePath);
+        local filename  = GT.IO.GetFileNameFromPath(fileInfo.absolutePath);
+        local extension = GT.IO.GetExtension(fileInfo.absolutePath);
         
         -- Blender will create backup .blend files named as .blend1, .blend2, etc. We want to ignore these.
         if string.sub(extension, 1, 5) == "blend" and string.len(extension) > 5 then
@@ -394,9 +394,9 @@ function GTGUI.Element:DataExplorer()
             -- is a case where the original source file may not be present, in which case we still want to see an item for the file. What we do is remove
             -- the .gtmodel extension, leaving only the base name. Then, we check if a file of that new name already exists. If so, we just ignore everything,
             -- otherwise we add a file with that base name.
-            if GTCore.IO.GetExtension(fileInfo.absolutePath) == "gtmodel" then
-                local baseFileAbsolutePath = GTCore.IO.RemoveExtension(fileInfo.absolutePath);
-                if GTCore.IO.FileExists(baseFileAbsolutePath) then
+            if GT.IO.GetExtension(fileInfo.absolutePath) == "gtmodel" then
+                local baseFileAbsolutePath = GT.IO.RemoveExtension(fileInfo.absolutePath);
+                if GT.IO.FileExists(baseFileAbsolutePath) then
                     fileInfo.absolutePath = baseFileAbsolutePath;
                     return;
                 end
@@ -430,11 +430,11 @@ function GTGUI.Element:DataExplorer()
         if Editor.DirectoryAliases and Editor.DirectoryAliases.Data[i] then
             text = text .. Editor.DirectoryAliases.Data[i];
         else
-            text = text .. GTCore.MakePathRelative(value, GTEngine.GetExecutableDirectory());
+            text = text .. GT.ToRelativePath(value, GTEngine.GetExecutableDirectory());
         end
         text = text .. ")";
         
-        local fileInfo = GTCore.IO.FileInfo.New(value);
+        local fileInfo = GT.IO.FileInfo.New(value);
         self:InsertItemFromFileInfo(fileInfo, text);
     end
     

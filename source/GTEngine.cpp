@@ -79,7 +79,7 @@ namespace GTEngine
             {
                 GTLib::IO::SetCurrentDirectory(directories[0].c_str());
 
-                // Here we are going to set additional search directories which will make GTCore search these directories if it can not
+                // Here we are going to set additional search directories which will make GTLib search these directories if it can not
                 // open a file from the current directory. We intentionally don't include the first directory.
                 for (size_t i = 1; i < directories.count; ++i)
                 {
@@ -102,7 +102,7 @@ namespace GTEngine
         }
         
         
-        // Before we can do any windowing operations we will need to initialise the window management module of GTCore.
+        // Before we can do any windowing operations we will need to initialise the window management module of GTLib.
         GTLib::StartupWindowManager();
 
 
@@ -209,7 +209,7 @@ namespace GTEngine
         // Thread cache.
         ThreadCache::Shutdown();
         
-        // GTCore's window management module.
+        // GTLib's window management module.
         GTLib::ShutdownWindowManager();
 
         // Application config.

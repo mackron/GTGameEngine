@@ -78,7 +78,7 @@ function GTGUI.Element:Vector4Input()
     
     
     self.X:OnKeyDown(function(data)
-        if data.key == GTCore.Keys.Tab then
+        if data.key == GT.Keys.Tab then
             self.Y:Focus();
             self.Y:SelectAllText();
             
@@ -87,7 +87,7 @@ function GTGUI.Element:Vector4Input()
     end);
     
     self.Y:OnKeyDown(function(data)
-        if data.key == GTCore.Keys.Tab then
+        if data.key == GT.Keys.Tab then
             self.Z:Focus();
             self.Z:SelectAllText();
             
@@ -96,7 +96,7 @@ function GTGUI.Element:Vector4Input()
     end);
     
     self.Z:OnKeyDown(function(data)
-        if data.key == GTCore.Keys.Tab then
+        if data.key == GT.Keys.Tab then
             self.W:Focus();
             self.W:SelectAllText();
             
@@ -105,7 +105,7 @@ function GTGUI.Element:Vector4Input()
     end);
     
     self.W:OnKeyDown(function(data)
-        if data.key == GTCore.Keys.Tab then
+        if data.key == GT.Keys.Tab then
             self.X:Focus();
             self.X:SelectAllText();
             

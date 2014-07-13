@@ -36,7 +36,7 @@ function GTGUI.Element:DropDownBox()
     end
     
     function self:RemoveItem(itemToRemove)
-        self:RemoveItemByIndex(table.indexof(self.Items, itemToRemove));
+        self:RemoveItemByIndex(GT.table.indexof(self.Items, itemToRemove));
     end
     
     
@@ -54,7 +54,7 @@ function GTGUI.Element:DropDownBox()
     end
     
     function self:SelectItem(itemToSelect, blockEvent)
-        self:SelectItemByIndex(table.indexof(self.Items, itemToSelect), blockEvent);
+        self:SelectItemByIndex(GT.table.indexof(self.Items, itemToSelect), blockEvent);
     end
     
     
@@ -77,7 +77,7 @@ function GTGUI.Element:DropDownBox()
     
 
     self:OnMouseButtonDown(function(data)
-        if data.button == GTCore.MouseButtons.Left then
+        if data.button == GT.MouseButtons.Left then
             if not self:IsOpen() then
                 self:Open();
             else
