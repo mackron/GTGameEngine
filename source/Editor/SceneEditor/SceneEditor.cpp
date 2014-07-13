@@ -351,6 +351,9 @@ namespace GTEngine
 
                 this->physicsManager.EnableSimulation();
                 this->physicsManager.ActivateAllRigidBodies();
+
+
+                this->GetGame().GetGUI().BlurFocusedElement();
             }
 
 
