@@ -1677,6 +1677,11 @@ namespace GTEngine
             return false;
         }
 
+        // If the scene is deserializing, we don't want to update prefabs. Prefabs should be updated in a separate pass at the end.
+        if (this->isDeserializing)
+        {
+            return false;
+        }
 
 
         return true;
