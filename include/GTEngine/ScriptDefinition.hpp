@@ -47,17 +47,17 @@ namespace GTEngine
         /// Determines if the script has an OnHide event handler.
         bool HasOnHide() const;
 
-        /// Determines if the script has an OnObjectEnter event handler.
-        bool HasOnObjectEnter() const;
+        /// Determines if the script has an OnSceneNodeEnter event handler.
+        bool HasOnSceneNodeEnter() const;
 
-        /// Determines if the script has an OnEnterObject event handler.
-        bool HasOnEnterObject() const;
+        /// Determines if the script has an OnEnterSceneNode event handler.
+        bool HasOnEnterSceneNode() const;
 
-        /// Determines if the script has an OnObjectLeave event handler.
-        bool HasOnObjectLeave() const;
+        /// Determines if the script has an OnSceneNodeLeave event handler.
+        bool HasOnSceneNodeLeave() const;
 
-        /// Determines if the script has an OnLeaveObject event handler.
-        bool HasOnLeaveObject() const;
+        /// Determines if the script has an OnLeaveSceneNode event handler.
+        bool HasOnLeaveSceneNode() const;
 
         /// Determines if the script has an OnMouseMove event handler.
         bool HasOnMouseMove() const;
@@ -149,17 +149,17 @@ namespace GTEngine
         /// Keeps track of whether or not this definition has an OnHide event handler.
         bool hasOnHide;
 
-        /// Keeps track of whether or not this definition has an OnObjectEnter event handler.
-        bool hasOnObjectEnter;
+        /// Keeps track of whether or not this definition has an OnSceneNodeEnter event handler.
+        bool hasOnSceneNodeEnter;
 
-        /// Keeps track of whether or not this definition has an OnEnterObject event handler.
-        bool hasOnEnterObject;
+        /// Keeps track of whether or not this definition has an OnEnterSceneNode event handler.
+        bool hasOnEnterSceneNode;
 
-        /// Keeps track of whether or not this definition has an OnObjectLeave event handler.
-        bool hasOnObjectLeave;
+        /// Keeps track of whether or not this definition has an OnSceneNodeLeave event handler.
+        bool hasOnSceneNodeLeave;
 
-        /// Keeps track of whether or not this definition has an OnLeaveObject event handler.
-        bool hasOnLeaveObject;
+        /// Keeps track of whether or not this definition has an OnLeaveSceneNode event handler.
+        bool hasOnLeaveSceneNode;
 
         /// Keeps track of whether of not this definition has an OnMouseMove event handler.
         bool hasOnMouseMove;

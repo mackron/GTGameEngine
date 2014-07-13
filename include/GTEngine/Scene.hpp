@@ -1060,7 +1060,7 @@ namespace GTEngine
         /// The list of scene nodes created by the scene.
         GTLib::SortedVector<uint64_t> sceneNodesCreatedByScene;
 
-        /// The list of scene nodes with proximity components. We keep track of this so we can do OnObjectEnter, etc checks. We map the IDs to a pointer to the proximity component.
+        /// The list of scene nodes with proximity components. We keep track of this so we can do OnSceneNodeEnter, etc checks. We map the IDs to a pointer to the proximity component.
         GTLib::Map<uint64_t, ProximityComponent*> sceneNodesWithProximityComponents;
 
         /// The list of scene nodes with particle system components. We keep track of this so we can post AABB updates to the culling manager more efficiently.

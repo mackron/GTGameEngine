@@ -148,41 +148,41 @@ namespace GTEngine
         ///     The scene node must be instantiated on a registered scene for this to work.
         void PostSceneNodeEvent_OnHide(GTLib::Script &script, SceneNode &sceneNode);
 
-        /// Calls the OnObjectEnter event on the given scene node.
+        /// Calls the OnSceneNodeEnter event on the given scene node.
         ///
         /// @param script    [in] A reference to the main script object.
         /// @param sceneNode [in] A reference to the scene node having it's event called.
         ///
         /// @remarks
         ///     The scene node must be instantiated on a registered scene for this to work.
-        void PostSceneNodeEvent_OnObjectEnter(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode);
+        void PostSceneNodeEvent_OnSceneNodeEnter(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode);
 
-        /// Calls the OnEnterObject event on the given scene node.
+        /// Calls the OnEnterSceneNode event on the given scene node.
         ///
         /// @param script    [in] A reference to the main script object.
         /// @param sceneNode [in] A reference to the scene node having it's event called.
         ///
         /// @remarks
         ///     The scene node must be instantiated on a registered scene for this to work.
-        void PostSceneNodeEvent_OnEnterObject(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode);
+        void PostSceneNodeEvent_OnEnterSceneNode(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode);
 
-        /// Calls the OnObjectLeave event on the given scene node.
+        /// Calls the OnSceneNodeLeave event on the given scene node.
         ///
         /// @param script    [in] A reference to the main script object.
         /// @param sceneNode [in] A reference to the scene node having it's event called.
         ///
         /// @remarks
         ///     The scene node must be instantiated on a registered scene for this to work.
-        void PostSceneNodeEvent_OnObjectLeave(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode);
+        void PostSceneNodeEvent_OnSceneNodeLeave(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode);
 
-        /// Calls the OnLeaveObject event on the given scene node.
+        /// Calls the OnLeaveSceneNode event on the given scene node.
         ///
         /// @param script    [in] A reference to the main script object.
         /// @param sceneNode [in] A reference to the scene node having it's event called.
         ///
         /// @remarks
         ///     The scene node must be instantiated on a registered scene for this to work.
-        void PostSceneNodeEvent_OnLeaveObject(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode);
+        void PostSceneNodeEvent_OnLeaveSceneNode(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode);
 
         /// Calls the OnSerializeGlobalData event on the given scene node.
         ///

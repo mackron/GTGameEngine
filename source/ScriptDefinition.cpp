@@ -11,7 +11,7 @@ namespace GTEngine
     ScriptDefinition::ScriptDefinition(const char* absolutePathIn, const char* relativePathIn, const char* scriptStringIn)
         : absolutePath(absolutePathIn), relativePath(relativePathIn), scriptString(scriptStringIn),
           hasOnUpdate(false), hasOnStartup(false), hasOnShutdown(false), hasOnShow(false), hasOnHide(false),
-          hasOnObjectEnter(false), hasOnEnterObject(false), hasOnObjectLeave(false), hasOnLeaveObject(false),
+          hasOnSceneNodeEnter(false), hasOnEnterSceneNode(false), hasOnSceneNodeLeave(false), hasOnLeaveSceneNode(false),
           hasOnMouseMove(false), hasOnMouseWheel(false), hasOnMouseButtonDown(false), hasOnMouseButtonUp(false), hasOnMouseButtonDoubleClick(false),
           hasOnKeyPressed(false), hasOnKeyReleased(false),
           hasOnSerialize(false), hasOnDeserialize(false),
@@ -69,21 +69,21 @@ namespace GTEngine
                     {
                         this->hasOnHide = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnEnterObject"))
+                    else if (GTLib::Strings::Equal(name, "OnEnterSceneNode"))
                     {
-                        this->hasOnEnterObject = true;
+                        this->hasOnEnterSceneNode = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnObjectEnter"))
+                    else if (GTLib::Strings::Equal(name, "OnSceneNodeEnter"))
                     {
-                        this->hasOnObjectEnter = true;
+                        this->hasOnSceneNodeEnter = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnLeaveObject"))
+                    else if (GTLib::Strings::Equal(name, "OnLeaveSceneNode"))
                     {
-                        this->hasOnLeaveObject = true;
+                        this->hasOnLeaveSceneNode = true;
                     }
-                    else if (GTLib::Strings::Equal(name, "OnObjectLeave"))
+                    else if (GTLib::Strings::Equal(name, "OnSceneNodeLeave"))
                     {
-                        this->hasOnObjectLeave = true;
+                        this->hasOnSceneNodeLeave = true;
                     }
                     else if (GTLib::Strings::Equal(name, "OnMouseMove"))
                     {
@@ -414,24 +414,24 @@ namespace GTEngine
         return this->hasOnHide;
     }
 
-    bool ScriptDefinition::HasOnObjectEnter() const
+    bool ScriptDefinition::HasOnSceneNodeEnter() const
     {
-        return this->hasOnObjectEnter;
+        return this->hasOnSceneNodeEnter;
     }
 
-    bool ScriptDefinition::HasOnEnterObject() const
+    bool ScriptDefinition::HasOnEnterSceneNode() const
     {
-        return this->hasOnEnterObject;
+        return this->hasOnEnterSceneNode;
     }
 
-    bool ScriptDefinition::HasOnObjectLeave() const
+    bool ScriptDefinition::HasOnSceneNodeLeave() const
     {
-        return this->hasOnObjectLeave;
+        return this->hasOnSceneNodeLeave;
     }
 
-    bool ScriptDefinition::HasOnLeaveObject() const
+    bool ScriptDefinition::HasOnLeaveSceneNode() const
     {
-        return this->hasOnLeaveObject;
+        return this->hasOnLeaveSceneNode;
     }
 
     bool ScriptDefinition::HasOnMouseMove() const

@@ -239,14 +239,14 @@ namespace GTEngine
         return false;
     }
 
-    bool ScriptComponent::HasOnObjectEnter() const
+    bool ScriptComponent::HasOnSceneNodeEnter() const
     {
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
             assert(script != nullptr);
             {
-                if (script->HasOnObjectEnter())
+                if (script->HasOnSceneNodeEnter())
                 {
                     return true;
                 }
@@ -256,14 +256,14 @@ namespace GTEngine
         return false;
     }
 
-    bool ScriptComponent::HasOnEnterObject() const
+    bool ScriptComponent::HasOnEnterSceneNode() const
     {
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
             assert(script != nullptr);
             {
-                if (script->HasOnEnterObject())
+                if (script->HasOnEnterSceneNode())
                 {
                     return true;
                 }
@@ -273,14 +273,14 @@ namespace GTEngine
         return false;
     }
 
-    bool ScriptComponent::HasOnObjectLeave() const
+    bool ScriptComponent::HasOnSceneNodeLeave() const
     {
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
             assert(script != nullptr);
             {
-                if (script->HasOnObjectLeave())
+                if (script->HasOnSceneNodeLeave())
                 {
                     return true;
                 }
@@ -290,14 +290,14 @@ namespace GTEngine
         return false;
     }
 
-    bool ScriptComponent::HasOnLeaveObject() const
+    bool ScriptComponent::HasOnLeaveSceneNode() const
     {
         for (size_t i = 0; i < this->scripts.count; ++i)
         {
             auto script = this->scripts[i];
             assert(script != nullptr);
             {
-                if (script->HasOnLeaveObject())
+                if (script->HasOnLeaveSceneNode())
                 {
                     return true;
                 }
