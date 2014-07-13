@@ -320,7 +320,7 @@ function GTGUI.Element:ParticleEditorEmitterPanel(emitter, index, ownerEditor)
     end
     
     function self:GetFunctionPanelIndex(panel)
-        return table.indexof(self.FunctionPanels, panel);
+        return GT.table.indexof(self.FunctionPanels, panel);
     end
     
     

@@ -87,7 +87,7 @@ function GTGUI.Element:ComboBox()
 
     -- Called when the a mouse button is pressed somewhere.
     self:WatchMouseButtonDown(function(data)
-        if data.button == GTCore.MouseButtons.Left then
+        if data.button == GT.MouseButtons.Left then
             if self.MenuElement:IsVisible() and data.receiver ~= self and self:IsChild(data.receiver) == false then
                 self:Collapse();
             end

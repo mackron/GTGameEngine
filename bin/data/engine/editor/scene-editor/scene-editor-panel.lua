@@ -171,7 +171,7 @@ function GTGUI.Element:SceneEditorPropertiesPanel(sceneEditor)
         
         -- We need to hide every panel that is not contained in componentIDs.
         for componentID,componentPanel in pairs(self.ComponentPanels) do
-            if table.indexof(componentIDs, componentID) == nil then
+            if GT.table.indexof(componentIDs, componentID) == nil then
                 componentPanel:Hide();
             end
         end

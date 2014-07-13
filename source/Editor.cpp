@@ -944,8 +944,8 @@ namespace GTEngine
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
-                    // GTCore.IO.FileInfo.New()
-                    script.GetGlobal("GTCore");
+                    // GT.IO.FileInfo.New()
+                    script.GetGlobal("GT");
                     assert(script.IsTable(-1));
                     {
                         script.Push("IO");
@@ -1013,8 +1013,8 @@ namespace GTEngine
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
-                    // GTCore.IO.FileInfo.New()
-                    script.GetGlobal("GTCore");
+                    // GT.IO.FileInfo.New()
+                    script.GetGlobal("GT");
                     assert(script.IsTable(-1));
                     {
                         script.Push("IO");
@@ -1081,8 +1081,8 @@ namespace GTEngine
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
-                    // GTCore.IO.FileInfo.New()
-                    script.GetGlobal("GTCore");
+                    // GT.IO.FileInfo.New()
+                    script.GetGlobal("GT");
                     assert(script.IsTable(-1));
                     {
                         script.Push("IO");

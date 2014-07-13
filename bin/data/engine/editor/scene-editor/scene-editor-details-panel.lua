@@ -40,7 +40,7 @@ function GTGUI.Element:SceneEditorDetailsPanel(parentPanel, sceneEditor)
         
         if self.SceneNode.Prefab then
             self.PrefabName.RelativePath = self.SceneNode.Prefab:GetPrefabRelativePath();
-            self.PrefabName:SetText(GTCore.IO.GetFileNameFromPath(self.PrefabName.RelativePath));
+            self.PrefabName:SetText(GT.IO.GetFileNameFromPath(self.PrefabName.RelativePath));
             
             self.PrefabCrossButton:Show();      -- It's possible for the cross button to be hidden, so ensure it's shown here.
             
@@ -59,7 +59,7 @@ function GTGUI.Element:SceneEditorDetailsPanel(parentPanel, sceneEditor)
     
     
     self.NameTextBox:OnKeyPressed(function(data)
-        if data.key == GTCore.Keys.Enter then
+        if data.key == GT.Keys.Enter then
             self.SceneNode:SetName(self.NameTextBox:GetText());
             self.ParentPanel:OnSceneNodeChanged();
         end

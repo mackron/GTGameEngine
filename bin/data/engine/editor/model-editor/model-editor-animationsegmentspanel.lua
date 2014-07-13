@@ -77,7 +77,7 @@ function GTGUI.Element:ModelEditor_AnimationSegmentsPanel(_internalPtr)
     end
     
     function self:DeleteSegment(segmentElement, removeFromModel)
-        local index = table.indexof(self.Segments, segmentElement);
+        local index = GT.table.indexof(self.Segments, segmentElement);
         if index ~= nil then
             table.remove(self.Segments, index);
             GTGUI.Server.DeleteElement(segmentElement);
@@ -90,14 +90,14 @@ function GTGUI.Element:ModelEditor_AnimationSegmentsPanel(_internalPtr)
     
     
     function self:UpdateSegmentName(segmentElement)
-        local index = table.indexof(self.Segments, segmentElement);
+        local index = GT.table.indexof(self.Segments, segmentElement);
         if index ~= nil then
             GTEngine.System.ModelEditor.SetAnimationSegmentName(_internalPtr, index, segmentElement.Name:GetText());
         end
     end
     
     function self:UpdateSegmentRange(segmentElement)
-        local index = table.indexof(self.Segments, segmentElement);
+        local index = GT.table.indexof(self.Segments, segmentElement);
         if index ~= nil then
             local startKeyFrame = segmentElement.Range.X:GetValue();
             local endKeyFrame   = segmentElement.Range.Y:GetValue();
@@ -106,7 +106,7 @@ function GTGUI.Element:ModelEditor_AnimationSegmentsPanel(_internalPtr)
     end
     
     function self:PlayAnimationSegment(segmentElement)
-        local index = table.indexof(self.Segments, segmentElement);
+        local index = GT.table.indexof(self.Segments, segmentElement);
         if index ~= nil then
             GTEngine.System.ModelEditor.PlayAnimationSegmentByIndex(_internalPtr, index);
         end

@@ -181,7 +181,7 @@ function GTGUI.Element:SceneEditorHierarchyPanel(sceneEditor)
             end);
             
             item.titleContainer:OnMouseButtonUp(function(data)
-                if data.button == GTCore.MouseButtons.Right then
+                if data.button == GT.MouseButtons.Right then
                     self.TreeView:DeselectAllItemsExcept(item);
                     item:Select();
                     

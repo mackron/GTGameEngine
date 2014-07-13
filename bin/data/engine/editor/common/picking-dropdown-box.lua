@@ -33,7 +33,7 @@ function GTGUI.Element:PickingDropDownBox(titleText)
     end
     
     function self:RemoveItem(itemToRemove)
-        self:RemoveItemByIndex(table.indexof(self.Items, itemToRemove));
+        self:RemoveItemByIndex(GT.table.indexof(self.Items, itemToRemove));
     end
     
     
@@ -45,7 +45,7 @@ function GTGUI.Element:PickingDropDownBox(titleText)
     end
     
     function self:PickItem(pickedItem)
-        self:PickItemByIndex(table.indexof(self.Items, pickedItem));
+        self:PickItemByIndex(GT.table.indexof(self.Items, pickedItem));
     end
     
     

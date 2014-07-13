@@ -8,7 +8,7 @@ function Editor.DataFilesWatcher.RegisterExplorer(explorer)
 end
 
 function Editor.DataFilesWatcher.DeregisterExplorer(explorer)
-    table.remove(table.indexof(Editor.DataFilesWatcher.RegisteredExplorers, explorer));
+    table.remove(GT.table.indexof(Editor.DataFilesWatcher.RegisteredExplorers, explorer));
 end
 
 function Editor.DataFilesWatcher.OnInsert(fileInfo)

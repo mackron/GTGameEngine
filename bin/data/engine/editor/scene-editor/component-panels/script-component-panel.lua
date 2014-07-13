@@ -404,7 +404,7 @@ function GTGUI.Element:ScriptComponentPanel()
         local scriptRelativePathsToRemove = {};
         
         for i,panel in ipairs(self.ScriptPanels) do
-            if table.indexof(scriptRelativePaths, panel.RelativePath) == nil then
+            if GT.table.indexof(scriptRelativePaths, panel.RelativePath) == nil then
                 scriptRelativePathsToRemove[#scriptRelativePathsToRemove + 1] = panel.RelativePath;
             end
         end

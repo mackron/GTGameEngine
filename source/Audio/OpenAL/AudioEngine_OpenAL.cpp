@@ -11,7 +11,7 @@
     #pragma warning(disable:4351)   // new behavior: elements of array will be default initialized
 #endif
 
-#if defined(GTCORE_PLATFORM_LINUX)
+#if defined(GT_PLATFORM_LINUX)
 #include <dlfcn.h>
 #endif // defined
 
@@ -145,12 +145,12 @@ namespace GTEngine
         }
 
 
-#if defined(GTCORE_PLATFORM_WINDOWS)
+#if defined(GT_PLATFORM_WINDOWS)
         FreeLibrary(m_library);
         m_library = nullptr;
 #endif
 
-#if defined(GTCORE_PLATFORM_LINUX)
+#if defined(GT_PLATFORM_LINUX)
         dlclose(m_library);
         m_library = nullptr;
 #endif
@@ -374,7 +374,7 @@ namespace GTEngine
 
     bool AudioEngine_OpenAL::LoadOpenALLibrary()
     {
-#if defined(GTCORE_PLATFORM_WINDOWS)
+#if defined(GT_PLATFORM_WINDOWS)
         m_library = LoadLibraryA("OpenAL32.dll");
         if (m_library == nullptr)
         {
@@ -382,7 +382,7 @@ namespace GTEngine
         }
 #endif
 
-#if defined(GTCORE_PLATFORM_LINUX)
+#if defined(GT_PLATFORM_LINUX)
         m_library = dlopen("openal.so", RTLD_NOW | RTLD_GLOBAL);
         if (m_library == nullptr)
         {
@@ -463,13 +463,13 @@ namespace GTEngine
     ///////////////////////////////////////////
     // Private, Static
 
-#if defined(GTCORE_PLATFORM_WINDOWS)
+#if defined(GT_PLATFORM_WINDOWS)
     OpenALProc AudioEngine_OpenAL::GetOpenALProc(HMODULE library, const char* procName)
     {
         return reinterpret_cast<OpenALProc>(GetProcAddress(library, procName));
     }
 #endif
-#if defined(GTCORE_PLATFORM_LINUX)
+#if defined(GT_PLATFORM_LINUX)
     OpenALProc AudioEngine_OpenAL::GetOpenALProc(void* library, const char* procName)
     {
         return reinterpret_cast<OpenALProc>(dlsym(library, procName));
