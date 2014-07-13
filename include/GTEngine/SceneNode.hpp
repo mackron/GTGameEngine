@@ -416,6 +416,32 @@ namespace GTEngine
         void Slerp(const glm::quat &dest, float a);
 
 
+        
+        /// Clampes the relative position of the scene node.
+        ///
+        /// @param posMin [in] The min relative position.
+        /// @param posMax [in] The max relative position.
+        void ClampPosition(const glm::vec3 &posMin, const glm::vec3 &posMax);
+
+        /// Clampes the world position of the scene node.
+        ///
+        /// @param posMin [in] The min world position.
+        /// @param posMax [in] The max world position.
+        void ClampWorldPosition(const glm::vec3 &posMin, const glm::vec3 &posMax);
+
+        /// Clampes the relative scale of the scene node.
+        ///
+        /// @param scaleMin [in] The min relative scale.
+        /// @param scaleMax [in] The max relative scale.
+        void ClampScale(const glm::vec3 &scaleMin, const glm::vec3 &scaleMax);
+
+        /// Clampes the world position of the scene node.
+        ///
+        /// @param scaleMin [in] The min world scale.
+        /// @param scaleMax [in] The max world scale.
+        void ClampWorldScale(const glm::vec3 &scaleMin, const glm::vec3 &scaleMax);
+
+
 
         /// Retrieves a normalised vector pointing in the forward direction of the object.
         glm::vec3 GetForwardVector() const;
