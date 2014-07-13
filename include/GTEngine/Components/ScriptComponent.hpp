@@ -113,29 +113,29 @@ namespace GTEngine
         ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
         bool HasOnHide() const;
 
-        /// Determines if any of the attached scripts has an OnObjectEnter event handler.
+        /// Determines if any of the attached scripts has an OnSceneNodeEnter event handler.
         ///
         /// @remarks
         ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
-        bool HasOnObjectEnter() const;
+        bool HasOnSceneNodeEnter() const;
 
-        /// Determines if any of the attached scripts has an OnEnterObject event handler.
+        /// Determines if any of the attached scripts has an OnEnterSceneNode event handler.
         ///
         /// @remarks
         ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
-        bool HasOnEnterObject() const;
+        bool HasOnEnterSceneNode() const;
 
-        /// Determines if any of the attached scripts has an OnObjectLeave event handler.
+        /// Determines if any of the attached scripts has an OnSceneNodeLeave event handler.
         ///
         /// @remarks
         ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
-        bool HasOnObjectLeave() const;
+        bool HasOnSceneNodeLeave() const;
 
-        /// Determines if any of the attached scripts has an OnLeaveObject event handler.
+        /// Determines if any of the attached scripts has an OnLeaveSceneNode event handler.
         ///
         /// @remarks
         ///     This is used to help the owner scene decide whether or not the scene node needs the event posted to the scene node.
-        bool HasOnLeaveObject() const;
+        bool HasOnLeaveSceneNode() const;
 
         /// Determines if any of the attached scripts has an OnMouseMove event handler.
         ///

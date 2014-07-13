@@ -876,23 +876,23 @@ namespace GTEngine
                         // If we're linked to a script we'll need to notify the script about this.
                         if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
                         {
-                            // OnObjectEnter().
+                            // OnSceneNodeEnter().
                             auto scriptComponent = sceneNode->GetComponent<ScriptComponent>();
                             if (scriptComponent != nullptr)
                             {
-                                if (scriptComponent->HasOnObjectEnter())
+                                if (scriptComponent->HasOnSceneNodeEnter())
                                 {
-                                    Scripting::PostSceneNodeEvent_OnObjectEnter(*this->registeredScript, *sceneNode, *enteredSceneNode);
+                                    Scripting::PostSceneNodeEvent_OnSceneNodeEnter(*this->registeredScript, *sceneNode, *enteredSceneNode);
                                 }
                             }
 
-                            // OnEnterObject().
+                            // OnEnterSceneNode().
                             scriptComponent = enteredSceneNode->GetComponent<ScriptComponent>();
                             if (scriptComponent != nullptr)
                             {
-                                if (scriptComponent->HasOnEnterObject())
+                                if (scriptComponent->HasOnEnterSceneNode())
                                 {
-                                    Scripting::PostSceneNodeEvent_OnEnterObject(*this->registeredScript, *enteredSceneNode, *sceneNode);
+                                    Scripting::PostSceneNodeEvent_OnEnterSceneNode(*this->registeredScript, *enteredSceneNode, *sceneNode);
                                 }
                             }
                         }
@@ -909,23 +909,23 @@ namespace GTEngine
                         // If we're linked to a script we'll need to notify the script about this.
                         if (this->registeredScript != nullptr && !this->isScriptEventsBlocked)
                         {
-                            // OnObjectLeave().
+                            // OnSceneNodeLeave().
                             auto scriptComponent = sceneNode->GetComponent<ScriptComponent>();
                             if (scriptComponent != nullptr)
                             {
-                                if (scriptComponent->HasOnObjectLeave())
+                                if (scriptComponent->HasOnSceneNodeLeave())
                                 {
-                                    Scripting::PostSceneNodeEvent_OnObjectLeave(*this->registeredScript, *sceneNode, *leftSceneNode);
+                                    Scripting::PostSceneNodeEvent_OnSceneNodeLeave(*this->registeredScript, *sceneNode, *leftSceneNode);
                                 }
                             }
 
-                            // OnLeaveObject().
+                            // OnLeaveSceneNode().
                             scriptComponent = leftSceneNode->GetComponent<ScriptComponent>();
                             if (scriptComponent != nullptr)
                             {
-                                if (scriptComponent->HasOnLeaveObject())
+                                if (scriptComponent->HasOnLeaveSceneNode())
                                 {
-                                    Scripting::PostSceneNodeEvent_OnLeaveObject(*this->registeredScript, *leftSceneNode, *sceneNode);
+                                    Scripting::PostSceneNodeEvent_OnLeaveSceneNode(*this->registeredScript, *leftSceneNode, *sceneNode);
                                 }
                             }
                         }

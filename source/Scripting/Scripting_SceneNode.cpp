@@ -501,10 +501,10 @@ namespace GTEngine
                         script.SetTableValue(-1, 3,  "OnShutdown");
                         script.SetTableValue(-1, 4,  "OnShow");
                         script.SetTableValue(-1, 5,  "OnHide");
-                        script.SetTableValue(-1, 6,  "OnObjectEnter");
-                        script.SetTableValue(-1, 7,  "OnEnterObject");
-                        script.SetTableValue(-1, 8,  "OnObjectLeave");
-                        script.SetTableValue(-1, 9,  "OnLeaveObject");
+                        script.SetTableValue(-1, 6,  "OnSceneNodeEnter");
+                        script.SetTableValue(-1, 7,  "OnEnterSceneNode");
+                        script.SetTableValue(-1, 8,  "OnSceneNodeLeave");
+                        script.SetTableValue(-1, 9,  "OnLeaveSceneNode");
                         script.SetTableValue(-1, 10, "OnMouseMove");
                         script.SetTableValue(-1, 11, "OnMouseWheel");
                         script.SetTableValue(-1, 12, "OnMouseButtonDown");
@@ -1038,12 +1038,12 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void PostSceneNodeEvent_OnObjectEnter(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode)
+        void PostSceneNodeEvent_OnSceneNodeEnter(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode)
         {
             Scripting::PushSceneNode(script, sceneNode);
             assert(script.IsTable(-1));
             {
-                script.Push("OnObjectEnter");
+                script.Push("OnSceneNodeEnter");
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
@@ -1055,12 +1055,12 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void PostSceneNodeEvent_OnEnterObject(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode)
+        void PostSceneNodeEvent_OnEnterSceneNode(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode)
         {
             Scripting::PushSceneNode(script, sceneNode);
             assert(script.IsTable(-1));
             {
-                script.Push("OnEnterObject");
+                script.Push("OnEnterSceneNode");
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
@@ -1072,12 +1072,12 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void PostSceneNodeEvent_OnObjectLeave(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode)
+        void PostSceneNodeEvent_OnSceneNodeLeave(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode)
         {
             Scripting::PushSceneNode(script, sceneNode);
             assert(script.IsTable(-1));
             {
-                script.Push("OnObjectLeave");
+                script.Push("OnSceneNodeLeave");
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
@@ -1089,12 +1089,12 @@ namespace GTEngine
             script.Pop(1);
         }
 
-        void PostSceneNodeEvent_OnLeaveObject(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode)
+        void PostSceneNodeEvent_OnLeaveSceneNode(GTLib::Script &script, SceneNode &sceneNode, SceneNode &otherSceneNode)
         {
             Scripting::PushSceneNode(script, sceneNode);
             assert(script.IsTable(-1));
             {
-                script.Push("OnLeaveObject");
+                script.Push("OnLeaveSceneNode");
                 script.GetTableValue(-2);
                 assert(script.IsFunction(-1));
                 {
