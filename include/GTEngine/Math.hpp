@@ -26,6 +26,7 @@
 #include <glm/gtx/transform.hpp>
 #include <glm/gtx/orthonormalize.hpp>
 #include <glm/gtx/normal.hpp>
+#include <glm/gtx/matrix_major_storage.hpp>
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <glm/gtx/fast_square_root.hpp>
 #include <glm/gtx/fast_exponential.hpp>
