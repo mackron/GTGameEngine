@@ -420,6 +420,23 @@ namespace GTEngine
                 "end;"
 
 
+                "function GTEngine.SceneNode:ClampPosition(posMin, posMax)"
+                "    return GTEngine.System.SceneNode.ClampPosition(self._internalPtr, posMin, posMax);"
+                "end;"
+
+                "function GTEngine.SceneNode:ClampWorldPosition(posMin, posMax)"
+                "    return GTEngine.System.SceneNode.ClampWorldPosition(self._internalPtr, posMin, posMax);"
+                "end;"
+
+                "function GTEngine.SceneNode:ClampScale(scaleMin, scaleMax)"
+                "    return GTEngine.System.SceneNode.ClampScale(self._internalPtr, scaleMin, scaleMax);"
+                "end;"
+
+                "function GTEngine.SceneNode:ClampWorldScale(scaleMin, scaleMax)"
+                "    return GTEngine.System.SceneNode.ClampWorldScale(self._internalPtr, scaleMin, scaleMax);"
+                "end;"
+
+
                 "function GTEngine.SceneNode:LookAt(target, up)"
                 "    return GTEngine.System.SceneNode.LookAt(self._internalPtr, target, up);"
                 "end;"
@@ -588,6 +605,10 @@ namespace GTEngine
                             script.SetTableFunction(-1, "InterpolateOrientation",  SceneNodeFFI::InterpolateOrientation);
                             script.SetTableFunction(-1, "InterpolateScale",        SceneNodeFFI::InterpolateScale);
                             script.SetTableFunction(-1, "Slerp",                   SceneNodeFFI::Slerp);
+                            script.SetTableFunction(-1, "ClampPosition",           SceneNodeFFI::ClampPosition);
+                            script.SetTableFunction(-1, "ClampWorldPosition",      SceneNodeFFI::ClampWorldPosition);
+                            script.SetTableFunction(-1, "ClampScale",              SceneNodeFFI::ClampScale);
+                            script.SetTableFunction(-1, "ClampWorldScale",         SceneNodeFFI::ClampWorldScale);
                             script.SetTableFunction(-1, "LookAt",                  SceneNodeFFI::LookAt);
                             script.SetTableFunction(-1, "LookAtSceneNode",         SceneNodeFFI::LookAtSceneNode);
                             script.SetTableFunction(-1, "LookInDirection",         SceneNodeFFI::LookInDirection);
@@ -2073,6 +2094,52 @@ namespace GTEngine
 
                 return 0;
             }
+
+
+            int ClampPosition(GTLib::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->ClampPosition(Scripting::ToVector3(script, 2), Scripting::ToVector3(script, 3));
+                }
+
+                return 0;
+            }
+
+            int ClampWorldPosition(GTLib::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->ClampWorldPosition(Scripting::ToVector3(script, 2), Scripting::ToVector3(script, 3));
+                }
+
+                return 0;
+            }
+
+            int ClampScale(GTLib::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->ClampScale(Scripting::ToVector3(script, 2), Scripting::ToVector3(script, 3));
+                }
+
+                return 0;
+            }
+
+            int ClampWorldScale(GTLib::Script &script)
+            {
+                auto sceneNode = reinterpret_cast<SceneNode*>(script.ToPointer(1));
+                if (sceneNode != nullptr)
+                {
+                    sceneNode->ClampWorldScale(Scripting::ToVector3(script, 2), Scripting::ToVector3(script, 3));
+                }
+
+                return 0;
+            }
+
 
 
             int LookAt(GTLib::Script &script)

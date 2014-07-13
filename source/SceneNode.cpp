@@ -781,6 +781,28 @@ namespace GTEngine
 
 
 
+    void SceneNode::ClampPosition(const glm::vec3 &posMin, const glm::vec3 &posMax)
+    {
+        this->SetPosition(glm::clamp(this->GetPosition(), posMin, posMax));
+    }
+
+    void SceneNode::ClampWorldPosition(const glm::vec3 &posMin, const glm::vec3 &posMax)
+    {
+        this->SetWorldPosition(glm::clamp(this->GetWorldPosition(), posMin, posMax));
+    }
+
+    void SceneNode::ClampScale(const glm::vec3 &scaleMin, const glm::vec3 &scaleMax)
+    {
+        this->SetScale(glm::clamp(this->GetPosition(), scaleMin, scaleMax));
+    }
+
+    void SceneNode::ClampWorldScale(const glm::vec3 &scaleMin, const glm::vec3 &scaleMax)
+    {
+        this->SetWorldScale(glm::clamp(this->GetWorldPosition(), scaleMin, scaleMax));
+    }
+
+
+
     glm::vec3 SceneNode::GetForwardVector() const
     {
         return this->orientation * glm::vec3(0.0f, 0.0f, -1.0f);

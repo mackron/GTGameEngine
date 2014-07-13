@@ -606,6 +606,39 @@ namespace GTEngine
             int Slerp(GTLib::Script &script);
 
 
+            /// Clamps the position of the scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The min position.
+            ///     Argument 3: The max position.
+            int ClampPosition(GTLib::Script &script);
+
+            /// Clamps the world position of the scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The min world position.
+            ///     Argument 3: The max world position.
+            int ClampWorldPosition(GTLib::Script &script);
+
+            /// Clamps the scale of the scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The min scale.
+            ///     Argument 3: The max scale.
+            int ClampScale(GTLib::Script &script);
+
+            /// Clamps the world scale of the scene node.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene node.
+            ///     Argument 2: The min world scale.
+            ///     Argument 3: The max world scale.
+            int ClampWorldScale(GTLib::Script &script);
+
+
             /// Looks at the given point in the world.
             ///
             /// @remarks
