@@ -326,6 +326,13 @@ namespace GTEngine
                     "        currentEditor:ResumeSceneUpdates();"
                     "    end;"
                     "end;"
+
+                    "Game.IsPaused = function()"
+                    "    local currentEditor = Editor.GetCurrentlyShownEditor();"
+                    "    if currentEditor and currentEditor.IsPlaying and currentEditor:IsPlaying() then"
+                    "        return currentEditor:IsSceneUpdatesPaused();"
+                    "    end;"
+                    "end;"
                 );
 
 
@@ -422,6 +429,7 @@ namespace GTEngine
                     script.SetTableFunction(-1, "LoadScene",               Scripting::GameFFI::LoadScene);
                     script.SetTableFunction(-1, "Pause",                   Scripting::GameFFI::Pause);
                     script.SetTableFunction(-1, "Resume",                  Scripting::GameFFI::Resume);
+                    script.SetTableFunction(-1, "IsPaused",                Scripting::GameFFI::IsPaused);
                 }
                 script.Pop(1);
 

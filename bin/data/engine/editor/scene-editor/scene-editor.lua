@@ -1025,6 +1025,10 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
         GTEngine.System.SceneEditor.ResumeSceneUpdates(self._internalPtr);
     end
     
+    function sceneEditor:IsSceneUpdatesPaused()
+        return GTEngine.System.SceneEditor.IsSceneUpdatesPaused(self._internalPtr);
+    end
+    
     
     function sceneEditor:SetSceneNodeTransformToCamera(sceneNode)
         return GTEngine.System.SceneEditor.SetSceneNodeTransformToCamera(self._internalPtr, sceneNode._internalPtr);

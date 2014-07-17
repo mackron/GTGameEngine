@@ -43,6 +43,9 @@ namespace GTEngine
             /// Resumes the game.
             int Resume(GTLib::Script &script);
 
+            /// Determines whether or not the game is paused.
+            int IsPaused(GTLib::Script &script);
+
             /// Enables fullscreen mode.
             int EnableFullscreen(GTLib::Script &script);
 

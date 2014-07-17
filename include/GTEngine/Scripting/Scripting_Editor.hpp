@@ -533,6 +533,13 @@ namespace GTEngine
             ///     Argument 1: A pointer to the scene editor.
             int ResumeSceneUpdates(GTLib::Script &script);
 
+            /// Determines whether or not scene updates are current paused in the editor.
+            ///
+            /// @remarks
+            ///     Argument 1: A pointer to the scene editor.
+            ///     Return:     True if scene updates are paused; false otherwise.
+            int IsSceneUpdatesPaused(GTLib::Script &script);
+
 
             /// Enables physics simulation.
             ///

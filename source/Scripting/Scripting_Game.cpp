@@ -144,6 +144,7 @@ namespace GTEngine
                 script.SetTableFunction(-1, "Close",                              GameFFI::Close);
                 script.SetTableFunction(-1, "Pause",                              GameFFI::Pause);
                 script.SetTableFunction(-1, "Resume",                             GameFFI::Resume);
+                script.SetTableFunction(-1, "IsPaused",                           GameFFI::IsPaused);
                 script.SetTableFunction(-1, "EnableFullscreen",                   GameFFI::EnableFullscreen);
                 script.SetTableFunction(-1, "DisableFullscreen",                  GameFFI::DisableFullscreen);
                 script.SetTableFunction(-1, "OpenEditor",                         GameFFI::OpenEditor);
@@ -229,6 +230,12 @@ namespace GTEngine
             {
                 GetGame(script).Resume();
                 return 0;
+            }
+
+            int IsPaused(GTLib::Script &script)
+            {
+                script.Push(GetGame(script).IsPaused());
+                return 1;
             }
 
             int EnableFullscreen(GTLib::Script &script)
