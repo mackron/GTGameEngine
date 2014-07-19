@@ -1657,50 +1657,6 @@ namespace GTEngine
         this->script.Pop(1);
     }
 
-#if 0
-    void Game::PostScriptEvent_OnSerializeGameState(GTLib::Serializer &serializer)
-    {
-        this->script.GetGlobal("Game");
-        assert(this->script.IsTable(-1));
-        {
-            this->script.Push("OnSerializeGameState");
-            this->script.GetTableValue(-2);
-            assert(this->script.IsFunction(-1));
-            {
-                this->script.PushNewTable();
-
-                this->script.Push("serializer");
-                GTLib::Scripting::PushNewSerializer(this->script, serializer);
-                this->script.SetTableValue(-3);
-
-                this->script.Call(1, 0);
-            }
-        }
-        this->script.Pop(1);
-    }
-
-    void Game::PostScriptEvent_OnDeserializeGameState(GTLib::Deserializer &deserializer)
-    {
-        this->script.GetGlobal("Game");
-        assert(this->script.IsTable(-1));
-        {
-            this->script.Push("OnDeserializeGameState");
-            this->script.GetTableValue(-2);
-            assert(this->script.IsFunction(-1));
-            {
-                this->script.PushNewTable();
-
-                this->script.Push("deserializer");
-                GTLib::Scripting::PushNewDeserializer(this->script, deserializer);
-                this->script.SetTableValue(-3);
-
-                this->script.Call(1, 0);
-            }
-        }
-        this->script.Pop(1);
-    }
-#endif
-
     void Game::PostScriptEvent_OnPause()
     {
         Scripting::PostEvent_OnGamePause(this->script);
