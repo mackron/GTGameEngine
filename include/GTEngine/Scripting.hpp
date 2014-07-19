@@ -82,6 +82,15 @@ namespace GTEngine
         /// @param key    [in] The key code.
         void PostEvent_OnKeyReleased(GTLib::Script &script, GTLib::Key key);
 
+        /// Posts a global OnGamePause event to everything relevant.
+        ///
+        /// @param script [in] A reference to the main script object.
+        void PostEvent_OnGamePause(GTLib::Script &script);
+
+        /// Posts a global OnGamePause event to everything relevant.
+        ///
+        /// @param script [in] A reference to the main script object.
+        void PostEvent_OnGameResume(GTLib::Script &script);
 
 
         ///////////////////////////////////////////////////////////////

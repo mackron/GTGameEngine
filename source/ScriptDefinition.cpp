@@ -16,6 +16,7 @@ namespace GTEngine
           hasOnKeyPressed(false), hasOnKeyReleased(false),
           hasOnSerialize(false), hasOnDeserialize(false),
           hasOnSerializeGlobalData(false), hasOnDeserializeGlobalData(false),
+          hasOnGamePause(false), hasOnGameResume(false),
           publicVariables()
     {
         // We need to do a parse over the script and retrieve it's public variables.
@@ -128,6 +129,14 @@ namespace GTEngine
                     else if (GTLib::Strings::Equal(name, "OnDeserializeGlobalData"))
                     {
                         this->hasOnDeserializeGlobalData = true;
+                    }
+                    else if (GTLib::Strings::Equal(name, "OnGamePause"))
+                    {
+                        this->hasOnGamePause = true;
+                    }
+                    else if (GTLib::Strings::Equal(name, "OnGameResume"))
+                    {
+                        this->hasOnGameResume = true;
                     }
                 }
                 else
@@ -487,6 +496,16 @@ namespace GTEngine
     bool ScriptDefinition::HasOnDeserializeGlobalData() const
     {
         return this->hasOnDeserializeGlobalData;
+    }
+
+    bool ScriptDefinition::HasOnGamePause() const
+    {
+        return this->hasOnGamePause;
+    }
+
+    bool ScriptDefinition::HasOnGameResume() const
+    {
+        return this->hasOnGameResume;
     }
 
 

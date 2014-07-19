@@ -495,6 +495,40 @@ namespace GTEngine
         return false;
     }
 
+    bool ScriptComponent::HasOnGamePause() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            assert(script != nullptr);
+            {
+                if (script->HasOnGamePause())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool ScriptComponent::HasOnGameResume() const
+    {
+        for (size_t i = 0; i < this->scripts.count; ++i)
+        {
+            auto script = this->scripts[i];
+            assert(script != nullptr);
+            {
+                if (script->HasOnGameResume())
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
 
 
     void ScriptComponent::Clear(bool clearPublicVariables)

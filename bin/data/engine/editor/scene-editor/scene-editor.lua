@@ -652,9 +652,12 @@ function LinkSceneEditorToSystemAPI(sceneEditor)
     end
 
 
+    function sceneEditor:GetScene()
+        return GTEngine.RegisteredScenes[self:GetScenePtr()];
+    end
 
     function sceneEditor:GetScenePtr()
-        return GTEngine.System.SceneEditor.GetScenePtr();
+        return GTEngine.System.SceneEditor.GetScenePtr(self._internalPtr);
     end
     
     

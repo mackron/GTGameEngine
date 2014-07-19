@@ -317,6 +317,7 @@ namespace GTEngine
                     "    local currentEditor = Editor.GetCurrentlyShownEditor();"
                     "    if currentEditor and currentEditor.IsPlaying and currentEditor:IsPlaying() then"
                     "        currentEditor:PauseSceneUpdates();"
+                    "        currentEditor:GetScene():PostSceneNodeEvent_OnGamePause();"
                     "    end;"
                     "end;"
 
@@ -324,6 +325,7 @@ namespace GTEngine
                     "    local currentEditor = Editor.GetCurrentlyShownEditor();"
                     "    if currentEditor and currentEditor.IsPlaying and currentEditor:IsPlaying() then"
                     "        currentEditor:ResumeSceneUpdates();"
+                    "        currentEditor:GetScene():PostSceneNodeEvent_OnGameResume();"
                     "    end;"
                     "end;"
 

@@ -203,6 +203,17 @@ namespace GTEngine
         ///     This is used to determine whether or not OnDeserializeGlobalData needs to be called.
         bool HasOnDeserializeGlobalData() const;
 
+        /// Determines if any of the attached scripts has an OnGamePause event handler.
+        ///
+        /// @remarks
+        ///     This is used to determine whether or not OnGamePause needs to be called.
+        bool HasOnGamePause() const;
+
+        /// Determines if any of the attached scripts has an OnGameResume event handler.
+        ///
+        /// @remarks
+        ///     This is used to determine whether or not OnGameResume needs to be called.
+        bool HasOnGameResume() const;
 
 
 
