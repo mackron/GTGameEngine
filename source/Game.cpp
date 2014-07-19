@@ -382,6 +382,8 @@ namespace GTEngine
         {
             this->paused = true;
             m_gameStateManager.OnPause(*this);
+
+            this->PostScriptEvent_OnPause();
         }
     }
 
@@ -391,6 +393,8 @@ namespace GTEngine
         {
             this->paused = false;
             m_gameStateManager.OnResume(*this);
+
+            this->PostScriptEvent_OnResume();
         }
     }
 
@@ -1653,13 +1657,13 @@ namespace GTEngine
         this->script.Pop(1);
     }
 
-    
+#if 0
     void Game::PostScriptEvent_OnSerializeGameState(GTLib::Serializer &serializer)
     {
         this->script.GetGlobal("Game");
         assert(this->script.IsTable(-1));
         {
-            this->script.Push("OnSerializerGameState");
+            this->script.Push("OnSerializeGameState");
             this->script.GetTableValue(-2);
             assert(this->script.IsFunction(-1));
             {
@@ -1680,7 +1684,7 @@ namespace GTEngine
         this->script.GetGlobal("Game");
         assert(this->script.IsTable(-1));
         {
-            this->script.Push("OnDeserializerGameState");
+            this->script.Push("OnDeserializeGameState");
             this->script.GetTableValue(-2);
             assert(this->script.IsFunction(-1));
             {
@@ -1694,6 +1698,17 @@ namespace GTEngine
             }
         }
         this->script.Pop(1);
+    }
+#endif
+
+    void Game::PostScriptEvent_OnPause()
+    {
+        Scripting::PostEvent_OnGamePause(this->script);
+    }
+
+    void Game::PostScriptEvent_OnResume()
+    {
+        Scripting::PostEvent_OnGamePause(this->script);
     }
 }
 

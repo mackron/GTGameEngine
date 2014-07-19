@@ -533,6 +533,8 @@ namespace GTEngine
                         script.SetTableValue(-1, 18, "OnDeserialize");
                         script.SetTableValue(-1, 19, "OnSerializeGlobalData");
                         script.SetTableValue(-1, 20, "OnDeserializeGlobalData");
+                        script.SetTableValue(-1, 21, "OnGamePause");
+                        script.SetTableValue(-1, 22, "OnGameResume");
                     }
                     script.SetTableValue(-3);
 

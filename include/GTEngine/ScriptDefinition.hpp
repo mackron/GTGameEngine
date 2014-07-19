@@ -92,6 +92,12 @@ namespace GTEngine
         /// Determines if the script has an OnDeserializeGlobalData event handler.
         bool HasOnDeserializeGlobalData() const;
 
+        /// Determines if the script has an OnGamePause event handler.
+        bool HasOnGamePause() const;
+
+        /// Determines if the script has an OnGameResume event handler.
+        bool HasOnGameResume() const;
+
 
 
         /// Retrieves the number of public variables.
@@ -193,6 +199,12 @@ namespace GTEngine
 
         /// Keeps track of whether or not this definition has an OnDeserializeGlobalData event handler.
         bool hasOnDeserializeGlobalData;
+
+        /// Keeps track of whether or not this definition has an OnGamePause event handler.
+        bool hasOnGamePause;
+
+        /// Keeps track of whether or not this definition has an OnGameResume event handler.
+        bool hasOnGameResume;
 
 
         /// The list of public variables, in the order they are defined (hopefully).

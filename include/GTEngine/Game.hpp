@@ -672,13 +672,18 @@ namespace GTEngine
         /// Helper for posting the OnSerializeGameState event to the scripting environment.
         ///
         /// @param serializer [in] A reference to the serializer to pass to the event handlers.
-        void PostScriptEvent_OnSerializeGameState(GTLib::Serializer &serializer);
+        //void PostScriptEvent_OnSerializeGameState(GTLib::Serializer &serializer);
 
         /// Helper for posting the OnDeserializeGameState event to the scripting environment.
         ///
         /// @param deserializer [in] A reference to the deserializer to pass to the event handlers.
-        void PostScriptEvent_OnDeserializeGameState(GTLib::Deserializer &deserializer);
+        //void PostScriptEvent_OnDeserializeGameState(GTLib::Deserializer &deserializer);
 
+        /// Helper for posting the OnPause event to the scripting environment.
+        void PostScriptEvent_OnPause();
+
+        /// Helper for posting the OnResume event to the scripting environment.
+        void PostScriptEvent_OnResume();
 
 
     private:

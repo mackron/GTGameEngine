@@ -646,6 +646,50 @@ namespace GTEngine
             script.Pop(1);
         }
 
+        void PostEvent_OnGamePause(GTLib::Script &script)
+        {
+            // Game.
+            script.GetGlobal("Game");
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnPause");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.Call(0, 0);
+                }
+            }
+            script.Pop(1);
+
+
+            
+            // Scene Nodes.
+            script.GetGlobal("GTEngine");
+            assert(script.IsTable(-1));
+            {
+                script.Push("RegisteredScenes");
+                script.GetTableValue(-2);
+                assert(script.IsTable(-1));
+                {
+                    for (script.PushNil(); script.Next(-2); script.Pop(1))
+                    {
+                        assert(script.IsTable(-1));
+                        {
+                            script.Push("PostSceneNodeEvent_OnGamePause");
+                            script.GetTableValue(-2);
+                            assert(script.IsFunction(-1));
+                            {
+                                script.PushValue(-2);       // <-- 'self'
+                                script.Call(1, 0);
+                            }
+                        }
+                    }
+                }
+                script.Pop(1);
+            }
+            script.Pop(1);
+        }
+
 
 
         bool LoadScriptDefinition(GTLib::Script &script, const char* scriptRelativePath, const char* scriptString)
