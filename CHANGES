@@ -2,6 +2,44 @@
 - Changelog
 -------------------------------------------------------------------------------
 
+0.0.4 ()
+
+BREAKING CHANGES:
+    - The file format for scenes have changed. Old scenes will fail to load,
+      but they shouldn't crash.
+    - OnObjectEnter, etc. has been renamed to OnSceneNodeEnter, etc.
+      
+
+FEATURES:
+    - Added OnSerialize and OnDeserialize events to scene nodes. These will be
+      called when custom script-side data needs to be serialized/deserialized.
+    - Added support for keeping track of the game state. This allows makes save
+      games much easier to implement. The old game state system is removed.
+    - Added support for disabled a scene's state stack as a whole.
+    - Added support for "default constructors" to math.vec*. These default to
+      zero vectors.
+    - Added OnGamePause and OnGameResume events for scene nodes.
+    - Added Game.IsPaused() to the scripting environment.
+
+
+FIXES/IMPROVEMENTS
+    - Fixed a bug where script errors would occur when dynamically attaching
+      and detaching script script files from a scene node.
+    - Fixed a shader warning on Intel.
+    - Fixed an issue where number inputs in the editor would not work quite
+      right when the applicable scene node is linked to a prefab.
+    - Fixed an issue where the currently focused text box would keep focus when
+      a scene is played in-editor. This caused text to be input into the text
+      box when pressing keys that are intended for game play.
+    - Fixed an issue in the scene editor where some scene nodes would not be
+      restored correctly when stopping playback.
+    - Removed some deprecated functions and dead code.
+    - Improved the way property panels in the scene editor are refreshed in
+      response to changes to the scene node.
+
+
+-------------------------------------------------------------------------------
+
 0.0.3 (May 28th, 2014)
 
 BREAKING CHANGES:
