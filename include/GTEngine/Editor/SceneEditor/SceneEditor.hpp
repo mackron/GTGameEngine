@@ -1068,7 +1068,6 @@ namespace GTEngine
         btStaticPlaneShape insertionPlaneShape;
 
         
-        
     private:    // No copying.
         SceneEditor(const SceneEditor &);
         SceneEditor & operator=(const SceneEditor &);
