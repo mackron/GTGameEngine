@@ -254,7 +254,26 @@ namespace GTEngine
             }
             else
             {
+                // In order to properly restore the scene, what we'll do is stage an update for every scene node. Then we commit a stack frame, which will be reverted
+                // when playback is stopped. We need to do this before setting the playback state to Transitioning, otherwise CommitStateStackFrame() won't actually
+                // do anything. Alternatively, we could just call this->scene.CommitStateStackFrame(), which is a legitmate alternative.
+                for (size_t iNode = 0; iNode < this->scene.GetSceneNodeCount(); ++iNode)
+                {
+                    auto node = this->scene.GetSceneNodeByIndex(iNode);
+                    assert(node != nullptr);
+                    {
+                        if (node->IsStateStackStagingEnabled())
+                        {
+                            this->scene.StageUpdateOnStateStack(node->GetID());
+                        }
+                    }
+                }
+                this->CommitStateStackFrame(false); // This will be undone when the scene editor is stopped. 'false' means to not mark as modified.
+
+
+
                 this->playbackState = PlaybackState_Transitioning;
+
 
                 // We need to set the event filter
                 this->eventFilterBeforePlaying = this->GetGame().GetEventFilter();
@@ -469,7 +488,8 @@ namespace GTEngine
 
 
                 // To restore, all we need to do is revert the staging area.
-                this->scene.RevertStateStackStagingArea();
+                //this->scene.RevertStateStackStagingArea();
+                this->scene.SeekStateStack(-1);
 
                 // We want to revert the selections, but we don't want to stage these on the state stack.
                 this->DeselectAll(SelectionOption_NoStateStaging);
@@ -1553,6 +1573,17 @@ namespace GTEngine
     void SceneEditor::CommitStateStackFrame(bool markAsModified)
     {
         // We will never do this if a simulation is running.
+        bool wasMarkingAsModifiedEnabled = this->IsMarkingAsModifiedEnabled();
+        if (markAsModified)
+        {
+            this->EnableMarkingAsModified();
+        }
+        else
+        {
+            this->DisableMarkingAsModified();
+        }
+
+        
         if (this->IsStopped())
         {
             if (this->scene.IsStateStackEnabled())
@@ -1564,6 +1595,12 @@ namespace GTEngine
                     this->MarkAsModified();
                 }
             }
+        }
+
+        
+        if (wasMarkingAsModifiedEnabled)
+        {
+            this->EnableMarkingAsModified();
         }
     }
 

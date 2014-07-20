@@ -16,7 +16,7 @@ namespace GTEngine
     SubEditor::SubEditor(Editor &ownerEditorIn, const char* absolutePathIn, const char* relativePathIn)
         : ownerEditor(ownerEditorIn), absolutePath(absolutePathIn), relativePath(relativePathIn),
           tabElement(nullptr), tabEventHandler(*this),
-          isMarkedAsModified(false)
+          isMarkedAsModified(false), m_isMarkingAsModifiedEnabled(true)
     {
         // We need to create a tab for this new editor.
         //
@@ -131,16 +131,19 @@ namespace GTEngine
     
     void SubEditor::MarkAsModified()
     {
-        if (!this->isMarkedAsModified)
+        if (m_isMarkingAsModifiedEnabled)
         {
-            this->isMarkedAsModified = true;
+            if (!this->isMarkedAsModified)
+            {
+                this->isMarkedAsModified = true;
 
-            // We will modify the text of the tab to show a star to the right.
-            GTLib::String tabText(GTLib::IO::FileName(this->GetRelativePath())); tabText += "*";
-            this->SetTabText(tabText.c_str());
+                // We will modify the text of the tab to show a star to the right.
+                GTLib::String tabText(GTLib::IO::FileName(this->GetRelativePath())); tabText += "*";
+                this->SetTabText(tabText.c_str());
 
 
-            this->ownerEditor.UpdateMenuButtonEnableStates();
+                this->ownerEditor.UpdateMenuButtonEnableStates();
+            }
         }
     }
 
@@ -161,6 +164,22 @@ namespace GTEngine
     bool SubEditor::IsMarkedAsModified() const
     {
         return this->isMarkedAsModified;
+    }
+
+
+    void SubEditor::EnableMarkingAsModified()
+    {
+        m_isMarkingAsModifiedEnabled = true;
+    }
+
+    void SubEditor::DisableMarkingAsModified()
+    {
+        m_isMarkingAsModifiedEnabled = false;
+    }
+
+    bool SubEditor::IsMarkingAsModifiedEnabled() const
+    {
+        return m_isMarkingAsModifiedEnabled;
     }
 
 

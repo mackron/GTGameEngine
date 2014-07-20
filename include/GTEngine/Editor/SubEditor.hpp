@@ -57,6 +57,16 @@ namespace GTEngine
         bool IsMarkedAsModified() const;
 
 
+        /// Enables marking as modified.
+        void EnableMarkingAsModified();
+
+        /// Disables marking as modified.
+        void DisableMarkingAsModified();
+
+        /// Determines whether or not marking as modified is enabled.
+        bool IsMarkingAsModifiedEnabled() const;
+
+
         /// Closes the sub-editor.
         ///
         /// @remarks
@@ -165,6 +175,9 @@ namespace GTEngine
 
         /// Keeps track of whether or not the file is marked as modified.
         bool isMarkedAsModified;
+
+        /// Keeps track of whether or not marking as modified is enabled. When this is set to false, MarkAsModified() will do nothing.
+        bool m_isMarkingAsModifiedEnabled;
 
 
     private:    // No copying.
