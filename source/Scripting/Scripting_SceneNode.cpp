@@ -377,15 +377,15 @@ namespace GTEngine
                 "end;"
 
 
-                "function GTEngine.SceneNode.RotateX(angle)"
+                "function GTEngine.SceneNode:RotateX(angle)"
                 "    return GTEngine.System.SceneNode.Rotate(self._internalPtr, angle, 1.0, 0.0, 0.0);"
                 "end;"
 
-                "function GTEngine.SceneNode.RotateY(angle)"
+                "function GTEngine.SceneNode:RotateY(angle)"
                 "    return GTEngine.System.SceneNode.Rotate(self._internalPtr, angle, 0.0, 1.0, 0.0);"
                 "end;"
 
-                "function GTEngine.SceneNode.RotateZ(angle)"
+                "function GTEngine.SceneNode:RotateZ(angle)"
                 "    return GTEngine.System.SceneNode.Rotate(self._internalPtr, angle, 0.0, 0.0, 1.0);"
                 "end;"
 
