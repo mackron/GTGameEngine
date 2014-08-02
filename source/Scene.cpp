@@ -2887,7 +2887,7 @@ namespace GTEngine
                     }
                     else
                     {
-                        Log("Warning: Attempting to add a dynamics component without collision shapes. The rigid body has not been added to the dynamics world.");
+                        //Log("Warning: Attempting to add a dynamics component without collision shapes. The rigid body has not been added to the dynamics world.");
                     }
                 }
             }
