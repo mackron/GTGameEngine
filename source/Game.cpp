@@ -15,6 +15,7 @@
 #include <GTEngine/Scripting.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GamePackager.hpp>
+#include <GTEngine/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
 #include <GTLib/System.hpp>
 #include <GTLib/Strings/Tokenizer.hpp>
 #include <GTLib/String.hpp>
@@ -556,7 +557,7 @@ namespace GTEngine
 
 
         // We will start by copying over the data directories.
-        auto &absoluteDataDirectories = ApplicationConfig::GetDataDirectories();
+        auto &absoluteDataDirectories = g_EngineContext->GetApplicationConfig().GetDataDirectories();
         {
             for (size_t iDataDirectory = 0; iDataDirectory < absoluteDataDirectories.count; ++iDataDirectory)
             {
@@ -945,7 +946,7 @@ namespace GTEngine
 
     bool Game::InitialiseDataFilesWatcher()
     {
-        auto &directories = ApplicationConfig::GetDataDirectories();
+        auto &directories = g_EngineContext->GetApplicationConfig().GetDataDirectories();
         if (directories.count > 0)
         {
             for (size_t i = 0; i < directories.count; ++i)

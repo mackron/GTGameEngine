@@ -6,6 +6,8 @@
 #include "MessageHandler.hpp"
 #include <GTLib/Vector.hpp>
 
+#undef PostMessage
+
 namespace GT
 {
     /// Class used for dispatching messages to the various message handlers.
@@ -15,6 +17,34 @@ namespace GT
 
         /// Constructor.
         MessageDispatcher();
+
+
+        /// Posts a message.
+        ///
+        /// @param message [in] A reference to the Message object.
+        void PostMessage(const Message &message);
+
+        /// Helper for posting a simple message.
+        ///
+        /// @param type    [in] The message type.
+        /// @param message [in] The message content.
+        void PostMessage(MessageType type, const char* message);
+
+        /// Helper for posting a simple error message.
+        ///
+        /// @param message [in] The error message.
+        void PostErrorMessage(const char* message);
+
+        /// Helper for posting a simple warning message.
+        ///
+        /// @param message [in] The warning message.
+        void PostWarningMessage(const char* message);
+
+        /// Helper for posting a simple log message.
+        ///
+        /// @param message [in] The log message.
+        void PostLogMessage(const char* message);
+
 
         
         /// Adds a message handler.

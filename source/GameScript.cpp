@@ -5,6 +5,7 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Audio.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
+#include <GTEngine/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -37,7 +38,7 @@ namespace GTEngine
                 this->GetTableValue(-2);
                 if (this->IsTable(-1))
                 {
-                    auto &dataDirectories = ApplicationConfig::GetDataDirectories();
+                    auto &dataDirectories = g_EngineContext->GetApplicationConfig().GetDataDirectories();
                     for (size_t iDirectory = 0; iDirectory < dataDirectories.count; ++iDirectory)
                     {
                         this->SetTableValue(-1, iDirectory + 1, dataDirectories[iDirectory].c_str());

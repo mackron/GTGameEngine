@@ -12,6 +12,9 @@ namespace GT
     {
     public:
 
+        /// Constructor.
+        MessageHandler();
+
         /// Destructor.
         virtual ~MessageHandler();
 

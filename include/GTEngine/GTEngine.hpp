@@ -27,12 +27,16 @@ THE SOFTWARE.
 #define __GTEngine_hpp_
 
 #include "Game.hpp"
+#include "EngineContext.hpp"
 
 #define GTENGINE_VERSION_STRING "0.0.4"
 
 namespace GTEngine
 {
     extern Game* GlobalGame;
+
+    /// The global engine context. TODO: Remove this and have applications create this themselves. This global object is only used during the transition phase.
+    extern GT::Engine::EngineContext* g_EngineContext;
 
 
     /// Starts up the engine.
@@ -56,13 +60,13 @@ namespace GTEngine
     template <typename T>
     T* Startup(int argc, char** argv, GameStateManager &gameStateManager)
     {
-        if (GlobalGame == nullptr)
+        if (GlobalGame == nullptr && g_EngineContext == nullptr)
         {
-            GTLib::CommandLine commandLine(argc, argv);
-            if (_PreStartup(commandLine))
+            g_EngineContext = new GT::Engine::EngineContext(argc, argv);
+            if (_PreStartup(g_EngineContext->GetCommandLine()))
             {
                 GlobalGame = new T(gameStateManager);
-                if (!GlobalGame->Startup(commandLine))
+                if (!GlobalGame->Startup(g_EngineContext->GetCommandLine()))
                 {
                     delete GlobalGame;
                     GlobalGame = nullptr;

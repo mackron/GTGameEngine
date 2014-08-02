@@ -4,6 +4,7 @@
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
+#include <GTEngine/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
 #include <GTLib/IO.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/Dictionary.hpp>
@@ -279,7 +280,7 @@ namespace GTEngine
 
         if (!GTLib::Path::IsAbsolute(directory))
         {
-            ApplicationConfig::GetDataDirectories(baseDirectories);
+            g_EngineContext->GetApplicationConfig().GetDataDirectories(baseDirectories);
         }
 
 

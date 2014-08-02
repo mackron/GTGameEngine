@@ -9,98 +9,93 @@
 
 #include <cstring>
 
-namespace GTEngine
+namespace GT
 {
-    /// Helper function for retrieving the 'Data' directory from the config script.
-    void ApplicationConfig_ReadDataDirectories();
-
-
-    /// The script for the config file. If this is null, we know the configuration is not yet loaded.
-    static GTLib::Script* ConfigScript = nullptr;
-
-    /// The list of data directories.
-    static GTLib::Vector<GTLib::String> DataDirectories;
-
-
-    bool ApplicationConfig::Open(const char* fileName)
+    namespace Engine
     {
-        if (!ConfigScript)
+        ApplicationConfig::ApplicationConfig()
+            : m_script(),
+              m_dataDirectories()
         {
-            ConfigScript = new GTLib::Script;
-            ConfigScript->LoadAndExecute
-            (
-                "Directories = \n"
-                "{\n"
-                "    Data = {};\n"
-                "}\n"
-            );
+        }
 
-            if (ConfigScript->LoadFile(fileName) && ConfigScript->Execute())
+        ApplicationConfig::~ApplicationConfig()
+        {
+        }
+
+
+        bool ApplicationConfig::Open(const char* fileName)
+        {
+            // Reset everything just to be sure.
+            m_dataDirectories.Clear();
+
+            // Just need a bit of setup in the script before doing anything:
+            //   Directories =
+            //   {
+            //       Data = {};
+            //   }
+            m_script.PushNewTable();
             {
-                ApplicationConfig_ReadDataDirectories();
+                m_script.Push("Data");
+                m_script.PushNewTable();
+                m_script.SetTableValue(-3);
+            }
+            m_script.SetGlobal("Directories");
+
+
+
+            // Everything is reset, so now we load the script.
+            if (m_script.LoadFileAndExecute(fileName))
+            {
+                m_script.GetGlobal("Directories");
+                assert(m_script.IsTable(-1));
+                {
+                    m_script.Push("Data");
+                    m_script.GetTableValue(-2);
+                    if (m_script.IsString(-1))
+                    {
+                        GTLib::Path absPath(m_script.ToString(-1));
+                        absPath.MakeAbsolute();
+
+                        m_dataDirectories.PushBack(absPath.c_str());
+                    }
+                    else if (m_script.IsTable(-1))
+                    {
+                        // We have a list of directories. We need to iterate over each one.
+                        for (m_script.PushNil(); m_script.Next(-2); m_script.Pop(1))
+                        {
+                            if (m_script.IsString(-1))
+                            {
+                                GTLib::Path absPath(m_script.ToString(-1));
+                                absPath.MakeAbsolute();
+
+                                m_dataDirectories.PushBack(absPath.c_str());
+                            }
+                        }
+                    }
+                    m_script.Pop(1);
+                }
+                m_script.Pop(1);
+
+                return true;
             }
             else
             {
-                delete ConfigScript;
-                ConfigScript = nullptr;
+                return false;
             }
         }
 
-        return ConfigScript != nullptr;
-    }
-
-    void ApplicationConfig::Close()
-    {
-        delete ConfigScript;
-        ConfigScript = nullptr;
-    }
-
-    const GTLib::Vector<GTLib::String> & ApplicationConfig::GetDataDirectories()
-    {
-        return DataDirectories;
-    }
-
-    void ApplicationConfig::GetDataDirectories(GTLib::Vector<const char*> &directories)
-    {
-        for (size_t i = 0; i < DataDirectories.count; ++i)
+        const GTLib::Vector<GTLib::String> & ApplicationConfig::GetDataDirectories() const
         {
-            directories.PushBack(DataDirectories[i].c_str());
+            return m_dataDirectories;
         }
-    }
 
-    void ApplicationConfig_ReadDataDirectories()
-    {
-        if (ConfigScript)
+        void ApplicationConfig::GetDataDirectories(GTLib::Vector<const char*> &directories) const
         {
-            ConfigScript->GetGlobal("Directories");
-            if (ConfigScript->IsTable(-1))
+            for (size_t i = 0; i < m_dataDirectories.count; ++i)
             {
-                ConfigScript->Push("Data");
-                ConfigScript->GetTableValue(-2);
-                if (ConfigScript->IsString(-1))
-                {
-                    GTLib::Path absPath(ConfigScript->ToString(-1));
-                    absPath.MakeAbsolute();
-
-                    DataDirectories.PushBack(absPath.c_str());
-                }
-                else if (ConfigScript->IsTable(-1))
-                {
-                    // We have a list of directories. We need to iterate over each one.
-                    for (ConfigScript->PushNil(); ConfigScript->Next(-2); ConfigScript->Pop(1))
-                    {
-                        if (ConfigScript->IsString(-1))
-                        {
-                            GTLib::Path absPath(ConfigScript->ToString(-1));
-                            absPath.MakeAbsolute();
-
-                            DataDirectories.PushBack(absPath.c_str());
-                        }
-                    }
-                }
-                ConfigScript->Pop(1);
+                directories.PushBack(m_dataDirectories[i].c_str());
             }
-            ConfigScript->Pop(1);
         }
     }
 }

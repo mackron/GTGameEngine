@@ -4,9 +4,14 @@
 
 namespace GT
 {
+    MessageHandler::MessageHandler()
+    {
+    }
+
     MessageHandler::~MessageHandler()
     {
     }
+
 
     void MessageHandler::HandleMessage(const Message &)
     {

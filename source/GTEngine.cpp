@@ -15,9 +15,11 @@
 #include <GTEngine/ParticleSystemLibrary.hpp>
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/ThreadCache.hpp>
+#include <GTEngine/MessageDispatcher.hpp>
 #include <GTLib/CommandLine.hpp>
 #include <GTLib/IO.hpp>
 #include <GTLib/WindowManagement.hpp>
+
 //#include "Audio/OpenAL/AudioEngine_OpenAL.hpp"
 
 // Basic globals.
@@ -26,14 +28,16 @@ namespace GTEngine
     /// A pointer to the global game object.
     Game* GlobalGame = nullptr;
 
-    /// Keeps track of the executable directory.
-    static GTLib::String ExecutableDirectory;
+    /// The global engine context. TODO: Remove this and have applications create this themselves. This global object is only used during the transition phase.
+    GT::Engine::EngineContext* g_EngineContext = nullptr;
 }
 
 namespace GTEngine
 {
     bool _PreStartup(const GTLib::CommandLine &commandLine)
     {
+        (void)commandLine;
+
 #if 0
         AudioEngine_OpenAL audioEngine;
         if (audioEngine.Startup())
@@ -55,51 +59,6 @@ namespace GTEngine
             printf("Failed to initialize OpenAL audio engine.\n");
         }
 #endif
-
-
-
-        // First this is to more into the applications directory. We get this from the command line.
-        GTLib::IO::SetCurrentDirectory(commandLine.GetApplicationDirectory());
-
-        // We need to keep hold of the executable directory for GetExecutableDirectory().
-        ExecutableDirectory = GTLib::IO::ToAbsolutePath(commandLine.GetApplicationDirectory(), GTLib::IO::GetCurrentDirectory());
-
-        // After moving into the application directory, we need to load up the config file and move into the data directory. From
-        // there we can read the user configs and setup the log file.
-        //
-        // This is different from a user configuration (which are located in the 'configs' folder). The application configuration
-        // usually remains constant. It defines things like directories. We won't return false if we fail to open, in which case
-        // the game will use defaults.
-        if (ApplicationConfig::Open("config.lua"))
-        {
-            // The application config will define the data directories where all of the game's data and assets are located. We will
-            // move into the directory of the first defined data directory.
-            auto &directories = ApplicationConfig::GetDataDirectories();
-            if (directories.count > 0)
-            {
-                GTLib::IO::SetCurrentDirectory(directories[0].c_str());
-
-                // Here we are going to set additional search directories which will make GTLib search these directories if it can not
-                // open a file from the current directory. We intentionally don't include the first directory.
-                for (size_t i = 1; i < directories.count; ++i)
-                {
-                    GTLib::IO::AddAdditionalSearchPath(directories[i].c_str());
-                }
-            }
-        }
-
-
-        // We need to initialise our logging stuff before starting up any major sub-systems, such as the renderer. The log file will be specified
-        // as a command line option, else we will use the default value of 'var/logs/engine.html'
-        const char** cmdLine_logfile = commandLine.GetArgument("logfile");
-        if (cmdLine_logfile != nullptr)
-        {
-            Logging::Startup(cmdLine_logfile[0]);
-        }
-        else
-        {
-            Logging::Startup("var/logs/engine.html");
-        }
         
         
         // Before we can do any windowing operations we will need to initialise the window management module of GTLib.
@@ -163,10 +122,6 @@ namespace GTEngine
         ScriptLibrary::Startup();
 
 
-        // The font manager.
-        //Log("Initializing Font Manager...");
-        //FontManager::Startup();
-
 
         return true;
     }
@@ -184,9 +139,6 @@ namespace GTEngine
         }
 
 
-        // Font manager.
-        //FontManager::Shutdown();
-
 
         // We kill our libraries before the major sub-systems.
         ModelLibrary::Shutdown();
@@ -203,22 +155,26 @@ namespace GTEngine
         AudioComposer::Shutdown();
 
 
-        // Now we can shutdown the minor sub-systems, remembering to do logging last.
-        Logging::Shutdown();
-
         // Thread cache.
         ThreadCache::Shutdown();
         
         // GTLib's window management module.
         GTLib::ShutdownWindowManager();
 
-        // Application config.
-        ApplicationConfig::Close();
+
+        /// The engine context.
+        delete g_EngineContext;
+        g_EngineContext = nullptr;
     }
 
 
     const char* GetExecutableDirectory()
     {
-        return ExecutableDirectory.c_str();
+        if (g_EngineContext != nullptr)
+        {
+            return g_EngineContext->GetExecutableDirectoryAbsolutePath();
+        }
+
+        return nullptr;
     }
 }
