@@ -522,6 +522,17 @@ namespace GTEngine
 
         sceneNode->Deserialize(deserializer, deserializeFlags);
 
+        // After deserializing, if the scene is registered to a script and the new scene node has a script component, we need to instantiate the
+        // scene node on the script side. If we don't do this straight away, we'll run into problems when posting events to the scene node's script.
+        if (this->registeredScript != nullptr && sceneNode->HasComponent<ScriptComponent>())
+        {
+            Scripting::InstantiateSceneNode(*this->registeredScript, *sceneNode);
+
+            // We now need to post an OnStartup event if applicable. All scene nodes should have 1 OnStartup and 1 OnShutdown called for each time they are part
+            // of the scene.
+            this->PostSceneNodeScriptEvent_OnStartup(*sceneNode);
+        }
+
 
         // The scene needs to know that it was the one who created the node.
         assert(!this->sceneNodesCreatedByScene.Exists(sceneNode->GetID()));
@@ -651,6 +662,17 @@ namespace GTEngine
                     GTLib::BasicDeserializer deserializer(sceneNodeSerializer->GetBuffer(), sceneNodeSerializer->GetBufferSizeInBytes());
                     sceneNode->Deserialize(deserializer, SceneNode::NoID);          // <-- Passing NoID here means that the ID will not be changed during deserialization. This is super important.
 
+                    // After deserializing, if the scene is registered to a script and the new scene node has a script component, we need to instantiate the
+                    // scene node on the script side. If we don't do this straight away, we'll run into problems when posting events to the scene node's script.
+                    if (this->registeredScript != nullptr && sceneNode->HasComponent<ScriptComponent>())
+                    {
+                        Scripting::InstantiateSceneNode(*this->registeredScript, *sceneNode);
+
+                        // We now need to post an OnStartup event if applicable. All scene nodes should have 1 OnStartup and 1 OnShutdown called for each time they are part
+                        // of the scene.
+                        this->PostSceneNodeScriptEvent_OnStartup(*sceneNode);
+                    }
+
 
                     // The scene needs to know that it was the one who create the node.
                     assert(!this->sceneNodesCreatedByScene.Exists(sceneNode->GetID()));
@@ -659,6 +681,7 @@ namespace GTEngine
                     }
                 }
             }
+
 
 
 
@@ -2438,6 +2461,7 @@ namespace GTEngine
         }
 
 
+#if 0
         // If the scene is registered to a script and the new scene node has a script component, we need to instantiate the scene node on the script side. If we
         // don't do this straight away, we'll run into problems when posting events to the scene node's script.
         if (this->registeredScript != nullptr && node.HasComponent<ScriptComponent>())
@@ -2448,7 +2472,7 @@ namespace GTEngine
             // of the scene.
             this->PostSceneNodeScriptEvent_OnStartup(node);
         }
-
+#endif
 
         // Event handlers need to know.
         this->PostEvent_OnSceneNodeAdded(node);
