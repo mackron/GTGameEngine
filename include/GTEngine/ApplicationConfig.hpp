@@ -5,29 +5,59 @@
 
 #include <GTLib/Vector.hpp>
 #include <GTLib/String.hpp>
+#include <GTLib/Script.hpp>
 
-namespace GTEngine
+namespace GT
 {
-    class ApplicationConfig
+    namespace Engine
     {
-    public:
+        class ApplicationConfig
+        {
+        public:
+
+            /// Constructor.
+            ApplicationConfig();
+
+            /// Destructor.
+            ~ApplicationConfig();
+
     
-        /// Opens the application configuration from the given file.
-        ///
-        /// @param  fileName [in] The name of the config file to load.
-        ///
-        /// @remarks
-        ///     You must call Close() when finished with the configuration.
-        static bool Open(const char* fileName);
+            /// Opens the application configuration from the given file.
+            ///
+            /// @param  fileName [in] The name of the config file to load.
+            ///
+            /// @remarks
+            ///     You must call Close() when finished with the configuration.
+            bool Open(const char* fileName);
         
-        /// Closes the application configuration.
-        static void Close();
+
+            /// Retrieves a reference to the list containing the data directories.
+            const GTLib::Vector<GTLib::String> & GetDataDirectories() const;
+
+            /// Copies the data directory strings from the internal list into the given list.
+            ///
+            /// @param directoriesOut [out] A reference the list that the directories will be copied into.
+            ///
+            /// @remarks
+            ///     The values will be pushed to the back. Existing items will not be cleared.
+            void GetDataDirectories(GTLib::Vector<const char*> &directories) const;
 
 
-        /// Retrieves a reference to the list containing the data directories.
-        static const GTLib::Vector<GTLib::String> & GetDataDirectories();
-        static void GetDataDirectories(GTLib::Vector<const char*> &directories);
-    };
+
+        private:
+
+            /// The script object that will be used to read the config file.
+            GTLib::Script m_script;
+
+            /// The list of data directories.
+            GTLib::Vector<GTLib::String> m_dataDirectories;
+
+
+        private:    // No copying.
+            ApplicationConfig(const ApplicationConfig &);
+            ApplicationConfig & operator=(const ApplicationConfig &);
+        };
+    }
 }
 
 #endif
