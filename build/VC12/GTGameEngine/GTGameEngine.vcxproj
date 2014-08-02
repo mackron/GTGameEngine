@@ -202,6 +202,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Math\Plane.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Mesh.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\MeshBuilder.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Message.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\MessageDispatcher.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\MessageHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Model.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ModelDefinition.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ModelLibrary.hpp" />
@@ -505,6 +508,9 @@
     <ClCompile Include="..\..\..\source\Math.cpp" />
     <ClCompile Include="..\..\..\source\Mesh.cpp" />
     <ClCompile Include="..\..\..\source\MeshBuilder.cpp" />
+    <ClCompile Include="..\..\..\source\Message.cpp" />
+    <ClCompile Include="..\..\..\source\MessageDispatcher.cpp" />
+    <ClCompile Include="..\..\..\source\MessageHandler.cpp" />
     <ClCompile Include="..\..\..\source\Model.cpp" />
     <ClCompile Include="..\..\..\source\ModelDefinition.cpp" />
     <ClCompile Include="..\..\..\source\ModelDefinition_Assimp.cpp" />
