@@ -14,6 +14,24 @@ namespace GTEngine
     typedef size_t CaptureDeviceHandle;
     typedef size_t ListenerHandle;
     typedef size_t SoundHandle;
+    typedef size_t AudioBufferHandle;
+
+
+    /// Enumerator for the various supporting audio data formats.
+    enum AudioDataFormat
+    {
+        AudioDataFormat_Mono8,          ///< 8-bit, single channel.
+        AudioDataFormat_Stereo8,        ///< 8-bit, stereo channel.
+
+        AudioDataFormat_Mono16,         ///< 16-bit, single channel.
+        AudioDataFormat_Stereo16,       ///< 16-bit, stereo channel.
+
+        AudioDataFormat_Mono24,         ///< 24-bit, single channel.
+        AudioDataFormat_Stereo24,       ///< 24-bit, stereo channel.
+
+        //AudioDataFormat_Mono32F,        ///< 32-bit float, single channel.
+        //AudioDataFormat_Stereo32F,      ///< 32-bit float, stereo channel.
+    };
 
 
     /// Base class for handling audio playback.
@@ -167,7 +185,73 @@ namespace GTEngine
         /// @return A vec3 containing the position of the sound.
         virtual glm::vec3 GetSoundPosition(SoundHandle sound) const = 0;
 
+        /// Adds the given buffer to the end of the given sound's buffer queue.
+        ///
+        /// @param sound  [in] The sound whose having an audio buffer queued.
+        /// @param buffer [in] The buffer to add to the queue.
+        virtual void QueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer);
 
+        /// Removes the given buffer from the given sound's buffer queue.
+        ///
+        /// @param sound  [in] The sound whose having the buffer removed.
+        /// @param buffer [in] The buffer to remove from the queue.
+        virtual void UnqueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer);
+
+        /// Starts, replay or resume the given sound.
+        ///
+        /// @param sound [in] The sound to play.
+        virtual void Play(SoundHandle sound);
+
+        /// Stops playing the sound.
+        ///
+        /// @param sound [in] The sound to stop.
+        ///
+        /// @remarks
+        ///     Calling Play() after this will cause the sound to restart from the start. Use Pause() if you want pause functionality.
+        virtual void Stop(SoundHandle sound);
+
+        /// Pauses playback of the given sound.
+        ///
+        /// @param sound [in] The sound to pause.
+        ///
+        /// @remarks
+        ///     Calling Play() after this will cause the sound to resume from where it was left off. Use Stop() or Rewind() if you want to go back to the beginning.
+        virtual void Pause(SoundHandle sound);
+
+        /// Restarts the given sound from the beginning.
+        ///
+        /// @param sound [in] The sound to restart.
+        ///
+        /// @remarks
+        ///     This does not stop playback.
+        virtual void Rewind(SoundHandle sound);
+
+
+
+        /// Creates an audio buffer.
+        ///
+        /// @param device [in] the device the buffer should be created for.
+        ///
+        /// @return A handle to the new buffer object.
+        virtual AudioBufferHandle CreateAudioBuffer(PlaybackDeviceHandle device) = 0;
+
+        /// Deletes an audio buffer that was previously created with CreateAudioBuffer().
+        ///
+        /// @param buffer [in] The audio buffer to delete.
+        virtual void DeleteAudioBuffer(AudioBufferHandle buffer) = 0;
+
+        /// Sets the data of the given audio buffer.
+        ///
+        /// @param buffer          [in] A handle to the buffer whose data is being set.
+        /// @param data            [in] A pointer to the buffer containing the audio data.
+        /// @param dataSizeInBytes [in] The size of the audio data, in bytes.
+        /// @param format          [in] The format of the audio (8-bit mono, etc.)
+        /// @param frequency       [in] The sample rate of the audio - 22050, 44100, etc.
+        ///
+        /// @remarks
+        ///     This will make a copy of the data. The data can be deleted once this returns.
+        virtual void SetAudioBufferData(AudioBufferHandle buffer, const void *data, size_t dataSizeInBytes, AudioDataFormat format, unsigned int frequency);
+        
 
 
 
@@ -185,11 +269,11 @@ namespace GTEngine
 
         /// Sets the position of the given sound.
         ///
-        /// @param listener [in] The sound whose position is being set.
-        /// @param xPos     [in] The new x position of the sound.
-        /// @param yPos     [in] The new y position of the sound.
-        /// @param zPos     [in] The new z position of the sound.
-        void SetSoundPosition(ListenerHandle sound, float xPos, float yPos, float zPos) { this->SetSoundPosition(sound, glm::vec3(xPos, yPos, zPos)); }
+        /// @param sound [in] The sound whose position is being set.
+        /// @param xPos  [in] The new x position of the sound.
+        /// @param yPos  [in] The new y position of the sound.
+        /// @param zPos  [in] The new z position of the sound.
+        void SetSoundPosition(SoundHandle sound, float xPos, float yPos, float zPos) { this->SetSoundPosition(sound, glm::vec3(xPos, yPos, zPos)); }
     };
 }
 

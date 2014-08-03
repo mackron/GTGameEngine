@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
 
 #include <GTEngine/EngineContext.hpp>
+#include "Audio/OpenAL/AudioEngine_OpenAL.hpp"
 
 namespace GT
 {
@@ -10,7 +11,8 @@ namespace GT
             : m_commandLine(argc, argv),
               m_executableDirectoryAbsolutePath(),
               m_applicationConfig(),
-              m_messageHandler(), m_messageDispatcher()
+              m_messageHandler(), m_messageDispatcher(),
+              m_audioSystem(nullptr)
         {
             // First this is to more into the applications directory. We get this from the command line.
             GTLib::IO::SetCurrentDirectory(m_commandLine.GetApplicationDirectory());
@@ -57,6 +59,40 @@ namespace GT
 
             // At this point the message handler should be setup, so we'll go ahead and add it to the dispatcher.
             m_messageDispatcher.AddMessageHandler(m_messageHandler);
+
+
+
+            //////////////////////////////////////////
+            // Audio System
+            //
+            // TODO: Add support for multiple audio systems.
+            m_audioSystem = new GTEngine::AudioEngine_OpenAL();
+            if (m_audioSystem->Startup())
+            {
+
+            }
+            else
+            {
+                // TODO: Use the null audio system.
+                this->PostWarningMessage("Failed to create audio system. Defaulting to null audio system.");
+            }
+
+            assert(m_audioSystem != nullptr);
+            {
+                // TEMP: Print the playback devices.
+                size_t playbackDeviceCount = m_audioSystem->GetPlaybackDeviceCount();
+                for (size_t iDevice = 0; iDevice < playbackDeviceCount; ++iDevice)
+                {
+                    auto deviceInfo = m_audioSystem->GetPlaybackDeviceInfo(iDevice);
+
+                    GTLib::String message;
+                    message.AppendFormatted("Playback Device (%d) - %s", static_cast<int>(iDevice), deviceInfo.name.c_str());
+
+                    this->PostLogMessage(message.c_str());
+                }
+
+                //m_audioPlaybackDevice = m_audioSystem->OpenPlaybackDevice(0);
+            }
         }
 
         EngineContext::~EngineContext()

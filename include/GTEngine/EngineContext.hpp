@@ -6,6 +6,7 @@
 #include "ApplicationConfig.hpp"
 #include "MessageDispatcher.hpp"
 #include "DefaultMessageHandler.hpp"
+#include "Audio/AudioEngine.hpp"
 #include <GTLib/CommandLine.hpp>
 
 #undef GetCommandLine
@@ -75,6 +76,16 @@ namespace GT
 
 
 
+            ////////////////////////////////////////////////////
+            // Audio
+
+            /// Retrieves a reference to the internal audio system.
+            ///
+            /// @return A reference to the internal audio system.
+            GTEngine::AudioEngine & GetAudioSystem();
+
+
+
         private:
 
             /// The command line object. This is constructed from the argc and argv parameters in the constructor.
@@ -91,6 +102,12 @@ namespace GT
 
             /// The message dispatcher.
             MessageDispatcher m_messageDispatcher;
+
+
+            /// The audio system. This should never be null, but it needs to be a pointer because it's a virtual class.
+            GTEngine::AudioEngine* m_audioSystem;
+
+
 
 
         private:    // No copying.
