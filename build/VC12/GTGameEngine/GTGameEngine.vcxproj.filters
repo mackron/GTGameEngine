@@ -1046,6 +1046,9 @@
     <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioDataFormats.hpp">
       <Filter>Header Files\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\source\Audio\g711.h">
+      <Filter>Source Files\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\include\GTEngine\HACD\hacdCircularList.inl">
@@ -1826,6 +1829,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\DefaultMessageHandler.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\g711.c">
+      <Filter>Source Files\Audio</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

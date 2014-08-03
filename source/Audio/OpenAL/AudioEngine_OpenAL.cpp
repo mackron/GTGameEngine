@@ -1,6 +1,8 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include "AudioEngine_OpenAL.hpp"
+#include "../g711.h"
+
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/GTEngine.hpp>
 
@@ -22,6 +24,12 @@
 #define AL_FORMAT_MONO_DOUBLE_EXT   0x10012
 #define AL_FORMAT_STEREO_DOUBLE_EXT 0x10013
 
+#define AL_FORMAT_MONO_MULAW_EXT    0x10014
+#define AL_FORMAT_STEREO_MULAW_EXT  0x10015
+
+#define AL_FORMAT_MONO_ALAW_EXT     0x10016
+#define AL_FORMAT_STEREO_ALAW_EXT   0x10017
+
 
 namespace GTEngine
 {
@@ -29,17 +37,23 @@ namespace GTEngine
     {
         switch (format)
         {
-        case AudioDataFormat_Mono8:     return AL_FORMAT_MONO8;
-        case AudioDataFormat_Stereo8:   return AL_FORMAT_STEREO8;
+        case AudioDataFormat_Mono8:       return AL_FORMAT_MONO8;
+        case AudioDataFormat_Stereo8:     return AL_FORMAT_STEREO8;
         
-        case AudioDataFormat_Mono16:    return AL_FORMAT_MONO16;
-        case AudioDataFormat_Stereo16:  return AL_FORMAT_STEREO16;
+        case AudioDataFormat_Mono16:      return AL_FORMAT_MONO16;
+        case AudioDataFormat_Stereo16:    return AL_FORMAT_STEREO16;
         
-        case AudioDataFormat_Mono32F:   return AL_FORMAT_MONO_FLOAT32;
-        case AudioDataFormat_Stereo32F: return AL_FORMAT_STEREO_FLOAT32;
+        case AudioDataFormat_Mono32F:     return AL_FORMAT_MONO_FLOAT32;
+        case AudioDataFormat_Stereo32F:   return AL_FORMAT_STEREO_FLOAT32;
 
-        case AudioDataFormat_Mono64F:   return AL_FORMAT_MONO_DOUBLE_EXT;
-        case AudioDataFormat_Stereo64F: return AL_FORMAT_STEREO_DOUBLE_EXT;
+        case AudioDataFormat_Mono64F:     return AL_FORMAT_MONO_DOUBLE_EXT;
+        case AudioDataFormat_Stereo64F:   return AL_FORMAT_STEREO_DOUBLE_EXT;
+
+        case AudioDataFormat_Mono_ALaw:   return AL_FORMAT_MONO_ALAW_EXT;
+        case AudioDataFormat_Stereo_ALaw: return AL_FORMAT_STEREO_ALAW_EXT;
+
+        case AudioDataFormat_Mono_ULaw:   return AL_FORMAT_MONO_MULAW_EXT;
+        case AudioDataFormat_Stereo_ULaw: return AL_FORMAT_STEREO_MULAW_EXT;
 
         case AudioDataFormat_Mono24:
         case AudioDataFormat_Stereo24:
@@ -709,7 +723,7 @@ namespace GTEngine
 
                     free(newData);
                 }
-                else if (format == AudioDataFormat_Mono32F || format == AudioDataFormat_Stereo32F && !m_alIsExtensionPresent("AL_EXT_float32"))
+                else if (format == AudioDataFormat_Mono32F || format == AudioDataFormat_Stereo32F && !m_alIsExtensionPresent("AL_EXT_FLOAT32"))
                 {
                     // We don't natively support 32-bit float formats, so we'll need to convert to 16-bit.
                     size_t   newDataSizeInBytes = (dataSizeInBytes / 4) * 2;
@@ -724,7 +738,7 @@ namespace GTEngine
 
                     free(newData);
                 }
-                else if (format == AudioDataFormat_Mono64F || format == AudioDataFormat_Stereo64F/* && !m_alIsExtensionPresent("AL_EXT_double")*/)
+                else if (format == AudioDataFormat_Mono64F || format == AudioDataFormat_Stereo64F && !m_alIsExtensionPresent("AL_EXT_DOUBLE"))
                 {
                     // We don't natively support 64-bit float formats, so we'll need to convert to 16-bit.
                     size_t   newDataSizeInBytes = (dataSizeInBytes / 8) * 2;
@@ -736,6 +750,36 @@ namespace GTEngine
                     }
 
                     m_alBufferData(bufferAL->buffer, (format == AudioDataFormat_Mono64F) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
+
+                    free(newData);
+                }
+                else if (format == AudioDataFormat_Mono_ALaw || format == AudioDataFormat_Stereo_ALaw && !m_alIsExtensionPresent("AL_EXT_ALAW"))
+                {
+                    // In this case we don't natively support A-Law.
+                    size_t   newDataSizeInBytes = dataSizeInBytes * 2;    // <-- expanding from 8-bit compressed to 16-bit decompressed.
+                    int16_t* newData = static_cast<int16_t*>(malloc(newDataSizeInBytes));
+
+                    for (size_t iSample = 0; iSample < dataSizeInBytes; ++iSample)
+                    {
+                        newData[iSample] = static_cast<int16_t>(alaw2linear(reinterpret_cast<const unsigned char*>(data)[iSample]));
+                    }
+
+                    m_alBufferData(bufferAL->buffer, (format == AudioDataFormat_Mono_ALaw) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
+
+                    free(newData);
+                }
+                else if (format == AudioDataFormat_Mono_ULaw || format == AudioDataFormat_Stereo_ULaw && !m_alIsExtensionPresent("AL_EXT_MULAW"))
+                {
+                    // In this case we don't natively support A-Law.
+                    size_t   newDataSizeInBytes = dataSizeInBytes * 2;    // <-- expanding from 8-bit compressed to 16-bit decompressed.
+                    int16_t* newData = static_cast<int16_t*>(malloc(newDataSizeInBytes));
+
+                    for (size_t iSample = 0; iSample < dataSizeInBytes; ++iSample)
+                    {
+                        newData[iSample] = static_cast<int16_t>(ulaw2linear(reinterpret_cast<const unsigned char*>(data)[iSample]));
+                    }
+
+                    m_alBufferData(bufferAL->buffer, (format == AudioDataFormat_Mono_ULaw) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
 
                     free(newData);
                 }
