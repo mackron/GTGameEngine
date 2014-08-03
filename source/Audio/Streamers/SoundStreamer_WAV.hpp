@@ -18,6 +18,10 @@ namespace GTEngine
         virtual ~SoundStreamer_WAV();
 
 
+        /// SoundStreamer::GetChunkSize()
+        uint32_t GetChunkSize();
+
+
     // Virtual implementations.
     public:
 
@@ -65,7 +69,6 @@ namespace GTEngine
         uint64_t GetTotalPCMDataSize();
 
 
-
     private:
 
         /**
@@ -97,6 +100,9 @@ namespace GTEngine
 
         /// The file that we're streaming from. This will opened in Open() and closed in Close().
         FILE* file;
+
+        /// The format code. We use this in determining whether or not we're loading integer or float data.
+        uint16_t m_formatCode;
 
         /// The position in the file of the beginning of the sound data.
         uint64_t dataStartPos;

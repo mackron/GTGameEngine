@@ -2,6 +2,7 @@
 
 #include "AudioEngine_OpenAL.hpp"
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 #include <cstdio>
 #include <cstring>
@@ -15,16 +16,30 @@
 #include <dlfcn.h>
 #endif // defined
 
+#define AL_FORMAT_MONO_FLOAT32      0x10010
+#define AL_FORMAT_STEREO_FLOAT32    0x10011
+
+#define AL_FORMAT_MONO_DOUBLE_EXT   0x10012
+#define AL_FORMAT_STEREO_DOUBLE_EXT 0x10013
+
+
 namespace GTEngine
 {
     ALenum ToOpenALDataFormat(AudioDataFormat format)
     {
         switch (format)
         {
-        case AudioDataFormat_Mono8:    return AL_FORMAT_MONO8;
-        case AudioDataFormat_Stereo8:  return AL_FORMAT_STEREO8;
-        case AudioDataFormat_Mono16:   return AL_FORMAT_MONO16;
-        case AudioDataFormat_Stereo16: return AL_FORMAT_STEREO16;
+        case AudioDataFormat_Mono8:     return AL_FORMAT_MONO8;
+        case AudioDataFormat_Stereo8:   return AL_FORMAT_STEREO8;
+        
+        case AudioDataFormat_Mono16:    return AL_FORMAT_MONO16;
+        case AudioDataFormat_Stereo16:  return AL_FORMAT_STEREO16;
+        
+        case AudioDataFormat_Mono32F:   return AL_FORMAT_MONO_FLOAT32;
+        case AudioDataFormat_Stereo32F: return AL_FORMAT_STEREO_FLOAT32;
+
+        case AudioDataFormat_Mono64F:   return AL_FORMAT_MONO_DOUBLE_EXT;
+        case AudioDataFormat_Stereo64F: return AL_FORMAT_STEREO_DOUBLE_EXT;
 
         case AudioDataFormat_Mono24:
         case AudioDataFormat_Stereo24:
@@ -121,6 +136,8 @@ namespace GTEngine
           m_alcCloseDevice(nullptr),
           m_alcIsExtensionPresent(nullptr),
           m_alcGetString(nullptr),
+          m_alGetString(nullptr),
+          m_alIsExtensionPresent(nullptr),
           m_alListener3f(nullptr),
           m_alListenerfv(nullptr),
           m_alGenSources(nullptr),
@@ -222,6 +239,9 @@ namespace GTEngine
         deviceHandle->context = contextAL;
 
         m_instantiatedPlaybackDevices.PushBack(reinterpret_cast<size_t>(deviceHandle));
+
+        m_alcMakeContextCurrent(contextAL);
+        printf("%s\n", m_alGetString(AL_EXTENSIONS));
 
         return reinterpret_cast<size_t>(deviceHandle);
     }
@@ -659,7 +679,70 @@ namespace GTEngine
             assert(deviceAL != nullptr);
             {
                 m_alcMakeContextCurrent(deviceAL->context);
-                m_alBufferData(bufferAL->buffer, ToOpenALDataFormat(format), data, static_cast<ALsizei>(dataSizeInBytes), static_cast<ALsizei>(frequency));
+
+                // OpenAL does not have reliable 24-bit support. We're going to downscale this to 16-bit if applicable.
+                if (format == AudioDataFormat_Mono24 || format == AudioDataFormat_Stereo24)
+                {
+                    size_t   newDataSizeInBytes = (dataSizeInBytes / 3) * 2;     // <-- Going from 3-byte samples to 2-bytes.
+                    int16_t* newData = static_cast<int16_t*>(malloc(newDataSizeInBytes));
+
+                    for (size_t iSample = 0; iSample < (dataSizeInBytes / 3); ++iSample)
+                    {
+                        const uint8_t* samplePtr = reinterpret_cast<const uint8_t*>(data) + (iSample * 3);
+
+                        uint32_t s0 = samplePtr[0];
+                        uint32_t s1 = samplePtr[1];
+                        uint32_t s2 = samplePtr[2];
+
+                        int sample32 = ((s0 << 0) | (s1 << 8) | (s2 << 16));
+                        if (sample32 & 0x800000)
+                        {
+                            sample32 |= ~0xffffff;
+                        }
+
+                        int16_t sample16 = static_cast<int16_t>(GTLib::Round((sample32 / 16777216.0f) * 65536.0f));
+
+                        newData[iSample] = sample16;
+                    }
+
+                    m_alBufferData(bufferAL->buffer, (format == AudioDataFormat_Mono24) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
+
+                    free(newData);
+                }
+                else if (format == AudioDataFormat_Mono32F || format == AudioDataFormat_Stereo32F && !m_alIsExtensionPresent("AL_EXT_float32"))
+                {
+                    // We don't natively support 32-bit float formats, so we'll need to convert to 16-bit.
+                    size_t   newDataSizeInBytes = (dataSizeInBytes / 4) * 2;
+                    int16_t* newData = static_cast<int16_t*>(malloc(newDataSizeInBytes));
+                    
+                    for (size_t iSample = 0; iSample < (dataSizeInBytes / 4); ++iSample)
+                    {
+                        newData[iSample] = static_cast<int16_t>(reinterpret_cast<const float*>(data)[iSample] * 65536.0f);
+                    }
+
+                    m_alBufferData(bufferAL->buffer, (format == AudioDataFormat_Mono32F) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
+
+                    free(newData);
+                }
+                else if (format == AudioDataFormat_Mono64F || format == AudioDataFormat_Stereo64F/* && !m_alIsExtensionPresent("AL_EXT_double")*/)
+                {
+                    // We don't natively support 64-bit float formats, so we'll need to convert to 16-bit.
+                    size_t   newDataSizeInBytes = (dataSizeInBytes / 8) * 2;
+                    int16_t* newData = static_cast<int16_t*>(malloc(newDataSizeInBytes));
+                    
+                    for (size_t iSample = 0; iSample < (dataSizeInBytes / 8); ++iSample)
+                    {
+                        newData[iSample] = static_cast<int16_t>(reinterpret_cast<const double*>(data)[iSample] * 65536.0f);
+                    }
+
+                    m_alBufferData(bufferAL->buffer, (format == AudioDataFormat_Mono64F) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
+
+                    free(newData);
+                }
+                else
+                {
+                    m_alBufferData(bufferAL->buffer, ToOpenALDataFormat(format), data, static_cast<ALsizei>(dataSizeInBytes), static_cast<ALsizei>(frequency));
+                }
             }
         }
     }
@@ -698,6 +781,8 @@ namespace GTEngine
         m_alcGetString          = reinterpret_cast<LPALCGETSTRING         >(GetOpenALProc(m_library, "alcGetString"));
 
         // AL
+        m_alGetString            = reinterpret_cast<LPALGETSTRING           >(GetOpenALProc(m_library, "alGetString"));
+        m_alIsExtensionPresent   = reinterpret_cast<LPALISEXTENSIONPRESENT  >(GetOpenALProc(m_library, "alIsExtensionPresent"));
         m_alListener3f           = reinterpret_cast<LPALLISTENER3F          >(GetOpenALProc(m_library, "alListener3f"));
         m_alListenerfv           = reinterpret_cast<LPALLISTENERFV          >(GetOpenALProc(m_library, "alListenerfv"));
         m_alGenSources           = reinterpret_cast<LPALGENSOURCES          >(GetOpenALProc(m_library, "alGenSources"));

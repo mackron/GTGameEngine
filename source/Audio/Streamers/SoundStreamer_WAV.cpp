@@ -7,7 +7,11 @@
 namespace GTEngine
 {
     SoundStreamer_WAV::SoundStreamer_WAV(const char* fileName)
-        : SoundStreamer(fileName), file(nullptr), dataStartPos(0), dataSize(0), readChunkReturnedZero(false)
+        : SoundStreamer(fileName),
+          file(nullptr),
+          m_formatCode(0),
+          dataStartPos(0), dataSize(0),
+          readChunkReturnedZero(false)
     {
     }
 
@@ -15,6 +19,11 @@ namespace GTEngine
     {
         GTLib::IO::Close(this->file);
         this->file = nullptr;
+    }
+
+    uint32_t SoundStreamer_WAV::GetChunkSize()
+    {
+        return 8192 * this->numChannels * (this->bitsPerSample / 8);
     }
 
     bool SoundStreamer_WAV::Open()
@@ -186,10 +195,9 @@ namespace GTEngine
 			    // We've found the fmt chunk.
 			    found_fmt = true;
 
-			    // Grab the compression code. We only support a value of 1 (PCM).
-			    uint16_t compression_code = 0;
-                GTLib::IO::Read(this->file, &compression_code, 2);
-			    if (compression_code != 1)
+			    // Grab the format code. We only support a value of 1 (PCM).
+                GTLib::IO::Read(this->file, &m_formatCode, 2);
+			    if (m_formatCode != 1 && m_formatCode != 3)
 			    {
                     GTEngine::PostError("SoundStreamer_WAV::ReadRIFFChunks() - Unsupported compression format.");
 				    return false;
@@ -287,6 +295,42 @@ namespace GTEngine
             else if (this->numChannels == 2)
             {
                 this->format = AudioDataFormat_Stereo24;
+            }
+        }
+        else if (this->bitsPerSample == 32)
+        {
+            if (m_formatCode == 1)
+            {
+                // TODO: How would we handle this? Just add support for 32-bit with a data conversion?
+            }
+            else
+            {
+                if (this->numChannels == 1)
+                {
+                    this->format = AudioDataFormat_Mono32F;
+                }
+                else if (this->numChannels == 2)
+                {
+                    this->format = AudioDataFormat_Stereo32F;
+                }
+            }
+        }
+        else if (this->bitsPerSample == 64)
+        {
+            if (m_formatCode == 1)
+            {
+                // TODO: How would we handle this? Just add support for 64-bit with a data conversion?
+            }
+            else
+            {
+                if (this->numChannels == 1)
+                {
+                    this->format = AudioDataFormat_Mono64F;
+                }
+                else if (this->numChannels == 2)
+                {
+                    this->format = AudioDataFormat_Stereo64F;
+                }
             }
         }
     }
