@@ -81,6 +81,34 @@ namespace GTEngine
         /// AudioEngine::GetSoundPosition().
         glm::vec3 GetSoundPosition(SoundHandle sound) const;
 
+        /// AudioEngine::QueueAudioBuffer().
+        void QueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer);
+
+        /// AudioEngine::UnqueueAudioBuffer().
+        void UnqueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer);
+
+        /// AudioEngine::Play().
+        void Play(SoundHandle sound);
+
+        /// AudioEngine::Stop().
+        void Stop(SoundHandle sound);
+
+        /// AudioEngine::Pause().
+        void Pause(SoundHandle sound);
+
+        /// AudioEngine::Rewind().
+        void Rewind(SoundHandle sound);
+
+
+
+        /// AudioEngine::CreateAudioBuffer().
+        AudioBufferHandle CreateAudioBuffer(PlaybackDeviceHandle device);
+
+        /// AudioEngine::DeleteAudioBuffer().
+        void DeleteAudioBuffer(AudioBufferHandle buffer);
+
+        /// AudioEngine::SetAudioBufferData().
+        void SetAudioBufferData(AudioBufferHandle buffer, const void *data, size_t dataSizeInBytes, AudioDataFormat format, unsigned int frequency);
 
 
 
@@ -168,8 +196,13 @@ namespace GTEngine
         LPALGETSOURCEFV          m_alGetSourcefv;
         LPALSOURCEQUEUEBUFFERS   m_alSourceQueueBuffers;
         LPALSOURCEUNQUEUEBUFFERS m_alSourceUnqueueBuffers;
+        LPALSOURCEPLAY           m_alSourcePlay;
+        LPALSOURCESTOP           m_alSourceStop;
+        LPALSOURCEREWIND         m_alSourceRewind;
+        LPALSOURCEPAUSE          m_alSourcePause;
         LPALGENBUFFERS           m_alGenBuffers;
         LPALDELETEBUFFERS        m_alDeleteBuffers;
+        LPALBUFFERDATA           m_alBufferData;
         
         
     private:    // No copying.
