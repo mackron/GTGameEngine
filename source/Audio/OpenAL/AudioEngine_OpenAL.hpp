@@ -200,7 +200,6 @@ namespace GTEngine
         GTLib::Vector<CaptureDeviceHandle> m_instantiatedCaptureDevices;
 
 
-
         // ALC functions.
         LPALCCREATECONTEXT      m_alcCreateContext;
         LPALCDESTROYCONTEXT     m_alcDestroyContext;
@@ -211,6 +210,8 @@ namespace GTEngine
         LPALCGETSTRING          m_alcGetString;
 
         // AL functions.
+        LPALGETSTRING            m_alGetString;
+        LPALISEXTENSIONPRESENT   m_alIsExtensionPresent;
         LPALLISTENER3F           m_alListener3f;
         LPALLISTENERFV           m_alListenerfv;
         LPALGENSOURCES           m_alGenSources;
