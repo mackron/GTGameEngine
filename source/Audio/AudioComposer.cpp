@@ -1,37 +1,15 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
 
 #include <GTEngine/Audio/AudioComposer.hpp>
+#include <GTEngine/GTEngine.hpp>                // <-- For g_EngineContext.
+#include <GTEngine/Errors.hpp>
 #include "Streamers/SoundStreamer_WAV.hpp"
 #include "Streamers/SoundStreamer_OGG.hpp"
-#include <AL/al.h>
-#include <AL/alc.h>
-
-#include <GTEngine/Errors.hpp>
 
 #include <GTLib/Threading.hpp>
 #include <GTLib/IO.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/Strings/Equal.hpp>
-
-namespace GTEngine
-{
-    ALenum ToOpenALFormat(SoundFormat format)
-    {
-        switch (format)
-        {
-        case SoundFormat_Mono8:    return AL_FORMAT_MONO8;
-        case SoundFormat_Stereo8:  return AL_FORMAT_STEREO8;
-        case SoundFormat_Mono16:   return AL_FORMAT_MONO16;
-        case SoundFormat_Stereo16: return AL_FORMAT_STEREO16;
-
-        case SoundFormat_Mono24:
-        case SoundFormat_Stereo24:
-        default: break;
-        }
-
-        return AL_FORMAT_MONO8;
-    }
-}
 
 namespace GTEngine
 {
@@ -41,7 +19,7 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        PlaySoundThreadJob(SoundStreamer &streamer, ALuint source, ALuint buffers[2])
+        PlaySoundThreadJob(SoundStreamer &streamer, SoundHandle source, AudioBufferHandle buffers[2])
             : streamer(streamer), source(source), backBuffer(buffers[0]), frontBuffer(buffers[1])
         {
         }
@@ -51,12 +29,12 @@ namespace GTEngine
         {
             AudioComposer::DeleteStreamer(&this->streamer);
 
-            alSourceUnqueueBuffers(this->source, 1, &this->backBuffer);
-            alSourceUnqueueBuffers(this->source, 1, &this->frontBuffer);
+            g_EngineContext->GetAudioSystem().UnqueueAudioBuffer(this->source);
+            g_EngineContext->GetAudioSystem().UnqueueAudioBuffer(this->source);
 
-            alDeleteBuffers(1, &this->backBuffer);
-            alDeleteBuffers(1, &this->frontBuffer);
-            alDeleteSources(1, &this->source);
+            g_EngineContext->GetAudioSystem().DeleteAudioBuffer(this->backBuffer);
+            g_EngineContext->GetAudioSystem().DeleteAudioBuffer(this->frontBuffer);
+            g_EngineContext->GetAudioSystem().DeleteSound(this->source);
         }
 
 
@@ -70,15 +48,20 @@ namespace GTEngine
 
             // Before entering the loop below, we're going to fill the front buffer with data. Once this is done, we start playback.
             this->streamer.ReadChunk(chunkBuffer);
-            alBufferData(this->frontBuffer, ToOpenALFormat(this->streamer.GetFormat()), chunkBuffer, static_cast<ALsizei>(this->streamer.GetChunkSize()), static_cast<ALsizei>(this->streamer.GetSampleRate()));
-            alSourceQueueBuffers(this->source, 1, &this->frontBuffer);
 
-            alSourcePlay(this->source);
 
-            // Before entering the loop, we're going to read in the first chunk of data for the back buffer.
+            // Fill and queue the front buffer.
+            g_EngineContext->GetAudioSystem().SetAudioBufferData(this->frontBuffer, chunkBuffer, this->streamer.GetChunkSize(), this->streamer.GetFormat(), this->streamer.GetSampleRate());
+            g_EngineContext->GetAudioSystem().QueueAudioBuffer(this->source, this->frontBuffer);
+
+            // Start playing.
+            g_EngineContext->GetAudioSystem().PlaySound(this->source);
+
+            // Do an initial fill and queue of the back buffer.
             this->streamer.ReadChunk(chunkBuffer);
-            alBufferData(this->backBuffer, ToOpenALFormat(this->streamer.GetFormat()), chunkBuffer, static_cast<ALsizei>(this->streamer.GetChunkSize()), static_cast<ALsizei>(this->streamer.GetSampleRate()));
-            alSourceQueueBuffers(this->source, 1, &this->backBuffer);
+            g_EngineContext->GetAudioSystem().SetAudioBufferData(this->backBuffer, chunkBuffer, this->streamer.GetChunkSize(), this->streamer.GetFormat(), this->streamer.GetSampleRate());
+            g_EngineContext->GetAudioSystem().QueueAudioBuffer(this->source, this->backBuffer);
+
 
             // Now we can start looping until we've finished playing the sound.
             for (;;)
@@ -94,8 +77,8 @@ namespace GTEngine
                 }
 
                 // We just retrieved valid data, so we just update the buffer again.
-                alBufferData(this->backBuffer, ToOpenALFormat(this->streamer.GetFormat()), chunkBuffer, static_cast<ALsizei>(this->streamer.GetChunkSize()), static_cast<ALsizei>(this->streamer.GetSampleRate()));
-                alSourceQueueBuffers(this->source, 1, &this->backBuffer);
+                g_EngineContext->GetAudioSystem().SetAudioBufferData(this->backBuffer, chunkBuffer, this->streamer.GetChunkSize(), this->streamer.GetFormat(), this->streamer.GetSampleRate());
+                g_EngineContext->GetAudioSystem().QueueAudioBuffer(this->source, this->backBuffer);
             }
 
 
@@ -115,38 +98,25 @@ namespace GTEngine
             // We need to wait for the front buffer to finish processing before returning. We'll throw ourselves into a slow loop for this.
             for (;;)
             {
-                // Check our state. If we need to restart, do so.
-                ALuint state = 0;
-                alGetSourcei(this->source, AL_SOURCE_STATE, (ALint *)&state);
-
-                // Here is where we'll check if the buffer needs to be restarted.
-                if (state != AL_PLAYING)
+                // We may need to restart playback. If the sound is not playing it may need to be restarted.
+                if (!g_EngineContext->GetAudioSystem().IsSoundPlaying(this->source))
                 {
-                    // We need to check the number of buffers that are queued. If we have some, it means
-                    // that we couldn't fill the buffers quick enough with data and so the source must
-                    // be restarted.
-                    ALint queued_buffers;
-                    alGetSourcei(this->source, AL_BUFFERS_QUEUED, &queued_buffers);
-
-                    if (queued_buffers > 0)
+                    // If we have some buffer's queue, it means we couldn't fill the buffer's quick enough with data and so the source must be restarted.
+                    if (g_EngineContext->GetAudioSystem().GetQueuedAudioBufferCount(this->source) > 0)
                     {
-                        // We have buffers queued, so we need to restart.
-                        alSourcePlay(this->source);
+                        g_EngineContext->GetAudioSystem().PlaySound(this->source);
                     }
                 }
 
 
-                // Determines if we have swapped the buffers.
+                // Determines if we have swapped the buffers. 
                 bool swapped = false;
 
-                int num_processed;
-                alGetSourcei(this->source, AL_BUFFERS_PROCESSED, &num_processed);
-
-                // We do the loop just in case both the front and back buffers have been processed.
-                while (num_processed--)
+                // We do the swapping in a look just in case both the front and back buffers have been processed.
+                int processedBufferCount = g_EngineContext->GetAudioSystem().GetProcessedQueuedAudioBufferCount(this->source);
+                while (processedBufferCount--)
                 {
-                    ALuint buffer;
-                    alSourceUnqueueBuffers(this->source, 1, &buffer);
+                    g_EngineContext->GetAudioSystem().UnqueueAudioBuffer(this->source);
 
                     auto temp         = this->backBuffer;
                     this->backBuffer  = this->frontBuffer;
@@ -154,6 +124,7 @@ namespace GTEngine
 
                     swapped = true;
                 }
+
 
                 if (swapped)
                 {
@@ -172,72 +143,22 @@ namespace GTEngine
         /// The streamer that the sound data will be read from.
         SoundStreamer &streamer;
 
-        /// The OpenAL source to play.
-        ALuint source;
+        /// The sound handle.
+        SoundHandle source;
 
         /// The two buffers to use for streaming.
-        ALuint backBuffer;
-        ALuint frontBuffer;
+        AudioBufferHandle backBuffer;
+        AudioBufferHandle frontBuffer;
     };
 }
 
 
-// Globals.
-namespace GTEngine
-{
-    static ALCdevice*  Device  = nullptr;
-    static ALCcontext* Context = nullptr;
-
-    static float ListenerX = 0.0f;
-    static float ListenerY = 0.0f;
-    static float ListenerZ = 0.0f;
-}
-
-
-// Startup/Shutdown.
-namespace GTEngine
-{
-    bool AudioComposer::Startup()
-    {
-        Device = alcOpenDevice(nullptr);
-        if (Device == nullptr)
-        {
-            GTEngine::PostError("AudioComposer - Failed to open device.");
-            return false;
-        }
-
-        // Create our context.
-        Context = alcCreateContext(Device, nullptr);
-        if (Context == nullptr)
-        {
-            GTEngine::PostError("AudioComposer - Failed to create context.");
-            return false;
-        }
-
-        // Now we just need to make our context current and then return.
-        alcMakeContextCurrent(Context);
-
-        return true;
-    }
-
-    void AudioComposer::Shutdown()
-    {
-        alcMakeContextCurrent(nullptr);
-        alcDestroyContext(Context);
-        alcCloseDevice(Device);
-    }
-}
-
 // Playback.
 namespace GTEngine
 {
-    const bool UseRelativePositioning = true;
-    //const bool UseAbsolutePositioning = false;
-
-
-    bool AudioComposer::Play(const char* fileName)
+    bool AudioComposer::Play(const char* fileName, bool relativePositioning)
     {
-        return AudioComposer::Play(fileName, 0.0f, 0.0f, 0.0f, UseRelativePositioning);
+        return AudioComposer::Play(fileName, 0.0f, 0.0f, 0.0f, relativePositioning);
     }
 
     bool AudioComposer::Play(const char* fileName, float x, float y, float z, bool relativePositioning)
@@ -251,23 +172,21 @@ namespace GTEngine
         auto streamer = AudioComposer::CreateStreamer(fileName);
         if (streamer != nullptr && streamer->Open())
         {
-            // The streamer has been created, so now we will create our OpenAL source object.
-            ALuint source;
-            alGenSources(1, &source);
+            // The streamer has been created, so now we will create our audio objects.
+            PlaybackDeviceHandle playbackDevice = g_EngineContext->GetAudioPlaybackDevice();
+            
 
-            // This sets the position of the source.
-            alSource3f(source, AL_POSITION, x, y, z);
-
-            // If the sound is relative, it must be specified as such.
-            if (relativePositioning)
-            {
-                alSourcei(source, AL_SOURCE_RELATIVE, AL_TRUE);
-            }
+            // Sound source.
+            SoundHandle source = g_EngineContext->GetAudioSystem().CreateSound(playbackDevice);
+            g_EngineContext->GetAudioSystem().SetSoundPosition(source, x, y, z);
+            g_EngineContext->GetAudioSystem().SetIsSoundPositionRelative(source, relativePositioning);
 
 
-            // We create two buffers. One for the back which is currently playing, and another for the front which is being filled by the streamer.
-            ALuint buffers[2];
-            alGenBuffers(2, buffers);
+            // Sound buffers.
+            AudioBufferHandle buffers[2];
+            buffers[0] = g_EngineContext->GetAudioSystem().CreateAudioBuffer(playbackDevice);
+            buffers[1] = g_EngineContext->GetAudioSystem().CreateAudioBuffer(playbackDevice);
+
 
             // Here we start running a thread that will play the sound.
             GTLib::Thread(*(new PlaySoundThreadJob(*streamer, source, buffers)));
@@ -288,27 +207,12 @@ namespace GTEngine
 {
     void AudioComposer::SetListenerPosition(float x, float y, float z)
     {
-        ListenerX = x;
-        ListenerY = y;
-        ListenerZ = z;
-
-        alListener3f(AL_POSITION, x, y, z);
+        g_EngineContext->GetAudioSystem().SetListenerPosition(g_EngineContext->GetAudioListener(), x, y, z);
     }
 
-    void AudioComposer::SetListenerOrientation(const glm::quat &orientationIn)
+    void AudioComposer::SetListenerOrientation(const glm::quat &orientation)
     {
-        glm::vec3 forward = orientationIn * glm::vec3(0.0f, 0.0f, -1.0f);
-        glm::vec3 up      = orientationIn * glm::vec3(0.0f, 1.0f,  0.0f);
-
-        ALfloat orientation[6];
-        orientation[0] = forward.x;
-        orientation[1] = forward.y;
-        orientation[2] = forward.z;
-        orientation[3] = up.x;
-        orientation[4] = up.y;
-        orientation[5] = up.z;
-
-        alListenerfv(AL_ORIENTATION, orientation);
+        g_EngineContext->GetAudioSystem().SetListenerOrientation(g_EngineContext->GetAudioListener(), orientation);
     }
 }
 

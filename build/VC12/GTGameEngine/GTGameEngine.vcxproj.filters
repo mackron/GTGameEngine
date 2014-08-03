@@ -464,9 +464,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Audio\Sound.hpp">
       <Filter>Header Files\Audio</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundFormats.hpp">
-      <Filter>Header Files\Audio</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundStreamer.hpp">
       <Filter>Header Files\Audio</Filter>
     </ClInclude>
@@ -1045,6 +1042,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTEngine\DefaultMessageHandler.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioDataFormats.hpp">
+      <Filter>Header Files\Audio</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

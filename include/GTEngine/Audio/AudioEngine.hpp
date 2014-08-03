@@ -3,10 +3,12 @@
 #ifndef __GTGameEngine_AudioEngine_hpp_
 #define __GTGameEngine_AudioEngine_hpp_
 
+#include "AudioDataFormats.hpp"
 #include <GTLib/String.hpp>
 
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
 
 namespace GTEngine
 {
@@ -15,23 +17,6 @@ namespace GTEngine
     typedef size_t ListenerHandle;
     typedef size_t SoundHandle;
     typedef size_t AudioBufferHandle;
-
-
-    /// Enumerator for the various supporting audio data formats.
-    enum AudioDataFormat
-    {
-        AudioDataFormat_Mono8,          ///< 8-bit, single channel.
-        AudioDataFormat_Stereo8,        ///< 8-bit, stereo channel.
-
-        AudioDataFormat_Mono16,         ///< 16-bit, single channel.
-        AudioDataFormat_Stereo16,       ///< 16-bit, stereo channel.
-
-        AudioDataFormat_Mono24,         ///< 24-bit, single channel.
-        AudioDataFormat_Stereo24,       ///< 24-bit, stereo channel.
-
-        //AudioDataFormat_Mono32F,        ///< 32-bit float, single channel.
-        //AudioDataFormat_Stereo32F,      ///< 32-bit float, stereo channel.
-    };
 
 
     /// Base class for handling audio playback.
@@ -158,6 +143,17 @@ namespace GTEngine
         /// @return A vec3 containing the position of the sound.
         virtual glm::vec3 GetListenerPosition(ListenerHandle listener) const = 0;
 
+        /// Sets the orientation of the given listener.
+        ///
+        /// @param listener    [in] The listener whose orientation is being set.
+        /// @param orientation [in] The quaternion representing the target orientation.
+        virtual void SetListenerOrientation(ListenerHandle listener, glm::quat orientation) = 0;
+
+        /// Retrieves the orientation of the given listener.
+        ///
+        /// @param listener [in] The listener whose orientation is being retrieved.
+        virtual glm::quat GetListenerOrientation(ListenerHandle listener) const = 0;
+
 
 
         /// Creates a sound.
@@ -185,22 +181,40 @@ namespace GTEngine
         /// @return A vec3 containing the position of the sound.
         virtual glm::vec3 GetSoundPosition(SoundHandle sound) const = 0;
 
+        /// Sets whether or not the position of the sound should be relative to the listener.
+        ///
+        /// @param sound      [in] The sound handle.
+        /// @param isRelative [in] True is the sound's position should be relative to the player; false otherwise.
+        virtual void SetIsSoundPositionRelative(SoundHandle sound, bool isRelative) = 0;
+
         /// Adds the given buffer to the end of the given sound's buffer queue.
         ///
         /// @param sound  [in] The sound whose having an audio buffer queued.
         /// @param buffer [in] The buffer to add to the queue.
-        virtual void QueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer);
+        virtual void QueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer) = 0;
 
-        /// Removes the given buffer from the given sound's buffer queue.
+        /// Removes the oldest processed audio buffer from the given sound's queue.
         ///
         /// @param sound  [in] The sound whose having the buffer removed.
-        /// @param buffer [in] The buffer to remove from the queue.
-        virtual void UnqueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer);
+        ///
+        /// @remarks
+        ///     Use GetProcessedAudioBufferCount() to retrieve the number of buffers that have been processed.
+        virtual void UnqueueAudioBuffer(SoundHandle sound) = 0;
+
+        /// Retrieves the number of buffers that are queud on the given sound.
+        ///
+        /// @param sound [in] The sound whose buffer queue is being counted.
+        virtual size_t GetQueuedAudioBufferCount(SoundHandle sound) = 0;
+
+        /// Retrieves the number of buffers that are queue on the given sound, but have also been processed (played).
+        ///
+        /// @param sound [in] The sound handle.
+        virtual size_t GetProcessedQueuedAudioBufferCount(SoundHandle sound) = 0;
 
         /// Starts, replay or resume the given sound.
         ///
         /// @param sound [in] The sound to play.
-        virtual void Play(SoundHandle sound);
+        virtual void PlaySound(SoundHandle sound) = 0;
 
         /// Stops playing the sound.
         ///
@@ -208,7 +222,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     Calling Play() after this will cause the sound to restart from the start. Use Pause() if you want pause functionality.
-        virtual void Stop(SoundHandle sound);
+        virtual void StopSound(SoundHandle sound) = 0;
 
         /// Pauses playback of the given sound.
         ///
@@ -216,7 +230,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     Calling Play() after this will cause the sound to resume from where it was left off. Use Stop() or Rewind() if you want to go back to the beginning.
-        virtual void Pause(SoundHandle sound);
+        virtual void PauseSound(SoundHandle sound) = 0;
 
         /// Restarts the given sound from the beginning.
         ///
@@ -224,7 +238,28 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This does not stop playback.
-        virtual void Rewind(SoundHandle sound);
+        virtual void RewindSound(SoundHandle sound) = 0;
+
+        /// Determines whether or not the sound is currently being played.
+        ///
+        /// @param sound [in] The sound handle.
+        ///
+        /// @return True if the sound is currently in a playing state; false otherwise.
+        virtual bool IsSoundPlaying(SoundHandle sound) = 0;
+
+        /// Determines whether or not the sound is currently paused.
+        ///
+        /// @param sound [in] The sound handle.
+        ///
+        /// @return True if the sound is currently paused; false otherwise.
+        virtual bool IsSoundPaused(SoundHandle sound) = 0;
+
+        /// Determines whether or not the sound is currently stopped.
+        ///
+        /// @param sound [in] The sound handle.
+        ///
+        /// @return True if the sound is currently stopped; false otherwise.
+        virtual bool IsSoundStopped(SoundHandle sound) = 0;
 
 
 
@@ -250,7 +285,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will make a copy of the data. The data can be deleted once this returns.
-        virtual void SetAudioBufferData(AudioBufferHandle buffer, const void *data, size_t dataSizeInBytes, AudioDataFormat format, unsigned int frequency);
+        virtual void SetAudioBufferData(AudioBufferHandle buffer, const void *data, size_t dataSizeInBytes, AudioDataFormat format, unsigned int frequency) = 0;
         
 
 

@@ -7,7 +7,7 @@ namespace GTEngine
 {
     SoundStreamer::SoundStreamer(const char* fileName)
         : absolutePath(),
-          numChannels(0), bitsPerSample(0), sampleRate(0), format(SoundFormat_Mono8)
+          numChannels(0), bitsPerSample(0), sampleRate(0), format(AudioDataFormat_Mono8)
     {
         GTLib::Path path(fileName);
         path.MakeAbsolute();

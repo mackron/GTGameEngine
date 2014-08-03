@@ -84,6 +84,16 @@ namespace GT
             /// @return A reference to the internal audio system.
             GTEngine::AudioEngine & GetAudioSystem();
 
+            /// Retrieves a handle to the playback device.
+            ///
+            /// @return A handle to the playback device.
+            GTEngine::PlaybackDeviceHandle GetAudioPlaybackDevice();
+
+            /// Retrieves a handle to the audio listener.
+            ///
+            /// @return A handle to the audio listener.
+            GTEngine::ListenerHandle GetAudioListener();
+
 
 
         private:
@@ -107,7 +117,11 @@ namespace GT
             /// The audio system. This should never be null, but it needs to be a pointer because it's a virtual class.
             GTEngine::AudioEngine* m_audioSystem;
 
+            /// The playback device handle for audio.
+            GTEngine::PlaybackDeviceHandle m_audioPlaybackDevice;
 
+            /// The listener handle for audio.
+            GTEngine::ListenerHandle m_audioListener;
 
 
         private:    // No copying.

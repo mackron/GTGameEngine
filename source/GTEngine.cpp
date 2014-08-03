@@ -88,6 +88,7 @@ namespace GTEngine
             return false;
         }
 
+#if 0
         Log("Starting Audio Sub-System...");
         if (AudioComposer::Startup())
         {
@@ -97,6 +98,7 @@ namespace GTEngine
         {
             return false;
         }
+#endif
 
 
         // With sub-systems started up, we can startup our resource libraries.
@@ -152,7 +154,7 @@ namespace GTEngine
 
         // We shutdown major sub-systems before logging. This allows us to log shutdown info.
         Renderer::Shutdown();
-        AudioComposer::Shutdown();
+        //AudioComposer::Shutdown();
 
 
         // Thread cache.

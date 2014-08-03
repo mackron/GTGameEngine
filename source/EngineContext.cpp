@@ -12,7 +12,7 @@ namespace GT
               m_executableDirectoryAbsolutePath(),
               m_applicationConfig(),
               m_messageHandler(), m_messageDispatcher(),
-              m_audioSystem(nullptr)
+              m_audioSystem(nullptr), m_audioPlaybackDevice(0), m_audioListener(0)
         {
             // First this is to more into the applications directory. We get this from the command line.
             GTLib::IO::SetCurrentDirectory(m_commandLine.GetApplicationDirectory());
@@ -91,12 +91,24 @@ namespace GT
                     this->PostLogMessage(message.c_str());
                 }
 
-                //m_audioPlaybackDevice = m_audioSystem->OpenPlaybackDevice(0);
+                m_audioPlaybackDevice = m_audioSystem->OpenPlaybackDevice(0);
+                m_audioListener = m_audioSystem->CreateListener(m_audioPlaybackDevice);
             }
         }
 
         EngineContext::~EngineContext()
         {
+            //////////////////////////////////////////
+            // Audio System
+
+            m_audioSystem->DeleteListener(m_audioListener);
+            m_audioListener = 0;
+
+            m_audioSystem->ClosePlaybackDevice(m_audioPlaybackDevice);
+            m_audioPlaybackDevice = 0;
+
+            delete m_audioSystem;
+            m_audioSystem = nullptr;
         }
 
 
@@ -157,6 +169,29 @@ namespace GT
         void EngineContext::PostLogMessage(const char* message)
         {
             m_messageDispatcher.PostLogMessage(message);
+        }
+
+
+
+        ////////////////////////////////////////////////////
+        // Audio
+
+        GTEngine::AudioEngine & EngineContext::GetAudioSystem()
+        {
+            assert(m_audioSystem != nullptr);
+            return *m_audioSystem;
+        }
+
+        GTEngine::PlaybackDeviceHandle EngineContext::GetAudioPlaybackDevice()
+        {
+            assert(m_audioPlaybackDevice != 0);
+            return m_audioPlaybackDevice;
+        }
+
+        GTEngine::ListenerHandle EngineContext::GetAudioListener()
+        {
+            assert(m_audioListener != 0);
+            return m_audioListener;
         }
     }
 }

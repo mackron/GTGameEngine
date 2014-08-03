@@ -260,33 +260,33 @@ namespace GTEngine
         {
             if (this->numChannels == 1)
             {
-                this->format = SoundFormat_Mono8;
+                this->format = AudioDataFormat_Mono8;
             }
             else if (this->numChannels == 2)
             {
-                this->format = SoundFormat_Stereo8;
+                this->format = AudioDataFormat_Stereo8;
             }
         }
         else if (this->bitsPerSample == 16)
         {
             if (this->numChannels == 1)
             {
-                this->format = SoundFormat_Mono16;
+                this->format = AudioDataFormat_Mono16;
             }
             else if (this->numChannels == 2)
             {
-                this->format = SoundFormat_Stereo16;
+                this->format = AudioDataFormat_Stereo16;
             }
         }
         else if (this->bitsPerSample == 24)
         {
             if (this->numChannels == 1)
             {
-                this->format = SoundFormat_Mono24;
+                this->format = AudioDataFormat_Mono24;
             }
             else if (this->numChannels == 2)
             {
-                this->format = SoundFormat_Stereo24;
+                this->format = AudioDataFormat_Stereo24;
             }
         }
     }
