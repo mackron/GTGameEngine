@@ -22,6 +22,12 @@ namespace GTEngine
 
         AudioDataFormat_Mono64F,        ///< 64-bit float, single channel.
         AudioDataFormat_Stereo64F,      ///< 64-bit float, stereo channel.
+
+        AudioDataFormat_Mono_ALaw,      ///< 8-bit, single channel.
+        AudioDataFormat_Stereo_ALaw,    ///< 8-bit, single channel.
+
+        AudioDataFormat_Mono_ULaw,      ///< 8-bit, single channel.
+        AudioDataFormat_Stereo_ULaw,    ///< 8-bit, single channel.
     };
 }
 

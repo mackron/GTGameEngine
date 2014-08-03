@@ -333,6 +333,7 @@
     <ClInclude Include="..\..\..\include\gtgl\gtgl_gl.h" />
     <ClInclude Include="..\..\..\include\gtgl\gtgl_glx.h" />
     <ClInclude Include="..\..\..\include\gtgl\gtgl_wgl.h" />
+    <ClInclude Include="..\..\..\source\Audio\g711.h" />
     <ClInclude Include="..\..\..\source\Audio\OpenAL\AudioEngine_OpenAL.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp" />
@@ -393,6 +394,7 @@
     <ClCompile Include="..\..\..\source\ApplicationConfig.cpp" />
     <ClCompile Include="..\..\..\source\Audio\AudioComposer.cpp" />
     <ClCompile Include="..\..\..\source\Audio\AudioEngine.cpp" />
+    <ClCompile Include="..\..\..\source\Audio\g711.c" />
     <ClCompile Include="..\..\..\source\Audio\OpenAL\AudioEngine_OpenAL.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Sound.cpp" />
     <ClCompile Include="..\..\..\source\Audio\SoundStreamer.cpp" />

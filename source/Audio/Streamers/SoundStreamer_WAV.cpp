@@ -4,8 +4,18 @@
 #include <GTEngine/Errors.hpp>
 #include <GTLib/IO.hpp>
 
+
+#define WAVE_FORMAT_PCM        0x1
+#define WAVE_FORMAT_IEEE_FLOAT 0x3
+#define WAVE_FORMAT_ALAW       0x6
+#define WAVE_FORMAT_MULAW      0x7
+
+
 namespace GTEngine
 {
+
+
+
     SoundStreamer_WAV::SoundStreamer_WAV(const char* fileName)
         : SoundStreamer(fileName),
           file(nullptr),
@@ -197,7 +207,7 @@ namespace GTEngine
 
 			    // Grab the format code. We only support a value of 1 (PCM).
                 GTLib::IO::Read(this->file, &m_formatCode, 2);
-			    if (m_formatCode != 1 && m_formatCode != 3)
+			    if (m_formatCode != WAVE_FORMAT_PCM && m_formatCode != WAVE_FORMAT_IEEE_FLOAT && m_formatCode != WAVE_FORMAT_ALAW && m_formatCode != WAVE_FORMAT_MULAW)
 			    {
                     GTEngine::PostError("SoundStreamer_WAV::ReadRIFFChunks() - Unsupported compression format.");
 				    return false;
@@ -266,13 +276,38 @@ namespace GTEngine
     {
         if (this->bitsPerSample == 8)
         {
-            if (this->numChannels == 1)
+            if (m_formatCode == WAVE_FORMAT_ALAW)
             {
-                this->format = AudioDataFormat_Mono8;
+                if (this->numChannels == 1)
+                {
+                    this->format = AudioDataFormat_Mono_ALaw;
+                }
+                else if (this->numChannels == 2)
+                {
+                    this->format = AudioDataFormat_Stereo_ALaw;
+                }
             }
-            else if (this->numChannels == 2)
+            else if (m_formatCode == WAVE_FORMAT_MULAW)
             {
-                this->format = AudioDataFormat_Stereo8;
+                if (this->numChannels == 1)
+                {
+                    this->format = AudioDataFormat_Mono_ULaw;
+                }
+                else if (this->numChannels == 2)
+                {
+                    this->format = AudioDataFormat_Stereo_ULaw;
+                }
+            }
+            else
+            {
+                if (this->numChannels == 1)
+                {
+                    this->format = AudioDataFormat_Mono8;
+                }
+                else if (this->numChannels == 2)
+                {
+                    this->format = AudioDataFormat_Stereo8;
+                }
             }
         }
         else if (this->bitsPerSample == 16)
