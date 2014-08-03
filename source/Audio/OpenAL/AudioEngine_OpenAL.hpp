@@ -67,6 +67,12 @@ namespace GTEngine
         /// AudioEngine::GetListenerPosition().
         glm::vec3 GetListenerPosition(ListenerHandle listener) const;
 
+        /// AudioEngine::SetListenerOrientation().
+        void SetListenerOrientation(ListenerHandle listener, glm::quat orientation);
+
+        /// AudioEngine::GetListenerOrientation().
+        glm::quat GetListenerOrientation(ListenerHandle listener) const;
+
 
 
         /// AudioEngine::CreateSound().
@@ -81,23 +87,41 @@ namespace GTEngine
         /// AudioEngine::GetSoundPosition().
         glm::vec3 GetSoundPosition(SoundHandle sound) const;
 
+        /// AudioEngine::SetSoundPositionRelative().
+        void SetIsSoundPositionRelative(SoundHandle sound, bool isRelative);
+
         /// AudioEngine::QueueAudioBuffer().
         void QueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer);
 
         /// AudioEngine::UnqueueAudioBuffer().
-        void UnqueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer);
+        void UnqueueAudioBuffer(SoundHandle sound);
 
-        /// AudioEngine::Play().
-        void Play(SoundHandle sound);
+        /// AudioEngine::GetQueuedAudioBufferCount().
+        size_t GetQueuedAudioBufferCount(SoundHandle sound);
 
-        /// AudioEngine::Stop().
-        void Stop(SoundHandle sound);
+        /// AudioEngine::GetProcessedQueuedAudioBufferCount().
+        size_t GetProcessedQueuedAudioBufferCount(SoundHandle sound);
 
-        /// AudioEngine::Pause().
-        void Pause(SoundHandle sound);
+        /// AudioEngine::PlaySound().
+        void PlaySound(SoundHandle sound);
 
-        /// AudioEngine::Rewind().
-        void Rewind(SoundHandle sound);
+        /// AudioEngine::StopSound().
+        void StopSound(SoundHandle sound);
+
+        /// AudioEngine::PauseSound().
+        void PauseSound(SoundHandle sound);
+
+        /// AudioEngine::RewindSound().
+        void RewindSound(SoundHandle sound);
+
+        /// AudioEngine::IsSoundPlaying().
+        bool IsSoundPlaying(SoundHandle sound);
+
+        /// AudioEngine::IsSoundPaused().
+        bool IsSoundPaused(SoundHandle sound);
+
+        /// AudioEngine::IsSoundStopped().
+        bool IsSoundStopped(SoundHandle sound);
 
 
 
@@ -194,6 +218,7 @@ namespace GTEngine
         LPALSOURCE3F             m_alSource3f;
         LPALSOURCEI              m_alSourcei;
         LPALGETSOURCEFV          m_alGetSourcefv;
+        LPALGETSOURCEI           m_alGetSourcei;
         LPALSOURCEQUEUEBUFFERS   m_alSourceQueueBuffers;
         LPALSOURCEUNQUEUEBUFFERS m_alSourceUnqueueBuffers;
         LPALSOURCEPLAY           m_alSourcePlay;

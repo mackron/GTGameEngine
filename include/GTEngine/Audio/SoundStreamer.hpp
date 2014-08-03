@@ -4,7 +4,7 @@
 #define __GTEngine_Audio_SoundStreamer_hpp_
 
 #include <GTLib/String.hpp>
-#include "SoundFormats.hpp"
+#include "AudioDataFormats.hpp"
 
 namespace GTEngine
 {
@@ -98,7 +98,7 @@ namespace GTEngine
         *   \brief  Retrieves the format of the audio.
         *   \return The format of the audio.
         */
-        SoundFormat GetFormat() const { return this->format; }
+        AudioDataFormat GetFormat() const { return this->format; }
 
 	    
 
@@ -118,7 +118,7 @@ namespace GTEngine
 	    uint32_t sampleRate;
 
         /// The format of the audio.
-        SoundFormat format;
+        AudioDataFormat format;
     };
 }
 
