@@ -23,7 +23,7 @@ namespace GTEngine
         *   \brief  Retrieves the size of each chunk.
         *   \return The size of each chunk.
         */
-        virtual uint32_t GetChunkSize();
+        //virtual size_t GetChunkSize() const;
 
 
     // Virtual methods.
@@ -37,23 +37,32 @@ namespace GTEngine
         /// Closes the streamer.
         virtual void Close() = 0;
 
-        /**
-        *   \brief             Reads a chunk of data.
-        *   \param  data [out] Pointer to the buffer that will recieve the data.
-        *   \return            The number of bytes that was read.
-        *
-        *   \remarks
-        *       The size of the buffer pointed to by \c data in bytes should be equal to value returned
-        *       by SoundStreamer::GetChunkSize().
-        *       \par
-        *       When reading a chunk causes the streamer to reach the end of the file, it will not read
-        *       from the start of the sound to fill up the chunk.
-        *       \par
-        *       When this function returns 0, it can be assumed that the sound is at the end of itself.
-        *       A subsequent call to ReadChunk() will cause the streamer to move back to the start of
-        *       the file.
-        */
-        virtual uint32_t ReadChunk(void *data) = 0;
+        /// Prepares the next chunk for reading.
+        ///
+        /// @return The size in bytes of the buffer required to store the data chunk. Returns 0 if there are no chunks available to read.
+        ///
+        /// @remarks
+        ///     To read a chunk, first call this method, then allocate a buffer using the return value, then call ReadNextChunk().
+        ///     @par
+        ///     For compressed audio formats, this will usually be where the data is actually loaded and processed. Assume that this is
+        ///     a slow function.
+        ///     @par
+        ///     When PrepareNextChunk() returns zero, the next call will loop back to the start.
+        //virtual size_t PrepareNextChunk() = 0;
+
+        /// Reads the next data chunk.
+        ///
+        /// @param dataOut [in] A pointer to the buffer that will receive the data chunk.
+        ///
+        /// @return The number of bytes that were copied into the output buffer.
+        ///
+        /// @remarks
+        ///     The size of the dataOut buffer should be at least that of the return value of the preceding call to PrepareNextChunk().
+        ///     @par
+        ///     The return value of ReadNextChunk() should always be the same as the preceding call to PrepareNextChunk().
+        ///     @par
+        ///     This will not loop back to the start. To do this, call Seek(0).
+        virtual const void* ReadNextChunk(size_t &dataSizeOut) = 0;
 
         /**
         *   \brief            Seeks the read positition of the streamer.
@@ -68,39 +77,37 @@ namespace GTEngine
 
 
         /**
-        *   \brief  Retrieves the total size of the PCM data.
-        *   \return The total size of the PCM data.
-        */
-        virtual uint64_t GetTotalPCMDataSize() = 0;
-
-
-    public:	// Accessors / mutators.
-
-	    /**
         *   \brief  Retrieves the number of channels in the sound.
         *   \return The number of channels in the sound.
         */
-        uint16_t GetNumChannels() const { return this->numChannels; }
+        virtual uint16_t GetNumChannels() const = 0;
 
         /**
         *   \brief  Retrieves number of bits per sample. Usually set to 16.
         *   \return The number of bits per sample.
         */
-        uint16_t GetBitsPerSample() const { return this->bitsPerSample; }
+        virtual uint16_t GetBitsPerSample() const = 0;
 
 	    /**
         *   \brief  Retrieves the sample rate. 22050, 44100, etc.
         *   \return The sample rate of the sound.
         */
-        uint32_t GetSampleRate() const { return this->sampleRate; }
+        virtual uint32_t GetSampleRate() const = 0;
 
         /**
         *   \brief  Retrieves the format of the audio.
         *   \return The format of the audio.
         */
-        AudioDataFormat GetFormat() const { return this->format; }
+        virtual AudioDataFormat GetFormat() const = 0;
 
-	    
+
+        /**
+        *   \brief  Retrieves the total size of the PCM data.
+        *   \return The total size of the PCM data.
+        */
+        //virtual uint64_t GetTotalPCMDataSize() = 0;
+
+
 
 
     protected:
@@ -108,6 +115,7 @@ namespace GTEngine
         /// The path of the file being streamed.
         GTLib::String absolutePath;
 
+#if 0
         /// The number of channels in the sound.
 	    uint16_t numChannels;
 
@@ -119,6 +127,7 @@ namespace GTEngine
 
         /// The format of the audio.
         AudioDataFormat format;
+#endif
     };
 }
 

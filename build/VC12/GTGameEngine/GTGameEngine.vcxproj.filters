@@ -1833,5 +1833,8 @@
     <ClCompile Include="..\..\..\source\Audio\g711.c">
       <Filter>Source Files\Audio</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\Streamers\stb_vorbis.c">
+      <Filter>Source Files\Audio\Streamers</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

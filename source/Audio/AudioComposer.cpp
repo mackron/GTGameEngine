@@ -40,50 +40,64 @@ namespace GTEngine
 
         void Run()
         {
-            // We need a buffer to store chunk data as it's read from the streamer.
-            void* chunkBuffer = malloc(this->streamer.GetChunkSize());
-
             // Here we make sure the streamer is at the start.
             this->streamer.Seek(0.0);
 
             // Before entering the loop below, we're going to fill the front buffer with data. Once this is done, we start playback.
-            this->streamer.ReadChunk(chunkBuffer);
-
-
+            //
             // Fill and queue the front buffer.
-            g_EngineContext->GetAudioSystem().SetAudioBufferData(this->frontBuffer, chunkBuffer, this->streamer.GetChunkSize(), this->streamer.GetFormat(), this->streamer.GetSampleRate());
-            g_EngineContext->GetAudioSystem().QueueAudioBuffer(this->source, this->frontBuffer);
+            size_t chunkBuffer1SizeInBytes = 0;
+            const void* chunkBuffer1 = this->streamer.ReadNextChunk(chunkBuffer1SizeInBytes);
+            if (chunkBuffer1 != nullptr)
+            {
+                g_EngineContext->GetAudioSystem().SetAudioBufferData(this->frontBuffer, chunkBuffer1, chunkBuffer1SizeInBytes, this->streamer.GetFormat(), this->streamer.GetSampleRate());
+                g_EngineContext->GetAudioSystem().QueueAudioBuffer(this->source, this->frontBuffer);
+            }
+            
 
             // Start playing.
             g_EngineContext->GetAudioSystem().PlaySound(this->source);
 
+
             // Do an initial fill and queue of the back buffer.
-            this->streamer.ReadChunk(chunkBuffer);
-            g_EngineContext->GetAudioSystem().SetAudioBufferData(this->backBuffer, chunkBuffer, this->streamer.GetChunkSize(), this->streamer.GetFormat(), this->streamer.GetSampleRate());
-            g_EngineContext->GetAudioSystem().QueueAudioBuffer(this->source, this->backBuffer);
+            size_t chunkBuffer2SizeInBytes = 0;
+            const void* chunkBuffer2 = this->streamer.ReadNextChunk(chunkBuffer2SizeInBytes);
+            if (chunkBuffer2 != nullptr)
+            {
+                g_EngineContext->GetAudioSystem().SetAudioBufferData(this->backBuffer, chunkBuffer2, chunkBuffer2SizeInBytes, this->streamer.GetFormat(), this->streamer.GetSampleRate());
+                g_EngineContext->GetAudioSystem().QueueAudioBuffer(this->source, this->backBuffer);
+            }
+            
 
 
             // Now we can start looping until we've finished playing the sound.
             for (;;)
             {
+                // If we no longer have an engine context, just return here.
+                if (g_EngineContext == nullptr)
+                {
+                    break;
+                }
+
                 // First we swap the buffers. This will not return until the swap has occured.
                 this->SwapBuffers();
 
-                uint32_t size = this->streamer.ReadChunk(chunkBuffer);
-                if (size == 0)
+                size_t chunkSizeInBytes = 0;
+                const void* chunkData = this->streamer.ReadNextChunk(chunkSizeInBytes);
+                if (chunkData == nullptr)
                 {
                     // We've reached the end of the stream.
                     break;
                 }
 
                 // We just retrieved valid data, so we just update the buffer again.
-                g_EngineContext->GetAudioSystem().SetAudioBufferData(this->backBuffer, chunkBuffer, this->streamer.GetChunkSize(), this->streamer.GetFormat(), this->streamer.GetSampleRate());
-                g_EngineContext->GetAudioSystem().QueueAudioBuffer(this->source, this->backBuffer);
+                if (g_EngineContext != nullptr)
+                {
+                    g_EngineContext->GetAudioSystem().SetAudioBufferData(this->backBuffer, chunkData, chunkSizeInBytes, this->streamer.GetFormat(), this->streamer.GetSampleRate());
+                    g_EngineContext->GetAudioSystem().QueueAudioBuffer(this->source, this->backBuffer);
+                }
             }
 
-
-            // We're done with the chunk buffer...
-            free(chunkBuffer);
 
             // It looks bad, but we actually delete ourselves after we've finished running.
             delete this;
@@ -98,6 +112,12 @@ namespace GTEngine
             // We need to wait for the front buffer to finish processing before returning. We'll throw ourselves into a slow loop for this.
             for (;;)
             {
+                // If we no longer have an engine context, just return here.
+                if (g_EngineContext == nullptr)
+                {
+                    break;
+                }
+
                 // We may need to restart playback. If the sound is not playing it may need to be restarted.
                 if (!g_EngineContext->GetAudioSystem().IsSoundPlaying(this->source))
                 {

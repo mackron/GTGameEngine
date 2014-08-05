@@ -13,252 +13,326 @@
 
 namespace GTEngine
 {
-
-
-
     SoundStreamer_WAV::SoundStreamer_WAV(const char* fileName)
         : SoundStreamer(fileName),
-          file(nullptr),
+          m_file(0), m_fileDataPtr(nullptr),
           m_formatCode(0),
-          dataStartPos(0), dataSize(0),
-          readChunkReturnedZero(false)
+          m_numChannels(0),
+          m_sampleRate(0),
+          m_averageBytesPerSecond(0),
+          m_blockAlign(0),
+          m_bitsPerSample(0),
+          m_audioData(nullptr), m_audioDataSize(0),
+          m_nextChunkData(nullptr), m_nextChunkDataSize(0)
     {
     }
 
     SoundStreamer_WAV::~SoundStreamer_WAV()
     {
-        GTLib::IO::Close(this->file);
-        this->file = nullptr;
+        GTLib::CloseFile(m_file);   // <-- This will also unmap.
     }
 
-    uint32_t SoundStreamer_WAV::GetChunkSize()
-    {
-        return 8192 * this->numChannels * (this->bitsPerSample / 8);
-    }
 
     bool SoundStreamer_WAV::Open()
     {
-        // If the file is already open, we'll move back to the start.
-        if (this->file != nullptr)
+        if (m_file == 0)
         {
-            assert(false);
-            return false;
-        }
-        else
-        {
-            this->file = GTLib::IO::Open(this->absolutePath.c_str(), GTLib::IO::OpenMode::Read);
-            if (this->file != nullptr)
+            m_file = GTLib::OpenFile(this->absolutePath.c_str(), GTLib::IO::OpenMode::Read);
+            if (m_file != 0)
             {
-                // First we will read the RIFF stuff from the WAV file. These functions will output the appropriate errors.
-                if (this->ReadRIFFHeader())
+                m_fileDataPtr = GTLib::MapFile(m_file, static_cast<size_t>(GTLib::GetFileSize(m_file)));
+                if (m_fileDataPtr != nullptr)
                 {
-                    if (this->ReadRIFFChunks())
-                    {
-                        // We now need to determine our format.
-                        this->CalculateFormat();
-
-                        // Now we need to seek to the start of our data so that we can start reading it.
-                        GTLib::IO::Seek(this->file, this->dataStartPos, GTLib::SeekOrigin::Start);
-
-                        return true;
-                    }
-                    else
-                    {
-                        return false;
-                    }
+                    return this->ReadRIFFHeaderAndChunks();
                 }
                 else
                 {
+                    // Failed to map the file.
+                    GTLib::CloseFile(m_file);
+                    m_file = 0;
+
                     return false;
                 }
             }
             else
             {
+                // Failed to open the file.
                 return false;
             }
+        }
+        else
+        {
+            // The file is already open. This is an erroneous condition.
+            assert(false);
+            return false;
         }
     }
 
     void SoundStreamer_WAV::Close()
     {
-        GTLib::IO::Close(this->file);
-        this->file = nullptr;
+        GTLib::CloseFile(m_file);   // <-- This will also unmap.
+        m_file = 0;
+        m_fileDataPtr = nullptr;
+
+        m_audioData = nullptr;
+        m_audioDataSize = 0;
+
+        m_nextChunkData = nullptr;
+        m_nextChunkDataSize = 0;
     }
 
 
-    uint32_t SoundStreamer_WAV::ReadChunk(void* data)
+    const void* SoundStreamer_WAV::ReadNextChunk(size_t &dataSizeOut)
     {
-        assert(data != nullptr);
+        // We need to calculate how much data is available to read. To do this, we'll first move the next chunk data pointer
+        // forward by it's data size such that it will point to the new data chunk.
+        m_nextChunkData = reinterpret_cast<const void*>(reinterpret_cast<size_t>(m_nextChunkData) + m_nextChunkDataSize);
 
-        // If we're at the end of the data, we need to seek back to the start of the sound.
-        if (static_cast<uint64_t>(GTLib::IO::Tell(this->file)) == this->dataSize + this->dataStartPos)
+        const size_t targetSize = 8192 * m_numChannels * (m_bitsPerSample / 8);
+        const size_t bytesLeft  = m_audioDataSize - (reinterpret_cast<size_t>(m_nextChunkData) - reinterpret_cast<size_t>(m_audioData));
+
+        dataSizeOut = m_nextChunkDataSize = (targetSize < bytesLeft) ? targetSize : bytesLeft;
+        if (m_nextChunkDataSize != 0)
         {
-            if (!this->readChunkReturnedZero)
-            {
-                this->readChunkReturnedZero = true;
-                return 0;
-            }
-            else
-            {
-                GTLib::IO::Seek(this->file, this->dataStartPos, GTLib::SeekOrigin::Start);
-            }
+            return m_nextChunkData;
         }
-
-        // If we make it here we shouldn't be returning 0.
-        this->readChunkReturnedZero = false;
-
-        // Grab the size of a chunk for ease of use.
-        uint32_t chunk_size = this->GetChunkSize();
-
-        // Grab the number of bytes from the current position to the end of the data.
-        uint32_t bytes_left = static_cast<uint32_t>(this->dataSize - (static_cast<uint64_t>(GTLib::IO::Tell(this->file)) - this->dataStartPos));
-
-        // The number of bytes to read.
-        uint32_t bytes_to_read = (chunk_size < bytes_left) ? chunk_size : bytes_left;
-
-        // Read the data from the file.
-        GTLib::IO::Read(this->file, data, bytes_to_read);
-
-        // Fill any unread part of the buffer with silence.
-        memset(((char *)data) + bytes_to_read, 0, this->GetChunkSize() - bytes_to_read);
-
-        // Return the number of bytes we have read. If were at the end of the file, we will return 0.
-        return bytes_to_read;
+        else
+        {
+            return nullptr;
+        }
     }
 
     void SoundStreamer_WAV::Seek(double time)
     {
         assert(time >= 0.0);
 
-        // We can determine where we need to seek to by looking at our bytesPerSecond variable. To get good
-        // precision, we will convert our input time to milliseconds and then we will retrieve the bytes
-        // per millisecond. From here we can calculate our new position.
-        uint32_t time_mills     = static_cast<uint32_t>(time * 1000);
-        uint32_t bytes_per_mill = this->GetBytesPerSecond() / 1000;
-
-        uint32_t new_position = bytes_per_mill * time_mills;
-        GTLib::IO::Seek(this->file, this->dataStartPos + new_position, GTLib::SeekOrigin::Start);
-    }
-
-    uint64_t SoundStreamer_WAV::GetTotalPCMDataSize()
-    {
-        return this->dataSize;
+        m_nextChunkData     = reinterpret_cast<const int8_t*>(m_audioData) + static_cast<int>(this->GetBytesPerSecond() * time);
+        m_nextChunkDataSize = 0;
     }
 
 
-
-
-    bool SoundStreamer_WAV::ReadRIFFHeader()
+    uint16_t SoundStreamer_WAV::GetNumChannels() const
     {
+        return m_numChannels;
+    }
+
+    uint16_t SoundStreamer_WAV::GetBitsPerSample() const
+    {
+        return m_bitsPerSample;
+    }
+
+    uint32_t SoundStreamer_WAV::GetSampleRate() const
+    {
+        return m_sampleRate;
+    }
+
+    AudioDataFormat SoundStreamer_WAV::GetFormat() const
+    {
+        if (m_bitsPerSample == 8)
+        {
+            if (m_formatCode == WAVE_FORMAT_ALAW)
+            {
+                if (m_numChannels == 1)
+                {
+                    return AudioDataFormat_Mono_ALaw;
+                }
+                else if (m_numChannels == 2)
+                {
+                    return AudioDataFormat_Stereo_ALaw;
+                }
+            }
+            else if (m_formatCode == WAVE_FORMAT_MULAW)
+            {
+                if (m_numChannels == 1)
+                {
+                    return AudioDataFormat_Mono_ULaw;
+                }
+                else if (m_numChannels == 2)
+                {
+                    return AudioDataFormat_Stereo_ULaw;
+                }
+            }
+            else
+            {
+                if (m_numChannels == 1)
+                {
+                    return AudioDataFormat_Mono8;
+                }
+                else if (m_numChannels == 2)
+                {
+                    return AudioDataFormat_Stereo8;
+                }
+            }
+        }
+        else if (m_bitsPerSample == 16)
+        {
+            if (m_numChannels == 1)
+            {
+                return AudioDataFormat_Mono16;
+            }
+            else if (m_numChannels == 2)
+            {
+                return AudioDataFormat_Stereo16;
+            }
+        }
+        else if (m_bitsPerSample == 24)
+        {
+            if (m_numChannels == 1)
+            {
+                return AudioDataFormat_Mono24;
+            }
+            else if (m_numChannels == 2)
+            {
+                return AudioDataFormat_Stereo24;
+            }
+        }
+        else if (m_bitsPerSample == 32)
+        {
+            if (m_formatCode == WAVE_FORMAT_PCM)
+            {
+                // TODO: How would we handle this? Just add support for 32-bit with a data conversion?
+            }
+            else
+            {
+                if (m_numChannels == 1)
+                {
+                    return AudioDataFormat_Mono32F;
+                }
+                else if (m_numChannels == 2)
+                {
+                    return AudioDataFormat_Stereo32F;
+                }
+            }
+        }
+        else if (m_bitsPerSample == 64)
+        {
+            if (m_formatCode == WAVE_FORMAT_PCM)
+            {
+                // TODO: How would we handle this? Just add support for 64-bit with a data conversion?
+            }
+            else
+            {
+                if (m_numChannels == 1)
+                {
+                    return AudioDataFormat_Mono64F;
+                }
+                else if (m_numChannels == 2)
+                {
+                    return AudioDataFormat_Stereo64F;
+                }
+            }
+        }
+
+
+        // Default case.
+        return AudioDataFormat_Mono8;
+    }
+
+
+
+    bool SoundStreamer_WAV::ReadRIFFHeaderAndChunks()
+    {
+        const uint32_t ChunkID_RIFF = 0x46464952;
+        const uint32_t ChunkID_WAVE = 0x45564157;
+        const uint32_t ChunkID_FMT  = 0x20746D66;
+        const uint32_t ChunkID_DATA = 0x61746164;
+
+        const uint32_t* fileData32 = reinterpret_cast<const uint32_t*>(m_fileDataPtr);
+
         // The first 4 bytes should read "RIFF".
-	    char riff[4];
-        GTLib::IO::Read(this->file, riff, 4);
-        if (riff[0] != 'R' || riff[1] != 'I' || riff[2] != 'F' || riff[3] != 'F')
-	    {
+        if (*fileData32++ != ChunkID_RIFF)
+        {
             GTEngine::PostError("SoundStreamer_WAV::ReadRIFFHeader() - File is not a RIFF file.");
 		    return false;
-	    }
+        }
 
-	    // Grab the size of the file.
-	    uint32_t fileSize;
-        GTLib::IO::Read(this->file, &fileSize, 4);
-	    if (fileSize == 0)
-	    {
-            GTEngine::PostError("SoundStreamer_WAV::ReadRIFFHeader() - File size is 0.");
-		    return false;
-	    }
+        if (*fileData32++ == 0)
+        {
+            GTEngine::PostError("SoundStreamer_WAV::ReadRIFFHeader() - cksize is 0.");
+            return false;
+        }
 
-	    // The next 4 bytes should read "WAVE". This indicates that the RIFF
-	    // file is a WAVE file.
-	    char wave[4];
-        GTLib::IO::Read(this->file, wave, 4);
-        if (wave[0] != 'W' || wave[1] != 'A' || wave[2] != 'V' || wave[3] != 'E')
-	    {
+        if (*fileData32++ != ChunkID_WAVE)
+        {
             GTEngine::PostError("SoundStreamer_WAV::ReadRIFFHeader() - File is not a WAVE file.");
 		    return false;
-	    }
+        }
 
-	    return true;
-    }
 
-    bool SoundStreamer_WAV::ReadRIFFChunks()
-    {
-        // The name of the chunk we're reading.
-	    char chunk_name[5]; chunk_name[4] = '\0';
+        // Determines if we've found our needed chunks.
+	    bool foundFMT  = false;
+	    bool foundDATA = false;
 
-	    // The size of the chunk we're looking at so we can skip over it.
-	    uint32_t chunk_size = 0;
+        size_t bytesRead = 12;      // <-- We start at 12 here, because this should always come after the RIFF header, which is 12 bytes.
 
-	    // Determines if we've found our needed chunks.
-	    bool found_fmt = false;
-	    bool found_data = false;
+        while ((!foundFMT || !foundDATA) && bytesRead < GTLib::GetFileSize(m_file))
+        {
+            const uint32_t chunkName = *fileData32++;
+            const uint32_t chunkSize = *fileData32++;
 
-        while ((!found_fmt || !found_data) && !GTLib::IO::AtEnd(this->file))
-	    {
-		    // Read in the name and size of the chunk.
-            GTLib::IO::Read(this->file, chunk_name, 4);
-            GTLib::IO::Read(this->file, &chunk_size, 4);
+            switch (chunkName)
+            {
+            case ChunkID_FMT:
+                {
+                    const uint16_t* chunkData = reinterpret_cast<const uint16_t*>(fileData32);
 
-		    // Now check the name of the chunk and perform the appropriate operations.
-            if (GTLib::Strings::Equal<false>(chunk_name, "fmt "))
-		    {
-			    // We've found the fmt chunk.
-			    found_fmt = true;
+                    // Format code - 2 bytes
+                    m_formatCode = chunkData[0];
+			        if (m_formatCode != WAVE_FORMAT_PCM && m_formatCode != WAVE_FORMAT_IEEE_FLOAT && m_formatCode != WAVE_FORMAT_ALAW && m_formatCode != WAVE_FORMAT_MULAW)
+			        {
+                        GTEngine::PostError("SoundStreamer_WAV::ReadRIFFChunks() - Unsupported compression format.");
+				        return false;
+			        }
 
-			    // Grab the format code. We only support a value of 1 (PCM).
-                GTLib::IO::Read(this->file, &m_formatCode, 2);
-			    if (m_formatCode != WAVE_FORMAT_PCM && m_formatCode != WAVE_FORMAT_IEEE_FLOAT && m_formatCode != WAVE_FORMAT_ALAW && m_formatCode != WAVE_FORMAT_MULAW)
-			    {
-                    GTEngine::PostError("SoundStreamer_WAV::ReadRIFFChunks() - Unsupported compression format.");
-				    return false;
-			    }
 
-			    // Read the number of channels.
-                GTLib::IO::Read(this->file, &this->numChannels, 2);
+                    // Channels count - 2 bytes.
+                    m_numChannels = chunkData[1];
 
-			    // Read the sample rate.
-                GTLib::IO::Read(this->file, &this->sampleRate, 4);
+                    // Sample rate, per second - 4 bytes.
+                    m_sampleRate = (chunkData[2] << 0) | (chunkData[3] << 16);
 
-			    // We can skip over our bytes per second and block align. These can be calculated from other properties.
-                GTLib::IO::Seek(this->file, 4, GTLib::SeekOrigin::Current);   // <-- bytes-per-second
-                GTLib::IO::Seek(this->file, 2, GTLib::SeekOrigin::Current);   // <-- block align
+                    // Average bytes per second - 4 bytes.
+                    m_averageBytesPerSecond = (chunkData[4] << 0) | (chunkData[5] << 16);
 
-			    // Read the significant bits per sample.
-                GTLib::IO::Read(this->file, &this->bitsPerSample, 2);
+                    // Block align - 2 bytes.
+                    m_blockAlign = chunkData[6];
 
-			    // Now we need to check if we have to read the number of extra bytes. We can
-			    // determine this by looking at the block size. If it is 16, we don't have
-			    // the bytes for the extra part. If it is 18, we do.
-			    if (chunk_size == 18)
-			    {
-				    // Read in the extra bytes and skip over them.
-				    uint16_t extra = 0;
-                    GTLib::IO::Read(this->file, &extra, 2);
-                    GTLib::IO::Seek(this->file, extra, GTLib::SeekOrigin::Current);
-			    }
-		    }
-            else if (GTLib::Strings::Equal<false>(chunk_name, "data"))
-		    {
-			    // We've found the data chunk.
-			    found_data = true;
+                    // Bits per sample - 2 bytes.
+                    m_bitsPerSample = chunkData[7];
 
-			    // Our current position is the start of the data.
-                this->dataStartPos = static_cast<uint64_t>(GTLib::IO::Tell(this->file));
+                    
 
-			    // Set the size of the data.
-			    this->dataSize = chunk_size;
 
-			    // Skip over the data. We will move back here when it is time to read the data.
-                GTLib::IO::Seek(this->file, this->dataSize, GTLib::SeekOrigin::Current);
-		    }
-		    else
-		    {
-			    // We're not interested in the chunk, so skip over it.
-                GTLib::IO::Seek(this->file, chunk_size, GTLib::SeekOrigin::Current);
-		    }
-	    }
+                    foundFMT = true;
+                    break;
+                }
 
-	    if (!found_fmt || !found_data)
+            case ChunkID_DATA:
+                {
+                    m_audioData     = reinterpret_cast<const void*>(fileData32);
+                    m_audioDataSize = static_cast<uint32_t>(chunkSize);
+
+                    m_nextChunkData     = m_audioData;
+                    m_nextChunkDataSize = 0;
+
+
+                    foundDATA = true;
+                    break;
+                }
+
+            default:
+                {
+                    // We don't care about this chunk - skip over it.
+                    break;
+                }
+            }
+
+
+            bytesRead += chunkSize;
+            fileData32 = reinterpret_cast<const uint32_t*>(reinterpret_cast<size_t>(fileData32) + chunkSize);
+        }
+
+        if (!foundFMT || !foundDATA)
 	    {
             GTEngine::PostError("SoundStreamer_WAV::ReadRIFFChunks() - FMT and/or DATA chunks were not found.");
 		    return false;
@@ -269,104 +343,6 @@ namespace GTEngine
 
     uint32_t SoundStreamer_WAV::GetBytesPerSecond() const
     {
-	    return ((this->bitsPerSample / 8U) * this->numChannels) * this->sampleRate;
-    }
-
-    void SoundStreamer_WAV::CalculateFormat()
-    {
-        if (this->bitsPerSample == 8)
-        {
-            if (m_formatCode == WAVE_FORMAT_ALAW)
-            {
-                if (this->numChannels == 1)
-                {
-                    this->format = AudioDataFormat_Mono_ALaw;
-                }
-                else if (this->numChannels == 2)
-                {
-                    this->format = AudioDataFormat_Stereo_ALaw;
-                }
-            }
-            else if (m_formatCode == WAVE_FORMAT_MULAW)
-            {
-                if (this->numChannels == 1)
-                {
-                    this->format = AudioDataFormat_Mono_ULaw;
-                }
-                else if (this->numChannels == 2)
-                {
-                    this->format = AudioDataFormat_Stereo_ULaw;
-                }
-            }
-            else
-            {
-                if (this->numChannels == 1)
-                {
-                    this->format = AudioDataFormat_Mono8;
-                }
-                else if (this->numChannels == 2)
-                {
-                    this->format = AudioDataFormat_Stereo8;
-                }
-            }
-        }
-        else if (this->bitsPerSample == 16)
-        {
-            if (this->numChannels == 1)
-            {
-                this->format = AudioDataFormat_Mono16;
-            }
-            else if (this->numChannels == 2)
-            {
-                this->format = AudioDataFormat_Stereo16;
-            }
-        }
-        else if (this->bitsPerSample == 24)
-        {
-            if (this->numChannels == 1)
-            {
-                this->format = AudioDataFormat_Mono24;
-            }
-            else if (this->numChannels == 2)
-            {
-                this->format = AudioDataFormat_Stereo24;
-            }
-        }
-        else if (this->bitsPerSample == 32)
-        {
-            if (m_formatCode == 1)
-            {
-                // TODO: How would we handle this? Just add support for 32-bit with a data conversion?
-            }
-            else
-            {
-                if (this->numChannels == 1)
-                {
-                    this->format = AudioDataFormat_Mono32F;
-                }
-                else if (this->numChannels == 2)
-                {
-                    this->format = AudioDataFormat_Stereo32F;
-                }
-            }
-        }
-        else if (this->bitsPerSample == 64)
-        {
-            if (m_formatCode == 1)
-            {
-                // TODO: How would we handle this? Just add support for 64-bit with a data conversion?
-            }
-            else
-            {
-                if (this->numChannels == 1)
-                {
-                    this->format = AudioDataFormat_Mono64F;
-                }
-                else if (this->numChannels == 2)
-                {
-                    this->format = AudioDataFormat_Stereo64F;
-                }
-            }
-        }
+	    return ((m_bitsPerSample / 8U) * m_numChannels) * m_sampleRate;
     }
 }
