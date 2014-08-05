@@ -6,8 +6,7 @@
 namespace GTEngine
 {
     SoundStreamer::SoundStreamer(const char* fileName)
-        : absolutePath(),
-          numChannels(0), bitsPerSample(0), sampleRate(0), format(AudioDataFormat_Mono8)
+        : absolutePath()
     {
         GTLib::Path path(fileName);
         path.MakeAbsolute();
@@ -19,9 +18,11 @@ namespace GTEngine
     {
     }
 
-    uint32_t SoundStreamer::GetChunkSize()
+#if 0
+    size_t SoundStreamer::GetChunkSize() const
     {
         // TODO: Handle this correctly.
         return 16384;
     }
+#endif
 }
