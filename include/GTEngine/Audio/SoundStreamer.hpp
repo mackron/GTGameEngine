@@ -37,31 +37,20 @@ namespace GTEngine
         /// Closes the streamer.
         virtual void Close() = 0;
 
-        /// Prepares the next chunk for reading.
-        ///
-        /// @return The size in bytes of the buffer required to store the data chunk. Returns 0 if there are no chunks available to read.
-        ///
-        /// @remarks
-        ///     To read a chunk, first call this method, then allocate a buffer using the return value, then call ReadNextChunk().
-        ///     @par
-        ///     For compressed audio formats, this will usually be where the data is actually loaded and processed. Assume that this is
-        ///     a slow function.
-        ///     @par
-        ///     When PrepareNextChunk() returns zero, the next call will loop back to the start.
-        //virtual size_t PrepareNextChunk() = 0;
 
         /// Reads the next data chunk.
         ///
-        /// @param dataOut [in] A pointer to the buffer that will receive the data chunk.
+        /// @param dataSizeOut [in] A reference to the variable that will receive the size in bytes of the returned buffer.
         ///
-        /// @return The number of bytes that were copied into the output buffer.
+        /// @return A pointer to the buffer containing the audio data.
         ///
         /// @remarks
-        ///     The size of the dataOut buffer should be at least that of the return value of the preceding call to PrepareNextChunk().
-        ///     @par
-        ///     The return value of ReadNextChunk() should always be the same as the preceding call to PrepareNextChunk().
-        ///     @par
         ///     This will not loop back to the start. To do this, call Seek(0).
+        ///     @par
+        ///     The returned pointer should not be cached. It should be considered invalid after the next call to ReadNextChunk().
+        ///     @par
+        ///     The returned pointer is memory managed internally. The buffer will become invalid after destruction, the next call
+        ///     to ReadNextChunk() and Close().
         virtual const void* ReadNextChunk(size_t &dataSizeOut) = 0;
 
         /**

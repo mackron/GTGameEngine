@@ -851,9 +851,6 @@
     <ClInclude Include="..\..\..\include\GTEngine\Physics\StaticMeshCollisionShape.hpp">
       <Filter>Header Files\Physics</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp">
-      <Filter>Source Files\Audio\Streamers</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp">
       <Filter>Source Files\Audio\Streamers</Filter>
     </ClInclude>
@@ -1048,6 +1045,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\Audio\g711.h">
       <Filter>Source Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_Vorbis.hpp">
+      <Filter>Source Files\Audio\Streamers</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1310,9 +1310,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Audio\SoundStreamer.cpp">
       <Filter>Source Files\Audio</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.cpp">
-      <Filter>Source Files\Audio\Streamers</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.cpp">
       <Filter>Source Files\Audio\Streamers</Filter>
@@ -1834,6 +1831,9 @@
       <Filter>Source Files\Audio</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Audio\Streamers\stb_vorbis.c">
+      <Filter>Source Files\Audio\Streamers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_Vorbis.cpp">
       <Filter>Source Files\Audio\Streamers</Filter>
     </ClCompile>
   </ItemGroup>

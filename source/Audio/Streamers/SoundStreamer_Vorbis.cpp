@@ -1,21 +1,25 @@
-// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
+// Copyright (C) 2011 - 2013 David Reid. See included LICENCE.
 
-#include "SoundStreamer_OGG.hpp"
+#include "SoundStreamer_Vorbis.hpp"
 
 namespace GT
 {
     namespace Engine
     {
+        static const size_t ChunkSampleCount = 16384;       // <-- This controls the size of each streaming chunk. Larger values mean more memory usage, but less chance of stuttering.
+
         SoundStreamer_Vorbis::SoundStreamer_Vorbis(const char* filePath)
             : SoundStreamer(filePath),
               m_file(0), m_fileDataPtr(0),
-              m_vorbis(nullptr)
+              m_vorbis(nullptr), m_vorbisInfo(),
+              m_nextChunkData(nullptr)
         {
         }
 
         SoundStreamer_Vorbis::~SoundStreamer_Vorbis()
         {
             GTLib::CloseFile(m_file);   // <-- This will also unmap.
+            free(m_nextChunkData);
         }
 
 
@@ -34,6 +38,9 @@ namespace GT
                         m_vorbis = stb_vorbis_open_memory(reinterpret_cast<unsigned char*>(m_fileDataPtr), static_cast<int>(GTLib::GetFileSize(m_file)), &error, nullptr);
                         if (m_vorbis != nullptr)
                         {
+                            m_vorbisInfo = stb_vorbis_get_info(m_vorbis);
+                            m_nextChunkData = reinterpret_cast<float*>(malloc(m_vorbisInfo.channels * ChunkSampleCount * sizeof(float)));
+
                             return true;
                         }
                         else
@@ -76,19 +83,70 @@ namespace GT
 
             stb_vorbis_close(m_vorbis);
             m_vorbis = nullptr;
+
+            free(m_nextChunkData);
+            m_nextChunkData = nullptr;
         }
 
 
         const void* SoundStreamer_Vorbis::ReadNextChunk(size_t &dataSizeOut)
         {
-            (void)dataSizeOut;
-            return nullptr;
+            dataSizeOut = stb_vorbis_get_samples_float_interleaved(m_vorbis, m_vorbisInfo.channels, m_nextChunkData, ChunkSampleCount * m_vorbisInfo.channels) * m_vorbisInfo.channels * sizeof(float);
+            if (dataSizeOut > 0)
+            {
+                return m_nextChunkData;
+            }
+            else
+            {
+                return nullptr;
+            }
         }
 
 
         void SoundStreamer_Vorbis::Seek(double time)
         {
             (void)time;
+
+            if (time == 0.0)
+            {
+                stb_vorbis_seek_start(m_vorbis);
+            }
+            else
+            {
+                // Not working at the moment.
+            }
+        }
+
+
+        uint16_t SoundStreamer_Vorbis::GetNumChannels() const
+        {
+            return static_cast<uint16_t>(m_vorbisInfo.channels);
+        }
+
+        uint16_t SoundStreamer_Vorbis::GetBitsPerSample() const
+        {
+            return 4;   // Float data.
+        }
+
+        uint32_t SoundStreamer_Vorbis::GetSampleRate() const
+        {
+            return m_vorbisInfo.sample_rate;
+        }
+
+        GTEngine::AudioDataFormat SoundStreamer_Vorbis::GetFormat() const
+        {
+            if (m_vorbisInfo.channels == 1)
+            {
+                return GTEngine::AudioDataFormat_Mono32F;
+            }
+            else if (m_vorbisInfo.channels == 2)
+            {
+                return GTEngine::AudioDataFormat_Stereo32F;
+            }
+
+
+            // Default case.
+            return GTEngine::AudioDataFormat_Mono32F;
         }
     }
 }
