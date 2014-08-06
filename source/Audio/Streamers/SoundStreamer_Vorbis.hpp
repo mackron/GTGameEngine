@@ -1,4 +1,4 @@
-// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+// Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #ifndef __GT_Engine_SoundStreamer_Vorbis_hpp_
 #define __GT_Engine_SoundStreamer_Vorbis_hpp_

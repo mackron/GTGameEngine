@@ -1,4 +1,4 @@
-// Copyright (C) 2011 - 2013 David Reid. See included LICENCE.
+// Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #pragma warning(push)
 #pragma warning(disable: 4100)
