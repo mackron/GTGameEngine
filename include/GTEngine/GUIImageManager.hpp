@@ -1,4 +1,4 @@
-// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
+// Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #ifndef __GTEngine_GUIImageManager_hpp_
 #define __GTEngine_GUIImageManager_hpp_
