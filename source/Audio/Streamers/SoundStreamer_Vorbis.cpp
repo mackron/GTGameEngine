@@ -1,5 +1,16 @@
 // Copyright (C) 2011 - 2013 David Reid. See included LICENCE.
 
+#pragma warning(push)
+#pragma warning(disable: 4100)
+#pragma warning(disable: 4127)
+#pragma warning(disable: 4189)
+#pragma warning(disable: 4244)
+#define STB_VORBIS_NO_STDIO
+#define STB_VORBIS_NO_PUSHDATA_API
+#define STB_VORBIS_NO_INTEGER_CONVERSION
+#include "../../stb/stb_vorbis.c"
+#pragma warning(pop)
+
 #include "SoundStreamer_Vorbis.hpp"
 
 namespace GT

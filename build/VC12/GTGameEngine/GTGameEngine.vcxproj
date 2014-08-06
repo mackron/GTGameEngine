@@ -400,7 +400,6 @@
     <ClCompile Include="..\..\..\source\Audio\SoundStreamer.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_Vorbis.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.cpp" />
-    <ClCompile Include="..\..\..\source\Audio\Streamers\stb_vorbis.c" />
     <ClCompile Include="..\..\..\source\Bone.cpp" />
     <ClCompile Include="..\..\..\source\Component.cpp" />
     <ClCompile Include="..\..\..\source\Components\CameraComponent.cpp" />
