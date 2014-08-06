@@ -1,4 +1,4 @@
-// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
+// Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 // This file is where anything requiring Assimp is located. It is forbidden to place any Assimp code anywhere other
 // than inside this file. FORBIDDEN, I TELL YOU!

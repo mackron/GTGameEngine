@@ -1,4 +1,4 @@
-// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
+// Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #ifndef __GTGameEngine_AudioEngine_OpenAL_hpp_
 #define __GTGameEngine_AudioEngine_OpenAL_hpp_

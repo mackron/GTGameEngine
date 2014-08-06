@@ -1,4 +1,4 @@
-// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
+// Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include "Shader_OpenGL21.hpp"
 #include "Texture2D_OpenGL21.hpp"

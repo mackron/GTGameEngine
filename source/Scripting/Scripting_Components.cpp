@@ -1,4 +1,4 @@
-// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
+// Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/Scripting/Scripting_Components.hpp>
 #include <GTEngine/Scripting/Scripting_Animation.hpp>

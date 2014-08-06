@@ -1,4 +1,4 @@
-// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
+// Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include "RCSetFramebufferState_OpenGL21.hpp"
 #include "ServerState_OpenGL21.hpp"
