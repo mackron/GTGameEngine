@@ -1,4 +1,4 @@
-// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
+// Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #ifndef __GT_Engine_GameStateManager_hpp_
 #define __GT_Engine_GameStateManager_hpp_

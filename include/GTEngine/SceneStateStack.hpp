@@ -1,4 +1,4 @@
-// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file or GTEngine.hpp.
+// Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #ifndef __GTEngine_SceneStateStack_hpp_
 #define __GTEngine_SceneStateStack_hpp_
