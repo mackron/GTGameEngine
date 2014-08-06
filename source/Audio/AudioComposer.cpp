@@ -4,7 +4,7 @@
 #include <GTEngine/GTEngine.hpp>                // <-- For g_EngineContext.
 #include <GTEngine/Errors.hpp>
 #include "Streamers/SoundStreamer_WAV.hpp"
-#include "Streamers/SoundStreamer_OGG.hpp"
+#include "Streamers/SoundStreamer_Vorbis.hpp"
 
 #include <GTLib/Threading.hpp>
 #include <GTLib/IO.hpp>
@@ -29,12 +29,15 @@ namespace GTEngine
         {
             AudioComposer::DeleteStreamer(&this->streamer);
 
-            g_EngineContext->GetAudioSystem().UnqueueAudioBuffer(this->source);
-            g_EngineContext->GetAudioSystem().UnqueueAudioBuffer(this->source);
+            if (g_EngineContext != nullptr)
+            {
+                g_EngineContext->GetAudioSystem().UnqueueAudioBuffer(this->source);
+                g_EngineContext->GetAudioSystem().UnqueueAudioBuffer(this->source);
 
-            g_EngineContext->GetAudioSystem().DeleteAudioBuffer(this->backBuffer);
-            g_EngineContext->GetAudioSystem().DeleteAudioBuffer(this->frontBuffer);
-            g_EngineContext->GetAudioSystem().DeleteSound(this->source);
+                g_EngineContext->GetAudioSystem().DeleteAudioBuffer(this->backBuffer);
+                g_EngineContext->GetAudioSystem().DeleteAudioBuffer(this->frontBuffer);
+                g_EngineContext->GetAudioSystem().DeleteSound(this->source);
+            }
         }
 
 
@@ -252,6 +255,11 @@ namespace GTEngine
             {
                 return new SoundStreamer_WAV(absolutePath.c_str());
             }
+
+            if (GTLib::Strings::Equal<false>(ext, "ogg"))
+            {
+                return new GT::Engine::SoundStreamer_Vorbis(absolutePath.c_str());
+            }
         }
 
         return nullptr;
@@ -269,6 +277,6 @@ namespace GTEngine
 {
     bool AudioComposer::IsFileExtensionSupported(const char* extension)
     {
-        return GTLib::Strings::Equal<false>(extension, "wav");
+        return GTLib::Strings::Equal<false>(extension, "wav") || GTLib::Strings::Equal<false>(extension, "ogg");;
     }
 }

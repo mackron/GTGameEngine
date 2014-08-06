@@ -335,7 +335,7 @@
     <ClInclude Include="..\..\..\include\gtgl\gtgl_wgl.h" />
     <ClInclude Include="..\..\..\source\Audio\g711.h" />
     <ClInclude Include="..\..\..\source\Audio\OpenAL\AudioEngine_OpenAL.hpp" />
-    <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.hpp" />
+    <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_Vorbis.hpp" />
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.hpp" />
     <ClInclude Include="..\..\..\source\gtgl\debugging\gtgl_debugging_common.h" />
     <ClInclude Include="..\..\..\source\gtgl\emulators\gtgl_arb_debug_output.h" />
@@ -398,7 +398,7 @@
     <ClCompile Include="..\..\..\source\Audio\OpenAL\AudioEngine_OpenAL.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Sound.cpp" />
     <ClCompile Include="..\..\..\source\Audio\SoundStreamer.cpp" />
-    <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_OGG.cpp" />
+    <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_Vorbis.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_WAV.cpp" />
     <ClCompile Include="..\..\..\source\Audio\Streamers\stb_vorbis.c" />
     <ClCompile Include="..\..\..\source\Bone.cpp" />
