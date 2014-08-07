@@ -7,12 +7,16 @@ namespace GT
 {
     namespace Engine
     {
+        static const size_t MaxDormantThreads = 64;     ///< The maximum number of threads to allow to lie around dormant.
+
+
         EngineContext::EngineContext(int argc, char** argv)
             : m_commandLine(argc, argv),
               m_executableDirectoryAbsolutePath(),
               m_applicationConfig(),
               m_messageHandler(), m_messageDispatcher(),
-              m_audioSystem(nullptr), m_audioPlaybackDevice(0), m_audioListener(0)
+              m_audioSystem(nullptr), m_audioPlaybackDevice(0), m_audioListener(0),
+              m_activeThreads(), m_dormantThreads(), m_threadManagementLock()
         {
             // First this is to more into the applications directory. We get this from the command line.
             GTLib::IO::SetCurrentDirectory(m_commandLine.GetApplicationDirectory());
@@ -99,6 +103,34 @@ namespace GT
         EngineContext::~EngineContext()
         {
             //////////////////////////////////////////
+            // Threading
+            //
+            // All threads need to be unacquired, and we need to wait for them all to finish executing.
+
+            this->UnacquireAllThreads();
+
+            GTLib::Vector<GTLib::Thread*> threadsToDelete;
+            m_threadManagementLock.Lock();
+            {
+                threadsToDelete = m_dormantThreads;
+            }
+            m_threadManagementLock.Unlock();
+
+            for (size_t iThread = 0; iThread < threadsToDelete.GetCount(); ++iThread)
+            {
+                auto thread = threadsToDelete[iThread];
+                assert(thread != nullptr);
+                {
+                    thread->Stop();
+                    thread->Wait();
+
+                    delete thread;
+                }
+            }
+
+
+
+            //////////////////////////////////////////
             // Audio System
 
             m_audioSystem->DeleteListener(m_audioListener);
@@ -139,6 +171,91 @@ namespace GT
         const char* EngineContext::GetExecutableDirectoryAbsolutePath() const
         {
             return m_executableDirectoryAbsolutePath.c_str();
+        }
+
+
+
+        ////////////////////////////////////////////////////
+        // Threading
+
+        GTLib::Thread* EngineContext::AcquireThread()
+        {
+            GTLib::Thread* thread = nullptr;
+
+            m_threadManagementLock.Lock();
+            {
+                // First try getting a dormant thread. Technically, there's a small chance a dormant thread is still running, in which case we don't
+                // want to consider those for the sake of efficiency.
+                if (m_dormantThreads.GetCount() > 0)
+                {
+                    // Loop from the back.
+                    size_t iThread = m_dormantThreads.GetCount();
+                    do
+                    {
+                        --iThread;
+
+                        thread = m_dormantThreads[iThread];
+                        if (!thread->Busy())
+                        {
+                            m_dormantThreads.Remove(iThread);
+                        }
+                    } while (iThread > 0);
+                }
+
+                // If we haven't got a thread at this point it means there was no available dormant thread and thus we need to create a new one.
+                if (thread == nullptr)
+                {
+                    thread = new GTLib::Thread();
+                }
+
+
+                // The thread needs to be added to the active threads list.
+                assert(thread != nullptr);
+                {
+                    m_activeThreads.PushBack(thread);
+                }
+            }
+            m_threadManagementLock.Unlock();
+            
+
+            return thread;
+        }
+
+        void EngineContext::UnacquireThread(GTLib::Thread* thread)
+        {
+            m_threadManagementLock.Lock();
+            {
+                this->UnacquireThreadNoLock(thread);
+            }
+            m_threadManagementLock.Unlock();
+        }
+
+        void EngineContext::UnacquireThreadNoLock(GTLib::Thread* thread)
+        {
+            assert(thread != nullptr);
+
+            m_activeThreads.RemoveFirstOccuranceOf(thread);
+
+            if (m_dormantThreads.GetCount() < MaxDormantThreads)
+            {
+                m_dormantThreads.PushBack(thread);
+            }
+            else
+            {
+                delete thread;
+            }
+        }
+
+        void EngineContext::UnacquireAllThreads()
+        {
+            m_threadManagementLock.Lock();
+            {
+                while (m_activeThreads.GetCount() > 0)
+                {
+                    this->UnacquireThreadNoLock(m_activeThreads.GetBack());
+                }
+            }
+            m_threadManagementLock.Unlock();
         }
 
 

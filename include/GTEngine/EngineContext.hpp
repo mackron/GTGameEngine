@@ -8,6 +8,8 @@
 #include "DefaultMessageHandler.hpp"
 #include "Audio/AudioEngine.hpp"
 #include <GTLib/CommandLine.hpp>
+#include <GTLib/Vector.hpp>
+#include <GTLib/Threading.hpp>
 
 #undef GetCommandLine
 
@@ -57,6 +59,46 @@ namespace GT
 
 
             ////////////////////////////////////////////////////
+            // Threading
+
+            /// Retrieves a thread.
+            ///
+            /// @return A pointer to the new thread.
+            ///
+            /// @remarks
+            ///     The returned thread should be unacquired when it is no longer in use.
+            ///     @par
+            ///     This function is thread-safe.
+            GTLib::Thread* AcquireThread();
+
+            /// Unacquires a thread that will previously acquired with AcquireThread().
+            ///
+            /// @param thread [in] A pointer to the thread to unacquire.
+            ///
+            /// @remarks
+            ///     This function will not wait until the thread is finished executing it's current function.
+            ///     @par
+            ///     This function is thread-safe.
+            void UnacquireThread(GTLib::Thread* thread);
+            void UnacquireThread(GTLib::Thread &thread) { this->UnacquireThread(&thread); }
+
+            /// Unacquires a thread without locking.
+            ///
+            /// @param thread [in] A pointer to the thread to unacquire.
+            ///
+            /// @remarks
+            ///     This function is the same as UnacquireThread(), except that it is not thread safe.
+            void UnacquireThreadNoLock(GTLib::Thread* thread);
+
+            /// Unacquires every acquired thread.
+            ///
+            /// @remarks
+            ///     This is mainly intended for the shutdown process so that threads can complete execution before the engine is shutdown.
+            void UnacquireAllThreads();
+
+
+
+            ////////////////////////////////////////////////////
             // Messages
 
             /// @copydoc GT::MessageDispatcher::PostMessage(const Message &)
@@ -101,11 +143,26 @@ namespace GT
             /// The command line object. This is constructed from the argc and argv parameters in the constructor.
             GTLib::CommandLine m_commandLine;
 
+
             /// The absolute path of the directory the application's executable is located in.
             GTLib::String m_executableDirectoryAbsolutePath;
 
+
+            /// The list of every active thread that is owned by the engine. When a thread is created, it'll be added to this list. When a thread is
+            /// deleted, it will not actually be destructed - instead it will be added to the dormant thread list for re-use. This is done this way
+            /// so that rapid thread creation and deletion is efficient.
+            GTLib::Vector<GTLib::Thread*> m_activeThreads;
+
+            /// The list of every dormant thread that can be reused.
+            GTLib::Vector<GTLib::Thread*> m_dormantThreads;
+
+            /// The mutex for controlling access to the thread acquiring/unacquiring procedures.
+            GTLib::Mutex m_threadManagementLock;
+
+
             /// The application config.
             ApplicationConfig m_applicationConfig;
+
 
             /// The default message handler.
             DefaultMessageHandler m_messageHandler;
