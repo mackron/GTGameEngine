@@ -19,8 +19,8 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        PlaySoundThreadJob(SoundStreamer &streamer, SoundHandle source, AudioBufferHandle buffers[2])
-            : streamer(streamer), source(source), backBuffer(buffers[0]), frontBuffer(buffers[1])
+        PlaySoundThreadJob(GTLib::Thread* thread, SoundStreamer &streamer, SoundHandle source, AudioBufferHandle buffers[2])
+            : m_thread(thread), streamer(streamer), source(source), backBuffer(buffers[0]), frontBuffer(buffers[1])
         {
         }
 
@@ -29,15 +29,12 @@ namespace GTEngine
         {
             AudioComposer::DeleteStreamer(&this->streamer);
 
-            if (g_EngineContext != nullptr)
-            {
-                g_EngineContext->GetAudioSystem().UnqueueAudioBuffer(this->source);
-                g_EngineContext->GetAudioSystem().UnqueueAudioBuffer(this->source);
+            g_EngineContext->GetAudioSystem().UnqueueAudioBuffer(this->source);
+            g_EngineContext->GetAudioSystem().UnqueueAudioBuffer(this->source);
 
-                g_EngineContext->GetAudioSystem().DeleteAudioBuffer(this->backBuffer);
-                g_EngineContext->GetAudioSystem().DeleteAudioBuffer(this->frontBuffer);
-                g_EngineContext->GetAudioSystem().DeleteSound(this->source);
-            }
+            g_EngineContext->GetAudioSystem().DeleteAudioBuffer(this->backBuffer);
+            g_EngineContext->GetAudioSystem().DeleteAudioBuffer(this->frontBuffer);
+            g_EngineContext->GetAudioSystem().DeleteSound(this->source);
         }
 
 
@@ -74,14 +71,8 @@ namespace GTEngine
 
 
             // Now we can start looping until we've finished playing the sound.
-            for (;;)
+            while (!m_thread->WantsToStop())
             {
-                // If we no longer have an engine context, just return here.
-                if (g_EngineContext == nullptr)
-                {
-                    break;
-                }
-
                 // First we swap the buffers. This will not return until the swap has occured.
                 this->SwapBuffers();
 
@@ -94,13 +85,13 @@ namespace GTEngine
                 }
 
                 // We just retrieved valid data, so we just update the buffer again.
-                if (g_EngineContext != nullptr)
-                {
-                    g_EngineContext->GetAudioSystem().SetAudioBufferData(this->backBuffer, chunkData, chunkSizeInBytes, this->streamer.GetFormat(), this->streamer.GetSampleRate());
-                    g_EngineContext->GetAudioSystem().QueueAudioBuffer(this->source, this->backBuffer);
-                }
+                g_EngineContext->GetAudioSystem().SetAudioBufferData(this->backBuffer, chunkData, chunkSizeInBytes, this->streamer.GetFormat(), this->streamer.GetSampleRate());
+                g_EngineContext->GetAudioSystem().QueueAudioBuffer(this->source, this->backBuffer);
             }
 
+
+            // The thread needs to unacquire itself.
+            g_EngineContext->UnacquireThread(m_thread);
 
             // It looks bad, but we actually delete ourselves after we've finished running.
             delete this;
@@ -115,12 +106,6 @@ namespace GTEngine
             // We need to wait for the front buffer to finish processing before returning. We'll throw ourselves into a slow loop for this.
             for (;;)
             {
-                // If we no longer have an engine context, just return here.
-                if (g_EngineContext == nullptr)
-                {
-                    break;
-                }
-
                 // We may need to restart playback. If the sound is not playing it may need to be restarted.
                 if (!g_EngineContext->GetAudioSystem().IsSoundPlaying(this->source))
                 {
@@ -162,6 +147,9 @@ namespace GTEngine
 
 
     private:
+
+        /// A pointer to the thread that is running this sound streaming.
+        GTLib::Thread* m_thread;
 
         /// The streamer that the sound data will be read from.
         SoundStreamer &streamer;
@@ -212,7 +200,11 @@ namespace GTEngine
 
 
             // Here we start running a thread that will play the sound.
-            GTLib::Thread(*(new PlaySoundThreadJob(*streamer, source, buffers)));
+            auto thread = g_EngineContext->AcquireThread();
+            if (thread != nullptr)
+            {
+                thread->Start(*(new PlaySoundThreadJob(thread, *streamer, source, buffers)));
+            }
 
             return true;
         }
