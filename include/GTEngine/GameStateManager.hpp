@@ -433,6 +433,112 @@ namespace GTEngine
         /// Maps a scene's relative file path to it's serialized data.
         GTLib::Dictionary<SceneStateStackRestoreCommands*> m_sceneData;
     };
+
+
+
+
+    /// The default game state manager.
+    ///
+    /// This can be used as the game state manager for most games. If more flexibility is required, you may want to
+    /// consider rolling out a custom game state manager implementation.
+    class DefaultGameStateManager : public GenericGameStateManager
+    {
+    public:
+
+        /// Constructor.
+        DefaultGameStateManager();
+
+        /// Destructor.
+        virtual ~DefaultGameStateManager();
+
+
+        ////////////////////////////////////////
+        // Events
+
+        /// GameStateManager::OnStartup().
+        virtual bool OnStartup(GTEngine::Game &game, const GTLib::CommandLine &commandLine);
+
+        /// GameStateManager::OnShutdown().
+        virtual void OnShutdown(GTEngine::Game &game);
+
+        /// GameStateManager::OnUpdate().
+        virtual void OnUpdate(GTEngine::Game &game, double deltaTimeInSeconds);
+
+        /// GameStateManager::OnStartFrame().
+        virtual void OnStartFrame(GTEngine::Game &game);
+
+        /// GameStateManager::OnSize().
+        virtual void OnSize(GTEngine::Game &game, unsigned int newWidth, unsigned int newHeight);
+
+        /// GameStateManager::OnEditorClosing().
+        virtual bool OnEditorClosing(GTEngine::Game &game);
+
+
+
+        /// GameStateManager::LoadScene().
+        virtual bool LoadScene(GTEngine::Game &game, const char* sceneRelativePath);
+
+
+
+        ///////////////////////////////////////
+        // Serialization
+
+        /// GenericGameStateManager::Serialize()
+        virtual bool Serialize(GTEngine::Game &game, GTLib::Serializer &serializer);
+
+        /// GenericGameStateManager::SerializeHeaderData()
+        virtual uint32_t SerializeHeaderData(GTEngine::Game &game, GTLib::Serializer &serializer);
+
+        /// GenericGameStateManager::SerializeGlobalData()
+        virtual uint32_t SerializeGlobalData(GTEngine::Game &game, GTLib::Serializer &serializer);
+
+
+        ///////////////////////////////////////
+        // Deserialization
+
+        /// GenericGameStateManager::Deserialize()
+        virtual bool Deserialize(GTEngine::Game &game, GTLib::Deserializer &deserializer);
+
+        /// GenericGameStateManager::DeserializeHeaderData()
+        virtual bool DeserializeHeaderData(GTEngine::Game &game, GTLib::Deserializer &deserializer, uint32_t version);
+
+        /// GenericGameStateManager::DeserializeGlobalData()
+        virtual bool DeserializeGlobalData(GTEngine::Game &game, GTLib::Deserializer &deserializer, uint32_t version);
+
+
+
+    private:
+
+        /// Determines whether or not the game state is deserializing.
+        bool IsDeserializing() const
+        {
+            return m_isDeserializing;
+        }
+
+
+    private:
+
+        /// A pointer to the current scene. We use a pointer because we'll be dynamically creating and deleting scenes.
+        GTEngine::Scene* m_currentScene;
+
+        /// The relative path of the current scene. We need this so we can update the game state manager when a scene changes.
+        GTLib::String m_currentSceneRelativePath;
+
+        /// A pointer to the next scene that's just about to be loaded. When a scene is loaded, we don't want to switch scenes
+        /// immediately because there is a chance it will be in the middle of updating. Instead, we want to delay the loading
+        /// until the next frame, in which case we'll do the switch.
+        GTEngine::Scene* m_nextScene;
+
+        /// The relative path of the next scene that's just about to be loaded.
+        GTLib::String m_nextSceneRelativePath;
+
+        /// The aspect ratio to use. If this is 0, the aspect ratio will be re-calculated dynamically when the window is resized.
+        float m_aspectRatio;
+
+        /// Whether or not the game state is in the process of deserializing. We use this in determining whether or not LoadScene()
+        /// should update the scene state - we don't want to bother doing it if we're deserializing.
+        bool m_isDeserializing;
+    };
 }
 
 #endif
