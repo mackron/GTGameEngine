@@ -13,29 +13,22 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        SoundStreamer(const char* fileName);
+        SoundStreamer();
 
         /// Destructor.
         virtual ~SoundStreamer();
 
 
-        /**
-        *   \brief  Retrieves the size of each chunk.
-        *   \return The size of each chunk.
-        */
-        //virtual size_t GetChunkSize() const;
-
-
     // Virtual methods.
     public:
 
-        /// Opens the streamer.
+        /// Initializes the streamer.
         ///
-        /// @return True if the streamer is opened successfully; false otherwise.
-        virtual bool Open() = 0;
-
-        /// Closes the streamer.
-        virtual void Close() = 0;
+        /// @return True if the streamer is initialized successfully; false otherwise.
+        ///
+        /// @remarks
+        ///     This is where the validity of the file data should be initially checked.
+        virtual bool Initialize() = 0;
 
 
         /// Reads the next data chunk.
@@ -88,35 +81,6 @@ namespace GTEngine
         *   \return The format of the audio.
         */
         virtual AudioDataFormat GetFormat() const = 0;
-
-
-        /**
-        *   \brief  Retrieves the total size of the PCM data.
-        *   \return The total size of the PCM data.
-        */
-        //virtual uint64_t GetTotalPCMDataSize() = 0;
-
-
-
-
-    protected:
-
-        /// The path of the file being streamed.
-        GTLib::String absolutePath;
-
-#if 0
-        /// The number of channels in the sound.
-	    uint16_t numChannels;
-
-        /// The bits per sample. Usually set to 16.
-	    uint16_t bitsPerSample;
-
-	    /// The sample rate. 22050, 44100, etc.
-	    uint32_t sampleRate;
-
-        /// The format of the audio.
-        AudioDataFormat format;
-#endif
     };
 }
 

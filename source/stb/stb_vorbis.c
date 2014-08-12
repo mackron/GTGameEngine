@@ -222,7 +222,7 @@ extern int stb_vorbis_decode_memory(unsigned char *mem, int len, int *channels, 
 // decoded, or -1 if the file could not be opened or was not an ogg vorbis file.
 // When you're done with it, just free() the pointer returned in *output.
 
-extern stb_vorbis * stb_vorbis_open_memory(unsigned char *data, int len,
+extern stb_vorbis * stb_vorbis_open_memory(const unsigned char *data, int len,
                                   int *error, stb_vorbis_alloc *alloc_buffer);
 // create an ogg vorbis decoder from an ogg vorbis stream in memory (note
 // this must be the entire stream!). on failure, returns NULL and sets *error
@@ -731,9 +731,9 @@ struct stb_vorbis
    int close_on_free;
 #endif
 
-   uint8 *stream;
-   uint8 *stream_start;
-   uint8 *stream_end;
+   const uint8 *stream;
+   const uint8 *stream_start;
+   const uint8 *stream_end;
 
    uint32 stream_len;
 
@@ -3536,7 +3536,7 @@ static int is_whole_packet_present(stb_vorbis *f, int end_page)
    // of state to restore (primarily the page segment table)
 
    int s = f->next_seg, first = TRUE;
-   uint8 *p = f->stream;
+   const uint8 *p = f->stream;
 
    if (s != -1) { // if we're not starting the packet with a 'continue on next page' flag
       for (; s < f->segment_count; ++s) {
@@ -3553,7 +3553,7 @@ static int is_whole_packet_present(stb_vorbis *f, int end_page)
       first = FALSE;
    }
    for (; s == -1;) {
-      uint8 *q; 
+      const uint8 *q; 
       int n;
 
       // check that we have the page header ready
@@ -5016,7 +5016,7 @@ stb_vorbis * stb_vorbis_open_filename(const char *filename, int *error, stb_vorb
 }
 #endif // STB_VORBIS_NO_STDIO
 
-stb_vorbis * stb_vorbis_open_memory(unsigned char *data, int len, int *error, stb_vorbis_alloc *alloc)
+stb_vorbis * stb_vorbis_open_memory(const unsigned char *data, int len, int *error, stb_vorbis_alloc *alloc)
 {
    stb_vorbis *f, p;
    if (data == NULL) return NULL;

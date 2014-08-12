@@ -15,8 +15,9 @@ namespace GT
               m_executableDirectoryAbsolutePath(),
               m_applicationConfig(),
               m_messageHandler(), m_messageDispatcher(),
-              m_audioSystem(nullptr), m_audioPlaybackDevice(0), m_audioListener(0),
-              m_activeThreads(), m_dormantThreads(), m_threadManagementLock()
+              m_audioSystem(nullptr), m_audioPlaybackDevice(0), m_audioListener(0), m_soundWorld(*this),
+              m_activeThreads(), m_dormantThreads(), m_threadManagementLock(),
+              m_assetLibrary()
         {
             // First this is to more into the applications directory. We get this from the command line.
             GTLib::IO::SetCurrentDirectory(m_commandLine.GetApplicationDirectory());
@@ -102,6 +103,10 @@ namespace GT
 
         EngineContext::~EngineContext()
         {
+            // All sounds need to be stopped so we can clean up the threads.
+            m_soundWorld.StopAllSounds();
+
+
             //////////////////////////////////////////
             // Threading
             //
@@ -223,11 +228,14 @@ namespace GT
 
         void EngineContext::UnacquireThread(GTLib::Thread* thread)
         {
-            m_threadManagementLock.Lock();
+            if (thread != nullptr)
             {
-                this->UnacquireThreadNoLock(thread);
+                m_threadManagementLock.Lock();
+                {
+                    this->UnacquireThreadNoLock(thread);
+                }
+                m_threadManagementLock.Unlock();
             }
-            m_threadManagementLock.Unlock();
         }
 
         void EngineContext::UnacquireThreadNoLock(GTLib::Thread* thread)
@@ -309,6 +317,21 @@ namespace GT
         {
             assert(m_audioListener != 0);
             return m_audioListener;
+        }
+
+        SoundWorld & EngineContext::GetSoundWorld()
+        {
+            return m_soundWorld;
+        }
+
+
+
+        ////////////////////////////////////////////////////
+        // Assets
+
+        AssetLibrary & EngineContext::GetAssetLibrary()
+        {
+            return m_assetLibrary;
         }
     }
 }

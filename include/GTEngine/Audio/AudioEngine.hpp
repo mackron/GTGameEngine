@@ -187,6 +187,13 @@ namespace GTEngine
         /// @param isRelative [in] True is the sound's position should be relative to the player; false otherwise.
         virtual void SetIsSoundPositionRelative(SoundHandle sound, bool isRelative) = 0;
 
+        /// Determines whether or not the position of the given sound is relative to the listener.
+        ///
+        /// @param sound [in] The sound handle.
+        ///
+        /// @return True if the sound is relative to the listener; false otherwise.
+        virtual bool IsSoundPositionRelative(SoundHandle sound) const = 0;
+
         /// Adds the given buffer to the end of the given sound's buffer queue.
         ///
         /// @param sound  [in] The sound whose having an audio buffer queued.

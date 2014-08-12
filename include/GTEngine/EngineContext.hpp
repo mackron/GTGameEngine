@@ -7,6 +7,8 @@
 #include "MessageDispatcher.hpp"
 #include "DefaultMessageHandler.hpp"
 #include "Audio/AudioEngine.hpp"
+#include "Audio/SoundWorld.hpp"
+#include "AssetLibrary.hpp"
 #include <GTLib/CommandLine.hpp>
 #include <GTLib/Vector.hpp>
 #include <GTLib/Threading.hpp>
@@ -136,6 +138,19 @@ namespace GT
             /// @return A handle to the audio listener.
             GTEngine::ListenerHandle GetAudioListener();
 
+            /// Retrieves a reference to the global sound world.
+            ///
+            /// @return A reference to the global sound world for when a sound needs to be played globally, outside of a scene.
+            SoundWorld & GetSoundWorld();
+
+
+
+            ////////////////////////////////////////////////////
+            // Assets
+
+            /// Returns a reference to the internal asset library.
+            AssetLibrary & GetAssetLibrary();
+
 
 
         private:
@@ -179,6 +194,13 @@ namespace GT
 
             /// The listener handle for audio.
             GTEngine::ListenerHandle m_audioListener;
+
+            /// The global sound world.
+            SoundWorld m_soundWorld;
+
+
+            /// The asset library.
+            AssetLibrary m_assetLibrary;
 
 
         private:    // No copying.

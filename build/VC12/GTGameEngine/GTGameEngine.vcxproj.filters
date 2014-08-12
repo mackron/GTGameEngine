@@ -1049,6 +1049,21 @@
     <ClInclude Include="..\..\..\source\Audio\Streamers\SoundStreamer_Vorbis.hpp">
       <Filter>Source Files\Audio\Streamers</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\AssetLibrary.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundPlaybackThreadProc.hpp">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundPlaybackState.hpp">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundPlaybackEventHandler.hpp">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundWorld.hpp">
+      <Filter>Header Files\Audio</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\include\GTEngine\HACD\hacdCircularList.inl">
@@ -1832,6 +1847,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Audio\Streamers\SoundStreamer_Vorbis.cpp">
       <Filter>Source Files\Audio\Streamers</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\AssetLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\SoundPlaybackThreadProc.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\SoundPlaybackEventHandler.cpp">
+      <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Audio\SoundWorld.cpp">
+      <Filter>Source Files\Audio</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

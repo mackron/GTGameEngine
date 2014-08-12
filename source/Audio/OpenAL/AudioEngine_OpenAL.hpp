@@ -87,8 +87,11 @@ namespace GTEngine
         /// AudioEngine::GetSoundPosition().
         glm::vec3 GetSoundPosition(SoundHandle sound) const;
 
-        /// AudioEngine::SetSoundPositionRelative().
+        /// AudioEngine::SetIsSoundPositionRelative().
         void SetIsSoundPositionRelative(SoundHandle sound, bool isRelative);
+
+        /// AudioEngine::IsSoundPositionRelative().
+        bool IsSoundPositionRelative(SoundHandle sound) const;
 
         /// AudioEngine::QueueAudioBuffer().
         void QueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer);
