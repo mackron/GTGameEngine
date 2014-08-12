@@ -19,17 +19,14 @@ namespace GT
         public:
 
             /// Constructor.
-            SoundStreamer_Vorbis(const char* filePath);
+            SoundStreamer_Vorbis(const void* fileData, size_t fileDataSizeInBytes);
 
             /// Destructor.
             ~SoundStreamer_Vorbis();
 
 
-            /// SoundStreamer::Open().
-            bool Open();
-
-            /// SoundStreamer::Close().
-            void Close();
+            /// SoundStreamer::Initialize()
+            bool Initialize();
 
 
             /// SoundStreamer::ReadChunk().
@@ -56,12 +53,11 @@ namespace GT
 
         private:
 
-            /// The handle to the file we'll be reading the audio data from. This file needs to support mapping because we're just going
-            /// to pass a pointer to the mapped data to the Vorbis reader.
-            GTLib::FileHandle m_file;
+            /// A pointer to the file data.
+            const void* m_fileDataPtr;
 
-            /// The mapped file pointer.
-            void* m_fileDataPtr;
+            /// The size of the file data in bytes.
+            size_t m_fileDataSizeInBytes;
 
 
             /// A pointer to the stb_vorbis for doing the actual reading of the Vorbis file.

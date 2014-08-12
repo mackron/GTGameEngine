@@ -13,18 +13,14 @@ namespace GTEngine
     public:
 
         /// Constructor.
-        SoundStreamer_WAV(const char* fileName);
+        SoundStreamer_WAV(const void* fileData, size_t fileDataSizeInBytes);
 
         /// Destructor.
         virtual ~SoundStreamer_WAV();
 
 
-
-        /// SoundStreamer::Open()
-        bool Open();
-
-        /// SoundStreamer::Close()
-        void Close();
+        /// SoundStreamer::Initialize()
+        bool Initialize();
 
 
         /// SoundStreamer::ReadNextChunk()
@@ -65,12 +61,11 @@ namespace GTEngine
 
     private:
 
-        /// The handle to the file we'll be reading the audio data from. This file needs to support mapping because we're just going
-        /// to directly reference a mapped pointer to make things easier.
-        GTLib::FileHandle m_file;
-
-        /// The mapped file pointer. This points to the very beginning of the file.
+        /// A pointer to the file data.
         const void* m_fileDataPtr;
+
+        /// The size in bytes of the file data.
+        size_t m_fileDataSizeInBytes;
 
 
         /// The format code. We use this in determining whether or not we're loading integer or float data.

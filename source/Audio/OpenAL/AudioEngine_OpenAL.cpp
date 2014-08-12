@@ -461,6 +461,20 @@ namespace GTEngine
         }
     }
 
+    bool AudioEngine_OpenAL::IsSoundPositionRelative(SoundHandle sound) const
+    {
+        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
+        if (soundAL != nullptr)
+        {
+            ALint isRelative;
+            m_alGetSourcei(soundAL->source, AL_SOURCE_RELATIVE, &isRelative);
+
+            return isRelative != 0;
+        }
+
+        return false;
+    }
+
     void AudioEngine_OpenAL::QueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer)
     {
         auto soundAL  = reinterpret_cast<OpenALSound*>(sound);

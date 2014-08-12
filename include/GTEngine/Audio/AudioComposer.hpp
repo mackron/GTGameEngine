@@ -4,7 +4,6 @@
 #define __GTEngine_Audio_AudioComposer_hpp_
 
 #include "../Math.hpp"
-#include "SoundStreamer.hpp"
 
 namespace GTEngine
 {
@@ -32,25 +31,6 @@ namespace GTEngine
 
         /// Sets the orientation of the listener.
         static void SetListenerOrientation(const glm::quat &orientation);
-
-
-
-    // Streaming.
-    public:
-
-        /// Creates a streamer from the given file.
-        ///
-        /// @param fileName [in] The name of the file to stream.
-        ///
-        /// @return A pointer to the new streamer, or null if it could not be created.
-        ///
-        /// @remarks
-        ///     The file's extension will be used in determining the kind of streamer to use (WAV, OGG, etc).
-        static SoundStreamer* CreateStreamer(const char* fileName);
-
-        /// Deletes the given streamer.
-        static void DeleteStreamer(SoundStreamer* streamer);
-
 
 
     // Misc.

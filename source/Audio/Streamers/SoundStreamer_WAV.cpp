@@ -13,9 +13,11 @@
 
 namespace GTEngine
 {
-    SoundStreamer_WAV::SoundStreamer_WAV(const char* fileName)
-        : SoundStreamer(fileName),
-          m_file(0), m_fileDataPtr(nullptr),
+    static const size_t ChunkSampleCount = 8192;       // <-- This controls the size of each streaming chunk. Larger values mean more memory usage, but less chance of stuttering.
+
+    SoundStreamer_WAV::SoundStreamer_WAV(const void* fileData, size_t fileDataSizeInBytes)
+        : SoundStreamer(),
+          m_fileDataPtr(fileData), m_fileDataSizeInBytes(fileDataSizeInBytes),
           m_formatCode(0),
           m_numChannels(0),
           m_sampleRate(0),
@@ -29,58 +31,12 @@ namespace GTEngine
 
     SoundStreamer_WAV::~SoundStreamer_WAV()
     {
-        GTLib::CloseFile(m_file);   // <-- This will also unmap.
     }
 
-
-    bool SoundStreamer_WAV::Open()
+    bool SoundStreamer_WAV::Initialize()
     {
-        if (m_file == 0)
-        {
-            m_file = GTLib::OpenFile(this->absolutePath.c_str(), GTLib::IO::OpenMode::Read);
-            if (m_file != 0)
-            {
-                m_fileDataPtr = GTLib::MapFile(m_file, static_cast<size_t>(GTLib::GetFileSize(m_file)));
-                if (m_fileDataPtr != nullptr)
-                {
-                    return this->ReadRIFFHeaderAndChunks();
-                }
-                else
-                {
-                    // Failed to map the file.
-                    GTLib::CloseFile(m_file);
-                    m_file = 0;
-
-                    return false;
-                }
-            }
-            else
-            {
-                // Failed to open the file.
-                return false;
-            }
-        }
-        else
-        {
-            // The file is already open. This is an erroneous condition.
-            assert(false);
-            return false;
-        }
+        return this->ReadRIFFHeaderAndChunks();
     }
-
-    void SoundStreamer_WAV::Close()
-    {
-        GTLib::CloseFile(m_file);   // <-- This will also unmap.
-        m_file = 0;
-        m_fileDataPtr = nullptr;
-
-        m_audioData = nullptr;
-        m_audioDataSize = 0;
-
-        m_nextChunkData = nullptr;
-        m_nextChunkDataSize = 0;
-    }
-
 
     const void* SoundStreamer_WAV::ReadNextChunk(size_t &dataSizeOut)
     {
@@ -88,7 +44,7 @@ namespace GTEngine
         // forward by it's data size such that it will point to the new data chunk.
         m_nextChunkData = reinterpret_cast<const void*>(reinterpret_cast<size_t>(m_nextChunkData) + m_nextChunkDataSize);
 
-        const size_t targetSize = 8192 * m_numChannels * (m_bitsPerSample / 8);
+        const size_t targetSize = ChunkSampleCount * m_numChannels * (m_bitsPerSample / 8);
         const size_t bytesLeft  = m_audioDataSize - (reinterpret_cast<size_t>(m_nextChunkData) - reinterpret_cast<size_t>(m_audioData));
 
         dataSizeOut = m_nextChunkDataSize = (targetSize < bytesLeft) ? targetSize : bytesLeft;
@@ -265,7 +221,7 @@ namespace GTEngine
 
         size_t bytesRead = 12;      // <-- We start at 12 here, because this should always come after the RIFF header, which is 12 bytes.
 
-        while ((!foundFMT || !foundDATA) && bytesRead < GTLib::GetFileSize(m_file))
+        while ((!foundFMT || !foundDATA) && bytesRead < m_fileDataSizeInBytes)
         {
             const uint32_t chunkName = *fileData32++;
             const uint32_t chunkSize = *fileData32++;
