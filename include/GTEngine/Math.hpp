@@ -3,7 +3,10 @@
 #ifndef __GTEngine_Math_hpp_
 #define __GTEngine_Math_hpp_
 
-#if defined(__GNUC__)
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4201)   // nameless struct/union
+#elif defined(__GNUC__)
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wpedantic"
     #pragma GCC diagnostic ignored "-Winline"
@@ -32,9 +35,12 @@
 #include <glm/gtx/fast_exponential.hpp>
 #include <glm/gtx/simd_mat4.hpp>
 #include <glm/gtx/simd_quat.hpp>
-#if defined(__GNUC__)
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#elif defined(__GNUC__)
     #pragma GCC diagnostic pop
 #endif
+
 
 #include "Math/Plane.hpp"
 #include "AABB.hpp"
