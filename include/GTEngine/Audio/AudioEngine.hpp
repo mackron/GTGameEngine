@@ -6,9 +6,33 @@
 #include "AudioDataFormats.hpp"
 #include <GTLib/String.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4201)   // nameless struct/union
+    #pragma warning(disable:4324)   // structure was padded due to __declspec(align())
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wpedantic"
+    #pragma GCC diagnostic ignored "-Winline"
+    #pragma GCC diagnostic ignored "-Weffc++"
+    #pragma GCC diagnostic ignored "-Wstrict-aliasing"
+
+    #if defined(__clang__)
+        #pragma GCC diagnostic ignored "-Wunused-parameter"
+    #endif
+#endif
+#define GLM_FORCE_ONLY_XYZW
+#define GLM_FORCE_SSE2
+#define GLM_SIMD_ENABLE_XYZW_UNION
+#define GLM_SIMD_ENABLE_DEFAULT_INIT
 #define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#elif defined(__GNUC__)
+    #pragma GCC diagnostic pop
+#endif
 
 namespace GTEngine
 {
@@ -211,12 +235,12 @@ namespace GTEngine
         /// Retrieves the number of buffers that are queud on the given sound.
         ///
         /// @param sound [in] The sound whose buffer queue is being counted.
-        virtual size_t GetQueuedAudioBufferCount(SoundHandle sound) = 0;
+        virtual unsigned int GetQueuedAudioBufferCount(SoundHandle sound) = 0;
 
         /// Retrieves the number of buffers that are queue on the given sound, but have also been processed (played).
         ///
         /// @param sound [in] The sound handle.
-        virtual size_t GetProcessedQueuedAudioBufferCount(SoundHandle sound) = 0;
+        virtual unsigned int GetProcessedQueuedAudioBufferCount(SoundHandle sound) = 0;
 
         /// Starts, replay or resume the given sound.
         ///

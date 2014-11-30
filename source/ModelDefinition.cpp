@@ -177,8 +177,8 @@ namespace GTEngine
         {
             if (this->meshes[i].geometry != nullptr)
             {
-                ConvexHull* convexHulls;
-                size_t      count;
+                ConvexHull*  convexHulls;
+                unsigned int count;
                 ConvexHull::BuildConvexHulls(*this->meshes[i].geometry, convexHulls, count, settings);
 
                 for (size_t iHull = 0; iHull < count; ++iHull)

@@ -3,8 +3,8 @@
 #ifndef __GTEngine_CollisionShapeComponent_hpp_
 #define __GTEngine_CollisionShapeComponent_hpp_
 
-#include "../Component.hpp"
 #include "../Physics.hpp"
+#include "../Component.hpp"
 #include "../ConvexHull.hpp"
 
 namespace GTEngine
@@ -54,7 +54,7 @@ namespace GTEngine
         /// @param points     [in] A pointer to the buffer containing the points to build the hull from.
         /// @param pointCount [in] The number of points in the buffer.
         /// @param stride     [in] The vertex stride.
-        void AddConvexHullCollisionShape(const float* points, size_t pointCount, size_t stride, float margin = 0.0);
+        void AddConvexHullCollisionShape(const float* points, unsigned int pointCount, unsigned int stride, float margin = 0.0);
         void AddConvexHullCollisionShape(const ConvexHull &convexHull, float margin = 0.0);
 
 

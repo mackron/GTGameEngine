@@ -41,7 +41,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This method asserts that vertex and index data pointers are not mapped.
-        void SetData(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount);
+        void SetData(const float* vertices, unsigned int vertexCount, const unsigned int* indices, unsigned int indexCount);
 
         /// Sets the vertex data of the vertex array.
         ///
@@ -52,7 +52,7 @@ namespace GTEngine
         ///     This method asserts that the existing vertex data is not mapped.
         ///     @par
         ///     Use SetIndexData() to set the indices.
-        void SetVertexData(const float* vertices, size_t vertexCount);
+        void SetVertexData(const float* vertices, unsigned int vertexCount);
 
         /// Sets the index data of the vertex array.
         ///
@@ -63,7 +63,7 @@ namespace GTEngine
         ///     This method asserts that the existing index data is not mapped.
         ///     @par
         ///     Use SetVertexData() to set the vertices.
-        void SetIndexData(const unsigned int* indices, size_t indexCount);
+        void SetIndexData(const unsigned int* indices, unsigned int indexCount);
 
 
         /// Retrieves a constant pointer to the vertex data.
@@ -73,7 +73,7 @@ namespace GTEngine
         inline const float* GetVertexDataPtr() const { return this->vertices; }
 
         /// Retrieves the number of vertices in the vertex array.
-        inline size_t GetVertexCount() const { return this->vertexCount; }
+        inline unsigned int GetVertexCount() const { return this->vertexCount; }
 
         /// Retrieves a constant pointer to the index data.
         ///
@@ -82,7 +82,7 @@ namespace GTEngine
         inline const unsigned int* GetIndexDataPtr() const { return this->indices; }
 
         /// Retrieves the number of indices in the vertex array.
-        inline size_t GetIndexCount() const { return this->indexCount; }
+        inline unsigned int GetIndexCount() const { return this->indexCount; }
 
 
         /// Returns a writable pointer to the vertex data. Returns nullptr if the data is already mapped.
@@ -183,10 +183,10 @@ namespace GTEngine
 
         /// The number of vertices. This is NOT the number of float's in 'vertices', but rather the number of vertices that the data
         /// in 'vertices' defines.
-        size_t vertexCount;
+        unsigned int vertexCount;
 
         /// The size in floats of the vertex buffer.
-        size_t vertexBufferSize;
+        unsigned int vertexBufferSize;
 
 
 
@@ -194,10 +194,10 @@ namespace GTEngine
         unsigned int* indices;
 
         /// The number of indices making up the vertex array.
-        size_t indexCount;
+        unsigned int indexCount;
 
         /// The size in unsigned ints of the index buffer.
-        size_t indexBufferSize;
+        unsigned int indexBufferSize;
 
 
 

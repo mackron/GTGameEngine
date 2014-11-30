@@ -326,7 +326,7 @@ namespace GTEngine
         Serialization::ChunkHeader header;
         header.id          = Serialization::ChunkID_Animation_PlaybackState;
         header.version     = 1;
-        header.sizeInBytes = playbackSerializer.GetBufferSizeInBytes();
+        header.sizeInBytes = static_cast<uint32_t>(playbackSerializer.GetBufferSizeInBytes());
 
         serializer.Write(header);
         serializer.Write(playbackSerializer.GetBuffer(), header.sizeInBytes);
