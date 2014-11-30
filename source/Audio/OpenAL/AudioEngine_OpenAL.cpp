@@ -507,7 +507,7 @@ namespace GTEngine
         }
     }
 
-    size_t AudioEngine_OpenAL::GetQueuedAudioBufferCount(SoundHandle sound)
+    unsigned int AudioEngine_OpenAL::GetQueuedAudioBufferCount(SoundHandle sound)
     {
         auto soundAL = reinterpret_cast<OpenALSound*>(sound);
         if (soundAL != nullptr)
@@ -520,14 +520,14 @@ namespace GTEngine
                 ALint count = 0;
                 m_alGetSourcei(soundAL->source, AL_BUFFERS_QUEUED, &count);
 
-                return static_cast<size_t>(count);
+                return static_cast<unsigned int>(count);
             }
         }
 
         return 0;
     }
 
-    size_t AudioEngine_OpenAL::GetProcessedQueuedAudioBufferCount(SoundHandle sound)
+    unsigned int AudioEngine_OpenAL::GetProcessedQueuedAudioBufferCount(SoundHandle sound)
     {
         auto soundAL = reinterpret_cast<OpenALSound*>(sound);
         if (soundAL != nullptr)
@@ -540,7 +540,7 @@ namespace GTEngine
                 ALint count = 0;
                 m_alGetSourcei(soundAL->source, AL_BUFFERS_PROCESSED, &count);
 
-                return static_cast<size_t>(count);
+                return static_cast<unsigned int>(count);
             }
         }
 

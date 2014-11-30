@@ -92,7 +92,7 @@ namespace GTEngine
         this->mvp[15] = mvpIn[3][3];
         */
 
-	    buffer.resize(bufferWidth * bufferHeight, 0);
+	    buffer.resize(static_cast<int>(bufferWidth * bufferHeight), 0);
     }
 
     SceneCullingDbvtPolicy::~SceneCullingDbvtPolicy()

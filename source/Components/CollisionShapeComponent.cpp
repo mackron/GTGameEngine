@@ -101,7 +101,7 @@ namespace GTEngine
     }
 
 
-    void CollisionShapeComponent::AddConvexHullCollisionShape(const float* points, size_t pointCount, size_t stride, float margin)
+    void CollisionShapeComponent::AddConvexHullCollisionShape(const float* points, unsigned int pointCount, unsigned int stride, float margin)
     {
         if (margin < GTENGINE_MIN_CONVEX_HULL_MARGIN) margin = GTENGINE_MIN_CONVEX_HULL_MARGIN;
 

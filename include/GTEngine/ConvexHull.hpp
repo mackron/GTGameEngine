@@ -30,7 +30,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     <vertices> must be tightly packed in xyz format.
-        ConvexHull(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount);
+        ConvexHull(const float* vertices, unsigned int vertexCount, const unsigned int* indices, unsigned int indexCount);
 
         /// Destructor.
         ~ConvexHull();
@@ -40,14 +40,14 @@ namespace GTEngine
         const float* GetVertices() const { return &this->vertices[0][0]; }
 
         /// Retrieves the number of vertices.
-        size_t GetVertexCount() const { return this->vertices.count; }
+        unsigned int GetVertexCount() const { return static_cast<unsigned int>(this->vertices.count); }
 
 
         /// Retrieves a constant pointer to the index data.
         const unsigned int* GetIndices() const { return &this->indices[0]; }
 
         /// Retrieves the number of indices.
-        size_t GetIndexCount() const { return this->indices.count; }
+        unsigned int GetIndexCount() const { return static_cast<unsigned int>(this->indices.count); }
 
 
         /// Builds the convex hull from input data.
@@ -59,7 +59,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     <vertices> must be tightly packed in xyz format.
-        void Build(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount);
+        void Build(const float* vertices, unsigned int vertexCount, const unsigned int* indices, unsigned int indexCount);
 
 
         /// Assignment operator.
@@ -90,7 +90,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     Delete each returned convex hull with delete [] or DeleteConvexHulls().
-        static void BuildConvexHulls(const VertexArray &va, ConvexHull* &outputArray, size_t &outputCount, ConvexHullBuildSettings &settings);
+        static void BuildConvexHulls(const VertexArray &va, ConvexHull* &outputArray, unsigned int &outputCount, ConvexHullBuildSettings &settings);
 
         /// Deletes the convex hulls returned by BuildConvexHulls().
         ///

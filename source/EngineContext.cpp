@@ -96,8 +96,11 @@ namespace GT
                     this->PostLogMessage(message.c_str());
                 }
 
-                m_audioPlaybackDevice = m_audioSystem->OpenPlaybackDevice(0);
-                m_audioListener = m_audioSystem->CreateListener(m_audioPlaybackDevice);
+                if (playbackDeviceCount > 0)
+                {
+                    m_audioPlaybackDevice = m_audioSystem->OpenPlaybackDevice(0);
+                    m_audioListener = m_audioSystem->CreateListener(m_audioPlaybackDevice);
+                }
             }
         }
 

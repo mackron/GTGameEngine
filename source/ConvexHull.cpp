@@ -22,7 +22,7 @@ namespace GTEngine
     {
     }
 
-    ConvexHull::ConvexHull(const float* verticesIn, size_t vertexCount, const unsigned int* indicesIn, size_t indexCount)
+    ConvexHull::ConvexHull(const float* verticesIn, unsigned int vertexCount, const unsigned int* indicesIn, unsigned int indexCount)
         : vertices(), indices()
     {
         this->Build(verticesIn, vertexCount, indicesIn, indexCount);
@@ -32,17 +32,17 @@ namespace GTEngine
     {
     }
     
-    void ConvexHull::Build(const float* verticesIn, size_t vertexCount, const unsigned int* indicesIn, size_t indexCount)
+    void ConvexHull::Build(const float* verticesIn, unsigned int vertexCount, const unsigned int* indicesIn, unsigned int indexCount)
     {
         this->vertices.Clear();
         this->indices.Clear();
 
-        for (size_t i = 0; i < vertexCount; ++i)
+        for (unsigned int i = 0; i < vertexCount; ++i)
         {
             this->vertices.PushBack(glm::vec3(verticesIn[i * 3 + 0], verticesIn[i * 3 + 1], verticesIn[i * 3 + 2]));
         }
 
-        for (size_t i = 0; i < indexCount; ++i)
+        for (unsigned int i = 0; i < indexCount; ++i)
         {
             this->indices.PushBack(indicesIn[i]);
         }
@@ -53,7 +53,7 @@ namespace GTEngine
     //////////////////////////////////////////////////////////
     // Static Functions
 
-    void ConvexHull::BuildConvexHulls(const VertexArray &va, ConvexHull* &outputArray, size_t &outputCount, ConvexHullBuildSettings &settings)
+    void ConvexHull::BuildConvexHulls(const VertexArray &va, ConvexHull* &outputArray, unsigned int &outputCount, ConvexHullBuildSettings &settings)
     {
         outputArray = nullptr;
         outputCount = 0;

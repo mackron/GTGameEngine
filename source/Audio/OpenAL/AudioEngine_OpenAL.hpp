@@ -100,10 +100,10 @@ namespace GTEngine
         void UnqueueAudioBuffer(SoundHandle sound);
 
         /// AudioEngine::GetQueuedAudioBufferCount().
-        size_t GetQueuedAudioBufferCount(SoundHandle sound);
+        unsigned int GetQueuedAudioBufferCount(SoundHandle sound);
 
         /// AudioEngine::GetProcessedQueuedAudioBufferCount().
-        size_t GetProcessedQueuedAudioBufferCount(SoundHandle sound);
+        unsigned int GetProcessedQueuedAudioBufferCount(SoundHandle sound);
 
         /// AudioEngine::PlaySound().
         void PlaySound(SoundHandle sound);

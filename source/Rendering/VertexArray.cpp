@@ -18,13 +18,13 @@ namespace GTEngine
         free(this->indices);
     }
 
-    void VertexArray::SetData(const float* vertices, size_t vertexCount, const unsigned int* indices, size_t indexCount)
+    void VertexArray::SetData(const float* vertices, unsigned int vertexCount, const unsigned int* indices, unsigned int indexCount)
     {
         this->SetVertexData(vertices, vertexCount);
         this->SetIndexData(indices, indexCount);
     }
 
-    void VertexArray::SetVertexData(const float* vertices, size_t vertexCount)
+    void VertexArray::SetVertexData(const float* vertices, unsigned int vertexCount)
     {
         assert(!this->verticesMapped);
 
@@ -62,7 +62,7 @@ namespace GTEngine
         this->OnVertexDataChanged();
     }
 
-    void VertexArray::SetIndexData(const unsigned int* indices, size_t indexCount)
+    void VertexArray::SetIndexData(const unsigned int* indices, unsigned int indexCount)
     {
         assert(!this->indicesMapped);
 
@@ -85,7 +85,7 @@ namespace GTEngine
 
         if (this->indices != nullptr && indices != nullptr)
         {
-            for (size_t i = 0; i < indexCount; ++i)
+            for (unsigned int i = 0; i < indexCount; ++i)
             {
                 this->indices[i] = indices[i];
             }

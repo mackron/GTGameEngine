@@ -22,7 +22,7 @@
 #include <GTLib/CommandLine.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/Keyboard.hpp>
-#include <GTLib/Profiling/valgrind/callgrind.h>
+//#include <GTLib/Profiling/valgrind/callgrind.h>
 //#include <ittnotify.h>
 
 #if defined(_MSC_VER)

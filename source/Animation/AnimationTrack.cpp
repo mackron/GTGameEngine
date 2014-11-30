@@ -126,9 +126,9 @@ namespace GTEngine
         header.id = Serialization::ChunkID_AnimationKeyFrameQueue;
         header.version = 1;
         header.sizeInBytes = 
-            sizeof(uint32_t) +                                        // <-- Key frame count.
-            sizeof(LocalKeyFrame) * this->localKeyFrames.count +      // <-- Key frame data.
-            sizeof(double);                                           // <-- Total duration.
+            sizeof(uint32_t) +                                                              // <-- Key frame count.
+            sizeof(LocalKeyFrame) * static_cast<uint32_t>(this->localKeyFrames.count) +     // <-- Key frame data.
+            sizeof(double);                                                                 // <-- Total duration.
 
 
         serializer.Write(header);

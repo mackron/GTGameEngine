@@ -6,6 +6,7 @@
 #if defined(_MSC_VER)
     #pragma warning(push)
     #pragma warning(disable:4201)   // nameless struct/union
+    #pragma warning(disable:4324)   // structure was padded due to __declspec(align())
 #elif defined(__GNUC__)
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wpedantic"
@@ -34,6 +35,7 @@
 #include <glm/gtx/fast_square_root.hpp>
 #include <glm/gtx/fast_exponential.hpp>
 #include <glm/gtx/simd_mat4.hpp>
+#include <glm/gtx/simd_vec4.hpp>
 #include <glm/gtx/simd_quat.hpp>
 #if defined(_MSC_VER)
     #pragma warning(pop)
