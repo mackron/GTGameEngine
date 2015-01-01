@@ -31,6 +31,18 @@ namespace GT
             ~EngineContext();
 
 
+            ////////////////////////////////////////////////////
+            // Startup / Shutdown
+
+            /// Initialises the engine context.
+            ///
+            /// @return True if the engine was initialised successfully; fasle otherwise.
+            bool Startup();
+
+            /// Uninitialises the engine context.
+            void Shutdown();
+
+
 
             ////////////////////////////////////////////////////
             // Command Line
@@ -155,6 +167,13 @@ namespace GT
 
         private:
 
+            /// Helper function for determining whether or not the engine is initialized.
+            bool IsInitialized() const;
+
+
+
+        private:
+
             /// The command line object. This is constructed from the argc and argv parameters in the constructor.
             GTLib::CommandLine m_commandLine;
 
@@ -201,6 +220,19 @@ namespace GT
 
             /// The asset library.
             AssetLibrary m_assetLibrary;
+
+
+            /// A set of flags that keep track of the state of the engine context. We use this so we can restrict certain operations when the engine
+            /// is in a particular state. For example, we do not want the engine to be able to create threads if it has not yet been initialized.
+            uint32_t m_stateFlags;
+
+
+
+        private:
+
+            // State flags.
+            static const uint32_t StateFlag_Uninitialized = 0;
+            static const uint32_t StateFlag_Initialized   = 1;
 
 
         private:    // No copying.

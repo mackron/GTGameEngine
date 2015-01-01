@@ -34,8 +34,8 @@ namespace GT
                 auto iFile = m_openedSoundFiles.Find(absoluteFilePath.c_str());
                 if (iFile != nullptr)
                 {
-                    streamerFile = iFile->value.m_file;
-                    iFile->value.m_count += 1;
+                    streamerFile = iFile->value.file;
+                    iFile->value.count += 1;
                 }
                 else
                 {
@@ -103,13 +103,13 @@ namespace GT
                 auto iFile = m_openedSoundFiles.Find(iSoundStreamer->value.c_str());
                 if (iFile != nullptr)
                 {
-                    assert(iFile->value.m_count > 0);
+                    assert(iFile->value.count > 0);
                     {
-                        iFile->value.m_count -= 1;
+                        iFile->value.count -= 1;
 
-                        if (iFile->value.m_count == 0)
+                        if (iFile->value.count == 0)
                         {
-                            GTLib::CloseFile(iFile->value.m_file);
+                            GTLib::CloseFile(iFile->value.file);
                             m_openedSoundFiles.RemoveByIndex(iFile->index);
                         }
                     }

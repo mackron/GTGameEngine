@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/Game.hpp>
+#include <GTEngine/EngineContext.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/ThreadCache.hpp>
@@ -15,7 +16,6 @@
 #include <GTEngine/Scripting.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GamePackager.hpp>
-#include <GTEngine/GTEngine.hpp>           // For g_EngineContext. Remove this when the global context is removed.
 #include <GTLib/System.hpp>
 #include <GTLib/Strings/Tokenizer.hpp>
 #include <GTLib/String.hpp>
@@ -34,8 +34,9 @@
 
 namespace GTEngine
 {
-    Game::Game(GameStateManager &gameStateManager)
-        : m_gameStateManager(gameStateManager),
+    Game::Game(GT::Engine::EngineContext &engineContext, GameStateManager &gameStateManager)
+        : m_engineContext(engineContext),
+          m_gameStateManager(gameStateManager),
           isInitialised(false), closing(false),
           executablePath(), executableDirectoryPath(),
           eventQueue(), eventQueueLock(),
@@ -557,7 +558,7 @@ namespace GTEngine
 
 
         // We will start by copying over the data directories.
-        auto &absoluteDataDirectories = g_EngineContext->GetApplicationConfig().GetDataDirectories();
+        auto &absoluteDataDirectories = m_engineContext.GetApplicationConfig().GetDataDirectories();
         {
             for (size_t iDataDirectory = 0; iDataDirectory < absoluteDataDirectories.count; ++iDataDirectory)
             {
@@ -852,8 +853,10 @@ namespace GTEngine
 
 
 
-    bool Game::Startup(const GTLib::CommandLine &commandLine)
+    bool Game::Startup()
     {
+        auto &commandLine = m_engineContext.GetCommandLine();
+
         this->executablePath          = commandLine.GetExecutablePath();
         this->executableDirectoryPath = commandLine.GetApplicationDirectory();
 
@@ -946,7 +949,7 @@ namespace GTEngine
 
     bool Game::InitialiseDataFilesWatcher()
     {
-        auto &directories = g_EngineContext->GetApplicationConfig().GetDataDirectories();
+        auto &directories = m_engineContext.GetApplicationConfig().GetDataDirectories();
         if (directories.count > 0)
         {
             for (size_t i = 0; i < directories.count; ++i)

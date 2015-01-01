@@ -162,6 +162,12 @@
     <Filter Include="Header Files\gtgl\GL">
       <UniqueIdentifier>{9a58447b-b4d3-4187-8063-888e22858854}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Assets">
+      <UniqueIdentifier>{0c0fc84e-d28c-4b6a-8344-3844ffdd0cb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Assets">
+      <UniqueIdentifier>{feb7a67b-93fe-4081-aa03-df02892da0d9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTEngine\AABB.hpp">
@@ -1064,6 +1070,27 @@
     <ClInclude Include="..\..\..\include\GTEngine\Audio\SoundWorld.hpp">
       <Filter>Header Files\Audio</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\Asset.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\ImageAsset.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\MaterialAssets.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\ModelAsset.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\ParticleSystemAsset.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\PrefabAsset.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\SoundAsset.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\include\GTEngine\HACD\hacdCircularList.inl">
@@ -1859,6 +1886,27 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Audio\SoundWorld.cpp">
       <Filter>Source Files\Audio</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\Asset.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\ImageAsset.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\MaterialAssets.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\ModelAsset.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\ParticleSystemAsset.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\PrefabAsset.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\SoundAsset.cpp">
+      <Filter>Source Files\Assets</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -26,17 +26,17 @@ THE SOFTWARE.
 #ifndef __GTEngine_hpp_
 #define __GTEngine_hpp_
 
-#include "Game.hpp"
 #include "EngineContext.hpp"
+#include "Game.hpp"
 
-#define GTENGINE_VERSION_STRING "0.0.4"
+#define GTENGINE_VERSION_STRING "0.1.0"
 
 namespace GTEngine
 {
-    extern Game* GlobalGame;
+    //extern Game* GlobalGame;
 
     /// The global engine context. TODO: Remove this and have applications create this themselves. This global object is only used during the transition phase.
-    extern GT::Engine::EngineContext* g_EngineContext;
+    //extern GT::Engine::EngineContext* g_EngineContext;
 
 
     /// Starts up the engine.
@@ -44,7 +44,7 @@ namespace GTEngine
     /// @param commandLine [in] A reference to the command line.
     ///
     /// @return True if the engine is initialised successfully; false otherwise.
-    bool _PreStartup(const GTLib::CommandLine &commandLine);
+    //bool _PreStartup(const GTLib::CommandLine &commandLine);
 
 
     /// Starts up the engine, returning an instance of the given game class (T).
@@ -57,6 +57,7 @@ namespace GTEngine
     /// @remarks
     ///     The 'T' template argument is the type of the game object to create. This will use the default constructor. Thus, the game
     ///     object MUST use a default constructor.
+#if 0
     template <typename T>
     T* Startup(int argc, char** argv, GameStateManager &gameStateManager)
     {
@@ -76,11 +77,12 @@ namespace GTEngine
 
         return static_cast<T*>(GlobalGame);
     }
+#endif
 
     /// Shuts down the engine, deleting the given game object returned by Startup().
     ///
     /// @param game [in] The game object returned by Startup().
-    void Shutdown(Game* game);
+    //void Shutdown(Game* game);
 
 
 
@@ -88,7 +90,7 @@ namespace GTEngine
     /// Retrieves the directory containing the executable.
     ///
     /// @return The directory containing the executable.
-    const char* GetExecutableDirectory();
+    //const char* GetExecutableDirectory();
 
     
     /// Retrieves the version string.

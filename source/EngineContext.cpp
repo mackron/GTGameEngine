@@ -17,7 +17,21 @@ namespace GT
               m_messageHandler(), m_messageDispatcher(),
               m_audioSystem(nullptr), m_audioPlaybackDevice(0), m_audioListener(0), m_soundWorld(*this),
               m_activeThreads(), m_dormantThreads(), m_threadManagementLock(),
-              m_assetLibrary()
+              m_assetLibrary(),
+              m_stateFlags(StateFlag_Uninitialized)
+        {
+        }
+
+        EngineContext::~EngineContext()
+        {
+            // This is purely cleanup. Use Shutdown() to do a proper uninitialisation.
+        }
+
+
+        ////////////////////////////////////////////////////
+        // Startup / Shutdown
+
+        bool EngineContext::Startup()
         {
             // First this is to more into the applications directory. We get this from the command line.
             GTLib::IO::SetCurrentDirectory(m_commandLine.GetApplicationDirectory());
@@ -104,8 +118,13 @@ namespace GT
             }
         }
 
-        EngineContext::~EngineContext()
+        void EngineContext::Shutdown()
         {
+            // We want to consider the engine to be unitialized at the beginning of this function. The main purpose for this is to ensure
+            // other threads don't try to perform certain operations while the context is unitialized, such as creating another thread.
+            m_stateFlags = StateFlag_Uninitialized;
+
+
             // All sounds need to be stopped so we can clean up the threads.
             m_soundWorld.StopAllSounds();
 
@@ -121,6 +140,7 @@ namespace GT
             m_threadManagementLock.Lock();
             {
                 threadsToDelete = m_dormantThreads;
+                m_dormantThreads.Clear();
             }
             m_threadManagementLock.Unlock();
 
@@ -150,7 +170,6 @@ namespace GT
             delete m_audioSystem;
             m_audioSystem = nullptr;
         }
-
 
 
         ////////////////////////////////////////////////////
@@ -188,6 +207,16 @@ namespace GT
 
         GTLib::Thread* EngineContext::AcquireThread()
         {
+            // We cannot acquire a thread if the context is not initialized.
+            if (!this->IsInitialized())
+            {
+                assert(m_activeThreads.GetCount()  == 0);
+                assert(m_dormantThreads.GetCount() == 0);
+
+                return nullptr;
+            }
+
+
             GTLib::Thread* thread = nullptr;
 
             m_threadManagementLock.Lock();
@@ -231,6 +260,16 @@ namespace GT
 
         void EngineContext::UnacquireThread(GTLib::Thread* thread)
         {
+            // Don't do anything if we're not initialized.
+            if (!this->IsInitialized())
+            {
+                assert(m_activeThreads.GetCount()  == 0);
+                assert(m_dormantThreads.GetCount() == 0);
+
+                return;
+            }
+
+
             if (thread != nullptr)
             {
                 m_threadManagementLock.Lock();
@@ -244,6 +283,16 @@ namespace GT
         void EngineContext::UnacquireThreadNoLock(GTLib::Thread* thread)
         {
             assert(thread != nullptr);
+
+            // Don't do anything if we're not initialized.
+            if (!this->IsInitialized())
+            {
+                assert(m_activeThreads.GetCount()  == 0);
+                assert(m_dormantThreads.GetCount() == 0);
+
+                return;
+            }
+
 
             m_activeThreads.RemoveFirstOccuranceOf(thread);
 
@@ -259,6 +308,16 @@ namespace GT
 
         void EngineContext::UnacquireAllThreads()
         {
+            // Don't do anything if we're not initialized.
+            if (!this->IsInitialized())
+            {
+                assert(m_activeThreads.GetCount()  == 0);
+                assert(m_dormantThreads.GetCount() == 0);
+
+                return;
+            }
+
+
             m_threadManagementLock.Lock();
             {
                 while (m_activeThreads.GetCount() > 0)
@@ -335,6 +394,19 @@ namespace GT
         AssetLibrary & EngineContext::GetAssetLibrary()
         {
             return m_assetLibrary;
+        }
+
+
+
+
+
+
+        ////////////////////////////////////////////////////
+        // Private
+
+        bool EngineContext::IsInitialized() const
+        {
+            return (m_stateFlags & StateFlag_Initialized) != 0;
         }
     }
 }

@@ -3,6 +3,7 @@
 #ifndef __GT_Engine_AssetLibrary_hpp_
 #define __GT_Engine_AssetLibrary_hpp_
 
+#include "Assets/Asset.hpp"
 #include "Audio/SoundStreamer.hpp"
 #include <GTLib/Dictionary.hpp>
 #include <GTLib/Map.hpp>
@@ -23,6 +24,17 @@ namespace GT
             /// Destructor.
             ~AssetLibrary();
 
+
+
+            ///////////////////////////////////////////////////
+            // Images / Textures
+
+
+
+
+
+            ///////////////////////////////////////////////////
+            // Sounds
 
             /// Creates a sound streamer using the given relative file path.
             ///
@@ -53,19 +65,41 @@ namespace GT
 
         private:
 
+            /// The list of opened assets. This is keyed by the absolute path of the asset.
+            GTLib::Dictionary<Asset*> m_openedAssets;
+
+
+
+
+
             struct FileCounter
             {
                 FileCounter(GTLib::FileHandle file, unsigned int count)
-                    : m_file(file), m_count(count)
+                    : file(file), count(count)
                 {
                 }
 
                 /// The file handle.
-                GTLib::FileHandle m_file;
+                GTLib::FileHandle file;
 
                 /// The current open counter. When a file is opened, this is incremented. When it is closed, this is decremented. When it hits 0,
                 /// the file will be closed for real.
-                unsigned int m_count;
+                unsigned int count;
+            };
+
+
+            struct AssetFile
+            {
+                /// The absolute path of the file.
+                GTLib::String absolutePath;
+
+                /// The current open counter. When an asset is opened, this is incremented. When it is closed, it is decremented. When it hits 0,
+                /// the asset will be deleted for real.
+                unsigned int counter;
+
+                /// The file handle for the asset. If the asset requires an open file handle (such as a sound) and this is 0, the handle will need
+                /// to be reopened, which can be done by using absolutePath.
+                GTLib::FileHandle hFile;
             };
 
 
@@ -73,7 +107,7 @@ namespace GT
             /// The list of currently opened sound files. When a sound streamer is opened, it reuses an already-opened file.
             GTLib::Dictionary<FileCounter> m_openedSoundFiles;
 
-            /// The list of currently opened sound streamers, with the absolute file path as the extension.
+            /// The list of currently opened sound streamers, with the absolute file path as the value.
             GTLib::Map<GTEngine::SoundStreamer*, GTLib::String> m_openedSoundStreamers;
         };
     }

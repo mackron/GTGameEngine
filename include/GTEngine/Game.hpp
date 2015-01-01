@@ -21,26 +21,21 @@
 #include <GTLib/FontServer.hpp>
 #include <GTLib/GUI/Server.hpp>
 
+
+namespace GT
+{
+    namespace Engine
+    {
+        class EngineContext;
+    }
+}
+
 namespace GTEngine
 {
     static const size_t MouseBufferSize   = 2;
     static const float  MouseSmoothFactor = 0.5f;
 
-    /**
-    *   \brief  Base class for the class representing a game.
-    *
-    *   This class needs to be inheritted, with the event methods implemented by the child class.
-    *
-    *   \section    Mouse
-    *   The game's mouse can be in one of two states: captured or uncaptured. By default, the mouse is uncaptured. The way a mouse works is different
-    *   depending on whether or not it is captured.
-    *
-    *   A captured mouse is hidden and will always be placed in the center of the window. It's movements are defined as offsets from the center. A
-    *   captured mouse will have smoothing applied to it, making it useful for things like first-person cameras. MouseMove events are ignored when
-    *   the mouse is captured. You retrieved smoothed offsets using Game::GetSmoothedMouseOffset(). Use Game::CaptureMouse() to capture the mouse
-    *   and Game::ReleaseMouse() to use uncaptured mode.
-    *   \endsection
-    */
+    /// Class representing a game.
     class Game
     {
     public:
@@ -51,7 +46,7 @@ namespace GTEngine
         ///     The constructor is where all initialisation takes place. Use operator bool or IsInitialised() to check if initialisation was successful.
         ///     @par
         ///     If initialisation was not successful, Run() will return immediately. Use Run() to start running the game.
-        Game(GameStateManager &gameStateManager);
+        Game(GT::Engine::EngineContext &engineContext, GameStateManager &gameStateManager);
 
         /// Destructor.
         ///
@@ -66,7 +61,7 @@ namespace GTEngine
         ///     This will call OnLoadConfigs() and OnStartup().
         ///     @par
         ///     Client application should not call this method directly. It will instead be called internally by GTEngine::Startup().
-        bool Startup(const GTLib::CommandLine &commandLine);
+        bool Startup();
 
         /// Shuts down the game.
         ///
@@ -677,6 +672,9 @@ namespace GTEngine
 
 
     private:
+
+        /// The engine context this game belongs to.
+        GT::Engine::EngineContext &m_engineContext;
 
         /// The game state manager.
         GameStateManager &m_gameStateManager;

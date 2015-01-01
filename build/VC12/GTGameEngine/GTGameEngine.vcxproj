@@ -170,6 +170,13 @@
     <ClInclude Include="..\..\..\include\GTEngine\Animation\AnimationTrack.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\ApplicationConfig.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\AssetLibrary.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\Asset.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\ImageAsset.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\MaterialAssets.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\ModelAsset.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\ParticleSystemAsset.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\PrefabAsset.hpp" />
+    <ClInclude Include="..\..\..\include\GTEngine\Assets\SoundAsset.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\AssetTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio.hpp" />
     <ClInclude Include="..\..\..\include\GTEngine\Audio\AudioComposer.hpp" />
@@ -474,6 +481,13 @@
     <ClCompile Include="..\..\..\source\Animation\AnimationTrack.cpp" />
     <ClCompile Include="..\..\..\source\ApplicationConfig.cpp" />
     <ClCompile Include="..\..\..\source\AssetLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\Assets\Asset.cpp" />
+    <ClCompile Include="..\..\..\source\Assets\ImageAsset.cpp" />
+    <ClCompile Include="..\..\..\source\Assets\MaterialAssets.cpp" />
+    <ClCompile Include="..\..\..\source\Assets\ModelAsset.cpp" />
+    <ClCompile Include="..\..\..\source\Assets\ParticleSystemAsset.cpp" />
+    <ClCompile Include="..\..\..\source\Assets\PrefabAsset.cpp" />
+    <ClCompile Include="..\..\..\source\Assets\SoundAsset.cpp" />
     <ClCompile Include="..\..\..\source\Audio\AudioComposer.cpp" />
     <ClCompile Include="..\..\..\source\Audio\AudioEngine.cpp" />
     <ClCompile Include="..\..\..\source\Audio\g711.c" />
