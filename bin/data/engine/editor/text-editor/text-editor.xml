@@ -1,9 +1,0 @@
-<!-- Copyright (C) 2011 - 2013 David Reid. See included LICENCE file. -->
-
-<style  url="text-editor.style"            />
-<style  url="text-editor-panel.style"      />
-<style  url="text-editor-error-list.style" />
-
-<script url="text-editor.lua"              />
-<script url="text-editor-panel.lua"        />
-<script url="text-editor-error-list.lua"   />

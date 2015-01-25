@@ -1,7 +1,0 @@
-// Copyright (C) 2011 - 2013 David Reid. See included LICENCE file.
-
-data-explorer
-{
-    height:            100%
-    flex-child-height: true
-}

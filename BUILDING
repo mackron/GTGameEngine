@@ -2,4 +2,4 @@
 
 To build the engine:
  - Compile the dependencies
- - Add every source file in "source" to your project, except for the stb library (everything in source/stb)
+ - Add every source file in "source" to your project

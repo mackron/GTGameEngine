@@ -1,8 +1,0 @@
-<material>
-    <channel name="diffuse"   shaderid='Material_SimpleDiffuse'    />
-    <channel name="shininess" shaderid='Material_DefaultShininess' />
-    
-    <defaultproperties>
-        <float3 name='DiffuseColour' >1.0 1.0 1.0</float3>
-    </defaultproperties>
-</material>
