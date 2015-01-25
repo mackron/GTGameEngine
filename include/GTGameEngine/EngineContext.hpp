@@ -4,6 +4,7 @@
 #define __GT_GE_EngineContext_hpp_
 
 #include <GTLib/ResultCodes.hpp>
+#include "HardwarePlatform.hpp"
 
 namespace GT
 {
@@ -43,7 +44,9 @@ namespace GT
 
         private:
 
-
+            /// The hardware platform object for detecting the available hardware on the running system. This object can be used to iterate over devices
+            /// and specify which ones should be used for particular tasks.
+            HardwarePlatform m_hardwarePlatform;
 
 
 

@@ -7,6 +7,7 @@ namespace GT
     namespace GE
     {
         EngineContext::EngineContext()
+            : m_hardwarePlatform()
         {
         }
 
@@ -20,11 +21,25 @@ namespace GT
             (void)argc;
             (void)argv;
 
-            return 0;
+
+            ResultCode result = 0;
+
+            
+            // Hardware platform.
+            result = m_hardwarePlatform.Startup();
+            if (Failed(result))
+            {
+                return result;
+            }
+
+
+
+            return result;
         }
 
         void EngineContext::Shutdown()
         {
+            m_hardwarePlatform.Shutdown();
         }
     }
 }

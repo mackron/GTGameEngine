@@ -14,7 +14,7 @@ namespace GT
 
         /// Class representing a game context.
         ///
-        /// An application can have multiple game context's.
+        /// An application can have multiple game context's per engine context.
         class GameContext
         {
         public:

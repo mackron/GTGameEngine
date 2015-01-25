@@ -22,10 +22,20 @@
     <ClCompile Include="..\..\..\source\EngineContext.cpp" />
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c" />
     <ClCompile Include="..\..\..\source\GameContext.cpp" />
+    <ClCompile Include="..\..\..\source\HardwarePlatform.cpp" />
+    <ClCompile Include="..\..\..\source\HardwarePlatform_Audio.cpp" />
+    <ClCompile Include="..\..\..\source\HardwarePlatform_CPU.cpp" />
+    <ClCompile Include="..\..\..\source\HardwarePlatform_GPU.cpp" />
+    <ClCompile Include="..\..\..\source\HardwarePlatform_Input.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameContext.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Audio.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_CPU.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_GPU.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Input.hpp" />
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
