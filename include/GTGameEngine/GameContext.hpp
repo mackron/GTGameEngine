@@ -5,6 +5,7 @@
 
 #include <GTLib/ResultCodes.hpp>
 #include <GTLib/Config.hpp>
+#include <GTLib/Vector.hpp>
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windef.h>
@@ -16,6 +17,7 @@ namespace GT
     {
         class EngineContext;
         class GameDisplay;
+        class GameDisplay_Windowed;
 
 
         // Error codes.
@@ -64,10 +66,30 @@ namespace GT
 
 
 
+            /// Steps the game by one frame.
+            ///
+            /// @remarks
+            ///     This will update and render the game.
+            void Step();
+
+
         private:
 
             /// A reference to the engine context that owns this game context.
             EngineContext &m_engineContext;
+
+            /// The list of window displays.
+            GTLib::Vector<GameDisplay_Windowed*> m_windowedDisplays;
+
+
+            /// A set of flags for boolean variables.
+            uint32_t m_flags;
+
+
+        private:
+
+            // Various boolean flags used by the game context.
+            static const uint32_t IsSingleThreaded = 0x00000001;
 
 
         private:    // No copying.

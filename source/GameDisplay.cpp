@@ -6,7 +6,8 @@ namespace GT
 {
     namespace GE
     {
-        GameDisplay::GameDisplay()
+        GameDisplay::GameDisplay(GPURenderingDevice &renderingDevice)
+            : m_renderingDevice(renderingDevice)
         {
         }
 
