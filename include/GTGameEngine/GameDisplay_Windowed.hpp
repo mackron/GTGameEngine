@@ -34,7 +34,7 @@ namespace GT
 
 #if defined(GT_PLATFORM_WINDOWS)
             /// Constructor.
-            GameDisplay_Windowed(HWND hWnd);
+            GameDisplay_Windowed(GPURenderingDevice &renderingDevice, HWND hWnd);
 
             /// Retrieves a handle to the window this display is drawing to.
             ///

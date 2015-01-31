@@ -66,5 +66,17 @@ namespace GT
             m_gpuHardwarePlatform.Shutdown();
             m_cpuHardwarePlatform.Shutdown();
         }
+
+
+
+        ResultCode HardwarePlatform::CreateGPURenderingDevice(int apiCode, GPURenderingDevice* &renderingDeviceOut)
+        {
+            return m_gpuHardwarePlatform.CreateGPURenderingDevice(apiCode, renderingDeviceOut);
+        }
+
+        void HardwarePlatform::DeleteGPURenderingDevice(GPURenderingDevice* renderingDevice)
+        {
+            m_gpuHardwarePlatform.DeleteGPURenderingDevice(renderingDevice);
+        }
     }
 }

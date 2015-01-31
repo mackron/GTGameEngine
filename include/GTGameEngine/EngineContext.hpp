@@ -10,6 +10,9 @@ namespace GT
 {
     namespace GE
     {
+        class GPURenderingDevice;
+
+
         /// Class representing the engine context.
         ///
         /// Only a single engine context is usually needed for an application, however it is possible to have more.
@@ -40,6 +43,30 @@ namespace GT
             /// @remarks
             ///     This does not delete the context object.
             void Shutdown();
+
+
+            /// Creates a GPU rendering device.
+            ///
+            /// @param apiCode            [in]  A code identifying the rendering API to use as the back-end.
+            /// @param renderingDeviceOut [out] A reference to the variable that will receive a pointer to the new rendering device.
+            ///
+            /// @return A result code specifying whether or not the device was created successfully. The return value will be >=0 if there was no error.
+            ///
+            /// @remarks
+            ///     Specify a value of 0 for apiCode to automatically choose the best API back-end. On Windows this will try the highest available version of Direct3D. On Linux
+            ///     this will pick the highest available version of OpenGL.
+            ResultCode CreateGPURenderingDevice(int apiCode, GPURenderingDevice* &renderingDeviceOut);
+
+            /// Deletes a GPU rendering device object that was created with DeleteGPURenderingDevice.
+            ///
+            /// @param renderingDevice [in] A pointer to the GPU device to delete.
+            void DeleteGPURenderingDevice(GPURenderingDevice* renderingDevice);
+
+
+
+        private:
+
+
 
 
         private:

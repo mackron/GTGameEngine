@@ -76,11 +76,11 @@ namespace GT
         //////////////////////////////////////////////////////////////////
         // Win32
 #if defined(GT_PLATFORM_WINDOWS)
-        ResultCode GameContext::CreateWindowedDisplay(HWND hWnd, GameDisplay* &displayOut)
+        ResultCode GameContext::CreateWindowedDisplay(GPURenderingDevice &renderingDevice, HWND hWnd, GameDisplay* &displayOut)
         {
             if (hWnd != 0)
             {
-                displayOut = new GameDisplay_Windowed(hWnd);
+                displayOut = new GameDisplay_Windowed(renderingDevice, hWnd);
 
                 return 0;   // No error.
             }

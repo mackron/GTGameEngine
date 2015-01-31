@@ -18,6 +18,7 @@ namespace GT
         class EngineContext;
         class GameDisplay;
         class GameDisplay_Windowed;
+        class GPURenderingDevice;
 
 
         // Error codes.
@@ -52,11 +53,12 @@ namespace GT
 #if defined(GT_PLATFORM_WINDOWS)
             /// Creates a windowed display from the given window.
             ///
-            /// @param hWnd       [in] The window to create the display from.
-            /// @param displayOut [in] A reference to the variable that will receive a pointer to the newly created display object.
+            /// @param renderingDevice [in] The rendering device that will be used for rendering to the display.
+            /// @param hWnd            [in] The window to create the display from.
+            /// @param displayOut      [in] A reference to the variable that will receive a pointer to the newly created display object.
             ///
             /// @return >=0 if there is no error, <0 if there was an error.
-            ResultCode CreateWindowedDisplay(HWND hWnd, GameDisplay* &displayOut);
+            ResultCode CreateWindowedDisplay(GPURenderingDevice &renderingDevice, HWND hWnd, GameDisplay* &displayOut);
 #endif
 
             /// Deletes the given display.

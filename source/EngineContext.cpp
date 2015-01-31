@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/EngineContext.hpp>
+#include <GTLib/Config.hpp>
 
 namespace GT
 {
@@ -41,5 +42,24 @@ namespace GT
         {
             m_hardwarePlatform.Shutdown();
         }
+
+
+
+        ResultCode EngineContext::CreateGPURenderingDevice(int apiCode, GPURenderingDevice* &renderingDeviceOut)
+        {
+            return m_hardwarePlatform.CreateGPURenderingDevice(apiCode, renderingDeviceOut);
+        }
+
+        void EngineContext::DeleteGPURenderingDevice(GPURenderingDevice* renderingDevice)
+        {
+            m_hardwarePlatform.DeleteGPURenderingDevice(renderingDevice);
+        }
+
+
+
+
+        //////////////////////////////////////////////////////////
+        // Private
+
     }
 }
