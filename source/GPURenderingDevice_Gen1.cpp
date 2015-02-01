@@ -6,7 +6,8 @@ namespace GT
 {
     namespace GE
     {
-        GPURenderingDevice_Gen1::GPURenderingDevice_Gen1()
+        GPURenderingDevice_Gen1::GPURenderingDevice_Gen1(const GPURenderingDeviceInfo &info)
+            : GPURenderingDevice(info)
         {
         }
 

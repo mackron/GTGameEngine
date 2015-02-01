@@ -14,5 +14,11 @@ namespace GT
         GameDisplay::~GameDisplay()
         {
         }
+
+
+        GPURenderingDevice & GameDisplay::GetRenderingDevice()
+        {
+            return m_renderingDevice;
+        }
     }
 }

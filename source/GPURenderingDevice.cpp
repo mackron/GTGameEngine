@@ -6,12 +6,19 @@ namespace GT
 {
     namespace GE
     {
-        GPURenderingDevice::GPURenderingDevice()
+        GPURenderingDevice::GPURenderingDevice(const GPURenderingDeviceInfo &info)
+            : m_info(info)
         {
         }
 
         GPURenderingDevice::~GPURenderingDevice()
         {
+        }
+
+
+        void GPURenderingDevice::GetInfo(GPURenderingDeviceInfo &infoOut) const
+        {
+            infoOut = m_info;
         }
     }
 }

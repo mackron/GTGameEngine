@@ -69,14 +69,25 @@ namespace GT
 
 
 
-        ResultCode HardwarePlatform::CreateGPURenderingDevice(int apiCode, GPURenderingDevice* &renderingDeviceOut)
+        unsigned int HardwarePlatform::GetGPURenderingDeviceCount() const
         {
-            return m_gpuHardwarePlatform.CreateGPURenderingDevice(apiCode, renderingDeviceOut);
+            return m_gpuHardwarePlatform.GetGPURenderingDeviceCount();
         }
 
-        void HardwarePlatform::DeleteGPURenderingDevice(GPURenderingDevice* renderingDevice)
+        ResultCode HardwarePlatform::GetGPURenderingDeviceInfo(unsigned int deviceIndex, GPURenderingDeviceInfo &deviceInfoOut) const
         {
-            m_gpuHardwarePlatform.DeleteGPURenderingDevice(renderingDevice);
+            return m_gpuHardwarePlatform.GetGPURenderingDeviceInfo(deviceIndex, deviceInfoOut);
+        }
+
+
+        ResultCode HardwarePlatform::CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount, GPURenderingDevice* &deviceOut)
+        {
+            return m_gpuHardwarePlatform.CreateGPURenderingDevice(deviceIndex, renderingAPIs, renderingAPIsCount, deviceOut);
+        }
+
+        void HardwarePlatform::DeleteGPURenderingDevice(GPURenderingDevice* device)
+        {
+            m_gpuHardwarePlatform.DeleteGPURenderingDevice(device);
         }
     }
 }

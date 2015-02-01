@@ -121,5 +121,8 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplay_Windowed.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDeviceInfo.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

@@ -23,7 +23,7 @@ namespace GT
 #if defined(GT_PLATFORM_WINDOWS)
         GameDisplay_Windowed::GameDisplay_Windowed(GPURenderingDevice &renderingDevice, HWND hWnd)
             : GameDisplay(renderingDevice),
-              m_hWnd(0)
+              m_hWnd(hWnd)
         {
         }
 

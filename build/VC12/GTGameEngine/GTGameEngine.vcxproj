@@ -44,6 +44,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\GPUAdapter.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPUComputeDevice.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDeviceInfo.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_D3D11.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_Gen1.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_Gen2.hpp" />

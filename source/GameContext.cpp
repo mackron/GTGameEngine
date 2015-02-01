@@ -3,6 +3,7 @@
 #include <GTGameEngine/EngineContext.hpp>
 #include <GTGameEngine/GameContext.hpp>
 #include <GTGameEngine/GameDisplay_Windowed.hpp>
+#include <GTGameEngine/GPURenderingDevice.hpp>
 
 namespace GT
 {
@@ -62,7 +63,13 @@ namespace GT
                     auto display = m_windowedDisplays[iDisplay];
                     assert(display != nullptr);
                     {
-                    
+                        auto &renderingDevice = display->GetRenderingDevice();
+
+                        renderingDevice.SetCurrentWindow(display->GetWindow());
+                        
+                        renderingDevice.ClearColor(0.0f, 0.25f, 0.0f, 1.0f);
+
+                        renderingDevice.SwapBuffers();
                     }
                 }
             }
@@ -80,9 +87,20 @@ namespace GT
         {
             if (hWnd != 0)
             {
-                displayOut = new GameDisplay_Windowed(renderingDevice, hWnd);
+                ResultCode result = renderingDevice.InitWindowFramebuffer(hWnd, true);
+                if (GT::Succeeded(result))
+                {
+                    auto display = new GameDisplay_Windowed(renderingDevice, hWnd);
+                    
+                    m_windowedDisplays.PushBack(display);
 
-                return 0;   // No error.
+                    displayOut = display;
+                    return 0;   // No error.
+                }
+                else
+                {
+                    return result;
+                }
             }
             else
             {
@@ -92,6 +110,23 @@ namespace GT
 
         void GameContext::DeleteDisplay(GameDisplay* display)
         {
+            if (display != nullptr)
+            {
+                switch (display->GetType())
+                {
+                case GameDisplayType_Windowed:
+                    {
+                        display->GetRenderingDevice().UninitWindowFramebuffer(reinterpret_cast<GameDisplay_Windowed*>(display)->GetWindow());
+                        break;
+                    }
+
+
+                case GameDisplayType_Fullscreen:
+                case GameDisplayType_Texture:
+                default: break;
+                }
+            }
+
             delete display;
         }
 #endif

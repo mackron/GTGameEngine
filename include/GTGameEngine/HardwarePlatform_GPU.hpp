@@ -6,39 +6,17 @@
 #include <GTLib/Config.hpp>
 #include <GTLib/ResultCodes.hpp>
 #include <GTLib/Vector.hpp>
+#include <GTGameEngine/GPURenderingDeviceInfo.hpp>
+
+#if defined(GT_PLATFORM_WINDOWS)
+#include <GTLib/windef.h>
+#endif
 
 namespace GT
 {
     namespace GE
     {
         class GPURenderingDevice;
-
-        // Rendering API codes.
-        static const int RenderingAPI_Any      = 0;
-        static const int RenderingAPI_Any_Gen1 = 1;
-        static const int RenderingAPI_Any_Gen2 = 2;
-        static const int RenderingAPI_OpenGL21 = (1 << 8) | RenderingAPI_Any_Gen1;
-        static const int RenderingAPI_OpenGL45 = (1 << 8) | RenderingAPI_Any_Gen2;
-        static const int RenderingAPI_D3D9     = (2 << 8) | RenderingAPI_Any_Gen1;
-        static const int RenderingAPI_D3D11    = (2 << 8) | RenderingAPI_Any_Gen2;
-
-        struct GPURenderingDeviceInfo
-        {
-            /// The description of the device.
-            char description[256];
-
-            /// The supported APIs of the given device. This will be terminated with a 0.
-            int supportedAPIs[16];
-
-
-            /// The identifier that is used for identifying the device for the OpenGL API. With OpenGL, we can only use the primary display, so for
-            /// this one, we set it to 1 for the rendering device and 0 for the others.
-            int identifier_OpenGL;
-
-            /// The identifier that is used for identifying the device for the D3D11 API. This is just the index 
-            int identifier_D3D11;
-        };
-
 
         /// Class representing all of the usable GPU devices on the running system.
         class HardwarePlatform_GPU
@@ -73,20 +51,23 @@ namespace GT
             ///
             /// @param deviceIndex   [in]  The index of the rendering device.
             /// @param deviceInfoOut [out] A reference to the GPURenderingDeviceInfo object that will receive information about the device.
-            ResultCode GetGPURenderingDeviceInfo(GPURenderingDeviceInfo &deviceInfoOut);
+            ResultCode GetGPURenderingDeviceInfo(unsigned int deviceIndex, GPURenderingDeviceInfo &deviceInfoOut) const;
 
 
-            /// Creates a rendering device for the given API code.
+            /// Creates an instance of a rendering device from the given device index.
             ///
-            /// @param apiCode            [in]  A code identifying the rendering API to use as the back-end.
-            /// @param renderingDeviceOut [out] A reference to the variable that will receive a pointer to the new rendering device.
+            /// @param deviceIndex        [in] The index of the device to create the device instance from.
+            /// @param renderingAPIs      [in] A buffer containing a list of rendering APIs to use, in order of preference.
+            /// @param renderingAPIsCount [in] The number of items in the renderingAPIs argument.
+            /// @param deviceOut          [in] A reference to the variable that will receive a pointer to the new device instance.
             ///
-            /// @return A result code specifying whether or not the device was created successfully. The return value will be >=0 if there was no error.
+            /// @return <0 if an error occurs, otherwise >=0.
             ///
             /// @remarks
-            ///     Specify a value of 0 for apiCode to automatically choose the best API back-end. On Windows this will try the highest available version of Direct3D. On Linux
-            ///     this will pick the highest available version of OpenGL.
-            ResultCode CreateGPURenderingDevice(int apiCode, GPURenderingDevice* &renderingDeviceOut);
+            ///     To use the primary rendering device, specify 0 for deviceIndex.
+            ///     @par
+            ///     renderingAPIs should contain a list of rendering APIs to use, in order of preference. If none of the APIs are supported, an error will be returned.
+            ResultCode CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount, GPURenderingDevice* &deviceOut);
 
             /// Deletes a GPU rendering device object that was created with CreateGPURenderingDevice().
             ///
@@ -110,68 +91,35 @@ namespace GT
 
         private:
 
-            /// Creates the best available GPU rendering device.
-            ///
-            /// @param renderingDeviceOut [in] A reference to the variable that will receive a pointer to the new rendering devivce.
-            ///
-            /// @return >=0 if there is no error.
-            ResultCode CreateGPURenderingDevice_Any(GPURenderingDevice* &renderingDeviceOut);
-
-            /// Creates the best available generation 1 GPU rendering device.
-            ///
-            /// @param renderingDeviceOut [in] A reference to the variable that will receive a pointer to the new rendering devivce.
-            ///
-            /// @return >=0 if there is no error.
-            ResultCode CreateGPURenderingDevice_Gen1(GPURenderingDevice* &renderingDeviceOut);
-
-            /// Creates the best available generation 2 GPU rendering device.
-            ///
-            /// @param renderingDeviceOut [in] A reference to the variable that will receive a pointer to the new rendering devivce.
-            ///
-            /// @return >=0 if there is no error.
-            ResultCode CreateGPURenderingDevice_Gen2(GPURenderingDevice* &renderingDeviceOut);
-
-            /// Creates the best available OpenGL 2.1 GPU rendering device.
-            ///
-            /// @param renderingDeviceOut [in] A reference to the variable that will receive a pointer to the new rendering devivce.
-            ///
-            /// @return >=0 if there is no error.
-            ResultCode CreateGPURenderingDevice_OpenGL21(GPURenderingDevice* &renderingDeviceOut);
-
-            /// Creates the best available OpenGL 4.5 GPU rendering device.
-            ///
-            /// @param renderingDeviceOut [in] A reference to the variable that will receive a pointer to the new rendering devivce.
-            ///
-            /// @return >=0 if there is no error.
-            ResultCode CreateGPURenderingDevice_OpenGL45(GPURenderingDevice* &renderingDeviceOut);
-
-            /// Creates the best available D3D9 GPU rendering device.
-            ///
-            /// @param renderingDeviceOut [in] A reference to the variable that will receive a pointer to the new rendering devivce.
-            ///
-            /// @return >=0 if there is no error.
-            ResultCode CreateGPURenderingDevice_D3D9(GPURenderingDevice* &renderingDeviceOut);
-
-            /// Creates the best available D3D11 GPU rendering device.
-            ///
-            /// @param renderingDeviceOut [in] A reference to the variable that will receive a pointer to the new rendering devivce.
-            ///
-            /// @return >=0 if there is no error.
-            ResultCode CreateGPURenderingDevice_D3D11(GPURenderingDevice* &renderingDeviceOut);
-
-
-
-        private:
-
             /// The list of info structures for each rendering device.
             GTLib::Vector<GPURenderingDeviceInfo> m_renderingDevices;
 
 
 #if defined(GT_PLATFORM_WINDOWS)
-            /// The IDXGIFactory object that was used to iterate over each of the GPU adapters.
-            void* m_pDXGIFactory;
+            /// A handle representing the DXGI DLL.
+            HMODULE m_hDXGI;
 
-            /// 
+            /// A handle representing the D3D11 DLL.
+            HMODULE m_hD3D11;
+
+            /// A handle representing the D3DCompiler DLL.
+            HMODULE m_hD3DCompiler;
+
+            /// A handle representing the OpenGL32 DLL.
+            HMODULE m_hOpenGL32;
+
+
+            /// The dummy window for creating the OpenGL rendering context.
+            HWND m_hOpenGLDummyWindow;
+
+            /// The device context of the OpenGL dummy window.
+            HDC m_hOpenGLDummyDC;
+
+            /// The pixel format that must used for each OpenGL window.
+            int m_OpenGLPixelFormat;
+
+            /// The primary OpenGL rendering context. All other rendering contexts are created from this.
+            HGLRC m_hOpenGLRC;
 #endif
 
 

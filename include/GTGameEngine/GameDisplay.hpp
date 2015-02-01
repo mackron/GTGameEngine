@@ -30,6 +30,12 @@ namespace GT
             virtual ~GameDisplay();
 
 
+            /// Retrieves a reference to the rendering device that was passed to the constructor of the display.
+            ///
+            /// @return A reference to the associated rendering device.
+            GPURenderingDevice & GetRenderingDevice();
+
+
             /// Retrieves the type of the game display (windowed, fullscreen or textured)
             ///
             /// @return The type of the game display.

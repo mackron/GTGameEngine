@@ -45,17 +45,47 @@ namespace GT
             void Shutdown();
 
 
-            /// Creates a GPU rendering device.
+
+            /// Retrieves the number of GPU rendering devices available to the application.
             ///
-            /// @param apiCode            [in]  A code identifying the rendering API to use as the back-end.
-            /// @param renderingDeviceOut [out] A reference to the variable that will receive a pointer to the new rendering device.
+            /// @return The number of GPU devices that are available to the application for rendering.
+            unsigned int GetGPURenderingDeviceCount() const;
+
+            /// Retrieves the GPU rendering device info for the device at the given index.
             ///
-            /// @return A result code specifying whether or not the device was created successfully. The return value will be >=0 if there was no error.
+            /// @param deviceIndex   [in]  The index of the device whose information is being retrieved.
+            /// @param deviceInfoOut [out] A reference to the object that will receive the device info.
+            ///
+            /// @return If an error occurs, the return value will be <0. Otherwise, the return value will be >=0.
+            ResultCode GetGPURenderingDeviceInfo(unsigned int deviceIndex, GPURenderingDeviceInfo &deviceInfoOut) const;
+
+
+            /// @copydoc GT::GE::HardwarePlatform_GPU::CreateGPURenderingDevice().
+            ResultCode CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount, GPURenderingDevice* &deviceOut);
+
+            /// Helper for creating a GPU rendering device for the given rendering API.
+            ///
+            /// @param deviceIndex  [in]  The index of the device to create the new device instance from.
+            /// @param renderingAPI [in]  The rendering API to use.
+            /// @param deviceOut    [out] A reference to the variable that will receive the new device object.
+            ///
+            /// @return <0 if an error occurs, otherwise returns >=0.
+            ResultCode CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPI, GPURenderingDevice* &deviceOut);
+
+            /// Helper for creating a GPU rendering device with the best available rendering API.
+            ///
+            /// @param deviceIndex  [in]  The index of the device to create the new device instance from.
+            /// @param deviceOut    [out] A reference to the variable that will receive the new device object.
+            ResultCode CreateGPURenderingDevice(unsigned int deviceIndex, GPURenderingDevice* &deviceOut);
+
+            /// The highest level helper for creating a GPU rendering device.
+            ///
+            /// @return A pointer to the GPU rendering device, or null if an error occurs.
             ///
             /// @remarks
-            ///     Specify a value of 0 for apiCode to automatically choose the best API back-end. On Windows this will try the highest available version of Direct3D. On Linux
-            ///     this will pick the highest available version of OpenGL.
-            ResultCode CreateGPURenderingDevice(int apiCode, GPURenderingDevice* &renderingDeviceOut);
+            ///     This will create the rendering device from the primary adapter (device index of 0) and will use the best available rendering API.
+            GPURenderingDevice* CreateGPURenderingDevice();
+
 
             /// Deletes a GPU rendering device object that was created with DeleteGPURenderingDevice.
             ///

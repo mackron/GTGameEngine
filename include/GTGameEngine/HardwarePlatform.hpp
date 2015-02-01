@@ -37,23 +37,25 @@ namespace GT
             void Shutdown();
 
 
-            /// Creates a rendering device for the given API code.
+            /// Retrieves the number of GPU rendering devices available to the application.
             ///
-            /// @param apiCode            [in]  A code identifying the rendering API to use as the back-end.
-            /// @param renderingDeviceOut [out] A reference to the variable that will receive a pointer to the new rendering device.
-            ///
-            /// @return A result code specifying whether or not the device was created successfully. The return value will be >=0 if there was no error.
-            ///
-            /// @remarks
-            ///     Specify a value of 0 for apiCode to automatically choose the best API back-end. On Windows this will try the highest available version of Direct3D. On Linux
-            ///     this will pick the highest available version of OpenGL.
-            ResultCode CreateGPURenderingDevice(int apiCode, GPURenderingDevice* &renderingDeviceOut);
+            /// @return The number of GPU devices that are available to the application for rendering.
+            unsigned int GetGPURenderingDeviceCount() const;
 
-            /// Deletes a GPU rendering device object that was created with DeleteGPURenderingDevice.
+            /// Retrieves the GPU rendering device info for the device at the given index.
             ///
-            /// @param renderingDevice [in] A pointer to the GPU device to delete.
-            void DeleteGPURenderingDevice(GPURenderingDevice* renderingDevice);
+            /// @param deviceIndex   [in]  The index of the device whose information is being retrieved.
+            /// @param deviceInfoOut [out] A reference to the object that will receive the device info.
+            ///
+            /// @return If an error occurs, the return value will be <0. Otherwise, the return value will be >=0.
+            ResultCode GetGPURenderingDeviceInfo(unsigned int deviceIndex, GPURenderingDeviceInfo &deviceInfoOut) const;
 
+
+            /// @copydoc GT::GE::HardwarePlatform_GPU::CreateGPURenderingDevice().
+            ResultCode CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount, GPURenderingDevice* &deviceOut);
+
+            /// @copydoc GT::GE::HardwarePlatform_GPU::DeleteGPURenderingDevice().
+            void DeleteGPURenderingDevice(GPURenderingDevice* device);
 
 
         private:

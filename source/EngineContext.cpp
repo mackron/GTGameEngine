@@ -45,9 +45,83 @@ namespace GT
 
 
 
-        ResultCode EngineContext::CreateGPURenderingDevice(int apiCode, GPURenderingDevice* &renderingDeviceOut)
+        unsigned int EngineContext::GetGPURenderingDeviceCount() const
         {
-            return m_hardwarePlatform.CreateGPURenderingDevice(apiCode, renderingDeviceOut);
+            return m_hardwarePlatform.GetGPURenderingDeviceCount();
+        }
+
+        ResultCode EngineContext::GetGPURenderingDeviceInfo(unsigned int deviceIndex, GPURenderingDeviceInfo &deviceInfoOut) const
+        {
+            return m_hardwarePlatform.GetGPURenderingDeviceInfo(deviceIndex, deviceInfoOut);
+        }
+
+
+
+        ResultCode EngineContext::CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount, GPURenderingDevice* &deviceOut)
+        {
+            return m_hardwarePlatform.CreateGPURenderingDevice(deviceIndex, renderingAPIs, renderingAPIsCount, deviceOut);
+        }
+
+        ResultCode EngineContext::CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPI, GPURenderingDevice* &deviceOut)
+        {
+            switch (renderingAPI)
+            {
+            case RenderingAPI_Any:
+                {
+                    RenderingAPI renderingAPIs[] = 
+                    {
+                        RenderingAPI_D3D11,
+                        RenderingAPI_OpenGL45,
+                        RenderingAPI_D3D9,
+                        RenderingAPI_OpenGL21
+                    };
+                    
+                    return this->CreateGPURenderingDevice(deviceIndex, renderingAPIs, sizeof(renderingAPIs) / sizeof(renderingAPIs[0]), deviceOut);
+                }
+
+            case RenderingAPI_Any_Gen1:
+                {
+                    RenderingAPI renderingAPIs[] = 
+                    {
+                        RenderingAPI_D3D11,
+                        RenderingAPI_OpenGL45
+                    };
+                    
+                    return this->CreateGPURenderingDevice(deviceIndex, renderingAPIs, sizeof(renderingAPIs) / sizeof(renderingAPIs[0]), deviceOut);
+                }
+
+            case RenderingAPI_Any_Gen2:
+                {
+                    RenderingAPI renderingAPIs[] = 
+                    {
+                        RenderingAPI_D3D9,
+                        RenderingAPI_OpenGL21
+                    };
+                    
+                    return this->CreateGPURenderingDevice(deviceIndex, renderingAPIs, sizeof(renderingAPIs) / sizeof(renderingAPIs[0]), deviceOut);
+                }
+
+            default:
+                {
+                    return this->CreateGPURenderingDevice(deviceIndex, &renderingAPI, 1, deviceOut);
+                }
+            }
+        }
+
+        ResultCode EngineContext::CreateGPURenderingDevice(unsigned int deviceIndex, GPURenderingDevice* &deviceOut)
+        {
+            return this->CreateGPURenderingDevice(deviceIndex, RenderingAPI_Any, deviceOut);
+        }
+
+        GPURenderingDevice* EngineContext::CreateGPURenderingDevice()
+        {
+            GPURenderingDevice* device;
+            if (GT::Succeeded(this->CreateGPURenderingDevice(0, device)))
+            {
+                return device;
+            }
+
+            return nullptr;
         }
 
         void EngineContext::DeleteGPURenderingDevice(GPURenderingDevice* renderingDevice)

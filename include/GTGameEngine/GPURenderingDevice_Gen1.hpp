@@ -15,7 +15,7 @@ namespace GT
         public:
 
             /// Constructor.
-            GPURenderingDevice_Gen1();
+            GPURenderingDevice_Gen1(const GPURenderingDeviceInfo &info);
 
             /// Destructor.
             ~GPURenderingDevice_Gen1();
