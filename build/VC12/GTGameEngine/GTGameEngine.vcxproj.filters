@@ -21,6 +21,18 @@
     <Filter Include="Source Files\external\tinyxml">
       <UniqueIdentifier>{4ababe3e-9423-4ffe-99b0-8c0a2ebe6f2f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Rendering">
+      <UniqueIdentifier>{eabec654-0eb9-4a28-ba41-a7b21e5a95b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering">
+      <UniqueIdentifier>{b41ed964-8573-4f87-94de-e5abd303bfb0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering\OpenGL21">
+      <UniqueIdentifier>{99ed188e-3e4e-4eb3-be51-2d15a4ccb3fc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering\D3D11">
+      <UniqueIdentifier>{dca3d216-945b-4d83-84b8-2152191edd4c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c">
@@ -70,6 +82,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\GPURenderingDevice_OpenGL21.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\D3D11\Framebuffer_D3D11.cpp">
+      <Filter>Source Files\Rendering\D3D11</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +141,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_OpenGL21.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Framebuffer.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\D3D11\Framebuffer_D3D11.hpp">
+      <Filter>Source Files\Rendering\D3D11</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

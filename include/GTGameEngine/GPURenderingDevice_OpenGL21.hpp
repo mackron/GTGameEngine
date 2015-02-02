@@ -79,9 +79,7 @@ namespace GT
 {
     namespace GE
     {
-        
-
-
+        /// OpenGL 2.1 implementation of the rendering device.
         class GPURenderingDevice_OpenGL21 : public GPURenderingDevice_Gen1
         {
         public:
@@ -107,6 +105,14 @@ namespace GT
 
             /// GPURenderingDevice::ClearColor().
             void ClearColor(float r, float g, float b, float a);
+
+
+
+            ///////////////////////////////////////////
+            // Framebuffers
+
+            /// GPURenderingDevice::CreateFramebuffer().
+            ResultCode CreateFramebuffer(Framebuffer* &framebuffer);
 
 
 

@@ -35,6 +35,8 @@
     <ClCompile Include="..\..\..\source\HardwarePlatform_CPU.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_GPU.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_Input.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\D3D11\Framebuffer_D3D11.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp" />
@@ -53,7 +55,9 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_CPU.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_GPU.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Input.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Framebuffer.hpp" />
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
+    <ClInclude Include="..\..\..\source\Rendering\D3D11\Framebuffer_D3D11.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0E702596-5089-48E6-AD25-2DD3C3F705B6}</ProjectGuid>

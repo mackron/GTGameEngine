@@ -15,6 +15,9 @@ namespace GT
 {
     namespace GE
     {
+        class Framebuffer;
+
+
         /// Class representing a rendering GPU device.
         class GPURenderingDevice
         {
@@ -73,6 +76,16 @@ namespace GT
             /// @param b [in] The blue component.
             /// @param a [in] The alpha component.
             virtual void ClearColor(float r, float g, float b, float a) = 0;
+
+
+
+            ///////////////////////////////////////////
+            // Framebuffers
+
+            /// Creates a framebuffer object.
+            ///
+            /// @param framebufferOut [in] A reference to the variable that will receive a pointer to the new framebuffer, if successful.
+            virtual ResultCode CreateFramebuffer(Framebuffer* &framebuffer) = 0;
 
 
 

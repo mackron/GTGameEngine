@@ -58,6 +58,15 @@ namespace GT
 
 
 
+
+            ///////////////////////////////////////////
+            // Framebuffers
+
+            /// GPURenderingDevice::CreateFramebuffer().
+            ResultCode CreateFramebuffer(Framebuffer* &framebuffer);
+
+
+
             //////////////////////////////////////////
             // Platform-Specific Methods
 
