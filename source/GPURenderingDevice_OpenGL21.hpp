@@ -3,7 +3,7 @@
 #ifndef __GT_GE_GPURenderingDevice_OpenGL21_hpp_
 #define __GT_GE_GPURenderingDevice_OpenGL21_hpp_
 
-#include "GPURenderingDevice_Gen1.hpp"
+#include <GTGameEngine/GPURenderingDevice_Gen1.hpp>
 #include <GTLib/Map.hpp>
 
 

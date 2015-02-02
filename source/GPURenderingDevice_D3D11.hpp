@@ -10,7 +10,7 @@
 #include <GTLib/ResultCodes.hpp>
 #include <GTLib/windows.hpp>
 #include <d3d11.h>
-#include "GPURenderingDevice_Gen2.hpp"
+#include <GTGameEngine/GPURenderingDevice_Gen2.hpp>
 
 namespace GT
 {

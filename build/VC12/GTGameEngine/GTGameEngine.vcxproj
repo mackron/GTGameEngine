@@ -46,10 +46,8 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\GPUComputeDevice.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDeviceInfo.hpp" />
-    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_D3D11.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_Gen1.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_Gen2.hpp" />
-    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_OpenGL21.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Audio.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_CPU.hpp" />
@@ -57,6 +55,8 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Input.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Framebuffer.hpp" />
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
+    <ClInclude Include="..\..\..\source\GPURenderingDevice_D3D11.hpp" />
+    <ClInclude Include="..\..\..\source\GPURenderingDevice_OpenGL21.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D11\Framebuffer_D3D11.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">

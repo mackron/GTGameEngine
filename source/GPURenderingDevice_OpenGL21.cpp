@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/GPURenderingDevice_OpenGL21.hpp>
+#include "GPURenderingDevice_OpenGL21.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>

@@ -124,9 +124,6 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_D3D11.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_Gen1.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -139,14 +136,17 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDeviceInfo.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_OpenGL21.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Framebuffer.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\D3D11\Framebuffer_D3D11.hpp">
       <Filter>Source Files\Rendering\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\GPURenderingDevice_D3D11.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\GPURenderingDevice_OpenGL21.hpp">
+      <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
