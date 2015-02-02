@@ -3,9 +3,8 @@
 #ifndef __GT_GE_GameDisplay_Windowed_hpp_
 #define __GT_GE_GameDisplay_Windowed_hpp_
 
+#include "Config.hpp"
 #include "GameDisplay.hpp"
-
-#include <GTLib/Config.hpp>
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windef.h>

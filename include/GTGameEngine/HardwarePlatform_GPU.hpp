@@ -3,7 +3,7 @@
 #ifndef __GT_GE_HardwarePlatform_GPU_hpp_
 #define __GT_GE_HardwarePlatform_GPU_hpp_
 
-#include <GTLib/Config.hpp>
+#include "Config.hpp"
 #include <GTLib/ResultCodes.hpp>
 #include <GTLib/Vector.hpp>
 #include <GTGameEngine/GPURenderingDeviceInfo.hpp>

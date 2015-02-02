@@ -3,8 +3,9 @@
 #ifndef __GT_GE_GPURenderingDevice_hpp_
 #define __GT_GE_GPURenderingDevice_hpp_
 
+#include "Config.hpp"
 #include "GPURenderingDeviceInfo.hpp"
-#include <GTLib/Config.hpp>
+
 #include <GTLib/ResultCodes.hpp>
 
 #if defined(GT_PLATFORM_WINDOWS)

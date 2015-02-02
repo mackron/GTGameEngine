@@ -3,8 +3,8 @@
 #ifndef __GT_GE_GameContext_hpp_
 #define __GT_GE_GameContext_hpp_
 
+#include "Config.hpp"
 #include <GTLib/ResultCodes.hpp>
-#include <GTLib/Config.hpp>
 #include <GTLib/Vector.hpp>
 
 #if defined(GT_PLATFORM_WINDOWS)

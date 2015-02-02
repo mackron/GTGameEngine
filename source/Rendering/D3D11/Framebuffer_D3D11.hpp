@@ -3,7 +3,7 @@
 #ifndef __GT_GE_Framebuffer_D3D11_hpp_
 #define __GT_GE_Framebuffer_D3D11_hpp_
 
-#include <GTLib/Config.hpp>
+#include "Config.hpp"
 #include <GTGameEngine/Rendering/Framebuffer.hpp>
 
 namespace GT

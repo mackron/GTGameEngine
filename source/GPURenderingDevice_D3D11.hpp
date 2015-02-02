@@ -3,7 +3,7 @@
 #ifndef __GT_GE_GPURenderingDevice_D3D11_hpp_
 #define __GT_GE_GPURenderingDevice_D3D11_hpp_
 
-#include <GTLib/Config.hpp>
+#include "Config.hpp"
 #include <GTLib/Map.hpp>
 
 #if defined(GT_PLATFORM_WINDOWS)

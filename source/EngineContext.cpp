@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/EngineContext.hpp>
-#include <GTLib/Config.hpp>
+#include <GTGameEngine/Config.hpp>
 
 namespace GT
 {

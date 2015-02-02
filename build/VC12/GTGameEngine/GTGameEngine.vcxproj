@@ -39,6 +39,7 @@
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Config.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameContext.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplay.hpp" />
