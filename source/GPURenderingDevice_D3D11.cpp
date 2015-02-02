@@ -18,6 +18,7 @@ namespace GT
               m_stateFlags(0),
               m_swapInterval(0)
         {
+            m_stateFlags |= StageFlag_IsWindowFramebufferCurrent;       // TODO: Remove this from the constructor once we get the framebuffer system working properly.
         }
 
         GPURenderingDevice_D3D11::~GPURenderingDevice_D3D11()
@@ -154,156 +155,162 @@ namespace GT
         {
             assert(m_device != nullptr);
 
-
-            HRESULT hr = 0;
-
-
-            // 1) Retrieve the relevant interfaces for creating the swap buffer.
-            IDXGIDevice* pDXGIDevice;
-            hr = m_device->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&pDXGIDevice));
-            if (FAILED(hr))
+            if (!m_windowFramebuffers.Exists(hWnd))
             {
-                return D3D11_FailedToRetrieveIDXGIDevice;
-            }
+                HRESULT hr = 0;
 
-            IDXGIAdapter* pDXGIAdapter;
-            hr = pDXGIDevice->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void**>(&pDXGIAdapter));
-            if (FAILED(hr))
-            {
-                pDXGIDevice->Release();
+                // 1) Retrieve the relevant interfaces for creating the swap buffer.
+                IDXGIDevice* pDXGIDevice;
+                hr = m_device->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&pDXGIDevice));
+                if (FAILED(hr))
+                {
+                    return D3D11_FailedToRetrieveIDXGIDevice;
+                }
 
-                return D3D11_FailedToRetrieveIDXGIAdapter;
-            }
+                IDXGIAdapter* pDXGIAdapter;
+                hr = pDXGIDevice->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void**>(&pDXGIAdapter));
+                if (FAILED(hr))
+                {
+                    pDXGIDevice->Release();
 
-            IDXGIFactory* pDXGIFactory;
-            hr = pDXGIAdapter->GetParent(__uuidof(IDXGIFactory),reinterpret_cast<void**>(&pDXGIFactory));
-            if (FAILED(hr))
-            {
-                pDXGIAdapter->Release();
-                pDXGIDevice->Release();
+                    return D3D11_FailedToRetrieveIDXGIAdapter;
+                }
 
-                return D3D11_FailedToRetrieveIDXGIFactory;
-            }
+                IDXGIFactory* pDXGIFactory;
+                hr = pDXGIAdapter->GetParent(__uuidof(IDXGIFactory),reinterpret_cast<void**>(&pDXGIFactory));
+                if (FAILED(hr))
+                {
+                    pDXGIAdapter->Release();
+                    pDXGIDevice->Release();
+
+                    return D3D11_FailedToRetrieveIDXGIFactory;
+                }
 
 
 
-            // 2) Create the swap buffer and the associated views.
-            ResultCode result = 0;
+                // 2) Create the swap buffer and the associated views.
+                ResultCode result = 0;
 
-            HWNDFramebuffer framebuffer;
-            framebuffer.swapChain        = nullptr;
-            framebuffer.renderTargetView = nullptr;
-            framebuffer.depthStencil     = nullptr;
-            framebuffer.depthStencilView = nullptr;
+                HWNDFramebuffer framebuffer;
+                framebuffer.swapChain        = nullptr;
+                framebuffer.renderTargetView = nullptr;
+                framebuffer.depthStencil     = nullptr;
+                framebuffer.depthStencilView = nullptr;
 
-            RECT windowClientRect;
-            GetClientRect(hWnd, &windowClientRect);
+                RECT windowClientRect;
+                GetClientRect(hWnd, &windowClientRect);
 
-            UINT windowWidth  = windowClientRect.right - windowClientRect.left;
-            UINT windowHeight = windowClientRect.bottom - windowClientRect.top;
+                UINT windowWidth  = windowClientRect.right - windowClientRect.left;
+                UINT windowHeight = windowClientRect.bottom - windowClientRect.top;
 
-            DXGI_SWAP_CHAIN_DESC sd;
-            ZeroMemory(&sd, sizeof(sd));
-            sd.BufferCount        = 1;
-            sd.BufferDesc.Width   = windowWidth;
-            sd.BufferDesc.Height  = windowHeight;
-            sd.BufferDesc.Format  = DXGI_FORMAT_R8G8B8A8_UNORM;
-            sd.BufferUsage        = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-            sd.SampleDesc.Count   = 1;
-            sd.SampleDesc.Quality = 0;
-            sd.Windowed           = TRUE;
-            sd.OutputWindow = hWnd;
+                DXGI_SWAP_CHAIN_DESC sd;
+                ZeroMemory(&sd, sizeof(sd));
+                sd.BufferCount        = 1;
+                sd.BufferDesc.Width   = windowWidth;
+                sd.BufferDesc.Height  = windowHeight;
+                sd.BufferDesc.Format  = DXGI_FORMAT_R8G8B8A8_UNORM;
+                sd.BufferUsage        = DXGI_USAGE_RENDER_TARGET_OUTPUT;
+                sd.SampleDesc.Count   = 1;
+                sd.SampleDesc.Quality = 0;
+                sd.Windowed           = TRUE;
+                sd.OutputWindow = hWnd;
 
-            hr = pDXGIFactory->CreateSwapChain(m_device, &sd, &framebuffer.swapChain);
-            if (SUCCEEDED(hr))
-            {
-                ID3D11Texture2D* pBackBuffer = NULL;
-                hr = framebuffer.swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<LPVOID*>(&pBackBuffer));
+                hr = pDXGIFactory->CreateSwapChain(m_device, &sd, &framebuffer.swapChain);
                 if (SUCCEEDED(hr))
                 {
-                    hr = m_device->CreateRenderTargetView(pBackBuffer, NULL, &framebuffer.renderTargetView);
+                    ID3D11Texture2D* pBackBuffer = NULL;
+                    hr = framebuffer.swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), reinterpret_cast<LPVOID*>(&pBackBuffer));
                     if (SUCCEEDED(hr))
                     {
-                        // Create the depth/stencil buffer if applicable.
-                        if (includeDepthStencil)
+                        hr = m_device->CreateRenderTargetView(pBackBuffer, NULL, &framebuffer.renderTargetView);
+                        if (SUCCEEDED(hr))
                         {
-                            // Create the texture.
-                            D3D11_TEXTURE2D_DESC descDepth;
-                            ZeroMemory(&descDepth, sizeof(descDepth));
-                            descDepth.Width              = windowWidth;
-                            descDepth.Height             = windowHeight;
-                            descDepth.MipLevels          = 1;
-                            descDepth.ArraySize          = 1;
-                            descDepth.Format             = DXGI_FORMAT_D24_UNORM_S8_UINT;
-                            descDepth.SampleDesc.Count   = 1;
-                            descDepth.SampleDesc.Quality = 0;
-                            descDepth.Usage              = D3D11_USAGE_DEFAULT;
-                            descDepth.BindFlags          = D3D11_BIND_DEPTH_STENCIL;
-                            descDepth.CPUAccessFlags     = 0;
-                            descDepth.MiscFlags          = 0;
-                            hr = m_device->CreateTexture2D(&descDepth, NULL, &framebuffer.depthStencil);
-                            if (SUCCEEDED(hr))
+                            // Create the depth/stencil buffer if applicable.
+                            if (includeDepthStencil)
                             {
-                                // Create the view from the texture.
-                                D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
-                                ZeroMemory(&descDSV, sizeof(descDSV));
-                                descDSV.Format             = descDepth.Format;
-                                descDSV.ViewDimension      = D3D11_DSV_DIMENSION_TEXTURE2D;
-                                descDSV.Texture2D.MipSlice = 0;
-                                hr = m_device->CreateDepthStencilView(framebuffer.depthStencil, &descDSV, &framebuffer.depthStencilView);
-                                if (FAILED(hr))
+                                // Create the texture.
+                                D3D11_TEXTURE2D_DESC descDepth;
+                                ZeroMemory(&descDepth, sizeof(descDepth));
+                                descDepth.Width              = windowWidth;
+                                descDepth.Height             = windowHeight;
+                                descDepth.MipLevels          = 1;
+                                descDepth.ArraySize          = 1;
+                                descDepth.Format             = DXGI_FORMAT_D24_UNORM_S8_UINT;
+                                descDepth.SampleDesc.Count   = 1;
+                                descDepth.SampleDesc.Quality = 0;
+                                descDepth.Usage              = D3D11_USAGE_DEFAULT;
+                                descDepth.BindFlags          = D3D11_BIND_DEPTH_STENCIL;
+                                descDepth.CPUAccessFlags     = 0;
+                                descDepth.MiscFlags          = 0;
+                                hr = m_device->CreateTexture2D(&descDepth, NULL, &framebuffer.depthStencil);
+                                if (SUCCEEDED(hr))
                                 {
-                                    framebuffer.depthStencil->Release();
+                                    // Create the view from the texture.
+                                    D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+                                    ZeroMemory(&descDSV, sizeof(descDSV));
+                                    descDSV.Format             = descDepth.Format;
+                                    descDSV.ViewDimension      = D3D11_DSV_DIMENSION_TEXTURE2D;
+                                    descDSV.Texture2D.MipSlice = 0;
+                                    hr = m_device->CreateDepthStencilView(framebuffer.depthStencil, &descDSV, &framebuffer.depthStencilView);
+                                    if (FAILED(hr))
+                                    {
+                                        framebuffer.depthStencil->Release();
+                                        framebuffer.renderTargetView->Release();
+                                        framebuffer.swapChain->Release();
+
+                                        result = D3D11_FailedToCreateDepthStencilView;
+                                    }
+                                }
+                                else
+                                {
                                     framebuffer.renderTargetView->Release();
                                     framebuffer.swapChain->Release();
 
-                                    result = D3D11_FailedToCreateDepthStencilView;
+                                    result = D3D11_FailedToCreateDepthStencilTexture;
                                 }
                             }
-                            else
-                            {
-                                framebuffer.renderTargetView->Release();
-                                framebuffer.swapChain->Release();
 
-                                result = D3D11_FailedToCreateDepthStencilTexture;
+
+                            // If we haven't yet failed at this point we have successfully created the framebuffer for the given window.
+                            if (GT::Succeeded(result))
+                            {
+                                m_windowFramebuffers.Add(hWnd, framebuffer);
                             }
                         }
-
-
-                        // If we haven't yet failed at this point we have successfully created the framebuffer for the given window.
-                        if (GT::Succeeded(result))
+                        else
                         {
-                            m_windowFramebuffers.Add(hWnd, framebuffer);
+                            result = D3D11_FailedToCreateSwapChainRenderTargetView;
                         }
+
+
+                        // We don't need to keep this one around.
+                        pBackBuffer->Release();
                     }
                     else
                     {
-                        result = D3D11_FailedToCreateSwapChainRenderTargetView;
+                        framebuffer.swapChain->Release();
+
+                        result = D3D11_FailedToCreateSwapChainBackBuffer;
                     }
-
-
-                    // We don't need to keep this one around.
-                    pBackBuffer->Release();
                 }
                 else
                 {
-                    framebuffer.swapChain->Release();
-
-                    result = D3D11_FailedToCreateSwapChainBackBuffer;
+                    result = D3D11_FailedToCreateSwapChain;
                 }
-            }
-            else
-            {
-                result = D3D11_FailedToCreateSwapChain;
-            }
 
             
 
-            pDXGIFactory->Release();
-            pDXGIAdapter->Release();
-            pDXGIDevice->Release();
+                pDXGIFactory->Release();
+                pDXGIAdapter->Release();
+                pDXGIDevice->Release();
 
-            return result;
+                return result;
+            }
+            else
+            {
+                // Window is already registered. This is not considered an error.
+                return 0;
+            }
         }
 
         void GPURenderingDevice_D3D11::UninitWindowFramebuffer(HWND hWnd)
@@ -344,6 +351,9 @@ namespace GT
                     framebuffer.swapChain->Release();
                     framebuffer.swapChain = nullptr;
                 }
+
+
+                m_windowFramebuffers.RemoveByIndex(iFramebuffer->index);
             }
         }
 

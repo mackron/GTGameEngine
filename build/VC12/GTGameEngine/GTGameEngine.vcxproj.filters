@@ -68,6 +68,9 @@
     <ClCompile Include="..\..\..\source\GameDisplay_Windowed.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\GPURenderingDevice_OpenGL21.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -116,6 +119,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDeviceInfo.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_OpenGL21.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

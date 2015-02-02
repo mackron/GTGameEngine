@@ -36,6 +36,34 @@ namespace GT
             /// The identifier that is used for identifying the device for the D3D11 API. This is a pointer to the IDXGIAdapter object.
             void* identifier_D3D11;
         };
+
+
+        /// Helper function for appending an API code to the given GPURenderingDeviceInfo structure.
+        inline void AddSupportedRenderingAPI(GPURenderingDeviceInfo &info, RenderingAPI apiCode)
+        {
+            for (int i = 0; i < 16; ++i)
+            {
+                if (info.supportedAPIs[i] == 0)
+                {
+                    info.supportedAPIs[i] = apiCode;
+                    break;
+                }
+            }
+        }
+
+        /// Helper function for determining whether or not the given rendering API is supported by the given GPU rendering device.
+        inline bool IsRenderingAPISupported(GPURenderingDeviceInfo &info, RenderingAPI apiCode)
+        {
+            for (int i = 0; i < 16 && info.supportedAPIs[i] != 0; ++i)
+            {
+                if (info.supportedAPIs[i] == apiCode)
+                {
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 }
 

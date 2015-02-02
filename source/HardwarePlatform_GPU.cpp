@@ -2,6 +2,7 @@
 
 #include <GTGameEngine/HardwarePlatform_GPU.hpp>
 #include <GTGameEngine/GPURenderingDevice_D3D11.hpp>
+#include <GTGameEngine/GPURenderingDevice_OpenGL21.hpp>
 
 #include <iostream>
 
@@ -51,35 +52,6 @@ namespace GT
 {
     namespace GE
     {
-        /// Helper function for appending an API code to the given GPURenderingDeviceInfo structure.
-        inline void AddSupportedRenderingAPI(GPURenderingDeviceInfo &info, RenderingAPI apiCode)
-        {
-            for (int i = 0; i < 16; ++i)
-            {
-                if (info.supportedAPIs[i] == 0)
-                {
-                    info.supportedAPIs[i] = apiCode;
-                    break;
-                }
-            }
-        }
-
-        /// Helper function for determining whether or not the given rendering API is supported by the given GPU rendering device.
-        inline bool IsRenderingAPISupported(GPURenderingDeviceInfo &info, RenderingAPI apiCode)
-        {
-            for (int i = 0; i < 16 && info.supportedAPIs[i] != 0; ++i)
-            {
-                if (info.supportedAPIs[i] == apiCode)
-                {
-                    return true;
-                }
-            }
-
-            return false;
-        }
-
-
-
         HardwarePlatform_GPU::HardwarePlatform_GPU()
             : 
 #if defined(GT_PLATFORM_WINDOWS)
@@ -385,6 +357,7 @@ namespace GT
 
                     case RenderingAPI_OpenGL21:
                         {
+                            newDevice = new GPURenderingDevice_OpenGL21(info);
                             break;
                         }
 
