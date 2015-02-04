@@ -21,7 +21,6 @@
 #define GT_GE_ENABLE_OPENGL45       1
 #define GT_GE_ENABLE_D3D9           1
 #define GT_GE_ENABLE_OPENGL21       1
-#define GT_GE_ENABLE_OPENGL11       1
 
 
 
@@ -52,11 +51,6 @@
 // OpenGL 2.1 Support.
 #if (defined(GT_GE_ENABLE_OPENGL21) && GT_GE_ENABLE_OPENGL21 == 1)
 #define GT_GE_BUILD_OPENGL21
-#endif
-
-// OpenGL 1.1 Support.
-#if (defined(GT_GE_ENABLE_OPENGL11) && GT_GE_ENABLE_OPENGL11 == 1)
-#define GT_GE_BUILD_OPENGL11
 #endif
 
 

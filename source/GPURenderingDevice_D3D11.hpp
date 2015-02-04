@@ -10,7 +10,7 @@
 #include <GTLib/Map.hpp>
 #include <GTLib/windows.hpp>
 #include <d3d11.h>
-#include <GTGameEngine/GPURenderingDevice_Gen3.hpp>
+#include <GTGameEngine/GPURenderingDevice_Gen2.hpp>
 
 namespace GT
 {
@@ -29,7 +29,7 @@ namespace GT
 
 
         /// Class representing a rendering D3D9-generation GPU device.
-        class GPURenderingDevice_D3D11 : public GPURenderingDevice_Gen3
+        class GPURenderingDevice_D3D11 : public GPURenderingDevice_Gen2
         {
         public:
 

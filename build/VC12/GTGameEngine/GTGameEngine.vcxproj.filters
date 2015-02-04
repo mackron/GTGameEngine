@@ -86,9 +86,6 @@
     <ClCompile Include="..\..\..\source\GPURenderingDevice_Gen2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\GPURenderingDevice_Gen3.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\GPURenderingDevice_Gen1.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -149,9 +146,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_Gen2.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_Gen3.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_Gen1.hpp">
