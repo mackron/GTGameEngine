@@ -3,6 +3,7 @@
 #include <GTGameEngine/EngineContext.hpp>
 #include <GTGameEngine/GameContext.hpp>
 #include <GTGameEngine/GameDisplay_Windowed.hpp>
+#include <GTGameEngine/GameDisplayRenderingCallback.hpp>
 #include <GTGameEngine/GPURenderingDevice.hpp>
 
 namespace GT
@@ -60,16 +61,20 @@ namespace GT
                 // We need to iterate over each display and draw it.
                 for (size_t iDisplay = 0; iDisplay < m_windowedDisplays.GetCount(); ++iDisplay)
                 {
-                    auto display = m_windowedDisplays[iDisplay];
+                    GameDisplay_Windowed* display = m_windowedDisplays[iDisplay];
                     assert(display != nullptr);
                     {
-                        auto &renderingDevice = display->GetRenderingDevice();
+                        GameDisplayRenderingCallback* renderingCallback = display->GetRenderingCallback();
+                        if (renderingCallback != nullptr)
+                        {
+                            GPURenderingDevice &renderingDevice = display->GetRenderingDevice();
 
-                        renderingDevice.SetCurrentWindow(display->GetWindow());
-                        
-                        renderingDevice.ClearColor(0.0f, 0.25f, 0.0f, 1.0f);
-
-                        renderingDevice.SwapBuffers();
+                            renderingDevice.SetCurrentWindow(display->GetWindow());
+                            {
+                                renderingCallback->Render(*display);
+                            }
+                            renderingDevice.SwapBuffers();
+                        }
                     }
                 }
             }

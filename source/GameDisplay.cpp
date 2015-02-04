@@ -1,13 +1,15 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/GameDisplay.hpp>
+#include <GTGameEngine/GameDisplayRenderingCallback.hpp>
 
 namespace GT
 {
     namespace GE
     {
         GameDisplay::GameDisplay(GPURenderingDevice &renderingDevice)
-            : m_renderingDevice(renderingDevice)
+            : m_renderingDevice(renderingDevice),
+              m_renderingCallback(nullptr)
         {
         }
 
@@ -19,6 +21,17 @@ namespace GT
         GPURenderingDevice & GameDisplay::GetRenderingDevice()
         {
             return m_renderingDevice;
+        }
+
+
+        void GameDisplay::SetRenderingCallback(GameDisplayRenderingCallback* renderingCallback)
+        {
+            m_renderingCallback = renderingCallback;
+        }
+
+        GameDisplayRenderingCallback* GameDisplay::GetRenderingCallback()
+        {
+            return m_renderingCallback;
         }
     }
 }

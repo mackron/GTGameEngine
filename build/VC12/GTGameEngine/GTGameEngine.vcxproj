@@ -23,6 +23,7 @@
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c" />
     <ClCompile Include="..\..\..\source\GameContext.cpp" />
     <ClCompile Include="..\..\..\source\GameDisplay.cpp" />
+    <ClCompile Include="..\..\..\source\GameDisplayRenderingCallback.cpp" />
     <ClCompile Include="..\..\..\source\GameDisplay_Windowed.cpp" />
     <ClCompile Include="..\..\..\source\GPUComputeDevice.cpp" />
     <ClCompile Include="..\..\..\source\GPURenderingDevice.cpp" />
@@ -43,6 +44,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameContext.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplay.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplayRenderingCallback.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplay_Windowed.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPUComputeDevice.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice.hpp" />
