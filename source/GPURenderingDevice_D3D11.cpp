@@ -2,6 +2,7 @@
 
 #include "GPURenderingDevice_D3D11.hpp"
 
+#if defined(GT_GE_BUILD_D3D11)
 namespace GT
 {
     namespace GE
@@ -415,3 +416,5 @@ namespace GT
 #endif
     }
 }
+
+#endif

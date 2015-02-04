@@ -7,12 +7,17 @@
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/Strings.hpp>
 #include <GTLib/windows.hpp>
+
+
+#if defined(GT_GE_BUILD_D3D11)
 #include <dxgi.h>
 #include <d3d11.h>
 
 typedef HRESULT (WINAPI *pCreateDXGIFactory1) (REFIID riid, _Out_ void **ppFactory);
+#endif
 
 
+#if defined(GT_GE_BUILD_OPENGL11) || defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
 // Base GL types.
 typedef unsigned int GLenum;
 typedef unsigned char GLboolean;
@@ -43,6 +48,7 @@ typedef BOOL  (* PFNWGLDELETECONTEXTPROC)       (HGLRC hglrc);
 typedef BOOL  (* PFNWGLMAKECURRENTPROC)         (HDC hdc, HGLRC hglrc);
 
 typedef const GLubyte * (* PFNGLGETSTRINGPROC) (GLenum name);
+#endif
 
 #endif
 
@@ -52,10 +58,12 @@ namespace GT
     {
         HardwarePlatform_GPU::HardwarePlatform_GPU()
             : 
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(GT_GE_BUILD_D3D11)
               m_hDXGI(0),
               m_hD3D11(0),
               m_hD3DCompiler(0),
+#endif
+#if defined(GT_GE_BUILD_OPENGL11) || defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
               m_hOpenGL32(0),
               m_hOpenGLDummyWindow(0),
               m_hOpenGLDummyDC(0),
@@ -77,7 +85,7 @@ namespace GT
             // Windows
             //
             // On Windows, we first want to use DXGI. If this is not available we use just the primary adapter that is specified by the OpenGL API.
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(GT_GE_BUILD_D3D11)
             // D3D Libraries
             m_hDXGI = LoadLibraryW(L"dxgi.dll");
             if (m_hDXGI != 0)
@@ -114,11 +122,6 @@ namespace GT
                     }
                 }
             }
-
-            // OpenGL Library
-            m_hOpenGL32 = LoadLibraryW(L"OpenGL32.dll");
-
-
 
             // We will first try the DXGI API for finding the device information.
             if (m_hDXGI != 0 && m_hD3D11 != 0 && m_hD3DCompiler != 0)
@@ -175,9 +178,12 @@ namespace GT
                     }
                 }
             }
+#endif
 
-
-            // Now we will check for OpenGL support.
+#if defined(GT_GE_BUILD_OPENGL11) || defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#if defined(GT_PLATFORM_WINDOWS)
+            // OpenGL
+            m_hOpenGL32 = LoadLibraryW(L"OpenGL32.dll");
             if (m_hOpenGL32 != 0)
             {
                 m_hOpenGLDummyWindow = CreateWindowExW(0, L"STATIC", L"", 0, 0, 0, 0, 0, NULL, NULL, GetModuleHandle(NULL), NULL);
@@ -239,14 +245,17 @@ namespace GT
                                             GPURenderingDeviceInfo& openGLDeviceInfo = m_renderingDevices[0];       // <-- The OpenGL device should always be the first item since that should correspond to the primary display, which is what OpenGL always uses.
                                             assert(openGLDeviceInfo.identifier_OpenGL == 1);
                                             {
+#if defined(GT_GE_BUILD_OPENGL21)
                                                 AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL21);
-
+#endif
 
                                                 // Now we need to check for OpenGL 4.5 support.
                                                 // TODO: On NVIDIA we can just use the same version string from glGetString(), however I'm not sure if that's how all vendor's report the maximum version. Test this.
                                                 if (major > 4 || (major == 4 && minor >= 5))
                                                 {
+#if defined(GT_GE_BUILD_OPENGL45)
                                                     AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL45);
+#endif
                                                 }
                                                 else
                                                 {
@@ -267,12 +276,17 @@ namespace GT
             }
 #endif
 
+#if defined(GT_GE_PLATFORM_LINUX)
+#endif
+#endif
+
 
             return 0;   // No error.
         }
 
         void HardwarePlatform_GPU::Shutdown()
         {
+#if defined(GT_GE_BUILD_OPENGL11) || defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
 #if defined(GT_PLATFORM_WINDOWS)
             PFNWGLDELETECONTEXTPROC _wglDeleteContext = reinterpret_cast<PFNWGLDELETECONTEXTPROC>(GetProcAddress(m_hOpenGL32, "wglDeleteContext"));
             if (_wglDeleteContext != nullptr)
@@ -282,14 +296,22 @@ namespace GT
 
             DestroyWindow(m_hOpenGLDummyWindow);
 
-
             FreeLibrary(m_hOpenGL32);
-            FreeLibrary(m_hD3DCompiler);
-            FreeLibrary(m_hD3D11);
-            FreeLibrary(m_hDXGI);
+            m_hOpenGL32 = NULL;
+#endif
+#if defined(GT_PLATFORM_LINUX)
+#endif
 #endif
 
-#if defined(GT_PLATFORM_LINUX)
+#if defined(GT_GE_BUILD_D3D11)
+            FreeLibrary(m_hD3DCompiler);
+            m_hD3DCompiler = NULL;
+
+            FreeLibrary(m_hD3D11);
+            m_hD3D11 = NULL;
+
+            FreeLibrary(m_hDXGI);
+            m_hDXGI = NULL;
 #endif
         }
 
@@ -342,22 +364,42 @@ namespace GT
 
                     switch (chosenAPI)
                     {
+#if defined(GT_GE_BUILD_D3D11)
                     case RenderingAPI_D3D11:
                         {
                             newDevice = new GPURenderingDevice_D3D11(info);
                             break;
                         }
+#endif
 
+#if defined(GT_GE_BUILD_OPENGL45)
                     case RenderingAPI_OpenGL45:
                         {
                             break;
                         }
+#endif
 
+#if defined(GT_GE_BUILD_D3D9)
+                    case RenderingAPI_D3D9:
+                        {
+                            break;
+                        }
+#endif
+
+#if defined(GT_GE_BUILD_OPENGL21)
                     case RenderingAPI_OpenGL21:
                         {
                             newDevice = new GPURenderingDevice_OpenGL21(info);
                             break;
                         }
+#endif
+
+#if defined(GT_GE_BUILD_OPENGL11)
+                    case RenderingAPI_OpenGL11:
+                        {
+                            break;
+                        }
+#endif
 
                     default:
                         {

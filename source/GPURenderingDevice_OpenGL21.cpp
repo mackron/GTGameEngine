@@ -2,6 +2,8 @@
 
 #include "GPURenderingDevice_OpenGL21.hpp"
 
+#if defined(GT_GE_BUILD_OPENGL21)
+
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
 #endif
@@ -274,41 +276,41 @@ namespace GT
 
         ResultCode GPURenderingDevice_OpenGL21::SetCurrentWindow(HWND hWnd)
         {
-            if (m_currentHWND != hWnd)
+            if (hWnd != NULL)
             {
-                if (hWnd != NULL)
+                auto iFramebuffer = m_windowFramebuffers.Find(hWnd);
+                if (iFramebuffer != nullptr)
                 {
-                    auto iFramebuffer = m_windowFramebuffers.Find(hWnd);
-                    if (iFramebuffer != nullptr)
-                    {
-                        auto &framebuffer = iFramebuffer->value;
+                    auto &framebuffer = iFramebuffer->value;
 
-                        // If the current render target is another window, we want that to be unbound, and then have the new window bound.
-                        if ((m_stateFlags & StageFlag_IsWindowFramebufferCurrent) != 0)
-                        {
-                            m_wglMakeCurrent(framebuffer.m_hDC, m_hRC);
-                        }
-
-                        m_currentHWND = hWnd;
-                        m_currentDC   = framebuffer.m_hDC;
-                    }
-                    else
+                    // If the current render target is another window, we want that to be unbound, and then have the new window bound.
+                    if ((m_stateFlags & StageFlag_IsWindowFramebufferCurrent) != 0)
                     {
-                        // The window can not be used as a render target.
-                        return -1;
                     }
+
+                    m_wglMakeCurrent(framebuffer.m_hDC, m_hRC);
+
+                    m_currentHWND = hWnd;
+                    m_currentDC   = framebuffer.m_hDC;
                 }
                 else
                 {
-                    // No window was specified.
-                    if ((m_stateFlags & StageFlag_IsWindowFramebufferCurrent) != 0)
-                    {
-                        m_wglMakeCurrent(NULL, NULL);
-                    }
-
-                    m_currentHWND = NULL;
-                    m_currentDC   = NULL;
+                    // The window can not be used as a render target.
+                    return -1;
                 }
+            }
+            else
+            {
+                // No window was specified.
+                if ((m_stateFlags & StageFlag_IsWindowFramebufferCurrent) != 0)
+                {
+                        
+                }
+
+                m_wglMakeCurrent(NULL, NULL);
+
+                m_currentHWND = NULL;
+                m_currentDC   = NULL;
             }
 
             return 0;   // No error.
@@ -385,3 +387,5 @@ namespace GT
         }
     }
 }
+
+#endif

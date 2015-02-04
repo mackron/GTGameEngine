@@ -95,7 +95,7 @@ namespace GT
             GTLib::Vector<GPURenderingDeviceInfo> m_renderingDevices;
 
 
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(GT_GE_BUILD_D3D11)
             /// A handle representing the DXGI DLL.
             HMODULE m_hDXGI;
 
@@ -104,10 +104,12 @@ namespace GT
 
             /// A handle representing the D3DCompiler DLL.
             HMODULE m_hD3DCompiler;
+#endif
 
+#if defined(GT_GE_BUILD_OPENGL11) || defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#if defined(GT_PLATFORM_WINDOWS)
             /// A handle representing the OpenGL32 DLL.
             HMODULE m_hOpenGL32;
-
 
             /// The dummy window for creating the OpenGL rendering context.
             HWND m_hOpenGLDummyWindow;
@@ -120,6 +122,10 @@ namespace GT
 
             /// The primary OpenGL rendering context. All other rendering contexts are created from this.
             HGLRC m_hOpenGLRC;
+#endif
+
+#if defined(GT_PLATFORM_LINUX)
+#endif
 #endif
 
 

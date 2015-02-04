@@ -3,11 +3,11 @@
 #ifndef __GT_GE_GPURenderingDevice_D3D11_hpp_
 #define __GT_GE_GPURenderingDevice_D3D11_hpp_
 
-#include "Config.hpp"
-#include <GTLib/Map.hpp>
+#include <GTGameEngine/Config.hpp>
 
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(GT_GE_BUILD_D3D11)
 #include <GTLib/ResultCodes.hpp>
+#include <GTLib/Map.hpp>
 #include <GTLib/windows.hpp>
 #include <d3d11.h>
 #include <GTGameEngine/GPURenderingDevice_Gen2.hpp>

@@ -3,9 +3,11 @@
 #ifndef __GT_GE_GPURenderingDevice_OpenGL21_hpp_
 #define __GT_GE_GPURenderingDevice_OpenGL21_hpp_
 
+#include <GTGameEngine/Config.hpp>
+
+#if defined(GT_GE_BUILD_OPENGL21)
 #include <GTGameEngine/GPURenderingDevice_Gen1.hpp>
 #include <GTLib/Map.hpp>
-
 
 
 #if defined(GT_PLATFORM_WINDOWS)
@@ -235,5 +237,7 @@ namespace GT
         };
     }
 }
+
+#endif
 
 #endif
