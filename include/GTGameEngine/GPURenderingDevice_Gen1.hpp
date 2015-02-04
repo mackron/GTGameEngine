@@ -9,9 +9,7 @@ namespace GT
 {
     namespace GE
     {
-        /// Class representing a GPU rendering device that uses an OpenGL 1.1 (fixed function) class of API.
-        ///
-        /// This generation of API is good for minimalist games.
+        /// Class representing a GPU rendering device that uses an D3D9/OpenGL 2.1 class of API.
         class GPURenderingDevice_Gen1 : public GPURenderingDevice
         {
         public:

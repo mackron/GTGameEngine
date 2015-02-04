@@ -59,6 +59,11 @@ namespace GT
             ///     If this returns 2, the rendering device supports Direct3D 11 / OpenGL 4.5 class of functionality.
             virtual unsigned int GetGeneration() const = 0;
 
+            /// Retrieves a code representing the rendering API being used internally by the device.
+            ///
+            /// @return A code representing the rendering API being used internally by the device.
+            virtual RenderingAPI GetRenderingAPI() const = 0;
+
 
 
             /// Sets the swap interval.

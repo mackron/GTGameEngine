@@ -100,6 +100,10 @@ namespace GT
             void Shutdown();
 
 
+            /// GPURenderingDevice::GetRenderingAPI().
+            RenderingAPI GetRenderingAPI() const;
+
+
 
             /// GPURenderingDevice::SetSwapInterval().
             void SetSwapInterval(int swapInterval);

@@ -116,6 +116,13 @@ namespace GT
 
 
 
+        RenderingAPI GPURenderingDevice_D3D11::GetRenderingAPI() const
+        {
+            return RenderingAPI_D3D11;
+        }
+
+
+
         void GPURenderingDevice_D3D11::SetSwapInterval(int swapInterval)
         {
             m_swapInterval = swapInterval;

@@ -198,6 +198,12 @@ namespace GT
         }
 
 
+        RenderingAPI GPURenderingDevice_OpenGL21::GetRenderingAPI() const
+        {
+            return RenderingAPI_OpenGL21;
+        }
+
+
         void GPURenderingDevice_OpenGL21::SetSwapInterval(int swapInterval)
         {
             (void)swapInterval;
