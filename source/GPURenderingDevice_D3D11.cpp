@@ -8,7 +8,7 @@ namespace GT
     namespace GE
     {
         GPURenderingDevice_D3D11::GPURenderingDevice_D3D11(const GPURenderingDeviceInfo &info)
-            : GPURenderingDevice_Gen2(info),
+            : GPURenderingDevice_Gen3(info),
               m_hD3D11(NULL),
               m_hD3DCompiler(NULL),
               m_device(nullptr),

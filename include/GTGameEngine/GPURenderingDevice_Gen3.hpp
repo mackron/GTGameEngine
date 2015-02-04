@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GE_GPURenderingDevice_Gen1_hpp_
-#define __GT_GE_GPURenderingDevice_Gen1_hpp_
+#ifndef __GT_GE_GPURenderingDevice_Gen3_hpp_
+#define __GT_GE_GPURenderingDevice_Gen3_hpp_
 
 #include "GPURenderingDevice.hpp"
 
@@ -10,15 +10,15 @@ namespace GT
     namespace GE
     {
         /// Class representing a rendering D3D9-generation GPU device.
-        class GPURenderingDevice_Gen1 : public GPURenderingDevice
+        class GPURenderingDevice_Gen3 : public GPURenderingDevice
         {
         public:
 
             /// Constructor.
-            GPURenderingDevice_Gen1(const GPURenderingDeviceInfo &info);
+            GPURenderingDevice_Gen3(const GPURenderingDeviceInfo &info);
 
             /// Destructor.
-            ~GPURenderingDevice_Gen1();
+            virtual ~GPURenderingDevice_Gen3();
 
 
             /// GPURenderingDevice::GetGeneration().
@@ -27,8 +27,8 @@ namespace GT
 
 
         private:    // No copying.
-            GPURenderingDevice_Gen1(const GPURenderingDevice_Gen1 &);
-            GPURenderingDevice_Gen1 & operator=(const GPURenderingDevice_Gen1 &);
+            GPURenderingDevice_Gen3(const GPURenderingDevice_Gen3 &);
+            GPURenderingDevice_Gen3 & operator=(const GPURenderingDevice_Gen3 &);
         };
     }
 }

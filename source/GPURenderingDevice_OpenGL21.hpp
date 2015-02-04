@@ -6,7 +6,7 @@
 #include <GTGameEngine/Config.hpp>
 
 #if defined(GT_GE_BUILD_OPENGL21)
-#include <GTGameEngine/GPURenderingDevice_Gen1.hpp>
+#include <GTGameEngine/GPURenderingDevice_Gen2.hpp>
 #include <GTLib/Map.hpp>
 
 
@@ -82,7 +82,7 @@ namespace GT
     namespace GE
     {
         /// OpenGL 2.1 implementation of the rendering device.
-        class GPURenderingDevice_OpenGL21 : public GPURenderingDevice_Gen1
+        class GPURenderingDevice_OpenGL21 : public GPURenderingDevice_Gen2
         {
         public:
 

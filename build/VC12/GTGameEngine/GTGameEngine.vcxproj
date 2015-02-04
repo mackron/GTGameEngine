@@ -27,8 +27,8 @@
     <ClCompile Include="..\..\..\source\GPUComputeDevice.cpp" />
     <ClCompile Include="..\..\..\source\GPURenderingDevice.cpp" />
     <ClCompile Include="..\..\..\source\GPURenderingDevice_D3D11.cpp" />
-    <ClCompile Include="..\..\..\source\GPURenderingDevice_Gen1.cpp" />
     <ClCompile Include="..\..\..\source\GPURenderingDevice_Gen2.cpp" />
+    <ClCompile Include="..\..\..\source\GPURenderingDevice_Gen3.cpp" />
     <ClCompile Include="..\..\..\source\GPURenderingDevice_OpenGL21.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_Audio.cpp" />
@@ -47,8 +47,8 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\GPUComputeDevice.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDeviceInfo.hpp" />
-    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_Gen1.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_Gen2.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice_Gen3.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Audio.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_CPU.hpp" />

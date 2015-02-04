@@ -44,7 +44,7 @@ namespace GT
     namespace GE
     {
         GPURenderingDevice_OpenGL21::GPURenderingDevice_OpenGL21(const GPURenderingDeviceInfo &info)
-            : GPURenderingDevice_Gen1(info)
+            : GPURenderingDevice_Gen2(info)
 #if defined(GT_PLATFORM_WINDOWS)
             , m_hOpenGL32(NULL),
               m_hDummyHWND(NULL),
