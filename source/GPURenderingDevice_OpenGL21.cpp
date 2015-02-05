@@ -132,7 +132,7 @@ namespace GT
                                         FreeLibrary(m_hOpenGL32);
                                         m_hOpenGL32 = NULL;
 
-                                        return -5;
+                                        return FailedToMakeContextCurrent;
                                     }
                                 }
                                 else
@@ -144,7 +144,7 @@ namespace GT
                                     FreeLibrary(m_hOpenGL32);
                                     m_hOpenGL32 = NULL;
 
-                                    return -5;
+                                    return FailedToCreateContext;
                                 }
                             }
                         }
@@ -157,7 +157,7 @@ namespace GT
                             FreeLibrary(m_hOpenGL32);
                             m_hOpenGL32 = NULL;
 
-                            return -4;
+                            return FailedToSetPixelFormat;
                         }
                     }
                     else
@@ -169,19 +169,19 @@ namespace GT
                         FreeLibrary(m_hOpenGL32);
                         m_hOpenGL32 = NULL;
 
-                        return -3;
+                        return FailedToFindPixelFormat;
                     }
                 }
                 else
                 {
                     // Failed to load OpenGL32.dll.
-                    return -2;
+                    return FailedToLoadOpenGLLibrary;
                 }
             }
             else
             {
                 // The device is not the primary adapter or OpenGL 2.1 is not supported.
-                return -1;
+                return RenderingAPINotSupported;
             }
         }
 
@@ -261,7 +261,7 @@ namespace GT
                 else
                 {
                     // Failed to set pixel format.
-                    return -1;
+                    return FailedToSetPixelFormat;
                 }
             }
             else
@@ -302,7 +302,7 @@ namespace GT
                 else
                 {
                     // The window can not be used as a render target.
-                    return -1;
+                    return InvalidWindowRenderTarget;
                 }
             }
             else
@@ -376,19 +376,19 @@ namespace GT
                     else
                     {
                         // OpenGL 2.1 is not supported.
-                        return -3;
+                        return RenderingAPINotSupported;
                     }
                 }
                 else
                 {
                     // Failed to retrieve version string.
-                    return -2;
+                    return FailedToRetrieveVersionString;
                 }
             }
             else
             {
                 // Failed to retrieve glGetString().
-                return -1;
+                return FailedToRetrieveGetStringProc;
             }
         }
     }

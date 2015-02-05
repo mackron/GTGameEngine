@@ -20,12 +20,6 @@ namespace GT
         class GameDisplay_Windowed;
         class GPURenderingDevice;
 
-
-        // Error codes.
-        static const ResultCode InvalidWindow = (1 << 31) | 1;
-
-
-
         /// Class representing a game context.
         ///
         /// An application can have multiple game context's per engine context.
@@ -90,8 +84,19 @@ namespace GT
 
         private:
 
-            // Various boolean flags used by the game context.
-            static const uint32_t IsSingleThreaded = 0x00000001;
+            ///////////////////////////////////////////////////////////////
+            // State Flags
+
+            static const uint32_t IsSingleThreaded = 0x00000001;        //< Whether or not the game should run in single- or multi-threaded mode.
+
+
+
+        public:
+
+            ///////////////////////////////////////////////////////////////
+            // Error Codes
+
+            static const ResultCode InvalidWindow = (1 << 31) | 1;
 
 
         private:    // No copying.

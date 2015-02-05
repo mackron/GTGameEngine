@@ -75,19 +75,6 @@ namespace GT
             void DeleteGPURenderingDevice(GPURenderingDevice* renderingDevice);
 
 
-            /// Creates a GPU compute device.
-            ///
-            /// @param computeDevice [out] A reference to the variable that will receive a pointer to the new compute device.
-            ///
-            /// @return A result code specifying whether or not the device was created successfully. The return value will be >=0 if there was no error.
-            ResultCode CreateGPUComputeDevice(GPURenderingDevice* &computeDeviceOut);
-
-            /// Deletes a GPU compute device object that was created with CreateGPUComputeDevice().
-            ///
-            /// @param computeDevice [in] A pointer to the GPU compute device to delete.
-            void DeleteGPUComputeDevice(GPURenderingDevice* computeDevice);
-
-
 
         private:
 
@@ -127,6 +114,17 @@ namespace GT
 #if defined(GT_PLATFORM_LINUX)
 #endif
 #endif
+
+
+        public:
+
+            //////////////////////////////////////////////////////
+            // Error Codes
+
+            static const ResultCode InvalidDeviceIndex       = (1 << 31) | 0x01;
+            static const ResultCode RenderingAPINotSupported = (1 << 31) | 0x02;
+            static const ResultCode UnknownRenderingAPI      = (1 << 31) | 0x03;
+
 
 
         private:    // No copying.

@@ -234,6 +234,30 @@ namespace GT
             PFNGLCLEARCOLORPROC m_glClearColor;
 
 
+        public:
+
+            //////////////////////////////////////////////////////
+            // Error Codes
+
+            static const ResultCode RenderingAPINotSupported      = (1 << 31) | 0x01;
+            static const ResultCode FailedToLoadOpenGLLibrary     = (1 << 31) | 0x02;
+            static const ResultCode FailedToCreateContext         = (1 << 31) | 0x03;
+            static const ResultCode FailedToMakeContextCurrent    = (1 << 31) | 0x04;
+            static const ResultCode InvalidWindowRenderTarget     = (1 << 31) | 0x05;      //< Fired when a window is attempted to be made current, but the window was never initialized with a framebuffer.
+
+            static const ResultCode FailedToRetrieveGetStringProc = (1 << 31) | 0x10;
+            static const ResultCode FailedToRetrieveVersionString = (1 << 31) | 0x11;
+
+            // Win32 Errors
+#if defined(GT_PLATFORM_WINDOWS)
+            static const ResultCode FailedToFindPixelFormat       = (1 << 31) | 0xF0;
+            static const ResultCode FailedToSetPixelFormat        = (1 << 31) | 0xF1;
+#endif
+
+            // Linux/X11 Errors
+#if defined(GT_PLATFORM_LINUX)
+#endif
+
 
         private:    // No copying.
             GPURenderingDevice_OpenGL21(const GPURenderingDevice_OpenGL21 &);

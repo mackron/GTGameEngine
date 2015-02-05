@@ -331,7 +331,7 @@ namespace GT
             else
             {
                 // Invalid device index.
-                return -1;
+                return InvalidDeviceIndex;
             }
         }
 
@@ -394,13 +394,6 @@ namespace GT
                         }
 #endif
 
-#if defined(GT_GE_BUILD_OPENGL11)
-                    case RenderingAPI_OpenGL11:
-                        {
-                            break;
-                        }
-#endif
-
                     default:
                         {
                             assert(false);
@@ -425,19 +418,19 @@ namespace GT
                     else
                     {
                         // Should never actually get here, but in this case the chosen API code is unknown or unimplemented.
-                        return -3;
+                        return UnknownRenderingAPI;
                     }
                 }
                 else
                 {
                     // No supported rendering API.
-                    return -2;
+                    return RenderingAPINotSupported;
                 }
             }
             else
             {
                 // Invalid device index.
-                return -1;
+                return InvalidDeviceIndex;
             }
             
         }
