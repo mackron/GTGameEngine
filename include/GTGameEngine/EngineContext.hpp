@@ -60,7 +60,7 @@ namespace GT
             ResultCode GetGPURenderingDeviceInfo(unsigned int deviceIndex, GPURenderingDeviceInfo &deviceInfoOut) const;
 
 
-            /// @copydoc GT::GE::HardwarePlatform_GPU::CreateGPURenderingDevice().
+            /// @copydoc GT::GE::HardwarePlatform_GPU::CreateGPURenderingDevice()
             ResultCode CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount, GPURenderingDevice* &deviceOut);
 
             /// Helper for creating a GPU rendering device for the given rendering API.
@@ -95,6 +95,7 @@ namespace GT
 
 
         private:
+
 
 
 

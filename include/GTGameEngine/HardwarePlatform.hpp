@@ -51,10 +51,10 @@ namespace GT
             ResultCode GetGPURenderingDeviceInfo(unsigned int deviceIndex, GPURenderingDeviceInfo &deviceInfoOut) const;
 
 
-            /// @copydoc GT::GE::HardwarePlatform_GPU::CreateGPURenderingDevice().
+            /// @copydoc GT::GE::HardwarePlatform_GPU::CreateGPURenderingDevice()
             ResultCode CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount, GPURenderingDevice* &deviceOut);
 
-            /// @copydoc GT::GE::HardwarePlatform_GPU::DeleteGPURenderingDevice().
+            /// @copydoc GT::GE::HardwarePlatform_GPU::DeleteGPURenderingDevice()
             void DeleteGPURenderingDevice(GPURenderingDevice* device);
 
 
