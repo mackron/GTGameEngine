@@ -304,6 +304,16 @@ namespace GT
 #endif
 
 #if defined(GT_GE_BUILD_D3D11)
+            // We need to release the D3D11 adapters that are stored in the rendering device info structures.
+            for (size_t iRenderingDeviceInfo = 0; iRenderingDeviceInfo < m_renderingDevices.GetCount(); ++iRenderingDeviceInfo)
+            {
+                auto &info = m_renderingDevices.Get(iRenderingDeviceInfo);
+                if (info.identifier_D3D11 != nullptr)
+                {
+                    reinterpret_cast<IDXGIAdapter1*>(info.identifier_D3D11)->Release();
+                }
+            }
+
             FreeLibrary(m_hD3DCompiler);
             m_hD3DCompiler = NULL;
 
@@ -437,7 +447,11 @@ namespace GT
 
         void HardwarePlatform_GPU::DeleteGPURenderingDevice(GPURenderingDevice* renderingDevice)
         {
-            delete renderingDevice;
+            if (renderingDevice != nullptr)
+            {
+                renderingDevice->Shutdown();
+                delete renderingDevice;
+            }
         }
 
 
@@ -450,7 +464,11 @@ namespace GT
 
         void DeleteGPUComputeDevice(GPURenderingDevice* computeDevice)
         {
-            delete computeDevice;
+            if (computeDevice != nullptr)
+            {
+                computeDevice->Shutdown();
+                delete computeDevice;
+            }
         }
 
 

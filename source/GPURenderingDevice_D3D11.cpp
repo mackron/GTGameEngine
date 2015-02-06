@@ -100,6 +100,19 @@ namespace GT
 
         void GPURenderingDevice_D3D11::Shutdown()
         {
+            while (m_windowFramebuffers.GetCount() > 0)
+            {
+                auto iFramebuffer = m_windowFramebuffers.GetItemByIndex(0);
+                if (iFramebuffer != nullptr)
+                {
+                    assert(m_windowFramebuffers.Exists(iFramebuffer->key));
+                    {
+                        this->UninitWindowFramebuffer(iFramebuffer->key);   // <-- This will remove the framebuffer from the list.
+                    }
+                }
+            }
+
+
             if (m_device  != nullptr) { m_device->Release();  }
             if (m_context != nullptr) { m_context->Release(); }
 
