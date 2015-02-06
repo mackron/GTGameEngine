@@ -90,6 +90,8 @@ namespace GT
 #if defined(GT_PLATFORM_WINDOWS)
         ResultCode GameContext::CreateWindowedDisplay(GPURenderingDevice &renderingDevice, HWND hWnd, GameDisplay* &displayOut)
         {
+            displayOut = nullptr;
+
             if (hWnd != 0)
             {
                 ResultCode result = renderingDevice.InitWindowFramebuffer(hWnd, true);
