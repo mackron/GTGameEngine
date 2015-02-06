@@ -76,25 +76,25 @@ namespace GT
                         else
                         {
                             // Failed to create device.
-                            return -4;
+                            return FailedToCreateD3D11Device;
                         }
                     }
                     else
                     {
-                        // Failed to load retrieve D3D11CreateDevice.
-                        return -3;
+                        // Failed to load D3D11CreateDevice().
+                        return FailedToLoadD3D11API;
                     }
                 }
                 else
                 {
                     // Failed to load D3dcompiler.dll
-                    return -2;
+                    return FailedToLoadD3DCompilerDLL;
                 }
             }
             else
             {
                 // Failed to load d3d11.dll
-                return -1;
+                return FailedToLoadD3D11DLL;
             }
         }
 
@@ -183,7 +183,7 @@ namespace GT
                 hr = m_device->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&pDXGIDevice));
                 if (FAILED(hr))
                 {
-                    return D3D11_FailedToRetrieveIDXGIDevice;
+                    return FailedToRetrieveIDXGIDevice;
                 }
 
                 IDXGIAdapter* pDXGIAdapter;
@@ -192,7 +192,7 @@ namespace GT
                 {
                     pDXGIDevice->Release();
 
-                    return D3D11_FailedToRetrieveIDXGIAdapter;
+                    return FailedToRetrieveIDXGIAdapter;
                 }
 
                 IDXGIFactory* pDXGIFactory;
@@ -202,7 +202,7 @@ namespace GT
                     pDXGIAdapter->Release();
                     pDXGIDevice->Release();
 
-                    return D3D11_FailedToRetrieveIDXGIFactory;
+                    return FailedToRetrieveIDXGIFactory;
                 }
 
 
@@ -277,7 +277,7 @@ namespace GT
                                         framebuffer.renderTargetView->Release();
                                         framebuffer.swapChain->Release();
 
-                                        result = D3D11_FailedToCreateDepthStencilView;
+                                        result = FailedToCreateDepthStencilView;
                                     }
                                 }
                                 else
@@ -285,7 +285,7 @@ namespace GT
                                     framebuffer.renderTargetView->Release();
                                     framebuffer.swapChain->Release();
 
-                                    result = D3D11_FailedToCreateDepthStencilTexture;
+                                    result = FailedToCreateDepthStencilTexture;
                                 }
                             }
 
@@ -298,7 +298,7 @@ namespace GT
                         }
                         else
                         {
-                            result = D3D11_FailedToCreateSwapChainRenderTargetView;
+                            result = FailedToCreateSwapChainRenderTargetView;
                         }
 
 
@@ -309,12 +309,12 @@ namespace GT
                     {
                         framebuffer.swapChain->Release();
 
-                        result = D3D11_FailedToCreateSwapChainBackBuffer;
+                        result = FailedToCreateSwapChainBackBuffer;
                     }
                 }
                 else
                 {
-                    result = D3D11_FailedToCreateSwapChain;
+                    result = FailedToCreateSwapChain;
                 }
 
             
@@ -399,7 +399,7 @@ namespace GT
                     else
                     {
                         // The window can not be used as a render target.
-                        return -1;
+                        return InvalidWindowRenderTarget;
                     }
                 }
                 else

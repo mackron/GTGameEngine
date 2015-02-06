@@ -121,6 +121,8 @@ namespace GT
             ///
             /// @remarks
             ///     Removing the current binding by pass NULL.
+            ///     @par
+            ///     InvalidWindowRenderTarget will be returned if the window was not first initialized with InitWindowFramebuffer().
             virtual ResultCode SetCurrentWindow(HWND hWnd) = 0;
 #endif
 
@@ -133,6 +135,16 @@ namespace GT
 
             /// The device info structure.
             GPURenderingDeviceInfo m_info;
+
+
+
+        public:
+
+            //////////////////////////////////////////////////////
+            // Error Codes
+
+            static const ResultCode RenderingAPINotSupported      = (1 << 31) | 0x00000001;
+            static const ResultCode InvalidWindowRenderTarget     = (1 << 31) | 0x000000F0;      //< Fired when a window is attempted to be made current, but the window was never initialized with a framebuffer.
 
 
         private:    // No copying.

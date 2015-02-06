@@ -243,7 +243,6 @@ namespace GT
             static const ResultCode FailedToLoadOpenGLLibrary     = (1 << 31) | 0x02;
             static const ResultCode FailedToCreateContext         = (1 << 31) | 0x03;
             static const ResultCode FailedToMakeContextCurrent    = (1 << 31) | 0x04;
-            static const ResultCode InvalidWindowRenderTarget     = (1 << 31) | 0x05;      //< Fired when a window is attempted to be made current, but the window was never initialized with a framebuffer.
 
             static const ResultCode FailedToRetrieveGetStringProc = (1 << 31) | 0x10;
             static const ResultCode FailedToRetrieveVersionString = (1 << 31) | 0x11;

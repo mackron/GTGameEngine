@@ -16,18 +16,6 @@ namespace GT
 {
     namespace GE
     {
-        // Result codes.
-        static const ResultCode D3D11_FailedToCreateD3D11Device               = (1 << 31) | 50;
-        static const ResultCode D3D11_FailedToRetrieveIDXGIDevice             = (1 << 31) | 51;
-        static const ResultCode D3D11_FailedToRetrieveIDXGIAdapter            = (1 << 31) | 52;
-        static const ResultCode D3D11_FailedToRetrieveIDXGIFactory            = (1 << 31) | 53;
-        static const ResultCode D3D11_FailedToCreateSwapChain                 = (1 << 31) | 54;
-        static const ResultCode D3D11_FailedToCreateSwapChainBackBuffer       = (1 << 31) | 55;
-        static const ResultCode D3D11_FailedToCreateSwapChainRenderTargetView = (1 << 31) | 56;
-        static const ResultCode D3D11_FailedToCreateDepthStencilTexture       = (1 << 31) | 57;
-        static const ResultCode D3D11_FailedToCreateDepthStencilView          = (1 << 31) | 58;
-
-
         /// Class representing a rendering D3D9-generation GPU device.
         class GPURenderingDevice_D3D11 : public GPURenderingDevice_Gen2
         {
@@ -144,6 +132,26 @@ namespace GT
             // State Flags
 
             static const uint32_t StageFlag_IsWindowFramebufferCurrent = (1 << 0);     //< Is the current window's framebuffer the current render target?
+
+
+
+         public:
+
+            //////////////////////////////////////////////////////
+            // Error Codes
+
+            static const ResultCode FailedToCreateD3D11Device               = (1 << 31) | 50;
+            static const ResultCode FailedToRetrieveIDXGIDevice             = (1 << 31) | 51;
+            static const ResultCode FailedToRetrieveIDXGIAdapter            = (1 << 31) | 52;
+            static const ResultCode FailedToRetrieveIDXGIFactory            = (1 << 31) | 53;
+            static const ResultCode FailedToCreateSwapChain                 = (1 << 31) | 54;
+            static const ResultCode FailedToCreateSwapChainBackBuffer       = (1 << 31) | 55;
+            static const ResultCode FailedToCreateSwapChainRenderTargetView = (1 << 31) | 56;
+            static const ResultCode FailedToCreateDepthStencilTexture       = (1 << 31) | 57;
+            static const ResultCode FailedToCreateDepthStencilView          = (1 << 31) | 58;
+            static const ResultCode FailedToLoadD3D11DLL                    = (1 << 31) | 59;
+            static const ResultCode FailedToLoadD3DCompilerDLL              = (1 << 31) | 60;
+            static const ResultCode FailedToLoadD3D11API                    = (1 << 31) | 61;
 
 
         private:    // No copying.
