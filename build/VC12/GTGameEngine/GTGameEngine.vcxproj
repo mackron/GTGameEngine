@@ -27,17 +27,17 @@
     <ClCompile Include="..\..\..\source\GameDisplay_Windowed.cpp" />
     <ClCompile Include="..\..\..\source\GPUComputeDevice.cpp" />
     <ClCompile Include="..\..\..\source\GPURenderingDevice.cpp" />
-    <ClCompile Include="..\..\..\source\GPURenderingDevice_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\GPURenderingDevice_Gen1.cpp" />
     <ClCompile Include="..\..\..\source\GPURenderingDevice_Gen2.cpp" />
-    <ClCompile Include="..\..\..\source\GPURenderingDevice_OpenGL21.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_Audio.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_CPU.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_GPU.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_Input.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\D3D11\Framebuffer_D3D11.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\Framebuffer_D3D11.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPURenderingDevice_OpenGL21.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTGameEngine\Config.hpp" />
@@ -58,9 +58,9 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Input.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Framebuffer.hpp" />
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
-    <ClInclude Include="..\..\..\source\GPURenderingDevice_D3D11.hpp" />
-    <ClInclude Include="..\..\..\source\GPURenderingDevice_OpenGL21.hpp" />
-    <ClInclude Include="..\..\..\source\Rendering\D3D11\Framebuffer_D3D11.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\Framebuffer_D3D11.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPURenderingDevice_OpenGL21.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0E702596-5089-48E6-AD25-2DD3C3F705B6}</ProjectGuid>

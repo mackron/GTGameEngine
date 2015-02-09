@@ -17,7 +17,7 @@ typedef HRESULT (WINAPI *pCreateDXGIFactory1) (REFIID riid, _Out_ void **ppFacto
 #endif
 
 
-#if defined(GT_GE_BUILD_OPENGL11) || defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
 // Base GL types.
 typedef unsigned int GLenum;
 typedef unsigned char GLboolean;
@@ -63,7 +63,7 @@ namespace GT
               m_hD3D11(0),
               m_hD3DCompiler(0),
 #endif
-#if defined(GT_GE_BUILD_OPENGL11) || defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
               m_hOpenGL32(0),
               m_hOpenGLDummyWindow(0),
               m_hOpenGLDummyDC(0),
@@ -180,7 +180,7 @@ namespace GT
             }
 #endif
 
-#if defined(GT_GE_BUILD_OPENGL11) || defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
 #if defined(GT_PLATFORM_WINDOWS)
             // OpenGL
             m_hOpenGL32 = LoadLibraryW(L"OpenGL32.dll");
@@ -286,7 +286,7 @@ namespace GT
 
         void HardwarePlatform_GPU::Shutdown()
         {
-#if defined(GT_GE_BUILD_OPENGL11) || defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
 #if defined(GT_PLATFORM_WINDOWS)
             PFNWGLDELETECONTEXTPROC _wglDeleteContext = reinterpret_cast<PFNWGLDELETECONTEXTPROC>(GetProcAddress(m_hOpenGL32, "wglDeleteContext"));
             if (_wglDeleteContext != nullptr)

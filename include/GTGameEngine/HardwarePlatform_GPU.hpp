@@ -93,7 +93,7 @@ namespace GT
             HMODULE m_hD3DCompiler;
 #endif
 
-#if defined(GT_GE_BUILD_OPENGL11) || defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
 #if defined(GT_PLATFORM_WINDOWS)
             /// A handle representing the OpenGL32 DLL.
             HMODULE m_hOpenGL32;
