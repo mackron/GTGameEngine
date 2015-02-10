@@ -37,6 +37,7 @@
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\Framebuffer_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPURenderingDevice_OpenGL21.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -57,6 +58,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_GPU.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Input.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Framebuffer.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\OpenGL\OpenGL.hpp" />
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\Framebuffer_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.hpp" />

@@ -15,41 +15,6 @@
 
 typedef HRESULT (WINAPI *pCreateDXGIFactory1) (REFIID riid, _Out_ void **ppFactory);
 #endif
-
-
-#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
-// Base GL types.
-typedef unsigned int GLenum;
-typedef unsigned char GLboolean;
-typedef unsigned int GLbitfield;
-typedef signed char GLbyte;
-typedef short GLshort;
-typedef int GLint;
-typedef int GLsizei;
-typedef unsigned char GLubyte;
-typedef unsigned short GLushort;
-typedef unsigned int GLuint;
-typedef unsigned short GLhalf;
-typedef float GLfloat;
-typedef float GLclampf;
-typedef double GLdouble;
-typedef double GLclampd;
-typedef void GLvoid;
-
-/* StringName */
-#define GL_VENDOR                         0x1F00
-#define GL_RENDERER                       0x1F01
-#define GL_VERSION                        0x1F02
-#define GL_EXTENSIONS                     0x1F03
-
-
-typedef HGLRC (* PFNWGLCREATECONTEXTPROC)       (HDC hdc);
-typedef BOOL  (* PFNWGLDELETECONTEXTPROC)       (HGLRC hglrc);
-typedef BOOL  (* PFNWGLMAKECURRENTPROC)         (HDC hdc, HGLRC hglrc);
-
-typedef const GLubyte * (* PFNGLGETSTRINGPROC) (GLenum name);
-#endif
-
 #endif
 
 namespace GT
@@ -64,11 +29,7 @@ namespace GT
               m_hD3DCompiler(0),
 #endif
 #if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
-              m_hOpenGL32(0),
-              m_hOpenGLDummyWindow(0),
-              m_hOpenGLDummyDC(0),
-              m_OpenGLPixelFormat(0),
-              m_hOpenGLRC(0)
+              m_gl()
 #endif
         {
         }
@@ -181,103 +142,50 @@ namespace GT
 #endif
 
 #if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
-#if defined(GT_PLATFORM_WINDOWS)
-            // OpenGL
-            m_hOpenGL32 = LoadLibraryW(L"OpenGL32.dll");
-            if (m_hOpenGL32 != 0)
+            ResultCode resultGL = m_gl.Startup();       // <-- This will fail if OpenGL 2.1 is not supported.
+            if (GT::Succeeded(resultGL))
             {
-                m_hOpenGLDummyWindow = CreateWindowExW(0, L"STATIC", L"", 0, 0, 0, 0, 0, NULL, NULL, GetModuleHandle(NULL), NULL);
-                m_hOpenGLDummyDC     = GetDC(m_hOpenGLDummyWindow);
-
-                PIXELFORMATDESCRIPTOR pfd;
-                memset(&pfd, 0, sizeof(pfd));
-                pfd.nSize        = sizeof(m_hOpenGLDummyDC);
-                pfd.nVersion     = 1;
-                pfd.dwFlags      = PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-                pfd.iPixelType   = PFD_TYPE_RGBA;
-                pfd.cStencilBits = 8;
-                pfd.cDepthBits   = 24;
-                pfd.cColorBits   = 32;
-                m_OpenGLPixelFormat = ChoosePixelFormat(m_hOpenGLDummyDC, &pfd);
-
-                if (m_OpenGLPixelFormat != 0)
+                // If we don't yet have any GPURenderingDeviceInfo objects we'll need to create one.
+                if (m_renderingDevices.GetCount() == 0)
                 {
-                    if (SetPixelFormat(m_hOpenGLDummyDC, m_OpenGLPixelFormat,  &pfd))
-                    {
-                        PFNWGLCREATECONTEXTPROC _wglCreateContext = reinterpret_cast<PFNWGLCREATECONTEXTPROC>(GetProcAddress(m_hOpenGL32, "wglCreateContext"));
-                        PFNWGLMAKECURRENTPROC   _wglMakeCurrent   = reinterpret_cast<PFNWGLMAKECURRENTPROC  >(GetProcAddress(m_hOpenGL32, "wglMakeCurrent"));
+                    GPURenderingDeviceInfo info;
+                    ZeroMemory(&info, sizeof(info));
+                    GTLib::Strings::Copy(info.description, 256, reinterpret_cast<const char*>(m_gl.GetString(GL_RENDERER)));
+                    info.identifier_OpenGL = 1;
 
-                        if (_wglCreateContext != nullptr && _wglMakeCurrent != nullptr)
-                        {
-                            m_hOpenGLRC = _wglCreateContext(m_hOpenGLDummyDC);
-                            if (m_hOpenGLRC != 0)
-                            {
-                                _wglMakeCurrent(m_hOpenGLDummyDC, m_hOpenGLRC);
+                    m_renderingDevices.PushBack(info);
+                }
 
-                                // We need to use glGetString() to determine which version of the OpenGL API is supported.
-                                PFNGLGETSTRINGPROC _glGetString = reinterpret_cast<PFNGLGETSTRINGPROC>(GetProcAddress(m_hOpenGL32, "glGetString"));
-                                if (_glGetString != nullptr)
-                                {
-                                    const char* versionStr = reinterpret_cast<const char*>(_glGetString(GL_VERSION));
-                                    if (versionStr != nullptr)
-                                    {
-                                        const char* majorStart = versionStr;
-                                              char* minorStart;
+                assert(m_renderingDevices.GetCount() > 0);
 
-                                        unsigned int major = strtoul(majorStart, &minorStart, 0);
-                                        unsigned int minor = strtoul(minorStart + 1, NULL, 0);
-
-                                        if (major > 2 || (major == 2 && minor >= 1))
-                                        {
-                                            // If we don't yet have any GPURenderingDeviceInfo objects we'll need to create one.
-                                            if (m_renderingDevices.GetCount() == 0)
-                                            {
-                                                GPURenderingDeviceInfo info;
-                                                ZeroMemory(&info, sizeof(info));
-                                                GTLib::Strings::Copy(info.description, 256, reinterpret_cast<const char*>(_glGetString(GL_RENDERER)));
-                                                info.identifier_OpenGL = 1;
-
-                                                m_renderingDevices.PushBack(info);
-                                            }
-
-                                            assert(m_renderingDevices.GetCount() > 0);
-
-                                            GPURenderingDeviceInfo& openGLDeviceInfo = m_renderingDevices[0];       // <-- The OpenGL device should always be the first item since that should correspond to the primary display, which is what OpenGL always uses.
-                                            assert(openGLDeviceInfo.identifier_OpenGL == 1);
-                                            {
+                GPURenderingDeviceInfo& openGLDeviceInfo = m_renderingDevices[0];       // <-- The OpenGL device should always be the first item since that should correspond to the primary display, which is what OpenGL always uses.
+                assert(openGLDeviceInfo.identifier_OpenGL == 1);
+                {
 #if defined(GT_GE_BUILD_OPENGL21)
-                                                AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL21);
+                    AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL21);
 #endif
 
-                                                // Now we need to check for OpenGL 4.5 support.
-                                                // TODO: On NVIDIA we can just use the same version string from glGetString(), however I'm not sure if that's how all vendor's report the maximum version. Test this.
-                                                if (major > 4 || (major == 4 && minor >= 5))
-                                                {
+                    // Now we need to check for OpenGL 4.5 support.
+                    unsigned int majorVersion;
+                    unsigned int minorVersion;
+                    m_gl.GetVersion(majorVersion, minorVersion);
+
+                    if (majorVersion > 4 || (majorVersion == 4 && minorVersion >= 5))
+                    {
 #if defined(GT_GE_BUILD_OPENGL45)
-                                                    AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL45);
+                        AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL45);
 #endif
-                                                }
-                                                else
-                                                {
-                                                    // OpenGL 4.5 is not supported.
-                                                }
-                                            }
-                                        }
-                                        else
-                                        {
-                                            // Minimum supported version of OpenGL is not supported.
-                                        }
-                                    }
-                                }
-                            }
-                        }
+                    }
+                    else
+                    {
+                        // OpenGL 4.5 is not supported.
                     }
                 }
             }
-#endif
-
-#if defined(GT_GE_PLATFORM_LINUX)
-#endif
+            else
+            {
+                return resultGL;
+            }
 #endif
 
 
@@ -287,20 +195,7 @@ namespace GT
         void HardwarePlatform_GPU::Shutdown()
         {
 #if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
-#if defined(GT_PLATFORM_WINDOWS)
-            PFNWGLDELETECONTEXTPROC _wglDeleteContext = reinterpret_cast<PFNWGLDELETECONTEXTPROC>(GetProcAddress(m_hOpenGL32, "wglDeleteContext"));
-            if (_wglDeleteContext != nullptr)
-            {
-                _wglDeleteContext(m_hOpenGLRC);
-            }
-
-            DestroyWindow(m_hOpenGLDummyWindow);
-
-            FreeLibrary(m_hOpenGL32);
-            m_hOpenGL32 = NULL;
-#endif
-#if defined(GT_PLATFORM_LINUX)
-#endif
+            m_gl.Shutdown();
 #endif
 
 #if defined(GT_GE_BUILD_D3D11)

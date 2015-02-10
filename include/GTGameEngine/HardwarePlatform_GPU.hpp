@@ -12,6 +12,12 @@
 #include <GTLib/windef.h>
 #endif
 
+
+#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#include "Rendering/OpenGL/OpenGL.hpp"
+#endif
+
+
 namespace GT
 {
     namespace GE
@@ -94,25 +100,8 @@ namespace GT
 #endif
 
 #if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
-#if defined(GT_PLATFORM_WINDOWS)
-            /// A handle representing the OpenGL32 DLL.
-            HMODULE m_hOpenGL32;
-
-            /// The dummy window for creating the OpenGL rendering context.
-            HWND m_hOpenGLDummyWindow;
-
-            /// The device context of the OpenGL dummy window.
-            HDC m_hOpenGLDummyDC;
-
-            /// The pixel format that must used for each OpenGL window.
-            int m_OpenGLPixelFormat;
-
-            /// The primary OpenGL rendering context. All other rendering contexts are created from this.
-            HGLRC m_hOpenGLRC;
-#endif
-
-#if defined(GT_PLATFORM_LINUX)
-#endif
+            /// The OpenGL helper context.
+            OpenGLContext m_gl;
 #endif
 
 

@@ -45,6 +45,9 @@
     <Filter Include="Source Files\Rendering\OpenGL\OpenGL45">
       <UniqueIdentifier>{ec235752-6c3b-4ea2-8126-e156cb6f1272}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Rendering\OpenGL">
+      <UniqueIdentifier>{9a6de853-7d28-411a-9d04-c5403b1c5516}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c">
@@ -103,6 +106,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPURenderingDevice_OpenGL21.cpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL.cpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -168,6 +174,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPURenderingDevice_OpenGL21.hpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\OpenGL\OpenGL.hpp">
+      <Filter>Header Files\Rendering\OpenGL</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
