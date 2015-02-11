@@ -110,6 +110,15 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL.cpp">
       <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\GPUBuffer.cpp">
+      <Filter>Source Files\Rendering\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUBuffer_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUBuffer_D3D11.cpp">
+      <Filter>Source Files\Rendering\D3D\D3D11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -177,6 +186,39 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\OpenGL\OpenGL.hpp">
       <Filter>Header Files\Rendering\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBuffer.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferType.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferUsage.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUBuffer_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferCPUAccessFlags.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Texture1D.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Texture2D.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Texture3D.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\TextureCube.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferMapType.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUBuffer_D3D11.hpp">
+      <Filter>Source Files\Rendering\D3D\D3D11</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

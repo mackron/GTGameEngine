@@ -5,6 +5,10 @@
 
 #include "Config.hpp"
 #include "GPURenderingDeviceInfo.hpp"
+#include "Rendering/GPUBufferType.hpp"
+#include "Rendering/GPUBufferUsage.hpp"
+#include "Rendering/GPUBufferCPUAccessFlags.hpp"
+#include "Rendering/GPUBufferMapType.hpp"
 
 #include <GTLib/ResultCodes.hpp>
 
@@ -17,6 +21,7 @@ namespace GT
     namespace GE
     {
         class Framebuffer;
+        class GPUBuffer;
 
 
         /// Class representing a rendering GPU device.
@@ -85,6 +90,74 @@ namespace GT
 
 
 
+            ////////////////////////////////////////////
+            // Buffers
+
+            /// Creates a buffer object of the given type.
+            ///
+            /// @param type           [in]  The buffer type (vertex, index, constant, etc.)
+            /// @param usage          [in]  The usage type of the buffer (immutable, dynamic, etc.)
+            /// @param cpuAccessFlags [in] Flags specifying how the CPU is allowed to access the buffer's data. This affects map/unmap operations.
+            /// @param sizeInBytes    [in]  The size in bytes of the buffer.
+            /// @param data           [in]  A pointer to the buffer that contains the initial data.
+            /// @param bufferOut      [out] A reference to the variable that will receive a pointer to the new buffer object.
+            ///
+            /// @return The result code specifying whether or not the buffer was created successfully.
+            ///
+            /// @remarks
+            ///     When \c usage is GPUBufferUsage_Immutable, \c data cannot be null.
+            ///     @par
+            ///     If \c cpuAccessFlags is set to GPUBufferCPUAccess_None (0), all map and unmap operations will fail.
+            virtual ResultCode CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data, GPUBuffer* &bufferOut) = 0;
+
+            /// Deletes a buffer object that was created with CreateBuffer().
+            ///
+            /// @param buffer [in] A pointer to the buffer to delete.
+            virtual void DeleteBuffer(GPUBuffer* buffer) = 0;
+
+            /// Maps the given buffer's data for use on the CPU side.
+            ///
+            /// @param buffer  [in]  A pointer to the buffer object whose data is being mapped.
+            /// @param mapType [in]  The type of mapping to perform. See remarks.
+            /// @param dataOut [out] A reference to the variable that will receive a pointer to the mapped data.
+            ///
+            /// @remarks
+            ///     This does not, conceptually, allocate a buffer - it simply outputs a pointer to the internal buffer.
+            ///     @par
+            ///     The buffer must be unmapped with UnmapBuffer().
+            ///     @par
+            ///     This cannot be used when the buffer was created with GPUBufferUsage_Immutable.
+            ///     @par
+            ///     When \c mapType is \c GPUBufferMapType_Read or \c GPUBufferMapType_ReadWrite, the buffer must have been created with \c GPUBufferCPUAccess_Read.
+            ///     @par
+            ///     When \c mapType is \c GPUBufferMapType_Write, \c GPUBufferMapType_ReadWrite, \c GPUBufferMapType_Write_Discard or \c GPUBufferMapType_Write_NoOverwrite, the buffer must have been created with \c GPUBufferCPUAccess_Write.
+            virtual ResultCode MapBuffer(GPUBuffer* buffer, GPUBufferMapType mapType, void* &dataOut) = 0;
+
+            /// Unmaps the given buffer's data.
+            ///
+            /// @param buffer [in] A pointer to the buffer object whose data is being unmapped.
+            ///
+            /// @remarks
+            ///     This should be paired with a prior call to MapBuffer(). After this is called, the pointer returned by MapBuffer will become invalid.
+            virtual void UnmapBuffer(GPUBuffer* buffer) = 0;
+
+            /// Sets the data for the given buffer.
+            ///
+            /// @param buffer        [in] A pointer to the buffer object whose data is being updated.
+            /// @param offsetInBytes [in] The offset in bytes to start the data placement.
+            /// @param sizeInBytes   [in] The size in bytes of the new data.
+            /// @param data          [in] A pointer to the buffer containing the new data.
+            ///
+            /// @remarks
+            ///     This will fail if the buffer was created with GPUBufferUsage_Immutable.
+            ///     @par
+            ///     This will fail if the buffer is currently mapped.
+            ///     @par
+            ///     When using the Direct3D 11 API, this will use map/unmap internally when the buffer was created with GPUBufferUsage_Dynamic.
+            virtual ResultCode SetBufferData(GPUBuffer* buffer, size_t offsetInBytes, size_t sizeInBytes, const void* data) = 0;
+
+
+
             ///////////////////////////////////////////
             // Framebuffers
 
@@ -143,8 +216,16 @@ namespace GT
             //////////////////////////////////////////////////////
             // Error Codes
 
-            static const ResultCode RenderingAPINotSupported      = (1 << 31) | 0x00000001;
-            static const ResultCode InvalidWindowRenderTarget     = (1 << 31) | 0x000000F0;      //< Fired when a window is attempted to be made current, but the window was never initialized with a framebuffer.
+            static const ResultCode RenderingAPINotSupported          = (1 << 31) | 0x00000001;
+            static const ResultCode InvalidWindowRenderTarget         = (1 << 31) | 0x000000F0;      //< Fired when a window is attempted to be made current, but the window was never initialized with a framebuffer.
+            static const ResultCode UnknownGPUBufferType              = (1 << 31) | 0x000000F1;
+            static const ResultCode UnknownGPUBufferUsage             = (1 << 31) | 0x000000F2;
+            static const ResultCode UnsupportedGPUBufferType          = (1 << 31) | 0x000000F3;
+            static const ResultCode UnsupportedGPUBufferUsage         = (1 << 31) | 0x000000F4;
+            static const ResultCode NoDataSpecifiedForImmutableBuffer = (1 << 31) | 0x000000F5;
+            static const ResultCode GPUBufferIsImmutable              = (1 << 31) | 0x000000F6;
+            static const ResultCode FailedToMapGPUBuffer              = (1 << 31) | 0x000000F7;
+            static const ResultCode UnknownGPUBufferMapType           = (1 << 31) | 0x000000F8;
 
 
         private:    // No copying.

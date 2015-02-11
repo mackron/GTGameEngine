@@ -3,6 +3,7 @@
 #include "GPURenderingDevice_OpenGL21.hpp"
 
 #if defined(GT_GE_BUILD_OPENGL21)
+#include "GPUBuffer_OpenGL21.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
@@ -66,6 +67,171 @@ namespace GT
             m_gl.Clear(GL_COLOR_BUFFER_BIT);
         }
 
+        
+
+        ///////////////////////////////////////////
+        // Buffers
+
+        ResultCode GPURenderingDevice_OpenGL21::CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data, GPUBuffer* &bufferOut)
+        {
+            bufferOut = nullptr;
+
+            if (usage == GPUBufferUsage_Immutable && data == nullptr)
+            {
+                return NoDataSpecifiedForImmutableBuffer;
+            }
+
+
+            GLuint targetGL = 0;
+            GLuint usageGL  = 0;
+
+            switch (type)
+            {
+            case GPUBufferType_Vertex:
+                {
+                    targetGL = GL_ARRAY_BUFFER;
+                    break;
+                }
+
+            case GPUBufferType_Index:
+                {
+                    targetGL = GL_ELEMENT_ARRAY_BUFFER;
+                    break;
+                }
+
+            case GPUBufferType_Constant:
+                {
+                    return UnsupportedGPUBufferType;
+                }
+
+            default:
+                {
+                    return UnknownGPUBufferType;
+                }
+            }
+
+
+            switch (usage)
+            {
+            case GPUBufferUsage_Default:
+                {
+                    usageGL = GL_STREAM_DRAW;
+                    break;
+                }
+
+            case GPUBufferUsage_Immutable:
+                {
+                    usageGL = GL_STATIC_DRAW;
+                    break;
+                }
+
+            case GPUBufferUsage_Dynamic:
+                {
+                    usageGL = GL_DYNAMIC_DRAW;
+                    break;
+                }
+
+            case GPUBufferUsage_Staging:
+                {
+                    usageGL = GL_DYNAMIC_READ;
+                    break;
+                }
+
+            default:
+                {
+                    return UnknownGPUBufferUsage;
+                }
+            }
+
+
+
+            GLuint bufferGL;
+            m_gl.GenBuffers(1, &bufferGL);
+            m_gl.BindBuffer(targetGL, bufferGL);
+            m_gl.BufferData(targetGL, sizeInBytes, data, usageGL);
+
+            bufferOut = new GPUBuffer_OpenGL21(type, usage, cpuAccessFlags, bufferGL, targetGL, usageGL);
+
+
+            return 0;   // No error.
+        }
+
+        void GPURenderingDevice_OpenGL21::DeleteBuffer(GPUBuffer* buffer)
+        {
+            auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
+            assert(bufferGL != nullptr);
+            {
+                GLuint objectGL = bufferGL->GetOpenGLObject();
+                m_gl.DeleteBuffers(1, &objectGL);
+
+                delete buffer;
+            }
+        }
+
+        ResultCode GPURenderingDevice_OpenGL21::MapBuffer(GPUBuffer* buffer, GPUBufferMapType mapType, void* &dataOut)
+        {
+            auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
+            assert(bufferGL != nullptr);
+            {
+                if (bufferGL->GetBufferUsage() != GPUBufferUsage_Immutable)
+                {
+                    const GLenum accessGLTable[] = {
+                        0,
+                        GL_READ_ONLY,       // GPUBufferMapType_Read
+                        GL_WRITE_ONLY,      // GPUBufferMapType_Write
+                        GL_READ_WRITE,      // GPUBufferMapType_ReadWrite
+                        GL_WRITE_ONLY,      // GPUBufferMapType_Write_Discard
+                        GL_WRITE_ONLY       // GPUBufferMapType_Write_NoOverwrite
+                    };
+
+
+                    m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), bufferGL->GetOpenGLObject());
+                    dataOut = m_gl.MapBuffer(bufferGL->GetOpenGLTarget(), accessGLTable[mapType]);
+
+                    if (dataOut != nullptr)
+                    {
+                        return FailedToMapGPUBuffer;
+                    }
+                    else
+                    {
+                        return 0;   // No error.
+                    }
+                }
+                else
+                {
+                    dataOut = nullptr;
+                    return GPUBufferIsImmutable;
+                }
+            }
+        }
+
+        void GPURenderingDevice_OpenGL21::UnmapBuffer(GPUBuffer* buffer)
+        {
+            auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
+            assert(bufferGL != nullptr);
+            {
+                m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), bufferGL->GetOpenGLObject());
+                m_gl.UnmapBuffer(bufferGL->GetOpenGLTarget());
+            }
+        }
+
+        ResultCode GPURenderingDevice_OpenGL21::SetBufferData(GPUBuffer* buffer, size_t offsetInBytes, size_t sizeInBytes, const void* data)
+        {
+            auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
+            assert(bufferGL != nullptr);
+            {
+                if (bufferGL->GetBufferUsage() != GPUBufferUsage_Immutable)
+                {
+                    m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), bufferGL->GetOpenGLObject());
+                    m_gl.BufferSubData(bufferGL->GetOpenGLTarget(), offsetInBytes, sizeInBytes, data);
+                }
+                else
+                {
+                    return GPUBufferIsImmutable;
+                }
+            }
+        }
+
 
 
         ///////////////////////////////////////////
@@ -99,7 +265,7 @@ namespace GT
             {
                 HDC hDC = GetDC(hWnd);
 
-                if (SetPixelFormat(hDC, m_gl.GetPixelFormat(), reinterpret_cast<const PIXELFORMATDESCRIPTOR*>(&m_gl.GetPFD())))
+                if (SetPixelFormat(hDC, m_gl.GetPixelFormat(), &m_gl.GetPFD()))
                 {
                     HWNDFramebuffer framebuffer;
                     framebuffer.m_hDC = hDC;

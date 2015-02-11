@@ -49,6 +49,25 @@ namespace GT
 
 
 
+            ////////////////////////////////////////////
+            // Buffers
+
+            /// GPURenderingDevice::CreateBuffer().
+            ResultCode CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data, GPUBuffer* &bufferOut);
+
+            /// GPURenderingDevice::DeleteBuffer().
+            void DeleteBuffer(GPUBuffer* buffer);
+
+            /// GPURenderingDevice::MapBuffer().
+            ResultCode MapBuffer(GPUBuffer* buffer, GPUBufferMapType mapType, void* &dataOut);
+
+            /// GPURenderingDevice::UnmapBuffer().
+            void UnmapBuffer(GPUBuffer* buffer);
+
+            /// GPURenderingDevice::SetBufferData().
+            ResultCode SetBufferData(GPUBuffer* buffer, size_t offsetInBytes, size_t sizeInBytes, const void* data);
+
+
 
             ///////////////////////////////////////////
             // Framebuffers

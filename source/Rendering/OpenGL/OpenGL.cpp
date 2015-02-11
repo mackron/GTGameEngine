@@ -40,7 +40,13 @@ namespace GT
 #endif
               GetString(nullptr),
               Clear(nullptr),
-              ClearColor(nullptr)
+              ClearColor(nullptr),
+              GenBuffers(nullptr),
+              DeleteBuffers(nullptr),
+              BindBuffer(nullptr),
+              BufferData(nullptr),
+              MapBuffer(nullptr),
+              UnmapBuffer(nullptr)
         {
         }
 
@@ -195,7 +201,7 @@ namespace GT
             return m_pixelFormat;
         }
 
-        const PIXELFORMATDESCRIPTOR_GTGE & OpenGLContext::GetPFD() const
+        const PIXELFORMATDESCRIPTOR & OpenGLContext::GetPFD() const
         {
             return m_pfd;
         }
@@ -243,8 +249,16 @@ namespace GT
                     if (m_majorVersion > 2 || (m_majorVersion == 2 && m_minorVersion >= 1))
                     {
                         // We support OpenGL 2.1 so we will now initialize the rest of the API.
-                        this->Clear      = reinterpret_cast<PFNGLCLEARPROC     >(this->GetGLProcAddress("glClear"));
-                        this->ClearColor = reinterpret_cast<PFNGLCLEARCOLORPROC>(this->GetGLProcAddress("glClearColor"));
+                        this->Clear         = reinterpret_cast<PFNGLCLEARPROC        >(this->GetGLProcAddress("glClear"));
+                        this->ClearColor    = reinterpret_cast<PFNGLCLEARCOLORPROC   >(this->GetGLProcAddress("glClearColor"));
+
+                        this->GenBuffers    = reinterpret_cast<PFNGLGENBUFFERSPROC   >(this->GetGLProcAddress("glGenBuffers"));
+                        this->DeleteBuffers = reinterpret_cast<PFNGLDELETEBUFFERSPROC>(this->GetGLProcAddress("glDeleteBuffers"));
+                        this->BindBuffer    = reinterpret_cast<PFNGLBINDBUFFERPROC   >(this->GetGLProcAddress("glBindBuffer"));
+                        this->BufferData    = reinterpret_cast<PFNGLBUFFERDATAPROC   >(this->GetGLProcAddress("glBufferData"));
+                        this->BufferSubData = reinterpret_cast<PFNGLBUFFERSUBDATAPROC>(this->GetGLProcAddress("glBufferSubData"));
+                        this->MapBuffer     = reinterpret_cast<PFNGLMAPBUFFERPROC    >(this->GetGLProcAddress("glMapBuffer"));
+                        this->UnmapBuffer   = reinterpret_cast<PFNGLUNMAPBUFFERPROC  >(this->GetGLProcAddress("glUnmapBuffer"));
 
 
                         return 0;   // No error.

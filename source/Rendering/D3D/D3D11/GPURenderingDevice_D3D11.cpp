@@ -3,6 +3,8 @@
 #include "GPURenderingDevice_D3D11.hpp"
 
 #if defined(GT_GE_BUILD_D3D11)
+#include "GPUBuffer_D3D11.hpp"
+
 namespace GT
 {
     namespace GE
@@ -155,6 +157,65 @@ namespace GT
                 color[2] = b;
                 color[3] = a;
                 m_context->ClearRenderTargetView(iFramebuffer->value.renderTargetView, color);
+            }
+        }
+
+
+        ///////////////////////////////////////////
+        // Buffers
+
+        ResultCode GPURenderingDevice_D3D11::CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data, GPUBuffer* &bufferOut)
+        {
+            bufferOut = nullptr;
+
+            if (usage == GPUBufferUsage_Immutable && data == nullptr)
+            {
+                return NoDataSpecifiedForImmutableBuffer;
+            }
+
+
+            return -1;
+        }
+
+        void GPURenderingDevice_D3D11::DeleteBuffer(GPUBuffer* buffer)
+        {
+            auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
+            assert(bufferD3D != nullptr);
+            {
+                delete buffer;
+            }
+        }
+
+        ResultCode GPURenderingDevice_D3D11::MapBuffer(GPUBuffer* buffer, GPUBufferMapType mapType, void* &dataOut)
+        {
+            auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
+            assert(bufferD3D != nullptr);
+            {
+                return -1;
+            }
+        }
+
+        void GPURenderingDevice_D3D11::UnmapBuffer(GPUBuffer* buffer)
+        {
+            auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
+            assert(bufferD3D != nullptr);
+            {
+            }
+        }
+
+        ResultCode GPURenderingDevice_D3D11::SetBufferData(GPUBuffer* buffer, size_t offsetInBytes, size_t sizeInBytes, const void* data)
+        {
+            auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
+            assert(bufferD3D != nullptr);
+            {
+                if (bufferD3D->GetBufferUsage() != GPUBufferUsage_Immutable)
+                {
+                    return -1;
+                }
+                else
+                {
+                    return GPUBufferIsImmutable;
+                }
             }
         }
 
