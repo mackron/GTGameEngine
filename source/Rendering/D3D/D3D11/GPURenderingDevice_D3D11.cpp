@@ -19,7 +19,8 @@ namespace GT
               m_currentHWND(0),
               m_currentSwapChain(nullptr),
               m_stateFlags(0),
-              m_swapInterval(0)
+              m_swapInterval(0),
+              m_currentPrimitiveTopology(PrimitiveTopology_Triangle)
         {
             m_stateFlags |= StageFlag_IsWindowFramebufferCurrent;       // TODO: Remove this from the constructor once we get the framebuffer system working properly.
         }
@@ -158,6 +159,63 @@ namespace GT
                 color[3] = a;
                 m_context->ClearRenderTargetView(iFramebuffer->value.renderTargetView, color);
             }
+        }
+
+        void GPURenderingDevice_D3D11::Draw(unsigned int indexCount, unsigned int startIndexLocation)
+        {
+            m_context->DrawIndexed(indexCount, startIndexLocation, 0);
+        }
+
+
+
+        ///////////////////////////////////////////
+        // State
+
+        void GPURenderingDevice_D3D11::SetPrimitiveTopology(PrimitiveTopology topology)
+        {
+            D3D11_PRIMITIVE_TOPOLOGY topologiesD3D11[] =
+            {
+                D3D11_PRIMITIVE_TOPOLOGY_POINTLIST,
+                D3D11_PRIMITIVE_TOPOLOGY_LINELIST,
+                D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP,
+                D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+                D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
+            };
+
+            m_context->IASetPrimitiveTopology(topologiesD3D11[topology]);
+        }
+
+        void GPURenderingDevice_D3D11::SetCurrentVertexBuffer(GPUBuffer* buffer)
+        {
+            auto bufferD3D11 = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
+            if (bufferD3D11 != nullptr)
+            {
+                //ID3D11Buffer* d3d11Buffer = bufferD3D11->GetD3D11Buffer();
+            }
+            else
+            {
+                m_context->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
+            }
+        }
+
+        void GPURenderingDevice_D3D11::SetCurrentIndexBuffer(GPUBuffer* buffer)
+        {
+            auto bufferD3D11 = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
+            if (bufferD3D11 != nullptr)
+            {
+            }
+            else
+            {
+                m_context->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
+            }
+        }
+
+        void GPURenderingDevice_D3D11::SetCurrentConstantBuffer(GPUBuffer* buffer, unsigned int slot)
+        {
+            (void)buffer;
+            (void)slot;
+
+            // Unsupported with core OpenGL 2.1.
         }
 
 

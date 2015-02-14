@@ -220,5 +220,8 @@
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUBuffer_D3D11.hpp">
       <Filter>Source Files\Rendering\D3D\D3D11</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\PrimitiveTopolgoy.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

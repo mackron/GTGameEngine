@@ -41,8 +41,31 @@ namespace GT
             void SetSwapInterval(int swapInterval);
 
 
+            ////////////////////////////////////////////
+            // Drawing
+
             /// GPURenderingDevice::ClearColor().
             void ClearColor(float r, float g, float b, float a);
+
+            /// GPURenderingDevice::Draw().
+            void Draw(unsigned int indexCount, unsigned int startIndexLocation);
+
+
+
+            /////////////////////////////////////////////
+            // State
+
+            /// GPURenderingDevice::SetPrimitiveTopology().
+            void SetPrimitiveTopology(PrimitiveTopology topology);
+
+            /// GPURenderingDevice::SetCurrentVertexBuffer().
+            void SetCurrentVertexBuffer(GPUBuffer* buffer);
+
+            /// GPURenderingDevice::SetCurrentIndexBuffer().
+            void SetCurrentIndexBuffer(GPUBuffer* buffer);
+
+            /// GPURenderingDevice::SetCurrentConstantBuffer().
+            void SetCurrentConstantBuffer(GPUBuffer* buffer, unsigned int slot);
 
 
 
@@ -130,6 +153,16 @@ namespace GT
 
             /// Boolean state flags.
             uint32_t m_stateFlags;
+
+            /// The current primitive topology for use by the OpenGL API. 
+            GLenum m_currentTopologyGL;
+
+
+            /// A pointer to the current vertex buffer.
+            GPUBuffer* m_currentVertexBuffer;
+
+            /// A pointer to the current index buffer.
+            GPUBuffer* m_currentIndexBuffer;
 
 
             

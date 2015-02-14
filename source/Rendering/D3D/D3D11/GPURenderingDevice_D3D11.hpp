@@ -44,9 +44,32 @@ namespace GT
             void SetSwapInterval(int swapInterval);
 
 
+
+            /////////////////////////////////////////////
+            // Drawing
+
             /// GPURenderingDevice::ClearColor().
             void ClearColor(float r, float g, float b, float a);
 
+            /// GPURenderingDevice::Draw().
+            void Draw(unsigned int indexCount, unsigned int startIndexLocation);
+
+
+
+            /////////////////////////////////////////////
+            // State
+
+            /// GPURenderingDevice::SetPrimitiveTopology().
+            void SetPrimitiveTopology(PrimitiveTopology topology);
+
+            /// GPURenderingDevice::SetCurrentVertexBuffer().
+            void SetCurrentVertexBuffer(GPUBuffer* buffer);
+
+            /// GPURenderingDevice::SetCurrentIndexBuffer().
+            void SetCurrentIndexBuffer(GPUBuffer* buffer);
+
+            /// GPURenderingDevice::SetCurrentConstantBuffer().
+            void SetCurrentConstantBuffer(GPUBuffer* buffer, unsigned int slot);
 
 
             ////////////////////////////////////////////
@@ -145,6 +168,9 @@ namespace GT
 
             /// The current swap interval.
             UINT m_swapInterval;
+
+            /// The current primitive topology.
+            PrimitiveTopology m_currentPrimitiveTopology;
 
             
             ///////////////////////////////////////////

@@ -39,8 +39,10 @@ namespace GT
 #if defined(GT_PLATFORM_LINUX)
 #endif
               GetString(nullptr),
+              GetIntegerv(nullptr),
               Clear(nullptr),
               ClearColor(nullptr),
+              DrawElements(nullptr),
               GenBuffers(nullptr),
               DeleteBuffers(nullptr),
               BindBuffer(nullptr),
@@ -249,8 +251,11 @@ namespace GT
                     if (m_majorVersion > 2 || (m_majorVersion == 2 && m_minorVersion >= 1))
                     {
                         // We support OpenGL 2.1 so we will now initialize the rest of the API.
+                        this->GetIntegerv   = reinterpret_cast<PFNGLGETINTEGERVPROC  >(this->GetGLProcAddress("glGetIntegerv"));
+
                         this->Clear         = reinterpret_cast<PFNGLCLEARPROC        >(this->GetGLProcAddress("glClear"));
                         this->ClearColor    = reinterpret_cast<PFNGLCLEARCOLORPROC   >(this->GetGLProcAddress("glClearColor"));
+                        this->DrawElements  = reinterpret_cast<PFNGLDRAWELEMENTSPROC >(this->GetGLProcAddress("glDrawElements"));
 
                         this->GenBuffers    = reinterpret_cast<PFNGLGENBUFFERSPROC   >(this->GetGLProcAddress("glGenBuffers"));
                         this->DeleteBuffers = reinterpret_cast<PFNGLDELETEBUFFERSPROC>(this->GetGLProcAddress("glDeleteBuffers"));

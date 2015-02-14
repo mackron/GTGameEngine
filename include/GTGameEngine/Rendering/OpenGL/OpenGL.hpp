@@ -136,8 +136,11 @@ namespace GT
 #endif
 
             PFNGLGETSTRINGPROC     GetString;
+            PFNGLGETINTEGERVPROC   GetIntegerv;
+
             PFNGLCLEARPROC         Clear;
             PFNGLCLEARCOLORPROC    ClearColor;
+            PFNGLDRAWELEMENTSPROC  DrawElements;
 
             PFNGLGENBUFFERSPROC    GenBuffers;
             PFNGLDELETEBUFFERSPROC DeleteBuffers;

@@ -9,6 +9,7 @@
 #include "Rendering/GPUBufferUsage.hpp"
 #include "Rendering/GPUBufferCPUAccessFlags.hpp"
 #include "Rendering/GPUBufferMapType.hpp"
+#include "Rendering/PrimitiveTopolgoy.hpp"
 
 #include <GTLib/ResultCodes.hpp>
 
@@ -80,6 +81,9 @@ namespace GT
             virtual void SetSwapInterval(int swapInterval) = 0;
 
 
+            ////////////////////////////////////////////
+            // Drawing
+
             /// Clears the current framebuffer with the given color.
             ///
             /// @param r [in] The red component.
@@ -87,6 +91,50 @@ namespace GT
             /// @param b [in] The blue component.
             /// @param a [in] The alpha component.
             virtual void ClearColor(float r, float g, float b, float a) = 0;
+
+            /// Renders the contents of the currently bound vertex buffer using the currently bound index buffer.
+            ///
+            /// @param indexCount         [in] The number of indices to draw.
+            /// @param startIndexLocation [in] The zero-based location of the first index in the index buffer to start drawing from.
+            ///
+            /// @remarks
+            ///     The \c indexCount argument refers to how many indices to iterate over when determining which primitives to draw. For example, when drawing
+            ///     a triangle, you would pass the number 3 (number of indices used to build the triangle).
+            virtual void Draw(unsigned int indexCount, unsigned int startIndexLocation) = 0;
+
+
+
+
+            /////////////////////////////////////////////
+            // State
+
+            /// Sets the primitive topology to use for all future draw calls.
+            ///
+            /// @param topology [in] The new primitive topology to use for drawing.
+            ///
+            /// @remarks
+            ///     The default topology is triangles.
+            virtual void SetPrimitiveTopology(PrimitiveTopology topology) = 0;
+
+            /// Sets the current vertex buffer.
+            ///
+            /// @param buffer [in] A pointer to the buffer to make current on the vertex buffer bind point.
+            virtual void SetCurrentVertexBuffer(GPUBuffer* buffer) = 0;
+
+            /// Sets the current index buffer.
+            ///
+            /// @param buffer [in] A pointer to the buffer to make current on the index buffer bind point.
+            virtual void SetCurrentIndexBuffer(GPUBuffer* buffer) = 0;
+
+            /// Sets the current constant buffer.
+            ///
+            /// @param buffer [in] A pointer to the buffer to make current on the constant buffer bind point.
+            /// @param slot   [in] The zero-based slot number to bind the constant buffer to.
+            ///
+            /// @remarks
+            ///     Every constant/uniform block has an index. When assigning a buffer to a block, you pass the index to the \c slot parameter.
+            virtual void SetCurrentConstantBuffer(GPUBuffer* buffer, unsigned int slot) = 0;
+
 
 
 

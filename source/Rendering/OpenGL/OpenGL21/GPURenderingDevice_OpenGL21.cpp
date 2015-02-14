@@ -20,7 +20,10 @@ namespace GT
               m_currentHWND(NULL),
               m_currentDC(NULL),
 #endif
-              m_stateFlags(0)
+              m_stateFlags(0),
+              m_currentTopologyGL(GL_TRIANGLES),
+              m_currentVertexBuffer(nullptr),
+              m_currentIndexBuffer(nullptr)
         {
             m_stateFlags |= StageFlag_IsWindowFramebufferCurrent;       // TODO: Remove this from the constructor once we get the framebuffer system working properly.
         }
@@ -61,13 +64,90 @@ namespace GT
         }
 
 
+
+        ///////////////////////////////////////////
+        // Drawing
+
         void GPURenderingDevice_OpenGL21::ClearColor(float r, float g, float b, float a)
         {
             m_gl.ClearColor(r, g, b, a);
             m_gl.Clear(GL_COLOR_BUFFER_BIT);
         }
 
+        void GPURenderingDevice_OpenGL21::Draw(unsigned int indexCount, unsigned int startIndexLocation)
+        {
+            if (m_currentVertexBuffer != nullptr && m_currentIndexBuffer != nullptr)
+            {
+                m_gl.DrawElements(m_currentTopologyGL, indexCount, GL_UNSIGNED_INT, reinterpret_cast<const void*>(startIndexLocation*sizeof(uint32_t)));
+            }
+        }
+
         
+
+        ///////////////////////////////////////////
+        // State
+
+        void GPURenderingDevice_OpenGL21::SetPrimitiveTopology(PrimitiveTopology topology)
+        {
+            GLenum topologiesGL[] =
+            {
+                GL_POINTS,              // PrimitiveTopology_Point
+                GL_LINES,               // PrimitiveTopology_Line
+                GL_LINE_STRIP,          // PrimitiveTopology_LineStrip
+                GL_TRIANGLES,           // PrimitiveTopology_Triangle
+                GL_TRIANGLE_STRIP       // PrimitiveTopology_TriangleStrip
+            };
+
+            m_currentTopologyGL = topologiesGL[topology];
+        }
+
+        void GPURenderingDevice_OpenGL21::SetCurrentVertexBuffer(GPUBuffer* buffer)
+        {
+            auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
+            if (bufferGL != nullptr)
+            {
+                assert(bufferGL->GetOpenGLTarget() == GL_ARRAY_BUFFER);
+                {
+                    m_gl.BindBuffer(GL_ARRAY_BUFFER, bufferGL->GetOpenGLObject());
+                }
+            }
+            else
+            {
+                m_gl.BindBuffer(GL_ARRAY_BUFFER, 0);
+            }
+
+
+            m_currentVertexBuffer = buffer;
+        }
+
+        void GPURenderingDevice_OpenGL21::SetCurrentIndexBuffer(GPUBuffer* buffer)
+        {
+            auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
+            if (bufferGL != nullptr)
+            {
+                assert(bufferGL->GetOpenGLTarget() == GL_ELEMENT_ARRAY_BUFFER);
+                {
+                    m_gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferGL->GetOpenGLObject());
+                }
+            }
+            else
+            {
+                m_gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            }
+
+
+            m_currentIndexBuffer = buffer;
+        }
+
+        void GPURenderingDevice_OpenGL21::SetCurrentConstantBuffer(GPUBuffer* buffer, unsigned int slot)
+        {
+            (void)buffer;
+            (void)slot;
+
+            // Unsupported with core OpenGL 2.1.
+        }
+
+
 
         ///////////////////////////////////////////
         // Buffers
@@ -145,12 +225,20 @@ namespace GT
 
 
 
-            GLuint bufferGL;
-            m_gl.GenBuffers(1, &bufferGL);
-            m_gl.BindBuffer(targetGL, bufferGL);
+            GLuint prevObjectGL;
+            m_gl.GetIntegerv((targetGL == GL_ARRAY_BUFFER) ? GL_ARRAY_BUFFER_BINDING : GL_ELEMENT_ARRAY_BUFFER_BINDING, reinterpret_cast<GLint*>(&prevObjectGL));
+
+
+            GLuint objectGL;
+            m_gl.GenBuffers(1, &objectGL);
+            m_gl.BindBuffer(targetGL, objectGL);
             m_gl.BufferData(targetGL, sizeInBytes, data, usageGL);
 
-            bufferOut = new GPUBuffer_OpenGL21(type, usage, cpuAccessFlags, bufferGL, targetGL, usageGL);
+            bufferOut = new GPUBuffer_OpenGL21(type, usage, cpuAccessFlags, objectGL, targetGL, usageGL);
+
+
+            // Re-bind the previous buffer.
+            m_gl.BindBuffer(targetGL, prevObjectGL);
 
 
             return 0;   // No error.
@@ -185,8 +273,17 @@ namespace GT
                     };
 
 
+                    GLuint prevObjectGL;
+                    m_gl.GetIntegerv((bufferGL->GetOpenGLTarget() == GL_ARRAY_BUFFER) ? GL_ARRAY_BUFFER_BINDING : GL_ELEMENT_ARRAY_BUFFER_BINDING, reinterpret_cast<GLint*>(&prevObjectGL));
+
+
                     m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), bufferGL->GetOpenGLObject());
                     dataOut = m_gl.MapBuffer(bufferGL->GetOpenGLTarget(), accessGLTable[mapType]);
+
+
+                    // Re-bind the previous buffer.
+                    m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), prevObjectGL);
+
 
                     if (dataOut != nullptr)
                     {
@@ -210,8 +307,14 @@ namespace GT
             auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
             assert(bufferGL != nullptr);
             {
+                GLuint prevObjectGL;
+                m_gl.GetIntegerv((bufferGL->GetOpenGLTarget() == GL_ARRAY_BUFFER) ? GL_ARRAY_BUFFER_BINDING : GL_ELEMENT_ARRAY_BUFFER_BINDING, reinterpret_cast<GLint*>(&prevObjectGL));
+
                 m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), bufferGL->GetOpenGLObject());
                 m_gl.UnmapBuffer(bufferGL->GetOpenGLTarget());
+
+                // Re-bind the previous buffer.
+                m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), prevObjectGL);
             }
         }
 
@@ -222,8 +325,14 @@ namespace GT
             {
                 if (bufferGL->GetBufferUsage() != GPUBufferUsage_Immutable)
                 {
+                    GLuint prevObjectGL;
+                    m_gl.GetIntegerv((bufferGL->GetOpenGLTarget() == GL_ARRAY_BUFFER) ? GL_ARRAY_BUFFER_BINDING : GL_ELEMENT_ARRAY_BUFFER_BINDING, reinterpret_cast<GLint*>(&prevObjectGL));
+
                     m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), bufferGL->GetOpenGLObject());
                     m_gl.BufferSubData(bufferGL->GetOpenGLTarget(), offsetInBytes, sizeInBytes, data);
+
+                    // Re-bind the previous buffer.
+                    m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), prevObjectGL);
                 }
                 else
                 {
