@@ -333,6 +333,9 @@ namespace GT
 
                     // Re-bind the previous buffer.
                     m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), prevObjectGL);
+
+
+					return 0;	// No errors.
                 }
                 else
                 {
