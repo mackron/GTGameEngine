@@ -284,13 +284,6 @@ namespace GT
                         }
 #endif
 
-#if defined(GT_GE_BUILD_D3D9)
-                    case RenderingAPI_D3D9:
-                        {
-                            break;
-                        }
-#endif
-
 #if defined(GT_GE_BUILD_OPENGL21)
                     case RenderingAPI_OpenGL21:
                         {

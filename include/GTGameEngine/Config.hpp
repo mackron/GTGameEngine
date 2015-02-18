@@ -19,7 +19,6 @@
 
 #define GT_GE_ENABLE_D3D11          1
 #define GT_GE_ENABLE_OPENGL45       1
-#define GT_GE_ENABLE_D3D9           1
 #define GT_GE_ENABLE_OPENGL21       1
 
 
@@ -39,13 +38,6 @@
 // OpenGL 4.5 Support.
 #if (defined(GT_GE_ENABLE_OPENGL45) && GT_GE_ENABLE_OPENGL45 == 1)
 #define GT_GE_BUILD_OPENGL45
-#endif
-
-// D3D9 Support.
-//
-// Currently, only Visual C++ 2013 has been tested for D3D11, so this is restricted to VC compilers for now.
-#if (defined(GT_GE_ENABLE_D3D9) && GT_GE_ENABLE_D3D9 == 1) && defined(GT_PLATFORM_WINDOWS) && defined(GT_COMPILER_VC)
-#define GT_GE_BUILD_D3D9
 #endif
 
 // OpenGL 2.1 Support.
