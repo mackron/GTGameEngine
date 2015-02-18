@@ -179,7 +179,11 @@ namespace GT
                 D3D11_PRIMITIVE_TOPOLOGY_LINELIST,
                 D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP,
                 D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-                D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP
+                D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP,
+                D3D11_PRIMITIVE_TOPOLOGY_LINELIST_ADJ,
+                D3D11_PRIMITIVE_TOPOLOGY_LINESTRIP_ADJ,
+                D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST_ADJ,
+                D3D11_PRIMITIVE_TOPOLOGY_TRIANGLESTRIP_ADJ,
             };
 
             m_context->IASetPrimitiveTopology(topologiesD3D11[topology]);
@@ -217,6 +221,22 @@ namespace GT
 
             // Unsupported with core OpenGL 2.1.
         }
+
+
+
+        ////////////////////////////////////////////
+        // Shaders
+
+        ResultCode GPURenderingDevice_D3D11::CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
+        {
+            return ShaderTargetNotSupported;
+        }
+
+        bool GPURenderingDevice_D3D11::IsShaderTargetSupported(GPUShaderTarget target) const
+        {
+            return (target >= GPUShaderTarget_HLSL_50_VS && target <= GPUShaderTarget_HLSL_50_CS);
+        }
+
 
 
         ///////////////////////////////////////////

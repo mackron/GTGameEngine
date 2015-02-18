@@ -9,6 +9,8 @@
 #include <GTLib/windows.hpp>
 #endif
 
+#include <GTLib/String.hpp>
+
 namespace GT
 {
     namespace GE
@@ -20,6 +22,7 @@ namespace GT
               m_currentHWND(NULL),
               m_currentDC(NULL),
 #endif
+              m_supportedShaderTargets(),
               m_stateFlags(0),
               m_currentTopologyGL(GL_TRIANGLES),
               m_currentVertexBuffer(nullptr),
@@ -37,7 +40,14 @@ namespace GT
         {
             if (m_info.identifier_OpenGL == 1 && IsRenderingAPISupported(m_info, RenderingAPI_OpenGL21))
             {
-                return m_gl.Startup();
+                ResultCode result = m_gl.Startup();
+                if (Succeeded(result))
+                {
+                    m_supportedShaderTargets.PushBack(GPUShaderTarget_GLSL_120_VS);
+                    m_supportedShaderTargets.PushBack(GPUShaderTarget_GLSL_120_FS);
+
+                    // TODO: Check for ARB program support.
+                }
             }
             else
             {
@@ -48,6 +58,8 @@ namespace GT
 
         void GPURenderingDevice_OpenGL21::Shutdown()
         {
+            m_supportedShaderTargets.Clear();
+
             m_gl.Shutdown();
         }
 
@@ -91,11 +103,15 @@ namespace GT
         {
             GLenum topologiesGL[] =
             {
-                GL_POINTS,              // PrimitiveTopology_Point
-                GL_LINES,               // PrimitiveTopology_Line
-                GL_LINE_STRIP,          // PrimitiveTopology_LineStrip
-                GL_TRIANGLES,           // PrimitiveTopology_Triangle
-                GL_TRIANGLE_STRIP       // PrimitiveTopology_TriangleStrip
+                GL_POINTS,                          // PrimitiveTopology_Point
+                GL_LINES,                           // PrimitiveTopology_Line
+                GL_LINE_STRIP,                      // PrimitiveTopology_LineStrip
+                GL_TRIANGLES,                       // PrimitiveTopology_Triangle
+                GL_TRIANGLE_STRIP,                  // PrimitiveTopology_TriangleStrip
+                GL_LINES,                           // PrimitiveTopology_Line_Adjacency (Not supported in OpenGL 2.1)
+                GL_LINE_STRIP,                      // PrimitiveTopology_LineStrip_Adjacency (Not supported in OpenGL 2.1)
+                GL_TRIANGLES,                       // PrimitiveTopology_Triangle_Adjacency (Not supported in OpenGL 2.1)
+                GL_TRIANGLE_STRIP                   // PrimitiveTopology_TriangleStrip_Adjacency (Not supported in OpenGL 2.1)
             };
 
             m_currentTopologyGL = topologiesGL[topology];
@@ -145,6 +161,34 @@ namespace GT
             (void)slot;
 
             // Unsupported with core OpenGL 2.1.
+        }
+
+
+
+        ////////////////////////////////////////////
+        // Shaders
+
+        ResultCode GPURenderingDevice_OpenGL21::CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
+        {
+            if (this->IsShaderTargetSupported(target))
+            {
+                if (target >= GPUShaderTarget_GLSL_120_VS && target <= GPUShaderTarget_GLSL_120_FS)
+                {
+                    return this->CompileShader_GLSL(source, sourceLength, defines, target, byteCodeOut, messagesOut);
+                }
+
+                if (target >= GPUShaderTarget_ARB_VP && target <= GPUShaderTarget_ARB_FP)
+                {
+                    return this->CompileShader_ARB(source, sourceLength, defines, target, byteCodeOut, messagesOut);
+                }
+            }
+
+            return ShaderTargetNotSupported;
+        }
+
+        bool GPURenderingDevice_OpenGL21::IsShaderTargetSupported(GPUShaderTarget target) const
+        {
+            return m_supportedShaderTargets.Exists(target);
         }
 
 
@@ -453,6 +497,119 @@ namespace GT
 
 #if defined(GT_PLATFORM_LINUX)
 #endif
+
+
+
+        //////////////////////////////////////////
+        // Private
+
+        ResultCode GPURenderingDevice_OpenGL21::CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
+        {
+            GLuint objectGL;
+            ResultCode result = this->CompileShader_GLSL(source, sourceLength, defines, target, messagesOut, objectGL);
+            if (GT::Succeeded(result))
+            {
+                // The shader compilation was successful. We now need to build the byte code data. The OpenGL 2.1 API does not support loading shaders from binary data, so we can only output
+                // the original shader source and the defines and target that was used to build it.
+                result = this->CreateBufferBinaryData(source, sourceLength, defines, target, nullptr, 0, 0, byteCodeOut);
+            }
+
+            return result;
+        }
+
+        ResultCode GPURenderingDevice_OpenGL21::CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &messagesOut, GLuint &objectGLOut)
+        {
+            objectGLOut = 0;
+
+            const char* versionStrings[] =
+            {
+                "",                     // GPUShaderTarget_Unknown
+                "#version 120",         // GPUShaderTarget_GLSL_120_VS
+                "#version 120"          // GPUShaderTarget_GLSL_120_FS
+            };
+
+            GLenum shaderTypes[] =
+            {
+                0,
+                GL_VERTEX_SHADER,       // GPUShaderTarget_GLSL_120_VS,
+                GL_FRAGMENT_SHADER,     // GPUShaderTarget_GLSL_120_FS
+            };
+
+
+            GTLib::String definesString;
+            if (defines != nullptr)
+            {
+                int i = 0;
+                while (defines[i].name != nullptr)
+                {
+                    definesString.AppendFormatted("#define %s %s\n", defines[i].name, defines[i].value);
+                }
+            }
+            
+
+
+            const char* shaderStrings[3];
+            shaderStrings[0] = versionStrings[target];
+            shaderStrings[1] = definesString.c_str();
+            shaderStrings[2] = source;
+
+            GLint shaderStringLengths[3];
+            shaderStringLengths[0] = -1;        // Null-terminated.
+            shaderStringLengths[1] = -1;        // Null-terminated.
+            shaderStringLengths[2] = static_cast<GLint>((sourceLength > 0) ? sourceLength : -1);
+
+
+            GLuint objectGL = m_gl.CreateShader(shaderTypes[target]);
+            if (objectGL != 0)
+            {
+                // Compile the shader.
+                m_gl.ShaderSource(objectGL, 3, shaderStrings, nullptr);
+                m_gl.CompileShader(objectGL);
+
+
+                // Check for errors and/or warnings. We always want to output all messages, even when the compilation is successful.
+                GLint logLengthInBytes;
+                m_gl.GetShaderiv(objectGL, GL_INFO_LOG_LENGTH, &logLengthInBytes);
+                if (logLengthInBytes > 0)
+                {
+                    void* messageDst = messagesOut.Allocate(logLengthInBytes, true);
+                    if (messageDst != nullptr)
+                    {
+                        m_gl.GetShaderInfoLog(objectGL, logLengthInBytes, &logLengthInBytes, reinterpret_cast<GLchar*>(messageDst));
+                    }
+                }
+
+
+                // Now check for compilation errors.
+                GLint compiled;
+                m_gl.GetShaderiv(objectGL, GL_COMPILE_STATUS, &compiled);
+                if (compiled == GL_TRUE)
+                {
+                    objectGLOut = objectGL;
+                    return 0;   // No error.
+                }
+                else
+                {
+                    return FailedToCompileShader;
+                }
+            }
+            else
+            {
+                return FailedToCreateShaderObject;
+            }
+        }
+
+        ResultCode GPURenderingDevice_OpenGL21::CompileShader_ARB(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
+        {
+            (void)source;
+            (void)sourceLength;
+            (void)defines;
+            (void)target;
+            (void)byteCodeOut;
+            (void)messagesOut;
+
+            return ShaderTargetNotSupported;
+        }
     }
 }
 

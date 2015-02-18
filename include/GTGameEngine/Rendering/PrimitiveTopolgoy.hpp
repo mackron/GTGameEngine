@@ -9,11 +9,15 @@ namespace GT
     {
         enum PrimitiveTopology
         {
-            PrimitiveTopology_Point         = 0,
-            PrimitiveTopology_Line          = 1,
-            PrimitiveTopology_LineStrip     = 2,
-            PrimitiveTopology_Triangle      = 3,
-            PrimitiveTopology_TriangleStrip = 4
+            PrimitiveTopology_Point                  = 0,
+            PrimitiveTopology_Line                   = 1,
+            PrimitiveTopology_LineStrip              = 2,
+            PrimitiveTopology_Triangle               = 3,
+            PrimitiveTopology_TriangleStrip          = 4,
+            PrimitiveTopology_Line_Adjacency         = 5,
+            PrimitiveTopology_LineList_Adjacency     = 6,
+            PrimitiveTopology_Triangle_Adjacency     = 7,
+            PrimitiveTopology_TriangleList_Adjacency = 8
         };
     }
 }

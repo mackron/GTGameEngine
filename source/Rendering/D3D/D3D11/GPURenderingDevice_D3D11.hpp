@@ -72,6 +72,17 @@ namespace GT
             void SetCurrentConstantBuffer(GPUBuffer* buffer, unsigned int slot);
 
 
+
+            ////////////////////////////////////////////
+            // Shaders
+
+            /// GPURenderingDevice::CompileShader().
+            ResultCode CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
+
+            /// GPURenderingDevice::IsShaderTargetSupported().
+            bool IsShaderTargetSupported(GPUShaderTarget target) const;
+
+
             ////////////////////////////////////////////
             // Buffers
 

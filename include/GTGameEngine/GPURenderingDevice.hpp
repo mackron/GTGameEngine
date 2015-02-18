@@ -10,6 +10,8 @@
 #include "Rendering/GPUBufferCPUAccessFlags.hpp"
 #include "Rendering/GPUBufferMapType.hpp"
 #include "Rendering/PrimitiveTopolgoy.hpp"
+#include "Rendering/GPUShaderDefine.hpp"
+#include "Rendering/GPUShaderTargets.hpp"
 
 #include <GTLib/ResultCodes.hpp>
 
@@ -17,13 +19,14 @@
 #include <GTLib/windef.h>
 #endif
 
+#include <GTLib/BasicBuffer.hpp>
+
 namespace GT
 {
     namespace GE
     {
         class Framebuffer;
         class GPUBuffer;
-
 
         /// Class representing a rendering GPU device.
         class GPURenderingDevice
@@ -136,6 +139,41 @@ namespace GT
             virtual void SetCurrentConstantBuffer(GPUBuffer* buffer, unsigned int slot) = 0;
 
 
+
+            ////////////////////////////////////////////
+            // Shaders
+
+            /// Compiles a shader from source, returning a compiled representation of the shader.
+            ///
+            /// @param source                 [in]  The shader source.
+            /// @param sourceLength           [in]  The length of the shader source. Can be 0, in which case it is assumed the string is null-terminated.
+            /// @param defines                [in]  An array of name/value pairs describing the #define's to include. NULL terminated.
+            /// @param target                 [in]  The shader target. See remarks.
+            /// @param byteCodeOut            [out] A reference to the buffer object that will receive the compiled byte-code.
+            /// @param messagesOut            [out] A reference to the buffer object that will receive the error/warning/message string. This is a null-terminated string in UTF-8 format.
+            ///
+            /// @remarks
+            ///     The \c source paramter refers to the actual human-readable shader source code, and is <b>not</b> a file path.
+            ///     @par
+            ///     The possible values for \c target are dependant on the rendering API being used. Use GetSupportedShaderTargetCount() and GetSupportedShaderTarget() to determine which
+            ///     shader targets are available. A shader target is the type of shader that is being compiled (vertex shader, pixel shader, etc.), and the version of the shading language
+            ///     to target.
+            ///     @par
+            ///     For compatibility with OpenGL, all shaders must use main() as the entry point.
+            ///     @par
+            ///     When using the OpenGL API, the shader source should NOT include the "#version <version>" statement - this will be included automatically based on \c target.
+            ///     @par
+            ///     The #include mechanism is not currently supported.
+            ///     @par
+            ///     The compiled data can be saved to disk, however be aware that the original source code will be included so this is not enough to obfuscate your shader code if you
+            ///     feel that is important. This reason for this is that in some cases the shader code may need to be re-compiled internally in the event of something like a change in
+            ///     driver versions or whatnot.
+            virtual ResultCode CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut) = 0;
+
+            /// Determines whether or not the given target is supported by the rendering device.
+            ///
+            /// @param target [in] The shader target to check.
+            virtual bool IsShaderTargetSupported(GPUShaderTarget target) const = 0;
 
 
             ////////////////////////////////////////////
@@ -251,6 +289,12 @@ namespace GT
 #endif
 
 
+        protected:
+
+            /// Creates a shader binary buffer from the given information. 
+            ResultCode CreateBufferBinaryData(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, const void* binary, size_t binarySizeInBytes, int binaryVersion, GT::BasicBuffer &byteCodeOut);
+
+
 
         protected:
 
@@ -265,15 +309,17 @@ namespace GT
             // Error Codes
 
             static const ResultCode RenderingAPINotSupported          = (1 << 31) | 0x00000001;
-            static const ResultCode InvalidWindowRenderTarget         = (1 << 31) | 0x000000F0;      //< Fired when a window is attempted to be made current, but the window was never initialized with a framebuffer.
-            static const ResultCode UnknownGPUBufferType              = (1 << 31) | 0x000000F1;
-            static const ResultCode UnknownGPUBufferUsage             = (1 << 31) | 0x000000F2;
-            static const ResultCode UnsupportedGPUBufferType          = (1 << 31) | 0x000000F3;
-            static const ResultCode UnsupportedGPUBufferUsage         = (1 << 31) | 0x000000F4;
-            static const ResultCode NoDataSpecifiedForImmutableBuffer = (1 << 31) | 0x000000F5;
-            static const ResultCode GPUBufferIsImmutable              = (1 << 31) | 0x000000F6;
-            static const ResultCode FailedToMapGPUBuffer              = (1 << 31) | 0x000000F7;
-            static const ResultCode UnknownGPUBufferMapType           = (1 << 31) | 0x000000F8;
+            static const ResultCode InvalidWindowRenderTarget         = (1 << 31) | 0x00000002;      //< Fired when a window is attempted to be made current, but the window was never initialized with a framebuffer.
+            static const ResultCode ShaderTargetNotSupported          = (1 << 31) | 0x00000010;
+            static const ResultCode UnknownGPUBufferType              = (1 << 31) | 0x00000020;
+            static const ResultCode UnknownGPUBufferUsage             = (1 << 31) | 0x00000021;
+            static const ResultCode UnsupportedGPUBufferType          = (1 << 31) | 0x00000022;
+            static const ResultCode UnsupportedGPUBufferUsage         = (1 << 31) | 0x00000023;
+            static const ResultCode NoDataSpecifiedForImmutableBuffer = (1 << 31) | 0x00000024;
+            static const ResultCode GPUBufferIsImmutable              = (1 << 31) | 0x00000025;
+            static const ResultCode FailedToMapGPUBuffer              = (1 << 31) | 0x00000026;
+            static const ResultCode UnknownGPUBufferMapType           = (1 << 31) | 0x00000027;
+            
 
 
         private:    // No copying.

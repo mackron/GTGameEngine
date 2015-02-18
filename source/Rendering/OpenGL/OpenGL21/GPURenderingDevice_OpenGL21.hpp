@@ -8,6 +8,7 @@
 #if defined(GT_GE_BUILD_OPENGL21)
 #include <GTGameEngine/GPURenderingDevice_Gen1.hpp>
 #include <GTLib/Map.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GT
 {
@@ -70,6 +71,17 @@ namespace GT
 
 
             ////////////////////////////////////////////
+            // Shaders
+
+            /// GPURenderingDevice::CompileShader().
+            ResultCode CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
+
+            /// GPURenderingDevice::IsShaderTargetSupported().
+            bool IsShaderTargetSupported(GPUShaderTarget target) const;
+
+
+
+            ////////////////////////////////////////////
             // Buffers
 
             /// GPURenderingDevice::CreateBuffer().
@@ -120,6 +132,13 @@ namespace GT
 
         private:
 
+            /// Helper for compiling a GLSL shader.
+            ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
+            ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &messagesOut, GLuint &objectGLOut);
+
+            /// Helper for compiler an ARB shader program.
+            ResultCode CompileShader_ARB(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
+
 
 
         private:
@@ -146,6 +165,9 @@ namespace GT
             /// A handle to the DC of the current window.
             HDC m_currentDC;
 #endif
+
+            /// The list of supported shader targets.
+            GTLib::Vector<GPUShaderTarget> m_supportedShaderTargets;
 
 
             ////////////////////////////////////////////////////
@@ -175,6 +197,9 @@ namespace GT
 
             //////////////////////////////////////////////////////
             // Error Codes
+
+            static const ResultCode FailedToCreateShaderObject      = (1 << 31) | 0x000000A0;
+            static const ResultCode FailedToCompileShader           = (1 << 31) | 0x000000A1;
 
             // Win32 Errors
 #if defined(GT_PLATFORM_WINDOWS)
