@@ -36,6 +36,12 @@ namespace GT
             /// @return The type of the game display.
             virtual GameDisplayType GetType() const = 0;
 
+            /// Retrieves the size of the display.
+            ///
+            /// @param widthOut  [out] A reference to the variable that will receive the width.
+            /// @param heightOut [out] A reference to the variable that will receive the height.
+            virtual void GetSize(unsigned int &widthOut, unsigned int &heightOut) const = 0;
+
 
             /// Retrieves a reference to the rendering device that was passed to the constructor of the display.
             ///

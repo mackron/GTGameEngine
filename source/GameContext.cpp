@@ -115,6 +115,19 @@ namespace GT
             }
         }
 
+        GameDisplay* GameContext::GetWindowedDisplayFromWindow(HWND hWnd)
+        {
+            for (size_t iDisplay = 0; iDisplay < m_windowedDisplays.GetCount(); ++iDisplay)
+            {
+                if (m_windowedDisplays[iDisplay]->GetWindow() == hWnd)
+                {
+                    return m_windowedDisplays[iDisplay];
+                }
+            }
+
+            return nullptr;
+        }
+
         void GameContext::DeleteDisplay(GameDisplay* display)
         {
             if (display != nullptr)

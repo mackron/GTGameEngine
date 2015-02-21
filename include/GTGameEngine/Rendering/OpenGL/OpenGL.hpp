@@ -126,44 +126,51 @@ namespace GT
             // API
 
 #if defined(GT_PLATFORM_WINDOWS)
-            PFNWGLCREATECONTEXTPROC    CreateContext;
-            PFNWGLDELETECONTEXTPROC    DeleteContext;
-            PFNWGLMAKECURRENTPROC      MakeCurrent;
-            PFNWGLGETPROCADDRESSPROC   GetProcAddress;
+            PFNWGLCREATECONTEXTPROC      CreateContext;
+            PFNWGLDELETECONTEXTPROC      DeleteContext;
+            PFNWGLMAKECURRENTPROC        MakeCurrent;
+            PFNWGLGETPROCADDRESSPROC     GetProcAddress;
 #endif
 
 #if defined(GT_PLATFORM_LINUX)
 #endif
 
-            PFNGLGETSTRINGPROC         GetString;
-            PFNGLGETINTEGERVPROC       GetIntegerv;
+            PFNGLGETSTRINGPROC           GetString;
+            PFNGLGETINTEGERVPROC         GetIntegerv;
+            PFNGLVIEWPORTPROC            Viewport;
+            PFNGLDEPTHRANGEPROC          DepthRange;
 
-            PFNGLCLEARPROC             Clear;
-            PFNGLCLEARCOLORPROC        ClearColor;
-            PFNGLDRAWELEMENTSPROC      DrawElements;
+            PFNGLCLEARPROC               Clear;
+            PFNGLCLEARCOLORPROC          ClearColor;
+            PFNGLDRAWELEMENTSPROC        DrawElements;
 
-            PFNGLCREATESHADERPROC      CreateShader;
-            PFNGLDELETESHADERPROC      DeleteShader;
-            PFNGLSHADERSOURCEPROC      ShaderSource;
-            PFNGLSHADERBINARYPROC      ShaderBinary;
-            PFNGLCOMPILESHADERPROC     CompileShader;
-            PFNGLGETSHADERIVPROC       GetShaderiv;
-            PFNGLGETSHADERINFOLOGPROC  GetShaderInfoLog;
-            PFNGLCREATEPROGRAMPROC     CreateProgram;
-            PFNGLDELETEPROGRAMPROC     DeleteProgram;
-            PFNGLATTACHSHADERPROC      AttachShader;
-            PFNGLDETACHSHADERPROC      DetachShader;
-            PFNGLLINKPROGRAMPROC       LinkProgram;
-            PFNGLGETPROGRAMIVPROC      GetProgramiv;
-            PFNGLGETPROGRAMINFOLOGPROC GetProgramInfoLog;
+            PFNGLCREATESHADERPROC        CreateShader;
+            PFNGLDELETESHADERPROC        DeleteShader;
+            PFNGLSHADERSOURCEPROC        ShaderSource;
+            PFNGLSHADERBINARYPROC        ShaderBinary;
+            PFNGLCOMPILESHADERPROC       CompileShader;
+            PFNGLGETSHADERIVPROC         GetShaderiv;
+            PFNGLGETSHADERINFOLOGPROC    GetShaderInfoLog;
+            PFNGLCREATEPROGRAMPROC       CreateProgram;
+            PFNGLDELETEPROGRAMPROC       DeleteProgram;
+            PFNGLATTACHSHADERPROC        AttachShader;
+            PFNGLDETACHSHADERPROC        DetachShader;
+            PFNGLLINKPROGRAMPROC         LinkProgram;
+            PFNGLGETPROGRAMIVPROC        GetProgramiv;
+            PFNGLGETPROGRAMINFOLOGPROC   GetProgramInfoLog;
+            PFNGLUSEPROGRAMPROC          UseProgram;
+            PFNGLGETATTRIBLOCATIONPROC   GetAttribLocation;
+            PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer;
+            PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray;
+            PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray;
 
-            PFNGLGENBUFFERSPROC        GenBuffers;
-            PFNGLDELETEBUFFERSPROC     DeleteBuffers;
-            PFNGLBINDBUFFERPROC        BindBuffer;
-            PFNGLBUFFERDATAPROC        BufferData;
-            PFNGLBUFFERSUBDATAPROC     BufferSubData;
-            PFNGLMAPBUFFERPROC         MapBuffer;
-            PFNGLUNMAPBUFFERPROC       UnmapBuffer;
+            PFNGLGENBUFFERSPROC          GenBuffers;
+            PFNGLDELETEBUFFERSPROC       DeleteBuffers;
+            PFNGLBINDBUFFERPROC          BindBuffer;
+            PFNGLBUFFERDATAPROC          BufferData;
+            PFNGLBUFFERSUBDATAPROC       BufferSubData;
+            PFNGLMAPBUFFERPROC           MapBuffer;
+            PFNGLUNMAPBUFFERPROC         UnmapBuffer;
 
 
         public:

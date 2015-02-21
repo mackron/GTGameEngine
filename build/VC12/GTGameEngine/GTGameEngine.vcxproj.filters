@@ -33,9 +33,6 @@
     <Filter Include="Source Files\Rendering\OpenGL">
       <UniqueIdentifier>{4ee854c9-e47b-4da6-bf5d-7da40644b30b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Rendering\D3D\D3D9">
-      <UniqueIdentifier>{073173dc-1216-47f7-b3e5-12313d692204}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Rendering\D3D\D3D11">
       <UniqueIdentifier>{f1465376-69c8-47b6-b4a6-6b504ca716ac}</UniqueIdentifier>
     </Filter>
@@ -86,9 +83,6 @@
     <ClCompile Include="..\..\..\source\GameDisplay_Windowed.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp">
-      <Filter>Source Files\Rendering</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\GPURenderingDevice_Gen2.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -97,9 +91,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\GameDisplayRenderingCallback.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\Framebuffer_D3D11.cpp">
-      <Filter>Source Files\Rendering\D3D\D3D11</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.cpp">
       <Filter>Source Files\Rendering\D3D\D3D11</Filter>
@@ -110,14 +101,26 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL.cpp">
       <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\GPUBuffer.cpp">
-      <Filter>Source Files\Rendering\OpenGL</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUBuffer_OpenGL21.cpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUBuffer_D3D11.cpp">
       <Filter>Source Files\Rendering\D3D\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\GPUShaderProgram.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUShaderProgram_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\GPUInputLayout.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\GPUBuffer.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUInputLayout_OpenGL21.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -160,9 +163,6 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDeviceInfo.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Framebuffer.hpp">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Config.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -174,9 +174,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplayRenderingCallback.hpp">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\Framebuffer_D3D11.hpp">
-      <Filter>Source Files\Rendering\D3D\D3D11</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.hpp">
       <Filter>Source Files\Rendering\D3D\D3D11</Filter>
@@ -199,29 +196,11 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUBuffer_OpenGL21.hpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferCPUAccessFlags.hpp">
-      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Texture1D.hpp">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Texture2D.hpp">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Texture3D.hpp">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\TextureCube.hpp">
-      <Filter>Header Files\Rendering</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferMapType.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUBuffer_D3D11.hpp">
       <Filter>Source Files\Rendering\D3D\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\PrimitiveTopolgoy.hpp">
-      <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUShaderDefine.hpp">
       <Filter>Header Files\Rendering</Filter>
@@ -229,9 +208,29 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUShaderTargets.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-    <None Include="ClassDiagram1.cd" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUShaderProgram.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUShaderProgram_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferCPUAccessFlags.hpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUInputLayout.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUInputLayoutDesc.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUInputLayout_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPURenderingDeviceLimits.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUViewport.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

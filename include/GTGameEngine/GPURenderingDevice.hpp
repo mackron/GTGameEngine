@@ -9,9 +9,12 @@
 #include "Rendering/GPUBufferUsage.hpp"
 #include "Rendering/GPUBufferCPUAccessFlags.hpp"
 #include "Rendering/GPUBufferMapType.hpp"
-#include "Rendering/PrimitiveTopolgoy.hpp"
+#include "Rendering/GPUPrimitiveTopolgoy.hpp"
 #include "Rendering/GPUShaderDefine.hpp"
 #include "Rendering/GPUShaderTargets.hpp"
+#include "Rendering/GPUInputLayoutDesc.hpp"
+#include "Rendering/GPURenderingDeviceLimits.hpp"
+#include "Rendering/GPUViewport.hpp"
 
 #include <GTLib/ResultCodes.hpp>
 
@@ -20,6 +23,7 @@
 #endif
 
 #include <GTLib/BasicBuffer.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GT
 {
@@ -27,6 +31,8 @@ namespace GT
     {
         class Framebuffer;
         class GPUBuffer;
+        class GPUShaderProgram;
+        class GPUInputLayout;
 
         /// Class representing a rendering GPU device.
         class GPURenderingDevice
@@ -107,37 +113,101 @@ namespace GT
 
 
 
-
             /////////////////////////////////////////////
             // State
 
-            /// Sets the primitive topology to use for all future draw calls.
+            /// Sets the current shader program.
+            ///
+            /// @param shaderProgram [in] A pointer to the shader program to make current.
+            virtual void SetCurrentShaderProgram(GPUShaderProgram* shaderProgram) = 0;
+
+
+
+            /////////////////////////////////////////////////////////////////////////////
+            //
+            // Stages
+            //
+            /////////////////////////////////////////////////////////////////////////////
+
+            /////////////////////////////////////////////
+            // Input-Assembler Stage
+
+            /// Sets the primitive topology to use for future draw calls.
             ///
             /// @param topology [in] The new primitive topology to use for drawing.
             ///
             /// @remarks
             ///     The default topology is triangles.
-            virtual void SetPrimitiveTopology(PrimitiveTopology topology) = 0;
+            ///     @par
+            ///     This is analogous to D3D11's IASetPrimitiveTopology().
+            virtual void IASetPrimitiveTopology(GPUPrimitiveTopology topology) = 0;
 
-            /// Sets the current vertex buffer.
+            /// Binds the given input layout object to the input-assembler stage.
             ///
-            /// @param buffer [in] A pointer to the buffer to make current on the vertex buffer bind point.
-            virtual void SetCurrentVertexBuffer(GPUBuffer* buffer) = 0;
-
-            /// Sets the current index buffer.
-            ///
-            /// @param buffer [in] A pointer to the buffer to make current on the index buffer bind point.
-            virtual void SetCurrentIndexBuffer(GPUBuffer* buffer) = 0;
-
-            /// Sets the current constant buffer.
-            ///
-            /// @param buffer [in] A pointer to the buffer to make current on the constant buffer bind point.
-            /// @param slot   [in] The zero-based slot number to bind the constant buffer to.
+            /// @para inputLayout [in] A pointer to the input layout object to bind.
             ///
             /// @remarks
-            ///     Every constant/uniform block has an index. When assigning a buffer to a block, you pass the index to the \c slot parameter.
-            virtual void SetCurrentConstantBuffer(GPUBuffer* buffer, unsigned int slot) = 0;
+            ///     This is analogous to D3D11's IASetInputLayout().
+            virtual void IASetInputLayout(GPUInputLayout* inputLayout) = 0;
 
+            /// Binds the given vertex buffer to the given slot for the input-assembler stage.
+            ///
+            /// @param slotIndex [in] The slot index to bind the vertex buffer to. This cannot be larger than 31.
+            /// @param buffer    [in] A pointer to the buffer to bind.
+            /// @param stride    [in] The number of bytes making up the elements of a single vertex in the buffer. See remarks
+            /// @param offset    [in] The number of bytes from the beginning of the buffer to start from.
+            ///
+            /// @remarks
+            ///     This is analogous to D3D11's IASetVertexBuffers().
+            virtual void IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset) = 0;
+
+            /// Binds the given index buffer for the input-assembler stage.
+            ///
+            /// @param buffer [in] A pointer to the buffer to bind.
+            ///
+            /// @remarks
+            ///     This is analogous to D3D11's IASetIndexBuffer().
+            virtual void IASetIndexBuffer(GPUBuffer* buffer) = 0;
+
+
+
+            /////////////////////////////////////////////
+            // Rasterization Stage
+
+            /// Sets the viewports for the rasterization stage.
+            ///
+            /// @param viewports [in] The list of GPUViewport objects.
+            /// @param viewportCount [in] The number of viewports to set.
+            ///
+            /// @remarks
+            ///     This is analogous to D3D11's RSSetViewports().
+            ///     @par
+            ///     If the rendering API does not support multiple viewports (such as OpenGL 2.1), this will only look at the first one in the list.
+            virtual void RSSetViewports(GPUViewport* viewports, size_t viewportCount) = 0;
+
+
+
+            /////////////////////////////////////////////////////////////////////////////
+            //
+            // Object Creation and Deletion
+            //
+            /////////////////////////////////////////////////////////////////////////////
+
+            ////////////////////////////////////////////
+            // Input Layout
+
+            /// Creates a vertex input layout object that is used to describe the format of the input data for a vertex shader.
+            ///
+            /// @param shaderProgram        [in]  A pointer to the shader program to create the layout object from.
+            /// @param attribDesc           [in]  An array of GPUVertexInputAttribLayoutDesc objects that describes each input variable.
+            /// @param attribDescCount      [in]  The number of items in \c attribDesc.
+            /// @param vertexInputLayoutOut [out] A reference to the variable that will receive a pointer to the new vertex input layout object.
+            virtual ResultCode CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &vertexInputLayoutOut) = 0;
+
+            /// Deletes the given vertex input layout object.
+            ///
+            /// @param vertexInputLayout [in] A pointer to the vertex input layout object to delete.
+            virtual void DeleteInputLayout(GPUInputLayout* vertexInputLayout) = 0;
 
 
             ////////////////////////////////////////////
@@ -174,6 +244,36 @@ namespace GT
             ///
             /// @param target [in] The shader target to check.
             virtual bool IsShaderTargetSupported(GPUShaderTarget target) const = 0;
+
+
+            /// Creates a shader program from a vertex and fragment shader.
+            ///
+            /// @param vertexShaderData       [in]  A pointer to the buffer containing the binary code of the vertex shader as returned from CompileShader().
+            /// @param vertexShaderDataSize   [in]  The size in bytes of the vertex shader data.
+            /// @param fragmentShaderData     [in]  A pointer to the buffer containing the binary code of the fragment/pixel shader as returned from CompileShader().
+            /// @param fragmentShaderDataSize [in]  The size in bytes of the fragment shader data.
+            /// @param messageOut             [out] A reference to the buffer that will receive any compilation/linking messages.
+            /// @param shaderProgramOut       [out] A reference to the variable that will receive a pointer to the new shader program.
+            ///
+            /// @return Less than zero if an error occurs.
+            ///
+            /// @remarks
+            ///     The difference between a shader and a shader program is that a shader program is a monolithic object that is made up of a shader that
+            ///     covers the vertex and fragment pipeline.
+            ///     @par
+            ///     The concept of a shader program exists only for compatibility with the OpenGL 2.1 API which does not support separate shader objects. Therefore,
+            ///     it does not support anything other than vertex and fragment shaders.
+            ///     @par
+            ///     Generation 2 APIs which support separate shader objects do not need to ever use shader programs, however it can still be useful in order to
+            ///     keep rendering operations consistent.
+            virtual ResultCode CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut, GPUShaderProgram* &shaderProgramOut) = 0;
+
+            /// Deletes a shader program that was created with CreateShaderProgram().
+            ///
+            /// @param shaderProgram [in] A pointer to the shader program to delete.
+            virtual void DeleteShaderProgram(GPUShaderProgram* shaderProgram) = 0;
+
+
 
 
             ////////////////////////////////////////////
@@ -250,7 +350,7 @@ namespace GT
             /// Creates a framebuffer object.
             ///
             /// @param framebufferOut [in] A reference to the variable that will receive a pointer to the new framebuffer, if successful.
-            virtual ResultCode CreateFramebuffer(Framebuffer* &framebuffer) = 0;
+            //virtual ResultCode CreateFramebuffer(Framebuffer* &framebuffer) = 0;
 
 
 
@@ -292,8 +392,11 @@ namespace GT
         protected:
 
             /// Creates a shader binary buffer from the given information. 
-            ResultCode CreateBufferBinaryData(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, const void* binary, size_t binarySizeInBytes, int binaryVersion, GT::BasicBuffer &byteCodeOut);
+            static ResultCode CreateShaderBinaryData(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, const void* binary, size_t binarySizeInBytes, int binaryVersion, GT::BasicBuffer &byteCodeOut);
 
+            /// Takes the shader binary data created by CreateShaderBinaryData() and reads it's various components.
+            static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, GPUShaderTarget &targetOut, const void* &binaryOut, size_t &binarySizeOut, int &binaryVersionOut);
+            static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, GPUShaderTarget &targetOut);
 
 
         protected:
@@ -311,6 +414,7 @@ namespace GT
             static const ResultCode RenderingAPINotSupported          = (1 << 31) | 0x00000001;
             static const ResultCode InvalidWindowRenderTarget         = (1 << 31) | 0x00000002;      //< Fired when a window is attempted to be made current, but the window was never initialized with a framebuffer.
             static const ResultCode ShaderTargetNotSupported          = (1 << 31) | 0x00000010;
+            static const ResultCode ShaderTargetNotCompatible         = (1 << 31) | 0x00000011;
             static const ResultCode UnknownGPUBufferType              = (1 << 31) | 0x00000020;
             static const ResultCode UnknownGPUBufferUsage             = (1 << 31) | 0x00000021;
             static const ResultCode UnsupportedGPUBufferType          = (1 << 31) | 0x00000022;

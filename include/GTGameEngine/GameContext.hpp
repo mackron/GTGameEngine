@@ -53,6 +53,13 @@ namespace GT
             ///
             /// @return >=0 if there is no error, <0 if there was an error.
             ResultCode CreateWindowedDisplay(GPURenderingDevice &renderingDevice, HWND hWnd, GameDisplay* &displayOut);
+
+            /// Retrieves a windowed game display from the given window.
+            ///
+            /// @param hWnd [in] A handle to the window whose game display object is being retrieved.
+            ///
+            /// @return A pointer to the game display, or null if it cannot be found.
+            GameDisplay* GetWindowedDisplayFromWindow(HWND hWnd);
 #endif
 
             /// Deletes the given display.

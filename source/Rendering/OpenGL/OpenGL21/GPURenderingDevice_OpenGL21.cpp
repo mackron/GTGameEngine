@@ -3,13 +3,16 @@
 #include "GPURenderingDevice_OpenGL21.hpp"
 
 #if defined(GT_GE_BUILD_OPENGL21)
+#include "GPUShaderProgram_OpenGL21.hpp"
 #include "GPUBuffer_OpenGL21.hpp"
+#include "GPUInputLayout_OpenGL21.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
 #endif
 
 #include <GTLib/String.hpp>
+#include <GTLib/Math.hpp>
 
 namespace GT
 {
@@ -23,10 +26,12 @@ namespace GT
               m_currentDC(NULL),
 #endif
               m_supportedShaderTargets(),
+              m_vertexBufferSlots(),
+              m_invalidVertexBufferSlots(),
               m_stateFlags(0),
               m_currentTopologyGL(GL_TRIANGLES),
-              m_currentVertexBuffer(nullptr),
-              m_currentIndexBuffer(nullptr)
+              m_currentIndexBuffer(nullptr),
+              m_currentInputLayout(nullptr)
         {
             m_stateFlags |= StageFlag_IsWindowFramebufferCurrent;       // TODO: Remove this from the constructor once we get the framebuffer system working properly.
         }
@@ -48,6 +53,8 @@ namespace GT
 
                     // TODO: Check for ARB program support.
                 }
+
+                return result;
             }
             else
             {
@@ -88,8 +95,15 @@ namespace GT
 
         void GPURenderingDevice_OpenGL21::Draw(unsigned int indexCount, unsigned int startIndexLocation)
         {
-            if (m_currentVertexBuffer != nullptr && m_currentIndexBuffer != nullptr)
+            if (m_currentIndexBuffer != nullptr)
             {
+                // Update the vertex attribute pointers if any are invalid.
+                while (m_invalidVertexBufferSlots != 0)
+                {
+                    this->UpdateSlotVertexAttributePointers(GTLib::NextBitIndex(m_invalidVertexBufferSlots));
+                }
+
+                //m_gl.Viewport(0, 0, 100, 100);      // TODO: <-- Testing. Remove this later.
                 m_gl.DrawElements(m_currentTopologyGL, indexCount, GL_UNSIGNED_INT, reinterpret_cast<const void*>(startIndexLocation*sizeof(uint32_t)));
             }
         }
@@ -99,44 +113,102 @@ namespace GT
         ///////////////////////////////////////////
         // State
 
-        void GPURenderingDevice_OpenGL21::SetPrimitiveTopology(PrimitiveTopology topology)
+        void GPURenderingDevice_OpenGL21::SetCurrentShaderProgram(GPUShaderProgram* shaderProgram)
+        {
+            auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(shaderProgram);
+            if (shaderProgramGL != nullptr)
+            {
+                m_gl.UseProgram(shaderProgramGL->GetOpenGLObject());
+            }
+            else
+            {
+                m_gl.UseProgram(0);
+            }
+        }
+
+
+
+
+        /////////////////////////////////////////////////////////////////////////////
+        //
+        // Stages
+        //
+        /////////////////////////////////////////////////////////////////////////////
+
+        /////////////////////////////////////////////
+        // Input-Assembler Stage
+
+        void GPURenderingDevice_OpenGL21::IASetPrimitiveTopology(GPUPrimitiveTopology topology)
         {
             GLenum topologiesGL[] =
             {
-                GL_POINTS,                          // PrimitiveTopology_Point
-                GL_LINES,                           // PrimitiveTopology_Line
-                GL_LINE_STRIP,                      // PrimitiveTopology_LineStrip
-                GL_TRIANGLES,                       // PrimitiveTopology_Triangle
-                GL_TRIANGLE_STRIP,                  // PrimitiveTopology_TriangleStrip
-                GL_LINES,                           // PrimitiveTopology_Line_Adjacency (Not supported in OpenGL 2.1)
-                GL_LINE_STRIP,                      // PrimitiveTopology_LineStrip_Adjacency (Not supported in OpenGL 2.1)
-                GL_TRIANGLES,                       // PrimitiveTopology_Triangle_Adjacency (Not supported in OpenGL 2.1)
-                GL_TRIANGLE_STRIP                   // PrimitiveTopology_TriangleStrip_Adjacency (Not supported in OpenGL 2.1)
+                GL_POINTS,                          // GPUPrimitiveTopology_Point
+                GL_LINES,                           // GPUPrimitiveTopology_Line
+                GL_LINE_STRIP,                      // GPUPrimitiveTopology_LineStrip
+                GL_TRIANGLES,                       // GPUPrimitiveTopology_Triangle
+                GL_TRIANGLE_STRIP,                  // GPUPrimitiveTopology_TriangleStrip
+                GL_LINES,                           // GPUPrimitiveTopology_Line_Adjacency (Not supported in OpenGL 2.1)
+                GL_LINE_STRIP,                      // GPUPrimitiveTopology_LineStrip_Adjacency (Not supported in OpenGL 2.1)
+                GL_TRIANGLES,                       // GPUPrimitiveTopology_Triangle_Adjacency (Not supported in OpenGL 2.1)
+                GL_TRIANGLE_STRIP                   // GPUPrimitiveTopology_TriangleStrip_Adjacency (Not supported in OpenGL 2.1)
             };
 
             m_currentTopologyGL = topologiesGL[topology];
         }
 
-        void GPURenderingDevice_OpenGL21::SetCurrentVertexBuffer(GPUBuffer* buffer)
+        void GPURenderingDevice_OpenGL21::IASetInputLayout(GPUInputLayout* vertexInputLayout)
         {
-            auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
-            if (bufferGL != nullptr)
+            if (vertexInputLayout != m_currentInputLayout)
             {
-                assert(bufferGL->GetOpenGLTarget() == GL_ARRAY_BUFFER);
+                // Disable the vertex attributes of the previous input layout.
+                if (m_currentInputLayout != nullptr)
                 {
-                    m_gl.BindBuffer(GL_ARRAY_BUFFER, bufferGL->GetOpenGLObject());
+                    auto prevLayoutGL = reinterpret_cast<GPUInputLayout_OpenGL21*>(m_currentInputLayout);
+                    if (prevLayoutGL != nullptr)
+                    {
+                        size_t attribCount = prevLayoutGL->GetAttributeCount();
+                        for (size_t iAttrib = 0; iAttrib < attribCount; ++iAttrib)
+                        {
+                            m_gl.DisableVertexAttribArray(prevLayoutGL->GetAttribute(iAttrib).attribLocation);
+                        }
+                    }
                 }
-            }
-            else
-            {
-                m_gl.BindBuffer(GL_ARRAY_BUFFER, 0);
-            }
 
 
-            m_currentVertexBuffer = buffer;
+                auto newLayoutGL = reinterpret_cast<GPUInputLayout_OpenGL21*>(vertexInputLayout);
+                if (newLayoutGL != nullptr)
+                {
+                    size_t attribCount = newLayoutGL->GetAttributeCount();
+                    for (size_t iAttrib = 0; iAttrib < attribCount; ++iAttrib)
+                    {
+                        auto &attribGL = newLayoutGL->GetAttribute(iAttrib);
+
+                        assert(attribGL.slotIndex < GT_GE_MAX_VERTEX_BUFFER_SLOTS);
+                        {
+                            m_invalidVertexBufferSlots |= (1 << attribGL.slotIndex);
+                        }
+                    }
+                }
+
+
+                m_currentInputLayout = vertexInputLayout;
+            }
         }
 
-        void GPURenderingDevice_OpenGL21::SetCurrentIndexBuffer(GPUBuffer* buffer)
+        void GPURenderingDevice_OpenGL21::IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset)
+        {
+            assert(slotIndex < GT_GE_MAX_VERTEX_BUFFER_SLOTS);
+
+            m_vertexBufferSlots[slotIndex].buffer = buffer;
+            m_vertexBufferSlots[slotIndex].stride = stride;
+            m_vertexBufferSlots[slotIndex].offset = offset;
+
+
+            // Update the vertex attribute pointers.
+            this->UpdateSlotVertexAttributePointers(slotIndex);
+        }
+
+        void GPURenderingDevice_OpenGL21::IASetIndexBuffer(GPUBuffer* buffer)
         {
             auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
             if (bufferGL != nullptr)
@@ -155,14 +227,18 @@ namespace GT
             m_currentIndexBuffer = buffer;
         }
 
-        void GPURenderingDevice_OpenGL21::SetCurrentConstantBuffer(GPUBuffer* buffer, unsigned int slot)
+
+        /////////////////////////////////////////////
+        // Rasterization Stage
+
+        void GPURenderingDevice_OpenGL21::RSSetViewports(GPUViewport* viewports, size_t viewportCount)
         {
-            (void)buffer;
-            (void)slot;
-
-            // Unsupported with core OpenGL 2.1.
+            if (viewports != nullptr && viewportCount > 0)
+            {
+                m_gl.Viewport(static_cast<GLint>(viewports[0].x), static_cast<GLint>(viewports[0].y), static_cast<GLsizei>(viewports[0].width), static_cast<GLsizei>(viewports[0].height));
+                m_gl.DepthRange(viewports[0].depthRangeNear, viewports[0].depthRangeFar);
+            }
         }
-
 
 
         ////////////////////////////////////////////
@@ -191,6 +267,264 @@ namespace GT
             return m_supportedShaderTargets.Exists(target);
         }
 
+        ResultCode GPURenderingDevice_OpenGL21::CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut, GPUShaderProgram* &shaderProgramOut)
+        {
+            // TODO: Check that the shader targets are of the correct shader stage.
+
+            ResultCode result = 0;
+
+            // Vertex Shader.
+            const char* vertexSource;
+            size_t vertexSourceLength;
+            GTLib::Vector<GPUShaderDefine> vertexDefines;
+            GPUShaderTarget vertexTarget;
+            result = this->ExtractShaderBinaryData(vertexShaderData, vertexShaderDataSize, vertexSource, vertexSourceLength, vertexDefines, vertexTarget);
+            if (Failed(result))
+            {
+                return result;
+            }
+
+            // Fragment Shader.
+            const char* fragmentSource;
+            size_t fragmentSourceLength;
+            GTLib::Vector<GPUShaderDefine> fragmentDefines;
+            GPUShaderTarget fragmentTarget;
+            result = this->ExtractShaderBinaryData(fragmentShaderData, fragmentShaderDataSize, fragmentSource, fragmentSourceLength, fragmentDefines, fragmentTarget);
+            if (Failed(result))
+            {
+                return result;
+            }
+
+
+
+            // The shader types must be compatible.
+            if (vertexTarget == GPUShaderTarget_GLSL_120_VS && fragmentTarget != GPUShaderTarget_GLSL_120_FS)
+            {
+                return ShaderTargetNotCompatible;
+            }
+
+
+
+            // Vertex object.
+            GLuint vertexObjectGL = 0;
+            if (this->IsShaderTargetSupported(vertexTarget))
+            {
+                if (vertexTarget == GPUShaderTarget_GLSL_120_VS)
+                {
+                    result = this->CompileShader_GLSL(vertexSource, vertexSourceLength, vertexDefines.buffer, vertexTarget, messagesOut, vertexObjectGL);
+                    if (GT::Failed(result))
+                    {
+                        return result;
+                    }
+                }
+
+                if (vertexTarget == GPUShaderTarget_ARB_VP)
+                {
+                    // TODO: Implement this!
+                    return ShaderTargetNotSupported;
+                }
+            }
+            else
+            {
+                return ShaderTargetNotSupported;
+            }
+
+
+            // Fragment object.
+            GLuint fragmentObjectGL = 0;
+            if (this->IsShaderTargetSupported(fragmentTarget))
+            {
+                if (fragmentTarget == GPUShaderTarget_GLSL_120_FS)
+                {
+                    result = this->CompileShader_GLSL(fragmentSource, fragmentSourceLength, fragmentDefines.buffer, fragmentTarget, messagesOut, fragmentObjectGL);
+                    if (GT::Failed(result))
+                    {
+                        return result;
+                    }
+                }
+
+                if (fragmentTarget == GPUShaderTarget_ARB_FP)
+                {
+                    // TODO: Implement this!
+                    return ShaderTargetNotSupported;
+                }
+            }
+            else
+            {
+                return ShaderTargetNotSupported;
+            }
+
+
+
+            GLuint objectGL = m_gl.CreateProgram();
+            if (objectGL > 0)
+            {
+                // Attach the shader objects.
+                m_gl.AttachShader(objectGL, vertexObjectGL);
+                m_gl.AttachShader(objectGL, fragmentObjectGL);
+
+                // Perform the link step.
+                m_gl.LinkProgram(objectGL);
+
+
+                // Always check for log messages regardless of whether or not there was an error.
+                GLint logLengthInBytes;
+                m_gl.GetProgramiv(objectGL, GL_INFO_LOG_LENGTH, &logLengthInBytes);
+                if (logLengthInBytes > 0)
+                {
+                    void* messageDst = messagesOut.Allocate(logLengthInBytes, true);
+                    if (messageDst != nullptr)
+                    {
+                        m_gl.GetProgramInfoLog(objectGL, logLengthInBytes, &logLengthInBytes, reinterpret_cast<GLchar*>(messageDst));
+                    }
+                }
+
+
+                ResultCode result = 0;
+
+                // Check for link errors.
+                GLint isLinked = 0;
+                m_gl.GetProgramiv(objectGL, GL_LINK_STATUS, &isLinked);
+                if(isLinked == GL_TRUE)
+                {
+                    shaderProgramOut = new GPUShaderProgram_OpenGL21(objectGL);
+                }
+                else
+                {
+                    result = FailedToLinkProgram;
+                }
+
+
+                m_gl.DeleteShader(vertexObjectGL);
+                m_gl.DeleteShader(fragmentObjectGL);
+
+
+                return result;
+            }
+            else
+            {
+                return FailedToCreateOpenGLProgramObject;
+            }
+
+
+
+            return 0;
+        }
+
+        void GPURenderingDevice_OpenGL21::DeleteShaderProgram(GPUShaderProgram* shaderProgram)
+        {
+            auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(shaderProgram);
+            if (shaderProgramGL != nullptr)
+            {
+                m_gl.DeleteProgram(shaderProgramGL->GetOpenGLObject());
+                delete shaderProgram;
+            }
+        }
+
+        ResultCode GPURenderingDevice_OpenGL21::CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &vertexInputLayoutOut)
+        {
+            auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(shaderProgram);
+            if (shaderProgramGL != nullptr)
+            {
+                auto attribDescGL = reinterpret_cast<GPUInputLayout_OpenGL21::AttributeDesc*>(malloc(sizeof(GPUInputLayout_OpenGL21::AttributeDesc) * attribDescCount));
+                if (attribDescGL != nullptr)
+                {
+                    unsigned int slotAttribCounts[GT_GE_MAX_VERTEX_BUFFER_SLOTS];
+                    memset(slotAttribCounts, 0, sizeof(slotAttribCounts));
+
+                    unsigned int iAttribGL = 0;
+                    for (unsigned int iSlot = 0; iSlot < GT_GE_MAX_VERTEX_BUFFER_SLOTS && iAttribGL < attribDescCount; ++iSlot)
+                    {
+                        GLsizei currentOffset = 0;
+
+                        for (size_t iAttrib = 0; iAttrib < attribDescCount; ++iAttrib)
+                        {
+                            assert(iAttribGL < attribDescCount);
+
+                            auto &attrib   = attribDesc[iAttrib];
+                            auto &attribGL = attribDescGL[iAttribGL];
+                        
+                            if (attrib.slotIndex == iSlot)
+                            {
+                                slotAttribCounts[iSlot] += 1;
+
+
+                                attribGL.slotIndex            = attrib.slotIndex;
+                                attribGL.attribLocation       = m_gl.GetAttribLocation(shaderProgramGL->GetOpenGLObject(), attrib.attributeName);
+                                attribGL.attribOffset         = currentOffset;
+                                attribGL.attribComponentCount = attrib.attributeComponentCount;
+
+                                GLenum attribComponentTypesGL[] =
+                                {
+                                    GL_FLOAT,               // GPUBasicType_Float
+                                    GL_INT,                 // GPUBasicType_SInt
+                                    GL_UNSIGNED_INT         // GPUBasicType_UInt
+                                };
+                                attribGL.attribComponentType = attribComponentTypesGL[attrib.attributeComponentType];
+
+                                attribGL.attributeClass   = attrib.attributeClass;
+                                attribGL.instanceStepRate = attrib.instanceStepRate;
+
+
+
+                                // Move the offset.
+                                GLsizei attribComponentSizes[] =
+                                {
+                                    4,      // GPUBasicType_Float
+                                    4,      // GPUBasicType_SInt
+                                    4       // GPUBasicType_UInt
+                                };
+                                GLsizei attribComponentSize = attribComponentSizes[attrib.attributeComponentType];
+
+                                currentOffset += attribComponentSize * attrib.attributeComponentCount + attrib.attributePadding;
+
+
+
+                                iAttribGL += 1;
+                            }
+                        }
+                    }
+
+
+
+                    vertexInputLayoutOut = new GPUInputLayout_OpenGL21(attribDescGL, attribDescCount, slotAttribCounts);
+
+
+                    free(attribDescGL);
+                    return 0;   // No errors.
+                }
+                else
+                {
+                    // Failed to allocate memory.
+                    return -1;
+                }
+
+
+                /*
+                GLuint prevProgramGL;
+                m_gl.GetIntegerv(GL_ACTIVE_PROGRAM, reinterpret_cast<GLint*>(&prevProgramGL));
+                {
+                    m_gl.UseProgram(shaderProgramGL->GetOpenGLObject());
+                }
+                m_gl.UseProgram(prevProgramGL);
+                */
+            }
+            else
+            {
+                // Invalid shader program.
+                return -1;
+            }
+        }
+
+        void GPURenderingDevice_OpenGL21::DeleteInputLayout(GPUInputLayout* vertexInputLayout)
+        {
+            if (m_currentInputLayout == vertexInputLayout)
+            {
+                this->IASetInputLayout(nullptr);
+            }
+
+            delete vertexInputLayout;
+        }
 
 
         ///////////////////////////////////////////
@@ -203,6 +537,11 @@ namespace GT
             if (usage == GPUBufferUsage_Immutable && data == nullptr)
             {
                 return NoDataSpecifiedForImmutableBuffer;
+            }
+
+            if (type == GPUBufferType_Constant)
+            {
+                return UnsupportedGPUBufferType;
             }
 
 
@@ -503,6 +842,54 @@ namespace GT
         //////////////////////////////////////////
         // Private
 
+        void GPURenderingDevice_OpenGL21::UpdateSlotVertexAttributePointers(unsigned int slotIndex)
+        {
+            assert(slotIndex < GT_GE_MAX_VERTEX_BUFFER_SLOTS);
+
+
+            auto inputLayoutGL = reinterpret_cast<GPUInputLayout_OpenGL21*>(m_currentInputLayout);
+            if (inputLayoutGL != nullptr)
+            {
+                auto &slot = m_vertexBufferSlots[slotIndex];
+
+                // We need to get the indices of the attributes that are tied to the buffer on the given slot.
+                size_t attribStart;
+                size_t attribEnd;
+                inputLayoutGL->GetSlotAttributeRange(slotIndex, attribStart, attribEnd);
+
+
+                auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(slot.buffer);
+                if (bufferGL != nullptr)
+                {
+                    for (size_t iAttrib = attribStart; iAttrib < attribEnd; ++iAttrib)
+                    {
+                        auto &attribGL = inputLayoutGL->GetAttribute(iAttrib);
+                        {
+                            m_gl.EnableVertexAttribArray(attribGL.attribLocation);
+                            m_gl.BindBuffer(GL_ARRAY_BUFFER, bufferGL->GetOpenGLObject());
+                            m_gl.VertexAttribPointer(attribGL.attribLocation, attribGL.attribComponentCount, attribGL.attribComponentType, GL_FALSE, static_cast<GLsizei>(slot.stride), reinterpret_cast<const void*>(slot.offset + attribGL.attribOffset));
+
+                            // NOTE: With OpenGL 4.5 we would check to see if this was per-instance data.
+                        }
+                    }
+                }
+                else
+                {
+                    // The input buffer is null. We need to disable every vertex attribute location that is bound to the buffer on this slot.
+                    for (size_t iAttrib = attribStart; iAttrib < attribEnd; ++iAttrib)
+                    {
+                        auto &attribGL = inputLayoutGL->GetAttribute(iAttrib);
+                        {
+                            m_gl.DisableVertexAttribArray(attribGL.attribLocation);
+                        }
+                    }
+                }
+
+
+                m_invalidVertexBufferSlots &= ~(1 << slotIndex);
+            }
+        }
+
         ResultCode GPURenderingDevice_OpenGL21::CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
         {
             GLuint objectGL;
@@ -511,7 +898,11 @@ namespace GT
             {
                 // The shader compilation was successful. We now need to build the byte code data. The OpenGL 2.1 API does not support loading shaders from binary data, so we can only output
                 // the original shader source and the defines and target that was used to build it.
-                result = this->CreateBufferBinaryData(source, sourceLength, defines, target, nullptr, 0, 0, byteCodeOut);
+                result = this->CreateShaderBinaryData(source, sourceLength, defines, target, nullptr, 0, 3, byteCodeOut);
+
+
+                // The shader object needs to be deleted at this pointer or otherwise it will leak.
+                m_gl.DeleteShader(objectGL);
             }
 
             return result;
@@ -519,13 +910,16 @@ namespace GT
 
         ResultCode GPURenderingDevice_OpenGL21::CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &messagesOut, GLuint &objectGLOut)
         {
+            assert(target == GPUShaderTarget_GLSL_120_VS || target == GPUShaderTarget_GLSL_120_FS);
+
+
             objectGLOut = 0;
 
             const char* versionStrings[] =
             {
                 "",                     // GPUShaderTarget_Unknown
-                "#version 120",         // GPUShaderTarget_GLSL_120_VS
-                "#version 120"          // GPUShaderTarget_GLSL_120_FS
+                "#version 120\n",       // GPUShaderTarget_GLSL_120_VS
+                "#version 120\n"        // GPUShaderTarget_GLSL_120_FS
             };
 
             GLenum shaderTypes[] =
@@ -595,7 +989,7 @@ namespace GT
             }
             else
             {
-                return FailedToCreateShaderObject;
+                return FailedToCreateOpenGLShaderObject;
             }
         }
 

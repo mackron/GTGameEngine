@@ -23,8 +23,11 @@ namespace GT
             virtual ~GameDisplay_Windowed();
 
 
-            /// GameDisplay::GetType().
+            /// @copydoc GameDisplay::GetType()
             GameDisplayType GetType() const;
+
+            /// @copydoc GameDisplay::GetSize(unsigned int &, unsigned int &)
+            void GetSize(unsigned int &widthOut, unsigned int &heightOut) const;
 
 
 

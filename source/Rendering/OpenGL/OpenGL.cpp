@@ -40,9 +40,13 @@ namespace GT
 #endif
               GetString(nullptr),
               GetIntegerv(nullptr),
+              Viewport(nullptr),
+              DepthRange(nullptr),
+
               Clear(nullptr),
               ClearColor(nullptr),
               DrawElements(nullptr),
+
               CreateShader(nullptr),
               DeleteShader(nullptr),
               ShaderSource(nullptr),
@@ -57,6 +61,12 @@ namespace GT
               LinkProgram(nullptr),
               GetProgramiv(nullptr),
               GetProgramInfoLog(nullptr),
+              UseProgram(nullptr),
+              GetAttribLocation(nullptr),
+              VertexAttribPointer(nullptr),
+              EnableVertexAttribArray(nullptr),
+              DisableVertexAttribArray(nullptr),
+
               GenBuffers(nullptr),
               DeleteBuffers(nullptr),
               BindBuffer(nullptr),
@@ -265,34 +275,41 @@ namespace GT
                     if (m_majorVersion > 2 || (m_majorVersion == 2 && m_minorVersion >= 1))
                     {
                         // We support OpenGL 2.1 so we will now initialize the rest of the API.
-                        this->GetIntegerv       = reinterpret_cast<PFNGLGETINTEGERVPROC      >(this->GetGLProcAddress("glGetIntegerv"));
+                        this->GetIntegerv              = reinterpret_cast<PFNGLGETINTEGERVPROC             >(this->GetGLProcAddress("glGetIntegerv"));
+                        this->Viewport                 = reinterpret_cast<PFNGLVIEWPORTPROC                >(this->GetGLProcAddress("glViewport"));
+                        this->DepthRange               = reinterpret_cast<PFNGLDEPTHRANGEPROC              >(this->GetGLProcAddress("glDepthRange"));
 
-                        this->Clear             = reinterpret_cast<PFNGLCLEARPROC            >(this->GetGLProcAddress("glClear"));
-                        this->ClearColor        = reinterpret_cast<PFNGLCLEARCOLORPROC       >(this->GetGLProcAddress("glClearColor"));
-                        this->DrawElements      = reinterpret_cast<PFNGLDRAWELEMENTSPROC     >(this->GetGLProcAddress("glDrawElements"));
+                        this->Clear                    = reinterpret_cast<PFNGLCLEARPROC                   >(this->GetGLProcAddress("glClear"));
+                        this->ClearColor               = reinterpret_cast<PFNGLCLEARCOLORPROC              >(this->GetGLProcAddress("glClearColor"));
+                        this->DrawElements             = reinterpret_cast<PFNGLDRAWELEMENTSPROC            >(this->GetGLProcAddress("glDrawElements"));
 
-                        this->CreateShader      = reinterpret_cast<PFNGLCREATESHADERPROC     >(this->GetGLProcAddress("glCreateShader"));
-                        this->DeleteShader      = reinterpret_cast<PFNGLDELETESHADERPROC     >(this->GetGLProcAddress("glDeleteShader"));
-                        this->ShaderSource      = reinterpret_cast<PFNGLSHADERSOURCEPROC     >(this->GetGLProcAddress("glShaderSource"));
-                        this->ShaderBinary      = reinterpret_cast<PFNGLSHADERBINARYPROC     >(this->GetGLProcAddress("glShaderBinary"));
-                        this->CompileShader     = reinterpret_cast<PFNGLCOMPILESHADERPROC    >(this->GetGLProcAddress("glCompileShader"));
-                        this->GetShaderiv       = reinterpret_cast<PFNGLGETSHADERIVPROC      >(this->GetGLProcAddress("glGetShaderiv"));
-                        this->GetShaderInfoLog  = reinterpret_cast<PFNGLGETSHADERINFOLOGPROC >(this->GetGLProcAddress("glGetShaderInfoLog"));
-                        this->CreateProgram     = reinterpret_cast<PFNGLCREATEPROGRAMPROC    >(this->GetGLProcAddress("glCreateProgram"));
-                        this->DeleteProgram     = reinterpret_cast<PFNGLDELETEPROGRAMPROC    >(this->GetGLProcAddress("glDeleteProgram"));
-                        this->AttachShader      = reinterpret_cast<PFNGLATTACHSHADERPROC     >(this->GetGLProcAddress("glAttachShader"));
-                        this->DetachShader      = reinterpret_cast<PFNGLDETACHSHADERPROC     >(this->GetGLProcAddress("glDetachShader"));
-                        this->LinkProgram       = reinterpret_cast<PFNGLLINKPROGRAMPROC      >(this->GetGLProcAddress("glLinkProgram"));
-                        this->GetProgramiv      = reinterpret_cast<PFNGLGETPROGRAMIVPROC     >(this->GetGLProcAddress("glGetProgramiv"));
-                        this->GetProgramInfoLog = reinterpret_cast<PFNGLGETPROGRAMINFOLOGPROC>(this->GetGLProcAddress("glGetProgramInfoLog"));
+                        this->CreateShader             = reinterpret_cast<PFNGLCREATESHADERPROC            >(this->GetGLProcAddress("glCreateShader"));
+                        this->DeleteShader             = reinterpret_cast<PFNGLDELETESHADERPROC            >(this->GetGLProcAddress("glDeleteShader"));
+                        this->ShaderSource             = reinterpret_cast<PFNGLSHADERSOURCEPROC            >(this->GetGLProcAddress("glShaderSource"));
+                        this->ShaderBinary             = reinterpret_cast<PFNGLSHADERBINARYPROC            >(this->GetGLProcAddress("glShaderBinary"));
+                        this->CompileShader            = reinterpret_cast<PFNGLCOMPILESHADERPROC           >(this->GetGLProcAddress("glCompileShader"));
+                        this->GetShaderiv              = reinterpret_cast<PFNGLGETSHADERIVPROC             >(this->GetGLProcAddress("glGetShaderiv"));
+                        this->GetShaderInfoLog         = reinterpret_cast<PFNGLGETSHADERINFOLOGPROC        >(this->GetGLProcAddress("glGetShaderInfoLog"));
+                        this->CreateProgram            = reinterpret_cast<PFNGLCREATEPROGRAMPROC           >(this->GetGLProcAddress("glCreateProgram"));
+                        this->DeleteProgram            = reinterpret_cast<PFNGLDELETEPROGRAMPROC           >(this->GetGLProcAddress("glDeleteProgram"));
+                        this->AttachShader             = reinterpret_cast<PFNGLATTACHSHADERPROC            >(this->GetGLProcAddress("glAttachShader"));
+                        this->DetachShader             = reinterpret_cast<PFNGLDETACHSHADERPROC            >(this->GetGLProcAddress("glDetachShader"));
+                        this->LinkProgram              = reinterpret_cast<PFNGLLINKPROGRAMPROC             >(this->GetGLProcAddress("glLinkProgram"));
+                        this->GetProgramiv             = reinterpret_cast<PFNGLGETPROGRAMIVPROC            >(this->GetGLProcAddress("glGetProgramiv"));
+                        this->GetProgramInfoLog        = reinterpret_cast<PFNGLGETPROGRAMINFOLOGPROC       >(this->GetGLProcAddress("glGetProgramInfoLog"));
+                        this->UseProgram               = reinterpret_cast<PFNGLUSEPROGRAMPROC              >(this->GetGLProcAddress("glUseProgram"));
+                        this->GetAttribLocation        = reinterpret_cast<PFNGLGETATTRIBLOCATIONPROC       >(this->GetGLProcAddress("glGetAttribLocation"));
+                        this->VertexAttribPointer      = reinterpret_cast<PFNGLVERTEXATTRIBPOINTERPROC     >(this->GetGLProcAddress("glVertexAttribPointer"));
+                        this->EnableVertexAttribArray  = reinterpret_cast<PFNGLENABLEVERTEXATTRIBARRAYPROC >(this->GetGLProcAddress("glEnableVertexAttribArray"));
+                        this->DisableVertexAttribArray = reinterpret_cast<PFNGLDISABLEVERTEXATTRIBARRAYPROC>(this->GetGLProcAddress("glDisableVertexAttribArray"));
 
-                        this->GenBuffers        = reinterpret_cast<PFNGLGENBUFFERSPROC       >(this->GetGLProcAddress("glGenBuffers"));
-                        this->DeleteBuffers     = reinterpret_cast<PFNGLDELETEBUFFERSPROC    >(this->GetGLProcAddress("glDeleteBuffers"));
-                        this->BindBuffer        = reinterpret_cast<PFNGLBINDBUFFERPROC       >(this->GetGLProcAddress("glBindBuffer"));
-                        this->BufferData        = reinterpret_cast<PFNGLBUFFERDATAPROC       >(this->GetGLProcAddress("glBufferData"));
-                        this->BufferSubData     = reinterpret_cast<PFNGLBUFFERSUBDATAPROC    >(this->GetGLProcAddress("glBufferSubData"));
-                        this->MapBuffer         = reinterpret_cast<PFNGLMAPBUFFERPROC        >(this->GetGLProcAddress("glMapBuffer"));
-                        this->UnmapBuffer       = reinterpret_cast<PFNGLUNMAPBUFFERPROC      >(this->GetGLProcAddress("glUnmapBuffer"));
+                        this->GenBuffers               = reinterpret_cast<PFNGLGENBUFFERSPROC              >(this->GetGLProcAddress("glGenBuffers"));
+                        this->DeleteBuffers            = reinterpret_cast<PFNGLDELETEBUFFERSPROC           >(this->GetGLProcAddress("glDeleteBuffers"));
+                        this->BindBuffer               = reinterpret_cast<PFNGLBINDBUFFERPROC              >(this->GetGLProcAddress("glBindBuffer"));
+                        this->BufferData               = reinterpret_cast<PFNGLBUFFERDATAPROC              >(this->GetGLProcAddress("glBufferData"));
+                        this->BufferSubData            = reinterpret_cast<PFNGLBUFFERSUBDATAPROC           >(this->GetGLProcAddress("glBufferSubData"));
+                        this->MapBuffer                = reinterpret_cast<PFNGLMAPBUFFERPROC               >(this->GetGLProcAddress("glMapBuffer"));
+                        this->UnmapBuffer              = reinterpret_cast<PFNGLUNMAPBUFFERPROC             >(this->GetGLProcAddress("glUnmapBuffer"));
 
 
                         return 0;   // No error.

@@ -59,18 +59,56 @@ namespace GT
             /////////////////////////////////////////////
             // State
 
-            /// GPURenderingDevice::SetPrimitiveTopology().
-            void SetPrimitiveTopology(PrimitiveTopology topology);
+            /// @copydoc GPURenderingDevice::SetCurrentShaderProgram()
+            void SetCurrentShaderProgram(GPUShaderProgram* shaderProgram);
 
-            /// GPURenderingDevice::SetCurrentVertexBuffer().
-            void SetCurrentVertexBuffer(GPUBuffer* buffer);
 
-            /// GPURenderingDevice::SetCurrentIndexBuffer().
-            void SetCurrentIndexBuffer(GPUBuffer* buffer);
 
-            /// GPURenderingDevice::SetCurrentConstantBuffer().
-            void SetCurrentConstantBuffer(GPUBuffer* buffer, unsigned int slot);
 
+            /////////////////////////////////////////////////////////////////////////////
+            //
+            // Stages
+            //
+            /////////////////////////////////////////////////////////////////////////////
+
+            /////////////////////////////////////////////
+            // Input-Assembler Stage
+
+            /// @copydoc GPURenderingDevice::IASetPrimitiveTopology()
+            void IASetPrimitiveTopology(GPUPrimitiveTopology topology);
+
+            /// @copydoc GPURenderingDevice::IASetInputLayout()
+            void IASetInputLayout(GPUInputLayout* inputLayout);
+
+            /// @copydoc GPURenderingDevice::IASetVertexBuffer()
+            void IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset);
+
+            /// @copydoc GPURenderingDevice::IASetIndexBuffer()
+            void IASetIndexBuffer(GPUBuffer* buffer);
+
+
+            /////////////////////////////////////////////
+            // Rasterization Stage
+
+            /// @copydoc GPURenderingDevice::RSSetViewports()
+            void RSSetViewports(GPUViewport* viewports, size_t viewportCount);
+
+
+
+            /////////////////////////////////////////////////////////////////////////////
+            //
+            // Object Creation and Deletion
+            //
+            /////////////////////////////////////////////////////////////////////////////
+
+            ////////////////////////////////////////////
+            // Input Layout
+
+            /// GPURenderingDevice::CreateVertexInputLayout().
+            ResultCode CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &vertexInputLayoutOut);
+
+            /// GPURenderingDevice::DeleteVertexInputLayout().
+            void DeleteInputLayout(GPUInputLayout* vertexInputLayout);
 
 
             ////////////////////////////////////////////
@@ -81,6 +119,12 @@ namespace GT
 
             /// GPURenderingDevice::IsShaderTargetSupported().
             bool IsShaderTargetSupported(GPUShaderTarget target) const;
+
+            /// GPURenderingDevice::CreateShaderProgram().
+            ResultCode CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut, GPUShaderProgram* &shaderProgramOut);
+
+            /// GPURenderingDevice::DeleteShaderProgram().
+            void DeleteShaderProgram(GPUShaderProgram* shaderProgram);
 
 
             ////////////////////////////////////////////
@@ -181,7 +225,7 @@ namespace GT
             UINT m_swapInterval;
 
             /// The current primitive topology.
-            PrimitiveTopology m_currentPrimitiveTopology;
+            GPUPrimitiveTopology m_currentPrimitiveTopology;
 
             
             ///////////////////////////////////////////

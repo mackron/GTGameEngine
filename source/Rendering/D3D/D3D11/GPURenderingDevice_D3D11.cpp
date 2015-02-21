@@ -20,7 +20,7 @@ namespace GT
               m_currentSwapChain(nullptr),
               m_stateFlags(0),
               m_swapInterval(0),
-              m_currentPrimitiveTopology(PrimitiveTopology_Triangle)
+              m_currentPrimitiveTopology(GPUPrimitiveTopology_Triangle)
         {
             m_stateFlags |= StageFlag_IsWindowFramebufferCurrent;       // TODO: Remove this from the constructor once we get the framebuffer system working properly.
         }
@@ -74,6 +74,9 @@ namespace GT
                         HRESULT hr = _D3D11CreateDevice(reinterpret_cast<IDXGIAdapter1*>(m_info.identifier_D3D11), D3D_DRIVER_TYPE_UNKNOWN, NULL, 0, featureLevels, sizeof(featureLevels) / sizeof(featureLevels[0]), D3D11_SDK_VERSION, &m_device, &featureLevel, &m_context);
                         if (SUCCEEDED(hr) && featureLevel == D3D_FEATURE_LEVEL_11_0)
                         {
+                            // Triangles by default.
+                            m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
                             return 0;   // No error.
                         }
                         else
@@ -145,6 +148,9 @@ namespace GT
         }
 
 
+        ///////////////////////////////////////////
+        // Drawing
+
         void GPURenderingDevice_D3D11::ClearColor(float r, float g, float b, float a)
         {
             // TODO: Better define the behaviour of this function regarding the current render targets. This is currently quick-and-dirty to get something working.
@@ -171,7 +177,23 @@ namespace GT
         ///////////////////////////////////////////
         // State
 
-        void GPURenderingDevice_D3D11::SetPrimitiveTopology(PrimitiveTopology topology)
+        void GPURenderingDevice_D3D11::SetCurrentShaderProgram(GPUShaderProgram* shaderProgram)
+        {
+            (void)shaderProgram;
+        }
+
+
+
+        /////////////////////////////////////////////////////////////////////////////
+        //
+        // Stages
+        //
+        /////////////////////////////////////////////////////////////////////////////
+
+        /////////////////////////////////////////////
+        // Input-Assembler Stage
+
+        void GPURenderingDevice_D3D11::IASetPrimitiveTopology(GPUPrimitiveTopology topology)
         {
             D3D11_PRIMITIVE_TOPOLOGY topologiesD3D11[] =
             {
@@ -189,7 +211,12 @@ namespace GT
             m_context->IASetPrimitiveTopology(topologiesD3D11[topology]);
         }
 
-        void GPURenderingDevice_D3D11::SetCurrentVertexBuffer(GPUBuffer* buffer)
+        void GPURenderingDevice_D3D11::IASetInputLayout(GPUInputLayout* vertexInputLayout)
+        {
+            (void)vertexInputLayout;
+        }
+
+        void GPURenderingDevice_D3D11::IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset)
         {
             auto bufferD3D11 = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
             if (bufferD3D11 != nullptr)
@@ -202,7 +229,7 @@ namespace GT
             }
         }
 
-        void GPURenderingDevice_D3D11::SetCurrentIndexBuffer(GPUBuffer* buffer)
+        void GPURenderingDevice_D3D11::IASetIndexBuffer(GPUBuffer* buffer)
         {
             auto bufferD3D11 = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
             if (bufferD3D11 != nullptr)
@@ -214,14 +241,57 @@ namespace GT
             }
         }
 
-        void GPURenderingDevice_D3D11::SetCurrentConstantBuffer(GPUBuffer* buffer, unsigned int slot)
-        {
-            (void)buffer;
-            (void)slot;
 
-            // Unsupported with core OpenGL 2.1.
+        /////////////////////////////////////////////
+        // Rasterization Stage
+
+        void GPURenderingDevice_D3D11::RSSetViewports(GPUViewport* viewports, size_t viewportCount)
+        {
+            if (viewports != nullptr && viewportCount > 0)
+            {
+                auto viewportsD3D11 = reinterpret_cast<D3D11_VIEWPORT*>(malloc(sizeof(D3D11_VIEWPORT) * viewportCount));
+                if (viewportsD3D11 != nullptr)
+                {
+                    for (size_t iViewport = 0; iViewport < viewportCount; ++iViewport)
+                    {
+                        viewportsD3D11[iViewport].TopLeftX = viewports[iViewport].x;
+                        viewportsD3D11[iViewport].TopLeftY = viewports[iViewport].y;
+                        viewportsD3D11[iViewport].Width    = viewports[iViewport].width;
+                        viewportsD3D11[iViewport].Height   = viewports[iViewport].height;
+                        viewportsD3D11[iViewport].MinDepth = viewports[iViewport].depthRangeNear;
+                        viewportsD3D11[iViewport].MaxDepth = viewports[iViewport].depthRangeFar;
+                    }
+
+                    m_context->RSSetViewports(viewportCount, viewportsD3D11);
+                }
+            }
         }
 
+
+
+        /////////////////////////////////////////////////////////////////////////////
+        //
+        // Object Creation and Deletion
+        //
+        /////////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////
+        // Input Layout
+
+        ResultCode GPURenderingDevice_D3D11::CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &vertexInputLayoutOut)
+        {
+            (void)shaderProgram;
+            (void)attribDesc;
+            (void)attribDescCount;
+            (void)vertexInputLayoutOut;
+
+            return -1;
+        }
+
+        void GPURenderingDevice_D3D11::DeleteInputLayout(GPUInputLayout* vertexInputLayout)
+        {
+            (void)vertexInputLayout;
+        }
 
 
         ////////////////////////////////////////////
@@ -235,6 +305,23 @@ namespace GT
         bool GPURenderingDevice_D3D11::IsShaderTargetSupported(GPUShaderTarget target) const
         {
             return (target >= GPUShaderTarget_HLSL_50_VS && target <= GPUShaderTarget_HLSL_50_CS);
+        }
+
+        ResultCode GPURenderingDevice_D3D11::CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut, GPUShaderProgram* &shaderProgramOut)
+        {
+            (void)vertexShaderData;
+            (void)vertexShaderDataSize;
+            (void)fragmentShaderData;
+            (void)fragmentShaderDataSize;
+            (void)messagesOut;
+            (void)shaderProgramOut;
+
+            return -1;
+        }
+
+        void GPURenderingDevice_D3D11::DeleteShaderProgram(GPUShaderProgram* shaderProgram)
+        {
+            (void)shaderProgram;
         }
 
 

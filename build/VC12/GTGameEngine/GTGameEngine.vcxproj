@@ -34,14 +34,16 @@
     <ClCompile Include="..\..\..\source\HardwarePlatform_CPU.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_GPU.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_Input.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\Framebuffer_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUBuffer_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\Framebuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GPUBuffer.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\GPUInputLayout.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\GPUShaderProgram.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUBuffer_OpenGL21.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUInputLayout_OpenGL21.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPURenderingDevice_OpenGL21.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUShaderProgram_OpenGL21.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTGameEngine\Config.hpp" />
@@ -60,30 +62,26 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_CPU.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_GPU.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Input.hpp" />
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Framebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferCPUAccessFlags.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferMapType.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferType.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferUsage.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUInputLayout.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUInputLayoutDesc.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPURenderingDeviceLimits.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUShaderDefine.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUShaderProgram.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUShaderTargets.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUViewport.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\OpenGL\OpenGL.hpp" />
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\PrimitiveTopolgoy.hpp" />
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Texture1D.hpp" />
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Texture2D.hpp" />
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\Texture3D.hpp" />
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\TextureCube.hpp" />
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
-    <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\Framebuffer_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUBuffer_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUBuffer_OpenGL21.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUInputLayout_OpenGL21.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPURenderingDevice_OpenGL21.hpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="ClassDiagram.cd" />
-    <None Include="ClassDiagram1.cd" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUShaderProgram_OpenGL21.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0E702596-5089-48E6-AD25-2DD3C3F705B6}</ProjectGuid>

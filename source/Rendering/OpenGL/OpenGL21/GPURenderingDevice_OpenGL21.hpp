@@ -52,22 +52,59 @@ namespace GT
             void Draw(unsigned int indexCount, unsigned int startIndexLocation);
 
 
-
             /////////////////////////////////////////////
             // State
 
-            /// GPURenderingDevice::SetPrimitiveTopology().
-            void SetPrimitiveTopology(PrimitiveTopology topology);
+            /// @copydoc GPURenderingDevice::SetCurrentShaderProgram()
+            void SetCurrentShaderProgram(GPUShaderProgram* shaderProgram);
 
-            /// GPURenderingDevice::SetCurrentVertexBuffer().
-            void SetCurrentVertexBuffer(GPUBuffer* buffer);
 
-            /// GPURenderingDevice::SetCurrentIndexBuffer().
-            void SetCurrentIndexBuffer(GPUBuffer* buffer);
 
-            /// GPURenderingDevice::SetCurrentConstantBuffer().
-            void SetCurrentConstantBuffer(GPUBuffer* buffer, unsigned int slot);
 
+            /////////////////////////////////////////////////////////////////////////////
+            //
+            // Stages
+            //
+            /////////////////////////////////////////////////////////////////////////////
+
+            /////////////////////////////////////////////
+            // Input-Assembler Stage
+
+            /// @copydoc GPURenderingDevice::IASetPrimitiveTopology()
+            void IASetPrimitiveTopology(GPUPrimitiveTopology topology);
+
+            /// @copydoc GPURenderingDevice::IASetInputLayout()
+            void IASetInputLayout(GPUInputLayout* inputLayout);
+
+            /// @copydoc GPURenderingDevice::IASetVertexBuffer()
+            void IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset);
+
+            /// @copydoc GPURenderingDevice::IASetIndexBuffer()
+            void IASetIndexBuffer(GPUBuffer* buffer);
+
+
+            /////////////////////////////////////////////
+            // Rasterization Stage
+
+            /// @copydoc GPURenderingDevice::RSSetViewports()
+            void RSSetViewports(GPUViewport* viewports, size_t viewportCount);
+
+
+
+            /////////////////////////////////////////////////////////////////////////////
+            //
+            // Object Creation and Deletion
+            //
+            /////////////////////////////////////////////////////////////////////////////
+
+            ////////////////////////////////////////////
+            // Input Layout
+
+            /// GPURenderingDevice::CreateVertexInputLayout().
+            ResultCode CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &vertexInputLayoutOut);
+
+            /// GPURenderingDevice::DeleteVertexInputLayout().
+            void DeleteInputLayout(GPUInputLayout* vertexInputLayout);
 
 
             ////////////////////////////////////////////
@@ -79,6 +116,11 @@ namespace GT
             /// GPURenderingDevice::IsShaderTargetSupported().
             bool IsShaderTargetSupported(GPUShaderTarget target) const;
 
+            /// GPURenderingDevice::CreateShaderProgram().
+            ResultCode CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut, GPUShaderProgram* &shaderProgramOut);
+
+            /// GPURenderingDevice::DeleteShaderProgram().
+            void DeleteShaderProgram(GPUShaderProgram* shaderProgram);
 
 
             ////////////////////////////////////////////
@@ -132,6 +174,15 @@ namespace GT
 
         private:
 
+            /// Updates the vertex attribute pointers for the attributes that use the buffer that is bound to the given slot.
+            ///
+            /// @param slotIndex [in] The slot whose associated vertex attribute pointers are being updated.
+            ///
+            /// @remarks
+            ///     If the buffer is null, the vertex attribute will be disabled.
+            void UpdateSlotVertexAttributePointers(unsigned int slotIndex);
+
+
             /// Helper for compiling a GLSL shader.
             ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
             ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &messagesOut, GLuint &objectGLOut);
@@ -173,6 +224,25 @@ namespace GT
             ////////////////////////////////////////////////////
             // State
 
+            struct IAVertexBufferSlot
+            {
+                /// A pointer to the vertex buffer object that is bound to the slot.
+                GPUBuffer* buffer;
+
+                /// The stride to use with the buffer that is bound to the slot.
+                size_t stride;
+
+                /// The offset to use with the buffer that is bound to the slot.
+                size_t offset;
+            };
+
+            /// The state of each vertex buffer slot.
+            IAVertexBufferSlot m_vertexBufferSlots[GT_GE_MAX_VERTEX_BUFFER_SLOTS];
+
+            /// A set of flags that specify which buffer slots are invalid and need to have glVertexAttribPointer() called against them. Each bit represents one slot.
+            uint32_t m_invalidVertexBufferSlots;
+
+
             /// Boolean state flags.
             uint32_t m_stateFlags;
 
@@ -180,11 +250,12 @@ namespace GT
             GLenum m_currentTopologyGL;
 
 
-            /// A pointer to the current vertex buffer.
-            GPUBuffer* m_currentVertexBuffer;
-
             /// A pointer to the current index buffer.
             GPUBuffer* m_currentIndexBuffer;
+
+
+            /// The current vertex input layout object.
+            GPUInputLayout* m_currentInputLayout;
 
 
             
@@ -198,8 +269,10 @@ namespace GT
             //////////////////////////////////////////////////////
             // Error Codes
 
-            static const ResultCode FailedToCreateShaderObject      = (1 << 31) | 0x000000A0;
-            static const ResultCode FailedToCompileShader           = (1 << 31) | 0x000000A1;
+            static const ResultCode FailedToCreateOpenGLShaderObject  = (1 << 31) | 0x000000A0;
+            static const ResultCode FailedToCreateOpenGLProgramObject = (1 << 31) | 0x000000A1;
+            static const ResultCode FailedToCompileShader             = (1 << 31) | 0x000000A2;
+            static const ResultCode FailedToLinkProgram               = (1 << 31) | 0x000000A3;
 
             // Win32 Errors
 #if defined(GT_PLATFORM_WINDOWS)
