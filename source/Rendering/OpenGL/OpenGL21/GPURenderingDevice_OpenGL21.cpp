@@ -940,7 +940,7 @@ namespace GT
             {
                 // The shader compilation was successful. We now need to build the byte code data. The OpenGL 2.1 API does not support loading shaders from binary data, so we can only output
                 // the original shader source and the defines and target that was used to build it.
-                result = this->CreateShaderBinaryData(source, sourceLength, defines, target, nullptr, 0, 3, byteCodeOut);
+                result = this->CreateShaderBinaryData(source, sourceLength, defines, target, nullptr, 0, 0, byteCodeOut);
 
 
                 // The shader object needs to be deleted at this pointer or otherwise it will leak.
