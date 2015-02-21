@@ -22,6 +22,26 @@
 #define GT_GE_ENABLE_OPENGL21       1
 
 
+// Optimize for Single Rendering Device
+//
+// The engine can support multiple rendering devices (contexts), however there is some overhead with it, in particular with OpenGL. In the
+// case of OpenGL, the appropriate context needs to be made current at a global level before making the applicable rendering command. What
+// this means is that for every draw call, a check needs to be performed to ensure the correct context is current at the time of calling. This
+// check involves a comparison plus a call to wglGetCurrentContext() - this occurs for every function that calls an OpenGL function.
+//
+// In most applications however, only a single rendering device will be used. We can therefore offer an optimization that essentially assumes
+// the application will only ever use a single rendering device per thread per rendering API. Set the variable below to 1 to enable this
+// optimization, however please note that using this means continued use of multiple rendering devices on the same thread results in undefined
+// behaviour.
+//
+// When using OpenGL, this optimization can be safely enabled if only a single rendering device is used per-thread. For example, consider an
+// application with two threads, with each of those threads having their own rendering device object. In this case there are two rendering
+// devices, but because they will only ever be used on a single thread, it should be safe to enable this optimization.
+#define GT_GE_OPTIMIZE_FOR_SINGLE_RENDERING_DEVICE      0
+
+
+
+
 
 //////////////////////////////////////////////////
 // Non-Configurable Section

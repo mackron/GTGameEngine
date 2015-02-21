@@ -64,6 +64,13 @@ namespace GT
 
             /// Retrieves a reference to the pixel format descriptor for when an OpenGL enable window is created.
             const PIXELFORMATDESCRIPTOR & GetPFD() const;
+
+            /// Retrieves a handle to the dummy device context.
+            ///
+            /// @remarks
+            ///     When a null window is made current, the dummy window (which is never visible) will be made current. This will allow
+            ///     rendering commands to be issued, but not actually displayed on anything.
+            HDC GetDummyDC() const;
 #endif
 
 
@@ -129,6 +136,7 @@ namespace GT
             PFNWGLCREATECONTEXTPROC      CreateContext;
             PFNWGLDELETECONTEXTPROC      DeleteContext;
             PFNWGLMAKECURRENTPROC        MakeCurrent;
+            PFNWGLGETCURRENTCONTEXTPROC  GetCurrentContext;
             PFNWGLGETPROCADDRESSPROC     GetProcAddress;
 #endif
 

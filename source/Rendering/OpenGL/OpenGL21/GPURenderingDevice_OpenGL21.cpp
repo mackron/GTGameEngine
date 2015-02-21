@@ -18,6 +18,20 @@ namespace GT
 {
     namespace GE
     {
+        inline void CheckContextIsCurrent(OpenGLContext &m_gl, HDC m_currentDC)
+        {
+#if !defined(GT_GE_OPTIMIZE_FOR_SINGLE_RENDERING_DEVICE) || GT_GE_OPTIMIZE_FOR_SINGLE_RENDERING_DEVICE == 0
+            if (m_gl.GetCurrentContext() != m_gl.GetRenderingContext())
+            {
+                m_gl.MakeCurrent(m_currentDC, m_gl.GetRenderingContext());
+            }
+#else
+            (void)m_gl;
+            (void)m_currentDC;
+#endif
+        }
+
+
         GPURenderingDevice_OpenGL21::GPURenderingDevice_OpenGL21(const GPURenderingDeviceInfo &info)
             : GPURenderingDevice_Gen1(info),
               m_gl(),
@@ -48,6 +62,13 @@ namespace GT
                 ResultCode result = m_gl.Startup();
                 if (Succeeded(result))
                 {
+                    // Make the dummy DC current by default. If we don't do this, any rendering commands that are issued before making a window current will fail. This is important for things
+                    // like an initialization step or whatnot.
+                    m_currentHWND = NULL;
+                    m_currentDC   = m_gl.GetDummyDC();
+                    m_gl.MakeCurrent(m_currentDC, m_gl.GetRenderingContext());
+
+
                     m_supportedShaderTargets.PushBack(GPUShaderTarget_GLSL_120_VS);
                     m_supportedShaderTargets.PushBack(GPUShaderTarget_GLSL_120_FS);
 
@@ -89,12 +110,16 @@ namespace GT
 
         void GPURenderingDevice_OpenGL21::ClearColor(float r, float g, float b, float a)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             m_gl.ClearColor(r, g, b, a);
             m_gl.Clear(GL_COLOR_BUFFER_BIT);
         }
 
         void GPURenderingDevice_OpenGL21::Draw(unsigned int indexCount, unsigned int startIndexLocation)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             if (m_currentIndexBuffer != nullptr)
             {
                 // Update the vertex attribute pointers if any are invalid.
@@ -103,7 +128,6 @@ namespace GT
                     this->UpdateSlotVertexAttributePointers(GTLib::NextBitIndex(m_invalidVertexBufferSlots));
                 }
 
-                //m_gl.Viewport(0, 0, 100, 100);      // TODO: <-- Testing. Remove this later.
                 m_gl.DrawElements(m_currentTopologyGL, indexCount, GL_UNSIGNED_INT, reinterpret_cast<const void*>(startIndexLocation*sizeof(uint32_t)));
             }
         }
@@ -115,6 +139,8 @@ namespace GT
 
         void GPURenderingDevice_OpenGL21::SetCurrentShaderProgram(GPUShaderProgram* shaderProgram)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(shaderProgram);
             if (shaderProgramGL != nullptr)
             {
@@ -158,6 +184,8 @@ namespace GT
 
         void GPURenderingDevice_OpenGL21::IASetInputLayout(GPUInputLayout* vertexInputLayout)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             if (vertexInputLayout != m_currentInputLayout)
             {
                 // Disable the vertex attributes of the previous input layout.
@@ -197,6 +225,8 @@ namespace GT
 
         void GPURenderingDevice_OpenGL21::IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             assert(slotIndex < GT_GE_MAX_VERTEX_BUFFER_SLOTS);
 
             m_vertexBufferSlots[slotIndex].buffer = buffer;
@@ -210,6 +240,8 @@ namespace GT
 
         void GPURenderingDevice_OpenGL21::IASetIndexBuffer(GPUBuffer* buffer)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
             if (bufferGL != nullptr)
             {
@@ -233,6 +265,8 @@ namespace GT
 
         void GPURenderingDevice_OpenGL21::RSSetViewports(GPUViewport* viewports, size_t viewportCount)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             if (viewports != nullptr && viewportCount > 0)
             {
                 m_gl.Viewport(static_cast<GLint>(viewports[0].x), static_cast<GLint>(viewports[0].y), static_cast<GLsizei>(viewports[0].width), static_cast<GLsizei>(viewports[0].height));
@@ -246,6 +280,8 @@ namespace GT
 
         ResultCode GPURenderingDevice_OpenGL21::CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             if (this->IsShaderTargetSupported(target))
             {
                 if (target >= GPUShaderTarget_GLSL_120_VS && target <= GPUShaderTarget_GLSL_120_FS)
@@ -269,6 +305,8 @@ namespace GT
 
         ResultCode GPURenderingDevice_OpenGL21::CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut, GPUShaderProgram* &shaderProgramOut)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             // TODO: Check that the shader targets are of the correct shader stage.
 
             ResultCode result = 0;
@@ -413,6 +451,8 @@ namespace GT
 
         void GPURenderingDevice_OpenGL21::DeleteShaderProgram(GPUShaderProgram* shaderProgram)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(shaderProgram);
             if (shaderProgramGL != nullptr)
             {
@@ -423,6 +463,8 @@ namespace GT
 
         ResultCode GPURenderingDevice_OpenGL21::CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &vertexInputLayoutOut)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(shaderProgram);
             if (shaderProgramGL != nullptr)
             {
@@ -498,16 +540,6 @@ namespace GT
                     // Failed to allocate memory.
                     return -1;
                 }
-
-
-                /*
-                GLuint prevProgramGL;
-                m_gl.GetIntegerv(GL_ACTIVE_PROGRAM, reinterpret_cast<GLint*>(&prevProgramGL));
-                {
-                    m_gl.UseProgram(shaderProgramGL->GetOpenGLObject());
-                }
-                m_gl.UseProgram(prevProgramGL);
-                */
             }
             else
             {
@@ -532,6 +564,8 @@ namespace GT
 
         ResultCode GPURenderingDevice_OpenGL21::CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data, GPUBuffer* &bufferOut)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             bufferOut = nullptr;
 
             if (usage == GPUBufferUsage_Immutable && data == nullptr)
@@ -629,6 +663,8 @@ namespace GT
 
         void GPURenderingDevice_OpenGL21::DeleteBuffer(GPUBuffer* buffer)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
             assert(bufferGL != nullptr);
             {
@@ -641,6 +677,8 @@ namespace GT
 
         ResultCode GPURenderingDevice_OpenGL21::MapBuffer(GPUBuffer* buffer, GPUBufferMapType mapType, void* &dataOut)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
             assert(bufferGL != nullptr);
             {
@@ -687,6 +725,8 @@ namespace GT
 
         void GPURenderingDevice_OpenGL21::UnmapBuffer(GPUBuffer* buffer)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
             assert(bufferGL != nullptr);
             {
@@ -703,6 +743,8 @@ namespace GT
 
         ResultCode GPURenderingDevice_OpenGL21::SetBufferData(GPUBuffer* buffer, size_t offsetInBytes, size_t sizeInBytes, const void* data)
         {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
             auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
             assert(bufferGL != nullptr);
             {
@@ -824,10 +866,10 @@ namespace GT
                         
                 }
 
-                m_gl.MakeCurrent(NULL, NULL);
+                m_gl.MakeCurrent(m_gl.GetDummyDC(), NULL);
 
                 m_currentHWND = NULL;
-                m_currentDC   = NULL;
+                m_currentDC   = m_gl.GetDummyDC();
             }
 
             return 0;   // No error.

@@ -34,6 +34,7 @@ namespace GT
               CreateContext(nullptr),
               DeleteContext(nullptr),
               MakeCurrent(nullptr),
+              GetCurrentContext(nullptr),
               GetProcAddress(nullptr),
 #endif
 #if defined(GT_PLATFORM_LINUX)
@@ -104,10 +105,11 @@ namespace GT
                 {
                     if (SetPixelFormat(m_hDummyDC, m_pixelFormat,  &m_pfd))
                     {
-                        this->CreateContext  = reinterpret_cast<PFNWGLCREATECONTEXTPROC >(::GetProcAddress(m_hOpenGL32, "wglCreateContext"));
-                        this->DeleteContext  = reinterpret_cast<PFNWGLDELETECONTEXTPROC >(::GetProcAddress(m_hOpenGL32, "wglDeleteContext"));
-                        this->MakeCurrent    = reinterpret_cast<PFNWGLMAKECURRENTPROC   >(::GetProcAddress(m_hOpenGL32, "wglMakeCurrent"));
-                        this->GetProcAddress = reinterpret_cast<PFNWGLGETPROCADDRESSPROC>(::GetProcAddress(m_hOpenGL32, "wglGetProcAddress"));
+                        this->CreateContext     = reinterpret_cast<PFNWGLCREATECONTEXTPROC    >(::GetProcAddress(m_hOpenGL32, "wglCreateContext"));
+                        this->DeleteContext     = reinterpret_cast<PFNWGLDELETECONTEXTPROC    >(::GetProcAddress(m_hOpenGL32, "wglDeleteContext"));
+                        this->MakeCurrent       = reinterpret_cast<PFNWGLMAKECURRENTPROC      >(::GetProcAddress(m_hOpenGL32, "wglMakeCurrent"));
+                        this->GetCurrentContext = reinterpret_cast<PFNWGLGETCURRENTCONTEXTPROC>(::GetProcAddress(m_hOpenGL32, "wglGetCurrentContext"));
+                        this->GetProcAddress    = reinterpret_cast<PFNWGLGETPROCADDRESSPROC   >(::GetProcAddress(m_hOpenGL32, "wglGetProcAddress"));
 
                         assert(this->CreateContext != NULL && this->DeleteContext != NULL && this->MakeCurrent != NULL && this->GetProcAddress != NULL);
                         {
@@ -230,6 +232,11 @@ namespace GT
         const PIXELFORMATDESCRIPTOR & OpenGLContext::GetPFD() const
         {
             return m_pfd;
+        }
+
+        HDC OpenGLContext::GetDummyDC() const
+        {
+            return m_hDummyDC;
         }
 #endif
 
