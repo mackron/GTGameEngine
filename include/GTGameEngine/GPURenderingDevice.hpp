@@ -35,6 +35,8 @@ namespace GT
         class GPUInputLayout;
 
         /// Class representing a rendering GPU device.
+        ///
+        /// A rendering device cannot be used across multiple threads.
         class GPURenderingDevice
         {
         public:
