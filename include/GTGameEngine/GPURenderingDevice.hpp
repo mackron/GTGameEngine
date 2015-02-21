@@ -29,7 +29,7 @@ namespace GT
 {
     namespace GE
     {
-        class Framebuffer;
+        class GPUFramebuffer;
         class GPUBuffer;
         class GPUShaderProgram;
         class GPUInputLayout;

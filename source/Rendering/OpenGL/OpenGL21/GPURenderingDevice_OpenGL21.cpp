@@ -774,7 +774,7 @@ namespace GT
         ///////////////////////////////////////////
         // Framebuffers
 
-        ResultCode GPURenderingDevice_OpenGL21::CreateFramebuffer(Framebuffer* &framebufferOut)
+        ResultCode GPURenderingDevice_OpenGL21::CreateFramebuffer(GPUFramebuffer* &framebufferOut)
         {
             framebufferOut = nullptr;
             return -1;

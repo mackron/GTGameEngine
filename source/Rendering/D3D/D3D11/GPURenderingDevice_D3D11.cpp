@@ -262,7 +262,7 @@ namespace GT
                         viewportsD3D11[iViewport].MaxDepth = viewports[iViewport].depthRangeFar;
                     }
 
-                    m_context->RSSetViewports(viewportCount, viewportsD3D11);
+                    m_context->RSSetViewports(static_cast<UINT>(viewportCount), viewportsD3D11);
                 }
             }
         }
@@ -389,7 +389,7 @@ namespace GT
         ///////////////////////////////////////////
         // Framebuffers
 
-        ResultCode GPURenderingDevice_D3D11::CreateFramebuffer(Framebuffer* &framebufferOut)
+        ResultCode GPURenderingDevice_D3D11::CreateFramebuffer(GPUFramebuffer* &framebufferOut)
         {
             framebufferOut = nullptr;
             return -1;
