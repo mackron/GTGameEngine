@@ -173,10 +173,10 @@ namespace GT
                 GL_LINE_STRIP,                      // GPUPrimitiveTopology_LineStrip
                 GL_TRIANGLES,                       // GPUPrimitiveTopology_Triangle
                 GL_TRIANGLE_STRIP,                  // GPUPrimitiveTopology_TriangleStrip
-                GL_LINES,                           // GPUPrimitiveTopology_Line_Adjacency (Not supported in OpenGL 2.1)
-                GL_LINE_STRIP,                      // GPUPrimitiveTopology_LineStrip_Adjacency (Not supported in OpenGL 2.1)
-                GL_TRIANGLES,                       // GPUPrimitiveTopology_Triangle_Adjacency (Not supported in OpenGL 2.1)
-                GL_TRIANGLE_STRIP                   // GPUPrimitiveTopology_TriangleStrip_Adjacency (Not supported in OpenGL 2.1)
+                GL_LINES_ADJACENCY,                 // GPUPrimitiveTopology_Line_Adjacency (Not supported in OpenGL 2.1)
+                GL_LINE_STRIP_ADJACENCY,            // GPUPrimitiveTopology_LineStrip_Adjacency (Not supported in OpenGL 2.1)
+                GL_TRIANGLES_ADJACENCY,             // GPUPrimitiveTopology_Triangle_Adjacency (Not supported in OpenGL 2.1)
+                GL_TRIANGLE_STRIP_ADJACENCY         // GPUPrimitiveTopology_TriangleStrip_Adjacency (Not supported in OpenGL 2.1)
             };
 
             m_currentTopologyGL = topologiesGL[topology];
