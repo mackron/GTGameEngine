@@ -19,9 +19,7 @@ namespace GT
 {
     namespace GE
     {
-
-
-        /// Class representing a rendering D3D9-generation GPU device.
+        /// GPU rendering device class using the D3D11 API.
         class GPURenderingDevice_D3D11 : public GPURenderingDevice_Gen2
         {
         public:
