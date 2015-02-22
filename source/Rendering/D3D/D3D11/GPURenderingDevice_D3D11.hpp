@@ -10,6 +10,7 @@
 #include <GTLib/Map.hpp>
 #include <GTLib/windows.hpp>
 #include <d3d11.h>
+#include <d3dcompiler.h>
 #include <GTGameEngine/GPURenderingDevice_Gen2.hpp>
 
 namespace GT
@@ -120,11 +121,28 @@ namespace GT
             /// GPURenderingDevice::IsShaderTargetSupported().
             bool IsShaderTargetSupported(GPUShaderTarget target) const;
 
+
             /// GPURenderingDevice::CreateShaderProgram().
             ResultCode CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut, GPUShaderProgram* &shaderProgramOut);
 
             /// GPURenderingDevice::DeleteShaderProgram().
             void DeleteShaderProgram(GPUShaderProgram* shaderProgram);
+
+
+            /// @copydoc GPURenderingDevice_Gen2::CreateVertexShader()
+            ResultCode CreateVertexShader(const void* shaderData, size_t shaderDataSize, GPUVertexShader* &shaderOut);
+
+            /// @copydoc GPURenderingDevice_Gen2::DeleteVertexShader()
+            void DeleteVertexShader(GPUVertexShader* shader);
+
+
+            /// @copydoc GPURenderingDevice_Gen2::CreateFragmentShader()
+            ResultCode CreateFragmentShader(const void* shaderData, size_t shaderDataSize, GPUFragmentShader* &shaderOut);
+
+            /// @copydoc GPURenderingDevice_Gen2::DeleteFragmentShader()
+            void DeleteFragmentShader(GPUFragmentShader* shader);
+
+
 
 
             ////////////////////////////////////////////
@@ -169,7 +187,6 @@ namespace GT
 
             /// GPURenderingDevice::SetCurrentWindow().
             ResultCode SetCurrentWindow(HWND hWnd);
-
 
 
 
@@ -234,6 +251,11 @@ namespace GT
             static const uint32_t StageFlag_IsWindowFramebufferCurrent = (1 << 0);     //< Is the current window's framebuffer the current render target?
 
 
+            ///////////////////////////////////////////////////////////////
+            // API
+
+            pD3DCompile m_D3DCompile;
+
 
          public:
 
@@ -252,6 +274,7 @@ namespace GT
             static const ResultCode FailedToLoadD3D11DLL                    = (1 << 31) | 59;
             static const ResultCode FailedToLoadD3DCompilerDLL              = (1 << 31) | 60;
             static const ResultCode FailedToLoadD3D11API                    = (1 << 31) | 61;
+            static const ResultCode FailedToCompileD3D11Shader              = (1 << 31) | 62;
 
 
         private:    // No copying.

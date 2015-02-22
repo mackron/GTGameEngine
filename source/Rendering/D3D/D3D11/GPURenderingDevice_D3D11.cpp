@@ -4,6 +4,9 @@
 
 #if defined(GT_GE_BUILD_D3D11)
 #include "GPUBuffer_D3D11.hpp"
+#include "GPUVertexShader_D3D11.hpp"
+#include "GPUFragmentShader_D3D11.hpp"
+#include "GPUShaderProgram_D3D11.hpp"
 
 namespace GT
 {
@@ -20,7 +23,8 @@ namespace GT
               m_currentSwapChain(nullptr),
               m_stateFlags(0),
               m_swapInterval(0),
-              m_currentPrimitiveTopology(GPUPrimitiveTopology_Triangle)
+              m_currentPrimitiveTopology(GPUPrimitiveTopology_Triangle),
+              m_D3DCompile(nullptr)
         {
             m_stateFlags |= StageFlag_IsWindowFramebufferCurrent;       // TODO: Remove this from the constructor once we get the framebuffer system working properly.
         }
@@ -74,6 +78,15 @@ namespace GT
                         HRESULT hr = _D3D11CreateDevice(reinterpret_cast<IDXGIAdapter1*>(m_info.identifier_D3D11), D3D_DRIVER_TYPE_UNKNOWN, NULL, 0, featureLevels, sizeof(featureLevels) / sizeof(featureLevels[0]), D3D11_SDK_VERSION, &m_device, &featureLevel, &m_context);
                         if (SUCCEEDED(hr) && featureLevel == D3D_FEATURE_LEVEL_11_0)
                         {
+                            // Initialize the API.
+                            m_D3DCompile = reinterpret_cast<pD3DCompile>(GetProcAddress(m_hD3DCompiler, "D3DCompile"));
+                            if (m_D3DCompile == nullptr)
+                            {
+                                return FailedToLoadD3D11API;
+                            }
+
+
+
                             // Triangles by default.
                             m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
 
@@ -299,7 +312,57 @@ namespace GT
 
         ResultCode GPURenderingDevice_D3D11::CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
         {
-            return ShaderTargetNotSupported;
+            if (target >= GPUShaderTarget_HLSL_50_VS && target <= GPUShaderTarget_HLSL_50_CS)
+            {
+                const char* targetStrs[] =
+                {
+                    "vs_5_0",       // GPUShaderTarget_HLSL_50_VS
+                    "hs_5_0",       // GPUShaderTarget_HLSL_50_HS
+                    "ds_5_0",       // GPUShaderTarget_HLSL_50_DS
+                    "gs_5_0",       // GPUShaderTarget_HLSL_50_GS
+                    "ps_5_0",       // GPUShaderTarget_HLSL_50_PS
+                    "cs_5_0",       // GPUShaderTarget_HLSL_50_CS
+                };
+                const char* targetD3D11 = targetStrs[target - GPUShaderTarget_HLSL_50_VS];
+
+
+                ID3DBlob* shaderCompiled = NULL;
+                ID3DBlob* shaderErrors   = NULL;
+                HRESULT hr = m_D3DCompile(source, (sourceLength > 0) ? sourceLength : strlen(source), nullptr, nullptr, nullptr, "main", targetD3D11, D3DCOMPILE_ENABLE_STRICTNESS, 0, &shaderCompiled, &shaderErrors);
+                if (SUCCEEDED(hr))
+                {
+                    if (shaderCompiled != nullptr)
+                    {
+                        ResultCode result = this->CreateShaderBinaryData(source, sourceLength, defines, target, shaderCompiled->GetBufferPointer(), shaderCompiled->GetBufferSize(), 0, byteCodeOut);
+
+                        shaderCompiled->Release();
+                        return result;
+                    }
+                    else
+                    {
+                        return FailedToCompileD3D11Shader;
+                    }
+                }
+                else
+                {
+                    if (shaderErrors != nullptr)
+                    {
+                        void* messagesPtr = messagesOut.Allocate(shaderErrors->GetBufferSize());
+                        if (messagesPtr != nullptr)
+                        {
+                            memcpy(messagesPtr, shaderErrors->GetBufferPointer(), shaderErrors->GetBufferSize());
+                        }
+
+                        shaderErrors->Release();
+                    }
+
+                    return FailedToCompileD3D11Shader;
+                }
+            }
+            else
+            {
+                return ShaderTargetNotSupported;
+            }
         }
 
         bool GPURenderingDevice_D3D11::IsShaderTargetSupported(GPUShaderTarget target) const
@@ -307,21 +370,116 @@ namespace GT
             return (target >= GPUShaderTarget_HLSL_50_VS && target <= GPUShaderTarget_HLSL_50_CS);
         }
 
+
         ResultCode GPURenderingDevice_D3D11::CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut, GPUShaderProgram* &shaderProgramOut)
         {
-            (void)vertexShaderData;
-            (void)vertexShaderDataSize;
-            (void)fragmentShaderData;
-            (void)fragmentShaderDataSize;
             (void)messagesOut;
-            (void)shaderProgramOut;
 
-            return -1;
+            ResultCode result = 0;
+
+            GPUVertexShader* vertexShader;
+            result = this->CreateVertexShader(vertexShaderData, vertexShaderDataSize, vertexShader);
+            if (GT::Succeeded(result))
+            {
+                GPUFragmentShader* fragmentShader;
+                result = this->CreateFragmentShader(fragmentShaderData, fragmentShaderDataSize, fragmentShader);
+                if (GT::Succeeded(result))
+                {
+                    shaderProgramOut = new GPUShaderProgram_D3D11(reinterpret_cast<GPUVertexShader_D3D11*>(vertexShader), reinterpret_cast<GPUFragmentShader_D3D11*>(fragmentShader));
+                }
+            }
+
+            return result;
         }
 
         void GPURenderingDevice_D3D11::DeleteShaderProgram(GPUShaderProgram* shaderProgram)
         {
-            (void)shaderProgram;
+            auto shaderProgramD3D = reinterpret_cast<GPUShaderProgram_D3D11*>(shaderProgram);
+            if (shaderProgramD3D != nullptr)
+            {
+                this->DeleteVertexShader(shaderProgramD3D->GetVertexShader());
+                this->DeleteFragmentShader(shaderProgramD3D->GetFragmentShader());
+
+                delete shaderProgramD3D;
+            }
+        }
+
+
+        ResultCode GPURenderingDevice_D3D11::CreateVertexShader(const void* shaderData, size_t shaderDataSize, GPUVertexShader* &shaderOut)
+        {
+            const void* binaryData;
+            size_t binaryDataSize;
+            ResultCode result = this->ExtractShaderBinaryData(shaderData, shaderDataSize, binaryData, binaryDataSize);
+            if (GT::Succeeded(result))
+            {
+                ID3D11VertexShader* vertexShaderD3D;
+                if (SUCCEEDED(m_device->CreateVertexShader(binaryData, binaryDataSize, nullptr, &vertexShaderD3D)))
+                {
+                    shaderOut = new GPUVertexShader_D3D11(vertexShaderD3D, binaryData, binaryDataSize);
+                    return 0;
+                }
+                else
+                {
+                    return FailedToCompileD3D11Shader;
+                }
+            }
+            else
+            {
+                return result;
+            }
+        }
+
+        void GPURenderingDevice_D3D11::DeleteVertexShader(GPUVertexShader* shader)
+        {
+            auto shaderD3D = reinterpret_cast<GPUVertexShader_D3D11*>(shader);
+            if (shaderD3D != nullptr)
+            {
+                assert(shaderD3D->GetD3D11VertexShader() != nullptr);
+                {
+                    shaderD3D->GetD3D11VertexShader()->Release();
+                }
+
+                delete shader;
+            }
+        }
+
+
+        ResultCode GPURenderingDevice_D3D11::CreateFragmentShader(const void* shaderData, size_t shaderDataSize, GPUFragmentShader* &shaderOut)
+        {
+            const void* binaryData;
+            size_t binaryDataSize;
+            ResultCode result = this->ExtractShaderBinaryData(shaderData, shaderDataSize, binaryData, binaryDataSize);
+            if (GT::Succeeded(result))
+            {
+                ID3D11PixelShader* pixelShaderD3D;
+                if (SUCCEEDED(m_device->CreatePixelShader(binaryData, binaryDataSize, nullptr, &pixelShaderD3D)))
+                {
+                    shaderOut = new GPUFragmentShader_D3D11(pixelShaderD3D, binaryData, binaryDataSize);
+                    return 0;
+                }
+                else
+                {
+                    return FailedToCompileD3D11Shader;
+                }
+            }
+            else
+            {
+                return result;
+            }
+        }
+
+        void GPURenderingDevice_D3D11::DeleteFragmentShader(GPUFragmentShader* shader)
+        {
+            auto shaderD3D = reinterpret_cast<GPUFragmentShader_D3D11*>(shader);
+            if (shaderD3D != nullptr)
+            {
+                assert(shaderD3D->GetD3D11PixelShader() != nullptr);
+                {
+                    shaderD3D->GetD3D11PixelShader()->Release();
+                }
+
+                delete shader;
+            }
         }
 
 

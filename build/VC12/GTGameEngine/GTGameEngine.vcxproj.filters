@@ -122,6 +122,21 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUInputLayout_OpenGL21.cpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUFragmentShader_D3D11.cpp">
+      <Filter>Source Files\Rendering\D3D\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUShaderProgram_D3D11.cpp">
+      <Filter>Source Files\Rendering\D3D\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUVertexShader_D3D11.cpp">
+      <Filter>Source Files\Rendering\D3D\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\GPUFragmentShader.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\GPUVertexShader.cpp">
+      <Filter>Source Files\Rendering</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -230,6 +245,21 @@
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUViewport.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUFragmentShader_D3D11.hpp">
+      <Filter>Source Files\Rendering\D3D\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUShaderProgram_D3D11.hpp">
+      <Filter>Source Files\Rendering\D3D\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUVertexShader_D3D11.hpp">
+      <Filter>Source Files\Rendering\D3D\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUFragmentShader.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUVertexShader.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>

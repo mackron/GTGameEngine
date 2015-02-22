@@ -301,5 +301,15 @@ namespace GT
             int binaryVersion;
             return ExtractShaderBinaryData(shaderData, shaderDataSize, sourceOut, sourceLengthOut, definesOut, targetOut, binary, binarySize, binaryVersion);
         }
+
+        ResultCode GPURenderingDevice::ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const void* &binaryOut, size_t &binarySizeOut)
+        {
+            const char* sourceOut;
+            size_t sourceLengthOut;
+            GTLib::Vector<GPUShaderDefine> definesOut;
+            GPUShaderTarget targetOut;
+            int binaryVersionOut;
+            return ExtractShaderBinaryData(shaderData, shaderDataSize, sourceOut, sourceLengthOut, definesOut, targetOut, binaryOut, binarySizeOut, binaryVersionOut);
+        }
     }
 }
