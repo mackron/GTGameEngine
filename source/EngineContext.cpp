@@ -72,7 +72,6 @@ namespace GT
                     {
                         RenderingAPI_D3D11,
                         RenderingAPI_OpenGL45,
-                        RenderingAPI_D3D9,
                         RenderingAPI_OpenGL21
                     };
                     
@@ -94,7 +93,6 @@ namespace GT
                 {
                     RenderingAPI renderingAPIs[] = 
                     {
-                        RenderingAPI_D3D9,
                         RenderingAPI_OpenGL21
                     };
                     

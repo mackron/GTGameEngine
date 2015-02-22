@@ -15,7 +15,6 @@ namespace GT
             RenderingAPI_Any_Gen2 = 2,
             RenderingAPI_OpenGL21 = (1 << 8) | RenderingAPI_Any_Gen1,
             RenderingAPI_OpenGL45 = (1 << 8) | RenderingAPI_Any_Gen2,
-            RenderingAPI_D3D9     = (2 << 8) | RenderingAPI_Any_Gen1,
             RenderingAPI_D3D11    = (2 << 8) | RenderingAPI_Any_Gen2
         };
 
