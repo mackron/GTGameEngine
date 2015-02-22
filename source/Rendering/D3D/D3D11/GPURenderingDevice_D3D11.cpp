@@ -4,9 +4,13 @@
 
 #if defined(GT_GE_BUILD_D3D11)
 #include "GPUBuffer_D3D11.hpp"
+#include "GPUInputLayout_D3D11.hpp"
 #include "GPUVertexShader_D3D11.hpp"
 #include "GPUFragmentShader_D3D11.hpp"
 #include "GPUShaderProgram_D3D11.hpp"
+#include <GTLib/Strings/Find.hpp>
+#include <GTLib/String.hpp>
+#include <GTLib/Parse.hpp>
 
 namespace GT
 {
@@ -73,9 +77,14 @@ namespace GT
                     PFN_D3D11_CREATE_DEVICE _D3D11CreateDevice = reinterpret_cast<PFN_D3D11_CREATE_DEVICE>(GetProcAddress(m_hD3D11, "D3D11CreateDevice"));
                     if (_D3D11CreateDevice != nullptr)
                     {
+                        UINT flags = 0;
+#ifdef _DEBUG
+                        flags |= D3D11_CREATE_DEVICE_DEBUG;
+#endif
+
                         D3D_FEATURE_LEVEL    featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
                         D3D_FEATURE_LEVEL    featureLevel    = D3D_FEATURE_LEVEL_11_0;
-                        HRESULT hr = _D3D11CreateDevice(reinterpret_cast<IDXGIAdapter1*>(m_info.identifier_D3D11), D3D_DRIVER_TYPE_UNKNOWN, NULL, 0, featureLevels, sizeof(featureLevels) / sizeof(featureLevels[0]), D3D11_SDK_VERSION, &m_device, &featureLevel, &m_context);
+                        HRESULT hr = _D3D11CreateDevice(reinterpret_cast<IDXGIAdapter1*>(m_info.identifier_D3D11), D3D_DRIVER_TYPE_UNKNOWN, NULL, flags, featureLevels, sizeof(featureLevels) / sizeof(featureLevels[0]), D3D11_SDK_VERSION, &m_device, &featureLevel, &m_context);
                         if (SUCCEEDED(hr) && featureLevel == D3D_FEATURE_LEVEL_11_0)
                         {
                             // Initialize the API.
@@ -85,10 +94,19 @@ namespace GT
                                 return FailedToLoadD3D11API;
                             }
 
+                            m_D3DReflect = reinterpret_cast<pD3DReflect>(GetProcAddress(m_hD3DCompiler, "D3DReflect"));
+                            if (m_D3DReflect == nullptr)
+                            {
+                                return FailedToLoadD3D11API;
+                            }
+
 
 
                             // Triangles by default.
                             m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+
+                            // TODO: Change winding order to suit a right-handed coordinate system. Need to experiment with this.
+
 
                             return 0;   // No error.
                         }
@@ -180,6 +198,25 @@ namespace GT
             }
         }
 
+        void GPURenderingDevice_D3D11::ClearDepthStencil(GPUClearFlag clearFlags, float depth, uint8_t stencil)
+        {
+            auto iFramebuffer = m_windowFramebuffers.Find(m_currentHWND);
+            if (iFramebuffer != nullptr)
+            {
+                UINT clearFlagsD3D = 0;
+                if ((clearFlags & GPUClearFlag_Depth) != 0)
+                {
+                    clearFlagsD3D |= D3D11_CLEAR_DEPTH;
+                }
+                if ((clearFlags & GPUClearFlag_Stencil) != 0)
+                {
+                    clearFlagsD3D |= D3D11_CLEAR_STENCIL;
+                }
+
+                m_context->ClearDepthStencilView(iFramebuffer->value.depthStencilView, clearFlagsD3D, depth, stencil);
+            }
+        }
+
         void GPURenderingDevice_D3D11::Draw(unsigned int indexCount, unsigned int startIndexLocation)
         {
             m_context->DrawIndexed(indexCount, startIndexLocation, 0);
@@ -192,7 +229,21 @@ namespace GT
 
         void GPURenderingDevice_D3D11::SetCurrentShaderProgram(GPUShaderProgram* shaderProgram)
         {
-            (void)shaderProgram;
+            // All we do is set the vertex and fragment shaders.
+            auto shaderProgramD3D = reinterpret_cast<GPUShaderProgram_D3D11*>(shaderProgram);
+            if (shaderProgramD3D != nullptr)
+            {
+                assert(shaderProgramD3D->GetVertexShader()   != nullptr);
+                assert(shaderProgramD3D->GetFragmentShader() != nullptr);
+
+                m_context->VSSetShader(shaderProgramD3D->GetVertexShader()->GetD3D11VertexShader(),  nullptr, 0);
+                m_context->PSSetShader(shaderProgramD3D->GetFragmentShader()->GetD3D11PixelShader(), nullptr, 0);
+            }
+            else
+            {
+                m_context->VSSetShader(nullptr, nullptr, 0);
+                m_context->PSSetShader(nullptr, nullptr, 0);
+            }
         }
 
 
@@ -224,17 +275,28 @@ namespace GT
             m_context->IASetPrimitiveTopology(topologiesD3D11[topology]);
         }
 
-        void GPURenderingDevice_D3D11::IASetInputLayout(GPUInputLayout* vertexInputLayout)
+        void GPURenderingDevice_D3D11::IASetInputLayout(GPUInputLayout* inputLayout)
         {
-            (void)vertexInputLayout;
+            auto inputLayoutD3D = reinterpret_cast<GPUInputLayout_D3D11*>(inputLayout);
+            if (inputLayoutD3D != nullptr)
+            {
+                m_context->IASetInputLayout(inputLayoutD3D->GetD3D11InputLayout());
+            }
+            else
+            {
+                m_context->IASetInputLayout(nullptr);
+            }
         }
 
         void GPURenderingDevice_D3D11::IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset)
         {
-            auto bufferD3D11 = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
-            if (bufferD3D11 != nullptr)
+            auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
+            if (bufferD3D != nullptr)
             {
-                //ID3D11Buffer* d3d11Buffer = bufferD3D11->GetD3D11Buffer();
+                auto bufferD3D11 = bufferD3D->GetD3D11Buffer();
+                UINT strideD3D11 = static_cast<UINT>(stride);
+                UINT offsetD3D11 = static_cast<UINT>(offset);
+                m_context->IASetVertexBuffers(slotIndex, 1, &bufferD3D11, &strideD3D11, &offsetD3D11);
             }
             else
             {
@@ -242,15 +304,23 @@ namespace GT
             }
         }
 
-        void GPURenderingDevice_D3D11::IASetIndexBuffer(GPUBuffer* buffer)
+        void GPURenderingDevice_D3D11::IASetIndexBuffer(GPUBuffer* buffer, GPUIndexFormat format, size_t offset)
         {
-            auto bufferD3D11 = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
-            if (bufferD3D11 != nullptr)
+            DXGI_FORMAT formats[] =
             {
+                DXGI_FORMAT_R8_UINT,
+                DXGI_FORMAT_R16_UINT,
+                DXGI_FORMAT_R32_UINT
+            };
+
+            auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
+            if (bufferD3D != nullptr)
+            {
+                m_context->IASetIndexBuffer(bufferD3D->GetD3D11Buffer(), formats[format], static_cast<UINT>(offset));
             }
             else
             {
-                m_context->IASetIndexBuffer(nullptr, DXGI_FORMAT_R32_UINT, 0);
+                m_context->IASetIndexBuffer(nullptr, formats[format], static_cast<UINT>(offset));
             }
         }
 
@@ -276,6 +346,7 @@ namespace GT
                     }
 
                     m_context->RSSetViewports(static_cast<UINT>(viewportCount), viewportsD3D11);
+                    free(viewportsD3D11);
                 }
             }
         }
@@ -291,19 +362,128 @@ namespace GT
         ////////////////////////////////////////////
         // Input Layout
 
-        ResultCode GPURenderingDevice_D3D11::CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &vertexInputLayoutOut)
+        ResultCode GPURenderingDevice_D3D11::CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &inputLayoutOut)
         {
-            (void)shaderProgram;
-            (void)attribDesc;
-            (void)attribDescCount;
-            (void)vertexInputLayoutOut;
+            auto shaderProgramD3D = reinterpret_cast<GPUShaderProgram_D3D11*>(shaderProgram);
+            if (shaderProgramD3D != nullptr)
+            {
+                assert(shaderProgramD3D->GetVertexShader() != nullptr);
 
-            return -1;
+                auto vertexShaderData       = shaderProgramD3D->GetVertexShader()->GetD3D11ShaderBinary();
+                size_t vertexShaderDataSize = shaderProgramD3D->GetVertexShader()->GetD3D11ShaderBinarySize();
+
+                if (vertexShaderData != nullptr && vertexShaderDataSize > 0)
+                {
+                    auto attribDescD3D = new D3D11_INPUT_ELEMENT_DESC[attribDescCount];
+                    assert(attribDescD3D != nullptr);
+                    {
+                        memset(attribDescD3D, 0, sizeof(D3D11_INPUT_ELEMENT_DESC) * attribDescCount);
+
+
+                        ResultCode result = 0;
+
+                        for (size_t iAttrib = 0; iAttrib < attribDescCount; ++iAttrib)
+                        {
+                            assert(attribDesc[iAttrib].attributeComponentCount >= 1 && attribDesc[iAttrib].attributeComponentCount <=4);
+
+                            auto semanticIndexStart = GTLib::Strings::FindFirstOf(attribDesc[iAttrib].attributeName, "0123456789");
+
+                            ptrdiff_t semanticNameLength = semanticIndexStart - attribDesc[iAttrib].attributeName;
+                            char* semanticName = reinterpret_cast<char*>(malloc(semanticNameLength + 1));
+                            if (semanticName != nullptr)
+                            {
+                                memcpy(semanticName, attribDesc[iAttrib].attributeName, semanticNameLength);
+                                semanticName[semanticNameLength] = '\0';
+                            }
+                            else
+                            {
+                                // Failed to allocate memory.
+                                result = -4;
+                                break;
+                            }
+
+
+                            DXGI_FORMAT format[3][4] = 
+                            {
+                                {
+                                    DXGI_FORMAT_R32_FLOAT,
+                                    DXGI_FORMAT_R32G32_FLOAT,
+                                    DXGI_FORMAT_R32G32B32_FLOAT,
+                                    DXGI_FORMAT_R32G32B32A32_FLOAT
+                                },  // GPUBasicType_Float
+                                {
+                                    DXGI_FORMAT_R32_SINT,
+                                    DXGI_FORMAT_R32G32_SINT,
+                                    DXGI_FORMAT_R32G32B32_SINT,
+                                    DXGI_FORMAT_R32G32B32A32_SINT
+                                },  // GPUBasicType_SInt
+                                {
+                                    DXGI_FORMAT_R32_UINT,
+                                    DXGI_FORMAT_R32G32_UINT,
+                                    DXGI_FORMAT_R32G32B32_UINT,
+                                    DXGI_FORMAT_R32G32B32A32_UINT
+                                }   // GPUBasicType_UInt
+                            };
+
+
+                            attribDescD3D[iAttrib].SemanticName         = semanticName;
+                            attribDescD3D[iAttrib].SemanticIndex        = GTLib::Parse<UINT>(semanticIndexStart);
+                            attribDescD3D[iAttrib].Format               = format[attribDesc[iAttrib].attributeComponentType][attribDesc[iAttrib].attributeComponentCount - 1];
+                            attribDescD3D[iAttrib].InputSlot            = attribDesc[iAttrib].slotIndex;
+                            attribDescD3D[iAttrib].AlignedByteOffset    = attribDesc[iAttrib].attributeOffset;
+                            attribDescD3D[iAttrib].InputSlotClass       = (attribDesc[iAttrib].attributeClass == GPUInputClassification_PerVertex) ? D3D11_INPUT_PER_VERTEX_DATA : D3D11_INPUT_PER_INSTANCE_DATA;
+                            attribDescD3D[iAttrib].InstanceDataStepRate = attribDesc[iAttrib].instanceStepRate;
+                        }
+
+                        if (GT::Succeeded(result))
+                        {
+                            ID3D11InputLayout* inputLayoutD3D;
+                            if (SUCCEEDED(m_device->CreateInputLayout(attribDescD3D, static_cast<UINT>(attribDescCount), vertexShaderData, vertexShaderDataSize, &inputLayoutD3D)))
+                            {
+                                inputLayoutOut = new GPUInputLayout_D3D11(inputLayoutD3D);
+                                result = 0;
+                            }
+                            else
+                            {
+                                // Failed to create input layout.
+                                result = -3;
+                            }
+                        }
+                        
+
+
+                        for (size_t iAttrib = 0; iAttrib < attribDescCount; ++iAttrib)
+                        {
+                            free(const_cast<void*>(reinterpret_cast<const void*>(attribDescD3D[iAttrib].SemanticName)));
+                        }
+
+                        delete [] attribDescD3D;
+                        return result;
+                    }
+                }
+                else
+                {
+                    // Invalid vertex shader data.
+                    return -2;
+                }
+            }
+            else
+            {
+                // No shader program specified.
+                return -1;
+            }
         }
 
-        void GPURenderingDevice_D3D11::DeleteInputLayout(GPUInputLayout* vertexInputLayout)
+        void GPURenderingDevice_D3D11::DeleteInputLayout(GPUInputLayout* inputLayout)
         {
-            (void)vertexInputLayout;
+            auto inputLayoutD3D = reinterpret_cast<GPUInputLayout_D3D11*>(inputLayout);
+            if (inputLayoutD3D != nullptr)
+            {
+                assert(inputLayoutD3D->GetD3D11InputLayout() != nullptr);
+
+                inputLayoutD3D->GetD3D11InputLayout()->Release();
+                delete inputLayoutD3D;
+            }
         }
 
 
@@ -497,7 +677,57 @@ namespace GT
             }
 
 
-            return -1;
+            D3D11_USAGE usages[] =
+            {
+                D3D11_USAGE_DEFAULT,
+                D3D11_USAGE_IMMUTABLE,
+                D3D11_USAGE_DYNAMIC,
+                D3D11_USAGE_STAGING,
+            };
+
+            UINT bindFlags[] =
+            {
+                0,
+                D3D11_BIND_VERTEX_BUFFER,
+                D3D11_BIND_INDEX_BUFFER,
+                D3D11_BIND_CONSTANT_BUFFER
+            };
+
+
+
+            D3D11_BUFFER_DESC bd;
+	        ZeroMemory(&bd, sizeof(bd));
+            bd.Usage          = usages[usage];
+            bd.ByteWidth      = static_cast<UINT>(sizeInBytes);
+            bd.BindFlags      = bindFlags[type];
+	        bd.CPUAccessFlags = 0;
+
+            if ((cpuAccessFlags & GPUBufferCPUAccess_Read) != 0)
+            {
+                bd.CPUAccessFlags |= D3D11_CPU_ACCESS_READ;
+            }
+            if ((cpuAccessFlags & GPUBufferCPUAccess_Write) != 0)
+            {
+                bd.CPUAccessFlags |= D3D11_CPU_ACCESS_WRITE;
+            }
+
+
+            D3D11_SUBRESOURCE_DATA initialData;
+	        ZeroMemory(&initialData, sizeof(D3D11_SUBRESOURCE_DATA));
+            initialData.pSysMem = data;
+
+
+            ID3D11Buffer* bufferD3D11;
+            if (SUCCEEDED(m_device->CreateBuffer(&bd, &initialData, &bufferD3D11)))
+            {
+                bufferOut = new GPUBuffer_D3D11(bufferD3D11, type, usage, cpuAccessFlags);
+                return 0;
+            }
+            else
+            {
+                // Failed to create the buffer.
+                return -1;
+            }
         }
 
         void GPURenderingDevice_D3D11::DeleteBuffer(GPUBuffer* buffer)
@@ -505,6 +735,9 @@ namespace GT
             auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
             assert(bufferD3D != nullptr);
             {
+                assert(bufferD3D->GetD3D11Buffer() != nullptr);
+
+                bufferD3D->GetD3D11Buffer()->Release();
                 delete buffer;
             }
         }
@@ -514,7 +747,26 @@ namespace GT
             auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
             assert(bufferD3D != nullptr);
             {
-                return -1;
+                D3D11_MAP mapTypes[] =
+                {
+                    D3D11_MAP_READ,
+                    D3D11_MAP_WRITE,
+                    D3D11_MAP_READ_WRITE,
+                    D3D11_MAP_WRITE_DISCARD,
+                    D3D11_MAP_WRITE_NO_OVERWRITE,
+                };
+
+                D3D11_MAPPED_SUBRESOURCE mappingInfo;
+                if (SUCCEEDED(m_context->Map(bufferD3D->GetD3D11Buffer(), 0, mapTypes[mapType - 1], 0, &mappingInfo)))
+                {
+                    dataOut = mappingInfo.pData;
+                    return 0;
+                }
+                else
+                {
+                    // Failed to map the buffer.
+                    return -1;
+                }
             }
         }
 
@@ -523,6 +775,7 @@ namespace GT
             auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
             assert(bufferD3D != nullptr);
             {
+                m_context->Unmap(bufferD3D->GetD3D11Buffer(), 0);
             }
         }
 
@@ -533,7 +786,17 @@ namespace GT
             {
                 if (bufferD3D->GetBufferUsage() != GPUBufferUsage_Immutable)
                 {
-                    return -1;
+                    D3D11_BOX box;
+                    box.left   = static_cast<UINT>(offsetInBytes);
+                    box.right  = static_cast<UINT>(offsetInBytes + sizeInBytes);
+                    box.top    = 0;
+                    box.bottom = 1;
+                    box.front  = 0;
+                    box.back   = 1;
+
+                    m_context->UpdateSubresource(bufferD3D->GetD3D11Buffer(), 0, &box, data, static_cast<UINT>(sizeInBytes), 0);
+
+                    return 0;
                 }
                 else
                 {
@@ -813,6 +1076,90 @@ namespace GT
             }
 
             return 0;
+        }
+
+        void GPURenderingDevice_D3D11::ResizeWindowFramebuffer(HWND hWnd)
+        {
+            auto iFramebuffer = m_windowFramebuffers.Find(hWnd);
+            if (iFramebuffer != nullptr)
+            {
+                auto &framebuffer = iFramebuffer->value;
+
+                // If the window is the current render target, unset it (it will be made current again at the end).
+                if (m_currentHWND == hWnd && (m_stateFlags & StageFlag_IsWindowFramebufferCurrent) != 0)
+                {
+                    m_context->OMSetRenderTargets(0, nullptr, nullptr);
+                }
+                
+                framebuffer.renderTargetView->Release();
+
+                // Resize the swap chain buffers.
+                framebuffer.swapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0);
+
+                // Recreate the render target.
+                ID3D11Texture2D* pBackBuffer1 = NULL;
+                framebuffer.swapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (LPVOID*)&pBackBuffer1);
+                m_device->CreateRenderTargetView(pBackBuffer1, NULL, &framebuffer.renderTargetView);
+                pBackBuffer1->Release();
+
+
+                // Re-create the depth/stencil buffer if applicable.
+                if (framebuffer.depthStencil != nullptr)
+                {
+                    framebuffer.depthStencilView->Release();
+                    framebuffer.depthStencil->Release();
+
+                    framebuffer.depthStencilView = nullptr;
+                    framebuffer.depthStencil     = nullptr;
+                    
+
+                    RECT windowClientRect;
+                    GetClientRect(hWnd, &windowClientRect);
+
+                    UINT windowWidth  = windowClientRect.right - windowClientRect.left;
+                    UINT windowHeight = windowClientRect.bottom - windowClientRect.top;
+
+
+
+                    // Create the texture.
+                    D3D11_TEXTURE2D_DESC descDepth;
+                    ZeroMemory(&descDepth, sizeof(descDepth));
+                    descDepth.Width              = windowWidth;
+                    descDepth.Height             = windowHeight;
+                    descDepth.MipLevels          = 1;
+                    descDepth.ArraySize          = 1;
+                    descDepth.Format             = DXGI_FORMAT_D24_UNORM_S8_UINT;
+                    descDepth.SampleDesc.Count   = 1;
+                    descDepth.SampleDesc.Quality = 0;
+                    descDepth.Usage              = D3D11_USAGE_DEFAULT;
+                    descDepth.BindFlags          = D3D11_BIND_DEPTH_STENCIL;
+                    descDepth.CPUAccessFlags     = 0;
+                    descDepth.MiscFlags          = 0;
+                    HRESULT hr = m_device->CreateTexture2D(&descDepth, NULL, &framebuffer.depthStencil);
+                    if (SUCCEEDED(hr))
+                    {
+                        // Create the view from the texture.
+                        D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+                        ZeroMemory(&descDSV, sizeof(descDSV));
+                        descDSV.Format             = descDepth.Format;
+                        descDSV.ViewDimension      = D3D11_DSV_DIMENSION_TEXTURE2D;
+                        descDSV.Texture2D.MipSlice = 0;
+                        hr = m_device->CreateDepthStencilView(framebuffer.depthStencil, &descDSV, &framebuffer.depthStencilView);
+                        if (FAILED(hr))
+                        {
+                            framebuffer.depthStencil->Release();
+                            framebuffer.depthStencil = nullptr;
+                        }
+                    }
+                }
+
+
+
+                if (m_currentHWND == hWnd && (m_stateFlags & StageFlag_IsWindowFramebufferCurrent) != 0)
+                {
+                    m_context->OMSetRenderTargets(1, &framebuffer.renderTargetView, framebuffer.depthStencilView);
+                }
+            }
         }
 #endif
 

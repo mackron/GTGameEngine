@@ -13,10 +13,14 @@
 #include <d3dcompiler.h>
 #include <GTGameEngine/GPURenderingDevice_Gen2.hpp>
 
+typedef HRESULT (WINAPI *pD3DReflect) (LPCVOID pSrcData, SIZE_T SrcDataSize, REFIID pInterface, void** ppReflector);
+
 namespace GT
 {
     namespace GE
     {
+
+
         /// Class representing a rendering D3D9-generation GPU device.
         class GPURenderingDevice_D3D11 : public GPURenderingDevice_Gen2
         {
@@ -52,6 +56,9 @@ namespace GT
             /// GPURenderingDevice::ClearColor().
             void ClearColor(float r, float g, float b, float a);
 
+            /// @copydoc GPURenderingDevice::ClearDepthStencil()
+            void ClearDepthStencil(GPUClearFlag clearFlags, float depth, uint8_t stencil);
+
             /// GPURenderingDevice::Draw().
             void Draw(unsigned int indexCount, unsigned int startIndexLocation);
 
@@ -85,7 +92,7 @@ namespace GT
             void IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset);
 
             /// @copydoc GPURenderingDevice::IASetIndexBuffer()
-            void IASetIndexBuffer(GPUBuffer* buffer);
+            void IASetIndexBuffer(GPUBuffer* buffer, GPUIndexFormat format, size_t offset);
 
 
             /////////////////////////////////////////////
@@ -188,6 +195,9 @@ namespace GT
             /// GPURenderingDevice::SetCurrentWindow().
             ResultCode SetCurrentWindow(HWND hWnd);
 
+            /// @copydoc GPURenderingDevice::ResizeWindowFramebuffer()
+            void ResizeWindowFramebuffer(HWND hWnd);
+
 
 
         private:
@@ -255,6 +265,7 @@ namespace GT
             // API
 
             pD3DCompile m_D3DCompile;
+            pD3DReflect m_D3DReflect;
 
 
          public:

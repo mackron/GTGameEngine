@@ -7,6 +7,7 @@
 
 #if defined(GT_GE_BUILD_D3D11)
 #include <GTGameEngine/Rendering/GPUBuffer.hpp>
+#include <d3d11.h>
 
 namespace GT
 {
@@ -18,12 +19,12 @@ namespace GT
         public:
 
             /// Constructor.
-            GPUBuffer_D3D11(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags);
+            GPUBuffer_D3D11(ID3D11Buffer* bufferD3D, GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags);
 
             /// Destructor.
             ~GPUBuffer_D3D11();
 
-            
+
             /// GPUBuffer::GetBufferType().
             GPUBufferType GetBufferType() const;
 
@@ -35,7 +36,15 @@ namespace GT
 
 
 
+            /// Retrieves a pointer to the internal D3D11 buffer object.
+            ID3D11Buffer* GetD3D11Buffer();
+
+
+
         private:
+
+            /// The internal D3D11 buffer object.
+            ID3D11Buffer* m_bufferD3D;
 
             /// The buffer type.
             GPUBufferType m_type;

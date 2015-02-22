@@ -40,11 +40,15 @@ namespace GT
               m_currentDC(NULL),
 #endif
               m_supportedShaderTargets(),
-              m_vertexBufferSlots(),
-              m_invalidVertexBufferSlots(),
+
               m_stateFlags(0),
               m_currentTopologyGL(GL_TRIANGLES),
+              m_vertexBufferSlots(),
+              m_invalidVertexBufferSlots(),
               m_currentIndexBuffer(nullptr),
+              m_indexBufferFormat(GL_UNSIGNED_INT),
+              m_indexBufferFormatSize(4),
+              m_indexBufferOffset(0),
               m_currentInputLayout(nullptr)
         {
             m_stateFlags |= StageFlag_IsWindowFramebufferCurrent;       // TODO: Remove this from the constructor once we get the framebuffer system working properly.
@@ -73,6 +77,13 @@ namespace GT
                     m_supportedShaderTargets.PushBack(GPUShaderTarget_GLSL_120_FS);
 
                     // TODO: Check for ARB program support.
+
+
+                    // Enable back face culling by default.
+                    m_gl.Enable(GL_CULL_FACE);
+
+                    // Enable depth-testing by default.
+                    m_gl.Enable(GL_DEPTH_TEST);
                 }
 
                 return result;
@@ -116,6 +127,25 @@ namespace GT
             m_gl.Clear(GL_COLOR_BUFFER_BIT);
         }
 
+        void GPURenderingDevice_OpenGL21::ClearDepthStencil(GPUClearFlag clearFlags, float depth, uint8_t stencil)
+        {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
+            GLbitfield maskGL = 0;
+            if ((clearFlags & GPUClearFlag_Depth) != 0)
+            {
+                maskGL |= GL_DEPTH_BUFFER_BIT;
+                m_gl.ClearDepth(depth);
+            }
+            if ((clearFlags & GPUClearFlag_Stencil) != 0)
+            {
+                maskGL |= GL_STENCIL_BUFFER_BIT;
+                m_gl.ClearStencil(stencil);
+            }
+
+            m_gl.Clear(maskGL);
+        }
+
         void GPURenderingDevice_OpenGL21::Draw(unsigned int indexCount, unsigned int startIndexLocation)
         {
             CheckContextIsCurrent(m_gl, m_currentDC);
@@ -128,7 +158,7 @@ namespace GT
                     this->UpdateSlotVertexAttributePointers(GTLib::NextBitIndex(m_invalidVertexBufferSlots));
                 }
 
-                m_gl.DrawElements(m_currentTopologyGL, indexCount, GL_UNSIGNED_INT, reinterpret_cast<const void*>(startIndexLocation*sizeof(uint32_t)));
+                m_gl.DrawElements(m_currentTopologyGL, indexCount, m_indexBufferFormat, reinterpret_cast<const void*>(m_indexBufferOffset + (startIndexLocation*m_indexBufferFormatSize)));
             }
         }
 
@@ -238,7 +268,7 @@ namespace GT
             this->UpdateSlotVertexAttributePointers(slotIndex);
         }
 
-        void GPURenderingDevice_OpenGL21::IASetIndexBuffer(GPUBuffer* buffer)
+        void GPURenderingDevice_OpenGL21::IASetIndexBuffer(GPUBuffer* buffer, GPUIndexFormat format, size_t offset)
         {
             CheckContextIsCurrent(m_gl, m_currentDC);
 
@@ -248,6 +278,25 @@ namespace GT
                 assert(bufferGL->GetOpenGLTarget() == GL_ELEMENT_ARRAY_BUFFER);
                 {
                     m_gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferGL->GetOpenGLObject());
+                    
+                    
+                    GLenum indexBufferFormats[] =
+                    {
+                        GL_UNSIGNED_BYTE,
+                        GL_UNSIGNED_SHORT,
+                        GL_UNSIGNED_INT
+                    };
+
+                    size_t indexBufferFormatSizes[] =
+                    {
+                        1,
+                        2,
+                        4
+                    };
+
+                    m_indexBufferFormat     = indexBufferFormats[format];
+                    m_indexBufferFormatSize = indexBufferFormatSizes[format];
+                    m_indexBufferOffset     = offset;
                 }
             }
             else
@@ -477,8 +526,6 @@ namespace GT
                     unsigned int iAttribGL = 0;
                     for (unsigned int iSlot = 0; iSlot < GT_GE_MAX_VERTEX_BUFFER_SLOTS && iAttribGL < attribDescCount; ++iSlot)
                     {
-                        GLsizei currentOffset = 0;
-
                         for (size_t iAttrib = 0; iAttrib < attribDescCount; ++iAttrib)
                         {
                             assert(iAttribGL < attribDescCount);
@@ -493,8 +540,8 @@ namespace GT
 
                                 attribGL.slotIndex            = attrib.slotIndex;
                                 attribGL.attribLocation       = m_gl.GetAttribLocation(shaderProgramGL->GetOpenGLObject(), attrib.attributeName);
-                                attribGL.attribOffset         = currentOffset;
                                 attribGL.attribComponentCount = attrib.attributeComponentCount;
+                                attribGL.attribOffset         = attrib.attributeOffset;
 
                                 GLenum attribComponentTypesGL[] =
                                 {
@@ -506,20 +553,6 @@ namespace GT
 
                                 attribGL.attributeClass   = attrib.attributeClass;
                                 attribGL.instanceStepRate = attrib.instanceStepRate;
-
-
-
-                                // Move the offset.
-                                GLsizei attribComponentSizes[] =
-                                {
-                                    4,      // GPUBasicType_Float
-                                    4,      // GPUBasicType_SInt
-                                    4       // GPUBasicType_UInt
-                                };
-                                GLsizei attribComponentSize = attribComponentSizes[attrib.attributeComponentType];
-
-                                currentOffset += attribComponentSize * attrib.attributeComponentCount + attrib.attributePadding;
-
 
 
                                 iAttribGL += 1;
@@ -854,7 +887,7 @@ namespace GT
                 }
                 else
                 {
-                    // The window can not be used as a render target.
+                    // The window can not be used as a render target because InitWindowFramebuffer() has not been successfully called on it.
                     return InvalidWindowRenderTarget;
                 }
             }
@@ -873,6 +906,13 @@ namespace GT
             }
 
             return 0;   // No error.
+        }
+
+        void GPURenderingDevice_OpenGL21::ResizeWindowFramebuffer(HWND hWnd)
+        {
+            (void)hWnd;
+            
+            // This is done automatically in the background.
         }
 #endif
 

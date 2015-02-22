@@ -147,9 +147,18 @@ namespace GT
             PFNGLGETINTEGERVPROC         GetIntegerv;
             PFNGLVIEWPORTPROC            Viewport;
             PFNGLDEPTHRANGEPROC          DepthRange;
+            PFNGLDEPTHFUNCPROC           DepthFunc;
+            PFNGLDEPTHMASKPROC           DepthMask;
+            PFNGLSTENCILOPSEPARATEPROC   StencilOpSeparate;
+            PFNGLSTENCILFUNCSEPARATEPROC StencilFuncSeparate;
+            PFNGLSTENCILMASKSEPARATEPROC StencilMaskSeparate;
+            PFNGLENABLEPROC              Enable;
+            PFNGLDISABLEPROC             Disable;
+            PFNGLCLEARCOLORPROC          ClearColor;
+            PFNGLCLEARDEPTHPROC          ClearDepth;
+            PFNGLCLEARSTENCILPROC        ClearStencil;
 
             PFNGLCLEARPROC               Clear;
-            PFNGLCLEARCOLORPROC          ClearColor;
             PFNGLDRAWELEMENTSPROC        DrawElements;
 
             PFNGLCREATESHADERPROC        CreateShader;

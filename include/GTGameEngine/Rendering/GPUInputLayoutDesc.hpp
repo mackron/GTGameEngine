@@ -3,17 +3,12 @@
 #ifndef __GT_GE_GPUVertexInputLayoutDesc_hpp_
 #define __GT_GE_GPUVertexInputLayoutDesc_hpp_
 
+#include "GPUDataFormats.hpp"
+
 namespace GT
 {
     namespace GE
     {
-        enum GPUBasicType
-        {
-            GPUBasicType_Float = 0,
-            GPUBasicType_SInt  = 1,
-            GPUBasicType_UInt  = 2
-        };
-
         enum GPUInputClassification
         {
             GPUInputClassification_PerVertex   = 0,
@@ -23,10 +18,10 @@ namespace GT
         struct GPUInputLayoutAttribDesc
         {
             unsigned int           slotIndex;
-            const char*            attributeName;
-            GPUBasicType           attributeComponentType;      // Float, Signed Int, etc.
+            const char*            attributeName;               // The name of the attribute variable inside the shader, or the semantic name in the case of Direct3D.
+            GPUVertexAttribFormat  attributeComponentType;      // Float, Signed Int, etc.
             unsigned int           attributeComponentCount;     // float = 1, float2 = 2, etc.
-            unsigned int           attributePadding;            // The amount of padding between the end of this attribute, and the beginning of the next.
+            unsigned int           attributeOffset;             // The attribute's offset.
             GPUInputClassification attributeClass;              // Per-Vertex or Per-Instance
             unsigned int           instanceStepRate;
         };

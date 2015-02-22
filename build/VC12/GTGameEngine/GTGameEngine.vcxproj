@@ -36,6 +36,7 @@
     <ClCompile Include="..\..\..\source\HardwarePlatform_Input.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUBuffer_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUFragmentShader_D3D11.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUInputLayout_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUShaderProgram_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUVertexShader_D3D11.cpp" />
@@ -72,6 +73,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferMapType.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferType.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferUsage.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUDataFormats.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUFragmentShader.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUInputLayout.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUInputLayoutDesc.hpp" />
@@ -85,6 +87,7 @@
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUBuffer_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUFragmentShader_D3D11.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUInputLayout_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUShaderProgram_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUVertexShader_D3D11.hpp" />

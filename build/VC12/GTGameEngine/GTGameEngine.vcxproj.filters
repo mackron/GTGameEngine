@@ -137,6 +137,9 @@
     <ClCompile Include="..\..\..\source\Rendering\GPUVertexShader.cpp">
       <Filter>Source Files\Rendering</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUInputLayout_D3D11.cpp">
+      <Filter>Source Files\Rendering\D3D\D3D11</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -260,6 +263,12 @@
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUVertexShader.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUInputLayout_D3D11.hpp">
+      <Filter>Source Files\Rendering\D3D\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUDataFormats.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>

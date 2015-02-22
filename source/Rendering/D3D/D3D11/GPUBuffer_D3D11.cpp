@@ -8,8 +8,10 @@ namespace GT
 {
     namespace GE
     {
-        GPUBuffer_D3D11::GPUBuffer_D3D11(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags)
-            : m_type(type),
+        GPUBuffer_D3D11::GPUBuffer_D3D11(ID3D11Buffer* bufferD3D, GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags)
+            : GPUBuffer(),
+              m_bufferD3D(bufferD3D),
+              m_type(type),
               m_usage(usage),
               m_cpuAccessFlags(cpuAccessFlags)
         {
@@ -33,6 +35,12 @@ namespace GT
         GPUBufferCPUAccessFlags GPUBuffer_D3D11::GetBufferCPUAccessFlags() const
         {
             return m_cpuAccessFlags;
+        }
+
+
+        ID3D11Buffer* GPUBuffer_D3D11::GetD3D11Buffer()
+        {
+            return m_bufferD3D;
         }
     }
 }

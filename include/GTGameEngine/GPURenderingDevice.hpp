@@ -34,6 +34,12 @@ namespace GT
         class GPUShaderProgram;
         class GPUInputLayout;
 
+        enum GPUClearFlag
+        {
+            GPUClearFlag_Depth   = 0x01,
+            GPUClearFlag_Stencil = 0x02,
+        };
+
         /// Class representing a rendering GPU device.
         ///
         /// A rendering device cannot be used across multiple threads.
@@ -103,6 +109,14 @@ namespace GT
             /// @param a [in] The alpha component.
             virtual void ClearColor(float r, float g, float b, float a) = 0;
 
+            /// Clears the depth/stencil buffer of the current framebuffer with the given values.
+            ///
+            /// @param clearFlags [in] Flags specifying which buffers to clear.
+            /// @param depth      [in] The value to set for the depth buffer.
+            /// @param stencil    [in] The value to set for the stencil buffer.
+            virtual void ClearDepthStencil(GPUClearFlag clearFlags, float depth, uint8_t stencil) = 0;
+
+
             /// Renders the contents of the currently bound vertex buffer using the currently bound index buffer.
             ///
             /// @param indexCount         [in] The number of indices to draw.
@@ -166,10 +180,12 @@ namespace GT
             /// Binds the given index buffer for the input-assembler stage.
             ///
             /// @param buffer [in] A pointer to the buffer to bind.
+            /// @param format [in] The format of the indices (8-bit, 16-bit or 32-bit).
+            /// @param offset [in] The starting point within the buffer to start reading indices from.
             ///
             /// @remarks
             ///     This is analogous to D3D11's IASetIndexBuffer().
-            virtual void IASetIndexBuffer(GPUBuffer* buffer) = 0;
+            virtual void IASetIndexBuffer(GPUBuffer* buffer, GPUIndexFormat format, size_t offset) = 0;
 
 
 
@@ -385,6 +401,14 @@ namespace GT
             ///     @par
             ///     InvalidWindowRenderTarget will be returned if the window was not first initialized with InitWindowFramebuffer().
             virtual ResultCode SetCurrentWindow(HWND hWnd) = 0;
+
+            /// Updates the size of the give window's framebuffer.
+            ///
+            /// @param hWnd [in] A handle to the window whose framebuffer needs to be resized.
+            ///
+            /// @remarks
+            ///     This should be called in response to the window's size changing.
+            virtual void ResizeWindowFramebuffer(HWND hWnd) = 0;
 #endif
 
 #if defined(GT_PLATFORM_LINUX)

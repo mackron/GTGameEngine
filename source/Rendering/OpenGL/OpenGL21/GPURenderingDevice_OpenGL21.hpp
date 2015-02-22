@@ -48,6 +48,9 @@ namespace GT
             /// GPURenderingDevice::ClearColor().
             void ClearColor(float r, float g, float b, float a);
 
+            /// @copydoc GPURenderingDevice::ClearDepthStencil()
+            void ClearDepthStencil(GPUClearFlag clearFlags, float depth, uint8_t stencil);
+
             /// GPURenderingDevice::Draw().
             void Draw(unsigned int indexCount, unsigned int startIndexLocation);
 
@@ -80,7 +83,7 @@ namespace GT
             void IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset);
 
             /// @copydoc GPURenderingDevice::IASetIndexBuffer()
-            void IASetIndexBuffer(GPUBuffer* buffer);
+            void IASetIndexBuffer(GPUBuffer* buffer, GPUIndexFormat format, size_t offset);
 
 
             /////////////////////////////////////////////
@@ -166,6 +169,9 @@ namespace GT
 
             /// GPURenderingDevice::SetCurrentWindow().
             ResultCode SetCurrentWindow(HWND hWnd);
+
+            /// @copydoc GPURenderingDevice::ResizeWindowFramebuffer()
+            void ResizeWindowFramebuffer(HWND hWnd);
 #endif
 
 #if defined(GT_PLATFORM_LINUX)
@@ -224,6 +230,13 @@ namespace GT
             ////////////////////////////////////////////////////
             // State
 
+            /// Boolean state flags.
+            uint32_t m_stateFlags;
+
+            /// The current primitive topology for use by the OpenGL API. 
+            GLenum m_currentTopologyGL;
+
+
             struct IAVertexBufferSlot
             {
                 /// A pointer to the vertex buffer object that is bound to the slot.
@@ -243,15 +256,17 @@ namespace GT
             uint32_t m_invalidVertexBufferSlots;
 
 
-            /// Boolean state flags.
-            uint32_t m_stateFlags;
-
-            /// The current primitive topology for use by the OpenGL API. 
-            GLenum m_currentTopologyGL;
-
-
             /// A pointer to the current index buffer.
             GPUBuffer* m_currentIndexBuffer;
+
+            /// The format of the indices inside the currently bound index buffer.
+            GLenum m_indexBufferFormat;
+
+            /// The size in bytes of a single vertex index based on the index buffer format.
+            size_t m_indexBufferFormatSize;
+
+            /// The offset into the index buffer to use when drawing.
+            size_t m_indexBufferOffset;
 
 
             /// The current vertex input layout object.
