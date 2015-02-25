@@ -91,7 +91,11 @@ namespace GT
               BindBuffer(nullptr),
               BufferData(nullptr),
               MapBuffer(nullptr),
-              UnmapBuffer(nullptr)
+              UnmapBuffer(nullptr),
+
+              DebugMessageControlARB(nullptr),
+              DebugMessageInsertARB(nullptr),
+              DebugMessageCallbackARB(nullptr)
         {
         }
 
@@ -172,7 +176,7 @@ namespace GT
                                                             attribList[1] = static_cast<int>(majorVersion);
                                                             attribList[3] = static_cast<int>(minorVersion);
 
-                                                            if ((flags & DebugContext) != 0)
+                                                            if ((flags & EnableDebugging) != 0)
                                                             {
                                                                 attribList[5] |= WGL_CONTEXT_DEBUG_BIT_ARB;
                                                             }
@@ -355,7 +359,13 @@ namespace GT
 
         bool OpenGLContext::IsExtensionSupported(const char* extension) const
         {
-            (void)extension;
+            for (size_t iExtension = 0; iExtension < m_extensions.GetCount(); ++iExtension)
+            {
+                if (strcmp(m_extensions[iExtension], extension) == 0)
+                {
+                    return true;
+                }
+            }
 
             return false;
         }
@@ -550,6 +560,14 @@ namespace GT
                 this->BufferSubData            = reinterpret_cast<PFNGLBUFFERSUBDATAPROC           >(this->GetGLProcAddress("glBufferSubData"));
                 this->MapBuffer                = reinterpret_cast<PFNGLMAPBUFFERPROC               >(this->GetGLProcAddress("glMapBuffer"));
                 this->UnmapBuffer              = reinterpret_cast<PFNGLUNMAPBUFFERPROC             >(this->GetGLProcAddress("glUnmapBuffer"));
+
+
+                if (this->IsExtensionSupported("GL_ARB_debug_output"))
+                {
+                    this->DebugMessageControlARB  = reinterpret_cast<PFNGLDEBUGMESSAGECONTROLARBPROC >(this->GetGLProcAddress("glDebugMessageControlARB"));
+                    this->DebugMessageInsertARB   = reinterpret_cast<PFNGLDEBUGMESSAGEINSERTARBPROC  >(this->GetGLProcAddress("glDebugMessageInsertARB"));
+                    this->DebugMessageCallbackARB = reinterpret_cast<PFNGLDEBUGMESSAGECALLBACKARBPROC>(this->GetGLProcAddress("glDebugMessageCallbackARB"));
+                }
             }
 
             return 0;   // No error.

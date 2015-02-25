@@ -14,11 +14,62 @@
 
 #include <GTLib/String.hpp>
 #include <GTLib/Math.hpp>
+#include <GTLib/IO/cstdio.hpp>
 
 namespace GT
 {
     namespace GE
     {
+        void APIENTRY DebugOutputCallback(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char* message, const void* userParam)
+        {
+            (void)length;
+            (void)userParam;
+
+            const char* sourceStr;
+            const char* typeStr;
+            const char* severityStr;
+
+            switch (source)
+            {
+            case GL_DEBUG_SOURCE_API_ARB:               sourceStr = "OpenGL";           break;
+            case GL_DEBUG_SOURCE_WINDOW_SYSTEM_ARB:     sourceStr = "Window System";    break;
+            case GL_DEBUG_SOURCE_SHADER_COMPILER_ARB:   sourceStr = "Shader Compiler";  break;
+            case GL_DEBUG_SOURCE_APPLICATION_ARB:       sourceStr = "Application";      break;
+            case GL_DEBUG_SOURCE_OTHER_ARB:             sourceStr = "Other";            break;
+
+            default: sourceStr = "Unknown"; break;
+            }
+
+            switch (type)
+            {
+            case GL_DEBUG_TYPE_ERROR_ARB:               typeStr = "Error";                  break;
+            case GL_DEBUG_TYPE_DEPRECATED_BEHAVIOR_ARB: typeStr = "Deprecated Behaviour";   break;
+            case GL_DEBUG_TYPE_UNDEFINED_BEHAVIOR_ARB:  typeStr = "Undefined Behavious";    break;
+            case GL_DEBUG_TYPE_PORTABILITY_ARB:         typeStr = "Portability";            break;
+            case GL_DEBUG_TYPE_PERFORMANCE_ARB:         typeStr = "Performance";            break;
+            case GL_DEBUG_TYPE_OTHER_ARB:               typeStr = "Message";                break;
+
+            default: typeStr = "Unknown"; break;
+            }
+ 
+	        switch (severity)
+            {
+            case GL_DEBUG_SEVERITY_HIGH_ARB:   severityStr = "High";   break;
+            case GL_DEBUG_SEVERITY_MEDIUM_ARB: severityStr = "Medium"; break;
+            case GL_DEBUG_SEVERITY_LOW_ARB:    severityStr = "Low";    break;
+
+            default: severityStr = "Unknown"; break;
+            }
+
+            printf(
+                "%s\n"
+                "    ID:       %u\n"
+                "    Source:   %s\n"
+                "    Type:     %s\n"
+                "    Severity: %s\n\n",
+                message, id, sourceStr, typeStr, severityStr);
+        }
+
         inline void CheckContextIsCurrent(OpenGLContext &m_gl, HDC m_currentDC)
         {
 #if !defined(GT_GE_OPTIMIZE_FOR_SINGLE_RENDERING_DEVICE) || GT_GE_OPTIMIZE_FOR_SINGLE_RENDERING_DEVICE == 0
@@ -64,7 +115,14 @@ namespace GT
         {
             if (m_info.identifier_OpenGL == 1 && IsRenderingAPISupported(m_info, RenderingAPI_OpenGL21))
             {
-                ResultCode result = m_gl.Startup(2, 1);
+                unsigned int versionMajor = 2;
+                unsigned int versionMinor = 1;
+                uint32_t flags = 0;
+#if _DEBUG
+                flags |= OpenGLContext::EnableDebugging;
+#endif
+
+                ResultCode result = m_gl.Startup(versionMajor, versionMinor, flags);
                 if (Succeeded(result))
                 {
                     // Make the dummy DC current by default. If we don't do this, any rendering commands that are issued before making a window current will fail. This is important for things
@@ -88,6 +146,16 @@ namespace GT
 
                     // Clockwise winding by default.
                     m_gl.FrontFace(GL_CW);
+
+
+
+
+                    // Debug Output. For now we are just dumping this to stdout, but later on this should be changed to a proper callback system.
+                    if (m_gl.IsExtensionSupported("GL_ARB_debug_output"))
+                    {
+                        m_gl.Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
+                        m_gl.DebugMessageCallbackARB(DebugOutputCallback, nullptr);
+                    }
                 }
 
                 return result;

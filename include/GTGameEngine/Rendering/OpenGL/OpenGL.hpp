@@ -291,6 +291,12 @@ namespace GT
             PFNGLUNMAPBUFFERPROC         UnmapBuffer;
 
 
+            // GL_ARB_debug_output
+            PFNGLDEBUGMESSAGECONTROLARBPROC  DebugMessageControlARB;
+            PFNGLDEBUGMESSAGEINSERTARBPROC   DebugMessageInsertARB;
+            PFNGLDEBUGMESSAGECALLBACKARBPROC DebugMessageCallbackARB;
+
+
         public:
 
             //////////////////////////////////////////////////////
@@ -319,7 +325,7 @@ namespace GT
             static const uint32_t NoInitAPI        = (1 << 0);      // Do not retrieve any function pointers, except for those that are essential to initialize the context.
             static const uint32_t NoInitExtensions = (1 << 1);      // Do not extract any extensions, including APIs. Note that this will affect some important extensions such as WGL_EXT_swap_control.
             static const uint32_t NoCoreContext    = (1 << 2);      // Do not create a core context. In the case of OpenGL 2.1, this will not create an extended context, but in the case of OpenGL 4.5, it will not create a Core extended context.
-            static const uint32_t DebugContext     = (1 << 3);
+            static const uint32_t EnableDebugging  = (1 << 3);
 
 
         private:    // No copying.
