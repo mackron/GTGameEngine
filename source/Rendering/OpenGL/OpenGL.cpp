@@ -53,6 +53,10 @@ namespace GT
               ClearColor(nullptr),
               ClearDepth(nullptr),
               ClearStencil(nullptr),
+              FrontFace(nullptr),
+              CullFace(nullptr),
+              PolygonMode(nullptr),
+              PolygonOffset(nullptr),
 
               Clear(nullptr),
               DrawElements(nullptr),
@@ -225,6 +229,13 @@ namespace GT
             minorVersionOut = m_minorVersion;
         }
 
+        bool OpenGLContext::IsExtensionSupported(const char* extension) const
+        {
+            (void)extension;
+
+            return false;
+        }
+
 
 
 #if defined(GT_PLATFORM_WINDOWS)
@@ -304,6 +315,10 @@ namespace GT
                         this->ClearColor               = reinterpret_cast<PFNGLCLEARCOLORPROC              >(this->GetGLProcAddress("glClearColor"));
                         this->ClearDepth               = reinterpret_cast<PFNGLCLEARDEPTHPROC              >(this->GetGLProcAddress("glClearDepth"));
                         this->ClearStencil             = reinterpret_cast<PFNGLCLEARSTENCILPROC            >(this->GetGLProcAddress("glClearStencil"));
+                        this->FrontFace                = reinterpret_cast<PFNGLFRONTFACEPROC               >(this->GetGLProcAddress("glFrontFace"));
+                        this->CullFace                 = reinterpret_cast<PFNGLCULLFACEPROC                >(this->GetGLProcAddress("glCullFace"));
+                        this->PolygonMode              = reinterpret_cast<PFNGLPOLYGONMODEPROC             >(this->GetGLProcAddress("glPolygonMode"));
+                        this->PolygonOffset            = reinterpret_cast<PFNGLPOLYGONOFFSETPROC           >(this->GetGLProcAddress("glPolygonOffset"));
 
                         this->Clear                    = reinterpret_cast<PFNGLCLEARPROC                   >(this->GetGLProcAddress("glClear"));
                         this->DrawElements             = reinterpret_cast<PFNGLDRAWELEMENTSPROC            >(this->GetGLProcAddress("glDrawElements"));

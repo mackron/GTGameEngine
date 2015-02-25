@@ -8,6 +8,7 @@
 #include "GPUVertexShader_D3D11.hpp"
 #include "GPUFragmentShader_D3D11.hpp"
 #include "GPUShaderProgram_D3D11.hpp"
+#include "GPUStateObjects_D3D11.hpp"
 #include <GTLib/Strings/Find.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/Parse.hpp>
@@ -171,6 +172,11 @@ namespace GT
             return RenderingAPI_D3D11;
         }
 
+        GPUHandedness GPURenderingDevice_D3D11::GetHandedness() const
+        {
+            return GPUHandedness_Left;
+        }
+
 
 
         void GPURenderingDevice_D3D11::SetSwapInterval(int swapInterval)
@@ -328,6 +334,15 @@ namespace GT
         /////////////////////////////////////////////
         // Rasterization Stage
 
+        void GPURenderingDevice_D3D11::RSSetState(GPURasterizerState* state)
+        {
+            auto stateD3D = reinterpret_cast<GPURasterizerState_D3D11*>(state);
+            if (stateD3D != nullptr)
+            {
+                m_context->RSSetState(stateD3D->GetD3D11RasterizerState());
+            }
+        }
+
         void GPURenderingDevice_D3D11::RSSetViewports(GPUViewport* viewports, size_t viewportCount)
         {
             if (viewports != nullptr && viewportCount > 0)
@@ -358,6 +373,62 @@ namespace GT
         // Object Creation and Deletion
         //
         /////////////////////////////////////////////////////////////////////////////
+
+        ////////////////////////////////////////////
+        // State Objects
+
+        ResultCode GPURenderingDevice_D3D11::CreateRasterizerState(const GPURasterizerStateDesc &desc, GPURasterizerState* &rasterizerStateOut)
+        {
+            D3D11_FILL_MODE fillModesD3D[] =
+            {
+                D3D11_FILL_WIREFRAME,
+                D3D11_FILL_SOLID
+            };
+
+            D3D11_CULL_MODE cullModesD3D[] =
+            {
+                D3D11_CULL_NONE,
+                D3D11_CULL_FRONT,
+                D3D11_CULL_BACK
+            };
+
+
+            D3D11_RASTERIZER_DESC descD3D;
+            descD3D.FillMode              = fillModesD3D[desc.fillMode];
+            descD3D.CullMode              = cullModesD3D[desc.cullMode];
+            descD3D.FrontCounterClockwise = (desc.polygonWinding == GPUPolygonWinding_CW) ? TRUE : FALSE;
+            descD3D.DepthBias             = desc.depthBias;
+            descD3D.DepthBiasClamp        = desc.depthBiasClamp;
+            descD3D.SlopeScaledDepthBias  = desc.slopeScaledDepthBias;
+            descD3D.DepthClipEnable       = desc.enableDepthClip;
+            descD3D.MultisampleEnable     = desc.enableMultisample;
+            descD3D.AntialiasedLineEnable = desc.enableAntialiasedLine;
+            
+            ID3D11RasterizerState* rasterizerStateD3D11;
+            if (SUCCEEDED(m_device->CreateRasterizerState(&descD3D, &rasterizerStateD3D11)))
+            {
+                rasterizerStateOut = new GPURasterizerState_D3D11(desc, rasterizerStateD3D11);
+                return 0;
+            }
+            else
+            {
+                // Failed to create the state object.
+                return -1;
+            }
+        }
+
+        void GPURenderingDevice_D3D11::DeleteRasterizerState(GPURasterizerState* state)
+        {
+            auto rasterizerStateD3D = reinterpret_cast<GPURasterizerState_D3D11*>(state);
+            if (rasterizerStateD3D != nullptr)
+            {
+                assert(rasterizerStateD3D->GetD3D11RasterizerState() != nullptr);
+
+                rasterizerStateD3D->GetD3D11RasterizerState()->Release();
+                delete rasterizerStateD3D;
+            }
+        }
+
 
         ////////////////////////////////////////////
         // Input Layout

@@ -15,6 +15,7 @@
 #include "Rendering/GPUInputLayoutDesc.hpp"
 #include "Rendering/GPURenderingDeviceLimits.hpp"
 #include "Rendering/GPUViewport.hpp"
+#include "Rendering/GPUStateObjects.hpp"
 
 #include <GTLib/ResultCodes.hpp>
 
@@ -39,6 +40,13 @@ namespace GT
             GPUClearFlag_Depth   = 0x01,
             GPUClearFlag_Stencil = 0x02,
         };
+
+        enum GPUHandedness
+        {
+            GPUHandedness_Left,     // Front-facing triangle winding = CCW. Forward direction = -Z
+            GPUHandedness_Right     // Front-facing triangle winding = CW. Forward direction = +Z
+        };
+
 
         /// Class representing a rendering GPU device.
         ///
@@ -87,6 +95,14 @@ namespace GT
             /// @return A code representing the rendering API being used internally by the device.
             virtual RenderingAPI GetRenderingAPI() const = 0;
 
+            /// Retrieves the handedness used by the rendering API.
+            ///
+            /// @remarks
+            ///     Direct3D is right-handed, whereas OpenGL is left handed.
+            ///     @par
+            ///     A front-facing triangle is wound clockwise for a right-handed coordinate system, and counter-clockwise for a left handed system. In addition, the
+            ///     Z axis is such that looking forward, or into the screen, is the +Z direction for right-handed, and -Z for left handed.
+            virtual GPUHandedness GetHandedness() const = 0;
 
 
             /// Sets the swap interval.
@@ -192,6 +208,11 @@ namespace GT
             /////////////////////////////////////////////
             // Rasterization Stage
 
+            /// Sets the state for the rasterization state.
+            ///
+            /// @param state [in] The rasterizer state to make current on the rasterization state.
+            virtual void RSSetState(GPURasterizerState* state) = 0;
+
             /// Sets the viewports for the rasterization stage.
             ///
             /// @param viewports [in] The list of GPUViewport objects.
@@ -210,6 +231,21 @@ namespace GT
             // Object Creation and Deletion
             //
             /////////////////////////////////////////////////////////////////////////////
+
+            ////////////////////////////////////////////
+            // State Objects
+
+            /// Creates a rasterizer state object.
+            ///
+            /// @param desc               [in]  A reference to the object that describes the rasterizer state.
+            /// @param rasterizerStateOut [out] A reference to the variable that will receive a pointer to the new rasterizer state object.
+            virtual ResultCode CreateRasterizerState(const GPURasterizerStateDesc &desc, GPURasterizerState* &rasterizerStateOut) = 0;
+
+            /// Deletes a rasterizer state object.
+            ///
+            /// @param state [in] A pointer to the rasterizer state object to delete.
+            virtual void DeleteRasterizerState(GPURasterizerState* state) = 0;
+
 
             ////////////////////////////////////////////
             // Input Layout

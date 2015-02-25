@@ -6,6 +6,7 @@
 #include "GPUShaderProgram_OpenGL21.hpp"
 #include "GPUBuffer_OpenGL21.hpp"
 #include "GPUInputLayout_OpenGL21.hpp"
+#include "GPUStateObjects_OpenGL21.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
@@ -84,6 +85,9 @@ namespace GT
 
                     // Enable depth-testing by default.
                     m_gl.Enable(GL_DEPTH_TEST);
+
+                    // Clockwise winding by default.
+                    m_gl.FrontFace(GL_CW);
                 }
 
                 return result;
@@ -106,6 +110,11 @@ namespace GT
         RenderingAPI GPURenderingDevice_OpenGL21::GetRenderingAPI() const
         {
             return RenderingAPI_OpenGL21;
+        }
+
+        GPUHandedness GPURenderingDevice_OpenGL21::GetHandedness() const
+        {
+            return GPUHandedness_Left;
         }
 
 
@@ -312,6 +321,92 @@ namespace GT
         /////////////////////////////////////////////
         // Rasterization Stage
 
+        void GPURenderingDevice_OpenGL21::RSSetState(GPURasterizerState* state)
+        {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
+            auto stateGL = reinterpret_cast<GPURasterizerState_OpenGL21*>(state);
+            if (stateGL != nullptr)
+            {
+                // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
+
+                const GPURasterizerStateDesc &desc = stateGL->GetDesc();
+
+
+                // Fill mode.
+                GLenum fillModesGL[] =
+                {
+                    GL_LINE,        // GPUFillMode_Wireframe
+                    GL_FILL,        // GPUFillMode_Solid
+                };
+                m_gl.PolygonMode(GL_FRONT_AND_BACK, fillModesGL[desc.fillMode]);
+                
+
+                // Cull mode.
+                if (desc.cullMode == GPUCullMode_None)
+                {
+                    m_gl.Disable(GL_CULL_FACE);
+                }
+                else
+                {
+                    m_gl.Enable(GL_CULL_FACE);
+                    m_gl.CullFace((desc.cullMode == GPUCullMode_Back) ? GL_BACK : GL_FRONT);
+                }
+
+
+                // Polygon winding.
+                GLenum windingModesGL[] =
+                {
+                    GL_CCW,
+                    GL_CW
+                };
+                m_gl.FrontFace(windingModesGL[desc.polygonWinding]);
+
+
+                // Depth bias.
+                if (desc.depthBias != 0)
+                {
+                    m_gl.Enable(GL_POLYGON_OFFSET_FILL);
+                    m_gl.Enable(GL_POLYGON_OFFSET_LINE);
+                    m_gl.PolygonOffset(1.0f, static_cast<float>(desc.depthBias));
+                }
+                else
+                {
+                    m_gl.Enable(GL_POLYGON_OFFSET_FILL);
+                    m_gl.Enable(GL_POLYGON_OFFSET_LINE);
+                }
+
+
+                // Dpeth bias clamp is not supported.
+                // Sloped scaled depth bias is not supported.
+
+
+                // Depth clipping.
+                if (desc.enableDepthClip)
+                {
+                    m_gl.Disable(GL_DEPTH_CLAMP);
+                }
+                else
+                {
+                    m_gl.Enable(GL_DEPTH_CLAMP);
+                }
+
+
+                // Enable scissor.
+                if (desc.enableScissor)
+                {
+                    m_gl.Enable(GL_SCISSOR_TEST);
+                }
+                else
+                {
+                    m_gl.Disable(GL_SCISSOR_TEST);
+                }
+
+
+                // enableMultisampling and enableAntialiasedLine is not supported.
+            }
+        }
+
         void GPURenderingDevice_OpenGL21::RSSetViewports(GPUViewport* viewports, size_t viewportCount)
         {
             CheckContextIsCurrent(m_gl, m_currentDC);
@@ -321,6 +416,111 @@ namespace GT
                 m_gl.Viewport(static_cast<GLint>(viewports[0].x), static_cast<GLint>(viewports[0].y), static_cast<GLsizei>(viewports[0].width), static_cast<GLsizei>(viewports[0].height));
                 m_gl.DepthRange(viewports[0].depthRangeNear, viewports[0].depthRangeFar);
             }
+        }
+
+
+
+        ////////////////////////////////////////////
+        // State Objects
+
+        ResultCode GPURenderingDevice_OpenGL21::CreateRasterizerState(const GPURasterizerStateDesc &desc, GPURasterizerState* &rasterizerStateOut)
+        {
+            rasterizerStateOut = new GPURasterizerState_OpenGL21(desc);
+            return 0;
+        }
+
+        void GPURenderingDevice_OpenGL21::DeleteRasterizerState(GPURasterizerState* state)
+        {
+            auto stateGL = reinterpret_cast<GPURasterizerState_OpenGL21*>(state);
+            if (stateGL != nullptr)
+            {
+                delete stateGL;
+            }
+        }
+
+
+        ////////////////////////////////////////////
+        // Input Layouts
+
+        ResultCode GPURenderingDevice_OpenGL21::CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &vertexInputLayoutOut)
+        {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
+            auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(shaderProgram);
+            if (shaderProgramGL != nullptr)
+            {
+                auto attribDescGL = reinterpret_cast<GPUInputLayout_OpenGL21::AttributeDesc*>(malloc(sizeof(GPUInputLayout_OpenGL21::AttributeDesc) * attribDescCount));
+                if (attribDescGL != nullptr)
+                {
+                    unsigned int slotAttribCounts[GT_GE_MAX_VERTEX_BUFFER_SLOTS];
+                    memset(slotAttribCounts, 0, sizeof(slotAttribCounts));
+
+                    unsigned int iAttribGL = 0;
+                    for (unsigned int iSlot = 0; iSlot < GT_GE_MAX_VERTEX_BUFFER_SLOTS && iAttribGL < attribDescCount; ++iSlot)
+                    {
+                        for (size_t iAttrib = 0; iAttrib < attribDescCount; ++iAttrib)
+                        {
+                            assert(iAttribGL < attribDescCount);
+
+                            auto &attrib   = attribDesc[iAttrib];
+                            auto &attribGL = attribDescGL[iAttribGL];
+                        
+                            if (attrib.slotIndex == iSlot)
+                            {
+                                slotAttribCounts[iSlot] += 1;
+
+
+                                attribGL.slotIndex            = attrib.slotIndex;
+                                attribGL.attribLocation       = m_gl.GetAttribLocation(shaderProgramGL->GetOpenGLObject(), attrib.attributeName);
+                                attribGL.attribComponentCount = attrib.attributeComponentCount;
+                                attribGL.attribOffset         = attrib.attributeOffset;
+
+                                GLenum attribComponentTypesGL[] =
+                                {
+                                    GL_FLOAT,               // GPUBasicType_Float
+                                    GL_INT,                 // GPUBasicType_SInt
+                                    GL_UNSIGNED_INT         // GPUBasicType_UInt
+                                };
+                                attribGL.attribComponentType = attribComponentTypesGL[attrib.attributeComponentType];
+
+                                attribGL.attributeClass   = attrib.attributeClass;
+                                attribGL.instanceStepRate = attrib.instanceStepRate;
+
+
+                                iAttribGL += 1;
+                            }
+                        }
+                    }
+
+
+
+                    vertexInputLayoutOut = new GPUInputLayout_OpenGL21(attribDescGL, attribDescCount, slotAttribCounts);
+
+
+                    free(attribDescGL);
+                    return 0;   // No errors.
+                }
+                else
+                {
+                    // Failed to allocate memory.
+                    return -1;
+                }
+            }
+            else
+            {
+                // Invalid shader program.
+                return -1;
+            }
+        }
+
+        void GPURenderingDevice_OpenGL21::DeleteInputLayout(GPUInputLayout* vertexInputLayout)
+        {
+            if (m_currentInputLayout == vertexInputLayout)
+            {
+                this->IASetInputLayout(nullptr);
+            }
+
+            delete vertexInputLayout;
         }
 
 
@@ -508,87 +708,6 @@ namespace GT
                 m_gl.DeleteProgram(shaderProgramGL->GetOpenGLObject());
                 delete shaderProgram;
             }
-        }
-
-        ResultCode GPURenderingDevice_OpenGL21::CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &vertexInputLayoutOut)
-        {
-            CheckContextIsCurrent(m_gl, m_currentDC);
-
-            auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(shaderProgram);
-            if (shaderProgramGL != nullptr)
-            {
-                auto attribDescGL = reinterpret_cast<GPUInputLayout_OpenGL21::AttributeDesc*>(malloc(sizeof(GPUInputLayout_OpenGL21::AttributeDesc) * attribDescCount));
-                if (attribDescGL != nullptr)
-                {
-                    unsigned int slotAttribCounts[GT_GE_MAX_VERTEX_BUFFER_SLOTS];
-                    memset(slotAttribCounts, 0, sizeof(slotAttribCounts));
-
-                    unsigned int iAttribGL = 0;
-                    for (unsigned int iSlot = 0; iSlot < GT_GE_MAX_VERTEX_BUFFER_SLOTS && iAttribGL < attribDescCount; ++iSlot)
-                    {
-                        for (size_t iAttrib = 0; iAttrib < attribDescCount; ++iAttrib)
-                        {
-                            assert(iAttribGL < attribDescCount);
-
-                            auto &attrib   = attribDesc[iAttrib];
-                            auto &attribGL = attribDescGL[iAttribGL];
-                        
-                            if (attrib.slotIndex == iSlot)
-                            {
-                                slotAttribCounts[iSlot] += 1;
-
-
-                                attribGL.slotIndex            = attrib.slotIndex;
-                                attribGL.attribLocation       = m_gl.GetAttribLocation(shaderProgramGL->GetOpenGLObject(), attrib.attributeName);
-                                attribGL.attribComponentCount = attrib.attributeComponentCount;
-                                attribGL.attribOffset         = attrib.attributeOffset;
-
-                                GLenum attribComponentTypesGL[] =
-                                {
-                                    GL_FLOAT,               // GPUBasicType_Float
-                                    GL_INT,                 // GPUBasicType_SInt
-                                    GL_UNSIGNED_INT         // GPUBasicType_UInt
-                                };
-                                attribGL.attribComponentType = attribComponentTypesGL[attrib.attributeComponentType];
-
-                                attribGL.attributeClass   = attrib.attributeClass;
-                                attribGL.instanceStepRate = attrib.instanceStepRate;
-
-
-                                iAttribGL += 1;
-                            }
-                        }
-                    }
-
-
-
-                    vertexInputLayoutOut = new GPUInputLayout_OpenGL21(attribDescGL, attribDescCount, slotAttribCounts);
-
-
-                    free(attribDescGL);
-                    return 0;   // No errors.
-                }
-                else
-                {
-                    // Failed to allocate memory.
-                    return -1;
-                }
-            }
-            else
-            {
-                // Invalid shader program.
-                return -1;
-            }
-        }
-
-        void GPURenderingDevice_OpenGL21::DeleteInputLayout(GPUInputLayout* vertexInputLayout)
-        {
-            if (m_currentInputLayout == vertexInputLayout)
-            {
-                this->IASetInputLayout(nullptr);
-            }
-
-            delete vertexInputLayout;
         }
 
 

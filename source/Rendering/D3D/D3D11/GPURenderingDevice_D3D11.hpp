@@ -42,6 +42,9 @@ namespace GT
             /// GPURenderingDevice::GetRenderingAPI().
             RenderingAPI GetRenderingAPI() const;
 
+            /// GPURenderingDevice::GetHandedness().
+            GPUHandedness GetHandedness() const;
+
 
             /// GPURenderingDevice::SetSwapInterval().
             void SetSwapInterval(int swapInterval);
@@ -96,6 +99,9 @@ namespace GT
             /////////////////////////////////////////////
             // Rasterization Stage
 
+            /// @copydoc GPURenderingDevice::RSSetState()
+            void RSSetState(GPURasterizerState* state);
+
             /// @copydoc GPURenderingDevice::RSSetViewports()
             void RSSetViewports(GPUViewport* viewports, size_t viewportCount);
 
@@ -106,6 +112,18 @@ namespace GT
             // Object Creation and Deletion
             //
             /////////////////////////////////////////////////////////////////////////////
+
+            ////////////////////////////////////////////
+            // State Objects
+
+            /// @copydoc GPURenderingDevice::CreateRasterizerState()
+            ResultCode CreateRasterizerState(const GPURasterizerStateDesc &desc, GPURasterizerState* &rasterizerStateOut);
+
+            /// @copydoc GPURenderingDevice::DeleteRasterizerState()
+            void DeleteRasterizerState(GPURasterizerState* state);
+
+
+
 
             ////////////////////////////////////////////
             // Input Layout

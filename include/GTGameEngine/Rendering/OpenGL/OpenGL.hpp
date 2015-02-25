@@ -9,8 +9,73 @@
 #if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
-#include <GL/glcorearb.h>
+#include <GL/GL.h>
+#include <GL/glext.h>
 #include <GL/wglext.h>
+
+typedef void (APIENTRYP PFNGLCULLFACEPROC) (GLenum mode);
+typedef void (APIENTRYP PFNGLFRONTFACEPROC) (GLenum mode);
+typedef void (APIENTRYP PFNGLHINTPROC) (GLenum target, GLenum mode);
+typedef void (APIENTRYP PFNGLLINEWIDTHPROC) (GLfloat width);
+typedef void (APIENTRYP PFNGLPOINTSIZEPROC) (GLfloat size);
+typedef void (APIENTRYP PFNGLPOLYGONMODEPROC) (GLenum face, GLenum mode);
+typedef void (APIENTRYP PFNGLSCISSORPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
+typedef void (APIENTRYP PFNGLTEXPARAMETERFPROC) (GLenum target, GLenum pname, GLfloat param);
+typedef void (APIENTRYP PFNGLTEXPARAMETERFVPROC) (GLenum target, GLenum pname, const GLfloat *params);
+typedef void (APIENTRYP PFNGLTEXPARAMETERIPROC) (GLenum target, GLenum pname, GLint param);
+typedef void (APIENTRYP PFNGLTEXPARAMETERIVPROC) (GLenum target, GLenum pname, const GLint *params);
+typedef void (APIENTRYP PFNGLTEXIMAGE1DPROC) (GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const void *pixels);
+typedef void (APIENTRYP PFNGLTEXIMAGE2DPROC) (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels);
+typedef void (APIENTRYP PFNGLDRAWBUFFERPROC) (GLenum buf);
+typedef void (APIENTRYP PFNGLCLEARPROC) (GLbitfield mask);
+typedef void (APIENTRYP PFNGLCLEARCOLORPROC) (GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
+typedef void (APIENTRYP PFNGLCLEARSTENCILPROC) (GLint s);
+typedef void (APIENTRYP PFNGLCLEARDEPTHPROC) (GLdouble depth);
+typedef void (APIENTRYP PFNGLSTENCILMASKPROC) (GLuint mask);
+typedef void (APIENTRYP PFNGLCOLORMASKPROC) (GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
+typedef void (APIENTRYP PFNGLDEPTHMASKPROC) (GLboolean flag);
+typedef void (APIENTRYP PFNGLDISABLEPROC) (GLenum cap);
+typedef void (APIENTRYP PFNGLENABLEPROC) (GLenum cap);
+typedef void (APIENTRYP PFNGLFINISHPROC) (void);
+typedef void (APIENTRYP PFNGLFLUSHPROC) (void);
+typedef void (APIENTRYP PFNGLBLENDFUNCPROC) (GLenum sfactor, GLenum dfactor);
+typedef void (APIENTRYP PFNGLLOGICOPPROC) (GLenum opcode);
+typedef void (APIENTRYP PFNGLSTENCILFUNCPROC) (GLenum func, GLint ref, GLuint mask);
+typedef void (APIENTRYP PFNGLSTENCILOPPROC) (GLenum fail, GLenum zfail, GLenum zpass);
+typedef void (APIENTRYP PFNGLDEPTHFUNCPROC) (GLenum func);
+typedef void (APIENTRYP PFNGLPIXELSTOREFPROC) (GLenum pname, GLfloat param);
+typedef void (APIENTRYP PFNGLPIXELSTOREIPROC) (GLenum pname, GLint param);
+typedef void (APIENTRYP PFNGLREADBUFFERPROC) (GLenum src);
+typedef void (APIENTRYP PFNGLREADPIXELSPROC) (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void *pixels);
+typedef void (APIENTRYP PFNGLGETBOOLEANVPROC) (GLenum pname, GLboolean *data);
+typedef void (APIENTRYP PFNGLGETDOUBLEVPROC) (GLenum pname, GLdouble *data);
+typedef GLenum (APIENTRYP PFNGLGETERRORPROC) (void);
+typedef void (APIENTRYP PFNGLGETFLOATVPROC) (GLenum pname, GLfloat *data);
+typedef void (APIENTRYP PFNGLGETINTEGERVPROC) (GLenum pname, GLint *data);
+typedef const GLubyte *(APIENTRYP PFNGLGETSTRINGPROC) (GLenum name);
+typedef void (APIENTRYP PFNGLGETTEXIMAGEPROC) (GLenum target, GLint level, GLenum format, GLenum type, void *pixels);
+typedef void (APIENTRYP PFNGLGETTEXPARAMETERFVPROC) (GLenum target, GLenum pname, GLfloat *params);
+typedef void (APIENTRYP PFNGLGETTEXPARAMETERIVPROC) (GLenum target, GLenum pname, GLint *params);
+typedef void (APIENTRYP PFNGLGETTEXLEVELPARAMETERFVPROC) (GLenum target, GLint level, GLenum pname, GLfloat *params);
+typedef void (APIENTRYP PFNGLGETTEXLEVELPARAMETERIVPROC) (GLenum target, GLint level, GLenum pname, GLint *params);
+typedef GLboolean (APIENTRYP PFNGLISENABLEDPROC) (GLenum cap);
+typedef void (APIENTRYP PFNGLDEPTHRANGEPROC) (GLdouble near, GLdouble far);
+typedef void (APIENTRYP PFNGLVIEWPORTPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
+
+typedef void (APIENTRYP PFNGLDRAWARRAYSPROC) (GLenum mode, GLint first, GLsizei count);
+typedef void (APIENTRYP PFNGLDRAWELEMENTSPROC) (GLenum mode, GLsizei count, GLenum type, const void *indices);
+typedef void (APIENTRYP PFNGLGETPOINTERVPROC) (GLenum pname, void **params);
+typedef void (APIENTRYP PFNGLPOLYGONOFFSETPROC) (GLfloat factor, GLfloat units);
+typedef void (APIENTRYP PFNGLCOPYTEXIMAGE1DPROC) (GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border);
+typedef void (APIENTRYP PFNGLCOPYTEXIMAGE2DPROC) (GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border);
+typedef void (APIENTRYP PFNGLCOPYTEXSUBIMAGE1DPROC) (GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
+typedef void (APIENTRYP PFNGLCOPYTEXSUBIMAGE2DPROC) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
+typedef void (APIENTRYP PFNGLTEXSUBIMAGE1DPROC) (GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels);
+typedef void (APIENTRYP PFNGLTEXSUBIMAGE2DPROC) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
+typedef void (APIENTRYP PFNGLBINDTEXTUREPROC) (GLenum target, GLuint texture);
+typedef void (APIENTRYP PFNGLDELETETEXTURESPROC) (GLsizei n, const GLuint *textures);
+typedef void (APIENTRYP PFNGLGENTEXTURESPROC) (GLsizei n, GLuint *textures);
+typedef GLboolean (APIENTRYP PFNGLISTEXTUREPROC) (GLuint texture);
 
 typedef HGLRC (* PFNWGLCREATECONTEXTPROC)       (HDC hdc);
 typedef BOOL  (* PFNWGLDELETECONTEXTPROC)       (HGLRC hglrc);
@@ -53,6 +118,12 @@ namespace GT
             /// @param minor [out] A reference to the variable that will receive the minor version.
             void GetVersion(unsigned int &major, unsigned int &minor) const;
 
+            /// Helper for determining whether or not the given extension is supported.
+            ///
+            /// @param extension [in] A reference to the extension string.
+            ///
+            /// @return True if the extension is supported.
+            bool IsExtensionSupported(const char* extension) const;
 
 
 #if defined(GT_PLATFORM_WINDOWS)
@@ -127,6 +198,9 @@ namespace GT
             unsigned int m_minorVersion;
 
 
+
+
+
         public:
 
             ///////////////////////////////////////////////////////////////
@@ -157,6 +231,10 @@ namespace GT
             PFNGLCLEARCOLORPROC          ClearColor;
             PFNGLCLEARDEPTHPROC          ClearDepth;
             PFNGLCLEARSTENCILPROC        ClearStencil;
+            PFNGLFRONTFACEPROC           FrontFace;
+            PFNGLCULLFACEPROC            CullFace;
+            PFNGLPOLYGONMODEPROC         PolygonMode;
+            PFNGLPOLYGONOFFSETPROC       PolygonOffset;
 
             PFNGLCLEARPROC               Clear;
             PFNGLDRAWELEMENTSPROC        DrawElements;
