@@ -170,7 +170,7 @@ namespace GT
                     if (m_gl.IsExtensionSupported("GL_ARB_debug_output"))
                     {
                         m_gl.Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
-                        
+                        m_gl.DebugMessageCallbackARB(DebugOutputCallback, nullptr);
 
 
                         // Disable some specific messages.
@@ -182,9 +182,6 @@ namespace GT
                             };
                             m_gl.DebugMessageControlARB(GL_DEBUG_SOURCE_API_ARB, GL_DEBUG_TYPE_OTHER_ARB, GL_DONT_CARE, sizeof(disabledIDs) / sizeof(GLuint), disabledIDs, GL_FALSE);
                         }
-
-
-                        m_gl.DebugMessageCallbackARB(DebugOutputCallback, nullptr);
                     }
                 }
 
