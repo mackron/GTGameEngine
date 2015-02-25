@@ -47,6 +47,14 @@ namespace GT
             GPUHandedness_Right     // Front-facing triangle winding = CW. Forward direction = +Z
         };
 
+        enum GPUVendor
+        {
+            GPUVendor_Unknown,
+            GPUVendor_NVIDIA,
+            GPUVendor_AMD,
+            GPUVendor_Intel
+        };
+
 
         /// Class representing a rendering GPU device.
         ///

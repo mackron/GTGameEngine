@@ -132,6 +132,22 @@ namespace GT
                     m_gl.MakeCurrent(m_currentDC, m_gl.GetRenderingContext());
 
 
+                    // Retrieve the vendor.
+                    const char* vendor = reinterpret_cast<const char*>(m_gl.GetString(GL_VENDOR));
+                    if (strstr(vendor, "NVIDIA") != nullptr)
+                    {
+                        m_vendor = GPUVendor_NVIDIA;
+                    }
+                    else if (strstr(vendor, "AMD") != nullptr || strstr(vendor, "ATI") != nullptr)
+                    {
+                        m_vendor = GPUVendor_AMD;
+                    }
+                    else if (strstr(vendor, "Intel") != nullptr)
+                    {
+                        m_vendor = GPUVendor_Intel;
+                    }
+
+
                     m_supportedShaderTargets.PushBack(GPUShaderTarget_GLSL_120_VS);
                     m_supportedShaderTargets.PushBack(GPUShaderTarget_GLSL_120_FS);
 
@@ -154,6 +170,20 @@ namespace GT
                     if (m_gl.IsExtensionSupported("GL_ARB_debug_output"))
                     {
                         m_gl.Enable(GL_DEBUG_OUTPUT_SYNCHRONOUS_ARB);
+                        
+
+
+                        // Disable some specific messages.
+                        if (m_vendor == GPUVendor_NVIDIA)
+                        {
+                            GLuint disabledIDs[] =
+                            {
+                                131185      // ... Buffer object will use VIDEO memory ...
+                            };
+                            m_gl.DebugMessageControlARB(GL_DEBUG_SOURCE_API_ARB, GL_DEBUG_TYPE_OTHER_ARB, GL_DONT_CARE, sizeof(disabledIDs) / sizeof(GLuint), disabledIDs, GL_FALSE);
+                        }
+
+
                         m_gl.DebugMessageCallbackARB(DebugOutputCallback, nullptr);
                     }
                 }

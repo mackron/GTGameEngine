@@ -239,6 +239,9 @@ namespace GT
             HDC m_currentDC;
 #endif
 
+            /// The GPU vendor (NVIDIA, AMD, etc.)
+            GPUVendor m_vendor;
+
             /// The list of supported shader targets.
             GTLib::Vector<GPUShaderTarget> m_supportedShaderTargets;
 
