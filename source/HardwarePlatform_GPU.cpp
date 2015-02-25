@@ -142,7 +142,9 @@ namespace GT
 #endif
 
 #if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
-            ResultCode resultGL = m_gl.Startup();       // <-- This will fail if OpenGL 2.1 is not supported.
+            static const unsigned int minOpenGLVersionMajor = 2;
+            static const unsigned int minOpenGLVersionMinor = 1;
+            ResultCode resultGL = m_gl.Startup(minOpenGLVersionMajor, minOpenGLVersionMinor, OpenGLContext::NoInitAPI | OpenGLContext::NoInitExtensions | OpenGLContext::NoCoreContext);
             if (GT::Succeeded(resultGL))
             {
                 // If we don't yet have any GPURenderingDeviceInfo objects we'll need to create one.
@@ -165,6 +167,7 @@ namespace GT
                     AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL21);
 #endif
 
+#if defined(GT_GE_BUILD_OPENGL45)
                     // Now we need to check for OpenGL 4.5 support.
                     unsigned int majorVersion;
                     unsigned int minorVersion;
@@ -172,14 +175,14 @@ namespace GT
 
                     if (majorVersion > 4 || (majorVersion == 4 && minorVersion >= 5))
                     {
-#if defined(GT_GE_BUILD_OPENGL45)
+
                         AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL45);
-#endif
                     }
                     else
                     {
                         // OpenGL 4.5 is not supported.
                     }
+#endif
                 }
             }
             else

@@ -4,9 +4,12 @@
 #define __GT_GE_Rendering_OpenGL_hpp_
 
 #include <GTGameEngine/Config.hpp>
-#include <GTLib/ResultCodes.hpp>
 
 #if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#include <GTLib/ResultCodes.hpp>
+#include <GTLib/Vector.hpp>
+#include <cstdint>
+
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
 #include <GL/GL.h>
@@ -105,8 +108,12 @@ namespace GT
 
             /// Starts up the context.
             ///
+            /// @param majorVersion [in] The major OpenGL version to support at a minimum.
+            /// @param minorVersion [in] The minor OpenGL version to support at a minimum.
+            /// @param flags        [in] Flags controlling how the context should be started up.
+            ///
             /// @return <0 if an error occurs; >= 0 if there is no error.
-            ResultCode Startup();
+            ResultCode Startup(unsigned int majorVersion, unsigned int minorVersion, uint32_t flags = 0);
 
             /// Shuts down the context.
             void Shutdown();
@@ -156,13 +163,24 @@ namespace GT
             ///     This does not use the OS-level equivalent (GetProcAddress on Win32 and dlsym on *nix systems).
             void* GetGLProcAddress(const char* procName) const;
 
+            /// Initializes the OpenGL extensions.
+            ///
+            /// @remarks
+            ///     This does not retrieve the function pointers for each extension, but rather extracts the extension strings to that IsExtensionSupported() works correctly.
+            ResultCode InitExtensions();
+
             /// Initializes the OpenGL API.
+            ///
+            /// @param majorVersion [in] The major part of the OpenGL version whose API is being initialized.
+            /// @param minorVersion [in] The minor part of the OpenGL version whose API is being initialized.
             ///
             /// @remarks
             ///     This assumes a context is already current.
             ///     @par
-            ///     This is where version support is checked.
-            ResultCode InitGLAPI();
+            ///     This does not initialize the API if it is not part of the applicable version.
+            ResultCode InitAPI(unsigned int majorVersion, unsigned int minorVersion);
+
+            
 
 
 
@@ -197,7 +215,8 @@ namespace GT
             /// The minor version of the OpenGL API that is supported by the given rendering context.
             unsigned int m_minorVersion;
 
-
+            /// The list of supported extensions.
+            GTLib::Vector<const char*> m_extensions;
 
 
 
@@ -212,12 +231,16 @@ namespace GT
             PFNWGLMAKECURRENTPROC        MakeCurrent;
             PFNWGLGETCURRENTCONTEXTPROC  GetCurrentContext;
             PFNWGLGETPROCADDRESSPROC     GetProcAddress;
+
+            PFNWGLSWAPINTERVALEXTPROC    SwapIntervalEXT;
+            PFNWGLGETSWAPINTERVALEXTPROC GetSwapIntervalEXT;
 #endif
 
 #if defined(GT_PLATFORM_LINUX)
 #endif
 
             PFNGLGETSTRINGPROC           GetString;
+            PFNGLGETSTRINGIPROC          GetStringi;
             PFNGLGETINTEGERVPROC         GetIntegerv;
             PFNGLVIEWPORTPROC            Viewport;
             PFNGLDEPTHRANGEPROC          DepthRange;
@@ -277,15 +300,26 @@ namespace GT
             static const ResultCode FailedToLoadOpenGLLibrary     = (1 << 31) | 0x02;
             static const ResultCode FailedToCreateContext         = (1 << 31) | 0x03;
             static const ResultCode FailedToMakeContextCurrent    = (1 << 31) | 0x04;
+            static const ResultCode FailedToInitAPI               = (1 << 31) | 0x05;
 
             static const ResultCode FailedToRetrieveGetStringProc = (1 << 31) | 0x10;
             static const ResultCode FailedToRetrieveVersionString = (1 << 31) | 0x11;
+            static const ResultCode FailedToRetrievesExtensions   = (1 << 31) | 0x12;
 
             // Win32 Errors
 #if defined(GT_PLATFORM_WINDOWS)
             static const ResultCode FailedToFindPixelFormat       = (1 << 31) | 0xF0;
             static const ResultCode FailedToSetPixelFormat        = (1 << 31) | 0xF1;
 #endif
+
+
+            //////////////////////////////////////////////////////
+            // Startup Flags
+
+            static const uint32_t NoInitAPI        = (1 << 0);      // Do not retrieve any function pointers, except for those that are essential to initialize the context.
+            static const uint32_t NoInitExtensions = (1 << 1);      // Do not extract any extensions, including APIs. Note that this will affect some important extensions such as WGL_EXT_swap_control.
+            static const uint32_t NoCoreContext    = (1 << 2);      // Do not create a core context. In the case of OpenGL 2.1, this will not create an extended context, but in the case of OpenGL 4.5, it will not create a Core extended context.
+            static const uint32_t DebugContext     = (1 << 3);
 
 
         private:    // No copying.

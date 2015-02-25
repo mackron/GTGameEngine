@@ -64,7 +64,7 @@ namespace GT
         {
             if (m_info.identifier_OpenGL == 1 && IsRenderingAPISupported(m_info, RenderingAPI_OpenGL21))
             {
-                ResultCode result = m_gl.Startup();
+                ResultCode result = m_gl.Startup(2, 1);
                 if (Succeeded(result))
                 {
                     // Make the dummy DC current by default. If we don't do this, any rendering commands that are issued before making a window current will fail. This is important for things
@@ -120,7 +120,15 @@ namespace GT
 
         void GPURenderingDevice_OpenGL21::SetSwapInterval(int swapInterval)
         {
-            (void)swapInterval;
+            if (m_gl.SwapIntervalEXT != nullptr)
+            {
+                if (swapInterval < 0 && !m_gl.IsExtensionSupported("WGL_EXT_swap_control_tear"))
+                {
+                    swapInterval = 0;
+                }
+
+                m_gl.SwapIntervalEXT(swapInterval);
+            }
         }
 
 
