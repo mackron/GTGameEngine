@@ -106,6 +106,13 @@ namespace GT
             void RSSetViewports(GPUViewport* viewports, size_t viewportCount);
 
 
+            /////////////////////////////////////////////
+            // Output Merger Stage
+
+            /// @copydoc GPURenderingDevice::OMSetDepthStencilState()
+            void OMSetDepthStencilState(GPUDepthStencilState* state, unsigned int stencilRef);
+
+
 
             /////////////////////////////////////////////////////////////////////////////
             //
@@ -123,6 +130,12 @@ namespace GT
             void DeleteRasterizerState(GPURasterizerState* state);
 
 
+            /// @copydoc GPURenderingDevice::CreateDepthStencilState()
+            ResultCode CreateDepthStencilState(const GPUDepthStencilStateDesc &desc, GPUDepthStencilState* &depthStencilStateOut);
+
+            /// @copydoc GPURenderingDevice::DeleteDepthStencilState().
+            void DeleteDepthStencilState(GPUDepthStencilState* state);
+
 
 
             ////////////////////////////////////////////
@@ -133,6 +146,7 @@ namespace GT
 
             /// GPURenderingDevice::DeleteVertexInputLayout().
             void DeleteInputLayout(GPUInputLayout* vertexInputLayout);
+
 
 
             ////////////////////////////////////////////

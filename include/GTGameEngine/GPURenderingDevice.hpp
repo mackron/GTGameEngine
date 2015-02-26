@@ -234,6 +234,17 @@ namespace GT
 
 
 
+            /////////////////////////////////////////////
+            // Output Merger Stage
+
+            /// Sets the depth/stencil state.
+            ///
+            /// @param state      [in] The depth/stencil state to make current on the output merger state.
+            /// @param stencilRef [in] Reference value that is bitwise-and when performing the depth/stencil test.
+            virtual void OMSetDepthStencilState(GPUDepthStencilState* state, unsigned int stencilRef) = 0;
+
+
+
             /////////////////////////////////////////////////////////////////////////////
             //
             // Object Creation and Deletion
@@ -253,6 +264,19 @@ namespace GT
             ///
             /// @param state [in] A pointer to the rasterizer state object to delete.
             virtual void DeleteRasterizerState(GPURasterizerState* state) = 0;
+
+
+            /// Creates a depth/stencil state object.
+            ///
+            /// @param desc                 [in]  A reference to the object that describes the depth/stencil state.
+            /// @param depthStencilStateOut [out] A reference to the variable that receive a pointer ot the new depth/stencil state object.
+            virtual ResultCode CreateDepthStencilState(const GPUDepthStencilStateDesc &desc, GPUDepthStencilState* &depthStencilStateOut) = 0;
+
+            /// Deletes a depth/stencil state object.
+            ///
+            /// @param state [in] A pointer to the depth/stencil state object to delete.
+            virtual void DeleteDepthStencilState(GPUDepthStencilState* state) = 0;
+
 
 
             ////////////////////////////////////////////

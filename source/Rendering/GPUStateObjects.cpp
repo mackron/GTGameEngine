@@ -19,5 +19,23 @@ namespace GT
         {
             return m_desc;
         }
+
+
+
+
+
+        GPUDepthStencilState::GPUDepthStencilState(const GPUDepthStencilStateDesc &desc)
+            : m_desc(desc)
+        {
+        }
+
+        GPUDepthStencilState::~GPUDepthStencilState()
+        {
+        }
+
+        const GPUDepthStencilStateDesc & GPUDepthStencilState::GetDesc() const
+        {
+            return m_desc;
+        }
     }
 }

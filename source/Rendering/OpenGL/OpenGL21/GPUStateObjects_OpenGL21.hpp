@@ -23,6 +23,20 @@ namespace GT
             /// Destructor.
             virtual ~GPURasterizerState_OpenGL21();
         };
+
+
+
+        /// OpenGL 2.1 implementation of the GPU depth/stencil state object.
+        class GPUDepthStencilState_OpenGL21 : public GPUDepthStencilState
+        {
+        public:
+
+            /// Constructor.
+            GPUDepthStencilState_OpenGL21(const GPUDepthStencilStateDesc &desc);
+
+            /// Destructor.
+            virtual ~GPUDepthStencilState_OpenGL21();
+        };
     }
 }
 

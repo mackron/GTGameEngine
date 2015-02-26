@@ -367,6 +367,20 @@ namespace GT
         }
 
 
+        /////////////////////////////////////////////
+        // Output Merger Stage
+
+        void GPURenderingDevice_D3D11::OMSetDepthStencilState(GPUDepthStencilState* state, unsigned int stencilRef)
+        {
+            auto stateD3D = reinterpret_cast<GPUDepthStencilState_D3D11*>(state);
+            if (stateD3D != nullptr)
+            {
+                m_context->OMSetDepthStencilState(stateD3D->GetD3D11DepthStencilState(), stencilRef);
+            }
+        }
+
+
+
 
         /////////////////////////////////////////////////////////////////////////////
         //
@@ -419,13 +433,88 @@ namespace GT
 
         void GPURenderingDevice_D3D11::DeleteRasterizerState(GPURasterizerState* state)
         {
-            auto rasterizerStateD3D = reinterpret_cast<GPURasterizerState_D3D11*>(state);
-            if (rasterizerStateD3D != nullptr)
+            auto stateD3D = reinterpret_cast<GPURasterizerState_D3D11*>(state);
+            if (stateD3D != nullptr)
             {
-                assert(rasterizerStateD3D->GetD3D11RasterizerState() != nullptr);
+                assert(stateD3D->GetD3D11RasterizerState() != nullptr);
 
-                rasterizerStateD3D->GetD3D11RasterizerState()->Release();
-                delete rasterizerStateD3D;
+                stateD3D->GetD3D11RasterizerState()->Release();
+                delete stateD3D;
+            }
+        }
+
+
+        ResultCode GPURenderingDevice_D3D11::CreateDepthStencilState(const GPUDepthStencilStateDesc &desc, GPUDepthStencilState* &depthStencilStateOut)
+        {
+            D3D11_DEPTH_WRITE_MASK depthWriteMasks[] =
+            {
+                D3D11_DEPTH_WRITE_MASK_ZERO,
+                D3D11_DEPTH_WRITE_MASK_ALL
+            };
+
+            D3D11_COMPARISON_FUNC comparisonFuncs[] =
+            {
+                D3D11_COMPARISON_NEVER,
+                D3D11_COMPARISON_LESS,
+                D3D11_COMPARISON_EQUAL,
+                D3D11_COMPARISON_LESS_EQUAL,
+                D3D11_COMPARISON_GREATER,
+                D3D11_COMPARISON_NOT_EQUAL,
+                D3D11_COMPARISON_GREATER_EQUAL,
+                D3D11_COMPARISON_ALWAYS
+            };
+
+            D3D11_STENCIL_OP stencilOps[] =
+            {
+                D3D11_STENCIL_OP_KEEP,
+                D3D11_STENCIL_OP_ZERO,
+                D3D11_STENCIL_OP_REPLACE,
+                D3D11_STENCIL_OP_INCR_SAT,
+                D3D11_STENCIL_OP_DECR_SAT,
+                D3D11_STENCIL_OP_INVERT,
+                D3D11_STENCIL_OP_INCR,
+                D3D11_STENCIL_OP_DECR
+            };
+
+
+            D3D11_DEPTH_STENCIL_DESC descD3D;
+            descD3D.DepthEnable                  = desc.enableDepthTest;
+            descD3D.DepthWriteMask               = depthWriteMasks[desc.depthWriteMask];
+            descD3D.DepthFunc                    = comparisonFuncs[desc.depthFunc];
+            descD3D.StencilEnable                = desc.enableStencilTest;
+            descD3D.StencilReadMask              = desc.stencilReadMask;
+            descD3D.StencilWriteMask             = desc.stencilWriteMask;
+            descD3D.FrontFace.StencilFailOp      = stencilOps[desc.stencilFrontFaceOp.stencilFailOp];
+            descD3D.FrontFace.StencilDepthFailOp = stencilOps[desc.stencilFrontFaceOp.stencilDepthFailOp];
+            descD3D.FrontFace.StencilPassOp      = stencilOps[desc.stencilFrontFaceOp.stencilPassOp];
+            descD3D.FrontFace.StencilFunc        = comparisonFuncs[desc.stencilFrontFaceOp.stencilFunc];
+            descD3D.BackFace.StencilFailOp       = stencilOps[desc.stencilBackFaceOp.stencilFailOp];
+            descD3D.BackFace.StencilDepthFailOp  = stencilOps[desc.stencilBackFaceOp.stencilDepthFailOp];
+            descD3D.BackFace.StencilPassOp       = stencilOps[desc.stencilBackFaceOp.stencilPassOp];
+            descD3D.BackFace.StencilFunc         = comparisonFuncs[desc.stencilBackFaceOp.stencilFunc];
+
+            ID3D11DepthStencilState* depthStencilStateD3D11;
+            if (SUCCEEDED(m_device->CreateDepthStencilState(&descD3D, &depthStencilStateD3D11)))
+            {
+                depthStencilStateOut = new GPUDepthStencilState_D3D11(desc, depthStencilStateD3D11);
+                return 0;
+            }
+            else
+            {
+                // Failed to create the state object.
+                return -1;
+            }
+        }
+
+        void GPURenderingDevice_D3D11::DeleteDepthStencilState(GPUDepthStencilState* state)
+        {
+            auto stateD3D = reinterpret_cast<GPURasterizerState_D3D11*>(state);
+            if (stateD3D != nullptr)
+            {
+                assert(stateD3D->GetD3D11RasterizerState() != nullptr);
+
+                stateD3D->GetD3D11RasterizerState()->Release();
+                delete stateD3D;
             }
         }
 

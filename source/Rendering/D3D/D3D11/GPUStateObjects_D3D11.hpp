@@ -34,6 +34,31 @@ namespace GT
             /// A pointer to the D3D11 rasterizer state object.
             ID3D11RasterizerState* m_rasterizerStateD3D;
         };
+
+
+
+
+        /// D3D11 implementation of the GPU depth/stencil state object.
+        class GPUDepthStencilState_D3D11 : public GPUDepthStencilState
+        {
+        public:
+
+            /// Constructor.
+            GPUDepthStencilState_D3D11(const GPUDepthStencilStateDesc &desc, ID3D11DepthStencilState* depthStencilStateD3D);
+
+            /// Destructor.
+            virtual ~GPUDepthStencilState_D3D11();
+
+
+            /// Retrieves a pointer to the internal D3D11 rasterizer state object.
+            ID3D11DepthStencilState* GetD3D11DepthStencilState();
+
+
+        private:
+
+            /// A pointer to the D3D11 rasterizer state object.
+            ID3D11DepthStencilState* m_depthStencilStateD3D;
+        };
     }
 }
 

@@ -522,6 +522,89 @@ namespace GT
         }
 
 
+        /////////////////////////////////////////////
+        // Output Merger Stage
+
+        void GPURenderingDevice_OpenGL21::OMSetDepthStencilState(GPUDepthStencilState* state, unsigned int stencilRef)
+        {
+            CheckContextIsCurrent(m_gl, m_currentDC);
+
+            auto stateGL = reinterpret_cast<GPUDepthStencilState_OpenGL21*>(state);
+            if (stateGL != nullptr)
+            {
+                // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
+
+                const GPUDepthStencilStateDesc &desc = stateGL->GetDesc();
+
+
+                GLenum comparisonFuncs[] =
+                {
+                    GL_NEVER,
+                    GL_LESS,
+                    GL_EQUAL,
+                    GL_LEQUAL,
+                    GL_GREATER,
+                    GL_NOTEQUAL,
+                    GL_GEQUAL,
+                    GL_ALWAYS
+                };
+
+                GLenum stencilOps[] =
+                {
+                    GL_KEEP,
+                    GL_ZERO,
+                    GL_REPLACE,
+                    GL_INCR,
+                    GL_DECR,
+                    GL_INVERT,
+                    GL_INCR_WRAP,
+                    GL_DECR_WRAP
+                };
+
+
+                // Enable depth test.
+                if (desc.enableDepthTest)
+                {
+                    m_gl.Enable(GL_DEPTH_TEST);
+                }
+                else
+                {
+                    m_gl.Disable(GL_DEPTH_TEST);
+                }
+
+                // Depth mask.
+                m_gl.DepthMask(desc.depthWriteMask != GPUDepthWriteMask_Zero);
+
+                // Depth func.
+                m_gl.DepthFunc(comparisonFuncs[desc.depthFunc]);
+
+
+
+                // Enable stencil test.
+                if (desc.enableStencilTest)
+                {
+                    m_gl.Enable(GL_STENCIL_TEST);
+                }
+                else
+                {
+                    m_gl.Disable(GL_STENCIL_TEST);
+                }
+
+                // Stencil write mask.
+                m_gl.StencilMaskSeparate(GL_FRONT_AND_BACK, desc.stencilWriteMask);
+
+                // Front face stencil op.
+                m_gl.StencilFuncSeparate(GL_FRONT, comparisonFuncs[desc.stencilFrontFaceOp.stencilFunc], static_cast<GLint>(stencilRef), desc.stencilReadMask);  // <-- TODO: Check this. Is this the correct use of desc.stencilReadMask?
+                m_gl.StencilOpSeparate(GL_FRONT, stencilOps[desc.stencilFrontFaceOp.stencilFailOp], stencilOps[desc.stencilFrontFaceOp.stencilDepthFailOp], stencilOps[desc.stencilFrontFaceOp.stencilPassOp]);
+
+                // Back face stencil op.
+                m_gl.StencilFuncSeparate(GL_BACK, comparisonFuncs[desc.stencilFrontFaceOp.stencilFunc], static_cast<GLint>(stencilRef), desc.stencilReadMask);   // <-- TODO: Check this. Is this the correct use of desc.stencilReadMask?
+                m_gl.StencilOpSeparate(GL_BACK, stencilOps[desc.stencilFrontFaceOp.stencilFailOp], stencilOps[desc.stencilFrontFaceOp.stencilDepthFailOp], stencilOps[desc.stencilFrontFaceOp.stencilPassOp]);
+            }
+        }
+
+
+
 
         ////////////////////////////////////////////
         // State Objects
@@ -535,6 +618,22 @@ namespace GT
         void GPURenderingDevice_OpenGL21::DeleteRasterizerState(GPURasterizerState* state)
         {
             auto stateGL = reinterpret_cast<GPURasterizerState_OpenGL21*>(state);
+            if (stateGL != nullptr)
+            {
+                delete stateGL;
+            }
+        }
+
+
+        ResultCode GPURenderingDevice_OpenGL21::CreateDepthStencilState(const GPUDepthStencilStateDesc &desc, GPUDepthStencilState* &depthStencilStateOut)
+        {
+            depthStencilStateOut = new GPUDepthStencilState_OpenGL21(desc);
+            return 0;
+        }
+
+        void GPURenderingDevice_OpenGL21::DeleteDepthStencilState(GPUDepthStencilState* state)
+        {
+            auto stateGL = reinterpret_cast<GPUDepthStencilState_OpenGL21*>(state);
             if (stateGL != nullptr)
             {
                 delete stateGL;

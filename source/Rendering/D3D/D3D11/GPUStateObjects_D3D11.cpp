@@ -23,6 +23,25 @@ namespace GT
         {
             return m_rasterizerStateD3D;
         }
+
+
+
+
+        GPUDepthStencilState_D3D11::GPUDepthStencilState_D3D11(const GPUDepthStencilStateDesc &desc, ID3D11DepthStencilState* depthStencilStateD3D)
+            : GPUDepthStencilState(desc),
+              m_depthStencilStateD3D(depthStencilStateD3D)
+        {
+        }
+
+        GPUDepthStencilState_D3D11::~GPUDepthStencilState_D3D11()
+        {
+        }
+
+
+        ID3D11DepthStencilState* GPUDepthStencilState_D3D11::GetD3D11DepthStencilState()
+        {
+            return m_depthStencilStateD3D;
+        }
     }
 }
 
