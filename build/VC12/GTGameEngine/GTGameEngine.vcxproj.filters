@@ -295,5 +295,8 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUFramebuffer.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\RenderingObjectHandles.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

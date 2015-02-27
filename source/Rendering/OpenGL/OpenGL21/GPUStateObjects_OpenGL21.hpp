@@ -7,11 +7,12 @@
 
 #if defined(GT_GE_BUILD_OPENGL21)
 #include <GTGameEngine/Rendering/GPUStateObjects.hpp>
+#include <GTLib/ReferenceCountedObject.hpp>
 
 namespace GT
 {
     /// OpenGL 2.1 implementation of the GPU rasterization state object.
-    class GPURasterizerState_OpenGL21 : public GPURasterizerState
+    class GPURasterizerState_OpenGL21 : public ReferenceCountedObject, public GPURasterizerState
     {
     public:
 
@@ -25,7 +26,7 @@ namespace GT
 
 
     /// OpenGL 2.1 implementation of the GPU depth/stencil state object.
-    class GPUDepthStencilState_OpenGL21 : public GPUDepthStencilState
+    class GPUDepthStencilState_OpenGL21 : public ReferenceCountedObject, public GPUDepthStencilState
     {
     public:
 

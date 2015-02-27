@@ -9,6 +9,7 @@
 #include <GTGameEngine/GPURenderingDevice_Gen1.hpp>
 #include <GTLib/Map.hpp>
 #include <GTLib/Vector.hpp>
+#include <GTLib/Threading/Mutex.hpp>
 
 namespace GT
 {
@@ -91,7 +92,7 @@ namespace GT
         // Rasterization Stage
 
         /// @copydoc GPURenderingDevice::RSSetState()
-        void RSSetState(GPURasterizerState* state);
+        void RSSetState(HRasterizerState hState);
 
         /// @copydoc GPURenderingDevice::RSSetViewports()
         void RSSetViewports(GPUViewport* viewports, size_t viewportCount);
@@ -115,10 +116,13 @@ namespace GT
         // State Objects
 
         /// @copydoc GPURenderingDevice::CreateRasterizerState()
-        ResultCode CreateRasterizerState(const GPURasterizerStateDesc &desc, GPURasterizerState* &rasterizerStateOut);
+        HRasterizerState CreateRasterizerState(const GPURasterizerStateDesc &desc);
 
         /// @copydoc GPURenderingDevice::DeleteRasterizerState()
-        void DeleteRasterizerState(GPURasterizerState* state);
+        void ReleaseRasterizerState(HRasterizerState hState);
+
+        /// @copydoc GPURenderingDevice::HoldRasterizerState()
+        void HoldRasterizerState(HRasterizerState hState);
 
 
         /// @copydoc GPURenderingDevice::CreateDepthStencilState()
@@ -228,9 +232,12 @@ namespace GT
 
     private:
 
+        /// The mutex for increment and decrementing reference counters.
+        GTLib::Mutex m_referenceCountLock;
+
+
         /// The OpenGL context object.
         OpenGLContext m_gl;
-
 
 #if defined(GT_PLATFORM_WINDOWS)
         /// Structure containing the elements that make up the framebuffer for a given window.

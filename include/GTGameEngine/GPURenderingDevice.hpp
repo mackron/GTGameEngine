@@ -4,6 +4,8 @@
 #define __GT_GE_GPURenderingDevice_hpp_
 
 #include "Config.hpp"
+#include "Rendering/RenderingObjectHandles.hpp"
+
 #include "GPURenderingDeviceInfo.hpp"
 #include "Rendering/GPUBufferType.hpp"
 #include "Rendering/GPUBufferUsage.hpp"
@@ -216,8 +218,8 @@ namespace GT
 
         /// Sets the state for the rasterization state.
         ///
-        /// @param state [in] The rasterizer state to make current on the rasterization state.
-        virtual void RSSetState(GPURasterizerState* state) = 0;
+        /// @param hState [in] The rasterizer state to make current on the rasterization state.
+        virtual void RSSetState(HRasterizerState hState) = 0;
 
         /// Sets the viewports for the rasterization stage.
         ///
@@ -254,14 +256,29 @@ namespace GT
 
         /// Creates a rasterizer state object.
         ///
-        /// @param desc               [in]  A reference to the object that describes the rasterizer state.
-        /// @param rasterizerStateOut [out] A reference to the variable that will receive a pointer to the new rasterizer state object.
-        virtual ResultCode CreateRasterizerState(const GPURasterizerStateDesc &desc, GPURasterizerState* &rasterizerStateOut) = 0;
-
-        /// Deletes a rasterizer state object.
+        /// @param desc [in] A reference to the object that describes the rasterizer state.
         ///
-        /// @param state [in] A pointer to the rasterizer state object to delete.
-        virtual void DeleteRasterizerState(GPURasterizerState* state) = 0;
+        /// @return A handle to the new rasterizer state object, or 0 if there was an error.
+        virtual HRasterizerState CreateRasterizerState(const GPURasterizerStateDesc &desc) = 0;
+
+        /// Decrements the internal reference counter of the given rasterizer state and deletes the object if it hits 0.
+        ///
+        /// @param hState [in] A pointer to the rasterizer state object to release.
+        ///
+        /// @remarks
+        ///     This is thread safe.
+        ///     @par
+        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
+        ///     synchronization.
+        virtual void ReleaseRasterizerState(HRasterizerState hState) = 0;
+
+        /// Increments the internal reference counter of the given rasterizer state object.
+        ///
+        /// @param hState [in] A pointer to the rasterizer state object to hold.
+        ///
+        /// @remarks
+        ///     This is thread safe.
+        virtual void HoldRasterizerState(HRasterizerState hState) = 0;
 
 
         /// Creates a depth/stencil state object.

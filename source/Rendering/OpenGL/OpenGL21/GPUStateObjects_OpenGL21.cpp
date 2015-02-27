@@ -7,7 +7,7 @@
 namespace GT
 {
     GPURasterizerState_OpenGL21::GPURasterizerState_OpenGL21(const GPURasterizerStateDesc &desc)
-        : GPURasterizerState(desc)
+        : ReferenceCountedObject(), GPURasterizerState(desc)
     {
     }
 
@@ -18,7 +18,7 @@ namespace GT
 
 
     GPUDepthStencilState_OpenGL21::GPUDepthStencilState_OpenGL21(const GPUDepthStencilStateDesc &desc)
-        : GPUDepthStencilState(desc)
+        : ReferenceCountedObject(), GPUDepthStencilState(desc)
     {
     }
 

@@ -332,13 +332,9 @@ namespace GT
     /////////////////////////////////////////////
     // Rasterization Stage
 
-    void GPURenderingDevice_D3D11::RSSetState(GPURasterizerState* state)
+    void GPURenderingDevice_D3D11::RSSetState(HRasterizerState hState)
     {
-        auto stateD3D = reinterpret_cast<GPURasterizerState_D3D11*>(state);
-        if (stateD3D != nullptr)
-        {
-            m_context->RSSetState(stateD3D->GetD3D11RasterizerState());
-        }
+        m_context->RSSetState(reinterpret_cast<ID3D11RasterizerState*>(hState));
     }
 
     void GPURenderingDevice_D3D11::RSSetViewports(GPUViewport* viewports, size_t viewportCount)
@@ -389,7 +385,7 @@ namespace GT
     ////////////////////////////////////////////
     // State Objects
 
-    ResultCode GPURenderingDevice_D3D11::CreateRasterizerState(const GPURasterizerStateDesc &desc, GPURasterizerState* &rasterizerStateOut)
+    HRasterizerState GPURenderingDevice_D3D11::CreateRasterizerState(const GPURasterizerStateDesc &desc)
     {
         D3D11_FILL_MODE fillModesD3D[] =
         {
@@ -419,25 +415,27 @@ namespace GT
         ID3D11RasterizerState* rasterizerStateD3D11;
         if (SUCCEEDED(m_device->CreateRasterizerState(&descD3D, &rasterizerStateD3D11)))
         {
-            rasterizerStateOut = new GPURasterizerState_D3D11(desc, rasterizerStateD3D11);
-            return 0;
+            return reinterpret_cast<HRasterizerState>(rasterizerStateD3D11);
         }
         else
         {
-            // Failed to create the state object.
-            return -1;
+            return 0;
         }
     }
 
-    void GPURenderingDevice_D3D11::DeleteRasterizerState(GPURasterizerState* state)
+    void GPURenderingDevice_D3D11::ReleaseRasterizerState(HRasterizerState hState)
     {
-        auto stateD3D = reinterpret_cast<GPURasterizerState_D3D11*>(state);
-        if (stateD3D != nullptr)
+        if (hState != 0)
         {
-            assert(stateD3D->GetD3D11RasterizerState() != nullptr);
+            reinterpret_cast<ID3D11RasterizerState*>(hState)->Release();
+        }
+    }
 
-            stateD3D->GetD3D11RasterizerState()->Release();
-            delete stateD3D;
+    void GPURenderingDevice_D3D11::HoldRasterizerState(HRasterizerState hState)
+    {
+        if (hState != 0)
+        {
+            reinterpret_cast<ID3D11RasterizerState*>(hState)->AddRef();
         }
     }
 

@@ -90,6 +90,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUVertexShader.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUViewport.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\OpenGL\OpenGL.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\RenderingObjectHandles.hpp" />
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUBuffer_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUFragmentShader_D3D11.hpp" />

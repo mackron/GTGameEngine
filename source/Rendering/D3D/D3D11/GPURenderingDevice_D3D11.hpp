@@ -98,7 +98,7 @@ namespace GT
         // Rasterization Stage
 
         /// @copydoc GPURenderingDevice::RSSetState()
-        void RSSetState(GPURasterizerState* state);
+        void RSSetState(HRasterizerState hState);
 
         /// @copydoc GPURenderingDevice::RSSetViewports()
         void RSSetViewports(GPUViewport* viewports, size_t viewportCount);
@@ -122,10 +122,13 @@ namespace GT
         // State Objects
 
         /// @copydoc GPURenderingDevice::CreateRasterizerState()
-        ResultCode CreateRasterizerState(const GPURasterizerStateDesc &desc, GPURasterizerState* &rasterizerStateOut);
+        HRasterizerState CreateRasterizerState(const GPURasterizerStateDesc &desc);
 
         /// @copydoc GPURenderingDevice::DeleteRasterizerState()
-        void DeleteRasterizerState(GPURasterizerState* state);
+        void ReleaseRasterizerState(HRasterizerState hState);
+
+        /// @copydoc GPURenderingDevice::HoldRasterizerState()
+        void HoldRasterizerState(HRasterizerState hState);
 
 
         /// @copydoc GPURenderingDevice::CreateDepthStencilState()

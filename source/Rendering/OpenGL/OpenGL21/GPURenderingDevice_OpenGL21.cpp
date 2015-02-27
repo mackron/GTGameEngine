@@ -84,6 +84,7 @@ namespace GT
 
     GPURenderingDevice_OpenGL21::GPURenderingDevice_OpenGL21(const GPURenderingDeviceInfo &info)
         : GPURenderingDevice_Gen1(info),
+            m_referenceCountLock(),
             m_gl(),
 #if defined(GT_PLATFORM_WINDOWS)
             m_currentHWND(NULL),
@@ -422,11 +423,11 @@ namespace GT
     /////////////////////////////////////////////
     // Rasterization Stage
 
-    void GPURenderingDevice_OpenGL21::RSSetState(GPURasterizerState* state)
+    void GPURenderingDevice_OpenGL21::RSSetState(HRasterizerState hState)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto stateGL = reinterpret_cast<GPURasterizerState_OpenGL21*>(state);
+        auto stateGL = reinterpret_cast<GPURasterizerState_OpenGL21*>(hState);
         if (stateGL != nullptr)
         {
             // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
@@ -607,18 +608,39 @@ namespace GT
     ////////////////////////////////////////////
     // State Objects
 
-    ResultCode GPURenderingDevice_OpenGL21::CreateRasterizerState(const GPURasterizerStateDesc &desc, GPURasterizerState* &rasterizerStateOut)
+    HRasterizerState GPURenderingDevice_OpenGL21::CreateRasterizerState(const GPURasterizerStateDesc &desc)
     {
-        rasterizerStateOut = new GPURasterizerState_OpenGL21(desc);
-        return 0;
+        return reinterpret_cast<HRasterizerState>(new GPURasterizerState_OpenGL21(desc));
     }
 
-    void GPURenderingDevice_OpenGL21::DeleteRasterizerState(GPURasterizerState* state)
+    void GPURenderingDevice_OpenGL21::ReleaseRasterizerState(HRasterizerState hState)
     {
-        auto stateGL = reinterpret_cast<GPURasterizerState_OpenGL21*>(state);
+        auto stateGL = reinterpret_cast<GPURasterizerState_OpenGL21*>(hState);
         if (stateGL != nullptr)
         {
-            delete stateGL;
+            m_referenceCountLock.Lock();
+            {
+                assert(stateGL->GetReferenceCount() > 0);
+
+                if (stateGL->DecrementReferenceCount() == 0)
+                {
+                    delete stateGL;
+                }
+            }
+            m_referenceCountLock.Unlock();
+        }
+    }
+
+    void GPURenderingDevice_OpenGL21::HoldRasterizerState(HRasterizerState hState)
+    {
+        auto stateGL = reinterpret_cast<GPURasterizerState_OpenGL21*>(hState);
+        if (stateGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                stateGL->IncrementReferenceCount();
+            }
+            m_referenceCountLock.Unlock();
         }
     }
 
