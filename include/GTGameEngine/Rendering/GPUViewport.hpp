@@ -5,30 +5,27 @@
 
 namespace GT
 {
-    namespace GE
+    /// Structure representing a viewport.
+    struct GPUViewport
     {
-        /// Structure representing a viewport.
-        struct GPUViewport
-        {
-            /// The position of the viewport on the X axis.
-            float x;
+        /// The position of the viewport on the X axis.
+        float x;
 
-            /// The position of the viewport on the Y axis.
-            float y;
+        /// The position of the viewport on the Y axis.
+        float y;
 
-            /// The width of the viewport.
-            float width;
+        /// The width of the viewport.
+        float width;
 
-            /// The height of the viewport.
-            float height;
+        /// The height of the viewport.
+        float height;
 
-            /// The near depth range.
-            float depthRangeNear;
+        /// The near depth range.
+        float depthRangeNear;
 
-            /// The far depth range.
-            float depthRangeFar;
-        };
-    }
+        /// The far depth range.
+        float depthRangeFar;
+    };
 }
 
 #endif

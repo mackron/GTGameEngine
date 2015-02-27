@@ -4,14 +4,11 @@
 
 namespace GT
 {
-    namespace GE
+    GPUFragmentShader::GPUFragmentShader()
     {
-        GPUFragmentShader::GPUFragmentShader()
-        {
-        }
+    }
 
-        GPUFragmentShader::~GPUFragmentShader()
-        {
-        }
+    GPUFragmentShader::~GPUFragmentShader()
+    {
     }
 }

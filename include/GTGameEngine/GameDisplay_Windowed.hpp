@@ -12,53 +12,50 @@
 
 namespace GT
 {
-    namespace GE
+    /// Class representing a windowed game display.
+    class GameDisplay_Windowed : public GameDisplay
     {
-        /// Class representing a windowed game display.
-        class GameDisplay_Windowed : public GameDisplay
-        {
-        public:
+    public:
 
-            /// Destructor.
-            virtual ~GameDisplay_Windowed();
+        /// Destructor.
+        virtual ~GameDisplay_Windowed();
 
 
-            /// @copydoc GameDisplay::GetType()
-            GameDisplayType GetType() const;
+        /// @copydoc GameDisplay::GetType()
+        GameDisplayType GetType() const;
 
-            /// @copydoc GameDisplay::GetSize(unsigned int &, unsigned int &)
-            void GetSize(unsigned int &widthOut, unsigned int &heightOut) const;
+        /// @copydoc GameDisplay::GetSize(unsigned int &, unsigned int &)
+        void GetSize(unsigned int &widthOut, unsigned int &heightOut) const;
 
 
 
-            ///////////////////////////////////////
-            // Platform-specific
+        ///////////////////////////////////////
+        // Platform-specific
 
 #if defined(GT_PLATFORM_WINDOWS)
-            /// Constructor.
-            GameDisplay_Windowed(GPURenderingDevice &renderingDevice, HWND hWnd);
+        /// Constructor.
+        GameDisplay_Windowed(GPURenderingDevice &renderingDevice, HWND hWnd);
 
-            /// Retrieves a handle to the window this display is drawing to.
-            ///
-            /// @return A handle to the window the display is drawing to.
-            HWND GetWindow() const;
+        /// Retrieves a handle to the window this display is drawing to.
+        ///
+        /// @return A handle to the window the display is drawing to.
+        HWND GetWindow() const;
 #endif
             
 
 
-        private:
+    private:
 
 #if defined(GT_PLATFORM_WINDOWS)
-            /// A handle to the window we are drawing to.
-            HWND m_hWnd;
+        /// A handle to the window we are drawing to.
+        HWND m_hWnd;
 #endif
 
 
-        private:    // No copying.
-            GameDisplay_Windowed(const GameDisplay_Windowed &);
-            GameDisplay_Windowed & operator=(const GameDisplay_Windowed &);
-        };
-    }
+    private:    // No copying.
+        GameDisplay_Windowed(const GameDisplay_Windowed &);
+        GameDisplay_Windowed & operator=(const GameDisplay_Windowed &);
+    };
 }
 
 #endif

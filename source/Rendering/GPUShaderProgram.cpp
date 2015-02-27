@@ -4,14 +4,11 @@
 
 namespace GT
 {
-    namespace GE
+    GPUShaderProgram::GPUShaderProgram()
     {
-        GPUShaderProgram::GPUShaderProgram()
-        {
-        }
+    }
 
-        GPUShaderProgram::~GPUShaderProgram()
-        {
-        }
+    GPUShaderProgram::~GPUShaderProgram()
+    {
     }
 }

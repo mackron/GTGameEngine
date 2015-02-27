@@ -6,23 +6,20 @@
 
 namespace GT
 {
-    namespace GE
+    GPUShaderProgram_OpenGL21::GPUShaderProgram_OpenGL21(GLuint objectGL)
+        : GPUShaderProgram(),
+            m_objectGL(objectGL)
     {
-        GPUShaderProgram_OpenGL21::GPUShaderProgram_OpenGL21(GLuint objectGL)
-            : GPUShaderProgram(),
-              m_objectGL(objectGL)
-        {
-        }
+    }
 
-        GPUShaderProgram_OpenGL21::~GPUShaderProgram_OpenGL21()
-        {
-        }
+    GPUShaderProgram_OpenGL21::~GPUShaderProgram_OpenGL21()
+    {
+    }
 
 
-        GLuint GPUShaderProgram_OpenGL21::GetOpenGLObject() const
-        {
-            return m_objectGL;
-        }
+    GLuint GPUShaderProgram_OpenGL21::GetOpenGLObject() const
+    {
+        return m_objectGL;
     }
 }
 

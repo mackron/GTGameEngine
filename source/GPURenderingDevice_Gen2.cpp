@@ -4,21 +4,18 @@
 
 namespace GT
 {
-    namespace GE
+    GPURenderingDevice_Gen2::GPURenderingDevice_Gen2(const GPURenderingDeviceInfo &info)
+        : GPURenderingDevice(info)
     {
-        GPURenderingDevice_Gen2::GPURenderingDevice_Gen2(const GPURenderingDeviceInfo &info)
-            : GPURenderingDevice(info)
-        {
-        }
+    }
 
-        GPURenderingDevice_Gen2::~GPURenderingDevice_Gen2()
-        {
-        }
+    GPURenderingDevice_Gen2::~GPURenderingDevice_Gen2()
+    {
+    }
 
 
-        unsigned int GPURenderingDevice_Gen2::GetGeneration() const
-        {
-            return 2;
-        }
+    unsigned int GPURenderingDevice_Gen2::GetGeneration() const
+    {
+        return 2;
     }
 }

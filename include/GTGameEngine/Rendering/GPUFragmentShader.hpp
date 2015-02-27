@@ -5,28 +5,25 @@
 
 namespace GT
 {
-    namespace GE
+    /// Class representing a fragment shader.
+    class GPUFragmentShader
     {
-        /// Class representing a fragment shader.
-        class GPUFragmentShader
-        {
-        public:
+    public:
 
-            /// Constructor.
-            GPUFragmentShader();
+        /// Constructor.
+        GPUFragmentShader();
 
-            /// Destructor.
-            virtual ~GPUFragmentShader();
+        /// Destructor.
+        virtual ~GPUFragmentShader();
 
 
 
 
 
-        private:    // No copying.
-            GPUFragmentShader(const GPUFragmentShader &);
-            GPUFragmentShader & operator=(const GPUFragmentShader &);
-        };
-    }
+    private:    // No copying.
+        GPUFragmentShader(const GPUFragmentShader &);
+        GPUFragmentShader & operator=(const GPUFragmentShader &);
+    };
 }
 
 #endif

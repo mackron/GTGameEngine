@@ -4,14 +4,11 @@
 
 namespace GT
 {
-    namespace GE
+    GPUComputeDevice::GPUComputeDevice()
     {
-        GPUComputeDevice::GPUComputeDevice()
-        {
-        }
+    }
 
-        GPUComputeDevice::~GPUComputeDevice()
-        {
-        }
+    GPUComputeDevice::~GPUComputeDevice()
+    {
     }
 }

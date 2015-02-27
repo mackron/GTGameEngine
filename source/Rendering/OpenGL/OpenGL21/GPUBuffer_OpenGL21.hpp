@@ -10,64 +10,61 @@
 
 namespace GT
 {
-    namespace GE
+    /// Class representing a buffer on the GPU.
+    class GPUBuffer_OpenGL21 : public GPUBuffer
     {
-        /// Class representing a buffer on the GPU.
-        class GPUBuffer_OpenGL21 : public GPUBuffer
-        {
-        public:
+    public:
 
-            /// Constructor.
-            GPUBuffer_OpenGL21(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, GLuint objectGL, GLenum targetGL, GLenum usageGL);
+        /// Constructor.
+        GPUBuffer_OpenGL21(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, GLuint objectGL, GLenum targetGL, GLenum usageGL);
 
-            /// Destructor.
-            ~GPUBuffer_OpenGL21();
+        /// Destructor.
+        ~GPUBuffer_OpenGL21();
 
             
-            /// GPUBuffer::GetBufferType().
-            GPUBufferType GetBufferType() const;
+        /// GPUBuffer::GetBufferType().
+        GPUBufferType GetBufferType() const;
 
-            /// GPUBuffer::GetBufferUsage().
-            GPUBufferUsage GetBufferUsage() const;
+        /// GPUBuffer::GetBufferUsage().
+        GPUBufferUsage GetBufferUsage() const;
 
-            /// GPUBuffer::GetBufferCPUAccessFlags().
-            GPUBufferCPUAccessFlags GetBufferCPUAccessFlags() const;
-
-
-
-            /// Retrieves the OpenGL buffer object.
-            GLuint GetOpenGLObject() const;
-
-            /// Retrieves the OpenGL bind target.
-            GLenum GetOpenGLTarget() const;
-
-            /// Retrieves the OpenGL usage hint.
-            GLenum GetOpenGLUsage() const;
+        /// GPUBuffer::GetBufferCPUAccessFlags().
+        GPUBufferCPUAccessFlags GetBufferCPUAccessFlags() const;
 
 
 
-        private:
+        /// Retrieves the OpenGL buffer object.
+        GLuint GetOpenGLObject() const;
 
-            /// The buffer type.
-            GPUBufferType m_type;
+        /// Retrieves the OpenGL bind target.
+        GLenum GetOpenGLTarget() const;
 
-            /// The buffer usage.
-            GPUBufferUsage m_usage;
-
-            /// The buffer CPU access flags.
-            GPUBufferCPUAccessFlags m_cpuAccessFlags;
+        /// Retrieves the OpenGL usage hint.
+        GLenum GetOpenGLUsage() const;
 
 
-            /// The OpenGL buffer object.
-            GLuint m_objectGL;
 
-            /// The OpenGL target for glBindBuffer(), etc.
-            GLenum m_targetGL;
+    private:
 
-            /// The OpenGL usage flags for glBufferData().
-            GLenum m_usageGL;
-        };
-    }
+        /// The buffer type.
+        GPUBufferType m_type;
+
+        /// The buffer usage.
+        GPUBufferUsage m_usage;
+
+        /// The buffer CPU access flags.
+        GPUBufferCPUAccessFlags m_cpuAccessFlags;
+
+
+        /// The OpenGL buffer object.
+        GLuint m_objectGL;
+
+        /// The OpenGL target for glBindBuffer(), etc.
+        GLenum m_targetGL;
+
+        /// The OpenGL usage flags for glBufferData().
+        GLenum m_usageGL;
+    };
 }
 #endif
 

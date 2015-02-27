@@ -12,38 +12,35 @@
 
 namespace GT
 {
-    namespace GE
+    /// OpenGL 2.1 implementation of the GPUShaderProgram class.
+    class GPUShaderProgram_OpenGL21 : public GPUShaderProgram
     {
-        /// OpenGL 2.1 implementation of the GPUShaderProgram class.
-        class GPUShaderProgram_OpenGL21 : public GPUShaderProgram
-        {
-        public:
+    public:
 
-            /// Constructor.
-            GPUShaderProgram_OpenGL21(GLuint objectGL);
+        /// Constructor.
+        GPUShaderProgram_OpenGL21(GLuint objectGL);
 
-            /// Destructor.
-            ~GPUShaderProgram_OpenGL21();
+        /// Destructor.
+        ~GPUShaderProgram_OpenGL21();
 
 
-            /// Retrieves the OpenGL object.
-            GLuint GetOpenGLObject() const;
+        /// Retrieves the OpenGL object.
+        GLuint GetOpenGLObject() const;
 
 
 
-        private:
+    private:
 
-            /// The OpenGL program object.
-            GLuint m_objectGL;
+        /// The OpenGL program object.
+        GLuint m_objectGL;
 
 
 
 
-        private:    // No copying.
-            GPUShaderProgram_OpenGL21(const GPUShaderProgram_OpenGL21 &);
-            GPUShaderProgram_OpenGL21 & operator=(const GPUShaderProgram_OpenGL21 &);
-        };
-    }
+    private:    // No copying.
+        GPUShaderProgram_OpenGL21(const GPUShaderProgram_OpenGL21 &);
+        GPUShaderProgram_OpenGL21 & operator=(const GPUShaderProgram_OpenGL21 &);
+    };
 }
 
 #endif

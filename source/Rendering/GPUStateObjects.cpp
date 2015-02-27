@@ -4,38 +4,35 @@
 
 namespace GT
 {
-    namespace GE
+    GPURasterizerState::GPURasterizerState(const GPURasterizerStateDesc &desc)
+        : m_desc(desc)
     {
-        GPURasterizerState::GPURasterizerState(const GPURasterizerStateDesc &desc)
-            : m_desc(desc)
-        {
-        }
+    }
 
-        GPURasterizerState::~GPURasterizerState()
-        {
-        }
+    GPURasterizerState::~GPURasterizerState()
+    {
+    }
 
-        const GPURasterizerStateDesc & GPURasterizerState::GetDesc() const
-        {
-            return m_desc;
-        }
+    const GPURasterizerStateDesc & GPURasterizerState::GetDesc() const
+    {
+        return m_desc;
+    }
 
 
 
 
 
-        GPUDepthStencilState::GPUDepthStencilState(const GPUDepthStencilStateDesc &desc)
-            : m_desc(desc)
-        {
-        }
+    GPUDepthStencilState::GPUDepthStencilState(const GPUDepthStencilStateDesc &desc)
+        : m_desc(desc)
+    {
+    }
 
-        GPUDepthStencilState::~GPUDepthStencilState()
-        {
-        }
+    GPUDepthStencilState::~GPUDepthStencilState()
+    {
+    }
 
-        const GPUDepthStencilStateDesc & GPUDepthStencilState::GetDesc() const
-        {
-            return m_desc;
-        }
+    const GPUDepthStencilStateDesc & GPUDepthStencilState::GetDesc() const
+    {
+        return m_desc;
     }
 }

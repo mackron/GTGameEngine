@@ -5,29 +5,26 @@
 
 namespace GT
 {
-    namespace GE
+    /// Class representing a framebuffer for the rendering system.
+    class Framebuffer
     {
-        /// Class representing a framebuffer for the rendering system.
-        class Framebuffer
-        {
-        public:
+    public:
 
-            /// Constructor.
-            Framebuffer();
+        /// Constructor.
+        Framebuffer();
 
-            /// Destructor.
-            virtual ~Framebuffer();
+        /// Destructor.
+        virtual ~Framebuffer();
 
 
 
 
 
 
-        private:    // No copying.
-            Framebuffer(const Framebuffer &);
-            Framebuffer & operator=(const Framebuffer&);
-        };
-    }
+    private:    // No copying.
+        Framebuffer(const Framebuffer &);
+        Framebuffer & operator=(const Framebuffer&);
+    };
 }
 
 #endif // !__GT_GE_Framebuffer_hpp_

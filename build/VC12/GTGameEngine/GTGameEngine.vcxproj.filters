@@ -289,5 +289,11 @@
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUStateObjects_OpenGL21.hpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUPrimitiveTopolgoy.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUFramebuffer.hpp">
+      <Filter>Header Files\Rendering</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

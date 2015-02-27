@@ -9,30 +9,27 @@
 
 namespace GT
 {
-    namespace GE
+    /// Class representing a buffer on the GPU.
+    class GPUBuffer
     {
-        /// Class representing a buffer on the GPU.
-        class GPUBuffer
-        {
-        public:
+    public:
 
-            /// Constructor.
-            GPUBuffer();
+        /// Constructor.
+        GPUBuffer();
 
-            /// Destructor.
-            virtual ~GPUBuffer();
+        /// Destructor.
+        virtual ~GPUBuffer();
 
             
-            /// Retrieves the buffer type.
-            virtual GPUBufferType GetBufferType() const = 0;
+        /// Retrieves the buffer type.
+        virtual GPUBufferType GetBufferType() const = 0;
 
-            /// Retrieves the buffer usage.
-            virtual GPUBufferUsage GetBufferUsage() const = 0;
+        /// Retrieves the buffer usage.
+        virtual GPUBufferUsage GetBufferUsage() const = 0;
 
-            /// Retrieves the buffer CPU access flags.
-            virtual GPUBufferCPUAccessFlags GetBufferCPUAccessFlags() const = 0;
-        };
-    }
+        /// Retrieves the buffer CPU access flags.
+        virtual GPUBufferCPUAccessFlags GetBufferCPUAccessFlags() const = 0;
+    };
 }
 
 #endif

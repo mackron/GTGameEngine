@@ -5,28 +5,25 @@
 
 namespace GT
 {
-    namespace GE
+    /// Class representing a vertex shader.
+    class GPUVertexShader
     {
-        /// Class representing a vertex shader.
-        class GPUVertexShader
-        {
-        public:
+    public:
 
-            /// Constructor.
-            GPUVertexShader();
+        /// Constructor.
+        GPUVertexShader();
 
-            /// Destructor.
-            virtual ~GPUVertexShader();
+        /// Destructor.
+        virtual ~GPUVertexShader();
 
 
 
 
 
-        private:    // No copying.
-            GPUVertexShader(const GPUVertexShader &);
-            GPUVertexShader & operator=(const GPUVertexShader &);
-        };
-    }
+    private:    // No copying.
+        GPUVertexShader(const GPUVertexShader &);
+        GPUVertexShader & operator=(const GPUVertexShader &);
+    };
 }
 
 #endif

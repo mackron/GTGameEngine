@@ -4,14 +4,11 @@
 
 namespace GT
 {
-    namespace GE
+    GameDisplayRenderingCallback::GameDisplayRenderingCallback()
     {
-        GameDisplayRenderingCallback::GameDisplayRenderingCallback()
-        {
-        }
+    }
 
-        GameDisplayRenderingCallback::~GameDisplayRenderingCallback()
-        {
-        }
+    GameDisplayRenderingCallback::~GameDisplayRenderingCallback()
+    {
     }
 }

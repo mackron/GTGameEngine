@@ -5,29 +5,26 @@
 
 namespace GT
 {
-    namespace GE
+    /// Class representing a shader program.
+    class GPUShaderProgram
     {
-        /// Class representing a shader program.
-        class GPUShaderProgram
-        {
-        public:
+    public:
 
-            /// Constructor.
-            GPUShaderProgram();
+        /// Constructor.
+        GPUShaderProgram();
 
-            /// Destructor.
-            virtual ~GPUShaderProgram();
+        /// Destructor.
+        virtual ~GPUShaderProgram();
 
 
 
 
 
 
-        private:    // No copying.
-            GPUShaderProgram(const GPUShaderProgram &);
-            GPUShaderProgram & operator=(const GPUShaderProgram &);
-        };
-    }
+    private:    // No copying.
+        GPUShaderProgram(const GPUShaderProgram &);
+        GPUShaderProgram & operator=(const GPUShaderProgram &);
+    };
 }
 
 #endif

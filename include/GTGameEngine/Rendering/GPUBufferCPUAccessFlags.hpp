@@ -5,16 +5,13 @@
 
 namespace GT
 {
-    namespace GE
+    enum GPUBufferCPUAccessFlags
     {
-        enum GPUBufferCPUAccessFlags
-        {
-            GPUBufferCPUAccess_None      = 0x00,
-            GPUBufferCPUAccess_Read      = 0x01,
-            GPUBufferCPUAccess_Write     = 0x02,
-            GPUBufferCPUAccess_ReadWrite = GPUBufferCPUAccess_Read | GPUBufferCPUAccess_Write
-        };
-    }
+        GPUBufferCPUAccess_None      = 0x00,
+        GPUBufferCPUAccess_Read      = 0x01,
+        GPUBufferCPUAccess_Write     = 0x02,
+        GPUBufferCPUAccess_ReadWrite = GPUBufferCPUAccess_Read | GPUBufferCPUAccess_Write
+    };
 }
 
 #endif

@@ -5,15 +5,12 @@
 
 namespace GT
 {
-    namespace GE
+    enum GPUBufferType
     {
-        enum GPUBufferType
-        {
-            GPUBufferType_Vertex   = 1,
-            GPUBufferType_Index    = 2,
-            GPUBufferType_Constant = 3
-        };
-    }
+        GPUBufferType_Vertex   = 1,
+        GPUBufferType_Index    = 2,
+        GPUBufferType_Constant = 3
+    };
 }
 
 #endif

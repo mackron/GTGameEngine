@@ -5,14 +5,11 @@
 
 namespace GT
 {
-    namespace GE
+    struct GPUShaderDefine
     {
-        struct GPUShaderDefine
-        {
-            const char* name;
-            const char* value;
-        };
-    }
+        const char* name;
+        const char* value;
+    };
 }
 
 #endif

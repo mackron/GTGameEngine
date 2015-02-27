@@ -7,9 +7,6 @@
 
 namespace GT
 {
-    namespace GE
-    {
-    }
 }
 
 #endif

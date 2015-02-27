@@ -11,51 +11,48 @@
 
 namespace GT
 {
-    namespace GE
+    /// Class representing a buffer on the GPU.
+    class GPUBuffer_D3D11 : public GPUBuffer
     {
-        /// Class representing a buffer on the GPU.
-        class GPUBuffer_D3D11 : public GPUBuffer
-        {
-        public:
+    public:
 
-            /// Constructor.
-            GPUBuffer_D3D11(ID3D11Buffer* bufferD3D, GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags);
+        /// Constructor.
+        GPUBuffer_D3D11(ID3D11Buffer* bufferD3D, GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags);
 
-            /// Destructor.
-            ~GPUBuffer_D3D11();
+        /// Destructor.
+        ~GPUBuffer_D3D11();
 
 
-            /// GPUBuffer::GetBufferType().
-            GPUBufferType GetBufferType() const;
+        /// GPUBuffer::GetBufferType().
+        GPUBufferType GetBufferType() const;
 
-            /// GPUBuffer::GetBufferUsage().
-            GPUBufferUsage GetBufferUsage() const;
+        /// GPUBuffer::GetBufferUsage().
+        GPUBufferUsage GetBufferUsage() const;
 
-            /// GPUBuffer::GetBufferCPUAccessFlags().
-            GPUBufferCPUAccessFlags GetBufferCPUAccessFlags() const;
+        /// GPUBuffer::GetBufferCPUAccessFlags().
+        GPUBufferCPUAccessFlags GetBufferCPUAccessFlags() const;
 
 
 
-            /// Retrieves a pointer to the internal D3D11 buffer object.
-            ID3D11Buffer* GetD3D11Buffer();
+        /// Retrieves a pointer to the internal D3D11 buffer object.
+        ID3D11Buffer* GetD3D11Buffer();
 
 
 
-        private:
+    private:
 
-            /// The internal D3D11 buffer object.
-            ID3D11Buffer* m_bufferD3D;
+        /// The internal D3D11 buffer object.
+        ID3D11Buffer* m_bufferD3D;
 
-            /// The buffer type.
-            GPUBufferType m_type;
+        /// The buffer type.
+        GPUBufferType m_type;
 
-            /// The buffer usage.
-            GPUBufferUsage m_usage;
+        /// The buffer usage.
+        GPUBufferUsage m_usage;
 
-            /// The buffer CPU access flags.
-            GPUBufferCPUAccessFlags m_cpuAccessFlags;
-        };
-    }
+        /// The buffer CPU access flags.
+        GPUBufferCPUAccessFlags m_cpuAccessFlags;
+    };
 }
 #endif
 

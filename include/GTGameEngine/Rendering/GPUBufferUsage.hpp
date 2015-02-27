@@ -5,16 +5,13 @@
 
 namespace GT
 {
-    namespace GE
+    enum GPUBufferUsage
     {
-        enum GPUBufferUsage
-        {
-            GPUBufferUsage_Default   = 0,
-            GPUBufferUsage_Immutable = 1,
-            GPUBufferUsage_Dynamic   = 2,
-            GPUBufferUsage_Staging   = 3
-        };
-    }
+        GPUBufferUsage_Default   = 0,
+        GPUBufferUsage_Immutable = 1,
+        GPUBufferUsage_Dynamic   = 2,
+        GPUBufferUsage_Staging   = 3
+    };
 }
 
 #endif

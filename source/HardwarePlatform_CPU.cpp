@@ -4,24 +4,21 @@
 
 namespace GT
 {
-    namespace GE
+    HardwarePlatform_CPU::HardwarePlatform_CPU()
     {
-        HardwarePlatform_CPU::HardwarePlatform_CPU()
-        {
-        }
+    }
 
-        HardwarePlatform_CPU::~HardwarePlatform_CPU()
-        {
-        }
+    HardwarePlatform_CPU::~HardwarePlatform_CPU()
+    {
+    }
 
 
-        ResultCode HardwarePlatform_CPU::Startup()
-        {
-            return 0;   // No error.
-        }
+    ResultCode HardwarePlatform_CPU::Startup()
+    {
+        return 0;   // No error.
+    }
 
-        void HardwarePlatform_CPU::Shutdown()
-        {
-        }
+    void HardwarePlatform_CPU::Shutdown()
+    {
     }
 }

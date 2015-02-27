@@ -12,50 +12,47 @@
 
 namespace GT
 {
-    namespace GE
+    /// D3D11 implementation of the shader program class.
+    ///
+    /// This is just a container around a vertex and fragment shader object.
+    class GPUShaderProgram_D3D11 : public GPUShaderProgram
     {
-        /// D3D11 implementation of the shader program class.
+    public:
+
+        /// Constructor.
+        GPUShaderProgram_D3D11(GPUVertexShader_D3D11* vertexShader, GPUFragmentShader_D3D11* fragmentShader);
+
+        /// Destructor.
+        virtual ~GPUShaderProgram_D3D11();
+
+
+
+        /// Retrieves a pointer to the vertex shader.
         ///
-        /// This is just a container around a vertex and fragment shader object.
-        class GPUShaderProgram_D3D11 : public GPUShaderProgram
-        {
-        public:
+        /// @return A pointer to the vertex shader.
+        GPUVertexShader_D3D11* GetVertexShader();
 
-            /// Constructor.
-            GPUShaderProgram_D3D11(GPUVertexShader_D3D11* vertexShader, GPUFragmentShader_D3D11* fragmentShader);
-
-            /// Destructor.
-            virtual ~GPUShaderProgram_D3D11();
+        /// Retrieves a pointer to the fragment shader.
+        ///
+        /// @return A pointer to the fragment shader.
+        GPUFragmentShader_D3D11* GetFragmentShader();
 
 
 
-            /// Retrieves a pointer to the vertex shader.
-            ///
-            /// @return A pointer to the vertex shader.
-            GPUVertexShader_D3D11* GetVertexShader();
+    private:
 
-            /// Retrieves a pointer to the fragment shader.
-            ///
-            /// @return A pointer to the fragment shader.
-            GPUFragmentShader_D3D11* GetFragmentShader();
+        /// A pointer to the vertex shader object.
+        GPUVertexShader_D3D11* m_vertexShader;
+
+        /// A pointer to the fragment shader object.
+        GPUFragmentShader_D3D11* m_fragmentShader;
 
 
 
-        private:
-
-            /// A pointer to the vertex shader object.
-            GPUVertexShader_D3D11* m_vertexShader;
-
-            /// A pointer to the fragment shader object.
-            GPUFragmentShader_D3D11* m_fragmentShader;
-
-
-
-        private:    // No copying.
-            GPUShaderProgram_D3D11(const GPUShaderProgram_D3D11 &);
-            GPUShaderProgram_D3D11 & operator=(const GPUShaderProgram_D3D11 &);
-        };
-    }
+    private:    // No copying.
+        GPUShaderProgram_D3D11(const GPUShaderProgram_D3D11 &);
+        GPUShaderProgram_D3D11 & operator=(const GPUShaderProgram_D3D11 &);
+    };
 }
 
 #endif

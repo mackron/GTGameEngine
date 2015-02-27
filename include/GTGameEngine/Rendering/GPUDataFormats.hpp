@@ -5,22 +5,19 @@
 
 namespace GT
 {
-    namespace GE
+    enum GPUVertexAttribFormat
     {
-        enum GPUVertexAttribFormat
-        {
-            GPUVertexAttribFormat_Float       = 0,
-            GPUVertexAttribFormat_Int         = 1,
-            GPUVertexAttribFormat_UnsignedInt = 2,
-        };
+        GPUVertexAttribFormat_Float       = 0,
+        GPUVertexAttribFormat_Int         = 1,
+        GPUVertexAttribFormat_UnsignedInt = 2,
+    };
 
-        enum GPUIndexFormat
-        {
-            GPUIndexFormat_UnsignedInt8  = 0,
-            GPUIndexFormat_UnsignedInt16 = 1,
-            GPUIndexFormat_UnsignedInt32 = 2,
-        };
-    }
+    enum GPUIndexFormat
+    {
+        GPUIndexFormat_UnsignedInt8  = 0,
+        GPUIndexFormat_UnsignedInt16 = 1,
+        GPUIndexFormat_UnsignedInt32 = 2,
+    };
 }
 
 #endif

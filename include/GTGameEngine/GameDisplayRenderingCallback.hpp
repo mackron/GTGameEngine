@@ -5,31 +5,28 @@
 
 namespace GT
 {
-    namespace GE
+    class GameDisplay;
+
+
+    /// Class for handling the rendering of a game display.
+    class GameDisplayRenderingCallback
     {
-        class GameDisplay;
+    public:
+
+        /// Constructor.
+        GameDisplayRenderingCallback();
+
+        /// Destructor.
+        virtual ~GameDisplayRenderingCallback();
 
 
-        /// Class for handling the rendering of a game display.
-        class GameDisplayRenderingCallback
-        {
-        public:
+        /// Performs the rendering operation on the given display.
+        ///
+        /// @param display         [in] A reference to the display being rendered.
+        /// @param commandPipeline [in] A reference to the RenderingCommandPipeline object where rendering commands will be posted to.
+        virtual void Render(GameDisplay &display/*, RenderingCommandPipeline &commandPipeline*/) = 0;
 
-            /// Constructor.
-            GameDisplayRenderingCallback();
-
-            /// Destructor.
-            virtual ~GameDisplayRenderingCallback();
-
-
-            /// Performs the rendering operation on the given display.
-            ///
-            /// @param display         [in] A reference to the display being rendered.
-            /// @param commandPipeline [in] A reference to the RenderingCommandPipeline object where rendering commands will be posted to.
-            virtual void Render(GameDisplay &display/*, RenderingCommandPipeline &commandPipeline*/) = 0;
-
-        };
-    }
+    };
 }
 
 #endif

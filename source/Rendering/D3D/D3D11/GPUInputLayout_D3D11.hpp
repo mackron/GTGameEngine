@@ -11,35 +11,32 @@
 
 namespace GT
 {
-    namespace GE
+    class GPUInputLayout_D3D11 : public GPUInputLayout
     {
-        class GPUInputLayout_D3D11 : public GPUInputLayout
-        {
-        public:
+    public:
 
-            /// Constructor.
-            GPUInputLayout_D3D11(ID3D11InputLayout* inputLayoutD3D);
+        /// Constructor.
+        GPUInputLayout_D3D11(ID3D11InputLayout* inputLayoutD3D);
 
-            /// Destructor.
-            ~GPUInputLayout_D3D11();
+        /// Destructor.
+        ~GPUInputLayout_D3D11();
 
 
-            /// Retrieves a pointer to the D3D11 input layout object.
-            ID3D11InputLayout* GetD3D11InputLayout();
+        /// Retrieves a pointer to the D3D11 input layout object.
+        ID3D11InputLayout* GetD3D11InputLayout();
             
 
 
-        private:
+    private:
 
-            /// The internal D3D11 input layout object.
-            ID3D11InputLayout* m_inputLayoutD3D;
+        /// The internal D3D11 input layout object.
+        ID3D11InputLayout* m_inputLayoutD3D;
 
 
-        private:    // No copying.
-            GPUInputLayout_D3D11(const GPUInputLayout_D3D11 &);
-            GPUInputLayout_D3D11 & operator=(const GPUInputLayout_D3D11 &);
-        };
-    }
+    private:    // No copying.
+        GPUInputLayout_D3D11(const GPUInputLayout_D3D11 &);
+        GPUInputLayout_D3D11 & operator=(const GPUInputLayout_D3D11 &);
+    };
 }
 
 #endif

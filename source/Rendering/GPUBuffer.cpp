@@ -4,14 +4,11 @@
 
 namespace GT
 {
-    namespace GE
+    GPUBuffer::GPUBuffer()
     {
-        GPUBuffer::GPUBuffer()
-        {
-        }
+    }
 
-        GPUBuffer::~GPUBuffer()
-        {
-        }
+    GPUBuffer::~GPUBuffer()
+    {
     }
 }

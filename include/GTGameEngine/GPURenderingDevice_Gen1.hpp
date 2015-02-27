@@ -7,30 +7,27 @@
 
 namespace GT
 {
-    namespace GE
+    /// Class representing a GPU rendering device that uses an D3D9/OpenGL 2.1 class of API.
+    class GPURenderingDevice_Gen1 : public GPURenderingDevice
     {
-        /// Class representing a GPU rendering device that uses an D3D9/OpenGL 2.1 class of API.
-        class GPURenderingDevice_Gen1 : public GPURenderingDevice
-        {
-        public:
+    public:
 
-            /// Constructor.
-            GPURenderingDevice_Gen1(const GPURenderingDeviceInfo &info);
+        /// Constructor.
+        GPURenderingDevice_Gen1(const GPURenderingDeviceInfo &info);
 
-            /// Destructor.
-            ~GPURenderingDevice_Gen1();
+        /// Destructor.
+        ~GPURenderingDevice_Gen1();
 
 
-            /// GPURenderingDevice::GetGeneration().
-            unsigned int GetGeneration() const;
+        /// GPURenderingDevice::GetGeneration().
+        unsigned int GetGeneration() const;
 
 
 
-        private:    // No copying.
-            GPURenderingDevice_Gen1(const GPURenderingDevice_Gen1 &);
-            GPURenderingDevice_Gen1 & operator=(const GPURenderingDevice_Gen1 &);
-        };
-    }
+    private:    // No copying.
+        GPURenderingDevice_Gen1(const GPURenderingDevice_Gen1 &);
+        GPURenderingDevice_Gen1 & operator=(const GPURenderingDevice_Gen1 &);
+    };
 }
 
 #endif

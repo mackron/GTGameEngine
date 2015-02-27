@@ -4,14 +4,11 @@
 
 namespace GT
 {
-    namespace GE
+    GPUVertexShader::GPUVertexShader()
     {
-        GPUVertexShader::GPUVertexShader()
-        {
-        }
+    }
 
-        GPUVertexShader::~GPUVertexShader()
-        {
-        }
+    GPUVertexShader::~GPUVertexShader()
+    {
     }
 }

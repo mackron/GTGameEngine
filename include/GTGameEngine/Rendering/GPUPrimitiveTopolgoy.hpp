@@ -5,21 +5,18 @@
 
 namespace GT
 {
-    namespace GE
+    enum GPUPrimitiveTopology
     {
-        enum GPUPrimitiveTopology
-        {
-            GPUPrimitiveTopology_Point                  = 0,
-            GPUPrimitiveTopology_Line                   = 1,
-            GPUPrimitiveTopology_LineStrip              = 2,
-            GPUPrimitiveTopology_Triangle               = 3,
-            GPUPrimitiveTopology_TriangleStrip          = 4,
-            GPUPrimitiveTopology_Line_Adjacency         = 5,
-            GPUPrimitiveTopology_LineList_Adjacency     = 6,
-            GPUPrimitiveTopology_Triangle_Adjacency     = 7,
-            GPUPrimitiveTopology_TriangleList_Adjacency = 8
-        };
-    }
+        GPUPrimitiveTopology_Point                  = 0,
+        GPUPrimitiveTopology_Line                   = 1,
+        GPUPrimitiveTopology_LineStrip              = 2,
+        GPUPrimitiveTopology_Triangle               = 3,
+        GPUPrimitiveTopology_TriangleStrip          = 4,
+        GPUPrimitiveTopology_Line_Adjacency         = 5,
+        GPUPrimitiveTopology_LineList_Adjacency     = 6,
+        GPUPrimitiveTopology_Triangle_Adjacency     = 7,
+        GPUPrimitiveTopology_TriangleList_Adjacency = 8
+    };
 }
 
 #endif

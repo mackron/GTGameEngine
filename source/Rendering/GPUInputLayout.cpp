@@ -4,14 +4,11 @@
 
 namespace GT
 {
-    namespace GE
+    GPUInputLayout::GPUInputLayout()
     {
-        GPUInputLayout::GPUInputLayout()
-        {
-        }
+    }
 
-        GPUInputLayout::~GPUInputLayout()
-        {
-        }
+    GPUInputLayout::~GPUInputLayout()
+    {
     }
 }

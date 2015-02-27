@@ -4,24 +4,21 @@
 
 namespace GT
 {
-    namespace GE
+    HardwarePlatform_Input::HardwarePlatform_Input()
     {
-        HardwarePlatform_Input::HardwarePlatform_Input()
-        {
-        }
+    }
 
-        HardwarePlatform_Input::~HardwarePlatform_Input()
-        {
-        }
+    HardwarePlatform_Input::~HardwarePlatform_Input()
+    {
+    }
 
 
-        ResultCode HardwarePlatform_Input::Startup()
-        {
-            return 0;   // No error.
-        }
+    ResultCode HardwarePlatform_Input::Startup()
+    {
+        return 0;   // No error.
+    }
 
-        void HardwarePlatform_Input::Shutdown()
-        {
-        }
+    void HardwarePlatform_Input::Shutdown()
+    {
     }
 }

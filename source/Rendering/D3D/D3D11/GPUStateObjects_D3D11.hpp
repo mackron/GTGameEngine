@@ -11,55 +11,52 @@
 
 namespace GT
 {
-    namespace GE
+    /// D3D11 implementation of the GPU rasterization state object.
+    class GPURasterizerState_D3D11 : public GPURasterizerState
     {
-        /// D3D11 implementation of the GPU rasterization state object.
-        class GPURasterizerState_D3D11 : public GPURasterizerState
-        {
-        public:
+    public:
 
-            /// Constructor.
-            GPURasterizerState_D3D11(const GPURasterizerStateDesc &desc, ID3D11RasterizerState* rasterizerStateD3D);
+        /// Constructor.
+        GPURasterizerState_D3D11(const GPURasterizerStateDesc &desc, ID3D11RasterizerState* rasterizerStateD3D);
 
-            /// Destructor.
-            virtual ~GPURasterizerState_D3D11();
+        /// Destructor.
+        virtual ~GPURasterizerState_D3D11();
 
 
-            /// Retrieves a pointer to the internal D3D11 rasterizer state object.
-            ID3D11RasterizerState* GetD3D11RasterizerState();
+        /// Retrieves a pointer to the internal D3D11 rasterizer state object.
+        ID3D11RasterizerState* GetD3D11RasterizerState();
 
 
-        private:
+    private:
 
-            /// A pointer to the D3D11 rasterizer state object.
-            ID3D11RasterizerState* m_rasterizerStateD3D;
-        };
+        /// A pointer to the D3D11 rasterizer state object.
+        ID3D11RasterizerState* m_rasterizerStateD3D;
+    };
 
 
 
 
-        /// D3D11 implementation of the GPU depth/stencil state object.
-        class GPUDepthStencilState_D3D11 : public GPUDepthStencilState
-        {
-        public:
+    /// D3D11 implementation of the GPU depth/stencil state object.
+    class GPUDepthStencilState_D3D11 : public GPUDepthStencilState
+    {
+    public:
 
-            /// Constructor.
-            GPUDepthStencilState_D3D11(const GPUDepthStencilStateDesc &desc, ID3D11DepthStencilState* depthStencilStateD3D);
+        /// Constructor.
+        GPUDepthStencilState_D3D11(const GPUDepthStencilStateDesc &desc, ID3D11DepthStencilState* depthStencilStateD3D);
 
-            /// Destructor.
-            virtual ~GPUDepthStencilState_D3D11();
-
-
-            /// Retrieves a pointer to the internal D3D11 rasterizer state object.
-            ID3D11DepthStencilState* GetD3D11DepthStencilState();
+        /// Destructor.
+        virtual ~GPUDepthStencilState_D3D11();
 
 
-        private:
+        /// Retrieves a pointer to the internal D3D11 rasterizer state object.
+        ID3D11DepthStencilState* GetD3D11DepthStencilState();
 
-            /// A pointer to the D3D11 rasterizer state object.
-            ID3D11DepthStencilState* m_depthStencilStateD3D;
-        };
-    }
+
+    private:
+
+        /// A pointer to the D3D11 rasterizer state object.
+        ID3D11DepthStencilState* m_depthStencilStateD3D;
+    };
 }
 
 #endif

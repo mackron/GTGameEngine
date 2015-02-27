@@ -5,29 +5,26 @@
 
 namespace GT
 {
-    namespace GE
+    /// Class representing a GPU compute device.
+    class GPUComputeDevice
     {
-        /// Class representing a GPU compute device.
-        class GPUComputeDevice
-        {
-        public:
+    public:
 
-            /// Constructor.
-            GPUComputeDevice();
+        /// Constructor.
+        GPUComputeDevice();
 
-            /// Destructor.
-            ~GPUComputeDevice();
+        /// Destructor.
+        ~GPUComputeDevice();
 
 
 
 
 
 
-        private:    // No copying.
-            GPUComputeDevice(const GPUComputeDevice &);
-            GPUComputeDevice & operator=(const GPUComputeDevice &);
-        };
-    }
+    private:    // No copying.
+        GPUComputeDevice(const GPUComputeDevice &);
+        GPUComputeDevice & operator=(const GPUComputeDevice &);
+    };
 }
 
 #endif

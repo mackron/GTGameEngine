@@ -4,24 +4,21 @@
 
 namespace GT
 {
-    namespace GE
+    HardwarePlatform_Audio::HardwarePlatform_Audio()
     {
-        HardwarePlatform_Audio::HardwarePlatform_Audio()
-        {
-        }
+    }
 
-        HardwarePlatform_Audio::~HardwarePlatform_Audio()
-        {
-        }
+    HardwarePlatform_Audio::~HardwarePlatform_Audio()
+    {
+    }
 
 
-        ResultCode HardwarePlatform_Audio::Startup()
-        {
-            return 0;   // No error.
-        }
+    ResultCode HardwarePlatform_Audio::Startup()
+    {
+        return 0;   // No error.
+    }
 
-        void HardwarePlatform_Audio::Shutdown()
-        {
-        }
+    void HardwarePlatform_Audio::Shutdown()
+    {
     }
 }

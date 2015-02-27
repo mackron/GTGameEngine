@@ -8,22 +8,19 @@
 
 namespace GT
 {
-    namespace GE
+    GPUInputLayout_D3D11::GPUInputLayout_D3D11(ID3D11InputLayout* inputLayoutD3D)
+        : m_inputLayoutD3D(inputLayoutD3D)
     {
-        GPUInputLayout_D3D11::GPUInputLayout_D3D11(ID3D11InputLayout* inputLayoutD3D)
-            : m_inputLayoutD3D(inputLayoutD3D)
-        {
-        }
+    }
 
-        GPUInputLayout_D3D11::~GPUInputLayout_D3D11()
-        {
-        }
+    GPUInputLayout_D3D11::~GPUInputLayout_D3D11()
+    {
+    }
 
 
-        ID3D11InputLayout* GPUInputLayout_D3D11::GetD3D11InputLayout()
-        {
-            return m_inputLayoutD3D;
-        }
+    ID3D11InputLayout* GPUInputLayout_D3D11::GetD3D11InputLayout()
+    {
+        return m_inputLayoutD3D;
     }
 }
 

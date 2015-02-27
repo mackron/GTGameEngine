@@ -11,47 +11,44 @@
 
 namespace GT
 {
-    namespace GE
+    /// Class representing a D3D11 vertex shader.
+    class GPUVertexShader_D3D11 : public GPUVertexShader
     {
-        /// Class representing a D3D11 vertex shader.
-        class GPUVertexShader_D3D11 : public GPUVertexShader
-        {
-        public:
+    public:
 
-            /// Constructor.
-            GPUVertexShader_D3D11(ID3D11VertexShader* vertexShaderD3D, const void* shaderBinaryD3D, size_t shaderBinarySizeD3D);
+        /// Constructor.
+        GPUVertexShader_D3D11(ID3D11VertexShader* vertexShaderD3D, const void* shaderBinaryD3D, size_t shaderBinarySizeD3D);
 
-            /// Destructor.
-            virtual ~GPUVertexShader_D3D11();
+        /// Destructor.
+        virtual ~GPUVertexShader_D3D11();
 
 
-            /// Retrieves a reference to the internal D3D11 shader object.
-            ID3D11VertexShader* GetD3D11VertexShader();
+        /// Retrieves a reference to the internal D3D11 shader object.
+        ID3D11VertexShader* GetD3D11VertexShader();
 
-            /// Retrieves a pointer ot the D3D shader binary.
-            const void* GetD3D11ShaderBinary() const;
+        /// Retrieves a pointer ot the D3D shader binary.
+        const void* GetD3D11ShaderBinary() const;
 
-            /// Retrieves the size in bytes of the D3D shader binary.
-            size_t GetD3D11ShaderBinarySize() const;
-
-
-        private:
-
-            /// A pointer to the D3D11 vertex shader object.
-            ID3D11VertexShader* m_vertexShaderD3D;
-
-            /// A pointer to the shader binary.
-            void* m_shaderBinaryD3D;
-
-            /// The size in bytes of the D3D shader binary.
-            size_t m_shaderBinarySizeD3D;
+        /// Retrieves the size in bytes of the D3D shader binary.
+        size_t GetD3D11ShaderBinarySize() const;
 
 
-        private:    // No copying.
-            GPUVertexShader_D3D11(const GPUVertexShader_D3D11 &);
-            GPUVertexShader_D3D11 & operator=(const GPUVertexShader_D3D11&);
-        };
-    }
+    private:
+
+        /// A pointer to the D3D11 vertex shader object.
+        ID3D11VertexShader* m_vertexShaderD3D;
+
+        /// A pointer to the shader binary.
+        void* m_shaderBinaryD3D;
+
+        /// The size in bytes of the D3D shader binary.
+        size_t m_shaderBinarySizeD3D;
+
+
+    private:    // No copying.
+        GPUVertexShader_D3D11(const GPUVertexShader_D3D11 &);
+        GPUVertexShader_D3D11 & operator=(const GPUVertexShader_D3D11&);
+    };
 }
 
 #endif

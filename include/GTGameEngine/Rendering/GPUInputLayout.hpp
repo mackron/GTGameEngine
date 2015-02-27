@@ -5,26 +5,23 @@
 
 namespace GT
 {
-    namespace GE
+    /// Base class representing the layout of a vertex shader's input.
+    class GPUInputLayout
     {
-        /// Base class representing the layout of a vertex shader's input.
-        class GPUInputLayout
-        {
-        public:
+    public:
 
-            /// Constructor.
-            GPUInputLayout();
+        /// Constructor.
+        GPUInputLayout();
 
-            /// Destructor
-            virtual ~GPUInputLayout();
+        /// Destructor
+        virtual ~GPUInputLayout();
 
 
 
-        private:    // No copying.
-            GPUInputLayout(const GPUInputLayout &);
-            GPUInputLayout & operator=(const GPUInputLayout &);
-        };
-    }
+    private:    // No copying.
+        GPUInputLayout(const GPUInputLayout &);
+        GPUInputLayout & operator=(const GPUInputLayout &);
+    };
 }
 
 #endif

@@ -78,8 +78,10 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUBufferUsage.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUDataFormats.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUFragmentShader.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUFramebuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUInputLayout.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUInputLayoutDesc.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUPrimitiveTopolgoy.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPURenderingDeviceLimits.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUShaderDefine.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUShaderProgram.hpp" />

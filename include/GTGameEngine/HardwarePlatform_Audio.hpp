@@ -7,35 +7,32 @@
 
 namespace GT
 {
-    namespace GE
+    /// Class representing all of the usable input devices (mouse, keyboard, controller, etc) on the running system.
+    class HardwarePlatform_Audio
     {
-        /// Class representing all of the usable input devices (mouse, keyboard, controller, etc) on the running system.
-        class HardwarePlatform_Audio
-        {
-        public:
+    public:
 
-            /// Constructor.
-            HardwarePlatform_Audio();
+        /// Constructor.
+        HardwarePlatform_Audio();
 
-            /// Destructor.
-            ~HardwarePlatform_Audio();
+        /// Destructor.
+        ~HardwarePlatform_Audio();
 
 
-            /// Starts up the hardware platform object.
-            ///
-            /// @return A result code that determines whether or not initialization was successful, and if not, what the error was.
-            ResultCode Startup();
+        /// Starts up the hardware platform object.
+        ///
+        /// @return A result code that determines whether or not initialization was successful, and if not, what the error was.
+        ResultCode Startup();
 
-            /// Shuts down the platform object.
-            void Shutdown();
+        /// Shuts down the platform object.
+        void Shutdown();
 
 
 
-        private:    // No copying.
-            HardwarePlatform_Audio(const HardwarePlatform_Audio &);
-            HardwarePlatform_Audio & operator=(const HardwarePlatform_Audio &);
-        };
-    }
+    private:    // No copying.
+        HardwarePlatform_Audio(const HardwarePlatform_Audio &);
+        HardwarePlatform_Audio & operator=(const HardwarePlatform_Audio &);
+    };
 }
 
 #endif
