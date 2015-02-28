@@ -259,7 +259,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUPrimitiveTopolgoy.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\RenderingObjectHandles.hpp">
+    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\RenderingTypes.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
   </ItemGroup>
