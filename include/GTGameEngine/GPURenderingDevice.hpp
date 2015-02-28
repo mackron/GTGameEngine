@@ -31,9 +31,7 @@
 namespace GT
 {
     class GPUFramebuffer;
-    class GPUBuffer;
     class GPUShaderProgram;
-    class GPUInputLayout;
 
     enum GPUClearFlag
     {
@@ -199,7 +197,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is analogous to D3D11's IASetVertexBuffers().
-        virtual void IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset) = 0;
+        virtual void IASetVertexBuffer(unsigned int slotIndex, HBuffer hBuffer, size_t stride, size_t offset) = 0;
 
         /// Binds the given index buffer for the input-assembler stage.
         ///
@@ -209,7 +207,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is analogous to D3D11's IASetIndexBuffer().
-        virtual void IASetIndexBuffer(GPUBuffer* buffer, GPUIndexFormat format, size_t offset) = 0;
+        virtual void IASetIndexBuffer(HBuffer hBuffer, GPUIndexFormat format, size_t offset) = 0;
 
 
 
@@ -332,7 +330,7 @@ namespace GT
         ///     synchronization.
         virtual void ReleaseInputLayout(HInputLayout hInputLayout) = 0;
 
-        /// Increments the internal reference counter of the given rasterizer state object.
+        /// Increments the internal reference counter of the given input layout object.
         ///
         /// @param hInputLayout [in] A handle to the object to hold.
         ///
@@ -412,31 +410,46 @@ namespace GT
 
         /// Creates a buffer object of the given type.
         ///
-        /// @param type           [in]  The buffer type (vertex, index, constant, etc.)
-        /// @param usage          [in]  The usage type of the buffer (immutable, dynamic, etc.)
+        /// @param type           [in] The buffer type (vertex, index, constant, etc.)
+        /// @param usage          [in] The usage type of the buffer (immutable, dynamic, etc.)
         /// @param cpuAccessFlags [in] Flags specifying how the CPU is allowed to access the buffer's data. This affects map/unmap operations.
-        /// @param sizeInBytes    [in]  The size in bytes of the buffer.
-        /// @param data           [in]  A pointer to the buffer that contains the initial data.
-        /// @param bufferOut      [out] A reference to the variable that will receive a pointer to the new buffer object.
+        /// @param sizeInBytes    [in] The size in bytes of the buffer.
+        /// @param data           [in] A pointer to the buffer that contains the initial data.
         ///
-        /// @return The result code specifying whether or not the buffer was created successfully.
+        /// @return A handle to the buffer object, or 0 if there was an error.
         ///
         /// @remarks
         ///     When \c usage is GPUBufferUsage_Immutable, \c data cannot be null.
         ///     @par
         ///     If \c cpuAccessFlags is set to GPUBufferCPUAccess_None (0), all map and unmap operations will fail.
-        virtual ResultCode CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data, GPUBuffer* &bufferOut) = 0;
+        virtual HBuffer CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data) = 0;
 
-        /// Deletes a buffer object that was created with CreateBuffer().
+        /// Reduces the reference count of the given buffer object and deletes the internal reference when it hits 0.
         ///
-        /// @param buffer [in] A pointer to the buffer to delete.
-        virtual void DeleteBuffer(GPUBuffer* buffer) = 0;
+        /// @param hBuffer [in] A handle to the buffer to delete.
+        ///
+        /// @remarks
+        ///     This is thread safe.
+        ///     @par
+        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
+        ///     synchronization.
+        virtual void ReleaseBuffer(HBuffer hBuffer) = 0;
+        
+        /// Increments the internal reference counter of the given buffer object.
+        ///
+        /// @param hBuffer [in] A handle to the buffer object to hold.
+        ///
+        /// @remarks
+        ///     This is thread safe.
+        virtual void HoldBuffer(HBuffer hBuffer) = 0;
+
 
         /// Maps the given buffer's data for use on the CPU side.
         ///
-        /// @param buffer  [in]  A pointer to the buffer object whose data is being mapped.
-        /// @param mapType [in]  The type of mapping to perform. See remarks.
-        /// @param dataOut [out] A reference to the variable that will receive a pointer to the mapped data.
+        /// @param hBuffer [in] A handle to the buffer object whose data is being mapped.
+        /// @param mapType [in] The type of mapping to perform. See remarks.
+        ///
+        /// @return A pointer to the buffer data, or null if an error occurs.
         ///
         /// @remarks
         ///     This does not, conceptually, allocate a buffer - it simply outputs a pointer to the internal buffer.
@@ -448,15 +461,15 @@ namespace GT
         ///     When \c mapType is \c GPUBufferMapType_Read or \c GPUBufferMapType_ReadWrite, the buffer must have been created with \c GPUBufferCPUAccess_Read.
         ///     @par
         ///     When \c mapType is \c GPUBufferMapType_Write, \c GPUBufferMapType_ReadWrite, \c GPUBufferMapType_Write_Discard or \c GPUBufferMapType_Write_NoOverwrite, the buffer must have been created with \c GPUBufferCPUAccess_Write.
-        virtual ResultCode MapBuffer(GPUBuffer* buffer, GPUBufferMapType mapType, void* &dataOut) = 0;
+        virtual void* MapBuffer(HBuffer hBuffer, GPUBufferMapType mapType) = 0;
 
         /// Unmaps the given buffer's data.
         ///
-        /// @param buffer [in] A pointer to the buffer object whose data is being unmapped.
+        /// @param hBuffer [in] A handle to the buffer object whose data is being unmapped.
         ///
         /// @remarks
         ///     This should be paired with a prior call to MapBuffer(). After this is called, the pointer returned by MapBuffer will become invalid.
-        virtual void UnmapBuffer(GPUBuffer* buffer) = 0;
+        virtual void UnmapBuffer(HBuffer hBuffer) = 0;
 
         /// Sets the data for the given buffer.
         ///
@@ -471,7 +484,7 @@ namespace GT
         ///     This will fail if the buffer is currently mapped.
         ///     @par
         ///     When using the Direct3D 11 API, this will use map/unmap internally when the buffer was created with GPUBufferUsage_Dynamic.
-        virtual ResultCode SetBufferData(GPUBuffer* buffer, size_t offsetInBytes, size_t sizeInBytes, const void* data) = 0;
+        virtual void SetBufferData(HBuffer hBuffer, size_t offsetInBytes, size_t sizeInBytes, const void* data) = 0;
 
 
 

@@ -88,10 +88,10 @@ namespace GT
         void IASetInputLayout(HInputLayout hinputLayout);
 
         /// @copydoc GPURenderingDevice::IASetVertexBuffer()
-        void IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset);
+        void IASetVertexBuffer(unsigned int slotIndex, HBuffer hBuffer, size_t stride, size_t offset);
 
         /// @copydoc GPURenderingDevice::IASetIndexBuffer()
-        void IASetIndexBuffer(GPUBuffer* buffer, GPUIndexFormat format, size_t offset);
+        void IASetIndexBuffer(HBuffer hBuffer, GPUIndexFormat format, size_t offset);
 
 
         /////////////////////////////////////////////
@@ -192,20 +192,23 @@ namespace GT
         ////////////////////////////////////////////
         // Buffers
 
-        /// GPURenderingDevice::CreateBuffer().
-        ResultCode CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data, GPUBuffer* &bufferOut);
+        /// @copydoc GPURenderingDevice::CreateBuffer()
+        HBuffer CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data);
 
-        /// GPURenderingDevice::DeleteBuffer().
-        void DeleteBuffer(GPUBuffer* buffer);
+        /// @copydoc GPURenderingDevice::ReleaseBuffer()
+        void ReleaseBuffer(HBuffer hBuffer);
 
-        /// GPURenderingDevice::MapBuffer().
-        ResultCode MapBuffer(GPUBuffer* buffer, GPUBufferMapType mapType, void* &dataOut);
+        /// @copydoc GPURenderingDevice::HoldBuffer()
+        void HoldBuffer(HBuffer hBuffer);
 
-        /// GPURenderingDevice::UnmapBuffer().
-        void UnmapBuffer(GPUBuffer* buffer);
+        /// @copydoc GPURenderingDevice::MapBuffer()
+        void* MapBuffer(HBuffer hBuffer, GPUBufferMapType mapType);
 
-        /// GPURenderingDevice::SetBufferData().
-        ResultCode SetBufferData(GPUBuffer* buffer, size_t offsetInBytes, size_t sizeInBytes, const void* data);
+        /// @copydoc GPURenderingDevice::UnmapBuffer()
+        void UnmapBuffer(HBuffer hBuffer);
+
+        /// @copydoc GPURenderingDevice::SetBufferData()
+        void SetBufferData(HBuffer hBuffer, size_t offsetInBytes, size_t sizeInBytes, const void* data);
 
 
 

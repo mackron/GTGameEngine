@@ -3,15 +3,17 @@
 #ifndef __GT_GE_Rendering_GPUBuffer_OpenGL21_hpp_
 #define __GT_GE_Rendering_GPUBuffer_OpenGL21_hpp_
 
-#include <GTGameEngine/Rendering/GPUBuffer.hpp>
-#include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
+#include <GTGameEngine/Config.hpp>
 
 #if defined(GT_GE_BUILD_OPENGL21)
+#include <GTGameEngine/Rendering/GPUBuffer.hpp>
+#include <GTLib/ReferenceCountedObject.hpp>
+#include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
 
 namespace GT
 {
     /// Class representing a buffer on the GPU.
-    class GPUBuffer_OpenGL21 : public GPUBuffer
+    class GPUBuffer_OpenGL21 : public ReferenceCountedObject, public GPUBuffer
     {
     public:
 

@@ -7,11 +7,11 @@ namespace GT
 {
     enum GPUBufferMapType
     {
-        GPUBufferMapType_Read              = 1,
-        GPUBufferMapType_Write             = 2,
-        GPUBufferMapType_ReadWrite         = 3,
-        GPUBufferMapType_Write_Discard     = 4,
-        GPUBufferMapType_Write_NoOverwrite = 5      //< Cannot be used with constant buffer.
+        GPUBufferMapType_Read              = 0,
+        GPUBufferMapType_Write             = 1,
+        GPUBufferMapType_ReadWrite         = 2,
+        GPUBufferMapType_Write_Discard     = 3,
+        GPUBufferMapType_Write_NoOverwrite = 4      //< Cannot be used with constant buffer.
     };
 }
 

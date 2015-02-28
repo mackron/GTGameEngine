@@ -7,12 +7,13 @@
 namespace GT
 {
     GPUBuffer_OpenGL21::GPUBuffer_OpenGL21(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, GLuint objectGL, GLenum targetGL, GLenum usageGL)
-        : m_type(type),
-            m_usage(usage),
-            m_cpuAccessFlags(cpuAccessFlags),
-            m_objectGL(objectGL),
-            m_targetGL(targetGL),
-            m_usageGL(usageGL)
+        : ReferenceCountedObject(),
+          m_type(type),
+          m_usage(usage),
+          m_cpuAccessFlags(cpuAccessFlags),
+          m_objectGL(objectGL),
+          m_targetGL(targetGL),
+          m_usageGL(usageGL)
     {
     }
 

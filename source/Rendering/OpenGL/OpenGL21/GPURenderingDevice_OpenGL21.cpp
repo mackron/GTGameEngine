@@ -96,7 +96,7 @@ namespace GT
             m_currentTopologyGL(GL_TRIANGLES),
             m_vertexBufferSlots(),
             m_invalidVertexBufferSlots(),
-            m_currentIndexBuffer(nullptr),
+            m_currentIndexBuffer(0),
             m_indexBufferFormat(GL_UNSIGNED_INT),
             m_indexBufferFormatSize(4),
             m_indexBufferOffset(0),
@@ -261,7 +261,7 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        if (m_currentIndexBuffer != nullptr)
+        if (m_currentIndexBuffer != 0)
         {
             // Update the vertex attribute pointers if any are invalid.
             while (m_invalidVertexBufferSlots != 0)
@@ -364,13 +364,13 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_OpenGL21::IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset)
+    void GPURenderingDevice_OpenGL21::IASetVertexBuffer(unsigned int slotIndex, HBuffer hBuffer, size_t stride, size_t offset)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
         assert(slotIndex < GT_GE_MAX_VERTEX_BUFFER_SLOTS);
 
-        m_vertexBufferSlots[slotIndex].buffer = buffer;
+        m_vertexBufferSlots[slotIndex].buffer = hBuffer;
         m_vertexBufferSlots[slotIndex].stride = stride;
         m_vertexBufferSlots[slotIndex].offset = offset;
 
@@ -379,11 +379,11 @@ namespace GT
         this->UpdateSlotVertexAttributePointers(slotIndex);
     }
 
-    void GPURenderingDevice_OpenGL21::IASetIndexBuffer(GPUBuffer* buffer, GPUIndexFormat format, size_t offset)
+    void GPURenderingDevice_OpenGL21::IASetIndexBuffer(HBuffer hBuffer, GPUIndexFormat format, size_t offset)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
+        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
         if (bufferGL != nullptr)
         {
             assert(bufferGL->GetOpenGLTarget() == GL_ELEMENT_ARRAY_BUFFER);
@@ -416,7 +416,7 @@ namespace GT
         }
 
 
-        m_currentIndexBuffer = buffer;
+        m_currentIndexBuffer = hBuffer;
     }
 
 
@@ -978,130 +978,139 @@ namespace GT
     ///////////////////////////////////////////
     // Buffers
 
-    ResultCode GPURenderingDevice_OpenGL21::CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data, GPUBuffer* &bufferOut)
+    HBuffer GPURenderingDevice_OpenGL21::CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        bufferOut = nullptr;
-
         if (usage == GPUBufferUsage_Immutable && data == nullptr)
         {
-            return NoDataSpecifiedForImmutableBuffer;
+            // No data specified for immutable buffer. Immutable buffers must have their data set a creation time.
+            return 0;
         }
 
         if (type == GPUBufferType_Constant)
         {
-            return UnsupportedGPUBufferType;
+            // Don't currently support constant/uniform buffers.
+            return 0;
         }
 
 
-        GLuint targetGL = 0;
-        GLuint usageGL  = 0;
-
-        switch (type)
+        GLuint targetsGL[] =
         {
-        case GPUBufferType_Vertex:
-            {
-                targetGL = GL_ARRAY_BUFFER;
-                break;
-            }
+            GL_ARRAY_BUFFER,
+            GL_ELEMENT_ARRAY_BUFFER,
+            GL_UNIFORM_BUFFER
+        };
 
-        case GPUBufferType_Index:
-            {
-                targetGL = GL_ELEMENT_ARRAY_BUFFER;
-                break;
-            }
-
-        case GPUBufferType_Constant:
-            {
-                return UnsupportedGPUBufferType;
-            }
-
-        default:
-            {
-                return UnknownGPUBufferType;
-            }
-        }
-
-
-        switch (usage)
+        GLuint usagesGL[] =
         {
-        case GPUBufferUsage_Default:
-            {
-                usageGL = GL_STREAM_DRAW;
-                break;
-            }
-
-        case GPUBufferUsage_Immutable:
-            {
-                usageGL = GL_STATIC_DRAW;
-                break;
-            }
-
-        case GPUBufferUsage_Dynamic:
-            {
-                usageGL = GL_DYNAMIC_DRAW;
-                break;
-            }
-
-        case GPUBufferUsage_Staging:
-            {
-                usageGL = GL_DYNAMIC_READ;
-                break;
-            }
-
-        default:
-            {
-                return UnknownGPUBufferUsage;
-            }
-        }
-
+            GL_STREAM_DRAW,     // BufferUsage_Default
+            GL_STATIC_DRAW,     // BufferUsage_Immutable,
+            GL_DYNAMIC_DRAW,    // BufferUsage_Dynamic,
+            GL_DYNAMIC_READ,    // BufferUsage_Staging
+        };
 
 
         GLuint prevObjectGL;
-        m_gl.GetIntegerv((targetGL == GL_ARRAY_BUFFER) ? GL_ARRAY_BUFFER_BINDING : GL_ELEMENT_ARRAY_BUFFER_BINDING, reinterpret_cast<GLint*>(&prevObjectGL));
+        m_gl.GetIntegerv((targetsGL[type] == GL_ARRAY_BUFFER) ? GL_ARRAY_BUFFER_BINDING : GL_ELEMENT_ARRAY_BUFFER_BINDING, reinterpret_cast<GLint*>(&prevObjectGL));
 
 
         GLuint objectGL;
         m_gl.GenBuffers(1, &objectGL);
-        m_gl.BindBuffer(targetGL, objectGL);
-        m_gl.BufferData(targetGL, sizeInBytes, data, usageGL);
+        m_gl.BindBuffer(targetsGL[type], objectGL);
+        m_gl.BufferData(targetsGL[type], sizeInBytes, data, usagesGL[usage]);
 
-        bufferOut = new GPUBuffer_OpenGL21(type, usage, cpuAccessFlags, objectGL, targetGL, usageGL);
-
+        HBuffer hBuffer = reinterpret_cast<HBuffer>(new GPUBuffer_OpenGL21(type, usage, cpuAccessFlags, objectGL, targetsGL[type], usagesGL[usage]));
 
         // Re-bind the previous buffer.
-        m_gl.BindBuffer(targetGL, prevObjectGL);
+        m_gl.BindBuffer(targetsGL[type], prevObjectGL);
 
 
-        return 0;   // No error.
+        return hBuffer;
     }
 
-    void GPURenderingDevice_OpenGL21::DeleteBuffer(GPUBuffer* buffer)
+    void GPURenderingDevice_OpenGL21::ReleaseBuffer(HBuffer hBuffer)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
-        assert(bufferGL != nullptr);
+        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
+        if (bufferGL != nullptr)
         {
-            GLuint objectGL = bufferGL->GetOpenGLObject();
-            m_gl.DeleteBuffers(1, &objectGL);
+            m_referenceCountLock.Lock();
+            {
+                assert(bufferGL->GetReferenceCount() > 0);
 
-            delete buffer;
+                if (bufferGL->DecrementReferenceCount() == 0)
+                {
+                    GLuint objectGL = bufferGL->GetOpenGLObject();
+                    m_gl.DeleteBuffers(1, &objectGL);
+
+
+                    // If the vertex buffer is bound, unbind it.
+                    switch (bufferGL->GetOpenGLTarget())
+                    {
+                    case GL_ARRAY_BUFFER:
+                        {
+                            for (unsigned int iVertexBufferSlot; iVertexBufferSlot < GT_GE_MAX_VERTEX_BUFFER_SLOTS; ++iVertexBufferSlot)
+                            {
+                                if (m_vertexBufferSlots[iVertexBufferSlot].buffer == hBuffer)
+                                {
+                                    m_vertexBufferSlots[iVertexBufferSlot].buffer = 0;
+                                }
+                            }
+
+                            break;
+                        }
+
+                    case GL_ELEMENT_ARRAY_BUFFER:
+                        {
+                            if (m_currentIndexBuffer == hBuffer)
+                            {
+                                m_currentIndexBuffer = 0;
+                            }
+
+                            break;
+                        }
+
+                    case GL_UNIFORM_BUFFER:
+                        {
+                            break;
+                        }
+
+                    default: break;
+                    }
+
+                    delete bufferGL;
+                }
+            }
+            m_referenceCountLock.Unlock();
         }
     }
 
-    ResultCode GPURenderingDevice_OpenGL21::MapBuffer(GPUBuffer* buffer, GPUBufferMapType mapType, void* &dataOut)
+    void GPURenderingDevice_OpenGL21::HoldBuffer(HBuffer hBuffer)
+    {
+        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
+        if (bufferGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                bufferGL->IncrementReferenceCount();
+            }
+            m_referenceCountLock.Unlock();
+        }
+    }
+
+    void* GPURenderingDevice_OpenGL21::MapBuffer(HBuffer hBuffer, GPUBufferMapType mapType)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
+        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
         assert(bufferGL != nullptr);
         {
-            if (bufferGL->GetBufferUsage() != GPUBufferUsage_Immutable)
+            if (bufferGL->GetOpenGLUsage() != GL_STATIC_DRAW)   // <-- BufferUsage_Immutable
             {
-                const GLenum accessGLTable[] = {
-                    0,
+                const GLenum accessGLTable[] =
+                {
                     GL_READ_ONLY,       // GPUBufferMapType_Read
                     GL_WRITE_ONLY,      // GPUBufferMapType_Write
                     GL_READ_WRITE,      // GPUBufferMapType_ReadWrite
@@ -1115,35 +1124,28 @@ namespace GT
 
 
                 m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), bufferGL->GetOpenGLObject());
-                dataOut = m_gl.MapBuffer(bufferGL->GetOpenGLTarget(), accessGLTable[mapType]);
+                void* dataOut = m_gl.MapBuffer(bufferGL->GetOpenGLTarget(), accessGLTable[mapType]);
 
 
                 // Re-bind the previous buffer.
                 m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), prevObjectGL);
 
 
-                if (dataOut != nullptr)
-                {
-                    return FailedToMapGPUBuffer;
-                }
-                else
-                {
-                    return 0;   // No error.
-                }
+                return dataOut;
             }
             else
             {
-                dataOut = nullptr;
-                return GPUBufferIsImmutable;
+                // Buffer is immutable.
+                return nullptr;
             }
         }
     }
 
-    void GPURenderingDevice_OpenGL21::UnmapBuffer(GPUBuffer* buffer)
+    void GPURenderingDevice_OpenGL21::UnmapBuffer(HBuffer hBuffer)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
+        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
         assert(bufferGL != nullptr);
         {
             GLuint prevObjectGL;
@@ -1157,11 +1159,11 @@ namespace GT
         }
     }
 
-    ResultCode GPURenderingDevice_OpenGL21::SetBufferData(GPUBuffer* buffer, size_t offsetInBytes, size_t sizeInBytes, const void* data)
+    void GPURenderingDevice_OpenGL21::SetBufferData(HBuffer hBuffer, size_t offsetInBytes, size_t sizeInBytes, const void* data)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(buffer);
+        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
         assert(bufferGL != nullptr);
         {
             if (bufferGL->GetBufferUsage() != GPUBufferUsage_Immutable)
@@ -1174,13 +1176,6 @@ namespace GT
 
                 // Re-bind the previous buffer.
                 m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), prevObjectGL);
-
-
-				return 0;	// No errors.
-            }
-            else
-            {
-                return GPUBufferIsImmutable;
             }
         }
     }

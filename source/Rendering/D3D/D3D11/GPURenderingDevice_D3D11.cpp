@@ -283,23 +283,15 @@ namespace GT
         m_context->IASetInputLayout(reinterpret_cast<ID3D11InputLayout*>(hInputLayout));
     }
 
-    void GPURenderingDevice_D3D11::IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset)
+    void GPURenderingDevice_D3D11::IASetVertexBuffer(unsigned int slotIndex, HBuffer hBuffer, size_t stride, size_t offset)
     {
-        auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
-        if (bufferD3D != nullptr)
-        {
-            auto bufferD3D11 = bufferD3D->GetD3D11Buffer();
-            UINT strideD3D11 = static_cast<UINT>(stride);
-            UINT offsetD3D11 = static_cast<UINT>(offset);
-            m_context->IASetVertexBuffers(slotIndex, 1, &bufferD3D11, &strideD3D11, &offsetD3D11);
-        }
-        else
-        {
-            m_context->IASetVertexBuffers(0, 0, nullptr, nullptr, nullptr);
-        }
+        auto bufferD3D11 = reinterpret_cast<ID3D11Buffer*>(hBuffer);
+        UINT strideD3D11 = static_cast<UINT>(stride);
+        UINT offsetD3D11 = static_cast<UINT>(offset);
+        m_context->IASetVertexBuffers(slotIndex, 1, &bufferD3D11, &strideD3D11, &offsetD3D11);
     }
 
-    void GPURenderingDevice_D3D11::IASetIndexBuffer(GPUBuffer* buffer, GPUIndexFormat format, size_t offset)
+    void GPURenderingDevice_D3D11::IASetIndexBuffer(HBuffer hBuffer, GPUIndexFormat format, size_t offset)
     {
         DXGI_FORMAT formats[] =
         {
@@ -308,15 +300,7 @@ namespace GT
             DXGI_FORMAT_R32_UINT
         };
 
-        auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
-        if (bufferD3D != nullptr)
-        {
-            m_context->IASetIndexBuffer(bufferD3D->GetD3D11Buffer(), formats[format], static_cast<UINT>(offset));
-        }
-        else
-        {
-            m_context->IASetIndexBuffer(nullptr, formats[format], static_cast<UINT>(offset));
-        }
+        m_context->IASetIndexBuffer(reinterpret_cast<ID3D11Buffer*>(hBuffer), formats[format], static_cast<UINT>(offset));
     }
 
 
@@ -811,13 +795,12 @@ namespace GT
     ///////////////////////////////////////////
     // Buffers
 
-    ResultCode GPURenderingDevice_D3D11::CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data, GPUBuffer* &bufferOut)
+    HBuffer GPURenderingDevice_D3D11::CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data)
     {
-        bufferOut = nullptr;
-
         if (usage == GPUBufferUsage_Immutable && data == nullptr)
         {
-            return NoDataSpecifiedForImmutableBuffer;
+            // No data specified for immutable buffer. Immutable buffers must have their data set a creation time.
+            return 0;
         }
 
 
@@ -831,7 +814,6 @@ namespace GT
 
         UINT bindFlags[] =
         {
-            0,
             D3D11_BIND_VERTEX_BUFFER,
             D3D11_BIND_INDEX_BUFFER,
             D3D11_BIND_CONSTANT_BUFFER
@@ -864,71 +846,67 @@ namespace GT
         ID3D11Buffer* bufferD3D11;
         if (SUCCEEDED(m_device->CreateBuffer(&bd, &initialData, &bufferD3D11)))
         {
-            bufferOut = new GPUBuffer_D3D11(bufferD3D11, type, usage, cpuAccessFlags);
-            return 0;
+            return reinterpret_cast<HBuffer>(bufferD3D11);
         }
         else
         {
-            // Failed to create the buffer.
-            return -1;
+            return 0;
         }
     }
 
-    void GPURenderingDevice_D3D11::DeleteBuffer(GPUBuffer* buffer)
+    void GPURenderingDevice_D3D11::ReleaseBuffer(HBuffer hBuffer)
     {
-        auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
-        assert(bufferD3D != nullptr);
+        if (hBuffer != 0)
         {
-            assert(bufferD3D->GetD3D11Buffer() != nullptr);
-
-            bufferD3D->GetD3D11Buffer()->Release();
-            delete buffer;
+            reinterpret_cast<ID3D11Buffer*>(hBuffer)->Release();
         }
     }
 
-    ResultCode GPURenderingDevice_D3D11::MapBuffer(GPUBuffer* buffer, GPUBufferMapType mapType, void* &dataOut)
+    void GPURenderingDevice_D3D11::HoldBuffer(HBuffer hBuffer)
     {
-        auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
-        assert(bufferD3D != nullptr);
+        if (hBuffer != 0)
         {
-            D3D11_MAP mapTypes[] =
-            {
-                D3D11_MAP_READ,
-                D3D11_MAP_WRITE,
-                D3D11_MAP_READ_WRITE,
-                D3D11_MAP_WRITE_DISCARD,
-                D3D11_MAP_WRITE_NO_OVERWRITE,
-            };
-
-            D3D11_MAPPED_SUBRESOURCE mappingInfo;
-            if (SUCCEEDED(m_context->Map(bufferD3D->GetD3D11Buffer(), 0, mapTypes[mapType - 1], 0, &mappingInfo)))
-            {
-                dataOut = mappingInfo.pData;
-                return 0;
-            }
-            else
-            {
-                // Failed to map the buffer.
-                return -1;
-            }
+            reinterpret_cast<ID3D11Buffer*>(hBuffer)->AddRef();
         }
     }
 
-    void GPURenderingDevice_D3D11::UnmapBuffer(GPUBuffer* buffer)
+    void* GPURenderingDevice_D3D11::MapBuffer(HBuffer hBuffer, GPUBufferMapType mapType)
     {
-        auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
-        assert(bufferD3D != nullptr);
+        D3D11_MAP mapTypes[] =
         {
-            m_context->Unmap(bufferD3D->GetD3D11Buffer(), 0);
+            D3D11_MAP_READ,
+            D3D11_MAP_WRITE,
+            D3D11_MAP_READ_WRITE,
+            D3D11_MAP_WRITE_DISCARD,
+            D3D11_MAP_WRITE_NO_OVERWRITE,
+        };
+
+        D3D11_MAPPED_SUBRESOURCE mappingInfo;
+        if (SUCCEEDED(m_context->Map(reinterpret_cast<ID3D11Buffer*>(hBuffer), 0, mapTypes[mapType], 0, &mappingInfo)))
+        {
+            return mappingInfo.pData;
+        }
+        else
+        {
+            return nullptr;
         }
     }
 
-    ResultCode GPURenderingDevice_D3D11::SetBufferData(GPUBuffer* buffer, size_t offsetInBytes, size_t sizeInBytes, const void* data)
+    void GPURenderingDevice_D3D11::UnmapBuffer(HBuffer hBuffer)
     {
-        auto bufferD3D = reinterpret_cast<GPUBuffer_D3D11*>(buffer);
-        assert(bufferD3D != nullptr);
+        m_context->Unmap(reinterpret_cast<ID3D11Buffer*>(hBuffer), 0);
+    }
+
+    void GPURenderingDevice_D3D11::SetBufferData(HBuffer hBuffer, size_t offsetInBytes, size_t sizeInBytes, const void* data)
+    {
+        auto bufferD3D11 = reinterpret_cast<ID3D11Buffer*>(hBuffer);
+        assert(bufferD3D11 != nullptr);
         {
-            if (bufferD3D->GetBufferUsage() != GPUBufferUsage_Immutable)
+            // Make sure the buffer is not immutable.
+            D3D11_BUFFER_DESC desc;
+            bufferD3D11->GetDesc(&desc);
+
+            if (desc.Usage != D3D11_USAGE_IMMUTABLE)
             {
                 D3D11_BOX box;
                 box.left   = static_cast<UINT>(offsetInBytes);
@@ -938,13 +916,7 @@ namespace GT
                 box.front  = 0;
                 box.back   = 1;
 
-                m_context->UpdateSubresource(bufferD3D->GetD3D11Buffer(), 0, &box, data, static_cast<UINT>(sizeInBytes), 0);
-
-                return 0;
-            }
-            else
-            {
-                return GPUBufferIsImmutable;
+                m_context->UpdateSubresource(bufferD3D11, 0, &box, data, static_cast<UINT>(sizeInBytes), 0);
             }
         }
     }
