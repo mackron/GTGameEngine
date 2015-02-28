@@ -1,13 +1,12 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include "GPUInputLayout_OpenGL21.hpp"
-
-#if defined(GT_GE_BUILD_OPENGL21)
-#include <cassert>
-#include <cstdlib>
+#include "RenderingTypes_OpenGL21.hpp"
 
 namespace GT
 {
+    //////////////////////////////////////////////////
+    // InputLayout_OpenGL21
+
     GPUInputLayout_OpenGL21::GPUInputLayout_OpenGL21(AttributeDesc* const attributes, size_t attributeCount, unsigned int* slotAttributeCounts)
         : m_attributes(reinterpret_cast<AttributeDesc* const>(malloc(sizeof(AttributeDesc) * attributeCount))),
           m_attributeCount(attributeCount),
@@ -57,5 +56,3 @@ namespace GT
         rangeEndOut   = static_cast<size_t>(m_slotAttributeRanges[slotIndex] & 0x0000FFFF);
     }
 }
-
-#endif

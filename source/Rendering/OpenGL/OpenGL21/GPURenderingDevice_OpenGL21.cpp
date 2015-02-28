@@ -3,10 +3,7 @@
 #include "GPURenderingDevice_OpenGL21.hpp"
 
 #if defined(GT_GE_BUILD_OPENGL21)
-#include "GPUShaderProgram_OpenGL21.hpp"
-#include "GPUBuffer_OpenGL21.hpp"
-#include "GPUInputLayout_OpenGL21.hpp"
-#include "GPUStateObjects_OpenGL21.hpp"
+#include "RenderingTypes_OpenGL21.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>

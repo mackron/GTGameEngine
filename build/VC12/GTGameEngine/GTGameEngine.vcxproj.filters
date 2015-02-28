@@ -101,16 +101,7 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL.cpp">
       <Filter>Source Files\Rendering\OpenGL</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUBuffer_OpenGL21.cpp">
-      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUShaderProgram_OpenGL21.cpp">
-      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUInputLayout_OpenGL21.cpp">
-      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUStateObjects_OpenGL21.cpp">
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RenderingTypes_OpenGL21.cpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
     </ClCompile>
   </ItemGroup>
@@ -175,23 +166,14 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\OpenGL\OpenGL.hpp">
       <Filter>Header Files\Rendering\OpenGL</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUBuffer_OpenGL21.hpp">
-      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUShaderProgram_OpenGL21.hpp">
-      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUInputLayout_OpenGL21.hpp">
-      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPUStateObjects_OpenGL21.hpp">
-      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\RenderingTypes.hpp">
       <Filter>Header Files\Rendering</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\RenderingTypes_D3D11.hpp">
       <Filter>Source Files\Rendering\D3D\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RenderingTypes_OpenGL21.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

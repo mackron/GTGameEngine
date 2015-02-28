@@ -1,17 +1,128 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GE_GPUVertexInputLayout_OpenGL21_hpp_
-#define __GT_GE_GPUVertexInputLayout_OpenGL21_hpp_
+#ifndef __GT_RenderingTypes_OpenGL21_hpp_
+#define __GT_RenderingTypes_OpenGL21_hpp_
 
 #include <GTGameEngine/Config.hpp>
 
 #if defined(GT_GE_BUILD_OPENGL21)
-#include <GTLib/ReferenceCountedObject.hpp>
 #include <GTGameEngine/Rendering/RenderingTypes.hpp>
 #include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
+#include <GTLib/ReferenceCountedObject.hpp>
 
 namespace GT
 {
+    /// OpenGL 2.1 rasterizer state.
+    struct GPURasterizerState_OpenGL21 : public ReferenceCountedObject, public GPURasterizerStateDesc
+    {
+        GPURasterizerState_OpenGL21(const GPURasterizerStateDesc &desc)
+            : ReferenceCountedObject(), GPURasterizerStateDesc(desc)
+        {
+        }
+    };
+
+    /// OpenGL 2.1 depth/stencil state.
+    struct GPUDepthStencilState_OpenGL21 : public ReferenceCountedObject, public GPUDepthStencilStateDesc
+    {
+        GPUDepthStencilState_OpenGL21(const GPUDepthStencilStateDesc &desc)
+            : ReferenceCountedObject(), GPUDepthStencilStateDesc(desc)
+        {
+        }
+    };
+
+
+
+    /// Base class representing an OpenGL object.
+    class OpenGLObject
+    {
+    public:
+
+        /// Constructor.
+        OpenGLObject(GLuint objectGL)
+            : m_objectGL(objectGL)
+        {
+        }
+
+        /// Retrieves the OpenGL object.
+        GLuint GetOpenGLObject() const { return m_objectGL; }
+
+
+    private:
+
+        /// The OpenGL object.
+        GLuint m_objectGL;
+    };
+
+
+
+
+    //////////////////////////////////////////////////
+    // ShaderProgram_OpenGL21
+
+    /// OpenGL 2.1 shader program.
+    class GPUShaderProgram_OpenGL21 : public ReferenceCountedObject, public OpenGLObject
+    {
+    public:
+
+        /// Constructor.
+        GPUShaderProgram_OpenGL21(GLuint objectGL)
+            : ReferenceCountedObject(), OpenGLObject(objectGL)
+        {
+        }
+
+
+    private:    // No copying.
+        GPUShaderProgram_OpenGL21(const GPUShaderProgram_OpenGL21 &);
+        GPUShaderProgram_OpenGL21 & operator=(const GPUShaderProgram_OpenGL21 &);
+    };
+
+
+
+
+    //////////////////////////////////////////////////
+    // Buffer_OpenGL21
+
+    /// Class representing an OpenGL buffer object.
+    class GPUBuffer_OpenGL21 : public ReferenceCountedObject, public OpenGLObject
+    {
+    public:
+
+        /// Constructor.
+        GPUBuffer_OpenGL21(GLuint objectGL, GLenum targetGL, GLenum usageGL)
+            : ReferenceCountedObject(), OpenGLObject(objectGL), m_targetGL(targetGL), m_usageGL(usageGL)
+        {
+        }
+
+
+        /// Retrieves the OpenGL bind target.
+        GLenum GetOpenGLTarget() const { return m_targetGL; }
+
+        /// Retrieves the OpenGL usage hint.
+        GLenum GetOpenGLUsage() const { return m_usageGL; }
+
+
+
+    private:
+
+        /// The OpenGL target for glBindBuffer(), etc.
+        GLenum m_targetGL;
+
+        /// The OpenGL usage flags for glBufferData().
+        GLenum m_usageGL;
+
+
+    private:    // No copying.
+        GPUBuffer_OpenGL21(const GPUBuffer_OpenGL21 &);
+        GPUBuffer_OpenGL21 & operator=(const GPUBuffer_OpenGL21 &);
+    };
+
+
+
+
+    //////////////////////////////////////////////////
+    // InputLayout_OpenGL21
+
+    /// OpenGL input layout object.
     class GPUInputLayout_OpenGL21 : public ReferenceCountedObject
     {
     public:
@@ -81,6 +192,7 @@ namespace GT
         GPUInputLayout_OpenGL21 & operator=(const GPUInputLayout_OpenGL21 &);
     };
 }
+
 
 #endif
 
