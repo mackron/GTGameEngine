@@ -45,31 +45,6 @@ namespace GT
     };
 
 
-    /// Base class for the rasterizer state object.
-    class GPURasterizerState
-    {
-    public:
-
-        /// Constructor.
-        GPURasterizerState(const GPURasterizerStateDesc &desc);
-
-        /// Destructor.
-        virtual ~GPURasterizerState();
-
-
-        /// Retrieve a reference to the rasterizer state descriptor.
-        const GPURasterizerStateDesc & GetDesc() const;
-
-
-    private:
-
-        /// The rasterizer state descriptor that was used to create the state object.
-        GPURasterizerStateDesc m_desc;
-    };
-
-
-
-
 
     enum GPUDepthWriteMask
     {
@@ -116,38 +91,15 @@ namespace GT
     /// This is used when creating a depth/stencil state object.
     struct GPUDepthStencilStateDesc
     {
-        bool enableDepthTest;
+        bool              enableDepthTest;
         GPUDepthWriteMask depthWriteMask;
         GPUComparisonFunc depthFunc;
             
-        bool enableStencilTest;
-        uint8_t stencilReadMask;
-        uint8_t stencilWriteMask;
-        GPUStencilOpDesc stencilFrontFaceOp;
-        GPUStencilOpDesc stencilBackFaceOp;
-    };
-
-    /// Base class for the depth/stencil state object.
-    class GPUDepthStencilState
-    {
-    public:
-
-        /// Cosntructor.
-        GPUDepthStencilState(const GPUDepthStencilStateDesc &desc);
-
-        /// Destructor.
-        virtual ~GPUDepthStencilState();
-
-
-        /// Retrieve a reference to the depth/stencil state descriptor.
-        const GPUDepthStencilStateDesc & GetDesc() const;
-
-
-
-    private:
-
-        /// The depth/stencil state desciptor that was used to create the state object.
-        GPUDepthStencilStateDesc m_desc;
+        bool              enableStencilTest;
+        uint8_t           stencilReadMask;
+        uint8_t           stencilWriteMask;
+        GPUStencilOpDesc  stencilFrontFaceOp;
+        GPUStencilOpDesc  stencilBackFaceOp;
     };
 }
 

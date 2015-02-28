@@ -102,7 +102,7 @@ namespace GT
         // Output Merger Stage
 
         /// @copydoc GPURenderingDevice::OMSetDepthStencilState()
-        void OMSetDepthStencilState(GPUDepthStencilState* state, unsigned int stencilRef);
+        void OMSetDepthStencilState(HDepthStencilState hState, unsigned int stencilRef);
 
 
 
@@ -126,10 +126,13 @@ namespace GT
 
 
         /// @copydoc GPURenderingDevice::CreateDepthStencilState()
-        ResultCode CreateDepthStencilState(const GPUDepthStencilStateDesc &desc, GPUDepthStencilState* &depthStencilStateOut);
+        HDepthStencilState CreateDepthStencilState(const GPUDepthStencilStateDesc &desc);
 
         /// @copydoc GPURenderingDevice::DeleteDepthStencilState().
-        void DeleteDepthStencilState(GPUDepthStencilState* state);
+        void DeleteDepthStencilState(HDepthStencilState hState);
+
+        /// @copydoc GPURenderingDevice::HoldDepthStencilState()
+        void HoldDepthStencilState(HDepthStencilState hState);
 
 
         ////////////////////////////////////////////

@@ -239,9 +239,9 @@ namespace GT
 
         /// Sets the depth/stencil state.
         ///
-        /// @param state      [in] The depth/stencil state to make current on the output merger state.
+        /// @param hState     [in] The depth/stencil state to make current on the output merger state.
         /// @param stencilRef [in] Reference value that is bitwise-and when performing the depth/stencil test.
-        virtual void OMSetDepthStencilState(GPUDepthStencilState* state, unsigned int stencilRef) = 0;
+        virtual void OMSetDepthStencilState(HDepthStencilState hState, unsigned int stencilRef) = 0;
 
 
 
@@ -263,7 +263,7 @@ namespace GT
 
         /// Decrements the internal reference counter of the given rasterizer state and deletes the object if it hits 0.
         ///
-        /// @param hState [in] A pointer to the rasterizer state object to release.
+        /// @param hState [in] A handle to the rasterizer state object to release.
         ///
         /// @remarks
         ///     This is thread safe.
@@ -283,14 +283,29 @@ namespace GT
 
         /// Creates a depth/stencil state object.
         ///
-        /// @param desc                 [in]  A reference to the object that describes the depth/stencil state.
-        /// @param depthStencilStateOut [out] A reference to the variable that receive a pointer ot the new depth/stencil state object.
-        virtual ResultCode CreateDepthStencilState(const GPUDepthStencilStateDesc &desc, GPUDepthStencilState* &depthStencilStateOut) = 0;
-
-        /// Deletes a depth/stencil state object.
+        /// @param desc [in] A reference to the object that describes the depth/stencil state.
         ///
-        /// @param state [in] A pointer to the depth/stencil state object to delete.
-        virtual void DeleteDepthStencilState(GPUDepthStencilState* state) = 0;
+        /// @return A handle to the new depth/stencil state object, or 0 if there was an error.
+        virtual HDepthStencilState CreateDepthStencilState(const GPUDepthStencilStateDesc &desc) = 0;
+
+        /// Decrements the internal reference counter fo the given depth/stencil state and deletes the object if it hits 0.
+        ///
+        /// @param hState [in] A handle to the depth/stencil state object to release.
+        ///
+        /// @remarks
+        ///     This is thread safe.
+        ///     @par
+        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
+        ///     synchronization.
+        virtual void DeleteDepthStencilState(HDepthStencilState hState) = 0;
+
+        /// Increments the internal reference counter of the given rasterizer state object.
+        ///
+        /// @param hState [in] A pointer to the rasterizer state object to hold.
+        ///
+        /// @remarks
+        ///     This is thread safe.
+        virtual void HoldDepthStencilState(HDepthStencilState hState) = 0;
 
 
 

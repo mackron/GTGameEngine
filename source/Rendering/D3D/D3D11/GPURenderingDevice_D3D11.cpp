@@ -8,13 +8,15 @@
 #include "GPUVertexShader_D3D11.hpp"
 #include "GPUFragmentShader_D3D11.hpp"
 #include "GPUShaderProgram_D3D11.hpp"
-#include "GPUStateObjects_D3D11.hpp"
 #include <GTLib/Strings/Find.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/Parse.hpp>
 
 namespace GT
 {
+    // GUID for use with SetPrivateData().
+    const GUID GPURenderingDevice_D3D11::CustomDataGUID = {0xD74A88E1, 0xDA90, 0x05AA, {0xDD, 0x01, 0xEA, 0xD3, 0x31, 0xB3, 0xC2, 0x10}};
+
     GPURenderingDevice_D3D11::GPURenderingDevice_D3D11(const GPURenderingDeviceInfo &info)
         : GPURenderingDevice_Gen2(info),
             m_hD3D11(NULL),
@@ -103,8 +105,6 @@ namespace GT
 
                         // Triangles by default.
                         m_context->IASetPrimitiveTopology(D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
-
-                        // TODO: Change winding order to suit a right-handed coordinate system. Need to experiment with this.
 
 
                         return 0;   // No error.
@@ -364,13 +364,9 @@ namespace GT
     /////////////////////////////////////////////
     // Output Merger Stage
 
-    void GPURenderingDevice_D3D11::OMSetDepthStencilState(GPUDepthStencilState* state, unsigned int stencilRef)
+    void GPURenderingDevice_D3D11::OMSetDepthStencilState(HDepthStencilState hState, unsigned int stencilRef)
     {
-        auto stateD3D = reinterpret_cast<GPUDepthStencilState_D3D11*>(state);
-        if (stateD3D != nullptr)
-        {
-            m_context->OMSetDepthStencilState(stateD3D->GetD3D11DepthStencilState(), stencilRef);
-        }
+        m_context->OMSetDepthStencilState(reinterpret_cast<ID3D11DepthStencilState*>(hState), stencilRef);
     }
 
 
@@ -440,7 +436,7 @@ namespace GT
     }
 
 
-    ResultCode GPURenderingDevice_D3D11::CreateDepthStencilState(const GPUDepthStencilStateDesc &desc, GPUDepthStencilState* &depthStencilStateOut)
+    HDepthStencilState GPURenderingDevice_D3D11::CreateDepthStencilState(const GPUDepthStencilStateDesc &desc)
     {
         D3D11_DEPTH_WRITE_MASK depthWriteMasks[] =
         {
@@ -492,25 +488,27 @@ namespace GT
         ID3D11DepthStencilState* depthStencilStateD3D11;
         if (SUCCEEDED(m_device->CreateDepthStencilState(&descD3D, &depthStencilStateD3D11)))
         {
-            depthStencilStateOut = new GPUDepthStencilState_D3D11(desc, depthStencilStateD3D11);
-            return 0;
+            return reinterpret_cast<size_t>(depthStencilStateD3D11);
         }
         else
         {
-            // Failed to create the state object.
-            return -1;
+            return 0;
         }
     }
 
-    void GPURenderingDevice_D3D11::DeleteDepthStencilState(GPUDepthStencilState* state)
+    void GPURenderingDevice_D3D11::DeleteDepthStencilState(HDepthStencilState hState)
     {
-        auto stateD3D = reinterpret_cast<GPURasterizerState_D3D11*>(state);
-        if (stateD3D != nullptr)
+        if (hState != 0)
         {
-            assert(stateD3D->GetD3D11RasterizerState() != nullptr);
+            reinterpret_cast<ID3D11DepthStencilState*>(hState)->Release();
+        }
+    }
 
-            stateD3D->GetD3D11RasterizerState()->Release();
-            delete stateD3D;
+    void GPURenderingDevice_D3D11::HoldDepthStencilState(HDepthStencilState hState)
+    {
+        if (hState != 0)
+        {
+            reinterpret_cast<ID3D11DepthStencilState*>(hState)->AddRef();
         }
     }
 

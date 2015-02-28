@@ -432,27 +432,24 @@ namespace GT
         {
             // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
 
-            const GPURasterizerStateDesc &desc = stateGL->GetDesc();
-
-
             // Fill mode.
             GLenum fillModesGL[] =
             {
                 GL_LINE,        // GPUFillMode_Wireframe
                 GL_FILL,        // GPUFillMode_Solid
             };
-            m_gl.PolygonMode(GL_FRONT_AND_BACK, fillModesGL[desc.fillMode]);
+            m_gl.PolygonMode(GL_FRONT_AND_BACK, fillModesGL[stateGL->fillMode]);
                 
 
             // Cull mode.
-            if (desc.cullMode == GPUCullMode_None)
+            if (stateGL->cullMode == GPUCullMode_None)
             {
                 m_gl.Disable(GL_CULL_FACE);
             }
             else
             {
                 m_gl.Enable(GL_CULL_FACE);
-                m_gl.CullFace((desc.cullMode == GPUCullMode_Back) ? GL_BACK : GL_FRONT);
+                m_gl.CullFace((stateGL->cullMode == GPUCullMode_Back) ? GL_BACK : GL_FRONT);
             }
 
 
@@ -462,15 +459,15 @@ namespace GT
                 GL_CCW,
                 GL_CW
             };
-            m_gl.FrontFace(windingModesGL[desc.polygonWinding]);
+            m_gl.FrontFace(windingModesGL[stateGL->polygonWinding]);
 
 
             // Depth bias.
-            if (desc.depthBias != 0)
+            if (stateGL->depthBias != 0)
             {
                 m_gl.Enable(GL_POLYGON_OFFSET_FILL);
                 m_gl.Enable(GL_POLYGON_OFFSET_LINE);
-                m_gl.PolygonOffset(1.0f, static_cast<float>(desc.depthBias));
+                m_gl.PolygonOffset(1.0f, static_cast<float>(stateGL->depthBias));
             }
             else
             {
@@ -484,7 +481,7 @@ namespace GT
 
 
             // Depth clipping.
-            if (desc.enableDepthClip)
+            if (stateGL->enableDepthClip)
             {
                 m_gl.Disable(GL_DEPTH_CLAMP);
             }
@@ -495,7 +492,7 @@ namespace GT
 
 
             // Enable scissor.
-            if (desc.enableScissor)
+            if (stateGL->enableScissor)
             {
                 m_gl.Enable(GL_SCISSOR_TEST);
             }
@@ -524,17 +521,14 @@ namespace GT
     /////////////////////////////////////////////
     // Output Merger Stage
 
-    void GPURenderingDevice_OpenGL21::OMSetDepthStencilState(GPUDepthStencilState* state, unsigned int stencilRef)
+    void GPURenderingDevice_OpenGL21::OMSetDepthStencilState(HDepthStencilState hState, unsigned int stencilRef)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto stateGL = reinterpret_cast<GPUDepthStencilState_OpenGL21*>(state);
+        auto stateGL = reinterpret_cast<GPUDepthStencilState_OpenGL21*>(hState);
         if (stateGL != nullptr)
         {
             // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
-
-            const GPUDepthStencilStateDesc &desc = stateGL->GetDesc();
-
 
             GLenum comparisonFuncs[] =
             {
@@ -562,7 +556,7 @@ namespace GT
 
 
             // Enable depth test.
-            if (desc.enableDepthTest)
+            if (stateGL->enableDepthTest)
             {
                 m_gl.Enable(GL_DEPTH_TEST);
             }
@@ -572,15 +566,15 @@ namespace GT
             }
 
             // Depth mask.
-            m_gl.DepthMask(desc.depthWriteMask != GPUDepthWriteMask_Zero);
+            m_gl.DepthMask(stateGL->depthWriteMask != GPUDepthWriteMask_Zero);
 
             // Depth func.
-            m_gl.DepthFunc(comparisonFuncs[desc.depthFunc]);
+            m_gl.DepthFunc(comparisonFuncs[stateGL->depthFunc]);
 
 
 
             // Enable stencil test.
-            if (desc.enableStencilTest)
+            if (stateGL->enableStencilTest)
             {
                 m_gl.Enable(GL_STENCIL_TEST);
             }
@@ -590,15 +584,15 @@ namespace GT
             }
 
             // Stencil write mask.
-            m_gl.StencilMaskSeparate(GL_FRONT_AND_BACK, desc.stencilWriteMask);
+            m_gl.StencilMaskSeparate(GL_FRONT_AND_BACK, stateGL->stencilWriteMask);
 
             // Front face stencil op.
-            m_gl.StencilFuncSeparate(GL_FRONT, comparisonFuncs[desc.stencilFrontFaceOp.stencilFunc], static_cast<GLint>(stencilRef), desc.stencilReadMask);  // <-- TODO: Check this. Is this the correct use of desc.stencilReadMask?
-            m_gl.StencilOpSeparate(GL_FRONT, stencilOps[desc.stencilFrontFaceOp.stencilFailOp], stencilOps[desc.stencilFrontFaceOp.stencilDepthFailOp], stencilOps[desc.stencilFrontFaceOp.stencilPassOp]);
+            m_gl.StencilFuncSeparate(GL_FRONT, comparisonFuncs[stateGL->stencilFrontFaceOp.stencilFunc], static_cast<GLint>(stencilRef), stateGL->stencilReadMask);  // <-- TODO: Check this. Is this the correct use of desc.stencilReadMask?
+            m_gl.StencilOpSeparate(GL_FRONT, stencilOps[stateGL->stencilFrontFaceOp.stencilFailOp], stencilOps[stateGL->stencilFrontFaceOp.stencilDepthFailOp], stencilOps[stateGL->stencilFrontFaceOp.stencilPassOp]);
 
             // Back face stencil op.
-            m_gl.StencilFuncSeparate(GL_BACK, comparisonFuncs[desc.stencilFrontFaceOp.stencilFunc], static_cast<GLint>(stencilRef), desc.stencilReadMask);   // <-- TODO: Check this. Is this the correct use of desc.stencilReadMask?
-            m_gl.StencilOpSeparate(GL_BACK, stencilOps[desc.stencilFrontFaceOp.stencilFailOp], stencilOps[desc.stencilFrontFaceOp.stencilDepthFailOp], stencilOps[desc.stencilFrontFaceOp.stencilPassOp]);
+            m_gl.StencilFuncSeparate(GL_BACK, comparisonFuncs[stateGL->stencilFrontFaceOp.stencilFunc], static_cast<GLint>(stencilRef), stateGL->stencilReadMask);   // <-- TODO: Check this. Is this the correct use of desc.stencilReadMask?
+            m_gl.StencilOpSeparate(GL_BACK, stencilOps[stateGL->stencilFrontFaceOp.stencilFailOp], stencilOps[stateGL->stencilFrontFaceOp.stencilDepthFailOp], stencilOps[stateGL->stencilFrontFaceOp.stencilPassOp]);
         }
     }
 
@@ -645,20 +639,42 @@ namespace GT
     }
 
 
-    ResultCode GPURenderingDevice_OpenGL21::CreateDepthStencilState(const GPUDepthStencilStateDesc &desc, GPUDepthStencilState* &depthStencilStateOut)
+    HDepthStencilState GPURenderingDevice_OpenGL21::CreateDepthStencilState(const GPUDepthStencilStateDesc &desc)
     {
-        depthStencilStateOut = new GPUDepthStencilState_OpenGL21(desc);
-        return 0;
+        return reinterpret_cast<size_t>(new GPUDepthStencilState_OpenGL21(desc));
     }
 
-    void GPURenderingDevice_OpenGL21::DeleteDepthStencilState(GPUDepthStencilState* state)
+    void GPURenderingDevice_OpenGL21::DeleteDepthStencilState(HDepthStencilState hState)
     {
-        auto stateGL = reinterpret_cast<GPUDepthStencilState_OpenGL21*>(state);
+        auto stateGL = reinterpret_cast<GPUDepthStencilState_OpenGL21*>(hState);
         if (stateGL != nullptr)
         {
-            delete stateGL;
+            m_referenceCountLock.Lock();
+            {
+                assert(stateGL->GetReferenceCount() > 0);
+
+                if (stateGL->DecrementReferenceCount() == 0)
+                {
+                    delete stateGL;
+                }
+            }
+            m_referenceCountLock.Unlock();
         }
     }
+
+    void GPURenderingDevice_OpenGL21::HoldDepthStencilState(HDepthStencilState hState)
+    {
+        auto stateGL = reinterpret_cast<GPUDepthStencilState_OpenGL21*>(hState);
+        if (stateGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                stateGL->IncrementReferenceCount();
+            }
+            m_referenceCountLock.Unlock();
+        }
+    }
+
 
 
     ////////////////////////////////////////////
