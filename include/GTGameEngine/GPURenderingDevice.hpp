@@ -30,7 +30,6 @@
 
 namespace GT
 {
-    class GPUFramebuffer;
     class GPUShaderProgram;
 
     enum GPUClearFlag

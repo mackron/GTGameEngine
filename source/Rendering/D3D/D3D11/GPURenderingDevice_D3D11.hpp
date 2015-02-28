@@ -215,9 +215,6 @@ namespace GT
         ///////////////////////////////////////////
         // Framebuffers
 
-        /// GPURenderingDevice::CreateFramebuffer().
-        ResultCode CreateFramebuffer(GPUFramebuffer* &framebuffer);
-
 
 
         //////////////////////////////////////////

@@ -925,12 +925,6 @@ namespace GT
     ///////////////////////////////////////////
     // Framebuffers
 
-    ResultCode GPURenderingDevice_D3D11::CreateFramebuffer(GPUFramebuffer* &framebufferOut)
-    {
-        framebufferOut = nullptr;
-        return -1;
-    }
-
 
 
     //////////////////////////////////////////
