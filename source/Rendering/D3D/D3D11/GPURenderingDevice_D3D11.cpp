@@ -3,7 +3,6 @@
 #include "GPURenderingDevice_D3D11.hpp"
 
 #if defined(GT_GE_BUILD_D3D11)
-#include "GPUBuffer_D3D11.hpp"
 #include "GPUVertexShader_D3D11.hpp"
 #include "GPUFragmentShader_D3D11.hpp"
 #include "GPUShaderProgram_D3D11.hpp"

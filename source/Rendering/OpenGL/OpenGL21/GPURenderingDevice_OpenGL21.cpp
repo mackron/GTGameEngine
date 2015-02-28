@@ -980,6 +980,9 @@ namespace GT
 
     HBuffer GPURenderingDevice_OpenGL21::CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data)
     {
+        (void)cpuAccessFlags;   // <-- Not considered with OpenGL.
+
+
         CheckContextIsCurrent(m_gl, m_currentDC);
 
         if (usage == GPUBufferUsage_Immutable && data == nullptr)
@@ -1020,7 +1023,7 @@ namespace GT
         m_gl.BindBuffer(targetsGL[type], objectGL);
         m_gl.BufferData(targetsGL[type], sizeInBytes, data, usagesGL[usage]);
 
-        HBuffer hBuffer = reinterpret_cast<HBuffer>(new GPUBuffer_OpenGL21(type, usage, cpuAccessFlags, objectGL, targetsGL[type], usagesGL[usage]));
+        HBuffer hBuffer = reinterpret_cast<HBuffer>(new GPUBuffer_OpenGL21(objectGL, targetsGL[type], usagesGL[usage]));
 
         // Re-bind the previous buffer.
         m_gl.BindBuffer(targetsGL[type], prevObjectGL);
@@ -1051,7 +1054,7 @@ namespace GT
                     {
                     case GL_ARRAY_BUFFER:
                         {
-                            for (unsigned int iVertexBufferSlot; iVertexBufferSlot < GT_GE_MAX_VERTEX_BUFFER_SLOTS; ++iVertexBufferSlot)
+                            for (unsigned int iVertexBufferSlot = 0; iVertexBufferSlot < GT_GE_MAX_VERTEX_BUFFER_SLOTS; ++iVertexBufferSlot)
                             {
                                 if (m_vertexBufferSlots[iVertexBufferSlot].buffer == hBuffer)
                                 {
@@ -1166,7 +1169,7 @@ namespace GT
         auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
         assert(bufferGL != nullptr);
         {
-            if (bufferGL->GetBufferUsage() != GPUBufferUsage_Immutable)
+            if (bufferGL->GetOpenGLUsage() != GL_STATIC_DRAW)   // <-- BufferUsage_Immutable
             {
                 GLuint prevObjectGL;
                 m_gl.GetIntegerv((bufferGL->GetOpenGLTarget() == GL_ARRAY_BUFFER) ? GL_ARRAY_BUFFER_BINDING : GL_ELEMENT_ARRAY_BUFFER_BINDING, reinterpret_cast<GLint*>(&prevObjectGL));

@@ -6,33 +6,21 @@
 #include <GTGameEngine/Config.hpp>
 
 #if defined(GT_GE_BUILD_OPENGL21)
-#include <GTGameEngine/Rendering/GPUBuffer.hpp>
 #include <GTLib/ReferenceCountedObject.hpp>
 #include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
 
 namespace GT
 {
     /// Class representing a buffer on the GPU.
-    class GPUBuffer_OpenGL21 : public ReferenceCountedObject, public GPUBuffer
+    class GPUBuffer_OpenGL21 : public ReferenceCountedObject
     {
     public:
 
         /// Constructor.
-        GPUBuffer_OpenGL21(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, GLuint objectGL, GLenum targetGL, GLenum usageGL);
+        GPUBuffer_OpenGL21(GLuint objectGL, GLenum targetGL, GLenum usageGL);
 
         /// Destructor.
         ~GPUBuffer_OpenGL21();
-
-            
-        /// GPUBuffer::GetBufferType().
-        GPUBufferType GetBufferType() const;
-
-        /// GPUBuffer::GetBufferUsage().
-        GPUBufferUsage GetBufferUsage() const;
-
-        /// GPUBuffer::GetBufferCPUAccessFlags().
-        GPUBufferCPUAccessFlags GetBufferCPUAccessFlags() const;
-
 
 
         /// Retrieves the OpenGL buffer object.
@@ -47,16 +35,6 @@ namespace GT
 
 
     private:
-
-        /// The buffer type.
-        GPUBufferType m_type;
-
-        /// The buffer usage.
-        GPUBufferUsage m_usage;
-
-        /// The buffer CPU access flags.
-        GPUBufferCPUAccessFlags m_cpuAccessFlags;
-
 
         /// The OpenGL buffer object.
         GLuint m_objectGL;
