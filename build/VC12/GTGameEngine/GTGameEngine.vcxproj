@@ -36,13 +36,11 @@
     <ClCompile Include="..\..\..\source\HardwarePlatform_Input.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUBuffer_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUFragmentShader_D3D11.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUInputLayout_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUShaderProgram_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPUVertexShader_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GPUBuffer.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GPUFragmentShader.cpp" />
-    <ClCompile Include="..\..\..\source\Rendering\GPUInputLayout.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GPUShaderProgram.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\GPUVertexShader.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL.cpp" />
@@ -77,7 +75,6 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUDataFormats.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUFragmentShader.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUFramebuffer.hpp" />
-    <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUInputLayout.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUInputLayoutDesc.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPUPrimitiveTopolgoy.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\GPURenderingDeviceLimits.hpp" />
@@ -92,7 +89,6 @@
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUBuffer_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUFragmentShader_D3D11.hpp" />
-    <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUInputLayout_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUShaderProgram_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPUVertexShader_D3D11.hpp" />

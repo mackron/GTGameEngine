@@ -8,6 +8,7 @@
 namespace GT
 {
     typedef size_t HBuffer;
+    typedef size_t HInputLayout;
     typedef size_t HVertexShader;
     typedef size_t HTessellationControlShader;
     typedef size_t HTessellationEvaluationShader;

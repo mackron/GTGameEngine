@@ -79,7 +79,7 @@ namespace GT
         void IASetPrimitiveTopology(GPUPrimitiveTopology topology);
 
         /// @copydoc GPURenderingDevice::IASetInputLayout()
-        void IASetInputLayout(GPUInputLayout* inputLayout);
+        void IASetInputLayout(HInputLayout hInputLayout);
 
         /// @copydoc GPURenderingDevice::IASetVertexBuffer()
         void IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset);
@@ -139,10 +139,13 @@ namespace GT
         // Input Layout
 
         /// GPURenderingDevice::CreateVertexInputLayout().
-        ResultCode CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &vertexInputLayoutOut);
+        HInputLayout CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
 
-        /// GPURenderingDevice::DeleteVertexInputLayout().
-        void DeleteInputLayout(GPUInputLayout* vertexInputLayout);
+        /// GPURenderingDevice::ReleaseInputLayout().
+        void ReleaseInputLayout(HInputLayout hInputLayout);
+
+        /// @copydoc GPURenderingDevice::HoldInputLayout()
+        void HoldInputLayout(HInputLayout hInputLayout);
 
 
         ////////////////////////////////////////////
@@ -311,7 +314,7 @@ namespace GT
 
 
         /// The current vertex input layout object.
-        GPUInputLayout* m_currentInputLayout;
+        HInputLayout m_currentInputLayout;
 
 
             

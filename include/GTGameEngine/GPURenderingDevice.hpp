@@ -184,11 +184,11 @@ namespace GT
 
         /// Binds the given input layout object to the input-assembler stage.
         ///
-        /// @para inputLayout [in] A pointer to the input layout object to bind.
+        /// @para hInputLayout [in] A pointer to the input layout object to bind.
         ///
         /// @remarks
         ///     This is analogous to D3D11's IASetInputLayout().
-        virtual void IASetInputLayout(GPUInputLayout* inputLayout) = 0;
+        virtual void IASetInputLayout(HInputLayout hInputLayout) = 0;
 
         /// Binds the given vertex buffer to the given slot for the input-assembler stage.
         ///
@@ -301,7 +301,7 @@ namespace GT
 
         /// Increments the internal reference counter of the given rasterizer state object.
         ///
-        /// @param hState [in] A pointer to the rasterizer state object to hold.
+        /// @param hState [in] A handle to the depth/stencil state object to hold.
         ///
         /// @remarks
         ///     This is thread safe.
@@ -314,16 +314,31 @@ namespace GT
 
         /// Creates a vertex input layout object that is used to describe the format of the input data for a vertex shader.
         ///
-        /// @param shaderProgram        [in]  A pointer to the shader program to create the layout object from.
-        /// @param attribDesc           [in]  An array of GPUVertexInputAttribLayoutDesc objects that describes each input variable.
-        /// @param attribDescCount      [in]  The number of items in \c attribDesc.
-        /// @param vertexInputLayoutOut [out] A reference to the variable that will receive a pointer to the new vertex input layout object.
-        virtual ResultCode CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &vertexInputLayoutOut) = 0;
-
-        /// Deletes the given vertex input layout object.
+        /// @param shaderProgram   [in] A pointer to the shader program to create the layout object from.
+        /// @param attribDesc      [in] An array of GPUVertexInputAttribLayoutDesc objects that describes each input variable.
+        /// @param attribDescCount [in] The number of items in \c attribDesc.
         ///
-        /// @param vertexInputLayout [in] A pointer to the vertex input layout object to delete.
-        virtual void DeleteInputLayout(GPUInputLayout* vertexInputLayout) = 0;
+        /// @return A handle to the new input layout object.
+        virtual HInputLayout CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount) = 0;
+
+        /// Decrements the internal reference counter fo the given depth/stencil state and deletes the object if it hits 0.
+        ///
+        /// @param hInputLayout [in] A handle to the vertex input layout object to release.
+        ///
+        /// @remarks
+        ///     This is thread safe.
+        ///     @par
+        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
+        ///     synchronization.
+        virtual void ReleaseInputLayout(HInputLayout hInputLayout) = 0;
+
+        /// Increments the internal reference counter of the given rasterizer state object.
+        ///
+        /// @param hInputLayout [in] A handle to the object to hold.
+        ///
+        /// @remarks
+        ///     This is thread safe.
+        virtual void HoldInputLayout(HInputLayout hInputLayout) = 0;
 
 
         ////////////////////////////////////////////

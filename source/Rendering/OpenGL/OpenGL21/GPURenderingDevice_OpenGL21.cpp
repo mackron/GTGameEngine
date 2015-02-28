@@ -100,7 +100,7 @@ namespace GT
             m_indexBufferFormat(GL_UNSIGNED_INT),
             m_indexBufferFormatSize(4),
             m_indexBufferOffset(0),
-            m_currentInputLayout(nullptr)
+            m_currentInputLayout(0)
     {
         m_stateFlags |= StageFlag_IsWindowFramebufferCurrent;       // TODO: Remove this from the constructor once we get the framebuffer system working properly.
     }
@@ -323,14 +323,14 @@ namespace GT
         m_currentTopologyGL = topologiesGL[topology];
     }
 
-    void GPURenderingDevice_OpenGL21::IASetInputLayout(GPUInputLayout* vertexInputLayout)
+    void GPURenderingDevice_OpenGL21::IASetInputLayout(HInputLayout hInputLayout)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        if (vertexInputLayout != m_currentInputLayout)
+        if (hInputLayout != m_currentInputLayout)
         {
             // Disable the vertex attributes of the previous input layout.
-            if (m_currentInputLayout != nullptr)
+            if (m_currentInputLayout != 0)
             {
                 auto prevLayoutGL = reinterpret_cast<GPUInputLayout_OpenGL21*>(m_currentInputLayout);
                 if (prevLayoutGL != nullptr)
@@ -344,7 +344,7 @@ namespace GT
             }
 
 
-            auto newLayoutGL = reinterpret_cast<GPUInputLayout_OpenGL21*>(vertexInputLayout);
+            auto newLayoutGL = reinterpret_cast<GPUInputLayout_OpenGL21*>(hInputLayout);
             if (newLayoutGL != nullptr)
             {
                 size_t attribCount = newLayoutGL->GetAttributeCount();
@@ -360,7 +360,7 @@ namespace GT
             }
 
 
-            m_currentInputLayout = vertexInputLayout;
+            m_currentInputLayout = hInputLayout;
         }
     }
 
@@ -680,7 +680,7 @@ namespace GT
     ////////////////////////////////////////////
     // Input Layouts
 
-    ResultCode GPURenderingDevice_OpenGL21::CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &vertexInputLayoutOut)
+    HInputLayout GPURenderingDevice_OpenGL21::CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
@@ -732,33 +732,59 @@ namespace GT
 
 
 
-                vertexInputLayoutOut = new GPUInputLayout_OpenGL21(attribDescGL, attribDescCount, slotAttribCounts);
+                HInputLayout hInputLayout = reinterpret_cast<HInputLayout>(new GPUInputLayout_OpenGL21(attribDescGL, attribDescCount, slotAttribCounts));
 
 
                 free(attribDescGL);
-                return 0;   // No errors.
+                return hInputLayout;   // No errors.
             }
             else
             {
                 // Failed to allocate memory.
-                return -1;
+                return 0;
             }
         }
         else
         {
             // Invalid shader program.
-            return -1;
+            return 0;
         }
     }
 
-    void GPURenderingDevice_OpenGL21::DeleteInputLayout(GPUInputLayout* vertexInputLayout)
+    void GPURenderingDevice_OpenGL21::ReleaseInputLayout(HInputLayout hInputLayout)
     {
-        if (m_currentInputLayout == vertexInputLayout)
+        auto inputLayoutGL = reinterpret_cast<GPUInputLayout_OpenGL21*>(hInputLayout);
+        if (inputLayoutGL != nullptr)
         {
-            this->IASetInputLayout(nullptr);
-        }
+            m_referenceCountLock.Lock();
+            {
+                assert(inputLayoutGL->GetReferenceCount() > 0);
 
-        delete vertexInputLayout;
+                if (inputLayoutGL->DecrementReferenceCount() == 0)
+                {
+                    if (m_currentInputLayout == hInputLayout)
+                    {
+                        this->IASetInputLayout(0);
+                    }
+
+                    delete inputLayoutGL;
+                }
+            }
+            m_referenceCountLock.Unlock();
+        }
+    }
+
+    void GPURenderingDevice_OpenGL21::HoldInputLayout(HInputLayout hInputLayout)
+    {
+        auto inputLayoutGL = reinterpret_cast<GPUInputLayout_OpenGL21*>(hInputLayout);
+        if (inputLayoutGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                inputLayoutGL->IncrementReferenceCount();
+            }
+            m_referenceCountLock.Unlock();
+        }
     }
 
 

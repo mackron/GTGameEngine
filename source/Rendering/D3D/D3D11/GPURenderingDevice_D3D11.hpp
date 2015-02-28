@@ -85,7 +85,7 @@ namespace GT
         void IASetPrimitiveTopology(GPUPrimitiveTopology topology);
 
         /// @copydoc GPURenderingDevice::IASetInputLayout()
-        void IASetInputLayout(GPUInputLayout* inputLayout);
+        void IASetInputLayout(HInputLayout hinputLayout);
 
         /// @copydoc GPURenderingDevice::IASetVertexBuffer()
         void IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset);
@@ -124,7 +124,7 @@ namespace GT
         /// @copydoc GPURenderingDevice::CreateRasterizerState()
         HRasterizerState CreateRasterizerState(const GPURasterizerStateDesc &desc);
 
-        /// @copydoc GPURenderingDevice::DeleteRasterizerState()
+        /// @copydoc GPURenderingDevice::ReleaseRasterizerState()
         void ReleaseRasterizerState(HRasterizerState hState);
 
         /// @copydoc GPURenderingDevice::HoldRasterizerState()
@@ -134,7 +134,7 @@ namespace GT
         /// @copydoc GPURenderingDevice::CreateDepthStencilState()
         HDepthStencilState CreateDepthStencilState(const GPUDepthStencilStateDesc &desc);
 
-        /// @copydoc GPURenderingDevice::DeleteDepthStencilState().
+        /// @copydoc GPURenderingDevice::ReleaseDepthStencilState().
         void DeleteDepthStencilState(HDepthStencilState hState);
 
         /// @copydoc GPURenderingDevice::HoldDepthStencilState()
@@ -146,10 +146,13 @@ namespace GT
         // Input Layout
 
         /// GPURenderingDevice::CreateVertexInputLayout().
-        ResultCode CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &vertexInputLayoutOut);
+        HInputLayout CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
 
-        /// GPURenderingDevice::DeleteVertexInputLayout().
-        void DeleteInputLayout(GPUInputLayout* vertexInputLayout);
+        /// GPURenderingDevice::ReleaseInputLayout().
+        void ReleaseInputLayout(HInputLayout hInputLayout);
+
+        /// @copydoc GPURenderingDevice::HoldInputLayout()
+        void HoldInputLayout(HInputLayout hInputLayout);
 
 
 

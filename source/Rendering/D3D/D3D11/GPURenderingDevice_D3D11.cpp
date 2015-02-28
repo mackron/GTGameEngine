@@ -4,7 +4,6 @@
 
 #if defined(GT_GE_BUILD_D3D11)
 #include "GPUBuffer_D3D11.hpp"
-#include "GPUInputLayout_D3D11.hpp"
 #include "GPUVertexShader_D3D11.hpp"
 #include "GPUFragmentShader_D3D11.hpp"
 #include "GPUShaderProgram_D3D11.hpp"
@@ -279,17 +278,9 @@ namespace GT
         m_context->IASetPrimitiveTopology(topologiesD3D11[topology]);
     }
 
-    void GPURenderingDevice_D3D11::IASetInputLayout(GPUInputLayout* inputLayout)
+    void GPURenderingDevice_D3D11::IASetInputLayout(HInputLayout hInputLayout)
     {
-        auto inputLayoutD3D = reinterpret_cast<GPUInputLayout_D3D11*>(inputLayout);
-        if (inputLayoutD3D != nullptr)
-        {
-            m_context->IASetInputLayout(inputLayoutD3D->GetD3D11InputLayout());
-        }
-        else
-        {
-            m_context->IASetInputLayout(nullptr);
-        }
+        m_context->IASetInputLayout(reinterpret_cast<ID3D11InputLayout*>(hInputLayout));
     }
 
     void GPURenderingDevice_D3D11::IASetVertexBuffer(unsigned int slotIndex, GPUBuffer* buffer, size_t stride, size_t offset)
@@ -516,7 +507,7 @@ namespace GT
     ////////////////////////////////////////////
     // Input Layout
 
-    ResultCode GPURenderingDevice_D3D11::CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount, GPUInputLayout* &inputLayoutOut)
+    HInputLayout GPURenderingDevice_D3D11::CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
     {
         auto shaderProgramD3D = reinterpret_cast<GPUShaderProgram_D3D11*>(shaderProgram);
         if (shaderProgramD3D != nullptr)
@@ -589,18 +580,13 @@ namespace GT
                         attribDescD3D[iAttrib].InstanceDataStepRate = attribDesc[iAttrib].instanceStepRate;
                     }
 
+
+                    ID3D11InputLayout* inputLayoutD3D;
                     if (GT::Succeeded(result))
                     {
-                        ID3D11InputLayout* inputLayoutD3D;
-                        if (SUCCEEDED(m_device->CreateInputLayout(attribDescD3D, static_cast<UINT>(attribDescCount), vertexShaderData, vertexShaderDataSize, &inputLayoutD3D)))
+                        if (FAILED(m_device->CreateInputLayout(attribDescD3D, static_cast<UINT>(attribDescCount), vertexShaderData, vertexShaderDataSize, &inputLayoutD3D)))
                         {
-                            inputLayoutOut = new GPUInputLayout_D3D11(inputLayoutD3D);
-                            result = 0;
-                        }
-                        else
-                        {
-                            // Failed to create input layout.
-                            result = -3;
+                            inputLayoutD3D = nullptr;
                         }
                     }
                         
@@ -612,31 +598,35 @@ namespace GT
                     }
 
                     delete [] attribDescD3D;
-                    return result;
+                    return reinterpret_cast<HInputLayout>(inputLayoutD3D);
                 }
             }
             else
             {
                 // Invalid vertex shader data.
-                return -2;
+                return 0;
             }
         }
         else
         {
             // No shader program specified.
-            return -1;
+            return 0;
         }
     }
 
-    void GPURenderingDevice_D3D11::DeleteInputLayout(GPUInputLayout* inputLayout)
+    void GPURenderingDevice_D3D11::ReleaseInputLayout(HInputLayout hInputLayout)
     {
-        auto inputLayoutD3D = reinterpret_cast<GPUInputLayout_D3D11*>(inputLayout);
-        if (inputLayoutD3D != nullptr)
+        if (hInputLayout != 0)
         {
-            assert(inputLayoutD3D->GetD3D11InputLayout() != nullptr);
+            reinterpret_cast<ID3D11InputLayout*>(hInputLayout)->Release();
+        }
+    }
 
-            inputLayoutD3D->GetD3D11InputLayout()->Release();
-            delete inputLayoutD3D;
+    void GPURenderingDevice_D3D11::HoldInputLayout(HInputLayout hInputLayout)
+    {
+        if (hInputLayout != 0)
+        {
+            reinterpret_cast<ID3D11InputLayout*>(hInputLayout)->AddRef();
         }
     }
 

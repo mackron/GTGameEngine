@@ -6,7 +6,7 @@
 #include <GTGameEngine/Config.hpp>
 
 #if defined(GT_GE_BUILD_OPENGL21)
-#include <GTGameEngine/Rendering/GPUInputLayout.hpp>
+#include <GTLib/ReferenceCountedObject.hpp>
 #include <GTGameEngine/Rendering/GPUInputLayoutDesc.hpp>
 #include <GTGameEngine/Rendering/GPURenderingDeviceLimits.hpp>
 #include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
@@ -14,7 +14,7 @@
 
 namespace GT
 {
-    class GPUInputLayout_OpenGL21 : public GPUInputLayout
+    class GPUInputLayout_OpenGL21 : public ReferenceCountedObject
     {
     public:
 
