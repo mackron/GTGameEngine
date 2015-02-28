@@ -6,7 +6,7 @@
 #include <GTGameEngine/Config.hpp>
 
 #if defined(GT_GE_BUILD_OPENGL21)
-#include <GTGameEngine/Rendering/GPUStateObjects.hpp>
+#include <GTGameEngine/Rendering/RenderingTypes.hpp>
 #include <GTLib/ReferenceCountedObject.hpp>
 
 namespace GT

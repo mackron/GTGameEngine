@@ -4,53 +4,19 @@
 #define __GT_GE_GPURenderingDevice_hpp_
 
 #include "Config.hpp"
-#include "Rendering/RenderingTypes.hpp"
-
 #include "GPURenderingDeviceInfo.hpp"
-#include "Rendering/GPUBufferType.hpp"
-#include "Rendering/GPUBufferUsage.hpp"
-#include "Rendering/GPUBufferCPUAccessFlags.hpp"
-#include "Rendering/GPUBufferMapType.hpp"
-#include "Rendering/GPUPrimitiveTopolgoy.hpp"
-#include "Rendering/GPUShaderDefine.hpp"
-#include "Rendering/GPUShaderTargets.hpp"
-#include "Rendering/GPUInputLayoutDesc.hpp"
-#include "Rendering/GPURenderingDeviceLimits.hpp"
-#include "Rendering/GPUViewport.hpp"
-#include "Rendering/GPUStateObjects.hpp"
-
-#include <GTLib/ResultCodes.hpp>
+#include "Rendering/RenderingTypes.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windef.h>
 #endif
 
+#include <GTLib/ResultCodes.hpp>
 #include <GTLib/BasicBuffer.hpp>
 #include <GTLib/Vector.hpp>
 
 namespace GT
 {
-    enum GPUClearFlag
-    {
-        GPUClearFlag_Depth   = 0x01,
-        GPUClearFlag_Stencil = 0x02,
-    };
-
-    enum GPUHandedness
-    {
-        GPUHandedness_Left,     // Front-facing triangle winding = CCW. Forward direction = -Z
-        GPUHandedness_Right     // Front-facing triangle winding = CW. Forward direction = +Z
-    };
-
-    enum GPUVendor
-    {
-        GPUVendor_Unknown,
-        GPUVendor_NVIDIA,
-        GPUVendor_AMD,
-        GPUVendor_Intel
-    };
-
-
     /// Class representing a rendering GPU device.
     ///
     /// A rendering device cannot be used across multiple threads.
