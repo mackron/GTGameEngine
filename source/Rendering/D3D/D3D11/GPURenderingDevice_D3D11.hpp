@@ -9,6 +9,7 @@
 #include <GTLib/ResultCodes.hpp>
 #include <GTLib/Map.hpp>
 #include <GTLib/windows.hpp>
+#include <GTLib/Threading/Mutex.hpp>
 #include <d3d11.h>
 #include <d3dcompiler.h>
 #include <GTGameEngine/GPURenderingDevice_Gen2.hpp>
@@ -67,7 +68,7 @@ namespace GT
         // State
 
         /// @copydoc GPURenderingDevice::SetCurrentShaderProgram()
-        void SetCurrentShaderProgram(GPUShaderProgram* shaderProgram);
+        void SetCurrentShaderProgram(HShaderProgram hShaderProgram);
 
 
 
@@ -146,7 +147,7 @@ namespace GT
         // Input Layout
 
         /// GPURenderingDevice::CreateVertexInputLayout().
-        HInputLayout CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
+        HInputLayout CreateInputLayout(HShaderProgram hShaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
 
         /// GPURenderingDevice::ReleaseInputLayout().
         void ReleaseInputLayout(HInputLayout hInputLayout);
@@ -166,25 +167,34 @@ namespace GT
         bool IsShaderTargetSupported(GPUShaderTarget target) const;
 
 
-        /// GPURenderingDevice::CreateShaderProgram().
-        ResultCode CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut, GPUShaderProgram* &shaderProgramOut);
+        /// @copydoc GPURenderingDevice::CreateShaderProgram()
+        HShaderProgram CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut);
 
-        /// GPURenderingDevice::DeleteShaderProgram().
-        void DeleteShaderProgram(GPUShaderProgram* shaderProgram);
+        /// @copydoc GPURenderingDevice::ReleaseShaderProgram()
+        void ReleaseShaderProgram(HShaderProgram hShaderProgram);
+
+        /// @copydoc GPURenderingDevice::HoldShaderProgram()
+        void HoldShaderProgram(HShaderProgram hShaderProgram);
 
 
         /// @copydoc GPURenderingDevice_Gen2::CreateVertexShader()
-        ResultCode CreateVertexShader(const void* shaderData, size_t shaderDataSize, GPUVertexShader* &shaderOut);
+        HVertexShader CreateVertexShader(const void* shaderData, size_t shaderDataSize);
 
-        /// @copydoc GPURenderingDevice_Gen2::DeleteVertexShader()
-        void DeleteVertexShader(GPUVertexShader* shader);
+        /// @copydoc GPURenderingDevice_Gen2::ReleaseVertexShader()
+        void ReleaseVertexShader(HVertexShader hShader);
+
+        /// @copydoc GPURenderingDevice_Gen2::HoldVertexShader()
+        void HoldVertexShader(HVertexShader hShader);
 
 
         /// @copydoc GPURenderingDevice_Gen2::CreateFragmentShader()
-        ResultCode CreateFragmentShader(const void* shaderData, size_t shaderDataSize, GPUFragmentShader* &shaderOut);
+        HFragmentShader CreateFragmentShader(const void* shaderData, size_t shaderDataSize);
 
-        /// @copydoc GPURenderingDevice_Gen2::DeleteFragmentShader()
-        void DeleteFragmentShader(GPUFragmentShader* shader);
+        /// @copydoc GPURenderingDevice_Gen2::ReleaseFragmentShader()
+        void ReleaseFragmentShader(HFragmentShader hShader);
+
+        /// @copydoc GPURenderingDevice_Gen2::HoldFragmentShader()
+        void HoldFragmentShader(HFragmentShader hShader);
 
 
 
@@ -327,7 +337,8 @@ namespace GT
 
         //////////////////////////////////////////////////////
         // GUIDs for the D3D11 API
-        static const GUID CustomDataGUID;
+        static const GUID CustomDataGUID_Generic;
+        static const GUID CustomDataGUID_ShaderBinary;
 
 
     private:    // No copying.

@@ -6,14 +6,13 @@
 #include <GTGameEngine/Config.hpp>
 
 #if defined(GT_GE_BUILD_OPENGL21)
-
-#include <GTGameEngine/Rendering/GPUShaderProgram.hpp>
+#include <GTLib/ReferenceCountedObject.hpp>
 #include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
 
 namespace GT
 {
     /// OpenGL 2.1 implementation of the GPUShaderProgram class.
-    class GPUShaderProgram_OpenGL21 : public GPUShaderProgram
+    class GPUShaderProgram_OpenGL21 : public ReferenceCountedObject
     {
     public:
 

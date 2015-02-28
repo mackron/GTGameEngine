@@ -7,10 +7,6 @@
 
 namespace GT
 {
-    class GPUVertexShader;
-    class GPUFragmentShader;
-
-
     /// Class representing a rendering D3D9-generation GPU device.
     class GPURenderingDevice_Gen2 : public GPURenderingDevice
     {
@@ -50,30 +46,56 @@ namespace GT
         ///
         /// @param shaderData     [in] A pointer to the buffer containing the vertex shader data.
         /// @param shaderDataSize [in] The size in bytes of the vertex shader data.
-        /// @param shaderOut      [out] A reference to the variable that will receive a pointer to the new shader object.
         ///
-        /// @return A result code describing whether or not the shader was created successfully.
-        virtual ResultCode CreateVertexShader(const void* shaderData, size_t shaderDataSize, GPUVertexShader* &shaderOut) = 0;
+        /// @return A handle to the new vertex shader object, or 0 if an error occurs.
+        virtual HVertexShader CreateVertexShader(const void* shaderData, size_t shaderDataSize) = 0;
 
-        /// Deletes a vertex shader.
+        /// Decrements the reference counter of the given shader and deletes the internal object if it reaches 0.
         ///
-        /// @param shader [in] A pointer to the shader object to delete.
-        virtual void DeleteVertexShader(GPUVertexShader* shader) = 0;
+        /// @param shader [in] A handle to the shader object to release.
+        ///
+        /// @remarks
+        ///     This is thread-safe.
+        ///     @par
+        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
+        ///     synchronization.
+        virtual void ReleaseVertexShader(HVertexShader hShader) = 0;
+
+        /// Increments the reference counter of the given shader.
+        ///
+        /// @param hShader [in] A handle to the shader whose reference counter is being incremented.
+        ///
+        /// @remarks
+        ///     This is thread-safe.
+        virtual void HoldVertexShader(HVertexShader hShader) = 0;
 
 
-        /// Creates a fragment shader.
+        /// Creates a vertex shader.
         ///
-        /// @param shaderData     [in] A pointer to the buffer containing the fragment shader data.
-        /// @param shaderDataSize [in] The size in bytes of the fragment shader data.
-        /// @param shaderOut      [out] A reference to the variable that will receive a pointer to the new shader object.
+        /// @param shaderData     [in] A pointer to the buffer containing the vertex shader data.
+        /// @param shaderDataSize [in] The size in bytes of the vertex shader data.
         ///
-        /// @return A result code describing whether or not the shader was created successfully.
-        virtual ResultCode CreateFragmentShader(const void* shaderData, size_t shaderDataSize, GPUFragmentShader* &shaderOut) = 0;
+        /// @return A handle to the new vertex shader object, or 0 if an error occurs.
+        virtual HFragmentShader CreateFragmentShader(const void* shaderData, size_t shaderDataSize) = 0;
 
-        /// Deletes a fragment shader.
+        /// Decrements the reference counter of the given shader and deletes the internal object if it reaches 0.
         ///
-        /// @param shader [in] A pointer to the shader object to delete.
-        virtual void DeleteFragmentShader(GPUFragmentShader* shader) = 0;
+        /// @param shader [in] A handle to the shader object to release.
+        ///
+        /// @remarks
+        ///     This is thread-safe.
+        ///     @par
+        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
+        ///     synchronization.
+        virtual void ReleaseFragmentShader(HFragmentShader hShader) = 0;
+
+        /// Increments the reference counter of the given shader.
+        ///
+        /// @param hShader [in] A handle to the shader whose reference counter is being incremented.
+        ///
+        /// @remarks
+        ///     This is thread-safe.
+        virtual void HoldFragmentShader(HFragmentShader hShader) = 0;
 
 
 

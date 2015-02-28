@@ -1,12 +1,15 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_RenderingObjectHandles_hpp_
-#define __GT_RenderingObjectHandles_hpp_
+#ifndef __GT_RenderingTypes_hpp_
+#define __GT_RenderingTypes_hpp_
 
 #include <cstdint>
 
 namespace GT
 {
+    //////////////////////////////////////////
+    // Object Handle Types
+
     typedef size_t HBuffer;
     typedef size_t HInputLayout;
     typedef size_t HVertexShader;

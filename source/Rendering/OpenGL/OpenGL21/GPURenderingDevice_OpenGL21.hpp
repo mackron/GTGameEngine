@@ -61,7 +61,7 @@ namespace GT
         // State
 
         /// @copydoc GPURenderingDevice::SetCurrentShaderProgram()
-        void SetCurrentShaderProgram(GPUShaderProgram* shaderProgram);
+        void SetCurrentShaderProgram(HShaderProgram hShaderProgram);
 
 
 
@@ -139,7 +139,7 @@ namespace GT
         // Input Layout
 
         /// GPURenderingDevice::CreateVertexInputLayout().
-        HInputLayout CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
+        HInputLayout CreateInputLayout(HShaderProgram hShaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
 
         /// GPURenderingDevice::ReleaseInputLayout().
         void ReleaseInputLayout(HInputLayout hInputLayout);
@@ -157,11 +157,16 @@ namespace GT
         /// GPURenderingDevice::IsShaderTargetSupported().
         bool IsShaderTargetSupported(GPUShaderTarget target) const;
 
-        /// GPURenderingDevice::CreateShaderProgram().
-        ResultCode CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut, GPUShaderProgram* &shaderProgramOut);
 
-        /// GPURenderingDevice::DeleteShaderProgram().
-        void DeleteShaderProgram(GPUShaderProgram* shaderProgram);
+        /// @copydoc GPURenderingDevice::CreateShaderProgram()
+        HShaderProgram CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut);
+
+        /// @copydoc GPURenderingDevice::ReleaseShaderProgram()
+        void ReleaseShaderProgram(HShaderProgram hShaderProgram);
+
+        /// @copydoc GPURenderingDevice::HoldShaderProgram()
+        void HoldShaderProgram(HShaderProgram hShaderProgram);
+
 
 
         ////////////////////////////////////////////

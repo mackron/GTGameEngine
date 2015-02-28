@@ -7,8 +7,7 @@
 namespace GT
 {
     GPUShaderProgram_OpenGL21::GPUShaderProgram_OpenGL21(GLuint objectGL)
-        : GPUShaderProgram(),
-            m_objectGL(objectGL)
+        : ReferenceCountedObject(), m_objectGL(objectGL)
     {
     }
 

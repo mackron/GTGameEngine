@@ -4,7 +4,7 @@
 #define __GT_GE_GPURenderingDevice_hpp_
 
 #include "Config.hpp"
-#include "Rendering/RenderingObjectHandles.hpp"
+#include "Rendering/RenderingTypes.hpp"
 
 #include "GPURenderingDeviceInfo.hpp"
 #include "Rendering/GPUBufferType.hpp"
@@ -30,8 +30,6 @@
 
 namespace GT
 {
-    class GPUShaderProgram;
-
     enum GPUClearFlag
     {
         GPUClearFlag_Depth   = 0x01,
@@ -155,8 +153,8 @@ namespace GT
 
         /// Sets the current shader program.
         ///
-        /// @param shaderProgram [in] A pointer to the shader program to make current.
-        virtual void SetCurrentShaderProgram(GPUShaderProgram* shaderProgram) = 0;
+        /// @param hShaderProgram [in] A reference to the shader program object to make current.
+        virtual void SetCurrentShaderProgram(HShaderProgram hShaderProgram) = 0;
 
 
 
@@ -311,12 +309,12 @@ namespace GT
 
         /// Creates a vertex input layout object that is used to describe the format of the input data for a vertex shader.
         ///
-        /// @param shaderProgram   [in] A pointer to the shader program to create the layout object from.
+        /// @param hShaderProgram  [in] A pointer to the shader program to create the layout object from.
         /// @param attribDesc      [in] An array of GPUVertexInputAttribLayoutDesc objects that describes each input variable.
         /// @param attribDescCount [in] The number of items in \c attribDesc.
         ///
         /// @return A handle to the new input layout object.
-        virtual HInputLayout CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount) = 0;
+        virtual HInputLayout CreateInputLayout(HShaderProgram hShaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount) = 0;
 
         /// Decrements the internal reference counter fo the given depth/stencil state and deletes the object if it hits 0.
         ///
@@ -381,9 +379,8 @@ namespace GT
         /// @param fragmentShaderData     [in]  A pointer to the buffer containing the binary code of the fragment/pixel shader as returned from CompileShader().
         /// @param fragmentShaderDataSize [in]  The size in bytes of the fragment shader data.
         /// @param messageOut             [out] A reference to the buffer that will receive any compilation/linking messages.
-        /// @param shaderProgramOut       [out] A reference to the variable that will receive a pointer to the new shader program.
         ///
-        /// @return Less than zero if an error occurs.
+        /// @return A handle to the new shader program, or 0 if an error occurs.
         ///
         /// @remarks
         ///     The difference between a shader and a shader program is that a shader program is a monolithic object that is made up of a shader that
@@ -394,13 +391,26 @@ namespace GT
         ///     @par
         ///     Generation 2 APIs which support separate shader objects do not need to ever use shader programs, however it can still be useful in order to
         ///     keep rendering operations consistent.
-        virtual ResultCode CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut, GPUShaderProgram* &shaderProgramOut) = 0;
+        virtual HShaderProgram CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut) = 0;
 
-        /// Deletes a shader program that was created with CreateShaderProgram().
+        /// Decrements the reference count of the given shader program and deletes the internal object if it hits 0.
         ///
-        /// @param shaderProgram [in] A pointer to the shader program to delete.
-        virtual void DeleteShaderProgram(GPUShaderProgram* shaderProgram) = 0;
+        /// @param hShaderProgram [in] A handle to the shader program to release.
+        ///
+        /// @remarks
+        ///     This is thread-safe.
+        ///     @par
+        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
+        ///     synchronization.
+        virtual void ReleaseShaderProgram(HShaderProgram hShaderProgram) = 0;
 
+        /// Increments the internal reference counter of the given shader program object.
+        ///
+        /// @param hShaderProgram [in] A handle to the buffer object to hold.
+        ///
+        /// @remarks
+        ///     This is thread safe.
+        virtual void HoldShaderProgram(HShaderProgram hShaderProgram) = 0;
 
 
 

@@ -3,9 +3,7 @@
 #include "GPURenderingDevice_D3D11.hpp"
 
 #if defined(GT_GE_BUILD_D3D11)
-#include "GPUVertexShader_D3D11.hpp"
-#include "GPUFragmentShader_D3D11.hpp"
-#include "GPUShaderProgram_D3D11.hpp"
+#include "RenderingTypes_D3D11.hpp"
 #include <GTLib/Strings/Find.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/Parse.hpp>
@@ -13,21 +11,22 @@
 namespace GT
 {
     // GUID for use with SetPrivateData().
-    const GUID GPURenderingDevice_D3D11::CustomDataGUID = {0xD74A88E1, 0xDA90, 0x05AA, {0xDD, 0x01, 0xEA, 0xD3, 0x31, 0xB3, 0xC2, 0x10}};
+    const GUID GPURenderingDevice_D3D11::CustomDataGUID_Generic      = {0xD74A88E1, 0xDA90, 0x05AA, {0xDD, 0x01, 0xEA, 0xD3, 0x31, 0xB3, 0xC2, 0x00}};
+    const GUID GPURenderingDevice_D3D11::CustomDataGUID_ShaderBinary = {0xD74A88E1, 0xDA90, 0x05AA, {0xDD, 0x01, 0xEA, 0xD3, 0x31, 0xB3, 0xC2, 0x01}};
 
     GPURenderingDevice_D3D11::GPURenderingDevice_D3D11(const GPURenderingDeviceInfo &info)
         : GPURenderingDevice_Gen2(info),
-            m_hD3D11(NULL),
-            m_hD3DCompiler(NULL),
-            m_device(nullptr),
-            m_context(nullptr),
-            m_windowFramebuffers(),
-            m_currentHWND(0),
-            m_currentSwapChain(nullptr),
-            m_stateFlags(0),
-            m_swapInterval(0),
-            m_currentPrimitiveTopology(GPUPrimitiveTopology_Triangle),
-            m_D3DCompile(nullptr)
+          m_hD3D11(NULL),
+          m_hD3DCompiler(NULL),
+          m_device(nullptr),
+          m_context(nullptr),
+          m_windowFramebuffers(),
+          m_currentHWND(0),
+          m_currentSwapChain(nullptr),
+          m_stateFlags(0),
+          m_swapInterval(0),
+          m_currentPrimitiveTopology(GPUPrimitiveTopology_Triangle),
+          m_D3DCompile(nullptr)
     {
         m_stateFlags |= StageFlag_IsWindowFramebufferCurrent;       // TODO: Remove this from the constructor once we get the framebuffer system working properly.
     }
@@ -229,17 +228,17 @@ namespace GT
     ///////////////////////////////////////////
     // State
 
-    void GPURenderingDevice_D3D11::SetCurrentShaderProgram(GPUShaderProgram* shaderProgram)
+    void GPURenderingDevice_D3D11::SetCurrentShaderProgram(HShaderProgram hShaderProgram)
     {
         // All we do is set the vertex and fragment shaders.
-        auto shaderProgramD3D = reinterpret_cast<GPUShaderProgram_D3D11*>(shaderProgram);
+        auto shaderProgramD3D = reinterpret_cast<ShaderProgram_D3D11*>(hShaderProgram);
         if (shaderProgramD3D != nullptr)
         {
-            assert(shaderProgramD3D->GetVertexShader()   != nullptr);
-            assert(shaderProgramD3D->GetFragmentShader() != nullptr);
+            assert(shaderProgramD3D->hVertexShader   != 0);
+            assert(shaderProgramD3D->hFragmentShader != 0);
 
-            m_context->VSSetShader(shaderProgramD3D->GetVertexShader()->GetD3D11VertexShader(),  nullptr, 0);
-            m_context->PSSetShader(shaderProgramD3D->GetFragmentShader()->GetD3D11PixelShader(), nullptr, 0);
+            m_context->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(shaderProgramD3D->hVertexShader),   nullptr, 0);
+            m_context->PSSetShader(reinterpret_cast<ID3D11PixelShader* >(shaderProgramD3D->hFragmentShader), nullptr, 0);
         }
         else
         {
@@ -490,103 +489,117 @@ namespace GT
     ////////////////////////////////////////////
     // Input Layout
 
-    HInputLayout GPURenderingDevice_D3D11::CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
+    HInputLayout GPURenderingDevice_D3D11::CreateInputLayout(HShaderProgram hShaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
     {
-        auto shaderProgramD3D = reinterpret_cast<GPUShaderProgram_D3D11*>(shaderProgram);
+        auto shaderProgramD3D = reinterpret_cast<ShaderProgram_D3D11*>(hShaderProgram);
         if (shaderProgramD3D != nullptr)
         {
-            assert(shaderProgramD3D->GetVertexShader() != nullptr);
+            assert(shaderProgramD3D->hVertexShader != 0);
 
-            auto vertexShaderData       = shaderProgramD3D->GetVertexShader()->GetD3D11ShaderBinary();
-            size_t vertexShaderDataSize = shaderProgramD3D->GetVertexShader()->GetD3D11ShaderBinarySize();
+            UINT vertexShaderDataSize = 0;
+            reinterpret_cast<ID3D11VertexShader*>(shaderProgramD3D->hVertexShader)->GetPrivateData(CustomDataGUID_ShaderBinary, &vertexShaderDataSize, nullptr);
 
-            if (vertexShaderData != nullptr && vertexShaderDataSize > 0)
+            if (vertexShaderDataSize > 0)
             {
-                auto attribDescD3D = new D3D11_INPUT_ELEMENT_DESC[attribDescCount];
-                assert(attribDescD3D != nullptr);
+                void* vertexShaderData = malloc(vertexShaderDataSize);
+                if (vertexShaderData != nullptr)
                 {
-                    memset(attribDescD3D, 0, sizeof(D3D11_INPUT_ELEMENT_DESC) * attribDescCount);
+                    reinterpret_cast<ID3D11VertexShader*>(shaderProgramD3D->hVertexShader)->GetPrivateData(CustomDataGUID_ShaderBinary, &vertexShaderDataSize, vertexShaderData);
 
-
-                    ResultCode result = 0;
-
-                    for (size_t iAttrib = 0; iAttrib < attribDescCount; ++iAttrib)
+                    auto attribDescD3D = new D3D11_INPUT_ELEMENT_DESC[attribDescCount];
+                    assert(attribDescD3D != nullptr);
                     {
-                        assert(attribDesc[iAttrib].attributeComponentCount >= 1 && attribDesc[iAttrib].attributeComponentCount <=4);
+                        memset(attribDescD3D, 0, sizeof(D3D11_INPUT_ELEMENT_DESC) * attribDescCount);
 
-                        auto semanticIndexStart = GTLib::Strings::FindFirstOf(attribDesc[iAttrib].attributeName, "0123456789");
 
-                        ptrdiff_t semanticNameLength = semanticIndexStart - attribDesc[iAttrib].attributeName;
-                        char* semanticName = reinterpret_cast<char*>(malloc(semanticNameLength + 1));
-                        if (semanticName != nullptr)
+                        ResultCode result = 0;
+
+                        for (size_t iAttrib = 0; iAttrib < attribDescCount; ++iAttrib)
                         {
-                            memcpy(semanticName, attribDesc[iAttrib].attributeName, semanticNameLength);
-                            semanticName[semanticNameLength] = '\0';
-                        }
-                        else
-                        {
-                            // Failed to allocate memory.
-                            result = -4;
-                            break;
-                        }
+                            assert(attribDesc[iAttrib].attributeComponentCount >= 1 && attribDesc[iAttrib].attributeComponentCount <=4);
 
+                            auto semanticIndexStart = GTLib::Strings::FindFirstOf(attribDesc[iAttrib].attributeName, "0123456789");
 
-                        DXGI_FORMAT format[3][4] = 
-                        {
+                            ptrdiff_t semanticNameLength = semanticIndexStart - attribDesc[iAttrib].attributeName;
+                            char* semanticName = reinterpret_cast<char*>(malloc(semanticNameLength + 1));
+                            if (semanticName != nullptr)
                             {
-                                DXGI_FORMAT_R32_FLOAT,
-                                DXGI_FORMAT_R32G32_FLOAT,
-                                DXGI_FORMAT_R32G32B32_FLOAT,
-                                DXGI_FORMAT_R32G32B32A32_FLOAT
-                            },  // GPUBasicType_Float
+                                memcpy(semanticName, attribDesc[iAttrib].attributeName, semanticNameLength);
+                                semanticName[semanticNameLength] = '\0';
+                            }
+                            else
                             {
-                                DXGI_FORMAT_R32_SINT,
-                                DXGI_FORMAT_R32G32_SINT,
-                                DXGI_FORMAT_R32G32B32_SINT,
-                                DXGI_FORMAT_R32G32B32A32_SINT
-                            },  // GPUBasicType_SInt
+                                // Failed to allocate memory.
+                                result = -4;
+                                break;
+                            }
+
+
+                            DXGI_FORMAT format[3][4] = 
                             {
-                                DXGI_FORMAT_R32_UINT,
-                                DXGI_FORMAT_R32G32_UINT,
-                                DXGI_FORMAT_R32G32B32_UINT,
-                                DXGI_FORMAT_R32G32B32A32_UINT
-                            }   // GPUBasicType_UInt
-                        };
+                                {
+                                    DXGI_FORMAT_R32_FLOAT,
+                                    DXGI_FORMAT_R32G32_FLOAT,
+                                    DXGI_FORMAT_R32G32B32_FLOAT,
+                                    DXGI_FORMAT_R32G32B32A32_FLOAT
+                                },  // GPUBasicType_Float
+                                {
+                                    DXGI_FORMAT_R32_SINT,
+                                    DXGI_FORMAT_R32G32_SINT,
+                                    DXGI_FORMAT_R32G32B32_SINT,
+                                    DXGI_FORMAT_R32G32B32A32_SINT
+                                },  // GPUBasicType_SInt
+                                {
+                                    DXGI_FORMAT_R32_UINT,
+                                    DXGI_FORMAT_R32G32_UINT,
+                                    DXGI_FORMAT_R32G32B32_UINT,
+                                    DXGI_FORMAT_R32G32B32A32_UINT
+                                }   // GPUBasicType_UInt
+                            };
 
 
-                        attribDescD3D[iAttrib].SemanticName         = semanticName;
-                        attribDescD3D[iAttrib].SemanticIndex        = GTLib::Parse<UINT>(semanticIndexStart);
-                        attribDescD3D[iAttrib].Format               = format[attribDesc[iAttrib].attributeComponentType][attribDesc[iAttrib].attributeComponentCount - 1];
-                        attribDescD3D[iAttrib].InputSlot            = attribDesc[iAttrib].slotIndex;
-                        attribDescD3D[iAttrib].AlignedByteOffset    = attribDesc[iAttrib].attributeOffset;
-                        attribDescD3D[iAttrib].InputSlotClass       = (attribDesc[iAttrib].attributeClass == GPUInputClassification_PerVertex) ? D3D11_INPUT_PER_VERTEX_DATA : D3D11_INPUT_PER_INSTANCE_DATA;
-                        attribDescD3D[iAttrib].InstanceDataStepRate = attribDesc[iAttrib].instanceStepRate;
-                    }
-
-
-                    ID3D11InputLayout* inputLayoutD3D;
-                    if (GT::Succeeded(result))
-                    {
-                        if (FAILED(m_device->CreateInputLayout(attribDescD3D, static_cast<UINT>(attribDescCount), vertexShaderData, vertexShaderDataSize, &inputLayoutD3D)))
-                        {
-                            inputLayoutD3D = nullptr;
+                            attribDescD3D[iAttrib].SemanticName         = semanticName;
+                            attribDescD3D[iAttrib].SemanticIndex        = GTLib::Parse<UINT>(semanticIndexStart);
+                            attribDescD3D[iAttrib].Format               = format[attribDesc[iAttrib].attributeComponentType][attribDesc[iAttrib].attributeComponentCount - 1];
+                            attribDescD3D[iAttrib].InputSlot            = attribDesc[iAttrib].slotIndex;
+                            attribDescD3D[iAttrib].AlignedByteOffset    = attribDesc[iAttrib].attributeOffset;
+                            attribDescD3D[iAttrib].InputSlotClass       = (attribDesc[iAttrib].attributeClass == GPUInputClassification_PerVertex) ? D3D11_INPUT_PER_VERTEX_DATA : D3D11_INPUT_PER_INSTANCE_DATA;
+                            attribDescD3D[iAttrib].InstanceDataStepRate = attribDesc[iAttrib].instanceStepRate;
                         }
-                    }
+
+
+                        ID3D11InputLayout* inputLayoutD3D;
+                        if (GT::Succeeded(result))
+                        {
+                            if (FAILED(m_device->CreateInputLayout(attribDescD3D, static_cast<UINT>(attribDescCount), vertexShaderData, vertexShaderDataSize, &inputLayoutD3D)))
+                            {
+                                inputLayoutD3D = nullptr;
+                            }
+                        }
                         
 
 
-                    for (size_t iAttrib = 0; iAttrib < attribDescCount; ++iAttrib)
-                    {
-                        free(const_cast<void*>(reinterpret_cast<const void*>(attribDescD3D[iAttrib].SemanticName)));
-                    }
+                        for (size_t iAttrib = 0; iAttrib < attribDescCount; ++iAttrib)
+                        {
+                            free(const_cast<void*>(reinterpret_cast<const void*>(attribDescD3D[iAttrib].SemanticName)));
+                        }
 
-                    delete [] attribDescD3D;
-                    return reinterpret_cast<HInputLayout>(inputLayoutD3D);
+                        delete [] attribDescD3D;
+                        free(vertexShaderData);
+
+
+                        return reinterpret_cast<HInputLayout>(inputLayoutD3D);
+                    }
+                }
+                else
+                {
+                    // Failed to allocate memory.
+                    return 0;
                 }
             }
             else
             {
-                // Invalid vertex shader data.
+                // Vertex shader binary data is 0 bytes.
                 return 0;
             }
         }
@@ -678,114 +691,154 @@ namespace GT
     }
 
 
-    ResultCode GPURenderingDevice_D3D11::CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut, GPUShaderProgram* &shaderProgramOut)
+    HShaderProgram GPURenderingDevice_D3D11::CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut)
     {
         (void)messagesOut;
 
-        ResultCode result = 0;
 
-        GPUVertexShader* vertexShader;
-        result = this->CreateVertexShader(vertexShaderData, vertexShaderDataSize, vertexShader);
-        if (GT::Succeeded(result))
+        HVertexShader vertexShader = this->CreateVertexShader(vertexShaderData, vertexShaderDataSize);
+        if (vertexShader != 0)
         {
-            GPUFragmentShader* fragmentShader;
-            result = this->CreateFragmentShader(fragmentShaderData, fragmentShaderDataSize, fragmentShader);
-            if (GT::Succeeded(result))
+            HFragmentShader fragmentShader = this->CreateFragmentShader(fragmentShaderData, fragmentShaderDataSize);
+            if (fragmentShader != 0)
             {
-                shaderProgramOut = new GPUShaderProgram_D3D11(reinterpret_cast<GPUVertexShader_D3D11*>(vertexShader), reinterpret_cast<GPUFragmentShader_D3D11*>(fragmentShader));
+                return reinterpret_cast<HShaderProgram>(new ShaderProgram_D3D11(vertexShader, fragmentShader));
+            }
+            else
+            {
+                this->ReleaseVertexShader(vertexShader);
             }
         }
 
-        return result;
+        return 0;
     }
 
-    void GPURenderingDevice_D3D11::DeleteShaderProgram(GPUShaderProgram* shaderProgram)
+    void GPURenderingDevice_D3D11::ReleaseShaderProgram(HShaderProgram hShaderProgram)
     {
-        auto shaderProgramD3D = reinterpret_cast<GPUShaderProgram_D3D11*>(shaderProgram);
+        auto shaderProgramD3D = reinterpret_cast<ShaderProgram_D3D11*>(hShaderProgram);
         if (shaderProgramD3D != nullptr)
         {
-            this->DeleteVertexShader(shaderProgramD3D->GetVertexShader());
-            this->DeleteFragmentShader(shaderProgramD3D->GetFragmentShader());
+            assert(shaderProgramD3D->hVertexShader   != 0);
+            assert(shaderProgramD3D->hFragmentShader != 0);
 
-            delete shaderProgramD3D;
+            ULONG vertexRefCount = reinterpret_cast<ID3D11VertexShader*>(shaderProgramD3D->hVertexShader)->Release();
+            ULONG pixelRefCount  = reinterpret_cast<ID3D11PixelShader*>(shaderProgramD3D->hFragmentShader)->Release();
+
+            assert(vertexRefCount == pixelRefCount);
+
+            if (vertexRefCount == 0)
+            {
+                delete shaderProgramD3D;
+            }
+        }
+    }
+
+    void GPURenderingDevice_D3D11::HoldShaderProgram(HShaderProgram hShaderProgram)
+    {
+        auto shaderProgramD3D = reinterpret_cast<ShaderProgram_D3D11*>(hShaderProgram);
+        if (shaderProgramD3D != nullptr)
+        {
+            assert(shaderProgramD3D->hVertexShader   != 0);
+            assert(shaderProgramD3D->hFragmentShader != 0);
+
+            reinterpret_cast<ID3D11VertexShader*>(shaderProgramD3D->hVertexShader)->AddRef();
+            reinterpret_cast<ID3D11PixelShader*>(shaderProgramD3D->hFragmentShader)->AddRef();
         }
     }
 
 
-    ResultCode GPURenderingDevice_D3D11::CreateVertexShader(const void* shaderData, size_t shaderDataSize, GPUVertexShader* &shaderOut)
+    HVertexShader GPURenderingDevice_D3D11::CreateVertexShader(const void* shaderData, size_t shaderDataSize)
     {
         const void* binaryData;
         size_t binaryDataSize;
         ResultCode result = this->ExtractShaderBinaryData(shaderData, shaderDataSize, binaryData, binaryDataSize);
         if (GT::Succeeded(result))
         {
-            ID3D11VertexShader* vertexShaderD3D;
-            if (SUCCEEDED(m_device->CreateVertexShader(binaryData, binaryDataSize, nullptr, &vertexShaderD3D)))
+            ID3D11VertexShader* vertexShaderD3D11;
+            if (SUCCEEDED(m_device->CreateVertexShader(binaryData, binaryDataSize, nullptr, &vertexShaderD3D11)))
             {
-                shaderOut = new GPUVertexShader_D3D11(vertexShaderD3D, binaryData, binaryDataSize);
-                return 0;
+                if (SUCCEEDED(vertexShaderD3D11->SetPrivateData(CustomDataGUID_ShaderBinary, static_cast<UINT>(binaryDataSize), binaryData)))
+                {
+                    return reinterpret_cast<HVertexShader>(vertexShaderD3D11);
+                }
+                else
+                {
+                    vertexShaderD3D11->Release();
+                    return 0;
+                }
             }
             else
             {
-                return FailedToCompileD3D11Shader;
+                return 0;
             }
         }
         else
         {
-            return result;
+            return 0;
         }
     }
 
-    void GPURenderingDevice_D3D11::DeleteVertexShader(GPUVertexShader* shader)
+    void GPURenderingDevice_D3D11::ReleaseVertexShader(HVertexShader hShader)
     {
-        auto shaderD3D = reinterpret_cast<GPUVertexShader_D3D11*>(shader);
-        if (shaderD3D != nullptr)
+        if (hShader != 0)
         {
-            assert(shaderD3D->GetD3D11VertexShader() != nullptr);
-            {
-                shaderD3D->GetD3D11VertexShader()->Release();
-            }
+            reinterpret_cast<ID3D11VertexShader*>(hShader)->Release();
+        }
+    }
 
-            delete shader;
+    void GPURenderingDevice_D3D11::HoldVertexShader(HVertexShader hShader)
+    {
+        if (hShader != 0)
+        {
+            reinterpret_cast<ID3D11VertexShader*>(hShader)->AddRef();
         }
     }
 
 
-    ResultCode GPURenderingDevice_D3D11::CreateFragmentShader(const void* shaderData, size_t shaderDataSize, GPUFragmentShader* &shaderOut)
+    HFragmentShader GPURenderingDevice_D3D11::CreateFragmentShader(const void* shaderData, size_t shaderDataSize)
     {
         const void* binaryData;
         size_t binaryDataSize;
         ResultCode result = this->ExtractShaderBinaryData(shaderData, shaderDataSize, binaryData, binaryDataSize);
         if (GT::Succeeded(result))
         {
-            ID3D11PixelShader* pixelShaderD3D;
-            if (SUCCEEDED(m_device->CreatePixelShader(binaryData, binaryDataSize, nullptr, &pixelShaderD3D)))
+            ID3D11PixelShader* pixelShaderD3D11;
+            if (SUCCEEDED(m_device->CreatePixelShader(binaryData, binaryDataSize, nullptr, &pixelShaderD3D11)))
             {
-                shaderOut = new GPUFragmentShader_D3D11(pixelShaderD3D, binaryData, binaryDataSize);
-                return 0;
+                if (SUCCEEDED(pixelShaderD3D11->SetPrivateData(CustomDataGUID_ShaderBinary, static_cast<UINT>(binaryDataSize), binaryData)))
+                {
+                    return reinterpret_cast<HVertexShader>(pixelShaderD3D11);
+                }
+                else
+                {
+                    pixelShaderD3D11->Release();
+                    return 0;
+                }
             }
             else
             {
-                return FailedToCompileD3D11Shader;
+                return 0;
             }
         }
         else
         {
-            return result;
+            return 0;
         }
     }
 
-    void GPURenderingDevice_D3D11::DeleteFragmentShader(GPUFragmentShader* shader)
+    void GPURenderingDevice_D3D11::ReleaseFragmentShader(HFragmentShader hShader)
     {
-        auto shaderD3D = reinterpret_cast<GPUFragmentShader_D3D11*>(shader);
-        if (shaderD3D != nullptr)
+        if (hShader != 0)
         {
-            assert(shaderD3D->GetD3D11PixelShader() != nullptr);
-            {
-                shaderD3D->GetD3D11PixelShader()->Release();
-            }
+            reinterpret_cast<ID3D11PixelShader*>(hShader)->Release();
+        }
+    }
 
-            delete shader;
+    void GPURenderingDevice_D3D11::HoldFragmentShader(HFragmentShader hShader)
+    {
+        if (hShader != 0)
+        {
+            reinterpret_cast<ID3D11PixelShader*>(hShader)->AddRef();
         }
     }
 

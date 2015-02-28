@@ -278,11 +278,11 @@ namespace GT
     ///////////////////////////////////////////
     // State
 
-    void GPURenderingDevice_OpenGL21::SetCurrentShaderProgram(GPUShaderProgram* shaderProgram)
+    void GPURenderingDevice_OpenGL21::SetCurrentShaderProgram(HShaderProgram hShaderProgram)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(shaderProgram);
+        auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(hShaderProgram);
         if (shaderProgramGL != nullptr)
         {
             m_gl.UseProgram(shaderProgramGL->GetOpenGLObject());
@@ -680,11 +680,11 @@ namespace GT
     ////////////////////////////////////////////
     // Input Layouts
 
-    HInputLayout GPURenderingDevice_OpenGL21::CreateInputLayout(GPUShaderProgram* shaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
+    HInputLayout GPURenderingDevice_OpenGL21::CreateInputLayout(HShaderProgram hShaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(shaderProgram);
+        auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(hShaderProgram);
         if (shaderProgramGL != nullptr)
         {
             auto attribDescGL = reinterpret_cast<GPUInputLayout_OpenGL21::AttributeDesc*>(malloc(sizeof(GPUInputLayout_OpenGL21::AttributeDesc) * attribDescCount));
@@ -816,23 +816,21 @@ namespace GT
         return m_supportedShaderTargets.Exists(target);
     }
 
-    ResultCode GPURenderingDevice_OpenGL21::CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut, GPUShaderProgram* &shaderProgramOut)
+    HShaderProgram GPURenderingDevice_OpenGL21::CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
         // TODO: Check that the shader targets are of the correct shader stage.
 
-        ResultCode result = 0;
 
         // Vertex Shader.
         const char* vertexSource;
         size_t vertexSourceLength;
         GTLib::Vector<GPUShaderDefine> vertexDefines;
         GPUShaderTarget vertexTarget;
-        result = this->ExtractShaderBinaryData(vertexShaderData, vertexShaderDataSize, vertexSource, vertexSourceLength, vertexDefines, vertexTarget);
-        if (Failed(result))
+        if (GT::Failed(this->ExtractShaderBinaryData(vertexShaderData, vertexShaderDataSize, vertexSource, vertexSourceLength, vertexDefines, vertexTarget)))
         {
-            return result;
+            return 0;
         }
 
         // Fragment Shader.
@@ -840,10 +838,9 @@ namespace GT
         size_t fragmentSourceLength;
         GTLib::Vector<GPUShaderDefine> fragmentDefines;
         GPUShaderTarget fragmentTarget;
-        result = this->ExtractShaderBinaryData(fragmentShaderData, fragmentShaderDataSize, fragmentSource, fragmentSourceLength, fragmentDefines, fragmentTarget);
-        if (Failed(result))
+        if (GT::Failed(this->ExtractShaderBinaryData(fragmentShaderData, fragmentShaderDataSize, fragmentSource, fragmentSourceLength, fragmentDefines, fragmentTarget)))
         {
-            return result;
+            return 0;
         }
 
 
@@ -851,7 +848,8 @@ namespace GT
         // The shader types must be compatible.
         if (vertexTarget == GPUShaderTarget_GLSL_120_VS && fragmentTarget != GPUShaderTarget_GLSL_120_FS)
         {
-            return ShaderTargetNotCompatible;
+            // Shader targets are not compatible.
+            return 0;
         }
 
 
@@ -862,22 +860,23 @@ namespace GT
         {
             if (vertexTarget == GPUShaderTarget_GLSL_120_VS)
             {
-                result = this->CompileShader_GLSL(vertexSource, vertexSourceLength, vertexDefines.buffer, vertexTarget, messagesOut, vertexObjectGL);
-                if (GT::Failed(result))
+                if (GT::Failed(this->CompileShader_GLSL(vertexSource, vertexSourceLength, vertexDefines.buffer, vertexTarget, messagesOut, vertexObjectGL)))
                 {
-                    return result;
+                    // Failed to compile vertex shader.
+                    return 0;
                 }
             }
 
             if (vertexTarget == GPUShaderTarget_ARB_VP)
             {
                 // TODO: Implement this!
-                return ShaderTargetNotSupported;
+                return 0;
             }
         }
         else
         {
-            return ShaderTargetNotSupported;
+            // Shader target is not supported.
+            return 0;
         }
 
 
@@ -887,22 +886,22 @@ namespace GT
         {
             if (fragmentTarget == GPUShaderTarget_GLSL_120_FS)
             {
-                result = this->CompileShader_GLSL(fragmentSource, fragmentSourceLength, fragmentDefines.buffer, fragmentTarget, messagesOut, fragmentObjectGL);
-                if (GT::Failed(result))
+                if (GT::Failed(this->CompileShader_GLSL(fragmentSource, fragmentSourceLength, fragmentDefines.buffer, fragmentTarget, messagesOut, fragmentObjectGL)))
                 {
-                    return result;
+                    return 0;
                 }
             }
 
             if (fragmentTarget == GPUShaderTarget_ARB_FP)
             {
                 // TODO: Implement this!
-                return ShaderTargetNotSupported;
+                return 0;
             }
         }
         else
         {
-            return ShaderTargetNotSupported;
+            // Shader target is not supported.
+            return 0;
         }
 
 
@@ -931,18 +930,14 @@ namespace GT
             }
 
 
-            ResultCode result = 0;
+            GPUShaderProgram_OpenGL21* shaderProgramGL = nullptr;
 
             // Check for link errors.
             GLint isLinked = 0;
             m_gl.GetProgramiv(objectGL, GL_LINK_STATUS, &isLinked);
-            if(isLinked == GL_TRUE)
+            if (isLinked == GL_TRUE)
             {
-                shaderProgramOut = new GPUShaderProgram_OpenGL21(objectGL);
-            }
-            else
-            {
-                result = FailedToLinkProgram;
+                shaderProgramGL = new GPUShaderProgram_OpenGL21(objectGL);
             }
 
 
@@ -950,11 +945,12 @@ namespace GT
             m_gl.DeleteShader(fragmentObjectGL);
 
 
-            return result;
+            return reinterpret_cast<HShaderProgram>(shaderProgramGL);
         }
         else
         {
-            return FailedToCreateOpenGLProgramObject;
+            // Failed to create OpenGL program object.
+            return 0;
         }
 
 
@@ -962,15 +958,37 @@ namespace GT
         return 0;
     }
 
-    void GPURenderingDevice_OpenGL21::DeleteShaderProgram(GPUShaderProgram* shaderProgram)
+    void GPURenderingDevice_OpenGL21::ReleaseShaderProgram(HShaderProgram hShaderProgram)
     {
-        CheckContextIsCurrent(m_gl, m_currentDC);
-
-        auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(shaderProgram);
+        auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(hShaderProgram);
         if (shaderProgramGL != nullptr)
         {
-            m_gl.DeleteProgram(shaderProgramGL->GetOpenGLObject());
-            delete shaderProgram;
+            m_referenceCountLock.Lock();
+            {
+                assert(shaderProgramGL->GetReferenceCount() > 0);
+
+                CheckContextIsCurrent(m_gl, m_currentDC);
+
+                if (shaderProgramGL->DecrementReferenceCount() == 0)
+                {
+                    m_gl.DeleteProgram(shaderProgramGL->GetOpenGLObject());
+                    delete shaderProgramGL;
+                }
+            }
+            m_referenceCountLock.Unlock();
+        }
+    }
+
+    void GPURenderingDevice_OpenGL21::HoldShaderProgram(HShaderProgram hShaderProgram)
+    {
+        auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(hShaderProgram);
+        if (shaderProgramGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                shaderProgramGL->IncrementReferenceCount();
+            }
+            m_referenceCountLock.Unlock();
         }
     }
 
@@ -1034,14 +1052,14 @@ namespace GT
 
     void GPURenderingDevice_OpenGL21::ReleaseBuffer(HBuffer hBuffer)
     {
-        CheckContextIsCurrent(m_gl, m_currentDC);
-
         auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
         if (bufferGL != nullptr)
         {
             m_referenceCountLock.Lock();
             {
                 assert(bufferGL->GetReferenceCount() > 0);
+
+                CheckContextIsCurrent(m_gl, m_currentDC);
 
                 if (bufferGL->DecrementReferenceCount() == 0)
                 {
