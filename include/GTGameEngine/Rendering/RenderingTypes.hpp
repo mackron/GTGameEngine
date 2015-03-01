@@ -26,6 +26,7 @@ namespace GT
     typedef size_t HTexture2DMultisample;
     typedef size_t HTexture3D;
     typedef size_t HTextureView;
+    typedef size_t HSampler;
     typedef size_t HFramebuffer;
     typedef size_t HFramebufferRenderbuffer;
     typedef size_t HRasterizerState;
