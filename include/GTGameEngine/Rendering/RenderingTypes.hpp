@@ -23,8 +23,9 @@ namespace GT
     typedef size_t HShaderProgram;
     typedef size_t HTexture1D;
     typedef size_t HTexture2D;
+    typedef size_t HTexture2DMultisample;
     typedef size_t HTexture3D;
-    typedef size_t HTextureCube;
+    typedef size_t HTextureView;
     typedef size_t HFramebuffer;
     typedef size_t HFramebufferRenderbuffer;
     typedef size_t HRasterizerState;
@@ -200,6 +201,107 @@ namespace GT
         GPUVendor_NVIDIA,
         GPUVendor_AMD,
         GPUVendor_Intel
+    };
+
+
+    enum TextureType
+    {
+        TextureType_1D,
+        TextureType_1D_Array,
+        TextureType_2D,
+        TextureType_2D_Array,
+        TextureType_2D_Multisample,
+        TextureType_2D_Multisample_Array,
+        TextureType_3D,
+        TextureType_Cube
+    };
+
+    enum TextureFormat
+    {
+        TextureFormat_Unknown = 0,
+
+        // Unsigned Normalized.
+        TextureFormat_R8,
+        TextureFormat_RG8,
+        TextureFormat_RGB8,
+        TextureFormat_RGBA8,
+        TextureFormat_R16,
+        TextureFormat_RG16,
+        TextureFormat_RGB16,
+        TextureFormat_RGBA16,
+        TextureFormat_RGB10_A2,
+        TextureFormat_SRGB8_A8,     //< sRGB, linear alpha.
+
+        // Signed Normalized.
+        TextureFormat_R8_SNORM,
+        TextureFormat_RG8_SNORM,
+        TextureFormat_RGB8_SNORM,
+        TextureFormat_RGBA8_SNORM,
+        TextureFormat_R16_SNORM,
+        TextureFormat_RG16_SNORM,
+        TextureFormat_RGB16_SNORM,
+        TextureFormat_RGBA16_SNORM,
+
+        // Unsigned Integral.
+        TextureFormat_R8UI,
+        TextureFormat_RG8UI,
+        TextureFormat_RGB8UI,
+        TextureFormat_RGBA8UI,
+        TextureFormat_R16UI,
+        TextureFormat_RG16UI,
+        TextureFormat_RGB16UI,
+        TextureFormat_RGBA16UI,
+        TextureFormat_R32UI,
+        TextureFormat_RG32UI,
+        TextureFormat_RGB32UI,
+        TextureFormat_RGBA32UI,
+
+        // Signed Integral.
+        TextureFormat_RBSI,
+        TextureFormat_R8SI,
+        TextureFormat_RG8SI,
+        TextureFormat_RGB8SI,
+        TextureFormat_RGBA8SI,
+        TextureFormat_R16SI,
+        TextureFormat_RG16SI,
+        TextureFormat_RGB16SI,
+        TextureFormat_RGBA16SI,
+        TextureFormat_R32SI,
+        TextureFormat_RG32SI,
+        TextureFormat_RGB32SI,
+        TextureFormat_RGBA32SI,
+
+        // Float
+        TextureFormat_R16F,
+        TextureFormat_RG16F,
+        TextureFormat_RGB16F,
+        TextureFormat_RGBA16F,
+        TextureFormat_R32F,
+        TextureFormat_RG32F,
+        TextureFormat_RGB32F,
+        TextureFormat_RGBA32F,
+        TextureFormat_R11G11B10F,
+
+        // Special
+        TextureFormat_D24_S8,               //< GL_DEPTH24_STENCIL8 / DXGI_FORMAT_D24_UNORM_S8_UINT
+
+        // Compressed.
+        TextureFormat_RGBA_DXT1,            //< GL_COMPRESSED_RGBA_S3TC_DXT1_EXT       / DXGI_FORMAT_BC1_UNORM
+        TextureFormat_RGBA_DXT3,            //< GL_COMPRESSED_RGBA_S3TC_DXT3_EXT       / DXGI_FORMAT_BC2_UNORM
+        TextureFormat_RGBA_DXT5,            //< GL_COMPRESSED_RGBA_S3TC_DXT5_EXT       / DXGI_FORMAT_BC3_UNORM
+        TextureFormat_SRGB_Alpha_DXT1,      //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT / DXGI_FORMAT_BC1_UNORM_SRGB
+        TextureFormat_SRGB_Alpha_DXT3,      //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT / DXGI_FORMAT_BC2_UNORM_SRGB
+        TextureFormat_SRGB_Alpha_DXT5,      //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT / DXGI_FORMAT_BC3_UNORM_SRGB
+
+        TextureFormat_R_RGTC,               //< GL_COMPRESSED_RED_RGTC1        / DXGI_FORMAT_BC4_UNORM
+        TextureFormat_R_RGTC_SNORM,         //< GL_COMPRESSED_SIGNED_RED_RGTC1 / DXGI_FORMAT_BC4_SNORM
+        TextureFormat_RG_RGTC,              //< GL_COMPRESSED_RG_RGTC2         / DXGI_FORMAT_BC5_UNORM
+        TextureFormat_RG_RGTC_SNORM,        //< GL_COMPRESSED_SIGNED_RG_RGTC2  / DXGI_FORMAT_BC5_SNORM
+
+        TextureFormat_RGBA_BPTC,            //< GL_COMPRESSED_RGBA_BPTC_UNORM_ARB         / DXGI_FORMAT_BC7_UNORM
+        TextureFormat_SRGB_Alpha_BPTC,      //< GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB   / DXGI_FORMAT_BC7_UNORM_SRGB
+        TextureFormat_RGB_UF16_BPTC,        //< GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB / DXGI_FORMAT_BC6H_UF16
+        TextureFormat_RGB_SF16_BPTC,        //< GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB   / DXGI_FORMAT_BC6H_SF16
     };
 
 
