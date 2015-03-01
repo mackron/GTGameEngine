@@ -2,6 +2,11 @@
 
 #include "GPURenderingDevice_OpenGL21.hpp"
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4351)   // new behaviour
+#endif
+
 #if defined(GT_GE_BUILD_OPENGL21)
 #include "RenderingTypes_OpenGL21.hpp"
 
@@ -279,7 +284,7 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(hShaderProgram);
+        auto shaderProgramGL = reinterpret_cast<ShaderProgram_OpenGL21*>(hShaderProgram);
         if (shaderProgramGL != nullptr)
         {
             m_gl.UseProgram(shaderProgramGL->GetOpenGLObject());
@@ -329,7 +334,7 @@ namespace GT
             // Disable the vertex attributes of the previous input layout.
             if (m_currentInputLayout != 0)
             {
-                auto prevLayoutGL = reinterpret_cast<GPUInputLayout_OpenGL21*>(m_currentInputLayout);
+                auto prevLayoutGL = reinterpret_cast<InputLayout_OpenGL21*>(m_currentInputLayout);
                 if (prevLayoutGL != nullptr)
                 {
                     size_t attribCount = prevLayoutGL->GetAttributeCount();
@@ -341,7 +346,7 @@ namespace GT
             }
 
 
-            auto newLayoutGL = reinterpret_cast<GPUInputLayout_OpenGL21*>(hInputLayout);
+            auto newLayoutGL = reinterpret_cast<InputLayout_OpenGL21*>(hInputLayout);
             if (newLayoutGL != nullptr)
             {
                 size_t attribCount = newLayoutGL->GetAttributeCount();
@@ -380,7 +385,7 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
+        auto bufferGL = reinterpret_cast<Buffer_OpenGL21*>(hBuffer);
         if (bufferGL != nullptr)
         {
             assert(bufferGL->GetOpenGLTarget() == GL_ELEMENT_ARRAY_BUFFER);
@@ -424,7 +429,7 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto stateGL = reinterpret_cast<GPURasterizerState_OpenGL21*>(hState);
+        auto stateGL = reinterpret_cast<RasterizerState_OpenGL21*>(hState);
         if (stateGL != nullptr)
         {
             // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
@@ -522,7 +527,7 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto stateGL = reinterpret_cast<GPUDepthStencilState_OpenGL21*>(hState);
+        auto stateGL = reinterpret_cast<DepthStencilState_OpenGL21*>(hState);
         if (stateGL != nullptr)
         {
             // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
@@ -601,12 +606,12 @@ namespace GT
 
     HRasterizerState GPURenderingDevice_OpenGL21::CreateRasterizerState(const GPURasterizerStateDesc &desc)
     {
-        return reinterpret_cast<HRasterizerState>(new GPURasterizerState_OpenGL21(desc));
+        return reinterpret_cast<HRasterizerState>(new RasterizerState_OpenGL21(desc));
     }
 
     void GPURenderingDevice_OpenGL21::ReleaseRasterizerState(HRasterizerState hState)
     {
-        auto stateGL = reinterpret_cast<GPURasterizerState_OpenGL21*>(hState);
+        auto stateGL = reinterpret_cast<RasterizerState_OpenGL21*>(hState);
         if (stateGL != nullptr)
         {
             m_referenceCountLock.Lock();
@@ -624,7 +629,7 @@ namespace GT
 
     void GPURenderingDevice_OpenGL21::HoldRasterizerState(HRasterizerState hState)
     {
-        auto stateGL = reinterpret_cast<GPURasterizerState_OpenGL21*>(hState);
+        auto stateGL = reinterpret_cast<RasterizerState_OpenGL21*>(hState);
         if (stateGL != nullptr)
         {
             m_referenceCountLock.Lock();
@@ -638,12 +643,12 @@ namespace GT
 
     HDepthStencilState GPURenderingDevice_OpenGL21::CreateDepthStencilState(const GPUDepthStencilStateDesc &desc)
     {
-        return reinterpret_cast<size_t>(new GPUDepthStencilState_OpenGL21(desc));
+        return reinterpret_cast<size_t>(new DepthStencilState_OpenGL21(desc));
     }
 
     void GPURenderingDevice_OpenGL21::DeleteDepthStencilState(HDepthStencilState hState)
     {
-        auto stateGL = reinterpret_cast<GPUDepthStencilState_OpenGL21*>(hState);
+        auto stateGL = reinterpret_cast<DepthStencilState_OpenGL21*>(hState);
         if (stateGL != nullptr)
         {
             m_referenceCountLock.Lock();
@@ -661,7 +666,7 @@ namespace GT
 
     void GPURenderingDevice_OpenGL21::HoldDepthStencilState(HDepthStencilState hState)
     {
-        auto stateGL = reinterpret_cast<GPUDepthStencilState_OpenGL21*>(hState);
+        auto stateGL = reinterpret_cast<DepthStencilState_OpenGL21*>(hState);
         if (stateGL != nullptr)
         {
             m_referenceCountLock.Lock();
@@ -681,10 +686,10 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(hShaderProgram);
+        auto shaderProgramGL = reinterpret_cast<ShaderProgram_OpenGL21*>(hShaderProgram);
         if (shaderProgramGL != nullptr)
         {
-            auto attribDescGL = reinterpret_cast<GPUInputLayout_OpenGL21::AttributeDesc*>(malloc(sizeof(GPUInputLayout_OpenGL21::AttributeDesc) * attribDescCount));
+            auto attribDescGL = reinterpret_cast<InputLayout_OpenGL21::AttributeDesc*>(malloc(sizeof(InputLayout_OpenGL21::AttributeDesc) * attribDescCount));
             if (attribDescGL != nullptr)
             {
                 unsigned int slotAttribCounts[GT_GE_MAX_VERTEX_BUFFER_SLOTS];
@@ -729,7 +734,7 @@ namespace GT
 
 
 
-                HInputLayout hInputLayout = reinterpret_cast<HInputLayout>(new GPUInputLayout_OpenGL21(attribDescGL, attribDescCount, slotAttribCounts));
+                HInputLayout hInputLayout = reinterpret_cast<HInputLayout>(new InputLayout_OpenGL21(attribDescGL, attribDescCount, slotAttribCounts));
 
 
                 free(attribDescGL);
@@ -750,7 +755,7 @@ namespace GT
 
     void GPURenderingDevice_OpenGL21::ReleaseInputLayout(HInputLayout hInputLayout)
     {
-        auto inputLayoutGL = reinterpret_cast<GPUInputLayout_OpenGL21*>(hInputLayout);
+        auto inputLayoutGL = reinterpret_cast<InputLayout_OpenGL21*>(hInputLayout);
         if (inputLayoutGL != nullptr)
         {
             m_referenceCountLock.Lock();
@@ -773,7 +778,7 @@ namespace GT
 
     void GPURenderingDevice_OpenGL21::HoldInputLayout(HInputLayout hInputLayout)
     {
-        auto inputLayoutGL = reinterpret_cast<GPUInputLayout_OpenGL21*>(hInputLayout);
+        auto inputLayoutGL = reinterpret_cast<InputLayout_OpenGL21*>(hInputLayout);
         if (inputLayoutGL != nullptr)
         {
             m_referenceCountLock.Lock();
@@ -927,14 +932,14 @@ namespace GT
             }
 
 
-            GPUShaderProgram_OpenGL21* shaderProgramGL = nullptr;
+            ShaderProgram_OpenGL21* shaderProgramGL = nullptr;
 
             // Check for link errors.
             GLint isLinked = 0;
             m_gl.GetProgramiv(objectGL, GL_LINK_STATUS, &isLinked);
             if (isLinked == GL_TRUE)
             {
-                shaderProgramGL = new GPUShaderProgram_OpenGL21(objectGL);
+                shaderProgramGL = new ShaderProgram_OpenGL21(objectGL);
             }
 
 
@@ -957,7 +962,7 @@ namespace GT
 
     void GPURenderingDevice_OpenGL21::ReleaseShaderProgram(HShaderProgram hShaderProgram)
     {
-        auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(hShaderProgram);
+        auto shaderProgramGL = reinterpret_cast<ShaderProgram_OpenGL21*>(hShaderProgram);
         if (shaderProgramGL != nullptr)
         {
             m_referenceCountLock.Lock();
@@ -978,7 +983,7 @@ namespace GT
 
     void GPURenderingDevice_OpenGL21::HoldShaderProgram(HShaderProgram hShaderProgram)
     {
-        auto shaderProgramGL = reinterpret_cast<GPUShaderProgram_OpenGL21*>(hShaderProgram);
+        auto shaderProgramGL = reinterpret_cast<ShaderProgram_OpenGL21*>(hShaderProgram);
         if (shaderProgramGL != nullptr)
         {
             m_referenceCountLock.Lock();
@@ -1038,7 +1043,7 @@ namespace GT
         m_gl.BindBuffer(targetsGL[type], objectGL);
         m_gl.BufferData(targetsGL[type], sizeInBytes, data, usagesGL[usage]);
 
-        HBuffer hBuffer = reinterpret_cast<HBuffer>(new GPUBuffer_OpenGL21(objectGL, targetsGL[type], usagesGL[usage]));
+        HBuffer hBuffer = reinterpret_cast<HBuffer>(new Buffer_OpenGL21(objectGL, targetsGL[type], usagesGL[usage]));
 
         // Re-bind the previous buffer.
         m_gl.BindBuffer(targetsGL[type], prevObjectGL);
@@ -1049,7 +1054,7 @@ namespace GT
 
     void GPURenderingDevice_OpenGL21::ReleaseBuffer(HBuffer hBuffer)
     {
-        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
+        auto bufferGL = reinterpret_cast<Buffer_OpenGL21*>(hBuffer);
         if (bufferGL != nullptr)
         {
             m_referenceCountLock.Lock();
@@ -1107,7 +1112,7 @@ namespace GT
 
     void GPURenderingDevice_OpenGL21::HoldBuffer(HBuffer hBuffer)
     {
-        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
+        auto bufferGL = reinterpret_cast<Buffer_OpenGL21*>(hBuffer);
         if (bufferGL != nullptr)
         {
             m_referenceCountLock.Lock();
@@ -1122,7 +1127,7 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
+        auto bufferGL = reinterpret_cast<Buffer_OpenGL21*>(hBuffer);
         assert(bufferGL != nullptr);
         {
             if (bufferGL->GetOpenGLUsage() != GL_STATIC_DRAW)   // <-- BufferUsage_Immutable
@@ -1163,7 +1168,7 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
+        auto bufferGL = reinterpret_cast<Buffer_OpenGL21*>(hBuffer);
         assert(bufferGL != nullptr);
         {
             GLuint prevObjectGL;
@@ -1181,7 +1186,7 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(hBuffer);
+        auto bufferGL = reinterpret_cast<Buffer_OpenGL21*>(hBuffer);
         assert(bufferGL != nullptr);
         {
             if (bufferGL->GetOpenGLUsage() != GL_STATIC_DRAW)   // <-- BufferUsage_Immutable
@@ -1319,7 +1324,7 @@ namespace GT
         assert(slotIndex < GT_GE_MAX_VERTEX_BUFFER_SLOTS);
 
 
-        auto inputLayoutGL = reinterpret_cast<GPUInputLayout_OpenGL21*>(m_currentInputLayout);
+        auto inputLayoutGL = reinterpret_cast<InputLayout_OpenGL21*>(m_currentInputLayout);
         if (inputLayoutGL != nullptr)
         {
             auto &slot = m_vertexBufferSlots[slotIndex];
@@ -1330,7 +1335,7 @@ namespace GT
             inputLayoutGL->GetSlotAttributeRange(slotIndex, attribStart, attribEnd);
 
 
-            auto bufferGL = reinterpret_cast<GPUBuffer_OpenGL21*>(slot.buffer);
+            auto bufferGL = reinterpret_cast<Buffer_OpenGL21*>(slot.buffer);
             if (bufferGL != nullptr)
             {
                 for (size_t iAttrib = attribStart; iAttrib < attribEnd; ++iAttrib)
@@ -1478,4 +1483,8 @@ namespace GT
     }
 }
 
+#endif
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
 #endif

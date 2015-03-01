@@ -13,18 +13,18 @@
 namespace GT
 {
     /// OpenGL 2.1 rasterizer state.
-    struct GPURasterizerState_OpenGL21 : public ReferenceCountedObject, public GPURasterizerStateDesc
+    struct RasterizerState_OpenGL21 : public ReferenceCountedObject, public GPURasterizerStateDesc
     {
-        GPURasterizerState_OpenGL21(const GPURasterizerStateDesc &desc)
+        RasterizerState_OpenGL21(const GPURasterizerStateDesc &desc)
             : ReferenceCountedObject(), GPURasterizerStateDesc(desc)
         {
         }
     };
 
     /// OpenGL 2.1 depth/stencil state.
-    struct GPUDepthStencilState_OpenGL21 : public ReferenceCountedObject, public GPUDepthStencilStateDesc
+    struct DepthStencilState_OpenGL21 : public ReferenceCountedObject, public GPUDepthStencilStateDesc
     {
-        GPUDepthStencilState_OpenGL21(const GPUDepthStencilStateDesc &desc)
+        DepthStencilState_OpenGL21(const GPUDepthStencilStateDesc &desc)
             : ReferenceCountedObject(), GPUDepthStencilStateDesc(desc)
         {
         }
@@ -60,20 +60,20 @@ namespace GT
     // ShaderProgram_OpenGL21
 
     /// OpenGL 2.1 shader program.
-    class GPUShaderProgram_OpenGL21 : public ReferenceCountedObject, public OpenGLObject
+    class ShaderProgram_OpenGL21 : public ReferenceCountedObject, public OpenGLObject
     {
     public:
 
         /// Constructor.
-        GPUShaderProgram_OpenGL21(GLuint objectGL)
+        ShaderProgram_OpenGL21(GLuint objectGL)
             : ReferenceCountedObject(), OpenGLObject(objectGL)
         {
         }
 
 
     private:    // No copying.
-        GPUShaderProgram_OpenGL21(const GPUShaderProgram_OpenGL21 &);
-        GPUShaderProgram_OpenGL21 & operator=(const GPUShaderProgram_OpenGL21 &);
+        ShaderProgram_OpenGL21(const ShaderProgram_OpenGL21 &);
+        ShaderProgram_OpenGL21 & operator=(const ShaderProgram_OpenGL21 &);
     };
 
 
@@ -83,12 +83,12 @@ namespace GT
     // Buffer_OpenGL21
 
     /// Class representing an OpenGL buffer object.
-    class GPUBuffer_OpenGL21 : public ReferenceCountedObject, public OpenGLObject
+    class Buffer_OpenGL21 : public ReferenceCountedObject, public OpenGLObject
     {
     public:
 
         /// Constructor.
-        GPUBuffer_OpenGL21(GLuint objectGL, GLenum targetGL, GLenum usageGL)
+        Buffer_OpenGL21(GLuint objectGL, GLenum targetGL, GLenum usageGL)
             : ReferenceCountedObject(), OpenGLObject(objectGL), m_targetGL(targetGL), m_usageGL(usageGL)
         {
         }
@@ -112,8 +112,8 @@ namespace GT
 
 
     private:    // No copying.
-        GPUBuffer_OpenGL21(const GPUBuffer_OpenGL21 &);
-        GPUBuffer_OpenGL21 & operator=(const GPUBuffer_OpenGL21 &);
+        Buffer_OpenGL21(const Buffer_OpenGL21 &);
+        Buffer_OpenGL21 & operator=(const Buffer_OpenGL21 &);
     };
 
 
@@ -123,7 +123,7 @@ namespace GT
     // InputLayout_OpenGL21
 
     /// OpenGL input layout object.
-    class GPUInputLayout_OpenGL21 : public ReferenceCountedObject
+    class InputLayout_OpenGL21 : public ReferenceCountedObject
     {
     public:
 
@@ -144,10 +144,10 @@ namespace GT
     public:
 
         /// Constructor.
-        GPUInputLayout_OpenGL21(AttributeDesc* const attributes, size_t attributeCount, unsigned int slotAttributeCounts[GT_GE_MAX_VERTEX_BUFFER_SLOTS]);
+        InputLayout_OpenGL21(AttributeDesc* const attributes, size_t attributeCount, unsigned int slotAttributeCounts[GT_GE_MAX_VERTEX_BUFFER_SLOTS]);
 
         /// Destructor.
-        ~GPUInputLayout_OpenGL21();
+        ~InputLayout_OpenGL21();
 
 
         /// Retrieves the number of vertex attribute count.
@@ -188,8 +188,8 @@ namespace GT
 
 
     private:    // No copying.
-        GPUInputLayout_OpenGL21(const GPUInputLayout_OpenGL21 &);
-        GPUInputLayout_OpenGL21 & operator=(const GPUInputLayout_OpenGL21 &);
+        InputLayout_OpenGL21(const InputLayout_OpenGL21 &);
+        InputLayout_OpenGL21 & operator=(const InputLayout_OpenGL21 &);
     };
 }
 
