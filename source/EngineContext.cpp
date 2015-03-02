@@ -69,29 +69,7 @@ namespace GT
                 RenderingAPI renderingAPIs[] = 
                 {
                     RenderingAPI_D3D11,
-                    RenderingAPI_OpenGL4,
-                    RenderingAPI_OpenGL21
-                };
-                    
-                return this->CreateGPURenderingDevice(deviceIndex, renderingAPIs, sizeof(renderingAPIs) / sizeof(renderingAPIs[0]), deviceOut);
-            }
-
-        case RenderingAPI_Any_Gen1:
-            {
-                RenderingAPI renderingAPIs[] = 
-                {
-                    RenderingAPI_D3D11,
                     RenderingAPI_OpenGL4
-                };
-                    
-                return this->CreateGPURenderingDevice(deviceIndex, renderingAPIs, sizeof(renderingAPIs) / sizeof(renderingAPIs[0]), deviceOut);
-            }
-
-        case RenderingAPI_Any_Gen2:
-            {
-                RenderingAPI renderingAPIs[] = 
-                {
-                    RenderingAPI_OpenGL21
                 };
                     
                 return this->CreateGPURenderingDevice(deviceIndex, renderingAPIs, sizeof(renderingAPIs) / sizeof(renderingAPIs[0]), deviceOut);

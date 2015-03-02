@@ -36,9 +36,6 @@
     <Filter Include="Source Files\Rendering\D3D\D3D11">
       <UniqueIdentifier>{f1465376-69c8-47b6-b4a6-6b504ca716ac}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Rendering\OpenGL\OpenGL21">
-      <UniqueIdentifier>{1cde6109-02b6-4ddb-8184-3205c84b3148}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Rendering\OpenGL">
       <UniqueIdentifier>{9a6de853-7d28-411a-9d04-c5403b1c5516}</UniqueIdentifier>
     </Filter>
@@ -95,14 +92,8 @@
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.cpp">
       <Filter>Source Files\Rendering\D3D\D3D11</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPURenderingDevice_OpenGL21.cpp">
-      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL.cpp">
       <Filter>Source Files\Rendering\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RenderingTypes_OpenGL21.cpp">
-      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL4\GPURenderingDevice_OpenGL4.cpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL4</Filter>
@@ -166,9 +157,6 @@
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.hpp">
       <Filter>Source Files\Rendering\D3D\D3D11</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPURenderingDevice_OpenGL21.hpp">
-      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\OpenGL\OpenGL.hpp">
       <Filter>Header Files\Rendering\OpenGL</Filter>
     </ClInclude>
@@ -177,9 +165,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\RenderingTypes_D3D11.hpp">
       <Filter>Source Files\Rendering\D3D\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RenderingTypes_OpenGL21.hpp">
-      <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL4\GPURenderingDevice_OpenGL4.hpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL4</Filter>

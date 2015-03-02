@@ -3,7 +3,6 @@
 #include <GTGameEngine/HardwarePlatform_GPU.hpp>
 #include "Rendering/D3D/D3D11/GPURenderingDevice_D3D11.hpp"
 #include "Rendering/OpenGL/OpenGL4/GPURenderingDevice_OpenGL4.hpp"
-#include "Rendering/OpenGL/OpenGL21/GPURenderingDevice_OpenGL21.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/Strings.hpp>
@@ -27,7 +26,7 @@ namespace GT
             m_hD3D11(0),
             m_hD3DCompiler(0),
 #endif
-#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL4)
+#if defined(GT_GE_BUILD_OPENGL4)
             m_gl()
 #endif
     {
@@ -140,7 +139,7 @@ namespace GT
         }
 #endif
 
-#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL4)
+#if defined(GT_GE_BUILD_OPENGL4)
         static const unsigned int minOpenGLVersionMajor = 2;
         static const unsigned int minOpenGLVersionMinor = 1;
         ResultCode resultGL = m_gl.Startup(minOpenGLVersionMajor, minOpenGLVersionMinor, OpenGLContext::NoInitAPI | OpenGLContext::NoInitExtensions | OpenGLContext::NoCoreContext);
@@ -162,11 +161,6 @@ namespace GT
             GPURenderingDeviceInfo& openGLDeviceInfo = m_renderingDevices[0];       // <-- The OpenGL device should always be the first item since that should correspond to the primary display, which is what OpenGL always uses.
             assert(openGLDeviceInfo.identifier_OpenGL == 1);
             {
-#if defined(GT_GE_BUILD_OPENGL21)
-                AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL21);
-#endif
-
-#if defined(GT_GE_BUILD_OPENGL4)
                 // Now we need to check for OpenGL 4.5 support.
                 unsigned int majorVersion;
                 unsigned int minorVersion;
@@ -181,7 +175,6 @@ namespace GT
                 {
                     // OpenGL 4.5 is not supported.
                 }
-#endif
             }
         }
         else
@@ -196,7 +189,7 @@ namespace GT
 
     void HardwarePlatform_GPU::Shutdown()
     {
-#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL4)
+#if defined(GT_GE_BUILD_OPENGL4)
         m_gl.Shutdown();
 #endif
 
@@ -286,15 +279,6 @@ namespace GT
                         break;
                     }
 #endif
-
-#if defined(GT_GE_BUILD_OPENGL21)
-                case RenderingAPI_OpenGL21:
-                    {
-                        newDevice = new GPURenderingDevice_OpenGL21(info);
-                        break;
-                    }
-#endif
-
                 default:
                     {
                         assert(false);

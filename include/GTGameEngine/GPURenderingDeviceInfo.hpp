@@ -9,11 +9,8 @@ namespace GT
     enum RenderingAPI
     {
         RenderingAPI_Any      = 0,
-        RenderingAPI_Any_Gen1 = 1,
-        RenderingAPI_Any_Gen2 = 2,
-        RenderingAPI_OpenGL21 = (1 << 8) | RenderingAPI_Any_Gen1,
-        RenderingAPI_OpenGL4  = (1 << 8) | RenderingAPI_Any_Gen2,
-        RenderingAPI_D3D11    = (2 << 8) | RenderingAPI_Any_Gen2
+        RenderingAPI_OpenGL4  = 1,
+        RenderingAPI_D3D11    = 2
     };
 
 

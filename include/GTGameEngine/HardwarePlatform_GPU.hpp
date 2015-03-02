@@ -13,7 +13,7 @@
 #endif
 
 
-#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL4)
+#if defined(GT_GE_BUILD_OPENGL4)
 #include "Rendering/OpenGL/OpenGL.hpp"
 #endif
 
@@ -97,7 +97,7 @@ namespace GT
         HMODULE m_hD3DCompiler;
 #endif
 
-#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL4)
+#if defined(GT_GE_BUILD_OPENGL4)
         /// The OpenGL helper context.
         OpenGLContext m_gl;
 #endif

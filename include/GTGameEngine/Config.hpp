@@ -19,7 +19,6 @@
 
 #define GT_GE_ENABLE_D3D11          1
 #define GT_GE_ENABLE_OPENGL4        1
-#define GT_GE_ENABLE_OPENGL21       1
 
 
 // Optimize for Single Rendering Device
@@ -58,11 +57,6 @@
 // OpenGL 4.x Support.
 #if (defined(GT_GE_ENABLE_OPENGL4) && GT_GE_ENABLE_OPENGL4 == 1)
 #define GT_GE_BUILD_OPENGL4
-#endif
-
-// OpenGL 2.1 Support.
-#if (defined(GT_GE_ENABLE_OPENGL21) && GT_GE_ENABLE_OPENGL21 == 1)
-#define GT_GE_BUILD_OPENGL21
 #endif
 
 
