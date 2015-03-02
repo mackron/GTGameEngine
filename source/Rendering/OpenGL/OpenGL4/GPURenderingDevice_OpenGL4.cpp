@@ -20,6 +20,7 @@
 
 namespace GT
 {
+#if _DEBUG
     void APIENTRY DebugOutputCallback_OpenGL4(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const char* message, const void* userParam)
     {
         (void)length;
@@ -69,6 +70,7 @@ namespace GT
             "    Severity: %s\n\n",
             message, id, sourceStr, typeStr, severityStr);
     }
+#endif
 
     inline void CheckContextIsCurrent(OpenGL4Context &m_gl, HDC m_currentDC)
     {
@@ -170,7 +172,7 @@ namespace GT
 
 
 
-
+#if _DEBUG
                 // Debug Output. For now we are just dumping this to stdout, but later on this should be changed to a proper callback system.
                 if (m_gl.IsExtensionSupported("GL_ARB_debug_output"))
                 {
@@ -188,6 +190,7 @@ namespace GT
                         m_gl.DebugMessageControlARB(GL_DEBUG_SOURCE_API_ARB, GL_DEBUG_TYPE_OTHER_ARB, GL_DONT_CARE, sizeof(disabledIDs) / sizeof(GLuint), disabledIDs, GL_FALSE);
                     }
                 }
+#endif
             }
 
             return result;
