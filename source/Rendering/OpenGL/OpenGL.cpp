@@ -80,10 +80,6 @@ namespace GT
             GetProgramInfoLog(nullptr),
             UseProgram(nullptr),
             GetAttribLocation(nullptr),
-            //VertexAttribPointer(nullptr),
-            //EnableVertexAttribArray(nullptr),
-            //DisableVertexAttribArray(nullptr),
-
 
             CreateVertexArrays(nullptr),
             DeleteVertexArrays(nullptr),
@@ -91,18 +87,22 @@ namespace GT
             EnableVertexArrayAttrib(nullptr),
             DisableVertexArrayAttrib(nullptr),
             VertexArrayVertexBuffer(nullptr),
+            VertexArrayElementBuffer(nullptr),
             VertexArrayAttribFormat(nullptr),
             VertexArrayAttribIFormat(nullptr),
             VertexArrayAttribLFormat(nullptr),
             VertexArrayAttribBinding(nullptr),
             VertexArrayBindingDivisor(nullptr),
 
-            GenBuffers(nullptr),
+            CreateBuffers(nullptr),
             DeleteBuffers(nullptr),
-            BindBuffer(nullptr),
-            BufferData(nullptr),
-            MapBuffer(nullptr),
-            UnmapBuffer(nullptr),
+            NamedBufferStorage(nullptr),
+            NamedBufferSubData(nullptr),
+            CopyNamedBufferSubData(nullptr),
+            ClearNamedBufferSubData(nullptr),
+            MapNamedBufferRange(nullptr),
+            UnmapNamedBuffer(nullptr),
+            FlushMappedNamedBufferRange(nullptr),
 
             DebugMessageControlARB(nullptr),
             DebugMessageInsertARB(nullptr),
@@ -530,31 +530,29 @@ namespace GT
             this->GetProgramInfoLog        = reinterpret_cast<PFNGLGETPROGRAMINFOLOGPROC       >(this->GetGLProcAddress("glGetProgramInfoLog"));
             this->UseProgram               = reinterpret_cast<PFNGLUSEPROGRAMPROC              >(this->GetGLProcAddress("glUseProgram"));
             this->GetAttribLocation        = reinterpret_cast<PFNGLGETATTRIBLOCATIONPROC       >(this->GetGLProcAddress("glGetAttribLocation"));
-            //this->VertexAttribPointer      = reinterpret_cast<PFNGLVERTEXATTRIBPOINTERPROC     >(this->GetGLProcAddress("glVertexAttribPointer"));
-            //this->EnableVertexAttribArray  = reinterpret_cast<PFNGLENABLEVERTEXATTRIBARRAYPROC >(this->GetGLProcAddress("glEnableVertexAttribArray"));
-            //this->DisableVertexAttribArray = reinterpret_cast<PFNGLDISABLEVERTEXATTRIBARRAYPROC>(this->GetGLProcAddress("glDisableVertexAttribArray"));
 
+            this->CreateVertexArrays          = reinterpret_cast<PFNGLCREATEVERTEXARRAYSPROC         >(this->GetGLProcAddress("glCreateVertexArrays"));
+            this->DeleteVertexArrays          = reinterpret_cast<PFNGLDELETEVERTEXARRAYSPROC         >(this->GetGLProcAddress("glDeleteVertexArrays"));
+            this->BindVertexArray             = reinterpret_cast<PFNGLBINDVERTEXARRAYPROC            >(this->GetGLProcAddress("glBindVertexArray"));
+            this->EnableVertexArrayAttrib     = reinterpret_cast<PFNGLENABLEVERTEXARRAYATTRIBPROC    >(this->GetGLProcAddress("glEnableVertexArrayAttrib"));
+            this->DisableVertexArrayAttrib    = reinterpret_cast<PFNGLDISABLEVERTEXARRAYATTRIBPROC   >(this->GetGLProcAddress("glDisableVertexArrayAttrib"));
+            this->VertexArrayVertexBuffer     = reinterpret_cast<PFNGLVERTEXARRAYVERTEXBUFFERPROC    >(this->GetGLProcAddress("glVertexArrayVertexBuffer"));
+            this->VertexArrayElementBuffer    = reinterpret_cast<PFNGLVERTEXARRAYELEMENTBUFFERPROC   >(this->GetGLProcAddress("glVertexArrayElementBuffer"));
+            this->VertexArrayAttribFormat     = reinterpret_cast<PFNGLVERTEXARRAYATTRIBFORMATPROC    >(this->GetGLProcAddress("glVertexArrayAttribFormat"));
+            this->VertexArrayAttribIFormat    = reinterpret_cast<PFNGLVERTEXARRAYATTRIBIFORMATPROC   >(this->GetGLProcAddress("glVertexArrayAttribIFormat"));
+            this->VertexArrayAttribLFormat    = reinterpret_cast<PFNGLVERTEXARRAYATTRIBLFORMATPROC   >(this->GetGLProcAddress("glVertexArrayAttribLFormat"));
+            this->VertexArrayAttribBinding    = reinterpret_cast<PFNGLVERTEXARRAYATTRIBBINDINGPROC   >(this->GetGLProcAddress("glVertexArrayAttribBinding"));
+            this->VertexArrayBindingDivisor   = reinterpret_cast<PFNGLVERTEXARRAYBINDINGDIVISORPROC  >(this->GetGLProcAddress("glVertexArrayBindingDivisor"));
 
-            this->CreateVertexArrays        = reinterpret_cast<PFNGLCREATEVERTEXARRAYSPROC       >(this->GetGLProcAddress("glCreateVertexArrays"));
-            this->DeleteVertexArrays        = reinterpret_cast<PFNGLDELETEVERTEXARRAYSPROC       >(this->GetGLProcAddress("glDeleteVertexArrays"));
-            this->BindVertexArray           = reinterpret_cast<PFNGLBINDVERTEXARRAYPROC          >(this->GetGLProcAddress("glBindVertexArray"));
-            this->EnableVertexArrayAttrib   = reinterpret_cast<PFNGLENABLEVERTEXARRAYATTRIBPROC  >(this->GetGLProcAddress("glEnableVertexArrayAttrib"));
-            this->DisableVertexArrayAttrib  = reinterpret_cast<PFNGLDISABLEVERTEXARRAYATTRIBPROC >(this->GetGLProcAddress("glDisableVertexArrayAttrib"));
-            this->VertexArrayVertexBuffer   = reinterpret_cast<PFNGLVERTEXARRAYVERTEXBUFFERPROC  >(this->GetGLProcAddress("glVertexArrayVertexBuffer"));
-            this->VertexArrayAttribFormat   = reinterpret_cast<PFNGLVERTEXARRAYATTRIBFORMATPROC  >(this->GetGLProcAddress("glVertexArrayAttribFormat"));
-            this->VertexArrayAttribIFormat  = reinterpret_cast<PFNGLVERTEXARRAYATTRIBIFORMATPROC >(this->GetGLProcAddress("glVertexArrayAttribIFormat"));
-            this->VertexArrayAttribLFormat  = reinterpret_cast<PFNGLVERTEXARRAYATTRIBLFORMATPROC >(this->GetGLProcAddress("glVertexArrayAttribLFormat"));
-            this->VertexArrayAttribBinding  = reinterpret_cast<PFNGLVERTEXARRAYATTRIBBINDINGPROC >(this->GetGLProcAddress("glVertexArrayAttribBinding"));
-            this->VertexArrayBindingDivisor = reinterpret_cast<PFNGLVERTEXARRAYBINDINGDIVISORPROC>(this->GetGLProcAddress("glVertexArrayBindingDivisor"));
-
-
-            this->GenBuffers               = reinterpret_cast<PFNGLGENBUFFERSPROC              >(this->GetGLProcAddress("glGenBuffers"));
-            this->DeleteBuffers            = reinterpret_cast<PFNGLDELETEBUFFERSPROC           >(this->GetGLProcAddress("glDeleteBuffers"));
-            this->BindBuffer               = reinterpret_cast<PFNGLBINDBUFFERPROC              >(this->GetGLProcAddress("glBindBuffer"));
-            this->BufferData               = reinterpret_cast<PFNGLBUFFERDATAPROC              >(this->GetGLProcAddress("glBufferData"));
-            this->BufferSubData            = reinterpret_cast<PFNGLBUFFERSUBDATAPROC           >(this->GetGLProcAddress("glBufferSubData"));
-            this->MapBuffer                = reinterpret_cast<PFNGLMAPBUFFERPROC               >(this->GetGLProcAddress("glMapBuffer"));
-            this->UnmapBuffer              = reinterpret_cast<PFNGLUNMAPBUFFERPROC             >(this->GetGLProcAddress("glUnmapBuffer"));
+            this->CreateBuffers               = reinterpret_cast<PFNGLCREATEBUFFERSPROC              >(this->GetGLProcAddress("glCreateBuffers"));
+            this->DeleteBuffers               = reinterpret_cast<PFNGLDELETEBUFFERSPROC              >(this->GetGLProcAddress("glDeleteBuffers"));
+            this->NamedBufferStorage          = reinterpret_cast<PFNGLNAMEDBUFFERSTORAGEPROC         >(this->GetGLProcAddress("glNamedBufferStorage"));
+            this->NamedBufferSubData          = reinterpret_cast<PFNGLNAMEDBUFFERSUBDATAPROC         >(this->GetGLProcAddress("glNamedBufferSubData"));
+            this->CopyNamedBufferSubData      = reinterpret_cast<PFNGLCOPYNAMEDBUFFERSUBDATAPROC     >(this->GetGLProcAddress("glCopyNamedBufferSubData"));
+            this->ClearNamedBufferSubData     = reinterpret_cast<PFNGLCLEARNAMEDBUFFERSUBDATAPROC    >(this->GetGLProcAddress("glClearNamedBufferSubData"));
+            this->MapNamedBufferRange         = reinterpret_cast<PFNGLMAPNAMEDBUFFERRANGEPROC        >(this->GetGLProcAddress("glMapNamedBufferRange"));
+            this->UnmapNamedBuffer            = reinterpret_cast<PFNGLUNMAPNAMEDBUFFERPROC           >(this->GetGLProcAddress("glUnmapNamedBuffer"));
+            this->FlushMappedNamedBufferRange = reinterpret_cast<PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEPROC>(this->GetGLProcAddress("glFlushMappedNamedBufferRange"));
 
 
             if (this->IsExtensionSupported("GL_ARB_debug_output"))

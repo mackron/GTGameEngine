@@ -88,27 +88,27 @@ namespace GT
     public:
 
         /// Constructor.
-        Buffer_OpenGL4(GLuint objectGL, GLenum targetGL, GLenum usageGL)
-            : ReferenceCountedObject(), OpenGLObject(objectGL), m_targetGL(targetGL), m_usageGL(usageGL)
+        Buffer_OpenGL4(GLuint objectGL, GLbitfield flagsGL, GLsizeiptr sizeInBytes)
+            : ReferenceCountedObject(), OpenGLObject(objectGL), m_flagsGL(flagsGL), m_sizeInBytes(sizeInBytes)
         {
         }
 
 
-        /// Retrieves the OpenGL bind target.
-        GLenum GetOpenGLTarget() const { return m_targetGL; }
+        /// Retrieves the flags that were used to create the buffer.
+        GLenum GetOpenGLFlags() const { return m_flagsGL; }
 
-        /// Retrieves the OpenGL usage hint.
-        GLenum GetOpenGLUsage() const { return m_usageGL; }
+        /// Retrieves the size of the buffer in bytes.
+        GLsizeiptr GetSizeInBytes() const { return m_sizeInBytes; }
 
 
 
     private:
 
-        /// The OpenGL target for glBindBuffer(), etc.
-        GLenum m_targetGL;
+        /// The flags that were used to create the buffer.
+        GLenum m_flagsGL;
 
-        /// The OpenGL usage flags for glBufferData().
-        GLenum m_usageGL;
+        /// The size of the buffer in bytes. This is needed in order to know how many bytes to specify when mapping the entire buffer.
+        GLsizeiptr m_sizeInBytes;
 
 
     private:    // No copying.

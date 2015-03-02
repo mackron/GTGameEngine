@@ -351,7 +351,6 @@ namespace GT
                     for (size_t iAttrib = 0; iAttrib < attribCount; ++iAttrib)
                     {
                         m_gl.DisableVertexArrayAttrib(m_globalVAO, prevLayoutGL->GetAttribute(iAttrib).attribLocation);
-                        //m_gl.DisableVertexAttribArray(prevLayoutGL->GetAttribute(iAttrib).attribLocation);
                     }
                 }
             }
@@ -394,10 +393,6 @@ namespace GT
         }
 
         m_gl.VertexArrayVertexBuffer(m_globalVAO, slotIndex, bufferGL, static_cast<GLintptr>(offset), static_cast<GLsizei>(stride));
-
-
-        // Update the vertex attribute pointers.
-        //this->UpdateSlotVertexAttributePointers(slotIndex);
     }
 
     void GPURenderingDevice_OpenGL4::IASetIndexBuffer(HBuffer hBuffer, GPUIndexFormat format, size_t offset)
@@ -407,33 +402,11 @@ namespace GT
         auto bufferGL = reinterpret_cast<Buffer_OpenGL4*>(hBuffer);
         if (bufferGL != nullptr)
         {
-            assert(bufferGL->GetOpenGLTarget() == GL_ELEMENT_ARRAY_BUFFER);
-            {
-                m_gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, bufferGL->GetOpenGLObject());
-                    
-                    
-                GLenum indexBufferFormats[] =
-                {
-                    GL_UNSIGNED_BYTE,
-                    GL_UNSIGNED_SHORT,
-                    GL_UNSIGNED_INT
-                };
-
-                size_t indexBufferFormatSizes[] =
-                {
-                    1,
-                    2,
-                    4
-                };
-
-                m_indexBufferFormat     = indexBufferFormats[format];
-                m_indexBufferFormatSize = indexBufferFormatSizes[format];
-                m_indexBufferOffset     = offset;
-            }
+            m_gl.VertexArrayElementBuffer(m_globalVAO, bufferGL->GetOpenGLObject());
         }
         else
         {
-            m_gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+            m_gl.VertexArrayElementBuffer(m_globalVAO, 0);
         }
 
 
@@ -887,12 +860,6 @@ namespace GT
                     return 0;
                 }
             }
-
-            if (vertexTarget == GPUShaderTarget_ARB_VP)
-            {
-                // TODO: Implement this!
-                return 0;
-            }
         }
         else
         {
@@ -911,12 +878,6 @@ namespace GT
                 {
                     return 0;
                 }
-            }
-
-            if (fragmentTarget == GPUShaderTarget_ARB_FP)
-            {
-                // TODO: Implement this!
-                return 0;
             }
         }
         else
@@ -1019,21 +980,69 @@ namespace GT
 
     HBuffer GPURenderingDevice_OpenGL4::CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data)
     {
-        (void)cpuAccessFlags;   // <-- Not considered with OpenGL.
+        // Validation.
+        if (usage == GPUBufferUsage_Immutable && data == nullptr)
+        {
+            if (data == nullptr)
+            {
+                // No data specified for immutable buffer. Immutable buffers must have their data set a creation time.
+                return 0;
+            }
+
+            if (cpuAccessFlags != GPUBufferCPUAccess_None)
+            {
+                // Cannot access an immutable buffer from the CPU.
+                return 0;
+            }
+        }
+
+        if (usage == GPUBufferUsage_Dynamic)
+        {
+            if ((cpuAccessFlags & GPUBufferCPUAccess_Read) != 0)
+            {
+                // Specified a dynamic buffer and a read CPU access flag.
+
+                // TODO: Output an error message saying that there is a conflict with the buffer usage and the CPU access flags.
+                return 0;
+            }
+
+            if ((cpuAccessFlags & GPUBufferCPUAccess_Write) == 0)
+            {
+                // Specified a dynamic buffer, but have not specified a CPU access flag. Recommend using an immutable or default buffer usage.
+
+                // TODO: Output a warning message saying that an immutable buffer is recommended.
+            }
+        }
 
 
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        if (usage == GPUBufferUsage_Immutable && data == nullptr)
+        GLbitfield flagsGL = 0;
+        switch (usage)
         {
-            // No data specified for immutable buffer. Immutable buffers must have their data set a creation time.
-            return 0;
-        }
+        case GPUBufferUsage_Immutable:
+            {
+                break;
+            }
 
-        if (type == GPUBufferType_Constant)
-        {
-            // Don't currently support constant/uniform buffers.
-            return 0;
+        case GPUBufferUsage_Dynamic:
+            {
+                flagsGL |= GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT;
+                break;
+            }
+
+        case GPUBufferUsage_Staging:
+            {
+                flagsGL |= GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_READ_BIT;
+                break;
+            }
+
+        case GPUBufferUsage_Default:
+        default:
+            {
+                flagsGL |= GL_DYNAMIC_STORAGE_BIT;
+                break;
+            }
         }
 
 
@@ -1044,31 +1053,12 @@ namespace GT
             GL_UNIFORM_BUFFER
         };
 
-        GLuint usagesGL[] =
-        {
-            GL_STREAM_DRAW,     // BufferUsage_Default
-            GL_STATIC_DRAW,     // BufferUsage_Immutable,
-            GL_DYNAMIC_DRAW,    // BufferUsage_Dynamic,
-            GL_DYNAMIC_READ,    // BufferUsage_Staging
-        };
-
-
-        GLuint prevObjectGL;
-        m_gl.GetIntegerv((targetsGL[type] == GL_ARRAY_BUFFER) ? GL_ARRAY_BUFFER_BINDING : GL_ELEMENT_ARRAY_BUFFER_BINDING, reinterpret_cast<GLint*>(&prevObjectGL));
-
-
+        
         GLuint objectGL;
-        m_gl.GenBuffers(1, &objectGL);
-        m_gl.BindBuffer(targetsGL[type], objectGL);
-        m_gl.BufferData(targetsGL[type], sizeInBytes, data, usagesGL[usage]);
+        m_gl.CreateBuffers(1, &objectGL);
+        m_gl.NamedBufferStorage(objectGL, static_cast<GLsizeiptr>(sizeInBytes), data, flagsGL);
 
-        HBuffer hBuffer = reinterpret_cast<HBuffer>(new Buffer_OpenGL4(objectGL, targetsGL[type], usagesGL[usage]));
-
-        // Re-bind the previous buffer.
-        m_gl.BindBuffer(targetsGL[type], prevObjectGL);
-
-
-        return hBuffer;
+        return reinterpret_cast<HBuffer>(new Buffer_OpenGL4(objectGL, flagsGL, sizeInBytes));
     }
 
     void GPURenderingDevice_OpenGL4::ReleaseBuffer(HBuffer hBuffer)
@@ -1086,41 +1076,6 @@ namespace GT
                 {
                     GLuint objectGL = bufferGL->GetOpenGLObject();
                     m_gl.DeleteBuffers(1, &objectGL);
-
-
-                    // If the vertex buffer is bound, unbind it.
-                    switch (bufferGL->GetOpenGLTarget())
-                    {
-                    case GL_ARRAY_BUFFER:
-                        {
-                            for (unsigned int iVertexBufferSlot = 0; iVertexBufferSlot < GT_GE_MAX_VERTEX_BUFFER_SLOTS; ++iVertexBufferSlot)
-                            {
-                                if (m_vertexBufferSlots[iVertexBufferSlot].buffer == hBuffer)
-                                {
-                                    m_vertexBufferSlots[iVertexBufferSlot].buffer = 0;
-                                }
-                            }
-
-                            break;
-                        }
-
-                    case GL_ELEMENT_ARRAY_BUFFER:
-                        {
-                            if (m_currentIndexBuffer == hBuffer)
-                            {
-                                m_currentIndexBuffer = 0;
-                            }
-
-                            break;
-                        }
-
-                    case GL_UNIFORM_BUFFER:
-                        {
-                            break;
-                        }
-
-                    default: break;
-                    }
 
                     delete bufferGL;
                 }
@@ -1149,37 +1104,16 @@ namespace GT
         auto bufferGL = reinterpret_cast<Buffer_OpenGL4*>(hBuffer);
         assert(bufferGL != nullptr);
         {
-            if (bufferGL->GetOpenGLUsage() != GL_STATIC_DRAW)   // <-- BufferUsage_Immutable
+            GLbitfield flagsGL[] =
             {
-                const GLenum accessGLTable[] =
-                {
-                    GL_READ_ONLY,       // GPUBufferMapType_Read
-                    GL_WRITE_ONLY,      // GPUBufferMapType_Write
-                    GL_READ_WRITE,      // GPUBufferMapType_ReadWrite
-                    GL_WRITE_ONLY,      // GPUBufferMapType_Write_Discard
-                    GL_WRITE_ONLY       // GPUBufferMapType_Write_NoOverwrite
-                };
+                GL_MAP_READ_BIT,                                     // GPUBufferMapType_Read
+                GL_MAP_WRITE_BIT ,                                   // GPUBufferMapType_Write
+                GL_MAP_READ_BIT  | GL_MAP_WRITE_BIT,                 // GPUBufferMapType_ReadWrite
+                GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT,      // GPUBufferMapType_Write_Discard
+                GL_MAP_WRITE_BIT                                     // GPUBufferMapType_Write_NoOverwrite
+            };
 
-
-                GLuint prevObjectGL;
-                m_gl.GetIntegerv((bufferGL->GetOpenGLTarget() == GL_ARRAY_BUFFER) ? GL_ARRAY_BUFFER_BINDING : GL_ELEMENT_ARRAY_BUFFER_BINDING, reinterpret_cast<GLint*>(&prevObjectGL));
-
-
-                m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), bufferGL->GetOpenGLObject());
-                void* dataOut = m_gl.MapBuffer(bufferGL->GetOpenGLTarget(), accessGLTable[mapType]);
-
-
-                // Re-bind the previous buffer.
-                m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), prevObjectGL);
-
-
-                return dataOut;
-            }
-            else
-            {
-                // Buffer is immutable.
-                return nullptr;
-            }
+            return m_gl.MapNamedBufferRange(bufferGL->GetOpenGLObject(), 0, bufferGL->GetSizeInBytes(), flagsGL[mapType]);
         }
     }
 
@@ -1190,35 +1124,20 @@ namespace GT
         auto bufferGL = reinterpret_cast<Buffer_OpenGL4*>(hBuffer);
         assert(bufferGL != nullptr);
         {
-            GLuint prevObjectGL;
-            m_gl.GetIntegerv((bufferGL->GetOpenGLTarget() == GL_ARRAY_BUFFER) ? GL_ARRAY_BUFFER_BINDING : GL_ELEMENT_ARRAY_BUFFER_BINDING, reinterpret_cast<GLint*>(&prevObjectGL));
-
-            m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), bufferGL->GetOpenGLObject());
-            m_gl.UnmapBuffer(bufferGL->GetOpenGLTarget());
-
-            // Re-bind the previous buffer.
-            m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), prevObjectGL);
+            m_gl.UnmapNamedBuffer(bufferGL->GetOpenGLObject());
         }
     }
 
     void GPURenderingDevice_OpenGL4::SetBufferData(HBuffer hBuffer, size_t offsetInBytes, size_t sizeInBytes, const void* data)
     {
+        // TODO: Prevent this call for Dynamic usage buffers.
+
         CheckContextIsCurrent(m_gl, m_currentDC);
 
         auto bufferGL = reinterpret_cast<Buffer_OpenGL4*>(hBuffer);
         assert(bufferGL != nullptr);
         {
-            if (bufferGL->GetOpenGLUsage() != GL_STATIC_DRAW)   // <-- BufferUsage_Immutable
-            {
-                GLuint prevObjectGL;
-                m_gl.GetIntegerv((bufferGL->GetOpenGLTarget() == GL_ARRAY_BUFFER) ? GL_ARRAY_BUFFER_BINDING : GL_ELEMENT_ARRAY_BUFFER_BINDING, reinterpret_cast<GLint*>(&prevObjectGL));
-
-                m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), bufferGL->GetOpenGLObject());
-                m_gl.BufferSubData(bufferGL->GetOpenGLTarget(), offsetInBytes, sizeInBytes, data);
-
-                // Re-bind the previous buffer.
-                m_gl.BindBuffer(bufferGL->GetOpenGLTarget(), prevObjectGL);
-            }
+            m_gl.NamedBufferSubData(bufferGL->GetOpenGLObject(), static_cast<GLintptr>(offsetInBytes), static_cast<GLintptr>(sizeInBytes), data);
         }
     }
 
@@ -1452,12 +1371,6 @@ namespace GT
                         {
                             m_gl.VertexArrayBindingDivisor(m_globalVAO, attribGL.slotIndex, attribGL.instanceStepRate);
                         }
-
-                        //m_gl.EnableVertexAttribArray(attribGL.attribLocation);
-                        //m_gl.BindBuffer(GL_ARRAY_BUFFER, bufferGL->GetOpenGLObject());
-                        //m_gl.VertexAttribPointer(attribGL.attribLocation, attribGL.attribComponentCount, attribGL.attribComponentType, GL_FALSE, static_cast<GLsizei>(slot.stride), reinterpret_cast<const void*>(slot.offset + attribGL.attribOffset));
-
-                        // NOTE: With OpenGL 4.5 we would check to see if this was per-instance data.
                     }
                 }
             }
@@ -1470,7 +1383,6 @@ namespace GT
                     if (attribGL.attribLocation > -1)
                     {
                         m_gl.DisableVertexArrayAttrib(m_globalVAO, attribGL.attribLocation);
-                        //m_gl.DisableVertexAttribArray(attribGL.attribLocation);
                     }
                 }
             }

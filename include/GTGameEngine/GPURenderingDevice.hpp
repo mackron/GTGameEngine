@@ -408,6 +408,16 @@ namespace GT
         ///     When \c usage is GPUBufferUsage_Immutable, \c data cannot be null.
         ///     @par
         ///     If \c cpuAccessFlags is set to GPUBufferCPUAccess_None (0), all map and unmap operations will fail.
+        ///     @par
+        ///     The \c usage argument controls whether or not the buffer can be from the CPU side.
+        ///       - Immutable - Can never be updated after creation from the CPU side.
+        ///       - Default - SetBufferData()
+        ///       - Dynamic - Write Mapping
+        ///       - Staging - SetBufferData() / Write Mapping / Read Mapping
+        ///     @par
+        ///     A dynamic buffer cannot be used as an output for a pipeline stage.
+        ///     @par
+        ///     A staging buffer cannot be used as an input nor an output for a pipeline stage. 
         virtual HBuffer CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data) = 0;
 
         /// Reduces the reference count of the given buffer object and deletes the internal reference when it hits 0.

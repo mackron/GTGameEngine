@@ -190,9 +190,11 @@ namespace GT
         PFNGLPOLYGONMODEPROC         PolygonMode;
         PFNGLPOLYGONOFFSETPROC       PolygonOffset;
 
+        // Drawing.
         PFNGLCLEARPROC               Clear;
         PFNGLDRAWELEMENTSPROC        DrawElements;
 
+        // Shaders.
         PFNGLCREATESHADERPROC        CreateShader;
         PFNGLDELETESHADERPROC        DeleteShader;
         PFNGLSHADERSOURCEPROC        ShaderSource;
@@ -209,32 +211,31 @@ namespace GT
         PFNGLGETPROGRAMINFOLOGPROC   GetProgramInfoLog;
         PFNGLUSEPROGRAMPROC          UseProgram;
         PFNGLGETATTRIBLOCATIONPROC   GetAttribLocation;
-        //PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer;
-        //PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray;
-        //PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray;
 
-        // Buffers and Vertex Array Objects.
-        PFNGLCREATEVERTEXARRAYSPROC        CreateVertexArrays;
-        PFNGLDELETEVERTEXARRAYSPROC        DeleteVertexArrays;
-        PFNGLBINDVERTEXARRAYPROC           BindVertexArray;
-        PFNGLENABLEVERTEXARRAYATTRIBPROC   EnableVertexArrayAttrib;
-        PFNGLDISABLEVERTEXARRAYATTRIBPROC  DisableVertexArrayAttrib;
-        PFNGLVERTEXARRAYVERTEXBUFFERPROC   VertexArrayVertexBuffer;
-        PFNGLVERTEXARRAYATTRIBFORMATPROC   VertexArrayAttribFormat;
-        PFNGLVERTEXARRAYATTRIBIFORMATPROC  VertexArrayAttribIFormat;
-        PFNGLVERTEXARRAYATTRIBLFORMATPROC  VertexArrayAttribLFormat;
-        PFNGLVERTEXARRAYATTRIBBINDINGPROC  VertexArrayAttribBinding;
-        PFNGLVERTEXARRAYBINDINGDIVISORPROC VertexArrayBindingDivisor;
+        // Vertex Array Objects.
+        PFNGLCREATEVERTEXARRAYSPROC          CreateVertexArrays;
+        PFNGLDELETEVERTEXARRAYSPROC          DeleteVertexArrays;
+        PFNGLBINDVERTEXARRAYPROC             BindVertexArray;
+        PFNGLENABLEVERTEXARRAYATTRIBPROC     EnableVertexArrayAttrib;
+        PFNGLDISABLEVERTEXARRAYATTRIBPROC    DisableVertexArrayAttrib;
+        PFNGLVERTEXARRAYVERTEXBUFFERPROC     VertexArrayVertexBuffer;
+        PFNGLVERTEXARRAYELEMENTBUFFERPROC    VertexArrayElementBuffer;
+        PFNGLVERTEXARRAYATTRIBFORMATPROC     VertexArrayAttribFormat;
+        PFNGLVERTEXARRAYATTRIBIFORMATPROC    VertexArrayAttribIFormat;
+        PFNGLVERTEXARRAYATTRIBLFORMATPROC    VertexArrayAttribLFormat;
+        PFNGLVERTEXARRAYATTRIBBINDINGPROC    VertexArrayAttribBinding;
+        PFNGLVERTEXARRAYBINDINGDIVISORPROC   VertexArrayBindingDivisor;
 
-
-
-        PFNGLGENBUFFERSPROC          GenBuffers;
-        PFNGLDELETEBUFFERSPROC       DeleteBuffers;
-        PFNGLBINDBUFFERPROC          BindBuffer;
-        PFNGLBUFFERDATAPROC          BufferData;
-        PFNGLBUFFERSUBDATAPROC       BufferSubData;
-        PFNGLMAPBUFFERPROC           MapBuffer;
-        PFNGLUNMAPBUFFERPROC         UnmapBuffer;
+        // Buffer Objects.
+        PFNGLCREATEBUFFERSPROC               CreateBuffers;
+        PFNGLDELETEBUFFERSPROC               DeleteBuffers;
+        PFNGLNAMEDBUFFERSTORAGEPROC          NamedBufferStorage;
+        PFNGLNAMEDBUFFERSUBDATAPROC          NamedBufferSubData;
+        PFNGLCOPYNAMEDBUFFERSUBDATAPROC      CopyNamedBufferSubData;
+        PFNGLCLEARNAMEDBUFFERSUBDATAPROC     ClearNamedBufferSubData;
+        PFNGLMAPNAMEDBUFFERRANGEPROC         MapNamedBufferRange;
+        PFNGLUNMAPNAMEDBUFFERPROC            UnmapNamedBuffer;
+        PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEPROC FlushMappedNamedBufferRange;
 
 
         // GL_ARB_debug_output
