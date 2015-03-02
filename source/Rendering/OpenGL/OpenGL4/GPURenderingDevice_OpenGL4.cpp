@@ -92,6 +92,7 @@ namespace GT
           m_currentHWND(NULL),
           m_currentDC(NULL),
 #endif
+          m_vendor(GPUVendor_Unknown),
           m_supportedShaderTargets(),
 
           m_stateFlags(0),
