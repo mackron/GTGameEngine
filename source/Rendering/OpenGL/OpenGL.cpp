@@ -13,7 +13,7 @@
 
 namespace GT
 {
-    OpenGLContext::OpenGLContext()
+    OpenGL4Context::OpenGL4Context()
         :
 #if defined(GT_PLATFORM_WINDOWS)
             m_hOpenGL32(NULL),
@@ -80,9 +80,22 @@ namespace GT
             GetProgramInfoLog(nullptr),
             UseProgram(nullptr),
             GetAttribLocation(nullptr),
-            VertexAttribPointer(nullptr),
-            EnableVertexAttribArray(nullptr),
-            DisableVertexAttribArray(nullptr),
+            //VertexAttribPointer(nullptr),
+            //EnableVertexAttribArray(nullptr),
+            //DisableVertexAttribArray(nullptr),
+
+
+            CreateVertexArrays(nullptr),
+            DeleteVertexArrays(nullptr),
+            BindVertexArray(nullptr),
+            EnableVertexArrayAttrib(nullptr),
+            DisableVertexArrayAttrib(nullptr),
+            VertexArrayVertexBuffer(nullptr),
+            VertexArrayAttribFormat(nullptr),
+            VertexArrayAttribIFormat(nullptr),
+            VertexArrayAttribLFormat(nullptr),
+            VertexArrayAttribBinding(nullptr),
+            VertexArrayBindingDivisor(nullptr),
 
             GenBuffers(nullptr),
             DeleteBuffers(nullptr),
@@ -97,12 +110,12 @@ namespace GT
     {
     }
 
-    OpenGLContext::~OpenGLContext()
+    OpenGL4Context::~OpenGL4Context()
     {
     }
 
 
-    ResultCode OpenGLContext::Startup(unsigned int majorVersion, unsigned int minorVersion, uint32_t flags)
+    ResultCode OpenGL4Context::Startup(uint32_t flags)
     {
         m_hOpenGL32 = LoadLibraryW(L"OpenGL32.dll");
         if (m_hOpenGL32 != NULL)
@@ -149,120 +162,90 @@ namespace GT
                                         if (versionStr != nullptr)
                                         {
                                             const char* majorStart = versionStr;
-                                                    char* minorStart;
+                                                  char* minorStart;
 
                                             m_majorVersion = strtoul(majorStart, &minorStart, 0);
                                             m_minorVersion = strtoul(minorStart + 1, NULL, 0);
 
-                                            if (m_majorVersion > majorVersion || (m_majorVersion == majorVersion && m_minorVersion >= minorVersion))
+                                            // Clamp at OpenGL 4.5 to ensure we don't break in the future since we'll be creating a core context for the highest possible version.
+                                            if (m_majorVersion > 4)
                                             {
-                                                // We now need to create an extended context, if applicable.
-                                                if (majorVersion > 2 || (flags & NoCoreContext) == 0)
+                                                m_majorVersion = 4;
+                                                m_minorVersion = 5;
+                                            }
+
+                                            if (m_majorVersion == 4 && m_minorVersion >= 0)
+                                            {
+                                                // We now need to create an extended context.
+                                                auto _wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(this->GetProcAddress("wglCreateContextAttribsARB"));
+                                                if (_wglCreateContextAttribsARB != nullptr)
                                                 {
-                                                    auto _wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(this->GetProcAddress("wglCreateContextAttribsARB"));
-                                                    if (_wglCreateContextAttribsARB != nullptr)
+                                                    int attribList[] =
                                                     {
-                                                        int attribList[] =
+                                                        WGL_CONTEXT_MAJOR_VERSION_ARB, 1,
+                                                        WGL_CONTEXT_MINOR_VERSION_ARB, 1,
+                                                        WGL_CONTEXT_FLAGS_ARB,         WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB,
+                                                        WGL_CONTEXT_PROFILE_MASK_ARB,  WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+                                                        0, 0
+                                                    };
+
+                                                    attribList[1] = static_cast<int>(m_majorVersion);
+                                                    attribList[3] = static_cast<int>(m_minorVersion);
+
+                                                    if ((flags & EnableDebugging) != 0)
+                                                    {
+                                                        attribList[5] |= WGL_CONTEXT_DEBUG_BIT_ARB;
+                                                    }
+                                                    
+
+                                                    HGLRC oldRC = m_hRC;
+                                                    HGLRC newRC = _wglCreateContextAttribsARB(m_hDummyDC, 0, attribList);
+                                                    if (newRC != NULL)
+                                                    {
+                                                        if (this->MakeCurrent(m_hDummyDC, newRC))
                                                         {
-                                                            WGL_CONTEXT_MAJOR_VERSION_ARB, 1,
-                                                            WGL_CONTEXT_MINOR_VERSION_ARB, 1,
-                                                            WGL_CONTEXT_FLAGS_ARB,         0,
-                                                            0, 0,                               // WGL_CONTEXT_PROFILE_MASK_ARB
-                                                            0, 0
-                                                        };
-
-                                                        attribList[1] = static_cast<int>(majorVersion);
-                                                        attribList[3] = static_cast<int>(minorVersion);
-
-                                                        if ((flags & EnableDebugging) != 0)
-                                                        {
-                                                            attribList[5] |= WGL_CONTEXT_DEBUG_BIT_ARB;
-                                                        }
-
-                                                        if ((flags & NoCoreContext) != 0)
-                                                        {
-                                                            // We're creating a core context. We want this to be 
-                                                            if (majorVersion > 2)
-                                                            {
-                                                                attribList[5] |= WGL_CONTEXT_FORWARD_COMPATIBLE_BIT_ARB;
-
-                                                                // Setting WGL_CONTEXT_CORE_PROFILE_BIT_ARB wants to fail on nVidia with anything below OpenGL 3.2...
-                                                                if (majorVersion > 3 || (majorVersion == 3 && minorVersion >= 2))
-                                                                {
-                                                                    attribList[6] = WGL_CONTEXT_PROFILE_MASK_ARB; attribList[7] = WGL_CONTEXT_CORE_PROFILE_BIT_ARB;
-                                                                }
-                                                            }
+                                                            m_hRC = newRC;
+                                                            this->DeleteContext(oldRC);
                                                         }
                                                         else
                                                         {
-                                                            // If our OpenGL version is 3.2 or above, we need to use a compatibility profile via WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB. If we don't,
-                                                            // we'll still get a valid context, but it won't be fully backwards compatible.
-                                                            if (majorVersion > 3 || (majorVersion == 3 && minorVersion >= 2))
-                                                            {
-                                                                attribList[6] = WGL_CONTEXT_PROFILE_MASK_ARB; attribList[7] = WGL_CONTEXT_COMPATIBILITY_PROFILE_BIT_ARB;
-                                                            }
-                                                        }
-
-
-                                                        HGLRC oldRC = m_hRC;
-                                                        HGLRC newRC = _wglCreateContextAttribsARB(m_hDummyDC, 0, attribList);
-                                                        if (newRC != NULL)
-                                                        {
-                                                            if (this->MakeCurrent(m_hDummyDC, newRC))
-                                                            {
-                                                                m_hRC = newRC;
-                                                                this->DeleteContext(oldRC);
-                                                            }
-                                                            else
-                                                            {
-                                                                if (majorVersion > 2)
-                                                                {
-                                                                    this->Shutdown();
-                                                                    return FailedToMakeContextCurrent;
-                                                                }
-                                                            }
-                                                        }
-                                                        else
-                                                        {
-                                                            if (majorVersion > 2)
-                                                            {
-                                                                this->Shutdown();
-                                                                return FailedToCreateContext;
-                                                            }
+                                                            this->Shutdown();
+                                                            return FailedToMakeContextCurrent;
                                                         }
                                                     }
                                                     else
                                                     {
-                                                        if (majorVersion > 2)
-                                                        {
-                                                            this->Shutdown();
-                                                            return FailedToCreateContext;
-                                                        }
+                                                        this->Shutdown();
+                                                        return FailedToCreateContext;
                                                     }
                                                 }
-
-
-                                                if ((flags & NoInitExtensions) == 0)
+                                                else
                                                 {
-                                                    ResultCode result = this->InitExtensions();
-                                                    if (GT::Failed(result))
-                                                    {
-                                                        return FailedToRetrievesExtensions;
-                                                    }
+                                                    this->Shutdown();
+                                                    return FailedToCreateContext;
                                                 }
 
-                                                if ((flags & NoInitAPI) == 0)
+
+                                                ResultCode result = this->InitExtensions();
+                                                if (GT::Succeeded(result))
                                                 {
-                                                    ResultCode result = this->InitAPI(majorVersion, minorVersion);
-                                                    if (GT::Failed(result))
+                                                    result = this->InitAPI(m_majorVersion, m_minorVersion);
+                                                    if (GT::Succeeded(result))
                                                     {
-                                                        return FailedToInitAPI;
+                                                        // If we get here there were no errors. It's been a long journey...
+                                                        return 0;
+                                                    }
+                                                    else
+                                                    {
+                                                        this->Shutdown();
+                                                        return result;
                                                     }
                                                 }
-
-
-                                                // If we get here there were no errors.
-                                                return 0;
+                                                else
+                                                {
+                                                    this->Shutdown();
+                                                    return result;
+                                                }
                                             }
                                             else
                                             {
@@ -325,7 +308,7 @@ namespace GT
         }
     }
 
-    void OpenGLContext::Shutdown()
+    void OpenGL4Context::Shutdown()
     {
         for (size_t iExtension = 0; iExtension < m_extensions.GetCount(); ++iExtension)
         {
@@ -349,13 +332,13 @@ namespace GT
     }
 
 
-    void OpenGLContext::GetVersion(unsigned int &majorVersionOut, unsigned int &minorVersionOut) const
+    void OpenGL4Context::GetVersion(unsigned int &majorVersionOut, unsigned int &minorVersionOut) const
     {
         majorVersionOut = m_majorVersion;
         minorVersionOut = m_minorVersion;
     }
 
-    bool OpenGLContext::IsExtensionSupported(const char* extension) const
+    bool OpenGL4Context::IsExtensionSupported(const char* extension) const
     {
         for (size_t iExtension = 0; iExtension < m_extensions.GetCount(); ++iExtension)
         {
@@ -371,22 +354,22 @@ namespace GT
 
 
 #if defined(GT_PLATFORM_WINDOWS)
-    HGLRC OpenGLContext::GetRenderingContext() const
+    HGLRC OpenGL4Context::GetRenderingContext() const
     {
         return m_hRC;
     }
 
-    int OpenGLContext::GetPixelFormat() const
+    int OpenGL4Context::GetPixelFormat() const
     {
         return m_pixelFormat;
     }
 
-    const PIXELFORMATDESCRIPTOR & OpenGLContext::GetPFD() const
+    const PIXELFORMATDESCRIPTOR & OpenGL4Context::GetPFD() const
     {
         return m_pfd;
     }
 
-    HDC OpenGLContext::GetDummyDC() const
+    HDC OpenGL4Context::GetDummyDC() const
     {
         return m_hDummyDC;
     }
@@ -398,7 +381,7 @@ namespace GT
     //////////////////////////////////////////
     // Private
 
-    void* OpenGLContext::GetGLProcAddress(const char* procName) const
+    void* OpenGL4Context::GetGLProcAddress(const char* procName) const
     {
 #if defined(GT_PLATFORM_WINDOWS)
         assert(this->GetProcAddress != nullptr);
@@ -416,7 +399,7 @@ namespace GT
 #endif
     }
 
-    ResultCode OpenGLContext::InitExtensions()
+    ResultCode OpenGL4Context::InitExtensions()
     {
         if (this->GetStringi != nullptr)
         {
@@ -495,7 +478,7 @@ namespace GT
         return 0;
     }
 
-    ResultCode OpenGLContext::InitAPI(unsigned int majorVersion, unsigned int minorVersion)
+    ResultCode OpenGL4Context::InitAPI(unsigned int majorVersion, unsigned int minorVersion)
     {
         if (majorVersion > 2 || (majorVersion == 2 && minorVersion >= 1))
         {
@@ -547,9 +530,23 @@ namespace GT
             this->GetProgramInfoLog        = reinterpret_cast<PFNGLGETPROGRAMINFOLOGPROC       >(this->GetGLProcAddress("glGetProgramInfoLog"));
             this->UseProgram               = reinterpret_cast<PFNGLUSEPROGRAMPROC              >(this->GetGLProcAddress("glUseProgram"));
             this->GetAttribLocation        = reinterpret_cast<PFNGLGETATTRIBLOCATIONPROC       >(this->GetGLProcAddress("glGetAttribLocation"));
-            this->VertexAttribPointer      = reinterpret_cast<PFNGLVERTEXATTRIBPOINTERPROC     >(this->GetGLProcAddress("glVertexAttribPointer"));
-            this->EnableVertexAttribArray  = reinterpret_cast<PFNGLENABLEVERTEXATTRIBARRAYPROC >(this->GetGLProcAddress("glEnableVertexAttribArray"));
-            this->DisableVertexAttribArray = reinterpret_cast<PFNGLDISABLEVERTEXATTRIBARRAYPROC>(this->GetGLProcAddress("glDisableVertexAttribArray"));
+            //this->VertexAttribPointer      = reinterpret_cast<PFNGLVERTEXATTRIBPOINTERPROC     >(this->GetGLProcAddress("glVertexAttribPointer"));
+            //this->EnableVertexAttribArray  = reinterpret_cast<PFNGLENABLEVERTEXATTRIBARRAYPROC >(this->GetGLProcAddress("glEnableVertexAttribArray"));
+            //this->DisableVertexAttribArray = reinterpret_cast<PFNGLDISABLEVERTEXATTRIBARRAYPROC>(this->GetGLProcAddress("glDisableVertexAttribArray"));
+
+
+            this->CreateVertexArrays        = reinterpret_cast<PFNGLCREATEVERTEXARRAYSPROC       >(this->GetGLProcAddress("glCreateVertexArrays"));
+            this->DeleteVertexArrays        = reinterpret_cast<PFNGLDELETEVERTEXARRAYSPROC       >(this->GetGLProcAddress("glDeleteVertexArrays"));
+            this->BindVertexArray           = reinterpret_cast<PFNGLBINDVERTEXARRAYPROC          >(this->GetGLProcAddress("glBindVertexArray"));
+            this->EnableVertexArrayAttrib   = reinterpret_cast<PFNGLENABLEVERTEXARRAYATTRIBPROC  >(this->GetGLProcAddress("glEnableVertexArrayAttrib"));
+            this->DisableVertexArrayAttrib  = reinterpret_cast<PFNGLDISABLEVERTEXARRAYATTRIBPROC >(this->GetGLProcAddress("glDisableVertexArrayAttrib"));
+            this->VertexArrayVertexBuffer   = reinterpret_cast<PFNGLVERTEXARRAYVERTEXBUFFERPROC  >(this->GetGLProcAddress("glVertexArrayVertexBuffer"));
+            this->VertexArrayAttribFormat   = reinterpret_cast<PFNGLVERTEXARRAYATTRIBFORMATPROC  >(this->GetGLProcAddress("glVertexArrayAttribFormat"));
+            this->VertexArrayAttribIFormat  = reinterpret_cast<PFNGLVERTEXARRAYATTRIBIFORMATPROC >(this->GetGLProcAddress("glVertexArrayAttribIFormat"));
+            this->VertexArrayAttribLFormat  = reinterpret_cast<PFNGLVERTEXARRAYATTRIBLFORMATPROC >(this->GetGLProcAddress("glVertexArrayAttribLFormat"));
+            this->VertexArrayAttribBinding  = reinterpret_cast<PFNGLVERTEXARRAYATTRIBBINDINGPROC >(this->GetGLProcAddress("glVertexArrayAttribBinding"));
+            this->VertexArrayBindingDivisor = reinterpret_cast<PFNGLVERTEXARRAYBINDINGDIVISORPROC>(this->GetGLProcAddress("glVertexArrayBindingDivisor"));
+
 
             this->GenBuffers               = reinterpret_cast<PFNGLGENBUFFERSPROC              >(this->GetGLProcAddress("glGenBuffers"));
             this->DeleteBuffers            = reinterpret_cast<PFNGLDELETEBUFFERSPROC           >(this->GetGLProcAddress("glDeleteBuffers"));

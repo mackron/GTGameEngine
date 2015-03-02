@@ -99,7 +99,7 @@ namespace GT
 
 #if defined(GT_GE_BUILD_OPENGL4)
         /// The OpenGL helper context.
-        OpenGLContext m_gl;
+        OpenGL4Context m_gl;
 #endif
 
 

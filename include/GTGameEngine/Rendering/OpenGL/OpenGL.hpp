@@ -12,73 +12,8 @@
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
-#include <GL/GL.h>
-#include <GL/glext.h>
+#include <GL/glcorearb.h>
 #include <GL/wglext.h>
-
-typedef void (APIENTRYP PFNGLCULLFACEPROC) (GLenum mode);
-typedef void (APIENTRYP PFNGLFRONTFACEPROC) (GLenum mode);
-typedef void (APIENTRYP PFNGLHINTPROC) (GLenum target, GLenum mode);
-typedef void (APIENTRYP PFNGLLINEWIDTHPROC) (GLfloat width);
-typedef void (APIENTRYP PFNGLPOINTSIZEPROC) (GLfloat size);
-typedef void (APIENTRYP PFNGLPOLYGONMODEPROC) (GLenum face, GLenum mode);
-typedef void (APIENTRYP PFNGLSCISSORPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
-typedef void (APIENTRYP PFNGLTEXPARAMETERFPROC) (GLenum target, GLenum pname, GLfloat param);
-typedef void (APIENTRYP PFNGLTEXPARAMETERFVPROC) (GLenum target, GLenum pname, const GLfloat *params);
-typedef void (APIENTRYP PFNGLTEXPARAMETERIPROC) (GLenum target, GLenum pname, GLint param);
-typedef void (APIENTRYP PFNGLTEXPARAMETERIVPROC) (GLenum target, GLenum pname, const GLint *params);
-typedef void (APIENTRYP PFNGLTEXIMAGE1DPROC) (GLenum target, GLint level, GLint internalformat, GLsizei width, GLint border, GLenum format, GLenum type, const void *pixels);
-typedef void (APIENTRYP PFNGLTEXIMAGE2DPROC) (GLenum target, GLint level, GLint internalformat, GLsizei width, GLsizei height, GLint border, GLenum format, GLenum type, const void *pixels);
-typedef void (APIENTRYP PFNGLDRAWBUFFERPROC) (GLenum buf);
-typedef void (APIENTRYP PFNGLCLEARPROC) (GLbitfield mask);
-typedef void (APIENTRYP PFNGLCLEARCOLORPROC) (GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-typedef void (APIENTRYP PFNGLCLEARSTENCILPROC) (GLint s);
-typedef void (APIENTRYP PFNGLCLEARDEPTHPROC) (GLdouble depth);
-typedef void (APIENTRYP PFNGLSTENCILMASKPROC) (GLuint mask);
-typedef void (APIENTRYP PFNGLCOLORMASKPROC) (GLboolean red, GLboolean green, GLboolean blue, GLboolean alpha);
-typedef void (APIENTRYP PFNGLDEPTHMASKPROC) (GLboolean flag);
-typedef void (APIENTRYP PFNGLDISABLEPROC) (GLenum cap);
-typedef void (APIENTRYP PFNGLENABLEPROC) (GLenum cap);
-typedef void (APIENTRYP PFNGLFINISHPROC) (void);
-typedef void (APIENTRYP PFNGLFLUSHPROC) (void);
-typedef void (APIENTRYP PFNGLBLENDFUNCPROC) (GLenum sfactor, GLenum dfactor);
-typedef void (APIENTRYP PFNGLLOGICOPPROC) (GLenum opcode);
-typedef void (APIENTRYP PFNGLSTENCILFUNCPROC) (GLenum func, GLint ref, GLuint mask);
-typedef void (APIENTRYP PFNGLSTENCILOPPROC) (GLenum fail, GLenum zfail, GLenum zpass);
-typedef void (APIENTRYP PFNGLDEPTHFUNCPROC) (GLenum func);
-typedef void (APIENTRYP PFNGLPIXELSTOREFPROC) (GLenum pname, GLfloat param);
-typedef void (APIENTRYP PFNGLPIXELSTOREIPROC) (GLenum pname, GLint param);
-typedef void (APIENTRYP PFNGLREADBUFFERPROC) (GLenum src);
-typedef void (APIENTRYP PFNGLREADPIXELSPROC) (GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, void *pixels);
-typedef void (APIENTRYP PFNGLGETBOOLEANVPROC) (GLenum pname, GLboolean *data);
-typedef void (APIENTRYP PFNGLGETDOUBLEVPROC) (GLenum pname, GLdouble *data);
-typedef GLenum (APIENTRYP PFNGLGETERRORPROC) (void);
-typedef void (APIENTRYP PFNGLGETFLOATVPROC) (GLenum pname, GLfloat *data);
-typedef void (APIENTRYP PFNGLGETINTEGERVPROC) (GLenum pname, GLint *data);
-typedef const GLubyte *(APIENTRYP PFNGLGETSTRINGPROC) (GLenum name);
-typedef void (APIENTRYP PFNGLGETTEXIMAGEPROC) (GLenum target, GLint level, GLenum format, GLenum type, void *pixels);
-typedef void (APIENTRYP PFNGLGETTEXPARAMETERFVPROC) (GLenum target, GLenum pname, GLfloat *params);
-typedef void (APIENTRYP PFNGLGETTEXPARAMETERIVPROC) (GLenum target, GLenum pname, GLint *params);
-typedef void (APIENTRYP PFNGLGETTEXLEVELPARAMETERFVPROC) (GLenum target, GLint level, GLenum pname, GLfloat *params);
-typedef void (APIENTRYP PFNGLGETTEXLEVELPARAMETERIVPROC) (GLenum target, GLint level, GLenum pname, GLint *params);
-typedef GLboolean (APIENTRYP PFNGLISENABLEDPROC) (GLenum cap);
-typedef void (APIENTRYP PFNGLDEPTHRANGEPROC) (GLdouble near, GLdouble far);
-typedef void (APIENTRYP PFNGLVIEWPORTPROC) (GLint x, GLint y, GLsizei width, GLsizei height);
-
-typedef void (APIENTRYP PFNGLDRAWARRAYSPROC) (GLenum mode, GLint first, GLsizei count);
-typedef void (APIENTRYP PFNGLDRAWELEMENTSPROC) (GLenum mode, GLsizei count, GLenum type, const void *indices);
-typedef void (APIENTRYP PFNGLGETPOINTERVPROC) (GLenum pname, void **params);
-typedef void (APIENTRYP PFNGLPOLYGONOFFSETPROC) (GLfloat factor, GLfloat units);
-typedef void (APIENTRYP PFNGLCOPYTEXIMAGE1DPROC) (GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLint border);
-typedef void (APIENTRYP PFNGLCOPYTEXIMAGE2DPROC) (GLenum target, GLint level, GLenum internalformat, GLint x, GLint y, GLsizei width, GLsizei height, GLint border);
-typedef void (APIENTRYP PFNGLCOPYTEXSUBIMAGE1DPROC) (GLenum target, GLint level, GLint xoffset, GLint x, GLint y, GLsizei width);
-typedef void (APIENTRYP PFNGLCOPYTEXSUBIMAGE2DPROC) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLint x, GLint y, GLsizei width, GLsizei height);
-typedef void (APIENTRYP PFNGLTEXSUBIMAGE1DPROC) (GLenum target, GLint level, GLint xoffset, GLsizei width, GLenum format, GLenum type, const void *pixels);
-typedef void (APIENTRYP PFNGLTEXSUBIMAGE2DPROC) (GLenum target, GLint level, GLint xoffset, GLint yoffset, GLsizei width, GLsizei height, GLenum format, GLenum type, const void *pixels);
-typedef void (APIENTRYP PFNGLBINDTEXTUREPROC) (GLenum target, GLuint texture);
-typedef void (APIENTRYP PFNGLDELETETEXTURESPROC) (GLsizei n, const GLuint *textures);
-typedef void (APIENTRYP PFNGLGENTEXTURESPROC) (GLsizei n, GLuint *textures);
-typedef GLboolean (APIENTRYP PFNGLISTEXTUREPROC) (GLuint texture);
 
 typedef HGLRC (* PFNWGLCREATECONTEXTPROC)       (HDC hdc);
 typedef BOOL  (* PFNWGLDELETECONTEXTPROC)       (HGLRC hglrc);
@@ -92,26 +27,24 @@ typedef HDC   (* PFNWGLGETCURRENTDCPROC)        ();
 namespace GT
 {
     /// Class representing an OpenGL context.
-    class OpenGLContext
+    class OpenGL4Context
     {
     public:
 
         /// Constructor.
-        OpenGLContext();
+        OpenGL4Context();
 
         /// Destructor.
-        ~OpenGLContext();
+        ~OpenGL4Context();
 
 
 
         /// Starts up the context.
         ///
-        /// @param majorVersion [in] The major OpenGL version to support at a minimum.
-        /// @param minorVersion [in] The minor OpenGL version to support at a minimum.
-        /// @param flags        [in] Flags controlling how the context should be started up.
+        /// @param flags [in] Flags controlling how the context should be started up.
         ///
         /// @return <0 if an error occurs; >= 0 if there is no error.
-        ResultCode Startup(unsigned int majorVersion, unsigned int minorVersion, uint32_t flags = 0);
+        ResultCode Startup(uint32_t flags = 0);
 
         /// Shuts down the context.
         void Shutdown();
@@ -276,9 +209,24 @@ namespace GT
         PFNGLGETPROGRAMINFOLOGPROC   GetProgramInfoLog;
         PFNGLUSEPROGRAMPROC          UseProgram;
         PFNGLGETATTRIBLOCATIONPROC   GetAttribLocation;
-        PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer;
-        PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray;
-        PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray;
+        //PFNGLVERTEXATTRIBPOINTERPROC VertexAttribPointer;
+        //PFNGLENABLEVERTEXATTRIBARRAYPROC EnableVertexAttribArray;
+        //PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray;
+
+        // Buffers and Vertex Array Objects.
+        PFNGLCREATEVERTEXARRAYSPROC        CreateVertexArrays;
+        PFNGLDELETEVERTEXARRAYSPROC        DeleteVertexArrays;
+        PFNGLBINDVERTEXARRAYPROC           BindVertexArray;
+        PFNGLENABLEVERTEXARRAYATTRIBPROC   EnableVertexArrayAttrib;
+        PFNGLDISABLEVERTEXARRAYATTRIBPROC  DisableVertexArrayAttrib;
+        PFNGLVERTEXARRAYVERTEXBUFFERPROC   VertexArrayVertexBuffer;
+        PFNGLVERTEXARRAYATTRIBFORMATPROC   VertexArrayAttribFormat;
+        PFNGLVERTEXARRAYATTRIBIFORMATPROC  VertexArrayAttribIFormat;
+        PFNGLVERTEXARRAYATTRIBLFORMATPROC  VertexArrayAttribLFormat;
+        PFNGLVERTEXARRAYATTRIBBINDINGPROC  VertexArrayAttribBinding;
+        PFNGLVERTEXARRAYBINDINGDIVISORPROC VertexArrayBindingDivisor;
+
+
 
         PFNGLGENBUFFERSPROC          GenBuffers;
         PFNGLDELETEBUFFERSPROC       DeleteBuffers;
@@ -320,15 +268,12 @@ namespace GT
         //////////////////////////////////////////////////////
         // Startup Flags
 
-        static const uint32_t NoInitAPI        = (1 << 0);      // Do not retrieve any function pointers, except for those that are essential to initialize the context.
-        static const uint32_t NoInitExtensions = (1 << 1);      // Do not extract any extensions, including APIs. Note that this will affect some important extensions such as WGL_EXT_swap_control.
-        static const uint32_t NoCoreContext    = (1 << 2);      // Do not create a core context. In the case of OpenGL 2.1, this will not create an extended context, but in the case of OpenGL 4.5, it will not create a Core extended context.
-        static const uint32_t EnableDebugging  = (1 << 3);
+        static const uint32_t EnableDebugging  = (1 << 0);
 
 
     private:    // No copying.
-        OpenGLContext(const OpenGLContext &);
-        OpenGLContext & operator=(const OpenGLContext &);
+        OpenGL4Context(const OpenGL4Context &);
+        OpenGL4Context & operator=(const OpenGL4Context &);
     };
 }
 

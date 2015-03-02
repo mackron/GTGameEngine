@@ -140,9 +140,7 @@ namespace GT
 #endif
 
 #if defined(GT_GE_BUILD_OPENGL4)
-        static const unsigned int minOpenGLVersionMajor = 2;
-        static const unsigned int minOpenGLVersionMinor = 1;
-        ResultCode resultGL = m_gl.Startup(minOpenGLVersionMajor, minOpenGLVersionMinor, OpenGLContext::NoInitAPI | OpenGLContext::NoInitExtensions | OpenGLContext::NoCoreContext);
+        ResultCode resultGL = m_gl.Startup(0);
         if (GT::Succeeded(resultGL))
         {
             // If we don't yet have any GPURenderingDeviceInfo objects we'll need to create one.
@@ -161,19 +159,67 @@ namespace GT
             GPURenderingDeviceInfo& openGLDeviceInfo = m_renderingDevices[0];       // <-- The OpenGL device should always be the first item since that should correspond to the primary display, which is what OpenGL always uses.
             assert(openGLDeviceInfo.identifier_OpenGL == 1);
             {
-                // Now we need to check for OpenGL 4.5 support.
+                // Now we need to check that we support the necessary features.
                 unsigned int majorVersion;
                 unsigned int minorVersion;
                 m_gl.GetVersion(majorVersion, minorVersion);
 
-                if (majorVersion > 4 || (majorVersion == 4 && minorVersion >= 5))
-                {
+                bool isFeatureSetSupported = true;
 
-                    AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL4);
+                // Separate shaders.
+                if ((majorVersion == 4 && minorVersion >= 1) || m_gl.IsExtensionSupported("GL_ARB_separate_shader_objects"))
+                {
                 }
                 else
                 {
-                    // OpenGL 4.5 is not supported.
+                    isFeatureSetSupported = false;
+                    m_gl.Shutdown();
+                }
+
+                // Binding points (for textures and uniform buffers)
+                if ((majorVersion == 4 && minorVersion >= 2) || m_gl.IsExtensionSupported("GL_ARB_shading_language_420pack"))
+                {
+                }
+                else
+                {
+                    isFeatureSetSupported = false;
+                    m_gl.Shutdown();
+                }
+
+                // Textures storage (immutable texture dimensions and formats)
+                if ((majorVersion == 4 && minorVersion >= 2) || m_gl.IsExtensionSupported("GL_ARB_texture_storage"))
+                {
+                }
+                else
+                {
+                    isFeatureSetSupported = false;
+                    m_gl.Shutdown();
+                }
+
+                // Texture views
+                if ((majorVersion == 4 && minorVersion >= 3) || m_gl.IsExtensionSupported("GL_ARB_texture_view"))
+                {
+                }
+                else
+                {
+                    isFeatureSetSupported = false;
+                    m_gl.Shutdown();
+                }
+
+                // Direct State Access
+                if ((majorVersion == 4 && minorVersion >= 5) || m_gl.IsExtensionSupported("GL_ARB_direct_state_access"))
+                {
+                }
+                else
+                {
+                    isFeatureSetSupported = false;
+                    m_gl.Shutdown();
+                }
+
+
+                if (isFeatureSetSupported)
+                {
+                    AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL4);
                 }
             }
         }

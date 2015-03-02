@@ -70,7 +70,7 @@ namespace GT
             message, id, sourceStr, typeStr, severityStr);
     }
 
-    inline void CheckContextIsCurrent(OpenGLContext &m_gl, HDC m_currentDC)
+    inline void CheckContextIsCurrent(OpenGL4Context &m_gl, HDC m_currentDC)
     {
 #if !defined(GT_GE_OPTIMIZE_FOR_SINGLE_RENDERING_DEVICE) || GT_GE_OPTIMIZE_FOR_SINGLE_RENDERING_DEVICE == 0
         if (m_gl.GetCurrentContext() != m_gl.GetRenderingContext())
@@ -96,6 +96,7 @@ namespace GT
 
           m_stateFlags(0),
           m_currentTopologyGL(GL_TRIANGLES),
+          m_globalVAO(0),
           m_vertexBufferSlots(),
           m_invalidVertexBufferSlots(),
           m_currentIndexBuffer(0),
@@ -116,14 +117,12 @@ namespace GT
     {
         if (m_info.identifier_OpenGL == 1 && IsRenderingAPISupported(m_info, RenderingAPI_OpenGL4))
         {
-            unsigned int versionMajor = 2;
-            unsigned int versionMinor = 1;
             uint32_t flags = 0;
 #if _DEBUG
-            flags |= OpenGLContext::EnableDebugging;
+            flags |= OpenGL4Context::EnableDebugging;
 #endif
 
-            ResultCode result = m_gl.Startup(versionMajor, versionMinor, flags);
+            ResultCode result = m_gl.Startup(flags);
             if (Succeeded(result))
             {
                 // Make the dummy DC current by default. If we don't do this, any rendering commands that are issued before making a window current will fail. This is important for things
@@ -149,10 +148,14 @@ namespace GT
                 }
 
 
+                // TODO: Update these shader profiles.
                 m_supportedShaderTargets.PushBack(GPUShaderTarget_GLSL_120_VS);
                 m_supportedShaderTargets.PushBack(GPUShaderTarget_GLSL_120_FS);
 
-                // TODO: Check for ARB program support.
+
+                // Create and bind the global VAO object.
+                m_gl.CreateVertexArrays(1, &m_globalVAO);
+                m_gl.BindVertexArray(m_globalVAO);
 
 
                 // Enable back face culling by default.
@@ -347,7 +350,8 @@ namespace GT
                     size_t attribCount = prevLayoutGL->GetAttributeCount();
                     for (size_t iAttrib = 0; iAttrib < attribCount; ++iAttrib)
                     {
-                        m_gl.DisableVertexAttribArray(prevLayoutGL->GetAttribute(iAttrib).attribLocation);
+                        m_gl.DisableVertexArrayAttrib(m_globalVAO, prevLayoutGL->GetAttribute(iAttrib).attribLocation);
+                        //m_gl.DisableVertexAttribArray(prevLayoutGL->GetAttribute(iAttrib).attribLocation);
                     }
                 }
             }
@@ -383,9 +387,17 @@ namespace GT
         m_vertexBufferSlots[slotIndex].stride = stride;
         m_vertexBufferSlots[slotIndex].offset = offset;
 
+        GLuint bufferGL = 0;
+        if (hBuffer != 0)
+        {
+            bufferGL = reinterpret_cast<Buffer_OpenGL4*>(hBuffer)->GetOpenGLObject();
+        }
+
+        m_gl.VertexArrayVertexBuffer(m_globalVAO, slotIndex, bufferGL, static_cast<GLintptr>(offset), static_cast<GLsizei>(stride));
+
 
         // Update the vertex attribute pointers.
-        this->UpdateSlotVertexAttributePointers(slotIndex);
+        //this->UpdateSlotVertexAttributePointers(slotIndex);
     }
 
     void GPURenderingDevice_OpenGL4::IASetIndexBuffer(HBuffer hBuffer, GPUIndexFormat format, size_t offset)
@@ -1324,7 +1336,7 @@ namespace GT
             else
             {
                 // Failed to set pixel format.
-                return OpenGLContext::FailedToSetPixelFormat;
+                return OpenGL4Context::FailedToSetPixelFormat;
             }
         }
         else
@@ -1401,6 +1413,8 @@ namespace GT
     //////////////////////////////////////////
     // Private
 
+
+    // TODO: Rename this function.
     void GPURenderingDevice_OpenGL4::UpdateSlotVertexAttributePointers(unsigned int slotIndex)
     {
         assert(slotIndex < GT_GE_MAX_VERTEX_BUFFER_SLOTS);
@@ -1425,9 +1439,23 @@ namespace GT
                     auto &attribGL = inputLayoutGL->GetAttribute(iAttrib);
                     if (attribGL.attribLocation > -1)
                     {
-                        m_gl.EnableVertexAttribArray(attribGL.attribLocation);
-                        m_gl.BindBuffer(GL_ARRAY_BUFFER, bufferGL->GetOpenGLObject());
-                        m_gl.VertexAttribPointer(attribGL.attribLocation, attribGL.attribComponentCount, attribGL.attribComponentType, GL_FALSE, static_cast<GLsizei>(slot.stride), reinterpret_cast<const void*>(slot.offset + attribGL.attribOffset));
+                        m_gl.EnableVertexArrayAttrib(m_globalVAO, attribGL.attribLocation);
+                        m_gl.VertexArrayAttribBinding(m_globalVAO, attribGL.attribLocation, attribGL.slotIndex);
+
+                        // TODO: Use the I and L versions of glVertexArrayAttribFormat where applicable based on the component type.
+                        m_gl.VertexArrayAttribFormat(m_globalVAO, attribGL.attribLocation, attribGL.attribComponentCount, attribGL.attribComponentType, GL_FALSE, attribGL.attribOffset);
+
+                        // Check if we are looking at per-instance format.
+                        //
+                        // TODO: This is untested. Check this.
+                        if (attribGL.attributeClass == GPUInputClassification_PerInstance)
+                        {
+                            m_gl.VertexArrayBindingDivisor(m_globalVAO, attribGL.slotIndex, attribGL.instanceStepRate);
+                        }
+
+                        //m_gl.EnableVertexAttribArray(attribGL.attribLocation);
+                        //m_gl.BindBuffer(GL_ARRAY_BUFFER, bufferGL->GetOpenGLObject());
+                        //m_gl.VertexAttribPointer(attribGL.attribLocation, attribGL.attribComponentCount, attribGL.attribComponentType, GL_FALSE, static_cast<GLsizei>(slot.stride), reinterpret_cast<const void*>(slot.offset + attribGL.attribOffset));
 
                         // NOTE: With OpenGL 4.5 we would check to see if this was per-instance data.
                     }
@@ -1441,7 +1469,8 @@ namespace GT
                     auto &attribGL = inputLayoutGL->GetAttribute(iAttrib);
                     if (attribGL.attribLocation > -1)
                     {
-                        m_gl.DisableVertexAttribArray(attribGL.attribLocation);
+                        m_gl.DisableVertexArrayAttrib(m_globalVAO, attribGL.attribLocation);
+                        //m_gl.DisableVertexAttribArray(attribGL.attribLocation);
                     }
                 }
             }

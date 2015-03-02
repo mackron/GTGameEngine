@@ -276,7 +276,7 @@ namespace GT
 
 
         /// The OpenGL context object.
-        OpenGLContext m_gl;
+        OpenGL4Context m_gl;
 
 #if defined(GT_PLATFORM_WINDOWS)
         /// Structure containing the elements that make up the framebuffer for a given window.
@@ -312,6 +312,9 @@ namespace GT
 
         /// The current primitive topology for use by the OpenGL API. 
         GLenum m_currentTopologyGL;
+
+        /// The global VAO object.
+        GLuint m_globalVAO;
 
 
         struct IAVertexBufferSlot
