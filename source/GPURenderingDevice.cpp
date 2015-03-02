@@ -27,10 +27,11 @@ namespace GT
     ////////////////////////////////////////////////////
     // Protected
 
-    ResultCode GPURenderingDevice::CreateShaderBinaryData(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, const void* binary, size_t binarySizeInBytes, int binaryVersion, GT::BasicBuffer &byteCodeOut)
+    ResultCode GPURenderingDevice::CreateShaderBinaryData(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, const void* binary, size_t binarySizeInBytes, int binaryVersion, GT::BasicBuffer &byteCodeOut)
     {
         // Current Version: 1
-        assert(target <= 65535);        // Saved as a 2-byte value, so must be less than 65536.
+        assert(language <= 255);        // Saved as a 1-byte value, so must be less than 255.
+        assert(type     <= 255);        // Saved as a 1-byte value, so must be less than 255.
 
         if (source != nullptr)
         {
@@ -43,7 +44,8 @@ namespace GT
             // The first step is to calculate the size of the buffer so that we can do only a single allocation.
             size_t bufferSizeOut = 0;
             bufferSizeOut += 4;     // Version
-            bufferSizeOut += 2;     // Target
+            bufferSizeOut += 1;     // Type
+            bufferSizeOut += 1;     // Language
             bufferSizeOut += 2;     // Defines count
                 
             uint16_t definesCount = 0;
@@ -93,9 +95,13 @@ namespace GT
                 *reinterpret_cast<uint32_t*>(bufferOut) = 1;
                 bufferOut += 4;
                     
-                // Target.
-                *reinterpret_cast<uint16_t*>(bufferOut) = static_cast<uint16_t>(target);
-                bufferOut += 2;
+                // Type.
+                *bufferOut = static_cast<uint8_t>(type);
+                bufferOut += 1;
+
+                // Language.
+                *bufferOut = static_cast<uint8_t>(language);
+                bufferOut += 1;
 
                 // Defines count.
                 *reinterpret_cast<uint16_t*>(bufferOut) = definesCount;
@@ -171,7 +177,7 @@ namespace GT
         return -1;
     }
 
-    ResultCode GPURenderingDevice::ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, GPUShaderTarget &targetOut, const void* &binaryOut, size_t &binarySizeOut, int &binaryVersionOut)
+    ResultCode GPURenderingDevice::ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, ShaderLanguage &languageOut, ShaderType &typeOut, const void* &binaryOut, size_t &binarySizeOut, int &binaryVersionOut)
     {
         if (shaderData != nullptr)
         {
@@ -187,7 +193,8 @@ namespace GT
 
             if ((version & 0x00000000FFFFFFFF) == 1)
             {
-                targetOut = static_cast<GPUShaderTarget>((version & 0x0000FFFF00000000) >> 32);
+                languageOut = static_cast<ShaderLanguage>((version & 0x0000FF0000000000) >> 40);
+                typeOut     = static_cast<ShaderType    >((version & 0x000000FF00000000) >> 32);
 
                 uint16_t definesCount = static_cast<uint16_t>((version & 0xFFFF000000000000) >> 48);
                 for (uint16_t iDefine = 0; iDefine < definesCount; ++iDefine)
@@ -292,12 +299,12 @@ namespace GT
         return -1;
     }
 
-    ResultCode GPURenderingDevice::ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, GPUShaderTarget &targetOut)
+    ResultCode GPURenderingDevice::ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, ShaderLanguage &languageOut, ShaderType &typeOut)
     {
         const void* binary;
         size_t binarySize;
         int binaryVersion;
-        return ExtractShaderBinaryData(shaderData, shaderDataSize, sourceOut, sourceLengthOut, definesOut, targetOut, binary, binarySize, binaryVersion);
+        return ExtractShaderBinaryData(shaderData, shaderDataSize, sourceOut, sourceLengthOut, definesOut, languageOut, typeOut, binary, binarySize, binaryVersion);
     }
 
     ResultCode GPURenderingDevice::ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const void* &binaryOut, size_t &binarySizeOut)
@@ -305,8 +312,9 @@ namespace GT
         const char* sourceOut;
         size_t sourceLengthOut;
         GTLib::Vector<GPUShaderDefine> definesOut;
-        GPUShaderTarget targetOut;
+        ShaderLanguage languageOut;
+        ShaderType typeOut;
         int binaryVersionOut;
-        return ExtractShaderBinaryData(shaderData, shaderDataSize, sourceOut, sourceLengthOut, definesOut, targetOut, binaryOut, binarySizeOut, binaryVersionOut);
+        return ExtractShaderBinaryData(shaderData, shaderDataSize, sourceOut, sourceLengthOut, definesOut, languageOut, typeOut, binaryOut, binarySizeOut, binaryVersionOut);
     }
 }

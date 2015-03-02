@@ -95,7 +95,7 @@ namespace GT
           m_currentDC(NULL),
 #endif
           m_vendor(GPUVendor_Unknown),
-          m_supportedShaderTargets(),
+          m_supportedShaderLanguages(),
 
           m_stateFlags(0),
           m_currentTopologyGL(GL_TRIANGLES),
@@ -151,9 +151,35 @@ namespace GT
                 }
 
 
-                // TODO: Update these shader profiles.
-                m_supportedShaderTargets.PushBack(GPUShaderTarget_GLSL_120_VS);
-                m_supportedShaderTargets.PushBack(GPUShaderTarget_GLSL_120_FS);
+                // The supported languages depend on the GLSL version.
+                unsigned int majorVersionGLSL;
+                unsigned int minorVersionGLSL;
+                m_gl.GetGLSLVersion(majorVersionGLSL, minorVersionGLSL);
+
+                assert(majorVersionGLSL >= 4);
+                m_supportedShaderLanguages.PushBack(ShaderLanguage_GLSL_400);
+
+                if (minorVersionGLSL > 0)
+                {
+                    m_supportedShaderLanguages.PushBack(ShaderLanguage_GLSL_410);
+                }
+                if (minorVersionGLSL > 1)
+                {
+                    m_supportedShaderLanguages.PushBack(ShaderLanguage_GLSL_420);
+                }
+                if (minorVersionGLSL > 2)
+                {
+                    m_supportedShaderLanguages.PushBack(ShaderLanguage_GLSL_430);
+                }
+                if (minorVersionGLSL > 3)
+                {
+                    m_supportedShaderLanguages.PushBack(ShaderLanguage_GLSL_440);
+                }
+                if (minorVersionGLSL > 4)
+                {
+                    m_supportedShaderLanguages.PushBack(ShaderLanguage_GLSL_450);
+                }
+
 
 
                 // Create and bind the global VAO object.
@@ -204,7 +230,7 @@ namespace GT
 
     void GPURenderingDevice_OpenGL4::Shutdown()
     {
-        m_supportedShaderTargets.Clear();
+        m_supportedShaderLanguages.Clear();
 
         m_gl.Shutdown();
     }
@@ -789,64 +815,65 @@ namespace GT
     ////////////////////////////////////////////
     // Shaders
 
-    ResultCode GPURenderingDevice_OpenGL4::CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
+    ResultCode GPURenderingDevice_OpenGL4::CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        if (this->IsShaderTargetSupported(target))
+        if (this->IsShaderLanguageSupported(language))
         {
-            if (target >= GPUShaderTarget_GLSL_120_VS && target <= GPUShaderTarget_GLSL_120_FS)
+            if (language >= ShaderLanguage_GLSL_400 && language <= ShaderLanguage_GLSL_450)
             {
-                return this->CompileShader_GLSL(source, sourceLength, defines, target, byteCodeOut, messagesOut);
+                return this->CompileShader_GLSL(source, sourceLength, defines, language, type, byteCodeOut, messagesOut);
             }
 
-            if (target >= GPUShaderTarget_ARB_VP && target <= GPUShaderTarget_ARB_FP)
+            if (language >= ShaderLanguage_GL_NV_5 && language <= ShaderLanguage_GL_NV_5)
             {
-                return this->CompileShader_ARB(source, sourceLength, defines, target, byteCodeOut, messagesOut);
+                // TODO: Add support for NV5 assembly shaders.
             }
         }
 
         return ShaderTargetNotSupported;
     }
 
-    bool GPURenderingDevice_OpenGL4::IsShaderTargetSupported(GPUShaderTarget target) const
+    bool GPURenderingDevice_OpenGL4::IsShaderLanguageSupported(ShaderLanguage language) const
     {
-        return m_supportedShaderTargets.Exists(target);
+        return m_supportedShaderLanguages.Exists(language);
     }
 
     HShaderProgram GPURenderingDevice_OpenGL4::CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        // TODO: Check that the shader targets are of the correct shader stage.
-
-
         // Vertex Shader.
         const char* vertexSource;
         size_t vertexSourceLength;
         GTLib::Vector<GPUShaderDefine> vertexDefines;
-        GPUShaderTarget vertexTarget;
-        if (GT::Failed(this->ExtractShaderBinaryData(vertexShaderData, vertexShaderDataSize, vertexSource, vertexSourceLength, vertexDefines, vertexTarget)))
+        ShaderLanguage vertexLanguage;
+        ShaderType vertexType;
+        if (GT::Failed(this->ExtractShaderBinaryData(vertexShaderData, vertexShaderDataSize, vertexSource, vertexSourceLength, vertexDefines, vertexLanguage, vertexType)))
         {
             return 0;
         }
+
+        if (vertexType != ShaderType_Vertex)
+        {
+            return 0;
+        }
+
 
         // Fragment Shader.
         const char* fragmentSource;
         size_t fragmentSourceLength;
         GTLib::Vector<GPUShaderDefine> fragmentDefines;
-        GPUShaderTarget fragmentTarget;
-        if (GT::Failed(this->ExtractShaderBinaryData(fragmentShaderData, fragmentShaderDataSize, fragmentSource, fragmentSourceLength, fragmentDefines, fragmentTarget)))
+        ShaderLanguage fragmentLanguage;
+        ShaderType fragmentType;
+        if (GT::Failed(this->ExtractShaderBinaryData(fragmentShaderData, fragmentShaderDataSize, fragmentSource, fragmentSourceLength, fragmentDefines, fragmentLanguage, fragmentType)))
         {
             return 0;
         }
 
-
-
-        // The shader types must be compatible.
-        if (vertexTarget == GPUShaderTarget_GLSL_120_VS && fragmentTarget != GPUShaderTarget_GLSL_120_FS)
+        if (fragmentType != ShaderType_Fragment)
         {
-            // Shader targets are not compatible.
             return 0;
         }
 
@@ -854,11 +881,11 @@ namespace GT
 
         // Vertex object.
         GLuint vertexObjectGL = 0;
-        if (this->IsShaderTargetSupported(vertexTarget))
+        if (this->IsShaderLanguageSupported(vertexLanguage))
         {
-            if (vertexTarget == GPUShaderTarget_GLSL_120_VS)
+            if (vertexLanguage >= ShaderLanguage_GLSL_400 && vertexLanguage <= ShaderLanguage_GLSL_450)
             {
-                if (GT::Failed(this->CompileShader_GLSL(vertexSource, vertexSourceLength, vertexDefines.buffer, vertexTarget, messagesOut, vertexObjectGL)))
+                if (GT::Failed(this->CompileShader_GLSL(vertexSource, vertexSourceLength, vertexDefines.buffer, vertexLanguage, vertexType, messagesOut, vertexObjectGL)))
                 {
                     // Failed to compile vertex shader.
                     return 0;
@@ -874,11 +901,11 @@ namespace GT
 
         // Fragment object.
         GLuint fragmentObjectGL = 0;
-        if (this->IsShaderTargetSupported(fragmentTarget))
+        if (this->IsShaderLanguageSupported(fragmentLanguage))
         {
-            if (fragmentTarget == GPUShaderTarget_GLSL_120_FS)
+            if (fragmentLanguage >= ShaderLanguage_GLSL_400 && fragmentLanguage <= ShaderLanguage_GLSL_450)
             {
-                if (GT::Failed(this->CompileShader_GLSL(fragmentSource, fragmentSourceLength, fragmentDefines.buffer, fragmentTarget, messagesOut, fragmentObjectGL)))
+                if (GT::Failed(this->CompileShader_GLSL(fragmentSource, fragmentSourceLength, fragmentDefines.buffer, fragmentLanguage, fragmentType, messagesOut, fragmentObjectGL)))
                 {
                     return 0;
                 }
@@ -1396,15 +1423,15 @@ namespace GT
         }
     }
 
-    ResultCode GPURenderingDevice_OpenGL4::CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
+    ResultCode GPURenderingDevice_OpenGL4::CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
     {
         GLuint objectGL;
-        ResultCode result = this->CompileShader_GLSL(source, sourceLength, defines, target, messagesOut, objectGL);
+        ResultCode result = this->CompileShader_GLSL(source, sourceLength, defines, language, type, messagesOut, objectGL);
         if (GT::Succeeded(result))
         {
             // The shader compilation was successful. We now need to build the byte code data. The OpenGL 2.1 API does not support loading shaders from binary data, so we can only output
             // the original shader source and the defines and target that was used to build it.
-            result = this->CreateShaderBinaryData(source, sourceLength, defines, target, nullptr, 0, 0, byteCodeOut);
+            result = this->CreateShaderBinaryData(source, sourceLength, defines, language, type, nullptr, 0, 0, byteCodeOut);
 
 
             // The shader object needs to be deleted at this pointer or otherwise it will leak.
@@ -1414,25 +1441,32 @@ namespace GT
         return result;
     }
 
-    ResultCode GPURenderingDevice_OpenGL4::CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &messagesOut, GLuint &objectGLOut)
+    ResultCode GPURenderingDevice_OpenGL4::CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &messagesOut, GLuint &objectGLOut)
     {
-        assert(target == GPUShaderTarget_GLSL_120_VS || target == GPUShaderTarget_GLSL_120_FS);
+        assert(language >= ShaderLanguage_GLSL_400 && language <= ShaderLanguage_GLSL_450);
 
 
         objectGLOut = 0;
 
         const char* versionStrings[] =
         {
-            "",                     // GPUShaderTarget_Unknown
-            "#version 120\n",       // GPUShaderTarget_GLSL_120_VS
-            "#version 120\n"        // GPUShaderTarget_GLSL_120_FS
+            "",                     // ShaderLanguage_Unknown
+            "#version 400\n",       // ShaderLanguage_GLSL_400
+            "#version 410\n"        // ShaderLanguage_GLSL_410
+            "#version 420\n"        // ShaderLanguage_GLSL_420
+            "#version 430\n"        // ShaderLanguage_GLSL_430
+            "#version 440\n"        // ShaderLanguage_GLSL_440
+            "#version 450\n"        // ShaderLanguage_GLSL_450
         };
 
         GLenum shaderTypes[] =
         {
-            0,
-            GL_VERTEX_SHADER,       // GPUShaderTarget_GLSL_120_VS,
-            GL_FRAGMENT_SHADER,     // GPUShaderTarget_GLSL_120_FS
+            GL_VERTEX_SHADER,           // ShaderType_Vertex,
+            GL_TESS_EVALUATION_SHADER,  // ShaderType_TessellationEvaluation
+            GL_TESS_CONTROL_SHADER,     // ShaderType_TessellationControl
+            GL_GEOMETRY_SHADER,         // ShaderType_Geometry
+            GL_FRAGMENT_SHADER,         // ShaderType_Fragment
+            GL_COMPUTE_SHADER,          // ShaderType_Compute
         };
 
 
@@ -1449,7 +1483,7 @@ namespace GT
 
 
         const char* shaderStrings[3];
-        shaderStrings[0] = versionStrings[target];
+        shaderStrings[0] = versionStrings[language];
         shaderStrings[1] = definesString.c_str();
         shaderStrings[2] = source;
 
@@ -1459,7 +1493,7 @@ namespace GT
         shaderStringLengths[2] = static_cast<GLint>((sourceLength > 0) ? sourceLength : -1);
 
 
-        GLuint objectGL = m_gl.CreateShader(shaderTypes[target]);
+        GLuint objectGL = m_gl.CreateShader(shaderTypes[type]);
         if (objectGL != 0)
         {
             // Compile the shader.
@@ -1497,18 +1531,6 @@ namespace GT
         {
             return FailedToCreateOpenGLShaderObject;
         }
-    }
-
-    ResultCode GPURenderingDevice_OpenGL4::CompileShader_ARB(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
-    {
-        (void)source;
-        (void)sourceLength;
-        (void)defines;
-        (void)target;
-        (void)byteCodeOut;
-        (void)messagesOut;
-
-        return ShaderTargetNotSupported;
     }
 }
 

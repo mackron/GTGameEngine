@@ -176,6 +176,12 @@ namespace GT
 
                                             if (m_majorVersion == 4 && m_minorVersion >= 0)
                                             {
+                                                // Now we need the GLSL version. This always matches the OpenGL version in the case of OpenGL 4.
+                                                m_majorVersionGLSL = m_majorVersion;
+                                                m_minorVersionGLSL = m_minorVersion;
+
+
+
                                                 // We now need to create an extended context.
                                                 auto _wglCreateContextAttribsARB = reinterpret_cast<PFNWGLCREATECONTEXTATTRIBSARBPROC>(this->GetProcAddress("wglCreateContextAttribsARB"));
                                                 if (_wglCreateContextAttribsARB != nullptr)
@@ -336,6 +342,12 @@ namespace GT
     {
         majorVersionOut = m_majorVersion;
         minorVersionOut = m_minorVersion;
+    }
+
+    void OpenGL4Context::GetGLSLVersion(unsigned int &majorVersionOut, unsigned int &minorVersionOut) const
+    {
+        majorVersionOut = m_majorVersionGLSL;
+        minorVersionOut = m_minorVersionGLSL;
     }
 
     bool OpenGL4Context::IsExtensionSupported(const char* extension) const

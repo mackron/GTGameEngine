@@ -321,16 +321,16 @@ namespace GT
         /// @param source                 [in]  The shader source.
         /// @param sourceLength           [in]  The length of the shader source. Can be 0, in which case it is assumed the string is null-terminated.
         /// @param defines                [in]  An array of name/value pairs describing the #define's to include. NULL terminated.
-        /// @param target                 [in]  The shader target. See remarks.
+        /// @param language               [in]  The shader language. See remarks.
+        /// @param type                   [in]  The shader type being compiled (vertex, fragment, etc.)
         /// @param byteCodeOut            [out] A reference to the buffer object that will receive the compiled byte-code.
         /// @param messagesOut            [out] A reference to the buffer object that will receive the error/warning/message string. This is a null-terminated string in UTF-8 format.
         ///
         /// @remarks
         ///     The \c source paramter refers to the actual human-readable shader source code, and is <b>not</b> a file path.
         ///     @par
-        ///     The possible values for \c target are dependant on the rendering API being used. Use GetSupportedShaderTargetCount() and GetSupportedShaderTarget() to determine which
-        ///     shader targets are available. A shader target is the type of shader that is being compiled (vertex shader, pixel shader, etc.), and the version of the shading language
-        ///     to target.
+        ///     The possible values for \c language are dependant on the rendering API being used. Use GetSupportedShaderLanguageCount() and GetSupportedShaderLanguage() to determine which
+        ///     shader languages are available.
         ///     @par
         ///     For compatibility with OpenGL, all shaders must use main() as the entry point.
         ///     @par
@@ -341,12 +341,12 @@ namespace GT
         ///     The compiled data can be saved to disk, however be aware that the original source code will be included so this is not enough to obfuscate your shader code if you
         ///     feel that is important. This reason for this is that in some cases the shader code may need to be re-compiled internally in the event of something like a change in
         ///     driver versions or whatnot.
-        virtual ResultCode CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut) = 0;
+        virtual ResultCode CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut) = 0;
 
-        /// Determines whether or not the given target is supported by the rendering device.
+        /// Determines whether or not the given shader language is supported by the rendering device.
         ///
-        /// @param target [in] The shader target to check.
-        virtual bool IsShaderTargetSupported(GPUShaderTarget target) const = 0;
+        /// @param language [in] The shader language to check.
+        virtual bool IsShaderLanguageSupported(ShaderLanguage language) const = 0;
 
 
         /// Creates a shader program from a vertex and fragment shader.
@@ -565,11 +565,11 @@ namespace GT
     protected:
 
         /// Creates a shader binary buffer from the given information. 
-        static ResultCode CreateShaderBinaryData(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, const void* binary, size_t binarySizeInBytes, int binaryVersion, GT::BasicBuffer &byteCodeOut);
+        static ResultCode CreateShaderBinaryData(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, const void* binary, size_t binarySizeInBytes, int binaryVersion, GT::BasicBuffer &byteCodeOut);
 
         /// Takes the shader binary data created by CreateShaderBinaryData() and reads it's various components.
-        static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, GPUShaderTarget &targetOut, const void* &binaryOut, size_t &binarySizeOut, int &binaryVersionOut);
-        static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, GPUShaderTarget &targetOut);
+        static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, ShaderLanguage &languageOut, ShaderType &typeOut, const void* &binaryOut, size_t &binarySizeOut, int &binaryVersionOut);
+        static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, ShaderLanguage &languageOut, ShaderType &typeOut);
         static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const void* &binaryOut, size_t &binarySizeOut);
 
 

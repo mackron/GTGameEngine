@@ -166,10 +166,10 @@ namespace GT
         // Shaders
 
         /// GPURenderingDevice::CompileShader().
-        ResultCode CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
+        ResultCode CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
 
-        /// GPURenderingDevice::IsShaderTargetSupported().
-        bool IsShaderTargetSupported(GPUShaderTarget target) const;
+        /// GPURenderingDevice::IsShaderLanguageSupported().
+        bool IsShaderLanguageSupported(ShaderLanguage language) const;
 
 
         /// @copydoc GPURenderingDevice::CreateShaderProgram()

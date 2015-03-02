@@ -156,10 +156,10 @@ namespace GT
         // Shaders
 
         /// GPURenderingDevice::CompileShader().
-        ResultCode CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
+        ResultCode CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
 
-        /// GPURenderingDevice::IsShaderTargetSupported().
-        bool IsShaderTargetSupported(GPUShaderTarget target) const;
+        /// GPURenderingDevice::IsShaderLanguageSupported().
+        bool IsShaderLanguageSupported(ShaderLanguage language) const;
 
 
         /// @copydoc GPURenderingDevice::CreateShaderProgram()
@@ -261,12 +261,8 @@ namespace GT
 
 
         /// Helper for compiling a GLSL shader.
-        ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
-        ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &messagesOut, GLuint &objectGLOut);
-
-        /// Helper for compiler an ARB shader program.
-        ResultCode CompileShader_ARB(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
-
+        ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
+        ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &messagesOut, GLuint &objectGLOut);
 
 
     private:
@@ -301,7 +297,7 @@ namespace GT
         GPUVendor m_vendor;
 
         /// The list of supported shader targets.
-        GTLib::Vector<GPUShaderTarget> m_supportedShaderTargets;
+        GTLib::Vector<ShaderLanguage> m_supportedShaderLanguages;
 
 
         ////////////////////////////////////////////////////

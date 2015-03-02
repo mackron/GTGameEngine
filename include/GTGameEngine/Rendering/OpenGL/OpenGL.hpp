@@ -56,6 +56,12 @@ namespace GT
         /// @param minor [out] A reference to the variable that will receive the minor version.
         void GetVersion(unsigned int &major, unsigned int &minor) const;
 
+        /// Retrieves the version of GLSL supported by the context.
+        ///
+        /// @param major [out] A reference to the variable that will receive the major version.
+        /// @param minor [out] A reference to the variable that will receive the minor version.
+        void GetGLSLVersion(unsigned int &major, unsigned int &minor) const;
+
         /// Helper for determining whether or not the given extension is supported.
         ///
         /// @param extension [in] A reference to the extension string.
@@ -145,6 +151,12 @@ namespace GT
 
         /// The minor version of the OpenGL API that is supported by the given rendering context.
         unsigned int m_minorVersion;
+
+        /// The major version of GLSL that is supported by this context.
+        unsigned int m_majorVersionGLSL;
+
+        /// The minor version of GLSL that is supported by this context.
+        unsigned int m_minorVersionGLSL;
 
         /// The list of supported extensions.
         GTLib::Vector<const char*> m_extensions;

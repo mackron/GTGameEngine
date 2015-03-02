@@ -654,9 +654,9 @@ namespace GT
     ////////////////////////////////////////////
     // Shaders
 
-    ResultCode GPURenderingDevice_D3D11::CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, GPUShaderTarget target, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
+    ResultCode GPURenderingDevice_D3D11::CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
     {
-        if (target >= GPUShaderTarget_HLSL_50_VS && target <= GPUShaderTarget_HLSL_50_CS)
+        if (language >= ShaderLanguage_HLSL_50 && language <= ShaderLanguage_HLSL_50)
         {
             const char* targetStrs[] =
             {
@@ -667,7 +667,7 @@ namespace GT
                 "ps_5_0",       // GPUShaderTarget_HLSL_50_PS
                 "cs_5_0",       // GPUShaderTarget_HLSL_50_CS
             };
-            const char* targetD3D11 = targetStrs[target - GPUShaderTarget_HLSL_50_VS];
+            const char* targetD3D11 = targetStrs[type];
 
 
             ID3DBlob* shaderCompiled = NULL;
@@ -677,7 +677,7 @@ namespace GT
             {
                 if (shaderCompiled != nullptr)
                 {
-                    ResultCode result = this->CreateShaderBinaryData(source, sourceLength, defines, target, shaderCompiled->GetBufferPointer(), shaderCompiled->GetBufferSize(), 0, byteCodeOut);
+                    ResultCode result = this->CreateShaderBinaryData(source, sourceLength, defines, language, type, shaderCompiled->GetBufferPointer(), shaderCompiled->GetBufferSize(), 0, byteCodeOut);
 
                     shaderCompiled->Release();
                     return result;
@@ -709,9 +709,9 @@ namespace GT
         }
     }
 
-    bool GPURenderingDevice_D3D11::IsShaderTargetSupported(GPUShaderTarget target) const
+    bool GPURenderingDevice_D3D11::IsShaderLanguageSupported(ShaderLanguage language) const
     {
-        return (target >= GPUShaderTarget_HLSL_50_VS && target <= GPUShaderTarget_HLSL_50_CS);
+        return (language >= ShaderLanguage_HLSL_50 && language <= ShaderLanguage_HLSL_50);
     }
 
 
