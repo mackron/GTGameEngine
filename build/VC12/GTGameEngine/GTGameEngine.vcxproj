@@ -38,6 +38,8 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPURenderingDevice_OpenGL21.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RenderingTypes_OpenGL21.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL4\GPURenderingDevice_OpenGL4.cpp" />
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL4\RenderingTypes_OpenGL4.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTGameEngine\Config.hpp" />
@@ -63,6 +65,8 @@
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\RenderingTypes_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\GPURenderingDevice_OpenGL21.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RenderingTypes_OpenGL21.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL4\GPURenderingDevice_OpenGL4.hpp" />
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL4\RenderingTypes_OpenGL4.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{0E702596-5089-48E6-AD25-2DD3C3F705B6}</ProjectGuid>

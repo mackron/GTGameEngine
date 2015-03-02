@@ -18,7 +18,7 @@
 // Disabling APIs can be useful for simplifying and reducing the size of the build.
 
 #define GT_GE_ENABLE_D3D11          1
-#define GT_GE_ENABLE_OPENGL45       1
+#define GT_GE_ENABLE_OPENGL4        1
 #define GT_GE_ENABLE_OPENGL21       1
 
 
@@ -55,9 +55,9 @@
 #define GT_GE_BUILD_D3D11
 #endif
 
-// OpenGL 4.5 Support.
-#if (defined(GT_GE_ENABLE_OPENGL45) && GT_GE_ENABLE_OPENGL45 == 1)
-#define GT_GE_BUILD_OPENGL45
+// OpenGL 4.x Support.
+#if (defined(GT_GE_ENABLE_OPENGL4) && GT_GE_ENABLE_OPENGL4 == 1)
+#define GT_GE_BUILD_OPENGL4
 #endif
 
 // OpenGL 2.1 Support.

@@ -5,7 +5,7 @@
 
 #include <GTGameEngine/Config.hpp>
 
-#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL4)
 #include <GTLib/ResultCodes.hpp>
 #include <GTLib/Vector.hpp>
 #include <cstdint>

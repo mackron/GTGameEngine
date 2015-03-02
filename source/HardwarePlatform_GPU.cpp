@@ -2,6 +2,7 @@
 
 #include <GTGameEngine/HardwarePlatform_GPU.hpp>
 #include "Rendering/D3D/D3D11/GPURenderingDevice_D3D11.hpp"
+#include "Rendering/OpenGL/OpenGL4/GPURenderingDevice_OpenGL4.hpp"
 #include "Rendering/OpenGL/OpenGL21/GPURenderingDevice_OpenGL21.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
@@ -26,7 +27,7 @@ namespace GT
             m_hD3D11(0),
             m_hD3DCompiler(0),
 #endif
-#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL4)
             m_gl()
 #endif
     {
@@ -139,7 +140,7 @@ namespace GT
         }
 #endif
 
-#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL4)
         static const unsigned int minOpenGLVersionMajor = 2;
         static const unsigned int minOpenGLVersionMinor = 1;
         ResultCode resultGL = m_gl.Startup(minOpenGLVersionMajor, minOpenGLVersionMinor, OpenGLContext::NoInitAPI | OpenGLContext::NoInitExtensions | OpenGLContext::NoCoreContext);
@@ -165,7 +166,7 @@ namespace GT
                 AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL21);
 #endif
 
-#if defined(GT_GE_BUILD_OPENGL45)
+#if defined(GT_GE_BUILD_OPENGL4)
                 // Now we need to check for OpenGL 4.5 support.
                 unsigned int majorVersion;
                 unsigned int minorVersion;
@@ -174,7 +175,7 @@ namespace GT
                 if (majorVersion > 4 || (majorVersion == 4 && minorVersion >= 5))
                 {
 
-                    AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL45);
+                    AddSupportedRenderingAPI(openGLDeviceInfo, RenderingAPI_OpenGL4);
                 }
                 else
                 {
@@ -195,7 +196,7 @@ namespace GT
 
     void HardwarePlatform_GPU::Shutdown()
     {
-#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL4)
         m_gl.Shutdown();
 #endif
 
@@ -278,9 +279,10 @@ namespace GT
                     }
 #endif
 
-#if defined(GT_GE_BUILD_OPENGL45)
-                case RenderingAPI_OpenGL45:
+#if defined(GT_GE_BUILD_OPENGL4)
+                case RenderingAPI_OpenGL4:
                     {
+                        newDevice = new GPURenderingDevice_OpenGL4(info);
                         break;
                     }
 #endif

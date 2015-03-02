@@ -39,11 +39,11 @@
     <Filter Include="Source Files\Rendering\OpenGL\OpenGL21">
       <UniqueIdentifier>{1cde6109-02b6-4ddb-8184-3205c84b3148}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Rendering\OpenGL\OpenGL45">
-      <UniqueIdentifier>{ec235752-6c3b-4ea2-8126-e156cb6f1272}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Rendering\OpenGL">
       <UniqueIdentifier>{9a6de853-7d28-411a-9d04-c5403b1c5516}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Rendering\OpenGL\OpenGL4">
+      <UniqueIdentifier>{ec235752-6c3b-4ea2-8126-e156cb6f1272}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -103,6 +103,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RenderingTypes_OpenGL21.cpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL4\GPURenderingDevice_OpenGL4.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL4\RenderingTypes_OpenGL4.cpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL4</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -174,6 +180,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL21\RenderingTypes_OpenGL21.hpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL21</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL4\GPURenderingDevice_OpenGL4.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL4\RenderingTypes_OpenGL4.hpp">
+      <Filter>Source Files\Rendering\OpenGL\OpenGL4</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

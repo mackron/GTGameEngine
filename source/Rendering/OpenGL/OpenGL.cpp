@@ -2,7 +2,7 @@
 
 #include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
 
-#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL45)
+#if defined(GT_GE_BUILD_OPENGL21) || defined(GT_GE_BUILD_OPENGL4)
 #include <cassert>
 
 #if defined(GT_PLATFORM_WINDOWS)
