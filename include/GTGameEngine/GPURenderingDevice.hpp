@@ -122,6 +122,17 @@ namespace GT
         /// @param hShaderProgram [in] A reference to the shader program object to make current.
         virtual void SetCurrentShaderProgram(HShaderProgram hShaderProgram) = 0;
 
+        /// Binds the given texture view to the given slot.
+        ///
+        /// @param hTextureView [in] A handle to the texture view to bind to the given slot.
+        /// @param slotIndex    [in] The index of the slot to bind the texture to.
+        virtual void BindTexture(HTextureView hTextureView, unsigned int slotIndex) = 0;
+
+        /// Binds the given sampler to the given slot.
+        ///
+        /// @param hSampler  [in] A handle to the sampler to bind to the given slot.
+        /// @param slotIndex [in] The index of the slot to bind the sampler to.
+        virtual void BindSampler(HSampler hSampler, unsigned int slotIndex) = 0;
 
 
         /////////////////////////////////////////////////////////////////////////////
@@ -461,6 +472,31 @@ namespace GT
         ///     When using the Direct3D 11 API, this will use map/unmap internally when the buffer was created with GPUBufferUsage_Dynamic.
         virtual void SetBufferData(HBuffer hBuffer, size_t offsetInBytes, size_t sizeInBytes, const void* data) = 0;
 
+
+
+        ///////////////////////////////////////////
+        // Textures
+
+        virtual HTexture2D CreateTexture2D(const Texture2DDesc &desc) = 0;
+        virtual void ReleaseTexture2D(HTexture2D hTexture) = 0;
+        virtual void HoldTexture2D(HTexture2D hTexture) = 0;
+        virtual void UpdateTexture2D(HTexture2D hTexture, int x, int y, unsigned int width, unsigned int height, unsigned int level, unsigned int layer, const void* srcData, unsigned int srcDataRowPitch) = 0;
+
+        virtual HTextureView CreateTextureViewFrom1D(HTexture2D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers) = 0;
+        virtual HTextureView CreateTextureViewFrom2D(HTexture2D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers) = 0;
+        virtual HTextureView CreateTextureViewFrom2DMultisample(HTexture2DMultisample hTexture, TextureType type, TextureFormat format, unsigned int minLayer, unsigned int numLayers) = 0;
+        virtual HTextureView CreateTextureViewFrom3D(HTexture3D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels) = 0;
+        virtual HTextureView CreateTextureViewFromCube(HTextureCube hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers) = 0;
+        virtual void ReleaseTextureView(HTextureView hTextureView) = 0;
+        virtual void HoldTextureView(HTextureView hTextureView) = 0;
+
+
+        ///////////////////////////////////////////
+        // Samplers
+
+        virtual HSampler CreateSampler(const SamplerDesc &desc) = 0;
+        virtual void ReleaseSampler(HSampler hSampler) = 0;
+        virtual void HoldSampler(HSampler hSampler) = 0;
 
 
         ///////////////////////////////////////////

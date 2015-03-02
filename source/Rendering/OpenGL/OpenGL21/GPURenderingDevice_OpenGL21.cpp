@@ -295,6 +295,13 @@ namespace GT
         }
     }
 
+    void GPURenderingDevice_OpenGL21::BindTexture(HTextureView hTextureView, unsigned int slotIndex)
+    {
+    }
+
+    void GPURenderingDevice_OpenGL21::BindSampler(HSampler hSampler, unsigned int slotIndex)
+    {
+    }
 
 
 
@@ -1206,6 +1213,81 @@ namespace GT
 
 
     ///////////////////////////////////////////
+    // Textures
+
+    HTexture2D GPURenderingDevice_OpenGL21::CreateTexture2D(const Texture2DDesc &desc)
+    {
+        return 0;
+    }
+
+    void GPURenderingDevice_OpenGL21::ReleaseTexture2D(HTexture2D hTexture)
+    {
+    }
+
+    void GPURenderingDevice_OpenGL21::HoldTexture2D(HTexture2D hTexture)
+    {
+    }
+
+    void GPURenderingDevice_OpenGL21::UpdateTexture2D(HTexture2D hTexture, int x, int y, unsigned int width, unsigned int height, unsigned int level, unsigned int layer, const void* srcData, unsigned int srcDataRowPitch)
+    {
+    }
+
+
+    HTextureView GPURenderingDevice_OpenGL21::CreateTextureViewFrom1D(HTexture1D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
+    {
+        return 0;
+    }
+
+    HTextureView GPURenderingDevice_OpenGL21::CreateTextureViewFrom2D(HTexture2D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
+    {
+        return 0;
+    }
+
+    HTextureView GPURenderingDevice_OpenGL21::CreateTextureViewFrom2DMultisample(HTexture2DMultisample hTexture, TextureType type, TextureFormat format, unsigned int minLayer, unsigned int numLayers)
+    {
+        return 0;
+    }
+
+    HTextureView GPURenderingDevice_OpenGL21::CreateTextureViewFrom3D(HTexture3D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels)
+    {
+        return 0;
+    }
+
+    HTextureView GPURenderingDevice_OpenGL21::CreateTextureViewFromCube(HTextureCube hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
+    {
+        return 0;
+    }
+
+    void GPURenderingDevice_OpenGL21::ReleaseTextureView(HTextureView hTextureView)
+    {
+    }
+
+    void GPURenderingDevice_OpenGL21::HoldTextureView(HTextureView hTextureView)
+    {
+    }
+
+
+
+    ///////////////////////////////////////////
+    // Samplers
+
+    HSampler GPURenderingDevice_OpenGL21::CreateSampler(const SamplerDesc &desc)
+    {
+        return 0;
+    }
+
+    void GPURenderingDevice_OpenGL21::ReleaseSampler(HSampler hSampler)
+    {
+    }
+
+    void GPURenderingDevice_OpenGL21::HoldSampler(HSampler hSampler)
+    {
+    }
+
+
+
+
+    ///////////////////////////////////////////
     // Framebuffers
 
 
@@ -1341,6 +1423,7 @@ namespace GT
                 for (size_t iAttrib = attribStart; iAttrib < attribEnd; ++iAttrib)
                 {
                     auto &attribGL = inputLayoutGL->GetAttribute(iAttrib);
+                    if (attribGL.attribLocation > -1)
                     {
                         m_gl.EnableVertexAttribArray(attribGL.attribLocation);
                         m_gl.BindBuffer(GL_ARRAY_BUFFER, bufferGL->GetOpenGLObject());
@@ -1356,6 +1439,7 @@ namespace GT
                 for (size_t iAttrib = attribStart; iAttrib < attribEnd; ++iAttrib)
                 {
                     auto &attribGL = inputLayoutGL->GetAttribute(iAttrib);
+                    if (attribGL.attribLocation > -1)
                     {
                         m_gl.DisableVertexAttribArray(attribGL.attribLocation);
                     }

@@ -4,8 +4,14 @@
 #define __GT_RenderingTypes_hpp_
 
 #include <cstdint>
+#include <cfloat>
 
 #define GT_GE_MAX_VERTEX_BUFFER_SLOTS       32
+
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4351)   // new behaviour
+#endif
 
 namespace GT
 {
@@ -25,6 +31,7 @@ namespace GT
     typedef size_t HTexture2D;
     typedef size_t HTexture2DMultisample;
     typedef size_t HTexture3D;
+    typedef size_t HTextureCube;
     typedef size_t HTextureView;
     typedef size_t HSampler;
     typedef size_t HFramebuffer;
@@ -214,7 +221,15 @@ namespace GT
         TextureType_2D_Multisample,
         TextureType_2D_Multisample_Array,
         TextureType_3D,
-        TextureType_Cube
+        TextureType_Cube,
+        TextureType_Cube_Array
+    };
+
+    enum TextureUsage
+    {
+        TextureUsage_ShaderResource     = (1 << 0),
+        TextureUsage_RenderTarget       = (1 << 1),
+        TextureUsage_DepthStencilTarget = (1 << 2)
     };
 
     enum TextureFormat
@@ -224,11 +239,9 @@ namespace GT
         // Unsigned Normalized.
         TextureFormat_R8,
         TextureFormat_RG8,
-        TextureFormat_RGB8,
         TextureFormat_RGBA8,
         TextureFormat_R16,
         TextureFormat_RG16,
-        TextureFormat_RGB16,
         TextureFormat_RGBA16,
         TextureFormat_RGB10_A2,
         TextureFormat_SRGB8_A8,     //< sRGB, linear alpha.
@@ -236,21 +249,17 @@ namespace GT
         // Signed Normalized.
         TextureFormat_R8_SNORM,
         TextureFormat_RG8_SNORM,
-        TextureFormat_RGB8_SNORM,
         TextureFormat_RGBA8_SNORM,
         TextureFormat_R16_SNORM,
         TextureFormat_RG16_SNORM,
-        TextureFormat_RGB16_SNORM,
         TextureFormat_RGBA16_SNORM,
 
         // Unsigned Integral.
         TextureFormat_R8UI,
         TextureFormat_RG8UI,
-        TextureFormat_RGB8UI,
         TextureFormat_RGBA8UI,
         TextureFormat_R16UI,
         TextureFormat_RG16UI,
-        TextureFormat_RGB16UI,
         TextureFormat_RGBA16UI,
         TextureFormat_R32UI,
         TextureFormat_RG32UI,
@@ -259,13 +268,10 @@ namespace GT
 
         // Signed Integral.
         TextureFormat_RBSI,
-        TextureFormat_R8SI,
         TextureFormat_RG8SI,
-        TextureFormat_RGB8SI,
         TextureFormat_RGBA8SI,
         TextureFormat_R16SI,
         TextureFormat_RG16SI,
-        TextureFormat_RGB16SI,
         TextureFormat_RGBA16SI,
         TextureFormat_R32SI,
         TextureFormat_RG32SI,
@@ -275,7 +281,6 @@ namespace GT
         // Float
         TextureFormat_R16F,
         TextureFormat_RG16F,
-        TextureFormat_RGB16F,
         TextureFormat_RGBA16F,
         TextureFormat_R32F,
         TextureFormat_RG32F,
@@ -303,6 +308,29 @@ namespace GT
         TextureFormat_SRGB_Alpha_BPTC,      //< GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB   / DXGI_FORMAT_BC7_UNORM_SRGB
         TextureFormat_RGB_UF16_BPTC,        //< GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB / DXGI_FORMAT_BC6H_UF16
         TextureFormat_RGB_SF16_BPTC,        //< GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB   / DXGI_FORMAT_BC6H_SF16
+    };
+
+    // Texture filters. All filters are named as TextureFilter_<minification>_<magnification>_<mipmap>
+    enum TextureFilter
+    {
+        TextureFilter_Point_Point_Point = 0,
+        TextureFilter_Point_Point_Linear,
+        TextureFilter_Point_Linear_Point,
+        TextureFitler_Point_Linear_Linear,
+        TextureFilter_Linear_Point_Point,
+        TextureFilter_Linear_Point_Linear,
+        TextureFilter_Linear_Linear_Point,
+        TextureFilter_Linear_Linear_Linear,
+        TextureFilter_Anisotropic,
+    };
+
+    enum TextureAddressMode
+    {
+        TextureAddressMode_Wrap = 0,
+        TextureAddressMode_Mirror,
+        TextureAddressMode_Clamp,
+        TextureAddressMode_Border,
+        TextureAddressMode_Mirror_Once
     };
 
 
@@ -392,6 +420,166 @@ namespace GT
         /// The far depth range.
         float depthRangeFar;
     };
+
+
+    /// Structure describing a 1D texture.
+    struct Texture1DDesc
+    {
+        unsigned int  width;
+        unsigned int  layerCount;
+        unsigned int  levelCount;
+        TextureFormat format;
+        TextureUsage  usage;
+    };
+
+    /// Structure describing a 2D texture.
+    struct Texture2DDesc
+    {
+        unsigned int  width;
+        unsigned int  height;
+        unsigned int  layerCount;    //< Number of items in the array. A standard 2D texture would set this to 1.
+        unsigned int  levelCount;   //< Number of mip levels for each layer.
+        TextureFormat format;
+        TextureUsage  usage;
+    };
+
+    /// Structure describing a multi-sampled 2D texture.
+    struct Texture2DMultisampleDesc : public Texture2DDesc
+    {
+        unsigned int sampleCount;
+    };
+
+    /// Structure describing a 2D texture.
+    struct Texture3DDesc
+    {
+        unsigned int  width;
+        unsigned int  height;
+        unsigned int  depth;
+        unsigned int  levelCount;
+        TextureFormat format;
+        TextureUsage  usage;
+    };
+
+
+    /// Structure describing a sampler object.
+    struct SamplerDesc
+    {
+        SamplerDesc()
+            : filter(TextureFilter_Linear_Linear_Linear),
+              addressModeU(TextureAddressMode_Clamp),
+              addressModeV(TextureAddressMode_Clamp),
+              addressModeW(TextureAddressMode_Clamp),
+              mipLODBias(0.0f),
+              maxAnisotropy(1),
+              borderColor(),
+              minLOD(-FLT_MAX),
+              maxLOD( FLT_MAX)
+        {
+            borderColor[0] = 1.0f;
+            borderColor[1] = 1.0f;
+            borderColor[2] = 1.0f;
+            borderColor[3] = 1.0f;
+        }
+
+        TextureFilter filter;
+        TextureAddressMode addressModeU;
+        TextureAddressMode addressModeV;
+        TextureAddressMode addressModeW;
+        float mipLODBias;
+        unsigned int maxAnisotropy;
+        float borderColor[4];
+        float minLOD;
+        float maxLOD;
+    };
+
+
+
+    //////////////////////////////////////////
+    // Mappings / Lookup Tables
+
+    /// The list of integers representing the bits-per-pixel of a single pixel for each texture format.
+    static unsigned int g_TextureFormatsBPPTable[] =
+    {
+        0,
+
+        // Unsigned Normalized.
+        8,
+        16,
+        32,
+        16,
+        32,
+        64,
+        32,
+        32,     //< sRGB, linear alpha.
+
+        // Signed Normalized.
+        8,
+        16,
+        32,
+        16,
+        32,
+        64,
+
+        // Unsigned Integral.
+        8,
+        16,
+        32,
+        16,
+        32,
+        64,
+        32,
+        64,
+        96,
+        128,
+
+        // Signed Integral.
+        8,
+        16,
+        32,
+        16,
+        32,
+        64,
+        32,
+        64,
+        96,
+        128,
+
+        // Float
+        16,
+        32,
+        64,
+        32,
+        64,
+        96,
+        128,
+        32,
+
+        // Special
+        32,               //< GL_DEPTH24_STENCIL8 / DXGI_FORMAT_D24_UNORM_S8_UINT
+
+        // Compressed.
+        4,              //< GL_COMPRESSED_RGBA_S3TC_DXT1_EXT       / DXGI_FORMAT_BC1_UNORM
+        8,              //< GL_COMPRESSED_RGBA_S3TC_DXT3_EXT       / DXGI_FORMAT_BC2_UNORM
+        8,              //< GL_COMPRESSED_RGBA_S3TC_DXT5_EXT       / DXGI_FORMAT_BC3_UNORM
+        4,              //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT / DXGI_FORMAT_BC1_UNORM_SRGB
+        8,              //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT / DXGI_FORMAT_BC2_UNORM_SRGB
+        8,              //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT / DXGI_FORMAT_BC3_UNORM_SRGB
+
+        4,              //< GL_COMPRESSED_RED_RGTC1        / DXGI_FORMAT_BC4_UNORM
+        4,              //< GL_COMPRESSED_SIGNED_RED_RGTC1 / DXGI_FORMAT_BC4_SNORM
+        8,              //< GL_COMPRESSED_RG_RGTC2         / DXGI_FORMAT_BC5_UNORM
+        8,              //< GL_COMPRESSED_SIGNED_RG_RGTC2  / DXGI_FORMAT_BC5_SNORM
+
+        8,              //< GL_COMPRESSED_RGBA_BPTC_UNORM_ARB         / DXGI_FORMAT_BC7_UNORM
+        8,              //< GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB   / DXGI_FORMAT_BC7_UNORM_SRGB
+        8,              //< GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB / DXGI_FORMAT_BC6H_UF16
+        8,              //< GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB   / DXGI_FORMAT_BC6H_SF16
+    };
 }
+
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 
 #endif

@@ -247,6 +247,30 @@ namespace GT
         }
     }
 
+    void GPURenderingDevice_D3D11::BindTexture(HTextureView hTextureView, unsigned int slotIndex)
+    {
+        // Bind the texture on all stages.
+        ID3D11ShaderResourceView* viewD3D11 = reinterpret_cast<ID3D11ShaderResourceView*>(hTextureView);
+        
+        m_context->VSSetShaderResources(slotIndex, 1, &viewD3D11);
+        m_context->DSSetShaderResources(slotIndex, 1, &viewD3D11);
+        m_context->HSSetShaderResources(slotIndex, 1, &viewD3D11);
+        m_context->GSSetShaderResources(slotIndex, 1, &viewD3D11);
+        m_context->PSSetShaderResources(slotIndex, 1, &viewD3D11);
+    }
+
+    void GPURenderingDevice_D3D11::BindSampler(HSampler hSampler, unsigned int slotIndex)
+    {
+        // Bind to all stages.
+        ID3D11SamplerState* samplerD3D11 = reinterpret_cast<ID3D11SamplerState*>(hSampler);
+
+        m_context->VSSetSamplers(slotIndex, 1, &samplerD3D11);
+        m_context->DSSetSamplers(slotIndex, 1, &samplerD3D11);
+        m_context->HSSetSamplers(slotIndex, 1, &samplerD3D11);
+        m_context->GSSetSamplers(slotIndex, 1, &samplerD3D11);
+        m_context->PSSetSamplers(slotIndex, 1, &samplerD3D11);
+    }
+
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -970,6 +994,411 @@ namespace GT
 
                 m_context->UpdateSubresource(bufferD3D11, 0, &box, data, static_cast<UINT>(sizeInBytes), 0);
             }
+        }
+    }
+
+
+
+    ///////////////////////////////////////////
+    // Textures
+
+    HTexture2D GPURenderingDevice_D3D11::CreateTexture2D(const Texture2DDesc &desc)
+    {
+        UINT bindFlagsD3D = 0;
+        if ((desc.usage & TextureUsage_ShaderResource) != 0)
+        {
+            bindFlagsD3D |= D3D11_BIND_SHADER_RESOURCE;
+        }
+        if ((desc.usage & TextureUsage_RenderTarget) != 0)
+        {
+            bindFlagsD3D |= D3D11_BIND_RENDER_TARGET;
+        }
+        if ((desc.usage & TextureUsage_DepthStencilTarget) != 0)
+        {
+            bindFlagsD3D |= D3D11_BIND_DEPTH_STENCIL;
+        }
+
+
+        D3D11_TEXTURE2D_DESC descD3D;
+        descD3D.Width              = desc.width;
+        descD3D.Height             = desc.height;
+        descD3D.MipLevels          = desc.levelCount;
+        descD3D.ArraySize          = desc.layerCount;
+        descD3D.Format             = g_D3DTextureFormatsTable[desc.format];
+        descD3D.SampleDesc.Count   = 1;
+        descD3D.SampleDesc.Quality = 0;
+        descD3D.Usage              = D3D11_USAGE_DEFAULT;       // <-- TODO: Might want to make this customizable.
+        descD3D.BindFlags          = bindFlagsD3D;
+        descD3D.CPUAccessFlags     = 0;
+        descD3D.MiscFlags          = 0;
+
+        ID3D11Texture2D* texture2DD3D11;
+        if (SUCCEEDED(m_device->CreateTexture2D(&descD3D, nullptr, &texture2DD3D11)))
+        {
+            return reinterpret_cast<HTexture2D>(texture2DD3D11);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    void GPURenderingDevice_D3D11::ReleaseTexture2D(HTexture2D hTexture)
+    {
+        if (hTexture != 0)
+        {
+            reinterpret_cast<ID3D11Texture2D*>(hTexture)->Release();
+        }
+    }
+
+    void GPURenderingDevice_D3D11::HoldTexture2D(HTexture2D hTexture)
+    {
+        if (hTexture != 0)
+        {
+            reinterpret_cast<ID3D11Texture2D*>(hTexture)->AddRef();
+        }
+    }
+
+    void GPURenderingDevice_D3D11::UpdateTexture2D(HTexture2D hTexture, int x, int y, unsigned int width, unsigned int height, unsigned int level, unsigned int layer, const void* srcData, unsigned int srcDataRowPitch)
+    {
+        auto texture2DD3D11 = reinterpret_cast<ID3D11Texture2D*>(hTexture);
+        assert(texture2DD3D11 != nullptr);
+        {
+            D3D11_TEXTURE2D_DESC descD3D;
+            texture2DD3D11->GetDesc(&descD3D);
+
+            D3D11_BOX box;
+            box.left   = x;
+            box.right  = x + width;
+            box.top    = y;
+            box.bottom = y + height;
+            box.front  = 0;
+            box.back   = 1;
+
+            m_context->UpdateSubresource(texture2DD3D11, level + (layer * descD3D.MipLevels), &box, srcData, srcDataRowPitch, 0);
+        }
+    }
+
+
+    HTextureView GPURenderingDevice_D3D11::CreateTextureViewFrom1D(HTexture1D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
+    {
+        D3D11_SHADER_RESOURCE_VIEW_DESC descD3D;
+        descD3D.Format = g_D3DTextureFormatsTable[format];
+
+        switch (type)
+        {
+        case TextureType_1D:
+            {
+                descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE1D;
+                descD3D.Texture1D.MipLevels       = numLevels;
+                descD3D.Texture1D.MostDetailedMip = minLevel;
+
+                break;
+            }
+
+        case TextureType_1D_Array:
+            {
+                descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE1DARRAY;
+                descD3D.Texture1DArray.MipLevels       = numLevels;
+                descD3D.Texture1DArray.MostDetailedMip = minLevel;
+                descD3D.Texture1DArray.ArraySize       = numLayers;
+                descD3D.Texture1DArray.FirstArraySlice = minLayer;
+
+                break;
+            }
+
+        default:
+            {
+                // Invalid format.
+                return 0;
+            }
+        }
+        
+
+        ID3D11ShaderResourceView* viewD3D11;
+        if (SUCCEEDED(m_device->CreateShaderResourceView(reinterpret_cast<ID3D11Texture1D*>(hTexture), &descD3D, &viewD3D11)))
+        {
+            return reinterpret_cast<HTextureView>(viewD3D11);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    HTextureView GPURenderingDevice_D3D11::CreateTextureViewFrom2D(HTexture2D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
+    {
+        D3D11_SHADER_RESOURCE_VIEW_DESC descD3D;
+        descD3D.Format = g_D3DTextureFormatsTable[format];
+
+        switch (type)
+        {
+        case TextureType_2D:
+            {
+                descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+                descD3D.Texture2D.MipLevels       = numLevels;
+                descD3D.Texture2D.MostDetailedMip = minLevel;
+
+                break;
+            }
+
+        case TextureType_2D_Array:
+            {
+                descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+                descD3D.Texture2D.MipLevels            = numLevels;
+                descD3D.Texture2D.MostDetailedMip      = minLevel;
+                descD3D.Texture2DArray.ArraySize       = numLayers;
+                descD3D.Texture2DArray.FirstArraySlice = minLayer;
+
+                break;
+            }
+
+        default:
+            {
+                // Invalid format.
+                return 0;
+            }
+        }
+        
+
+        ID3D11ShaderResourceView* viewD3D11;
+        if (SUCCEEDED(m_device->CreateShaderResourceView(reinterpret_cast<ID3D11Texture2D*>(hTexture), &descD3D, &viewD3D11)))
+        {
+            return reinterpret_cast<HTextureView>(viewD3D11);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    HTextureView GPURenderingDevice_D3D11::CreateTextureViewFrom2DMultisample(HTexture2DMultisample hTexture, TextureType type, TextureFormat format, unsigned int minLayer, unsigned int numLayers)
+    {
+        D3D11_SHADER_RESOURCE_VIEW_DESC descD3D;
+        descD3D.Format = g_D3DTextureFormatsTable[format];
+
+        switch (type)
+        {
+        case TextureType_2D_Multisample:
+            {
+                descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DMS;
+
+                break;
+            }
+
+        case TextureType_2D_Multisample_Array:
+            {
+                descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DMSARRAY;
+                descD3D.Texture2DMSArray.ArraySize       = numLayers;
+                descD3D.Texture2DMSArray.FirstArraySlice = minLayer;
+
+                break;
+            }
+
+        default:
+            {
+                // Invalid format.
+                return 0;
+            }
+        }
+        
+
+        ID3D11ShaderResourceView* viewD3D11;
+        if (SUCCEEDED(m_device->CreateShaderResourceView(reinterpret_cast<ID3D11Texture2D*>(hTexture), &descD3D, &viewD3D11)))
+        {
+            return reinterpret_cast<HTextureView>(viewD3D11);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    HTextureView GPURenderingDevice_D3D11::CreateTextureViewFrom3D(HTexture3D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels)
+    {
+        D3D11_SHADER_RESOURCE_VIEW_DESC descD3D;
+        descD3D.Format = g_D3DTextureFormatsTable[format];
+
+        switch (type)
+        {
+        case TextureType_3D:
+            {
+                descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE3D;
+                descD3D.Texture3D.MipLevels       = numLevels;
+                descD3D.Texture3D.MostDetailedMip = minLevel;
+
+                break;
+            }
+
+        default:
+            {
+                // Invalid format.
+                return 0;
+            }
+        }
+        
+
+        ID3D11ShaderResourceView* viewD3D11;
+        if (SUCCEEDED(m_device->CreateShaderResourceView(reinterpret_cast<ID3D11Texture3D*>(hTexture), &descD3D, &viewD3D11)))
+        {
+            return reinterpret_cast<HTextureView>(viewD3D11);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    HTextureView GPURenderingDevice_D3D11::CreateTextureViewFromCube(HTextureCube hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
+    {
+        D3D11_SHADER_RESOURCE_VIEW_DESC descD3D;
+        descD3D.Format = g_D3DTextureFormatsTable[format];
+
+        switch (type)
+        {
+        case TextureType_2D:
+            {
+                descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
+                descD3D.Texture2D.MipLevels       = numLevels;
+                descD3D.Texture2D.MostDetailedMip = minLevel;
+
+                break;
+            }
+
+        case TextureType_2D_Array:
+            {
+                descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
+                descD3D.Texture2D.MipLevels            = numLevels;
+                descD3D.Texture2D.MostDetailedMip      = minLevel;
+                descD3D.Texture2DArray.ArraySize       = numLayers;
+                descD3D.Texture2DArray.FirstArraySlice = minLayer;
+
+                break;
+            }
+
+        case TextureType_Cube:
+            {
+                descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBE;
+                descD3D.TextureCube.MipLevels       = numLevels;
+                descD3D.TextureCube.MostDetailedMip = minLevel;
+
+                break;
+            }
+
+        case TextureType_Cube_Array:
+            {
+                descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURECUBEARRAY;
+                descD3D.TextureCubeArray.MipLevels        = numLevels;
+                descD3D.TextureCubeArray.MostDetailedMip  = minLevel;
+                descD3D.TextureCubeArray.NumCubes         = numLayers / 6;
+                descD3D.TextureCubeArray.First2DArrayFace = minLayer;
+
+                break;
+            }
+
+        default:
+            {
+                // Invalid format.
+                return 0;
+            }
+        }
+        
+
+        ID3D11ShaderResourceView* viewD3D11;
+        if (SUCCEEDED(m_device->CreateShaderResourceView(reinterpret_cast<ID3D11Texture2D*>(hTexture), &descD3D, &viewD3D11)))
+        {
+            return reinterpret_cast<HTextureView>(viewD3D11);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    void GPURenderingDevice_D3D11::ReleaseTextureView(HTextureView hTextureView)
+    {
+        if (hTextureView != 0)
+        {
+            reinterpret_cast<ID3D11View*>(hTextureView)->Release();
+        }
+    }
+
+    void GPURenderingDevice_D3D11::HoldTextureView(HTextureView hTextureView)
+    {
+        if (hTextureView != 0)
+        {
+            reinterpret_cast<ID3D11View*>(hTextureView)->AddRef();
+        }
+    }
+
+
+
+    ///////////////////////////////////////////
+    // Samplers
+
+    HSampler GPURenderingDevice_D3D11::CreateSampler(const SamplerDesc &desc)
+    {
+        D3D11_FILTER filtersD3D[] =
+        {
+            D3D11_FILTER_MIN_MAG_MIP_POINT,
+            D3D11_FILTER_MIN_MAG_POINT_MIP_LINEAR,
+            D3D11_FILTER_MIN_POINT_MAG_LINEAR_MIP_POINT,
+            D3D11_FILTER_MIN_POINT_MAG_MIP_LINEAR,
+            D3D11_FILTER_MIN_LINEAR_MAG_MIP_POINT,
+            D3D11_FILTER_MIN_LINEAR_MAG_POINT_MIP_LINEAR,
+            D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT,
+            D3D11_FILTER_MIN_MAG_MIP_LINEAR,
+            D3D11_FILTER_ANISOTROPIC
+        };
+
+        D3D11_TEXTURE_ADDRESS_MODE addressModesD3D[] =
+        {
+            D3D11_TEXTURE_ADDRESS_WRAP,
+            D3D11_TEXTURE_ADDRESS_MIRROR,
+            D3D11_TEXTURE_ADDRESS_CLAMP,
+            D3D11_TEXTURE_ADDRESS_BORDER,
+            D3D11_TEXTURE_ADDRESS_MIRROR_ONCE
+        };
+
+        D3D11_SAMPLER_DESC descD3D;
+        ZeroMemory(&descD3D, sizeof(descD3D));
+        descD3D.Filter         = filtersD3D[desc.filter];
+        descD3D.AddressU       = addressModesD3D[desc.addressModeU];
+        descD3D.AddressV       = addressModesD3D[desc.addressModeV];
+        descD3D.AddressW       = addressModesD3D[desc.addressModeW];
+        descD3D.MipLODBias     = desc.mipLODBias;
+        descD3D.MaxAnisotropy  = desc.maxAnisotropy;
+        descD3D.BorderColor[0] = desc.borderColor[0];
+        descD3D.BorderColor[1] = desc.borderColor[1];
+        descD3D.BorderColor[2] = desc.borderColor[2];
+        descD3D.BorderColor[3] = desc.borderColor[3];
+        descD3D.MinLOD         = desc.minLOD;
+        descD3D.MaxLOD         = desc.maxLOD;
+
+        ID3D11SamplerState* samplerD3D11;
+        if (SUCCEEDED(m_device->CreateSamplerState(&descD3D, &samplerD3D11)))
+        {
+            return reinterpret_cast<HSampler>(samplerD3D11);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    void GPURenderingDevice_D3D11::ReleaseSampler(HSampler hSampler)
+    {
+        if (hSampler != 0)
+        {
+            reinterpret_cast<ID3D11SamplerState*>(hSampler)->Release();
+        }
+    }
+
+    void GPURenderingDevice_D3D11::HoldSampler(HSampler hSampler)
+    {
+        if (hSampler != 0)
+        {
+            reinterpret_cast<ID3D11SamplerState*>(hSampler)->AddRef();
         }
     }
 
