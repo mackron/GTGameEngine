@@ -109,6 +109,32 @@ namespace GT
             UnmapNamedBuffer(nullptr),
             FlushMappedNamedBufferRange(nullptr),
 
+
+            CreateTextures(nullptr),
+            DeleteTextures(nullptr),
+            BindTextureUnit(nullptr),
+            TextureStorage1D(nullptr),
+            TextureStorage2D(nullptr),
+            TextureStorage3D(nullptr),
+            TextureStorage2DMultisample(nullptr),
+            TextureSubImage1D(nullptr),
+            TextureSubImage2D(nullptr),
+            TextureSubImage3D(nullptr),
+            CompressedTextureSubImage1D(nullptr),
+            CompressedTextureSubImage2D(nullptr),
+            CompressedTextureSubImage3D(nullptr),
+            GenerateTextureMipmap(nullptr),
+
+            CreateSamplers(nullptr),
+            DeleteSamplers(nullptr),
+            BindSampler(nullptr),
+            SamplerParameterf(nullptr),
+            SamplerParameterfv(nullptr),
+            SamplerParameteri(nullptr),
+            SamplerParameteriv(nullptr),
+            SamplerParameterIiv(nullptr),
+            SamplerParameterIuiv(nullptr),
+
             DebugMessageControlARB(nullptr),
             DebugMessageInsertARB(nullptr),
             DebugMessageCallbackARB(nullptr)
@@ -537,7 +563,6 @@ namespace GT
             this->BindProgramPipeline      = reinterpret_cast<PFNGLBINDPROGRAMPIPELINEPROC     >(this->GetGLProcAddress("glBindProgramPipeline"));
             this->UseProgramStages         = reinterpret_cast<PFNGLUSEPROGRAMSTAGESPROC        >(this->GetGLProcAddress("glUseProgramStages"));
             this->CreateShaderProgramv     = reinterpret_cast<PFNGLCREATESHADERPROGRAMVPROC    >(this->GetGLProcAddress("glCreateShaderProgramv"));
-            
             this->CreateShader             = reinterpret_cast<PFNGLCREATESHADERPROC            >(this->GetGLProcAddress("glCreateShader"));
             this->DeleteShader             = reinterpret_cast<PFNGLDELETESHADERPROC            >(this->GetGLProcAddress("glDeleteShader"));
             this->ShaderSource             = reinterpret_cast<PFNGLSHADERSOURCEPROC            >(this->GetGLProcAddress("glShaderSource"));
@@ -578,6 +603,31 @@ namespace GT
             this->MapNamedBufferRange         = reinterpret_cast<PFNGLMAPNAMEDBUFFERRANGEPROC        >(this->GetGLProcAddress("glMapNamedBufferRange"));
             this->UnmapNamedBuffer            = reinterpret_cast<PFNGLUNMAPNAMEDBUFFERPROC           >(this->GetGLProcAddress("glUnmapNamedBuffer"));
             this->FlushMappedNamedBufferRange = reinterpret_cast<PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEPROC>(this->GetGLProcAddress("glFlushMappedNamedBufferRange"));
+
+            this->CreateTextures              = reinterpret_cast<PFNGLCREATETEXTURESPROC             >(this->GetGLProcAddress("glCreateTextures"));
+            this->DeleteTextures              = reinterpret_cast<PFNGLDELETETEXTURESPROC             >(this->GetGLProcAddress("glDeleteTextures"));
+            this->BindTextureUnit             = reinterpret_cast<PFNGLBINDTEXTUREUNITPROC            >(this->GetGLProcAddress("glBindTextureUnit"));
+            this->TextureStorage1D            = reinterpret_cast<PFNGLTEXTURESTORAGE1DPROC           >(this->GetGLProcAddress("glTextureStorage1D"));
+            this->TextureStorage2D            = reinterpret_cast<PFNGLTEXTURESTORAGE2DPROC           >(this->GetGLProcAddress("glTextureStorage2D"));
+            this->TextureStorage3D            = reinterpret_cast<PFNGLTEXTURESTORAGE3DPROC           >(this->GetGLProcAddress("glTextureStorage3D"));
+            this->TextureStorage2DMultisample = reinterpret_cast<PFNGLTEXTURESTORAGE2DMULTISAMPLEPROC>(this->GetGLProcAddress("glTextureStorage2DMultisample"));
+            this->TextureSubImage1D           = reinterpret_cast<PFNGLTEXTURESUBIMAGE1DPROC          >(this->GetGLProcAddress("glTextureSubImage1D"));
+            this->TextureSubImage2D           = reinterpret_cast<PFNGLTEXTURESUBIMAGE2DPROC          >(this->GetGLProcAddress("glTextureSubImage2D"));
+            this->TextureSubImage3D           = reinterpret_cast<PFNGLTEXTURESUBIMAGE3DPROC          >(this->GetGLProcAddress("glTextureSubImage3D"));
+            this->CompressedTextureSubImage1D = reinterpret_cast<PFNGLCOMPRESSEDTEXTURESUBIMAGE1DPROC>(this->GetGLProcAddress("glCompressedTextureSubImage1D"));
+            this->CompressedTextureSubImage2D = reinterpret_cast<PFNGLCOMPRESSEDTEXTURESUBIMAGE2DPROC>(this->GetGLProcAddress("glCompressedTextureSubImage2D"));
+            this->CompressedTextureSubImage3D = reinterpret_cast<PFNGLCOMPRESSEDTEXTURESUBIMAGE3DPROC>(this->GetGLProcAddress("glCompressedTextureSubImage3D"));
+            this->GenerateTextureMipmap       = reinterpret_cast<PFNGLGENERATETEXTUREMIPMAPPROC      >(this->GetGLProcAddress("glGenerateTextureMipmap"));
+
+            this->CreateSamplers              = reinterpret_cast<PFNGLCREATESAMPLERSPROC             >(this->GetGLProcAddress("glCreateSamplers"));
+            this->DeleteSamplers              = reinterpret_cast<PFNGLDELETESAMPLERSPROC             >(this->GetGLProcAddress("glDeleteSamplers"));
+            this->BindSampler                 = reinterpret_cast<PFNGLBINDSAMPLERPROC                >(this->GetGLProcAddress("glBindSampler"));
+            this->SamplerParameterf           = reinterpret_cast<PFNGLSAMPLERPARAMETERFPROC          >(this->GetGLProcAddress("glSamplerParameterf"));
+            this->SamplerParameterfv          = reinterpret_cast<PFNGLSAMPLERPARAMETERFVPROC         >(this->GetGLProcAddress("glSamplerParameterfv"));
+            this->SamplerParameteri           = reinterpret_cast<PFNGLSAMPLERPARAMETERIPROC          >(this->GetGLProcAddress("glSamplerParameteri"));
+            this->SamplerParameteriv          = reinterpret_cast<PFNGLSAMPLERPARAMETERIVPROC         >(this->GetGLProcAddress("glSamplerParameteriv"));
+            this->SamplerParameterIiv         = reinterpret_cast<PFNGLSAMPLERPARAMETERIIVPROC        >(this->GetGLProcAddress("glSamplerParameterIiv"));
+            this->SamplerParameterIuiv        = reinterpret_cast<PFNGLSAMPLERPARAMETERIUIVPROC       >(this->GetGLProcAddress("glSamplerParameterIuiv"));
 
 
             if (this->IsExtensionSupported("GL_ARB_debug_output"))

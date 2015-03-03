@@ -18,6 +18,8 @@
 #include <GTLib/Math.hpp>
 #include <GTLib/IO/cstdio.hpp>
 
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT   0x84FE
+
 namespace GT
 {
 #if _DEBUG
@@ -320,10 +322,28 @@ namespace GT
 
     void GPURenderingDevice_OpenGL4::BindTexture(HTextureView hTextureView, unsigned int slotIndex)
     {
+        auto textureViewGL = reinterpret_cast<TextureView_OpenGL4*>(hTextureView);
+        if (textureViewGL != nullptr)
+        {
+            m_gl.BindTextureUnit(slotIndex, textureViewGL->GetOpenGLObject());
+        }
+        else
+        {
+            m_gl.BindTextureUnit(slotIndex, 0);
+        }
     }
 
     void GPURenderingDevice_OpenGL4::BindSampler(HSampler hSampler, unsigned int slotIndex)
     {
+        auto samplerGL = reinterpret_cast<Sampler_OpenGL4*>(hSampler);
+        if (samplerGL != nullptr)
+        {
+            m_gl.BindSampler(slotIndex, samplerGL->GetOpenGLObject());
+        }
+        else
+        {
+            m_gl.BindSampler(slotIndex, 0);
+        }
     }
 
 
@@ -1069,7 +1089,11 @@ namespace GT
 
     HTexture2D GPURenderingDevice_OpenGL4::CreateTexture2D(const Texture2DDesc &desc)
     {
-        return 0;
+        GLuint objectGL;
+        m_gl.CreateTextures(GL_TEXTURE_2D_ARRAY, 1, &objectGL);
+        m_gl.TextureStorage3D(objectGL, desc.levelCount, g_GLTextureFormatsTable[desc.format], desc.width, desc.height, desc.levelCount);
+
+        return reinterpret_cast<HTexture2D>(new Texture_OpenGL4(objectGL));
     }
 
     void GPURenderingDevice_OpenGL4::ReleaseTexture2D(HTexture2D hTexture)
@@ -1125,15 +1149,108 @@ namespace GT
 
     HSampler GPURenderingDevice_OpenGL4::CreateSampler(const SamplerDesc &desc)
     {
-        return 0;
+        GLuint objectGL;
+        m_gl.CreateSamplers(1, &objectGL);
+
+
+        GLint minFiltersGL[] =
+        {
+            GL_NEAREST_MIPMAP_NEAREST,  // TextureFilter_Point_Point_Point
+            GL_NEAREST_MIPMAP_LINEAR,   // TextureFilter_Point_Point_Linear
+            GL_NEAREST_MIPMAP_NEAREST,  // TextureFilter_Point_Linear_Point
+            GL_NEAREST_MIPMAP_LINEAR,   // TextureFitler_Point_Linear_Linear
+            GL_LINEAR_MIPMAP_NEAREST,   // TextureFilter_Linear_Point_Point
+            GL_LINEAR_MIPMAP_LINEAR,    // TextureFilter_Linear_Point_Linear
+            GL_LINEAR_MIPMAP_NEAREST,   // TextureFilter_Linear_Linear_Point
+            GL_LINEAR_MIPMAP_LINEAR,    // TextureFilter_Linear_Linear_Linear
+            GL_LINEAR_MIPMAP_LINEAR     // TextureFilter_Anisotropic
+        };
+        
+        GLint magFiltersGL[] =
+        {
+            GL_NEAREST,                 // TextureFilter_Point_Point_Point
+            GL_NEAREST,                 // TextureFilter_Point_Point_Linear
+            GL_LINEAR,                  // TextureFilter_Point_Linear_Point
+            GL_LINEAR,                  // TextureFitler_Point_Linear_Linear
+            GL_NEAREST,                 // TextureFilter_Linear_Point_Point
+            GL_NEAREST,                 // TextureFilter_Linear_Point_Linear
+            GL_LINEAR,                  // TextureFilter_Linear_Linear_Point
+            GL_LINEAR,                  // TextureFilter_Linear_Linear_Linear
+            GL_LINEAR                   // TextureFilter_Anisotropic
+        };
+
+        GLint addressModesGL[] =
+        {
+            GL_REPEAT,                  // TextureAddressMode_Wrap
+            GL_MIRRORED_REPEAT,         // TextureAddressMode_Mirror
+            GL_CLAMP_TO_EDGE,           // TextureAddressMode_Clamp
+            GL_CLAMP_TO_BORDER,         // TextureAddressMode_Border
+            GL_MIRROR_CLAMP_TO_EDGE     // TextureAddressMode_Mirror_Once
+        };
+
+        // Filter.
+        m_gl.SamplerParameteri(objectGL, GL_TEXTURE_MIN_FILTER, minFiltersGL[desc.filter]);
+        m_gl.SamplerParameteri(objectGL, GL_TEXTURE_MAG_FILTER, magFiltersGL[desc.filter]);
+
+        // Address Modes.
+        m_gl.SamplerParameteri(objectGL, GL_TEXTURE_WRAP_S, addressModesGL[desc.addressModeU]);
+        m_gl.SamplerParameteri(objectGL, GL_TEXTURE_WRAP_T, addressModesGL[desc.addressModeV]);
+        m_gl.SamplerParameteri(objectGL, GL_TEXTURE_WRAP_R, addressModesGL[desc.addressModeW]);
+
+        // LOD Bias.
+        m_gl.SamplerParameterf(objectGL, GL_TEXTURE_LOD_BIAS, desc.mipLODBias);
+
+        // Anisotropy.
+        if (desc.maxAnisotropy > 0)
+        {
+            m_gl.SamplerParameterf(objectGL, GL_TEXTURE_MAX_ANISOTROPY_EXT, static_cast<GLfloat>(desc.maxAnisotropy));
+        }
+
+        // Border Colour.
+        m_gl.SamplerParameterfv(objectGL, GL_TEXTURE_BORDER_COLOR, desc.borderColor);
+
+        // LOD
+        m_gl.SamplerParameterf(objectGL, GL_TEXTURE_MIN_LOD, desc.minLOD);
+        m_gl.SamplerParameterf(objectGL, GL_TEXTURE_MAX_LOD, desc.maxLOD);
+
+
+        return reinterpret_cast<HSampler>(new Sampler_OpenGL4(objectGL));
     }
 
     void GPURenderingDevice_OpenGL4::ReleaseSampler(HSampler hSampler)
     {
+        auto samplerGL = reinterpret_cast<Sampler_OpenGL4*>(hSampler);
+        if (samplerGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                assert(samplerGL->GetReferenceCount() > 0);
+
+                CheckContextIsCurrent(m_gl, m_currentDC);
+
+                if (samplerGL->DecrementReferenceCount() == 0)
+                {
+                    GLuint objectGL = samplerGL->GetOpenGLObject();
+                    m_gl.DeleteSamplers(1, &objectGL);
+
+                    delete samplerGL;
+                }
+            }
+            m_referenceCountLock.Unlock();
+        }
     }
 
     void GPURenderingDevice_OpenGL4::HoldSampler(HSampler hSampler)
     {
+        auto samplerGL = reinterpret_cast<Sampler_OpenGL4*>(hSampler);
+        if (samplerGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                samplerGL->IncrementReferenceCount();
+            }
+            m_referenceCountLock.Unlock();
+        }
     }
 
 

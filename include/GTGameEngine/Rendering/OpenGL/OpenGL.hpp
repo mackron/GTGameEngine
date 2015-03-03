@@ -24,6 +24,16 @@ typedef BOOL  (* PFNWGLSHARELISTSPROC)          (HGLRC hglrc1, HGLRC hglrc2);
 typedef HDC   (* PFNWGLGETCURRENTDCPROC)        ();
 #endif
 
+#define GL_COMPRESSED_RGB_S3TC_DXT1_EXT                   0x83F0
+#define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT                  0x83F1
+#define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT                  0x83F2
+#define GL_COMPRESSED_RGBA_S3TC_DXT5_EXT                  0x83F3
+
+#define GL_COMPRESSED_SRGB_S3TC_DXT1_EXT                  0x8C4C
+#define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT            0x8C4D
+#define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT            0x8C4E
+#define GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT            0x8C4F
+
 namespace GT
 {
     /// Class representing an OpenGL context.
@@ -212,23 +222,22 @@ namespace GT
         PFNGLBINDPROGRAMPIPELINEPROC    BindProgramPipeline;
         PFNGLUSEPROGRAMSTAGESPROC       UseProgramStages;
         PFNGLCREATESHADERPROGRAMVPROC   CreateShaderProgramv;
-
-        PFNGLCREATESHADERPROC        CreateShader;
-        PFNGLDELETESHADERPROC        DeleteShader;
-        PFNGLSHADERSOURCEPROC        ShaderSource;
-        PFNGLSHADERBINARYPROC        ShaderBinary;
-        PFNGLCOMPILESHADERPROC       CompileShader;
-        PFNGLGETSHADERIVPROC         GetShaderiv;
-        PFNGLGETSHADERINFOLOGPROC    GetShaderInfoLog;
-        PFNGLCREATEPROGRAMPROC       CreateProgram;
-        PFNGLDELETEPROGRAMPROC       DeleteProgram;
-        PFNGLATTACHSHADERPROC        AttachShader;
-        PFNGLDETACHSHADERPROC        DetachShader;
-        PFNGLLINKPROGRAMPROC         LinkProgram;
-        PFNGLGETPROGRAMIVPROC        GetProgramiv;
-        PFNGLGETPROGRAMINFOLOGPROC   GetProgramInfoLog;
-        PFNGLUSEPROGRAMPROC          UseProgram;
-        PFNGLGETATTRIBLOCATIONPROC   GetAttribLocation;
+        PFNGLCREATESHADERPROC           CreateShader;
+        PFNGLDELETESHADERPROC           DeleteShader;
+        PFNGLSHADERSOURCEPROC           ShaderSource;
+        PFNGLSHADERBINARYPROC           ShaderBinary;
+        PFNGLCOMPILESHADERPROC          CompileShader;
+        PFNGLGETSHADERIVPROC            GetShaderiv;
+        PFNGLGETSHADERINFOLOGPROC       GetShaderInfoLog;
+        PFNGLCREATEPROGRAMPROC          CreateProgram;
+        PFNGLDELETEPROGRAMPROC          DeleteProgram;
+        PFNGLATTACHSHADERPROC           AttachShader;
+        PFNGLDETACHSHADERPROC           DetachShader;
+        PFNGLLINKPROGRAMPROC            LinkProgram;
+        PFNGLGETPROGRAMIVPROC           GetProgramiv;
+        PFNGLGETPROGRAMINFOLOGPROC      GetProgramInfoLog;
+        PFNGLUSEPROGRAMPROC             UseProgram;
+        PFNGLGETATTRIBLOCATIONPROC      GetAttribLocation;
 
         // Vertex Array Objects.
         PFNGLCREATEVERTEXARRAYSPROC          CreateVertexArrays;
@@ -255,6 +264,32 @@ namespace GT
         PFNGLUNMAPNAMEDBUFFERPROC            UnmapNamedBuffer;
         PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEPROC FlushMappedNamedBufferRange;
 
+        // Textures
+        PFNGLCREATETEXTURESPROC              CreateTextures;
+        PFNGLDELETETEXTURESPROC              DeleteTextures;
+        PFNGLBINDTEXTUREUNITPROC             BindTextureUnit;
+        PFNGLTEXTURESTORAGE1DPROC            TextureStorage1D;
+        PFNGLTEXTURESTORAGE2DPROC            TextureStorage2D;
+        PFNGLTEXTURESTORAGE3DPROC            TextureStorage3D;
+        PFNGLTEXTURESTORAGE2DMULTISAMPLEPROC TextureStorage2DMultisample;
+        PFNGLTEXTURESUBIMAGE1DPROC           TextureSubImage1D;
+        PFNGLTEXTURESUBIMAGE2DPROC           TextureSubImage2D;
+        PFNGLTEXTURESUBIMAGE3DPROC           TextureSubImage3D;
+        PFNGLCOMPRESSEDTEXTURESUBIMAGE1DPROC CompressedTextureSubImage1D;
+        PFNGLCOMPRESSEDTEXTURESUBIMAGE2DPROC CompressedTextureSubImage2D;
+        PFNGLCOMPRESSEDTEXTURESUBIMAGE3DPROC CompressedTextureSubImage3D;
+        PFNGLGENERATETEXTUREMIPMAPPROC       GenerateTextureMipmap;
+
+        // Samplers
+        PFNGLCREATESAMPLERSPROC              CreateSamplers;
+        PFNGLDELETESAMPLERSPROC              DeleteSamplers;
+        PFNGLBINDSAMPLERPROC                 BindSampler;
+        PFNGLSAMPLERPARAMETERFPROC           SamplerParameterf;
+        PFNGLSAMPLERPARAMETERFVPROC          SamplerParameterfv;
+        PFNGLSAMPLERPARAMETERIPROC           SamplerParameteri;
+        PFNGLSAMPLERPARAMETERIVPROC          SamplerParameteriv;
+        PFNGLSAMPLERPARAMETERIIVPROC         SamplerParameterIiv;
+        PFNGLSAMPLERPARAMETERIUIVPROC        SamplerParameterIuiv;
 
         // GL_ARB_debug_output
         PFNGLDEBUGMESSAGECONTROLARBPROC  DebugMessageControlARB;
