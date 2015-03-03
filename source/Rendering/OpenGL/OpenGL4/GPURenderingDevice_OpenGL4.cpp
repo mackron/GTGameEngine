@@ -87,7 +87,7 @@ namespace GT
 
 
     GPURenderingDevice_OpenGL4::GPURenderingDevice_OpenGL4(const GPURenderingDeviceInfo &info)
-        : GPURenderingDevice_Gen2(info),
+        : GPURenderingDevice(info),
           m_referenceCountLock(),
           m_gl(),
 #if defined(GT_PLATFORM_WINDOWS)

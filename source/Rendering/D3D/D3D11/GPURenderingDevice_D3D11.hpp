@@ -12,14 +12,14 @@
 #include <GTLib/Threading/Mutex.hpp>
 #include <d3d11.h>
 #include <d3dcompiler.h>
-#include <GTGameEngine/GPURenderingDevice_Gen2.hpp>
+#include <GTGameEngine/GPURenderingDevice.hpp>
 
 typedef HRESULT (WINAPI *pD3DReflect) (LPCVOID pSrcData, SIZE_T SrcDataSize, REFIID pInterface, void** ppReflector);
 
 namespace GT
 {
     /// GPU rendering device class using the D3D11 API.
-    class GPURenderingDevice_D3D11 : public GPURenderingDevice_Gen2
+    class GPURenderingDevice_D3D11 : public GPURenderingDevice
     {
     public:
 

@@ -59,25 +59,6 @@ namespace GT
     //////////////////////////////////////////////////
     // ShaderProgram_OpenGL4
 
-#if 0
-    /// OpenGL 2.1 shader program.
-    class ShaderProgram_OpenGL4 : public ReferenceCountedObject, public OpenGLObject
-    {
-    public:
-
-        /// Constructor.
-        ShaderProgram_OpenGL4(GLuint objectGL)
-            : ReferenceCountedObject(), OpenGLObject(objectGL)
-        {
-        }
-
-
-    private:    // No copying.
-        ShaderProgram_OpenGL4(const ShaderProgram_OpenGL4 &);
-        ShaderProgram_OpenGL4 & operator=(const ShaderProgram_OpenGL4 &);
-    };
-#endif
-
     struct ShaderProgram_OpenGL4
     {
         ShaderProgram_OpenGL4(HVertexShader hVertexShaderIn, HFragmentShader hFragmentShaderIn)

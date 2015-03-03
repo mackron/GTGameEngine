@@ -6,7 +6,7 @@
 #include <GTGameEngine/Config.hpp>
 
 #if defined(GT_GE_BUILD_OPENGL4)
-#include <GTGameEngine/GPURenderingDevice_Gen2.hpp>
+#include <GTGameEngine/GPURenderingDevice.hpp>
 #include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
 
 #include <GTLib/Threading/Mutex.hpp>
@@ -15,7 +15,7 @@
 namespace GT
 {
     /// OpenGL 4.x implementation of the GPU rendering device.
-    class GPURenderingDevice_OpenGL4 : public GPURenderingDevice_Gen2
+    class GPURenderingDevice_OpenGL4 : public GPURenderingDevice
     {
         public:
 

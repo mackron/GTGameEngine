@@ -15,7 +15,7 @@ namespace GT
     const GUID GPURenderingDevice_D3D11::CustomDataGUID_ShaderBinary = {0xD74A88E1, 0xDA90, 0x05AA, {0xDD, 0x01, 0xEA, 0xD3, 0x31, 0xB3, 0xC2, 0x01}};
 
     GPURenderingDevice_D3D11::GPURenderingDevice_D3D11(const GPURenderingDeviceInfo &info)
-        : GPURenderingDevice_Gen2(info),
+        : GPURenderingDevice(info),
           m_hD3D11(NULL),
           m_hD3DCompiler(NULL),
           m_device(nullptr),
