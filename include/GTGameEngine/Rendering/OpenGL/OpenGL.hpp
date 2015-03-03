@@ -207,6 +207,12 @@ namespace GT
         PFNGLDRAWELEMENTSPROC        DrawElements;
 
         // Shaders.
+        PFNGLCREATEPROGRAMPIPELINESPROC CreateProgramPipelines;
+        PFNGLDELETEPROGRAMPIPELINESPROC DeleteProgramPipelines;
+        PFNGLBINDPROGRAMPIPELINEPROC    BindProgramPipeline;
+        PFNGLUSEPROGRAMSTAGESPROC       UseProgramStages;
+        PFNGLCREATESHADERPROGRAMVPROC   CreateShaderProgramv;
+
         PFNGLCREATESHADERPROC        CreateShader;
         PFNGLDELETESHADERPROC        DeleteShader;
         PFNGLSHADERSOURCEPROC        ShaderSource;

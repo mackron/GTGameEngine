@@ -59,6 +59,7 @@ namespace GT
     //////////////////////////////////////////////////
     // ShaderProgram_OpenGL4
 
+#if 0
     /// OpenGL 2.1 shader program.
     class ShaderProgram_OpenGL4 : public ReferenceCountedObject, public OpenGLObject
     {
@@ -75,7 +76,46 @@ namespace GT
         ShaderProgram_OpenGL4(const ShaderProgram_OpenGL4 &);
         ShaderProgram_OpenGL4 & operator=(const ShaderProgram_OpenGL4 &);
     };
+#endif
 
+    struct ShaderProgram_OpenGL4
+    {
+        ShaderProgram_OpenGL4(HVertexShader hVertexShaderIn, HFragmentShader hFragmentShaderIn)
+            : hVertexShader(hVertexShaderIn), hFragmentShader(hFragmentShaderIn)
+        {
+        }
+
+        HVertexShader   hVertexShader;
+        HFragmentShader hFragmentShader;
+    };
+
+
+
+    //////////////////////////////////////////////////
+    // Shader_OpenGL4
+
+    /// OpenGL 4 shader program.
+    class Shader_OpenGL4 : public ReferenceCountedObject, public OpenGLObject
+    {
+    public:
+
+        /// Constructor.
+        Shader_OpenGL4(GLuint objectGL, GLenum typeGL)
+            : ReferenceCountedObject(), OpenGLObject(objectGL),
+              m_typeGL(typeGL)
+        {
+        }
+
+
+        /// Retrieves the shader type.
+        GLenum GetOpenGLShaderType() const { return m_typeGL; }
+
+
+    private:
+
+        /// The shader type as an OpenGL type.
+        GLenum m_typeGL;
+    };
 
 
 
@@ -109,11 +149,6 @@ namespace GT
 
         /// The size of the buffer in bytes. This is needed in order to know how many bytes to specify when mapping the entire buffer.
         GLsizeiptr m_sizeInBytes;
-
-
-    private:    // No copying.
-        Buffer_OpenGL4(const Buffer_OpenGL4 &);
-        Buffer_OpenGL4 & operator=(const Buffer_OpenGL4 &);
     };
 
 

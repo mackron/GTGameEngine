@@ -18,6 +18,7 @@ namespace GT
     //////////////////////////////////////////
     // Object Handle Types
 
+    typedef size_t HGeneric;        //< A generic handle whose purpose is to cast to another handle type.
     typedef size_t HBuffer;
     typedef size_t HInputLayout;
     typedef size_t HVertexShader;

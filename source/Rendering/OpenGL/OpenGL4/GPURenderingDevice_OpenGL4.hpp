@@ -6,7 +6,7 @@
 #include <GTGameEngine/Config.hpp>
 
 #if defined(GT_GE_BUILD_OPENGL4)
-#include <GTGameEngine/GPURenderingDevice_Gen1.hpp>
+#include <GTGameEngine/GPURenderingDevice_Gen2.hpp>
 #include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
 
 #include <GTLib/Threading/Mutex.hpp>
@@ -15,7 +15,7 @@
 namespace GT
 {
     /// OpenGL 4.x implementation of the GPU rendering device.
-    class GPURenderingDevice_OpenGL4 : public GPURenderingDevice_Gen1
+    class GPURenderingDevice_OpenGL4 : public GPURenderingDevice_Gen2
     {
         public:
 
@@ -172,6 +172,26 @@ namespace GT
         void HoldShaderProgram(HShaderProgram hShaderProgram);
 
 
+        /// @copydoc GPURenderingDevice_Gen2::CreateVertexShader()
+        HVertexShader CreateVertexShader(const void* shaderData, size_t shaderDataSize);
+
+        /// @copydoc GPURenderingDevice_Gen2::ReleaseVertexShader()
+        void ReleaseVertexShader(HVertexShader hShader);
+
+        /// @copydoc GPURenderingDevice_Gen2::HoldVertexShader()
+        void HoldVertexShader(HVertexShader hShader);
+
+
+        /// @copydoc GPURenderingDevice_Gen2::CreateFragmentShader()
+        HFragmentShader CreateFragmentShader(const void* shaderData, size_t shaderDataSize);
+
+        /// @copydoc GPURenderingDevice_Gen2::ReleaseFragmentShader()
+        void ReleaseFragmentShader(HFragmentShader hShader);
+
+        /// @copydoc GPURenderingDevice_Gen2::HoldFragmentShader()
+        void HoldFragmentShader(HFragmentShader hShader);
+
+
 
         ////////////////////////////////////////////
         // Buffers
@@ -260,9 +280,34 @@ namespace GT
         void UpdateSlotVertexAttributePointers(unsigned int slotIndex);
 
 
+        /// Helper for compiling a shader of the given type.
+        ///
+        /// @param shaderBianry            [in] A pointer to the shader binary.
+        /// @param shaderBinarySizeInBytes [in] The size in bytes of the shader binary.
+        /// @param shaderType              [in] The expected shader type.
+        ///
+        /// @remarks
+        ///     A generic handle that can be cast to a HVertexShader, HFragmentShader, etc.
+        ///     @par
+        ///     If an error occurs, 0 is returned.
+        ///     @par
+        ///     If the shader type specified inside the shader binary does not equal \c shaderType, 0 is returned.
+        HGeneric CreateShader(const void* shaderBinary, size_t shaderBinarySizeInBytes, ShaderType type);
+
+        /// Helper for releasing the given shader object.
+        ///
+        /// @param hShader [in] A handle to the shader object to delete.
+        void ReleaseShader(HGeneric hShader);
+
+        /// Helper for holding the given shader object.
+        ///
+        /// @param hShader [in] A handle to the shader object to hold.
+        void HoldShader(HGeneric hShader);
+
+
         /// Helper for compiling a GLSL shader.
         ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
-        ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &messagesOut, GLuint &objectGLOut);
+        ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &messagesOut, GLuint &objectGLOut, GLenum &typeGLOut);
 
 
     private:
@@ -311,6 +356,9 @@ namespace GT
 
         /// The global VAO object.
         GLuint m_globalVAO;
+
+        /// The global shader pipeline object.
+        GLuint m_globalShaderPipeline;
 
 
         struct IAVertexBufferSlot

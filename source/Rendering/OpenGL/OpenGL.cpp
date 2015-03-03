@@ -64,6 +64,11 @@ namespace GT
             Clear(nullptr),
             DrawElements(nullptr),
 
+            CreateProgramPipelines(nullptr),
+            DeleteProgramPipelines(nullptr),
+            BindProgramPipeline(nullptr),
+            UseProgramStages(nullptr),
+            CreateShaderProgramv(nullptr),
             CreateShader(nullptr),
             DeleteShader(nullptr),
             ShaderSource(nullptr),
@@ -526,6 +531,13 @@ namespace GT
             this->Clear                    = reinterpret_cast<PFNGLCLEARPROC                   >(this->GetGLProcAddress("glClear"));
             this->DrawElements             = reinterpret_cast<PFNGLDRAWELEMENTSPROC            >(this->GetGLProcAddress("glDrawElements"));
 
+
+            this->CreateProgramPipelines   = reinterpret_cast<PFNGLCREATEPROGRAMPIPELINESPROC  >(this->GetGLProcAddress("glCreateProgramPipelines"));
+            this->DeleteProgramPipelines   = reinterpret_cast<PFNGLDELETEPROGRAMPIPELINESPROC  >(this->GetGLProcAddress("glDeleteProgramPipelines"));
+            this->BindProgramPipeline      = reinterpret_cast<PFNGLBINDPROGRAMPIPELINEPROC     >(this->GetGLProcAddress("glBindProgramPipeline"));
+            this->UseProgramStages         = reinterpret_cast<PFNGLUSEPROGRAMSTAGESPROC        >(this->GetGLProcAddress("glUseProgramStages"));
+            this->CreateShaderProgramv     = reinterpret_cast<PFNGLCREATESHADERPROGRAMVPROC    >(this->GetGLProcAddress("glCreateShaderProgramv"));
+            
             this->CreateShader             = reinterpret_cast<PFNGLCREATESHADERPROC            >(this->GetGLProcAddress("glCreateShader"));
             this->DeleteShader             = reinterpret_cast<PFNGLDELETESHADERPROC            >(this->GetGLProcAddress("glDeleteShader"));
             this->ShaderSource             = reinterpret_cast<PFNGLSHADERSOURCEPROC            >(this->GetGLProcAddress("glShaderSource"));
@@ -542,6 +554,7 @@ namespace GT
             this->GetProgramInfoLog        = reinterpret_cast<PFNGLGETPROGRAMINFOLOGPROC       >(this->GetGLProcAddress("glGetProgramInfoLog"));
             this->UseProgram               = reinterpret_cast<PFNGLUSEPROGRAMPROC              >(this->GetGLProcAddress("glUseProgram"));
             this->GetAttribLocation        = reinterpret_cast<PFNGLGETATTRIBLOCATIONPROC       >(this->GetGLProcAddress("glGetAttribLocation"));
+
 
             this->CreateVertexArrays          = reinterpret_cast<PFNGLCREATEVERTEXARRAYSPROC         >(this->GetGLProcAddress("glCreateVertexArrays"));
             this->DeleteVertexArrays          = reinterpret_cast<PFNGLDELETEVERTEXARRAYSPROC         >(this->GetGLProcAddress("glDeleteVertexArrays"));
