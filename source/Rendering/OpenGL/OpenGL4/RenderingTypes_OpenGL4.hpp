@@ -57,22 +57,6 @@ namespace GT
 
 
     //////////////////////////////////////////////////
-    // ShaderProgram_OpenGL4
-
-    struct ShaderProgram_OpenGL4
-    {
-        ShaderProgram_OpenGL4(HVertexShader hVertexShaderIn, HFragmentShader hFragmentShaderIn)
-            : hVertexShader(hVertexShaderIn), hFragmentShader(hFragmentShaderIn)
-        {
-        }
-
-        HVertexShader   hVertexShader;
-        HFragmentShader hFragmentShader;
-    };
-
-
-
-    //////////////////////////////////////////////////
     // Shader_OpenGL4
 
     /// OpenGL 4 shader program.

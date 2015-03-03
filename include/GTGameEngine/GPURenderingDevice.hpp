@@ -105,11 +105,6 @@ namespace GT
         /////////////////////////////////////////////
         // State
 
-        /// Sets the current shader program.
-        ///
-        /// @param hShaderProgram [in] A reference to the shader program object to make current.
-        virtual void SetCurrentShaderProgram(HShaderProgram hShaderProgram) = 0;
-
         /// Binds the given texture view to the given slot.
         ///
         /// @param hTextureView [in] A handle to the texture view to bind to the given slot.
@@ -202,6 +197,26 @@ namespace GT
         /// @param hState     [in] The depth/stencil state to make current on the output merger state.
         /// @param stencilRef [in] Reference value that is bitwise-and when performing the depth/stencil test.
         virtual void OMSetDepthStencilState(HDepthStencilState hState, unsigned int stencilRef) = 0;
+        
+
+
+        /////////////////////////////////////////////
+        // Vertex Shader Stage
+
+        /// Sets the vertex shader.
+        ///
+        /// @param hShader [in] The vertex shader to make current.
+        virtual void VSSetShader(HVertexShader hShader) = 0;
+
+
+
+        /////////////////////////////////////////////
+        // Fragment Shader Stage
+
+        /// Sets the fragment shader.
+        ///
+        /// @param hShader [in] The fragment shader to make current.
+        virtual void FSSetShader(HFragmentShader hShader) = 0;
 
 
 
@@ -274,12 +289,12 @@ namespace GT
 
         /// Creates a vertex input layout object that is used to describe the format of the input data for a vertex shader.
         ///
-        /// @param hShaderProgram  [in] A pointer to the shader program to create the layout object from.
+        /// @param hVertexShader   [in] A pointer to the shader program to create the layout object from.
         /// @param attribDesc      [in] An array of GPUVertexInputAttribLayoutDesc objects that describes each input variable.
         /// @param attribDescCount [in] The number of items in \c attribDesc.
         ///
         /// @return A handle to the new input layout object.
-        virtual HInputLayout CreateInputLayout(HShaderProgram hShaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount) = 0;
+        virtual HInputLayout CreateInputLayout(HVertexShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount) = 0;
 
         /// Decrements the internal reference counter fo the given depth/stencil state and deletes the object if it hits 0.
         ///
@@ -391,47 +406,6 @@ namespace GT
         /// @remarks
         ///     This is thread-safe.
         virtual void HoldFragmentShader(HFragmentShader hShader) = 0;
-
-
-        /// Creates a shader program from a vertex and fragment shader.
-        ///
-        /// @param vertexShaderData       [in]  A pointer to the buffer containing the binary code of the vertex shader as returned from CompileShader().
-        /// @param vertexShaderDataSize   [in]  The size in bytes of the vertex shader data.
-        /// @param fragmentShaderData     [in]  A pointer to the buffer containing the binary code of the fragment/pixel shader as returned from CompileShader().
-        /// @param fragmentShaderDataSize [in]  The size in bytes of the fragment shader data.
-        /// @param messageOut             [out] A reference to the buffer that will receive any compilation/linking messages.
-        ///
-        /// @return A handle to the new shader program, or 0 if an error occurs.
-        ///
-        /// @remarks
-        ///     The difference between a shader and a shader program is that a shader program is a monolithic object that is made up of a shader that
-        ///     covers the vertex and fragment pipeline.
-        ///     @par
-        ///     The concept of a shader program exists only for compatibility with the OpenGL 2.1 API which does not support separate shader objects. Therefore,
-        ///     it does not support anything other than vertex and fragment shaders.
-        ///     @par
-        ///     Generation 2 APIs which support separate shader objects do not need to ever use shader programs, however it can still be useful in order to
-        ///     keep rendering operations consistent.
-        virtual HShaderProgram CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut) = 0;
-
-        /// Decrements the reference count of the given shader program and deletes the internal object if it hits 0.
-        ///
-        /// @param hShaderProgram [in] A handle to the shader program to release.
-        ///
-        /// @remarks
-        ///     This is thread-safe.
-        ///     @par
-        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
-        ///     synchronization.
-        virtual void ReleaseShaderProgram(HShaderProgram hShaderProgram) = 0;
-
-        /// Increments the internal reference counter of the given shader program object.
-        ///
-        /// @param hShaderProgram [in] A handle to the buffer object to hold.
-        ///
-        /// @remarks
-        ///     This is thread safe.
-        virtual void HoldShaderProgram(HShaderProgram hShaderProgram) = 0;
 
 
 

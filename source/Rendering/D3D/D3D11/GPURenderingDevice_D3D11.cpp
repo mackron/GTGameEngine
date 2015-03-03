@@ -228,25 +228,6 @@ namespace GT
     ///////////////////////////////////////////
     // State
 
-    void GPURenderingDevice_D3D11::SetCurrentShaderProgram(HShaderProgram hShaderProgram)
-    {
-        // All we do is set the vertex and fragment shaders.
-        auto shaderProgramD3D = reinterpret_cast<ShaderProgram_D3D11*>(hShaderProgram);
-        if (shaderProgramD3D != nullptr)
-        {
-            assert(shaderProgramD3D->hVertexShader   != 0);
-            assert(shaderProgramD3D->hFragmentShader != 0);
-
-            m_context->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(shaderProgramD3D->hVertexShader),   nullptr, 0);
-            m_context->PSSetShader(reinterpret_cast<ID3D11PixelShader* >(shaderProgramD3D->hFragmentShader), nullptr, 0);
-        }
-        else
-        {
-            m_context->VSSetShader(nullptr, nullptr, 0);
-            m_context->PSSetShader(nullptr, nullptr, 0);
-        }
-    }
-
     void GPURenderingDevice_D3D11::BindTexture(HTextureView hTextureView, unsigned int slotIndex)
     {
         // Bind the texture on all stages.
@@ -366,6 +347,24 @@ namespace GT
         m_context->OMSetDepthStencilState(reinterpret_cast<ID3D11DepthStencilState*>(hState), stencilRef);
     }
 
+
+
+    /////////////////////////////////////////////
+    // Vertex Shader Stage
+
+    void GPURenderingDevice_D3D11::VSSetShader(HVertexShader hShader)
+    {
+        m_context->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(hShader), nullptr, 0);
+    }
+
+
+    /////////////////////////////////////////////
+    // Fragment Shader Stage
+
+    void GPURenderingDevice_D3D11::FSSetShader(HFragmentShader hShader)
+    {
+        m_context->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(hShader), nullptr, 0);
+    }
 
 
 
@@ -513,22 +512,20 @@ namespace GT
     ////////////////////////////////////////////
     // Input Layout
 
-    HInputLayout GPURenderingDevice_D3D11::CreateInputLayout(HShaderProgram hShaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
+    HInputLayout GPURenderingDevice_D3D11::CreateInputLayout(HVertexShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
     {
-        auto shaderProgramD3D = reinterpret_cast<ShaderProgram_D3D11*>(hShaderProgram);
-        if (shaderProgramD3D != nullptr)
+        auto shaderD3D11 = reinterpret_cast<ID3D11VertexShader*>(hVertexShader);
+        if (shaderD3D11 != nullptr)
         {
-            assert(shaderProgramD3D->hVertexShader != 0);
-
             UINT vertexShaderDataSize = 0;
-            reinterpret_cast<ID3D11VertexShader*>(shaderProgramD3D->hVertexShader)->GetPrivateData(CustomDataGUID_ShaderBinary, &vertexShaderDataSize, nullptr);
+            shaderD3D11->GetPrivateData(CustomDataGUID_ShaderBinary, &vertexShaderDataSize, nullptr);
 
             if (vertexShaderDataSize > 0)
             {
                 void* vertexShaderData = malloc(vertexShaderDataSize);
                 if (vertexShaderData != nullptr)
                 {
-                    reinterpret_cast<ID3D11VertexShader*>(shaderProgramD3D->hVertexShader)->GetPrivateData(CustomDataGUID_ShaderBinary, &vertexShaderDataSize, vertexShaderData);
+                    shaderD3D11->GetPrivateData(CustomDataGUID_ShaderBinary, &vertexShaderDataSize, vertexShaderData);
 
                     auto attribDescD3D = new D3D11_INPUT_ELEMENT_DESC[attribDescCount];
                     assert(attribDescD3D != nullptr);
@@ -712,62 +709,6 @@ namespace GT
     bool GPURenderingDevice_D3D11::IsShaderLanguageSupported(ShaderLanguage language) const
     {
         return (language >= ShaderLanguage_HLSL_50 && language <= ShaderLanguage_HLSL_50);
-    }
-
-
-    HShaderProgram GPURenderingDevice_D3D11::CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut)
-    {
-        (void)messagesOut;
-
-
-        HVertexShader vertexShader = this->CreateVertexShader(vertexShaderData, vertexShaderDataSize);
-        if (vertexShader != 0)
-        {
-            HFragmentShader fragmentShader = this->CreateFragmentShader(fragmentShaderData, fragmentShaderDataSize);
-            if (fragmentShader != 0)
-            {
-                return reinterpret_cast<HShaderProgram>(new ShaderProgram_D3D11(vertexShader, fragmentShader));
-            }
-            else
-            {
-                this->ReleaseVertexShader(vertexShader);
-            }
-        }
-
-        return 0;
-    }
-
-    void GPURenderingDevice_D3D11::ReleaseShaderProgram(HShaderProgram hShaderProgram)
-    {
-        auto shaderProgramD3D = reinterpret_cast<ShaderProgram_D3D11*>(hShaderProgram);
-        if (shaderProgramD3D != nullptr)
-        {
-            assert(shaderProgramD3D->hVertexShader   != 0);
-            assert(shaderProgramD3D->hFragmentShader != 0);
-
-            ULONG vertexRefCount = reinterpret_cast<ID3D11VertexShader*>(shaderProgramD3D->hVertexShader)->Release();
-            ULONG pixelRefCount  = reinterpret_cast<ID3D11PixelShader*>(shaderProgramD3D->hFragmentShader)->Release();
-
-            assert(vertexRefCount == pixelRefCount);
-
-            if (vertexRefCount == 0)
-            {
-                delete shaderProgramD3D;
-            }
-        }
-    }
-
-    void GPURenderingDevice_D3D11::HoldShaderProgram(HShaderProgram hShaderProgram)
-    {
-        auto shaderProgramD3D = reinterpret_cast<ShaderProgram_D3D11*>(hShaderProgram);
-        if (shaderProgramD3D != nullptr)
-        {
-            assert(shaderProgramD3D->hVertexShader   != 0);
-            assert(shaderProgramD3D->hFragmentShader != 0);
-
-            reinterpret_cast<ID3D11VertexShader*>(shaderProgramD3D->hVertexShader)->AddRef();
-            reinterpret_cast<ID3D11PixelShader*>(shaderProgramD3D->hFragmentShader)->AddRef();
-        }
     }
 
 

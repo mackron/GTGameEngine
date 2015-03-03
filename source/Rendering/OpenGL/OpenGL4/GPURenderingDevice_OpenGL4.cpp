@@ -318,24 +318,6 @@ namespace GT
     ///////////////////////////////////////////
     // State
 
-    void GPURenderingDevice_OpenGL4::SetCurrentShaderProgram(HShaderProgram hShaderProgram)
-    {
-        CheckContextIsCurrent(m_gl, m_currentDC);
-
-        auto shaderProgramGL = reinterpret_cast<ShaderProgram_OpenGL4*>(hShaderProgram);
-        if (shaderProgramGL != nullptr)
-        {
-            m_gl.UseProgramStages(m_globalVAO, GL_VERTEX_SHADER_BIT,   reinterpret_cast<Shader_OpenGL4*>(shaderProgramGL->hVertexShader  )->GetOpenGLObject());
-            m_gl.UseProgramStages(m_globalVAO, GL_FRAGMENT_SHADER_BIT, reinterpret_cast<Shader_OpenGL4*>(shaderProgramGL->hFragmentShader)->GetOpenGLObject());
-            //m_gl.UseProgram(shaderProgramGL->GetOpenGLObject());
-        }
-        else
-        {
-            m_gl.UseProgramStages(m_globalVAO, GL_VERTEX_SHADER_BIT | GL_FRAGMENT_SHADER_BIT, 0);
-            //m_gl.UseProgram(0);
-        }
-    }
-
     void GPURenderingDevice_OpenGL4::BindTexture(HTextureView hTextureView, unsigned int slotIndex)
     {
     }
@@ -629,6 +611,39 @@ namespace GT
     }
 
 
+    /////////////////////////////////////////////
+    // Vertex Shader Stage
+
+    void GPURenderingDevice_OpenGL4::VSSetShader(HVertexShader hShader)
+    {
+        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
+        if (shaderGL != nullptr)
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_VERTEX_SHADER_BIT, shaderGL->GetOpenGLObject());
+        }
+        else
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_VERTEX_SHADER_BIT, 0);
+        }
+    }
+
+
+    /////////////////////////////////////////////
+    // Fragment Shader Stage
+
+    void GPURenderingDevice_OpenGL4::FSSetShader(HFragmentShader hShader)
+    {
+        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
+        if (shaderGL != nullptr)
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_FRAGMENT_SHADER_BIT, shaderGL->GetOpenGLObject());
+        }
+        else
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_FRAGMENT_SHADER_BIT, 0);
+        }
+    }
+
 
 
     ////////////////////////////////////////////
@@ -712,12 +727,12 @@ namespace GT
     ////////////////////////////////////////////
     // Input Layouts
 
-    HInputLayout GPURenderingDevice_OpenGL4::CreateInputLayout(HShaderProgram hShaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
+    HInputLayout GPURenderingDevice_OpenGL4::CreateInputLayout(HVertexShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        auto shaderProgramGL = reinterpret_cast<ShaderProgram_OpenGL4*>(hShaderProgram);
-        if (shaderProgramGL != nullptr)
+        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hVertexShader);
+        if (shaderGL != nullptr)
         {
             auto attribDescGL = reinterpret_cast<InputLayout_OpenGL4::AttributeDesc*>(malloc(sizeof(InputLayout_OpenGL4::AttributeDesc) * attribDescCount));
             if (attribDescGL != nullptr)
@@ -741,7 +756,7 @@ namespace GT
 
 
                             attribGL.slotIndex            = attrib.slotIndex;
-                            attribGL.attribLocation       = m_gl.GetAttribLocation(reinterpret_cast<Shader_OpenGL4*>(shaderProgramGL->hVertexShader)->GetOpenGLObject(), attrib.attributeName);
+                            attribGL.attribLocation       = m_gl.GetAttribLocation(shaderGL->GetOpenGLObject(), attrib.attributeName);
                             attribGL.attribComponentCount = attrib.attributeComponentCount;
                             attribGL.attribOffset         = attrib.attributeOffset;
 
@@ -846,203 +861,6 @@ namespace GT
     bool GPURenderingDevice_OpenGL4::IsShaderLanguageSupported(ShaderLanguage language) const
     {
         return m_supportedShaderLanguages.Exists(language);
-    }
-
-    HShaderProgram GPURenderingDevice_OpenGL4::CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut)
-    {
-        CheckContextIsCurrent(m_gl, m_currentDC);
-
-        (void)messagesOut;
-
-
-        HVertexShader vertexShader = this->CreateVertexShader(vertexShaderData, vertexShaderDataSize);
-        if (vertexShader != 0)
-        {
-            HFragmentShader fragmentShader = this->CreateFragmentShader(fragmentShaderData, fragmentShaderDataSize);
-            if (fragmentShader != 0)
-            {
-                return reinterpret_cast<HShaderProgram>(new ShaderProgram_OpenGL4(vertexShader, fragmentShader));
-            }
-            else
-            {
-                this->ReleaseVertexShader(vertexShader);
-            }
-        }
-
-        return 0;
-
-#if 0
-        // Vertex Shader.
-        const char* vertexSource;
-        size_t vertexSourceLength;
-        GTLib::Vector<GPUShaderDefine> vertexDefines;
-        ShaderLanguage vertexLanguage;
-        ShaderType vertexType;
-        if (GT::Failed(this->ExtractShaderBinaryData(vertexShaderData, vertexShaderDataSize, vertexSource, vertexSourceLength, vertexDefines, vertexLanguage, vertexType)))
-        {
-            return 0;
-        }
-
-        if (vertexType != ShaderType_Vertex)
-        {
-            return 0;
-        }
-
-
-        // Fragment Shader.
-        const char* fragmentSource;
-        size_t fragmentSourceLength;
-        GTLib::Vector<GPUShaderDefine> fragmentDefines;
-        ShaderLanguage fragmentLanguage;
-        ShaderType fragmentType;
-        if (GT::Failed(this->ExtractShaderBinaryData(fragmentShaderData, fragmentShaderDataSize, fragmentSource, fragmentSourceLength, fragmentDefines, fragmentLanguage, fragmentType)))
-        {
-            return 0;
-        }
-
-        if (fragmentType != ShaderType_Fragment)
-        {
-            return 0;
-        }
-
-
-
-        // Vertex object.
-        GLuint vertexObjectGL = 0;
-        if (this->IsShaderLanguageSupported(vertexLanguage))
-        {
-            if (vertexLanguage >= ShaderLanguage_GLSL_400 && vertexLanguage <= ShaderLanguage_GLSL_450)
-            {
-                if (GT::Failed(this->CompileShader_GLSL(vertexSource, vertexSourceLength, vertexDefines.buffer, vertexLanguage, vertexType, messagesOut, vertexObjectGL)))
-                {
-                    // Failed to compile vertex shader.
-                    return 0;
-                }
-            }
-        }
-        else
-        {
-            // Shader target is not supported.
-            return 0;
-        }
-
-
-        // Fragment object.
-        GLuint fragmentObjectGL = 0;
-        if (this->IsShaderLanguageSupported(fragmentLanguage))
-        {
-            if (fragmentLanguage >= ShaderLanguage_GLSL_400 && fragmentLanguage <= ShaderLanguage_GLSL_450)
-            {
-                if (GT::Failed(this->CompileShader_GLSL(fragmentSource, fragmentSourceLength, fragmentDefines.buffer, fragmentLanguage, fragmentType, messagesOut, fragmentObjectGL)))
-                {
-                    return 0;
-                }
-            }
-        }
-        else
-        {
-            // Shader target is not supported.
-            return 0;
-        }
-
-
-
-        GLuint objectGL = m_gl.CreateProgram();
-        if (objectGL > 0)
-        {
-            // Attach the shader objects.
-            m_gl.AttachShader(objectGL, vertexObjectGL);
-            m_gl.AttachShader(objectGL, fragmentObjectGL);
-
-            // Perform the link step.
-            m_gl.LinkProgram(objectGL);
-
-
-            // Always check for log messages regardless of whether or not there was an error.
-            GLint logLengthInBytes;
-            m_gl.GetProgramiv(objectGL, GL_INFO_LOG_LENGTH, &logLengthInBytes);
-            if (logLengthInBytes > 0)
-            {
-                void* messageDst = messagesOut.Allocate(logLengthInBytes, true);
-                if (messageDst != nullptr)
-                {
-                    m_gl.GetProgramInfoLog(objectGL, logLengthInBytes, &logLengthInBytes, reinterpret_cast<GLchar*>(messageDst));
-                }
-            }
-
-
-            ShaderProgram_OpenGL4* shaderProgramGL = nullptr;
-
-            // Check for link errors.
-            GLint isLinked = 0;
-            m_gl.GetProgramiv(objectGL, GL_LINK_STATUS, &isLinked);
-            if (isLinked == GL_TRUE)
-            {
-                shaderProgramGL = new ShaderProgram_OpenGL4(objectGL);
-            }
-
-
-            m_gl.DeleteShader(vertexObjectGL);
-            m_gl.DeleteShader(fragmentObjectGL);
-
-
-            return reinterpret_cast<HShaderProgram>(shaderProgramGL);
-        }
-        else
-        {
-            // Failed to create OpenGL program object.
-            return 0;
-        }
-
-
-
-        return 0;
-#endif
-    }
-
-    void GPURenderingDevice_OpenGL4::ReleaseShaderProgram(HShaderProgram hShaderProgram)
-    {
-        auto shaderProgramGL = reinterpret_cast<ShaderProgram_OpenGL4*>(hShaderProgram);
-        if (shaderProgramGL != nullptr)
-        {
-            assert(shaderProgramGL->hVertexShader   != 0);
-            assert(shaderProgramGL->hFragmentShader != 0);
-
-            this->ReleaseShader(shaderProgramGL->hVertexShader);
-            this->ReleaseShader(shaderProgramGL->hFragmentShader);
-
-            assert(reinterpret_cast<Shader_OpenGL4*>(shaderProgramGL->hVertexShader)->GetReferenceCount() == reinterpret_cast<Shader_OpenGL4*>(shaderProgramGL->hFragmentShader)->GetReferenceCount());
-
-            if (reinterpret_cast<Shader_OpenGL4*>(shaderProgramGL->hVertexShader)->GetReferenceCount() == 0)
-            {
-                delete shaderProgramGL;
-            }
-        }
-
-#if 0
-        auto shaderProgramGL = reinterpret_cast<ShaderProgram_OpenGL4*>(hShaderProgram);
-        if (shaderProgramGL != nullptr)
-        {
-            m_referenceCountLock.Lock();
-            {
-                assert(shaderProgramGL->GetReferenceCount() > 0);
-
-                CheckContextIsCurrent(m_gl, m_currentDC);
-
-                if (shaderProgramGL->DecrementReferenceCount() == 0)
-                {
-                    m_gl.DeleteProgram(shaderProgramGL->GetOpenGLObject());
-                    delete shaderProgramGL;
-                }
-            }
-            m_referenceCountLock.Unlock();
-        }
-#endif
-    }
-
-    void GPURenderingDevice_OpenGL4::HoldShaderProgram(HShaderProgram hShaderProgram)
-    {
-        
     }
 
 

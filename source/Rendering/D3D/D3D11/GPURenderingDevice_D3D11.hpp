@@ -67,9 +67,6 @@ namespace GT
         /////////////////////////////////////////////
         // State
 
-        /// @copydoc GPURenderingDevice::SetCurrentShaderProgram()
-        void SetCurrentShaderProgram(HShaderProgram hShaderProgram);
-
         /// @copydoc GPURenderingDevice::BindTextureView()
         void BindTexture(HTextureView hTextureView, unsigned int slotIndex);
 
@@ -117,6 +114,19 @@ namespace GT
         void OMSetDepthStencilState(HDepthStencilState hState, unsigned int stencilRef);
 
 
+        /////////////////////////////////////////////
+        // Vertex Shader Stage
+
+        /// @copydoc GPURenderingDevice::FSSetShader()
+        void VSSetShader(HVertexShader hShader);
+
+
+        /////////////////////////////////////////////
+        // Fragment Shader Stage
+
+        /// @copydoc GPURenderingDevice::FSSetShader()
+        void FSSetShader(HFragmentShader hShader);
+
 
         /////////////////////////////////////////////////////////////////////////////
         //
@@ -152,7 +162,7 @@ namespace GT
         // Input Layout
 
         /// GPURenderingDevice::CreateVertexInputLayout().
-        HInputLayout CreateInputLayout(HShaderProgram hShaderProgram, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
+        HInputLayout CreateInputLayout(HVertexShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
 
         /// GPURenderingDevice::ReleaseInputLayout().
         void ReleaseInputLayout(HInputLayout hInputLayout);
@@ -170,16 +180,6 @@ namespace GT
 
         /// GPURenderingDevice::IsShaderLanguageSupported().
         bool IsShaderLanguageSupported(ShaderLanguage language) const;
-
-
-        /// @copydoc GPURenderingDevice::CreateShaderProgram()
-        HShaderProgram CreateShaderProgram(const void* vertexShaderData, size_t vertexShaderDataSize, const void* fragmentShaderData, size_t fragmentShaderDataSize, GT::BasicBuffer &messagesOut);
-
-        /// @copydoc GPURenderingDevice::ReleaseShaderProgram()
-        void ReleaseShaderProgram(HShaderProgram hShaderProgram);
-
-        /// @copydoc GPURenderingDevice::HoldShaderProgram()
-        void HoldShaderProgram(HShaderProgram hShaderProgram);
 
 
         /// @copydoc GPURenderingDevice_Gen2::CreateVertexShader()

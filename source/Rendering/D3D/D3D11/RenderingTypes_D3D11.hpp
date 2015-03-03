@@ -11,19 +11,6 @@
 
 namespace GT
 {
-    struct ShaderProgram_D3D11
-    {
-        ShaderProgram_D3D11(HVertexShader hVertexShaderIn, HFragmentShader hFragmentShaderIn)
-            : hVertexShader(hVertexShaderIn), hFragmentShader(hFragmentShaderIn)
-        {
-        }
-
-        HVertexShader   hVertexShader;
-        HFragmentShader hFragmentShader;
-    };
-
-
-
     static const DXGI_FORMAT g_D3DTextureFormatsTable[] =
     {
         DXGI_FORMAT_UNKNOWN,
