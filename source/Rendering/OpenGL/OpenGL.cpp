@@ -124,7 +124,9 @@ namespace GT
             CompressedTextureSubImage2D(nullptr),
             CompressedTextureSubImage3D(nullptr),
             GenerateTextureMipmap(nullptr),
+            TextureView(nullptr),
 
+            GenTextures(nullptr),
             CreateSamplers(nullptr),
             DeleteSamplers(nullptr),
             BindSampler(nullptr),
@@ -604,6 +606,7 @@ namespace GT
             this->UnmapNamedBuffer            = reinterpret_cast<PFNGLUNMAPNAMEDBUFFERPROC           >(this->GetGLProcAddress("glUnmapNamedBuffer"));
             this->FlushMappedNamedBufferRange = reinterpret_cast<PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEPROC>(this->GetGLProcAddress("glFlushMappedNamedBufferRange"));
 
+            this->GenTextures                 = reinterpret_cast<PFNGLGENTEXTURESPROC                >(this->GetGLProcAddress("glGenTextures"));
             this->CreateTextures              = reinterpret_cast<PFNGLCREATETEXTURESPROC             >(this->GetGLProcAddress("glCreateTextures"));
             this->DeleteTextures              = reinterpret_cast<PFNGLDELETETEXTURESPROC             >(this->GetGLProcAddress("glDeleteTextures"));
             this->BindTextureUnit             = reinterpret_cast<PFNGLBINDTEXTUREUNITPROC            >(this->GetGLProcAddress("glBindTextureUnit"));
@@ -618,6 +621,7 @@ namespace GT
             this->CompressedTextureSubImage2D = reinterpret_cast<PFNGLCOMPRESSEDTEXTURESUBIMAGE2DPROC>(this->GetGLProcAddress("glCompressedTextureSubImage2D"));
             this->CompressedTextureSubImage3D = reinterpret_cast<PFNGLCOMPRESSEDTEXTURESUBIMAGE3DPROC>(this->GetGLProcAddress("glCompressedTextureSubImage3D"));
             this->GenerateTextureMipmap       = reinterpret_cast<PFNGLGENERATETEXTUREMIPMAPPROC      >(this->GetGLProcAddress("glGenerateTextureMipmap"));
+            this->TextureView                 = reinterpret_cast<PFNGLTEXTUREVIEWPROC                >(this->GetGLProcAddress("glTextureView"));
 
             this->CreateSamplers              = reinterpret_cast<PFNGLCREATESAMPLERSPROC             >(this->GetGLProcAddress("glCreateSamplers"));
             this->DeleteSamplers              = reinterpret_cast<PFNGLDELETESAMPLERSPROC             >(this->GetGLProcAddress("glDeleteSamplers"));

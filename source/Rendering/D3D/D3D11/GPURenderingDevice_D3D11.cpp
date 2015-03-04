@@ -976,6 +976,8 @@ namespace GT
         ID3D11Texture2D* texture2DD3D11;
         if (SUCCEEDED(m_device->CreateTexture2D(&descD3D, nullptr, &texture2DD3D11)))
         {
+            texture2DD3D11->SetPrivateData(CustomDataGUID_Generic, 4, &desc.format);
+
             return reinterpret_cast<HTexture2D>(texture2DD3D11);
         }
         else
@@ -1000,11 +1002,16 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::UpdateTexture2D(HTexture2D hTexture, int x, int y, unsigned int width, unsigned int height, unsigned int level, unsigned int layer, const void* srcData, unsigned int srcDataRowPitch)
+    void GPURenderingDevice_D3D11::UpdateTexture2D(HTexture2D hTexture, int x, int y, unsigned int width, unsigned int height, unsigned int level, unsigned int layer, const void* srcData)
     {
         auto texture2DD3D11 = reinterpret_cast<ID3D11Texture2D*>(hTexture);
         assert(texture2DD3D11 != nullptr);
         {
+            UINT formatSize = 4;
+            TextureFormat format;
+            texture2DD3D11->GetPrivateData(CustomDataGUID_Generic, &formatSize, &format);
+
+
             D3D11_TEXTURE2D_DESC descD3D;
             texture2DD3D11->GetDesc(&descD3D);
 
@@ -1016,7 +1023,7 @@ namespace GT
             box.front  = 0;
             box.back   = 1;
 
-            m_context->UpdateSubresource(texture2DD3D11, level + (layer * descD3D.MipLevels), &box, srcData, srcDataRowPitch, 0);
+            m_context->UpdateSubresource(texture2DD3D11, level + (layer * descD3D.MipLevels), &box, srcData, GetRowPitch(width, format), 0);
         }
     }
 

@@ -265,6 +265,7 @@ namespace GT
         PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEPROC FlushMappedNamedBufferRange;
 
         // Textures
+        PFNGLGENTEXTURESPROC                 GenTextures;       // <-- Needed for texture views.
         PFNGLCREATETEXTURESPROC              CreateTextures;
         PFNGLDELETETEXTURESPROC              DeleteTextures;
         PFNGLBINDTEXTUREUNITPROC             BindTextureUnit;
@@ -279,6 +280,7 @@ namespace GT
         PFNGLCOMPRESSEDTEXTURESUBIMAGE2DPROC CompressedTextureSubImage2D;
         PFNGLCOMPRESSEDTEXTURESUBIMAGE3DPROC CompressedTextureSubImage3D;
         PFNGLGENERATETEXTUREMIPMAPPROC       GenerateTextureMipmap;
+        PFNGLTEXTUREVIEWPROC                 TextureView;
 
         // Samplers
         PFNGLCREATESAMPLERSPROC              CreateSamplers;

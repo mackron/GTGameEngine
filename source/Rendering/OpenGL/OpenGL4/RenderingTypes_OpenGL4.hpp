@@ -124,10 +124,19 @@ namespace GT
     {
     public:
 
-        Texture_OpenGL4(GLuint objectGL)
-            : ReferenceCountedObject(), OpenGLObject(objectGL)
+        Texture_OpenGL4(GLuint objectGL, TextureFormat format)
+            : ReferenceCountedObject(), OpenGLObject(objectGL),
+              m_format(format)
         {
         }
+
+        TextureFormat GetFormat() const { return m_format; }
+
+
+    private:
+
+        /// The image format.
+        TextureFormat m_format;
     };
 
 
@@ -312,6 +321,163 @@ namespace GT
         GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB,        // TextureFormat_SRGB_Alpha_BPTC      //< GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB   / DXGI_FORMAT_BC7_UNORM_SRGB
         GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB,      // TextureFormat_RGB_UF16_BPTC        //< GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB / DXGI_FORMAT_BC6H_UF16
         GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB         // TextureFormat_RGB_SF16_BPTC        //< GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB   / DXGI_FORMAT_BC6H_SF16
+    };
+
+    static const GLenum g_GLTextureSubImageFormatsTable[] =
+    {
+        0,                                              // TextureFormat_Unknown = 0
+
+        // Unsigned Normalized.
+        GL_RED,                                          // TextureFormat_R8
+        GL_RG,                                         // TextureFormat_RG8
+        GL_RGBA,                                       // TextureFormat_RGBA8
+        GL_RED,                                         // TextureFormat_R16
+        GL_RG,                                        // TextureFormat_RG16
+        GL_RGBA,                                      // TextureFormat_RGBA16
+        GL_RGBA,                                    // TextureFormat_RGB10_A2
+        GL_RGBA,                                  // TextureFormat_SRGB8_A8
+
+        // Signed Normalized.
+        GL_RED,                                    // TextureFormat_R8_SNORM
+        GL_RG,                                   // TextureFormat_RG8_SNORM
+        GL_RGBA,                                 // TextureFormat_RGBA8_SNORM
+        GL_RED,                                   // TextureFormat_R16_SNORM
+        GL_RG,                                  // TextureFormat_RG16_SNORM
+        GL_RGBA,                                // TextureFormat_RGBA16_SNORM
+
+        // Unsigned Integral.
+        GL_RED_INTEGER,                                        // TextureFormat_R8UI
+        GL_RG_INTEGER,                                       // TextureFormat_RG8UI
+        GL_RGBA_INTEGER,                                     // TextureFormat_RGBA8UI
+        GL_RED_INTEGER,                                       // TextureFormat_R16UI
+        GL_RG_INTEGER,                                      // TextureFormat_RG16UI
+        GL_RGBA_INTEGER,                                    // TextureFormat_RGBA16UI
+        GL_RED_INTEGER,                                       // TextureFormat_R32UI
+        GL_RG_INTEGER,                                      // TextureFormat_RG32UI
+        GL_RGB_INTEGER,                                     // TextureFormat_RGB32UI
+        GL_RGBA_INTEGER,                                    // TextureFormat_RGBA32UI
+
+        // Signed Integral.
+        GL_RED_INTEGER,                                         // TextureFormat_RBSI
+        GL_RG_INTEGER,                                        // TextureFormat_RG8SI
+        GL_RGBA_INTEGER,                                      // TextureFormat_RGBA8SI
+        GL_RED_INTEGER,                                        // TextureFormat_R16SI
+        GL_RG_INTEGER,                                       // TextureFormat_RG16SI
+        GL_RGBA_INTEGER,                                     // TextureFormat_RGBA16SI
+        GL_RED_INTEGER,                                        // TextureFormat_R32SI
+        GL_RG_INTEGER,                                       // TextureFormat_RG32SI
+        GL_RGB_INTEGER,                                      // TextureFormat_RGB32SI
+        GL_RGBA_INTEGER,                                     // TextureFormat_RGBA32SI
+
+        // Float
+        GL_RED,                                        // TextureFormat_R16F
+        GL_RG,                                       // TextureFormat_RG16F
+        GL_RGBA,                                     // TextureFormat_RGBA16F
+        GL_RED,                                        // TextureFormat_R32F
+        GL_RG,                                       // TextureFormat_RG32F
+        GL_RGB,                                      // TextureFormat_RGB32F
+        GL_RGBA,                                     // TextureFormat_RGBA32F
+        GL_RGB,                              // TextureFormat_R11G11B10F
+
+
+        // Special
+        GL_DEPTH_STENCIL,                            // TextureFormat_D24_S8               //< GL_DEPTH24_STENCIL8 / DXGI_FORMAT_D24_UNORM_S8_UINT
+
+        // Compressed.
+        GL_COMPRESSED_RGBA_S3TC_DXT1_EXT,               // TextureFormat_RGBA_DXT1            //< GL_COMPRESSED_RGBA_S3TC_DXT1_EXT       / DXGI_FORMAT_BC1_UNORM
+        GL_COMPRESSED_RGBA_S3TC_DXT3_EXT,               // TextureFormat_RGBA_DXT3            //< GL_COMPRESSED_RGBA_S3TC_DXT3_EXT       / DXGI_FORMAT_BC2_UNORM
+        GL_COMPRESSED_RGBA_S3TC_DXT5_EXT,               // TextureFormat_RGBA_DXT5            //< GL_COMPRESSED_RGBA_S3TC_DXT5_EXT       / DXGI_FORMAT_BC3_UNORM
+        GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT,         // TextureFormat_SRGB_Alpha_DXT1      //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT / DXGI_FORMAT_BC1_UNORM_SRGB
+        GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT,         // TextureFormat_SRGB_Alpha_DXT3      //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT / DXGI_FORMAT_BC2_UNORM_SRGB
+        GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT,         // TextureFormat_SRGB_Alpha_DXT5      //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT / DXGI_FORMAT_BC3_UNORM_SRGB
+
+        GL_COMPRESSED_RED_RGTC1,                        // TextureFormat_R_RGTC               //< GL_COMPRESSED_RED_RGTC1        / DXGI_FORMAT_BC4_UNORM
+        GL_COMPRESSED_SIGNED_RED_RGTC1,                 // TextureFormat_R_RGTC_SNORM         //< GL_COMPRESSED_SIGNED_RED_RGTC1 / DXGI_FORMAT_BC4_SNORM
+        GL_COMPRESSED_RG_RGTC2,                         // TextureFormat_RG_RGTC              //< GL_COMPRESSED_RG_RGTC2         / DXGI_FORMAT_BC5_UNORM
+        GL_COMPRESSED_SIGNED_RG_RGTC2,                  // TextureFormat_RG_RGTC_SNORM        //< GL_COMPRESSED_SIGNED_RG_RGTC2  / DXGI_FORMAT_BC5_SNORM
+
+        GL_COMPRESSED_RGBA_BPTC_UNORM_ARB,              // TextureFormat_RGBA_BPTC            //< GL_COMPRESSED_RGBA_BPTC_UNORM_ARB         / DXGI_FORMAT_BC7_UNORM
+        GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB,        // TextureFormat_SRGB_Alpha_BPTC      //< GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB   / DXGI_FORMAT_BC7_UNORM_SRGB
+        GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB,      // TextureFormat_RGB_UF16_BPTC        //< GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB / DXGI_FORMAT_BC6H_UF16
+        GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB         // TextureFormat_RGB_SF16_BPTC        //< GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB   / DXGI_FORMAT_BC6H_SF16
+    };
+
+    static const GLenum g_GLTextureSubImageTypesTable[] =
+    {
+        0,                                              // TextureFormat_Unknown = 0
+
+        // Unsigned Normalized.
+        GL_UNSIGNED_BYTE,                                          // TextureFormat_R8
+        GL_UNSIGNED_BYTE,                                         // TextureFormat_RG8
+        GL_UNSIGNED_BYTE,                                       // TextureFormat_RGBA8
+        GL_UNSIGNED_SHORT,                                         // TextureFormat_R16
+        GL_UNSIGNED_SHORT,                                        // TextureFormat_RG16
+        GL_UNSIGNED_SHORT,                                      // TextureFormat_RGBA16
+        GL_UNSIGNED_INT_10_10_10_2,                                    // TextureFormat_RGB10_A2
+        GL_UNSIGNED_BYTE,                                  // TextureFormat_SRGB8_A8
+
+        // Signed Normalized.
+        GL_BYTE,                                    // TextureFormat_R8_SNORM
+        GL_BYTE,                                   // TextureFormat_RG8_SNORM
+        GL_BYTE,                                 // TextureFormat_RGBA8_SNORM
+        GL_SHORT,                                   // TextureFormat_R16_SNORM
+        GL_SHORT,                                  // TextureFormat_RG16_SNORM
+        GL_SHORT,                                // TextureFormat_RGBA16_SNORM
+
+        // Unsigned Integral.
+        GL_UNSIGNED_BYTE,                                        // TextureFormat_R8UI
+        GL_UNSIGNED_BYTE,                                       // TextureFormat_RG8UI
+        GL_UNSIGNED_BYTE,                                     // TextureFormat_RGBA8UI
+        GL_UNSIGNED_SHORT,                                       // TextureFormat_R16UI
+        GL_UNSIGNED_SHORT,                                      // TextureFormat_RG16UI
+        GL_UNSIGNED_SHORT,                                    // TextureFormat_RGBA16UI
+        GL_UNSIGNED_INT,                                       // TextureFormat_R32UI
+        GL_UNSIGNED_INT,                                      // TextureFormat_RG32UI
+        GL_UNSIGNED_INT,                                     // TextureFormat_RGB32UI
+        GL_UNSIGNED_INT,                                    // TextureFormat_RGBA32UI
+
+        // Signed Integral.
+        GL_BYTE,                                         // TextureFormat_RBSI
+        GL_BYTE,                                        // TextureFormat_RG8SI
+        GL_BYTE,                                      // TextureFormat_RGBA8SI
+        GL_SHORT,                                        // TextureFormat_R16SI
+        GL_SHORT,                                       // TextureFormat_RG16SI
+        GL_SHORT,                                     // TextureFormat_RGBA16SI
+        GL_INT,                                        // TextureFormat_R32SI
+        GL_INT,                                       // TextureFormat_RG32SI
+        GL_INT,                                      // TextureFormat_RGB32SI
+        GL_INT,                                     // TextureFormat_RGBA32SI
+
+        // Float
+        GL_HALF_FLOAT,                                        // TextureFormat_R16F
+        GL_HALF_FLOAT,                                       // TextureFormat_RG16F
+        GL_HALF_FLOAT,                                     // TextureFormat_RGBA16F
+        GL_HALF_FLOAT,                                        // TextureFormat_R32F
+        GL_FLOAT,                                       // TextureFormat_RG32F
+        GL_FLOAT,                                      // TextureFormat_RGB32F
+        GL_FLOAT,                                     // TextureFormat_RGBA32F
+        GL_UNSIGNED_INT_10F_11F_11F_REV,                              // TextureFormat_R11G11B10F
+
+        // Special
+        0,                            // TextureFormat_D24_S8               //< GL_DEPTH24_STENCIL8 / DXGI_FORMAT_D24_UNORM_S8_UINT
+
+        // Compressed.
+        0,               // TextureFormat_RGBA_DXT1            //< GL_COMPRESSED_RGBA_S3TC_DXT1_EXT       / DXGI_FORMAT_BC1_UNORM
+        0,               // TextureFormat_RGBA_DXT3            //< GL_COMPRESSED_RGBA_S3TC_DXT3_EXT       / DXGI_FORMAT_BC2_UNORM
+        0,               // TextureFormat_RGBA_DXT5            //< GL_COMPRESSED_RGBA_S3TC_DXT5_EXT       / DXGI_FORMAT_BC3_UNORM
+        0,         // TextureFormat_SRGB_Alpha_DXT1      //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT / DXGI_FORMAT_BC1_UNORM_SRGB
+        0,         // TextureFormat_SRGB_Alpha_DXT3      //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT / DXGI_FORMAT_BC2_UNORM_SRGB
+        0,         // TextureFormat_SRGB_Alpha_DXT5      //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT / DXGI_FORMAT_BC3_UNORM_SRGB
+
+        0,                        // TextureFormat_R_RGTC               //< GL_COMPRESSED_RED_RGTC1        / DXGI_FORMAT_BC4_UNORM
+        0,                 // TextureFormat_R_RGTC_SNORM         //< GL_COMPRESSED_SIGNED_RED_RGTC1 / DXGI_FORMAT_BC4_SNORM
+        0,                         // TextureFormat_RG_RGTC              //< GL_COMPRESSED_RG_RGTC2         / DXGI_FORMAT_BC5_UNORM
+        0,                  // TextureFormat_RG_RGTC_SNORM        //< GL_COMPRESSED_SIGNED_RG_RGTC2  / DXGI_FORMAT_BC5_SNORM
+
+        0,              // TextureFormat_RGBA_BPTC            //< GL_COMPRESSED_RGBA_BPTC_UNORM_ARB         / DXGI_FORMAT_BC7_UNORM
+        0,        // TextureFormat_SRGB_Alpha_BPTC      //< GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB   / DXGI_FORMAT_BC7_UNORM_SRGB
+        0,      // TextureFormat_RGB_UF16_BPTC        //< GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB / DXGI_FORMAT_BC6H_UF16
+        0         // TextureFormat_RGB_SF16_BPTC        //< GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB   / DXGI_FORMAT_BC6H_SF16
     };
 }
 

@@ -17,6 +17,7 @@
 #include <GTLib/String.hpp>
 #include <GTLib/Math.hpp>
 #include <GTLib/IO/cstdio.hpp>
+#include <GTLib/ImageUtils.hpp>
 
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT   0x84FE
 
@@ -1089,23 +1090,76 @@ namespace GT
 
     HTexture2D GPURenderingDevice_OpenGL4::CreateTexture2D(const Texture2DDesc &desc)
     {
+        GLsizei levelCountGL = desc.levelCount;
+        if (levelCountGL == 0)
+        {
+            levelCountGL = GTLib::ImageUtils::CalculateMipmapCount(desc.width, desc.height);
+        }
+
+
         GLuint objectGL;
         m_gl.CreateTextures(GL_TEXTURE_2D_ARRAY, 1, &objectGL);
-        m_gl.TextureStorage3D(objectGL, desc.levelCount, g_GLTextureFormatsTable[desc.format], desc.width, desc.height, desc.levelCount);
+        m_gl.TextureStorage3D(objectGL, levelCountGL, g_GLTextureFormatsTable[desc.format], desc.width, desc.height, desc.layerCount);
 
-        return reinterpret_cast<HTexture2D>(new Texture_OpenGL4(objectGL));
+        return reinterpret_cast<HTexture2D>(new Texture_OpenGL4(objectGL, desc.format));
     }
 
     void GPURenderingDevice_OpenGL4::ReleaseTexture2D(HTexture2D hTexture)
     {
+        auto textureGL = reinterpret_cast<Texture_OpenGL4*>(hTexture);
+        if (textureGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                assert(textureGL->GetReferenceCount() > 0);
+
+                CheckContextIsCurrent(m_gl, m_currentDC);
+
+                if (textureGL->DecrementReferenceCount() == 0)
+                {
+                    GLuint objectGL = textureGL->GetOpenGLObject();
+                    m_gl.DeleteTextures(1, &objectGL);
+
+                    delete textureGL;
+                }
+            }
+            m_referenceCountLock.Unlock();
+        }
     }
 
     void GPURenderingDevice_OpenGL4::HoldTexture2D(HTexture2D hTexture)
     {
+        auto textureGL = reinterpret_cast<Texture_OpenGL4*>(hTexture);
+        if (textureGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                textureGL->IncrementReferenceCount();
+            }
+            m_referenceCountLock.Unlock();
+        }
     }
 
-    void GPURenderingDevice_OpenGL4::UpdateTexture2D(HTexture2D hTexture, int x, int y, unsigned int width, unsigned int height, unsigned int level, unsigned int layer, const void* srcData, unsigned int srcDataRowPitch)
+    void GPURenderingDevice_OpenGL4::UpdateTexture2D(HTexture2D hTexture, int x, int y, unsigned int width, unsigned int height, unsigned int level, unsigned int layer, const void* srcData)
     {
+        auto textureGL = reinterpret_cast<Texture_OpenGL4*>(hTexture);
+        assert(textureGL != nullptr);
+        {
+            GLenum formatGL = g_GLTextureSubImageFormatsTable[textureGL->GetFormat()];
+            GLenum typeGL   = g_GLTextureSubImageTypesTable[textureGL->GetFormat()];
+
+            // We need to calculate the row pitch of the destination rectangle, and if it's different to srcDataRowPitch we need to do a copy before submitting it to the driver.
+            if (textureGL->GetFormat() >= TextureFormat_RGBA_DXT1 && textureGL->GetFormat() <= TextureFormat_RGB_SF16_BPTC)
+            {
+                // Compressed.
+                m_gl.CompressedTextureSubImage3D(textureGL->GetOpenGLObject(), level, x, y, layer, width, height, 1, formatGL, GetImageSizeInBytes(width, height, textureGL->GetFormat()), srcData);
+            }
+            else
+            {
+                // Uncompressed.
+                m_gl.TextureSubImage3D(textureGL->GetOpenGLObject(), level, x, y, layer, width, height, 1, formatGL, typeGL, srcData);
+            }
+        }
     }
 
 
@@ -1116,7 +1170,40 @@ namespace GT
 
     HTextureView GPURenderingDevice_OpenGL4::CreateTextureViewFrom2D(HTexture2D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
     {
-        return 0;
+        auto originalTextureGL = reinterpret_cast<Texture_OpenGL4*>(hTexture);
+        assert(originalTextureGL != nullptr);
+        {
+            GLenum targetGL;
+            switch (type)
+            {
+            case TextureType_2D:
+                {
+                    targetGL = GL_TEXTURE_2D;
+                    break;
+                }
+
+            case TextureType_2D_Array:
+                {
+                    targetGL = GL_TEXTURE_2D_ARRAY;
+                    break;
+                }
+
+            default:
+                {
+                    // Invalid format.
+                    return 0;
+                }
+            }
+
+
+            // Note here howe we use glGenTextures instead of the DSA glCreateTextures(). This is because glCreateTextures() will initialize the object, wherease in
+            // fact we want glTextureView() to be the one to initialize it. If we don't do this we'll get a GL_INVALID_VALUE error.
+            GLuint textureViewGL;
+            m_gl.GenTextures(1, &textureViewGL);
+            m_gl.TextureView(textureViewGL, targetGL, originalTextureGL->GetOpenGLObject(), g_GLTextureFormatsTable[format], minLevel, numLevels, minLayer, numLayers);
+
+            return reinterpret_cast<HTextureView>(new TextureView_OpenGL4(textureViewGL));
+        }
     }
 
     HTextureView GPURenderingDevice_OpenGL4::CreateTextureViewFrom2DMultisample(HTexture2DMultisample hTexture, TextureType type, TextureFormat format, unsigned int minLayer, unsigned int numLayers)
@@ -1136,10 +1223,38 @@ namespace GT
 
     void GPURenderingDevice_OpenGL4::ReleaseTextureView(HTextureView hTextureView)
     {
+        auto textureGL = reinterpret_cast<Texture_OpenGL4*>(hTextureView);
+        if (textureGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                assert(textureGL->GetReferenceCount() > 0);
+
+                CheckContextIsCurrent(m_gl, m_currentDC);
+
+                if (textureGL->DecrementReferenceCount() == 0)
+                {
+                    GLuint objectGL = textureGL->GetOpenGLObject();
+                    m_gl.DeleteTextures(1, &objectGL);
+
+                    delete textureGL;
+                }
+            }
+            m_referenceCountLock.Unlock();
+        }
     }
 
     void GPURenderingDevice_OpenGL4::HoldTextureView(HTextureView hTextureView)
     {
+        auto textureGL = reinterpret_cast<TextureView_OpenGL4*>(hTextureView);
+        if (textureGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                textureGL->IncrementReferenceCount();
+            }
+            m_referenceCountLock.Unlock();
+        }
     }
 
 
@@ -1551,6 +1666,11 @@ namespace GT
             GL_COMPUTE_SHADER,          // ShaderType_Compute
         };
 
+        GTLib::String extensionsString;
+        if (language < ShaderLanguage_GLSL_420)
+        {
+            extensionsString.Append("#extension GL_ARB_shading_language_420pack : enable\n");
+        }
 
         GTLib::String definesString;
         if (defines != nullptr)
@@ -1576,17 +1696,19 @@ namespace GT
         }
 
 
-        const char* shaderStrings[4];
+        const char* shaderStrings[5];
         shaderStrings[0] = versionStrings[language];
-        shaderStrings[1] = definesString.c_str();
-        shaderStrings[2] = vertexOutStruct;
-        shaderStrings[3] = source;
+        shaderStrings[1] = extensionsString.c_str();
+        shaderStrings[2] = definesString.c_str();
+        shaderStrings[3] = vertexOutStruct;
+        shaderStrings[4] = source;
 
-        GLint shaderStringLengths[4];
+        GLint shaderStringLengths[5];
         shaderStringLengths[0] = -1;        // Null-terminated.
-        shaderStringLengths[1] = -1;        // Null-terminated.
-        shaderStringLengths[2] = -1;
-        shaderStringLengths[3] = static_cast<GLint>((sourceLength > 0) ? sourceLength : -1);
+        shaderStringLengths[1] = static_cast<GLint>(extensionsString.GetLength());
+        shaderStringLengths[2] = static_cast<GLint>(definesString.GetLength());
+        shaderStringLengths[3] = -1;
+        shaderStringLengths[4] = static_cast<GLint>((sourceLength > 0) ? sourceLength : -1);
 
         GLuint objectGL = m_gl.CreateShaderProgramv(shaderTypes[type], sizeof(shaderStrings) / sizeof(shaderStrings[0]), shaderStrings);
 

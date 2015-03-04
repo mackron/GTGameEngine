@@ -17,6 +17,17 @@
 
 namespace GT
 {
+    inline size_t GetRowPitch(unsigned int width, TextureFormat format)
+    {
+        return (width * g_TextureFormatsBPPTable[format]) / 8;
+    }
+
+    inline size_t GetImageSizeInBytes(unsigned int width, unsigned int height, TextureFormat format)
+    {
+        return GetRowPitch(width, format) * height;
+    }
+
+
     /// Class representing a rendering GPU device.
     ///
     /// A rendering device cannot be used across multiple threads.
@@ -508,7 +519,7 @@ namespace GT
         virtual HTexture2D CreateTexture2D(const Texture2DDesc &desc) = 0;
         virtual void ReleaseTexture2D(HTexture2D hTexture) = 0;
         virtual void HoldTexture2D(HTexture2D hTexture) = 0;
-        virtual void UpdateTexture2D(HTexture2D hTexture, int x, int y, unsigned int width, unsigned int height, unsigned int level, unsigned int layer, const void* srcData, unsigned int srcDataRowPitch) = 0;
+        virtual void UpdateTexture2D(HTexture2D hTexture, int x, int y, unsigned int width, unsigned int height, unsigned int level, unsigned int layer, const void* srcData) = 0;
 
         virtual HTextureView CreateTextureViewFrom1D(HTexture2D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers) = 0;
         virtual HTextureView CreateTextureViewFrom2D(HTexture2D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers) = 0;
