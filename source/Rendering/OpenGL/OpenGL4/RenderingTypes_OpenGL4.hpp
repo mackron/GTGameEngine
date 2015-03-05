@@ -124,19 +124,19 @@ namespace GT
     {
     public:
 
-        Texture_OpenGL4(GLuint objectGL, TextureFormat format)
+        Texture_OpenGL4(GLuint objectGL, const TextureDesc &desc)
             : ReferenceCountedObject(), OpenGLObject(objectGL),
-              m_format(format)
+              m_desc(desc)
         {
         }
 
-        TextureFormat GetFormat() const { return m_format; }
+        const TextureDesc & GetDesc() const { return m_desc; }
 
 
     private:
 
         /// The image format.
-        TextureFormat m_format;
+        TextureDesc m_desc;
     };
 
 

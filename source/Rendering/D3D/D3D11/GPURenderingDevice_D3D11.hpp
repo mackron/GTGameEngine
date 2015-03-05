@@ -230,25 +230,39 @@ namespace GT
         ///////////////////////////////////////////
         // Textures
 
-        HTexture2D CreateTexture2D(const Texture2DDesc &desc);
-        void ReleaseTexture2D(HTexture2D hTexture);
-        void HoldTexture2D(HTexture2D hTexture);
-        void UpdateTexture2D(HTexture2D hTexture, int x, int y, unsigned int width, unsigned int height, unsigned int level, unsigned int layer, const void* srcData);
+        /// @copydoc GPURenderingDevice::CreateTexture()
+        HTexture CreateTexture(const TextureDesc &desc);
 
-        HTextureView CreateTextureViewFrom1D(HTexture1D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers);
-        HTextureView CreateTextureViewFrom2D(HTexture2D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers);
-        HTextureView CreateTextureViewFrom2DMultisample(HTexture2DMultisample hTexture, TextureType type, TextureFormat format, unsigned int minLayer, unsigned int numLayers);
-        HTextureView CreateTextureViewFrom3D(HTexture3D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels);
-        HTextureView CreateTextureViewFromCube(HTextureCube hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers);
+        /// @copydoc GPURenderingDevice::ReleaseTexture()
+        void ReleaseTexture(HTexture hTexture);
+
+        /// @copydoc GPURenderingDevice::HoldTexture()
+        void HoldTexture(HTexture hTexture);
+
+        /// @copydoc GPURenderingDevice::UpdateTexture()
+        void UpdateTexture(HTexture hTexture, int x, int y, int z, unsigned int width, unsigned int height, unsigned int depth, unsigned int mipmapLevel, const void* srcData);
+
+
+        /// @copydoc GPURenderingDevice::CreateTextureView()
+        HTextureView CreateTextureView(HTexture hOriginalTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers);
+        
+        /// @copydoc GPURenderingDevice::ReleaseTextureView()
         void ReleaseTextureView(HTextureView hTextureView);
+
+        /// @copydoc GPURenderingDevice::HoldTextureview()
         void HoldTextureView(HTextureView hTextureView);
 
 
         ///////////////////////////////////////////
         // Samplers
 
+        /// @copydoc GPURenderingDevice::CreateSampler()
         HSampler CreateSampler(const SamplerDesc &desc);
+
+        /// @copydoc GPURenderingDevice::ReleaseSampler()
         void ReleaseSampler(HSampler hSampler);
+
+        /// @copydoc GPURenderingDevice::HoldSampler()
         void HoldSampler(HSampler hSampler);
 
 

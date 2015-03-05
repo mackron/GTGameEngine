@@ -106,7 +106,7 @@ namespace GT
           m_vertexBufferSlots(),
           m_invalidVertexBufferSlots(),
           m_currentIndexBuffer(0),
-          m_indexBufferFormat(GL_UNSIGNED_INT),
+          m_indexBufferFormatGL(GL_UNSIGNED_INT),
           m_indexBufferFormatSize(4),
           m_indexBufferOffset(0),
           m_currentInputLayout(0)
@@ -312,7 +312,7 @@ namespace GT
                 this->UpdateSlotVertexAttributePointers(GTLib::NextBitIndex(m_invalidVertexBufferSlots));
             }
 
-            m_gl.DrawElements(m_currentTopologyGL, indexCount, m_indexBufferFormat, reinterpret_cast<const void*>(m_indexBufferOffset + (startIndexLocation*m_indexBufferFormatSize)));
+            m_gl.DrawElements(m_currentTopologyGL, indexCount, m_indexBufferFormatGL, reinterpret_cast<const void*>(m_indexBufferOffset + (startIndexLocation*m_indexBufferFormatSize)));
         }
     }
 
@@ -451,7 +451,13 @@ namespace GT
         }
 
 
-        m_currentIndexBuffer = hBuffer;
+        GLenum formatsGL[]   = { GL_UNSIGNED_BYTE, GL_UNSIGNED_SHORT, GL_UNSIGNED_INT };
+        size_t formatSizes[] = { 1, 2, 4 };
+
+        m_currentIndexBuffer    = hBuffer;
+        m_indexBufferFormatGL   = formatsGL[format];
+        m_indexBufferFormatSize = formatSizes[format];
+        m_indexBufferOffset     = offset;
     }
 
 
@@ -922,6 +928,9 @@ namespace GT
 
     HBuffer GPURenderingDevice_OpenGL4::CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data)
     {
+        (void)type;     // <-- Not used with DSA.
+
+
         // Validation.
         if (usage == GPUBufferUsage_Immutable && data == nullptr)
         {
@@ -988,14 +997,6 @@ namespace GT
         }
 
 
-        GLuint targetsGL[] =
-        {
-            GL_ARRAY_BUFFER,
-            GL_ELEMENT_ARRAY_BUFFER,
-            GL_UNIFORM_BUFFER
-        };
-
-        
         GLuint objectGL;
         m_gl.CreateBuffers(1, &objectGL);
         m_gl.NamedBufferStorage(objectGL, static_cast<GLsizeiptr>(sizeInBytes), data, flagsGL);
@@ -1088,23 +1089,64 @@ namespace GT
     ///////////////////////////////////////////
     // Textures
 
-    HTexture2D GPURenderingDevice_OpenGL4::CreateTexture2D(const Texture2DDesc &desc)
+    HTexture GPURenderingDevice_OpenGL4::CreateTexture(const TextureDesc &desc)
     {
-        GLsizei levelCountGL = desc.levelCount;
+        GLsizei levelCountGL = desc.mipmapLevels;
         if (levelCountGL == 0)
         {
-            levelCountGL = GTLib::ImageUtils::CalculateMipmapCount(desc.width, desc.height);
+            levelCountGL = GTLib::ImageUtils::CalculateMipmapCount(desc.width, desc.height, desc.depth);
         }
 
 
-        GLuint objectGL;
-        m_gl.CreateTextures(GL_TEXTURE_2D_ARRAY, 1, &objectGL);
-        m_gl.TextureStorage3D(objectGL, levelCountGL, g_GLTextureFormatsTable[desc.format], desc.width, desc.height, desc.layerCount);
+        // Always use array formats, but not for cube maps since cube map arrays require slightly newer hardware.
+        GLenum targetsGL[] =
+        {
+            GL_TEXTURE_1D_ARRAY,                // TextureType_1D,
+            GL_TEXTURE_1D_ARRAY,                // TextureType_1D_Array,
+            GL_TEXTURE_2D_ARRAY,                // TextureType_2D,
+            GL_TEXTURE_2D_ARRAY,                // TextureType_2D_Array,
+            GL_TEXTURE_2D_MULTISAMPLE_ARRAY,    // TextureType_2D_Multisample,
+            GL_TEXTURE_2D_MULTISAMPLE_ARRAY,    // TextureType_2D_Multisample_Array,
+            GL_TEXTURE_3D,                      // TextureType_3D,
+            GL_TEXTURE_CUBE_MAP,                // TextureType_Cube,
+            GL_TEXTURE_CUBE_MAP_ARRAY           // TextureType_Cube_Array
+        };
 
-        return reinterpret_cast<HTexture2D>(new Texture_OpenGL4(objectGL, desc.format));
+        GLuint objectGL;
+        m_gl.CreateTextures(targetsGL[desc.type], 1, &objectGL);
+
+        switch (desc.type)
+        {
+        case TextureType_1D:
+        case TextureType_1D_Array:
+            {
+                m_gl.TextureStorage2D(objectGL, levelCountGL, g_GLTextureFormatsTable[desc.format], desc.width, desc.height);
+                break;
+            }
+
+        case TextureType_2D:
+        case TextureType_2D_Array:
+        case TextureType_3D:
+        case TextureType_Cube:
+        case TextureType_Cube_Array:
+            {
+                m_gl.TextureStorage3D(objectGL, levelCountGL, g_GLTextureFormatsTable[desc.format], desc.width, desc.height, desc.depth);
+                break;
+            }
+
+        case TextureType_2D_Multisample:
+        case TextureType_2D_Multisample_Array:
+            {
+                m_gl.TextureStorage3DMultisample(objectGL, levelCountGL, g_GLTextureFormatsTable[desc.format], desc.width, desc.height, desc.depth, GL_TRUE);
+                break;
+            }
+        };
+        
+
+        return reinterpret_cast<HTexture2D>(new Texture_OpenGL4(objectGL, desc));
     }
 
-    void GPURenderingDevice_OpenGL4::ReleaseTexture2D(HTexture2D hTexture)
+    void GPURenderingDevice_OpenGL4::ReleaseTexture(HTexture hTexture)   
     {
         auto textureGL = reinterpret_cast<Texture_OpenGL4*>(hTexture);
         if (textureGL != nullptr)
@@ -1127,9 +1169,9 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_OpenGL4::HoldTexture2D(HTexture2D hTexture)
+    void GPURenderingDevice_OpenGL4::HoldTexture(HTexture hTexture)
     {
-        auto textureGL = reinterpret_cast<Texture_OpenGL4*>(hTexture);
+        auto textureGL = reinterpret_cast<TextureView_OpenGL4*>(hTexture);
         if (textureGL != nullptr)
         {
             m_referenceCountLock.Lock();
@@ -1140,85 +1182,104 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_OpenGL4::UpdateTexture2D(HTexture2D hTexture, int x, int y, unsigned int width, unsigned int height, unsigned int level, unsigned int layer, const void* srcData)
+    void GPURenderingDevice_OpenGL4::UpdateTexture(HTexture hTexture, int x, int y, int z, unsigned int width, unsigned int height, unsigned int depth, unsigned int mipmapLevel, const void* srcData)
     {
         auto textureGL = reinterpret_cast<Texture_OpenGL4*>(hTexture);
         assert(textureGL != nullptr);
         {
-            GLenum formatGL = g_GLTextureSubImageFormatsTable[textureGL->GetFormat()];
-            GLenum typeGL   = g_GLTextureSubImageTypesTable[textureGL->GetFormat()];
+            GLenum formatGL = g_GLTextureSubImageFormatsTable[textureGL->GetDesc().format];
+            GLenum typeGL   = g_GLTextureSubImageTypesTable[textureGL->GetDesc().format];
+
+            // TODO: Check if we can use the 3D version with 1D textures with the DSA version. Doubting it will work, but worth having a quick check
+            //       so we can get rid of the switches.
 
             // We need to calculate the row pitch of the destination rectangle, and if it's different to srcDataRowPitch we need to do a copy before submitting it to the driver.
-            if (textureGL->GetFormat() >= TextureFormat_RGBA_DXT1 && textureGL->GetFormat() <= TextureFormat_RGB_SF16_BPTC)
+            if (textureGL->GetDesc().format >= TextureFormat_RGBA_DXT1 && textureGL->GetDesc().format <= TextureFormat_RGB_SF16_BPTC)
             {
                 // Compressed.
-                m_gl.CompressedTextureSubImage3D(textureGL->GetOpenGLObject(), level, x, y, layer, width, height, 1, formatGL, GetImageSizeInBytes(width, height, textureGL->GetFormat()), srcData);
+                switch (textureGL->GetDesc().format)
+                {
+                case TextureType_1D:
+                case TextureType_1D_Array:
+                    {
+                        m_gl.CompressedTextureSubImage2D(textureGL->GetOpenGLObject(), mipmapLevel, x, y, width, height, formatGL, static_cast<GLsizei>(GetImageSizeInBytes(width, height, textureGL->GetDesc().format)), srcData);
+                        break;
+                    }
+
+                case TextureType_2D:
+                case TextureType_2D_Array:
+                case TextureType_3D:
+                case TextureType_Cube:
+                case TextureType_Cube_Array:
+                    {
+                        m_gl.CompressedTextureSubImage3D(textureGL->GetOpenGLObject(), mipmapLevel, x, y, z, width, height, depth, formatGL, static_cast<GLsizei>(GetImageSizeInBytes(width, height, textureGL->GetDesc().format)), srcData);
+                        break;
+                    }
+
+                default:
+                    {
+                        break;
+                    }
+                }
             }
             else
             {
                 // Uncompressed.
-                m_gl.TextureSubImage3D(textureGL->GetOpenGLObject(), level, x, y, layer, width, height, 1, formatGL, typeGL, srcData);
+                switch (textureGL->GetDesc().format)
+                {
+                case TextureType_1D:
+                case TextureType_1D_Array:
+                    {
+                        m_gl.TextureSubImage2D(textureGL->GetOpenGLObject(), mipmapLevel, x, y, width, 1, formatGL, typeGL, srcData);
+                        break;
+                    }
+
+                case TextureType_2D:
+                case TextureType_2D_Array:
+                case TextureType_3D:
+                case TextureType_Cube:
+                case TextureType_Cube_Array:
+                    {
+                        m_gl.TextureSubImage3D(textureGL->GetOpenGLObject(), mipmapLevel, x, y, z, width, height, 1, formatGL, typeGL, srcData);
+                        break;
+                    }
+
+                default:
+                    {
+                        break;
+                    }
+                }
             }
         }
     }
 
 
-    HTextureView GPURenderingDevice_OpenGL4::CreateTextureViewFrom1D(HTexture1D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
+    HTextureView GPURenderingDevice_OpenGL4::CreateTextureView(HTexture hOriginalTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
     {
-        return 0;
-    }
-
-    HTextureView GPURenderingDevice_OpenGL4::CreateTextureViewFrom2D(HTexture2D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
-    {
-        auto originalTextureGL = reinterpret_cast<Texture_OpenGL4*>(hTexture);
+        auto originalTextureGL = reinterpret_cast<Texture_OpenGL4*>(hOriginalTexture);
         assert(originalTextureGL != nullptr);
         {
-            GLenum targetGL;
-            switch (type)
+            GLenum targetsGL[] =
             {
-            case TextureType_2D:
-                {
-                    targetGL = GL_TEXTURE_2D;
-                    break;
-                }
-
-            case TextureType_2D_Array:
-                {
-                    targetGL = GL_TEXTURE_2D_ARRAY;
-                    break;
-                }
-
-            default:
-                {
-                    // Invalid format.
-                    return 0;
-                }
-            }
-
+                GL_TEXTURE_1D,                      // TextureType_1D,
+                GL_TEXTURE_1D_ARRAY,                // TextureType_1D_Array,
+                GL_TEXTURE_2D,                      // TextureType_2D,
+                GL_TEXTURE_2D_ARRAY,                // TextureType_2D_Array,
+                GL_TEXTURE_2D_MULTISAMPLE,          // TextureType_2D_Multisample,
+                GL_TEXTURE_2D_MULTISAMPLE_ARRAY,    // TextureType_2D_Multisample_Array,
+                GL_TEXTURE_3D,                      // TextureType_3D,
+                GL_TEXTURE_CUBE_MAP,                // TextureType_Cube,
+                GL_TEXTURE_CUBE_MAP_ARRAY           // TextureType_Cube_Array
+            };
 
             // Note here howe we use glGenTextures instead of the DSA glCreateTextures(). This is because glCreateTextures() will initialize the object, wherease in
             // fact we want glTextureView() to be the one to initialize it. If we don't do this we'll get a GL_INVALID_VALUE error.
             GLuint textureViewGL;
             m_gl.GenTextures(1, &textureViewGL);
-            m_gl.TextureView(textureViewGL, targetGL, originalTextureGL->GetOpenGLObject(), g_GLTextureFormatsTable[format], minLevel, numLevels, minLayer, numLayers);
+            m_gl.TextureView(textureViewGL, targetsGL[type], originalTextureGL->GetOpenGLObject(), g_GLTextureFormatsTable[format], minLevel, numLevels, minLayer, numLayers);
 
             return reinterpret_cast<HTextureView>(new TextureView_OpenGL4(textureViewGL));
         }
-    }
-
-    HTextureView GPURenderingDevice_OpenGL4::CreateTextureViewFrom2DMultisample(HTexture2DMultisample hTexture, TextureType type, TextureFormat format, unsigned int minLayer, unsigned int numLayers)
-    {
-        return 0;
-    }
-
-    HTextureView GPURenderingDevice_OpenGL4::CreateTextureViewFrom3D(HTexture3D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels)
-    {
-        return 0;
-    }
-
-    HTextureView GPURenderingDevice_OpenGL4::CreateTextureViewFromCube(HTextureCube hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
-    {
-        return 0;
     }
 
     void GPURenderingDevice_OpenGL4::ReleaseTextureView(HTextureView hTextureView)

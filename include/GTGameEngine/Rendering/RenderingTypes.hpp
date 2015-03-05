@@ -33,6 +33,7 @@ namespace GT
     typedef size_t HTexture2DMultisample;
     typedef size_t HTexture3D;
     typedef size_t HTextureCube;
+    typedef size_t HTexture;
     typedef size_t HTextureView;
     typedef size_t HSampler;
     typedef size_t HFramebuffer;
@@ -419,43 +420,17 @@ namespace GT
         float depthRangeFar;
     };
 
-
-    /// Structure describing a 1D texture.
-    struct Texture1DDesc
+    /// Structure describing a texture.
+    struct TextureDesc
     {
+        TextureType   type;
         unsigned int  width;
-        unsigned int  layerCount;
-        unsigned int  levelCount;
+        unsigned int  height;           //< For 1D textures, this is the number of items in the array.
+        unsigned int  depth;            //< For 2D textures, this is the number of items in the array. For cubemaps this is a multiple of 6.
+        unsigned int  mipmapLevels;     //< Mipmap levels
         TextureFormat format;
         TextureUsage  usage;
-    };
-
-    /// Structure describing a 2D texture.
-    struct Texture2DDesc
-    {
-        unsigned int  width;
-        unsigned int  height;
-        unsigned int  layerCount;    //< Number of items in the array. A standard 2D texture would set this to 1.
-        unsigned int  levelCount;   //< Number of mip levels for each layer.
-        TextureFormat format;
-        TextureUsage  usage;
-    };
-
-    /// Structure describing a multi-sampled 2D texture.
-    struct Texture2DMultisampleDesc : public Texture2DDesc
-    {
-        unsigned int sampleCount;
-    };
-
-    /// Structure describing a 2D texture.
-    struct Texture3DDesc
-    {
-        unsigned int  width;
-        unsigned int  height;
-        unsigned int  depth;
-        unsigned int  levelCount;
-        TextureFormat format;
-        TextureUsage  usage;
+        unsigned int  sampleCount;      //< Only used by multisampled textures.
     };
 
 

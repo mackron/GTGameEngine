@@ -117,6 +117,7 @@ namespace GT
             TextureStorage2D(nullptr),
             TextureStorage3D(nullptr),
             TextureStorage2DMultisample(nullptr),
+            TextureStorage3DMultisample(nullptr),
             TextureSubImage1D(nullptr),
             TextureSubImage2D(nullptr),
             TextureSubImage3D(nullptr),
@@ -614,6 +615,7 @@ namespace GT
             this->TextureStorage2D            = reinterpret_cast<PFNGLTEXTURESTORAGE2DPROC           >(this->GetGLProcAddress("glTextureStorage2D"));
             this->TextureStorage3D            = reinterpret_cast<PFNGLTEXTURESTORAGE3DPROC           >(this->GetGLProcAddress("glTextureStorage3D"));
             this->TextureStorage2DMultisample = reinterpret_cast<PFNGLTEXTURESTORAGE2DMULTISAMPLEPROC>(this->GetGLProcAddress("glTextureStorage2DMultisample"));
+            this->TextureStorage3DMultisample = reinterpret_cast<PFNGLTEXTURESTORAGE3DMULTISAMPLEPROC>(this->GetGLProcAddress("glTextureStorage3DMultisample"));
             this->TextureSubImage1D           = reinterpret_cast<PFNGLTEXTURESUBIMAGE1DPROC          >(this->GetGLProcAddress("glTextureSubImage1D"));
             this->TextureSubImage2D           = reinterpret_cast<PFNGLTEXTURESUBIMAGE2DPROC          >(this->GetGLProcAddress("glTextureSubImage2D"));
             this->TextureSubImage3D           = reinterpret_cast<PFNGLTEXTURESUBIMAGE3DPROC          >(this->GetGLProcAddress("glTextureSubImage3D"));

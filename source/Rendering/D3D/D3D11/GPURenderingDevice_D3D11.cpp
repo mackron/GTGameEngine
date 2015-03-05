@@ -943,7 +943,7 @@ namespace GT
     ///////////////////////////////////////////
     // Textures
 
-    HTexture2D GPURenderingDevice_D3D11::CreateTexture2D(const Texture2DDesc &desc)
+    HTexture GPURenderingDevice_D3D11::CreateTexture(const TextureDesc &desc)
     {
         UINT bindFlagsD3D = 0;
         if ((desc.usage & TextureUsage_ShaderResource) != 0)
@@ -959,76 +959,138 @@ namespace GT
             bindFlagsD3D |= D3D11_BIND_DEPTH_STENCIL;
         }
 
+        D3D11_USAGE usageD3D = D3D11_USAGE_DEFAULT;         // <-- TODO: Might want to make this customizable.
 
-        D3D11_TEXTURE2D_DESC descD3D;
-        descD3D.Width              = desc.width;
-        descD3D.Height             = desc.height;
-        descD3D.MipLevels          = desc.levelCount;
-        descD3D.ArraySize          = desc.layerCount;
-        descD3D.Format             = g_D3DTextureFormatsTable[desc.format];
-        descD3D.SampleDesc.Count   = 1;
-        descD3D.SampleDesc.Quality = 0;
-        descD3D.Usage              = D3D11_USAGE_DEFAULT;       // <-- TODO: Might want to make this customizable.
-        descD3D.BindFlags          = bindFlagsD3D;
-        descD3D.CPUAccessFlags     = 0;
-        descD3D.MiscFlags          = 0;
 
-        ID3D11Texture2D* texture2DD3D11;
-        if (SUCCEEDED(m_device->CreateTexture2D(&descD3D, nullptr, &texture2DD3D11)))
+        switch (desc.type)
         {
-            texture2DD3D11->SetPrivateData(CustomDataGUID_Generic, 4, &desc.format);
+        case TextureType_1D:
+        case TextureType_1D_Array:
+            {
+                D3D11_TEXTURE1D_DESC descD3D;
+                descD3D.Width          = desc.width;
+                descD3D.MipLevels      = desc.mipmapLevels;
+                descD3D.ArraySize      = desc.height;
+                descD3D.Format         = g_D3DTextureFormatsTable[desc.format];
+                descD3D.Usage          = usageD3D;
+                descD3D.BindFlags      = bindFlagsD3D;
+                descD3D.CPUAccessFlags = 0;
+                descD3D.MiscFlags      = 0;
 
-            return reinterpret_cast<HTexture2D>(texture2DD3D11);
+                ID3D11Texture1D* textureD3D11 = nullptr;
+                if (SUCCEEDED(m_device->CreateTexture1D(&descD3D, nullptr, &textureD3D11)))
+                {
+                    textureD3D11->SetPrivateData(CustomDataGUID_Generic, sizeof(desc), &desc);
+                }
+
+                return reinterpret_cast<HTexture>(textureD3D11);
+            }
+
+        case TextureType_2D:
+        case TextureType_2D_Array:
+        case TextureType_2D_Multisample:
+        case TextureType_2D_Multisample_Array:
+        case TextureType_Cube:
+        case TextureType_Cube_Array:
+            {
+                D3D11_TEXTURE2D_DESC descD3D;
+                descD3D.Width              = desc.width;
+                descD3D.Height             = desc.height;
+                descD3D.MipLevels          = desc.mipmapLevels;
+                descD3D.ArraySize          = desc.depth;
+                descD3D.Format             = g_D3DTextureFormatsTable[desc.format];
+                descD3D.SampleDesc.Count   = desc.sampleCount;
+                descD3D.SampleDesc.Quality = 0;
+                descD3D.Usage              = usageD3D;
+                descD3D.BindFlags          = bindFlagsD3D;
+                descD3D.CPUAccessFlags     = 0;
+                descD3D.MiscFlags          = 0;
+
+                if (desc.type != TextureType_2D_Multisample && desc.type != TextureType_2D_Multisample_Array)
+                {
+                    descD3D.SampleDesc.Count = 1;
+                }
+
+
+                ID3D11Texture2D* textureD3D11 = nullptr;
+                if (SUCCEEDED(m_device->CreateTexture2D(&descD3D, nullptr, &textureD3D11)))
+                {
+                    textureD3D11->SetPrivateData(CustomDataGUID_Generic, sizeof(desc), &desc);
+                }
+
+                return reinterpret_cast<HTexture>(textureD3D11);
+            }
+
+        case TextureType_3D:
+            {
+                D3D11_TEXTURE3D_DESC descD3D;
+                descD3D.Width          = desc.width;
+                descD3D.Height         = desc.height;
+                descD3D.Depth          = desc.depth;
+                descD3D.MipLevels      = desc.mipmapLevels;
+                descD3D.Format         = g_D3DTextureFormatsTable[desc.format];
+                descD3D.Usage          = usageD3D;
+                descD3D.BindFlags      = bindFlagsD3D;
+                descD3D.CPUAccessFlags = 0;
+                descD3D.MiscFlags      = 0;
+
+                ID3D11Texture3D* textureD3D11 = nullptr;
+                if (SUCCEEDED(m_device->CreateTexture3D(&descD3D, nullptr, &textureD3D11)))
+                {
+                    textureD3D11->SetPrivateData(CustomDataGUID_Generic, sizeof(desc), &desc);
+                }
+
+                return reinterpret_cast<HTexture>(textureD3D11);
+            }
+
+        default:
+            {
+                break;
+            }
         }
-        else
-        {
-            return 0;
-        }
+
+        return 0;
     }
 
-    void GPURenderingDevice_D3D11::ReleaseTexture2D(HTexture2D hTexture)
+    void GPURenderingDevice_D3D11::ReleaseTexture(HTexture hTexture)   
     {
         if (hTexture != 0)
         {
-            reinterpret_cast<ID3D11Texture2D*>(hTexture)->Release();
+            reinterpret_cast<ID3D11Resource*>(hTexture)->Release();
         }
     }
 
-    void GPURenderingDevice_D3D11::HoldTexture2D(HTexture2D hTexture)
+    void GPURenderingDevice_D3D11::HoldTexture(HTexture hTexture)
     {
         if (hTexture != 0)
         {
-            reinterpret_cast<ID3D11Texture2D*>(hTexture)->AddRef();
+            reinterpret_cast<ID3D11Resource*>(hTexture)->AddRef();
         }
     }
 
-    void GPURenderingDevice_D3D11::UpdateTexture2D(HTexture2D hTexture, int x, int y, unsigned int width, unsigned int height, unsigned int level, unsigned int layer, const void* srcData)
+    void GPURenderingDevice_D3D11::UpdateTexture(HTexture hTexture, int x, int y, int z, unsigned int width, unsigned int height, unsigned int depth, unsigned int mipmapLevel, const void* srcData)
     {
-        auto texture2DD3D11 = reinterpret_cast<ID3D11Texture2D*>(hTexture);
-        assert(texture2DD3D11 != nullptr);
+        ID3D11Resource* textureD3D11 = reinterpret_cast<ID3D11Resource*>(hTexture);
+        if (textureD3D11 != nullptr)
         {
-            UINT formatSize = 4;
-            TextureFormat format;
-            texture2DD3D11->GetPrivateData(CustomDataGUID_Generic, &formatSize, &format);
-
-
-            D3D11_TEXTURE2D_DESC descD3D;
-            texture2DD3D11->GetDesc(&descD3D);
+            UINT descSize = sizeof(TextureDesc);
+            TextureDesc desc;
+            textureD3D11->GetPrivateData(CustomDataGUID_Generic, &descSize, &desc);
 
             D3D11_BOX box;
             box.left   = x;
             box.right  = x + width;
             box.top    = y;
             box.bottom = y + height;
-            box.front  = 0;
-            box.back   = 1;
+            box.front  = z;
+            box.back   = z + depth;
 
-            m_context->UpdateSubresource(texture2DD3D11, level + (layer * descD3D.MipLevels), &box, srcData, GetRowPitch(width, format), 0);
+            m_context->UpdateSubresource(textureD3D11, mipmapLevel + (z * desc.mipmapLevels), &box, srcData, static_cast<UINT>(GetRowPitch(width, desc.format)), static_cast<UINT>(GetImageSizeInBytes(desc.width, desc.height, desc.format)));
         }
     }
 
 
-    HTextureView GPURenderingDevice_D3D11::CreateTextureViewFrom1D(HTexture1D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
+    HTextureView GPURenderingDevice_D3D11::CreateTextureView(HTexture hOriginalTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
     {
         D3D11_SHADER_RESOURCE_VIEW_DESC descD3D;
         descD3D.Format = g_D3DTextureFormatsTable[format];
@@ -1055,32 +1117,6 @@ namespace GT
                 break;
             }
 
-        default:
-            {
-                // Invalid format.
-                return 0;
-            }
-        }
-        
-
-        ID3D11ShaderResourceView* viewD3D11;
-        if (SUCCEEDED(m_device->CreateShaderResourceView(reinterpret_cast<ID3D11Texture1D*>(hTexture), &descD3D, &viewD3D11)))
-        {
-            return reinterpret_cast<HTextureView>(viewD3D11);
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    HTextureView GPURenderingDevice_D3D11::CreateTextureViewFrom2D(HTexture2D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
-    {
-        D3D11_SHADER_RESOURCE_VIEW_DESC descD3D;
-        descD3D.Format = g_D3DTextureFormatsTable[format];
-
-        switch (type)
-        {
         case TextureType_2D:
             {
                 descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
@@ -1101,32 +1137,6 @@ namespace GT
                 break;
             }
 
-        default:
-            {
-                // Invalid format.
-                return 0;
-            }
-        }
-        
-
-        ID3D11ShaderResourceView* viewD3D11;
-        if (SUCCEEDED(m_device->CreateShaderResourceView(reinterpret_cast<ID3D11Texture2D*>(hTexture), &descD3D, &viewD3D11)))
-        {
-            return reinterpret_cast<HTextureView>(viewD3D11);
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    HTextureView GPURenderingDevice_D3D11::CreateTextureViewFrom2DMultisample(HTexture2DMultisample hTexture, TextureType type, TextureFormat format, unsigned int minLayer, unsigned int numLayers)
-    {
-        D3D11_SHADER_RESOURCE_VIEW_DESC descD3D;
-        descD3D.Format = g_D3DTextureFormatsTable[format];
-
-        switch (type)
-        {
         case TextureType_2D_Multisample:
             {
                 descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DMS;
@@ -1143,83 +1153,11 @@ namespace GT
                 break;
             }
 
-        default:
-            {
-                // Invalid format.
-                return 0;
-            }
-        }
-        
-
-        ID3D11ShaderResourceView* viewD3D11;
-        if (SUCCEEDED(m_device->CreateShaderResourceView(reinterpret_cast<ID3D11Texture2D*>(hTexture), &descD3D, &viewD3D11)))
-        {
-            return reinterpret_cast<HTextureView>(viewD3D11);
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    HTextureView GPURenderingDevice_D3D11::CreateTextureViewFrom3D(HTexture3D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels)
-    {
-        D3D11_SHADER_RESOURCE_VIEW_DESC descD3D;
-        descD3D.Format = g_D3DTextureFormatsTable[format];
-
-        switch (type)
-        {
         case TextureType_3D:
             {
                 descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE3D;
                 descD3D.Texture3D.MipLevels       = numLevels;
                 descD3D.Texture3D.MostDetailedMip = minLevel;
-
-                break;
-            }
-
-        default:
-            {
-                // Invalid format.
-                return 0;
-            }
-        }
-        
-
-        ID3D11ShaderResourceView* viewD3D11;
-        if (SUCCEEDED(m_device->CreateShaderResourceView(reinterpret_cast<ID3D11Texture3D*>(hTexture), &descD3D, &viewD3D11)))
-        {
-            return reinterpret_cast<HTextureView>(viewD3D11);
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    HTextureView GPURenderingDevice_D3D11::CreateTextureViewFromCube(HTextureCube hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers)
-    {
-        D3D11_SHADER_RESOURCE_VIEW_DESC descD3D;
-        descD3D.Format = g_D3DTextureFormatsTable[format];
-
-        switch (type)
-        {
-        case TextureType_2D:
-            {
-                descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
-                descD3D.Texture2D.MipLevels       = numLevels;
-                descD3D.Texture2D.MostDetailedMip = minLevel;
-
-                break;
-            }
-
-        case TextureType_2D_Array:
-            {
-                descD3D.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2DARRAY;
-                descD3D.Texture2D.MipLevels            = numLevels;
-                descD3D.Texture2D.MostDetailedMip      = minLevel;
-                descD3D.Texture2DArray.ArraySize       = numLayers;
-                descD3D.Texture2DArray.FirstArraySlice = minLayer;
 
                 break;
             }
@@ -1253,7 +1191,7 @@ namespace GT
         
 
         ID3D11ShaderResourceView* viewD3D11;
-        if (SUCCEEDED(m_device->CreateShaderResourceView(reinterpret_cast<ID3D11Texture2D*>(hTexture), &descD3D, &viewD3D11)))
+        if (SUCCEEDED(m_device->CreateShaderResourceView(reinterpret_cast<ID3D11Resource*>(hOriginalTexture), &descD3D, &viewD3D11)))
         {
             return reinterpret_cast<HTextureView>(viewD3D11);
         }
@@ -1278,7 +1216,6 @@ namespace GT
             reinterpret_cast<ID3D11View*>(hTextureView)->AddRef();
         }
     }
-
 
 
     ///////////////////////////////////////////

@@ -516,25 +516,81 @@ namespace GT
         ///////////////////////////////////////////
         // Textures
 
-        virtual HTexture2D CreateTexture2D(const Texture2DDesc &desc) = 0;
-        virtual void ReleaseTexture2D(HTexture2D hTexture) = 0;
-        virtual void HoldTexture2D(HTexture2D hTexture) = 0;
-        virtual void UpdateTexture2D(HTexture2D hTexture, int x, int y, unsigned int width, unsigned int height, unsigned int level, unsigned int layer, const void* srcData) = 0;
+        /// Creates a texture.
+        ///
+        /// @param desc [in] A reference to the structure describing the properties of the texture.
+        ///
+        /// @return A handle to the texture, of 0 if there was an error.
+        virtual HTexture CreateTexture(const TextureDesc &desc) = 0;
 
-        virtual HTextureView CreateTextureViewFrom1D(HTexture2D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers) = 0;
-        virtual HTextureView CreateTextureViewFrom2D(HTexture2D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers) = 0;
-        virtual HTextureView CreateTextureViewFrom2DMultisample(HTexture2DMultisample hTexture, TextureType type, TextureFormat format, unsigned int minLayer, unsigned int numLayers) = 0;
-        virtual HTextureView CreateTextureViewFrom3D(HTexture3D hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels) = 0;
-        virtual HTextureView CreateTextureViewFromCube(HTextureCube hTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers) = 0;
+        /// Decrements the reference counter of the given texture and deletes it if the counter hits 0.
+        ///
+        /// @param hTexture [in] A handle to the texture to release.
+        virtual void ReleaseTexture(HTexture hTexture) = 0;
+
+        /// Increments the reference counter of the given texture.
+        ///
+        /// @param hTexture [in] A handle to the texture to hold.
+        virtual void HoldTexture(HTexture hTexture) = 0;
+
+        /// Updates the data of the given texture.
+        ///
+        /// @param hTexture    [in] A handle to the texture whose image data is being updated.
+        /// @param x           [in] The x position of the region to update.
+        /// @param y           [in] The y position of the region to update. For 1D textures, this is the array slice to update.
+        /// @param z           [in] The z position of the region to update. For 2D textures, this is the array slice to update.
+        /// @param width       [in] The width of the region to update.
+        /// @param height      [in] The height of the region to update. For 1D textures, this must be set to 1.
+        /// @param depth       [in] The depth of the region to update. For 2D textures, this must be set to 1.
+        /// @param mipmapLevel [in] The mipmap level to update.
+        /// @param srcData     [in] A pointer to the new image data.
+        virtual void UpdateTexture(HTexture hTexture, int x, int y, int z, unsigned int width, unsigned int height, unsigned int depth, unsigned int mipmapLevel, const void* srcData) = 0;
+
+
+        /// Creates a texture view from the given texture.
+        ///
+        /// @param originalTexture [in] A handle to the texture the new texture view will be referencing.
+        /// @param type            [in] The type of texture the texture view is representing.
+        /// @param format          [in] The format of the image data.
+        /// @param minLevel        [in] The index of the most detailed mipmap to use.
+        /// @param numLevels       [in] The number of mipmap levels to include in the view.
+        /// @param minLayer        [in] The minimum layer in the texture to use.
+        /// @param numLayers       [in] The number of layers to include in the view.
+        ///
+        /// @return A handle to the new texture view object, of 0 if an error occurs.
+        ///
+        /// @return
+        ///     If the texture type is not an array format, numLayers should never be greater than 1.
+        virtual HTextureView CreateTextureView(HTexture hOriginalTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers) = 0;
+        
+        /// Decrements the reference counter of the given texture view and deletes it if the counter hits 0.
+        ///
+        /// @param hTextureView [in] A handle to the texture view object to release.
         virtual void ReleaseTextureView(HTextureView hTextureView) = 0;
+
+        /// Increments the reference counter of the given texture view.
+        ///
+        /// @param hTextureView [in] A handle to the texture view object to hold.
         virtual void HoldTextureView(HTextureView hTextureView) = 0;
+
 
 
         ///////////////////////////////////////////
         // Samplers
 
+        /// Creates a sampler object from the given sampler description.
+        ///
+        /// @return A handle to the new sampler object, or 0 if an error occurs.
         virtual HSampler CreateSampler(const SamplerDesc &desc) = 0;
+
+        /// Decrements the reference counter of the given sampler object and deletes it if the counter hits 0.
+        ///
+        /// @param hSampler [in] A handle to the sampler object to release.
         virtual void ReleaseSampler(HSampler hSampler) = 0;
+
+        /// Increments the reference counter of the given sampler object.
+        ///
+        /// @param hSampler [in] A handle to the sampler object to hold.
         virtual void HoldSampler(HSampler hSampler) = 0;
 
 

@@ -273,6 +273,7 @@ namespace GT
         PFNGLTEXTURESTORAGE2DPROC            TextureStorage2D;
         PFNGLTEXTURESTORAGE3DPROC            TextureStorage3D;
         PFNGLTEXTURESTORAGE2DMULTISAMPLEPROC TextureStorage2DMultisample;
+        PFNGLTEXTURESTORAGE3DMULTISAMPLEPROC TextureStorage3DMultisample;
         PFNGLTEXTURESUBIMAGE1DPROC           TextureSubImage1D;
         PFNGLTEXTURESUBIMAGE2DPROC           TextureSubImage2D;
         PFNGLTEXTURESUBIMAGE3DPROC           TextureSubImage3D;
