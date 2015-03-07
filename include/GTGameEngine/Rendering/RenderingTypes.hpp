@@ -332,6 +332,40 @@ namespace GT
         TextureAddressMode_Mirror_Once
     };
 
+    enum BlendParameter
+    {
+        BlendParameter_Zero = 0,
+        BlendParameter_One,
+
+        BlendParameter_Src_Color,
+        BlendParameter_Inv_Src_Color,
+        BlendParameter_Src_Alpha,
+        BlendParameter_Inv_Src_Alpha,
+        BlendParameter_Src_Alpha_Saturate,
+        
+        BlendParameter_Dst_Color,
+        BlendParameter_Inv_Dst_Color,
+        BlendParameter_Dst_Alpha,
+        BlendParameter_Inv_Dst_Alpha,
+        
+        BlendParameter_Src1_Color,
+        BlendParameter_Inv_Src1_Color,
+        BlendParameter_Src1_Alpha,
+        BlendParameter_Inv_Src1_Alpha,
+
+        BlendParameter_BlendFactor,
+        BlendParameter_Inv_BlendFactor
+    };
+
+    enum BlendOp
+    {
+        BlendOp_Add = 0,
+        BlendOp_Subtract,
+        BlendOp_Reverse_Subtract,
+        BlendOp_Min,
+        BlendOp_Max
+    };
+
 
     //////////////////////////////////////////
     // Structures
@@ -395,6 +429,47 @@ namespace GT
         uint8_t           stencilWriteMask;
         GPUStencilOpDesc  stencilFrontFaceOp;
         GPUStencilOpDesc  stencilBackFaceOp;
+    };
+
+
+    /// Structure representing the blending parameters and function to use for a single render target.
+    struct RenderTargetBlendStateDesc
+    {
+        RenderTargetBlendStateDesc()
+            : enableBlending(false),
+              srcBlendParameter(BlendParameter_One),
+              dstBlendParameter(BlendParameter_Zero),
+              blendOp(BlendOp_Add),
+              srcAlphaBlendParameter(BlendParameter_One),
+              dstAlphaBlendParameter(BlendParameter_Zero),
+              blendOpAlpha(BlendOp_Add),
+              writeMask(0xFF)
+        {
+        }
+
+        bool           enableBlending;
+        BlendParameter srcBlendParameter;
+        BlendParameter dstBlendParameter;
+        BlendOp        blendOp;
+        BlendParameter srcAlphaBlendParameter;
+        BlendParameter dstAlphaBlendParameter;
+        BlendOp        blendOpAlpha;
+        uint8_t        writeMask;   //< RGBA masking.
+    };
+
+    /// Structure describing the blend state.
+    struct BlendStateDesc
+    {
+        BlendStateDesc()
+            : enableAlphaToCoverage(false),
+              enableIndependentBlend(false),
+              renderTarget()
+        {
+        }
+
+        bool enableAlphaToCoverage;
+        bool enableIndependentBlend;
+        RenderTargetBlendStateDesc renderTarget[8];
     };
 
 

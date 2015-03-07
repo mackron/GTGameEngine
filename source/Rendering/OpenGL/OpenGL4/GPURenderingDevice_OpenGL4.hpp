@@ -116,6 +116,15 @@ namespace GT
         /// @copydoc GPURenderingDevice::OMSetDepthStencilState()
         void OMSetDepthStencilState(HDepthStencilState hState, unsigned int stencilRef);
 
+        /// @copydoc GPURenderingDevice::OMSetBlendState()
+        void OMSetBlendState(HBlendState hState);
+
+        /// @copydoc GPURenderingDevice::OMSetBlendFactor()
+        void OMSetBlendFactor(float blendFactor[4]);
+
+        /// @copydoc GPURenderingDevice::OMSetSampleMask()
+        void OMSetSampleMask(uint32_t sampleMask);
+
 
         /////////////////////////////////////////////
         // Vertex Shader Stage
@@ -154,10 +163,21 @@ namespace GT
         HDepthStencilState CreateDepthStencilState(const GPUDepthStencilStateDesc &desc);
 
         /// @copydoc GPURenderingDevice::DeleteDepthStencilState().
-        void DeleteDepthStencilState(HDepthStencilState hState);
+        void ReleaseDepthStencilState(HDepthStencilState hState);
 
         /// @copydoc GPURenderingDevice::HoldDepthStencilState()
         void HoldDepthStencilState(HDepthStencilState hState);
+
+
+        /// @copydoc GPURenderingDevice::CreateBlendState()
+        HBlendState CreateBlendState(const BlendStateDesc &desc);
+
+        /// @copydoc GPURenderingDevice::ReleaseBlendState()
+        void ReleaseBlendState(HBlendState hState);
+
+        /// @copydoc GPURenderingDevice::HoldBlendState()
+        void HoldBlendState(HBlendState hState);
+
 
 
         ////////////////////////////////////////////

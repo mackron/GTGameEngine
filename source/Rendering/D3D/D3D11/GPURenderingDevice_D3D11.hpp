@@ -122,6 +122,16 @@ namespace GT
         /// @copydoc GPURenderingDevice::OMSetDepthStencilState()
         void OMSetDepthStencilState(HDepthStencilState hState, unsigned int stencilRef);
 
+        /// @copydoc GPURenderingDevice::OMSetBlendState()
+        void OMSetBlendState(HBlendState hState);
+
+        /// @copydoc GPURenderingDevice::OMSetBlendFactor()
+        void OMSetBlendFactor(float blendFactor[4]);
+
+        /// @copydoc GPURenderingDevice::OMSetSampleMask()
+        void OMSetSampleMask(uint32_t sampleMask);
+
+
 
         /////////////////////////////////////////////
         // Vertex Shader Stage
@@ -160,10 +170,20 @@ namespace GT
         HDepthStencilState CreateDepthStencilState(const GPUDepthStencilStateDesc &desc);
 
         /// @copydoc GPURenderingDevice::ReleaseDepthStencilState().
-        void DeleteDepthStencilState(HDepthStencilState hState);
+        void ReleaseDepthStencilState(HDepthStencilState hState);
 
         /// @copydoc GPURenderingDevice::HoldDepthStencilState()
         void HoldDepthStencilState(HDepthStencilState hState);
+
+
+        /// @copydoc GPURenderingDevice::CreateBlendState()
+        HBlendState CreateBlendState(const BlendStateDesc &desc);
+
+        /// @copydoc GPURenderingDevice::ReleaseBlendState()
+        void ReleaseBlendState(HBlendState hState);
+
+        /// @copydoc GPURenderingDevice::HoldBlendState()
+        void HoldBlendState(HBlendState hState);
 
 
 
@@ -353,6 +373,15 @@ namespace GT
 
         /// The current primitive topology.
         GPUPrimitiveTopology m_currentPrimitiveTopology;
+
+        /// The current blend state.
+        HBlendState m_currentBlendState;
+
+        /// The current blend factor.
+        float m_currentBlendFactor[4];
+
+        /// The current sample mask. The default value is 0xFFFFFFFF.
+        UINT m_currentSampleMask;
 
             
         ///////////////////////////////////////////

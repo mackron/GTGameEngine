@@ -739,6 +739,132 @@ namespace GT
         }
     }
 
+    void GPURenderingDevice_OpenGL4::OMSetBlendState(HBlendState hState)
+    {
+        CheckContextIsCurrent(m_gl, m_currentDC);
+
+        auto stateGL = reinterpret_cast<BlendState_OpenGL4*>(hState);
+        if (stateGL != nullptr)
+        {
+            // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
+
+            GLenum blendParametersGL[] =
+            {
+                GL_ZERO,                            // BlendParameter_Zero
+                GL_ONE,                             // BlendParameter_One
+
+                GL_SRC_COLOR,                       // BlendParameter_Src_Color
+                GL_ONE_MINUS_SRC_COLOR,             // BlendParameter_Inv_Src_Color
+                GL_SRC_ALPHA,                       // BlendParameter_Src_Alpha
+                GL_ONE_MINUS_SRC_ALPHA,             // BlendParameter_Inv_Src_Alpha
+                GL_SRC_ALPHA_SATURATE,              // BlendParameter_Src_Alpha_Saturate
+        
+                GL_DST_COLOR,                       // BlendParameter_Dst_Color
+                GL_ONE_MINUS_DST_COLOR,             // BlendParameter_Inv_Dst_Color
+                GL_DST_ALPHA,                       // BlendParameter_Dst_Alpha
+                GL_ONE_MINUS_DST_ALPHA,             // BlendParameter_Inv_Dst_Alpha
+        
+                GL_SRC1_COLOR,                      // BlendParameter_Src1_Color
+                GL_ONE_MINUS_SRC1_COLOR,            // BlendParameter_Inv_Src1_Color
+                GL_SRC1_ALPHA,                      // BlendParameter_Src1_Alpha
+                GL_ONE_MINUS_SRC1_ALPHA,            // BlendParameter_Inv_Src1_Alpha
+
+                GL_CONSTANT_COLOR,                  // BlendParameter_BlendFactor
+                GL_ONE_MINUS_CONSTANT_COLOR         // BlendParameter_Inv_BlendFactor
+            };
+
+            GLenum blendOpsGL[] =
+            {
+                GL_FUNC_ADD,                        // BlendOp_Add
+                GL_FUNC_SUBTRACT,                   // BlendOp_Subtract
+                GL_FUNC_REVERSE_SUBTRACT,           // BlendOp_Reverse_Subtract
+                GL_MIN,                             // BlendOp_Min
+                GL_MAX                              // BlendOp_Max
+            };
+
+
+            if (stateGL->enableAlphaToCoverage)
+            {
+                m_gl.Enable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+            }
+            else
+            {
+                m_gl.Disable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+            }
+
+
+            if (stateGL->enableIndependentBlend)
+            {
+                // Independant.
+                for (GLuint iRT = 0; iRT < 8; ++iRT)
+                {
+                    if (stateGL->renderTarget[iRT].enableBlending)
+                    {
+                        m_gl.Enablei(GL_BLEND, iRT);
+                    }
+                    else
+                    {
+                        m_gl.Disablei(GL_BLEND, iRT);
+                    }
+
+                    const GLenum srcColorParam = blendParametersGL[stateGL->renderTarget[iRT].srcBlendParameter];
+                    const GLenum dstColorParam = blendParametersGL[stateGL->renderTarget[iRT].dstBlendParameter];
+                    const GLenum srcAlphaParam = blendParametersGL[stateGL->renderTarget[iRT].srcAlphaBlendParameter];
+                    const GLenum dstAlphaParam = blendParametersGL[stateGL->renderTarget[iRT].dstAlphaBlendParameter];
+                    m_gl.BlendFuncSeparatei(iRT, srcColorParam, dstColorParam, srcAlphaParam, dstAlphaParam);
+
+                    const GLenum colorOp = blendOpsGL[stateGL->renderTarget[iRT].blendOp];
+                    const GLenum alphaOp = blendOpsGL[stateGL->renderTarget[iRT].blendOpAlpha];
+                    m_gl.BlendEquationSeparatei(iRT, colorOp, alphaOp);
+
+                    const GLboolean maskR = (stateGL->renderTarget[iRT].writeMask & (1 << 3)) >> 3;
+                    const GLboolean maskG = (stateGL->renderTarget[iRT].writeMask & (1 << 2)) >> 2;
+                    const GLboolean maskB = (stateGL->renderTarget[iRT].writeMask & (1 << 1)) >> 1;
+                    const GLboolean maskA = (stateGL->renderTarget[iRT].writeMask & (1 << 0)) >> 0;
+                    m_gl.ColorMaski(iRT, maskR, maskG, maskB, maskA);
+                }
+            }
+            else
+            {
+                // Not independant.
+                if (stateGL->renderTarget[0].enableBlending)
+                {
+                    m_gl.Enable(GL_BLEND);
+                }
+                else
+                {
+                    m_gl.Disable(GL_BLEND);
+                }
+
+                const GLenum srcColorParam = blendParametersGL[stateGL->renderTarget[0].srcBlendParameter];
+                const GLenum dstColorParam = blendParametersGL[stateGL->renderTarget[0].dstBlendParameter];
+                const GLenum srcAlphaParam = blendParametersGL[stateGL->renderTarget[0].srcAlphaBlendParameter];
+                const GLenum dstAlphaParam = blendParametersGL[stateGL->renderTarget[0].dstAlphaBlendParameter];
+                m_gl.BlendFuncSeparate(srcColorParam, dstColorParam, srcAlphaParam, dstAlphaParam);
+
+                const GLenum colorOp = blendOpsGL[stateGL->renderTarget[0].blendOp];
+                const GLenum alphaOp = blendOpsGL[stateGL->renderTarget[0].blendOpAlpha];
+                m_gl.BlendEquationSeparate(colorOp, alphaOp);
+
+                const GLboolean maskR = (stateGL->renderTarget[0].writeMask & (1 << 3)) >> 3;
+                const GLboolean maskG = (stateGL->renderTarget[0].writeMask & (1 << 2)) >> 2;
+                const GLboolean maskB = (stateGL->renderTarget[0].writeMask & (1 << 1)) >> 1;
+                const GLboolean maskA = (stateGL->renderTarget[0].writeMask & (1 << 0)) >> 0;
+                m_gl.ColorMask(maskR, maskG, maskB, maskA);
+            }
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::OMSetBlendFactor(float blendFactor[4])
+    {
+        m_gl.BlendColor(blendFactor[0], blendFactor[1], blendFactor[2], blendFactor[3]);
+    }
+
+    void GPURenderingDevice_OpenGL4::OMSetSampleMask(uint32_t sampleMask)
+    {
+        m_gl.SampleMaski(0, static_cast<GLbitfield>(sampleMask));
+    }
+
 
     /////////////////////////////////////////////
     // Vertex Shader Stage
@@ -820,7 +946,7 @@ namespace GT
         return reinterpret_cast<size_t>(new DepthStencilState_OpenGL4(desc));
     }
 
-    void GPURenderingDevice_OpenGL4::DeleteDepthStencilState(HDepthStencilState hState)
+    void GPURenderingDevice_OpenGL4::ReleaseDepthStencilState(HDepthStencilState hState)
     {
         auto stateGL = reinterpret_cast<DepthStencilState_OpenGL4*>(hState);
         if (stateGL != nullptr)
@@ -841,6 +967,43 @@ namespace GT
     void GPURenderingDevice_OpenGL4::HoldDepthStencilState(HDepthStencilState hState)
     {
         auto stateGL = reinterpret_cast<DepthStencilState_OpenGL4*>(hState);
+        if (stateGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                stateGL->IncrementReferenceCount();
+            }
+            m_referenceCountLock.Unlock();
+        }
+    }
+
+
+    HBlendState GPURenderingDevice_OpenGL4::CreateBlendState(const BlendStateDesc &desc)
+    {
+        return reinterpret_cast<size_t>(new BlendState_OpenGL4(desc));
+    }
+
+    void GPURenderingDevice_OpenGL4::ReleaseBlendState(HBlendState hState)
+    {
+        auto stateGL = reinterpret_cast<BlendState_OpenGL4*>(hState);
+        if (stateGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                assert(stateGL->GetReferenceCount() > 0);
+
+                if (stateGL->DecrementReferenceCount() == 0)
+                {
+                    delete stateGL;
+                }
+            }
+            m_referenceCountLock.Unlock();
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::HoldBlendState(HBlendState hState)
+    {
+        auto stateGL = reinterpret_cast<BlendState_OpenGL4*>(hState);
         if (stateGL != nullptr)
         {
             m_referenceCountLock.Lock();
@@ -1653,7 +1816,6 @@ namespace GT
     void GPURenderingDevice_OpenGL4::UpdateSlotVertexAttributePointers(unsigned int slotIndex)
     {
         assert(slotIndex < GT_GE_MAX_VERTEX_BUFFER_SLOTS);
-
 
         auto inputLayoutGL = reinterpret_cast<InputLayout_OpenGL4*>(m_currentInputLayout);
         if (inputLayoutGL != nullptr)

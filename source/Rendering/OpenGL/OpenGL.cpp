@@ -52,7 +52,9 @@ namespace GT
             StencilFuncSeparate(nullptr),
             StencilMaskSeparate(nullptr),
             Enable(nullptr),
+            Enablei(nullptr),
             Disable(nullptr),
+            Disablei(nullptr),
             ClearColor(nullptr),
             ClearDepth(nullptr),
             ClearStencil(nullptr),
@@ -60,6 +62,15 @@ namespace GT
             CullFace(nullptr),
             PolygonMode(nullptr),
             PolygonOffset(nullptr),
+
+            BlendEquationSeparate(nullptr),
+            BlendEquationSeparatei(nullptr),
+            BlendFuncSeparate(nullptr),
+            BlendFuncSeparatei(nullptr),
+            BlendColor(nullptr),
+            SampleMaski(nullptr),
+            ColorMask(nullptr),
+            ColorMaski(nullptr),
 
             Clear(nullptr),
             DrawElements(nullptr),
@@ -552,7 +563,9 @@ namespace GT
             this->StencilFuncSeparate      = reinterpret_cast<PFNGLSTENCILFUNCSEPARATEPROC     >(this->GetGLProcAddress("glStencilFuncSeparate"));
             this->StencilMaskSeparate      = reinterpret_cast<PFNGLSTENCILMASKSEPARATEPROC     >(this->GetGLProcAddress("glStencilMaskSeparate"));
             this->Enable                   = reinterpret_cast<PFNGLENABLEPROC                  >(this->GetGLProcAddress("glEnable"));
+            this->Enablei                  = reinterpret_cast<PFNGLENABLEIPROC                 >(this->GetGLProcAddress("glEnablei"));
             this->Disable                  = reinterpret_cast<PFNGLDISABLEPROC                 >(this->GetGLProcAddress("glDisable"));
+            this->Disablei                 = reinterpret_cast<PFNGLDISABLEIPROC                >(this->GetGLProcAddress("glDisablei"));
             this->ClearColor               = reinterpret_cast<PFNGLCLEARCOLORPROC              >(this->GetGLProcAddress("glClearColor"));
             this->ClearDepth               = reinterpret_cast<PFNGLCLEARDEPTHPROC              >(this->GetGLProcAddress("glClearDepth"));
             this->ClearStencil             = reinterpret_cast<PFNGLCLEARSTENCILPROC            >(this->GetGLProcAddress("glClearStencil"));
@@ -561,9 +574,17 @@ namespace GT
             this->PolygonMode              = reinterpret_cast<PFNGLPOLYGONMODEPROC             >(this->GetGLProcAddress("glPolygonMode"));
             this->PolygonOffset            = reinterpret_cast<PFNGLPOLYGONOFFSETPROC           >(this->GetGLProcAddress("glPolygonOffset"));
 
+            this->BlendEquationSeparate    = reinterpret_cast<PFNGLBLENDEQUATIONSEPARATEPROC   >(this->GetGLProcAddress("glBlendEquationSeparate"));
+            this->BlendEquationSeparatei   = reinterpret_cast<PFNGLBLENDEQUATIONSEPARATEIPROC  >(this->GetGLProcAddress("glBlendEquationSeparatei"));
+            this->BlendFuncSeparate        = reinterpret_cast<PFNGLBLENDFUNCSEPARATEPROC       >(this->GetGLProcAddress("glBlendFuncSeparate"));
+            this->BlendFuncSeparatei       = reinterpret_cast<PFNGLBLENDFUNCSEPARATEIPROC      >(this->GetGLProcAddress("glBlendFuncSeparatei"));
+            this->BlendColor               = reinterpret_cast<PFNGLBLENDCOLORPROC              >(this->GetGLProcAddress("glBlendColor"));
+            this->SampleMaski              = reinterpret_cast<PFNGLSAMPLEMASKIPROC             >(this->GetGLProcAddress("glSampleMaski"));
+            this->ColorMask                = reinterpret_cast<PFNGLCOLORMASKPROC               >(this->GetGLProcAddress("glColorMask"));
+            this->ColorMaski               = reinterpret_cast<PFNGLCOLORMASKIPROC              >(this->GetGLProcAddress("glColorMaski"));
+
             this->Clear                    = reinterpret_cast<PFNGLCLEARPROC                   >(this->GetGLProcAddress("glClear"));
             this->DrawElements             = reinterpret_cast<PFNGLDRAWELEMENTSPROC            >(this->GetGLProcAddress("glDrawElements"));
-
 
             this->CreateProgramPipelines   = reinterpret_cast<PFNGLCREATEPROGRAMPIPELINESPROC  >(this->GetGLProcAddress("glCreateProgramPipelines"));
             this->DeleteProgramPipelines   = reinterpret_cast<PFNGLDELETEPROGRAMPIPELINESPROC  >(this->GetGLProcAddress("glDeleteProgramPipelines"));

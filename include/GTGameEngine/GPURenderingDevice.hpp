@@ -216,10 +216,30 @@ namespace GT
 
         /// Sets the depth/stencil state.
         ///
-        /// @param hState     [in] The depth/stencil state to make current on the output merger state.
+        /// @param hState     [in] The depth/stencil state to make current on the output merger stage.
         /// @param stencilRef [in] Reference value that is bitwise-and when performing the depth/stencil test.
         virtual void OMSetDepthStencilState(HDepthStencilState hState, unsigned int stencilRef) = 0;
         
+        /// Sets the blend state.
+        ///
+        /// @param hState      [in] The blend state to make current on the output merger stage.
+        virtual void OMSetBlendState(HBlendState hState) = 0;
+
+        /// Sets the blend factor for when the blend parameter of the current state is set to BlendParameter_BlendFactor or BlendParameter_Inv_BlendFactor.
+        ///
+        /// @param blendFactor [in] The blend factor to use when the blend parameter is set to BlendParameter_BlendFactor or BlendParameter_Inv_BlendFactor.
+        ///
+        /// @remarks
+        ///     The default blend factor is (0.0, 0.0, 0.0, 0.0).
+        virtual void OMSetBlendFactor(float blendFactor[4]) = 0;
+
+        /// Sets the sample mask.
+        ///
+        /// @param sampleMask [in] The new sample mask.
+        ///
+        /// @remarks
+        ///     The default sample mask is 0xFFFFFFFF.
+        virtual void OMSetSampleMask(uint32_t sampleMask) = 0;
 
 
         /////////////////////////////////////////////
@@ -294,7 +314,7 @@ namespace GT
         ///     @par
         ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
         ///     synchronization.
-        virtual void DeleteDepthStencilState(HDepthStencilState hState) = 0;
+        virtual void ReleaseDepthStencilState(HDepthStencilState hState) = 0;
 
         /// Increments the internal reference counter of the given rasterizer state object.
         ///
@@ -304,6 +324,15 @@ namespace GT
         ///     This is thread safe.
         virtual void HoldDepthStencilState(HDepthStencilState hState) = 0;
 
+
+        /// @copydoc GPURenderingDevice::CreateBlendState()
+        HBlendState CreateBlendState(const BlendStateDesc &desc);
+
+        /// @copydoc GPURenderingDevice::ReleaseBlendState()
+        void ReleaseBlendState(HBlendState hState);
+
+        /// @copydoc GPURenderingDevice::HoldBlendState()
+        void HoldBlendState(HBlendState hState);
 
 
         ////////////////////////////////////////////

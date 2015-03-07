@@ -12,7 +12,7 @@
 
 namespace GT
 {
-    /// OpenGL 2.1 rasterizer state.
+    /// OpenGL rasterizer state.
     struct RasterizerState_OpenGL4 : public ReferenceCountedObject, public GPURasterizerStateDesc
     {
         RasterizerState_OpenGL4(const GPURasterizerStateDesc &desc)
@@ -21,11 +21,20 @@ namespace GT
         }
     };
 
-    /// OpenGL 2.1 depth/stencil state.
+    /// OpenGL depth/stencil state.
     struct DepthStencilState_OpenGL4 : public ReferenceCountedObject, public GPUDepthStencilStateDesc
     {
         DepthStencilState_OpenGL4(const GPUDepthStencilStateDesc &desc)
             : ReferenceCountedObject(), GPUDepthStencilStateDesc(desc)
+        {
+        }
+    };
+
+    /// OpenGL blend state.
+    struct BlendState_OpenGL4 : public ReferenceCountedObject, public BlendStateDesc
+    {
+        BlendState_OpenGL4(const BlendStateDesc &desc)
+            : ReferenceCountedObject(), BlendStateDesc(desc)
         {
         }
     };

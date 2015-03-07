@@ -203,7 +203,9 @@ namespace GT
         PFNGLSTENCILFUNCSEPARATEPROC StencilFuncSeparate;
         PFNGLSTENCILMASKSEPARATEPROC StencilMaskSeparate;
         PFNGLENABLEPROC              Enable;
+        PFNGLENABLEIPROC             Enablei;
         PFNGLDISABLEPROC             Disable;
+        PFNGLDISABLEIPROC            Disablei;
         PFNGLCLEARCOLORPROC          ClearColor;
         PFNGLCLEARDEPTHPROC          ClearDepth;
         PFNGLCLEARSTENCILPROC        ClearStencil;
@@ -212,9 +214,19 @@ namespace GT
         PFNGLPOLYGONMODEPROC         PolygonMode;
         PFNGLPOLYGONOFFSETPROC       PolygonOffset;
 
+        PFNGLBLENDEQUATIONSEPARATEPROC  BlendEquationSeparate;
+        PFNGLBLENDEQUATIONSEPARATEIPROC BlendEquationSeparatei;
+        PFNGLBLENDFUNCSEPARATEPROC      BlendFuncSeparate;
+        PFNGLBLENDFUNCSEPARATEIPROC     BlendFuncSeparatei;
+        PFNGLBLENDCOLORPROC             BlendColor;
+        PFNGLSAMPLEMASKIPROC            SampleMaski;
+        PFNGLCOLORMASKPROC              ColorMask;
+        PFNGLCOLORMASKIPROC             ColorMaski;
+
+
         // Drawing.
-        PFNGLCLEARPROC               Clear;
-        PFNGLDRAWELEMENTSPROC        DrawElements;
+        PFNGLCLEARPROC                  Clear;
+        PFNGLDRAWELEMENTSPROC           DrawElements;
 
         // Shaders.
         PFNGLCREATEPROGRAMPIPELINESPROC CreateProgramPipelines;

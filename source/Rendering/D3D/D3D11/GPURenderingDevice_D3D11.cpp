@@ -26,6 +26,9 @@ namespace GT
           m_stateFlags(0),
           m_swapInterval(0),
           m_currentPrimitiveTopology(GPUPrimitiveTopology_Triangle),
+          m_currentBlendState(0),
+          m_currentBlendFactor(),
+          m_currentSampleMask(0xFFFFFFFF),
           m_D3DCompile(nullptr)
     {
         m_stateFlags |= StageFlag_IsWindowFramebufferCurrent;       // TODO: Remove this from the constructor once we get the framebuffer system working properly.
@@ -418,6 +421,27 @@ namespace GT
         m_context->OMSetDepthStencilState(reinterpret_cast<ID3D11DepthStencilState*>(hState), stencilRef);
     }
 
+    void GPURenderingDevice_D3D11::OMSetBlendState(HBlendState hState)
+    {
+        m_context->OMSetBlendState(reinterpret_cast<ID3D11BlendState*>(hState), m_currentBlendFactor, m_currentSampleMask);
+        m_currentBlendState = hState;
+    }
+
+    void GPURenderingDevice_D3D11::OMSetBlendFactor(float blendFactor[4])
+    {
+        m_currentBlendFactor[0] = blendFactor[0];
+        m_currentBlendFactor[1] = blendFactor[1];
+        m_currentBlendFactor[2] = blendFactor[2];
+        m_currentBlendFactor[3] = blendFactor[3];
+        this->OMSetBlendState(m_currentBlendState);
+    }
+
+    void GPURenderingDevice_D3D11::OMSetSampleMask(uint32_t sampleMask)
+    {
+        m_currentSampleMask = static_cast<UINT>(sampleMask);
+        this->OMSetBlendState(m_currentBlendState);
+    }
+
 
 
     /////////////////////////////////////////////
@@ -555,7 +579,7 @@ namespace GT
         ID3D11DepthStencilState* depthStencilStateD3D11;
         if (SUCCEEDED(m_device->CreateDepthStencilState(&descD3D, &depthStencilStateD3D11)))
         {
-            return reinterpret_cast<size_t>(depthStencilStateD3D11);
+            return reinterpret_cast<HDepthStencilState>(depthStencilStateD3D11);
         }
         else
         {
@@ -563,7 +587,7 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::DeleteDepthStencilState(HDepthStencilState hState)
+    void GPURenderingDevice_D3D11::ReleaseDepthStencilState(HDepthStencilState hState)
     {
         if (hState != 0)
         {
@@ -576,6 +600,88 @@ namespace GT
         if (hState != 0)
         {
             reinterpret_cast<ID3D11DepthStencilState*>(hState)->AddRef();
+        }
+    }
+
+
+    HBlendState GPURenderingDevice_D3D11::CreateBlendState(const BlendStateDesc &desc)
+    {
+        D3D11_BLEND blendParametersD3D[] =
+        {
+            D3D11_BLEND_ZERO,                   // BlendParameter_Zero
+            D3D11_BLEND_ONE,                    // BlendParameter_One
+
+            D3D11_BLEND_SRC_COLOR,              // BlendParameter_Src_Color
+            D3D11_BLEND_INV_SRC_COLOR,          // BlendParameter_Inv_Src_Color
+            D3D11_BLEND_SRC_ALPHA,              // BlendParameter_Src_Alpha
+            D3D11_BLEND_INV_SRC_ALPHA,          // BlendParameter_Inv_Src_Alpha
+            D3D11_BLEND_SRC_ALPHA_SAT,          // BlendParameter_Src_Alpha_Saturate
+        
+            D3D11_BLEND_DEST_COLOR,             // BlendParameter_Dst_Color
+            D3D11_BLEND_INV_DEST_COLOR,         // BlendParameter_Inv_Dst_Color
+            D3D11_BLEND_DEST_ALPHA,             // BlendParameter_Dst_Alpha
+            D3D11_BLEND_INV_DEST_ALPHA,         // BlendParameter_Inv_Dst_Alpha
+        
+            D3D11_BLEND_SRC1_COLOR,             // BlendParameter_Src1_Color
+            D3D11_BLEND_INV_SRC1_COLOR,         // BlendParameter_Inv_Src1_Color
+            D3D11_BLEND_SRC1_ALPHA,             // BlendParameter_Src1_Alpha
+            D3D11_BLEND_INV_SRC1_ALPHA,         // BlendParameter_Inv_Src1_Alpha
+
+            D3D11_BLEND_BLEND_FACTOR,           // BlendParameter_BlendFactor
+            D3D11_BLEND_INV_BLEND_FACTOR        // BlendParameter_Inv_BlendFactor
+        };
+
+        D3D11_BLEND_OP blendOpsD3D[] =
+        {
+            D3D11_BLEND_OP_ADD,                 // BlendOp_Add
+            D3D11_BLEND_OP_SUBTRACT,            // BlendOp_Subtract
+            D3D11_BLEND_OP_REV_SUBTRACT,        // BlendOp_Reverse_Subtract
+            D3D11_BLEND_OP_MIN,                 // BlendOp_Min
+            D3D11_BLEND_OP_MAX                  // BlendOp_Max
+        };
+
+
+        D3D11_BLEND_DESC descD3D;
+        descD3D.AlphaToCoverageEnable  = desc.enableAlphaToCoverage;
+        descD3D.IndependentBlendEnable = desc.enableIndependentBlend;
+
+        for (int iRT = 0; iRT < 8; ++iRT)
+        {
+            descD3D.RenderTarget[iRT].BlendEnable           = desc.renderTarget[iRT].enableBlending;
+            descD3D.RenderTarget[iRT].SrcBlend              = blendParametersD3D[desc.renderTarget[iRT].srcBlendParameter];
+            descD3D.RenderTarget[iRT].DestBlend             = blendParametersD3D[desc.renderTarget[iRT].dstBlendParameter];
+            descD3D.RenderTarget[iRT].BlendOp               = blendOpsD3D[desc.renderTarget[iRT].blendOp];
+            descD3D.RenderTarget[iRT].SrcBlendAlpha         = blendParametersD3D[desc.renderTarget[iRT].srcAlphaBlendParameter];
+            descD3D.RenderTarget[iRT].DestBlendAlpha        = blendParametersD3D[desc.renderTarget[iRT].dstAlphaBlendParameter];
+            descD3D.RenderTarget[iRT].BlendOpAlpha          = blendOpsD3D[desc.renderTarget[iRT].blendOpAlpha];
+            descD3D.RenderTarget[iRT].RenderTargetWriteMask = desc.renderTarget[iRT].writeMask;
+        }
+
+
+        ID3D11BlendState* blendStateD3D11;
+        if (SUCCEEDED(m_device->CreateBlendState(&descD3D, &blendStateD3D11)))
+        {
+            return reinterpret_cast<HBlendState>(blendStateD3D11);
+        }
+        else
+        {
+            return 0;
+        }
+    }
+
+    void GPURenderingDevice_D3D11::ReleaseBlendState(HBlendState hState)
+    {
+        if (hState != 0)
+        {
+            reinterpret_cast<ID3D11BlendState*>(hState)->Release();
+        }
+    }
+
+    void GPURenderingDevice_D3D11::HoldBlendState(HBlendState hState)
+    {
+        if (hState != 0)
+        {
+            reinterpret_cast<ID3D11BlendState*>(hState)->AddRef();
         }
     }
 
