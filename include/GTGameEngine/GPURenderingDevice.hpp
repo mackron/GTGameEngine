@@ -316,7 +316,7 @@ namespace GT
         ///     synchronization.
         virtual void ReleaseDepthStencilState(HDepthStencilState hState) = 0;
 
-        /// Increments the internal reference counter of the given rasterizer state object.
+        /// Increments the internal reference counter of the given depth/stencil state object.
         ///
         /// @param hState [in] A handle to the depth/stencil state object to hold.
         ///
@@ -325,14 +325,31 @@ namespace GT
         virtual void HoldDepthStencilState(HDepthStencilState hState) = 0;
 
 
-        /// @copydoc GPURenderingDevice::CreateBlendState()
-        HBlendState CreateBlendState(const BlendStateDesc &desc);
+        /// Creates a blend state object.
+        ///
+        /// @param desc [in] A reference to the object that describes the blend state.
+        ///
+        /// @return A handle to the new blend state object, or 0 if there was an error.
+        virtual HBlendState CreateBlendState(const BlendStateDesc &desc) = 0;
 
-        /// @copydoc GPURenderingDevice::ReleaseBlendState()
-        void ReleaseBlendState(HBlendState hState);
+        /// Decrements the internal reference counter fo the given blend state and deletes the object if it hits 0.
+        ///
+        /// @param hState [in] A handle to the state object to release.
+        ///
+        /// @remarks
+        ///     This is thread safe.
+        ///     @par
+        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
+        ///     synchronization.
+        virtual void ReleaseBlendState(HBlendState hState) = 0;
 
-        /// @copydoc GPURenderingDevice::HoldBlendState()
-        void HoldBlendState(HBlendState hState);
+        /// Increments the internal reference counter of the given blend state object.
+        ///
+        /// @param hState [in] A handle to the state object to hold.
+        ///
+        /// @remarks
+        ///     This is thread safe.
+        virtual void HoldBlendState(HBlendState hState) = 0;
 
 
         ////////////////////////////////////////////
