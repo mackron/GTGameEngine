@@ -8,6 +8,11 @@
 #include <GTLib/String.hpp>
 #include <GTLib/Parse.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4351)   // new behaviour
+#endif
+
 namespace GT
 {
     // GUID for use with SetPrivateData().
@@ -1819,5 +1824,10 @@ namespace GT
 #if defined(GT_PLATFORM_WINDOWS)
 #endif
 }
+
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 
 #endif
