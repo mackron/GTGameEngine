@@ -7,7 +7,7 @@
 
 #if defined(GT_GE_BUILD_D3D11)
 #include <GTGameEngine/Rendering/RenderingTypes.hpp>
-#include <d3d11.h>
+#include <d3d11_1.h>
 
 namespace GT
 {

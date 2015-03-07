@@ -118,15 +118,26 @@ namespace GT
 
         /// Binds the given texture view to the given slot.
         ///
-        /// @param hTextureView [in] A handle to the texture view to bind to the given slot.
         /// @param slotIndex    [in] The index of the slot to bind the texture to.
-        virtual void BindTexture(HTextureView hTextureView, unsigned int slotIndex) = 0;
+        /// @param hTextureView [in] A handle to the texture view to bind to the given slot.
+        virtual void BindTexture(unsigned int slotIndex, HTextureView hTextureView) = 0;
 
         /// Binds the given sampler to the given slot.
         ///
-        /// @param hSampler  [in] A handle to the sampler to bind to the given slot.
         /// @param slotIndex [in] The index of the slot to bind the sampler to.
-        virtual void BindSampler(HSampler hSampler, unsigned int slotIndex) = 0;
+        /// @param hSampler  [in] A handle to the sampler to bind to the given slot.
+        virtual void BindSampler(unsigned int slotIndex, HSampler hSampler) = 0;
+
+        /// Binds the given constant buffers starting at the given slot index.
+        ///
+        /// @param firstSlotIndex [in] The index of the first slot to bind the buffers to.
+        /// @param count          [in] The number of buffers to bind.
+        /// @param buffers        [in] A pointer to the list of buffers to bind.
+        /// @param offsets        [in] The offsets to use for each buffer.
+        /// @param sizes          [in] The size in bytes of each buffer.
+        virtual void BindConstantBuffer(unsigned int slotIndex, HBuffer buffer) = 0;
+        virtual void BindConstantBuffer(unsigned int slotIndex, HBuffer buffer, size_t offset, size_t size) = 0;
+        virtual void BindConstantBuffer(unsigned int slotIndex, size_t count, HBuffer* buffers, size_t* offsets, size_t* sizes) = 0;
 
 
         /////////////////////////////////////////////////////////////////////////////
@@ -486,6 +497,8 @@ namespace GT
         ///     When \c mapType is \c GPUBufferMapType_Read or \c GPUBufferMapType_ReadWrite, the buffer must have been created with \c GPUBufferCPUAccess_Read.
         ///     @par
         ///     When \c mapType is \c GPUBufferMapType_Write, \c GPUBufferMapType_ReadWrite, \c GPUBufferMapType_Write_Discard or \c GPUBufferMapType_Write_NoOverwrite, the buffer must have been created with \c GPUBufferCPUAccess_Write.
+        ///     @par
+        ///     When the buffer was created with Dynamic usage, the map type must be either \c GPUBufferMapType_Write_Discard or \c GPUBufferMapType_Write_NoOverwrite.
         virtual void* MapBuffer(HBuffer hBuffer, GPUBufferMapType mapType) = 0;
 
         /// Unmaps the given buffer's data.

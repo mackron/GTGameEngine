@@ -99,6 +99,7 @@ namespace GT
 #endif
           m_vendor(GPUVendor_Unknown),
           m_supportedShaderLanguages(),
+          m_supportFlags(0),
 
           m_stateFlags(0),
           m_currentTopologyGL(GL_TRIANGLES),
@@ -181,6 +182,12 @@ namespace GT
                 if (minorVersionGLSL > 4)
                 {
                     m_supportedShaderLanguages.PushBack(ShaderLanguage_GLSL_450);
+                }
+
+
+                if (minorVersionGLSL >= 5 || m_gl.IsExtensionSupported("GL_ARB_multi_bind"))
+                {
+                    m_supportFlags |= SupportFlag_MultiBind;
                 }
 
 
@@ -321,7 +328,7 @@ namespace GT
     ///////////////////////////////////////////
     // State
 
-    void GPURenderingDevice_OpenGL4::BindTexture(HTextureView hTextureView, unsigned int slotIndex)
+    void GPURenderingDevice_OpenGL4::BindTexture(unsigned int slotIndex, HTextureView hTextureView)
     {
         auto textureViewGL = reinterpret_cast<TextureView_OpenGL4*>(hTextureView);
         if (textureViewGL != nullptr)
@@ -334,7 +341,7 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_OpenGL4::BindSampler(HSampler hSampler, unsigned int slotIndex)
+    void GPURenderingDevice_OpenGL4::BindSampler(unsigned int slotIndex, HSampler hSampler)
     {
         auto samplerGL = reinterpret_cast<Sampler_OpenGL4*>(hSampler);
         if (samplerGL != nullptr)
@@ -346,6 +353,101 @@ namespace GT
             m_gl.BindSampler(slotIndex, 0);
         }
     }
+
+    void GPURenderingDevice_OpenGL4::BindConstantBuffer(unsigned int slotIndex, HBuffer hBuffer)
+    {
+        auto bufferGL = reinterpret_cast<Buffer_OpenGL4*>(hBuffer);
+        if (bufferGL != nullptr)
+        {
+            m_gl.BindBufferBase(GL_UNIFORM_BUFFER, slotIndex, bufferGL->GetOpenGLObject());
+        }
+        else
+        {
+            m_gl.BindBufferBase(GL_UNIFORM_BUFFER, slotIndex, 0);
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::BindConstantBuffer(unsigned int slotIndex, HBuffer hBuffer, size_t offset, size_t size)
+    {
+        auto bufferGL = reinterpret_cast<Buffer_OpenGL4*>(hBuffer);
+        if (bufferGL != nullptr)
+        {
+            m_gl.BindBufferRange(GL_UNIFORM_BUFFER, slotIndex, bufferGL->GetOpenGLObject(), static_cast<GLintptr>(offset), static_cast<GLsizeiptr>(size));
+        }
+        else
+        {
+            m_gl.BindBufferRange(GL_UNIFORM_BUFFER, slotIndex, 0, 0, 0);
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::BindConstantBuffer(unsigned int slotIndex, size_t count, HBuffer* hBuffers, size_t* offsets, size_t* sizes)
+    {
+        const size_t maxSlots = 36;
+
+        if (count < maxSlots)
+        {
+            if ((m_supportFlags & SupportFlag_MultiBind) != 0)
+            {
+                if (hBuffers != nullptr)
+                {
+                    GLuint buffersGL[maxSlots];
+                    GLintptr offsetsGL[maxSlots];
+                    GLsizeiptr sizesGL[maxSlots];
+                    for (size_t iSlot = 0; iSlot < count; ++iSlot)
+                    {
+                        auto bufferGL = reinterpret_cast<Buffer_OpenGL4*>(hBuffers[iSlot]);
+                        if (bufferGL != nullptr)
+                        {
+                            buffersGL[iSlot] = bufferGL->GetOpenGLObject();
+                        }
+                        else
+                        {
+                            buffersGL[iSlot] = 0;
+                        }
+
+                        offsetsGL[iSlot] = static_cast<GLintptr>(offsets[iSlot]);
+                        sizesGL[iSlot]   = static_cast<GLsizeiptr>(sizes[iSlot]);
+                    }
+
+                    m_gl.BindBuffersRange(GL_UNIFORM_BUFFER, slotIndex, static_cast<GLsizei>(count), buffersGL, offsetsGL, sizesGL);
+                }
+                else
+                {
+                    m_gl.BindBuffersRange(GL_UNIFORM_BUFFER, slotIndex, static_cast<GLsizei>(count), nullptr, nullptr, nullptr);
+                }
+            }
+            else
+            {
+                if (hBuffers != nullptr)
+                {
+                    for (size_t iSlot = 0; iSlot < count; ++iSlot)
+                    {
+                        auto bufferGL = reinterpret_cast<Buffer_OpenGL4*>(hBuffers[iSlot]);
+                        if (bufferGL != nullptr)
+                        {
+                            m_gl.BindBufferRange(GL_UNIFORM_BUFFER, slotIndex + static_cast<unsigned int>(iSlot), bufferGL->GetOpenGLObject(), static_cast<GLintptr>(offsets[iSlot]), static_cast<GLsizeiptr>(sizes[iSlot]));
+                        }
+                        else
+                        {
+                            m_gl.BindBufferRange(GL_UNIFORM_BUFFER, slotIndex + static_cast<unsigned int>(iSlot), 0, 0, 0);
+                        }
+                    }
+                }
+                else
+                {
+                    for (size_t iSlot = 0; iSlot < count; ++iSlot)
+                    {
+                        m_gl.BindBufferRange(GL_UNIFORM_BUFFER, slotIndex + static_cast<unsigned int>(iSlot), 0, 0, 0);
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Too many buffers were specified.
+        }
+    }
+
 
 
 

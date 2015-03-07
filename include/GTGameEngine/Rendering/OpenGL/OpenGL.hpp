@@ -263,6 +263,11 @@ namespace GT
         PFNGLMAPNAMEDBUFFERRANGEPROC         MapNamedBufferRange;
         PFNGLUNMAPNAMEDBUFFERPROC            UnmapNamedBuffer;
         PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEPROC FlushMappedNamedBufferRange;
+        PFNGLBINDBUFFERBASEPROC              BindBufferBase;
+        PFNGLBINDBUFFERSBASEPROC             BindBuffersBase;
+        PFNGLBINDBUFFERRANGEPROC             BindBufferRange;
+        PFNGLBINDBUFFERSRANGEPROC            BindBuffersRange;
+
 
         // Textures
         PFNGLGENTEXTURESPROC                 GenTextures;       // <-- Needed for texture views.

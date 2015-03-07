@@ -62,10 +62,19 @@ namespace GT
         // State
 
         /// @copydoc GPURenderingDevice::BindTextureView()
-        void BindTexture(HTextureView hTextureView, unsigned int slotIndex);
+        void BindTexture(unsigned int slotIndex, HTextureView hTextureView);
 
         /// @copydoc GPURenderingDevice::BindSampler()
-        void BindSampler(HSampler hSampler, unsigned int slotIndex);
+        void BindSampler(unsigned int slotIndex, HSampler hSampler);
+
+        /// @copydoc GPURenderingDevice::BindConstantBuffer(unsigned int, HBuffer)
+        void BindConstantBuffer(unsigned int slotIndex, HBuffer hBuffer);
+
+        /// @copydoc GPURenderingDevice::BindConstantBuffer(unsigned int, HBuffer, size_t, size_t)
+        void BindConstantBuffer(unsigned int slotIndex, HBuffer hBuffer, size_t offset, size_t size);
+
+        /// @copydoc GPURenderingDevice::BindConstantBuffer(unsigned int, size_t, HBuffer*, size_t*, size_t*)
+        void BindConstantBuffer(unsigned int slotIndex, size_t count, HBuffer* hBuffers, size_t* offsets, size_t* sizes);
 
 
 
@@ -361,6 +370,9 @@ namespace GT
         /// The list of supported shader targets.
         GTLib::Vector<ShaderLanguage> m_supportedShaderLanguages;
 
+        /// The support flags.
+        uint32_t m_supportFlags;
+
 
         ////////////////////////////////////////////////////
         // State
@@ -419,6 +431,12 @@ namespace GT
         // State Flags
 
         static const uint32_t StageFlag_IsWindowFramebufferCurrent = (1 << 0);     //< Is the current window's framebuffer the current render target?
+
+
+        ///////////////////////////////////////////
+        // Support Flags
+
+        static const uint32_t SupportFlag_MultiBind = (1 << 0);     //< Is OpenGL 4.5 or ARB_multi_bind supported? If not, it can be emulated.
 
     public:
 

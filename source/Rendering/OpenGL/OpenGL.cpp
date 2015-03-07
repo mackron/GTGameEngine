@@ -108,6 +108,10 @@ namespace GT
             MapNamedBufferRange(nullptr),
             UnmapNamedBuffer(nullptr),
             FlushMappedNamedBufferRange(nullptr),
+            BindBufferBase(nullptr),
+            BindBuffersBase(nullptr),
+            BindBufferRange(nullptr),
+            BindBuffersRange(nullptr),
 
 
             CreateTextures(nullptr),
@@ -606,6 +610,10 @@ namespace GT
             this->MapNamedBufferRange         = reinterpret_cast<PFNGLMAPNAMEDBUFFERRANGEPROC        >(this->GetGLProcAddress("glMapNamedBufferRange"));
             this->UnmapNamedBuffer            = reinterpret_cast<PFNGLUNMAPNAMEDBUFFERPROC           >(this->GetGLProcAddress("glUnmapNamedBuffer"));
             this->FlushMappedNamedBufferRange = reinterpret_cast<PFNGLFLUSHMAPPEDNAMEDBUFFERRANGEPROC>(this->GetGLProcAddress("glFlushMappedNamedBufferRange"));
+            this->BindBufferBase              = reinterpret_cast<PFNGLBINDBUFFERBASEPROC             >(this->GetGLProcAddress("glBindBufferBase"));
+            this->BindBuffersBase             = reinterpret_cast<PFNGLBINDBUFFERSBASEPROC            >(this->GetGLProcAddress("glBindBuffersBase"));
+            this->BindBufferRange             = reinterpret_cast<PFNGLBINDBUFFERRANGEPROC            >(this->GetGLProcAddress("glBindBufferRange"));
+            this->BindBuffersRange            = reinterpret_cast<PFNGLBINDBUFFERSRANGEPROC           >(this->GetGLProcAddress("glBindBuffersRange"));
 
             this->GenTextures                 = reinterpret_cast<PFNGLGENTEXTURESPROC                >(this->GetGLProcAddress("glGenTextures"));
             this->CreateTextures              = reinterpret_cast<PFNGLCREATETEXTURESPROC             >(this->GetGLProcAddress("glCreateTextures"));

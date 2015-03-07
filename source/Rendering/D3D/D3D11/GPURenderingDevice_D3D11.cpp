@@ -80,11 +80,22 @@ namespace GT
                     flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
+                    ID3D11Device* tempDevice;
+                    ID3D11DeviceContext* tempContext;
+
                     D3D_FEATURE_LEVEL    featureLevels[] = { D3D_FEATURE_LEVEL_11_0 };
                     D3D_FEATURE_LEVEL    featureLevel    = D3D_FEATURE_LEVEL_11_0;
-                    HRESULT hr = _D3D11CreateDevice(reinterpret_cast<IDXGIAdapter1*>(m_info.identifier_D3D11), D3D_DRIVER_TYPE_UNKNOWN, NULL, flags, featureLevels, sizeof(featureLevels) / sizeof(featureLevels[0]), D3D11_SDK_VERSION, &m_device, &featureLevel, &m_context);
+                    HRESULT hr = _D3D11CreateDevice(reinterpret_cast<IDXGIAdapter1*>(m_info.identifier_D3D11), D3D_DRIVER_TYPE_UNKNOWN, NULL, flags, featureLevels, sizeof(featureLevels) / sizeof(featureLevels[0]), D3D11_SDK_VERSION, &tempDevice, &featureLevel, &tempContext);
                     if (SUCCEEDED(hr) && featureLevel == D3D_FEATURE_LEVEL_11_0)
                     {
+                        tempDevice->QueryInterface<ID3D11Device1>(&m_device);
+                        tempContext->QueryInterface<ID3D11DeviceContext1>(&m_context);
+
+                        // Release the original device and context objects.
+                        tempDevice->Release();
+                        tempContext->Release();
+
+
                         // Initialize the API.
                         m_D3DCompile = reinterpret_cast<pD3DCompile>(GetProcAddress(m_hD3DCompiler, "D3DCompile"));
                         if (m_D3DCompile == nullptr)
@@ -228,7 +239,7 @@ namespace GT
     ///////////////////////////////////////////
     // State
 
-    void GPURenderingDevice_D3D11::BindTexture(HTextureView hTextureView, unsigned int slotIndex)
+    void GPURenderingDevice_D3D11::BindTexture(unsigned int slotIndex, HTextureView hTextureView)
     {
         // Bind the texture on all stages.
         ID3D11ShaderResourceView* viewD3D11 = reinterpret_cast<ID3D11ShaderResourceView*>(hTextureView);
@@ -238,9 +249,10 @@ namespace GT
         m_context->HSSetShaderResources(slotIndex, 1, &viewD3D11);
         m_context->GSSetShaderResources(slotIndex, 1, &viewD3D11);
         m_context->PSSetShaderResources(slotIndex, 1, &viewD3D11);
+        m_context->CSSetShaderResources(slotIndex, 1, &viewD3D11);
     }
 
-    void GPURenderingDevice_D3D11::BindSampler(HSampler hSampler, unsigned int slotIndex)
+    void GPURenderingDevice_D3D11::BindSampler(unsigned int slotIndex, HSampler hSampler)
     {
         // Bind to all stages.
         ID3D11SamplerState* samplerD3D11 = reinterpret_cast<ID3D11SamplerState*>(hSampler);
@@ -250,6 +262,65 @@ namespace GT
         m_context->HSSetSamplers(slotIndex, 1, &samplerD3D11);
         m_context->GSSetSamplers(slotIndex, 1, &samplerD3D11);
         m_context->PSSetSamplers(slotIndex, 1, &samplerD3D11);
+        m_context->CSSetSamplers(slotIndex, 1, &samplerD3D11);
+    }
+
+    void GPURenderingDevice_D3D11::BindConstantBuffer(unsigned int slotIndex, HBuffer hBuffer)
+    {
+        // Bind to all stages.
+        ID3D11Buffer* bufferD3D11 = reinterpret_cast<ID3D11Buffer*>(hBuffer);
+
+        m_context->VSSetConstantBuffers(slotIndex, 1, &bufferD3D11);
+        m_context->DSSetConstantBuffers(slotIndex, 1, &bufferD3D11);
+        m_context->HSSetConstantBuffers(slotIndex, 1, &bufferD3D11);
+        m_context->GSSetConstantBuffers(slotIndex, 1, &bufferD3D11);
+        m_context->PSSetConstantBuffers(slotIndex, 1, &bufferD3D11);
+        m_context->CSSetConstantBuffers(slotIndex, 1, &bufferD3D11);
+    }
+
+    void GPURenderingDevice_D3D11::BindConstantBuffer(unsigned int slotIndex, HBuffer hBuffer, size_t offset, size_t size)
+    {
+        // Bind to all stages.
+        ID3D11Buffer* bufferD3D11 = reinterpret_cast<ID3D11Buffer*>(hBuffer);
+
+        UINT offsetD3D = static_cast<UINT>(offset);
+        UINT sizeD3D   = static_cast<UINT>(size);
+
+        m_context->VSSetConstantBuffers1(slotIndex, 1, &bufferD3D11, &offsetD3D, &sizeD3D);
+        m_context->DSSetConstantBuffers1(slotIndex, 1, &bufferD3D11, &offsetD3D, &sizeD3D);
+        m_context->HSSetConstantBuffers1(slotIndex, 1, &bufferD3D11, &offsetD3D, &sizeD3D);
+        m_context->GSSetConstantBuffers1(slotIndex, 1, &bufferD3D11, &offsetD3D, &sizeD3D);
+        m_context->PSSetConstantBuffers1(slotIndex, 1, &bufferD3D11, &offsetD3D, &sizeD3D);
+        m_context->CSSetConstantBuffers1(slotIndex, 1, &bufferD3D11, &offsetD3D, &sizeD3D);
+    }
+
+    void GPURenderingDevice_D3D11::BindConstantBuffer(unsigned int slotIndex, size_t count, HBuffer* hBuffers, size_t* offsets, size_t* sizes)
+    {
+        if (count < D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT)
+        {
+            ID3D11Buffer* buffersD3D[D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
+            UINT offsetsD3D[D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
+            UINT sizesD3D[D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
+
+            for (size_t iSlot = 0; iSlot < count; ++iSlot)
+            {
+                buffersD3D[iSlot] = reinterpret_cast<ID3D11Buffer*>(hBuffers[iSlot]);
+                offsetsD3D[iSlot] = static_cast<UINT>(offsets[iSlot]);
+                sizesD3D[iSlot]   = static_cast<UINT>(sizes[iSlot]);
+            }
+
+
+            m_context->VSSetConstantBuffers1(slotIndex, 1, buffersD3D, offsetsD3D, sizesD3D);
+            m_context->DSSetConstantBuffers1(slotIndex, 1, buffersD3D, offsetsD3D, sizesD3D);
+            m_context->HSSetConstantBuffers1(slotIndex, 1, buffersD3D, offsetsD3D, sizesD3D);
+            m_context->GSSetConstantBuffers1(slotIndex, 1, buffersD3D, offsetsD3D, sizesD3D);
+            m_context->PSSetConstantBuffers1(slotIndex, 1, buffersD3D, offsetsD3D, sizesD3D);
+            m_context->CSSetConstantBuffers1(slotIndex, 1, buffersD3D, offsetsD3D, sizesD3D);
+        }
+        else
+        {
+            // Too many buffers were specified.
+        }
     }
 
 
@@ -861,7 +932,7 @@ namespace GT
 
 
         ID3D11Buffer* bufferD3D11;
-        if (SUCCEEDED(m_device->CreateBuffer(&bd, &initialData, &bufferD3D11)))
+        if (SUCCEEDED(m_device->CreateBuffer(&bd, (data != nullptr) ? &initialData : nullptr, &bufferD3D11)))
         {
             return reinterpret_cast<HBuffer>(bufferD3D11);
         }
@@ -1315,15 +1386,15 @@ namespace GT
             HRESULT hr = 0;
 
             // 1) Retrieve the relevant interfaces for creating the swap buffer.
-            IDXGIDevice* pDXGIDevice;
-            hr = m_device->QueryInterface(__uuidof(IDXGIDevice), reinterpret_cast<void**>(&pDXGIDevice));
+            IDXGIDevice1* pDXGIDevice;
+            hr = m_device->QueryInterface(__uuidof(IDXGIDevice1), reinterpret_cast<void**>(&pDXGIDevice));
             if (FAILED(hr))
             {
                 return FailedToRetrieveIDXGIDevice;
             }
 
-            IDXGIAdapter* pDXGIAdapter;
-            hr = pDXGIDevice->GetParent(__uuidof(IDXGIAdapter), reinterpret_cast<void**>(&pDXGIAdapter));
+            IDXGIAdapter1* pDXGIAdapter;
+            hr = pDXGIDevice->GetParent(__uuidof(IDXGIAdapter1), reinterpret_cast<void**>(&pDXGIAdapter));
             if (FAILED(hr))
             {
                 pDXGIDevice->Release();
@@ -1331,8 +1402,8 @@ namespace GT
                 return FailedToRetrieveIDXGIAdapter;
             }
 
-            IDXGIFactory* pDXGIFactory;
-            hr = pDXGIAdapter->GetParent(__uuidof(IDXGIFactory),reinterpret_cast<void**>(&pDXGIFactory));
+            IDXGIFactory1* pDXGIFactory;
+            hr = pDXGIAdapter->GetParent(__uuidof(IDXGIFactory1),reinterpret_cast<void**>(&pDXGIFactory));
             if (FAILED(hr))
             {
                 pDXGIAdapter->Release();

@@ -10,7 +10,7 @@
 #include <GTLib/Map.hpp>
 #include <GTLib/windows.hpp>
 #include <GTLib/Threading/Mutex.hpp>
-#include <d3d11.h>
+#include <d3d11_1.h>
 #include <d3dcompiler.h>
 #include <GTGameEngine/GPURenderingDevice.hpp>
 
@@ -68,10 +68,19 @@ namespace GT
         // State
 
         /// @copydoc GPURenderingDevice::BindTextureView()
-        void BindTexture(HTextureView hTextureView, unsigned int slotIndex);
+        void BindTexture(unsigned int slotIndex, HTextureView hTextureView);
 
         /// @copydoc GPURenderingDevice::BindSampler()
-        void BindSampler(HSampler hSampler, unsigned int slotIndex);
+        void BindSampler(unsigned int slotIndex, HSampler hSampler);
+
+        /// @copydoc GPURenderingDevice::BindConstantBuffer(unsigned int, HBuffer)
+        void BindConstantBuffer(unsigned int slotIndex, HBuffer hBuffer);
+
+        /// @copydoc GPURenderingDevice::BindConstantBuffer(unsigned int, HBuffer, size_t, size_t)
+        void BindConstantBuffer(unsigned int slotIndex, HBuffer hBuffer, size_t offset, size_t size);
+
+        /// @copydoc GPURenderingDevice::BindConstantBuffer(unsigned int, size_t, HBuffer*, size_t*, size_t*)
+        void BindConstantBuffer(unsigned int slotIndex, size_t count, HBuffer* hBuffers, size_t* offsets, size_t* sizes);
 
 
 
@@ -300,10 +309,10 @@ namespace GT
         HMODULE m_hD3DCompiler;
 
         /// The D3D11 device object.
-        ID3D11Device* m_device;
+        ID3D11Device1* m_device;
 
         /// The D3D11 context.
-        ID3D11DeviceContext* m_context;
+        ID3D11DeviceContext1* m_context;
 
 
         /// Structure containing the elements that make up the framebuffer for a given window.
