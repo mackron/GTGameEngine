@@ -77,6 +77,25 @@ namespace GT
         void BindConstantBuffer(unsigned int slotIndex, size_t count, HBuffer* hBuffers, size_t* offsets, size_t* sizes);
 
 
+        /// @copydoc GPURenderingDevice::SetVertexShader()
+        void SetVertexShader(HShader hShader);
+
+        /// @copydoc GPURenderingDevice::SetTessellationControlShader()
+        void SetTessellationControlShader(HShader hShader);
+
+        /// @copydoc GPURenderingDevice::SetTessellationEvaluationShader()
+        void SetTessellationEvaluationShader(HShader hShader);
+
+        /// @copydoc GPURenderingDevice::SetGeometryShader()
+        void SetGeometryShader(HShader hShader);
+
+        /// @copydoc GPURenderingDevice::SetFragmentShader()
+        void SetFragmentShader(HShader hShader);
+
+        /// @copydoc GPURenderingDevice::SetComputeShader()
+        void SetComputeShader(HShader hShader);
+
+
 
         /////////////////////////////////////////////////////////////////////////////
         //
@@ -126,19 +145,6 @@ namespace GT
         void OMSetSampleMask(uint32_t sampleMask);
 
 
-        /////////////////////////////////////////////
-        // Vertex Shader Stage
-
-        /// @copydoc GPURenderingDevice::FSSetShader()
-        void VSSetShader(HVertexShader hShader);
-
-
-        /////////////////////////////////////////////
-        // Fragment Shader Stage
-
-        /// @copydoc GPURenderingDevice::FSSetShader()
-        void FSSetShader(HFragmentShader hShader);
-
 
         /////////////////////////////////////////////////////////////////////////////
         //
@@ -184,7 +190,7 @@ namespace GT
         // Input Layout
 
         /// GPURenderingDevice::CreateVertexInputLayout().
-        HInputLayout CreateInputLayout(HVertexShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
+        HInputLayout CreateInputLayout(HShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
 
         /// GPURenderingDevice::ReleaseInputLayout().
         void ReleaseInputLayout(HInputLayout hInputLayout);
@@ -203,24 +209,14 @@ namespace GT
         bool IsShaderLanguageSupported(ShaderLanguage language) const;
 
 
-        /// @copydoc GPURenderingDevice_Gen2::CreateVertexShader()
-        HVertexShader CreateVertexShader(const void* shaderData, size_t shaderDataSize);
+        /// @copydoc GPURenderingDevice::CreateShader()
+        HShader CreateShader(const void* shaderData, size_t shaderDataSize, ShaderType shaderType);
 
-        /// @copydoc GPURenderingDevice_Gen2::ReleaseVertexShader()
-        void ReleaseVertexShader(HVertexShader hShader);
+        /// @copydoc GPURenderingDevice::ReleaseShader()
+        void ReleaseShader(HShader hShader);
 
-        /// @copydoc GPURenderingDevice_Gen2::HoldVertexShader()
-        void HoldVertexShader(HVertexShader hShader);
-
-
-        /// @copydoc GPURenderingDevice_Gen2::CreateFragmentShader()
-        HFragmentShader CreateFragmentShader(const void* shaderData, size_t shaderDataSize);
-
-        /// @copydoc GPURenderingDevice_Gen2::ReleaseFragmentShader()
-        void ReleaseFragmentShader(HFragmentShader hShader);
-
-        /// @copydoc GPURenderingDevice_Gen2::HoldFragmentShader()
-        void HoldFragmentShader(HFragmentShader hShader);
+        /// @copydoc GPURenderingDevice::HoldShader()
+        void HoldShader(HShader hShader);
 
 
 
@@ -324,32 +320,6 @@ namespace GT
         /// @remarks
         ///     If the buffer is null, the vertex attribute will be disabled.
         void UpdateSlotVertexAttributePointers(unsigned int slotIndex);
-
-
-        /// Helper for compiling a shader of the given type.
-        ///
-        /// @param shaderBianry            [in] A pointer to the shader binary.
-        /// @param shaderBinarySizeInBytes [in] The size in bytes of the shader binary.
-        /// @param shaderType              [in] The expected shader type.
-        ///
-        /// @remarks
-        ///     A generic handle that can be cast to a HVertexShader, HFragmentShader, etc.
-        ///     @par
-        ///     If an error occurs, 0 is returned.
-        ///     @par
-        ///     If the shader type specified inside the shader binary does not equal \c shaderType, 0 is returned.
-        HGeneric CreateShader(const void* shaderBinary, size_t shaderBinarySizeInBytes, ShaderType type);
-
-        /// Helper for releasing the given shader object.
-        ///
-        /// @param hShader [in] A handle to the shader object to delete.
-        void ReleaseShader(HGeneric hShader);
-
-        /// Helper for holding the given shader object.
-        ///
-        /// @param hShader [in] A handle to the shader object to hold.
-        void HoldShader(HGeneric hShader);
-
 
         /// Helper for compiling a GLSL shader.
         ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);

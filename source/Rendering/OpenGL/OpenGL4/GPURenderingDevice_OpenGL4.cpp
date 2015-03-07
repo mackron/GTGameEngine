@@ -449,6 +449,85 @@ namespace GT
     }
 
 
+    void GPURenderingDevice_OpenGL4::SetVertexShader(HShader hShader)
+    {
+        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
+        if (shaderGL != nullptr)
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_VERTEX_SHADER_BIT, shaderGL->GetOpenGLObject());
+        }
+        else
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_VERTEX_SHADER_BIT, 0);
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::SetTessellationControlShader(HShader hShader)
+    {
+        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
+        if (shaderGL != nullptr)
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_TESS_CONTROL_SHADER_BIT, shaderGL->GetOpenGLObject());
+        }
+        else
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_TESS_CONTROL_SHADER_BIT, 0);
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::SetTessellationEvaluationShader(HShader hShader)
+    {
+        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
+        if (shaderGL != nullptr)
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_TESS_EVALUATION_SHADER_BIT, shaderGL->GetOpenGLObject());
+        }
+        else
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_TESS_EVALUATION_SHADER_BIT, 0);
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::SetGeometryShader(HShader hShader)
+    {
+        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
+        if (shaderGL != nullptr)
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_GEOMETRY_SHADER_BIT, shaderGL->GetOpenGLObject());
+        }
+        else
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_GEOMETRY_SHADER_BIT, 0);
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::SetFragmentShader(HShader hShader)
+    {
+        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
+        if (shaderGL != nullptr)
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_FRAGMENT_SHADER_BIT, shaderGL->GetOpenGLObject());
+        }
+        else
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_FRAGMENT_SHADER_BIT, 0);
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::SetComputeShader(HShader hShader)
+    {
+        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
+        if (shaderGL != nullptr)
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_COMPUTE_SHADER_BIT, shaderGL->GetOpenGLObject());
+        }
+        else
+        {
+            m_gl.UseProgramStages(m_globalShaderPipeline, GL_COMPUTE_SHADER_BIT, 0);
+        }
+    }
+
+
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -866,41 +945,6 @@ namespace GT
     }
 
 
-    /////////////////////////////////////////////
-    // Vertex Shader Stage
-
-    void GPURenderingDevice_OpenGL4::VSSetShader(HVertexShader hShader)
-    {
-        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
-        if (shaderGL != nullptr)
-        {
-            m_gl.UseProgramStages(m_globalShaderPipeline, GL_VERTEX_SHADER_BIT, shaderGL->GetOpenGLObject());
-        }
-        else
-        {
-            m_gl.UseProgramStages(m_globalShaderPipeline, GL_VERTEX_SHADER_BIT, 0);
-        }
-    }
-
-
-    /////////////////////////////////////////////
-    // Fragment Shader Stage
-
-    void GPURenderingDevice_OpenGL4::FSSetShader(HFragmentShader hShader)
-    {
-        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
-        if (shaderGL != nullptr)
-        {
-            m_gl.UseProgramStages(m_globalShaderPipeline, GL_FRAGMENT_SHADER_BIT, shaderGL->GetOpenGLObject());
-        }
-        else
-        {
-            m_gl.UseProgramStages(m_globalShaderPipeline, GL_FRAGMENT_SHADER_BIT, 0);
-        }
-    }
-
-
-
     ////////////////////////////////////////////
     // State Objects
 
@@ -1019,7 +1063,7 @@ namespace GT
     ////////////////////////////////////////////
     // Input Layouts
 
-    HInputLayout GPURenderingDevice_OpenGL4::CreateInputLayout(HVertexShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
+    HInputLayout GPURenderingDevice_OpenGL4::CreateInputLayout(HShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
@@ -1156,35 +1200,76 @@ namespace GT
     }
 
 
-    HVertexShader GPURenderingDevice_OpenGL4::CreateVertexShader(const void* shaderData, size_t shaderDataSize)
+    HShader GPURenderingDevice_OpenGL4::CreateShader(const void* shaderBinary, size_t shaderBinarySizeInBytes, ShaderType type)
     {
-        return this->CreateShader(shaderData, shaderDataSize, ShaderType_Vertex);
+        const char* shaderSource;
+        size_t shaderSourceLength;
+        GTLib::Vector<GPUShaderDefine> defines;
+        ShaderLanguage language;
+        ShaderType actualType;
+        if (GT::Succeeded(this->ExtractShaderBinaryData(shaderBinary, shaderBinarySizeInBytes, shaderSource, shaderSourceLength, defines, language, actualType)))
+        {
+            if (actualType == type)
+            {
+                GT::BasicBuffer devnull;
+
+                GLuint objectGL;
+                GLenum typeGL;
+                if (GT::Succeeded(this->CompileShader_GLSL(shaderSource, shaderSourceLength, defines.buffer, language, type, devnull, objectGL, typeGL)))
+                {
+                    return reinterpret_cast<HShader>(new Shader_OpenGL4(objectGL, typeGL));
+                }
+                else
+                {
+                    // Failed to compile shader.
+                    return 0;
+                }
+            }
+            else
+            {
+                // Not a vertex shader.
+                return 0;
+            }
+        }
+        else
+        {
+            // Failed to extract binary data.
+            return 0;
+        }
     }
 
-    void GPURenderingDevice_OpenGL4::ReleaseVertexShader(HVertexShader hShader)
+    void GPURenderingDevice_OpenGL4::ReleaseShader(HShader hShader)
     {
-        this->ReleaseShader(hShader);
+        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
+        if (shaderGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                assert(shaderGL->GetReferenceCount() > 0);
+
+                CheckContextIsCurrent(m_gl, m_currentDC);
+
+                if (shaderGL->DecrementReferenceCount() == 0)
+                {
+                    m_gl.DeleteProgram(shaderGL->GetOpenGLObject());
+                    delete shaderGL;
+                }
+            }
+            m_referenceCountLock.Unlock();
+        }
     }
 
-    void GPURenderingDevice_OpenGL4::HoldVertexShader(HVertexShader hShader)
+    void GPURenderingDevice_OpenGL4::HoldShader(HShader hShader)
     {
-        this->HoldShader(hShader);
-    }
-
-
-    HFragmentShader GPURenderingDevice_OpenGL4::CreateFragmentShader(const void* shaderData, size_t shaderDataSize)
-    {
-        return this->CreateShader(shaderData, shaderDataSize, ShaderType_Fragment);
-    }
-
-    void GPURenderingDevice_OpenGL4::ReleaseFragmentShader(HFragmentShader hShader)
-    {
-        this->ReleaseShader(hShader);
-    }
-
-    void GPURenderingDevice_OpenGL4::HoldFragmentShader(HFragmentShader hShader)
-    {
-        this->HoldShader(hShader);
+        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
+        if (shaderGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                shaderGL->IncrementReferenceCount();
+            }
+            m_referenceCountLock.Unlock();
+        }
     }
 
 
@@ -1408,7 +1493,7 @@ namespace GT
         };
         
 
-        return reinterpret_cast<HTexture2D>(new Texture_OpenGL4(objectGL, desc));
+        return reinterpret_cast<HTexture>(new Texture_OpenGL4(objectGL, desc));
     }
 
     void GPURenderingDevice_OpenGL4::ReleaseTexture(HTexture hTexture)   
@@ -1867,79 +1952,6 @@ namespace GT
 
 
             m_invalidVertexBufferSlots &= ~(1 << slotIndex);
-        }
-    }
-
-
-    HGeneric GPURenderingDevice_OpenGL4::CreateShader(const void* shaderBinary, size_t shaderBinarySizeInBytes, ShaderType type)
-    {
-        const char* shaderSource;
-        size_t shaderSourceLength;
-        GTLib::Vector<GPUShaderDefine> defines;
-        ShaderLanguage language;
-        ShaderType actualType;
-        if (GT::Succeeded(this->ExtractShaderBinaryData(shaderBinary, shaderBinarySizeInBytes, shaderSource, shaderSourceLength, defines, language, actualType)))
-        {
-            if (actualType == type)
-            {
-                GT::BasicBuffer devnull;
-
-                GLuint objectGL;
-                GLenum typeGL;
-                if (GT::Succeeded(this->CompileShader_GLSL(shaderSource, shaderSourceLength, defines.buffer, language, type, devnull, objectGL, typeGL)))
-                {
-                    return reinterpret_cast<HVertexShader>(new Shader_OpenGL4(objectGL, typeGL));
-                }
-                else
-                {
-                    // Failed to compile shader.
-                    return 0;
-                }
-            }
-            else
-            {
-                // Not a vertex shader.
-                return 0;
-            }
-        }
-        else
-        {
-            // Failed to extract binary data.
-            return 0;
-        }
-    }
-
-    void GPURenderingDevice_OpenGL4::ReleaseShader(HGeneric hShader)
-    {
-        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
-        if (shaderGL != nullptr)
-        {
-            m_referenceCountLock.Lock();
-            {
-                assert(shaderGL->GetReferenceCount() > 0);
-
-                CheckContextIsCurrent(m_gl, m_currentDC);
-
-                if (shaderGL->DecrementReferenceCount() == 0)
-                {
-                    m_gl.DeleteProgram(shaderGL->GetOpenGLObject());
-                    delete shaderGL;
-                }
-            }
-            m_referenceCountLock.Unlock();
-        }
-    }
-
-    void GPURenderingDevice_OpenGL4::HoldShader(HGeneric hShader)
-    {
-        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
-        if (shaderGL != nullptr)
-        {
-            m_referenceCountLock.Lock();
-            {
-                shaderGL->IncrementReferenceCount();
-            }
-            m_referenceCountLock.Unlock();
         }
     }
 

@@ -21,18 +21,7 @@ namespace GT
     typedef size_t HGeneric;        //< A generic handle whose purpose is to cast to another handle type.
     typedef size_t HBuffer;
     typedef size_t HInputLayout;
-    typedef size_t HVertexShader;
-    typedef size_t HTessellationControlShader;
-    typedef size_t HTessellationEvaluationShader;
-    typedef size_t HGeometryShader;
-    typedef size_t HFragmentShader;
-    typedef size_t HComputeShader;
-    typedef size_t HShaderProgram;
-    typedef size_t HTexture1D;
-    typedef size_t HTexture2D;
-    typedef size_t HTexture2DMultisample;
-    typedef size_t HTexture3D;
-    typedef size_t HTextureCube;
+    typedef size_t HShader;
     typedef size_t HTexture;
     typedef size_t HTextureView;
     typedef size_t HSampler;

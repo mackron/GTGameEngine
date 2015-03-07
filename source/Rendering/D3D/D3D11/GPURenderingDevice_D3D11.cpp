@@ -332,6 +332,37 @@ namespace GT
     }
 
 
+    void GPURenderingDevice_D3D11::SetVertexShader(HShader hShader)
+    {
+        m_context->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(hShader), nullptr, 0);
+    }
+
+    void GPURenderingDevice_D3D11::SetTessellationControlShader(HShader hShader)
+    {
+        m_context->HSSetShader(reinterpret_cast<ID3D11HullShader*>(hShader), nullptr, 0);
+    }
+
+    void GPURenderingDevice_D3D11::SetTessellationEvaluationShader(HShader hShader)
+    {
+        m_context->DSSetShader(reinterpret_cast<ID3D11DomainShader*>(hShader), nullptr, 0);
+    }
+
+    void GPURenderingDevice_D3D11::SetGeometryShader(HShader hShader)
+    {
+        m_context->GSSetShader(reinterpret_cast<ID3D11GeometryShader*>(hShader), nullptr, 0);
+    }
+
+    void GPURenderingDevice_D3D11::SetFragmentShader(HShader hShader)
+    {
+        m_context->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(hShader), nullptr, 0);
+    }
+
+    void GPURenderingDevice_D3D11::SetComputeShader(HShader hShader)
+    {
+        m_context->CSSetShader(reinterpret_cast<ID3D11ComputeShader*>(hShader), nullptr, 0);
+    }
+
+
 
     /////////////////////////////////////////////////////////////////////////////
     //
@@ -446,26 +477,6 @@ namespace GT
         m_currentSampleMask = static_cast<UINT>(sampleMask);
         this->OMSetBlendState(m_currentBlendState);
     }
-
-
-
-    /////////////////////////////////////////////
-    // Vertex Shader Stage
-
-    void GPURenderingDevice_D3D11::VSSetShader(HVertexShader hShader)
-    {
-        m_context->VSSetShader(reinterpret_cast<ID3D11VertexShader*>(hShader), nullptr, 0);
-    }
-
-
-    /////////////////////////////////////////////
-    // Fragment Shader Stage
-
-    void GPURenderingDevice_D3D11::FSSetShader(HFragmentShader hShader)
-    {
-        m_context->PSSetShader(reinterpret_cast<ID3D11PixelShader*>(hShader), nullptr, 0);
-    }
-
 
 
     /////////////////////////////////////////////////////////////////////////////
@@ -694,7 +705,7 @@ namespace GT
     ////////////////////////////////////////////
     // Input Layout
 
-    HInputLayout GPURenderingDevice_D3D11::CreateInputLayout(HVertexShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
+    HInputLayout GPURenderingDevice_D3D11::CreateInputLayout(HShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
     {
         auto shaderD3D11 = reinterpret_cast<ID3D11VertexShader*>(hVertexShader);
         if (shaderD3D11 != nullptr)
@@ -894,29 +905,95 @@ namespace GT
     }
 
 
-    HVertexShader GPURenderingDevice_D3D11::CreateVertexShader(const void* shaderData, size_t shaderDataSize)
+    HShader GPURenderingDevice_D3D11::CreateShader(const void* shaderData, size_t shaderDataSize, ShaderType shaderType)
     {
         const void* binaryData;
         size_t binaryDataSize;
         ResultCode result = this->ExtractShaderBinaryData(shaderData, shaderDataSize, binaryData, binaryDataSize);
         if (GT::Succeeded(result))
         {
-            ID3D11VertexShader* vertexShaderD3D11;
-            if (SUCCEEDED(m_device->CreateVertexShader(binaryData, binaryDataSize, nullptr, &vertexShaderD3D11)))
+            ID3D11DeviceChild* shaderD3D11 = nullptr;
+            
+            switch (shaderType)
             {
-                if (SUCCEEDED(vertexShaderD3D11->SetPrivateData(CustomDataGUID_ShaderBinary, static_cast<UINT>(binaryDataSize), binaryData)))
+            case ShaderType_Vertex:
                 {
-                    return reinterpret_cast<HVertexShader>(vertexShaderD3D11);
+                    if (FAILED(m_device->CreateVertexShader(binaryData, binaryDataSize, nullptr, reinterpret_cast<ID3D11VertexShader**>(&shaderD3D11))))
+                    {
+                        return 0;
+                    }
+
+                    break;
                 }
-                else
+
+            case ShaderType_TessellationControl:
                 {
-                    vertexShaderD3D11->Release();
+                    if (FAILED(m_device->CreateHullShader(binaryData, binaryDataSize, nullptr, reinterpret_cast<ID3D11HullShader**>(&shaderD3D11))))
+                    {
+                        return 0;
+                    }
+
+                    break;
+                }
+
+            case ShaderType_TessellationEvaluation:
+                {
+                    if (FAILED(m_device->CreateDomainShader(binaryData, binaryDataSize, nullptr, reinterpret_cast<ID3D11DomainShader**>(&shaderD3D11))))
+                    {
+                        return 0;
+                    }
+
+                    break;
+                }
+
+            case ShaderType_Geometry:
+                {
+                    if (FAILED(m_device->CreateGeometryShader(binaryData, binaryDataSize, nullptr, reinterpret_cast<ID3D11GeometryShader**>(&shaderD3D11))))
+                    {
+                        return 0;
+                    }
+
+                    break;
+                }
+
+            case ShaderType_Fragment:
+                {
+                    if (FAILED(m_device->CreatePixelShader(binaryData, binaryDataSize, nullptr, reinterpret_cast<ID3D11PixelShader**>(&shaderD3D11))))
+                    {
+                        return 0;
+                    }
+
+                    break;
+                }
+
+            case ShaderType_Compute:
+                {
+                    if (FAILED(m_device->CreateComputeShader(binaryData, binaryDataSize, nullptr, reinterpret_cast<ID3D11ComputeShader**>(&shaderD3D11))))
+                    {
+                        return 0;
+                    }
+
+                    break;
+                }
+
+            default:
+                {
+                    // Unknown or unsupported shader type.
                     return 0;
                 }
             }
-            else
+
+            assert(shaderD3D11 != nullptr);
             {
-                return 0;
+                if (SUCCEEDED(shaderD3D11->SetPrivateData(CustomDataGUID_ShaderBinary, static_cast<UINT>(binaryDataSize), binaryData)))
+                {
+                    return reinterpret_cast<HShader>(shaderD3D11);
+                }
+                else
+                {
+                    shaderD3D11->Release();
+                    return 0;
+                }
             }
         }
         else
@@ -925,70 +1002,21 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::ReleaseVertexShader(HVertexShader hShader)
+    void GPURenderingDevice_D3D11::ReleaseShader(HShader hShader)
     {
         if (hShader != 0)
         {
-            reinterpret_cast<ID3D11VertexShader*>(hShader)->Release();
+            reinterpret_cast<ID3D11DeviceChild*>(hShader)->Release();
         }
     }
 
-    void GPURenderingDevice_D3D11::HoldVertexShader(HVertexShader hShader)
+    void GPURenderingDevice_D3D11::HoldShader(HShader hShader)
     {
         if (hShader != 0)
         {
-            reinterpret_cast<ID3D11VertexShader*>(hShader)->AddRef();
+            reinterpret_cast<ID3D11DeviceChild*>(hShader)->AddRef();
         }
     }
-
-
-    HFragmentShader GPURenderingDevice_D3D11::CreateFragmentShader(const void* shaderData, size_t shaderDataSize)
-    {
-        const void* binaryData;
-        size_t binaryDataSize;
-        ResultCode result = this->ExtractShaderBinaryData(shaderData, shaderDataSize, binaryData, binaryDataSize);
-        if (GT::Succeeded(result))
-        {
-            ID3D11PixelShader* pixelShaderD3D11;
-            if (SUCCEEDED(m_device->CreatePixelShader(binaryData, binaryDataSize, nullptr, &pixelShaderD3D11)))
-            {
-                if (SUCCEEDED(pixelShaderD3D11->SetPrivateData(CustomDataGUID_ShaderBinary, static_cast<UINT>(binaryDataSize), binaryData)))
-                {
-                    return reinterpret_cast<HVertexShader>(pixelShaderD3D11);
-                }
-                else
-                {
-                    pixelShaderD3D11->Release();
-                    return 0;
-                }
-            }
-            else
-            {
-                return 0;
-            }
-        }
-        else
-        {
-            return 0;
-        }
-    }
-
-    void GPURenderingDevice_D3D11::ReleaseFragmentShader(HFragmentShader hShader)
-    {
-        if (hShader != 0)
-        {
-            reinterpret_cast<ID3D11PixelShader*>(hShader)->Release();
-        }
-    }
-
-    void GPURenderingDevice_D3D11::HoldFragmentShader(HFragmentShader hShader)
-    {
-        if (hShader != 0)
-        {
-            reinterpret_cast<ID3D11PixelShader*>(hShader)->AddRef();
-        }
-    }
-
 
 
     ///////////////////////////////////////////

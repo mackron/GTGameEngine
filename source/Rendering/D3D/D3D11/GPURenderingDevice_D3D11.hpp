@@ -83,6 +83,25 @@ namespace GT
         void BindConstantBuffer(unsigned int slotIndex, size_t count, HBuffer* hBuffers, size_t* offsets, size_t* sizes);
 
 
+        /// @copydoc GPURenderingDevice::SetVertexShader()
+        void SetVertexShader(HShader hShader);
+
+        /// @copydoc GPURenderingDevice::SetTessellationControlShader()
+        void SetTessellationControlShader(HShader hShader);
+
+        /// @copydoc GPURenderingDevice::SetTessellationEvaluationShader()
+        void SetTessellationEvaluationShader(HShader hShader);
+
+        /// @copydoc GPURenderingDevice::SetGeometryShader()
+        void SetGeometryShader(HShader hShader);
+
+        /// @copydoc GPURenderingDevice::SetFragmentShader()
+        void SetFragmentShader(HShader hShader);
+
+        /// @copydoc GPURenderingDevice::SetComputeShader()
+        void SetComputeShader(HShader hShader);
+
+
 
         /////////////////////////////////////////////////////////////////////////////
         //
@@ -133,20 +152,6 @@ namespace GT
 
 
 
-        /////////////////////////////////////////////
-        // Vertex Shader Stage
-
-        /// @copydoc GPURenderingDevice::FSSetShader()
-        void VSSetShader(HVertexShader hShader);
-
-
-        /////////////////////////////////////////////
-        // Fragment Shader Stage
-
-        /// @copydoc GPURenderingDevice::FSSetShader()
-        void FSSetShader(HFragmentShader hShader);
-
-
         /////////////////////////////////////////////////////////////////////////////
         //
         // Object Creation and Deletion
@@ -191,7 +196,7 @@ namespace GT
         // Input Layout
 
         /// GPURenderingDevice::CreateVertexInputLayout().
-        HInputLayout CreateInputLayout(HVertexShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
+        HInputLayout CreateInputLayout(HShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
 
         /// GPURenderingDevice::ReleaseInputLayout().
         void ReleaseInputLayout(HInputLayout hInputLayout);
@@ -211,25 +216,14 @@ namespace GT
         bool IsShaderLanguageSupported(ShaderLanguage language) const;
 
 
-        /// @copydoc GPURenderingDevice_Gen2::CreateVertexShader()
-        HVertexShader CreateVertexShader(const void* shaderData, size_t shaderDataSize);
+        /// @copydoc GPURenderingDevice::CreateShader()
+        HShader CreateShader(const void* shaderData, size_t shaderDataSize, ShaderType shaderType);
 
-        /// @copydoc GPURenderingDevice_Gen2::ReleaseVertexShader()
-        void ReleaseVertexShader(HVertexShader hShader);
+        /// @copydoc GPURenderingDevice::ReleaseShader()
+        void ReleaseShader(HShader hShader);
 
-        /// @copydoc GPURenderingDevice_Gen2::HoldVertexShader()
-        void HoldVertexShader(HVertexShader hShader);
-
-
-        /// @copydoc GPURenderingDevice_Gen2::CreateFragmentShader()
-        HFragmentShader CreateFragmentShader(const void* shaderData, size_t shaderDataSize);
-
-        /// @copydoc GPURenderingDevice_Gen2::ReleaseFragmentShader()
-        void ReleaseFragmentShader(HFragmentShader hShader);
-
-        /// @copydoc GPURenderingDevice_Gen2::HoldFragmentShader()
-        void HoldFragmentShader(HFragmentShader hShader);
-
+        /// @copydoc GPURenderingDevice::HoldShader()
+        void HoldShader(HShader hShader);
 
 
 

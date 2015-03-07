@@ -140,6 +140,37 @@ namespace GT
         virtual void BindConstantBuffer(unsigned int slotIndex, size_t count, HBuffer* buffers, size_t* offsets, size_t* sizes) = 0;
 
 
+        /// Sets the vertex shader.
+        ///
+        /// @param hShader [in] The vertex shader to make current.
+        virtual void SetVertexShader(HShader hShader) = 0;
+
+        /// Sets the tessellation control shader (hull shader in Direct3D).
+        ///
+        /// @param hShader [in] The tessellation control shader to make current.
+        virtual void SetTessellationControlShader(HShader hShader) = 0;
+
+        /// Sets the tessellation evaluation shader (domain shader in Direct3D).
+        ///
+        /// @param hShader [in] The tessellation evaluation shader to make current.
+        virtual void SetTessellationEvaluationShader(HShader hShader) = 0;
+
+        /// Sets the geometry shader.
+        ///
+        /// @param hShader [in] The geometry shader to make current.
+        virtual void SetGeometryShader(HShader hShader) = 0;
+
+        /// Sets the fragment shader.
+        ///
+        /// @param hShader [in] The fragment shader to make current.
+        virtual void SetFragmentShader(HShader hShader) = 0;
+
+        /// Sets the compute shader.
+        ///
+        /// @param hShader [in] The compute shader to make current.
+        virtual void SetComputeShader(HShader hShader) = 0;
+
+
         /////////////////////////////////////////////////////////////////////////////
         //
         // Stages
@@ -242,14 +273,41 @@ namespace GT
         virtual void OMSetSampleMask(uint32_t sampleMask) = 0;
 
 
+#if 0
         /////////////////////////////////////////////
         // Vertex Shader Stage
 
         /// Sets the vertex shader.
         ///
         /// @param hShader [in] The vertex shader to make current.
-        virtual void VSSetShader(HVertexShader hShader) = 0;
+        virtual void VSSetShader(HShader hShader) = 0;
 
+
+        /////////////////////////////////////////////
+        // Tessellation Control Shader Stage
+
+        /// Sets the tessellation control shader (hull shader in Direct3D).
+        ///
+        /// @param hShader [in] The tessellation control shader to make current.
+        virtual void TCSSetShader(HShader hShader) = 0;
+
+
+        /////////////////////////////////////////////
+        // Tessellation Evaluation Shader Stage
+
+        /// Sets the tessellation evaluation shader (domain shader in Direct3D).
+        ///
+        /// @param hShader [in] The tessellation evaluation shader to make current.
+        virtual void TESSetShader(HShader hShader) = 0;
+
+
+        /////////////////////////////////////////////
+        // Geometry Shader Stage
+
+        /// Sets the geometry shader.
+        ///
+        /// @param hShader [in] The geometry shader to make current.
+        virtual void GSSetShader(HShader hShader) = 0;
 
 
         /////////////////////////////////////////////
@@ -258,8 +316,17 @@ namespace GT
         /// Sets the fragment shader.
         ///
         /// @param hShader [in] The fragment shader to make current.
-        virtual void FSSetShader(HFragmentShader hShader) = 0;
+        virtual void FSSetShader(HShader hShader) = 0;
 
+
+        /////////////////////////////////////////////
+        // Compute Shader Stage
+
+        /// Sets the compute shader.
+        ///
+        /// @param hShader [in] The compute shader to make current.
+        virtual void CSSetShader(HShader hShader) = 0;
+#endif
 
 
         /////////////////////////////////////////////////////////////////////////////
@@ -362,7 +429,7 @@ namespace GT
         /// @param attribDescCount [in] The number of items in \c attribDesc.
         ///
         /// @return A handle to the new input layout object.
-        virtual HInputLayout CreateInputLayout(HVertexShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount) = 0;
+        virtual HInputLayout CreateInputLayout(HShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount) = 0;
 
         /// Decrements the internal reference counter fo the given depth/stencil state and deletes the object if it hits 0.
         ///
@@ -420,6 +487,25 @@ namespace GT
         virtual bool IsShaderLanguageSupported(ShaderLanguage language) const = 0;
 
 
+        /// Creates a shader of the given type.
+        ///
+        /// @param shaderData     [in] A pointer ot the buffer containing the shader data.
+        /// @param shaderDataSize [in] The size in bytes of the shader data.
+        /// @param shaderType     [in] The type of shader being created (vertex, fragment, etc.)
+        virtual HShader CreateShader(const void* shaderData, size_t shaderDataSize, ShaderType shaderType) = 0;
+
+        /// Decrements the reference counter of the given shader and deletes it if the counter hits 0.
+        ///
+        /// @param hShader [in] A handle to the shader to release.
+        virtual void ReleaseShader(HShader hShader) = 0;
+
+        /// Increments the reference counter of the given shader.
+        ///
+        /// @param hShader [in] A handle to the shader whose reference counter should be incremented.
+        virtual void HoldShader(HShader hShader) = 0;
+
+
+#if 0
         /// Creates a vertex shader.
         ///
         /// @param shaderData     [in] A pointer to the buffer containing the vertex shader data.
@@ -448,7 +534,7 @@ namespace GT
         virtual void HoldVertexShader(HVertexShader hShader) = 0;
 
 
-        /// Creates a vertex shader.
+        /// Creates a fragment/pixel shader.
         ///
         /// @param shaderData     [in] A pointer to the buffer containing the vertex shader data.
         /// @param shaderDataSize [in] The size in bytes of the vertex shader data.
@@ -475,6 +561,34 @@ namespace GT
         ///     This is thread-safe.
         virtual void HoldFragmentShader(HFragmentShader hShader) = 0;
 
+
+        /// Creates a compute shader.
+        ///
+        /// @param shaderData     [in] A pointer to the buffer containing the shader data.
+        /// @param shaderDataSize [in] The size in bytes of the shader data.
+        ///
+        /// @return A handle to the new shader object, or 0 if an error occurs.
+        virtual HComputeShader CreateComputeShader(const void* shaderData, size_t shaderDataSize) = 0;
+
+        /// Decrements the reference counter of the given shader and deletes the internal object if it reaches 0.
+        ///
+        /// @param shader [in] A handle to the shader object to release.
+        ///
+        /// @remarks
+        ///     This is thread-safe.
+        ///     @par
+        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
+        ///     synchronization.
+        virtual void ReleaseComputeShader(HComputeShader hShader) = 0;
+
+        /// Increments the reference counter of the given shader.
+        ///
+        /// @param hShader [in] A handle to the shader whose reference counter is being incremented.
+        ///
+        /// @remarks
+        ///     This is thread-safe.
+        virtual void HoldComputeShader(HComputeShader hShader) = 0;
+#endif
 
 
         ////////////////////////////////////////////
