@@ -273,62 +273,6 @@ namespace GT
         virtual void OMSetSampleMask(uint32_t sampleMask) = 0;
 
 
-#if 0
-        /////////////////////////////////////////////
-        // Vertex Shader Stage
-
-        /// Sets the vertex shader.
-        ///
-        /// @param hShader [in] The vertex shader to make current.
-        virtual void VSSetShader(HShader hShader) = 0;
-
-
-        /////////////////////////////////////////////
-        // Tessellation Control Shader Stage
-
-        /// Sets the tessellation control shader (hull shader in Direct3D).
-        ///
-        /// @param hShader [in] The tessellation control shader to make current.
-        virtual void TCSSetShader(HShader hShader) = 0;
-
-
-        /////////////////////////////////////////////
-        // Tessellation Evaluation Shader Stage
-
-        /// Sets the tessellation evaluation shader (domain shader in Direct3D).
-        ///
-        /// @param hShader [in] The tessellation evaluation shader to make current.
-        virtual void TESSetShader(HShader hShader) = 0;
-
-
-        /////////////////////////////////////////////
-        // Geometry Shader Stage
-
-        /// Sets the geometry shader.
-        ///
-        /// @param hShader [in] The geometry shader to make current.
-        virtual void GSSetShader(HShader hShader) = 0;
-
-
-        /////////////////////////////////////////////
-        // Fragment Shader Stage
-
-        /// Sets the fragment shader.
-        ///
-        /// @param hShader [in] The fragment shader to make current.
-        virtual void FSSetShader(HShader hShader) = 0;
-
-
-        /////////////////////////////////////////////
-        // Compute Shader Stage
-
-        /// Sets the compute shader.
-        ///
-        /// @param hShader [in] The compute shader to make current.
-        virtual void CSSetShader(HShader hShader) = 0;
-#endif
-
-
         /////////////////////////////////////////////////////////////////////////////
         //
         // Object Creation and Deletion
