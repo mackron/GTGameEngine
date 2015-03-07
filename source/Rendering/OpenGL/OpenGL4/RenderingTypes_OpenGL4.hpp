@@ -10,6 +10,11 @@
 #include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
 #include <GTLib/ReferenceCountedObject.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4351)   // new behaviour
+#endif
+
 namespace GT
 {
     /// OpenGL rasterizer state.
@@ -177,6 +182,28 @@ namespace GT
     };
 
 
+    //////////////////////////////////////////////////
+    // Framebuffer_OpenGL4
+
+    class Framebuffer_OpenGL4 : public ReferenceCountedObject, public OpenGLObject
+    {
+    public:
+
+        Framebuffer_OpenGL4(GLuint objectGL)
+            : ReferenceCountedObject(), OpenGLObject(objectGL),
+              renderTargetsGL()
+        {
+            for (int i = 0; i < GT_MAX_FRAMEBUFFER_RENDER_TARGETS; ++i)
+            {
+                renderTargetsGL[i] = GL_NONE;
+            }
+        }
+
+        /// The array of buffers to send to glNamedFramebufferDrawBuffers(). This will be filled with 
+        GLenum renderTargetsGL[GT_MAX_FRAMEBUFFER_RENDER_TARGETS];
+    };
+
+
 
     //////////////////////////////////////////////////
     // InputLayout_OpenGL4
@@ -203,7 +230,7 @@ namespace GT
     public:
 
         /// Constructor.
-        InputLayout_OpenGL4(AttributeDesc* const attributes, size_t attributeCount, unsigned int slotAttributeCounts[GT_GE_MAX_VERTEX_BUFFER_SLOTS]);
+        InputLayout_OpenGL4(AttributeDesc* const attributes, size_t attributeCount, unsigned int slotAttributeCounts[GT_MAX_VERTEX_BUFFER_SLOTS]);
 
         /// Destructor.
         ~InputLayout_OpenGL4();
@@ -243,7 +270,7 @@ namespace GT
 
         /// m_attributes will contain a list of vertex attributes, sorted by slot. Each item in this list corresponds to a slot, and contains the index of the
         /// first attribute for the respective slot, and the index + 1 of the last attribute for the slot.
-        uint32_t m_slotAttributeRanges[GT_GE_MAX_VERTEX_BUFFER_SLOTS];
+        uint32_t m_slotAttributeRanges[GT_MAX_VERTEX_BUFFER_SLOTS];
 
 
     private:    // No copying.
@@ -489,6 +516,10 @@ namespace GT
         0         // TextureFormat_RGB_SF16_BPTC        //< GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB   / DXGI_FORMAT_BC6H_SF16
     };
 }
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 
 #endif
 

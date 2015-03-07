@@ -34,9 +34,9 @@ namespace GT
           m_currentBlendState(0),
           m_currentBlendFactor(),
           m_currentSampleMask(0xFFFFFFFF),
+          m_currentFramebuffer(0),
           m_D3DCompile(nullptr)
     {
-        m_stateFlags |= StageFlag_IsWindowFramebufferCurrent;       // TODO: Remove this from the constructor once we get the framebuffer system working properly.
     }
 
     GPURenderingDevice_D3D11::~GPURenderingDevice_D3D11()
@@ -329,6 +329,34 @@ namespace GT
         {
             // Too many buffers were specified.
         }
+    }
+
+    void GPURenderingDevice_D3D11::BindFramebuffer(HFramebuffer hFramebuffer)
+    {
+        auto framebufferD3D = reinterpret_cast<Framebuffer_D3D11*>(hFramebuffer);
+        if (framebufferD3D != nullptr)
+        {
+            m_context->OMSetRenderTargets(GT_MAX_FRAMEBUFFER_RENDER_TARGETS, framebufferD3D->renderTargets, framebufferD3D->depthStencilView);
+        }
+        else
+        {
+            // Make the window framebuffer current.
+            if (m_currentHWND != nullptr)
+            {
+                auto iFramebuffer = m_windowFramebuffers.Find(m_currentHWND);
+                assert(iFramebuffer != nullptr);
+                {
+                    auto &framebuffer = iFramebuffer->value;
+                    m_context->OMSetRenderTargets(1, &framebuffer.renderTargetView, framebuffer.depthStencilView);
+                }
+            }
+            else
+            {
+                m_context->OMSetRenderTargets(1, nullptr, nullptr);
+            }
+        }
+
+        m_currentFramebuffer = hFramebuffer;
     }
 
 
@@ -1502,6 +1530,245 @@ namespace GT
     ///////////////////////////////////////////
     // Framebuffers
 
+    HFramebuffer GPURenderingDevice_D3D11::CreateFramebuffer()
+    {
+        return reinterpret_cast<HFramebuffer>(new Framebuffer_D3D11());
+    }
+
+    void GPURenderingDevice_D3D11::ReleaseFramebuffer(HFramebuffer hFramebuffer)
+    {
+        auto framebufferD3D = reinterpret_cast<Framebuffer_D3D11*>(hFramebuffer);
+        if (framebufferD3D != nullptr)
+        {
+            if (framebufferD3D->DecrementReferenceCount() == 0)
+            {
+                for (int i = 0; i < GT_MAX_FRAMEBUFFER_RENDER_TARGETS; ++i)
+                {
+                    if (framebufferD3D->renderTargets[i] != nullptr)
+                    {
+                        framebufferD3D->renderTargets[i]->Release();
+                    }
+                }
+
+                if (framebufferD3D->depthStencilView != nullptr)
+                {
+                    framebufferD3D->depthStencilView->Release();
+                }
+
+
+                delete framebufferD3D;
+            }
+        }
+    }
+
+    void GPURenderingDevice_D3D11::HoldFramebuffer(HFramebuffer hFramebuffer)
+    {
+        auto framebufferD3D = reinterpret_cast<Framebuffer_D3D11*>(hFramebuffer);
+        if (framebufferD3D != nullptr)
+        {
+            framebufferD3D->IncrementReferenceCount();
+        }
+    }
+
+    void GPURenderingDevice_D3D11::AttachFramebufferRenderTarget(HFramebuffer hFramebuffer, unsigned int attachmentIndex, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer)
+    {
+        auto framebufferD3D = reinterpret_cast<Framebuffer_D3D11*>(hFramebuffer);
+        if (framebufferD3D != nullptr)
+        {
+            // Release the previous render target view if one exists.
+            if (framebufferD3D->renderTargets[attachmentIndex] != nullptr)
+            {
+                framebufferD3D->renderTargets[attachmentIndex]->Release();
+                framebufferD3D->renderTargets[attachmentIndex] = nullptr;
+            }
+
+
+            ID3D11Resource* textureD3D = reinterpret_cast<ID3D11Resource*>(hTexture);
+            if (textureD3D != nullptr)
+            {
+                UINT textureDescSize = sizeof(TextureDesc);
+                TextureDesc textureDesc;
+                textureD3D->GetPrivateData(CustomDataGUID_Generic, &textureDescSize, &textureDesc);
+
+                D3D11_RENDER_TARGET_VIEW_DESC descRTV;
+                ZeroMemory(&descRTV, sizeof(descRTV));
+                descRTV.Format = g_D3DTextureFormatsTable[textureDesc.format];
+
+                switch (textureDesc.type)
+                {
+                case TextureType_1D:
+                    {
+                        descRTV.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE1D;
+                        descRTV.Texture1D.MipSlice = mipmapLevel;
+
+                        break;
+                    }
+                case TextureType_1D_Array:
+                    {
+                        descRTV.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE1DARRAY;
+                        descRTV.Texture1DArray.MipSlice        = mipmapLevel;
+                        descRTV.Texture1DArray.FirstArraySlice = arrayLayer;
+                        descRTV.Texture1DArray.ArraySize       = 1;
+
+                        break;
+                    }
+
+                case TextureType_2D:
+                    {
+                        descRTV.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+                        descRTV.Texture2D.MipSlice = mipmapLevel;
+
+                        break;
+                    }
+                case TextureType_2D_Array:
+                    {
+                        descRTV.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DARRAY;
+                        descRTV.Texture2DArray.MipSlice        = mipmapLevel;
+                        descRTV.Texture2DArray.FirstArraySlice = arrayLayer;
+                        descRTV.Texture2DArray.ArraySize       = 1;
+
+                        break;
+                    }
+
+                case TextureType_2D_Multisample:
+                    {
+                        descRTV.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DMS;
+
+                        break;
+                    }
+                case TextureType_2D_Multisample_Array:
+                    {
+                        descRTV.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2DMSARRAY;
+                        descRTV.Texture2DMSArray.FirstArraySlice = arrayLayer;
+                        descRTV.Texture2DMSArray.ArraySize       = 1;
+
+                        break;
+                    }
+
+                case TextureType_3D:
+                    {
+                        descRTV.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE3D;
+                        descRTV.Texture3D.MipSlice    = mipmapLevel;
+                        descRTV.Texture3D.FirstWSlice = arrayLayer;
+                        descRTV.Texture3D.WSize       = 1;
+
+                        break;
+                    }
+
+                default:
+                    {
+                        // Texture type not supported.
+                        return;
+                    }
+                }
+
+                m_device->CreateRenderTargetView(textureD3D, &descRTV, &framebufferD3D->renderTargets[attachmentIndex]);
+            }
+
+            
+            // If the framebuffer is currently bound, the render targets need to be updated immediately.
+            if (m_currentFramebuffer == hFramebuffer)
+            {
+                m_context->OMSetRenderTargets(GT_MAX_FRAMEBUFFER_RENDER_TARGETS, framebufferD3D->renderTargets, framebufferD3D->depthStencilView);
+            }
+        }
+    }
+
+    void GPURenderingDevice_D3D11::AttachFramebufferDepthStencilTarget(HFramebuffer hFramebuffer, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer)
+    {
+        auto framebufferD3D = reinterpret_cast<Framebuffer_D3D11*>(hFramebuffer);
+        if (framebufferD3D != nullptr)
+        {
+            // Release the previous render target view if one exists.
+            if (framebufferD3D->depthStencilView != nullptr)
+            {
+                framebufferD3D->depthStencilView->Release();
+                framebufferD3D->depthStencilView = nullptr;
+            }
+
+
+            ID3D11Resource* textureD3D = reinterpret_cast<ID3D11Resource*>(hTexture);
+            if (textureD3D != nullptr)
+            {
+                UINT textureDescSize = sizeof(TextureDesc);
+                TextureDesc textureDesc;
+                textureD3D->GetPrivateData(CustomDataGUID_Generic, &textureDescSize, &textureDesc);
+
+                D3D11_DEPTH_STENCIL_VIEW_DESC descDSV;
+                ZeroMemory(&descDSV, sizeof(descDSV));
+                descDSV.Format = g_D3DTextureFormatsTable[textureDesc.format];
+
+                switch (textureDesc.type)
+                {
+                case TextureType_1D:
+                    {
+                        descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE1D;
+                        descDSV.Texture1D.MipSlice = mipmapLevel;
+
+                        break;
+                    }
+                case TextureType_1D_Array:
+                    {
+                        descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE1DARRAY;
+                        descDSV.Texture1DArray.MipSlice        = mipmapLevel;
+                        descDSV.Texture1DArray.FirstArraySlice = arrayLayer;
+                        descDSV.Texture1DArray.ArraySize       = 1;
+
+                        break;
+                    }
+
+                case TextureType_2D:
+                    {
+                        descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+                        descDSV.Texture2D.MipSlice = mipmapLevel;
+
+                        break;
+                    }
+                case TextureType_2D_Array:
+                    {
+                        descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DARRAY;
+                        descDSV.Texture2DArray.MipSlice        = mipmapLevel;
+                        descDSV.Texture2DArray.FirstArraySlice = arrayLayer;
+                        descDSV.Texture2DArray.ArraySize       = 1;
+
+                        break;
+                    }
+
+                case TextureType_2D_Multisample:
+                    {
+                        descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMS;
+
+                        break;
+                    }
+                case TextureType_2D_Multisample_Array:
+                    {
+                        descDSV.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2DMSARRAY;
+                        descDSV.Texture2DMSArray.FirstArraySlice = arrayLayer;
+                        descDSV.Texture2DMSArray.ArraySize       = 1;
+
+                        break;
+                    }
+
+                default:
+                    {
+                        // Texture type not supported.
+                        return;
+                    }
+                }
+
+
+                m_device->CreateDepthStencilView(textureD3D, &descDSV, &framebufferD3D->depthStencilView);
+            }
+
+
+            // If the framebuffer is currently bound, the render targets need to be updated immediately.
+            if (m_currentFramebuffer == hFramebuffer)
+            {
+                m_context->OMSetRenderTargets(GT_MAX_FRAMEBUFFER_RENDER_TARGETS, framebufferD3D->renderTargets, framebufferD3D->depthStencilView);
+            }
+        }
+    }
+
 
 
     //////////////////////////////////////////
@@ -1734,7 +2001,7 @@ namespace GT
                     auto &framebuffer = iFramebuffer->value;
 
                     // If the current render target is another window, we want that to be unbound, and then have the new window bound.
-                    if ((m_stateFlags & StageFlag_IsWindowFramebufferCurrent) != 0)
+                    if (m_currentFramebuffer == 0)
                     {
                         m_context->OMSetRenderTargets(1, &framebuffer.renderTargetView, framebuffer.depthStencilView);
                     }
@@ -1751,7 +2018,7 @@ namespace GT
             else
             {
                 // No window was specified.
-                if ((m_stateFlags & StageFlag_IsWindowFramebufferCurrent) != 0)
+                if (m_currentFramebuffer == 0)
                 {
                     m_context->OMSetRenderTargets(0, nullptr, nullptr);
                 }
@@ -1772,7 +2039,7 @@ namespace GT
             auto &framebuffer = iFramebuffer->value;
 
             // If the window is the current render target, unset it (it will be made current again at the end).
-            if (m_currentHWND == hWnd && (m_stateFlags & StageFlag_IsWindowFramebufferCurrent) != 0)
+            if (m_currentHWND == hWnd && m_currentFramebuffer == 0)
             {
                 m_context->OMSetRenderTargets(0, nullptr, nullptr);
             }
@@ -1841,7 +2108,7 @@ namespace GT
 
 
 
-            if (m_currentHWND == hWnd && (m_stateFlags & StageFlag_IsWindowFramebufferCurrent) != 0)
+            if (m_currentHWND == hWnd && m_currentFramebuffer == 0)
             {
                 m_context->OMSetRenderTargets(1, &framebuffer.renderTargetView, framebuffer.depthStencilView);
             }

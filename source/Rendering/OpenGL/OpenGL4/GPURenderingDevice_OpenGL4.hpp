@@ -76,6 +76,9 @@ namespace GT
         /// @copydoc GPURenderingDevice::BindConstantBuffer(unsigned int, size_t, HBuffer*, size_t*, size_t*)
         void BindConstantBuffer(unsigned int slotIndex, size_t count, HBuffer* hBuffers, size_t* offsets, size_t* sizes);
 
+        /// @copydoc GPURenderingDevice::BindFramebuffer()
+        void BindFramebuffer(HFramebuffer hFramebuffer);
+
 
         /// @copydoc GPURenderingDevice::SetVertexShader()
         void SetVertexShader(HShader hShader);
@@ -286,6 +289,23 @@ namespace GT
         ///////////////////////////////////////////
         // Framebuffers
 
+        /// @copydoc GPURenderingDevice::CreateFramebuffer()
+        HFramebuffer CreateFramebuffer();
+
+        /// @copydoc GPURenderingDevice::ReleaseFramebuffer()
+        void ReleaseFramebuffer(HFramebuffer hFramebuffer);
+
+        /// @copydoc GPURenderingDevice::HoldFramebuffer()
+        void HoldFramebuffer(HFramebuffer hFramebuffer);
+
+        /// @copydoc GPURenderingDevice::AttachFramebufferRenderTarget()
+        void AttachFramebufferRenderTarget(HFramebuffer hFramebuffer, unsigned int attachmentIndex, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer);
+
+        /// @copydoc GPURenderingDevice::AttachFramebufferDepthStencilTarget()
+        void AttachFramebufferDepthStencilTarget(HFramebuffer hFramebuffer, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer);
+
+
+
 
         //////////////////////////////////////////
         // Platform-Specific Methods
@@ -393,7 +413,7 @@ namespace GT
         };
 
         /// The state of each vertex buffer slot.
-        IAVertexBufferSlot m_vertexBufferSlots[GT_GE_MAX_VERTEX_BUFFER_SLOTS];
+        IAVertexBufferSlot m_vertexBufferSlots[GT_MAX_VERTEX_BUFFER_SLOTS];
 
         /// A set of flags that specify which buffer slots are invalid and need to have glVertexAttribPointer() called against them. Each bit represents one slot.
         uint32_t m_invalidVertexBufferSlots;
@@ -416,11 +436,15 @@ namespace GT
         HInputLayout m_currentInputLayout;
 
 
+        /// The current framebuffer.
+        HFramebuffer m_currentFramebuffer;
+
+
             
         ///////////////////////////////////////////
         // State Flags
 
-        static const uint32_t StageFlag_IsWindowFramebufferCurrent = (1 << 0);     //< Is the current window's framebuffer the current render target?
+        //static const uint32_t StageFlag_IsWindowFramebufferCurrent = (1 << 0);     //< Is the current window's framebuffer the current render target?
 
 
         ///////////////////////////////////////////

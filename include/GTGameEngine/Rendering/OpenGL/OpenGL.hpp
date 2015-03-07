@@ -311,6 +311,21 @@ namespace GT
         PFNGLSAMPLERPARAMETERIIVPROC         SamplerParameterIiv;
         PFNGLSAMPLERPARAMETERIUIVPROC        SamplerParameterIuiv;
 
+        // Framebuffers.
+        PFNGLCREATEFRAMEBUFFERSPROC           CreateFramebuffers;
+        PFNGLDELETEFRAMEBUFFERSPROC           DeleteFramebuffers;
+        PFNGLBINDFRAMEBUFFERPROC              BindFramebuffer;
+        PFNGLNAMEDFRAMEBUFFERTEXTUREPROC      NamedFramebufferTexture;
+        PFNGLNAMEDFRAMEBUFFERTEXTURELAYERPROC NamedFramebufferTextureLayer;
+        PFNGLNAMEDFRAMEBUFFERDRAWBUFFERPROC   NamedFramebufferDrawBuffer;
+        PFNGLNAMEDFRAMEBUFFERDRAWBUFFERSPROC  NamedFramebufferDrawBuffers;
+        PFNGLCLEARNAMEDFRAMEBUFFERIVPROC      ClearNamedFramebufferiv;
+        PFNGLCLEARNAMEDFRAMEBUFFERUIVPROC     ClearNamedFramebufferuiv;
+        PFNGLCLEARNAMEDFRAMEBUFFERFVPROC      ClearNamedFramebufferfv;
+        PFNGLCLEARNAMEDFRAMEBUFFERFIPROC      ClearNamedFramebufferfi;
+        PFNGLBLITNAMEDFRAMEBUFFERPROC         BlitNamedFramebuffer;
+        PFNGLCHECKNAMEDFRAMEBUFFERSTATUSPROC  CheckNamedFramebufferStatus;
+
         // GL_ARB_debug_output
         PFNGLDEBUGMESSAGECONTROLARBPROC  DebugMessageControlARB;
         PFNGLDEBUGMESSAGEINSERTARBPROC   DebugMessageInsertARB;

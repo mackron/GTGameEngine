@@ -25,7 +25,7 @@ namespace GT
 
         uint32_t rangeStart = 0;
         uint32_t rangeEnd   = 0;
-        for (int i = 0; i < GT_GE_MAX_VERTEX_BUFFER_SLOTS; ++i)
+        for (int i = 0; i < GT_MAX_VERTEX_BUFFER_SLOTS; ++i)
         {
             unsigned int slotAttributeCount = slotAttributeCounts[i];
 
@@ -58,7 +58,7 @@ namespace GT
 
     void InputLayout_OpenGL4::GetSlotAttributeRange(unsigned int slotIndex, size_t &rangeStartOut, size_t &rangeEndOut) const
     {
-        assert(slotIndex < GT_GE_MAX_VERTEX_BUFFER_SLOTS);
+        assert(slotIndex < GT_MAX_VERTEX_BUFFER_SLOTS);
 
         rangeStartOut = static_cast<size_t>(m_slotAttributeRanges[slotIndex] >> 16);
         rangeEndOut   = static_cast<size_t>(m_slotAttributeRanges[slotIndex] & 0x0000FFFF);

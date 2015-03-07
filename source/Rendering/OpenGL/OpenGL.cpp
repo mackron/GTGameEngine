@@ -153,6 +153,20 @@ namespace GT
             SamplerParameterIiv(nullptr),
             SamplerParameterIuiv(nullptr),
 
+            CreateFramebuffers(nullptr),
+            DeleteFramebuffers(nullptr),
+            BindFramebuffer(nullptr),
+            NamedFramebufferTexture(nullptr),
+            NamedFramebufferTextureLayer(nullptr),
+            NamedFramebufferDrawBuffer(nullptr),
+            NamedFramebufferDrawBuffers(nullptr),
+            ClearNamedFramebufferiv(nullptr),
+            ClearNamedFramebufferuiv(nullptr),
+            ClearNamedFramebufferfv(nullptr),
+            ClearNamedFramebufferfi(nullptr),
+            BlitNamedFramebuffer(nullptr),
+            CheckNamedFramebufferStatus(nullptr),
+
             DebugMessageControlARB(nullptr),
             DebugMessageInsertARB(nullptr),
             DebugMessageCallbackARB(nullptr)
@@ -663,6 +677,20 @@ namespace GT
             this->SamplerParameteriv          = reinterpret_cast<PFNGLSAMPLERPARAMETERIVPROC         >(this->GetGLProcAddress("glSamplerParameteriv"));
             this->SamplerParameterIiv         = reinterpret_cast<PFNGLSAMPLERPARAMETERIIVPROC        >(this->GetGLProcAddress("glSamplerParameterIiv"));
             this->SamplerParameterIuiv        = reinterpret_cast<PFNGLSAMPLERPARAMETERIUIVPROC       >(this->GetGLProcAddress("glSamplerParameterIuiv"));
+
+            this->CreateFramebuffers           = reinterpret_cast<PFNGLCREATEFRAMEBUFFERSPROC          >(this->GetGLProcAddress("glCreateFramebuffers"));
+            this->DeleteFramebuffers           = reinterpret_cast<PFNGLDELETEFRAMEBUFFERSPROC          >(this->GetGLProcAddress("glDeleteFramebuffers"));
+            this->BindFramebuffer              = reinterpret_cast<PFNGLBINDFRAMEBUFFERPROC             >(this->GetGLProcAddress("glBindFramebuffer"));
+            this->NamedFramebufferTexture      = reinterpret_cast<PFNGLNAMEDFRAMEBUFFERTEXTUREPROC     >(this->GetGLProcAddress("glNamedFramebufferTexture"));
+            this->NamedFramebufferTextureLayer = reinterpret_cast<PFNGLNAMEDFRAMEBUFFERTEXTURELAYERPROC>(this->GetGLProcAddress("glNamedFramebufferTextureLayer"));
+            this->NamedFramebufferDrawBuffer   = reinterpret_cast<PFNGLNAMEDFRAMEBUFFERDRAWBUFFERPROC  >(this->GetGLProcAddress("glNamedFramebufferDrawBuffer"));
+            this->NamedFramebufferDrawBuffers  = reinterpret_cast<PFNGLNAMEDFRAMEBUFFERDRAWBUFFERSPROC >(this->GetGLProcAddress("glNamedFramebufferDrawBuffers"));
+            this->ClearNamedFramebufferiv      = reinterpret_cast<PFNGLCLEARNAMEDFRAMEBUFFERIVPROC     >(this->GetGLProcAddress("glClearNamedFramebufferiv"));
+            this->ClearNamedFramebufferuiv     = reinterpret_cast<PFNGLCLEARNAMEDFRAMEBUFFERUIVPROC    >(this->GetGLProcAddress("glClearNamedFramebufferuiv"));
+            this->ClearNamedFramebufferfv      = reinterpret_cast<PFNGLCLEARNAMEDFRAMEBUFFERFVPROC     >(this->GetGLProcAddress("glClearNamedFramebufferfv"));
+            this->ClearNamedFramebufferfi      = reinterpret_cast<PFNGLCLEARNAMEDFRAMEBUFFERFIPROC     >(this->GetGLProcAddress("glClearNamedFramebufferfi"));
+            this->BlitNamedFramebuffer         = reinterpret_cast<PFNGLBLITNAMEDFRAMEBUFFERPROC        >(this->GetGLProcAddress("glBlitNamedFramebuffer"));
+            this->CheckNamedFramebufferStatus  = reinterpret_cast<PFNGLCHECKNAMEDFRAMEBUFFERSTATUSPROC >(this->GetGLProcAddress("glCheckNamedFramebufferStatus"));
 
 
             if (this->IsExtensionSupported("GL_ARB_debug_output"))

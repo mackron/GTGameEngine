@@ -6,7 +6,9 @@
 #include <cstdint>
 #include <cfloat>
 
-#define GT_GE_MAX_VERTEX_BUFFER_SLOTS       32
+#define GT_MAX_VERTEX_BUFFER_SLOTS          32
+#define GT_MAX_CONSTANT_BUFFER_SLOTS        14
+#define GT_MAX_FRAMEBUFFER_RENDER_TARGETS   8
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -26,7 +28,6 @@ namespace GT
     typedef size_t HTextureView;
     typedef size_t HSampler;
     typedef size_t HFramebuffer;
-    typedef size_t HFramebufferRenderbuffer;
     typedef size_t HRasterizerState;
     typedef size_t HDepthStencilState;
     typedef size_t HBlendState;

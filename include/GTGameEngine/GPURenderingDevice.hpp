@@ -139,6 +139,11 @@ namespace GT
         virtual void BindConstantBuffer(unsigned int slotIndex, HBuffer buffer, size_t offset, size_t size) = 0;
         virtual void BindConstantBuffer(unsigned int slotIndex, size_t count, HBuffer* buffers, size_t* offsets, size_t* sizes) = 0;
 
+        /// Binds the given framebuffer.
+        ///
+        /// @param hFramebuffer [in] A handle to the framebuffer to bind.
+        virtual void BindFramebuffer(HFramebuffer hFramebuffer) = 0;
+
 
         /// Sets the vertex shader.
         ///
@@ -449,92 +454,6 @@ namespace GT
         virtual void HoldShader(HShader hShader) = 0;
 
 
-#if 0
-        /// Creates a vertex shader.
-        ///
-        /// @param shaderData     [in] A pointer to the buffer containing the vertex shader data.
-        /// @param shaderDataSize [in] The size in bytes of the vertex shader data.
-        ///
-        /// @return A handle to the new vertex shader object, or 0 if an error occurs.
-        virtual HVertexShader CreateVertexShader(const void* shaderData, size_t shaderDataSize) = 0;
-
-        /// Decrements the reference counter of the given shader and deletes the internal object if it reaches 0.
-        ///
-        /// @param shader [in] A handle to the shader object to release.
-        ///
-        /// @remarks
-        ///     This is thread-safe.
-        ///     @par
-        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
-        ///     synchronization.
-        virtual void ReleaseVertexShader(HVertexShader hShader) = 0;
-
-        /// Increments the reference counter of the given shader.
-        ///
-        /// @param hShader [in] A handle to the shader whose reference counter is being incremented.
-        ///
-        /// @remarks
-        ///     This is thread-safe.
-        virtual void HoldVertexShader(HVertexShader hShader) = 0;
-
-
-        /// Creates a fragment/pixel shader.
-        ///
-        /// @param shaderData     [in] A pointer to the buffer containing the vertex shader data.
-        /// @param shaderDataSize [in] The size in bytes of the vertex shader data.
-        ///
-        /// @return A handle to the new vertex shader object, or 0 if an error occurs.
-        virtual HFragmentShader CreateFragmentShader(const void* shaderData, size_t shaderDataSize) = 0;
-
-        /// Decrements the reference counter of the given shader and deletes the internal object if it reaches 0.
-        ///
-        /// @param shader [in] A handle to the shader object to release.
-        ///
-        /// @remarks
-        ///     This is thread-safe.
-        ///     @par
-        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
-        ///     synchronization.
-        virtual void ReleaseFragmentShader(HFragmentShader hShader) = 0;
-
-        /// Increments the reference counter of the given shader.
-        ///
-        /// @param hShader [in] A handle to the shader whose reference counter is being incremented.
-        ///
-        /// @remarks
-        ///     This is thread-safe.
-        virtual void HoldFragmentShader(HFragmentShader hShader) = 0;
-
-
-        /// Creates a compute shader.
-        ///
-        /// @param shaderData     [in] A pointer to the buffer containing the shader data.
-        /// @param shaderDataSize [in] The size in bytes of the shader data.
-        ///
-        /// @return A handle to the new shader object, or 0 if an error occurs.
-        virtual HComputeShader CreateComputeShader(const void* shaderData, size_t shaderDataSize) = 0;
-
-        /// Decrements the reference counter of the given shader and deletes the internal object if it reaches 0.
-        ///
-        /// @param shader [in] A handle to the shader object to release.
-        ///
-        /// @remarks
-        ///     This is thread-safe.
-        ///     @par
-        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
-        ///     synchronization.
-        virtual void ReleaseComputeShader(HComputeShader hShader) = 0;
-
-        /// Increments the reference counter of the given shader.
-        ///
-        /// @param hShader [in] A handle to the shader whose reference counter is being incremented.
-        ///
-        /// @remarks
-        ///     This is thread-safe.
-        virtual void HoldComputeShader(HComputeShader hShader) = 0;
-#endif
-
-
         ////////////////////////////////////////////
         // Buffers
 
@@ -714,10 +633,24 @@ namespace GT
         ///////////////////////////////////////////
         // Framebuffers
 
-        /// Creates a framebuffer object.
+        /// Creates an empty framebuffer object.
         ///
-        /// @param framebufferOut [in] A reference to the variable that will receive a pointer to the new framebuffer, if successful.
-        //virtual ResultCode CreateFramebuffer(Framebuffer* &framebuffer) = 0;
+        /// @return A handle to the new framebuffer object.
+        virtual HFramebuffer CreateFramebuffer() = 0;
+
+        /// Decrements the reference counter of the given framebuffer object and deletes it if the counter hits 0.
+        ///
+        /// @param hFramebuffer [in] A handle to the framebuffer to release.
+        virtual void ReleaseFramebuffer(HFramebuffer hFramebuffer) = 0;
+
+        /// Increments the reference counter of the given framebuffer object.
+        ///
+        /// @param hFramebuffer [in] A handle to the framebuffer whose reference counter is to be incremented.
+        virtual void HoldFramebuffer(HFramebuffer hFramebuffer) = 0;
+
+        virtual void AttachFramebufferRenderTarget(HFramebuffer hFramebuffer, unsigned int attachmentIndex, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer) = 0;
+        virtual void AttachFramebufferDepthStencilTarget(HFramebuffer hFramebuffer, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer) = 0;
+
 
 
 

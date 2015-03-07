@@ -110,9 +110,9 @@ namespace GT
           m_indexBufferFormatGL(GL_UNSIGNED_INT),
           m_indexBufferFormatSize(4),
           m_indexBufferOffset(0),
-          m_currentInputLayout(0)
+          m_currentInputLayout(0),
+          m_currentFramebuffer(0)
     {
-        m_stateFlags |= StageFlag_IsWindowFramebufferCurrent;       // TODO: Remove this from the constructor once we get the framebuffer system working properly.
     }
 
     GPURenderingDevice_OpenGL4::~GPURenderingDevice_OpenGL4()
@@ -448,6 +448,21 @@ namespace GT
         }
     }
 
+    void GPURenderingDevice_OpenGL4::BindFramebuffer(HFramebuffer hFramebuffer)
+    {
+        auto framebufferGL = reinterpret_cast<Framebuffer_OpenGL4*>(hFramebuffer);
+        if (framebufferGL != nullptr)
+        {
+            m_gl.BindFramebuffer(GL_FRAMEBUFFER, framebufferGL->GetOpenGLObject());
+        }
+        else
+        {
+            m_gl.BindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
+
+        m_currentFramebuffer = hFramebuffer;
+    }
+
 
     void GPURenderingDevice_OpenGL4::SetVertexShader(HShader hShader)
     {
@@ -586,7 +601,7 @@ namespace GT
                 {
                     auto &attribGL = newLayoutGL->GetAttribute(iAttrib);
 
-                    assert(attribGL.slotIndex < GT_GE_MAX_VERTEX_BUFFER_SLOTS);
+                    assert(attribGL.slotIndex < GT_MAX_VERTEX_BUFFER_SLOTS);
                     {
                         m_invalidVertexBufferSlots |= (1 << attribGL.slotIndex);
                     }
@@ -602,7 +617,7 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        assert(slotIndex < GT_GE_MAX_VERTEX_BUFFER_SLOTS);
+        assert(slotIndex < GT_MAX_VERTEX_BUFFER_SLOTS);
 
         m_vertexBufferSlots[slotIndex].buffer = hBuffer;
         m_vertexBufferSlots[slotIndex].stride = stride;
@@ -1073,11 +1088,11 @@ namespace GT
             auto attribDescGL = reinterpret_cast<InputLayout_OpenGL4::AttributeDesc*>(malloc(sizeof(InputLayout_OpenGL4::AttributeDesc) * attribDescCount));
             if (attribDescGL != nullptr)
             {
-                unsigned int slotAttribCounts[GT_GE_MAX_VERTEX_BUFFER_SLOTS];
+                unsigned int slotAttribCounts[GT_MAX_VERTEX_BUFFER_SLOTS];
                 memset(slotAttribCounts, 0, sizeof(slotAttribCounts));
 
                 unsigned int iAttribGL = 0;
-                for (unsigned int iSlot = 0; iSlot < GT_GE_MAX_VERTEX_BUFFER_SLOTS && iAttribGL < attribDescCount; ++iSlot)
+                for (unsigned int iSlot = 0; iSlot < GT_MAX_VERTEX_BUFFER_SLOTS && iAttribGL < attribDescCount; ++iSlot)
                 {
                     for (size_t iAttrib = 0; iAttrib < attribDescCount; ++iAttrib)
                     {
@@ -1780,10 +1795,91 @@ namespace GT
     }
 
 
-
-
     ///////////////////////////////////////////
     // Framebuffers
+
+    HFramebuffer GPURenderingDevice_OpenGL4::CreateFramebuffer()
+    {
+        GLuint objectGL;
+        m_gl.CreateFramebuffers(1, &objectGL);
+
+        return reinterpret_cast<HFramebuffer>(new Framebuffer_OpenGL4(objectGL));
+    }
+
+    void GPURenderingDevice_OpenGL4::ReleaseFramebuffer(HFramebuffer hFramebuffer)
+    {
+        auto framebufferGL = reinterpret_cast<Sampler_OpenGL4*>(hFramebuffer);
+        if (framebufferGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                assert(framebufferGL->GetReferenceCount() > 0);
+
+                CheckContextIsCurrent(m_gl, m_currentDC);
+
+                if (framebufferGL->DecrementReferenceCount() == 0)
+                {
+                    GLuint objectGL = framebufferGL->GetOpenGLObject();
+                    m_gl.DeleteFramebuffers(1, &objectGL);
+
+                    delete framebufferGL;
+                }
+            }
+            m_referenceCountLock.Unlock();
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::HoldFramebuffer(HFramebuffer hFramebuffer)
+    {
+        auto framebufferGL = reinterpret_cast<Framebuffer_OpenGL4*>(hFramebuffer);
+        if (framebufferGL != nullptr)
+        {
+            m_referenceCountLock.Lock();
+            {
+                framebufferGL->IncrementReferenceCount();
+            }
+            m_referenceCountLock.Unlock();
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::AttachFramebufferRenderTarget(HFramebuffer hFramebuffer, unsigned int attachmentIndex, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer)
+    {
+        auto framebufferGL = reinterpret_cast<Framebuffer_OpenGL4*>(hFramebuffer);
+        assert(framebufferGL != nullptr);
+        {
+            auto textureGL = reinterpret_cast<Texture_OpenGL4*>(hTexture);
+            if (textureGL != nullptr)
+            {
+                m_gl.NamedFramebufferTextureLayer(framebufferGL->GetOpenGLObject(), GL_COLOR_ATTACHMENT0 + attachmentIndex, textureGL->GetOpenGLObject(), static_cast<GLint>(mipmapLevel), static_cast<GLint>(arrayLayer));
+                framebufferGL->renderTargetsGL[attachmentIndex] = GL_COLOR_ATTACHMENT0 + attachmentIndex;
+            }
+            else
+            {
+                m_gl.NamedFramebufferTextureLayer(framebufferGL->GetOpenGLObject(), GL_COLOR_ATTACHMENT0 + attachmentIndex, 0, static_cast<GLint>(mipmapLevel), static_cast<GLint>(arrayLayer));
+                framebufferGL->renderTargetsGL[attachmentIndex] = GL_NONE;
+            }
+
+            m_gl.NamedFramebufferDrawBuffers(framebufferGL->GetOpenGLObject(), GT_MAX_FRAMEBUFFER_RENDER_TARGETS, framebufferGL->renderTargetsGL);
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::AttachFramebufferDepthStencilTarget(HFramebuffer hFramebuffer, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer)
+    {
+        auto framebufferGL = reinterpret_cast<Framebuffer_OpenGL4*>(hFramebuffer);
+        assert(framebufferGL != nullptr);
+        {
+            auto textureGL = reinterpret_cast<Texture_OpenGL4*>(hTexture);
+            if (textureGL != nullptr)
+            {
+                m_gl.NamedFramebufferTextureLayer(framebufferGL->GetOpenGLObject(), GL_DEPTH_STENCIL_ATTACHMENT, textureGL->GetOpenGLObject(), static_cast<GLint>(mipmapLevel), static_cast<GLint>(arrayLayer));
+            }
+            else
+            {
+                m_gl.NamedFramebufferTextureLayer(framebufferGL->GetOpenGLObject(), GL_DEPTH_STENCIL_ATTACHMENT, 0, static_cast<GLint>(mipmapLevel), static_cast<GLint>(arrayLayer));
+            }
+        }
+    }
+
 
 
     //////////////////////////////////////////
@@ -1847,11 +1943,6 @@ namespace GT
             {
                 auto &framebuffer = iFramebuffer->value;
 
-                // If the current render target is another window, we want that to be unbound, and then have the new window bound.
-                if ((m_stateFlags & StageFlag_IsWindowFramebufferCurrent) != 0)
-                {
-                }
-
                 m_gl.MakeCurrent(framebuffer.m_hDC, m_gl.GetRenderingContext());
 
                 m_currentHWND = hWnd;
@@ -1865,12 +1956,6 @@ namespace GT
         }
         else
         {
-            // No window was specified.
-            if ((m_stateFlags & StageFlag_IsWindowFramebufferCurrent) != 0)
-            {
-                        
-            }
-
             m_gl.MakeCurrent(m_gl.GetDummyDC(), NULL);
 
             m_currentHWND = NULL;
@@ -1900,7 +1985,7 @@ namespace GT
     // TODO: Rename this function.
     void GPURenderingDevice_OpenGL4::UpdateSlotVertexAttributePointers(unsigned int slotIndex)
     {
-        assert(slotIndex < GT_GE_MAX_VERTEX_BUFFER_SLOTS);
+        assert(slotIndex < GT_MAX_VERTEX_BUFFER_SLOTS);
 
         auto inputLayoutGL = reinterpret_cast<InputLayout_OpenGL4*>(m_currentInputLayout);
         if (inputLayoutGL != nullptr)

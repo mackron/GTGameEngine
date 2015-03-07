@@ -7,10 +7,37 @@
 
 #if defined(GT_GE_BUILD_D3D11)
 #include <GTGameEngine/Rendering/RenderingTypes.hpp>
+#include <GTLib/ReferenceCountedObject.hpp>
 #include <d3d11_1.h>
+
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4351)   // new behaviour
+#endif
 
 namespace GT
 {
+    class Framebuffer_D3D11 : public ReferenceCountedObject
+    {
+    public:
+
+        Framebuffer_D3D11()
+            : ReferenceCountedObject(),
+              renderTargets(),
+              depthStencilView(nullptr)
+        {
+            for (int i = 0; i < GT_MAX_FRAMEBUFFER_RENDER_TARGETS; ++i)
+            {
+                renderTargets[i] = nullptr;
+            }
+        }
+
+        ID3D11RenderTargetView* renderTargets[GT_MAX_FRAMEBUFFER_RENDER_TARGETS];
+        ID3D11DepthStencilView* depthStencilView;
+    };
+
+
+
     static const DXGI_FORMAT g_D3DTextureFormatsTable[] =
     {
         DXGI_FORMAT_UNKNOWN,
@@ -89,6 +116,10 @@ namespace GT
         DXGI_FORMAT_BC6H_SF16
     };
 }
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 
 
 #endif

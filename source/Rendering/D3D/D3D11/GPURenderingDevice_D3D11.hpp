@@ -82,6 +82,9 @@ namespace GT
         /// @copydoc GPURenderingDevice::BindConstantBuffer(unsigned int, size_t, HBuffer*, size_t*, size_t*)
         void BindConstantBuffer(unsigned int slotIndex, size_t count, HBuffer* hBuffers, size_t* offsets, size_t* sizes);
 
+        /// @copydoc GPURenderingDevice::BindFramebuffer()
+        void BindFramebuffer(HFramebuffer hFramebuffer);
+
 
         /// @copydoc GPURenderingDevice::SetVertexShader()
         void SetVertexShader(HShader hShader);
@@ -292,6 +295,21 @@ namespace GT
         ///////////////////////////////////////////
         // Framebuffers
 
+        /// @copydoc GPURenderingDevice::CreateFramebuffer()
+        HFramebuffer CreateFramebuffer();
+
+        /// @copydoc GPURenderingDevice::ReleaseFramebuffer()
+        void ReleaseFramebuffer(HFramebuffer hFramebuffer);
+
+        /// @copydoc GPURenderingDevice::HoldFramebuffer()
+        void HoldFramebuffer(HFramebuffer hFramebuffer);
+
+        /// @copydoc GPURenderingDevice::AttachFramebufferRenderTarget()
+        void AttachFramebufferRenderTarget(HFramebuffer hFramebuffer, unsigned int attachmentIndex, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer);
+
+        /// @copydoc GPURenderingDevice::AttachFramebufferDepthStencilTarget()
+        void AttachFramebufferDepthStencilTarget(HFramebuffer hFramebuffer, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer);
+
 
 
         //////////////////////////////////////////
@@ -377,11 +395,14 @@ namespace GT
         /// The current sample mask. The default value is 0xFFFFFFFF.
         UINT m_currentSampleMask;
 
+        /// A handle to the current framebuffer.
+        HFramebuffer m_currentFramebuffer;
+
             
         ///////////////////////////////////////////
         // State Flags
 
-        static const uint32_t StageFlag_IsWindowFramebufferCurrent = (1 << 0);     //< Is the current window's framebuffer the current render target?
+        //static const uint32_t StageFlag_IsWindowFramebufferCurrent = (1 << 0);     //< Is the current window's framebuffer the current render target?
 
 
         ///////////////////////////////////////////////////////////////
