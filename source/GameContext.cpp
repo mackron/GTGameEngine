@@ -86,9 +86,9 @@ namespace GT
     //////////////////////////////////////////////////////////////////
     // Win32
 #if defined(GT_PLATFORM_WINDOWS)
-    ResultCode GameContext::CreateWindowedDisplay(GPURenderingDevice &renderingDevice, HWND hWnd, GameDisplay* &displayOut)
+    GameDisplay* GameContext::CreateWindowedDisplay(GPURenderingDevice &renderingDevice, HWND hWnd)
     {
-        displayOut = nullptr;
+        GameDisplay* displayOut = nullptr;
 
         if (hWnd != 0)
         {
@@ -100,17 +100,18 @@ namespace GT
                 m_windowedDisplays.PushBack(display);
 
                 displayOut = display;
-                return 0;   // No error.
             }
             else
             {
-                return result;
+                //return result;
             }
         }
         else
         {
-            return InvalidWindow;
+            //return InvalidWindow;
         }
+
+        return displayOut;
     }
 
     GameDisplay* GameContext::GetWindowedDisplayFromWindow(HWND hWnd)

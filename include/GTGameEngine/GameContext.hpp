@@ -47,10 +47,9 @@ namespace GT
         ///
         /// @param renderingDevice [in] The rendering device that will be used for rendering to the display.
         /// @param hWnd            [in] The window to create the display from.
-        /// @param displayOut      [in] A reference to the variable that will receive a pointer to the newly created display object.
         ///
-        /// @return >=0 if there is no error, <0 if there was an error.
-        ResultCode CreateWindowedDisplay(GPURenderingDevice &renderingDevice, HWND hWnd, GameDisplay* &displayOut);
+        /// @return A pointer to the new display, or null if an error occurred.
+        GameDisplay* CreateWindowedDisplay(GPURenderingDevice &renderingDevice, HWND hWnd);
 
         /// Retrieves a windowed game display from the given window.
         ///
