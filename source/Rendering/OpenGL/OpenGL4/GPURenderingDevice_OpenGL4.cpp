@@ -211,7 +211,7 @@ namespace GT
                 m_gl.FrontFace(GL_CW);
 
                 // Emulate Direct3D.
-                m_gl.ClipControl(GL_UPPER_LEFT, GL_ZERO_TO_ONE);
+                //m_gl.ClipControl(GL_UPPER_LEFT, GL_ZERO_TO_ONE);
 
 
 
