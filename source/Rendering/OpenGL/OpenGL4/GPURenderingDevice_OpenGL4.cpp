@@ -108,7 +108,10 @@ namespace GT
           m_indexBufferFormatSize(4),
           m_indexBufferOffset(0),
           m_currentInputLayout(0),
-          m_currentFramebuffer(0)
+          m_currentFramebuffer(0),
+          m_currentViewports(),
+          m_currentScissorRects(),
+          m_currentWindowHeight(0)
     {
     }
 
@@ -198,7 +201,6 @@ namespace GT
                 m_gl.BindProgramPipeline(m_globalShaderPipeline);
 
 
-
                 // Enable back face culling by default.
                 m_gl.Enable(GL_CULL_FACE);
 
@@ -208,6 +210,34 @@ namespace GT
                 // Clockwise winding by default.
                 m_gl.FrontFace(GL_CW);
 
+                // Emulate Direct3D.
+                m_gl.ClipControl(GL_UPPER_LEFT, GL_ZERO_TO_ONE);
+
+
+
+                // Retrieve some initial state.
+                GLint viewportDims[4];
+                m_gl.GetIntegerv(GL_VIEWPORT, viewportDims);
+
+                for (int i = 0; i < GT_MAX_VIEWPORTS; ++i)
+                {
+                    m_currentViewports[i].x      = static_cast<float>(viewportDims[0]);
+                    m_currentViewports[i].y      = viewportDims[1];
+                    m_currentViewports[i].width  = static_cast<float>(static_cast<unsigned int>(viewportDims[2]));
+                    m_currentViewports[i].height = static_cast<float>(static_cast<unsigned int>(viewportDims[3]));
+                }
+
+
+                GLint scissorDims[4];
+                m_gl.GetIntegerv(GL_SCISSOR_BOX, scissorDims);
+
+                for (int i = 0; i < GT_MAX_VIEWPORTS; ++i)
+                {
+                    m_currentScissorRects[i].x      = scissorDims[0];
+                    m_currentScissorRects[i].y      = scissorDims[1];
+                    m_currentScissorRects[i].width  = static_cast<unsigned int>(scissorDims[2]);
+                    m_currentScissorRects[i].height = static_cast<unsigned int>(scissorDims[3]);
+                }
 
 
 #if _DEBUG
@@ -742,11 +772,12 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        if (viewports != nullptr && viewportCount > 0)
+        for (int i = 0; i < viewportCount; ++i)
         {
-            m_gl.Viewport(static_cast<GLint>(viewports[0].x), static_cast<GLint>(viewports[0].y), static_cast<GLsizei>(viewports[0].width), static_cast<GLsizei>(viewports[0].height));
-            m_gl.DepthRange(viewports[0].depthRangeNear, viewports[0].depthRangeFar);
+            m_currentViewports[i] = viewports[i];
         }
+
+        this->UpdateViewports();
     }
 
 
@@ -1720,6 +1751,19 @@ namespace GT
 
                 m_gl.MakeCurrent(framebuffer.m_hDC, m_gl.GetRenderingContext());
 
+
+                // We need to retrieve the height of the window and normalize the viewport and scissor rectangles.
+                if (m_currentHWND != hWnd)
+                {
+                    RECT windowRect;
+                    GetClientRect(hWnd, &windowRect);
+                    m_currentWindowHeight = windowRect.bottom - windowRect.top;
+
+                    this->UpdateViewports();
+                    this->UpdateScissorRects();
+                }
+
+                
                 m_currentHWND = hWnd;
                 m_currentDC   = framebuffer.m_hDC;
             }
@@ -1742,9 +1786,13 @@ namespace GT
 
     void GPURenderingDevice_OpenGL4::ResizeWindowFramebuffer(HWND hWnd)
     {
-        (void)hWnd;
-            
-        // This is done automatically in the background.
+        // We need to get the size of the window and update the viewports and scissor rectangles.
+        RECT windowRect;
+        GetClientRect(hWnd, &windowRect);
+        m_currentWindowHeight = windowRect.bottom - windowRect.top;
+
+        this->UpdateViewports();
+        this->UpdateScissorRects();
     }
 #endif
 
@@ -1933,6 +1981,35 @@ namespace GT
         else
         {
             return FailedToCompileShader;
+        }
+    }
+
+
+    void GPURenderingDevice_OpenGL4::UpdateViewports()
+    {
+        for (int i = 0; i < GT_MAX_VIEWPORTS; ++i)
+        {
+            GLfloat viewportX      = static_cast<GLfloat>(m_currentViewports[i].x);
+            GLfloat viewportY      = static_cast<GLfloat>(m_currentWindowHeight - m_currentViewports[i].y - m_currentViewports[i].height);
+            GLfloat viewportWidth  = static_cast<GLfloat>(m_currentViewports[i].width);
+            GLfloat viewportHeight = static_cast<GLfloat>(m_currentViewports[i].height);
+            m_gl.ViewportIndexedf(i, viewportX, viewportY, viewportWidth, viewportHeight);
+
+            GLdouble viewportDepthRangeNear = static_cast<GLdouble>(m_currentViewports[i].depthRangeNear);
+            GLdouble viewportDepthRangeFar  = static_cast<GLdouble>(m_currentViewports[i].depthRangeFar);
+            m_gl.DepthRangeIndexed(i, viewportDepthRangeNear, viewportDepthRangeFar);
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::UpdateScissorRects()
+    {
+        for (int i = 0; i < GT_MAX_VIEWPORTS; ++i)
+        {
+            GLint scissorX        = static_cast<GLint>(m_currentScissorRects[i].x);
+            GLint scissorY        = static_cast<GLint>(m_currentWindowHeight - m_currentScissorRects[i].y);
+            GLsizei scissorWidth  = static_cast<GLsizei>(m_currentScissorRects[i].width);
+            GLsizei scissorHeight = static_cast<GLsizei>(m_currentScissorRects[i].height);
+            m_gl.ScissorIndexed(i, scissorX, scissorY, scissorWidth, scissorHeight);
         }
     }
 }

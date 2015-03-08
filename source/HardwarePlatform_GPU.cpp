@@ -216,6 +216,16 @@ namespace GT
                     m_gl.Shutdown();
                 }
 
+                // Clip Control
+                if ((majorVersion == 4 && minorVersion >= 5) || m_gl.IsExtensionSupported("GL_ARB_clip_control"))
+                {
+                }
+                else
+                {
+                    isFeatureSetSupported = false;
+                    m_gl.Shutdown();
+                }
+
 
                 if (isFeatureSetSupported)
                 {

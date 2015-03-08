@@ -44,8 +44,15 @@ namespace GT
 #endif
             GetString(nullptr),
             GetIntegerv(nullptr),
-            Viewport(nullptr),
-            DepthRange(nullptr),
+
+            GetFloati_v(nullptr),
+            GetDoublei_v(nullptr),
+            ViewportArrayv(nullptr),
+            ViewportIndexedf(nullptr),
+            DepthRangeArrayv(nullptr),
+            DepthRangeIndexed(nullptr),
+            ScissorArrayv(nullptr),
+            ScissorIndexed(nullptr),
             DepthFunc(nullptr),
             DepthMask(nullptr),
             StencilOpSeparate(nullptr),
@@ -62,7 +69,6 @@ namespace GT
             CullFace(nullptr),
             PolygonMode(nullptr),
             PolygonOffset(nullptr),
-
             BlendEquationSeparate(nullptr),
             BlendEquationSeparatei(nullptr),
             BlendFuncSeparate(nullptr),
@@ -71,6 +77,7 @@ namespace GT
             SampleMaski(nullptr),
             ColorMask(nullptr),
             ColorMaski(nullptr),
+            ClipControl(nullptr),
 
             Clear(nullptr),
             DrawElements(nullptr),
@@ -569,8 +576,14 @@ namespace GT
 
             // We support OpenGL 2.1 so we will now initialize the rest of the API.
             this->GetIntegerv              = reinterpret_cast<PFNGLGETINTEGERVPROC             >(this->GetGLProcAddress("glGetIntegerv"));
-            this->Viewport                 = reinterpret_cast<PFNGLVIEWPORTPROC                >(this->GetGLProcAddress("glViewport"));
-            this->DepthRange               = reinterpret_cast<PFNGLDEPTHRANGEPROC              >(this->GetGLProcAddress("glDepthRange"));
+            this->GetFloati_v              = reinterpret_cast<PFNGLGETFLOATI_VPROC             >(this->GetGLProcAddress("glGetFloati_v"));
+            this->GetDoublei_v             = reinterpret_cast<PFNGLGETDOUBLEI_VPROC            >(this->GetGLProcAddress("glGetDoublei_v"));
+            this->ViewportArrayv           = reinterpret_cast<PFNGLVIEWPORTARRAYVPROC          >(this->GetGLProcAddress("glViewportArrayv"));
+            this->ViewportIndexedf         = reinterpret_cast<PFNGLVIEWPORTINDEXEDFPROC        >(this->GetGLProcAddress("glViewportIndexedf"));
+            this->DepthRangeArrayv         = reinterpret_cast<PFNGLDEPTHRANGEARRAYVPROC        >(this->GetGLProcAddress("glDepthRangeArrayv"));
+            this->DepthRangeIndexed        = reinterpret_cast<PFNGLDEPTHRANGEINDEXEDPROC       >(this->GetGLProcAddress("glDepthRangeIndexed"));
+            this->ScissorArrayv            = reinterpret_cast<PFNGLSCISSORARRAYVPROC           >(this->GetGLProcAddress("glScissorArrayv"));
+            this->ScissorIndexed           = reinterpret_cast<PFNGLSCISSORINDEXEDPROC          >(this->GetGLProcAddress("glScissorIndexed"));
             this->DepthFunc                = reinterpret_cast<PFNGLDEPTHFUNCPROC               >(this->GetGLProcAddress("glDepthFunc"));
             this->DepthMask                = reinterpret_cast<PFNGLDEPTHMASKPROC               >(this->GetGLProcAddress("glDepthMask"));
             this->StencilOpSeparate        = reinterpret_cast<PFNGLSTENCILOPSEPARATEPROC       >(this->GetGLProcAddress("glStencilOpSeparate"));
@@ -587,7 +600,6 @@ namespace GT
             this->CullFace                 = reinterpret_cast<PFNGLCULLFACEPROC                >(this->GetGLProcAddress("glCullFace"));
             this->PolygonMode              = reinterpret_cast<PFNGLPOLYGONMODEPROC             >(this->GetGLProcAddress("glPolygonMode"));
             this->PolygonOffset            = reinterpret_cast<PFNGLPOLYGONOFFSETPROC           >(this->GetGLProcAddress("glPolygonOffset"));
-
             this->BlendEquationSeparate    = reinterpret_cast<PFNGLBLENDEQUATIONSEPARATEPROC   >(this->GetGLProcAddress("glBlendEquationSeparate"));
             this->BlendEquationSeparatei   = reinterpret_cast<PFNGLBLENDEQUATIONSEPARATEIPROC  >(this->GetGLProcAddress("glBlendEquationSeparatei"));
             this->BlendFuncSeparate        = reinterpret_cast<PFNGLBLENDFUNCSEPARATEPROC       >(this->GetGLProcAddress("glBlendFuncSeparate"));
@@ -596,6 +608,7 @@ namespace GT
             this->SampleMaski              = reinterpret_cast<PFNGLSAMPLEMASKIPROC             >(this->GetGLProcAddress("glSampleMaski"));
             this->ColorMask                = reinterpret_cast<PFNGLCOLORMASKPROC               >(this->GetGLProcAddress("glColorMask"));
             this->ColorMaski               = reinterpret_cast<PFNGLCOLORMASKIPROC              >(this->GetGLProcAddress("glColorMaski"));
+            this->ClipControl              = reinterpret_cast<PFNGLCLIPCONTROLPROC             >(this->GetGLProcAddress("glClipControl"));
 
             this->Clear                    = reinterpret_cast<PFNGLCLEARPROC                   >(this->GetGLProcAddress("glClear"));
             this->DrawElements             = reinterpret_cast<PFNGLDRAWELEMENTSPROC            >(this->GetGLProcAddress("glDrawElements"));

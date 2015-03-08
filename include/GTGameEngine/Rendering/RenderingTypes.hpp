@@ -9,6 +9,7 @@
 #define GT_MAX_VERTEX_BUFFER_SLOTS          32
 #define GT_MAX_CONSTANT_BUFFER_SLOTS        14
 #define GT_MAX_FRAMEBUFFER_RENDER_TARGETS   8
+#define GT_MAX_VIEWPORTS                    16
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -483,6 +484,22 @@ namespace GT
 
         /// The far depth range.
         float depthRangeFar;
+    };
+
+    /// Structure representing a scissor rectangle.
+    struct ScissorRect
+    {
+        /// The position of the scissor rectangle on the X axis, relative to the top left corner.
+        int x;
+
+        /// The position of the scissor rectangle on the Y axis, relative to the top left corner.
+        int y;
+
+        /// The width of the scissor rectangle.
+        unsigned int width;
+
+        /// The height of the scissor rectangle.
+        unsigned int height;
     };
 
     /// Structure describing a texture.

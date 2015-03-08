@@ -194,28 +194,33 @@ namespace GT
 #if defined(GT_PLATFORM_LINUX)
 #endif
 
-        PFNGLGETSTRINGPROC           GetString;
-        PFNGLGETSTRINGIPROC          GetStringi;
-        PFNGLGETINTEGERVPROC         GetIntegerv;
-        PFNGLVIEWPORTPROC            Viewport;
-        PFNGLDEPTHRANGEPROC          DepthRange;
-        PFNGLDEPTHFUNCPROC           DepthFunc;
-        PFNGLDEPTHMASKPROC           DepthMask;
-        PFNGLSTENCILOPSEPARATEPROC   StencilOpSeparate;
-        PFNGLSTENCILFUNCSEPARATEPROC StencilFuncSeparate;
-        PFNGLSTENCILMASKSEPARATEPROC StencilMaskSeparate;
-        PFNGLENABLEPROC              Enable;
-        PFNGLENABLEIPROC             Enablei;
-        PFNGLDISABLEPROC             Disable;
-        PFNGLDISABLEIPROC            Disablei;
-        PFNGLCLEARCOLORPROC          ClearColor;
-        PFNGLCLEARDEPTHPROC          ClearDepth;
-        PFNGLCLEARSTENCILPROC        ClearStencil;
-        PFNGLFRONTFACEPROC           FrontFace;
-        PFNGLCULLFACEPROC            CullFace;
-        PFNGLPOLYGONMODEPROC         PolygonMode;
-        PFNGLPOLYGONOFFSETPROC       PolygonOffset;
-
+        PFNGLGETSTRINGPROC              GetString;
+        PFNGLGETSTRINGIPROC             GetStringi;
+        PFNGLGETINTEGERVPROC            GetIntegerv;
+        PFNGLGETFLOATI_VPROC            GetFloati_v;
+        PFNGLGETDOUBLEI_VPROC           GetDoublei_v;
+        PFNGLVIEWPORTARRAYVPROC         ViewportArrayv;
+        PFNGLVIEWPORTINDEXEDFPROC       ViewportIndexedf;
+        PFNGLDEPTHRANGEARRAYVPROC       DepthRangeArrayv;
+        PFNGLDEPTHRANGEINDEXEDPROC      DepthRangeIndexed;
+        PFNGLSCISSORARRAYVPROC          ScissorArrayv;
+        PFNGLSCISSORINDEXEDPROC         ScissorIndexed;
+        PFNGLDEPTHFUNCPROC              DepthFunc;
+        PFNGLDEPTHMASKPROC              DepthMask;
+        PFNGLSTENCILOPSEPARATEPROC      StencilOpSeparate;
+        PFNGLSTENCILFUNCSEPARATEPROC    StencilFuncSeparate;
+        PFNGLSTENCILMASKSEPARATEPROC    StencilMaskSeparate;
+        PFNGLENABLEPROC                 Enable;
+        PFNGLENABLEIPROC                Enablei;
+        PFNGLDISABLEPROC                Disable;
+        PFNGLDISABLEIPROC               Disablei;
+        PFNGLCLEARCOLORPROC             ClearColor;
+        PFNGLCLEARDEPTHPROC             ClearDepth;
+        PFNGLCLEARSTENCILPROC           ClearStencil;
+        PFNGLFRONTFACEPROC              FrontFace;
+        PFNGLCULLFACEPROC               CullFace;
+        PFNGLPOLYGONMODEPROC            PolygonMode;
+        PFNGLPOLYGONOFFSETPROC          PolygonOffset;
         PFNGLBLENDEQUATIONSEPARATEPROC  BlendEquationSeparate;
         PFNGLBLENDEQUATIONSEPARATEIPROC BlendEquationSeparatei;
         PFNGLBLENDFUNCSEPARATEPROC      BlendFuncSeparate;
@@ -224,6 +229,7 @@ namespace GT
         PFNGLSAMPLEMASKIPROC            SampleMaski;
         PFNGLCOLORMASKPROC              ColorMask;
         PFNGLCOLORMASKIPROC             ColorMaski;
+        PFNGLCLIPCONTROLPROC            ClipControl;
 
 
         // Drawing.
