@@ -55,12 +55,12 @@ namespace GT
 
 
 
-    ResultCode EngineContext::CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount, GPURenderingDevice* &deviceOut)
+    GPURenderingDevice* EngineContext::CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount)
     {
-        return m_hardwarePlatform.CreateGPURenderingDevice(deviceIndex, renderingAPIs, renderingAPIsCount, deviceOut);
+        return m_hardwarePlatform.CreateGPURenderingDevice(deviceIndex, renderingAPIs, renderingAPIsCount);
     }
 
-    ResultCode EngineContext::CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPI, GPURenderingDevice* &deviceOut)
+    GPURenderingDevice* EngineContext::CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPI)
     {
         switch (renderingAPI)
         {
@@ -72,30 +72,24 @@ namespace GT
                     RenderingAPI_OpenGL4
                 };
                     
-                return this->CreateGPURenderingDevice(deviceIndex, renderingAPIs, sizeof(renderingAPIs) / sizeof(renderingAPIs[0]), deviceOut);
+                return this->CreateGPURenderingDevice(deviceIndex, renderingAPIs, sizeof(renderingAPIs) / sizeof(renderingAPIs[0]));
             }
 
         default:
             {
-                return this->CreateGPURenderingDevice(deviceIndex, &renderingAPI, 1, deviceOut);
+                return this->CreateGPURenderingDevice(deviceIndex, &renderingAPI, 1);
             }
         }
     }
 
-    ResultCode EngineContext::CreateGPURenderingDevice(unsigned int deviceIndex, GPURenderingDevice* &deviceOut)
+    GPURenderingDevice* EngineContext::CreateGPURenderingDevice(unsigned int deviceIndex)
     {
-        return this->CreateGPURenderingDevice(deviceIndex, RenderingAPI_Any, deviceOut);
+        return this->CreateGPURenderingDevice(deviceIndex, RenderingAPI_Any);
     }
 
     GPURenderingDevice* EngineContext::CreateGPURenderingDevice()
     {
-        GPURenderingDevice* device;
-        if (GT::Succeeded(this->CreateGPURenderingDevice(0, device)))
-        {
-            return device;
-        }
-
-        return nullptr;
+        return this->CreateGPURenderingDevice(0);
     }
 
     void EngineContext::DeleteGPURenderingDevice(GPURenderingDevice* renderingDevice)

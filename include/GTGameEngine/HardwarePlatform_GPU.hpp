@@ -63,15 +63,14 @@ namespace GT
         /// @param deviceIndex        [in] The index of the device to create the device instance from.
         /// @param renderingAPIs      [in] A buffer containing a list of rendering APIs to use, in order of preference.
         /// @param renderingAPIsCount [in] The number of items in the renderingAPIs argument.
-        /// @param deviceOut          [in] A reference to the variable that will receive a pointer to the new device instance.
         ///
-        /// @return <0 if an error occurs, otherwise >=0.
+        /// @return A pointer to the new rendering device, or null if an error occurs.
         ///
         /// @remarks
         ///     To use the primary rendering device, specify 0 for deviceIndex.
         ///     @par
         ///     renderingAPIs should contain a list of rendering APIs to use, in order of preference. If none of the APIs are supported, an error will be returned.
-        ResultCode CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount, GPURenderingDevice* &deviceOut);
+        GPURenderingDevice* CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount);
 
         /// Deletes a GPU rendering device object that was created with CreateGPURenderingDevice().
         ///

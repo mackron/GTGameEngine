@@ -59,22 +59,23 @@ namespace GT
 
 
         /// @copydoc GT::GE::HardwarePlatform_GPU::CreateGPURenderingDevice()
-        ResultCode CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount, GPURenderingDevice* &deviceOut);
+        GPURenderingDevice* CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount);
 
         /// Helper for creating a GPU rendering device for the given rendering API.
         ///
         /// @param deviceIndex  [in]  The index of the device to create the new device instance from.
         /// @param renderingAPI [in]  The rendering API to use.
-        /// @param deviceOut    [out] A reference to the variable that will receive the new device object.
         ///
-        /// @return <0 if an error occurs, otherwise returns >=0.
-        ResultCode CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPI, GPURenderingDevice* &deviceOut);
+        /// @return A pointer to the new device, or null if an error occured.
+        GPURenderingDevice* CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPI);
 
         /// Helper for creating a GPU rendering device with the best available rendering API.
         ///
         /// @param deviceIndex  [in]  The index of the device to create the new device instance from.
         /// @param deviceOut    [out] A reference to the variable that will receive the new device object.
-        ResultCode CreateGPURenderingDevice(unsigned int deviceIndex, GPURenderingDevice* &deviceOut);
+        ///
+        /// @return A pointer to the new device, or null if an error occured.
+        GPURenderingDevice* CreateGPURenderingDevice(unsigned int deviceIndex);
 
         /// The highest level helper for creating a GPU rendering device.
         ///

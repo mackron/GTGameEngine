@@ -293,9 +293,9 @@ namespace GT
 
 
 
-    ResultCode HardwarePlatform_GPU::CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount, GPURenderingDevice* &deviceOut)
+    GPURenderingDevice* HardwarePlatform_GPU::CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount)
     {
-        deviceOut = nullptr;    // <-- Always assign a value to the output argument and default to null.
+        GPURenderingDevice* deviceOut = nullptr;    // <-- Always assign a value to the output argument and default to null.
 
 
         if (deviceIndex <= m_renderingDevices.GetCount())
@@ -349,31 +349,32 @@ namespace GT
                     if (GT::Succeeded(result))
                     {
                         deviceOut = newDevice;
-                        return 0;   // No error.
                     }
                     else
                     {
-                        return result;
+                        //return result;
                     }
                 }
                 else
                 {
                     // Should never actually get here, but in this case the chosen API code is unknown or unimplemented.
-                    return UnknownRenderingAPI;
+                    //return UnknownRenderingAPI;
                 }
             }
             else
             {
                 // No supported rendering API.
-                return RenderingAPINotSupported;
+                //return RenderingAPINotSupported;
             }
         }
         else
         {
             // Invalid device index.
-            return InvalidDeviceIndex;
+            //return InvalidDeviceIndex;
         }
-            
+
+
+        return deviceOut;
     }
 
     void HardwarePlatform_GPU::DeleteGPURenderingDevice(GPURenderingDevice* renderingDevice)
