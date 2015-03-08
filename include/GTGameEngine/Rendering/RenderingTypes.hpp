@@ -38,7 +38,7 @@ namespace GT
     //////////////////////////////////////////
     // Enumerators
 
-    enum GPUBufferCPUAccessFlags
+    enum BufferCPUAccessFlags
     {
         GPUBufferCPUAccess_None      = 0x00,
         GPUBufferCPUAccess_Read      = 0x01,
@@ -46,61 +46,61 @@ namespace GT
         GPUBufferCPUAccess_ReadWrite = GPUBufferCPUAccess_Read | GPUBufferCPUAccess_Write
     };
 
-    enum GPUBufferMapType
+    enum BufferMapType
     {
-        GPUBufferMapType_Read              = 0,
-        GPUBufferMapType_Write             = 1,
-        GPUBufferMapType_ReadWrite         = 2,
-        GPUBufferMapType_Write_Discard     = 3,
-        GPUBufferMapType_Write_NoOverwrite = 4      //< Cannot be used with constant buffer.
+        BufferMapType_Read              = 0,
+        BufferMapType_Write             = 1,
+        BufferMapType_ReadWrite         = 2,
+        BufferMapType_Write_Discard     = 3,
+        BufferMapType_Write_NoOverwrite = 4      //< Cannot be used with constant buffer.
     };
 
-    enum GPUBufferType
+    enum BufferType
     {
-        GPUBufferType_Vertex   = 0,
-        GPUBufferType_Index    = 1,
-        GPUBufferType_Constant = 2
+        BufferType_Vertex   = 0,
+        BufferType_Index    = 1,
+        BufferType_Constant = 2
     };
 
-    enum GPUBufferUsage
+    enum BufferUsage
     {
-        GPUBufferUsage_Default   = 0,
-        GPUBufferUsage_Immutable = 1,
-        GPUBufferUsage_Dynamic   = 2,
-        GPUBufferUsage_Staging   = 3
+        BufferUsage_Default   = 0,
+        BufferUsage_Immutable = 1,
+        BufferUsage_Dynamic   = 2,
+        BufferUsage_Staging   = 3
     };
 
-    enum GPUVertexAttribFormat
+    enum VertexAttribFormat
     {
-        GPUVertexAttribFormat_Float       = 0,
-        GPUVertexAttribFormat_Int         = 1,
-        GPUVertexAttribFormat_UnsignedInt = 2,
+        VertexAttribFormat_Float       = 0,
+        VertexAttribFormat_Int         = 1,
+        VertexAttribFormat_UnsignedInt = 2,
     };
 
-    enum GPUIndexFormat
+    enum IndexFormat
     {
-        GPUIndexFormat_UnsignedInt8  = 0,
-        GPUIndexFormat_UnsignedInt16 = 1,
-        GPUIndexFormat_UnsignedInt32 = 2,
+        IndexFormat_UnsignedInt8  = 0,
+        IndexFormat_UnsignedInt16 = 1,
+        IndexFormat_UnsignedInt32 = 2,
     };
 
-    enum GPUInputClassification
+    enum AttribInputClassification
     {
-        GPUInputClassification_PerVertex   = 0,
-        GPUInputClassification_PerInstance = 1,
+        AttribInputClassification_PerVertex   = 0,
+        AttribInputClassification_PerInstance = 1,
     };
 
-    enum GPUPrimitiveTopology
+    enum PrimitiveTopology
     {
-        GPUPrimitiveTopology_Point                  = 0,
-        GPUPrimitiveTopology_Line                   = 1,
-        GPUPrimitiveTopology_LineStrip              = 2,
-        GPUPrimitiveTopology_Triangle               = 3,
-        GPUPrimitiveTopology_TriangleStrip          = 4,
-        GPUPrimitiveTopology_Line_Adjacency         = 5,
-        GPUPrimitiveTopology_LineList_Adjacency     = 6,
-        GPUPrimitiveTopology_Triangle_Adjacency     = 7,
-        GPUPrimitiveTopology_TriangleList_Adjacency = 8
+        PrimitiveTopology_Point                  = 0,
+        PrimitiveTopology_Line                   = 1,
+        PrimitiveTopology_LineStrip              = 2,
+        PrimitiveTopology_Triangle               = 3,
+        PrimitiveTopology_TriangleStrip          = 4,
+        PrimitiveTopology_Line_Adjacency         = 5,
+        PrimitiveTopology_LineList_Adjacency     = 6,
+        PrimitiveTopology_Triangle_Adjacency     = 7,
+        PrimitiveTopology_TriangleList_Adjacency = 8
     };
 
     enum ShaderLanguage
@@ -131,65 +131,65 @@ namespace GT
     };
 
 
-    enum GPUFillMode
+    enum FillMode
     {
-        GPUFillMode_Wireframe = 0,
-        GPUFillMode_Solid     = 1
+        FillMode_Wireframe = 0,
+        FillMode_Solid     = 1
     };
 
-    enum GPUCullMode
+    enum CullMode
     {
-        GPUCullMode_None  = 0,
-        GPUCullMode_Front = 1,
-        GPUCullMode_Back  = 2
+        CullMode_None  = 0,
+        CullMode_Front = 1,
+        CullMode_Back  = 2
     };
 
-    enum GPUPolygonWinding
+    enum PolygonWinding
     {
-        GPUPolygonWinding_CCW = 0,
-        GPUPolygonWinding_CW  = 1
+        PolygonWinding_CCW = 0,
+        PolygonWinding_CW  = 1
     };
 
-    enum GPUDepthWriteMask
+    enum DepthWriteMask
     {
-        GPUDepthWriteMask_Zero = 0,
-        GPUDepthWriteMast_All  = 1
+        DepthWriteMask_Zero = 0,
+        DepthWriteMask_All  = 1
     };
 
-    enum GPUComparisonFunc
+    enum ComparisonFunc
     {
-        GPUComparisonFunc_Never         = 0,
-        GPUComparisonFunc_Less          = 1,
-        GPUComparisonFunc_Equal         = 2,
-        GPUComparisonFunc_Less_Equal    = 3,
-        GPUComparisonFunc_Greater       = 4,
-        GPUComparisonFunc_Not_Equal     = 5,
-        GPUComparisonFunc_Greater_Eqaul = 6,
-        GPUComparisonFunc_Always        = 7
+        ComparisonFunc_Never         = 0,
+        ComparisonFunc_Less          = 1,
+        ComparisonFunc_Equal         = 2,
+        ComparisonFunc_Less_Equal    = 3,
+        ComparisonFunc_Greater       = 4,
+        ComparisonFunc_Not_Equal     = 5,
+        ComparisonFunc_Greater_Eqaul = 6,
+        ComparisonFunc_Always        = 7
     };
 
-    enum GPUStencilOp
+    enum StencilOp
     {
-        GPUStencilOp_Keep            = 0,
-        GPUStencilOp_Zero            = 1,
-        GPUStencilOp_Replace         = 2,
-        GPUStencilOp_Increment_Clamp = 3,
-        GPUStencilOp_Decrement_Clamp = 4,
-        GPUStencilOp_Invert          = 5,
-        GPUStencilOp_Increment       = 6,
-        GPUStencilOp_Decrement       = 7
+        StencilOp_Keep            = 0,
+        StencilOp_Zero            = 1,
+        StencilOp_Replace         = 2,
+        StencilOp_Increment_Clamp = 3,
+        StencilOp_Decrement_Clamp = 4,
+        StencilOp_Invert          = 5,
+        StencilOp_Increment       = 6,
+        StencilOp_Decrement       = 7
     };
 
-    enum GPUClearFlag
+    enum ClearFlag
     {
-        GPUClearFlag_Depth   = 0x01,
-        GPUClearFlag_Stencil = 0x02,
+        ClearFlag_Depth   = 0x01,
+        ClearFlag_Stencil = 0x02,
     };
 
-    enum GPUHandedness
+    enum GraphicsHandedness
     {
-        GPUHandedness_Left,     //< Forward direction = -Z
-        GPUHandedness_Right     //< Forward direction = +Z
+        GraphicsHandedness_Left,     //< Forward direction = -Z
+        GraphicsHandedness_Right     //< Forward direction = +Z
     };
 
     enum GPUVendor
@@ -360,18 +360,18 @@ namespace GT
     //////////////////////////////////////////
     // Structures
 
-    struct GPUInputLayoutAttribDesc
+    struct InputLayoutAttribDesc
     {
         unsigned int           slotIndex;
         const char*            attributeName;               // The name of the attribute variable inside the shader, or the semantic name in the case of Direct3D.
-        GPUVertexAttribFormat  attributeComponentType;      // Float, Signed Int, etc.
+        VertexAttribFormat  attributeComponentType;      // Float, Signed Int, etc.
         unsigned int           attributeComponentCount;     // float = 1, float2 = 2, etc.
         unsigned int           attributeOffset;             // The attribute's offset.
-        GPUInputClassification attributeClass;              // Per-Vertex or Per-Instance
+        AttribInputClassification attributeClass;              // Per-Vertex or Per-Instance
         unsigned int           instanceStepRate;
     };
 
-    struct GPUShaderDefine
+    struct ShaderDefine
     {
         const char* name;
         const char* value;
@@ -381,11 +381,11 @@ namespace GT
     /// Structure describing a rasterization state.
     ///
     /// This is used when creating a rasterization state object.
-    struct GPURasterizerStateDesc
+    struct RasterizerStateDesc
     {
-        GPUFillMode       fillMode;
-        GPUCullMode       cullMode;
-        GPUPolygonWinding polygonWinding;
+        FillMode       fillMode;
+        CullMode       cullMode;
+        PolygonWinding polygonWinding;
         int               depthBias;
         float             depthBiasClamp;
         float             slopeScaledDepthBias;
@@ -397,28 +397,28 @@ namespace GT
 
 
 
-    struct GPUStencilOpDesc
+    struct StencilOpDesc
     {
-        GPUStencilOp stencilFailOp;
-        GPUStencilOp stencilDepthFailOp;
-        GPUStencilOp stencilPassOp;
-        GPUComparisonFunc stencilFunc;
+        StencilOp stencilFailOp;
+        StencilOp stencilDepthFailOp;
+        StencilOp stencilPassOp;
+        ComparisonFunc stencilFunc;
     };
 
     /// Structure describing a depth/stencil state.
     ///
     /// This is used when creating a depth/stencil state object.
-    struct GPUDepthStencilStateDesc
+    struct DepthStencilStateDesc
     {
         bool              enableDepthTest;
-        GPUDepthWriteMask depthWriteMask;
-        GPUComparisonFunc depthFunc;
+        DepthWriteMask depthWriteMask;
+        ComparisonFunc depthFunc;
             
         bool              enableStencilTest;
         uint8_t           stencilReadMask;
         uint8_t           stencilWriteMask;
-        GPUStencilOpDesc  stencilFrontFaceOp;
-        GPUStencilOpDesc  stencilBackFaceOp;
+        StencilOpDesc     stencilFrontFaceOp;
+        StencilOpDesc     stencilBackFaceOp;
     };
 
 
@@ -464,7 +464,7 @@ namespace GT
 
 
     /// Structure representing a viewport.
-    struct GPUViewport
+    struct GraphicsViewport
     {
         /// The position of the viewport on the X axis.
         float x;

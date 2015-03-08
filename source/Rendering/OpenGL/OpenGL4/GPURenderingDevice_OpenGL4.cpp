@@ -253,9 +253,9 @@ namespace GT
         return RenderingAPI_OpenGL4;
     }
 
-    GPUHandedness GPURenderingDevice_OpenGL4::GetHandedness() const
+    GraphicsHandedness GPURenderingDevice_OpenGL4::GetHandedness() const
     {
-        return GPUHandedness_Left;
+        return GraphicsHandedness_Left;
     }
 
 
@@ -285,17 +285,17 @@ namespace GT
         m_gl.Clear(GL_COLOR_BUFFER_BIT);
     }
 
-    void GPURenderingDevice_OpenGL4::ClearDepthStencil(GPUClearFlag clearFlags, float depth, uint8_t stencil)
+    void GPURenderingDevice_OpenGL4::ClearDepthStencil(ClearFlag clearFlags, float depth, uint8_t stencil)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
         GLbitfield maskGL = 0;
-        if ((clearFlags & GPUClearFlag_Depth) != 0)
+        if ((clearFlags & ClearFlag_Depth) != 0)
         {
             maskGL |= GL_DEPTH_BUFFER_BIT;
             m_gl.ClearDepth(depth);
         }
-        if ((clearFlags & GPUClearFlag_Stencil) != 0)
+        if ((clearFlags & ClearFlag_Stencil) != 0)
         {
             maskGL |= GL_STENCIL_BUFFER_BIT;
             m_gl.ClearStencil(stencil);
@@ -549,19 +549,19 @@ namespace GT
     /////////////////////////////////////////////
     // Input-Assembler Stage
 
-    void GPURenderingDevice_OpenGL4::IASetPrimitiveTopology(GPUPrimitiveTopology topology)
+    void GPURenderingDevice_OpenGL4::IASetPrimitiveTopology(PrimitiveTopology topology)
     {
         GLenum topologiesGL[] =
         {
-            GL_POINTS,                          // GPUPrimitiveTopology_Point
-            GL_LINES,                           // GPUPrimitiveTopology_Line
-            GL_LINE_STRIP,                      // GPUPrimitiveTopology_LineStrip
-            GL_TRIANGLES,                       // GPUPrimitiveTopology_Triangle
-            GL_TRIANGLE_STRIP,                  // GPUPrimitiveTopology_TriangleStrip
-            GL_LINES_ADJACENCY,                 // GPUPrimitiveTopology_Line_Adjacency (Not supported in OpenGL 2.1)
-            GL_LINE_STRIP_ADJACENCY,            // GPUPrimitiveTopology_LineStrip_Adjacency (Not supported in OpenGL 2.1)
-            GL_TRIANGLES_ADJACENCY,             // GPUPrimitiveTopology_Triangle_Adjacency (Not supported in OpenGL 2.1)
-            GL_TRIANGLE_STRIP_ADJACENCY         // GPUPrimitiveTopology_TriangleStrip_Adjacency (Not supported in OpenGL 2.1)
+            GL_POINTS,                          // PrimitiveTopology_Point
+            GL_LINES,                           // PrimitiveTopology_Line
+            GL_LINE_STRIP,                      // PrimitiveTopology_LineStrip
+            GL_TRIANGLES,                       // PrimitiveTopology_Triangle
+            GL_TRIANGLE_STRIP,                  // PrimitiveTopology_TriangleStrip
+            GL_LINES_ADJACENCY,                 // PrimitiveTopology_Line_Adjacency (Not supported in OpenGL 2.1)
+            GL_LINE_STRIP_ADJACENCY,            // PrimitiveTopology_LineStrip_Adjacency (Not supported in OpenGL 2.1)
+            GL_TRIANGLES_ADJACENCY,             // PrimitiveTopology_Triangle_Adjacency (Not supported in OpenGL 2.1)
+            GL_TRIANGLE_STRIP_ADJACENCY         // PrimitiveTopology_TriangleStrip_Adjacency (Not supported in OpenGL 2.1)
         };
 
         m_currentTopologyGL = topologiesGL[topology];
@@ -627,7 +627,7 @@ namespace GT
         m_gl.VertexArrayVertexBuffer(m_globalVAO, slotIndex, bufferGL, static_cast<GLintptr>(offset), static_cast<GLsizei>(stride));
     }
 
-    void GPURenderingDevice_OpenGL4::IASetIndexBuffer(HBuffer hBuffer, GPUIndexFormat format, size_t offset)
+    void GPURenderingDevice_OpenGL4::IASetIndexBuffer(HBuffer hBuffer, IndexFormat format, size_t offset)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
@@ -667,21 +667,21 @@ namespace GT
             // Fill mode.
             GLenum fillModesGL[] =
             {
-                GL_LINE,        // GPUFillMode_Wireframe
-                GL_FILL,        // GPUFillMode_Solid
+                GL_LINE,        // FillMode_Wireframe
+                GL_FILL,        // FillMode_Solid
             };
             m_gl.PolygonMode(GL_FRONT_AND_BACK, fillModesGL[stateGL->fillMode]);
                 
 
             // Cull mode.
-            if (stateGL->cullMode == GPUCullMode_None)
+            if (stateGL->cullMode == CullMode_None)
             {
                 m_gl.Disable(GL_CULL_FACE);
             }
             else
             {
                 m_gl.Enable(GL_CULL_FACE);
-                m_gl.CullFace((stateGL->cullMode == GPUCullMode_Back) ? GL_BACK : GL_FRONT);
+                m_gl.CullFace((stateGL->cullMode == CullMode_Back) ? GL_BACK : GL_FRONT);
             }
 
 
@@ -738,7 +738,7 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_OpenGL4::RSSetViewports(GPUViewport* viewports, size_t viewportCount)
+    void GPURenderingDevice_OpenGL4::RSSetViewports(GraphicsViewport* viewports, size_t viewportCount)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
@@ -798,7 +798,7 @@ namespace GT
             }
 
             // Depth mask.
-            m_gl.DepthMask(stateGL->depthWriteMask != GPUDepthWriteMask_Zero);
+            m_gl.DepthMask(stateGL->depthWriteMask != DepthWriteMask_Zero);
 
             // Depth func.
             m_gl.DepthFunc(comparisonFuncs[stateGL->depthFunc]);
@@ -958,7 +958,7 @@ namespace GT
     ////////////////////////////////////////////
     // State Objects
 
-    HRasterizerState GPURenderingDevice_OpenGL4::CreateRasterizerState(const GPURasterizerStateDesc &desc)
+    HRasterizerState GPURenderingDevice_OpenGL4::CreateRasterizerState(const RasterizerStateDesc &desc)
     {
         return reinterpret_cast<HRasterizerState>(new RasterizerState_OpenGL4(desc));
     }
@@ -973,7 +973,7 @@ namespace GT
     }
 
 
-    HDepthStencilState GPURenderingDevice_OpenGL4::CreateDepthStencilState(const GPUDepthStencilStateDesc &desc)
+    HDepthStencilState GPURenderingDevice_OpenGL4::CreateDepthStencilState(const DepthStencilStateDesc &desc)
     {
         return reinterpret_cast<size_t>(new DepthStencilState_OpenGL4(desc));
     }
@@ -1007,7 +1007,7 @@ namespace GT
     ////////////////////////////////////////////
     // Input Layouts
 
-    HInputLayout GPURenderingDevice_OpenGL4::CreateInputLayout(HShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
+    HInputLayout GPURenderingDevice_OpenGL4::CreateInputLayout(HShader hVertexShader, const InputLayoutAttribDesc* attribDesc, size_t attribDescCount)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
@@ -1096,7 +1096,7 @@ namespace GT
     ////////////////////////////////////////////
     // Shaders
 
-    ResultCode GPURenderingDevice_OpenGL4::CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
+    ResultCode GPURenderingDevice_OpenGL4::CompileShader(const char* source, size_t sourceLength, const ShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
@@ -1126,7 +1126,7 @@ namespace GT
     {
         const char* shaderSource;
         size_t shaderSourceLength;
-        GTLib::Vector<GPUShaderDefine> defines;
+        GTLib::Vector<ShaderDefine> defines;
         ShaderLanguage language;
         ShaderType actualType;
         if (GT::Succeeded(this->ExtractShaderBinaryData(shaderBinary, shaderBinarySizeInBytes, shaderSource, shaderSourceLength, defines, language, actualType)))
@@ -1176,13 +1176,13 @@ namespace GT
     ///////////////////////////////////////////
     // Buffers
 
-    HBuffer GPURenderingDevice_OpenGL4::CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data)
+    HBuffer GPURenderingDevice_OpenGL4::CreateBuffer(BufferType type, BufferUsage usage, BufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data)
     {
         (void)type;     // <-- Not used with DSA.
 
 
         // Validation.
-        if (usage == GPUBufferUsage_Immutable && data == nullptr)
+        if (usage == BufferUsage_Immutable && data == nullptr)
         {
             if (data == nullptr)
             {
@@ -1197,7 +1197,7 @@ namespace GT
             }
         }
 
-        if (usage == GPUBufferUsage_Dynamic)
+        if (usage == BufferUsage_Dynamic)
         {
             if ((cpuAccessFlags & GPUBufferCPUAccess_Read) != 0)
             {
@@ -1221,24 +1221,24 @@ namespace GT
         GLbitfield flagsGL = 0;
         switch (usage)
         {
-        case GPUBufferUsage_Immutable:
+        case BufferUsage_Immutable:
             {
                 break;
             }
 
-        case GPUBufferUsage_Dynamic:
+        case BufferUsage_Dynamic:
             {
                 flagsGL |= GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT;
                 break;
             }
 
-        case GPUBufferUsage_Staging:
+        case BufferUsage_Staging:
             {
                 flagsGL |= GL_DYNAMIC_STORAGE_BIT | GL_MAP_WRITE_BIT | GL_MAP_READ_BIT;
                 break;
             }
 
-        case GPUBufferUsage_Default:
+        case BufferUsage_Default:
         default:
             {
                 flagsGL |= GL_DYNAMIC_STORAGE_BIT;
@@ -1268,7 +1268,7 @@ namespace GT
         }
     }
 
-    void* GPURenderingDevice_OpenGL4::MapBuffer(HBuffer hBuffer, GPUBufferMapType mapType)
+    void* GPURenderingDevice_OpenGL4::MapBuffer(HBuffer hBuffer, BufferMapType mapType)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
@@ -1277,11 +1277,11 @@ namespace GT
         {
             GLbitfield flagsGL[] =
             {
-                GL_MAP_READ_BIT,                                     // GPUBufferMapType_Read
-                GL_MAP_WRITE_BIT ,                                   // GPUBufferMapType_Write
-                GL_MAP_READ_BIT  | GL_MAP_WRITE_BIT,                 // GPUBufferMapType_ReadWrite
-                GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT,      // GPUBufferMapType_Write_Discard
-                GL_MAP_WRITE_BIT                                     // GPUBufferMapType_Write_NoOverwrite
+                GL_MAP_READ_BIT,                                     // BufferMapType_Read
+                GL_MAP_WRITE_BIT ,                                   // BufferMapType_Write
+                GL_MAP_READ_BIT  | GL_MAP_WRITE_BIT,                 // BufferMapType_ReadWrite
+                GL_MAP_WRITE_BIT | GL_MAP_INVALIDATE_RANGE_BIT,      // BufferMapType_Write_Discard
+                GL_MAP_WRITE_BIT                                     // BufferMapType_Write_NoOverwrite
             };
 
             return m_gl.MapNamedBufferRange(bufferGL->GetOpenGLObject(), 0, bufferGL->GetSizeInBytes(), flagsGL[mapType]);
@@ -1790,7 +1790,7 @@ namespace GT
                         // Check if we are looking at per-instance format.
                         //
                         // TODO: This is untested. Check this.
-                        if (attribGL.attributeClass == GPUInputClassification_PerInstance)
+                        if (attribGL.attributeClass == AttribInputClassification_PerInstance)
                         {
                             m_gl.VertexArrayBindingDivisor(m_globalVAO, attribGL.slotIndex, attribGL.instanceStepRate);
                         }
@@ -1816,7 +1816,7 @@ namespace GT
     }
 
 
-    ResultCode GPURenderingDevice_OpenGL4::CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
+    ResultCode GPURenderingDevice_OpenGL4::CompileShader_GLSL(const char* source, size_t sourceLength, const ShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
     {
         GLuint objectGL;
         GLenum typeGL;
@@ -1835,7 +1835,7 @@ namespace GT
         return result;
     }
 
-    ResultCode GPURenderingDevice_OpenGL4::CompileShader_GLSL(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &messagesOut, GLuint &objectGLOut, GLenum &typeGLOut)
+    ResultCode GPURenderingDevice_OpenGL4::CompileShader_GLSL(const char* source, size_t sourceLength, const ShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &messagesOut, GLuint &objectGLOut, GLenum &typeGLOut)
     {
         assert(language >= ShaderLanguage_GLSL_400 && language <= ShaderLanguage_GLSL_450);
 

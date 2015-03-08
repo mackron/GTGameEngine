@@ -70,7 +70,7 @@ namespace GT
         ///     @par
         ///     A front-facing triangle is wound clockwise for a right-handed coordinate system, and counter-clockwise for a left handed system. In addition, the
         ///     Z axis is such that looking forward, or into the screen, is the +Z direction for right-handed, and -Z for left handed.
-        virtual GPUHandedness GetHandedness() const = 0;
+        virtual GraphicsHandedness GetHandedness() const = 0;
 
 
         /// Sets the swap interval.
@@ -98,7 +98,7 @@ namespace GT
         /// @param clearFlags [in] Flags specifying which buffers to clear.
         /// @param depth      [in] The value to set for the depth buffer.
         /// @param stencil    [in] The value to set for the stencil buffer.
-        virtual void ClearDepthStencil(GPUClearFlag clearFlags, float depth, uint8_t stencil) = 0;
+        virtual void ClearDepthStencil(ClearFlag clearFlags, float depth, uint8_t stencil) = 0;
 
 
         /// Renders the contents of the currently bound vertex buffer using the currently bound index buffer.
@@ -193,7 +193,7 @@ namespace GT
         ///     The default topology is triangles.
         ///     @par
         ///     This is analogous to D3D11's IASetPrimitiveTopology().
-        virtual void IASetPrimitiveTopology(GPUPrimitiveTopology topology) = 0;
+        virtual void IASetPrimitiveTopology(PrimitiveTopology topology) = 0;
 
         /// Binds the given input layout object to the input-assembler stage.
         ///
@@ -222,7 +222,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is analogous to D3D11's IASetIndexBuffer().
-        virtual void IASetIndexBuffer(HBuffer hBuffer, GPUIndexFormat format, size_t offset) = 0;
+        virtual void IASetIndexBuffer(HBuffer hBuffer, IndexFormat format, size_t offset) = 0;
 
 
 
@@ -236,14 +236,14 @@ namespace GT
 
         /// Sets the viewports for the rasterization stage.
         ///
-        /// @param viewports [in] The list of GPUViewport objects.
+        /// @param viewports [in] The list of GraphicsViewport objects.
         /// @param viewportCount [in] The number of viewports to set.
         ///
         /// @remarks
         ///     This is analogous to D3D11's RSSetViewports().
         ///     @par
         ///     If the rendering API does not support multiple viewports (such as OpenGL 2.1), this will only look at the first one in the list.
-        virtual void RSSetViewports(GPUViewport* viewports, size_t viewportCount) = 0;
+        virtual void RSSetViewports(GraphicsViewport* viewports, size_t viewportCount) = 0;
 
 
 
@@ -292,7 +292,7 @@ namespace GT
         /// @param desc [in] A reference to the object that describes the rasterizer state.
         ///
         /// @return A handle to the new rasterizer state object, or 0 if there was an error.
-        virtual HRasterizerState CreateRasterizerState(const GPURasterizerStateDesc &desc) = 0;
+        virtual HRasterizerState CreateRasterizerState(const RasterizerStateDesc &desc) = 0;
 
         /// Deletes the given reasterizer state object.
         ///
@@ -305,7 +305,7 @@ namespace GT
         /// @param desc [in] A reference to the object that describes the depth/stencil state.
         ///
         /// @return A handle to the new depth/stencil state object, or 0 if there was an error.
-        virtual HDepthStencilState CreateDepthStencilState(const GPUDepthStencilStateDesc &desc) = 0;
+        virtual HDepthStencilState CreateDepthStencilState(const DepthStencilStateDesc &desc) = 0;
 
         /// Deletes the given depth/stencil state object.
         ///
@@ -336,7 +336,7 @@ namespace GT
         /// @param attribDescCount [in] The number of items in \c attribDesc.
         ///
         /// @return A handle to the new input layout object.
-        virtual HInputLayout CreateInputLayout(HShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount) = 0;
+        virtual HInputLayout CreateInputLayout(HShader hVertexShader, const InputLayoutAttribDesc* attribDesc, size_t attribDescCount) = 0;
 
         /// Deletes the given input layout object.
         ///
@@ -372,7 +372,7 @@ namespace GT
         ///     The compiled data can be saved to disk, however be aware that the original source code will be included so this is not enough to obfuscate your shader code if you
         ///     feel that is important. This reason for this is that in some cases the shader code may need to be re-compiled internally in the event of something like a change in
         ///     driver versions or whatnot.
-        virtual ResultCode CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut) = 0;
+        virtual ResultCode CompileShader(const char* source, size_t sourceLength, const ShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut) = 0;
 
         /// Determines whether or not the given shader language is supported by the rendering device.
         ///
@@ -407,7 +407,7 @@ namespace GT
         /// @return A handle to the buffer object, or 0 if there was an error.
         ///
         /// @remarks
-        ///     When \c usage is GPUBufferUsage_Immutable, \c data cannot be null.
+        ///     When \c usage is BufferUsage_Immutable, \c data cannot be null.
         ///     @par
         ///     If \c cpuAccessFlags is set to GPUBufferCPUAccess_None (0), all map and unmap operations will fail.
         ///     @par
@@ -420,7 +420,7 @@ namespace GT
         ///     A dynamic buffer cannot be used as an output for a pipeline stage.
         ///     @par
         ///     A staging buffer cannot be used as an input nor an output for a pipeline stage. 
-        virtual HBuffer CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data) = 0;
+        virtual HBuffer CreateBuffer(BufferType type, BufferUsage usage, BufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data) = 0;
 
         /// Deletes the given buffer object.
         ///
@@ -440,14 +440,14 @@ namespace GT
         ///     @par
         ///     The buffer must be unmapped with UnmapBuffer().
         ///     @par
-        ///     This cannot be used when the buffer was created with GPUBufferUsage_Immutable.
+        ///     This cannot be used when the buffer was created with BufferUsage_Immutable.
         ///     @par
-        ///     When \c mapType is \c GPUBufferMapType_Read or \c GPUBufferMapType_ReadWrite, the buffer must have been created with \c GPUBufferCPUAccess_Read.
+        ///     When \c mapType is \c BufferMapType_Read or \c BufferMapType_ReadWrite, the buffer must have been created with \c GPUBufferCPUAccess_Read.
         ///     @par
-        ///     When \c mapType is \c GPUBufferMapType_Write, \c GPUBufferMapType_ReadWrite, \c GPUBufferMapType_Write_Discard or \c GPUBufferMapType_Write_NoOverwrite, the buffer must have been created with \c GPUBufferCPUAccess_Write.
+        ///     When \c mapType is \c BufferMapType_Write, \c BufferMapType_ReadWrite, \c BufferMapType_Write_Discard or \c BufferMapType_Write_NoOverwrite, the buffer must have been created with \c GPUBufferCPUAccess_Write.
         ///     @par
-        ///     When the buffer was created with Dynamic usage, the map type must be either \c GPUBufferMapType_Write_Discard or \c GPUBufferMapType_Write_NoOverwrite.
-        virtual void* MapBuffer(HBuffer hBuffer, GPUBufferMapType mapType) = 0;
+        ///     When the buffer was created with Dynamic usage, the map type must be either \c BufferMapType_Write_Discard or \c BufferMapType_Write_NoOverwrite.
+        virtual void* MapBuffer(HBuffer hBuffer, BufferMapType mapType) = 0;
 
         /// Unmaps the given buffer's data.
         ///
@@ -465,11 +465,11 @@ namespace GT
         /// @param data          [in] A pointer to the buffer containing the new data.
         ///
         /// @remarks
-        ///     This will fail if the buffer was created with GPUBufferUsage_Immutable.
+        ///     This will fail if the buffer was created with BufferUsage_Immutable.
         ///     @par
         ///     This will fail if the buffer is currently mapped.
         ///     @par
-        ///     When using the Direct3D 11 API, this will use map/unmap internally when the buffer was created with GPUBufferUsage_Dynamic.
+        ///     When using the Direct3D 11 API, this will use map/unmap internally when the buffer was created with BufferUsage_Dynamic.
         virtual void SetBufferData(HBuffer hBuffer, size_t offsetInBytes, size_t sizeInBytes, const void* data) = 0;
 
 
@@ -619,11 +619,11 @@ namespace GT
     protected:
 
         /// Creates a shader binary buffer from the given information. 
-        static ResultCode CreateShaderBinaryData(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, const void* binary, size_t binarySizeInBytes, int binaryVersion, GT::BasicBuffer &byteCodeOut);
+        static ResultCode CreateShaderBinaryData(const char* source, size_t sourceLength, const ShaderDefine* defines, ShaderLanguage language, ShaderType type, const void* binary, size_t binarySizeInBytes, int binaryVersion, GT::BasicBuffer &byteCodeOut);
 
         /// Takes the shader binary data created by CreateShaderBinaryData() and reads it's various components.
-        static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, ShaderLanguage &languageOut, ShaderType &typeOut, const void* &binaryOut, size_t &binarySizeOut, int &binaryVersionOut);
-        static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, ShaderLanguage &languageOut, ShaderType &typeOut);
+        static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<ShaderDefine> &definesOut, ShaderLanguage &languageOut, ShaderType &typeOut, const void* &binaryOut, size_t &binarySizeOut, int &binaryVersionOut);
+        static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<ShaderDefine> &definesOut, ShaderLanguage &languageOut, ShaderType &typeOut);
         static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const void* &binaryOut, size_t &binarySizeOut);
 
 
@@ -643,14 +643,14 @@ namespace GT
         static const ResultCode InvalidWindowRenderTarget         = (1 << 31) | 0x00000002;      //< Fired when a window is attempted to be made current, but the window was never initialized with a framebuffer.
         static const ResultCode ShaderTargetNotSupported          = (1 << 31) | 0x00000010;
         static const ResultCode ShaderTargetNotCompatible         = (1 << 31) | 0x00000011;
-        static const ResultCode UnknownGPUBufferType              = (1 << 31) | 0x00000020;
-        static const ResultCode UnknownGPUBufferUsage             = (1 << 31) | 0x00000021;
-        static const ResultCode UnsupportedGPUBufferType          = (1 << 31) | 0x00000022;
-        static const ResultCode UnsupportedGPUBufferUsage         = (1 << 31) | 0x00000023;
+        static const ResultCode UnknownBufferType              = (1 << 31) | 0x00000020;
+        static const ResultCode UnknownBufferUsage             = (1 << 31) | 0x00000021;
+        static const ResultCode UnsupportedBufferType          = (1 << 31) | 0x00000022;
+        static const ResultCode UnsupportedBufferUsage         = (1 << 31) | 0x00000023;
         static const ResultCode NoDataSpecifiedForImmutableBuffer = (1 << 31) | 0x00000024;
         static const ResultCode GPUBufferIsImmutable              = (1 << 31) | 0x00000025;
         static const ResultCode FailedToMapGPUBuffer              = (1 << 31) | 0x00000026;
-        static const ResultCode UnknownGPUBufferMapType           = (1 << 31) | 0x00000027;
+        static const ResultCode UnknownBufferMapType           = (1 << 31) | 0x00000027;
             
 
 

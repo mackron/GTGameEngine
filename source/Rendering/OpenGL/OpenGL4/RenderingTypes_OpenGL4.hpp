@@ -17,19 +17,19 @@
 namespace GT
 {
     /// OpenGL rasterizer state.
-    struct RasterizerState_OpenGL4 : public GPURasterizerStateDesc
+    struct RasterizerState_OpenGL4 : public RasterizerStateDesc
     {
-        RasterizerState_OpenGL4(const GPURasterizerStateDesc &desc)
-            : GPURasterizerStateDesc(desc)
+        RasterizerState_OpenGL4(const RasterizerStateDesc &desc)
+            : RasterizerStateDesc(desc)
         {
         }
     };
 
     /// OpenGL depth/stencil state.
-    struct DepthStencilState_OpenGL4 : public GPUDepthStencilStateDesc
+    struct DepthStencilState_OpenGL4 : public DepthStencilStateDesc
     {
-        DepthStencilState_OpenGL4(const GPUDepthStencilStateDesc &desc)
-            : GPUDepthStencilStateDesc(desc)
+        DepthStencilState_OpenGL4(const DepthStencilStateDesc &desc)
+            : DepthStencilStateDesc(desc)
         {
         }
     };
@@ -220,7 +220,7 @@ namespace GT
             GLint                  attribComponentCount;
             GLenum                 attribComponentType;
             GLsizei                attribOffset;
-            GPUInputClassification attributeClass;            // Per-Vertex or Per-Instance
+            AttribInputClassification attributeClass;            // Per-Vertex or Per-Instance
             unsigned int           instanceStepRate;
         };
 

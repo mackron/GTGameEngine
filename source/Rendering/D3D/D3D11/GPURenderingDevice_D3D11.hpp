@@ -42,7 +42,7 @@ namespace GT
         RenderingAPI GetRenderingAPI() const;
 
         /// GPURenderingDevice::GetHandedness().
-        GPUHandedness GetHandedness() const;
+        GraphicsHandedness GetHandedness() const;
 
 
         /// GPURenderingDevice::SetSwapInterval().
@@ -57,7 +57,7 @@ namespace GT
         void ClearColor(float r, float g, float b, float a);
 
         /// @copydoc GPURenderingDevice::ClearDepthStencil()
-        void ClearDepthStencil(GPUClearFlag clearFlags, float depth, uint8_t stencil);
+        void ClearDepthStencil(ClearFlag clearFlags, float depth, uint8_t stencil);
 
         /// GPURenderingDevice::Draw().
         void Draw(unsigned int indexCount, unsigned int startIndexLocation);
@@ -116,7 +116,7 @@ namespace GT
         // Input-Assembler Stage
 
         /// @copydoc GPURenderingDevice::IASetPrimitiveTopology()
-        void IASetPrimitiveTopology(GPUPrimitiveTopology topology);
+        void IASetPrimitiveTopology(PrimitiveTopology topology);
 
         /// @copydoc GPURenderingDevice::IASetInputLayout()
         void IASetInputLayout(HInputLayout hinputLayout);
@@ -125,7 +125,7 @@ namespace GT
         void IASetVertexBuffer(unsigned int slotIndex, HBuffer hBuffer, size_t stride, size_t offset);
 
         /// @copydoc GPURenderingDevice::IASetIndexBuffer()
-        void IASetIndexBuffer(HBuffer hBuffer, GPUIndexFormat format, size_t offset);
+        void IASetIndexBuffer(HBuffer hBuffer, IndexFormat format, size_t offset);
 
 
         /////////////////////////////////////////////
@@ -135,7 +135,7 @@ namespace GT
         void RSSetState(HRasterizerState hState);
 
         /// @copydoc GPURenderingDevice::RSSetViewports()
-        void RSSetViewports(GPUViewport* viewports, size_t viewportCount);
+        void RSSetViewports(GraphicsViewport* viewports, size_t viewportCount);
 
 
         /////////////////////////////////////////////
@@ -165,14 +165,14 @@ namespace GT
         // State Objects
 
         /// @copydoc GPURenderingDevice::CreateRasterizerState()
-        HRasterizerState CreateRasterizerState(const GPURasterizerStateDesc &desc);
+        HRasterizerState CreateRasterizerState(const RasterizerStateDesc &desc);
 
         /// @copydoc GPURenderingDevice::DeleteRasterizerState()
         void DeleteRasterizerState(HRasterizerState hState);
 
 
         /// @copydoc GPURenderingDevice::CreateDepthStencilState()
-        HDepthStencilState CreateDepthStencilState(const GPUDepthStencilStateDesc &desc);
+        HDepthStencilState CreateDepthStencilState(const DepthStencilStateDesc &desc);
 
         /// @copydoc GPURenderingDevice::DepthDepthStencilState().
         void DeleteDepthStencilState(HDepthStencilState hState);
@@ -190,7 +190,7 @@ namespace GT
         // Input Layout
 
         /// GPURenderingDevice::CreateVertexInputLayout().
-        HInputLayout CreateInputLayout(HShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
+        HInputLayout CreateInputLayout(HShader hVertexShader, const InputLayoutAttribDesc* attribDesc, size_t attribDescCount);
 
         /// GPURenderingDevice::DeleteInputLayout().
         void DeleteInputLayout(HInputLayout hInputLayout);
@@ -201,7 +201,7 @@ namespace GT
         // Shaders
 
         /// GPURenderingDevice::CompileShader().
-        ResultCode CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
+        ResultCode CompileShader(const char* source, size_t sourceLength, const ShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);
 
         /// GPURenderingDevice::IsShaderLanguageSupported().
         bool IsShaderLanguageSupported(ShaderLanguage language) const;
@@ -219,13 +219,13 @@ namespace GT
         // Buffers
 
         /// @copydoc GPURenderingDevice::CreateBuffer()
-        HBuffer CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data);
+        HBuffer CreateBuffer(BufferType type, BufferUsage usage, BufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data);
 
         /// @copydoc GPURenderingDevice::DeleteBuffer()
         void DeleteBuffer(HBuffer hBuffer);
 
         /// @copydoc GPURenderingDevice::MapBuffer()
-        void* MapBuffer(HBuffer hBuffer, GPUBufferMapType mapType);
+        void* MapBuffer(HBuffer hBuffer, BufferMapType mapType);
 
         /// @copydoc GPURenderingDevice::UnmapBuffer()
         void UnmapBuffer(HBuffer hBuffer);
@@ -354,7 +354,7 @@ namespace GT
         UINT m_swapInterval;
 
         /// The current primitive topology.
-        GPUPrimitiveTopology m_currentPrimitiveTopology;
+        PrimitiveTopology m_currentPrimitiveTopology;
 
         /// The current blend state.
         HBlendState m_currentBlendState;

@@ -27,7 +27,7 @@ namespace GT
     ////////////////////////////////////////////////////
     // Protected
 
-    ResultCode GPURenderingDevice::CreateShaderBinaryData(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, const void* binary, size_t binarySizeInBytes, int binaryVersion, GT::BasicBuffer &byteCodeOut)
+    ResultCode GPURenderingDevice::CreateShaderBinaryData(const char* source, size_t sourceLength, const ShaderDefine* defines, ShaderLanguage language, ShaderType type, const void* binary, size_t binarySizeInBytes, int binaryVersion, GT::BasicBuffer &byteCodeOut)
     {
         // Current Version: 1
         assert(language <= 255);        // Saved as a 1-byte value, so must be less than 255.
@@ -177,7 +177,7 @@ namespace GT
         return -1;
     }
 
-    ResultCode GPURenderingDevice::ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, ShaderLanguage &languageOut, ShaderType &typeOut, const void* &binaryOut, size_t &binarySizeOut, int &binaryVersionOut)
+    ResultCode GPURenderingDevice::ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<ShaderDefine> &definesOut, ShaderLanguage &languageOut, ShaderType &typeOut, const void* &binaryOut, size_t &binarySizeOut, int &binaryVersionOut)
     {
         if (shaderData != nullptr)
         {
@@ -199,7 +199,7 @@ namespace GT
                 uint16_t definesCount = static_cast<uint16_t>((version & 0xFFFF000000000000) >> 48);
                 for (uint16_t iDefine = 0; iDefine < definesCount; ++iDefine)
                 {
-                    GPUShaderDefine define;
+                    ShaderDefine define;
 
 
                     // Name.
@@ -239,7 +239,7 @@ namespace GT
                     definesOut.PushBack(define);
                 }
 
-                GPUShaderDefine defineNullTerminator = { nullptr, nullptr };
+                ShaderDefine defineNullTerminator = { nullptr, nullptr };
                 definesOut.PushBack(defineNullTerminator);
 
 
@@ -299,7 +299,7 @@ namespace GT
         return -1;
     }
 
-    ResultCode GPURenderingDevice::ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<GPUShaderDefine> &definesOut, ShaderLanguage &languageOut, ShaderType &typeOut)
+    ResultCode GPURenderingDevice::ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<ShaderDefine> &definesOut, ShaderLanguage &languageOut, ShaderType &typeOut)
     {
         const void* binary;
         size_t binarySize;
@@ -311,7 +311,7 @@ namespace GT
     {
         const char* sourceOut;
         size_t sourceLengthOut;
-        GTLib::Vector<GPUShaderDefine> definesOut;
+        GTLib::Vector<ShaderDefine> definesOut;
         ShaderLanguage languageOut;
         ShaderType typeOut;
         int binaryVersionOut;

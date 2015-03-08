@@ -30,7 +30,7 @@ namespace GT
           m_currentSwapChain(nullptr),
           m_stateFlags(0),
           m_swapInterval(0),
-          m_currentPrimitiveTopology(GPUPrimitiveTopology_Triangle),
+          m_currentPrimitiveTopology(PrimitiveTopology_Triangle),
           m_currentBlendState(0),
           m_currentBlendFactor(),
           m_currentSampleMask(0xFFFFFFFF),
@@ -187,9 +187,9 @@ namespace GT
         return RenderingAPI_D3D11;
     }
 
-    GPUHandedness GPURenderingDevice_D3D11::GetHandedness() const
+    GraphicsHandedness GPURenderingDevice_D3D11::GetHandedness() const
     {
-        return GPUHandedness_Left;
+        return GraphicsHandedness_Left;
     }
 
 
@@ -219,17 +219,17 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::ClearDepthStencil(GPUClearFlag clearFlags, float depth, uint8_t stencil)
+    void GPURenderingDevice_D3D11::ClearDepthStencil(ClearFlag clearFlags, float depth, uint8_t stencil)
     {
         auto iFramebuffer = m_windowFramebuffers.Find(m_currentHWND);
         if (iFramebuffer != nullptr)
         {
             UINT clearFlagsD3D = 0;
-            if ((clearFlags & GPUClearFlag_Depth) != 0)
+            if ((clearFlags & ClearFlag_Depth) != 0)
             {
                 clearFlagsD3D |= D3D11_CLEAR_DEPTH;
             }
-            if ((clearFlags & GPUClearFlag_Stencil) != 0)
+            if ((clearFlags & ClearFlag_Stencil) != 0)
             {
                 clearFlagsD3D |= D3D11_CLEAR_STENCIL;
             }
@@ -402,7 +402,7 @@ namespace GT
     /////////////////////////////////////////////
     // Input-Assembler Stage
 
-    void GPURenderingDevice_D3D11::IASetPrimitiveTopology(GPUPrimitiveTopology topology)
+    void GPURenderingDevice_D3D11::IASetPrimitiveTopology(PrimitiveTopology topology)
     {
         D3D11_PRIMITIVE_TOPOLOGY topologiesD3D11[] =
         {
@@ -433,7 +433,7 @@ namespace GT
         m_context->IASetVertexBuffers(slotIndex, 1, &bufferD3D11, &strideD3D11, &offsetD3D11);
     }
 
-    void GPURenderingDevice_D3D11::IASetIndexBuffer(HBuffer hBuffer, GPUIndexFormat format, size_t offset)
+    void GPURenderingDevice_D3D11::IASetIndexBuffer(HBuffer hBuffer, IndexFormat format, size_t offset)
     {
         DXGI_FORMAT formats[] =
         {
@@ -454,7 +454,7 @@ namespace GT
         m_context->RSSetState(reinterpret_cast<ID3D11RasterizerState*>(hState));
     }
 
-    void GPURenderingDevice_D3D11::RSSetViewports(GPUViewport* viewports, size_t viewportCount)
+    void GPURenderingDevice_D3D11::RSSetViewports(GraphicsViewport* viewports, size_t viewportCount)
     {
         if (viewports != nullptr && viewportCount > 0)
         {
@@ -517,7 +517,7 @@ namespace GT
     ////////////////////////////////////////////
     // State Objects
 
-    HRasterizerState GPURenderingDevice_D3D11::CreateRasterizerState(const GPURasterizerStateDesc &desc)
+    HRasterizerState GPURenderingDevice_D3D11::CreateRasterizerState(const RasterizerStateDesc &desc)
     {
         D3D11_FILL_MODE fillModesD3D[] =
         {
@@ -536,7 +536,7 @@ namespace GT
         D3D11_RASTERIZER_DESC descD3D;
         descD3D.FillMode              = fillModesD3D[desc.fillMode];
         descD3D.CullMode              = cullModesD3D[desc.cullMode];
-        descD3D.FrontCounterClockwise = (desc.polygonWinding == GPUPolygonWinding_CW) ? TRUE : FALSE;
+        descD3D.FrontCounterClockwise = (desc.polygonWinding == PolygonWinding_CW) ? TRUE : FALSE;
         descD3D.DepthBias             = desc.depthBias;
         descD3D.DepthBiasClamp        = desc.depthBiasClamp;
         descD3D.SlopeScaledDepthBias  = desc.slopeScaledDepthBias;
@@ -564,7 +564,7 @@ namespace GT
     }
 
 
-    HDepthStencilState GPURenderingDevice_D3D11::CreateDepthStencilState(const GPUDepthStencilStateDesc &desc)
+    HDepthStencilState GPURenderingDevice_D3D11::CreateDepthStencilState(const DepthStencilStateDesc &desc)
     {
         D3D11_DEPTH_WRITE_MASK depthWriteMasks[] =
         {
@@ -710,7 +710,7 @@ namespace GT
     ////////////////////////////////////////////
     // Input Layout
 
-    HInputLayout GPURenderingDevice_D3D11::CreateInputLayout(HShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount)
+    HInputLayout GPURenderingDevice_D3D11::CreateInputLayout(HShader hVertexShader, const InputLayoutAttribDesc* attribDesc, size_t attribDescCount)
     {
         auto shaderD3D11 = reinterpret_cast<ID3D11VertexShader*>(hVertexShader);
         if (shaderD3D11 != nullptr)
@@ -782,7 +782,7 @@ namespace GT
                             attribDescD3D[iAttrib].Format               = format[attribDesc[iAttrib].attributeComponentType][attribDesc[iAttrib].attributeComponentCount - 1];
                             attribDescD3D[iAttrib].InputSlot            = attribDesc[iAttrib].slotIndex;
                             attribDescD3D[iAttrib].AlignedByteOffset    = attribDesc[iAttrib].attributeOffset;
-                            attribDescD3D[iAttrib].InputSlotClass       = (attribDesc[iAttrib].attributeClass == GPUInputClassification_PerVertex) ? D3D11_INPUT_PER_VERTEX_DATA : D3D11_INPUT_PER_INSTANCE_DATA;
+                            attribDescD3D[iAttrib].InputSlotClass       = (attribDesc[iAttrib].attributeClass == AttribInputClassification_PerVertex) ? D3D11_INPUT_PER_VERTEX_DATA : D3D11_INPUT_PER_INSTANCE_DATA;
                             attribDescD3D[iAttrib].InstanceDataStepRate = attribDesc[iAttrib].instanceStepRate;
                         }
 
@@ -841,7 +841,7 @@ namespace GT
     ////////////////////////////////////////////
     // Shaders
 
-    ResultCode GPURenderingDevice_D3D11::CompileShader(const char* source, size_t sourceLength, const GPUShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
+    ResultCode GPURenderingDevice_D3D11::CompileShader(const char* source, size_t sourceLength, const ShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut)
     {
         if (language >= ShaderLanguage_HLSL_50 && language <= ShaderLanguage_HLSL_50)
         {
@@ -1011,9 +1011,9 @@ namespace GT
     ///////////////////////////////////////////
     // Buffers
 
-    HBuffer GPURenderingDevice_D3D11::CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data)
+    HBuffer GPURenderingDevice_D3D11::CreateBuffer(BufferType type, BufferUsage usage, BufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data)
     {
-        if (usage == GPUBufferUsage_Immutable && data == nullptr)
+        if (usage == BufferUsage_Immutable && data == nullptr)
         {
             // No data specified for immutable buffer. Immutable buffers must have their data set a creation time.
             return 0;
@@ -1078,7 +1078,7 @@ namespace GT
         }
     }
 
-    void* GPURenderingDevice_D3D11::MapBuffer(HBuffer hBuffer, GPUBufferMapType mapType)
+    void* GPURenderingDevice_D3D11::MapBuffer(HBuffer hBuffer, BufferMapType mapType)
     {
         D3D11_MAP mapTypes[] =
         {
