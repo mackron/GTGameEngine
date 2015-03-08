@@ -222,7 +222,7 @@ namespace GT
                 for (int i = 0; i < GT_MAX_VIEWPORTS; ++i)
                 {
                     m_currentViewports[i].x      = static_cast<float>(viewportDims[0]);
-                    m_currentViewports[i].y      = viewportDims[1];
+                    m_currentViewports[i].y      = static_cast<float>(viewportDims[1]);
                     m_currentViewports[i].width  = static_cast<float>(static_cast<unsigned int>(viewportDims[2]));
                     m_currentViewports[i].height = static_cast<float>(static_cast<unsigned int>(viewportDims[3]));
                 }
@@ -772,12 +772,24 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
-        for (int i = 0; i < viewportCount; ++i)
+        for (size_t iViewport = 0; iViewport < viewportCount; ++iViewport)
         {
-            m_currentViewports[i] = viewports[i];
+            m_currentViewports[iViewport] = viewports[iViewport];
         }
 
         this->UpdateViewports();
+    }
+
+    void GPURenderingDevice_OpenGL4::RSSetScissorRects(ScissorRect* scissorRects, size_t scissorCount)
+    {
+        CheckContextIsCurrent(m_gl, m_currentDC);
+
+        for (size_t iScissor = 0; iScissor < scissorCount; ++iScissor)
+        {
+            m_currentScissorRects[iScissor] = scissorRects[iScissor];
+        }
+
+        this->UpdateScissorRects();
     }
 
 

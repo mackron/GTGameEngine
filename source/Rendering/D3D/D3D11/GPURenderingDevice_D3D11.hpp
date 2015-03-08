@@ -137,6 +137,9 @@ namespace GT
         /// @copydoc GPURenderingDevice::RSSetViewports()
         void RSSetViewports(GraphicsViewport* viewports, size_t viewportCount);
 
+        /// @copydoc GPURenderingDevice::RSSetScissorRects()
+        void RSSetScissorRects(ScissorRect* scissorRects, size_t scissorCounts);
+
 
         /////////////////////////////////////////////
         // Output Merger Stage

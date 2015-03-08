@@ -456,25 +456,32 @@ namespace GT
 
     void GPURenderingDevice_D3D11::RSSetViewports(GraphicsViewport* viewports, size_t viewportCount)
     {
-        if (viewports != nullptr && viewportCount > 0)
+        D3D11_VIEWPORT viewportsD3D[GT_MAX_VIEWPORTS];
+        for (size_t iViewport = 0; iViewport < viewportCount; ++iViewport)
         {
-            auto viewportsD3D11 = reinterpret_cast<D3D11_VIEWPORT*>(malloc(sizeof(D3D11_VIEWPORT) * viewportCount));
-            if (viewportsD3D11 != nullptr)
-            {
-                for (size_t iViewport = 0; iViewport < viewportCount; ++iViewport)
-                {
-                    viewportsD3D11[iViewport].TopLeftX = viewports[iViewport].x;
-                    viewportsD3D11[iViewport].TopLeftY = viewports[iViewport].y;
-                    viewportsD3D11[iViewport].Width    = viewports[iViewport].width;
-                    viewportsD3D11[iViewport].Height   = viewports[iViewport].height;
-                    viewportsD3D11[iViewport].MinDepth = viewports[iViewport].depthRangeNear;
-                    viewportsD3D11[iViewport].MaxDepth = viewports[iViewport].depthRangeFar;
-                }
-
-                m_context->RSSetViewports(static_cast<UINT>(viewportCount), viewportsD3D11);
-                free(viewportsD3D11);
-            }
+            viewportsD3D[iViewport].TopLeftX = viewports[iViewport].x;
+            viewportsD3D[iViewport].TopLeftY = viewports[iViewport].y;
+            viewportsD3D[iViewport].Width    = viewports[iViewport].width;
+            viewportsD3D[iViewport].Height   = viewports[iViewport].height;
+            viewportsD3D[iViewport].MinDepth = viewports[iViewport].depthRangeNear;
+            viewportsD3D[iViewport].MaxDepth = viewports[iViewport].depthRangeFar;
         }
+
+        m_context->RSSetViewports(static_cast<UINT>(viewportCount), viewportsD3D);
+    }
+
+    void GPURenderingDevice_D3D11::RSSetScissorRects(ScissorRect* scissorRects, size_t scissorCount)
+    {
+        RECT scissorRectsD3D[GT_MAX_VIEWPORTS];
+        for (size_t iScissor = 0; iScissor < scissorCount; ++iScissor)
+        {
+            scissorRectsD3D[iScissor].left   = static_cast<LONG>(scissorRects[iScissor].x);
+            scissorRectsD3D[iScissor].top    = static_cast<LONG>(scissorRects[iScissor].y);
+            scissorRectsD3D[iScissor].right  = static_cast<LONG>(scissorRects[iScissor].x + scissorRects[iScissor].width);
+            scissorRectsD3D[iScissor].bottom = static_cast<LONG>(scissorRects[iScissor].y + scissorRects[iScissor].height);
+        }
+
+        m_context->RSSetScissorRects(static_cast<UINT>(scissorCount), scissorRectsD3D);
     }
 
 

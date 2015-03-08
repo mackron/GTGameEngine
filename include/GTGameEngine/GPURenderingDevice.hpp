@@ -245,6 +245,11 @@ namespace GT
         ///     If the rendering API does not support multiple viewports (such as OpenGL 2.1), this will only look at the first one in the list.
         virtual void RSSetViewports(GraphicsViewport* viewports, size_t viewportCount) = 0;
 
+        /// Sets the scissor rectanges for the rasterization stage.
+        ///
+        /// @param scissorRects [in] The list of scissor rectangles.
+        /// @param scissorCount [in] The number of scissor rectangles to set.
+        virtual void RSSetScissorRects(ScissorRect* scissorRects, size_t scissorCounts) = 0;
 
 
         /////////////////////////////////////////////

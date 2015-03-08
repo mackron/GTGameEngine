@@ -363,13 +363,13 @@ namespace GT
 
     struct InputLayoutAttribDesc
     {
-        unsigned int           slotIndex;
-        const char*            attributeName;               // The name of the attribute variable inside the shader, or the semantic name in the case of Direct3D.
-        VertexAttribFormat  attributeComponentType;      // Float, Signed Int, etc.
-        unsigned int           attributeComponentCount;     // float = 1, float2 = 2, etc.
-        unsigned int           attributeOffset;             // The attribute's offset.
+        unsigned int              slotIndex;
+        const char*               attributeName;               // The name of the attribute variable inside the shader, or the semantic name in the case of Direct3D.
+        VertexAttribFormat        attributeComponentType;      // Float, Signed Int, etc.
+        unsigned int              attributeComponentCount;     // float = 1, float2 = 2, etc.
+        unsigned int              attributeOffset;             // The attribute's offset.
         AttribInputClassification attributeClass;              // Per-Vertex or Per-Instance
-        unsigned int           instanceStepRate;
+        unsigned int              instanceStepRate;
     };
 
     struct ShaderDefine
