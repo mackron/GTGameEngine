@@ -1044,11 +1044,11 @@ namespace GT
         bd.BindFlags      = bindFlags[type];
 	    bd.CPUAccessFlags = 0;
 
-        if ((cpuAccessFlags & GPUBufferCPUAccess_Read) != 0)
+        if ((cpuAccessFlags & BufferCPUAccess_Read) != 0)
         {
             bd.CPUAccessFlags |= D3D11_CPU_ACCESS_READ;
         }
-        if ((cpuAccessFlags & GPUBufferCPUAccess_Write) != 0)
+        if ((cpuAccessFlags & BufferCPUAccess_Write) != 0)
         {
             bd.CPUAccessFlags |= D3D11_CPU_ACCESS_WRITE;
         }

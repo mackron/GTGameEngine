@@ -40,10 +40,10 @@ namespace GT
 
     enum BufferCPUAccessFlags
     {
-        GPUBufferCPUAccess_None      = 0x00,
-        GPUBufferCPUAccess_Read      = 0x01,
-        GPUBufferCPUAccess_Write     = 0x02,
-        GPUBufferCPUAccess_ReadWrite = GPUBufferCPUAccess_Read | GPUBufferCPUAccess_Write
+        BufferCPUAccess_None      = 0x00,
+        BufferCPUAccess_Read      = 0x01,
+        BufferCPUAccess_Write     = 0x02,
+        BufferCPUAccess_ReadWrite = BufferCPUAccess_Read | BufferCPUAccess_Write
     };
 
     enum BufferMapType

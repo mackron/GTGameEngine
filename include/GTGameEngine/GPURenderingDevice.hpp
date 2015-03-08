@@ -409,7 +409,7 @@ namespace GT
         /// @remarks
         ///     When \c usage is BufferUsage_Immutable, \c data cannot be null.
         ///     @par
-        ///     If \c cpuAccessFlags is set to GPUBufferCPUAccess_None (0), all map and unmap operations will fail.
+        ///     If \c cpuAccessFlags is set to BufferCPUAccess_None (0), all map and unmap operations will fail.
         ///     @par
         ///     The \c usage argument controls whether or not the buffer can be from the CPU side.
         ///       - Immutable - Can never be updated after creation from the CPU side.
@@ -442,9 +442,9 @@ namespace GT
         ///     @par
         ///     This cannot be used when the buffer was created with BufferUsage_Immutable.
         ///     @par
-        ///     When \c mapType is \c BufferMapType_Read or \c BufferMapType_ReadWrite, the buffer must have been created with \c GPUBufferCPUAccess_Read.
+        ///     When \c mapType is \c BufferMapType_Read or \c BufferMapType_ReadWrite, the buffer must have been created with \c BufferCPUAccess_Read.
         ///     @par
-        ///     When \c mapType is \c BufferMapType_Write, \c BufferMapType_ReadWrite, \c BufferMapType_Write_Discard or \c BufferMapType_Write_NoOverwrite, the buffer must have been created with \c GPUBufferCPUAccess_Write.
+        ///     When \c mapType is \c BufferMapType_Write, \c BufferMapType_ReadWrite, \c BufferMapType_Write_Discard or \c BufferMapType_Write_NoOverwrite, the buffer must have been created with \c BufferCPUAccess_Write.
         ///     @par
         ///     When the buffer was created with Dynamic usage, the map type must be either \c BufferMapType_Write_Discard or \c BufferMapType_Write_NoOverwrite.
         virtual void* MapBuffer(HBuffer hBuffer, BufferMapType mapType) = 0;

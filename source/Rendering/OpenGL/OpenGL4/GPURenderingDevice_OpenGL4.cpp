@@ -1190,7 +1190,7 @@ namespace GT
                 return 0;
             }
 
-            if (cpuAccessFlags != GPUBufferCPUAccess_None)
+            if (cpuAccessFlags != BufferCPUAccess_None)
             {
                 // Cannot access an immutable buffer from the CPU.
                 return 0;
@@ -1199,7 +1199,7 @@ namespace GT
 
         if (usage == BufferUsage_Dynamic)
         {
-            if ((cpuAccessFlags & GPUBufferCPUAccess_Read) != 0)
+            if ((cpuAccessFlags & BufferCPUAccess_Read) != 0)
             {
                 // Specified a dynamic buffer and a read CPU access flag.
 
@@ -1207,7 +1207,7 @@ namespace GT
                 return 0;
             }
 
-            if ((cpuAccessFlags & GPUBufferCPUAccess_Write) == 0)
+            if ((cpuAccessFlags & BufferCPUAccess_Write) == 0)
             {
                 // Specified a dynamic buffer, but have not specified a CPU access flag. Recommend using an immutable or default buffer usage.
 
