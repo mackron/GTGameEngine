@@ -203,44 +203,14 @@ namespace GT
     ///////////////////////////////////////////
     // Drawing
 
-    void GPURenderingDevice_D3D11::ClearColor(float r, float g, float b, float a)
+    void GPURenderingDevice_D3D11::Draw(unsigned int indexCount, unsigned int startIndexLocation, int baseVertex)
     {
-        // TODO: Better define the behaviour of this function regarding the current render targets. This is currently quick-and-dirty to get something working.
-
-        auto iFramebuffer = m_windowFramebuffers.Find(m_currentHWND);
-        if (iFramebuffer != nullptr)
-        {
-            float color[4];
-            color[0] = r;
-            color[1] = g;
-            color[2] = b;
-            color[3] = a;
-            m_context->ClearRenderTargetView(iFramebuffer->value.renderTargetView, color);
-        }
+        m_context->DrawIndexed(indexCount, startIndexLocation, baseVertex);
     }
 
-    void GPURenderingDevice_D3D11::ClearDepthStencil(ClearFlag clearFlags, float depth, uint8_t stencil)
+    void GPURenderingDevice_D3D11::DrawInstanced(unsigned int indexCount, unsigned int startIndexLocation, int baseVertex, unsigned int instanceCount, unsigned int baseInstance)
     {
-        auto iFramebuffer = m_windowFramebuffers.Find(m_currentHWND);
-        if (iFramebuffer != nullptr)
-        {
-            UINT clearFlagsD3D = 0;
-            if ((clearFlags & ClearFlag_Depth) != 0)
-            {
-                clearFlagsD3D |= D3D11_CLEAR_DEPTH;
-            }
-            if ((clearFlags & ClearFlag_Stencil) != 0)
-            {
-                clearFlagsD3D |= D3D11_CLEAR_STENCIL;
-            }
-
-            m_context->ClearDepthStencilView(iFramebuffer->value.depthStencilView, clearFlagsD3D, depth, stencil);
-        }
-    }
-
-    void GPURenderingDevice_D3D11::Draw(unsigned int indexCount, unsigned int startIndexLocation)
-    {
-        m_context->DrawIndexed(indexCount, startIndexLocation, 0);
+        m_context->DrawIndexedInstanced(indexCount, instanceCount, startIndexLocation, baseVertex, baseInstance);
     }
 
 
@@ -1689,6 +1659,87 @@ namespace GT
             if (m_currentFramebuffer == hFramebuffer)
             {
                 m_context->OMSetRenderTargets(GT_MAX_FRAMEBUFFER_RENDER_TARGETS, framebufferD3D->renderTargets, framebufferD3D->depthStencilView);
+            }
+        }
+    }
+
+    void GPURenderingDevice_D3D11::ClearFramebufferColor(HFramebuffer hFramebuffer, unsigned int attachmentIndex, float color[4])
+    {
+        auto framebufferD3D = reinterpret_cast<Framebuffer_D3D11*>(hFramebuffer);
+        if (framebufferD3D != nullptr)
+        {
+            m_context->ClearRenderTargetView(framebufferD3D->renderTargets[attachmentIndex], color);
+        }
+        else
+        {
+            // Clear the colour buffer of the framebuffer of the current window.
+            auto iFramebuffer = m_windowFramebuffers.Find(m_currentHWND);
+            if (iFramebuffer != nullptr)
+            {
+                m_context->ClearRenderTargetView(iFramebuffer->value.renderTargetView, color);
+            }
+        }
+    }
+
+    void GPURenderingDevice_D3D11::ClearFramebufferDepth(HFramebuffer hFramebuffer, float depth)
+    {
+        auto framebufferD3D = reinterpret_cast<Framebuffer_D3D11*>(hFramebuffer);
+        if (framebufferD3D != nullptr)
+        {
+            if (framebufferD3D->depthStencilView != nullptr)
+            {
+                m_context->ClearDepthStencilView(framebufferD3D->depthStencilView, D3D11_CLEAR_DEPTH, depth, 0);
+            }
+        }
+        else
+        {
+            // Clear the colour buffer of the framebuffer of the current window.
+            auto iFramebuffer = m_windowFramebuffers.Find(m_currentHWND);
+            if (iFramebuffer != nullptr)
+            {
+                m_context->ClearDepthStencilView(iFramebuffer->value.depthStencilView, D3D11_CLEAR_DEPTH, depth, 0);
+            }
+        }
+    }
+
+    void GPURenderingDevice_D3D11::ClearFramebufferStencil(HFramebuffer hFramebuffer, uint8_t stencil)
+    {
+        auto framebufferD3D = reinterpret_cast<Framebuffer_D3D11*>(hFramebuffer);
+        if (framebufferD3D != nullptr)
+        {
+            if (framebufferD3D->depthStencilView != nullptr)
+            {
+                m_context->ClearDepthStencilView(framebufferD3D->depthStencilView, D3D11_CLEAR_STENCIL, 0.0f, stencil);
+            }
+        }
+        else
+        {
+            // Clear the colour buffer of the framebuffer of the current window.
+            auto iFramebuffer = m_windowFramebuffers.Find(m_currentHWND);
+            if (iFramebuffer != nullptr)
+            {
+                m_context->ClearDepthStencilView(iFramebuffer->value.depthStencilView, D3D11_CLEAR_STENCIL, 0.0f, stencil);
+            }
+        }
+    }
+
+    void GPURenderingDevice_D3D11::ClearFramebufferDepthStencil(HFramebuffer hFramebuffer, float depth, uint8_t stencil)
+    {
+        auto framebufferD3D = reinterpret_cast<Framebuffer_D3D11*>(hFramebuffer);
+        if (framebufferD3D != nullptr)
+        {
+            if (framebufferD3D->depthStencilView != nullptr)
+            {
+                m_context->ClearDepthStencilView(framebufferD3D->depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
+            }
+        }
+        else
+        {
+            // Clear the colour buffer of the framebuffer of the current window.
+            auto iFramebuffer = m_windowFramebuffers.Find(m_currentHWND);
+            if (iFramebuffer != nullptr)
+            {
+                m_context->ClearDepthStencilView(iFramebuffer->value.depthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, depth, stencil);
             }
         }
     }

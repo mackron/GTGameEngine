@@ -233,8 +233,9 @@ namespace GT
 
 
         // Drawing.
-        PFNGLCLEARPROC                  Clear;
-        PFNGLDRAWELEMENTSPROC           DrawElements;
+        PFNGLDRAWELEMENTSBASEVERTEXPROC                      DrawElementsBaseVertex;
+        PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXPROC             DrawElementsInstancedBaseVertex;
+        PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEPROC DrawElementsInstancedBaseVertexBaseInstance;
 
         // Shaders.
         PFNGLCREATEPROGRAMPIPELINESPROC CreateProgramPipelines;

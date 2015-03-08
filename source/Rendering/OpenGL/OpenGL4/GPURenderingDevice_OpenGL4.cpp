@@ -307,34 +307,7 @@ namespace GT
     ///////////////////////////////////////////
     // Drawing
 
-    void GPURenderingDevice_OpenGL4::ClearColor(float r, float g, float b, float a)
-    {
-        CheckContextIsCurrent(m_gl, m_currentDC);
-
-        m_gl.ClearColor(r, g, b, a);
-        m_gl.Clear(GL_COLOR_BUFFER_BIT);
-    }
-
-    void GPURenderingDevice_OpenGL4::ClearDepthStencil(ClearFlag clearFlags, float depth, uint8_t stencil)
-    {
-        CheckContextIsCurrent(m_gl, m_currentDC);
-
-        GLbitfield maskGL = 0;
-        if ((clearFlags & ClearFlag_Depth) != 0)
-        {
-            maskGL |= GL_DEPTH_BUFFER_BIT;
-            m_gl.ClearDepth(depth);
-        }
-        if ((clearFlags & ClearFlag_Stencil) != 0)
-        {
-            maskGL |= GL_STENCIL_BUFFER_BIT;
-            m_gl.ClearStencil(stencil);
-        }
-
-        m_gl.Clear(maskGL);
-    }
-
-    void GPURenderingDevice_OpenGL4::Draw(unsigned int indexCount, unsigned int startIndexLocation)
+    void GPURenderingDevice_OpenGL4::Draw(unsigned int indexCount, unsigned int startIndexLocation, int baseVertex)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
@@ -346,7 +319,23 @@ namespace GT
                 this->UpdateSlotVertexAttributePointers(GTLib::NextBitIndex(m_invalidVertexBufferSlots));
             }
 
-            m_gl.DrawElements(m_currentTopologyGL, indexCount, m_indexBufferFormatGL, reinterpret_cast<const void*>(m_indexBufferOffset + (startIndexLocation*m_indexBufferFormatSize)));
+            m_gl.DrawElementsBaseVertex(m_currentTopologyGL, indexCount, m_indexBufferFormatGL, reinterpret_cast<const void*>(m_indexBufferOffset + (startIndexLocation*m_indexBufferFormatSize)), baseVertex);
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::DrawInstanced(unsigned int indexCount, unsigned int startIndexLocation, int baseVertex, unsigned int instanceCount, unsigned int baseInstance)
+    {
+        CheckContextIsCurrent(m_gl, m_currentDC);
+
+        if (m_currentIndexBuffer != 0)
+        {
+            // Update the vertex attribute pointers if any are invalid.
+            while (m_invalidVertexBufferSlots != 0)
+            {
+                this->UpdateSlotVertexAttributePointers(GTLib::NextBitIndex(m_invalidVertexBufferSlots));
+            }
+
+            m_gl.DrawElementsInstancedBaseVertexBaseInstance(m_currentTopologyGL, indexCount, m_indexBufferFormatGL, reinterpret_cast<const void*>(m_indexBufferOffset + (startIndexLocation*m_indexBufferFormatSize)), instanceCount, baseVertex, baseInstance);
         }
     }
 
@@ -1694,6 +1683,89 @@ namespace GT
             else
             {
                 m_gl.NamedFramebufferTextureLayer(framebufferGL->GetOpenGLObject(), GL_DEPTH_STENCIL_ATTACHMENT, 0, static_cast<GLint>(mipmapLevel), static_cast<GLint>(arrayLayer));
+            }
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::ClearFramebufferColor(HFramebuffer hFramebuffer, unsigned int attachmentIndex, float color[4])
+    {
+        auto framebufferGL = reinterpret_cast<Framebuffer_OpenGL4*>(hFramebuffer);
+        if (framebufferGL != nullptr)
+        {
+            m_gl.ClearNamedFramebufferfv(framebufferGL->GetOpenGLObject(), GL_COLOR, static_cast<GLint>(attachmentIndex), color);
+        }
+        else
+        {
+            // Clear the default framebuffer.
+            m_gl.ClearNamedFramebufferfv(0, GL_COLOR, 0, color);
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::ClearFramebufferDepth(HFramebuffer hFramebuffer, float depth)
+    {
+        auto framebufferGL = reinterpret_cast<Framebuffer_OpenGL4*>(hFramebuffer);
+        if (framebufferGL != nullptr)
+        {
+            m_gl.ClearNamedFramebufferfv(framebufferGL->GetOpenGLObject(), GL_DEPTH, 0, &depth);
+        }
+        else
+        {
+            // Clear the default framebuffer.
+            m_gl.ClearNamedFramebufferfv(0, GL_DEPTH, 0, &depth);
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::ClearFramebufferStencil(HFramebuffer hFramebuffer, uint8_t stencil)
+    {
+        GLuint stencilGL = stencil;
+
+        auto framebufferGL = reinterpret_cast<Framebuffer_OpenGL4*>(hFramebuffer);
+        if (framebufferGL != nullptr)
+        {
+            m_gl.ClearNamedFramebufferuiv(framebufferGL->GetOpenGLObject(), GL_STENCIL, 0, &stencilGL);
+        }
+        else
+        {
+            // Clear the default framebuffer.
+            m_gl.ClearNamedFramebufferuiv(0, GL_STENCIL, 0, &stencilGL);
+        }
+    }
+
+    void GPURenderingDevice_OpenGL4::ClearFramebufferDepthStencil(HFramebuffer hFramebuffer, float depth, uint8_t stencil)
+    {
+        // NOTE: It looks like glClearNamedFramebufferfi() is broken on NVIDIA as it is throwing an OpenGL error saying invalid draw buffer. To work around
+        //       we will instead use to separate clear operations on NVIDIA.
+        //
+        // TODO: Check whether or not this has been fixed.
+
+        auto framebufferGL = reinterpret_cast<Framebuffer_OpenGL4*>(hFramebuffer);
+        if (framebufferGL != nullptr)
+        {
+            if (m_vendor == GPUVendor_NVIDIA)
+            {
+                GLuint stencilGL = stencil;
+                m_gl.ClearNamedFramebufferfv(framebufferGL->GetOpenGLObject(), GL_DEPTH, 0, &depth);
+                m_gl.ClearNamedFramebufferuiv(framebufferGL->GetOpenGLObject(), GL_STENCIL, 0, &stencilGL);
+            }
+            else
+            {
+                // TODO: Test this branch on NVIDIA.
+                m_gl.ClearNamedFramebufferfi(framebufferGL->GetOpenGLObject(), GL_DEPTH_STENCIL, depth, stencil);
+            }
+            
+        }
+        else
+        {
+            // Clear the default framebuffer.
+            if (m_vendor == GPUVendor_NVIDIA)
+            {
+                GLuint stencilGL = stencil;
+                m_gl.ClearNamedFramebufferfv(0, GL_DEPTH, 0, &depth);
+                m_gl.ClearNamedFramebufferuiv(0, GL_STENCIL, 0, &stencilGL);
+            }
+            else
+            {
+                m_gl.ClearNamedFramebufferfi(0, GL_DEPTH_STENCIL, depth, stencil);
             }
         }
     }

@@ -79,8 +79,9 @@ namespace GT
             ColorMaski(nullptr),
             ClipControl(nullptr),
 
-            Clear(nullptr),
-            DrawElements(nullptr),
+            DrawElementsBaseVertex(nullptr),
+            DrawElementsInstancedBaseVertex(nullptr),
+            DrawElementsInstancedBaseVertexBaseInstance(nullptr),
 
             CreateProgramPipelines(nullptr),
             DeleteProgramPipelines(nullptr),
@@ -610,8 +611,9 @@ namespace GT
             this->ColorMaski               = reinterpret_cast<PFNGLCOLORMASKIPROC              >(this->GetGLProcAddress("glColorMaski"));
             this->ClipControl              = reinterpret_cast<PFNGLCLIPCONTROLPROC             >(this->GetGLProcAddress("glClipControl"));
 
-            this->Clear                    = reinterpret_cast<PFNGLCLEARPROC                   >(this->GetGLProcAddress("glClear"));
-            this->DrawElements             = reinterpret_cast<PFNGLDRAWELEMENTSPROC            >(this->GetGLProcAddress("glDrawElements"));
+            this->DrawElementsBaseVertex                      = reinterpret_cast<PFNGLDRAWELEMENTSBASEVERTEXPROC                     >(this->GetGLProcAddress("glDrawElementsBaseVertex"));
+            this->DrawElementsInstancedBaseVertex             = reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXPROC            >(this->GetGLProcAddress("glDrawElementsInstancedBaseVertex"));
+            this->DrawElementsInstancedBaseVertexBaseInstance = reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXBASEINSTANCEPROC>(this->GetGLProcAddress("glDrawElementsInstancedBaseVertexBaseInstance"));
 
             this->CreateProgramPipelines   = reinterpret_cast<PFNGLCREATEPROGRAMPIPELINESPROC  >(this->GetGLProcAddress("glCreateProgramPipelines"));
             this->DeleteProgramPipelines   = reinterpret_cast<PFNGLDELETEPROGRAMPIPELINESPROC  >(this->GetGLProcAddress("glDeleteProgramPipelines"));

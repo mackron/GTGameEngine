@@ -47,14 +47,11 @@ namespace GT
         ////////////////////////////////////////////
         // Drawing
 
-        /// GPURenderingDevice::ClearColor().
-        void ClearColor(float r, float g, float b, float a);
-
-        /// @copydoc GPURenderingDevice::ClearDepthStencil()
-        void ClearDepthStencil(ClearFlag clearFlags, float depth, uint8_t stencil);
-
         /// GPURenderingDevice::Draw().
-        void Draw(unsigned int indexCount, unsigned int startIndexLocation);
+        void Draw(unsigned int indexCount, unsigned int startIndexLocation, int baseVertex);
+
+        /// GPURenderingDevice::DrawInstanced().
+        void DrawInstanced(unsigned int indexCount, unsigned int startIndexLocation, int baseVertex, unsigned int instanceCount, unsigned int baseInstance);
 
 
         /////////////////////////////////////////////
@@ -276,6 +273,17 @@ namespace GT
         /// @copydoc GPURenderingDevice::AttachFramebufferDepthStencilTarget()
         void AttachFramebufferDepthStencilTarget(HFramebuffer hFramebuffer, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer);
 
+        /// @copydoc GPURenderingDevice::ClearFramebufferColor()
+        void ClearFramebufferColor(HFramebuffer hFramebuffer, unsigned int attachmentIndex, float color[4]);
+
+        /// @copydoc GPUREnderingDevice::ClearFramebufferDepth()
+        void ClearFramebufferDepth(HFramebuffer hFramebuffer, float depth);
+
+        /// @copydoc GPUREnderingDevice::ClearFramebufferStencil()
+        void ClearFramebufferStencil(HFramebuffer hFramebuffer, uint8_t stencil);
+
+        /// @copydoc GPUREnderingDevice::ClearFramebufferDepthStencil()
+        void ClearFramebufferDepthStencil(HFramebuffer hFramebuffer, float depth, uint8_t stencil);
 
 
 

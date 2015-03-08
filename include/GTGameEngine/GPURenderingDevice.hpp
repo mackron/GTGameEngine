@@ -85,31 +85,29 @@ namespace GT
         ////////////////////////////////////////////
         // Drawing
 
-        /// Clears the current framebuffer with the given color.
+        /// Renders the contents of the currently bound vertex buffer using the currently bound index buffer.
         ///
-        /// @param r [in] The red component.
-        /// @param g [in] The green component.
-        /// @param b [in] The blue component.
-        /// @param a [in] The alpha component.
-        virtual void ClearColor(float r, float g, float b, float a) = 0;
-
-        /// Clears the depth/stencil buffer of the current framebuffer with the given values.
+        /// @param indexCount         [in] The number of indices to draw.
+        /// @param startIndexLocation [in] The zero-based location of the first index in the index buffer to start drawing from.
+        /// @param baseVertex         [in] A value added to each index in the index buffer.
         ///
-        /// @param clearFlags [in] Flags specifying which buffers to clear.
-        /// @param depth      [in] The value to set for the depth buffer.
-        /// @param stencil    [in] The value to set for the stencil buffer.
-        virtual void ClearDepthStencil(ClearFlag clearFlags, float depth, uint8_t stencil) = 0;
-
+        /// @remarks
+        ///     The \c indexCount argument refers to how many indices to iterate over when determining which primitives to draw. For example, when drawing
+        ///     a single triangle, you would pass the number 3 (number of indices used to build the triangle).
+        virtual void Draw(unsigned int indexCount, unsigned int startIndexLocation, int baseVertex) = 0;
 
         /// Renders the contents of the currently bound vertex buffer using the currently bound index buffer.
         ///
         /// @param indexCount         [in] The number of indices to draw.
         /// @param startIndexLocation [in] The zero-based location of the first index in the index buffer to start drawing from.
+        /// @param baseVertex         [in] A value added to each index in the index buffer.
+        /// @param instanceCount      [in] The number of instances to draw.
+        /// @param baseInstance       [in] A value added to each instance index.
         ///
         /// @remarks
         ///     The \c indexCount argument refers to how many indices to iterate over when determining which primitives to draw. For example, when drawing
-        ///     a triangle, you would pass the number 3 (number of indices used to build the triangle).
-        virtual void Draw(unsigned int indexCount, unsigned int startIndexLocation) = 0;
+        ///     a single triangle, you would pass the number 3 (number of indices used to build the triangle).
+        virtual void DrawInstanced(unsigned int indexCount, unsigned int startIndexLocation, int baseVertex, unsigned int instanceCount, unsigned int baseInstance) = 0;
 
 
 
@@ -575,6 +573,10 @@ namespace GT
         /// @param arrayLayer   [in] the index of the array layer to draw to for array or 3D textures.
         virtual void AttachFramebufferDepthStencilTarget(HFramebuffer hFramebuffer, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer) = 0;
 
+        virtual void ClearFramebufferColor(HFramebuffer hFramebuffer, unsigned int attachmentIndex, float color[4]) = 0;
+        virtual void ClearFramebufferDepth(HFramebuffer hFramebuffer, float depth) = 0;
+        virtual void ClearFramebufferStencil(HFramebuffer hFramebuffer, uint8_t stencil) = 0;
+        virtual void ClearFramebufferDepthStencil(HFramebuffer hFramebuffer, float depth, uint8_t stencil) = 0;
 
 
 
