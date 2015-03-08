@@ -381,17 +381,15 @@ namespace GT
 
     void GPURenderingDevice_OpenGL4::BindConstantBuffer(unsigned int slotIndex, size_t count, HBuffer* hBuffers, size_t* offsets, size_t* sizes)
     {
-        const size_t maxSlots = 36;
-
-        if (count < maxSlots)
+        if (count < GT_MAX_CONSTANT_BUFFER_SLOTS)
         {
             if ((m_supportFlags & SupportFlag_MultiBind) != 0)
             {
                 if (hBuffers != nullptr)
                 {
-                    GLuint buffersGL[maxSlots];
-                    GLintptr offsetsGL[maxSlots];
-                    GLsizeiptr sizesGL[maxSlots];
+                    GLuint buffersGL[GT_MAX_CONSTANT_BUFFER_SLOTS];
+                    GLintptr offsetsGL[GT_MAX_CONSTANT_BUFFER_SLOTS];
+                    GLsizeiptr sizesGL[GT_MAX_CONSTANT_BUFFER_SLOTS];
                     for (size_t iSlot = 0; iSlot < count; ++iSlot)
                     {
                         auto bufferGL = reinterpret_cast<Buffer_OpenGL4*>(hBuffers[iSlot]);

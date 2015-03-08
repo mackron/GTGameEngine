@@ -305,11 +305,11 @@ namespace GT
 
     void GPURenderingDevice_D3D11::BindConstantBuffer(unsigned int slotIndex, size_t count, HBuffer* hBuffers, size_t* offsets, size_t* sizes)
     {
-        if (count < D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT)
+        if (count < GT_MAX_CONSTANT_BUFFER_SLOTS)
         {
-            ID3D11Buffer* buffersD3D[D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
-            UINT offsetsD3D[D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
-            UINT sizesD3D[D3D11_COMMONSHADER_CONSTANT_BUFFER_API_SLOT_COUNT];
+            ID3D11Buffer* buffersD3D[GT_MAX_CONSTANT_BUFFER_SLOTS];
+            UINT offsetsD3D[GT_MAX_CONSTANT_BUFFER_SLOTS];
+            UINT sizesD3D[GT_MAX_CONSTANT_BUFFER_SLOTS];
 
             for (size_t iSlot = 0; iSlot < count; ++iSlot)
             {
