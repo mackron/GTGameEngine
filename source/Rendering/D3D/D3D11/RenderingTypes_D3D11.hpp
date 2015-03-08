@@ -7,7 +7,6 @@
 
 #if defined(GT_GE_BUILD_D3D11)
 #include <GTGameEngine/Rendering/RenderingTypes.hpp>
-#include <GTLib/ReferenceCountedObject.hpp>
 #include <d3d11_1.h>
 
 #if defined(_MSC_VER)
@@ -17,13 +16,12 @@
 
 namespace GT
 {
-    class Framebuffer_D3D11 : public ReferenceCountedObject
+    class Framebuffer_D3D11
     {
     public:
 
         Framebuffer_D3D11()
-            : ReferenceCountedObject(),
-              renderTargets(),
+            : renderTargets(),
               depthStencilView(nullptr)
         {
             for (int i = 0; i < GT_MAX_FRAMEBUFFER_RENDER_TARGETS; ++i)

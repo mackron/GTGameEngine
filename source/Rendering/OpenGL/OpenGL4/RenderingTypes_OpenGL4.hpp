@@ -8,7 +8,6 @@
 #if defined(GT_GE_BUILD_OPENGL4)
 #include <GTGameEngine/Rendering/RenderingTypes.hpp>
 #include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
-#include <GTLib/ReferenceCountedObject.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -18,28 +17,28 @@
 namespace GT
 {
     /// OpenGL rasterizer state.
-    struct RasterizerState_OpenGL4 : public ReferenceCountedObject, public GPURasterizerStateDesc
+    struct RasterizerState_OpenGL4 : public GPURasterizerStateDesc
     {
         RasterizerState_OpenGL4(const GPURasterizerStateDesc &desc)
-            : ReferenceCountedObject(), GPURasterizerStateDesc(desc)
+            : GPURasterizerStateDesc(desc)
         {
         }
     };
 
     /// OpenGL depth/stencil state.
-    struct DepthStencilState_OpenGL4 : public ReferenceCountedObject, public GPUDepthStencilStateDesc
+    struct DepthStencilState_OpenGL4 : public GPUDepthStencilStateDesc
     {
         DepthStencilState_OpenGL4(const GPUDepthStencilStateDesc &desc)
-            : ReferenceCountedObject(), GPUDepthStencilStateDesc(desc)
+            : GPUDepthStencilStateDesc(desc)
         {
         }
     };
 
     /// OpenGL blend state.
-    struct BlendState_OpenGL4 : public ReferenceCountedObject, public BlendStateDesc
+    struct BlendState_OpenGL4 : public BlendStateDesc
     {
         BlendState_OpenGL4(const BlendStateDesc &desc)
-            : ReferenceCountedObject(), BlendStateDesc(desc)
+            : BlendStateDesc(desc)
         {
         }
     };
@@ -74,13 +73,13 @@ namespace GT
     // Shader_OpenGL4
 
     /// OpenGL 4 shader program.
-    class Shader_OpenGL4 : public ReferenceCountedObject, public OpenGLObject
+    class Shader_OpenGL4 : public OpenGLObject
     {
     public:
 
         /// Constructor.
         Shader_OpenGL4(GLuint objectGL, GLenum typeGL)
-            : ReferenceCountedObject(), OpenGLObject(objectGL),
+            : OpenGLObject(objectGL),
               m_typeGL(typeGL)
         {
         }
@@ -102,13 +101,13 @@ namespace GT
     // Buffer_OpenGL4
 
     /// Class representing an OpenGL buffer object.
-    class Buffer_OpenGL4 : public ReferenceCountedObject, public OpenGLObject
+    class Buffer_OpenGL4 : public OpenGLObject
     {
     public:
 
         /// Constructor.
         Buffer_OpenGL4(GLuint objectGL, GLbitfield flagsGL, GLsizeiptr sizeInBytes)
-            : ReferenceCountedObject(), OpenGLObject(objectGL), m_flagsGL(flagsGL), m_sizeInBytes(sizeInBytes)
+            : OpenGLObject(objectGL), m_flagsGL(flagsGL), m_sizeInBytes(sizeInBytes)
         {
         }
 
@@ -134,12 +133,12 @@ namespace GT
     ///////////////////////////////////////////////////
     // Texture_OpenGL4
 
-    class Texture_OpenGL4 : public ReferenceCountedObject, public OpenGLObject
+    class Texture_OpenGL4 : public OpenGLObject
     {
     public:
 
         Texture_OpenGL4(GLuint objectGL, const TextureDesc &desc)
-            : ReferenceCountedObject(), OpenGLObject(objectGL),
+            : OpenGLObject(objectGL),
               m_desc(desc)
         {
         }
@@ -157,12 +156,12 @@ namespace GT
     ///////////////////////////////////////////////////
     // TextureView_OpenGL4
 
-    class TextureView_OpenGL4 : public ReferenceCountedObject, public OpenGLObject
+    class TextureView_OpenGL4 : public OpenGLObject
     {
     public:
 
         TextureView_OpenGL4(GLuint objectGL)
-            : ReferenceCountedObject(), OpenGLObject(objectGL)
+            : OpenGLObject(objectGL)
         {
         }
     };
@@ -171,12 +170,12 @@ namespace GT
     //////////////////////////////////////////////////
     // Sampler_OpenGL4
 
-    class Sampler_OpenGL4 : public ReferenceCountedObject, public OpenGLObject
+    class Sampler_OpenGL4 : public OpenGLObject
     {
     public:
 
         Sampler_OpenGL4(GLuint objectGL)
-            : ReferenceCountedObject(), OpenGLObject(objectGL)
+            : OpenGLObject(objectGL)
         {
         }
     };
@@ -185,12 +184,12 @@ namespace GT
     //////////////////////////////////////////////////
     // Framebuffer_OpenGL4
 
-    class Framebuffer_OpenGL4 : public ReferenceCountedObject, public OpenGLObject
+    class Framebuffer_OpenGL4 : public OpenGLObject
     {
     public:
 
         Framebuffer_OpenGL4(GLuint objectGL)
-            : ReferenceCountedObject(), OpenGLObject(objectGL),
+            : OpenGLObject(objectGL),
               renderTargetsGL()
         {
             for (int i = 0; i < GT_MAX_FRAMEBUFFER_RENDER_TARGETS; ++i)
@@ -209,7 +208,7 @@ namespace GT
     // InputLayout_OpenGL4
 
     /// OpenGL input layout object.
-    class InputLayout_OpenGL4 : public ReferenceCountedObject
+    class InputLayout_OpenGL4
     {
     public:
 

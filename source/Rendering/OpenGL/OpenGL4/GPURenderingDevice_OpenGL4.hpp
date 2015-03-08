@@ -9,7 +9,6 @@
 #include <GTGameEngine/GPURenderingDevice.hpp>
 #include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
 
-#include <GTLib/Threading/Mutex.hpp>
 #include <GTLib/Map.hpp>
 
 namespace GT
@@ -162,30 +161,21 @@ namespace GT
         HRasterizerState CreateRasterizerState(const GPURasterizerStateDesc &desc);
 
         /// @copydoc GPURenderingDevice::DeleteRasterizerState()
-        void ReleaseRasterizerState(HRasterizerState hState);
-
-        /// @copydoc GPURenderingDevice::HoldRasterizerState()
-        void HoldRasterizerState(HRasterizerState hState);
+        void DeleteRasterizerState(HRasterizerState hState);
 
 
         /// @copydoc GPURenderingDevice::CreateDepthStencilState()
         HDepthStencilState CreateDepthStencilState(const GPUDepthStencilStateDesc &desc);
 
         /// @copydoc GPURenderingDevice::DeleteDepthStencilState().
-        void ReleaseDepthStencilState(HDepthStencilState hState);
-
-        /// @copydoc GPURenderingDevice::HoldDepthStencilState()
-        void HoldDepthStencilState(HDepthStencilState hState);
+        void DeleteDepthStencilState(HDepthStencilState hState);
 
 
         /// @copydoc GPURenderingDevice::CreateBlendState()
         HBlendState CreateBlendState(const BlendStateDesc &desc);
 
-        /// @copydoc GPURenderingDevice::ReleaseBlendState()
-        void ReleaseBlendState(HBlendState hState);
-
-        /// @copydoc GPURenderingDevice::HoldBlendState()
-        void HoldBlendState(HBlendState hState);
+        /// @copydoc GPURenderingDevice::DeleteBlendState()
+        void DeleteBlendState(HBlendState hState);
 
 
 
@@ -195,11 +185,8 @@ namespace GT
         /// GPURenderingDevice::CreateVertexInputLayout().
         HInputLayout CreateInputLayout(HShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount);
 
-        /// GPURenderingDevice::ReleaseInputLayout().
-        void ReleaseInputLayout(HInputLayout hInputLayout);
-
-        /// @copydoc GPURenderingDevice::HoldInputLayout()
-        void HoldInputLayout(HInputLayout hInputLayout);
+        /// GPURenderingDevice::DeleteInputLayout().
+        void DeleteInputLayout(HInputLayout hInputLayout);
 
 
         ////////////////////////////////////////////
@@ -215,11 +202,8 @@ namespace GT
         /// @copydoc GPURenderingDevice::CreateShader()
         HShader CreateShader(const void* shaderData, size_t shaderDataSize, ShaderType shaderType);
 
-        /// @copydoc GPURenderingDevice::ReleaseShader()
-        void ReleaseShader(HShader hShader);
-
-        /// @copydoc GPURenderingDevice::HoldShader()
-        void HoldShader(HShader hShader);
+        /// @copydoc GPURenderingDevice::DeleteShader()
+        void DeleteShader(HShader hShader);
 
 
 
@@ -229,11 +213,8 @@ namespace GT
         /// @copydoc GPURenderingDevice::CreateBuffer()
         HBuffer CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data);
 
-        /// @copydoc GPURenderingDevice::ReleaseBuffer()
-        void ReleaseBuffer(HBuffer hBuffer);
-
-        /// @copydoc GPURenderingDevice::HoldBuffer()
-        void HoldBuffer(HBuffer hBuffer);
+        /// @copydoc GPURenderingDevice::DeleteBuffer()
+        void DeleteBuffer(HBuffer hBuffer);
 
         /// @copydoc GPURenderingDevice::MapBuffer()
         void* MapBuffer(HBuffer hBuffer, GPUBufferMapType mapType);
@@ -252,11 +233,8 @@ namespace GT
         /// @copydoc GPURenderingDevice::CreateTexture()
         HTexture CreateTexture(const TextureDesc &desc);
 
-        /// @copydoc GPURenderingDevice::ReleaseTexture()
-        void ReleaseTexture(HTexture hTexture);
-
-        /// @copydoc GPURenderingDevice::HoldTexture()
-        void HoldTexture(HTexture hTexture);
+        /// @copydoc GPURenderingDevice::DeleteTexture()
+        void DeleteTexture(HTexture hTexture);
 
         /// @copydoc GPURenderingDevice::UpdateTexture()
         void UpdateTexture(HTexture hTexture, int x, int y, int z, unsigned int width, unsigned int height, unsigned int depth, unsigned int mipmapLevel, const void* srcData);
@@ -265,11 +243,8 @@ namespace GT
         /// @copydoc GPURenderingDevice::CreateTextureView()
         HTextureView CreateTextureView(HTexture hOriginalTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers);
         
-        /// @copydoc GPURenderingDevice::ReleaseTextureView()
-        void ReleaseTextureView(HTextureView hTextureView);
-
-        /// @copydoc GPURenderingDevice::HoldTextureview()
-        void HoldTextureView(HTextureView hTextureView);
+        /// @copydoc GPURenderingDevice::DeleteTextureView()
+        void DeleteTextureView(HTextureView hTextureView);
 
 
         ///////////////////////////////////////////
@@ -278,11 +253,8 @@ namespace GT
         /// @copydoc GPURenderingDevice::CreateSampler()
         HSampler CreateSampler(const SamplerDesc &desc);
 
-        /// @copydoc GPURenderingDevice::ReleaseSampler()
-        void ReleaseSampler(HSampler hSampler);
-
-        /// @copydoc GPURenderingDevice::HoldSampler()
-        void HoldSampler(HSampler hSampler);
+        /// @copydoc GPURenderingDevice::DeleteSampler()
+        void DeleteSampler(HSampler hSampler);
 
 
 
@@ -292,11 +264,8 @@ namespace GT
         /// @copydoc GPURenderingDevice::CreateFramebuffer()
         HFramebuffer CreateFramebuffer();
 
-        /// @copydoc GPURenderingDevice::ReleaseFramebuffer()
-        void ReleaseFramebuffer(HFramebuffer hFramebuffer);
-
-        /// @copydoc GPURenderingDevice::HoldFramebuffer()
-        void HoldFramebuffer(HFramebuffer hFramebuffer);
+        /// @copydoc GPURenderingDevice::DeleteFramebuffer()
+        void DeleteFramebuffer(HFramebuffer hFramebuffer);
 
         /// @copydoc GPURenderingDevice::AttachFramebufferRenderTarget()
         void AttachFramebufferRenderTarget(HFramebuffer hFramebuffer, unsigned int attachmentIndex, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer);
@@ -347,10 +316,6 @@ namespace GT
 
 
     private:
-
-        /// The mutex for increment and decrementing reference counters.
-        GTLib::Mutex m_referenceCountLock;
-
 
         /// The OpenGL context object.
         OpenGL4Context m_gl;

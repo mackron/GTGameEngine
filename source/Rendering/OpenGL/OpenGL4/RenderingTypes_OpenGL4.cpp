@@ -15,8 +15,7 @@ namespace GT
     // InputLayout_OpenGL4
 
     InputLayout_OpenGL4::InputLayout_OpenGL4(AttributeDesc* const attributes, size_t attributeCount, unsigned int* slotAttributeCounts)
-        : ReferenceCountedObject(),
-          m_attributes(reinterpret_cast<AttributeDesc* const>(malloc(sizeof(AttributeDesc) * attributeCount))),
+        : m_attributes(reinterpret_cast<AttributeDesc* const>(malloc(sizeof(AttributeDesc) * attributeCount))),
           m_attributeCount(attributeCount),
           m_slotAttributeRanges()
     {

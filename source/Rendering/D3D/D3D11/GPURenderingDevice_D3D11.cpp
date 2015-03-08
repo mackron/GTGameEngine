@@ -555,19 +555,11 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::ReleaseRasterizerState(HRasterizerState hState)
+    void GPURenderingDevice_D3D11::DeleteRasterizerState(HRasterizerState hState)
     {
         if (hState != 0)
         {
             reinterpret_cast<ID3D11RasterizerState*>(hState)->Release();
-        }
-    }
-
-    void GPURenderingDevice_D3D11::HoldRasterizerState(HRasterizerState hState)
-    {
-        if (hState != 0)
-        {
-            reinterpret_cast<ID3D11RasterizerState*>(hState)->AddRef();
         }
     }
 
@@ -632,19 +624,11 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::ReleaseDepthStencilState(HDepthStencilState hState)
+    void GPURenderingDevice_D3D11::DeleteDepthStencilState(HDepthStencilState hState)
     {
         if (hState != 0)
         {
             reinterpret_cast<ID3D11DepthStencilState*>(hState)->Release();
-        }
-    }
-
-    void GPURenderingDevice_D3D11::HoldDepthStencilState(HDepthStencilState hState)
-    {
-        if (hState != 0)
-        {
-            reinterpret_cast<ID3D11DepthStencilState*>(hState)->AddRef();
         }
     }
 
@@ -714,19 +698,11 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::ReleaseBlendState(HBlendState hState)
+    void GPURenderingDevice_D3D11::DeleteBlendState(HBlendState hState)
     {
         if (hState != 0)
         {
             reinterpret_cast<ID3D11BlendState*>(hState)->Release();
-        }
-    }
-
-    void GPURenderingDevice_D3D11::HoldBlendState(HBlendState hState)
-    {
-        if (hState != 0)
-        {
-            reinterpret_cast<ID3D11BlendState*>(hState)->AddRef();
         }
     }
 
@@ -853,19 +829,11 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::ReleaseInputLayout(HInputLayout hInputLayout)
+    void GPURenderingDevice_D3D11::DeleteInputLayout(HInputLayout hInputLayout)
     {
         if (hInputLayout != 0)
         {
             reinterpret_cast<ID3D11InputLayout*>(hInputLayout)->Release();
-        }
-    }
-
-    void GPURenderingDevice_D3D11::HoldInputLayout(HInputLayout hInputLayout)
-    {
-        if (hInputLayout != 0)
-        {
-            reinterpret_cast<ID3D11InputLayout*>(hInputLayout)->AddRef();
         }
     }
 
@@ -1031,19 +999,11 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::ReleaseShader(HShader hShader)
+    void GPURenderingDevice_D3D11::DeleteShader(HShader hShader)
     {
         if (hShader != 0)
         {
             reinterpret_cast<ID3D11DeviceChild*>(hShader)->Release();
-        }
-    }
-
-    void GPURenderingDevice_D3D11::HoldShader(HShader hShader)
-    {
-        if (hShader != 0)
-        {
-            reinterpret_cast<ID3D11DeviceChild*>(hShader)->AddRef();
         }
     }
 
@@ -1110,19 +1070,11 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::ReleaseBuffer(HBuffer hBuffer)
+    void GPURenderingDevice_D3D11::DeleteBuffer(HBuffer hBuffer)
     {
         if (hBuffer != 0)
         {
             reinterpret_cast<ID3D11Buffer*>(hBuffer)->Release();
-        }
-    }
-
-    void GPURenderingDevice_D3D11::HoldBuffer(HBuffer hBuffer)
-    {
-        if (hBuffer != 0)
-        {
-            reinterpret_cast<ID3D11Buffer*>(hBuffer)->AddRef();
         }
     }
 
@@ -1291,19 +1243,11 @@ namespace GT
         return 0;
     }
 
-    void GPURenderingDevice_D3D11::ReleaseTexture(HTexture hTexture)   
+    void GPURenderingDevice_D3D11::DeleteTexture(HTexture hTexture)   
     {
         if (hTexture != 0)
         {
             reinterpret_cast<ID3D11Resource*>(hTexture)->Release();
-        }
-    }
-
-    void GPURenderingDevice_D3D11::HoldTexture(HTexture hTexture)
-    {
-        if (hTexture != 0)
-        {
-            reinterpret_cast<ID3D11Resource*>(hTexture)->AddRef();
         }
     }
 
@@ -1440,19 +1384,11 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::ReleaseTextureView(HTextureView hTextureView)
+    void GPURenderingDevice_D3D11::DeleteTextureView(HTextureView hTextureView)
     {
         if (hTextureView != 0)
         {
             reinterpret_cast<ID3D11View*>(hTextureView)->Release();
-        }
-    }
-
-    void GPURenderingDevice_D3D11::HoldTextureView(HTextureView hTextureView)
-    {
-        if (hTextureView != 0)
-        {
-            reinterpret_cast<ID3D11View*>(hTextureView)->AddRef();
         }
     }
 
@@ -1510,19 +1446,11 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::ReleaseSampler(HSampler hSampler)
+    void GPURenderingDevice_D3D11::DeleteSampler(HSampler hSampler)
     {
         if (hSampler != 0)
         {
             reinterpret_cast<ID3D11SamplerState*>(hSampler)->Release();
-        }
-    }
-
-    void GPURenderingDevice_D3D11::HoldSampler(HSampler hSampler)
-    {
-        if (hSampler != 0)
-        {
-            reinterpret_cast<ID3D11SamplerState*>(hSampler)->AddRef();
         }
     }
 
@@ -1536,38 +1464,26 @@ namespace GT
         return reinterpret_cast<HFramebuffer>(new Framebuffer_D3D11());
     }
 
-    void GPURenderingDevice_D3D11::ReleaseFramebuffer(HFramebuffer hFramebuffer)
+    void GPURenderingDevice_D3D11::DeleteFramebuffer(HFramebuffer hFramebuffer)
     {
         auto framebufferD3D = reinterpret_cast<Framebuffer_D3D11*>(hFramebuffer);
         if (framebufferD3D != nullptr)
         {
-            if (framebufferD3D->DecrementReferenceCount() == 0)
+            for (int i = 0; i < GT_MAX_FRAMEBUFFER_RENDER_TARGETS; ++i)
             {
-                for (int i = 0; i < GT_MAX_FRAMEBUFFER_RENDER_TARGETS; ++i)
+                if (framebufferD3D->renderTargets[i] != nullptr)
                 {
-                    if (framebufferD3D->renderTargets[i] != nullptr)
-                    {
-                        framebufferD3D->renderTargets[i]->Release();
-                    }
+                    framebufferD3D->renderTargets[i]->Release();
                 }
-
-                if (framebufferD3D->depthStencilView != nullptr)
-                {
-                    framebufferD3D->depthStencilView->Release();
-                }
-
-
-                delete framebufferD3D;
             }
-        }
-    }
 
-    void GPURenderingDevice_D3D11::HoldFramebuffer(HFramebuffer hFramebuffer)
-    {
-        auto framebufferD3D = reinterpret_cast<Framebuffer_D3D11*>(hFramebuffer);
-        if (framebufferD3D != nullptr)
-        {
-            framebufferD3D->IncrementReferenceCount();
+            if (framebufferD3D->depthStencilView != nullptr)
+            {
+                framebufferD3D->depthStencilView->Release();
+            }
+
+
+            delete framebufferD3D;
         }
     }
 

@@ -91,7 +91,6 @@ namespace GT
 
     GPURenderingDevice_OpenGL4::GPURenderingDevice_OpenGL4(const GPURenderingDeviceInfo &info)
         : GPURenderingDevice(info),
-          m_referenceCountLock(),
           m_gl(),
 #if defined(GT_PLATFORM_WINDOWS)
           m_currentHWND(NULL),
@@ -968,34 +967,12 @@ namespace GT
         return reinterpret_cast<HRasterizerState>(new RasterizerState_OpenGL4(desc));
     }
 
-    void GPURenderingDevice_OpenGL4::ReleaseRasterizerState(HRasterizerState hState)
+    void GPURenderingDevice_OpenGL4::DeleteRasterizerState(HRasterizerState hState)
     {
         auto stateGL = reinterpret_cast<RasterizerState_OpenGL4*>(hState);
         if (stateGL != nullptr)
         {
-            m_referenceCountLock.Lock();
-            {
-                assert(stateGL->GetReferenceCount() > 0);
-
-                if (stateGL->DecrementReferenceCount() == 0)
-                {
-                    delete stateGL;
-                }
-            }
-            m_referenceCountLock.Unlock();
-        }
-    }
-
-    void GPURenderingDevice_OpenGL4::HoldRasterizerState(HRasterizerState hState)
-    {
-        auto stateGL = reinterpret_cast<RasterizerState_OpenGL4*>(hState);
-        if (stateGL != nullptr)
-        {
-            m_referenceCountLock.Lock();
-            {
-                stateGL->IncrementReferenceCount();
-            }
-            m_referenceCountLock.Unlock();
+            delete stateGL;
         }
     }
 
@@ -1005,34 +982,12 @@ namespace GT
         return reinterpret_cast<size_t>(new DepthStencilState_OpenGL4(desc));
     }
 
-    void GPURenderingDevice_OpenGL4::ReleaseDepthStencilState(HDepthStencilState hState)
+    void GPURenderingDevice_OpenGL4::DeleteDepthStencilState(HDepthStencilState hState)
     {
         auto stateGL = reinterpret_cast<DepthStencilState_OpenGL4*>(hState);
         if (stateGL != nullptr)
         {
-            m_referenceCountLock.Lock();
-            {
-                assert(stateGL->GetReferenceCount() > 0);
-
-                if (stateGL->DecrementReferenceCount() == 0)
-                {
-                    delete stateGL;
-                }
-            }
-            m_referenceCountLock.Unlock();
-        }
-    }
-
-    void GPURenderingDevice_OpenGL4::HoldDepthStencilState(HDepthStencilState hState)
-    {
-        auto stateGL = reinterpret_cast<DepthStencilState_OpenGL4*>(hState);
-        if (stateGL != nullptr)
-        {
-            m_referenceCountLock.Lock();
-            {
-                stateGL->IncrementReferenceCount();
-            }
-            m_referenceCountLock.Unlock();
+            delete stateGL;
         }
     }
 
@@ -1042,34 +997,12 @@ namespace GT
         return reinterpret_cast<size_t>(new BlendState_OpenGL4(desc));
     }
 
-    void GPURenderingDevice_OpenGL4::ReleaseBlendState(HBlendState hState)
+    void GPURenderingDevice_OpenGL4::DeleteBlendState(HBlendState hState)
     {
         auto stateGL = reinterpret_cast<BlendState_OpenGL4*>(hState);
         if (stateGL != nullptr)
         {
-            m_referenceCountLock.Lock();
-            {
-                assert(stateGL->GetReferenceCount() > 0);
-
-                if (stateGL->DecrementReferenceCount() == 0)
-                {
-                    delete stateGL;
-                }
-            }
-            m_referenceCountLock.Unlock();
-        }
-    }
-
-    void GPURenderingDevice_OpenGL4::HoldBlendState(HBlendState hState)
-    {
-        auto stateGL = reinterpret_cast<BlendState_OpenGL4*>(hState);
-        if (stateGL != nullptr)
-        {
-            m_referenceCountLock.Lock();
-            {
-                stateGL->IncrementReferenceCount();
-            }
-            m_referenceCountLock.Unlock();
+            delete stateGL;
         }
     }
 
@@ -1149,39 +1082,17 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_OpenGL4::ReleaseInputLayout(HInputLayout hInputLayout)
+    void GPURenderingDevice_OpenGL4::DeleteInputLayout(HInputLayout hInputLayout)
     {
         auto inputLayoutGL = reinterpret_cast<InputLayout_OpenGL4*>(hInputLayout);
         if (inputLayoutGL != nullptr)
         {
-            m_referenceCountLock.Lock();
+            if (m_currentInputLayout == hInputLayout)
             {
-                assert(inputLayoutGL->GetReferenceCount() > 0);
-
-                if (inputLayoutGL->DecrementReferenceCount() == 0)
-                {
-                    if (m_currentInputLayout == hInputLayout)
-                    {
-                        this->IASetInputLayout(0);
-                    }
-
-                    delete inputLayoutGL;
-                }
+                this->IASetInputLayout(0);
             }
-            m_referenceCountLock.Unlock();
-        }
-    }
 
-    void GPURenderingDevice_OpenGL4::HoldInputLayout(HInputLayout hInputLayout)
-    {
-        auto inputLayoutGL = reinterpret_cast<InputLayout_OpenGL4*>(hInputLayout);
-        if (inputLayoutGL != nullptr)
-        {
-            m_referenceCountLock.Lock();
-            {
-                inputLayoutGL->IncrementReferenceCount();
-            }
-            m_referenceCountLock.Unlock();
+            delete inputLayoutGL;
         }
     }
 
@@ -1253,37 +1164,15 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_OpenGL4::ReleaseShader(HShader hShader)
+    void GPURenderingDevice_OpenGL4::DeleteShader(HShader hShader)
     {
         auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
         if (shaderGL != nullptr)
         {
-            m_referenceCountLock.Lock();
-            {
-                assert(shaderGL->GetReferenceCount() > 0);
+            CheckContextIsCurrent(m_gl, m_currentDC);
 
-                CheckContextIsCurrent(m_gl, m_currentDC);
-
-                if (shaderGL->DecrementReferenceCount() == 0)
-                {
-                    m_gl.DeleteProgram(shaderGL->GetOpenGLObject());
-                    delete shaderGL;
-                }
-            }
-            m_referenceCountLock.Unlock();
-        }
-    }
-
-    void GPURenderingDevice_OpenGL4::HoldShader(HShader hShader)
-    {
-        auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hShader);
-        if (shaderGL != nullptr)
-        {
-            m_referenceCountLock.Lock();
-            {
-                shaderGL->IncrementReferenceCount();
-            }
-            m_referenceCountLock.Unlock();
+            m_gl.DeleteProgram(shaderGL->GetOpenGLObject());
+            delete shaderGL;
         }
     }
 
@@ -1369,39 +1258,17 @@ namespace GT
         return reinterpret_cast<HBuffer>(new Buffer_OpenGL4(objectGL, flagsGL, sizeInBytes));
     }
 
-    void GPURenderingDevice_OpenGL4::ReleaseBuffer(HBuffer hBuffer)
+    void GPURenderingDevice_OpenGL4::DeleteBuffer(HBuffer hBuffer)
     {
         auto bufferGL = reinterpret_cast<Buffer_OpenGL4*>(hBuffer);
         if (bufferGL != nullptr)
         {
-            m_referenceCountLock.Lock();
-            {
-                assert(bufferGL->GetReferenceCount() > 0);
+            CheckContextIsCurrent(m_gl, m_currentDC);
 
-                CheckContextIsCurrent(m_gl, m_currentDC);
+            GLuint objectGL = bufferGL->GetOpenGLObject();
+            m_gl.DeleteBuffers(1, &objectGL);
 
-                if (bufferGL->DecrementReferenceCount() == 0)
-                {
-                    GLuint objectGL = bufferGL->GetOpenGLObject();
-                    m_gl.DeleteBuffers(1, &objectGL);
-
-                    delete bufferGL;
-                }
-            }
-            m_referenceCountLock.Unlock();
-        }
-    }
-
-    void GPURenderingDevice_OpenGL4::HoldBuffer(HBuffer hBuffer)
-    {
-        auto bufferGL = reinterpret_cast<Buffer_OpenGL4*>(hBuffer);
-        if (bufferGL != nullptr)
-        {
-            m_referenceCountLock.Lock();
-            {
-                bufferGL->IncrementReferenceCount();
-            }
-            m_referenceCountLock.Unlock();
+            delete bufferGL;
         }
     }
 
@@ -1511,39 +1378,17 @@ namespace GT
         return reinterpret_cast<HTexture>(new Texture_OpenGL4(objectGL, desc));
     }
 
-    void GPURenderingDevice_OpenGL4::ReleaseTexture(HTexture hTexture)   
+    void GPURenderingDevice_OpenGL4::DeleteTexture(HTexture hTexture)   
     {
         auto textureGL = reinterpret_cast<Texture_OpenGL4*>(hTexture);
         if (textureGL != nullptr)
         {
-            m_referenceCountLock.Lock();
-            {
-                assert(textureGL->GetReferenceCount() > 0);
+            CheckContextIsCurrent(m_gl, m_currentDC);
 
-                CheckContextIsCurrent(m_gl, m_currentDC);
+            GLuint objectGL = textureGL->GetOpenGLObject();
+            m_gl.DeleteTextures(1, &objectGL);
 
-                if (textureGL->DecrementReferenceCount() == 0)
-                {
-                    GLuint objectGL = textureGL->GetOpenGLObject();
-                    m_gl.DeleteTextures(1, &objectGL);
-
-                    delete textureGL;
-                }
-            }
-            m_referenceCountLock.Unlock();
-        }
-    }
-
-    void GPURenderingDevice_OpenGL4::HoldTexture(HTexture hTexture)
-    {
-        auto textureGL = reinterpret_cast<TextureView_OpenGL4*>(hTexture);
-        if (textureGL != nullptr)
-        {
-            m_referenceCountLock.Lock();
-            {
-                textureGL->IncrementReferenceCount();
-            }
-            m_referenceCountLock.Unlock();
+            delete textureGL;
         }
     }
 
@@ -1647,39 +1492,17 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_OpenGL4::ReleaseTextureView(HTextureView hTextureView)
+    void GPURenderingDevice_OpenGL4::DeleteTextureView(HTextureView hTextureView)
     {
         auto textureGL = reinterpret_cast<Texture_OpenGL4*>(hTextureView);
         if (textureGL != nullptr)
         {
-            m_referenceCountLock.Lock();
-            {
-                assert(textureGL->GetReferenceCount() > 0);
+            CheckContextIsCurrent(m_gl, m_currentDC);
 
-                CheckContextIsCurrent(m_gl, m_currentDC);
+            GLuint objectGL = textureGL->GetOpenGLObject();
+            m_gl.DeleteTextures(1, &objectGL);
 
-                if (textureGL->DecrementReferenceCount() == 0)
-                {
-                    GLuint objectGL = textureGL->GetOpenGLObject();
-                    m_gl.DeleteTextures(1, &objectGL);
-
-                    delete textureGL;
-                }
-            }
-            m_referenceCountLock.Unlock();
-        }
-    }
-
-    void GPURenderingDevice_OpenGL4::HoldTextureView(HTextureView hTextureView)
-    {
-        auto textureGL = reinterpret_cast<TextureView_OpenGL4*>(hTextureView);
-        if (textureGL != nullptr)
-        {
-            m_referenceCountLock.Lock();
-            {
-                textureGL->IncrementReferenceCount();
-            }
-            m_referenceCountLock.Unlock();
+            delete textureGL;
         }
     }
 
@@ -1758,39 +1581,17 @@ namespace GT
         return reinterpret_cast<HSampler>(new Sampler_OpenGL4(objectGL));
     }
 
-    void GPURenderingDevice_OpenGL4::ReleaseSampler(HSampler hSampler)
+    void GPURenderingDevice_OpenGL4::DeleteSampler(HSampler hSampler)
     {
         auto samplerGL = reinterpret_cast<Sampler_OpenGL4*>(hSampler);
         if (samplerGL != nullptr)
         {
-            m_referenceCountLock.Lock();
-            {
-                assert(samplerGL->GetReferenceCount() > 0);
+            CheckContextIsCurrent(m_gl, m_currentDC);
 
-                CheckContextIsCurrent(m_gl, m_currentDC);
+            GLuint objectGL = samplerGL->GetOpenGLObject();
+            m_gl.DeleteSamplers(1, &objectGL);
 
-                if (samplerGL->DecrementReferenceCount() == 0)
-                {
-                    GLuint objectGL = samplerGL->GetOpenGLObject();
-                    m_gl.DeleteSamplers(1, &objectGL);
-
-                    delete samplerGL;
-                }
-            }
-            m_referenceCountLock.Unlock();
-        }
-    }
-
-    void GPURenderingDevice_OpenGL4::HoldSampler(HSampler hSampler)
-    {
-        auto samplerGL = reinterpret_cast<Sampler_OpenGL4*>(hSampler);
-        if (samplerGL != nullptr)
-        {
-            m_referenceCountLock.Lock();
-            {
-                samplerGL->IncrementReferenceCount();
-            }
-            m_referenceCountLock.Unlock();
+            delete samplerGL;
         }
     }
 
@@ -1806,39 +1607,17 @@ namespace GT
         return reinterpret_cast<HFramebuffer>(new Framebuffer_OpenGL4(objectGL));
     }
 
-    void GPURenderingDevice_OpenGL4::ReleaseFramebuffer(HFramebuffer hFramebuffer)
+    void GPURenderingDevice_OpenGL4::DeleteFramebuffer(HFramebuffer hFramebuffer)
     {
         auto framebufferGL = reinterpret_cast<Sampler_OpenGL4*>(hFramebuffer);
         if (framebufferGL != nullptr)
         {
-            m_referenceCountLock.Lock();
-            {
-                assert(framebufferGL->GetReferenceCount() > 0);
+            CheckContextIsCurrent(m_gl, m_currentDC);
 
-                CheckContextIsCurrent(m_gl, m_currentDC);
+            GLuint objectGL = framebufferGL->GetOpenGLObject();
+            m_gl.DeleteFramebuffers(1, &objectGL);
 
-                if (framebufferGL->DecrementReferenceCount() == 0)
-                {
-                    GLuint objectGL = framebufferGL->GetOpenGLObject();
-                    m_gl.DeleteFramebuffers(1, &objectGL);
-
-                    delete framebufferGL;
-                }
-            }
-            m_referenceCountLock.Unlock();
-        }
-    }
-
-    void GPURenderingDevice_OpenGL4::HoldFramebuffer(HFramebuffer hFramebuffer)
-    {
-        auto framebufferGL = reinterpret_cast<Framebuffer_OpenGL4*>(hFramebuffer);
-        if (framebufferGL != nullptr)
-        {
-            m_referenceCountLock.Lock();
-            {
-                framebufferGL->IncrementReferenceCount();
-            }
-            m_referenceCountLock.Unlock();
+            delete framebufferGL;
         }
     }
 

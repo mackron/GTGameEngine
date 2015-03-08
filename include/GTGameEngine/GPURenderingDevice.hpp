@@ -294,24 +294,10 @@ namespace GT
         /// @return A handle to the new rasterizer state object, or 0 if there was an error.
         virtual HRasterizerState CreateRasterizerState(const GPURasterizerStateDesc &desc) = 0;
 
-        /// Decrements the internal reference counter of the given rasterizer state and deletes the object if it hits 0.
+        /// Deletes the given reasterizer state object.
         ///
-        /// @param hState [in] A handle to the rasterizer state object to release.
-        ///
-        /// @remarks
-        ///     This is thread safe.
-        ///     @par
-        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
-        ///     synchronization.
-        virtual void ReleaseRasterizerState(HRasterizerState hState) = 0;
-
-        /// Increments the internal reference counter of the given rasterizer state object.
-        ///
-        /// @param hState [in] A pointer to the rasterizer state object to hold.
-        ///
-        /// @remarks
-        ///     This is thread safe.
-        virtual void HoldRasterizerState(HRasterizerState hState) = 0;
+        /// @param hState [in] A handle to the rasterizer state object to delete.
+        virtual void DeleteRasterizerState(HRasterizerState hState) = 0;
 
 
         /// Creates a depth/stencil state object.
@@ -321,24 +307,10 @@ namespace GT
         /// @return A handle to the new depth/stencil state object, or 0 if there was an error.
         virtual HDepthStencilState CreateDepthStencilState(const GPUDepthStencilStateDesc &desc) = 0;
 
-        /// Decrements the internal reference counter fo the given depth/stencil state and deletes the object if it hits 0.
+        /// Deletes the given depth/stencil state object.
         ///
-        /// @param hState [in] A handle to the depth/stencil state object to release.
-        ///
-        /// @remarks
-        ///     This is thread safe.
-        ///     @par
-        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
-        ///     synchronization.
-        virtual void ReleaseDepthStencilState(HDepthStencilState hState) = 0;
-
-        /// Increments the internal reference counter of the given depth/stencil state object.
-        ///
-        /// @param hState [in] A handle to the depth/stencil state object to hold.
-        ///
-        /// @remarks
-        ///     This is thread safe.
-        virtual void HoldDepthStencilState(HDepthStencilState hState) = 0;
+        /// @param hState [in] A handle to the depth/stencil state object to delete.
+        virtual void DeleteDepthStencilState(HDepthStencilState hState) = 0;
 
 
         /// Creates a blend state object.
@@ -348,24 +320,10 @@ namespace GT
         /// @return A handle to the new blend state object, or 0 if there was an error.
         virtual HBlendState CreateBlendState(const BlendStateDesc &desc) = 0;
 
-        /// Decrements the internal reference counter fo the given blend state and deletes the object if it hits 0.
+        /// Deletes the given blend state object.
         ///
-        /// @param hState [in] A handle to the state object to release.
-        ///
-        /// @remarks
-        ///     This is thread safe.
-        ///     @par
-        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
-        ///     synchronization.
-        virtual void ReleaseBlendState(HBlendState hState) = 0;
-
-        /// Increments the internal reference counter of the given blend state object.
-        ///
-        /// @param hState [in] A handle to the state object to hold.
-        ///
-        /// @remarks
-        ///     This is thread safe.
-        virtual void HoldBlendState(HBlendState hState) = 0;
+        /// @param hState [in] A handle to the state object to delete.
+        virtual void DeleteBlendState(HBlendState hState) = 0;
 
 
         ////////////////////////////////////////////
@@ -380,24 +338,10 @@ namespace GT
         /// @return A handle to the new input layout object.
         virtual HInputLayout CreateInputLayout(HShader hVertexShader, const GPUInputLayoutAttribDesc* attribDesc, size_t attribDescCount) = 0;
 
-        /// Decrements the internal reference counter fo the given depth/stencil state and deletes the object if it hits 0.
+        /// Deletes the given input layout object.
         ///
-        /// @param hInputLayout [in] A handle to the vertex input layout object to release.
-        ///
-        /// @remarks
-        ///     This is thread safe.
-        ///     @par
-        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
-        ///     synchronization.
-        virtual void ReleaseInputLayout(HInputLayout hInputLayout) = 0;
-
-        /// Increments the internal reference counter of the given input layout object.
-        ///
-        /// @param hInputLayout [in] A handle to the object to hold.
-        ///
-        /// @remarks
-        ///     This is thread safe.
-        virtual void HoldInputLayout(HInputLayout hInputLayout) = 0;
+        /// @param hInputLayout [in] A handle to the vertex input layout object to delete.
+        virtual void DeleteInputLayout(HInputLayout hInputLayout) = 0;
 
 
         ////////////////////////////////////////////
@@ -443,15 +387,10 @@ namespace GT
         /// @param shaderType     [in] The type of shader being created (vertex, fragment, etc.)
         virtual HShader CreateShader(const void* shaderData, size_t shaderDataSize, ShaderType shaderType) = 0;
 
-        /// Decrements the reference counter of the given shader and deletes it if the counter hits 0.
+        /// Deletes the given shader.
         ///
-        /// @param hShader [in] A handle to the shader to release.
-        virtual void ReleaseShader(HShader hShader) = 0;
-
-        /// Increments the reference counter of the given shader.
-        ///
-        /// @param hShader [in] A handle to the shader whose reference counter should be incremented.
-        virtual void HoldShader(HShader hShader) = 0;
+        /// @param hShader [in] A handle to the shader to delete.
+        virtual void DeleteShader(HShader hShader) = 0;
 
 
         ////////////////////////////////////////////
@@ -483,24 +422,10 @@ namespace GT
         ///     A staging buffer cannot be used as an input nor an output for a pipeline stage. 
         virtual HBuffer CreateBuffer(GPUBufferType type, GPUBufferUsage usage, GPUBufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data) = 0;
 
-        /// Reduces the reference count of the given buffer object and deletes the internal reference when it hits 0.
+        /// Deletes the given buffer object.
         ///
         /// @param hBuffer [in] A handle to the buffer to delete.
-        ///
-        /// @remarks
-        ///     This is thread safe.
-        ///     @par
-        ///     It is possible that the internal API-specific data structure may not be deleted until the next flush or buffer swap in the interest of
-        ///     synchronization.
-        virtual void ReleaseBuffer(HBuffer hBuffer) = 0;
-        
-        /// Increments the internal reference counter of the given buffer object.
-        ///
-        /// @param hBuffer [in] A handle to the buffer object to hold.
-        ///
-        /// @remarks
-        ///     This is thread safe.
-        virtual void HoldBuffer(HBuffer hBuffer) = 0;
+        virtual void DeleteBuffer(HBuffer hBuffer) = 0;
 
 
         /// Maps the given buffer's data for use on the CPU side.
@@ -559,15 +484,10 @@ namespace GT
         /// @return A handle to the texture, of 0 if there was an error.
         virtual HTexture CreateTexture(const TextureDesc &desc) = 0;
 
-        /// Decrements the reference counter of the given texture and deletes it if the counter hits 0.
+        /// Deletes the given texture.
         ///
-        /// @param hTexture [in] A handle to the texture to release.
-        virtual void ReleaseTexture(HTexture hTexture) = 0;
-
-        /// Increments the reference counter of the given texture.
-        ///
-        /// @param hTexture [in] A handle to the texture to hold.
-        virtual void HoldTexture(HTexture hTexture) = 0;
+        /// @param hTexture [in] A handle to the texture to delete.
+        virtual void DeleteTexture(HTexture hTexture) = 0;
 
         /// Updates the data of the given texture.
         ///
@@ -599,15 +519,10 @@ namespace GT
         ///     If the texture type is not an array format, numLayers should never be greater than 1.
         virtual HTextureView CreateTextureView(HTexture hOriginalTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers) = 0;
         
-        /// Decrements the reference counter of the given texture view and deletes it if the counter hits 0.
+        /// Deletes the given texture view object.
         ///
-        /// @param hTextureView [in] A handle to the texture view object to release.
-        virtual void ReleaseTextureView(HTextureView hTextureView) = 0;
-
-        /// Increments the reference counter of the given texture view.
-        ///
-        /// @param hTextureView [in] A handle to the texture view object to hold.
-        virtual void HoldTextureView(HTextureView hTextureView) = 0;
+        /// @param hTextureView [in] A handle to the texture view object to delete.
+        virtual void DeleteTextureView(HTextureView hTextureView) = 0;
 
 
 
@@ -619,15 +534,10 @@ namespace GT
         /// @return A handle to the new sampler object, or 0 if an error occurs.
         virtual HSampler CreateSampler(const SamplerDesc &desc) = 0;
 
-        /// Decrements the reference counter of the given sampler object and deletes it if the counter hits 0.
+        /// Deletes the given sampler object.
         ///
-        /// @param hSampler [in] A handle to the sampler object to release.
-        virtual void ReleaseSampler(HSampler hSampler) = 0;
-
-        /// Increments the reference counter of the given sampler object.
-        ///
-        /// @param hSampler [in] A handle to the sampler object to hold.
-        virtual void HoldSampler(HSampler hSampler) = 0;
+        /// @param hSampler [in] A handle to the sampler object to delete.
+        virtual void DeleteSampler(HSampler hSampler) = 0;
 
 
         ///////////////////////////////////////////
@@ -638,17 +548,26 @@ namespace GT
         /// @return A handle to the new framebuffer object.
         virtual HFramebuffer CreateFramebuffer() = 0;
 
-        /// Decrements the reference counter of the given framebuffer object and deletes it if the counter hits 0.
+        /// Deletes the given framebuffer object.
         ///
-        /// @param hFramebuffer [in] A handle to the framebuffer to release.
-        virtual void ReleaseFramebuffer(HFramebuffer hFramebuffer) = 0;
+        /// @param hFramebuffer [in] A handle to the framebuffer to delete.
+        virtual void DeleteFramebuffer(HFramebuffer hFramebuffer) = 0;
 
-        /// Increments the reference counter of the given framebuffer object.
+        /// Attaches a texture as a render target to the given framebuffer.
         ///
-        /// @param hFramebuffer [in] A handle to the framebuffer whose reference counter is to be incremented.
-        virtual void HoldFramebuffer(HFramebuffer hFramebuffer) = 0;
-
+        /// @param hFramebuffer    [in] A handle to the framebuffer to attach the render target to.
+        /// @param attachmentIndex [in] The index of the attachment point to attach the render target to.
+        /// @param hTexture        [in] A handle to the texture to use as the render target.
+        /// @param mipmapLevel     [in] The mipmap in the texture to draw to.
+        /// @param arrayLayer      [in] The index of the array layer to draw to for array or 3D textures.
         virtual void AttachFramebufferRenderTarget(HFramebuffer hFramebuffer, unsigned int attachmentIndex, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer) = 0;
+
+        /// Attaches a depth/stencil target to the given framebuffer.
+        ///
+        /// @param hFramebuffer [in] A handle to the framebuffer to attach the depth/stencil target to.
+        /// @param hTexture     [in] A handle to the texture to use as the depth/stencil target.
+        /// @param mipmapLevel  [in] the mipmap in the texture to draw/read.
+        /// @param arrayLayer   [in] the index of the array layer to draw to for array or 3D textures.
         virtual void AttachFramebufferDepthStencilTarget(HFramebuffer hFramebuffer, HTexture hTexture, unsigned int mipmapLevel, unsigned int arrayLayer) = 0;
 
 
