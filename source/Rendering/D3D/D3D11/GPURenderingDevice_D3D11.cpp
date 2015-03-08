@@ -84,6 +84,7 @@ namespace GT
                 if (_D3D11CreateDevice != nullptr)
                 {
                     UINT flags = 0;
+                    flags |= D3D11_CREATE_DEVICE_SINGLETHREADED;
 #ifdef _DEBUG
                     flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
