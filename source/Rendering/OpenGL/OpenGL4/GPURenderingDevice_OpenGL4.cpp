@@ -19,8 +19,6 @@
 #include <GTLib/IO/cstdio.hpp>
 #include <GTLib/ImageUtils.hpp>
 
-#define GL_TEXTURE_MAX_ANISOTROPY_EXT   0x84FE
-
 namespace GT
 {
 #if _DEBUG

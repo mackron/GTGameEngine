@@ -24,6 +24,8 @@ typedef BOOL  (* PFNWGLSHARELISTSPROC)          (HGLRC hglrc1, HGLRC hglrc2);
 typedef HDC   (* PFNWGLGETCURRENTDCPROC)        ();
 #endif
 
+#define GL_TEXTURE_MAX_ANISOTROPY_EXT                     0x84FE
+
 #define GL_COMPRESSED_RGB_S3TC_DXT1_EXT                   0x83F0
 #define GL_COMPRESSED_RGBA_S3TC_DXT1_EXT                  0x83F1
 #define GL_COMPRESSED_RGBA_S3TC_DXT3_EXT                  0x83F2
