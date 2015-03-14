@@ -5,6 +5,8 @@
 
 #include <GTLib/ResultCodes.hpp>
 #include "HardwarePlatform.hpp"
+#include "FileSystem.hpp"
+#include "AssetLibrary.hpp"
 
 namespace GT
 {
@@ -93,6 +95,17 @@ namespace GT
 
 
 
+        /// Retrieves a reference to the file system.
+        ///
+        /// @return A reference to the file system.
+        FileSystem & GetFileSystem();
+
+        /// Retrieves a reference to the asset library.
+        ///
+        /// @return A reference to the asset library.
+        AssetLibrary & GetAssetLibrary();
+
+
     private:
 
 
@@ -105,6 +118,11 @@ namespace GT
         /// and specify which ones should be used for particular tasks.
         HardwarePlatform m_hardwarePlatform;
 
+        /// The virtual file system for handling file reading and writing.
+        FileSystem m_fileSystem;
+
+        /// The asset library for managing assets.
+        AssetLibrary m_assetLibrary;
 
 
     private:    // No copying.

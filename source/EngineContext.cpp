@@ -6,7 +6,9 @@
 namespace GT
 {
     EngineContext::EngineContext()
-        : m_hardwarePlatform()
+        : m_hardwarePlatform(),
+          m_fileSystem(),
+          m_assetLibrary(m_fileSystem)
     {
     }
 
@@ -26,7 +28,21 @@ namespace GT
             
         // Hardware platform.
         result = m_hardwarePlatform.Startup();
-        if (Failed(result))
+        if (GT::Failed(result))
+        {
+            return result;
+        }
+
+        // File manager.
+        result = m_fileSystem.Startup();
+        if (GT::Failed(result))
+        {
+            return result;
+        }
+
+        // Asset library.
+        result = m_assetLibrary.Startup();
+        if (GT::Failed(result))
         {
             return result;
         }
@@ -98,6 +114,16 @@ namespace GT
     }
 
 
+
+    FileSystem & EngineContext::GetFileSystem()
+    {
+        return m_fileSystem;
+    }
+
+    AssetLibrary & EngineContext::GetAssetLibrary()
+    {
+        return m_assetLibrary;
+    }
 
 
     //////////////////////////////////////////////////////////

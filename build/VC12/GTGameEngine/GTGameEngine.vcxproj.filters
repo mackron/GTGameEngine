@@ -95,6 +95,21 @@
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL4\RenderingTypes_OpenGL4.cpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL4</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\FileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Asset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\AssetLibrary.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\AssetAllocator.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ImageAsset.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -159,6 +174,24 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL4\RenderingTypes_OpenGL4.hpp">
       <Filter>Source Files\Rendering\OpenGL\OpenGL4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\FileSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Asset.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\AssetLibrary.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\AssetTypes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\AssetAllocator.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\ImageAsset.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

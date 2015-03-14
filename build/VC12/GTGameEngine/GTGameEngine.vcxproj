@@ -19,8 +19,12 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\source\Asset.cpp" />
+    <ClCompile Include="..\..\..\source\AssetAllocator.cpp" />
+    <ClCompile Include="..\..\..\source\AssetLibrary.cpp" />
     <ClCompile Include="..\..\..\source\EngineContext.cpp" />
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c" />
+    <ClCompile Include="..\..\..\source\FileSystem.cpp" />
     <ClCompile Include="..\..\..\source\GameContext.cpp" />
     <ClCompile Include="..\..\..\source\GameDisplay.cpp" />
     <ClCompile Include="..\..\..\source\GameDisplayRenderingCallback.cpp" />
@@ -32,14 +36,20 @@
     <ClCompile Include="..\..\..\source\HardwarePlatform_CPU.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_GPU.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_Input.cpp" />
+    <ClCompile Include="..\..\..\source\ImageAsset.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL4\GPURenderingDevice_OpenGL4.cpp" />
     <ClCompile Include="..\..\..\source\Rendering\OpenGL\OpenGL4\RenderingTypes_OpenGL4.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Asset.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\AssetAllocator.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\AssetLibrary.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\AssetTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Config.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\FileSystem.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameContext.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplay.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplayRenderingCallback.hpp" />
@@ -52,6 +62,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_CPU.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_GPU.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Input.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\ImageAsset.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\OpenGL\OpenGL.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\RenderingTypes.hpp" />
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
