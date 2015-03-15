@@ -109,9 +109,21 @@ namespace GT
         /// Closes the given file.
         ///
         /// @param hFile [in] A handle to the file to close.
+        ///
+        /// @remarks
+        ///     This will unmap the file if it is already mapped.
         void CloseFile(HFile hFile);
 
-        /// Reads the given number of bytes from the file.
+        /// Reads data from the given file and increments the read/write pointer.
+        ///
+        /// @param hFile       [in]  A handle to the file to read the data from.
+        /// @param bytesToRead [in]  The number of bytes to read.
+        /// @param dataOut     [out] A pointer to the buffer that will receive the file data.
+        ///
+        /// @return The number of bytes actually read.
+        ///
+        /// @remarks
+        ///     If the return value is less than \c bytesToRead than it can be assumed the end of the file has been reached.
         size_t ReadFile(HFile hFile, size_t bytesToRead, void* dataOut);
 
         /// Writes data to the given file.
@@ -123,10 +135,24 @@ namespace GT
         /// @return The number of bytes that were written.
         size_t WriteFile(HFile hFile, size_t bytesToWrite, const void* data);
 
-        /// Seeks the file.
+        /// Seeks the read/write pointer of the given file by the given number of bytes.
+        ///
+        /// @param hFile       [in] A handle to the file to seek.
+        /// @param bytesToSeek [in] The number of bytes to seek.
+        /// @param origin      [in] Where to seek from (current position, beginning of the file, end of the file).
+        ///
+        /// @return The number of bytes seeked.
         int64_t SeekFile(HFile hFile, int64_t bytesToSeek, FileSeekOrigin origin);
 
-        /// Retrieves the position of the read/write pointer.
+        /// Retrieves the position of the read/write pointer of the given file.
+        ///
+        /// @param hFile [in] A handle to the file whose read/write pointer is being retrieved.
+        ///
+        /// @return The position of the read/write pointer.
+        ///
+        /// @remarks
+        ///     If the file is at the end of the file, this should return the same value as GetSize(). Use this assertion to check if the file's read/write pointer is
+        ///     at the end of the file.
         int64_t TellFile(HFile hFile);
         
         /// Retrieves the size of the given file.
@@ -136,13 +162,21 @@ namespace GT
         /// @return The size in bytes of the file.
         int64_t GetFileSize(HFile hFile);
 
-        /// Maps the given file.
+        /// Maps the file.
+        ///
+        /// @param hFile [in] A handle to the file to map.
+        ///
+        /// @return A pointer to the buffer that represents the contents of the file.
         ///
         /// @remarks
-        ///     Not all files can support mapping, in which case this will return null.
+        ///     If the file does not support mapping, this will return null.
+        ///     @par
+        ///     The file can only be mapped if it was opened in read mode.
         void* MapFile(HFile hFile, size_t length, int64_t offset);
 
         /// Unmaps the given file.
+        ///
+        /// @param hFile [in] A handle to the file to map.
         ///
         /// @remarks
         ///     The file will be automatically unmapped when CloseFile is called.

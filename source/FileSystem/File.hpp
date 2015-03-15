@@ -39,7 +39,7 @@ namespace GT
         /// @param bytesToRead [in]  The number of bytes to read.
         /// @param dataOut     [out] A pointer to the buffer that will receive the file data.
         ///
-        /// @return The number of bytes actually written.
+        /// @return The number of bytes actually read.
         ///
         /// @remarks
         ///     If the return value is less than \c bytesToRead than it can be assumed the end of the file has been reached.
