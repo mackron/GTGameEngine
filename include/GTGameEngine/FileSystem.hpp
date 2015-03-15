@@ -59,6 +59,13 @@ namespace GT
         ///     The base directory can be a URL for a supported protocol (such as FTP).
         ResultCode AddBaseDirectory(const char* absolutePath);
 
+        /// @copydoc AddBaseDirectory()
+        ///
+        /// @remarks
+        ///     A low-priority base directory will always be checked after the other base directories. This should be used for file systems with
+        ///     slow access such as remote servers.
+        ResultCode AddLowPriorityBaseDirectory(const char* absolutePath);
+
         /// Removes a base directory by it's absolute path.
         ///
         /// @param absolutePath [in] The absolute path of the base directory to remove.
@@ -152,6 +159,9 @@ namespace GT
 
         /// The list of base directories.
         GTLib::Vector<GTLib::String> m_baseDirectories;
+
+        /// The list of low-priority base directories.
+        GTLib::Vector<GTLib::String> m_baseDirectoriesLowPriority;
     };
 }
 

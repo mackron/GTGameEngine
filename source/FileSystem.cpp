@@ -18,7 +18,8 @@ namespace GT
     // FileSystem
 
     FileSystem::FileSystem()
-        : m_baseDirectories(4)
+        : m_baseDirectories(4),
+          m_baseDirectoriesLowPriority(1)
     {
     }
 
@@ -44,8 +45,15 @@ namespace GT
         return 0;
     }
 
+    ResultCode FileSystem::AddLowPriorityBaseDirectory(const char* absolutePath)
+    {
+        m_baseDirectoriesLowPriority.PushBack(absolutePath);
+        return 0;
+    }
+
     void FileSystem::RemoveBaseDirectory(const char* absolutePath)
     {
+        // Check high-priority first.
         for (size_t iBaseDirectory = 0; iBaseDirectory < m_baseDirectories.GetCount(); ++iBaseDirectory)
         {
             if (m_baseDirectories[iBaseDirectory] == absolutePath)
@@ -54,11 +62,22 @@ namespace GT
                 break;
             }
         }
+
+        // Low-priority.
+        for (size_t iBaseDirectory = 0; iBaseDirectory < m_baseDirectoriesLowPriority.GetCount(); ++iBaseDirectory)
+        {
+            if (m_baseDirectoriesLowPriority[iBaseDirectory] == absolutePath)
+            {
+                m_baseDirectoriesLowPriority.Remove(iBaseDirectory);
+                break;
+            }
+        }
     }
 
     void FileSystem::RemoveAllBaseDirectories()
     {
         m_baseDirectories.Clear();
+        m_baseDirectoriesLowPriority.Clear();
     }
 
 
@@ -196,9 +215,21 @@ namespace GT
 
         if (!GTLib::IO::IsPathAbsolute(filePath))
         {
+            // High-priority base directories.
             for (size_t iBase = 0; iBase < m_baseDirectories.GetCount(); ++iBase)
             {
                 GTLib::String absolutePathIn = m_baseDirectories[iBase] + "/";
+                if (GTLib::IO::FileExists((absolutePathIn + filePath).c_str()))
+                {
+                    absolutePathOut = GTLib::IO::ToAbsolutePath(filePath, absolutePathIn.c_str());
+                    return true;
+                }
+            }
+
+            // Low-priority base directories.
+            for (size_t iBase = 0; iBase < m_baseDirectoriesLowPriority.GetCount(); ++iBase)
+            {
+                GTLib::String absolutePathIn = m_baseDirectoriesLowPriority[iBase] + "/";
                 if (GTLib::IO::FileExists((absolutePathIn + filePath).c_str()))
                 {
                     absolutePathOut = GTLib::IO::ToAbsolutePath(filePath, absolutePathIn.c_str());
