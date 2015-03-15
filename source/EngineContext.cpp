@@ -104,8 +104,16 @@ namespace GT
 
     void EngineContext::Shutdown()
     {
+        // Asset library.
         m_assetLibrary.Shutdown();
+        delete m_pDefaultAssetAllocator;
+
+
+        // File system.
         m_fileSystem.Shutdown();
+
+
+        // Hardware platform.
         m_hardwarePlatform.Shutdown();
     }
 
@@ -172,9 +180,43 @@ namespace GT
         return m_fileSystem;
     }
 
+
+    //////////////////////////////////////////////////////////
+    // Asset Management
+
     AssetLibrary & EngineContext::GetAssetLibrary()
     {
         return m_assetLibrary;
+    }
+
+    Asset* EngineContext::LoadAsset(const char* filePathOrIdentifier, AssetType explicitAssetType)
+    {
+        return m_assetLibrary.Load(filePathOrIdentifier, explicitAssetType);
+    }
+
+    Asset* EngineContext::LoadAsset(Asset* pAsset)
+    {
+        return m_assetLibrary.Load(pAsset);
+    }
+
+    void EngineContext::UnloadAsset(Asset* pAsset)
+    {
+        m_assetLibrary.Unload(pAsset);
+    }
+
+    void EngineContext::ReloadAsset(const char* filePathOrIdentifier)
+    {
+        m_assetLibrary.Reload(filePathOrIdentifier);
+    }
+
+    void EngineContext::RegisterAssetAllocator(AssetAllocator &allocator)
+    {
+        m_assetLibrary.RegisterAllocator(allocator);
+    }
+
+    void EngineContext::RegisterAssetExtensions(AssetExtensionDesc* extensions, size_t extensionsCount)
+    {
+        m_assetLibrary.RegisterExtensions(extensions, extensionsCount);
     }
 
 

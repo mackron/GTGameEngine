@@ -101,10 +101,32 @@ namespace GT
         /// @return A reference to the file system.
         FileSystem & GetFileSystem();
 
+
+        ////////////////////////////////////////////////////////////////////
+        // Asset Management
+
         /// Retrieves a reference to the asset library.
         ///
         /// @return A reference to the asset library.
         AssetLibrary & GetAssetLibrary();
+
+        /// @copydoc AssetLibrary::Load(const char*, AssetType)
+        Asset* LoadAsset(const char* filePathOrIdentifier, AssetType explicitAssetType = AssetType_Unknown);
+
+        /// @copydoc AssetLibrary::Load(Asset*)
+        Asset* LoadAsset(Asset* pAsset);
+
+        /// @copydoc AssetLibrary::Unload()
+        void UnloadAsset(Asset* pAsset);
+
+        /// @copydoc AssetLibrary::Reload()
+        void ReloadAsset(const char* filePathOrIdentifier);
+
+        /// @copydoc AssetLibrary::RegisterAssetAllocator()
+        void RegisterAssetAllocator(AssetAllocator &allocator);
+
+        /// @copydoc AssetLibrary::RegisterAssetExtensions()
+        void RegisterAssetExtensions(AssetExtensionDesc* extensions, size_t extensionsCount);
 
 
     private:
