@@ -2,11 +2,13 @@
 
 #include <GTGameEngine/EngineContext.hpp>
 #include <GTGameEngine/Config.hpp>
+#include <GTLib/CommandLine.hpp>
 
 namespace GT
 {
     EngineContext::EngineContext()
-        : m_hardwarePlatform(),
+        : m_commandLine(),
+          m_hardwarePlatform(),
           m_fileSystem(),
           m_assetLibrary(m_fileSystem)
     {
@@ -19,13 +21,14 @@ namespace GT
 
     ResultCode EngineContext::Startup(int argc, char** argv)
     {
-        (void)argc;
-        (void)argv;
-
-
         ResultCode result = 0;
 
-            
+
+        // Command line.
+        m_commandLine.Parse(argc, argv);
+
+
+
         // Hardware platform.
         result = m_hardwarePlatform.Startup();
         if (GT::Failed(result))
@@ -33,12 +36,18 @@ namespace GT
             return result;
         }
 
-        // File manager.
+
+
+        // File system.
         result = m_fileSystem.Startup();
         if (GT::Failed(result))
         {
             return result;
         }
+
+        m_fileSystem.AddLowPriorityBaseDirectory(m_commandLine.GetApplicationDirectory());
+
+
 
         // Asset library.
         result = m_assetLibrary.Startup();
@@ -54,6 +63,8 @@ namespace GT
 
     void EngineContext::Shutdown()
     {
+        m_assetLibrary.Shutdown();
+        m_fileSystem.Shutdown();
         m_hardwarePlatform.Shutdown();
     }
 

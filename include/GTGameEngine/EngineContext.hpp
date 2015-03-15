@@ -4,6 +4,7 @@
 #define __GT_GE_EngineContext_hpp_
 
 #include <GTLib/ResultCodes.hpp>
+#include <GTLib/CommandLine.hpp>
 #include "HardwarePlatform.hpp"
 #include "FileSystem.hpp"
 #include "AssetLibrary.hpp"
@@ -113,6 +114,9 @@ namespace GT
 
 
     private:
+
+        /// An object representing the command line that was used to initialise the game engine.
+        GTLib::CommandLine m_commandLine;
 
         /// The hardware platform object for detecting the available hardware on the running system. This object can be used to iterate over devices
         /// and specify which ones should be used for particular tasks.
