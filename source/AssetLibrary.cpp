@@ -5,6 +5,7 @@
 #include <GTGameEngine/AssetAllocator.hpp>
 #include <GTGameEngine/FileSystem.hpp>
 #include <GTLib/String.hpp>
+#include <GTLib/IO.hpp>
 
 namespace GT
 {
@@ -51,7 +52,7 @@ namespace GT
             auto iExistingAsset = m_loadedAssets.Find(absolutePath.c_str());
             if (iExistingAsset == nullptr)
             {
-                AssetType assetType = this->FindTypeByExtension(filePath);
+                AssetType assetType = this->FindTypeByExtension(GTLib::IO::GetExtension(filePath));
 
                 auto pAllocator = this->FindAllocatorByType(assetType);
                 if (pAllocator != nullptr)
@@ -61,6 +62,7 @@ namespace GT
                     {
                         if (pAsset->Load(absolutePath.c_str(), m_fileSystem))
                         {
+                            m_loadedAssets.Add(absolutePath.c_str(), pAsset);
                             return pAsset;
                         }
                         else
