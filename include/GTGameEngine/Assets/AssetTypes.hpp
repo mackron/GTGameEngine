@@ -18,6 +18,7 @@ namespace GT
     static const AssetClass AssetClass_Unknown = 0x00000000;
     static const AssetClass AssetClass_Image   = 0x00000001;
     static const AssetClass AssetClass_Model   = 0x00000002;
+    static const AssetClass AssetClass_Sound   = 0x00000003;
 
     
     // Asset Type Ranges
@@ -30,7 +31,7 @@ namespace GT
     // Images - 0x00000100 - 0x000001FF
     static const AssetType AssetType_Image_PNG  = 0x00000100;
     static const AssetType AssetType_Image_TGA  = 0x00000102;
-    static const AssetType AssetType_Iamge_JPG  = 0x00000103;
+    static const AssetType AssetType_Image_JPG  = 0x00000103;
     static const AssetType AssetType_Image_PSD  = 0x00000104;
 
     // Models - 0x00000200 - 0x000002FF

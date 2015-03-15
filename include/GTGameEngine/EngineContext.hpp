@@ -112,7 +112,6 @@ namespace GT
 
 
 
-
     private:
 
         /// An object representing the command line that was used to initialise the game engine.
@@ -127,6 +126,10 @@ namespace GT
 
         /// The asset library for managing assets.
         AssetLibrary m_assetLibrary;
+
+        /// A pointer to the default asset allocator. This will be null if the default asset allocator is not being used. An application may choose to
+        /// exclude the default allocator so that they can do custom asset loading.
+        AssetAllocator* m_pDefaultAssetAllocator;
 
 
     private:    // No copying.

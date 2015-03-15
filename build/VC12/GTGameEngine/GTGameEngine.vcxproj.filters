@@ -125,6 +125,12 @@
     <ClCompile Include="..\..\..\source\Assets\ImageAsset.cpp">
       <Filter>Source Files\Assets</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\DefaultAssetAllocator.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\ImageAsset_STB.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -216,6 +222,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\ImageAsset.hpp">
       <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Assets\DefaultAssetAllocator.hpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Assets\ImageAsset_STB.hpp">
+      <Filter>Source Files\Assets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

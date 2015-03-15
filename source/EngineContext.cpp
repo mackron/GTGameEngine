@@ -4,13 +4,16 @@
 #include <GTGameEngine/Config.hpp>
 #include <GTLib/CommandLine.hpp>
 
+#include "Assets/DefaultAssetAllocator.hpp"
+
 namespace GT
 {
     EngineContext::EngineContext()
         : m_commandLine(),
           m_hardwarePlatform(),
           m_fileSystem(),
-          m_assetLibrary(m_fileSystem)
+          m_assetLibrary(m_fileSystem),
+          m_pDefaultAssetAllocator(nullptr)
     {
     }
 
@@ -56,6 +59,44 @@ namespace GT
             return result;
         }
 
+#if defined(GT_BUILD_DEFAULT_ASSETS)
+        // Create and register the default allocator.
+        m_pDefaultAssetAllocator = new DefaultAssetAllocator();
+        m_assetLibrary.RegisterAllocator(*m_pDefaultAssetAllocator);
+
+        // Register extensions.
+        GT::AssetExtensionDesc extensions[] =
+        {
+    #if defined(GT_BUILD_PNG)
+            {"png",  GT::AssetClass_Image, AssetType_Image_PNG},
+    #endif
+    #if defined(GT_BUILD_TGA)
+            {"tga",  GT::AssetClass_Image, AssetType_Image_TGA},
+    #endif
+    #if defined(GT_BUILD_JPG)
+            {"jpg",  GT::AssetClass_Image, AssetType_Image_JPG},
+            {"jpeg", GT::AssetClass_Image, AssetType_Image_JPG},
+    #endif
+    #if defined(GT_BUILD_PSD)
+            {"psd",  GT::AssetClass_Image, AssetType_Image_PSD},
+    #endif
+
+    #if defined(GT_BUILD_OBJ)
+            {"obj",  GT::AssetClass_Model, AssetType_Model_OBJ},
+    #endif
+    #if defined(GT_BUILD_OGEX)
+            {"ogex", GT::AssetClass_Model, AssetType_Model_OGEX},
+    #endif
+
+    #if defined(GT_BUILD_WAV)
+            {"wav",  GT::AssetClass_Sound, AssetType_Sound_WAV},
+    #endif
+    #if defined(GT_BUILD_OGG)
+            {"ogg",  GT::AssetClass_Sound, AssetType_Sound_OGG},
+    #endif
+        };
+        m_assetLibrary.RegisterExtensions(extensions, sizeof(extensions) / sizeof(extensions[0]));
+#endif
 
 
         return result;

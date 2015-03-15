@@ -14,7 +14,7 @@ namespace GT
     public:
 
         /// Constructor.
-        ImageAsset();
+        ImageAsset(AssetType type);
 
         /// Destructor.
         virtual ~ImageAsset();

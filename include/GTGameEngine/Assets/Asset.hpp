@@ -17,10 +17,14 @@ namespace GT
     public:
 
         /// Constructor.
-        Asset();
+        Asset(AssetType type);
 
         /// Destructor.
         virtual ~Asset();
+
+
+        /// Retrieves the type of this asset.
+        AssetType GetType() const;
 
 
         /////////////////////////////////////
@@ -31,9 +35,6 @@ namespace GT
         /// Retrieves the class of this asset.
         virtual AssetClass GetClass() const = 0;
 
-        /// Retrieves the type of this asset.
-        virtual AssetType GetType() const = 0;
-
         /// Loads the given file into the asset.
         ///
         /// @param absolutePath [in] The absolute path of the file to load.
@@ -42,6 +43,13 @@ namespace GT
         /// @remarks
         ///     This will replace the existing content of the asset.
         virtual bool Load(const char* absolutePath, FileSystem &fileSystem) = 0;
+
+
+
+    private:
+
+        /// The asset type.
+        AssetType m_type;
     };
 }
 

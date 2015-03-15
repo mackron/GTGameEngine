@@ -39,6 +39,24 @@
 #define GT_GE_OPTIMIZE_FOR_SINGLE_RENDERING_DEVICE      0
 
 
+// Asset Management
+//
+// The engine has built-in support for various types of assets. Whether or not support for these assets should be included in the build can
+// be controlled from here.
+//
+// There are two reasons why you may want to disable built-in support for an asset:
+//   1) The host application can do it better
+//   2) The size of the executable can be reduced if the asset type is not needed.
+
+#define GT_ENABLE_PNG   1       //< Enable PNG images.
+#define GT_ENABLE_TGA   1       //< Enable TGA images.
+#define GT_ENABLE_JPG   1       //< Enable JPG images.
+#define GT_ENABLE_PSD   1       //< Enable PSD images. PSD files are good for rapid turnaround times with texture creation, however disabling this will save a few KB in a release build.
+#define GT_ENABLE_OBJ   1       //< Enable OBJ models.
+#define GT_ENABLE_OGEX  1       //< Enable OpenGEX models.
+#define GT_ENABLE_WAV   1       //< Enable WAV sounds.
+#define GT_ENABLE_OGG   1       //< Enable OGG sounds.
+
 
 
 
@@ -57,6 +75,44 @@
 // OpenGL 4.x Support.
 #if (defined(GT_GE_ENABLE_OPENGL4) && GT_GE_ENABLE_OPENGL4 == 1)
 #define GT_GE_BUILD_OPENGL4
+#endif
+
+
+// Assets
+#if defined(GT_ENABLE_PNG)
+#define GT_BUILD_PNG
+#endif
+#if defined(GT_ENABLE_TGA)
+#define GT_BUILD_TGA
+#endif
+#if defined(GT_ENABLE_JPG)
+#define GT_BUILD_JPG
+#endif
+#if defined(GT_ENABLE_PSD)
+#define GT_BUILD_PSD
+#endif
+#if defined(GT_ENABLE_OBJ)
+#define GT_BUILD_OBJ
+#endif
+#if defined(GT_ENABLE_OGEX)
+#define GT_BUILD_OGEX
+#endif
+#if defined(GT_ENABLE_WAV)
+#define GT_BUILD_WAV
+#endif
+#if defined(GT_ENABLE_OGG)
+#define GT_BUILD_OGG
+#endif
+
+#if defined(GT_BUILD_PNG)  || \
+    defined(GT_BUILD_TGA)  || \
+    defined(GT_BUILD_JPG)  || \
+    defined(GT_BUILD_PSD)  || \
+    defined(GT_BUILD_OBJ)  || \
+    defined(GT_BUILD_OGEX) || \
+    defined(GT_BUILD_WAV)  || \
+    defined(GT_BUILD_OGG)
+#define GT_BUILD_DEFAULT_ASSETS
 #endif
 
 

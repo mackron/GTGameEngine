@@ -4,11 +4,18 @@
 
 namespace GT
 {
-    Asset::Asset()
+    Asset::Asset(AssetType type)
+        : m_type(type)
     {
     }
 
     Asset::~Asset()
     {
+    }
+
+
+    AssetType Asset::GetType() const
+    {
+        return m_type;
     }
 }

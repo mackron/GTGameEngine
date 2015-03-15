@@ -4,7 +4,8 @@
 
 namespace GT
 {
-    ImageAsset::ImageAsset()
+    ImageAsset::ImageAsset(AssetType type)
+        : Asset(type)
     {
     }
 

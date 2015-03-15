@@ -22,7 +22,9 @@
     <ClCompile Include="..\..\..\source\Assets\Asset.cpp" />
     <ClCompile Include="..\..\..\source\Assets\AssetAllocator.cpp" />
     <ClCompile Include="..\..\..\source\Assets\AssetLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\Assets\DefaultAssetAllocator.cpp" />
     <ClCompile Include="..\..\..\source\Assets\ImageAsset.cpp" />
+    <ClCompile Include="..\..\..\source\Assets\ImageAsset_STB.cpp" />
     <ClCompile Include="..\..\..\source\EngineContext.cpp" />
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c" />
     <ClCompile Include="..\..\..\source\FileSystem.cpp" />
@@ -68,6 +70,8 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Input.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\OpenGL\OpenGL.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\RenderingTypes.hpp" />
+    <ClInclude Include="..\..\..\source\Assets\DefaultAssetAllocator.hpp" />
+    <ClInclude Include="..\..\..\source\Assets\ImageAsset_STB.hpp" />
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
     <ClInclude Include="..\..\..\source\FileSystem\File.hpp" />
     <ClInclude Include="..\..\..\source\FileSystem\File_Native.hpp" />
