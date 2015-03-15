@@ -45,6 +45,12 @@
     <Filter Include="Source Files\FileSystem">
       <UniqueIdentifier>{b7e7820b-41aa-474e-80eb-4f916e1f4c1f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Assets">
+      <UniqueIdentifier>{be17dbbb-9b3b-4fa3-94da-bdb68a01588c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Assets">
+      <UniqueIdentifier>{ac24c5a7-98a9-4d2c-8c46-4ed741c9d315}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c">
@@ -101,23 +107,23 @@
     <ClCompile Include="..\..\..\source\FileSystem.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Asset.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\AssetLibrary.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\AssetAllocator.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\ImageAsset.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\FileSystem\File.cpp">
       <Filter>Source Files\FileSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\FileSystem\File_Native.cpp">
       <Filter>Source Files\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\Asset.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\AssetAllocator.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\AssetLibrary.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\ImageAsset.cpp">
+      <Filter>Source Files\Assets</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -187,21 +193,6 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\FileSystem.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Asset.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\AssetLibrary.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\AssetTypes.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\AssetAllocator.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\ImageAsset.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\source\FileSystem\File.hpp">
       <Filter>Source Files\FileSystem</Filter>
     </ClInclude>
@@ -210,6 +201,21 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\FileDataTypes.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\Asset.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetAllocator.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetLibrary.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetTypes.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\ImageAsset.hpp">
+      <Filter>Header Files\Assets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -7,7 +7,7 @@
 #include <GTLib/CommandLine.hpp>
 #include "HardwarePlatform.hpp"
 #include "FileSystem.hpp"
-#include "AssetLibrary.hpp"
+#include "Assets/AssetLibrary.hpp"
 
 namespace GT
 {

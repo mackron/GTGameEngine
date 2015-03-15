@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/AssetLibrary.hpp>
-#include <GTGameEngine/Asset.hpp>
-#include <GTGameEngine/AssetAllocator.hpp>
+#include <GTGameEngine/Assets/AssetLibrary.hpp>
+#include <GTGameEngine/Assets/Asset.hpp>
+#include <GTGameEngine/Assets/AssetAllocator.hpp>
 #include <GTGameEngine/FileSystem.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/IO.hpp>
