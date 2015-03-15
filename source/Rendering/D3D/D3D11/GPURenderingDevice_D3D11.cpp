@@ -764,13 +764,10 @@ namespace GT
                         }
 
 
-                        ID3D11InputLayout* inputLayoutD3D;
+                        ID3D11InputLayout* inputLayoutD3D = nullptr;
                         if (GT::Succeeded(result))
                         {
-                            if (FAILED(m_device->CreateInputLayout(attribDescD3D, static_cast<UINT>(attribDescCount), vertexShaderData, vertexShaderDataSize, &inputLayoutD3D)))
-                            {
-                                inputLayoutD3D = nullptr;
-                            }
+                            m_device->CreateInputLayout(attribDescD3D, static_cast<UINT>(attribDescCount), vertexShaderData, vertexShaderDataSize, &inputLayoutD3D);
                         }
                         
 
