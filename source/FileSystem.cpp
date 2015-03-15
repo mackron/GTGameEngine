@@ -122,6 +122,17 @@ namespace GT
         return 0;
     }
 
+    size_t FileSystem::WriteFile(HFile hFile, size_t bytesToWrite, const void* data)
+    {
+        auto pFile = reinterpret_cast<File*>(hFile);
+        if (pFile != nullptr)
+        {
+            return pFile->Write(bytesToWrite, data);
+        }
+
+        return 0;
+    }
+
     int64_t FileSystem::SeekFile(HFile hFile, int64_t bytesToSeek, FileSeekOrigin origin)
     {
         auto pFile = reinterpret_cast<File*>(hFile);

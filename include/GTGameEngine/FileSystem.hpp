@@ -107,6 +107,15 @@ namespace GT
         /// Reads the given number of bytes from the file.
         size_t ReadFile(HFile hFile, size_t bytesToRead, void* dataOut);
 
+        /// Writes data to the given file.
+        ///
+        /// @param hFile        [in] A handle to the file to write the data to.
+        /// @param bytesToWrite [in] The number of bytes to write.
+        /// @param data         [in] A pointer to the buffer that contains the data to write.
+        ///
+        /// @return The number of bytes that were written.
+        size_t WriteFile(HFile hFile, size_t bytesToWrite, const void* data);
+
         /// Seeks the file.
         int64_t SeekFile(HFile hFile, int64_t bytesToSeek, FileSeekOrigin origin);
 

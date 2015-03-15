@@ -34,8 +34,11 @@ namespace GT
         void Close();
 
 
-        /// @copydoc File::Open()
+        /// @copydoc File::Read()
         size_t Read(size_t bytesToRead, void* dataOut);
+
+        /// @copydoc File::Write()
+        size_t Write(size_t bytesToWrite, const void* data);
 
         /// @copydoc File::Seek()
         int64_t Seek(int64_t bytesToSeek, FileSeekOrigin origin);
@@ -89,8 +92,11 @@ namespace GT
         ~File_Unix();
 
 
-        /// @copydoc File::Open()
+        /// @copydoc File::Read()
         size_t Read(size_t bytesToRead, void* dataOut);
+
+        /// @copydoc File::Write()
+        size_t Write(size_t bytesToWrite, const void* data);
 
         /// @copydoc File::Seek()
         int64_t Seek(int64_t bytesToSeek, FileSeekOrigin origin);

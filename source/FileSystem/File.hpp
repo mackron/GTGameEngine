@@ -45,6 +45,14 @@ namespace GT
         ///     If the return value is less than \c bytesToRead than it can be assumed the end of the file has been reached.
         virtual size_t Read(size_t bytesToRead, void* dataOut) = 0;
 
+        /// Writes data to the file.
+        ///
+        /// @param bytesToWrite [in] The number of bytes to write.
+        /// @param data         [in] A pointer to the buffer that contains the data to write.
+        ///
+        /// @return The number of bytes that were written.
+        virtual size_t Write(size_t bytesToWrite, const void* data) = 0;
+
         /// Seeks the read/write pointer by the given number of bytes.
         ///
         /// @param bytesToSeek [in] The number of bytes to seek.

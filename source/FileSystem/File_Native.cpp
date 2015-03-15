@@ -118,6 +118,20 @@ namespace GT
         }
     }
 
+    size_t File_Win32::Write(size_t bytesToWrite, const void* data)
+    {
+        DWORD bytesWritten;
+        if (WriteFile(m_hWin32File, data, static_cast<DWORD>(bytesToWrite), &bytesWritten, nullptr))
+        {
+            return bytesWritten;
+        }
+        else
+        {
+            // There was an error writing the file data.
+            return 0;
+        }
+    }
+
     int64_t File_Win32::Seek(int64_t bytesToSeek, FileSeekOrigin origin)
     {
         LARGE_INTEGER lNewFilePointer;
