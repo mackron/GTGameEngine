@@ -44,61 +44,63 @@ namespace GT
     }
 
 
-    Asset* AssetLibrary::Load(const char* filePath)
+    Asset* AssetLibrary::Load(const char* filePathOrIdentifier)
     {
-        GTLib::String absolutePath;
-        if (m_fileSystem.FindAbsolutePath(filePath, absolutePath))
-        {
-            auto iExistingAsset = m_loadedAssets.Find(absolutePath.c_str());
-            if (iExistingAsset == nullptr)
-            {
-                AssetType assetType = this->FindTypeByExtension(GTLib::IO::GetExtension(filePath));
+        // When an asset is cached, the absolute path is used to retrieve the cached object. It is possible, however, for an asset to not actually
+        // be loaded from a file, in which case filePathOrIdentifier is used as the unique identifier without any modification.
 
-                auto pAllocator = this->FindAllocatorByType(assetType);
-                if (pAllocator != nullptr)
+        GTLib::String absolutePathOrIdentifier;
+        if (!m_fileSystem.FindAbsolutePath(filePathOrIdentifier, absolutePathOrIdentifier))
+        {
+            // The file could not be found, but the asset loader might be using it as a unique token, so we just assume use it as-is for the absolute path in this case.
+            absolutePathOrIdentifier = filePathOrIdentifier;
+        }
+
+
+        auto iExistingAsset = m_loadedAssets.Find(absolutePathOrIdentifier.c_str());
+        if (iExistingAsset == nullptr)
+        {
+            AssetType assetType = this->FindTypeByExtension(GTLib::IO::GetExtension(filePathOrIdentifier));
+
+            auto pAllocator = this->FindAllocatorByType(assetType);
+            if (pAllocator != nullptr)
+            {
+                auto pAsset = pAllocator->CreateAsset(assetType);
+                if (pAsset != nullptr)
                 {
-                    auto pAsset = pAllocator->CreateAsset(assetType);
-                    if (pAsset != nullptr)
+                    if (pAsset->Load(absolutePathOrIdentifier.c_str(), m_fileSystem))
                     {
-                        if (pAsset->Load(absolutePath.c_str(), m_fileSystem))
-                        {
-                            m_loadedAssets.Add(absolutePath.c_str(), pAsset);
-                            return pAsset;
-                        }
-                        else
-                        {
-                            // Failed to load the asset.
-                            pAllocator->DeleteAsset(pAsset);
-                            return nullptr;
-                        }
+                        m_loadedAssets.Add(absolutePathOrIdentifier.c_str(), pAsset);
+                        return pAsset;
                     }
                     else
                     {
-                        // Failed to create an asset of the given type.
+                        // Failed to load the asset.
+                        pAllocator->DeleteAsset(pAsset);
                         return nullptr;
                     }
                 }
                 else
                 {
-                    // Could not find a supported allocator.
+                    // Failed to create an asset of the given type.
                     return nullptr;
                 }
             }
             else
             {
-                auto pExistingAsset = iExistingAsset->value;
-                assert(pExistingAsset != nullptr);
-                {
-                    pExistingAsset->IncrementReferenceCount();
-                }
-
-                return iExistingAsset->value;
+                // Could not find a supported allocator.
+                return nullptr;
             }
         }
         else
         {
-            // Could not find the file.
-            return nullptr;
+            auto pExistingAsset = iExistingAsset->value;
+            assert(pExistingAsset != nullptr);
+            {
+                pExistingAsset->IncrementReferenceCount();
+            }
+
+            return iExistingAsset->value;
         }
     }
 

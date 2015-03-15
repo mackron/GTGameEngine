@@ -36,15 +36,15 @@ namespace GT
 
         /// Loads an asset using the give file path.
         ///
-        /// @param filePath [in] The absolute or relative file path of the asset to load.
+        /// @param filePathOrIdentifier [in] The absolute or relative file path of the asset to load if it is backed by a file, or a unique identifier if the asset is not backed by a file.
         ///
         /// @return A pointer to the new asset object, or null if an error occurs.
         ///
         /// @remarks
-        ///     If \c filePath is relative, it will be converted to absolute based on the base directory priorities
+        ///     If \c filePathOrIdentifier is a relative path, it will be converted to absolute based on the base directory priorities
         ///     @par
         ///     If the asset has already been loaded, this will return a pointer to the existing asset. If the asset should be re-loaded, use Reload().
-        Asset* Load(const char* filePath);
+        Asset* Load(const char* filePathOrIdentifier);
 
         /// Increments the reference counter of an existing asset.
         ///
@@ -60,8 +60,8 @@ namespace GT
 
         /// Reloads the asset at the given file path.
         ///
-        /// @param filePath [in] the absolute or relative path of the asset to reload.
-        void Reload(const char* filePath);
+        /// @param filePathOrIdentifier [in] The absolute or relative file path of the asset to reload if it is backed by a file, or a unique identifier if the asset is not backed by a file.
+        void Reload(const char* filePathOrIdentifier);
 
 
         void RegisterAllocator(AssetAllocator &allocator);
