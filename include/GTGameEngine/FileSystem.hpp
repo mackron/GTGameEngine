@@ -13,17 +13,11 @@
 #include <wininet.h>
 #endif
 
+#include "FileDataTypes.hpp"
+
 namespace GT
 {
     typedef size_t HFile;
-
-    enum class FileAccessMode
-    {
-        Read      = 0x01,
-        Write     = 0x02,
-        ReadWrite = Read | Write
-    };
-
 
     /// Class representing the engine's virtual file system.
     ///
@@ -98,15 +92,27 @@ namespace GT
         ///
         /// @remarks
         ///     When opening a file fails, use the result code to determine why and give meaningful feedback.
+        ///     @par
+        ///     The access mode can be Read OR Write - it cannot be both. The reason for this is to simplify the implementation of the underlying
+        ///     file processing for the various types of file sources.
         HFile OpenFile(const char* filePath, FileAccessMode accessMode, ResultCode* resultCodeOut);
-        HFile OpenFile(const char* filePath, FileAccessMode accessMode, ResultCode &resultCodeOut) { this->OpenFile(filePath, accessMode, resultCodeOut); }
-        HFile OpenFile(const char* filePath, FileAccessMode accessMode) { this->OpenFile(filePath, accessMode, nullptr); }
+        HFile OpenFile(const char* filePath, FileAccessMode accessMode, ResultCode &resultCodeOut) { return this->OpenFile(filePath, accessMode, &resultCodeOut); }
+        HFile OpenFile(const char* filePath, FileAccessMode accessMode) { return this->OpenFile(filePath, accessMode, nullptr); }
 
         /// Closes the given file.
         ///
         /// @param hFile [in] A handle to the file to close.
         void CloseFile(HFile hFile);
 
+        /// Reads the given number of bytes from the file.
+        size_t ReadFile(HFile hFile, size_t bytesToRead, void* dataOut);
+
+        /// Seeks the file.
+        int64_t SeekFile(HFile hFile, int64_t bytesToSeek, FileSeekOrigin origin);
+
+        /// Retrieves the position of the read/write pointer.
+        int64_t TellFile(HFile hFile);
+        
         /// Retrieves the size of the given file.
         ///
         /// @param hFile [in] A handle to the file whose size is being retrieved.
@@ -114,6 +120,17 @@ namespace GT
         /// @return The size in bytes of the file.
         int64_t GetFileSize(HFile hFile);
 
+        /// Maps the given file.
+        ///
+        /// @remarks
+        ///     Not all files can support mapping, in which case this will return null.
+        void* MapFile(HFile hFile, size_t length, int64_t offset);
+
+        /// Unmaps the given file.
+        ///
+        /// @remarks
+        ///     The file will be automatically unmapped when CloseFile is called.
+        void UnmapFile(HFile hFile);
 
 
 

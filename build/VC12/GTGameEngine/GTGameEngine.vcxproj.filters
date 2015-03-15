@@ -42,6 +42,9 @@
     <Filter Include="Source Files\Rendering\OpenGL\OpenGL4">
       <UniqueIdentifier>{ec235752-6c3b-4ea2-8126-e156cb6f1272}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\FileSystem">
+      <UniqueIdentifier>{b7e7820b-41aa-474e-80eb-4f916e1f4c1f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c">
@@ -109,6 +112,12 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\ImageAsset.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\FileSystem\File.cpp">
+      <Filter>Source Files\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\FileSystem\File_Native.cpp">
+      <Filter>Source Files\FileSystem</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -191,6 +200,15 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\ImageAsset.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\FileSystem\File.hpp">
+      <Filter>Source Files\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\FileSystem\File_Native.hpp">
+      <Filter>Source Files\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\FileDataTypes.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

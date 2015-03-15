@@ -25,6 +25,8 @@
     <ClCompile Include="..\..\..\source\EngineContext.cpp" />
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c" />
     <ClCompile Include="..\..\..\source\FileSystem.cpp" />
+    <ClCompile Include="..\..\..\source\FileSystem\File.cpp" />
+    <ClCompile Include="..\..\..\source\FileSystem\File_Native.cpp" />
     <ClCompile Include="..\..\..\source\GameContext.cpp" />
     <ClCompile Include="..\..\..\source\GameDisplay.cpp" />
     <ClCompile Include="..\..\..\source\GameDisplayRenderingCallback.cpp" />
@@ -49,6 +51,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\AssetTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Config.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\FileDataTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\FileSystem.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameContext.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplay.hpp" />
@@ -66,6 +69,8 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\OpenGL\OpenGL.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Rendering\RenderingTypes.hpp" />
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
+    <ClInclude Include="..\..\..\source\FileSystem\File.hpp" />
+    <ClInclude Include="..\..\..\source\FileSystem\File_Native.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\GPURenderingDevice_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\D3D\D3D11\RenderingTypes_D3D11.hpp" />
     <ClInclude Include="..\..\..\source\Rendering\OpenGL\OpenGL4\GPURenderingDevice_OpenGL4.hpp" />
