@@ -678,83 +678,87 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
+        RasterizerStateDesc stateDesc;
+
         auto stateGL = reinterpret_cast<RasterizerState_OpenGL4*>(hState);
         if (stateGL != nullptr)
         {
-            // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
+            stateDesc = *stateGL;
+        }
 
-            // Fill mode.
-            GLenum fillModesGL[] =
-            {
-                GL_LINE,        // FillMode_Wireframe
-                GL_FILL,        // FillMode_Solid
-            };
-            m_gl.PolygonMode(GL_FRONT_AND_BACK, fillModesGL[stateGL->fillMode]);
+        // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
+
+        // Fill mode.
+        GLenum fillModesGL[] =
+        {
+            GL_LINE,        // FillMode_Wireframe
+            GL_FILL,        // FillMode_Solid
+        };
+        m_gl.PolygonMode(GL_FRONT_AND_BACK, fillModesGL[stateDesc.fillMode]);
                 
 
-            // Cull mode.
-            if (stateGL->cullMode == CullMode_None)
-            {
-                m_gl.Disable(GL_CULL_FACE);
-            }
-            else
-            {
-                m_gl.Enable(GL_CULL_FACE);
-                m_gl.CullFace((stateGL->cullMode == CullMode_Back) ? GL_BACK : GL_FRONT);
-            }
-
-
-            // Polygon winding.
-            GLenum windingModesGL[] =
-            {
-                GL_CCW,
-                GL_CW
-            };
-            m_gl.FrontFace(windingModesGL[stateGL->polygonWinding]);
-
-
-            // Depth bias.
-            if (stateGL->depthBias != 0)
-            {
-                m_gl.Enable(GL_POLYGON_OFFSET_FILL);
-                m_gl.Enable(GL_POLYGON_OFFSET_LINE);
-                m_gl.PolygonOffset(1.0f, static_cast<float>(stateGL->depthBias));
-            }
-            else
-            {
-                m_gl.Enable(GL_POLYGON_OFFSET_FILL);
-                m_gl.Enable(GL_POLYGON_OFFSET_LINE);
-            }
-
-
-            // Dpeth bias clamp is not supported.
-            // Sloped scaled depth bias is not supported.
-
-
-            // Depth clipping.
-            if (stateGL->enableDepthClip)
-            {
-                m_gl.Disable(GL_DEPTH_CLAMP);
-            }
-            else
-            {
-                m_gl.Enable(GL_DEPTH_CLAMP);
-            }
-
-
-            // Enable scissor.
-            if (stateGL->enableScissor)
-            {
-                m_gl.Enable(GL_SCISSOR_TEST);
-            }
-            else
-            {
-                m_gl.Disable(GL_SCISSOR_TEST);
-            }
-
-
-            // enableMultisampling and enableAntialiasedLine is not supported.
+        // Cull mode.
+        if (stateDesc.cullMode == CullMode_None)
+        {
+            m_gl.Disable(GL_CULL_FACE);
         }
+        else
+        {
+            m_gl.Enable(GL_CULL_FACE);
+            m_gl.CullFace((stateDesc.cullMode == CullMode_Back) ? GL_BACK : GL_FRONT);
+        }
+
+
+        // Polygon winding.
+        GLenum windingModesGL[] =
+        {
+            GL_CCW,
+            GL_CW
+        };
+        m_gl.FrontFace(windingModesGL[stateDesc.polygonWinding]);
+
+
+        // Depth bias.
+        if (stateDesc.depthBias != 0)
+        {
+            m_gl.Enable(GL_POLYGON_OFFSET_FILL);
+            m_gl.Enable(GL_POLYGON_OFFSET_LINE);
+            m_gl.PolygonOffset(1.0f, static_cast<float>(stateDesc.depthBias));
+        }
+        else
+        {
+            m_gl.Enable(GL_POLYGON_OFFSET_FILL);
+            m_gl.Enable(GL_POLYGON_OFFSET_LINE);
+        }
+
+
+        // Dpeth bias clamp is not supported.
+        // Sloped scaled depth bias is not supported.
+
+
+        // Depth clipping.
+        if (stateDesc.enableDepthClip)
+        {
+            m_gl.Disable(GL_DEPTH_CLAMP);
+        }
+        else
+        {
+            m_gl.Enable(GL_DEPTH_CLAMP);
+        }
+
+
+        // Enable scissor.
+        if (stateDesc.enableScissor)
+        {
+            m_gl.Enable(GL_SCISSOR_TEST);
+        }
+        else
+        {
+            m_gl.Disable(GL_SCISSOR_TEST);
+        }
+
+
+        // enableMultisampling and enableAntialiasedLine is not supported.
     }
 
     void GPURenderingDevice_OpenGL4::RSSetViewports(GraphicsViewport* viewports, size_t viewportCount)
@@ -789,190 +793,199 @@ namespace GT
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
+        DepthStencilStateDesc stateDesc;
+
         auto stateGL = reinterpret_cast<DepthStencilState_OpenGL4*>(hState);
         if (stateGL != nullptr)
         {
-            // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
-
-            GLenum comparisonFuncs[] =
-            {
-                GL_NEVER,
-                GL_LESS,
-                GL_EQUAL,
-                GL_LEQUAL,
-                GL_GREATER,
-                GL_NOTEQUAL,
-                GL_GEQUAL,
-                GL_ALWAYS
-            };
-
-            GLenum stencilOps[] =
-            {
-                GL_KEEP,
-                GL_ZERO,
-                GL_REPLACE,
-                GL_INCR,
-                GL_DECR,
-                GL_INVERT,
-                GL_INCR_WRAP,
-                GL_DECR_WRAP
-            };
-
-
-            // Enable depth test.
-            if (stateGL->enableDepthTest)
-            {
-                m_gl.Enable(GL_DEPTH_TEST);
-            }
-            else
-            {
-                m_gl.Disable(GL_DEPTH_TEST);
-            }
-
-            // Depth mask.
-            m_gl.DepthMask(stateGL->depthWriteMask != DepthWriteMask_Zero);
-
-            // Depth func.
-            m_gl.DepthFunc(comparisonFuncs[stateGL->depthFunc]);
-
-
-
-            // Enable stencil test.
-            if (stateGL->enableStencilTest)
-            {
-                m_gl.Enable(GL_STENCIL_TEST);
-            }
-            else
-            {
-                m_gl.Disable(GL_STENCIL_TEST);
-            }
-
-            // Stencil write mask.
-            m_gl.StencilMaskSeparate(GL_FRONT_AND_BACK, stateGL->stencilWriteMask);
-
-            // Front face stencil op.
-            m_gl.StencilFuncSeparate(GL_FRONT, comparisonFuncs[stateGL->stencilFrontFaceOp.stencilFunc], static_cast<GLint>(stencilRef), stateGL->stencilReadMask);  // <-- TODO: Check this. Is this the correct use of desc.stencilReadMask?
-            m_gl.StencilOpSeparate(GL_FRONT, stencilOps[stateGL->stencilFrontFaceOp.stencilFailOp], stencilOps[stateGL->stencilFrontFaceOp.stencilDepthFailOp], stencilOps[stateGL->stencilFrontFaceOp.stencilPassOp]);
-
-            // Back face stencil op.
-            m_gl.StencilFuncSeparate(GL_BACK, comparisonFuncs[stateGL->stencilFrontFaceOp.stencilFunc], static_cast<GLint>(stencilRef), stateGL->stencilReadMask);   // <-- TODO: Check this. Is this the correct use of desc.stencilReadMask?
-            m_gl.StencilOpSeparate(GL_BACK, stencilOps[stateGL->stencilFrontFaceOp.stencilFailOp], stencilOps[stateGL->stencilFrontFaceOp.stencilDepthFailOp], stencilOps[stateGL->stencilFrontFaceOp.stencilPassOp]);
+            stateDesc = *stateGL;
         }
+
+        // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
+
+        GLenum comparisonFuncs[] =
+        {
+            GL_NEVER,
+            GL_LESS,
+            GL_EQUAL,
+            GL_LEQUAL,
+            GL_GREATER,
+            GL_NOTEQUAL,
+            GL_GEQUAL,
+            GL_ALWAYS
+        };
+
+        GLenum stencilOps[] =
+        {
+            GL_KEEP,
+            GL_ZERO,
+            GL_REPLACE,
+            GL_INCR,
+            GL_DECR,
+            GL_INVERT,
+            GL_INCR_WRAP,
+            GL_DECR_WRAP
+        };
+
+
+        // Enable depth test.
+        if (stateDesc.enableDepthTest)
+        {
+            m_gl.Enable(GL_DEPTH_TEST);
+        }
+        else
+        {
+            m_gl.Disable(GL_DEPTH_TEST);
+        }
+
+        // Depth mask.
+        m_gl.DepthMask(stateDesc.depthWriteMask != DepthWriteMask_Zero);
+
+        // Depth func.
+        m_gl.DepthFunc(comparisonFuncs[stateDesc.depthFunc]);
+
+
+
+        // Enable stencil test.
+        if (stateDesc.enableStencilTest)
+        {
+            m_gl.Enable(GL_STENCIL_TEST);
+        }
+        else
+        {
+            m_gl.Disable(GL_STENCIL_TEST);
+        }
+
+        // Stencil write mask.
+        m_gl.StencilMaskSeparate(GL_FRONT_AND_BACK, stateDesc.stencilWriteMask);
+
+        // Front face stencil op.
+        m_gl.StencilFuncSeparate(GL_FRONT, comparisonFuncs[stateDesc.stencilFrontFaceOp.stencilFunc], static_cast<GLint>(stencilRef), stateDesc.stencilReadMask);  // <-- TODO: Check this. Is this the correct use of desc.stencilReadMask?
+        m_gl.StencilOpSeparate(GL_FRONT, stencilOps[stateDesc.stencilFrontFaceOp.stencilFailOp], stencilOps[stateDesc.stencilFrontFaceOp.stencilDepthFailOp], stencilOps[stateDesc.stencilFrontFaceOp.stencilPassOp]);
+
+        // Back face stencil op.
+        m_gl.StencilFuncSeparate(GL_BACK, comparisonFuncs[stateDesc.stencilFrontFaceOp.stencilFunc], static_cast<GLint>(stencilRef), stateDesc.stencilReadMask);   // <-- TODO: Check this. Is this the correct use of desc.stencilReadMask?
+        m_gl.StencilOpSeparate(GL_BACK, stencilOps[stateDesc.stencilFrontFaceOp.stencilFailOp], stencilOps[stateDesc.stencilFrontFaceOp.stencilDepthFailOp], stencilOps[stateDesc.stencilFrontFaceOp.stencilPassOp]);
     }
 
     void GPURenderingDevice_OpenGL4::OMSetBlendState(HBlendState hState)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
+        BlendStateDesc blendDesc;
+
         auto stateGL = reinterpret_cast<BlendState_OpenGL4*>(hState);
         if (stateGL != nullptr)
         {
-            // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
+            blendDesc = *stateGL;
+        }
 
-            GLenum blendParametersGL[] =
-            {
-                GL_ZERO,                            // BlendParameter_Zero
-                GL_ONE,                             // BlendParameter_One
 
-                GL_SRC_COLOR,                       // BlendParameter_Src_Color
-                GL_ONE_MINUS_SRC_COLOR,             // BlendParameter_Inv_Src_Color
-                GL_SRC_ALPHA,                       // BlendParameter_Src_Alpha
-                GL_ONE_MINUS_SRC_ALPHA,             // BlendParameter_Inv_Src_Alpha
-                GL_SRC_ALPHA_SATURATE,              // BlendParameter_Src_Alpha_Saturate
+        // TODO: Profile this and consider storing a local copy of the relevant state and doing an early comparison before sending the OpenGL commands.
+
+        GLenum blendParametersGL[] =
+        {
+            GL_ZERO,                            // BlendParameter_Zero
+            GL_ONE,                             // BlendParameter_One
+
+            GL_SRC_COLOR,                       // BlendParameter_Src_Color
+            GL_ONE_MINUS_SRC_COLOR,             // BlendParameter_Inv_Src_Color
+            GL_SRC_ALPHA,                       // BlendParameter_Src_Alpha
+            GL_ONE_MINUS_SRC_ALPHA,             // BlendParameter_Inv_Src_Alpha
+            GL_SRC_ALPHA_SATURATE,              // BlendParameter_Src_Alpha_Saturate
         
-                GL_DST_COLOR,                       // BlendParameter_Dst_Color
-                GL_ONE_MINUS_DST_COLOR,             // BlendParameter_Inv_Dst_Color
-                GL_DST_ALPHA,                       // BlendParameter_Dst_Alpha
-                GL_ONE_MINUS_DST_ALPHA,             // BlendParameter_Inv_Dst_Alpha
+            GL_DST_COLOR,                       // BlendParameter_Dst_Color
+            GL_ONE_MINUS_DST_COLOR,             // BlendParameter_Inv_Dst_Color
+            GL_DST_ALPHA,                       // BlendParameter_Dst_Alpha
+            GL_ONE_MINUS_DST_ALPHA,             // BlendParameter_Inv_Dst_Alpha
         
-                GL_SRC1_COLOR,                      // BlendParameter_Src1_Color
-                GL_ONE_MINUS_SRC1_COLOR,            // BlendParameter_Inv_Src1_Color
-                GL_SRC1_ALPHA,                      // BlendParameter_Src1_Alpha
-                GL_ONE_MINUS_SRC1_ALPHA,            // BlendParameter_Inv_Src1_Alpha
+            GL_SRC1_COLOR,                      // BlendParameter_Src1_Color
+            GL_ONE_MINUS_SRC1_COLOR,            // BlendParameter_Inv_Src1_Color
+            GL_SRC1_ALPHA,                      // BlendParameter_Src1_Alpha
+            GL_ONE_MINUS_SRC1_ALPHA,            // BlendParameter_Inv_Src1_Alpha
 
-                GL_CONSTANT_COLOR,                  // BlendParameter_BlendFactor
-                GL_ONE_MINUS_CONSTANT_COLOR         // BlendParameter_Inv_BlendFactor
-            };
+            GL_CONSTANT_COLOR,                  // BlendParameter_BlendFactor
+            GL_ONE_MINUS_CONSTANT_COLOR         // BlendParameter_Inv_BlendFactor
+        };
 
-            GLenum blendOpsGL[] =
+        GLenum blendOpsGL[] =
+        {
+            GL_FUNC_ADD,                        // BlendOp_Add
+            GL_FUNC_SUBTRACT,                   // BlendOp_Subtract
+            GL_FUNC_REVERSE_SUBTRACT,           // BlendOp_Reverse_Subtract
+            GL_MIN,                             // BlendOp_Min
+            GL_MAX                              // BlendOp_Max
+        };
+
+
+        if (blendDesc.enableAlphaToCoverage)
+        {
+            m_gl.Enable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+        }
+        else
+        {
+            m_gl.Disable(GL_SAMPLE_ALPHA_TO_COVERAGE);
+        }
+
+
+        if (blendDesc.enableIndependentBlend)
+        {
+            // Independant.
+            for (GLuint iRT = 0; iRT < 8; ++iRT)
             {
-                GL_FUNC_ADD,                        // BlendOp_Add
-                GL_FUNC_SUBTRACT,                   // BlendOp_Subtract
-                GL_FUNC_REVERSE_SUBTRACT,           // BlendOp_Reverse_Subtract
-                GL_MIN,                             // BlendOp_Min
-                GL_MAX                              // BlendOp_Max
-            };
-
-
-            if (stateGL->enableAlphaToCoverage)
-            {
-                m_gl.Enable(GL_SAMPLE_ALPHA_TO_COVERAGE);
-            }
-            else
-            {
-                m_gl.Disable(GL_SAMPLE_ALPHA_TO_COVERAGE);
-            }
-
-
-            if (stateGL->enableIndependentBlend)
-            {
-                // Independant.
-                for (GLuint iRT = 0; iRT < 8; ++iRT)
+                if (blendDesc.renderTarget[iRT].enableBlending)
                 {
-                    if (stateGL->renderTarget[iRT].enableBlending)
-                    {
-                        m_gl.Enablei(GL_BLEND, iRT);
-                    }
-                    else
-                    {
-                        m_gl.Disablei(GL_BLEND, iRT);
-                    }
-
-                    const GLenum srcColorParam = blendParametersGL[stateGL->renderTarget[iRT].srcBlendParameter];
-                    const GLenum dstColorParam = blendParametersGL[stateGL->renderTarget[iRT].dstBlendParameter];
-                    const GLenum srcAlphaParam = blendParametersGL[stateGL->renderTarget[iRT].srcAlphaBlendParameter];
-                    const GLenum dstAlphaParam = blendParametersGL[stateGL->renderTarget[iRT].dstAlphaBlendParameter];
-                    m_gl.BlendFuncSeparatei(iRT, srcColorParam, dstColorParam, srcAlphaParam, dstAlphaParam);
-
-                    const GLenum colorOp = blendOpsGL[stateGL->renderTarget[iRT].blendOp];
-                    const GLenum alphaOp = blendOpsGL[stateGL->renderTarget[iRT].blendOpAlpha];
-                    m_gl.BlendEquationSeparatei(iRT, colorOp, alphaOp);
-
-                    const GLboolean maskR = (stateGL->renderTarget[iRT].writeMask & (1 << 3)) >> 3;
-                    const GLboolean maskG = (stateGL->renderTarget[iRT].writeMask & (1 << 2)) >> 2;
-                    const GLboolean maskB = (stateGL->renderTarget[iRT].writeMask & (1 << 1)) >> 1;
-                    const GLboolean maskA = (stateGL->renderTarget[iRT].writeMask & (1 << 0)) >> 0;
-                    m_gl.ColorMaski(iRT, maskR, maskG, maskB, maskA);
-                }
-            }
-            else
-            {
-                // Not independant.
-                if (stateGL->renderTarget[0].enableBlending)
-                {
-                    m_gl.Enable(GL_BLEND);
+                    m_gl.Enablei(GL_BLEND, iRT);
                 }
                 else
                 {
-                    m_gl.Disable(GL_BLEND);
+                    m_gl.Disablei(GL_BLEND, iRT);
                 }
 
-                const GLenum srcColorParam = blendParametersGL[stateGL->renderTarget[0].srcBlendParameter];
-                const GLenum dstColorParam = blendParametersGL[stateGL->renderTarget[0].dstBlendParameter];
-                const GLenum srcAlphaParam = blendParametersGL[stateGL->renderTarget[0].srcAlphaBlendParameter];
-                const GLenum dstAlphaParam = blendParametersGL[stateGL->renderTarget[0].dstAlphaBlendParameter];
-                m_gl.BlendFuncSeparate(srcColorParam, dstColorParam, srcAlphaParam, dstAlphaParam);
+                const GLenum srcColorParam = blendParametersGL[blendDesc.renderTarget[iRT].srcBlendParameter];
+                const GLenum dstColorParam = blendParametersGL[blendDesc.renderTarget[iRT].dstBlendParameter];
+                const GLenum srcAlphaParam = blendParametersGL[blendDesc.renderTarget[iRT].srcAlphaBlendParameter];
+                const GLenum dstAlphaParam = blendParametersGL[blendDesc.renderTarget[iRT].dstAlphaBlendParameter];
+                m_gl.BlendFuncSeparatei(iRT, srcColorParam, dstColorParam, srcAlphaParam, dstAlphaParam);
 
-                const GLenum colorOp = blendOpsGL[stateGL->renderTarget[0].blendOp];
-                const GLenum alphaOp = blendOpsGL[stateGL->renderTarget[0].blendOpAlpha];
-                m_gl.BlendEquationSeparate(colorOp, alphaOp);
+                const GLenum colorOp = blendOpsGL[blendDesc.renderTarget[iRT].blendOp];
+                const GLenum alphaOp = blendOpsGL[blendDesc.renderTarget[iRT].blendOpAlpha];
+                m_gl.BlendEquationSeparatei(iRT, colorOp, alphaOp);
 
-                const GLboolean maskR = (stateGL->renderTarget[0].writeMask & (1 << 3)) >> 3;
-                const GLboolean maskG = (stateGL->renderTarget[0].writeMask & (1 << 2)) >> 2;
-                const GLboolean maskB = (stateGL->renderTarget[0].writeMask & (1 << 1)) >> 1;
-                const GLboolean maskA = (stateGL->renderTarget[0].writeMask & (1 << 0)) >> 0;
-                m_gl.ColorMask(maskR, maskG, maskB, maskA);
+                const GLboolean maskR = (blendDesc.renderTarget[iRT].writeMask & (1 << 3)) >> 3;
+                const GLboolean maskG = (blendDesc.renderTarget[iRT].writeMask & (1 << 2)) >> 2;
+                const GLboolean maskB = (blendDesc.renderTarget[iRT].writeMask & (1 << 1)) >> 1;
+                const GLboolean maskA = (blendDesc.renderTarget[iRT].writeMask & (1 << 0)) >> 0;
+                m_gl.ColorMaski(iRT, maskR, maskG, maskB, maskA);
             }
+        }
+        else
+        {
+            // Not independant.
+            if (blendDesc.renderTarget[0].enableBlending)
+            {
+                m_gl.Enable(GL_BLEND);
+            }
+            else
+            {
+                m_gl.Disable(GL_BLEND);
+            }
+
+            const GLenum srcColorParam = blendParametersGL[blendDesc.renderTarget[0].srcBlendParameter];
+            const GLenum dstColorParam = blendParametersGL[blendDesc.renderTarget[0].dstBlendParameter];
+            const GLenum srcAlphaParam = blendParametersGL[blendDesc.renderTarget[0].srcAlphaBlendParameter];
+            const GLenum dstAlphaParam = blendParametersGL[blendDesc.renderTarget[0].dstAlphaBlendParameter];
+            m_gl.BlendFuncSeparate(srcColorParam, dstColorParam, srcAlphaParam, dstAlphaParam);
+
+            const GLenum colorOp = blendOpsGL[blendDesc.renderTarget[0].blendOp];
+            const GLenum alphaOp = blendOpsGL[blendDesc.renderTarget[0].blendOpAlpha];
+            m_gl.BlendEquationSeparate(colorOp, alphaOp);
+
+            const GLboolean maskR = (blendDesc.renderTarget[0].writeMask & (1 << 3)) >> 3;
+            const GLboolean maskG = (blendDesc.renderTarget[0].writeMask & (1 << 2)) >> 2;
+            const GLboolean maskB = (blendDesc.renderTarget[0].writeMask & (1 << 1)) >> 1;
+            const GLboolean maskA = (blendDesc.renderTarget[0].writeMask & (1 << 0)) >> 0;
+            m_gl.ColorMask(maskR, maskG, maskB, maskA);
         }
     }
 

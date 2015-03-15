@@ -384,22 +384,44 @@ namespace GT
     /// This is used when creating a rasterization state object.
     struct RasterizerStateDesc
     {
+        RasterizerStateDesc()
+            : fillMode(FillMode_Solid),
+              cullMode(CullMode_Back),
+              polygonWinding(PolygonWinding_CW),
+              depthBias(0),
+              depthBiasClamp(0.0f),
+              slopeScaledDepthBias(0.0f),
+              enableDepthClip(true),
+              enableScissor(false),
+              enableMultisample(false),
+              enableAntialiasedLine(false)
+        {
+        }
+
         FillMode       fillMode;
         CullMode       cullMode;
         PolygonWinding polygonWinding;
-        int               depthBias;
-        float             depthBiasClamp;
-        float             slopeScaledDepthBias;
-        bool              enableDepthClip;
-        bool              enableScissor;
-        bool              enableMultisample;
-        bool              enableAntialiasedLine;
+        int            depthBias;
+        float          depthBiasClamp;
+        float          slopeScaledDepthBias;
+        bool           enableDepthClip;
+        bool           enableScissor;
+        bool           enableMultisample;
+        bool           enableAntialiasedLine;
     };
 
 
 
     struct StencilOpDesc
     {
+        StencilOpDesc()
+            : stencilFailOp(StencilOp_Keep),
+              stencilDepthFailOp(StencilOp_Keep),
+              stencilPassOp(StencilOp_Keep),
+              stencilFunc(ComparisonFunc_Always)
+        {
+        }
+
         StencilOp stencilFailOp;
         StencilOp stencilDepthFailOp;
         StencilOp stencilPassOp;
@@ -411,10 +433,21 @@ namespace GT
     /// This is used when creating a depth/stencil state object.
     struct DepthStencilStateDesc
     {
+        DepthStencilStateDesc()
+            : enableDepthTest(true),
+              depthWriteMask(DepthWriteMask_All),
+              depthFunc(ComparisonFunc_Less),
+              enableStencilTest(false),
+              stencilReadMask(0xFF),
+              stencilWriteMask(0xFF),
+              stencilFrontFaceOp(),
+              stencilBackFaceOp()
+        {
+        }
+
         bool              enableDepthTest;
-        DepthWriteMask depthWriteMask;
-        ComparisonFunc depthFunc;
-            
+        DepthWriteMask    depthWriteMask;
+        ComparisonFunc    depthFunc;
         bool              enableStencilTest;
         uint8_t           stencilReadMask;
         uint8_t           stencilWriteMask;
