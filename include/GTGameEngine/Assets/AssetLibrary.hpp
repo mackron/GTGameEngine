@@ -37,6 +37,7 @@ namespace GT
         /// Loads an asset using the give file path.
         ///
         /// @param filePathOrIdentifier [in] The absolute or relative file path of the asset to load if it is backed by a file, or a unique identifier if the asset is not backed by a file.
+        /// @param explicitAssetType    [in] The asset type to load. If this is set to AssetType_Unknow (the default), the extension of \c filePathOrIdentifier will be used to determine the type based on the registered extensions.
         ///
         /// @return A pointer to the new asset object, or null if an error occurs.
         ///
@@ -44,7 +45,7 @@ namespace GT
         ///     If \c filePathOrIdentifier is a relative path, it will be converted to absolute based on the base directory priorities
         ///     @par
         ///     If the asset has already been loaded, this will return a pointer to the existing asset. If the asset should be re-loaded, use Reload().
-        Asset* Load(const char* filePathOrIdentifier);
+        Asset* Load(const char* filePathOrIdentifier, AssetType explicitAssetType = AssetType_Unknown);
 
         /// Increments the reference counter of an existing asset.
         ///
@@ -64,7 +65,15 @@ namespace GT
         void Reload(const char* filePathOrIdentifier);
 
 
+        /// Registers an asset allocator which is used to create and delete asset objects.
+        ///
+        /// @param allocator [in] A reference to the allocator to register.
         void RegisterAllocator(AssetAllocator &allocator);
+
+        /// Creates a mapping between a file extension and an asset type.
+        ///
+        /// @param extensions      [in] A pointer to the list of extension mappings.
+        /// @param extensionsCount [in] The number of extensions defined in \c extensions.
         void RegisterExtensions(AssetExtensionDesc* extensions, size_t extensionsCount);
 
 

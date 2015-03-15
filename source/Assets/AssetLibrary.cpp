@@ -44,7 +44,7 @@ namespace GT
     }
 
 
-    Asset* AssetLibrary::Load(const char* filePathOrIdentifier)
+    Asset* AssetLibrary::Load(const char* filePathOrIdentifier, AssetType explicitAssetType)
     {
         // When an asset is cached, the absolute path is used to retrieve the cached object. It is possible, however, for an asset to not actually
         // be loaded from a file, in which case filePathOrIdentifier is used as the unique identifier without any modification.
@@ -60,7 +60,12 @@ namespace GT
         auto iExistingAsset = m_loadedAssets.Find(absolutePathOrIdentifier.c_str());
         if (iExistingAsset == nullptr)
         {
-            AssetType assetType = this->FindTypeByExtension(GTLib::IO::GetExtension(filePathOrIdentifier));
+            AssetType assetType = explicitAssetType;
+            if (assetType == AssetType_Unknown)
+            {
+                assetType = this->FindTypeByExtension(GTLib::IO::GetExtension(filePathOrIdentifier));
+            }
+
 
             auto pAllocator = this->FindAllocatorByType(assetType);
             if (pAllocator != nullptr)
