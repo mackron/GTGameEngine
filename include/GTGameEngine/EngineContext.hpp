@@ -37,6 +37,8 @@ namespace GT
         ///
         /// @remarks
         ///     The argc and argv parameters should be passed exactly as they were passed from main().
+        ///     @par
+        ///     This sets the global current directory to that of the directory where the executable is located.
         ResultCode Startup(int argc, char** argv);
 
         /// Shuts down the engine engine.
