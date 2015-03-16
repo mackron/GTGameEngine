@@ -148,24 +148,26 @@ namespace GT
         }
     }
 
-    void AssetLibrary::Reload(const char* filePath)
+    void AssetLibrary::Reload(const char* filePathOrIdentifier)
     {
-        GTLib::String absolutePath;
-        if (m_fileSystem.FindAbsolutePath(filePath, absolutePath))
+        GTLib::String absolutePathOrIdentifier;
+        if (!m_fileSystem.FindAbsolutePath(filePathOrIdentifier, absolutePathOrIdentifier))
         {
-            auto iAsset = m_loadedAssets.Find(absolutePath.c_str());
-            if (iAsset != nullptr)
+            absolutePathOrIdentifier = filePathOrIdentifier;
+        }
+
+        auto iAsset = m_loadedAssets.Find(absolutePathOrIdentifier.c_str());
+        if (iAsset != nullptr)
+        {
+            auto pAsset = iAsset->value;
+            assert(pAsset != nullptr);
             {
-                auto pAsset = iAsset->value;
-                assert(pAsset != nullptr);
+                if (pAsset->Load(absolutePathOrIdentifier.c_str(), m_fileSystem))
                 {
-                    if (pAsset->Load(absolutePath.c_str(), m_fileSystem))
-                    {
-                    }
-                    else
-                    {
-                        // Failed to reload asset.
-                    }
+                }
+                else
+                {
+                    // Failed to reload asset.
                 }
             }
         }
