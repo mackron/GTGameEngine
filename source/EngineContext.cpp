@@ -3,6 +3,7 @@
 #include <GTGameEngine/EngineContext.hpp>
 #include <GTGameEngine/Config.hpp>
 #include <GTLib/CommandLine.hpp>
+#include <GTLib/IO.hpp>
 
 #include "Assets/DefaultAssetAllocator.hpp"
 
@@ -29,6 +30,9 @@ namespace GT
 
         // Command line.
         m_commandLine.Parse(argc, argv);
+
+        // Make the global current directory that of the executable by default.
+        GTLib::IO::SetCurrentDirectory(m_commandLine.GetApplicationDirectory());
 
 
 
