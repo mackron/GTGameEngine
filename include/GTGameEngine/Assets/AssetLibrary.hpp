@@ -68,12 +68,22 @@ namespace GT
         /// Registers an asset allocator which is used to create and delete asset objects.
         ///
         /// @param allocator [in] A reference to the allocator to register.
+        ///
+        /// @remarks
+        ///     An allocator can never be unregistered and they should always be registered before loading the first asset. The reason for this is that the allocator
+        ///     is not directly tied to the assets it creates, which means when an asset is deleted (which is done via the allocator) the library needs a consistent
+        ///     list of registered allocators in order to accurately determine the correct allocator to use for deleting.
+        ///     @par
+        ///     In debug mode, an assertion will be thrown if an asset has previously been loaded.
         void RegisterAllocator(AssetAllocator &allocator);
 
         /// Creates a mapping between a file extension and an asset type.
         ///
         /// @param extensions      [in] A pointer to the list of extension mappings.
         /// @param extensionsCount [in] The number of extensions defined in \c extensions.
+        ///
+        /// @remarks
+        ///     Once an extension has been registered, it can never be unregistered. See remarks in RegisterAllocator().
         void RegisterExtensions(AssetExtensionDesc* extensions, size_t extensionsCount);
 
 
