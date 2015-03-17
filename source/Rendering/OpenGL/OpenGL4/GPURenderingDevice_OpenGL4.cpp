@@ -316,7 +316,7 @@ namespace GT
             // Update the vertex attribute pointers if any are invalid.
             while (m_invalidVertexBufferSlots != 0)
             {
-                this->UpdateSlotVertexAttributePointers(GTLib::NextBitIndex(m_invalidVertexBufferSlots));
+                this->UpdateSlotVertexAttributeState(GTLib::NextBitIndex(m_invalidVertexBufferSlots));
             }
 
             m_gl.DrawElementsBaseVertex(m_currentTopologyGL, indexCount, m_indexBufferFormatGL, reinterpret_cast<const void*>(m_indexBufferOffset + (startIndexLocation*m_indexBufferFormatSize)), baseVertex);
@@ -332,7 +332,7 @@ namespace GT
             // Update the vertex attribute pointers if any are invalid.
             while (m_invalidVertexBufferSlots != 0)
             {
-                this->UpdateSlotVertexAttributePointers(GTLib::NextBitIndex(m_invalidVertexBufferSlots));
+                this->UpdateSlotVertexAttributeState(GTLib::NextBitIndex(m_invalidVertexBufferSlots));
             }
 
             m_gl.DrawElementsInstancedBaseVertexBaseInstance(m_currentTopologyGL, indexCount, m_indexBufferFormatGL, reinterpret_cast<const void*>(m_indexBufferOffset + (startIndexLocation*m_indexBufferFormatSize)), instanceCount, baseVertex, baseInstance);
@@ -1072,6 +1072,17 @@ namespace GT
                 unsigned int slotAttribCounts[GT_MAX_VERTEX_BUFFER_SLOTS];
                 memset(slotAttribCounts, 0, sizeof(slotAttribCounts));
 
+                GLenum attribComponentTypesGL[] =
+                {
+                    GL_FLOAT,               // VertexAttribFormat_Float
+                    GL_INT,                 // VertexAttribFormat_Int32
+                    GL_UNSIGNED_INT,        // VertexAttribFormat_UInt32
+                    GL_SHORT,               // VertexAttribFormat_Int16
+                    GL_UNSIGNED_SHORT,      // VertexAttribFormat_UInt16
+                    GL_BYTE,                // VertexAttribFormat_Int8
+                    GL_UNSIGNED_BYTE,       // VertexAttribFormat_UInt8
+                };
+
                 unsigned int iAttribGL = 0;
                 for (unsigned int iSlot = 0; iSlot < GT_MAX_VERTEX_BUFFER_SLOTS && iAttribGL < attribDescCount; ++iSlot)
                 {
@@ -1091,21 +1102,8 @@ namespace GT
                             attribGL.attribLocation       = m_gl.GetAttribLocation(shaderGL->GetOpenGLObject(), attrib.attributeName);
                             attribGL.attribComponentCount = attrib.attributeComponentCount;
                             attribGL.attribOffset         = attrib.attributeOffset;
-
-                            GLenum attribComponentTypesGL[] =
-                            {
-                                GL_FLOAT,               // VertexAttribFormat_Float
-                                GL_INT,                 // VertexAttribFormat_Int32
-                                GL_UNSIGNED_INT,        // VertexAttribFormat_UInt32
-                                GL_SHORT,               // VertexAttribFormat_Int16
-                                GL_UNSIGNED_SHORT,      // VertexAttribFormat_UInt16
-                                GL_BYTE,                // VertexAttribFormat_Int8
-                                GL_UNSIGNED_BYTE,       // VertexAttribFormat_UInt8
-                            };
-                            attribGL.attribComponentType = attribComponentTypesGL[attrib.attributeComponentType];
-
-                            attribGL.attributeClass   = attrib.attributeClass;
-                            attribGL.instanceStepRate = attrib.instanceStepRate;
+                            attribGL.attribComponentType  = attribComponentTypesGL[attrib.attributeComponentType];
+                            attribGL.instanceStepRate     = attrib.instanceStepRate;
 
 
                             // For compatibility with Direct3D, when a 3-dimensional 16- or 8-bit integral format is specified, force a 4 dimensional format.
@@ -1916,9 +1914,7 @@ namespace GT
     //////////////////////////////////////////
     // Private
 
-
-    // TODO: Rename this function.
-    void GPURenderingDevice_OpenGL4::UpdateSlotVertexAttributePointers(unsigned int slotIndex)
+    void GPURenderingDevice_OpenGL4::UpdateSlotVertexAttributeState(unsigned int slotIndex)
     {
         assert(slotIndex < GT_MAX_VERTEX_BUFFER_SLOTS);
 
@@ -1944,16 +1940,16 @@ namespace GT
                         m_gl.EnableVertexArrayAttrib(m_globalVAO, attribGL.attribLocation);
                         m_gl.VertexArrayAttribBinding(m_globalVAO, attribGL.attribLocation, attribGL.slotIndex);
 
-                        // TODO: Use the I and L versions of glVertexArrayAttribFormat where applicable based on the component type.
-                        m_gl.VertexArrayAttribFormat(m_globalVAO, attribGL.attribLocation, attribGL.attribComponentCount, attribGL.attribComponentType, GL_FALSE, attribGL.attribOffset);
-
-                        // Check if we are looking at per-instance format.
-                        //
-                        // TODO: This is untested. Check this.
-                        if (attribGL.attributeClass == AttribInputClassification_PerInstance)
+                        if (attribGL.attribComponentType == GL_FLOAT)
                         {
-                            m_gl.VertexArrayBindingDivisor(m_globalVAO, attribGL.slotIndex, attribGL.instanceStepRate);
+                            m_gl.VertexArrayAttribFormat(m_globalVAO, attribGL.attribLocation, attribGL.attribComponentCount, attribGL.attribComponentType, GL_FALSE, attribGL.attribOffset);
                         }
+                        else
+                        {
+                            m_gl.VertexArrayAttribIFormat(m_globalVAO, attribGL.attribLocation, attribGL.attribComponentCount, attribGL.attribComponentType, attribGL.attribOffset);
+                        }
+
+                        m_gl.VertexArrayBindingDivisor(m_globalVAO, attribGL.slotIndex, attribGL.instanceStepRate);
                     }
                 }
             }

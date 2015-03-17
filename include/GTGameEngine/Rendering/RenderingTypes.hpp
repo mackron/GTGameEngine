@@ -89,12 +89,6 @@ namespace GT
         IndexFormat_UInt32 = 2,
     };
 
-    enum AttribInputClassification
-    {
-        AttribInputClassification_PerVertex   = 0,
-        AttribInputClassification_PerInstance = 1,
-    };
-
     enum PrimitiveTopology
     {
         PrimitiveTopology_Point                  = 0,
@@ -367,13 +361,12 @@ namespace GT
 
     struct VSInputAttribFormat
     {
-        unsigned int              slotIndex;
-        const char*               attributeName;               // The name of the attribute variable inside the shader, or the semantic name in the case of Direct3D.
-        VertexAttribFormat        attributeComponentType;      // Float, Signed Int, etc.
-        unsigned int              attributeComponentCount;     // float = 1, float2 = 2, etc.
-        unsigned int              attributeOffset;             // The attribute's offset.
-        AttribInputClassification attributeClass;              // Per-Vertex or Per-Instance
-        unsigned int              instanceStepRate;
+        unsigned int       slotIndex;
+        const char*        attributeName;               //< The name of the attribute variable inside the shader, or the semantic name in the case of Direct3D.
+        VertexAttribFormat attributeComponentType;      //< Float, Signed Int, etc.
+        unsigned int       attributeComponentCount;     //< float = 1, float2 = 2, etc.
+        unsigned int       attributeOffset;             //< The attribute's offset within the buffer.
+        unsigned int       instanceStepRate;            //< The rate at which the vertex attributes advance for per-instance data. When this is 0, it is advanced once per vertex, otherwise it is advanced by this value for each instance. This will usually be set to 0 for non-instance vertex data, and 1 for instanced data.
     };
 
     struct ShaderDefine

@@ -215,13 +215,12 @@ namespace GT
         /// Structure describing an attribute.
         struct AttributeDesc
         {
-            unsigned int           slotIndex;
-            GLint                  attribLocation;
-            GLint                  attribComponentCount;
-            GLenum                 attribComponentType;
-            GLsizei                attribOffset;
-            AttribInputClassification attributeClass;            // Per-Vertex or Per-Instance
-            unsigned int           instanceStepRate;
+            unsigned int slotIndex;
+            GLint        attribLocation;
+            GLint        attribComponentCount;
+            GLenum       attribComponentType;
+            GLuint       attribOffset;
+            unsigned int instanceStepRate;
         };
 
 

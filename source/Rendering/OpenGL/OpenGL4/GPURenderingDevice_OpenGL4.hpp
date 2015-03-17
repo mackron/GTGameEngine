@@ -319,7 +319,7 @@ namespace GT
         ///
         /// @remarks
         ///     If the buffer is null, the vertex attribute will be disabled.
-        void UpdateSlotVertexAttributePointers(unsigned int slotIndex);
+        void UpdateSlotVertexAttributeState(unsigned int slotIndex);
 
         /// Helper for compiling a GLSL shader.
         ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const ShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &byteCodeOut, GT::BasicBuffer &messagesOut);

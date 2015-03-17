@@ -789,7 +789,7 @@ namespace GT
                             attribDescD3D[iAttrib].Format               = format[attribDesc[iAttrib].attributeComponentType][attribDesc[iAttrib].attributeComponentCount - 1];
                             attribDescD3D[iAttrib].InputSlot            = attribDesc[iAttrib].slotIndex;
                             attribDescD3D[iAttrib].AlignedByteOffset    = attribDesc[iAttrib].attributeOffset;
-                            attribDescD3D[iAttrib].InputSlotClass       = (attribDesc[iAttrib].attributeClass == AttribInputClassification_PerVertex) ? D3D11_INPUT_PER_VERTEX_DATA : D3D11_INPUT_PER_INSTANCE_DATA;
+                            attribDescD3D[iAttrib].InputSlotClass       = (attribDesc[iAttrib].instanceStepRate == 0) ? D3D11_INPUT_PER_VERTEX_DATA : D3D11_INPUT_PER_INSTANCE_DATA;
                             attribDescD3D[iAttrib].InstanceDataStepRate = attribDesc[iAttrib].instanceStepRate;
                         }
 
