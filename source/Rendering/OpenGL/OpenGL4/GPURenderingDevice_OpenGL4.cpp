@@ -586,7 +586,7 @@ namespace GT
         m_currentTopologyGL = topologiesGL[topology];
     }
 
-    void GPURenderingDevice_OpenGL4::IASetInputLayout(HInputLayout hInputLayout)
+    void GPURenderingDevice_OpenGL4::IASetInputLayout(HVSInputLayout hInputLayout)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 
@@ -1052,8 +1052,15 @@ namespace GT
     ////////////////////////////////////////////
     // Input Layouts
 
-    HInputLayout GPURenderingDevice_OpenGL4::CreateInputLayout(HShader hVertexShader, const InputLayoutAttribDesc* attribDesc, size_t attribDescCount)
+    HVSInputLayout GPURenderingDevice_OpenGL4::CreateVSInputLayout(HShader hVertexShader, const VSInputAttribFormat* attribDesc, size_t attribDescCount)
     {
+        // Validate the input layout.
+        if (!IsInputLayoutValid(attribDesc, attribDescCount))
+        {
+            return 0;
+        }
+
+
         CheckContextIsCurrent(m_gl, m_currentDC);
 
         auto shaderGL = reinterpret_cast<Shader_OpenGL4*>(hVertexShader);
@@ -1087,14 +1094,22 @@ namespace GT
 
                             GLenum attribComponentTypesGL[] =
                             {
-                                GL_FLOAT,               // GPUBasicType_Float
-                                GL_INT,                 // GPUBasicType_SInt
-                                GL_UNSIGNED_INT         // GPUBasicType_UInt
+                                GL_FLOAT,               // VertexAttribFormat_Float
+                                GL_INT,                 // VertexAttribFormat_Int32
+                                GL_UNSIGNED_INT,        // VertexAttribFormat_UInt32
+                                GL_SHORT,               // VertexAttribFormat_Int16
+                                GL_UNSIGNED_SHORT,      // VertexAttribFormat_UInt16
+                                GL_BYTE,                // VertexAttribFormat_Int8
+                                GL_UNSIGNED_BYTE,       // VertexAttribFormat_UInt8
                             };
                             attribGL.attribComponentType = attribComponentTypesGL[attrib.attributeComponentType];
 
                             attribGL.attributeClass   = attrib.attributeClass;
                             attribGL.instanceStepRate = attrib.instanceStepRate;
+
+
+                            // For compatibility with Direct3D, when a 3-dimensional 16- or 8-bit integral format is specified, force a 4 dimensional format.
+
 
 
                             iAttribGL += 1;
@@ -1104,7 +1119,7 @@ namespace GT
 
 
 
-                HInputLayout hInputLayout = reinterpret_cast<HInputLayout>(new InputLayout_OpenGL4(attribDescGL, attribDescCount, slotAttribCounts));
+                HVSInputLayout hInputLayout = reinterpret_cast<HVSInputLayout>(new InputLayout_OpenGL4(attribDescGL, attribDescCount, slotAttribCounts));
 
 
                 free(attribDescGL);
@@ -1123,7 +1138,7 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_OpenGL4::DeleteInputLayout(HInputLayout hInputLayout)
+    void GPURenderingDevice_OpenGL4::DeleteVSInputLayout(HVSInputLayout hInputLayout)
     {
         auto inputLayoutGL = reinterpret_cast<InputLayout_OpenGL4*>(hInputLayout);
         if (inputLayoutGL != nullptr)

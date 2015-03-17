@@ -56,8 +56,8 @@ namespace GT
 
         /// Unloads an asset.
         ///
-        /// @param asset [in] A pointer to the asset to unload.
-        void Unload(Asset* asset);
+        /// @param pAsset [in] A pointer to the asset to unload.
+        void Unload(Asset* pAsset);
 
         /// Reloads the asset at the given file path.
         ///

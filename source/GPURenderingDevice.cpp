@@ -317,4 +317,24 @@ namespace GT
         int binaryVersionOut;
         return ExtractShaderBinaryData(shaderData, shaderDataSize, sourceOut, sourceLengthOut, definesOut, languageOut, typeOut, binaryOut, binarySizeOut, binaryVersionOut);
     }
+
+    bool GPURenderingDevice::IsInputLayoutValid(const VSInputAttribFormat* attribDesc, size_t attribDescCount)
+    {
+        for (size_t iAttrib = 0; iAttrib < attribDescCount; ++iAttrib)
+        {
+            auto &attrib = attribDesc[iAttrib];
+
+            if (attrib.attributeComponentCount == 3)
+            {
+                if (attrib.attributeComponentType == VertexAttribFormat_Int16 || attrib.attributeComponentType == VertexAttribFormat_Int16 ||
+                    attrib.attributeComponentType == VertexAttribFormat_Int8  || attrib.attributeComponentType == VertexAttribFormat_Int8)
+                {
+                    // The vertex attribute is a 3-component, 16- or 8-bit format which is not allowed.
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
 }

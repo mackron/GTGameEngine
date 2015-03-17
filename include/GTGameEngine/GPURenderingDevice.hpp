@@ -199,7 +199,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is analogous to D3D11's IASetInputLayout().
-        virtual void IASetInputLayout(HInputLayout hInputLayout) = 0;
+        virtual void IASetInputLayout(HVSInputLayout hInputLayout) = 0;
 
         /// Binds the given vertex buffer to the given slot for the input-assembler stage.
         ///
@@ -339,12 +339,15 @@ namespace GT
         /// @param attribDescCount [in] The number of items in \c attribDesc.
         ///
         /// @return A handle to the new input layout object.
-        virtual HInputLayout CreateInputLayout(HShader hVertexShader, const InputLayoutAttribDesc* attribDesc, size_t attribDescCount) = 0;
+        ///
+        /// @remarks
+        ///     Direct3D 11 does not support 3-dimensional 16- and 8-bit integral formats. Therefore, this is not allowed.
+        virtual HVSInputLayout CreateVSInputLayout(HShader hVertexShader, const VSInputAttribFormat* attribDesc, size_t attribDescCount) = 0;
 
         /// Deletes the given input layout object.
         ///
         /// @param hInputLayout [in] A handle to the vertex input layout object to delete.
-        virtual void DeleteInputLayout(HInputLayout hInputLayout) = 0;
+        virtual void DeleteVSInputLayout(HVSInputLayout hInputLayout) = 0;
 
 
         ////////////////////////////////////////////
@@ -633,6 +636,8 @@ namespace GT
         static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const char* &sourceOut, size_t &sourceLengthOut, GTLib::Vector<ShaderDefine> &definesOut, ShaderLanguage &languageOut, ShaderType &typeOut);
         static ResultCode ExtractShaderBinaryData(const void* shaderData, size_t shaderDataSize, const void* &binaryOut, size_t &binarySizeOut);
 
+        /// Validates the given list of vertex layout attributes.
+        static bool IsInputLayoutValid(const VSInputAttribFormat* attribDesc, size_t attribDescCount);
 
     protected:
 

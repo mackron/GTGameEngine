@@ -390,7 +390,7 @@ namespace GT
         m_context->IASetPrimitiveTopology(topologiesD3D11[topology]);
     }
 
-    void GPURenderingDevice_D3D11::IASetInputLayout(HInputLayout hInputLayout)
+    void GPURenderingDevice_D3D11::IASetInputLayout(HVSInputLayout hInputLayout)
     {
         m_context->IASetInputLayout(reinterpret_cast<ID3D11InputLayout*>(hInputLayout));
     }
@@ -687,8 +687,14 @@ namespace GT
     ////////////////////////////////////////////
     // Input Layout
 
-    HInputLayout GPURenderingDevice_D3D11::CreateInputLayout(HShader hVertexShader, const InputLayoutAttribDesc* attribDesc, size_t attribDescCount)
+    HVSInputLayout GPURenderingDevice_D3D11::CreateVSInputLayout(HShader hVertexShader, const VSInputAttribFormat* attribDesc, size_t attribDescCount)
     {
+        // Validate the input layout.
+        if (!IsInputLayoutValid(attribDesc, attribDescCount))
+        {
+            return 0;
+        }
+
         auto shaderD3D11 = reinterpret_cast<ID3D11VertexShader*>(hVertexShader);
         if (shaderD3D11 != nullptr)
         {
@@ -731,26 +737,50 @@ namespace GT
                             }
 
 
-                            DXGI_FORMAT format[3][4] = 
+                            DXGI_FORMAT format[7][4] = 
                             {
                                 {
                                     DXGI_FORMAT_R32_FLOAT,
                                     DXGI_FORMAT_R32G32_FLOAT,
                                     DXGI_FORMAT_R32G32B32_FLOAT,
                                     DXGI_FORMAT_R32G32B32A32_FLOAT
-                                },  // GPUBasicType_Float
+                                },  // VertexAttribFormat_Float
                                 {
                                     DXGI_FORMAT_R32_SINT,
                                     DXGI_FORMAT_R32G32_SINT,
                                     DXGI_FORMAT_R32G32B32_SINT,
                                     DXGI_FORMAT_R32G32B32A32_SINT
-                                },  // GPUBasicType_SInt
+                                },  // VertexAttribFormat_Int32
                                 {
                                     DXGI_FORMAT_R32_UINT,
                                     DXGI_FORMAT_R32G32_UINT,
                                     DXGI_FORMAT_R32G32B32_UINT,
                                     DXGI_FORMAT_R32G32B32A32_UINT
-                                }   // GPUBasicType_UInt
+                                },  // VertexAttribFormat_UInt32
+                                {
+                                    DXGI_FORMAT_R16_SINT,
+                                    DXGI_FORMAT_R16G16_SINT,
+                                    DXGI_FORMAT_R16G16B16A16_SINT,
+                                    DXGI_FORMAT_R16G16B16A16_SINT
+                                },  // VertexAttribFormat_Int16
+                                {
+                                    DXGI_FORMAT_R16_UINT,
+                                    DXGI_FORMAT_R16G16_UINT,
+                                    DXGI_FORMAT_R16G16B16A16_UINT,
+                                    DXGI_FORMAT_R16G16B16A16_UINT
+                                },  // VertexAttribFormat_UInt16
+                                {
+                                    DXGI_FORMAT_R8_SINT,
+                                    DXGI_FORMAT_R8G8_SINT,
+                                    DXGI_FORMAT_R8G8B8A8_SINT,
+                                    DXGI_FORMAT_R8G8B8A8_SINT
+                                },  // VertexAttribFormat_Int8
+                                {
+                                    DXGI_FORMAT_R16_UINT,
+                                    DXGI_FORMAT_R16G16_UINT,
+                                    DXGI_FORMAT_R8G8B8A8_UINT,
+                                    DXGI_FORMAT_R8G8B8A8_UINT
+                                }  // VertexAttribFormat_UInt8
                             };
 
 
@@ -781,7 +811,7 @@ namespace GT
                         free(vertexShaderData);
 
 
-                        return reinterpret_cast<HInputLayout>(inputLayoutD3D);
+                        return reinterpret_cast<HVSInputLayout>(inputLayoutD3D);
                     }
                 }
                 else
@@ -803,7 +833,7 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::DeleteInputLayout(HInputLayout hInputLayout)
+    void GPURenderingDevice_D3D11::DeleteVSInputLayout(HVSInputLayout hInputLayout)
     {
         if (hInputLayout != 0)
         {

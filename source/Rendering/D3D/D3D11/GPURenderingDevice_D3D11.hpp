@@ -122,7 +122,7 @@ namespace GT
         void IASetPrimitiveTopology(PrimitiveTopology topology);
 
         /// @copydoc GPURenderingDevice::IASetInputLayout()
-        void IASetInputLayout(HInputLayout hinputLayout);
+        void IASetInputLayout(HVSInputLayout hinputLayout);
 
         /// @copydoc GPURenderingDevice::IASetVertexBuffer()
         void IASetVertexBuffer(unsigned int slotIndex, HBuffer hBuffer, size_t stride, size_t offset);
@@ -195,11 +195,11 @@ namespace GT
         ////////////////////////////////////////////
         // Input Layout
 
-        /// GPURenderingDevice::CreateVertexInputLayout().
-        HInputLayout CreateInputLayout(HShader hVertexShader, const InputLayoutAttribDesc* attribDesc, size_t attribDescCount);
+        /// GPURenderingDevice::CreateVSInputLayout().
+        HVSInputLayout CreateVSInputLayout(HShader hVertexShader, const VSInputAttribFormat* attribDesc, size_t attribDescCount);
 
-        /// GPURenderingDevice::DeleteInputLayout().
-        void DeleteInputLayout(HInputLayout hInputLayout);
+        /// GPURenderingDevice::DeleteVSInputLayout().
+        void DeleteVSInputLayout(HVSInputLayout hInputLayout);
 
 
 

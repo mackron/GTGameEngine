@@ -23,7 +23,7 @@ namespace GT
 
     typedef size_t HGeneric;        //< A generic handle whose purpose is to cast to another handle type.
     typedef size_t HBuffer;
-    typedef size_t HInputLayout;
+    typedef size_t HVSInputLayout;
     typedef size_t HShader;
     typedef size_t HTexture;
     typedef size_t HTextureView;
@@ -73,16 +73,20 @@ namespace GT
 
     enum VertexAttribFormat
     {
-        VertexAttribFormat_Float       = 0,
-        VertexAttribFormat_Int         = 1,
-        VertexAttribFormat_UnsignedInt = 2,
+        VertexAttribFormat_Float  = 0,
+        VertexAttribFormat_Int32,
+        VertexAttribFormat_UInt32,
+        VertexAttribFormat_Int16,
+        VertexAttribFormat_UInt16,
+        VertexAttribFormat_Int8,
+        VertexAttribFormat_UInt8
     };
 
     enum IndexFormat
     {
-        IndexFormat_UnsignedInt8  = 0,
-        IndexFormat_UnsignedInt16 = 1,
-        IndexFormat_UnsignedInt32 = 2,
+        IndexFormat_UInt8  = 0,
+        IndexFormat_UInt16 = 1,
+        IndexFormat_UInt32 = 2,
     };
 
     enum AttribInputClassification
@@ -361,7 +365,7 @@ namespace GT
     //////////////////////////////////////////
     // Structures
 
-    struct InputLayoutAttribDesc
+    struct VSInputAttribFormat
     {
         unsigned int              slotIndex;
         const char*               attributeName;               // The name of the attribute variable inside the shader, or the semantic name in the case of Direct3D.
