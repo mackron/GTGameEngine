@@ -179,7 +179,7 @@ namespace GT
         // It is considered an error if the allocator already exists.
         assert(m_allocators.Exists(&allocator) == false);
         {
-            m_allocators.PushBack(&allocator);
+            m_allocators.InsertAt(&allocator, 0);
         }
     }
 

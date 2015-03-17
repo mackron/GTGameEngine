@@ -75,6 +75,10 @@ namespace GT
         ///     list of registered allocators in order to accurately determine the correct allocator to use for deleting.
         ///     @par
         ///     In debug mode, an assertion will be thrown if an asset has previously been loaded.
+        ///     @par
+        ///     As allocators are added, they are given the highest priority. This makes is possible to override existing allocators for any particular asset type. The
+        ///     first allocator to be registered will usually be the engine's default allocator, which means it's possible for the host application to override any of
+        ///     the engine's default asset loaders.
         void RegisterAllocator(AssetAllocator &allocator);
 
         /// Creates a mapping between a file extension and an asset type.
@@ -84,6 +88,8 @@ namespace GT
         ///
         /// @remarks
         ///     Once an extension has been registered, it can never be unregistered. See remarks in RegisterAllocator().
+        ///     @par
+        ///     If the same extension has already been registered, it will be overwritten.
         void RegisterExtensions(AssetExtensionDesc* extensions, size_t extensionsCount);
 
 
