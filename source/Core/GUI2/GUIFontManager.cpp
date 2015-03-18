@@ -5,8 +5,8 @@
 
 namespace GT
 {
-    GUIFontManager::GUIFontManager(GUIImageManager &imageManager)
-        : m_glyphMapManager(imageManager),
+    GUIFontManager::GUIFontManager(/*GUIImageManager &imageManager*/)
+        : m_glyphMapManager(/*imageManager*/),
           m_fontServer(m_glyphMapManager),
           m_fontFamilies()
     {

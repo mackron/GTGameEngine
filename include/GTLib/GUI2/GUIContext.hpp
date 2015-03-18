@@ -6,7 +6,7 @@
 #include "GUIElement.hpp"
 #include "GUISurface.hpp"
 #include "GUIRenderer.hpp"
-#include "GUIImageManager_Default.hpp"
+#include "GUIImageManager.hpp"
 #include "GUIFontManager.hpp"
 #include "GUIEventHandler.hpp"
 #include "../HandleManager.hpp"
@@ -2049,7 +2049,7 @@ namespace GT
 
 
         /// The image manager for creating, deleting and updating images.
-        GUIImageManager_Default m_imageManager;
+        //GUIImageManager_Default m_imageManager;
 
         /// The font manager for working with fonts. This depends on m_imageManager, so must be declared and initialized afterwards.
         GUIFontManager m_fontManager;

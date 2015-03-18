@@ -17,7 +17,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GUIGlyphMapManager(GUIImageManager &imageManager);
+        GUIGlyphMapManager(/*GUIImageManager &imageManager*/);
 
         /// Destructor.
         virtual ~GUIGlyphMapManager();
@@ -46,7 +46,7 @@ namespace GT
     private:
 
         /// The image manager that will be used for managing the image buffers where the glyphs will be stored.
-        GUIImageManager &m_imageManager;
+        //GUIImageManager &m_imageManager;
 
         /// For now, glyph maps are just GTLib images.
         GTLib::Vector<ImageHandle> m_glyphMaps;

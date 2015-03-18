@@ -12,8 +12,8 @@ namespace GT
     GUIContext::GUIContext(GUIRenderer* renderer)
         : m_elementHandles(),
           m_surfaceHandles(),
-          m_imageManager(),
-          m_fontManager(m_imageManager),
+          //m_imageManager(),
+          m_fontManager(/*m_imageManager*/),
           m_defaultFont(nullptr),
           m_xBaseDPI(96), m_yBaseDPI(96), m_xDPI(m_xBaseDPI), m_yDPI(m_yBaseDPI), 
           m_renderer(renderer),

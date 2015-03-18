@@ -1,30 +1,19 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_MipmapGenerator_hpp_
-#define __GTLib_MipmapGenerator_hpp_
+#ifndef __GT_MipmapGenerator_hpp_
+#define __GT_MipmapGenerator_hpp_
 
-#include "Mipmap.hpp"
 #include "ImageUtils.hpp"
 
-namespace GTLib
+namespace GT
 {
     /// Static class for generating mipmaps.
     class MipmapGenerator
     {
     public:
 
-        /// Generates mipmap data from a source mipmap.
-        /// @param source [in] The mipmap that the destination will source it's image data from.
-        /// @param dest   [in] The destination mipmap.
-        /// @return True if the mipmap could be generated; false otherwise.
-        ///
-        /// @remarks
-        ///     Not all image formats can be mipmapped. In particular, depth and stencil formats can not be mipmapped.
-        ///     @par
-        ///     16-bit floats can not currently be mipmapped. Support is planned, but contributions are more than welcome.
-        static bool Generate(const Mipmap &source, Mipmap &dest);
-
         /// Mipmap generation function optimized for RGB8 image formats.
+        ///
         /// @param sourceWidth  [in] The width of the source mipmap.
         /// @param sourceHeight [in] The height of the source mipmap.
         /// @param sourceData   [in] A pointer to the source mipmaps image data.
@@ -35,6 +24,7 @@ namespace GTLib
         static void GenerateRGB8(unsigned int sourceWidth, unsigned int sourceHeight, const void* sourceData, void* destData);
 
         /// Mipmap generation function optimized for RGBA8 image formats.
+        ///
         /// @param sourceWidth  [in] The width of the source mipmap.
         /// @param sourceHeight [in] The height of the source mipmap.
         /// @param sourceData   [in] A pointer to the source mipmaps image data.
@@ -46,6 +36,7 @@ namespace GTLib
 
 
         /// Generic function for generating mipmap data.
+        ///
         /// @param sourceWidth    [in] The width of the source mipmap.
         /// @param sourceHeight   [in] The height of the source mipmap.
         /// @param componentCount [in] The number of components in each texel.

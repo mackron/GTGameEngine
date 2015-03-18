@@ -2,83 +2,18 @@
 
 #include <GTLib/MipmapGenerator.hpp>
 #include <GTLib/ImageUtils.hpp>
-#include <GTLib/stdlib.hpp>
+//#include <GTLib/stdlib.hpp>
 #include <cstdint>
 
-namespace GTLib
+namespace GT
 {
-    bool MipmapGenerator::Generate(const Mipmap &source, Mipmap &dest)
-    {
-        dest.DeleteLocalData();
-
-        dest.format = source.format;
-        dest.width  = ImageUtils::CalculateMipmapWidth(1, source.width);
-        dest.height = ImageUtils::CalculateMipmapHeight(1, source.height);
-        dest.data   = malloc(ImageUtils::CalculateDataSize(dest.width, dest.height, dest.format));
-
-        unsigned int componentCount = GetImageFormatComponentCount(dest.format);
-        unsigned int componentSize  = GetImageFormatComponentSize(dest.format);
-
-        if (dest.format == ImageFormat_RGB8)
-        {
-            MipmapGenerator::GenerateRGB8(source.width, source.height, source.data, dest.data);
-        }
-        else if (dest.format == ImageFormat_RGBA8)
-        {
-            MipmapGenerator::GenerateRGBA8(source.width, source.height, source.data, dest.data);
-        }
-        else
-        {
-            // Now we need to generate the mipmap depending on the format data type.
-            int componentDataType = GetImageFormatDataType(dest.format);
-            if (componentDataType == ImageFormatDataTypes::Integer)
-            {
-                switch (componentSize)
-                {
-                case 1: MipmapGenerator::Generate<uint8_t >(source.width, source.height, componentCount, source.data, dest.data); break;
-                case 2: MipmapGenerator::Generate<uint16_t>(source.width, source.height, componentCount, source.data, dest.data); break;
-                case 4: MipmapGenerator::Generate<uint32_t>(source.width, source.height, componentCount, source.data, dest.data); break;
-                case 8: MipmapGenerator::Generate<uint64_t>(source.width, source.height, componentCount, source.data, dest.data); break;
-
-                default:
-                    {
-                        // Error. Unknown or unsupported component size.
-                        return false;
-                    }
-                }
-            }
-            else if (componentDataType == ImageFormatDataTypes::Float)
-            {
-                switch (componentSize)
-                {
-                case 4: MipmapGenerator::Generate<float >(source.width, source.height, componentCount, source.data, dest.data); break;
-                case 8: MipmapGenerator::Generate<double>(source.width, source.height, componentCount, source.data, dest.data); break;
-
-                default:
-                    {
-                        // Error. Unknown or unsupported component size.
-                        return false;
-                    }
-                }
-            }
-            else
-            {
-                // Error. Can't generate mipmaps with this format.
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-
     void MipmapGenerator::GenerateRGB8(unsigned int sourceWidth, unsigned int sourceHeight, const void* sourceDataIn, void* destDataIn)
     {
         const uint8_t* sourceData = reinterpret_cast<const uint8_t*>(sourceDataIn);
               uint8_t* destData   = reinterpret_cast<      uint8_t*>(destDataIn);
 
-        unsigned int destWidth  = ImageUtils::CalculateMipmapWidth(1, sourceWidth);
-        unsigned int destHeight = ImageUtils::CalculateMipmapHeight(1, sourceHeight);
+        unsigned int destWidth  = GT::CalculateMipmapSize(1, sourceWidth);
+        unsigned int destHeight = GT::CalculateMipmapSize(1, sourceHeight);
 
         unsigned int destTexelIndex = 0;
 
@@ -148,8 +83,8 @@ namespace GTLib
         const uint32_t* sourceData = reinterpret_cast<const uint32_t*>(sourceDataIn);
               uint32_t* destData   = reinterpret_cast<      uint32_t*>(destDataIn);
 
-        unsigned int destWidth  = ImageUtils::CalculateMipmapWidth(1, sourceWidth);
-        unsigned int destHeight = ImageUtils::CalculateMipmapHeight(1, sourceHeight);
+        unsigned int destWidth  = GT::CalculateMipmapSize(1, sourceWidth);
+        unsigned int destHeight = GT::CalculateMipmapSize(1, sourceHeight);
 
         unsigned int destTexelIndex = 0;
 

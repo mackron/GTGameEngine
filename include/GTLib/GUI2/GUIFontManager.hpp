@@ -21,7 +21,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GUIFontManager(GUIImageManager &imageManager);
+        GUIFontManager(/*GUIImageManager &imageManager*/);
 
         /// Destructor.
         ~GUIFontManager();

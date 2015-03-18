@@ -1380,7 +1380,7 @@ namespace GT
         GLsizei levelCountGL = desc.mipmapLevels;
         if (levelCountGL == 0)
         {
-            levelCountGL = GTLib::ImageUtils::CalculateMipmapCount(desc.width, desc.height, desc.depth);
+            levelCountGL = GT::CalculateMipmapCount(desc.width, desc.height, desc.depth);
         }
 
 
