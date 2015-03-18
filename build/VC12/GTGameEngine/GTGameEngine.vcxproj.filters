@@ -51,6 +51,42 @@
     <Filter Include="Source Files\Assets">
       <UniqueIdentifier>{ac24c5a7-98a9-4d2c-8c46-4ed741c9d315}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{2da8048d-07e9-4b2c-ae1f-bd61fa1f1b06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{b67b0514-3b3b-4865-9e8e-72a832324f4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\GUI">
+      <UniqueIdentifier>{ad5fbc7f-c572-4652-85a2-0b9c80b7cd76}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\GUI2">
+      <UniqueIdentifier>{035dac0a-bafa-4840-92b5-f33713ab0a95}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\IO">
+      <UniqueIdentifier>{ea8a48b5-5438-4cfd-b2a1-80d8b6b49815}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Strings">
+      <UniqueIdentifier>{cb361e30-b985-4478-9eff-62259aec3fa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Threading">
+      <UniqueIdentifier>{bf1bb0aa-2bc4-4e5b-81bf-4dbe35361132}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Timing">
+      <UniqueIdentifier>{aca011c0-be76-4aee-8f51-4a03214743a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Windowing">
+      <UniqueIdentifier>{207a98d3-fcaf-4b3c-895c-7cd586d02327}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\GUI\Rendering">
+      <UniqueIdentifier>{1fc13d8c-44ae-4245-84d3-5eac52049d03}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Windowing\X11">
+      <UniqueIdentifier>{5c887360-6edb-4c91-b9b0-db9a3bc076ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Windowing\Win32">
+      <UniqueIdentifier>{133808cd-f01b-456f-ab36-daa5974fd2ff}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c">
@@ -136,6 +172,297 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Assets\ModelAsset_OBJ.cpp">
       <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\Caret.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\ClippingVolume.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\Element.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\ElementEventHandler.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\ElementTree.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\EventQueue.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\FontCache.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\FontGlyphMapManager.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GarbageCollector.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\ImageManager.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\LayoutManager.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\MarkupLoader.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\ScriptServer.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\Server.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\ServerEventHandler.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\ServerXMLParser.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\StandardLibrary.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\StandardLibrary_Images.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\StyleAttributeHandler.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\StyleClass.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\StyleClassTree.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\StyleScriptCompiler.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\StyleServer.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\StyleStack.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\StyleTokenizer.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\Rendering\ElementRenderingData.cpp">
+      <Filter>Source Files\Core\GUI\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\Rendering\Mesh.cpp">
+      <Filter>Source Files\Core\GUI\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\Rendering\Renderer.cpp">
+      <Filter>Source Files\Core\GUI\Rendering</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI2\GUIContext.cpp">
+      <Filter>Source Files\Core\GUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI2\GUIElement.cpp">
+      <Filter>Source Files\Core\GUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI2\GUIEventHandler.cpp">
+      <Filter>Source Files\Core\GUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI2\GUIFontManager.cpp">
+      <Filter>Source Files\Core\GUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI2\GUIGlyphMapManager.cpp">
+      <Filter>Source Files\Core\GUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI2\GUIImageManager.cpp">
+      <Filter>Source Files\Core\GUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI2\GUIImageManager_Default.cpp">
+      <Filter>Source Files\Core\GUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI2\GUILogging.cpp">
+      <Filter>Source Files\Core\GUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI2\GUIRenderer.cpp">
+      <Filter>Source Files\Core\GUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI2\GUIRenderer_Generic.cpp">
+      <Filter>Source Files\Core\GUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI2\GUISurface.cpp">
+      <Filter>Source Files\Core\GUI2</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\IO\cstdio.cpp">
+      <Filter>Source Files\Core\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\IO\FileIterator.cpp">
+      <Filter>Source Files\Core\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Windowing\Clipboard.cpp">
+      <Filter>Source Files\Core\Windowing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Windowing\WindowEventHandler.cpp">
+      <Filter>Source Files\Core\Windowing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Windowing\X11\Window_X11.cpp">
+      <Filter>Source Files\Core\Windowing\X11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Windowing\X11\X11.cpp">
+      <Filter>Source Files\Core\Windowing\X11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Windowing\X11\X11Keys.cpp">
+      <Filter>Source Files\Core\Windowing\X11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Windowing\Win32\Win32.cpp">
+      <Filter>Source Files\Core\Windowing\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Windowing\Win32\Window_Win32.cpp">
+      <Filter>Source Files\Core\Windowing\Win32</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Timing\Stopwatch.cpp">
+      <Filter>Source Files\Core\Timing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Timing\Timer.cpp">
+      <Filter>Source Files\Core\Timing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Timing\TimingCommon.cpp">
+      <Filter>Source Files\Core\Timing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Threading\Job.cpp">
+      <Filter>Source Files\Core\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Threading\JobQueue.cpp">
+      <Filter>Source Files\Core\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Threading\Mutex.cpp">
+      <Filter>Source Files\Core\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Threading\Semaphore.cpp">
+      <Filter>Source Files\Core\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Threading\Thread.cpp">
+      <Filter>Source Files\Core\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Strings\NextChar.cpp">
+      <Filter>Source Files\Core\Strings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\BasicBuffer.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Colour.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\CommandLine.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\DateTime.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Errors.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Font.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\FontEngine.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\FontEngine_FCFT.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\FontEngine_Win32.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\FontEventHandler.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\FontServer.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GlyphCache.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GlyphMapLayout.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GlyphMapManager.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\HandleManager.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Image.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\ImageDataConverter.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\ImageLoader.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\ImageLoader_PNG.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\ImageUtils.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\IO.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Keyboard.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Log.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Mipmap.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\MipmapGenerator.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Mouse.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Parse.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Path.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Regex.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Script.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Scripting.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\slre.c">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\System.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\TextManager.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\TextMesh.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Threading.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\ToString.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Window.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\WindowEventCallback.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\WindowManagement.cpp">
+      <Filter>Source Files\Core</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -240,6 +567,27 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\ModelAsset.hpp">
       <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Core\GUI\StyleAttributeHandler.hpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Core\GUI\StyleTokenizer.hpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Core\GUI2\GUIRenderer_Generic.hpp">
+      <Filter>Source Files\Core\GUI2</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Core\FontEngine_FCFT.hpp">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Core\FontEngine_Win32.hpp">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Core\ImageLoader_PNG.hpp">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Core\slre.h">
+      <Filter>Source Files\Core</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
