@@ -49,8 +49,8 @@ namespace GT
         template <typename T>
         static void Generate(unsigned int sourceWidth, unsigned int sourceHeight, unsigned int componentCount, const void* sourceData, void* destData)
         {
-            unsigned int destWidth  = ImageUtils::CalculateMipmapWidth(1, sourceWidth);
-            unsigned int destHeight = ImageUtils::CalculateMipmapHeight(1, sourceHeight);
+            unsigned int destWidth  = GT::CalculateMipmapSize(1, sourceWidth);
+            unsigned int destHeight = GT::CalculateMipmapSize(1, sourceHeight);
 
             for (unsigned int iRow = 0; iRow < destHeight; ++iRow)
             {
