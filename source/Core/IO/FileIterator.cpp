@@ -6,7 +6,6 @@
 #include <GTLib/Path.hpp>
 #include <GTLib/Strings/Create.hpp>
 #include <GTLib/Strings/Equal.hpp>
-#include <GTLib/Regex.hpp>
 
 #if    defined(GT_PLATFORM_WINDOWS)
 // --- Windows ---
@@ -24,13 +23,13 @@ namespace GTLib
     namespace IO
     {
         FileIterator::FileIterator()
-            : name(nullptr), absolutePath(nullptr), size(0), lastModified(0), isDirectory(false), fileInfoList(new GTLib::List<FileInfo *>), count(1)
+            : name(nullptr), absolutePath(nullptr), size(0), lastModified(0), isDirectory(false), fileInfoList(new GTLib::List<FileInfo>), count(1)
         {
 			this->ctor(nullptr);
         }
 
 		FileIterator::FileIterator(const char *fileQuery)
-			: name(nullptr), absolutePath(nullptr), size(0), lastModified(0), isDirectory(false), fileInfoList(new GTLib::List<FileInfo *>), count(1)
+			: name(nullptr), absolutePath(nullptr), size(0), lastModified(0), isDirectory(false), fileInfoList(new GTLib::List<FileInfo>), count(1)
 		{
 			this->ctor(fileQuery);
 		}
@@ -47,11 +46,7 @@ namespace GTLib
             --this->count;
             if (this->count == 0)
             {
-                while (this->fileInfoList->root != nullptr)
-                {
-                    delete this->fileInfoList->root->value;
-                    this->fileInfoList->RemoveRoot();
-                }
+                this->fileInfoList->Clear();
             }
 
             delete this->fileInfoList;
@@ -62,19 +57,18 @@ namespace GTLib
             // If there was a root item before, it needs to be removed.
             if (this->fileInfoList->root != nullptr)
             {
-                delete this->fileInfoList->root->value;
                 this->fileInfoList->RemoveRoot();
 
                 // Now if we have a root item we can set the appropriate values. Otherwise we're at the end.
                 if (this->fileInfoList->root)
                 {
-                    auto fi = this->fileInfoList->root->value;
+                    auto &fi = this->fileInfoList->root->value;
 
-                    this->name         = fi->path.c_str();
-                    this->absolutePath = fi->absolutePath.c_str();
-                    this->size         = fi->size;
-                    this->lastModified = fi->lastModifiedTime;
-                    this->isDirectory  = fi->isDirectory;
+                    this->name         = fi.path.c_str();
+                    this->absolutePath = fi.absolutePath.c_str();
+                    this->size         = fi.size;
+                    this->lastModified = fi.lastModifiedTime;
+                    this->isDirectory  = fi.isDirectory;
                 }
                 else
                 {
@@ -138,75 +132,67 @@ namespace GTLib
         }
 #endif
 
-        void FileIterator::ctor(const char *query)
+        void FileIterator::ctor(const char *directory)
 		{
-		    if (query == nullptr || *query == '\0')
+		    if (directory == nullptr)
 		    {
-		        query = ".*";
+		        directory = "";
 		    }
-
-		    // The names of the files returned in this iterator follow these rules:
-		    //     - The name contains the path information based on the input query.
-		    //     - The names should not be the absolute path and should not contain only the file name portion.
-		    // To solve these, we just take the directory portion of the input query and use that to construct
-		    // the paths of each file.
-            GTLib::String basePath;
-            GTLib::String regexQuery;
-            GTLib::IO::SplitPath(query, basePath, regexQuery);
-            
-
-            // Now we do the actual iteration. POSIX doesn't use wildcard matching, so we do it manually using our
-            // regular expression API.
-            GTLib::Regex regex(regexQuery.c_str());
 
             // === Start of platform-specific code ===
 #if defined(GT_PLATFORM_WINDOWS)
             // --- Windows ---
-            basePath += "/";
-
             WIN32_FIND_DATAA ffd;
-            auto currentDirectory = IO::GetCurrentDirectory();
+            const char* currentDirectory = IO::GetCurrentDirectory();
 
             // We need to put a '*' as the wildcard symbol on Windows. This will find every file in the directory. We then
             // use our own regex matcher for doing matching.
-            HANDLE hFind = FindFirstFileA((basePath + "*").c_str(), &ffd);
-
-            if (hFind != INVALID_HANDLE_VALUE)
+            size_t directoryLength = strlen(directory);
+            if (directoryLength < 4096 - 3)
             {
-                do
+                char directoryQuery[4096];
+                memcpy(directoryQuery, directory, directoryLength);
+
+                directoryQuery[directoryLength + 0] = '\\';
+                directoryQuery[directoryLength + 1] = '*';
+                directoryQuery[directoryLength + 2] = '\0';
+
+                HANDLE hFind = FindFirstFileA(directoryQuery, &ffd);
+                if (hFind != INVALID_HANDLE_VALUE)
                 {
-                    // We need to ignore '.' and '..' directories. In the case of '..', it will actually mess up our base path.
-                    if (!GTLib::Strings::Equal(ffd.cFileName, ".") && !GTLib::Strings::Equal(ffd.cFileName, ".."))
+                    do
                     {
-                        // The file name must match our input query before it can be added to the list. If it doesn't match,
-                        // we just don't bother adding it.
-                        if (regex.Match(ffd.cFileName))
+                        // We need to ignore '.' and '..' directories. In the case of '..', it will actually mess up our base path.
+                        if (!GTLib::Strings::Equal(ffd.cFileName, ".") && !GTLib::Strings::Equal(ffd.cFileName, ".."))
                         {
-                            FileInfo *newFI = new FileInfo();
-                            WIN32_FIND_DATAToFileInfo(ffd, *newFI);
+                            FileInfo newFI;
+                            WIN32_FIND_DATAToFileInfo(ffd, newFI);
 
                             // WIN32_FIND_DATAToFileInfo will not set the path. We need to set it here. We don't want to use SetPath() here because it
                             // will unnecessarilly call IO::FindAbsolutePath(). We can get the absolute path from the current directory.
-                            newFI->path = basePath + ffd.cFileName;
+                            //newFI.path = basePath + ffd.cFileName;
+                            newFI.path = directory;
+                            newFI.path += "/";
+                            newFI.path += ffd.cFileName;
 
-                            if (IO::IsPathRelative(newFI->path.c_str()))
+                            if (IO::IsPathRelative(newFI.path.c_str()))
                             {
-                                newFI->absolutePath = IO::ToAbsolutePath(newFI->path.c_str(), currentDirectory);
+                                newFI.absolutePath = IO::ToAbsolutePath(newFI.path.c_str(), currentDirectory);
                             }
                             else
                             {
-                                newFI->absolutePath = newFI->path;
+                                newFI.absolutePath = newFI.path;
                             }
 
                             this->fileInfoList->Append(newFI);
                         }
-                    }
 
-                } while (FindNextFileA(hFind, &ffd) != 0);
+                    } while (FindNextFileA(hFind, &ffd) != 0);
 
 
-                // Now we need to close the handle.
-                FindClose(hFind);
+                    // Now we need to close the handle.
+                    FindClose(hFind);
+                }
             }
 #else
             // --- POSIX ---
@@ -250,13 +236,13 @@ namespace GTLib
             // We need to apply the details of the first item if we have one.
             if (this->fileInfoList->root != nullptr)
             {
-                auto fi = this->fileInfoList->root->value;
+                auto &fi = this->fileInfoList->root->value;
 
-                this->name         = fi->path.c_str();
-                this->absolutePath = fi->absolutePath.c_str();
-                this->size         = fi->size;
-                this->lastModified = fi->lastModifiedTime;
-                this->isDirectory  = fi->isDirectory;
+                this->name         = fi.path.c_str();
+                this->absolutePath = fi.absolutePath.c_str();
+                this->size         = fi.size;
+                this->lastModified = fi.lastModifiedTime;
+                this->isDirectory  = fi.isDirectory;
             }
 		}
     }

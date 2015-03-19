@@ -126,7 +126,7 @@ namespace GTLib
             ///
             /// This needs to be a pointer so that we don't have to make a deep copy of the list when copying the
             /// iterator.
-            GTLib::List<FileInfo*>* fileInfoList;
+            GTLib::List<FileInfo>* fileInfoList;
 
             /// The number of instantiations of this iterator we have floating around. We use this to determine when
             /// to deallocate the internal data (like \c fileInfoList).

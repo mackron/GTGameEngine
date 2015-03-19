@@ -81,6 +81,9 @@
     <Filter Include="Source Files\Core\Windowing\Win32">
       <UniqueIdentifier>{133808cd-f01b-456f-ab36-daa5974fd2ff}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Core\IO">
+      <UniqueIdentifier>{35f2a080-a132-4798-b104-5631f7e142bb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c">
@@ -200,9 +203,6 @@
     <ClCompile Include="..\..\..\source\Core\IO\cstdio.cpp">
       <Filter>Source Files\Core\IO</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\IO\FileIterator.cpp">
-      <Filter>Source Files\Core\IO</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Core\Windowing\Clipboard.cpp">
       <Filter>Source Files\Core\Windowing</Filter>
     </ClCompile>
@@ -317,16 +317,10 @@
     <ClCompile Include="..\..\..\source\Core\Path.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\Regex.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Core\Script.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Core\Scripting.cpp">
-      <Filter>Source Files\Core</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\slre.c">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Core\System.cpp">
@@ -352,6 +346,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Core\WindowManagement.cpp">
       <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\IO\FileIterator.cpp">
+      <Filter>Source Files\Core\IO</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -464,9 +461,6 @@
       <Filter>Source Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\Core\FontEngine_Win32.hpp">
-      <Filter>Source Files\Core</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Core\slre.h">
       <Filter>Source Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTLib\BasicBuffer.hpp">
@@ -660,6 +654,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTLib\windows.hpp">
       <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\IO\cstdio.hpp">
+      <Filter>Header Files\Core\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\IO\FileIterator.hpp">
+      <Filter>Header Files\Core\IO</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

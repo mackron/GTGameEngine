@@ -61,10 +61,8 @@
     <ClCompile Include="..\..\..\source\Core\Mouse.cpp" />
     <ClCompile Include="..\..\..\source\Core\Parse.cpp" />
     <ClCompile Include="..\..\..\source\Core\Path.cpp" />
-    <ClCompile Include="..\..\..\source\Core\Regex.cpp" />
     <ClCompile Include="..\..\..\source\Core\Script.cpp" />
     <ClCompile Include="..\..\..\source\Core\Scripting.cpp" />
-    <ClCompile Include="..\..\..\source\Core\slre.c" />
     <ClCompile Include="..\..\..\source\Core\Strings\NextChar.cpp" />
     <ClCompile Include="..\..\..\source\Core\System.cpp" />
     <ClCompile Include="..\..\..\source\Core\TextManager.cpp" />
@@ -161,6 +159,8 @@
     <ClInclude Include="..\..\..\include\GTLib\HandleManager.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\ImageUtils.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\IO.hpp" />
+    <ClInclude Include="..\..\..\include\GTLib\IO\cstdio.hpp" />
+    <ClInclude Include="..\..\..\include\GTLib\IO\FileIterator.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\KerningVector.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\Keyboard.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\Limits.hpp" />
@@ -205,7 +205,6 @@
     <ClInclude Include="..\..\..\source\Core\FontEngine_FCFT.hpp" />
     <ClInclude Include="..\..\..\source\Core\FontEngine_Win32.hpp" />
     <ClInclude Include="..\..\..\source\Core\GUI2\GUIRenderer_Generic.hpp" />
-    <ClInclude Include="..\..\..\source\Core\slre.h" />
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
     <ClInclude Include="..\..\..\source\FileSystem\File.hpp" />
     <ClInclude Include="..\..\..\source\FileSystem\File_Native.hpp" />
