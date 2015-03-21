@@ -319,38 +319,36 @@ namespace GT
 
 
                         // Frames
-                        for (int32_t iFrame = 0; iFrame < header->num_frames; ++iFrame)
+                        for (int32_t iTriangle = 0; iTriangle < header->num_tris; ++iTriangle)
                         {
-                            auto frameHeader = reinterpret_cast<md2_frame_header*>((fileData + header->ofs_frames) + (iFrame * header->framesize));
-                            auto md2Vertices = reinterpret_cast<md2_vertex*      >((fileData + header->ofs_frames) + (iFrame * header->framesize) + sizeof(md2_frame_header));
-
-                            // At this point we have all of our positions, texture coordinates and normals. We can now convert the data to our own format.
-                            for (int32_t iTriangle = 0; iTriangle < header->num_tris; ++iTriangle)
+                            for (int iCorner = 0; iCorner < 3; ++iCorner)
                             {
-                                for (int iCorner = 0; iCorner < 3; ++iCorner)
+                                short positionIndexMD2 = md2Indices[iTriangle].positionIndex[iCorner];
+                                short texcoordIndexMD2 = md2Indices[iTriangle].texcoordIndex[iCorner];
+
+                                size_t actualIndexLocation;
+                                if (uniqueIndexPairs.FindFirstIndexOf(md2_index_pair(positionIndexMD2, texcoordIndexMD2), actualIndexLocation))
                                 {
-                                    short positionIndexMD2 = md2Indices[iTriangle].positionIndex[iCorner];
-                                    short texcoordIndexMD2 = md2Indices[iTriangle].texcoordIndex[iCorner];
-
-                                    float position[3];
-                                    position[0] = (md2Vertices[positionIndexMD2].v[0] * frameHeader->scale[0]) + frameHeader->translate[0];
-                                    position[1] = (md2Vertices[positionIndexMD2].v[1] * frameHeader->scale[1]) + frameHeader->translate[1];
-                                    position[2] = (md2Vertices[positionIndexMD2].v[2] * frameHeader->scale[2]) + frameHeader->translate[2];
-
-                                    float texcoord[2];
-                                    texcoord[0] = static_cast<float>(md2TexCoords[texcoordIndexMD2].s) / header->skinwidth;
-                                    texcoord[1] = static_cast<float>(md2TexCoords[texcoordIndexMD2].t) / header->skinheight;
-
-                                    float normal[3];
-                                    normal[0] = g_Normals[md2Vertices[positionIndexMD2].lightNormalIndex][0];
-                                    normal[1] = g_Normals[md2Vertices[positionIndexMD2].lightNormalIndex][1];
-                                    normal[2] = g_Normals[md2Vertices[positionIndexMD2].lightNormalIndex][2];
-
-
-                                
-                                    size_t actualIndexLocation;
-                                    if (uniqueIndexPairs.FindFirstIndexOf(md2_index_pair(positionIndexMD2, texcoordIndexMD2), actualIndexLocation))
+                                    for (int32_t iFrame = 0; iFrame < header->num_frames; ++iFrame)
                                     {
+                                        auto frameHeader = reinterpret_cast<md2_frame_header*>((fileData + header->ofs_frames) + (iFrame * header->framesize));
+                                        auto md2Vertices = reinterpret_cast<md2_vertex*      >((fileData + header->ofs_frames) + (iFrame * header->framesize) + sizeof(md2_frame_header));
+
+                                        float position[3];
+                                        position[0] = (md2Vertices[positionIndexMD2].v[0] * frameHeader->scale[0]) + frameHeader->translate[0];
+                                        position[1] = (md2Vertices[positionIndexMD2].v[1] * frameHeader->scale[1]) + frameHeader->translate[1];
+                                        position[2] = (md2Vertices[positionIndexMD2].v[2] * frameHeader->scale[2]) + frameHeader->translate[2];
+
+                                        float texcoord[2];
+                                        texcoord[0] = static_cast<float>(md2TexCoords[texcoordIndexMD2].s) / header->skinwidth;
+                                        texcoord[1] = static_cast<float>(md2TexCoords[texcoordIndexMD2].t) / header->skinheight;
+
+                                        float normal[3];
+                                        normal[0] = g_Normals[md2Vertices[positionIndexMD2].lightNormalIndex][0];
+                                        normal[1] = g_Normals[md2Vertices[positionIndexMD2].lightNormalIndex][1];
+                                        normal[2] = g_Normals[md2Vertices[positionIndexMD2].lightNormalIndex][2];
+
+
                                         size_t vertexDataLocation = (iFrame * m_vertexCountPerFrame) + actualIndexLocation;
 
                                         m_vertexData[vertexDataLocation].position[0] = position[0];
@@ -364,11 +362,11 @@ namespace GT
                                         m_vertexData[vertexDataLocation].normal[1] = normal[1];
                                         m_vertexData[vertexDataLocation].normal[2] = normal[2];
                                     }
-                                    else
-                                    {
-                                        // Should never hit this.
-                                        assert(false);
-                                    }
+                                }
+                                else
+                                {
+                                    // Should never hit this.
+                                    assert(false);
                                 }
                             }
                         }
