@@ -36,7 +36,8 @@ namespace GT
 
     // Models - 0x00000200 - 0x000002FF
     static const AssetType AssetType_Model_OBJ  = 0x00000200;
-    static const AssetType AssetType_Model_OGEX = 0x00000201;
+    static const AssetType AssetType_Model_MD2  = 0x00000201;
+    static const AssetType AssetType_Model_OGEX = 0x00000202;
 
     // Sounds - 0x00000300 - 0x000003FF
     static const AssetType AssetType_Sound_WAV  = 0x00000300;

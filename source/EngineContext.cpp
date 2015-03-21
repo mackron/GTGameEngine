@@ -88,6 +88,9 @@ namespace GT
     #if defined(GT_BUILD_OBJ)
             {"obj",  GT::AssetClass_Model, AssetType_Model_OBJ},
     #endif
+    #if defined(GT_BUILD_MD2)
+            {"md2",  GT::AssetClass_Model, AssetType_Model_MD2},
+    #endif
     #if defined(GT_BUILD_OGEX)
             {"ogex", GT::AssetClass_Model, AssetType_Model_OGEX},
     #endif

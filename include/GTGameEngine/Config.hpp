@@ -53,6 +53,7 @@
 #define GT_ENABLE_JPG   1       //< Enable JPG images.
 #define GT_ENABLE_PSD   1       //< Enable PSD images. PSD files are good for rapid turnaround times with texture creation, however disabling this will save a few KB in a release build.
 #define GT_ENABLE_OBJ   1       //< Enable OBJ models.
+#define GT_ENABLE_MD2   1       //< Enable MD2 models.
 #define GT_ENABLE_OGEX  1       //< Enable OpenGEX models.
 #define GT_ENABLE_WAV   1       //< Enable WAV sounds.
 #define GT_ENABLE_OGG   1       //< Enable OGG sounds.
@@ -79,28 +80,31 @@
 
 
 // Assets
-#if defined(GT_ENABLE_PNG)
+#if defined(GT_ENABLE_PNG) && GT_ENABLE_PNG == 1
 #define GT_BUILD_PNG
 #endif
-#if defined(GT_ENABLE_TGA)
+#if defined(GT_ENABLE_TGA) && GT_ENABLE_TGA == 1
 #define GT_BUILD_TGA
 #endif
-#if defined(GT_ENABLE_JPG)
+#if defined(GT_ENABLE_JPG) && GT_ENABLE_JPG == 1
 #define GT_BUILD_JPG
 #endif
-#if defined(GT_ENABLE_PSD)
+#if defined(GT_ENABLE_PSD) && GT_ENABLE_PSD == 1
 #define GT_BUILD_PSD
 #endif
-#if defined(GT_ENABLE_OBJ)
+#if defined(GT_ENABLE_OBJ) && GT_ENABLE_OBJ == 1
 #define GT_BUILD_OBJ
 #endif
-#if defined(GT_ENABLE_OGEX)
+#if defined(GT_ENABLE_MD2) && GT_ENABLE_MD2 == 1
+#define GT_BUILD_MD2
+#endif
+#if defined(GT_ENABLE_OGEX) && GT_ENABLE_OGEX == 1
 #define GT_BUILD_OGEX
 #endif
-#if defined(GT_ENABLE_WAV)
+#if defined(GT_ENABLE_WAV) && GT_ENABLE_WAV == 1
 #define GT_BUILD_WAV
 #endif
-#if defined(GT_ENABLE_OGG)
+#if defined(GT_ENABLE_OGG) && GT_ENABLE_OGG == 1
 #define GT_BUILD_OGG
 #endif
 
@@ -109,6 +113,7 @@
     defined(GT_BUILD_JPG)  || \
     defined(GT_BUILD_PSD)  || \
     defined(GT_BUILD_OBJ)  || \
+    defined(GT_BUILD_MD2)  || \
     defined(GT_BUILD_OGEX) || \
     defined(GT_BUILD_WAV)  || \
     defined(GT_BUILD_OGG)

@@ -350,6 +350,9 @@
     <ClCompile Include="..\..\..\source\Core\IO\FileIterator.cpp">
       <Filter>Source Files\Core\IO</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\ModelAsset_MD2.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -660,6 +663,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTLib\IO\FileIterator.hpp">
       <Filter>Header Files\Core\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Assets\ModelAsset_MD2.hpp">
+      <Filter>Source Files\Assets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

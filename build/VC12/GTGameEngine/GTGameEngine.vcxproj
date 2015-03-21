@@ -26,6 +26,7 @@
     <ClCompile Include="..\..\..\source\Assets\ImageAsset.cpp" />
     <ClCompile Include="..\..\..\source\Assets\ImageAsset_STB.cpp" />
     <ClCompile Include="..\..\..\source\Assets\ModelAsset.cpp" />
+    <ClCompile Include="..\..\..\source\Assets\ModelAsset_MD2.cpp" />
     <ClCompile Include="..\..\..\source\Assets\ModelAsset_OBJ.cpp" />
     <ClCompile Include="..\..\..\source\Core\BasicBuffer.cpp" />
     <ClCompile Include="..\..\..\source\Core\Colour.cpp" />
@@ -201,6 +202,7 @@
     <ClInclude Include="..\..\..\include\GTLib\windows.hpp" />
     <ClInclude Include="..\..\..\source\Assets\DefaultAssetAllocator.hpp" />
     <ClInclude Include="..\..\..\source\Assets\ImageAsset_STB.hpp" />
+    <ClInclude Include="..\..\..\source\Assets\ModelAsset_MD2.hpp" />
     <ClInclude Include="..\..\..\source\Assets\ModelAsset_OBJ.hpp" />
     <ClInclude Include="..\..\..\source\Core\FontEngine_FCFT.hpp" />
     <ClInclude Include="..\..\..\source\Core\FontEngine_Win32.hpp" />

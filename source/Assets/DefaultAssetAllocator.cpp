@@ -6,6 +6,10 @@
 #include "DefaultAssetAllocator.hpp"
 #include "ImageAsset_STB.hpp"
 
+#if defined(GT_BUILD_MD2)
+#include "ModelAsset_MD2.hpp"
+#endif
+
 namespace GT
 {
     bool DefaultAssetAllocator::IsAssetTypeSupported(AssetType type) const
@@ -27,6 +31,9 @@ namespace GT
 
 #if defined(GT_BUILD_OBJ)
         case AssetType_Model_OBJ:
+#endif
+#if defined(GT_BUILD_MD2)
+        case AssetType_Model_MD2:
 #endif
 #if defined(GT_BUILD_OGEX)
         case AssetType_Model_OGEX:
@@ -61,27 +68,42 @@ namespace GT
 
 
         // Models
+#if defined(GT_BUILD_OBJ)
         if (type == AssetType_Model_OBJ)
         {
             //return new ModelAsset_OBJ(type);
         }
+#endif
 
+#if defined(GT_BUILD_MD2)
+        if (type == AssetType_Model_MD2)
+        {
+            return new ModelAsset_MD2(type);
+        }
+#endif
+
+#if defined(GT_BUILD_OGEX)
         if (type == AssetType_Model_OGEX)
         {
             //return new ModelAsset_OGEX(type);
         }
+#endif
 
 
         // Sounds
+#if defined(GT_BUILD_WAV)
         if (type == AssetType_Sound_WAV)
         {
             //return new SoundAsset_WAV(type);
         }
+#endif
 
+#if defined(GT_BUILD_OGG)
         if (type == AssetType_Sound_OGG)
         {
             //return new SoundAsset_OGG(type);
         }
+#endif
 
 
 
