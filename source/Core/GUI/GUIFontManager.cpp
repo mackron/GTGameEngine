@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTLib/GUI2/GUIFontManager.hpp>
+#include <GTGameEngine/Core/GUI/GUIFontManager.hpp>
 #include <GTLib/Math.hpp>
 
 namespace GT

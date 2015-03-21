@@ -3,7 +3,7 @@
 #ifndef __GT_GUI_Renderer_Generic_h_
 #define __GT_GUI_Renderer_Generic_h_
 
-#include <GTLib/GUI2/GUIRenderer.hpp>
+#include <GTGameEngine/Core/GUI/GUIRenderer.hpp>
 #include <GTLib/HandleManager.hpp>
 
 namespace GT

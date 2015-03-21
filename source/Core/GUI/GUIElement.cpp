@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTLib/GUI2/GUIElement.hpp>
+#include <GTGameEngine/Core/GUI/GUIElement.hpp>
 
 namespace GT
 {

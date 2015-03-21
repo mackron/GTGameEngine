@@ -57,9 +57,6 @@
     <Filter Include="Source Files\Core">
       <UniqueIdentifier>{b67b0514-3b3b-4865-9e8e-72a832324f4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Core\GUI2">
-      <UniqueIdentifier>{035dac0a-bafa-4840-92b5-f33713ab0a95}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Core\IO">
       <UniqueIdentifier>{ea8a48b5-5438-4cfd-b2a1-80d8b6b49815}</UniqueIdentifier>
     </Filter>
@@ -83,6 +80,12 @@
     </Filter>
     <Filter Include="Header Files\Core\IO">
       <UniqueIdentifier>{35f2a080-a132-4798-b104-5631f7e142bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\GUI">
+      <UniqueIdentifier>{578473cc-a447-45e2-aaae-d00ec35ed3da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\GUI">
+      <UniqueIdentifier>{a6802da0-3d48-471f-9f47-6e68d67b0ac5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -169,36 +172,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Assets\ModelAsset_OBJ.cpp">
       <Filter>Source Files\Assets</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI2\GUIContext.cpp">
-      <Filter>Source Files\Core\GUI2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI2\GUIElement.cpp">
-      <Filter>Source Files\Core\GUI2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI2\GUIEventHandler.cpp">
-      <Filter>Source Files\Core\GUI2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI2\GUIFontManager.cpp">
-      <Filter>Source Files\Core\GUI2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI2\GUIGlyphMapManager.cpp">
-      <Filter>Source Files\Core\GUI2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI2\GUIImageManager.cpp">
-      <Filter>Source Files\Core\GUI2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI2\GUILogging.cpp">
-      <Filter>Source Files\Core\GUI2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI2\GUIRenderer.cpp">
-      <Filter>Source Files\Core\GUI2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI2\GUIRenderer_Generic.cpp">
-      <Filter>Source Files\Core\GUI2</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI2\GUISurface.cpp">
-      <Filter>Source Files\Core\GUI2</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Core\IO\cstdio.cpp">
       <Filter>Source Files\Core\IO</Filter>
@@ -353,6 +326,36 @@
     <ClCompile Include="..\..\..\source\Assets\ModelAsset_MD2.cpp">
       <Filter>Source Files\Assets</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GUIContext.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GUIElement.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GUIEventHandler.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GUIFontManager.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GUIGlyphMapManager.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GUIImageManager.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GUILogging.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GUIRenderer.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GUIRenderer_Generic.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GUISurface.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -456,9 +459,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\ModelAsset.hpp">
       <Filter>Header Files\Assets</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Core\GUI2\GUIRenderer_Generic.hpp">
-      <Filter>Source Files\Core\GUI2</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\Core\FontEngine_FCFT.hpp">
       <Filter>Source Files\Core</Filter>
@@ -666,6 +666,45 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\Assets\ModelAsset_MD2.hpp">
       <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIContext.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIElement.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIElementStyle.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIEventHandler.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIFontManager.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIGlyphMapManager.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIHandleTypes.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIImageManager.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUILayoutContext.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUILogging.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIRenderer.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUISurface.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Core\GUI\GUIRenderer_Generic.hpp">
+      <Filter>Source Files\Core\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
