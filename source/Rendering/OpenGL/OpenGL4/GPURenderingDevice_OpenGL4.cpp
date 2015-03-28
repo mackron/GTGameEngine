@@ -1546,26 +1546,15 @@ namespace GT
 
         GLint minFiltersGL[] =
         {
-            //GL_NEAREST_MIPMAP_NEAREST,  // TextureFilter_Point_Point_Point
-            //GL_NEAREST_MIPMAP_LINEAR,   // TextureFilter_Point_Point_Linear
-            //GL_NEAREST_MIPMAP_NEAREST,  // TextureFilter_Point_Linear_Point
-            //GL_NEAREST_MIPMAP_LINEAR,   // TextureFitler_Point_Linear_Linear
-            //GL_LINEAR_MIPMAP_NEAREST,   // TextureFilter_Linear_Point_Point
-            //GL_LINEAR_MIPMAP_LINEAR,    // TextureFilter_Linear_Point_Linear
-            //GL_LINEAR_MIPMAP_NEAREST,   // TextureFilter_Linear_Linear_Point
-            //GL_LINEAR_MIPMAP_LINEAR,    // TextureFilter_Linear_Linear_Linear
-            //GL_LINEAR_MIPMAP_LINEAR     // TextureFilter_Anisotropic
-
-            // TODO: Revert this. Just doing this for testing for now.
-            GL_NEAREST,  // TextureFilter_Point_Point_Point
-            GL_NEAREST,   // TextureFilter_Point_Point_Linear
-            GL_NEAREST,  // TextureFilter_Point_Linear_Point
-            GL_NEAREST,   // TextureFitler_Point_Linear_Linear
-            GL_LINEAR,   // TextureFilter_Linear_Point_Point
-            GL_LINEAR,    // TextureFilter_Linear_Point_Linear
-            GL_LINEAR,   // TextureFilter_Linear_Linear_Point
-            GL_LINEAR,    // TextureFilter_Linear_Linear_Linear
-            GL_LINEAR     // TextureFilter_Anisotropic
+            GL_NEAREST_MIPMAP_NEAREST,  // TextureFilter_Point_Point_Point
+            GL_NEAREST_MIPMAP_LINEAR,   // TextureFilter_Point_Point_Linear
+            GL_NEAREST_MIPMAP_NEAREST,  // TextureFilter_Point_Linear_Point
+            GL_NEAREST_MIPMAP_LINEAR,   // TextureFitler_Point_Linear_Linear
+            GL_LINEAR_MIPMAP_NEAREST,   // TextureFilter_Linear_Point_Point
+            GL_LINEAR_MIPMAP_LINEAR,    // TextureFilter_Linear_Point_Linear
+            GL_LINEAR_MIPMAP_NEAREST,   // TextureFilter_Linear_Linear_Point
+            GL_LINEAR_MIPMAP_LINEAR,    // TextureFilter_Linear_Linear_Linear
+            GL_LINEAR_MIPMAP_LINEAR     // TextureFilter_Anisotropic
         };
         
         GLint magFiltersGL[] =
@@ -1677,13 +1666,6 @@ namespace GT
             }
 
             m_gl.NamedFramebufferDrawBuffers(framebufferGL->GetOpenGLObject(), GT_MAX_FRAMEBUFFER_RENDER_TARGETS, framebufferGL->renderTargetsGL);
-
-
-            if (m_gl.CheckNamedFramebufferStatus(framebufferGL->GetOpenGLObject(), GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            {
-                // TODO: Delete this!
-                printf("Framebuffer Error: %d\n", m_gl.CheckNamedFramebufferStatus(framebufferGL->GetOpenGLObject(), GL_FRAMEBUFFER));
-            }
         }
     }
 
@@ -1700,12 +1682,6 @@ namespace GT
             else
             {
                 m_gl.NamedFramebufferTextureLayer(framebufferGL->GetOpenGLObject(), GL_DEPTH_STENCIL_ATTACHMENT, 0, static_cast<GLint>(mipmapLevel), static_cast<GLint>(arrayLayer));
-            }
-
-            if (m_gl.CheckNamedFramebufferStatus(framebufferGL->GetOpenGLObject(), GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-            {
-                // TODO: Delete this!
-                printf("Framebuffer Error: %d\n", m_gl.CheckNamedFramebufferStatus(framebufferGL->GetOpenGLObject(), GL_FRAMEBUFFER));
             }
         }
     }
