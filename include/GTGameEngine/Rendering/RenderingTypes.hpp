@@ -541,7 +541,7 @@ namespace GT
         unsigned int  depth;            //< For 2D textures, this is the number of items in the array. For cubemaps this is a multiple of 6.
         unsigned int  mipmapLevels;     //< Mipmap levels
         TextureFormat format;
-        TextureUsage  usage;
+        unsigned int  usage;
         unsigned int  sampleCount;      //< Only used by multisampled textures.
     };
 

@@ -6,6 +6,7 @@ namespace GT
 {
     GUIElement::GUIElement(HGUIElement handle)
         : handle(handle),
+          hSurface(0),
           id(),
           layout(),
           style(),

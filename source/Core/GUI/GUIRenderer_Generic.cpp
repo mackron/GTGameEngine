@@ -39,6 +39,7 @@ namespace GT
     }
 
 
+#if 0
     HGUIRenderBuffer GUIRenderer_Generic::CreateRenderBuffer(unsigned int width, unsigned int height)
     {
         HGUIRenderBuffer handle = m_renderBuffers.CreateHandle();
@@ -81,7 +82,9 @@ namespace GT
             heightOut = 0;
         }
     }
+#endif
 
+#if 0
     void* GUIRenderer_Generic::MapRenderBuffer(HGUIRenderBuffer hBuffer)
     {
         auto renderBuffer = this->GetRenderBufferObject(hBuffer);
@@ -110,16 +113,28 @@ namespace GT
 
         return false;
     }
+#endif
 
+#if 0
     void GUIRenderer_Generic::SetCurrentRenderBuffer(HGUIRenderBuffer hBuffer)
     {
         m_currentRenderBuffer = this->GetRenderBufferObject(hBuffer);
     }
+#endif
 
 
 
     ////////////////////////////////////////////////
     // Drawing
+
+    void GUIRenderer_Generic::BeginPaintSurface(GT::HGUISurface hSurface)
+    {
+        (void)hSurface;
+    }
+
+    void GUIRenderer_Generic::EndPaintSurface()
+    {
+    }
 
     void GUIRenderer_Generic::Clear()
     {

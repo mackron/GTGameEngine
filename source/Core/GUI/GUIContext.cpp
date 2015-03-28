@@ -17,7 +17,7 @@ namespace GT
           m_defaultFont(nullptr),
           m_xBaseDPI(96), m_yBaseDPI(96), m_xDPI(m_xBaseDPI), m_yDPI(m_yBaseDPI), 
           m_renderer(renderer),
-          m_ownsRenderer(true),
+          m_ownsRenderer(false),
           m_layoutContext(),
           m_batchLockCounter(0),
           m_globalEventHandlers()
@@ -89,8 +89,6 @@ namespace GT
         if (surface != nullptr)
         {
             m_surfaceHandles.DeleteHandle(hSurface);
-            
-            m_renderer->DeleteRenderBuffer(surface->renderBuffer);
             delete surface;
         }
     }
@@ -155,14 +153,6 @@ namespace GT
             surface->width  = newWidth;
             surface->height = newHeight;
 
-            // The renmder buffer needs to be re-created.
-            if (surface->renderBuffer != 0)
-            {
-                m_renderer->DeleteRenderBuffer(surface->renderBuffer);
-            }
-
-            surface->renderBuffer = m_renderer->CreateRenderBuffer(newWidth, newHeight);
-
 
             this->BeginBatch();
 
@@ -222,57 +212,23 @@ namespace GT
 
     bool GUIContext::DoesSurfaceContainGUIElement(HGUISurface hSurface, HGUIElement hElement) const
     {
-        auto surface = this->GetSurfacePtr(hSurface);
-        if (surface != nullptr)
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
         {
-            auto element = this->GetElementPtr(hElement);
-            if (element != nullptr)
-            {
-                for (size_t iElement = 0; iElement < surface->topLevelElements.GetCount(); ++iElement)
-                {
-                    if (surface->topLevelElements[iElement] == hElement)
-                    {
-                        return true;
-                    }
-                    else
-                    {
-                        if (element->parent != 0)
-                        {
-                            if (this->IsElementDescendant(element->parent, hElement))
-                            {
-                                return true;
-                            }
-                        }
-                    }
-                }
-            }
+            return pElement->hSurface == hSurface;
         }
-
-        return false;
+        else
+        {
+            return false;
+        }
     }
 
-
-    void *GUIContext::MapSurfaceRenderBuffer(HGUISurface hSurface) const
+    void GUIContext::SetSurfacePaintingMode(HGUISurface hSurface, GUIPaintingMode paintingMode)
     {
-        assert(m_renderer != nullptr);
-
-        auto surface = this->GetSurfacePtr(hSurface);
-        if (surface != nullptr)
+        auto pSurface = this->GetSurfacePtr(hSurface);
+        if (pSurface != nullptr)
         {
-            return m_renderer->MapRenderBuffer(surface->renderBuffer);
-        }
-
-        return nullptr;
-    }
-
-    void GUIContext::UnmapSurfaceRenderBuffer(HGUISurface hSurface, const void* data) const
-    {
-        assert(m_renderer != nullptr);
-
-        auto surface = this->GetSurfacePtr(hSurface);
-        if (surface != nullptr)
-        {
-            m_renderer->UnmapRenderBuffer(surface->renderBuffer, data);
+            pSurface->paintingMode = paintingMode;
         }
     }
 
@@ -1920,6 +1876,7 @@ namespace GT
     }
 
 
+#if 0
     bool GUIContext::SetElementSurface(HGUIElement hElement, HGUISurface hSurface)
     {
         auto element = this->GetElementPtr(hElement);
@@ -1952,7 +1909,7 @@ namespace GT
         return false;
     }
 
-    HGUISurface GUIContext::FindElementSurface(HGUIElement hElement) const
+    HGUISurface GUIContext::GetElementSurface(HGUIElement hElement) const
     {
         HGUISurface hElementSurface = 0;
         m_surfaceHandles.IterateAssociatedObjects([&](GUISurface* surface) -> bool
@@ -1968,6 +1925,107 @@ namespace GT
 
 
         return hElementSurface;
+    }
+#endif
+
+    bool GUIContext::AttachElementToSurface(HGUIElement hElement, HGUISurface hSurface)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->parent == 0)
+            {
+                if (pElement->hSurface != hSurface)
+                {
+                    // The element must be detached from the old surface first.
+                    if (pElement->hSurface != 0)
+                    {
+                        this->DetachElementFromSurface(hElement);
+                    }
+
+
+                    // The element needs to be set as a top-level element on the surface.
+                    auto pSurface = this->GetSurfacePtr(hSurface);
+                    if (pSurface != nullptr)
+                    {
+                        pSurface->topLevelElements.PushBack(hElement);
+                    }
+
+
+                    // Now the surface must be set recursively on the children.
+                    this->SetElementSurfaceRecursive(*pElement, hSurface);
+
+
+                    return true;
+                }
+                else
+                {
+                    // The old and new surface are both the same, so leave everything as-is.
+                    return true;
+                }
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+    bool GUIContext::DetachElementFromSurface(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->parent == 0)
+            {
+                if (pElement->hSurface != 0)
+                {
+                    // The element needs to be removed as a top-level element on the surface.
+                    auto pSurface = this->GetSurfacePtr(pElement->hSurface);
+                    if (pSurface != nullptr)
+                    {
+                        pSurface->topLevelElements.RemoveFirstOccuranceOf(hElement);
+                    }
+
+
+                    // The element must be set recursively on the children.
+                    this->SetElementSurfaceRecursive(*pElement, 0);
+
+
+                    return true;
+                }
+                else
+                {
+                    // The element isn't attached to a surface, so just leave everything as-is and pretend all is good.
+                    return true;
+                }
+            }
+            else
+            {
+                // The element is not a root level element.
+                return false;
+            }
+        }
+        else
+        {
+            // The element is null.
+            return false;
+        }
+    }
+
+    HGUISurface GUIContext::GetElementSurface(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return pElement->hSurface;
+        }
+
+        return 0;
     }
 
 
@@ -2014,25 +2072,41 @@ namespace GT
         auto surface = this->GetSurfacePtr(hSurface);
         if (surface != nullptr)
         {
-            m_renderer->SetCurrentRenderBuffer(surface->renderBuffer);
-            m_renderer->Clear(rect);
-
-
-            for (size_t iElement = 0; iElement < surface->topLevelElements.GetCount(); ++iElement)
+            m_renderer->BeginPaintSurface(hSurface);
             {
-                auto topLevelElement = this->GetElementPtr(surface->topLevelElements[iElement]);
-                if (topLevelElement != nullptr)
+                m_renderer->Clear(rect);
+
+                for (size_t iElement = 0; iElement < surface->topLevelElements.GetCount(); ++iElement)
                 {
-                    this->ClippedTraversal(*topLevelElement, rect, [&](GUIElement &elementToPaint, const GTLib::Rect<int> &visibleRect) -> void
+                    auto topLevelElement = this->GetElementPtr(surface->topLevelElements[iElement]);
+                    if (topLevelElement != nullptr)
                     {
-                        this->Painting_PaintElement(*surface, elementToPaint, visibleRect);
-                    });
+                        this->ClippedTraversal(*topLevelElement, rect, [&](GUIElement &elementToPaint, const GTLib::Rect<int> &visibleRect) -> void
+                        {
+                            this->Painting_PaintElement(*surface, elementToPaint, visibleRect);
+                        });
+                    }
                 }
+
+
+                this->PostEvent_OnPaint(hSurface, rect);
             }
-
-
-            this->PostEvent_OnPaint(hSurface, rect);
+            m_renderer->EndPaintSurface();
         }
+    }
+
+    void GUIContext::PaintSurface(HGUISurface hSurface)
+    {
+        unsigned int surfaceWidth;
+        unsigned int surfaceHeight;
+        this->GetSurfaceSize(hSurface, surfaceWidth, surfaceHeight);
+
+        GTLib::Rect<int> paintRect;
+        paintRect.left   = 0;
+        paintRect.top    = 0;
+        paintRect.right  = static_cast<int>(surfaceWidth);
+        paintRect.bottom = static_cast<int>(surfaceHeight);
+        this->PaintSurface(hSurface, paintRect);
     }
 
 
@@ -2300,6 +2374,31 @@ namespace GT
             return nullptr;
         }
     }
+
+
+    void GUIContext::SetElementSurfaceRecursive(GUIElement &element, HGUISurface hSurface)
+    {
+        element.hSurface = hSurface;
+
+        // The layout may need to be updated.
+        this->BeginBatch();
+        {
+            this->Layout_InvalidateElementLayout(element, LayoutFlag_WidthInvalid | LayoutFlag_HeightInvalid | LayoutFlag_PositionInvalid);
+        }
+        this->EndBatch();
+
+
+        // Now we update the children.
+        for (HGUIElement hChild = element.firstChild; hChild != 0; hChild = this->GetElementNextSibling(hChild))
+        {
+            auto pChild = this->GetElementPtr(hChild);
+            assert(pChild != nullptr);
+            {
+                this->SetElementSurfaceRecursive(*pChild, hSurface);
+            }
+        }
+    }
+
 
     void GUIContext::GetElementAbsoluteRect(GUIElement &element, GTLib::Rect<float> &rectOut) const
     {
@@ -2590,6 +2689,13 @@ namespace GT
                 //TODO: Only invalidate the properties that will have changed.
                 this->Layout_InvalidateElementLayout(childElement, LayoutFlag_SizeAndPositionInvalid);
             }
+
+
+            // If the child was on a different surface to the parent, it needs to be moved.
+            if (parentElement.hSurface != childElement.hSurface)
+            {
+                this->SetElementSurfaceRecursive(childElement, parentElement.hSurface);
+            }
         }
         this->EndBatch();
     }
@@ -2642,6 +2748,13 @@ namespace GT
 
                 // Invalidate the applicable layouts. TODO: Only invalidate the properties that will have changed.
                 this->Layout_InvalidateElementLayout(childElement, LayoutFlag_SizeAndPositionInvalid);
+            }
+
+
+            // If the child was on a different surface to the parent, it needs to be moved.
+            if (parentElement.hSurface != childElement.hSurface)
+            {
+                this->SetElementSurfaceRecursive(childElement, parentElement.hSurface);
             }
         }
         this->EndBatch();
@@ -2702,6 +2815,13 @@ namespace GT
             //TODO: Only invalidate the properties that will have changed.
             this->Layout_InvalidateElementLayout(elementToAppendTo, LayoutFlag_SizeAndPositionInvalid);
             this->Layout_InvalidateElementLayout(elementToAppend,   LayoutFlag_SizeAndPositionInvalid);
+
+
+            // If the elements are on different surfaces the appendee needs to be moved.
+            if (elementToAppendTo.hSurface != elementToAppend.hSurface)
+            {
+                this->SetElementSurfaceRecursive(elementToAppend, elementToAppendTo.hSurface);
+            }
         }
         this->EndBatch();
     }
@@ -2761,6 +2881,13 @@ namespace GT
             //TODO: Only invalidate the properties that will have changed.
             this->Layout_InvalidateElementLayout(elementToPrependTo, LayoutFlag_SizeAndPositionInvalid);
             this->Layout_InvalidateElementLayout(elementToPrepend,   LayoutFlag_SizeAndPositionInvalid);
+
+
+            // If the elements are on different surfaces the appendee needs to be moved.
+            if (elementToPrependTo.hSurface != elementToPrepend.hSurface)
+            {
+                this->SetElementSurfaceRecursive(elementToPrepend, elementToPrependTo.hSurface);
+            }
         }
         this->EndBatch();
     }
@@ -2984,7 +3111,7 @@ namespace GT
 
     void GUIContext::Painting_InvalidateElementRect(GUIElement &element)
     {
-        auto surface = this->GetSurfacePtr(this->FindElementSurface(element.handle));
+        auto surface = this->GetSurfacePtr(this->GetElementSurface(element.handle));
         if (surface != nullptr)
         {
             GTLib::Rect<int> rect;
@@ -3000,14 +3127,17 @@ namespace GT
     {
         m_surfaceHandles.IterateAssociatedObjects([&](GUISurface* surface) -> bool
         {
-            if (surface->invalidRect.right > surface->invalidRect.left && surface->invalidRect.bottom > surface->invalidRect.top)
+            if (surface->paintingMode != GUIPaintingMode::Deferred)
             {
-                this->PaintSurface(surface->handle, surface->invalidRect);
+                if (surface->invalidRect.right > surface->invalidRect.left && surface->invalidRect.bottom > surface->invalidRect.top)
+                {
+                    this->PaintSurface(surface->handle, surface->invalidRect);
                 
-                surface->invalidRect.left   = 0;
-                surface->invalidRect.top    = 0;
-                surface->invalidRect.right  = 0;
-                surface->invalidRect.bottom = 0;
+                    surface->invalidRect.left   = 0;
+                    surface->invalidRect.top    = 0;
+                    surface->invalidRect.right  = 0;
+                    surface->invalidRect.bottom = 0;
+                }
             }
 
             return true;
@@ -3065,6 +3195,7 @@ namespace GT
 
 
         // Text.
+#if 0
         if (this->DoesElementHaveText(element.handle))
         {
             // We need to iterate over each text run 
@@ -3173,6 +3304,7 @@ namespace GT
                 });
             }
         }
+#endif
     }
 
     void GUIContext::Painting_DrawAndSetClippingRect(GUISurface &surface, const GTLib::Rect<int> &rect, const GTLib::Colour &color)
@@ -4382,7 +4514,7 @@ namespace GT
                 }
                 else
                 {
-                    if (surface == nullptr) { surface = this->GetSurfacePtr(this->FindElementSurface(element.handle)); }
+                    if (surface == nullptr) { surface = this->GetSurfacePtr(this->GetElementSurface(element.handle)); }
                     if (surface != nullptr)
                     {
                         element.layout.relativePosX = surface->width - element.layout.width;
@@ -4396,7 +4528,7 @@ namespace GT
 
                 if (rightType == NumberType_Percent)
                 {
-                    if (surface == nullptr) { surface = this->GetSurfacePtr(this->FindElementSurface(element.handle)); }
+                    if (surface == nullptr) { surface = this->GetSurfacePtr(this->GetElementSurface(element.handle)); }
                     if (surface != nullptr)
                     {
                         element.layout.relativePosX += surface->width * (right / 100.0f);
@@ -4423,7 +4555,7 @@ namespace GT
 
                 if (leftType == NumberType_Percent)
                 {
-                    if (surface == nullptr) { surface = this->GetSurfacePtr(this->FindElementSurface(element.handle)); }
+                    if (surface == nullptr) { surface = this->GetSurfacePtr(this->GetElementSurface(element.handle)); }
                     if (surface != nullptr)
                     {
                         element.layout.relativePosX = surface->width * (left / 100.0f);
@@ -4459,7 +4591,7 @@ namespace GT
                 }
                 else
                 {
-                    if (surface == nullptr) { surface = this->GetSurfacePtr(this->FindElementSurface(element.handle)); }
+                    if (surface == nullptr) { surface = this->GetSurfacePtr(this->GetElementSurface(element.handle)); }
                     if (surface != nullptr)
                     {
                         element.layout.relativePosY = surface->height - element.layout.height;
@@ -4473,7 +4605,7 @@ namespace GT
 
                 if (bottomType == NumberType_Percent)
                 {
-                    if (surface == nullptr) { surface = this->GetSurfacePtr(this->FindElementSurface(element.handle)); }
+                    if (surface == nullptr) { surface = this->GetSurfacePtr(this->GetElementSurface(element.handle)); }
                     if (surface != nullptr)
                     {
                         element.layout.relativePosY += surface->width * (bottom / 100.0f);
@@ -4500,7 +4632,7 @@ namespace GT
 
                 if (topType == NumberType_Percent)
                 {
-                    if (surface == nullptr) { surface = this->GetSurfacePtr(this->FindElementSurface(element.handle)); }
+                    if (surface == nullptr) { surface = this->GetSurfacePtr(this->GetElementSurface(element.handle)); }
                     if (surface != nullptr)
                     {
                         element.layout.relativePosY = surface->height * (top / 100.0f);
@@ -4581,7 +4713,7 @@ namespace GT
             else
             {
                 // Position based on the size of the surface.
-                auto surface = this->GetSurfacePtr(this->FindElementSurface(element.handle));
+                auto surface = this->GetSurfacePtr(this->GetElementSurface(element.handle));
                 if (surface != nullptr)
                 {
                     if (!leftHasPriority)
@@ -4736,7 +4868,7 @@ namespace GT
             }
             else
             {
-                auto surface = this->GetSurfacePtr(this->FindElementSurface(element.handle));
+                auto surface = this->GetSurfacePtr(this->GetElementSurface(element.handle));
                 if (surface != nullptr)
                 {
                     containerWidth  = static_cast<float>(surface->width);
@@ -5207,7 +5339,7 @@ namespace GT
                 else
                 {
                     // The element does not have a parent, so we will size based on the surface.
-                    auto surface = this->GetSurfacePtr(this->FindElementSurface(element.handle));
+                    auto surface = this->GetSurfacePtr(this->GetElementSurface(element.handle));
                     if (surface != nullptr)
                     {
                         result = surface->width * sizeRatio;
@@ -5325,7 +5457,7 @@ namespace GT
                 else
                 {
                     // The element does not have a parent, so we will size based on the surface.
-                    auto surface = this->GetSurfacePtr(this->FindElementSurface(element.handle));
+                    auto surface = this->GetSurfacePtr(this->GetElementSurface(element.handle));
                     if (surface != nullptr)
                     {
                         result = surface->height * sizeRatio;

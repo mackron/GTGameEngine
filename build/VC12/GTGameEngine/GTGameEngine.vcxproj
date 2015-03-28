@@ -118,12 +118,12 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\ModelAsset.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Config.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIContext.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIDataTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIElement.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIElementStyle.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIFontManager.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIGlyphMapManager.hpp" />
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIHandleTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIImageManager.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUILayoutContext.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUILogging.hpp" />

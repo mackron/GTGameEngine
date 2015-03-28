@@ -685,9 +685,6 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIGlyphMapManager.hpp">
       <Filter>Header Files\Core\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIHandleTypes.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIImageManager.hpp">
       <Filter>Header Files\Core\GUI</Filter>
     </ClInclude>
@@ -705,6 +702,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\Core\GUI\GUIRenderer_Generic.hpp">
       <Filter>Source Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIDataTypes.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

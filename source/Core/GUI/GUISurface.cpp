@@ -13,7 +13,7 @@ namespace GT
           auxData(nullptr),
           hElementCapturingMouseEvents(0),
           hElementUnderMouse(0),
-          renderBuffer(0),
+          paintingMode(GUIPaintingMode::Immediate),
           invalidRect()
     {
     }

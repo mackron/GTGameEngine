@@ -53,42 +53,23 @@ namespace GT
         virtual ~GUIRenderer_Generic();
 
 
-        ///////////////////////////////////////
-        // Render Buffers
 
-        /// GUIRenderer::CreateRenderBuffer()
-        HGUIRenderBuffer CreateRenderBuffer(unsigned int width, unsigned int height);
+        /// @copydoc GUIRenderer::BeginPaintSurface()
+        void BeginPaintSurface(GT::HGUISurface hSurface);
 
-        /// GUIRenderer::DeleteRenderBuffer()
-        void DeleteRenderBuffer(HGUIRenderBuffer hBuffer);
+        /// @copydoc GUIRenderer::EndPaintSurface()
+        void EndPaintSurface();
 
-        /// GUIRenderer::GetRenderBufferSize()
-        void GetRenderBufferSize(HGUIRenderBuffer hBuffer, unsigned int &widthOut, unsigned int &heightOut);
-
-        /// GUIRenderer::MapRenderBuffer()
-        void* MapRenderBuffer(HGUIRenderBuffer hBuffer);
-
-        /// GUIRenderer::UnmapRenderBuffer()
-        bool UnmapRenderBuffer(HGUIRenderBuffer hBuffer, const void* data);
-
-        /// GUIRenderer::SetCurrentRenderBuffer()
-        void SetCurrentRenderBuffer(HGUIRenderBuffer hBuffer);
-
-
-
-        ///////////////////////////////////////
-        // Drawing
-
-        /// GUIRenderer::Clear()
+        /// @copydoc GUIRenderer::Clear()
         void Clear();
 
-        /// GUIRenderer::Clear(const GTLib::Rect<int> &)
+        /// @copydoc GUIRenderer::Clear(const GTLib::Rect<int> &)
         void Clear(const GTLib::Rect<int> &rect);
 
-        /// GUIRenderer::DrawRectangle()
+        /// @copydoc GUIRenderer::DrawRectangle()
         void DrawRectangle(GTLib::Rect<int> rect, GTLib::Colour colour);
 
-        /// GUIRenderer::SetClippingRect()
+        /// @copydoc GUIRenderer::SetClippingRect()
         void SetClippingRect(GTLib::Rect<int> rect);
 
 
