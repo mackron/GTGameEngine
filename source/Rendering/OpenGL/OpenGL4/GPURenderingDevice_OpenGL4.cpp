@@ -108,10 +108,7 @@ namespace GT
           m_indexBufferFormatSize(4),
           m_indexBufferOffset(0),
           m_currentInputLayout(0),
-          m_currentFramebuffer(0),
-          m_currentViewports(),
-          m_currentScissorRects(),
-          m_currentWindowHeight(0)
+          m_currentFramebuffer(0)
     {
     }
 
@@ -213,31 +210,6 @@ namespace GT
                 // Emulate Direct3D.
                 //m_gl.ClipControl(GL_UPPER_LEFT, GL_ZERO_TO_ONE);
 
-
-
-                // Retrieve some initial state.
-                GLint viewportDims[4];
-                m_gl.GetIntegerv(GL_VIEWPORT, viewportDims);
-
-                for (int i = 0; i < GT_MAX_VIEWPORTS; ++i)
-                {
-                    m_currentViewports[i].x      = static_cast<float>(viewportDims[0]);
-                    m_currentViewports[i].y      = static_cast<float>(viewportDims[1]);
-                    m_currentViewports[i].width  = static_cast<float>(static_cast<unsigned int>(viewportDims[2]));
-                    m_currentViewports[i].height = static_cast<float>(static_cast<unsigned int>(viewportDims[3]));
-                }
-
-
-                GLint scissorDims[4];
-                m_gl.GetIntegerv(GL_SCISSOR_BOX, scissorDims);
-
-                for (int i = 0; i < GT_MAX_VIEWPORTS; ++i)
-                {
-                    m_currentScissorRects[i].x      = scissorDims[0];
-                    m_currentScissorRects[i].y      = scissorDims[1];
-                    m_currentScissorRects[i].width  = static_cast<unsigned int>(scissorDims[2]);
-                    m_currentScissorRects[i].height = static_cast<unsigned int>(scissorDims[3]);
-                }
 
 
 #if _DEBUG
@@ -767,10 +739,11 @@ namespace GT
 
         for (size_t iViewport = 0; iViewport < viewportCount; ++iViewport)
         {
-            m_currentViewports[iViewport] = viewports[iViewport];
-        }
+            auto &viewport = viewports[iViewport];
 
-        this->UpdateViewports();
+            m_gl.ViewportIndexedf(static_cast<GLuint>(iViewport), viewport.x, viewport.y, viewport.width, viewport.height);
+            m_gl.DepthRangeIndexed(static_cast<GLuint>(iViewport), viewport.depthRangeNear, viewport.depthRangeFar);
+        }
     }
 
     void GPURenderingDevice_OpenGL4::RSSetScissorRects(ScissorRect* scissorRects, size_t scissorCount)
@@ -779,10 +752,10 @@ namespace GT
 
         for (size_t iScissor = 0; iScissor < scissorCount; ++iScissor)
         {
-            m_currentScissorRects[iScissor] = scissorRects[iScissor];
-        }
+            auto &scissorRect = scissorRects[iScissor];
 
-        this->UpdateScissorRects();
+            m_gl.ScissorIndexed(static_cast<GLuint>(iScissor), scissorRect.x, scissorRect.y, scissorRect.width, scissorRect.height);
+        }
     }
 
 
@@ -1573,15 +1546,26 @@ namespace GT
 
         GLint minFiltersGL[] =
         {
-            GL_NEAREST_MIPMAP_NEAREST,  // TextureFilter_Point_Point_Point
-            GL_NEAREST_MIPMAP_LINEAR,   // TextureFilter_Point_Point_Linear
-            GL_NEAREST_MIPMAP_NEAREST,  // TextureFilter_Point_Linear_Point
-            GL_NEAREST_MIPMAP_LINEAR,   // TextureFitler_Point_Linear_Linear
-            GL_LINEAR_MIPMAP_NEAREST,   // TextureFilter_Linear_Point_Point
-            GL_LINEAR_MIPMAP_LINEAR,    // TextureFilter_Linear_Point_Linear
-            GL_LINEAR_MIPMAP_NEAREST,   // TextureFilter_Linear_Linear_Point
-            GL_LINEAR_MIPMAP_LINEAR,    // TextureFilter_Linear_Linear_Linear
-            GL_LINEAR_MIPMAP_LINEAR     // TextureFilter_Anisotropic
+            //GL_NEAREST_MIPMAP_NEAREST,  // TextureFilter_Point_Point_Point
+            //GL_NEAREST_MIPMAP_LINEAR,   // TextureFilter_Point_Point_Linear
+            //GL_NEAREST_MIPMAP_NEAREST,  // TextureFilter_Point_Linear_Point
+            //GL_NEAREST_MIPMAP_LINEAR,   // TextureFitler_Point_Linear_Linear
+            //GL_LINEAR_MIPMAP_NEAREST,   // TextureFilter_Linear_Point_Point
+            //GL_LINEAR_MIPMAP_LINEAR,    // TextureFilter_Linear_Point_Linear
+            //GL_LINEAR_MIPMAP_NEAREST,   // TextureFilter_Linear_Linear_Point
+            //GL_LINEAR_MIPMAP_LINEAR,    // TextureFilter_Linear_Linear_Linear
+            //GL_LINEAR_MIPMAP_LINEAR     // TextureFilter_Anisotropic
+
+            // TODO: Revert this. Just doing this for testing for now.
+            GL_NEAREST,  // TextureFilter_Point_Point_Point
+            GL_NEAREST,   // TextureFilter_Point_Point_Linear
+            GL_NEAREST,  // TextureFilter_Point_Linear_Point
+            GL_NEAREST,   // TextureFitler_Point_Linear_Linear
+            GL_LINEAR,   // TextureFilter_Linear_Point_Point
+            GL_LINEAR,    // TextureFilter_Linear_Point_Linear
+            GL_LINEAR,   // TextureFilter_Linear_Linear_Point
+            GL_LINEAR,    // TextureFilter_Linear_Linear_Linear
+            GL_LINEAR     // TextureFilter_Anisotropic
         };
         
         GLint magFiltersGL[] =
@@ -1693,6 +1677,13 @@ namespace GT
             }
 
             m_gl.NamedFramebufferDrawBuffers(framebufferGL->GetOpenGLObject(), GT_MAX_FRAMEBUFFER_RENDER_TARGETS, framebufferGL->renderTargetsGL);
+
+
+            if (m_gl.CheckNamedFramebufferStatus(framebufferGL->GetOpenGLObject(), GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            {
+                // TODO: Delete this!
+                printf("Framebuffer Error: %d\n", m_gl.CheckNamedFramebufferStatus(framebufferGL->GetOpenGLObject(), GL_FRAMEBUFFER));
+            }
         }
     }
 
@@ -1709,6 +1700,12 @@ namespace GT
             else
             {
                 m_gl.NamedFramebufferTextureLayer(framebufferGL->GetOpenGLObject(), GL_DEPTH_STENCIL_ATTACHMENT, 0, static_cast<GLint>(mipmapLevel), static_cast<GLint>(arrayLayer));
+            }
+
+            if (m_gl.CheckNamedFramebufferStatus(framebufferGL->GetOpenGLObject(), GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            {
+                // TODO: Delete this!
+                printf("Framebuffer Error: %d\n", m_gl.CheckNamedFramebufferStatus(framebufferGL->GetOpenGLObject(), GL_FRAMEBUFFER));
             }
         }
     }
@@ -1860,19 +1857,6 @@ namespace GT
                 auto &framebuffer = iFramebuffer->value;
 
                 m_gl.MakeCurrent(framebuffer.m_hDC, m_gl.GetRenderingContext());
-
-
-                // We need to retrieve the height of the window and normalize the viewport and scissor rectangles.
-                if (m_currentHWND != hWnd)
-                {
-                    RECT windowRect;
-                    GetClientRect(hWnd, &windowRect);
-                    m_currentWindowHeight = windowRect.bottom - windowRect.top;
-
-                    this->UpdateViewports();
-                    this->UpdateScissorRects();
-                }
-
                 
                 m_currentHWND = hWnd;
                 m_currentDC   = framebuffer.m_hDC;
@@ -1896,13 +1880,7 @@ namespace GT
 
     void GPURenderingDevice_OpenGL4::ResizeWindowFramebuffer(HWND hWnd)
     {
-        // We need to get the size of the window and update the viewports and scissor rectangles.
-        RECT windowRect;
-        GetClientRect(hWnd, &windowRect);
-        m_currentWindowHeight = windowRect.bottom - windowRect.top;
-
-        this->UpdateViewports();
-        this->UpdateScissorRects();
+        (void)hWnd;
     }
 #endif
 
@@ -2089,35 +2067,6 @@ namespace GT
         else
         {
             return FailedToCompileShader;
-        }
-    }
-
-
-    void GPURenderingDevice_OpenGL4::UpdateViewports()
-    {
-        for (int i = 0; i < GT_MAX_VIEWPORTS; ++i)
-        {
-            GLfloat viewportX      = static_cast<GLfloat>(m_currentViewports[i].x);
-            GLfloat viewportY      = static_cast<GLfloat>(m_currentWindowHeight - m_currentViewports[i].y - m_currentViewports[i].height);
-            GLfloat viewportWidth  = static_cast<GLfloat>(m_currentViewports[i].width);
-            GLfloat viewportHeight = static_cast<GLfloat>(m_currentViewports[i].height);
-            m_gl.ViewportIndexedf(i, viewportX, viewportY, viewportWidth, viewportHeight);
-
-            GLdouble viewportDepthRangeNear = static_cast<GLdouble>(m_currentViewports[i].depthRangeNear);
-            GLdouble viewportDepthRangeFar  = static_cast<GLdouble>(m_currentViewports[i].depthRangeFar);
-            m_gl.DepthRangeIndexed(i, viewportDepthRangeNear, viewportDepthRangeFar);
-        }
-    }
-
-    void GPURenderingDevice_OpenGL4::UpdateScissorRects()
-    {
-        for (int i = 0; i < GT_MAX_VIEWPORTS; ++i)
-        {
-            GLint scissorX        = static_cast<GLint>(m_currentScissorRects[i].x);
-            GLint scissorY        = static_cast<GLint>(m_currentWindowHeight - m_currentScissorRects[i].y);
-            GLsizei scissorWidth  = static_cast<GLsizei>(m_currentScissorRects[i].width);
-            GLsizei scissorHeight = static_cast<GLsizei>(m_currentScissorRects[i].height);
-            m_gl.ScissorIndexed(i, scissorX, scissorY, scissorWidth, scissorHeight);
         }
     }
 }

@@ -326,13 +326,6 @@ namespace GT
         ResultCode CompileShader_GLSL(const char* source, size_t sourceLength, const ShaderDefine* defines, ShaderLanguage language, ShaderType type, GT::BasicBuffer &messagesOut, GLuint &objectGLOut, GLenum &typeGLOut);
 
 
-        /// Helper function for updating the viewports in response to a change in window size.
-        void UpdateViewports();
-
-        /// Helper function for updating the scissor rectangles in response to a change in window size.
-        void UpdateScissorRects();
-
-
     private:
 
         /// The OpenGL context object.
@@ -420,15 +413,6 @@ namespace GT
 
         /// The current framebuffer.
         HFramebuffer m_currentFramebuffer;
-
-        /// The current viewports.
-        GraphicsViewport m_currentViewports[GT_MAX_VIEWPORTS];
-
-        /// The current scissor rectangle.
-        ScissorRect m_currentScissorRects[GL_MAX_VIEWPORTS];
-
-        /// The height of the current window. This is used to convert window spaces to upper-left coordinates.
-        unsigned int m_currentWindowHeight;
 
 
 
