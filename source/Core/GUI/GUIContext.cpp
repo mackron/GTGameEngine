@@ -1218,6 +1218,7 @@ namespace GT
             
             this->BeginBatch();
             {
+                this->Painting_InvalidateElementRect(*element);
                 this->Layout_InvalidateElementLayoutsOnInnerSizeChange(*element);
             }
             this->EndBatch();
@@ -2072,9 +2073,9 @@ namespace GT
         auto surface = this->GetSurfacePtr(hSurface);
         if (surface != nullptr)
         {
-            m_renderer->BeginPaintSurface(hSurface);
+            m_renderer->BeginPaintSurface(*this, hSurface);
             {
-                m_renderer->Clear(rect);
+                m_renderer->Clear(*this, rect);
 
                 for (size_t iElement = 0; iElement < surface->topLevelElements.GetCount(); ++iElement)
                 {
@@ -2091,7 +2092,7 @@ namespace GT
 
                 this->PostEvent_OnPaint(hSurface, rect);
             }
-            m_renderer->EndPaintSurface();
+            m_renderer->EndPaintSurface(*this);
         }
     }
 
@@ -3170,28 +3171,28 @@ namespace GT
         borderLeftRect.top    = static_cast<int>(element.layout.absolutePosY);
         borderLeftRect.right  = static_cast<int>(element.layout.absolutePosX + element.layout.borderLeftWidth);
         borderLeftRect.bottom = static_cast<int>(element.layout.absolutePosY + element.layout.height);
-        m_renderer->DrawRectangle(borderLeftRect, GUIElementStyle_Get_borderleftcolor(element.style));
+        m_renderer->DrawRectangle(*this, borderLeftRect, GUIElementStyle_Get_borderleftcolor(element.style));
 
         GTLib::Rect<int> borderTopRect;
         borderTopRect.left   = static_cast<int>(element.layout.absolutePosX);
         borderTopRect.top    = static_cast<int>(element.layout.absolutePosY);
         borderTopRect.right  = static_cast<int>(element.layout.absolutePosX + element.layout.width);
         borderTopRect.bottom = static_cast<int>(element.layout.absolutePosY + element.layout.borderTopWidth);
-        m_renderer->DrawRectangle(borderTopRect, GUIElementStyle_Get_bordertopcolor(element.style));
+        m_renderer->DrawRectangle(*this, borderTopRect, GUIElementStyle_Get_bordertopcolor(element.style));
 
         GTLib::Rect<int> borderRightRect;
         borderRightRect.left   = static_cast<int>(element.layout.absolutePosX + element.layout.width - element.layout.borderRightWidth);
         borderRightRect.top    = static_cast<int>(element.layout.absolutePosY);
         borderRightRect.right  = static_cast<int>(element.layout.absolutePosX + element.layout.width);
         borderRightRect.bottom = static_cast<int>(element.layout.absolutePosY + element.layout.height);
-        m_renderer->DrawRectangle(borderRightRect, GUIElementStyle_Get_borderrightcolor(element.style));
+        m_renderer->DrawRectangle(*this, borderRightRect, GUIElementStyle_Get_borderrightcolor(element.style));
 
         GTLib::Rect<int> borderBottomRect;
         borderBottomRect.left   = static_cast<int>(element.layout.absolutePosX);
         borderBottomRect.top    = static_cast<int>(element.layout.absolutePosY + element.layout.height - element.layout.borderBottomWidth);
         borderBottomRect.right  = static_cast<int>(element.layout.absolutePosX + element.layout.width);
         borderBottomRect.bottom = static_cast<int>(element.layout.absolutePosY + element.layout.height);
-        m_renderer->DrawRectangle(borderBottomRect, GUIElementStyle_Get_borderbottomcolor(element.style));
+        m_renderer->DrawRectangle(*this, borderBottomRect, GUIElementStyle_Get_borderbottomcolor(element.style));
 
 
         // Text.
@@ -3314,8 +3315,8 @@ namespace GT
         assert(m_renderer != nullptr);
 
 #if 1
-        m_renderer->SetClippingRect(rect);
-        m_renderer->DrawRectangle(rect, color);
+        m_renderer->SetClippingRect(*this, rect);
+        m_renderer->DrawRectangle(*this, rect, color);
 
         //this->Painting_SetClippingRect(surface, rect);
         //this->Painting_DrawRectangle(surface, rect, color);

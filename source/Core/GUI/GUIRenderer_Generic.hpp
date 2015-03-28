@@ -55,22 +55,22 @@ namespace GT
 
 
         /// @copydoc GUIRenderer::BeginPaintSurface()
-        void BeginPaintSurface(GT::HGUISurface hSurface);
+        void BeginPaintSurface(GT::GUIContext &context, GT::HGUISurface hSurface);
 
         /// @copydoc GUIRenderer::EndPaintSurface()
-        void EndPaintSurface();
+        void EndPaintSurface(GT::GUIContext &context);
 
         /// @copydoc GUIRenderer::Clear()
-        void Clear();
+        void Clear(GT::GUIContext &context);
 
         /// @copydoc GUIRenderer::Clear(const GTLib::Rect<int> &)
-        void Clear(const GTLib::Rect<int> &rect);
+        void Clear(GT::GUIContext &context, const GTLib::Rect<int> &rect);
 
         /// @copydoc GUIRenderer::DrawRectangle()
-        void DrawRectangle(GTLib::Rect<int> rect, GTLib::Colour colour);
+        void DrawRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, GTLib::Colour colour);
 
         /// @copydoc GUIRenderer::SetClippingRect()
-        void SetClippingRect(GTLib::Rect<int> rect);
+        void SetClippingRect(GT::GUIContext &context, GTLib::Rect<int> rect);
 
 
     private:

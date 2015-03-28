@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include "GUIRenderer_Generic.hpp"
+#include <GTGameEngine/Core/GUI/GUIContext.hpp>
 
 namespace GT
 {
@@ -127,17 +128,21 @@ namespace GT
     ////////////////////////////////////////////////
     // Drawing
 
-    void GUIRenderer_Generic::BeginPaintSurface(GT::HGUISurface hSurface)
+    void GUIRenderer_Generic::BeginPaintSurface(GT::GUIContext &context, GT::HGUISurface hSurface)
     {
+        (void)context;
         (void)hSurface;
     }
 
-    void GUIRenderer_Generic::EndPaintSurface()
+    void GUIRenderer_Generic::EndPaintSurface(GT::GUIContext &context)
     {
+        (void)context;
     }
 
-    void GUIRenderer_Generic::Clear()
+    void GUIRenderer_Generic::Clear(GT::GUIContext &context)
     {
+        (void)context;
+
         if (m_currentRenderBuffer != nullptr)
         {
             m_currentClippingRect.left   = 0;
@@ -149,13 +154,15 @@ namespace GT
         }
     }
 
-    void GUIRenderer_Generic::Clear(const GTLib::Rect<int> &rect)
+    void GUIRenderer_Generic::Clear(GT::GUIContext &context, const GTLib::Rect<int> &rect)
     {
+        (void)context;
+
         if (m_currentRenderBuffer != nullptr)
         {
             // TODO: Optimize this so that it's done as a single operation.
 
-            this->SetClippingRect(rect);
+            this->SetClippingRect(context, rect);
 
             for (unsigned int y = m_currentClippingRect.top; y < m_currentClippingRect.bottom; ++y)
             {
@@ -168,8 +175,10 @@ namespace GT
         }
     }
 
-    void GUIRenderer_Generic::DrawRectangle(GTLib::Rect<int> rect, GTLib::Colour color)
+    void GUIRenderer_Generic::DrawRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, GTLib::Colour color)
     {
+        (void)context;
+
         if (m_currentRenderBuffer != nullptr)
         {
             // NOTE: There's a lot of optimization opportunaties here. Currently, this is just a naive implementation, but we will probably try something a bit
@@ -212,8 +221,10 @@ namespace GT
         }
     }
 
-    void GUIRenderer_Generic::SetClippingRect(GTLib::Rect<int> clippingRect)
+    void GUIRenderer_Generic::SetClippingRect(GT::GUIContext &context, GTLib::Rect<int> clippingRect)
     {
+        (void)context;
+
         if (m_currentRenderBuffer != nullptr)
         {
             auto pixelBuffer = m_currentRenderBuffer->data;
