@@ -65,13 +65,15 @@ namespace GT
                     GameDisplayRenderingCallback* renderingCallback = display->GetRenderingCallback();
                     if (renderingCallback != nullptr)
                     {
-                        GPURenderingDevice &renderingDevice = display->GetRenderingDevice();
+                        renderingCallback->Render(*display);
 
-                        renderingDevice.SetCurrentWindow(display->GetWindow());
-                        {
-                            renderingCallback->Render(*display);
-                        }
-                        renderingDevice.SwapBuffers();
+                        //GPURenderingDevice &renderingDevice = display->GetRenderingDevice();
+
+                        //renderingDevice.SetCurrentWindow(display->GetWindow());
+                        //{
+                        //    renderingCallback->Render(*display);
+                        //}
+                        //renderingDevice.SwapBuffers();
                     }
                 }
             }

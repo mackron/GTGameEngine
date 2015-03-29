@@ -98,6 +98,7 @@
     <ClCompile Include="..\..\..\source\GameDisplayRenderingCallback.cpp" />
     <ClCompile Include="..\..\..\source\GameDisplay_Windowed.cpp" />
     <ClCompile Include="..\..\..\source\GPUComputeDevice.cpp" />
+    <ClCompile Include="..\..\..\source\GPUGraphicsInterface.cpp" />
     <ClCompile Include="..\..\..\source\GPURenderingDevice.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_Audio.cpp" />
@@ -137,6 +138,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplayRenderingCallback.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplay_Windowed.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPUComputeDevice.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\GPUGraphicsInterface.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDeviceInfo.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform.hpp" />

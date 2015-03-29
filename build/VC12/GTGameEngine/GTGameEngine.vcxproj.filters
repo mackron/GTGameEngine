@@ -356,6 +356,9 @@
     <ClCompile Include="..\..\..\source\Core\GUI\GUISurface.cpp">
       <Filter>Source Files\Core\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\GPUGraphicsInterface.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -705,6 +708,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIDataTypes.hpp">
       <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GPUGraphicsInterface.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
