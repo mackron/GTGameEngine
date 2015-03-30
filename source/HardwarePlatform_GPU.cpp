@@ -116,7 +116,7 @@ namespace GT
                                 D3D_FEATURE_LEVEL    featureLevel    = D3D_FEATURE_LEVEL_11_0;
                                 ID3D11Device*        pD3DDevice      = nullptr;
                                 ID3D11DeviceContext* pD3DContext     = nullptr;
-                                HRESULT hr = _D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_UNKNOWN, NULL, 0, featureLevels, 1, D3D11_SDK_VERSION, &pD3DDevice, &featureLevel, &pD3DContext);
+                                hr = _D3D11CreateDevice(adapter, D3D_DRIVER_TYPE_UNKNOWN, NULL, 0, featureLevels, 1, D3D11_SDK_VERSION, &pD3DDevice, &featureLevel, &pD3DContext);
                                 if (SUCCEEDED(hr) && featureLevel == D3D_FEATURE_LEVEL_11_0)
                                 {
                                     AddSupportedRenderingAPI(info, RenderingAPI_D3D11);
