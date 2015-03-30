@@ -1,20 +1,19 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTLib/Windowing/Clipboard.hpp>
-#include <GTLib/WindowManagement.hpp>
 #include <GTLib/Config.hpp>
 #include <GTLib/Strings.hpp>
 #include <GTLib/Vector.hpp>
 
 #if defined(GT_PLATFORM_WINDOWS)
-#include <GTLib/Windowing/Win32/Win32.hpp>
+#include <GTLib/windows.hpp>
 #include <GTLib/Strings/LineIterator.hpp>
 
 namespace GTLib
 {
     void Clipboard::SetText(const char* text, ptrdiff_t sizeInTs)
     {
-        if (OpenClipboard(GTLib::Win32::GetFirstHWND()))
+        if (OpenClipboard(NULL))
         {
             // Windows loves \n\r, so we need to make sure that is how the lines are formatted. If we don't do this, it will stuff
             // up pasting in things like Notepad.
@@ -68,7 +67,7 @@ namespace GTLib
 
         if (IsClipboardFormatAvailable(CF_TEXT))
         {
-            if (OpenClipboard(GTLib::Win32::GetFirstHWND()))
+            if (OpenClipboard(NULL))
             {
                 HGLOBAL textHandle = GetClipboardData(CF_TEXT);
                 if (textHandle != 0)

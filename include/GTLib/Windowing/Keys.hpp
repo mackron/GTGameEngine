@@ -15,23 +15,6 @@ namespace GTLib
 {
     typedef char32_t Key;
 
-#if 0
-    struct Key_t
-    {
-        Key_t(const char* name, char32_t code)
-            : Name(name), Code(code)
-        {
-        }
-
-
-        // The name of the key as a string. First letter is capitalized.
-        GTLib::String Name;
-
-        // The key code.
-        char32_t Code;
-    };
-#endif
-
     // Keys map to unicode code points. We use the PUA in plane 15 for keys not in Unicode, such as the function keys, home/end, etc.
     // This list should include both upper- and lower-case versions of applicable characters.
     namespace Keys

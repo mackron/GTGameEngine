@@ -219,7 +219,7 @@ namespace GTLib
         bool DirectoryExists(const char* directory)
         {
         #if defined(GT_PLATFORM_WINDOWS)
-            DWORD attributes = GetFileAttributes(directory);
+            DWORD attributes = GetFileAttributesA(directory);
             return attributes != INVALID_FILE_ATTRIBUTES && (attributes & FILE_ATTRIBUTE_DIRECTORY);
         #else
             if (access(directory, F_OK) == 0)
