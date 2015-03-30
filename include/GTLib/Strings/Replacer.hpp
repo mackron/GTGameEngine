@@ -37,7 +37,7 @@ namespace GTLib
             *   \brief  Default constructor.
             */
             ReplacerUTF()
-                : base(nullptr), baseSizeInTs(0), buffers(), bufferIndex(0)
+                : m_base(nullptr), m_baseSizeInTs(0), m_buffers(), m_bufferIndex(0)
             {
             }
             
@@ -49,7 +49,7 @@ namespace GTLib
             *       The base string is not copied straight away. A copy is only made after the first call to Replace().
             */
             ReplacerUTF(const T* base, ptrdiff_t baseSizeInTs = -1)
-                : base(base), baseSizeInTs(baseSizeInTs), buffers(), bufferIndex(0)
+                : m_base(base), m_baseSizeInTs(baseSizeInTs), m_buffers(), m_bufferIndex(0)
             {
             }
                 
@@ -62,8 +62,8 @@ namespace GTLib
             */
             void SetBase(const T* base, ptrdiff_t baseSizeInTs = -1)
             {
-                this->base         = base;
-                this->baseSizeInTs = baseSizeInTs;
+				m_base         = base;
+				m_baseSizeInTs = baseSizeInTs;
             }
                 
             /**
@@ -76,13 +76,13 @@ namespace GTLib
             */
             const T* GetBase() const
             {
-                if (this->base != nullptr)
+                if (m_base != nullptr)
                 {
-                    return this->base;
+                    return m_base;
                 }
                 else
                 {
-                    return static_cast<const T*>(this->buffers[this->bufferIndex].GetDataPointer());
+                    return static_cast<const T*>(m_buffers[m_bufferIndex].GetDataPointer());
                 }
             }
                 
@@ -106,18 +106,18 @@ namespace GTLib
                 if (original != nullptr)
                 {
                     const T* base;
-                    if (this->base != nullptr)
+                    if (m_base != nullptr)
                     {
-                        base = this->base;
-                        if (this->baseSizeInTs == -1)
+                        base = m_base;
+                        if (m_baseSizeInTs == -1)
                         {
-                            this->baseSizeInTs = SizeInTs(base);
+							m_baseSizeInTs = SizeInTs(base);
                         }
                     }
                     else
                     {
-                        // We don't need to set the size here because this->baseSizeInBytes will have been set when the buffer was written.
-                        base = reinterpret_cast<const T*>(this->buffers[this->bufferIndex].GetDataPointer());
+                        // We don't need to set the size here because m_baseSizeInBytes will have been set when the buffer was written.
+                        base = reinterpret_cast<const T*>(m_buffers[m_bufferIndex].GetDataPointer());
                     }
 
                     if (base != nullptr)
@@ -157,8 +157,8 @@ namespace GTLib
                         
                         // Now that the positions of each occurance of 'original', we can construct the result. The destination buffer is
                         // always the back buffer.
-                        GT::BasicBuffer &destBuffer = this->buffers[!this->bufferIndex];
-                        ptrdiff_t destSizeInTs      = this->baseSizeInTs + baseSizeDiffInTs;
+                        GT::BasicBuffer &destBuffer = m_buffers[!m_bufferIndex];
+                        ptrdiff_t destSizeInTs      = m_baseSizeInTs + baseSizeDiffInTs;
                         
                         destBuffer.Allocate(static_cast<size_t>(destSizeInTs + 1) * sizeof(T));    // +1 for the null terminator.
                         T* result = static_cast<T*>(destBuffer.GetDataPointer());
@@ -187,11 +187,11 @@ namespace GTLib
                         
                         
                         
-                        // Now we need to finish up. We no longer want to use this->base, because that is now stored in one of our buffers.
+                        // Now we need to finish up. We no longer want to use m_base, because that is now stored in one of our buffers.
                         // The new base size will be the size of the destination buffer, since that buffer is now the new base.
-                        this->base         = nullptr;
-                        this->baseSizeInTs = destSizeInTs;
-                        this->bufferIndex  = !this->bufferIndex;
+                        m_base         = nullptr;
+                        m_baseSizeInTs = destSizeInTs;
+                        m_bufferIndex  = !m_bufferIndex;
                         
                         return result;
                     }
@@ -224,12 +224,12 @@ namespace GTLib
             */
             const T* c_str() const
             {
-                if (this->base != nullptr)
+                if (m_base != nullptr)
                 {
-                    return this->base;
+                    return m_base;
                 }
 
-                return static_cast<T*>(this->buffers[this->bufferIndex].ptr);
+                return static_cast<T*>(m_buffers[m_bufferIndex].ptr);
             }
 
 
@@ -237,16 +237,16 @@ namespace GTLib
 
             /// The base string. This is a direct reference, not a copy. Once this value has been copied into a buffer, it will be
             /// set to nullptr. It is not copied over straight away; instead it will be copied during the next call to Replace().
-            const T* base;
+            const T* m_base;
                 
             /// The size in bytes of the base string. Can be -1.
-            ptrdiff_t baseSizeInTs;
+            ptrdiff_t m_baseSizeInTs;
             
             /// The two internal buffers.
-            GT::BasicBuffer buffers[2];
+            GT::BasicBuffer m_buffers[2];
                 
             /// The index of the current buffer. Toggles between 0 and 1.
-            size_t bufferIndex;
+            size_t m_bufferIndex;
                 
                 
         private:    // No copying.

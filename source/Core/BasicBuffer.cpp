@@ -21,13 +21,13 @@ namespace GT
         }
     }
 
-    BasicBuffer::BasicBuffer(const void *m_ptr, size_t m_size)
-        : m_ptr(nullptr), m_size(m_size)
+    BasicBuffer::BasicBuffer(const void *ptr, size_t size)
+        : m_ptr(nullptr), m_size(size)
     {
         if (this->m_size > 0)
         {
             this->m_ptr = malloc(this->m_size);
-            std::memcpy(this->m_ptr, m_ptr, this->m_size);
+            std::memcpy(this->m_ptr, ptr, this->m_size);
         }
     }
 
@@ -36,22 +36,22 @@ namespace GT
         free(this->m_ptr);
     }
 
-    void * BasicBuffer::Allocate(size_t m_size, bool tightlyPacked)
+    void * BasicBuffer::Allocate(size_t size, bool tightlyPacked)
     {
-        if ((m_size < this->m_size && tightlyPacked) || m_size > this->m_size)
+        if ((size < this->m_size && tightlyPacked) || size > this->m_size)
         {
             free(this->m_ptr);
 
-            if (m_size > 0)
+            if (size > 0)
             {
-                this->m_ptr = malloc(m_size);
+                this->m_ptr = malloc(size);
             }
             else
             {
                 this->m_ptr = nullptr;
             }
 
-            this->m_size = m_size;
+            this->m_size = size;
         }
 
         return this->m_ptr;

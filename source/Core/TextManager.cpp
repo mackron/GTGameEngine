@@ -970,7 +970,7 @@ namespace GTLib
         }
     }
 
-    void TextManager::InsertTextAtCursor(const char* text, ptrdiff_t textSizeInTs, bool appendNewCommand)
+    void TextManager::InsertTextAtCursor(const char* textIn, ptrdiff_t textSizeInTs, bool appendNewCommand)
     {
         // We need to grab the start so we can create an undo/redo command.
         int lineStart          = this->cursorMarker.lineIndex;
@@ -986,11 +986,11 @@ namespace GTLib
 
 
         // We need to insert line-by-line.
-        GTLib::Strings::LineIterator lineText(text, textSizeInTs);
+        GTLib::Strings::LineIterator lineText(textIn, textSizeInTs);
         while (lineText)
         {
             // TODO: Do an additional check to see if the text manager is in single-line mode. Only care about the first line in that case.
-            if (lineText.start != text)
+            if (lineText.start != textIn)
             {
                 this->InsertNewLineAtCursor(false);
             }
@@ -1031,7 +1031,7 @@ namespace GTLib
             int lineEnd          = this->cursorMarker.lineIndex;
             int lineEndCharacter = this->cursorMarker.characterIndex;
 
-            this->AppendCommand(TextCommandType_Insert, text, textSizeInTs, lineStart, lineStartCharacter, lineEnd, lineEndCharacter, false);
+            this->AppendCommand(TextCommandType_Insert, textIn, textSizeInTs, lineStart, lineStartCharacter, lineEnd, lineEndCharacter, false);
         }
     }
 
@@ -1319,7 +1319,7 @@ namespace GTLib
 
 
             // We need to grab the text for the undo command.
-            GTLib::String text = this->GetTextInRange(*start, *end);
+            GTLib::String textForUndo = this->GetTextInRange(*start, *end);
 
             auto startLine          = this->lines[start->lineIndex];
             int  startLineIndex     = start->lineIndex;
@@ -1414,7 +1414,7 @@ namespace GTLib
 
             if (appendNewCommand)
             {
-                this->AppendCommand(TextCommandType_Delete, text.c_str(), text.GetLengthInTs(), startLineIndex, startLineCharacter, endLineIndex, endLineCharacter, false);
+                this->AppendCommand(TextCommandType_Delete, textForUndo.c_str(), textForUndo.GetLengthInTs(), startLineIndex, startLineCharacter, endLineIndex, endLineCharacter, false);
             }
         }
     }
@@ -2330,7 +2330,7 @@ namespace GTLib
 
 
 
-    void TextManager::AppendCommand(TextCommandType type, const char* text, size_t textSizeInTs, int lineStart, int lineStartCharacter, int lineEnd, int lineEndCharacter, bool placeCursorAtStart)
+    void TextManager::AppendCommand(TextCommandType type, const char* textIn, size_t textSizeInTs, int lineStart, int lineStartCharacter, int lineEnd, int lineEndCharacter, bool placeCursorAtStart)
     {
         TextCommand command;
         command.type               = type;
@@ -2339,7 +2339,7 @@ namespace GTLib
         command.lineEnd            = lineEnd;
         command.lineEndCharacter   = lineEndCharacter;
         command.placeCursorAtStart = placeCursorAtStart;
-        command.text.Assign(text, static_cast<ptrdiff_t>(textSizeInTs));
+        command.text.Assign(textIn, static_cast<ptrdiff_t>(textSizeInTs));
 
         // Everything after the current index needs to be removed.
         while (this->commandStack.count > 0 && this->commandStack.count > this->commandIndex)
