@@ -194,7 +194,6 @@ namespace GT
             m_hDummyHWND = CreateWindowExW(0, L"STATIC", L"", 0, 0, 0, 0, 0, NULL, NULL, GetModuleHandle(NULL), NULL);
             m_hDummyDC   = GetDC(m_hDummyHWND);
 
-            PIXELFORMATDESCRIPTOR m_pfd;
             memset(&m_pfd, 0, sizeof(m_pfd));
             m_pfd.nSize        = sizeof(m_pfd);
             m_pfd.nVersion     = 1;
