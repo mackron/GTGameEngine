@@ -8,7 +8,7 @@
 namespace GT
 {
     GPURenderingDevice::GPURenderingDevice(const GPURenderingDeviceInfo &info)
-        : m_info(info)
+        : GraphicsInterface(GraphicsInterfaceType_Unknown), m_info(info)
     {
     }
 

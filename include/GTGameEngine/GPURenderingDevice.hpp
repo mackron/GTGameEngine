@@ -15,6 +15,8 @@
 #include <GTLib/BasicBuffer.hpp>
 #include <GTLib/Vector.hpp>
 
+#include "GraphicsInterface.hpp"
+
 namespace GT
 {
     inline size_t GetRowPitch(unsigned int width, TextureFormat format)
@@ -31,7 +33,7 @@ namespace GT
     /// Class representing a rendering GPU device.
     ///
     /// A rendering device cannot be used across multiple threads.
-    class GPURenderingDevice
+    class GPURenderingDevice : public GraphicsInterface
     {
     public:
 
@@ -586,32 +588,19 @@ namespace GT
         //////////////////////////////////////////
         // Platform-Specific Methods
 
-        /// Swaps the buffers for the current window.
-        virtual void SwapBuffers() = 0;
+        
 
 #if defined(GT_PLATFORM_WINDOWS)
         /// Win32: Creates a framebuffer for the given window so that it can be drawn to.
         ///
         /// @param hWnd                [in] A handle to the window whose framebuffer is being initialized.
         /// @param includeDepthStencil [in] Whether or not a depth/stencil buffer should also be created.
-        virtual ResultCode InitWindowFramebuffer(HWND hWnd, bool includeDepthStencil) = 0;
+        virtual ResultCode InitWindowBuffers(HWND hWnd, bool includeDepthStencil) = 0;
 
         /// Win32: Uninitialises the framebuffer of the given window.
         ///
         /// @param hWnd [in] A handle to the window whose framebuffer is being unitialized.
-        virtual void UninitWindowFramebuffer(HWND hWnd) = 0;
-
-        /// Win32: Sets the current window where rendering will be output to.
-        ///
-        /// @param hWnd [in] A handle to the window to make current.
-        ///
-        /// @return <0 if there was an error making the window current. >=0 if the window was set successfully.
-        ///
-        /// @remarks
-        ///     Removing the current binding by pass NULL.
-        ///     @par
-        ///     InvalidWindowRenderTarget will be returned if the window was not first initialized with InitWindowFramebuffer().
-        virtual ResultCode SetCurrentWindow(HWND hWnd) = 0;
+        virtual void UninitWindowBuffers(HWND hWnd) = 0;
 
         /// Updates the size of the give window's framebuffer.
         ///
@@ -619,7 +608,22 @@ namespace GT
         ///
         /// @remarks
         ///     This should be called in response to the window's size changing.
-        virtual void ResizeWindowFramebuffer(HWND hWnd) = 0;
+        virtual void ResizeWindowBuffers(HWND hWnd) = 0;
+
+		/// Swaps the buffers for the current window.
+		virtual void SwapWindowBuffers(HWND hWnd, int swapInterval) = 0;
+
+		/// Win32: Sets the current window where rendering will be output to.
+		///
+		/// @param hWnd [in] A handle to the window to make current.
+		///
+		/// @return <0 if there was an error making the window current. >=0 if the window was set successfully.
+		///
+		/// @remarks
+		///     Removing the current binding by pass NULL.
+		///     @par
+		///     InvalidWindowRenderTarget will be returned if the window was not first initialized with InitWindowFramebuffer().
+		virtual ResultCode SetCurrentWindow(HWND hWnd) = 0;
 #endif
 
 #if defined(GT_PLATFORM_LINUX)

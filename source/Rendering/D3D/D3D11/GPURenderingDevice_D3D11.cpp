@@ -160,7 +160,7 @@ namespace GT
             {
                 assert(m_windowFramebuffers.Exists(iFramebuffer->key));
                 {
-                    this->UninitWindowFramebuffer(iFramebuffer->key);   // <-- This will remove the framebuffer from the list.
+                    this->UninitWindowBuffers(iFramebuffer->key);   // <-- This will remove the framebuffer from the list.
                 }
             }
         }
@@ -1776,16 +1776,17 @@ namespace GT
     //////////////////////////////////////////
     // Platform-Specific Methods
 
-    void GPURenderingDevice_D3D11::SwapBuffers()
+    void GPURenderingDevice_D3D11::SwapWindowBuffers(HWND hWnd, int swapInterval)
     {
-        if (m_currentSwapChain != nullptr)
-        {
-            m_currentSwapChain->Present(this->m_swapInterval, 0);
-        }
+		auto iFramebuffer = m_windowFramebuffers.Find(hWnd);
+		if (iFramebuffer != nullptr)
+		{
+			iFramebuffer->value.swapChain->Present(swapInterval, 0);
+		}
     }
 
 #if defined(GT_PLATFORM_WINDOWS)
-    ResultCode GPURenderingDevice_D3D11::InitWindowFramebuffer(HWND hWnd, bool includeDepthStencil)
+    ResultCode GPURenderingDevice_D3D11::InitWindowBuffers(HWND hWnd, bool includeDepthStencil)
     {
         assert(m_device != nullptr);
 
@@ -1947,7 +1948,7 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_D3D11::UninitWindowFramebuffer(HWND hWnd)
+    void GPURenderingDevice_D3D11::UninitWindowBuffers(HWND hWnd)
     {
         auto iFramebuffer = m_windowFramebuffers.Find(hWnd);
         if (iFramebuffer != nullptr)
@@ -2033,7 +2034,7 @@ namespace GT
         return 0;
     }
 
-    void GPURenderingDevice_D3D11::ResizeWindowFramebuffer(HWND hWnd)
+    void GPURenderingDevice_D3D11::ResizeWindowBuffers(HWND hWnd)
     {
         auto iFramebuffer = m_windowFramebuffers.Find(hWnd);
         if (iFramebuffer != nullptr)

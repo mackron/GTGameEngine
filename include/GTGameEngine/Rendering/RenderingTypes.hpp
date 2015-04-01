@@ -18,6 +18,33 @@
 
 namespace GT
 {
+	typedef uint32_t GraphicsInterfaceClass;
+	typedef uint32_t GraphicsInterfaceType;
+
+
+	// Graphics Interface Class Ranges
+	//  0x00000000 - 0x000000FF : Reserved by the engine.
+	//  0x00000100 - 0xFFFFFFFF : Custom
+
+	static const GraphicsInterfaceClass GraphicsInterfaceClass_Unknown = 0x00000000;
+	static const GraphicsInterfaceClass GraphicsInterfaceClass_MT      = 0x00000001;		// Modern multi-threaded APIs - Vulkan/D3D12/Metal style APIs.
+
+
+	// Graphics Interface Type Ranges
+	//  0x00000000 - 0x0000FFFF : Reserved by the engine
+	//  0x00010000 - 0xFFFFFFFF : Custom
+
+	// Special - 0x00000000 - 0x000000FF
+	static const GraphicsInterfaceType GraphicsInterfaceType_Unknown = 0x00000000;
+
+	// Default Multi-Threaded - 0x00000100 - 0x000001FF
+	static const GraphicsInterfaceType GraphicsInterfaceType_Vulkan  = 0x00000100;
+	static const GraphicsInterfaceType GraphicsInterfaceType_D3D12   = 0x00000101;
+	static const GraphicsInterfaceType GraphicsInterfaceType_Metal   = 0x00000102;
+
+
+
+
     //////////////////////////////////////////
     // Object Handle Types
 

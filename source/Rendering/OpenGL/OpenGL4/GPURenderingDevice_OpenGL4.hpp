@@ -292,19 +292,19 @@ namespace GT
 
 #if defined(GT_PLATFORM_WINDOWS)
         /// GPURenderingDevice::SwapBuffers().
-        void SwapBuffers();
+        void SwapWindowBuffers(HWND hWnd, int swapInterval);
 
         /// GPURenderingDevice::InitWindowFramebuffer().
-        ResultCode InitWindowFramebuffer(HWND hWnd, bool includeDepthStencil);
+        ResultCode InitWindowBuffers(HWND hWnd, bool includeDepthStencil);
 
         /// GPURenderingDevice::UninitWindowFramebuffer().
-        void UninitWindowFramebuffer(HWND hWnd);
+        void UninitWindowBuffers(HWND hWnd);
 
         /// GPURenderingDevice::SetCurrentWindow().
         ResultCode SetCurrentWindow(HWND hWnd);
 
         /// @copydoc GPURenderingDevice::ResizeWindowFramebuffer()
-        void ResizeWindowFramebuffer(HWND hWnd);
+        void ResizeWindowBuffers(HWND hWnd);
 #endif
 
 #if defined(GT_PLATFORM_LINUX)

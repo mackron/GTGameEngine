@@ -94,7 +94,7 @@ namespace GT
 
         if (hWnd != 0)
         {
-            ResultCode result = renderingDevice.InitWindowFramebuffer(hWnd, true);
+            ResultCode result = renderingDevice.InitWindowBuffers(hWnd, true);
             if (GT::Succeeded(result))
             {
                 auto display = new GameDisplay_Windowed(renderingDevice, hWnd);
@@ -137,7 +137,7 @@ namespace GT
             {
             case GameDisplayType_Windowed:
                 {
-                    display->GetRenderingDevice().UninitWindowFramebuffer(reinterpret_cast<GameDisplay_Windowed*>(display)->GetWindow());
+                    display->GetRenderingDevice().UninitWindowBuffers(reinterpret_cast<GameDisplay_Windowed*>(display)->GetWindow());
                     break;
                 }
 

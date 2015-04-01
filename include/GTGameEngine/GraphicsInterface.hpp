@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_GPUGraphicsInterface_hpp_
-#define __GT_GPUGraphicsInterface_hpp_
+#ifndef __GT_GraphicsInterface_hpp_
+#define __GT_GraphicsInterface_hpp_
 
 #include "Config.hpp"
 #include "GPURenderingDeviceInfo.hpp"
@@ -16,16 +16,24 @@
 namespace GT
 {
     /// Base class for doing graphics operations.
-    class GPUGraphicsInterface
+    class GraphicsInterface
     {
     public:
 
         /// Constructor.
-        GPUGraphicsInterface();
+		GraphicsInterface(GraphicsInterfaceType type);
 
         /// Destructor.
-        virtual ~GPUGraphicsInterface();
+        virtual ~GraphicsInterface();
 
+
+		/// Retrieves the class of the graphics type.
+		virtual GraphicsInterfaceClass GetClass() const;
+
+		/// Retrieves the type of the graphics interface.
+		GraphicsInterfaceType GetType() const;
+
+		
 
 
         /// Starts up the graphics interface.
@@ -67,6 +75,13 @@ namespace GT
         /// @param interval [in] The swap interval which controls v-sync.
         virtual void SwapWindowBuffers(HWND hWnd, int interval) = 0;
 #endif
+
+
+
+	private:
+
+		/// The graphics interface type.
+		GraphicsInterfaceType m_type;
     };
 }
 

@@ -30,9 +30,9 @@ namespace GT
 
     // Images - 0x00000100 - 0x000001FF
     static const AssetType AssetType_Image_PNG  = 0x00000100;
-    static const AssetType AssetType_Image_TGA  = 0x00000102;
-    static const AssetType AssetType_Image_JPG  = 0x00000103;
-    static const AssetType AssetType_Image_PSD  = 0x00000104;
+    static const AssetType AssetType_Image_TGA  = 0x00000101;
+    static const AssetType AssetType_Image_JPG  = 0x00000102;
+    static const AssetType AssetType_Image_PSD  = 0x00000103;
 
     // Models - 0x00000200 - 0x000002FF
     static const AssetType AssetType_Model_OBJ  = 0x00000200;

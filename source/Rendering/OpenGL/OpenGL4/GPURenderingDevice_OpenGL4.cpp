@@ -1775,15 +1775,18 @@ namespace GT
     // Platform-Specific Methods
 
 #if defined(GT_PLATFORM_WINDOWS)
-    void GPURenderingDevice_OpenGL4::SwapBuffers()
+    void GPURenderingDevice_OpenGL4::SwapWindowBuffers(HWND hWnd, int swapInterval)
     {
-        if (m_currentDC != NULL)
-        {
-            ::SwapBuffers(m_currentDC);
-        }
+		auto iFramebuffer = m_windowFramebuffers.Find(hWnd);
+		if (iFramebuffer != nullptr)
+		{
+			::SwapBuffers(iFramebuffer->value.m_hDC);
+
+			(void)swapInterval;
+		}
     }
 
-    ResultCode GPURenderingDevice_OpenGL4::InitWindowFramebuffer(HWND hWnd, bool includeDepthStencil)
+    ResultCode GPURenderingDevice_OpenGL4::InitWindowBuffers(HWND hWnd, bool includeDepthStencil)
     {
         (void)includeDepthStencil;      // <-- This is always included with OpenGL contexts because all windows must use the same pixel format.
 
@@ -1814,7 +1817,7 @@ namespace GT
         }
     }
 
-    void GPURenderingDevice_OpenGL4::UninitWindowFramebuffer(HWND hWnd)
+    void GPURenderingDevice_OpenGL4::UninitWindowBuffers(HWND hWnd)
     {
         auto iFramebuffer = m_windowFramebuffers.Find(hWnd);
         if (iFramebuffer != nullptr)
@@ -1854,7 +1857,7 @@ namespace GT
         return 0;   // No error.
     }
 
-    void GPURenderingDevice_OpenGL4::ResizeWindowFramebuffer(HWND hWnd)
+    void GPURenderingDevice_OpenGL4::ResizeWindowBuffers(HWND hWnd)
     {
         (void)hWnd;
     }

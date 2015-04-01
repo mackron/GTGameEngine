@@ -304,19 +304,19 @@ namespace GT
         // Platform-Specific Methods
 
         /// GPURenderingDevice::SwapBuffers().
-        void SwapBuffers();
+        void SwapWindowBuffers(HWND hWnd, int swapInterval);
 
         /// GPURenderingDevice::InitWindowFramebuffer().
-        ResultCode InitWindowFramebuffer(HWND hWnd, bool includeDepthStencil);
+        ResultCode InitWindowBuffers(HWND hWnd, bool includeDepthStencil);
 
         /// GPURenderingDevice::UninitWindowFramebuffer().
-        void UninitWindowFramebuffer(HWND hWnd);
+        void UninitWindowBuffers(HWND hWnd);
 
         /// GPURenderingDevice::SetCurrentWindow().
         ResultCode SetCurrentWindow(HWND hWnd);
 
         /// @copydoc GPURenderingDevice::ResizeWindowFramebuffer()
-        void ResizeWindowFramebuffer(HWND hWnd);
+        void ResizeWindowBuffers(HWND hWnd);
 
 
 
