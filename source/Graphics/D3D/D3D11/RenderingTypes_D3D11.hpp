@@ -6,7 +6,7 @@
 #include <GTGameEngine/Config.hpp>
 
 #if defined(GT_GE_BUILD_D3D11)
-#include <GTGameEngine/Rendering/RenderingTypes.hpp>
+#include <GTGameEngine/Graphics/GraphicsTypes.hpp>
 #include <d3d11_1.h>
 
 #if defined(_MSC_VER)

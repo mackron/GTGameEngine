@@ -5,7 +5,7 @@
 
 #include "Config.hpp"
 #include "GPURenderingDeviceInfo.hpp"
-#include "Rendering/RenderingTypes.hpp"
+#include "Graphics/GraphicsTypes.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windef.h>
@@ -15,7 +15,7 @@
 #include <GTLib/BasicBuffer.hpp>
 #include <GTLib/Vector.hpp>
 
-#include "GraphicsInterface.hpp"
+#include "Graphics/GraphicsInterface.hpp"
 
 namespace GT
 {

@@ -16,7 +16,7 @@ namespace GT
     class EngineContext;
     class GameDisplay;
     class GameDisplay_Windowed;
-    class GPURenderingDevice;
+    class GraphicsInterface;
 
     /// Class representing a game context.
     ///
@@ -49,7 +49,7 @@ namespace GT
         /// @param hWnd            [in] The window to create the display from.
         ///
         /// @return A pointer to the new display, or null if an error occurred.
-        GameDisplay* CreateWindowedDisplay(GPURenderingDevice &renderingDevice, HWND hWnd);
+        GameDisplay* CreateWindowedDisplay(GraphicsInterface &graphicsInterface, HWND hWnd);
 
         /// Retrieves a windowed game display from the given window.
         ///

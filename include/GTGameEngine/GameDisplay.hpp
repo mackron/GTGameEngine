@@ -5,7 +5,7 @@
 
 namespace GT
 {
-    class GPURenderingDevice;
+	class GraphicsInterface;
     class GameDisplayRenderingCallback;
 
 
@@ -23,7 +23,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GameDisplay(GPURenderingDevice &renderingDevice);
+        GameDisplay(GraphicsInterface &graphicsInterface);
 
         /// Destructor.
         virtual ~GameDisplay();
@@ -41,10 +41,10 @@ namespace GT
         virtual void GetSize(unsigned int &widthOut, unsigned int &heightOut) const = 0;
 
 
-        /// Retrieves a reference to the rendering device that was passed to the constructor of the display.
+        /// Retrieves a reference to the graphics interface that was passed to the constructor of the display.
         ///
         /// @return A reference to the associated rendering device.
-        GPURenderingDevice & GetRenderingDevice();
+        GraphicsInterface & GetGraphicsInterface();
 
 
         /// Sets the rendering callback.
@@ -66,7 +66,7 @@ namespace GT
     private:
 
         /// A reference to the GPU rendering device that will be executing the drawing commands.
-        GPURenderingDevice &m_renderingDevice;
+		GraphicsInterface &m_graphicsInterface;
 
         /// A pointer to the current rendering command callback object. This can be changed dynamically, but it is up to caller to manage resource cleanup and the like.
         GameDisplayRenderingCallback* m_renderingCallback;

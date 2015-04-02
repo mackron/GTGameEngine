@@ -3,7 +3,7 @@
 #ifndef __GT_GraphicsInterface_MT_hpp_
 #define __GT_GraphicsInterface_MT_hpp_
 
-#include "../GraphicsInterface.hpp"
+#include "GraphicsInterface.hpp"
 
 namespace GT
 {

@@ -3,9 +3,8 @@
 #ifndef __GT_GraphicsInterface_hpp_
 #define __GT_GraphicsInterface_hpp_
 
-#include "Config.hpp"
-#include "GPURenderingDeviceInfo.hpp"
-#include "Rendering/RenderingTypes.hpp"
+#include "../Config.hpp"
+#include "../Graphics/GraphicsTypes.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windef.h>

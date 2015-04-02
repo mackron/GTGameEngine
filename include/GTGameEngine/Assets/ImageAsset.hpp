@@ -4,7 +4,7 @@
 #define __GT_ImageAsset_hpp_
 
 #include "Asset.hpp"
-#include "../Rendering/RenderingTypes.hpp"
+#include "../Graphics/GraphicsTypes.hpp"
 
 namespace GT
 {

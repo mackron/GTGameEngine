@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/GraphicsInterface.hpp>
+#include <GTGameEngine/Graphics/GraphicsInterface.hpp>
 
 namespace GT
 {

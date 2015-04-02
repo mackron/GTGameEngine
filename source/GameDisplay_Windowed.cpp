@@ -20,9 +20,9 @@ namespace GT
     // Platform-specific
 
 #if defined(GT_PLATFORM_WINDOWS)
-    GameDisplay_Windowed::GameDisplay_Windowed(GPURenderingDevice &renderingDevice, HWND hWnd)
-        : GameDisplay(renderingDevice),
-            m_hWnd(hWnd)
+    GameDisplay_Windowed::GameDisplay_Windowed(GraphicsInterface &graphicsInterface, HWND hWnd)
+        : GameDisplay(graphicsInterface),
+          m_hWnd(hWnd)
     {
     }
 

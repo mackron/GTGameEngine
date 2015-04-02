@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
+#include <GTGameEngine/Graphics/OpenGL/OpenGL.hpp>
 
 #if defined(GT_GE_BUILD_OPENGL4)
 #include <cassert>

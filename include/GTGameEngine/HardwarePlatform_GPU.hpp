@@ -14,7 +14,7 @@
 
 
 #if defined(GT_GE_BUILD_OPENGL4)
-#include "Rendering/OpenGL/OpenGL.hpp"
+#include "Graphics/OpenGL/OpenGL.hpp"
 #endif
 
 

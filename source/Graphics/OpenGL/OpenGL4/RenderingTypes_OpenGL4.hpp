@@ -6,8 +6,8 @@
 #include <GTGameEngine/Config.hpp>
 
 #if defined(GT_GE_BUILD_OPENGL4)
-#include <GTGameEngine/Rendering/RenderingTypes.hpp>
-#include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
+#include <GTGameEngine/Graphics/GraphicsTypes.hpp>
+#include <GTGameEngine/Graphics/OpenGL/OpenGL.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

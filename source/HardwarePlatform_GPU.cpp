@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/HardwarePlatform_GPU.hpp>
-#include "Rendering/D3D/D3D11/GPURenderingDevice_D3D11.hpp"
-#include "Rendering/OpenGL/OpenGL4/GPURenderingDevice_OpenGL4.hpp"
+#include "Graphics/D3D/D3D11/GPURenderingDevice_D3D11.hpp"
+#include "Graphics/OpenGL/OpenGL4/GPURenderingDevice_OpenGL4.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/Strings.hpp>

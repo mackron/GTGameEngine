@@ -7,7 +7,7 @@
 
 #if defined(GT_GE_BUILD_OPENGL4)
 #include <GTGameEngine/GPURenderingDevice.hpp>
-#include <GTGameEngine/Rendering/OpenGL/OpenGL.hpp>
+#include <GTGameEngine/Graphics/OpenGL/OpenGL.hpp>
 
 #include <GTLib/Map.hpp>
 

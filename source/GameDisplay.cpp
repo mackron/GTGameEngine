@@ -5,9 +5,9 @@
 
 namespace GT
 {
-    GameDisplay::GameDisplay(GPURenderingDevice &renderingDevice)
-        : m_renderingDevice(renderingDevice),
-            m_renderingCallback(nullptr)
+    GameDisplay::GameDisplay(GraphicsInterface &graphicsInterface)
+        : m_graphicsInterface(graphicsInterface),
+          m_renderingCallback(nullptr)
     {
     }
 
@@ -16,9 +16,9 @@ namespace GT
     }
 
 
-    GPURenderingDevice & GameDisplay::GetRenderingDevice()
+	GraphicsInterface & GameDisplay::GetGraphicsInterface()
     {
-        return m_renderingDevice;
+        return m_graphicsInterface;
     }
 
 

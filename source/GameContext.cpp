@@ -66,14 +66,6 @@ namespace GT
                     if (renderingCallback != nullptr)
                     {
                         renderingCallback->Render(*display);
-
-                        //GPURenderingDevice &renderingDevice = display->GetRenderingDevice();
-
-                        //renderingDevice.SetCurrentWindow(display->GetWindow());
-                        //{
-                        //    renderingCallback->Render(*display);
-                        //}
-                        //renderingDevice.SwapBuffers();
                     }
                 }
             }
@@ -88,16 +80,16 @@ namespace GT
     //////////////////////////////////////////////////////////////////
     // Win32
 #if defined(GT_PLATFORM_WINDOWS)
-    GameDisplay* GameContext::CreateWindowedDisplay(GPURenderingDevice &renderingDevice, HWND hWnd)
+    GameDisplay* GameContext::CreateWindowedDisplay(GraphicsInterface &graphicsInterface, HWND hWnd)
     {
         GameDisplay* displayOut = nullptr;
 
         if (hWnd != 0)
         {
-            ResultCode result = renderingDevice.InitWindowBuffers(hWnd, true);
+            ResultCode result = graphicsInterface.InitWindowBuffers(hWnd, true);
             if (GT::Succeeded(result))
             {
-                auto display = new GameDisplay_Windowed(renderingDevice, hWnd);
+                auto display = new GameDisplay_Windowed(graphicsInterface, hWnd);
                     
                 m_windowedDisplays.PushBack(display);
 
@@ -137,7 +129,7 @@ namespace GT
             {
             case GameDisplayType_Windowed:
                 {
-                    display->GetRenderingDevice().UninitWindowBuffers(reinterpret_cast<GameDisplay_Windowed*>(display)->GetWindow());
+                    display->GetGraphicsInterface().UninitWindowBuffers(reinterpret_cast<GameDisplay_Windowed*>(display)->GetWindow());
                     break;
                 }
 

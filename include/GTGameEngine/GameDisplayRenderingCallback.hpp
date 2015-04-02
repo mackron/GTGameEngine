@@ -22,8 +22,7 @@ namespace GT
 
         /// Performs the rendering operation on the given display.
         ///
-        /// @param display         [in] A reference to the display being rendered.
-        /// @param commandPipeline [in] A reference to the RenderingCommandPipeline object where rendering commands will be posted to.
+        /// @param display [in] A reference to the display being rendered.
         virtual void Render(GameDisplay &display/*, RenderingCommandPipeline &commandPipeline*/) = 0;
 
     };

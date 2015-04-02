@@ -28,6 +28,7 @@ namespace GT
 
 	static const GraphicsInterfaceClass GraphicsInterfaceClass_Unknown = 0x00000000;
 	static const GraphicsInterfaceClass GraphicsInterfaceClass_MT      = 0x00000001;		// Modern multi-threaded APIs - Vulkan/D3D12/Metal style APIs.
+	static const GraphicsInterfaceClass GraphicsInterfaceClass_Legacy  = 0x00000002;		// Shader Model 2/3 APIs - OpenGL2/D3D9 style APIs. 
 
 
 	// Graphics Interface Type Ranges
@@ -41,6 +42,9 @@ namespace GT
 	static const GraphicsInterfaceType GraphicsInterfaceType_Vulkan  = 0x00000100;
 	static const GraphicsInterfaceType GraphicsInterfaceType_D3D12   = 0x00000101;
 	static const GraphicsInterfaceType GraphicsInterfaceType_Metal   = 0x00000102;
+
+	// Default Legacy - 0x00000200 - 0x000002FF
+	static const GraphicsInterfaceType GraphicsInterfaceType_OpenGL  = 0x000000200;
 
 
 
