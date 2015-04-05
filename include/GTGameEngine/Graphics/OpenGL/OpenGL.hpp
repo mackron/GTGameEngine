@@ -15,13 +15,13 @@
 #include <GL/glcorearb.h>
 #include <GL/wglext.h>
 
-typedef HGLRC (* PFNWGLCREATECONTEXTPROC)       (HDC hdc);
-typedef BOOL  (* PFNWGLDELETECONTEXTPROC)       (HGLRC hglrc);
-typedef BOOL  (* PFNWGLMAKECURRENTPROC)         (HDC hdc, HGLRC hglrc);
-typedef HGLRC (* PFNWGLGETCURRENTCONTEXTPROC)   ();
-typedef PROC  (* PFNWGLGETPROCADDRESSPROC)      (LPCSTR lpszProc);
-typedef BOOL  (* PFNWGLSHARELISTSPROC)          (HGLRC hglrc1, HGLRC hglrc2);
-typedef HDC   (* PFNWGLGETCURRENTDCPROC)        ();
+typedef HGLRC (WINAPI * PFNWGLCREATECONTEXTPROC)       (HDC hdc);
+typedef BOOL  (WINAPI * PFNWGLDELETECONTEXTPROC)       (HGLRC hglrc);
+typedef BOOL  (WINAPI * PFNWGLMAKECURRENTPROC)         (HDC hdc, HGLRC hglrc);
+typedef HGLRC (WINAPI * PFNWGLGETCURRENTCONTEXTPROC)   ();
+typedef PROC  (WINAPI * PFNWGLGETPROCADDRESSPROC)      (LPCSTR lpszProc);
+typedef BOOL  (WINAPI * PFNWGLSHARELISTSPROC)          (HGLRC hglrc1, HGLRC hglrc2);
+typedef HDC   (WINAPI * PFNWGLGETCURRENTDCPROC)        ();
 #endif
 
 #define GL_TEXTURE_MAX_ANISOTROPY_EXT                     0x84FE

@@ -53,6 +53,16 @@ namespace GT
     // Object Handle Types
 
     typedef size_t HGeneric;        //< A generic handle whose purpose is to cast to another handle type.
+    
+    typedef size_t HGraphicsDevice;
+    typedef size_t HCommandAllocator;
+    typedef size_t HCommandQueue;
+    typedef size_t HCommandList;
+    typedef size_t HPipelineState;
+    typedef size_t HDescriptorHeap;
+    typedef size_t HHeap;
+    typedef size_t HFence;
+    
     typedef size_t HBuffer;
     typedef size_t HVSInputLayout;
     typedef size_t HShader;
@@ -69,6 +79,52 @@ namespace GT
 
     //////////////////////////////////////////
     // Enumerators
+
+    enum CommandListType
+    {
+        CommandListType_Direct = 0,
+        CommandListType_Bundle,
+        CommandListType_Compute,
+        CommandListType_Copy,
+    };
+
+    enum HeapType
+    {
+        HeapType_Generic = 0,
+        HeapType_Sampler,
+        HeapType_RTV,
+        HeapType_DSV
+    };
+
+    enum GraphicsResourceUsage
+    {
+        GraphicsResourceUsage_NoAccess,
+        GraphicsResourceUsage_DefaultRead,
+        GraphicsResourceUsage_RenderTarget,
+        GraphicsResourceUsage_UnorderedAccess,
+        GraphicsResourceUsage_Depth,
+        GraphicsResourceUsage_NonPixelShaderResource,
+        GraphicsResourceUsage_PixelShaderResource,
+        GraphicsResourceUsage_StreamOut,
+        GraphicsResourceUsage_IndirectArgument,
+        GraphicsResourceUsage_CopyDest,
+        GraphicsResourceUsage_CopySource,
+        GraphicsResourceUsage_ResolveDest,
+        GraphicsResourceUsage_ResolveSource,
+        GraphicsResourceUsage_GenericRead,
+        GraphicsResourceUsage_Present,
+        GraphicsResourceUsage_Initial
+    };
+
+    enum FenceFlag
+    {
+        FenceFlag_None               = 0x00,
+        FenceFlag_Shared             = 0x01,
+        FenceFlag_SharedCrossAdapter = 0x02
+    };
+
+
+
 
     enum BufferCPUAccessFlags
     {
@@ -118,6 +174,15 @@ namespace GT
         IndexFormat_UInt8  = 0,
         IndexFormat_UInt16 = 1,
         IndexFormat_UInt32 = 2,
+    };
+
+    enum PrimitiveTopologyType
+    {
+        PrimitiveTopologyType_Undefined = 0,
+        PrimitiveTopologyType_Point,
+        PrimitiveTopologyType_Line,
+        PrimitiveTopologyType_Triangle,
+        PrimitiveTopologyType_Patch
     };
 
     enum PrimitiveTopology
@@ -390,22 +455,102 @@ namespace GT
     //////////////////////////////////////////
     // Structures
 
-    struct VSInputAttribFormat
+    struct GraphicsDeviceInfo
     {
-        unsigned int       slotIndex;
-        const char*        attributeName;               //< The name of the attribute variable inside the shader, or the semantic name in the case of Direct3D.
-        VertexAttribFormat attributeComponentType;      //< Float, Signed Int, etc.
-        unsigned int       attributeComponentCount;     //< float = 1, float2 = 2, etc.
-        unsigned int       attributeOffset;             //< The attribute's offset within the buffer.
-        unsigned int       instanceStepRate;            //< The rate at which the vertex attributes advance for per-instance data. When this is 0, it is advanced once per vertex, otherwise it is advanced by this value for each instance. This will usually be set to 0 for non-instance vertex data, and 1 for instanced data.
+        /// The description of the device.
+        char description[256];
     };
 
-    struct ShaderDefine
+    struct ShaderBytecode
     {
-        const char* name;
-        const char* value;
+        ShaderBytecode()
+            : pData(nullptr),
+              dataSizeInBytes(0)
+        {
+        }
+
+        /// A pointer to the shader bytecode.
+        const void* pData;
+
+        /// The size in bytes of the shader bytecode.
+        size_t dataSizeInBytes;
     };
 
+    struct StreamOutputDeclarationEntry
+    {
+        StreamOutputDeclarationEntry()
+            : stream(0),
+              attributeIndex(0),
+              startComponent(0),
+              componentCount(0),
+              outputSlot(0)
+        {
+        }
+
+        unsigned int stream;
+        unsigned int attributeIndex;
+        uint8_t startComponent;
+        uint8_t componentCount;
+        uint8_t outputSlot;
+    };
+
+    struct StreamOutputDesc
+    {
+        StreamOutputDesc()
+            : pSODeclaration(nullptr),
+              numEntries(0),
+              pBufferStrides(nullptr),
+              numStrides(0),
+              rasterizedStream(0)
+        {
+        }
+
+        const StreamOutputDeclarationEntry *pSODeclaration;
+        unsigned int numEntries;
+        const unsigned int *pBufferStrides;
+        unsigned int numStrides;
+        unsigned int rasterizedStream;
+    };
+
+    /// Structure representing the blending parameters and function to use for a single render target.
+    struct RenderTargetBlendStateDesc
+    {
+        RenderTargetBlendStateDesc()
+            : enableBlending(false),
+              srcBlendParameter(BlendParameter_One),
+              dstBlendParameter(BlendParameter_Zero),
+              blendOp(BlendOp_Add),
+              srcAlphaBlendParameter(BlendParameter_One),
+              dstAlphaBlendParameter(BlendParameter_Zero),
+              blendOpAlpha(BlendOp_Add),
+              writeMask(0xFF)
+        {
+        }
+
+        bool           enableBlending;
+        BlendParameter srcBlendParameter;
+        BlendParameter dstBlendParameter;
+        BlendOp        blendOp;
+        BlendParameter srcAlphaBlendParameter;
+        BlendParameter dstAlphaBlendParameter;
+        BlendOp        blendOpAlpha;
+        uint8_t        writeMask;   //< RGBA masking.
+    };
+
+    /// Structure describing the blend state.
+    struct BlendStateDesc
+    {
+        BlendStateDesc()
+            : enableAlphaToCoverage(false),
+              enableIndependentBlend(false),
+              renderTarget()
+        {
+        }
+
+        bool enableAlphaToCoverage;
+        bool enableIndependentBlend;
+        RenderTargetBlendStateDesc renderTarget[8];
+    };
 
     /// Structure describing a rasterization state.
     ///
@@ -437,8 +582,6 @@ namespace GT
         bool           enableMultisample;
         bool           enableAntialiasedLine;
     };
-
-
 
     struct StencilOpDesc
     {
@@ -483,47 +626,106 @@ namespace GT
         StencilOpDesc     stencilBackFaceOp;
     };
 
-
-    /// Structure representing the blending parameters and function to use for a single render target.
-    struct RenderTargetBlendStateDesc
+    struct VSInputAttribFormat  // TODO: This is the old one. Remove this later. The difference is that the index instead of the name is used to identify the attribute.
     {
-        RenderTargetBlendStateDesc()
-            : enableBlending(false),
-              srcBlendParameter(BlendParameter_One),
-              dstBlendParameter(BlendParameter_Zero),
-              blendOp(BlendOp_Add),
-              srcAlphaBlendParameter(BlendParameter_One),
-              dstAlphaBlendParameter(BlendParameter_Zero),
-              blendOpAlpha(BlendOp_Add),
-              writeMask(0xFF)
+        unsigned int       slotIndex;
+        const char*        attributeName;               //< The name of the attribute variable inside the shader, or the semantic name in the case of Direct3D.
+        VertexAttribFormat attributeComponentType;      //< Float, Signed Int, etc.
+        unsigned int       attributeComponentCount;     //< float = 1, float2 = 2, etc.
+        unsigned int       attributeOffset;             //< The attribute's offset within the buffer.
+        unsigned int       instanceStepRate;            //< The rate at which the vertex attributes advance for per-instance data. When this is 0, it is advanced once per vertex, otherwise it is advanced by this value for each instance. This will usually be set to 0 for non-instance vertex data, and 1 for instanced data.
+    };
+
+    struct VSInputAttribFormat2
+    {
+        unsigned int       slotIndex;
+        unsigned int       attributeIndex;              //< The index of the attribute variable inside the shader.
+        VertexAttribFormat attributeComponentType;      //< Float, Signed Int, etc.
+        unsigned int       attributeComponentCount;     //< float = 1, float2 = 2, etc.
+        unsigned int       attributeOffset;             //< The attribute's offset within the buffer.
+        unsigned int       instanceStepRate;            //< The rate at which the vertex attributes advance for per-instance data. When this is 0, it is advanced once per vertex, otherwise it is advanced by this value for each instance. This will usually be set to 0 for non-instance vertex data, and 1 for instanced data.
+    };
+
+    struct VSInputLayoutDesc
+    {
+        const VSInputAttribFormat2* attribFormats;
+        unsigned int attribFormatsCount;
+    };
+
+    /// Structure describing multisampling.
+    struct SampleDesc
+    {
+        SampleDesc()
+            : count(1),
+              quality(0)
         {
         }
 
-        bool           enableBlending;
-        BlendParameter srcBlendParameter;
-        BlendParameter dstBlendParameter;
-        BlendOp        blendOp;
-        BlendParameter srcAlphaBlendParameter;
-        BlendParameter dstAlphaBlendParameter;
-        BlendOp        blendOpAlpha;
-        uint8_t        writeMask;   //< RGBA masking.
+        unsigned int count;
+        unsigned int quality;
     };
 
-    /// Structure describing the blend state.
-    struct BlendStateDesc
+    struct GraphicsPipelineStateDesc
     {
-        BlendStateDesc()
-            : enableAlphaToCoverage(false),
-              enableIndependentBlend(false),
-              renderTarget()
+        GraphicsPipelineStateDesc()
+            : shaderBytecodeVS(),
+              shaderBytecodeTCS(),
+              shaderBytecodeTES(),
+              shaderBytecodeGS(),
+              shaderBytecodeFS(),
+              streamOutput(),
+              blendState(),
+              sampleMask(0),
+              rasterizerState(),
+              depthStencilState(),
+              inputLayout(),
+              primitiveTopologyType(PrimitiveTopologyType_Triangle),
+              renderTargetCount(0),
+              renderTargetFormats(),
+              depthStencilFormat(TextureFormat_D24_S8),
+              sampleDesc(),
+              nodeMask(0)
         {
+            renderTargetFormats[0] = TextureFormat_RGBA8;
+            renderTargetFormats[1] = TextureFormat_RGBA8;
+            renderTargetFormats[2] = TextureFormat_RGBA8;
+            renderTargetFormats[3] = TextureFormat_RGBA8;
+            renderTargetFormats[4] = TextureFormat_RGBA8;
+            renderTargetFormats[5] = TextureFormat_RGBA8;
+            renderTargetFormats[6] = TextureFormat_RGBA8;
+            renderTargetFormats[7] = TextureFormat_RGBA8;
         }
 
-        bool enableAlphaToCoverage;
-        bool enableIndependentBlend;
-        RenderTargetBlendStateDesc renderTarget[8];
+        ShaderBytecode   shaderBytecodeVS;
+        ShaderBytecode   shaderBytecodeTCS;
+        ShaderBytecode   shaderBytecodeTES;
+        ShaderBytecode   shaderBytecodeGS;
+        ShaderBytecode   shaderBytecodeFS;
+        StreamOutputDesc streamOutput;
+        BlendStateDesc   blendState;
+        unsigned int     sampleMask;
+        RasterizerStateDesc rasterizerState;
+        DepthStencilStateDesc depthStencilState;
+        VSInputLayoutDesc inputLayout;
+        PrimitiveTopologyType primitiveTopologyType;
+        unsigned int renderTargetCount;
+        TextureFormat renderTargetFormats[8];
+        TextureFormat depthStencilFormat;
+        SampleDesc sampleDesc;
+        unsigned int nodeMask;
     };
 
+
+    
+
+    struct ShaderDefine
+    {
+        const char* name;
+        const char* value;
+    };
+
+
+ 
 
     /// Structure representing a viewport.
     struct GraphicsViewport

@@ -2,10 +2,14 @@
 
 #include <GTGameEngine/EngineContext.hpp>
 #include <GTGameEngine/Config.hpp>
+#include <GTGameEngine/Graphics/GraphicsInterface.hpp>
+
 #include <GTLib/CommandLine.hpp>
 #include <GTLib/IO.hpp>
 
+#include "Graphics/DefaultGraphicsInterfaceAllocator.hpp"
 #include "Assets/DefaultAssetAllocator.hpp"
+
 
 namespace GT
 {
@@ -36,11 +40,18 @@ namespace GT
 
 
 
+#if defined (GT_BUILD_DEFAULT_GRAPHICS_INTERFACES)
+        // Create and register the default graphics interface allocator.
+        m_pDefaultGraphicsInterfaceAllocator = new DefaultGraphicsInterfaceAllocator();
+        this->RegisterGraphicsInterfaceAllocator(*m_pDefaultGraphicsInterfaceAllocator);
+#endif
+
+
         // Hardware platform.
         result = m_hardwarePlatform.Startup();
         if (GT::Failed(result))
         {
-            return result;
+            //return result;
         }
 
 
@@ -124,6 +135,48 @@ namespace GT
         m_hardwarePlatform.Shutdown();
     }
 
+
+
+    void EngineContext::RegisterGraphicsInterfaceAllocator(GraphicsInterfaceAllocator &allocator)
+    {
+        m_graphicsInterfaceAllocators.RemoveFirstOccuranceOf(&allocator);
+        m_graphicsInterfaceAllocators.InsertAt(&allocator, 0);
+    }
+
+    GraphicsInterface* EngineContext::CreateGraphicsInterface(GraphicsInterfaceType type)
+    {
+        for (size_t iAllocator = 0; iAllocator < m_graphicsInterfaceAllocators.GetCount(); ++iAllocator)
+        {
+            auto pAllocator = m_graphicsInterfaceAllocators[iAllocator];
+            assert(pAllocator != nullptr);
+            {
+                if (pAllocator->IsGraphicsInterfaceSupported(type))
+                {
+                    return pAllocator->CreateGraphicsInterface(type);
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
+    void EngineContext::DeleteGraphicsInterface(GraphicsInterface* pGraphicsInterface)
+    {
+        if (pGraphicsInterface != nullptr)
+        {
+            for (size_t iAllocator = 0; iAllocator < m_graphicsInterfaceAllocators.GetCount(); ++iAllocator)
+            {
+                auto pAllocator = m_graphicsInterfaceAllocators[iAllocator];
+                assert(pAllocator != nullptr);
+                {
+                    if (pAllocator->IsGraphicsInterfaceSupported(pGraphicsInterface->GetType()))
+                    {
+                        pAllocator->DeleteGraphicsInterface(pGraphicsInterface);
+                    }
+                }
+            }
+        }
+    }
 
 
     unsigned int EngineContext::GetGPURenderingDeviceCount() const

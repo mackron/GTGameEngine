@@ -7,11 +7,15 @@
 #include <GTLib/CommandLine.hpp>
 #include "HardwarePlatform.hpp"
 #include "FileSystem.hpp"
+#include "Graphics/GraphicsTypes.hpp"
 #include "Assets/AssetLibrary.hpp"
 
 namespace GT
 {
-    class GPURenderingDevice;
+    class GPURenderingDevice;	// TODO: Remove this.
+
+	class GraphicsInterface;
+	class GraphicsInterfaceAllocator;
 
 
     /// Class representing the engine context.
@@ -46,6 +50,32 @@ namespace GT
         /// @remarks
         ///     This does not delete the context object.
         void Shutdown();
+
+
+
+		/// Registers a graphics interface allocator.
+		///
+		/// @param allocator [in] A reference to the graphics interface allocator to register.
+		///
+		/// @remarks
+		///		Once registered, an allocator cannot be unregistered.
+		///		@par
+		///		Allocators are registered such that the most recent one is given the highest priority.
+		///		@par
+		///		The default allocator is the first one to be registered, but it is only registered if there is at least 1 built-in graphics interface enabled in the build.
+		void RegisterGraphicsInterfaceAllocator(GraphicsInterfaceAllocator &allocator);
+
+        /// Creates an instance of a graphics interface of the given type.
+        ///
+        /// @param type [in] The graphics interface type.
+        ///
+        /// @return A pointer to the new graphics interface, or null if the graphics interface is not supported.
+        GraphicsInterface* CreateGraphicsInterface(GraphicsInterfaceType type);
+
+        /// Deletes the given graphics interface.
+        ///
+        /// @param pGraphicsInterface [in] A pointer to the graphics interface to delete.
+        void DeleteGraphicsInterface(GraphicsInterface* pGraphicsInterface);
 
 
 
@@ -144,6 +174,15 @@ namespace GT
         /// The hardware platform object for detecting the available hardware on the running system. This object can be used to iterate over devices
         /// and specify which ones should be used for particular tasks.
         HardwarePlatform m_hardwarePlatform;
+
+
+		/// The list of graphics interface allocators.
+		GTLib::Vector<GraphicsInterfaceAllocator*> m_graphicsInterfaceAllocators;
+
+        /// A pointer to the default graphics interface allocator. This will be null if the default allocator is not being used. An application may
+        /// chose to exclude the default allocator so that they can implement custom graphics interface.
+        GraphicsInterfaceAllocator* m_pDefaultGraphicsInterfaceAllocator;
+
 
         /// The virtual file system for handling file reading and writing.
         FileSystem m_fileSystem;

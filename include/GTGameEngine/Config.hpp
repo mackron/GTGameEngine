@@ -17,8 +17,15 @@
 //
 // Disabling APIs can be useful for simplifying and reducing the size of the build.
 
+#define GT_ENABLE_VULKAN			1
+#define GT_ENABLE_D3D12				1
+#define GT_ENABLE_OPENGL            1
+
 #define GT_GE_ENABLE_D3D11          1
 #define GT_GE_ENABLE_OPENGL4        1
+
+
+
 
 
 // Optimize for Single Rendering Device
@@ -66,17 +73,29 @@
 //
 // This section should not be configured by hand, unless it's for the development of the engine itself.
 
-// D3D11 Support.
-//
-// Currently, only Visual C++ 2013 has been tested for D3D11, so this is restricted to VC compilers for now.
-#if (defined(GT_GE_ENABLE_D3D11) && GT_GE_ENABLE_D3D11 == 1) && defined(GT_PLATFORM_WINDOWS) && defined(GT_COMPILER_VC)
-#define GT_GE_BUILD_D3D11
+// Vulkan Support.
+#if (defined(GT_ENABLE_VULKAN) && GT_ENABLE_VULKAN == 1)
+#define GT_BUILD_VULKAN
 #endif
 
-// OpenGL 4.x Support.
-#if (defined(GT_GE_ENABLE_OPENGL4) && GT_GE_ENABLE_OPENGL4 == 1)
-#define GT_GE_BUILD_OPENGL4
+// D3D12 Support.
+//
+// Currently, only Visual C++ has been tested for D3D12, so this is restricted to VC compilers for now.
+#if (defined(GT_ENABLE_D3D12) && GT_ENABLE_D3D12 == 1) && defined(GT_PLATFORM_WINDOWS) && defined(GT_COMPILER_VC)
+#define GT_BUILD_D3D12
 #endif
+
+// OpenGL Support.
+#if (defined(GT_ENABLE_OPENGL) && GT_ENABLE_OPENGL == 1)
+#define GT_BUILD_OPENGL
+#endif
+
+#if defined(GT_BUILD_VULKAN) || \
+    defined(GT_BUILD_D3D12)  || \
+    defined(GT_BUILD_OPENGL)
+#define GT_BUILD_DEFAULT_GRAPHICS_INTERFACES
+#endif
+
 
 
 // Assets
@@ -119,6 +138,23 @@
     defined(GT_BUILD_OGG)
 #define GT_BUILD_DEFAULT_ASSETS
 #endif
+
+
+
+
+// TODO: Remove D3D11 and OpenGL 4 support (replaced with D3D12 and Vulkan, with OpenGL as a legacy fallback.
+// D3D11 Support.
+//
+// Currently, only Visual C++ 2013 has been tested for D3D11, so this is restricted to VC compilers for now.
+#if (defined(GT_GE_ENABLE_D3D11) && GT_GE_ENABLE_D3D11 == 1) && defined(GT_PLATFORM_WINDOWS) && defined(GT_COMPILER_VC)
+#define GT_GE_BUILD_D3D11
+#endif
+
+// OpenGL 4.x Support.
+#if (defined(GT_GE_ENABLE_OPENGL4) && GT_GE_ENABLE_OPENGL4 == 1)
+#define GT_GE_BUILD_OPENGL4
+#endif
+
 
 
 #endif
