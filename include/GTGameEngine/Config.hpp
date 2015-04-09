@@ -18,7 +18,7 @@
 // Disabling APIs can be useful for simplifying and reducing the size of the build.
 
 #define GT_ENABLE_VULKAN			1
-#define GT_ENABLE_D3D12				1
+#define GT_ENABLE_D3D12				0
 #define GT_ENABLE_OPENGL            1
 
 #define GT_GE_ENABLE_D3D11          1

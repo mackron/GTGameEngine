@@ -1,5 +1,8 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
+#include <GTGameEngine/Config.hpp>
+
+#if defined(GT_BUILD_D3D12)
 #include "D3D12GraphicsInterface.hpp"
 #include <cassert>
 #include <GTLib/Strings/Copy.hpp>
@@ -972,3 +975,5 @@ namespace GT
         }
     }
 }
+
+#endif
