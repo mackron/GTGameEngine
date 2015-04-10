@@ -23,9 +23,9 @@ namespace GT
           m_componentCount(0),
           m_flags(0),
           m_padding0(0),
-          m_position(0.0f, 0.0f, 0.0f, 1.0f),
+          m_position(0.0f, 0.0f, 0.0f, 0.0f),
           m_rotation(0.0f, 0.0f, 0.0f, 1.0f),
-          m_scale(1.0f, 1.0f, 1.0f, 1.0f)
+          m_scale(1.0f, 1.0f, 1.0f, 0.0f)
     {
         for (int i = 0; i < 4; ++i)
         {
