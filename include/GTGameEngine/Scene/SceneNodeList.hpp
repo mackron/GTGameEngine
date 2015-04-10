@@ -116,8 +116,8 @@ namespace GT
         /// The list of chunks.
         GTLib::Vector<SceneNodeListChunk*> m_chunks;
 
-        /// Padding for alignment.
-        uint64_t m_padding0;
+        /// The number of active scene nodes in the list.
+        uint64_t m_count;
     };
 }
 

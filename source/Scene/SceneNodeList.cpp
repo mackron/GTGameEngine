@@ -22,6 +22,9 @@ namespace GT
             int newIndex = GTLib::BitScanForward(~m_bitfield0);
             assert(newIndex < 64);
             {
+                // Set the bitfield value to 1 so that we know this is a valid scene node. This will ensure the slot is not reused.
+                m_bitfield0 |= (uint64_t(1) << uint64_t(newIndex));
+
                 indexOut = static_cast<uint32_t>(newIndex);
                 return new (m_sceneNodes + newIndex) SceneNode(sceneNodeID);
             }
@@ -69,7 +72,8 @@ namespace GT
     // SceneNodeList
 
     SceneNodeList::SceneNodeList()
-        : m_chunks()
+        : m_chunks(),
+          m_count(0)
     {
     }
 
@@ -84,15 +88,20 @@ namespace GT
 
     SceneNode* SceneNodeList::CreateAndInsertSceneNode(uint64_t sceneNodeID, uint64_t &indexOut)
     {
-        // Keep trying to insert into a chunk until we find one. If we don't find one, we'll need to create a new chunk and insert into that.
-        for (size_t iChunk = 0; iChunk < m_chunks.GetCount(); ++iChunk)
+        // Keep trying to insert into a chunk until we find one. If we don't find one, we'll need to create a new chunk and insert into that. It is
+        // more likely that chunks at the end will have an available space, so we will iterate backwards.
+        if (m_count < m_chunks.GetCount()*64)
         {
-            auto pSceneNode = this->CreateAndInsertSceneNodeInChunk(iChunk, sceneNodeID, indexOut);
-            if (pSceneNode != nullptr)
+            for (size_t iChunk = m_chunks.GetCount(); iChunk > 0; --iChunk)
             {
-                return pSceneNode;
+                auto pSceneNode = this->CreateAndInsertSceneNodeInChunk(iChunk - 1, sceneNodeID, indexOut);
+                if (pSceneNode != nullptr)
+                {
+                    return pSceneNode;
+                }
             }
         }
+        
 
 
         // If we get here it means there were not chunks with any available space, so we need to create a new one.
@@ -111,6 +120,7 @@ namespace GT
         if (chunkIndex < m_chunks.GetCount())
         {
             m_chunks[chunkIndex]->DeleteSceneNodeByIndex(localIndex);
+            m_count -= 1;
         }
     }
 
@@ -145,6 +155,8 @@ namespace GT
                 auto pSceneNode = pChunk->CreateAndInsertSceneNode(sceneNodeID, localIndex);
                 if (pSceneNode != nullptr)
                 {
+                    m_count += 1;
+
                     indexOut = (uint64_t(chunkIndex) << 32) | uint64_t(localIndex);
                     return pSceneNode;
                 }

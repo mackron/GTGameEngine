@@ -3,6 +3,7 @@
 #ifndef __GT_SceneNodeIDAllocator_hpp_
 #define __GT_SceneNodeIDAllocator_hpp_
 
+#include <GTLib/Threading/Mutex.hpp>
 #include <cstdint>
 
 namespace GT
@@ -23,6 +24,9 @@ namespace GT
 
 
         /// Allocates and return new ID.
+        ///
+        /// @remarks
+        ///     This is thread-safe.
         uint64_t AllocateID();
 
 
@@ -33,6 +37,9 @@ namespace GT
 
         /// The next ID.
         uint64_t m_nextID;
+
+        /// Allocation lock for thread-safety.
+        GTLib::Mutex m_lock;
     };
 }
 
