@@ -23,6 +23,9 @@
 
 namespace GT
 {
+    //////////////////////////////////
+    // vec4
+
     /// Structure representing a vec4/float4.
     ALIGNED_TYPE(struct, 16) vec4
     {
@@ -139,6 +142,10 @@ namespace GT
 
 
 
+
+    //////////////////////////////////
+    // quat
+
     /// Structure representing a quaternion.
     ALIGNED_TYPE(struct, 16) quat
     {
@@ -164,6 +171,31 @@ namespace GT
 
         quat(float _x, float _y, float _z, float _w)
             : x(_x), y(_y), z(_z), w(_w)
+        {
+        }
+    };
+
+
+
+
+    //////////////////////////////////
+    // mat4
+
+    /// Structure representing a column-major mat4
+    ALIGNED_TYPE(struct, 16) mat4
+    {
+        vec4 col0;
+        vec4 col1;
+        vec4 col2;
+        vec4 col3;
+
+        mat4()
+            : col0(), col1(), col2(), col3()
+        {
+        }
+
+        mat4(vec4 _col0, vec4 _col1, vec4 _col2, vec4 _col3)
+            : col0(_col0), col1(_col1), col2(_col2), col3(_col3)
         {
         }
     };
