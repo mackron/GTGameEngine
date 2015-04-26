@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_RenderingTypes_hpp_
-#define __GT_RenderingTypes_hpp_
+#ifndef __GT_GraphicsTypes_hpp_
+#define __GT_GraphicsTypes_hpp_
 
 #include <cstdint>
 #include <cfloat>
@@ -451,6 +451,16 @@ namespace GT
         BlendOp_Max
     };
 
+    enum VertexAttribSemantic
+    {
+        VertexAttribSemantic_Generic = 0,
+        VertexAttribSemantic_Position,
+        VertexAttribSemantic_TexCoord,
+        VertexAttribSemantic_Normal,
+        VertexAttribSemantic_Tangent,
+        VertexAttribSemantic_Binormal
+    };
+
 
     //////////////////////////////////////////
     // Structures
@@ -808,6 +818,34 @@ namespace GT
         float borderColor[4];
         float minLOD;
         float maxLOD;
+    };
+
+
+
+    /// Structure representing the layout of a vertex attribute in a mesh.
+    struct VertexAttribLayout
+    {
+        VertexAttribLayout()
+            : attributeComponentType(VertexAttribFormat_Float),
+              attributeComponentCount(4),
+              attributeOffset(0),
+              attributeSemantic(VertexAttribSemantic_Generic)
+        {
+        }
+
+        VertexAttribLayout(VertexAttribFormat componentType, unsigned int componentCount, unsigned int offset, VertexAttribSemantic semantic)
+            : attributeComponentType(componentType),
+              attributeComponentCount(componentCount),
+              attributeOffset(offset),
+              attributeSemantic(semantic)
+        {
+        }
+
+
+        GT::VertexAttribFormat   attributeComponentType;        // Float, Signed Int, etc.
+        unsigned int             attributeComponentCount;       // float = 1, float2 = 2, etc.
+        unsigned int             attributeOffset;               // The attribute's offset.
+        GT::VertexAttribSemantic attributeSemantic;             // The attribute's semantic (generic, position, texcoord, etc.)
     };
 
 

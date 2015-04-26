@@ -424,7 +424,7 @@ namespace GT
         m_context->RSSetState(reinterpret_cast<ID3D11RasterizerState*>(hState));
     }
 
-    void GPURenderingDevice_D3D11::RSSetViewports(GraphicsViewport* viewports, size_t viewportCount)
+    void GPURenderingDevice_D3D11::RSSetViewports(const GraphicsViewport* viewports, size_t viewportCount)
     {
         D3D11_VIEWPORT viewportsD3D[GT_MAX_VIEWPORTS];
         for (size_t iViewport = 0; iViewport < viewportCount; ++iViewport)

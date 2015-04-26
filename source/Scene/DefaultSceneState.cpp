@@ -64,7 +64,7 @@ namespace GT
 
     void DefaultSceneState::DeleteSceneNode(uint64_t sceneNodeID)
     {
-        uint64_t   sceneNodeIndex;
+        uint64_t   sceneNodeIndex = 0;
         SceneNode* pSceneNodeToDelete = nullptr;
 
         m_containerLock.Lock();
@@ -72,7 +72,7 @@ namespace GT
             auto iSceneNodeIndex = m_sceneNodeMap.Find(sceneNodeID);
             if (iSceneNodeIndex != nullptr)
             {
-                uint64_t sceneNodeIndex = iSceneNodeIndex->value;
+                sceneNodeIndex = iSceneNodeIndex->value;
 
                 pSceneNodeToDelete = m_sceneNodes.GetSceneNodeByIndex(sceneNodeIndex);
                 assert(pSceneNodeToDelete != nullptr);

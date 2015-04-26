@@ -230,6 +230,8 @@ namespace GT
         PFNGLCOLORMASKPROC              ColorMask;
         PFNGLCOLORMASKIPROC             ColorMaski;
         PFNGLCLIPCONTROLPROC            ClipControl;
+        PFNGLFLUSHPROC                  Flush;
+        PFNGLFINISHPROC                 Finish;
 
 
         // Drawing.

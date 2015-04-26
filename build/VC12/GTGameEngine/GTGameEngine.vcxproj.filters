@@ -362,6 +362,15 @@
     <ClCompile Include="..\..\..\source\Scene\SceneNodeList.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsWorld.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsWorldObject.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -747,6 +756,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneEventHandler.hpp">
       <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsWorld.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsWorldObject.hpp">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -733,7 +733,7 @@ namespace GT
         // enableMultisampling and enableAntialiasedLine is not supported.
     }
 
-    void GPURenderingDevice_OpenGL4::RSSetViewports(GraphicsViewport* viewports, size_t viewportCount)
+    void GPURenderingDevice_OpenGL4::RSSetViewports(const GraphicsViewport* viewports, size_t viewportCount)
     {
         CheckContextIsCurrent(m_gl, m_currentDC);
 

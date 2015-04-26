@@ -8,14 +8,6 @@
 
 namespace GT
 {
-    /// Structure representing the layout of a vertex attribute in a model asset.
-    struct VertexAttribLayout
-    {
-        GT::VertexAttribFormat attributeComponentType;      // Float, Signed Int, etc.
-        unsigned int           attributeComponentCount;     // float = 1, float2 = 2, etc.
-        unsigned int           attributeOffset;             // The attribute's offset.
-    };
-
     /// The different supported animation types for meshes.
     enum class MeshAnimationType
     {

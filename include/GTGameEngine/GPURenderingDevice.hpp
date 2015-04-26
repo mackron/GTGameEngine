@@ -243,7 +243,7 @@ namespace GT
         ///     This is analogous to D3D11's RSSetViewports().
         ///     @par
         ///     If the rendering API does not support multiple viewports (such as OpenGL 2.1), this will only look at the first one in the list.
-        virtual void RSSetViewports(GraphicsViewport* viewports, size_t viewportCount) = 0;
+        virtual void RSSetViewports(const GraphicsViewport* viewports, size_t viewportCount) = 0;
 
         /// Sets the scissor rectanges for the rasterization stage.
         ///

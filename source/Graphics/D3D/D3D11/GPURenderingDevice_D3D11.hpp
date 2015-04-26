@@ -138,7 +138,7 @@ namespace GT
         void RSSetState(HRasterizerState hState);
 
         /// @copydoc GPURenderingDevice::RSSetViewports()
-        void RSSetViewports(GraphicsViewport* viewports, size_t viewportCount);
+        void RSSetViewports(const GraphicsViewport* viewports, size_t viewportCount);
 
         /// @copydoc GPURenderingDevice::RSSetScissorRects()
         void RSSetScissorRects(ScissorRect* scissorRects, size_t scissorCounts);

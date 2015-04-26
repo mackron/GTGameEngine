@@ -24,6 +24,7 @@ namespace GT
 
     EngineContext::~EngineContext()
     {
+        delete m_pDefaultGraphicsInterfaceAllocator;
     }
 
 

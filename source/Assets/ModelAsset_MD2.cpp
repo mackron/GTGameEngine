@@ -251,9 +251,9 @@ namespace GT
           m_vertexData(nullptr), m_vertexCount(0), m_vertexCountPerFrame(0), m_vertexLayout(),
           m_indexData(nullptr), m_indexCount(0)
     {
-        m_vertexLayout[0] = {VertexAttribFormat_Float, 3, sizeof(float) * 0};
-        m_vertexLayout[1] = {VertexAttribFormat_Float, 2, sizeof(float) * 3};
-        m_vertexLayout[2] = {VertexAttribFormat_Float, 3, sizeof(float) * 5};
+        m_vertexLayout[0] = {VertexAttribFormat_Float, 3, sizeof(float) * 0, VertexAttribSemantic_Position};
+        m_vertexLayout[1] = {VertexAttribFormat_Float, 2, sizeof(float) * 3, VertexAttribSemantic_TexCoord};
+        m_vertexLayout[2] = {VertexAttribFormat_Float, 3, sizeof(float) * 5, VertexAttribSemantic_Normal  };
     }
 
     ModelAsset_MD2::~ModelAsset_MD2()

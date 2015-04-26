@@ -93,6 +93,8 @@
     <ClCompile Include="..\..\..\source\Graphics\GraphicsInterface.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\GraphicsInterfaceAllocator.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\GraphicsInterface_MT.cpp" />
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsWorld.cpp" />
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsWorldObject.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\OpenGL\OpenGL.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\OpenGL\OpenGL4\GPURenderingDevice_OpenGL4.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\OpenGL\OpenGL4\RenderingTypes_OpenGL4.cpp" />
@@ -101,6 +103,7 @@
     <ClCompile Include="..\..\..\source\HardwarePlatform_CPU.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_GPU.cpp" />
     <ClCompile Include="..\..\..\source\HardwarePlatform_Input.cpp" />
+    <ClCompile Include="..\..\..\source\Math.cpp" />
     <ClCompile Include="..\..\..\source\Scene\DefaultSceneState.cpp" />
     <ClCompile Include="..\..\..\source\Scene\Scene.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneNode.cpp" />
@@ -145,6 +148,8 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsInterfaceAllocator.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsInterface_MT.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsTypes.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsWorld.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsWorldObject.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\OpenGL\OpenGL.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Audio.hpp" />

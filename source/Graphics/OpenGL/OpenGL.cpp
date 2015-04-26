@@ -78,6 +78,8 @@ namespace GT
             ColorMask(nullptr),
             ColorMaski(nullptr),
             ClipControl(nullptr),
+            Flush(nullptr),
+            Finish(nullptr),
 
             DrawElementsBaseVertex(nullptr),
             DrawElementsInstancedBaseVertex(nullptr),
@@ -609,6 +611,8 @@ namespace GT
             this->ColorMask                = reinterpret_cast<PFNGLCOLORMASKPROC               >(this->GetGLProcAddress("glColorMask"));
             this->ColorMaski               = reinterpret_cast<PFNGLCOLORMASKIPROC              >(this->GetGLProcAddress("glColorMaski"));
             this->ClipControl              = reinterpret_cast<PFNGLCLIPCONTROLPROC             >(this->GetGLProcAddress("glClipControl"));
+            this->Flush                    = reinterpret_cast<PFNGLFLUSHPROC                   >(this->GetGLProcAddress("glFlush"));
+            this->Finish                   = reinterpret_cast<PFNGLFINISHPROC                  >(this->GetGLProcAddress("glFinish"));
 
             this->DrawElementsBaseVertex                      = reinterpret_cast<PFNGLDRAWELEMENTSBASEVERTEXPROC                     >(this->GetGLProcAddress("glDrawElementsBaseVertex"));
             this->DrawElementsInstancedBaseVertex             = reinterpret_cast<PFNGLDRAWELEMENTSINSTANCEDBASEVERTEXPROC            >(this->GetGLProcAddress("glDrawElementsInstancedBaseVertex"));
