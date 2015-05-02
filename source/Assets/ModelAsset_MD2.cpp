@@ -4,7 +4,6 @@
 
 #if defined(GT_BUILD_MD2)
 #include <GTGameEngine/FileSystem.hpp>
-#include <GTLib/BufferReader.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)

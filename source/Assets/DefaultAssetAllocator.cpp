@@ -10,6 +10,10 @@
 #include "ModelAsset_MD2.hpp"
 #endif
 
+#if defined(GT_BUILD_OBJ)
+#include "ModelAsset_OBJ.hpp"
+#endif
+
 namespace GT
 {
     bool DefaultAssetAllocator::IsAssetTypeSupported(AssetType type) const
@@ -54,8 +58,6 @@ namespace GT
                 return false;
             }
         }
-
-        //return (type > 0x00000000 && type < 0x0000FFFF);
     }
 
     Asset* DefaultAssetAllocator::CreateAsset(AssetType type)
@@ -71,7 +73,7 @@ namespace GT
 #if defined(GT_BUILD_OBJ)
         if (type == AssetType_Model_OBJ)
         {
-            //return new ModelAsset_OBJ(type);
+            return new ModelAsset_OBJ(type);
         }
 #endif
 
