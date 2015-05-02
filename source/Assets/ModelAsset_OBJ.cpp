@@ -7,8 +7,6 @@
 #include <GTGameEngine/Math.hpp>
 #include <GTLib/Vector.hpp>
 
-#include <GTLib/Strings/LineIterator.hpp>   // <-- TEMP. Remove this once the parser optimization is in.
-
 namespace GT
 {
     // The indices in this list are 1 based. A value of 0 means it was unspecified.
@@ -243,80 +241,85 @@ namespace GT
                 GTLib::Vector<vec4>    normals;
                 GTLib::Vector<OBJFace> faces;
 
+                GTLib::Vector<OBJFaceVertex> uniqueIndices(faces.GetCount());
+                GTLib::Vector<uint32_t> actualIndices(faces.GetCount());
+
+                const char* str    = fileData;
+                const char* strEnd = str + fileSize;
 
                 // We just go over the file data line by line.
-                //
-                // TODO: Optimize this.
-                GTLib::Strings::LineIterator line(fileData, fileSize);
-                while (line)
+                while (str < strEnd)
                 {
-                    const char* lineStart = GTLib::Strings::TrimStart(line.start, line.end - line.start);
-                    const char* lineEnd   = line.end;
-
-                    if (lineEnd > lineStart + 1)
+                    if (str + 1 < strEnd)
                     {
-                        const uint16_t next16 = reinterpret_cast<const uint16_t*>(lineStart)[0];
+                        const uint16_t next16 = reinterpret_cast<const uint16_t*>(str)[0];
 
                         if (next16 == ' v' || next16 == '\tv')
                         {
                             // Position. Only supporting X, Y and Z. W and colours are ignored.
-                            lineStart += 2;
-                            if (lineEnd > lineStart)
-                            {
-                                float value[3];
-                                value[0] = OBJ_atof(lineStart, lineEnd, &lineStart);
-                                value[1] = OBJ_atof(lineStart, lineEnd, &lineStart);
-                                value[2] = OBJ_atof(lineStart, lineEnd, &lineStart);
+                            str += 2;
 
-                                positions.PushBack(vec4(value[0], value[1], value[2], 1.0f));
-                            }
+                            float value[3];
+                            value[0] = OBJ_atof(str, strEnd, &str);
+                            value[1] = OBJ_atof(str, strEnd, &str);
+                            value[2] = OBJ_atof(str, strEnd, &str);
+
+                            positions.PushBack(vec4(value[0], value[1], value[2], 1.0f));
                         }
                         else if (next16 == 'tv')
                         {
                             // Texture Coordinate.
-                            lineStart += 3;
-                            if (lineEnd > lineStart)
-                            {
-                                float value[2];
-                                value[0] = OBJ_atof(lineStart, lineEnd, &lineStart);
-                                value[1] = OBJ_atof(lineStart, lineEnd, &lineStart);
+                            str += 3;
 
-                                texcoords.PushBack(vec4(value[0], value[1], 0.0f, 0.0f));
-                            }
+                            float value[2];
+                            value[0] = OBJ_atof(str, strEnd, &str);
+                            value[1] = OBJ_atof(str, strEnd, &str);
+
+                            texcoords.PushBack(vec4(value[0], value[1], 0.0f, 0.0f));
                         }
                         else if (next16 == 'nv')
                         {
                             // Normal.
-                            lineStart += 3;
-                            if (lineEnd > lineStart)
-                            {
-                                float value[3];
-                                value[0] = OBJ_atof(lineStart, lineEnd, &lineStart);
-                                value[1] = OBJ_atof(lineStart, lineEnd, &lineStart);
-                                value[2] = OBJ_atof(lineStart, lineEnd, &lineStart);
+                            str += 3;
 
-                                normals.PushBack(vec4(value[0], value[1], value[2], 0.0f));
-                            }
+                            float value[3];
+                            value[0] = OBJ_atof(str, strEnd, &str);
+                            value[1] = OBJ_atof(str, strEnd, &str);
+                            value[2] = OBJ_atof(str, strEnd, &str);
+
+                            normals.PushBack(vec4(value[0], value[1], value[2], 0.0f));
                         }
                         else if (next16 == ' f' || next16 == '\tf')
                         {
                             // Face. Only supporting triangles.
-                            lineStart += 2;
-                            if (lineEnd > lineStart)
-                            {
-                                OBJFace face;
-                                OBJ_ParseFace(lineStart, lineEnd, face, &lineStart);
+                            str += 2;
 
-                                faces.PushBack(face);
+                            OBJFace face;
+                            OBJ_ParseFace(str, strEnd, face, &str);
+
+                            faces.PushBack(face);
+
+                            for (size_t iVertex = 0; iVertex < 3; ++iVertex)
+                            {
+                                size_t existingIndexLocation;
+                                if (uniqueIndices.FindFirstIndexOf(face.v[iVertex], existingIndexLocation))
+                                {
+                                    actualIndices.PushBack(static_cast<uint32_t>(existingIndexLocation));
+                                }
+                                else
+                                {
+                                    actualIndices.PushBack(static_cast<uint32_t>(uniqueIndices.GetCount()));
+                                    uniqueIndices.PushBack(face.v[iVertex]);
+                                }
                             }
                         }
                         else if (next16 == 'su')
                         {
                             // "usemtl"
-                            lineStart += 2;
-                            if (lineEnd > lineStart + 5)
+                            str += 2;
+                            if (str + 5 < strEnd)
                             {
-                                if (reinterpret_cast<const uint32_t*>(lineStart)[0] == 'ltme')
+                                if (reinterpret_cast<const uint32_t*>(str)[0] == 'ltme')
                                 {
 
                                 }
@@ -332,7 +335,15 @@ namespace GT
                         // Empty line. Skip it.
                     }
 
-                    ++line;
+
+                    // Move to the end of the line
+                    while (str < strEnd && *str != '\n')
+                    {
+                        str += 1;
+                    }
+
+                    // Move past the new-line character which will take us to the beginning of the next line.
+                    str += 1;
                 }
 
                 // At this point the file has been parsed, so free the file data...
@@ -355,26 +366,6 @@ namespace GT
                     normals.PushBack(vec4(0.0f, 0.0f, -1.0f, 0.0f));
                 }
 
-
-                GTLib::Vector<OBJFaceVertex> uniqueIndices(faces.GetCount());
-                GTLib::Vector<uint32_t> actualIndices(faces.GetCount());
-
-                for (size_t iFace = 0; iFace < faces.GetCount(); ++iFace)
-                {
-                    for (size_t iVertex = 0; iVertex < 3; ++iVertex)
-                    {
-                        size_t existingIndexLocation;
-                        if (uniqueIndices.FindFirstIndexOf(faces[iFace].v[iVertex], existingIndexLocation))
-                        {
-                            actualIndices.PushBack(static_cast<uint32_t>(existingIndexLocation));
-                        }
-                        else
-                        {
-                            actualIndices.PushBack(static_cast<uint32_t>(uniqueIndices.GetCount()));
-                            uniqueIndices.PushBack(faces[iFace].v[iVertex]);
-                        }
-                    }
-                }
 
 
                 m_vertexCount = static_cast<unsigned int>(uniqueIndices.GetCount());
