@@ -5,6 +5,7 @@
 
 #include <GTLib/Vector.hpp>
 #include <GTLib/Dictionary.hpp>
+#include <GTLib/String.hpp>
 #include "AssetTypes.hpp"
 
 namespace GT
@@ -16,6 +17,10 @@ namespace GT
     
 
     /// Class for managing every type of asset.
+    ///
+    /// Asset paths where the asset data is stored in a library/archive type file is supported. In this case, the last extension is used to determine
+    /// which extension should be used for loading. An example of such a path is OBJ MTL files such as "data/material.mtl/mymaterial". In this case,
+    /// whichever allocator is associated with the ".mtl" extension is used because that is the last extension mentioned in the path.
     class AssetLibrary
     {
     public:
@@ -95,10 +100,11 @@ namespace GT
 
     private:
 
-        AssetAllocator* FindAllocatorByExtension(const char* extension);
+        AssetAllocator* FindAllocatorByExtension(const char* filePath);
         AssetAllocator* FindAllocatorByType(AssetType type);
-        AssetType FindTypeByExtension(const char* extension);
-        AssetClass FindClassByExtension(const char* extension);
+        AssetType FindTypeByExtension(const char* filePath);
+        AssetClass FindClassByExtension(const char* filePath);
+        GTLib::String GetAssetExtension(const char* filePath);
 
 
     private:

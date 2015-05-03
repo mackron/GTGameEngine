@@ -73,7 +73,7 @@ namespace GT
             AssetType assetType = explicitAssetType;
             if (assetType == AssetType_Unknown)
             {
-                assetType = this->FindTypeByExtension(GTLib::IO::GetExtension(filePathOrIdentifier));
+                assetType = this->FindTypeByExtension(filePathOrIdentifier);
             }
 
 
@@ -219,9 +219,9 @@ namespace GT
     ////////////////////////////////////
     // Private
 
-    AssetAllocator* AssetLibrary::FindAllocatorByExtension(const char* extension)
+    AssetAllocator* AssetLibrary::FindAllocatorByExtension(const char* filePath)
     {
-        return this->FindAllocatorByType(this->FindTypeByExtension(extension));
+        return this->FindAllocatorByType(this->FindTypeByExtension(filePath));
     }
 
     AssetAllocator* AssetLibrary::FindAllocatorByType(AssetType type)
@@ -241,9 +241,9 @@ namespace GT
         return nullptr;
     }
 
-    AssetType AssetLibrary::FindTypeByExtension(const char* extension)
+    AssetType AssetLibrary::FindTypeByExtension(const char* filePath)
     {
-        auto iAssetType = m_extensionTypeMapping.Find(extension);
+        auto iAssetType = m_extensionTypeMapping.Find(this->GetAssetExtension(filePath).c_str());
         if (iAssetType != nullptr)
         {
             return static_cast<AssetType>(iAssetType->value & 0x00000000FFFFFFFF);
@@ -252,14 +252,29 @@ namespace GT
         return AssetType_Unknown;
     }
 
-    AssetClass AssetLibrary::FindClassByExtension(const char* extension)
+    AssetClass AssetLibrary::FindClassByExtension(const char* filePath)
     {
-        auto iAssetType = m_extensionTypeMapping.Find(extension);
+        auto iAssetType = m_extensionTypeMapping.Find(this->GetAssetExtension(filePath).c_str());
         if (iAssetType != nullptr)
         {
             return static_cast<AssetClass>((iAssetType->value & 0xFFFFFFFF00000000) >> 32);
         }
 
         return AssetType_Unknown;
+    }
+
+
+    GTLib::String AssetLibrary::GetAssetExtension(const char* filePath)
+    {
+        const char* extensionStart = GTLib::IO::GetExtension(filePath);
+
+        const char* extensionEnd = extensionStart;
+        while (*extensionEnd != '\0' && *extensionEnd != '/' && *extensionEnd != '\\')
+        {
+            extensionEnd += 1;
+        }
+
+
+        return GTLib::String(extensionStart, extensionEnd - extensionStart);
     }
 }
