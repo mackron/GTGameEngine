@@ -5,6 +5,7 @@
 
 #include <GTLib/Vector.hpp>
 #include <GTLib/Serializer.hpp>
+#include <GTLib/Deserializer.hpp>
 
 namespace GT
 {
@@ -15,6 +16,9 @@ namespace GT
         
         /// Constructor.
         AssetMetadataChunk(const char* name, uint32_t sizeInBytes, const void* pData);
+
+        /// Constructs the chunk from a deserializer.
+        AssetMetadataChunk(GTLib::Deserializer &deserializer);
 
         /// Destructor.
         ~AssetMetadataChunk();
@@ -75,6 +79,11 @@ namespace GT
         /// Constructor.
         AssetMetadata();
 
+        /// Constructs the metadata from a deserializer.
+        ///
+        /// @param deserializer [in] A reference to the deserializer.
+        AssetMetadata(GTLib::Deserializer &deserializer);
+
         /// Destructor.
         ~AssetMetadata();
 
@@ -101,6 +110,10 @@ namespace GT
         const void* GetChunkData(const char* name, uint32_t &sizeInBytesOut) const;
 
 
+        /// Deletes every metadata chunk.
+        void Clear();
+
+
         /// Serializes the metadata.
         ///
         /// @param serializer [in] A reference to the serializer.
@@ -109,6 +122,14 @@ namespace GT
         ///     The format of the serializer is very simple. The first 4 bytes defines the number of chunks, which is
         ///     followed by the chunk data itself.
         void Serialize(GTLib::Serializer &serializer) const;
+
+        /// Deserializes the metadata.
+        ///
+        /// @param deserializer [in] A reference to the deserializer to read the data from.
+        ///
+        /// @remarks
+        ///     This will clear the metadata before deserializing.
+        void Deserialize(GTLib::Deserializer &deserializer);
 
 
     private:

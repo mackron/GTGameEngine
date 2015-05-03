@@ -52,8 +52,18 @@ namespace GT
         GTLib::String absolutePathOrIdentifier;
         if (!m_fileSystem.FindAbsolutePath(filePathOrIdentifier, absolutePathOrIdentifier))
         {
-            // The file could not be found, but the asset loader might be using it as a unique token, so we just assume use it as-is for the absolute path in this case.
-            absolutePathOrIdentifier = filePathOrIdentifier;
+            // The file could not be found, but there may be a metadata file. It is possible that the data for an asset is
+            // entirely defined in the metadata file, we'll look for that file too.
+            if (m_fileSystem.FindAbsolutePath((GTLib::String(filePathOrIdentifier) + ".gtdata").c_str(), absolutePathOrIdentifier))
+            {
+                // The metadata file was found. Later on we'll load the metadata for real, so we'll need to remove the ".gtdata" extension beforehand.
+                absolutePathOrIdentifier = GTLib::IO::RemoveExtension(absolutePathOrIdentifier.c_str());
+            }
+            else
+            {
+                // The file nor it's metadata file could not be found, but the asset loader might be using it as a unique token, so we just assume use it as-is for the absolute path in this case.
+                absolutePathOrIdentifier = filePathOrIdentifier;
+            }
         }
 
 
@@ -73,6 +83,10 @@ namespace GT
                 auto pAsset = pAllocator->CreateAsset(assetType);
                 if (pAsset != nullptr)
                 {
+                    // Load the metadata first. It does not matter if this fails so the return value doesn't need to be checked.
+                    pAsset->LoadMetadata((absolutePathOrIdentifier + ".gtdata").c_str(), m_fileSystem);
+
+                    // Load the asset after the metadata.
                     if (pAsset->Load(absolutePathOrIdentifier.c_str(), m_fileSystem))
                     {
                         m_loadedAssets.Add(absolutePathOrIdentifier.c_str(), pAsset);
@@ -153,7 +167,10 @@ namespace GT
         GTLib::String absolutePathOrIdentifier;
         if (!m_fileSystem.FindAbsolutePath(filePathOrIdentifier, absolutePathOrIdentifier))
         {
-            absolutePathOrIdentifier = filePathOrIdentifier;
+            if (!m_fileSystem.FindAbsolutePath((GTLib::String(filePathOrIdentifier) + ".gtdata").c_str(), absolutePathOrIdentifier))
+            {
+                absolutePathOrIdentifier = filePathOrIdentifier;
+            }
         }
 
         auto iAsset = m_loadedAssets.Find(absolutePathOrIdentifier.c_str());
@@ -162,6 +179,10 @@ namespace GT
             auto pAsset = iAsset->value;
             assert(pAsset != nullptr);
             {
+                // Load the metadata first. It does not matter if this fails so the return value doesn't need to be checked.
+                pAsset->LoadMetadata((absolutePathOrIdentifier + ".gtdata").c_str(), m_fileSystem);
+
+                // Load the asset after the metadata.
                 if (pAsset->Load(absolutePathOrIdentifier.c_str(), m_fileSystem))
                 {
                 }

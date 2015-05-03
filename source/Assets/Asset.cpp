@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/Assets/Asset.hpp>
+#include <GTGameEngine/FileSystem.hpp>
 
 namespace GT
 {
@@ -34,5 +35,38 @@ namespace GT
     {
         uint32_t unused;
         return this->GetMetadataChunkData(name, unused);
+    }
+
+    bool Asset::LoadMetadata(const char* absolutePath, FileSystem &fileSystem)
+    {
+        HFile hMetadataFile = fileSystem.OpenFile(absolutePath, GT::FileAccessMode::Read);
+        if (hMetadataFile != 0)
+        {
+            size_t fileSize = static_cast<size_t>(fileSystem.GetFileSize(hMetadataFile));
+            if (fileSize > 0)
+            {
+                // Read the data.
+                char* fileData = reinterpret_cast<char*>(malloc(fileSize));
+                fileSystem.ReadFile(hMetadataFile, fileSize, fileData);
+                fileSystem.CloseFile(hMetadataFile);
+
+                GTLib::BasicDeserializer deserializer(fileData, fileSize);
+                m_metadata.Deserialize(deserializer);
+
+                free(fileData);
+                return true;
+            }
+            else
+            {
+                // File size is 0.
+                fileSystem.CloseFile(hMetadataFile);
+                return false;
+            }
+        }
+        else
+        {
+            // Failed to open the file.
+            return false;
+        }
     }
 }

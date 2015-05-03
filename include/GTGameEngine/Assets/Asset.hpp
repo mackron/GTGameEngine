@@ -49,6 +49,16 @@ namespace GT
         /// @copydoc GetMetadataChunkData()
         const void* GetMetadataChunkData(const char* name) const;
 
+        /// Loads the metadata from the file at the given path.
+        ///
+        /// @param absolutePath [in] The absolute path of the metadata.
+        /// @param fileSystem   [in] A reference to the file system object to load the file from.
+        ///
+        /// @remarks
+        ///     This is virtual so that inherited classes do custom implementations which may be required for things like procedural assets. It is
+        ///     not required that inherited classes implement this, in which case the default implementation will simply try loading it from a file.
+        virtual bool LoadMetadata(const char* absolutePath, FileSystem &fileSystem);
+
 
         /////////////////////////////////////
         // Virtual Methods
