@@ -22,6 +22,7 @@
     <ClCompile Include="..\..\..\source\Assets\Asset.cpp" />
     <ClCompile Include="..\..\..\source\Assets\AssetAllocator.cpp" />
     <ClCompile Include="..\..\..\source\Assets\AssetLibrary.cpp" />
+    <ClCompile Include="..\..\..\source\Assets\AssetMetadata.cpp" />
     <ClCompile Include="..\..\..\source\Assets\DefaultAssetAllocator.cpp" />
     <ClCompile Include="..\..\..\source\Assets\ImageAsset.cpp" />
     <ClCompile Include="..\..\..\source\Assets\ImageAsset_STB.cpp" />
@@ -116,6 +117,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\Asset.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetAllocator.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetLibrary.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetMetadata.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\ImageAsset.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\ModelAsset.hpp" />

@@ -6,6 +6,7 @@
 #include <GTLib/String.hpp>
 #include <GTLib/ReferenceCountedObject.hpp>
 #include "AssetTypes.hpp"
+#include "AssetMetadata.hpp"
 
 namespace GT
 {
@@ -25,6 +26,28 @@ namespace GT
 
         /// Retrieves the type of this asset.
         AssetType GetType() const;
+
+
+        /// Adds a metadata chunk to the asset's metadata.
+        ///
+        /// @param name        [in] The name of the metadata chunk. Only the first 31 characters are used.
+        /// @param sizeInBytes [in] The size in bytes of the metadata chunk.
+        /// @param pData       [in] A pointer to the buffer that contains the chunk data.
+        ///
+        /// @remarks
+        ///     If a chunk with the same name already exists it will be replaced.
+        void AddMetadataChunk(const char* name, uint32_t sizeInBytes, const void* pData);
+
+        /// Retrieves a pointer to the buffer containing the data of the chunk with the given name.
+        ///
+        /// @param name [in] The name of the metadata chunk whose data pointer is being retrieved.
+        /// @param sizeInBytesOut [out] A reference to the variable that will receive the size in bytes of the chunk data.
+        ///
+        /// @return A pointer to the buffer containing the chunk's data.
+        const void* GetMetadataChunkData(const char* name, uint32_t &sizeInBytesOut) const;
+
+        /// @copydoc GetMetadataChunkData()
+        const void* GetMetadataChunkData(const char* name) const;
 
 
         /////////////////////////////////////
@@ -50,6 +73,9 @@ namespace GT
 
         /// The asset type.
         AssetType m_type;
+
+        /// The asset's metadata.
+        AssetMetadata m_metadata;
     };
 }
 

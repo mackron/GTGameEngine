@@ -371,6 +371,9 @@
     <ClCompile Include="..\..\..\source\Math.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\AssetMetadata.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -762,6 +765,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsWorldObject.hpp">
       <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetMetadata.hpp">
+      <Filter>Header Files\Assets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

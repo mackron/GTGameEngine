@@ -18,4 +18,21 @@ namespace GT
     {
         return m_type;
     }
+
+
+    void Asset::AddMetadataChunk(const char* name, uint32_t sizeInBytes, const void* pData)
+    {
+        m_metadata.AddChunk(name, sizeInBytes, pData);
+    }
+
+    const void* Asset::GetMetadataChunkData(const char* name, uint32_t &sizeInBytesOut) const
+    {
+        return m_metadata.GetChunkData(name, sizeInBytesOut);
+    }
+
+    const void* Asset::GetMetadataChunkData(const char* name) const
+    {
+        uint32_t unused;
+        return this->GetMetadataChunkData(name, unused);
+    }
 }
