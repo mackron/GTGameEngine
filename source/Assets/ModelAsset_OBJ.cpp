@@ -241,8 +241,8 @@ namespace GT
                 GTLib::Vector<vec4>    normals;
                 GTLib::Vector<OBJFace> faces;
 
-                GTLib::Vector<OBJFaceVertex> uniqueIndices(faces.GetCount());
-                GTLib::Vector<uint32_t> actualIndices(faces.GetCount());
+                GTLib::Vector<OBJFaceVertex> uniqueIndices;
+                GTLib::Vector<uint32_t>      actualIndices;
 
                 const char* str    = fileData;
                 const char* strEnd = str + fileSize;
