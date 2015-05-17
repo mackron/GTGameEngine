@@ -139,18 +139,41 @@ namespace GT
         // Check if a chunk of the same name already exists.
         for (size_t iChunk = 0; iChunk < m_chunks.GetCount(); ++iChunk)
         {
-            if (strcmp(name, m_chunks[iChunk]->GetName()) == 0)
+            auto pChunk = m_chunks[iChunk];
+            assert(pChunk != nullptr);
             {
-                // A chunk of the same name exists - replace it.
-                delete m_chunks[iChunk];
-                m_chunks[iChunk] = pNewChunk;
+                if (strcmp(name, m_chunks[iChunk]->GetName()) == 0)
+                {
+                    // A chunk of the same name exists - replace it.
+                    delete m_chunks[iChunk];
+                    m_chunks[iChunk] = pNewChunk;
 
-                return;
+                    return;
+                }
             }
         }
 
         // If we get here it means a chunk of the same name does not exist. In this case we just push it to the back.
         m_chunks.PushBack(pNewChunk);
+    }
+
+    void AssetMetadata::RemoveChunk(const char* name)
+    {
+        for (size_t iChunk = 0; iChunk < m_chunks.GetCount(); ++iChunk)
+        {
+            auto pChunk = m_chunks[iChunk];
+            assert(pChunk != nullptr);
+            {
+                if (strcmp(name, pChunk->GetName()) == 0)
+                {
+                    // A chunk of the same name exists - replace it.
+                    delete pChunk;
+                    m_chunks.Remove(iChunk);
+
+                    return;
+                }
+            }
+        }
     }
 
     const void* AssetMetadata::GetChunkData(const char* name, uint32_t &sizeInBytesOut) const

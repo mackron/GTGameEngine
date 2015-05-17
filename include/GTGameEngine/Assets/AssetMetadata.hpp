@@ -98,6 +98,11 @@ namespace GT
         ///     If a chunk of the same name already exists it will be replaced.
         void AddChunk(const char* name, uint32_t sizeInBytes, const void* pData);
 
+        /// Removes a metadata chunk.
+        ///
+        /// @param name [in] The name of the metadata chunk to remove.
+        void RemoveChunk(const char* name);
+
         /// Retrieves a pointer to the buffer containing the data of the metadata chunk with the given name.
         ///
         /// @param name           [in]  The name of the buffer whose data is being retrieved.
