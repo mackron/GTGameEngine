@@ -9,6 +9,8 @@ namespace GT
           id(),
           width(0),
           height(0),
+          xDPI(96),
+          yDPI(96),
           topLevelElements(),
           auxData(nullptr),
           hElementCapturingMouseEvents(0),

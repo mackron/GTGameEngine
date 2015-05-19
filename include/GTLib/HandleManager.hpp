@@ -156,9 +156,11 @@ namespace GT
         ///
         /// @param handler [in] The function that will be called for each handle.
         ///
+        /// @return False if the iteration was terminated early as a result of handler() returning false. True if everything was iterated.
+        ///
         /// @remarks
         ///     When the return value of the handler function is false, the loop will stop iterating.
-        void IterateAssociatedObjects(std::function<bool (ObjectType*)> handler) const
+        bool IterateAssociatedObjects(std::function<bool (ObjectType*)> handler) const
         {
             for (size_t iObject = 0; iObject < m_objectPointers.GetCount(); ++iObject)
             {
@@ -167,10 +169,12 @@ namespace GT
                 {
                     if (!handler(objectPtr))
                     {
-                        break;
+                        return false;
                     }
                 }
             }
+
+            return true;
         }
 
 

@@ -67,10 +67,6 @@ namespace GT
     ///
     /// Every GUI operation will be executed through the context. The context is essentially an arbiter of all GUI operations to
     /// ensure everything is done properly, and to properly handle cases when it isn't.
-    ///
-    /// All GUI elements are attached to a surface. By default, an element is attached to the default surface, or whichever surface
-    /// it's ancestors are attached to. A handle to the default surface can be retrieved with GetDefaultSurface(). The default
-    /// surface can be used just like any other surface, but it should not be deleted.
     class GUIContext
     {
     public:
@@ -179,6 +175,13 @@ namespace GT
 
             return reinterpret_cast<T*>(nullptr);
         }
+
+
+        /// Iterates over every element that is attached to the given surface.
+        ///
+        /// @param hSurface [in] The a handle to surface whose elements are being iterated.
+        /// @param handler  [in] The function that will be called for each element. If this returns false, the iteration will stop.
+        void IterateSurfaceElements(HGUISurface hSurface, std::function<bool (HGUIElement)> handler);
 
 
         /// Sets the painting mode for the given surface - immediate or deferred.
@@ -1259,16 +1262,16 @@ namespace GT
 
 
         /// Retrieves the DPI on the X axis.
-        unsigned int GetXDPI() const;
+        unsigned int GetXDPI(HGUISurface hSurface) const;
 
         /// Retrieves the DPI on the Y axis.
-        unsigned int GetYDPI() const;
+        unsigned int GetYDPI(HGUISurface hSurface) const;
 
         /// Retrieves the DPI on both the X and Y axis.
         ///
         /// @param xDPIOut [out] A reference to the variable that will receive the DPI on the X axis.
         /// @param yDPIOut [out] A reference to the variable that will receive the DPI on the Y axis.
-        void GetDPI(unsigned int &xDPIOut, unsigned int &yDPIOut);
+        void GetDPI(HGUISurface hSurface, unsigned int &xDPIOut, unsigned int &yDPIOut);
 
         /// Sets the DPI on both the X and Y axis.
         ///
@@ -1277,18 +1280,22 @@ namespace GT
         ///
         /// @remarks
         ///     This will cause a re-validation of the layout and will redraw every surface.
-        void SetDPI(unsigned int xDPI, unsigned int yDPI);
+        void SetDPI(HGUISurface hSurface, unsigned int xDPI, unsigned int yDPI);
 
 
-        /// Retrieves the DPI scaling factor for the X axis.
+        /// Retrieves the DPI scaling factor for the X axis based on the given surface's DPI.
+        ///
+        /// @param hSurface [in] The surface whose DPI is being used to calculate the scaling factor.
         ///
         /// @return A float equal to the current DPI divided by the base DPI for the X axis.
-        float GetXDPIScalingFactor() const;
+        float GetXDPIScalingFactor(HGUISurface hSurface) const;
 
-        /// Retrieves the DPI scaling factor for the Y axis.
+        /// Retrieves the DPI scaling factor for the Y axis based on the given surface's DPI.
+        ///
+        /// @param hSurface [in] The surface whose DPI is being used to calculate the scaling factor.
         ///
         /// @return a float equal to the current DPI divided by the base DPI for the Y axis.
-        float GetYDPIScalingFactor() const;
+        float GetYDPIScalingFactor(HGUISurface hSurface) const;
 
 
         ////////////////////////////////////////////////////////////////
@@ -1326,6 +1333,9 @@ namespace GT
         /// @remarks
         ///     If the handle is invalid, null will be returned.
         GUIElement* GetElementPtr(HGUIElement hElement) const;
+
+
+        /// Retrieves 
 
 
         /// Recursively sets the surface for the given element and it's children.
@@ -1450,12 +1460,64 @@ namespace GT
 
 
         ////////////////////////////////////////////////////////////////
+        // Iteration
+        //
+        // All iterators here are standard. When the handler function returns false, the iteration will stop.
+        
+        /// Iterates over every surface.
+        ///
+        /// @param handler [in] The function to call for each surface.
+        ///
+        /// @return False if the iteration was terminated early as a result of handler() returning false. True if everything was iterated.
+        bool IterateSurfaces(std::function<bool (GUISurface* pSurface)> handler);
+
+        /// Iterates over every element.
+        ///
+        /// @param handler [in] The function to call for each element.
+        ///
+        /// @return False if the iteration was terminated early as a result of handler() returning false. True if everything was iterated.
+        bool IterateElements(std::function<bool (GUIElement* pElement)> handler);
+
+        /// Iterates over each element that is attached to the given surface.
+        ///
+        /// @param surface [in] A reference to the surface whose elements are being iterated.
+        /// @param handler [in] The function to call for each element.
+        ///
+        /// @return False if the iteration was terminated early as a result of handler() returning false. True if everything was iterated.
+        bool IterateSurfaceElements(GUISurface* pSurface, std::function<bool (GUIElement* pElement)> handler);
+
+        /// Recursively iterates over every child of the given element.
+        ///
+        /// @param element [in] A reference to the element whose children are being iterated.
+        /// @param handler [in] The function to call for each child element.
+        ///
+        /// @return False if the iteration was terminated early as a result of handler() returning false. True if everything was iterated.
+        bool IterateElementChildrenRecursive(GUIElement* pElement, std::function<bool (GUIElement* pElement)> handler);
+
+        /// Iterates over every child of the given element.
+        ///
+        /// @param element [in] A reference to the element whose children are being iterated.
+        /// @param handler [in] The function to call for each child element.
+        ///
+        /// @return False if the iteration was terminated early as a result of handler() returning false. True if everything was iterated.
+        ///
+        /// @remarks
+        ///     This is not recursive.
+        bool IterateElementChildren(GUIElement* pElement, std::function<bool (GUIElement* pElement)> handler);
+
+
+
+
+        ////////////////////////////////////////////////////////////////
         // DPI / Scaling
 
         /// Updates every element as required as a result of a change in DPI.
         ///
+        /// @param surface [in] A reference to the surface whose DPI has changed.
+        ///
         /// @remarks
         ///     This will update the layout and font of every element.
+        void UpdateAllElementsOnDPIChange(GUISurface &surface);
         void UpdateAllElementsOnDPIChange();
 
         /// Updates the size of each border of the given element based on their style and current DPI scaling.
@@ -2080,12 +2142,6 @@ namespace GT
 
         /// The base DPI on yhe Y axis for calculating the scaling factor. Defaults to 96.
         unsigned int m_yBaseDPI;
-
-        /// The current DPI on the X axis.
-        unsigned int m_xDPI;
-
-        /// The current DPI on the Y axis.
-        unsigned int m_yDPI;
 
         
 

@@ -39,6 +39,13 @@ namespace GT
         unsigned int height;
 
 
+        /// The current DPI on the X axis.
+        unsigned int xDPI;
+
+        /// The current DPI on the Y axis.
+        unsigned int yDPI;
+
+
         /// The list of top-level elements that are on this surface. The elements in this list should all be parentless.
         GTLib::Vector<HGUIElement> topLevelElements;
 

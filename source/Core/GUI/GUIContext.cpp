@@ -15,7 +15,7 @@ namespace GT
           //m_imageManager(),
           m_fontManager(/*m_imageManager*/),
           m_defaultFont(nullptr),
-          m_xBaseDPI(96), m_yBaseDPI(96), m_xDPI(m_xBaseDPI), m_yDPI(m_yBaseDPI), 
+          m_xBaseDPI(96), m_yBaseDPI(96),
           m_renderer(renderer),
           m_ownsRenderer(false),
           m_layoutContext(),
@@ -36,7 +36,7 @@ namespace GT
         // Create the default font.
         GTLib::FontInfo fi;
         fi.family       = "liberation sans";
-        fi.sizeInPoints = 9 * this->GetXDPIScalingFactor();
+        fi.sizeInPoints = 9;
         m_defaultFont = m_fontManager.AcquireFont(fi);
     }
 
@@ -991,7 +991,7 @@ namespace GT
         {
             GUIElementStyle_Set_borderleftwidth(element->style, width, NumberType_Points);
 
-            element->layout.borderLeftWidth = static_cast<float>(width) * this->GetXDPIScalingFactor();
+            element->layout.borderLeftWidth = static_cast<float>(width) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             this->BeginBatch();
@@ -1009,7 +1009,7 @@ namespace GT
         {
             GUIElementStyle_Set_bordertopwidth(element->style, width, NumberType_Points);
 
-            element->layout.borderTopWidth = static_cast<float>(width) * this->GetYDPIScalingFactor();
+            element->layout.borderTopWidth = static_cast<float>(width) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             this->BeginBatch();
@@ -1027,7 +1027,7 @@ namespace GT
         {
             GUIElementStyle_Set_borderrightwidth(element->style, width, NumberType_Points);
 
-            element->layout.borderRightWidth = static_cast<float>(width) * this->GetXDPIScalingFactor();
+            element->layout.borderRightWidth = static_cast<float>(width) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             this->BeginBatch();
@@ -1045,7 +1045,7 @@ namespace GT
         {
             GUIElementStyle_Set_borderbottomwidth(element->style, width, NumberType_Points);
 
-            element->layout.borderBottomWidth = static_cast<float>(width) * this->GetYDPIScalingFactor();
+            element->layout.borderBottomWidth = static_cast<float>(width) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             this->BeginBatch();
@@ -1063,10 +1063,10 @@ namespace GT
         {
             GUIElementStyle_Set_borderwidth(element->style, width, NumberType_Points);
 
-            element->layout.borderLeftWidth   = static_cast<float>(width) * this->GetXDPIScalingFactor();
-            element->layout.borderTopWidth    = static_cast<float>(width) * this->GetYDPIScalingFactor();
-            element->layout.borderRightWidth  = static_cast<float>(width) * this->GetXDPIScalingFactor();
-            element->layout.borderBottomWidth = static_cast<float>(width) * this->GetYDPIScalingFactor();
+            element->layout.borderLeftWidth   = static_cast<float>(width) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
+            element->layout.borderTopWidth    = static_cast<float>(width) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
+            element->layout.borderRightWidth  = static_cast<float>(width) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
+            element->layout.borderBottomWidth = static_cast<float>(width) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
 
             
             this->BeginBatch();
@@ -1210,10 +1210,10 @@ namespace GT
         {
             GUIElementStyle_Set_border(element->style, width, NumberType_Points, color);
 
-            element->layout.borderLeftWidth   = static_cast<float>(width) * this->GetXDPIScalingFactor();
-            element->layout.borderTopWidth    = static_cast<float>(width) * this->GetYDPIScalingFactor();
-            element->layout.borderRightWidth  = static_cast<float>(width) * this->GetXDPIScalingFactor();
-            element->layout.borderBottomWidth = static_cast<float>(width) * this->GetYDPIScalingFactor();
+            element->layout.borderLeftWidth   = static_cast<float>(width) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
+            element->layout.borderTopWidth    = static_cast<float>(width) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
+            element->layout.borderRightWidth  = static_cast<float>(width) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
+            element->layout.borderBottomWidth = static_cast<float>(width) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
 
             
             this->BeginBatch();
@@ -1234,7 +1234,7 @@ namespace GT
         {
             GUIElementStyle_Set_paddingleft(element->style, padding, NumberType_Points);
 
-            element->layout.paddingLeft = static_cast<float>(padding) * this->GetXDPIScalingFactor();
+            element->layout.paddingLeft = static_cast<float>(padding) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             this->BeginBatch();
@@ -1252,7 +1252,7 @@ namespace GT
         {
             GUIElementStyle_Set_paddingtop(element->style, padding, NumberType_Points);
 
-            element->layout.paddingTop = static_cast<float>(padding) * this->GetYDPIScalingFactor();
+            element->layout.paddingTop = static_cast<float>(padding) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             this->BeginBatch();
@@ -1270,7 +1270,7 @@ namespace GT
         {
             GUIElementStyle_Set_paddingright(element->style, padding, NumberType_Points);
 
-            element->layout.paddingRight = static_cast<float>(padding) * this->GetXDPIScalingFactor();
+            element->layout.paddingRight = static_cast<float>(padding) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             this->EndBatch();
@@ -1288,7 +1288,7 @@ namespace GT
         {
             GUIElementStyle_Set_paddingbottom(element->style, padding, NumberType_Points);
 
-            element->layout.paddingBottom = static_cast<float>(padding) * this->GetYDPIScalingFactor();
+            element->layout.paddingBottom = static_cast<float>(padding) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             this->BeginBatch();
@@ -1306,10 +1306,10 @@ namespace GT
         {
             GUIElementStyle_Set_padding(element->style, padding, NumberType_Points);
 
-            element->layout.paddingLeft   = static_cast<float>(padding) * this->GetXDPIScalingFactor();
-            element->layout.paddingTop    = static_cast<float>(padding) * this->GetYDPIScalingFactor();
-            element->layout.paddingRight  = static_cast<float>(padding) * this->GetXDPIScalingFactor();
-            element->layout.paddingBottom = static_cast<float>(padding) * this->GetYDPIScalingFactor();
+            element->layout.paddingLeft   = static_cast<float>(padding) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
+            element->layout.paddingTop    = static_cast<float>(padding) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
+            element->layout.paddingRight  = static_cast<float>(padding) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
+            element->layout.paddingBottom = static_cast<float>(padding) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             this->BeginBatch();
@@ -1329,7 +1329,7 @@ namespace GT
         {
             GUIElementStyle_Set_marginleft(element->style, margin, NumberType_Points);
 
-            element->layout.marginLeft = static_cast<float>(margin) * this->GetXDPIScalingFactor();
+            element->layout.marginLeft = static_cast<float>(margin) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             // The margin will change this element's position.
@@ -1348,7 +1348,7 @@ namespace GT
         {
             GUIElementStyle_Set_margintop(element->style, margin, NumberType_Points);
 
-            element->layout.marginTop = static_cast<float>(margin) * this->GetYDPIScalingFactor();
+            element->layout.marginTop = static_cast<float>(margin) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             // The margin will change this element's position.
@@ -1367,7 +1367,7 @@ namespace GT
         {
             GUIElementStyle_Set_marginright(element->style, margin, NumberType_Points);
 
-            element->layout.marginRight = static_cast<float>(margin) * this->GetXDPIScalingFactor();
+            element->layout.marginRight = static_cast<float>(margin) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             // The margin will change this element's position.
@@ -1386,7 +1386,7 @@ namespace GT
         {
             GUIElementStyle_Set_marginbottom(element->style, margin, NumberType_Points);
 
-            element->layout.marginBottom = static_cast<float>(margin) * this->GetYDPIScalingFactor();
+            element->layout.marginBottom = static_cast<float>(margin) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             // The margin will change this element's position.
@@ -1405,10 +1405,10 @@ namespace GT
         {
             GUIElementStyle_Set_margin(element->style, margin, NumberType_Points);
 
-            element->layout.marginLeft   = static_cast<float>(margin) * this->GetXDPIScalingFactor();
-            element->layout.marginTop    = static_cast<float>(margin) * this->GetYDPIScalingFactor();
-            element->layout.marginRight  = static_cast<float>(margin) * this->GetXDPIScalingFactor();
-            element->layout.marginBottom = static_cast<float>(margin) * this->GetYDPIScalingFactor();
+            element->layout.marginLeft   = static_cast<float>(margin) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
+            element->layout.marginTop    = static_cast<float>(margin) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
+            element->layout.marginRight  = static_cast<float>(margin) * this->GetXDPIScalingFactor(this->GetElementSurface(hElement));
+            element->layout.marginBottom = static_cast<float>(margin) * this->GetYDPIScalingFactor(this->GetElementSurface(hElement));
 
 
             // The margin will change this element's position.
@@ -2273,39 +2273,64 @@ namespace GT
     }
 
 
-    unsigned int GUIContext::GetXDPI() const
+    unsigned int GUIContext::GetXDPI(HGUISurface hSurface) const
     {
-        return m_xDPI;
+        auto pSurface = this->GetSurfacePtr(hSurface);
+        if (pSurface != nullptr)
+        {
+            return pSurface->xDPI;
+        }
+
+        return m_xBaseDPI;
     }
 
-    unsigned int GUIContext::GetYDPI() const
+    unsigned int GUIContext::GetYDPI(HGUISurface hSurface) const
     {
-        return m_yDPI;
+        auto pSurface = this->GetSurfacePtr(hSurface);
+        if (pSurface != nullptr)
+        {
+            return pSurface->xDPI;
+        }
+
+        return m_yBaseDPI;
     }
 
-    void GUIContext::GetDPI(unsigned int &xDPIOut, unsigned int &yDPIOut)
+    void GUIContext::GetDPI(HGUISurface hSurface, unsigned int &xDPIOut, unsigned int &yDPIOut)
     {
-        xDPIOut = m_xDPI;
-        yDPIOut = m_yDPI;
+        auto pSurface = this->GetSurfacePtr(hSurface);
+        if (pSurface != nullptr)
+        {
+            xDPIOut = pSurface->xDPI;
+            yDPIOut = pSurface->yDPI;
+        }
+        else
+        {
+            xDPIOut = m_xBaseDPI;
+            yDPIOut = m_yBaseDPI;
+        }
     }
 
-    void GUIContext::SetDPI(unsigned int xDPI, unsigned int yDPI)
+    void GUIContext::SetDPI(HGUISurface hSurface, unsigned int xDPI, unsigned int yDPI)
     {
-        m_xDPI = xDPI;
-        m_yDPI = yDPI;
+        auto pSurface = this->GetSurfacePtr(hSurface);
+        if (pSurface != nullptr)
+        {
+            pSurface->xDPI = xDPI;
+            pSurface->yDPI = yDPI;
 
-        this->UpdateAllElementsOnDPIChange();
+            this->UpdateAllElementsOnDPIChange(*pSurface);       // TODO: Make this per-surface rather than global.
+        }
     }
 
 
-    float GUIContext::GetXDPIScalingFactor() const
+    float GUIContext::GetXDPIScalingFactor(HGUISurface hSurface) const
     {
-        return static_cast<float>(m_xDPI) / static_cast<float>(m_xBaseDPI);
+        return this->GetXDPI(hSurface) / static_cast<float>(m_xBaseDPI);
     }
 
-    float GUIContext::GetYDPIScalingFactor() const
+    float GUIContext::GetYDPIScalingFactor(HGUISurface hSurface) const
     {
-        return static_cast<float>(m_yDPI) / static_cast<float>(m_yBaseDPI);
+        return this->GetYDPI(hSurface) / static_cast<float>(m_yBaseDPI);
     }
 
 
@@ -2579,18 +2604,18 @@ namespace GT
         // We now have enough information to generate a font from a font info structure.
         GTLib::FontInfo fi;
         fi.family = family;
-        fi.dpiX = m_xDPI;
-        fi.dpiY = m_yDPI;
+        fi.dpiX = this->GetXDPI(this->GetElementSurface(element.handle));
+        fi.dpiY = this->GetYDPI(this->GetElementSurface(element.handle));
         
         if (sizeType == NumberType_Points)
         {
-            fi.sizeInPoints = static_cast<float>(size) * this->GetXDPIScalingFactor();
+            fi.sizeInPoints = static_cast<float>(size) * this->GetXDPIScalingFactor(this->GetElementSurface(element.handle));
             fi.sizeInPixels = 0;
         }
         else
         {
             fi.sizeInPoints = 0;
-            fi.sizeInPixels = static_cast<float>(size) * this->GetYDPIScalingFactor();
+            fi.sizeInPixels = static_cast<float>(size) * this->GetYDPIScalingFactor(this->GetElementSurface(element.handle));
         }
 
 
@@ -2985,32 +3010,124 @@ namespace GT
 
 
     ////////////////////////////////////////////////////////////////
+    // Iteration
+
+    bool GUIContext::IterateSurfaces(std::function<bool (GUISurface* pSurface)> handler)
+    {
+        return m_surfaceHandles.IterateAssociatedObjects([&](GUISurface* pSurface) -> bool
+        {
+            assert(pSurface != nullptr);
+            {
+                return handler(pSurface);
+            }
+        });
+    }
+
+    bool GUIContext::IterateElements(std::function<bool (GUIElement* pElement)> handler)
+    {
+        return m_elementHandles.IterateAssociatedObjects([&](GUIElement* pElement) -> bool
+        {
+            assert(pElement != nullptr);
+            {
+                return handler(pElement);
+            }
+        });
+    }
+
+    bool GUIContext::IterateSurfaceElements(GUISurface* pSurface, std::function<bool (GUIElement* pElement)> handler)
+    {
+        assert(pSurface != nullptr);
+
+
+        for (size_t iTopLevelElement = 0; iTopLevelElement < pSurface->topLevelElements.count; ++iTopLevelElement)
+        {
+            auto pTopLevelElement = this->GetElementPtr(pSurface->topLevelElements[iTopLevelElement]);
+            assert(pTopLevelElement != nullptr);
+            {
+                if (!handler(pTopLevelElement))
+                {
+                    return false;
+                }
+
+                if (!this->IterateElementChildrenRecursive(pTopLevelElement, [&](GUIElement* pChildElement) -> bool { return handler(pChildElement); }))
+                {
+                    return false;
+                }
+            }
+        }
+
+        return true;
+    }
+
+    bool GUIContext::IterateElementChildrenRecursive(GUIElement* pElement, std::function<bool (GUIElement* pElement)> handler)
+    {
+        assert(pElement != nullptr);
+
+
+        return this->IterateElementChildren(pElement, [&](GUIElement* pChildElement) -> bool 
+        {
+            if (handler(pChildElement))
+            {
+                return this->IterateElementChildrenRecursive(pChildElement, [&](GUIElement* pChildElementInner) -> bool { return handler(pChildElementInner); });
+            }
+            else
+            {
+                return false;
+            }
+        });
+    }
+
+    bool GUIContext::IterateElementChildren(GUIElement* pElement, std::function<bool (GUIElement* pElement)> handler)
+    {
+        assert(pElement != nullptr);
+
+
+        for (auto pChild = this->GetElementPtr(pElement->firstChild); pChild != nullptr; pChild = this->GetElementPtr(pChild->nextSibling))
+        {
+            if (!handler(pChild))
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
+    ////////////////////////////////////////////////////////////////
     // DPI / Scaling
+
+    void GUIContext::UpdateAllElementsOnDPIChange(GUISurface &surface)
+    {
+        this->BeginBatch();
+        this->IterateSurfaceElements(&surface, [&](GUIElement* pElement) -> bool
+        {
+            // Font.
+            this->UpdateElementFontFromStyle(*pElement);
+
+            // Borders.
+            this->UpdateElementBorderSizes(*pElement);
+
+            // Margins.
+            this->UpdateElementMarginSizes(*pElement);
+
+            // Padding.
+            this->UpdateElementPaddingSizes(*pElement);
+
+            // Layout.
+            this->Layout_InvalidateElementLayout(*pElement, LayoutFlag_PositionInvalid | LayoutFlag_SizeInvalid | LayoutFlag_TextInvalid);
+
+            return true;
+        });
+        this->EndBatch();
+    }
 
     void GUIContext::UpdateAllElementsOnDPIChange()
     {
-        // Every single element of every surface needs to have every layout property updated. In addition, every element needs to have their font updated for the new scaling.
         this->BeginBatch();
-        m_elementHandles.IterateAssociatedObjects([&](GUIElement* element) -> bool
+        this->IterateSurfaces([&](GUISurface* pSurface) -> bool
         {
-            assert(element != nullptr);
-
-            // Font.
-            this->UpdateElementFontFromStyle(*element);
-
-            // Borders.
-            this->UpdateElementBorderSizes(*element);
-
-            // Margins.
-            this->UpdateElementMarginSizes(*element);
-
-            // Padding.
-            this->UpdateElementPaddingSizes(*element);
-
-            // Layout.
-            this->Layout_InvalidateElementLayout(*element, LayoutFlag_PositionInvalid | LayoutFlag_SizeInvalid | LayoutFlag_TextInvalid);
-
-            return true;
+            this->UpdateAllElementsOnDPIChange(*pSurface);
         });
         this->EndBatch();
     }
@@ -3030,10 +3147,10 @@ namespace GT
         element.layout.borderBottomWidth = static_cast<float>(GUIElementStyle_Get_borderbottomwidth(element.style, bottomType));
 
 
-        if (leftType   == NumberType_Points) { element.layout.borderLeftWidth   *= this->GetXDPIScalingFactor(); }
-        if (topType    == NumberType_Points) { element.layout.borderTopWidth    *= this->GetYDPIScalingFactor(); }
-        if (rightType  == NumberType_Points) { element.layout.borderRightWidth  *= this->GetXDPIScalingFactor(); }
-        if (bottomType == NumberType_Points) { element.layout.borderBottomWidth *= this->GetYDPIScalingFactor(); }
+        if (leftType   == NumberType_Points) { element.layout.borderLeftWidth   *= this->GetXDPIScalingFactor(this->GetElementSurface(element.handle)); }
+        if (topType    == NumberType_Points) { element.layout.borderTopWidth    *= this->GetYDPIScalingFactor(this->GetElementSurface(element.handle)); }
+        if (rightType  == NumberType_Points) { element.layout.borderRightWidth  *= this->GetXDPIScalingFactor(this->GetElementSurface(element.handle)); }
+        if (bottomType == NumberType_Points) { element.layout.borderBottomWidth *= this->GetYDPIScalingFactor(this->GetElementSurface(element.handle)); }
     }
 
     void GUIContext::UpdateElementMarginSizes(GUIElement &element)
@@ -3051,10 +3168,10 @@ namespace GT
         element.layout.marginBottom = static_cast<float>(GUIElementStyle_Get_marginbottom(element.style, bottomType));
 
 
-        if (leftType   == NumberType_Points) { element.layout.marginLeft   *= this->GetXDPIScalingFactor(); }
-        if (topType    == NumberType_Points) { element.layout.marginTop    *= this->GetYDPIScalingFactor(); }
-        if (rightType  == NumberType_Points) { element.layout.marginRight  *= this->GetXDPIScalingFactor(); }
-        if (bottomType == NumberType_Points) { element.layout.marginBottom *= this->GetYDPIScalingFactor(); }
+        if (leftType   == NumberType_Points) { element.layout.marginLeft   *= this->GetXDPIScalingFactor(this->GetElementSurface(element.handle)); }
+        if (topType    == NumberType_Points) { element.layout.marginTop    *= this->GetYDPIScalingFactor(this->GetElementSurface(element.handle)); }
+        if (rightType  == NumberType_Points) { element.layout.marginRight  *= this->GetXDPIScalingFactor(this->GetElementSurface(element.handle)); }
+        if (bottomType == NumberType_Points) { element.layout.marginBottom *= this->GetYDPIScalingFactor(this->GetElementSurface(element.handle)); }
     }
 
     void GUIContext::UpdateElementPaddingSizes(GUIElement &element)
@@ -3072,10 +3189,10 @@ namespace GT
         element.layout.paddingBottom = static_cast<float>(GUIElementStyle_Get_paddingbottom(element.style, bottomType));
 
 
-        if (leftType   == NumberType_Points) { element.layout.paddingLeft   *= this->GetXDPIScalingFactor(); }
-        if (topType    == NumberType_Points) { element.layout.paddingTop    *= this->GetYDPIScalingFactor(); }
-        if (rightType  == NumberType_Points) { element.layout.paddingRight  *= this->GetXDPIScalingFactor(); }
-        if (bottomType == NumberType_Points) { element.layout.paddingBottom *= this->GetYDPIScalingFactor(); }
+        if (leftType   == NumberType_Points) { element.layout.paddingLeft   *= this->GetXDPIScalingFactor(this->GetElementSurface(element.handle)); }
+        if (topType    == NumberType_Points) { element.layout.paddingTop    *= this->GetYDPIScalingFactor(this->GetElementSurface(element.handle)); }
+        if (rightType  == NumberType_Points) { element.layout.paddingRight  *= this->GetXDPIScalingFactor(this->GetElementSurface(element.handle)); }
+        if (bottomType == NumberType_Points) { element.layout.paddingBottom *= this->GetYDPIScalingFactor(this->GetElementSurface(element.handle)); }
     }
 
 
@@ -4539,7 +4656,7 @@ namespace GT
                 {
                     if (rightType == NumberType_Points)
                     {
-                        element.layout.relativePosX += static_cast<float>(right) * this->GetXDPIScalingFactor();
+                        element.layout.relativePosX += static_cast<float>(right) * this->GetXDPIScalingFactor(this->GetElementSurface(element.handle));
                     }
                     else
                     {
@@ -4566,7 +4683,7 @@ namespace GT
                 {
                     if (leftType == NumberType_Points)
                     {
-                        element.layout.relativePosX = static_cast<float>(left) * this->GetXDPIScalingFactor();
+                        element.layout.relativePosX = static_cast<float>(left) * this->GetXDPIScalingFactor(this->GetElementSurface(element.handle));
                     }
                     else
                     {
@@ -4616,7 +4733,7 @@ namespace GT
                 {
                     if (bottomType == NumberType_Points)
                     {
-                        element.layout.relativePosY += static_cast<float>(bottom) * this->GetYDPIScalingFactor();
+                        element.layout.relativePosY += static_cast<float>(bottom) * this->GetYDPIScalingFactor(this->GetElementSurface(element.handle));
                     }
                     else
                     {
@@ -4643,7 +4760,7 @@ namespace GT
                 {
                     if (topType == NumberType_Points)
                     {
-                        element.layout.relativePosY = static_cast<float>(top) * this->GetYDPIScalingFactor();
+                        element.layout.relativePosY = static_cast<float>(top) * this->GetYDPIScalingFactor(this->GetElementSurface(element.handle));
                     }
                     else
                     {
@@ -4795,7 +4912,7 @@ namespace GT
             }
             else if (positionTypeX == NumberType_Points)
             {
-                offsetX += positionX * this->GetXDPIScalingFactor();
+                offsetX += positionX * this->GetXDPIScalingFactor(this->GetElementSurface(element.handle));
             }
             else
             {
@@ -4808,7 +4925,7 @@ namespace GT
             }
             else if (positionTypeY == NumberType_Points)
             {
-                offsetY += positionY * this->GetYDPIScalingFactor();
+                offsetY += positionY * this->GetYDPIScalingFactor(this->GetElementSurface(element.handle));
             }
             else
             {
@@ -5271,7 +5388,7 @@ namespace GT
         case NumberType_Points:
             {
                 // Same as pixels/absolute, only now it's DPI aware.
-                result = static_cast<float>(width) * this->GetXDPIScalingFactor();
+                result = static_cast<float>(width) * this->GetXDPIScalingFactor(this->GetElementSurface(element.handle));
                 break;
             }
 
@@ -5389,7 +5506,7 @@ namespace GT
         case NumberType_Points:
             {
                 // Same as pixels/absolute, only now it's DPI aware.
-                result = static_cast<float>(height) * this->GetYDPIScalingFactor();
+                result = static_cast<float>(height) * this->GetYDPIScalingFactor(this->GetElementSurface(element.handle));
                 break;
             }
 
