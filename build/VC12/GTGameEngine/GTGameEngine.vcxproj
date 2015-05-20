@@ -45,6 +45,7 @@
     <ClCompile Include="..\..\..\source\Core\GlyphMapLayout.cpp" />
     <ClCompile Include="..\..\..\source\Core\GlyphMapManager.cpp" />
     <ClCompile Include="..\..\..\source\Core\GUI\GUIContext.cpp" />
+    <ClCompile Include="..\..\..\source\Core\GUI\GUIContextBase.cpp" />
     <ClCompile Include="..\..\..\source\Core\GUI\GUIElement.cpp" />
     <ClCompile Include="..\..\..\source\Core\GUI\GUIEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\Core\GUI\GUIFontManager.cpp" />
@@ -127,6 +128,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Components\ComponentTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Config.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIContext.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIContextBase.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIDataTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIElement.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIElementStyle.hpp" />

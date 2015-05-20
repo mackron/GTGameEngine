@@ -389,7 +389,6 @@ namespace GT
         void SetElementPosition(HGUIElement hElement, float xPos, float yPos);
         void SetElementPosition(HGUIElement hElement, int xPos, int yPos);
 
-
         /// Sets the left style property of the given element, in DPI-aware points.
         ///
         /// @param hElement [in] The GUI element whose left position is being set.
