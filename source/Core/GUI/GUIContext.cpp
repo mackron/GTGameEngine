@@ -159,7 +159,7 @@ namespace GT
             // Top level elements may need to have their layouts invalidated.
             for (size_t iTopLevelElement = 0; iTopLevelElement < surface->topLevelElements.GetCount(); ++iTopLevelElement)
             {
-                auto element = this->GetElementPtr(surface->topLevelElements[iTopLevelElement]);
+                auto element = surface->topLevelElements[iTopLevelElement];
                 assert(element != nullptr);
                 {
                     int flags = 0;
@@ -1824,7 +1824,6 @@ namespace GT
         return false;
     }
 
-
     const GTLib::Font* GUIContext::SetElementFont(HGUIElement hElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType)
     {
         auto element = this->GetElementPtr(hElement);
@@ -1949,7 +1948,7 @@ namespace GT
                     auto pSurface = this->GetSurfacePtr(hSurface);
                     if (pSurface != nullptr)
                     {
-                        pSurface->topLevelElements.PushBack(hElement);
+                        pSurface->topLevelElements.PushBack(pElement);
                     }
 
 
@@ -1989,7 +1988,7 @@ namespace GT
                     auto pSurface = this->GetSurfacePtr(pElement->hSurface);
                     if (pSurface != nullptr)
                     {
-                        pSurface->topLevelElements.RemoveFirstOccuranceOf(hElement);
+                        pSurface->topLevelElements.RemoveFirstOccuranceOf(pElement);
                     }
 
 
@@ -2079,7 +2078,7 @@ namespace GT
 
                 for (size_t iElement = 0; iElement < surface->topLevelElements.GetCount(); ++iElement)
                 {
-                    auto topLevelElement = this->GetElementPtr(surface->topLevelElements[iElement]);
+                    auto topLevelElement = surface->topLevelElements[iElement];
                     if (topLevelElement != nullptr)
                     {
                         this->ClippedTraversal(*topLevelElement, rect, [&](GUIElement &elementToPaint, const GTLib::Rect<int> &visibleRect) -> void
@@ -2226,7 +2225,7 @@ namespace GT
 
             for (size_t iElement = 0; iElement < surface->topLevelElements.GetCount(); ++iElement)
             {
-                auto topLevelElement = this->GetElementPtr(surface->topLevelElements[iElement]);
+                auto topLevelElement = surface->topLevelElements[iElement];
                 if (topLevelElement != nullptr)
                 {
                     this->ClippedTraversal(*topLevelElement, rect, [&](GUIElement &element, const GTLib::Rect<int> &visibleRect) -> void
@@ -3041,7 +3040,7 @@ namespace GT
 
         for (size_t iTopLevelElement = 0; iTopLevelElement < pSurface->topLevelElements.count; ++iTopLevelElement)
         {
-            auto pTopLevelElement = this->GetElementPtr(pSurface->topLevelElements[iTopLevelElement]);
+            auto pTopLevelElement = pSurface->topLevelElements[iTopLevelElement];
             assert(pTopLevelElement != nullptr);
             {
                 if (!handler(pTopLevelElement))
@@ -3682,6 +3681,20 @@ namespace GT
                 
                 return false;
             });
+        }
+    }
+
+    void GUIContext::PostEvent_OnSizeAndOnMove(HGUIElement hElement, unsigned int width, unsigned int height, int x, int y)
+    {
+        auto pElementAtStart = this->GetElementPtr(hElement);
+        if (pElementAtStart != nullptr)
+        {
+            this->PostEvent_OnSize(hElement, width, height);
+
+            if (this->GetElementPtr(hElement) == pElementAtStart)       // <-- This check is to guard against cases when the element was deleted during OnSize().
+            {
+                this->PostEvent_OnMove(hElement, x, y);
+            }
         }
     }
 

@@ -28,6 +28,7 @@ namespace GT
     static const uint16_t LayoutFlag_PositionChanged = (1 << 0);
     static const uint16_t LayoutFlag_SizeChanged     = (1 << 1);
 
+    struct GUISurface;
 
     /// The data structure for GUI elements. This structure should only ever be touched by the GUIContext class.
     struct GUIElement
@@ -45,8 +46,13 @@ namespace GT
         /// The handle to the element.
         HGUIElement handle;
 
+
         /// A handle to the surface this element is part of.
         HGUISurface hSurface;
+
+        /// A pointer to the surface this element is part of.
+        GUISurface* pSurface;
+
 
         /// The ID of the element.
         GTLib::String id;
@@ -169,6 +175,22 @@ namespace GT
 
         /// A handle to the next sibling element.
         HGUIElement nextSibling;
+
+
+        /// A pointer to the parent element.
+        GUIElement* pParent;
+
+        /// A pointer to the first child element.
+        GUIElement* pFirstChild;
+
+        /// A pointer to the last child element.
+        GUIElement* pLastChild;
+
+        /// A pointer to the previous sibling element.
+        GUIElement* pPrevSibling;
+
+        /// A pointer to the next sibling element.
+        GUIElement* pNextSibling;
 
 
         /// The element's text manager.

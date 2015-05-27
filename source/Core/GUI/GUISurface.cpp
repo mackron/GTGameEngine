@@ -15,6 +15,8 @@ namespace GT
           auxData(nullptr),
           hElementCapturingMouseEvents(0),
           hElementUnderMouse(0),
+          pElementCapturingMouseEvents(nullptr),
+          pElementUnderMouse(nullptr),
           paintingMode(GUIPaintingMode::Immediate),
           invalidRect()
     {

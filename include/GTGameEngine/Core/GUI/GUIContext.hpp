@@ -1334,8 +1334,6 @@ namespace GT
         GUIElement* GetElementPtr(HGUIElement hElement) const;
 
 
-        /// Retrieves 
-
 
         /// Recursively sets the surface for the given element and it's children.
         ///
@@ -1630,6 +1628,9 @@ namespace GT
         /// @param x       [in] The new position of the element on the x axis, relative to the top left corner of the parent.
         /// @param y       [in] The new position of the element on the y axis, relative to the top left corner of the parent.
         void PostEvent_OnMove(HGUIElement hElement, int x, int y);
+
+        /// @copydoc GUIContextBase::PostEvent_OnSizeAndOnMove()
+        void PostEvent_OnSizeAndOnMove(HGUIElement hElement, unsigned int width, unsigned int height, int x, int y);
 
         /// Posts the OnMouseEnter event.
         ///
