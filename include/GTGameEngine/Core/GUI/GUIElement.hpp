@@ -36,19 +36,11 @@ namespace GT
     public:
 
         /// Constructor.
-        GUIElement(HGUIElement handle);
+        GUIElement();
 
         /// Destructor.
         ~GUIElement();
 
-
-
-        /// The handle to the element.
-        HGUIElement handle;
-
-
-        /// A handle to the surface this element is part of.
-        HGUISurface hSurface;
 
         /// A pointer to the surface this element is part of.
         GUISurface* pSurface;
@@ -161,9 +153,6 @@ namespace GT
         GUIElementStyle style;
 
 
-        /// A handle to the parent element.
-        HGUIElement parent;
-
         /// A handle to the first child element.
         HGUIElement firstChild;
 
@@ -204,6 +193,17 @@ namespace GT
     private:    // No copying.
         GUIElement(const GUIElement &);
         GUIElement & operator=(const GUIElement &);
+    };
+
+    struct GUIElementWithHandle : public GUIElement
+    {
+        GUIElementWithHandle(HGUIElement handle)
+            : GUIElement(), handle(handle)
+        {
+        }
+
+        /// A handle tot eh element.
+        HGUIElement handle;
     };
 }
 

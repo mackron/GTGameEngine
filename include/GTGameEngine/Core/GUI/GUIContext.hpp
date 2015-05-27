@@ -3,6 +3,7 @@
 #ifndef __GT_GUI_Context_hpp_
 #define __GT_GUI_Context_hpp_
 
+#include "GUIContextBase.hpp"
 #include "GUIElement.hpp"
 #include "GUISurface.hpp"
 #include "GUIRenderer.hpp"
@@ -11,7 +12,6 @@
 #include "GUIEventHandler.hpp"
 #include <GTLib/HandleManager.hpp>
 #include <GTLib/Vector.hpp>
-#include <GTLib/List.hpp>
 
 //#define GT_GUI_DEBUGGING 1
 
@@ -67,7 +67,7 @@ namespace GT
     ///
     /// Every GUI operation will be executed through the context. The context is essentially an arbiter of all GUI operations to
     /// ensure everything is done properly, and to properly handle cases when it isn't.
-    class GUIContext
+    class GUIContext : public GUIContextBase
     {
     public:
 
@@ -77,6 +77,73 @@ namespace GT
         /// Destructor.
         ~GUIContext();
 
+
+    private:
+
+        /////////////////////////////////////////////////////////////////
+        // Virtual Method Implementations
+
+        /// @copydoc GUIContextBase::CreateSurfacePtr()
+        GUISurface* CreateSurfacePtr();
+
+        /// @copydoc GUIContextBase::DeleteSurfacePtr()
+        void DeleteSurfacePtr(GUISurface* pSurface);
+
+
+        /// @copydoc GUIContextBase::CreateElementPr()
+        GUIElement* CreateElementPtr();
+
+        /// @copydoc GUIContextBase::DeleteElementPtr()
+        void DeleteElementPtr(GUIElement* pElement);
+        
+
+        /// @copydoc GUIContextBase::IterateSurfaces()
+        void IterateSurfaces(std::function<bool (GUISurface* pSurface)> handler) const;
+
+        /// @copydoc GUIContextBase::IterateElements()
+        void IterateElements(std::function<bool (GUIElement* pElement)> handler) const;
+
+
+        /// @copydoc GUIContextBase::PostEvent_OnSize()
+        void PostEvent_OnSize(GUIElement* pElement, unsigned int width, unsigned int height);
+
+        /// @copydoc GUIContextBase::PostEvent_ONMove()
+        void PostEvent_OnMove(GUIElement* pElement, int x, int y);
+
+        /// @copydoc GUIContextBase::PostEvent_OnSizeAndOnMove()
+        void PostEvent_OnSizeAndOnMove(GUIElement* pElement, unsigned int width, unsigned height, int x, int y);
+
+        /// @copydoc GUIContextBase::PostEvent_OnMouseEnter()
+        void PostEvent_OnMouseEnter(GUIElement* pElement);
+
+        /// @copydoc GUIContextBase::PostEvent_OnMouseLeave()
+        void PostEvent_OnMouseLeave(GUIElement* pElement);
+
+        /// @copydoc GUIContextBase::PostEvent_OnMouseMove()
+        void PostEvent_OnMouseMove(GUIElement* pElement, int mousePosX, int mousePosY);
+
+        /// @copydoc GUIContextBase::PostEvent_OnPaint()
+        void PostEvent_OnPaint(GUISurface* pSurface, const GTLib::Rect<int> &rect);
+
+
+        /// @copydoc GUIContextBase::Renderer_BeginPaintSurface() 
+        void Renderer_BeginPaintSurface(GUISurface* pSurface);
+
+        /// @copydoc GUIContextBase::Renderer_EndPaintSurface()
+        void Renderer_EndPaintSurface();
+
+        /// @copydoc GUIContextBase::Renderer_Clear()
+        void Renderer_Clear(const GTLib::Rect<int> &rect);
+
+        /// @copydoc GUIContextBase::Renderer_DrawRectangle()
+        void Renderer_DrawRectangle(GTLib::Rect<int> rect, GTLib::Colour colour);
+
+        /// @copydoc GUIContextBase::Renderer_SetClippingRect()
+        void Renderer_SetClippingRect(GTLib::Rect<int> clippingRect);
+
+
+
+    public:
 
         /////////////////////////////////////////////////////////////////
         // Surfaces
@@ -325,19 +392,19 @@ namespace GT
         ///
         /// @param hElement [in] The GUI element whose siblings are being iterated.
         /// @param func     [in] The function to call for each element.
-        void IterateElementPrevSiblings(HGUIElement hElement, std::function<void (HGUIElement)> func);
+        void IterateElementPrevSiblings(HGUIElement hElement, std::function<bool (HGUIElement)> handler);
 
         /// Iterates over the next siblings of the given element.
         ///
         /// @param hElement [in] The GUI element whose siblings are being iterated.
         /// @param func     [in] The function to call for each element.
-        void IterateElementNextSiblings(HGUIElement hElement, std::function<void (HGUIElement)> func);
+        void IterateElementNextSiblings(HGUIElement hElement, std::function<bool (HGUIElement)> handler);
 
         /// Iterates over the siblings of the given element, including itself.
         ///
         /// @param hElement [in] The GUI element whose siblings are being iterated.
         /// @param func     [in] The function to call for each sibling.
-        void IterateElementSiblingsAndSelf(HGUIElement hElement, std::function<void (HGUIElement)> func);
+        void IterateElementSiblingsAndSelf(HGUIElement hElement, std::function<bool (HGUIElement)> handler);
 
 
         /// Determines if the given element is a direct child of the given element.
@@ -1331,264 +1398,7 @@ namespace GT
         ///
         /// @remarks
         ///     If the handle is invalid, null will be returned.
-        GUIElement* GetElementPtr(HGUIElement hElement) const;
-
-
-
-        /// Recursively sets the surface for the given element and it's children.
-        ///
-        /// @param element  [in] A reference to the element whose surface is being set.
-        /// @param hSurface [in] A handle to the surface.
-        void SetElementSurfaceRecursive(GUIElement &element, HGUISurface hSurface);
-
-
-        /// Retrieves the absolute rectangle of the given element.
-        ///
-        /// @param hElement [in]  The GUI element whose absolute rectangle is being retrieved.
-        /// @param rectOut  [out] A reference to the structure that will receive the absolute rectangle of the given element.
-        void GetElementAbsoluteRect(GUIElement &element, GTLib::Rect<float> &rectOut) const;
-        void GetElementAbsoluteRect(GUIElement &element, GTLib::Rect<int> &rectOut) const;
-
-        /// Retrieves the rectangle children of the given element will be clipped against.
-        ///
-        /// @param hElement [in]  The GUI element whose clipping rectangle is being retrieved.
-        /// @param rectOut  [out] A reference to the object that will receive the children clipping rectangle.
-        void GetElementChildrenClippingRect(GUIElement &element, GTLib::Rect<float> &rectOut) const;
-        void GetElementChildrenClippingRect(GUIElement &element, GTLib::Rect<int> &rectOut) const;
-
-
-        
-        /// Determines whether or not the given element is visible.
-        ///
-        /// @param element [in] A reference to the element whose visibility state is being determined.
-        ///
-        /// @return True if the element is visible; false otherwise.
-        ///
-        /// @remarks
-        ///     Because an invisible element will render it's descendants invisible, this will be called recursively on the element's ancestors. 
-        bool IsElementVisible(GUIElement &element) const;
-
-
-        /// Determines whether or not the given element is being clipped against it's parent.
-        ///
-        /// @param element [in] A reference to the element whose clipping state is being retrieved.
-        bool IsElementClippedAgainstParent(GUIElement &element) const;
-
-
-        /// Performs a clipped traversals of the children of the given element.
-        ///
-        /// @param element      [in] A reference the root element.
-        /// @param clippingRect [in] The rectangle to clip against.
-        /// @param func         [in] The function to call for the input element and each of it's children.
-        ///
-        /// @remarks
-        ///     This will do a pre-order depth-first traversal, and will include the root element.
-        ///     @par
-        ///     The delegate function will not be called if the child is completely clipped.
-        void ClippedTraversal(GUIElement &element, const GTLib::Rect<float> &clippingRect, std::function<void (GUIElement &, const GTLib::Rect<int> &)> func);
-
-
-        /// Updates the given element's font based on it's current style.
-        ///
-        /// @param element [in] A reference to the element whose having it's font updated.
-        ///
-        /// @return A pointer to the element's new font.
-        const GTLib::Font* UpdateElementFontFromStyle(GUIElement &element);
-
-
-        //////////////////////////////////////////////////
-        // Direct element hierarchy operations.
-
-        /// Attaches a child element to the given parent element.
-        ///
-        /// @param parentElement [in] A reference to the parent element.
-        /// @param childElement  [in] A reference to the child element.
-        ///
-        /// @remarks
-        ///     If the child element is already attached to a parent, it will be detached.
-        void AppendChildElement(GUIElement &parentElement, GUIElement &childElement);
-
-        /// Prepends a child child element to the given parent element.
-        ///
-        /// @param parentElement [in] A reference to the parent element.
-        /// @param childElement  [in] A reference to the child element.
-        ///
-        /// @remarks
-        ///     If the child element is already attached to a parent, it will be detached.
-        void PrependChildElement(GUIElement &parentElement, GUIElement &childElement);
-
-        /// Appends an element to the given sibling.
-        ///
-        /// @param siblingElement  [in] A reference to the sibling that the child will be appended to.
-        /// @param elementToInsert [in] A reference to the element to insert.
-        ///
-        /// @remarks
-        ///     If the elements have different parents, the element to insert will be detached from it's current parent first.
-        void AppendSiblingElement(GUIElement &siblingElement, GUIElement &elementToInsert);
-
-        /// Prepends an element to the given sibling.
-        ///
-        /// @param siblingElement  [in] A reference to the sibling that the element will be prepended to.
-        /// @param elementToInsert [in] A reference to the element to insert.
-        ///
-        /// @remarks
-        ///     If the elements have different parents, the element to insert will be detached from it's current parent first.
-        void PrependSiblingElement(GUIElement &siblingElement, GUIElement &elementToInsert);
-
-        /// Detaches a child element from it's parent element.
-        ///
-        /// @param element [in] A reference to the element to detach from it's parent.
-        ///
-        /// @remarks
-        ///     The element will also be detached from it's siblings. The difference between this and DetachGUIElementFromSiblingsAndParent()
-        ///     is that if the element is already parentless, it will not detach from any siblings.
-        void DetachElementFromParent(GUIElement &element);
-
-        /// Detaches an element from it's siblings, and by extension, it's parent.
-        ///
-        /// @param element [in] A reference to the element to detach from it's siblings.
-        ///
-        /// @remarks
-        ///     Detaching an element from it's siblings will isolate it from siblings and it's parent, but will keep it's children. The
-        ///     difference between this and DetachGUIElementFromParent() is that this will detach from siblings even when the element does
-        ///     not have a parent.
-        void DetachElementFromParentAndSiblings(GUIElement &element);
-
-
-
-        ////////////////////////////////////////////////////////////////
-        // Iteration
-        //
-        // All iterators here are standard. When the handler function returns false, the iteration will stop.
-        
-        /// Iterates over every surface.
-        ///
-        /// @param handler [in] The function to call for each surface.
-        ///
-        /// @return False if the iteration was terminated early as a result of handler() returning false. True if everything was iterated.
-        bool IterateSurfaces(std::function<bool (GUISurface* pSurface)> handler);
-
-        /// Iterates over every element.
-        ///
-        /// @param handler [in] The function to call for each element.
-        ///
-        /// @return False if the iteration was terminated early as a result of handler() returning false. True if everything was iterated.
-        bool IterateElements(std::function<bool (GUIElement* pElement)> handler);
-
-        /// Iterates over each element that is attached to the given surface.
-        ///
-        /// @param surface [in] A reference to the surface whose elements are being iterated.
-        /// @param handler [in] The function to call for each element.
-        ///
-        /// @return False if the iteration was terminated early as a result of handler() returning false. True if everything was iterated.
-        bool IterateSurfaceElements(GUISurface* pSurface, std::function<bool (GUIElement* pElement)> handler);
-
-        /// Recursively iterates over every child of the given element.
-        ///
-        /// @param element [in] A reference to the element whose children are being iterated.
-        /// @param handler [in] The function to call for each child element.
-        ///
-        /// @return False if the iteration was terminated early as a result of handler() returning false. True if everything was iterated.
-        bool IterateElementChildrenRecursive(GUIElement* pElement, std::function<bool (GUIElement* pElement)> handler);
-
-        /// Iterates over every child of the given element.
-        ///
-        /// @param element [in] A reference to the element whose children are being iterated.
-        /// @param handler [in] The function to call for each child element.
-        ///
-        /// @return False if the iteration was terminated early as a result of handler() returning false. True if everything was iterated.
-        ///
-        /// @remarks
-        ///     This is not recursive.
-        bool IterateElementChildren(GUIElement* pElement, std::function<bool (GUIElement* pElement)> handler);
-
-
-
-
-        ////////////////////////////////////////////////////////////////
-        // DPI / Scaling
-
-        /// Updates every element as required as a result of a change in DPI.
-        ///
-        /// @param surface [in] A reference to the surface whose DPI has changed.
-        ///
-        /// @remarks
-        ///     This will update the layout and font of every element.
-        void UpdateAllElementsOnDPIChange(GUISurface &surface);
-        void UpdateAllElementsOnDPIChange();
-
-        /// Updates the size of each border of the given element based on their style and current DPI scaling.
-        ///
-        /// @param element [in] A reference to the element whose border sizes are being updated.
-        ///
-        /// @remarks
-        ///     This does not invalidate the layout.
-        void UpdateElementBorderSizes(GUIElement &element);
-
-        /// Updates the size of the margins of the given element based on their style and current DPI scaling.
-        ///
-        /// @param element [in] A reference to the element whose margin sizes are being updated.
-        ///
-        /// @remarks
-        ///     This does not invalidate the layout.
-        void UpdateElementMarginSizes(GUIElement &element);
-
-        /// Updates the size of the padding of the given element based on their style and current DPI scaling.
-        ///
-        /// @param element [in] A reference to the element whose padding sizes are being updated.
-        ///
-        /// @remarks
-        ///     This does not invalidate the layout.
-        void UpdateElementPaddingSizes(GUIElement &element);
-
-
-
-        //////////////////////////////////////////////////
-        // Painting
-
-        /// Marks the given rectangle as invalid which will cause a repaint.
-        ///
-        /// @param surface [in] The surface whose rectangle region is being invalidated.
-        /// @param rect    [in] The rectangle to invalidate.
-        ///
-        /// @remarks
-        ///     Invalidating a rectangle does not redraw it. It will instead be redrawn when the host application requests it with Paint().
-        void Painting_InvalidateRect(GUISurface &surface, const GTLib::Rect<int> &rect);
-        void Painting_InvalidateRect(HGUISurface surface, const GTLib::Rect<int> &rect);
-
-        /// Invalidates the rectangle of the given element.
-        ///
-        /// @param element [in] A reference to the element whose rectangle is being invalidated.
-        void Painting_InvalidateElementRect(GUIElement &element);
-
-        /// Paints the invalid rectangles of every surface that has an invalid region.
-        ///
-        /// @remarks
-        ///     This does not paint surfaces whose painting modes are set to GUIPaintingMode::Deferred.
-        ///     @par
-        ///     This will mark every invalid rectangle as valid.
-        void Painting_PaintAndValidateSurfaceRects();
-
-        /// Paints the given element and it's descendents if they fall into the given rectangle.
-        ///
-        /// @param surface      [in] The surface being drawn to.
-        /// @param element      [in] A reference to the element to draw.
-        /// @param clippingRect [in] The rectangle to clip against.
-        ///
-        /// @remarks
-        ///     If the element falls outside the given rectangle, it will ignored, as will it's descendents that are clipped against it.
-        void Painting_PaintElement(GUISurface &surface, GUIElement &element, const GTLib::Rect<int> &clippingRect);
-
-        /// Optimized function for setting the clipping and drawing the rectangle at the same time.
-        ///
-        /// @param surface [in] The surface to draw on.
-        /// @param rect    [in] The clipping rectangle, and the rectangle to draw.
-        /// @param color   [in] The color to draw the clipping rectangle.
-        ///
-        /// @remarks
-        ///     This function simply combines SetClippingRect and DrawRectangle into a single optimized call.
-        void Painting_DrawAndSetClippingRect(GUISurface &surface, const GTLib::Rect<int> &rect, const GTLib::Colour &color);
-
+        GUIElementWithHandle* GetElementPtr(HGUIElement hElement) const;
 
 
         //////////////////////////////////////////////////
@@ -1615,535 +1425,14 @@ namespace GT
         ///     If the iteration function returns false, iteration will stop.
         void IterateGlobalEventHandlers(std::function<bool (GUIEventHandler &)> func);
 
-        /// Posts the OnSize event.
-        ///
-        /// @param element [in] A reference to the element receiving the event.
-        /// @param width   [in] The new width of the element.
-        /// @param height  [in] The new height of the element.
-        void PostEvent_OnSize(HGUIElement hElement, unsigned int width, unsigned int height);
-
-        /// Posts the OnMove event.
-        ///
-        /// @param element [in] A reference to the element receiving the event.
-        /// @param x       [in] The new position of the element on the x axis, relative to the top left corner of the parent.
-        /// @param y       [in] The new position of the element on the y axis, relative to the top left corner of the parent.
-        void PostEvent_OnMove(HGUIElement hElement, int x, int y);
-
-        /// @copydoc GUIContextBase::PostEvent_OnSizeAndOnMove()
-        void PostEvent_OnSizeAndOnMove(HGUIElement hElement, unsigned int width, unsigned int height, int x, int y);
-
-        /// Posts the OnMouseEnter event.
-        ///
-        /// @param element [in] A reference to the element receiving the event.
-        void PostEvent_OnMouseEnter(HGUIElement hElement);
-
-        /// Posts the OnMouseLeave event.
-        ///
-        /// @param element [in] A reference to the element receiving the event.
-        void PostEvent_OnMouseLeave(HGUIElement hElement);
-
-        /// Posts the OnMouseMove event.
-        ///
-        /// @param element   [in] A reference to the element receiving the event.
-        /// @param mousePosX [in] The position of the mouse on the x axis relative to the top left corner of the element.
-        /// @param mousePosY [in] The position of the mouse on the y axis relative to the top left corner of the element.
-        void PostEvent_OnMouseMove(HGUIElement hElement, int mousePosX, int mousePosY);
-
-        /// Posts the OnPaint event.
-        ///
-        /// @param hSurface [in] A handle to the surface that has been painted.
-        /// @param rect     [in] The rectangle that will just painted.
-        void PostEvent_OnPaint(HGUISurface hSurface, const GTLib::Rect<int> &rect);
-
-
-        //////////////////////////////////////////////////
-        // Layout
-
-        /// Helper method for setting the size of the given element.
-        ///
-        /// @param hElement   [in] A handle to the element whose size is being set.
-        /// @param width      [in] The width of the element as a 32-bit unsigned int, the value of which is determined by widthType
-        /// @param widthType  [in] The type of number the width is (actual, percentage, etc.)
-        /// @param height     [in] The height of the element as a 32-bit unsigned int, the value of which is determined by heightType
-        /// @param heightType [in] The type of number the height is (actual, precentage, etc.)
-        ///
-        /// @remarks
-        ///     widthType and heightType can be one of the NumberType_* contants.
-        void Layout_SetElementSize(HGUIElement hElement, uint32_t width, uint32_t widthType, uint32_t height, uint32_t heightType);
-
-        /// Helper method for setting the width of the given element.
-        ///
-        /// @param hElement   [in] A handle to the element whose size is being set.
-        /// @param width      [in] The width of the element as a 32-bit unsigned int, the value of which is determined by widthType
-        /// @param widthType  [in] The type of number the width is (actual, percentage, etc.)
-        ///
-        /// @remarks
-        ///     widthType can be one of the NumberType_* contants.
-        void Layout_SetElementWidth(HGUIElement hElement, uint32_t width, uint32_t widthType);
-
-        /// Helper method for setting the min width of the given element.
-        ///
-        /// @param hElement  [in] A handle to the element whose min size is being set.
-        /// @param minWidth  [in] The min width of the element as a 32-bit unsigned int, the value of which is determined by widthType.
-        /// @param widthType [in] The type of number the width is (actual, percentage, etc.)
-        void Layout_SetElementMinWidth(HGUIElement hElement, uint32_t minWidth, uint32_t widthType);
-
-        /// Helper method for setting the max width of the given element.
-        ///
-        /// @param hElement  [in] A handle to the element whose min size is being set.
-        /// @param minWidth  [in] The ax width of the element as a 32-bit unsigned int, the value of which is determined by widthType.
-        /// @param widthType [in] The type of number the width is (actual, percentage, etc.)
-        void Layout_SetElementMaxWidth(HGUIElement hElement, uint32_t maxWidth, uint32_t widthType);
-
-        /// Helper method for setting the height of the given element.
-        ///
-        /// @param hElement   [in] A handle to the element whose size is being set.
-        /// @param height     [in] The height of the element as a 32-bit unsigned int, the value of which is determined by heightType
-        /// @param heightType [in] The type of number the height is (actual, precentage, etc.)
-        ///
-        /// @remarks
-        ///     heightType can be one of the NumberType_* contants.
-        void Layout_SetElementHeight(HGUIElement hElement, uint32_t height, uint32_t heightType);
-
-        /// Helper method for setting the min height of the given element.
-        ///
-        /// @param hElement  [in] A handle to the element whose min size is being set.
-        /// @param minWidth  [in] The min height of the element as a 32-bit unsigned int, the value of which is determined by widthType.
-        /// @param widthType [in] The type of number the height is (actual, percentage, etc.)
-        void Layout_SetElementMinHeight(HGUIElement hElement, uint32_t minHeight, uint32_t heightType);
-
-        /// Helper method for setting the max height of the given element.
-        ///
-        /// @param hElement  [in] A handle to the element whose min size is being set.
-        /// @param minWidth  [in] The ax height of the element as a 32-bit unsigned int, the value of which is determined by widthType.
-        /// @param widthType [in] The type of number the height is (actual, percentage, etc.)
-        void Layout_SetElementMaxHeight(HGUIElement hElement, uint32_t maxHeight, uint32_t heightType);
-
-
-        /// Invalidates the layout of the given element.
-        ///
-        /// @param hElement [in] A reference to the element whose layout is being invaliated.
-        /// @param flags    [in] The flags specifying which layout properties have changed.
-        ///
-        /// @remarks
-        ///     When a change is made to an element such that it's layout needs updating, this will need to be called on that element.
-        ///     @par
-        ///     Basically, this function just marks the layout as invalid - it does not actually update the layout. The layout will be
-        ///     updated when ValidateGUIElementLayouts() is called.
-        void Layout_InvalidateElementLayout(GUIElement &element, unsigned int flags);
-        void Layout_InvalidateElementLayout( HGUIElement hElement, unsigned int flags)
-        {
-            auto element = this->GetElementPtr(hElement);
-            if (element != 0)
-            {
-                this->Layout_InvalidateElementLayout(*element, flags);
-            }
-        }
-
-        /// Invalidates the applicable layouts of the applicable elements based on when the inner width of the given element changes.
-        ///
-        /// @param element [in] A reference to the element whose inner width has changed.
-        void Layout_InvalidateElementLayoutsOnInnerWidthChange(GUIElement &element);
-
-        /// Invalidates the applicable layouts of the applicable elements based on when the inner height of the given element changes.
-        ///
-        /// @param element [in] A reference to the element whose inner height has changed.
-        void Layout_InvalidateElementLayoutsOnInnerHeightChange(GUIElement &element);
-
-        /// Invalidates the applicable layouts of the applicable elements based on when the inner size (width and height) of the given element changes.
-        ///
-        /// @param element [in] A reference to the element whose inner size has changed.
-        void Layout_InvalidateElementLayoutsOnInnerSizeChange(GUIElement &element);
-
-
-        /// Invalidates the applicable layouts of the applicable elements based on when the child axis of the given element changes.
-        ///
-        /// @param element [in] A reference to the element whose child axis has changed.
-        void Layout_InvalidateElementLayoutsOnChildAxisChange(GUIElement &element);
-
-
-        /// Invalidates the applicable layouts of the applicable elements based on when the horizontal align of the given element changes.
-        ///
-        /// @param element [in] A reference to the element whose horizontal alignment has changed.
-        void Layout_InvalidateElementLayoutsOnHorizontalAlignChange(GUIElement &element);
-
-        /// Invalidates the applicable layouts of the applicable elements based on when the vertical align of the given element changes.
-        ///
-        /// @param element [in] A reference to the element whose vertical alignment has changed.
-        void Layout_InvalidateElementLayoutsOnVerticalAlignChange(GUIElement &element);
-
-
-
-        /// Validates the layouts of every element whose layout is invalid.
-        ///
-        /// @remarks
-        ///     This is where the layouts of elements are actually updated. By the time this method returns, all elements should have valid layouts.
-        void Layout_ValidateElementLayouts();
-
-        /// Validates the layout of the given element.
-        ///
-        /// @param element [in] The element whose layout is being validated.
-        void Layout_ValidateElementLayout(GUIElement &element);
-
-        /// Validates the width of the given element.
-        ///
-        /// @param element [in] The element whose width is being validated.
-        void Layout_ValidateElementWidth(GUIElement &element);
-
-        /// Validates the height of the given element.
-        ///
-        /// @param element [in] The element whose hieght is being validated.
-        void Layout_ValidateElementHeight(GUIElement &element);
-
-        /// Validates the position of the given element.
-        ///
-        /// @param element               [in] The element whose position is being validated.
-        ///
-        /// @remarks
-        ///     The will validate both the X and Y position.
-        void Layout_ValidateElementPosition(GUIElement &element);
-
-        /// Validates the position of the given element based on absolute positioning.
-        ///
-        /// @param element               [in] The element whose position is being validated.
-        ///
-        /// @remarks
-        ///     This should only be called when the positioning of the given element is absolute.
-        void Layout_ValidateElementPosition_Absolute(GUIElement &element);
-
-        /// Validates the position of the given element based on relative positioning.
-        ///
-        /// @param element [in] The element whose position is being validated.
-        ///
-        /// @remarks
-        ///     This should only be called when the positioning of the given element is relative.
-        void Layout_ValidateElementPosition_Relative(GUIElement &element);
-
-        /// Validates the position of the given element based on automatic positioning.
-        ///
-        /// @param element [in] The element whose position is being validated.
-        ///
-        /// @remarks
-        ///     This should only be called when the positioning of the given element is automatic.
-        void Layout_ValidateElementPosition_Auto(GUIElement &element);
-
-        /// Validates the text layout of the given element.
-        ///
-        /// @param element [in] The element whose text layout is being validated.
-        void Layout_ValidateElementText(GUIElement &element);
-
-
-        /// Marks the width of the givn element as valid.
-        ///
-        /// @param element [in] A reference to the element whose width is being marked as valid.
-        void Layout_MarkElementWidthAsValid(GUIElement &element);
-
-        /// Marks the height of the givn element as valid.
-        ///
-        /// @param element [in] A reference to the element whose height is being marked as valid.
-        void Layout_MarkElementHeightAsValid(GUIElement &element);
-
-        /// Marks the position of the given element as valid.
-        ///
-        /// @param element [in] A reference to the element whose position is being marked as valid.
-        void Layout_MarkElementPositionAsValid(GUIElement &element);
-
-        /// Marks the layout of the text of the given element as valid.
-        ///
-        /// @param element [in] A reference to the element whose text layout is being marked as valid.
-        void Layout_MarkElementTextAsValid(GUIElement &element);
-
-
-        /// Updates the width of the given element, returning it's new outer width (width + horizontal margins).
-        ///
-        /// @param element [in] The element whose width is being updated.
-        float Layout_UpdateElementWidth(GUIElement &element);
-
-        /// Updastes the height of the given element, returning it's new outer height (width + vertical margins).
-        ///
-        /// @param element [in] The element whose height is being updated.
-        float Layout_UpdateElementHeight(GUIElement &element);
-
-
-        /// Calculates the width of the given element based on the given width style attribute.
-        ///
-        /// @param element         [in] The element whose new width is being calculated.
-        /// @param width           [in] The width style value.
-        /// @param widthType       [in] The width style value type (%, absolute, etc).
-        /// @param calculateFlexed [in] Whether or not flexing should be calculated.
-        ///
-        /// @remarks
-        ///     This does not set the new width.
-        float Layout_CalculateElementWidth(GUIElement &element, uint32_t width, uint32_t widthType, bool calculateFlexed);
-
-        /// Calculates the height of the given element based on the given height style attribute.
-        ///
-        /// @param element         [in] The element whose height is being calculated.
-        /// @param height          [in] The height style value.
-        /// @param heightType      [in] The height style value type (%, absolute, etc).
-        /// @param calculateFlexed [in] Whether or not flexing should be calculated.
-        ///
-        /// @remarks
-        ///     This does not set the new width.
-        float Layout_CalculateElementHeight(GUIElement &element, uint32_t height, uint32_t heightType, bool calculateFlexed);
-
-
-        /// Calculates the width of the children of the given element for when the parent is auto-sized based on the width of it's children.
-        ///
-        /// @param element [in] The element whose children width is being calculated.
-        ///
-        /// @return The width of the children of the given element for when it is auto-sized based on the width of the it's children.
-        ///
-        /// @remarks
-        ///     This will only include children whose size would actually affect the parent. This only considers auto-positioned children. Absolute
-        ///     and relative positioned elements are ignored.
-        float Layout_CalculateElementChildrenWidthForAutoSize(GUIElement &element) const;
-
-        /// Calculates the height of the children of the given element for when the parent is auto-sized based on the height of it's children.
-        ///
-        /// @param element [in] The element whose children height is being calculated.
-        ///
-        /// @return The height of the children of the given element for when it is auto-sized based on the height of the it's children.
-        ///
-        /// @remarks
-        ///     This will only include children whose size would actually affect the parent. This only considers auto-positioned children. Absolute
-        ///     and relative positioned elements are ignored.
-        float Layout_CalculateElementChildrenHeightForAutoSize(GUIElement &element) const;
-
-        /// Retrieves the total width of the children of the given element that would contribute to it's width when auto-sized.
-        ///
-        /// @param element [in] A reference to the element whose childrens' size is being retrieved.
-        ///
-        /// @remarks
-        ///     This will not include invisible children, not those that would not contribute to the size of the element if it were sized based on the children.
-        float Layout_CalculateElementChildrenWidth(GUIElement &element);
-
-        /// Retrieves the total height of the children of the given element that would contribute to it's width when auto-sized.
-        ///
-        /// @param element [in] A reference to the element whose childrens' size is being retrieved.
-        ///
-        /// @remarks
-        ///     This will not include invisible children, not those that would not contribute to the size of the element if it were sized based on the children.
-        float Layout_CalculateElementChildrenHeight(GUIElement &element);
-
-
-        /// Retrieves the total width of the given element and it's visible, auto-positioned siblings.
-        ///
-        /// @param element [in] A reference to the element whose siblings size is being retrieved.
-        ///
-        /// @remarks
-        ///     This will not include invisible siblings, nor those that are not auto-positioned.
-        float Layout_CalculateTotalVisibleAutoPositionedSiblingsWidth(GUIElement &element);
-
-        /// Retrieves the total height of the given element and it's visible, auto-positioned siblings.
-        ///
-        /// @param element [in] A reference to the element whose siblings size is being retrieved.
-        ///
-        /// @remarks
-        ///     This will not include invisible siblings, nor those that are not auto-positioned.
-        float Layout_CalculateTotalVisibleAutoPositionedSiblingsHeight(GUIElement &element);
-
-
-        /// Finds the closest neighboring auto-positioned sibling of the given element.
-        ///
-        /// @param element [in] The element whose neighboring sibling is being retrieved.
-        ///
-        /// @remarks
-        ///     This is used when needing to update the position of auto-positioned sibling elements because they all depend on each other.
-        GUIElement* Layout_GetNeighboringAutoPositionedSibling(GUIElement &element);
-
-        /// Finds the first auto-positioned child of the given element.
-        ///
-        /// @param element [in] The element whose first auto-positioned child is being retrieved.
-        ///
-        /// @remarks
-        ///     This is used when needing to update the position of auto-positioned children.
-        GUIElement* Layout_GetFirstAutoPositionedChild(GUIElement &element);
-
-
-
-        /// Marks the position of the given element as changed.
-        ///
-        /// @param element [in] A reference to the element whose position is being marked as changed.
-        ///
-        /// @remarks
-        ///     At the end of validation, all elements whose position has changed will have move events posted.
-        void Layout_MarkElementPositionAsChanged(GUIElement &element);
-
-        /// Marks the size of the given element as changed.
-        ///
-        /// @param element [in] A reference to the element whose size is being marked as changed.
-        ///
-        /// @remarks
-        ///     At the end of layout validation, all elements whose size is marked as changed will have size events posted.
-        void Layout_MarkElementSizeAsChanged(GUIElement &element);
-
-
-        /// Recursively determines whether or not the absolute position of the given element has changed.
-        ///
-        /// @param element [in] A reference to the element whose absolute position change state is being checked.
-        bool Layout_HasElementAbsolutePositionChanged(GUIElement &element);
-
-
-        /// Updates the absolute positions of the elements whose absolute positions are currently invalid.
-        ///
-        /// @remarks
-        ///     This is called at the end of a layout validation process.
-        void Layout_UpdateElementAbsolutePositions();
-
-        /// Updates the absolute position of the given element, and then recursively does the same thing for it's children.
-        ///
-        /// @param element [in] The element whose position is being updated.
-        void Layout_UpdateElementAbsolutePosition(GUIElement &element);
-
-
-        /// Posts OnSize and OnMove events to every element whose size and/or position has changed.
-        ///
-        /// @remarks
-        ///     This is called at the end of a layout validation process.
-        void Layout_InvalidateRectsAndPostEventsToElements();
-
-
-
-        ////////////////////////////
-        // Static Helpers
-        
-        /// Retrieves the horizontal padding (left padding + right padding) of the given element.
-        ///
-        /// @param element [in] A reference to the element whose horizontal padding is being retrieved.
-        static float Layout_GetElementHorizontalPadding(GUIElement &element);
-
-        /// Retrieves the vertical padding (top padding + bottom padding) of the given element.
-        ///
-        /// @param element [in] A reference to the element whose vertical padding is being retrieved.
-        static float Layout_GetElementVerticalPadding(GUIElement &element);
-
-        /// Retrieves the horizontal margin (left margin + right margin) of the given element.
-        ///
-        /// @param element [in] A reference to the element whose horizontal margin is being retrieved.
-        static float Layout_GetElementHorizontalMargin(GUIElement &element);
-
-        /// Retrieves the vertical margin (top margin + bottom margin) of the given element.
-        ///
-        /// @param element [in] A reference to the element whose vertical margin is being retrieved.
-        static float Layout_GetElementVerticalMargin(GUIElement &element);
-
-        /// Retrieves the size of the horizontal borders (left and right borders) of the given element.
-        ///
-        /// @param element [in] A reference to the element whose horizontal border size is being retrieved.
-        static float Layout_GetElementHorizontalBorderSize(GUIElement &element);
-
-        /// Retrieves the size of the vertical borders (top and bottom borders) of the given element.
-        ///
-        /// @param element [in] A reference to the element whose vertical border size is being retrieved.
-        static float Layout_GetElementVerticalBorderSize(GUIElement &element);
-
-        /// Retrieves the width + left margin + right margin of the given element.
-        ///
-        /// @param element [in] A reference to the element whose outer width is being retrieved.
-        ///
-        /// @remarks
-        ///     The outer width is the width of the element plus the left and right margins.
-        static float Layout_GetElementOuterWidth(GUIElement &element);
-
-        /// Retrieves the height + top margin + bottom margin of the given element.
-        ///
-        /// @param element [in] A reference to the element whose outer height is being retrieved.
-        ///
-        /// @remarks
-        ///     The outer height is the height of the element plus the top and bottom margins.
-        static float Layout_GetElementOuterHeight(GUIElement &element);
-
-        /// Retrieves the width minus the left and right padding and borders of the given element.
-        ///
-        /// @param element [in] A reference to the element whose inner width is being retrieved.
-        ///
-        /// @remarks
-        ///     The inner width is the width of the element minus the left and right padding and borders.
-        static float Layout_GetElementInnerWidth(GUIElement &element);
-
-        /// Retrieves the height minus the top and bottom padding and borders of the given element.
-        ///
-        /// @param element [in] A reference to the element whose inner height is being retrieved.
-        ///
-        /// @remarks
-        ///     The inner height is the height of the element minus the top and bottom padding and borders.
-        static float Layout_GetElementInnerHeight(GUIElement &element);
-
-        /// Retrieves the width minus the left and right borders of the given element.
-        ///
-        /// @param element [in] A reference to the element whose inner border width is being retrieved.
-        ///
-        /// @remarks
-        ///     The inner-border width is the width of the element minus the left and right borders, but including the padding.
-        static float Layout_GetElementInnerBorderWidth(GUIElement &element);
-
-        /// Retrieves the height minus the top and bottom borders of the given element.
-        ///
-        /// @param element [in] A reference to the element whose inner-border height is being retrieved.
-        ///
-        /// @remarks
-        ///     The inner-border height is the height of the element minus the top and bottom borders, but including the padding.
-        static float Layout_GetElementInnerBorderHeight(GUIElement &element);
-
-        /// Retrieves the width of the given element that should be used when calculating the relative width of a child.
-        ///
-        /// @param element [in] A reference to the element whose width is being calculated.
-        static float Layout_GetElementWidthForRelativeSizing(GUIElement &element);
-
-        /// Retrieves the height of the given element that should be used when calculating the relative height of a child.
-        ///
-        /// @param element [in] A reference to the element whose height is being calculated.
-        static float Layout_GetElementHeightForRelativeSizing(GUIElement &element);
-
-        /// Determines whether or not the width of the given element is invalid.
-        ///
-        /// @param element [in] A reference to the element whose width validation state is being determined.
-        ///
-        /// @return True if the width of the given element is invalid; false otherwise.
-        static bool Layout_IsElementWidthInvalid(GUIElement &element);
-
-        /// Determines whether or not the height of the given element is invalid.
-        ///
-        /// @param element [in] A reference to the element whose height validation state is being determined.
-        ///
-        /// @return True if the height of the given element is invalid; false otherwise.
-        static bool Layout_IsElementHeightInvalid(GUIElement &element);
-
-        /// Determines whether or not the position of the given element is invalid.
-        ///
-        /// @param element [in] A reference to the element whose position validation state is being determined.
-        ///
-        /// @return True if the position of the given element is invalid; false otherwise.
-        static bool Layout_IsElementPositionInvalid(GUIElement &element);
-
 
     private:
 
         /// The handle manager for elements.
-        HandleManager<HGUIElement, GUIElement> m_elementHandles;
+        HandleManager<HGUIElement, GUIElementWithHandle> m_elementHandles;
 
         /// The handle manager for surfaces.
         HandleManager<HGUISurface, GUISurfaceWithHandle> m_surfaceHandles;
-
-
-        /// The image manager for creating, deleting and updating images.
-        //GUIImageManager_Default m_imageManager;
-
-        /// The font manager for working with fonts. This depends on m_imageManager, so must be declared and initialized afterwards.
-        GUIFontManager m_fontManager;
-
-        /// The default font for when elements have not yet been assigned one.
-        GTLib::Font* m_defaultFont;
-
-
-        /// The base DPI on the X axis for calculating the scaling factor. Defaults to 96.
-        unsigned int m_xBaseDPI;
-
-        /// The base DPI on yhe Y axis for calculating the scaling factor. Defaults to 96.
-        unsigned int m_yBaseDPI;
-
-        
 
 
         /// A pointer to the renderer.
@@ -2151,32 +1440,6 @@ namespace GT
 
         /// Keeps track of whether or not the context owns the renderer object.
         bool m_ownsRenderer;
-
-
-        /// Object containing the necessary variables for handling layout updates.
-        struct GUILayoutContext
-        {
-            GUILayoutContext()
-                : invalidElements(),
-                  validatedElements(),
-                  elementsWithInvalidAbsolutePositions()
-            {
-            }
-
-            /// The elements that have an invalid layout property. We need fast insertions and removals here, so we'll use a linked list.
-            GTLib::List<GUIElement*> invalidElements;
-
-            /// The elements whose layout has changed. We use this during the post-process stage of layout validation so we can know which elements to post events to.
-            GTLib::Vector<GUIElement*> validatedElements;
-
-            /// The elements that need to have their absolute positions updated.
-            GTLib::Vector<GUIElement*> elementsWithInvalidAbsolutePositions;
-
-        } m_layoutContext;
-
-
-        /// The batch operation lock counter. When this is >0, any operation that is controlled by batching will be locked.
-        uint32_t m_batchLockCounter;
 
         /// The list of global event handlers.
         GTLib::Vector<GUIEventHandler*> m_globalEventHandlers;

@@ -144,7 +144,7 @@ namespace GT
         /// Sets the clipping rectangle for rendering.
         ///
         /// @param rect [in] The clipping rectangle.
-        virtual void Renderer_SetClippingRect(GTLib::Rect<int> clippingRect);
+        virtual void Renderer_SetClippingRect(GTLib::Rect<int> clippingRect) = 0;
 
 
 
@@ -1297,37 +1297,6 @@ namespace GT
         void PaintSurface(GUISurface* pSurface);
 
 
-        /////////////////////////////////////////////////////////////////
-        // Events
-        //
-        // There are two scopes an event handler can be attached to:
-        //   1) Local - attached to an individual element.
-        //   2) Global - attached at a global level.
-
-        /// Attaches an event handler to local scope.
-        ///
-        /// @param hElement     [in] A handle to the element to attach the event handler to.
-        /// @param eventHandler [in] A reference to the event handler to attach.
-        void AttachLocalEventHandler(GUIElement* pElement, GUIEventHandler &eventHandler);
-
-        /// Detaches a local event handler.
-        ///
-        /// @param hElement     [in] A handle to the element whose event handler is being detached.
-        /// @param eventHandler [in] A reference to the event handler to detach.
-        void DetachLocalEventHandler(GUIElement* pElement, GUIEventHandler &eventHandler);
-
-        /// Attaches a global event handler.
-        ///
-        /// @param eventHandler [in] A reference to the event handler to attach.
-        void AttachGlobalEventHandler(GUIEventHandler &eventHandler);
-
-        /// Detaches a global event handler.
-        ///
-        /// @param eventHandler [in] A reference to the event handler to detach,.
-        void DetachGlobalEventHandler(GUIEventHandler &eventHandler);
-
-
-
         ////////////////////////////////////////////////////////////////
         // Inbound Events
         //
@@ -2056,9 +2025,6 @@ namespace GT
 
         /// The batch operation lock counter. When this is >0, any operation that is controlled by batching will be locked.
         uint32_t m_batchLockCounter;
-
-        /// The list of global event handlers.
-        GTLib::Vector<GUIEventHandler*> m_globalEventHandlers;
     };
 }
 

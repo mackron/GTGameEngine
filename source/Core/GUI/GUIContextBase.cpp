@@ -8,8 +8,7 @@ namespace GT
         : m_fontManager(),
           m_xBaseDPI(96), m_yBaseDPI(96),
           m_layoutContext(),
-          m_batchLockCounter(0),
-          m_globalEventHandlers()
+          m_batchLockCounter(0)
     {
     }
 
@@ -419,7 +418,7 @@ namespace GT
 
 
             // If the child was on a different surface to the parent, it needs to be moved.
-            if (pParentElement->hSurface != pChildElement->hSurface)
+            if (pParentElement->pSurface != pChildElement->pSurface)
             {
                 this->SetElementSurfaceRecursive(pChildElement, pParentElement->pSurface);
             }
@@ -1989,7 +1988,7 @@ namespace GT
             if (pElement->pSurface != pSurface)
             {
                 // The element must be detached from the old surface first.
-                if (pElement->hSurface != 0)
+                if (pElement->pSurface != 0)
                 {
                     this->DetachElementFromSurface(pElement);
                 }
@@ -2141,34 +2140,6 @@ namespace GT
         this->PaintSurface(pSurface, paintRect);
     }
 
-
-
-    /////////////////////////////////////////////////////////////////
-    // Events
-
-    void GUIContextBase::AttachLocalEventHandler(GUIElement* pElement, GUIEventHandler &eventHandler)
-    {
-        assert(pElement != nullptr);
-
-        pElement->eventHandlers.PushBack(&eventHandler);
-    }
-
-    void GUIContextBase::DetachLocalEventHandler(GUIElement* pElement, GUIEventHandler &eventHandler)
-    {
-        assert(pElement != nullptr);
-
-        pElement->eventHandlers.RemoveFirstOccuranceOf(&eventHandler);
-    }
-
-    void GUIContextBase::AttachGlobalEventHandler(GUIEventHandler &eventHandler)
-    {
-        m_globalEventHandlers.PushBack(&eventHandler);
-    }
-
-    void GUIContextBase::DetachGlobalEventHandler(GUIEventHandler &eventHandler)
-    {
-        m_globalEventHandlers.RemoveFirstOccuranceOf(&eventHandler);
-    }
 
 
 
