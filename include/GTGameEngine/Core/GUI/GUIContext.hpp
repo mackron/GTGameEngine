@@ -1321,7 +1321,7 @@ namespace GT
         ///
         /// @remarks
         ///     If the handle is invalid, null will be returned.
-        GUISurface* GetSurfacePtr(HGUISurface hSurface) const;
+        GUISurfaceWithHandle* GetSurfacePtr(HGUISurface hSurface) const;
 
         /// Retrieves a pointer to the actual GUI element referred to by the given handle.
         ///
@@ -2124,7 +2124,7 @@ namespace GT
         HandleManager<HGUIElement, GUIElement> m_elementHandles;
 
         /// The handle manager for surfaces.
-        HandleManager<HGUISurface, GUISurface> m_surfaceHandles;
+        HandleManager<HGUISurface, GUISurfaceWithHandle> m_surfaceHandles;
 
 
         /// The image manager for creating, deleting and updating images.

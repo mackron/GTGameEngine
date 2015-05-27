@@ -75,7 +75,7 @@ namespace GT
         HGUISurface handle = m_surfaceHandles.CreateHandle();
         if (handle != 0)
         {
-            m_surfaceHandles.AssociateObjectWithHandle(handle, new GUISurface(handle));
+            m_surfaceHandles.AssociateObjectWithHandle(handle, new GUISurfaceWithHandle(handle));
         }
 
         return handle;
@@ -115,7 +115,7 @@ namespace GT
 
         if (foundSurface != nullptr)
         {
-            return foundSurface->handle;
+            return reinterpret_cast<GUISurfaceWithHandle*>(foundSurface)->handle;
         }
         
         // A surface with the given ID could not be found.
@@ -2150,25 +2150,24 @@ namespace GT
         auto surface = this->GetSurfacePtr(hSurface);
         if (surface != nullptr)
         {
-            auto hNewElementUnderMouse = this->FindElementUnderPoint(hSurface, mousePosX, mousePosY);
+            auto pNewElementUnderMouse = this->GetElementPtr(this->FindElementUnderPoint(hSurface, mousePosX, mousePosY));
             
             // OnMouseLeave/OnMouseEnter
-            if (surface->hElementUnderMouse != hNewElementUnderMouse)
+            if (surface->pElementUnderMouse != pNewElementUnderMouse)
             {
-                auto oldElementUnderMouse = this->GetElementPtr(surface->hElementUnderMouse);
-                if (oldElementUnderMouse != nullptr)
+                auto pOldElementUnderMouse = surface->pElementUnderMouse;
+                if (pOldElementUnderMouse != nullptr)
                 {
-                    this->PostEvent_OnMouseLeave(oldElementUnderMouse->handle);
+                    this->PostEvent_OnMouseLeave(pOldElementUnderMouse->handle);
                 }
 
-                auto newElementUnderMouse = this->GetElementPtr(hNewElementUnderMouse);
-                if (newElementUnderMouse != nullptr)
+                if (pNewElementUnderMouse != nullptr)
                 {
-                    this->PostEvent_OnMouseEnter(newElementUnderMouse->handle);
+                    this->PostEvent_OnMouseEnter(pNewElementUnderMouse->handle);
                 }
 
 
-                surface->hElementUnderMouse = hNewElementUnderMouse;
+                surface->pElementUnderMouse = pNewElementUnderMouse;
             }
 
 
@@ -2176,21 +2175,21 @@ namespace GT
             //
             // If an element is capturing mouse events, it needs to be the one to receive the event.
             GUIElement* eventReceiver = nullptr;
-            if (surface->hElementCapturingMouseEvents != 0)
+            if (surface->pElementCapturingMouseEvents != 0)
             {
-                auto elementCapturingMouseEvents = this->GetElementPtr(surface->hElementCapturingMouseEvents);
-                if (elementCapturingMouseEvents != nullptr)
+                auto pElementCapturingMouseEvents = surface->pElementCapturingMouseEvents;
+                if (pElementCapturingMouseEvents != nullptr)
                 {
-                    eventReceiver = elementCapturingMouseEvents;
+                    eventReceiver = pElementCapturingMouseEvents;
                 }
                 else
                 {
-                    eventReceiver = this->GetElementPtr(hNewElementUnderMouse);
+                    eventReceiver = pNewElementUnderMouse;
                 }
             }
             else
             {
-                eventReceiver = this->GetElementPtr(hNewElementUnderMouse);
+                eventReceiver = pNewElementUnderMouse;
             }
 
             if (eventReceiver != nullptr)
@@ -2356,7 +2355,7 @@ namespace GT
     ////////////////////////////////////////////////////////////////
     // Private
 
-    GUISurface* GUIContext::GetSurfacePtr(HGUISurface hSurface) const
+    GUISurfaceWithHandle* GUIContext::GetSurfacePtr(HGUISurface hSurface) const
     {
         auto surface = m_surfaceHandles.GetAssociatedObject(hSurface);
         if (surface != nullptr)
@@ -3248,7 +3247,7 @@ namespace GT
             {
                 if (surface->invalidRect.right > surface->invalidRect.left && surface->invalidRect.bottom > surface->invalidRect.top)
                 {
-                    this->PaintSurface(surface->handle, surface->invalidRect);
+                    this->PaintSurface(reinterpret_cast<GUISurfaceWithHandle*>(surface)->handle, surface->invalidRect);
                 
                     surface->invalidRect.left   = 0;
                     surface->invalidRect.top    = 0;

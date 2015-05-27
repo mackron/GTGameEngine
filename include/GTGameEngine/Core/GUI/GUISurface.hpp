@@ -19,15 +19,11 @@ namespace GT
         /// Constructor.
         ///
         /// @param handle [in] The handle to the surface.
-        GUISurface(HGUISurface handle);
+        GUISurface();
 
         /// Destructor.
         ~GUISurface();
 
-
-
-        /// The handle to the surface.
-        HGUISurface handle;
 
         /// The ID of the surface. This is a string because we want it to be possible to assign elements to surfaces by a human-readable name.
         GTLib::String id;
@@ -48,13 +44,6 @@ namespace GT
 
         /// The list of top-level elements that are on this surface. The elements in this list should all be parentless.
         GTLib::Vector<GUIElement*> topLevelElements;
-
-        /// A handle to the element who is capturing mouse events (mouse move and button down/up).
-        HGUIElement hElementCapturingMouseEvents;
-
-        /// A handle to the element that is currently sitting under the mouse.
-        HGUIElement hElementUnderMouse;
-
 
         /// A pointer to the element who is capturing mouse events (mouse move and button down/up).
         GUIElement* pElementCapturingMouseEvents;
@@ -79,6 +68,19 @@ namespace GT
     private:    // No copying.
         GUISurface(const GUISurface &);
         GUISurface & operator=(const GUISurface &);
+    };
+
+
+    struct GUISurfaceWithHandle : public GUISurface
+    {
+        GUISurfaceWithHandle(HGUISurface handle)
+            : GUISurface(),
+              handle(handle)
+        {
+        }
+
+        /// The handle to the surface.
+        HGUISurface handle;
     };
 }
 

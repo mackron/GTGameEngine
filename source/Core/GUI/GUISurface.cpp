@@ -4,17 +4,14 @@
 
 namespace GT
 {
-    GUISurface::GUISurface(HGUISurface handle)
-        : handle(handle),
-          id(),
+    GUISurface::GUISurface()
+        : id(),
           width(0),
           height(0),
           xDPI(96),
           yDPI(96),
           topLevelElements(),
           auxData(nullptr),
-          hElementCapturingMouseEvents(0),
-          hElementUnderMouse(0),
           pElementCapturingMouseEvents(nullptr),
           pElementUnderMouse(nullptr),
           paintingMode(GUIPaintingMode::Immediate),
