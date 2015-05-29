@@ -55,7 +55,7 @@ namespace GT
 
 
         /// @copydoc GUIRenderer::BeginPaintSurface()
-        void BeginPaintSurface(GT::GUIContext &context, GT::HGUISurface hSurface);
+        void BeginPaintSurface(GT::GUIContext &context, GT::HGUISurface hSurface, void* pInputData);
 
         /// @copydoc GUIRenderer::EndPaintSurface()
         void EndPaintSurface(GT::GUIContext &context);

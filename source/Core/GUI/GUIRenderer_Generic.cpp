@@ -128,10 +128,11 @@ namespace GT
     ////////////////////////////////////////////////
     // Drawing
 
-    void GUIRenderer_Generic::BeginPaintSurface(GT::GUIContext &context, GT::HGUISurface hSurface)
+    void GUIRenderer_Generic::BeginPaintSurface(GT::GUIContext &context, GT::HGUISurface hSurface, void* pInputData)
     {
         (void)context;
         (void)hSurface;
+        (void)pInputData;
     }
 
     void GUIRenderer_Generic::EndPaintSurface(GT::GUIContext &context)

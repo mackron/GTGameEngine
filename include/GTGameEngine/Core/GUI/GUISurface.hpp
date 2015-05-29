@@ -56,9 +56,6 @@ namespace GT
         void* auxData;
 
 
-        /// The painting mode the surface is employing. The default is immediate.
-        GUIPaintingMode paintingMode;
-
         /// The rectangle region containing the area that is invalid and needs to be re-painted. As a region is invalidated, this rectangle
         /// will be expanded to encompass it. Later on we may optimize this such that it's more efficiently broken up into seperate pieces
         /// based on the spacial location of each rectangle.

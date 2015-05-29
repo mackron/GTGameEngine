@@ -78,9 +78,6 @@ namespace GT
         {
             if (pSurfaceWithHandle == this->GetSurfacePtr(pSurfaceWithHandle->handle))      // <-- This guards against cases when the handle is invalid.
             {
-                // Detach any elements that are attached to this surface.
-                GUIContextBase::DetachAllElementsFromSurface(pSurface);
-
                 m_surfaceHandles.DeleteHandle(pSurfaceWithHandle->handle);
                 delete pSurfaceWithHandle;
             }
@@ -275,11 +272,12 @@ namespace GT
         }
     }
 
+#if 0
     void GUIContext::PostEvent_OnPaint(GUISurface* pSurface, const GTLib::Rect<int> &rect)
     {
         assert(pSurface != nullptr);
 
-        HGUIElement hSurface = reinterpret_cast<GUIElementWithHandle*>(pSurface)->handle;
+        HGUIElement hSurface = reinterpret_cast<GUISurfaceWithHandle*>(pSurface)->handle;
         assert(hSurface != 0);
         {
             // Global
@@ -295,12 +293,34 @@ namespace GT
             });
         }
     }
+#endif
+
+    void GUIContext::PostEvent_OnSurfaceNeedsRepaint(GUISurface* pSurface, const GTLib::Rect<int> &rect)
+    {
+        assert(pSurface != nullptr);
+
+        HGUIElement hSurface = reinterpret_cast<GUISurfaceWithHandle*>(pSurface)->handle;
+        assert(hSurface != 0);
+        {
+            // Global
+            this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+            {
+                if (pSurface == this->GetSurfacePtr(hSurface))
+                {
+                    eventHandler.OnSurfaceNeedsRepaint(*this, hSurface, rect);
+                    return true;
+                }
+                
+                return false;
+            });
+        }
+    }
 
 
-    void GUIContext::Renderer_BeginPaintSurface(GUISurface* pSurface)
+    void GUIContext::Renderer_BeginPaintSurface(GUISurface* pSurface, void* pInputData)
     {
         assert(m_renderer != nullptr);
-        m_renderer->BeginPaintSurface(*this, reinterpret_cast<GUISurfaceWithHandle*>(pSurface)->handle);
+        m_renderer->BeginPaintSurface(*this, reinterpret_cast<GUISurfaceWithHandle*>(pSurface)->handle, pInputData);
     }
 
     void GUIContext::Renderer_EndPaintSurface()
@@ -435,15 +455,6 @@ namespace GT
         }
     }
 
-    void GUIContext::SetSurfacePaintingMode(HGUISurface hSurface, GUIPaintingMode paintingMode)
-    {
-        auto pSurface = this->GetSurfacePtr(hSurface);
-        if (pSurface != nullptr)
-        {
-            GUIContextBase::SetSurfacePaintingMode(pSurface, paintingMode);
-        }
-    }
-
 
 
     ////////////////////////////////////////////////////////////////
@@ -451,7 +462,7 @@ namespace GT
 
     HGUIElement GUIContext::CreateElement()
     {
-        auto pElement = GUIContextBase::CreateElementPtr();
+        auto pElement = GUIContextBase::CreateElement();
         if (pElement != nullptr)
         {
             return reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
@@ -637,40 +648,88 @@ namespace GT
     }
 
 
-    void GUIContext::IterateElementPrevSiblings(HGUIElement hElement, std::function<bool (HGUIElement)> handler)
+    bool GUIContext::IterateElementPrevSiblings(HGUIElement hElement, std::function<bool (HGUIElement)> handler)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
-            GUIContextBase::IterateElementPrevSiblings(pElement, [&](GUIElement* pSibling) -> bool
+            return GUIContextBase::IterateElementPrevSiblings(pElement, [&](GUIElement* pSibling) -> bool
             {
                 return handler(reinterpret_cast<GUIElementWithHandle*>(pSibling)->handle);
             });
         }
+
+        return true;
     }
 
-    void GUIContext::IterateElementNextSiblings(HGUIElement hElement, std::function<bool (HGUIElement)> handler)
+    bool GUIContext::IterateElementPrevSiblingsReverse(HGUIElement hElement, std::function<bool (HGUIElement)> handler) const
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
-            GUIContextBase::IterateElementNextSiblings(pElement, [&](GUIElement* pSibling) -> bool
+            return GUIContextBase::IterateElementPrevSiblingsReverse(pElement, [&](GUIElement* pSibling) -> bool
             {
                 return handler(reinterpret_cast<GUIElementWithHandle*>(pSibling)->handle);
             });
         }
+
+        return true;
     }
 
-    void GUIContext::IterateElementSiblingsAndSelf(HGUIElement hElement, std::function<bool (HGUIElement)> handler)
+    bool GUIContext::IterateElementNextSiblings(HGUIElement hElement, std::function<bool (HGUIElement)> handler)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
-            GUIContextBase::IterateElementSiblingsAndSelf(pElement, [&](GUIElement* pSibling) -> bool
+            return GUIContextBase::IterateElementNextSiblings(pElement, [&](GUIElement* pSibling) -> bool
             {
                 return handler(reinterpret_cast<GUIElementWithHandle*>(pSibling)->handle);
             });
         }
+
+        return true;
+    }
+
+    bool GUIContext::IterateElementNextSiblingsReverse(HGUIElement hElement, std::function<bool (HGUIElement)> handler) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::IterateElementNextSiblingsReverse(pElement, [&](GUIElement* pSibling) -> bool
+            {
+                return handler(reinterpret_cast<GUIElementWithHandle*>(pSibling)->handle);
+            });
+        }
+
+        return true;
+    }
+
+    bool GUIContext::IterateElementSiblings(HGUIElement hElement, std::function<bool (HGUIElement)> handler) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::IterateElementSiblings(pElement, [&](GUIElement* pSibling) -> bool
+            {
+                return handler(reinterpret_cast<GUIElementWithHandle*>(pSibling)->handle);
+            });
+        }
+
+        return true;
+    }
+
+    bool GUIContext::IterateElementSiblingsAndSelf(HGUIElement hElement, std::function<bool (HGUIElement)> handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::IterateElementSiblingsAndSelf(pElement, [&](GUIElement* pSibling) -> bool
+            {
+                return handler(reinterpret_cast<GUIElementWithHandle*>(pSibling)->handle);
+            });
+        }
+
+        return true;
     }
 
 
@@ -1782,21 +1841,21 @@ namespace GT
         }
     }
 
-    void GUIContext::PaintSurface(HGUISurface hSurface, const GTLib::Rect<int> &rect)
+    void GUIContext::PaintSurface(HGUISurface hSurface, const GTLib::Rect<int> &rect, void* pInputData)
     {
         auto pSurface = this->GetSurfacePtr(hSurface);
         if (pSurface != nullptr)
         {
-            GUIContextBase::PaintSurface(pSurface, rect);
+            GUIContextBase::PaintSurface(pSurface, rect, pInputData);
         }
     }
 
-    void GUIContext::PaintSurface(HGUISurface hSurface)
+    void GUIContext::PaintSurface(HGUISurface hSurface, void* pInputData)
     {
         auto pSurface = this->GetSurfacePtr(hSurface);
         if (pSurface != nullptr)
         {
-            GUIContextBase::PaintSurface(pSurface);
+            GUIContextBase::PaintSurface(pSurface, pInputData);
         }
     }
 

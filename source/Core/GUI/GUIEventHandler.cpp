@@ -35,7 +35,13 @@ namespace GT
     }
 
 
+#if 0
     void GUIEventHandler::OnPaint(GUIContext &, HGUISurface, const GTLib::Rect<int> &)
+    {
+    }
+#endif
+
+    void GUIEventHandler::OnSurfaceNeedsRepaint(GUIContext &, HGUISurface, const GTLib::Rect<int> &)
     {
     }
 }

@@ -516,9 +516,10 @@ namespace GT
         uint32_t value =
             (static_cast<uint32_t>(static_cast<uint8_t>(color.r * 255)) << 24) |
             (static_cast<uint32_t>(static_cast<uint8_t>(color.g * 255)) << 16) |
-            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8);
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.a * 255)) <<  0);
 
-        style.borderLeftColour = value | (style.borderLeftColour & 0x000000FF);
+        style.borderLeftColour = value;
     }
     inline GTLib::Colour GUIElementStyle_Get_borderleftcolor(const GUIElementStyle &style)
     {
@@ -536,9 +537,10 @@ namespace GT
         uint32_t value =
             (static_cast<uint32_t>(static_cast<uint8_t>(color.r * 255)) << 24) |
             (static_cast<uint32_t>(static_cast<uint8_t>(color.g * 255)) << 16) |
-            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8);
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.a * 255)) <<  0);
 
-        style.borderTopColour = value | (style.borderTopColour & 0x000000FF);
+        style.borderTopColour = value;
     }
     inline GTLib::Colour GUIElementStyle_Get_bordertopcolor(const GUIElementStyle &style)
     {
@@ -556,9 +558,10 @@ namespace GT
         uint32_t value =
             (static_cast<uint32_t>(static_cast<uint8_t>(color.r * 255)) << 24) |
             (static_cast<uint32_t>(static_cast<uint8_t>(color.g * 255)) << 16) |
-            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8);
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.a * 255)) <<  0);
 
-        style.borderRightColour = value | (style.borderRightColour & 0x000000FF);
+        style.borderRightColour = value;
     }
     inline GTLib::Colour GUIElementStyle_Get_borderrightcolor(const GUIElementStyle &style)
     {
@@ -576,9 +579,10 @@ namespace GT
         uint32_t value =
             (static_cast<uint32_t>(static_cast<uint8_t>(color.r * 255)) << 24) |
             (static_cast<uint32_t>(static_cast<uint8_t>(color.g * 255)) << 16) |
-            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8);
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.a * 255)) <<  0);
 
-        style.borderBottomColour = value | (style.borderBottomColour & 0x000000FF);
+        style.borderBottomColour = value;
     }
     inline GTLib::Colour GUIElementStyle_Get_borderbottomcolor(const GUIElementStyle &style)
     {
@@ -849,12 +853,13 @@ namespace GT
         uint32_t value =
             (static_cast<uint32_t>(static_cast<uint8_t>(color.r * 255)) << 24) |
             (static_cast<uint32_t>(static_cast<uint8_t>(color.g * 255)) << 16) |
-            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8);
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.a * 255)) <<  0);
 
-        style.borderLeftColour   = value | (style.borderLeftColour   & 0x000000FF);
-        style.borderTopColour    = value | (style.borderTopColour    & 0x000000FF);
-        style.borderRightColour  = value | (style.borderRightColour  & 0x000000FF);
-        style.borderBottomColour = value | (style.borderBottomColour & 0x000000FF);
+        style.borderLeftColour   = value;
+        style.borderTopColour    = value;
+        style.borderRightColour  = value;
+        style.borderBottomColour = value;
     }
 
     /// Sets the width and colour of every border.

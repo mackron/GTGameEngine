@@ -75,7 +75,14 @@ namespace GT
         /// @param context [in] The GUI context.
         /// @param surface [in] The surface to redraw.
         /// @param rect    [in] The rectangle region needing to be redrawn.
-        virtual void OnPaint(GUIContext &context, HGUISurface hSurface, const GTLib::Rect<int> &rect);
+        //virtual void OnPaint(GUIContext &context, HGUISurface hSurface, const GTLib::Rect<int> &rect);
+
+        /// Called when the given surface needs to be redrawn.
+        ///
+        /// @param context [in] The GUI context.
+        /// @param surface [in] The surface to redraw.
+        /// @param rect    [in] The rectangle region needing to be redrawn.
+        virtual void OnSurfaceNeedsRepaint(GUIContext &context, HGUISurface hSurface, const GTLib::Rect<int> &rect);
     };
 }
 

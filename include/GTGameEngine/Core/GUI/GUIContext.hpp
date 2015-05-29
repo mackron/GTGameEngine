@@ -123,11 +123,14 @@ namespace GT
         void PostEvent_OnMouseMove(GUIElement* pElement, int mousePosX, int mousePosY);
 
         /// @copydoc GUIContextBase::PostEvent_OnPaint()
-        void PostEvent_OnPaint(GUISurface* pSurface, const GTLib::Rect<int> &rect);
+        //void PostEvent_OnPaint(GUISurface* pSurface, const GTLib::Rect<int> &rect);
+
+        /// @copydoc GUIContextBase::PostEvent_OnSurfaceNeedsRepaint()
+        void PostEvent_OnSurfaceNeedsRepaint(GUISurface* pSurface, const GTLib::Rect<int> &rect);
 
 
         /// @copydoc GUIContextBase::Renderer_BeginPaintSurface() 
-        void Renderer_BeginPaintSurface(GUISurface* pSurface);
+        void Renderer_BeginPaintSurface(GUISurface* pSurface, void* pInputData);
 
         /// @copydoc GUIContextBase::Renderer_EndPaintSurface()
         void Renderer_EndPaintSurface();
@@ -249,21 +252,6 @@ namespace GT
         /// @param hSurface [in] The a handle to surface whose elements are being iterated.
         /// @param handler  [in] The function that will be called for each element. If this returns false, the iteration will stop.
         void IterateSurfaceElements(HGUISurface hSurface, std::function<bool (HGUIElement)> handler);
-
-
-        /// Sets the painting mode for the given surface - immediate or deferred.
-        ///
-        /// @param hSurface     [in] A handle to the surface whose painting mode is being set.
-        /// @param paintingMode [in] The new painting mode.
-        ///
-        /// @remarks
-        ///     When \c paintingMode is set to \c GUIPaintingMode::Immediate (the default), painting commands are posted automatically
-        ///     and immediately whenever there is a change to the graphical representation of an element that is attached to the given
-        ///     surface.
-        ///     @par
-        ///     When \c paintingMode is set to \c GUIPaintingMode::Deferred, painting commands are posted via an explicit call to
-        ///     PaintSurface(). In this case, painting commands are posted such that the entire surface is redrawn.
-        void SetSurfacePaintingMode(HGUISurface hSurface, GUIPaintingMode paintingMode);
 
 
 
@@ -388,23 +376,26 @@ namespace GT
         HGUIElement GetElementPreviousSibling(HGUIElement hElement) const;
 
 
-        /// Iterates over the previous siblings of the given element in forward order.
-        ///
-        /// @param hElement [in] The GUI element whose siblings are being iterated.
-        /// @param func     [in] The function to call for each element.
-        void IterateElementPrevSiblings(HGUIElement hElement, std::function<bool (HGUIElement)> handler);
+        /// @copydoc GUIContextBase::IterateElementPrevSiblings()
+        bool IterateElementPrevSiblings(HGUIElement hElement, std::function<bool (HGUIElement)> handler);
 
-        /// Iterates over the next siblings of the given element.
-        ///
-        /// @param hElement [in] The GUI element whose siblings are being iterated.
-        /// @param func     [in] The function to call for each element.
-        void IterateElementNextSiblings(HGUIElement hElement, std::function<bool (HGUIElement)> handler);
+        /// @copydoc GUIContextBase::IterateElementPrevSiblingsReverse()
+        bool IterateElementPrevSiblingsReverse(HGUIElement hElement, std::function<bool (HGUIElement)> handler) const;
 
-        /// Iterates over the siblings of the given element, including itself.
-        ///
-        /// @param hElement [in] The GUI element whose siblings are being iterated.
-        /// @param func     [in] The function to call for each sibling.
-        void IterateElementSiblingsAndSelf(HGUIElement hElement, std::function<bool (HGUIElement)> handler);
+        /// @copydoc GUIContextBase::IterateElementNextSiblings()
+        bool IterateElementNextSiblings(HGUIElement hElement, std::function<bool (HGUIElement)> handler);
+
+        /// @copydoc GUIContextBase::IterateElementNextSiblingsReverse()
+        bool IterateElementNextSiblingsReverse(HGUIElement hElement, std::function<bool (HGUIElement)> handler) const;
+
+        /// @copydoc GUIContextBase::IterateElementSiblings()
+        bool IterateElementSiblings(HGUIElement hElement, std::function<bool (HGUIElement)> handler) const;
+
+        /// @copydoc GUIContextBase::IterateElementSiblingsAndNotSelf()
+        bool IterateElementSiblingsAndNotSelf(HGUIElement hElement, std::function<bool (HGUIElement)> handler) const { return this->IterateElementSiblings(hElement, handler); }
+
+        /// @copydoc GUIContextBase::IterateElementSiblingsAndSelf()
+        bool IterateElementSiblingsAndSelf(HGUIElement hElement, std::function<bool (HGUIElement)> handler);
 
 
         /// Determines if the given element is a direct child of the given element.
@@ -1232,12 +1223,12 @@ namespace GT
         ///
         /// @param hSurface [in] The surface to paint.
         /// @param rect     [in] The rectangle region to paint.
-        void PaintSurface(HGUISurface hSurface, const GTLib::Rect<int> &rect);
+        void PaintSurface(HGUISurface hSurface, const GTLib::Rect<int> &rect, void* pInputData);
 
         /// Paints the entire region of the given surface.
         ///
         /// @param hSurface [in] A handle to the surface to paint.
-        void PaintSurface(HGUISurface hSurface);
+        void PaintSurface(HGUISurface hSurface, void* pInputData);
 
 
 

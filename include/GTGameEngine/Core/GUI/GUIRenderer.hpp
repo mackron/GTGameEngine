@@ -28,7 +28,7 @@ namespace GT
         /// Begins rendering the given surface.
         ///
         /// @param hSurface [in] A handle to the surface to start rendering.
-        virtual void BeginPaintSurface(GT::GUIContext &context, GT::HGUISurface hSurface) = 0;
+        virtual void BeginPaintSurface(GT::GUIContext &context, GT::HGUISurface hSurface, void* pInputData) = 0;
 
         /// Ends rendering of the current surface.
         virtual void EndPaintSurface(GT::GUIContext &context) = 0;

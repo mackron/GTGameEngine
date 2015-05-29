@@ -25,7 +25,16 @@ namespace GT
     {
         if (pSurface != nullptr)
         {
-            // NOTE: What about elements that are tied to this surface? These should be detached.
+            // Detach any elements that are attached to this surface.
+            while (pSurface->topLevelElements.GetCount() > 0)
+            {
+                auto pTopLevelElement = pSurface->topLevelElements[0];
+                assert(pTopLevelElement != nullptr);
+                {
+                    GUIContextBase::DetachElementFromSurface(pTopLevelElement);
+                }
+            }
+
             this->DeleteSurfacePtr(pSurface);
         }
     }
@@ -154,14 +163,6 @@ namespace GT
 
         return true;
     }
-
-    void GUIContextBase::SetSurfacePaintingMode(GUISurface* pSurface, GUIPaintingMode paintingMode)
-    {
-        assert(pSurface != nullptr);
-
-        pSurface->paintingMode = paintingMode;
-    }
-
 
 
 
@@ -2081,7 +2082,10 @@ namespace GT
             // If the counter is now at zero, validate the layouts.
             if (m_batchLockCounter == 0)
             {
+                // Validate the layout.
                 this->Layout_ValidateElementLayouts();
+
+                // Validate the surface graphics.
                 this->Painting_PaintAndValidateSurfaceRects();
             }
         }
@@ -2096,14 +2100,18 @@ namespace GT
     {
         assert(pSurface != nullptr);
 
-        this->Painting_InvalidateRect(pSurface, rect);
+        this->BeginBatch();
+        {
+            this->Painting_InvalidateRect(pSurface, rect);
+        }
+        this->EndBatch();
     }
 
-    void GUIContextBase::PaintSurface(GUISurface* pSurface, const GTLib::Rect<int> &rect)
+    void GUIContextBase::PaintSurface(GUISurface* pSurface, const GTLib::Rect<int> &rect, void* pInputData)
     {
         assert(pSurface != nullptr);
 
-        this->Renderer_BeginPaintSurface(pSurface);
+        this->Renderer_BeginPaintSurface(pSurface, pInputData);
         {
             this->Renderer_Clear(rect);
 
@@ -2119,12 +2127,12 @@ namespace GT
                 }
             }
 
-            this->PostEvent_OnPaint(pSurface, rect);
+            //this->PostEvent_OnPaint(pSurface, rect);
         }
         this->Renderer_EndPaintSurface();
     }
 
-    void GUIContextBase::PaintSurface(GUISurface* pSurface)
+    void GUIContextBase::PaintSurface(GUISurface* pSurface, void* pInputData)
     {
         assert(pSurface != nullptr);
 
@@ -2137,7 +2145,7 @@ namespace GT
         paintRect.top    = 0;
         paintRect.right  = static_cast<int>(surfaceWidth);
         paintRect.bottom = static_cast<int>(surfaceHeight);
-        this->PaintSurface(pSurface, paintRect);
+        this->PaintSurface(pSurface, paintRect, pInputData);
     }
 
 
@@ -2261,16 +2269,26 @@ namespace GT
 
     unsigned int GUIContextBase::GetXDPI(GUISurface* pSurface) const
     {
-        assert(pSurface != nullptr);
-
-        return pSurface->xDPI;
+        if (pSurface != nullptr)
+        {
+            return pSurface->xDPI;
+        }
+        else
+        {
+            return this->GetBaseXDPI();
+        }
     }
 
     unsigned int GUIContextBase::GetYDPI(GUISurface* pSurface) const
     {
-        assert(pSurface != nullptr);
-
-        return pSurface->xDPI;
+        if (pSurface != nullptr)
+        {
+            return pSurface->xDPI;
+        }
+        else
+        {
+            return this->GetBaseYDPI();
+        }
     }
 
     void GUIContextBase::GetDPI(GUISurface* pSurface, unsigned int &xDPIOut, unsigned int &yDPIOut)
@@ -2294,15 +2312,11 @@ namespace GT
 
     float GUIContextBase::GetXDPIScalingFactor(GUISurface* pSurface) const
     {
-        assert(pSurface != nullptr);
-
         return this->GetXDPI(pSurface) / static_cast<float>(m_xBaseDPI);
     }
 
     float GUIContextBase::GetYDPIScalingFactor(GUISurface* pSurface) const
     {
-        assert(pSurface != nullptr);
-
         return this->GetYDPI(pSurface) / static_cast<float>(m_yBaseDPI);
     }
 
@@ -2325,10 +2339,10 @@ namespace GT
     ////////////////////////////////////////////////////////////////
     // Private
 
-    // TODO: ADD ASSERTS!!!
-
     void GUIContextBase::SetElementSurfaceRecursive(GUIElement* pElement, GUISurface* pSurface)
     {
+        assert(pElement != nullptr);
+
         pElement->pSurface = pSurface;
 
         // The layout may need to be updated.
@@ -2350,6 +2364,8 @@ namespace GT
 
     void GUIContextBase::GetElementChildrenClippingRect(GUIElement* pElement, GTLib::Rect<float> &rectOut) const
     {
+        assert(pElement != nullptr);
+
         this->GetElementAbsoluteRect(pElement, rectOut);
 
         // Pull in based on the boundary.
@@ -2388,6 +2404,8 @@ namespace GT
 
     void GUIContextBase::GetElementChildrenClippingRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const
     {
+        assert(pElement != nullptr);
+
         GTLib::Rect<float> rectF;
         this->GetElementChildrenClippingRect(pElement, rectF);
 
@@ -2400,6 +2418,8 @@ namespace GT
 
     bool GUIContextBase::IsElementClippedAgainstParent(GUIElement* pElement) const
     {
+        assert(pElement != nullptr);
+
         ClippingMode mode = GUIElementStyle_Get_clippingmode(pElement->style);
         if (mode == ClippingMode_Auto)
         {
@@ -2428,6 +2448,8 @@ namespace GT
 
     void GUIContextBase::ClippedTraversal(GUIElement* pElement, const GTLib::Rect<float> &clippingRect, std::function<void (GUIElement*, const GTLib::Rect<int> &)> func)
     {
+        assert(pElement != nullptr);
+
         GTLib::Rect<float> pElementRect;
         this->GetElementAbsoluteRect(pElement, pElementRect);
 
@@ -2479,6 +2501,8 @@ namespace GT
 
     const GTLib::Font* GUIContextBase::UpdateElementFontFromStyle(GUIElement* pElement)
     {
+        assert(pElement != nullptr);
+
         const char* family = m_fontManager.DecodeFontFamily(GUIElementStyle_Get_fontfamily(pElement->style));
         FontWeight  weight = GUIElementStyle_Get_fontweight(pElement->style);
         FontSlant   slant  = GUIElementStyle_Get_fontslant(pElement->style);
@@ -2554,6 +2578,8 @@ namespace GT
 
     void GUIContextBase::UpdateAllElementsOnDPIChange(GUISurface* pSurface)
     {
+        assert(pSurface != nullptr);
+
         this->BeginBatch();
         this->IterateSurfaceElements(pSurface, [&](GUIElement* pElement) -> bool
         {
@@ -2583,12 +2609,15 @@ namespace GT
         this->IterateSurfaces([&](GUISurface* pSurface) -> bool
         {
             this->UpdateAllElementsOnDPIChange(pSurface);
+            return true;
         });
         this->EndBatch();
     }
 
     void GUIContextBase::UpdateElementBorderSizes(GUIElement* pElement)
     {
+        assert(pElement != nullptr);
+
         uint32_t leftType;
         pElement->layout.borderLeftWidth   = static_cast<float>(GUIElementStyle_Get_borderleftwidth(pElement->style, leftType));
 
@@ -2610,6 +2639,8 @@ namespace GT
 
     void GUIContextBase::UpdateElementMarginSizes(GUIElement* pElement)
     {
+        assert(pElement != nullptr);
+
         uint32_t leftType;
         pElement->layout.marginLeft   = static_cast<float>(GUIElementStyle_Get_marginleft(pElement->style, leftType));
 
@@ -2631,6 +2662,8 @@ namespace GT
 
     void GUIContextBase::UpdateElementPaddingSizes(GUIElement* pElement)
     {
+        assert(pElement != nullptr);
+
         uint32_t leftType;
         pElement->layout.paddingLeft   = static_cast<float>(GUIElementStyle_Get_paddingleft(pElement->style, leftType));
 
@@ -2657,6 +2690,8 @@ namespace GT
 
     void GUIContextBase::Painting_InvalidateRect(GUISurface* pSurface, const GTLib::Rect<int> &rect)
     {
+        assert(pSurface != nullptr);
+
         if (rect.left > static_cast<int>(pSurface->width)  || rect.right  < 0 ||
             rect.top  > static_cast<int>(pSurface->height) || rect.bottom < 0)
         {
@@ -2676,6 +2711,8 @@ namespace GT
 
     void GUIContextBase::Painting_InvalidateElementRect(GUIElement* pElement)
     {
+        assert(pElement != nullptr);
+
         auto pSurface = this->GetElementSurface(pElement);
         if (pSurface != nullptr)
         {
@@ -2692,17 +2729,15 @@ namespace GT
     {
         this->IterateSurfaces([&](GUISurface* pSurface) -> bool
         {
-            if (pSurface->paintingMode != GUIPaintingMode::Deferred)
+            if (pSurface->invalidRect.right > pSurface->invalidRect.left && pSurface->invalidRect.bottom > pSurface->invalidRect.top)
             {
-                if (pSurface->invalidRect.right > pSurface->invalidRect.left && pSurface->invalidRect.bottom > pSurface->invalidRect.top)
-                {
-                    this->PaintSurface(pSurface, pSurface->invalidRect);
+                //this->PaintSurface(pSurface, pSurface->invalidRect);
+                this->PostEvent_OnSurfaceNeedsRepaint(pSurface, pSurface->invalidRect);
                 
-                    pSurface->invalidRect.left   = 0;
-                    pSurface->invalidRect.top    = 0;
-                    pSurface->invalidRect.right  = 0;
-                    pSurface->invalidRect.bottom = 0;
-                }
+                pSurface->invalidRect.left   = 0;
+                pSurface->invalidRect.top    = 0;
+                pSurface->invalidRect.right  = 0;
+                pSurface->invalidRect.bottom = 0;
             }
 
             return true;
@@ -2711,38 +2746,44 @@ namespace GT
 
     void GUIContextBase::Painting_PaintElement(GUISurface* pSurface, GUIElement* pElement, const GTLib::Rect<int> &visibleRect)
     {
+        assert(pSurface != nullptr);
+
         Painting_DrawAndSetClippingRect(pSurface, visibleRect, this->GetElementBackgroundColour(pElement));
 
-        // Borders.
-        //
-        // TODO: There is overlap in the borders that will affect transparency. Borders should not overlap in the corners.
-
+        // Borders. These should always be drawn last so that they're always on top.
         GTLib::Rect<int> borderLeftRect;
-        borderLeftRect.left   = static_cast<int>(pElement->layout.absolutePosX);
-        borderLeftRect.top    = static_cast<int>(pElement->layout.absolutePosY);
-        borderLeftRect.right  = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.borderLeftWidth);
-        borderLeftRect.bottom = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.height);
-        Renderer_DrawRectangle(borderLeftRect, GUIElementStyle_Get_borderleftcolor(pElement->style));
+        borderLeftRect.left     = static_cast<int>(pElement->layout.absolutePosX);
+        borderLeftRect.top      = static_cast<int>(pElement->layout.absolutePosY);
+        borderLeftRect.right    = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.borderLeftWidth);
+        borderLeftRect.bottom   = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.height);
 
         GTLib::Rect<int> borderTopRect;
-        borderTopRect.left   = static_cast<int>(pElement->layout.absolutePosX);
-        borderTopRect.top    = static_cast<int>(pElement->layout.absolutePosY);
-        borderTopRect.right  = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.width);
-        borderTopRect.bottom = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.borderTopWidth);
-        Renderer_DrawRectangle(borderTopRect, GUIElementStyle_Get_bordertopcolor(pElement->style));
+        borderTopRect.left      = static_cast<int>(pElement->layout.absolutePosX);
+        borderTopRect.top       = static_cast<int>(pElement->layout.absolutePosY);
+        borderTopRect.right     = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.width);
+        borderTopRect.bottom    = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.borderTopWidth);
 
         GTLib::Rect<int> borderRightRect;
-        borderRightRect.left   = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.width - pElement->layout.borderRightWidth);
-        borderRightRect.top    = static_cast<int>(pElement->layout.absolutePosY);
-        borderRightRect.right  = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.width);
-        borderRightRect.bottom = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.height);
-        Renderer_DrawRectangle(borderRightRect, GUIElementStyle_Get_borderrightcolor(pElement->style));
-
+        borderRightRect.left    = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.width - pElement->layout.borderRightWidth);
+        borderRightRect.top     = static_cast<int>(pElement->layout.absolutePosY);
+        borderRightRect.right   = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.width);
+        borderRightRect.bottom  = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.height);
+        
         GTLib::Rect<int> borderBottomRect;
         borderBottomRect.left   = static_cast<int>(pElement->layout.absolutePosX);
         borderBottomRect.top    = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.height - pElement->layout.borderBottomWidth);
         borderBottomRect.right  = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.width);
         borderBottomRect.bottom = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.height);
+
+        // Remove the overlap.
+        borderTopRect.right    -= borderRightRect.GetWidth();
+        borderRightRect.bottom -= borderBottomRect.GetHeight();
+        borderBottomRect.left  += borderLeftRect.GetWidth();
+        borderLeftRect.top     += borderTopRect.GetHeight();
+
+        Renderer_DrawRectangle(borderLeftRect,   GUIElementStyle_Get_borderleftcolor(pElement->style));
+        Renderer_DrawRectangle(borderTopRect,    GUIElementStyle_Get_bordertopcolor(pElement->style));
+        Renderer_DrawRectangle(borderRightRect,  GUIElementStyle_Get_borderrightcolor(pElement->style));
         Renderer_DrawRectangle(borderBottomRect, GUIElementStyle_Get_borderbottomcolor(pElement->style));
 
 

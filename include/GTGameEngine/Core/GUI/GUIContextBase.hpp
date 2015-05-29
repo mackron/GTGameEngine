@@ -119,13 +119,23 @@ namespace GT
         ///
         /// @param hSurface [in] A handle to the surface that has been painted.
         /// @param rect     [in] The rectangle that will just painted.
-        virtual void PostEvent_OnPaint(GUISurface* pSurface, const GTLib::Rect<int> &rect) = 0;
+        //virtual void PostEvent_OnPaint(GUISurface* pSurface, const GTLib::Rect<int> &rect) = 0;
+
+        /// Posts the OnSurfaceNeedsRepaid event.
+        ///
+        /// @param hSurface [in] A handle to the surface that needs to be repainted.
+        /// @param rect     [in] The rectangle region that needs to be repainted.
+        ///
+        /// @remarks
+        ///     Applications should call PaintSurface() in response to this event. This will then route all of the rendering commands
+        ///     to the rendering event handler.
+        virtual void PostEvent_OnSurfaceNeedsRepaint(GUISurface* pSurface, const GTLib::Rect<int> &rect) = 0;
 
 
         /// Begins painting the given surface.
         ///
         /// @param pSurface [in] A pointer to the surface being painted.
-        virtual void Renderer_BeginPaintSurface(GUISurface* pSurface) = 0;
+        virtual void Renderer_BeginPaintSurface(GUISurface* pSurface, void* pInputData) = 0;
 
         /// Ends painting the given surface.
         virtual void Renderer_EndPaintSurface() = 0;
@@ -252,20 +262,6 @@ namespace GT
 
             return reinterpret_cast<T*>(nullptr);
         }
-
-        /// Sets the painting mode for the given surface - immediate or deferred.
-        ///
-        /// @param pSurface     [in] A pointer to the surface whose painting mode is being set.
-        /// @param paintingMode [in] The new painting mode.
-        ///
-        /// @remarks
-        ///     When \c paintingMode is set to \c GUIPaintingMode::Immediate (the default), painting commands are posted automatically
-        ///     and immediately whenever there is a change to the graphical representation of an element that is attached to the given
-        ///     surface.
-        ///     @par
-        ///     When \c paintingMode is set to \c GUIPaintingMode::Deferred, painting commands are posted via an explicit call to
-        ///     PaintSurface(). In this case, painting commands are posted such that the entire surface is redrawn.
-        void SetSurfacePaintingMode(GUISurface* pSurface, GUIPaintingMode paintingMode);
 
 
 
@@ -1287,14 +1283,16 @@ namespace GT
 
         /// Paints a portion of the given surface.
         ///
-        /// @param hSurface [in] The surface to paint.
-        /// @param rect     [in] The rectangle region to paint.
-        void PaintSurface(GUISurface* pSurface, const GTLib::Rect<int> &rect);
+        /// @param hSurface   [in] The surface to paint.
+        /// @param rect       [in] The rectangle region to paint.
+        /// @param pInputData [in] A pointer that will be passed to the BeginPaintSurface() method of the renderer.
+        void PaintSurface(GUISurface* pSurface, const GTLib::Rect<int> &rect, void* pInputData = nullptr);
 
         /// Paints the entire region of the given surface.
         ///
-        /// @param hSurface [in] A handle to the surface to paint.
-        void PaintSurface(GUISurface* pSurface);
+        /// @param hSurface   [in] A handle to the surface to paint.
+        /// @param pInputData [in] A pointer that will be passed to the BeginPaintSurface() method of the renderer.
+        void PaintSurface(GUISurface* pSurface, void* pInputData = nullptr);
 
 
         ////////////////////////////////////////////////////////////////
