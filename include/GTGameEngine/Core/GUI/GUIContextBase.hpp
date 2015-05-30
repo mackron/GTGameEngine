@@ -1989,7 +1989,7 @@ namespace GT
     private:
 
         /// The font manager for working with fonts. This depends on m_imageManager, so must be declared and initialized afterwards.
-        GUIFontManager m_fontManager;
+        GUIFontManagerOld m_fontManager;
 
 
         /// The base DPI on the X axis for calculating the scaling factor. Defaults to 96.

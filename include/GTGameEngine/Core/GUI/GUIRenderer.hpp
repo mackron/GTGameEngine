@@ -58,6 +58,19 @@ namespace GT
         /// @remarks
         ///     Anything outside the given rectangle will be clipped.
         virtual void SetClippingRect(GT::GUIContext &context, GTLib::Rect<int> rect) = 0;
+
+
+        /// Determines whether or not the renderer can natively render text using the given font.
+        ///
+        /// @param hFont [in] A handle to the font to check.
+        //virtual bool CanDrawText(GT::HGUIFont hFont) = 0;
+
+        /// Draws the given text using the given font.
+        ///
+        /// @param hFont   [in] A handle to the font to use when drawing the text.
+        /// @param text    [in] The text run to draw.
+        /// @param options [in] The settings to use when drawing the text.
+        //virtual void DrawText(GT::HGUIFont hFont, const char* text, const GT::GUITextRenderingOptions &options) = 0;
     };
 }
 

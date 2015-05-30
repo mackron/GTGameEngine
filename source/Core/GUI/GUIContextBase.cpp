@@ -2747,8 +2747,23 @@ namespace GT
     void GUIContextBase::Painting_PaintElement(GUISurface* pSurface, GUIElement* pElement, const GTLib::Rect<int> &visibleRect)
     {
         assert(pSurface != nullptr);
+        assert(pElement != nullptr);
 
         Painting_DrawAndSetClippingRect(pSurface, visibleRect, this->GetElementBackgroundColour(pElement));
+
+
+        // Text.
+        if (this->DoesElementHaveText(pElement))
+        {
+            auto font = this->GetElementFont(pElement);
+            if (font != nullptr)
+            {
+                
+            }
+        }
+
+
+
 
         // Borders. These should always be drawn last so that they're always on top.
         GTLib::Rect<int> borderLeftRect;

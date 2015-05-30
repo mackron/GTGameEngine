@@ -380,6 +380,9 @@
     <ClCompile Include="..\..\..\source\Core\GUI\GUIContextBase.cpp">
       <Filter>Source Files\Core\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GUIFontManager_GDI.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -779,6 +782,9 @@
       <Filter>Header Files\Assets</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIContextBase.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIFontManager_GDI.hpp">
       <Filter>Header Files\Core\GUI</Filter>
     </ClInclude>
   </ItemGroup>

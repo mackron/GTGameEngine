@@ -49,6 +49,7 @@
     <ClCompile Include="..\..\..\source\Core\GUI\GUIElement.cpp" />
     <ClCompile Include="..\..\..\source\Core\GUI\GUIEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\Core\GUI\GUIFontManager.cpp" />
+    <ClCompile Include="..\..\..\source\Core\GUI\GUIFontManager_GDI.cpp" />
     <ClCompile Include="..\..\..\source\Core\GUI\GUIGlyphMapManager.cpp" />
     <ClCompile Include="..\..\..\source\Core\GUI\GUIImageManager.cpp" />
     <ClCompile Include="..\..\..\source\Core\GUI\GUILogging.cpp" />
@@ -134,6 +135,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIElementStyle.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIFontManager.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIFontManager_GDI.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIGlyphMapManager.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIImageManager.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUILayoutContext.hpp" />
