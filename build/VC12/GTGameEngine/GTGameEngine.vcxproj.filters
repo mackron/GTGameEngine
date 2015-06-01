@@ -93,6 +93,9 @@
     <Filter Include="Source Files\Graphics\OpenGL\OpenGL4">
       <UniqueIdentifier>{57a88c26-1f42-40da-8834-63ded5c07433}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Core\Strings">
+      <UniqueIdentifier>{7fc93798-0958-48ba-a1d4-7955ceb2b6d7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c">
@@ -786,6 +789,48 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIFontManager_GDI.hpp">
       <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Compare.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Copy.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Create.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Equal.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Find.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Iterator.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\LineIterator.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\List.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\NextChar.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Replacer.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Size.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Tokenizer.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Trim.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\UnicodeBase.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

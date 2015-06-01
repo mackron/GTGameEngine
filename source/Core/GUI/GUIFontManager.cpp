@@ -12,11 +12,6 @@ namespace GT
 
     GUIFontManager::~GUIFontManager()
     {
-        // All loaded fonts need to be deleted.
-        for (size_t iLoadedFont = 0; iLoadedFont < m_loadedFonts.count; ++iLoadedFont)
-        {
-            this->DeleteFont(m_loadedFonts[iLoadedFont].hFont);
-        }
     }
 
 
@@ -74,6 +69,15 @@ namespace GT
         }
 
         return nullptr;
+    }
+
+
+    void GUIFontManager::DeleteAllFonts()
+    {
+        for (size_t iLoadedFont = 0; iLoadedFont < m_loadedFonts.count; ++iLoadedFont)
+        {
+            this->DeleteFont(m_loadedFonts[iLoadedFont].hFont);
+        }
     }
 
 

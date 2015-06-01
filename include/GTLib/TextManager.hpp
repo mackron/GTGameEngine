@@ -10,6 +10,7 @@
 #include <GTLib/Vector.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/List.hpp>
+#include <GTGameEngine/Core/GUI/GUIFontManager.hpp>
 
 namespace GTLib
 {
@@ -128,14 +129,14 @@ namespace GTLib
     public:
 
         /// Constructor.
-        TextManagerLine(const Font* defaultFont, unsigned int tabSizeInPixels, const char* text, ptrdiff_t textSizeInTs = -1);
+        TextManagerLine(GT::GUIFontManager* pFontManager, GT::HGUIFont defaultFont, unsigned int tabSizeInPixels, const char* text, ptrdiff_t textSizeInTs = -1);
 
         /// Destructor.
         ~TextManagerLine();
 
 
         /// Sets the default font.
-        void SetDefaultFont(const Font* defaultFont);
+        void SetDefaultFont(GT::HGUIFont defaultFont);
 
         /// Sets the tab size, in pixels.
         void SetTabSizeInPixels(unsigned int newTabSize);
@@ -242,8 +243,11 @@ namespace GTLib
 
     private:
 
+        /// A reference to the font manager for measuring strings.
+        GT::GUIFontManager* m_pFontManager;
+
         /// The default font. This will be removed when we add support for multiple fonts in the same line.
-        const Font* defaultFont;
+        GT::HGUIFont defaultFont;
 
 
         /// The line's text.
@@ -338,7 +342,7 @@ namespace GTLib
     public:
 
         /// Constructor.
-        TextManager(GTLib::Font* defaultFont);
+        TextManager(GT::GUIFontManager* pFontManager, GT::HGUIFont defaultFont);
 
         /// Destructor.
         ~TextManager();
@@ -361,10 +365,10 @@ namespace GTLib
 
 
         /// Sets the default font to use with the manager.
-        void SetDefaultFont(GTLib::Font* defaultFont);
+        void SetDefaultFont(GT::HGUIFont defaultFont);
 
         /// Retrieves the default font.
-        GTLib::Font* GetDefaultFont();
+        GT::HGUIFont GetDefaultFont();
 
 
         /// Sets the size of the area the contains the text.
@@ -744,8 +748,11 @@ namespace GTLib
         /// Keeps track of whether or not 'text' needs to be updated in the next call to GetText().
         mutable bool isTextValid;
 
+        /// A reference to the font manager for measuring strings.
+        GT::GUIFontManager* m_pFontManager;
+
         /// The default font. Needs to be a pointer internally since it can be changed. Will never be null.
-        GTLib::Font* defaultFont;
+        GT::HGUIFont defaultFont;
 
         unsigned int containerWidth;    ///< The width of the container.
         unsigned int containerHeight;   ///< The height of the container.

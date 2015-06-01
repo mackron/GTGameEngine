@@ -90,7 +90,7 @@ namespace GT
         HGUIElement hElement = m_elementHandles.CreateHandle();
         if (hElement != 0)
         {
-            auto pElement = new GUIElementWithHandle(hElement);
+            auto pElement = new GUIElementWithHandle(this->GetFontManager(), hElement);
             m_elementHandles.AssociateObjectWithHandle(hElement, pElement);
 
             return pElement;
@@ -1751,7 +1751,7 @@ namespace GT
         return false;
     }
 
-    const GTLib::Font* GUIContext::SetElementFont(HGUIElement hElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType)
+    HGUIFont GUIContext::SetElementFont(HGUIElement hElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -1759,10 +1759,10 @@ namespace GT
             return GUIContextBase::SetElementFont(pElement, family, weight, slant, size, sizeType);
         }
 
-        return nullptr;
+        return 0;
     }
 
-    const GTLib::Font* GUIContext::GetElementFont(HGUIElement hElement) const
+    HGUIFont GUIContext::GetElementFont(HGUIElement hElement) const
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -1770,7 +1770,7 @@ namespace GT
             return GUIContextBase::GetElementFont(pElement);
         }
 
-        return nullptr;
+        return 0;
     }
 
 
@@ -2040,6 +2040,7 @@ namespace GT
             yOut = yIn;
         }
     }
+
 
 
     ////////////////////////////////////////////////////////////////

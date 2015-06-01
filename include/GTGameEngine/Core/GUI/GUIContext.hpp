@@ -1145,14 +1145,14 @@ namespace GT
         /// @param sizeType [in] Specifies whether or not the size is in points or pixels. Pixels by default.
         ///
         /// @return A pointer to the font object that is assigned to the element.
-        const GTLib::Font* SetElementFont(HGUIElement hElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType = NumberType_Pixels);
+        HGUIFont SetElementFont(HGUIElement hElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType = NumberType_Pixels);
 
         /// Retrieves the current font of the given element.
         ///
         /// @param hElement [in] A handle to the GUI element whose font is being retrieved.
         ///
         /// @return A pointer to the font object.
-        const GTLib::Font* GetElementFont(HGUIElement hElement) const;
+        HGUIFont GetElementFont(HGUIElement hElement) const;
 
 
         /// Attaches the given element to the given surface.
@@ -1366,7 +1366,6 @@ namespace GT
         /// @param xOut     [out] A reference to the variable that will receive the relative position on the x axis.
         /// @param yOut     [out] A reference to the variable that will receive the relative position on the y axis.
         void AbsoluteToRelative(HGUIElement hElement, int xIn, int yIn, int &xOut, int &yOut) const;
-
 
 
     private:

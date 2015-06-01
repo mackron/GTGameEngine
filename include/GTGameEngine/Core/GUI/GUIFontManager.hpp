@@ -79,6 +79,30 @@ namespace GT
         unsigned int dpiY;
     };
 
+    /// The structure containing the metrics of a glyph.
+    struct GUIGlyphMetrics
+    {
+        GUIGlyphMetrics()
+            : width(0), height(0), advance(0), bearingX(0), bearingY(0)
+        {
+        }
+
+        /// The width of the glyph.
+        int width;
+        
+        /// The height of the glyph.
+        int height;
+        
+        /// The advance for the glyph. This is the distance to advance the pen position when rendering the glyph.
+        int advance;
+        
+        /// The horizontal bearing. This is the distance between the current pen position and the leftmost border of the glyph image.
+        int bearingX;
+        
+        /// The vertical bearing. This is the distance between the base line and the topmost border of the glyph image.
+        int bearingY;
+    };
+
 
 
     /// Base class for managing fonts.
@@ -126,6 +150,9 @@ namespace GT
         const char* DecodeFontFamily(uint32_t family);
 
 
+        /// Helper function for deleting every font.
+        void DeleteAllFonts();
+
 
         /////////////////////////////////////////////
         // Virtual Methods
@@ -152,7 +179,35 @@ namespace GT
         ///
         /// @remarks
         ///     If this returns false, \c widthOut and \c heightOut will be left unset.
-        virtual bool MeasureString(HGUIFont hFont, const char* text, size_t textLengthInChars, unsigned int &widthOut, unsigned int &heightOut) = 0;
+        virtual bool MeasureString(HGUIFont hFont, const char* text, size_t textLengthInChars, int &widthOut, int &heightOut) = 0;
+
+        /// Retrieves the ascent of the given font.
+        ///
+        /// @param hFont [in] The font.
+        ///
+        /// @return The ascent.
+        virtual int GetAscent(HGUIFont hFont) const = 0;
+
+        /// Retrieves the descent of the given font.
+        ///
+        /// @param hFont [in] The font.
+        ///
+        /// @return The descent.
+        virtual int GetDescent(HGUIFont hFont) const = 0;
+
+        /// Retrieves the line height of the given font.
+        ///
+        /// @param hFont [in] The font.
+        ///
+        /// @return The line height for the given font.
+        virtual int GetLineHeight(HGUIFont hFont) const = 0;
+
+        /// Retrievse the metrics of the glyph of the given character and font.
+        ///
+        /// @param hFont      [in]  A handle to the font.
+        /// @param character  [in]  The character whose glyph metrics are being retrieved.
+        /// @param metricsOut [out] A reference to the object that will receive the reference.
+        virtual bool GetGlyphMetrics(HGUIFont hFont, char32_t character, GUIGlyphMetrics &metricsOut) const = 0;
 
 
 

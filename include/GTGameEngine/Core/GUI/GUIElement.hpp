@@ -36,7 +36,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GUIElement();
+        GUIElement(GUIFontManager* pFontManager);
 
         /// Destructor.
         ~GUIElement();
@@ -197,8 +197,8 @@ namespace GT
 
     struct GUIElementWithHandle : public GUIElement
     {
-        GUIElementWithHandle(HGUIElement handle)
-            : GUIElement(), handle(handle)
+        GUIElementWithHandle(GUIFontManager* pFontManager, HGUIElement handle)
+            : GUIElement(pFontManager), handle(handle)
         {
         }
 

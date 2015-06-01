@@ -17,6 +17,11 @@ namespace GT
 
     GUIFontManager_GDI::~GUIFontManager_GDI()
     {
+        // All loaded fonts need to be deleted.
+        this->DeleteAllFonts();
+        
+
+        // The device context should be deleted last because things like fonts can depend on it.
         DeleteDC(m_hDC);
     }
 
@@ -92,7 +97,14 @@ namespace GT
             HGUIFont hFont = m_fontHandles.CreateHandle();
             if (hFont != 0)
             {
-                m_fontHandles.AssociateObjectWithHandle(hFont, new FontGDI(hFontWin32));
+                HGDIOBJ hPrevFontWin32 = SelectObject(m_hDC, hFontWin32);
+
+                TEXTMETRICA metrics;
+                GetTextMetricsA(m_hDC, &metrics);
+
+                m_fontHandles.AssociateObjectWithHandle(hFont, new FontGDI(hFontWin32, metrics));
+
+                SelectObject(m_hDC, hPrevFontWin32);
                 return hFont;
             }
 		}
@@ -114,16 +126,73 @@ namespace GT
     }
 
 
-    bool GUIFontManager_GDI::MeasureString(HGUIFont hFont, const char* text, size_t textLengthInChars, unsigned int &widthOut, unsigned int &heightOut)
+    bool GUIFontManager_GDI::MeasureString(HGUIFont hFont, const char* text, size_t textLengthInChars, int &widthOut, int &heightOut)
     {
         HFONT hFontWin32 = this->GetWin32FontHandle(hFont);
         if (hFontWin32 != 0)
         {
             SIZE sizeWin32;
-            if (GetTextExtentPointA(m_hDC, text, static_cast<int>(textLengthInChars), &sizeWin32) != 0)
+            if (GetTextExtentPoint32A(m_hDC, text, static_cast<int>(textLengthInChars), &sizeWin32) != 0)
             {
-                widthOut  = static_cast<unsigned int>(sizeWin32.cx);
-                heightOut = static_cast<unsigned int>(sizeWin32.cy);
+                widthOut  = sizeWin32.cx;
+                heightOut = sizeWin32.cy;
+
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    int GUIFontManager_GDI::GetAscent(HGUIFont hFont) const
+    {
+        FontGDI* pFont = m_fontHandles.GetAssociatedObject(hFont);
+        if (pFont != nullptr)
+        {
+            return pFont->metrics.tmAscent;
+        }
+
+        return 0;
+    }
+
+    int GUIFontManager_GDI::GetDescent(HGUIFont hFont) const
+    {
+        FontGDI* pFont = m_fontHandles.GetAssociatedObject(hFont);
+        if (pFont != nullptr)
+        {
+            return pFont->metrics.tmDescent;
+        }
+
+        return 0;
+    }
+
+    int GUIFontManager_GDI::GetLineHeight(HGUIFont hFont) const
+    {
+        FontGDI* pFont = m_fontHandles.GetAssociatedObject(hFont);
+        if (pFont != nullptr)
+        {
+            return pFont->metrics.tmHeight;
+        }
+
+        return 0;
+    }
+
+    bool GUIFontManager_GDI::GetGlyphMetrics(HGUIFont hFont, uint32_t character, GUIGlyphMetrics &metricsOut) const
+    {
+        FontGDI* pFont = m_fontHandles.GetAssociatedObject(hFont);
+        if (pFont != nullptr)
+        {
+            const MAT2 transform = {{0, 1}, {0, 0}, {0, 0}, {0, 1}};        // <-- Identity matrix
+
+            GLYPHMETRICS metrics;
+            DWORD bitmapBufferSize = GetGlyphOutlineW(m_hDC, character, GGO_NATIVE, &metrics, 0, nullptr, &transform);
+            if (bitmapBufferSize != GDI_ERROR)
+            {
+				metricsOut.width    = metrics.gmBlackBoxX;
+				metricsOut.height   = metrics.gmBlackBoxY;
+				metricsOut.advance  = metrics.gmCellIncX;
+				metricsOut.bearingX = metrics.gmptGlyphOrigin.x;
+				metricsOut.bearingY = metrics.gmptGlyphOrigin.y;
 
                 return true;
             }

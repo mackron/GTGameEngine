@@ -1,19 +1,24 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/Core/GUI/GUIContextBase.hpp>
+#include <GTGameEngine/Core/GUI/GUIFontManager_GDI.hpp>
 
 namespace GT
 {
     GUIContextBase::GUIContextBase()
-        : m_fontManager(),
+        : m_pFontManager(),
           m_xBaseDPI(96), m_yBaseDPI(96),
           m_layoutContext(),
           m_batchLockCounter(0)
     {
+        // TODO: Delete this line later.
+        m_pFontManager = new GUIFontManager_GDI;
     }
 
     GUIContextBase::~GUIContextBase()
     {
+        // TODO: Delete this line later.
+        delete m_pFontManager;
     }
 
     GUISurface* GUIContextBase::CreateSurface()
@@ -1936,14 +1941,15 @@ namespace GT
         return pElement->textManager.HasText();
     }
 
-    const GTLib::Font* GUIContextBase::SetElementFont(GUIElement* pElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType)
+    HGUIFont GUIContextBase::SetElementFont(GUIElement* pElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType)
     {
         assert(pElement != nullptr);
+        assert(m_pFontManager != nullptr);
 
         auto pOldFont = this->GetElementFont(pElement);
 
         // 1) Update the styles.
-        GUIElementStyle_Set_fontfamily(pElement->style, m_fontManager.EncodeFontFamily(family));
+        GUIElementStyle_Set_fontfamily(pElement->style, m_pFontManager->EncodeFontFamily(family));
         GUIElementStyle_Set_fontweight(pElement->style, weight);
         GUIElementStyle_Set_fontslant(pElement->style, slant);
         GUIElementStyle_Set_fontsize(pElement->style, size, sizeType);
@@ -1965,17 +1971,17 @@ namespace GT
         return this->GetElementFont(pElement);
     }
 
-    const GTLib::Font* GUIContextBase::GetElementFont(GUIElement* pElement) const
+    HGUIFont GUIContextBase::GetElementFont(GUIElement* pElement) const
     {
         assert(pElement != nullptr);
 
-        if (pElement->textManager.GetDefaultFont() != nullptr)
+        if (pElement->textManager.GetDefaultFont() != 0)
         {
             return pElement->textManager.GetDefaultFont();
         }
         else
         {
-            return nullptr;
+            return 0;
         }
     }
 
@@ -2335,6 +2341,15 @@ namespace GT
 
 
 
+    ////////////////////////////////////////////////////////////////
+    // Miscellaneous
+
+    GUIFontManager* GUIContextBase::GetFontManager()
+    {
+        return m_pFontManager;
+    }
+
+
 
     ////////////////////////////////////////////////////////////////
     // Private
@@ -2499,11 +2514,11 @@ namespace GT
     }
 
 
-    const GTLib::Font* GUIContextBase::UpdateElementFontFromStyle(GUIElement* pElement)
+    HGUIFont GUIContextBase::UpdateElementFontFromStyle(GUIElement* pElement)
     {
         assert(pElement != nullptr);
 
-        const char* family = m_fontManager.DecodeFontFamily(GUIElementStyle_Get_fontfamily(pElement->style));
+        const char* family = m_pFontManager->DecodeFontFamily(GUIElementStyle_Get_fontfamily(pElement->style));
         FontWeight  weight = GUIElementStyle_Get_fontweight(pElement->style);
         FontSlant   slant  = GUIElementStyle_Get_fontslant(pElement->style);
 
@@ -2512,7 +2527,7 @@ namespace GT
 
 
         // We now have enough information to generate a font from a font info structure.
-        GTLib::FontInfo fi;
+        GUIFontInfo fi;
         fi.family = family;
         fi.dpiX = this->GetXDPI(this->GetElementSurface(pElement));
         fi.dpiY = this->GetYDPI(this->GetElementSurface(pElement));
@@ -2561,11 +2576,11 @@ namespace GT
         }
 
 
-        auto font = m_fontManager.AcquireFont(fi);
-        if (font != nullptr)
+        HGUIFont hFont = m_pFontManager->AcquireFont(fi);
+        if (hFont != 0)
         {
-            pElement->textManager.SetDefaultFont(font);
-            return font;
+            pElement->textManager.SetDefaultFont(hFont);
+            return hFont;
         }
 
         return this->GetElementFont(pElement);
@@ -2755,8 +2770,8 @@ namespace GT
         // Text.
         if (this->DoesElementHaveText(pElement))
         {
-            auto font = this->GetElementFont(pElement);
-            if (font != nullptr)
+            HGUIFont hFont = this->GetElementFont(pElement);
+            if (hFont != 0)
             {
                 
             }

@@ -3,14 +3,28 @@
 #include <GTLib/TextManager.hpp>
 #include <GTLib/FontServer.hpp>
 #include <GTLib/Strings/LineIterator.hpp>
+#include <GTLib/Strings/Iterator.hpp>
 #include <GTLib/Windowing/Clipboard.hpp>
 #include <GTLib/Math.hpp>
 #include <cassert>
 
 namespace GTLib
 {
-    TextManagerLine::TextManagerLine(const Font* defaultFontIn, unsigned int tabSizeInPixelsIn, const char* textIn, ptrdiff_t textSizeInTs)
-        : defaultFont(defaultFontIn), text(nullptr), width(0), height(0), tabSizeInPixels(tabSizeInPixelsIn)
+    inline const char* GetStringAtCharPos(const char* text, size_t charIndex)
+    {
+        size_t iChar = 0;
+        while (iChar < charIndex && GTLib::Strings::NextChar(text) != '\0')
+        {
+            ++iChar;
+        }
+
+        return text;
+    }
+
+
+
+    TextManagerLine::TextManagerLine(GT::GUIFontManager* pFontManager, const GT::HGUIFont defaultFontIn, unsigned int tabSizeInPixelsIn, const char* textIn, ptrdiff_t textSizeInTs)
+        : m_pFontManager(pFontManager), defaultFont(defaultFontIn), text(nullptr), width(0), height(0), tabSizeInPixels(tabSizeInPixelsIn)
     {
         this->SetText(textIn, textSizeInTs);
     }
@@ -20,7 +34,7 @@ namespace GTLib
     }
 
 
-    void TextManagerLine::SetDefaultFont(const Font* defaultFontIn)
+    void TextManagerLine::SetDefaultFont(const GT::HGUIFont defaultFontIn)
     {
         this->defaultFont = defaultFontIn;
         this->RecalculateBounds();
@@ -35,22 +49,26 @@ namespace GTLib
 
     int TextManagerLine::CalculateAscent() const
     {
-        if (this->defaultFont != nullptr)
+        if (m_pFontManager != nullptr)
         {
-            return this->defaultFont->GetAscent();
+            return m_pFontManager->GetAscent(this->defaultFont);
         }
-        
-        return 0;
+        else
+        {
+            return 0;
+        }
     }
 
     int TextManagerLine::CalculateDescent() const
     {
-        if (this->defaultFont != nullptr)
+        if (m_pFontManager != nullptr)
         {
-            return this->defaultFont->GetDescent();
+            return m_pFontManager->GetDescent(this->defaultFont);
         }
-        
-        return 0;
+        else
+        {
+            return 0;
+        }
     }
 
 
@@ -86,8 +104,9 @@ namespace GTLib
     {
         assert(endCharIndex >= startCharIndex);
 
-        if (this->defaultFont != nullptr)
+        if (this->defaultFont != 0 && m_pFontManager != nullptr)
         {
+#if 0
             struct Callback : public FontEngine::MeasureStringCallback
             {
                 Callback(int tabSize, size_t startIndex, size_t endIndex, int &startPosition, int &endPosition)
@@ -150,6 +169,22 @@ namespace GTLib
             
             // At this point the callback should have the information we need.
             return callback.m_endPosition - callback.m_startPosition;
+#endif
+
+            // TODO: What about kerning between the two segments.
+
+            // Need to measure twice - once for the first part of the string, and again for the second part.
+            int textWidth1  = 0;
+            int textHeight1 = 0;
+            m_pFontManager->MeasureString(this->defaultFont, this->text.c_str(), startCharIndex, textWidth1, textHeight1);
+
+            int textWidth2  = 0;
+            int textHeight2 = 0;
+            m_pFontManager->MeasureString(this->defaultFont, GetStringAtCharPos(this->text.c_str(), startCharIndex), endCharIndex - startCharIndex, textWidth2, textHeight2);
+
+            startPosition = textWidth1;
+            endPosition   = textWidth1 + textWidth2;
+            return textWidth2;
         }
         
         return 0;
@@ -256,13 +291,14 @@ namespace GTLib
 
     void TextManagerLine::RecalculateBounds()
     {
-        if (this->defaultFont != nullptr)
+        if (this->defaultFont != 0 && m_pFontManager != nullptr)
         {
             int startPosition;
             int endPosition;
 
             this->width  = this->Measure(0, this->GetCharacterCount(), startPosition, endPosition);
-            this->height = this->defaultFont->GetLineHeight();
+            this->height = m_pFontManager->GetLineHeight(this->defaultFont);
+            //this->height = this->defaultFont->GetLineHeight();
         }
     }
 }
@@ -270,9 +306,9 @@ namespace GTLib
 
 namespace GTLib
 {
-    TextManager::TextManager(GTLib::Font* defaultFont)
+    TextManager::TextManager(GT::GUIFontManager* pFontManager, GT::HGUIFont defaultFont)
         : text(nullptr), isTextValid(false),
-          defaultFont(defaultFont),
+          m_pFontManager(pFontManager), defaultFont(defaultFont),
           containerWidth(0), containerHeight(0),
           containerOffsetX(0), containerOffsetY(0),
           lines(),
@@ -312,7 +348,7 @@ namespace GTLib
                 --lineEnd;
             }
 
-            this->lines.PushBack(new TextManagerLine(this->defaultFont, this->GetTabSizeInPixels(), lineStart, lineEnd - lineStart));
+            this->lines.PushBack(new TextManagerLine(m_pFontManager, this->defaultFont, this->GetTabSizeInPixels(), lineStart, lineEnd - lineStart));
             ++line;
         }
 
@@ -372,7 +408,7 @@ namespace GTLib
         return this->lines[0]->IsNotEmpty();
     }
 
-    void TextManager::SetDefaultFont(GTLib::Font* newDefaultFont)
+    void TextManager::SetDefaultFont(GT::HGUIFont newDefaultFont)
     {
         if (this->defaultFont != newDefaultFont)
         {
@@ -391,7 +427,7 @@ namespace GTLib
         }
     }
 
-    GTLib::Font* TextManager::GetDefaultFont()
+    GT::HGUIFont TextManager::GetDefaultFont()
     {
         return this->defaultFont;
     }
@@ -637,9 +673,9 @@ namespace GTLib
 
     unsigned int TextManager::GetPageLineCount() const
     {
-        if (this->defaultFont != nullptr)
+        if (this->defaultFont != 0 && m_pFontManager != nullptr)
         {
-            return this->containerHeight / this->defaultFont->GetLineHeight();
+            return this->containerHeight / m_pFontManager->GetLineHeight(this->defaultFont);
         }
         
         return 0;
@@ -648,7 +684,7 @@ namespace GTLib
     void TextManager::GetVisibleLineRange(size_t &firstIndexOut, size_t &lastIndexOut) const
     {
         // TODO: This needs to be changed when we get support for multiple fonts.
-        if (this->defaultFont != nullptr)
+        if (this->defaultFont != 0)
         {
             if (this->lines.count > 0)
             {
@@ -748,16 +784,11 @@ namespace GTLib
     unsigned int TextManager::GetTabSizeInPixels() const
     {
         // TODO: Profile this function. I want to see how many times this is called.
-        if (this->defaultFont != nullptr)
+        if (this->defaultFont != 0 && m_pFontManager != nullptr)
         {
-            auto &fontEngine = this->defaultFont->GetServer().GetFontEngine();
-
-            auto spaceGlyph = fontEngine.GetGlyph(this->defaultFont->GetFontHandle(), ' ');
-            if (spaceGlyph != 0)
+            GT::GUIGlyphMetrics spaceMetrics;
+            if (m_pFontManager->GetGlyphMetrics(this->defaultFont, ' ', spaceMetrics))
             {
-                GlyphMetrics spaceMetrics;
-                fontEngine.GetGlyphMetrics(this->defaultFont->GetFontHandle(), spaceMetrics);
-
                 return this->tabSize * spaceMetrics.advance;
             }
         }
@@ -893,7 +924,7 @@ namespace GTLib
 
     void TextManager::AppendNewLine(bool blockEvent)
     {
-        this->lines.PushBack(new TextManagerLine(this->defaultFont, this->GetTabSizeInPixels(), ""));
+        this->lines.PushBack(new TextManagerLine(m_pFontManager, this->defaultFont, this->GetTabSizeInPixels(), ""));
 
         this->isTextValid = false;
 
@@ -966,7 +997,7 @@ namespace GTLib
         }
         else
         {
-            this->AppendCommand(TextCommandType_Insert, &cANSI, 1, this->cursorMarker.lineIndex, this->cursorMarker.characterIndex - 1, this->cursorMarker.lineIndex, this->cursorMarker.characterIndex, false);
+            this->AppendCommand(TextCommandType_Insert, &cANSI, 1, static_cast<int>(this->cursorMarker.lineIndex), static_cast<int>(this->cursorMarker.characterIndex - 1), static_cast<int>(this->cursorMarker.lineIndex), static_cast<int>(this->cursorMarker.characterIndex), false);
         }
     }
 
@@ -1051,7 +1082,7 @@ namespace GTLib
         GTLib::Strings::List<char> newLineText;
         newLineText.Append(currentLine->GetText() + currentLineCharacterIndex);
 
-        auto newLine = new TextManagerLine(this->defaultFont, this->GetTabSizeInPixels(), newLineText.c_str());
+        auto newLine = new TextManagerLine(m_pFontManager, this->defaultFont, this->GetTabSizeInPixels(), newLineText.c_str());
         this->lines.InsertAt(newLine, currentLineIndex + 1);
 
 
@@ -1569,6 +1600,7 @@ namespace GTLib
                 marker.characterIndex = 0;
                 
                 
+#if 0
                 // It's somewhere in the middle of the line, so now we need to correctly position it next to a character.
                 struct Callback : public FontEngine::MeasureStringCallback
                 {
@@ -1632,6 +1664,7 @@ namespace GTLib
                 // All we need to do is call MeasureString() and let the callback handle the setting of the marker. After MeasureString() has returned,
                 // the marker should be positioned correctly.
                 this->defaultFont->GetServer().GetFontEngine().MeasureString(this->defaultFont->GetFontHandle(), marker.line->GetText(), callback);
+#endif
             }
         }
         else
@@ -1817,8 +1850,9 @@ namespace GTLib
         // First thing we do is ensure the existing rendering info is cleared.
         renderingInfo.Clear();
         
-        if (!this->lines.IsEmpty() && this->defaultFont != nullptr)
+        if (!this->lines.IsEmpty() && this->defaultFont != 0)
         {
+#if 0
             // Background
             //
             // When doing the selection background we need to find the marker that comes prior to the other - it's possible that this->selectionEndMarker
@@ -2048,6 +2082,7 @@ namespace GTLib
                     delete foregroundMesh;
                 }
             }
+#endif
         }
     }
 
@@ -2152,67 +2187,18 @@ namespace GTLib
 
     void TextManager::UpdateMarkerXPosition(Marker &marker) const
     {
-        if (this->defaultFont != nullptr)
+        if (this->defaultFont != 0 && m_pFontManager != nullptr)
         {
             marker.posX = this->textRect.left;
 
             if (marker.line != nullptr)
             {
-                struct Callback : public FontEngine::MeasureStringCallback
-                {
-                    Callback(int tabSize, Marker &marker)
-                        : m_tabSize(tabSize),
-                          m_currentCharIndex(0),
-                          m_marker(marker)
-                    {
-                    }
-                    
-                    
-                    /// FontEngine::MeasureStringCallback::GetTabSize()
-                    int GetTabSize() const
-                    {
-                        return m_tabSize;
-                    }
-                    
-                    /// FontEngine::GetXStartPosition()
-                    int GetXStartPosition() const
-                    {
-                        return m_marker.posX;
-                    }
-                    
-                    /// FontEngine::MeasureStringCallback::HandleCharacter()
-                    bool HandleCharacter(const FontEngine &fontEngine, char32_t character, GlyphHandle glyph, const GTLib::Rect<int> &rect, GlyphMetrics &metrics, int &penPositionX, int &penPositionY)
-                    {
-                        (void)fontEngine;
-                        (void)glyph;
-                        (void)character;
-                        (void)rect;
-                        (void)penPositionX;
-                        (void)penPositionY;
-                        
-                        
-                        if (m_currentCharIndex == m_marker.characterIndex)
-                        {
-                            return false;
-                        }
-                        
-                        
-                        m_marker.posX       = penPositionX + metrics.advance;
-                        m_currentCharIndex += 1;
-                        
-                        
-                        return true;
-                    }
-                    
-                    
-                    int m_tabSize;
-                    unsigned int m_currentCharIndex;
-                    Marker &m_marker;
-                    
-                }callback(this->GetTabSizeInPixels(), marker);
-                
-                // Now we measure.
-                this->defaultFont->GetServer().GetFontEngine().MeasureString(this->defaultFont->GetFontHandle(), marker.line->GetText(), callback);
+                // We just need to measure the string up to the character position of the marker.
+                int widthOut  = 0;
+                int heightOut = 0;
+                m_pFontManager->MeasureString(this->defaultFont, marker.line->GetText(), marker.characterIndex, widthOut, heightOut);
+
+                marker.posX = static_cast<unsigned int>(widthOut);
             }
         }
     }

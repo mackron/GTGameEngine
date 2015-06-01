@@ -31,7 +31,19 @@ namespace GT
         void DeleteFont(HGUIFont hFont);
 
         /// @copydoc GUIFontManager::MeasureString()
-        bool MeasureString(HGUIFont hFont, const char* text, size_t textLengthInChars, unsigned int &widthOut, unsigned int &heightOut);
+        bool MeasureString(HGUIFont hFont, const char* text, size_t textLengthInChars, int &widthOut, int &heightOut);
+
+        /// @copydoc GUIFontManager::GetAscent()
+        int GetAscent(HGUIFont hFont) const;
+
+        /// @copydoc GUIFontManager::GetDescent()
+        int GetDescent(HGUIFont hFont) const;
+
+        /// @copydoc GUIFontManager::GetLineHeight()
+        int GetLineHeight(HGUIFont hFont) const;
+
+        /// @copydoc GUIFontManager::GetGlyphMetrics()
+        bool GetGlyphMetrics(HGUIFont hFont, char32_t character, GUIGlyphMetrics &metricsOut) const;
 
 
         /// Retrieves the Win32 font handle from the given font.
@@ -51,13 +63,16 @@ namespace GT
         /// Structure containing information about a GDI font.
         struct FontGDI
         {
-            FontGDI(HFONT hFontWin32In)
-                : hFontWin32(hFontWin32In)
+            FontGDI(HFONT hFontWin32In, TEXTMETRICA metricsIn)
+                : hFontWin32(hFontWin32In), metrics(metricsIn)
             {
             }
 
             /// A handle to the Win32 font.
             HFONT hFontWin32;
+
+            /// The font metrics.
+            TEXTMETRICA metrics;
         };
 
         /// Tha manager for font handles.

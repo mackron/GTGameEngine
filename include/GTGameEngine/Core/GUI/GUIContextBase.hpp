@@ -1208,14 +1208,14 @@ namespace GT
         /// @param sizeType [in] Specifies whether or not the size is in points or pixels. Pixels by default.
         ///
         /// @return A pointer to the font object that is assigned to the element.
-        const GTLib::Font* SetElementFont(GUIElement* pElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType = NumberType_Pixels);
+        HGUIFont SetElementFont(GUIElement* pElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType = NumberType_Pixels);
 
         /// Retrieves the current font of the given element.
         ///
         /// @param hElement [in] A handle to the GUI element whose font is being retrieved.
         ///
         /// @return A pointer to the font object.
-        const GTLib::Font* GetElementFont(GUIElement* pElement) const;
+        HGUIFont GetElementFont(GUIElement* pElement) const;
 
 
         /// Attaches the given element to the given surface.
@@ -1401,6 +1401,14 @@ namespace GT
         void AbsoluteToRelative(GUIElement* pElement, int xIn, int yIn, int &xOut, int &yOut) const;
 
 
+        ////////////////////////////////////////////////////////////////
+        // Miscellaneous
+
+        /// Retrieves a pointer to the font manager.
+        ///
+        /// @return A pointer to the font manager.
+        GUIFontManager* GetFontManager();
+
 
     private:
 
@@ -1443,7 +1451,7 @@ namespace GT
         /// @param element [in] A reference to the element whose having it's font updated.
         ///
         /// @return A pointer to the element's new font.
-        const GTLib::Font* UpdateElementFontFromStyle(GUIElement* pElement);
+        HGUIFont UpdateElementFontFromStyle(GUIElement* pElement);
 
 
 
@@ -1989,7 +1997,10 @@ namespace GT
     private:
 
         /// The font manager for working with fonts. This depends on m_imageManager, so must be declared and initialized afterwards.
-        GUIFontManagerOld m_fontManager;
+        //GUIFontManagerOld m_fontManager;
+
+        /// A pointer to the font manager.
+        GUIFontManager* m_pFontManager;
 
 
         /// The base DPI on the X axis for calculating the scaling factor. Defaults to 96.
