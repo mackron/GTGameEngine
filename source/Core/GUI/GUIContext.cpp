@@ -19,12 +19,6 @@ namespace GT
         , m_layoutLogger()
 #endif
     {
-        // We need a renderer. For now we're just goint to use the generic one.
-        if (renderer == nullptr)
-        {
-            m_renderer = new GUIRenderer_Generic;
-            m_ownsRenderer = true;
-        }
     }
 
     GUIContext::~GUIContext()
@@ -345,6 +339,18 @@ namespace GT
     {
         assert(m_renderer != nullptr);
         m_renderer->SetClippingRect(*this, clippingRect);
+    }
+
+    bool GUIContext::Renderer_CanDrawText(HGUIFont hFont)
+    {
+        assert(m_renderer != nullptr);
+        return m_renderer->CanDrawText(*this, hFont);
+    }
+
+    void GUIContext::Renderer_DrawText(HGUIFont hFont, const char* text, const GUITextRenderingOptions &options)
+    {
+        assert(m_renderer != nullptr);
+        m_renderer->DrawText(*this, hFont, text, options);
     }
 
 
@@ -1774,6 +1780,27 @@ namespace GT
     }
 
 
+    void GUIContext::SetElementTextColor(HGUIElement hElement, const GTLib::Colour &color)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementTextColor(pElement, color);
+        }
+    }
+
+    GTLib::Colour GUIContext::GetElementTextColor(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementTextColor(pElement);
+        }
+
+        return GTLib::Colour(0.0f, 0.0f, 0.0f, 1.0f);
+    }
+
+
     bool GUIContext::AttachElementToSurface(HGUIElement hElement, HGUISurface hSurface)
     {
         auto pElement = this->GetElementPtr(hElement);
@@ -2039,6 +2066,15 @@ namespace GT
             xOut = xIn;
             yOut = yIn;
         }
+    }
+
+
+    ////////////////////////////////////////////////////////////////
+    // Miscellaneous
+
+    GUIFontManager* GUIContext::GetFontManager()
+    {
+        return GUIContextBase::GetFontManager();
     }
 
 

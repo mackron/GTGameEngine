@@ -22,6 +22,7 @@
 #undef GetClassName
 #undef GetCommandLine
 #undef PostMessage
+#undef DrawText
 #undef min
 #undef max
 #undef MIN

@@ -76,6 +76,10 @@ namespace GT
 		LOGFONTA logfont;
 		memset(&logfont, 0, sizeof(logfont));
 
+        // TODO: Add support for rotated fonts.
+        //logfont.lfEscapement  = <rotation in tenths of degrees>;
+        //logfont.lfOrientation = <rotation in tenths of degrees>;
+
 		if (fontInfo.sizeInPoints > 0.0f)
 		{
 			logfont.lfHeight = -MulDiv(static_cast<int>(fontInfo.sizeInPoints), GetDeviceCaps(m_hDC, LOGPIXELSY), 72);
@@ -88,7 +92,7 @@ namespace GT
 		logfont.lfWeight  = weight;
 		logfont.lfItalic  = slant;
 		logfont.lfCharSet = DEFAULT_CHARSET;
-		logfont.lfQuality = CLEARTYPE_QUALITY;
+		logfont.lfQuality = CLEARTYPE_QUALITY;      // TODO: Use CLEARTYPE_QUALITY for small fonts and ANTIALIASED_QUALITY for larger fonts.
 		memcpy(logfont.lfFaceName, fontInfo.family.c_str(), (fontInfo.family.GetLength() < 31) ? fontInfo.family.GetLength() : 31);
 
 		HFONT hFontWin32 = CreateFontIndirectA(&logfont);

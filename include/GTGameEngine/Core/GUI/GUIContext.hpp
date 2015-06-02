@@ -144,6 +144,12 @@ namespace GT
         /// @copydoc GUIContextBase::Renderer_SetClippingRect()
         void Renderer_SetClippingRect(GTLib::Rect<int> clippingRect);
 
+        /// @copydoc GUIContextBase::Renderer_CanDrawText()
+        bool Renderer_CanDrawText(HGUIFont hFont);
+
+        /// @copydoc GUIContextBase::Renderer_DrawText()
+        void Renderer_DrawText(HGUIFont hFont, const char* text, const GUITextRenderingOptions &options);
+
 
 
     public:
@@ -1155,6 +1161,14 @@ namespace GT
         HGUIFont GetElementFont(HGUIElement hElement) const;
 
 
+        /// @copydoc GUIElementBase::SetElementTextColor()
+        void SetElementTextColor(HGUIElement hElement, const GTLib::Colour &color);
+
+        /// @copydoc GUIElementbase::GetElementTextColor()
+        GTLib::Colour GetElementTextColor(HGUIElement hElement) const;
+
+
+
         /// Attaches the given element to the given surface.
         ///
         /// @param hElement [in] A handle to the element whose surface is changing.
@@ -1366,6 +1380,15 @@ namespace GT
         /// @param xOut     [out] A reference to the variable that will receive the relative position on the x axis.
         /// @param yOut     [out] A reference to the variable that will receive the relative position on the y axis.
         void AbsoluteToRelative(HGUIElement hElement, int xIn, int yIn, int &xOut, int &yOut) const;
+
+
+        ////////////////////////////////////////////////////////////////
+        // Miscellaneous
+
+        /// Retrieves a pointer to the font manager.
+        ///
+        /// @return A pointer to the font manager.
+        GUIFontManager* GetFontManager();
 
 
     private:

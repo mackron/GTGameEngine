@@ -156,6 +156,19 @@ namespace GT
         /// @param rect [in] The clipping rectangle.
         virtual void Renderer_SetClippingRect(GTLib::Rect<int> clippingRect) = 0;
 
+        /// Determines whether or not the current renderer can draw the given font.
+        ///
+        /// @parma hFont [in] A handle to the font.
+        ///
+        /// @return True if the current renderer can draw text with the given font.
+        virtual bool Renderer_CanDrawText(HGUIFont hFont) = 0;
+
+        /// Draws the given string using the given font using the current renderer.
+        ///
+        /// @param hFont   [in] A handle to the font.
+        /// @param text    [in] The text to draw.
+        /// @param options [in] The settings to use when drawing the text.
+        virtual void Renderer_DrawText(HGUIFont hFont, const char* text, const GUITextRenderingOptions &options) = 0;
 
 
 
@@ -1218,6 +1231,21 @@ namespace GT
         HGUIFont GetElementFont(GUIElement* pElement) const;
 
 
+        /// Sets the colour of the element's text.
+        ///
+        /// @param hElement [in] A handle to the GUI element whose text colour is being set.
+        /// @param color    [in] The new color of the element's text.
+        void SetElementTextColor(GUIElement* pElement, const GTLib::Colour &color);
+
+        /// Retrieves the colour of the given element's text.
+        ///
+        /// @param hElement [in] A handle to the GUI element whose text colour is being retrieved.
+        ///
+        /// @return The colour of the text.
+        GTLib::Colour GetElementTextColor(GUIElement* pElement) const;
+
+
+
         /// Attaches the given element to the given surface.
         ///
         /// @param hElement [in] A handle to the element whose surface is changing.
@@ -1536,6 +1564,7 @@ namespace GT
         /// @remarks
         ///     This function simply combines SetClippingRect and DrawRectangle into a single optimized call.
         void Painting_DrawAndSetClippingRect(GUISurface* pSurface, const GTLib::Rect<int> &rect, const GTLib::Colour &color);
+
 
 
 

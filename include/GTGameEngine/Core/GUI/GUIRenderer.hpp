@@ -13,6 +13,19 @@ namespace GT
     typedef uint32_t HGUIRenderBuffer;
 
 
+    struct GUITextRenderingOptions
+    {
+        /// The text color.
+        GTLib::Colour color;
+
+        /// The x position to draw the text at.
+        unsigned int xPos;
+
+        /// The y position to draw the text at.
+        unsigned int yPos;
+    };
+
+
     /// Base class for doing GUI rendering.
     class GUIRenderer
     {
@@ -62,15 +75,17 @@ namespace GT
 
         /// Determines whether or not the renderer can natively render text using the given font.
         ///
-        /// @param hFont [in] A handle to the font to check.
-        //virtual bool CanDrawText(GT::HGUIFont hFont) = 0;
+        /// @param context [in] A reference to the GUI context.
+        /// @param hFont   [in] A handle to the font to check.
+        virtual bool CanDrawText(GT::GUIContext &context, GT::HGUIFont hFont) = 0;
 
         /// Draws the given text using the given font.
         ///
+        /// @param context [in] A reference to the context.
         /// @param hFont   [in] A handle to the font to use when drawing the text.
         /// @param text    [in] The text run to draw.
         /// @param options [in] The settings to use when drawing the text.
-        //virtual void DrawText(GT::HGUIFont hFont, const char* text, const GT::GUITextRenderingOptions &options) = 0;
+        virtual void DrawText(GT::GUIContext &context, GT::HGUIFont hFont, const char* text, const GT::GUITextRenderingOptions &options) = 0;
     };
 }
 

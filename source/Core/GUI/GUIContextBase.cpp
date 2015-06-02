@@ -195,6 +195,9 @@ namespace GT
 
             // Set the default font.
             this->SetElementFont(pElement, "Liberation Sans", FontWeight_Medium, FontSlant_None, 9, NumberType_Points);
+
+            // Text colour.
+            GUIElementStyle_Set_textcolor(pElement->style, GTLib::Colour(0.0f, 0.0f, 0.0f, 1.0f));
         }
 
         return pElement;
@@ -1986,6 +1989,29 @@ namespace GT
     }
 
 
+    void GUIContextBase::SetElementTextColor(GUIElement* pElement, const GTLib::Colour &colour)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_textcolor(pElement->style, colour);
+
+        this->BeginBatch();
+        {
+            // TODO: Only invalidate the text rectangle (previous and current).
+            this->Painting_InvalidateElementRect(pElement);
+        }
+        this->EndBatch();
+    }
+
+    GTLib::Colour GUIContextBase::GetElementTextColor(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return GUIElementStyle_Get_textcolor(pElement->style);
+    }
+
+
+
     bool GUIContextBase::AttachElementToSurface(GUIElement* pElement, GUISurface* pSurface)
     {
         assert(pElement != nullptr);
@@ -2132,8 +2158,6 @@ namespace GT
                     });
                 }
             }
-
-            //this->PostEvent_OnPaint(pSurface, rect);
         }
         this->Renderer_EndPaintSurface();
     }
@@ -2465,26 +2489,31 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        GTLib::Rect<float> pElementRect;
-        this->GetElementAbsoluteRect(pElement, pElementRect);
+        GTLib::Rect<float> elementRect;
+        this->GetElementAbsoluteRect(pElement, elementRect);
 
         // If clipping is disabled on the child we don't care about constraining the visible region - the entire rectangle will be classed as visible.
-        GTLib::Rect<float> pElementVisibleRect;
+        GTLib::Rect<float> elementVisibleRect;
         if (this->IsElementClippedAgainstParent(pElement))
         {
-            pElementVisibleRect = GTLib::Rect<float>::Clamp(pElementRect, clippingRect);
+            elementVisibleRect = GTLib::Rect<float>::Clamp(elementRect, clippingRect);
         }
         else
         {
-            pElementVisibleRect = pElementRect;
+            elementVisibleRect = elementRect;
         }
 
 
 
         // If the visible rectangle has some volume we can call the function and then traverse the children.
-        if (pElementVisibleRect.left < pElementVisibleRect.right && pElementVisibleRect.top < pElementVisibleRect.bottom)
+        if (elementVisibleRect.left < elementVisibleRect.right && elementVisibleRect.top < elementVisibleRect.bottom)
         {
-            func(pElement, GTLib::Rect<int>(pElementVisibleRect));
+            GTLib::Rect<int> elementVisibleRectI;
+            elementVisibleRectI.left   = static_cast<int>(GTLib::Round(elementVisibleRect.left));
+            elementVisibleRectI.top    = static_cast<int>(GTLib::Round(elementVisibleRect.top));
+            elementVisibleRectI.right  = static_cast<int>(GTLib::Round(elementVisibleRect.right));
+            elementVisibleRectI.bottom = static_cast<int>(GTLib::Round(elementVisibleRect.bottom));
+            func(pElement, elementVisibleRectI);
 
 
             // Now we need to recursively call this method again, only this time we need to pass in a new clipping rectangle. The rectangle will be determined
@@ -2773,37 +2802,63 @@ namespace GT
             HGUIFont hFont = this->GetElementFont(pElement);
             if (hFont != 0)
             {
-                
+                // Text needs to be clipped against the inner rectangle (the same rectangle children are clipped against).
+                GTLib::Rect<int> childClippingRect;
+                this->GetElementChildrenClippingRect(pElement, childClippingRect);
+
+                // The text clipping rectangle needs to be clamped against the input clipping rectangle.
+                childClippingRect.Clamp(visibleRect);
+                Renderer_SetClippingRect(childClippingRect);
+
+
+                if (Renderer_CanDrawText(hFont))
+                {
+                    GTLib::Rect<int> rect;
+                    pElement->textManager.GetTextRect(rect);
+
+                    GUITextRenderingOptions options;
+                    options.color = GUIElementStyle_Get_textcolor(pElement->style);
+                    options.xPos  = static_cast<unsigned int>(GTLib::Round(rect.left + pElement->layout.absolutePosX));
+                    options.yPos  = static_cast<unsigned int>(GTLib::Round(rect.top  + pElement->layout.absolutePosY));
+                    Renderer_DrawText(hFont, this->GetElementText(pElement), options);
+                }
+                else
+                {
+                    // Draw the text the slow, generic way.
+                }
+
+
+                // The clipping rect needs to be reset.
+                Renderer_SetClippingRect(visibleRect);
             }
         }
 
-
-
+        
 
         // Borders. These should always be drawn last so that they're always on top.
         GTLib::Rect<int> borderLeftRect;
-        borderLeftRect.left     = static_cast<int>(pElement->layout.absolutePosX);
-        borderLeftRect.top      = static_cast<int>(pElement->layout.absolutePosY);
-        borderLeftRect.right    = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.borderLeftWidth);
-        borderLeftRect.bottom   = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.height);
+        borderLeftRect.left     = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX));
+        borderLeftRect.top      = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY));
+        borderLeftRect.right    = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX + pElement->layout.borderLeftWidth));
+        borderLeftRect.bottom   = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY + pElement->layout.height));
 
         GTLib::Rect<int> borderTopRect;
-        borderTopRect.left      = static_cast<int>(pElement->layout.absolutePosX);
-        borderTopRect.top       = static_cast<int>(pElement->layout.absolutePosY);
-        borderTopRect.right     = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.width);
-        borderTopRect.bottom    = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.borderTopWidth);
+        borderTopRect.left      = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX));
+        borderTopRect.top       = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY));
+        borderTopRect.right     = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX + pElement->layout.width));
+        borderTopRect.bottom    = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY + pElement->layout.borderTopWidth));
 
         GTLib::Rect<int> borderRightRect;
-        borderRightRect.left    = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.width - pElement->layout.borderRightWidth);
-        borderRightRect.top     = static_cast<int>(pElement->layout.absolutePosY);
-        borderRightRect.right   = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.width);
-        borderRightRect.bottom  = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.height);
+        borderRightRect.left    = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX + pElement->layout.width - pElement->layout.borderRightWidth));
+        borderRightRect.top     = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY));
+        borderRightRect.right   = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX + pElement->layout.width));
+        borderRightRect.bottom  = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY + pElement->layout.height));
         
         GTLib::Rect<int> borderBottomRect;
-        borderBottomRect.left   = static_cast<int>(pElement->layout.absolutePosX);
-        borderBottomRect.top    = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.height - pElement->layout.borderBottomWidth);
-        borderBottomRect.right  = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.width);
-        borderBottomRect.bottom = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.height);
+        borderBottomRect.left   = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX));
+        borderBottomRect.top    = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY + pElement->layout.height - pElement->layout.borderBottomWidth));
+        borderBottomRect.right  = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX + pElement->layout.width));
+        borderBottomRect.bottom = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY + pElement->layout.height));
 
         // Remove the overlap.
         borderTopRect.right    -= borderRightRect.GetWidth();

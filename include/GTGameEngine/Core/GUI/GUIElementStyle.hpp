@@ -158,6 +158,7 @@ namespace GT
         uint8_t backgroundColourR;
         uint8_t backgroundColourG;
         uint8_t backgroundColourB;
+        uint8_t backgroundColourA;
 
         uint32_t borderLeftWidth;                           // [1,4] type | [5,32] value
         uint32_t borderTopWidth;                            // [1,4] type | [5,32] value
@@ -181,6 +182,11 @@ namespace GT
         uint32_t fontFamily;                                // 32-bit hash representation of the font family.
         uint32_t fontSize;                                  // [1,4] type   | [5,32] value
         uint32_t fontStyle;                                 // [1,4] weight | [5,7]  slant
+
+        uint8_t textColorR;
+        uint8_t textColorG;
+        uint8_t textColorB;
+        uint8_t textColorA;
 
 
         uint16_t booleanField;
@@ -457,6 +463,7 @@ namespace GT
         style.backgroundColourR = static_cast<uint8_t>(colour.r * 255);
         style.backgroundColourG = static_cast<uint8_t>(colour.g * 255);
         style.backgroundColourB = static_cast<uint8_t>(colour.b * 255);
+        style.backgroundColourA = static_cast<uint8_t>(colour.a * 255);
     }
     inline GTLib::Colour GUIElementStyle_Get_backgroundcolor(const GUIElementStyle &style)
     {
@@ -464,6 +471,7 @@ namespace GT
         colour.r = style.backgroundColourR / 255.0f;
         colour.g = style.backgroundColourG / 255.0f;
         colour.b = style.backgroundColourB / 255.0f;
+        colour.a = style.backgroundColourA / 255.0f;
 
         return colour;
     }
@@ -681,6 +689,7 @@ namespace GT
 
 
 
+    // Font.
     inline void GUIElementStyle_Set_fontfamily(GUIElementStyle &style, uint32_t fontFamily)
     {
         style.fontFamily = fontFamily;
@@ -716,6 +725,26 @@ namespace GT
     inline FontSlant GUIElementStyle_Get_fontslant(GUIElementStyle &style)
     {
         return static_cast<FontSlant>((style.fontStyle & 0x30) >> 4);
+    }
+
+
+    // Text.
+    inline void GUIElementStyle_Set_textcolor(GUIElementStyle &style, const GTLib::Colour &colour)
+    {
+        style.textColorR = static_cast<uint8_t>(colour.r * 255);
+        style.textColorG = static_cast<uint8_t>(colour.g * 255);
+        style.textColorB = static_cast<uint8_t>(colour.b * 255);
+        style.textColorA = static_cast<uint8_t>(colour.a * 255);
+    }
+    inline GTLib::Colour GUIElementStyle_Get_textcolor(const GUIElementStyle &style)
+    {
+        GTLib::Colour colour;
+        colour.r = style.textColorR / 255.0f;
+        colour.g = style.textColorG / 255.0f;
+        colour.b = style.textColorB / 255.0f;
+        colour.a = style.textColorA / 255.0f;
+
+        return colour;
     }
 
 
