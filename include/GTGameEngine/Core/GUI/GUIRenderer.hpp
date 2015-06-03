@@ -81,11 +81,9 @@ namespace GT
 
         /// Draws the given text using the given font.
         ///
-        /// @param context [in] A reference to the context.
-        /// @param hFont   [in] A handle to the font to use when drawing the text.
-        /// @param text    [in] The text run to draw.
-        /// @param options [in] The settings to use when drawing the text.
-        virtual void DrawText(GT::GUIContext &context, GT::HGUIFont hFont, const char* text, const GT::GUITextRenderingOptions &options) = 0;
+        /// @param context     [in] A reference to the context.
+        /// @param textRunDesc [in] Information about the text to draw.
+        virtual void DrawText(GT::GUIContext &context, const GUITextRunDesc &textRunDesc) = 0;
     };
 }
 

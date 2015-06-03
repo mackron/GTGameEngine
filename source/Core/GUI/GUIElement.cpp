@@ -5,7 +5,7 @@
 
 namespace GT
 {
-    GUIElement::GUIElement(GUIFontManager* pFontManager)
+    GUIElement::GUIElement()
         : pSurface(nullptr),
           id(),
           layout(),
@@ -13,7 +13,8 @@ namespace GT
           pParent(nullptr),
           pFirstChild(nullptr), pLastChild(nullptr),
           pPrevSibling(nullptr), pNextSibling(nullptr),
-          textManager(pFontManager, 0),
+          hFont(0),
+          pTextLayout(nullptr),
           eventHandlers()
     {
     }

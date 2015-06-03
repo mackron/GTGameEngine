@@ -2,6 +2,7 @@
 
 #include <GTGameEngine/Core/GUI/GUIContextBase.hpp>
 #include <GTGameEngine/Core/GUI/GUIFontManager_GDI.hpp>
+#include <GTGameEngine/Core/GUI/GUISimpleTextLayout.hpp>
 
 namespace GT
 {
@@ -444,7 +445,7 @@ namespace GT
         this->BeginBatch();
         {
             // If the parent already has children, we can just append the child element to the last child.
-            if (pParentElement->firstChild != 0)
+            if (pParentElement->pFirstChild != nullptr)
             {
                 // The parent has children.
                 assert(pParentElement->pLastChild != nullptr);
@@ -1920,28 +1921,41 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        pElement->textManager.SetText(text);
-
-
-        this->BeginBatch();
+        if (m_pFontManager != nullptr)
         {
-            this->Layout_InvalidateElementLayout(pElement, LayoutFlag_TextInvalid);
+            this->UpdateTextLayout(pElement, text);
+
+
+            this->BeginBatch();
+            {
+                this->Layout_InvalidateElementLayout(pElement, LayoutFlag_TextInvalid);
+            }
+            this->EndBatch();
         }
-        this->EndBatch();
     }
 
     const char* GUIContextBase::GetElementText(GUIElement* pElement) const
     {
         assert(pElement != nullptr);
 
-        return pElement->textManager.GetText();
+        if (pElement->pTextLayout != nullptr)
+        {
+            return pElement->pTextLayout->GetText();
+        }
+
+        return nullptr;
     }
 
     bool GUIContextBase::DoesElementHaveText(GUIElement* pElement) const
     {
         assert(pElement != nullptr);
 
-        return pElement->textManager.HasText();
+        if (pElement->pTextLayout != nullptr)
+        {
+            return GTLib::Strings::IsNullOrEmpty(pElement->pTextLayout->GetText()) == false;
+        }
+
+        return false;
     }
 
     HGUIFont GUIContextBase::SetElementFont(GUIElement* pElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType)
@@ -1978,14 +1992,7 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        if (pElement->textManager.GetDefaultFont() != 0)
-        {
-            return pElement->textManager.GetDefaultFont();
-        }
-        else
-        {
-            return 0;
-        }
+        return pElement->hFont;
     }
 
 
@@ -2608,11 +2615,44 @@ namespace GT
         HGUIFont hFont = m_pFontManager->AcquireFont(fi);
         if (hFont != 0)
         {
-            pElement->textManager.SetDefaultFont(hFont);
+            pElement->hFont = hFont;
+            this->UpdateTextLayout(pElement, this->GetElementText(pElement));
+
             return hFont;
         }
 
         return this->GetElementFont(pElement);
+    }
+    
+    void GUIContextBase::UpdateTextLayout(GUIElement* pElement, const char* text)
+    {
+        assert(pElement != nullptr);
+
+        if (m_pFontManager != nullptr)
+        {
+            if (text != nullptr)
+            {
+                // TODO: Compare the type of the current text layout and replace with a new one if the new type is different.
+
+                if (pElement->pTextLayout == nullptr)
+                {
+                    pElement->pTextLayout = new GUISimpleTextLayout(*m_pFontManager);
+                }
+
+
+                GUISimpleTextLayout* pTextLayout = reinterpret_cast<GUISimpleTextLayout*>(pElement->pTextLayout);
+                if (pTextLayout != nullptr)
+                {
+                    pTextLayout->SetTextAndFont(text, this->GetElementFont(pElement));
+                    pTextLayout->SetColor(this->GetElementTextColor(pElement));
+                }
+            }
+            else
+            {
+                // If the element does not have any text, delete the layout object to save memory.
+                delete pElement->pTextLayout;
+            }
+        }
     }
 
 
@@ -2813,14 +2853,15 @@ namespace GT
 
                 if (Renderer_CanDrawText(hFont))
                 {
-                    GTLib::Rect<int> rect;
-                    pElement->textManager.GetTextRect(rect);
+                    pElement->pTextLayout->SetBounds(childClippingRect.GetWidth(), childClippingRect.GetHeight());  // <-- TODO: Update the boundary at the proper time - when the size has actually changed.
 
-                    GUITextRenderingOptions options;
-                    options.color = GUIElementStyle_Get_textcolor(pElement->style);
-                    options.xPos  = static_cast<unsigned int>(GTLib::Round(rect.left + pElement->layout.absolutePosX));
-                    options.yPos  = static_cast<unsigned int>(GTLib::Round(rect.top  + pElement->layout.absolutePosY));
-                    Renderer_DrawText(hFont, this->GetElementText(pElement), options);
+                    pElement->pTextLayout->IterateVisibleTextRuns([&](const GUITextRunDesc &run) {
+                        GUITextRunDesc run2(run);
+                        run2.xPos += static_cast<int>(pElement->layout.absolutePosX);
+                        run2.yPos += static_cast<int>(pElement->layout.absolutePosY);
+
+                        Renderer_DrawText(run2);
+                    });
                 }
                 else
                 {
@@ -4690,13 +4731,16 @@ namespace GT
                 result = GUIContextBase::Layout_GetElementHorizontalBorderSize(pElement) + GUIContextBase::Layout_GetElementHorizontalPadding(pElement);
 
                 // The width will be the width of the children plus padding.
-                if (pElement->firstChild != 0)
+                if (pElement->pFirstChild != nullptr)
                 {
                     result += this->Layout_CalculateElementChildrenWidthForAutoSize(pElement);
                 }
                 else if (this->DoesElementHaveText(pElement))
                 {
-                    result += pElement->textManager.GetTextWidth();
+                    assert(pElement->pTextLayout != nullptr);
+                    result += pElement->pTextLayout->GetTextWidth();
+
+                    //result += pElement->textManager.GetTextWidth();
                 }
 
                 break;
@@ -4809,13 +4853,16 @@ namespace GT
                 result = GUIContextBase::Layout_GetElementVerticalBorderSize(pElement) + GUIContextBase::Layout_GetElementVerticalPadding(pElement);
 
                 // The height will be the height of the children plus padding.
-                if (pElement->firstChild != 0)
+                if (pElement->pFirstChild != nullptr)
                 {
                     result += this->Layout_CalculateElementChildrenHeightForAutoSize(pElement);
                 }
                 else if (this->DoesElementHaveText(pElement))
                 {
-                    result += pElement->textManager.GetTextHeight();
+                    assert(pElement->pTextLayout != nullptr);
+                    result += pElement->pTextLayout->GetTextHeight();
+
+                    //result += pElement->textManager.GetTextHeight();
                 }
 
                 break;

@@ -386,6 +386,12 @@
     <ClCompile Include="..\..\..\source\Core\GUI\GUIFontManager_GDI.cpp">
       <Filter>Source Files\Core\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GUISimpleTextLayout.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GUI\GUITextLayout.cpp">
+      <Filter>Source Files\Core\GUI</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -831,6 +837,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTLib\Strings\UnicodeBase.hpp">
       <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUISimpleTextLayout.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUITextLayout.hpp">
+      <Filter>Header Files\Core\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

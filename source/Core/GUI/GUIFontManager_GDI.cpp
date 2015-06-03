@@ -183,9 +183,13 @@ namespace GT
 
     bool GUIFontManager_GDI::GetGlyphMetrics(HGUIFont hFont, uint32_t character, GUIGlyphMetrics &metricsOut) const
     {
+        // TODO: This is slow due to the font selection. Should use caching for this.
+
         FontGDI* pFont = m_fontHandles.GetAssociatedObject(hFont);
         if (pFont != nullptr)
         {
+            HGDIOBJ hPrevFontWin32 = SelectObject(m_hDC, pFont->hFontWin32);
+
             const MAT2 transform = {{0, 1}, {0, 0}, {0, 0}, {0, 1}};        // <-- Identity matrix
 
             GLYPHMETRICS metrics;
@@ -198,7 +202,13 @@ namespace GT
 				metricsOut.bearingX = metrics.gmptGlyphOrigin.x;
 				metricsOut.bearingY = metrics.gmptGlyphOrigin.y;
 
+                SelectObject(m_hDC, hPrevFontWin32);
                 return true;
+            }
+            else
+            {
+                SelectObject(m_hDC, hPrevFontWin32);
+                return false;
             }
         }
 

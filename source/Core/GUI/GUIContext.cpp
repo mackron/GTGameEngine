@@ -84,7 +84,7 @@ namespace GT
         HGUIElement hElement = m_elementHandles.CreateHandle();
         if (hElement != 0)
         {
-            auto pElement = new GUIElementWithHandle(this->GetFontManager(), hElement);
+            auto pElement = new GUIElementWithHandle(hElement);
             m_elementHandles.AssociateObjectWithHandle(hElement, pElement);
 
             return pElement;
@@ -347,10 +347,10 @@ namespace GT
         return m_renderer->CanDrawText(*this, hFont);
     }
 
-    void GUIContext::Renderer_DrawText(HGUIFont hFont, const char* text, const GUITextRenderingOptions &options)
+    void GUIContext::Renderer_DrawText(const GUITextRunDesc &textRunDesc)
     {
         assert(m_renderer != nullptr);
-        m_renderer->DrawText(*this, hFont, text, options);
+        m_renderer->DrawText(*this, textRunDesc);
     }
 
 

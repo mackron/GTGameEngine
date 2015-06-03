@@ -55,7 +55,9 @@
     <ClCompile Include="..\..\..\source\Core\GUI\GUILogging.cpp" />
     <ClCompile Include="..\..\..\source\Core\GUI\GUIRenderer.cpp" />
     <ClCompile Include="..\..\..\source\Core\GUI\GUIRenderer_Generic.cpp" />
+    <ClCompile Include="..\..\..\source\Core\GUI\GUISimpleTextLayout.cpp" />
     <ClCompile Include="..\..\..\source\Core\GUI\GUISurface.cpp" />
+    <ClCompile Include="..\..\..\source\Core\GUI\GUITextLayout.cpp" />
     <ClCompile Include="..\..\..\source\Core\HandleManager.cpp" />
     <ClCompile Include="..\..\..\source\Core\IO.cpp" />
     <ClCompile Include="..\..\..\source\Core\IO\cstdio.cpp" />
@@ -141,7 +143,9 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUILayoutContext.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUILogging.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIRenderer.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUISimpleTextLayout.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUISurface.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUITextLayout.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\FileDataTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\FileSystem.hpp" />

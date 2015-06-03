@@ -165,10 +165,8 @@ namespace GT
 
         /// Draws the given string using the given font using the current renderer.
         ///
-        /// @param hFont   [in] A handle to the font.
-        /// @param text    [in] The text to draw.
-        /// @param options [in] The settings to use when drawing the text.
-        virtual void Renderer_DrawText(HGUIFont hFont, const char* text, const GUITextRenderingOptions &options) = 0;
+        /// @param textRunDesc [in] Information about the text to draw.
+        virtual void Renderer_DrawText(const GUITextRunDesc &textRunDesc) = 0;
 
 
 
@@ -1481,6 +1479,11 @@ namespace GT
         /// @return A pointer to the element's new font.
         HGUIFont UpdateElementFontFromStyle(GUIElement* pElement);
 
+        /// Updates the given element's text layout.
+        ///
+        /// @param pElement [in] A pointer to the element whose text layout is being updated.
+        /// @param text     [in] The text of the layout.
+        void UpdateTextLayout(GUIElement* pElement, const char* text);
 
 
         ////////////////////////////////////////////////////////////////

@@ -148,7 +148,7 @@ namespace GT
         bool Renderer_CanDrawText(HGUIFont hFont);
 
         /// @copydoc GUIContextBase::Renderer_DrawText()
-        void Renderer_DrawText(HGUIFont hFont, const char* text, const GUITextRenderingOptions &options);
+        void Renderer_DrawText(const GUITextRunDesc &textRunDesc);
 
 
 

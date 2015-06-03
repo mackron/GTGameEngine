@@ -9,8 +9,9 @@
 #include "GUIDataTypes.hpp"
 #include "GUIElementStyle.hpp"
 #include "GUIEventHandler.hpp"
-#include <GTLib/Font.hpp>
-#include <GTLib/TextManager.hpp>
+#include "GUITextLayout.hpp"
+//#include <GTLib/Font.hpp>
+//#include <GTLib/TextManager.hpp>
 
 namespace GT
 {
@@ -36,7 +37,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GUIElement(GUIFontManager* pFontManager);
+        GUIElement();
 
         /// Destructor.
         ~GUIElement();
@@ -153,19 +154,6 @@ namespace GT
         GUIElementStyle style;
 
 
-        /// A handle to the first child element.
-        HGUIElement firstChild;
-
-        /// A handle to the last child element.
-        HGUIElement lastChild;
-
-        /// A handle to the previous sibling element.
-        HGUIElement prevSibling;
-
-        /// A handle to the next sibling element.
-        HGUIElement nextSibling;
-
-
         /// A pointer to the parent element.
         GUIElement* pParent;
 
@@ -182,8 +170,11 @@ namespace GT
         GUIElement* pNextSibling;
 
 
-        /// The element's text manager.
-        GTLib::TextManager textManager;
+        /// The element's font.
+        HGUIFont hFont;
+
+        /// The element's text layout.
+        GUITextLayout* pTextLayout;
 
 
         /// The list of event handlers currently attached to the element.
@@ -197,8 +188,8 @@ namespace GT
 
     struct GUIElementWithHandle : public GUIElement
     {
-        GUIElementWithHandle(GUIFontManager* pFontManager, HGUIElement handle)
-            : GUIElement(pFontManager), handle(handle)
+        GUIElementWithHandle(HGUIElement handle)
+            : GUIElement(), handle(handle)
         {
         }
 
