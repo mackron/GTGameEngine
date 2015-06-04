@@ -113,6 +113,7 @@ namespace GT
         void SetTextAndFont(const char* text, HGUIFont hFont);
 
 
+
     private:
 
         /// Structure containing information about a text run.

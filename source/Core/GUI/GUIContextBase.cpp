@@ -6,6 +6,52 @@
 
 namespace GT
 {
+    GUITextLayoutHorizontalAlignment ToGUITextLayoutHorizontalAlignment(HorizontalAlign alignment)
+    {
+        switch (alignment)
+        {
+        case HorizontalAlign_Right:
+            {
+                return GUITextLayoutHorizontalAlignment::Right;
+            }
+
+        case HorizontalAlign_Center:
+            {
+                return GUITextLayoutHorizontalAlignment::Center;
+            }
+
+        case HorizontalAlign_Left:
+        default:
+            {
+                return GUITextLayoutHorizontalAlignment::Left;
+            }
+        }
+    }
+
+    GUITextLayoutVerticalAlignment ToGUITextLayoutVerticalAlignment(VerticalAlign alignment)
+    {
+        switch (alignment)
+        {
+        case VerticalAlign_Bottom:
+            {
+                return GUITextLayoutVerticalAlignment::Bottom;
+            }
+
+        case VerticalAlign_Center:
+            {
+                return GUITextLayoutVerticalAlignment::Center;
+            }
+
+        case VerticalAlign_Top:
+        default:
+            {
+                return GUITextLayoutVerticalAlignment::Top;
+            }
+        }
+    }
+
+
+
     GUIContextBase::GUIContextBase()
         : m_pFontManager(),
           m_xBaseDPI(96), m_yBaseDPI(96),
@@ -1638,7 +1684,13 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        GUIElementStyle_Set_horizontalaling(pElement->style, align);
+        GUIElementStyle_Set_horizontalalign(pElement->style, align);
+
+        if (pElement->pTextLayout != nullptr)
+        {
+            this->UpdateTextLayout(pElement, this->GetElementText(pElement));
+        }
+
 
         this->BeginBatch();
         {
@@ -1658,7 +1710,13 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        GUIElementStyle_Set_verticalaling(pElement->style, align);
+        GUIElementStyle_Set_verticalalign(pElement->style, align);
+
+        if (pElement->pTextLayout != nullptr)
+        {
+            this->UpdateTextLayout(pElement, this->GetElementText(pElement));
+        }
+
 
         this->BeginBatch();
         {
@@ -2646,7 +2704,11 @@ namespace GT
                     pTextLayout->SetTextAndFont(text, this->GetElementFont(pElement));
                     pTextLayout->SetColor(this->GetElementTextColor(pElement));
 
-                    pTextLayout->SetBounds(static_cast<unsigned int>(GTLib::Round(pElement->layout.width)), static_cast<unsigned int>(GTLib::Round(pElement->layout.height)));
+                    unsigned int textBoundsWidth  = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerWidth(pElement)));
+                    unsigned int textBoundsHeight = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerHeight(pElement)));
+                    pTextLayout->SetBounds(textBoundsWidth, textBoundsHeight);
+
+                    pTextLayout->SetAlignment(ToGUITextLayoutHorizontalAlignment(this->GetElementHorizontalAlign(pElement)), ToGUITextLayoutVerticalAlignment(this->GetElementVerticalAlign(pElement)));
                 }
             }
             else
@@ -2855,8 +2917,6 @@ namespace GT
 
                 if (Renderer_CanDrawText(hFont))
                 {
-                    //pElement->pTextLayout->SetBounds(childClippingRect.GetWidth(), childClippingRect.GetHeight());  // <-- TODO: Update the boundary at the proper time - when the size has actually changed.
-
                     pElement->pTextLayout->IterateVisibleTextRuns([&](const GUITextRunDesc &run) {
                         GUITextRunDesc run2(run);
                         run2.xPos += static_cast<int>(GTLib::Round(pElement->layout.absolutePosX + pElement->layout.borderLeftWidth + pElement->layout.paddingLeft));

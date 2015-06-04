@@ -373,7 +373,7 @@ namespace GT
     }
 
     // Horizontal align.
-    inline void GUIElementStyle_Set_horizontalaling(GUIElementStyle &style, HorizontalAlign align)
+    inline void GUIElementStyle_Set_horizontalalign(GUIElementStyle &style, HorizontalAlign align)
     {
         style.childAxisAndAlignmentAndPositioning = (style.childAxisAndAlignmentAndPositioning & ~0x06) | (static_cast<uint8_t>(align) << 1);
     }
@@ -383,7 +383,7 @@ namespace GT
     }
 
     // Vertical align.
-    inline void GUIElementStyle_Set_verticalaling(GUIElementStyle &style, VerticalAlign align)
+    inline void GUIElementStyle_Set_verticalalign(GUIElementStyle &style, VerticalAlign align)
     {
         style.childAxisAndAlignmentAndPositioning = (style.childAxisAndAlignmentAndPositioning & ~0x18) | (static_cast<uint8_t>(align) << 3);
     }
