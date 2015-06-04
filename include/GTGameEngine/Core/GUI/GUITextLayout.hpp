@@ -8,6 +8,21 @@
 
 namespace GT
 {
+    enum class GUITextLayoutHorizontalAlignment
+    {
+        Left,
+        Center,
+        Right,
+    };
+
+    enum class GUITextLayoutVerticalAlignment
+    {
+        Top,
+        Center,
+        Bottom
+    };
+
+
     /// Structure containing information about a text run in a text layout.
     struct GUITextRunDesc
     {
@@ -126,6 +141,33 @@ namespace GT
         /// @remarks
         ///     This is not the same as the main boundary that's retrieved with GetBounds(), but rather the height of the text itself.
         virtual int GetTextHeight() const = 0;
+
+
+        /// Sets the horizontal alignment.
+        ///
+        /// @param alignment [in] The new horizontal alignment.
+        virtual void SetHorizontalAlignment(GUITextLayoutHorizontalAlignment alignment) = 0;
+
+        /// Retrieves the horizontal alignment.
+        ///
+        /// @return The horizontal alignment.
+        virtual GUITextLayoutHorizontalAlignment GetHorizontalAlignment() const = 0;
+
+        /// Sets the vertical alignment.
+        ///
+        /// @param alignment [in] The new vertical alignment.
+        virtual void SetVerticalAlignment(GUITextLayoutVerticalAlignment alignment) = 0;
+
+        /// Retrieves the vertical alignment.
+        ///
+        /// @return The vertical alignment.
+        virtual GUITextLayoutVerticalAlignment GetVerticalAlignment() const = 0;
+
+        /// Optimized method for setting both vertical and horizontal alignment at once.
+        ///
+        /// @param horizontalAlignment [in] The horizontal alignment.
+        /// @param verticalAlignment   [in] The vertical alignment.
+        virtual void SetAlignment(GUITextLayoutHorizontalAlignment horizontalAlignment, GUITextLayoutVerticalAlignment verticalAlignment) = 0;
 
 
 

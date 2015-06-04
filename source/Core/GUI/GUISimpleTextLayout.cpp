@@ -12,6 +12,7 @@ namespace GT
           m_boundsWidth(0), m_boundsHeight(0),
           m_offsetX(0), m_offsetY(0),
           m_tabSizeInSpaces(4),
+          m_horizontalAlignment(GUITextLayoutHorizontalAlignment::Left), m_verticalAlignment(GUITextLayoutVerticalAlignment::Top),
           m_hFont(0),
           m_color(),
           m_lines(),
@@ -74,6 +75,48 @@ namespace GT
     }
 
 
+    void GUISimpleTextLayout::SetHorizontalAlignment(GUITextLayoutHorizontalAlignment alignment)
+    {
+        if (m_horizontalAlignment != alignment)
+        {
+            m_horizontalAlignment = alignment;
+
+            this->RefreshAlignment();
+        }
+    }
+
+    GUITextLayoutHorizontalAlignment GUISimpleTextLayout::GetHorizontalAlignment() const
+    {
+        return m_horizontalAlignment;
+    }
+
+    void GUISimpleTextLayout::SetVerticalAlignment(GUITextLayoutVerticalAlignment alignment)
+    {
+        if (m_verticalAlignment != alignment)
+        {
+            m_verticalAlignment = alignment;
+
+            this->RefreshAlignment();
+        }
+    }
+
+    GUITextLayoutVerticalAlignment GUISimpleTextLayout::GetVerticalAlignment() const
+    {
+        return m_verticalAlignment;
+    }
+
+    void GUISimpleTextLayout::SetAlignment(GUITextLayoutHorizontalAlignment horizontalAlignment, GUITextLayoutVerticalAlignment verticalAlignment)
+    {
+        if (m_horizontalAlignment != horizontalAlignment || m_verticalAlignment != verticalAlignment)
+        {
+            m_verticalAlignment   = verticalAlignment;
+            m_horizontalAlignment = horizontalAlignment;
+
+            this->RefreshAlignment();
+        }
+    }
+
+
 
     //////////////////////////////////////////
     // Font Management
@@ -123,12 +166,12 @@ namespace GT
         {
             auto &line = m_lines[iLine];
 
-            int lineTop    = line.height * static_cast<int>(iLine);
+            int lineTop    = line.height * static_cast<int>(iLine) + m_offsetY;
             int lineBottom = lineTop + lineHeight;
             
             if (lineBottom > 0 && lineTop < static_cast<int>(m_boundsHeight))
             {
-                int lineLeft  = line.xPos;
+                int lineLeft  = line.alignmentOffsetX + m_offsetX;
                 int lineRight = lineLeft + line.width;
 
                 if (lineRight > 0 && lineLeft < static_cast<int>(m_boundsWidth))
@@ -138,17 +181,19 @@ namespace GT
                     {
                         auto &run = line.runs[iRun];
 
-                        int runLeft  = run.xPos;
+                        int runLeft  = lineLeft + run.xPos;
                         int runRight = runLeft + run.width;
 
                         if (runRight > 0 && runLeft < static_cast<int>(m_boundsWidth))
                         {
                             // The run is visible.
+                            int runTop = run.yPos + line.alignmentOffsetY;
+
                             GUITextRunDesc runDesc;
                             runDesc.text              = GTLib::String(run.textStart, run.textEnd - run.textStart);
                             runDesc.hFont             = m_hFont;
-                            runDesc.xPos              = run.xPos;
-                            runDesc.yPos              = run.yPos;
+                            runDesc.xPos              = runLeft;
+                            runDesc.yPos              = runTop;
                             runDesc.rotationInDegrees = 0;
                             runDesc.color             = m_color;
                             func(runDesc);
@@ -203,36 +248,93 @@ namespace GT
             TextLine newLine;
             newLine.width  = 0;
             newLine.height = lineHeight;
-            newLine.xPos   = 0;
+            newLine.alignmentOffsetX = 0;
+            newLine.alignmentOffsetY = 0;
 
-            GTLib::Strings::Tokenizer8 token(iLine.start, iLine.end - iLine.start, "\t");
-            while (token)
+            TextRun currentRun;
+            currentRun.textStart      = nullptr;
+            currentRun.textEnd        = nullptr;
+            currentRun.characterCount = 0;
+            currentRun.width          = 0;
+            currentRun.xPos           = 0;
+            currentRun.yPos           = 0;
+
+            // We need to split the string based on tabs.
+            GTLib::Strings::Iterator<char> c(iLine.start, iLine.end - iLine.start);
+            while (c)
             {
-                TextRun run;
-                run.textStart      = iLine.start;
-                run.textEnd        = iLine.end;
-                run.characterCount = static_cast<unsigned int>(GTLib::Strings::GetCharacterCount(iLine.start, iLine.end - iLine.start));
-                run.xPos           = newLine.width;
-                run.yPos           = newLine.height * lineCount;
-
-                int tokenWidth  = 0;
-                int tokenHeight = 0;
-                fontManager.MeasureString(m_hFont, iLine.start, GTLib::Strings::GetCharacterCount(iLine.start, iLine.end - iLine.start), tokenWidth, tokenHeight);
-
-                run.width = tokenWidth;
-                
-                
-                // Update the width of the line.
-                newLine.width += run.width;
-                if (token++)
+                if (c.character == '\t')
                 {
-                    // Handle the tab character.
+                    // If we are in the middle of a run it needs to be ended.
+                    if (currentRun.textStart != nullptr)
+                    {
+                        // End the run and add it to the list of runs.
+                        {
+                            currentRun.textEnd = c.str;
+                            currentRun.xPos    = newLine.width;
+                            currentRun.yPos    = newLine.height * lineCount;
+
+                            int runWidth  = 0;
+                            int runHeight = 0;
+                            if (fontManager.MeasureString(m_hFont, currentRun.textStart, currentRun.characterCount, runWidth, runHeight))
+                            {
+                                currentRun.width = runWidth;
+                                newLine.width += runWidth;
+                            }
+
+
+                            newLine.runs.PushBack(currentRun);
+                        }
+                        
+
+                        // Reset the run.
+                        {
+                            currentRun.textStart      = nullptr;
+                            currentRun.textEnd        = nullptr;
+                            currentRun.characterCount = 0;
+                            currentRun.width          = 0;
+                            currentRun.xPos           = 0;
+                            currentRun.yPos           = 0;
+                        }
+                    }
+
+                    
+                    // Increment the tab size.
                     newLine.width += (tabWidth - (newLine.width % tabWidth));
                 }
-                
+                else
+                {
+                    // It's a normal character. If we are in the middle of a run we just continue iterating. Otherwise we begin a new one.
+                    if (currentRun.textStart == nullptr)
+                    {
+                        currentRun.textStart = c.str;
+                    }
 
-                newLine.runs.PushBack(run);
+                    currentRun.characterCount += 1;
+                }
+
+                ++c;
             }
+
+            // There might be a run that needs to be added.
+            if (currentRun.textStart != nullptr)
+            {
+                currentRun.textEnd = c.str;
+                currentRun.xPos    = newLine.width;
+                currentRun.yPos    = newLine.height * lineCount;
+
+                int runWidth  = 0;
+                int runHeight = 0;
+                if (fontManager.MeasureString(m_hFont, currentRun.textStart, currentRun.characterCount, runWidth, runHeight))
+                {
+                    currentRun.width = runWidth;
+                    newLine.width += runWidth;
+                }
+
+
+                newLine.runs.PushBack(currentRun);
+            }
+
 
 
             if (textBoundsWidth < newLine.width)
@@ -241,6 +343,7 @@ namespace GT
             }
 
             textBoundsHeight += newLine.height;
+
 
 
             m_lines.PushBack(newLine);
@@ -252,5 +355,66 @@ namespace GT
 
         m_textBoundsWidth  = textBoundsWidth;
         m_textBoundsHeight = textBoundsHeight;
+
+
+        // If we were to return now the text would be alignment top/left. If the alignment is not top/left we need to refresh the layout.
+        if (m_horizontalAlignment != GUITextLayoutHorizontalAlignment::Left || m_verticalAlignment != GUITextLayoutVerticalAlignment::Top)
+        {
+            this->RefreshAlignment();
+        }
+    }
+
+
+    void GUISimpleTextLayout::RefreshAlignment()
+    {
+        for (size_t iLine = 0; iLine < m_lines.GetCount(); ++iLine)
+        {
+            auto &line = m_lines[iLine];
+
+            switch (m_horizontalAlignment)
+            {
+            case GUITextLayoutHorizontalAlignment::Right:
+                {
+                    line.alignmentOffsetX = m_boundsWidth - line.width;
+                    break;
+                }
+
+            case GUITextLayoutHorizontalAlignment::Center:
+                {
+                    line.alignmentOffsetX = (m_boundsWidth - line.width) / 2;
+                    break;
+                }
+
+            case GUITextLayoutHorizontalAlignment::Left:
+            default:
+                {
+                    line.alignmentOffsetX = 0;
+                    break;
+                }
+            }
+
+
+            switch (m_verticalAlignment)
+            {
+            case GUITextLayoutVerticalAlignment::Bottom:
+                {
+                    line.alignmentOffsetY = m_boundsHeight - m_textBoundsHeight;
+                    break;
+                }
+
+            case GUITextLayoutVerticalAlignment::Center:
+                {
+                    line.alignmentOffsetY = (m_boundsHeight - m_textBoundsHeight) / 2;
+                    break;
+                }
+
+            case GUITextLayoutVerticalAlignment::Top:
+            default:
+                {
+                    line.alignmentOffsetY = 0;
+                    break;
+                }
+            }
+        }
     }
 }

@@ -61,6 +61,22 @@ namespace GT
         int GetTextHeight() const;
 
 
+        /// @copydoc GUITextLayout::SetHorizontalAlignment()
+        void SetHorizontalAlignment(GUITextLayoutHorizontalAlignment alignment);
+
+        /// @copydoc GUITextLayout::GetVerticalAlignment()
+        GUITextLayoutHorizontalAlignment GetHorizontalAlignment() const;
+
+        /// @copydoc GUITextLayout::SetVerticalAlignment()
+        void SetVerticalAlignment(GUITextLayoutVerticalAlignment alignment);
+
+        /// @copydoc GUITextLayout::GetVerticalAlignment()
+        GUITextLayoutVerticalAlignment GetVerticalAlignment() const;
+
+        /// @copydoc GUITextLayout::SetAlignment()
+        void SetAlignment(GUITextLayoutHorizontalAlignment horizontalAlignment, GUITextLayoutVerticalAlignment verticalAlignment);
+
+
 
         //////////////////////////////////////////
         // Font Management
@@ -97,7 +113,6 @@ namespace GT
         void SetTextAndFont(const char* text, HGUIFont hFont);
 
 
-
     private:
 
         /// Structure containing information about a text run.
@@ -112,10 +127,10 @@ namespace GT
             /// The number of characters making up the text run.
             unsigned int characterCount;
 
-            /// The position of the run on the x axis.
+            /// The position of the run on the x axis, relative to the left side of the line.
             int xPos;
 
-            /// The position of the run on the y axis.
+            /// The position of the run on the y axis, relative to the top side of the line.
             int yPos;
 
             /// The width of the text run.
@@ -134,8 +149,11 @@ namespace GT
             /// The height of the line.
             int height;
 
-            /// The x position of the line.
-            int xPos;
+            /// The offset on the x axis to apply to the line to account for horizontal alignment.
+            int alignmentOffsetX;
+
+            /// The offset on the y axis to apply to the line to account for vertical alignment.
+            int alignmentOffsetY;
         };
 
 
@@ -143,6 +161,10 @@ namespace GT
 
         /// Refreshes the layout.
         void RefreshLayout();
+
+        /// Refreshes the alignment of the text.
+        void RefreshAlignment();
+
 
 
     private:
@@ -167,6 +189,14 @@ namespace GT
 
         /// The size of a tab character in spaces.
         int m_tabSizeInSpaces;
+
+
+        /// The horizontal alignment.
+        GUITextLayoutHorizontalAlignment m_horizontalAlignment;
+
+        /// The vertical alignment.
+        GUITextLayoutVerticalAlignment m_verticalAlignment;
+
 
 
         /// The font.

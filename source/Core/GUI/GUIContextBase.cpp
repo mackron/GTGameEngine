@@ -2645,6 +2645,8 @@ namespace GT
                 {
                     pTextLayout->SetTextAndFont(text, this->GetElementFont(pElement));
                     pTextLayout->SetColor(this->GetElementTextColor(pElement));
+
+                    pTextLayout->SetBounds(static_cast<unsigned int>(GTLib::Round(pElement->layout.width)), static_cast<unsigned int>(GTLib::Round(pElement->layout.height)));
                 }
             }
             else
@@ -2853,12 +2855,12 @@ namespace GT
 
                 if (Renderer_CanDrawText(hFont))
                 {
-                    pElement->pTextLayout->SetBounds(childClippingRect.GetWidth(), childClippingRect.GetHeight());  // <-- TODO: Update the boundary at the proper time - when the size has actually changed.
+                    //pElement->pTextLayout->SetBounds(childClippingRect.GetWidth(), childClippingRect.GetHeight());  // <-- TODO: Update the boundary at the proper time - when the size has actually changed.
 
                     pElement->pTextLayout->IterateVisibleTextRuns([&](const GUITextRunDesc &run) {
                         GUITextRunDesc run2(run);
-                        run2.xPos += static_cast<int>(pElement->layout.absolutePosX);
-                        run2.yPos += static_cast<int>(pElement->layout.absolutePosY);
+                        run2.xPos += static_cast<int>(GTLib::Round(pElement->layout.absolutePosX + pElement->layout.borderLeftWidth + pElement->layout.paddingLeft));
+                        run2.yPos += static_cast<int>(GTLib::Round(pElement->layout.absolutePosY + pElement->layout.borderTopWidth  + pElement->layout.paddingTop));
 
                         Renderer_DrawText(run2);
                     });
@@ -5499,6 +5501,15 @@ namespace GT
                     {
                         break;
                     }
+                }
+
+
+                // If the size has changed, the text boundary needs to be updated.
+                if (pElement->pTextLayout != nullptr)
+                {
+                    unsigned int textBoundsWidth  = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerWidth(pElement)));
+                    unsigned int textBoundsHeight = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerHeight(pElement)));
+                    pElement->pTextLayout->SetBounds(textBoundsWidth, textBoundsHeight);
                 }
             }
         }

@@ -135,13 +135,21 @@ namespace GT
         HFONT hFontWin32 = this->GetWin32FontHandle(hFont);
         if (hFontWin32 != 0)
         {
+            HGDIOBJ hPrevFontWin32 = SelectObject(m_hDC, hFontWin32);
+
             SIZE sizeWin32;
             if (GetTextExtentPoint32A(m_hDC, text, static_cast<int>(textLengthInChars), &sizeWin32) != 0)
             {
                 widthOut  = sizeWin32.cx;
                 heightOut = sizeWin32.cy;
 
+                SelectObject(m_hDC, hPrevFontWin32);
                 return true;
+            }
+            else
+            {
+                SelectObject(m_hDC, hPrevFontWin32);
+                return false;
             }
         }
 
