@@ -3343,7 +3343,7 @@ namespace GT
                 assert(pElement->layout.layoutValidationListItem == nullptr);
                 pElement->layout.layoutValidationListItem = m_layoutContext.invalidElements.Append(pElement);
 
-                // The pElement is amount to have it's layout changed which means we will want to invalidate the previous rectangle. The new
+                // The element is about to have it's layout changed which means we will want to invalidate the previous rectangle. The new
                 // rectangle will be invalidated after validating the layout.
                 this->Painting_InvalidateElementRect(pElement);
             }
