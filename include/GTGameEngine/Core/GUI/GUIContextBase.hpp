@@ -829,6 +829,12 @@ namespace GT
         void GetElementAbsoluteRect(GUIElement* pElement, GTLib::Rect<float> &rectOut) const;
         void GetElementAbsoluteRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const;
 
+        /// Retrieves the absolute rectangle of the text of the given element.
+        ///
+        /// @param hElement [in] The GUI element whose absolute text rectangle is being retrieved.
+        /// @param rectOut  [out] A reference to the object that will receive the rectangle.
+        void GetElementAbsoluteTextRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const;
+
 
         /// Sets the positiong of the given element.
         ///
@@ -1189,6 +1195,41 @@ namespace GT
         bool IsElementChildHeightFlexingEnabled(GUIElement* pElement);
 
 
+        /// Sets the given element's inner offset on the x axis.
+        ///
+        /// @param hElement     [in] The element whose inner offset is being set.
+        /// @param innerOffsetX [in] The inner offset on the x offset.
+        void SetElementInnerOffsetX(GUIElement* pElement, float innerOffsetX);
+
+        /// Sets the given element's inner offset on the y axis.
+        ///
+        /// @param hElement     [in] The element whose inner offset is being set.
+        /// @param innerOffsetX [in] The inner offset on the x offset.
+        void SetElementInnerOffsetY(GUIElement* pElement, float innerOffsetY);
+
+        /// Sets the given element's inner offset on both the x and y axis.
+        ///
+        /// @param hElement     [in] The element whose inner offset is being set.
+        /// @param innerOffsetX [in] The inner offset on the x offset.
+        /// @param innerOffsetY [in] The inner offset on the y offset.
+        void SetElementInnerOffset(GUIElement* pElement, float innerOffsetX, float innerOffsetY);
+
+        /// Retrieves the given element's inner offset on the x axis.
+        ///
+        /// @param hElement [in] The element whose inner offset is being retrieved.
+        ///
+        /// @return The inner offset on the x axis.
+        float GetElementInnerOffsetX(GUIElement* pElement) const;
+
+        /// Retrieves the given element's inner offset on the y axis.
+        ///
+        /// @param hElement [in] The element whose inner offset is being retrieved.
+        ///
+        /// @return The inner offset on the y axis.
+        float GetElementInnerOffsetY(GUIElement* pElement) const;
+
+
+
         /// Sets the text of the given element.
         ///
         /// @param hElement [in] A handle to the element whose text is being set.
@@ -1483,7 +1524,7 @@ namespace GT
         ///
         /// @param pElement [in] A pointer to the element whose text layout is being updated.
         /// @param text     [in] The text of the layout.
-        void UpdateTextLayout(GUIElement* pElement, const char* text);
+        void UpdateElementTextLayout(GUIElement* pElement, const char* text);
 
 
         ////////////////////////////////////////////////////////////////
@@ -1539,6 +1580,11 @@ namespace GT
         ///
         /// @param element [in] A reference to the element whose rectangle is being invalidated.
         void Painting_InvalidateElementRect(GUIElement* pElement);
+
+        /// Invalidates the text rectangle of the given element.
+        ///
+        /// @param pElement [in] A reference to the element whose text rectangle is being invalidated.
+        void Painting_InvalidateElementTextRect(GUIElement* pElement);
 
         /// Paints the invalid rectangles of every surface that has an invalid region.
         ///

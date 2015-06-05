@@ -1200,6 +1200,31 @@ namespace GT
         rectOut.bottom = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY + pElement->layout.height));
     }
 
+    
+    void GUIContextBase::GetElementAbsoluteTextRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const
+    {
+        assert(pElement != nullptr);
+
+        GTLib::Rect<float> rectf;
+        rectf.left   = pElement->layout.absolutePosX + this->GetElementInnerOffsetX(pElement);
+        rectf.top    = pElement->layout.absolutePosY + this->GetElementInnerOffsetY(pElement);
+        rectf.right  = rectf.left;
+        rectf.bottom = rectf.top;
+
+        if (pElement->pTextLayout != nullptr)
+        {
+            rectf.right  += pElement->pTextLayout->GetTextWidth();
+            rectf.bottom += pElement->pTextLayout->GetTextHeight();
+        }
+
+
+        rectOut.left   = static_cast<int>(GTLib::Round(rectf.left));
+        rectOut.top    = static_cast<int>(GTLib::Round(rectf.top));
+        rectOut.right  = static_cast<int>(GTLib::Round(rectf.right));
+        rectOut.bottom = static_cast<int>(GTLib::Round(rectf.bottom));
+    }
+
+
 
     void GUIContextBase::SetElementPositioning(GUIElement* pElement, Positioning positioning)
     {
@@ -1688,7 +1713,7 @@ namespace GT
 
         if (pElement->pTextLayout != nullptr)
         {
-            this->UpdateTextLayout(pElement, this->GetElementText(pElement));
+            this->UpdateElementTextLayout(pElement, this->GetElementText(pElement));
         }
 
 
@@ -1714,7 +1739,7 @@ namespace GT
 
         if (pElement->pTextLayout != nullptr)
         {
-            this->UpdateTextLayout(pElement, this->GetElementText(pElement));
+            this->UpdateElementTextLayout(pElement, this->GetElementText(pElement));
         }
 
 
@@ -1911,6 +1936,8 @@ namespace GT
 
         this->BeginBatch();
         {
+            // TODO: Update the layout of every auto-positioned child.
+
             this->Painting_InvalidateElementRect(pElement);
         }
         this->EndBatch();
@@ -1925,6 +1952,8 @@ namespace GT
 
         this->BeginBatch();
         {
+            // TODO: Update the layout of every auto-positioned child.
+
             this->Painting_InvalidateElementRect(pElement);
         }
         this->EndBatch();
@@ -1974,6 +2003,64 @@ namespace GT
     }
 
 
+    void GUIContextBase::SetElementInnerOffsetX(GUIElement* pElement, float innerOffsetX)
+    {
+        assert(pElement != nullptr);
+
+        this->SetElementInnerOffset(pElement, innerOffsetX, this->GetElementInnerOffsetY(pElement));
+    }
+
+    void GUIContextBase::SetElementInnerOffsetY(GUIElement* pElement, float innerOffsetY)
+    {
+        assert(pElement != nullptr);
+
+        this->SetElementInnerOffset(pElement, this->GetElementInnerOffsetX(pElement), innerOffsetY);
+    }
+
+    void GUIContextBase::SetElementInnerOffset(GUIElement* pElement, float innerOffsetX, float innerOffsetY)
+    {
+        assert(pElement != nullptr);
+
+        pElement->layout.innerOffsetX = innerOffsetX;
+        pElement->layout.innerOffsetY = innerOffsetY;
+
+        if (pElement->pTextLayout != nullptr)
+        {
+            pElement->pTextLayout->SetOffset(static_cast<int>(GTLib::Round(pElement->layout.innerOffsetX)), static_cast<int>(GTLib::Round(pElement->layout.innerOffsetY)));
+        }
+
+
+        // The position of every non-absolute positioned child needs to be updated.
+        this->BeginBatch();
+        {
+            this->IterateElementChildren(pElement, [&](GUIElement* pChild) -> bool
+            {
+                if (this->GetElementPositioning(pChild) != Positioning_Absolute)
+                {
+                    this->Layout_InvalidateElementLayout(pChild, LayoutFlag_PositionInvalid);
+                }
+
+                return true;
+            });
+        }
+        this->EndBatch();
+    }
+
+    float GUIContextBase::GetElementInnerOffsetX(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return pElement->layout.innerOffsetX;
+    }
+
+    float GUIContextBase::GetElementInnerOffsetY(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return pElement->layout.innerOffsetY;
+    }
+
+
 
     void GUIContextBase::SetElementText(GUIElement* pElement, const char* text)
     {
@@ -1981,7 +2068,7 @@ namespace GT
 
         if (m_pFontManager != nullptr)
         {
-            this->UpdateTextLayout(pElement, text);
+            this->UpdateElementTextLayout(pElement, text);
 
 
             this->BeginBatch();
@@ -2054,16 +2141,22 @@ namespace GT
     }
 
 
-    void GUIContextBase::SetElementTextColor(GUIElement* pElement, const GTLib::Colour &colour)
+    void GUIContextBase::SetElementTextColor(GUIElement* pElement, const GTLib::Colour &color)
     {
         assert(pElement != nullptr);
 
-        GUIElementStyle_Set_textcolor(pElement->style, colour);
+        GUIElementStyle_Set_textcolor(pElement->style, color);
+
+        if (pElement->pTextLayout != nullptr)
+        {
+            pElement->pTextLayout->SetDefaultTextColor(color);
+        }
+
 
         this->BeginBatch();
         {
-            // TODO: Only invalidate the text rectangle (previous and current).
-            this->Painting_InvalidateElementRect(pElement);
+            // The text rectangle needs to be redrawn.
+            this->Painting_InvalidateElementTextRect(pElement);
         }
         this->EndBatch();
     }
@@ -2674,7 +2767,7 @@ namespace GT
         if (hFont != 0)
         {
             pElement->hFont = hFont;
-            this->UpdateTextLayout(pElement, this->GetElementText(pElement));
+            this->UpdateElementTextLayout(pElement, this->GetElementText(pElement));
 
             return hFont;
         }
@@ -2682,7 +2775,7 @@ namespace GT
         return this->GetElementFont(pElement);
     }
     
-    void GUIContextBase::UpdateTextLayout(GUIElement* pElement, const char* text)
+    void GUIContextBase::UpdateElementTextLayout(GUIElement* pElement, const char* text)
     {
         assert(pElement != nullptr);
 
@@ -2697,18 +2790,17 @@ namespace GT
                     pElement->pTextLayout = new GUISimpleTextLayout(*m_pFontManager);
                 }
 
-
-                GUISimpleTextLayout* pTextLayout = reinterpret_cast<GUISimpleTextLayout*>(pElement->pTextLayout);
-                if (pTextLayout != nullptr)
+                assert(pElement->pTextLayout != nullptr);
                 {
-                    pTextLayout->SetTextAndFont(text, this->GetElementFont(pElement));
-                    pTextLayout->SetColor(this->GetElementTextColor(pElement));
+                    pElement->pTextLayout->SetText(text);
+                    pElement->pTextLayout->SetDefaultFont(this->GetElementFont(pElement));
+                    pElement->pTextLayout->SetDefaultTextColor(this->GetElementTextColor(pElement));
 
                     unsigned int textBoundsWidth  = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerWidth(pElement)));
                     unsigned int textBoundsHeight = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerHeight(pElement)));
-                    pTextLayout->SetBounds(textBoundsWidth, textBoundsHeight);
+                    pElement->pTextLayout->SetBounds(textBoundsWidth, textBoundsHeight);
 
-                    pTextLayout->SetAlignment(ToGUITextLayoutHorizontalAlignment(this->GetElementHorizontalAlign(pElement)), ToGUITextLayoutVerticalAlignment(this->GetElementVerticalAlign(pElement)));
+                    pElement->pTextLayout->SetAlignment(ToGUITextLayoutHorizontalAlignment(this->GetElementHorizontalAlign(pElement)), ToGUITextLayoutVerticalAlignment(this->GetElementVerticalAlign(pElement)));
                 }
             }
             else
@@ -2864,12 +2956,60 @@ namespace GT
         auto pSurface = this->GetElementSurface(pElement);
         if (pSurface != nullptr)
         {
+#if 0
             GTLib::Rect<int> rect;
-            rect.left   = static_cast<int>(pElement->layout.absolutePosX);
-            rect.top    = static_cast<int>(pElement->layout.absolutePosY);
-            rect.right  = static_cast<int>(pElement->layout.absolutePosX + pElement->layout.width);
-            rect.bottom = static_cast<int>(pElement->layout.absolutePosY + pElement->layout.height);
+            rect.left   = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX));
+            rect.top    = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY));
+            rect.right  = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX + pElement->layout.width));
+            rect.bottom = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY + pElement->layout.height));
+#endif
+
+            GTLib::Rect<int> rect;
+            this->GetElementAbsoluteRect(pElement, rect);
+
             this->Painting_InvalidateRect(pSurface, rect);
+        }
+    }
+
+    void GUIContextBase::Painting_InvalidateElementTextRect(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        if (pElement->pTextLayout != nullptr)
+        {
+            auto pSurface = this->GetElementSurface(pElement);
+            if (pSurface != nullptr)
+            {
+                GTLib::Rect<int> rect;
+                this->GetElementAbsoluteTextRect(pElement, rect);
+
+                // TODO: Check if text clipping is enabled.
+                {
+                    GTLib::Rect<float> childClippingRect;
+                    this->GetElementChildrenClippingRect(pElement, childClippingRect);
+
+                    if (rect.left < static_cast<int>(GTLib::Round(childClippingRect.left)))
+                    {
+                        rect.left = static_cast<int>(GTLib::Round(childClippingRect.left));
+                    }
+                    if (rect.right > static_cast<int>(GTLib::Round(childClippingRect.right)))
+                    {
+                        rect.right = static_cast<int>(GTLib::Round(childClippingRect.right));
+                    }
+
+                    if (rect.top < static_cast<int>(GTLib::Round(childClippingRect.top)))
+                    {
+                        rect.top = static_cast<int>(GTLib::Round(childClippingRect.top));
+                    }
+                    if (rect.bottom > static_cast<int>(GTLib::Round(childClippingRect.bottom)))
+                    {
+                        rect.bottom = static_cast<int>(GTLib::Round(childClippingRect.bottom));
+                    }
+                }
+
+
+                this->Painting_InvalidateRect(pSurface, rect);
+            }
         }
     }
 

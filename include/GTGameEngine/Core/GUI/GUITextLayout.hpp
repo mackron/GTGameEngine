@@ -170,6 +170,28 @@ namespace GT
         virtual void SetAlignment(GUITextLayoutHorizontalAlignment horizontalAlignment, GUITextLayoutVerticalAlignment verticalAlignment) = 0;
 
 
+        /// Sets the default font to use with the text layout.
+        ///
+        /// @param hFont [in] A handle to the default font.
+        virtual void SetDefaultFont(HGUIFont hFont) = 0;
+
+        /// Retrieves a handle to the default font.
+        ///
+        /// @return A handle to the default font.
+        virtual HGUIFont GetDefaultFont() const = 0;
+
+
+        /// Sets the default colour for the text.
+        ///
+        /// @param color [in] The default color of the text.
+        virtual void SetDefaultTextColor(const GTLib::Colour &color) = 0;
+
+        /// Retrieves the default colour of the text.
+        ///
+        /// @return The default colour of the text.
+        virtual GTLib::Colour GetDefaultTextColor() const = 0;
+
+
 
     private:
 

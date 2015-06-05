@@ -92,7 +92,7 @@ namespace GT
 		logfont.lfWeight  = weight;
 		logfont.lfItalic  = slant;
 		logfont.lfCharSet = DEFAULT_CHARSET;
-		logfont.lfQuality = CLEARTYPE_QUALITY;      // TODO: Use CLEARTYPE_QUALITY for small fonts and ANTIALIASED_QUALITY for larger fonts.
+		logfont.lfQuality = (GTLib::Abs(logfont.lfHeight <= 36) ? CLEARTYPE_QUALITY : ANTIALIASED_QUALITY);      // TODO: Use CLEARTYPE_QUALITY for small fonts and ANTIALIASED_QUALITY for larger fonts.
 		memcpy(logfont.lfFaceName, fontInfo.family.c_str(), (fontInfo.family.GetLength() < 31) ? fontInfo.family.GetLength() : 31);
 
 		HFONT hFontWin32 = CreateFontIndirectA(&logfont);

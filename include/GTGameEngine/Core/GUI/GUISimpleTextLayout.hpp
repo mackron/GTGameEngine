@@ -77,40 +77,18 @@ namespace GT
         void SetAlignment(GUITextLayoutHorizontalAlignment horizontalAlignment, GUITextLayoutVerticalAlignment verticalAlignment);
 
 
+        /// @copydoc GUITextLayout::SetDefaultFont()
+        void SetDefaultFont(HGUIFont hFont);
 
-        //////////////////////////////////////////
-        // Font Management
-
-        /// Sets the font to use with the text.
-        ///
-        /// @param hFont [in] A handle to the font to use for all of the text.
-        ///
-        /// @remarks
-        ///     This implementation of the text layout class only supports a single font.
-        void SetFont(HGUIFont hFont);
-
-        /// Retrieves a handle to the font.
-        ///
-        /// @return A handle to the font.
-        HGUIFont GetFont() const;
+        /// @copydoc GUITextLayout::GetDefaultFont()
+        HGUIFont GetDefaultFont() const;
 
 
-        /// Sets the colour of the text.
-        ///
-        /// @param color [in] The colour of the text.
-        void SetColor(const GTLib::Colour &color);
+        /// @copydoc GUITextLayout::SetDefaultTextColor()
+        void SetDefaultTextColor(const GTLib::Colour &color);
 
-        /// Retrieves the colour of the text.
-        ///
-        /// @return The text colour.
-        const GTLib::Colour & GetColor() const;
-
-
-        /// Optimization for setting the text and font at the same time.
-        ///
-        /// @param text  [in] The text.
-        /// @param hFont [in] A handle to the font.
-        void SetTextAndFont(const char* text, HGUIFont hFont);
+        /// @copydoc GUITextLayout::GetDefaultTextColor()
+        GTLib::Colour GetDefaultTextColor() const;
 
 
 

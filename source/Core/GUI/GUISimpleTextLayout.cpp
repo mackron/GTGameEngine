@@ -42,6 +42,8 @@ namespace GT
     {
         m_boundsWidth  = width;
         m_boundsHeight = height;
+
+        this->RefreshLayout();
     }
 
     void GUISimpleTextLayout::GetBounds(unsigned int &widthOut, unsigned int &heightOut) const
@@ -117,41 +119,29 @@ namespace GT
     }
 
 
-
-    //////////////////////////////////////////
-    // Font Management
-
-    void GUISimpleTextLayout::SetFont(HGUIFont hFont)
+    void GUISimpleTextLayout::SetDefaultFont(HGUIFont hFont)
     {
         m_hFont = hFont;
 
         this->RefreshLayout();
     }
 
-    HGUIFont GUISimpleTextLayout::GetFont() const
+    HGUIFont GUISimpleTextLayout::GetDefaultFont() const
     {
         return m_hFont;
     }
 
 
-    void GUISimpleTextLayout::SetColor(const GTLib::Colour &color)
+    void GUISimpleTextLayout::SetDefaultTextColor(const GTLib::Colour &color)
     {
         m_color = color;
     }
 
-    const GTLib::Colour & GUISimpleTextLayout::GetColor() const
+    GTLib::Colour GUISimpleTextLayout::GetDefaultTextColor() const
     {
         return m_color;
     }
 
-
-    void GUISimpleTextLayout::SetTextAndFont(const char* text, HGUIFont hFont)
-    {
-        m_text  = text;
-        m_hFont = hFont;
-
-        this->RefreshLayout();
-    }
 
 
 

@@ -65,6 +65,7 @@ namespace GT
                   marginLeft(0.0f), marginRight(0.0f), marginTop(0.0f), marginBottom(0.0f),
                   borderLeftWidth(0.0f), borderRightWidth(0.0f), borderTopWidth(0.0f), borderBottomWidth(0.0f),
                   paddingLeft(0.0f), paddingRight(0.0f), paddingTop(0.0f), paddingBottom(0.0f),
+                  innerOffsetX(0.0f), innerOffsetY(0.0f),
                   flags(0), layoutChangeFlags(0),
                   layoutValidationListItem(nullptr)
             {
@@ -134,6 +135,13 @@ namespace GT
 
             /// The actual bottom padding of the element.
             float paddingBottom;
+
+
+            /// The inner offset on the X axis.
+            float innerOffsetX;
+
+            /// The inner offset on the Y axis.
+            float innerOffsetY;
 
 
             /// Flags for internal use by the GUI context so that it can quickly know the state of the layout and which layout properties
