@@ -34,7 +34,7 @@ namespace GT
     static const uint32_t NumberType_Absolute = (0 << 28);
     static const uint32_t NumberType_Percent  = (1 << 28);
     static const uint32_t NumberType_Pixels   = (2 << 28);
-    static const uint32_t NumberType_Points   = (3 << 28);        // Useful for fonts.
+    static const uint32_t NumberType_Points   = (3 << 28);        // Same as pixels, but scaled based on DPI.
     static const uint32_t NumberType_Auto     = (4 << 28);        // Usually depends on context.
 
     // The two possible axes for children - horizontal or vertical. Only requires 1 bit.

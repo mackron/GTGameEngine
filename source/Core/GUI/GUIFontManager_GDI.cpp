@@ -80,19 +80,11 @@ namespace GT
         //logfont.lfEscapement  = <rotation in tenths of degrees>;
         //logfont.lfOrientation = <rotation in tenths of degrees>;
 
-		if (fontInfo.sizeInPoints > 0.0f)
-		{
-			logfont.lfHeight = -MulDiv(static_cast<int>(fontInfo.sizeInPoints), GetDeviceCaps(m_hDC, LOGPIXELSY), 72);
-		}
-		else
-		{
-			logfont.lfHeight = -static_cast<int>(fontInfo.sizeInPixels);
-		}
-
+        logfont.lfHeight  = -static_cast<int>(fontInfo.size);
 		logfont.lfWeight  = weight;
 		logfont.lfItalic  = slant;
 		logfont.lfCharSet = DEFAULT_CHARSET;
-		logfont.lfQuality = (GTLib::Abs(logfont.lfHeight <= 36) ? CLEARTYPE_QUALITY : ANTIALIASED_QUALITY);      // TODO: Use CLEARTYPE_QUALITY for small fonts and ANTIALIASED_QUALITY for larger fonts.
+		logfont.lfQuality = (GTLib::Abs(logfont.lfHeight) <= 36) ? CLEARTYPE_QUALITY : ANTIALIASED_QUALITY;      // TODO: Use CLEARTYPE_QUALITY for small fonts and ANTIALIASED_QUALITY for larger fonts.
 		memcpy(logfont.lfFaceName, fontInfo.family.c_str(), (fontInfo.family.GetLength() < 31) ? fontInfo.family.GetLength() : 31);
 
 		HFONT hFontWin32 = CreateFontIndirectA(&logfont);

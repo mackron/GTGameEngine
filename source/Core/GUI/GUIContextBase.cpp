@@ -2718,17 +2718,7 @@ namespace GT
         fi.family = family;
         fi.dpiX = this->GetXDPI(this->GetElementSurface(pElement));
         fi.dpiY = this->GetYDPI(this->GetElementSurface(pElement));
-        
-        if (sizeType == NumberType_Points)
-        {
-            fi.sizeInPoints = static_cast<float>(size) * this->GetXDPIScalingFactor(this->GetElementSurface(pElement));
-            fi.sizeInPixels = 0;
-        }
-        else
-        {
-            fi.sizeInPoints = 0;
-            fi.sizeInPixels = static_cast<float>(size) * this->GetYDPIScalingFactor(this->GetElementSurface(pElement));
-        }
+        fi.size = static_cast<float>(size) * this->GetXDPIScalingFactor(this->GetElementSurface(pElement));
 
 
         switch (weight)

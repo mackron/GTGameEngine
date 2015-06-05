@@ -18,7 +18,7 @@ namespace GT
         GUIFontInfo()
             : family(),
               styleFlags(0),
-              sizeInPoints(10.0f), sizeInPixels(0.0f),
+              size(14),
               dpiX(96), dpiY(96)
         {
         }
@@ -26,7 +26,7 @@ namespace GT
         GUIFontInfo(const GUIFontInfo &info)
             : family(info.family),
               styleFlags(info.styleFlags),
-              sizeInPoints(info.sizeInPoints), sizeInPixels(info.sizeInPixels),
+              size(info.size),
               dpiX(info.dpiX), dpiY(info.dpiY)
         {
         }
@@ -39,12 +39,11 @@ namespace GT
         {
             if (this != &other)
             {
-                this->family       = other.family;
-                this->styleFlags   = other.styleFlags;
-                this->sizeInPoints = other.sizeInPoints;
-                this->sizeInPixels = other.sizeInPixels;
-                this->dpiX         = other.dpiX;
-                this->dpiY         = other.dpiY;
+                this->family     = other.family;
+                this->styleFlags = other.styleFlags;
+                this->size       = other.size;
+                this->dpiX       = other.dpiX;
+                this->dpiY       = other.dpiY;
             }
             
             return *this;
@@ -52,12 +51,11 @@ namespace GT
 
         bool IsEqual(const GUIFontInfo &other)
         {
-            return this->family          == other.family        &&
-                   this->styleFlags      == other.styleFlags    &&
-                   this->sizeInPoints    == other.sizeInPoints  &&
-                   this->sizeInPixels    == other.sizeInPixels  &&
-                   this->dpiX            == other.dpiX          &&
-                   this->dpiY            == other.dpiY;
+            return this->family     == other.family     &&
+                   this->styleFlags == other.styleFlags &&
+                   this->size       == other.size       &&
+                   this->dpiX       == other.dpiX       &&
+                   this->dpiY       == other.dpiY;
         }
         
         
@@ -66,11 +64,9 @@ namespace GT
         
         /// The style flags of the font.
         uint32_t styleFlags;
-        
-        
+
         /// The size of the font, in points. We use a float here so we can have values like 8.5.
-        float sizeInPoints;
-        float sizeInPixels;
+        float size;
         
         /// The X DPI to use for the font. Default is 96.
         unsigned int dpiX;
