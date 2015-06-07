@@ -7,6 +7,7 @@
 #include <GTLib/CommandLine.hpp>
 #include "HardwarePlatform.hpp"
 #include "FileSystem.hpp"
+#include "WindowManager.hpp"
 #include "Graphics/GraphicsTypes.hpp"
 #include "Assets/AssetLibrary.hpp"
 
@@ -26,7 +27,7 @@ namespace GT
     public:
 
         /// Constructor.
-        EngineContext();
+        EngineContext(WindowManager* pWindowManager = nullptr);
 
         /// Destructor.
         ~EngineContext();
@@ -134,6 +135,17 @@ namespace GT
         FileSystem & GetFileSystem();
 
 
+
+        ////////////////////////////////////////////////////////////////////
+        // Window Management
+
+        /// Retrieves a reference to the window manager.
+        ///
+        /// @return A reference to the window manager.
+        WindowManager & GetWindowManager();
+
+
+
         ////////////////////////////////////////////////////////////////////
         // Asset Management
 
@@ -166,6 +178,7 @@ namespace GT
 
 
 
+
     private:
 
         /// An object representing the command line that was used to initialise the game engine.
@@ -187,12 +200,24 @@ namespace GT
         /// The virtual file system for handling file reading and writing.
         FileSystem m_fileSystem;
 
+
+        /// A pointer to the window manager. This should never be null. If a window manager is not specified in the context's constructor a default
+        /// one will be created.
+        WindowManager* m_pWindowManager;
+
+        /// Keeps track of whether or not the context owns the window manager.
+        bool m_ownsWindowManager;
+
+
         /// The asset library for managing assets.
         AssetLibrary m_assetLibrary;
 
         /// A pointer to the default asset allocator. This will be null if the default asset allocator is not being used. An application may choose to
         /// exclude the default allocator so that they can do custom asset loading.
         AssetAllocator* m_pDefaultAssetAllocator;
+
+
+        
 
 
     private:    // No copying.

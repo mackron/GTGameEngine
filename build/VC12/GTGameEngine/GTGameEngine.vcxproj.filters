@@ -392,6 +392,12 @@
     <ClCompile Include="..\..\..\source\Core\GUI\GUITextLayout.cpp">
       <Filter>Source Files\Core\GUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\WindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\WindowManager_Win32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -843,6 +849,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUITextLayout.hpp">
       <Filter>Header Files\Core\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager_Win32.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -6,6 +6,10 @@
 #include <GTGameEngine/GameDisplayRenderingCallback.hpp>
 #include <GTGameEngine/GPURenderingDevice.hpp>
 
+#if defined(GT_PLATFORM_WINDOWS)
+#include "GameContext_Win32.hpp"
+#endif
+
 namespace GT
 {
     GameContext::GameContext(EngineContext &engineContext)
@@ -28,6 +32,47 @@ namespace GT
 
     void GameContext::Shutdown()
     {
+    }
+
+
+
+    HWindow GameContext::CreateMainWindow(WindowType type, const char* title, int xPos, int yPos, unsigned int width, unsigned int height)
+    {
+        HWindow hWindow = m_engineContext.GetWindowManager().CreateWindow(0, type, xPos, yPos, width, height);
+        if (hWindow != 0)
+        {
+            m_engineContext.GetWindowManager().SetWindowTitle(hWindow, title);
+            m_engineContext.GetWindowManager().ShowWindow(hWindow);
+        }
+     
+        return hWindow;
+    }
+
+    HWindow GameContext::CreateChildWindow(HWindow hParent, int xPos, int yPos, unsigned int width, unsigned int height)
+    {
+        HWindow hWindow = m_engineContext.GetWindowManager().CreateWindow(hParent, WindowType::ChildWindow, xPos, yPos, width, height);
+        if (hWindow != 0)
+        {
+            m_engineContext.GetWindowManager().ShowWindow(hWindow);
+        }
+
+        return hWindow;
+    }
+
+    HWindow GameContext::CreatePopupWindow(HWindow hParent, int xPos, int yPos, unsigned int width, unsigned int height)
+    {
+        HWindow hWindow = m_engineContext.GetWindowManager().CreateWindow(hParent, WindowType::PopupWindow, xPos, yPos, width, height);
+        if (hWindow != 0)
+        {
+            m_engineContext.GetWindowManager().ShowWindow(hWindow);
+        }
+
+        return hWindow;
+    }
+
+    void GameContext::DeleteWindow(HWindow hWindow)
+    {
+        m_engineContext.GetWindowManager().DeleteWindow(hWindow);
     }
 
 
@@ -72,8 +117,47 @@ namespace GT
         }
     }
 
-        
 
+
+    void GameContext::OnWantToClose()
+    {
+    }
+
+    void GameContext::OnWindowResized(HWindow hWindow, unsigned int width, unsigned int height)
+    {
+    }
+
+    void GameContext::OnWindowMoved(HWindow hWindow, int xPos, int yPos)
+    {
+    }
+
+    void GameContext::OnMouseMove(HWindow hWindow, int xPos, int yPos)
+    {
+    }
+
+    void GameContext::OnMouseButtonPressed(HWindow hWindow, int button, int xPos, int yPos)
+    {
+    }
+
+    void GameContext::OnMouseButtonReleased(HWindow hWinodw, int button, int xPos, int yPos)
+    {
+    }
+
+    void GameContext::OnMouseButtonDoubleClicked(HWindow hWindow, int button, int xPos, int yPos)
+    {
+    }
+
+    void GameContext::OnKeyPressed(HWindow hWindow, GTLib::Key key)
+    {
+    }
+
+    void GameContext::OnKeyReleased(HWindow hWindow, GTLib::Key key)
+    {
+    }
+
+    void GameContext::OnPrintableKeyDown(HWindow hWindow, GTLib::Key key)
+    {
+    }
 
 
 

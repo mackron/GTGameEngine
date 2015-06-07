@@ -10,16 +10,31 @@
 #include "Graphics/DefaultGraphicsInterfaceAllocator.hpp"
 #include "Assets/DefaultAssetAllocator.hpp"
 
+#if defined(GT_PLATFORM_WINDOWS)
+#include <GTGameEngine/WindowManager_Win32.hpp>
+#endif
 
 namespace GT
 {
-    EngineContext::EngineContext()
+    EngineContext::EngineContext(WindowManager* pWindowManager)
         : m_commandLine(),
           m_hardwarePlatform(),
           m_fileSystem(),
+          m_pWindowManager(pWindowManager), m_ownsWindowManager(false),
           m_assetLibrary(m_fileSystem),
           m_pDefaultAssetAllocator(nullptr)
     {
+        if (m_pWindowManager == nullptr)
+        {
+#if defined (GT_PLATFORM_WINDOWS)
+            m_pWindowManager = new WindowManager_Win32;
+#endif
+#if defined (GT_PLATFORM_LINUX)
+            m_pWindowManager = new WindowManager_X11;
+#endif
+
+            m_ownsWindowManager = true;
+        }
     }
 
     EngineContext::~EngineContext()
@@ -134,6 +149,14 @@ namespace GT
 
         // Hardware platform.
         m_hardwarePlatform.Shutdown();
+
+
+        // Window manager.
+        if (m_ownsWindowManager)
+        {
+            delete m_pWindowManager;
+            m_pWindowManager = nullptr;
+        }
     }
 
 
@@ -239,6 +262,16 @@ namespace GT
     FileSystem & EngineContext::GetFileSystem()
     {
         return m_fileSystem;
+    }
+
+
+    ////////////////////////////////////////////////////////////////////
+    // Window Management
+    WindowManager & EngineContext::GetWindowManager()
+    {
+        assert(m_pWindowManager != nullptr);
+
+        return *m_pWindowManager;
     }
 
 

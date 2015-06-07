@@ -117,6 +117,8 @@
     <ClCompile Include="..\..\..\source\Scene\SceneNodeIDAllocator.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneNodeList.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneState.cpp" />
+    <ClCompile Include="..\..\..\source\WindowManager.cpp" />
+    <ClCompile Include="..\..\..\source\WindowManager_Win32.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\Asset.hpp" />
@@ -178,6 +180,8 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeIDAllocator.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeList.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneState.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager_Win32.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\BasicBuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\BinarySearchTree.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\BufferReader.hpp" />
@@ -279,27 +283,27 @@
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <CharacterSet>MultiByte</CharacterSet>
+    <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
