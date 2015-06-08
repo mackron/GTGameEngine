@@ -4,6 +4,7 @@
 #define __GT_WindowManager_hpp_
 
 #include <GTLib/Rect.hpp>
+#include <functional>
 
 namespace GT
 {
@@ -95,6 +96,50 @@ namespace GT
         ///
         /// @return A handle to the window that currently has the keyboard focus.
         virtual HWindow GetFocusedWindow() const = 0;
+
+
+        /// Shows the cursor at a global level.
+        virtual void ShowCursor() = 0;
+
+        /// Hides the cursor at a global level.
+        virtual void HideCursor() = 0;
+
+        /// Determines whether or not the cursor is visible at a global level.
+        ///
+        /// @return True if the cursor is visible at a global level; false otherwise.
+        virtual bool IsCursorVisible() const = 0;
+
+
+        /// Posts a message to the window manager's event queue.
+        ///
+        /// @remarks
+        ///     Use this to inject an event into the message queue to notify the application that it should quit.
+        virtual void PostQuitMessage(int exitCode) = 0;
+
+        /// Retrieves the exit code that was used to terminate the loop.
+        ///
+        /// @remarks
+        ///     If no exit code has been posted, this will return 0.
+        virtual int GetExitCode() const = 0;
+
+
+        /// Enters into an event-driven loop.
+        ///
+        /// @param postLoop [in] The function to at the end of every loop iteration.
+        ///
+        /// @remarks
+        ///     When postLoop returns false, the loop will be terminated.
+        ///     @par
+        ///     In the case of an event-driven loop the post loop function will be called for every event.
+        virtual void EventDrivenLoop(std::function<bool ()> postLoop) = 0;
+
+        /// Enters into a real-time loop.
+        ///
+        /// @param postLoop [in] The function to at the end of every loop iteration.
+        ///
+        /// @remarks
+        ///     When postLoop returns false, the loop will be terminated.
+        virtual void RealTimeLoop(std::function<bool ()> postLoop) = 0;
     };
 }
 

@@ -7,7 +7,6 @@
 #include <GTLib/CommandLine.hpp>
 #include "HardwarePlatform.hpp"
 #include "FileSystem.hpp"
-#include "WindowManager.hpp"
 #include "Graphics/GraphicsTypes.hpp"
 #include "Assets/AssetLibrary.hpp"
 
@@ -27,7 +26,7 @@ namespace GT
     public:
 
         /// Constructor.
-        EngineContext(WindowManager* pWindowManager = nullptr);
+        EngineContext();
 
         /// Destructor.
         ~EngineContext();
@@ -52,6 +51,11 @@ namespace GT
         ///     This does not delete the context object.
         void Shutdown();
 
+
+        /// Retrieves a reference to the object representing the command line.
+        ///
+        /// @return A reference to the command line object.
+        const GTLib::CommandLine & GetCommandLine() const;
 
 
 		/// Registers a graphics interface allocator.
@@ -137,16 +141,6 @@ namespace GT
 
 
         ////////////////////////////////////////////////////////////////////
-        // Window Management
-
-        /// Retrieves a reference to the window manager.
-        ///
-        /// @return A reference to the window manager.
-        WindowManager & GetWindowManager();
-
-
-
-        ////////////////////////////////////////////////////////////////////
         // Asset Management
 
         /// Retrieves a reference to the asset library.
@@ -199,14 +193,6 @@ namespace GT
 
         /// The virtual file system for handling file reading and writing.
         FileSystem m_fileSystem;
-
-
-        /// A pointer to the window manager. This should never be null. If a window manager is not specified in the context's constructor a default
-        /// one will be created.
-        WindowManager* m_pWindowManager;
-
-        /// Keeps track of whether or not the context owns the window manager.
-        bool m_ownsWindowManager;
 
 
         /// The asset library for managing assets.

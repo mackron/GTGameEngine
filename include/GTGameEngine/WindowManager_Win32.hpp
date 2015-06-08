@@ -18,61 +18,75 @@ namespace GT
     public:
 
         /// Constructor.
-        WindowManager_Win32();
+        WindowManager_Win32(unsigned int extraWindowBytes, WNDPROC wndProc);
 
         /// Destructor.
-        ~WindowManager_Win32();
+        virtual ~WindowManager_Win32();
 
 
         /// @copydoc WindowManager::CreateWindow()
-        HWindow CreateWindow(HWindow hParent, WindowType type, int xPos, int yPos, unsigned int width, unsigned int height);
+        virtual HWindow CreateWindow(HWindow hParent, WindowType type, int xPos, int yPos, unsigned int width, unsigned int height);
 
         /// @copydoc WindowManager::DeleteWindow()
-        void DeleteWindow(HWindow hWindow);
+        virtual void DeleteWindow(HWindow hWindow);
 
 
         /// @copydoc WindowManager::SetWindowTitle()
-        void SetWindowTitle(HWindow hWindow, const char* title);
+        virtual void SetWindowTitle(HWindow hWindow, const char* title);
 
         /// @copydoc WindowManager::SetWindowPosition()
-        void SetWindowPosition(HWindow hWindow, int xPos, int yPos);
+        virtual void SetWindowPosition(HWindow hWindow, int xPos, int yPos);
 
         /// @copydoc WindowManager::SetWindowSize()
-        void SetWindowSize(HWindow hWindow, unsigned int width, unsigned int height);
+        virtual void SetWindowSize(HWindow hWindow, unsigned int width, unsigned int height);
 
 
         /// @copydoc WindowManager::ShowWindow()
-        void ShowWindow(HWindow hWindow);
+        virtual void ShowWindow(HWindow hWindow);
 
         /// @copydoc WindowManager::HideWindow()
-        void HideWindow(HWindow hWindow);
+        virtual void HideWindow(HWindow hWindow);
 
 
         /// @copydoc WindowManager::InvalidateWindowRect()
-        void InvalidateWindowRect(HWindow hWindow, const GTLib::Rect<int> &rect);
+        virtual void InvalidateWindowRect(HWindow hWindow, const GTLib::Rect<int> &rect);
 
 
         /// @copydoc WindowManager::SetFocusedWindow()
-        void SetFocusedWindow(HWindow hWindow);
+        virtual void SetFocusedWindow(HWindow hWindow);
 
         /// @copydoc WindowManager::GetFocusedWindow()
-        HWindow GetFocusedWindow() const;
+        virtual HWindow GetFocusedWindow() const;
 
 
+        /// @copydoc WindowManager::ShowCursor()
+        virtual void ShowCursor();
 
-        ////////////////////////////////////
-        // Win32 Specific
+        /// @copydoc WindowManager::HideCursor()
+        virtual void HideCursor();
 
-        /// Sets the window handler for the given window.
-        ///
-        /// @param hWindow [in] A handle to the window whose window procedure is being set.
-        /// @param wndProc [in] The window procedure function.
-        void SetWindowProc(HWindow hWindow, WNDPROC wndProc);
+        /// @copydoc WindowManager::IsCursorVisible()
+        virtual bool IsCursorVisible() const;
+
+
+        /// @copydoc WindowManager::PostQuitMessage()
+        virtual void PostQuitMessage(int exitCode);
+
+        /// @copydoc WindowManager::GetExitCode()
+        virtual int GetExitCode() const;
+
+
+        /// @copydoc WindowManager::EventDrivenLoop()
+        virtual void EventDrivenLoop(std::function<bool ()> postLoop);
+
+        /// @copydoc WindowManager::RealTimeLoop()
+        virtual void RealTimeLoop(std::function<bool ()> postLoop);
 
 
     private:
 
-
+        /// The exit code that was used to exit the process.
+        WPARAM m_wExitCode;
     };
 }
 

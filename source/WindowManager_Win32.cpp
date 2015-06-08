@@ -3,48 +3,21 @@
 #include <GTGameEngine/WindowManager_Win32.hpp>
 #include <cassert>
 
+#define CURSOR_SUPPRESSED           0x00000002
+
 namespace GT
 {
     const wchar_t* g_WindowClass = L"GT_WndClass";
 
-    LRESULT WindowProc1(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
-    {
-        WNDPROC proc = reinterpret_cast<WNDPROC>(GetWindowLongPtrW(hWnd, 0));
-
-        switch (msg)
-        {
-        case WM_ERASEBKGND:
-            {
-                // Don't draw the background.
-                return 1;
-            }
-
-        default:
-            {
-                break;
-            }
-        }
-
-
-        if (proc != nullptr)
-        {
-            return proc(hWnd, msg, wParam, lParam);
-        }
-        else
-        {
-            return DefWindowProcW(hWnd, msg, wParam, lParam);
-        }
-    }
-
-    WindowManager_Win32::WindowManager_Win32()
+    WindowManager_Win32::WindowManager_Win32(unsigned int extraWindowBytes, WNDPROC wndProc)
         : WindowManager()
     {
         // Window class need to be registered.
         WNDCLASSEXW wc;
         memset(&wc, 0, sizeof(wc));
         wc.cbSize        = sizeof(wc);
-        wc.cbWndExtra    = sizeof(void*) * 2;
-        wc.lpfnWndProc   = (WNDPROC)WindowProc1;
+        wc.cbWndExtra    = extraWindowBytes;
+        wc.lpfnWndProc   = wndProc;
         wc.lpszClassName = g_WindowClass;
         wc.hCursor       = LoadCursorW(NULL, IDC_ARROW);
         wc.style         = CS_OWNDC | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
@@ -104,8 +77,6 @@ namespace GT
         HWND hWnd = ::CreateWindowExW(dwExStyle, g_WindowClass, L"GTGameEngine", dwStyle, xPos, yPos, width, height, reinterpret_cast<HWND>(hParent), NULL, NULL, nullptr);
         if (hWnd != NULL)
         {
-            ::SetWindowLongPtrW(hWnd, sizeof(void*)*0, 0);
-            ::SetWindowLongPtrW(hWnd, sizeof(void*)*1, 0);
         }
 
         return reinterpret_cast<HWindow>(hWnd);
@@ -181,5 +152,102 @@ namespace GT
     HWindow WindowManager_Win32::GetFocusedWindow() const
     {
         return reinterpret_cast<HWindow>(::GetFocus());
+    }
+
+
+    void WindowManager_Win32::ShowCursor()
+    {
+        if (!this->IsCursorVisible())
+        {
+            while (::ShowCursor(TRUE) < 0);
+        }
+    }
+
+    void WindowManager_Win32::HideCursor()
+    {
+        if (this->IsCursorVisible())
+        {
+            while (::ShowCursor(FALSE) >= 0);
+        }
+    }
+
+    bool WindowManager_Win32::IsCursorVisible() const
+    {
+        CURSORINFO ci;
+        ci.cbSize = sizeof(ci);
+
+        if (GetCursorInfo(&ci))
+        {
+            return ci.flags == CURSOR_SHOWING || ci.flags == CURSOR_SUPPRESSED;
+        }
+
+        return true;
+    }
+
+
+    void WindowManager_Win32::PostQuitMessage(int exitCode)
+    {
+        ::PostQuitMessage(exitCode);
+    }
+
+    int WindowManager_Win32::GetExitCode() const
+    {
+        return static_cast<int>(m_wExitCode);
+    }
+
+
+
+    void WindowManager_Win32::EventDrivenLoop(std::function<bool ()> postLoop)
+    {
+        MSG msg;
+        BOOL bRet;
+        while ((bRet = GetMessageW(&msg, NULL, 0, 0)) != 0)
+        {
+            if (bRet == -1)
+            {
+                // Unknown error.
+                break;
+            }
+                
+            TranslateMessage(&msg);
+            DispatchMessageA(&msg);
+
+
+            if (!postLoop())
+            {
+                break;
+            }
+        }
+
+
+        // If we get here we received a WM_QUIT message.
+        m_wExitCode = msg.wParam;
+    }
+
+    void WindowManager_Win32::RealTimeLoop(std::function<bool ()> postLoop)
+    {
+        for (;;)
+        {
+            // Handle window events.
+            MSG msg;
+            if (PeekMessageA(&msg, nullptr, 0, 0, PM_REMOVE))
+            {
+                if (msg.message == WM_QUIT)
+                {
+                    // Received a quit message.
+                    m_wExitCode = msg.wParam;
+                    break;
+                }
+
+                TranslateMessage(&msg);
+                DispatchMessageA(&msg);
+            }
+
+
+            if (!postLoop())
+            {
+                break;
+            }
+        }
     }
 }

@@ -88,9 +88,11 @@
     <ClCompile Include="..\..\..\source\FileSystem\File.cpp" />
     <ClCompile Include="..\..\..\source\FileSystem\File_Native.cpp" />
     <ClCompile Include="..\..\..\source\GameContext.cpp" />
+    <ClCompile Include="..\..\..\source\GameContext_Win32.cpp" />
     <ClCompile Include="..\..\..\source\GameDisplay.cpp" />
     <ClCompile Include="..\..\..\source\GameDisplayRenderingCallback.cpp" />
     <ClCompile Include="..\..\..\source\GameDisplay_Windowed.cpp" />
+    <ClCompile Include="..\..\..\source\GameState.cpp" />
     <ClCompile Include="..\..\..\source\GPUComputeDevice.cpp" />
     <ClCompile Include="..\..\..\source\GPURenderingDevice.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\D3D12\D3D12GraphicsInterface.cpp" />
@@ -118,6 +120,7 @@
     <ClCompile Include="..\..\..\source\Scene\SceneNodeList.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneState.cpp" />
     <ClCompile Include="..\..\..\source\WindowManager.cpp" />
+    <ClCompile Include="..\..\..\source\WindowManager_DefaultWin32.cpp" />
     <ClCompile Include="..\..\..\source\WindowManager_Win32.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -155,6 +158,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplay.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplayRenderingCallback.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplay_Windowed.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\GameState.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPUComputeDevice.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDeviceInfo.hpp" />
@@ -181,6 +185,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeList.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneState.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager_DefaultWin32.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager_Win32.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\BasicBuffer.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\BinarySearchTree.hpp" />
@@ -266,6 +271,7 @@
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
     <ClInclude Include="..\..\..\source\FileSystem\File.hpp" />
     <ClInclude Include="..\..\..\source\FileSystem\File_Native.hpp" />
+    <ClInclude Include="..\..\..\source\GameContext_Win32.hpp" />
     <ClInclude Include="..\..\..\source\Graphics\D3D12\D3D12Common.hpp" />
     <ClInclude Include="..\..\..\source\Graphics\D3D12\D3D12GraphicsInterface.hpp" />
     <ClInclude Include="..\..\..\source\Graphics\D3D\D3D11\GPURenderingDevice_D3D11.hpp" />

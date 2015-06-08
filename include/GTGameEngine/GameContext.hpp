@@ -16,6 +16,7 @@
 namespace GT
 {
     class EngineContext;
+    class GameState;
     class GameDisplay;
     class GameDisplay_Windowed;
     class GraphicsInterface;
@@ -35,7 +36,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GameContext(EngineContext &engineContext);
+        GameContext(EngineContext &engineContext, GameState &gameState);
 
         /// Destructor.
         ~GameContext();
@@ -48,6 +49,21 @@ namespace GT
 
         /// Shuts down the game context.
         void Shutdown();
+
+
+        /// Retrieves a reference to the engine context.
+        ///
+        /// @return A reference to the engine context.
+        EngineContext & GetEngineContext();
+
+
+        /// Runs the game.
+        ///
+        /// @return The exit code.
+        ///
+        /// @remarks
+        ///     This is where the game loop is run. When this function returns the game will be closed.
+        int Run();
 
 
         /// Creates a game window.
@@ -111,11 +127,37 @@ namespace GT
 
 
 
+        /// Closes the game.
+        ///
+        /// @remarks
+        ///     This does not immediately shut down the game. Rather, it marks the game as needing to close and waits
+        ///     until the end of the current loop iteration. 
+        void Close();
+
         /// Steps the game by one frame.
         ///
         /// @remarks
         ///     This will update and render the game.
         void Step();
+
+
+
+        ///////////////////////////////////////////////////
+        // Editor
+
+        /// Opens the editor.
+        ///
+        /// @remarks
+        ///     This will call the game state's OnWantToOpenEditor() method. If that returns false the editor will not be opened.
+        void OpenEditor();
+
+        /// Closes the editor.
+        void CloseEditor();
+
+        /// Determines whether or not the editor is open.
+        ///
+        /// @return True if the editor is open; false otherwise.
+        bool IsEditorOpen() const;
 
 
 
@@ -193,7 +235,7 @@ namespace GT
         /// @remarks
         ///     When text operations are required (such as typing in a text box), us this event over OnKeyPressed(). This
         ///     difference is that this passes the unicode representation of the character and is also auto-repeated.
-        void OnPrintableKeyDown(HWindow hWindow, GTLib::Key key);
+        void OnPrintableKeyDown(HWindow hWindow, char32_t character);
 
 
 
@@ -203,6 +245,15 @@ namespace GT
         /// A reference to the engine context that owns this game context.
         EngineContext &m_engineContext;
 
+        /// A reference to the game state. This is set in the constructor.
+        GameState &m_gameState;
+
+
+        /// A pointer to the window manager. This should never be null. If a window manager is not specified in the context's constructor a default
+        /// one will be created.
+        WindowManager* m_pWindowManager;
+
+
         /// The list of window displays.
         GTLib::Vector<GameDisplay_Windowed*> m_windowedDisplays;
 
@@ -211,12 +262,21 @@ namespace GT
         uint32_t m_flags;
 
 
+        /// The time of the last frame. This is used to calculate the delta time between frames.
+        double m_lastFrameTime;
+
+
+
     private:
 
         ///////////////////////////////////////////////////////////////
         // State Flags
 
-        static const uint32_t IsSingleThreaded = 0x00000001;        //< Whether or not the game should run in single- or multi-threaded mode.
+        static const uint32_t IsSingleThreadedFlag       = (1 << 0);        //< Whether or not the game should run in single- or multi-threaded mode.
+        static const uint32_t IsOwnerOfWindowManagerFlag = (1 << 1);        //< Whether or not the context owns the window manager.
+        static const uint32_t IsEditorOpenFlag           = (1 << 2);        //< Whether or not the editor is open.
+        static const uint32_t IsRunningFlag              = (1 << 3);        //< Whether or not the game is currently running. This is used to track whether or not the game loop should continue looping.
+        static const uint32_t IsRunningRealTimeLoopFlag  = (1 << 4);        //< Whether or not a real-time loop is being used.
 
 
 
