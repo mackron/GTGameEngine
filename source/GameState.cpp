@@ -35,7 +35,16 @@ namespace GT
     }
 
 
-    void GameState::Step(double)
+    void GameState::Step(GameContext &, double)
+    {
+    }
+
+
+    void GameState::Pause(GameContext &)
+    {
+    }
+
+    void GameState::Resume(GameContext &)
     {
     }
 

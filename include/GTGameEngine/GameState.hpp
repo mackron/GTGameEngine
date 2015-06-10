@@ -63,7 +63,14 @@ namespace GT
         /// @remarks
         ///     There are two parts to stepping the game - updating and rendering. It is up to the game state to decide how it
         ///     wants to do the update.
-        virtual void Step(double deltaTimeInSeconds);
+        virtual void Step(GameContext &gameContext, double deltaTimeInSeconds);
+
+
+        /// Pauses the game.
+        virtual void Pause(GameContext &gameContext);
+
+        /// Resumes the game.
+        virtual void Resume(GameContext &gameContext);
 
 
         /////////////////////////////////
