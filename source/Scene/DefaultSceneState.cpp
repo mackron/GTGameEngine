@@ -37,7 +37,7 @@ namespace GT
         m_containerLock.Unlock();
 
 
-        // We need to post an OnSceneNodeInserted() event. If we are currently stepping, it must be deferred, otherwise it will be posted straight away.
+        // We need to post an OnSceneNodeAdded() event. If we are currently stepping, it must be deferred, otherwise it will be posted straight away.
         if (pSceneNode != nullptr)
         {
             if ((m_stateFlags & StateFlag_IsStepping) != 0)
