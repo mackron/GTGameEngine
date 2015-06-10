@@ -72,6 +72,11 @@ namespace GT
         return m_engineContext;
     }
 
+    GameState & GameContext::GetGameState()
+    {
+        return m_gameState;
+    }
+
 
     int GameContext::Run()
     {
@@ -184,13 +189,18 @@ namespace GT
 
     void GameContext::Step()
     {
-        double currentTime = GTLib::Timing::GetTimeInSeconds();
-        double deltaTimeInSeconds = currentTime - m_lastFrameTime;
+        if (!this->IsEditorOpen())
+        {
+            double currentTime = GTLib::Timing::GetTimeInSeconds();
+            double deltaTimeInSeconds = currentTime - m_lastFrameTime;
+            {
+                m_gameState.Step(*this, deltaTimeInSeconds);
+            }
+            m_lastFrameTime = currentTime;
+        }
+        
 
-        m_gameState.Step(deltaTimeInSeconds);
-
-        m_lastFrameTime = currentTime;
-
+#if 0
         // The way the game is stepped depends on whether or not multithreading is being used. In some cases it is
         // desireable to not multi-thread things, such as when single-threading is efficient enough that it becomes
         // faster.
@@ -227,11 +237,13 @@ namespace GT
                 }
             }
         }
+#endif
     }
 
 
     void GameContext::OpenEditor()
     {
+#if defined(GT_BUILD_EDITOR)
         if (!this->IsEditorOpen())
         {
             if (m_gameState.OnWantToOpenEditor(*this))
@@ -240,20 +252,27 @@ namespace GT
                 m_flags &= ~IsRunningRealTimeLoopFlag;  //< Switch to an event-driven application loop.
             }
         }
+#endif
     }
 
     void GameContext::CloseEditor()
     {
+#if defined(GT_BUILD_EDITOR)
         if (this->IsEditorOpen())
         {
             m_flags &= ~IsEditorOpenFlag;
             m_flags |= IsRunningRealTimeLoopFlag;       //< Switch to a real-time game loop.
         }
+#endif
     }
 
     bool GameContext::IsEditorOpen() const
     {
+#if defined(GT_BUILD_EDITOR)
         return (m_flags & IsEditorOpenFlag) != 0;
+#else
+        return false;
+#endif
     }
 
 

@@ -10,6 +10,18 @@
 //
 // This section can be configured by hand to customize the build.
 
+// Editor
+//
+// The editor can be enabled or disabled from here. When the editor is disabled, none of it's components are included in the build,
+// and the editor can never be opened.
+//
+// Disabling the editor is useful for reducing the size of the build for when the editor isn't really needed. An example would be
+// phone games where the editor would never be used in a final build.
+
+#define GT_ENABLE_EDITOR            1
+
+
+
 // Rendering APIs
 //
 // Rendering APIs can be enabled and disabled from here. By default, everything is enabled. To disable these, either comment out the line or
@@ -72,6 +84,11 @@
 // Non-Configurable Section
 //
 // This section should not be configured by hand, unless it's for the development of the engine itself.
+
+// Editor.
+#if (defined(GT_ENABLE_EDITOR) && GT_ENABLE_EDITOR == 1)
+#define GT_BUILD_EDITOR
+#endif
 
 // Vulkan Support.
 #if (defined(GT_ENABLE_VULKAN) && GT_ENABLE_VULKAN == 1)

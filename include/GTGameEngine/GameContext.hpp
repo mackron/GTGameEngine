@@ -56,6 +56,11 @@ namespace GT
         /// @return A reference to the engine context.
         EngineContext & GetEngineContext();
 
+        /// Retrieves a reference to the game state.
+        ///
+        /// @return A reference to the game state object.
+        GameState & GetGameState();
+
 
         /// Runs the game.
         ///
@@ -265,6 +270,9 @@ namespace GT
         /// The time of the last frame. This is used to calculate the delta time between frames.
         double m_lastFrameTime;
 
+
+
+        /// The editor.
 
 
     private:
