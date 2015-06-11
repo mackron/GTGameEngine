@@ -8,7 +8,8 @@ namespace GT
 {
     Editor::Editor(GT::GameContext &gameContext)
         : m_gameContext(gameContext),
-          m_gui(),
+          m_guiRenderer(),
+          m_gui(&m_guiRenderer),
           m_globalGUIEventHandler(),
           m_hMainWindow(NULL),
           m_windowSurfaceMap(),
@@ -38,6 +39,17 @@ namespace GT
                 {
                     // Attach the GUI event handler.
                     m_gui.AttachGlobalEventHandler(m_globalGUIEventHandler);
+
+
+                    // TESTING
+                    m_hTestElement = m_gui.CreateElement();
+                    m_gui.AttachElementToSurface(m_hTestElement, hMainSurface);
+                    m_gui.SetElementBackgroundColour(m_hTestElement, GTLib::Colour(0.75f, 0.75f, 0.75f, 1));
+                    m_gui.SetElementSizeRatio(m_hTestElement, 1.0f, 1.0f);
+                    m_gui.SetElementBorder(m_hTestElement, 8, GTLib::Colour(0.75f, 0.25f, 0.25f, 1.0f));
+                    m_gui.SetElementVerticalAlign(m_hTestElement, GT::VerticalAlign_Center);
+                    m_gui.SetElementHorizontalAlign(m_hTestElement, GT::HorizontalAlign_Left);
+
 
                     return true;
                 }
@@ -272,6 +284,7 @@ namespace GT
                 if (hSurface != NULL)
                 {
                     m_gui.SetSurfaceSize(hSurface, windowWidth, windowHeight);
+                    m_gui.SetSurfaceAuxData(hSurface, new EditorGUISurfaceAUXData(hWindow));
 
                     // The window needs to be mapped to the surface.
                     m_windowSurfaceMap.Add(hWindow, hSurface);
@@ -291,6 +304,7 @@ namespace GT
         {
             // TODO: Delete the elements that are attached to the surface.
 
+            delete m_gui.GetSurfaceAuxData<EditorGUISurfaceAUXData>(hSurface);
             m_gui.DeleteSurface(hSurface);
 
 

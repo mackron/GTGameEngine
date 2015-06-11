@@ -3,10 +3,17 @@
 #ifndef __GT_Editor_hpp_
 #define __GT_Editor_hpp_
 
+#include "../Config.hpp"
+
+#if defined(GT_BUILD_EDITOR)
 #include "../Core/GUI/GUIContext.hpp"
 #include "../WindowManager.hpp"
 #include "EditorEventHandler.hpp"
 #include "EditorGUIEventHandler.hpp"
+
+#if defined(GT_PLATFORM_WINDOWS)
+#include "EditorGUIRenderer_GDI.hpp"
+#endif
 
 #include <GTLib/Keyboard.hpp>
 #include <GTLib/Map.hpp>
@@ -152,6 +159,11 @@ namespace GT
         /// A reference to the game context.
         GameContext &m_gameContext;
 
+        /// The GUI renderer.
+#if defined(GT_PLATFORM_WINDOWS)
+        EditorGUIRenderer_GDI m_guiRenderer;
+#endif
+
         /// The GUI context.
         GUIContext m_gui;
 
@@ -175,10 +187,17 @@ namespace GT
         bool m_isOpen;
 
 
+
+        // Test window.
+        HGUIElement m_hTestElement;
+
+
     private:    // No copying.
         Editor(const Editor &);
         Editor & operator=(const Editor &);
     };
 }
+
+#endif
 
 #endif

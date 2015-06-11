@@ -422,11 +422,11 @@
     <ClCompile Include="..\..\..\source\Editor\EditorEventHandler.cpp">
       <Filter>Source Files\Editor</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\EditorGUIRendererGDI.cpp">
-      <Filter>Source Files\Editor</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\GameContextEditorEventHandler.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\EditorGUIRenderer_GDI.cpp">
+      <Filter>Source Files\Editor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -907,11 +907,11 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorEventHandler.hpp">
       <Filter>Header Files\Editor</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIRendererGDI.hpp">
-      <Filter>Header Files\Editor</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\GameContextEditorEventHandler.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIRenderer_GDI.hpp">
+      <Filter>Header Files\Editor</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

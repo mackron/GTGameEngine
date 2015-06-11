@@ -85,7 +85,7 @@
     <ClCompile Include="..\..\..\source\Editor\Editor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\EditorEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\Editor\EditorGUIEventHandler.cpp" />
-    <ClCompile Include="..\..\..\source\Editor\EditorGUIRendererGDI.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\EditorGUIRenderer_GDI.cpp" />
     <ClCompile Include="..\..\..\source\EngineContext.cpp" />
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c" />
     <ClCompile Include="..\..\..\source\FileSystem.cpp" />
@@ -159,7 +159,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Editor.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIEventHandler.hpp" />
-    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIRendererGDI.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIRenderer_GDI.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUISurfaceAUXData.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\FileDataTypes.hpp" />
