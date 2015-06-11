@@ -77,6 +77,15 @@ namespace GT
         HWND hWnd = ::CreateWindowExW(dwExStyle, g_WindowClass, L"GTGameEngine", dwStyle, xPos, yPos, width, height, reinterpret_cast<HWND>(hParent), NULL, NULL, nullptr);
         if (hWnd != NULL)
         {
+            // The size of the window needs to be adjusted so that the client area is set to the width and height.
+            RECT windowRect;
+            RECT clientRect;
+            ::GetWindowRect(hWnd, &windowRect);
+            ::GetClientRect(hWnd, &clientRect);
+
+            int windowFrameX = (windowRect.right - windowRect.left) - (clientRect.right - clientRect.left);
+            int windowFrameY = (windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top);
+            SetWindowPos(hWnd, NULL, 0, 0, windowFrameX + width, windowFrameY + height, SWP_NOMOVE | SWP_NOZORDER);
         }
 
         return reinterpret_cast<HWindow>(hWnd);
@@ -110,6 +119,23 @@ namespace GT
         {
             ::SetWindowPos(reinterpret_cast<HWND>(hWindow), NULL, 0, 0, width, height, SWP_NOZORDER | SWP_NOMOVE);
         }
+    }
+
+    bool WindowManager_Win32::GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut)
+    {
+        if (hWindow != 0)
+        {
+            RECT clientRect;
+            if (GetClientRect(reinterpret_cast<HWND>(hWindow), &clientRect))
+            {
+                widthOut  = static_cast<unsigned int>(clientRect.right - clientRect.left);
+                heightOut = static_cast<unsigned int>(clientRect.bottom - clientRect.top);
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
 

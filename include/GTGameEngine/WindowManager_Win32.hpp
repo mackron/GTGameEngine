@@ -34,11 +34,17 @@ namespace GT
         /// @copydoc WindowManager::SetWindowTitle()
         virtual void SetWindowTitle(HWindow hWindow, const char* title);
 
+
         /// @copydoc WindowManager::SetWindowPosition()
         virtual void SetWindowPosition(HWindow hWindow, int xPos, int yPos);
 
+
         /// @copydoc WindowManager::SetWindowSize()
         virtual void SetWindowSize(HWindow hWindow, unsigned int width, unsigned int height);
+
+        /// @copydoc WindowManager::GetWindowSize()
+        virtual bool GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut);
+
 
 
         /// @copydoc WindowManager::ShowWindow()

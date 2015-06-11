@@ -103,6 +103,10 @@ namespace GT
     {
     }
 
+    void GameState::OnPaintWindow(GameContext &, HWindow, const GTLib::Rect<int> &)
+    {
+    }
+
 
     bool GameState::OnWantToOpenEditor(GameContext &)
     {

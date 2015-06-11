@@ -9,14 +9,22 @@
 #include <GTLib/Vector.hpp>
 #include <GTLib/Keyboard.hpp>
 
+#if defined(GT_BUILD_EDITOR)
+#include "Editor/Editor.hpp"
+#include "GameContextEditorEventHandler.hpp"
+#endif
+
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windef.h>
 #endif
+
+
 
 namespace GT
 {
     class EngineContext;
     class GameState;
+
     class GameDisplay;
     class GameDisplay_Windowed;
     class GraphicsInterface;
@@ -69,6 +77,35 @@ namespace GT
         /// @remarks
         ///     This is where the game loop is run. When this function returns the game will be closed.
         int Run();
+
+
+        /// Retrieves the number of game windows based on the game state.
+        ///
+        /// @return The number of game windows.
+        ///
+        /// @remarks
+        ///     This just returns GameState::GetWindowCount().
+        unsigned int GetWindowCount();
+
+        /// Retrieves the window at the given index.
+        ///
+        /// @param index [in] The index of the window to retrieve.
+        ///
+        /// @return A handle to the window at the given index.
+        ///
+        /// @remarks
+        ///     The window at index 0 should be considered the primary window. The editor will reuse the game windows for itself.
+        HWindow GetWindowByIndex(unsigned int index);
+
+
+        /// Retrieves the size of the given window.
+        ///
+        /// @param hWindow   [in ] A handle to the window whose size is being retrieved.
+        /// @param widthOut  [out] A reference to the variable that will receive the width.
+        /// @param heightOut [out] A reference to the variable that will receive the height.
+        ///
+        /// @return True if the size of the window is retrieved successfully; false otherwise.
+        bool GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut);
 
 
         /// Creates a game window.
@@ -152,9 +189,11 @@ namespace GT
 
         /// Opens the editor.
         ///
+        /// @return True if the editor is opened successfully; false otherwise.
+        ///
         /// @remarks
         ///     This will call the game state's OnWantToOpenEditor() method. If that returns false the editor will not be opened.
-        void OpenEditor();
+        bool OpenEditor();
 
         /// Closes the editor.
         void CloseEditor();
@@ -210,7 +249,7 @@ namespace GT
         /// @param button  [in] The index of the mouse button that was pressed.
         /// @param xPos    [in] The position of the mouse cursor on the x axis.
         /// @param yPos    [in] The position of the mouse cursor on the y axis.
-        void OnMouseButtonReleased(HWindow hWinodw, int button, int xPos, int yPos);
+        void OnMouseButtonReleased(HWindow hWindow, int button, int xPos, int yPos);
 
         /// Called when the mouse is double-clicked on the given window.
         ///
@@ -242,6 +281,25 @@ namespace GT
         ///     difference is that this passes the unicode representation of the character and is also auto-repeated.
         void OnPrintableKeyDown(HWindow hWindow, char32_t character);
 
+        /// Called when a region of the given window needs to be repainted.
+        ///
+        /// @param hWindow [in] The window that is needing a repaint.
+        /// @param rect    [in] The rectangle region that is needing a repaint.
+        ///
+        /// @remarks
+        ///     The rectangle will never be empty.
+        ///     @par
+        ///     Games will almost never need to handle this function because they will typically repaint the entire windo
+        ///     every frame. This is mainly used by the editor because it does not do a full-window update every frame, but
+        ///     rather only draws the regions that have actually changed.
+        void OnPaintWindow(HWindow hWindow, const GTLib::Rect<int> &rect);
+
+
+        /// Called when the editor is opened.
+        void OnEditorOpened();
+
+        /// Called when the editor is closed.
+        void OnEditorClosed();
 
 
 
@@ -272,20 +330,25 @@ namespace GT
 
 
 
+#if defined(GT_BUILD_EDITOR)
         /// The editor.
+        Editor m_editor;
 
+        /// The editor event handler for detecting when the editor is opened and closed.
+        GameContextEditorEventHandler m_editorEventHandler;
+#endif
 
     private:
 
         ///////////////////////////////////////////////////////////////
         // State Flags
 
-        static const uint32_t IsSingleThreadedFlag       = (1 << 0);        //< Whether or not the game should run in single- or multi-threaded mode.
-        static const uint32_t IsOwnerOfWindowManagerFlag = (1 << 1);        //< Whether or not the context owns the window manager.
-        static const uint32_t IsEditorOpenFlag           = (1 << 2);        //< Whether or not the editor is open.
-        static const uint32_t IsRunningFlag              = (1 << 3);        //< Whether or not the game is currently running. This is used to track whether or not the game loop should continue looping.
-        static const uint32_t IsRunningRealTimeLoopFlag  = (1 << 4);        //< Whether or not a real-time loop is being used.
-
+        static const uint32_t IsSingleThreadedFlag       = (1U << 0);        //< Whether or not the game should run in single- or multi-threaded mode.
+        static const uint32_t IsOwnerOfWindowManagerFlag = (1U << 1);        //< Whether or not the context owns the window manager.
+        static const uint32_t IsRunningFlag              = (1U << 2);        //< Whether or not the game is currently running. This is used to track whether or not the game loop should continue looping.
+        static const uint32_t IsRunningRealTimeLoopFlag  = (1U << 3);        //< Whether or not a real-time loop is being used.
+        
+        static const uint32_t IsEditorInitialisedFlag    = (1U << 31);       //< Whether or not the editor has been initialized.
 
 
     public:
@@ -293,7 +356,7 @@ namespace GT
         ///////////////////////////////////////////////////////////////
         // Error Codes
 
-        static const ResultCode InvalidWindow = (1 << 31) | 1;
+        static const ResultCode InvalidWindow = (1U << 31) | 1;
 
 
     private:    // No copying.

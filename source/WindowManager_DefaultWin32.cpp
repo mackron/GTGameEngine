@@ -229,6 +229,23 @@ namespace GT
                 }
 
 
+            case WM_PAINT:
+                {
+                    RECT rectWin32;
+                    if (GetUpdateRect(hWnd, &rectWin32, FALSE))
+                    {
+                        GTLib::Rect<int> rect;
+                        rect.left   = rectWin32.left;
+                        rect.right  = rectWin32.right;
+                        rect.top    = rectWin32.top;
+                        rect.bottom = rectWin32.bottom;
+                        pGameContext->OnPaintWindow(reinterpret_cast<HWindow>(hWnd), rect);
+                    }
+
+                    break;
+                }
+
+
             default:
                 {
                     break;

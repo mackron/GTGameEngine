@@ -1232,6 +1232,7 @@ namespace GT
         /// @param hSurface [in] The surface whose rectangle region is being invalidated.
         /// @param rect     [in] The rectangle to invalidate.
         void InvalidateSurfaceRect(HGUISurface hSurface, const GTLib::Rect<int> &rect);
+        void InvalidateSurfaceRect(HGUISurface hSurcface);
 
         /// Paints a portion of the given surface.
         ///

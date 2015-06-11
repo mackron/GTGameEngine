@@ -13,6 +13,7 @@
 #include <GTGameEngine/WindowManager_DefaultWin32.hpp>
 #endif
 
+
 namespace GT
 {
     GameContext::GameContext(EngineContext &engineContext, GameState &gameState)
@@ -21,6 +22,10 @@ namespace GT
           m_pWindowManager(nullptr),
           m_windowedDisplays(),
           m_flags(0)
+#if defined(GT_BUILD_EDITOR)
+        , m_editor(*this),
+          m_editorEventHandler(*this)
+#endif
     {
         m_flags |= IsRunningFlag;
         m_flags |= IsRunningRealTimeLoopFlag;
@@ -141,6 +146,28 @@ namespace GT
     }
 
 
+    unsigned int GameContext::GetWindowCount()
+    {
+        return m_gameState.GetWindowCount(*this);
+    }
+
+    HWindow GameContext::GetWindowByIndex(unsigned int index)
+    {
+        return m_gameState.GetWindowByIndex(*this, index);
+    }
+
+
+    bool GameContext::GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut)
+    {
+        if (m_pWindowManager != nullptr)
+        {
+            return m_pWindowManager->GetWindowSize(hWindow, widthOut, heightOut);
+        }
+
+        return false;
+    }
+
+
     HWindow GameContext::CreateMainWindow(WindowType type, const char* title, int xPos, int yPos, unsigned int width, unsigned int height)
     {
         HWindow hWindow = m_pWindowManager->CreateWindow(0, type, xPos, yPos, width, height);
@@ -194,7 +221,18 @@ namespace GT
             double currentTime = GTLib::Timing::GetTimeInSeconds();
             double deltaTimeInSeconds = currentTime - m_lastFrameTime;
             {
+#if defined(GT_BUILD_EDITOR)
+                if (!this->IsEditorOpen())
+                {
+                    m_gameState.Step(*this, deltaTimeInSeconds);
+                }
+                else
+                {
+                    m_editor.Step(deltaTimeInSeconds);
+                }
+#else
                 m_gameState.Step(*this, deltaTimeInSeconds);
+#endif
             }
             m_lastFrameTime = currentTime;
         }
@@ -241,35 +279,96 @@ namespace GT
     }
 
 
-    void GameContext::OpenEditor()
+    bool GameContext::OpenEditor()
     {
 #if defined(GT_BUILD_EDITOR)
+        // Startup the editor if it hasn't already.
+        if ((m_flags & IsEditorInitialisedFlag) == 0)
+        {
+            if (m_editor.Startup())
+            {
+                m_editor.AttachEventHandler(m_editorEventHandler);
+                m_flags |= IsEditorInitialisedFlag;
+            }
+            else
+            {
+                // Failed to start up the editor.
+                return false;
+            }
+        }
+
+
+        return m_editor.Open();     // This will post OnEditorOpened()
+#if 0
         if (!this->IsEditorOpen())
         {
             if (m_gameState.OnWantToOpenEditor(*this))
             {
-                m_flags |= IsEditorOpenFlag;
-                m_flags &= ~IsRunningRealTimeLoopFlag;  //< Switch to an event-driven application loop.
+                if ((m_flags & IsEditorInitialisedFlag) == 0)
+                {
+                    if (m_editor.Startup())
+                    {
+                        m_flags |= IsEditorInitialisedFlag;
+                    }
+                    else
+                    {
+                        // Failed to start up the editor.
+                        return false;
+                    }
+                }
+
+
+                if (m_editor.Open())
+                {
+                    m_flags |= IsEditorOpenFlag;
+                    m_flags &= ~IsRunningRealTimeLoopFlag;  //< Switch to an event-driven application loop.
+
+                    return true;
+                }
+                else
+                {
+                    // Failed to open the editor.
+                    return false;
+                }
+            }
+            else
+            {
+                // OnWantToOpenEditor() returned false.
+                return false;
             }
         }
+        else
+        {
+            // Editor is already open. Return true in this case.
+            return true;
+        }
+#endif
+
 #endif
     }
 
     void GameContext::CloseEditor()
     {
 #if defined(GT_BUILD_EDITOR)
+        m_editor.Close();       // This will post OnEditorClosed()
+
+#if 0
         if (this->IsEditorOpen())
         {
+            m_editor.Close();
+
             m_flags &= ~IsEditorOpenFlag;
             m_flags |= IsRunningRealTimeLoopFlag;       //< Switch to a real-time game loop.
         }
+#endif
+
 #endif
     }
 
     bool GameContext::IsEditorOpen() const
     {
 #if defined(GT_BUILD_EDITOR)
-        return (m_flags & IsEditorOpenFlag) != 0;
+        return m_editor.IsOpen();
 #else
         return false;
 #endif
@@ -279,55 +378,177 @@ namespace GT
 
     void GameContext::OnWantToClose()
     {
-        if (m_gameState.OnWantToClose(*this))
+        if (!this->IsEditorOpen())
         {
-            this->Close();
+            if (m_gameState.OnWantToClose(*this))
+            {
+                this->Close();
+            }
         }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            if (m_editor.OnWantToClose())
+            {
+                this->Close();
+            }
+        }
+#endif
     }
 
     void GameContext::OnWindowResized(HWindow hWindow, unsigned int width, unsigned int height)
     {
-        m_gameState.OnWindowResized(*this, hWindow, width, height);
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnWindowResized(*this, hWindow, width, height);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnWindowResized(hWindow, width, height);
+        }
+#endif
     }
 
     void GameContext::OnWindowMoved(HWindow hWindow, int xPos, int yPos)
     {
-        m_gameState.OnWindowMoved(*this, hWindow, xPos, yPos);
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnWindowMoved(*this, hWindow, xPos, yPos);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnWindowMoved(hWindow, xPos, yPos);
+        }
+#endif
     }
 
     void GameContext::OnMouseMove(HWindow hWindow, int xPos, int yPos)
     {
-        m_gameState.OnMouseMove(*this, hWindow, xPos, yPos);
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnMouseMove(*this, hWindow, xPos, yPos);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnMouseMove(hWindow, xPos, yPos);
+        }
+#endif
     }
 
     void GameContext::OnMouseButtonPressed(HWindow hWindow, int button, int xPos, int yPos)
     {
-        m_gameState.OnMouseButtonPressed(*this, hWindow, button, xPos, yPos);
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnMouseButtonPressed(*this, hWindow, button, xPos, yPos);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnMouseButtonPressed(hWindow, button, xPos, yPos);
+        }
+#endif
     }
 
     void GameContext::OnMouseButtonReleased(HWindow hWindow, int button, int xPos, int yPos)
     {
-        m_gameState.OnMouseButtonReleased(*this, hWindow, button, xPos, yPos);
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnMouseButtonReleased(*this, hWindow, button, xPos, yPos);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnMouseButtonReleased(hWindow, button, xPos, yPos);
+        }
+#endif
     }
 
     void GameContext::OnMouseButtonDoubleClicked(HWindow hWindow, int button, int xPos, int yPos)
     {
-        m_gameState.OnMouseButtonDoubleClicked(*this, hWindow, button, xPos, yPos);
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnMouseButtonDoubleClicked(*this, hWindow, button, xPos, yPos);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnMouseButtonDoubleClicked(hWindow, button, xPos, yPos);
+        }
+#endif
     }
 
     void GameContext::OnKeyPressed(HWindow hWindow, GTLib::Key key)
     {
-        m_gameState.OnKeyPressed(*this, hWindow, key);
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnKeyPressed(*this, hWindow, key);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnKeyPressed(hWindow, key);
+        }
+#endif
     }
 
     void GameContext::OnKeyReleased(HWindow hWindow, GTLib::Key key)
     {
-        m_gameState.OnKeyReleased(*this, hWindow, key);
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnKeyReleased(*this, hWindow, key);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnKeyReleased(hWindow, key);
+        }
+#endif
     }
 
     void GameContext::OnPrintableKeyDown(HWindow hWindow, char32_t character)
     {
-        m_gameState.OnPrintableKeyDown(*this, hWindow, character);
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnPrintableKeyDown(*this, hWindow, character);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnPrintableKeyDown(hWindow, character);
+        }
+#endif
+    }
+
+    void GameContext::OnPaintWindow(HWindow hWindow, const GTLib::Rect<int> &rect)
+    {
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnPaintWindow(*this, hWindow, rect);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnPaintWindow(hWindow, rect);
+        }
+#endif
+    }
+
+
+    void GameContext::OnEditorOpened()
+    {
+#if defined(GT_BUILD_EDITOR)
+        m_flags &= ~IsRunningRealTimeLoopFlag;      //< Switch to an event-driven application loop.
+#endif
+    }
+
+    void GameContext::OnEditorClosed()
+    {
+#if defined(GT_BUILD_EDITOR)
+        m_flags |= IsRunningRealTimeLoopFlag;       //< Switch to a real-time game loop.
+#endif
     }
 
 

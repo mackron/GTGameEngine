@@ -96,6 +96,12 @@
     <Filter Include="Header Files\Core\Strings">
       <UniqueIdentifier>{7fc93798-0958-48ba-a1d4-7955ceb2b6d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Editor">
+      <UniqueIdentifier>{1a8af64e-f9a7-4599-a36b-c010b7bd9bc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor">
+      <UniqueIdentifier>{b93dbce7-10d6-4e1e-a116-392803946096}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c">
@@ -405,6 +411,21 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\WindowManager_DefaultWin32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Editor.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\EditorGUIEventHandler.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\EditorEventHandler.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\EditorGUIRendererGDI.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameContextEditorEventHandler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -872,6 +893,24 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager_DefaultWin32.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Editor.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIEventHandler.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUISurfaceAUXData.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorEventHandler.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIRendererGDI.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GameContextEditorEventHandler.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

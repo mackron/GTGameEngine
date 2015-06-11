@@ -1868,6 +1868,24 @@ namespace GT
         }
     }
 
+    void GUIContext::InvalidateSurfaceRect(HGUISurface hSurface)
+    {
+        auto pSurface = this->GetSurfacePtr(hSurface);
+        if (pSurface != nullptr)
+        {
+            unsigned int surfaceWidth;
+            unsigned int surfaceHeight;
+            GUIContextBase::GetSurfaceSize(pSurface, surfaceWidth, surfaceHeight);
+
+            GTLib::Rect<int> rect;
+            rect.left   = 0;
+            rect.top    = 0;
+            rect.right  = static_cast<int>(surfaceWidth);
+            rect.bottom = static_cast<int>(surfaceHeight);
+            GUIContextBase::InvalidateSurfaceRect(pSurface, rect);
+        }
+    }
+
     void GUIContext::PaintSurface(HGUISurface hSurface, const GTLib::Rect<int> &rect, void* pInputData)
     {
         auto pSurface = this->GetSurfacePtr(hSurface);
@@ -1890,11 +1908,17 @@ namespace GT
     /////////////////////////////////////////////////////////////////
     // Events
 
+    // TODO: In the Attach*() methods, how should duplicate event handlers be handled? Currently it is not checked whether or not
+    //       an event handler is already attached.
+    //
+    //       An event handler should never be attached more than once. It should be removed and then added to the end of the list.
+
     void GUIContext::AttachLocalEventHandler(HGUIElement hElement, GUIEventHandler &eventHandler)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
+            pElement->eventHandlers.RemoveFirstOccuranceOf(&eventHandler);
             pElement->eventHandlers.PushBack(&eventHandler);
         }
     }
@@ -1910,6 +1934,7 @@ namespace GT
 
     void GUIContext::AttachGlobalEventHandler(GUIEventHandler &eventHandler)
     {
+        m_globalEventHandlers.RemoveFirstOccuranceOf(&eventHandler);
         m_globalEventHandlers.PushBack(&eventHandler);
     }
 

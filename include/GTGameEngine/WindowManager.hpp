@@ -57,12 +57,22 @@ namespace GT
         /// @param yPos    [in] The position of the window on the y axis.
         virtual void SetWindowPosition(HWindow hWindow, int xPos, int yPos) = 0;
 
+
         /// Sets the size of the given window.
         ///
         /// @param hWindow [in] A handle to the window whose size is being set.
         /// @param width   [in] The width of the window.
         /// @param height  [in] The height of the window.
         virtual void SetWindowSize(HWindow hWindow, unsigned int width, unsigned int height) = 0;
+
+        /// Retrieves the size of the given window.
+        ///
+        /// @param hWindow   [in ] A handle to the window whose size is being retrieved.
+        /// @param widthOut  [out] A reference to the variable that will receive the width.
+        /// @param heightOut [out] A reference to the variable that will receive the height.
+        ///
+        /// @return True if the size of the window is retrieved successfully; false otherwise.
+        virtual bool GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut) = 0;
 
 
         /// Shows the given window.

@@ -141,7 +141,7 @@ namespace GT
         /// @param button  [in] The index of the mouse button that was pressed.
         /// @param xPos    [in] The position of the mouse cursor on the x axis.
         /// @param yPos    [in] The position of the mouse cursor on the y axis.
-        virtual void OnMouseButtonReleased(GameContext &gameContext, HWindow hWinodw, int button, int xPos, int yPos);
+        virtual void OnMouseButtonReleased(GameContext &gameContext, HWindow hWindow, int button, int xPos, int yPos);
 
         /// Called when the mouse is double-clicked on the given window.
         ///
@@ -172,6 +172,19 @@ namespace GT
         ///     When text operations are required (such as typing in a text box), us this event over OnKeyPressed(). This
         ///     difference is that this passes the unicode representation of the character and is also auto-repeated.
         virtual void OnPrintableKeyDown(GameContext &gameContext, HWindow hWindow, char32_t character);
+
+        /// Called when a region of the given window needs to be repainted.
+        ///
+        /// @param hWindow [in] The window that is needing a repaint.
+        /// @param rect    [in] The rectangle region that is needing a repaint.
+        ///
+        /// @remarks
+        ///     The rectangle will never be empty.
+        ///     @par
+        ///     Games will almost never need to handle this function because they will typically repaint the entire windo
+        ///     every frame. This is mainly used by the editor because it does not do a full-window update every frame, but
+        ///     rather only draws the regions that have actually changed.
+        virtual void OnPaintWindow(GameContext &gameContext, HWindow hWindow, const GTLib::Rect<int> &rect);
 
 
 
