@@ -23,7 +23,7 @@ namespace GT
     protected:
 
         /// Constructor.
-        GUIContextBase();
+        GUIContextBase(GUIFontManager* pFontManager);
 
         /// Destructor
         virtual ~GUIContextBase();
@@ -2068,9 +2068,6 @@ namespace GT
 
 
     private:
-
-        /// The font manager for working with fonts. This depends on m_imageManager, so must be declared and initialized afterwards.
-        //GUIFontManagerOld m_fontManager;
 
         /// A pointer to the font manager.
         GUIFontManager* m_pFontManager;

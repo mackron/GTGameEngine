@@ -52,20 +52,16 @@ namespace GT
 
 
 
-    GUIContextBase::GUIContextBase()
-        : m_pFontManager(),
+    GUIContextBase::GUIContextBase(GUIFontManager* pFontManager)
+        : m_pFontManager(pFontManager),
           m_xBaseDPI(96), m_yBaseDPI(96),
           m_layoutContext(),
           m_batchLockCounter(0)
     {
-        // TODO: Delete this line later.
-        m_pFontManager = new GUIFontManager_GDI;
     }
 
     GUIContextBase::~GUIContextBase()
     {
-        // TODO: Delete this line later.
-        delete m_pFontManager;
     }
 
     GUISurface* GUIContextBase::CreateSurface()
@@ -2106,31 +2102,38 @@ namespace GT
     HGUIFont GUIContextBase::SetElementFont(GUIElement* pElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType)
     {
         assert(pElement != nullptr);
-        assert(m_pFontManager != nullptr);
 
-        auto pOldFont = this->GetElementFont(pElement);
-
-        // 1) Update the styles.
-        GUIElementStyle_Set_fontfamily(pElement->style, m_pFontManager->EncodeFontFamily(family));
-        GUIElementStyle_Set_fontweight(pElement->style, weight);
-        GUIElementStyle_Set_fontslant(pElement->style, slant);
-        GUIElementStyle_Set_fontsize(pElement->style, size, sizeType);
-
-        // 2) Update the font based on the current style.
-        auto pNewFont = this->UpdateElementFontFromStyle(pElement);
-
-        // 3) Update the layout, but only if the font is different.
-        if (pNewFont != pOldFont)
+        if (m_pFontManager != nullptr)
         {
-            this->BeginBatch();
+            auto pOldFont = this->GetElementFont(pElement);
+
+            // 1) Update the styles.
+            GUIElementStyle_Set_fontfamily(pElement->style, m_pFontManager->EncodeFontFamily(family));
+            GUIElementStyle_Set_fontweight(pElement->style, weight);
+            GUIElementStyle_Set_fontslant(pElement->style, slant);
+            GUIElementStyle_Set_fontsize(pElement->style, size, sizeType);
+
+            // 2) Update the font based on the current style.
+            auto pNewFont = this->UpdateElementFontFromStyle(pElement);
+
+            // 3) Update the layout, but only if the font is different.
+            if (pNewFont != pOldFont)
             {
-                this->Layout_InvalidateElementLayout(pElement, LayoutFlag_TextInvalid);
+                this->BeginBatch();
+                {
+                    this->Layout_InvalidateElementLayout(pElement, LayoutFlag_TextInvalid);
+                }
+                this->EndBatch();
             }
-            this->EndBatch();
+
+
+            return this->GetElementFont(pElement);
         }
-
-
-        return this->GetElementFont(pElement);
+        else
+        {
+            // No font manager.
+            return 0;
+        }
     }
 
     HGUIFont GUIContextBase::GetElementFont(GUIElement* pElement) const
@@ -2705,64 +2708,71 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        const char* family = m_pFontManager->DecodeFontFamily(GUIElementStyle_Get_fontfamily(pElement->style));
-        FontWeight  weight = GUIElementStyle_Get_fontweight(pElement->style);
-        FontSlant   slant  = GUIElementStyle_Get_fontslant(pElement->style);
-
-        uint32_t sizeType;
-        uint32_t size = GUIElementStyle_Get_fontsize(pElement->style, sizeType);
-
-
-        // We now have enough information to generate a font from a font info structure.
-        GUIFontInfo fi;
-        fi.family = family;
-        fi.dpiX = this->GetXDPI(this->GetElementSurface(pElement));
-        fi.dpiY = this->GetYDPI(this->GetElementSurface(pElement));
-        fi.size = static_cast<float>(size) * this->GetXDPIScalingFactor(this->GetElementSurface(pElement));
-
-
-        switch (weight)
+        if (m_pFontManager != nullptr)
         {
-        case FontWeight_Thin:       fi.styleFlags |= GTLib::FontStyle_Thin;       break;
-        case FontWeight_ExtraLight: fi.styleFlags |= GTLib::FontStyle_ExtraLight; break;
-        case FontWeight_Light:      fi.styleFlags |= GTLib::FontStyle_Light;      break;
-        case FontWeight_SemiBold:   fi.styleFlags |= GTLib::FontStyle_SemiBold;   break;
-        case FontWeight_Bold:       fi.styleFlags |= GTLib::FontStyle_Bold;       break;
-        case FontWeight_ExtraBold:  fi.styleFlags |= GTLib::FontStyle_ExtraBold;  break;
-        case FontWeight_Heavy:      fi.styleFlags |= GTLib::FontStyle_Heavy;      break;
+            const char* family = m_pFontManager->DecodeFontFamily(GUIElementStyle_Get_fontfamily(pElement->style));
+            FontWeight  weight = GUIElementStyle_Get_fontweight(pElement->style);
+            FontSlant   slant  = GUIElementStyle_Get_fontslant(pElement->style);
 
-        case FontWeight_Medium:
-        default:
+            uint32_t sizeType;
+            uint32_t size = GUIElementStyle_Get_fontsize(pElement->style, sizeType);
+
+
+            // We now have enough information to generate a font from a font info structure.
+            GUIFontInfo fi;
+            fi.family = family;
+            fi.dpiX = this->GetXDPI(this->GetElementSurface(pElement));
+            fi.dpiY = this->GetYDPI(this->GetElementSurface(pElement));
+            fi.size = static_cast<float>(size) * this->GetXDPIScalingFactor(this->GetElementSurface(pElement));
+
+
+            switch (weight)
             {
-                fi.styleFlags |= GTLib::FontStyle_Medium;
-                break;
+            case FontWeight_Thin:       fi.styleFlags |= GTLib::FontStyle_Thin;       break;
+            case FontWeight_ExtraLight: fi.styleFlags |= GTLib::FontStyle_ExtraLight; break;
+            case FontWeight_Light:      fi.styleFlags |= GTLib::FontStyle_Light;      break;
+            case FontWeight_SemiBold:   fi.styleFlags |= GTLib::FontStyle_SemiBold;   break;
+            case FontWeight_Bold:       fi.styleFlags |= GTLib::FontStyle_Bold;       break;
+            case FontWeight_ExtraBold:  fi.styleFlags |= GTLib::FontStyle_ExtraBold;  break;
+            case FontWeight_Heavy:      fi.styleFlags |= GTLib::FontStyle_Heavy;      break;
+
+            case FontWeight_Medium:
+            default:
+                {
+                    fi.styleFlags |= GTLib::FontStyle_Medium;
+                    break;
+                }
             }
-        }
 
 
-        switch (slant)
-        {
-        case FontSlant_Italic:  fi.styleFlags |= GTLib::FontStyle_Italic;  break;
-        case FontSlant_Oblique: fi.styleFlags |= GTLib::FontStyle_Oblique; break;
-
-        case FontSlant_None:
-        default:
+            switch (slant)
             {
-                break;
+            case FontSlant_Italic:  fi.styleFlags |= GTLib::FontStyle_Italic;  break;
+            case FontSlant_Oblique: fi.styleFlags |= GTLib::FontStyle_Oblique; break;
+
+            case FontSlant_None:
+            default:
+                {
+                    break;
+                }
             }
+
+
+            HGUIFont hFont = m_pFontManager->AcquireFont(fi);
+            if (hFont != 0)
+            {
+                pElement->hFont = hFont;
+                this->UpdateElementTextLayout(pElement, this->GetElementText(pElement));
+
+                return hFont;
+            }
+
+            return this->GetElementFont(pElement);
         }
-
-
-        HGUIFont hFont = m_pFontManager->AcquireFont(fi);
-        if (hFont != 0)
+        else
         {
-            pElement->hFont = hFont;
-            this->UpdateElementTextLayout(pElement, this->GetElementText(pElement));
-
-            return hFont;
+            return 0;
         }
-
-        return this->GetElementFont(pElement);
     }
     
     void GUIContextBase::UpdateElementTextLayout(GUIElement* pElement, const char* text)

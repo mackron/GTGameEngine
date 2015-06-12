@@ -9,7 +9,8 @@ namespace GT
     Editor::Editor(GT::GameContext &gameContext)
         : m_gameContext(gameContext),
           m_guiRenderer(),
-          m_gui(&m_guiRenderer),
+          m_guiFontManager(),
+          m_gui(&m_guiRenderer, &m_guiFontManager),
           m_globalGUIEventHandler(),
           m_hMainWindow(NULL),
           m_windowSurfaceMap(),

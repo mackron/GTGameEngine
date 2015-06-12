@@ -72,7 +72,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GUIContext(GUIRenderer* renderer = nullptr);
+        GUIContext(GUIRenderer* renderer = nullptr, GUIFontManager* pFontManager = nullptr);
 
         /// Destructor.
         ~GUIContext();

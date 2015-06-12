@@ -13,6 +13,7 @@
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include "EditorGUIRenderer_GDI.hpp"
+#include "../Core/GUI/GUIFontManager_GDI.hpp"
 #endif
 
 #include <GTLib/Keyboard.hpp>
@@ -162,6 +163,11 @@ namespace GT
         /// The GUI renderer.
 #if defined(GT_PLATFORM_WINDOWS)
         EditorGUIRenderer_GDI m_guiRenderer;
+#endif
+
+        /// The GUI font manager.
+#if defined(GT_PLATFORM_WINDOWS)
+        GUIFontManager_GDI m_guiFontManager;
 #endif
 
         /// The GUI context.
