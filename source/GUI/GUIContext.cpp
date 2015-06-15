@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Core/GUI/GUIContext.hpp>
+#include <GTGameEngine/GUI/GUIContext.hpp>
 #include "GUIRenderer_Generic.hpp"
 
 extern "C" {

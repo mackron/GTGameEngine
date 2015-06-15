@@ -6,14 +6,14 @@
 #include "../Config.hpp"
 
 #if defined(GT_BUILD_EDITOR)
-#include "../Core/GUI/GUIContext.hpp"
+#include "../GUI/GUIContext.hpp"
 #include "../WindowManager.hpp"
 #include "EditorEventHandler.hpp"
 #include "EditorGUIEventHandler.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include "EditorGUIRenderer_GDI.hpp"
-#include "../Core/GUI/GUIFontManager_GDI.hpp"
+#include "../GUI/GUIFontManager_GDI.hpp"
 #endif
 
 #include <GTLib/Keyboard.hpp>

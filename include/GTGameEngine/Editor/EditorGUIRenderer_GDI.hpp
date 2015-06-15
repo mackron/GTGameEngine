@@ -7,7 +7,7 @@
 
 #if defined(GT_BUILD_EDITOR) && defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
-#include <GTGameEngine/Core/GUI/GUIRenderer.hpp>
+#include <GTGameEngine/GUI/GUIRenderer.hpp>
 
 namespace GT
 {

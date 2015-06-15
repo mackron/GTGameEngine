@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Core/GUI/GUISurface.hpp>
+#include <GTGameEngine/GUI/GUISurface.hpp>
 
 namespace GT
 {

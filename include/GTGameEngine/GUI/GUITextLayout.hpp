@@ -4,7 +4,7 @@
 #define __GT_GUITextLayout_hpp_
 
 #include "GUIFontManager.hpp"
-#include "../../../GTLib/Colour.hpp"
+#include "../../GTLib/Colour.hpp"
 
 namespace GT
 {

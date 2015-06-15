@@ -10,7 +10,7 @@
 #include <GTLib/Vector.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/List.hpp>
-#include <GTGameEngine/Core/GUI/GUIFontManager.hpp>
+#include <GTGameEngine/GUI/GUIFontManager.hpp>
 
 namespace GTLib
 {

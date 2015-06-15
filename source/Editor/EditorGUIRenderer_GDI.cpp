@@ -3,8 +3,8 @@
 #include <GTGameEngine/Editor/EditorGUIRenderer_GDI.hpp>
 
 #if defined(GT_BUILD_EDITOR) && defined(GT_PLATFORM_WINDOWS)
-#include <GTGameEngine/Core/GUI/GUIContext.hpp>
-#include <GTGameEngine/Core/GUI/GUIFontManager_GDI.hpp>
+#include <GTGameEngine/GUI/GUIContext.hpp>
+#include <GTGameEngine/GUI/GUIFontManager_GDI.hpp>
 #include <GTGameEngine/Editor/EditorGUISurfaceAUXData.hpp>
 
 namespace GT

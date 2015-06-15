@@ -54,12 +54,6 @@
     <Filter Include="Header Files\Core\IO">
       <UniqueIdentifier>{35f2a080-a132-4798-b104-5631f7e142bb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Core\GUI">
-      <UniqueIdentifier>{578473cc-a447-45e2-aaae-d00ec35ed3da}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Core\GUI">
-      <UniqueIdentifier>{a6802da0-3d48-471f-9f47-6e68d67b0ac5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Components">
       <UniqueIdentifier>{5d1ab4a5-f0f0-4f9b-a414-8e24e3034f5d}</UniqueIdentifier>
     </Filter>
@@ -101,6 +95,18 @@
     </Filter>
     <Filter Include="Source Files\Editor">
       <UniqueIdentifier>{b93dbce7-10d6-4e1e-a116-392803946096}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI">
+      <UniqueIdentifier>{fb0486d7-5c44-4c09-a30f-a7c69c4f809b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI">
+      <UniqueIdentifier>{ae616b3c-4001-4556-b648-883cf3127818}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI\CommonControls">
+      <UniqueIdentifier>{93589c8a-7ec8-4247-9fdd-01bcf572fefa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\CommonControls">
+      <UniqueIdentifier>{4131daf9-8207-4582-aa5b-e2c9f397da88}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -293,36 +299,6 @@
     <ClCompile Include="..\..\..\source\Assets\ModelAsset_MD2.cpp">
       <Filter>Source Files\Assets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUIContext.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUIElement.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUIEventHandler.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUIFontManager.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUIGlyphMapManager.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUIImageManager.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUILogging.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUIRenderer.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUIRenderer_Generic.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUISurface.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Scene\Scene.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
@@ -386,18 +362,6 @@
     <ClCompile Include="..\..\..\source\Assets\MaterialAsset.cpp">
       <Filter>Source Files\Assets</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUIContextBase.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUIFontManager_GDI.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUISimpleTextLayout.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\GUI\GUITextLayout.cpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\WindowManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -427,6 +391,48 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\EditorGUIRenderer_GDI.cpp">
       <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIContext.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIContextBase.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIElement.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIEventHandler.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIFontManager.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIFontManager_GDI.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIGlyphMapManager.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIImageManager.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUILogging.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIRenderer.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIRenderer_Generic.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUISimpleTextLayout.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUISurface.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUITextLayout.cpp">
+      <Filter>Source Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -703,45 +709,6 @@
     <ClInclude Include="..\..\..\source\Assets\ModelAsset_MD2.hpp">
       <Filter>Source Files\Assets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIContext.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIElement.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIElementStyle.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIEventHandler.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIFontManager.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIGlyphMapManager.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIImageManager.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUILayoutContext.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUILogging.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIRenderer.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUISurface.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Core\GUI\GUIRenderer_Generic.hpp">
-      <Filter>Source Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIDataTypes.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Components\Component.hpp">
       <Filter>Header Files\Components</Filter>
     </ClInclude>
@@ -826,12 +793,6 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\MaterialAsset.hpp">
       <Filter>Header Files\Assets</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIContextBase.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUIFontManager_GDI.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTLib\Strings\Compare.hpp">
       <Filter>Header Files\Core\Strings</Filter>
     </ClInclude>
@@ -874,12 +835,6 @@
     <ClInclude Include="..\..\..\include\GTLib\Strings\UnicodeBase.hpp">
       <Filter>Header Files\Core\Strings</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUISimpleTextLayout.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Core\GUI\GUITextLayout.hpp">
-      <Filter>Header Files\Core\GUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -912,6 +867,57 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIRenderer_GDI.hpp">
       <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\GUI\GUIRenderer_Generic.hpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIContext.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIContextBase.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIDataTypes.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIElement.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIElementStyle.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIEventHandler.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIFontManager.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIFontManager_GDI.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIGlyphMapManager.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIImageManager.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUILayoutContext.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUILogging.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIRenderer.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUISimpleTextLayout.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUISurface.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUITextLayout.hpp">
+      <Filter>Header Files\GUI</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

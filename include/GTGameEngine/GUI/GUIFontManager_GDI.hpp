@@ -3,7 +3,7 @@
 #ifndef __GT_GUI_FontManager_GDI_hpp_
 #define __GT_GUI_FontManager_GDI_hpp_
 
-#include "../../Config.hpp"
+#include "../Config.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>

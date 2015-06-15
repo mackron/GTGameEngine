@@ -2,7 +2,7 @@
 
 #include <GTGameEngine/Editor/EditorGUIEventHandler.hpp>
 #include <GTGameEngine/Editor/EditorGUISurfaceAUXData.hpp>
-#include <GTGameEngine/Core/GUI/GUIContext.hpp>
+#include <GTGameEngine/GUI/GUIContext.hpp>
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>

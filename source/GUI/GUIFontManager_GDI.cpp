@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Core/GUI/GUIFontManager_GDI.hpp>
+#include <GTGameEngine/GUI/GUIFontManager_GDI.hpp>
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/FontStyles.hpp>

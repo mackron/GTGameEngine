@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Core/GUI/GUIElement.hpp>
-#include <GTGameEngine/Core/GUI/GUIFontManager.hpp>
+#include <GTGameEngine/GUI/GUIElement.hpp>
+#include <GTGameEngine/GUI/GUIFontManager.hpp>
 
 namespace GT
 {

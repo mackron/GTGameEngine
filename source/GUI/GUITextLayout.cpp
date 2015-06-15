@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Core/GUI/GUITextLayout.hpp>
+#include <GTGameEngine/GUI/GUITextLayout.hpp>
 
 namespace GT
 {

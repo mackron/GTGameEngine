@@ -3,7 +3,7 @@
 #ifndef __GT_EditorGUIEventHandler_hpp_
 #define __GT_EditorGUIEventHandler_hpp_
 
-#include <GTGameEngine/Core/GUI/GUIEventHandler.hpp>
+#include <GTGameEngine/GUI/GUIEventHandler.hpp>
 
 namespace GT
 {

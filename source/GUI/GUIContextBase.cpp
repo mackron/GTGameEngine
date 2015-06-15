@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Core/GUI/GUIContextBase.hpp>
-#include <GTGameEngine/Core/GUI/GUIFontManager_GDI.hpp>
-#include <GTGameEngine/Core/GUI/GUISimpleTextLayout.hpp>
+#include <GTGameEngine/GUI/GUIContextBase.hpp>
+#include <GTGameEngine/GUI/GUIFontManager_GDI.hpp>
+#include <GTGameEngine/GUI/GUISimpleTextLayout.hpp>
 
 namespace GT
 {
