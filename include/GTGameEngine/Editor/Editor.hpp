@@ -25,6 +25,8 @@ namespace GT
     class GameContext;
 
     /// Class representing the editor.
+    ///
+    /// The editor's GUI is made up of controls. Each control is made up of a number of other child controls.
     class Editor
     {
     public:

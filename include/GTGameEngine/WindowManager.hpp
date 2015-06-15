@@ -4,6 +4,7 @@
 #define __GT_WindowManager_hpp_
 
 #include <GTLib/Rect.hpp>
+#include <GTLib/Keyboard.hpp>
 #include <functional>
 
 namespace GT
@@ -131,6 +132,14 @@ namespace GT
         /// @remarks
         ///     If no exit code has been posted, this will return 0.
         virtual int GetExitCode() const = 0;
+
+
+        /// Determines whether or not the given key is down.
+        ///
+        /// @param key [in] The key to check.
+        ///
+        /// @return True if the key is down; false otherwise.
+        virtual bool IsKeyDown(GTLib::Key key) const = 0;
 
 
         /// Enters into an event-driven loop.

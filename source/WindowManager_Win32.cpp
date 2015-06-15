@@ -9,6 +9,206 @@ namespace GT
 {
     const wchar_t* g_WindowClass = L"GT_WndClass";
 
+    GTLib::Key FromWin32VirtualKey(WPARAM key)
+    {
+        // Easy cases for letters and numbers...
+        if (key >= 'A' && key <= 'Z')
+        {
+            return static_cast<GTLib::Key>(key);
+        }
+        if (key >= '0' && key <= '9')
+        {
+            return static_cast<GTLib::Key>(key);
+        }
+
+        switch (key)
+        {
+        case VK_PAUSE:      return GTLib::Keys::Pause;
+        case VK_SCROLL:     return GTLib::Keys::ScrollLock;
+
+        case VK_BACK:       return GTLib::Keys::Backspace;
+        case VK_TAB:        return GTLib::Keys::Tab;
+        case VK_DELETE:     return GTLib::Keys::Delete;
+        case VK_RETURN:     return GTLib::Keys::Return;
+        case VK_SPACE:      return GTLib::Keys::Space;
+        case VK_ESCAPE:     return GTLib::Keys::Escape;
+
+        case VK_SHIFT:      return GTLib::Keys::Shift;
+        case VK_CONTROL:    return GTLib::Keys::Ctrl;
+        case VK_MENU:       return GTLib::Keys::Alt;
+        case VK_LWIN:       return GTLib::Keys::Super;
+        case VK_RWIN:       return GTLib::Keys::Super;
+        case VK_CAPITAL:    return GTLib::Keys::CapsLock;
+
+            /*
+        case VK_LSHIFT:     return GTLib::Keys::LeftShift;
+        case VK_RSHIFT:     return GTLib::Keys::RightShift;
+        case VK_LCONTROL:   return GTLib::Keys::LeftCtrl;
+        case VK_RCONTROL:   return GTLib::Keys::RightCtrl;
+        case VK_LMENU:      return GTLib::Keys::LeftAlt;
+        case VK_RMENU:      return GTLib::Keys::RightAlt;
+            */
+
+        case VK_LEFT:       return GTLib::Keys::ArrowLeft;
+        case VK_RIGHT:      return GTLib::Keys::ArrowRight;
+        case VK_UP:         return GTLib::Keys::ArrowUp;
+        case VK_DOWN:       return GTLib::Keys::ArrowDown;
+
+        case VK_F1:         return GTLib::Keys::F1;
+        case VK_F2:         return GTLib::Keys::F2;
+        case VK_F3:         return GTLib::Keys::F3;
+        case VK_F4:         return GTLib::Keys::F4;
+        case VK_F5:         return GTLib::Keys::F5;
+        case VK_F6:         return GTLib::Keys::F6;
+        case VK_F7:         return GTLib::Keys::F7;
+        case VK_F8:         return GTLib::Keys::F8;
+        case VK_F9:         return GTLib::Keys::F9;
+        case VK_F10:        return GTLib::Keys::F10;
+        case VK_F11:        return GTLib::Keys::F11;
+        case VK_F12:        return GTLib::Keys::F12;
+        case VK_F13:        return GTLib::Keys::F13;
+        case VK_F14:        return GTLib::Keys::F14;
+        case VK_F15:        return GTLib::Keys::F15;
+        case VK_F16:        return GTLib::Keys::F16;
+        case VK_F17:        return GTLib::Keys::F17;
+        case VK_F18:        return GTLib::Keys::F18;
+        case VK_F19:        return GTLib::Keys::F19;
+        case VK_F20:        return GTLib::Keys::F20;
+        case VK_F21:        return GTLib::Keys::F21;
+        case VK_F22:        return GTLib::Keys::F22;
+        case VK_F23:        return GTLib::Keys::F23;
+        case VK_F24:        return GTLib::Keys::F24;
+
+
+        case VK_END:        return GTLib::Keys::End;
+        case VK_HOME:       return GTLib::Keys::Home;
+        case VK_PRIOR:      return GTLib::Keys::PageUp;
+        case VK_NEXT:       return GTLib::Keys::PageDown;
+
+
+        case VK_SELECT:     return GTLib::Keys::Select;
+        case VK_PRINT:      return GTLib::Keys::Print;
+        case VK_EXECUTE:    return GTLib::Keys::Execute;
+        case VK_INSERT:     return GTLib::Keys::Insert;
+        // GTLib::Keys::Undo
+        // GTLib::Keys::Redo
+        // GTLib::Keys::Menu
+        // GTLib::Keys::Find
+        // GTLib::Keys::Cancel
+        case VK_HELP:       return GTLib::Keys::Help;
+        case VK_CANCEL:     return GTLib::Keys::Break;
+        // GTLib::Keys::ModeSwitch
+        case VK_NUMLOCK:    return GTLib::Keys::NumLock;
+
+
+
+        default: break;
+        }
+
+        return '\0';
+    }
+
+
+    int ToWin32VirtualKey(GTLib::Key key)
+    {
+        // Easy cases for letters and numbers...
+        if (key >= GTLib::Keys::A && key <= GTLib::Keys::Z)
+        {
+            return static_cast<int>(key);
+        }
+        if (key >= '0' && key <= '9')
+        {
+            return static_cast<int>(key);
+        }
+
+        switch (key)
+        {
+        case GTLib::Keys::Pause:    return VK_PAUSE;
+        case GTLib::Keys::ScrollLock:return VK_SCROLL;
+
+        case GTLib::Keys::Backspace:return VK_BACK;
+        case GTLib::Keys::Tab:return VK_TAB;
+        case GTLib::Keys::Delete:return VK_DELETE;
+        case GTLib::Keys::Return:return VK_RETURN;
+        case GTLib::Keys::Space:return VK_SPACE;
+        case GTLib::Keys::Escape:return VK_ESCAPE;
+
+        case GTLib::Keys::Shift:return VK_SHIFT;
+        case GTLib::Keys::Ctrl:return VK_CONTROL;
+        case GTLib::Keys::Alt:return VK_MENU;
+        case GTLib::Keys::Super:return VK_LWIN;
+        case GTLib::Keys::CapsLock:return VK_CAPITAL;
+
+            /*
+        case GTLib::Keys::LeftShift:return VK_LSHIFT;
+        case GTLib::Keys::RightShift:return VK_RSHIFT;
+        case GTLib::Keys::LeftCtrl:return VK_LCONTROL;
+        case GTLib::Keys::RightCtrl:return VK_RCONTROL;
+        case GTLib::Keys::LeftAlt:return VK_LMENU;
+        case GTLib::Keys::RightAlt:return VK_RMENU;
+            */
+
+        case GTLib::Keys::ArrowLeft:return VK_LEFT;
+        case GTLib::Keys::ArrowRight:return VK_RIGHT;
+        case GTLib::Keys::ArrowUp:return VK_UP;
+        case GTLib::Keys::ArrowDown:return VK_DOWN;
+
+        case GTLib::Keys::F1:return VK_F1;
+        case GTLib::Keys::F2:return VK_F2;
+        case GTLib::Keys::F3:return VK_F3;
+        case GTLib::Keys::F4:return VK_F4;
+        case GTLib::Keys::F5:return VK_F5;
+        case GTLib::Keys::F6:return VK_F6;
+        case GTLib::Keys::F7:return VK_F7;
+        case GTLib::Keys::F8:return VK_F8;
+        case GTLib::Keys::F9:return VK_F9;
+        case GTLib::Keys::F10:return VK_F10;
+        case GTLib::Keys::F11:return VK_F11;
+        case GTLib::Keys::F12:return VK_F12;
+        case GTLib::Keys::F13:return VK_F13;
+        case GTLib::Keys::F14:return VK_F14;
+        case GTLib::Keys::F15:return VK_F15;
+        case GTLib::Keys::F16:return VK_F16;
+        case GTLib::Keys::F17:return VK_F17;
+        case GTLib::Keys::F18:return VK_F18;
+        case GTLib::Keys::F19:return VK_F19;
+        case GTLib::Keys::F20:return VK_F20;
+        case GTLib::Keys::F21:return VK_F21;
+        case GTLib::Keys::F22:return VK_F22;
+        case GTLib::Keys::F23:return VK_F23;
+        case GTLib::Keys::F24:return VK_F24;
+
+
+        case GTLib::Keys::End:return VK_END;
+        case GTLib::Keys::Home:return VK_HOME;
+        case GTLib::Keys::PageUp:return VK_PRIOR;
+        case GTLib::Keys::PageDown:return VK_NEXT;
+
+
+        case GTLib::Keys::Select:return VK_SELECT;
+        case GTLib::Keys::Print:return VK_PRINT;
+        case GTLib::Keys::Execute:return VK_EXECUTE;
+        case GTLib::Keys::Insert:return VK_INSERT;
+        // GTLib::Keys::Undo
+        // GTLib::Keys::Redo
+        // GTLib::Keys::Menu
+        // GTLib::Keys::Find
+        // GTLib::Keys::Cancel
+        case GTLib::Keys::Help:return VK_HELP;
+        case GTLib::Keys::Break:return VK_CANCEL;
+        // GTLib::Keys::ModeSwitch
+        case GTLib::Keys::NumLock:return VK_NUMLOCK;
+
+
+
+        default: break;
+        }
+
+        return 0;
+    }
+
+
+
     WindowManager_Win32::WindowManager_Win32(unsigned int extraWindowBytes, WNDPROC wndProc)
         : WindowManager()
     {
@@ -221,6 +421,11 @@ namespace GT
         return static_cast<int>(m_wExitCode);
     }
 
+
+    bool WindowManager_Win32::IsKeyDown(GTLib::Key key) const
+    {
+        return (GetAsyncKeyState(ToWin32VirtualKey(key)) & 0x8000) != 0;
+    }
 
 
     void WindowManager_Win32::EventDrivenLoop(std::function<bool ()> postLoop)

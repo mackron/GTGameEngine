@@ -183,6 +183,16 @@ namespace GT
         void Step();
 
 
+        ///////////////////////////////////////////////////
+        // Input
+
+        /// Determines whether or not the given key is currently down.
+        ///
+        /// @param key [in] The whose down state should be checked.
+        ///
+        /// @return True if the key is down; false otherwise.
+        bool IsKeyDown(GTLib::Key key);
+
 
         ///////////////////////////////////////////////////
         // Editor

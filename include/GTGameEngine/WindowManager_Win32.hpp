@@ -12,6 +12,9 @@
 
 namespace GT
 {
+    GTLib::Key FromWin32VirtualKey(WPARAM key);
+    int ToWin32VirtualKey(GTLib::Key key);
+
     /// The Windows implementation of the window manager.
     class WindowManager_Win32 : public WindowManager
     {
@@ -80,6 +83,10 @@ namespace GT
 
         /// @copydoc WindowManager::GetExitCode()
         virtual int GetExitCode() const;
+
+
+        /// @copydoc WindowManager::IsKeyDown()
+        bool IsKeyDown(GTLib::Key key) const;
 
 
         /// @copydoc WindowManager::EventDrivenLoop()

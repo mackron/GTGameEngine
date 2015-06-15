@@ -45,9 +45,10 @@ namespace GT
                     // TESTING
                     m_hTestElement = m_gui.CreateElement();
                     m_gui.AttachElementToSurface(m_hTestElement, hMainSurface);
-                    m_gui.SetElementBackgroundColour(m_hTestElement, GTLib::Colour(0.75f, 0.75f, 0.75f, 1));
+                    m_gui.SetElementBackgroundColour(m_hTestElement, GTLib::Colour(0.25f, 0.25f, 0.25f, 1));
                     m_gui.SetElementSizeRatio(m_hTestElement, 1.0f, 1.0f);
-                    m_gui.SetElementBorder(m_hTestElement, 8, GTLib::Colour(0.75f, 0.25f, 0.25f, 1.0f));
+                    //m_gui.SetElementBorder(m_hTestElement, 8, GTLib::Colour(0.75f, 0.25f, 0.25f, 1.0f));
+                    m_gui.EnableElementChildHeightFlexing(m_hTestElement);
                     m_gui.SetElementVerticalAlign(m_hTestElement, GT::VerticalAlign_Center);
                     m_gui.SetElementHorizontalAlign(m_hTestElement, GT::HorizontalAlign_Left);
 
@@ -84,6 +85,13 @@ namespace GT
                 if (hSurface != NULL)
                 {
                     printf("Open\n");
+
+                    unsigned int windowWidth;
+                    unsigned int windowHeight;
+                    if (m_gameContext.GetWindowSize(m_hMainWindow, windowWidth, windowHeight))
+                    {
+                        m_gui.SetSurfaceSize(hSurface, windowWidth, windowHeight);
+                    }
 
                     m_gui.InvalidateSurfaceRect(hSurface);
 
@@ -215,6 +223,21 @@ namespace GT
         HGUISurface hSurface = this->GetWindowSurface(hWindow);
         if (hSurface != 0)
         {
+            if (key == GTLib::Keys::Tab)
+            {
+                if (m_gameContext.IsKeyDown(GTLib::Keys::Shift))
+                {
+                    if (this->IsOpen())
+                    {
+                        this->Close();
+                    }
+                    else
+                    {
+                        this->Open();
+                    }
+                }
+            }
+
             //m_gui.OnKeyPressed(key);
         }
     }
