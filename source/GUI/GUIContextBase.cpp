@@ -235,10 +235,6 @@ namespace GT
             GUIElementStyle_Set_minheight(pElement->style, 0U,                         NumberType_Absolute);
             GUIElementStyle_Set_maxheight(pElement->style, GUIStyleNumber_MaxUnsigned, NumberType_Absolute);
 
-
-            // Set the default font.
-            this->SetElementFont(pElement, "Liberation Sans", FontWeight_Medium, FontSlant_None, 9, NumberType_Points);
-
             // Text colour.
             GUIElementStyle_Set_textcolor(pElement->style, GTLib::Colour(0.0f, 0.0f, 0.0f, 1.0f));
         }
@@ -466,6 +462,13 @@ namespace GT
 
                 //TODO: Only invalidate the properties that will have changed.
                 this->Layout_InvalidateElementLayout(pChildElement, LayoutFlag_SizeAndPositionInvalid);
+
+
+                // The element may not have a font set in which case it will inherit it from the parent. And since the parent has just changed, this will need to be updated.
+                if (pChildElement->hFont == 0 && this->DoesElementHaveText(pChildElement))
+                {
+                    this->SetElementText(pChildElement, this->GetElementText(pChildElement));
+                }
             }
 
 
@@ -523,6 +526,13 @@ namespace GT
 
                 // Invalidate the applicable layouts. TODO: Only invalidate the properties that will have changed.
                 this->Layout_InvalidateElementLayout(pChildElement, LayoutFlag_SizeAndPositionInvalid);
+
+
+                // The element may not have a font set in which case it will inherit it from the parent. And since the parent has just changed, this will need to be updated.
+                if (pChildElement->hFont == 0 && this->DoesElementHaveText(pChildElement))
+                {
+                    this->SetElementText(pChildElement, this->GetElementText(pChildElement));
+                }
             }
 
 
@@ -590,6 +600,13 @@ namespace GT
             this->Layout_InvalidateElementLayout(pElementToAppend,   LayoutFlag_SizeAndPositionInvalid);
 
 
+            // The element may not have a font set in which case it will inherit it from the parent. And since the parent may have changed, this will need to be updated.
+            if (pElementToAppend->hFont == 0 && this->DoesElementHaveText(pElementToAppend))
+            {
+                this->SetElementText(pElementToAppend, this->GetElementText(pElementToAppend));
+            }
+
+
             // If the elements are on different surfaces the appendee needs to be moved.
             if (pElementToAppendTo->pSurface != pElementToAppend->pSurface)
             {
@@ -652,6 +669,13 @@ namespace GT
             //TODO: Only invalidate the properties that will have changed.
             this->Layout_InvalidateElementLayout(pElementToPrependTo, LayoutFlag_SizeAndPositionInvalid);
             this->Layout_InvalidateElementLayout(pElementToPrepend,   LayoutFlag_SizeAndPositionInvalid);
+
+
+            // The element may not have a font set in which case it will inherit it from the parent. And since the parent may have changed, this will need to be updated.
+            if (pElementToPrepend->hFont == 0 && this->DoesElementHaveText(pElementToPrepend))
+            {
+                this->SetElementText(pElementToPrepend, this->GetElementText(pElementToPrepend));
+            }
 
 
             // If the elements are on different surfaces the appendee needs to be moved.
@@ -1202,8 +1226,8 @@ namespace GT
         assert(pElement != nullptr);
 
         GTLib::Rect<float> rectf;
-        rectf.left   = pElement->layout.absolutePosX + this->GetElementInnerOffsetX(pElement);
-        rectf.top    = pElement->layout.absolutePosY + this->GetElementInnerOffsetY(pElement);
+        rectf.left   = pElement->layout.absolutePosX + pElement->layout.borderLeftWidth + pElement->layout.paddingLeft + this->GetElementInnerOffsetX(pElement);
+        rectf.top    = pElement->layout.absolutePosY + pElement->layout.borderTopWidth  + pElement->layout.paddingTop  + this->GetElementInnerOffsetY(pElement);
         rectf.right  = rectf.left;
         rectf.bottom = rectf.top;
 
@@ -2122,6 +2146,12 @@ namespace GT
                 this->BeginBatch();
                 {
                     this->Layout_InvalidateElementLayout(pElement, LayoutFlag_TextInvalid);
+
+                    // All children that have a null font (thus, inheritting the font from the parent) need to also have their text made invalid.
+                    this->IterateElementChildren(pElement, [&](GUIElement* pChild) -> bool {
+                        this->Layout_InvalidateElementLayout(pChild, LayoutFlag_TextInvalid);
+                        return true;
+                    });
                 }
                 this->EndBatch();
             }
@@ -2139,6 +2169,14 @@ namespace GT
     HGUIFont GUIContextBase::GetElementFont(GUIElement* pElement) const
     {
         assert(pElement != nullptr);
+
+        if (pElement->hFont == NULL)
+        {
+            if (pElement->pParent != nullptr)
+            {
+                return this->GetElementFont(pElement->pParent);
+            }
+        }
 
         return pElement->hFont;
     }
@@ -3022,10 +3060,12 @@ namespace GT
                 //this->PaintSurface(pSurface, pSurface->invalidRect);
                 this->PostEvent_OnSurfaceNeedsRepaint(pSurface, pSurface->invalidRect);
                 
-                pSurface->invalidRect.left   = 0;
-                pSurface->invalidRect.top    = 0;
-                pSurface->invalidRect.right  = 0;
-                pSurface->invalidRect.bottom = 0;
+
+                // Make the invalid region inside-out to indicate that it's currently unset.
+                pSurface->invalidRect.left   = INT_MAX;
+                pSurface->invalidRect.top    = INT_MAX;
+                pSurface->invalidRect.right  = INT_MIN;
+                pSurface->invalidRect.bottom = INT_MIN;
             }
 
             return true;
@@ -3057,10 +3097,13 @@ namespace GT
 
                 if (Renderer_CanDrawText(hFont))
                 {
+                    GTLib::Rect<int> textRect;
+                    this->GetElementAbsoluteTextRect(pElement, textRect);
+
                     pElement->pTextLayout->IterateVisibleTextRuns([&](const GUITextRunDesc &run) {
                         GUITextRunDesc run2(run);
-                        run2.xPos += static_cast<int>(GTLib::Round(pElement->layout.absolutePosX + pElement->layout.borderLeftWidth + pElement->layout.paddingLeft));
-                        run2.yPos += static_cast<int>(GTLib::Round(pElement->layout.absolutePosY + pElement->layout.borderTopWidth  + pElement->layout.paddingTop));
+                        run2.xPos += textRect.left;
+                        run2.yPos += textRect.top;
 
                         Renderer_DrawText(run2);
                     });
