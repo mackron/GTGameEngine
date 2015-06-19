@@ -2430,6 +2430,23 @@ namespace GT
         }
     }
 
+    void GUIContextBase::OnMouseEnter(GUISurface* pSurface)
+    {
+        assert(pSurface != nullptr);
+    }
+
+    void GUIContextBase::OnMouseLeave(GUISurface* pSurface)
+    {
+        assert(pSurface != nullptr);
+
+        // OnMouseLeave
+        if (pSurface->pElementUnderMouse != nullptr)
+        {
+            this->PostEvent_OnMouseLeave(pSurface->pElementUnderMouse);
+            pSurface->pElementUnderMouse = nullptr;
+        }
+    }
+
 
     ////////////////////////////////////////////////////////////////
     // Searching/Gathering

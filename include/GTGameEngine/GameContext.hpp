@@ -245,6 +245,16 @@ namespace GT
         /// @param yPos    [in] The position of the cursor relative to the top left corner of the window.
         void OnMouseMove(HWindow hWindow, int xPos, int yPos);
 
+        /// Called when the mouse enters the given window.
+        ///
+        /// @param hWindow [in] A handle to the window that has just had the mouse enter it.
+        void OnMouseEnter(HWindow hWindow);
+
+        /// Called when the mouse leaves the given window.
+        ///
+        /// @param hWindow [in] A handle to the window that has just had the mouse leave it.
+        void OnMouseLeave(HWindow hWindow);
+
         /// Called when a mouse button is pressed on the given window.
         ///
         /// @param hWindow [in] A handle to the window that had the mouse button clicked on it.

@@ -10,13 +10,34 @@
 
 namespace GT
 {
+    static const size_t WindowFlag_IsCursorInside = (1 << 0);
+
+    void TrackMouseLeaveEvent(HWND hWnd)
+    {
+        TRACKMOUSEEVENT tme;
+        ZeroMemory(&tme, sizeof(tme));
+        tme.cbSize    = sizeof(tme);
+        tme.dwFlags   = TME_LEAVE;
+        tme.hwndTrack = hWnd;
+        TrackMouseEvent(&tme);
+    }
+
     LRESULT DefaultWindowProcWin32(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
-        GameContext* pGameContext = reinterpret_cast<GameContext*>(GetWindowLongPtrW(hWnd, 0));
+        GameContext* pGameContext = reinterpret_cast<GameContext*>(GetWindowLongPtrW(hWnd, sizeof(size_t)*0));
         if (pGameContext != nullptr)
         {
+            size_t flags = static_cast<size_t>(GetWindowLongPtrW(hWnd, sizeof(size_t)*1));
+
             switch (msg)
             {
+            case WM_CREATE:
+                {
+                    TrackMouseLeaveEvent(hWnd);
+                    return 0;
+                }
+
+
             case WM_ERASEBKGND:
                 {
                     return 1;       //< Never draw the background of the window - always leave that the engine's native GUI system.
@@ -43,7 +64,23 @@ namespace GT
 
             case WM_MOUSEMOVE:
                 {
+                    if ((flags & WindowFlag_IsCursorInside) == 0)
+                    {
+                        TrackMouseLeaveEvent(hWnd);
+                        ::SetWindowLongPtrW(hWnd, sizeof(size_t)*1, flags | WindowFlag_IsCursorInside);
+
+                        pGameContext->OnMouseEnter(reinterpret_cast<HWindow>(hWnd));
+                    }
+
                     pGameContext->OnMouseMove(reinterpret_cast<HWindow>(hWnd), GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    break;
+                }
+
+            case WM_MOUSELEAVE:
+                {
+                    ::SetWindowLongPtrW(hWnd, sizeof(size_t)*1, flags & ~WindowFlag_IsCursorInside);
+
+                    pGameContext->OnMouseLeave(reinterpret_cast<HWindow>(hWnd));
                     break;
                 }
 
@@ -160,7 +197,7 @@ namespace GT
 
 
     WindowManager_DefaultWin32::WindowManager_DefaultWin32(GameContext* pGameContext)
-        : WindowManager_Win32(sizeof(void*), reinterpret_cast<WNDPROC>(DefaultWindowProcWin32)),
+        : WindowManager_Win32(sizeof(size_t)*2, reinterpret_cast<WNDPROC>(DefaultWindowProcWin32)),
           m_pGameContext(pGameContext)
     {
     }
@@ -175,7 +212,8 @@ namespace GT
         HWindow hWindow = WindowManager_Win32::CreateWindow(hParent, type, xPos, yPos, width, height);
         if (hWindow != 0)
         {
-            ::SetWindowLongPtrW(reinterpret_cast<HWND>(hWindow), 0, reinterpret_cast<LONG_PTR>(m_pGameContext));
+            ::SetWindowLongPtrW(reinterpret_cast<HWND>(hWindow), sizeof(size_t)*0, reinterpret_cast<LONG_PTR>(m_pGameContext));
+            ::SetWindowLongPtrW(reinterpret_cast<HWND>(hWindow), sizeof(size_t)*1, 0);      // <-- Flags
         }
 
         return hWindow;

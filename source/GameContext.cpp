@@ -404,6 +404,34 @@ namespace GT
 #endif
     }
 
+    void GameContext::OnMouseEnter(HWindow hWindow)
+    {
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnMouseEnter(*this, hWindow);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnMouseEnter(hWindow);
+        }
+#endif
+    }
+
+    void GameContext::OnMouseLeave(HWindow hWindow)
+    {
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnMouseLeave(*this, hWindow);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnMouseLeave(hWindow);
+        }
+#endif
+    }
+
     void GameContext::OnMouseButtonPressed(HWindow hWindow, int button, int xPos, int yPos)
     {
         if (!this->IsEditorOpen())

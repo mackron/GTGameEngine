@@ -1369,6 +1369,17 @@ namespace GT
         /// @param mousePosY [in] The y position of the cursor on the surface relative to the top left corner.
         void OnMouseMove(GUISurface* pSurface, int mousePosX, int mousePosY);
 
+        /// Called by the host application when the mouse enters the given surface.
+        ///
+        /// @param pSurface [in] A handle to the surface the mouse just entered.
+        void OnMouseEnter(GUISurface* pSurface);
+
+        /// Called by the host application when the mouse leaves the given surface.
+        ///
+        /// @param pSurface [in] A handle to the surface the mouse just left.
+        void OnMouseLeave(GUISurface* pSurface);
+
+
 
 
         ////////////////////////////////////////////////////////////////

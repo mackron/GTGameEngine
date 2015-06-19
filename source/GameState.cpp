@@ -79,6 +79,14 @@ namespace GT
     {
     }
 
+    void GameState::OnMouseEnter(GameContext &, HWindow)
+    {
+    }
+
+    void GameState::OnMouseLeave(GameContext &, HWindow)
+    {
+    }
+
     void GameState::OnMouseButtonPressed(GameContext &, HWindow, int, int, int)
     {
     }

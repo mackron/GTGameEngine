@@ -1956,6 +1956,24 @@ namespace GT
         }
     }
 
+    void GUIContext::OnMouseEnter(HGUISurface hSurface)
+    {
+        auto pSurface = this->GetSurfacePtr(hSurface);
+        if (pSurface != nullptr)
+        {
+            GUIContextBase::OnMouseEnter(pSurface);
+        }
+    }
+
+    void GUIContext::OnMouseLeave(HGUISurface hSurface)
+    {
+        auto pSurface = this->GetSurfacePtr(hSurface);
+        if (pSurface != nullptr)
+        {
+            GUIContextBase::OnMouseLeave(pSurface);
+        }
+    }
+
 
 
     ////////////////////////////////////////////////////////////////
