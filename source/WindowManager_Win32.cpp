@@ -220,7 +220,7 @@ namespace GT
         wc.lpfnWndProc   = wndProc;
         wc.lpszClassName = g_WindowClass;
         wc.hCursor       = LoadCursorW(NULL, IDC_ARROW);
-        wc.style         = CS_OWNDC | CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS;
+        wc.style         = CS_OWNDC /*| CS_HREDRAW | CS_VREDRAW*/ | CS_DBLCLKS;
         if (!::RegisterClassExW(&wc))
         {
             // Failed to register window class.
