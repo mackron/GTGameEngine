@@ -16,6 +16,8 @@ namespace GT
     {
         void OnMouseEnter(GUIContext &gui, HGUIElement hElement);
         void OnMouseLeave(GUIContext &gui, HGUIElement hElement);
+        void OnMouseButtonPressed(GUIContext &gui, HGUIElement hElement, int button, int xPos, int yPos);
+        void OnMouseButtonReleased(GUIContext &gui, HGUIElement hElement, int button, int xPos, int yPos);
     };
 
 

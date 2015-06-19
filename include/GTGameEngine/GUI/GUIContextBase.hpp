@@ -110,6 +110,30 @@ namespace GT
         /// @param mousePosY [in] The position of the mouse on the y axis relative to the top left corner of the element.
         virtual void PostEvent_OnMouseMove(GUIElement* pElement, int mousePosX, int mousePosY) = 0;
 
+        /// Posts the OnMouseButtonPressed event.
+        ///
+        /// @param element     [in] A reference to the element receiving the event.
+        /// @param mouseButton [in] The mouse button.
+        /// @param mousePosX   [in] The position of the mouse on the x axis relative to the top left corner of the element.
+        /// @param mousePosY   [in] The position of the mouse on the y axis relative to the top left corner of the element.
+        virtual void PostEvent_OnMouseButtonPressed(GUIElement* pElement, int mouseButton, int mousePosX, int mousePosY) = 0;
+
+        /// Posts the OnMouseButtonReleased event.
+        ///
+        /// @param element     [in] A reference to the element receiving the event.
+        /// @param mouseButton [in] The mouse button.
+        /// @param mousePosX   [in] The position of the mouse on the x axis relative to the top left corner of the element.
+        /// @param mousePosY   [in] The position of the mouse on the y axis relative to the top left corner of the element.
+        virtual void PostEvent_OnMouseButtonReleased(GUIElement* pElement, int mouseButton, int mousePosX, int mousePosY) = 0;
+
+        /// Posts the OnMouseButtonDoubleClicked event.
+        ///
+        /// @param element     [in] A reference to the element receiving the event.
+        /// @param mouseButton [in] The mouse button.
+        /// @param mousePosX   [in] The position of the mouse on the x axis relative to the top left corner of the element.
+        /// @param mousePosY   [in] The position of the mouse on the y axis relative to the top left corner of the element.
+        virtual void PostEvent_OnMouseButtonDoubleClicked(GUIElement* pElement, int mouseButton, int mousePosX, int mousePosY) = 0;
+
         /// Posts the OnPaint event.
         ///
         /// @param pSurface [in] A handle to the surface that has been painted.
@@ -1313,6 +1337,14 @@ namespace GT
         GUISurface* GetElementSurface(GUIElement* pElement) const;
 
 
+        /// Determines if the given element is under the mouse cursor.
+        ///
+        /// @param pElement [in] The element.
+        ///
+        /// @return True if the element is currently under the mouse.
+        bool IsElementUnderMouse(GUIElement* pElement) const;
+
+
 
         ////////////////////////////////////////////////////////////////
         // Batching
@@ -1379,6 +1411,34 @@ namespace GT
         /// @param pSurface [in] A handle to the surface the mouse just left.
         void OnMouseLeave(GUISurface* pSurface);
 
+        /// Called when a mouse is pressed while on top of the given surface.
+        ///
+        /// @param pSurface [in] A handle to the surface the mouse button was clicked on.
+        /// @param button   [in] The mouse button that was pressed.
+        /// @param xPos     [in] The position of the cursor on the x axis relative to the top left corner of the surface.
+        /// @param yPos     [in] The position of the cursor on the y axis relative to the top left corner of the surface.
+        void OnMouseButtonPressed(GUISurface* pSurface, int button, int xPos, int yPos);
+
+        /// Called when a mouse is released while on top of the given surface.
+        ///
+        /// @param pSurface [in] A handle to the surface the mouse button was released on.
+        /// @param button   [in] The mouse button that was released.
+        /// @param xPos     [in] The position of the cursor on the x axis relative to the top left corner of the surface.
+        /// @param yPos     [in] The position of the cursor on the y axis relative to the top left corner of the surface.
+        ///
+        /// @remarks
+        ///     This will post the mouse button up event to the element that the mouse is sitting on top of, or whichever
+        ///     element has captured mouse events.
+        void OnMouseButtonReleased(GUISurface* pSurface, int button, int xPos, int yPos);
+
+        /// Called when the mouse is double-clicked on the given surface.
+        ///
+        /// @param pSurface [in] A handle to the surface the mouse button was double clicked on.
+        /// @param button   [in] The mouse button that was double-clicked.
+        /// @param xPos     [in] The position of the cursor on the x axis relative to the top left corner of the surface.
+        /// @param yPos     [in] The position of the cursor on the y axis relative to the top left corner of the surface.
+        void OnMouseButtonDoubleClicked(GUISurface* pSurface, int button, int xPos, int yPos);
+            
 
 
 

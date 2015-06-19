@@ -2294,6 +2294,21 @@ namespace GT
     }
 
 
+    bool GUIContextBase::IsElementUnderMouse(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        if (pElement->pSurface != nullptr)
+        {
+            return pElement->pSurface->pElementUnderMouse == pElement;
+        }
+        else
+        {
+            return false;
+        }
+    }
+
+
 
     ////////////////////////////////////////////////////////////////
     // Batching
@@ -2444,6 +2459,90 @@ namespace GT
         {
             this->PostEvent_OnMouseLeave(pSurface->pElementUnderMouse);
             pSurface->pElementUnderMouse = nullptr;
+        }
+    }
+
+    void GUIContextBase::OnMouseButtonPressed(GUISurface* pSurface, int mouseButton, int mousePosX, int mousePosY)
+    {
+        assert(pSurface != nullptr);
+
+        // OnMouseButtonPressed
+        //
+        // If an element is capturing mouse events, it needs to be the one to receive the event.
+        GUIElement* pEventReceiver = nullptr;
+        if (pSurface->pElementCapturingMouseEvents != nullptr)
+        {
+            pEventReceiver = pSurface->pElementCapturingMouseEvents;
+        }
+        else
+        {
+            pEventReceiver = pSurface->pElementUnderMouse;
+        }
+
+        if (pEventReceiver != nullptr)
+        {
+            // Need to convert the point to local coordinates.
+            int relativeMousePosX;
+            int relativeMousePosY;
+            this->AbsoluteToRelative(pEventReceiver, mousePosX, mousePosY, relativeMousePosX, relativeMousePosY);
+
+            this->PostEvent_OnMouseButtonPressed(pEventReceiver, mouseButton, relativeMousePosX, relativeMousePosY);
+        }
+    }
+
+    void GUIContextBase::OnMouseButtonReleased(GUISurface* pSurface, int mouseButton, int mousePosX, int mousePosY)
+    {
+        assert(pSurface != nullptr);
+
+        // OnMouseButtonReleased
+        //
+        // If an element is capturing mouse events, it needs to be the one to receive the event.
+        GUIElement* pEventReceiver = nullptr;
+        if (pSurface->pElementCapturingMouseEvents != nullptr)
+        {
+            pEventReceiver = pSurface->pElementCapturingMouseEvents;
+        }
+        else
+        {
+            pEventReceiver = pSurface->pElementUnderMouse;
+        }
+
+        if (pEventReceiver != nullptr)
+        {
+            // Need to convert the point to local coordinates.
+            int relativeMousePosX;
+            int relativeMousePosY;
+            this->AbsoluteToRelative(pEventReceiver, mousePosX, mousePosY, relativeMousePosX, relativeMousePosY);
+
+            this->PostEvent_OnMouseButtonReleased(pEventReceiver, mouseButton, relativeMousePosX, relativeMousePosY);
+        }
+    }
+
+    void GUIContextBase::OnMouseButtonDoubleClicked(GUISurface* pSurface, int mouseButton, int mousePosX, int mousePosY)
+    {
+        assert(pSurface != nullptr);
+
+        // OnMouseButtonDoubleClicked
+        //
+        // If an element is capturing mouse events, it needs to be the one to receive the event.
+        GUIElement* pEventReceiver = nullptr;
+        if (pSurface->pElementCapturingMouseEvents != nullptr)
+        {
+            pEventReceiver = pSurface->pElementCapturingMouseEvents;
+        }
+        else
+        {
+            pEventReceiver = pSurface->pElementUnderMouse;
+        }
+
+        if (pEventReceiver != nullptr)
+        {
+            // Need to convert the point to local coordinates.
+            int relativeMousePosX;
+            int relativeMousePosY;
+            this->AbsoluteToRelative(pEventReceiver, mousePosX, mousePosY, relativeMousePosX, relativeMousePosY);
+
+            this->PostEvent_OnMouseButtonDoubleClicked(pEventReceiver, mouseButton, relativeMousePosX, relativeMousePosY);
         }
     }
 

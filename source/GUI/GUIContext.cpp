@@ -266,20 +266,26 @@ namespace GT
         }
     }
 
-#if 0
-    void GUIContext::PostEvent_OnPaint(GUISurface* pSurface, const GTLib::Rect<int> &rect)
+    void GUIContext::PostEvent_OnMouseButtonPressed(GUIElement* pElement, int mouseButton, int mousePosX, int mousePosY)
     {
-        assert(pSurface != nullptr);
+        assert(pElement != nullptr);
 
-        HGUIElement hSurface = reinterpret_cast<GUISurfaceWithHandle*>(pSurface)->handle;
-        assert(hSurface != 0);
+        HGUIElement hElement = reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        assert(hElement != 0);
         {
+            // Local
+            this->IterateLocalEventHandlers(hElement, [&](GUIEventHandler &eventHandler) -> bool
+            {
+                eventHandler.OnMouseButtonPressed(*this, hElement, mouseButton, mousePosX, mousePosY);
+                return true;
+            });
+
             // Global
             this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
             {
-                if (pSurface == this->GetSurfacePtr(hSurface))
+                if (pElement == this->GetElementPtr(hElement))
                 {
-                    eventHandler.OnPaint(*this, hSurface, rect);
+                    eventHandler.OnMouseButtonPressed(*this, hElement, mouseButton, mousePosX, mousePosY);
                     return true;
                 }
                 
@@ -287,7 +293,63 @@ namespace GT
             });
         }
     }
-#endif
+
+    void GUIContext::PostEvent_OnMouseButtonReleased(GUIElement* pElement, int mouseButton, int mousePosX, int mousePosY)
+    {
+        assert(pElement != nullptr);
+
+        HGUIElement hElement = reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        assert(hElement != 0);
+        {
+            // Local
+            this->IterateLocalEventHandlers(hElement, [&](GUIEventHandler &eventHandler) -> bool
+            {
+                eventHandler.OnMouseButtonReleased(*this, hElement, mouseButton, mousePosX, mousePosY);
+                return true;
+            });
+
+            // Global
+            this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    eventHandler.OnMouseButtonReleased(*this, hElement, mouseButton, mousePosX, mousePosY);
+                    return true;
+                }
+                
+                return false;
+            });
+        }
+    }
+
+    void GUIContext::PostEvent_OnMouseButtonDoubleClicked(GUIElement* pElement, int mouseButton, int mousePosX, int mousePosY)
+    {
+        assert(pElement != nullptr);
+
+        HGUIElement hElement = reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        assert(hElement != 0);
+        {
+            // Local
+            this->IterateLocalEventHandlers(hElement, [&](GUIEventHandler &eventHandler) -> bool
+            {
+                eventHandler.OnMouseButtonDoubleClicked(*this, hElement, mouseButton, mousePosX, mousePosY);
+                return true;
+            });
+
+            // Global
+            this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    eventHandler.OnMouseButtonDoubleClicked(*this, hElement, mouseButton, mousePosX, mousePosY);
+                    return true;
+                }
+                
+                return false;
+            });
+        }
+    }
+
 
     void GUIContext::PostEvent_OnSurfaceNeedsRepaint(GUISurface* pSurface, const GTLib::Rect<int> &rect)
     {
@@ -1843,6 +1905,17 @@ namespace GT
     }
 
 
+    bool GUIContext::IsElementUnderMouse(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::IsElementUnderMouse(pElement);
+        }
+
+        return false;
+    }
+
 
     void GUIContext::BeginBatch()
     {
@@ -1971,6 +2044,33 @@ namespace GT
         if (pSurface != nullptr)
         {
             GUIContextBase::OnMouseLeave(pSurface);
+        }
+    }
+
+    void GUIContext::OnMouseButtonPressed(HGUISurface hSurface, int mouseButton, int mousePosX, int mousePosY)
+    {
+        auto pSurface = this->GetSurfacePtr(hSurface);
+        if (pSurface != nullptr)
+        {
+            GUIContextBase::OnMouseButtonPressed(pSurface, mouseButton, mousePosX, mousePosY);
+        }
+    }
+
+    void GUIContext::OnMouseButtonReleased(HGUISurface hSurface, int mouseButton, int mousePosX, int mousePosY)
+    {
+        auto pSurface = this->GetSurfacePtr(hSurface);
+        if (pSurface != nullptr)
+        {
+            GUIContextBase::OnMouseButtonReleased(pSurface, mouseButton, mousePosX, mousePosY);
+        }
+    }
+
+    void GUIContext::OnMouseButtonDoubleClicked(HGUISurface hSurface, int mouseButton, int mousePosX, int mousePosY)
+    {
+        auto pSurface = this->GetSurfacePtr(hSurface);
+        if (pSurface != nullptr)
+        {
+            GUIContextBase::OnMouseButtonDoubleClicked(pSurface, mouseButton, mousePosX, mousePosY);
         }
     }
 

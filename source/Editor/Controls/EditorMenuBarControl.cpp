@@ -12,7 +12,24 @@ namespace GT
 
     void EditorMenuBarButtonControlGUIEventHandler::OnMouseLeave(GUIContext &gui, HGUIElement hElement)
     {
-        gui.SetElementTextColor(hElement, GTLib::Colour(0.75f, 0.75f, 0.75f, 0.75f));
+        gui.SetElementTextColor(hElement, GTLib::Colour(0.75f, 0.75f, 0.75f, 1.0f));
+    }
+
+    void EditorMenuBarButtonControlGUIEventHandler::OnMouseButtonPressed(GUIContext &gui, HGUIElement hElement, int, int, int)
+    {
+        gui.SetElementTextColor(hElement, GTLib::Colour(0.5f, 0.5f, 0.5f, 1.0f));
+    }
+
+    void EditorMenuBarButtonControlGUIEventHandler::OnMouseButtonReleased(GUIContext &gui, HGUIElement hElement, int, int, int)
+    {
+        if (gui.IsElementUnderMouse(hElement))
+        {
+            gui.SetElementTextColor(hElement, GTLib::Colour(1.0f, 1.0f, 1.0f, 1.0f));
+        }
+        else
+        {
+            gui.SetElementTextColor(hElement, GTLib::Colour(0.75f, 0.75f, 0.75f, 1.0f));
+        }
     }
 
 

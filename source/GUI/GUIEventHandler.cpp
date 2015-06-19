@@ -34,6 +34,18 @@ namespace GT
     {
     }
 
+    void GUIEventHandler::OnMouseButtonPressed(GUIContext &, HGUIElement, int, int, int)
+    {
+    }
+
+    void GUIEventHandler::OnMouseButtonReleased(GUIContext &, HGUIElement, int, int, int)
+    {
+    }
+
+    void GUIEventHandler::OnMouseButtonDoubleClicked(GUIContext &, HGUIElement, int, int, int )
+    {
+    }
+
 
     void GUIEventHandler::OnSurfaceNeedsRepaint(GUIContext &, HGUISurface, const GTLib::Rect<int> &)
     {

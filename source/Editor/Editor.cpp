@@ -240,7 +240,7 @@ namespace GT
         HGUISurface hSurface = this->GetWindowSurface(hWindow);
         if (hSurface != 0)
         {
-            //m_gui.OnMouseButtonPressed(hSurface, button, xPos, yPos);
+            m_gui.OnMouseButtonPressed(hSurface, button, xPos, yPos);
         }
     }
 
@@ -249,7 +249,7 @@ namespace GT
         HGUISurface hSurface = this->GetWindowSurface(hWindow);
         if (hSurface != 0)
         {
-            //m_gui.OnMouseButtonReleased(hSurface, button, xPos, yPos);
+            m_gui.OnMouseButtonReleased(hSurface, button, xPos, yPos);
         }
     }
 
@@ -258,7 +258,7 @@ namespace GT
         HGUISurface hSurface = this->GetWindowSurface(hWindow);
         if (hSurface != 0)
         {
-            //m_gui.OnMouseButtonDoubleClicked(hSurface, button, xPos, yPos);
+            m_gui.OnMouseButtonDoubleClicked(hSurface, button, xPos, yPos);
         }
     }
 

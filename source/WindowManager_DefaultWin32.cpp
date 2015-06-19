@@ -97,6 +97,7 @@ namespace GT
                 }
             case WM_LBUTTONDBLCLK:
                 {
+                    pGameContext->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
                     pGameContext->OnMouseButtonDoubleClicked(reinterpret_cast<HWindow>(hWnd), MouseButton_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
                     break;
                 }
@@ -114,6 +115,7 @@ namespace GT
                 }
             case WM_RBUTTONDBLCLK:
                 {
+                    pGameContext->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
                     pGameContext->OnMouseButtonDoubleClicked(reinterpret_cast<HWindow>(hWnd), MouseButton_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
                     break;
                 }
@@ -131,6 +133,7 @@ namespace GT
                 }
             case WM_MBUTTONDBLCLK:
                 {
+                    pGameContext->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Middle, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
                     pGameContext->OnMouseButtonDoubleClicked(reinterpret_cast<HWindow>(hWnd), MouseButton_Middle, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
                     break;
                 }

@@ -63,6 +63,33 @@ namespace GT
         ///     If the given element has captured the mouse input, this event will be fired even when the mouse is not over the element.
         virtual void OnMouseMove(GUIContext &context, HGUIElement hElement, int mousePosX, int mousePosY);
 
+        /// Called when a mouse button is pressed while on top of the given element, or if a button is pressed while the given element has the mouse capture.
+        ///
+        /// @param context     [in] The GUI context.
+        /// @param hElement    [in] The element receiving the event.
+        /// @param mouseButton [in] The index of the mouse button that was pressed.
+        /// @param mousePosX   [in] The position of the mouse relative to the top left corner, on the x axis.
+        /// @param mousePosY   [in] The position of the mouse relative to the top left corner, on the y axis.
+        virtual void OnMouseButtonPressed(GUIContext &context, HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY);
+
+        /// Called when a mouse button is released while on top of the given element, or if a button is released while the given element has the mouse capture.
+        ///
+        /// @param context     [in] The GUI context.
+        /// @param hElement    [in] The element receiving the event.
+        /// @param mouseButton [in] The index of the mouse button that was released.
+        /// @param mousePosX   [in] The position of the mouse relative to the top left corner, on the x axis.
+        /// @param mousePosY   [in] The position of the mouse relative to the top left corner, on the y axis.
+        virtual void OnMouseButtonReleased(GUIContext &context, HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY);
+
+        /// Called when a mouse button is double-clicked while on top of the given element, or if a button is double-clicked while the given element has the mouse capture.
+        ///
+        /// @param context     [in] The GUI context.
+        /// @param hElement    [in] The element receiving the event.
+        /// @param mouseButton [in] The index of the mouse button that was double-clicked.
+        /// @param mousePosX   [in] The position of the mouse relative to the top left corner, on the x axis.
+        /// @param mousePosY   [in] The position of the mouse relative to the top left corner, on the y axis.
+        virtual void OnMouseButtonDoubleClicked(GUIContext &context, HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY);
+
 
 
         ///////////////////////////////////////////

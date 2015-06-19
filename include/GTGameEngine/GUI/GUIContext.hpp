@@ -122,8 +122,14 @@ namespace GT
         /// @copydoc GUIContextBase::PostEvent_OnMouseMove()
         void PostEvent_OnMouseMove(GUIElement* pElement, int mousePosX, int mousePosY);
 
-        /// @copydoc GUIContextBase::PostEvent_OnPaint()
-        //void PostEvent_OnPaint(GUISurface* pSurface, const GTLib::Rect<int> &rect);
+        /// @copydoc GUIContextBase::PostEvent_OnMouseButtonPressed()
+        void PostEvent_OnMouseButtonPressed(GUIElement* pElement, int mouseButton, int mousePosX, int mousePosY);
+
+        /// @copydoc GUIContextBase::PostEvent_OnMouseButtonReleased()
+        void PostEvent_OnMouseButtonReleased(GUIElement* pElement, int mouseButton, int mousePosX, int mousePosY);
+
+        /// @copydoc GUIContextBase::PostEvent_OnMouseButtonDoubleClicked()
+        void PostEvent_OnMouseButtonDoubleClicked(GUIElement* pElement, int mouseButton, int mousePosX, int mousePosY);
 
         /// @copydoc GUIContextBase::PostEvent_OnSurfaceNeedsRepaint()
         void PostEvent_OnSurfaceNeedsRepaint(GUISurface* pSurface, const GTLib::Rect<int> &rect);
@@ -1202,6 +1208,10 @@ namespace GT
         HGUISurface GetElementSurface(HGUIElement hElement) const;
 
 
+        /// @copydoc GUIContextBase::IsElementUnderPoint()
+        bool IsElementUnderMouse(HGUIElement hElement) const;
+
+
 
         ////////////////////////////////////////////////////////////////
         // Batching
@@ -1299,6 +1309,15 @@ namespace GT
         ///
         /// @param pSurface [in] A handle to the surface the mouse just left.
         void OnMouseLeave(HGUISurface hSurface);
+
+        /// @copydoc GUIContextBase::OnMouseButtonClicked()
+        void OnMouseButtonPressed(HGUISurface hSurface, int mouseButton, int mousePosX, int mousePosY);
+
+        /// @copydoc GUIContextBase::OnMouseButtonReleased()
+        void OnMouseButtonReleased(HGUISurface hSurface, int mouseButton, int mousePosX, int mousePosY);
+
+        /// @copydoc GUIContextBase::OnMouseButtonDoubleClicked()
+        void OnMouseButtonDoubleClicked(HGUISurface hSurface, int mouseButton, int mousePosX, int mousePosY);
 
 
         ////////////////////////////////////////////////////////////////
