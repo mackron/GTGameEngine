@@ -30,7 +30,7 @@ namespace GT
             invalidatedRect.top    = rect.top;
             invalidatedRect.right  = rect.right;
             invalidatedRect.bottom = rect.bottom;
-            InvalidateRect(reinterpret_cast<HWND>(pAUXData->hWindow), &invalidatedRect, true);
+            InvalidateRect(reinterpret_cast<HWND>(pAUXData->hWindow), &invalidatedRect, FALSE);
 #endif
 
 #if defined(GT_PLATFORM_LINUX)

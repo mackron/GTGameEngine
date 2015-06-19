@@ -10,6 +10,7 @@
 #include "../WindowManager.hpp"
 #include "EditorEventHandler.hpp"
 #include "EditorGUIEventHandler.hpp"
+#include "Controls/EditorHeaderControl.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include "EditorGUIRenderer_GDI.hpp"
@@ -23,6 +24,9 @@
 namespace GT
 {
     class GameContext;
+    class EditorHeaderControl;
+    class EditorBodyControl;
+    class EditorFooterControl;
 
     /// Class representing the editor.
     ///
@@ -48,6 +52,13 @@ namespace GT
 
         /// Shuts down the editor.
         void Shutdown();
+
+
+        /// Retrieves a reference to the editor's GUI context.
+        ///
+        /// @return A reference to the editor's GUI context.
+              GUIContext & GetGUI()       { return m_gui; }
+        const GUIContext & GetGUI() const { return m_gui; }
 
 
         /// Opens the editor.
@@ -99,6 +110,12 @@ namespace GT
         /// @copydoc GameContext::OnMouseMove()
         void OnMouseMove(HWindow hWindow, int xPos, int yPos);
 
+        /// @copydoc GameContext::OnMouseEnter()
+        void OnMouseEnter(HWindow hWindow);
+
+        /// @copydoc GameContext::OnMouseLeave()
+        void OnMouseLeave(HWindow hWindow);
+
         /// @copydoc GameContext::OnMouseButtonPressed()
         void OnMouseButtonPressed(HWindow hWindow, int button, int xPos, int yPos);
 
@@ -124,27 +141,56 @@ namespace GT
 
     private:
 
+        /// Every window in the editor is associated with a surface, which also has a root level element. This structure contains that information.
+        struct WindowGUISurfaceAndElement
+        {
+            /// The window's surface.
+            HGUISurface hSurface;
+
+            /// The window's root level element.
+            HGUIElement hElement;
+        };
+
+
         /// Helper method for retrieving the surface that is associated with the given window.
         ///
         /// @param hWindow [in] A handle to the window whose associated surface is being retrieved.
+        /// @param surfaceAndElementOut [out] A reference to the object that will receive the surface and element.
         ///
-        /// @return A handle to the surface, or 0 if the window does not have a surface associated with it.
-        HGUISurface GetWindowSurface(HWindow hWindow) const;
+        /// @return True if the surface and element was retrieved successfully.
+        bool GetWindowSurfaceAndElement(HWindow hWindow, WindowGUISurfaceAndElement &surfaceAndElementOut) const;
 
         /// Creates a GUI surface for the given window.
         ///
-        /// @param hWindow [in] A handle to the window that should have a surface created for it.
+        /// @param hWindow              [in]  A handle to the window that should have a surface created for it.
+        /// @param surfaceAndElementOut [out] A reference to the object that will receive the surface and element.
         ///
-        /// @return A handle to the new surface.
+        /// @return True if the surface and element was created successfully.
         ///
         /// @remarks
         ///     When the surface is created it will be mapped to the window and can be retrieved with GetWindowSurface().
-        HGUISurface CreateWindowSurface(HWindow hWindow);
+        bool CreateWindowSurfaceAndElement(HWindow hWindow, WindowGUISurfaceAndElement &surfaceAndElementOut);
+        bool CreateWindowSurfaceAndElement(HWindow hWindow);
 
         /// Deletse the GUI surface of the given window.
         ///
         /// @param hWindow [in] A handle to the window whose surface is being deleted.
-        void DeleteWindowSurface(HWindow hWindow);
+        void DeleteWindowSurfaceAndElement(HWindow hWindow);
+
+
+        /// Helper method for retrieving the surface that is associated with the given window.
+        ///
+        /// @param hWindow [in] A handle to the window whose associated surface is being retrieved.
+        ///
+        /// @return A handle to the window's surface, or null if there was an error.
+        HGUISurface GetWindowSurface(HWindow hWindow) const;
+
+        /// Helper method for retrieving the element that is associated with the given window.
+        ///
+        /// @param hWindow [in] A handle to the window whose associated window is being retrieved.
+        ///
+        /// @return A handle to the window's element, or null if there was an error.
+        HGUIElement GetWindowElement(HWindow hWindow) const;
 
 
         //////////////////////////////////////
@@ -155,6 +201,7 @@ namespace GT
 
         /// Posts the OnEditorClosed() event to every attached event handler.
         void PostEvent_OnEditorClosed();
+
 
 
     private:
@@ -183,8 +230,8 @@ namespace GT
         HWindow m_hMainWindow;
 
 
-        /// Every window in the editor has a GUI surface associated with it. This maps a window to a surface.
-        GTLib::Map<HWindow, HGUISurface> m_windowSurfaceMap;
+        /// Every window in the editor has a GUI surface associated with it. This maps a window to a surface/element.
+        GTLib::Map<HWindow, WindowGUISurfaceAndElement> m_windowSurfaceMap;
 
 
         /// The list of event handlers.
@@ -195,9 +242,18 @@ namespace GT
         bool m_isOpen;
 
 
+        /// The header control.
+        EditorHeaderControl* m_pHeaderControl;
+
+        /// The body control.
+        EditorBodyControl* m_pBodyControl;
+
+        /// The footer control.
+        EditorFooterControl* m_pFooterControl;
+
 
         // Test window.
-        HGUIElement m_hTestElement;
+        //HGUIElement m_hTestElement;
 
 
     private:    // No copying.
