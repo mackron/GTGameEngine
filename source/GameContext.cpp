@@ -157,7 +157,7 @@ namespace GT
     }
 
 
-    bool GameContext::GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut)
+    bool GameContext::GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut) const
     {
         if (m_pWindowManager != nullptr)
         {
@@ -242,6 +242,32 @@ namespace GT
     bool GameContext::IsKeyDown(GTLib::Key key)
     {
         return m_pWindowManager->IsKeyDown(key);
+    }
+
+
+    bool GameContext::GetCursorPosition(HWindow hWindow, int &mousePosXOut, int &mousePosYOut) const
+    {
+        return m_pWindowManager->GetCursorPosition(hWindow, mousePosXOut, mousePosYOut);
+    }
+
+    bool GameContext::IsMouseInsideWindow(HWindow hWindow) const
+    {
+        int mousePosX;
+        int mousePosY;
+        if (this->GetCursorPosition(hWindow, mousePosX, mousePosY))
+        {
+            if (mousePosX >= 0 && mousePosY >= 0)
+            {
+                unsigned int windowWidth;
+                unsigned int windowHeight;
+                if (this->GetWindowSize(hWindow, windowWidth, windowHeight))
+                {
+                    return static_cast<unsigned int>(mousePosX) < windowWidth && static_cast<unsigned int>(mousePosY) < windowHeight;
+                }
+            }
+        }
+
+        return false;
     }
 
 

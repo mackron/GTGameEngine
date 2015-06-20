@@ -12,8 +12,6 @@ namespace GT
           yDPI(96),
           topLevelElements(),
           auxData(nullptr),
-          pElementCapturingMouseEvents(nullptr),
-          pElementUnderMouse(nullptr),
           invalidRect()
     {
     }

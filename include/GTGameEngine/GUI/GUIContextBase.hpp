@@ -261,6 +261,10 @@ namespace GT
         /// @return False if the iteration was terminated early as a result of handler() returning false. True if everything was iterated.
         bool IterateSurfaceElements(GUISurface* pSurface, std::function<bool (GUIElement* pElement)> handler);
 
+        /// Retrieves the surface that's sitting under the mouse cursor.
+        ///
+        /// @return A reference to the surface that is currently under the mouse.
+        GUISurface* GetSurfaceUnderMouse() const;
 
         /// Sets the given surface's aux. data pointer.
         ///
@@ -1337,13 +1341,17 @@ namespace GT
         GUISurface* GetElementSurface(GUIElement* pElement) const;
 
 
+        /// Retrieves a reference to the element that's sitting under the mouse cursor.
+        ///
+        /// @return A reference to the element that is currently under the mouse.
+        GUIElement* GetElementUnderMouse() const;
+
         /// Determines if the given element is under the mouse cursor.
         ///
         /// @param pElement [in] The element.
         ///
         /// @return True if the element is currently under the mouse.
         bool IsElementUnderMouse(GUIElement* pElement) const;
-
 
 
         ////////////////////////////////////////////////////////////////
@@ -1541,6 +1549,17 @@ namespace GT
         ///
         /// @return A pointer to the font manager.
         GUIFontManager* GetFontManager();
+
+        /// Sets the element that has captured the mouse input events.
+        ///
+        /// @param pElement [in] A pointer to the element that will receive the mouse events.
+        ///
+        /// @remarks
+        ///     All mouse events will be routed to the given element until the capture changes, or is released.
+        void SetMouseEventCapture(GUIElement* pElement);
+
+        /// Releases the mouse event capture and restores default mouse message handling.
+        void ReleaseMouseEventCapture();
 
 
     private:
@@ -2149,6 +2168,23 @@ namespace GT
 
         /// The base DPI on yhe Y axis for calculating the scaling factor. Defaults to 96.
         unsigned int m_yBaseDPI;
+
+
+        /// A pointer to the element who is capturing mouse events (mouse move and button down/up).
+        GUIElement* m_pElementCapturingMouseEvents;
+
+        /// A pointer to the element that is currently sitting under the mouse.
+        GUIElement* m_pElementUnderMouse;
+
+
+        /// A pointer to the surface sitting under the mouse.
+        GUISurface* m_pSurfaceUnderMouse;
+
+        /// The position of the mouse on the x axis relative to the top-left corner of the surface that's under the mouse.
+        int m_mousePosX;
+
+        /// The position of the mouse on the x axis relative to the top-left corner of the surface that's under the mouse.
+        int m_mousePosY;
 
 
         /// Object containing the necessary variables for handling layout updates.

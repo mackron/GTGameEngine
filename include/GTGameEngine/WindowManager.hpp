@@ -73,7 +73,7 @@ namespace GT
         /// @param heightOut [out] A reference to the variable that will receive the height.
         ///
         /// @return True if the size of the window is retrieved successfully; false otherwise.
-        virtual bool GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut) = 0;
+        virtual bool GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut) const = 0;
 
 
         /// Shows the given window.
@@ -119,6 +119,13 @@ namespace GT
         ///
         /// @return True if the cursor is visible at a global level; false otherwise.
         virtual bool IsCursorVisible() const = 0;
+
+        /// Retrieves the position of the mouse cursor relative to the given window.
+        ///
+        /// @param hWindow      [in]  The window.
+        /// @param mousePosXOut [out] A reference to the variable that will receive the position of the mouse on the x axis relative to the top left of the given window.
+        /// @param mousePosYOut [out] A reference to the variable that will receive the position of the mouse on the y axis relative to the top left of the given window.
+        virtual bool GetCursorPosition(HWindow hWindow, int &mousePosXOut, int &mousePosYOut) const = 0;
 
 
         /// Posts a message to the window manager's event queue.

@@ -321,7 +321,7 @@ namespace GT
         }
     }
 
-    bool WindowManager_Win32::GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut)
+    bool WindowManager_Win32::GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut) const
     {
         if (hWindow != 0)
         {
@@ -408,6 +408,23 @@ namespace GT
         }
 
         return true;
+    }
+
+    bool WindowManager_Win32::GetCursorPosition(HWindow hWindow, int &mousePosXOut, int &mousePosYOut) const
+    {
+        POINT p;
+        if (GetCursorPos(&p))
+        {
+            if (ScreenToClient(reinterpret_cast<HWND>(hWindow), &p))
+            {
+                mousePosXOut = p.x;
+                mousePosYOut = p.y;
+
+                return true;
+            }
+        }
+
+        return false;
     }
 
 

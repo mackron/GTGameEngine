@@ -46,7 +46,7 @@ namespace GT
         virtual void SetWindowSize(HWindow hWindow, unsigned int width, unsigned int height);
 
         /// @copydoc WindowManager::GetWindowSize()
-        virtual bool GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut);
+        virtual bool GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut) const;
 
 
 
@@ -76,6 +76,9 @@ namespace GT
 
         /// @copydoc WindowManager::IsCursorVisible()
         virtual bool IsCursorVisible() const;
+
+        /// @copydoc WindowManager::GetMousePosition()
+        virtual bool GetCursorPosition(HWindow hWindow, int &mousePosXOut, int &mousePosYOut) const;
 
 
         /// @copydoc WindowManager::PostQuitMessage()

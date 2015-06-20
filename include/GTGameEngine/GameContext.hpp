@@ -105,7 +105,7 @@ namespace GT
         /// @param heightOut [out] A reference to the variable that will receive the height.
         ///
         /// @return True if the size of the window is retrieved successfully; false otherwise.
-        bool GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut);
+        bool GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut) const;
 
 
         /// Creates a game window.
@@ -192,6 +192,18 @@ namespace GT
         ///
         /// @return True if the key is down; false otherwise.
         bool IsKeyDown(GTLib::Key key);
+
+        /// Retrieves the position of the mouse relative to the given window.
+        ///
+        /// @param hWindow      [in]  The window.
+        /// @param mousePosXOut [out] A reference to the variable that will receive the mouse position on the x axis.
+        /// @param mousePosYOut [out] A reference to the variable that will receive the mouse position on the y axis.
+        bool GetCursorPosition(HWindow hWindow, int &mousePosXOut, int &mousePosYOut) const;
+
+        /// Helper function for determining whether or not the mouse is contained within the given window.
+        ///
+        /// @param hWindow [in] The window.
+        bool IsMouseInsideWindow(HWindow hWindow) const;
 
 
         ///////////////////////////////////////////////////

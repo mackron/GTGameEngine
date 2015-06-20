@@ -45,12 +45,6 @@ namespace GT
         /// The list of top-level elements that are on this surface. The elements in this list should all be parentless.
         GTLib::Vector<GUIElement*> topLevelElements;
 
-        /// A pointer to the element who is capturing mouse events (mouse move and button down/up).
-        GUIElement* pElementCapturingMouseEvents;
-
-        /// A pointer to the element that is currently sitting under the mouse.
-        GUIElement* pElementUnderMouse;
-
 
         /// A pointer to the aux. data.
         void* auxData;

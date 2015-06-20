@@ -523,6 +523,17 @@ namespace GT
         }
     }
 
+    HGUISurface GUIContext::GetSurfaceUnderMouse() const
+    {
+        auto pSurface = GUIContextBase::GetSurfaceUnderMouse();
+        if (pSurface != nullptr)
+        {
+            return reinterpret_cast<GUISurfaceWithHandle*>(pSurface)->handle;
+        }
+
+        return 0;
+    }
+
 
 
     ////////////////////////////////////////////////////////////////
@@ -1904,6 +1915,16 @@ namespace GT
         return 0;
     }
 
+    HGUIElement GUIContext::GetElementUnderMouse() const
+    {
+        auto pElement = GUIContextBase::GetElementUnderMouse();
+        if (pElement != nullptr)
+        {
+            return reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        }
+
+        return 0;
+    }
 
     bool GUIContext::IsElementUnderMouse(HGUIElement hElement) const
     {

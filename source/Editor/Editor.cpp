@@ -66,20 +66,6 @@ namespace GT
 
                         return true;
                     }
-
-
-                    // TESTING
-                    //m_hTestElement = m_gui.CreateElement();
-                    //m_gui.AttachElementToSurface(m_hTestElement, hMainSurface);
-                    //m_gui.SetElementBackgroundColour(m_hTestElement, GTLib::Colour(0.25f, 0.25f, 0.25f, 1));
-                    //m_gui.SetElementSizeRatio(m_hTestElement, 1.0f, 1.0f);
-                    //m_gui.SetElementBorder(m_hTestElement, 8, GTLib::Colour(0.75f, 0.25f, 0.25f, 1.0f));
-                    //m_gui.EnableElementChildHeightFlexing(m_hTestElement);
-                    //m_gui.SetElementVerticalAlign(m_hTestElement, GT::VerticalAlign_Center);
-                    //m_gui.SetElementHorizontalAlign(m_hTestElement, GT::HorizontalAlign_Left);
-
-
-                    
                 }
             }
         }
@@ -117,6 +103,17 @@ namespace GT
                     if (m_gameContext.GetWindowSize(m_hMainWindow, windowWidth, windowHeight))
                     {
                         m_gui.SetSurfaceSize(hSurface, windowWidth, windowHeight);
+
+
+                        // If the mouse is within the surface we need to post the OnMouseEnter event to the GUI system.
+                        if (m_gameContext.IsMouseInsideWindow(m_hMainWindow))
+                        {
+                            if (m_gui.GetSurfaceUnderMouse() != hSurface)
+                            {
+                                m_gui.OnMouseLeave(m_gui.GetSurfaceUnderMouse());
+                                m_gui.OnMouseEnter(hSurface);
+                            }
+                        }
                     }
 
                     m_gui.InvalidateSurfaceRect(hSurface);

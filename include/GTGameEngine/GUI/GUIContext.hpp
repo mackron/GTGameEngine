@@ -265,6 +265,8 @@ namespace GT
         /// @param handler  [in] The function that will be called for each element. If this returns false, the iteration will stop.
         void IterateSurfaceElements(HGUISurface hSurface, std::function<bool (HGUIElement)> handler);
 
+        /// @copydoc GUIContextBase::GetSurfaceUnderMouse()
+        HGUISurface GetSurfaceUnderMouse() const;
 
 
         ////////////////////////////////////////////////////////////////
@@ -1207,9 +1209,13 @@ namespace GT
         /// @param hElement [in] A handle to the element whose surface is being retrieved.
         HGUISurface GetElementSurface(HGUIElement hElement) const;
 
+        /// @copydoc GUIContextBase::GetElementUnderMouse()
+        HGUIElement GetElementUnderMouse() const;
 
         /// @copydoc GUIContextBase::IsElementUnderPoint()
         bool IsElementUnderMouse(HGUIElement hElement) const;
+
+        
 
 
 

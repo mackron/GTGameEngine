@@ -55,6 +55,8 @@ namespace GT
     GUIContextBase::GUIContextBase(GUIFontManager* pFontManager)
         : m_pFontManager(pFontManager),
           m_xBaseDPI(96), m_yBaseDPI(96),
+          m_pElementCapturingMouseEvents(nullptr), m_pElementUnderMouse(nullptr),
+          m_pSurfaceUnderMouse(nullptr),
           m_layoutContext(),
           m_batchLockCounter(0)
     {
@@ -212,6 +214,10 @@ namespace GT
         return true;
     }
 
+    GUISurface* GUIContextBase::GetSurfaceUnderMouse() const
+    {
+        return m_pSurfaceUnderMouse;
+    }
 
 
     ////////////////////////////////////////////////////////////////
@@ -2293,6 +2299,10 @@ namespace GT
         return pElement->pSurface;
     }
 
+    GUIElement* GUIContextBase::GetElementUnderMouse() const
+    {
+        return m_pElementUnderMouse;
+    }
 
     bool GUIContextBase::IsElementUnderMouse(GUIElement* pElement) const
     {
@@ -2300,7 +2310,7 @@ namespace GT
 
         if (pElement->pSurface != nullptr)
         {
-            return pElement->pSurface->pElementUnderMouse == pElement;
+            return m_pElementUnderMouse == pElement;
         }
         else
         {
@@ -2400,24 +2410,33 @@ namespace GT
 
     void GUIContextBase::OnMouseMove(GUISurface* pSurface, int mousePosX, int mousePosY)
     {
+        assert(pSurface != nullptr);
+        assert(pSurface == m_pSurfaceUnderMouse);
+
         auto pNewElementUnderMouse = this->FindElementUnderPoint(pSurface, mousePosX, mousePosY);
             
         // OnMouseLeave/OnMouseEnter
-        if (pSurface->pElementUnderMouse != pNewElementUnderMouse)
+        if (m_pElementUnderMouse != pNewElementUnderMouse)
         {
-            auto pOldElementUnderMouse = pSurface->pElementUnderMouse;
+            auto pOldElementUnderMouse = m_pElementUnderMouse;
             if (pOldElementUnderMouse != nullptr)
             {
-                this->PostEvent_OnMouseLeave(pOldElementUnderMouse);
+                if (m_pElementCapturingMouseEvents == nullptr || m_pElementCapturingMouseEvents == pOldElementUnderMouse)
+                {
+                    this->PostEvent_OnMouseLeave(pOldElementUnderMouse);
+                }
             }
 
             if (pNewElementUnderMouse != nullptr)
             {
-                this->PostEvent_OnMouseEnter(pNewElementUnderMouse);
+                if (m_pElementCapturingMouseEvents == nullptr || m_pElementCapturingMouseEvents == pNewElementUnderMouse)
+                {
+                    this->PostEvent_OnMouseEnter(pNewElementUnderMouse);
+                }
             }
 
 
-            pSurface->pElementUnderMouse = pNewElementUnderMouse;
+            m_pElementUnderMouse = pNewElementUnderMouse;
         }
 
 
@@ -2425,9 +2444,9 @@ namespace GT
         //
         // If an element is capturing mouse events, it needs to be the one to receive the event.
         GUIElement* pEventReceiver = nullptr;
-        if (pSurface->pElementCapturingMouseEvents != nullptr)
+        if (m_pElementCapturingMouseEvents != nullptr)
         {
-            pEventReceiver = pSurface->pElementCapturingMouseEvents;
+            pEventReceiver = m_pElementCapturingMouseEvents;
         }
         else
         {
@@ -2448,35 +2467,45 @@ namespace GT
     void GUIContextBase::OnMouseEnter(GUISurface* pSurface)
     {
         assert(pSurface != nullptr);
+        assert(pSurface != m_pSurfaceUnderMouse);
+
+        m_pSurfaceUnderMouse = pSurface;
     }
 
     void GUIContextBase::OnMouseLeave(GUISurface* pSurface)
     {
         assert(pSurface != nullptr);
+        assert(pSurface == m_pSurfaceUnderMouse);
 
         // OnMouseLeave
-        if (pSurface->pElementUnderMouse != nullptr)
+        if (m_pElementUnderMouse != nullptr)
         {
-            this->PostEvent_OnMouseLeave(pSurface->pElementUnderMouse);
-            pSurface->pElementUnderMouse = nullptr;
+            this->PostEvent_OnMouseLeave(m_pElementUnderMouse);
+            m_pElementUnderMouse = nullptr;
         }
+
+
+        m_pSurfaceUnderMouse = nullptr;
     }
 
     void GUIContextBase::OnMouseButtonPressed(GUISurface* pSurface, int mouseButton, int mousePosX, int mousePosY)
     {
         assert(pSurface != nullptr);
+        assert(pSurface == m_pSurfaceUnderMouse);
+
+        (void)pSurface;
 
         // OnMouseButtonPressed
         //
         // If an element is capturing mouse events, it needs to be the one to receive the event.
         GUIElement* pEventReceiver = nullptr;
-        if (pSurface->pElementCapturingMouseEvents != nullptr)
+        if (m_pElementCapturingMouseEvents != nullptr)
         {
-            pEventReceiver = pSurface->pElementCapturingMouseEvents;
+            pEventReceiver = m_pElementCapturingMouseEvents;
         }
         else
         {
-            pEventReceiver = pSurface->pElementUnderMouse;
+            pEventReceiver = m_pElementUnderMouse;
         }
 
         if (pEventReceiver != nullptr)
@@ -2493,18 +2522,21 @@ namespace GT
     void GUIContextBase::OnMouseButtonReleased(GUISurface* pSurface, int mouseButton, int mousePosX, int mousePosY)
     {
         assert(pSurface != nullptr);
+        assert(pSurface == m_pSurfaceUnderMouse);
+
+        (void)pSurface;
 
         // OnMouseButtonReleased
         //
         // If an element is capturing mouse events, it needs to be the one to receive the event.
         GUIElement* pEventReceiver = nullptr;
-        if (pSurface->pElementCapturingMouseEvents != nullptr)
+        if (m_pElementCapturingMouseEvents != nullptr)
         {
-            pEventReceiver = pSurface->pElementCapturingMouseEvents;
+            pEventReceiver = m_pElementCapturingMouseEvents;
         }
         else
         {
-            pEventReceiver = pSurface->pElementUnderMouse;
+            pEventReceiver = m_pElementUnderMouse;
         }
 
         if (pEventReceiver != nullptr)
@@ -2521,18 +2553,21 @@ namespace GT
     void GUIContextBase::OnMouseButtonDoubleClicked(GUISurface* pSurface, int mouseButton, int mousePosX, int mousePosY)
     {
         assert(pSurface != nullptr);
+        assert(pSurface == m_pSurfaceUnderMouse);
+
+        (void)pSurface;
 
         // OnMouseButtonDoubleClicked
         //
         // If an element is capturing mouse events, it needs to be the one to receive the event.
         GUIElement* pEventReceiver = nullptr;
-        if (pSurface->pElementCapturingMouseEvents != nullptr)
+        if (m_pElementCapturingMouseEvents != nullptr)
         {
-            pEventReceiver = pSurface->pElementCapturingMouseEvents;
+            pEventReceiver = m_pElementCapturingMouseEvents;
         }
         else
         {
-            pEventReceiver = pSurface->pElementUnderMouse;
+            pEventReceiver = m_pElementUnderMouse;
         }
 
         if (pEventReceiver != nullptr)
@@ -2686,6 +2721,21 @@ namespace GT
     GUIFontManager* GUIContextBase::GetFontManager()
     {
         return m_pFontManager;
+    }
+
+    void GUIContextBase::SetMouseEventCapture(GUIElement* pElement)
+    {
+        if (m_pElementCapturingMouseEvents != pElement)
+        {
+        }
+    }
+
+    void GUIContextBase::ReleaseMouseEventCapture()
+    {
+        if (m_pElementCapturingMouseEvents != nullptr)
+        {
+            // When the mouse is released, we will need to post events for the element
+        }
     }
 
 
