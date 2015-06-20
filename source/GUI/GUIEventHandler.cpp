@@ -47,6 +47,15 @@ namespace GT
     }
 
 
+    void GUIEventHandler::OnSetMouseEventCapture(GUIContext &, HGUIElement)
+    {
+    }
+
+    void GUIEventHandler::OnReleaseMouseEventCapture(GUIContext &, HGUIElement)
+    {
+    }
+
+
     void GUIEventHandler::OnSurfaceNeedsRepaint(GUIContext &, HGUISurface, const GTLib::Rect<int> &)
     {
     }

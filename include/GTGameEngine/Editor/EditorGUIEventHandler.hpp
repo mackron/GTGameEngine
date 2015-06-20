@@ -19,6 +19,11 @@ namespace GT
         ~EditorGUIEventHandler();
 
 
+        /// @copydoc GUIEventHandler::OnSetMouseEventCapture()
+        void OnSetMouseEventCapture(GT::GUIContext &context, GT::HGUIElement hElement);
+
+        /// @copydoc GUIEventHandler::OnReleaseMouseEventCapture()
+        void OnReleaseMouseEventCapture(GT::GUIContext &context, GT::HGUIElement hElement);
 
         /// @copydoc GUIEventHandler::OnSurfaceNeedsRepaint()
         void OnSurfaceNeedsRepaint(GT::GUIContext &context, GT::HGUISurface hSurface, const GTLib::Rect<int> &rect);

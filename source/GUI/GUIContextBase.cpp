@@ -252,6 +252,12 @@ namespace GT
     {
         assert(pElement != nullptr);
 
+        // If the element is capturing mouse events, it needs to be released.
+        if (pElement == this->GetMouseEventCapture())
+        {
+            this->ReleaseMouseEventCapture();
+        }
+
         this->BeginBatch();
         {
             // The area consumed by the deleted element needs to be invalidated so that it will be redrawn.
@@ -2343,6 +2349,13 @@ namespace GT
 
                 // Validate the surface graphics.
                 this->Painting_PaintAndValidateSurfaceRects();
+
+                
+                // The element under the mouse may have changed, so refresh that.
+                //if (m_pSurfaceUnderMouse != nullptr)
+                //{
+                //    this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY));
+                //}
             }
         }
     }
@@ -2413,31 +2426,16 @@ namespace GT
         assert(pSurface != nullptr);
         assert(pSurface == m_pSurfaceUnderMouse);
 
+        //int prevMousePosX = m_mousePosX;
+        //int prevMousePosY = m_mousePosY;
+
+        m_mousePosX = mousePosX;
+        m_mousePosY = mousePosY;
+
         auto pNewElementUnderMouse = this->FindElementUnderPoint(pSurface, mousePosX, mousePosY);
             
         // OnMouseLeave/OnMouseEnter
-        if (m_pElementUnderMouse != pNewElementUnderMouse)
-        {
-            auto pOldElementUnderMouse = m_pElementUnderMouse;
-            if (pOldElementUnderMouse != nullptr)
-            {
-                if (m_pElementCapturingMouseEvents == nullptr || m_pElementCapturingMouseEvents == pOldElementUnderMouse)
-                {
-                    this->PostEvent_OnMouseLeave(pOldElementUnderMouse);
-                }
-            }
-
-            if (pNewElementUnderMouse != nullptr)
-            {
-                if (m_pElementCapturingMouseEvents == nullptr || m_pElementCapturingMouseEvents == pNewElementUnderMouse)
-                {
-                    this->PostEvent_OnMouseEnter(pNewElementUnderMouse);
-                }
-            }
-
-
-            m_pElementUnderMouse = pNewElementUnderMouse;
-        }
+        this->UpdateMouseEnterAndLeaveState(pNewElementUnderMouse);
 
 
         // OnMouseMove
@@ -2727,14 +2725,54 @@ namespace GT
     {
         if (m_pElementCapturingMouseEvents != pElement)
         {
+            auto pOldElementCapturingMouseEvents = m_pElementCapturingMouseEvents;
+            auto pNewElementCapturingMouseEvents = pElement;
+
+            if (pNewElementCapturingMouseEvents != nullptr)
+            {
+                m_pElementCapturingMouseEvents = pNewElementCapturingMouseEvents;
+
+
+                // OnReleaseMouseEventCapture
+                if (pOldElementCapturingMouseEvents != nullptr)
+                {
+                    this->PostEvent_OnReleaseMouseEventCapture(pOldElementCapturingMouseEvents);
+                }
+
+
+                // OnSetMouseEventCapture
+                this->PostEvent_OnSetMouseEventCapture(pNewElementCapturingMouseEvents);
+
+
+                // When the element capturing mouse events changes, the mouse enter/leave state. This will post all of the applicable events.
+                this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY));
+            }
+            else
+            {
+                // SetMouseEventCapture(nullptr) is equivalent to ReleaseMouseEventCapture().
+                this->ReleaseMouseEventCapture();
+            }
         }
+    }
+
+    GUIElement* GUIContextBase::GetMouseEventCapture() const
+    {
+        return m_pElementCapturingMouseEvents;
     }
 
     void GUIContextBase::ReleaseMouseEventCapture()
     {
         if (m_pElementCapturingMouseEvents != nullptr)
         {
-            // When the mouse is released, we will need to post events for the element
+            auto pOldElementCapturingMouseEvents = m_pElementCapturingMouseEvents;
+            {
+                m_pElementCapturingMouseEvents = nullptr;
+            }
+            this->PostEvent_OnReleaseMouseEventCapture(pOldElementCapturingMouseEvents);
+
+
+            // When the element capturing mouse events changes, the mouse enter/leave state. This will post all of the applicable events.
+            this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY));
         }
     }
 
@@ -3012,6 +3050,33 @@ namespace GT
                 // If the element does not have any text, delete the layout object to save memory.
                 delete pElement->pTextLayout;
             }
+        }
+    }
+
+
+    void GUIContextBase::UpdateMouseEnterAndLeaveState(GUIElement* pNewElementUnderMouse)
+    {
+        if (m_pElementUnderMouse != pNewElementUnderMouse)
+        {
+            auto pOldElementUnderMouse = m_pElementUnderMouse;
+            if (pOldElementUnderMouse != nullptr)
+            {
+                if (m_pElementCapturingMouseEvents == nullptr || m_pElementCapturingMouseEvents == pOldElementUnderMouse)
+                {
+                    this->PostEvent_OnMouseLeave(pOldElementUnderMouse);
+                }
+            }
+
+            if (pNewElementUnderMouse != nullptr)
+            {
+                if (m_pElementCapturingMouseEvents == nullptr || m_pElementCapturingMouseEvents == pNewElementUnderMouse)
+                {
+                    this->PostEvent_OnMouseEnter(pNewElementUnderMouse);
+                }
+            }
+
+
+            m_pElementUnderMouse = pNewElementUnderMouse;
         }
     }
 

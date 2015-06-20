@@ -91,6 +91,18 @@ namespace GT
         virtual void OnMouseButtonDoubleClicked(GUIContext &context, HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY);
 
 
+        /// Called when an element receives the mouse event capture.
+        ///
+        /// @param context     [in] The GUI context.
+        /// @param hElement    [in] The element receiving the event, and has just received the mouse event capture.
+        virtual void OnSetMouseEventCapture(GUIContext &context, HGUIElement hElement);
+
+        /// Called when an element is released of the mouse event capture.
+        ///
+        /// @param context     [in] The GUI context.
+        /// @param hElement    [in] The element receiving the event, and has just received the mouse event capture.
+        virtual void OnReleaseMouseEventCapture(GUIContext &context, HGUIElement hElement);
+
 
         ///////////////////////////////////////////
         // Global Events

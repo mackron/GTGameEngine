@@ -134,11 +134,17 @@ namespace GT
         /// @param mousePosY   [in] The position of the mouse on the y axis relative to the top left corner of the element.
         virtual void PostEvent_OnMouseButtonDoubleClicked(GUIElement* pElement, int mouseButton, int mousePosX, int mousePosY) = 0;
 
-        /// Posts the OnPaint event.
+
+        /// Posts the OnSetMouseEventCapture()
         ///
-        /// @param pSurface [in] A handle to the surface that has been painted.
-        /// @param rect     [in] The rectangle that will just painted.
-        //virtual void PostEvent_OnPaint(GUISurface* pSurface, const GTLib::Rect<int> &rect) = 0;
+        /// @param pElement [in] A reference to the element that has just received the mouse capture.
+        virtual void PostEvent_OnSetMouseEventCapture(GUIElement* pElement) = 0;
+
+        /// Posts the OnReleaseMouseEventCapture()
+        ///
+        /// @param pElement [in] A reference to the element that has just been released of the mouse capture.
+        virtual void PostEvent_OnReleaseMouseEventCapture(GUIElement* pElement) = 0;
+
 
         /// Posts the OnSurfaceNeedsRepaid event.
         ///
@@ -1363,7 +1369,8 @@ namespace GT
         ///     Batched operations allow the context to more efficeintly perform bulk operations. The main thing here is batching
         ///     layout and painting operations to avoid redundancy.
         ///     @par
-        ///     Begin/end batching pairs can be called within each other, but they should always be paired together correctly.
+        ///     Begin/end batching pairs can be nested, however BeginBatch() will return false if it is called from an event handler
+        ///     that was posted during the batch evaluation in EndBatch().
         void BeginBatch();
 
         /// Ends a batch operations, and performs all of the required operations to get the relevant state up to date.
@@ -1558,6 +1565,11 @@ namespace GT
         ///     All mouse events will be routed to the given element until the capture changes, or is released.
         void SetMouseEventCapture(GUIElement* pElement);
 
+        /// Retrieves the element that is currently capturing mouse events.
+        ///
+        /// @return A pointer to the element that is currently capturing mouse events.
+        GUIElement* GetMouseEventCapture() const;
+
         /// Releases the mouse event capture and restores default mouse message handling.
         void ReleaseMouseEventCapture();
 
@@ -1610,6 +1622,17 @@ namespace GT
         /// @param pElement [in] A pointer to the element whose text layout is being updated.
         /// @param text     [in] The text of the layout.
         void UpdateElementTextLayout(GUIElement* pElement, const char* text);
+
+
+        /// Updates the mouse enter/leave state and posts the relevant events.
+        ///
+        /// @param pNewElementUnderMouse [in] A pointer to the element currently sitting under the mouse.
+        ///
+        /// @remarks
+        ///     Call this when the enter/leave state needs to be refreshed.
+        ///     @par
+        ///     This will post the relevant OnMouseEnter and OnMouseLeave events.
+        void UpdateMouseEnterAndLeaveState(GUIElement* pNewElementUnderMouse);
 
 
         ////////////////////////////////////////////////////////////////

@@ -131,6 +131,13 @@ namespace GT
         /// @copydoc GUIContextBase::PostEvent_OnMouseButtonDoubleClicked()
         void PostEvent_OnMouseButtonDoubleClicked(GUIElement* pElement, int mouseButton, int mousePosX, int mousePosY);
 
+        /// @copydoc GUIContextBase::PostEvent_OnSetMouseEventCapture()
+        void PostEvent_OnSetMouseEventCapture(GUIElement* pElement);
+
+        /// @copydoc GUIContextBase::PostEvent_OnReleaseMouseEventCapture()
+        void PostEvent_OnReleaseMouseEventCapture(GUIElement* pElement);
+
+
         /// @copydoc GUIContextBase::PostEvent_OnSurfaceNeedsRepaint()
         void PostEvent_OnSurfaceNeedsRepaint(GUISurface* pSurface, const GTLib::Rect<int> &rect);
 
@@ -1424,6 +1431,22 @@ namespace GT
         ///
         /// @return A pointer to the font manager.
         GUIFontManager* GetFontManager();
+
+        /// Sets the element that has captured the mouse input events.
+        ///
+        /// @param pElement [in] A pointer to the element that will receive the mouse events.
+        ///
+        /// @remarks
+        ///     All mouse events will be routed to the given element until the capture changes, or is released.
+        void SetMouseEventCapture(HGUIElement hElement);
+
+        /// Retrieves the element that is currently capturing mouse events.
+        ///
+        /// @return A pointer to the element that is currently capturing mouse events.
+        HGUIElement GetMouseEventCapture() const;
+
+        /// Releases the mouse event capture and restores default mouse message handling.
+        void ReleaseMouseEventCapture();
 
 
     private:

@@ -351,6 +351,63 @@ namespace GT
     }
 
 
+    void GUIContext::PostEvent_OnSetMouseEventCapture(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        HGUIElement hElement = reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        assert(hElement != 0);
+        {
+            // Local
+            this->IterateLocalEventHandlers(hElement, [&](GUIEventHandler &eventHandler) -> bool
+            {
+                eventHandler.OnSetMouseEventCapture(*this, hElement);
+                return true;
+            });
+
+            // Global
+            this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    eventHandler.OnSetMouseEventCapture(*this, hElement);
+                    return true;
+                }
+                
+                return false;
+            });
+        }
+    }
+
+    void GUIContext::PostEvent_OnReleaseMouseEventCapture(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        HGUIElement hElement = reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        assert(hElement != 0);
+        {
+            // Local
+            this->IterateLocalEventHandlers(hElement, [&](GUIEventHandler &eventHandler) -> bool
+            {
+                eventHandler.OnReleaseMouseEventCapture(*this, hElement);
+                return true;
+            });
+
+            // Global
+            this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    eventHandler.OnReleaseMouseEventCapture(*this, hElement);
+                    return true;
+                }
+                
+                return false;
+            });
+        }
+    }
+
+
     void GUIContext::PostEvent_OnSurfaceNeedsRepaint(GUISurface* pSurface, const GTLib::Rect<int> &rect)
     {
         assert(pSurface != nullptr);
@@ -2239,6 +2296,31 @@ namespace GT
     GUIFontManager* GUIContext::GetFontManager()
     {
         return GUIContextBase::GetFontManager();
+    }
+
+    void GUIContext::SetMouseEventCapture(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetMouseEventCapture(pElement);
+        }
+    }
+
+    HGUIElement GUIContext::GetMouseEventCapture() const
+    {
+        auto pElement = GUIContextBase::GetMouseEventCapture();
+        if (pElement != nullptr)
+        {
+            return reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        }
+
+        return 0;
+    }
+
+    void GUIContext::ReleaseMouseEventCapture()
+    {
+        GUIContextBase::ReleaseMouseEventCapture();
     }
 
 
