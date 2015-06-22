@@ -1583,7 +1583,7 @@ namespace GT
         pElement->layout.paddingRight = static_cast<float>(padding) * this->GetXDPIScalingFactor(this->GetElementSurface(pElement));
 
 
-        this->EndBatch();
+        this->BeginBatch();
         {
             this->Layout_InvalidateElementLayoutsOnInnerWidthChange(pElement);
         }
@@ -2340,22 +2340,25 @@ namespace GT
         {
             m_batchLockCounter -= 1;
 
-
             // If the counter is now at zero, validate the layouts.
             if (m_batchLockCounter == 0)
             {
-                // Validate the layout.
-                this->Layout_ValidateElementLayouts();
+                // We will be posting events here which means it's possible for Begin/End pairs to be called. We're already in EndBatch(), so need to guard
+                // against this case. What we do to address this is increment the counter which will guard access to this section. Then at the end, we normalize
+                // the counter the 0.
+                m_batchLockCounter += 1;
+                {
+                    // Update layouts.
+                    if (this->Layout_HasInvalidLayouts())
+                    {
+                        this->Layout_ValidateElementLayoutsAndPostEvents();
+                    }
 
-                // Validate the surface graphics.
-                this->Painting_PaintAndValidateSurfaceRects();
 
-                
-                // The element under the mouse may have changed, so refresh that.
-                //if (m_pSurfaceUnderMouse != nullptr)
-                //{
-                //    this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY));
-                //}
+                    // Paint.
+                    this->Painting_PaintAndValidateSurfaceRects();
+                }
+                m_batchLockCounter = 0;     // <-- Important that this is set to 0 explicitly because event handlers may call BeginBatch/EndBatch from inside which will break the counter.
             }
         }
     }
@@ -2585,32 +2588,31 @@ namespace GT
 
     GUIElement* GUIContextBase::FindElementUnderPoint(GUISurface* pSurface, int x, int y)
     {
-        assert(pSurface != nullptr);
-
         GUIElement* pElementUnderPoint = nullptr;
 
-
-        GTLib::Rect<float> rect;
-        rect.left   = 0;
-        rect.top    = 0;
-        rect.right  = static_cast<float>(pSurface->width);
-        rect.bottom = static_cast<float>(pSurface->height);
-
-        for (size_t iElement = 0; iElement < pSurface->topLevelElements.GetCount(); ++iElement)
+        if (pSurface != nullptr)
         {
-            auto pTopLevelElement = pSurface->topLevelElements[iElement];
-            assert(pTopLevelElement != nullptr);
+            GTLib::Rect<float> rect;
+            rect.left   = 0;
+            rect.top    = 0;
+            rect.right  = static_cast<float>(pSurface->width);
+            rect.bottom = static_cast<float>(pSurface->height);
+
+            for (size_t iElement = 0; iElement < pSurface->topLevelElements.GetCount(); ++iElement)
             {
-                this->ClippedTraversal(pTopLevelElement, rect, [&](GUIElement* pElement, const GTLib::Rect<int> &visibleRect) -> void
+                auto pTopLevelElement = pSurface->topLevelElements[iElement];
+                assert(pTopLevelElement != nullptr);
                 {
-                    if (visibleRect.Contains(x, y))
+                    this->ClippedTraversal(pTopLevelElement, rect, [&](GUIElement* pElement, const GTLib::Rect<int> &visibleRect) -> void
                     {
-                        pElementUnderPoint = pElement;
-                    }
-                });
+                        if (visibleRect.Contains(x, y))
+                        {
+                            pElementUnderPoint = pElement;
+                        }
+                    });
+                }
             }
         }
-
 
         return pElementUnderPoint;
     }
@@ -3059,6 +3061,8 @@ namespace GT
         if (m_pElementUnderMouse != pNewElementUnderMouse)
         {
             auto pOldElementUnderMouse = m_pElementUnderMouse;
+            m_pElementUnderMouse = pNewElementUnderMouse;
+
             if (pOldElementUnderMouse != nullptr)
             {
                 if (m_pElementCapturingMouseEvents == nullptr || m_pElementCapturingMouseEvents == pOldElementUnderMouse)
@@ -3074,9 +3078,6 @@ namespace GT
                     this->PostEvent_OnMouseEnter(pNewElementUnderMouse);
                 }
             }
-
-
-            m_pElementUnderMouse = pNewElementUnderMouse;
         }
     }
 
@@ -3622,7 +3623,7 @@ namespace GT
 
         if (flags != 0)
         {
-            if (pElement->layout.flags == 0)
+            if (pElement->layout.invalidFlags == 0)
             {
                 assert(pElement->layout.layoutValidationListItem == nullptr);
                 pElement->layout.layoutValidationListItem = m_layoutContext.invalidElements.Append(pElement);
@@ -3632,7 +3633,7 @@ namespace GT
                 this->Painting_InvalidateElementRect(pElement);
             }
         
-            pElement->layout.flags |= flags;
+            pElement->layout.invalidFlags |= flags;
         }
     }
 
@@ -3828,42 +3829,62 @@ namespace GT
     }
 
 
+    bool GUIContextBase::Layout_HasInvalidLayouts() const
+    {
+        return !m_layoutContext.invalidElements.IsEmpty();
+    }
+
+    void GUIContextBase::Layout_ValidateElementLayoutsAndPostEvents()
+    {
+        this->Layout_ValidateElementLayouts();
+
+        this->Layout_PostLayoutEventsAndInvalidateRects();
+        if (this->Layout_HasInvalidLayouts())
+        {
+            this->Layout_ValidateElementLayoutsAndPostEvents();
+        }
+        else
+        {
+            this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY));   // <-- This will post OnMouseEnter and OnMouseLeave events.
+            if (this->Layout_HasInvalidLayouts())
+            {
+                this->Layout_ValidateElementLayoutsAndPostEvents();
+            }
+        }
+    }
 
     void GUIContextBase::Layout_ValidateElementLayouts()
     {
-        if (m_batchLockCounter == 0)
-        {
 #if defined(GT_GUI_DEBUGGING)
-            m_layoutLogger.Print("\n\nValidateGUIElementLayouts() begin\n");
+        m_layoutLogger.Print("\n\nValidateGUIElementLayouts() begin\n");
 #endif
 
-            while (m_layoutContext.invalidElements.root != nullptr)
+        while (m_layoutContext.invalidElements.root != nullptr)
+        {
+            auto iElement = m_layoutContext.invalidElements.root;
+            assert(iElement != nullptr);
             {
-                auto iElement = m_layoutContext.invalidElements.root;
-                assert(iElement != nullptr);
+                auto pElement = iElement->value;
+                assert(pElement != nullptr);
                 {
-                    auto pElement = iElement->value;
-                    assert(pElement != nullptr);
-                    {
-                        this->Layout_ValidateElementLayout(pElement);
-                    }
+                    this->Layout_ValidateElementLayout(pElement);
                 }
             }
+        }
 
 
-            ///////////////////////////////////////////////////
-            // Post-process stage.
+        ///////////////////////////////////////////////////
+        // Post-process stage.
 
-            // Update absolute layouts.
-            this->Layout_UpdateElementAbsolutePositions();
+        // Update absolute layouts.
+        this->Layout_UpdateElementAbsolutePositions();
 
-            // Post events.
-            this->Layout_InvalidateRectsAndPostEventsToElements();
+        // Post events.
+        //this->Layout_InvalidateRectsAndPostEventsToElements();
 
 #if defined(GT_GUI_DEBUGGING)
-            m_layoutLogger.Print("ValidateGUIElementLayouts() end\n");
+        m_layoutLogger.Print("ValidateGUIElementLayouts() end\n");
 #endif
-        }
     }
 
     void GUIContextBase::Layout_ValidateElementLayout(GUIElement* pElement)
@@ -3876,22 +3897,22 @@ namespace GT
 #endif
 
 
-        if ((pElement->layout.flags & LayoutFlag_WidthInvalid) != 0)
+        if ((pElement->layout.invalidFlags & LayoutFlag_WidthInvalid) != 0)
         {
             this->Layout_ValidateElementWidth(pElement);
         }
 
-        if ((pElement->layout.flags & LayoutFlag_HeightInvalid) != 0)
+        if ((pElement->layout.invalidFlags & LayoutFlag_HeightInvalid) != 0)
         {
             this->Layout_ValidateElementHeight(pElement);
         }
 
-        if ((pElement->layout.flags & (LayoutFlag_RelativeXPositionInvalid | LayoutFlag_RelativeYPositionInvalid)) != 0)
+        if ((pElement->layout.invalidFlags & (LayoutFlag_RelativeXPositionInvalid | LayoutFlag_RelativeYPositionInvalid)) != 0)
         {
             this->Layout_ValidateElementPosition(pElement);
         }
 
-        if ((pElement->layout.flags & LayoutFlag_TextInvalid) != 0)
+        if ((pElement->layout.invalidFlags & LayoutFlag_TextInvalid) != 0)
         {
             this->Layout_ValidateElementText(pElement);
         }
@@ -3899,7 +3920,7 @@ namespace GT
 
 
         // The list item in the layout context needs to be removed.
-        if (pElement->layout.flags == 0 && pElement->layout.layoutValidationListItem != nullptr)
+        if (pElement->layout.invalidFlags == 0 && pElement->layout.layoutValidationListItem != nullptr)
         {
             m_layoutContext.invalidElements.Remove(pElement->layout.layoutValidationListItem);
             pElement->layout.layoutValidationListItem = nullptr;
@@ -4822,7 +4843,7 @@ namespace GT
                 {
                     // If the siblings layout is not invalid, we will need to invalidate the rectangle region of the pElement's previous layout rectangle. If the pElement's
                     // layout is already invalidated, this will have already been done.
-                    if (pSibling->layout.flags == 0)
+                    if (pSibling->layout.invalidFlags == 0)
                     {
                         this->Painting_InvalidateElementRect(pSibling);
                     }
@@ -4948,8 +4969,8 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        pElement->layout.flags &= ~LayoutFlag_WidthInvalid;
-        if (pElement->layout.flags == 0)
+        pElement->layout.invalidFlags &= ~LayoutFlag_WidthInvalid;
+        if (pElement->layout.invalidFlags == 0)
         {
             m_layoutContext.invalidElements.Remove(pElement->layout.layoutValidationListItem);
             pElement->layout.layoutValidationListItem = nullptr;
@@ -4960,8 +4981,8 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        pElement->layout.flags &= ~LayoutFlag_HeightInvalid;
-        if (pElement->layout.flags == 0)
+        pElement->layout.invalidFlags &= ~LayoutFlag_HeightInvalid;
+        if (pElement->layout.invalidFlags == 0)
         {
             m_layoutContext.invalidElements.Remove(pElement->layout.layoutValidationListItem);
             pElement->layout.layoutValidationListItem = nullptr;
@@ -4972,9 +4993,9 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        pElement->layout.flags &= ~LayoutFlag_RelativeXPositionInvalid;
-        pElement->layout.flags &= ~LayoutFlag_RelativeYPositionInvalid;
-        if (pElement->layout.flags == 0)
+        pElement->layout.invalidFlags &= ~LayoutFlag_RelativeXPositionInvalid;
+        pElement->layout.invalidFlags &= ~LayoutFlag_RelativeYPositionInvalid;
+        if (pElement->layout.invalidFlags == 0)
         {
             m_layoutContext.invalidElements.Remove(pElement->layout.layoutValidationListItem);
             pElement->layout.layoutValidationListItem = nullptr;
@@ -4985,8 +5006,8 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        pElement->layout.flags &= ~LayoutFlag_TextInvalid;
-        if (pElement->layout.flags == 0)
+        pElement->layout.invalidFlags &= ~LayoutFlag_TextInvalid;
+        if (pElement->layout.invalidFlags == 0)
         {
             m_layoutContext.invalidElements.Remove(pElement->layout.layoutValidationListItem);
             pElement->layout.layoutValidationListItem = nullptr;
@@ -5808,7 +5829,7 @@ namespace GT
 
         // If the flags specifying the validated layout properties is non-zero, we know it is already in our validated pElements list and thus
         // doesn't need to be added again.
-        if (pElement->layout.layoutChangeFlags == 0)
+        if (pElement->layout.changedFlags == 0)
         {
             m_layoutContext.validatedElements.PushBack(pElement);
         }
@@ -5843,7 +5864,7 @@ namespace GT
         }
 
 
-        pElement->layout.layoutChangeFlags |= LayoutFlag_PositionChanged;
+        pElement->layout.changedFlags |= LayoutFlag_PositionChanged;
     }
 
     void GUIContextBase::Layout_MarkElementSizeAsChanged(GUIElement* pElement)
@@ -5852,12 +5873,12 @@ namespace GT
 
         // If the flags specifying the validated layout properties is non-zero, we know it is already in our validated pElements list and thus
         // doesn't need to be added again.
-        if (pElement->layout.layoutChangeFlags == 0)
+        if (pElement->layout.changedFlags == 0)
         {
             m_layoutContext.validatedElements.PushBack(pElement);
         }
 
-        pElement->layout.layoutChangeFlags |= LayoutFlag_SizeChanged;
+        pElement->layout.changedFlags |= LayoutFlag_SizeChanged;
     }
 
 
@@ -5865,7 +5886,7 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        if ((pElement->layout.layoutChangeFlags & LayoutFlag_PositionChanged) != 0)
+        if ((pElement->layout.changedFlags & LayoutFlag_PositionChanged) != 0)
         {
             return true;
         }
@@ -5924,7 +5945,7 @@ namespace GT
         });
     }
 
-    void GUIContextBase::Layout_InvalidateRectsAndPostEventsToElements()
+    void GUIContextBase::Layout_PostLayoutEventsAndInvalidateRects()
     {
         for (size_t iElement = 0; iElement < m_layoutContext.validatedElements.GetCount(); ++iElement)
         {
@@ -5943,15 +5964,15 @@ namespace GT
                 unsigned int height = static_cast<unsigned int>(pElement->layout.height);
                 int xPos = static_cast<int>(pElement->layout.relativePosX);
                 int yPos = static_cast<int>(pElement->layout.relativePosY);
-                uint16_t layoutChangeFlags = pElement->layout.layoutChangeFlags;
+                uint16_t layoutChangedFlags = pElement->layout.changedFlags;
 
 
                 // We need to clear the change flags on the pElement so we know they are now valid. We do this before posting the events so that we don't dereference the
                 // pElement object after posting the events since it is possible for the host application to delete it.
-                pElement->layout.layoutChangeFlags &= ~(LayoutFlag_PositionChanged | LayoutFlag_SizeChanged);
+                pElement->layout.changedFlags &= ~(LayoutFlag_PositionChanged | LayoutFlag_SizeChanged);
 
 
-                switch ((layoutChangeFlags & (LayoutFlag_SizeChanged | LayoutFlag_PositionChanged)))
+                switch ((layoutChangedFlags & (LayoutFlag_SizeChanged | LayoutFlag_PositionChanged)))
                 {
                 case LayoutFlag_SizeChanged | LayoutFlag_PositionChanged:
                     {
@@ -6133,20 +6154,20 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        return (pElement->layout.flags & LayoutFlag_WidthInvalid) != 0;
+        return (pElement->layout.invalidFlags & LayoutFlag_WidthInvalid) != 0;
     }
 
     bool GUIContextBase::Layout_IsElementHeightInvalid(GUIElement* pElement)
     {
         assert(pElement != nullptr);
 
-        return (pElement->layout.flags & LayoutFlag_HeightInvalid) != 0;
+        return (pElement->layout.invalidFlags & LayoutFlag_HeightInvalid) != 0;
     }
 
     bool GUIContextBase::Layout_IsElementPositionInvalid(GUIElement* pElement)
     {
         assert(pElement != nullptr);
 
-        return (pElement->layout.flags & (LayoutFlag_RelativeXPositionInvalid | LayoutFlag_RelativeYPositionInvalid)) != 0;
+        return (pElement->layout.invalidFlags & (LayoutFlag_RelativeXPositionInvalid | LayoutFlag_RelativeYPositionInvalid)) != 0;
     }
 }

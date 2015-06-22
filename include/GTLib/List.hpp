@@ -298,11 +298,11 @@ namespace GTLib
 
 
         /**
-        *   \brief  Determines whether or not eh list is empty.
+        *   \brief  Determines whether or not the list is empty.
         */
         bool IsEmpty() const
         {
-            return this->root != nullptr;
+            return this->root == nullptr;
         }
 
 

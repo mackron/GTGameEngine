@@ -1370,7 +1370,7 @@ namespace GT
         ///     layout and painting operations to avoid redundancy.
         ///     @par
         ///     Begin/end batching pairs can be nested, however BeginBatch() will return false if it is called from an event handler
-        ///     that was posted during the batch evaluation in EndBatch().
+        ///     that was posted from EndBatch().
         void BeginBatch();
 
         /// Ends a batch operations, and performs all of the required operations to get the relevant state up to date.
@@ -1835,6 +1835,33 @@ namespace GT
 
 
 
+        /// Determines whether or not there are any elements with invalid layouts.
+        ///
+        /// @return True if there are any elements with invalid layouts.
+        bool Layout_HasInvalidLayouts() const;
+
+        /// Validates the layouts of every element whose layout is invalid, and then posts the relevant events.
+        ///
+        /// @remarks
+        ///     This is recursive. It is possible that event handlers may change the layout of elements, in which case this will need to be called again
+        ///     ensure the layout is correctly evaluated. For example, when the mouse enters an element, it's event handler may choose to increase the
+        ///     elements size to give it focus and draw the user's attention. This will cause that element's layout to become invalid and require a
+        ///     re-evaluation.
+        ///     @par
+        ///     This function does not check for cyclic dependencies between elements. For example, if an element changes it's layout in response to an
+        ///     event which then causes another event to fire for another element, and so on and so forth, there may be cases where a cyclic dependency
+        ///     is created. Care needs to be taken by event handlers to account for this.
+        ///     @par
+        ///     If an element moves such that it because the element sitting under the mouse, this will post the applicable OnMouseEnter and OnMouseLeave
+        ///     events.
+        ///     @par
+        ///     The events this function may fire include:
+        ///       - OnSize
+        ///       - OnMove
+        ///       - OnMouseEnter
+        ///       - OnMouseLeave
+        void Layout_ValidateElementLayoutsAndPostEvents();
+
         /// Validates the layouts of every element whose layout is invalid.
         ///
         /// @remarks
@@ -2062,7 +2089,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is called at the end of a layout validation process.
-        void Layout_InvalidateRectsAndPostEventsToElements();
+        void Layout_PostLayoutEventsAndInvalidateRects();
 
 
 

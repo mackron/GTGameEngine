@@ -8,11 +8,14 @@ namespace GT
     void EditorMenuBarButtonControlGUIEventHandler::OnMouseEnter(GUIContext &gui, HGUIElement hElement)
     {
         gui.SetElementTextColor(hElement, GTLib::Colour(1.0f, 1.0f, 1.0f, 1.0f));
+        //gui.SetElementPadding(hElement, 0);
     }
 
     void EditorMenuBarButtonControlGUIEventHandler::OnMouseLeave(GUIContext &gui, HGUIElement hElement)
     {
         gui.SetElementTextColor(hElement, GTLib::Colour(0.75f, 0.75f, 0.75f, 1.0f));
+        //gui.SetElementPaddingLeft(hElement, 8);
+        //gui.SetElementPaddingRight(hElement, 8);
     }
 
     void EditorMenuBarButtonControlGUIEventHandler::OnMouseButtonPressed(GUIContext &gui, HGUIElement hElement, int, int, int)

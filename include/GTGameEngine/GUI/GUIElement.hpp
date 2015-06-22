@@ -10,8 +10,6 @@
 #include "GUIElementStyle.hpp"
 #include "GUIEventHandler.hpp"
 #include "GUITextLayout.hpp"
-//#include <GTLib/Font.hpp>
-//#include <GTLib/TextManager.hpp>
 
 namespace GT
 {
@@ -20,7 +18,6 @@ namespace GT
     static const uint16_t LayoutFlag_WidthInvalid             = (1 << 4);
     static const uint16_t LayoutFlag_HeightInvalid            = (1 << 5);
     static const uint16_t LayoutFlag_TextInvalid              = (1 << 6);
-    
     static const uint16_t LayoutFlag_PositionInvalid          = LayoutFlag_RelativeXPositionInvalid | LayoutFlag_RelativeYPositionInvalid;
     static const uint16_t LayoutFlag_SizeInvalid              = LayoutFlag_WidthInvalid | LayoutFlag_HeightInvalid;
     static const uint16_t LayoutFlag_SizeAndPositionInvalid   = LayoutFlag_SizeInvalid | LayoutFlag_PositionInvalid;
@@ -66,7 +63,7 @@ namespace GT
                   borderLeftWidth(0.0f), borderRightWidth(0.0f), borderTopWidth(0.0f), borderBottomWidth(0.0f),
                   paddingLeft(0.0f), paddingRight(0.0f), paddingTop(0.0f), paddingBottom(0.0f),
                   innerOffsetX(0.0f), innerOffsetY(0.0f),
-                  flags(0), layoutChangeFlags(0),
+                  invalidFlags(0), changedFlags(0),
                   layoutValidationListItem(nullptr)
             {
             }
@@ -145,13 +142,12 @@ namespace GT
 
 
             /// Flags for internal use by the GUI context so that it can quickly know the state of the layout and which layout properties
-            /// are valid and which are invalid and need updating. The was this is designed is such that when this is 0, the layout is
-            /// entirely valid.
-            uint16_t flags;
+            /// are invalid and need updating. The was this is designed is such that when this is 0, the layout is entirely valid.
+            uint16_t invalidFlags;
 
             /// Keeps track of a set of flags that specifies which layout properties were recently changed. This will be cleared by the
             /// context at the end of layout validation.
-            uint16_t layoutChangeFlags;
+            uint16_t changedFlags;
             
             /// The list item for the element in the invalid elements list. This is used by the layout validation component of the GUI context.
             GTLib::ListItem<GUIElement*>* layoutValidationListItem;

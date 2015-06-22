@@ -144,6 +144,11 @@ namespace GT
             printf("Closed\n");
 
 
+            // We are hiding everything surface, so we want to let the GUI know that the mouse has left whatever surface it is
+            // currently sitting on.
+            m_gui.OnMouseLeave(m_gui.GetSurfaceUnderMouse());
+
+
             // At this point the editor is closed, so post the event and set the flag.
             this->PostEvent_OnEditorClosed();
             m_isOpen = false;
