@@ -7,9 +7,12 @@
 
 #if defined(GT_PLATFORM_WINDOWS)
 
+
 namespace GT
 {
     class GameContext;
+
+    
 
     /// Default Windows implementation of the window manager.
     class WindowManager_DefaultWin32 : public WindowManager_Win32
@@ -23,8 +26,54 @@ namespace GT
         ~WindowManager_DefaultWin32();
 
 
-        /// @copydoc WindowManager::CreateWindow()
-        HWindow CreateWindow(HWindow hParent, WindowType type, int xPos, int yPos, unsigned int width, unsigned int height);
+        /// Retrieves a pointer to the game context.
+        GameContext* GetGameContext() { return m_pGameContext; }
+
+
+
+
+        /////////////////////////////////////////////
+        // To Be Implemented by Child Classes
+
+        /// @copydoc WindowManager_Win32::OnClose()
+        virtual void OnClose();
+
+        /// @copydoc WindowManager_Win32::OnMove()
+        virtual void OnMove(HWindow hWindow, int xPos, int yPos);
+
+        /// @copydoc WindowManager_Win32::OnSize()
+        virtual void OnSize(HWindow hWindow, unsigned int width, unsigned int height);
+
+        /// @copydoc WindowManager_Win32::OnMouseEnter()
+        virtual void OnMouseEnter(HWindow hWindow);
+
+        /// @copydoc WindowManager_Win32::OnMouseLeave()
+        virtual void OnMouseLeave(HWindow hWindow);
+
+        /// @copydoc WindowManager_Win32::OnMouseMove()
+        virtual void OnMouseMove(HWindow hWindow, int mousePosX, int mousePosY);
+
+        /// @copydoc WindowManager_Win32::OnMouseButtonPressed()
+        virtual void OnMouseButtonPressed(HWindow hWinodw, int button, int mousePosX, int mousePosY);
+        
+        /// @copydoc WindowManager_Win32::OnMouseButtonReleased()
+        virtual void OnMouseButtonReleased(HWindow hWindow, int button, int mousePosX, int mousePosY);
+
+        /// @copydoc WindowManager_Win32::OnMouseButtonDoubleClicked()
+        virtual void OnMouseButtonDoubleClicked(HWindow hWindow, int button, int mousePosX, int mousePosY);
+
+        /// @copydoc WindowManager_Win32::OnKeyPressed()
+        virtual void OnKeyPressed(HWindow hWindow, GTLib::Key key);
+
+        /// @copydoc WindowManager_Win32::OnKeyReleased()
+        virtual void OnKeyReleased(HWindow hWindow, GTLib::Key key);
+
+        /// @copydoc WindowManager_Win32::OnPrintableKeyDown()
+        virtual void OnPrintableKeyDown(HWindow hWindow, char32_t character);
+
+        /// @copydoc WindowManager_Win32::OnPaintWindow()
+        virtual void OnPaintWindow(HWindow hWindow, const GTLib::Rect<int> &rect);
+        
 
 
     private:

@@ -174,7 +174,6 @@ namespace GT
         if (hWindow != 0)
         {
             m_pWindowManager->SetWindowTitle(hWindow, title);
-            m_pWindowManager->ShowWindow(hWindow);
         }
      
         return hWindow;
@@ -182,29 +181,28 @@ namespace GT
 
     HWindow GameContext::CreateChildWindow(HWindow hParent, int xPos, int yPos, unsigned int width, unsigned int height)
     {
-        HWindow hWindow = m_pWindowManager->CreateWindow(hParent, WindowType::ChildWindow, xPos, yPos, width, height);
-        if (hWindow != 0)
-        {
-            m_pWindowManager->ShowWindow(hWindow);
-        }
-
-        return hWindow;
+        return m_pWindowManager->CreateWindow(hParent, WindowType::ChildWindow, xPos, yPos, width, height);
     }
 
     HWindow GameContext::CreatePopupWindow(HWindow hParent, int xPos, int yPos, unsigned int width, unsigned int height)
     {
-        HWindow hWindow = m_pWindowManager->CreateWindow(hParent, WindowType::PopupWindow, xPos, yPos, width, height);
-        if (hWindow != 0)
-        {
-            m_pWindowManager->ShowWindow(hWindow);
-        }
-
-        return hWindow;
+        return m_pWindowManager->CreateWindow(hParent, WindowType::PopupWindow, xPos, yPos, width, height);
     }
 
     void GameContext::DeleteWindow(HWindow hWindow)
     {
         m_pWindowManager->DeleteWindow(hWindow);
+    }
+
+
+    void GameContext::ShowWindow(HWindow hWindow)
+    {
+        m_pWindowManager->ShowWindow(hWindow);
+    }
+
+    void GameContext::HideWindow(HWindow hWindow)
+    {
+        m_pWindowManager->HideWindow(hWindow);
     }
 
 
@@ -291,51 +289,8 @@ namespace GT
 
 
         return m_editor.Open();     // This will post OnEditorOpened()
-#if 0
-        if (!this->IsEditorOpen())
-        {
-            if (m_gameState.OnWantToOpenEditor(*this))
-            {
-                if ((m_flags & IsEditorInitialisedFlag) == 0)
-                {
-                    if (m_editor.Startup())
-                    {
-                        m_flags |= IsEditorInitialisedFlag;
-                    }
-                    else
-                    {
-                        // Failed to start up the editor.
-                        return false;
-                    }
-                }
-
-
-                if (m_editor.Open())
-                {
-                    m_flags |= IsEditorOpenFlag;
-                    m_flags &= ~IsRunningRealTimeLoopFlag;  //< Switch to an event-driven application loop.
-
-                    return true;
-                }
-                else
-                {
-                    // Failed to open the editor.
-                    return false;
-                }
-            }
-            else
-            {
-                // OnWantToOpenEditor() returned false.
-                return false;
-            }
-        }
-        else
-        {
-            // Editor is already open. Return true in this case.
-            return true;
-        }
-#endif
-
+#else
+        return false;
 #endif
     }
 
@@ -343,17 +298,6 @@ namespace GT
     {
 #if defined(GT_BUILD_EDITOR)
         m_editor.Close();       // This will post OnEditorClosed()
-
-#if 0
-        if (this->IsEditorOpen())
-        {
-            m_editor.Close();
-
-            m_flags &= ~IsEditorOpenFlag;
-            m_flags |= IsRunningRealTimeLoopFlag;       //< Switch to a real-time game loop.
-        }
-#endif
-
 #endif
     }
 

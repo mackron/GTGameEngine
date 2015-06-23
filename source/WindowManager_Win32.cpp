@@ -7,7 +7,24 @@
 
 namespace GT
 {
-    const wchar_t* g_WindowClass = L"GT_WndClass";
+    static const wchar_t* g_WindowClass      = L"GT_WndClass";
+    static const wchar_t* g_WinodwClassPopup = L"GT_WndClass_Popup";
+
+    static const size_t WindowFlag_IsCursorInside = (1 << 0);
+
+    #define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
+    #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
+
+    void TrackMouseLeaveEvent(HWND hWnd)
+    {
+        TRACKMOUSEEVENT tme;
+        ZeroMemory(&tme, sizeof(tme));
+        tme.cbSize    = sizeof(tme);
+        tme.dwFlags   = TME_LEAVE;
+        tme.hwndTrack = hWnd;
+        TrackMouseEvent(&tme);
+    }
+
 
     GTLib::Key FromWin32VirtualKey(WPARAM key)
     {
@@ -209,18 +226,249 @@ namespace GT
 
 
 
-    WindowManager_Win32::WindowManager_Win32(unsigned int extraWindowBytes, WNDPROC wndProc)
+
+
+    LRESULT DefaultWindowProcWin32(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        WindowManager_Win32::WindowData* pWindowData = reinterpret_cast<WindowManager_Win32::WindowData*>(GetWindowLongPtrW(hWnd, 0));
+        if (pWindowData != nullptr)
+        {
+            WindowManager_Win32* pWindowManager = pWindowData->pWindowManager;
+
+            switch (msg)
+            {
+            case WM_CREATE:
+                {
+                    TrackMouseLeaveEvent(hWnd);
+                    return 0;
+                }
+
+
+            case WM_ERASEBKGND:
+                {
+                    return 1;       //< Never draw the background of the window - always leave that the engine's native GUI system.
+                }
+
+
+            case WM_CLOSE:
+                {
+                    pWindowManager->OnClose();
+                    break;
+                }
+
+            case WM_MOVE:
+                {
+                    // All child popup windows need to be repositions so that their positions stay relative.
+                    GTLib::Vector<HWindow> &windows = pWindowManager->_GetWindows();
+                    for (size_t i = 0; i < windows.GetCount(); ++i)
+                    {
+                        WindowManager_Win32::WindowData* pPopupWindowData = reinterpret_cast<WindowManager_Win32::WindowData*>(::GetWindowLongPtr(reinterpret_cast<HWND>(windows[i]), 0));
+                        if (pPopupWindowData != nullptr)
+                        {
+                            if (pPopupWindowData->type == WindowType::PopupWindow)
+                            {
+                                pWindowManager->_RefreshPopupPosition(windows[i]);
+                            }
+                        }
+                    }
+
+                    pWindowManager->OnMove(reinterpret_cast<HWindow>(hWnd), GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    break;
+                }
+
+            case WM_SIZE:
+                {
+                    pWindowManager->OnSize(reinterpret_cast<HWindow>(hWnd), LOWORD(lParam), HIWORD(lParam));
+                    break;
+                }
+
+            case WM_MOUSEMOVE:
+                {
+                    if ((pWindowData->flags & WindowFlag_IsCursorInside) == 0)
+                    {
+                        TrackMouseLeaveEvent(hWnd);
+                        pWindowData->flags |= WindowFlag_IsCursorInside;
+
+                        pWindowManager->OnMouseEnter(reinterpret_cast<HWindow>(hWnd));
+                    }
+
+                    pWindowManager->OnMouseMove(reinterpret_cast<HWindow>(hWnd), GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    break;
+                }
+
+            case WM_MOUSELEAVE:
+                {
+                    pWindowData->flags &= ~WindowFlag_IsCursorInside;
+
+                    pWindowManager->OnMouseLeave(reinterpret_cast<HWindow>(hWnd));
+                    break;
+                }
+
+
+            case WM_LBUTTONDOWN:
+                {
+                    pWindowManager->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    break;
+                }
+            case WM_LBUTTONUP:
+                {
+                    pWindowManager->OnMouseButtonReleased(reinterpret_cast<HWindow>(hWnd), MouseButton_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    break;
+                }
+            case WM_LBUTTONDBLCLK:
+                {
+                    pWindowManager->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    pWindowManager->OnMouseButtonDoubleClicked(reinterpret_cast<HWindow>(hWnd), MouseButton_Left, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    break;
+                }
+
+
+            case WM_RBUTTONDOWN:
+                {
+                    pWindowManager->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    break;
+                }
+            case WM_RBUTTONUP:
+                {
+                    pWindowManager->OnMouseButtonReleased(reinterpret_cast<HWindow>(hWnd), MouseButton_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    break;
+                }
+            case WM_RBUTTONDBLCLK:
+                {
+                    pWindowManager->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    pWindowManager->OnMouseButtonDoubleClicked(reinterpret_cast<HWindow>(hWnd), MouseButton_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    break;
+                }
+
+
+            case WM_MBUTTONDOWN:
+                {
+                    pWindowManager->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Middle, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    break;
+                }
+            case WM_MBUTTONUP:
+                {
+                    pWindowManager->OnMouseButtonReleased(reinterpret_cast<HWindow>(hWnd), MouseButton_Middle, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    break;
+                }
+            case WM_MBUTTONDBLCLK:
+                {
+                    pWindowManager->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Middle, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    pWindowManager->OnMouseButtonDoubleClicked(reinterpret_cast<HWindow>(hWnd), MouseButton_Middle, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+                    break;
+                }
+
+
+            case WM_KEYDOWN:
+                {
+                    if ((lParam & (1 << 30)) == 0)  // No auto-repeat.
+                    {
+                        pWindowManager->OnKeyPressed(reinterpret_cast<HWindow>(hWnd), FromWin32VirtualKey(wParam));
+                    }
+                    
+                    break;
+                }
+
+            case WM_KEYUP:
+                {
+                    pWindowManager->OnKeyReleased(reinterpret_cast<HWindow>(hWnd), FromWin32VirtualKey(wParam));
+                    break;
+                }
+
+            case WM_UNICHAR:
+                {
+                    if ((lParam & (1 << 31)) != 0)
+                    {
+                        int repeatCount = lParam & 0x0000FFFF;
+                        for (int i = 0; i < repeatCount; ++i)
+                        {
+                            pWindowManager->OnPrintableKeyDown(reinterpret_cast<HWindow>(hWnd), static_cast<char32_t>(wParam));
+                        }
+                    }
+
+                    break;
+                }
+
+
+            case WM_PAINT:
+                {
+                    RECT rectWin32;
+                    if (GetUpdateRect(hWnd, &rectWin32, FALSE))
+                    {
+                        GTLib::Rect<int> rect;
+                        rect.left   = rectWin32.left;
+                        rect.right  = rectWin32.right;
+                        rect.top    = rectWin32.top;
+                        rect.bottom = rectWin32.bottom;
+                        pWindowManager->OnPaintWindow(reinterpret_cast<HWindow>(hWnd), rect);
+                    }
+
+                    break;
+                }
+
+            case WM_NCACTIVATE:
+                {
+                    GTLib::Vector<HWindow> &windows = pWindowManager->_GetWindows();
+                    BOOL keepActive = static_cast<BOOL>(wParam);
+                    BOOL syncOthers = TRUE;
+
+#if 1
+                    for (size_t i = 0; i < windows.GetCount(); ++i)
+                    {
+                        if (windows[i] == static_cast<HWindow>(lParam))
+                        {
+                            keepActive = TRUE;
+                            syncOthers = FALSE;
+
+                            break;
+                        }
+                    }
+#endif
+
+                    if (lParam == -1)
+                    {
+                        return DefWindowProc(hWnd, msg, keepActive, 0);
+                    }
+
+                    if (syncOthers)
+                    {
+                        for (size_t i = 0; i < windows.GetCount(); ++i)
+                        {
+                            if (reinterpret_cast<HWindow>(hWnd) != windows[i] && hWnd != reinterpret_cast<HWND>(lParam))
+                            {
+                                SendMessage(reinterpret_cast<HWND>(windows[i]), msg, keepActive, -1);
+                            }
+                        }
+                    }
+
+                    return DefWindowProc(hWnd, msg, keepActive, lParam);
+                }
+
+
+            default:
+                {
+                    break;
+                }
+            }
+        }
+
+        return DefWindowProc(hWnd, msg, wParam, lParam);
+    }
+
+
+
+    WindowManager_Win32::WindowManager_Win32()
         : WindowManager()
     {
         // Window class need to be registered.
         WNDCLASSEXW wc;
         memset(&wc, 0, sizeof(wc));
         wc.cbSize        = sizeof(wc);
-        wc.cbWndExtra    = extraWindowBytes;
-        wc.lpfnWndProc   = wndProc;
+        wc.cbWndExtra    = sizeof(void*);
+        wc.lpfnWndProc   = reinterpret_cast<WNDPROC>(DefaultWindowProcWin32);
         wc.lpszClassName = g_WindowClass;
         wc.hCursor       = LoadCursorW(NULL, IDC_ARROW);
-        wc.style         = CS_OWNDC /*| CS_HREDRAW | CS_VREDRAW*/ | CS_DBLCLKS;
+        wc.style         = CS_OWNDC | CS_DBLCLKS | CS_DROPSHADOW;
         if (!::RegisterClassExW(&wc))
         {
             // Failed to register window class.
@@ -263,7 +511,8 @@ namespace GT
 
         case WindowType::PopupWindow:
             {
-                dwStyle |= WS_POPUP;
+                dwExStyle |= WS_EX_NOACTIVATE;
+                dwStyle   |= WS_POPUP;
                 break;
             }
 
@@ -277,15 +526,40 @@ namespace GT
         HWND hWnd = ::CreateWindowExW(dwExStyle, g_WindowClass, L"GTGameEngine", dwStyle, xPos, yPos, width, height, reinterpret_cast<HWND>(hParent), NULL, NULL, nullptr);
         if (hWnd != NULL)
         {
-            // The size of the window needs to be adjusted so that the client area is set to the width and height.
-            RECT windowRect;
-            RECT clientRect;
-            ::GetWindowRect(hWnd, &windowRect);
-            ::GetClientRect(hWnd, &clientRect);
+            // Set the auxilliary window data to help in processing some window events.
+            WindowData* pWindowData = new WindowData;
+            pWindowData->pWindowManager = this;
+            pWindowData->relativePosX   = xPos;
+            pWindowData->relativePosY   = yPos;
+            pWindowData->type           = type;
+            pWindowData->flags          = 0;
+            ::SetWindowLongPtr(hWnd, 0, reinterpret_cast<LONG_PTR>(pWindowData));
 
-            int windowFrameX = (windowRect.right - windowRect.left) - (clientRect.right - clientRect.left);
-            int windowFrameY = (windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top);
-            SetWindowPos(hWnd, NULL, 0, 0, windowFrameX + width, windowFrameY + height, SWP_NOMOVE | SWP_NOZORDER);
+
+            // The size of the window needs to be adjusted so that the client area is set to the width and height.
+            if (type == WindowType::PrimaryWindow)
+            {
+                RECT windowRect;
+                RECT clientRect;
+                ::GetWindowRect(hWnd, &windowRect);
+                ::GetClientRect(hWnd, &clientRect);
+
+                int windowFrameX = (windowRect.right - windowRect.left) - (clientRect.right - clientRect.left);
+                int windowFrameY = (windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top);
+                SetWindowPos(hWnd, NULL, 0, 0, windowFrameX + width, windowFrameY + height, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+            }
+
+
+            // If the window is a popup it will be positioned relative to the window rectangle, but we want it relative to the client area. We need to convert.
+            if (type == WindowType::PopupWindow && hParent != 0)
+            {
+                this->_RefreshPopupPosition(reinterpret_cast<HWindow>(hWnd));
+            }
+
+
+            
+
+            m_windows.PushBack(reinterpret_cast<HWindow>(hWnd));
         }
 
         return reinterpret_cast<HWindow>(hWnd);
@@ -293,6 +567,18 @@ namespace GT
 
     void WindowManager_Win32::DeleteWindow(HWindow hWindow)
     {
+        // Delete the window data.
+        WindowData* pWindowData = reinterpret_cast<WindowData*>(::GetWindowLongPtr(reinterpret_cast<HWND>(hWindow), 0));
+        if (pWindowData != nullptr)
+        {
+            delete pWindowData;
+        }
+
+        // Remove the window from the main list.
+        m_windows.RemoveFirstOccuranceOf(hWindow);
+
+
+        // Destroy the window last.
         ::DestroyWindow(reinterpret_cast<HWND>(hWindow));
     }
 
@@ -309,7 +595,25 @@ namespace GT
     {
         if (hWindow != 0)
         {
-            ::SetWindowPos(reinterpret_cast<HWND>(hWindow), NULL, xPos, yPos, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+            WindowData* pWindowData = reinterpret_cast<WindowData*>(::GetWindowLongPtr(reinterpret_cast<HWND>(hWindow), 0));
+            if (pWindowData != nullptr)
+            {
+                pWindowData->relativePosX = xPos;
+                pWindowData->relativePosY = yPos;
+
+                if (pWindowData->type == WindowType::PopupWindow)
+                {
+                    this->_RefreshPopupPosition(hWindow);
+                }
+                else
+                {
+                    ::SetWindowPos(reinterpret_cast<HWND>(hWindow), NULL, xPos, yPos, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+                }
+            }
+            else
+            {
+                ::SetWindowPos(reinterpret_cast<HWND>(hWindow), NULL, xPos, yPos, 0, 0, SWP_NOZORDER | SWP_NOSIZE);
+            }
         }
     }
 
@@ -495,6 +799,38 @@ namespace GT
             if (!postLoop())
             {
                 break;
+            }
+        }
+    }
+
+
+
+    void WindowManager_Win32::_RefreshPopupPosition(HWindow hPopupWindow)
+    {
+        WindowData* pPopupWindowData = reinterpret_cast<WindowData*>(::GetWindowLongPtr(reinterpret_cast<HWND>(hPopupWindow), 0));
+        assert(pPopupWindowData != nullptr);
+        {
+            assert(pPopupWindowData->type == WindowType::PopupWindow);
+
+            HWND hOwnerWnd = ::GetWindow(reinterpret_cast<HWND>(hPopupWindow), GW_OWNER);
+            if (hOwnerWnd != NULL)
+            {
+                RECT ownerRect;
+                ::GetWindowRect(hOwnerWnd, &ownerRect);
+
+                POINT p;
+                p.x = 0;
+                p.y = 0;
+                if (::ClientToScreen(hOwnerWnd, &p))
+                {
+                    RECT parentRect;
+                    ::GetWindowRect(hOwnerWnd, &parentRect);
+
+                    int offsetX = p.x - parentRect.left;
+                    int offsetY = p.y - parentRect.top;
+
+                    ::SetWindowPos(reinterpret_cast<HWND>(hPopupWindow), NULL, ownerRect.left + pPopupWindowData->relativePosX + offsetX, ownerRect.top + pPopupWindowData->relativePosY + offsetY, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_NOACTIVATE);
+                }
             }
         }
     }

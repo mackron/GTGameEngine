@@ -114,6 +114,11 @@ namespace GT
                                 m_gui.OnMouseEnter(hSurface);
                             }
                         }
+
+
+                        // Testing.
+                        auto hPopup = m_gameContext.CreatePopupWindow(m_hMainWindow, 2, 26, 248, 400);
+                        m_gameContext.ShowWindow(hPopup);
                     }
 
                     m_gui.InvalidateSurfaceRect(hSurface);
@@ -266,44 +271,32 @@ namespace GT
 
     void Editor::OnKeyPressed(HWindow hWindow, GTLib::Key key)
     {
-        HGUISurface hSurface = this->GetWindowSurface(hWindow);
-        if (hSurface != 0)
+        if (key == GTLib::Keys::Tab)
         {
-            if (key == GTLib::Keys::Tab)
+            if (m_gameContext.IsKeyDown(GTLib::Keys::Shift))
             {
-                if (m_gameContext.IsKeyDown(GTLib::Keys::Shift))
+                if (this->IsOpen())
                 {
-                    if (this->IsOpen())
-                    {
-                        this->Close();
-                    }
-                    else
-                    {
-                        this->Open();
-                    }
+                    this->Close();
+                }
+                else
+                {
+                    this->Open();
                 }
             }
-
-            //m_gui.OnKeyPressed(key);
         }
+
+        //m_gui.OnKeyPressed(key);
     }
 
     void Editor::OnKeyReleased(HWindow hWindow, GTLib::Key key)
     {
-        HGUISurface hSurface = this->GetWindowSurface(hWindow);
-        if (hSurface != 0)
-        {
-            //m_gui.OnKeyReleased(key);
-        }
+        //m_gui.OnKeyReleased(key);
     }
 
     void Editor::OnPrintableKeyDown(HWindow hWindow, char32_t character)
     {
-        HGUISurface hSurface = this->GetWindowSurface(hWindow);
-        if (hSurface != 0)
-        {
-            //m_gui.OnPrintableKeyDown(character);
-        }
+        //m_gui.OnPrintableKeyDown(character);
     }
 
     void Editor::OnPaintWindow(HWindow hWindow, const GTLib::Rect<int> &rect)

@@ -9,6 +9,7 @@
 #include "WindowManager.hpp"
 #include <GTLib/windows.hpp>
 #include <GTLib/Rect.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GT
 {
@@ -21,7 +22,7 @@ namespace GT
     public:
 
         /// Constructor.
-        WindowManager_Win32(unsigned int extraWindowBytes, WNDPROC wndProc);
+        WindowManager_Win32();
 
         /// Destructor.
         virtual ~WindowManager_Win32();
@@ -89,7 +90,7 @@ namespace GT
 
 
         /// @copydoc WindowManager::IsKeyDown()
-        bool IsKeyDown(GTLib::Key key) const;
+        virtual bool IsKeyDown(GTLib::Key key) const;
 
 
         /// @copydoc WindowManager::EventDrivenLoop()
@@ -99,7 +100,84 @@ namespace GT
         virtual void RealTimeLoop(std::function<bool ()> postLoop);
 
 
+        /// Retrieves a reference to the list of popup windows.
+        GTLib::Vector<HWindow> & _GetWindows() { return m_windows; }
+
+        /// Refreshes the position of the given popup window.
+        void _RefreshPopupPosition(HWindow hPopupWindow);
+
+
+
+        /////////////////////////////////////////////
+        // To Be Implemented by Child Classes
+
+        /// Called when the WM_CLOSE event is received.
+        virtual void OnClose() = 0;
+
+        /// Called when ths WM_MOVE event is received.
+        virtual void OnMove(HWindow hWindow, int xPos, int yPos) = 0;
+
+        /// Called when the WM_SIZE event is received.
+        virtual void OnSize(HWindow hWindow, unsigned int width, unsigned int height) = 0;
+
+        /// Called when the mouse enters the given window.
+        virtual void OnMouseEnter(HWindow hWindow) = 0;
+
+        /// Called when the mouse leaves the given window.
+        virtual void OnMouseLeave(HWindow hWindow) = 0;
+
+        /// Called when the WM_MOUSEMOVE event is called.
+        virtual void OnMouseMove(HWindow hWindow, int mousePosX, int mousePosY) = 0;
+
+        /// Called when a mouse button is pressed.
+        virtual void OnMouseButtonPressed(HWindow hWinodw, int button, int mousePosX, int mousePosY) = 0;
+        
+        /// Called when a mouse button is released.
+        virtual void OnMouseButtonReleased(HWindow hWindow, int button, int mousePosX, int mousePosY) = 0;
+
+        /// Called when a mouse button is double-clicked.
+        virtual void OnMouseButtonDoubleClicked(HWindow hWindow, int button, int mousePosX, int mousePosY) = 0;
+
+        /// Called when a key is pressed.
+        virtual void OnKeyPressed(HWindow hWnd, GTLib::Key key) = 0;
+
+        /// Called when a key is released.
+        virtual void OnKeyReleased(HWindow hWnd, GTLib::Key key) = 0;
+
+        /// Called when a printable key is pressed, including auto-repeat.
+        virtual void OnPrintableKeyDown(HWindow hWnd, char32_t character) = 0;
+
+        /// Called when the WM_PAINT message is received.
+        virtual void OnPaintWindow(HWindow hWnd, const GTLib::Rect<int> &rect) = 0;
+
+
+    public:
+
+        // Structure containing information about a window. This is mostly to help work around Win32 API issues.
+        struct WindowData
+        {
+            /// A pointer to the window manager that owns the window.
+            WindowManager_Win32* pWindowManager;
+
+            /// The position of the window relative to the parent on the y axis.
+            int relativePosX;
+
+            /// The position of the window relative to the parent on the y axis.
+            int relativePosY;
+
+            /// The window type. This is used so that certain event handlers can be handled differently depending on the window type. This is
+            /// mostly used to handle popup windows.
+            WindowType type;
+
+            /// Some flags to help with handling some events.
+            uint32_t flags;
+        };
+
+
     private:
+
+        /// The list of windows that currently exist. We use this to handle activation state changes.
+        GTLib::Vector<HWindow> m_windows;
 
         /// The exit code that was used to exit the process.
         WPARAM m_wExitCode;

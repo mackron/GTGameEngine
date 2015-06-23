@@ -30,12 +30,6 @@ namespace GT
     class GraphicsInterface;
 
 
-    static const int MouseButton_Left   = 1;
-    static const int MouseButton_Right  = 2;
-    static const int MouseButton_Middle = 3;
-
-
-
     /// Class representing a game context.
     ///
     /// An application can have multiple game context's per engine context.
@@ -143,6 +137,17 @@ namespace GT
         ///
         /// @param hWindow [in] A handle to the window to destroy.
         void DeleteWindow(HWindow hWindow);
+
+
+        /// Shows the given window.
+        ///
+        /// @param hWindow [in] The window to show.
+        void ShowWindow(HWindow hWindow);
+
+        /// Hides the given window.
+        ///
+        /// @param hWindow [in] The window to hide.
+        void HideWindow(HWindow hWinodw);
 
 
 #if defined(GT_PLATFORM_WINDOWS)

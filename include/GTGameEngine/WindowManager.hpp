@@ -20,6 +20,11 @@ namespace GT
     typedef size_t HWindow;
 
 
+    static const int MouseButton_Left   = 1;
+    static const int MouseButton_Right  = 2;
+    static const int MouseButton_Middle = 3;
+
+
     /// Base class for managing windows.
     class WindowManager
     {
