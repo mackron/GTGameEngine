@@ -9,21 +9,21 @@
 namespace GT
 {
     /// Control representing 
-    class EditorHeaderControl : public EditorControl
+    class EditorHeader: public EditorControl
     {
     public:
 
         /// Constructor.
-        EditorHeaderControl(GUIContext &gui);
+        EditorHeader(Editor &editor);
 
         /// Destructor.
-        ~EditorHeaderControl();
+        ~EditorHeader();
 
 
     private:
 
         /// The main menu bar control.
-        EditorMainMenuBarControl m_menuBar;
+        EditorMainMenuBar m_menuBar;
     };
 }
 

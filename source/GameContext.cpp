@@ -82,6 +82,11 @@ namespace GT
         return m_gameState;
     }
 
+    WindowManager & GameContext::GetWindowManager()
+    {
+        return *m_pWindowManager;
+    }
+
 
     int GameContext::Run()
     {
@@ -329,6 +334,24 @@ namespace GT
                 this->Close();
             }
         }
+#endif
+    }
+
+    void GameContext::OnWindowCreated(HWindow hWindow)
+    {
+        m_gameState.OnWindowCreated(*this, hWindow);
+
+#if defined(GT_BUILD_EDITOR)
+        m_editor.OnWindowCreated(hWindow);
+#endif
+    }
+
+    void GameContext::OnWindowDeleting(HWindow hWindow)
+    {
+        m_gameState.OnWindowDeleting(*this, hWindow);
+
+#if defined(GT_BUILD_EDITOR)
+        m_editor.OnWindowDeleting(hWindow);
 #endif
     }
 

@@ -7,16 +7,16 @@
 
 namespace GT
 {
-    /// Control representing 
-    class EditorBodyControl : public EditorControl
+    /// Control representing the central part of the editor window.
+    class EditorBody : public EditorControl
     {
     public:
 
         /// Constructor.
-        EditorBodyControl(GUIContext &gui);
+        EditorBody(Editor &editor);
 
         /// Destructor.
-        ~EditorBodyControl();
+        ~EditorBody();
 
 
     private:

@@ -103,6 +103,16 @@ namespace GT
         ///     The default implementation will return true.
         virtual bool OnWantToClose(GameContext &gameContext);
 
+        /// Called just after a window is created.
+        ///
+        /// @param hWindow [in] The window that was just created.
+        virtual void OnWindowCreated(GameContext &gameContext, HWindow hWindow);
+
+        /// Called just before a window is deleted.
+        ///
+        /// @param hWindow [in] The window that is about to be deleted.
+        virtual void OnWindowDeleting(GameContext &gameContext, HWindow hWindow);
+
         /// Called when the given window has been resized.
         ///
         /// @param hWindow [in] A handle to the window that has been resized.

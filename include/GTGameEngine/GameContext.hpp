@@ -63,6 +63,9 @@ namespace GT
         /// @return A reference to the game state object.
         GameState & GetGameState();
 
+        /// Retrieves a reference to the window manager.
+        WindowManager & GetWindowManager();
+
 
         /// Runs the game.
         ///
@@ -237,6 +240,22 @@ namespace GT
 
         /// Called when the game wants to close.
         void OnWantToClose();
+
+        /// Called just after a window is created.
+        ///
+        /// @param hWindow [in] The window that was just created.
+        ///
+        /// @remarks
+        ///     This is always sent to the editor even when it is closed.
+        void OnWindowCreated(HWindow hWindow);
+
+        /// Called just before a window is deleted.
+        ///
+        /// @param hWindow [in] The window that is about to be deleted.
+        ///
+        /// @remarks
+        ///     This is always sent to the editor event when it is closed.
+        void OnWindowDeleting(HWindow hWindow);
 
         /// Called when the given window has been resized.
         ///

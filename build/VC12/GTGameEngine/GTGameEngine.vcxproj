@@ -75,6 +75,7 @@
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorMainMenuBarControl.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBarButtonControl.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBarControl.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorPopupControl.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Editor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\EditorEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\Editor\EditorGUIEventHandler.cpp" />
@@ -154,6 +155,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMainMenuBarControl.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBarButtonControl.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBarControl.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorPopupControl.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Editor.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIEventHandler.hpp" />

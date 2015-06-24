@@ -7,15 +7,15 @@
 
 namespace GT
 {
-    class EditorMainMenuBarControl : public EditorMenuBarControl
+    class EditorMainMenuBar : public EditorMenuBar
     {
     public:
 
         /// Constructor.
-        EditorMainMenuBarControl(GUIContext &gui);
+        EditorMainMenuBar(Editor &editor);
 
         /// Destructor.
-        ~EditorMainMenuBarControl();
+        ~EditorMainMenuBar();
 
 
 

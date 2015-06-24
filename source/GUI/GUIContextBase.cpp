@@ -2427,7 +2427,18 @@ namespace GT
     void GUIContextBase::OnMouseMove(GUISurface* pSurface, int mousePosX, int mousePosY)
     {
         assert(pSurface != nullptr);
-        assert(pSurface == m_pSurfaceUnderMouse);
+
+        // First check for Enter/Leave state.
+        if (pSurface != m_pSurfaceUnderMouse)
+        {
+            if (m_pSurfaceUnderMouse != nullptr)
+            {
+                this->OnMouseLeave(m_pSurfaceUnderMouse);
+            }
+
+            this->OnMouseEnter(pSurface);
+        }
+
 
         //int prevMousePosX = m_mousePosX;
         //int prevMousePosY = m_mousePosY;
@@ -2468,25 +2479,36 @@ namespace GT
     void GUIContextBase::OnMouseEnter(GUISurface* pSurface)
     {
         assert(pSurface != nullptr);
-        assert(pSurface != m_pSurfaceUnderMouse);
 
-        m_pSurfaceUnderMouse = pSurface;
+        if (pSurface != m_pSurfaceUnderMouse)
+        {
+            if (m_pSurfaceUnderMouse != nullptr)
+            {
+                this->OnMouseLeave(m_pSurfaceUnderMouse);
+            }
+
+            m_pSurfaceUnderMouse = pSurface;
+        }
+
+        
     }
 
     void GUIContextBase::OnMouseLeave(GUISurface* pSurface)
     {
         assert(pSurface != nullptr);
-        assert(pSurface == m_pSurfaceUnderMouse);
+        //assert(pSurface == m_pSurfaceUnderMouse);
 
-        // OnMouseLeave
-        if (m_pElementUnderMouse != nullptr)
+        if (pSurface == m_pSurfaceUnderMouse)
         {
-            this->PostEvent_OnMouseLeave(m_pElementUnderMouse);
-            m_pElementUnderMouse = nullptr;
+            // OnMouseLeave
+            if (m_pElementUnderMouse != nullptr)
+            {
+                this->PostEvent_OnMouseLeave(m_pElementUnderMouse);
+                m_pElementUnderMouse = nullptr;
+            }
+
+            m_pSurfaceUnderMouse = nullptr;
         }
-
-
-        m_pSurfaceUnderMouse = nullptr;
     }
 
     void GUIContextBase::OnMouseButtonPressed(GUISurface* pSurface, int mouseButton, int mousePosX, int mousePosY)

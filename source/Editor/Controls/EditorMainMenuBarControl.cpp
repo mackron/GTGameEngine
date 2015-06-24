@@ -1,11 +1,12 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/Editor/Controls/EditorMainMenuBarControl.hpp>
+#include <GTGameEngine/Editor/Editor.hpp>
 
 namespace GT
 {
-    EditorMainMenuBarControl::EditorMainMenuBarControl(GUIContext &gui)
-        : EditorMenuBarControl(gui)
+    EditorMainMenuBar::EditorMainMenuBar(Editor &editor)
+        : EditorMenuBar(editor)
     {
         this->CreateAndInsertButton("FILE");
         this->CreateAndInsertButton("EDIT");
@@ -13,7 +14,7 @@ namespace GT
         this->CreateAndInsertButton("HELP");
     }
 
-    EditorMainMenuBarControl::~EditorMainMenuBarControl()
+    EditorMainMenuBar::~EditorMainMenuBar()
     {
     }
 }

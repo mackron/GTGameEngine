@@ -67,6 +67,14 @@ namespace GT
         return true;
     }
 
+    void GameState::OnWindowCreated(GameContext &, HWindow)
+    {
+    }
+
+    void GameState::OnWindowDeleting(GameContext &, HWindow)
+    {
+    }
+
     void GameState::OnWindowResized(GameContext &, HWindow, unsigned int, unsigned int)
     {
     }

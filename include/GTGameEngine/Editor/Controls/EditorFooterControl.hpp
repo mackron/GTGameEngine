@@ -8,15 +8,15 @@
 namespace GT
 {
     /// Control representing 
-    class EditorFooterControl : public EditorControl
+    class EditorFooter : public EditorControl
     {
     public:
 
         /// Constructor.
-        EditorFooterControl(GUIContext &gui);
+        EditorFooter(Editor &editor);
 
         /// Destructor.
-        ~EditorFooterControl();
+        ~EditorFooter();
 
 
     private:

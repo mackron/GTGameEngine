@@ -461,6 +461,9 @@
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBarButtonControl.cpp">
       <Filter>Source Files\Editor\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorPopupControl.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -965,6 +968,9 @@
       <Filter>Header Files\Editor\Controls</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBarButtonControl.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorPopupControl.hpp">
       <Filter>Header Files\Editor\Controls</Filter>
     </ClInclude>
   </ItemGroup>

@@ -7,6 +7,8 @@
 
 namespace GT
 {
+    class Editor;
+
     /// Base class for editor controls.
     class EditorControl
     {
@@ -16,11 +18,17 @@ namespace GT
         ///
         /// @remarks
         ///     This will create an empty element. It is up to the host to attach the element to a parent element.
-        EditorControl(GUIContext &gui);
+        EditorControl(Editor &editor);
 
         /// Destructor.
         virtual ~EditorControl();
 
+
+        /// Retrieves a reference to the editor.
+        ///
+        /// @return A reference to the editor.
+              Editor & GetEditor();
+        const Editor & GetEditor() const;
 
         /// Retrieves a reference to the GUI context.
         ///
@@ -38,7 +46,7 @@ namespace GT
     private:
 
         /// A reference to the GUI context that owns the element making up the control.
-        GUIContext &m_gui;
+        Editor &m_editor;
 
         /// A handle to the GUI element. This is created in the constructor.
         HGUIElement m_hRootElement;

@@ -2,28 +2,29 @@
 
 #include <GTGameEngine/Editor/Controls/EditorMenuBarControl.hpp>
 #include <GTGameEngine/Editor/Controls/EditorMenuBarButtonControl.hpp>
+#include <GTGameEngine/Editor/Editor.hpp>
 
 namespace GT
 {
-    void EditorMenuBarButtonControlGUIEventHandler::OnMouseEnter(GUIContext &gui, HGUIElement hElement)
+    void EditorMenuBarButtonGUIEventHandler::OnMouseEnter(GUIContext &gui, HGUIElement hElement)
     {
         gui.SetElementTextColor(hElement, GTLib::Colour(1.0f, 1.0f, 1.0f, 1.0f));
         //gui.SetElementPadding(hElement, 0);
     }
 
-    void EditorMenuBarButtonControlGUIEventHandler::OnMouseLeave(GUIContext &gui, HGUIElement hElement)
+    void EditorMenuBarButtonGUIEventHandler::OnMouseLeave(GUIContext &gui, HGUIElement hElement)
     {
         gui.SetElementTextColor(hElement, GTLib::Colour(0.75f, 0.75f, 0.75f, 1.0f));
         //gui.SetElementPaddingLeft(hElement, 8);
         //gui.SetElementPaddingRight(hElement, 8);
     }
 
-    void EditorMenuBarButtonControlGUIEventHandler::OnMouseButtonPressed(GUIContext &gui, HGUIElement hElement, int, int, int)
+    void EditorMenuBarButtonGUIEventHandler::OnMouseButtonPressed(GUIContext &gui, HGUIElement hElement, int, int, int)
     {
         gui.SetElementTextColor(hElement, GTLib::Colour(0.5f, 0.5f, 0.5f, 1.0f));
     }
 
-    void EditorMenuBarButtonControlGUIEventHandler::OnMouseButtonReleased(GUIContext &gui, HGUIElement hElement, int, int, int)
+    void EditorMenuBarButtonGUIEventHandler::OnMouseButtonReleased(GUIContext &gui, HGUIElement hElement, int, int, int)
     {
         if (gui.IsElementUnderMouse(hElement))
         {
@@ -38,25 +39,27 @@ namespace GT
 
 
 
-    EditorMenuBarControl::EditorMenuBarControl(GUIContext &gui)
-        : EditorControl(gui),
+    EditorMenuBar::EditorMenuBar(Editor &editor)
+        : EditorControl(editor),
           m_buttons(),
           m_buttonEventHandler()
     {
+        GUIContext &gui = editor.GetGUI();
+
         gui.SetElementChildAxis(this->GetRootGUIElement(), ChildAxis_Horizontal);
         gui.SetElementWidthToChildren(this->GetRootGUIElement());
         gui.SetElementHeightToChildren(this->GetRootGUIElement());
         gui.SetElementFont(this->GetRootGUIElement(), "Segoe UI", FontWeight_Medium, FontSlant_None, 13);
     }
 
-    EditorMenuBarControl::~EditorMenuBarControl()
+    EditorMenuBar::~EditorMenuBar()
     {
     }
 
 
-    EditorMenuBarButtonControl* EditorMenuBarControl::CreateAndInsertButton(const char* buttonText)
+    EditorMenuBarButton* EditorMenuBar::CreateAndInsertButton(const char* buttonText)
     {
-        auto pButton = new EditorMenuBarButtonControl(this->GetGUI(), buttonText);
+        auto pButton = new EditorMenuBarButton(this->GetEditor(), buttonText);
         this->GetGUI().SetElementParent(pButton->GetRootGUIElement(), this->GetRootGUIElement());
         this->GetGUI().SetElementSizeToChildren(pButton->GetRootGUIElement());
 
@@ -67,7 +70,7 @@ namespace GT
         return pButton;
     }
 
-    void EditorMenuBarControl::DeleteButton(EditorMenuBarButtonControl* pButton)
+    void EditorMenuBar::DeleteButton(EditorMenuBarButton* pButton)
     {
         if (pButton != nullptr)
         {

@@ -111,6 +111,12 @@ namespace GT
         /////////////////////////////////////////////
         // To Be Implemented by Child Classes
 
+        /// Called after a window is created.
+        //virtual void OnWindowCreated(HWindow hWindow) = 0;
+
+        /// Called just before a window is deleted.
+        //virtual void OnWindowDeleting(HWindow hWindow) = 0;
+
         /// Called when the WM_CLOSE event is received.
         virtual void OnClose() = 0;
 

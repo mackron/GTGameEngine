@@ -7,6 +7,8 @@
 #include <GTGameEngine/Editor/Controls/EditorFooterControl.hpp>
 #include <GTGameEngine/GameContext.hpp>
 
+#include <GTGameEngine/Editor/Controls/EditorPopupControl.hpp>
+
 namespace GT
 {
     Editor::Editor(GT::GameContext &gameContext)
@@ -52,16 +54,20 @@ namespace GT
                     if (hMainWindowElement != 0)
                     {
                         // Create the header control.
-                        m_pHeaderControl = new EditorHeaderControl(m_gui);
+                        m_pHeaderControl = new EditorHeader(*this);
                         m_gui.SetElementParent(m_pHeaderControl->GetRootGUIElement(), hMainWindowElement);
 
                         // Create the body control.
-                        m_pBodyControl = new EditorBodyControl(m_gui);
+                        m_pBodyControl = new EditorBody(*this);
                         m_gui.SetElementParent(m_pBodyControl->GetRootGUIElement(), hMainWindowElement);
 
                         // Create the footer control.
-                        m_pFooterControl = new EditorFooterControl(m_gui);
+                        m_pFooterControl = new EditorFooter(*this);
                         m_gui.SetElementParent(m_pFooterControl->GetRootGUIElement(), hMainWindowElement);
+
+
+
+                        
 
 
                         return true;
@@ -96,7 +102,7 @@ namespace GT
                 HGUISurface hSurface = this->GetWindowSurface(m_hMainWindow);
                 if (hSurface != NULL)
                 {
-                    printf("Open\n");
+                    //printf("Open\n");
 
                     unsigned int windowWidth;
                     unsigned int windowHeight;
@@ -117,8 +123,9 @@ namespace GT
 
 
                         // Testing.
-                        auto hPopup = m_gameContext.CreatePopupWindow(m_hMainWindow, 2, 26, 248, 400);
-                        m_gameContext.ShowWindow(hPopup);
+                        EditorPopupControl* testPopup = new EditorPopupControl(*this, m_hMainWindow);
+                        m_gameContext.ShowWindow(testPopup->GetWindow());
+                        m_gameContext.GetWindowManager().SetWindowPosition(testPopup->GetWindow(), 2, 25);
                     }
 
                     m_gui.InvalidateSurfaceRect(hSurface);
@@ -146,7 +153,7 @@ namespace GT
         if (this->IsOpen())
         {
             // Every relevant windows needs to be hidden.
-            printf("Closed\n");
+            //printf("Closed\n");
 
 
             // We are hiding everything surface, so we want to let the GUI know that the mouse has left whatever surface it is
@@ -184,12 +191,76 @@ namespace GT
     }
 
 
+    HWindow Editor::CreateWindow(HWindow hParentWindow, WindowType windowType, int xPos, int yPos, unsigned int width, unsigned int height, HGUIElement hElement)
+    {
+        HWindow hWindow = m_gameContext.GetWindowManager().CreateWindow(hParentWindow, windowType, xPos, yPos, width, height);
+        if (hWindow != 0)
+        {
+            WindowGUISurfaceAndElement windowSurfaceAndElement;
+            windowSurfaceAndElement.hElement = hElement;
+            if (this->CreateWindowSurfaceAndElement(hWindow, windowSurfaceAndElement))
+            {
+            }
+            else
+            {
+                m_gameContext.GetWindowManager().DeleteWindow(hWindow);
+                hWindow = 0;
+            }
+        }
+
+        return hWindow;
+    }
+
+    void Editor::DeleteWindow(HWindow hWindow)
+    {
+        this->DeleteWindowSurfaceAndElement(hWindow);
+        m_gameContext.GetWindowManager().DeleteWindow(hWindow);
+    }
+
+    HGUISurface Editor::GetWindowSurface(HWindow hWindow) const
+    {
+        auto iSurface = m_windowSurfaceMap.Find(hWindow);
+        if (iSurface != nullptr)
+        {
+            return iSurface->value.hSurface;
+        }
+        else
+        {
+            return NULL;
+        }
+    }
+
+    HGUISurface Editor::GetWindowElement(HWindow hWindow) const
+    {
+        auto iSurface = m_windowSurfaceMap.Find(hWindow);
+        if (iSurface != nullptr)
+        {
+            return iSurface->value.hElement;
+        }
+        else
+        {
+            return NULL;
+        }
+    }
+
+
+
     ////////////////////////////////////
     // Inbound Events
 
     bool Editor::OnWantToClose()
     {
         return true;
+    }
+
+    void Editor::OnWindowCreated(HWindow hWindow)
+    {
+        (void)hWindow;
+    }
+
+    void Editor::OnWindowDeleting(HWindow hWindow)
+    {
+        (void)hWindow;
     }
 
     void Editor::OnWindowResized(HWindow hWindow, unsigned int width, unsigned int height)
@@ -331,6 +402,9 @@ namespace GT
     {
         if (hWindow != NULL)
         {
+            HGUISurface hSurface = surfaceAndElementOut.hSurface;
+            HGUISurface hElement = surfaceAndElementOut.hElement;
+
             // If the window already has a surface and element, return immediately.
             if (this->GetWindowSurfaceAndElement(hWindow, surfaceAndElementOut))
             {
@@ -343,13 +417,21 @@ namespace GT
             unsigned int windowHeight;
             if (m_gameContext.GetWindowSize(hWindow, windowWidth, windowHeight))
             {
-                HGUISurface hSurface = m_gui.CreateSurface();
+                if (hSurface == NULL)
+                {
+                    hSurface = m_gui.CreateSurface();
+                }
+
                 if (hSurface != NULL)
                 {
                     m_gui.SetSurfaceSize(hSurface, windowWidth, windowHeight);
                     m_gui.SetSurfaceAuxData(hSurface, new EditorGUISurfaceAUXData(hWindow));
 
-                    HGUIElement hElement = m_gui.CreateElement();
+                    if (hElement == NULL)
+                    {
+                        hElement = m_gui.CreateElement();
+                    }
+                    
                     if (hElement != NULL)
                     {
                         m_gui.AttachElementToSurface(hElement, hSurface);
@@ -357,10 +439,6 @@ namespace GT
                         m_gui.SetElementBackgroundColour(hElement, GTLib::Colour(0.25f, 0.25f, 0.25f, 1));
                         m_gui.EnableElementChildWidthFlexing(hElement);
                         m_gui.EnableElementChildHeightFlexing(hElement);
-                        
-                        //m_gui.SetElementBorder(hElement, 8, GTLib::Colour(0.75f, 0.25f, 0.25f, 1.0f));
-                        
-
 
                         surfaceAndElementOut.hSurface = hSurface;
                         surfaceAndElementOut.hElement = hElement;
@@ -398,33 +476,6 @@ namespace GT
 
             // Remove the window/surface mapping.
             m_windowSurfaceMap.RemoveByKey(hWindow);
-        }
-    }
-
-
-    HGUISurface Editor::GetWindowSurface(HWindow hWindow) const
-    {
-        auto iSurface = m_windowSurfaceMap.Find(hWindow);
-        if (iSurface != nullptr)
-        {
-            return iSurface->value.hSurface;
-        }
-        else
-        {
-            return NULL;
-        }
-    }
-
-    HGUISurface Editor::GetWindowElement(HWindow hWindow) const
-    {
-        auto iSurface = m_windowSurfaceMap.Find(hWindow);
-        if (iSurface != nullptr)
-        {
-            return iSurface->value.hElement;
-        }
-        else
-        {
-            return NULL;
         }
     }
 

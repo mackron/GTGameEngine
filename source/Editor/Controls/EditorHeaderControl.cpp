@@ -1,13 +1,16 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/Editor/Controls/EditorHeaderControl.hpp>
+#include <GTGameEngine/Editor/Editor.hpp>
 
 namespace GT
 {
-    EditorHeaderControl::EditorHeaderControl(GUIContext &gui)
-        : EditorControl(gui),
-          m_menuBar(gui)
+    EditorHeader::EditorHeader(Editor &editor)
+        : EditorControl(editor),
+          m_menuBar(editor)
     {
+        GUIContext &gui = editor.GetGUI();
+
         HGUIElement hRootElement = this->GetRootGUIElement();
         if (hRootElement != NULL)
         {
@@ -20,7 +23,7 @@ namespace GT
         }
     }
 
-    EditorHeaderControl::~EditorHeaderControl()
+    EditorHeader::~EditorHeader()
     {
     }
 }

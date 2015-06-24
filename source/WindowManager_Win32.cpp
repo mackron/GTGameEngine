@@ -289,7 +289,7 @@ namespace GT
                         TrackMouseLeaveEvent(hWnd);
                         pWindowData->flags |= WindowFlag_IsCursorInside;
 
-                        pWindowManager->OnMouseEnter(reinterpret_cast<HWindow>(hWnd));
+                        //pWindowManager->OnMouseEnter(reinterpret_cast<HWindow>(hWnd));
                     }
 
                     pWindowManager->OnMouseMove(reinterpret_cast<HWindow>(hWnd), GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
