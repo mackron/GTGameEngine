@@ -1569,6 +1569,51 @@ namespace GT
     }
 
 
+    uint32_t GUIContext::GetElementPaddingLeft(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementPaddingLeft(pElement);
+        }
+
+        return 0;
+    }
+
+    uint32_t GUIContext::GetElementPaddingTop(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementPaddingTop(pElement);
+        }
+
+        return 0;
+    }
+
+    uint32_t GUIContext::GetElementPaddingRight(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementPaddingRight(pElement);
+        }
+
+        return 0;
+    }
+
+    uint32_t GUIContext::GetElementPaddingBottom(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementPaddingBottom(pElement);
+        }
+
+        return 0;
+    }
+
+
 
     void GUIContext::SetElementMarginLeft(HGUIElement hElement, uint32_t margin)
     {

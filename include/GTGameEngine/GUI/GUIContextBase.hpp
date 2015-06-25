@@ -1029,6 +1029,28 @@ namespace GT
         void SetElementPadding(GUIElement* pElement, uint32_t padding);
 
 
+        /// Retrieves the left padding of the given element, in DPI-aware points.
+        ///
+        /// @param pElement [in] The element whose padding is being retrieved.
+        uint32_t GetElementPaddingLeft(GUIElement* pElement) const;
+
+        /// Retrieves the top padding of the given element, in DPI-aware points.
+        ///
+        /// @param pElement [in] The element whose padding is being retrieved.
+        uint32_t GetElementPaddingTop(GUIElement* pElement) const;
+
+        /// Retrieves the right padding of the given element, in DPI-aware points.
+        ///
+        /// @param pElement [in] The element whose padding is being retrieved.
+        uint32_t GetElementPaddingRight(GUIElement* pElement) const;
+
+        /// Retrieves the bottom padding of the given element, in DPI-aware points.
+        ///
+        /// @param pElement [in] The element whose padding is being retrieved.
+        uint32_t GetElementPaddingBottom(GUIElement* pElement) const;
+
+
+
         /// Sets the left margin of the given element, in DPI-aware points.
         ///
         /// @param pElement [in] The element whose left margin is being set.

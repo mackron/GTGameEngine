@@ -2,9 +2,9 @@
 
 #include <GTGameEngine/Editor/Editor.hpp>
 #include <GTGameEngine/Editor/EditorGUISurfaceAUXData.hpp>
-#include <GTGameEngine/Editor/Controls/EditorHeaderControl.hpp>
-#include <GTGameEngine/Editor/Controls/EditorBodyControl.hpp>
-#include <GTGameEngine/Editor/Controls/EditorFooterControl.hpp>
+#include <GTGameEngine/Editor/Controls/EditorHeader.hpp>
+#include <GTGameEngine/Editor/Controls/EditorBody.hpp>
+#include <GTGameEngine/Editor/Controls/EditorFooter.hpp>
 #include <GTGameEngine/GameContext.hpp>
 
 #include <GTGameEngine/Editor/Controls/EditorPopupControl.hpp>
@@ -54,7 +54,7 @@ namespace GT
                     if (hMainWindowElement != 0)
                     {
                         // Create the header control.
-                        m_pHeaderControl = new EditorHeader(*this);
+                        m_pHeaderControl = new EditorHeader(*this, m_hMainWindow);
                         m_gui.SetElementParent(m_pHeaderControl->GetRootGUIElement(), hMainWindowElement);
 
                         // Create the body control.
@@ -123,9 +123,9 @@ namespace GT
 
 
                         // Testing.
-                        EditorPopupControl* testPopup = new EditorPopupControl(*this, m_hMainWindow);
-                        m_gameContext.ShowWindow(testPopup->GetWindow());
-                        m_gameContext.GetWindowManager().SetWindowPosition(testPopup->GetWindow(), 2, 25);
+                        //EditorPopupControl* testPopup = new EditorPopupControl(*this, m_hMainWindow);
+                        //m_gameContext.ShowWindow(testPopup->GetWindow());
+                        //m_gameContext.GetWindowManager().SetWindowPosition(testPopup->GetWindow(), 2, 22);
                     }
 
                     m_gui.InvalidateSurfaceRect(hSurface);
@@ -217,6 +217,27 @@ namespace GT
         m_gameContext.GetWindowManager().DeleteWindow(hWindow);
     }
 
+    void Editor::ShowWindow(HWindow hWindow)
+    {
+        m_gameContext.ShowWindow(hWindow);
+    }
+
+    void Editor::HideWindow(HWindow hWindow)
+    {
+        m_gameContext.HideWindow(hWindow);
+    }
+
+    void Editor::SetWindowPosition(HWindow hWindow, int xPos, int yPos)
+    {
+        m_gameContext.GetWindowManager().SetWindowPosition(hWindow, xPos, yPos);
+    }
+
+    void Editor::SetWindowSize(HWindow hWindow, unsigned int width, unsigned int height)
+    {
+        m_gameContext.GetWindowManager().SetWindowSize(hWindow, width, height);
+    }
+
+
     HGUISurface Editor::GetWindowSurface(HWindow hWindow) const
     {
         auto iSurface = m_windowSurfaceMap.Find(hWindow);
@@ -241,6 +262,17 @@ namespace GT
         {
             return NULL;
         }
+    }
+
+    HWindow Editor::GetSurfaceWindow(HGUISurface hSurface) const
+    {
+        EditorGUISurfaceAUXData* pSurfaceData = m_gui.GetSurfaceAuxData<EditorGUISurfaceAUXData>(hSurface);
+        if (pSurfaceData != nullptr)
+        {
+            return pSurfaceData->hWindow;
+        }
+
+        return NULL;
     }
 
 

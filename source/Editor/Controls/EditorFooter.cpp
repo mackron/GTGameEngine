@@ -1,11 +1,11 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Editor/Controls/EditorBodyControl.hpp>
+#include <GTGameEngine/Editor/Controls/EditorFooter.hpp>
 #include <GTGameEngine/Editor/Editor.hpp>
 
 namespace GT
 {
-    EditorBody::EditorBody(Editor &editor)
+    EditorFooter::EditorFooter(Editor &editor)
         : EditorControl(editor)
     {
         GUIContext &gui = editor.GetGUI();
@@ -13,12 +13,14 @@ namespace GT
         HGUIElement hRootElement = this->GetRootGUIElement();
         if (hRootElement != NULL)
         {
-            gui.SetElementHeightRatio(hRootElement, 1.0f);
+            gui.SetElementHeight(hRootElement, 32U);
             gui.SetElementWidthRatio(hRootElement, 1.0f);
+
+            gui.SetElementBorderTop(hRootElement, 1, GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
         }
     }
 
-    EditorBody::~EditorBody()
+    EditorFooter::~EditorFooter()
     {
     }
 }

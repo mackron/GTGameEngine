@@ -254,7 +254,7 @@ namespace GT
         ///
         /// @return A pointer to the aux. data.
         template <typename T>
-        T* GetSurfaceAuxData(HGUISurface hSurface)
+        T* GetSurfaceAuxData(HGUISurface hSurface) const
         {
             auto surface = this->GetSurfacePtr(hSurface);
             if (surface != nullptr)
@@ -936,6 +936,28 @@ namespace GT
         /// @remarks
         ///     This will set the padding to all sides.
         void SetElementPadding(HGUIElement hElement, uint32_t padding);
+
+
+        /// Retrieves the left padding of the given element, in DPI-aware points.
+        ///
+        /// @param pElement [in] The element whose padding is being retrieved.
+        uint32_t GetElementPaddingLeft(HGUIElement hElement) const;
+
+        /// Retrieves the top padding of the given element, in DPI-aware points.
+        ///
+        /// @param pElement [in] The element whose padding is being retrieved.
+        uint32_t GetElementPaddingTop(HGUIElement hElement) const;
+
+        /// Retrieves the right padding of the given element, in DPI-aware points.
+        ///
+        /// @param pElement [in] The element whose padding is being retrieved.
+        uint32_t GetElementPaddingRight(HGUIElement hElement) const;
+
+        /// Retrieves the bottom padding of the given element, in DPI-aware points.
+        ///
+        /// @param pElement [in] The element whose padding is being retrieved.
+        uint32_t GetElementPaddingBottom(HGUIElement hElement) const;
+
 
 
 

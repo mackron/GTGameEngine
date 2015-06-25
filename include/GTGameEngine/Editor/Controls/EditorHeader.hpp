@@ -4,7 +4,7 @@
 #define __GT_EditorHeaderControl_hpp_
 
 #include "EditorControl.hpp"
-#include "EditorMainMenuBarControl.hpp"
+#include "EditorMainMenuBar.hpp"
 
 namespace GT
 {
@@ -14,7 +14,7 @@ namespace GT
     public:
 
         /// Constructor.
-        EditorHeader(Editor &editor);
+        EditorHeader(Editor &editor, HWindow hParentWindow);
 
         /// Destructor.
         ~EditorHeader();

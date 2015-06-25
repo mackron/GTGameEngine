@@ -32,6 +32,25 @@ namespace GT
         HWindow GetWindow() const;
 
 
+        /// Shows the window.
+        void Show();
+
+        /// Hides the window.
+        void Hide();
+
+        /// Sets the position of the popup control window relative to the parent.
+        ///
+        /// @param xPos [in] The position of the window on the x axis.
+        /// @param yPos [in] The position of the window on the y axis.
+        void SetPosition(int xPos, int yPos);
+
+        /// Sets the size of the popup control window.
+        ///
+        /// @param width  [in] The new width of the control.
+        /// @param height [in] The new height of the control.
+        void SetSize(unsigned int width, unsigned int height);
+
+
     private:
 
         /// A handle to the window.

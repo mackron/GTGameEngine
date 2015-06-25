@@ -28,4 +28,26 @@ namespace GT
     {
         return m_hWindow;
     }
+
+
+    void EditorPopupControl::Show()
+    {
+        this->GetEditor().ShowWindow(m_hWindow);
+    }
+
+    void EditorPopupControl::Hide()
+    {
+        this->GetEditor().HideWindow(m_hWindow);
+    }
+
+
+    void EditorPopupControl::SetPosition(int xPos, int yPos)
+    {
+        this->GetEditor().SetWindowPosition(m_hWindow, xPos, yPos);
+    }
+
+    void EditorPopupControl::SetSize(unsigned int width, unsigned int height)
+    {
+        this->GetEditor().SetWindowSize(m_hWindow, width, height);
+    }
 }

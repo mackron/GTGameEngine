@@ -113,6 +113,31 @@ namespace GT
         ///     This should only be called for a window that was created with Editor::CreateWindow()
         void DeleteWindow(HWindow hWindow);
 
+        /// Shows the given window.
+        ///
+        /// @param hWindow [in] The window to show.
+        void ShowWindow(HWindow hWindow);
+
+        /// Hides the given window.
+        ///
+        /// @param hWindow [in] The window to hide.
+        void HideWindow(HWindow hWindow);
+
+        /// Sets the position of the given window.
+        ///
+        /// @param hWindow [in] A handle to the window whose position is being set.
+        /// @param xPos    [in] The position of the window on the x axis relative to the top-left corner of the parent window.
+        /// @param yPos    [in] The position of the window on the y axis relative to the top-left corner of the parent window.
+        void SetWindowPosition(HWindow hWindow, int xPos, int yPos);
+
+        /// Sets the size of the given window.
+        ///
+        /// @param hWindow [in] A handle to the window whose size is being set.
+        /// @param width   [in] The new width of the window.
+        /// @param height  [in] The new height of the window.
+        void SetWindowSize(HWindow hWindow, unsigned int width, unsigned int height);
+
+
         /// Retrieves the surface that is associated with the given window.
         ///
         /// @param hWindow [in] A handle to the window whose associated surface is being retrieved.
@@ -126,6 +151,13 @@ namespace GT
         ///
         /// @return A handle to the window's element, or null if there was an error.
         HGUIElement GetWindowElement(HWindow hWindow) const;
+
+        /// Retrieves the window that is associated with the given surface.
+        ///
+        /// @param hSurface [in] A handle to the surface whose associated window is being retrieved.
+        ///
+        /// @return A handle to the window that is associated with the given surface, if any.
+        HWindow GetSurfaceWindow(HGUISurface hSurface) const;
 
 
         ////////////////////////////////////

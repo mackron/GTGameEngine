@@ -1626,6 +1626,27 @@ namespace GT
     }
 
 
+    uint32_t GUIContextBase::GetElementPaddingLeft(GUIElement* pElement) const
+    {
+        return static_cast<uint32_t>(GTLib::Round(pElement->layout.paddingLeft / this->GetXDPIScalingFactor(this->GetElementSurface(pElement))));
+    }
+
+    uint32_t GUIContextBase::GetElementPaddingTop(GUIElement* pElement) const
+    {
+        return static_cast<uint32_t>(GTLib::Round(pElement->layout.paddingTop / this->GetYDPIScalingFactor(this->GetElementSurface(pElement))));
+    }
+
+    uint32_t GUIContextBase::GetElementPaddingRight(GUIElement* pElement) const
+    {
+        return static_cast<uint32_t>(GTLib::Round(pElement->layout.paddingRight / this->GetXDPIScalingFactor(this->GetElementSurface(pElement))));
+    }
+
+    uint32_t GUIContextBase::GetElementPaddingBottom(GUIElement* pElement) const
+    {
+        return static_cast<uint32_t>(GTLib::Round(pElement->layout.paddingBottom / this->GetYDPIScalingFactor(this->GetElementSurface(pElement))));
+    }
+
+
 
     void GUIContextBase::SetElementMarginLeft(GUIElement* pElement, uint32_t margin)
     {

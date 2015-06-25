@@ -440,28 +440,28 @@
     <ClCompile Include="..\..\..\source\GUI\GUITextLayout.cpp">
       <Filter>Source Files\GUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\Controls\EditorBodyControl.cpp">
-      <Filter>Source Files\Editor\Controls</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorControl.cpp">
       <Filter>Source Files\Editor\Controls</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\Controls\EditorHeaderControl.cpp">
-      <Filter>Source Files\Editor\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\Controls\EditorFooterControl.cpp">
-      <Filter>Source Files\Editor\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\Controls\EditorMainMenuBarControl.cpp">
-      <Filter>Source Files\Editor\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBarControl.cpp">
-      <Filter>Source Files\Editor\Controls</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBarButtonControl.cpp">
-      <Filter>Source Files\Editor\Controls</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorPopupControl.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorBody.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorFooter.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorHeader.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorMainMenuBar.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBar.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBarButton.cpp">
       <Filter>Source Files\Editor\Controls</Filter>
     </ClCompile>
   </ItemGroup>
@@ -949,28 +949,28 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUITextLayout.hpp">
       <Filter>Header Files\GUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorBodyControl.hpp">
-      <Filter>Header Files\Editor\Controls</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorControl.hpp">
       <Filter>Header Files\Editor\Controls</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorHeaderControl.hpp">
-      <Filter>Header Files\Editor\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorFooterControl.hpp">
-      <Filter>Header Files\Editor\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMainMenuBarControl.hpp">
-      <Filter>Header Files\Editor\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBarControl.hpp">
-      <Filter>Header Files\Editor\Controls</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBarButtonControl.hpp">
-      <Filter>Header Files\Editor\Controls</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorPopupControl.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorBody.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorFooter.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorHeader.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMainMenuBar.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBar.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBarButton.hpp">
       <Filter>Header Files\Editor\Controls</Filter>
     </ClInclude>
   </ItemGroup>
