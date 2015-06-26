@@ -36,24 +36,6 @@ namespace GT
     };
 
 
-    /// Global event handler for use by the main menu so it can detect when an event occurs that should deactivate a menu.
-    class EditorMenuBarGUIGlobalEventHandler : public GUIEventHandler
-    {
-    public:
-
-        /// Constructor.
-        EditorMenuBarGUIGlobalEventHandler(EditorMenuBar* pMenuBar);
-
-        void OnMouseButtonPressed(GUIContext &gui, HGUIElement hElement, int, int, int);
-
-    private:
-
-        /// A pointer to the relevant menu bar.
-        EditorMenuBar* m_pMenuBar;
-    };
-
-
-
     /// The editor event handler for detecting events that will cause popup windows to close.
     class EditorMenuBarEditorEventHandler : public EditorEventHandler
     {
@@ -145,9 +127,6 @@ namespace GT
         /// Called when the given menu button is pressed.
         virtual void _OnButtonPressed(HGUIElement hButtonElement);
 
-        /// Called when a mouse button is pressed on ANY element in the entire GUI.
-        virtual void _OnGlobalMouseButtonPressed(HGUIElement hElement);
-
         /// Called when a mouse button is pressed on the given window.
         virtual void _OnMouseButtonPressedOnWindow(HWindow hWindow);
 
@@ -165,10 +144,6 @@ namespace GT
 
         /// The event handler to attach to each button.
         EditorMenuBarButtonGUIEventHandler m_buttonEventHandler;
-
-        /// The global event handler for handling events that will trigger popup windows to close.
-        EditorMenuBarGUIGlobalEventHandler m_globalEventHandler;
-
 
         /// The editor event handler for detecting events that will trigger popup windows to close.
         EditorMenuBarEditorEventHandler m_editorEventHandler;

@@ -13,6 +13,8 @@ namespace GT
         HGUIElement hElement = this->GetRootGUIElement();
         if (hElement != NULL)
         {
+            GUIContext &gui = editor.GetGUI();
+
             m_pFileMenuButton = this->CreateAndInsertButton("FILE");
             this->CreateAndInsertButton("EDIT");
             this->CreateAndInsertButton("VIEW");
@@ -20,6 +22,9 @@ namespace GT
 
 
             m_pFileMenu = new EditorPopupControl(editor, hParentWindow);
+            gui.SetElementBorderTopMask(m_pFileMenu->GetRootGUIElement(), 1, static_cast<uint32_t>(gui.GetElementWidthInPoints(m_pFileMenuButton->GetRootGUIElement()) - 2));
+            gui.SetElementBackgroundColour(m_pFileMenu->GetRootGUIElement(), GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
+            gui.SetElementBorderColor(m_pFileMenu->GetRootGUIElement(), GTLib::Colour(0.3f, 0.3f, 0.3f, 1.0f));
         }
     }
 
@@ -55,30 +60,6 @@ namespace GT
     //////////////////////////////////
     // Inbound Events
 
-    void EditorMainMenuBar::_OnGlobalMouseButtonPressed(HGUIElement hElement)
-    {
-        // If the element is that of the currently active button, don't close anything.
-        EditorMenuBarButton* pActiveButton = this->GetActiveButton();
-        if (pActiveButton != nullptr)
-        {
-            if (pActiveButton->GetRootGUIElement() != hElement)
-            {
-                EditorPopupControl* pActiveMenu = this->GetActiveMenu();
-                if (pActiveMenu != nullptr)
-                {
-                    if (pActiveMenu->GetRootGUIElement() != hElement && !this->GetGUI().IsElementDescendant(pActiveMenu->GetRootGUIElement(), hElement))
-                    {
-                        this->DeactivateActiveButton();
-                    }
-                    else
-                    {
-                        // It may be a sub-menu, so we want to check is the window itself is a descendant of the active menu.
-                    }
-                }
-            }
-        }
-    }
-
     void EditorMainMenuBar::_OnMouseButtonPressedOnWindow(HWindow hWindow)
     {
         EditorMenuBarButton* pActiveButton = this->GetActiveButton();
@@ -91,6 +72,10 @@ namespace GT
                 {
                     this->DeactivateActiveButton();
                 }
+            }
+            else
+            {
+                this->DeactivateActiveButton();
             }
         }
     }
