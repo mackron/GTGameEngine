@@ -54,12 +54,30 @@ namespace GT
 
 
 
+    EditorMenuBarEditorEventHandler::EditorMenuBarEditorEventHandler(EditorMenuBar* pMenuBar)
+        : EditorEventHandler(), m_pMenuBar(pMenuBar)
+    {
+    }
+
+    void EditorMenuBarEditorEventHandler::OnWindowDeactivated(HWindow hWindow)
+    {
+        m_pMenuBar->DeactivateActiveButton();
+    }
+
+    void EditorMenuBarEditorEventHandler::OnMouseButtonPressed(HWindow hWindow, int, int, int)
+    {
+        m_pMenuBar->_OnMouseButtonPressedOnWindow(hWindow);
+    }
+
+
+
 
     EditorMenuBar::EditorMenuBar(Editor &editor)
         : EditorControl(editor),
           m_buttons(),
           m_buttonEventHandler(this),
           m_globalEventHandler(this),
+          m_editorEventHandler(this),
           m_pActiveButton(nullptr)
     {
         GUIContext &gui = editor.GetGUI();
@@ -70,10 +88,14 @@ namespace GT
         gui.SetElementFont(this->GetRootGUIElement(), "Segoe UI", FontWeight_Medium, FontSlant_None, 13);
 
         gui.AttachGlobalEventHandler(m_globalEventHandler);
+
+
+        editor.AttachEventHandler(m_editorEventHandler);
     }
 
     EditorMenuBar::~EditorMenuBar()
     {
+        this->GetEditor().DetachEventHandler(m_editorEventHandler);
     }
 
 
@@ -175,7 +197,6 @@ namespace GT
             {
                 this->DeactivateActiveButton();
                 this->ActivateButton(pTargetButton);
-                
             }
         }
         else
@@ -206,6 +227,10 @@ namespace GT
     }
 
     void EditorMenuBar::_OnGlobalMouseButtonPressed(HGUIElement)
+    {
+    }
+
+    void EditorMenuBar::_OnMouseButtonPressedOnWindow(HWindow)
     {
     }
 

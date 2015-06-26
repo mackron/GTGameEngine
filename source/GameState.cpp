@@ -75,6 +75,14 @@ namespace GT
     {
     }
 
+    void GameState::OnWindowActivated(GameContext &, HWindow)
+    {
+    }
+
+    void GameState::OnWindowDeactivated(GameContext &, HWindow)
+    {
+    }
+
     void GameState::OnWindowResized(GameContext &, HWindow, unsigned int, unsigned int)
     {
     }

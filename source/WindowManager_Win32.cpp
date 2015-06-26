@@ -8,7 +8,7 @@
 namespace GT
 {
     static const wchar_t* g_WindowClass      = L"GT_WndClass";
-    static const wchar_t* g_WinodwClassPopup = L"GT_WndClass_Popup";
+    static const wchar_t* g_WindowClassPopup = L"GT_WndClass_Popup";
 
     static const size_t WindowFlag_IsCursorInside = (1 << 0);
 
@@ -225,6 +225,10 @@ namespace GT
     }
 
 
+    bool IsWin32MouseButtonKeyCode(WPARAM wParam)
+    {
+        return wParam == VK_LBUTTON || wParam == VK_RBUTTON || wParam == VK_MBUTTON || wParam == VK_XBUTTON1 || wParam == VK_XBUTTON2;
+    }
 
 
 
@@ -282,14 +286,13 @@ namespace GT
                     break;
                 }
 
+
             case WM_MOUSEMOVE:
                 {
                     if ((pWindowData->flags & WindowFlag_IsCursorInside) == 0)
                     {
                         TrackMouseLeaveEvent(hWnd);
                         pWindowData->flags |= WindowFlag_IsCursorInside;
-
-                        //pWindowManager->OnMouseEnter(reinterpret_cast<HWindow>(hWnd));
                     }
 
                     pWindowManager->OnMouseMove(reinterpret_cast<HWindow>(hWnd), GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -304,6 +307,41 @@ namespace GT
                     break;
                 }
 
+
+
+            case WM_NCLBUTTONDOWN:
+                {
+                    POINT p;
+                    p.x = GET_X_LPARAM(lParam);
+                    p.y = GET_Y_LPARAM(lParam);
+                    ScreenToClient(hWnd, &p);
+
+                    pWindowManager->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Left, p.x, p.y);
+                    break;
+                }
+
+            case WM_NCLBUTTONUP:
+                {
+                    POINT p;
+                    p.x = GET_X_LPARAM(lParam);
+                    p.y = GET_Y_LPARAM(lParam);
+                    ScreenToClient(hWnd, &p);
+
+                    pWindowManager->OnMouseButtonReleased(reinterpret_cast<HWindow>(hWnd), MouseButton_Left, p.x, p.y);
+                    break;
+                }
+
+            case WM_NCLBUTTONDBLCLK:
+                {
+                    POINT p;
+                    p.x = GET_X_LPARAM(lParam);
+                    p.y = GET_Y_LPARAM(lParam);
+                    ScreenToClient(hWnd, &p);
+
+                    pWindowManager->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Left, p.x, p.y);
+                    pWindowManager->OnMouseButtonDoubleClicked(reinterpret_cast<HWindow>(hWnd), MouseButton_Left, p.x, p.y);
+                    break;
+                }
 
             case WM_LBUTTONDOWN:
                 {
@@ -323,6 +361,41 @@ namespace GT
                 }
 
 
+
+            case WM_NCRBUTTONDOWN:
+                {
+                    POINT p;
+                    p.x = GET_X_LPARAM(lParam);
+                    p.y = GET_Y_LPARAM(lParam);
+                    ScreenToClient(hWnd, &p);
+
+                    pWindowManager->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Right, p.x, p.y);
+                    break;
+                }
+
+            case WM_NCRBUTTONUP:
+                {
+                    POINT p;
+                    p.x = GET_X_LPARAM(lParam);
+                    p.y = GET_Y_LPARAM(lParam);
+                    ScreenToClient(hWnd, &p);
+
+                    pWindowManager->OnMouseButtonReleased(reinterpret_cast<HWindow>(hWnd), MouseButton_Right, p.x, p.y);
+                    break;
+                }
+
+            case WM_NCRBUTTONDBLCLK:
+                {
+                    POINT p;
+                    p.x = GET_X_LPARAM(lParam);
+                    p.y = GET_Y_LPARAM(lParam);
+                    ScreenToClient(hWnd, &p);
+
+                    pWindowManager->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Right, p.x, p.y);
+                    pWindowManager->OnMouseButtonDoubleClicked(reinterpret_cast<HWindow>(hWnd), MouseButton_Right, p.x, p.y);
+                    break;
+                }
+
             case WM_RBUTTONDOWN:
                 {
                     pWindowManager->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Right, GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
@@ -340,6 +413,40 @@ namespace GT
                     break;
                 }
 
+
+            case WM_NCMBUTTONDOWN:
+                {
+                    POINT p;
+                    p.x = GET_X_LPARAM(lParam);
+                    p.y = GET_Y_LPARAM(lParam);
+                    ScreenToClient(hWnd, &p);
+
+                    pWindowManager->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Middle, p.x, p.y);
+                    break;
+                }
+
+            case WM_NCMBUTTONUP:
+                {
+                    POINT p;
+                    p.x = GET_X_LPARAM(lParam);
+                    p.y = GET_Y_LPARAM(lParam);
+                    ScreenToClient(hWnd, &p);
+
+                    pWindowManager->OnMouseButtonReleased(reinterpret_cast<HWindow>(hWnd), MouseButton_Middle, p.x, p.y);
+                    break;
+                }
+
+            case WM_NCMBUTTONDBLCLK:
+                {
+                    POINT p;
+                    p.x = GET_X_LPARAM(lParam);
+                    p.y = GET_Y_LPARAM(lParam);
+                    ScreenToClient(hWnd, &p);
+
+                    pWindowManager->OnMouseButtonPressed(reinterpret_cast<HWindow>(hWnd), MouseButton_Middle, p.x, p.y);
+                    pWindowManager->OnMouseButtonDoubleClicked(reinterpret_cast<HWindow>(hWnd), MouseButton_Middle, p.x, p.y);
+                    break;
+                }
 
             case WM_MBUTTONDOWN:
                 {
@@ -361,9 +468,12 @@ namespace GT
 
             case WM_KEYDOWN:
                 {
-                    if ((lParam & (1 << 30)) == 0)  // No auto-repeat.
+                    if (!IsWin32MouseButtonKeyCode(wParam))
                     {
-                        pWindowManager->OnKeyPressed(reinterpret_cast<HWindow>(hWnd), FromWin32VirtualKey(wParam));
+                        if ((lParam & (1 << 30)) == 0)  // No auto-repeat.
+                        {
+                            pWindowManager->OnKeyPressed(reinterpret_cast<HWindow>(hWnd), FromWin32VirtualKey(wParam));
+                        }
                     }
                     
                     break;
@@ -371,7 +481,11 @@ namespace GT
 
             case WM_KEYUP:
                 {
-                    pWindowManager->OnKeyReleased(reinterpret_cast<HWindow>(hWnd), FromWin32VirtualKey(wParam));
+                    if (!IsWin32MouseButtonKeyCode(wParam))
+                    {
+                        pWindowManager->OnKeyReleased(reinterpret_cast<HWindow>(hWnd), FromWin32VirtualKey(wParam));
+                    }
+
                     break;
                 }
 
@@ -444,6 +558,77 @@ namespace GT
                     return DefWindowProc(hWnd, msg, keepActive, lParam);
                 }
 
+            case WM_ACTIVATE:
+                {
+                    HWND hActivatedWnd   = NULL;
+                    HWND hDeactivatedWnd = NULL;
+
+                    if (LOWORD(wParam) != WA_INACTIVE)
+                    {
+                        // Activated.
+                        hActivatedWnd   = hWnd;
+                        hDeactivatedWnd = reinterpret_cast<HWND>(lParam);
+                    }
+                    else
+                    {
+                        // Deactivated.
+                        hActivatedWnd   = reinterpret_cast<HWND>(lParam);
+                        hDeactivatedWnd = hWnd;
+                    }
+                    
+                    bool isActivatedWindowOwnedByThis   = pWindowManager->IsWindowOwnedByThis(hActivatedWnd);
+                    bool isDeactivatedWindowOwnedByThis = pWindowManager->IsWindowOwnedByThis(hDeactivatedWnd);
+
+                    if (isActivatedWindowOwnedByThis && isDeactivatedWindowOwnedByThis)
+                    {
+                        // Both windows are owned the by application.
+
+                        if (LOWORD(wParam) != WA_INACTIVE)
+                        {
+                            hActivatedWnd   = pWindowManager->GetTopLevelPrimaryWindow(hActivatedWnd);
+                            hDeactivatedWnd = pWindowManager->GetTopLevelPrimaryWindow(hDeactivatedWnd);
+
+                            if (hActivatedWnd != hDeactivatedWnd)
+                            {
+                                if (hDeactivatedWnd != NULL)
+                                {
+                                    pWindowManager->OnWindowDeactivated(reinterpret_cast<HWindow>(hDeactivatedWnd));
+                                }
+
+                                if (hActivatedWnd != NULL)
+                                {
+                                    pWindowManager->OnWindowActivated(reinterpret_cast<HWindow>(hActivatedWnd));
+                                }
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // The windows are not both owned by this manager.
+
+                        if (isDeactivatedWindowOwnedByThis)
+                        {
+                            hDeactivatedWnd = pWindowManager->GetTopLevelPrimaryWindow(hDeactivatedWnd);
+                            if (hDeactivatedWnd != NULL)
+                            {
+                                pWindowManager->OnWindowDeactivated(reinterpret_cast<HWindow>(hDeactivatedWnd));
+                            }
+                        }
+
+                        if (isActivatedWindowOwnedByThis)
+                        {
+                            hActivatedWnd = pWindowManager->GetTopLevelPrimaryWindow(hActivatedWnd);
+                            if (hActivatedWnd != NULL)
+                            {
+                                pWindowManager->OnWindowActivated(reinterpret_cast<HWindow>(hActivatedWnd));
+                            }
+                        }
+                    }
+
+
+                    break;
+                }
+
 
             default:
                 {
@@ -460,13 +645,27 @@ namespace GT
     WindowManager_Win32::WindowManager_Win32()
         : WindowManager()
     {
-        // Window class need to be registered.
+        // Window classes need to be registered.
         WNDCLASSEXW wc;
         memset(&wc, 0, sizeof(wc));
         wc.cbSize        = sizeof(wc);
         wc.cbWndExtra    = sizeof(void*);
         wc.lpfnWndProc   = reinterpret_cast<WNDPROC>(DefaultWindowProcWin32);
         wc.lpszClassName = g_WindowClass;
+        wc.hCursor       = LoadCursorW(NULL, IDC_ARROW);
+        wc.style         = CS_OWNDC | CS_DBLCLKS;
+        if (!::RegisterClassExW(&wc))
+        {
+            // Failed to register window class.
+            assert(false);
+        }
+
+
+        memset(&wc, 0, sizeof(wc));
+        wc.cbSize        = sizeof(wc);
+        wc.cbWndExtra    = sizeof(void*);
+        wc.lpfnWndProc   = reinterpret_cast<WNDPROC>(DefaultWindowProcWin32);
+        wc.lpszClassName = g_WindowClassPopup;
         wc.hCursor       = LoadCursorW(NULL, IDC_ARROW);
         wc.style         = CS_OWNDC | CS_DBLCLKS | CS_DROPSHADOW;
         if (!::RegisterClassExW(&wc))
@@ -484,6 +683,7 @@ namespace GT
 
     HWindow WindowManager_Win32::CreateWindow(HWindow hParent, WindowType type, int xPos, int yPos, unsigned int width, unsigned int height)
     {
+        const wchar_t* windowClass = g_WindowClass;
         DWORD dwExStyle = 0;
         DWORD dwStyle   = 0;
 
@@ -511,8 +711,8 @@ namespace GT
 
         case WindowType::PopupWindow:
             {
-                dwExStyle |= WS_EX_NOACTIVATE;
-                dwStyle   |= WS_POPUP;
+                windowClass = g_WindowClassPopup;
+                dwStyle |= WS_POPUP;
                 break;
             }
 
@@ -523,7 +723,7 @@ namespace GT
         }
 
 
-        HWND hWnd = ::CreateWindowExW(dwExStyle, g_WindowClass, L"GTGameEngine", dwStyle, xPos, yPos, width, height, reinterpret_cast<HWND>(hParent), NULL, NULL, nullptr);
+        HWND hWnd = ::CreateWindowExW(dwExStyle, windowClass, L"GTGameEngine", dwStyle, xPos, yPos, width, height, reinterpret_cast<HWND>(hParent), NULL, NULL, nullptr);
         if (hWnd != NULL)
         {
             // Set the auxilliary window data to help in processing some window events.
@@ -657,6 +857,17 @@ namespace GT
         {
             ::ShowWindow(reinterpret_cast<HWND>(hWindow), SW_HIDE);
         }
+    }
+
+
+    bool WindowManager_Win32::IsWindowDescendant(HWindow hParentWindow, HWindow hChildWindow) const
+    {
+        if (hParentWindow != 0 && hChildWindow != 0)
+        {
+            return ::IsChild(reinterpret_cast<HWND>(hParentWindow), reinterpret_cast<HWND>(hChildWindow)) != 0;
+        }
+
+        return false;
     }
 
 
@@ -833,5 +1044,46 @@ namespace GT
                 }
             }
         }
+    }
+
+
+
+    ///////////////////////////////////
+    // Private
+
+    bool WindowManager_Win32::IsWindowOwnedByThis(HWND hWnd) const
+    {
+        for (size_t i = 0; i < m_windows.GetCount(); ++i)
+        {
+            if (m_windows[i] == reinterpret_cast<HWindow>(hWnd))
+            {
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+    HWND WindowManager_Win32::GetTopLevelPrimaryWindow(HWND hWnd) const
+    {
+        assert(this->IsWindowOwnedByThis(hWnd));
+
+        HWND hTopLevelWindow = hWnd;
+        do
+        {
+            WindowData* pWindowData = reinterpret_cast<WindowData*>(::GetWindowLongPtr(hTopLevelWindow, 0));
+            if (pWindowData != nullptr)
+            {
+                if (pWindowData->type == WindowType::PrimaryWindow || pWindowData->type == WindowType::PrimaryWindow_Borderless)
+                {
+                    return hTopLevelWindow;
+                }
+            }
+
+            hTopLevelWindow = ::GetWindow(hTopLevelWindow, GW_OWNER);
+        } while (hTopLevelWindow != 0);
+
+
+        return hTopLevelWindow;
     }
 }

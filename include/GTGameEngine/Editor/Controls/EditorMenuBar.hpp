@@ -4,6 +4,7 @@
 #define __GT_EditorMenuBarControl_hpp_
 
 #include "EditorControl.hpp"
+#include "../EditorEventHandler.hpp"
 #include <GTLib/Vector.hpp>
 
 namespace GT
@@ -51,6 +52,26 @@ namespace GT
         EditorMenuBar* m_pMenuBar;
     };
 
+
+
+    /// The editor event handler for detecting events that will cause popup windows to close.
+    class EditorMenuBarEditorEventHandler : public EditorEventHandler
+    {
+    public:
+
+        /// Constructor.
+        EditorMenuBarEditorEventHandler(EditorMenuBar* pMenuBar);
+
+
+        void OnWindowDeactivated(HWindow hWindow);
+        void OnMouseButtonPressed(HWindow hWindow, int button, int xPos, int yPos);
+
+
+    private:
+
+        /// A pointer to the relevant menu bar.
+        EditorMenuBar* m_pMenuBar;
+    };
 
 
 
@@ -127,6 +148,9 @@ namespace GT
         /// Called when a mouse button is pressed on ANY element in the entire GUI.
         virtual void _OnGlobalMouseButtonPressed(HGUIElement hElement);
 
+        /// Called when a mouse button is pressed on the given window.
+        virtual void _OnMouseButtonPressedOnWindow(HWindow hWindow);
+
 
     protected:
 
@@ -144,6 +168,10 @@ namespace GT
 
         /// The global event handler for handling events that will trigger popup windows to close.
         EditorMenuBarGUIGlobalEventHandler m_globalEventHandler;
+
+
+        /// The editor event handler for detecting events that will trigger popup windows to close.
+        EditorMenuBarEditorEventHandler m_editorEventHandler;
 
 
         /// A pointer to the currently active button.

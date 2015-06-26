@@ -237,6 +237,11 @@ namespace GT
         m_gameContext.GetWindowManager().SetWindowSize(hWindow, width, height);
     }
 
+    bool Editor::IsWindowDescendant(HWindow hParentWindow, HWindow hChildWindow) const
+    {
+        return m_gameContext.GetWindowManager().IsWindowDescendant(hParentWindow, hChildWindow);
+    }
+
 
     HGUISurface Editor::GetWindowSurface(HWindow hWindow) const
     {
@@ -295,6 +300,16 @@ namespace GT
         (void)hWindow;
     }
 
+    void Editor::OnWindowActivated(HWindow hWindow)
+    {
+        this->PostEvent_OnWindowActivated(hWindow);
+    }
+
+    void Editor::OnWindowDeactivated(HWindow hWindow)
+    {
+        this->PostEvent_OnWindowDeactivated(hWindow);
+    }
+
     void Editor::OnWindowResized(HWindow hWindow, unsigned int width, unsigned int height)
     {
         HGUISurface hSurface = this->GetWindowSurface(hWindow);
@@ -320,10 +335,21 @@ namespace GT
 
     void Editor::OnMouseMove(HWindow hWindow, int xPos, int yPos)
     {
+        this->PostEvent_OnMouseMove(hWindow, xPos, yPos);
+
         HGUISurface hSurface = this->GetWindowSurface(hWindow);
         if (hSurface != 0)
         {
-            m_gui.OnMouseMove(hSurface, xPos, yPos);
+            // The cursor position may be on the client area which means it wasn't moved while on top of the GUI surface. Don't post
+            // the event to the GUI if the position is not inside the surface's area.
+            unsigned int surfaceWidth;
+            unsigned int surfaceHeight;
+            m_gui.GetSurfaceSize(hSurface, surfaceWidth, surfaceHeight);
+
+            if (xPos > 0 && yPos > 0 && xPos < surfaceWidth && yPos < surfaceHeight)
+            {
+                m_gui.OnMouseMove(hSurface, xPos, yPos);
+            }
         }
     }
 
@@ -347,28 +373,61 @@ namespace GT
 
     void Editor::OnMouseButtonPressed(HWindow hWindow, int button, int xPos, int yPos)
     {
+        this->PostEvent_OnMouseButtonPressed(hWindow, button, xPos, yPos);
+
         HGUISurface hSurface = this->GetWindowSurface(hWindow);
         if (hSurface != 0)
         {
-            m_gui.OnMouseButtonPressed(hSurface, button, xPos, yPos);
+            // The cursor position may be on the client area which means it wasn't moved while on top of the GUI surface. Don't post
+            // the event to the GUI if the position is not inside the surface's area.
+            unsigned int surfaceWidth;
+            unsigned int surfaceHeight;
+            m_gui.GetSurfaceSize(hSurface, surfaceWidth, surfaceHeight);
+
+            if (xPos > 0 && yPos > 0 && xPos < surfaceWidth && yPos < surfaceHeight)
+            {
+                m_gui.OnMouseButtonPressed(hSurface, button, xPos, yPos);
+            }
         }
     }
 
     void Editor::OnMouseButtonReleased(HWindow hWindow, int button, int xPos, int yPos)
     {
+        this->PostEvent_OnMouseButtonReleased(hWindow, button, xPos, yPos);
+
         HGUISurface hSurface = this->GetWindowSurface(hWindow);
         if (hSurface != 0)
         {
-            m_gui.OnMouseButtonReleased(hSurface, button, xPos, yPos);
+            // The cursor position may be on the client area which means it wasn't moved while on top of the GUI surface. Don't post
+            // the event to the GUI if the position is not inside the surface's area.
+            unsigned int surfaceWidth;
+            unsigned int surfaceHeight;
+            m_gui.GetSurfaceSize(hSurface, surfaceWidth, surfaceHeight);
+
+            if (xPos > 0 && yPos > 0 && xPos < surfaceWidth && yPos < surfaceHeight)
+            {
+                m_gui.OnMouseButtonReleased(hSurface, button, xPos, yPos);
+            }
         }
     }
 
     void Editor::OnMouseButtonDoubleClicked(HWindow hWindow, int button, int xPos, int yPos)
     {
+        this->PostEvent_OnMouseButtonDoubleClick(hWindow, button, xPos, yPos);
+
         HGUISurface hSurface = this->GetWindowSurface(hWindow);
         if (hSurface != 0)
         {
-            m_gui.OnMouseButtonDoubleClicked(hSurface, button, xPos, yPos);
+            // The cursor position may be on the client area which means it wasn't moved while on top of the GUI surface. Don't post
+            // the event to the GUI if the position is not inside the surface's area.
+            unsigned int surfaceWidth;
+            unsigned int surfaceHeight;
+            m_gui.GetSurfaceSize(hSurface, surfaceWidth, surfaceHeight);
+
+            if (xPos > 0 && yPos > 0 && xPos < surfaceWidth && yPos < surfaceHeight)
+            {
+                m_gui.OnMouseButtonDoubleClicked(hSurface, button, xPos, yPos);
+            }
         }
     }
 
@@ -532,6 +591,79 @@ namespace GT
             assert(pEventHandler != nullptr);
             {
                 pEventHandler->OnEditorClosed();
+            }
+        }
+    }
+
+
+    void Editor::PostEvent_OnWindowActivated(HWindow hWindow)
+    {
+        for (size_t iEventHandler = 0; iEventHandler < m_eventHandlers.GetCount(); ++iEventHandler)
+        {
+            auto pEventHandler = m_eventHandlers[iEventHandler];
+            assert(pEventHandler != nullptr);
+            {
+                pEventHandler->OnWindowActivated(hWindow);
+            }
+        }
+    }
+
+    void Editor::PostEvent_OnWindowDeactivated(HWindow hWindow)
+    {
+        for (size_t iEventHandler = 0; iEventHandler < m_eventHandlers.GetCount(); ++iEventHandler)
+        {
+            auto pEventHandler = m_eventHandlers[iEventHandler];
+            assert(pEventHandler != nullptr);
+            {
+                pEventHandler->OnWindowDeactivated(hWindow);
+            }
+        }
+    }
+
+    void Editor::PostEvent_OnMouseMove(HWindow hWindow, int xPos, int yPos)
+    {
+        for (size_t iEventHandler = 0; iEventHandler < m_eventHandlers.GetCount(); ++iEventHandler)
+        {
+            auto pEventHandler = m_eventHandlers[iEventHandler];
+            assert(pEventHandler != nullptr);
+            {
+                pEventHandler->OnMouseMove(hWindow, xPos, yPos);
+            }
+        }
+    }
+
+    void Editor::PostEvent_OnMouseButtonPressed(HWindow hWindow, int button, int xPos, int yPos)
+    {
+        for (size_t iEventHandler = 0; iEventHandler < m_eventHandlers.GetCount(); ++iEventHandler)
+        {
+            auto pEventHandler = m_eventHandlers[iEventHandler];
+            assert(pEventHandler != nullptr);
+            {
+                pEventHandler->OnMouseButtonPressed(hWindow, button, xPos, yPos);
+            }
+        }
+    }
+
+    void Editor::PostEvent_OnMouseButtonReleased(HWindow hWindow, int button, int xPos, int yPos)
+    {
+        for (size_t iEventHandler = 0; iEventHandler < m_eventHandlers.GetCount(); ++iEventHandler)
+        {
+            auto pEventHandler = m_eventHandlers[iEventHandler];
+            assert(pEventHandler != nullptr);
+            {
+                pEventHandler->OnMouseButtonReleased(hWindow, button, xPos, yPos);
+            }
+        }
+    }
+
+    void Editor::PostEvent_OnMouseButtonDoubleClick(HWindow hWindow, int button, int xPos, int yPos)
+    {
+        for (size_t iEventHandler = 0; iEventHandler < m_eventHandlers.GetCount(); ++iEventHandler)
+        {
+            auto pEventHandler = m_eventHandlers[iEventHandler];
+            assert(pEventHandler != nullptr);
+            {
+                pEventHandler->OnMouseButtonDoubleClick(hWindow, button, xPos, yPos);
             }
         }
     }

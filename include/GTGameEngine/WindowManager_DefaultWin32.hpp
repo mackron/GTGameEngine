@@ -38,6 +38,12 @@ namespace GT
         /// @copydoc WindowManager_Win32::OnClose()
         virtual void OnClose();
 
+        /// @copydoc WindowManager_Win32::OnWindowActivated()
+        virtual void OnWindowActivated(HWindow hWindow);
+
+        /// @copydoc WindowManager_Win32::OnWindowDeactivated()
+        virtual void OnWindowDeactivated(HWindow hWindow);
+
         /// @copydoc WindowManager_Win32::OnMove()
         virtual void OnMove(HWindow hWindow, int xPos, int yPos);
 

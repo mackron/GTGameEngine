@@ -25,6 +25,16 @@ namespace GT
     {
         m_pGameContext->OnWantToClose();
     }
+    
+    void WindowManager_DefaultWin32::OnWindowActivated(HWindow hWindow)
+    {
+        m_pGameContext->OnWindowActivated(hWindow);
+    }
+
+    void WindowManager_DefaultWin32::OnWindowDeactivated(HWindow hWindow)
+    {
+        m_pGameContext->OnWindowDeactivated(hWindow);
+    }
 
     void WindowManager_DefaultWin32::OnMove(HWindow hWindow, int xPos, int yPos)
     {

@@ -79,6 +79,22 @@ namespace GT
         }
     }
 
+    void EditorMainMenuBar::_OnMouseButtonPressedOnWindow(HWindow hWindow)
+    {
+        EditorMenuBarButton* pActiveButton = this->GetActiveButton();
+        if (pActiveButton != nullptr)
+        {
+            EditorPopupControl* pActiveMenu = this->GetActiveMenu();
+            if (pActiveMenu != nullptr)
+            {
+                if (pActiveMenu->GetWindow() != hWindow && !this->GetEditor().IsWindowDescendant(pActiveMenu->GetWindow(), hWindow))
+                {
+                    this->DeactivateActiveButton();
+                }
+            }
+        }
+    }
+
 
 
     ///////////////////////////////////

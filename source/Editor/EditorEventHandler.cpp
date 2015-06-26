@@ -20,4 +20,29 @@ namespace GT
     void EditorEventHandler::OnEditorClosed()
     {
     }
+
+
+    void EditorEventHandler::OnWindowActivated(HWindow)
+    {
+    }
+
+    void EditorEventHandler::OnWindowDeactivated(HWindow)
+    {
+    }
+
+    void EditorEventHandler::OnMouseMove(HWindow, int, int)
+    {
+    }
+
+    void EditorEventHandler::OnMouseButtonPressed(HWindow, int, int, int)
+    {
+    }
+
+    void EditorEventHandler::OnMouseButtonReleased(HWindow, int, int, int)
+    {
+    }
+
+    void EditorEventHandler::OnMouseButtonDoubleClick(HWindow, int, int, int)
+    {
+    }
 }

@@ -80,7 +80,9 @@ namespace GT
     void EditorGUIRenderer_GDI::Clear(GUIContext &context, const GTLib::Rect<int> &rect)
     {
         this->SetClippingRect(context, rect);
-        this->DrawRectangle(context, rect, GTLib::Colour(0, 0, 0, 1));
+
+        // There is no need to clear to black with GDI.
+        //this->DrawRectangle(context, rect, GTLib::Colour(0, 0, 0, 1));
     }
 
 

@@ -26,6 +26,9 @@ namespace GT
         /// @copydoc EditorMenuBar::_OnGlobalMouseButtonPressed()
         virtual void _OnGlobalMouseButtonPressed(HGUIElement hElement);
 
+        /// @copydoc EditorMenuBar::_OnMouseButtonPressedOnWindow()
+        virtual void _OnMouseButtonPressedOnWindow(HWindow hWindow);
+
 
         //////////////////////////////////
         // Events

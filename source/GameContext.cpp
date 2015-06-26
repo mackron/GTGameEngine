@@ -337,6 +337,34 @@ namespace GT
 #endif
     }
 
+    void GameContext::OnWindowActivated(HWindow hWindow)
+    {
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnWindowActivated(*this, hWindow);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnWindowActivated(hWindow);
+        }
+#endif
+    }
+
+    void GameContext::OnWindowDeactivated(HWindow hWindow)
+    {
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnWindowDeactivated(*this, hWindow);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnWindowDeactivated(hWindow);
+        }
+#endif
+    }
+
     void GameContext::OnWindowCreated(HWindow hWindow)
     {
         m_gameState.OnWindowCreated(*this, hWindow);

@@ -241,6 +241,16 @@ namespace GT
         /// Called when the game wants to close.
         void OnWantToClose();
 
+        /// Called after a primary window has been activated.
+        ///
+        /// @param hWindow [in] The window that was just activated.
+        void OnWindowActivated(HWindow hWindow);
+
+        /// Called after a primary window has been deactivated.
+        ///
+        /// @param hWindow [in] The window that was just deactivated.
+        void OnWindowDeactivated(HWindow hWindow);
+
         /// Called just after a window is created.
         ///
         /// @param hWindow [in] The window that was just created.

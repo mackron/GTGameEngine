@@ -50,12 +50,15 @@ namespace GT
         virtual bool GetWindowSize(HWindow hWindow, unsigned int &widthOut, unsigned int &heightOut) const;
 
 
-
         /// @copydoc WindowManager::ShowWindow()
         virtual void ShowWindow(HWindow hWindow);
 
         /// @copydoc WindowManager::HideWindow()
         virtual void HideWindow(HWindow hWindow);
+
+
+        /// @copydoc WindowManager::IsWindowDescendant()
+        virtual bool IsWindowDescendant(HWindow hParentWindow, HWindow hChildWindow) const;
 
 
         /// @copydoc WindowManager::InvalidateWindowRect()
@@ -120,6 +123,12 @@ namespace GT
         /// Called when the WM_CLOSE event is received.
         virtual void OnClose() = 0;
 
+        /// Called when a primary window is activated.
+        virtual void OnWindowActivated(HWindow hWindow) = 0;
+
+        /// Called when a primary window is deactivated.
+        virtual void OnWindowDeactivated(HWindow hWindow) = 0;
+
         /// Called when ths WM_MOVE event is received.
         virtual void OnMove(HWindow hWindow, int xPos, int yPos) = 0;
 
@@ -178,6 +187,14 @@ namespace GT
             /// Some flags to help with handling some events.
             uint32_t flags;
         };
+
+
+        /// Determines whether or not the given window is owned by this window manager.
+        bool IsWindowOwnedByThis(HWND hWnd) const;
+
+        /// Finds the top-level primary window that is either the given window itself, or an ancestor.
+        HWND GetTopLevelPrimaryWindow(HWND hWnd) const;
+
 
 
     private:

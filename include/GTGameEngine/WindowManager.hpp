@@ -92,6 +92,13 @@ namespace GT
         virtual void HideWindow(HWindow hWindow) = 0;
 
 
+        /// Determines if a window is a descendant of another.
+        ///
+        /// @param hParentWindow [in] The parent window.
+        /// @param hChildWindow  [in] The descendant window.
+        virtual bool IsWindowDescendant(HWindow hParentWindow, HWindow hChildWindow) const = 0;
+
+
         /// Invalidates a rectangular region of the given window so that it forces a repaint.
         ///
         /// @param hWindow [in] A handle to the window whose region is to be invalidated.

@@ -113,6 +113,16 @@ namespace GT
         /// @param hWindow [in] The window that is about to be deleted.
         virtual void OnWindowDeleting(GameContext &gameContext, HWindow hWindow);
 
+        /// Called after a primary window has been activated.
+        ///
+        /// @param hWindow [in] The window that was just activated.
+        virtual void OnWindowActivated(GameContext &gameContext, HWindow hWindow);
+
+        /// Called after a primary window has been deactivated.
+        ///
+        /// @param hWindow [in] The window that was just deactivated.
+        virtual void OnWindowDeactivated(GameContext &gameContext, HWindow hWindow);
+
         /// Called when the given window has been resized.
         ///
         /// @param hWindow [in] A handle to the window that has been resized.

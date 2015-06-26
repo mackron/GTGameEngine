@@ -137,6 +137,12 @@ namespace GT
         /// @param height  [in] The new height of the window.
         void SetWindowSize(HWindow hWindow, unsigned int width, unsigned int height);
 
+        /// Determines if a window is a descendant of another.
+        ///
+        /// @param hParentWindow [in] The parent window.
+        /// @param hChildWindow  [in] The descendant window.
+        bool IsWindowDescendant(HWindow hParentWindow, HWindow hChildWindow) const;
+
 
         /// Retrieves the surface that is associated with the given window.
         ///
@@ -171,6 +177,12 @@ namespace GT
 
         /// @copydoc GameContext::OnWindowDeleting()
         void OnWindowDeleting(HWindow hWindow);
+
+        /// @copydoc GameContext::OnWindowActivated()
+        void OnWindowActivated(HWindow hWindow);
+
+        /// @copydoc GameContext::OnWindowDeactivated()
+        void OnWindowDeactivated(HWindow hWindow);
 
         /// @copydoc GameContext::OnWindowResized()
         void OnWindowResized(HWindow hWindow, unsigned int width, unsigned int height);
@@ -270,6 +282,25 @@ namespace GT
 
         /// Posts the OnEditorClosed() event to every attached event handler.
         void PostEvent_OnEditorClosed();
+
+
+        /// Posts the OnWindowActivated event to every attached event handler.
+        void PostEvent_OnWindowActivated(HWindow hWindow);
+
+        /// Posts the OnWindowDeactivated event to every attached event handler.
+        void PostEvent_OnWindowDeactivated(HWindow hWindow);
+
+        /// Posts the OnMouseMove event to every attached event handler.
+        void PostEvent_OnMouseMove(HWindow hWindow, int xPos, int yPos);
+
+        /// Posts the OnMouseButtonPressed event to every attached event handler.
+        void PostEvent_OnMouseButtonPressed(HWindow hWindow, int button, int xPos, int yPos);
+
+        /// Posts the OnMouseButtonReleased event to every attached event handler.
+        void PostEvent_OnMouseButtonReleased(HWindow hWindow, int button, int xPos, int yPos);
+
+        /// Posts the OnMouseButtonDoubleClick event to every attached event handler.
+        void PostEvent_OnMouseButtonDoubleClick(HWindow hWindow, int button, int xPos, int yPos);
 
 
 

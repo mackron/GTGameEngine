@@ -260,7 +260,7 @@ namespace GT
         /// @param hState     [in] The depth/stencil state to make current on the output merger stage.
         /// @param stencilRef [in] Reference value that is bitwise-and when performing the depth/stencil test.
         virtual void OMSetDepthStencilState(HDepthStencilState hState, unsigned int stencilRef) = 0;
-        
+
         /// Sets the blend state.
         ///
         /// @param hState      [in] The blend state to make current on the output merger stage.
@@ -427,7 +427,7 @@ namespace GT
         ///     @par
         ///     A dynamic buffer cannot be used as an output for a pipeline stage.
         ///     @par
-        ///     A staging buffer cannot be used as an input nor an output for a pipeline stage. 
+        ///     A staging buffer cannot be used as an input nor an output for a pipeline stage.
         virtual HBuffer CreateBuffer(BufferType type, BufferUsage usage, BufferCPUAccessFlags cpuAccessFlags, size_t sizeInBytes, const void* data) = 0;
 
         /// Deletes the given buffer object.
@@ -526,7 +526,7 @@ namespace GT
         /// @return
         ///     If the texture type is not an array format, numLayers should never be greater than 1.
         virtual HTextureView CreateTextureView(HTexture hOriginalTexture, TextureType type, TextureFormat format, unsigned int minLevel, unsigned int numLevels, unsigned int minLayer, unsigned int numLayers) = 0;
-        
+
         /// Deletes the given texture view object.
         ///
         /// @param hTextureView [in] A handle to the texture view object to delete.
@@ -588,7 +588,7 @@ namespace GT
         //////////////////////////////////////////
         // Platform-Specific Methods
 
-        
+
 
 #if defined(GT_PLATFORM_WINDOWS)
         /// Win32: Creates a framebuffer for the given window so that it can be drawn to.
@@ -632,7 +632,7 @@ namespace GT
 
     protected:
 
-        /// Creates a shader binary buffer from the given information. 
+        /// Creates a shader binary buffer from the given information.
         static ResultCode CreateShaderBinaryData(const char* source, size_t sourceLength, const ShaderDefine* defines, ShaderLanguage language, ShaderType type, const void* binary, size_t binarySizeInBytes, int binaryVersion, GT::BasicBuffer &byteCodeOut);
 
         /// Takes the shader binary data created by CreateShaderBinaryData() and reads it's various components.
@@ -667,7 +667,7 @@ namespace GT
         static const ResultCode GPUBufferIsImmutable              = (1 << 31) | 0x00000025;
         static const ResultCode FailedToMapGPUBuffer              = (1 << 31) | 0x00000026;
         static const ResultCode UnknownBufferMapType           = (1 << 31) | 0x00000027;
-            
+
 
 
     private:    // No copying.
