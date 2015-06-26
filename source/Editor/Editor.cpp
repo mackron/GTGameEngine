@@ -346,7 +346,7 @@ namespace GT
             unsigned int surfaceHeight;
             m_gui.GetSurfaceSize(hSurface, surfaceWidth, surfaceHeight);
 
-            if (xPos > 0 && yPos > 0 && xPos < surfaceWidth && yPos < surfaceHeight)
+            if (xPos > 0 && yPos > 0 && xPos < static_cast<int>(surfaceWidth) && yPos < static_cast<int>(surfaceHeight))
             {
                 m_gui.OnMouseMove(hSurface, xPos, yPos);
             }
@@ -384,7 +384,7 @@ namespace GT
             unsigned int surfaceHeight;
             m_gui.GetSurfaceSize(hSurface, surfaceWidth, surfaceHeight);
 
-            if (xPos > 0 && yPos > 0 && xPos < surfaceWidth && yPos < surfaceHeight)
+            if (xPos > 0 && yPos > 0 && xPos < static_cast<int>(surfaceWidth) && yPos < static_cast<int>(surfaceHeight))
             {
                 m_gui.OnMouseButtonPressed(hSurface, button, xPos, yPos);
             }
@@ -404,7 +404,7 @@ namespace GT
             unsigned int surfaceHeight;
             m_gui.GetSurfaceSize(hSurface, surfaceWidth, surfaceHeight);
 
-            if (xPos > 0 && yPos > 0 && xPos < surfaceWidth && yPos < surfaceHeight)
+            if (xPos > 0 && yPos > 0 && xPos < static_cast<int>(surfaceWidth) && yPos < static_cast<int>(surfaceHeight))
             {
                 m_gui.OnMouseButtonReleased(hSurface, button, xPos, yPos);
             }
@@ -424,7 +424,7 @@ namespace GT
             unsigned int surfaceHeight;
             m_gui.GetSurfaceSize(hSurface, surfaceWidth, surfaceHeight);
 
-            if (xPos > 0 && yPos > 0 && xPos < surfaceWidth && yPos < surfaceHeight)
+            if (xPos > 0 && yPos > 0 && xPos < static_cast<int>(surfaceWidth) && yPos < static_cast<int>(surfaceHeight))
             {
                 m_gui.OnMouseButtonDoubleClicked(hSurface, button, xPos, yPos);
             }
@@ -527,7 +527,7 @@ namespace GT
                     {
                         m_gui.AttachElementToSurface(hElement, hSurface);
                         m_gui.SetElementSizeRatio(hElement, 1.0f, 1.0f);
-                        m_gui.SetElementBackgroundColour(hElement, GTLib::Colour(0.25f, 0.25f, 0.25f, 1));
+                        m_gui.SetElementBackgroundColor(hElement, GTLib::Colour(0.25f, 0.25f, 0.25f, 1));
                         m_gui.EnableElementChildWidthFlexing(hElement);
                         m_gui.EnableElementChildHeightFlexing(hElement);
 

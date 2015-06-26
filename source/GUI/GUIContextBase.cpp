@@ -1302,7 +1302,7 @@ namespace GT
 
 
 
-    void GUIContextBase::SetElementBackgroundColour(GUIElement* pElement, const GTLib::Colour &colour)
+    void GUIContextBase::SetElementBackgroundColor(GUIElement* pElement, const GTLib::Colour &colour)
     {
         assert(pElement != nullptr);
 
@@ -1315,7 +1315,7 @@ namespace GT
         this->EndBatch();
     }
 
-    GTLib::Colour GUIContextBase::GetElementBackgroundColour(GUIElement* pElement) const
+    GTLib::Colour GUIContextBase::GetElementBackgroundColor(GUIElement* pElement) const
     {
         assert(pElement != nullptr);
 
@@ -3425,7 +3425,7 @@ namespace GT
         assert(pSurface != nullptr);
         assert(pElement != nullptr);
 
-        Painting_DrawAndSetClippingRect(pSurface, visibleRect, this->GetElementBackgroundColour(pElement));
+        Painting_DrawAndSetClippingRect(pSurface, visibleRect, this->GetElementBackgroundColor(pElement));
 
 
         // Text.

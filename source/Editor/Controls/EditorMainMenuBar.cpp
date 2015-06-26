@@ -23,7 +23,7 @@ namespace GT
 
             m_pFileMenu = new EditorPopupControl(editor, hParentWindow);
             gui.SetElementBorderTopMask(m_pFileMenu->GetRootGUIElement(), 1, static_cast<uint32_t>(gui.GetElementWidthInPoints(m_pFileMenuButton->GetRootGUIElement()) - 2));
-            gui.SetElementBackgroundColour(m_pFileMenu->GetRootGUIElement(), GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
+            gui.SetElementBackgroundColor(m_pFileMenu->GetRootGUIElement(), GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
             gui.SetElementBorderColor(m_pFileMenu->GetRootGUIElement(), GTLib::Colour(0.3f, 0.3f, 0.3f, 1.0f));
         }
     }

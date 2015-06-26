@@ -84,7 +84,7 @@ namespace GT
             // Adjust the padding to compensate for the border.
             gui.BeginBatch();
             {
-                gui.SetElementBackgroundColour(hElement, GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
+                gui.SetElementBackgroundColor(hElement, GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
 
                 gui.SetElementPaddingLeft(hElement, paddingLeft);
                 gui.SetElementPaddingTop(hElement, paddingTop);
@@ -120,7 +120,7 @@ namespace GT
 
             gui.BeginBatch();
             {
-                gui.SetElementBackgroundColour(hElement, GTLib::Colour(0.25f, 0.25f, 0.25f, 1.0f));
+                gui.SetElementBackgroundColor(hElement, GTLib::Colour(0.25f, 0.25f, 0.25f, 1.0f));
 
                 gui.SetElementPaddingLeft(hElement, paddingLeft);
                 gui.SetElementPaddingTop(hElement, paddingTop);

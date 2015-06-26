@@ -889,14 +889,14 @@ namespace GT
         ///
         /// @param pElement [in] The GUI element whose background colour is being changed.
         /// @param colour   [in] The new background colour.
-        void SetElementBackgroundColour(GUIElement* pElement, const GTLib::Colour &colour);
+        void SetElementBackgroundColor(GUIElement* pElement, const GTLib::Colour &colour);
 
         /// Retrieves the background colour of the given element.
         ///
         /// @param pElement [in] The GUI element whose background colour is being retrieved.
         ///
         /// @return The background colour of the given element.
-        GTLib::Colour GetElementBackgroundColour(GUIElement* pElement) const;
+        GTLib::Colour GetElementBackgroundColor(GUIElement* pElement) const;
 
 
         /// Sets the width of the left border, in DPI-aware points.

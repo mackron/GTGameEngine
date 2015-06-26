@@ -796,14 +796,14 @@ namespace GT
         ///
         /// @param hElement [in] The GUI element whose background colour is being changed.
         /// @param colour   [in] The new background colour.
-        void SetElementBackgroundColour(HGUIElement hElement, const GTLib::Colour &colour);
+        void SetElementBackgroundColor(HGUIElement hElement, const GTLib::Colour &colour);
 
         /// Retrieves the background colour of the given element.
         ///
         /// @param hElement [in] The GUI element whose background colour is being retrieved.
         ///
         /// @return The background colour of the given element.
-        GTLib::Colour GetElementBackgroundColour(HGUIElement hElement) const;
+        GTLib::Colour GetElementBackgroundColor(HGUIElement hElement) const;
 
 
 

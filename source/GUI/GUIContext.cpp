@@ -1383,21 +1383,21 @@ namespace GT
 
 
 
-    void GUIContext::SetElementBackgroundColour(HGUIElement hElement, const GTLib::Colour &color)
+    void GUIContext::SetElementBackgroundColor(HGUIElement hElement, const GTLib::Colour &color)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
-            GUIContextBase::SetElementBackgroundColour(pElement, color);
+            GUIContextBase::SetElementBackgroundColor(pElement, color);
         }
     }
 
-    GTLib::Colour GUIContext::GetElementBackgroundColour(HGUIElement hElement) const
+    GTLib::Colour GUIContext::GetElementBackgroundColor(HGUIElement hElement) const
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
-            return GUIContextBase::GetElementBackgroundColour(pElement);
+            return GUIContextBase::GetElementBackgroundColor(pElement);
         }
 
         return GTLib::Colour(0.0f, 0.0f, 0.0f);
