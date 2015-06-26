@@ -842,6 +842,7 @@ namespace GT
         ///
         /// @return The actual width of the element.
         float GetElementWidth(GUIElement* pElement) const;
+        float GetElementWidthInPoints(GUIElement* pElement) const;
 
         /// Retrieves the actual height of the element.
         ///
@@ -849,6 +850,7 @@ namespace GT
         ///
         /// @return The actual height of the element.
         float GetElementHeight(GUIElement* pElement) const;
+        float GetElementHeightInPoints(GUIElement* pElement) const;
 
 
         /// Retrieves the absolute rectangle of the given element.
@@ -993,6 +995,35 @@ namespace GT
         /// @param width    [in] The width of the border, in DPI-aware points.
         /// @param color    [in] The colour of the border.
         void SetElementBorder(GUIElement* pElement, uint32_t width, const GTLib::Colour &colour);
+
+
+        /// Sets the region of the left border that is not drawn.
+        ///
+        /// @param hElement   [in] The element whose border mask is being set.
+        /// @param maskOffset [in] The starting point of the mask, from the top.
+        /// @param maskLength [in] The length of the mask.
+        void SetElementBorderLeftMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength);
+
+        /// Sets the region of the top border that is not drawn.
+        ///
+        /// @param hElement   [in] The element whose border mask is being set.
+        /// @param maskOffset [in] The starting point of the mask, from the left.
+        /// @param maskLength [in] The length of the mask.
+        void SetElementBorderTopMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength);
+
+        /// Sets the region of the right border that is not drawn.
+        ///
+        /// @param hElement   [in] The element whose border mask is being set.
+        /// @param maskOffset [in] The starting point of the mask, from the top.
+        /// @param maskLength [in] The length of the mask.
+        void SetElementBorderRightMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength);
+
+        /// Sets the region of the bottom border that is not drawn.
+        ///
+        /// @param hElement   [in] The element whose border mask is being set.
+        /// @param maskOffset [in] The starting point of the mask, from the left.
+        /// @param maskLength [in] The length of the mask.
+        void SetElementBorderBottomMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength);
 
 
         /// Sets the left padding of the given element, in DPI-aware points.

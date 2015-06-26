@@ -168,6 +168,14 @@ namespace GT
         uint32_t borderTopColour;                           // [1,8] red | [9,16] green | [17,24] blue | [24,32] alpha
         uint32_t borderRightColour;                         // [1,8] red | [9,16] green | [17,24] blue | [24,32] alpha
         uint32_t borderBottomColour;                        // [1,8] red | [9,16] green | [17,24] blue | [24,32] alpha
+        uint32_t borderLeftMaskOffset;                      // [1,4] type | [5,32] value
+        uint32_t borderTopMaskOffset;                       // [1,4] type | [5,32] value
+        uint32_t borderRightMaskOffset;                     // [1,4] type | [5,32] value
+        uint32_t borderBottomMaskOffset;                    // [1,4] type | [5,32] value
+        uint32_t borderLeftMaskLength;                      // [1,4] type | [5,32] value
+        uint32_t borderTopMaskLength;                       // [1,4] type | [5,32] value
+        uint32_t borderRightMaskLength;                     // [1,4] type | [5,32] value
+        uint32_t borderBottomMaskLength;                    // [1,4] type | [5,32] value
 
         uint32_t paddingLeft;                               // [1,4] type | [5,32] value
         uint32_t paddingTop;                                // [1,4] type | [5,32] value
@@ -602,6 +610,89 @@ namespace GT
 
         return color;
     }
+
+
+    inline void GUIElementStyle_Set_borderleftmaskoffset(GUIElementStyle &style, uint32_t maskOffset, uint32_t type = NumberType_Absolute)
+    {
+        style.borderLeftMaskOffset = type | maskOffset;
+    }
+    inline uint32_t GUIElementStyle_Get_borderleftmaskoffset(const GUIElementStyle &style, uint32_t &typeOut)
+    {
+        typeOut = style.borderLeftMaskOffset & 0xF0000000;
+        return style.borderLeftMaskOffset & 0x0FFFFFFF;
+    }
+
+    inline void GUIElementStyle_Set_bordertopmaskoffset(GUIElementStyle &style, uint32_t maskOffset, uint32_t type = NumberType_Absolute)
+    {
+        style.borderTopMaskOffset = type | maskOffset;
+    }
+    inline uint32_t GUIElementStyle_Get_bordertopmaskoffset(const GUIElementStyle &style, uint32_t &typeOut)
+    {
+        typeOut = style.borderTopMaskOffset & 0xF0000000;
+        return style.borderTopMaskOffset & 0x0FFFFFFF;
+    }
+
+    inline void GUIElementStyle_Set_borderrightmaskoffset(GUIElementStyle &style, uint32_t maskOffset, uint32_t type = NumberType_Absolute)
+    {
+        style.borderRightMaskOffset = type | maskOffset;
+    }
+    inline uint32_t GUIElementStyle_Get_borderrightmaskoffset(const GUIElementStyle &style, uint32_t &typeOut)
+    {
+        typeOut = style.borderRightMaskOffset & 0xF0000000;
+        return style.borderRightMaskOffset & 0x0FFFFFFF;
+    }
+
+    inline void GUIElementStyle_Set_borderbottommaskoffset(GUIElementStyle &style, uint32_t maskOffset, uint32_t type = NumberType_Absolute)
+    {
+        style.borderBottomMaskOffset = type | maskOffset;
+    }
+    inline uint32_t GUIElementStyle_Get_borderbottommaskoffset(const GUIElementStyle &style, uint32_t &typeOut)
+    {
+        typeOut = style.borderBottomMaskOffset & 0xF0000000;
+        return style.borderBottomMaskOffset & 0x0FFFFFFF;
+    }
+
+
+    inline void GUIElementStyle_Set_borderleftmasklength(GUIElementStyle &style, uint32_t maskLength, uint32_t type = NumberType_Absolute)
+    {
+        style.borderLeftMaskLength = type | maskLength;
+    }
+    inline uint32_t GUIElementStyle_Get_borderleftmasklength(const GUIElementStyle &style, uint32_t &typeOut)
+    {
+        typeOut = style.borderLeftMaskLength & 0xF0000000;
+        return style.borderLeftMaskLength & 0x0FFFFFFF;
+    }
+
+    inline void GUIElementStyle_Set_bordertopmasklength(GUIElementStyle &style, uint32_t maskLength, uint32_t type = NumberType_Absolute)
+    {
+        style.borderTopMaskLength = type | maskLength;
+    }
+    inline uint32_t GUIElementStyle_Get_bordertopmasklength(const GUIElementStyle &style, uint32_t &typeOut)
+    {
+        typeOut = style.borderTopMaskLength & 0xF0000000;
+        return style.borderTopMaskLength & 0x0FFFFFFF;
+    }
+
+    inline void GUIElementStyle_Set_borderrightmasklength(GUIElementStyle &style, uint32_t maskLength, uint32_t type = NumberType_Absolute)
+    {
+        style.borderRightMaskLength = type | maskLength;
+    }
+    inline uint32_t GUIElementStyle_Get_borderrightmasklength(const GUIElementStyle &style, uint32_t &typeOut)
+    {
+        typeOut = style.borderRightMaskLength & 0xF0000000;
+        return style.borderRightMaskLength & 0x0FFFFFFF;
+    }
+
+    inline void GUIElementStyle_Set_borderbottommasklength(GUIElementStyle &style, uint32_t maskLength, uint32_t type = NumberType_Absolute)
+    {
+        style.borderBottomMaskLength = type | maskLength;
+    }
+    inline uint32_t GUIElementStyle_Get_borderbottommasklength(const GUIElementStyle &style, uint32_t &typeOut)
+    {
+        typeOut = style.borderBottomMaskLength & 0xF0000000;
+        return style.borderBottomMaskLength & 0x0FFFFFFF;
+    }
+
 
 
     // Padding.

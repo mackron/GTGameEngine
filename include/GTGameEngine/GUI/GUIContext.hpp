@@ -755,6 +755,7 @@ namespace GT
         ///
         /// @return The actual width of the element.
         float GetElementWidth(HGUIElement hElement) const;
+        float GetElementWidthInPoints(HGUIElement hElement) const;
 
         /// Retrieves the actual height of the element.
         ///
@@ -762,6 +763,7 @@ namespace GT
         ///
         /// @return The actual height of the element.
         float GetElementHeight(HGUIElement hElement) const;
+        float GetElementHeightInPoints(HGUIElement hElement) const;
 
 
         /// Retrieves the absolute rectangle of the given element.
@@ -901,6 +903,19 @@ namespace GT
         /// @param width    [in] The width of the border, in DPI-aware points.
         /// @param color    [in] The colour of the border.
         void SetElementBorder(HGUIElement hElement, uint32_t width, const GTLib::Colour &colour);
+
+
+        /// @copydoc GUIContext::SetElementBorderLeftMask()
+        void SetElementBorderLeftMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength);
+
+        /// @copydoc GUIContext::SetElementBorderTopMask()
+        void SetElementBorderTopMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength);
+
+        /// @copydoc GUIContext::SetElementBorderRightMask()
+        void SetElementBorderRightMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength);
+
+        /// @copydoc GUIContext::SetElementBorderBottomMask()
+        void SetElementBorderBottomMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength);
 
 
 

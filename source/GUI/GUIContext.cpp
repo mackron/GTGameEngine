@@ -1308,6 +1308,16 @@ namespace GT
 
         return 0;
     }
+    float GUIContext::GetElementWidthInPoints(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementWidthInPoints(pElement);
+        }
+
+        return 0;
+    }
 
     float GUIContext::GetElementHeight(HGUIElement hElement) const
     {
@@ -1315,6 +1325,16 @@ namespace GT
         if (pElement != nullptr)
         {
             return GUIContextBase::GetElementHeight(pElement);
+        }
+
+        return 0;
+    }
+    float GUIContext::GetElementHeightInPoints(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementHeightInPoints(pElement);
         }
 
         return 0;
@@ -1518,6 +1538,43 @@ namespace GT
         if (pElement != nullptr)
         {
             GUIContextBase::SetElementBorder(pElement, width, color);
+        }
+    }
+
+
+    void GUIContext::SetElementBorderLeftMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementBorderLeftMask(pElement, maskOffset, maskLength);
+        }
+    }
+
+    void GUIContext::SetElementBorderTopMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementBorderTopMask(pElement, maskOffset, maskLength);
+        }
+    }
+
+    void GUIContext::SetElementBorderRightMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementBorderRightMask(pElement, maskOffset, maskLength);
+        }
+    }
+
+    void GUIContext::SetElementBorderBottomMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementBorderBottomMask(pElement, maskOffset, maskLength);
         }
     }
 

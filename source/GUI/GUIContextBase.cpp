@@ -1203,12 +1203,24 @@ namespace GT
 
         return pElement->layout.width;
     }
+    float GUIContextBase::GetElementWidthInPoints(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return pElement->layout.width / this->GetXDPIScalingFactor(this->GetElementSurface(pElement));
+    }
 
     float GUIContextBase::GetElementHeight(GUIElement* pElement) const
     {
         assert(pElement != nullptr);
 
         return pElement->layout.height;
+    }
+    float GUIContextBase::GetElementHeightInPoints(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return pElement->layout.height / this->GetYDPIScalingFactor(this->GetElementSurface(pElement));
     }
 
 
@@ -1536,6 +1548,67 @@ namespace GT
         {
             this->Painting_InvalidateElementRect(pElement);
             this->Layout_InvalidateElementLayoutsOnInnerSizeChange(pElement);
+        }
+        this->EndBatch();
+    }
+
+
+    void GUIContextBase::SetElementBorderLeftMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_borderleftmaskoffset(pElement->style, maskOffset, NumberType_Points);
+        GUIElementStyle_Set_borderleftmasklength(pElement->style, maskLength, NumberType_Points);
+
+
+        this->BeginBatch();
+        {
+            this->Painting_InvalidateElementRect(pElement);
+        }
+        this->EndBatch();
+    }
+
+    void GUIContextBase::SetElementBorderTopMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_bordertopmaskoffset(pElement->style, maskOffset, NumberType_Points);
+        GUIElementStyle_Set_bordertopmasklength(pElement->style, maskLength, NumberType_Points);
+
+
+        this->BeginBatch();
+        {
+            this->Painting_InvalidateElementRect(pElement);
+        }
+        this->EndBatch();
+    }
+
+    void GUIContextBase::SetElementBorderRightMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_borderrightmaskoffset(pElement->style, maskOffset, NumberType_Points);
+        GUIElementStyle_Set_borderrightmasklength(pElement->style, maskLength, NumberType_Points);
+
+
+        this->BeginBatch();
+        {
+            this->Painting_InvalidateElementRect(pElement);
+        }
+        this->EndBatch();
+    }
+
+    void GUIContextBase::SetElementBorderBottomMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_borderbottommaskoffset(pElement->style, maskOffset, NumberType_Points);
+        GUIElementStyle_Set_borderbottommasklength(pElement->style, maskLength, NumberType_Points);
+
+
+        this->BeginBatch();
+        {
+            this->Painting_InvalidateElementRect(pElement);
         }
         this->EndBatch();
     }
@@ -3427,10 +3500,123 @@ namespace GT
         borderBottomRect.left  += borderLeftRect.GetWidth();
         borderLeftRect.top     += borderTopRect.GetHeight();
 
-        Renderer_DrawRectangle(borderLeftRect,   GUIElementStyle_Get_borderleftcolor(pElement->style));
-        Renderer_DrawRectangle(borderTopRect,    GUIElementStyle_Get_bordertopcolor(pElement->style));
-        Renderer_DrawRectangle(borderRightRect,  GUIElementStyle_Get_borderrightcolor(pElement->style));
-        Renderer_DrawRectangle(borderBottomRect, GUIElementStyle_Get_borderbottomcolor(pElement->style));
+
+        // Left
+        {
+            uint32_t borderMaskOffsetType;
+            uint32_t borderMaskOffset = GUIElementStyle_Get_borderleftmaskoffset(pElement->style, borderMaskOffsetType);
+            if (borderMaskOffsetType == NumberType_Points)
+            {
+                borderMaskOffset = static_cast<uint32_t>(borderMaskOffset * this->GetXDPIScalingFactor(this->GetElementSurface(pElement)));
+            }
+
+            uint32_t borderMaskLengthType;
+            uint32_t borderMaskLength = GUIElementStyle_Get_borderleftmasklength(pElement->style, borderMaskLengthType);
+            if (borderMaskLength == NumberType_Points)
+            {
+                borderMaskLength = static_cast<uint32_t>(borderMaskLength * this->GetXDPIScalingFactor(this->GetElementSurface(pElement)));
+            }
+
+            GTLib::Rect<int> borderLeftRect1(borderLeftRect);
+            borderLeftRect1.bottom = GTLib::Clamp(borderLeftRect1.top + static_cast<int>(borderMaskOffset), borderLeftRect1.top, borderLeftRect1.bottom);
+
+            GTLib::Rect<int> borderLeftRect2(borderLeftRect);
+            borderLeftRect2.top = GTLib::Clamp(borderLeftRect2.top + static_cast<int>(borderMaskOffset + borderMaskLength), borderLeftRect2.top, borderLeftRect2.bottom);
+            
+
+            Renderer_DrawRectangle(borderLeftRect1, GUIElementStyle_Get_borderleftcolor(pElement->style));
+            Renderer_DrawRectangle(borderLeftRect2, GUIElementStyle_Get_borderleftcolor(pElement->style));
+
+            //Renderer_DrawRectangle(borderLeftRect,   GUIElementStyle_Get_borderleftcolor(pElement->style));
+        }
+
+
+        // Top
+        {
+            uint32_t borderMaskOffsetType;
+            uint32_t borderMaskOffset = GUIElementStyle_Get_bordertopmaskoffset(pElement->style, borderMaskOffsetType);
+            if (borderMaskOffsetType == NumberType_Points)
+            {
+                borderMaskOffset = static_cast<uint32_t>(borderMaskOffset * this->GetXDPIScalingFactor(this->GetElementSurface(pElement)));
+            }
+
+            uint32_t borderMaskLengthType;
+            uint32_t borderMaskLength = GUIElementStyle_Get_bordertopmasklength(pElement->style, borderMaskLengthType);
+            if (borderMaskLength == NumberType_Points)
+            {
+                borderMaskLength = static_cast<uint32_t>(borderMaskLength * this->GetXDPIScalingFactor(this->GetElementSurface(pElement)));
+            }
+
+            GTLib::Rect<int> borderTopRect1(borderTopRect);
+            borderTopRect1.right = GTLib::Clamp(borderTopRect1.left + static_cast<int>(borderMaskOffset), borderTopRect1.left, borderTopRect1.right);
+
+            GTLib::Rect<int> borderTopRect2(borderTopRect);
+            borderTopRect2.left = GTLib::Clamp(borderTopRect2.left + static_cast<int>(borderMaskOffset + borderMaskLength), borderTopRect2.left, borderTopRect2.right);
+            
+
+            Renderer_DrawRectangle(borderTopRect1, GUIElementStyle_Get_bordertopcolor(pElement->style));
+            Renderer_DrawRectangle(borderTopRect2, GUIElementStyle_Get_bordertopcolor(pElement->style));
+        }
+        
+
+        // Right
+        {
+            uint32_t borderMaskOffsetType;
+            uint32_t borderMaskOffset = GUIElementStyle_Get_borderrightmaskoffset(pElement->style, borderMaskOffsetType);
+            if (borderMaskOffsetType == NumberType_Points)
+            {
+                borderMaskOffset = static_cast<uint32_t>(borderMaskOffset * this->GetXDPIScalingFactor(this->GetElementSurface(pElement)));
+            }
+
+            uint32_t borderMaskLengthType;
+            uint32_t borderMaskLength = GUIElementStyle_Get_borderrightmasklength(pElement->style, borderMaskLengthType);
+            if (borderMaskLength == NumberType_Points)
+            {
+                borderMaskLength = static_cast<uint32_t>(borderMaskLength * this->GetXDPIScalingFactor(this->GetElementSurface(pElement)));
+            }
+
+            GTLib::Rect<int> borderRightRect1(borderRightRect);
+            borderRightRect1.bottom = GTLib::Clamp(borderRightRect1.top + static_cast<int>(borderMaskOffset), borderRightRect1.top, borderRightRect1.bottom);
+
+            GTLib::Rect<int> borderRightRect2(borderRightRect);
+            borderRightRect2.top = GTLib::Clamp(borderRightRect2.top + static_cast<int>(borderMaskOffset + borderMaskLength), borderRightRect2.top, borderRightRect2.bottom);
+            
+
+            Renderer_DrawRectangle(borderRightRect1, GUIElementStyle_Get_borderrightcolor(pElement->style));
+            Renderer_DrawRectangle(borderRightRect2, GUIElementStyle_Get_borderrightcolor(pElement->style));
+
+            //Renderer_DrawRectangle(borderRightRect,  GUIElementStyle_Get_borderrightcolor(pElement->style));
+        }
+
+
+        // Bottom
+        {
+            uint32_t borderMaskOffsetType;
+            uint32_t borderMaskOffset = GUIElementStyle_Get_borderbottommaskoffset(pElement->style, borderMaskOffsetType);
+            if (borderMaskOffsetType == NumberType_Points)
+            {
+                borderMaskOffset = static_cast<uint32_t>(borderMaskOffset * this->GetXDPIScalingFactor(this->GetElementSurface(pElement)));
+            }
+
+            uint32_t borderMaskLengthType;
+            uint32_t borderMaskLength = GUIElementStyle_Get_borderbottommasklength(pElement->style, borderMaskLengthType);
+            if (borderMaskLength == NumberType_Points)
+            {
+                borderMaskLength = static_cast<uint32_t>(borderMaskLength * this->GetXDPIScalingFactor(this->GetElementSurface(pElement)));
+            }
+
+            GTLib::Rect<int> borderBottomRect1(borderBottomRect);
+            borderBottomRect1.right = GTLib::Clamp(borderBottomRect1.left + static_cast<int>(borderMaskOffset), borderBottomRect1.left, borderBottomRect1.right);
+
+            GTLib::Rect<int> borderBottomRect2(borderBottomRect);
+            borderBottomRect2.left = GTLib::Clamp(borderBottomRect2.left + static_cast<int>(borderMaskOffset + borderMaskLength), borderBottomRect2.left, borderBottomRect2.right);
+            
+
+            Renderer_DrawRectangle(borderBottomRect1, GUIElementStyle_Get_borderbottomcolor(pElement->style));
+            Renderer_DrawRectangle(borderBottomRect2, GUIElementStyle_Get_borderbottomcolor(pElement->style));
+
+            //Renderer_DrawRectangle(borderBottomRect, GUIElementStyle_Get_borderbottomcolor(pElement->style));
+        }
 
 
         // Text.
