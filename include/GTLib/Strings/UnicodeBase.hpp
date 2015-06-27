@@ -546,7 +546,7 @@ namespace GTLib
                 case 4: *--dest = static_cast<char>(((c | 0x80) & 0xBF)); c >>= 6;
                 case 3: *--dest = static_cast<char>(((c | 0x80) & 0xBF)); c >>= 6;
                 case 2: *--dest = static_cast<char>(((c | 0x80) & 0xBF)); c >>= 6;
-                case 1: *--dest = static_cast<char>((c | g_firstByteMark[charSize]));
+                case 1: *--dest = static_cast<char>( (c | g_firstByteMark[charSize]));
                 default: break;
                 }
 
@@ -609,6 +609,11 @@ namespace GTLib
 
             *dest = ValidateUTF32Char(c);
             return 1;
+        }
+
+        inline size_t WriteChar(wchar_t* dest, char32_t c)
+        {
+            return WriteChar(reinterpret_cast<char16_t*>(dest), c);
         }
 
 

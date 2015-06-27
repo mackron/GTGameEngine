@@ -444,7 +444,6 @@ namespace GTLib
     typedef BasicStringUTF<char16_t> String16;
     typedef BasicStringUTF<char32_t> String32;
     
-    
 
 
     /// Simple structure representing a string segment.
@@ -472,7 +471,7 @@ namespace GTLib
     typedef StringSegmentUTF<char>     StringSegment;
     typedef StringSegmentUTF<char>     StringSegment8;
     typedef StringSegmentUTF<char16_t> StringSegment16;
-    typedef StringSegmentUTF<char16_t> StringSegment32;
+    typedef StringSegmentUTF<char32_t> StringSegment32;
 }
 
 #endif

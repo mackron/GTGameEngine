@@ -12,12 +12,78 @@ namespace GTLib
             // We can't dereference if there are no bytes.
             if (str && strSizeInTs != 0)
             {
+                if (*str != '\0')
+                {
+                    char32_t ch = 0;
+
+                    if (static_cast<unsigned char>(*str) < 0xC0)
+                    {
+                        ch += static_cast<unsigned char>(*str++);
+
+                        strSizeInTs -= 1;
+                    }
+                    else if (static_cast<unsigned char>(*str) < 0xE0)
+                    {
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++);
+                        ch -= 0x00003080UL;
+
+                        strSizeInTs -= 2;
+                    }
+                    else if (static_cast<unsigned char>(*str) < 0xF0)
+                    {
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++);
+                        ch -= 0x000E2080UL;
+
+                        strSizeInTs -= 3;
+                    }
+                    else if (static_cast<unsigned char>(*str) < 0xF8)
+                    {
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++);
+                        ch -= 0x03C82080UL;
+
+                        strSizeInTs -= 4;
+                    }
+                    else if (static_cast<unsigned char>(*str) < 0xF7)
+                    {
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++);
+                        ch -= 0xFA082080UL;
+
+                        strSizeInTs -= 5;
+                    }
+                    else
+                    {
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++); ch <<= 6;
+                        ch += static_cast<unsigned char>(*str++);
+                        ch -= 0x82082080UL;
+
+                        strSizeInTs -= 6;
+                    }
+
+                    return ch;
+                }
+
+#if 0
                 // We'll do an optimized case when the character is only a single byte in length.
                 const unsigned char firstByte = (unsigned char)*str;
                 if (firstByte != '\0')
                 {
+
                     // We're not null terminated, so we can move by at least 1 byte.
-                    ++str;
+                    //++str;
 
                     if (firstByte < 0xC0)   // 0xC0 = 192
                     {
@@ -28,7 +94,7 @@ namespace GTLib
                     else
                     {
                         // More than 1 byte - slightly slower here. Remember that 'str' is sitting on it's second byte right now...
-                        char32_t ch = firstByte;
+                        char32_t ch = 0;    //firstByte;
 
                         if (firstByte < 0xE0 && strSizeInTs >= 2)
                         {
@@ -40,7 +106,7 @@ namespace GTLib
                         }
                         else if (firstByte < 0xF0 && strSizeInTs >= 3)
                         {
-                            ch <<= 6;
+                            ch += (unsigned char)*str++; ch <<= 6;
                             ch += (unsigned char)*str++; ch <<= 6;
                             ch += (unsigned char)*str++;
                             ch -= 0x000E2080UL;
@@ -71,6 +137,7 @@ namespace GTLib
                     // We've hit a null terminator. We just return without modifying the string.
                     return firstByte;
                 }
+#endif
             }
 
             return '\0';

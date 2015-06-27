@@ -108,6 +108,28 @@ namespace GTLib
 
             return count;
         }
+
+        /// Retrieve the number T's making up the string based when only the number of characters is known.
+        template <typename T>
+        size_t SizeInTsFromCharacterCount(const T* str, size_t characterCount)
+        {
+            size_t sizeInTs = 0;
+
+            for (size_t i = 0; i < characterCount; ++i)
+            {
+                char32_t c = NextChar(str);
+                if (c != '\0')
+                {
+                    sizeInTs += GetCharSize<T>(c);
+                }
+                else
+                {
+                    break;
+                }
+            }
+
+            return sizeInTs;
+        }
     }
 }
 

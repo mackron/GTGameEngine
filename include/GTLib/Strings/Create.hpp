@@ -117,6 +117,7 @@ namespace GTLib
             // Strings::Copy() will null-terminate the destination, so it's now all good to return.
             return newString;
         }
+        
 
 
 
