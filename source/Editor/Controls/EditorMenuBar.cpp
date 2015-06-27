@@ -51,9 +51,9 @@ namespace GT
         m_pMenuBar->DeactivateActiveButton();
     }
 
-    void EditorMenuBarEditorEventHandler::OnMouseButtonPressed(HWindow hWindow, int, int, int)
+    void EditorMenuBarEditorEventHandler::OnMouseButtonPressed(HWindow hWindow, int button, int xPos, int yPos)
     {
-        m_pMenuBar->_OnMouseButtonPressedOnWindow(hWindow);
+        m_pMenuBar->_OnMouseButtonPressedOnWindow(hWindow, button, xPos, yPos);
     }
 
 
@@ -128,6 +128,8 @@ namespace GT
             // Now actiate the new button.
             if (pButton != nullptr)
             {
+                this->GetGUI().SetElementTextColor(pButton->GetRootGUIElement(), GTLib::Colour(0.75f, 0.75f, 0.75f, 1.0f));
+
                 pButton->Activate();
                 m_pActiveButton = pButton;
 
@@ -210,7 +212,7 @@ namespace GT
         }
     }
 
-    void EditorMenuBar::_OnMouseButtonPressedOnWindow(HWindow)
+    void EditorMenuBar::_OnMouseButtonPressedOnWindow(HWindow, int, int, int)
     {
     }
 

@@ -464,6 +464,18 @@
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBarButton.cpp">
       <Filter>Source Files\Editor\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorTabBar.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorTabGroup.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorTabPage.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorTab.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -971,6 +983,18 @@
       <Filter>Header Files\Editor\Controls</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBarButton.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTabBar.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTabGroup.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTabPage.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTab.hpp">
       <Filter>Header Files\Editor\Controls</Filter>
     </ClInclude>
   </ItemGroup>

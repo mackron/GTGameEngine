@@ -1958,6 +1958,56 @@ namespace GT
     }
 
 
+    void GUIContext::SetElementInnerOffsetX(HGUIElement hElement, float innerOffsetX)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementInnerOffsetX(pElement, innerOffsetX);
+        }
+    }
+
+    void GUIContext::SetElementInnerOffsetY(HGUIElement hElement, float innerOffsetY)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementInnerOffsetY(pElement, innerOffsetY);
+        }
+    }
+
+    void GUIContext::SetElementInnerOffset(HGUIElement hElement, float innerOffsetX, float innerOffsetY)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementInnerOffset(pElement, innerOffsetX, innerOffsetY);
+        }
+    }
+
+    float GUIContext::GetElementInnerOffsetX(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementInnerOffsetX(pElement);
+        }
+
+        return 0.0f;
+    }
+
+    float GUIContext::GetElementInnerOffsetY(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementInnerOffsetY(pElement);
+        }
+
+        return 0.0f;
+    }
+
+
     void GUIContext::SetElementText(HGUIElement hElement, const char* text)
     {
         auto pElement = this->GetElementPtr(hElement);

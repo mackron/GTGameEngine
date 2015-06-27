@@ -24,7 +24,7 @@ namespace GT
         // Inbound Events
 
         /// @copydoc EditorMenuBar::_OnMouseButtonPressedOnWindow()
-        virtual void _OnMouseButtonPressedOnWindow(HWindow hWindow);
+        virtual void _OnMouseButtonPressedOnWindow(HWindow hWindow, int button, int xPos, int yPos);
 
 
         //////////////////////////////////

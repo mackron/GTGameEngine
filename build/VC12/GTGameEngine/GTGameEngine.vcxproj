@@ -76,6 +76,10 @@
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBar.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBarButton.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorPopupControl.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorTab.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorTabBar.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorTabGroup.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorTabPage.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Editor.cpp" />
     <ClCompile Include="..\..\..\source\Editor\EditorEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\Editor\EditorGUIEventHandler.cpp" />
@@ -156,6 +160,10 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBar.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBarButton.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorPopupControl.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTab.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTabBar.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTabGroup.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTabPage.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Editor.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIEventHandler.hpp" />

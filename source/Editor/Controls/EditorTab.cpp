@@ -1,0 +1,67 @@
+// Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
+
+#include <GTGameEngine/Editor/Controls/EditorTab.hpp>
+#include <GTGameEngine/Editor/Editor.hpp>
+
+namespace GT
+{
+    EditorTab::EditorTab(Editor &editor)
+        : EditorControl(editor),
+          m_hTextElement(NULL),
+          m_hCloseElement(NULL)
+    {
+        HGUIElement hRootElement = this->GetRootGUIElement();
+        if (hRootElement != NULL)
+        {
+            GUIContext &gui = editor.GetGUI();
+
+            //gui.EnableElementChildWidthFlexing(hRootElement);
+            gui.SetElementChildAxis(hRootElement, ChildAxis_Horizontal);
+            gui.SetElementSizeToChildren(hRootElement);
+            gui.SetElementBorder(hRootElement, 1, GTLib::Colour(0.4f, 0.4f, 0.4f));
+            gui.SetElementBorderBottomWidth(hRootElement, 0);
+            
+            //gui.SetElementSize(hRootElement, 200U, 28U);
+            //gui.SetElementFont(hRootElement, "Segoe UI", FontWeight_Medium, FontSlant_None, 13);
+
+
+            // Text element.
+            m_hTextElement = gui.CreateElement();
+            gui.SetElementParent(m_hTextElement, hRootElement);
+            gui.SetElementSizeToChildren(m_hTextElement);
+            gui.SetElementVerticalAlign(m_hTextElement, VerticalAlign_Center);
+            gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.8f, 0.8f, 0.8f));
+            gui.SetElementPadding(m_hTextElement, 4);
+            gui.SetElementPaddingTop(m_hTextElement, 2);
+            gui.SetElementPaddingBottom(m_hTextElement, 0);
+            //gui.SetElementBorder(m_hTextElement, 1, GTLib::Colour(0, 0, 0));
+            
+            
+
+            // Close button element.
+            m_hCloseElement = gui.CreateElement();
+            gui.SetElementParent(m_hCloseElement, hRootElement);
+            gui.SetElementFont(m_hCloseElement, "Arial", FontWeight_Bold, FontSlant_None, 15);
+            gui.SetElementText(m_hCloseElement, "\xC3\x97");    // <-- Multiplication sign - U+00D7
+            gui.SetElementVerticalAlign(m_hCloseElement, VerticalAlign_Center);
+            gui.SetElementHorizontalAlign(m_hCloseElement, HorizontalAlign_Center);
+            gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.35f, 0.35f, 0.35f));
+            gui.SetElementSizeToChildren(m_hCloseElement);
+            gui.SetElementMarginLeft(m_hCloseElement, 4);
+            gui.SetElementMarginRight(m_hCloseElement, 4);
+            //gui.SetElementInnerOffsetY(m_hCloseElement, -2);
+            //gui.SetElementBorder(m_hCloseElement, 1, GTLib::Colour(1, 1, 1));
+        }
+    }
+
+
+    void EditorTab::SetText(const char* text)
+    {
+        this->GetGUI().SetElementText(m_hTextElement, text);
+    }
+
+    const char* EditorTab::GetText() const
+    {
+        return this->GetGUI().GetElementText(m_hTextElement);
+    }
+}

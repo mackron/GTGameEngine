@@ -60,22 +60,31 @@ namespace GT
     //////////////////////////////////
     // Inbound Events
 
-    void EditorMainMenuBar::_OnMouseButtonPressedOnWindow(HWindow hWindow)
+    void EditorMainMenuBar::_OnMouseButtonPressedOnWindow(HWindow hWindow, int button, int xPos, int yPos)
     {
+        (void)button;
+
         EditorMenuBarButton* pActiveButton = this->GetActiveButton();
         if (pActiveButton != nullptr)
         {
-            EditorPopupControl* pActiveMenu = this->GetActiveMenu();
-            if (pActiveMenu != nullptr)
+            // Don't do anything if we clicked on the active window. We do this because the GUI event handling will handle the button presses.
+            GTLib::Rect<int> buttonRect;
+            this->GetGUI().GetElementAbsoluteRect(pActiveButton->GetRootGUIElement(), buttonRect);
+            
+            if (!buttonRect.Contains(xPos, yPos))
             {
-                if (pActiveMenu->GetWindow() != hWindow && !this->GetEditor().IsWindowDescendant(pActiveMenu->GetWindow(), hWindow))
+                EditorPopupControl* pActiveMenu = this->GetActiveMenu();
+                if (pActiveMenu != nullptr)
+                {
+                    if (pActiveMenu->GetWindow() != hWindow && !this->GetEditor().IsWindowDescendant(pActiveMenu->GetWindow(), hWindow))
+                    {
+                        this->DeactivateActiveButton();
+                    }
+                }
+                else
                 {
                     this->DeactivateActiveButton();
                 }
-            }
-            else
-            {
-                this->DeactivateActiveButton();
             }
         }
     }

@@ -1172,6 +1172,40 @@ namespace GT
         bool IsElementChildHeightFlexingEnabled(HGUIElement hElement);
 
 
+        /// Sets the given element's inner offset on the x axis.
+        ///
+        /// @param pElement     [in] The element whose inner offset is being set.
+        /// @param innerOffsetX [in] The inner offset on the x offset.
+        void SetElementInnerOffsetX(HGUIElement hElement, float innerOffsetX);
+
+        /// Sets the given element's inner offset on the y axis.
+        ///
+        /// @param pElement     [in] The element whose inner offset is being set.
+        /// @param innerOffsetX [in] The inner offset on the x offset.
+        void SetElementInnerOffsetY(HGUIElement hElement, float innerOffsetY);
+
+        /// Sets the given element's inner offset on both the x and y axis.
+        ///
+        /// @param pElement     [in] The element whose inner offset is being set.
+        /// @param innerOffsetX [in] The inner offset on the x offset.
+        /// @param innerOffsetY [in] The inner offset on the y offset.
+        void SetElementInnerOffset(HGUIElement hElement, float innerOffsetX, float innerOffsetY);
+
+        /// Retrieves the given element's inner offset on the x axis.
+        ///
+        /// @param pElement [in] The element whose inner offset is being retrieved.
+        ///
+        /// @return The inner offset on the x axis.
+        float GetElementInnerOffsetX(HGUIElement hElement) const;
+
+        /// Retrieves the given element's inner offset on the y axis.
+        ///
+        /// @param pElement [in] The element whose inner offset is being retrieved.
+        ///
+        /// @return The inner offset on the y axis.
+        float GetElementInnerOffsetY(HGUIElement hElement) const;
+
+
         /// Sets the text of the given element.
         ///
         /// @param hElement [in] A handle to the element whose text is being set.

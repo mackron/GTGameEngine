@@ -151,12 +151,13 @@ namespace GT
     void GUISimpleTextLayout::IterateVisibleTextRuns(std::function<void (const GUITextRunDesc &textRunDesc)> func) const
     {
         int lineHeight = this->GetFontManager().GetLineHeight(m_hFont);
+        int topOffset  = 0; //this->GetFontManager().GetAscent(m_hFont); // - lineHeight;
 
         for (size_t iLine = 0; iLine < m_lines.GetCount(); ++iLine)
         {
             auto &line = m_lines[iLine];
 
-            int lineTop    = line.height * static_cast<int>(iLine) + m_offsetY;
+            int lineTop    = line.height * static_cast<int>(iLine) + m_offsetY + topOffset;
             int lineBottom = lineTop + lineHeight;
             
             if (lineBottom > 0 && lineTop < static_cast<int>(m_boundsHeight))
@@ -177,7 +178,7 @@ namespace GT
                         if (runRight > 0 && runLeft < static_cast<int>(m_boundsWidth))
                         {
                             // The run is visible.
-                            int runTop = run.yPos + line.alignmentOffsetY;
+                            int runTop = run.yPos + line.alignmentOffsetY + topOffset;
 
                             GUITextRunDesc runDesc;
                             runDesc.text              = GTLib::String(run.textStart, run.textEnd - run.textStart);

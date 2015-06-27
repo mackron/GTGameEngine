@@ -128,7 +128,7 @@ namespace GT
         virtual void _OnButtonPressed(HGUIElement hButtonElement);
 
         /// Called when a mouse button is pressed on the given window.
-        virtual void _OnMouseButtonPressedOnWindow(HWindow hWindow);
+        virtual void _OnMouseButtonPressedOnWindow(HWindow hWindow, int button, int xPos, int yPos);
 
 
     protected:

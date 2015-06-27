@@ -3,7 +3,7 @@
 #ifndef __GT_EditorBodyControl_hpp_
 #define __GT_EditorBodyControl_hpp_
 
-#include "EditorControl.hpp"
+#include "EditorTabGroup.hpp"
 
 namespace GT
 {
@@ -19,7 +19,13 @@ namespace GT
         ~EditorBody();
 
 
+
+
+
     private:
+
+        /// The list of tab groups.
+        GTLib::Vector<EditorTabGroup*> m_tabGroups;
     };
 }
 

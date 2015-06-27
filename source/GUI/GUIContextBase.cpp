@@ -477,10 +477,7 @@ namespace GT
 
 
                 // The element may not have a font set in which case it will inherit it from the parent. And since the parent has just changed, this will need to be updated.
-                if (pChildElement->hFont == 0 && this->DoesElementHaveText(pChildElement))
-                {
-                    this->SetElementText(pChildElement, this->GetElementText(pChildElement));
-                }
+                this->RefreshTextLayoutsOfElementsWithInheritedFont(pChildElement);
             }
 
 
@@ -541,10 +538,7 @@ namespace GT
 
 
                 // The element may not have a font set in which case it will inherit it from the parent. And since the parent has just changed, this will need to be updated.
-                if (pChildElement->hFont == 0 && this->DoesElementHaveText(pChildElement))
-                {
-                    this->SetElementText(pChildElement, this->GetElementText(pChildElement));
-                }
+                this->RefreshTextLayoutsOfElementsWithInheritedFont(pChildElement);
             }
 
 
@@ -613,10 +607,7 @@ namespace GT
 
 
             // The element may not have a font set in which case it will inherit it from the parent. And since the parent may have changed, this will need to be updated.
-            if (pElementToAppend->hFont == 0 && this->DoesElementHaveText(pElementToAppend))
-            {
-                this->SetElementText(pElementToAppend, this->GetElementText(pElementToAppend));
-            }
+            this->RefreshTextLayoutsOfElementsWithInheritedFont(pElementToAppend);
 
 
             // If the elements are on different surfaces the appendee needs to be moved.
@@ -684,10 +675,7 @@ namespace GT
 
 
             // The element may not have a font set in which case it will inherit it from the parent. And since the parent may have changed, this will need to be updated.
-            if (pElementToPrepend->hFont == 0 && this->DoesElementHaveText(pElementToPrepend))
-            {
-                this->SetElementText(pElementToPrepend, this->GetElementText(pElementToPrepend));
-            }
+            this->RefreshTextLayoutsOfElementsWithInheritedFont(pElementToPrepend);
 
 
             // If the elements are on different surfaces the appendee needs to be moved.
@@ -3168,6 +3156,26 @@ namespace GT
                 // If the element does not have any text, delete the layout object to save memory.
                 delete pElement->pTextLayout;
             }
+        }
+    }
+
+    void GUIContextBase::RefreshTextLayoutsOfElementsWithInheritedFont(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        if (pElement->hFont == 0)
+        {
+            if (this->DoesElementHaveText(pElement))
+            {
+                this->UpdateElementTextLayout(pElement, this->GetElementText(pElement));
+            }
+
+            
+            // Children.
+            this->IterateElementChildren(pElement, [&](GUIElement* pChild) -> bool {
+                this->RefreshTextLayoutsOfElementsWithInheritedFont(pChild);
+                return true;
+            });
         }
     }
 

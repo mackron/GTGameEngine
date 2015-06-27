@@ -129,8 +129,35 @@ namespace GT
         {
             HGDIOBJ hPrevFontWin32 = SelectObject(m_hDC, hFontWin32);
 
+            // The string needs to be converted to a wchar_t string before we'll be able to accurately measure.
+            BOOL result = FALSE;
             SIZE sizeWin32;
-            if (GetTextExtentPoint32A(m_hDC, text, static_cast<int>(textLengthInChars), &sizeWin32) != 0)
+
+            int bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthInChars), nullptr, 0);
+            if (bufferSize > 0)
+            {
+                if (bufferSize > 64)
+                {
+                    wchar_t* buffer = reinterpret_cast<wchar_t*>(malloc(sizeof(wchar_t) * bufferSize));
+                    if (buffer != nullptr)
+                    {
+                        result = GetTextExtentPoint32W(m_hDC, buffer, bufferSize, &sizeWin32);
+                        free(buffer);
+                    }
+                }
+                else
+                {
+                    wchar_t buffer[64];
+                    bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthInChars), buffer, 64);
+                    if (bufferSize > 0)
+                    {
+                        result = GetTextExtentPoint32W(m_hDC, buffer, bufferSize, &sizeWin32);
+                    }
+                }
+            }
+
+
+            if (result != 0)
             {
                 widthOut  = sizeWin32.cx;
                 heightOut = sizeWin32.cy;

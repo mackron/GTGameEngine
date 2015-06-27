@@ -15,6 +15,13 @@ namespace GT
         {
             gui.SetElementHeightRatio(hRootElement, 1.0f);
             gui.SetElementWidthRatio(hRootElement, 1.0f);
+
+
+            EditorTabGroup* pDefaultTabGroup = new EditorTabGroup(editor);
+            m_tabGroups.PushBack(pDefaultTabGroup);
+
+            gui.SetElementParent(pDefaultTabGroup->GetRootGUIElement(), hRootElement);
+            gui.SetElementMarginTop(pDefaultTabGroup->GetRootGUIElement(), 8);
         }
     }
 

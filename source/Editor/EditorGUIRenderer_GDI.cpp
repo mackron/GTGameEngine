@@ -41,6 +41,7 @@ namespace GT
                 // Don't draw the default text background.
                 SetBkMode(m_ps.hdc, TRANSPARENT);
                 //SetBkColor(m_ps.hdc, RGB(255, 0, 0));
+                //SetTextAlign(m_ps.hdc, TA_BASELINE);
 
 
                 // Set the current window.
@@ -139,7 +140,45 @@ namespace GT
                 HGDIOBJ  hPrevFont      = SelectObject(m_ps.hdc, hFontWin32);
                 COLORREF hPrevTextColor = SetTextColor(m_ps.hdc, RGB(textRunDesc.color.r*255, textRunDesc.color.g*255, textRunDesc.color.b*255));
 
-                TextOutA(m_ps.hdc, textRunDesc.xPos, textRunDesc.yPos, textRunDesc.text.c_str(), static_cast<int>(textRunDesc.text.GetCharacterCount()));
+                //GTLib::String16 text(textRunDesc.text.c_str(), textRunDesc.text.GetCharacterCount());
+                
+
+                //GTLib::BasicStringUTF<wchar_t> text(L"\uE0A1");
+                //GTLib::String text8(text.c_str(), text.GetCharacterCount());
+                //GTLib::BasicStringUTF<wchar_t> textW2(text8.c_str(), text8.GetCharacterCount());
+                //TextOutW(m_ps.hdc, textRunDesc.xPos, textRunDesc.yPos, textW2.c_str(), textW2.GetCharacterCount());
+
+                //GTLib::BasicStringUTF<wchar_t> text(textRunDesc.text.c_str(), textRunDesc.text.GetCharacterCount());
+                //TextOutW(m_ps.hdc, textRunDesc.xPos, textRunDesc.yPos, text.c_str(), static_cast<int>(text.GetCharacterCount()));
+
+                // The text needs to be converted.
+                //const char* text8 = "\xEE\x82\xA1";
+                //TextOutW(m_ps.hdc, textRunDesc.xPos, textRunDesc.yPos, GTLib::BasicStringUTF<wchar_t>(text8).c_str(), 1);
+
+
+                int bufferSize = MultiByteToWideChar(CP_UTF8, 0, textRunDesc.text.c_str(), -1, nullptr, 0);
+                if (bufferSize > 0)
+                {
+                    if (bufferSize > 64)
+                    {
+                        wchar_t* buffer = reinterpret_cast<wchar_t*>(malloc(sizeof(wchar_t) * bufferSize));
+                        if (buffer != nullptr)
+                        {
+                            TextOutW(m_ps.hdc, textRunDesc.xPos, textRunDesc.yPos, buffer, bufferSize - 1);
+                            free(buffer);
+                        }
+                    }
+                    else
+                    {
+                        wchar_t buffer[64];
+                        bufferSize = MultiByteToWideChar(CP_UTF8, 0, textRunDesc.text.c_str(), -1, buffer, 64);
+                        if (bufferSize > 0)
+                        {
+                            TextOutW(m_ps.hdc, textRunDesc.xPos, textRunDesc.yPos, buffer, bufferSize - 1);
+                        }
+                    }
+                }
+                
 
                 SelectObject(m_ps.hdc, hPrevFont);
                 SetTextColor(m_ps.hdc, hPrevTextColor);
