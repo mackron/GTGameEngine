@@ -5399,8 +5399,7 @@ namespace GT
 
                                 if (GUIElementStyle_Get_positioning(pSibling->style) == Positioning_Auto && GUIElementStyle_Get_visible(pSibling->style))
                                 {
-                                    totalFixed += GUIContextBase::Layout_GetElementHorizontalMargin( pSibling);
-                                    totalFixed += GUIContextBase::Layout_GetElementHorizontalPadding(pSibling);
+                                    totalFixed += GUIContextBase::Layout_GetElementHorizontalMargin(pSibling);
 
 
                                     uint32_t siblingWidthType;
@@ -5522,8 +5521,7 @@ namespace GT
 
                                 if (GUIElementStyle_Get_positioning(pSibling->style) == Positioning_Auto && GUIElementStyle_Get_visible(pSibling->style))
                                 {
-                                    totalFixed += GUIContextBase::Layout_GetElementVerticalMargin( pSibling);
-                                    totalFixed += GUIContextBase::Layout_GetElementVerticalPadding(pSibling);
+                                    totalFixed += GUIContextBase::Layout_GetElementVerticalMargin(pSibling);
 
 
                                     uint32_t siblingHeightType;
