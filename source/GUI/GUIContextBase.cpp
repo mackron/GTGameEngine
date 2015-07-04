@@ -855,9 +855,23 @@ namespace GT
             {
                 return false;
             }
+
+            return this->IterateElementAncestors(pParent, handler);
         }
 
         return true;
+    }
+
+    bool GUIContextBase::IterateElementAncestorsAndSelf(GUIElement* pElement, std::function<bool (GUIElement*)> handler) const
+    {
+        assert(pElement != nullptr);
+
+        if (handler(pElement))
+        {
+            return this->IterateElementAncestors(pElement, handler);
+        }
+
+        return false;
     }
 
 
@@ -3187,20 +3201,44 @@ namespace GT
             auto pOldElementUnderMouse = m_pElementUnderMouse;
             m_pElementUnderMouse = pNewElementUnderMouse;
 
+
+            // When posting mouse enter/leave events, it's important to remember that the mouse is considered to be hovered over the ancestors
+            // of the top level element the mouse is contained in. Thus, the relevant ancestors also need to be sent the events.
+
+
+            // OnMouseLeave
             if (pOldElementUnderMouse != nullptr)
             {
-                if (m_pElementCapturingMouseEvents == nullptr || m_pElementCapturingMouseEvents == pOldElementUnderMouse)
-                {
-                    this->PostEvent_OnMouseLeave(pOldElementUnderMouse);
-                }
+                this->IterateElementAncestorsAndSelf(pOldElementUnderMouse, [&](GUIElement* pOldAncestor) -> bool {
+                    bool isOldElementUnderMouse = pNewElementUnderMouse == pOldAncestor || this->IsElementAncestor(pNewElementUnderMouse, pOldAncestor);
+                    if (!isOldElementUnderMouse)
+                    {
+                        if (m_pElementCapturingMouseEvents == nullptr || m_pElementCapturingMouseEvents == pOldAncestor)
+                        {
+                            this->PostEvent_OnMouseLeave(pOldAncestor);
+                        }
+                    }
+
+                    return true;
+                });
             }
 
+
+            // OnMouseEnter
             if (pNewElementUnderMouse != nullptr)
             {
-                if (m_pElementCapturingMouseEvents == nullptr || m_pElementCapturingMouseEvents == pNewElementUnderMouse)
-                {
-                    this->PostEvent_OnMouseEnter(pNewElementUnderMouse);
-                }
+                this->IterateElementAncestorsAndSelf(pNewElementUnderMouse, [&](GUIElement* pNewAncestor) -> bool {
+                    bool wasNewElementUnderMouse = pOldElementUnderMouse == pNewAncestor || (pOldElementUnderMouse != nullptr && this->IsElementAncestor(pOldElementUnderMouse, pNewAncestor));
+                    if (!wasNewElementUnderMouse)
+                    {
+                        if (m_pElementCapturingMouseEvents == nullptr || m_pElementCapturingMouseEvents == pNewAncestor)
+                        {
+                            this->PostEvent_OnMouseEnter(pNewAncestor);
+                        }
+                    }
+
+                    return true;
+                });
             }
         }
     }
