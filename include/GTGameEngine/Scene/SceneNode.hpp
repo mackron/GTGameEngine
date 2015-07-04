@@ -111,13 +111,13 @@ namespace GT
 
 
         /// Sets the position of the scene node.
-        void SetPosition(vec4 position);
+        void SetPosition(const vec4 &position);
 
         /// Sets the rotation of the scene node.
-        void SetRotation(quat rotation);
+        void SetRotation(const quat &rotation);
 
         /// Sets the scale of the scene node.
-        void SetScale(vec4 scale);
+        void SetScale(const vec4 &scale);
 
 
 

@@ -190,19 +190,19 @@ namespace GT
     }
 
 
-    void SceneNode::SetPosition(vec4 position)
+    void SceneNode::SetPosition(const vec4 &position)
     {
         m_position = position;
         m_flags |= _PositionChanged;
     }
 
-    void SceneNode::SetRotation(quat rotation)
+    void SceneNode::SetRotation(const quat &rotation)
     {
         m_rotation = rotation;
         m_flags |= _RotationChanged;
     }
 
-    void SceneNode::SetScale(vec4 scale)
+    void SceneNode::SetScale(const vec4 &scale)
     {
         m_scale = scale;
         m_flags |= _ScaleChanged;

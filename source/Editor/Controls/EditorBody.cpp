@@ -21,7 +21,7 @@ namespace GT
             m_tabGroups.PushBack(pDefaultTabGroup);
 
             gui.SetElementParent(pDefaultTabGroup->GetRootGUIElement(), hRootElement);
-            gui.SetElementMarginTop(pDefaultTabGroup->GetRootGUIElement(), 8);
+            //gui.SetElementMarginTop(pDefaultTabGroup->GetRootGUIElement(), 8);
         }
     }
 

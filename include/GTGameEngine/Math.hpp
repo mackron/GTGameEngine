@@ -175,78 +175,78 @@ namespace GT
     };
 
     /// Performs an addition on the given vector.
-    inline vec4 add(vec4 v0, vec4 v1)
+    inline vec4 add(const vec4 &v0, const vec4 &v1)
     {
         return vec4(v0.x + v1.x, v0.y + v1.y, v0.z + v1.z, v0.w + v1.w);
     }
-    inline vec4 add(vec4 v0, float v1)
+    inline vec4 add(const vec4 &v0, float v1)
     {
         return vec4(v0.x + v1, v0.y + v1, v0.z + v1, v0.w + v1);
     }
 
 
     /// Performs a subtraction on the given vector.
-    inline vec4 sub(vec4 v0, vec4 v1)
+    inline vec4 sub(const vec4 &v0, const vec4 &v1)
     {
         return vec4(v0.x - v1.x, v0.y - v1.y, v0.z - v1.z, v0.w - v1.w);
     }
-    inline vec4 sub(vec4 v0, float v1)
+    inline vec4 sub(const vec4 &v0, float v1)
     {
         return vec4(v0.x - v1, v0.y - v1, v0.z - v1, v0.w - v1);
     }
-    inline vec4 sub(float v0, vec4 v1)
+    inline vec4 sub(float v0, const vec4 &v1)
     {
         return vec4(v0 - v1.x, v0 - v1.y, v0 - v1.z, v0 - v1.w);
     }
 
 
     /// Performs a multiplication on the given vector.
-    inline vec4 mul(vec4 v0, vec4 v1)
+    inline vec4 mul(const vec4 &v0, const vec4 &v1)
     {
         return vec4(v0.x * v1.x, v0.y * v1.y, v0.z * v1.z, v0.w * v1.w);
     }
-    inline vec4 mul(vec4 v0, float v1)
+    inline vec4 mul(const vec4 &v0, float v1)
     {
         return vec4(v0.x * v1, v0.y * v1, v0.z * v1, v0.w * v1);
     }
 
 
     /// Performs a division on the given vector.
-    inline vec4 div(vec4 v0, vec4 v1)
+    inline vec4 div(const vec4 &v0, const vec4 &v1)
     {
         return vec4(v0.x / v1.x, v0.y / v1.y, v0.z / v1.z, v0.w / v1.w);
     }
-    inline vec4 div(vec4 v0, float v1)
+    inline vec4 div(const vec4 &v0, float v1)
     {
         return vec4(v0.x / v1, v0.y / v1, v0.z / v1, v0.w / v1);
     }
-    inline vec4 div(float v0, vec4 v1)
+    inline vec4 div(float v0, const vec4 &v1)
     {
         return vec4(v0 / v1.x, v0 / v1.y, v0 / v1.z, v0 / v1.w);
     }
 
 
     /// Calculates the squared length of a vector.
-    inline float length2(vec4 v)
+    inline float length2(const vec4 &v)
     {
         return v.x*v.x + v.y*v.y + v.z*v.z + v.w*v.w;
     }
 
     /// Calculates the length of a vector.
-    inline float length(vec4 v)
+    inline float length(const vec4 &v)
     {
         return ::sqrtf(length2(v));
     }
 
     /// Returns the normalization of the given vector.
-    inline vec4 normalize(vec4 v)
+    inline vec4 normalize(const vec4 &v)
     {
         return div(v, length(v));
     }
 
 
     /// Performs a dot product between two vectors.
-    inline float dot(vec4 v0, vec4 v1)
+    inline float dot(const vec4 &v0, const vec4 &v1)
     {
         return v0.x*v1.x + v0.y*v1.y + v0.z*v1.z + v0.w*v1.w;
     }
@@ -254,7 +254,7 @@ namespace GT
     /// Performs a cross product between two vectors.
     ///
     /// The W component is ignored and set to 0 in the returned vector.
-    inline vec4 cross(vec4 v0, vec4 v1)
+    inline vec4 cross(const vec4 &v0, const vec4 &v1)
     {
         return vec4(
             v0.y*v1.z - v0.z*v1.y,
@@ -410,7 +410,7 @@ namespace GT
         {
         }
 
-        mat4(vec4 _col0, vec4 _col1, vec4 _col2, vec4 _col3)
+        mat4(const vec4 &_col0, const vec4 &_col1, const vec4 &_col2, const vec4 &_col3)
             : col0(_col0), col1(_col1), col2(_col2), col3(_col3)
         {
         }
@@ -480,7 +480,7 @@ namespace GT
         ///
         /// @remarks
         ///     The w component of the translation vector is ignored.
-        static mat4 translate(const mat4 &m, vec4 v)
+        static mat4 translate(const mat4 &m, const vec4 &v)
         {
             mat4 result(m);
             result[3] = m[0]*v[0] + m[1]*v[1] + m[2]*v[2] + m[3];
@@ -496,13 +496,14 @@ namespace GT
         ///
         /// @remarks
         ///     The w component of the rotation axis is ignored.
-        static mat4 rotate(const mat4 &m, float angle, vec4 axis)
+        ///     @par
+        ///     \c axis should be normalized.
+        static mat4 rotate(const mat4 &m, float angle, const vec4 &axis)
         {
             const float a = angle;
 		    const float c = cos(a);
 		    const float s = sin(a);
 
-		    axis = normalize(axis);
 		    vec4 temp((1.0f - c) * axis);
 
 		    mat4 rotation;
@@ -534,7 +535,7 @@ namespace GT
         ///
         /// @remarks
         ///     The w component of the scaling vector is ignored.
-        static mat4 scale(const mat4 &m, vec4 v)
+        static mat4 scale(const mat4 &m, const vec4 &v)
         {
             mat4 result;
             result[0] = m[0] * v[0];
@@ -555,7 +556,7 @@ namespace GT
 
 
     /// Converts a quaternion to a matrix.
-    inline mat4 quat_to_mat4(quat q)
+    inline mat4 quat_to_mat4(const quat &q)
     {
         mat4 result;
 
@@ -593,7 +594,7 @@ namespace GT
     }
 
     /// Converts a matrix to a quaternion
-    inline quat mat4_to_quat(mat4 m)
+    inline quat mat4_to_quat(const mat4 &m)
     {
         float fourXSquaredMinus1 = m[0][0] - m[1][1] - m[2][2];
 		float fourYSquaredMinus1 = m[1][1] - m[0][0] - m[2][2];

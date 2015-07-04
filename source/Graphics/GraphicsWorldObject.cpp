@@ -22,7 +22,7 @@ namespace GT
     }
 
 
-    void GraphicsWorldObject::SetPosition(vec4 position)
+    void GraphicsWorldObject::SetPosition(const vec4 &position)
     {
         m_position = position;
     }
@@ -33,7 +33,7 @@ namespace GT
     }
 
 
-    void GraphicsWorldObject::SetRotation(quat rotation)
+    void GraphicsWorldObject::SetRotation(const quat &rotation)
     {
         m_rotation = rotation;
     }
@@ -44,7 +44,7 @@ namespace GT
     }
 
     
-    void GraphicsWorldObject::SetScale(vec4 scale)
+    void GraphicsWorldObject::SetScale(const vec4 &scale)
     {
         m_scale = scale;
     }

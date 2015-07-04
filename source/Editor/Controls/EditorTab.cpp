@@ -32,8 +32,8 @@ namespace GT
             gui.SetElementVerticalAlign(m_hTextElement, VerticalAlign_Center);
             gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.8f, 0.8f, 0.8f));
             gui.SetElementPadding(m_hTextElement, 4);
-            gui.SetElementPaddingTop(m_hTextElement, 2);
-            gui.SetElementPaddingBottom(m_hTextElement, 0);
+            gui.SetElementPaddingTop(m_hTextElement, 4);
+            gui.SetElementPaddingBottom(m_hTextElement, 2);
             //gui.SetElementBorder(m_hTextElement, 1, GTLib::Colour(0, 0, 0));
             
             
@@ -51,6 +51,10 @@ namespace GT
             gui.SetElementMarginRight(m_hCloseElement, 4);
             //gui.SetElementInnerOffsetY(m_hCloseElement, -2);
             //gui.SetElementBorder(m_hCloseElement, 1, GTLib::Colour(1, 1, 1));
+
+
+            // Apply the default style to begin with.
+            this->ApplyDefaultStyle();
         }
     }
 
@@ -63,5 +67,87 @@ namespace GT
     const char* EditorTab::GetText() const
     {
         return this->GetGUI().GetElementText(m_hTextElement);
+    }
+
+
+
+    void EditorTab::ApplyDefaultStyle()
+    {
+        HGUIElement hRootElement = this->GetRootGUIElement();
+        if (hRootElement != NULL)
+        {
+            GUIContext &gui = this->GetGUI();
+
+            // Hide the border, and compensate with padding.
+            gui.BeginBatch();
+            {
+                gui.SetElementPaddingLeft(hRootElement, 1);
+                gui.SetElementPaddingRight(hRootElement, 1);
+                gui.SetElementPaddingTop(hRootElement, 1);
+                gui.SetElementPaddingBottom(hRootElement, 0);
+                gui.SetElementBorderWidth(hRootElement, 0U);
+
+
+                // Text.
+                gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.8f, 0.8f, 0.8f));
+
+
+                // Close button.
+                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.35f, 0.35f, 0.35f));
+            }
+            gui.EndBatch();
+        }
+    }
+
+    void EditorTab::ApplyHoveredStyle()
+    {
+        HGUIElement hRootElement = this->GetRootGUIElement();
+        if (hRootElement != NULL)
+        {
+            GUIContext &gui = this->GetGUI();
+
+            // Hide the border, and compensate with padding.
+            gui.BeginBatch();
+            {
+                gui.SetElementPaddingLeft(hRootElement, 0);
+                gui.SetElementPaddingRight(hRootElement, 0);
+                gui.SetElementPaddingTop(hRootElement, 0);
+                gui.SetElementPaddingBottom(hRootElement, 0);
+
+                gui.SetElementBorderWidth(hRootElement, 1U);
+                gui.SetElementBorderBottomWidth(hRootElement, 0U);
+
+
+                // Text
+                gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.9f, 0.9f, 0.9f));
+
+
+                // Close button.
+                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.75f, 0.35f, 0.35f));
+            }
+            gui.EndBatch();
+        }
+    }
+
+    void EditorTab::ApplyActivatedStyle()
+    {
+        HGUIElement hRootElement = this->GetRootGUIElement();
+        if (hRootElement != NULL)
+        {
+            GUIContext &gui = this->GetGUI();
+
+            // Hide the border, and compensate with padding.
+            gui.BeginBatch();
+            {
+                gui.SetElementPaddingLeft(hRootElement, 1);
+                gui.SetElementPaddingRight(hRootElement, 1);
+                gui.SetElementPaddingTop(hRootElement, 1);
+                gui.SetElementPaddingBottom(hRootElement, 1);
+                gui.SetElementBorderWidth(hRootElement, 0U);
+
+                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.75f, 0.35f, 0.35f));
+            }
+            gui.EndBatch();
+        }
     }
 }

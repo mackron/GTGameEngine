@@ -30,6 +30,16 @@ namespace GT
         void HideCloseButton();
 
 
+        /// Sets the style of the tab to the default style.
+        void ApplyDefaultStyle();
+
+        /// Sets the style of the tab to the hovered style.
+        void ApplyHoveredStyle();
+
+        /// Sets the style of the tab to the activated style.
+        void ApplyActivatedStyle();
+
+
     public:
 
         /// The element that will contain the text.
@@ -37,6 +47,18 @@ namespace GT
 
         /// The element that will contain the close button.
         HGUIElement m_hCloseElement;
+
+
+
+        /////////////////////////////////////////
+        // Statics
+
+        static const uint32_t Style_PaddingLeft   = 0;
+        static const uint32_t Style_PaddingRight  = 0;
+        static const uint32_t Style_PaddingTop    = 0;
+        static const uint32_t Style_PaddingBottom = 0;
+
+        static const uint32_t Style_BorderWidth   = 1;
     };
 }
 

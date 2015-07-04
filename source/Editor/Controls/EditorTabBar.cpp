@@ -6,7 +6,11 @@
 namespace GT
 {
     EditorTabBar::EditorTabBar(Editor &editor)
-        : EditorControl(editor)
+        : EditorControl(editor),
+          m_tabs(),
+          m_pActiveTab(nullptr),
+          m_hTabContainer(NULL), m_hDropDownContainer(NULL),
+          m_tabEventHandler(this)
     {
         HGUIElement hRootElement = this->GetRootGUIElement();
         if (hRootElement != NULL)
@@ -49,6 +53,10 @@ namespace GT
 
             gui.SetElementText(m_hDropDownContainer, "\xE2\x8B\xAF");   // <-- Midline ellipsis (U+22EF)
             gui.SetElementTextColor(m_hDropDownContainer, GTLib::Colour(0.8f, 0.8f, 0.8f));
+
+
+
+
         }
     }
 
@@ -59,6 +67,7 @@ namespace GT
         pTab->SetText(text);
 
         this->GetGUI().PrependChildElement(m_hTabContainer, pTab->GetRootGUIElement());
+        this->GetGUI().AttachLocalEventHandler(pTab->GetRootGUIElement(), m_tabEventHandler);
 
         m_tabs.PushBack(pTab);
         return pTab;
@@ -76,5 +85,87 @@ namespace GT
 
             delete pTab;
         }
+    }
+
+    EditorTab* EditorTabBar::GetTabByGUIElement(HGUIElement hElement) const
+    {
+        for (size_t i = 0; i < m_tabs.GetCount(); ++i)
+        {
+            auto pTab = m_tabs[i];
+            assert(pTab != nullptr);
+            {
+                if (pTab->GetRootGUIElement() == hElement)
+                {
+                    return pTab;
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
+
+    EditorTab* EditorTabBar::GetActiveTab() const
+    {
+        return m_pActiveTab;
+    }
+
+    void EditorTabBar::ActivateTab(EditorTab* pTab)
+    {
+        this->DeactivateTab();
+
+        if (pTab != nullptr)
+        {
+            m_pActiveTab = pTab;
+            m_pActiveTab->ApplyActivatedStyle();
+        }
+    }
+
+    void EditorTabBar::DeactivateTab()
+    {
+        if (m_pActiveTab != nullptr)
+        {
+            m_pActiveTab->ApplyDefaultStyle();
+            m_pActiveTab = nullptr;
+        }
+    }
+
+
+
+
+
+
+    ///////////////////////////////////////
+    // TabEventHandler
+
+    EditorTabBar::TabEventHandler::TabEventHandler(EditorTabBar* pTabBar)
+        : m_pTabBar(pTabBar)
+    {
+    }
+
+    void EditorTabBar::TabEventHandler::OnMouseEnter(GUIContext &gui, HGUIElement hElement)
+    {
+        auto pTab = m_pTabBar->GetTabByGUIElement(hElement);
+        if (pTab != nullptr)
+        {
+            pTab->ApplyHoveredStyle();
+        }
+    }
+
+    void EditorTabBar::TabEventHandler::OnMouseLeave(GUIContext &gui, HGUIElement hElement)
+    {
+        auto pTab = m_pTabBar->GetTabByGUIElement(hElement);
+        if (pTab != nullptr)
+        {
+            if (pTab != m_pTabBar->GetActiveTab())
+            {
+                pTab->ApplyDefaultStyle();
+            }
+        }
+    }
+
+    void EditorTabBar::TabEventHandler::OnMouseButtonPressed(GUIContext &gui, HGUIElement hElement, int, int, int)
+    {
+        int temp = 0;
     }
 }

@@ -28,11 +28,58 @@ namespace GT
         void DeleteTab(EditorTab* pTab);
 
 
+        /// Retrieves the tab by it's GUI element.
+        ///
+        /// @param hElement [in] The GUI element of the tab control.
+        EditorTab* GetTabByGUIElement(HGUIElement hElement) const;
+
+
+        /// Retrieves a pointer to the currently active tab.
+        EditorTab* GetActiveTab() const;
+
+        /// Activates the given tab.
+        ///
+        /// @param pTab [in] A pointer to the tab to activate.
+        ///
+        /// @remarks
+        ///     Passing null is equivalent to a call to DeactivateTab().
+        void ActivateTab(EditorTab* pTab);
+
+        /// Deactivates the currently active tab.
+        void DeactivateTab();
+
+
+
+    private:
+
+        class TabEventHandler : public GUIEventHandler
+        {
+        public:
+
+            /// Constructor.
+            TabEventHandler(EditorTabBar* pTabBar);
+
+            void OnMouseEnter(GUIContext &gui, HGUIElement hElement);
+            void OnMouseLeave(GUIContext &gui, HGUIElement hElement);
+            void OnMouseButtonPressed(GUIContext &gui, HGUIElement hElement, int, int, int);
+
+
+
+        private:
+
+            /// A pointer to the tab bar control that owns the tab.
+            EditorTabBar* m_pTabBar;
+        };
+
+
 
     private:
 
         /// The list of tabs. This is not in the order they appear in on the bar.
         GTLib::Vector<EditorTab*> m_tabs;
+
+        /// A pointer to the active tab.
+        EditorTab* m_pActiveTab;
 
 
         /// The parent element for tabs.
@@ -40,6 +87,10 @@ namespace GT
 
         /// The parent element for the drop-down button.
         HGUIElement m_hDropDownContainer;
+
+
+        /// The GUI event handler for each tab.
+        TabEventHandler m_tabEventHandler;
     };
 }
 

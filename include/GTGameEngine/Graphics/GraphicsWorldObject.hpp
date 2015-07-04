@@ -45,7 +45,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is just a simple setter.
-        void SetPosition(vec4 position);
+        void SetPosition(const vec4 &position);
 
         /// Retrieves the position of the object.
         ///
@@ -59,7 +59,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is just a simple setter.
-        void SetRotation(quat rotation);
+        void SetRotation(const quat &rotation);
 
         /// Retrieves the rotation of the object.
         ///
@@ -73,7 +73,7 @@ namespace GT
         ///
         /// @remarks
         ///     This is just a simple setter.
-        void SetScale(vec4 scale);
+        void SetScale(const vec4 &scale);
 
         /// Retrieves the scale of the object.
         ///

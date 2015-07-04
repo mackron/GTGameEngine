@@ -93,7 +93,7 @@ namespace GT
         ///
         /// @remarks
         ///     The result will output to the first render target of the given framebuffer.
-        void Render(mat4 projection, mat4 view, HFramebuffer hFramebuffer, const GraphicsViewport &viewport);
+        void Render(const mat4 &projection, const mat4 &view, HFramebuffer hFramebuffer, const GraphicsViewport &viewport);
 
 
         /// Creates a mesh descriptor.
@@ -121,7 +121,7 @@ namespace GT
         ///
         /// @remarks
         ///     The object will be made invisible by default.
-        GraphicsWorldObject* CreateMesh(HGraphicsWorldMeshDescriptor hDescriptor, vec4 position = vec4(0.0f, 0.0f, 0.0f, 1.0f), quat rotation = quat::identity, vec4 scale = vec4(1.0f, 1.0f, 1.0f, 1.0f));
+        GraphicsWorldObject* CreateMesh(HGraphicsWorldMeshDescriptor hDescriptor, const vec4 &position = vec4(0.0f, 0.0f, 0.0f, 1.0f), const quat &rotation = quat::identity, const vec4 &scale = vec4(1.0f, 1.0f, 1.0f, 1.0f));
 
 
         /// Deletes an object.

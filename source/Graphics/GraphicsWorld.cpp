@@ -131,7 +131,7 @@ namespace GT
     }
 
 
-    void GraphicsWorld::Render(mat4 projection, mat4 view, HFramebuffer hFramebuffer, const GraphicsViewport &viewport)
+    void GraphicsWorld::Render(const mat4 &projection, const mat4 &view, HFramebuffer hFramebuffer, const GraphicsViewport &viewport)
     {
         auto &graphicsInterfaceGL = reinterpret_cast<GPURenderingDevice_OpenGL4 &>(m_graphicsInterface);
 
@@ -257,7 +257,7 @@ namespace GT
     }
 
 
-    GraphicsWorldObject* GraphicsWorld::CreateMesh(HGraphicsWorldMeshDescriptor hDescriptor, vec4 position, quat rotation, vec4 scale)
+    GraphicsWorldObject* GraphicsWorld::CreateMesh(HGraphicsWorldMeshDescriptor hDescriptor, const vec4 &position, const quat &rotation, const vec4 &scale)
     {
         GraphicsWorldMesh* pMesh = new GraphicsWorldMesh(hDescriptor);
         pMesh->SetPosition(position);

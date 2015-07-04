@@ -507,6 +507,7 @@ namespace GT
         /// @remarks
         ///     This is recursive.
         bool IterateElementAncestors(GUIElement* pElement, std::function<bool (GUIElement*)> handler) const;
+        bool IterateElementAncestorsAndSelf(GUIElement* pElement, std::function<bool (GUIElement*)> handler) const;
 
 
         /// Determines if the given element is a direct child of the given element.
