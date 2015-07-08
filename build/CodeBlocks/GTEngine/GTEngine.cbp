@@ -17,6 +17,7 @@
 				<Compiler>
 					<Add option="-Wall" />
 					<Add option="-g" />
+					<Add directory="../../../include" />
 				</Compiler>
 			</Target>
 			<Target title="release-windows-gcc">
@@ -28,7 +29,6 @@
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
 				<Compiler>
-					<Add option="-O2" />
 					<Add option="-Wall" />
 				</Compiler>
 				<Linker>
@@ -362,16 +362,25 @@
 		<Unit filename="../../../source/Animation/AnimationSequence.cpp" />
 		<Unit filename="../../../source/Animation/AnimationTrack.cpp" />
 		<Unit filename="../../../source/ApplicationConfig.cpp" />
+		<Unit filename="../../../source/AssetLibrary.cpp" />
 		<Unit filename="../../../source/Audio/AudioComposer.cpp" />
 		<Unit filename="../../../source/Audio/AudioEngine.cpp" />
 		<Unit filename="../../../source/Audio/OpenAL/AudioEngine_OpenAL.cpp" />
 		<Unit filename="../../../source/Audio/OpenAL/AudioEngine_OpenAL.hpp" />
 		<Unit filename="../../../source/Audio/Sound.cpp" />
+		<Unit filename="../../../source/Audio/SoundPlaybackEventHandler.cpp" />
+		<Unit filename="../../../source/Audio/SoundPlaybackThreadProc.cpp" />
 		<Unit filename="../../../source/Audio/SoundStreamer.cpp" />
-		<Unit filename="../../../source/Audio/Streamers/SoundStreamer_OGG.cpp" />
+		<Unit filename="../../../source/Audio/SoundWorld.cpp" />
 		<Unit filename="../../../source/Audio/Streamers/SoundStreamer_OGG.hpp" />
+		<Unit filename="../../../source/Audio/Streamers/SoundStreamer_Vorbis.cpp" />
+		<Unit filename="../../../source/Audio/Streamers/SoundStreamer_Vorbis.hpp" />
 		<Unit filename="../../../source/Audio/Streamers/SoundStreamer_WAV.cpp" />
 		<Unit filename="../../../source/Audio/Streamers/SoundStreamer_WAV.hpp" />
+		<Unit filename="../../../source/Audio/g711.c">
+			<Option compilerVar="CC" />
+		</Unit>
+		<Unit filename="../../../source/Audio/g711.h" />
 		<Unit filename="../../../source/Bone.cpp" />
 		<Unit filename="../../../source/CPUVertexShader.cpp" />
 		<Unit filename="../../../source/CPUVertexShader_SimpleTransform.cpp" />
@@ -393,6 +402,7 @@
 		<Unit filename="../../../source/Components/ScriptComponent.cpp" />
 		<Unit filename="../../../source/ConvexHull.cpp" />
 		<Unit filename="../../../source/DataFilesWatcher.cpp" />
+		<Unit filename="../../../source/DefaultMessageHandler.cpp" />
 		<Unit filename="../../../source/DefaultPrefabLinker.cpp" />
 		<Unit filename="../../../source/DefaultSceneCullingManager.cpp" />
 		<Unit filename="../../../source/DefaultScenePhysicsManager.cpp" />
@@ -435,6 +445,7 @@
 		<Unit filename="../../../source/Editor/SubEditorTabEventHandler.cpp" />
 		<Unit filename="../../../source/Editor/TextEditor/TextEditor.cpp" />
 		<Unit filename="../../../source/Editor/TransformGizmo.cpp" />
+		<Unit filename="../../../source/EngineContext.cpp" />
 		<Unit filename="../../../source/Errors.cpp" />
 		<Unit filename="../../../source/GTEngine.cpp" />
 		<Unit filename="../../../source/GUIEventHandler.cpp" />
@@ -446,7 +457,7 @@
 		<Unit filename="../../../source/GameObjectGC.cpp" />
 		<Unit filename="../../../source/GamePackager.cpp" />
 		<Unit filename="../../../source/GameScript.cpp" />
-		<Unit filename="../../../source/GameState.cpp" />
+		<Unit filename="../../../source/GameStateManager.cpp" />
 		<Unit filename="../../../source/GameUpdateJob.cpp" />
 		<Unit filename="../../../source/GameWindowEventHandler.cpp" />
 		<Unit filename="../../../source/HACD/hacdGraph.cpp" />
@@ -464,6 +475,9 @@
 		<Unit filename="../../../source/Math.cpp" />
 		<Unit filename="../../../source/Mesh.cpp" />
 		<Unit filename="../../../source/MeshBuilder.cpp" />
+		<Unit filename="../../../source/Message.cpp" />
+		<Unit filename="../../../source/MessageDispatcher.cpp" />
+		<Unit filename="../../../source/MessageHandler.cpp" />
 		<Unit filename="../../../source/Model.cpp" />
 		<Unit filename="../../../source/ModelDefinition.cpp" />
 		<Unit filename="../../../source/ModelDefinition_Assimp.cpp" />
@@ -692,6 +706,9 @@
 		<Unit filename="../../../source/gtgl/x11/gtgl_windowmanager_x11.c">
 			<Option compilerVar="CC" />
 		</Unit>
+		<Unit filename="../../../source/stb/stb_dxt.h" />
+		<Unit filename="../../../source/stb/stb_image.h" />
+		<Unit filename="../../../source/stb/stb_image_write.h" />
 		<Extensions>
 			<code_completion />
 			<envvars />
