@@ -48,7 +48,7 @@ namespace GTEngine
 
                 ///////////////////////////////////////////////////
                 // GTEngine.Display
-                
+
                 script.Push("Display");
                 script.PushNewTable();
                 {
@@ -171,12 +171,12 @@ namespace GTEngine
 
             ///////////////////////////////////////////
             // CollisionGroupMask.
-            
+
             successful = successful & script.Execute
             (
                 "GTEngine.__CollisionGroupMask = {};"
                 "GTEngine.__CollisionGroupMask.__index = GTEngine.__CollisionGroupMask;"
-                
+
                 "GTEngine.__CollisionGroupMask.Add = function(self, groupIndex)"
                 "    if groupIndex == -1 then"
                 "        self.bitfield = -1;"
@@ -184,7 +184,7 @@ namespace GTEngine
                 "        self.bitfield = bit.bor(self.bitfield, bit.lshift(1, groupIndex - 1));"
                 "    end;"
                 "end;"
-                
+
                 "GTEngine.__CollisionGroupMask.Remove = function(self, groupIndex)"
                 "    if groupIndex == -1 then"
                 "        self.bitfield = -1;"
@@ -192,7 +192,7 @@ namespace GTEngine
                 "        self.bitfield = bit.band(self.bitfield, bit.bswap(bit.lshift(1, groupIndex - 1)));"
                 "    end;"
                 "end;"
-                
+
                 "function GTEngine.CollisionGroupMask()"
                 "    local new = {};"
                 "    setmetatable(new, GTEngine.__CollisionGroupMask);"
@@ -243,7 +243,7 @@ namespace GTEngine
         }
 
 
-        
+
 
 
         void PostEvent_OnMouseMove(GTLib::Script &script, int mousePosX, int mousePosY)
@@ -391,7 +391,7 @@ namespace GTEngine
             script.Pop(1);
 
 
-            
+
             // Scene Nodes.
             script.GetGlobal("GTEngine");
             assert(script.IsTable(-1));
@@ -452,7 +452,7 @@ namespace GTEngine
             script.Pop(1);
 
 
-            
+
             // Scene Nodes.
             script.GetGlobal("GTEngine");
             assert(script.IsTable(-1));
@@ -513,7 +513,7 @@ namespace GTEngine
             script.Pop(1);
 
 
-            
+
             // Scene Nodes.
             script.GetGlobal("GTEngine");
             assert(script.IsTable(-1));
@@ -566,7 +566,7 @@ namespace GTEngine
             script.Pop(1);
 
 
-            
+
             // Scene Nodes.
             script.GetGlobal("GTEngine");
             assert(script.IsTable(-1));
@@ -617,7 +617,7 @@ namespace GTEngine
             script.Pop(1);
 
 
-            
+
             // Scene Nodes.
             script.GetGlobal("GTEngine");
             assert(script.IsTable(-1));
@@ -662,7 +662,7 @@ namespace GTEngine
             script.Pop(1);
 
 
-            
+
             // Scene Nodes.
             script.GetGlobal("GTEngine");
             assert(script.IsTable(-1));
@@ -676,6 +676,50 @@ namespace GTEngine
                         assert(script.IsTable(-1));
                         {
                             script.Push("PostSceneNodeEvent_OnGamePause");
+                            script.GetTableValue(-2);
+                            assert(script.IsFunction(-1));
+                            {
+                                script.PushValue(-2);       // <-- 'self'
+                                script.Call(1, 0);
+                            }
+                        }
+                    }
+                }
+                script.Pop(1);
+            }
+            script.Pop(1);
+        }
+
+        void PostEvent_OnGameResume(GTLib::Script &script)
+        {
+            // Game.
+            script.GetGlobal("Game");
+            assert(script.IsTable(-1));
+            {
+                script.Push("OnResume");
+                script.GetTableValue(-2);
+                assert(script.IsFunction(-1));
+                {
+                    script.Call(0, 0);
+                }
+            }
+            script.Pop(1);
+
+
+
+            // Scene Nodes.
+            script.GetGlobal("GTEngine");
+            assert(script.IsTable(-1));
+            {
+                script.Push("RegisteredScenes");
+                script.GetTableValue(-2);
+                assert(script.IsTable(-1));
+                {
+                    for (script.PushNil(); script.Next(-2); script.Pop(1))
+                    {
+                        assert(script.IsTable(-1));
+                        {
+                            script.Push("PostSceneNodeEvent_OnGameResume");
                             script.GetTableValue(-2);
                             assert(script.IsFunction(-1));
                             {

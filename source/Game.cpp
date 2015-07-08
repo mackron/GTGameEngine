@@ -115,18 +115,18 @@ namespace GTEngine
         }
         this->eventQueueLock.Unlock();
     }
-    
-    
+
+
     void Game::SetEventFilter(GameEventFilter* filter)
     {
         this->eventFilter = filter;
     }
-    
+
     GameEventFilter* Game::GetEventFilter()
     {
         return this->eventFilter;
     }
-    
+
 
 
     GTGUI::Server & Game::GetGUI()
@@ -256,7 +256,7 @@ namespace GTEngine
         }
     }
 
-    
+
     void Game::EnableMouseSmoothing()
     {
         this->isMouseSmoothingEnabled = true;
@@ -1236,7 +1236,7 @@ namespace GTEngine
         this->mousePosX = e.mousemove.x;
         this->mousePosY = e.mousemove.y;
 
-        
+
 
         // If we're captured and blocking, we don't want to post anything.
         if (this->mouseMoveLockCounter == 0)
@@ -1274,7 +1274,7 @@ namespace GTEngine
     void Game::HandleEvent_OnMouseButtonDown(GameEvent &e, GTGUI::EventContext eventContext)
     {
         this->mouseButtonDownMap.Add(e.mousedown.button, true);
-        
+
         this->gui.OnMouseButtonDown(eventContext, static_cast<int>(e.mousedown.button));
 
 
@@ -1300,7 +1300,7 @@ namespace GTEngine
         {
             iButtonDown->value = false;
         }
-        
+
 
         this->gui.OnMouseButtonUp(eventContext, static_cast<int>(e.mouseup.button));
 
@@ -1351,7 +1351,7 @@ namespace GTEngine
         {
             this->editor.OnKeyPressed(e.keypressed.key);
         }
-        
+
         if (this->editorToggleKeyCombination.IsPrintableKey(e.keypressed.key) && this->IsKeyCombinationDown(this->editorToggleKeyCombination))
         {
             if (!this->IsEditorOpen())
@@ -1394,7 +1394,7 @@ namespace GTEngine
             m_gameStateManager.OnKeyRelease(*this, e.keyreleased.key);
             this->PostScriptEvent_OnKeyReleased(e);
         }
-        
+
 
         if (this->editor.IsOpen())
         {
@@ -1418,7 +1418,7 @@ namespace GTEngine
     {
         this->gui.OnKeyUp(eventContext, e.keyup.key);
 
-        
+
         if (this->eventFilter == nullptr || this->eventFilter->OnKeyUp(e.keyup.key))
         {
             m_gameStateManager.OnKeyUp(*this, e.keyup.key);
@@ -1665,7 +1665,7 @@ namespace GTEngine
 
     void Game::PostScriptEvent_OnResume()
     {
-        Scripting::PostEvent_OnGamePause(this->script);
+        Scripting::PostEvent_OnGameResume(this->script);
     }
 }
 
