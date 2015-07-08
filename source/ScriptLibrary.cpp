@@ -167,7 +167,7 @@ namespace GTEngine
             else
             {
                 GTEngine::PostError("Attempting to load a file using an absolute path (%s). You need to use a path that's relative to the game's data directory.", fileName);
-                return nullptr;
+                return false;
             }
         }
 
@@ -178,7 +178,7 @@ namespace GTEngine
         {
             return LoadedDefinitions.Exists(absolutePath.c_str());
         }
-        
+
         return false;
     }
 

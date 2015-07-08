@@ -565,7 +565,7 @@ namespace GTEngine
         this->AddSceneNode(*sceneNode);
 #endif
 
-        
+
 
         return sceneNode;
     }
@@ -925,7 +925,7 @@ namespace GTEngine
                 for (size_t iLeft = 0; iLeft < sceneNodesLeft.count; ++iLeft)
                 {
                     auto leftSceneNode = this->GetSceneNodeByID(sceneNodesLeft[iLeft]);
-                    if (leftSceneNode != nullptr)       // <-- Don't want an assert because there is a situation where the node might have been deleted, in which case this will be null. 
+                    if (leftSceneNode != nullptr)       // <-- Don't want an assert because there is a situation where the node might have been deleted, in which case this will be null.
                     {
                         // TODO: Call the C++ events.
 
@@ -957,7 +957,7 @@ namespace GTEngine
             }
         }
 
-        
+
 
 
         // Now we need to render.
@@ -1400,7 +1400,7 @@ namespace GTEngine
     void Scene::EnableHDR()
     {
         this->isHDREnabled = true;
-        
+
         if (this->renderer != nullptr)
         {
             this->renderer->SetProperty("IsHDREnabled", true);
@@ -1618,7 +1618,7 @@ namespace GTEngine
         // - Scene node data
 
         Serialization::ChunkHeader header;
-        
+
 
 
         // Scene Info (nextSceneNodeID, etc).
@@ -1638,7 +1638,7 @@ namespace GTEngine
         {
             GTLib::BasicSerializer secondarySerializer;
             secondarySerializer.WriteString(this->name);
-        
+
             secondarySerializer.Write(this->isBackgroundClearEnabled);
             secondarySerializer.Write(this->backgroundClearColour);
             secondarySerializer.Write(this->isHDREnabled);
@@ -1721,7 +1721,7 @@ namespace GTEngine
         GTLib::BasicSerializer sceneNodeSerializer;
         sceneNodeSerializer.Write(static_cast<uint32_t>(sceneNodeIDs.GetCount()));                  // <-- Scene node count
         sceneNodeSerializer.Write(sceneNodeIDs.buffer, sceneNodeIDs.count * sizeof(uint64_t));      // <-- Flat list of scene node IDs, indexable by the local indices in the hierarchy list.
-        
+
 
         for (size_t iSceneNode = 0; iSceneNode < serializedNodes.GetCount(); ++iSceneNode)
         {
@@ -1790,7 +1790,7 @@ namespace GTEngine
         // Everything needs to be cleared, including the state stack.
         this->RemoveAllSceneNodes();
         this->stateStack.Clear();
-        
+
         bool wasStateStackEnabled = this->IsStateStackEnabled();
         this->DisableStateStack();
         {
@@ -1991,7 +1991,7 @@ namespace GTEngine
 
                             auto childSceneNode  = deserializedNodes[pair.index0];
                             auto parentSceneNode = deserializedNodes[pair.index1];
-            
+
                             assert(childSceneNode  != nullptr);
                             assert(parentSceneNode != nullptr);
                             {
@@ -2102,7 +2102,7 @@ namespace GTEngine
             }
         }
         if (wasStateStackEnabled) { this->EnableStateStack(); }
-        
+
 
 
 #if 0
@@ -2380,7 +2380,7 @@ namespace GTEngine
 
             auto childSceneNode  = deserializedNodes[pair.index0];
             auto parentSceneNode = deserializedNodes[pair.index1];
-            
+
             assert(childSceneNode  != nullptr);
             assert(parentSceneNode != nullptr);
             {
@@ -2540,7 +2540,7 @@ namespace GTEngine
         if (this->IsStateStackEnabled() && node.IsStateStackStagingEnabled())
         {
             this->stateStack.StageUpdate(node.GetID());
-            
+
             if (node.GetParent() != nullptr)
             {
                 this->stateStack.StageUpdate(node.GetParent()->GetID());
@@ -2848,7 +2848,7 @@ namespace GTEngine
                 if (particleSystem != nullptr)
                 {
                     this->cullingManager.AddParticleSystem(node);
-                    
+
                     // Gravity needs to be set.
                     particleSystem->SetGravity(this->GetGravity());
 
@@ -3426,7 +3426,7 @@ namespace GTEngine
         }
     }
 
-    
+
 
     void Scene::PostEvent_OnSceneNodeComponentAdded(SceneNode &node, Component &component)
     {

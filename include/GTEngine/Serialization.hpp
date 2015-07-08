@@ -12,7 +12,7 @@ namespace GTEngine
     namespace Serialization
     {
         /// Structure representing the header of a chunk for serialization/deserialization.
-        __declspec(align(4)) struct ChunkHeader
+        struct ChunkHeader
         {
             uint32_t id;
             uint32_t version;
@@ -58,7 +58,7 @@ namespace GTEngine
         //
         // A chunk of this type is really good for marking the end of a group of chunks. It can operate in a similar way to a null terminator in a string.
         static const uint32_t ChunkID_Null                                    = CHUNK_ID(0x00000000U);
-        
+
 
         /////////////////////////////////////////////////////
         // Scenes
@@ -166,7 +166,7 @@ namespace GTEngine
         static const uint32_t ChunkID_ParticleSystem_Main                     = CHUNK_ID(0x00000521U);
         static const uint32_t ChunkID_ParticleEmitter_Main                    = CHUNK_ID(0x00000522U);
         static const uint32_t ChunkID_ParticleEmitter_Particles               = CHUNK_ID(0x00000523U);
-        
+
 
 
         /////////////////////////////////////////////////////

@@ -11,7 +11,7 @@ namespace GT
 
 
         EngineContext::EngineContext(int argc, char** argv)
-            : m_commandLine(argc, argv),
+            : m_commandLine(),
               m_executableDirectoryAbsolutePath(),
               m_applicationConfig(),
               m_messageHandler(), m_messageDispatcher(),
@@ -19,6 +19,8 @@ namespace GT
               m_activeThreads(), m_dormantThreads(), m_threadManagementLock(),
               m_assetLibrary()
         {
+            m_commandLine.Parse(argc, argv);
+
             // First this is to more into the applications directory. We get this from the command line.
             GTLib::IO::SetCurrentDirectory(m_commandLine.GetApplicationDirectory());
 
@@ -224,7 +226,7 @@ namespace GT
                 }
             }
             m_threadManagementLock.Unlock();
-            
+
 
             return thread;
         }

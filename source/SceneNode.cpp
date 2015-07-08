@@ -961,7 +961,7 @@ namespace GTEngine
 
             this->components.Remove(componentName);
 
-            
+
             // Post the event after the component has been removed, but before it is deleted.
             if (this->scene != nullptr)
             {
@@ -1237,7 +1237,7 @@ namespace GTEngine
             assert(component != nullptr);
             {
                 GTLib::BasicSerializer componentSubSerializer;
-             
+
                 // Special cases.
                 if (GTLib::Strings::Equal(component->GetName(), EditorMetadataComponent::Name))
                 {
@@ -1274,7 +1274,7 @@ namespace GTEngine
         GTLib::String newName;
         auto wasStatic  = this->IsStatic();
         auto wasVisible = this->IsVisible();
-        
+
         glm::vec3 newPosition;
         glm::quat newOrientation;
         glm::vec3 newScale;
@@ -1413,7 +1413,7 @@ namespace GTEngine
     bool SceneNode::Deserialize_PeekID(GTLib::Deserializer &deserializer, uint64_t &idOut)
     {
         // The ID should be position right after the header. We're going to read straight into a structure.
-        __declspec(align(4)) struct ExtendedHeader
+        struct ExtendedHeader
         {
             Serialization::ChunkHeader header;
             uint32_t sceneNodeID0;
@@ -1431,7 +1431,7 @@ namespace GTEngine
                 }
             }
         }
-        
+
         return false;
     }
 
