@@ -33,6 +33,7 @@ namespace GT
         Sound::~Sound()
         {
             this->Stop();
+            m_engineContext.GetAudioSystem().DeleteSound(m_hSound);
             m_engineContext.GetAssetLibrary().CloseSoundStreamer(m_streamer);
 
             m_engineContext.UnacquireThread(m_playbackThread);
@@ -54,7 +55,7 @@ namespace GT
         {
             // If the sound is already playing, it needs to be stopped immediately.
             this->Stop();
-            
+
             // The old streamer needs to be closed.
             if (m_streamer != nullptr)
             {
@@ -180,7 +181,7 @@ namespace GT
         void Sound::RemovePlaybackEventHandler(SoundPlaybackEventHandler &eventHandler)
         {
             m_playbackEventHandlers.RemoveFirstOccuranceOf(&eventHandler);
-            
+
             assert(!m_playbackEventHandlers.Exists(&eventHandler));     // <-- If this fails it means the event handler was attached more than once.
         }
 
