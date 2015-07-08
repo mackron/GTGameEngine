@@ -109,7 +109,7 @@ namespace GTEngine
 
                     // Material.
                     this->RenderMesh(*mesh, emptyLightGroup, DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass | DefaultSceneRenderer_MaterialShaderID::GetLightingFromTextures);
-                    
+
                 }
             }
         }
@@ -211,7 +211,7 @@ namespace GTEngine
 
                     // Material.
                     this->RenderMesh(mesh, emptyLightGroup, DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass | DefaultSceneRenderer_MaterialShaderID::GetLightingFromTextures);
-                    
+
                     // Highlight.
                     if ((mesh.flags & SceneRendererMesh::DrawHighlight))
                     {
@@ -241,7 +241,7 @@ namespace GTEngine
 
                     // Draw.
                     this->RenderMesh(mesh, lightGroups[0], DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass | DefaultSceneRenderer_MaterialShaderID::NoNormalMapping); // <-- take away NoNormalMapping here and have it use the material in determining whether or not to use normal mapping.
-                    
+
                     // Highlight.
                     if ((mesh.flags & SceneRendererMesh::DrawHighlight))
                     {
@@ -397,7 +397,7 @@ namespace GTEngine
                                     for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
                                     {
                                         auto &mesh = meshList->buffer[iMesh];
-                                            
+
                                         if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
                                         {
                                             this->RenderMesh(mesh, lightGroup, 0);
@@ -435,7 +435,7 @@ namespace GTEngine
                                     for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
                                     {
                                         auto &mesh = meshList->buffer[iMesh];
-                                            
+
                                         if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
                                         {
                                             this->RenderMesh(mesh, lightGroup, 0);
@@ -494,12 +494,12 @@ namespace GTEngine
 
             // Depth testing.
             this->EnableLightingDepthTesting();
-        
+
 
 
             // Determine whether or not to include shadow-casting lights in the next pass.
             uint32_t lightSubdivisionOptions = 0;
-            
+
             if (this->splitShadowLights)
             {
                 lightSubdivisionOptions |= NoShadowLights;
@@ -525,7 +525,7 @@ namespace GTEngine
                         for (size_t iLightGroup = 0; iLightGroup < lightGroups.count; ++iLightGroup)
                         {
                             auto &mesh = meshList->buffer[iMesh];
-                                            
+
                             if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
                             {
                                 this->RenderMesh(mesh, lightGroups[iLightGroup], 0);
@@ -559,7 +559,7 @@ namespace GTEngine
                 for (size_t iMesh = 0; iMesh < meshList->count; ++iMesh)
                 {
                     auto &mesh = meshList->buffer[iMesh];
-                    {       
+                    {
                         if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
                         {
                             this->RenderMesh(mesh, emptyLightGroup, DefaultSceneRenderer_MaterialShaderID::IncludeMaterialPass | DefaultSceneRenderer_MaterialShaderID::GetLightingFromTextures);
@@ -593,7 +593,7 @@ namespace GTEngine
         const uint32_t shadowSpotComplexity        = 250;
 
         uint32_t currentComplexity = 0;
-        
+
         bool includeShadowLights = !(options & NoShadowLights);
         bool convertShadowLights =  (options & ConvertShadowLights) != 0;
 
@@ -857,7 +857,7 @@ namespace GTEngine
     {
         int lightingBuffers[] = {DiffuseLightingBufferIndex, SpecularLightingBufferIndex};
         Renderer::SetDrawBuffers(2, lightingBuffers);
-        
+
 
         if (lightGroups.count > 1)
         {
