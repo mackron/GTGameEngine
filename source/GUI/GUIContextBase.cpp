@@ -1555,7 +1555,7 @@ namespace GT
     }
 
 
-    void GUIContextBase::SetElementBorderLeftMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength)
+    void GUIContextBase::SetElementBorderLeftMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         assert(pElement != nullptr);
 
@@ -1570,7 +1570,7 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderTopMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength)
+    void GUIContextBase::SetElementBorderTopMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         assert(pElement != nullptr);
 
@@ -1585,7 +1585,7 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderRightMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength)
+    void GUIContextBase::SetElementBorderRightMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         assert(pElement != nullptr);
 
@@ -1600,12 +1600,13 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderBottomMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength)
+    void GUIContextBase::SetElementBorderBottomMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         assert(pElement != nullptr);
 
         GUIElementStyle_Set_borderbottommaskoffset(pElement->style, maskOffset, NumberType_Points);
         GUIElementStyle_Set_borderbottommasklength(pElement->style, maskLength, NumberType_Points);
+        GUIElementStyle_Set_borderbottommaskcolor(pElement->style, maskColor);
 
 
         this->BeginBatch();
@@ -2421,6 +2422,32 @@ namespace GT
     }
 
 
+    void GUIContextBase::EnableCursorPassThrough(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_passthroughcursorinput(pElement->style, true);
+        this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY, true));
+    }
+
+    void GUIContextBase::DisableCursorPassThrough(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_passthroughcursorinput(pElement->style, false);
+        this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY, true));
+    }
+
+    bool GUIContextBase::IsCursorPassThroughEnabled(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return GUIElementStyle_Get_passthroughcursorinput(pElement->style);
+    }
+
+
+
+
 
     ////////////////////////////////////////////////////////////////
     // Batching
@@ -2488,9 +2515,10 @@ namespace GT
                 auto pTopLevelElement = pSurface->topLevelElements[iElement];
                 if (pTopLevelElement != nullptr)
                 {
-                    this->ClippedTraversal(pTopLevelElement, rect, [&](GUIElement* pElementToPaint, const GTLib::Rect<int> &visibleRect) -> void
+                    this->ClippedTraversal(pTopLevelElement, rect, [&](GUIElement* pElementToPaint, const GTLib::Rect<int> &visibleRect) -> bool
                     {
                         this->Painting_PaintElement(pSurface, pElementToPaint, visibleRect);
+                        return true;
                     });
                 }
             }
@@ -2542,7 +2570,7 @@ namespace GT
         m_mousePosX = mousePosX;
         m_mousePosY = mousePosY;
 
-        auto pNewElementUnderMouse = this->FindElementUnderPoint(pSurface, mousePosX, mousePosY);
+        auto pNewElementUnderMouse = this->FindElementUnderPoint(pSurface, mousePosX, mousePosY, true);
             
         // OnMouseLeave/OnMouseEnter
         this->UpdateMouseEnterAndLeaveState(pNewElementUnderMouse);
@@ -2704,7 +2732,7 @@ namespace GT
     ////////////////////////////////////////////////////////////////
     // Searching/Gathering
 
-    GUIElement* GUIContextBase::FindElementUnderPoint(GUISurface* pSurface, int x, int y)
+    GUIElement* GUIContextBase::FindElementUnderPoint(GUISurface* pSurface, int x, int y, bool respectPassThrough)
     {
         GUIElement* pElementUnderPoint = nullptr;
 
@@ -2721,12 +2749,14 @@ namespace GT
                 auto pTopLevelElement = pSurface->topLevelElements[iElement];
                 assert(pTopLevelElement != nullptr);
                 {
-                    this->ClippedTraversal(pTopLevelElement, rect, [&](GUIElement* pElement, const GTLib::Rect<int> &visibleRect) -> void
+                    this->ClippedTraversal(pTopLevelElement, rect, [&](GUIElement* pElement, const GTLib::Rect<int> &visibleRect) -> bool
                     {
-                        if (visibleRect.Contains(x, y))
+                        if (visibleRect.Contains(x, y) && (!respectPassThrough || !this->IsCursorPassThroughEnabled(pElement)))
                         {
                             pElementUnderPoint = pElement;
                         }
+
+                        return true;
                     });
                 }
             }
@@ -2865,7 +2895,7 @@ namespace GT
 
 
                 // When the element capturing mouse events changes, the mouse enter/leave state. This will post all of the applicable events.
-                this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY));
+                this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY, true));
             }
             else
             {
@@ -2892,7 +2922,7 @@ namespace GT
 
 
             // When the element capturing mouse events changes, the mouse enter/leave state. This will post all of the applicable events.
-            this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY));
+            this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY, true));
         }
     }
 
@@ -3008,7 +3038,7 @@ namespace GT
         }
     }
 
-    void GUIContextBase::ClippedTraversal(GUIElement* pElement, const GTLib::Rect<float> &clippingRect, std::function<void (GUIElement*, const GTLib::Rect<int> &)> func)
+    bool GUIContextBase::ClippedTraversal(GUIElement* pElement, const GTLib::Rect<float> &clippingRect, std::function<bool (GUIElement*, const GTLib::Rect<int> &)> func)
     {
         assert(pElement != nullptr);
 
@@ -3027,6 +3057,7 @@ namespace GT
         }
 
 
+        bool result = true;
 
         // If the visible rectangle has some volume we can call the function and then traverse the children.
         if (elementVisibleRect.left < elementVisibleRect.right && elementVisibleRect.top < elementVisibleRect.bottom)
@@ -3036,7 +3067,11 @@ namespace GT
             elementVisibleRectI.top    = static_cast<int>(GTLib::Round(elementVisibleRect.top));
             elementVisibleRectI.right  = static_cast<int>(GTLib::Round(elementVisibleRect.right));
             elementVisibleRectI.bottom = static_cast<int>(GTLib::Round(elementVisibleRect.bottom));
-            func(pElement, elementVisibleRectI);
+            if (!func(pElement, elementVisibleRectI))
+            {
+                result = false;
+                return result;
+            }
 
 
             // Now we need to recursively call this method again, only this time we need to pass in a new clipping rectangle. The rectangle will be determined
@@ -3057,12 +3092,19 @@ namespace GT
             {
                 if (!this->IsElementClippedAgainstParent(pChild) || doesChildClippingRectangleHaveVolume)
                 {
-                    this->ClippedTraversal(pChild, childClippingRect, func);
+                    if (!this->ClippedTraversal(pChild, childClippingRect, func))
+                    {
+                        result = false;
+                        return false;
+                    }
                 }
 
                 return true;
             });
         }
+
+
+        return result;
     }
 
 
@@ -3661,7 +3703,10 @@ namespace GT
             Renderer_DrawRectangle(borderBottomRect1, GUIElementStyle_Get_borderbottomcolor(pElement->style));
             Renderer_DrawRectangle(borderBottomRect2, GUIElementStyle_Get_borderbottomcolor(pElement->style));
 
-            //Renderer_DrawRectangle(borderBottomRect, GUIElementStyle_Get_borderbottomcolor(pElement->style));
+            GTLib::Rect<int> borderBottomRect3(borderBottomRect);
+            borderBottomRect3.left  = borderBottomRect1.right;
+            borderBottomRect3.right = borderBottomRect2.left;
+            Renderer_DrawRectangle(borderBottomRect3, GUIElementStyle_Get_borderbottommaskcolor(pElement->style));
         }
 
 
@@ -4120,7 +4165,7 @@ namespace GT
         }
         else
         {
-            this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY));   // <-- This will post OnMouseEnter and OnMouseLeave events.
+            this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY, true));   // <-- This will post OnMouseEnter and OnMouseLeave events.
             if (this->Layout_HasInvalidLayouts())
             {
                 this->Layout_ValidateElementLayoutsAndPostEvents();

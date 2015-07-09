@@ -20,7 +20,7 @@ namespace GT
     static const uint32_t StyleBit_Disabled                 = (1 << 1);
     static const uint32_t StyleBit_FlexChildrenWidth        = (1 << 2);
     static const uint32_t StyleBit_FlexChildrenHeight       = (1 << 3);
-    static const uint32_t StyleBit_TransparentMouseInput    = (1 << 4);
+    static const uint32_t StyleBit_PassThroughCursorInput   = (1 << 4);
     static const uint32_t StyleBit_CanReceiveFocusFromMouse = (1 << 5);
     static const uint32_t StyleBit_EditableText             = (1 << 6);
     static const uint32_t StyleBit_MultiLineText            = (1 << 7);
@@ -176,6 +176,12 @@ namespace GT
         uint32_t borderTopMaskLength;                       // [1,4] type | [5,32] value
         uint32_t borderRightMaskLength;                     // [1,4] type | [5,32] value
         uint32_t borderBottomMaskLength;                    // [1,4] type | [5,32] value
+        uint32_t borderLeftMaskColor;
+        uint32_t borderTopMaskColor;
+        uint32_t borderRightMaskColor;
+        uint32_t borderBottomMaskColor;
+
+
 
         uint32_t paddingLeft;                               // [1,4] type | [5,32] value
         uint32_t paddingTop;                                // [1,4] type | [5,32] value
@@ -694,6 +700,28 @@ namespace GT
     }
 
 
+    inline void GUIElementStyle_Set_borderbottommaskcolor(GUIElementStyle &style, const GTLib::Colour &color)
+    {
+        uint32_t value =
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.r * 255)) << 24) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.g * 255)) << 16) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.a * 255)) <<  0);
+
+        style.borderBottomMaskColor = value;
+    }
+    inline GTLib::Colour GUIElementStyle_Get_borderbottommaskcolor(const GUIElementStyle &style)
+    {
+        GTLib::Colour color;
+        color.r = static_cast<float>((style.borderBottomMaskColor & 0xFF000000) >> 24) / 255.0f;
+        color.g = static_cast<float>((style.borderBottomMaskColor & 0x00FF0000) >> 16) / 255.0f;
+        color.b = static_cast<float>((style.borderBottomMaskColor & 0x0000FF00) >>  8) / 255.0f;
+        color.a = static_cast<float>((style.borderBottomMaskColor & 0x000000FF) >>  0) / 255.0f;
+
+        return color;
+    }
+
+
 
     // Padding.
     inline void GUIElementStyle_Set_paddingleft(GUIElementStyle &style, uint32_t padding, uint32_t type = NumberType_Absolute)
@@ -914,6 +942,16 @@ namespace GT
     inline bool GUIElementStyle_Get_bottomhaspriority(const GUIElementStyle &style)
     {
         return (style.booleanField & StyleBit_BottomHasPriority) != 0;
+    }
+
+    // Cursor pass-through.
+    inline void GUIElementStyle_Set_passthroughcursorinput(GUIElementStyle &style, bool passThroughCursorInput)
+    {
+        style.booleanField = (style.booleanField & ~StyleBit_PassThroughCursorInput) | (-static_cast<int32_t>(passThroughCursorInput) & StyleBit_PassThroughCursorInput);
+    }
+    inline bool GUIElementStyle_Get_passthroughcursorinput(const GUIElementStyle &style)
+    {
+        return (style.booleanField & StyleBit_PassThroughCursorInput) != 0;
     }
 
 

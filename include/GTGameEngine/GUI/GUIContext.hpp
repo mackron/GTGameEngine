@@ -906,16 +906,16 @@ namespace GT
 
 
         /// @copydoc GUIContext::SetElementBorderLeftMask()
-        void SetElementBorderLeftMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength);
+        void SetElementBorderLeftMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// @copydoc GUIContext::SetElementBorderTopMask()
-        void SetElementBorderTopMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength);
+        void SetElementBorderTopMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// @copydoc GUIContext::SetElementBorderRightMask()
-        void SetElementBorderRightMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength);
+        void SetElementBorderRightMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// @copydoc GUIContext::SetElementBorderBottomMask()
-        void SetElementBorderBottomMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength);
+        void SetElementBorderBottomMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
 
 
@@ -1294,6 +1294,14 @@ namespace GT
         bool IsElementUnderMouse(HGUIElement hElement) const;
 
         
+        /// @copydoc GUIContextBase::EnableCursorPassThrough()
+        void EnableCursorPassThrough(HGUIElement hElement);
+
+        /// @copydoc GUIContextBase::DisableCursorPassThrough()
+        void DisableCursorPassThrough(HGUIElement hElement);
+
+        /// @copydoc GUIContextBase::IsCursorPassThroughEnabled()
+        bool IsCursorPassThroughEnabled(HGUIElement hElement) const;
 
 
 

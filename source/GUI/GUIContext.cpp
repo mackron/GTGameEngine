@@ -1542,39 +1542,39 @@ namespace GT
     }
 
 
-    void GUIContext::SetElementBorderLeftMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength)
+    void GUIContext::SetElementBorderLeftMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
-            GUIContextBase::SetElementBorderLeftMask(pElement, maskOffset, maskLength);
+            GUIContextBase::SetElementBorderLeftMask(pElement, maskOffset, maskLength, maskColor);
         }
     }
 
-    void GUIContext::SetElementBorderTopMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength)
+    void GUIContext::SetElementBorderTopMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
-            GUIContextBase::SetElementBorderTopMask(pElement, maskOffset, maskLength);
+            GUIContextBase::SetElementBorderTopMask(pElement, maskOffset, maskLength, maskColor);
         }
     }
 
-    void GUIContext::SetElementBorderRightMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength)
+    void GUIContext::SetElementBorderRightMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
-            GUIContextBase::SetElementBorderRightMask(pElement, maskOffset, maskLength);
+            GUIContextBase::SetElementBorderRightMask(pElement, maskOffset, maskLength, maskColor);
         }
     }
 
-    void GUIContext::SetElementBorderBottomMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength)
+    void GUIContext::SetElementBorderBottomMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
-            GUIContextBase::SetElementBorderBottomMask(pElement, maskOffset, maskLength);
+            GUIContextBase::SetElementBorderBottomMask(pElement, maskOffset, maskLength, maskColor);
         }
     }
 
@@ -2146,6 +2146,40 @@ namespace GT
         return false;
     }
 
+
+    void GUIContext::EnableCursorPassThrough(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::EnableCursorPassThrough(pElement);
+        }
+    }
+
+    void GUIContext::DisableCursorPassThrough(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::DisableCursorPassThrough(pElement);
+        }
+    }
+
+    bool GUIContext::IsCursorPassThroughEnabled(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::IsCursorPassThroughEnabled(pElement);
+        }
+
+        return false;
+    }
+
+
+
+    ////////////////////////////////////////////////////////////////
+    // Batching
 
     void GUIContext::BeginBatch()
     {

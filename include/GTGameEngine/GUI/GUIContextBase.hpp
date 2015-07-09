@@ -1003,28 +1003,28 @@ namespace GT
         /// @param hElement   [in] The element whose border mask is being set.
         /// @param maskOffset [in] The starting point of the mask, from the top.
         /// @param maskLength [in] The length of the mask.
-        void SetElementBorderLeftMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength);
+        void SetElementBorderLeftMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// Sets the region of the top border that is not drawn.
         ///
         /// @param hElement   [in] The element whose border mask is being set.
         /// @param maskOffset [in] The starting point of the mask, from the left.
         /// @param maskLength [in] The length of the mask.
-        void SetElementBorderTopMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength);
+        void SetElementBorderTopMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// Sets the region of the right border that is not drawn.
         ///
         /// @param hElement   [in] The element whose border mask is being set.
         /// @param maskOffset [in] The starting point of the mask, from the top.
         /// @param maskLength [in] The length of the mask.
-        void SetElementBorderRightMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength);
+        void SetElementBorderRightMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// Sets the region of the bottom border that is not drawn.
         ///
         /// @param hElement   [in] The element whose border mask is being set.
         /// @param maskOffset [in] The starting point of the mask, from the left.
         /// @param maskLength [in] The length of the mask.
-        void SetElementBorderBottomMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength);
+        void SetElementBorderBottomMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
 
         /// Sets the left padding of the given element, in DPI-aware points.
@@ -1414,6 +1414,27 @@ namespace GT
         bool IsElementUnderMouse(GUIElement* pElement) const;
 
 
+        /// Enables cursor pass-through on the given element.
+        ///
+        /// @param pElement [in] The element.
+        void EnableCursorPassThrough(GUIElement* pElement);
+
+        /// Distables cursor pass-through on the given element.
+        ///
+        /// @param pElement [i] The element.
+        void DisableCursorPassThrough(GUIElement* pElement);
+
+        /// Determines whether or not cursor pass-through is enabled on the given element.
+        ///
+        /// @param pElement [in] The element.
+        ///
+        /// @return True if cursor pass-through is enabled on the given element; false otherwise.
+        ///
+        /// @remarks
+        ///     By default this will return false.
+        bool IsCursorPassThroughEnabled(GUIElement* pElement) const;
+
+
         ////////////////////////////////////////////////////////////////
         // Batching
 
@@ -1516,15 +1537,16 @@ namespace GT
 
         /// Finds the element sitting directly under the given point on the given surface.
         ///
-        /// @param pSurface [in] A handle to the surface to search for.
-        /// @param x        [in] The position of the point on the x axis relative to the top left corner.
-        /// @param y        [in] The position of the point on the y axis relative to the top left corner.
+        /// @param pSurface           [in] A handle to the surface to search for.
+        /// @param x                  [in] The position of the point on the x axis relative to the top left corner.
+        /// @param y                  [in] The position of the point on the y axis relative to the top left corner.
+        /// @param respectPassThrough [in] Whether or not the cursor pass-through state of the element.
         ///
         /// @return A handle to the element sitting directly under the point, or 0 if no element is sitting under the point.
         ///
         /// @remarks
         ///     This will take clipping into account.
-        GUIElement* FindElementUnderPoint(GUISurface* pSurface, int x, int y);
+        GUIElement* FindElementUnderPoint(GUISurface* pSurface, int x, int y, bool respectPassThrough = false);
 
 
 
@@ -1660,8 +1682,8 @@ namespace GT
         /// @remarks
         ///     This will do a pre-order depth-first traversal, and will include the root element.
         ///     @par
-        ///     The delegate function will not be called if the child is completely clipped.
-        void ClippedTraversal(GUIElement* pElement, const GTLib::Rect<float> &clippingRect, std::function<void (GUIElement*, const GTLib::Rect<int> &)> func);
+        ///     The delegate function will not be called if the child is completely clipped. When \c func returns false, the traversal will stop.
+        bool ClippedTraversal(GUIElement* pElement, const GTLib::Rect<float> &clippingRect, std::function<bool (GUIElement*, const GTLib::Rect<int> &)> func);
 
 
         /// Updates the given element's font based on it's current style.
