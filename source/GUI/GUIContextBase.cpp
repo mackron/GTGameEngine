@@ -428,9 +428,6 @@ namespace GT
 
             // Invalidate the applicable layouts.
             this->Layout_InvalidateElementLayout(pChildElement, LayoutFlag_SizeAndPositionInvalid);
-
-            // The element's DPI may have changed.
-            this->UpdateElementOnDPIChange(pChildElement);
         }
         this->EndBatch();
     }
@@ -552,9 +549,6 @@ namespace GT
             if (pParentElement->pSurface != pChildElement->pSurface)
             {
                 this->SetElementSurfaceRecursive(pChildElement, pParentElement->pSurface);
-
-                // The element's DPI may have changed.
-                //this->UpdateElementOnDPIChange(pChildElement);
             }
         }
         this->EndBatch();
@@ -623,9 +617,6 @@ namespace GT
             if (pElementToAppendTo->pSurface != pElementToAppend->pSurface)
             {
                 this->SetElementSurfaceRecursive(pElementToAppend, pElementToAppendTo->pSurface);
-
-                // The element's DPI may have changed.
-                //this->UpdateElementOnDPIChange(pElementToAppend);
             }
         }
         this->EndBatch();
@@ -694,9 +685,6 @@ namespace GT
             if (pElementToPrependTo->pSurface != pElementToPrepend->pSurface)
             {
                 this->SetElementSurfaceRecursive(pElementToPrepend, pElementToPrependTo->pSurface);
-
-                // The element's DPI may have changed.
-                //this->UpdateElementOnDPIChange(pElementToPrepend);
             }
         }
         this->EndBatch();
