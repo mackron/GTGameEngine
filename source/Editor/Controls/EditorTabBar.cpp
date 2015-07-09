@@ -121,9 +121,9 @@ namespace GT
             m_pActiveTab->ApplyActivatedStyle();
 
 
-            GTLib::Rect<int> tabRect;
-            this->GetGUI().GetElementAbsoluteRect(pTab->GetRootGUIElement(), tabRect);
-            this->GetGUI().SetElementBorderBottomMask(this->GetRootGUIElement(), tabRect.left + 1, tabRect.GetWidth() - 2, GTLib::Colour(0.25f, 0.25f, 0.25f));
+            GTLib::Rect<int> tabInnerRect;
+            this->GetGUI().GetElementAbsoluteInnerBorderRect(pTab->GetRootGUIElement(), tabInnerRect);
+            this->GetGUI().SetElementBorderBottomMaskInPixels(this->GetRootGUIElement(), tabInnerRect.left, tabInnerRect.GetWidth(), GTLib::Colour(0.25f, 0.25f, 0.25f));
         }
     }
 
@@ -134,7 +134,7 @@ namespace GT
             m_pActiveTab->ApplyDefaultStyle();
             m_pActiveTab = nullptr;
 
-            this->GetGUI().SetElementBorderBottomMask(this->GetRootGUIElement(), 0, 0);
+            this->GetGUI().SetElementBorderBottomMaskInPixels(this->GetRootGUIElement(), 0, 0);
         }
     }
 

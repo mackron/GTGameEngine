@@ -515,6 +515,10 @@ namespace GT
 
                 if (hSurface != NULL)
                 {
+                    m_gui.SetDPI(hSurface, 192, 192);
+                    //m_gui.SetDPI(hSurface, 144, 144);
+                    //m_gui.SetDPI(hSurface, 96, 96);
+
                     m_gui.SetSurfaceSize(hSurface, windowWidth, windowHeight);
                     m_gui.SetSurfaceAuxData(hSurface, new EditorGUISurfaceAUXData(hWindow));
 
