@@ -34,6 +34,7 @@ namespace GT
             gui.SetElementPadding(m_hTextElement, 4);
             gui.SetElementPaddingTop(m_hTextElement, 4);
             gui.SetElementPaddingBottom(m_hTextElement, 2);
+            gui.EnableCursorPassThrough(m_hTextElement);
             //gui.SetElementBorder(m_hTextElement, 1, GTLib::Colour(0, 0, 0));
             
             
@@ -87,13 +88,15 @@ namespace GT
                 gui.SetElementPaddingBottom(hRootElement, 0);
                 gui.SetElementBorderWidth(hRootElement, 0U);
 
+                // Background.
+                gui.SetElementBackgroundColor(hRootElement, GTLib::Colour(0, 0, 0, 0));
 
                 // Text.
-                gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.8f, 0.8f, 0.8f));
+                gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.75f, 0.75f, 0.75f));
 
 
                 // Close button.
-                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.35f, 0.35f, 0.35f));
+                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.225f, 0.225f, 0.225f, 0.0f));
             }
             gui.EndBatch();
         }
@@ -109,21 +112,23 @@ namespace GT
             // Hide the border, and compensate with padding.
             gui.BeginBatch();
             {
-                gui.SetElementPaddingLeft(hRootElement, 0);
-                gui.SetElementPaddingRight(hRootElement, 0);
-                gui.SetElementPaddingTop(hRootElement, 0);
+                gui.SetElementPaddingLeft(hRootElement, 1);
+                gui.SetElementPaddingRight(hRootElement, 1);
+                gui.SetElementPaddingTop(hRootElement, 1);
                 gui.SetElementPaddingBottom(hRootElement, 0);
 
-                gui.SetElementBorderWidth(hRootElement, 1U);
-                gui.SetElementBorderBottomWidth(hRootElement, 0U);
+                //gui.SetElementBorderWidth(hRootElement, 1U);
+                //gui.SetElementBorderBottomWidth(hRootElement, 0U);
 
+                // Background.
+                gui.SetElementBackgroundColor(hRootElement, GTLib::Colour(0, 0, 0, 0));
 
                 // Text
                 gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.9f, 0.9f, 0.9f));
 
 
                 // Close button.
-                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.75f, 0.35f, 0.35f));
+                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.4f, 0.4f, 0.4f));
             }
             gui.EndBatch();
         }
@@ -139,13 +144,23 @@ namespace GT
             // Hide the border, and compensate with padding.
             gui.BeginBatch();
             {
-                gui.SetElementPaddingLeft(hRootElement, 1);
-                gui.SetElementPaddingRight(hRootElement, 1);
-                gui.SetElementPaddingTop(hRootElement, 1);
-                gui.SetElementPaddingBottom(hRootElement, 1);
-                gui.SetElementBorderWidth(hRootElement, 0U);
+                gui.SetElementPaddingLeft(hRootElement, 0);
+                gui.SetElementPaddingRight(hRootElement, 0);
+                gui.SetElementPaddingTop(hRootElement, 0);
+                gui.SetElementPaddingBottom(hRootElement, 0);
 
-                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.75f, 0.35f, 0.35f));
+                // Border.
+                gui.SetElementBorderWidth(hRootElement, 1U);
+                gui.SetElementBorderBottomWidth(hRootElement, 0U);
+
+                // Background.
+                gui.SetElementBackgroundColor(hRootElement, GTLib::Colour(0.25f, 0.25f, 0.25f));
+
+                // Text
+                gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.9f, 0.9f, 0.9f));
+
+                // Close button.
+                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.4f, 0.4f, 0.4f));
             }
             gui.EndBatch();
         }

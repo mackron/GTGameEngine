@@ -18,6 +18,7 @@ namespace GT
 
             gui.EnableElementChildHeightFlexing(hRootElement);
             gui.SetElementSizeRatio(hRootElement, 1.0f, 1.0f);
+            gui.SetElementChildAxis(hRootElement, ChildAxis_Vertical);
 
 
             // Tab bar.
@@ -26,6 +27,9 @@ namespace GT
             // Tab page container.
             m_hTabPageContainer = gui.CreateElement();
             gui.SetElementParent(m_hTabPageContainer, hRootElement);
+            gui.SetElementSizeRatio(m_hTabPageContainer, 1.0f, 1.0f);
+            gui.SetElementBorder(m_hTabPageContainer, 1, GTLib::Colour(0.4f, 0.4f, 0.4f));
+            gui.SetElementBorderTopWidth(m_hTabPageContainer, 0);
 
 
             // Testing.

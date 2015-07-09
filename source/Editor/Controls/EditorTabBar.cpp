@@ -20,7 +20,8 @@ namespace GT
             //gui.SetElementHeight(hRootElement, 28U);
             gui.SetElementHeightToChildren(hRootElement);
             gui.SetElementWidthRatio(hRootElement, 1.0f);
-            gui.SetElementBorderBottom(hRootElement, 1, GTLib::Colour(0.4f, 0.4f, 0.4f));
+            gui.SetElementBackgroundColor(hRootElement, GTLib::Colour(0.225f, 0.225f, 0.225f));
+            gui.SetElementBorderBottom(hRootElement, 1, GTLib::Colour(0.35f, 0.35f, 0.35f));
             gui.EnableElementChildWidthFlexing(hRootElement);
             gui.SetElementChildAxis(hRootElement, ChildAxis_Horizontal);
             gui.SetElementFont(hRootElement, "Segoe UI", FontWeight_Medium, FontSlant_None, 12);
@@ -118,6 +119,11 @@ namespace GT
         {
             m_pActiveTab = pTab;
             m_pActiveTab->ApplyActivatedStyle();
+
+
+            GTLib::Rect<int> tabRect;
+            this->GetGUI().GetElementAbsoluteRect(pTab->GetRootGUIElement(), tabRect);
+            this->GetGUI().SetElementBorderBottomMask(this->GetRootGUIElement(), tabRect.left + 1, tabRect.GetWidth() - 2, GTLib::Colour(0.25f, 0.25f, 0.25f));
         }
     }
 
@@ -127,6 +133,8 @@ namespace GT
         {
             m_pActiveTab->ApplyDefaultStyle();
             m_pActiveTab = nullptr;
+
+            this->GetGUI().SetElementBorderBottomMask(this->GetRootGUIElement(), 0, 0);
         }
     }
 
@@ -148,7 +156,10 @@ namespace GT
         auto pTab = m_pTabBar->GetTabByGUIElement(hElement);
         if (pTab != nullptr)
         {
-            pTab->ApplyHoveredStyle();
+            if (pTab != m_pTabBar->GetActiveTab())
+            {
+                pTab->ApplyHoveredStyle();
+            }
         }
     }
 
@@ -166,6 +177,10 @@ namespace GT
 
     void EditorTabBar::TabEventHandler::OnMouseButtonPressed(GUIContext &gui, HGUIElement hElement, int, int, int)
     {
-        int temp = 0;
+        auto pTab = m_pTabBar->GetTabByGUIElement(hElement);
+        if (pTab != nullptr)
+        {
+            m_pTabBar->ActivateTab(pTab);
+        }
     }
 }
