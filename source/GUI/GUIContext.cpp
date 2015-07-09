@@ -1349,13 +1349,46 @@ namespace GT
             GUIContextBase::GetElementAbsoluteRect(pElement, rectOut);
         }
     }
-
     void GUIContext::GetElementAbsoluteRect(HGUIElement hElement, GTLib::Rect<int> &rectOut) const
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
             GUIContextBase::GetElementAbsoluteRect(pElement, rectOut);
+        }
+    }
+
+    void GUIContext::GetElementAbsoluteInnerRect(HGUIElement hElement, GTLib::Rect<float> &rectOut) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::GetElementAbsoluteInnerRect(pElement, rectOut);
+        }
+    }
+    void GUIContext::GetElementAbsoluteInnerRect(HGUIElement hElement, GTLib::Rect<int> &rectOut) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::GetElementAbsoluteInnerRect(pElement, rectOut);
+        }
+    }
+
+    void GUIContext::GetElementAbsoluteInnerBorderRect(HGUIElement hElement, GTLib::Rect<float> &rectOut) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::GetElementAbsoluteInnerBorderRect(pElement, rectOut);
+        }
+    }
+    void GUIContext::GetElementAbsoluteInnerBorderRect(HGUIElement hElement, GTLib::Rect<int> &rectOut) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::GetElementAbsoluteInnerBorderRect(pElement, rectOut);
         }
     }
 
@@ -1542,39 +1575,39 @@ namespace GT
     }
 
 
-    void GUIContext::SetElementBorderLeftMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContext::SetElementBorderLeftMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
-            GUIContextBase::SetElementBorderLeftMask(pElement, maskOffset, maskLength, maskColor);
+            GUIContextBase::SetElementBorderLeftMaskInPixels(pElement, maskOffset, maskLength, maskColor);
         }
     }
 
-    void GUIContext::SetElementBorderTopMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContext::SetElementBorderTopMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
-            GUIContextBase::SetElementBorderTopMask(pElement, maskOffset, maskLength, maskColor);
+            GUIContextBase::SetElementBorderTopMaskInPixels(pElement, maskOffset, maskLength, maskColor);
         }
     }
 
-    void GUIContext::SetElementBorderRightMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContext::SetElementBorderRightMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
-            GUIContextBase::SetElementBorderRightMask(pElement, maskOffset, maskLength, maskColor);
+            GUIContextBase::SetElementBorderRightMaskInPixels(pElement, maskOffset, maskLength, maskColor);
         }
     }
 
-    void GUIContext::SetElementBorderBottomMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContext::SetElementBorderBottomMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
         {
-            GUIContextBase::SetElementBorderBottomMask(pElement, maskOffset, maskLength, maskColor);
+            GUIContextBase::SetElementBorderBottomMaskInPixels(pElement, maskOffset, maskLength, maskColor);
         }
     }
 

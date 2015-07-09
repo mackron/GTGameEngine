@@ -243,6 +243,9 @@ namespace GT
 
             // Text colour.
             GUIElementStyle_Set_textcolor(pElement->style, GTLib::Colour(0.0f, 0.0f, 0.0f, 1.0f));
+
+            // Inherit the font.
+            GUIElementStyle_Set_inheritfont(pElement->style, true);
         }
 
         return pElement;
@@ -425,6 +428,9 @@ namespace GT
 
             // Invalidate the applicable layouts.
             this->Layout_InvalidateElementLayout(pChildElement, LayoutFlag_SizeAndPositionInvalid);
+
+            // The element's DPI may have changed.
+            this->UpdateElementOnDPIChange(pChildElement);
         }
         this->EndBatch();
     }
@@ -546,6 +552,9 @@ namespace GT
             if (pParentElement->pSurface != pChildElement->pSurface)
             {
                 this->SetElementSurfaceRecursive(pChildElement, pParentElement->pSurface);
+
+                // The element's DPI may have changed.
+                //this->UpdateElementOnDPIChange(pChildElement);
             }
         }
         this->EndBatch();
@@ -614,6 +623,9 @@ namespace GT
             if (pElementToAppendTo->pSurface != pElementToAppend->pSurface)
             {
                 this->SetElementSurfaceRecursive(pElementToAppend, pElementToAppendTo->pSurface);
+
+                // The element's DPI may have changed.
+                //this->UpdateElementOnDPIChange(pElementToAppend);
             }
         }
         this->EndBatch();
@@ -682,6 +694,9 @@ namespace GT
             if (pElementToPrependTo->pSurface != pElementToPrepend->pSurface)
             {
                 this->SetElementSurfaceRecursive(pElementToPrepend, pElementToPrependTo->pSurface);
+
+                // The element's DPI may have changed.
+                //this->UpdateElementOnDPIChange(pElementToPrepend);
             }
         }
         this->EndBatch();
@@ -1235,7 +1250,6 @@ namespace GT
         rectOut.right  = rectOut.left + pElement->layout.width;
         rectOut.bottom = rectOut.top  + pElement->layout.height;
     }
-
     void GUIContextBase::GetElementAbsoluteRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const
     {
         assert(pElement != nullptr);
@@ -1244,6 +1258,50 @@ namespace GT
         rectOut.top    = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY));
         rectOut.right  = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX + pElement->layout.width));
         rectOut.bottom = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY + pElement->layout.height));
+    }
+
+    void GUIContextBase::GetElementAbsoluteInnerRect(GUIElement* pElement, GTLib::Rect<float> &rectOut) const
+    {
+        assert(pElement != nullptr);
+
+        rectOut.left   = pElement->layout.absolutePosX + pElement->layout.borderLeftWidth + pElement->layout.paddingLeft;
+        rectOut.top    = pElement->layout.absolutePosY + pElement->layout.borderTopWidth  + pElement->layout.paddingTop;
+        rectOut.right  = rectOut.left + pElement->layout.width  - this->Layout_GetElementInnerWidth(pElement);
+        rectOut.bottom = rectOut.top  + pElement->layout.height - this->Layout_GetElementInnerHeight(pElement);
+    }
+    void GUIContextBase::GetElementAbsoluteInnerRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const
+    {
+        assert(pElement != nullptr);
+
+        GTLib::Rect<float> rectF;
+        this->GetElementAbsoluteInnerRect(pElement, rectF);
+
+        rectOut.left   = static_cast<int>(GTLib::Round(rectF.left));
+        rectOut.top    = static_cast<int>(GTLib::Round(rectF.top));
+        rectOut.right  = static_cast<int>(GTLib::Round(rectF.right));
+        rectOut.bottom = static_cast<int>(GTLib::Round(rectF.bottom));
+    }
+
+    void GUIContextBase::GetElementAbsoluteInnerBorderRect(GUIElement* pElement, GTLib::Rect<float> &rectOut) const
+    {
+        assert(pElement != nullptr);
+
+        rectOut.left   = pElement->layout.absolutePosX + pElement->layout.borderLeftWidth;
+        rectOut.top    = pElement->layout.absolutePosY + pElement->layout.borderTopWidth;
+        rectOut.right  = rectOut.left + pElement->layout.width  - this->Layout_GetElementHorizontalBorderSize(pElement);
+        rectOut.bottom = rectOut.top  + pElement->layout.height - this->Layout_GetElementVerticalBorderSize(pElement);
+    }
+    void GUIContextBase::GetElementAbsoluteInnerBorderRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const
+    {
+        assert(pElement != nullptr);
+
+        GTLib::Rect<float> rectF;
+        this->GetElementAbsoluteInnerBorderRect(pElement, rectF);
+
+        rectOut.left   = static_cast<int>(GTLib::Round(rectF.left));
+        rectOut.top    = static_cast<int>(GTLib::Round(rectF.top));
+        rectOut.right  = static_cast<int>(GTLib::Round(rectF.right));
+        rectOut.bottom = static_cast<int>(GTLib::Round(rectF.bottom));
     }
 
     
@@ -1555,12 +1613,13 @@ namespace GT
     }
 
 
-    void GUIContextBase::SetElementBorderLeftMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContextBase::SetElementBorderLeftMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         assert(pElement != nullptr);
 
-        GUIElementStyle_Set_borderleftmaskoffset(pElement->style, maskOffset, NumberType_Points);
-        GUIElementStyle_Set_borderleftmasklength(pElement->style, maskLength, NumberType_Points);
+        GUIElementStyle_Set_borderleftmaskoffset(pElement->style, maskOffset, NumberType_Pixels);
+        GUIElementStyle_Set_borderleftmasklength(pElement->style, maskLength, NumberType_Pixels);
+        GUIElementStyle_Set_borderleftmaskcolor(pElement->style, maskColor);
 
 
         this->BeginBatch();
@@ -1570,12 +1629,13 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderTopMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContextBase::SetElementBorderTopMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         assert(pElement != nullptr);
 
-        GUIElementStyle_Set_bordertopmaskoffset(pElement->style, maskOffset, NumberType_Points);
-        GUIElementStyle_Set_bordertopmasklength(pElement->style, maskLength, NumberType_Points);
+        GUIElementStyle_Set_bordertopmaskoffset(pElement->style, maskOffset, NumberType_Pixels);
+        GUIElementStyle_Set_bordertopmasklength(pElement->style, maskLength, NumberType_Pixels);
+        GUIElementStyle_Set_bordertopmaskcolor(pElement->style, maskColor);
 
 
         this->BeginBatch();
@@ -1585,12 +1645,13 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderRightMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContextBase::SetElementBorderRightMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         assert(pElement != nullptr);
 
-        GUIElementStyle_Set_borderrightmaskoffset(pElement->style, maskOffset, NumberType_Points);
-        GUIElementStyle_Set_borderrightmasklength(pElement->style, maskLength, NumberType_Points);
+        GUIElementStyle_Set_borderrightmaskoffset(pElement->style, maskOffset, NumberType_Pixels);
+        GUIElementStyle_Set_borderrightmasklength(pElement->style, maskLength, NumberType_Pixels);
+        GUIElementStyle_Set_borderrightmaskcolor(pElement->style, maskColor);
 
 
         this->BeginBatch();
@@ -1600,12 +1661,12 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderBottomMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContextBase::SetElementBorderBottomMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
     {
         assert(pElement != nullptr);
 
-        GUIElementStyle_Set_borderbottommaskoffset(pElement->style, maskOffset, NumberType_Points);
-        GUIElementStyle_Set_borderbottommasklength(pElement->style, maskLength, NumberType_Points);
+        GUIElementStyle_Set_borderbottommaskoffset(pElement->style, maskOffset, NumberType_Pixels);
+        GUIElementStyle_Set_borderbottommasklength(pElement->style, maskLength, NumberType_Pixels);
         GUIElementStyle_Set_borderbottommaskcolor(pElement->style, maskColor);
 
 
@@ -2241,6 +2302,7 @@ namespace GT
             auto pOldFont = this->GetElementFont(pElement);
 
             // 1) Update the styles.
+            GUIElementStyle_Set_inheritfont(pElement->style, false);
             GUIElementStyle_Set_fontfamily(pElement->style, m_pFontManager->EncodeFontFamily(family));
             GUIElementStyle_Set_fontweight(pElement->style, weight);
             GUIElementStyle_Set_fontslant(pElement->style, slant);
@@ -2935,12 +2997,41 @@ namespace GT
     {
         assert(pElement != nullptr);
 
+        // The element's DPI may have changed.
+        unsigned int prevXDPI;
+        unsigned int prevYDPI;
+        this->GetBaseDPI(prevXDPI, prevYDPI);
+
+        if (pElement->pSurface != nullptr)
+        {
+            this->GetDPI(pElement->pSurface, prevXDPI, prevYDPI);
+        }
+
+
+        unsigned int newXDPI;
+        unsigned int newYDPI;
+        this->GetBaseDPI(newXDPI, newYDPI);
+
+        if (pSurface != nullptr)
+        {
+            this->GetDPI(pSurface, newXDPI, newYDPI);
+        }
+        
+
         pElement->pSurface = pSurface;
+
+
+        // Update DPI.
+        if (prevXDPI != newXDPI || prevYDPI != newYDPI)
+        {
+            this->UpdateElementOnDPIChange(pElement);
+        }
+
 
         // The layout may need to be updated.
         this->BeginBatch();
         {
-            this->Layout_InvalidateElementLayout(pElement, LayoutFlag_WidthInvalid | LayoutFlag_HeightInvalid | LayoutFlag_PositionInvalid);
+            this->Layout_InvalidateElementLayout(pElement, LayoutFlag_WidthInvalid | LayoutFlag_HeightInvalid | LayoutFlag_PositionInvalid | LayoutFlag_TextInvalid);
         }
         this->EndBatch();
 
@@ -3114,63 +3205,84 @@ namespace GT
 
         if (m_pFontManager != nullptr)
         {
-            const char* family = m_pFontManager->DecodeFontFamily(GUIElementStyle_Get_fontfamily(pElement->style));
-            FontWeight  weight = GUIElementStyle_Get_fontweight(pElement->style);
-            FontSlant   slant  = GUIElementStyle_Get_fontslant(pElement->style);
-
-            uint32_t sizeType;
-            uint32_t size = GUIElementStyle_Get_fontsize(pElement->style, sizeType);
-
-
-            // We now have enough information to generate a font from a font info structure.
-            GUIFontInfo fi;
-            fi.family = family;
-            fi.dpiX = this->GetXDPI(this->GetElementSurface(pElement));
-            fi.dpiY = this->GetYDPI(this->GetElementSurface(pElement));
-            fi.size = static_cast<float>(size) * this->GetXDPIScalingFactor(this->GetElementSurface(pElement));
-
-
-            switch (weight)
+            if (!GUIElementStyle_Get_inheritfont(pElement->style))
             {
-            case FontWeight_Thin:       fi.styleFlags |= GTLib::FontStyle_Thin;       break;
-            case FontWeight_ExtraLight: fi.styleFlags |= GTLib::FontStyle_ExtraLight; break;
-            case FontWeight_Light:      fi.styleFlags |= GTLib::FontStyle_Light;      break;
-            case FontWeight_SemiBold:   fi.styleFlags |= GTLib::FontStyle_SemiBold;   break;
-            case FontWeight_Bold:       fi.styleFlags |= GTLib::FontStyle_Bold;       break;
-            case FontWeight_ExtraBold:  fi.styleFlags |= GTLib::FontStyle_ExtraBold;  break;
-            case FontWeight_Heavy:      fi.styleFlags |= GTLib::FontStyle_Heavy;      break;
+                const char* family = m_pFontManager->DecodeFontFamily(GUIElementStyle_Get_fontfamily(pElement->style));
+                FontWeight  weight = GUIElementStyle_Get_fontweight(pElement->style);
+                FontSlant   slant  = GUIElementStyle_Get_fontslant(pElement->style);
 
-            case FontWeight_Medium:
-            default:
+                uint32_t sizeType;
+                uint32_t size = GUIElementStyle_Get_fontsize(pElement->style, sizeType);
+
+
+                // We now have enough information to generate a font from a font info structure.
+                GUIFontInfo fi;
+                fi.family = family;
+                fi.dpiX = this->GetXDPI(this->GetElementSurface(pElement));
+                fi.dpiY = this->GetYDPI(this->GetElementSurface(pElement));
+                fi.size = static_cast<float>(size) * this->GetXDPIScalingFactor(this->GetElementSurface(pElement));
+
+                if (fi.dpiX == 192)
                 {
-                    fi.styleFlags |= GTLib::FontStyle_Medium;
-                    break;
+                    fi.dpiX = 192;
+                }
+
+                switch (weight)
+                {
+                case FontWeight_Thin:       fi.styleFlags |= GTLib::FontStyle_Thin;       break;
+                case FontWeight_ExtraLight: fi.styleFlags |= GTLib::FontStyle_ExtraLight; break;
+                case FontWeight_Light:      fi.styleFlags |= GTLib::FontStyle_Light;      break;
+                case FontWeight_SemiBold:   fi.styleFlags |= GTLib::FontStyle_SemiBold;   break;
+                case FontWeight_Bold:       fi.styleFlags |= GTLib::FontStyle_Bold;       break;
+                case FontWeight_ExtraBold:  fi.styleFlags |= GTLib::FontStyle_ExtraBold;  break;
+                case FontWeight_Heavy:      fi.styleFlags |= GTLib::FontStyle_Heavy;      break;
+
+                case FontWeight_Medium:
+                default:
+                    {
+                        fi.styleFlags |= GTLib::FontStyle_Medium;
+                        break;
+                    }
+                }
+
+
+                switch (slant)
+                {
+                case FontSlant_Italic:  fi.styleFlags |= GTLib::FontStyle_Italic;  break;
+                case FontSlant_Oblique: fi.styleFlags |= GTLib::FontStyle_Oblique; break;
+
+                case FontSlant_None:
+                default:
+                    {
+                        break;
+                    }
+                }
+
+
+                HGUIFont hFont = m_pFontManager->AcquireFont(fi);
+                if (hFont != NULL)
+                {
+                    // The old font needs to be unaquired.
+                    if (pElement->hFont != NULL)
+                    {
+                        m_pFontManager->UnacquireFont(pElement->hFont);
+                    }
+
+                    pElement->hFont = hFont;
                 }
             }
-
-
-            switch (slant)
+            else
             {
-            case FontSlant_Italic:  fi.styleFlags |= GTLib::FontStyle_Italic;  break;
-            case FontSlant_Oblique: fi.styleFlags |= GTLib::FontStyle_Oblique; break;
-
-            case FontSlant_None:
-            default:
+                // The old font needs to be unaquired.
+                if (pElement->hFont != NULL)
                 {
-                    break;
+                    m_pFontManager->UnacquireFont(pElement->hFont);
                 }
+
+                pElement->hFont = NULL;
             }
 
-
-            HGUIFont hFont = m_pFontManager->AcquireFont(fi);
-            if (hFont != 0)
-            {
-                pElement->hFont = hFont;
-                this->UpdateElementTextLayout(pElement, this->GetElementText(pElement));
-
-                return hFont;
-            }
-
+            this->UpdateElementTextLayout(pElement, this->GetElementText(pElement));
             return this->GetElementFont(pElement);
         }
         else
@@ -3297,6 +3409,27 @@ namespace GT
         this->BeginBatch();
         this->IterateSurfaceElements(pSurface, [&](GUIElement* pElement) -> bool
         {
+            this->UpdateElementOnDPIChange(pElement);
+            return true;
+        });
+        this->EndBatch();
+    }
+
+    void GUIContextBase::UpdateAllElementsOnDPIChange()
+    {
+        this->BeginBatch();
+        this->IterateSurfaces([&](GUISurface* pSurface) -> bool
+        {
+            this->UpdateAllElementsOnDPIChange(pSurface);
+            return true;
+        });
+        this->EndBatch();
+    }
+
+    void GUIContextBase::UpdateElementOnDPIChange(GUIElement* pElement)
+    {
+        this->BeginBatch();
+        {
             // Font.
             this->UpdateElementFontFromStyle(pElement);
 
@@ -3311,20 +3444,7 @@ namespace GT
 
             // Layout.
             this->Layout_InvalidateElementLayout(pElement, LayoutFlag_PositionInvalid | LayoutFlag_SizeInvalid | LayoutFlag_TextInvalid);
-
-            return true;
-        });
-        this->EndBatch();
-    }
-
-    void GUIContextBase::UpdateAllElementsOnDPIChange()
-    {
-        this->BeginBatch();
-        this->IterateSurfaces([&](GUISurface* pSurface) -> bool
-        {
-            this->UpdateAllElementsOnDPIChange(pSurface);
-            return true;
-        });
+        }
         this->EndBatch();
     }
 
@@ -3600,7 +3720,7 @@ namespace GT
 
             uint32_t borderMaskLengthType;
             uint32_t borderMaskLength = GUIElementStyle_Get_borderleftmasklength(pElement->style, borderMaskLengthType);
-            if (borderMaskLength == NumberType_Points)
+            if (borderMaskLengthType == NumberType_Points)
             {
                 borderMaskLength = static_cast<uint32_t>(borderMaskLength * this->GetXDPIScalingFactor(this->GetElementSurface(pElement)));
             }
@@ -3615,7 +3735,10 @@ namespace GT
             Renderer_DrawRectangle(borderLeftRect1, GUIElementStyle_Get_borderleftcolor(pElement->style));
             Renderer_DrawRectangle(borderLeftRect2, GUIElementStyle_Get_borderleftcolor(pElement->style));
 
-            //Renderer_DrawRectangle(borderLeftRect,   GUIElementStyle_Get_borderleftcolor(pElement->style));
+            GTLib::Rect<int> borderLeftRect3(borderLeftRect);
+            borderLeftRect3.top  = borderLeftRect1.bottom;
+            borderLeftRect3.bottom = borderLeftRect2.top;
+            Renderer_DrawRectangle(borderLeftRect3, GUIElementStyle_Get_borderleftmaskcolor(pElement->style));
         }
 
 
@@ -3630,7 +3753,7 @@ namespace GT
 
             uint32_t borderMaskLengthType;
             uint32_t borderMaskLength = GUIElementStyle_Get_bordertopmasklength(pElement->style, borderMaskLengthType);
-            if (borderMaskLength == NumberType_Points)
+            if (borderMaskLengthType == NumberType_Points)
             {
                 borderMaskLength = static_cast<uint32_t>(borderMaskLength * this->GetXDPIScalingFactor(this->GetElementSurface(pElement)));
             }
@@ -3644,6 +3767,11 @@ namespace GT
 
             Renderer_DrawRectangle(borderTopRect1, GUIElementStyle_Get_bordertopcolor(pElement->style));
             Renderer_DrawRectangle(borderTopRect2, GUIElementStyle_Get_bordertopcolor(pElement->style));
+
+            GTLib::Rect<int> borderTopRect3(borderTopRect);
+            borderTopRect3.left  = borderTopRect1.right;
+            borderTopRect3.right = borderTopRect2.left;
+            Renderer_DrawRectangle(borderTopRect3, GUIElementStyle_Get_bordertopmaskcolor(pElement->style));
         }
         
 
@@ -3658,7 +3786,7 @@ namespace GT
 
             uint32_t borderMaskLengthType;
             uint32_t borderMaskLength = GUIElementStyle_Get_borderrightmasklength(pElement->style, borderMaskLengthType);
-            if (borderMaskLength == NumberType_Points)
+            if (borderMaskLengthType == NumberType_Points)
             {
                 borderMaskLength = static_cast<uint32_t>(borderMaskLength * this->GetXDPIScalingFactor(this->GetElementSurface(pElement)));
             }
@@ -3673,7 +3801,10 @@ namespace GT
             Renderer_DrawRectangle(borderRightRect1, GUIElementStyle_Get_borderrightcolor(pElement->style));
             Renderer_DrawRectangle(borderRightRect2, GUIElementStyle_Get_borderrightcolor(pElement->style));
 
-            //Renderer_DrawRectangle(borderRightRect,  GUIElementStyle_Get_borderrightcolor(pElement->style));
+            GTLib::Rect<int> borderRightRect3(borderRightRect);
+            borderRightRect3.top    = borderRightRect1.bottom;
+            borderRightRect3.bottom = borderRightRect2.top;
+            Renderer_DrawRectangle(borderRightRect3, GUIElementStyle_Get_borderrightmaskcolor(pElement->style));
         }
 
 
@@ -3688,7 +3819,7 @@ namespace GT
 
             uint32_t borderMaskLengthType;
             uint32_t borderMaskLength = GUIElementStyle_Get_borderbottommasklength(pElement->style, borderMaskLengthType);
-            if (borderMaskLength == NumberType_Points)
+            if (borderMaskLengthType == NumberType_Points)
             {
                 borderMaskLength = static_cast<uint32_t>(borderMaskLength * this->GetXDPIScalingFactor(this->GetElementSurface(pElement)));
             }

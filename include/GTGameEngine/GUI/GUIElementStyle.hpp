@@ -28,6 +28,7 @@ namespace GT
     static const uint32_t StyleBit_EnableShadow             = (1 << 9);
     static const uint32_t StyleBit_RightHasPriority         = (1 << 10);
     static const uint32_t StyleBit_BottomHasPriority        = (1 << 11);
+    static const uint32_t StyleBit_InheritFont              = (1 << 12);        // Whether or not the font should be inherited from the parent element.
 
     // Type codes for number values. Note that these are bit-shifted such that they are in the top 8-bits. This is to make
     // it easier to construct the encoded number value.
@@ -700,6 +701,70 @@ namespace GT
     }
 
 
+
+    inline void GUIElementStyle_Set_borderleftmaskcolor(GUIElementStyle &style, const GTLib::Colour &color)
+    {
+        uint32_t value =
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.r * 255)) << 24) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.g * 255)) << 16) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.a * 255)) <<  0);
+
+        style.borderLeftMaskColor = value;
+    }
+    inline GTLib::Colour GUIElementStyle_Get_borderleftmaskcolor(const GUIElementStyle &style)
+    {
+        GTLib::Colour color;
+        color.r = static_cast<float>((style.borderLeftMaskColor & 0xFF000000) >> 24) / 255.0f;
+        color.g = static_cast<float>((style.borderLeftMaskColor & 0x00FF0000) >> 16) / 255.0f;
+        color.b = static_cast<float>((style.borderLeftMaskColor & 0x0000FF00) >>  8) / 255.0f;
+        color.a = static_cast<float>((style.borderLeftMaskColor & 0x000000FF) >>  0) / 255.0f;
+
+        return color;
+    }
+
+    inline void GUIElementStyle_Set_bordertopmaskcolor(GUIElementStyle &style, const GTLib::Colour &color)
+    {
+        uint32_t value =
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.r * 255)) << 24) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.g * 255)) << 16) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.a * 255)) <<  0);
+
+        style.borderTopMaskColor = value;
+    }
+    inline GTLib::Colour GUIElementStyle_Get_bordertopmaskcolor(const GUIElementStyle &style)
+    {
+        GTLib::Colour color;
+        color.r = static_cast<float>((style.borderTopMaskColor & 0xFF000000) >> 24) / 255.0f;
+        color.g = static_cast<float>((style.borderTopMaskColor & 0x00FF0000) >> 16) / 255.0f;
+        color.b = static_cast<float>((style.borderTopMaskColor & 0x0000FF00) >>  8) / 255.0f;
+        color.a = static_cast<float>((style.borderTopMaskColor & 0x000000FF) >>  0) / 255.0f;
+
+        return color;
+    }
+
+    inline void GUIElementStyle_Set_borderrightmaskcolor(GUIElementStyle &style, const GTLib::Colour &color)
+    {
+        uint32_t value =
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.r * 255)) << 24) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.g * 255)) << 16) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.a * 255)) <<  0);
+
+        style.borderRightMaskColor = value;
+    }
+    inline GTLib::Colour GUIElementStyle_Get_borderrightmaskcolor(const GUIElementStyle &style)
+    {
+        GTLib::Colour color;
+        color.r = static_cast<float>((style.borderRightMaskColor & 0xFF000000) >> 24) / 255.0f;
+        color.g = static_cast<float>((style.borderRightMaskColor & 0x00FF0000) >> 16) / 255.0f;
+        color.b = static_cast<float>((style.borderRightMaskColor & 0x0000FF00) >>  8) / 255.0f;
+        color.a = static_cast<float>((style.borderRightMaskColor & 0x000000FF) >>  0) / 255.0f;
+
+        return color;
+    }
+
     inline void GUIElementStyle_Set_borderbottommaskcolor(GUIElementStyle &style, const GTLib::Colour &color)
     {
         uint32_t value =
@@ -952,6 +1017,16 @@ namespace GT
     inline bool GUIElementStyle_Get_passthroughcursorinput(const GUIElementStyle &style)
     {
         return (style.booleanField & StyleBit_PassThroughCursorInput) != 0;
+    }
+
+    // Font inheritance.
+    inline void GUIElementStyle_Set_inheritfont(GUIElementStyle &style, bool inheritFont)
+    {
+        style.booleanField = (style.booleanField & ~StyleBit_InheritFont) | (-static_cast<int32_t>(inheritFont) & StyleBit_InheritFont);
+    }
+    inline bool GUIElementStyle_Get_inheritfont(const GUIElementStyle &style)
+    {
+        return (style.booleanField & StyleBit_InheritFont) != 0;
     }
 
 

@@ -773,6 +773,20 @@ namespace GT
         void GetElementAbsoluteRect(HGUIElement hElement, GTLib::Rect<float> &rectOut) const;
         void GetElementAbsoluteRect(HGUIElement hElement, GTLib::Rect<int> &rectOut) const;
 
+        /// Retrieves the absolute rectangle of the inner region of the given element.
+        ///
+        /// @param hElement [in]  The GUI element whose absolute rectangle is being retrieved.
+        /// @param rectOut  [out] A reference to the structure that will receive the absolute rectangle of the given element.
+        void GetElementAbsoluteInnerRect(HGUIElement hElement, GTLib::Rect<float> &rectOut) const;
+        void GetElementAbsoluteInnerRect(HGUIElement hElement, GTLib::Rect<int> &rectOut) const;
+
+        /// Retrieves the absolute rectangle of the inner region of the given element, but outside the padding (just inside the border).
+        ///
+        /// @param hElement [in]  The GUI element whose absolute rectangle is being retrieved.
+        /// @param rectOut  [out] A reference to the structure that will receive the absolute rectangle of the given element.
+        void GetElementAbsoluteInnerBorderRect(HGUIElement hElement, GTLib::Rect<float> &rectOut) const;
+        void GetElementAbsoluteInnerBorderRect(HGUIElement hElement, GTLib::Rect<int> &rectOut) const;
+
 
 
         /// Sets the positiong of the given element.
@@ -906,16 +920,16 @@ namespace GT
 
 
         /// @copydoc GUIContext::SetElementBorderLeftMask()
-        void SetElementBorderLeftMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
+        void SetElementBorderLeftMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// @copydoc GUIContext::SetElementBorderTopMask()
-        void SetElementBorderTopMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
+        void SetElementBorderTopMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// @copydoc GUIContext::SetElementBorderRightMask()
-        void SetElementBorderRightMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
+        void SetElementBorderRightMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// @copydoc GUIContext::SetElementBorderBottomMask()
-        void SetElementBorderBottomMask(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
+        void SetElementBorderBottomMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
 
 

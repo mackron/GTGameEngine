@@ -861,6 +861,21 @@ namespace GT
         void GetElementAbsoluteRect(GUIElement* pElement, GTLib::Rect<float> &rectOut) const;
         void GetElementAbsoluteRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const;
 
+        /// Retrieves the absolute rectangle of the inner region of the given element.
+        ///
+        /// @param hElement [in]  The GUI element whose absolute rectangle is being retrieved.
+        /// @param rectOut  [out] A reference to the structure that will receive the absolute rectangle of the given element.
+        void GetElementAbsoluteInnerRect(GUIElement* pElement, GTLib::Rect<float> &rectOut) const;
+        void GetElementAbsoluteInnerRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const;
+
+        /// Retrieves the absolute rectangle of the inner region of the given element, but outside the padding (just inside the border).
+        ///
+        /// @param hElement [in]  The GUI element whose absolute rectangle is being retrieved.
+        /// @param rectOut  [out] A reference to the structure that will receive the absolute rectangle of the given element.
+        void GetElementAbsoluteInnerBorderRect(GUIElement* pElement, GTLib::Rect<float> &rectOut) const;
+        void GetElementAbsoluteInnerBorderRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const;
+
+
         /// Retrieves the absolute rectangle of the text of the given element.
         ///
         /// @param pElement [in] The GUI element whose absolute text rectangle is being retrieved.
@@ -1003,28 +1018,28 @@ namespace GT
         /// @param hElement   [in] The element whose border mask is being set.
         /// @param maskOffset [in] The starting point of the mask, from the top.
         /// @param maskLength [in] The length of the mask.
-        void SetElementBorderLeftMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
+        void SetElementBorderLeftMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// Sets the region of the top border that is not drawn.
         ///
         /// @param hElement   [in] The element whose border mask is being set.
         /// @param maskOffset [in] The starting point of the mask, from the left.
         /// @param maskLength [in] The length of the mask.
-        void SetElementBorderTopMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
+        void SetElementBorderTopMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// Sets the region of the right border that is not drawn.
         ///
         /// @param hElement   [in] The element whose border mask is being set.
         /// @param maskOffset [in] The starting point of the mask, from the top.
         /// @param maskLength [in] The length of the mask.
-        void SetElementBorderRightMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
+        void SetElementBorderRightMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// Sets the region of the bottom border that is not drawn.
         ///
         /// @param hElement   [in] The element whose border mask is being set.
         /// @param maskOffset [in] The starting point of the mask, from the left.
         /// @param maskLength [in] The length of the mask.
-        void SetElementBorderBottomMask(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
+        void SetElementBorderBottomMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
 
         /// Sets the left padding of the given element, in DPI-aware points.
@@ -1725,6 +1740,12 @@ namespace GT
         ///     This will update the layout and font of every element.
         void UpdateAllElementsOnDPIChange(GUISurface* pSurface);
         void UpdateAllElementsOnDPIChange();
+
+        /// Updates the given element for when it's DPI changes.
+        ///
+        /// @remarks
+        ///     This is not recursive.
+        void UpdateElementOnDPIChange(GUIElement* pElement);
 
         /// Updates the size of each border of the given element based on their style and current DPI scaling.
         ///
