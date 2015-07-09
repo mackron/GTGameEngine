@@ -161,6 +161,23 @@ namespace GT
         virtual bool IsKeyDown(GTLib::Key key) const = 0;
 
 
+        /// Retrieves the DPI of the given window based on the monitor that the majority of the window's area is contained within.
+        ///
+        /// @param hWindow [in ] A handle to the window.
+        /// @param xDPIOut [out] A reference to the variable that will receive the DPI on the x axis.
+        /// @param yDPIOut [out] A reference to the variable that will receive the DPI on the y axis.
+        ///
+        /// @remarks
+        ///     If an error occurs, false will be returned and the returned DPI's will be set to 96.
+        virtual bool GetWindowDPI(HWindow hWindow, unsigned int &xDPIOut, unsigned int &yDPIOut) const = 0;
+
+        /// Retrieves the base DPI that can be used to calculate a scaling factor.
+        ///
+        /// @param xDPIOut [out] A reference to the variable that will receive the DPI on the x axis.
+        /// @param yDPIOut [out] A reference to the variable that will receive the DPI on the y axis.
+        virtual void GetBaseDPI(unsigned int &xDPIOut, unsigned int &yDPIOut) const = 0;
+
+
         /// Enters into an event-driven loop.
         ///
         /// @param postLoop [in] The function to at the end of every loop iteration.

@@ -96,6 +96,13 @@ namespace GT
         virtual bool IsKeyDown(GTLib::Key key) const;
 
 
+        /// @copydoc WindowManager::GetMonitorDPI()
+        virtual bool GetWindowDPI(HWindow hWindow, unsigned int &xDPIOut, unsigned int &yDPIOut) const;
+
+        /// @copydoc WindowManager::GetBaseDPI()
+        virtual void GetBaseDPI(unsigned int &xDPIOut, unsigned int &yDPIOut) const;
+
+
         /// @copydoc WindowManager::EventDrivenLoop()
         virtual void EventDrivenLoop(std::function<bool ()> postLoop);
 

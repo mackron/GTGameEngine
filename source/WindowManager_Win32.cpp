@@ -17,8 +17,9 @@ namespace GT
     #define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
     #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
 
-    //STDAPI SetProcessDpiAwareness(_In_ PROCESS_DPI_AWARENESS value);
+
     typedef HRESULT (__stdcall * PFN_SetProcessDpiAwareness) (PROCESS_DPI_AWARENESS);
+    typedef HRESULT (__stdcall * PFN_GetDpiForMonitor)       (HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX, UINT *dpiY);
 
     void TrackMouseLeaveEvent(HWND hWnd)
     {
@@ -776,7 +777,21 @@ namespace GT
             ::SetWindowLongPtr(hWnd, 0, reinterpret_cast<LONG_PTR>(pWindowData));
 
 
-            // The size of the window needs to be adjusted so that the client area is set to the width and height.
+            // The size of the window needs to be adjusted so that the client area is set to the width and height. We also need to adjust for DPI scaling.
+            unsigned int xDPIBase;
+            unsigned int yDPIBase;
+            this->GetBaseDPI(xDPIBase, yDPIBase);
+
+            unsigned int windowXDPI;
+            unsigned int windowYDPI;
+            this->GetWindowDPI(reinterpret_cast<HWindow>(hWnd), windowXDPI, windowYDPI);
+
+            double scaleX = static_cast<double>(windowXDPI) / static_cast<double>(xDPIBase);
+            double scaleY = static_cast<double>(windowYDPI) / static_cast<double>(yDPIBase);
+
+            int scaledWidth  = static_cast<int>(width  * scaleX);
+            int scaledHeight = static_cast<int>(height * scaleY);
+
             if (type == WindowType::PrimaryWindow)
             {
                 RECT windowRect;
@@ -786,8 +801,12 @@ namespace GT
 
                 int windowFrameX = (windowRect.right - windowRect.left) - (clientRect.right - clientRect.left);
                 int windowFrameY = (windowRect.bottom - windowRect.top) - (clientRect.bottom - clientRect.top);
-                SetWindowPos(hWnd, NULL, 0, 0, windowFrameX + width, windowFrameY + height, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
+
+                scaledWidth  += windowFrameX;
+                scaledHeight += windowFrameY;
             }
+
+            SetWindowPos(hWnd, NULL, 0, 0, scaledWidth, scaledHeight, SWP_NOMOVE | SWP_NOZORDER | SWP_NOACTIVATE);
 
 
             // If the window is a popup it will be positioned relative to the window rectangle, but we want it relative to the client area. We need to convert.
@@ -997,6 +1016,54 @@ namespace GT
     bool WindowManager_Win32::IsKeyDown(GTLib::Key key) const
     {
         return (GetAsyncKeyState(ToWin32VirtualKey(key)) & 0x8000) != 0;
+    }
+
+
+    bool WindowManager_Win32::GetWindowDPI(HWindow hWindow, unsigned int &xDPIOut, unsigned int &yDPIOut) const
+    {
+        if (hWindow != NULL)
+        {
+            if (IsWindows8Point1OrGreater())
+            {
+                // We're running on a version of Windows that is either Windows 8.1 or newer which means it supports per-monitor DPI.
+
+                PFN_GetDpiForMonitor _GetDpiForMonitor = reinterpret_cast<PFN_GetDpiForMonitor>(::GetProcAddress(m_hSHCoreDLL, "GetDpiForMonitor"));
+                if (_GetDpiForMonitor)
+                {
+                    HMONITOR hMonitor = MonitorFromWindow(reinterpret_cast<HWND>(hWindow), MONITOR_DEFAULTTOPRIMARY);
+                    if (hMonitor != NULL)
+                    {
+                        if (_GetDpiForMonitor(hMonitor, MDT_EFFECTIVE_DPI, &xDPIOut, &yDPIOut) == S_OK)
+                        {
+                            return true;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                // We're running on a version of Windows that is older than Windows 8.1 which means there is no per-monitor DPI support.
+
+                HDC hDC = GetDC(NULL);
+                xDPIOut = static_cast<unsigned int>(::GetDeviceCaps(hDC, LOGPIXELSX));
+                yDPIOut = static_cast<unsigned int>(::GetDeviceCaps(hDC, LOGPIXELSY));
+                ReleaseDC(NULL, hDC);
+
+                return true;
+            }
+        }
+
+
+        xDPIOut = 96;
+        yDPIOut = 96;
+
+        return false;
+    }
+
+    void WindowManager_Win32::GetBaseDPI(unsigned int &xDPIOut, unsigned int &yDPIOut) const
+    {
+        xDPIOut = 96;
+        yDPIOut = 96;
     }
 
 
