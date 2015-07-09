@@ -2,6 +2,8 @@
 
 #include <GTGameEngine/WindowManager_Win32.hpp>
 #include <cassert>
+#include <VersionHelpers.h>
+#include <ShellScalingApi.h>
 
 #define CURSOR_SUPPRESSED           0x00000002
 
@@ -14,6 +16,9 @@ namespace GT
 
     #define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
     #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
+
+    //STDAPI SetProcessDpiAwareness(_In_ PROCESS_DPI_AWARENESS value);
+    typedef HRESULT (__stdcall * PFN_SetProcessDpiAwareness) (PROCESS_DPI_AWARENESS);
 
     void TrackMouseLeaveEvent(HWND hWnd)
     {
@@ -643,8 +648,42 @@ namespace GT
 
 
     WindowManager_Win32::WindowManager_Win32()
-        : WindowManager()
+        : WindowManager(),
+          m_hSHCoreDLL(NULL)
     {
+        // The application should be DPI aware.
+        if (IsWindows8Point1OrGreater())
+        {
+            // We can't call SetProcessDpiAwareness() directly because otherwise on versions of Windows < 8.1 we'll get an error at load time about
+            // a missing DLL.
+            m_hSHCoreDLL = ::LoadLibraryW(L"shcore.dll");
+            if (m_hSHCoreDLL != nullptr)
+            {
+                PFN_SetProcessDpiAwareness _SetProcessDpiAwareness = reinterpret_cast<PFN_SetProcessDpiAwareness>(::GetProcAddress(m_hSHCoreDLL, "SetProcessDpiAwareness"));
+                if (_SetProcessDpiAwareness != nullptr)
+                {
+                    _SetProcessDpiAwareness(PROCESS_PER_MONITOR_DPI_AWARE);
+                }
+                else
+                {
+                    // Couldn't find SetProcessDpiAwareness() so fall back to the discouraged way.
+                    SetProcessDPIAware();
+                }
+            }
+            else
+            {
+                // Couldn't find shcore.dll so fall back to the discouraged way.
+                SetProcessDPIAware();
+            }
+        }
+        else
+        {
+            // Not running at least Windows 8.1 so fall back to the discouraged way.
+            SetProcessDPIAware();
+        }
+        
+
+
         // Window classes need to be registered.
         WNDCLASSEXW wc;
         memset(&wc, 0, sizeof(wc));
@@ -677,7 +716,8 @@ namespace GT
 
     WindowManager_Win32::~WindowManager_Win32()
     {
-        UnregisterClassW(g_WindowClass, GetModuleHandleW(NULL));
+        ::UnregisterClassW(g_WindowClass, GetModuleHandleW(NULL));
+        ::FreeLibrary(m_hSHCoreDLL);
     }
 
 

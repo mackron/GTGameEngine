@@ -199,6 +199,9 @@ namespace GT
 
     private:
 
+        /// A handle to the shcore.dll module.
+        HMODULE m_hSHCoreDLL;
+
         /// The list of windows that currently exist. We use this to handle activation state changes.
         GTLib::Vector<HWindow> m_windows;
 
