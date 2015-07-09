@@ -515,10 +515,6 @@ namespace GT
 
                 if (hSurface != NULL)
                 {
-                    //m_gui.SetDPI(hSurface, 192, 192);
-                    //m_gui.SetDPI(hSurface, 144, 144);
-                    //m_gui.SetDPI(hSurface, 96, 96);
-
                     unsigned int xDPI;
                     unsigned int yDPI;
                     m_gameContext.GetWindowManager().GetWindowDPI(hWindow, xDPI, yDPI);
