@@ -30,9 +30,12 @@ void gtglSetDebugMessageCallback(PFNGTGLDEBUGMESSAGECALLBACKPROC callback)
     GTGLcontext context = gtglGetCurrentContext();
     if (context != NULL)
     {
-        context->debugMessageCallback = callback;
+        if (glDebugMessageCallbackARB != NULL)
+        {
+            context->debugMessageCallback = callback;
 
-        glDebugMessageCallbackARB(gtglDefaultDebugMessageCallback, context);
+            glDebugMessageCallbackARB(gtglDefaultDebugMessageCallback, context);
+        }
     }
 }
 

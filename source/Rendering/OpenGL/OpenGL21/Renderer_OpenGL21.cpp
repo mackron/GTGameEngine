@@ -193,7 +193,7 @@ namespace GTEngine
                 GTGL_CONTEXT_FORWARD_COMPATIBLE, GL_TRUE,
 
             #if !defined(NDEBUG)
-                GTGL_CONTEXT_DEBUG,              GL_TRUE,
+                GTGL_CONTEXT_DEBUG,              GL_FALSE,
             #endif
 
                 0, 0
@@ -1262,7 +1262,7 @@ namespace GTEngine
                 State.currentRCSetTextureState->SetTextureFilter(textureState, textureTarget, ToOpenGLTextureFilter(minification), ToOpenGLTextureFilter(magnification));
             }
         }
-        
+
         State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
@@ -1279,7 +1279,7 @@ namespace GTEngine
                 State.currentRCSetTextureState->SetTextureAnisotropy(textureState, textureTarget, static_cast<GLint>(anisotropy));
             }
         }
-        
+
         State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
@@ -1296,7 +1296,7 @@ namespace GTEngine
                 State.currentRCSetTextureState->SetTextureWrapMode(textureState, textureTarget, ToOpenGLWrapMode(wrapMode));
             }
         }
-        
+
         State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
@@ -1313,7 +1313,7 @@ namespace GTEngine
                 State.currentRCSetTextureState->SetTextureMipmapLevels(textureState, textureTarget, static_cast<GLint>(baseLevel), static_cast<GLint>(maxLevel));
             }
         }
-        
+
         State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
@@ -1330,7 +1330,7 @@ namespace GTEngine
                 State.currentRCSetTextureState->GenerateTextureMipmaps(textureState, textureTarget);
             }
         }
-        
+
         State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
@@ -1399,7 +1399,7 @@ namespace GTEngine
             // If you fail this assert it means you haven't got any texture data, which in turn means you're calling this function unnecessarily. For performance,
             // the renderer assumes this function will be called when there is actually data to push, and thus will crash when there is none.
             assert(texture.GetMipmapCount() > 0);
-            
+
             for (size_t i = 0; i < texture.GetMipmapCount(); ++i)
             {
                 auto &mipmap = texture.GetMipmap(i);
@@ -1412,7 +1412,7 @@ namespace GTEngine
             SetTexture2DData(texture, mipmapIndex, mipmap.width, mipmap.height, mipmap.format, mipmap.data);
         }
     }
-    
+
     void Renderer::SetTexture2DData(const Texture2D &texture, int mipmapIndex, unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data, bool flip)
     {
         auto &textureGL21 = static_cast<const Texture2D_OpenGL21 &>(texture);
@@ -1433,10 +1433,10 @@ namespace GTEngine
                 }
             }
         }
-        
+
         State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
-    
+
     void Renderer::SetTexture2DSubData(const Texture2D &texture, int mipmapIndex, unsigned int xOffset, unsigned int yOffset, unsigned int width, unsigned int height, GTLib::ImageFormat format, const void* data, bool flip)
     {
         auto &textureGL21 = static_cast<const Texture2D_OpenGL21 &>(texture);
@@ -1457,7 +1457,7 @@ namespace GTEngine
                 }
             }
         }
-        
+
         State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
@@ -1494,7 +1494,7 @@ namespace GTEngine
                 }
             }
         }
-        
+
         State.currentRCSetTextureState = nullptr;       // <-- Force a new texture state draw call.
     }
 
@@ -1679,7 +1679,7 @@ namespace GTEngine
         ResourceCreationLock.Lock();
         {
             RCCreateFramebuffer* command = nullptr;
-            
+
             if (GTGL_ARB_framebuffer_object)
             {
                 // Primary (ARB_framebuffer_object).
@@ -1798,7 +1798,7 @@ namespace GTEngine
                     if (depthStencilAttachment != nullptr && GTGL_ARB_framebuffer_object)
                     {
                         State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_DEPTH_STENCIL_ATTACHMENT, depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
-                        
+
                         // This technique causes a crash on Intel's Windows drivers (not tested with Linux drivers). Leaving this here for future reference.
                         //State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_DEPTH_ATTACHMENT_EXT,   depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
                         //State.currentRCSetFramebufferState->SetAttachedBuffer(framebufferState, GL_STENCIL_ATTACHMENT_EXT, depthStencilAttachment->GetTarget(), depthStencilAttachment->GetOpenGLState());
