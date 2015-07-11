@@ -157,7 +157,6 @@ namespace GTEngine
         Renderer::EnableDepthWrites();
         Renderer::SetDepthFunction(RendererFunction_LEqual);
 
-
         // With the visible objects determined we can now choose a pipeline to run rendering operations through. We want to use fast paths where
         // they're available.
         if (visibleObjects.lightManager.shadowDirectionalLights.count <= 1 && 
@@ -1033,14 +1032,12 @@ namespace GTEngine
         {
             Renderer::SetTexture2DFilter(*sourceColourBuffer, TextureFilter_Nearest, TextureFilter_Nearest);
 
-
             // Framebuffer Setup.
             int finalOutputBufferIndex = 4;
 
             Renderer::SetCurrentFramebuffer(framebuffer->framebuffer);
             Renderer::SetDrawBuffers(1, &finalOutputBufferIndex);
             Renderer::SetViewport(0, 0, framebuffer->width, framebuffer->height);
-
 
             // Shader Setup.
             Renderer::SetCurrentShader(this->finalCompositionShaderLDR);
