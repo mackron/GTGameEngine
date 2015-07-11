@@ -39,10 +39,10 @@ namespace GTEngine
         {
         case AudioDataFormat_Mono8:       return AL_FORMAT_MONO8;
         case AudioDataFormat_Stereo8:     return AL_FORMAT_STEREO8;
-        
+
         case AudioDataFormat_Mono16:      return AL_FORMAT_MONO16;
         case AudioDataFormat_Stereo16:    return AL_FORMAT_STEREO16;
-        
+
         case AudioDataFormat_Mono32F:     return AL_FORMAT_MONO_FLOAT32;
         case AudioDataFormat_Stereo32F:   return AL_FORMAT_STEREO_FLOAT32;
 
@@ -82,8 +82,8 @@ namespace GTEngine
 
         /// The current listener. We need to keep track of this so that when the listener is changed while current, it will be updated on the OpenAL side immediately.
         ListenerHandle currentListener;
-        
-        
+
+
     private:    // No copying.
         OpenALDevice(const OpenALDevice &);
         OpenALDevice & operator=(const OpenALDevice &);
@@ -378,7 +378,7 @@ namespace GTEngine
 
 
 
-    
+
 
     SoundHandle AudioEngine_OpenAL::CreateSound(PlaybackDeviceHandle device)
     {
@@ -436,7 +436,7 @@ namespace GTEngine
             assert(deviceAL != nullptr);
             {
                 m_alcMakeContextCurrent(deviceAL->context);
-                
+
                 ALfloat position[3];
                 m_alGetSourcefv(soundAL->source, AL_POSITION, position);
 
@@ -516,7 +516,7 @@ namespace GTEngine
             assert(deviceAL != nullptr);
             {
                 m_alcMakeContextCurrent(deviceAL->context);
-                
+
                 ALint count = 0;
                 m_alGetSourcei(soundAL->source, AL_BUFFERS_QUEUED, &count);
 
@@ -536,7 +536,7 @@ namespace GTEngine
             assert(deviceAL != nullptr);
             {
                 m_alcMakeContextCurrent(deviceAL->context);
-                
+
                 ALint count = 0;
                 m_alGetSourcei(soundAL->source, AL_BUFFERS_PROCESSED, &count);
 
@@ -737,12 +737,12 @@ namespace GTEngine
 
                     free(newData);
                 }
-                else if (format == AudioDataFormat_Mono32F || format == AudioDataFormat_Stereo32F && !m_alIsExtensionPresent("AL_EXT_FLOAT32"))
+                else if ((format == AudioDataFormat_Mono32F || format == AudioDataFormat_Stereo32F) && !m_alIsExtensionPresent("AL_EXT_FLOAT32"))
                 {
                     // We don't natively support 32-bit float formats, so we'll need to convert to 16-bit.
                     size_t   newDataSizeInBytes = (dataSizeInBytes / 4) * 2;
                     int16_t* newData = static_cast<int16_t*>(malloc(newDataSizeInBytes));
-                    
+
                     for (size_t iSample = 0; iSample < (dataSizeInBytes / 4); ++iSample)
                     {
                         newData[iSample] = static_cast<int16_t>(reinterpret_cast<const float*>(data)[iSample] * 65536.0f);
@@ -752,12 +752,12 @@ namespace GTEngine
 
                     free(newData);
                 }
-                else if (format == AudioDataFormat_Mono64F || format == AudioDataFormat_Stereo64F && !m_alIsExtensionPresent("AL_EXT_DOUBLE"))
+                else if ((format == AudioDataFormat_Mono64F || format == AudioDataFormat_Stereo64F) && !m_alIsExtensionPresent("AL_EXT_DOUBLE"))
                 {
                     // We don't natively support 64-bit float formats, so we'll need to convert to 16-bit.
                     size_t   newDataSizeInBytes = (dataSizeInBytes / 8) * 2;
                     int16_t* newData = static_cast<int16_t*>(malloc(newDataSizeInBytes));
-                    
+
                     for (size_t iSample = 0; iSample < (dataSizeInBytes / 8); ++iSample)
                     {
                         newData[iSample] = static_cast<int16_t>(reinterpret_cast<const double*>(data)[iSample] * 65536.0f);
@@ -767,7 +767,7 @@ namespace GTEngine
 
                     free(newData);
                 }
-                else if (format == AudioDataFormat_Mono_ALaw || format == AudioDataFormat_Stereo_ALaw && !m_alIsExtensionPresent("AL_EXT_ALAW"))
+                else if ((format == AudioDataFormat_Mono_ALaw || format == AudioDataFormat_Stereo_ALaw) && !m_alIsExtensionPresent("AL_EXT_ALAW"))
                 {
                     // In this case we don't natively support A-Law.
                     size_t   newDataSizeInBytes = dataSizeInBytes * 2;    // <-- expanding from 8-bit compressed to 16-bit decompressed.
@@ -782,7 +782,7 @@ namespace GTEngine
 
                     free(newData);
                 }
-                else if (format == AudioDataFormat_Mono_ULaw || format == AudioDataFormat_Stereo_ULaw && !m_alIsExtensionPresent("AL_EXT_MULAW"))
+                else if ((format == AudioDataFormat_Mono_ULaw || format == AudioDataFormat_Stereo_ULaw) && !m_alIsExtensionPresent("AL_EXT_MULAW"))
                 {
                     // In this case we don't natively support A-Law.
                     size_t   newDataSizeInBytes = dataSizeInBytes * 2;    // <-- expanding from 8-bit compressed to 16-bit decompressed.

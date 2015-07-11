@@ -31,6 +31,7 @@ namespace GT
                 GTLib::FileHandle        streamerFile = 0;
 
 
+                m_openedSoundFilesLock.Lock();
                 auto iFile = m_openedSoundFiles.Find(absoluteFilePath.c_str());
                 if (iFile != nullptr)
                 {
@@ -45,6 +46,7 @@ namespace GT
                         m_openedSoundFiles.Add(absoluteFilePath.c_str(), FileCounter(streamerFile, 1));
                     }
                 }
+                m_openedSoundFilesLock.Unlock();
 
 
                 if (streamerFile != 0)
@@ -100,6 +102,7 @@ namespace GT
             auto iSoundStreamer = m_openedSoundStreamers.Find(streamer);
             if (iSoundStreamer != nullptr)
             {
+                m_openedSoundFilesLock.Lock();
                 auto iFile = m_openedSoundFiles.Find(iSoundStreamer->value.c_str());
                 if (iFile != nullptr)
                 {
@@ -114,6 +117,7 @@ namespace GT
                         }
                     }
                 }
+                m_openedSoundFilesLock.Unlock();
 
                 m_openedSoundStreamers.RemoveByIndex(iSoundStreamer->index);
                 delete streamer;
@@ -122,7 +126,7 @@ namespace GT
             {
                 // The sound streamer wasn't opened by OpenSoundStreamer().
                 //assert(false);
-            }            
+            }
         }
     }
 }

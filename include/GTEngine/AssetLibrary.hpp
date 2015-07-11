@@ -7,6 +7,7 @@
 #include <GTLib/Dictionary.hpp>
 #include <GTLib/Map.hpp>
 #include <GTLib/IO.hpp>
+#include <GTLib/Threading/Mutex.hpp>
 
 namespace GT
 {
@@ -75,6 +76,9 @@ namespace GT
 
             /// The list of currently opened sound streamers, with the absolute file path as the extension.
             GTLib::Map<GTEngine::SoundStreamer*, GTLib::String> m_openedSoundStreamers;
+
+            /// The lock synchronizing access to the opened sound files. It is possible that sound files are closed on a background thread.
+            GTLib::Mutex m_openedSoundFilesLock;
         };
     }
 }
