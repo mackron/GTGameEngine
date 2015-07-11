@@ -78,7 +78,8 @@ namespace GTEngine
     void DefaultScenePhysicsManager::UpdateTransform(GhostObject &object, const glm::mat4 &newTransform)
     {
         auto objectWorld = object.GetWorld();
-        assert(objectWorld == &this->world);
+        //assert(objectWorld == &this->world);
+        if (objectWorld == &this->world)
         {
             object.setWorldTransform(ToBulletTransform(newTransform));
             objectWorld->UpdateAABB(object);
