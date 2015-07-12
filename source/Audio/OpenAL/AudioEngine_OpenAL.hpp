@@ -5,6 +5,7 @@
 
 #include <GTEngine/Audio/AudioEngine.hpp>
 #include <GTLib/Vector.hpp>
+#include <GTLib/HandleManager.hpp>
 
 #define AL_NO_PROTOTYPES
 #include <AL/al.h>
@@ -17,6 +18,12 @@
 namespace GTEngine
 {
     typedef void(*OpenALProc)();
+
+
+    struct OpenALDevice;
+    struct OpenALListener;
+    struct OpenALSound;
+    struct OpenALBuffer;
 
     /// The OpenAL implementation of the audio engine.
     class AudioEngine_OpenAL : public AudioEngine
@@ -48,94 +55,97 @@ namespace GTEngine
         PlaybackDeviceInfo GetPlaybackDeviceInfo(size_t deviceIndex) const;
 
         /// AudioEngine::OpenPlaybackDevice().
-        PlaybackDeviceHandle OpenPlaybackDevice(size_t deviceIndex);
+        HPlaybackDevice OpenPlaybackDevice(size_t deviceIndex);
 
         /// AudioEngine::ClosePlaybackDevice().
-        void ClosePlaybackDevice(PlaybackDeviceHandle device);
+        void ClosePlaybackDevice(HPlaybackDevice device);
 
 
 
         /// AudioEngine::CreateListener().
-        ListenerHandle CreateListener(PlaybackDeviceHandle device);
+        HListener CreateListener(HPlaybackDevice device);
 
         /// AudioEngine::DeleteListener().
-        void DeleteListener(ListenerHandle listener);
+        void DeleteListener(HListener listener);
 
         /// AudioEngine::SetListenerPosition().
-        void SetListenerPosition(ListenerHandle listener, glm::vec3 position);
-        
+        void SetListenerPosition(HListener listener, glm::vec3 position);
+
         /// AudioEngine::GetListenerPosition().
-        glm::vec3 GetListenerPosition(ListenerHandle listener) const;
+        glm::vec3 GetListenerPosition(HListener listener) const;
 
         /// AudioEngine::SetListenerOrientation().
-        void SetListenerOrientation(ListenerHandle listener, glm::quat orientation);
+        void SetListenerOrientation(HListener listener, glm::quat orientation);
 
         /// AudioEngine::GetListenerOrientation().
-        glm::quat GetListenerOrientation(ListenerHandle listener) const;
+        glm::quat GetListenerOrientation(HListener listener) const;
 
 
 
         /// AudioEngine::CreateSound().
-        SoundHandle CreateSound(PlaybackDeviceHandle device);
+        HSound CreateSound(HPlaybackDevice device);
 
         /// AudioEngine::DeleteSound().
-        void DeleteSound(SoundHandle sound);
+        void DeleteSound(HSound sound);
+
+        /// AudioEngine::IsValidSound()
+        bool IsValidSound(HSound hSound) const;
 
         /// AudioEngine::SetSoundPosition().
-        void SetSoundPosition(SoundHandle sound, glm::vec3 position);
+        void SetSoundPosition(HSound sound, glm::vec3 position);
 
         /// AudioEngine::GetSoundPosition().
-        glm::vec3 GetSoundPosition(SoundHandle sound) const;
+        glm::vec3 GetSoundPosition(HSound sound) const;
 
         /// AudioEngine::SetIsSoundPositionRelative().
-        void SetIsSoundPositionRelative(SoundHandle sound, bool isRelative);
+        void SetIsSoundPositionRelative(HSound sound, bool isRelative);
 
         /// AudioEngine::IsSoundPositionRelative().
-        bool IsSoundPositionRelative(SoundHandle sound) const;
+        bool IsSoundPositionRelative(HSound sound) const;
 
         /// AudioEngine::QueueAudioBuffer().
-        void QueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer);
+        void QueueAudioBuffer(HSound sound, HAudioBuffer buffer);
 
         /// AudioEngine::UnqueueAudioBuffer().
-        void UnqueueAudioBuffer(SoundHandle sound);
+        void UnqueueAudioBuffer(HSound sound);
 
         /// AudioEngine::GetQueuedAudioBufferCount().
-        unsigned int GetQueuedAudioBufferCount(SoundHandle sound);
+        unsigned int GetQueuedAudioBufferCount(HSound sound);
 
         /// AudioEngine::GetProcessedQueuedAudioBufferCount().
-        unsigned int GetProcessedQueuedAudioBufferCount(SoundHandle sound);
+        unsigned int GetProcessedQueuedAudioBufferCount(HSound sound);
 
         /// AudioEngine::PlaySound().
-        void PlaySound(SoundHandle sound);
+        void PlaySound(HSound sound);
 
         /// AudioEngine::StopSound().
-        void StopSound(SoundHandle sound);
+        void StopSound(HSound sound);
 
         /// AudioEngine::PauseSound().
-        void PauseSound(SoundHandle sound);
+        void PauseSound(HSound sound);
 
         /// AudioEngine::RewindSound().
-        void RewindSound(SoundHandle sound);
+        void RewindSound(HSound sound);
 
         /// AudioEngine::IsSoundPlaying().
-        bool IsSoundPlaying(SoundHandle sound);
+        bool IsSoundPlaying(HSound sound);
 
         /// AudioEngine::IsSoundPaused().
-        bool IsSoundPaused(SoundHandle sound);
+        bool IsSoundPaused(HSound sound);
 
         /// AudioEngine::IsSoundStopped().
-        bool IsSoundStopped(SoundHandle sound);
+        bool IsSoundStopped(HSound sound);
 
 
 
         /// AudioEngine::CreateAudioBuffer().
-        AudioBufferHandle CreateAudioBuffer(PlaybackDeviceHandle device);
+        HAudioBuffer CreateAudioBuffer(HPlaybackDevice device);
 
         /// AudioEngine::DeleteAudioBuffer().
-        void DeleteAudioBuffer(AudioBufferHandle buffer);
+        void DeleteAudioBuffer(HAudioBuffer buffer);
 
         /// AudioEngine::SetAudioBufferData().
-        void SetAudioBufferData(AudioBufferHandle buffer, const void *data, size_t dataSizeInBytes, AudioDataFormat format, unsigned int frequency);
+        void SetAudioBufferData(HAudioBuffer buffer, const void *data, size_t dataSizeInBytes, AudioDataFormat format, unsigned int frequency);
 
 
 
@@ -164,6 +174,19 @@ namespace GTEngine
         void ExtractCaptureDevices();
 
 
+        /// Retrieves a pointer to the object associated with the given playback device handle.
+        OpenALDevice* GetPlaybackDevicePtr(HPlaybackDevice hPlaybackDevice) const;
+
+        /// Retrieves a pointer to the object associated with the given listener handle.
+        OpenALListener* GetListenerPtr(HListener hListener) const;
+
+        /// Retrieves a pointer to the object associated with the given sound handle.
+        OpenALSound* GetSoundPtr(HSound hSound) const;
+
+        /// Retrieves a pointer to the object associated with the given audio buffer.
+        OpenALBuffer* GetAudioBufferPtr(HAudioBuffer hAudioBuffer) const;
+
+
         /// A static helper method for retrieving the address of the given OpenAL function.
         ///
         /// @param library  [in] The handle to the library to get the function pointer from.
@@ -190,17 +213,30 @@ namespace GTEngine
 #endif
 
         /// The list of playback device info structures.
-        GTLib::Vector<PlaybackDeviceInfo> m_playbackDevices;
+        GTLib::Vector<PlaybackDeviceInfo> m_playbackDeviceInfos;
 
         /// The list of capture device info structures.
-        GTLib::Vector<CaptureDeviceInfo> m_captureDevices;
+        GTLib::Vector<CaptureDeviceInfo> m_captureDeviceInfos;
 
 
         /// The list of instantiated playback devices.
-        GTLib::Vector<PlaybackDeviceHandle> m_instantiatedPlaybackDevices;
+        //GTLib::Vector<HPlaybackDevice> m_instantiatedPlaybackDevices;
 
         /// The list of instantiated capture devices.
-        GTLib::Vector<CaptureDeviceHandle> m_instantiatedCaptureDevices;
+        //GTLib::Vector<HCaptureDevice> m_instantiatedCaptureDevices;
+
+
+        /// The handle manager for instantiated playback devices.
+        GT::HandleManager<HPlaybackDevice, OpenALDevice> m_playbackDevices;
+
+        /// The handle manager for instantiated listenders.
+        GT::HandleManager<HListener, OpenALListener> m_listeners;
+
+        /// The handle manager for instantiated sounds.
+        GT::HandleManager<HSound, OpenALSound> m_sounds;
+
+        /// The handle manager for instantiated audio buffers.
+        GT::HandleManager<HAudioBuffer, OpenALBuffer> m_audioBuffers;
 
 
         // ALC functions.
@@ -232,8 +268,8 @@ namespace GTEngine
         LPALGENBUFFERS           m_alGenBuffers;
         LPALDELETEBUFFERS        m_alDeleteBuffers;
         LPALBUFFERDATA           m_alBufferData;
-        
-        
+
+
     private:    // No copying.
         AudioEngine_OpenAL(const AudioEngine_OpenAL &);
         AudioEngine_OpenAL & operator=(const AudioEngine_OpenAL &);

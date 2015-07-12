@@ -35,7 +35,7 @@ namespace GT
             ///
             /// @param sound   [in] The sound source handle.
             /// @param buffers [in] A pointer to a 2-element buffer containing the front and back buffers.
-            void Initialize(GTEngine::SoundHandle source, GTEngine::AudioBufferHandle buffers[2], GTEngine::SoundStreamer &streamer);
+            void Initialize(GTEngine::HSound source, GTEngine::HAudioBuffer buffers[2], GTEngine::SoundStreamer &streamer);
 
 
             /////////////////////////////////////////////
@@ -69,7 +69,7 @@ namespace GT
             /// @param buffer [in] The buffer to copy the next chunk of data into.
             ///
             /// @return True if anything was copied into the buffer; false otherwise.
-            bool ReadAndQueueNextChunk(GTEngine::AudioBufferHandle buffer);
+            bool ReadAndQueueNextChunk(GTEngine::HAudioBuffer buffer);
 
             /// Waits for the read buffer to process.
             ///
@@ -86,10 +86,10 @@ namespace GT
             EngineContext &m_engineContext;
 
             /// A handle to the sound source.
-            GTEngine::SoundHandle m_source;
+            GTEngine::HSound m_source;
 
             /// The read and write buffers to use when streaming audio data.
-            GTEngine::AudioBufferHandle m_buffers[2];
+            GTEngine::HAudioBuffer m_buffers[2];
 
             /// A pointer to the sound streamer to read the audio data from.
             GTEngine::SoundStreamer* m_streamer;

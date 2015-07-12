@@ -40,7 +40,7 @@ namespace GT
         }
 
 
-        void SoundPlaybackThreadProc::Initialize(GTEngine::SoundHandle source, GTEngine::AudioBufferHandle buffers[2], GTEngine::SoundStreamer &streamer)
+        void SoundPlaybackThreadProc::Initialize(GTEngine::HSound source, GTEngine::HAudioBuffer buffers[2], GTEngine::SoundStreamer &streamer)
         {
             assert(m_source == 0);
             assert(m_buffers[0] == 0 && m_buffers[1] == 0);
@@ -150,7 +150,7 @@ namespace GT
                             audioSystem.UnqueueAudioBuffer(m_source);
 
                             // The buffers need to be swapped.
-                            GTEngine::AudioBufferHandle hTempBuffer = m_buffers[0];
+                            GTEngine::HAudioBuffer hTempBuffer = m_buffers[0];
                             m_buffers[0] = m_buffers[1];
                             m_buffers[1] = hTempBuffer;
 
@@ -181,7 +181,7 @@ namespace GT
 
             // At this point the sound has stopped so we want to let everything know. There is a strong chance the event handler for OnStop() will delete
             // this object and the applicable thread, so this needs to be the very last thing we do here.
-            if (m_playbackEventHandler != nullptr)
+            if (audioSystem.IsValidSound(m_source) && m_playbackEventHandler != nullptr)
             {
                 m_playbackEventHandler->OnStop();
             }
@@ -192,7 +192,7 @@ namespace GT
         /////////////////////////////////////////////
         // Private Methods
 
-        bool SoundPlaybackThreadProc::ReadAndQueueNextChunk(GTEngine::AudioBufferHandle buffer)
+        bool SoundPlaybackThreadProc::ReadAndQueueNextChunk(GTEngine::HAudioBuffer buffer)
         {
             assert(buffer     != 0);
             assert(m_source   != 0);

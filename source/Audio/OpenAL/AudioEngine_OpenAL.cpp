@@ -66,22 +66,28 @@ namespace GTEngine
 
     struct OpenALDevice
     {
-        OpenALDevice()
-            : device(nullptr), context(nullptr),
-              currentListener(0)
+        OpenALDevice(HPlaybackDevice handleIn, ALCdevice* pDeviceALIn, ALCcontext* pContextALIn)
+            : handle(handleIn),
+              pDeviceAL(pDeviceALIn),
+              pContextAL(pContextALIn),
+              hCurrentListener(0)
         {
         }
 
 
-        /// The OpenAL device.
-        ALCdevice* device;
+        /// The object's handle. This is used for handle validation.
+        HPlaybackDevice handle;
+
+
+        /// The OpenAL hDevice.
+        ALCdevice* pDeviceAL;
 
         /// The OpenAL context.
-        ALCcontext* context;
+        ALCcontext* pContextAL;
 
 
         /// The current listener. We need to keep track of this so that when the listener is changed while current, it will be updated on the OpenAL side immediately.
-        ListenerHandle currentListener;
+        HListener hCurrentListener;
 
 
     private:    // No copying.
@@ -91,14 +97,17 @@ namespace GTEngine
 
     struct OpenALListener
     {
-        OpenALListener()
-            : device(0), position(), orientation()
+        OpenALListener(HListener handleIn, HPlaybackDevice hDeviceIn)
+            : handle(handleIn), hDevice(hDeviceIn), position(), orientation()
         {
         }
 
 
-        /// The device that owns this listener.
-        PlaybackDeviceHandle device;
+        /// The object's handle. This is used for handle validation.
+        HListener handle;
+
+        /// The hDevice that owns this listener.
+        HPlaybackDevice hDevice;
 
         /// The position of the listener.
         glm::vec3 position;
@@ -109,14 +118,17 @@ namespace GTEngine
 
     struct OpenALSound
     {
-        OpenALSound()
-            : device(0), source(0)
+        OpenALSound(HSound handleIn, HPlaybackDevice hDeviceIn)
+            : handle(handleIn), hDevice(hDeviceIn), source(0)
         {
         }
 
 
-        /// The device that owns this sound.
-        PlaybackDeviceHandle device;
+        /// The object's handle. This is used for handle validation.
+        HSound handle;
+
+        /// The hDevice that owns this hSound.
+        HPlaybackDevice hDevice;
 
         /// The OpenAL source object.
         ALuint source;
@@ -124,25 +136,32 @@ namespace GTEngine
 
     struct OpenALBuffer
     {
-        OpenALBuffer()
-            : device(0), buffer(0)
+        OpenALBuffer(HAudioBuffer handleIn, HPlaybackDevice hDeviceIn)
+            : handle(handleIn), hDevice(hDeviceIn), hBuffer(0)
         {
         }
 
 
-        /// The device that owns this buffer.
-        PlaybackDeviceHandle device;
+        /// The object's handle. This is used for handle validation.
+        HAudioBuffer handle;
 
-        /// The OpenAL buffer object.
-        ALuint buffer;
+        /// The hDevice that owns this hBuffer.
+        HPlaybackDevice hDevice;
+
+        /// The OpenAL hBuffer object.
+        ALuint hBuffer;
     };
 
 
 
     AudioEngine_OpenAL::AudioEngine_OpenAL()
         : m_library(nullptr),
-          m_playbackDevices(), m_captureDevices(),
-          m_instantiatedPlaybackDevices(), m_instantiatedCaptureDevices(),
+          m_playbackDeviceInfos(), m_captureDeviceInfos(),
+          //m_instantiatedPlaybackDevices(), m_instantiatedCaptureDevices(),
+          m_playbackDevices(),
+          m_listeners(),
+          m_sounds(),
+          m_audioBuffers(),
           m_alcCreateContext(nullptr),
           m_alcDestroyContext(nullptr),
           m_alcMakeContextCurrent(nullptr),
@@ -194,11 +213,7 @@ namespace GTEngine
 
     void AudioEngine_OpenAL::Shutdown()
     {
-        // Every playback device needs to be closed. This will in turn delete every listener and sound.
-        while (m_instantiatedPlaybackDevices.GetCount() > 0)
-        {
-            this->ClosePlaybackDevice(m_instantiatedPlaybackDevices[0]);
-        }
+        // TODO: Every playback hDevice needs to be closed. This will in turn delete every listener and hSound.
 
 
 #if defined(GT_PLATFORM_WINDOWS)
@@ -211,8 +226,8 @@ namespace GTEngine
         m_library = nullptr;
 #endif
 
-        m_playbackDevices.Clear();
-        m_captureDevices.Clear();
+        m_playbackDeviceInfos.Clear();
+        m_captureDeviceInfos.Clear();
 
         m_alcMakeContextCurrent(nullptr);
     }
@@ -221,131 +236,147 @@ namespace GTEngine
 
     size_t AudioEngine_OpenAL::GetPlaybackDeviceCount() const
     {
-        return m_playbackDevices.GetCount();
+        return m_playbackDeviceInfos.GetCount();
     }
 
-    AudioEngine::PlaybackDeviceInfo AudioEngine_OpenAL::GetPlaybackDeviceInfo(size_t deviceIndex) const
+    AudioEngine::PlaybackDeviceInfo AudioEngine_OpenAL::GetPlaybackDeviceInfo(size_t hDeviceIndex) const
     {
-        return m_playbackDevices[deviceIndex];
+        return m_playbackDeviceInfos[hDeviceIndex];
     }
 
-    PlaybackDeviceHandle AudioEngine_OpenAL::OpenPlaybackDevice(size_t deviceIndex)
+    HPlaybackDevice AudioEngine_OpenAL::OpenPlaybackDevice(size_t hDeviceIndex)
     {
-        auto deviceAL = m_alcOpenDevice(m_playbackDevices[deviceIndex].name.c_str());
-        if (deviceAL == nullptr)
+        ALCdevice* pDeviceAL = m_alcOpenDevice(m_playbackDeviceInfos[hDeviceIndex].name.c_str());
+        if (pDeviceAL == nullptr)
         {
-            GTEngine::PostError("AudioEngine_OpenAL - Failed to open device.");
+            GTEngine::PostError("AudioEngine_OpenAL - Failed to open hDevice.");
 
             return 0;
         }
 
-        auto contextAL = m_alcCreateContext(deviceAL, nullptr);
-        if (contextAL == nullptr)
+        ALCcontext* pContextAL = m_alcCreateContext(pDeviceAL, nullptr);
+        if (pContextAL == nullptr)
         {
             GTEngine::PostError("AudioEngine_OpenAL - Failed to create context.");
 
-            m_alcCloseDevice(deviceAL);
+            m_alcCloseDevice(pDeviceAL);
             return 0;
         }
 
-        auto deviceHandle = new OpenALDevice;
-        deviceHandle->device  = deviceAL;
-        deviceHandle->context = contextAL;
 
-        m_instantiatedPlaybackDevices.PushBack(reinterpret_cast<size_t>(deviceHandle));
+        HPlaybackDevice handle = m_playbackDevices.CreateHandle();
+        if (handle == 0)
+        {
+            GTEngine::PostError("AudioEngine_OpenAL - Failed to create hDevice handle.");
 
-        m_alcMakeContextCurrent(contextAL);
+            m_alcDestroyContext(pContextAL);
+            m_alcCloseDevice(pDeviceAL);
+            return 0;
+        }
+
+
+        OpenALDevice* pDevice = new OpenALDevice(handle, pDeviceAL, pContextAL);
+        m_playbackDevices.AssociateObjectWithHandle(handle, pDevice);
+
+        //m_instantiatedPlaybackDevices.PushBack(reinterpret_cast<size_t>(hDeviceHandle));
+
+        m_alcMakeContextCurrent(pContextAL);
         printf("%s\n", m_alGetString(AL_EXTENSIONS));
 
-        return reinterpret_cast<size_t>(deviceHandle);
+        return handle;
     }
 
-    void AudioEngine_OpenAL::ClosePlaybackDevice(PlaybackDeviceHandle device)
+    void AudioEngine_OpenAL::ClosePlaybackDevice(HPlaybackDevice hDevice)
     {
-        auto deviceAL = reinterpret_cast<OpenALDevice*>(device);
-        if (deviceAL != nullptr)
+        auto pDevice = this->GetPlaybackDevicePtr(hDevice);
+        if (pDevice != nullptr)
         {
-            m_alcDestroyContext(deviceAL->context);
-            m_alcCloseDevice(deviceAL->device);
+            m_alcDestroyContext(pDevice->pContextAL);
+            m_alcCloseDevice(pDevice->pDeviceAL);
 
-            m_instantiatedPlaybackDevices.RemoveFirstOccuranceOf(device);
-            delete deviceAL;
+            m_playbackDevices.DeleteHandle(pDevice->handle);
+            delete pDevice;
         }
     }
 
 
 
-    ListenerHandle AudioEngine_OpenAL::CreateListener(PlaybackDeviceHandle device)
+    HListener AudioEngine_OpenAL::CreateListener(HPlaybackDevice hDevice)
     {
-        auto deviceAL = reinterpret_cast<OpenALDevice*>(device);
-        if (deviceAL != nullptr)
+        auto pDevice = this->GetPlaybackDevicePtr(hDevice);
+        if (pDevice != nullptr)
         {
-            auto listenerAL = new OpenALListener;
-            listenerAL->device = device;
+            HListener handle = m_listeners.CreateHandle();
+            if (handle != 0)
+            {
+                auto pListener = new OpenALListener(handle, hDevice);
 
-            return reinterpret_cast<size_t>(listenerAL);
+                m_listeners.AssociateObjectWithHandle(handle, pListener);
+                return handle;
+            }
         }
 
         return 0;
     }
 
-    void AudioEngine_OpenAL::DeleteListener(ListenerHandle listener)
+    void AudioEngine_OpenAL::DeleteListener(HListener hListener)
     {
-        auto listenerAL = reinterpret_cast<OpenALListener*>(listener);
-        if (listenerAL != nullptr)
+        auto pListener = this->GetListenerPtr(hListener);
+        if (pListener != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(listenerAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(hListener);
+            assert(pDevice != nullptr);
             {
             }
 
-            delete listenerAL;
+            m_listeners.DeleteHandle(hListener);
+            delete pListener;
         }
     }
 
-    void AudioEngine_OpenAL::SetListenerPosition(ListenerHandle listener, glm::vec3 position)
+    void AudioEngine_OpenAL::SetListenerPosition(HListener hListener, glm::vec3 position)
     {
-        auto listenerAL = reinterpret_cast<OpenALListener*>(listener);
-        if (listenerAL != nullptr)
+        auto pListener = this->GetListenerPtr(hListener);
+        if (pListener != nullptr)
         {
-            listenerAL->position = position;
+            pListener->position = position;
 
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(listenerAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pListener->hDevice);
+            assert(pDevice != nullptr);
             {
-                if (deviceAL->currentListener == listener)
+                if (pDevice->hCurrentListener == hListener)
                 {
-                    m_alcMakeContextCurrent(deviceAL->context);
+                    m_alcMakeContextCurrent(pDevice->pContextAL);
                     m_alListener3f(AL_POSITION, position.x, position.y, position.z);
                 }
             }
         }
     }
 
-    glm::vec3 AudioEngine_OpenAL::GetListenerPosition(ListenerHandle listener) const
+    glm::vec3 AudioEngine_OpenAL::GetListenerPosition(HListener hListener) const
     {
-        auto listenerAL = reinterpret_cast<OpenALListener*>(listener);
-        if (listenerAL != nullptr)
+        auto pListener = this->GetListenerPtr(hListener);
+        if (pListener != nullptr)
         {
-            return listenerAL->position;
+            return pListener->position;
         }
 
         return glm::vec3(0, 0, 0);
     }
 
-    void AudioEngine_OpenAL::SetListenerOrientation(ListenerHandle listener, glm::quat orientation)
+    void AudioEngine_OpenAL::SetListenerOrientation(HListener hListener, glm::quat orientation)
     {
-        auto listenerAL = reinterpret_cast<OpenALListener*>(listener);
-        if (listenerAL != nullptr)
+        auto pListener = this->GetListenerPtr(hListener);
+        if (pListener != nullptr)
         {
-            listenerAL->orientation = orientation;
+            pListener->orientation = orientation;
 
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(listenerAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pListener->hDevice);
+            assert(pDevice != nullptr);
             {
-                if (deviceAL->currentListener == listener)
+                if (pDevice->hCurrentListener == hListener)
                 {
-                    m_alcMakeContextCurrent(deviceAL->context);
+                    m_alcMakeContextCurrent(pDevice->pContextAL);
 
 
                     glm::vec3 forward = orientation * glm::vec3(0.0f, 0.0f, -1.0f);
@@ -365,12 +396,12 @@ namespace GTEngine
         }
     }
 
-    glm::quat AudioEngine_OpenAL::GetListenerOrientation(ListenerHandle listener) const
+    glm::quat AudioEngine_OpenAL::GetListenerOrientation(HListener hListener) const
     {
-        auto listenerAL = reinterpret_cast<OpenALListener*>(listener);
-        if (listenerAL != nullptr)
+        auto pListener = this->GetListenerPtr(hListener);
+        if (pListener != nullptr)
         {
-            return listenerAL->orientation;
+            return pListener->orientation;
         }
 
         return glm::quat();
@@ -380,65 +411,75 @@ namespace GTEngine
 
 
 
-    SoundHandle AudioEngine_OpenAL::CreateSound(PlaybackDeviceHandle device)
+    HSound AudioEngine_OpenAL::CreateSound(HPlaybackDevice hDevice)
     {
-        auto deviceAL = reinterpret_cast<OpenALDevice*>(device);
-        if (deviceAL != nullptr)
+        auto pDevice = this->GetPlaybackDevicePtr(hDevice);
+        if (pDevice != nullptr)
         {
-            auto soundAL = new OpenALSound;
-            soundAL->device = device;
+            HSound handle = m_sounds.CreateHandle();
+            if (handle != 0)
+            {
+                auto pSound = new OpenALSound(handle, hDevice);
 
-            m_alcMakeContextCurrent(deviceAL->context);
-            m_alGenSources(1, &soundAL->source);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
+                m_alGenSources(1, &pSound->source);
 
-            return reinterpret_cast<SoundHandle>(soundAL);
+                m_sounds.AssociateObjectWithHandle(handle, pSound);
+                return handle;
+            }
         }
 
         return 0;
     }
 
-    void AudioEngine_OpenAL::DeleteSound(SoundHandle sound)
+    void AudioEngine_OpenAL::DeleteSound(HSound hSound)
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
-                m_alDeleteSources(1, &soundAL->source);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
+                m_alDeleteSources(1, &pSound->source);
             }
 
-            delete soundAL;
+            m_sounds.DeleteHandle(hSound);
+            delete pSound;
         }
     }
 
-    void AudioEngine_OpenAL::SetSoundPosition(SoundHandle sound, glm::vec3 position)
+    bool AudioEngine_OpenAL::IsValidSound(HSound hSound) const
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        return this->GetSoundPtr(hSound) != nullptr;
+    }
+
+    void AudioEngine_OpenAL::SetSoundPosition(HSound hSound, glm::vec3 position)
+    {
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
-                m_alSource3f(soundAL->source, AL_POSITION, position.x, position.y, position.z);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
+                m_alSource3f(pSound->source, AL_POSITION, position.x, position.y, position.z);
             }
         }
     }
 
-    glm::vec3 AudioEngine_OpenAL::GetSoundPosition(SoundHandle sound) const
+    glm::vec3 AudioEngine_OpenAL::GetSoundPosition(HSound hSound) const
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
 
                 ALfloat position[3];
-                m_alGetSourcefv(soundAL->source, AL_POSITION, position);
+                m_alGetSourcefv(pSound->source, AL_POSITION, position);
 
                 return glm::vec3(position[0], position[1], position[2]);
             }
@@ -447,27 +488,27 @@ namespace GTEngine
         return glm::vec3(0, 0, 0);
     }
 
-    void AudioEngine_OpenAL::SetIsSoundPositionRelative(SoundHandle sound, bool isRelative)
+    void AudioEngine_OpenAL::SetIsSoundPositionRelative(HSound hSound, bool isRelative)
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
-                m_alSourcei(soundAL->source, AL_SOURCE_RELATIVE, static_cast<ALint>(isRelative));
+                m_alcMakeContextCurrent(pDevice->pContextAL);
+                m_alSourcei(pSound->source, AL_SOURCE_RELATIVE, static_cast<ALint>(isRelative));
             }
         }
     }
 
-    bool AudioEngine_OpenAL::IsSoundPositionRelative(SoundHandle sound) const
+    bool AudioEngine_OpenAL::IsSoundPositionRelative(HSound hSound) const
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
             ALint isRelative;
-            m_alGetSourcei(soundAL->source, AL_SOURCE_RELATIVE, &isRelative);
+            m_alGetSourcei(pSound->source, AL_SOURCE_RELATIVE, &isRelative);
 
             return isRelative != 0;
         }
@@ -475,50 +516,50 @@ namespace GTEngine
         return false;
     }
 
-    void AudioEngine_OpenAL::QueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer)
+    void AudioEngine_OpenAL::QueueAudioBuffer(HSound hSound, HAudioBuffer hBuffer)
     {
-        auto soundAL  = reinterpret_cast<OpenALSound*>(sound);
-        auto bufferAL = reinterpret_cast<OpenALBuffer*>(buffer);
+        auto pSound  = this->GetSoundPtr(hSound);
+        auto pBuffer = this->GetAudioBufferPtr(hBuffer);
 
-        if (soundAL != nullptr && bufferAL != nullptr)
+        if (pSound != nullptr && pBuffer != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
-                m_alSourceQueueBuffers(soundAL->source, 1, &bufferAL->buffer);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
+                m_alSourceQueueBuffers(pSound->source, 1, &pBuffer->hBuffer);
             }
         }
     }
 
-    void AudioEngine_OpenAL::UnqueueAudioBuffer(SoundHandle sound)
+    void AudioEngine_OpenAL::UnqueueAudioBuffer(HSound hSound)
     {
-        auto soundAL  = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound  = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
 
                 ALuint devnull;
-                m_alSourceUnqueueBuffers(soundAL->source, 1, &devnull);
+                m_alSourceUnqueueBuffers(pSound->source, 1, &devnull);
             }
         }
     }
 
-    unsigned int AudioEngine_OpenAL::GetQueuedAudioBufferCount(SoundHandle sound)
+    unsigned int AudioEngine_OpenAL::GetQueuedAudioBufferCount(HSound hSound)
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
 
                 ALint count = 0;
-                m_alGetSourcei(soundAL->source, AL_BUFFERS_QUEUED, &count);
+                m_alGetSourcei(pSound->source, AL_BUFFERS_QUEUED, &count);
 
                 return static_cast<unsigned int>(count);
             }
@@ -527,18 +568,18 @@ namespace GTEngine
         return 0;
     }
 
-    unsigned int AudioEngine_OpenAL::GetProcessedQueuedAudioBufferCount(SoundHandle sound)
+    unsigned int AudioEngine_OpenAL::GetProcessedQueuedAudioBufferCount(HSound hSound)
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
 
                 ALint count = 0;
-                m_alGetSourcei(soundAL->source, AL_BUFFERS_PROCESSED, &count);
+                m_alGetSourcei(pSound->source, AL_BUFFERS_PROCESSED, &count);
 
                 return static_cast<unsigned int>(count);
             }
@@ -547,74 +588,74 @@ namespace GTEngine
         return 0;
     }
 
-    void AudioEngine_OpenAL::PlaySound(SoundHandle sound)
+    void AudioEngine_OpenAL::PlaySound(HSound hSound)
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
-                m_alSourcePlay(soundAL->source);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
+                m_alSourcePlay(pSound->source);
             }
         }
     }
 
-    void AudioEngine_OpenAL::StopSound(SoundHandle sound)
+    void AudioEngine_OpenAL::StopSound(HSound hSound)
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
-                m_alSourceStop(soundAL->source);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
+                m_alSourceStop(pSound->source);
             }
         }
     }
 
-    void AudioEngine_OpenAL::PauseSound(SoundHandle sound)
+    void AudioEngine_OpenAL::PauseSound(HSound hSound)
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
-                m_alSourcePause(soundAL->source);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
+                m_alSourcePause(pSound->source);
             }
         }
     }
 
-    void AudioEngine_OpenAL::RewindSound(SoundHandle sound)
+    void AudioEngine_OpenAL::RewindSound(HSound hSound)
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
-                m_alSourceRewind(soundAL->source);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
+                m_alSourceRewind(pSound->source);
             }
         }
     }
 
-    bool AudioEngine_OpenAL::IsSoundPlaying(SoundHandle sound)
+    bool AudioEngine_OpenAL::IsSoundPlaying(HSound hSound)
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
 
                 ALint state = 0;
-                m_alGetSourcei(soundAL->source, AL_SOURCE_STATE, &state);
+                m_alGetSourcei(pSound->source, AL_SOURCE_STATE, &state);
 
                 return state == AL_PLAYING;
             }
@@ -623,18 +664,18 @@ namespace GTEngine
         return false;
     }
 
-    bool AudioEngine_OpenAL::IsSoundPaused(SoundHandle sound)
+    bool AudioEngine_OpenAL::IsSoundPaused(HSound hSound)
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
 
                 ALint state = 0;
-                m_alGetSourcei(soundAL->source, AL_SOURCE_STATE, &state);
+                m_alGetSourcei(pSound->source, AL_SOURCE_STATE, &state);
 
                 return state == AL_PAUSED;
             }
@@ -643,70 +684,75 @@ namespace GTEngine
         return false;
     }
 
-    bool AudioEngine_OpenAL::IsSoundStopped(SoundHandle sound)
+    bool AudioEngine_OpenAL::IsSoundStopped(HSound hSound)
     {
-        auto soundAL = reinterpret_cast<OpenALSound*>(sound);
-        if (soundAL != nullptr)
+        auto pSound = this->GetSoundPtr(hSound);
+        if (pSound != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(soundAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pSound->hDevice);
+            if (pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
 
                 ALint state = 0;
-                m_alGetSourcei(soundAL->source, AL_SOURCE_STATE, &state);
+                m_alGetSourcei(pSound->source, AL_SOURCE_STATE, &state);
 
                 return state == AL_STOPPED;
             }
         }
 
-        return false;
+        return true;
     }
 
 
 
-    AudioBufferHandle AudioEngine_OpenAL::CreateAudioBuffer(PlaybackDeviceHandle device)
+    HAudioBuffer AudioEngine_OpenAL::CreateAudioBuffer(HPlaybackDevice hDevice)
     {
-        auto deviceAL = reinterpret_cast<OpenALDevice*>(device);
-        if (deviceAL != nullptr)
+        auto pDevice = this->GetPlaybackDevicePtr(hDevice);
+        if (pDevice != nullptr)
         {
-            auto bufferAL = new OpenALBuffer;
-            bufferAL->device = device;
+            HAudioBuffer handle = m_audioBuffers.CreateHandle();
+            if (handle != 0)
+            {
+                auto pBuffer = new OpenALBuffer(handle, hDevice);
 
-            m_alcMakeContextCurrent(deviceAL->context);
-            m_alGenBuffers(1, &bufferAL->buffer);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
+                m_alGenBuffers(1, &pBuffer->hBuffer);
 
-            return reinterpret_cast<SoundHandle>(bufferAL);
+                m_audioBuffers.AssociateObjectWithHandle(handle, pBuffer);
+                return handle;
+            }
         }
 
         return 0;
     }
 
-    void AudioEngine_OpenAL::DeleteAudioBuffer(AudioBufferHandle buffer)
+    void AudioEngine_OpenAL::DeleteAudioBuffer(HAudioBuffer hBuffer)
     {
-        auto bufferAL = reinterpret_cast<OpenALBuffer*>(buffer);
-        if (bufferAL != nullptr)
+        auto pBuffer = this->GetAudioBufferPtr(hBuffer);
+        if (pBuffer != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(bufferAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pBuffer->hDevice);
+            if(pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
-                m_alDeleteBuffers(1, &bufferAL->buffer);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
+                m_alDeleteBuffers(1, &pBuffer->hBuffer);
             }
 
-            delete bufferAL;
+            m_audioBuffers.DeleteHandle(hBuffer);
+            delete pBuffer;
         }
     }
 
-    void AudioEngine_OpenAL::SetAudioBufferData(AudioBufferHandle buffer, const void *data, size_t dataSizeInBytes, AudioDataFormat format, unsigned int frequency)
+    void AudioEngine_OpenAL::SetAudioBufferData(HAudioBuffer hBuffer, const void *data, size_t dataSizeInBytes, AudioDataFormat format, unsigned int frequency)
     {
-        auto bufferAL = reinterpret_cast<OpenALBuffer*>(buffer);
-        if (bufferAL != nullptr)
+        auto pBuffer = this->GetAudioBufferPtr(hBuffer);
+        if (pBuffer != nullptr)
         {
-            auto deviceAL = reinterpret_cast<OpenALDevice*>(bufferAL->device);
-            assert(deviceAL != nullptr);
+            auto pDevice = this->GetPlaybackDevicePtr(pBuffer->hDevice);
+            if(pDevice != nullptr)
             {
-                m_alcMakeContextCurrent(deviceAL->context);
+                m_alcMakeContextCurrent(pDevice->pContextAL);
 
                 // OpenAL does not have reliable 24-bit support. We're going to downscale this to 16-bit if applicable.
                 if (format == AudioDataFormat_Mono24 || format == AudioDataFormat_Stereo24)
@@ -733,7 +779,7 @@ namespace GTEngine
                         newData[iSample] = sample16;
                     }
 
-                    m_alBufferData(bufferAL->buffer, (format == AudioDataFormat_Mono24) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
+                    m_alBufferData(pBuffer->hBuffer, (format == AudioDataFormat_Mono24) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
 
                     free(newData);
                 }
@@ -748,7 +794,7 @@ namespace GTEngine
                         newData[iSample] = static_cast<int16_t>(reinterpret_cast<const float*>(data)[iSample] * 65536.0f);
                     }
 
-                    m_alBufferData(bufferAL->buffer, (format == AudioDataFormat_Mono32F) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
+                    m_alBufferData(pBuffer->hBuffer, (format == AudioDataFormat_Mono32F) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
 
                     free(newData);
                 }
@@ -763,7 +809,7 @@ namespace GTEngine
                         newData[iSample] = static_cast<int16_t>(reinterpret_cast<const double*>(data)[iSample] * 65536.0f);
                     }
 
-                    m_alBufferData(bufferAL->buffer, (format == AudioDataFormat_Mono64F) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
+                    m_alBufferData(pBuffer->hBuffer, (format == AudioDataFormat_Mono64F) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
 
                     free(newData);
                 }
@@ -778,7 +824,7 @@ namespace GTEngine
                         newData[iSample] = static_cast<int16_t>(alaw2linear(reinterpret_cast<const unsigned char*>(data)[iSample]));
                     }
 
-                    m_alBufferData(bufferAL->buffer, (format == AudioDataFormat_Mono_ALaw) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
+                    m_alBufferData(pBuffer->hBuffer, (format == AudioDataFormat_Mono_ALaw) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
 
                     free(newData);
                 }
@@ -793,13 +839,13 @@ namespace GTEngine
                         newData[iSample] = static_cast<int16_t>(ulaw2linear(reinterpret_cast<const unsigned char*>(data)[iSample]));
                     }
 
-                    m_alBufferData(bufferAL->buffer, (format == AudioDataFormat_Mono_ULaw) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
+                    m_alBufferData(pBuffer->hBuffer, (format == AudioDataFormat_Mono_ULaw) ? AL_FORMAT_MONO16 : AL_FORMAT_STEREO16, newData, static_cast<ALsizei>(newDataSizeInBytes), static_cast<ALsizei>(frequency));
 
                     free(newData);
                 }
                 else
                 {
-                    m_alBufferData(bufferAL->buffer, ToOpenALDataFormat(format), data, static_cast<ALsizei>(dataSizeInBytes), static_cast<ALsizei>(frequency));
+                    m_alBufferData(pBuffer->hBuffer, ToOpenALDataFormat(format), data, static_cast<ALsizei>(dataSizeInBytes), static_cast<ALsizei>(frequency));
                 }
             }
         }
@@ -875,15 +921,15 @@ namespace GTEngine
         }
 
 
-        size_t deviceNameLength;
-        while ((deviceNameLength = strlen(playbackDeviceList)) > 0)
+        size_t hDeviceNameLength;
+        while ((hDeviceNameLength = strlen(playbackDeviceList)) > 0)
         {
-            PlaybackDeviceInfo deviceInfo;
-            deviceInfo.name = playbackDeviceList;
+            PlaybackDeviceInfo hDeviceInfo;
+            hDeviceInfo.name = playbackDeviceList;
 
-            m_playbackDevices.PushBack(deviceInfo);
+            m_playbackDeviceInfos.PushBack(hDeviceInfo);
 
-            playbackDeviceList += deviceNameLength + 1;
+            playbackDeviceList += hDeviceNameLength + 1;
         }
     }
 
@@ -892,19 +938,106 @@ namespace GTEngine
         const char* captureDeviceList = m_alcGetString(nullptr, ALC_CAPTURE_DEVICE_SPECIFIER);
         if (captureDeviceList != nullptr)
         {
-            size_t deviceNameLength;
-            while ((deviceNameLength = strlen(captureDeviceList)) > 0)
+            size_t hDeviceNameLength;
+            while ((hDeviceNameLength = strlen(captureDeviceList)) > 0)
             {
-                CaptureDeviceInfo deviceInfo;
-                deviceInfo.name = captureDeviceList;
+                CaptureDeviceInfo hDeviceInfo;
+                hDeviceInfo.name = captureDeviceList;
 
-                m_captureDevices.PushBack(deviceInfo);
+                m_captureDeviceInfos.PushBack(hDeviceInfo);
 
-                captureDeviceList += deviceNameLength + 1;
+                captureDeviceList += hDeviceNameLength + 1;
             }
         }
     }
 
+    OpenALDevice* AudioEngine_OpenAL::GetPlaybackDevicePtr(HPlaybackDevice hPlaybackDevice) const
+    {
+        auto pObject = m_playbackDevices.GetAssociatedObject(hPlaybackDevice);
+        if (pObject != nullptr)
+        {
+            if (hPlaybackDevice == pObject->handle)
+            {
+                return pObject;
+            }
+            else
+            {
+                // Invalid handle (uniqueness IDs do not match).
+                return nullptr;
+            }
+        }
+        else
+        {
+            // Invalid handle (deleted or null).
+            return nullptr;
+        }
+    }
+
+    OpenALListener* AudioEngine_OpenAL::GetListenerPtr(HListener hListener) const
+    {
+        auto pObject = m_listeners.GetAssociatedObject(hListener);
+        if (pObject != nullptr)
+        {
+            if (hListener == pObject->handle)
+            {
+                return pObject;
+            }
+            else
+            {
+                // Invalid handle (uniqueness IDs do not match).
+                return nullptr;
+            }
+        }
+        else
+        {
+            // Invalid handle (deleted or null).
+            return nullptr;
+        }
+    }
+
+    OpenALSound* AudioEngine_OpenAL::GetSoundPtr(HSound hSound) const
+    {
+        auto pObject = m_sounds.GetAssociatedObject(hSound);
+        if (pObject != nullptr)
+        {
+            if (hSound == pObject->handle)
+            {
+                return pObject;
+            }
+            else
+            {
+                // Invalid handle (uniqueness IDs do not match).
+                return nullptr;
+            }
+        }
+        else
+        {
+            // Invalid handle (deleted or null).
+            return nullptr;
+        }
+    }
+
+    OpenALBuffer* AudioEngine_OpenAL::GetAudioBufferPtr(HAudioBuffer hAudioBuffer) const
+    {
+        auto pObject = m_audioBuffers.GetAssociatedObject(hAudioBuffer);
+        if (pObject != nullptr)
+        {
+            if (hAudioBuffer == pObject->handle)
+            {
+                return pObject;
+            }
+            else
+            {
+                // Invalid handle (uniqueness IDs do not match).
+                return nullptr;
+            }
+        }
+        else
+        {
+            // Invalid handle (deleted or null).
+            return nullptr;
+        }
+    }
 
 
     ///////////////////////////////////////////

@@ -36,11 +36,17 @@
 
 namespace GTEngine
 {
-    typedef size_t PlaybackDeviceHandle;
-    typedef size_t CaptureDeviceHandle;
-    typedef size_t ListenerHandle;
-    typedef size_t SoundHandle;
-    typedef size_t AudioBufferHandle;
+    //typedef size_t PlaybackDeviceHandle;
+    //typedef size_t CaptureDeviceHandle;
+    //typedef size_t ListenerHandle;
+    //typedef size_t SoundHandle;
+    //typedef size_t AudioBufferHandle;
+
+    typedef uint32_t HPlaybackDevice;
+    typedef uint32_t HCaptureDevice;
+    typedef uint32_t HListener;
+    typedef uint32_t HSound;
+    typedef uint32_t HAudioBuffer;
 
 
     /// Base class for handling audio playback.
@@ -132,7 +138,7 @@ namespace GTEngine
         ///     @par
         ///     The device will need to be passed to every creation function. This is because each listener, sound, etc, must be associated with a device so the
         ///     audio engine knows which device to playback the audio from.
-        virtual PlaybackDeviceHandle OpenPlaybackDevice(size_t deviceIndex) = 0;
+        virtual HPlaybackDevice OpenPlaybackDevice(size_t deviceIndex) = 0;
 
         /// Closes a playback device.
         ///
@@ -140,43 +146,43 @@ namespace GTEngine
         ///
         /// @remarks
         ///     When a playback device is closed, every resource (listeners, sounds, etc) that's associated with that device will be deleted.
-        virtual void ClosePlaybackDevice(PlaybackDeviceHandle device) = 0;
+        virtual void ClosePlaybackDevice(HPlaybackDevice device) = 0;
 
 
 
         /// Creates a listener.
         ///
         /// @param device [in] The device the listener should be associated with.
-        virtual ListenerHandle CreateListener(PlaybackDeviceHandle device) = 0;
+        virtual HListener CreateListener(HPlaybackDevice device) = 0;
 
         /// Deletes a listener.
         ///
         /// @param listener [in] A handle to the listener to delete.
-        virtual void DeleteListener(ListenerHandle listener) = 0;
+        virtual void DeleteListener(HListener listener) = 0;
 
         /// Sets the position of the given listener.
         ///
         /// @param listener [in] The listener whose position is being set.
         /// @param position [in] The new position of the listener.
-        virtual void SetListenerPosition(ListenerHandle listener, glm::vec3 position) = 0;
-        
+        virtual void SetListenerPosition(HListener listener, glm::vec3 position) = 0;
+
         /// Retrieves the position of the listener.
         ///
         /// @param listener [in]  The listener whose position is being retrieved.
         ///
         /// @return A vec3 containing the position of the sound.
-        virtual glm::vec3 GetListenerPosition(ListenerHandle listener) const = 0;
+        virtual glm::vec3 GetListenerPosition(HListener listener) const = 0;
 
         /// Sets the orientation of the given listener.
         ///
         /// @param listener    [in] The listener whose orientation is being set.
         /// @param orientation [in] The quaternion representing the target orientation.
-        virtual void SetListenerOrientation(ListenerHandle listener, glm::quat orientation) = 0;
+        virtual void SetListenerOrientation(HListener listener, glm::quat orientation) = 0;
 
         /// Retrieves the orientation of the given listener.
         ///
         /// @param listener [in] The listener whose orientation is being retrieved.
-        virtual glm::quat GetListenerOrientation(ListenerHandle listener) const = 0;
+        virtual glm::quat GetListenerOrientation(HListener listener) const = 0;
 
 
 
@@ -185,44 +191,49 @@ namespace GTEngine
         /// @param device [in] The device the sound should be played from.
         ///
         /// @return A handle to the new sound object.
-        virtual SoundHandle CreateSound(PlaybackDeviceHandle device) = 0;
+        virtual HSound CreateSound(HPlaybackDevice device) = 0;
 
         /// Deletes a sound that was previously created with CreateSound().
         ///
         /// @param sound [in] A handle to the sound to delete.
-        virtual void DeleteSound(SoundHandle sound) = 0;
+        virtual void DeleteSound(HSound sound) = 0;
+
+        /// Determines whether or not the given handle is a valid sound object.
+        ///
+        /// @param hSound [in] A handle to the sound object.
+        virtual bool IsValidSound(HSound hSound) const = 0;
 
         /// Sets the position of the given sound.
         ///
         /// @param sound    [in] The sound whose position is being set.
         /// @param position [in] The new position of the sound.
-        virtual void SetSoundPosition(SoundHandle sound, glm::vec3 position) = 0;
+        virtual void SetSoundPosition(HSound sound, glm::vec3 position) = 0;
 
         /// Retrieves the position of the given sound.
         ///
         /// @param sound [in] The sound whose position is being retrieved.
         ///
         /// @return A vec3 containing the position of the sound.
-        virtual glm::vec3 GetSoundPosition(SoundHandle sound) const = 0;
+        virtual glm::vec3 GetSoundPosition(HSound sound) const = 0;
 
         /// Sets whether or not the position of the sound should be relative to the listener.
         ///
         /// @param sound      [in] The sound handle.
         /// @param isRelative [in] True is the sound's position should be relative to the player; false otherwise.
-        virtual void SetIsSoundPositionRelative(SoundHandle sound, bool isRelative) = 0;
+        virtual void SetIsSoundPositionRelative(HSound sound, bool isRelative) = 0;
 
         /// Determines whether or not the position of the given sound is relative to the listener.
         ///
         /// @param sound [in] The sound handle.
         ///
         /// @return True if the sound is relative to the listener; false otherwise.
-        virtual bool IsSoundPositionRelative(SoundHandle sound) const = 0;
+        virtual bool IsSoundPositionRelative(HSound sound) const = 0;
 
         /// Adds the given buffer to the end of the given sound's buffer queue.
         ///
         /// @param sound  [in] The sound whose having an audio buffer queued.
         /// @param buffer [in] The buffer to add to the queue.
-        virtual void QueueAudioBuffer(SoundHandle sound, AudioBufferHandle buffer) = 0;
+        virtual void QueueAudioBuffer(HSound sound, HAudioBuffer buffer) = 0;
 
         /// Removes the oldest processed audio buffer from the given sound's queue.
         ///
@@ -230,22 +241,22 @@ namespace GTEngine
         ///
         /// @remarks
         ///     Use GetProcessedAudioBufferCount() to retrieve the number of buffers that have been processed.
-        virtual void UnqueueAudioBuffer(SoundHandle sound) = 0;
+        virtual void UnqueueAudioBuffer(HSound sound) = 0;
 
         /// Retrieves the number of buffers that are queud on the given sound.
         ///
         /// @param sound [in] The sound whose buffer queue is being counted.
-        virtual unsigned int GetQueuedAudioBufferCount(SoundHandle sound) = 0;
+        virtual unsigned int GetQueuedAudioBufferCount(HSound sound) = 0;
 
         /// Retrieves the number of buffers that are queue on the given sound, but have also been processed (played).
         ///
         /// @param sound [in] The sound handle.
-        virtual unsigned int GetProcessedQueuedAudioBufferCount(SoundHandle sound) = 0;
+        virtual unsigned int GetProcessedQueuedAudioBufferCount(HSound sound) = 0;
 
         /// Starts, replay or resume the given sound.
         ///
         /// @param sound [in] The sound to play.
-        virtual void PlaySound(SoundHandle sound) = 0;
+        virtual void PlaySound(HSound sound) = 0;
 
         /// Stops playing the sound.
         ///
@@ -253,7 +264,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     Calling Play() after this will cause the sound to restart from the start. Use Pause() if you want pause functionality.
-        virtual void StopSound(SoundHandle sound) = 0;
+        virtual void StopSound(HSound sound) = 0;
 
         /// Pauses playback of the given sound.
         ///
@@ -261,7 +272,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     Calling Play() after this will cause the sound to resume from where it was left off. Use Stop() or Rewind() if you want to go back to the beginning.
-        virtual void PauseSound(SoundHandle sound) = 0;
+        virtual void PauseSound(HSound sound) = 0;
 
         /// Restarts the given sound from the beginning.
         ///
@@ -269,28 +280,28 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This does not stop playback.
-        virtual void RewindSound(SoundHandle sound) = 0;
+        virtual void RewindSound(HSound sound) = 0;
 
         /// Determines whether or not the sound is currently being played.
         ///
         /// @param sound [in] The sound handle.
         ///
         /// @return True if the sound is currently in a playing state; false otherwise.
-        virtual bool IsSoundPlaying(SoundHandle sound) = 0;
+        virtual bool IsSoundPlaying(HSound sound) = 0;
 
         /// Determines whether or not the sound is currently paused.
         ///
         /// @param sound [in] The sound handle.
         ///
         /// @return True if the sound is currently paused; false otherwise.
-        virtual bool IsSoundPaused(SoundHandle sound) = 0;
+        virtual bool IsSoundPaused(HSound sound) = 0;
 
         /// Determines whether or not the sound is currently stopped.
         ///
         /// @param sound [in] The sound handle.
         ///
         /// @return True if the sound is currently stopped; false otherwise.
-        virtual bool IsSoundStopped(SoundHandle sound) = 0;
+        virtual bool IsSoundStopped(HSound sound) = 0;
 
 
 
@@ -299,12 +310,12 @@ namespace GTEngine
         /// @param device [in] the device the buffer should be created for.
         ///
         /// @return A handle to the new buffer object.
-        virtual AudioBufferHandle CreateAudioBuffer(PlaybackDeviceHandle device) = 0;
+        virtual HAudioBuffer CreateAudioBuffer(HPlaybackDevice device) = 0;
 
         /// Deletes an audio buffer that was previously created with CreateAudioBuffer().
         ///
         /// @param buffer [in] The audio buffer to delete.
-        virtual void DeleteAudioBuffer(AudioBufferHandle buffer) = 0;
+        virtual void DeleteAudioBuffer(HAudioBuffer buffer) = 0;
 
         /// Sets the data of the given audio buffer.
         ///
@@ -316,8 +327,8 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This will make a copy of the data. The data can be deleted once this returns.
-        virtual void SetAudioBufferData(AudioBufferHandle buffer, const void *data, size_t dataSizeInBytes, AudioDataFormat format, unsigned int frequency) = 0;
-        
+        virtual void SetAudioBufferData(HAudioBuffer buffer, const void *data, size_t dataSizeInBytes, AudioDataFormat format, unsigned int frequency) = 0;
+
 
 
 
@@ -331,7 +342,7 @@ namespace GTEngine
         /// @param xPos     [in] The new x position of the listener.
         /// @param yPos     [in] The new y position of the listener.
         /// @param zPos     [in] The new z position of the listener.
-        void SetListenerPosition(ListenerHandle listener, float xPos, float yPos, float zPos) { this->SetListenerPosition(listener, glm::vec3(xPos, yPos, zPos)); }
+        void SetListenerPosition(HListener listener, float xPos, float yPos, float zPos) { this->SetListenerPosition(listener, glm::vec3(xPos, yPos, zPos)); }
 
         /// Sets the position of the given sound.
         ///
@@ -339,7 +350,7 @@ namespace GTEngine
         /// @param xPos  [in] The new x position of the sound.
         /// @param yPos  [in] The new y position of the sound.
         /// @param zPos  [in] The new z position of the sound.
-        void SetSoundPosition(SoundHandle sound, float xPos, float yPos, float zPos) { this->SetSoundPosition(sound, glm::vec3(xPos, yPos, zPos)); }
+        void SetSoundPosition(HSound sound, float xPos, float yPos, float zPos) { this->SetSoundPosition(sound, glm::vec3(xPos, yPos, zPos)); }
     };
 }
 

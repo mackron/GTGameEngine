@@ -312,13 +312,13 @@ namespace GT
             return *m_audioSystem;
         }
 
-        GTEngine::PlaybackDeviceHandle EngineContext::GetAudioPlaybackDevice()
+        GTEngine::HPlaybackDevice EngineContext::GetAudioPlaybackDevice()
         {
             assert(m_audioPlaybackDevice != 0);
             return m_audioPlaybackDevice;
         }
 
-        GTEngine::ListenerHandle EngineContext::GetAudioListener()
+        GTEngine::HListener EngineContext::GetAudioListener()
         {
             assert(m_audioListener != 0);
             return m_audioListener;

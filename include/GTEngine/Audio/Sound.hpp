@@ -31,7 +31,7 @@ namespace GT
             /// Retrieve the internal sound source handle.
             ///
             /// @return The internal sound source handle.
-            GTEngine::SoundHandle GetSoundHandle();
+            GTEngine::HSound GetSoundHandle();
 
             /// Retrieves the internal audio buffers for the the sound.
             ///
@@ -39,7 +39,7 @@ namespace GT
             ///
             /// @remarks
             ///     The returned pointer is of a 2-element buffer.
-            GTEngine::AudioBufferHandle* GetAudioBuffers();
+            GTEngine::HAudioBuffer* GetAudioBuffers();
 
 
             /// Loads a sound from the given sound file.
@@ -170,7 +170,7 @@ namespace GT
                 {
                 }
 
-                
+
                 /// SoundPlaybackEventHandler::OnStop().
                 void OnStop()
                 {
@@ -201,10 +201,10 @@ namespace GT
 
 
             /// The handle to the sound source.
-            GTEngine::SoundHandle m_hSound;
+            GTEngine::HSound m_hSound;
 
             /// The handle to the two audio data buffers. Index 0 is the read buffer and 1 is the write buffer.
-            GTEngine::AudioBufferHandle m_hBuffers[2];
+            GTEngine::HAudioBuffer m_hBuffers[2];
 
 
             /// A pointer to the streamer to load the audio data from.

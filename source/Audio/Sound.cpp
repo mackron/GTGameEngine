@@ -40,12 +40,12 @@ namespace GT
         }
 
 
-        GTEngine::SoundHandle Sound::GetSoundHandle()
+        GTEngine::HSound Sound::GetSoundHandle()
         {
             return m_hSound;
         }
 
-        GTEngine::AudioBufferHandle* Sound::GetAudioBuffers()
+        GTEngine::HAudioBuffer* Sound::GetAudioBuffers()
         {
             return m_hBuffers;
         }
