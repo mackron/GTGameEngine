@@ -6,12 +6,210 @@
 #include "GraphicsTypes.hpp"
 #include "GraphicsWorldObject.hpp"
 #include "../Math.hpp"
-#include <GTLib/Vector.hpp>
+#include "../GUI/GUIContext.hpp"
+
+#if defined(GT_PLATFORM_WINDOWS)
+#include <GTLib/windows.hpp>
+#endif
 
 namespace GT
 {
-    class GraphicsInterface;
+    // Handle types.
+    typedef uintptr_t HGraphicsResource;
+    typedef uintptr_t HGraphicsObject;
+    typedef uintptr_t HGraphicsRenderTarget;
 
+    // Flags
+    static const uint32_t GraphicsRenderTarget_OnlyUI = (1 << 0);       //< Set on a render target to indicate that it should only render UI elements and not any world objects.
+
+
+    /// Base class for a graphics world. A graphics world is where rendering occurs.
+    ///
+    /// The actual rendering and resource creation is performed by derived classes. 
+    class GraphicsWorld
+    {
+    public:
+
+        /// Constructor.
+        GraphicsWorld(GUIContext &gui);
+
+        /// Destructor.
+        virtual ~GraphicsWorld();
+
+
+        /// Retrieves a reference to the GUI context that is used for drawing GUI elements.
+        GUIContext & GetGUI() const;
+
+
+
+        ////////////////////////////////////////////
+        // Virtual Methods
+
+        /// Initializes the world.
+        ///
+        /// @return True if the world is initialized successfully; false otherwise.
+        virtual bool Startup() = 0;
+
+        /// Shuts down the world.
+        virtual void Shutdown() = 0;
+
+
+
+        ////////////////////
+        // Resources
+
+        /// Creates a texture resource.
+        ///
+        /// @remarks
+        ///     If the texture is going to be used as a render target, set \c pData to null which will cause the texture data to be
+        ///     allocated internally, but it's specific contents will be left undefined (until it has been rendered).
+        virtual HGraphicsResource CreateTextureResource(unsigned int width, unsigned int height, unsigned int depth, TextureFormat format, const void* pData) = 0;
+
+        /// Creates a material resource.
+        ///
+        /// @remarks
+        ///     Materials are immutable which means however they are defined by this method is how the material is defined for it's life. If a
+        ///     change is required, the material must be deleted and re-created.
+        virtual HGraphicsResource CreateMaterialResource() = 0;
+
+        /// Creates a mesh resource.
+        virtual HGraphicsResource CreateMeshResource() = 0;
+
+
+        /// Deletes the given resource.
+        ///
+        /// @remarks
+        ///     Use this to delete a resource of any type.
+        virtual void DeleteResource(HGraphicsResource hResource) = 0;
+
+
+
+        ////////////////////
+        // Objects
+
+        /// Creates a mesh object.
+        virtual HGraphicsObject CreateMeshObject(HGraphicsResource hMeshResource, const vec4 &position = vec4(0, 0, 0, 1), const quat &rotation = quat::identity, const vec4 &scale = vec4(1, 1, 1, 1)) = 0;
+
+        /// Deletes the given object.
+        ///
+        /// @remarks
+        ///     Use this to delete an object of any type.
+        virtual void DeleteObject(HGraphicsObject hObject) = 0;
+
+
+
+        ////////////////////
+        // Render Targets
+
+        /// Creates a render target where the result is output to the given window.
+#if defined(GT_PLATFORM_WINDOWS)
+        virtual HGraphicsRenderTarget CreateRenderTargetFromWindow(HWND hWnd, uint32_t flags = 0) = 0;
+#endif
+
+        /// Creates a render target where the result is output to the given texture.
+        virtual HGraphicsRenderTarget CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, uint32_t flags = 0) = 0;
+
+        /// Deletes the given render target.
+        virtual void DeleteRenderTarget(HGraphicsRenderTarget hRT) = 0;
+
+
+        /// Sets the priority of the given render target.
+        ///
+        /// @remarks
+        ///     Texture render targets are always rendered before window render targets.
+        ///     @par
+        ///     Render targets have a default priority of 0.
+        virtual void SetRenderTargetPriority(HGraphicsRenderTarget hRT, int priority) = 0;
+
+        /// Retrieves the priority of the given render target.
+        virtual int GetRenderTargetPriority(HGraphicsRenderTarget hRT) const = 0;
+
+
+        /// Enables the given render target.
+        ///
+        /// @remarks
+        ///     Render targets are enabled by default.
+        virtual void EnableRenderTarget(HGraphicsRenderTarget hRT) = 0;
+
+        /// Disables the given render target.
+        ///
+        /// @remarks
+        ///     Render targets are enabled by default.
+        virtual void DisableRenderTarget(HGraphicsRenderTarget hRT) = 0;
+
+        /// Determines whether or not a render target is enabled.
+        ///
+        /// @remarks
+        ///     Render targets are enabled by default.
+        virtual bool IsRenderTargetEnabled(HGraphicsRenderTarget hRT) const = 0;
+
+
+        /// Sets the projection and view matrices to use when rendering the given render target.
+        virtual void SetRenderTargetProjectionAndView(HGraphicsRenderTarget hRT, const mat4 &projection, const mat4 &view) = 0;
+
+        /// Retrieves the projection and view matrices to use when rendering the given render target.
+        ///
+        /// @remarks
+        ///     If the render target is not valid, \c projectionOut and \c viewOut will be left unmodified.
+        virtual void GetRenderTargetProjectionAndView(HGraphicsRenderTarget hRT, mat4 &projectionOut, mat4 &viewOut) const = 0;
+
+
+        /// Sets the GUI surface that should be rendered to the given render target.
+        ///
+        /// @remarks
+        ///     The surface must belong to the GUI that was passed to the constructor of the graphics world.
+        ///     @par
+        ///     Setting the surface to NULL or 0 will remove the surface from the render target. This is the default, and should
+        ///     be done if the surface is deleted from the GUI.
+        virtual void SetRenderTargetGUISurface(HGraphicsRenderTarget hRT, HGUISurface hSurface) = 0;
+
+        /// Retrieves the surface that is being rendered to the given render target.
+        virtual HGUISurface GetRenderTargetGUISurface(HGraphicsRenderTarget hRT) const = 0;
+
+
+
+        ////////////////////
+        // Rendering
+
+        /// Determines whether or not command buffers are supported.
+        virtual bool IsCommandBuffersSupported() const = 0;
+
+        /// Builds the command buffers required for rendering the world.
+        ///
+        /// @remarks
+        ///     This will fail if command buffers are not supported.
+        virtual void BuildCommandBuffers() = 0;
+
+        /// Executes the command buffers that were previous compiled with BuildCommandBuffers().
+        ///
+        /// @remarks
+        ///     This will fail if command buffers are not supported.
+        virtual void ExecuteCommandBuffers() = 0;
+        
+        /// Executes the rendering commands required for rendering the world.
+        ///
+        /// @remarks
+        ///     This should be used in single-threaded environments and when command buffers are not supported.
+        ///     @par
+        ///     This is equivalent to BuildCommandBuffers(), immediately followed by ExecuteCommandBuffers().
+        virtual void ExecuteRenderingCommands() = 0;
+
+
+
+    private:
+
+        /// A reference to the GUI context.
+        GUIContext &m_gui;
+
+
+    private:    // No copying.
+        GraphicsWorld(const GraphicsWorld &);
+        GraphicsWorld & operator=(const GraphicsWorld &);
+    };
+
+
+#if 0
+    class GraphicsInterface;
 
     /// Structure used for creating a mesh descriptor.
     struct GraphicsWorldMeshDesc
@@ -71,7 +269,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GraphicsWorld(GraphicsInterface &graphicsInterface);
+        GraphicsWorld(/*GraphicsInterface &graphicsInterface*/);
 
         /// Destructor.
         ~GraphicsWorld();
@@ -207,6 +405,8 @@ namespace GT
         GraphicsWorld(const GraphicsWorld &);
         GraphicsWorld & operator=(const GraphicsWorld &);
     };
+#endif
+
 }
 
 #endif // !__GT_GraphicsWorld_hpp_

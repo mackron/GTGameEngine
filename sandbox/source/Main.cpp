@@ -2,6 +2,7 @@
 #include <GTGameEngine/EngineContext.hpp>
 #include <GTGameEngine/GameContext.hpp>
 #include <GTGameEngine/GameState.hpp>
+#include <GTGameEngine/Graphics/DefaultGraphicsWorld.hpp>
 
 class SandboxGameState : public GT::GameState
 {
@@ -9,7 +10,8 @@ public:
 
     /// Constructor.
     SandboxGameState()
-        : m_pGraphicsInterface(nullptr),
+        : m_pGraphicsAPI(nullptr), 
+          m_pGraphicsWorld(nullptr),
           m_hMainWindow(0),
           m_isShiftKeyDown(false)
     {
@@ -37,6 +39,9 @@ public:
     {
         (void)gameContext;
         (void)deltaTimeInSeconds;
+
+        // TODO: Add support for multi-threaded rendering.
+        m_pGraphicsWorld->ExecuteRenderingCommands();
     }
 
 
@@ -50,15 +55,22 @@ public:
         m_hMainWindow = gameContext.CreateMainWindow(GT::WindowType::PrimaryWindow, "GTGameEngine Sandbox", 0, 0, 1280, 720);
         if (m_hMainWindow == 0)
         {
-            gameContext.GetEngineContext().DeleteGraphicsInterface(m_pGraphicsInterface);
-            m_pGraphicsInterface = nullptr;
-
             return false;
         }
 
-
         // Show the window.
         gameContext.ShowWindow(m_hMainWindow);
+
+
+        m_pGraphicsAPI = gameContext.GetEngineContext().GetBestGraphicsAPI();
+        assert(m_pGraphicsAPI != nullptr);
+        {
+            m_pGraphicsWorld = new GT::DefaultGraphicsWorld(gameContext.GetGUI(), *m_pGraphicsAPI);
+            if (m_pGraphicsWorld->Startup())
+            {
+                m_pGraphicsWorld->CreateRenderTargetFromWindow(reinterpret_cast<HWND>(m_hMainWindow), 0);
+            }
+        }
 
 
         return true;
@@ -97,8 +109,12 @@ public:
 
 private:
 
-    /// A pointer to the graphics interface for doing rendering.
-    GT::GraphicsInterface* m_pGraphicsInterface;
+    /// The graphics API.
+    GT::GraphicsAPI* m_pGraphicsAPI;
+
+    /// The default graphics world.
+    GT::DefaultGraphicsWorld* m_pGraphicsWorld;
+
 
     /// The main window.
     GT::HWindow m_hMainWindow;

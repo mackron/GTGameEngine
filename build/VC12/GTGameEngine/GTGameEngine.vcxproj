@@ -101,6 +101,12 @@
     <ClCompile Include="..\..\..\source\Graphics\D3D12\D3D12GraphicsInterface.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\D3D\D3D11\GPURenderingDevice_D3D11.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\DefaultGraphicsInterfaceAllocator.cpp" />
+    <ClCompile Include="..\..\..\source\Graphics\DefaultGraphicsWorld.cpp" />
+    <ClCompile Include="..\..\..\source\Graphics\DefaultGraphicsWorld_Null.cpp" />
+    <ClCompile Include="..\..\..\source\Graphics\DefaultGraphicsWorld_OpenGL.cpp" />
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsAPI.cpp" />
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsAPI_Null.cpp" />
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsAPI_OpenGL.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\GraphicsInterface.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\GraphicsInterfaceAllocator.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\GraphicsInterface_MT.cpp" />
@@ -181,6 +187,12 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\GPUComputeDevice.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDeviceInfo.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\DefaultGraphicsWorld.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\DefaultGraphicsWorld_Null.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\DefaultGraphicsWorld_OpenGL.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI_Null.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI_OpenGL.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsInterface.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsInterfaceAllocator.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsInterface_MT.hpp" />

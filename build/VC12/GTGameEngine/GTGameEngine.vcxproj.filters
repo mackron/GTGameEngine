@@ -476,6 +476,24 @@
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorTab.cpp">
       <Filter>Source Files\Editor\Controls</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\DefaultGraphicsWorld.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\DefaultGraphicsWorld_OpenGL.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\DefaultGraphicsWorld_Null.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsAPI.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsAPI_Null.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsAPI_OpenGL.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -996,6 +1014,24 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTab.hpp">
       <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\DefaultGraphicsWorld.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\DefaultGraphicsWorld_OpenGL.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\DefaultGraphicsWorld_Null.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI_Null.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI_OpenGL.hpp">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

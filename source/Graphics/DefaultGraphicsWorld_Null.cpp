@@ -1,0 +1,187 @@
+// Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
+
+#include <GTGameEngine/Graphics/DefaultGraphicsWorld_Null.hpp>
+
+namespace GT
+{
+    DefaultGraphicsWorld_Null::DefaultGraphicsWorld_Null(GUIContext &gui)
+        : GraphicsWorld(gui)
+    {
+    }
+
+    DefaultGraphicsWorld_Null::~DefaultGraphicsWorld_Null()
+    {
+    }
+
+
+    bool DefaultGraphicsWorld_Null::Startup()
+    {
+        return false;
+    }
+
+    void DefaultGraphicsWorld_Null::Shutdown()
+    {
+    }
+
+
+
+    ////////////////////
+    // Resources
+
+    HGraphicsResource DefaultGraphicsWorld_Null::CreateTextureResource(unsigned int width, unsigned int height, unsigned int depth, TextureFormat format, const void* pData)
+    {
+        (void)width;
+        (void)height;
+        (void)depth;
+        (void)format;
+        (void)pData;
+
+        return 0;
+    }
+
+    HGraphicsResource DefaultGraphicsWorld_Null::CreateMaterialResource()
+    {
+        return 0;
+    }
+
+    HGraphicsResource DefaultGraphicsWorld_Null::CreateMeshResource()
+    {
+        return 0;
+    }
+
+    void DefaultGraphicsWorld_Null::DeleteResource(HGraphicsResource hResource)
+    {
+        (void)hResource;
+    }
+
+
+
+    ////////////////////
+    // Objects
+
+    HGraphicsObject DefaultGraphicsWorld_Null::CreateMeshObject(HGraphicsResource hMeshResource, const vec4 &position, const quat &rotation, const vec4 &scale)
+    {
+        (void)hMeshResource;
+        (void)position;
+        (void)rotation;
+        (void)scale;
+
+        return 0;
+    }
+
+    void DefaultGraphicsWorld_Null::DeleteObject(HGraphicsObject hObject)
+    {
+        (void)hObject;
+    }
+
+
+
+    ////////////////////
+    // Render Targets
+
+#if defined(GT_PLATFORM_WINDOWS)
+    HGraphicsRenderTarget DefaultGraphicsWorld_Null::CreateRenderTargetFromWindow(HWND hWnd, uint32_t flags)
+    {
+        (void)hWnd;
+        (void)flags;
+
+        return 0;
+    }
+#endif
+
+    HGraphicsRenderTarget DefaultGraphicsWorld_Null::CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, uint32_t flags)
+    {
+        (void)hTextureResource;
+        (void)flags;
+
+        return 0;
+    }
+
+    void DefaultGraphicsWorld_Null::DeleteRenderTarget(HGraphicsResource hRT)
+    {
+        (void)hRT;
+    }
+
+
+    void DefaultGraphicsWorld_Null::SetRenderTargetPriority(HGraphicsRenderTarget hRT, int priority)
+    {
+        (void)hRT;
+        (void)priority;
+    }
+
+    int DefaultGraphicsWorld_Null::GetRenderTargetPriority(HGraphicsRenderTarget hRT) const
+    {
+        (void)hRT;
+
+        return 0;
+    }
+
+
+    void DefaultGraphicsWorld_Null::EnableRenderTarget(HGraphicsRenderTarget hRT)
+    {
+        (void)hRT;
+    }
+
+    void DefaultGraphicsWorld_Null::DisableRenderTarget(HGraphicsRenderTarget hRT)
+    {
+        (void)hRT;
+    }
+
+    bool DefaultGraphicsWorld_Null::IsRenderTargetEnabled(HGraphicsRenderTarget hRT) const
+    {
+        (void)hRT;
+
+        return false;
+    }
+
+
+    void DefaultGraphicsWorld_Null::SetRenderTargetProjectionAndView(HGraphicsRenderTarget hRT, const mat4 &projection, const mat4 &view)
+    {
+        (void)hRT;
+        (void)projection;
+        (void)view;
+    }
+
+    void DefaultGraphicsWorld_Null::GetRenderTargetProjectionAndView(HGraphicsRenderTarget hRT, mat4 &projectionOut, mat4 &viewOut) const
+    {
+        (void)hRT;
+        (void)projectionOut;
+        (void)viewOut;
+    }
+
+
+    void DefaultGraphicsWorld_Null::SetRenderTargetGUISurface(HGraphicsRenderTarget hRT, HGUISurface hSurface)
+    {
+        (void)hRT;
+        (void)hSurface;
+    }
+
+    HGUISurface DefaultGraphicsWorld_Null::GetRenderTargetGUISurface(HGraphicsRenderTarget hRT) const
+    {
+        (void)hRT;
+
+        return 0;
+    }
+
+
+
+    ////////////////////
+    // Rendering
+
+    bool DefaultGraphicsWorld_Null::IsCommandBuffersSupported() const
+    {
+        return false;
+    }
+
+    void DefaultGraphicsWorld_Null::BuildCommandBuffers()
+    {
+    }
+
+    void DefaultGraphicsWorld_Null::ExecuteCommandBuffers()
+    {
+    }
+        
+    void DefaultGraphicsWorld_Null::ExecuteRenderingCommands()
+    {
+    }
+}

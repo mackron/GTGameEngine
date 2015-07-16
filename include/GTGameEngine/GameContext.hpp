@@ -191,6 +191,10 @@ namespace GT
         void Step();
 
 
+        /// Retrieves a reference to the GUI context.
+        GUIContext & GetGUI();
+
+
         ///////////////////////////////////////////////////
         // Input
 
@@ -383,8 +387,12 @@ namespace GT
         WindowManager* m_pWindowManager;
 
 
+        /// The GUI context for the game. The editor uses a separate GUI context.
+        GUIContext m_gui;
+
+
         /// The list of window displays.
-        GTLib::Vector<GameDisplay_Windowed*> m_windowedDisplays;
+        GTLib::Vector<GameDisplay_Windowed*> m_windowedDisplays;    // TODO: Delete this.
 
 
         /// A set of flags for boolean variables.

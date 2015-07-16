@@ -1,8 +1,10 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/HardwarePlatform_GPU.hpp>
-#include "Graphics/D3D/D3D11/GPURenderingDevice_D3D11.hpp"
-#include "Graphics/OpenGL/OpenGL4/GPURenderingDevice_OpenGL4.hpp"
+
+#include <GTGameEngine/GPURenderingDevice.hpp>                          // TODO: Delete
+#include "Graphics/D3D/D3D11/GPURenderingDevice_D3D11.hpp"              // TODO: Delete
+#include "Graphics/OpenGL/OpenGL4/GPURenderingDevice_OpenGL4.hpp"       // TODO: Delete
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/Strings.hpp>
@@ -20,14 +22,14 @@ typedef HRESULT (WINAPI *pCreateDXGIFactory1) (REFIID riid, _Out_ void **ppFacto
 namespace GT
 {
     HardwarePlatform_GPU::HardwarePlatform_GPU()
-        : 
+        : m_renderingDevices()
 #if defined(GT_GE_BUILD_D3D11)
-            m_hDXGI(0),
-            m_hD3D11(0),
-            m_hD3DCompiler(0),
+        , m_hDXGI(0),
+          m_hD3D11(0),
+          m_hD3DCompiler(0)
 #endif
 #if defined(GT_GE_BUILD_OPENGL4)
-            m_gl()
+        , m_gl()
 #endif
     {
     }

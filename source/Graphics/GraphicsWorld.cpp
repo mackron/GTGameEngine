@@ -1,13 +1,30 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/Graphics/GraphicsWorld.hpp>
-#include <GTGameEngine/Graphics/GraphicsInterface.hpp>
-#include "OpenGL/OpenGL4/GPURenderingDevice_OpenGL4.hpp"
+//#include <GTGameEngine/Graphics/GraphicsInterface.hpp>
+//#include "OpenGL/OpenGL4/GPURenderingDevice_OpenGL4.hpp"
 
-#include <cstdio>
+//#include <cstdio>
 
 namespace GT
 {
+    GraphicsWorld::GraphicsWorld(GUIContext &gui)
+        : m_gui(gui)
+    {
+    }
+
+    GraphicsWorld::~GraphicsWorld()
+    {
+    }
+
+
+    GUIContext & GraphicsWorld::GetGUI() const
+    {
+        return m_gui;
+    }
+
+
+#if 0
     GraphicsWorld::GraphicsWorld(GraphicsInterface &graphicsInterface)
         : m_graphicsInterface(graphicsInterface)
     {
@@ -293,4 +310,5 @@ namespace GT
             delete pObject;
         }
     }
+#endif
 }

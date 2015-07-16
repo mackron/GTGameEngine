@@ -18,6 +18,20 @@ namespace GT
 	class GraphicsInterfaceAllocator;
 
 
+    class GraphicsAPI;
+    class GraphicsAPI_Null;
+
+#if defined(GT_BUILD_OPENGL)
+    class GraphicsAPI_OpenGL;
+#endif
+#if defined(GT_BUILD_VULKAN)
+    class GraphicsAPI_Vulkan;
+#endif
+#if defined(GT_BUILD_D3D12)
+    class GraphicsAPI_D3D12;
+#endif
+
+
     /// Class representing the engine context.
     ///
     /// Only a single engine context is usually needed for an application, however it is possible to have more.
@@ -57,6 +71,32 @@ namespace GT
         /// @return A reference to the command line object.
         const GTLib::CommandLine & GetCommandLine() const;
 
+
+        /// Retrieves a pointer to the best graphics API object.
+        ///
+        /// @remarks
+        ///     The prioritization is as follows:
+        ///         - Vulkan (Not yet implemented)
+        ///         - D3D12 (Not yet implemented)
+        ///         - OpenGL
+        ///         - Null
+        GraphicsAPI* GetBestGraphicsAPI();
+
+        /// Retrieves a pointer to the null graphics API object.
+        GraphicsAPI_Null* GetNullGraphicsAPI();
+
+#if defined(GT_BUILD_OPENGL)
+        /// Retrieves a pointer to the OpenGL graphics API object.
+        GraphicsAPI_OpenGL* GetOpenGLGraphicsAPI();
+#endif
+#if defined(GT_BUILD_VULKAN)
+        /// Retrieves a pointer to the Vulkan graphics API object.
+        GraphicsAPI_Vulkan* GetVulkanGraphicsAPI();
+#endif
+#if defined(GT_BUILD_D3D12)
+        /// Retrieves a pointer to the Vulkan graphics API object.
+        GraphicsAPI_D3D12* GetD3D12GraphicsAPI();
+#endif
 
 		/// Registers a graphics interface allocator.
 		///
@@ -189,6 +229,26 @@ namespace GT
         /// A pointer to the default graphics interface allocator. This will be null if the default allocator is not being used. An application may
         /// chose to exclude the default allocator so that they can implement custom graphics interface.
         GraphicsInterfaceAllocator* m_pDefaultGraphicsInterfaceAllocator;
+
+
+        // Supported Graphics APIs.
+
+        /// A pointer to the null graphics API. This API does nothing and is intended for a placeholder for when graphics are not needed
+        /// or when none of the APIs are supported.
+        GraphicsAPI_Null* m_pGraphicsAPI_Null;
+
+#if defined(GT_BUILD_OPENGL)
+        /// A pointer to the OpenGL graphics API object. If OpenGL is not supported, this will be set to null.
+        GraphicsAPI_OpenGL* m_pGraphicsAPI_OpenGL;
+#endif
+#if defined(GT_BUILD_VULKAN)
+        /// A pointer to the Vulkan graphics API object. If Vulkan is not supported, this will be set to null.
+        GraphicsAPI_Vulkan* m_pGraphicsAPI_Vulkan;
+#endif
+#if defined(GT_BUILD_D3D12)
+        /// A pointer to the D3D12 graphics API object. If D3D12 is not supported, this will be set to null.
+        GraphicsAPI_D3D12* m_pGraphicsAPI_D3D12;
+#endif
 
 
         /// The virtual file system for handling file reading and writing.

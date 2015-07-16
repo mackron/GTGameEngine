@@ -20,6 +20,7 @@ namespace GT
         : m_engineContext(engineContext),
           m_gameState(gameState),
           m_pWindowManager(nullptr),
+          m_gui(),
           m_windowedDisplays(),
           m_flags(0)
 #if defined(GT_BUILD_EDITOR)
@@ -239,6 +240,12 @@ namespace GT
             }
             m_lastFrameTime = currentTime;
         }
+    }
+
+
+    GUIContext & GameContext::GetGUI()
+    {
+        return m_gui;
     }
 
 

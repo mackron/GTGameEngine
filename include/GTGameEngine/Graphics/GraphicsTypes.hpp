@@ -18,9 +18,19 @@
 
 namespace GT
 {
-	typedef uint32_t GraphicsInterfaceClass;
-	typedef uint32_t GraphicsInterfaceType;
+    // APIs.
+    typedef uint32_t GraphicsAPIType;
 
+    static const GraphicsAPIType GraphicsAPIType_Unknown = 0x00000000;
+    static const GraphicsAPIType GraphicsAPIType_Null    = 0x00000001;
+    static const GraphicsAPIType GraphicsAPIType_OpenGL  = 0x00000002;
+    static const GraphicsAPIType GraphicsAPIType_Vulkan  = 0x00000003;
+    static const GraphicsAPIType GraphicsAPIType_D3D12   = 0x00000004;
+
+
+
+    typedef uint32_t GraphicsInterfaceClass;
+	typedef uint32_t GraphicsInterfaceType;
 
 	// Graphics Interface Class Ranges
 	//  0x00000000 - 0x000000FF : Reserved by the engine.
