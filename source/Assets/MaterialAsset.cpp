@@ -10,6 +10,52 @@
 namespace GT
 {
     /////////////////////////////////////
+    // MaterialAssetVariable
+
+    MaterialAssetVariable::MaterialAssetVariable(MaterialVariableType type, const char* name)
+        : m_type(type), m_name()
+    {
+        // Name.
+        for (int i = 0; i < 4; ++i)
+        {
+            reinterpret_cast<uint64_t*>(m_name)[i] = 0;
+        }
+
+        for (int i = 0; i < 31 && name[i] != '\0'; ++i)
+        {
+            m_name[i] = name[i];
+        }
+    }
+
+    MaterialVariableType MaterialAssetVariable::GetType() const
+    {
+        return m_type;
+    }
+
+    const char* MaterialAssetVariable::GetName() const
+    {
+        return m_name;
+    }
+
+
+    // Float.
+    float MaterialAssetVariable_Float::GetValue() const
+    {
+        return m_value;
+    }
+
+    void MaterialAssetVariable_Float::SetValue(float value)
+    {
+        m_value = value;
+    }
+
+    
+    // Float2.
+    
+
+
+
+    /////////////////////////////////////
     // MaterialChannel
 
     MaterialChannel::MaterialChannel(const char* name, const char* shaderCode)
@@ -164,6 +210,29 @@ namespace GT
 
         // The chunk doesn't exist.
         return nullptr;
+    }
+
+
+    bool MaterialAsset::SetChannelByteCodeData(const char* name, size_t sizeInBytes, const void* pData)
+    {
+        (void)name;
+        (void)sizeInBytes;
+        (void)pData;
+
+        return false;
+    }
+
+    size_t MaterialAsset::GetChannelByteCodeSizeInBytes(const char* name) const
+    {
+        (void)name;
+
+        return 0;
+    }
+
+    void MaterialAsset::GetChannelByteCodeData(const char* name, void* pDataOut) const
+    {
+        (void)name;
+        (void)pDataOut;
     }
 }
 
