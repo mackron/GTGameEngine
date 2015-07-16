@@ -279,7 +279,7 @@ namespace GT
                 md2_header* header = reinterpret_cast<md2_header*>(fileData);
                 if (header->ident == '2PDI' && header->version == 8)
                 {
-                    if (fileSize > header->ofs_glcmds)
+                    if (fileSize > static_cast<size_t>(header->ofs_glcmds))
                     {
                         auto md2TexCoords = reinterpret_cast<md2_texcoord*        >(fileData + header->ofs_st);
                         auto md2Indices   = reinterpret_cast<md2_triangle_indices*>(fileData + header->ofs_tris);
