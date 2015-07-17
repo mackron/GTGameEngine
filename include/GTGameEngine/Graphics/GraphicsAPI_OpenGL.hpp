@@ -261,6 +261,7 @@ namespace GT
         PFNGLCOLORMASKPROC              ColorMask;
         PFNGLFLUSHPROC                  Flush;
         PFNGLFINISHPROC                 Finish;
+        PFNGLVIEWPORTPROC               Viewport;
 
 
         // Drawing.
@@ -277,16 +278,29 @@ namespace GT
         PFNGLDELETEPROGRAMPROC          DeleteProgram;
         PFNGLATTACHSHADERPROC           AttachShader;
         PFNGLDETACHSHADERPROC           DetachShader;
+        PFNGLBINDATTRIBLOCATIONPROC     BindAttribLocation;
         PFNGLLINKPROGRAMPROC            LinkProgram;
         PFNGLGETPROGRAMIVPROC           GetProgramiv;
         PFNGLGETPROGRAMINFOLOGPROC      GetProgramInfoLog;
         PFNGLUSEPROGRAMPROC             UseProgram;
         PFNGLGETATTRIBLOCATIONPROC      GetAttribLocation;
+        PFNGLGETUNIFORMLOCATIONPROC     GetUniformLocation;
+        PFNGLUNIFORMMATRIX2FVPROC       UniformMatrix2fv;
+        PFNGLUNIFORMMATRIX3FVPROC       UniformMatrix3fv;
+        PFNGLUNIFORMMATRIX4FVPROC       UniformMatrix4fv;
 
         // Vertex Array Objects.
 
 
         // Buffer Objects.
+        PFNGLGENBUFFERSPROC               GenBuffers;
+        PFNGLDELETEBUFFERSARBPROC         DeleteBuffers;
+        PFNGLBINDBUFFERPROC               BindBuffer;
+        PFNGLBUFFERDATAPROC               BufferData;
+        PFNGLBUFFERSUBDATAPROC            BufferSubData;
+        PFNGLVERTEXATTRIBPOINTERPROC      VertexAttribPointer;
+        PFNGLENABLEVERTEXATTRIBARRAYPROC  EnableVertexAttribArray;
+        PFNGLDISABLEVERTEXATTRIBARRAYPROC DisableVertexAttribArray;
 
 
         // Textures
@@ -299,6 +313,12 @@ namespace GT
 
 
         // Framebuffers.
+
+
+        // GL_ARB_debug_output
+        PFNGLDEBUGMESSAGECONTROLARBPROC  DebugMessageControlARB;
+        PFNGLDEBUGMESSAGEINSERTARBPROC   DebugMessageInsertARB;
+        PFNGLDEBUGMESSAGECALLBACKARBPROC DebugMessageCallbackARB;
     };
 }
 #endif

@@ -90,6 +90,26 @@ namespace GT
 
 
         ////////////////////////////////////////
+        // Material Data
+
+        /// Retrieves the number of materials used by the given mesh.
+        ///
+        /// @return The number of material used by the mesh at the given index.
+        ///
+        /// @remarks
+        ///     This should never return 0.
+        virtual size_t GetMeshMaterialCount(unsigned int meshIndex) const = 0;
+
+        /// Retrieves the index offset/count pairs for every material.
+        ///
+        /// @remarks
+        ///     The return value is a pointer to a buffer that contains a pair of 32-bit integers for each material for the given mesh. The
+        ///     first integer in each pair is the offset into the index buffer that represents the first element that uses the material, and
+        ///     the second integer is the number of elements that use the material.
+        virtual const uint32_t* GetMeshMaterialIndexOffsetCountPairs(unsigned int meshIndex) const = 0;
+
+
+        ////////////////////////////////////////
         // Animation Data
 
         /// Retrieves the animation type for the mesh at the given index.

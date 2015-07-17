@@ -3,6 +3,7 @@
 #include <GTGameEngine/GameContext.hpp>
 #include <GTGameEngine/GameState.hpp>
 #include <GTGameEngine/Graphics/DefaultGraphicsWorld.hpp>
+#include <GTGameEngine/Assets/ModelAsset.hpp>
 
 class SandboxGameState : public GT::GameState
 {
@@ -62,13 +63,38 @@ public:
         gameContext.ShowWindow(m_hMainWindow);
 
 
+        m_pTestMeshAsset = reinterpret_cast<GT::ModelAsset*>(gameContext.GetEngineContext().LoadAsset("data/cube.obj"));
+        if (m_pTestMeshAsset == nullptr)
+        {
+            return false;
+        }
+
+
         m_pGraphicsAPI = gameContext.GetEngineContext().GetBestGraphicsAPI();
         assert(m_pGraphicsAPI != nullptr);
         {
             m_pGraphicsWorld = new GT::DefaultGraphicsWorld(gameContext.GetGUI(), *m_pGraphicsAPI);
             if (m_pGraphicsWorld->Startup())
             {
-                m_pGraphicsWorld->CreateRenderTargetFromWindow(reinterpret_cast<HWND>(m_hMainWindow), 0);
+                m_hWindowRT = m_pGraphicsWorld->CreateRenderTargetFromWindow(reinterpret_cast<HWND>(m_hMainWindow), 0);
+                m_pGraphicsWorld->SetRenderTargetProjectionAndView(m_hWindowRT, GT::mat4::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.0f), GT::mat4::translate(GT::mat4::identity, GT::vec4(0, 0, -5, 0.0f)));
+
+
+                GT::GraphicsMeshResourceDesc testMeshDesc;
+                testMeshDesc.topology                      = GT::PrimitiveTopologyType_Triangle;
+                testMeshDesc.pVertexData                   = m_pTestMeshAsset->GetMeshVertexData(0);
+                testMeshDesc.vertexDataSize                = m_pTestMeshAsset->GetMeshVertexDataSize(0);
+                testMeshDesc.vertexStride                  = m_pTestMeshAsset->GetMeshVertexStride(0);
+                testMeshDesc.pVertexLayout                 = m_pTestMeshAsset->GetMeshVertexLayout(0, testMeshDesc.vertexAttribCount);
+                testMeshDesc.pIndexData                    = m_pTestMeshAsset->GetMeshIndexData(0);
+                testMeshDesc.indexDataSize                 = m_pTestMeshAsset->GetMeshIndexDataSize(0);
+                testMeshDesc.indexCount                    = m_pTestMeshAsset->GetMeshIndexCount(0);
+                testMeshDesc.indexFormat                   = m_pTestMeshAsset->GetMeshIndexFormat(0);
+                testMeshDesc.materialIndexOffsetCountPairs = m_pTestMeshAsset->GetMeshMaterialIndexOffsetCountPairs(0);
+                testMeshDesc.materialCount                 = m_pTestMeshAsset->GetMeshMaterialCount(0);
+                m_hTestMeshResource = m_pGraphicsWorld->CreateMeshResource(testMeshDesc);
+
+                m_hTestMeshObject = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
             }
         }
 
@@ -106,6 +132,12 @@ public:
     }
 
 
+    void OnWindowResized(GT::GameContext &gameContext, GT::HWindow hWindow, unsigned int width, unsigned int height)
+    {
+        m_pGraphicsWorld->SetRenderTargetViewport(m_pGraphicsWorld->GetRenderTargetByWindow(reinterpret_cast<HWND>(hWindow)), 0, 0, width, height);
+    }
+
+
 
 private:
 
@@ -119,8 +151,17 @@ private:
     /// The main window.
     GT::HWindow m_hMainWindow;
 
+    /// The render target for the main window.
+    GT::HGraphicsRenderTarget m_hWindowRT;
+
     /// Keeps track of whether or not the shift key is down.
     bool m_isShiftKeyDown;
+
+
+    GT::ModelAsset* m_pTestMeshAsset;
+
+    GT::HGraphicsResource m_hTestMeshResource;
+    GT::HGraphicsObject   m_hTestMeshObject;
 };
 
 

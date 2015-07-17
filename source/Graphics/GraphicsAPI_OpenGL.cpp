@@ -381,6 +381,7 @@ namespace GT
         this->ColorMask                = reinterpret_cast<PFNGLCOLORMASKPROC               >(this->GetGLProcAddress("glColorMask"));
         this->Flush                    = reinterpret_cast<PFNGLFLUSHPROC                   >(this->GetGLProcAddress("glFlush"));
         this->Finish                   = reinterpret_cast<PFNGLFINISHPROC                  >(this->GetGLProcAddress("glFinish"));
+        this->Viewport                 = reinterpret_cast<PFNGLVIEWPORTPROC                >(this->GetGLProcAddress("glViewport"));
 
         this->DrawElements             = reinterpret_cast<PFNGLDRAWELEMENTSPROC            >(this->GetGLProcAddress("glDrawElements"));
 
@@ -394,11 +395,25 @@ namespace GT
         this->DeleteProgram            = reinterpret_cast<PFNGLDELETEPROGRAMPROC           >(this->GetGLProcAddress("glDeleteProgram"));
         this->AttachShader             = reinterpret_cast<PFNGLATTACHSHADERPROC            >(this->GetGLProcAddress("glAttachShader"));
         this->DetachShader             = reinterpret_cast<PFNGLDETACHSHADERPROC            >(this->GetGLProcAddress("glDetachShader"));
+        this->BindAttribLocation       = reinterpret_cast<PFNGLBINDATTRIBLOCATIONPROC      >(this->GetGLProcAddress("glBindAttribLocation"));
         this->LinkProgram              = reinterpret_cast<PFNGLLINKPROGRAMPROC             >(this->GetGLProcAddress("glLinkProgram"));
         this->GetProgramiv             = reinterpret_cast<PFNGLGETPROGRAMIVPROC            >(this->GetGLProcAddress("glGetProgramiv"));
         this->GetProgramInfoLog        = reinterpret_cast<PFNGLGETPROGRAMINFOLOGPROC       >(this->GetGLProcAddress("glGetProgramInfoLog"));
         this->UseProgram               = reinterpret_cast<PFNGLUSEPROGRAMPROC              >(this->GetGLProcAddress("glUseProgram"));
         this->GetAttribLocation        = reinterpret_cast<PFNGLGETATTRIBLOCATIONPROC       >(this->GetGLProcAddress("glGetAttribLocation"));
+        this->GetUniformLocation       = reinterpret_cast<PFNGLGETUNIFORMLOCATIONPROC      >(this->GetGLProcAddress("glGetUniformLocation"));
+        this->UniformMatrix2fv         = reinterpret_cast<PFNGLUNIFORMMATRIX2FVPROC        >(this->GetGLProcAddress("glUniformMatrix2fv"));
+        this->UniformMatrix3fv         = reinterpret_cast<PFNGLUNIFORMMATRIX3FVPROC        >(this->GetGLProcAddress("glUniformMatrix3fv"));
+        this->UniformMatrix4fv         = reinterpret_cast<PFNGLUNIFORMMATRIX4FVPROC        >(this->GetGLProcAddress("glUniformMatrix4fv"));
+
+        this->GenBuffers               = reinterpret_cast<PFNGLGENBUFFERSPROC              >(this->GetGLProcAddress("glGenBuffers"));
+        this->DeleteBuffers            = reinterpret_cast<PFNGLDELETEBUFFERSARBPROC        >(this->GetGLProcAddress("glDeleteBuffers"));
+        this->BindBuffer               = reinterpret_cast<PFNGLBINDBUFFERPROC              >(this->GetGLProcAddress("glBindBuffer"));
+        this->BufferData               = reinterpret_cast<PFNGLBUFFERDATAPROC              >(this->GetGLProcAddress("glBufferData"));
+        this->BufferSubData            = reinterpret_cast<PFNGLBUFFERSUBDATAPROC           >(this->GetGLProcAddress("glBufferSubData"));
+        this->VertexAttribPointer      = reinterpret_cast<PFNGLVERTEXATTRIBPOINTERPROC     >(this->GetGLProcAddress("glVertexAttribPointer"));
+        this->EnableVertexAttribArray  = reinterpret_cast<PFNGLENABLEVERTEXATTRIBARRAYPROC >(this->GetGLProcAddress("glEnableVertexAttribArray"));
+        this->DisableVertexAttribArray = reinterpret_cast<PFNGLDISABLEVERTEXATTRIBARRAYPROC>(this->GetGLProcAddress("glDisableVertexAttribArray"));
 
         this->GenTextures              = reinterpret_cast<PFNGLGENTEXTURESPROC             >(this->GetGLProcAddress("glGenTextures"));
         this->DeleteTextures           = reinterpret_cast<PFNGLDELETETEXTURESPROC          >(this->GetGLProcAddress("glDeleteTextures"));
@@ -407,6 +422,12 @@ namespace GT
         this->TexImage2D               = reinterpret_cast<PFNGLTEXIMAGE2DPROC              >(this->GetGLProcAddress("glTexImage2D"));
         this->TexImage3D               = reinterpret_cast<PFNGLTEXIMAGE3DPROC              >(this->GetGLProcAddress("glTexImage3D"));
 
+        if (this->IsExtensionSupported("GL_ARB_debug_output"))
+        {
+            this->DebugMessageControlARB  = reinterpret_cast<PFNGLDEBUGMESSAGECONTROLARBPROC >(this->GetGLProcAddress("glDebugMessageControlARB"));
+            this->DebugMessageInsertARB   = reinterpret_cast<PFNGLDEBUGMESSAGEINSERTARBPROC  >(this->GetGLProcAddress("glDebugMessageInsertARB"));
+            this->DebugMessageCallbackARB = reinterpret_cast<PFNGLDEBUGMESSAGECALLBACKARBPROC>(this->GetGLProcAddress("glDebugMessageCallbackARB"));
+        }
 
         return true;   // No error.
     }

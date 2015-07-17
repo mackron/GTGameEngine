@@ -3,13 +3,14 @@
 #ifndef __GT_DefaultGraphicsWorld_OpenGL_hpp_
 #define __GT_DefaultGraphicsWorld_OpenGL_hpp_
 
+#include "../Config.hpp"
+#if defined(GT_BUILD_OPENGL)
 #include "GraphicsWorld.hpp"
+#include "GraphicsAPI_OpenGL.hpp"
 #include <GTLib/Vector.hpp>
 
 namespace GT
 {
-    class GraphicsAPI_OpenGL;
-
     // An implementation of the default graphics world that does not do anything.
     //
     // This should only be used as a fallback in cases when no rendering APIs are supported so that a crash can be prevented. In the
@@ -46,7 +47,7 @@ namespace GT
         HGraphicsResource CreateMaterialResource();
 
         /// @copydoc GraphicsWorld::CreateMeshResource()
-        HGraphicsResource CreateMeshResource();
+        HGraphicsResource CreateMeshResource(GraphicsMeshResourceDesc &meshDesc);
 
         /// @copydoc GraphicsWorld::DeleteResource()
         void DeleteResource(HGraphicsResource hResource);
@@ -70,6 +71,9 @@ namespace GT
 #if defined(GT_PLATFORM_WINDOWS)
         /// @copydoc GraphicsWorld::CreateRenderTargetFromWindow()
         HGraphicsRenderTarget CreateRenderTargetFromWindow(HWND hWnd, uint32_t flags);
+
+        /// @copydoc GraphicsWorld::GetRenderTargetByWindow()
+        HGraphicsRenderTarget GetRenderTargetByWindow(HWND hWnd) const;
 #endif
 
         /// @copydoc GraphicsWorld::CreateRenderTargetFromTexture()
@@ -77,6 +81,13 @@ namespace GT
 
         /// @copydoc GraphicsWorld::DeleteRenderTarget()
         void DeleteRenderTarget(HGraphicsRenderTarget hRT);
+
+
+        /// @copydoc GraphicsWorld::SetRenderTargetViewport()
+        void SetRenderTargetViewport(HGraphicsRenderTarget hRT, int x, int y, unsigned int width, unsigned height);
+
+        /// @copydoc GraphicsWorld::GetRenderTargetViewport()
+        void GetRenderTargetViewport(HGraphicsRenderTarget hRT, int &xOut, int &yOut, unsigned int &widthOut, unsigned int &heightOut) const;
 
 
         /// @copydoc GraphicsWorld::SetRenderTargetPriority()
@@ -151,6 +162,20 @@ namespace GT
         void ExecuteTextureRTRenderingCommands(HGraphicsRenderTarget hRT);
 
 
+        /// Deletes the given texture resource.
+        void DeleteTextureResource(HGraphicsResource hTextureResource);
+
+        /// Deletes the given material resource.
+        void DeleteMaterialResource(HGraphicsResource hMaterialResource);
+
+        /// Deletes the given mesh resource.
+        void DeleteMeshResource(HGraphicsResource hMeshResource);
+
+
+        /// Deletes the given mesh object.
+        void DeleteMeshObject(HGraphicsResource hMeshObject);
+
+
     private:
 
         /// The graphics API. This is used to call OpenGL functions.
@@ -168,7 +193,17 @@ namespace GT
 
         /// The list of texture render targets.
         GTLib::Vector<HGraphicsRenderTarget> m_textureRTs;
+
+
+        /// The list of mesh objects. This probably tempoary since we'll place these into an accelerated structure.
+        GTLib::Vector<HGraphicsObject> m_meshObjects;
+
+
+        /// Temporary program object for testing.
+        GLuint m_testProgramObjectGL;
     };
 }
+
+#endif
 
 #endif

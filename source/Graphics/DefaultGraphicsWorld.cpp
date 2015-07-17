@@ -74,9 +74,9 @@ namespace GT
         return m_pGraphicsWorldImpl->CreateMaterialResource();
     }
 
-    HGraphicsResource DefaultGraphicsWorld::CreateMeshResource()
+    HGraphicsResource DefaultGraphicsWorld::CreateMeshResource(GraphicsMeshResourceDesc &meshDesc)
     {
-        return m_pGraphicsWorldImpl->CreateMeshResource();
+        return m_pGraphicsWorldImpl->CreateMeshResource(meshDesc);
     }
 
     void DefaultGraphicsWorld::DeleteResource(HGraphicsResource hResource)
@@ -109,6 +109,11 @@ namespace GT
     {
         return m_pGraphicsWorldImpl->CreateRenderTargetFromWindow(hWnd, flags);
     }
+
+    HGraphicsRenderTarget DefaultGraphicsWorld::GetRenderTargetByWindow(HWND hWnd) const
+    {
+        return m_pGraphicsWorldImpl->GetRenderTargetByWindow(hWnd);
+    }
 #endif
 
     HGraphicsRenderTarget DefaultGraphicsWorld::CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, uint32_t flags)
@@ -119,6 +124,17 @@ namespace GT
     void DefaultGraphicsWorld::DeleteRenderTarget(HGraphicsResource hRT)
     {
         return m_pGraphicsWorldImpl->DeleteRenderTarget(hRT);
+    }
+
+
+    void DefaultGraphicsWorld::SetRenderTargetViewport(HGraphicsRenderTarget hRT, int x, int y, unsigned int width, unsigned height)
+    {
+        return m_pGraphicsWorldImpl->SetRenderTargetViewport(hRT, x, y, width, height);
+    }
+
+    void DefaultGraphicsWorld::GetRenderTargetViewport(HGraphicsRenderTarget hRT, int &xOut, int &yOut, unsigned int &widthOut, unsigned int &heightOut) const
+    {
+        return m_pGraphicsWorldImpl->GetRenderTargetViewport(hRT, xOut, yOut, widthOut, heightOut);
     }
 
 

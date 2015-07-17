@@ -672,6 +672,29 @@ namespace GT
 
 		return result;
     }
+
+
+
+
+    ///////////////////////////////////////////
+    // Helper Utilities
+
+    inline mat4 CalculateTransformMatrix(const vec4 &position, const quat &rotation, const vec4 &scale)
+    {
+        mat4 result;
+
+        result = GT::quat_to_mat4(rotation);
+
+        result[3][0] = position.x;
+        result[3][1] = position.y;
+        result[3][2] = position.z;
+
+        result[0] *= scale.x;
+        result[1] *= scale.y;
+        result[2] *= scale.z;
+
+        return result;
+    }
 }
 
 

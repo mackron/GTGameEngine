@@ -7,6 +7,8 @@
 #include <GTGameEngine/Math.hpp>
 #include <GTLib/Vector.hpp>
 
+// TODO: Correctly handle "usemtl" to properly handle multiple materials.
+
 namespace GT
 {
     // The indices in this list are 1 based. A value of 0 means it was unspecified.
@@ -212,6 +214,9 @@ namespace GT
         m_vertexLayout[0] = {VertexAttribFormat_Float, 3, sizeof(float) * 0, VertexAttribSemantic_Position};
         m_vertexLayout[1] = {VertexAttribFormat_Float, 2, sizeof(float) * 3, VertexAttribSemantic_TexCoord};
         m_vertexLayout[2] = {VertexAttribFormat_Float, 3, sizeof(float) * 5, VertexAttribSemantic_Normal  };
+
+        m_materialOffsetCountPair[0] = 0;
+        m_materialOffsetCountPair[1] = 0;
     }
 
     ModelAsset_OBJ::~ModelAsset_OBJ()
@@ -375,6 +380,9 @@ namespace GT
                 m_indexData  = new uint32_t[m_indexCount];
                 memcpy(m_indexData, actualIndices.buffer, m_indexCount * sizeof(uint32_t));
 
+                m_materialOffsetCountPair[0] = 0;
+                m_materialOffsetCountPair[1] = static_cast<uint32_t>(m_indexCount);
+
 
                 for (size_t iFace = 0; iFace < faces.GetCount(); ++iFace)
                 {
@@ -515,6 +523,26 @@ namespace GT
         assert(meshIndex == 0);
         {
             return IndexFormat::IndexFormat_UInt32;
+        }
+    }
+
+
+    ////////////////////////////////////////
+    // Material Data
+
+    size_t ModelAsset_OBJ::GetMeshMaterialCount(unsigned int meshIndex) const
+    {
+        assert(meshIndex == 0);
+        {
+            return 1;
+        }
+    }
+
+    const uint32_t* ModelAsset_OBJ::GetMeshMaterialIndexOffsetCountPairs(unsigned int meshIndex) const
+    {
+        assert(meshIndex == 0);
+        {
+            return m_materialOffsetCountPair;
         }
     }
 

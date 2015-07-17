@@ -43,7 +43,7 @@ namespace GT
         HGraphicsResource CreateMaterialResource();
 
         /// @copydoc GraphicsWorld::CreateMeshResource()
-        HGraphicsResource CreateMeshResource();
+        HGraphicsResource CreateMeshResource(GraphicsMeshResourceDesc &meshDesc);
 
         /// @copydoc GraphicsWorld::DeleteResource()
         void DeleteResource(HGraphicsResource hResource);
@@ -67,6 +67,9 @@ namespace GT
 #if defined(GT_PLATFORM_WINDOWS)
         /// @copydoc GraphicsWorld::CreateRenderTargetFromWindow()
         HGraphicsRenderTarget CreateRenderTargetFromWindow(HWND hWnd, uint32_t flags);
+
+        /// @copydoc GraphicsWorld::GetRenderTargetByWindow()
+        HGraphicsRenderTarget GetRenderTargetByWindow(HWND hWnd) const;
 #endif
 
         /// @copydoc GraphicsWorld::CreateRenderTargetFromTexture()
@@ -74,6 +77,13 @@ namespace GT
 
         /// @copydoc GraphicsWorld::DeleteRenderTarget()
         void DeleteRenderTarget(HGraphicsRenderTarget hRT);
+
+
+        /// @copydoc GraphicsWorld::SetRenderTargetViewport()
+        void SetRenderTargetViewport(HGraphicsRenderTarget hRT, int x, int y, unsigned int width, unsigned height);
+
+        /// @copydoc GraphicsWorld::GetRenderTargetViewport()
+        void GetRenderTargetViewport(HGraphicsRenderTarget hRT, int &xOut, int &yOut, unsigned int &widthOut, unsigned int &heightOut) const;
 
 
         /// @copydoc GraphicsWorld::SetRenderTargetPriority()

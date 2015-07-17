@@ -44,8 +44,10 @@ namespace GT
         return 0;
     }
 
-    HGraphicsResource DefaultGraphicsWorld_Null::CreateMeshResource()
+    HGraphicsResource DefaultGraphicsWorld_Null::CreateMeshResource(GraphicsMeshResourceDesc &meshDesc)
     {
+        (void)meshDesc;
+
         return 0;
     }
 
@@ -87,6 +89,13 @@ namespace GT
 
         return 0;
     }
+
+    HGraphicsRenderTarget DefaultGraphicsWorld_Null::GetRenderTargetByWindow(HWND hWnd) const
+    {
+        (void)hWnd;
+
+        return 0;
+    }
 #endif
 
     HGraphicsRenderTarget DefaultGraphicsWorld_Null::CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, uint32_t flags)
@@ -100,6 +109,25 @@ namespace GT
     void DefaultGraphicsWorld_Null::DeleteRenderTarget(HGraphicsResource hRT)
     {
         (void)hRT;
+    }
+
+
+    void DefaultGraphicsWorld_Null::SetRenderTargetViewport(HGraphicsRenderTarget hRT, int x, int y, unsigned int width, unsigned height)
+    {
+        (void)hRT;
+        (void)x;
+        (void)y;
+        (void)width;
+        (void)height;
+    }
+
+    void DefaultGraphicsWorld_Null::GetRenderTargetViewport(HGraphicsRenderTarget hRT, int &xOut, int &yOut, unsigned int &widthOut, unsigned int &heightOut) const
+    {
+        (void)hRT;
+        (void)xOut;
+        (void)yOut;
+        (void)widthOut;
+        (void)heightOut;
     }
 
 

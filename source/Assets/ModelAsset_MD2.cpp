@@ -248,11 +248,15 @@ namespace GT
     ModelAsset_MD2::ModelAsset_MD2(AssetType assetType)
         : ModelAsset(assetType),
           m_vertexData(nullptr), m_vertexCount(0), m_vertexCountPerFrame(0), m_vertexLayout(),
-          m_indexData(nullptr), m_indexCount(0)
+          m_indexData(nullptr), m_indexCount(0),
+          m_materialOffsetCountPair()
     {
         m_vertexLayout[0] = {VertexAttribFormat_Float, 3, sizeof(float) * 0, VertexAttribSemantic_Position};
         m_vertexLayout[1] = {VertexAttribFormat_Float, 2, sizeof(float) * 3, VertexAttribSemantic_TexCoord};
         m_vertexLayout[2] = {VertexAttribFormat_Float, 3, sizeof(float) * 5, VertexAttribSemantic_Normal  };
+
+        m_materialOffsetCountPair[0] = 0;
+        m_materialOffsetCountPair[1] = 0;
     }
 
     ModelAsset_MD2::~ModelAsset_MD2()
@@ -315,6 +319,9 @@ namespace GT
                         m_indexCount = static_cast<unsigned int>(actualIndices.GetCount());
                         m_indexData  = new uint32_t[m_indexCount];
                         memcpy(m_indexData, actualIndices.buffer, m_indexCount * sizeof(uint32_t));
+
+                        m_materialOffsetCountPair[0] = 0;
+                        m_materialOffsetCountPair[1] = static_cast<uint32_t>(m_indexCount);
 
 
                         // Frames
@@ -479,6 +486,26 @@ namespace GT
         assert(meshIndex == 0);
         {
             return IndexFormat::IndexFormat_UInt32;
+        }
+    }
+
+
+    ////////////////////////////////////////
+    // Material Data
+
+    size_t ModelAsset_MD2::GetMeshMaterialCount(unsigned int meshIndex) const
+    {
+        assert(meshIndex == 0);
+        {
+            return 1;
+        }
+    }
+
+    const uint32_t* ModelAsset_MD2::GetMeshMaterialIndexOffsetCountPairs(unsigned int meshIndex) const
+    {
+        assert(meshIndex == 0);
+        {
+            return m_materialOffsetCountPair;
         }
     }
 

@@ -23,6 +23,85 @@ namespace GT
     static const uint32_t GraphicsRenderTarget_OnlyUI = (1 << 0);       //< Set on a render target to indicate that it should only render UI elements and not any world objects.
 
 
+    /// The different resource types.
+    enum class GraphicsResourceType
+    {
+        Texture,
+        Material,
+        Mesh,
+    };
+
+    /// The different object types.
+    enum class GraphicsObjectType
+    {
+        Mesh,
+        PointLight,
+        SpotLight,
+        AmbientLight,
+    };
+
+
+    /// Structure describing a static mesh resource.
+    struct GraphicsMeshResourceDesc
+    {
+        GraphicsMeshResourceDesc()
+            : topology(PrimitiveTopologyType_Triangle),
+              pVertexData(nullptr),
+              vertexDataSize(0),
+              vertexStride(0),
+              pVertexLayout(nullptr),
+              vertexAttribCount(0),
+              pIndexData(nullptr),
+              indexDataSize(0),
+              indexCount(0),
+              indexFormat(IndexFormat_UInt32),
+              materialIndexOffsetCountPairs(nullptr),
+              materialCount(0)
+        {
+        }
+
+
+        /// The primitive topology (points, lines, triangles or patch)
+        PrimitiveTopologyType topology;
+
+
+        /// A pointer to the vertex data.
+        const void* pVertexData;
+
+        /// The size of the vertex data in bytes.
+        size_t vertexDataSize;
+        
+        /// The size in bytes of a single vertex.
+        size_t vertexStride;
+
+        /// A pointer to the vertex attribute layout info.
+        const VertexAttribLayout* pVertexLayout;
+
+        /// The number of vertex attributes. This defines how many items are in pVertexLayout.
+        unsigned int vertexAttribCount;
+
+
+        /// A pointer to the index data.
+        const void* pIndexData;
+
+        /// The size in bytes of the index data.
+        size_t indexDataSize;
+
+        /// The number of indices in the index buffer.
+        unsigned int indexCount;
+
+        /// The format of the index data.
+        IndexFormat indexFormat;
+
+
+        /// A pointer to the list of integers that define the starting index for each material.
+        const uint32_t* materialIndexOffsetCountPairs;
+
+        /// The number of materials.
+        unsigned int materialCount;
+    };
+
+
     /// Base class for a graphics world. A graphics world is where rendering occurs.
     ///
     /// The actual rendering and resource creation is performed by derived classes. 
@@ -73,7 +152,7 @@ namespace GT
         virtual HGraphicsResource CreateMaterialResource() = 0;
 
         /// Creates a mesh resource.
-        virtual HGraphicsResource CreateMeshResource() = 0;
+        virtual HGraphicsResource CreateMeshResource(GraphicsMeshResourceDesc &meshDesc) = 0;
 
 
         /// Deletes the given resource.
@@ -101,9 +180,15 @@ namespace GT
         ////////////////////
         // Render Targets
 
-        /// Creates a render target where the result is output to the given window.
 #if defined(GT_PLATFORM_WINDOWS)
+        /// Creates a render target where the result is output to the given window.
         virtual HGraphicsRenderTarget CreateRenderTargetFromWindow(HWND hWnd, uint32_t flags = 0) = 0;
+
+        /// Retrieves the render target for the given window, if any.
+        ///
+        /// @remarks
+        ///     If the given window does not have a render target associated with it, 0 will be returned.
+        virtual HGraphicsRenderTarget GetRenderTargetByWindow(HWND hWnd) const = 0;
 #endif
 
         /// Creates a render target where the result is output to the given texture.
@@ -111,6 +196,13 @@ namespace GT
 
         /// Deletes the given render target.
         virtual void DeleteRenderTarget(HGraphicsRenderTarget hRT) = 0;
+
+
+        /// Sets the viewport for the given render target.
+        virtual void SetRenderTargetViewport(HGraphicsRenderTarget hRT, int x, int y, unsigned int width, unsigned height) = 0;
+
+        /// Retrieves the viewport for the given render target.
+        virtual void GetRenderTargetViewport(HGraphicsRenderTarget hRT, int &xOut, int &yOut, unsigned int &widthOut, unsigned int &heightOut) const = 0;
 
 
         /// Sets the priority of the given render target.

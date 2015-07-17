@@ -70,6 +70,16 @@ namespace GT
 
 
         ////////////////////////////////////////
+        // Material Data
+
+        /// @copydoc ModelAsset::GetMaterialCount()
+        size_t GetMeshMaterialCount(unsigned int meshIndex) const;
+
+        /// @copydoc ModelAsset::GetMaterialIndexOffsetCountPairs()
+        const uint32_t* GetMeshMaterialIndexOffsetCountPairs(unsigned int meshIndex) const;
+
+
+        ////////////////////////////////////////
         // Animation Data
 
         /// @copydoc GetMeshAnimationType()
@@ -102,6 +112,10 @@ namespace GT
 
         /// The index count.
         unsigned int m_indexCount;
+
+
+        /// The material offset/count pair. This is temp until support for multiple materials is added to the OBJ loader.
+        uint32_t m_materialOffsetCountPair[2];
     };
 }
 
