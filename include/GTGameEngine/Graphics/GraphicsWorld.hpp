@@ -41,6 +41,49 @@ namespace GT
     };
 
 
+    /// The different types for material variables. Some of these are invalid in certain contexts, which are specific to the underlying rendering API.
+    enum class GraphicsMaterialVariableType
+    {
+        Float,
+        Float2,
+        Float3,
+        Float4,
+
+        Integer,
+        Integer2,
+        Integer3,
+        Integer4,
+
+        Texture,
+
+        Boolean,
+    };
+
+
+    /// Structure describing a material resource.
+    struct GraphicsMaterialResourceDesc
+    {
+        GraphicsMaterialResourceDesc()
+            : pInputVariableData(nullptr), inputVariableDataSizeInBytes(0),
+              pChannelData(nullptr), channelDataSizeInBytes(0)
+        {
+        }
+
+
+        /// A pointer to the input variable declaration data as Spir-V bytecode.
+        const void* pInputVariableData;
+
+        /// The size in bytes of the input variable data.
+        size_t inputVariableDataSizeInBytes;
+
+
+        /// A pointer to the channel data as Spir-V bytecode.
+        const void* pChannelData;
+
+        /// The size in bytes of the channel data.
+        size_t channelDataSizeInBytes;
+    };
+
     /// Structure describing a static mesh resource.
     struct GraphicsMeshResourceDesc
     {
@@ -55,6 +98,7 @@ namespace GT
               indexDataSize(0),
               indexCount(0),
               indexFormat(IndexFormat_UInt32),
+              materials(nullptr),
               materialIndexOffsetCountPairs(nullptr),
               materialCount(0)
         {
@@ -93,6 +137,9 @@ namespace GT
         /// The format of the index data.
         IndexFormat indexFormat;
 
+
+        /// The list of material resources to use for each material slot.
+        const HGraphicsResource* materials;
 
         /// A pointer to the list of integers that define the starting index for each material.
         const uint32_t* materialIndexOffsetCountPairs;
@@ -149,10 +196,13 @@ namespace GT
         /// @remarks
         ///     Materials are immutable which means however they are defined by this method is how the material is defined for it's life. If a
         ///     change is required, the material must be deleted and re-created.
-        virtual HGraphicsResource CreateMaterialResource() = 0;
+        virtual HGraphicsResource CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc) = 0;
 
         /// Creates a mesh resource.
-        virtual HGraphicsResource CreateMeshResource(GraphicsMeshResourceDesc &meshDesc) = 0;
+        virtual HGraphicsResource CreateMeshResource(const GraphicsMeshResourceDesc &meshDesc) = 0;
+
+        /// Sets the default material to use for the given material slot on the given mesh.
+        virtual void SetMeshResourceMaterial(HGraphicsResource hMeshResource, unsigned int materialSlot, HGraphicsResource hMaterialResource) = 0;
 
 
         /// Deletes the given resource.
@@ -166,8 +216,26 @@ namespace GT
         ////////////////////
         // Objects
 
+        /// Sets the transformation of the given object.
+        ///
+        /// @param hObject [in] The object whose transformation is being set.
+        virtual void SetObjectTransform(HGraphicsObject hObject, const vec4 &position, const quat &rotation, const vec4 &scale) = 0;
+
+        /// Sets the position of the given object.
+        virtual void SetObjectPosition(HGraphicsObject hObject, const vec4 &position) = 0;
+
+        /// Sets the rotation of the given object.
+        virtual void SetObjectRotation(HGraphicsObject hObject, const quat &rotation) = 0;
+
+        /// Sets the scale of the given object.
+        virtual void SetObjectScale(HGraphicsObject hObject, const vec4 &scale) = 0;
+
+
         /// Creates a mesh object.
         virtual HGraphicsObject CreateMeshObject(HGraphicsResource hMeshResource, const vec4 &position = vec4(0, 0, 0, 1), const quat &rotation = quat::identity, const vec4 &scale = vec4(1, 1, 1, 1)) = 0;
+
+        /// Sets the material to use with the given mesh resource.
+        virtual void SetMeshObjectMaterial(HGraphicsObject hMeshObject, unsigned int materialSlot, HGraphicsResource hMaterialResource) = 0;
 
         /// Deletes the given object.
         ///
@@ -203,6 +271,20 @@ namespace GT
 
         /// Retrieves the viewport for the given render target.
         virtual void GetRenderTargetViewport(HGraphicsRenderTarget hRT, int &xOut, int &yOut, unsigned int &widthOut, unsigned int &heightOut) const = 0;
+
+
+        /// Sets the clear color for the given render target.
+        virtual void SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GTLib::Colour &color) = 0;
+
+        /// Enables clearing of the background color of the given render target.
+        ///
+        /// @remarks
+        ///     This is enabled by default, but for scenes where the background is never seen (most FPS games, for example), it is
+        ///     more efficient to disable this.
+        virtual void EnableRenderTargetColorClearing(HGraphicsRenderTarget hRT) = 0;
+
+        /// Disables clearing of the background color of the given render target.
+        virtual void DisableRenderTargetColorClearing(HGraphicsRenderTarget hRT) = 0;
 
 
         /// Sets the priority of the given render target.

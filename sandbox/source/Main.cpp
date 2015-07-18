@@ -80,6 +80,27 @@ public:
                 m_pGraphicsWorld->SetRenderTargetProjectionAndView(m_hWindowRT, GT::mat4::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.0f), GT::mat4::translate(GT::mat4::identity, GT::vec4(0, 0, -5, 0.0f)));
 
 
+                // Materials.
+                GT::vec4 materialRData(1.0f, 0.0f, 0.0f, 1.0f);
+                GT::vec4 materialGData(0.0f, 1.0f, 0.0f, 1.0f);
+                GT::vec4 materialBData(0.0f, 0.0f, 1.0f, 1.0f);
+
+                GT::GraphicsMaterialResourceDesc materialR;
+                materialR.channelDataSizeInBytes = sizeof(materialRData);
+                materialR.pChannelData = &materialRData[0];
+                m_hTestMaterialR = m_pGraphicsWorld->CreateMaterialResource(materialR);
+
+                GT::GraphicsMaterialResourceDesc materialG;
+                materialG.channelDataSizeInBytes = sizeof(materialGData);
+                materialG.pChannelData = &materialGData[0];
+                m_hTestMaterialG = m_pGraphicsWorld->CreateMaterialResource(materialG);
+
+                GT::GraphicsMaterialResourceDesc materialB;
+                materialB.channelDataSizeInBytes = sizeof(materialBData);
+                materialB.pChannelData = &materialBData[0];
+                m_hTestMaterialB = m_pGraphicsWorld->CreateMaterialResource(materialB);
+
+
                 GT::GraphicsMeshResourceDesc testMeshDesc;
                 testMeshDesc.topology                      = GT::PrimitiveTopologyType_Triangle;
                 testMeshDesc.pVertexData                   = m_pTestMeshAsset->GetMeshVertexData(0);
@@ -93,8 +114,19 @@ public:
                 testMeshDesc.materialIndexOffsetCountPairs = m_pTestMeshAsset->GetMeshMaterialIndexOffsetCountPairs(0);
                 testMeshDesc.materialCount                 = m_pTestMeshAsset->GetMeshMaterialCount(0);
                 m_hTestMeshResource = m_pGraphicsWorld->CreateMeshResource(testMeshDesc);
+                m_pGraphicsWorld->SetMeshResourceMaterial(m_hTestMeshResource, 0, m_hTestMaterialR);
 
-                m_hTestMeshObject = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
+                m_hTestMeshObject0 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
+                m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject0, 0, m_hTestMaterialR);
+                m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject0, GT::vec4(0, 0, 0, 0));
+
+                m_hTestMeshObject1 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
+                m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject1, 0, m_hTestMaterialG);
+                m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject1, GT::vec4(-2, 0, 0, 0));
+
+                m_hTestMeshObject2 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
+                m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject2, 0, m_hTestMaterialB);
+                m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject2, GT::vec4(2, 0, 0, 0));
             }
         }
 
@@ -160,8 +192,14 @@ private:
 
     GT::ModelAsset* m_pTestMeshAsset;
 
+    GT::HGraphicsResource m_hTestMaterialR;
+    GT::HGraphicsResource m_hTestMaterialG;
+    GT::HGraphicsResource m_hTestMaterialB;
+
     GT::HGraphicsResource m_hTestMeshResource;
-    GT::HGraphicsObject   m_hTestMeshObject;
+    GT::HGraphicsObject   m_hTestMeshObject0;
+    GT::HGraphicsObject   m_hTestMeshObject1;
+    GT::HGraphicsObject   m_hTestMeshObject2;
 };
 
 

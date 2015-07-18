@@ -402,6 +402,15 @@ namespace GT
         this->UseProgram               = reinterpret_cast<PFNGLUSEPROGRAMPROC              >(this->GetGLProcAddress("glUseProgram"));
         this->GetAttribLocation        = reinterpret_cast<PFNGLGETATTRIBLOCATIONPROC       >(this->GetGLProcAddress("glGetAttribLocation"));
         this->GetUniformLocation       = reinterpret_cast<PFNGLGETUNIFORMLOCATIONPROC      >(this->GetGLProcAddress("glGetUniformLocation"));
+        this->Uniform1fv               = reinterpret_cast<PFNGLUNIFORM1FVPROC              >(this->GetGLProcAddress("glUniform1fv"));
+        this->Uniform2fv               = reinterpret_cast<PFNGLUNIFORM2FVPROC              >(this->GetGLProcAddress("glUniform2fv"));
+        this->Uniform3fv               = reinterpret_cast<PFNGLUNIFORM3FVPROC              >(this->GetGLProcAddress("glUniform3fv"));
+        this->Uniform4fv               = reinterpret_cast<PFNGLUNIFORM4FVPROC              >(this->GetGLProcAddress("glUniform4fv"));
+        this->Uniform1i                = reinterpret_cast<PFNGLUNIFORM1IPROC               >(this->GetGLProcAddress("glUniform1i"));
+        this->Uniform1iv               = reinterpret_cast<PFNGLUNIFORM1IVPROC              >(this->GetGLProcAddress("glUniform1iv"));
+        this->Uniform2iv               = reinterpret_cast<PFNGLUNIFORM2IVPROC              >(this->GetGLProcAddress("glUniform2iv"));
+        this->Uniform3iv               = reinterpret_cast<PFNGLUNIFORM3IVPROC              >(this->GetGLProcAddress("glUniform3iv"));
+        this->Uniform4iv               = reinterpret_cast<PFNGLUNIFORM4IVPROC              >(this->GetGLProcAddress("glUniform4iv"));
         this->UniformMatrix2fv         = reinterpret_cast<PFNGLUNIFORMMATRIX2FVPROC        >(this->GetGLProcAddress("glUniformMatrix2fv"));
         this->UniformMatrix3fv         = reinterpret_cast<PFNGLUNIFORMMATRIX3FVPROC        >(this->GetGLProcAddress("glUniformMatrix3fv"));
         this->UniformMatrix4fv         = reinterpret_cast<PFNGLUNIFORMMATRIX4FVPROC        >(this->GetGLProcAddress("glUniformMatrix4fv"));
@@ -417,6 +426,7 @@ namespace GT
 
         this->GenTextures              = reinterpret_cast<PFNGLGENTEXTURESPROC             >(this->GetGLProcAddress("glGenTextures"));
         this->DeleteTextures           = reinterpret_cast<PFNGLDELETETEXTURESPROC          >(this->GetGLProcAddress("glDeleteTextures"));
+        this->ActiveTexture            = reinterpret_cast<PFNGLACTIVETEXTUREPROC           >(this->GetGLProcAddress("glActiveTexture"));
         this->BindTexture              = reinterpret_cast<PFNGLBINDTEXTUREPROC             >(this->GetGLProcAddress("glBindTexture"));
         this->TexImage1D               = reinterpret_cast<PFNGLTEXIMAGE1DPROC              >(this->GetGLProcAddress("glTexImage1D"));
         this->TexImage2D               = reinterpret_cast<PFNGLTEXIMAGE2DPROC              >(this->GetGLProcAddress("glTexImage2D"));

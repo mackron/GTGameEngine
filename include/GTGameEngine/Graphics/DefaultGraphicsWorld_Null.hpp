@@ -40,10 +40,13 @@ namespace GT
         HGraphicsResource CreateTextureResource(unsigned int width, unsigned int height, unsigned int depth, TextureFormat format, const void* pData);
 
         /// @copydoc GraphicsWorld::CreateMaterialResource()
-        HGraphicsResource CreateMaterialResource();
+        HGraphicsResource CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc);
 
         /// @copydoc GraphicsWorld::CreateMeshResource()
-        HGraphicsResource CreateMeshResource(GraphicsMeshResourceDesc &meshDesc);
+        HGraphicsResource CreateMeshResource(const GraphicsMeshResourceDesc &meshDesc);
+
+        /// @copydoc GraphicsWorld::SetMeshResourceMaterial()
+        void SetMeshResourceMaterial(HGraphicsResource hMeshResource, unsigned int materialSlot, HGraphicsResource hMaterialResource);
 
         /// @copydoc GraphicsWorld::DeleteResource()
         void DeleteResource(HGraphicsResource hResource);
@@ -53,8 +56,24 @@ namespace GT
         ////////////////////
         // Objects
 
+        /// @copydoc GraphicsWorld::SetObjectTransform()
+        void SetObjectTransform(HGraphicsObject hObject, const vec4 &position, const quat &rotation, const vec4 &scale);
+
+        /// @copydoc GraphicsWorld::SetObjectPosition()
+        void SetObjectPosition(HGraphicsObject hObject, const vec4 &position);
+
+        /// @copydoc GraphicsWorld::SetObjectRotation()
+        void SetObjectRotation(HGraphicsObject hObject, const quat &rotation);
+
+        /// @copydoc GraphicsWorld::SetObjectScale()
+        void SetObjectScale(HGraphicsObject hObject, const vec4 &scale);
+
+
         /// @copydoc GraphicsWorld::CreateMeshObject()
         HGraphicsObject CreateMeshObject(HGraphicsResource hMeshResource, const vec4 &position = vec4(0, 0, 0, 1), const quat &rotation = quat::identity, const vec4 &scale = vec4(1, 1, 1, 1));
+
+        /// @copydoc GraphicsWorld::SetMeshObjectMaterial()
+        void SetMeshObjectMaterial(HGraphicsObject hMeshObject, unsigned int materialSlot, HGraphicsResource hMaterialResource);
 
         /// @copydoc GraphicsWorld::DeleteObject()
         void DeleteObject(HGraphicsObject);
@@ -84,6 +103,16 @@ namespace GT
 
         /// @copydoc GraphicsWorld::GetRenderTargetViewport()
         void GetRenderTargetViewport(HGraphicsRenderTarget hRT, int &xOut, int &yOut, unsigned int &widthOut, unsigned int &heightOut) const;
+
+
+        /// @copydoc GraphicsWorld::SetRenderTargetClearColor()
+        void SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GTLib::Colour &color);
+
+        /// @copydoc GraphicsWorld::EnableRenderTargetColorClearing()
+        void EnableRenderTargetColorClearing(HGraphicsRenderTarget hRT);
+
+        /// @copydoc GraphicsWorld::DisableRenderTargetColorClearing()
+        void DisableRenderTargetColorClearing(HGraphicsRenderTarget hRT);
 
 
         /// @copydoc GraphicsWorld::SetRenderTargetPriority()

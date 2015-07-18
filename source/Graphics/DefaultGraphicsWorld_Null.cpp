@@ -39,16 +39,25 @@ namespace GT
         return 0;
     }
 
-    HGraphicsResource DefaultGraphicsWorld_Null::CreateMaterialResource()
+    HGraphicsResource DefaultGraphicsWorld_Null::CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc)
     {
+        (void)materialDesc;
+
         return 0;
     }
 
-    HGraphicsResource DefaultGraphicsWorld_Null::CreateMeshResource(GraphicsMeshResourceDesc &meshDesc)
+    HGraphicsResource DefaultGraphicsWorld_Null::CreateMeshResource(const GraphicsMeshResourceDesc &meshDesc)
     {
         (void)meshDesc;
 
         return 0;
+    }
+
+    void DefaultGraphicsWorld_Null::SetMeshResourceMaterial(HGraphicsResource hMeshResource, unsigned int materialSlot, HGraphicsResource hMaterialResource)
+    {
+        (void)hMeshResource;
+        (void)materialSlot;
+        (void)hMaterialResource;
     }
 
     void DefaultGraphicsWorld_Null::DeleteResource(HGraphicsResource hResource)
@@ -61,6 +70,32 @@ namespace GT
     ////////////////////
     // Objects
 
+    void DefaultGraphicsWorld_Null::SetObjectTransform(HGraphicsObject hObject, const vec4 &position, const quat &rotation, const vec4 &scale)
+    {
+        (void)hObject;
+        (void)position;
+        (void)rotation;
+        (void)scale;
+    }
+
+    void DefaultGraphicsWorld_Null::SetObjectPosition(HGraphicsObject hObject, const vec4 &position)
+    {
+        (void)hObject;
+        (void)position;
+    }
+
+    void DefaultGraphicsWorld_Null::SetObjectRotation(HGraphicsObject hObject, const quat &rotation)
+    {
+        (void)hObject;
+        (void)rotation;
+    }
+
+    void DefaultGraphicsWorld_Null::SetObjectScale(HGraphicsObject hObject, const vec4 &scale)
+    {
+        (void)hObject;
+        (void)scale;
+    }
+
     HGraphicsObject DefaultGraphicsWorld_Null::CreateMeshObject(HGraphicsResource hMeshResource, const vec4 &position, const quat &rotation, const vec4 &scale)
     {
         (void)hMeshResource;
@@ -69,6 +104,13 @@ namespace GT
         (void)scale;
 
         return 0;
+    }
+
+    void DefaultGraphicsWorld_Null::SetMeshObjectMaterial(HGraphicsObject hMeshObject, unsigned int materialSlot, HGraphicsResource hMaterialResource)
+    {
+        (void)hMeshObject;
+        (void)materialSlot;
+        (void)hMaterialResource;
     }
 
     void DefaultGraphicsWorld_Null::DeleteObject(HGraphicsObject hObject)
@@ -128,6 +170,23 @@ namespace GT
         (void)yOut;
         (void)widthOut;
         (void)heightOut;
+    }
+
+
+    void DefaultGraphicsWorld_Null::SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GTLib::Colour &color)
+    {
+        (void)hRT;
+        (void)color;
+    }
+
+    void DefaultGraphicsWorld_Null::EnableRenderTargetColorClearing(HGraphicsRenderTarget hRT)
+    {
+        (void)hRT;
+    }
+
+    void DefaultGraphicsWorld_Null::DisableRenderTargetColorClearing(HGraphicsRenderTarget hRT)
+    {
+        (void)hRT;
     }
 
 

@@ -285,6 +285,15 @@ namespace GT
         PFNGLUSEPROGRAMPROC             UseProgram;
         PFNGLGETATTRIBLOCATIONPROC      GetAttribLocation;
         PFNGLGETUNIFORMLOCATIONPROC     GetUniformLocation;
+        PFNGLUNIFORM1FVPROC             Uniform1fv;
+        PFNGLUNIFORM2FVPROC             Uniform2fv;
+        PFNGLUNIFORM3FVPROC             Uniform3fv;
+        PFNGLUNIFORM4FVPROC             Uniform4fv;
+        PFNGLUNIFORM1IPROC              Uniform1i;
+        PFNGLUNIFORM1IVPROC             Uniform1iv;
+        PFNGLUNIFORM2IVPROC             Uniform2iv;
+        PFNGLUNIFORM3IVPROC             Uniform3iv;
+        PFNGLUNIFORM4IVPROC             Uniform4iv;
         PFNGLUNIFORMMATRIX2FVPROC       UniformMatrix2fv;
         PFNGLUNIFORMMATRIX3FVPROC       UniformMatrix3fv;
         PFNGLUNIFORMMATRIX4FVPROC       UniformMatrix4fv;
@@ -306,6 +315,7 @@ namespace GT
         // Textures
         PFNGLGENTEXTURESPROC                 GenTextures;
         PFNGLDELETETEXTURESPROC              DeleteTextures;
+        PFNGLACTIVETEXTUREPROC               ActiveTexture;
         PFNGLBINDTEXTUREPROC                 BindTexture;
         PFNGLTEXIMAGE1DPROC                  TexImage1D;
         PFNGLTEXIMAGE2DPROC                  TexImage2D;

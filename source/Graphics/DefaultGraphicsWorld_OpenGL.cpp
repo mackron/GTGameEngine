@@ -4,6 +4,7 @@
 
 #if defined(GT_BUILD_OPENGL)
 #include <GTGameEngine/Graphics/DefaultGraphicsWorld_OpenGL.hpp>
+#include <GTLib/BasicBuffer.hpp>
 
 namespace GT
 {
@@ -245,15 +246,17 @@ namespace GT
 
 
 
-    static const uint32_t RTFlag_IsWindow   = (1U << 31);
-    static const uint32_t RTFlag_IsTexture  = (1U << 30);
-    static const uint32_t RTFlag_IsDisabled = (1U << 29);
+    static const uint32_t RTFlag_IsWindow                = (1U << 31);
+    static const uint32_t RTFlag_IsTexture               = (1U << 30);
+    static const uint32_t RTFlag_IsDisabled              = (1U << 29);
+    static const uint32_t RTFlag_IsColorClearingDisabled = (1U << 28);
 
     struct RenderTarget_OpenGL
     {
         RenderTarget_OpenGL(uint32_t flagsIn)
             : flags(flagsIn),
               viewportX(0), viewportY(0), viewportWidth(1), viewportHeight(1),
+              clearColor(0.5f, 0.5f, 0.5f, 1.0f),
               priority(0), projection(), view(), hSurface(0)
         {
         }
@@ -272,6 +275,9 @@ namespace GT
 
         /// The height of the viewport.
         unsigned int viewportHeight;
+
+        /// The clear color.
+        GTLib::Colour clearColor;
 
         /// The priority.
         int priority;
@@ -316,6 +322,163 @@ namespace GT
     };
 
 
+#if 0
+    /// Structure containing information about a material input variable.
+    struct MaterialResourceInputVariableDesc_OpenGL
+    {
+        /// The location of the uniform variable.
+        GLint uniformLocation;
+
+        /// The variable type.
+        GraphicsMaterialVariableType type;
+
+        /// The offset into the corresponding buffer that contains the variable data.
+        GLuint bufferOffset;
+
+#if 0
+        /// The value of the variable.
+        union
+        {
+            // Float
+            struct _value1f
+            {
+                float x;
+
+            } value1f;
+            
+
+            // Float2
+            struct _value2f
+            {
+                float x;
+                float y;
+
+            } value2f;
+
+            // Float3
+            struct _value3f
+            {
+                float x;
+                float y;
+                float z;
+                float padding;
+
+            } value3f;
+
+            // Float4
+            struct _value4f
+            {
+                float x;
+                float y;
+                float z;
+                float w;
+
+            } value4f;
+
+
+            // Integer1
+            struct _value1i
+            {
+                int x;
+
+            } value1i;
+            
+            // Integer2
+            struct _value2i
+            {
+                int x;
+                int y;
+
+            } value2i;
+
+            // Integer3
+            struct _value3i
+            {
+                int x;
+                int y;
+                int z;
+                int padding;
+
+            } value3i;
+
+            // Integer4
+            struct _value4i
+            {
+                int x;
+                int y;
+                int z;
+                int w;
+
+            } value4i;
+
+
+            // Boolean.
+            struct _value1b
+            {
+                bool x;
+
+            } value1b;
+
+
+            GLuint texture1D;
+            GLuint texture2D;
+            GLuint texture3D;
+            GLuint textureCube;
+        };
+#endif
+    };
+#endif
+
+    struct MaterialResourceInputVariableBuffer_OpenGL
+    {
+        /// Structure describing an input variable.
+        struct VariableDesc
+        {
+            /// The name of the variable.
+            GTLib::String name;
+
+            /// The location of the uniform variable.
+            GLint uniformLocation;
+
+            /// The variable type.
+            GraphicsMaterialVariableType type;
+
+            /// The offset into the corresponding buffer that contains the variable data.
+            GLuint bufferOffset;
+        };
+
+
+        /// The list of variables descriptors. There is one of these for each variable, and the values here map to the pVariableData buffer.
+        GTLib::Vector<VariableDesc> variableDescriptors;
+
+        /// A pointer to the buffer containing the raw variable data.
+        void* pVariableData;
+
+        /// The size of the variable data.
+        size_t variableDataSizeInBytes;
+
+
+        MaterialResourceInputVariableBuffer_OpenGL(const void* pVariableDataIn, size_t variableDataSizeInBytesIn)
+            : variableDescriptors(),
+              pVariableData(nullptr), variableDataSizeInBytes(variableDataSizeInBytesIn)
+        {
+            pVariableData = malloc(variableDataSizeInBytes);
+            memcpy(pVariableData, pVariableDataIn, variableDataSizeInBytes);
+        }
+
+        MaterialResourceInputVariableBuffer_OpenGL(const MaterialResourceInputVariableBuffer_OpenGL &other)
+            : variableDescriptors(other.variableDescriptors),
+              pVariableData(nullptr), variableDataSizeInBytes(other.variableDataSizeInBytes)
+        {
+            pVariableData = malloc(variableDataSizeInBytes);
+            memcpy(pVariableData, other.pVariableData, variableDataSizeInBytes);
+        }
+
+        ~MaterialResourceInputVariableBuffer_OpenGL()
+        {
+            free(pVariableData);
+        }
+    };
 
 
     /// Base class for resources.
@@ -365,19 +528,66 @@ namespace GT
     struct MaterialResource_OpenGL : public Resource_OpenGL
     {
         MaterialResource_OpenGL()
-            : Resource_OpenGL(GraphicsResourceType::Material)
+            : Resource_OpenGL(GraphicsResourceType::Material),
+              programGL(0),
+              uniformLocation_Projection(-1), uniformLocation_View(-1), uniformLocation_Model(-1)
         {
         }
+
+        /// The program object for the material.
+        GLuint programGL;
+
+        /// The location of the Projection uniform.
+        GLint uniformLocation_Projection;
+
+        /// The location of the View uniform.
+        GLint uniformLocation_View;
+
+        /// The location of the Model uniform.
+        GLint uniformLocation_Model;
+
+
+        struct InputVariables
+        {
+            /// Structure describing an input variable.
+            struct VariableDesc
+            {
+                /// The name of the variable.
+                GTLib::String name;
+
+                /// The location of the uniform variable.
+                GLint uniformLocation;
+
+                /// The variable type.
+                GraphicsMaterialVariableType type;
+
+                /// The offset into the corresponding buffer that contains the variable data.
+                GLuint bufferOffset;
+            };
+
+
+            /// The list of variables descriptors. There is one of these for each variable, and the values here map to the pVariableData buffer.
+            GTLib::Vector<VariableDesc> variableDescriptors;
+
+            /// The buffer containing the values of each variable, using the same packing rules as the OpenGL std140 uniform packing rules.
+            GT::BasicBuffer valuesBuffer;
+
+        } inputVariables;
     };
 
     /// Structure representing a mesh resource.
     struct MeshResource_OpenGL : public Resource_OpenGL
     {
-        MeshResource_OpenGL(GLuint vertexBufferGLIn, GLuint indexBufferGLIn)
+        MeshResource_OpenGL(GLenum drawModeIn, GLuint vertexBufferGLIn, GLuint indexBufferGLIn)
             : Resource_OpenGL(GraphicsResourceType::Mesh),
-              vertexBufferGL(vertexBufferGLIn), indexBufferGL(indexBufferGLIn)
+              drawMode(drawModeIn), vertexBufferGL(vertexBufferGLIn), indexBufferGL(indexBufferGLIn)
         {
         }
+
+
+        /// The draw mode for glDrawElements(). GL_TRIANGLES, GL_LINES, etc.
+        GLenum drawMode;
+
 
         /// The buffer object for the vertex data.
         GLuint vertexBufferGL;
@@ -397,6 +607,10 @@ namespace GT
 
             /// The default material.
             HGraphicsResource hDefaultMaterial;
+
+            /// The buffer containing the custom values for input variables. If this is empty, it will use the same variables defined by
+            /// the material resource.
+            GT::BasicBuffer valuesBuffer;
         };
 
         /// The list of material slots.
@@ -439,10 +653,27 @@ namespace GT
         /// The mesh resource this object is attached. to.
         HGraphicsResource hMeshResource;
 
+
+        /// The structure containing the necessary information for a single material slot on a mesh object.
+        struct MaterialSlot
+        {
+            /// The material to use for this slot.
+            HGraphicsResource hMaterial;
+
+            /// The buffer containing the custom values for input variables. If this is empty, it will use the same variables defined by
+            /// the mesh resource. If that is also empty, it will use the values from the material resource.
+            GT::BasicBuffer valuesBuffer;
+        };
+
+        /// The list of materials. The number of items in this array is the same as the number of material slots
+        /// in the mesh resource. By default this is filled with the same materials as specified by the mesh definition, but they can be
+        /// overwritten on a per-object basis.
+        GTLib::Vector<MaterialSlot> materials;
+
         /// The list of materials to use for each material slot. The number of items in this array is the same as the number of material slots
         /// in the mesh resource. By default this is filled with the same materials as specified by the mesh definition, but they can be
         /// overwritten on a per-object basis.
-        GTLib::Vector<HGraphicsResource> materials;
+        //GTLib::Vector<HGraphicsResource> materials;
     };
 
 
@@ -648,18 +879,126 @@ namespace GT
         return reinterpret_cast<HGraphicsResource>(pTexture);
     }
 
-    HGraphicsResource DefaultGraphicsWorld_OpenGL::CreateMaterialResource()
+    HGraphicsResource DefaultGraphicsWorld_OpenGL::CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc)
     {
+        MaterialResource_OpenGL* pMaterialResource = nullptr;
+
+
         this->MakeOpenGLContextCurrent();
 
-        return 0;
+        // The channel data from the material descriptor needs to be converted from Spir-V to GLSL.
+        
+        // For the moment, the input data is just a float4 describing the diffuse colour. This is not real Spir-V at the moment.
+        vec4 diffuseColor;
+        if (materialDesc.channelDataSizeInBytes >= sizeof(float)*4)
+        {
+            memcpy(&diffuseColor[0], materialDesc.pChannelData, sizeof(float)*4);
+        }
+
+        char shaderString_Diffuse[256];
+        sprintf(shaderString_Diffuse, "vec4 Material_Diffuse() { return vec4(%f, %f, %f, %f); }", diffuseColor.x, diffuseColor.y, diffuseColor.z, diffuseColor.w);
+
+
+
+        // Vertex shader.
+        const char* vertexShaderSource =
+            "attribute vec3 VS_Position;\n"
+            "attribute vec2 VS_TexCoord;\n"
+            "attribute vec3 VS_Normal;\n"
+            "uniform mat4 Projection;\n"
+            "uniform mat4 View;\n"
+            "uniform mat4 Model;\n"
+            "varying vec2 FS_TexCoord;\n"
+            "varying vec3 FS_Normal;\n"
+            "void main()\n"
+            "{\n"
+            "    FS_TexCoord = VS_TexCoord;\n"
+            "    FS_Normal   = VS_Normal;\n"
+            "    \n"
+            "    gl_Position = Projection * View * Model * vec4(VS_Position, 1.0);\n"
+            "}";
+        GLuint vertexShader = this->CreateShader_GLSL(GL_VERTEX_SHADER, vertexShaderSource);
+        if (vertexShader == 0)
+        {
+            return 0;
+        }
+
+
+
+        // Fragment shader.
+        const char* fragmentShaderSource =
+            "varying vec2 FS_TexCoord;\n"
+            "varying vec3 FS_Normal;\n"
+            "vec4 Material_Diffuse();\n"
+            "void main()\n"
+            "{\n"
+            "    gl_FragColor = Material_Diffuse();\n"
+            "}";
+
+        const char* fragmentShaderStrings[2];
+        fragmentShaderStrings[0] = fragmentShaderSource;
+        fragmentShaderStrings[1] = shaderString_Diffuse;
+        GLuint fragmentShader = this->CreateShader_GLSL(GL_FRAGMENT_SHADER, sizeof(fragmentShaderStrings) / sizeof(fragmentShaderStrings[0]), fragmentShaderStrings, nullptr);
+        if (fragmentShader == 0)
+        {
+            m_gl.DeleteShader(vertexShader);
+            return 0;
+        }
+
+
+
+        // Program object.
+        GLuint shaderProgram = this->CreateProgram_GLSL(vertexShader, fragmentShader);
+        if (shaderProgram != 0)
+        {
+            pMaterialResource = new MaterialResource_OpenGL;
+            pMaterialResource->programGL                  = shaderProgram;
+            pMaterialResource->uniformLocation_Projection = m_gl.GetUniformLocation(shaderProgram, "Projection");
+            pMaterialResource->uniformLocation_View       = m_gl.GetUniformLocation(shaderProgram, "View");
+            pMaterialResource->uniformLocation_Model      = m_gl.GetUniformLocation(shaderProgram, "Model");
+        }
+
+
+        // Shaders are no longer needed.
+        m_gl.DeleteShader(vertexShader);
+        m_gl.DeleteShader(fragmentShader);
+
+        return reinterpret_cast<HGraphicsResource>(pMaterialResource);
     }
 
-    HGraphicsResource DefaultGraphicsWorld_OpenGL::CreateMeshResource(GraphicsMeshResourceDesc &meshDesc)
+    HGraphicsResource DefaultGraphicsWorld_OpenGL::CreateMeshResource(const GraphicsMeshResourceDesc &meshDesc)
     {
         this->MakeOpenGLContextCurrent();
 
         // TODO: Normalize the format of the mesh so that every mesh is the same format.
+
+        GLenum drawMode;
+        switch (meshDesc.topology)
+        {
+        case PrimitiveTopologyType_Triangle:
+            {
+                drawMode = GL_TRIANGLES;
+                break;
+            }
+
+        case PrimitiveTopologyType_Line:
+            {
+                drawMode = GL_LINE;
+                break;
+            }
+
+        case PrimitiveTopologyType_Point:
+            {
+                drawMode = GL_POINT;
+                break;
+            }
+
+        default:
+            {
+                // The topology isn't supported.
+                return 0;
+            }
+        }
 
         GLuint vertexBufferGL;
         m_gl.GenBuffers(1, &vertexBufferGL);
@@ -672,7 +1011,7 @@ namespace GT
         m_gl.BufferData(GL_ELEMENT_ARRAY_BUFFER, meshDesc.indexDataSize, meshDesc.pIndexData, GL_STATIC_DRAW);
 
 
-        auto pMeshResource = new MeshResource_OpenGL(vertexBufferGL, indexBufferGL);
+        auto pMeshResource = new MeshResource_OpenGL(drawMode, vertexBufferGL, indexBufferGL);
 
         for (unsigned int iMaterial = 0; iMaterial < meshDesc.materialCount; ++iMaterial)
         {
@@ -682,13 +1021,31 @@ namespace GT
                 MeshResource_OpenGL::MaterialSlot materialSlot;
                 materialSlot.indexOffset      = materialOffsetCountPair[0];
                 materialSlot.indexCount       = materialOffsetCountPair[1];
-                materialSlot.hDefaultMaterial = 0;
+
+                if (meshDesc.materials != nullptr)
+                {
+                    materialSlot.hDefaultMaterial = meshDesc.materials[iMaterial];
+                }
+                else
+                {
+                    materialSlot.hDefaultMaterial = 0;
+                }
+                
                 pMeshResource->materialSlots.PushBack(materialSlot);
             }
         }
 
 
         return reinterpret_cast<HGraphicsResource>(pMeshResource);
+    }
+
+    void DefaultGraphicsWorld_OpenGL::SetMeshResourceMaterial(HGraphicsResource hMeshResource, unsigned int materialSlot, HGraphicsResource hMaterialResource)
+    {
+        auto pMeshResource = reinterpret_cast<MeshResource_OpenGL*>(hMeshResource);
+        if (pMeshResource != nullptr)
+        {
+            pMeshResource->materialSlots[materialSlot].hDefaultMaterial = hMaterialResource;
+        }
     }
 
     void DefaultGraphicsWorld_OpenGL::DeleteResource(HGraphicsResource hResource)
@@ -728,6 +1085,44 @@ namespace GT
     ////////////////////
     // Objects
 
+    void DefaultGraphicsWorld_OpenGL::SetObjectTransform(HGraphicsObject hObject, const vec4 &position, const quat &rotation, const vec4 &scale)
+    {
+        auto pObject = reinterpret_cast<Object_OpenGL*>(hObject);
+        if (pObject != nullptr)
+        {
+            pObject->position = position;
+            pObject->rotation = rotation;
+            pObject->scale    = scale;
+        }
+    }
+
+    void DefaultGraphicsWorld_OpenGL::SetObjectPosition(HGraphicsObject hObject, const vec4 &position)
+    {
+        auto pObject = reinterpret_cast<Object_OpenGL*>(hObject);
+        if (pObject != nullptr)
+        {
+            pObject->position = position;
+        }
+    }
+
+    void DefaultGraphicsWorld_OpenGL::SetObjectRotation(HGraphicsObject hObject, const quat &rotation)
+    {
+        auto pObject = reinterpret_cast<Object_OpenGL*>(hObject);
+        if (pObject != nullptr)
+        {
+            pObject->rotation = rotation;
+        }
+    }
+
+    void DefaultGraphicsWorld_OpenGL::SetObjectScale(HGraphicsObject hObject, const vec4 &scale)
+    {
+        auto pObject = reinterpret_cast<Object_OpenGL*>(hObject);
+        if (pObject != nullptr)
+        {
+            pObject->scale = scale;
+        }
+    }
+
     HGraphicsObject DefaultGraphicsWorld_OpenGL::CreateMeshObject(HGraphicsResource hMeshResource, const vec4 &position, const quat &rotation, const vec4 &scale)
     {
         auto pMeshResource = reinterpret_cast<MeshResource_OpenGL*>(hMeshResource);
@@ -740,7 +1135,9 @@ namespace GT
 
             for (size_t iMaterial = 0; iMaterial < pMeshResource->materialSlots.GetCount(); ++iMaterial)
             {
-                pMeshObject->materials.PushBack(pMeshResource->materialSlots[iMaterial].hDefaultMaterial);
+                MeshObject_OpenGL::MaterialSlot materialSlot;
+                materialSlot.hMaterial = pMeshResource->materialSlots[iMaterial].hDefaultMaterial;
+                pMeshObject->materials.PushBack(materialSlot);
             }
 
 
@@ -751,6 +1148,19 @@ namespace GT
         }
 
         return 0;
+    }
+
+    void DefaultGraphicsWorld_OpenGL::SetMeshObjectMaterial(HGraphicsObject hMeshObject, unsigned int materialSlot, HGraphicsResource hMaterialResource)
+    {
+        auto pMeshObject = reinterpret_cast<MeshObject_OpenGL*>(hMeshObject);
+        if (pMeshObject != nullptr)
+        {
+            if (pMeshObject->materials[materialSlot].hMaterial != hMaterialResource)
+            {
+                pMeshObject->materials[materialSlot].hMaterial = hMaterialResource;
+                pMeshObject->materials[materialSlot].valuesBuffer.Free();       //< Free the values buffer to use the default input variables of the material.
+            }
+        }
     }
 
     void DefaultGraphicsWorld_OpenGL::DeleteObject(HGraphicsObject hObject)
@@ -901,6 +1311,34 @@ namespace GT
             yOut      = pRT->viewportY;
             widthOut  = pRT->viewportWidth;
             heightOut = pRT->viewportHeight;
+        }
+    }
+
+
+    void DefaultGraphicsWorld_OpenGL::SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GTLib::Colour &color)
+    {
+        auto pRT = reinterpret_cast<RenderTarget_OpenGL*>(hRT);
+        if (pRT != nullptr)
+        {
+            pRT->clearColor = color;
+        }
+    }
+
+    void DefaultGraphicsWorld_OpenGL::EnableRenderTargetColorClearing(HGraphicsRenderTarget hRT)
+    {
+        auto pRT = reinterpret_cast<RenderTarget_OpenGL*>(hRT);
+        if (pRT != nullptr)
+        {
+            pRT->flags &= ~RTFlag_IsColorClearingDisabled;
+        }
+    }
+
+    void DefaultGraphicsWorld_OpenGL::DisableRenderTargetColorClearing(HGraphicsRenderTarget hRT)
+    {
+        auto pRT = reinterpret_cast<RenderTarget_OpenGL*>(hRT);
+        if (pRT != nullptr)
+        {
+            pRT->flags |= RTFlag_IsColorClearingDisabled;
         }
     }
 
@@ -1125,15 +1563,17 @@ namespace GT
             if (m_gl.MakeCurrent(pRT->hDC, m_hRC))
             {
                 m_gl.Viewport(pRT->viewportX, pRT->viewportY, pRT->viewportWidth, pRT->viewportHeight);
-                m_gl.ClearColor(0.25f, 0.25f, 0.75f, 1.0f);
+
+                GLbitfield clearFlags = GL_DEPTH_BUFFER_BIT;
+                if ((pRT->flags & RTFlag_IsColorClearingDisabled) == 0)
+                {
+                    m_gl.ClearColor(pRT->clearColor.r, pRT->clearColor.g, pRT->clearColor.b, pRT->clearColor.a);
+                    clearFlags |= GL_COLOR_BUFFER_BIT;
+                }
+
                 m_gl.ClearDepth(1.0f);
-                m_gl.Clear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                m_gl.Clear(clearFlags);
 
-
-                m_gl.UseProgram(m_testProgramObjectGL);
-                m_gl.UniformMatrix4fv(m_gl.GetUniformLocation(m_testProgramObjectGL, "Projection"), 1, GL_FALSE, &pRT->projection[0][0]);
-                m_gl.UniformMatrix4fv(m_gl.GetUniformLocation(m_testProgramObjectGL, "View"),       1, GL_FALSE, &pRT->view[0][0]);
-                
 
                 for (size_t iMesh = 0; iMesh < m_meshObjects.GetCount(); ++iMesh)
                 {
@@ -1143,9 +1583,6 @@ namespace GT
                         auto pMeshResource = reinterpret_cast<MeshResource_OpenGL*>(pMeshObject->hMeshResource);
                         assert(pMeshResource != nullptr);
                         {
-                            mat4 model = CalculateTransformMatrix(pMeshObject->position, pMeshObject->rotation, pMeshObject->scale);
-                            m_gl.UniformMatrix4fv(m_gl.GetUniformLocation(m_testProgramObjectGL, "Model"), 1, GL_FALSE, &model[0][0]);
-
                             GLsizei stride = sizeof(float)*3 + sizeof(float)*2 + sizeof(float)*3;
 
                             m_gl.BindBuffer(GL_ARRAY_BUFFER,         pMeshResource->vertexBufferGL);
@@ -1160,14 +1597,82 @@ namespace GT
                          
                             for (size_t iMaterial = 0; iMaterial < pMeshResource->materialSlots.GetCount(); ++iMaterial)
                             {
-                                auto &materialSlot = pMeshResource->materialSlots[iMaterial];
+                                auto &meshResourceMaterialSlot = pMeshResource->materialSlots[iMaterial];
+                                auto &meshObjectMaterialSlot   = pMeshObject->materials[iMaterial];
 
-                                //auto pMaterialResource = reinterpret_cast<MaterialResource_OpenGL*>(pMeshObject->materials[iMaterial]);
-                                //if (pMaterialResource != nullptr)
+                                auto pMaterialResource = reinterpret_cast<MaterialResource_OpenGL*>(pMeshObject->materials[iMaterial].hMaterial);
+                                if (pMaterialResource != nullptr)
                                 {
-                                    // TODO: Make the material current and set the input variables.
+                                    // TODO: Render per-material and set the global uniforms once rather than per-object.
+                                    m_gl.UseProgram(pMaterialResource->programGL);
+                                    m_gl.UniformMatrix4fv(pMaterialResource->uniformLocation_Projection, 1, GL_FALSE, &pRT->projection[0][0]);
+                                    m_gl.UniformMatrix4fv(pMaterialResource->uniformLocation_View,       1, GL_FALSE, &pRT->view[0][0]);
 
-                                    m_gl.DrawElements(GL_TRIANGLES, materialSlot.indexCount, GL_UNSIGNED_INT, reinterpret_cast<const void*>(materialSlot.indexOffset));
+                                    mat4 model = CalculateTransformMatrix(pMeshObject->position, pMeshObject->rotation, pMeshObject->scale);
+                                    m_gl.UniformMatrix4fv(pMaterialResource->uniformLocation_Model, 1, GL_FALSE, &model[0][0]);
+
+                                    // Set the material's input variables.
+                                    const char* pInputValues = reinterpret_cast<const char*>(pMaterialResource->inputVariables.valuesBuffer.GetDataPointer());
+                                    if (meshResourceMaterialSlot.valuesBuffer.GetDataSizeInBytes() > 0)
+                                    {
+                                        pInputValues = reinterpret_cast<const char*>(meshResourceMaterialSlot.valuesBuffer.GetDataPointer());
+                                    }
+                                    if (meshObjectMaterialSlot.valuesBuffer.GetDataSizeInBytes() > 0)
+                                    {
+                                        pInputValues = reinterpret_cast<const char*>(meshObjectMaterialSlot.valuesBuffer.GetDataPointer());
+                                    }
+
+                                    if (pInputValues != nullptr)
+                                    {
+                                        int currentTextureUnit = 0;
+
+                                        for (size_t iUniform = 0; iUniform < pMaterialResource->inputVariables.variableDescriptors.GetCount(); ++iUniform)
+                                        {
+                                            auto &uniformDesc = pMaterialResource->inputVariables.variableDescriptors[iUniform];
+                                            if (uniformDesc.uniformLocation > -1)
+                                            {
+                                                // TODO: Remove this switch and replace with a pointer to a function.
+                                                switch (uniformDesc.type)
+                                                {
+                                                case GraphicsMaterialVariableType::Float:    m_gl.Uniform1fv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLfloat*>(pInputValues + uniformDesc.bufferOffset));
+                                                case GraphicsMaterialVariableType::Float2:   m_gl.Uniform2fv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLfloat*>(pInputValues + uniformDesc.bufferOffset));
+                                                case GraphicsMaterialVariableType::Float3:   m_gl.Uniform3fv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLfloat*>(pInputValues + uniformDesc.bufferOffset));
+                                                case GraphicsMaterialVariableType::Float4:   m_gl.Uniform4fv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLfloat*>(pInputValues + uniformDesc.bufferOffset));
+
+                                                case GraphicsMaterialVariableType::Integer:  m_gl.Uniform1iv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLint*>(pInputValues + uniformDesc.bufferOffset));
+                                                case GraphicsMaterialVariableType::Integer2: m_gl.Uniform2iv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLint*>(pInputValues + uniformDesc.bufferOffset));
+                                                case GraphicsMaterialVariableType::Integer3: m_gl.Uniform3iv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLint*>(pInputValues + uniformDesc.bufferOffset));
+                                                case GraphicsMaterialVariableType::Integer4: m_gl.Uniform4iv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLint*>(pInputValues + uniformDesc.bufferOffset));
+
+                                                case GraphicsMaterialVariableType::Texture:
+                                                {
+                                                    // The value for the texture will be a HGraphicsResource handle. The value we want to pass to the texture is the texture unit index.
+                                                    HGraphicsResource hTexture = *reinterpret_cast<const HGraphicsResource*>(pInputValues + uniformDesc.bufferOffset);
+                                                    if (hTexture != 0)
+                                                    {
+                                                        auto pTexture = reinterpret_cast<TextureResource_OpenGL*>(hTexture);
+                                                        assert(pTexture != nullptr);
+                                                        {
+                                                            // Activate the texture...
+                                                            m_gl.ActiveTexture(GL_TEXTURE0 + currentTextureUnit);
+                                                            m_gl.BindTexture(pTexture->targetGL, pTexture->objectGL);
+
+                                                            // ... and let the shader know which unit it is bound to.
+                                                            m_gl.Uniform1i(uniformDesc.uniformLocation, currentTextureUnit);
+
+                                                            // Go to the next texture unit.
+                                                            currentTextureUnit += 1;
+                                                        }
+                                                    }
+                                                }
+
+                                                default: break;
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                    m_gl.DrawElements(pMeshResource->drawMode, meshResourceMaterialSlot.indexCount, GL_UNSIGNED_INT, reinterpret_cast<const void*>(meshResourceMaterialSlot.indexOffset));
                                 }
                             }
                         }
@@ -1235,6 +1740,87 @@ namespace GT
             m_meshObjects.RemoveFirstOccuranceOf(hMeshObject);
             delete pMesh;
         }
+    }
+
+
+    GLuint DefaultGraphicsWorld_OpenGL::CreateShader_GLSL(GLenum shaderType, GLsizei shaderStringCount, const GLchar** shaderStrings, const GLint* shaderStringLengths)
+    {
+        GLuint objectGL = m_gl.CreateShader(shaderType);
+        m_gl.ShaderSource(objectGL, shaderStringCount, shaderStrings, shaderStringLengths);
+        m_gl.CompileShader(objectGL);
+
+
+        // Check for messages.
+        GLint logLengthInBytes;
+        m_gl.GetShaderiv(objectGL, GL_INFO_LOG_LENGTH, &logLengthInBytes);
+        if (logLengthInBytes > 1)
+        {
+            void* messageDst = malloc(logLengthInBytes);
+            if (messageDst != nullptr)
+            {
+                m_gl.GetShaderInfoLog(objectGL, logLengthInBytes, &logLengthInBytes, reinterpret_cast<GLchar*>(messageDst));
+                printf("%s\n", messageDst);
+            }
+            free(messageDst);
+        }
+
+
+        // If compilation failed, delete the object and return 0.
+        GLint compileStatus;
+        m_gl.GetShaderiv(objectGL, GL_COMPILE_STATUS, &compileStatus);
+        if (compileStatus == GL_FALSE)
+        {
+            // Failed to compile.
+            m_gl.DeleteShader(objectGL);
+            objectGL = 0;
+        }
+
+
+        return objectGL;
+    }
+
+    GLuint DefaultGraphicsWorld_OpenGL::CreateShader_GLSL(GLenum shaderType, const GLchar* shaderString)
+    {
+        return CreateShader_GLSL(shaderType, 1, &shaderString, nullptr);
+    }
+
+
+    GLuint DefaultGraphicsWorld_OpenGL::CreateProgram_GLSL(GLuint vertexShader, GLuint fragmentShader)
+    {
+        GLuint objectGL = m_gl.CreateProgram();
+        m_gl.AttachShader(objectGL, vertexShader);
+        m_gl.AttachShader(objectGL, fragmentShader);
+        m_gl.BindAttribLocation(objectGL, 0, "VS_Position");
+        m_gl.BindAttribLocation(objectGL, 1, "VS_TexCoord");
+        m_gl.BindAttribLocation(objectGL, 2, "VS_Normal");
+        m_gl.LinkProgram(objectGL);
+
+
+        // Check for messages.
+        GLint logLengthInBytes;
+        m_gl.GetProgramiv(objectGL, GL_INFO_LOG_LENGTH, &logLengthInBytes);
+        if (logLengthInBytes > 1)
+        {
+            void* messageDst = malloc(logLengthInBytes);
+            if (messageDst != nullptr)
+            {
+                m_gl.GetProgramInfoLog(objectGL, logLengthInBytes, &logLengthInBytes, reinterpret_cast<GLchar*>(messageDst));
+                printf("%s\n", messageDst);
+            }
+            free(messageDst);
+        }
+
+
+        // If linking failed, delete the object and return 0.
+        GLint linkStatus;
+        m_gl.GetProgramiv(objectGL, GL_LINK_STATUS, &linkStatus);
+        if (linkStatus == GL_FALSE)
+        {
+            m_gl.DeleteProgram(objectGL);
+            objectGL = 0;
+        }
+
+        return objectGL;
     }
 }
 
