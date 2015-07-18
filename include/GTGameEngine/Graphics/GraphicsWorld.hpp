@@ -7,6 +7,7 @@
 #include "GraphicsWorldObject.hpp"
 #include "../Math.hpp"
 #include "../GUI/GUIContext.hpp"
+#include "../SpirV.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
@@ -44,6 +45,8 @@ namespace GT
     /// The different types for material variables. Some of these are invalid in certain contexts, which are specific to the underlying rendering API.
     enum class GraphicsMaterialVariableType
     {
+        Unknown,
+
         Float,
         Float2,
         Float3,
@@ -54,10 +57,39 @@ namespace GT
         Integer3,
         Integer4,
 
-        Texture,
-
         Boolean,
+
+        Texture1D,
+        Texture2D,
+        Texture3D,
+        TextureCube,
     };
+
+
+    inline GraphicsMaterialVariableType ToMaterialVariableType(SpirVCommonTypeID typeSpirV)
+    {
+        switch (typeSpirV)
+        {
+        case SpirVCommonTypeID::Float:       return GraphicsMaterialVariableType::Float;
+        case SpirVCommonTypeID::Float2:      return GraphicsMaterialVariableType::Float2;
+        case SpirVCommonTypeID::Float3:      return GraphicsMaterialVariableType::Float3;
+        case SpirVCommonTypeID::Float4:      return GraphicsMaterialVariableType::Float4;
+
+        case SpirVCommonTypeID::Integer:     return GraphicsMaterialVariableType::Integer;
+        case SpirVCommonTypeID::Integer2:    return GraphicsMaterialVariableType::Integer2;
+        case SpirVCommonTypeID::Integer3:    return GraphicsMaterialVariableType::Integer3;
+        case SpirVCommonTypeID::Integer4:    return GraphicsMaterialVariableType::Integer4;
+
+        case SpirVCommonTypeID::Boolean:     return GraphicsMaterialVariableType::Boolean;
+
+        case SpirVCommonTypeID::Texture1D:   return GraphicsMaterialVariableType::Texture1D;
+        case SpirVCommonTypeID::Texture2D:   return GraphicsMaterialVariableType::Texture2D;
+        case SpirVCommonTypeID::Texture3D:   return GraphicsMaterialVariableType::Texture3D;
+        case SpirVCommonTypeID::TextureCube: return GraphicsMaterialVariableType::TextureCube;
+
+        default: return GraphicsMaterialVariableType::Unknown;
+        }
+    }
 
 
     /// Structure describing a material resource.
@@ -236,6 +268,18 @@ namespace GT
 
         /// Sets the material to use with the given mesh resource.
         virtual void SetMeshObjectMaterial(HGraphicsObject hMeshObject, unsigned int materialSlot, HGraphicsResource hMaterialResource) = 0;
+
+        /// Sets the value of a material input variable for the current mesh object.
+        virtual void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, float x) = 0;
+        virtual void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, float x, float y) = 0;
+        virtual void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, float x, float y, float z) = 0;
+        virtual void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, float x, float y, float z, float w) = 0;
+        virtual void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, int x) = 0;
+        virtual void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, int x, int y) = 0;
+        virtual void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, int x, int y, int z) = 0;
+        virtual void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, int x, int y, int z, int w) = 0;
+        virtual void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, HGraphicsResource hTexture) = 0;
+
 
         /// Deletes the given object.
         ///

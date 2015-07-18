@@ -79,6 +79,18 @@ namespace GT
         /// @copydoc GraphicsWorld::SetMeshObjectMaterial()
         void SetMeshObjectMaterial(HGraphicsObject hMeshObject, unsigned int materialSlot, HGraphicsResource hMaterialResource);
 
+        /// @copydoc GraphicsWorld::SetMeshObjectMaterialInputVariable()
+        void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, float x);
+        void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, float x, float y);
+        void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, float x, float y, float z);
+        void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, float x, float y, float z, float w);
+        void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, int x);
+        void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, int x, int y);
+        void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, int x, int y, int z);
+        void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, int x, int y, int z, int w);
+        void SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, HGraphicsResource hTexture);
+
+
         /// @copydoc GraphicsWorld::DeleteObject()
         void DeleteObject(HGraphicsObject);
 
@@ -203,6 +215,12 @@ namespace GT
 
         /// Deletes the given mesh object.
         void DeleteMeshObject(HGraphicsResource hMeshObject);
+
+        /// Helper for retrieving a pointer to the buffer that contains the value of the given variable.
+        ///
+        /// @remarks
+        ///     This is used when setting the value of a material input variable for the given mesh object.
+        void* GetMeshObjectMaterialInputVariableBufferPtr(HGraphicsObject hMeshObject, unsigned int materialSlotIndex, const char* variableName) const;
 
 
         /// Creates a shader object from the given shader strings.

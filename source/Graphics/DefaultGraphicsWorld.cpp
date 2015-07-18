@@ -121,8 +121,46 @@ namespace GT
 
     void DefaultGraphicsWorld::SetMeshObjectMaterial(HGraphicsObject hMeshObject, unsigned int materialSlot, HGraphicsResource hMaterialResource)
     {
-        return m_pGraphicsWorldImpl->SetMeshObjectMaterial(hMeshObject, materialSlot, hMaterialResource);
+        m_pGraphicsWorldImpl->SetMeshObjectMaterial(hMeshObject, materialSlot, hMaterialResource);
     }
+
+    void DefaultGraphicsWorld::SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, float x)
+    {
+        m_pGraphicsWorldImpl->SetMeshObjectMaterialInputVariable(hMeshObject, materialSlot, variableName, x);
+    }
+    void DefaultGraphicsWorld::SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, float x, float y)
+    {
+        m_pGraphicsWorldImpl->SetMeshObjectMaterialInputVariable(hMeshObject, materialSlot, variableName, x, y);
+    }
+    void DefaultGraphicsWorld::SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, float x, float y, float z)
+    {
+        m_pGraphicsWorldImpl->SetMeshObjectMaterialInputVariable(hMeshObject, materialSlot, variableName, x, y, z);
+    }
+    void DefaultGraphicsWorld::SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, float x, float y, float z, float w)
+    {
+        m_pGraphicsWorldImpl->SetMeshObjectMaterialInputVariable(hMeshObject, materialSlot, variableName, x, y, z, w);
+    }
+    void DefaultGraphicsWorld::SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, int x)
+    {
+        m_pGraphicsWorldImpl->SetMeshObjectMaterialInputVariable(hMeshObject, materialSlot, variableName, x);
+    }
+    void DefaultGraphicsWorld::SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, int x, int y)
+    {
+        m_pGraphicsWorldImpl->SetMeshObjectMaterialInputVariable(hMeshObject, materialSlot, variableName, x, y);
+    }
+    void DefaultGraphicsWorld::SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, int x, int y, int z)
+    {
+        m_pGraphicsWorldImpl->SetMeshObjectMaterialInputVariable(hMeshObject, materialSlot, variableName, x, y, z);
+    }
+    void DefaultGraphicsWorld::SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, int x, int y, int z, int w)
+    {
+        m_pGraphicsWorldImpl->SetMeshObjectMaterialInputVariable(hMeshObject, materialSlot, variableName, x, y, z, w);
+    }
+    void DefaultGraphicsWorld::SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, HGraphicsResource hTexture)
+    {
+        m_pGraphicsWorldImpl->SetMeshObjectMaterialInputVariable(hMeshObject, materialSlot, variableName, hTexture);
+    }
+
 
     void DefaultGraphicsWorld::DeleteObject(HGraphicsObject hObject)
     {

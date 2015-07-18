@@ -4,6 +4,7 @@
 #include <GTGameEngine/GameState.hpp>
 #include <GTGameEngine/Graphics/DefaultGraphicsWorld.hpp>
 #include <GTGameEngine/Assets/ModelAsset.hpp>
+#include <GTGameEngine/external/spirv.h>
 
 class SandboxGameState : public GT::GameState
 {
@@ -85,7 +86,7 @@ public:
                 GT::vec4 materialGData(0.0f, 1.0f, 0.0f, 1.0f);
                 GT::vec4 materialBData(0.0f, 0.0f, 1.0f, 1.0f);
 
-                GT::GraphicsMaterialResourceDesc materialR;
+                /*GT::GraphicsMaterialResourceDesc materialR;
                 materialR.channelDataSizeInBytes = sizeof(materialRData);
                 materialR.pChannelData = &materialRData[0];
                 m_hTestMaterialR = m_pGraphicsWorld->CreateMaterialResource(materialR);
@@ -98,7 +99,27 @@ public:
                 GT::GraphicsMaterialResourceDesc materialB;
                 materialB.channelDataSizeInBytes = sizeof(materialBData);
                 materialB.pChannelData = &materialBData[0];
-                m_hTestMaterialB = m_pGraphicsWorld->CreateMaterialResource(materialB);
+                m_hTestMaterialB = m_pGraphicsWorld->CreateMaterialResource(materialB);*/
+
+
+                GT::GraphicsMaterialResourceDesc material0;
+                material0.channelDataSizeInBytes = sizeof(materialRData);
+                material0.pChannelData = &materialRData[0];
+
+                GTLib::Vector<uint32_t> inputVariableData;
+                inputVariableData.PushBack(static_cast<uint32_t>((8 << spv::WordCountShift) | static_cast<uint32_t>(GT::SpirVOp::DeclareMaterialVariable)));
+                inputVariableData.PushBack(static_cast<uint32_t>(GT::SpirVCommonTypeID::Float4));
+                inputVariableData.PushBack(reinterpret_cast<uint32_t*>(&materialGData[0])[0]);
+                inputVariableData.PushBack(reinterpret_cast<uint32_t*>(&materialGData[0])[1]);
+                inputVariableData.PushBack(reinterpret_cast<uint32_t*>(&materialGData[0])[2]);
+                inputVariableData.PushBack(reinterpret_cast<uint32_t*>(&materialGData[0])[3]);
+                inputVariableData.PushBack(static_cast<uint32_t>('tset')); inputVariableData.PushBack(static_cast<uint32_t>('\0gni'));
+                material0.pInputVariableData           = inputVariableData.buffer;
+                material0.inputVariableDataSizeInBytes = inputVariableData.count * sizeof(uint32_t);
+
+                m_hTestMaterial0 = m_pGraphicsWorld->CreateMaterialResource(material0);
+
+                
 
 
                 GT::GraphicsMeshResourceDesc testMeshDesc;
@@ -114,19 +135,20 @@ public:
                 testMeshDesc.materialIndexOffsetCountPairs = m_pTestMeshAsset->GetMeshMaterialIndexOffsetCountPairs(0);
                 testMeshDesc.materialCount                 = m_pTestMeshAsset->GetMeshMaterialCount(0);
                 m_hTestMeshResource = m_pGraphicsWorld->CreateMeshResource(testMeshDesc);
-                m_pGraphicsWorld->SetMeshResourceMaterial(m_hTestMeshResource, 0, m_hTestMaterialR);
+                m_pGraphicsWorld->SetMeshResourceMaterial(m_hTestMeshResource, 0, m_hTestMaterial0);
 
                 m_hTestMeshObject0 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
-                m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject0, 0, m_hTestMaterialR);
+                m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject0, 0, m_hTestMaterial0);
+                m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "testing", 0.0f, 1.0f, 1.0f, 1.0f);
                 m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject0, GT::vec4(0, 0, 0, 0));
 
-                m_hTestMeshObject1 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
-                m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject1, 0, m_hTestMaterialG);
-                m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject1, GT::vec4(-2, 0, 0, 0));
+                //m_hTestMeshObject1 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
+                //m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject1, 0, m_hTestMaterialG);
+                //m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject1, GT::vec4(-2, 0, 0, 0));
 
-                m_hTestMeshObject2 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
-                m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject2, 0, m_hTestMaterialB);
-                m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject2, GT::vec4(2, 0, 0, 0));
+                //m_hTestMeshObject2 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
+                //m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject2, 0, m_hTestMaterialB);
+                //m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject2, GT::vec4(2, 0, 0, 0));
             }
         }
 
@@ -195,6 +217,8 @@ private:
     GT::HGraphicsResource m_hTestMaterialR;
     GT::HGraphicsResource m_hTestMaterialG;
     GT::HGraphicsResource m_hTestMaterialB;
+
+    GT::HGraphicsResource m_hTestMaterial0;
 
     GT::HGraphicsResource m_hTestMeshResource;
     GT::HGraphicsObject   m_hTestMeshObject0;

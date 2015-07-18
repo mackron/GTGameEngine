@@ -1033,5 +1033,8 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI_OpenGL.hpp">
       <Filter>Header Files\Graphics</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\SpirV.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

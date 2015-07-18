@@ -231,6 +231,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeIDAllocator.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeList.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneState.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\SpirV.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager_DefaultWin32.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager_Win32.hpp" />
