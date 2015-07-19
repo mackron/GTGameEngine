@@ -14,6 +14,7 @@ namespace GT
         if (hElement != NULL)
         {
             GUIContext &gui = editor.GetGUI();
+            const EditorTheme &theme = editor.GetTheme();
 
             m_pFileMenuButton = this->CreateAndInsertButton("FILE");
             this->CreateAndInsertButton("EDIT");
@@ -22,8 +23,8 @@ namespace GT
 
 
             m_pFileMenu = new EditorPopupControl(editor, hParentWindow);
-            gui.SetElementBackgroundColor(m_pFileMenu->GetRootGUIElement(), GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
-            gui.SetElementBorderColor(m_pFileMenu->GetRootGUIElement(), GTLib::Colour(0.3f, 0.3f, 0.3f, 1.0f));
+            gui.SetElementBackgroundColor(m_pFileMenu->GetRootGUIElement(), theme.backgroundPopup);
+            gui.SetElementBorderColor(m_pFileMenu->GetRootGUIElement(), theme.borderDefault);
         }
     }
 

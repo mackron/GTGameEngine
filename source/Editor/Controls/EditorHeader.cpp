@@ -10,6 +10,7 @@ namespace GT
           m_menuBar(editor, hParentWindow)
     {
         GUIContext &gui = editor.GetGUI();
+        const EditorTheme &theme = editor.GetTheme();
 
         HGUIElement hRootElement = this->GetRootGUIElement();
         if (hRootElement != NULL)
@@ -17,6 +18,7 @@ namespace GT
             gui.SetElementHeight(hRootElement, 26U);
             gui.SetElementWidthRatio(hRootElement, 1.0f);
             gui.SetElementVerticalAlign(hRootElement, VerticalAlign_Center);
+            gui.SetElementBackgroundColor(hRootElement, theme.backgroundMid);
             gui.SetElementBorderBottom(hRootElement, 1, GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
             gui.SetElementPaddingLeft(hRootElement, 2);
 

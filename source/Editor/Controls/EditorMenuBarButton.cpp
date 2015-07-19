@@ -66,6 +66,7 @@ namespace GT
         if (hElement != NULL)
         {
             GUIContext &gui = this->GetGUI();
+            const EditorTheme &theme = this->GetEditor().GetTheme();
 
             uint32_t paddingLeft   = gui.GetElementPaddingLeft(hElement);
             uint32_t paddingTop    = gui.GetElementPaddingTop(hElement);
@@ -73,7 +74,7 @@ namespace GT
             uint32_t paddingBottom = gui.GetElementPaddingBottom(hElement);
 
             uint32_t borderWidth = 1;
-            GTLib::Colour borderColor(0.3f, 0.3f, 0.3f, 1.0f);
+            GTLib::Colour borderColor(theme.borderDefault);
 
             paddingLeft   = ((paddingLeft   > borderWidth) ? (paddingLeft   - borderWidth) : (0));
             paddingTop    = ((paddingTop    > borderWidth) ? (paddingTop    - borderWidth) : (0));
@@ -84,7 +85,7 @@ namespace GT
             // Adjust the padding to compensate for the border.
             gui.BeginBatch();
             {
-                gui.SetElementBackgroundColor(hElement, GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
+                gui.SetElementBackgroundColor(hElement, theme.backgroundPopup);
 
                 gui.SetElementPaddingLeft(hElement, paddingLeft);
                 gui.SetElementPaddingTop(hElement, paddingTop);
@@ -105,6 +106,7 @@ namespace GT
         if (hElement != NULL)
         {
             GUIContext &gui = this->GetGUI();
+            const EditorTheme &theme = this->GetEditor().GetTheme();
 
 
             // Set the padding to compensate.
@@ -120,7 +122,7 @@ namespace GT
 
             gui.BeginBatch();
             {
-                gui.SetElementBackgroundColor(hElement, GTLib::Colour(0.25f, 0.25f, 0.25f, 1.0f));
+                gui.SetElementBackgroundColor(hElement, theme.backgroundMid);
 
                 gui.SetElementPaddingLeft(hElement, paddingLeft);
                 gui.SetElementPaddingTop(hElement, paddingTop);

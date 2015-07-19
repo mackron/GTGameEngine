@@ -67,10 +67,12 @@ namespace GT
           m_pActiveButton(nullptr)
     {
         GUIContext &gui = editor.GetGUI();
+        const EditorTheme &theme = editor.GetTheme();
 
         gui.SetElementChildAxis(this->GetRootGUIElement(), ChildAxis_Horizontal);
         gui.SetElementWidthToChildren(this->GetRootGUIElement());
         gui.SetElementHeightToChildren(this->GetRootGUIElement());
+        gui.SetElementBackgroundColor(this->GetRootGUIElement(), theme.backgroundMid);
         gui.SetElementFont(this->GetRootGUIElement(), "Segoe UI", FontWeight_Medium, FontSlant_None, 13);
 
 

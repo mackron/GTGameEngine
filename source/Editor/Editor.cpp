@@ -433,6 +433,8 @@ namespace GT
 
     void Editor::OnKeyPressed(HWindow hWindow, GTLib::Key key)
     {
+        (void)hWindow;
+
         if (key == GTLib::Keys::Tab)
         {
             if (m_gameContext.IsKeyDown(GTLib::Keys::Shift))
@@ -453,11 +455,17 @@ namespace GT
 
     void Editor::OnKeyReleased(HWindow hWindow, GTLib::Key key)
     {
+        (void)hWindow;
+        (void)key;
+
         //m_gui.OnKeyReleased(key);
     }
 
     void Editor::OnPrintableKeyDown(HWindow hWindow, char32_t character)
     {
+        (void)hWindow;
+        (void)character;
+
         //m_gui.OnPrintableKeyDown(character);
     }
 
@@ -533,7 +541,7 @@ namespace GT
                     {
                         m_gui.AttachElementToSurface(hElement, hSurface);
                         m_gui.SetElementSizeRatio(hElement, 1.0f, 1.0f);
-                        m_gui.SetElementBackgroundColor(hElement, GTLib::Colour(0.25f, 0.25f, 0.25f, 1));
+                        m_gui.SetElementBackgroundColor(hElement, m_theme.backgroundDark);
                         m_gui.EnableElementChildWidthFlexing(hElement);
                         m_gui.EnableElementChildHeightFlexing(hElement);
 

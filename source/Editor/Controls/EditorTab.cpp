@@ -14,11 +14,12 @@ namespace GT
         if (hRootElement != NULL)
         {
             GUIContext &gui = editor.GetGUI();
+            const EditorTheme &theme = editor.GetTheme();
 
             //gui.EnableElementChildWidthFlexing(hRootElement);
             gui.SetElementChildAxis(hRootElement, ChildAxis_Horizontal);
             gui.SetElementSizeToChildren(hRootElement);
-            gui.SetElementBorder(hRootElement, 1, GTLib::Colour(0.4f, 0.4f, 0.4f));
+            gui.SetElementBorder(hRootElement, 1, theme.borderDefault);
             gui.SetElementBorderBottomWidth(hRootElement, 0);
             
             //gui.SetElementSize(hRootElement, 200U, 28U);
@@ -78,6 +79,7 @@ namespace GT
         if (hRootElement != NULL)
         {
             GUIContext &gui = this->GetGUI();
+            const EditorTheme &theme = this->GetEditor().GetTheme();
 
             // Hide the border, and compensate with padding.
             gui.BeginBatch();
@@ -96,7 +98,7 @@ namespace GT
 
 
                 // Close button.
-                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.225f, 0.225f, 0.225f, 0.0f));
+                gui.SetElementTextColor(m_hCloseElement, theme.backgroundDark);
             }
             gui.EndBatch();
         }
@@ -108,6 +110,7 @@ namespace GT
         if (hRootElement != NULL)
         {
             GUIContext &gui = this->GetGUI();
+            //const EditorTheme &theme = this->GetEditor().GetTheme();
 
             // Hide the border, and compensate with padding.
             gui.BeginBatch();
@@ -140,6 +143,7 @@ namespace GT
         if (hRootElement != NULL)
         {
             GUIContext &gui = this->GetGUI();
+            const EditorTheme &theme = this->GetEditor().GetTheme();
 
             // Hide the border, and compensate with padding.
             gui.BeginBatch();
@@ -154,7 +158,7 @@ namespace GT
                 gui.SetElementBorderBottomWidth(hRootElement, 0U);
 
                 // Background.
-                gui.SetElementBackgroundColor(hRootElement, GTLib::Colour(0.25f, 0.25f, 0.25f));
+                gui.SetElementBackgroundColor(hRootElement, theme.backgroundMid);
 
                 // Text
                 gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.9f, 0.9f, 0.9f));

@@ -10,6 +10,7 @@
 #include "../WindowManager.hpp"
 #include "EditorEventHandler.hpp"
 #include "EditorGUIEventHandler.hpp"
+#include "EditorTheme.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include "EditorGUIRenderer_GDI.hpp"
@@ -58,6 +59,10 @@ namespace GT
         /// @return A reference to the editor's GUI context.
               GUIContext & GetGUI()       { return m_gui; }
         const GUIContext & GetGUI() const { return m_gui; }
+
+
+        /// Retrieves a reference to the editor's theme.
+        const EditorTheme & GetTheme() const { return m_theme; }
 
 
         /// Opens the editor.
@@ -324,6 +329,9 @@ namespace GT
 
         /// The global event handler.
         EditorGUIEventHandler m_globalGUIEventHandler;
+
+        /// The theme.
+        EditorTheme m_theme;
 
 
         /// The main window.

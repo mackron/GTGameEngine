@@ -16,11 +16,12 @@ namespace GT
         if (hRootElement != NULL)
         {
             GUIContext &gui = editor.GetGUI();
+            const EditorTheme &theme = editor.GetTheme();
 
             //gui.SetElementHeight(hRootElement, 28U);
             gui.SetElementHeightToChildren(hRootElement);
             gui.SetElementWidthRatio(hRootElement, 1.0f);
-            gui.SetElementBackgroundColor(hRootElement, GTLib::Colour(0.225f, 0.225f, 0.225f));
+            gui.SetElementBackgroundColor(hRootElement, theme.backgroundDark);
             gui.SetElementBorderBottom(hRootElement, 1, GTLib::Colour(0.35f, 0.35f, 0.35f));
             gui.EnableElementChildWidthFlexing(hRootElement);
             gui.SetElementChildAxis(hRootElement, ChildAxis_Horizontal);
@@ -121,9 +122,12 @@ namespace GT
             m_pActiveTab->ApplyActivatedStyle();
 
 
+            GTLib::Rect<int> tabParentRect;
+            this->GetGUI().GetElementAbsoluteRect(this->GetGUI().GetElementParent(pTab->GetRootGUIElement()), tabParentRect);
+
             GTLib::Rect<int> tabInnerRect;
             this->GetGUI().GetElementAbsoluteInnerBorderRect(pTab->GetRootGUIElement(), tabInnerRect);
-            this->GetGUI().SetElementBorderBottomMaskInPixels(this->GetRootGUIElement(), tabInnerRect.left, tabInnerRect.GetWidth(), GTLib::Colour(0.25f, 0.25f, 0.25f));
+            this->GetGUI().SetElementBorderBottomMaskInPixels(this->GetRootGUIElement(), tabInnerRect.left - tabParentRect.left, tabInnerRect.GetWidth(), GTLib::Colour(0.25f, 0.25f, 0.25f));
         }
     }
 

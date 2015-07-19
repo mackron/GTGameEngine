@@ -7,9 +7,11 @@ namespace GT
 {
     EditorControl::EditorControl(Editor &editor)
         : m_editor(editor),
-          m_hRootElement(NULL)
+          m_hRootElement(NULL),
+          m_eventHandler(*this)
     {
         m_hRootElement = editor.GetGUI().CreateElement();
+        editor.GetGUI().AttachLocalEventHandler(m_hRootElement, m_eventHandler);
     }
 
     EditorControl::~EditorControl()
@@ -44,4 +46,47 @@ namespace GT
     {
         return m_hRootElement;
     }
+
+
+
+    void EditorControl::OnMove(GUIContext &, HGUIElement, unsigned int, unsigned int)
+    {
+    }
+
+    void EditorControl::OnSize(GUIContext &, HGUIElement, int, int)
+    {
+    }
+
+    void EditorControl::OnMouseEnter(GUIContext &, HGUIElement)
+    {
+    }
+
+    void EditorControl::OnMouseLeave(GUIContext &, HGUIElement)
+    {
+    }
+
+    void EditorControl::OnMouseMove(GUIContext &, HGUIElement, int, int)
+    {
+    }
+
+    void EditorControl::OnMouseButtonPressed(GUIContext &, HGUIElement, int, int, int)
+    {
+    }
+
+    void EditorControl::OnMouseButtonReleased(GUIContext &, HGUIElement, int, int, int)
+    {
+    }
+
+    void EditorControl::OnMouseButtonDoubleClicked(GUIContext &, HGUIElement, int, int, int)
+    {
+    }
+
+    void EditorControl::OnSetMouseEventCapture(GUIContext &, HGUIElement)
+    {
+    }
+
+    void EditorControl::OnReleaseMouseEventCapture(GUIContext &, HGUIElement)
+    {
+    }
+
 }
