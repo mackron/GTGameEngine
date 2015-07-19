@@ -3121,69 +3121,73 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        GTLib::Rect<float> elementRect;
-        this->GetElementAbsoluteRect(pElement, elementRect);
-
-        // If clipping is disabled on the child we don't care about constraining the visible region - the entire rectangle will be classed as visible.
-        GTLib::Rect<float> elementVisibleRect;
-        if (this->IsElementClippedAgainstParent(pElement))
+        if (this->IsElementVisible(pElement))
         {
-            elementVisibleRect = GTLib::Rect<float>::Clamp(elementRect, clippingRect);
-        }
-        else
-        {
-            elementVisibleRect = elementRect;
-        }
+            GTLib::Rect<float> elementRect;
+            this->GetElementAbsoluteRect(pElement, elementRect);
 
-
-        bool result = true;
-
-        // If the visible rectangle has some volume we can call the function and then traverse the children.
-        if (elementVisibleRect.left < elementVisibleRect.right && elementVisibleRect.top < elementVisibleRect.bottom)
-        {
-            GTLib::Rect<int> elementVisibleRectI;
-            elementVisibleRectI.left   = static_cast<int>(GTLib::Round(elementVisibleRect.left));
-            elementVisibleRectI.top    = static_cast<int>(GTLib::Round(elementVisibleRect.top));
-            elementVisibleRectI.right  = static_cast<int>(GTLib::Round(elementVisibleRect.right));
-            elementVisibleRectI.bottom = static_cast<int>(GTLib::Round(elementVisibleRect.bottom));
-            if (!func(pElement, elementVisibleRectI))
+            // If clipping is disabled on the child we don't care about constraining the visible region - the entire rectangle will be classed as visible.
+            GTLib::Rect<float> elementVisibleRect;
+            if (this->IsElementClippedAgainstParent(pElement))
             {
-                result = false;
-                return result;
+                elementVisibleRect = GTLib::Rect<float>::Clamp(elementRect, clippingRect);
+            }
+            else
+            {
+                elementVisibleRect = elementRect;
             }
 
 
-            // Now we need to recursively call this method again, only this time we need to pass in a new clipping rectangle. The rectangle will be determined
-            // by the child clipping mode, which controls whether or not children are clipped against padding + border, only the border, or only the outside.
-            //
-            // To calculate this clipping rectangle, we start with the unclamped rectangle. We then pull it in based on our clipping boundary. Finally, we clamp
-            // against the original clipping rectangle.
-            GTLib::Rect<float> childClippingRect;
-            this->GetElementChildrenClippingRect(pElement, childClippingRect);
+            bool result = true;
 
-            // Clamp against the original clipping rectangle.
-            childClippingRect.Clamp(clippingRect);
-
-
-            // We now need to traverse the children, but only if they themselves are at least partially visible.
-            bool doesChildClippingRectangleHaveVolume = childClippingRect.left < childClippingRect.right && childClippingRect.top < childClippingRect.bottom;
-            this->IterateElementChildren(pElement, [&](GUIElement* pChild) -> bool
+            // If the visible rectangle has some volume we can call the function and then traverse the children.
+            if (elementVisibleRect.left < elementVisibleRect.right && elementVisibleRect.top < elementVisibleRect.bottom)
             {
-                if (!this->IsElementClippedAgainstParent(pChild) || doesChildClippingRectangleHaveVolume)
+                GTLib::Rect<int> elementVisibleRectI;
+                elementVisibleRectI.left   = static_cast<int>(GTLib::Round(elementVisibleRect.left));
+                elementVisibleRectI.top    = static_cast<int>(GTLib::Round(elementVisibleRect.top));
+                elementVisibleRectI.right  = static_cast<int>(GTLib::Round(elementVisibleRect.right));
+                elementVisibleRectI.bottom = static_cast<int>(GTLib::Round(elementVisibleRect.bottom));
+                if (!func(pElement, elementVisibleRectI))
                 {
-                    if (!this->ClippedTraversal(pChild, childClippingRect, func))
-                    {
-                        result = false;
-                        return false;
-                    }
+                    result = false;
+                    return result;
                 }
 
-                return true;
-            });
+
+                // Now we need to recursively call this method again, only this time we need to pass in a new clipping rectangle. The rectangle will be determined
+                // by the child clipping mode, which controls whether or not children are clipped against padding + border, only the border, or only the outside.
+                //
+                // To calculate this clipping rectangle, we start with the unclamped rectangle. We then pull it in based on our clipping boundary. Finally, we clamp
+                // against the original clipping rectangle.
+                GTLib::Rect<float> childClippingRect;
+                this->GetElementChildrenClippingRect(pElement, childClippingRect);
+
+                // Clamp against the original clipping rectangle.
+                childClippingRect.Clamp(clippingRect);
+
+
+                // We now need to traverse the children, but only if they themselves are at least partially visible.
+                bool doesChildClippingRectangleHaveVolume = childClippingRect.left < childClippingRect.right && childClippingRect.top < childClippingRect.bottom;
+                this->IterateElementChildren(pElement, [&](GUIElement* pChild) -> bool
+                {
+                    if (!this->IsElementClippedAgainstParent(pChild) || doesChildClippingRectangleHaveVolume)
+                    {
+                        if (!this->ClippedTraversal(pChild, childClippingRect, func))
+                        {
+                            result = false;
+                            return false;
+                        }
+                    }
+
+                    return true;
+                });
+            }
+
+            return result;
         }
 
-
-        return result;
+        return true;
     }
 
 
