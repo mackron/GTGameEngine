@@ -68,6 +68,7 @@
     <ClCompile Include="..\..\..\source\Core\Timing\TimingCommon.cpp" />
     <ClCompile Include="..\..\..\source\Core\ToString.cpp" />
     <ClCompile Include="..\..\..\source\Core\Windowing\Clipboard.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorAssetExplorer.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorBody.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorControl.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorFooter.cpp" />
@@ -86,6 +87,77 @@
     <ClCompile Include="..\..\..\source\Editor\EditorGUIRenderer_GDI.cpp" />
     <ClCompile Include="..\..\..\source\EngineContext.cpp" />
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lapi.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lauxlib.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lbaselib.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lbitlib.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lcode.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lcorolib.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lctype.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ldblib.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ldebug.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ldo.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ldump.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lfunc.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lgc.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\linit.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\liolib.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\llex.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lmathlib.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lmem.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\loadlib.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lobject.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lopcodes.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\loslib.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lparser.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lstate.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lstring.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lstrlib.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ltable.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ltablib.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ltm.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lundump.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lutf8lib.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lvm.c" />
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lzio.c" />
+    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\archivers\dir.c" />
+    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\archivers\zip.c" />
+    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\physfs.c" />
+    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\physfs_byteorder.c" />
+    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\physfs_unicode.c" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\boxcylinder.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\collision.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\collisionbody.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\constraint.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\cylinder.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\dcd.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\lines.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\ne_interface.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\perfwin32.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\region.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\restcontact.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\rigidbody.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\rigidbodybase.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\scenery.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\simulator.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\solver.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\sphere.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\stack.cpp" />
+    <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\tricollision.cpp" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\adler32.c" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\compress.c" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\crc32.c" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\deflate.c" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\gzclose.c" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\gzlib.c" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\gzread.c" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\gzwrite.c" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\infback.c" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\inflate.c" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\inftrees.c" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\trees.c" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\uncompr.c" />
+    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\zutil.c" />
     <ClCompile Include="..\..\..\source\FileSystem.cpp" />
     <ClCompile Include="..\..\..\source\FileSystem\File.cpp" />
     <ClCompile Include="..\..\..\source\FileSystem\File_Native.cpp" />
@@ -158,6 +230,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Components\Component.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Components\ComponentTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Config.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorAssetExplorer.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorBody.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorControl.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorFooter.hpp" />
@@ -175,6 +248,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIEventHandler.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIRenderer_GDI.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUISurfaceAUXData.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorTheme.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\FileDataTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\FileSystem.hpp" />
@@ -316,6 +390,17 @@
     <ClInclude Include="..\..\..\source\Core\FontEngine_FCFT.hpp" />
     <ClInclude Include="..\..\..\source\Core\FontEngine_Win32.hpp" />
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
+    <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\collision.h" />
+    <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\collision2.h" />
+    <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\constraint.h" />
+    <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\containers.h" />
+    <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\dcd.h" />
+    <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\message.h" />
+    <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\perfwin32.h" />
+    <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\rigidbody.h" />
+    <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\scenery.h" />
+    <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\simulator.h" />
+    <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\stack.h" />
     <ClInclude Include="..\..\..\source\FileSystem\File.hpp" />
     <ClInclude Include="..\..\..\source\FileSystem\File_Native.hpp" />
     <ClInclude Include="..\..\..\source\GameContext_Win32.hpp" />
@@ -395,7 +480,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\source\external\tokamak\include;..\..\..\source\external\physfs-2.0.3;..\..\..\source\external\zlib-1.2.8;..\..\..\include</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
@@ -413,7 +498,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\source\external\tokamak\include;..\..\..\source\external\physfs-2.0.3;..\..\..\source\external\zlib-1.2.8;..\..\..\include</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>
@@ -434,7 +519,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\source\external\tokamak\include;..\..\..\source\external\physfs-2.0.3;..\..\..\source\external\zlib-1.2.8;..\..\..\include</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
@@ -456,7 +541,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\source\external\tokamak\include;..\..\..\source\external\physfs-2.0.3;..\..\..\source\external\zlib-1.2.8;..\..\..\include</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>
