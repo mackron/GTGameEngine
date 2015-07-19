@@ -1847,6 +1847,8 @@ namespace GTLib
 
     void TextManager::Render(const TextManagerRenderingOptions &options, TextManagerRenderingInfo &renderingInfo)
     {
+        (void)options;
+
         // First thing we do is ensure the existing rendering info is cleared.
         renderingInfo.Clear();
         
