@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_layout_file>
+	<ActiveTarget name="Release" />
+	<File name="src/boxcylinder.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="6352" topLine="256" />
+	</File>
+	<File name="src/collision.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="49901" topLine="2457" />
+	</File>
+	<File name="src/constraint.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="30933" topLine="1585" />
+	</File>
+	<File name="src/containers.h" open="0" top="0" tabpos="0">
+		<Cursor position="5105" topLine="207" />
+	</File>
+	<File name="src/cylinder.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="17882" topLine="756" />
+	</File>
+	<File name="src/dcd.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="32634" topLine="1553" />
+	</File>
+	<File name="src/dcd.h" open="0" top="0" tabpos="0">
+		<Cursor position="2198" topLine="23" />
+	</File>
+	<File name="src/ne_interface.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="90383" topLine="3793" />
+	</File>
+	<File name="src/perflinux.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="1923" topLine="46" />
+	</File>
+	<File name="src/perflinux.h" open="0" top="0" tabpos="0">
+		<Cursor position="943" topLine="0" />
+	</File>
+	<File name="src/region.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="12032" topLine="526" />
+	</File>
+	<File name="src/rigidbody.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="2675" topLine="79" />
+	</File>
+	<File name="src/scenery.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="22156" topLine="875" />
+	</File>
+	<File name="src/scenery.h" open="0" top="0" tabpos="0">
+		<Cursor position="1762" topLine="35" />
+	</File>
+	<File name="src/simulator.h" open="0" top="0" tabpos="0">
+		<Cursor position="6128" topLine="279" />
+	</File>
+	<File name="src/useopcode.cpp" open="0" top="0" tabpos="0">
+		<Cursor position="3675" topLine="74" />
+	</File>
+</CodeBlocks_layout_file>

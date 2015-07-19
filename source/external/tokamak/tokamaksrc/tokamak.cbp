@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="tokamak" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug">
+				<Option output="../lib/libtokamakd.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="tmp/debug" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-W" />
+					<Add option="-g" />
+					<Add option="-O0" />
+					<Add directory="../include" />
+					<Add directory="../opcode" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="../include" />
+					<Add directory="../opcode" />
+				</ResourceCompiler>
+			</Target>
+			<Target title="Release">
+				<Option output="../lib/libtokamak.a" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="tmp/release" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-O2" />
+					<Add option="-W" />
+					<Add directory="../include" />
+					<Add directory="../opcode" />
+				</Compiler>
+				<ResourceCompiler>
+					<Add directory="../include" />
+					<Add directory="../opcode" />
+				</ResourceCompiler>
+			</Target>
+		</Build>
+		<Unit filename="../include/tokamak.h" />
+		<Unit filename="../readme.txt" />
+		<Unit filename="note.txt" />
+		<Unit filename="src/boxcylinder.cpp" />
+		<Unit filename="src/collision.cpp" />
+		<Unit filename="src/collision.h" />
+		<Unit filename="src/collision2.h" />
+		<Unit filename="src/collisionbody.cpp" />
+		<Unit filename="src/constraint.cpp" />
+		<Unit filename="src/constraint.h" />
+		<Unit filename="src/containers.h" />
+		<Unit filename="src/cylinder.cpp" />
+		<Unit filename="src/dcd.cpp" />
+		<Unit filename="src/dcd.h" />
+		<Unit filename="src/lines.cpp" />
+		<Unit filename="src/message.h" />
+		<Unit filename="src/ne_interface.cpp" />
+		<Unit filename="src/perflinux.cpp" />
+		<Unit filename="src/perflinux.h" />
+		<Unit filename="src/region.cpp" />
+		<Unit filename="src/restcontact.cpp" />
+		<Unit filename="src/rigidbody.cpp" />
+		<Unit filename="src/rigidbody.h" />
+		<Unit filename="src/rigidbodybase.cpp" />
+		<Unit filename="src/scenery.cpp" />
+		<Unit filename="src/scenery.h" />
+		<Unit filename="src/simulator.cpp" />
+		<Unit filename="src/simulator.h" />
+		<Unit filename="src/solver.cpp" />
+		<Unit filename="src/sphere.cpp" />
+		<Unit filename="src/stack.cpp" />
+		<Unit filename="src/stack.h" />
+		<Unit filename="src/tricollision.cpp" />
+		<Unit filename="src/useopcode.cpp" />
+		<Extensions>
+			<envvars />
+			<code_completion />
+		</Extensions>
+	</Project>
+</CodeBlocks_project_file>

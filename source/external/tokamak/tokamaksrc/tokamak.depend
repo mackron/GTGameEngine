@@ -1,0 +1,348 @@
+# depslib dependency file v1.0
+1184910869 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/boxcylinder.cpp
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"collision2.h"
+	"constraint.h"
+	"rigidbody.h"
+	<assert.h>
+	<stdio.h>
+
+1179285288 /home/ice/downloads/tokamak/linux-new/include/tokamak.h
+	<malloc.h>
+	"math/ne_math.h"
+
+1184726026 /home/ice/downloads/tokamak/linux-new/include/math/ne_math.h
+	"Opcode.h"
+	<math.h>
+	<float.h>
+	"ne_type.h"
+	"ne_debug.h"
+	"ne_smath.h"
+	"ne_math_misc_inline.h"
+	"ne_math_v3_inline.h"
+	"ne_math_v4_inline.h"
+	"ne_math_m4_inline.h"
+	"ne_math_m3_inline.h"
+	"ne_math_q_inline.h"
+	"ne_math_t3_inline.h"
+
+1184909666 /home/ice/downloads/tokamak/linux-new/include/math/ne_type.h
+	<stdarg.h>
+
+1179367034 /home/ice/downloads/tokamak/linux-new/include/math/ne_debug.h
+	<windows.h>
+	<stdio.h>
+	<assert.h>
+
+1184909641 /home/ice/downloads/tokamak/linux-new/include/math/ne_smath.h
+	<math.h>
+	"ne_type.h"
+
+1184910789 /home/ice/downloads/tokamak/linux-new/include/math/ne_math_misc_inline.h
+	<stdlib.h>
+
+1184909651 /home/ice/downloads/tokamak/linux-new/include/math/ne_math_v3_inline.h
+
+1184727030 /home/ice/downloads/tokamak/linux-new/include/math/ne_math_v4_inline.h
+
+1184727274 /home/ice/downloads/tokamak/linux-new/include/math/ne_math_m4_inline.h
+
+1184910869 /home/ice/downloads/tokamak/linux-new/include/math/ne_math_m3_inline.h
+
+1184909715 /home/ice/downloads/tokamak/linux-new/include/math/ne_math_q_inline.h
+
+1184910789 /home/ice/downloads/tokamak/linux-new/include/math/ne_math_t3_inline.h
+
+1184910807 /home/ice/downloads/tokamak/linux-new/tokamaksrc/src/containers.h
+	<memory.h>
+
+1179366952 /home/ice/downloads/tokamak/linux-new/tokamaksrc/src/scenery.h
+
+1179366784 /home/ice/downloads/tokamak/linux-new/tokamaksrc/src/collision.h
+
+1179366794 /home/ice/downloads/tokamak/linux-new/tokamaksrc/src/collision2.h
+
+1179366820 /home/ice/downloads/tokamak/linux-new/tokamaksrc/src/constraint.h
+
+1179366930 /home/ice/downloads/tokamak/linux-new/tokamaksrc/src/rigidbody.h
+
+1184910870 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/collision.cpp
+	"stdio.h"
+	<windows.h>
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"collision2.h"
+	"constraint.h"
+	"rigidbody.h"
+	"scenery.h"
+	"stack.h"
+	"simulator.h"
+	"message.h"
+	"dcd.h"
+
+1179366992 /home/ice/downloads/tokamak/linux-new/tokamaksrc/src/stack.h
+
+1179366966 /home/ice/downloads/tokamak/linux-new/tokamaksrc/src/simulator.h
+
+1179366858 /home/ice/downloads/tokamak/linux-new/tokamaksrc/src/message.h
+
+1184910789 /home/ice/downloads/tokamak/linux-new/tokamaksrc/src/dcd.h
+
+1179366802 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/collisionbody.cpp
+	"stdio.h"
+	<windows.h>
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"constraint.h"
+	"rigidbody.h"
+	"scenery.h"
+	"stack.h"
+	"simulator.h"
+	"message.h"
+
+1184910870 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/constraint.cpp
+	"stdio.h"
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"constraint.h"
+	"rigidbody.h"
+	"scenery.h"
+	"stack.h"
+	"simulator.h"
+	"message.h"
+
+1184910870 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/cylinder.cpp
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"collision2.h"
+	"constraint.h"
+	"rigidbody.h"
+	<assert.h>
+	<stdio.h>
+
+1184910870 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/dcd.cpp
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"collision2.h"
+	"constraint.h"
+	"rigidbody.h"
+	"scenery.h"
+	"stack.h"
+	"simulator.h"
+	"message.h"
+	"dcd.h"
+
+1179366852 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/lines.cpp
+	"stdio.h"
+	<windows.h>
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"constraint.h"
+	"rigidbody.h"
+	"scenery.h"
+	"stack.h"
+	"simulator.h"
+	"message.h"
+
+1184910870 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/ne_interface.cpp
+	"math/ne_type.h"
+	"math/ne_debug.h"
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"constraint.h"
+	"rigidbody.h"
+	<windows.h>
+	"stack.h"
+	"simulator.h"
+	"message.h"
+	"stdio.h"
+
+1184910721 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/perflinux.cpp
+	"math/ne_type.h"
+	"math/ne_debug.h"
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"constraint.h"
+	"rigidbody.h"
+	"scenery.h"
+	"stack.h"
+	"simulator.h"
+	"perflinux.h"
+	<sys/time.h>
+
+1184910549 /home/ice/downloads/tokamak/linux-new/tokamaksrc/src/perflinux.h
+
+1184910870 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/region.cpp
+	"math/ne_type.h"
+	"math/ne_debug.h"
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"constraint.h"
+	"rigidbody.h"
+	"scenery.h"
+	<windows.h>
+	"stack.h"
+	"simulator.h"
+	<stdio.h>
+	<assert.h>
+
+1179366914 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/restcontact.cpp
+	"stdio.h"
+	<windows.h>
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"constraint.h"
+	"rigidbody.h"
+	"scenery.h"
+	"stack.h"
+	"simulator.h"
+	"message.h"
+
+1184910892 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/rigidbody.cpp
+	"stdio.h"
+	<windows.h>
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"constraint.h"
+	"rigidbody.h"
+	"scenery.h"
+	"stack.h"
+	"simulator.h"
+	"message.h"
+
+1179366938 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/rigidbodybase.cpp
+	"stdio.h"
+	<windows.h>
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"constraint.h"
+	"rigidbody.h"
+	"scenery.h"
+	"stack.h"
+	"simulator.h"
+	"message.h"
+
+1184910918 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/scenery.cpp
+	"math/ne_type.h"
+	"math/ne_debug.h"
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"constraint.h"
+	"rigidbody.h"
+	"scenery.h"
+	<windows.h>
+	"stack.h"
+	"simulator.h"
+	<math.h>
+	<stdio.h>
+
+1184895820 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/simulator.cpp
+	"math/ne_type.h"
+	"math/ne_debug.h"
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"constraint.h"
+	"rigidbody.h"
+	"stack.h"
+	"simulator.h"
+	"scenery.h"
+	"message.h"
+	<stdio.h>
+	<windows.h>
+
+1184895818 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/solver.cpp
+	"math/ne_type.h"
+	"math/ne_debug.h"
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"constraint.h"
+	"rigidbody.h"
+	"stack.h"
+	"simulator.h"
+	"scenery.h"
+	"message.h"
+
+1179366980 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/sphere.cpp
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"collision2.h"
+	"constraint.h"
+	"rigidbody.h"
+	<assert.h>
+	<stdio.h>
+
+1179366986 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/stack.cpp
+	"math/ne_type.h"
+	"math/ne_debug.h"
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"constraint.h"
+	"rigidbody.h"
+	<windows.h>
+	"stack.h"
+	"simulator.h"
+	"scenery.h"
+	<algorithm>
+	<assert.h>
+
+1179366998 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/tricollision.cpp
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"collision2.h"
+	"dcd.h"
+	<assert.h>
+	<stdio.h>
+
+1184910773 source:/home/ice/downloads/tokamak/linux-new/tokamaksrc/src/useopcode.cpp
+	<stdio.h>
+	"tokamak.h"
+	"containers.h"
+	"scenery.h"
+	"collision.h"
+	"collision2.h"
+	"constraint.h"
+	"rigidbody.h"
+	"scenery.h"
+	"stack.h"
+	"simulator.h"
+	"message.h"
+
