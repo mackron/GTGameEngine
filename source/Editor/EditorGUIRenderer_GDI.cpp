@@ -164,6 +164,8 @@ namespace GT
                         wchar_t* buffer = reinterpret_cast<wchar_t*>(malloc(sizeof(wchar_t) * bufferSize));
                         if (buffer != nullptr)
                         {
+                            MultiByteToWideChar(CP_UTF8, 0, textRunDesc.text.c_str(), -1, buffer, sizeof(wchar_t)*bufferSize);
+
                             TextOutW(m_ps.hdc, textRunDesc.xPos, textRunDesc.yPos, buffer, bufferSize - 1);
                             free(buffer);
                         }
