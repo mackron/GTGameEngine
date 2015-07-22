@@ -6,11 +6,56 @@
 #include <GTGameEngine/Editor/Controls/EditorBody.hpp>
 #include <GTGameEngine/Editor/Controls/EditorFooter.hpp>
 #include <GTGameEngine/GameContext.hpp>
+#include <GTGameEngine/EngineContext.hpp>
 
 #include <GTGameEngine/Editor/Controls/EditorPopupControl.hpp>
+#include "../external/easy_fsw/easy_fsw.h"
 
 namespace GT
 {
+    void EditorFSWProc(void* pEditorIn)
+    {
+        auto pEditor = reinterpret_cast<Editor*>(pEditorIn);
+        if (pEditor != nullptr)
+        {
+            easyfsw_event e;
+            while (easyfsw_nextevent(pEditor->GetFileSystemWatcher(), &e))
+            {
+                switch (e.type)
+                {
+                case easyfsw_event_type_created:
+                    {
+                        pEditor->OnFileCreated(e.absolutePath);
+                        break;
+                    }
+
+                case easyfsw_event_type_deleted:
+                    {
+                        pEditor->OnFileDeleted(e.absolutePath);
+                        break;
+                    }
+
+                case easyfsw_event_type_renamed:
+                    {
+                        pEditor->OnFileRenamed(e.absolutePath, e.absolutePathNew);
+                        break;
+                    }
+
+                case easyfsw_event_type_updated:
+                    {
+                        pEditor->OnFileUpdated(e.absolutePath);
+                        break;
+                    }
+
+                default: break;
+                }
+            }
+
+            printf("File System Watcher Thread Closed.\n");
+        }
+    }
+
+
     Editor::Editor(GT::GameContext &gameContext)
         : m_gameContext(gameContext),
           m_guiRenderer(),
@@ -20,6 +65,7 @@ namespace GT
           m_hMainWindow(NULL),
           m_windowSurfaceMap(),
           m_eventHandlers(),
+          m_fileSystemWatcherThread(), m_pFSW(nullptr),
           m_isOpen(false),
           m_pHeaderControl(nullptr),
           m_pBodyControl(nullptr),
@@ -34,6 +80,9 @@ namespace GT
 
     bool Editor::Startup()
     {
+        // Try creating the file system watcher. No need to return false here, but we should post a warning showing that auto asset reloading is disabled.
+        this->StartupFileSystemWatcher();
+
         // We need to reuse the main game window. If we don't have at least one we'll have to return false. The main game window is
         // the window at index 0.
         unsigned int windowCount = m_gameContext.GetWindowCount();
@@ -81,6 +130,9 @@ namespace GT
 
     void Editor::Shutdown()
     {
+        this->ShutdownFileSystemWatcher();
+
+
         // TODO: Delete all surfaces and elements.
 
         m_gui.DetachGlobalEventHandler(m_globalGUIEventHandler);
@@ -89,6 +141,49 @@ namespace GT
         // Remove all event handlers.
         m_eventHandlers.Clear();
     }
+
+
+    bool Editor::StartupFileSystemWatcher()
+    {
+        m_pFSW = easyfsw_create_context();
+        if (m_pFSW)
+        {
+            // Add the base directories.
+            size_t baseDirectoryCount = m_gameContext.GetEngineContext().GetFileSystem().GetBaseDirectoryCount();
+            for (size_t iBaseDirectory = 0; iBaseDirectory < baseDirectoryCount; ++iBaseDirectory)
+            {
+                easyfsw_add_directory(m_pFSW, m_gameContext.GetEngineContext().GetFileSystem().GetBaseDirectoryByIndex(iBaseDirectory).c_str());
+            }
+
+
+            // Start watching the file system on another thread.
+            m_fileSystemWatcherThread.Start(EditorFSWProc, this);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    void Editor::ShutdownFileSystemWatcher()
+    {
+        if (m_pFSW != NULL)
+        {
+            // When deleting the context, we want to set the pointer to null first so that easyfsw_nextevent() returns 0.
+            easyfsw_context* pFSWOld = m_pFSW;
+            m_pFSW = nullptr;
+            easyfsw_delete_context(pFSWOld);
+
+            // Wait for the watcher thread the close before returning.
+            m_fileSystemWatcherThread.Wait();
+        }
+    }
+
+    easyfsw_context* Editor::GetFileSystemWatcher()
+    {
+        return m_pFSW;
+    }
+
 
 
     bool Editor::Open()
@@ -476,6 +571,27 @@ namespace GT
         {
             m_gui.PaintSurface(hSurface, rect, nullptr);
         }
+    }
+
+
+    void Editor::OnFileCreated(const char* absolutePath)
+    {
+        printf("FILE CREATED: %s\n", absolutePath);
+    }
+
+    void Editor::OnFileDeleted(const char* absolutePath)
+    {
+        printf("FILE DELETED: %s\n", absolutePath);
+    }
+
+    void Editor::OnFileRenamed(const char* absolutePathOld, const char* absolutePathNew)
+    {
+        printf("FILE RENAMED: %s -> %s\n", absolutePathOld, absolutePathNew);
+    }
+
+    void Editor::OnFileUpdated(const char* absolutePath)
+    {
+        printf("FILE UPDATED: %s\n", absolutePath);
     }
 
 

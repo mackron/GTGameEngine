@@ -20,6 +20,9 @@
 #include <GTLib/Keyboard.hpp>
 #include <GTLib/Map.hpp>
 #include <GTLib/Vector.hpp>
+#include <GTLib/Threading/Thread.hpp>
+
+typedef void* easyfsw_context;
 
 namespace GT
 {
@@ -52,6 +55,16 @@ namespace GT
 
         /// Shuts down the editor.
         void Shutdown();
+
+
+        /// Starts up the event file system watcher.
+        bool StartupFileSystemWatcher();
+
+        /// Shuts down the file system watcher.
+        void ShutdownFileSystemWatcher();
+
+        /// Retrieves a pointer to the file system watcher.
+        easyfsw_context* GetFileSystemWatcher();
 
 
         /// Retrieves a reference to the editor's GUI context.
@@ -226,6 +239,26 @@ namespace GT
         void OnPaintWindow(HWindow hWindow, const GTLib::Rect<int> &rect);
 
 
+        /// Called from the file system watcher thread when a file in one of the base directories has been created.
+        ///
+        /// @param absolutePath [in] The absolute path of the file.
+        void OnFileCreated(const char* absolutePath);
+
+        /// Called from the file system watcher thread when a file in one of the base directories has been deleted.
+        ///
+        /// @param absolutePath [in] The absolute path of the file.
+        void OnFileDeleted(const char* absolutePath);
+
+        /// Called from the file system watcher thread when a file in one of the base directories has been renamed.
+        ///
+        /// @param absolutePathOld [in] The absolute path of the file.
+        void OnFileRenamed(const char* absolutePathOld, const char* absolutePathNew);
+
+        /// Called from the file system watcher thread when a file in one of the base directories has been updated.
+        ///
+        /// @param absolutePath [in] The absolute path of the file.
+        void OnFileUpdated(const char* absolutePath);
+
 
     private:
 
@@ -341,9 +374,14 @@ namespace GT
         /// Every window in the editor has a GUI surface associated with it. This maps a window to a surface/element.
         GTLib::Map<HWindow, WindowGUISurfaceAndElement> m_windowSurfaceMap;
 
-
         /// The list of event handlers.
         GTLib::Vector<EditorEventHandler*> m_eventHandlers;
+
+        /// The thread that will watch for changes to the file system.
+        GTLib::Thread m_fileSystemWatcherThread;
+
+        /// The file system watcher.
+        easyfsw_context* m_pFSW;
 
 
         /// Keeps track of whether or not the editor is open.
