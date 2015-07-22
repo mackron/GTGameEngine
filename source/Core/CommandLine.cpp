@@ -38,7 +38,7 @@ namespace GTLib
         char executablePath[4096];
 #if defined(GT_PLATFORM_WINDOWS)
         GetModuleFileNameA(NULL, executablePath, 4096);
-        m_executablePath = executablePath;
+        m_executablePath = IO::CleanPath(executablePath);
 #elif defined(GT_PLATFORM_LINUX)
         readlink("/proc/self/etc", executablePath, 4096);
         m_executablePath = executablePath;
