@@ -19,6 +19,40 @@ namespace GT
 {
     typedef size_t HFile;
 
+    /// Structure containing information about a file.
+    struct FileInfo
+    {
+        FileInfo()
+            : absolutePath(),
+              relativePath(),
+              sizeInBytes(0),
+              lastModifiedTime(0),
+              flags(0)
+        {
+        }
+
+        /// The absolute path of the file.
+        GTLib::String absolutePath;
+
+        /// The relative path of the file.
+        GTLib::String relativePath;
+
+        /// The size of the file.
+        int64_t sizeInBytes;
+
+        /// The time of the last modification.
+        time_t lastModifiedTime;
+
+        /// Flags.
+        uint32_t flags;
+
+
+        //////////////////////////////////////////
+        // Flags
+
+        static const uint32_t IsDirectory = (1 << 0);   //< Whether or not the file is a directory.
+    };
+
     /// Class representing the engine's virtual file system.
     ///
     /// The virtual file system is basically just an abstraction layer around the various method of working with files. This abstraction
@@ -73,6 +107,33 @@ namespace GT
 
         /// Removes all base directories.
         void RemoveAllBaseDirectories();
+
+
+        /// Retrieves the number of base directories.
+        ///
+        /// @return
+        ///     The returned value includes both normal and low-priority directories.
+        ///     @par
+        ///     Use the return value to retrieve the base directory at that given index.
+        size_t GetBaseDirectoryCount() const;
+
+        /// Retrieves a base directory by it's index.
+        ///
+        /// @param index [in] The index of the directory to retrieve.
+        GTLib::String GetBaseDirectoryByIndex(size_t index) const;
+
+
+        /// Iterates over every file and directory in the given directory.
+        ///
+        /// @param absolutePath [in] The absolute path of the directory whose contents are being iterated.
+        /// 
+        /// @remarks
+        ///     This is not recursive.
+        ///     @par
+        ///     To iterate over the files and directories in a base directory, do IterateFiles(GetBaseDirectoryByIndex(baseIndex)).
+        ///     @par
+        ///     Do not delete files during the iteration.
+        bool IterateFiles(const char* absolutePath, std::function<bool (const FileInfo &fi)> func) const;
 
 
         /// Finds an absolute path from the given path using the base directories.
@@ -181,12 +242,6 @@ namespace GT
         /// @remarks
         ///     The file will be automatically unmapped when CloseFile is called.
         void UnmapFile(HFile hFile);
-
-
-
-
-        ///////////////////////////////////////////////////////////////////
-        // Static Helpers
 
 
     private:

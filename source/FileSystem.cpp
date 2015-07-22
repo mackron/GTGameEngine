@@ -3,20 +3,10 @@
 #include <GTGameEngine/FileSystem.hpp>
 #include "FileSystem/File_Native.hpp"
 
-#if defined(GT_PLATFORM_WINDOWS)
-#endif
-
-#if defined(GT_PLATFORM_LINUX)
-#endif
-
-
 #include <GTLib/IO.hpp>
 
 namespace GT
 {
-    /////////////////////////////////////////////
-    // FileSystem
-
     FileSystem::FileSystem()
         : m_baseDirectories(4),
           m_baseDirectoriesLowPriority(1)
@@ -36,18 +26,19 @@ namespace GT
 
     void FileSystem::Shutdown()
     {
+        this->RemoveAllBaseDirectories();
     }
 
 
     ResultCode FileSystem::AddBaseDirectory(const char* absolutePath)
     {
-        m_baseDirectories.PushBack(absolutePath);
+        m_baseDirectories.PushBack(GTLib::IO::CleanPath(absolutePath).c_str());
         return 0;
     }
 
     ResultCode FileSystem::AddLowPriorityBaseDirectory(const char* absolutePath)
     {
-        m_baseDirectoriesLowPriority.PushBack(absolutePath);
+        m_baseDirectoriesLowPriority.PushBack(GTLib::IO::CleanPath(absolutePath).c_str());
         return 0;
     }
 
@@ -74,10 +65,105 @@ namespace GT
         }
     }
 
+
+
+
+
     void FileSystem::RemoveAllBaseDirectories()
     {
         m_baseDirectories.Clear();
         m_baseDirectoriesLowPriority.Clear();
+    }
+
+
+
+    size_t FileSystem::GetBaseDirectoryCount() const
+    {
+        return m_baseDirectories.GetCount() + m_baseDirectoriesLowPriority.GetCount();
+    }
+
+    GTLib::String FileSystem::GetBaseDirectoryByIndex(size_t index) const
+    {
+        assert(index < this->GetBaseDirectoryCount());
+
+        if (index < m_baseDirectories.GetCount())
+        {
+            return m_baseDirectories[index];
+        }
+        else
+        {
+            return m_baseDirectoriesLowPriority[index - m_baseDirectories.GetCount()];
+        }
+    }
+
+
+    bool FileSystem::IterateFiles(const char* absolutePath, std::function<bool (const FileInfo &fi)> func) const
+    {
+#if defined(GT_PLATFORM_WINDOWS)
+        WIN32_FIND_DATAA ffd;
+
+        // We need to put a '*' as the wildcard symbol on Windows. This will find every file in the directory. We then
+        // use our own regex matcher for doing matching.
+        size_t directoryLength = strlen(absolutePath);
+        if (directoryLength < 4096 - 3)
+        {
+            char directoryQuery[4096];
+            memcpy(directoryQuery, absolutePath, directoryLength);
+
+            directoryQuery[directoryLength + 0] = '\\';
+            directoryQuery[directoryLength + 1] = '*';
+            directoryQuery[directoryLength + 2] = '\0';
+
+            bool wantToTerminate = false;
+            HANDLE hFind = FindFirstFileA(directoryQuery, &ffd);
+            if (hFind != INVALID_HANDLE_VALUE)
+            {
+                do
+                {
+                    // We need to ignore '.' and '..' directories. In the case of '..', it will actually mess up our base path.
+                    if (!GTLib::Strings::Equal(ffd.cFileName, ".") && !GTLib::Strings::Equal(ffd.cFileName, ".."))
+                    {
+                        LARGE_INTEGER liSize;
+                        liSize.LowPart  = ffd.nFileSizeLow;
+                        liSize.HighPart = ffd.nFileSizeHigh;
+
+                        LARGE_INTEGER liTime;
+                        liTime.LowPart  = ffd.ftLastWriteTime.dwLowDateTime;
+                        liTime.HighPart = ffd.ftLastWriteTime.dwHighDateTime;
+
+
+                        FileInfo newFI;
+                        newFI.relativePath     = ffd.cFileName;
+                        newFI.absolutePath     = absolutePath; newFI.absolutePath += "/"; newFI.absolutePath += ffd.cFileName;
+                        newFI.sizeInBytes      = liSize.QuadPart;
+                        newFI.lastModifiedTime = liTime.QuadPart;
+                        newFI.flags            = 0;
+
+                        if ((ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
+                        {
+                            newFI.flags |= FileInfo::IsDirectory;
+                        }
+
+
+                        if (!func(newFI))
+                        {
+                            wantToTerminate = true;
+                        }
+                    }
+
+                } while (!wantToTerminate && FindNextFileA(hFind, &ffd) != 0);
+
+
+                // Now we need to close the handle.
+                FindClose(hFind);
+            }
+
+
+            return !wantToTerminate;
+        }
+#endif
+
+        return true;
     }
 
 
@@ -249,9 +335,4 @@ namespace GT
             
         return false;
     }
-
-
-    ///////////////////////////////////////////////////////////////////
-    // Static Helpers
-
 }
