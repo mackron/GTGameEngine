@@ -87,6 +87,7 @@
     <ClCompile Include="..\..\..\source\Editor\EditorGUIRenderer_GDI.cpp" />
     <ClCompile Include="..\..\..\source\EngineContext.cpp" />
     <ClCompile Include="..\..\..\source\external\easycl\easycl.c" />
+    <ClCompile Include="..\..\..\source\external\easy_fsw\easy_fsw.c" />
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lapi.c" />
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lauxlib.c" />
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lbaselib.c" />
@@ -120,11 +121,6 @@
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lutf8lib.c" />
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lvm.c" />
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lzio.c" />
-    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\archivers\dir.c" />
-    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\archivers\zip.c" />
-    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\physfs.c" />
-    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\physfs_byteorder.c" />
-    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\physfs_unicode.c" />
     <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\boxcylinder.cpp" />
     <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\collision.cpp" />
     <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\collisionbody.cpp" />
@@ -144,20 +140,6 @@
     <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\sphere.cpp" />
     <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\stack.cpp" />
     <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\tricollision.cpp" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\adler32.c" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\compress.c" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\crc32.c" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\deflate.c" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\gzclose.c" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\gzlib.c" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\gzread.c" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\gzwrite.c" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\infback.c" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\inflate.c" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\inftrees.c" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\trees.c" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\uncompr.c" />
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\zutil.c" />
     <ClCompile Include="..\..\..\source\FileSystem.cpp" />
     <ClCompile Include="..\..\..\source\FileSystem\File.cpp" />
     <ClCompile Include="..\..\..\source\FileSystem\File_Native.cpp" />
@@ -390,6 +372,7 @@
     <ClInclude Include="..\..\..\source\Core\FontEngine_FCFT.hpp" />
     <ClInclude Include="..\..\..\source\Core\FontEngine_Win32.hpp" />
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
+    <ClInclude Include="..\..\..\source\external\easy_fsw\easy_fsw.h" />
     <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\collision.h" />
     <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\collision2.h" />
     <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\constraint.h" />
@@ -480,13 +463,14 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\source\external\tokamak\include;..\..\..\source\external\physfs-2.0.3;..\..\..\source\external\zlib-1.2.8;..\..\..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\source\external\tokamak\include;..\..\..\include</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions>PHYSFS_SUPPORTS_ZIP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -498,7 +482,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\source\external\tokamak\include;..\..\..\source\external\physfs-2.0.3;..\..\..\source\external\zlib-1.2.8;..\..\..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\source\external\tokamak\include;..\..\..\include</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>
@@ -506,6 +490,7 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <PreprocessorDefinitions>PHYSFS_SUPPORTS_ZIP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -519,13 +504,14 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\source\external\tokamak\include;..\..\..\source\external\physfs-2.0.3;..\..\..\source\external\zlib-1.2.8;..\..\..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\source\external\tokamak\include;..\..\..\include</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>StreamingSIMDExtensions2</EnableEnhancedInstructionSet>
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>PHYSFS_SUPPORTS_ZIP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -541,7 +527,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>..\..\..\source\external\tokamak\include;..\..\..\source\external\physfs-2.0.3;..\..\..\source\external\zlib-1.2.8;..\..\..\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\source\external\tokamak\include;..\..\..\include</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>
@@ -549,6 +535,7 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PreprocessorDefinitions>PHYSFS_SUPPORTS_ZIP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

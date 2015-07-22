@@ -114,14 +114,11 @@
     <Filter Include="Source Files\external\lua">
       <UniqueIdentifier>{0286beda-b9b8-48df-9a61-098891cb343d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\external\zlib">
-      <UniqueIdentifier>{f812d2a8-0e4e-428c-8982-6d099540aa7f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\external\physfs">
-      <UniqueIdentifier>{dde8477e-7f7b-4dbf-bec2-f4a20e8fa2a5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\external\tokamak">
       <UniqueIdentifier>{e0744b3e-13ee-426c-8aa0-956395d03f8e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\external\easy_fsw">
+      <UniqueIdentifier>{9c8ee375-205b-4742-9b63-566f0dd56764}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -605,63 +602,6 @@
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lzio.c">
       <Filter>Source Files\external\lua</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\adler32.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\compress.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\crc32.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\deflate.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\gzclose.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\gzlib.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\gzread.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\gzwrite.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\infback.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\inflate.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\inftrees.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\trees.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\uncompr.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\zlib-1.2.8\zutil.c">
-      <Filter>Source Files\external\zlib</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\physfs.c">
-      <Filter>Source Files\external\physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\physfs_byteorder.c">
-      <Filter>Source Files\external\physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\physfs_unicode.c">
-      <Filter>Source Files\external\physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\archivers\dir.c">
-      <Filter>Source Files\external\physfs</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\external\physfs-2.0.3\archivers\zip.c">
-      <Filter>Source Files\external\physfs</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\boxcylinder.cpp">
       <Filter>Source Files\external\tokamak</Filter>
     </ClCompile>
@@ -718,6 +658,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\external\tokamak\tokamaksrc\src\tricollision.cpp">
       <Filter>Source Files\external\tokamak</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\easy_fsw\easy_fsw.c">
+      <Filter>Source Files\external\easy_fsw</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1299,6 +1242,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\stack.h">
       <Filter>Source Files\external\tokamak</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\external\easy_fsw\easy_fsw.h">
+      <Filter>Source Files\external\easy_fsw</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
