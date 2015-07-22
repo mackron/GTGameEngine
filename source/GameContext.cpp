@@ -64,6 +64,11 @@ namespace GT
 
     void GameContext::Shutdown()
     {
+#if defined(GT_BUILD_EDITOR)
+        // Editor.
+        m_editor.Shutdown();
+#endif
+
         // Window manager.
         if ((m_flags & IsOwnerOfWindowManagerFlag) != 0)
         {
