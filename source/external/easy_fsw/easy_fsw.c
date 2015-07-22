@@ -1,4 +1,4 @@
-// Version 0.1 - Public Domain. Use at your own risk. No waranty implied.
+// Version 0.1 - Public Domain. See "unlicense" statement at the end of this file.
 
 // NOTES:
 //
@@ -604,7 +604,7 @@ typedef struct
 
     // The list of events to wait on in the watcher thread.
     //   0 = The event to wait on when the context is deleted.
-    //   1 = The event to wait on when a directory needs to being watching.
+    //   1 = The event to wait on when a directory needs to begin watching.
     //   2 = The event to wait on when a directory needs to be deleted.
     HANDLE hEvents[3];
 
@@ -626,7 +626,6 @@ void easyfsw_remove_all_directories_win32(easyfsw_context_win32* pContext);
 int easyfsw_is_watching_directory_win32(easyfsw_context_win32* pContext, const char* absolutePath);
 int easyfsw_nextevent_win32(easyfsw_context_win32* pContext, easyfsw_event* pEventOut);
 int easyfsw_peekevent_win32(easyfsw_context_win32* pContext, easyfsw_event* pEventOut);
-
 void easyfsw_postevent_win32(easyfsw_context_win32* pContext, easyfsw_event* pEvent);
 
 
@@ -637,7 +636,7 @@ typedef struct
     easyfsw_context_win32* pContext;
 
     // The absolute path of the directory being watched.
-    char* absolutePath;
+    char absolutePath[EASYFSW_MAX_PATH];
 
     // The handle representing the directory. This is created with CreateFile() which means the directory itself will become locked
     // because the operating system see's it as "in use". It is possible to modify the files and folder inside the directory, though.
@@ -666,9 +665,6 @@ void easyfsw_directory_win32_uninit(easyfsw_directory_win32* pDirectory)
 {
     if (pDirectory != NULL)
     {
-        easyfsw_free(pDirectory->absolutePath);
-        pDirectory->absolutePath = NULL;
-
         if (pDirectory->hDirectory != NULL)
         {
             CloseHandle(pDirectory->hDirectory);
@@ -685,7 +681,7 @@ int easyfsw_directory_win32_init(easyfsw_directory_win32* pDirectory, easyfsw_co
     if (pDirectory != NULL)
     {
         pDirectory->pContext             = pContext;
-        pDirectory->absolutePath         = NULL;
+        easyfsw_zeromemory(pDirectory->absolutePath, EASYFSW_MAX_PATH);
         pDirectory->hDirectory           = NULL;
         pDirectory->pFNIBuffer           = NULL;
         pDirectory->fniBufferSizeInBytes = 0;
@@ -694,46 +690,38 @@ int easyfsw_directory_win32_init(easyfsw_directory_win32* pDirectory, easyfsw_co
         size_t length = strlen(absolutePath);
         if (length > 0)
         {
-            pDirectory->absolutePath = easyfsw_malloc(length + 1);
-            if (pDirectory->absolutePath != NULL)
+            strcpy_s(pDirectory->absolutePath, length + 1, absolutePath);
+
+            wchar_t absolutePathWithBackSlashes[EASYFSW_MAX_PATH_W];
+            if (ToWin32PathWCHAR(absolutePath, absolutePathWithBackSlashes))
             {
-                strcpy_s(pDirectory->absolutePath, length + 1, absolutePath);
-
-                wchar_t absolutePathWithBackSlashes[EASYFSW_MAX_PATH_W];
-                if (ToWin32PathWCHAR(absolutePath, absolutePathWithBackSlashes))
+                pDirectory->hDirectory = CreateFileW(
+                    absolutePathWithBackSlashes,
+                    FILE_LIST_DIRECTORY,
+                    FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
+                    NULL,
+                    OPEN_EXISTING,
+                    FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
+                    NULL);
+                if (pDirectory->hDirectory != INVALID_HANDLE_VALUE)
                 {
-                    pDirectory->hDirectory = CreateFileW(
-                        absolutePathWithBackSlashes,
-                        FILE_LIST_DIRECTORY,
-                        FILE_SHARE_READ | FILE_SHARE_WRITE | FILE_SHARE_DELETE,
-                        NULL,
-                        OPEN_EXISTING,
-                        FILE_FLAG_BACKUP_SEMANTICS | FILE_FLAG_OVERLAPPED,
-                        NULL);
-                    if (pDirectory->hDirectory != INVALID_HANDLE_VALUE)
-                    {
-                        // From MSDN:
-                        //
-                        // Using a completion routine. To receive notification through a completion routine, do not associate the directory with a
-                        // completion port. Specify a completion routine in lpCompletionRoutine. This routine is called whenever the operation has
-                        // been completed or canceled while the thread is in an alertable wait state. The hEvent member of the OVERLAPPED structure
-                        // is not used by the system, so you can use it yourself.
-                        ZeroMemory(&pDirectory->overlapped, sizeof(pDirectory->overlapped));
-                        pDirectory->overlapped.hEvent = pDirectory;
+                    // From MSDN:
+                    //
+                    // Using a completion routine. To receive notification through a completion routine, do not associate the directory with a
+                    // completion port. Specify a completion routine in lpCompletionRoutine. This routine is called whenever the operation has
+                    // been completed or canceled while the thread is in an alertable wait state. The hEvent member of the OVERLAPPED structure
+                    // is not used by the system, so you can use it yourself.
+                    ZeroMemory(&pDirectory->overlapped, sizeof(pDirectory->overlapped));
+                    pDirectory->overlapped.hEvent = pDirectory;
 
-                        pDirectory->fniBufferSizeInBytes = WIN32_RDC_FNI_COUNT * sizeof(FILE_NOTIFY_INFORMATION);
-                        pDirectory->pFNIBuffer = easyfsw_malloc(pDirectory->fniBufferSizeInBytes);
-                        if (pDirectory->pFNIBuffer != NULL)
-                        {
-                            // At this point the directory is initialized, however it is not yet being watched. The watch needs to be triggered from
-                            // the worker thread. To do this, we need to signal hPendingWatchEvent, however that needs to be done after the context
-                            // has added the directory to it's internal list.
-                            return 1;
-                        }
-                        else
-                        {
-                            easyfsw_directory_win32_uninit(pDirectory);
-                        }
+                    pDirectory->fniBufferSizeInBytes = WIN32_RDC_FNI_COUNT * sizeof(FILE_NOTIFY_INFORMATION);
+                    pDirectory->pFNIBuffer = easyfsw_malloc(pDirectory->fniBufferSizeInBytes);
+                    if (pDirectory->pFNIBuffer != NULL)
+                    {
+                        // At this point the directory is initialized, however it is not yet being watched. The watch needs to be triggered from
+                        // the worker thread. To do this, we need to signal hPendingWatchEvent, however that needs to be done after the context
+                        // has added the directory to it's internal list.
+                        return 1;
                     }
                     else
                     {
@@ -744,6 +732,10 @@ int easyfsw_directory_win32_init(easyfsw_directory_win32* pDirectory, easyfsw_co
                 {
                     easyfsw_directory_win32_uninit(pDirectory);
                 }
+            }
+            else
+            {
+                easyfsw_directory_win32_uninit(pDirectory);
             }
         }
     }
@@ -928,9 +920,7 @@ VOID CALLBACK easyfsw_win32_completionroutine(DWORD dwErrorCode, DWORD dwNumberO
                         default: break;
                         }
                     }
-                    //easyfsw_free(absolutePath);
                 }
-                //easyfsw_free(relativePath);
 
             
 
@@ -1413,3 +1403,29 @@ int easyfsw_peekevent(easyfsw_context* pContext, easyfsw_event* pEventOut)
 #endif  // Win32
 
 
+/*
+This is free and unencumbered software released into the public domain.
+
+Anyone is free to copy, modify, publish, use, compile, sell, or
+distribute this software, either in source code form or as a compiled
+binary, for any purpose, commercial or non-commercial, and by any
+means.
+
+In jurisdictions that recognize copyright laws, the author or authors
+of this software dedicate any and all copyright interest in the
+software to the public domain. We make this dedication for the benefit
+of the public at large and to the detriment of our heirs and
+successors. We intend this dedication to be an overt act of
+relinquishment in perpetuity of all present and future rights to this
+software under copyright law.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS BE LIABLE FOR ANY CLAIM, DAMAGES OR
+OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE,
+ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE.
+
+For more information, please refer to <http://unlicense.org/>
+*/
