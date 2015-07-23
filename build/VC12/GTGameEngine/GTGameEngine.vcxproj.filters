@@ -117,6 +117,9 @@
     <Filter Include="Source Files\external\easy_fsw">
       <UniqueIdentifier>{9c8ee375-205b-4742-9b63-566f0dd56764}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\external\easy_path">
+      <UniqueIdentifier>{a0e1e330-6cf4-43e3-a2c6-d94232effb5b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\EngineContext.cpp">
@@ -667,6 +670,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\ConfigFile.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\easy_path\easy_path.c">
+      <Filter>Source Files\external\easy_path</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1260,6 +1266,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\ConfigFile.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\external\easy_path\easy_path.h">
+      <Filter>Source Files\external\easy_path</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

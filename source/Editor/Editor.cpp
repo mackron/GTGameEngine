@@ -10,6 +10,7 @@
 
 #include <GTGameEngine/Editor/Controls/EditorPopupControl.hpp>
 #include "../external/easy_fsw/easy_fsw.h"
+#include "../external/easy_path/easy_path.h"
 
 namespace GT
 {
@@ -50,8 +51,6 @@ namespace GT
                 default: break;
                 }
             }
-
-            printf("File System Watcher Thread Closed.\n");
         }
     }
 
@@ -148,11 +147,52 @@ namespace GT
         m_pFSW = easyfsw_create_context();
         if (m_pFSW)
         {
-            // Add the base directories.
-            size_t baseDirectoryCount = m_gameContext.GetEngineContext().GetFileSystem().GetBaseDirectoryCount();
+            auto &fileSystem = m_gameContext.GetEngineContext().GetFileSystem();
+
+            GTLib::Vector<GTLib::String> pathsToWatch;
+            size_t baseDirectoryCount = fileSystem.GetBaseDirectoryCount();
             for (size_t iBaseDirectory = 0; iBaseDirectory < baseDirectoryCount; ++iBaseDirectory)
             {
-                easyfsw_add_directory(m_pFSW, m_gameContext.GetEngineContext().GetFileSystem().GetBaseDirectoryByIndex(iBaseDirectory).c_str());
+                auto baseDirectoryAbsolutePath = fileSystem.GetBaseDirectoryByIndex(iBaseDirectory);
+                
+                // If the base directory is a descendant of any of the paths in pathsToWatch, ignore it.
+                bool ignore = false;
+                for (size_t iPathToWatch = 0; iPathToWatch < pathsToWatch.GetCount(); ++iPathToWatch)
+                {
+                    GTLib::String &pathToWatch = pathsToWatch[iPathToWatch];
+                    if (easypath_isdescendant(baseDirectoryAbsolutePath.c_str(), pathToWatch.c_str()))
+                    {
+                        ignore = true;
+                    }
+                }
+
+                if (!ignore)
+                {
+                    // If any of the paths in pathsToWatch is a descendant of the base directory, they need to be removed.
+                    for (size_t iPathToWatch = 0; iPathToWatch < pathsToWatch.GetCount(); )
+                    {
+                        GTLib::String &pathToWatch = pathsToWatch[iPathToWatch];
+                        if (easypath_isdescendant(pathToWatch.c_str(), baseDirectoryAbsolutePath.c_str()))
+                        {
+                            pathsToWatch.Remove(iPathToWatch);
+                        }
+                        else
+                        {
+                            ++iPathToWatch;
+                        }
+                    }
+
+                    
+                    // Descendants have been handled, so now we just add it.
+                    pathsToWatch.PushBack(baseDirectoryAbsolutePath);
+                }
+            }
+
+
+            // Now we can let the file system watcher know about our watchable paths.
+            for (size_t iPathToWatch = 0; iPathToWatch < pathsToWatch.GetCount(); ++iPathToWatch)
+            {
+                easyfsw_add_directory(m_pFSW, pathsToWatch[iPathToWatch].c_str());
             }
 
 
