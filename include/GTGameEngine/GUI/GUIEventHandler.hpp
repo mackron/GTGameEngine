@@ -27,17 +27,17 @@ namespace GT
         ///
         /// @param context  [in] The GUI context.
         /// @param hElement [in] The element receiving the event.
-        /// @param width    [in] The new width of the element.
-        /// @param height   [in] The new height of the element.
-        virtual void OnMove(GUIContext &context, HGUIElement hElement, unsigned int width, unsigned int height);
+        /// @param x        [in] The new position of the element on the x axis, relative to the top left corner of the parent.
+        /// @param y        [in] The new position of the element on the y axis, relative to the top left corner of the parent.
+        virtual void OnMove(GUIContext &context, HGUIElement hElement, int x, int y);
 
         /// Called when an element's position has changed.
         ///
         /// @param context  [in] The GUI context.
         /// @param hElement [in] The element receiving the event.
-        /// @param x        [in] The new position of the element on the x axis, relative to the top left corner of the parent.
-        /// @param y        [in] The new position of the element on the y axis, relative to the top left corner of the parent.
-        virtual void OnSize(GUIContext &context, HGUIElement hElement, int x, int y);
+        /// @param width    [in] The new width of the element.
+        /// @param height   [in] The new height of the element.
+        virtual void OnSize(GUIContext &context, HGUIElement hElement, unsigned int width, unsigned int height);
 
 
         /// Called when the mouse enters the area of the given GUI element.

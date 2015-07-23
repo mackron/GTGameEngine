@@ -13,11 +13,11 @@ namespace GT
     }
 
 
-    void GUIEventHandler::OnMove(GUIContext &, HGUIElement, unsigned int, unsigned int)
+    void GUIEventHandler::OnMove(GUIContext &, HGUIElement, int, int)
     {
     }
 
-    void GUIEventHandler::OnSize(GUIContext &, HGUIElement, int, int)
+    void GUIEventHandler::OnSize(GUIContext &, HGUIElement, unsigned int, unsigned int)
     {
     }
 
