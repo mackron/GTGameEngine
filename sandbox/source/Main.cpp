@@ -4,7 +4,9 @@
 #include <GTGameEngine/GameState.hpp>
 #include <GTGameEngine/Graphics/DefaultGraphicsWorld.hpp>
 #include <GTGameEngine/Assets/ModelAsset.hpp>
+#include <GTGameEngine/ConfigFile.hpp>
 #include <GTGameEngine/external/spirv.h>
+#include <GTLib/IO.hpp>
 
 class SandboxGameState : public GT::GameState
 {
@@ -50,7 +52,36 @@ public:
 
     bool OnStarting(GT::GameContext &gameContext, const GTLib::CommandLine &commandLine)
     {
+        auto &engine = gameContext.GetEngineContext();
+
+
         // Load the config file.
+        GTLib::String configAbsolutePath;
+        if (engine.GetFileSystem().FindAbsolutePath("config.lua", configAbsolutePath))
+        {
+            if (m_config.Load(configAbsolutePath.c_str()))
+            {
+                // Retrieve the base directories.
+                if (m_config.IsArray("BaseDirectories"))
+                {
+                    size_t baseDirectoriesCount = m_config.GetArrayCount("BaseDirectories");
+                    for (size_t i = 0; i < baseDirectoriesCount; ++i)
+                    {
+                        const char* relativeBaseDirectory = m_config.GetStringFromArray("BaseDirectories", i);
+                        if (relativeBaseDirectory != nullptr)
+                        {
+                            //char absoluteBaseDirectory[EASYPATH_MAX_PATH];
+                            //easypath_makeabsolute(engine.GetCommandLine().GetApplicationDirectory(), relativeBaseDirectory, absoluteBaseDirectory, EASYPATH_MAX_PATH);
+
+                            engine.GetFileSystem().AddBaseDirectory(GTLib::IO::ToAbsolutePath(relativeBaseDirectory, engine.GetCommandLine().GetApplicationDirectory()).c_str());
+                        }
+                    }
+                }
+            }
+        }
+
+        //GT::ConfigFile config;
+        //config.Load(gameContext.GetEngineContext().GetFileSystem().FindAbsolutePath())
 
 
         // Create the game windows.
@@ -194,6 +225,10 @@ public:
 
 
 private:
+
+    /// The config file.
+    GT::ConfigFile m_config;
+
 
     /// The graphics API.
     GT::GraphicsAPI* m_pGraphicsAPI;
