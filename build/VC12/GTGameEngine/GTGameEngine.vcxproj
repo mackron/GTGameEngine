@@ -90,7 +90,6 @@
     <ClCompile Include="..\..\..\source\Editor\EditorGUIEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\Editor\EditorGUIRenderer_GDI.cpp" />
     <ClCompile Include="..\..\..\source\EngineContext.cpp" />
-    <ClCompile Include="..\..\..\source\external\easycl\easycl.c" />
     <ClCompile Include="..\..\..\source\external\easy_fsw\easy_fsw.c" />
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lapi.c" />
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lauxlib.c" />
@@ -379,7 +378,6 @@
     <ClInclude Include="..\..\..\source\Assets\ModelAsset_OBJ.hpp" />
     <ClInclude Include="..\..\..\source\Core\FontEngine_FCFT.hpp" />
     <ClInclude Include="..\..\..\source\Core\FontEngine_Win32.hpp" />
-    <ClInclude Include="..\..\..\source\external\easycl\easycl.h" />
     <ClInclude Include="..\..\..\source\external\easy_fsw\easy_fsw.h" />
     <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\collision.h" />
     <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\collision2.h" />

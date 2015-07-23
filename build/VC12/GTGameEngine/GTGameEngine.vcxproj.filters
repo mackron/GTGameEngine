@@ -15,9 +15,6 @@
     <Filter Include="Source Files\external">
       <UniqueIdentifier>{f222d202-19ee-4d5d-a76e-7ab2f78d6978}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\external\easycl">
-      <UniqueIdentifier>{796b5b69-d5a4-41af-942b-2dd8bc66ad12}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\FileSystem">
       <UniqueIdentifier>{b7e7820b-41aa-474e-80eb-4f916e1f4c1f}</UniqueIdentifier>
     </Filter>
@@ -122,9 +119,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\source\external\easycl\easycl.c">
-      <Filter>Source Files\external\easycl</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\EngineContext.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -676,9 +670,6 @@
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
-      <Filter>Source Files\external\easycl</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
