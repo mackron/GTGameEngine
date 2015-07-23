@@ -662,6 +662,18 @@
     <ClCompile Include="..\..\..\source\external\easy_fsw\easy_fsw.c">
       <Filter>Source Files\external\easy_fsw</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorAssetExplorerItem.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorScrollableControl.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorQuadControl.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ConfigFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\source\external\easycl\easycl.h">
@@ -1245,6 +1257,18 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\external\easy_fsw\easy_fsw.h">
       <Filter>Source Files\external\easy_fsw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorAssetExplorerItem.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorScrollableControl.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorQuadControl.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\ConfigFile.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

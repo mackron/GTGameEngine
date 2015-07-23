@@ -30,6 +30,7 @@
     <ClCompile Include="..\..\..\source\Assets\ModelAsset.cpp" />
     <ClCompile Include="..\..\..\source\Assets\ModelAsset_MD2.cpp" />
     <ClCompile Include="..\..\..\source\Assets\ModelAsset_OBJ.cpp" />
+    <ClCompile Include="..\..\..\source\ConfigFile.cpp" />
     <ClCompile Include="..\..\..\source\Core\BasicBuffer.cpp" />
     <ClCompile Include="..\..\..\source\Core\Colour.cpp" />
     <ClCompile Include="..\..\..\source\Core\CommandLine.cpp" />
@@ -69,6 +70,7 @@
     <ClCompile Include="..\..\..\source\Core\ToString.cpp" />
     <ClCompile Include="..\..\..\source\Core\Windowing\Clipboard.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorAssetExplorer.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorAssetExplorerItem.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorBody.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorControl.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorFooter.cpp" />
@@ -77,6 +79,8 @@
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBar.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBarButton.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorPopupControl.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorQuadControl.cpp" />
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorScrollableControl.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorTab.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorTabBar.cpp" />
     <ClCompile Include="..\..\..\source\Editor\Controls\EditorTabGroup.cpp" />
@@ -212,7 +216,9 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Components\Component.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Components\ComponentTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Config.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\ConfigFile.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorAssetExplorer.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorAssetExplorerItem.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorBody.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorControl.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorFooter.hpp" />
@@ -221,6 +227,8 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBar.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBarButton.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorPopupControl.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorQuadControl.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorScrollableControl.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTab.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTabBar.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTabGroup.hpp" />

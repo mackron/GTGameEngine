@@ -3,11 +3,12 @@
 #ifndef __GT_EditorAssetExplorer_hpp_
 #define __GT_EditorAssetExplorer_hpp_
 
-#include "EditorControl.hpp"
+#include "EditorScrollableControl.hpp"
 
 namespace GT
 {
-    class EditorAssetExplorer : public EditorControl
+    /// The asset explorer control.
+    class EditorAssetExplorer : public EditorScrollableControl
     {
     public:
 
@@ -18,7 +19,7 @@ namespace GT
 
     private:
 
-
+        
     };
 }
 

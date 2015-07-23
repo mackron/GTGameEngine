@@ -1,12 +1,13 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Editor/Controls/EditorAssetExplorer.hpp>
+#include <GTGameEngine/Editor/Controls/EditorAssetExplorerItem.hpp>
 #include <GTGameEngine/Editor/Editor.hpp>
 
 namespace GT
 {
-    EditorAssetExplorer::EditorAssetExplorer(Editor &editor)
-        : EditorScrollableControl(editor)
+    EditorAssetExplorerItem::EditorAssetExplorerItem(Editor &editor, bool isFolder)
+        : EditorControl(editor),
+          m_isFolder(isFolder)
     {
         HGUIElement hRootElement = this->GetRootGUIElement();
         if (hRootElement != NULL)
@@ -16,11 +17,7 @@ namespace GT
 
             gui.SetElementSizeRatio(hRootElement, 1.0f, 1.0f);
             gui.SetElementBorder(hRootElement, 1, theme.borderDefault);
-            
-
-
-            HGUIElement hContentElement = this->GetContentElement();
-            gui.SetElementBackgroundColor(hContentElement, theme.backgroundMid);
+            gui.SetElementBackgroundColor(hRootElement, theme.backgroundMid);
         }
     }
 }
