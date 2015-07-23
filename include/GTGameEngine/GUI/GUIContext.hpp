@@ -1504,6 +1504,15 @@ namespace GT
         float GetYDPIScalingFactor(HGUISurface hSurface) const;
 
 
+        /// Converts the given value from pixels to DPI-aware points based on the given element's X DPI scaling.
+        float PixelsToPointsX(HGUIElement hElement, float x);
+        float PixelsToPointsX(HGUIElement hElement, unsigned int x);
+
+        /// Converts the given value from pixels to DPI-aware points based on the given element's Y DPI scaling.
+        float PixelsToPointsY(HGUIElement hElement, float y);
+        float PixelsToPointsY(HGUIElement hElement, unsigned int y);
+
+
         ////////////////////////////////////////////////////////////////
         // Utilities
 

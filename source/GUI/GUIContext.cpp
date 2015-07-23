@@ -2490,6 +2490,37 @@ namespace GT
     }
 
 
+    float GUIContext::PixelsToPointsX(HGUIElement hElement, float x)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return x / GUIContextBase::GetXDPIScalingFactor(GUIContextBase::GetElementSurface(pElement));
+        }
+
+        return x;
+    }
+    float GUIContext::PixelsToPointsX(HGUIElement hElement, unsigned int x)
+    {
+        return PixelsToPointsX(hElement, static_cast<float>(x));
+    }
+
+    float GUIContext::PixelsToPointsY(HGUIElement hElement, float y)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return y / GUIContextBase::GetXDPIScalingFactor(GUIContextBase::GetElementSurface(pElement));
+        }
+
+        return y;
+    }
+    float GUIContext::PixelsToPointsY(HGUIElement hElement, unsigned int y)
+    {
+        return PixelsToPointsY(hElement, static_cast<float>(y));
+    }
+
+
 
     ////////////////////////////////////////////////////////////////
     // Utilities
