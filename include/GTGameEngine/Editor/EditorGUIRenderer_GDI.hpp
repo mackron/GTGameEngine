@@ -8,6 +8,7 @@
 #if defined(GT_BUILD_EDITOR) && defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
 #include <GTGameEngine/GUI/GUIRenderer.hpp>
+#include <GTGameEngine/Editor/EditorGUISurfaceAUXData.hpp>
 
 namespace GT
 {
@@ -63,6 +64,17 @@ namespace GT
 
         /// The surface that is currently being painted.
         HWND m_hCurrentWindow;
+
+        /// The DC to draw to.
+        HDC m_hDC;
+
+        /// A pointer to the AUX data for the current surface.
+        EditorGUISurfaceAUXData* m_pCurrentSurfaceAUXData;
+
+
+
+        /// The bitmap that needs to be restored at the end of EndPaintSurface()
+        //HANDLE m_hBitmapToRestore;
     };
 }
 

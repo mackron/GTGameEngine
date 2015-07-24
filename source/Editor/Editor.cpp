@@ -755,7 +755,19 @@ namespace GT
         {
             // TODO: Delete the elements that are attached to the surface.
 
-            delete m_gui.GetSurfaceAuxData<EditorGUISurfaceAUXData>(surfaceAndElement.hSurface);
+            EditorGUISurfaceAUXData* pSurfaceAUXData = m_gui.GetSurfaceAuxData<EditorGUISurfaceAUXData>(surfaceAndElement.hSurface);
+            if (pSurfaceAUXData != nullptr)
+            {
+                // TODO: Improve this a bit - don't like having platform-specific code here. Also looks a bit out of place...
+#if defined(GT_PLATFORM_WINDOWS)
+                if (pSurfaceAUXData->hMemDC != NULL)
+                {
+                    DeleteObject(reinterpret_cast<HANDLE>(pSurfaceAUXData->hMemBitmap));
+                    DeleteDC(reinterpret_cast<HDC>(pSurfaceAUXData->hMemDC));
+                }
+#endif
+            }
+
             m_gui.DeleteSurface(surfaceAndElement.hSurface);
             m_gui.DeleteElement(surfaceAndElement.hElement);
 

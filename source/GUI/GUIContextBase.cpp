@@ -3574,18 +3574,30 @@ namespace GT
         auto pSurface = this->GetElementSurface(pElement);
         if (pSurface != nullptr)
         {
-#if 0
-            GTLib::Rect<int> rect;
-            rect.left   = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX));
-            rect.top    = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY));
-            rect.right  = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX + pElement->layout.width));
-            rect.bottom = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY + pElement->layout.height));
-#endif
-
-            GTLib::Rect<int> rect;
+            GTLib::Rect<float> rect;
             this->GetElementAbsoluteRect(pElement, rect);
 
-            this->Painting_InvalidateRect(pSurface, rect);
+            // If clipping is disabled on the child we don't care about constraining the visible region - the entire rectangle will be classed as visible.
+            GTLib::Rect<float> elementVisibleRect;
+            if (pElement->pParent != nullptr && this->IsElementClippedAgainstParent(pElement))
+            {
+                GTLib::Rect<float> clippingRect;
+                this->GetElementChildrenClippingRect(pElement->pParent, clippingRect);
+
+                elementVisibleRect = GTLib::Rect<float>::Clamp(rect, clippingRect);
+            }
+            else
+            {
+                elementVisibleRect = rect;
+            }
+
+
+            GTLib::Rect<int> rectI;
+            rectI.left   = static_cast<int>(GTLib::Round(elementVisibleRect.left));
+            rectI.top    = static_cast<int>(GTLib::Round(elementVisibleRect.top));
+            rectI.right  = static_cast<int>(GTLib::Round(elementVisibleRect.right));
+            rectI.bottom = static_cast<int>(GTLib::Round(elementVisibleRect.bottom));
+            this->Painting_InvalidateRect(pSurface, rectI);
         }
     }
 

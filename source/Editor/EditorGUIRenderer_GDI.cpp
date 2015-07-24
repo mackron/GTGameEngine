@@ -5,7 +5,6 @@
 #if defined(GT_BUILD_EDITOR) && defined(GT_PLATFORM_WINDOWS)
 #include <GTGameEngine/GUI/GUIContext.hpp>
 #include <GTGameEngine/GUI/GUIFontManager_GDI.hpp>
-#include <GTGameEngine/Editor/EditorGUISurfaceAUXData.hpp>
 
 namespace GT
 {
@@ -32,20 +31,44 @@ namespace GT
             HDC hDC = BeginPaint(reinterpret_cast<HWND>(pAUXData->hWindow), &m_ps);
             if (hDC != NULL)
             {
-                // No pen by default.
-                SelectObject(m_ps.hdc, GetStockObject(NULL_PEN));
+                // The offscreen buffer may need to be refresehd.
+                RECT windowRect;
+                GetClientRect(reinterpret_cast<HWND>(pAUXData->hWindow), &windowRect);
 
-                // The normal brush by default.
-                SelectObject(m_ps.hdc, GetStockObject(DC_BRUSH));
+                int windowWidth  = windowRect.right  - windowRect.left;
+                int windowHeight = windowRect.bottom - windowRect.top;
+                if (pAUXData->hMemDC == NULL || (windowWidth != pAUXData->memBitmapWidth || windowHeight != pAUXData->memBitmapHeight))
+                {
+                    if (pAUXData->hMemDC)
+                    {
+                        DeleteObject(reinterpret_cast<HANDLE>(pAUXData->hMemBitmap));
+                        DeleteDC(reinterpret_cast<HDC>(pAUXData->hMemDC));
+                    }
 
-                // Don't draw the default text background.
-                SetBkMode(m_ps.hdc, TRANSPARENT);
-                //SetBkColor(m_ps.hdc, RGB(255, 0, 0));
-                //SetTextAlign(m_ps.hdc, TA_BASELINE);
+                    pAUXData->hMemDC          = reinterpret_cast<size_t>(CreateCompatibleDC(hDC));
+                    pAUXData->hMemBitmap      = reinterpret_cast<size_t>(CreateCompatibleBitmap(hDC, windowWidth, windowHeight));
+                    pAUXData->memBitmapWidth  = windowWidth;
+                    pAUXData->memBitmapHeight = windowHeight;
+                }
 
+                SelectObject(reinterpret_cast<HDC>(pAUXData->hMemDC), reinterpret_cast<HANDLE>(pAUXData->hMemBitmap));
 
                 // Set the current window.
-                m_hCurrentWindow = reinterpret_cast<HWND>(pAUXData->hWindow);
+                m_hCurrentWindow         = reinterpret_cast<HWND>(pAUXData->hWindow);
+                m_hDC                    = reinterpret_cast<HDC>(pAUXData->hMemDC);
+                m_pCurrentSurfaceAUXData = pAUXData;
+
+
+                // No pen by default.
+                SelectObject(m_hDC, GetStockObject(NULL_PEN));
+
+                // The normal brush by default.
+                SelectObject(m_hDC, GetStockObject(DC_BRUSH));
+
+                // Don't draw the default text background.
+                SetBkMode(m_hDC, TRANSPARENT);
+                //SetBkColor(m_hDC, RGB(255, 0, 0));
+                //SetTextAlign(m_hDC, TA_BASELINE);
             }
             else
             {
@@ -58,11 +81,29 @@ namespace GT
     {
         (void)context;
 
+
+        if (m_pCurrentSurfaceAUXData != nullptr)
+        {
+            // Present the back buffer.
+            int xPos   = m_ps.rcPaint.left;
+            int yPos   = m_ps.rcPaint.top;
+            int width  = m_ps.rcPaint.right - m_ps.rcPaint.left;
+            int height = m_ps.rcPaint.bottom - m_ps.rcPaint.top;
+            BitBlt(GetDC(reinterpret_cast<HWND>(m_pCurrentSurfaceAUXData->hWindow)), xPos, yPos, width, height, reinterpret_cast<HDC>(m_pCurrentSurfaceAUXData->hMemDC), xPos, yPos, SRCCOPY);
+
+            // Restore the old bitmap.
+            SelectObject(reinterpret_cast<HDC>(m_pCurrentSurfaceAUXData->hMemDC), reinterpret_cast<HANDLE>(m_pCurrentSurfaceAUXData->hMemBitmap));
+        }
+
+
         // The clipping rectangle needs to be reset before so that future WM_PAINT messages are sent the correct drawing rectangle.
         SelectClipRgn(m_ps.hdc, NULL);
+        SelectClipRgn(m_hDC, NULL);
 
         // Reset the current window.
         m_hCurrentWindow = NULL;
+        m_hDC = NULL;
+        m_pCurrentSurfaceAUXData = nullptr;
 
 
         // End painting.
@@ -98,11 +139,11 @@ namespace GT
                 // Opaque.
 
                 // Set the color.
-                SetDCBrushColor(m_ps.hdc, RGB(color.r*255, color.g*255, color.b*255));
+                SetDCBrushColor(m_hDC, RGB(color.r*255, color.g*255, color.b*255));
 
                 // Now draw the rectangle. The documentation for this says that the width and height is 1 pixel less when the pen is null. Therefore we will
                 // increase the width and height by 1 since we have got the pen set to null.
-                Rectangle(m_ps.hdc, rect.left, rect.top, rect.right + 1, rect.bottom + 1);
+                Rectangle(m_hDC, rect.left, rect.top, rect.right + 1, rect.bottom + 1);
             }
             else
             {
@@ -115,8 +156,8 @@ namespace GT
     {
         (void)context;
 
-        SelectClipRgn(m_ps.hdc, NULL);
-        IntersectClipRect(m_ps.hdc, rect.left, rect.top, rect.right, rect.bottom);
+        SelectClipRgn(m_hDC, NULL);
+        IntersectClipRect(m_hDC, rect.left, rect.top, rect.right, rect.bottom);
     }
 
     bool EditorGUIRenderer_GDI::CanDrawText(GUIContext &context, HGUIFont hFont)
@@ -137,8 +178,8 @@ namespace GT
             HFONT hFontWin32 = pFontManagerGDI->GetWin32FontHandle(textRunDesc.hFont);
             if (hFontWin32 != 0)
             {
-                HGDIOBJ  hPrevFont      = SelectObject(m_ps.hdc, hFontWin32);
-                COLORREF hPrevTextColor = SetTextColor(m_ps.hdc, RGB(textRunDesc.color.r*255, textRunDesc.color.g*255, textRunDesc.color.b*255));
+                HGDIOBJ  hPrevFont      = SelectObject(m_hDC, hFontWin32);
+                COLORREF hPrevTextColor = SetTextColor(m_hDC, RGB(textRunDesc.color.r*255, textRunDesc.color.g*255, textRunDesc.color.b*255));
 
                 //GTLib::String16 text(textRunDesc.text.c_str(), textRunDesc.text.GetCharacterCount());
                 
@@ -166,7 +207,7 @@ namespace GT
                         {
                             MultiByteToWideChar(CP_UTF8, 0, textRunDesc.text.c_str(), -1, buffer, sizeof(wchar_t)*bufferSize);
 
-                            TextOutW(m_ps.hdc, textRunDesc.xPos, textRunDesc.yPos, buffer, bufferSize - 1);
+                            TextOutW(m_hDC, textRunDesc.xPos, textRunDesc.yPos, buffer, bufferSize - 1);
                             free(buffer);
                         }
                     }
@@ -176,14 +217,14 @@ namespace GT
                         bufferSize = MultiByteToWideChar(CP_UTF8, 0, textRunDesc.text.c_str(), -1, buffer, 64);
                         if (bufferSize > 0)
                         {
-                            TextOutW(m_ps.hdc, textRunDesc.xPos, textRunDesc.yPos, buffer, bufferSize - 1);
+                            TextOutW(m_hDC, textRunDesc.xPos, textRunDesc.yPos, buffer, bufferSize - 1);
                         }
                     }
                 }
                 
 
-                SelectObject(m_ps.hdc, hPrevFont);
-                SetTextColor(m_ps.hdc, hPrevTextColor);
+                SelectObject(m_hDC, hPrevFont);
+                SetTextColor(m_hDC, hPrevTextColor);
             }
         }
     }
