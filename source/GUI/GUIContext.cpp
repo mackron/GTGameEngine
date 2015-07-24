@@ -350,6 +350,34 @@ namespace GT
         }
     }
 
+    void GUIContext::PostEvent_OnMouseWheel(GUIElement* pElement, int delta, int mousePosX, int mousePosY)
+    {
+        assert(pElement != nullptr);
+
+        HGUIElement hElement = reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        assert(hElement != 0);
+        {
+            // Local
+            this->IterateLocalEventHandlers(hElement, [&](GUIEventHandler &eventHandler) -> bool
+            {
+                eventHandler.OnMouseWheel(*this, hElement, delta, mousePosX, mousePosY);
+                return true;
+            });
+
+            // Global
+            this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    eventHandler.OnMouseWheel(*this, hElement, delta, mousePosX, mousePosY);
+                    return true;
+                }
+                
+                return false;
+            });
+        }
+    }
+
 
     void GUIContext::PostEvent_OnSetMouseEventCapture(GUIElement* pElement)
     {
@@ -2368,6 +2396,15 @@ namespace GT
         if (pSurface != nullptr)
         {
             GUIContextBase::OnMouseButtonDoubleClicked(pSurface, mouseButton, mousePosX, mousePosY);
+        }
+    }
+
+    void GUIContext::OnMouseWheel(HGUISurface hSurface, int delta, int mousePosX, int mousePosY)
+    {
+        auto pSurface = this->GetSurfacePtr(hSurface);
+        if (pSurface != nullptr)
+        {
+            GUIContextBase::OnMouseWheel(pSurface, delta, mousePosX, mousePosY);
         }
     }
 

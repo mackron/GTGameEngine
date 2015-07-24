@@ -2467,7 +2467,7 @@ namespace GT
 
         if (pElement->pSurface != nullptr)
         {
-            return m_pElementUnderMouse == pElement;
+            return m_pElementUnderMouse == pElement || this->IsElementAncestor(m_pElementUnderMouse, pElement);
         }
         else
         {
@@ -2779,6 +2779,34 @@ namespace GT
             this->AbsoluteToRelative(pEventReceiver, mousePosX, mousePosY, relativeMousePosX, relativeMousePosY);
 
             this->PostEvent_OnMouseButtonDoubleClicked(pEventReceiver, mouseButton, relativeMousePosX, relativeMousePosY);
+        }
+    }
+
+    void GUIContextBase::OnMouseWheel(GUISurface* pSurface, int delta, int mousePosX, int mousePosY)
+    {
+        assert(pSurface != nullptr);
+
+        // OnMouseWheel
+        //
+        // If an element is capturing mouse events, it needs to be the one to receive the event.
+        GUIElement* pEventReceiver = nullptr;
+        if (m_pElementCapturingMouseEvents != nullptr)
+        {
+            pEventReceiver = m_pElementCapturingMouseEvents;
+        }
+        else
+        {
+            pEventReceiver = m_pElementUnderMouse;
+        }
+
+        if (pEventReceiver != nullptr)
+        {
+            // Need to convert the point to local coordinates.
+            int relativeMousePosX;
+            int relativeMousePosY;
+            this->AbsoluteToRelative(pEventReceiver, mousePosX, mousePosY, relativeMousePosX, relativeMousePosY);
+
+            this->PostEvent_OnMouseWheel(pEventReceiver, delta, relativeMousePosX, relativeMousePosY);
         }
     }
 

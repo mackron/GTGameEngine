@@ -46,6 +46,10 @@ namespace GT
     {
     }
 
+    void GUIEventHandler::OnMouseWheel(GUIContext &, HGUIElement, int, int, int)
+    {
+    }
+
 
     void GUIEventHandler::OnSetMouseEventCapture(GUIContext &, HGUIElement)
     {
