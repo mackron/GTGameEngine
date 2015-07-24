@@ -222,17 +222,38 @@ namespace GT
     void EditorAssetExplorerItem::FindChildAlphabeticalInsertIndex(const char* absolutePath, size_t &insertIndexOut) const
     {
         insertIndexOut = 0;
-        //for (size_t iChild = 0; iChild < m_children.GetCount(); ++iChild)
-        for (size_t iChild = m_children.GetCount(); iChild > 0; --iChild)
+        size_t firstFileIndex = 0;
+        if (this->FirstFirstFileIndex(firstFileIndex))
         {
-            auto pChild = m_children[iChild - 1];
-            assert(pChild != nullptr);
-
-            //if (GTLib::Strings::Compare(absolutePath, pChild->GetAbsolutePath()) < 0)
-            if (strcmp(easypath_filename(pChild->GetAbsolutePath()), easypath_filename(absolutePath)) < 0)
+            if (m_fileSystem.IsDirectory(absolutePath))
             {
-                insertIndexOut = iChild;
-                return;
+                insertIndexOut = 0;
+                for (size_t iChild = firstFileIndex; iChild > 0; --iChild)
+                {
+                    auto pChild = m_children[iChild - 1];
+                    assert(pChild != nullptr);
+
+                    if (GTLib::Strings::CompareNoCase(easypath_filename(pChild->GetAbsolutePath()), easypath_filename(absolutePath)) < 0)
+                    {
+                        insertIndexOut = iChild;
+                        return;
+                    }
+                }
+            }
+            else
+            {
+                insertIndexOut = firstFileIndex;
+                for (size_t iChild = m_children.GetCount(); iChild > firstFileIndex; --iChild)
+                {
+                    auto pChild = m_children[iChild - 1];
+                    assert(pChild != nullptr);
+
+                    if (GTLib::Strings::CompareNoCase(easypath_filename(pChild->GetAbsolutePath()), easypath_filename(absolutePath)) < 0)
+                    {
+                        insertIndexOut = iChild;
+                        return;
+                    }
+                }
             }
         }
     }
@@ -418,6 +439,27 @@ namespace GT
         return 0;
     }
 
+
+
+    ///////////////////////////////////////////////////////
+    // Private
+
+    bool EditorAssetExplorerItem::FirstFirstFileIndex(size_t &indexOut) const
+    {
+        for (size_t i = 0; i < m_children.GetCount(); ++i)
+        {
+            auto pChild = m_children[i];
+            assert(pChild != nullptr);
+
+            if (!m_fileSystem.IsDirectory(pChild->GetAbsolutePath()))
+            {
+                indexOut = i;
+                return true;
+            }
+        }
+
+        return false;
+    }
 
 
 

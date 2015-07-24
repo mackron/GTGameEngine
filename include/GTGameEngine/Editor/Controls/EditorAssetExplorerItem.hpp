@@ -110,6 +110,13 @@ namespace GT
 
     private:
 
+        /// Retrieves the index of the file in the children list.
+        bool FirstFirstFileIndex(size_t &indexOut) const;
+
+
+
+    private:
+
         /// A pointer to the parent item, if any.
         EditorAssetExplorerItem* m_pParent;
 
@@ -147,7 +154,7 @@ namespace GT
         HGUIElement m_hChildContainer;
 
 
-        /// The list of child element.
+        /// The list of child element. This is in the order the items are shown in the explorer. Thus, folders are at the top.
         GTLib::Vector<EditorAssetExplorerItem*> m_children;
 
 

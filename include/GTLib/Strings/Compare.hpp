@@ -12,6 +12,44 @@ namespace GTLib
     {
         /// Compares two strings in the same manner as strcmp().
         template <typename T, typename U>
+        int CompareNoCase(const T* str1, ptrdiff_t str1SizeInTs, const U* str2, ptrdiff_t str2SizeInUs = -1)
+        {
+            int result = 0;
+
+            char32_t c1;
+            char32_t c2;
+
+            do
+            {
+                c1 = NextChar(str1, str1SizeInTs);
+                c2 = NextChar(str2, str2SizeInUs);
+
+                result = tolower(static_cast<int>(c1)) - tolower(static_cast<int>(c2));
+
+            } while (result == 0 && c2 != '\0');
+
+
+            if (result < 0)
+            {
+                return -1;
+            }
+            else if (result > 0)
+            {
+                return +1;
+            }
+
+            return 0;
+        }
+
+        template <typename T, typename U>
+        int CompareNoCase(const T* str1, const U* str2)
+        {
+            return CompareNoCase(str1, -1, str2, -1);
+        }
+
+
+        /// Compares two strings in the same manner as strcmp().
+        template <typename T, typename U>
         int Compare(const T* str1, ptrdiff_t str1SizeInTs, const U* str2, ptrdiff_t str2SizeInUs = -1)
         {
             int result = 0;
