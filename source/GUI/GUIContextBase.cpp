@@ -476,7 +476,7 @@ namespace GT
                 }
 
                 //TODO: Only invalidate the properties that will have changed.
-                this->Layout_InvalidateElementLayout(pChildElement, LayoutFlag_SizeAndPositionInvalid);
+                this->Layout_InvalidateElementLayout(pChildElement, LayoutFlag_SizeAndPositionInvalid | LayoutFlag_ForceReposition);
 
 
                 // The element may not have a font set in which case it will inherit it from the parent. And since the parent has just changed, this will need to be updated.
@@ -537,7 +537,7 @@ namespace GT
                 }
 
                 // Invalidate the applicable layouts. TODO: Only invalidate the properties that will have changed.
-                this->Layout_InvalidateElementLayout(pChildElement, LayoutFlag_SizeAndPositionInvalid);
+                this->Layout_InvalidateElementLayout(pChildElement, LayoutFlag_SizeAndPositionInvalid | LayoutFlag_ForceReposition);
 
 
                 // The element may not have a font set in which case it will inherit it from the parent. And since the parent has just changed, this will need to be updated.
@@ -606,7 +606,7 @@ namespace GT
 
             //TODO: Only invalidate the properties that will have changed.
             this->Layout_InvalidateElementLayout(pElementToAppendTo, LayoutFlag_SizeAndPositionInvalid);
-            this->Layout_InvalidateElementLayout(pElementToAppend,   LayoutFlag_SizeAndPositionInvalid);
+            this->Layout_InvalidateElementLayout(pElementToAppend,   LayoutFlag_SizeAndPositionInvalid | LayoutFlag_ForceReposition);
 
 
             // The element may not have a font set in which case it will inherit it from the parent. And since the parent may have changed, this will need to be updated.
@@ -674,8 +674,7 @@ namespace GT
 
             //TODO: Only invalidate the properties that will have changed.
             this->Layout_InvalidateElementLayout(pElementToPrependTo, LayoutFlag_SizeAndPositionInvalid);
-            this->Layout_InvalidateElementLayout(pElementToPrepend,   LayoutFlag_SizeAndPositionInvalid);
-
+            this->Layout_InvalidateElementLayout(pElementToPrepend,   LayoutFlag_SizeAndPositionInvalid | LayoutFlag_ForceReposition);
 
             // The element may not have a font set in which case it will inherit it from the parent. And since the parent may have changed, this will need to be updated.
             this->RefreshTextLayoutsOfElementsWithInheritedFont(pElementToPrepend);
@@ -2082,7 +2081,12 @@ namespace GT
         GUIElementStyle_Set_visible(pElement->style, visible);
 
         
-        // TODO: A change in visibility will change the layout of other elements. Also need a redraw.
+        // With respect to layout, a change in visiblity is equivalent to changing the size to 0,0 and back again.
+        this->BeginBatch();
+        {
+            this->Layout_InvalidateElementLayout(pElement, LayoutFlag_SizeInvalid);
+        }
+        this->EndBatch();
     }
 
     bool GUIContextBase::IsElementVisible(GUIElement* pElement) const
@@ -4757,7 +4761,7 @@ namespace GT
         }
 
 
-        if (oldRelativeX != pElement->layout.relativePosX || oldRelativeY != pElement->layout.relativePosY)
+        if (oldRelativeX != pElement->layout.relativePosX || oldRelativeY != pElement->layout.relativePosY || (pElement->layout.invalidFlags & LayoutFlag_ForceReposition) != 0)
         {
             this->Layout_MarkElementPositionAsChanged(pElement);
         }
@@ -5356,7 +5360,7 @@ namespace GT
                     }
 
 
-                    if (prevRelativeX != pSibling->layout.relativePosX || prevRelativeY != pSibling->layout.relativePosY)
+                    if (prevRelativeX != pSibling->layout.relativePosX || prevRelativeY != pSibling->layout.relativePosY || (pSibling->layout.invalidFlags & LayoutFlag_ForceReposition) != 0)
                     {
                         this->Layout_MarkElementPositionAsChanged(pSibling);
                     }
@@ -5438,6 +5442,7 @@ namespace GT
 
         pElement->layout.invalidFlags &= ~LayoutFlag_RelativeXPositionInvalid;
         pElement->layout.invalidFlags &= ~LayoutFlag_RelativeYPositionInvalid;
+        pElement->layout.invalidFlags &= ~LayoutFlag_ForceReposition;
         if (pElement->layout.invalidFlags == 0)
         {
             m_layoutContext.invalidElements.Remove(pElement->layout.layoutValidationListItem);
