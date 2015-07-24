@@ -2084,7 +2084,7 @@ namespace GT
         // With respect to layout, a change in visiblity is equivalent to changing the size to 0,0 and back again.
         this->BeginBatch();
         {
-            this->Layout_InvalidateElementLayout(pElement, LayoutFlag_SizeInvalid);
+            this->Layout_InvalidateElementLayout(pElement, LayoutFlag_SizeInvalid | LayoutFlag_ForceWidthRevalidation | LayoutFlag_ForceHeightRevalidation);
         }
         this->EndBatch();
     }
@@ -4390,7 +4390,7 @@ namespace GT
         float oldOuterWidth = GUIContextBase::Layout_GetElementOuterWidth(pElement);
         float newOuterWidth = this->Layout_UpdateElementWidth(pElement);
 
-        if (oldOuterWidth != newOuterWidth)
+        if (oldOuterWidth != newOuterWidth || (pElement->layout.invalidFlags & LayoutFlag_ForceHeightRevalidation) != 0)
         {
             this->Layout_MarkElementSizeAsChanged(pElement);
 
@@ -4564,7 +4564,7 @@ namespace GT
         float oldOuterHeight = GUIContextBase::Layout_GetElementOuterHeight(pElement);
         float newOuterHeight = this->Layout_UpdateElementHeight(pElement);
 
-        if (oldOuterHeight != newOuterHeight)
+        if (oldOuterHeight != newOuterHeight || (pElement->layout.invalidFlags & LayoutFlag_ForceHeightRevalidation) != 0)
         {
             this->Layout_MarkElementSizeAsChanged(pElement);
 
@@ -5417,6 +5417,7 @@ namespace GT
         assert(pElement != nullptr);
 
         pElement->layout.invalidFlags &= ~LayoutFlag_WidthInvalid;
+        pElement->layout.invalidFlags &= ~LayoutFlag_ForceWidthRevalidation;
         if (pElement->layout.invalidFlags == 0)
         {
             m_layoutContext.invalidElements.Remove(pElement->layout.layoutValidationListItem);
@@ -5429,6 +5430,7 @@ namespace GT
         assert(pElement != nullptr);
 
         pElement->layout.invalidFlags &= ~LayoutFlag_HeightInvalid;
+        pElement->layout.invalidFlags &= ~LayoutFlag_ForceHeightRevalidation;
         if (pElement->layout.invalidFlags == 0)
         {
             m_layoutContext.invalidElements.Remove(pElement->layout.layoutValidationListItem);
