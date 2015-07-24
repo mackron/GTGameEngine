@@ -45,4 +45,8 @@ namespace GT
     void EditorEventHandler::OnMouseButtonDoubleClick(HWindow, int, int, int)
     {
     }
+
+    void EditorEventHandler::OnMouseWheel(HWindow, int, int, int)
+    {
+    }
 }

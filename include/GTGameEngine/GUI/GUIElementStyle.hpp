@@ -149,8 +149,8 @@ namespace GT
         uint32_t minHeight;                                 // [1,4] type | [5,32] value
         uint32_t maxHeight;                                 // [1,4] type | [5,32] value
 
-        int32_t innerOffsetX;
-        int32_t innerOffsetY;
+        //int32_t innerOffsetX;
+        //int32_t innerOffsetY;
 
         uint8_t childAxisAndAlignmentAndPositioning;        // [1,1] child axis              | [2,3] horizontal align         | [4,5] vertical align  | [6,7] positioning
         uint8_t childrenSizeBoundaryAndPositionOrigin;      // [1,2] children width boundary | [3,4] children height boundary | [5,6] position origin
@@ -356,6 +356,7 @@ namespace GT
     }
 
 
+#if 0
     // Inner X offset
     inline void GUIElementStyle_Set_inneroffsetx(GUIElementStyle &style, int32_t innerOffsetX)
     {
@@ -375,6 +376,7 @@ namespace GT
     {
         return style.innerOffsetY;
     }
+#endif
 
 
     // Child axis.

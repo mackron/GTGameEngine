@@ -97,6 +97,12 @@ namespace GT
     }
 
 
+    bool FileSystem::IsDirectory(const char* absolutePath)
+    {
+        return GTLib::IO::DirectoryExists(absolutePath);
+    }
+
+
     bool FileSystem::IterateFiles(const char* absolutePath, std::function<bool (const FileInfo &fi)> func) const
     {
 #if defined(GT_PLATFORM_WINDOWS)

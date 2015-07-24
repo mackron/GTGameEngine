@@ -27,6 +27,7 @@ typedef void* easyfsw_context;
 namespace GT
 {
     class GameContext;
+    class EngineContext;
     class EditorHeader;
     class EditorBody;
     class EditorFooter;
@@ -76,6 +77,13 @@ namespace GT
 
         /// Retrieves a reference to the editor's theme.
         const EditorTheme & GetTheme() const { return m_theme; }
+
+
+        /// Retrieves a reference to the game context.
+        GameContext & GetGameContext() { return m_gameContext; }
+
+        /// Retrieves a reference to the engine context.
+        EngineContext & GetEngineContext();
 
 
         /// Opens the editor.
@@ -226,6 +234,9 @@ namespace GT
         /// @copydoc GameContext::OnMouseButtonDoubleClicked()
         void OnMouseButtonDoubleClicked(HWindow hWindow, int button, int xPos, int yPos);
 
+        /// @copydoc GameContext::OnMouseWheel()
+        void OnMouseWheel(HWindow hWindow, int delta, int xPos, int yPos);
+
         /// @copydoc GameContext::OnKeyPressed()
         void OnKeyPressed(HWindow hWindow, GTLib::Key key);
 
@@ -339,6 +350,9 @@ namespace GT
 
         /// Posts the OnMouseButtonDoubleClick event to every attached event handler.
         void PostEvent_OnMouseButtonDoubleClick(HWindow hWindow, int button, int xPos, int yPos);
+
+        /// Posts the OnMouseWheel event to every attached event handler.
+        void PostEvent_OnMouseWheel(HWindow hWindow, int delta, int xPos, int yPos);
 
 
 

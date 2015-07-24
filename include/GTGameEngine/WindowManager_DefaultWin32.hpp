@@ -68,6 +68,9 @@ namespace GT
         /// @copydoc WindowManager_Win32::OnMouseButtonDoubleClicked()
         virtual void OnMouseButtonDoubleClicked(HWindow hWindow, int button, int mousePosX, int mousePosY);
 
+        /// @copydoc WindowManager_Win32::OnMouseWheel()
+        virtual void OnMouseWheel(HWindow hWindow, int delta, int mousePosX, int mousePosY);
+
         /// @copydoc WindowManager_Win32::OnKeyPressed()
         virtual void OnKeyPressed(HWindow hWindow, GTLib::Key key);
 

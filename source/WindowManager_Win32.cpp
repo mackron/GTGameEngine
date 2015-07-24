@@ -472,6 +472,19 @@ namespace GT
                 }
 
 
+
+            case WM_MOUSEWHEEL:
+                {
+                    int delta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
+                    int xPos  = GET_X_LPARAM(lParam);
+                    int yPos  = GET_Y_LPARAM(lParam);
+                    pWindowManager->OnMouseWheel(reinterpret_cast<HWindow>(hWnd), delta, xPos, yPos);
+
+                    break;
+                }
+
+
+
             case WM_KEYDOWN:
                 {
                     if (!IsWin32MouseButtonKeyCode(wParam))

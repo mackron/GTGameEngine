@@ -181,6 +181,9 @@ namespace GT
         /// @param yPos    [in] The position of the cursor on the y axis.
         virtual void OnMouseButtonDoubleClicked(GameContext &gameContext, HWindow hWindow, int button, int xPos, int yPos);
 
+        /// Called when the mouse wheen is turned.
+        virtual void OnMouseWheel(GameContext &gameContext, HWindow hWindow, int delta, int xPos, int yPos);
+
         /// Called when a key is pressed.
         ///
         /// @param hWindow [in] A handle to the window that has the keyboard focus and thus received the key press event.

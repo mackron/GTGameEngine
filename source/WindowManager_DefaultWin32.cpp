@@ -76,6 +76,11 @@ namespace GT
         m_pGameContext->OnMouseButtonDoubleClicked(hWindow, button, mousePosX, mousePosY);
     }
 
+    void WindowManager_DefaultWin32::OnMouseWheel(HWindow hWindow, int delta, int mousePosX, int mousePosY)
+    {
+        m_pGameContext->OnMouseWheel(hWindow, delta, mousePosX, mousePosY);
+    }
+
     void WindowManager_DefaultWin32::OnKeyPressed(HWindow hWindow, GTLib::Key key)
     {
         m_pGameContext->OnKeyPressed(hWindow, key);

@@ -131,6 +131,9 @@ namespace GT
         /// @copydoc GUIContextBase::PostEvent_OnMouseButtonDoubleClicked()
         void PostEvent_OnMouseButtonDoubleClicked(GUIElement* pElement, int mouseButton, int mousePosX, int mousePosY);
 
+        /// @copydoc GUIContextBase::PostEvent_OnMouseWheel()
+        void PostEvent_OnMouseWheel(GUIElement* pElement, int delta, int mousePosX, int mousePosY);
+
         /// @copydoc GUIContextBase::PostEvent_OnSetMouseEventCapture()
         void PostEvent_OnSetMouseEventCapture(GUIElement* pElement);
 
@@ -1424,6 +1427,9 @@ namespace GT
 
         /// @copydoc GUIContextBase::OnMouseButtonDoubleClicked()
         void OnMouseButtonDoubleClicked(HGUISurface hSurface, int mouseButton, int mousePosX, int mousePosY);
+
+        /// @copydoc GUIContextBase::OnMouseWheel()
+        void OnMouseWheel(HGUISurface hSurface, int delta, int mousePosX, int mousePosY);
 
 
         ////////////////////////////////////////////////////////////////

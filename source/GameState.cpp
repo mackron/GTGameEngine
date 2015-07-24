@@ -115,6 +115,10 @@ namespace GT
     {
     }
 
+    void GameState::OnMouseWheel(GameContext &, HWindow, int, int, int)
+    {
+    }
+
     void GameState::OnKeyPressed(GameContext &, HWindow, GTLib::Key)
     {
     }

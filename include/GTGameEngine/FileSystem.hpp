@@ -123,6 +123,10 @@ namespace GT
         GTLib::String GetBaseDirectoryByIndex(size_t index) const;
 
 
+        /// Determines whether or not the given path points to a directory.
+        bool IsDirectory(const char* absolutePath);
+
+
         /// Iterates over every file and directory in the given directory.
         ///
         /// @param absolutePath [in] The absolute path of the directory whose contents are being iterated.

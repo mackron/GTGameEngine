@@ -160,6 +160,9 @@ namespace GT
         /// Called when a mouse button is double-clicked.
         virtual void OnMouseButtonDoubleClicked(HWindow hWindow, int button, int mousePosX, int mousePosY) = 0;
 
+        /// Called when the mouse wheel is turned.
+        virtual void OnMouseWheel(HWindow hWindow, int delta, int mousePosX, int mousePosY) = 0;
+
         /// Called when a key is pressed.
         virtual void OnKeyPressed(HWindow hWnd, GTLib::Key key) = 0;
 

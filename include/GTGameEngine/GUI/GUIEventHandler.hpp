@@ -90,6 +90,15 @@ namespace GT
         /// @param mousePosY   [in] The position of the mouse relative to the top left corner, on the y axis.
         virtual void OnMouseButtonDoubleClicked(GUIContext &context, HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY);
 
+        /// Called when the mouse wheel is moved.
+        ///
+        /// @param context   [in] The GUI context.
+        /// @param hElement  [in] The element receiving the event.
+        /// @param delta     [in] The mouse wheel delta.
+        /// @param mousePosX [in] The position of the mouse relative to the top left corner, on the x axis.
+        /// @param mousePosY [in] The position of the mouse relative to the top left corner, on the y axis.
+        virtual void OnMouseWheel(GUIContext &context, HGUIElement hElement, int delta, int mousePosX, int mousePosY);
+
 
         /// Called when an element receives the mouse event capture.
         ///

@@ -134,6 +134,9 @@ namespace GT
         /// @param mousePosY   [in] The position of the mouse on the y axis relative to the top left corner of the element.
         virtual void PostEvent_OnMouseButtonDoubleClicked(GUIElement* pElement, int mouseButton, int mousePosX, int mousePosY) = 0;
 
+        /// Posts the OnMouseWheel event.
+        virtual void PostEvent_OnMouseWheel(GUIElement* pElement, int delta, int mousePosX, int mousePosY) = 0;
+
 
         /// Posts the OnSetMouseEventCapture()
         ///
@@ -1543,6 +1546,9 @@ namespace GT
         /// @param xPos     [in] The position of the cursor on the x axis relative to the top left corner of the surface.
         /// @param yPos     [in] The position of the cursor on the y axis relative to the top left corner of the surface.
         void OnMouseButtonDoubleClicked(GUISurface* pSurface, int button, int xPos, int yPos);
+
+        /// @copydoc GUIEventHandler::OnMouseWheel()
+        void OnMouseWheel(GUISurface* pSurface, int delta, int mousePosX, int mousePosY);
             
 
 

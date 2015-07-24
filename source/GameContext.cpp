@@ -507,6 +507,20 @@ namespace GT
 #endif
     }
 
+    void GameContext::OnMouseWheel(HWindow hWindow, int delta, int xPos, int yPos)
+    {
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnMouseWheel(*this, hWindow, delta, xPos, yPos);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnMouseWheel(hWindow, delta, xPos, yPos);
+        }
+#endif
+    }
+
     void GameContext::OnKeyPressed(HWindow hWindow, GTLib::Key key)
     {
         if (!this->IsEditorOpen())

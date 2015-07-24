@@ -225,6 +225,11 @@ namespace GT
     }
 
 
+    EngineContext & Editor::GetEngineContext()
+    {
+        return m_gameContext.GetEngineContext();
+    }
+
 
     bool Editor::Open()
     {
@@ -566,6 +571,26 @@ namespace GT
         }
     }
 
+    void Editor::OnMouseWheel(HWindow hWindow, int delta, int xPos, int yPos)
+    {
+        this->PostEvent_OnMouseWheel(hWindow, delta, xPos, yPos);
+
+        HGUISurface hSurface = this->GetWindowSurface(hWindow);
+        if (hSurface != 0)
+        {
+            // The cursor position may be on the client area which means it wasn't moved while on top of the GUI surface. Don't post
+            // the event to the GUI if the position is not inside the surface's area.
+            unsigned int surfaceWidth;
+            unsigned int surfaceHeight;
+            m_gui.GetSurfaceSize(hSurface, surfaceWidth, surfaceHeight);
+
+            if (xPos > 0 && yPos > 0 && xPos < static_cast<int>(surfaceWidth) && yPos < static_cast<int>(surfaceHeight))
+            {
+                m_gui.OnMouseWheel(hSurface, delta, xPos, yPos);
+            }
+        }
+    }
+
     void Editor::OnKeyPressed(HWindow hWindow, GTLib::Key key)
     {
         (void)hWindow;
@@ -834,6 +859,18 @@ namespace GT
             assert(pEventHandler != nullptr);
             {
                 pEventHandler->OnMouseButtonDoubleClick(hWindow, button, xPos, yPos);
+            }
+        }
+    }
+
+    void Editor::PostEvent_OnMouseWheel(HWindow hWindow, int delta, int xPos, int yPos)
+    {
+        for (size_t iEventHandler = 0; iEventHandler < m_eventHandlers.GetCount(); ++iEventHandler)
+        {
+            auto pEventHandler = m_eventHandlers[iEventHandler];
+            assert(pEventHandler != nullptr);
+            {
+                pEventHandler->OnMouseWheel(hWindow, delta, xPos, yPos);
             }
         }
     }

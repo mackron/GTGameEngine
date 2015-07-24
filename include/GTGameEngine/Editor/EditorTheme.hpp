@@ -3,7 +3,14 @@
 #ifndef __GT_EditorTheme_hpp_
 #define __GT_EditorTheme_hpp_
 
+#include "../Config.hpp"
+#include <GTLib/String.hpp>
 #include <GTLib/Colour.hpp>
+
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4351)   // new behaviour
+#endif
 
 namespace GT
 {
@@ -11,7 +18,11 @@ namespace GT
     struct EditorTheme
     {
         EditorTheme()
-            : backgroundDark(0.225f, 0.225f, 0.225f),
+            : defaultFontFamily(),
+              defaultSymbolFontFamily(),
+              defaultTextColor(0.8f, 0.8f, 0.8f),
+
+              backgroundDark(0.225f, 0.225f, 0.225f),
               backgroundMid(0.25f, 0.25f, 0.25f),
               backgroundPopup(0.2f, 0.2f, 0.2f),
 
@@ -20,8 +31,17 @@ namespace GT
               scrollbarBackgroundColor(0.325f, 0.325f, 0.325f),
               scrollbarWidth(16)
         {
+#if defined(GT_PLATFORM_WINDOWS)
+            GTLib::Strings::Copy(defaultFontFamily, "Segoe UI");
+            GTLib::Strings::Copy(defaultSymbolFontFamily, "Segoe UI Symbol");
+#endif
         }
 
+
+        // Fonts and text
+        char defaultFontFamily[128];
+        char defaultSymbolFontFamily[128];
+        GTLib::Colour defaultTextColor;
 
         // Background colours.
         GTLib::Colour backgroundDark;       //< The dark background colour.
@@ -36,5 +56,10 @@ namespace GT
         unsigned int scrollbarWidth;
     };
 }
+
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 
 #endif

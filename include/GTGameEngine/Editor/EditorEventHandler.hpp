@@ -78,6 +78,9 @@ namespace GT
         /// @remarks
         ///     The position is relative to the client area of the window.
         virtual void OnMouseButtonDoubleClick(HWindow hWindow, int button, int xPos, int yPos);
+
+        /// Called when the mouse wheen is turned.
+        virtual void OnMouseWheel(HWindow hWindow, int delta, int xPos, int yPos);
     };
 }
 

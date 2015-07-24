@@ -18,6 +18,9 @@ namespace GT
     static const uint16_t LayoutFlag_WidthInvalid             = (1 << 4);
     static const uint16_t LayoutFlag_HeightInvalid            = (1 << 5);
     static const uint16_t LayoutFlag_TextInvalid              = (1 << 6);
+    static const uint16_t LayoutFlag_ForceReposition          = (1 << 7);   // Specify this flag when an element changes parent. This is because the position of the element has changed, however the relative position will remain constant and thus won't be detected as a position change.
+    static const uint16_t LayoutFlag_ForceWidthRevalidation   = (1 << 8);   // Specify this when the width needs to be re-evaluated regardless of whether or not it's actually changed.
+    static const uint16_t LayoutFlag_ForceHeightRevalidation  = (1 << 9);   // As above.
     static const uint16_t LayoutFlag_PositionInvalid          = LayoutFlag_RelativeXPositionInvalid | LayoutFlag_RelativeYPositionInvalid;
     static const uint16_t LayoutFlag_SizeInvalid              = LayoutFlag_WidthInvalid | LayoutFlag_HeightInvalid;
     static const uint16_t LayoutFlag_SizeAndPositionInvalid   = LayoutFlag_SizeInvalid | LayoutFlag_PositionInvalid;

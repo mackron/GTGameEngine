@@ -2219,7 +2219,7 @@ namespace GT
             {
                 if (this->GetElementPositioning(pChild) != Positioning_Absolute)
                 {
-                    this->Layout_InvalidateElementLayout(pChild, LayoutFlag_PositionInvalid);
+                    this->Layout_InvalidateElementLayout(pChild, LayoutFlag_PositionInvalid/* | LayoutFlag_ForceReposition*/);
                 }
 
                 return true;
@@ -5194,8 +5194,10 @@ namespace GT
                 containerBorderRightWidth  = pParent->layout.borderRightWidth;
                 containerBorderBottomWidth = pParent->layout.borderBottomWidth;
 
-                containerInnerOffsetX = static_cast<float>(GUIElementStyle_Get_inneroffsetx(pParent->style));
-                containerInnerOffsetY = static_cast<float>(GUIElementStyle_Get_inneroffsety(pParent->style));
+                //containerInnerOffsetX = static_cast<float>(GUIElementStyle_Get_inneroffsetx(pParent->style));
+                //containerInnerOffsetY = static_cast<float>(GUIElementStyle_Get_inneroffsety(pParent->style));
+                containerInnerOffsetX = pParent->layout.innerOffsetX;
+                containerInnerOffsetY = pParent->layout.innerOffsetY;
             }
             else
             {
