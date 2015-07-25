@@ -156,6 +156,19 @@ namespace GT
                 
                 return false;
             });
+
+            auto handlers = m_callbackGlobalEventHandlers.OnSize;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement, width, height);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 
@@ -200,6 +213,19 @@ namespace GT
                 
                 return false;
             });
+
+            auto handlers = m_callbackGlobalEventHandlers.OnMove;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement, x, y);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 
@@ -262,19 +288,16 @@ namespace GT
                 return false;
             });
 
-            if (this->GetElementPtr(hElement) == pElement)
+            auto handlers = m_callbackGlobalEventHandlers.OnMouseEnter;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
             {
-                auto handlers = m_callbackGlobalEventHandlers.OnMouseEnter;
-                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                if (pElement == this->GetElementPtr(hElement))
                 {
-                    if (pElement == this->GetElementPtr(hElement))
-                    {
-                        handlers[i](hElement);
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    handlers[i](hElement);
+                }
+                else
+                {
+                    break;
                 }
             }
         }
@@ -323,19 +346,16 @@ namespace GT
                 return false;
             });
 
-            if (this->GetElementPtr(hElement) == pElement)
+            auto handlers = m_callbackGlobalEventHandlers.OnMouseLeave;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
             {
-                auto handlers = m_callbackGlobalEventHandlers.OnMouseLeave;
-                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                if (pElement == this->GetElementPtr(hElement))
                 {
-                    if (pElement == this->GetElementPtr(hElement))
-                    {
-                        handlers[i](hElement);
-                    }
-                    else
-                    {
-                        break;
-                    }
+                    handlers[i](hElement);
+                }
+                else
+                {
+                    break;
                 }
             }
         }
