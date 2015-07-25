@@ -1396,6 +1396,33 @@ namespace GT
         void DetachGlobalEventHandler(GUIEventHandler &eventHandler);
 
 
+        void OnElementSize(HGUIElement hElement, LocalOnSizeProc handler);
+        void OnElementMove(HGUIElement hElement, LocalOnMoveProc handler);
+        void OnElementMouseEnter(HGUIElement hElement, LocalOnMouseEnterProc handler);
+        void OnElementMouseLeave(HGUIElement hElement, LocalOnMouseLeaveProc handler);
+        void OnElementMouseMove(HGUIElement hElement, LocalOnMouseMoveProc handler);
+        void OnElementMouseButtonPressed(HGUIElement hElement, LocalOnMouseButtonPressedProc handler);
+        void OnElementMouseButtonReleased(HGUIElement hElement, LocalOnMouseButtonReleasedProc handler);
+        void OnElementMouseButtonDoubleClicked(HGUIElement hElement, LocalOnMouseButtonDoubleClickedProc handler);
+        void OnElementMouseWheel(HGUIElement hElement, LocalOnMouseWheelProc handler);
+        void OnElementSetMouseEventCapture(HGUIElement hElement, LocalOnSetMouseEventCaptureProc handler);
+        void OnElementReleaseMouseEventCapture(HGUIElement hElement, LocalOnReleaseMouseEventCaptureProc handler);
+
+        void OnGlobalElementSize(GlobalOnSizeProc handler);
+        void OnGlobalElementMove(GlobalOnMoveProc handler);
+        void OnGlobalElementMouseEnter(GlobalOnMouseEnterProc handler);
+        void OnGlobalElementMouseLeave(GlobalOnMouseLeaveProc handler);
+        void OnGlobalElementMouseMove(GlobalOnMouseMoveProc handler);
+        void OnGlobalElementMouseButtonPressed(GlobalOnMouseButtonPressedProc handler);
+        void OnGlobalElementMouseButtonReleased(GlobalOnMouseButtonReleasedProc handler);
+        void OnGlobalElementMouseButtonDoubleClicked(GlobalOnMouseButtonDoubleClickedProc handler);
+        void OnGlobalElementMouseWheel(GlobalOnMouseWheelProc handler);
+        void OnGlobalElementSetMouseEventCapture(GlobalOnSetMouseEventCaptureProc handler);
+        void OnGlobalElementReleaseMouseEventCapture(GlobalOnReleaseMouseEventCaptureProc handler);
+        void OnGlobalElementSurfaceNeedsRepaint(GlobalOnSurfaceNeedsRepaintProc handler);
+
+
+
 
         ////////////////////////////////////////////////////////////////
         // Inbound Events
@@ -1622,6 +1649,9 @@ namespace GT
 
         /// The list of global event handlers.
         GTLib::Vector<GUIEventHandler*> m_globalEventHandlers;
+
+        /// The callback based global event handlers.
+        GlobalCallbackEventHandlers m_callbackGlobalEventHandlers;
 
 
 #if defined(GT_GUI_DEBUGGING)

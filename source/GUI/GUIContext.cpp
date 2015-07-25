@@ -95,7 +95,11 @@ namespace GT
 
     void GUIContext::DeleteElementPtr(GUIElement* pElement)
     {
-        delete pElement;
+        if (pElement != nullptr)
+        {
+            delete pElement->pCallbackEventHandlers;
+            delete pElement;
+        }
     }
         
 
@@ -124,6 +128,23 @@ namespace GT
                 return true;
             });
 
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnSize;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i](width, height);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
             // Global
             this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
             {
@@ -151,6 +172,22 @@ namespace GT
                 eventHandler.OnMove(*this, hElement, x, y);
                 return true;
             });
+
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnMove;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i](x, y);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
 
             // Global
             this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
@@ -196,6 +233,23 @@ namespace GT
                 return true;
             });
 
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnMouseEnter;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i]();
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
             // Global
             this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
             {
@@ -207,6 +261,22 @@ namespace GT
                 
                 return false;
             });
+
+            if (this->GetElementPtr(hElement) == pElement)
+            {
+                auto handlers = m_callbackGlobalEventHandlers.OnMouseEnter;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i](hElement);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -224,6 +294,23 @@ namespace GT
                 return true;
             });
 
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnMouseLeave;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i]();
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
             // Global
             this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
             {
@@ -235,6 +322,22 @@ namespace GT
                 
                 return false;
             });
+
+            if (this->GetElementPtr(hElement) == pElement)
+            {
+                auto handlers = m_callbackGlobalEventHandlers.OnMouseLeave;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i](hElement);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
         }
     }
 
@@ -252,6 +355,23 @@ namespace GT
                 return true;
             });
 
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnMouseMove;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i](mousePosX, mousePosY);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
             // Global
             this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
             {
@@ -263,6 +383,19 @@ namespace GT
                 
                 return false;
             });
+
+            auto handlers = m_callbackGlobalEventHandlers.OnMouseMove;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement, mousePosX, mousePosY);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 
@@ -280,6 +413,23 @@ namespace GT
                 return true;
             });
 
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnMouseButtonPressed;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i](mouseButton, mousePosX, mousePosY);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
             // Global
             this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
             {
@@ -291,6 +441,19 @@ namespace GT
                 
                 return false;
             });
+
+            auto handlers = m_callbackGlobalEventHandlers.OnMouseButtonPressed;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement, mouseButton, mousePosX, mousePosY);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 
@@ -308,6 +471,23 @@ namespace GT
                 return true;
             });
 
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnMouseButtonReleased;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i](mouseButton, mousePosX, mousePosY);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
             // Global
             this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
             {
@@ -319,6 +499,19 @@ namespace GT
                 
                 return false;
             });
+
+            auto handlers = m_callbackGlobalEventHandlers.OnMouseButtonReleased;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement, mouseButton, mousePosX, mousePosY);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 
@@ -336,6 +529,23 @@ namespace GT
                 return true;
             });
 
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnMouseButtonDoubleClicked;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i](mouseButton, mousePosX, mousePosY);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
             // Global
             this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
             {
@@ -347,6 +557,19 @@ namespace GT
                 
                 return false;
             });
+
+            auto handlers = m_callbackGlobalEventHandlers.OnMouseButtonDoubleClicked;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement, mouseButton, mousePosX, mousePosY);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 
@@ -364,6 +587,23 @@ namespace GT
                 return true;
             });
 
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnMouseWheel;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i](delta, mousePosX, mousePosY);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
             // Global
             this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
             {
@@ -375,6 +615,19 @@ namespace GT
                 
                 return false;
             });
+
+            auto handlers = m_callbackGlobalEventHandlers.OnMouseWheel;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement, delta, mousePosX, mousePosY);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 
@@ -393,6 +646,23 @@ namespace GT
                 return true;
             });
 
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnSetMouseEventCapture;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i]();
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
             // Global
             this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
             {
@@ -404,6 +674,19 @@ namespace GT
                 
                 return false;
             });
+
+            auto handlers = m_callbackGlobalEventHandlers.OnSetMouseEventCapture;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 
@@ -421,6 +704,23 @@ namespace GT
                 return true;
             });
 
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnReleaseMouseEventCapture;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i]();
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
             // Global
             this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
             {
@@ -432,6 +732,20 @@ namespace GT
                 
                 return false;
             });
+
+
+            auto handlers = m_callbackGlobalEventHandlers.OnReleaseMouseEventCapture;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 
@@ -454,6 +768,19 @@ namespace GT
                 
                 return false;
             });
+
+            auto handlers = m_callbackGlobalEventHandlers.OnSurfaceNeedsRepaint;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pSurface == this->GetSurfacePtr(hSurface))
+                {
+                    handlers[i](hSurface, rect);
+                }
+                else
+                {
+                    break;
+                }
+            }
         }
     }
 
@@ -2340,6 +2667,225 @@ namespace GT
     {
         m_globalEventHandlers.RemoveFirstOccuranceOf(&eventHandler);
     }
+
+
+
+    void GUIContext::OnElementMove(HGUIElement hElement, LocalOnMoveProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnMove.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementSize(HGUIElement hElement, LocalOnSizeProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnSize.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementMouseEnter(HGUIElement hElement, std::function<void ()> handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnMouseEnter.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementMouseLeave(HGUIElement hElement, std::function<void ()> handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnMouseLeave.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementMouseMove(HGUIElement hElement, LocalOnMouseMoveProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnMouseMove.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementMouseButtonPressed(HGUIElement hElement, LocalOnMouseButtonPressedProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnMouseButtonPressed.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementMouseButtonReleased(HGUIElement hElement, LocalOnMouseButtonReleasedProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnMouseButtonReleased.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementMouseButtonDoubleClicked(HGUIElement hElement, LocalOnMouseButtonDoubleClickedProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnMouseButtonDoubleClicked.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementMouseWheel(HGUIElement hElement, LocalOnMouseWheelProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnMouseWheel.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementSetMouseEventCapture(HGUIElement hElement, LocalOnSetMouseEventCaptureProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnSetMouseEventCapture.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementReleaseMouseEventCapture(HGUIElement hElement, LocalOnReleaseMouseEventCaptureProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnReleaseMouseEventCapture.PushBack(handler);
+        }
+    }
+
+
+    void GUIContext::OnGlobalElementMove(GlobalOnMoveProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnMove.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementSize(GlobalOnSizeProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnSize.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementMouseEnter(GlobalOnMouseEnterProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnMouseEnter.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementMouseLeave(GlobalOnMouseLeaveProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnMouseLeave.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementMouseMove(GlobalOnMouseMoveProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnMouseMove.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementMouseButtonPressed(GlobalOnMouseButtonPressedProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnMouseButtonPressed.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementMouseButtonReleased(GlobalOnMouseButtonReleasedProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnMouseButtonReleased.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementMouseButtonDoubleClicked(GlobalOnMouseButtonDoubleClickedProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnMouseButtonDoubleClicked.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementMouseWheel(GlobalOnMouseWheelProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnMouseWheel.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementSetMouseEventCapture(GlobalOnSetMouseEventCaptureProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnSetMouseEventCapture.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementReleaseMouseEventCapture(GlobalOnReleaseMouseEventCaptureProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnReleaseMouseEventCapture.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementSurfaceNeedsRepaint(GlobalOnSurfaceNeedsRepaintProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnSurfaceNeedsRepaint.PushBack(handler);
+    }
+
+
 
 
     ////////////////////////////////////////////////////////////////

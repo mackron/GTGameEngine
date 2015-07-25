@@ -15,7 +15,7 @@ namespace GT
           pPrevSibling(nullptr), pNextSibling(nullptr),
           hFont(0),
           pTextLayout(nullptr),
-          eventHandlers()
+          eventHandlers(), pCallbackEventHandlers(nullptr)
     {
     }
 

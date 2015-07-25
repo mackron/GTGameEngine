@@ -6,6 +6,8 @@
 #include <cstdint>
 #include "GUIDataTypes.hpp"
 #include <GTLib/Rect.hpp>
+#include <GTLib/Vector.hpp>
+#include <functional>
 
 namespace GT
 {
@@ -124,6 +126,65 @@ namespace GT
         /// @param surface [in] The surface to redraw.
         /// @param rect    [in] The rectangle region needing to be redrawn.
         virtual void OnSurfaceNeedsRepaint(GUIContext &context, HGUISurface hSurface, const GTLib::Rect<int> &rect);
+    };
+
+
+    typedef std::function<void (int xPos, int yPos)>                            LocalOnMoveProc;
+    typedef std::function<void (unsigned int width, unsigned int height)>       LocalOnSizeProc;
+    typedef std::function<void ()>                                              LocalOnMouseEnterProc;
+    typedef std::function<void ()>                                              LocalOnMouseLeaveProc;
+    typedef std::function<void (int mousePosX, int mousePosY)>                  LocalOnMouseMoveProc;
+    typedef std::function<void (int mouseButton, int mousePosX, int mousePosY)> LocalOnMouseButtonPressedProc;
+    typedef std::function<void (int mouseButton, int mousePosX, int mousePosY)> LocalOnMouseButtonReleasedProc;
+    typedef std::function<void (int mouseButton, int mousePosX, int mousePosY)> LocalOnMouseButtonDoubleClickedProc;
+    typedef std::function<void (int delta, int mousePosX, int mousePosY)>       LocalOnMouseWheelProc;
+    typedef std::function<void ()>                                              LocalOnSetMouseEventCaptureProc;
+    typedef std::function<void ()>                                              LocalOnReleaseMouseEventCaptureProc;
+
+    struct LocalCallbackEventHandlers
+    {
+        GTLib::Vector<LocalOnMoveProc>                     OnMove;
+        GTLib::Vector<LocalOnSizeProc>                     OnSize;
+        GTLib::Vector<LocalOnMouseEnterProc>               OnMouseEnter;
+        GTLib::Vector<LocalOnMouseLeaveProc>               OnMouseLeave;
+        GTLib::Vector<LocalOnMouseMoveProc>                OnMouseMove;
+        GTLib::Vector<LocalOnMouseButtonPressedProc>       OnMouseButtonPressed;
+        GTLib::Vector<LocalOnMouseButtonReleasedProc>      OnMouseButtonReleased;
+        GTLib::Vector<LocalOnMouseButtonDoubleClickedProc> OnMouseButtonDoubleClicked;
+        GTLib::Vector<LocalOnMouseWheelProc>               OnMouseWheel;
+        GTLib::Vector<LocalOnSetMouseEventCaptureProc>     OnSetMouseEventCapture;
+        GTLib::Vector<LocalOnReleaseMouseEventCaptureProc> OnReleaseMouseEventCapture;
+    };
+
+
+
+    typedef std::function<void (HGUIElement hElement, int xPos, int yPos)>                            GlobalOnMoveProc;
+    typedef std::function<void (HGUIElement hElement, unsigned int width, unsigned int height)>       GlobalOnSizeProc;
+    typedef std::function<void (HGUIElement hElement)>                                                GlobalOnMouseEnterProc;
+    typedef std::function<void (HGUIElement hElement)>                                                GlobalOnMouseLeaveProc;
+    typedef std::function<void (HGUIElement hElement, int mousePosX, int mousePosY)>                  GlobalOnMouseMoveProc;
+    typedef std::function<void (HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY)> GlobalOnMouseButtonPressedProc;
+    typedef std::function<void (HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY)> GlobalOnMouseButtonReleasedProc;
+    typedef std::function<void (HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY)> GlobalOnMouseButtonDoubleClickedProc;
+    typedef std::function<void (HGUIElement hElement, int delta, int mousePosX, int mousePosY)>       GlobalOnMouseWheelProc;
+    typedef std::function<void (HGUIElement hElement)>                                                GlobalOnSetMouseEventCaptureProc;
+    typedef std::function<void (HGUIElement hElement)>                                                GlobalOnReleaseMouseEventCaptureProc;
+    typedef std::function<void (HGUISurface hSurface, const GTLib::Rect<int> &rect)>                  GlobalOnSurfaceNeedsRepaintProc;
+
+    struct GlobalCallbackEventHandlers
+    {
+        GTLib::Vector<GlobalOnMoveProc>                     OnMove;
+        GTLib::Vector<GlobalOnSizeProc>                     OnSize;
+        GTLib::Vector<GlobalOnMouseEnterProc>               OnMouseEnter;
+        GTLib::Vector<GlobalOnMouseLeaveProc>               OnMouseLeave;
+        GTLib::Vector<GlobalOnMouseMoveProc>                OnMouseMove;
+        GTLib::Vector<GlobalOnMouseButtonPressedProc>       OnMouseButtonPressed;
+        GTLib::Vector<GlobalOnMouseButtonReleasedProc>      OnMouseButtonReleased;
+        GTLib::Vector<GlobalOnMouseButtonDoubleClickedProc> OnMouseButtonDoubleClicked;
+        GTLib::Vector<GlobalOnMouseWheelProc>               OnMouseWheel;
+        GTLib::Vector<GlobalOnSetMouseEventCaptureProc>     OnSetMouseEventCapture;
+        GTLib::Vector<GlobalOnReleaseMouseEventCaptureProc> OnReleaseMouseEventCapture;
+        GTLib::Vector<GlobalOnSurfaceNeedsRepaintProc>      OnSurfaceNeedsRepaint;
     };
 }
 

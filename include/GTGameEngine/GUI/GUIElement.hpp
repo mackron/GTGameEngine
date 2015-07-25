@@ -187,6 +187,10 @@ namespace GT
         /// The list of event handlers currently attached to the element.
         GTLib::Vector<GUIEventHandler*> eventHandlers;
 
+        /// The structure containing the inlined event handlers.
+        LocalCallbackEventHandlers* pCallbackEventHandlers;
+
+
 
     private:    // No copying.
         GUIElement(const GUIElement &);
