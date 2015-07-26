@@ -134,7 +134,7 @@ const char* easypath_filename(const char* path)
 {
     if (path != 0)
     {
-        const char* fileName     = path;
+        const char* fileName = path;
 
         // We just loop through the path until we find the last slash.
         while (path[0] != '\0')
@@ -156,6 +156,54 @@ const char* easypath_filename(const char* path)
 
 
         return fileName;
+    }
+    
+    return 0;
+}
+
+const char* easypath_extension(const char* path)
+{
+    if (path != 0)
+    {
+        const char* extension = easypath_filename(path);
+
+        // Just find the first '.' and return.
+        while (path[0] != '\0')
+        {
+            if (path[0] == '.')
+            {
+                extension = path;
+            }
+
+            path += 1;
+        }
+
+
+        return extension;
+    }
+
+    return 0;
+}
+
+
+int easypath_equal(const char* path1, const char* path2)
+{
+    if (path1 != 0 && path2 != 0)
+    {
+        easypath_iterator iPath1 = easypath_begin(path1);
+        easypath_iterator iPath2 = easypath_begin(path2);
+
+        while (easypath_next(&iPath1) && easypath_next(&iPath2))
+        {
+            if (!easypath_iterators_equal(iPath1, iPath2))
+            {
+                return 0;
+            }
+        }
+
+
+        // At this point either iPath1 and/or iPath2 have finished iterating. If both of them are at the end, the two paths are equal.
+        return iPath1.path[iPath1.segment.offset] == '\0' && iPath2.path[iPath2.segment.offset] == '\0';
     }
     
     return 0;
