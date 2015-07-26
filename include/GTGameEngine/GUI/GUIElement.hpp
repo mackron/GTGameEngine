@@ -29,13 +29,12 @@ namespace GT
     static const uint16_t LayoutFlag_PositionChanged = (1 << 0);
     static const uint16_t LayoutFlag_SizeChanged     = (1 << 1);
 
+
     struct GUISurface;
 
     /// The data structure for GUI elements. This structure should only ever be touched by the GUIContext class.
     struct GUIElement
     {
-    public:
-
         /// Constructor.
         GUIElement();
 
@@ -190,6 +189,16 @@ namespace GT
         /// The structure containing the inlined event handlers.
         LocalCallbackEventHandlers* pCallbackEventHandlers;
 
+
+        /// Miscellaneous boolean flags.
+        uint32_t flags;
+
+
+
+        ///////////////////////////////////////
+        // Flags
+
+        static const uint32_t IsMarkedForDeletion = (1 << 0);
 
 
     private:    // No copying.

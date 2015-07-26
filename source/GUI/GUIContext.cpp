@@ -97,8 +97,17 @@ namespace GT
     {
         if (pElement != nullptr)
         {
-            delete pElement->pCallbackEventHandlers;
-            delete pElement;
+            auto pElementWithHandle = reinterpret_cast<GUIElementWithHandle*>(pElement);
+            if (pElementWithHandle != nullptr)
+            {
+                if (pElementWithHandle == this->GetElementPtr(pElementWithHandle->handle))
+                {
+                    m_elementHandles.DeleteHandle(pElementWithHandle->handle);
+
+                    delete pElement->pCallbackEventHandlers;
+                    delete pElement;
+                }
+            }
         }
     }
         

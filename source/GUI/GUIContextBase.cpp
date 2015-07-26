@@ -284,8 +284,9 @@ namespace GT
                 m_layoutContext.invalidElements.Remove(pElement->layout.layoutValidationListItem);
             }
 
-            // Now the element can actually be deleted.
-            this->DeleteElementPtr(pElement);
+
+            // Mark the element for deletion. The element will be deleted for real after all of the pending events and layout validation has been done.
+            this->MarkElementForDeletion(pElement);
         }
         this->EndBatch();
     }
@@ -2534,6 +2535,10 @@ namespace GT
 
                     // Paint.
                     this->Painting_PaintAndValidateSurfaceRects();
+
+
+                    // Delete every element that's pending deletion.
+                    this->DeleteElementsPendingDeletion();
                 }
                 m_batchLockCounter = 0;     // <-- Important that this is set to 0 explicitly because event handlers may call BeginBatch/EndBatch from inside which will break the counter.
             }
@@ -3419,6 +3424,35 @@ namespace GT
                 });
             }
         }
+    }
+
+
+    void GUIContextBase::MarkElementForDeletion(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        if (!this->IsElementMarkedForDeletion(pElement))
+        {
+            pElement->flags |= GUIElement::IsMarkedForDeletion;
+            m_elementsPendingDeletion.PushBack(pElement);
+        }
+    }
+
+    bool GUIContextBase::IsElementMarkedForDeletion(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return (pElement->flags & GUIElement::IsMarkedForDeletion) != 0;
+    }
+
+    void GUIContextBase::DeleteElementsPendingDeletion()
+    {
+        for (size_t iElement = 0; iElement < m_elementsPendingDeletion.GetCount(); ++iElement)
+        {
+            this->DeleteElementPtr(m_elementsPendingDeletion[iElement]);
+        }
+
+        m_elementsPendingDeletion.Clear();
     }
 
 

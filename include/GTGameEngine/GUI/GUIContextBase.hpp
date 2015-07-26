@@ -1735,6 +1735,16 @@ namespace GT
         void UpdateMouseEnterAndLeaveState(GUIElement* pNewElementUnderMouse);
 
 
+        /// Marks the given element for deletion.
+        void MarkElementForDeletion(GUIElement* pElement);
+
+        /// Determines whether or not the given element is marked for deletion.
+        bool IsElementMarkedForDeletion(GUIElement* pElement) const;
+
+        /// Deletes every element that is pending deletion.
+        void DeleteElementsPendingDeletion();
+
+
         ////////////////////////////////////////////////////////////////
         // DPI / Scaling
 
@@ -2367,6 +2377,9 @@ namespace GT
 
         /// The batch operation lock counter. When this is >0, any operation that is controlled by batching will be locked.
         uint32_t m_batchLockCounter;
+
+        /// The list of elements pending deletion.
+        GTLib::Vector<GUIElement*> m_elementsPendingDeletion;
     };
 }
 
