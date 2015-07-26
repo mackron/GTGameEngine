@@ -12,6 +12,10 @@
 #include "../external/easy_fsw/easy_fsw.h"
 #include "../external/easy_path/easy_path.h"
 
+#if defined(GT_PLATFORM_WINDOWS)
+#include <shellapi.h>
+#endif
+
 namespace GT
 {
     void EditorFSWProc(void* pEditorIn)
@@ -321,6 +325,19 @@ namespace GT
 
     bool Editor::OpenFile(const char* absolutePath)
     {
+#if defined(GT_PLATFORM_WINDOWS)
+        const char* extension = easypath_extension(absolutePath);
+        if (GTLib::Strings::Equal<true>(extension, "exe"))
+        {
+            return ShellExecuteA(NULL, "open", absolutePath, NULL, NULL, SW_SHOWNORMAL) > reinterpret_cast<HINSTANCE>(32);
+        }
+
+        if (GTLib::Strings::Equal<true>(extension, "bat"))
+        {
+            return ShellExecuteA(NULL, "open", absolutePath, NULL, NULL, SW_SHOWNORMAL) > reinterpret_cast<HINSTANCE>(32);
+        }
+#endif
+
         // For now we'll add the tab to the first tab group, but later we'll want to make this more intelligent such adding
         // it to the tab group that the user was last interacting with.
         auto pTabGroup = m_pBodyControl->GetTabGroupByIndex(0);
