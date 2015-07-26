@@ -71,6 +71,7 @@
 #define GT_ENABLE_TGA   1       //< Enable TGA images.
 #define GT_ENABLE_JPG   1       //< Enable JPG images.
 #define GT_ENABLE_PSD   1       //< Enable PSD images. PSD files are good for rapid turnaround times with texture creation, however disabling this will save a few KB in a release build.
+#define GT_ENABLE_MTL   1       //< Enable MTL materials (OBJ materials).
 #define GT_ENABLE_OBJ   1       //< Enable OBJ models.
 #define GT_ENABLE_MD2   1       //< Enable MD2 models.
 #define GT_ENABLE_OGEX  1       //< Enable OpenGEX models.
@@ -128,6 +129,9 @@
 #if defined(GT_ENABLE_PSD) && GT_ENABLE_PSD == 1
 #define GT_BUILD_PSD
 #endif
+#if defined(GT_ENABLE_MTL) && GT_ENABLE_MTL == 1
+#define GT_BUILD_MTL
+#endif
 #if defined(GT_ENABLE_OBJ) && GT_ENABLE_OBJ == 1
 #define GT_BUILD_OBJ
 #endif
@@ -148,6 +152,7 @@
     defined(GT_BUILD_TGA)  || \
     defined(GT_BUILD_JPG)  || \
     defined(GT_BUILD_PSD)  || \
+    defined(GT_BUILD_MTL)  || \
     defined(GT_BUILD_OBJ)  || \
     defined(GT_BUILD_MD2)  || \
     defined(GT_BUILD_OGEX) || \

@@ -674,6 +674,9 @@
     <ClCompile Include="..\..\..\source\external\easy_path\easy_path.c">
       <Filter>Source Files\external\easy_path</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\MaterialAsset_MTL.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp">
@@ -1269,6 +1272,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\external\easy_path\easy_path.h">
       <Filter>Source Files\external\easy_path</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Assets\MaterialAsset_MTL.hpp">
+      <Filter>Source Files\Assets</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

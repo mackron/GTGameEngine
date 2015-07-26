@@ -6,6 +6,10 @@
 #include "DefaultAssetAllocator.hpp"
 #include "ImageAsset_STB.hpp"
 
+#if defined(GT_BUILD_MTL)
+#include "MaterialAsset_MTL.hpp"
+#endif
+
 #if defined(GT_BUILD_MD2)
 #include "ModelAsset_MD2.hpp"
 #endif
@@ -31,6 +35,10 @@ namespace GT
 #endif
 #if defined(GT_BUILD_PSD)
         case AssetType_Image_PSD:
+#endif
+
+#if defined(GT_BUILD_MTL)
+        case AssetType_Material_MTL:
 #endif
 
 #if defined(GT_BUILD_OBJ)
@@ -67,6 +75,15 @@ namespace GT
         {
             return new ImageAsset_STB(type);
         }
+
+
+        // Materials
+#if defined(GT_BUILD_MTL)
+        if (type == AssetType_Material_MTL)
+        {
+            return new MaterialAsset_MTL(type);
+        }
+#endif
 
 
         // Models
