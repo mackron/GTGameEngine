@@ -25,6 +25,24 @@ namespace GT
         HGUIElement GetRightContainer() const { return m_hRightContainer; }
 
 
+        /// Retrieves the number of tab groups.
+        size_t GetTabGroupCount() const;
+
+        /// Retrieves the tab group at the given index.
+        EditorTabGroup* GetTabGroupByIndex(size_t index) const;
+
+
+        /// Closes the given tab.
+        bool CloseTab(EditorTab* pTab);
+
+        /// Activates the given tab.
+        bool ActivateTab(EditorTab* pTab);
+
+        /// Retrieves a pointer to the tab group the given tab is part of, if any.
+        ///
+        /// @remarks
+        ///     If the tab is not part of any group, null will be returned.
+        EditorTabGroup* FindTabGroup(EditorTab* pTab);
 
 
     private:

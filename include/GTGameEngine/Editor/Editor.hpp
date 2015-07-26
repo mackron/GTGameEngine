@@ -31,6 +31,7 @@ namespace GT
     class EditorHeader;
     class EditorBody;
     class EditorFooter;
+    class EditorTab;
 
     /// Class representing the editor.
     ///
@@ -107,6 +108,40 @@ namespace GT
         ///     @par
         ///     Stepping the editor will update and render all visible 3D viewports.
         void Step(double deltaTimeInSeconds);
+
+
+        /// Opens a file by it's absolute path.
+        ///
+        /// @param absolutePath [in] The absolute path of the file.
+        ///
+        /// @return True if the file was opened successfully.
+        ///
+        /// @remarks
+        ///     This will create the appropriate tab, but not activate it. Use ActivateFileTab() to activate the tab.
+        bool OpenFile(const char* absolutePath);
+
+        /// Closes a file by it's absolute path.
+        ///
+        /// @param absolutePath [in] The absolute path of the file.
+        void CloseFile(const char* absolutePath);
+
+        /// Same as CloseFile(), except shows a confirmation message if the file has been modified.
+        void TryCloseFile(const char* absolutePath);
+
+        /// Finds the tab associated with the given file.
+        EditorTab* FindFileTab(const char* absolutePath);
+
+
+        /// Closes the given tab.
+        void CloseTab(EditorTab* pTab);
+
+        /// Activates the given tab.
+        void ActivateTab(EditorTab* pTab);
+
+        /// Activates the tab for the file with the absolute path.
+        ///
+        /// @param absolutePath [in] The absolute path of the file whose tab should be activated.
+        bool ActivateFileTab(const char* absolutePath);
 
 
         /// Attaches an event handler.
@@ -358,6 +393,20 @@ namespace GT
 
     private:
 
+        /// Structure containing information about an open file in the editor.
+        struct OpenedFile
+        {
+            /// The absolute path of the file.
+            GTLib::String absolutePath;
+
+            /// A pointer to the tab associated with the file.
+            EditorTab* pTab;
+        };
+
+
+
+    private:
+
         /// A reference to the game context.
         GameContext &m_gameContext;
 
@@ -410,6 +459,10 @@ namespace GT
 
         /// The footer control.
         EditorFooter* m_pFooterControl;
+
+
+        /// The list of opened files.
+        GTLib::Vector<OpenedFile> m_openedFiles;
 
 
     private:    // No copying.

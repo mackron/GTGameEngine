@@ -22,6 +22,7 @@ namespace GT
           m_explorer(explorer),
           m_fileSystem(fileSystem),
           m_absolutePath(absolutePath),
+          m_isFolder(false),
           m_isExpanded(false),
           m_isSelected(false),
           m_titleEventHandler(*this)
@@ -58,6 +59,18 @@ namespace GT
             gui.SetElementFont(m_hTitleArrow, theme.defaultSymbolFontFamily, FontWeight_Medium, FontSlant_None, 9);
             gui.SetElementHeightToChildren(m_hTitleArrow);
             gui.SetElementWidth(m_hTitleArrow, 16U);
+            gui.OnElementMouseEnter(m_hTitleArrow, [&]() {
+                gui.SetElementTextColor(m_hTitleArrow, GTLib::Colour::White);
+            });
+            gui.OnElementMouseLeave(m_hTitleArrow, [&]() {
+                gui.SetElementTextColor(m_hTitleArrow, theme.defaultTextColor);
+            });
+            gui.OnElementMouseButtonPressed(m_hTitleArrow, [&](int button, int, int) {
+                if (button == 1)    // Left button
+                {
+                    this->ToggleExpand();
+                }
+            });
 
             m_hTitleIcon = gui.CreateElement();
             gui.SetElementParent(m_hTitleIcon, m_hTitleContainer);
@@ -104,6 +117,9 @@ namespace GT
             gui.SetElementSizeToChildren(m_hChildContainer);
             gui.SetElementMinWidthRatio(m_hChildContainer, 1.0f);
             gui.HideElement(m_hChildContainer);
+
+
+            m_isFolder = fileSystem.IsDirectory(absolutePath);
         }
     }
 
@@ -225,7 +241,7 @@ namespace GT
         size_t firstFileIndex = 0;
         if (this->FirstFirstFileIndex(firstFileIndex))
         {
-            if (m_fileSystem.IsDirectory(absolutePath))
+            if (this->IsFolder())
             {
                 insertIndexOut = 0;
                 for (size_t iChild = firstFileIndex; iChild > 0; --iChild)
@@ -264,7 +280,7 @@ namespace GT
     {
         if (!this->IsExpanded())
         {
-            if (m_fileSystem.IsDirectory(m_absolutePath.c_str()))
+            if (this->IsFolder())
             {
                 auto &gui   = this->GetGUI();
                 //auto &theme = this->GetEditor().GetTheme();
@@ -322,7 +338,7 @@ namespace GT
     {
         if (this->IsExpanded())
         {
-            if (m_fileSystem.IsDirectory(m_absolutePath.c_str()))
+            if (this->IsFolder())
             {
                 auto &gui   = this->GetGUI();
                 //auto &theme = this->GetEditor().GetTheme();
@@ -352,6 +368,18 @@ namespace GT
     bool EditorAssetExplorerItem::IsExpanded() const
     {
         return m_isExpanded;
+    }
+
+    void EditorAssetExplorerItem::OpenFileOrToggleExpand()
+    {
+        if (this->IsFolder())
+        {
+            this->ToggleExpand();
+        }
+        else
+        {
+            this->GetEditor().OpenFile(m_absolutePath.c_str());
+        }
     }
 
 

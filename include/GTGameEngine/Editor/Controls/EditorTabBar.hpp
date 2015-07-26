@@ -25,6 +25,8 @@ namespace GT
         /// Removes the given tab from the tab bar and deletes it.
         ///
         /// @param pTab [in] A pointer to the tab to delete.
+        ///
+        /// @return True if the tab was deleted; false if the tab could not be found (it could be part of a different tab bar).
         void DeleteTab(EditorTab* pTab);
 
 
@@ -46,8 +48,25 @@ namespace GT
         void ActivateTab(EditorTab* pTab);
 
         /// Deactivates the currently active tab.
-        void DeactivateTab();
+        void DeactivateActiveTab();
 
+        /// Determines whether or not the tab is part of this group.
+        bool IsTabOnThisBar(EditorTab* pTab) const;
+
+        /// Retrieves a pointer ot the neighbouring tab, if any.
+        ///
+        /// @remarks
+        ///     If there are not other tabs, this will return null.
+        ///     @par
+        ///     This will prioritize the tab to the right. If there are no tabs to the right, it will pick the one on the left.
+        EditorTab* GetNeighbouringTab(EditorTab* pTab) const;
+
+
+        /// Retrieves the number of tabs on the tab bar.
+        size_t GetTabCount() const;
+
+        /// Retrieves a pointer to the tab at the given index.
+        EditorTab* GetTabByIndex(size_t index) const;
 
 
     private:
@@ -71,6 +90,12 @@ namespace GT
             EditorTabBar* m_pTabBar;
         };
 
+
+
+    private:
+
+        /// Updates the border mask for the active tab.
+        void UpdateActiveTabBorderMask();
 
 
     private:

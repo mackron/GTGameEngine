@@ -16,8 +16,7 @@ namespace GT
 
             gui.SetElementHeightRatio(hRootElement, 1.0f);
             gui.SetElementWidthRatio(hRootElement, 1.0f);
-            gui.SetElementBorder(hRootElement, 1, GTLib::Colour(1, 1, 1, 1));
-            gui.SetElementBackgroundColor(hRootElement, theme.backgroundMid);
+            gui.SetElementBorder(hRootElement, 1, GTLib::Colour(0.4f, 0.4f, 0.4f));
         }
     }
 }

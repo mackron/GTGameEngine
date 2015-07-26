@@ -49,7 +49,6 @@ namespace GT
         HGUIElement m_hCloseElement;
 
 
-
         /////////////////////////////////////////
         // Statics
 

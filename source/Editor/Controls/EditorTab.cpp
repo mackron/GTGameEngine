@@ -16,14 +16,10 @@ namespace GT
             GUIContext &gui = editor.GetGUI();
             const EditorTheme &theme = editor.GetTheme();
 
-            //gui.EnableElementChildWidthFlexing(hRootElement);
             gui.SetElementChildAxis(hRootElement, ChildAxis_Horizontal);
             gui.SetElementSizeToChildren(hRootElement);
             gui.SetElementBorder(hRootElement, 1, theme.borderDefault);
             gui.SetElementBorderBottomWidth(hRootElement, 0);
-            
-            //gui.SetElementSize(hRootElement, 200U, 28U);
-            //gui.SetElementFont(hRootElement, "Segoe UI", FontWeight_Medium, FontSlant_None, 13);
 
 
             // Text element.
@@ -53,6 +49,20 @@ namespace GT
             gui.SetElementMarginRight(m_hCloseElement, 4);
             //gui.SetElementInnerOffsetY(m_hCloseElement, -2);
             //gui.SetElementBorder(m_hCloseElement, 1, GTLib::Colour(1, 1, 1));
+
+            gui.OnElementMouseEnter(m_hCloseElement, [&]() {
+                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.75f, 0.25f, 0.25f));
+            });
+            gui.OnElementMouseLeave(m_hCloseElement, [&]() {
+                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.35f, 0.35f, 0.35f));
+            });
+
+            gui.OnElementMouseButtonPressed(m_hCloseElement, [&](int, int, int) {
+                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.5f, 0.25f, 0.25f));
+            });
+            gui.OnElementMouseButtonReleased(m_hCloseElement, [&](int, int, int) {
+                editor.CloseTab(this);
+            });
 
 
             // Apply the default style to begin with.

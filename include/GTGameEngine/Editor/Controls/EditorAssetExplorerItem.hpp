@@ -29,6 +29,9 @@ namespace GT
         /// Retrieves a handle to the child container GUI element.
         HGUIElement GetChildContainerGUIElement() const { return m_hChildContainer; }
 
+        /// Determines whether or not the item is a folder.
+        bool IsFolder() const { return m_isFolder; }
+
 
         /// Creates and inserts a child item.
         ///
@@ -74,6 +77,9 @@ namespace GT
 
         /// Determines whether or not the item is expanded.
         bool IsExpanded() const;
+
+        /// If the item is a folder, toggles the expand/collapse state, and if it's a file opens the file.
+        void OpenFileOrToggleExpand();
 
 
         /// Selects the item.
@@ -130,6 +136,9 @@ namespace GT
         GTLib::String m_absolutePath;
 
 
+        /// Keeps track of whether or not the item is a folder.
+        bool m_isFolder;
+
         /// Keeps track of whether or not the item is expanded.
         bool m_isExpanded;
 
@@ -182,7 +191,7 @@ namespace GT
             {
                 if (mouseButton == 1)   // Left
                 {
-                    m_explorerItem.ToggleExpand();
+                    m_explorerItem.OpenFileOrToggleExpand();
                 }
             }
 

@@ -319,6 +319,105 @@ namespace GT
     }
 
 
+    bool Editor::OpenFile(const char* absolutePath)
+    {
+        // For now we'll add the tab to the first tab group, but later we'll want to make this more intelligent such adding
+        // it to the tab group that the user was last interacting with.
+        auto pTabGroup = m_pBodyControl->GetTabGroupByIndex(0);
+        if (pTabGroup != nullptr)
+        {
+            auto pExistingTab = this->FindFileTab(absolutePath);
+            if (pExistingTab != nullptr)
+            {
+                this->ActivateTab(pExistingTab);
+            }
+            else
+            {
+                auto pNewTab = pTabGroup->CreateTab(easypath_filename(absolutePath));
+                if (pNewTab != nullptr)
+                {
+                    OpenedFile openedFile;
+                    openedFile.absolutePath = absolutePath;
+                    openedFile.pTab = pNewTab;
+                    m_openedFiles.PushBack(openedFile);
+
+                    pTabGroup->ActivateTab(pNewTab);
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    void Editor::CloseFile(const char* absolutePath)
+    {
+        auto pFileTab = this->FindFileTab(absolutePath);
+        if (pFileTab != nullptr)
+        {
+            this->CloseTab(pFileTab);
+        }
+    }
+
+    void Editor::TryCloseFile(const char* absolutePath)
+    {
+        // TODO: Check if the file has been modified and if so, show a confirmation box.
+
+        this->CloseFile(absolutePath);
+    }
+
+
+
+    void Editor::CloseTab(EditorTab* pTab)
+    {
+        // Check if the tab is associated with a file.
+        for (size_t iOpenedFile = 0; iOpenedFile < m_openedFiles.GetCount(); ++iOpenedFile)
+        {
+            auto &openedFile = m_openedFiles[iOpenedFile];
+            if (openedFile.pTab == pTab)
+            {
+                m_openedFiles.Remove(iOpenedFile);
+                break;
+            }
+        }
+
+
+
+        m_pBodyControl->CloseTab(pTab);
+    }
+
+    void Editor::ActivateTab(EditorTab* pTab)
+    {
+        m_pBodyControl->ActivateTab(pTab);
+    }
+
+    bool Editor::ActivateFileTab(const char* absolutePath)
+    {
+        auto pTab = this->FindFileTab(absolutePath);
+        if (pTab != nullptr)
+        {
+            this->ActivateTab(pTab);
+            return true;
+        }
+
+        return false;
+    }
+
+    EditorTab* Editor::FindFileTab(const char* absolutePath)
+    {
+        for (size_t iOpenedFile = 0; iOpenedFile < m_openedFiles.GetCount(); ++iOpenedFile)
+        {
+            auto &openedFile = m_openedFiles[iOpenedFile];
+            if (openedFile.absolutePath == absolutePath)
+            {
+                return openedFile.pTab;
+            }
+        }
+
+        return nullptr;
+    }
+
+
     void Editor::AttachEventHandler(EditorEventHandler &eventHandler)
     {
         m_eventHandlers.RemoveFirstOccuranceOf(&eventHandler);

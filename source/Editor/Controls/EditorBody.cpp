@@ -55,4 +55,71 @@ namespace GT
     EditorBody::~EditorBody()
     {
     }
+
+
+    size_t EditorBody::GetTabGroupCount() const
+    {
+        return m_tabGroups.GetCount();
+    }
+
+    EditorTabGroup* EditorBody::GetTabGroupByIndex(size_t index) const
+    {
+        return m_tabGroups[index];
+    }
+
+
+    bool EditorBody::CloseTab(EditorTab* pTab)
+    {
+        auto pTabGroup = this->FindTabGroup(pTab);
+        if (pTabGroup != nullptr)
+        {
+            // TODO: The tab group is oblivious to the actual contents of the tab's page. We need to determine what the tab is for
+            //       and delete the content appropriately before closing the tab. If it's something like a scene editor, the scene
+            //       and all it's resources need to be deleted.
+
+            // If the tab is active we want to activate it's neighbour.
+            if (pTab == pTabGroup->GetActiveTab())
+            {
+                pTabGroup->ActivateNeighbouringTab(pTab);
+            }
+            
+            pTabGroup->CloseTab(pTab);
+
+
+            return true;
+        }
+
+
+        return false;
+    }
+
+    bool EditorBody::ActivateTab(EditorTab* pTab)
+    {
+        auto pTabGroup = this->FindTabGroup(pTab);
+        if (pTabGroup != nullptr)
+        {
+            pTabGroup->ActivateTab(pTab);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    EditorTabGroup* EditorBody::FindTabGroup(EditorTab* pTab)
+    {
+        for (size_t iTabGroup = 0; iTabGroup < m_tabGroups.GetCount(); ++iTabGroup)
+        {
+            auto pTabGroup = m_tabGroups[iTabGroup];
+            assert(pTabGroup != nullptr);
+            {
+                if (pTabGroup->IsTabInThisGroup(pTab))
+                {
+                    return pTabGroup;
+                }
+            }
+        }
+
+        return nullptr;
+    }
 }
