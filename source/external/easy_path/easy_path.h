@@ -8,6 +8,11 @@ extern "C" {
 #endif
 
 
+// Set this to 0 to avoid using the standard library. This adds a dependency, however it is likely more efficient for things like
+// finding the length of a null-terminated string.
+#define EASYPATH_USE_STDLIB     1
+
+
 // Structure representing a section of a path.
 typedef struct 
 {
@@ -51,6 +56,11 @@ easypath_iterator easypath_begin(const char* path);
 /// @return True if the iterator contains a valid value. Use this to determine when to terminate iteration.
 int easypath_next(easypath_iterator* i);
 
+/// Determines if the given iterator is at the end.
+///
+/// @param i [in] The iterator to check.
+int easypath_atend(easypath_iterator i);
+
 /// Compares the string values of two iterators for equality.
 ///
 /// @param i0 [in] The first iterator to compare.
@@ -82,6 +92,17 @@ void easypath_tobackslashes(char* path);
 ///     If either path contains "." or "..", clean it with easypath_clean() before calling this.
 int easypath_isdescendant(const char* descendantAbsolutePath, const char* parentAbsolutePath);
 
+/// Determines whether or not the given path is a direct child of another.
+///
+/// @param childAbsolutePath [in] The absolute of the child.
+/// @param parentAbsolutePath [in] The absolute path of the parent.
+///
+/// @remarks
+///     As an example, "C:/My/Folder" is NOT a child of "C:/" - it is a descendant. Alternatively, "C:/My" IS a child of "C:/".
+///     @par
+///     If either path contains "." or "..", clean it with easypath_clean() before calling this.
+int easypath_ischild(const char* childAbsolutePath, const char* parentAbsolutePath);
+
 
 /// Finds the file name portion of the path.
 ///
@@ -106,8 +127,7 @@ const char* easypath_filename(const char* path);
 ///     @par
 ///     The return value is just an offset of "path".
 ///     @par
-///     On a path such as "filename.ext1.ext2" the returned string will be "ext1.ext2". You can call this function
-///     like "easypath_extension(easypath_extension(path))" to get "ext2".
+///     On a path such as "filename.ext1.ext2" the returned string will be "ext2".
 const char* easypath_extension(const char* path);
 
 
@@ -124,6 +144,67 @@ const char* easypath_extension(const char* path);
 ///     This is more than just a string comparison. Rather, this splits the path and compares each segment. The path "C:/My/Folder" is considered
 ///     equal to to "C:\\My\\Folder".
 int easypath_equal(const char* path1, const char* path2);
+
+/// Checks if the extension of the given path is equal to the given extension.
+///
+/// @remarks
+///     By default this is NOT case-sensitive, however if the standard library is disable, it is case-sensitive.
+int easypath_extensionequal(const char* path, const char* extension);
+
+
+/// Determines whether or not the given path is relative.
+///
+/// @param path [in] The path to check.
+int easypath_isrelative(const char* path);
+
+/// Determines whether or not the given path is absolute.
+///
+/// @param path [in] The path to check.
+int easypath_isabsolute(const char* path);
+
+
+/// Appends two paths together, ensuring there is not double up on the last slash.
+///
+/// @param base                  [in, out] The base path that is being appended to.
+/// @param baseBufferSizeInBytes [in]      The size of the buffer pointed to by "base", in bytes.
+/// @param other                 [in]      The other path segment.
+///
+/// @remarks
+///     This assumes both paths are well formed and "other" is a relative path.
+int easypath_append(char* base, unsigned int baseBufferSizeInBytes, const char* other);
+
+/// Appends an iterator object to the given base path.
+int easypath_appenditerator(char* base, unsigned int baseBufferSizeInBytes, easypath_iterator i);
+
+/// Appends two paths together, and copyies them to a separate buffer.
+///
+/// @param dst            [out] The destination buffer.
+/// @param dstSizeInBytes [in]  The size of the buffer pointed to by "dst", in bytes.
+/// @param base           [in]  The base directory.
+/// @param other          [in]  The relative path to append to "base".
+///
+/// @return 1 if the paths were appended successfully; 0 otherwise.
+///
+/// @remarks
+///     This assumes both paths are well formed and "other" is a relative path.
+int easypath_copyandappend(char* dst, unsigned int dstSizeInBytes, const char* base, const char* other);
+
+/// Appends a base path and an iterator together, and copyies them to a separate buffer.
+///
+/// @param dst            [out] The destination buffer.
+/// @param dstSizeInBytes [in]  The size of the buffer pointed to by "dst", in bytes.
+/// @param base           [in]  The base directory.
+/// @param i              [in]  The iterator to append.
+///
+/// @return 1 if the paths were appended successfully; 0 otherwise.
+///
+/// @remarks
+///     This assumes both paths are well formed and "i" is a valid iterator.
+int easypath_copyandappenditerator(char* dst, unsigned int dstSizeInBytes, const char* base, easypath_iterator i);
+
+
+/// Retrieves the length of the path, in bytes.
+unsigned int easypath_length(const char* path);
 
 
 #ifdef __cplusplus
