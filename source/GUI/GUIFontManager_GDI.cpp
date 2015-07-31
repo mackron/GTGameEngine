@@ -132,6 +132,8 @@ namespace GT
             // The string needs to be converted to a wchar_t string before we'll be able to accurately measure.
             BOOL result = FALSE;
             SIZE sizeWin32;
+            sizeWin32.cx = 0;
+            sizeWin32.cy = 0;
 
             int bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthInChars), nullptr, 0);
             if (bufferSize > 0)
