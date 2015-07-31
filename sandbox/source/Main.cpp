@@ -54,6 +54,8 @@ public:
     {
         auto &engine = gameContext.GetEngineContext();
 
+        // The index to insert base directory, from the back.
+        unsigned int baseDirectoryInsertOffset = static_cast<unsigned int>(engine.GetFileSystem().GetBaseDirectoryCount());
 
         // Load the config file.
         GTLib::String configAbsolutePath;
@@ -64,6 +66,8 @@ public:
                 // Retrieve the base directories.
                 if (m_config.IsArray("BaseDirectories"))
                 {
+                    auto &fileSystem = engine.GetFileSystem();
+
                     size_t baseDirectoriesCount = m_config.GetArrayCount("BaseDirectories");
                     for (size_t i = 0; i < baseDirectoriesCount; ++i)
                     {
@@ -73,15 +77,15 @@ public:
                             //char absoluteBaseDirectory[EASYPATH_MAX_PATH];
                             //easypath_makeabsolute(engine.GetCommandLine().GetApplicationDirectory(), relativeBaseDirectory, absoluteBaseDirectory, EASYPATH_MAX_PATH);
 
-                            engine.GetFileSystem().AddBaseDirectory(GTLib::IO::ToAbsolutePath(relativeBaseDirectory, engine.GetCommandLine().GetApplicationDirectory()).c_str());
+                            // The directory needs to be added at to one position from the back. That is because we want the application directory
+                            GTLib::String absoluteBaseDirectory = GTLib::IO::ToAbsolutePath(relativeBaseDirectory, engine.GetCommandLine().GetApplicationDirectory());
+                            fileSystem.InsertBaseDirectory(absoluteBaseDirectory.c_str(), fileSystem.GetBaseDirectoryCount() - baseDirectoryInsertOffset);
                         }
                     }
                 }
             }
         }
 
-        //GT::ConfigFile config;
-        //config.Load(gameContext.GetEngineContext().GetFileSystem().FindAbsolutePath())
 
 
         // Create the game windows.
