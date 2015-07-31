@@ -34,9 +34,9 @@ namespace GT
             gui.SetElementPadding(m_hTabPageContainer, 2);
 
 
-            // Testing.
-            this->CreateTab("Hello, World!");
-            this->CreateTab("MainMenu.gtscene");
+            // Hide the tab bar and page container by default. This will be made visible when a tab is added.
+            gui.HideElement(m_tabBar.GetRootGUIElement());
+            gui.HideElement(m_hTabPageContainer);
         }
     }
 
