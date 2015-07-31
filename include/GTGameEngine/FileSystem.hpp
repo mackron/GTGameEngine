@@ -15,6 +15,8 @@
 
 #include "FileDataTypes.hpp"
 
+typedef struct easyvfs_context easyvfs_context;
+
 namespace GT
 {
     typedef size_t HFile;
@@ -51,6 +53,7 @@ namespace GT
         // Flags
 
         static const uint32_t IsDirectory = (1 << 0);   //< Whether or not the file is a directory.
+        static const uint32_t IsReadOnly  = (1 << 1);   //< Whether or not the file is read-only.
     };
 
     /// Class representing the engine's virtual file system.
@@ -93,12 +96,8 @@ namespace GT
         ///     The base directory can be a URL for a supported protocol (such as FTP).
         ResultCode AddBaseDirectory(const char* absolutePath);
 
-        /// @copydoc AddBaseDirectory()
-        ///
-        /// @remarks
-        ///     A low-priority base directory will always be checked after the other base directories. This should be used for file systems with
-        ///     slow access such as remote servers.
-        ResultCode AddLowPriorityBaseDirectory(const char* absolutePath);
+        /// Inserts a base directory at a specific index.
+        ResultCode InsertBaseDirectory(const char* absolutePath, unsigned int index);
 
         /// Removes a base directory by it's absolute path.
         ///
@@ -124,7 +123,7 @@ namespace GT
 
 
         /// Determines whether or not the given path points to a directory.
-        bool IsDirectory(const char* absolutePath);
+        bool IsDirectory(const char* absoluteOrRelativePath);
 
 
         /// Iterates over every file and directory in the given directory.
@@ -137,7 +136,7 @@ namespace GT
         ///     To iterate over the files and directories in a base directory, do IterateFiles(GetBaseDirectoryByIndex(baseIndex)).
         ///     @par
         ///     Do not delete files during the iteration.
-        bool IterateFiles(const char* absolutePath, std::function<bool (const FileInfo &fi)> func) const;
+        bool IterateFiles(const char* absoluteOrRelativePath, std::function<bool (const FileInfo &fi)> func) const;
 
 
         /// Finds an absolute path from the given path using the base directories.
@@ -189,7 +188,7 @@ namespace GT
         ///
         /// @remarks
         ///     If the return value is less than \c bytesToRead than it can be assumed the end of the file has been reached.
-        size_t ReadFile(HFile hFile, size_t bytesToRead, void* dataOut);
+        unsigned int ReadFile(HFile hFile, unsigned int bytesToRead, void* dataOut);
 
         /// Writes data to the given file.
         ///
@@ -198,7 +197,7 @@ namespace GT
         /// @param data         [in] A pointer to the buffer that contains the data to write.
         ///
         /// @return The number of bytes that were written.
-        size_t WriteFile(HFile hFile, size_t bytesToWrite, const void* data);
+        unsigned int WriteFile(HFile hFile, unsigned int bytesToWrite, const void* data);
 
         /// Seeks the read/write pointer of the given file by the given number of bytes.
         ///
@@ -227,34 +226,46 @@ namespace GT
         /// @return The size in bytes of the file.
         int64_t GetFileSize(HFile hFile);
 
-        /// Maps the file.
-        ///
-        /// @param hFile [in] A handle to the file to map.
-        ///
-        /// @return A pointer to the buffer that represents the contents of the file.
-        ///
-        /// @remarks
-        ///     If the file does not support mapping, this will return null.
-        ///     @par
-        ///     The file can only be mapped if it was opened in read mode.
-        void* MapFile(HFile hFile, size_t length, int64_t offset);
 
-        /// Unmaps the given file.
+        /// Deletes the given file.
         ///
-        /// @param hFile [in] A handle to the file to map.
+        /// @param absolutePath [in] The absolute path of the file to delete.
         ///
         /// @remarks
-        ///     The file will be automatically unmapped when CloseFile is called.
-        void UnmapFile(HFile hFile);
+        ///     This will return false if the archive does not support deleting.
+        bool DeleteFile(const char* absolutePath);
+
+        /// Renames a file.
+        ///
+        /// @param absolutePathOld [in] The absolute path of the file to rename.
+        /// @param absolutePathNew [in] The new file path.
+        ///
+        /// @remarks
+        ///     This will move the file if the new path is on the same device and part of the same archive.
+        ///     @par
+        ///     This will return false if the archive does not support renaming.
+        bool RenameFile(const char* absolutePathOld, const char* absolutePathNew);
+
+        /// Creates a new directory at the given path.
+        ///
+        /// @param absolutePath [in] The absolute path of the new folder.
+        ///
+        /// @remarks
+        ///     This will return false if the archvie does not support directory creation.
+        bool CreateDirectory(const char* absolutePath);
 
 
     private:
 
         /// The list of base directories.
-        GTLib::Vector<GTLib::String> m_baseDirectories;
+        //GTLib::Vector<GTLib::String> m_baseDirectories;
 
         /// The list of low-priority base directories.
-        GTLib::Vector<GTLib::String> m_baseDirectoriesLowPriority;
+        //GTLib::Vector<GTLib::String> m_baseDirectoriesLowPriority;
+
+
+        /// A pointer to the virtual file system context.
+        easyvfs_context* m_pVFS;
     };
 }
 

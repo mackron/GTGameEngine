@@ -2,14 +2,17 @@
 
 #include <GTGameEngine/FileSystem.hpp>
 #include "FileSystem/File_Native.hpp"
+#include "external/easy_vfs/easy_vfs.h"
+#include "external/easy_vfs/extras/easy_vfs_mtl.h"
+#include "external/easy_vfs/extras/easy_vfs_zip.h"
+#include "external/easy_path/easy_path.h"
 
 #include <GTLib/IO.hpp>
 
 namespace GT
 {
     FileSystem::FileSystem()
-        : m_baseDirectories(4),
-          m_baseDirectoriesLowPriority(1)
+        : m_pVFS(nullptr)
     {
     }
 
@@ -21,48 +24,45 @@ namespace GT
 
     ResultCode FileSystem::Startup()
     {
-        return 0;
+        m_pVFS = easyvfs_createcontext();
+        if (m_pVFS != nullptr)
+        {
+            easyvfs_registerarchivecallbacks_zip(m_pVFS);
+            easyvfs_registerarchivecallbacks_mtl(m_pVFS);   // Add support for Wavefront MTL files.
+
+            return 0;
+        }
+        else
+        {
+            // Failed to create the virtual file system.
+            return 1;
+        }
     }
 
     void FileSystem::Shutdown()
     {
+        easyvfs_deletecontext(m_pVFS);
+        m_pVFS = nullptr;
+
         this->RemoveAllBaseDirectories();
     }
 
 
     ResultCode FileSystem::AddBaseDirectory(const char* absolutePath)
     {
-        m_baseDirectories.PushBack(GTLib::IO::CleanPath(absolutePath).c_str());
+        easyvfs_addbasedirectory(m_pVFS, GTLib::IO::CleanPath(absolutePath).c_str());
         return 0;
     }
 
-    ResultCode FileSystem::AddLowPriorityBaseDirectory(const char* absolutePath)
+    ResultCode FileSystem::InsertBaseDirectory(const char* absolutePath, unsigned int index)
     {
-        m_baseDirectoriesLowPriority.PushBack(GTLib::IO::CleanPath(absolutePath).c_str());
+        easyvfs_insertbasedirectory(m_pVFS, absolutePath, index);
         return 0;
     }
 
     void FileSystem::RemoveBaseDirectory(const char* absolutePath)
     {
-        // Check high-priority first.
-        for (size_t iBaseDirectory = 0; iBaseDirectory < m_baseDirectories.GetCount(); ++iBaseDirectory)
-        {
-            if (m_baseDirectories[iBaseDirectory] == absolutePath)
-            {
-                m_baseDirectories.Remove(iBaseDirectory);
-                break;
-            }
-        }
-
-        // Low-priority.
-        for (size_t iBaseDirectory = 0; iBaseDirectory < m_baseDirectoriesLowPriority.GetCount(); ++iBaseDirectory)
-        {
-            if (m_baseDirectoriesLowPriority[iBaseDirectory] == absolutePath)
-            {
-                m_baseDirectoriesLowPriority.Remove(iBaseDirectory);
-                break;
-            }
-        }
+        easyvfs_removebasedirectory(m_pVFS, absolutePath);
     }
 
 
@@ -71,174 +71,132 @@ namespace GT
 
     void FileSystem::RemoveAllBaseDirectories()
     {
-        m_baseDirectories.Clear();
-        m_baseDirectoriesLowPriority.Clear();
+        easyvfs_removeallbasedirectories(m_pVFS);
     }
 
 
 
     size_t FileSystem::GetBaseDirectoryCount() const
     {
-        return m_baseDirectories.GetCount() + m_baseDirectoriesLowPriority.GetCount();
+        return easyvfs_basedirectorycount(m_pVFS);
     }
 
     GTLib::String FileSystem::GetBaseDirectoryByIndex(size_t index) const
     {
         assert(index < this->GetBaseDirectoryCount());
 
-        if (index < m_baseDirectories.GetCount())
-        {
-            return m_baseDirectories[index];
-        }
-        else
-        {
-            return m_baseDirectoriesLowPriority[index - m_baseDirectories.GetCount()];
-        }
+        char absolutePath[EASYVFS_MAX_PATH];
+        easyvfs_getbasedirectorybyindex(m_pVFS, static_cast<unsigned int>(index), absolutePath, EASYVFS_MAX_PATH);
+
+        return absolutePath;
     }
 
 
-    bool FileSystem::IsDirectory(const char* absolutePath)
+    bool FileSystem::IsDirectory(const char* absoluteOrRelativePath)
     {
-        return GTLib::IO::DirectoryExists(absolutePath);
+        easyvfs_fileinfo fi;
+        if (easyvfs_getfileinfo(m_pVFS, absoluteOrRelativePath, &fi))
+        {
+            return (fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0;
+        }
+
+        return false;
     }
 
 
-    bool FileSystem::IterateFiles(const char* absolutePath, std::function<bool (const FileInfo &fi)> func) const
+    bool FileSystem::IterateFiles(const char* absoluteOrRelativePath, std::function<bool (const FileInfo &fi)> func) const
     {
-#if defined(GT_PLATFORM_WINDOWS)
-        WIN32_FIND_DATAA ffd;
+        bool wantToTerminate = false;
 
-        // We need to put a '*' as the wildcard symbol on Windows. This will find every file in the directory. We then
-        // use our own regex matcher for doing matching.
-        size_t directoryLength = strlen(absolutePath);
-        if (directoryLength < 4096 - 3)
+        easyvfs_iterator i;
+        if (easyvfs_beginiteration(m_pVFS, absoluteOrRelativePath, &i))
         {
-            char directoryQuery[4096];
-            memcpy(directoryQuery, absolutePath, directoryLength);
-
-            directoryQuery[directoryLength + 0] = '\\';
-            directoryQuery[directoryLength + 1] = '*';
-            directoryQuery[directoryLength + 2] = '\0';
-
-            bool wantToTerminate = false;
-            HANDLE hFind = FindFirstFileA(directoryQuery, &ffd);
-            if (hFind != INVALID_HANDLE_VALUE)
+            easyvfs_fileinfo fi;
+            while (!wantToTerminate && easyvfs_nextiteration(m_pVFS, &i, &fi))
             {
-                do
+                FileInfo fi2;
+                fi2.absolutePath     = fi.absolutePath;
+                fi2.relativePath     = easypath_filename(fi.absolutePath);
+                fi2.sizeInBytes      = fi.sizeInBytes;
+                fi2.lastModifiedTime = fi.lastModifiedTime;
+
+                if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                 {
-                    // We need to ignore '.' and '..' directories. In the case of '..', it will actually mess up our base path.
-                    if (!GTLib::Strings::Equal(ffd.cFileName, ".") && !GTLib::Strings::Equal(ffd.cFileName, ".."))
-                    {
-                        LARGE_INTEGER liSize;
-                        liSize.LowPart  = ffd.nFileSizeLow;
-                        liSize.HighPart = ffd.nFileSizeHigh;
+                    fi2.flags |= FileInfo::IsDirectory;
+                }
+                if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_READONLY) != 0)
+                {
+                    fi2.flags |= FileInfo::IsReadOnly;
+                }
 
-                        LARGE_INTEGER liTime;
-                        liTime.LowPart  = ffd.ftLastWriteTime.dwLowDateTime;
-                        liTime.HighPart = ffd.ftLastWriteTime.dwHighDateTime;
-
-
-                        FileInfo newFI;
-                        newFI.relativePath     = ffd.cFileName;
-                        newFI.absolutePath     = absolutePath; newFI.absolutePath += "/"; newFI.absolutePath += ffd.cFileName;
-                        newFI.sizeInBytes      = liSize.QuadPart;
-                        newFI.lastModifiedTime = liTime.QuadPart;
-                        newFI.flags            = 0;
-
-                        if ((ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0)
-                        {
-                            newFI.flags |= FileInfo::IsDirectory;
-                        }
-
-
-                        if (!func(newFI))
-                        {
-                            wantToTerminate = true;
-                        }
-                    }
-
-                } while (!wantToTerminate && FindNextFileA(hFind, &ffd) != 0);
-
-
-                // Now we need to close the handle.
-                FindClose(hFind);
+                if (!func(fi2))
+                {
+                    wantToTerminate = true;
+                }
             }
 
-
-            return !wantToTerminate;
+            easyvfs_enditeration(m_pVFS, &i);
         }
-#endif
 
-        return true;
+
+        return !wantToTerminate;
     }
 
 
 
     HFile FileSystem::OpenFile(const char* filePath, FileAccessMode accessMode, ResultCode* resultCodeOut)
     {
-        // NOTE: Only supporting simple files at the moment. This implementation will need to change once other file sources are supported.
-
-        ResultCode result = 0;
-        File* pFile = nullptr;
-
-        GTLib::String absolutePath;
-        if (this->FindAbsolutePath(filePath, absolutePath))
+        easyvfs_accessmode accessModeInternal;
+        switch (accessMode)
         {
-#if defined(GT_PLATFORM_WINDOWS)
-            pFile = new File_Win32;
-            result = pFile->Open(absolutePath.c_str(), accessMode);
-#elif defined(GT_PLATFORM_LINUX)
-            pFile = new File_Unix;
-            result = pFile->Open(absolutePath.c_str(), accessMode);
-#endif
-
-            if (GT::Failed(result))
+        case FileAccessMode::Read:
             {
-                delete pFile;
-                pFile = nullptr;
+                accessModeInternal = easyvfs_read;
+                break;
+            }
+
+        case FileAccessMode::Write:
+            {
+                accessModeInternal = easyvfs_write;
+                break;
+            }
+
+        default:
+            {
+                return 0;
             }
         }
-        else
-        {
-            result = FileNotFound;
-        }
-
 
         if (resultCodeOut != nullptr)
         {
-            *resultCodeOut = result;
+            *resultCodeOut = 0;
         }
 
-        return reinterpret_cast<HFile>(pFile);
+        return reinterpret_cast<HFile>(easyvfs_openfile(m_pVFS, filePath, accessModeInternal));
     }
 
     void FileSystem::CloseFile(HFile hFile)
     {
-        auto pFile = reinterpret_cast<File*>(hFile);
-        if (pFile != nullptr)
-        {
-            pFile->Close();
-            delete pFile;
-        }
+        easyvfs_closefile(reinterpret_cast<easyvfs_file*>(hFile));
     }
 
-    size_t FileSystem::ReadFile(HFile hFile, size_t bytesToRead, void* dataOut)
+    unsigned int FileSystem::ReadFile(HFile hFile, unsigned int bytesToRead, void* dataOut)
     {
-        auto pFile = reinterpret_cast<File*>(hFile);
-        if (pFile != nullptr)
+        unsigned int bytesRead;
+        if (easyvfs_readfile(reinterpret_cast<easyvfs_file*>(hFile), dataOut, bytesToRead, &bytesRead))
         {
-            return pFile->Read(bytesToRead, dataOut);
+            return bytesRead;
         }
 
         return 0;
     }
 
-    size_t FileSystem::WriteFile(HFile hFile, size_t bytesToWrite, const void* data)
+    unsigned int FileSystem::WriteFile(HFile hFile, unsigned int bytesToWrite, const void* data)
     {
-        auto pFile = reinterpret_cast<File*>(hFile);
-        if (pFile != nullptr)
+        unsigned int bytesWritten;
+        if (easyvfs_writefile(reinterpret_cast<easyvfs_file*>(hFile), data, bytesToWrite, &bytesWritten))
         {
-            return pFile->Write(bytesToWrite, data);
+            return bytesWritten;
         }
 
         return 0;
@@ -246,55 +204,60 @@ namespace GT
 
     int64_t FileSystem::SeekFile(HFile hFile, int64_t bytesToSeek, FileSeekOrigin origin)
     {
-        auto pFile = reinterpret_cast<File*>(hFile);
-        if (pFile != nullptr)
+        easyvfs_seekorigin originInternal;
+        switch (origin)
         {
-            return pFile->Seek(bytesToSeek, origin);
+        case FileSeekOrigin::Current:
+            {
+                originInternal = easyvfs_current;
+                break;
+            }
+
+        case FileSeekOrigin::Start:
+            {
+                originInternal = easyvfs_start;
+                break;
+            }
+
+        case FileSeekOrigin::End:
+            {
+                originInternal = easyvfs_start;
+                break;
+            }
+
+        default:
+            {
+                return 0;
+            }
         }
 
-        return 0;
+        return easyvfs_seekfile(reinterpret_cast<easyvfs_file*>(hFile), bytesToSeek, originInternal);
     }
 
     int64_t FileSystem::TellFile(HFile hFile)
     {
-        auto pFile = reinterpret_cast<File*>(hFile);
-        if (pFile != nullptr)
-        {
-            return pFile->Tell();
-        }
-
-        return 0;
+        return easyvfs_tellfile(reinterpret_cast<easyvfs_file*>(hFile));
     }
 
     int64_t FileSystem::GetFileSize(HFile hFile)
     {
-        auto pFile = reinterpret_cast<File*>(hFile);
-        if (pFile != nullptr)
-        {
-            return pFile->GetSize();
-        }
-
-        return 0;
+        return easyvfs_filesize(reinterpret_cast<easyvfs_file*>(hFile));
     }
 
-    void* FileSystem::MapFile(HFile hFile, size_t length, int64_t offset)
-    {
-        auto pFile = reinterpret_cast<File*>(hFile);
-        if (pFile != nullptr)
-        {
-            return pFile->Map(length, offset);
-        }
 
-        return nullptr;
+    bool FileSystem::DeleteFile(const char* filePath)
+    {
+        return easyvfs_deletefile(m_pVFS, filePath) != 0;
     }
 
-    void FileSystem::UnmapFile(HFile hFile)
+    bool FileSystem::RenameFile(const char* filePathOld, const char* filePathNew)
     {
-        auto pFile = reinterpret_cast<File*>(hFile);
-        if (pFile != nullptr)
-        {
-            pFile->Unmap();
-        }
+        return easyvfs_renamefile(m_pVFS, filePathOld, filePathNew) != 0;
+    }
+
+    bool FileSystem::CreateDirectory(const char* filePath)
+    {
+        return easyvfs_mkdir(m_pVFS, filePath) != 0;
     }
 
     
@@ -303,42 +266,13 @@ namespace GT
 
     bool FileSystem::FindAbsolutePath(const char* filePath, GTLib::String &absolutePathOut) const
     {
-        // TODO: Handle zip files properly.
-
-        if (!GTLib::IO::IsPathAbsolute(filePath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_findabsolutepath(m_pVFS, filePath, absolutePath, EASYVFS_MAX_PATH))
         {
-            // High-priority base directories.
-            for (size_t iBase = 0; iBase < m_baseDirectories.GetCount(); ++iBase)
-            {
-                GTLib::String absolutePathIn = m_baseDirectories[iBase] + "/";
-                if (GTLib::IO::FileExists((absolutePathIn + filePath).c_str()))
-                {
-                    absolutePathOut = GTLib::IO::ToAbsolutePath(filePath, absolutePathIn.c_str());
-                    return true;
-                }
-            }
+            absolutePathOut = absolutePath;
+            return true;
+        }
 
-            // Low-priority base directories.
-            for (size_t iBase = 0; iBase < m_baseDirectoriesLowPriority.GetCount(); ++iBase)
-            {
-                GTLib::String absolutePathIn = m_baseDirectoriesLowPriority[iBase] + "/";
-                if (GTLib::IO::FileExists((absolutePathIn + filePath).c_str()))
-                {
-                    absolutePathOut = GTLib::IO::ToAbsolutePath(filePath, absolutePathIn.c_str());
-                    return true;
-                }
-            }
-        }
-        else
-        {
-            // 'filePath' is an absolute path if we make it to this branch.
-            if (GTLib::IO::FileExists(filePath))
-            {
-                absolutePathOut = filePath;
-                return true;
-            }
-        }
-            
         return false;
     }
 }

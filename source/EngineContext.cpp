@@ -107,7 +107,8 @@ namespace GT
             return result;
         }
 
-        m_fileSystem.AddLowPriorityBaseDirectory(m_commandLine.GetApplicationDirectory());
+        m_fileSystem.AddBaseDirectory(m_commandLine.GetApplicationDirectory());
+        //m_fileSystem.AddLowPriorityBaseDirectory(m_commandLine.GetApplicationDirectory());
 
 
 

@@ -209,7 +209,9 @@ namespace GT
 
 
     ModelAsset_OBJ::ModelAsset_OBJ(AssetType assetType)
-        : ModelAsset(assetType)
+        : ModelAsset(assetType),
+         m_vertexData(nullptr),
+         m_indexData(nullptr)
     {
         m_vertexLayout[0] = {VertexAttribFormat_Float, 3, sizeof(float) * 0, VertexAttribSemantic_Position};
         m_vertexLayout[1] = {VertexAttribFormat_Float, 2, sizeof(float) * 3, VertexAttribSemantic_TexCoord};

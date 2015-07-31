@@ -120,6 +120,12 @@
     <Filter Include="Source Files\external\easy_path">
       <UniqueIdentifier>{a0e1e330-6cf4-43e3-a2c6-d94232effb5b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\external\easy_vfs">
+      <UniqueIdentifier>{eddb8cab-0a9c-4215-aa94-d68ea17562c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\external\easy_vfs\extras">
+      <UniqueIdentifier>{3ab7000b-b6e0-4165-bbb5-0a5e7e62ed91}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\EngineContext.cpp">
@@ -676,6 +682,18 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Assets\MaterialAsset_MTL.cpp">
       <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\easy_vfs\easy_vfs.c">
+      <Filter>Source Files\external\easy_vfs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_mtl.c">
+      <Filter>Source Files\external\easy_vfs\extras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_zip.c">
+      <Filter>Source Files\external\easy_vfs\extras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\easy_vfs\extras\miniz.c">
+      <Filter>Source Files\external\easy_vfs\extras</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1275,6 +1293,15 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\Assets\MaterialAsset_MTL.hpp">
       <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\external\easy_vfs\easy_vfs.h">
+      <Filter>Source Files\external\easy_vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_mtl.h">
+      <Filter>Source Files\external\easy_vfs\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_zip.h">
+      <Filter>Source Files\external\easy_vfs\extras</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

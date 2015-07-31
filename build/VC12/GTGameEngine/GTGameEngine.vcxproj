@@ -93,6 +93,10 @@
     <ClCompile Include="..\..\..\source\EngineContext.cpp" />
     <ClCompile Include="..\..\..\source\external\easy_fsw\easy_fsw.c" />
     <ClCompile Include="..\..\..\source\external\easy_path\easy_path.c" />
+    <ClCompile Include="..\..\..\source\external\easy_vfs\easy_vfs.c" />
+    <ClCompile Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_mtl.c" />
+    <ClCompile Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_zip.c" />
+    <ClCompile Include="..\..\..\source\external\easy_vfs\extras\miniz.c" />
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lapi.c" />
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lauxlib.c" />
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lbaselib.c" />
@@ -383,6 +387,9 @@
     <ClInclude Include="..\..\..\source\Core\FontEngine_Win32.hpp" />
     <ClInclude Include="..\..\..\source\external\easy_fsw\easy_fsw.h" />
     <ClInclude Include="..\..\..\source\external\easy_path\easy_path.h" />
+    <ClInclude Include="..\..\..\source\external\easy_vfs\easy_vfs.h" />
+    <ClInclude Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_mtl.h" />
+    <ClInclude Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_zip.h" />
     <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\collision.h" />
     <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\collision2.h" />
     <ClInclude Include="..\..\..\source\external\tokamak\tokamaksrc\src\constraint.h" />
