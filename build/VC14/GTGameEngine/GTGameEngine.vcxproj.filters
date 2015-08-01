@@ -1,0 +1,1214 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Header Files\external">
+      <UniqueIdentifier>{dd2c05f6-7527-498b-9524-75bd75c72edb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\external">
+      <UniqueIdentifier>{f222d202-19ee-4d5d-a76e-7ab2f78d6978}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\FileSystem">
+      <UniqueIdentifier>{b7e7820b-41aa-474e-80eb-4f916e1f4c1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Assets">
+      <UniqueIdentifier>{be17dbbb-9b3b-4fa3-94da-bdb68a01588c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Assets">
+      <UniqueIdentifier>{ac24c5a7-98a9-4d2c-8c46-4ed741c9d315}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core">
+      <UniqueIdentifier>{2da8048d-07e9-4b2c-ae1f-bd61fa1f1b06}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core">
+      <UniqueIdentifier>{b67b0514-3b3b-4865-9e8e-72a832324f4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\IO">
+      <UniqueIdentifier>{ea8a48b5-5438-4cfd-b2a1-80d8b6b49815}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Strings">
+      <UniqueIdentifier>{cb361e30-b985-4478-9eff-62259aec3fa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Threading">
+      <UniqueIdentifier>{bf1bb0aa-2bc4-4e5b-81bf-4dbe35361132}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Timing">
+      <UniqueIdentifier>{aca011c0-be76-4aee-8f51-4a03214743a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Core\Windowing">
+      <UniqueIdentifier>{207a98d3-fcaf-4b3c-895c-7cd586d02327}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\IO">
+      <UniqueIdentifier>{35f2a080-a132-4798-b104-5631f7e142bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Components">
+      <UniqueIdentifier>{5d1ab4a5-f0f0-4f9b-a414-8e24e3034f5d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Scene">
+      <UniqueIdentifier>{c0633798-1301-4990-9614-f26d07ba9eba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Scene">
+      <UniqueIdentifier>{7ca7289b-0f41-42e4-8c10-785ecd32a70f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics">
+      <UniqueIdentifier>{8ec35ecd-4109-4542-9829-ffe6edee240d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Graphics\OpenGL">
+      <UniqueIdentifier>{b2e4e939-f630-41be-8d0b-61e8011c39b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics">
+      <UniqueIdentifier>{6de4dd36-bacb-44c6-ab6f-4acdf188d5e1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\D3D">
+      <UniqueIdentifier>{398643a3-8588-44e7-a2d4-749723428973}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\D3D12">
+      <UniqueIdentifier>{ce693a20-f25e-451a-a758-341638bde657}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\OpenGL">
+      <UniqueIdentifier>{66ce2f20-9f76-4d9e-8c21-4fc324e7513e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\D3D\D3D11">
+      <UniqueIdentifier>{eb42e70d-2a21-402d-9622-06912b594115}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graphics\OpenGL\OpenGL4">
+      <UniqueIdentifier>{57a88c26-1f42-40da-8834-63ded5c07433}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Core\Strings">
+      <UniqueIdentifier>{7fc93798-0958-48ba-a1d4-7955ceb2b6d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Editor">
+      <UniqueIdentifier>{1a8af64e-f9a7-4599-a36b-c010b7bd9bc0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor">
+      <UniqueIdentifier>{b93dbce7-10d6-4e1e-a116-392803946096}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI">
+      <UniqueIdentifier>{fb0486d7-5c44-4c09-a30f-a7c69c4f809b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI">
+      <UniqueIdentifier>{ae616b3c-4001-4556-b648-883cf3127818}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\GUI\CommonControls">
+      <UniqueIdentifier>{93589c8a-7ec8-4247-9fdd-01bcf572fefa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\GUI\CommonControls">
+      <UniqueIdentifier>{4131daf9-8207-4582-aa5b-e2c9f397da88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Editor\Controls">
+      <UniqueIdentifier>{267bba9e-7a1e-4b5f-9f19-f8dba14bc7d7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Editor\Controls">
+      <UniqueIdentifier>{518b1cef-8815-4995-bbb2-8fbc593c5807}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\external\lua">
+      <UniqueIdentifier>{0286beda-b9b8-48df-9a61-098891cb343d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\external\easy_fsw">
+      <UniqueIdentifier>{9c8ee375-205b-4742-9b63-566f0dd56764}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\external\easy_path">
+      <UniqueIdentifier>{a0e1e330-6cf4-43e3-a2c6-d94232effb5b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\external\easy_vfs">
+      <UniqueIdentifier>{eddb8cab-0a9c-4215-aa94-d68ea17562c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\external\easy_vfs\extras">
+      <UniqueIdentifier>{3ab7000b-b6e0-4165-bbb5-0a5e7e62ed91}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\source\EngineContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameContext.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HardwarePlatform.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HardwarePlatform_Audio.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HardwarePlatform_CPU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HardwarePlatform_GPU.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\HardwarePlatform_Input.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameDisplay.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GPUComputeDevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GPURenderingDevice.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameDisplay_Windowed.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameDisplayRenderingCallback.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\FileSystem.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\FileSystem\File.cpp">
+      <Filter>Source Files\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\FileSystem\File_Native.cpp">
+      <Filter>Source Files\FileSystem</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\Asset.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\AssetAllocator.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\AssetLibrary.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\ImageAsset.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\DefaultAssetAllocator.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\ImageAsset_STB.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\ModelAsset.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\ModelAsset_OBJ.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\IO\cstdio.cpp">
+      <Filter>Source Files\Core\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Windowing\Clipboard.cpp">
+      <Filter>Source Files\Core\Windowing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Timing\Stopwatch.cpp">
+      <Filter>Source Files\Core\Timing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Timing\Timer.cpp">
+      <Filter>Source Files\Core\Timing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Timing\TimingCommon.cpp">
+      <Filter>Source Files\Core\Timing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Threading\Job.cpp">
+      <Filter>Source Files\Core\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Threading\JobQueue.cpp">
+      <Filter>Source Files\Core\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Threading\Mutex.cpp">
+      <Filter>Source Files\Core\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Threading\Semaphore.cpp">
+      <Filter>Source Files\Core\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Threading\Thread.cpp">
+      <Filter>Source Files\Core\Threading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Strings\NextChar.cpp">
+      <Filter>Source Files\Core\Strings</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\BasicBuffer.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Colour.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\CommandLine.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\DateTime.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Errors.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Font.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\FontEngine.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\FontEngine_FCFT.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\FontEngine_Win32.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\FontEventHandler.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\FontServer.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GlyphCache.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GlyphMapLayout.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\GlyphMapManager.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\HandleManager.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\IO.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Keyboard.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Log.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\MipmapGenerator.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Parse.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Path.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\System.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\TextManager.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\TextMesh.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\Threading.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\ToString.cpp">
+      <Filter>Source Files\Core</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Core\IO\FileIterator.cpp">
+      <Filter>Source Files\Core\IO</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\ModelAsset_MD2.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\Scene.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneNode.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeComponent.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\DefaultGraphicsInterfaceAllocator.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsInterface.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsInterface_MT.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsInterfaceAllocator.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\D3D\D3D11\GPURenderingDevice_D3D11.cpp">
+      <Filter>Source Files\Graphics\D3D\D3D11</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\D3D12\D3D12GraphicsInterface.cpp">
+      <Filter>Source Files\Graphics\D3D12</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\OpenGL\OpenGL.cpp">
+      <Filter>Source Files\Graphics\OpenGL</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\OpenGL\OpenGL4\GPURenderingDevice_OpenGL4.cpp">
+      <Filter>Source Files\Graphics\OpenGL\OpenGL4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\OpenGL\OpenGL4\RenderingTypes_OpenGL4.cpp">
+      <Filter>Source Files\Graphics\OpenGL\OpenGL4</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeIDAllocator.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\DefaultSceneState.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneState.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeList.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsWorld.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsWorldObject.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Math.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\AssetMetadata.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\MaterialAsset.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\WindowManager.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\WindowManager_Win32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameContext_Win32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\WindowManager_DefaultWin32.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Editor.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\EditorGUIEventHandler.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\EditorEventHandler.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GameContextEditorEventHandler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\EditorGUIRenderer_GDI.cpp">
+      <Filter>Source Files\Editor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIContext.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIContextBase.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIElement.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIEventHandler.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIFontManager.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIFontManager_GDI.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIGlyphMapManager.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIImageManager.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUILogging.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIRenderer.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUIRenderer_Generic.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUISimpleTextLayout.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUISurface.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\GUI\GUITextLayout.cpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorControl.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorPopupControl.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorBody.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorFooter.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorHeader.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorMainMenuBar.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBar.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorMenuBarButton.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorTabBar.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorTabGroup.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorTabPage.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorTab.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\DefaultGraphicsWorld.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\DefaultGraphicsWorld_OpenGL.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\DefaultGraphicsWorld_Null.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsAPI.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsAPI_Null.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsAPI_OpenGL.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorAssetExplorer.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lapi.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lauxlib.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lbaselib.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lbitlib.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lcode.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lcorolib.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lctype.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ldblib.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ldebug.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ldo.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ldump.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lfunc.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lgc.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\linit.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\liolib.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\llex.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lmathlib.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lmem.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\loadlib.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lobject.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lopcodes.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\loslib.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lparser.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lstate.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lstring.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lstrlib.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ltable.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ltablib.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\ltm.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lundump.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lutf8lib.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lvm.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lzio.c">
+      <Filter>Source Files\external\lua</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\easy_fsw\easy_fsw.c">
+      <Filter>Source Files\external\easy_fsw</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorAssetExplorerItem.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorScrollableControl.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Editor\Controls\EditorQuadControl.cpp">
+      <Filter>Source Files\Editor\Controls</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\ConfigFile.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\easy_path\easy_path.c">
+      <Filter>Source Files\external\easy_path</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Assets\MaterialAsset_MTL.cpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\easy_vfs\easy_vfs.c">
+      <Filter>Source Files\external\easy_vfs</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_mtl.c">
+      <Filter>Source Files\external\easy_vfs\extras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_zip.c">
+      <Filter>Source Files\external\easy_vfs\extras</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\easy_vfs\extras\miniz.c">
+      <Filter>Source Files\external\easy_vfs\extras</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GameContext.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Audio.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_CPU.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_GPU.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Input.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplay.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GPUComputeDevice.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplay_Windowed.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDeviceInfo.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Config.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplayRenderingCallback.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\FileSystem.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\FileSystem\File.hpp">
+      <Filter>Source Files\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\FileSystem\File_Native.hpp">
+      <Filter>Source Files\FileSystem</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\FileDataTypes.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\Asset.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetAllocator.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetLibrary.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetTypes.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\ImageAsset.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Assets\DefaultAssetAllocator.hpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Assets\ImageAsset_STB.hpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Assets\ModelAsset_OBJ.hpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\ModelAsset.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Core\FontEngine_FCFT.hpp">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Core\FontEngine_Win32.hpp">
+      <Filter>Source Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\BasicBuffer.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\BinarySearchTree.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\BufferReader.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Colour.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\CommandLine.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Config.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Cursors.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\DateTime.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Deserializer.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Dictionary.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Errors.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Font.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\FontEngine.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\FontEventHandler.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\FontInfo.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\FontMetrics.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\FontServer.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\FontStyles.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\GlyphCache.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\GlyphMapLayout.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\GlyphMapManager.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\GlyphMetrics.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\GlyphRenderingModes.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\HandleManager.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\ImageUtils.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\IO.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\KerningVector.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Keyboard.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Limits.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\List.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Log.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Map.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Math.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\MipmapGenerator.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Parse.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Path.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Point.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Random.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\rapidxml.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Rect.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\ReferenceCountedObject.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Regex.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\ResultCodes.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Serializer.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\SortedVector.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\stdlib.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\String.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\System.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\TextManager.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\TextMesh.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Threading.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Timing.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\ToString.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Vector.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\windef.h">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Window.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\windows.hpp">
+      <Filter>Header Files\Core</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\IO\cstdio.hpp">
+      <Filter>Header Files\Core\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\IO\FileIterator.hpp">
+      <Filter>Header Files\Core\IO</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Assets\ModelAsset_MD2.hpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Components\Component.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Components\ComponentTypes.hpp">
+      <Filter>Header Files\Components</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\Scene.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNode.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponent.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentTypes.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsInterface.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsInterface_MT.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsInterfaceAllocator.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsTypes.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\OpenGL\OpenGL.hpp">
+      <Filter>Header Files\Graphics\OpenGL</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Graphics\DefaultGraphicsInterfaceAllocator.hpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Graphics\D3D\D3D11\GPURenderingDevice_D3D11.hpp">
+      <Filter>Source Files\Graphics\D3D\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Graphics\D3D\D3D11\RenderingTypes_D3D11.hpp">
+      <Filter>Source Files\Graphics\D3D\D3D11</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Graphics\D3D12\D3D12Common.hpp">
+      <Filter>Source Files\Graphics\D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Graphics\D3D12\D3D12GraphicsInterface.hpp">
+      <Filter>Source Files\Graphics\D3D12</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Graphics\OpenGL\OpenGL4\GPURenderingDevice_OpenGL4.hpp">
+      <Filter>Source Files\Graphics\OpenGL\OpenGL4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Graphics\OpenGL\OpenGL4\RenderingTypes_OpenGL4.hpp">
+      <Filter>Source Files\Graphics\OpenGL\OpenGL4</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Math.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeIDAllocator.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\DefaultSceneState.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneState.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeList.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneEventHandler.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsWorld.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsWorldObject.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetMetadata.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Assets\MaterialAsset.hpp">
+      <Filter>Header Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Compare.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Copy.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Create.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Equal.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Find.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Iterator.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\LineIterator.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\List.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\NextChar.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Replacer.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Size.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Tokenizer.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\Trim.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTLib\Strings\UnicodeBase.hpp">
+      <Filter>Header Files\Core\Strings</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager_Win32.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\GameContext_Win32.hpp">
+      <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GameState.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\WindowManager_DefaultWin32.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Editor.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIEventHandler.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUISurfaceAUXData.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorEventHandler.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GameContextEditorEventHandler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorGUIRenderer_GDI.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\GUI\GUIRenderer_Generic.hpp">
+      <Filter>Source Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIContext.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIContextBase.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIDataTypes.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIElement.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIElementStyle.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIEventHandler.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIFontManager.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIFontManager_GDI.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIGlyphMapManager.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIImageManager.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUILayoutContext.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUILogging.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUIRenderer.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUISimpleTextLayout.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUISurface.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUITextLayout.hpp">
+      <Filter>Header Files\GUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorControl.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorPopupControl.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorBody.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorFooter.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorHeader.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMainMenuBar.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBar.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorMenuBarButton.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTabBar.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTabGroup.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTabPage.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorTab.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\DefaultGraphicsWorld.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\DefaultGraphicsWorld_OpenGL.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\DefaultGraphicsWorld_Null.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI_Null.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI_OpenGL.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\SpirV.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorAssetExplorer.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\EditorTheme.hpp">
+      <Filter>Header Files\Editor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\external\easy_fsw\easy_fsw.h">
+      <Filter>Source Files\external\easy_fsw</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorAssetExplorerItem.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorScrollableControl.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Editor\Controls\EditorQuadControl.hpp">
+      <Filter>Header Files\Editor\Controls</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\ConfigFile.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\external\easy_path\easy_path.h">
+      <Filter>Source Files\external\easy_path</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\Assets\MaterialAsset_MTL.hpp">
+      <Filter>Source Files\Assets</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\external\easy_vfs\easy_vfs.h">
+      <Filter>Source Files\external\easy_vfs</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_mtl.h">
+      <Filter>Source Files\external\easy_vfs\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_zip.h">
+      <Filter>Source Files\external\easy_vfs\extras</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>
