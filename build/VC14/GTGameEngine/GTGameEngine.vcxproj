@@ -131,8 +131,6 @@
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lvm.c" />
     <ClCompile Include="..\..\..\source\external\lua-5.3.1\src\lzio.c" />
     <ClCompile Include="..\..\..\source\FileSystem.cpp" />
-    <ClCompile Include="..\..\..\source\FileSystem\File.cpp" />
-    <ClCompile Include="..\..\..\source\FileSystem\File_Native.cpp" />
     <ClCompile Include="..\..\..\source\GameContext.cpp" />
     <ClCompile Include="..\..\..\source\GameContextEditorEventHandler.cpp" />
     <ClCompile Include="..\..\..\source\GameContext_Win32.cpp" />
@@ -338,8 +336,6 @@
     <ClInclude Include="..\..\..\source\external\easy_vfs\easy_vfs.h" />
     <ClInclude Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_mtl.h" />
     <ClInclude Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_zip.h" />
-    <ClInclude Include="..\..\..\source\FileSystem\File.hpp" />
-    <ClInclude Include="..\..\..\source\FileSystem\File_Native.hpp" />
     <ClInclude Include="..\..\..\source\GameContext_Win32.hpp" />
     <ClInclude Include="..\..\..\source\GUI\GUIRenderer_Generic.hpp" />
   </ItemGroup>

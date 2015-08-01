@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/FileSystem.hpp>
-#include "FileSystem/File_Native.hpp"
 #include "external/easy_vfs/easy_vfs.h"
 #include "external/easy_vfs/extras/easy_vfs_mtl.h"
 #include "external/easy_vfs/extras/easy_vfs_zip.h"

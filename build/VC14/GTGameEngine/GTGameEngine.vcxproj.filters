@@ -15,9 +15,6 @@
     <Filter Include="Source Files\external">
       <UniqueIdentifier>{f222d202-19ee-4d5d-a76e-7ab2f78d6978}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\FileSystem">
-      <UniqueIdentifier>{b7e7820b-41aa-474e-80eb-4f916e1f4c1f}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Header Files\Assets">
       <UniqueIdentifier>{be17dbbb-9b3b-4fa3-94da-bdb68a01588c}</UniqueIdentifier>
     </Filter>
@@ -115,12 +112,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\FileSystem.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\FileSystem\File.cpp">
-      <Filter>Source Files\FileSystem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\FileSystem\File_Native.cpp">
-      <Filter>Source Files\FileSystem</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Assets\Asset.cpp">
       <Filter>Source Files\Assets</Filter>
@@ -573,12 +564,6 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\FileSystem.hpp">
       <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\FileSystem\File.hpp">
-      <Filter>Source Files\FileSystem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\FileSystem\File_Native.hpp">
-      <Filter>Source Files\FileSystem</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\FileDataTypes.hpp">
       <Filter>Header Files</Filter>
