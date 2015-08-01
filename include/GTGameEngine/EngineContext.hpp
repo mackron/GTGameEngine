@@ -3,21 +3,16 @@
 #ifndef __GT_GE_EngineContext_hpp_
 #define __GT_GE_EngineContext_hpp_
 
+
 #include <GTLib/ResultCodes.hpp>
 #include <GTLib/CommandLine.hpp>
-#include "HardwarePlatform.hpp"
+#include "Config.hpp"
 #include "FileSystem.hpp"
 #include "Graphics/GraphicsTypes.hpp"
 #include "Assets/AssetLibrary.hpp"
 
 namespace GT
 {
-    class GPURenderingDevice;	// TODO: Remove this.
-
-	class GraphicsInterface;
-	class GraphicsInterfaceAllocator;
-
-
     class GraphicsAPI;
     class GraphicsAPI_Null;
 
@@ -85,10 +80,6 @@ namespace GT
         /// Retrieves a pointer to the null graphics API object.
         GraphicsAPI_Null* GetNullGraphicsAPI();
 
-#if defined(GT_BUILD_OPENGL)
-        /// Retrieves a pointer to the OpenGL graphics API object.
-        GraphicsAPI_OpenGL* GetOpenGLGraphicsAPI();
-#endif
 #if defined(GT_BUILD_VULKAN)
         /// Retrieves a pointer to the Vulkan graphics API object.
         GraphicsAPI_Vulkan* GetVulkanGraphicsAPI();
@@ -97,79 +88,10 @@ namespace GT
         /// Retrieves a pointer to the Vulkan graphics API object.
         GraphicsAPI_D3D12* GetD3D12GraphicsAPI();
 #endif
-
-		/// Registers a graphics interface allocator.
-		///
-		/// @param allocator [in] A reference to the graphics interface allocator to register.
-		///
-		/// @remarks
-		///		Once registered, an allocator cannot be unregistered.
-		///		@par
-		///		Allocators are registered such that the most recent one is given the highest priority.
-		///		@par
-		///		The default allocator is the first one to be registered, but it is only registered if there is at least 1 built-in graphics interface enabled in the build.
-		void RegisterGraphicsInterfaceAllocator(GraphicsInterfaceAllocator &allocator);
-
-        /// Creates an instance of a graphics interface of the given type.
-        ///
-        /// @param type [in] The graphics interface type.
-        ///
-        /// @return A pointer to the new graphics interface, or null if the graphics interface is not supported.
-        GraphicsInterface* CreateGraphicsInterface(GraphicsInterfaceType type);
-
-        /// Deletes the given graphics interface.
-        ///
-        /// @param pGraphicsInterface [in] A pointer to the graphics interface to delete.
-        void DeleteGraphicsInterface(GraphicsInterface* pGraphicsInterface);
-
-
-
-        /// Retrieves the number of GPU rendering devices available to the application.
-        ///
-        /// @return The number of GPU devices that are available to the application for rendering.
-        unsigned int GetGPURenderingDeviceCount() const;
-
-        /// Retrieves the GPU rendering device info for the device at the given index.
-        ///
-        /// @param deviceIndex   [in]  The index of the device whose information is being retrieved.
-        /// @param deviceInfoOut [out] A reference to the object that will receive the device info.
-        ///
-        /// @return If an error occurs, the return value will be <0. Otherwise, the return value will be >=0.
-        ResultCode GetGPURenderingDeviceInfo(unsigned int deviceIndex, GPURenderingDeviceInfo &deviceInfoOut) const;
-
-
-        /// @copydoc GT::GE::HardwarePlatform_GPU::CreateGPURenderingDevice()
-        GPURenderingDevice* CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPIs[], unsigned int renderingAPIsCount);
-
-        /// Helper for creating a GPU rendering device for the given rendering API.
-        ///
-        /// @param deviceIndex  [in]  The index of the device to create the new device instance from.
-        /// @param renderingAPI [in]  The rendering API to use.
-        ///
-        /// @return A pointer to the new device, or null if an error occured.
-        GPURenderingDevice* CreateGPURenderingDevice(unsigned int deviceIndex, RenderingAPI renderingAPI);
-
-        /// Helper for creating a GPU rendering device with the best available rendering API.
-        ///
-        /// @param deviceIndex  [in]  The index of the device to create the new device instance from.
-        /// @param deviceOut    [out] A reference to the variable that will receive the new device object.
-        ///
-        /// @return A pointer to the new device, or null if an error occured.
-        GPURenderingDevice* CreateGPURenderingDevice(unsigned int deviceIndex);
-
-        /// The highest level helper for creating a GPU rendering device.
-        ///
-        /// @return A pointer to the GPU rendering device, or null if an error occurs.
-        ///
-        /// @remarks
-        ///     This will create the rendering device from the primary adapter (device index of 0) and will use the best available rendering API.
-        GPURenderingDevice* CreateGPURenderingDevice();
-
-
-        /// Deletes a GPU rendering device object that was created with DeleteGPURenderingDevice.
-        ///
-        /// @param renderingDevice [in] A pointer to the GPU device to delete.
-        void DeleteGPURenderingDevice(GPURenderingDevice* renderingDevice);
+#if defined(GT_BUILD_OPENGL)
+        /// Retrieves a pointer to the OpenGL graphics API object.
+        GraphicsAPI_OpenGL* GetOpenGLGraphicsAPI();
+#endif
 
 
 
@@ -214,18 +136,6 @@ namespace GT
 
         /// An object representing the command line that was used to initialise the game engine.
         GTLib::CommandLine m_commandLine;
-
-        /// The hardware platform object for detecting the available hardware on the running system. This object can be used to iterate over devices
-        /// and specify which ones should be used for particular tasks.
-        HardwarePlatform m_hardwarePlatform;
-
-
-		/// The list of graphics interface allocators.
-		GTLib::Vector<GraphicsInterfaceAllocator*> m_graphicsInterfaceAllocators;
-
-        /// A pointer to the default graphics interface allocator. This will be null if the default allocator is not being used. An application may
-        /// chose to exclude the default allocator so that they can implement custom graphics interface.
-        GraphicsInterfaceAllocator* m_pDefaultGraphicsInterfaceAllocator;
 
 
         // Supported Graphics APIs.

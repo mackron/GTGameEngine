@@ -50,7 +50,6 @@ namespace GT
                             {
                                 if (reinterpret_cast<const uint32_t*>(str)[0] == 'ltmw')
                                 {
-
                                 }
                             }
                         }

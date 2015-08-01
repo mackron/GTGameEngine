@@ -60,26 +60,8 @@
     <Filter Include="Header Files\Graphics">
       <UniqueIdentifier>{8ec35ecd-4109-4542-9829-ffe6edee240d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\Graphics\OpenGL">
-      <UniqueIdentifier>{b2e4e939-f630-41be-8d0b-61e8011c39b9}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\Graphics">
       <UniqueIdentifier>{6de4dd36-bacb-44c6-ab6f-4acdf188d5e1}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Graphics\D3D">
-      <UniqueIdentifier>{398643a3-8588-44e7-a2d4-749723428973}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Graphics\D3D12">
-      <UniqueIdentifier>{ce693a20-f25e-451a-a758-341638bde657}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Graphics\OpenGL">
-      <UniqueIdentifier>{66ce2f20-9f76-4d9e-8c21-4fc324e7513e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Graphics\D3D\D3D11">
-      <UniqueIdentifier>{eb42e70d-2a21-402d-9622-06912b594115}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\Graphics\OpenGL\OpenGL4">
-      <UniqueIdentifier>{57a88c26-1f42-40da-8834-63ded5c07433}</UniqueIdentifier>
     </Filter>
     <Filter Include="Header Files\Core\Strings">
       <UniqueIdentifier>{7fc93798-0958-48ba-a1d4-7955ceb2b6d7}</UniqueIdentifier>
@@ -129,36 +111,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\GameContext.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\HardwarePlatform.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\HardwarePlatform_Audio.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\HardwarePlatform_CPU.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\HardwarePlatform_GPU.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\HardwarePlatform_Input.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\GameDisplay.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\GPUComputeDevice.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\GPURenderingDevice.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\GameDisplay_Windowed.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\GameDisplayRenderingCallback.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\FileSystem.cpp">
@@ -319,33 +271,6 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Scene\SceneNodeComponent.cpp">
       <Filter>Source Files\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Graphics\DefaultGraphicsInterfaceAllocator.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Graphics\GraphicsInterface.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Graphics\GraphicsInterface_MT.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Graphics\GraphicsInterfaceAllocator.cpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Graphics\D3D\D3D11\GPURenderingDevice_D3D11.cpp">
-      <Filter>Source Files\Graphics\D3D\D3D11</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Graphics\D3D12\D3D12GraphicsInterface.cpp">
-      <Filter>Source Files\Graphics\D3D12</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Graphics\OpenGL\OpenGL.cpp">
-      <Filter>Source Files\Graphics\OpenGL</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Graphics\OpenGL\OpenGL4\GPURenderingDevice_OpenGL4.cpp">
-      <Filter>Source Files\Graphics\OpenGL\OpenGL4</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Graphics\OpenGL\OpenGL4\RenderingTypes_OpenGL4.cpp">
-      <Filter>Source Files\Graphics\OpenGL\OpenGL4</Filter>
     </ClCompile>
     <ClCompile Include="..\..\..\source\Scene\SceneNodeIDAllocator.cpp">
       <Filter>Source Files\Scene</Filter>
@@ -643,40 +568,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\GameContext.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Audio.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_CPU.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_GPU.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\HardwarePlatform_Input.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplay.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\GPUComputeDevice.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDevice.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplay_Windowed.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\GPURenderingDeviceInfo.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Config.hpp">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\GameDisplayRenderingCallback.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\FileSystem.hpp">
@@ -925,41 +817,8 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentTypes.hpp">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsInterface.hpp">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsInterface_MT.hpp">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsInterfaceAllocator.hpp">
-      <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsTypes.hpp">
       <Filter>Header Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\OpenGL\OpenGL.hpp">
-      <Filter>Header Files\Graphics\OpenGL</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Graphics\DefaultGraphicsInterfaceAllocator.hpp">
-      <Filter>Source Files\Graphics</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Graphics\D3D\D3D11\GPURenderingDevice_D3D11.hpp">
-      <Filter>Source Files\Graphics\D3D\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Graphics\D3D\D3D11\RenderingTypes_D3D11.hpp">
-      <Filter>Source Files\Graphics\D3D\D3D11</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Graphics\D3D12\D3D12Common.hpp">
-      <Filter>Source Files\Graphics\D3D12</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Graphics\D3D12\D3D12GraphicsInterface.hpp">
-      <Filter>Source Files\Graphics\D3D12</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Graphics\OpenGL\OpenGL4\GPURenderingDevice_OpenGL4.hpp">
-      <Filter>Source Files\Graphics\OpenGL\OpenGL4</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\source\Graphics\OpenGL\OpenGL4\RenderingTypes_OpenGL4.hpp">
-      <Filter>Source Files\Graphics\OpenGL\OpenGL4</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Math.hpp">
       <Filter>Header Files</Filter>

@@ -28,7 +28,7 @@ namespace GT
     static const GraphicsAPIType GraphicsAPIType_D3D12   = 0x00000004;
 
 
-
+#if 0
     typedef uint32_t GraphicsInterfaceClass;
 	typedef uint32_t GraphicsInterfaceType;
 
@@ -83,7 +83,7 @@ namespace GT
     typedef size_t HRasterizerState;
     typedef size_t HDepthStencilState;
     typedef size_t HBlendState;
-
+#endif
 
 
 

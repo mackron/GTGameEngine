@@ -3,9 +3,6 @@
 #include <GTGameEngine/EngineContext.hpp>
 #include <GTGameEngine/GameContext.hpp>
 #include <GTGameEngine/GameState.hpp>
-#include <GTGameEngine/GameDisplay_Windowed.hpp>
-#include <GTGameEngine/GameDisplayRenderingCallback.hpp>
-#include <GTGameEngine/GPURenderingDevice.hpp>
 #include <GTLib/Timing/TimingCommon.hpp>
 
 #if defined(GT_PLATFORM_WINDOWS)
@@ -21,7 +18,6 @@ namespace GT
           m_gameState(gameState),
           m_pWindowManager(nullptr),
           m_gui(),
-          m_windowedDisplays(),
           m_flags(0)
 #if defined(GT_BUILD_EDITOR)
         , m_editor(*this),
@@ -591,73 +587,4 @@ namespace GT
         m_flags |= IsRunningRealTimeLoopFlag;       //< Switch to a real-time game loop.
 #endif
     }
-
-
-
-    //////////////////////////////////////////////////////////////////
-    // Win32
-#if defined(GT_PLATFORM_WINDOWS)
-    GameDisplay* GameContext::CreateWindowedDisplay(GraphicsInterface &graphicsInterface, HWND hWnd)
-    {
-        GameDisplay* displayOut = nullptr;
-
-        if (hWnd != 0)
-        {
-            ResultCode result = graphicsInterface.InitWindowBuffers(hWnd, true);
-            if (GT::Succeeded(result))
-            {
-                auto display = new GameDisplay_Windowed(graphicsInterface, hWnd);
-                    
-                m_windowedDisplays.PushBack(display);
-
-                displayOut = display;
-            }
-            else
-            {
-                //return result;
-            }
-        }
-        else
-        {
-            //return InvalidWindow;
-        }
-
-        return displayOut;
-    }
-
-    GameDisplay* GameContext::GetWindowedDisplayFromWindow(HWND hWnd)
-    {
-        for (size_t iDisplay = 0; iDisplay < m_windowedDisplays.GetCount(); ++iDisplay)
-        {
-            if (m_windowedDisplays[iDisplay]->GetWindow() == hWnd)
-            {
-                return m_windowedDisplays[iDisplay];
-            }
-        }
-
-        return nullptr;
-    }
-
-    void GameContext::DeleteDisplay(GameDisplay* display)
-    {
-        if (display != nullptr)
-        {
-            switch (display->GetType())
-            {
-            case GameDisplayType_Windowed:
-                {
-                    display->GetGraphicsInterface().UninitWindowBuffers(reinterpret_cast<GameDisplay_Windowed*>(display)->GetWindow());
-                    break;
-                }
-
-
-            case GameDisplayType_Fullscreen:
-            case GameDisplayType_Texture:
-            default: break;
-            }
-        }
-
-        delete display;
-    }
-#endif
 }

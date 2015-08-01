@@ -25,11 +25,6 @@ namespace GT
     class EngineContext;
     class GameState;
 
-    class GameDisplay;
-    class GameDisplay_Windowed;
-    class GraphicsInterface;
-
-
     /// Class representing a game context.
     ///
     /// An application can have multiple game context's per engine context.
@@ -151,30 +146,6 @@ namespace GT
         ///
         /// @param hWindow [in] The window to hide.
         void HideWindow(HWindow hWinodw);
-
-
-#if defined(GT_PLATFORM_WINDOWS)
-        /// Creates a windowed display from the given window.
-        ///
-        /// @param renderingDevice [in] The rendering device that will be used for rendering to the display.
-        /// @param hWnd            [in] The window to create the display from.
-        ///
-        /// @return A pointer to the new display, or null if an error occurred.
-        GameDisplay* CreateWindowedDisplay(GraphicsInterface &graphicsInterface, HWND hWnd);
-
-        /// Retrieves a windowed game display from the given window.
-        ///
-        /// @param hWnd [in] A handle to the window whose game display object is being retrieved.
-        ///
-        /// @return A pointer to the game display, or null if it cannot be found.
-        GameDisplay* GetWindowedDisplayFromWindow(HWND hWnd);
-#endif
-
-        /// Deletes the given display.
-        ///
-        /// @param display [in] A pointer to the display to delete.
-        void DeleteDisplay(GameDisplay* display);
-
 
 
         /// Closes the game.
@@ -392,10 +363,6 @@ namespace GT
 
         /// The GUI context for the game. The editor uses a separate GUI context.
         GUIContext m_gui;
-
-
-        /// The list of window displays.
-        GTLib::Vector<GameDisplay_Windowed*> m_windowedDisplays;    // TODO: Delete this.
 
 
         /// A set of flags for boolean variables.
