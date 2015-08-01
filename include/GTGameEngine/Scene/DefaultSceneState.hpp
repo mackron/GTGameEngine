@@ -8,7 +8,7 @@
 namespace GT
 {
     /// The default scene state.
-    ALIGNED_TYPE(class, 16) DefaultSceneState : public SceneState
+    class DefaultSceneState : public SceneState
     {
     public:
 

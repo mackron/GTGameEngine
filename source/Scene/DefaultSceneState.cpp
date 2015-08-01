@@ -155,6 +155,8 @@ namespace GT
 
     void DefaultSceneState::Step(double deltaTimeInSeconds)
     {
+        (void)deltaTimeInSeconds;
+
         // The rules for the stepping pipeline is as follows:
         //   - Events are never posted until the end of the pipeline, but before cleanup. Events are posted on a single thread, that thread being
         //     the same thread that called this method.

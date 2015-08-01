@@ -795,7 +795,7 @@ namespace GT
 
         char shaderString_Diffuse[256];
         //sprintf(shaderString_Diffuse, "vec4 Material_Diffuse() { return vec4(%f, %f, %f, %f); }", diffuseColor.x, diffuseColor.y, diffuseColor.z, diffuseColor.w);
-        sprintf(shaderString_Diffuse, "vec4 Material_Diffuse() { return testing; }", diffuseColor.x, diffuseColor.y, diffuseColor.z, diffuseColor.w);
+        sprintf(shaderString_Diffuse, "%s", "vec4 Material_Diffuse() { return testing; }");
 
 
         // Uniforms.
@@ -1850,7 +1850,7 @@ namespace GT
             if (messageDst != nullptr)
             {
                 m_gl.GetShaderInfoLog(objectGL, logLengthInBytes, &logLengthInBytes, reinterpret_cast<GLchar*>(messageDst));
-                printf("%s\n", messageDst);
+                printf("%s\n", reinterpret_cast<char*>(messageDst));
             }
             free(messageDst);
         }
@@ -1896,7 +1896,7 @@ namespace GT
             if (messageDst != nullptr)
             {
                 m_gl.GetProgramInfoLog(objectGL, logLengthInBytes, &logLengthInBytes, reinterpret_cast<GLchar*>(messageDst));
-                printf("%s\n", messageDst);
+                printf("%s\n", reinterpret_cast<char*>(messageDst));
             }
             free(messageDst);
         }

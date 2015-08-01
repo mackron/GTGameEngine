@@ -427,8 +427,8 @@ namespace GTLib
         /// Sets the event handler.
         ///
         /// @param eventHandler [in] The event handler to use with the text manager.
-        void SetEventHandler(TextManagerEventHandler* eventHandler) { this->eventHandler = eventHandler; }
-        void SetEventHandler(TextManagerEventHandler &eventHandler) { this->SetEventHandler(&eventHandler); }
+        void SetEventHandler(TextManagerEventHandler* eventHandlerIn) { this->eventHandler = eventHandlerIn; }
+        void SetEventHandler(TextManagerEventHandler &eventHandlerIn) { this->SetEventHandler(&eventHandlerIn); }
 
 
         /// Sets the default colour for text.

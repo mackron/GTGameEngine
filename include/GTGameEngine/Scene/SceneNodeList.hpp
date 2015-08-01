@@ -16,7 +16,7 @@ namespace GT
     /// the slot will be reused at a later time.
     ///
     /// This class should be aligned to 16 bytes since that is required for scene nodes.
-    ALIGNED_TYPE(class, 16) SceneNodeListChunk
+    class alignas(16) SceneNodeListChunk
     {
     public:
 
@@ -66,9 +66,7 @@ namespace GT
     ///
     /// This class is made up of chunks of scene nodes. When a new scene node is required, but there's no room available, a new chunk will be
     /// created. The idea of this system is to have a list of actual scene node objects rather than a list of scene node pointers.
-    ///
-    /// This class should be aligned to 16 bytes since that is required for scene nodes.
-    ALIGNED_TYPE(class, 16) SceneNodeList
+    class SceneNodeList
     {
     public:
 

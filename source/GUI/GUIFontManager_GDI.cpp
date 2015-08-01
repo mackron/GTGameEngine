@@ -210,7 +210,7 @@ namespace GT
         return 0;
     }
 
-    bool GUIFontManager_GDI::GetGlyphMetrics(HGUIFont hFont, uint32_t character, GUIGlyphMetrics &metricsOut) const
+    bool GUIFontManager_GDI::GetGlyphMetrics(HGUIFont hFont, char32_t character, GUIGlyphMetrics &metricsOut) const
     {
         // TODO: This is slow due to the font selection. Should use caching for this.
 

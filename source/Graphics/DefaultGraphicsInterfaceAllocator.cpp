@@ -4,6 +4,7 @@
 
 #if defined(GT_BUILD_DEFAULT_GRAPHICS_INTERFACES)
 #include "DefaultGraphicsInterfaceAllocator.hpp"
+#include <GTGameEngine/Graphics/GraphicsInterface.hpp>
 
 #if defined(GT_BUILD_D3D12)
 #include "D3D12/D3D12GraphicsInterface.hpp"

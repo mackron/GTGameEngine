@@ -97,7 +97,7 @@ namespace GTLib
             *   \brief  Default constructor.
             */
             List()
-                : root(nullptr), last(nullptr), lengthInTs(0), str(nullptr)
+                : root(nullptr), last(nullptr), m_lengthInTs(0), m_str(nullptr)
             {
             }
 
@@ -139,16 +139,16 @@ namespace GTLib
             *       \par
             *       The return value can be passed to Remove().
             */
-            ListItem<T>* Append(const T* str, ptrdiff_t sizeInTs = -1)
+            ListItem<T>* Append(const T* strIn, ptrdiff_t sizeInTs = -1)
             {
-                if (str != nullptr)
+                if (strIn != nullptr)
                 {
                     if (sizeInTs == -1)
                     {
-                        sizeInTs = SizeInTs(str);
+                        sizeInTs = SizeInTs(strIn);
                     }
 
-                    auto newItem = ListItem<T>::Allocate(str, str + sizeInTs, this->last, nullptr);
+                    auto newItem = ListItem<T>::Allocate(strIn, strIn + sizeInTs, this->last, nullptr);
 
                     if (this->last)
                     {
@@ -163,7 +163,7 @@ namespace GTLib
                     // The new item is always the last one.
                     this->last = newItem;
 
-                    this->lengthInTs += static_cast<size_t>(sizeInTs);   // <-- Safe cast. Set to Size(str) if it's -1 on entry.
+                    m_lengthInTs += static_cast<size_t>(sizeInTs);   // <-- Safe cast. Set to Size(str) if it's -1 on entry.
                     return newItem;
                 }
 
@@ -200,7 +200,7 @@ namespace GTLib
                     // The new item is always the root.
                     this->root = newItem;
 
-                    this->lengthInTs += static_cast<size_t>(sizeInTs);
+                    m_lengthInTs += static_cast<size_t>(sizeInTs);
                     return newItem;
                 }
 
@@ -234,7 +234,7 @@ namespace GTLib
                 other.root = nullptr;
                 other.last = nullptr;
 
-                this->lengthInTs += other.BuildStringSize() - 1;    // BuildStringSize() includes the null terminator.
+                m_lengthInTs += other.BuildStringSize() - 1;    // BuildStringSize() includes the null terminator.
             }
 
             /**
@@ -263,7 +263,7 @@ namespace GTLib
                 other.root = nullptr;
                 other.last = nullptr;
 
-                this->lengthInTs += other.BuildStringSize() - 1;    // BuildStringSize() includes the null terminator.
+                m_lengthInTs += other.BuildStringSize() - 1;    // BuildStringSize() includes the null terminator.
             }
 
 
@@ -295,7 +295,7 @@ namespace GTLib
                         this->last = item->prev;
                     }
 
-                    this->lengthInTs -= static_cast<size_t>(item->end - item->start);
+                    m_lengthInTs -= static_cast<size_t>(item->end - item->start);
                     ListItem<T>::Deallocate(item);
                 }
             }
@@ -329,7 +329,7 @@ namespace GTLib
                 this->root = nullptr;
                 this->last = nullptr;
 
-				free(this->str);
+				free(m_str);
             }
 
             /**
@@ -358,13 +358,13 @@ namespace GTLib
                     *dest = '\0';
                 }
 
-                return this->lengthInTs + 1;
+                return m_lengthInTs + 1;
             }
 
             /**
             *   \brief  Retrieves the required buffer size (in Ts) for BuildString().
             */
-            inline size_t BuildStringSize() const { return this->lengthInTs + 1; }
+            inline size_t BuildStringSize() const { return m_lengthInTs + 1; }
 
 
 			/**
@@ -377,12 +377,12 @@ namespace GTLib
 			*/
 			const T* c_str()
 			{
-				free(this->str);	// <-- Always ensure we delete the old string.
+				free(m_str);	// <-- Always ensure we delete the old string.
 
-                this->str = static_cast<T*>(malloc((this->lengthInTs + 1) * sizeof(T)));
-				this->BuildString(this->str);
+                m_str = static_cast<T*>(malloc((m_lengthInTs + 1) * sizeof(T)));
+				this->BuildString(m_str);
 
-				return this->str;
+				return m_str;
 			}
 
 
@@ -417,10 +417,10 @@ namespace GTLib
         private:
 
             /// The size of the buffer required for BuildString(). Does not include the null terminator.
-            size_t lengthInTs;
+            size_t m_lengthInTs;
 
 			/// The temporary string we keep a hold of for the c_str() method.
-			T* str;
+			T* m_str;
         };
     }
 }

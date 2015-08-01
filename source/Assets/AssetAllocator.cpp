@@ -13,7 +13,7 @@ namespace GT
     }
 
 
-    AssetType AssetAllocator::GetAssetTypeByPath(const char* filePath) const
+    AssetType AssetAllocator::GetAssetTypeByPath(const char*) const
     {
         return AssetType_Unknown;
     }
