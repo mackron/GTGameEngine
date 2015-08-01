@@ -21,6 +21,13 @@ namespace GT
         virtual ~AssetAllocator();
 
 
+        /// Retrieves the asset type by the given file path.
+        ///
+        /// @param filePath [in] The path of the file being checked.
+        ///
+        /// @return The asset type for the given path. Returns AssetType_Unknown if the allocator does not support that asset at the given path.
+        virtual AssetType GetAssetTypeByPath(const char* filePath) const;
+
         /// Determines whether or not the given asset type is supported by this allocator.
         ///
         /// @param assetType [in] The asset type to check support for.

@@ -95,16 +95,21 @@ namespace GT
         ///     Once an extension has been registered, it can never be unregistered. See remarks in RegisterAllocator().
         ///     @par
         ///     If the same extension has already been registered, it will be overwritten.
-        void RegisterExtensions(AssetExtensionDesc* extensions, size_t extensionsCount);
+        //void RegisterExtensions(AssetExtensionDesc* extensions, size_t extensionsCount);
 
 
     private:
 
-        AssetAllocator* FindAllocatorByExtension(const char* filePath);
+        AssetAllocator* FindAllocatorAndTypeByPath(const char* filePath, AssetType &assetTypeOut);
         AssetAllocator* FindAllocatorByType(AssetType type);
-        AssetType FindTypeByExtension(const char* filePath);
-        AssetClass FindClassByExtension(const char* filePath);
-        GTLib::String GetAssetExtension(const char* filePath);
+        AssetType FindTypeByPath(const char* filePath);
+        //AssetClass FindClassByPath(const char* filePath);
+
+        //AssetAllocator* FindAllocatorByExtension(const char* filePath);
+        
+        //AssetType FindTypeByExtension(const char* filePath);
+        //AssetClass FindClassByExtension(const char* filePath);
+        //GTLib::String GetAssetExtension(const char* filePath);
 
 
     private:
@@ -116,7 +121,7 @@ namespace GT
         GTLib::Vector<AssetAllocator*> m_allocators;
 
         /// The list of extension/classification/type mappings. The value is the asset class and type encoded as ((class << 32) | type)
-        GTLib::Dictionary<uint64_t> m_extensionTypeMapping;
+        //GTLib::Dictionary<uint64_t> m_extensionTypeMapping;
 
         /// The list of loaded assets, by absolute file path.
         GTLib::Dictionary<Asset*> m_loadedAssets;

@@ -12,7 +12,7 @@ namespace GT
     AssetLibrary::AssetLibrary(FileSystem &fileSystem)
         : m_fileSystem(fileSystem),
           m_allocators(),
-          m_extensionTypeMapping(),
+          //m_extensionTypeMapping(),
           m_loadedAssets()
     {
     }
@@ -70,14 +70,20 @@ namespace GT
         auto iExistingAsset = m_loadedAssets.Find(absolutePathOrIdentifier.c_str());
         if (iExistingAsset == nullptr)
         {
+            AssetAllocator* pAllocator = nullptr;
+
             AssetType assetType = explicitAssetType;
             if (assetType == AssetType_Unknown)
             {
-                assetType = this->FindTypeByExtension(filePathOrIdentifier);
+                pAllocator = this->FindAllocatorAndTypeByPath(filePathOrIdentifier, assetType);
+            }
+            else
+            {
+                pAllocator = this->FindAllocatorByType(assetType);
             }
 
 
-            auto pAllocator = this->FindAllocatorByType(assetType);
+            //auto pAllocator = this->FindAllocatorByType(assetType);
             if (pAllocator != nullptr)
             {
                 auto pAsset = pAllocator->CreateAsset(assetType);
@@ -204,6 +210,7 @@ namespace GT
         }
     }
 
+#if 0
     void AssetLibrary::RegisterExtensions(AssetExtensionDesc* extensions, size_t extensionsCount)
     {
         for (size_t iExtension = 0; iExtension < extensionsCount; ++iExtension)
@@ -213,15 +220,30 @@ namespace GT
             m_extensionTypeMapping.Add(extension.extension, ((static_cast<uint64_t>(extension.classification) << 32) | static_cast<uint64_t>(extension.type)));
         }
     }
+#endif
 
 
 
     ////////////////////////////////////
     // Private
 
-    AssetAllocator* AssetLibrary::FindAllocatorByExtension(const char* filePath)
+    AssetAllocator* AssetLibrary::FindAllocatorAndTypeByPath(const char* filePath, AssetType &assetTypeOut)
     {
-        return this->FindAllocatorByType(this->FindTypeByExtension(filePath));
+        for (size_t iAllocator = 0; iAllocator < m_allocators.GetCount(); ++iAllocator)
+        {
+            auto pAllocator = m_allocators[iAllocator];
+            assert(pAllocator != nullptr);
+            {
+                AssetType assetType = pAllocator->GetAssetTypeByPath(filePath);
+                if (assetType != AssetType_Unknown)
+                {
+                    assetTypeOut = assetType;
+                    return pAllocator;
+                }
+            }
+        }
+
+        return nullptr; 
     }
 
     AssetAllocator* AssetLibrary::FindAllocatorByType(AssetType type)
@@ -241,6 +263,16 @@ namespace GT
         return nullptr;
     }
 
+#if 0
+    AssetAllocator* AssetLibrary::FindAllocatorByExtension(const char* filePath)
+    {
+        return this->FindAllocatorByType(this->FindTypeByExtension(filePath));
+    }
+#endif
+
+    
+
+#if 0
     AssetType AssetLibrary::FindTypeByExtension(const char* filePath)
     {
         auto iAssetType = m_extensionTypeMapping.Find(this->GetAssetExtension(filePath).c_str());
@@ -277,4 +309,5 @@ namespace GT
 
         return GTLib::String(extensionStart, extensionEnd - extensionStart);
     }
+#endif
 }

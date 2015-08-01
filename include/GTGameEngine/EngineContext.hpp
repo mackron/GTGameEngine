@@ -204,7 +204,7 @@ namespace GT
         void RegisterAssetAllocator(AssetAllocator &allocator);
 
         /// @copydoc AssetLibrary::RegisterAssetExtensions()
-        void RegisterAssetExtensions(AssetExtensionDesc* extensions, size_t extensionsCount);
+        //void RegisterAssetExtensions(AssetExtensionDesc* extensions, size_t extensionsCount);
 
 
     private:

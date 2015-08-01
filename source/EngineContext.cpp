@@ -124,6 +124,7 @@ namespace GT
         m_pDefaultAssetAllocator = new DefaultAssetAllocator();
         m_assetLibrary.RegisterAllocator(*m_pDefaultAssetAllocator);
 
+#if 0
         // Register extensions.
         GT::AssetExtensionDesc extensions[] =
         {
@@ -159,6 +160,8 @@ namespace GT
     #endif
         };
         m_assetLibrary.RegisterExtensions(extensions, sizeof(extensions) / sizeof(extensions[0]));
+#endif
+
 #endif
 
 
@@ -375,10 +378,10 @@ namespace GT
         m_assetLibrary.RegisterAllocator(allocator);
     }
 
-    void EngineContext::RegisterAssetExtensions(AssetExtensionDesc* extensions, size_t extensionsCount)
-    {
-        m_assetLibrary.RegisterExtensions(extensions, extensionsCount);
-    }
+    //void EngineContext::RegisterAssetExtensions(AssetExtensionDesc* extensions, size_t extensionsCount)
+    //{
+    //    m_assetLibrary.RegisterExtensions(extensions, extensionsCount);
+    //}
 
 
     //////////////////////////////////////////////////////////
