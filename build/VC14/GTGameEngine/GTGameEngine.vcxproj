@@ -191,6 +191,7 @@
     <ClCompile Include="..\..\..\source\WindowManager_Win32.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\..\include\GTGameEngine\AlignedType.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\Asset.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetAllocator.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Assets\AssetLibrary.hpp" />
@@ -458,7 +459,7 @@
       <FloatingPointModel>Fast</FloatingPointModel>
       <FloatingPointExceptions>false</FloatingPointExceptions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PreprocessorDefinitions>PHYSFS_SUPPORTS_ZIP;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>

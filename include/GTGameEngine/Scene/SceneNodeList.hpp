@@ -4,6 +4,7 @@
 #define __GT_SceneNodeList_hpp_
 
 #include "SceneNode.hpp"
+#include "../AlignedType.hpp"
 #include <GTLib/Vector.hpp>
 
 namespace GT
@@ -16,7 +17,7 @@ namespace GT
     /// the slot will be reused at a later time.
     ///
     /// This class should be aligned to 16 bytes since that is required for scene nodes.
-    class alignas(16) SceneNodeListChunk
+    class alignas(16) SceneNodeListChunk : public SIMDAlignedType
     {
     public:
 

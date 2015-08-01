@@ -1210,5 +1210,8 @@
     <ClInclude Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_zip.h">
       <Filter>Source Files\external\easy_vfs\extras</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\AlignedType.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

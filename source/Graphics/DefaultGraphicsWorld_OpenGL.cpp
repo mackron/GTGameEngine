@@ -6,6 +6,7 @@
 #include <GTGameEngine/Graphics/DefaultGraphicsWorld_OpenGL.hpp>
 #include <GTGameEngine/SpirV.hpp>
 #include <GTLib/BasicBuffer.hpp>
+#include <GTGameEngine/AlignedType.hpp>
 
 
 namespace GT
@@ -294,7 +295,7 @@ namespace GT
         HGUISurface hSurface;
     };
 
-    struct WindowRenderTarget_OpenGL : public RenderTarget_OpenGL
+    struct WindowRenderTarget_OpenGL : public RenderTarget_OpenGL, SIMDAlignedType
     {
         WindowRenderTarget_OpenGL(HWND hWndIn, HDC hDCIn, uint32_t flagsIn)
             : RenderTarget_OpenGL(flagsIn),
@@ -311,7 +312,7 @@ namespace GT
 #endif
     };
 
-    struct TextureRenderTarget_OpenGL : public RenderTarget_OpenGL
+    struct TextureRenderTarget_OpenGL : public RenderTarget_OpenGL, SIMDAlignedType
     {
         TextureRenderTarget_OpenGL(HGraphicsResource hTextureIn, uint32_t flagsIn)
             : RenderTarget_OpenGL(flagsIn),
@@ -517,7 +518,7 @@ namespace GT
     };
 
     /// Structure representing a mesh object in OpenGL.
-    struct MeshObject_OpenGL : public Object_OpenGL
+    struct MeshObject_OpenGL : public Object_OpenGL, public SIMDAlignedType
     {
         MeshObject_OpenGL(HGraphicsResource hMeshResourceIn)
             : Object_OpenGL(GraphicsObjectType::Mesh),
