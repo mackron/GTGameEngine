@@ -102,14 +102,6 @@ namespace GT
 
         AssetAllocator* FindAllocatorAndTypeByPath(const char* filePath, AssetType &assetTypeOut);
         AssetAllocator* FindAllocatorByType(AssetType type);
-        AssetType FindTypeByPath(const char* filePath);
-        //AssetClass FindClassByPath(const char* filePath);
-
-        //AssetAllocator* FindAllocatorByExtension(const char* filePath);
-        
-        //AssetType FindTypeByExtension(const char* filePath);
-        //AssetClass FindClassByExtension(const char* filePath);
-        //GTLib::String GetAssetExtension(const char* filePath);
 
 
     private:
@@ -119,9 +111,6 @@ namespace GT
 
         /// The list of allocators.
         GTLib::Vector<AssetAllocator*> m_allocators;
-
-        /// The list of extension/classification/type mappings. The value is the asset class and type encoded as ((class << 32) | type)
-        //GTLib::Dictionary<uint64_t> m_extensionTypeMapping;
 
         /// The list of loaded assets, by absolute file path.
         GTLib::Dictionary<Asset*> m_loadedAssets;

@@ -4,6 +4,7 @@
 #include <GTGameEngine/GameState.hpp>
 #include <GTGameEngine/Graphics/DefaultGraphicsWorld.hpp>
 #include <GTGameEngine/Assets/ModelAsset.hpp>
+#include <GTGameEngine/Assets/MaterialAsset.hpp>
 #include <GTGameEngine/ConfigFile.hpp>
 #include <GTGameEngine/external/spirv.h>
 #include <GTLib/IO.hpp>
@@ -101,6 +102,12 @@ public:
 
         m_pTestMeshAsset = reinterpret_cast<GT::ModelAsset*>(gameContext.GetEngineContext().LoadAsset("data/cube.obj"));
         if (m_pTestMeshAsset == nullptr)
+        {
+            return false;
+        }
+
+        m_pTestMaterialAsset = reinterpret_cast<GT::MaterialAsset*>(gameContext.GetEngineContext().LoadAsset("data/default.mtl/default"));
+        if (m_pTestMaterialAsset == nullptr)
         {
             return false;
         }
@@ -223,7 +230,10 @@ public:
 
     void OnWindowResized(GT::GameContext &gameContext, GT::HWindow hWindow, unsigned int width, unsigned int height)
     {
-        m_pGraphicsWorld->SetRenderTargetViewport(m_pGraphicsWorld->GetRenderTargetByWindow(reinterpret_cast<HWND>(hWindow)), 0, 0, width, height);
+        if (m_pGraphicsWorld != NULL)
+        {
+            m_pGraphicsWorld->SetRenderTargetViewport(m_pGraphicsWorld->GetRenderTargetByWindow(reinterpret_cast<HWND>(hWindow)), 0, 0, width, height);
+        }
     }
 
 
@@ -252,6 +262,7 @@ private:
 
 
     GT::ModelAsset* m_pTestMeshAsset;
+    GT::MaterialAsset* m_pTestMaterialAsset;
 
     GT::HGraphicsResource m_hTestMaterialR;
     GT::HGraphicsResource m_hTestMaterialG;

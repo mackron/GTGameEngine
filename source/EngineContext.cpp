@@ -5,14 +5,14 @@
 #include <GTGameEngine/Graphics/GraphicsInterface.hpp>
 
 #include <GTGameEngine/Graphics/GraphicsAPI_Null.hpp>
-#if defined(GT_BUILD_OPENGL)
-#include <GTGameEngine/Graphics/GraphicsAPI_OpenGL.hpp>
-#endif
 #if defined(GT_BUILD_VULKAN)
 #include <GTGameEngine/Graphics/GraphicsAPI_Vulkan.hpp>
 #endif
 #if defined(GT_BUILD_D3D12)
 #include <GTGameEngine/Graphics/GraphicsAPI_D3D12.hpp>
+#endif
+#if defined(GT_BUILD_OPENGL)
+#include <GTGameEngine/Graphics/GraphicsAPI_OpenGL.hpp>
 #endif
 
 
@@ -108,7 +108,6 @@ namespace GT
         }
 
         m_fileSystem.AddBaseDirectory(m_commandLine.GetApplicationDirectory());
-        //m_fileSystem.AddLowPriorityBaseDirectory(m_commandLine.GetApplicationDirectory());
 
 
 
@@ -123,45 +122,6 @@ namespace GT
         // Create and register the default allocator.
         m_pDefaultAssetAllocator = new DefaultAssetAllocator();
         m_assetLibrary.RegisterAllocator(*m_pDefaultAssetAllocator);
-
-#if 0
-        // Register extensions.
-        GT::AssetExtensionDesc extensions[] =
-        {
-    #if defined(GT_BUILD_PNG)
-            {"png",  GT::AssetClass_Image, AssetType_Image_PNG},
-    #endif
-    #if defined(GT_BUILD_TGA)
-            {"tga",  GT::AssetClass_Image, AssetType_Image_TGA},
-    #endif
-    #if defined(GT_BUILD_JPG)
-            {"jpg",  GT::AssetClass_Image, AssetType_Image_JPG},
-            {"jpeg", GT::AssetClass_Image, AssetType_Image_JPG},
-    #endif
-    #if defined(GT_BUILD_PSD)
-            {"psd",  GT::AssetClass_Image, AssetType_Image_PSD},
-    #endif
-
-    #if defined(GT_BUILD_OBJ)
-            {"obj",  GT::AssetClass_Model, AssetType_Model_OBJ},
-    #endif
-    #if defined(GT_BUILD_MD2)
-            {"md2",  GT::AssetClass_Model, AssetType_Model_MD2},
-    #endif
-    #if defined(GT_BUILD_OGEX)
-            {"ogex", GT::AssetClass_Model, AssetType_Model_OGEX},
-    #endif
-
-    #if defined(GT_BUILD_WAV)
-            {"wav",  GT::AssetClass_Sound, AssetType_Sound_WAV},
-    #endif
-    #if defined(GT_BUILD_OGG)
-            {"ogg",  GT::AssetClass_Sound, AssetType_Sound_OGG},
-    #endif
-        };
-        m_assetLibrary.RegisterExtensions(extensions, sizeof(extensions) / sizeof(extensions[0]));
-#endif
-
 #endif
 
 
@@ -377,12 +337,6 @@ namespace GT
     {
         m_assetLibrary.RegisterAllocator(allocator);
     }
-
-    //void EngineContext::RegisterAssetExtensions(AssetExtensionDesc* extensions, size_t extensionsCount)
-    //{
-    //    m_assetLibrary.RegisterExtensions(extensions, extensionsCount);
-    //}
-
 
     //////////////////////////////////////////////////////////
     // Private

@@ -12,7 +12,6 @@ namespace GT
     AssetLibrary::AssetLibrary(FileSystem &fileSystem)
         : m_fileSystem(fileSystem),
           m_allocators(),
-          //m_extensionTypeMapping(),
           m_loadedAssets()
     {
     }
@@ -210,19 +209,6 @@ namespace GT
         }
     }
 
-#if 0
-    void AssetLibrary::RegisterExtensions(AssetExtensionDesc* extensions, size_t extensionsCount)
-    {
-        for (size_t iExtension = 0; iExtension < extensionsCount; ++iExtension)
-        {
-            AssetExtensionDesc &extension = extensions[iExtension];
-
-            m_extensionTypeMapping.Add(extension.extension, ((static_cast<uint64_t>(extension.classification) << 32) | static_cast<uint64_t>(extension.type)));
-        }
-    }
-#endif
-
-
 
     ////////////////////////////////////
     // Private
@@ -262,52 +248,4 @@ namespace GT
 
         return nullptr;
     }
-
-#if 0
-    AssetAllocator* AssetLibrary::FindAllocatorByExtension(const char* filePath)
-    {
-        return this->FindAllocatorByType(this->FindTypeByExtension(filePath));
-    }
-#endif
-
-    
-
-#if 0
-    AssetType AssetLibrary::FindTypeByExtension(const char* filePath)
-    {
-        auto iAssetType = m_extensionTypeMapping.Find(this->GetAssetExtension(filePath).c_str());
-        if (iAssetType != nullptr)
-        {
-            return static_cast<AssetType>(iAssetType->value & 0x00000000FFFFFFFF);
-        }
-
-        return AssetType_Unknown;
-    }
-
-    AssetClass AssetLibrary::FindClassByExtension(const char* filePath)
-    {
-        auto iAssetType = m_extensionTypeMapping.Find(this->GetAssetExtension(filePath).c_str());
-        if (iAssetType != nullptr)
-        {
-            return static_cast<AssetClass>((iAssetType->value & 0xFFFFFFFF00000000) >> 32);
-        }
-
-        return AssetType_Unknown;
-    }
-
-
-    GTLib::String AssetLibrary::GetAssetExtension(const char* filePath)
-    {
-        const char* extensionStart = GTLib::IO::GetExtension(filePath);
-
-        const char* extensionEnd = extensionStart;
-        while (*extensionEnd != '\0' && *extensionEnd != '/' && *extensionEnd != '\\')
-        {
-            extensionEnd += 1;
-        }
-
-
-        return GTLib::String(extensionStart, extensionEnd - extensionStart);
-    }
-#endif
 }
