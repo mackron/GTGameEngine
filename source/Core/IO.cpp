@@ -191,22 +191,6 @@ namespace GTLib
 
         void DeleteDirectory(const char* directoryPath)
         {
-            // We need to do this recursively.
-            FileIterator iFile((GTLib::String(directoryPath) + "/.*").c_str());
-            while (iFile)
-            {
-                if (iFile.isDirectory)
-                {
-                    DeleteDirectory(iFile.absolutePath);
-                }
-                else
-                {
-                    IO::DeleteFile(iFile.absolutePath);
-                }
-
-                ++iFile;
-            }
-
             // The directory should now be empty, so now we can delete the directory itself.
         #if defined(GT_PLATFORM_WINDOWS)
             RemoveDirectoryA(directoryPath);

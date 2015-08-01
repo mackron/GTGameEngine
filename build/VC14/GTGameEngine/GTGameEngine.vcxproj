@@ -49,7 +49,6 @@
     <ClCompile Include="..\..\..\source\Core\HandleManager.cpp" />
     <ClCompile Include="..\..\..\source\Core\IO.cpp" />
     <ClCompile Include="..\..\..\source\Core\IO\cstdio.cpp" />
-    <ClCompile Include="..\..\..\source\Core\IO\FileIterator.cpp" />
     <ClCompile Include="..\..\..\source\Core\Keyboard.cpp" />
     <ClCompile Include="..\..\..\source\Core\Log.cpp" />
     <ClCompile Include="..\..\..\source\Core\MipmapGenerator.cpp" />
@@ -277,7 +276,6 @@
     <ClInclude Include="..\..\..\include\GTLib\ImageUtils.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\IO.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\IO\cstdio.hpp" />
-    <ClInclude Include="..\..\..\include\GTLib\IO\FileIterator.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\KerningVector.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\Keyboard.hpp" />
     <ClInclude Include="..\..\..\include\GTLib\Limits.hpp" />

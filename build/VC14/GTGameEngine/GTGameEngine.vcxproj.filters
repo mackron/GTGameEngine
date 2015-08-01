@@ -248,9 +248,6 @@
     <ClCompile Include="..\..\..\source\Core\ToString.cpp">
       <Filter>Source Files\Core</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Core\IO\FileIterator.cpp">
-      <Filter>Source Files\Core\IO</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Assets\ModelAsset_MD2.cpp">
       <Filter>Source Files\Assets</Filter>
     </ClCompile>
@@ -776,9 +773,6 @@
       <Filter>Header Files\Core</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTLib\IO\cstdio.hpp">
-      <Filter>Header Files\Core\IO</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTLib\IO\FileIterator.hpp">
       <Filter>Header Files\Core\IO</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\source\Assets\ModelAsset_MD2.hpp">

@@ -3,7 +3,6 @@
 #ifndef __GTLib_IO_hpp_
 #define __GTLib_IO_hpp_
 
-#include "IO/FileIterator.hpp"
 #include "IO/cstdio.hpp"
 #include "String.hpp"
 #include "Vector.hpp"
@@ -190,7 +189,7 @@ namespace GTLib
         /// @param directoryPath [in] The path of the directory to delete.
         ///
         /// @remarks
-        ///     This will recursively delete the contents of the directory.
+        ///     This is not recursive.
         ///     @par
         ///     If 'directoryPath' is relative, it will be assumed that it is relative to the current directory.
         void DeleteDirectory(const char* directoryPath);
