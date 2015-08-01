@@ -1,6 +1,8 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/Config.hpp>
+#include "../external/easy_path/easy_path.h"
+#include <GTLib/Strings/Equal.hpp>
 
 #if defined(GT_BUILD_DEFAULT_ASSETS)
 #include "DefaultAssetAllocator.hpp"
@@ -20,6 +22,88 @@
 
 namespace GT
 {
+    AssetType DefaultAssetAllocator::GetAssetTypeByPath(const char* filePath) const
+    {
+        // We determine the type by the extension, except for Wavefront MTL files which need to the in the format of <file>.mtl/<material>
+        const char* ext = easypath_extension(filePath);
+        if (ext != NULL)
+        {
+            if (ext[0] != '\0')
+            {
+                if (GTLib::Strings::Equal<false>(ext, "png"))
+                {
+                    return AssetType_Image_PNG;
+                }
+                if (GTLib::Strings::Equal<false>(ext, "tga"))
+                {
+                    return AssetType_Image_TGA;
+                }
+                if (GTLib::Strings::Equal<false>(ext, "jpg") || GTLib::Strings::Equal<false>(ext, "jpeg"))
+                {
+                    return AssetType_Image_JPG;
+                }
+                if (GTLib::Strings::Equal<false>(ext, "psd"))
+                {
+                    return AssetType_Image_PSD;
+                }
+
+                if (GTLib::Strings::Equal<false>(ext, "obj"))
+                {
+                    return AssetType_Model_OBJ;
+                }
+                if (GTLib::Strings::Equal<false>(ext, "md2"))
+                {
+                    return AssetType_Model_MD2;
+                }
+                if (GTLib::Strings::Equal<false>(ext, "ogex"))
+                {
+                    return AssetType_Model_OGEX;
+                }
+
+                if (GTLib::Strings::Equal<false>(ext, "wav"))
+                {
+                    return AssetType_Sound_WAV;
+                }
+                if (GTLib::Strings::Equal<false>(ext, "ogg"))
+                {
+                    return AssetType_Sound_OGG;
+                }
+            }
+            else
+            {
+                // There's no extension, so it could be a material in a Wavefront MTL file. To do this we look for the last dot.
+                const char* filename = easypath_filename(filePath);
+                if (filename != NULL && filename[0] != '\0')
+                {
+                    const char* extension = filename;
+                    while (extension >= filePath && extension[0] != '.')
+                    {
+                        extension -= 1;
+                    }
+
+                    if (extension[0] == '.')
+                    {
+                        extension += 1;
+
+                        if ((filename - extension) > 3)
+                        {
+                            if ((extension[0] == 'm' || extension[0] == 'M') && (extension[1] == 't' || extension[1] == 'T') && (extension[2] == 'l' || extension[2] == 'L'))
+                            {
+                                if (extension[3] == '/')
+                                {
+                                    // It's a Wavefront material.
+                                    return AssetType_Material_MTL;
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        return AssetType_Unknown;
+    }
+
     bool DefaultAssetAllocator::IsAssetTypeSupported(AssetType type) const
     {
         switch (type)

@@ -75,7 +75,7 @@ namespace GT
             AssetType assetType = explicitAssetType;
             if (assetType == AssetType_Unknown)
             {
-                pAllocator = this->FindAllocatorAndTypeByPath(filePathOrIdentifier, assetType);
+                pAllocator = this->FindAllocatorAndTypeByPath(absolutePathOrIdentifier.c_str(), assetType);
             }
             else
             {

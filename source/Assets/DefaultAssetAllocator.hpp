@@ -14,6 +14,9 @@ namespace GT
     class DefaultAssetAllocator : public AssetAllocator
     {
     public:
+
+        /// @copydoc AssetAllocator::GetAssetTypeByPath()
+        AssetType GetAssetTypeByPath(const char* filePath) const;
         
         /// @copydoc AssetAllocator::IsAssetTypeSupported()
         bool IsAssetTypeSupported(AssetType assetType) const;
