@@ -238,9 +238,11 @@ namespace GT
             {
                 bool result = true;
 
-                char* fileData = reinterpret_cast<char*>(malloc(fileSize));
+                char* fileData = reinterpret_cast<char*>(malloc(fileSize + 1));
                 fileSystem.ReadFile(hFile, fileSize, fileData);
                 fileSystem.CloseFile(hFile);
+
+                fileData[fileSize] = '\0';
 
 
                 GTLib::Vector<vec4>    positions;
