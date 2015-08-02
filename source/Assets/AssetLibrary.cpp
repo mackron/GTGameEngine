@@ -82,7 +82,6 @@ namespace GT
             }
 
 
-            //auto pAllocator = this->FindAllocatorByType(assetType);
             if (pAllocator != nullptr)
             {
                 auto pAsset = pAllocator->CreateAsset(assetType);
