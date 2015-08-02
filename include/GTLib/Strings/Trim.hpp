@@ -37,7 +37,7 @@ namespace GTLib
             return str;
         }
 
-        /// Retrieves a point to 1 character past the last non-whitespace character in a string.
+        /// Retrieves a pointer to 1 character past the last non-whitespace character in a string.
         ///
         /// \param  str         [in] The string to search.
         /// \param  strSizeInTs [in] The size in Ts of the input string. Can be -1 if the string is null-terminated.
