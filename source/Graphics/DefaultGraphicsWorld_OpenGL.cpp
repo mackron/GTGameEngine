@@ -663,6 +663,9 @@ namespace GT
             }
         }
 
+        m_gl.TexParameteri(targetGL, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        m_gl.TexParameteri(targetGL, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
 
         return reinterpret_cast<HGraphicsResource>(pTexture);
     }
@@ -752,6 +755,7 @@ namespace GT
                         case GT::SpirVCommonTypeID::Texture3D:
                         case GT::SpirVCommonTypeID::TextureCube:
                             {
+                                inputVariablesValuesBuffer.PushBack(0);
                                 name = reinterpret_cast<const char*>(pInputVariableData32 + 2);
 
                                 break;
@@ -796,7 +800,8 @@ namespace GT
 
         char shaderString_Diffuse[256];
         //sprintf(shaderString_Diffuse, "vec4 Material_Diffuse() { return vec4(%f, %f, %f, %f); }", diffuseColor.x, diffuseColor.y, diffuseColor.z, diffuseColor.w);
-        sprintf(shaderString_Diffuse, "%s", "vec4 Material_Diffuse() { return testing; }");
+        sprintf(shaderString_Diffuse, "%s", "vec4 Material_Diffuse() { return testing * texture2D(map, FS_TexCoord); }");
+        //sprintf(shaderString_Diffuse, "%s", "vec4 Material_Diffuse() { return texture2D(map, FS_TexCoord); }");
 
 
         // Uniforms.
@@ -822,8 +827,8 @@ namespace GT
             case GraphicsMaterialVariableType::Integer4:    uniformString.Append("ivec4 "); break;
 
             case GraphicsMaterialVariableType::Texture1D:   uniformString.Append("sampler1D "); break;
-            case GraphicsMaterialVariableType::Texture2D:   uniformString.Append("sampler1D "); break;
-            case GraphicsMaterialVariableType::Texture3D:   uniformString.Append("sampler1D "); break;
+            case GraphicsMaterialVariableType::Texture2D:   uniformString.Append("sampler2D "); break;
+            case GraphicsMaterialVariableType::Texture3D:   uniformString.Append("sampler3D "); break;
             case GraphicsMaterialVariableType::TextureCube: uniformString.Append("samplerCube "); break;
 
             default:

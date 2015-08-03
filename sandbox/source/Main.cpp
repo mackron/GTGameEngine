@@ -4,6 +4,7 @@
 #include <GTGameEngine/GameState.hpp>
 #include <GTGameEngine/Graphics/DefaultGraphicsWorld.hpp>
 #include <GTGameEngine/Assets/ModelAsset.hpp>
+#include <GTGameEngine/Assets/ImageAsset.hpp>
 #include <GTGameEngine/Assets/MaterialAsset.hpp>
 #include <GTGameEngine/ConfigFile.hpp>
 #include <GTGameEngine/external/spirv.h>
@@ -106,6 +107,12 @@ public:
             return false;
         }
 
+        m_pTestImageAsset = reinterpret_cast<GT::ImageAsset*>(gameContext.GetEngineContext().LoadAsset("data/default.png"));
+        if (m_pTestImageAsset == nullptr)
+        {
+            return false;
+        }
+
         m_pTestMaterialAsset = reinterpret_cast<GT::MaterialAsset*>(gameContext.GetEngineContext().LoadAsset("data/default.mtl/default"));
         if (m_pTestMaterialAsset == nullptr)
         {
@@ -121,6 +128,12 @@ public:
             {
                 m_hWindowRT = m_pGraphicsWorld->CreateRenderTargetFromWindow(reinterpret_cast<HWND>(m_hMainWindow), 0);
                 m_pGraphicsWorld->SetRenderTargetProjectionAndView(m_hWindowRT, GT::mat4::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.0f), GT::mat4::translate(GT::mat4::identity, GT::vec4(0, 0, -5, 0.0f)));
+
+
+
+                // Textures.
+                m_hTestTexture0 = m_pGraphicsWorld->CreateTextureResource(m_pTestImageAsset->GetImageWidth(), m_pTestImageAsset->GetImageHeight(), 1, m_pTestImageAsset->GetImageFormat(), m_pTestImageAsset->GetImageData());
+
 
 
                 // Materials.
@@ -156,6 +169,11 @@ public:
                 inputVariableData.PushBack(reinterpret_cast<uint32_t*>(&materialGData[0])[2]);
                 inputVariableData.PushBack(reinterpret_cast<uint32_t*>(&materialGData[0])[3]);
                 inputVariableData.PushBack(static_cast<uint32_t>('tset')); inputVariableData.PushBack(static_cast<uint32_t>('\0gni'));
+
+                inputVariableData.PushBack(static_cast<uint32_t>((3 << spv::WordCountShift) | static_cast<uint32_t>(GT::SpirVOp::DeclareMaterialVariable)));
+                inputVariableData.PushBack(static_cast<uint32_t>(GT::SpirVCommonTypeID::Texture2D));
+                inputVariableData.PushBack(static_cast<uint32_t>('\0pam'));
+
                 material0.pInputVariableData           = inputVariableData.buffer;
                 material0.inputVariableDataSizeInBytes = inputVariableData.count * sizeof(uint32_t);
 
@@ -181,7 +199,8 @@ public:
 
                 m_hTestMeshObject0 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
                 m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject0, 0, m_hTestMaterial0);
-                m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "testing", 0.0f, 1.0f, 1.0f, 1.0f);
+                m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "testing", 1.0f, 1.0f, 1.0f, 1.0f);
+                m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "map", m_hTestTexture0);
                 m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject0, GT::vec4(0, 0, 0, 0));
 
                 //m_hTestMeshObject1 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
@@ -263,11 +282,13 @@ private:
 
     GT::ModelAsset* m_pTestMeshAsset;
     GT::MaterialAsset* m_pTestMaterialAsset;
+    GT::ImageAsset* m_pTestImageAsset;
 
     GT::HGraphicsResource m_hTestMaterialR;
     GT::HGraphicsResource m_hTestMaterialG;
     GT::HGraphicsResource m_hTestMaterialB;
 
+    GT::HGraphicsResource m_hTestTexture0;
     GT::HGraphicsResource m_hTestMaterial0;
 
     GT::HGraphicsResource m_hTestMeshResource;

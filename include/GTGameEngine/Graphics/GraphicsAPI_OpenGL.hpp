@@ -320,6 +320,7 @@ namespace GT
         PFNGLTEXIMAGE1DPROC                  TexImage1D;
         PFNGLTEXIMAGE2DPROC                  TexImage2D;
         PFNGLTEXIMAGE3DPROC                  TexImage3D;
+        PFNGLTEXPARAMETERIPROC               TexParameteri;
 
 
         // Framebuffers.
