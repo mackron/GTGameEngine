@@ -91,6 +91,11 @@
     <ClCompile Include="..\..\..\source\Editor\EditorGUIRenderer_GDI.cpp" />
     <ClCompile Include="..\..\..\source\EngineContext.cpp" />
     <ClCompile Include="..\..\..\source\external\easy_fsw\easy_fsw.c" />
+    <ClCompile Include="..\..\..\source\external\easy_mtl\easy_mtl.c" />
+    <ClCompile Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_glsl.c" />
+    <ClCompile Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_hlsl.c" />
+    <ClCompile Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_spirv.c" />
+    <ClCompile Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_loader_mtl.c" />
     <ClCompile Include="..\..\..\source\external\easy_path\easy_path.c" />
     <ClCompile Include="..\..\..\source\external\easy_vfs\easy_vfs.c" />
     <ClCompile Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_mtl.c" />
@@ -330,6 +335,11 @@
     <ClInclude Include="..\..\..\source\Core\FontEngine_FCFT.hpp" />
     <ClInclude Include="..\..\..\source\Core\FontEngine_Win32.hpp" />
     <ClInclude Include="..\..\..\source\external\easy_fsw\easy_fsw.h" />
+    <ClInclude Include="..\..\..\source\external\easy_mtl\easy_mtl.h" />
+    <ClInclude Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_glsl.h" />
+    <ClInclude Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_hlsl.h" />
+    <ClInclude Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_spirv.h" />
+    <ClInclude Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_loader_mtl.h" />
     <ClInclude Include="..\..\..\source\external\easy_path\easy_path.h" />
     <ClInclude Include="..\..\..\source\external\easy_vfs\easy_vfs.h" />
     <ClInclude Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_mtl.h" />
