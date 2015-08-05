@@ -10,6 +10,8 @@
 #include <GTGameEngine/external/spirv.h>
 #include <GTLib/IO.hpp>
 
+#include <GTGameEngine/../../source/external/easy_mtl/easy_mtl.h>
+
 class SandboxGameState : public GT::GameState
 {
 public:
@@ -113,7 +115,7 @@ public:
             return false;
         }
 
-        m_pTestMaterialAsset = reinterpret_cast<GT::MaterialAsset*>(gameContext.GetEngineContext().LoadAsset("data/default.mtl/default"));
+        m_pTestMaterialAsset = reinterpret_cast<GT::MaterialAsset*>(gameContext.GetEngineContext().LoadAsset("data/defaults.mtl/default"));
         if (m_pTestMaterialAsset == nullptr)
         {
             return false;
@@ -157,7 +159,65 @@ public:
                 m_hTestMaterialB = m_pGraphicsWorld->CreateMaterialResource(materialB);*/
 
 
+#if 0
+                // Build a test material.
+                easymtl_material materialDesc;
+                easymtl_init(&materialDesc);
+
+                easymtl_identifier identifier;
+                strcpy(identifier.name, "FS_TexCoord");
+                identifier.type = easymtl_type_float2;
+                easymtl_appendidentifier(&materialDesc, &identifier);
+
+                strcpy(identifier.name, "DiffuseTexture");
+                identifier.type = easymtl_type_tex2d;
+                easymtl_appendidentifier(&materialDesc, &identifier);
+
+                strcpy(identifier.name, "DiffuseResult");
+                identifier.type = easymtl_type_float4;
+                easymtl_appendidentifier(&materialDesc, &identifier);
+
+
+                easymtl_input_var input;
+                input.identifierIndex = 0;
+                easymtl_appendprivateinput(&materialDesc, &input);
+                
+                input.identifierIndex = 1;      // DiffuseTexture
+                strcpy(input.path.value, "default.png");
+                easymtl_appendpublicinput(&materialDesc, &input);
+
+
+                easymtl_channel_header diffuseHeader;
+                diffuseHeader.type = easymtl_type_float4;
+                strcpy(diffuseHeader.name, "Diffuse");
+                easymtl_appendchannel(&materialDesc, &diffuseHeader);
+
+                easymtl_instruction var;
+                var.opcode = easymtl_opcode_var;
+                var.var.identifierIndex = 2;    // DiffuseResult
+                easymtl_appendinstruction(&materialDesc, &var);
+
+                easymtl_instruction tex;
+                tex.opcode = easymtl_opcode_tex2;
+                tex.tex.texture = 1;            // DiffuseTexture
+                tex.tex.output = 2;             // DiffuseResult
+                tex.tex.inputDesc.x = EASYMTL_INPUT_DESC_VARX; tex.tex.inputDesc.y = EASYMTL_INPUT_DESC_VARY;
+                tex.tex.inputX.id = 0; tex.tex.inputY.id = 0;
+                easymtl_appendinstruction(&materialDesc, &tex);
+
+                easymtl_instruction ret;
+                ret.opcode = easymtl_opcode_retf4;
+                ret.ret.inputDesc.x = EASYMTL_INPUT_DESC_VARX; ret.ret.inputDesc.y = EASYMTL_INPUT_DESC_VARY; ret.ret.inputDesc.z = EASYMTL_INPUT_DESC_VARZ; ret.ret.inputDesc.w = EASYMTL_INPUT_DESC_VARW;
+                ret.ret.inputX.id = 2; ret.ret.inputY.id = 2; ret.ret.inputZ.id = 2; ret.ret.inputW.id = 2;
+                easymtl_appendinstruction(&materialDesc, &ret);
+#endif
+
                 GT::GraphicsMaterialResourceDesc material0;
+                material0.pData           = m_pTestMaterialAsset->GetData();
+                material0.dataSizeInBytes = m_pTestMaterialAsset->GetDataSizeInBytes();
+
+
+#if 0
                 material0.channelDataSizeInBytes = sizeof(materialRData);
                 material0.pChannelData = &materialRData[0];
 
@@ -176,6 +236,7 @@ public:
 
                 material0.pInputVariableData           = inputVariableData.buffer;
                 material0.inputVariableDataSizeInBytes = inputVariableData.count * sizeof(uint32_t);
+#endif
 
                 m_hTestMaterial0 = m_pGraphicsWorld->CreateMaterialResource(material0);
 
@@ -199,8 +260,8 @@ public:
 
                 m_hTestMeshObject0 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
                 m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject0, 0, m_hTestMaterial0);
-                m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "testing", 1.0f, 1.0f, 1.0f, 1.0f);
-                m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "map", m_hTestTexture0);
+                //m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "testing", 1.0f, 1.0f, 1.0f, 1.0f);
+                m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "DiffuseMap", m_hTestTexture0);
                 m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject0, GT::vec4(0, 0, 0, 0));
 
                 //m_hTestMeshObject1 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
@@ -284,9 +345,9 @@ private:
     GT::MaterialAsset* m_pTestMaterialAsset;
     GT::ImageAsset* m_pTestImageAsset;
 
-    GT::HGraphicsResource m_hTestMaterialR;
-    GT::HGraphicsResource m_hTestMaterialG;
-    GT::HGraphicsResource m_hTestMaterialB;
+    //GT::HGraphicsResource m_hTestMaterialR;
+    //GT::HGraphicsResource m_hTestMaterialG;
+    //GT::HGraphicsResource m_hTestMaterialB;
 
     GT::HGraphicsResource m_hTestTexture0;
     GT::HGraphicsResource m_hTestMaterial0;
