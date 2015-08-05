@@ -28,13 +28,9 @@ namespace GT
     ////////////////////
     // Resources
 
-    HGraphicsResource DefaultGraphicsWorld_Null::CreateTextureResource(unsigned int width, unsigned int height, unsigned int depth, TextureFormat format, const void* pData)
+    HGraphicsResource DefaultGraphicsWorld_Null::CreateTextureResource(const GraphicsTextureResourceDesc &textureDesc)
     {
-        (void)width;
-        (void)height;
-        (void)depth;
-        (void)format;
-        (void)pData;
+        (void)textureDesc;
 
         return 0;
     }

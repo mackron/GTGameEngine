@@ -34,7 +34,7 @@ namespace GT
         // Resources
 
         /// @copydoc GraphicsWorld::CreateTextureResource()
-        virtual HGraphicsResource CreateTextureResource(unsigned int width, unsigned int height, unsigned int depth, TextureFormat format, const void* pData);
+        virtual HGraphicsResource CreateTextureResource(const GraphicsTextureResourceDesc &textureDesc);
 
         /// @copydoc GraphicsWorld::CreateMaterialResource()
         virtual HGraphicsResource CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc);

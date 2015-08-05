@@ -92,6 +92,30 @@ namespace GT
         }
     }
 
+    /// Structure describing a texture resource.
+    struct GraphicsTextureResourceDesc
+    {
+        GraphicsTextureResourceDesc()
+            : width(1), height(1), depth(1), format(TextureFormat_RGBA8), pData(nullptr)
+        {
+        }
+
+
+        /// The width of the texture.
+        unsigned int width;
+
+        /// The height of the texture.
+        unsigned int height;
+
+        /// The depth of the texture.
+        unsigned int depth;
+
+        /// The format of the texture data.
+        TextureFormat format;
+
+        /// A pointer to the raw texture data.
+        const void* pData;
+    };
 
     /// Structure describing a material resource.
     struct GraphicsMaterialResourceDesc
@@ -213,7 +237,7 @@ namespace GT
         /// @remarks
         ///     If the texture is going to be used as a render target, set \c pData to null which will cause the texture data to be
         ///     allocated internally, but it's specific contents will be left undefined (until it has been rendered).
-        virtual HGraphicsResource CreateTextureResource(unsigned int width, unsigned int height, unsigned int depth, TextureFormat format, const void* pData) = 0;
+        virtual HGraphicsResource CreateTextureResource(const GraphicsTextureResourceDesc &textureDesc) = 0;
 
         /// Creates a material resource.
         ///

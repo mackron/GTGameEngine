@@ -603,11 +603,11 @@ namespace GT
     ////////////////////
     // Resources
 
-    HGraphicsResource DefaultGraphicsWorld_OpenGL::CreateTextureResource(unsigned int width, unsigned int height, unsigned int depth, TextureFormat format, const void* pData)
+    HGraphicsResource DefaultGraphicsWorld_OpenGL::CreateTextureResource(const GraphicsTextureResourceDesc &textureDesc)
     {
-        assert(width  > 0);
-        assert(height > 0);
-        assert(depth  > 0);
+        assert(textureDesc.width  > 0);
+        assert(textureDesc.height > 0);
+        assert(textureDesc.depth  > 0);
 
 
         this->MakeOpenGLContextCurrent();
@@ -616,12 +616,12 @@ namespace GT
         m_gl.GenTextures(1, &objectGL);
         
         GLenum targetGL         = 0;
-        GLenum internalFormatGL = g_GLTextureFormatsTable[format];
-        GLenum formatGL         = g_GLTextureSubImageFormatsTable[format];
-        GLenum typeGL           = g_GLTextureSubImageTypesTable[format];
-        if (depth == 1)
+        GLenum internalFormatGL = g_GLTextureFormatsTable[textureDesc.format];
+        GLenum formatGL         = g_GLTextureSubImageFormatsTable[textureDesc.format];
+        GLenum typeGL           = g_GLTextureSubImageTypesTable[textureDesc.format];
+        if (textureDesc.depth == 1)
         {
-            if (height == 1)
+            if (textureDesc.height == 1)
             {
                 targetGL = GL_TEXTURE_1D;
             }
@@ -638,24 +638,24 @@ namespace GT
 
         m_gl.BindTexture(targetGL, objectGL);
 
-        auto pTexture = new TextureResource_OpenGL(objectGL, targetGL, width, height, depth, format);
+        auto pTexture = new TextureResource_OpenGL(objectGL, targetGL, textureDesc.width, textureDesc.height, textureDesc.depth, textureDesc.format);
         switch (targetGL)
         {
         case GL_TEXTURE_1D:
             {
-                m_gl.TexImage1D(targetGL, 0, internalFormatGL, width, 0, formatGL, typeGL, pData);
+                m_gl.TexImage1D(targetGL, 0, internalFormatGL, textureDesc.width, 0, formatGL, typeGL, textureDesc.pData);
                 break;
             }
 
         case GL_TEXTURE_2D:
             {
-                m_gl.TexImage2D(targetGL, 0, internalFormatGL, width, height, 0, formatGL, typeGL, pData);
+                m_gl.TexImage2D(targetGL, 0, internalFormatGL, textureDesc.width, textureDesc.height, 0, formatGL, typeGL, textureDesc.pData);
                 break;
             }
 
         case GL_TEXTURE_3D:
             {
-                m_gl.TexImage3D(targetGL, 0, internalFormatGL, width, height, depth, 0, formatGL, typeGL, pData);
+                m_gl.TexImage3D(targetGL, 0, internalFormatGL, textureDesc.width, textureDesc.height, textureDesc.depth, 0, formatGL, typeGL, textureDesc.pData);
                 break;
             }
 
@@ -674,6 +674,8 @@ namespace GT
 
     HGraphicsResource DefaultGraphicsWorld_OpenGL::CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc)
     {
+        this->MakeOpenGLContextCurrent();
+
         GTLib::Vector<MaterialResource_OpenGL::InputVariables::VariableDesc> inputVariableDescriptors;
         GTLib::Vector<uint32_t> inputVariablesValuesBuffer;
 
@@ -683,7 +685,7 @@ namespace GT
             unsigned int inputVariableCount = easymtl_getpublicinputvariablecount(&materialSource);
             for (unsigned int iInputVariable = 0; iInputVariable < inputVariableCount; ++iInputVariable)
             {
-                easymtl_input_var* pInputVariableSrc = easymtl_getpublicinputvariable(&materialSource, iInputVariable);
+                easymtl_input* pInputVariableSrc = easymtl_getpublicinputvariable(&materialSource, iInputVariable);
                 if (pInputVariableSrc != nullptr)
                 {
                     easymtl_identifier* pIdentifier = easymtl_getidentifier(&materialSource, pInputVariableSrc->identifierIndex);
@@ -765,152 +767,26 @@ namespace GT
             }
         }
 
-        MaterialResource_OpenGL* pMaterialResource = nullptr;
-
-        this->MakeOpenGLContextCurrent();
-
-
-#if 0
-        // Input variables are implemented as SPIR-V using our custom DeclareMaterialVariable variable.
-        GTLib::Vector<MaterialResource_OpenGL::InputVariables::VariableDesc> inputVariableDescriptors;
-        GTLib::Vector<uint32_t> inputVariablesValuesBuffer;
-
-        const uint32_t* pInputVariableData32    = reinterpret_cast<const uint32_t*>(materialDesc.pInputVariableData);
-        const uint32_t* pInputVariableData32End = reinterpret_cast<const uint32_t*>(reinterpret_cast<const char*>(materialDesc.pInputVariableData) + materialDesc.inputVariableDataSizeInBytes);
-        if (pInputVariableData32 != nullptr)
-        {
-            while (pInputVariableData32 + 1 < pInputVariableData32End)
-            {
-                // The first 4 bytes is the word count / opcode pair.
-                uint32_t    word0 = pInputVariableData32[0];
-                uint16_t    wordCount = static_cast<uint16_t   >(word0 >> spv::WordCountShift);
-                GT::SpirVOp opcode    = static_cast<GT::SpirVOp>(word0 &  spv::OpCodeMask);
-
-                // Check for overflow...
-                if (pInputVariableData32 + wordCount <= pInputVariableData32End)
-                {
-                    // We only care a OpDeclareMaterialVariable which is our own operator to simplify input variables.
-                    if (opcode == GT::SpirVOp::DeclareMaterialVariable)
-                    {
-                        GraphicsMaterialVariableType type = GraphicsMaterialVariableType::Unknown;
-                        GLuint bufferOffset = inputVariablesValuesBuffer.GetCount() * sizeof(uint32_t);
-                        const char* name = nullptr;
-
-                        GT::SpirVCommonTypeID typeSpirV = static_cast<GT::SpirVCommonTypeID>(pInputVariableData32[1]);
-                        switch (typeSpirV)
-                        {
-                        case GT::SpirVCommonTypeID::Float:
-                        case GT::SpirVCommonTypeID::Integer:
-                        case GT::SpirVCommonTypeID::Boolean:
-                            {
-                                inputVariablesValuesBuffer.PushBack(pInputVariableData32[2]);
-                                name = reinterpret_cast<const char*>(pInputVariableData32 + 3);
-
-                                break;
-                            }
-
-                        case GT::SpirVCommonTypeID::Float2:
-                        case GT::SpirVCommonTypeID::Integer2:
-                            {
-                                inputVariablesValuesBuffer.PushBack(pInputVariableData32[2]);
-                                inputVariablesValuesBuffer.PushBack(pInputVariableData32[3]);
-                                name = reinterpret_cast<const char*>(pInputVariableData32 + 4);
-
-                                break;
-                            }
-
-                        case GT::SpirVCommonTypeID::Float3:
-                        case GT::SpirVCommonTypeID::Integer3:
-                            {
-                                inputVariablesValuesBuffer.PushBack(pInputVariableData32[2]);
-                                inputVariablesValuesBuffer.PushBack(pInputVariableData32[3]);
-                                inputVariablesValuesBuffer.PushBack(pInputVariableData32[4]);
-                                inputVariablesValuesBuffer.PushBack(0);   //< Padding for keeping in line with OpenGL's std140 packing rules.
-                                name = reinterpret_cast<const char*>(pInputVariableData32 + 5);
-
-                                break;
-                            }
-
-                        case GT::SpirVCommonTypeID::Float4:
-                        case GT::SpirVCommonTypeID::Integer4:
-                            {
-                                inputVariablesValuesBuffer.PushBack(pInputVariableData32[2]);
-                                inputVariablesValuesBuffer.PushBack(pInputVariableData32[3]);
-                                inputVariablesValuesBuffer.PushBack(pInputVariableData32[4]);
-                                inputVariablesValuesBuffer.PushBack(pInputVariableData32[5]);
-                                name = reinterpret_cast<const char*>(pInputVariableData32 + 6);
-
-                                break;
-                            }
-
-                        case GT::SpirVCommonTypeID::Texture1D:
-                        case GT::SpirVCommonTypeID::Texture2D:
-                        case GT::SpirVCommonTypeID::Texture3D:
-                        case GT::SpirVCommonTypeID::TextureCube:
-                            {
-                                inputVariablesValuesBuffer.PushBack(0);
-                                name = reinterpret_cast<const char*>(pInputVariableData32 + 2);
-
-                                break;
-                            }
-
-                        default:
-                            {
-                                // Unknown or unsupported type. We will ignore this variable.
-                                type = GraphicsMaterialVariableType::Unknown;
-                                break;
-                            }
-                        }
-
-
-                        // Only continue if it was a valid type.
-                        if (name != nullptr)
-                        {
-                            // We now have everything we need to add the variable descriptor to the material.
-                            MaterialResource_OpenGL::InputVariables::VariableDesc desc;
-                            desc.name            = name;
-                            desc.type            = ToMaterialVariableType(typeSpirV);
-                            desc.bufferOffset    = bufferOffset;
-                            desc.uniformLocation = -1;  // <-- This will be set later on after compiling the shader.
-                            inputVariableDescriptors.PushBack(desc);
-                        }
-                    }
-                }
-
-                pInputVariableData32 += wordCount;
-            }
-        }
-#endif
-
-        // The channel data from the material descriptor needs to be converted from Spir-V to GLSL.
         
-        // For the moment, the input data is just a float4 describing the diffuse colour. This is not real Spir-V at the moment.
-        //vec4 diffuseColor;
-        //if (materialDesc.channelDataSizeInBytes >= sizeof(float)*4)
-        //{
-        //    memcpy(&diffuseColor[0], materialDesc.pChannelData, sizeof(float)*4);
-        //}
 
         char shaderString_Diffuse[4096];
-        easymtl_codegen_glsl_channel(&materialSource, "DiffuseChannel", shaderString_Diffuse, 4096);
-
-        //sprintf(shaderString_Diffuse, "vec4 Material_Diffuse() { return vec4(%f, %f, %f, %f); }", diffuseColor.x, diffuseColor.y, diffuseColor.z, diffuseColor.w);
-        //sprintf(shaderString_Diffuse, "%s", "vec4 Material_Diffuse() { return testing * texture2D(map, FS_TexCoord); }");
-        //sprintf(shaderString_Diffuse, "%s", "vec4 Material_Diffuse() { return texture2D(map, FS_TexCoord); }");
-
-        //char uniformsString[4096];
-        //easymtl_codegen_glsl_uniforms(&materialSource, uniformsString, 4096);
+        easymtl_codegen_glsl_channel(&materialSource, "DiffuseChannel", shaderString_Diffuse, 4096, NULL);
 
         char shaderString_Specular[4096];
-        easymtl_codegen_glsl_channel(&materialSource, "SpecularChannel", shaderString_Specular, 4096);
+        easymtl_codegen_glsl_channel(&materialSource, "SpecularChannel", shaderString_Specular, 4096, NULL);
 
         char shaderString_SpecularExponent[4096];
-        easymtl_codegen_glsl_channel(&materialSource, "SpecularExponentChannel", shaderString_SpecularExponent, 4096);
+        easymtl_codegen_glsl_channel(&materialSource, "SpecularExponentChannel", shaderString_SpecularExponent, 4096, NULL);
 
         char shaderString_Alpha[4096];
-        easymtl_codegen_glsl_channel(&materialSource, "AlphaChannel", shaderString_Alpha, 4096);
+        easymtl_codegen_glsl_channel(&materialSource, "AlphaChannel", shaderString_Alpha, 4096, NULL);
+
 
         // Uniforms.
+        char uniformsString[4096];
+        easymtl_codegen_glsl_uniforms(&materialSource, uniformsString, 4096, NULL);
+
+#if 0
         GTLib::String uniformsString;
         for (size_t iUniform = 0; iUniform < inputVariableDescriptors.GetCount(); ++iUniform)
         {
@@ -954,6 +830,9 @@ namespace GT
                 uniformsString.Append(uniformString);
             }
         }
+#endif
+
+
 
 
         // Vertex shader.
@@ -992,7 +871,7 @@ namespace GT
             "}";
 
         const char* fragmentShaderStrings[3];
-        fragmentShaderStrings[0] = uniformsString.c_str();
+        fragmentShaderStrings[0] = uniformsString;
         fragmentShaderStrings[1] = fragmentShaderSource;
         fragmentShaderStrings[2] = shaderString_Diffuse;
         GLuint fragmentShader = this->CreateShader_GLSL(GL_FRAGMENT_SHADER, sizeof(fragmentShaderStrings) / sizeof(fragmentShaderStrings[0]), fragmentShaderStrings, nullptr);
@@ -1003,6 +882,8 @@ namespace GT
         }
 
 
+
+        MaterialResource_OpenGL* pMaterialResource = nullptr;
 
         // Program object.
         GLuint shaderProgram = this->CreateProgram_GLSL(vertexShader, fragmentShader);
