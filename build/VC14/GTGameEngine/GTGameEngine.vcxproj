@@ -95,7 +95,7 @@
     <ClCompile Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_glsl.c" />
     <ClCompile Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_hlsl.c" />
     <ClCompile Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_spirv.c" />
-    <ClCompile Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_loader_mtl.c" />
+    <ClCompile Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_compiler_mtl.c" />
     <ClCompile Include="..\..\..\source\external\easy_path\easy_path.c" />
     <ClCompile Include="..\..\..\source\external\easy_vfs\easy_vfs.c" />
     <ClCompile Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_mtl.c" />
@@ -339,7 +339,7 @@
     <ClInclude Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_glsl.h" />
     <ClInclude Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_hlsl.h" />
     <ClInclude Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_spirv.h" />
-    <ClInclude Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_loader_mtl.h" />
+    <ClInclude Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_compiler_mtl.h" />
     <ClInclude Include="..\..\..\source\external\easy_path\easy_path.h" />
     <ClInclude Include="..\..\..\source\external\easy_vfs\easy_vfs.h" />
     <ClInclude Include="..\..\..\source\external\easy_vfs\extras\easy_vfs_mtl.h" />

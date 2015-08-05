@@ -566,7 +566,7 @@
     <ClCompile Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_spirv.c">
       <Filter>Source Files\external\easy_mtl\extras</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_loader_mtl.c">
+    <ClCompile Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_compiler_mtl.c">
       <Filter>Source Files\external\easy_mtl\extras</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1084,7 +1084,7 @@
     <ClInclude Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_codegen_spirv.h">
       <Filter>Source Files\external\easy_mtl\extras</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_loader_mtl.h">
+    <ClInclude Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_compiler_mtl.h">
       <Filter>Source Files\external\easy_mtl\extras</Filter>
     </ClInclude>
   </ItemGroup>
