@@ -323,6 +323,16 @@ namespace GT
         AssetClass GetClass() const;
 
 
+        /// Retrieves a pointer to the raw material data.
+        ///
+        /// @remarks
+        ///     This data must be in the format defined by easy_mtl.
+        virtual const void* GetData() const = 0;
+
+        /// Retrieves the size of the raw material data, in bytes.
+        virtual unsigned int GetDataSizeInBytes() const = 0;
+
+
 
         /// Adds a channel to the material.
         ///

@@ -22,12 +22,26 @@ namespace GT
         ~MaterialAsset_MTL();
 
 
-        /// @copydoc ModelAsset::Load()
+        /// @copydoc Asset::Load()
         bool Load(const char* absolutePath, FileSystem &fileSystem);
 
 
+        /// @copydoc MaterialAsset::GetData()
+        const void* GetData() const;
+
+        /// @copydoc MaterialAsset::GetDataSizeInBytes()
+        unsigned int GetDataSizeInBytes() const;
+
 
     private:
+
+        /// A pointer to the raw material data. This will be allocated in Load()
+        void* m_pData;
+
+        /// The size of the raw material data, in bytes.
+        unsigned int m_dataSizeInBytes;
+
+
 
         /// The ambient colour.
         float m_ambientColor[3];

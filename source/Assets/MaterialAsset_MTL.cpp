@@ -4,6 +4,8 @@
 
 #if defined(GT_BUILD_MTL)
 #include <GTGameEngine/FileSystem.hpp>
+#include "../external/easy_mtl/easy_mtl.h"
+#include "../external/easy_mtl/extras/easy_mtl_compiler_mtl.h"
 
 namespace GT
 {
@@ -139,6 +141,8 @@ namespace GT
 
     MaterialAsset_MTL::MaterialAsset_MTL(AssetType assetType)
         : MaterialAsset(assetType),
+          m_pData(nullptr), m_dataSizeInBytes(0)
+#if 0
           m_ambientColor(), m_diffuseColor(),  m_specularColor(),
           m_specularExponent(10),
           m_opacity(1),
@@ -146,10 +150,11 @@ namespace GT
           m_diffuseMap(),
           m_specularMap(),
           m_specularExponentMap()
+#endif
     {
-        m_ambientColor[0]  = 1; m_ambientColor[1]  = 1; m_ambientColor[2]  = 1;
-        m_diffuseColor[0]  = 1; m_diffuseColor[1]  = 1; m_diffuseColor[2]  = 1;
-        m_specularColor[0] = 1; m_specularColor[1] = 1; m_specularColor[2] = 1;
+        //m_ambientColor[0]  = 1; m_ambientColor[1]  = 1; m_ambientColor[2]  = 1;
+        //m_diffuseColor[0]  = 1; m_diffuseColor[1]  = 1; m_diffuseColor[2]  = 1;
+        //m_specularColor[0] = 1; m_specularColor[1] = 1; m_specularColor[2] = 1;
     }
 
     MaterialAsset_MTL::~MaterialAsset_MTL()
@@ -173,7 +178,22 @@ namespace GT
 
                 fileData[fileSize] = '\0';
 
+                easymtl_material materialSource;
+                if (easymtl_compile_wavefront_mtl(&materialSource, fileData, fileSize))
+                {
+                    m_dataSizeInBytes = materialSource.sizeInBytes;
+                    m_pData = malloc(materialSource.sizeInBytes);
+                    memcpy(m_pData, materialSource.pRawData, materialSource.sizeInBytes);
 
+                    easymtl_uninit(&materialSource);
+                    result = true;
+                }
+                else
+                {
+                    result = false;
+                }
+
+#if 0
                 const char* fileDataCur = fileData;
                 const char* fileDataEnd = fileData + fileSize;
 
@@ -314,7 +334,7 @@ namespace GT
                         }
                     }
                 }
-
+#endif
                 
 
 
@@ -330,6 +350,17 @@ namespace GT
         }
 
         return false;
+    }
+
+
+    const void* MaterialAsset_MTL::GetData() const
+    {
+        return m_pData;
+    }
+
+    unsigned int MaterialAsset_MTL::GetDataSizeInBytes() const
+    {
+        return m_dataSizeInBytes;
     }
 }
 

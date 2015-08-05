@@ -42,27 +42,28 @@ namespace GT
     };
 
 
-    /// The different types for material variables. Some of these are invalid in certain contexts, which are specific to the underlying rendering API.
+    /// The different types for material variables. Some of these are invalid in certain contexts, which are specific to the underlying rendering API. All
+    /// of these match up with easymtl_type.
     enum class GraphicsMaterialVariableType
     {
-        Unknown,
+        Unknown     = 0,
 
-        Float,
-        Float2,
-        Float3,
-        Float4,
+        Float       = 1,
+        Float2      = 2,
+        Float3      = 3,
+        Float4      = 4,
 
-        Integer,
-        Integer2,
-        Integer3,
-        Integer4,
+        Integer     = 5,
+        Integer2    = 6,
+        Integer3    = 7,
+        Integer4    = 8,
 
-        Boolean,
+        Texture1D   = 9,
+        Texture2D   = 10,
+        Texture3D   = 11,
+        TextureCube = 12,
 
-        Texture1D,
-        Texture2D,
-        Texture3D,
-        TextureCube,
+        Boolean     = 13,
     };
 
 
@@ -96,24 +97,15 @@ namespace GT
     struct GraphicsMaterialResourceDesc
     {
         GraphicsMaterialResourceDesc()
-            : pInputVariableData(nullptr), inputVariableDataSizeInBytes(0),
-              pChannelData(nullptr), channelDataSizeInBytes(0)
+            : pData(nullptr), dataSizeInBytes(0)
         {
         }
 
+        /// A pointer to the raw material data.
+        const void* pData;
 
-        /// A pointer to the input variable declaration data as Spir-V bytecode.
-        const void* pInputVariableData;
-
-        /// The size in bytes of the input variable data.
-        size_t inputVariableDataSizeInBytes;
-
-
-        /// A pointer to the channel data as Spir-V bytecode.
-        const void* pChannelData;
-
-        /// The size in bytes of the channel data.
-        size_t channelDataSizeInBytes;
+        /// The size of the raw material data, in bytes.
+        unsigned int dataSizeInBytes;
     };
 
     /// Structure describing a static mesh resource.
