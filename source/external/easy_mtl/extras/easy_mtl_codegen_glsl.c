@@ -36,11 +36,15 @@ easymtl_bool easymtl_write_string(easymtl_output_string* pOutput, const char* sr
 
     if (dstSizeInBytes > 0)
     {
+        // There's enough room for the null terminator which means there was enough room in the buffer. All good.
         pOutput->text[pOutput->length] = '\0';
+        return 1;
+    }
+    else
+    {
+        // There's not enough room for the null terminator which means there was NOT enough room in the buffer. Error.
         return 0;
     }
-
-    return 1;
 }
 
 easymtl_bool easymtl_write_float(easymtl_output_string* pOutput, float src)
@@ -165,7 +169,7 @@ easymtl_bool easymtl_write_channel_function_begin(easymtl_output_string* pOutput
     assert(pChannelHeader != NULL);
 
     // <type> <name> {\n
-    return easymtl_write_type(pOutput, pChannelHeader->type) && easymtl_write_string(pOutput, " ") && easymtl_write_string(pOutput, pChannelHeader->name) && easymtl_write_string(pOutput, " {\n");
+    return easymtl_write_type(pOutput, pChannelHeader->type) && easymtl_write_string(pOutput, " ") && easymtl_write_string(pOutput, pChannelHeader->name) && easymtl_write_string(pOutput, "() {\n");
 }
 
 easymtl_bool easymtl_write_channel_function_close(easymtl_output_string* pOutput)
@@ -200,7 +204,7 @@ easymtl_bool easymtl_glsl_write_instruction_input_scalar(easymtl_output_string* 
         easymtl_identifier* pIdentifier = pIdentifiers + pInput->id;
         assert(pIdentifier != NULL);
 
-        if (type != easymtl_type_float)
+        if (type == easymtl_type_float)
         {
             // It's a float, so we don't want to use any selectors.
             return easymtl_write_string(pOutput, pIdentifier->name);
@@ -239,7 +243,7 @@ easymtl_bool easymtl_glsl_write_instruction_input_initializer(easymtl_output_str
 
     case easymtl_type_float2:
         {
-            if (!easymtl_write_string(pOutput, "vec2("))
+            if (easymtl_write_string(pOutput, "vec2("))
             {
                 if (easymtl_glsl_write_instruction_input_scalar(pOutput, type, pIdentifiers, inputDesc.x, pInputs + 0) && easymtl_write_string(pOutput, ", ") &&
                     easymtl_glsl_write_instruction_input_scalar(pOutput, type, pIdentifiers, inputDesc.y, pInputs + 1))
@@ -253,7 +257,7 @@ easymtl_bool easymtl_glsl_write_instruction_input_initializer(easymtl_output_str
 
     case easymtl_type_float3:
         {
-            if (!easymtl_write_string(pOutput, "vec3("))
+            if (easymtl_write_string(pOutput, "vec3("))
             {
                 if (easymtl_glsl_write_instruction_input_scalar(pOutput, type, pIdentifiers, inputDesc.x, pInputs + 0) && easymtl_write_string(pOutput, ", ") &&
                     easymtl_glsl_write_instruction_input_scalar(pOutput, type, pIdentifiers, inputDesc.y, pInputs + 1) && easymtl_write_string(pOutput, ", ") &&
@@ -268,7 +272,7 @@ easymtl_bool easymtl_glsl_write_instruction_input_initializer(easymtl_output_str
 
     case easymtl_type_float4:
         {
-            if (!easymtl_write_string(pOutput, "vec4("))
+            if (easymtl_write_string(pOutput, "vec4("))
             {
                 if (easymtl_glsl_write_instruction_input_scalar(pOutput, type, pIdentifiers, inputDesc.x, pInputs + 0) && easymtl_write_string(pOutput, ", ") &&
                     easymtl_glsl_write_instruction_input_scalar(pOutput, type, pIdentifiers, inputDesc.y, pInputs + 1) && easymtl_write_string(pOutput, ", ") &&
@@ -312,7 +316,7 @@ easymtl_bool easymtl_write_instruction_mov(easymtl_output_string* pOutput, easym
         default: return 0;
         }
 
-        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->mov.inputDesc, &pInstruction->mov.input0) && easymtl_write_string(pOutput, ";\n");
+        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->mov.inputDesc, &pInstruction->mov.inputX) && easymtl_write_string(pOutput, ";\n");
     }
     
     return 0;
@@ -338,7 +342,7 @@ easymtl_bool easymtl_write_instruction_add(easymtl_output_string* pOutput, easym
         default: return 0;
         }
 
-        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->add.inputDesc, &pInstruction->add.input0) && easymtl_write_string(pOutput, ";\n");
+        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->add.inputDesc, &pInstruction->add.inputX) && easymtl_write_string(pOutput, ";\n");
     }
     
     return 0;
@@ -364,7 +368,7 @@ easymtl_bool easymtl_write_instruction_sub(easymtl_output_string* pOutput, easym
         default: return 0;
         }
 
-        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->sub.inputDesc, &pInstruction->sub.input0) && easymtl_write_string(pOutput, ";\n");
+        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->sub.inputDesc, &pInstruction->sub.inputX) && easymtl_write_string(pOutput, ";\n");
     }
 
     return 0;
@@ -390,7 +394,7 @@ easymtl_bool easymtl_write_instruction_mul(easymtl_output_string* pOutput, easym
         default: return 0;
         }
 
-        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->mul.inputDesc, &pInstruction->mul.input0) && easymtl_write_string(pOutput, ";\n");
+        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->mul.inputDesc, &pInstruction->mul.inputX) && easymtl_write_string(pOutput, ";\n");
     }
 
     return 0;
@@ -416,7 +420,7 @@ easymtl_bool easymtl_write_instruction_div(easymtl_output_string* pOutput, easym
         default: return 0;
         }
 
-        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->div.inputDesc, &pInstruction->div.input0) && easymtl_write_string(pOutput, ";\n");
+        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->div.inputDesc, &pInstruction->div.inputX) && easymtl_write_string(pOutput, ";\n");
     }
 
     return 0;
@@ -442,7 +446,7 @@ easymtl_bool easymtl_write_instruction_pow(easymtl_output_string* pOutput, easym
         default: return 0;
         }
 
-        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->pow.inputDesc, &pInstruction->pow.input0) && easymtl_write_string(pOutput, ");\n");
+        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->pow.inputDesc, &pInstruction->pow.inputX) && easymtl_write_string(pOutput, ");\n");
     }
 
     return 0;
@@ -467,7 +471,7 @@ easymtl_bool easymtl_write_instruction_tex(easymtl_output_string* pOutput, easym
         case easymtl_opcode_tex1:
         {
             type = easymtl_type_float;
-            if (!easymtl_write_string(pOutput, "sampler1D("))
+            if (!easymtl_write_string(pOutput, "texture1D("))
             {
                 return 0;
             }
@@ -478,7 +482,7 @@ easymtl_bool easymtl_write_instruction_tex(easymtl_output_string* pOutput, easym
         case easymtl_opcode_tex2:
         {
             type = easymtl_type_float2;
-            if (!easymtl_write_string(pOutput, "sampler2D("))
+            if (!easymtl_write_string(pOutput, "texture2D("))
             {
                 return 0;
             }
@@ -489,7 +493,7 @@ easymtl_bool easymtl_write_instruction_tex(easymtl_output_string* pOutput, easym
         case easymtl_opcode_tex3:
         {
             type = easymtl_type_float3;
-            if (!easymtl_write_string(pOutput, "sampler3D("))
+            if (!easymtl_write_string(pOutput, "texture3D("))
             {
                 return 0;
             }
@@ -500,7 +504,7 @@ easymtl_bool easymtl_write_instruction_tex(easymtl_output_string* pOutput, easym
         case easymtl_opcode_texcube:
         {
             type = easymtl_type_float3;
-            if (!easymtl_write_string(pOutput, "samplerCube("))
+            if (!easymtl_write_string(pOutput, "textureCube("))
             {
                 return 0;
             }
@@ -513,7 +517,7 @@ easymtl_bool easymtl_write_instruction_tex(easymtl_output_string* pOutput, easym
 
         return
             easymtl_write_string(pOutput, pTextureIdentifier->name) && easymtl_write_string(pOutput, ", ") &&
-            easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->tex.inputDesc, &pInstruction->tex.input0) && easymtl_write_string(pOutput, ");\n");
+            easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->tex.inputDesc, &pInstruction->tex.inputX) && easymtl_write_string(pOutput, ");\n");
     }
 
     return 0;
@@ -527,7 +531,7 @@ easymtl_bool easymtl_write_instruction_var(easymtl_output_string* pOutput, easym
     easymtl_identifier* pIdentifier = pIdentifiers + pInstruction->var.identifierIndex;
     assert(pIdentifier != NULL);
     
-    return easymtl_write_type(pOutput, pInstruction->var.type) && easymtl_write_string(pOutput, " ") && easymtl_write_string(pOutput, pIdentifier->name) && easymtl_write_string(pOutput, ";");
+    return easymtl_write_type(pOutput, pIdentifier->type) && easymtl_write_string(pOutput, " ") && easymtl_write_string(pOutput, pIdentifier->name) && easymtl_write_string(pOutput, ";\n");
 }
 
 easymtl_bool easymtl_write_instruction_ret(easymtl_output_string* pOutput, easymtl_instruction* pInstruction, easymtl_identifier* pIdentifiers)
@@ -547,7 +551,7 @@ easymtl_bool easymtl_write_instruction_ret(easymtl_output_string* pOutput, easym
         default: return 0;
         }
 
-        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->ret.inputDesc, &pInstruction->ret.input0) && easymtl_write_string(pOutput, ";");
+        return easymtl_glsl_write_instruction_input_initializer(pOutput, type, pIdentifiers, pInstruction->ret.inputDesc, &pInstruction->ret.inputX) && easymtl_write_string(pOutput, ";\n");
     }
 
     return 0;
@@ -661,7 +665,7 @@ easymtl_bool easymtl_write_channel_instructions(easymtl_output_string* pOutput, 
 }
 
 
-easymtl_bool easymtl_channel_to_glsl(easymtl_material* pMaterial, const char* channelName, char* codeOut, unsigned int codeOutSizeInBytes)
+easymtl_bool easymtl_codegen_glsl_channel(easymtl_material* pMaterial, const char* channelName, char* codeOut, unsigned int codeOutSizeInBytes)
 {
     if (pMaterial != NULL && codeOut != NULL && codeOutSizeInBytes > 0)
     {

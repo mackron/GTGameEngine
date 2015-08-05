@@ -16,9 +16,17 @@ extern "C" {
 #define EASYMTL_MAGIC_NUMBER    0x81DF7405
 #define EASYMTL_CURRENT_VERSION 1
 
+#define EASYMTL_INPUT_DESC_CONSTI   ((unsigned char)-2)
+#define EASYMTL_INPUT_DESC_CONSTF   ((unsigned char)-1)
+#define EASYMTL_INPUT_DESC_VARX     ((unsigned char)0)
+#define EASYMTL_INPUT_DESC_VARY     ((unsigned char)1)
+#define EASYMTL_INPUT_DESC_VARZ     ((unsigned char)2)
+#define EASYMTL_INPUT_DESC_VARW     ((unsigned char)3)
+
 
 typedef int           easymtl_bool;
 typedef unsigned char easymtl_uint8;
+typedef unsigned int  easymtl_uint32;
 
 typedef struct easymtl_material easymtl_material;
 
@@ -197,6 +205,15 @@ typedef struct
         {
             char value[252];	// Enough room for a path, but less to keep the total size of the structure at 256 bytes. Null terminated.
         } path;
+
+
+        struct
+        {
+            easymtl_uint32 x;
+            easymtl_uint32 y;
+            easymtl_uint32 z;
+            easymtl_uint32 w;
+        } raw4;
     };
 
 } easymtl_input_var;
@@ -241,10 +258,10 @@ typedef struct
 		struct
 		{
             easymtl_instruction_input_descriptor inputDesc;
-			easymtl_instruction_input input0;
-            easymtl_instruction_input input1;
-            easymtl_instruction_input input2;
-            easymtl_instruction_input input3;
+			easymtl_instruction_input inputX;
+            easymtl_instruction_input inputY;
+            easymtl_instruction_input inputZ;
+            easymtl_instruction_input inputW;
             unsigned int output;
 		} mov;
 		
@@ -253,10 +270,10 @@ typedef struct
         struct
         {
             easymtl_instruction_input_descriptor inputDesc;
-            easymtl_instruction_input input0;
-            easymtl_instruction_input input1;
-            easymtl_instruction_input input2;
-            easymtl_instruction_input input3;
+            easymtl_instruction_input inputX;
+            easymtl_instruction_input inputY;
+            easymtl_instruction_input inputZ;
+            easymtl_instruction_input inputW;
             unsigned int output;
         } add;
 
@@ -264,10 +281,10 @@ typedef struct
         struct
         {
             easymtl_instruction_input_descriptor inputDesc;
-            easymtl_instruction_input input0;
-            easymtl_instruction_input input1;
-            easymtl_instruction_input input2;
-            easymtl_instruction_input input3;
+            easymtl_instruction_input inputX;
+            easymtl_instruction_input inputY;
+            easymtl_instruction_input inputZ;
+            easymtl_instruction_input inputW;
             unsigned int output;
         } sub;
 
@@ -275,10 +292,10 @@ typedef struct
         struct
         {
             easymtl_instruction_input_descriptor inputDesc;
-            easymtl_instruction_input input0;
-            easymtl_instruction_input input1;
-            easymtl_instruction_input input2;
-            easymtl_instruction_input input3;
+            easymtl_instruction_input inputX;
+            easymtl_instruction_input inputY;
+            easymtl_instruction_input inputZ;
+            easymtl_instruction_input inputW;
             unsigned int output;
         } mul;
 
@@ -286,10 +303,10 @@ typedef struct
         struct
         {
             easymtl_instruction_input_descriptor inputDesc;
-            easymtl_instruction_input input0;
-            easymtl_instruction_input input1;
-            easymtl_instruction_input input2;
-            easymtl_instruction_input input3;
+            easymtl_instruction_input inputX;
+            easymtl_instruction_input inputY;
+            easymtl_instruction_input inputZ;
+            easymtl_instruction_input inputW;
             unsigned int output;
         } div;
 
@@ -297,10 +314,10 @@ typedef struct
         struct
         {
             easymtl_instruction_input_descriptor inputDesc;
-            easymtl_instruction_input input0;
-            easymtl_instruction_input input1;
-            easymtl_instruction_input input2;
-            easymtl_instruction_input input3;
+            easymtl_instruction_input inputX;
+            easymtl_instruction_input inputY;
+            easymtl_instruction_input inputZ;
+            easymtl_instruction_input inputW;
             unsigned int output;
         } pow;
 
@@ -309,10 +326,10 @@ typedef struct
         struct
         {
             easymtl_instruction_input_descriptor inputDesc;
-            easymtl_instruction_input input0;
-            easymtl_instruction_input input1;
-            easymtl_instruction_input input2;
-            easymtl_instruction_input input3;
+            easymtl_instruction_input inputX;
+            easymtl_instruction_input inputY;
+            easymtl_instruction_input inputZ;
+            easymtl_instruction_input inputW;
             unsigned int texture;
             unsigned int output;
         } tex;
@@ -322,17 +339,17 @@ typedef struct
         struct
         {
             easymtl_instruction_input_descriptor inputDesc;
-            easymtl_instruction_input input0;
-            easymtl_instruction_input input1;
-            easymtl_instruction_input input2;
-            easymtl_instruction_input input3;
+            easymtl_instruction_input inputX;
+            easymtl_instruction_input inputY;
+            easymtl_instruction_input inputZ;
+            easymtl_instruction_input inputW;
         } ret;
 
 
         // var data
         struct
         {
-            easymtl_type type;
+            //easymtl_type type;
             unsigned int identifierIndex;
         } var;
 
@@ -517,6 +534,11 @@ struct easymtl_material
     /// The offset of the current channel. This is needed to we can determine which bytes need to be updated as
     /// instructions are added to the channel.
     unsigned int currentChannelOffset;
+
+
+    /// Whether or not the material data is owned by this library. When this is set to false, the library will
+    /// never modify the original pointer.
+    easymtl_bool ownsRawData;
 };
 
 
@@ -537,6 +559,8 @@ struct easymtl_material
 ///
 /// @return True if the material is initialized successfully; false otherwise.
 easymtl_bool easymtl_init(easymtl_material* pMaterial);
+easymtl_bool easymtl_initfromexisting(easymtl_material* pMaterial, const void* pRawData, unsigned int dataSizeInBytes);
+easymtl_bool easymtl_initfromexisting_nocopy(easymtl_material* pMaterial, const void* pRawData, unsigned int dataSizeInBytes);
 
 /// Uninitializes the given material.
 ///
@@ -589,6 +613,11 @@ easymtl_channel_header* easymtl_getchannelheaderbyname(easymtl_material* pMateri
 
 /// Retrieves a pointer to the buffer containing the list of identifiers.
 easymtl_identifier* easymtl_getidentifiers(easymtl_material* pMaterial);
+easymtl_identifier* easymtl_getidentifier(easymtl_material* pMaterial, unsigned int index);
+
+
+unsigned int easymtl_getpublicinputvariablecount(easymtl_material* pMaterial);
+easymtl_input_var* easymtl_getpublicinputvariable(easymtl_material* pMaterial, unsigned int index);
 
 
 
