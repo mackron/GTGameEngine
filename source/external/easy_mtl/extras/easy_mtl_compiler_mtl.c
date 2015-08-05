@@ -1,6 +1,6 @@
 // Version 0.1 - Public Domain. See "unlicense" statement at the end of this file.
 
-#include "easy_mtl_loader_mtl.h"
+#include "easy_mtl_compiler_mtl.h"
 #include "../easy_mtl.h"
 
 
