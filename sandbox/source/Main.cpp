@@ -134,115 +134,21 @@ public:
 
 
                 // Textures.
-                m_hTestTexture0 = m_pGraphicsWorld->CreateTextureResource(m_pTestImageAsset->GetImageWidth(), m_pTestImageAsset->GetImageHeight(), 1, m_pTestImageAsset->GetImageFormat(), m_pTestImageAsset->GetImageData());
-
-
+                GT::GraphicsTextureResourceDesc testTextureDesc;
+                testTextureDesc.width = m_pTestImageAsset->GetImageWidth();
+                testTextureDesc.height = m_pTestImageAsset->GetImageHeight();
+                testTextureDesc.depth  = 1;
+                testTextureDesc.format = m_pTestImageAsset->GetImageFormat();
+                testTextureDesc.pData  = m_pTestImageAsset->GetImageData();
+                m_hTestTexture0 = m_pGraphicsWorld->CreateTextureResource(testTextureDesc);
 
                 // Materials.
-                GT::vec4 materialRData(1.0f, 0.0f, 0.0f, 1.0f);
-                GT::vec4 materialGData(0.0f, 1.0f, 0.0f, 1.0f);
-                GT::vec4 materialBData(0.0f, 0.0f, 1.0f, 1.0f);
-
-                /*GT::GraphicsMaterialResourceDesc materialR;
-                materialR.channelDataSizeInBytes = sizeof(materialRData);
-                materialR.pChannelData = &materialRData[0];
-                m_hTestMaterialR = m_pGraphicsWorld->CreateMaterialResource(materialR);
-
-                GT::GraphicsMaterialResourceDesc materialG;
-                materialG.channelDataSizeInBytes = sizeof(materialGData);
-                materialG.pChannelData = &materialGData[0];
-                m_hTestMaterialG = m_pGraphicsWorld->CreateMaterialResource(materialG);
-
-                GT::GraphicsMaterialResourceDesc materialB;
-                materialB.channelDataSizeInBytes = sizeof(materialBData);
-                materialB.pChannelData = &materialBData[0];
-                m_hTestMaterialB = m_pGraphicsWorld->CreateMaterialResource(materialB);*/
-
-
-#if 0
-                // Build a test material.
-                easymtl_material materialDesc;
-                easymtl_init(&materialDesc);
-
-                easymtl_identifier identifier;
-                strcpy(identifier.name, "FS_TexCoord");
-                identifier.type = easymtl_type_float2;
-                easymtl_appendidentifier(&materialDesc, &identifier);
-
-                strcpy(identifier.name, "DiffuseTexture");
-                identifier.type = easymtl_type_tex2d;
-                easymtl_appendidentifier(&materialDesc, &identifier);
-
-                strcpy(identifier.name, "DiffuseResult");
-                identifier.type = easymtl_type_float4;
-                easymtl_appendidentifier(&materialDesc, &identifier);
-
-
-                easymtl_input_var input;
-                input.identifierIndex = 0;
-                easymtl_appendprivateinput(&materialDesc, &input);
-                
-                input.identifierIndex = 1;      // DiffuseTexture
-                strcpy(input.path.value, "default.png");
-                easymtl_appendpublicinput(&materialDesc, &input);
-
-
-                easymtl_channel_header diffuseHeader;
-                diffuseHeader.type = easymtl_type_float4;
-                strcpy(diffuseHeader.name, "Diffuse");
-                easymtl_appendchannel(&materialDesc, &diffuseHeader);
-
-                easymtl_instruction var;
-                var.opcode = easymtl_opcode_var;
-                var.var.identifierIndex = 2;    // DiffuseResult
-                easymtl_appendinstruction(&materialDesc, &var);
-
-                easymtl_instruction tex;
-                tex.opcode = easymtl_opcode_tex2;
-                tex.tex.texture = 1;            // DiffuseTexture
-                tex.tex.output = 2;             // DiffuseResult
-                tex.tex.inputDesc.x = EASYMTL_INPUT_DESC_VARX; tex.tex.inputDesc.y = EASYMTL_INPUT_DESC_VARY;
-                tex.tex.inputX.id = 0; tex.tex.inputY.id = 0;
-                easymtl_appendinstruction(&materialDesc, &tex);
-
-                easymtl_instruction ret;
-                ret.opcode = easymtl_opcode_retf4;
-                ret.ret.inputDesc.x = EASYMTL_INPUT_DESC_VARX; ret.ret.inputDesc.y = EASYMTL_INPUT_DESC_VARY; ret.ret.inputDesc.z = EASYMTL_INPUT_DESC_VARZ; ret.ret.inputDesc.w = EASYMTL_INPUT_DESC_VARW;
-                ret.ret.inputX.id = 2; ret.ret.inputY.id = 2; ret.ret.inputZ.id = 2; ret.ret.inputW.id = 2;
-                easymtl_appendinstruction(&materialDesc, &ret);
-#endif
-
                 GT::GraphicsMaterialResourceDesc material0;
                 material0.pData           = m_pTestMaterialAsset->GetData();
                 material0.dataSizeInBytes = m_pTestMaterialAsset->GetDataSizeInBytes();
-
-
-#if 0
-                material0.channelDataSizeInBytes = sizeof(materialRData);
-                material0.pChannelData = &materialRData[0];
-
-                GTLib::Vector<uint32_t> inputVariableData;
-                inputVariableData.PushBack(static_cast<uint32_t>((8 << spv::WordCountShift) | static_cast<uint32_t>(GT::SpirVOp::DeclareMaterialVariable)));
-                inputVariableData.PushBack(static_cast<uint32_t>(GT::SpirVCommonTypeID::Float4));
-                inputVariableData.PushBack(reinterpret_cast<uint32_t*>(&materialGData[0])[0]);
-                inputVariableData.PushBack(reinterpret_cast<uint32_t*>(&materialGData[0])[1]);
-                inputVariableData.PushBack(reinterpret_cast<uint32_t*>(&materialGData[0])[2]);
-                inputVariableData.PushBack(reinterpret_cast<uint32_t*>(&materialGData[0])[3]);
-                inputVariableData.PushBack(static_cast<uint32_t>('tset')); inputVariableData.PushBack(static_cast<uint32_t>('\0gni'));
-
-                inputVariableData.PushBack(static_cast<uint32_t>((3 << spv::WordCountShift) | static_cast<uint32_t>(GT::SpirVOp::DeclareMaterialVariable)));
-                inputVariableData.PushBack(static_cast<uint32_t>(GT::SpirVCommonTypeID::Texture2D));
-                inputVariableData.PushBack(static_cast<uint32_t>('\0pam'));
-
-                material0.pInputVariableData           = inputVariableData.buffer;
-                material0.inputVariableDataSizeInBytes = inputVariableData.count * sizeof(uint32_t);
-#endif
-
                 m_hTestMaterial0 = m_pGraphicsWorld->CreateMaterialResource(material0);
 
-                
-
-
+                // Meshes.
                 GT::GraphicsMeshResourceDesc testMeshDesc;
                 testMeshDesc.topology                      = GT::PrimitiveTopologyType_Triangle;
                 testMeshDesc.pVertexData                   = m_pTestMeshAsset->GetMeshVertexData(0);
@@ -260,17 +166,9 @@ public:
 
                 m_hTestMeshObject0 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
                 m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject0, 0, m_hTestMaterial0);
-                //m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "testing", 1.0f, 1.0f, 1.0f, 1.0f);
+                m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "DiffuseColor", 0.75f, 0.75f, 1.0f, 1.0f);
                 m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "DiffuseMap", m_hTestTexture0);
                 m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject0, GT::vec4(0, 0, 0, 0));
-
-                //m_hTestMeshObject1 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
-                //m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject1, 0, m_hTestMaterialG);
-                //m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject1, GT::vec4(-2, 0, 0, 0));
-
-                //m_hTestMeshObject2 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
-                //m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject2, 0, m_hTestMaterialB);
-                //m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject2, GT::vec4(2, 0, 0, 0));
             }
         }
 
@@ -344,10 +242,6 @@ private:
     GT::ModelAsset* m_pTestMeshAsset;
     GT::MaterialAsset* m_pTestMaterialAsset;
     GT::ImageAsset* m_pTestImageAsset;
-
-    //GT::HGraphicsResource m_hTestMaterialR;
-    //GT::HGraphicsResource m_hTestMaterialG;
-    //GT::HGraphicsResource m_hTestMaterialB;
 
     GT::HGraphicsResource m_hTestTexture0;
     GT::HGraphicsResource m_hTestMaterial0;
