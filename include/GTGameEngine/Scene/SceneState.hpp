@@ -22,7 +22,7 @@ namespace GT
         virtual ~SceneState();
 
 
-        /// Creates a scene node with the given ID.
+        /// Creates a scene node with the given ID, but does not insert it into the scene.
         ///
         /// @param id [in] The ID to assign to the scene node.
         virtual SceneNode* CreateSceneNode(uint64_t id) = 0;
@@ -36,6 +36,20 @@ namespace GT
         ///
         /// @param pSceneNode [in] A pointer to the scene node to delete.
         virtual void DeleteSceneNode(SceneNode* pSceneNode);
+
+
+        /// Adds the given scene node to the scene.
+        ///
+        /// @param sceneNode [in] The scene node to add to the scene.
+        ///
+        /// @remarks
+        ///     If the scene node's ID is zero or a scene node of the same ID already exists, this will fail.
+        virtual bool InsertSceneNode(SceneNode* pSceneNode) = 0;
+
+        /// Removes the given scene node.
+        ///
+        /// @param sceneNode [in] The scene node to remove from the scene.
+        virtual void RemoveSceneNode(SceneNode* pSceneNode) = 0;
 
 
         /// Retrieves a pointer to the scene node with the given ID.

@@ -16,7 +16,7 @@ namespace GT
     class SceneNodeComponent;
 
     /// Class representing a scene node.
-    ALIGNED_TYPE(class, 16) SceneNode
+    class alignas(16) SceneNode
     {
     public:
 
@@ -148,7 +148,7 @@ namespace GT
         /// The number of components attached to the scene node.
         uint16_t m_componentCount;
 
-        /// The various flags used by the scene node. This is for internal use only.
+        /// The various flags used by the scene node.
         uint16_t m_flags;
 
 
@@ -174,6 +174,9 @@ namespace GT
         static const uint16_t _ScaleChanged    = (1 << 2);      //< [Internal Use Only] Set when the scale has changed.
         static const uint16_t _IsDeleted       = (1 << 3);      //< [Internal Use Only] Set when the scene node is marked as deleted.
         static const uint16_t _IsDisabled      = (1 << 4);      //< [Internal Use Only] Set when the scene node is marked as disabled. A disabled scene node is not stepped nor does it have events posted for it.
+        static const uint16_t _IsInScene       = (1 << 5);      //< [Internal Use Only] Set when the scene node is currently within it's scene.
+
+        static const uint16_t IsStatic         = (1 << 15);      //< Set when the scene node is marked as static.
     };
 }
 

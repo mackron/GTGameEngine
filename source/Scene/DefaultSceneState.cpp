@@ -11,7 +11,8 @@ namespace GT
           m_pEventHandler(nullptr),
           m_stateFlags(0),
           m_containerLock(),
-          m_sceneNodesCreatedWhileStepping(),
+          m_sceneNodesInsertedWhileStepping(),
+          m_sceneNodesRemovedWhileStepping(),
           m_sceneNodesDeletedWhileStepping()
     {
     }
@@ -24,7 +25,6 @@ namespace GT
     SceneNode* DefaultSceneState::CreateSceneNode(uint64_t sceneNodeID)
     {
         SceneNode* pSceneNode = nullptr;
-
         m_containerLock.Lock();
         {
             uint64_t sceneNodeIndex;
@@ -37,89 +37,87 @@ namespace GT
         m_containerLock.Unlock();
 
 
-        // We need to post an OnSceneNodeAdded() event. If we are currently stepping, it must be deferred, otherwise it will be posted straight away.
-        if (pSceneNode != nullptr)
-        {
-            if ((m_stateFlags & StateFlag_IsStepping) != 0)
-            {
-                pSceneNode->_SetFlags(pSceneNode->_GetFlags() | SceneNode::_IsDisabled);        // <-- Disable the scene node so that it is not updated during this step.
-
-                m_containerLock.Lock();
-                {
-                    m_sceneNodesCreatedWhileStepping.PushBack(pSceneNode);
-                }
-                m_containerLock.Unlock();
-            }
-            else
-            {
-                if (m_pEventHandler != nullptr)
-                {
-                    m_pEventHandler->OnSceneNodeAdded(pSceneNode);
-                }
-            }
-        }
-
         return pSceneNode;
     }
 
     void DefaultSceneState::DeleteSceneNode(uint64_t sceneNodeID)
     {
-        uint64_t   sceneNodeIndex = 0;
-        SceneNode* pSceneNodeToDelete = nullptr;
-
-        m_containerLock.Lock();
-        {
-            auto iSceneNodeIndex = m_sceneNodeMap.Find(sceneNodeID);
-            if (iSceneNodeIndex != nullptr)
-            {
-                sceneNodeIndex = iSceneNodeIndex->value;
-
-                pSceneNodeToDelete = m_sceneNodes.GetSceneNodeByIndex(sceneNodeIndex);
-                assert(pSceneNodeToDelete != nullptr);
-                {
-                    // Return early if the node is already marked for deletion.
-                    if ((pSceneNodeToDelete->_GetFlags() & SceneNode::_IsDeleted) == 0)
-                    {
-                        pSceneNodeToDelete->_SetFlags(pSceneNodeToDelete->_GetFlags() | SceneNode::_IsDeleted);
-                    }
-                    else
-                    {
-                        // The scene node is already marked for deletion.
-                        m_containerLock.Unlock();
-                        return;
-                    }
-                }
-            }
-        }
-        m_containerLock.Unlock();
-
-
-        // We need to post an OnSceneNodeRemoved() event. If we are current stepping, it must be deferred, otherwise it will be posted straight away.
+        SceneNode* pSceneNodeToDelete = this->GetSceneNodeByID(sceneNodeID);
         if (pSceneNodeToDelete != nullptr)
         {
-            if ((m_stateFlags & StateFlag_IsStepping) != 0)
-            {
-                m_containerLock.Lock();
-                {
-                    // If the scene node was adding during this same step, remove it from the list.
-                    m_sceneNodesCreatedWhileStepping.RemoveFirstOccuranceOf(pSceneNodeToDelete);
+            // We remove the scene node from the scene before deleting.
+            this->RemoveSceneNode(pSceneNodeToDelete);
 
-                    // Defer the delete event until the very end.
+
+            // Now delete for real.
+            pSceneNodeToDelete->_SetFlags(pSceneNodeToDelete->_GetFlags() | SceneNode::_IsDeleted);
+
+            m_containerLock.Lock();
+            {
+                if ((m_stateFlags & StateFlag_IsStepping) != 0)
+                {
                     m_sceneNodesDeletedWhileStepping.PushBack(pSceneNodeToDelete);
                 }
-                m_containerLock.Unlock();
-            }
-            else
-            {
-                if (m_pEventHandler != nullptr)
+                else
                 {
-                    // Post the event before deleting for real.
-                    m_pEventHandler->OnSceneNodeRemoved(pSceneNodeToDelete);
-                    
-                    // Delete the scene node for real.
-                    this->DeleteSceneNodeForReal_NoLock(pSceneNodeToDelete, sceneNodeIndex);
+                    this->DeleteSceneNodeForReal_NoLock(pSceneNodeToDelete);
                 }
             }
+            m_containerLock.Unlock();
+        }
+    }
+
+
+    bool DefaultSceneState::InsertSceneNode(SceneNode* pSceneNode)
+    {
+        assert(pSceneNode != nullptr);
+        
+        // We need to post an OnSceneNodeAdded() event. If we are currently stepping, it must be deferred, otherwise it will be posted straight away.
+        if ((m_stateFlags & StateFlag_IsStepping) != 0)
+        {
+            pSceneNode->_SetFlags(pSceneNode->_GetFlags() | SceneNode::_IsDisabled);        // <-- Disable the scene node so that it is not updated during this step.
+            pSceneNode->_SetFlags(pSceneNode->_GetFlags() | SceneNode::_IsInScene);
+
+            m_containerLock.Lock();
+            {
+                m_sceneNodesInsertedWhileStepping.PushBack(pSceneNode);
+            }
+            m_containerLock.Unlock();
+        }
+        else
+        {
+            if (m_pEventHandler != nullptr)
+            {
+                m_pEventHandler->OnSceneNodeInserted(pSceneNode);
+            }
+        }
+
+        return true;
+    }
+
+    void DefaultSceneState::RemoveSceneNode(SceneNode* pSceneNode)
+    {
+        assert(pSceneNode != NULL);
+
+        pSceneNode->_SetFlags(pSceneNode->_GetFlags() |  SceneNode::_IsDisabled);
+        pSceneNode->_SetFlags(pSceneNode->_GetFlags() & ~SceneNode::_IsInScene);
+
+        // We need to post an OnSceneNodeRemoved() event. If we are current stepping, it must be deferred, otherwise it will be posted straight away.
+        if ((m_stateFlags & StateFlag_IsStepping) != 0)
+        {
+            m_containerLock.Lock();
+            {
+                // If the scene node was inserted during this same step, remove it from the list.
+                m_sceneNodesInsertedWhileStepping.RemoveFirstOccuranceOf(pSceneNode);
+
+                // Defer the delete event until the very end.
+                m_sceneNodesRemovedWhileStepping.PushBack(pSceneNode);
+            }
+            m_containerLock.Unlock();
+        }
+        else
+        {
+            this->RemoveSceneNodeForReal_NoLock(pSceneNode);
         }
     }
 
@@ -191,27 +189,22 @@ namespace GT
         if (m_pEventHandler != nullptr)
         {
             // OnSceneNodeInserted
-            for (size_t iSceneNode = 0; iSceneNode < m_sceneNodesCreatedWhileStepping.GetCount(); ++iSceneNode)
+            for (size_t iSceneNode = 0; iSceneNode < m_sceneNodesInsertedWhileStepping.GetCount(); ++iSceneNode)
             {
-                auto pSceneNode = m_sceneNodesCreatedWhileStepping[iSceneNode];
+                auto pSceneNode = m_sceneNodesInsertedWhileStepping[iSceneNode];
                 assert(pSceneNode != nullptr);
                 {
-                    // Enable the scene node before posting the event.
-                    pSceneNode->_SetFlags(pSceneNode->_GetFlags() & ~SceneNode::_IsDisabled);
-
-                    // Post the event.
-                    m_pEventHandler->OnSceneNodeAdded(pSceneNode);
+                    this->InsertSceneNodeForReal_NoLock(pSceneNode);
                 }
             }
 
-            // OnSceneNodeRemoved. Note that we don't clean up at this point. This is done in Cleanup().
-            for (size_t iSceneNode = 0; iSceneNode < m_sceneNodesDeletedWhileStepping.GetCount(); ++iSceneNode)
+            // OnSceneNodeRemoved
+            for (size_t iSceneNode = 0; iSceneNode < m_sceneNodesRemovedWhileStepping.GetCount(); ++iSceneNode)
             {
-                auto pSceneNode = m_sceneNodesDeletedWhileStepping[iSceneNode];
+                auto pSceneNode = m_sceneNodesRemovedWhileStepping[iSceneNode];
                 assert(pSceneNode != nullptr);
                 {
-                    // Post the event.
-                    m_pEventHandler->OnSceneNodeRemoved(pSceneNode);
+                    this->RemoveSceneNodeForReal_NoLock(pSceneNode);
                 }
             }
         }
@@ -231,7 +224,8 @@ namespace GT
 
 
         // Clear the lists.
-        m_sceneNodesCreatedWhileStepping.Clear();
+        m_sceneNodesInsertedWhileStepping.Clear();
+        m_sceneNodesRemovedWhileStepping.Clear();
         m_sceneNodesDeletedWhileStepping.Clear();
     }
 
@@ -251,6 +245,34 @@ namespace GT
             }
         }
     }
+
+
+    void DefaultSceneState::InsertSceneNodeForReal_NoLock(SceneNode* pSceneNode)
+    {
+        assert(pSceneNode != nullptr);
+        
+        // Enable the scene node.
+        pSceneNode->_SetFlags(pSceneNode->_GetFlags() & ~SceneNode::_IsDisabled);
+
+        // Post the event.
+        if (m_pEventHandler != nullptr)
+        {
+            m_pEventHandler->OnSceneNodeInserted(pSceneNode);
+        }
+    }
+
+
+    void DefaultSceneState::RemoveSceneNodeForReal_NoLock(SceneNode* pSceneNode)
+    {
+        assert(pSceneNode != nullptr);
+
+        // Post the event.
+        if (m_pEventHandler != nullptr)
+        {
+            m_pEventHandler->OnSceneNodeRemoved(pSceneNode);
+        }
+    }
+
 
     void DefaultSceneState::DeleteSceneNodeForReal_NoLock(SceneNode* pSceneNode, uint64_t sceneNodeListIndex)
     {

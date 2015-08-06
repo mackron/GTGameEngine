@@ -26,6 +26,13 @@ namespace GT
         void DeleteSceneNode(uint64_t sceneNodeID);
 
 
+        /// @copydoc DefaultSceneState::InsertSceneNode()
+        bool InsertSceneNode(SceneNode* pSceneNode);
+
+        /// @copydoc DefaultSceneState::RemoveSceneNode()
+        void RemoveSceneNode(SceneNode* pSceneNode);
+
+
         /// @copydoc DefaultSceneState::GetSceneNodeByID()
         SceneNode* GetSceneNodeByID(uint64_t sceneNodeID);
 
@@ -51,6 +58,13 @@ namespace GT
 
         /// Retrieves the index of the scene node within the primary list.
         bool GetSceneNodeListIndex(SceneNode* pSceneNode, uint64_t &sceneNodeIndexOut);
+
+
+        /// Inserts the scene node for real.
+        void InsertSceneNodeForReal_NoLock(SceneNode* pSceneNode);
+        
+        /// Removes a scene node for real.
+        void RemoveSceneNodeForReal_NoLock(SceneNode* pSceneNode);
 
         /// Deletes a scene node for real by it's ID.
         ///
@@ -80,8 +94,11 @@ namespace GT
         GTLib::Mutex m_containerLock;
 
 
-        /// The list of scene nodes that were created during the stepping pipeline.
-        GTLib::Vector<SceneNode*> m_sceneNodesCreatedWhileStepping;
+        /// The list of scene nodes that were added during the stepping pipeline.
+        GTLib::Vector<SceneNode*> m_sceneNodesInsertedWhileStepping;
+
+        /// The list of scene nodes that were removed during the stepping pipeline.
+        GTLib::Vector<SceneNode*> m_sceneNodesRemovedWhileStepping;
 
         /// The list of scene nodes that were deleted during the stepping pipeline.
         GTLib::Vector<SceneNode*> m_sceneNodesDeletedWhileStepping;

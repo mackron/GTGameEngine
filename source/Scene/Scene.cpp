@@ -23,8 +23,39 @@ namespace GT
         m_pState->DeleteSceneNode(pSceneNode);
     }
 
+
+    bool Scene::InsertSceneNode(SceneNode* pSceneNode)
+    {
+        if (pSceneNode != nullptr)
+        {
+            return m_pState->InsertSceneNode(pSceneNode);
+        }
+
+        return false;
+    }
+
+    void Scene::RemoveSceneNode(SceneNode* pSceneNode)
+    {
+        if (pSceneNode != nullptr)
+        {
+            m_pState->RemoveSceneNode(pSceneNode);
+        }
+    }
+
+
     SceneNode* Scene::GetSceneNodeByID(uint64_t sceneNodeID)
     {
         return m_pState->GetSceneNodeByID(sceneNodeID);
+    }
+
+
+    void Scene::SetEventHandler(SceneEventHandler* pEventHandler)
+    {
+        m_pState->SetEventHandler(pEventHandler);
+    }
+
+    SceneEventHandler* Scene::GetEventHandler()
+    {
+        return m_pState->GetEventHandler();
     }
 }

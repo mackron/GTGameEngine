@@ -121,7 +121,7 @@ namespace GT
         }
         else
         {
-            // No available slots. Max 8.
+            // No available slots. Max GT_MAX_SCENE_NODE_COMPONENTS.
             return false;
         }
     }
