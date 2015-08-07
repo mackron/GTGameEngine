@@ -269,15 +269,6 @@
     <ClCompile Include="..\..\..\source\Scene\SceneNodeIDAllocator.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\source\Scene\DefaultSceneState.cpp">
-      <Filter>Source Files\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Scene\SceneState.cpp">
-      <Filter>Source Files\Scene</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\..\source\Scene\SceneNodeList.cpp">
-      <Filter>Source Files\Scene</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\source\Graphics\GraphicsWorld.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
@@ -839,18 +830,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeIDAllocator.hpp">
-      <Filter>Header Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\DefaultSceneState.hpp">
-      <Filter>Header Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneState.hpp">
-      <Filter>Header Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeList.hpp">
-      <Filter>Header Files\Scene</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneEventHandler.hpp">
       <Filter>Header Files\Scene</Filter>
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsWorld.hpp">

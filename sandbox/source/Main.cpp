@@ -10,8 +10,6 @@
 #include <GTGameEngine/external/spirv.h>
 #include <GTLib/IO.hpp>
 
-#include <GTGameEngine/../../source/external/easy_mtl/easy_mtl.h>
-
 class SandboxGameState : public GT::GameState
 {
 public:
