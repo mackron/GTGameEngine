@@ -319,6 +319,15 @@ namespace GT
         return div(v0, v1);
     }
 
+    inline bool operator==(const vec4 &v0, const vec4 &v1)
+    {
+        return v0.x == v1.x && v0.y == v1.y && v0.z == v1.z && v0.w == v1.w;
+    }
+    inline bool operator!=(const vec4 &v0, const vec4 &v1)
+    {
+        return !(v0 == v1);
+    }
+
 
 
 
@@ -385,6 +394,19 @@ namespace GT
 
         static const quat identity;
     };
+
+
+    //////////////////////////
+    // Operator Overloads
+
+    inline bool operator==(const quat &v0, const quat &v1)
+    {
+        return v0.x == v1.x && v0.y == v1.y && v0.z == v1.z && v0.w == v1.w;
+    }
+    inline bool operator!=(const quat &v0, const quat &v1)
+    {
+        return !(v0 == v1);
+    }
 
 
 

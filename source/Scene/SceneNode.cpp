@@ -174,6 +174,28 @@ namespace GT
     }
 
 
+    void SceneNode::SetStatic(bool isStatic)
+    {
+        this->_SetFlags(this->_GetFlags() | _IsStatic);
+    }
+
+    bool SceneNode::IsStatic() const
+    {
+        return (this->_GetFlags() & _IsStatic) != 0;
+    }
+
+    void SceneNode::SetUpdatesDisabled(bool updatesDisabled)
+    {
+        this->_SetFlags(this->_GetFlags() | _UpdatingDisabled);
+    }
+
+    bool SceneNode::IsUpdatesDisabled() const
+    {
+        return (this->_GetFlags() & _UpdatingDisabled) != 0;
+    }
+
+
+
     vec4 SceneNode::GetPosition() const
     {
         return m_position;

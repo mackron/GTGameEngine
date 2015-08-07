@@ -11,6 +11,9 @@ namespace GT
           m_pEventHandler(nullptr),
           m_stateFlags(0),
           m_containerLock(),
+          m_updatingSceneNodes(),
+          m_dynamicSceneNodes(),
+          m_sceneNodesTransformedWhileStepping(),
           m_sceneNodesInsertedWhileStepping(),
           m_sceneNodesRemovedWhileStepping(),
           m_sceneNodesDeletedWhileStepping()
@@ -76,7 +79,6 @@ namespace GT
         if ((m_stateFlags & StateFlag_IsStepping) != 0)
         {
             pSceneNode->_SetFlags(pSceneNode->_GetFlags() | SceneNode::_IsDisabled);        // <-- Disable the scene node so that it is not updated during this step.
-            pSceneNode->_SetFlags(pSceneNode->_GetFlags() | SceneNode::_IsInScene);
 
             m_containerLock.Lock();
             {
@@ -86,10 +88,7 @@ namespace GT
         }
         else
         {
-            if (m_pEventHandler != nullptr)
-            {
-                m_pEventHandler->OnSceneNodeInserted(pSceneNode);
-            }
+            this->InsertSceneNodeForReal_NoLock(pSceneNode);
         }
 
         return true;
@@ -165,8 +164,14 @@ namespace GT
         {
             m_stateFlags |= StateFlag_IsStepping;
             {
+                // Do the main update.
+                this->Update(deltaTimeInSeconds);
 
+                // Do the physics simulation.
+                this->DoPhysics(deltaTimeInSeconds);
 
+                // Let the callback know about scene nodes whose world position has changed. This only checks non-static objects.
+                this->ResolveTransformations();
 
 
                 // Post events in one go after everything else have been done. This is done on a single thread, on the same one that called Step().
@@ -184,10 +189,69 @@ namespace GT
     /////////////////////////////////
     // Priate
 
+    void DefaultSceneState::Update(double deltaTimeInSeconds)
+    {
+        if (m_pEventHandler != nullptr)
+        {
+            for (size_t iSceneNode = 0; iSceneNode < m_updatingSceneNodes.GetCount(); ++iSceneNode)
+            {
+                SceneNode* pSceneNode = m_updatingSceneNodes[iSceneNode];
+                assert(pSceneNode != nullptr);
+
+                m_pEventHandler->OnSceneNodeUpdate(pSceneNode, deltaTimeInSeconds);
+            }
+        }
+    }
+
+    void DefaultSceneState::DoPhysics(double deltaTimeInSeconds)
+    {
+        if (m_pEventHandler != nullptr)
+        {
+            // TODO: Can optimize this part so that it only iterates over scene nodes with a dynamics component attached.
+            //
+            // The physics system needs to know which scene nodes have had their transformations explicitly set.
+            for (size_t iSceneNode = 0; iSceneNode < m_dynamicSceneNodes.GetCount(); ++iSceneNode)
+            {
+                SceneNode* pSceneNode = m_dynamicSceneNodes[iSceneNode];
+                assert(pSceneNode != nullptr);
+
+                if ((pSceneNode->_GetFlags() & (SceneNode::_PositionChanged | SceneNode::_RotationChanged | SceneNode::_ScaleChanged)) != 0)
+                {
+                    m_pEventHandler->UpdateSceneNodePhysicsTransform(pSceneNode);
+                }
+            }
+
+
+            // Now divert control to the callback and get it to update the physics.
+            m_pEventHandler->DoPhysics(deltaTimeInSeconds);
+        }
+    }
+
+    void DefaultSceneState::ResolveTransformations()
+    {
+        if (m_pEventHandler != nullptr)
+        {
+
+        }
+    }
+
     void DefaultSceneState::PostEvents()
     {
         if (m_pEventHandler != nullptr)
         {
+            // OnSceneNodeRemoved
+            //
+            // We do this before OnSceneNodeInserted because we want to support a workflow of: Remove Node -> Change Node -> Insert Node. If we
+            // were to do this after OnSceneNodeInsert, that workflow would not not work as expected.
+            for (size_t iSceneNode = 0; iSceneNode < m_sceneNodesRemovedWhileStepping.GetCount(); ++iSceneNode)
+            {
+                auto pSceneNode = m_sceneNodesRemovedWhileStepping[iSceneNode];
+                assert(pSceneNode != nullptr);
+                {
+                    this->RemoveSceneNodeForReal_NoLock(pSceneNode);
+                }
+            }
+
             // OnSceneNodeInserted
             for (size_t iSceneNode = 0; iSceneNode < m_sceneNodesInsertedWhileStepping.GetCount(); ++iSceneNode)
             {
@@ -195,16 +259,6 @@ namespace GT
                 assert(pSceneNode != nullptr);
                 {
                     this->InsertSceneNodeForReal_NoLock(pSceneNode);
-                }
-            }
-
-            // OnSceneNodeRemoved
-            for (size_t iSceneNode = 0; iSceneNode < m_sceneNodesRemovedWhileStepping.GetCount(); ++iSceneNode)
-            {
-                auto pSceneNode = m_sceneNodesRemovedWhileStepping[iSceneNode];
-                assert(pSceneNode != nullptr);
-                {
-                    this->RemoveSceneNodeForReal_NoLock(pSceneNode);
                 }
             }
         }
@@ -247,12 +301,36 @@ namespace GT
     }
 
 
+    void DefaultSceneState::CacheEvent_OnSceneNodeTransformed(SceneNode* pSceneNode)
+    {
+        m_containerLock.Lock();
+        {
+            m_sceneNodesTransformedWhileStepping.PushBack(pSceneNode);
+        }
+        m_containerLock.Unlock();
+    }
+
+
     void DefaultSceneState::InsertSceneNodeForReal_NoLock(SceneNode* pSceneNode)
     {
         assert(pSceneNode != nullptr);
+
+
+        if (!pSceneNode->IsUpdatesDisabled())
+        {
+            m_updatingSceneNodes.PushBack(pSceneNode);
+        }
+
+        if (!pSceneNode->IsStatic())
+        {
+            m_dynamicSceneNodes.PushBack(pSceneNode);
+        }
+
         
         // Enable the scene node.
         pSceneNode->_SetFlags(pSceneNode->_GetFlags() & ~SceneNode::_IsDisabled);
+        pSceneNode->_SetFlags(pSceneNode->_GetFlags() |  SceneNode::_IsInScene);
+
 
         // Post the event.
         if (m_pEventHandler != nullptr)

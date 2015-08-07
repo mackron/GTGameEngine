@@ -50,14 +50,31 @@ namespace GT
 
     private:
 
+        /// Performs the main update.
+        void Update(double deltaTimeInSeconds);
+
+        /// Performs the physics simulation.
+        ///
+        /// @remarks
+        ///     This just diverts control to the callback to do the physics simulation.
+        void DoPhysics(double deltaTimeInSeconds);
+
+        /// Resolves the transformations of the scene nodes whose transforms have changed.
+        void ResolveTransformations();
+
         /// Posts all of the cached events.
         void PostEvents();
         
         /// Cleans up all of the objects that have been marked for deletion.
         void Cleanup();
 
+
         /// Retrieves the index of the scene node within the primary list.
         bool GetSceneNodeListIndex(SceneNode* pSceneNode, uint64_t &sceneNodeIndexOut);
+
+
+        /// Caches an OnSceneNodeTransformed event.
+        void CacheEvent_OnSceneNodeTransformed(SceneNode* pSceneNode);
 
 
         /// Inserts the scene node for real.
@@ -93,6 +110,18 @@ namespace GT
         /// The lock for synchronizing access to the scene nodes list. This locks access to insert, delete and searching operations.
         GTLib::Mutex m_containerLock;
 
+
+        /// The list of scene nodes that need to be updated during the update step. When doing the main and post updates, only these
+        /// scene nodes are included.
+        GTLib::Vector<SceneNode*> m_updatingSceneNodes;
+
+        /// The list of dynamic scene nodes. During the post-process step when the final transformations are being calculated, only
+        /// this list is checked for changes.
+        GTLib::Vector<SceneNode*> m_dynamicSceneNodes;
+
+
+        /// The list of scene nodes that were transformed during the stepping pipeline.
+        GTLib::Vector<SceneNode*> m_sceneNodesTransformedWhileStepping;
 
         /// The list of scene nodes that were added during the stepping pipeline.
         GTLib::Vector<SceneNode*> m_sceneNodesInsertedWhileStepping;

@@ -569,6 +569,21 @@
     <ClCompile Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_compiler_mtl.c">
       <Filter>Source Files\external\easy_mtl\extras</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneCallback.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeAllocator.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeAllocator_Default.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneSteppingPipeline.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneSteppingPipeline_Default.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp">
@@ -1086,6 +1101,21 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\external\easy_mtl\extras\easy_mtl_compiler_mtl.h">
       <Filter>Source Files\external\easy_mtl\extras</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneCallback.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeAllocator.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeAllocator_Default.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneSteppingPipeline.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneSteppingPipeline_Default.hpp">
+      <Filter>Header Files\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

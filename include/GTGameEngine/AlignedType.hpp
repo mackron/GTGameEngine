@@ -4,6 +4,7 @@
 #define __GT_AlignedType_hpp_
 
 #include <stdlib.h>
+#include <new>
 
 /// Base class for correctly aligning new operations.
 template <int Alignment>
@@ -15,17 +16,51 @@ public:
     {
         return _aligned_malloc(size, Alignment);
     }
+    void* operator new(size_t, void* ptr)
+    {
+        return ptr;
+    }
+    void* operator new(size_t size, const std::nothrow_t &)
+    {
+        return _aligned_malloc(size, Alignment);
+    }
+
     void* operator new[](size_t size)
+    {
+        return _aligned_malloc(size, Alignment);
+    }
+    void* operator new[](size_t, void* ptr)
+    {
+        return ptr;
+    }
+    void* operator new[](size_t size, const std::nothrow_t &)
     {
         return _aligned_malloc(size, Alignment);
     }
 
 
-    void operator delete(void* ptr, size_t)
+    void operator delete(void* ptr)
     {
         _aligned_free(ptr);
     }
-    void operator delete[](void* ptr, size_t)
+    void operator delete(void* ptr, const std::nothrow_t &)
+    {
+        _aligned_free(ptr);
+    }
+    void operator delete(void* ptr, void*)
+    {
+        _aligned_free(ptr);
+    }
+
+    void operator delete[](void* ptr)
+    {
+        _aligned_free(ptr);
+    }
+    void operator delete[](void* ptr, const std::nothrow_t &)
+    {
+        _aligned_free(ptr);
+    }
+    void operator delete[](void* ptr, void*)
     {
         _aligned_free(ptr);
     }

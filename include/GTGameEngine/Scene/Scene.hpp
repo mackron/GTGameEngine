@@ -4,12 +4,15 @@
 #define __GT_Scene_hpp_
 
 #include "SceneNodeIDAllocator.hpp"
+#include <GTLib/Map.hpp>
+#include <GTLib/Vector.hpp>
 
 namespace GT
 {
     class SceneNode;
-    class SceneState;
-    class SceneEventHandler;
+    class SceneCallback;
+    class SceneNodeAllocator;
+    class SceneSteppingPipeline;
 
     /// Class representing a scene.
     ///
@@ -19,7 +22,10 @@ namespace GT
     public:
 
         /// Constructor.
-        Scene(SceneState &sceneState);
+        Scene(SceneCallback& callback);
+
+        /// Destructor.
+        ~Scene();
 
 
         /// Creates a new, empty scene node.
@@ -27,6 +33,9 @@ namespace GT
         /// @return A pointer to the new scene node.
         ///
         /// @remarks
+        ///     This will NOT insert the new node into the scene. Call InsertSceneNode() to do this, but make sure all of the relevant components
+        ///     and flags have been set beforehand.
+        ///     @par
         ///     The new scene node will be created with a new unique ID.
         SceneNode* CreateSceneNode();
 
@@ -60,15 +69,23 @@ namespace GT
         SceneNode* GetSceneNodeByID(uint64_t sceneNodeID);
 
 
-        /// Sets the event handler.
+        /// Steps the scene.
         ///
-        /// @param pEventHandler [in] A pointer to the new event handler.
-        void SetEventHandler(SceneEventHandler* pEventHandler);
+        /// @param deltaTimeInSeconds [in] The time between frames, in seconds.
+        void Step(double deltaTimeInSeconds);
 
-        /// Retrieves a pointer to the event handler.
-        ///
-        /// @return A pointer to the event handler.
-        SceneEventHandler* GetEventHandler();
+
+    private:
+
+        /// Caches a scene node insertion which will be done for real after the currently executing step.
+        void CacheInsertSceneNode(SceneNode* pSceneNode);
+
+        /// Caches a scene node removal which will be done for real after the currently executing step.
+        void CacheRemoveSceneNode(SceneNode* pSceneNode);
+
+        /// Caches a scene node deletion which will be done for real after the currently executing step.
+        void CacheDeleteSceneNode(SceneNode* pSceneNode);
+
 
 
     private:
@@ -76,8 +93,44 @@ namespace GT
         /// The scene node ID allocator for generating unique scene node IDs. This is serialized with the scene so that IDs are persistent.
         SceneNodeIDAllocator m_idAllocator;
 
-        /// A pointer to the scene state object.
-        SceneState* m_pState;
+        /// The list of scene nodes currently inside the scene. This is keyed by the ID of the scene node so that scene nodes can be found
+        /// relatively quickly by their ID.
+        GTLib::Map<uint64_t, SceneNode*> m_sceneNodes;
+
+
+        /// A reference to the scene's callback. The callback is used to allow the host application to customize how the scene works. The
+        /// callback is where a lot of the real work happens when stepping the scene.
+        SceneCallback &m_callback;
+
+        /// A pointer to the scene node allocator. This will never be null.
+        SceneNodeAllocator* m_pSceneNodeAllocator;
+
+        /// A pointer to the object that will step the scene. This will never be null.
+        SceneSteppingPipeline* m_pSteppingPipeline;
+
+
+        /// Synchronization lock for access to cached scene nodes.
+        GTLib::Mutex m_cacheLock;
+
+        /// The list of scene nodes that need to be inserted at the end of the step.
+        GTLib::Vector<SceneNode*> m_sceneNodesToInsert;
+
+        /// The list of scene nodes that need to be removed at the end of the step.
+        GTLib::Vector<SceneNode*> m_sceneNodesToRemove;
+
+        /// The list of scene nodes that need to be deleted at the end of the step.
+        GTLib::Vector<SceneNode*> m_sceneNodesToDelete;
+
+
+        /// Flags.
+        uint32_t m_flags;
+
+
+        ///////////////////////////////////////////
+        // Flags
+
+        static const uint32_t Flag_OwnsAllocator        = (1 << 0);
+        static const uint32_t Flag_OwnsSteppingPipeline = (1 << 1);
     };
 }
 

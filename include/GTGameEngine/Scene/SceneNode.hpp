@@ -5,6 +5,7 @@
 
 #include <GTGameEngine/Config.hpp>
 #include <GTGameEngine/Math.hpp>
+#include <GTGameEngine/AlignedType.hpp>
 #include <cstdint>
 
 #include "SceneNodeComponentTypes.hpp"
@@ -16,7 +17,7 @@ namespace GT
     class SceneNodeComponent;
 
     /// Class representing a scene node.
-    class alignas(16) SceneNode
+    class alignas(16) SceneNode : public SIMDAlignedType
     {
     public:
 
@@ -99,6 +100,31 @@ namespace GT
         void DetachComponentByIndex(unsigned int index);
 
         
+        /// Sets the scene node to static.
+        ///
+        /// @remarks
+        ///     When this is changed, the scene node will need to be removed from the scene and re-inserted before it will take effect.
+        ///     @par
+        ///     This is just an optimization, and does not strictly need to be set.
+        void SetStatic(bool isStatic);
+
+        /// Determines whether or not the scene node is static.
+        bool IsStatic() const;
+
+        /// Disables updates to the scene node.
+        ///
+        /// @remarks
+        ///     When this is changed, the scene node will need to be removed from the scene and re-inserted before it will take effect.
+        ///     @par
+        ///     This is just an optimization, and does not strictly need to be set. When updates are disabled, the scene state will not
+        ///     call any update events on the scene node.
+        ///     @par
+        ///     A lot of scene nodes can be disable updates, in particular decorative static meshes.
+        void SetUpdatesDisabled(bool updatesDisabled);
+
+        /// Determines whether or not scene node updates are enabled.
+        bool IsUpdatesDisabled() const;
+
 
         /// Retrieves the position of the scene node.
         vec4 GetPosition() const;
@@ -169,14 +195,15 @@ namespace GT
 
     public:
 
-        static const uint16_t _PositionChanged = (1 << 0);      //< [Internal Use Only] Set when the position has changed.
-        static const uint16_t _RotationChanged = (1 << 1);      //< [Internal Use Only] Set when the rotation has changed.
-        static const uint16_t _ScaleChanged    = (1 << 2);      //< [Internal Use Only] Set when the scale has changed.
-        static const uint16_t _IsDeleted       = (1 << 3);      //< [Internal Use Only] Set when the scene node is marked as deleted.
-        static const uint16_t _IsDisabled      = (1 << 4);      //< [Internal Use Only] Set when the scene node is marked as disabled. A disabled scene node is not stepped nor does it have events posted for it.
-        static const uint16_t _IsInScene       = (1 << 5);      //< [Internal Use Only] Set when the scene node is currently within it's scene.
+        static const uint16_t _PositionChanged  = (1 << 0);      //< [Internal Use Only] Set when the position has changed.
+        static const uint16_t _RotationChanged  = (1 << 1);      //< [Internal Use Only] Set when the rotation has changed.
+        static const uint16_t _ScaleChanged     = (1 << 2);      //< [Internal Use Only] Set when the scale has changed.
+        static const uint16_t _IsDeleted        = (1 << 3);      //< [Internal Use Only] Set when the scene node is marked as deleted.
+        static const uint16_t _IsDisabled       = (1 << 4);      //< [Internal Use Only] Set when the scene node is marked as disabled. A disabled scene node is not stepped nor does it have events posted for it.
+        static const uint16_t _IsInScene        = (1 << 5);      //< [Internal Use Only] Set when the scene node is currently within it's scene.
 
-        static const uint16_t IsStatic         = (1 << 15);      //< Set when the scene node is marked as static.
+        static const uint16_t _UpdatingDisabled = (1 << 14);     //< Set when the updates are disable on this scene node.
+        static const uint16_t _IsStatic         = (1 << 15);     //< Set when the scene node is marked as static.
     };
 }
 
