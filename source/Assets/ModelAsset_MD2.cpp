@@ -4,6 +4,7 @@
 
 #if defined(GT_BUILD_MD2)
 #include <GTGameEngine/FileSystem.hpp>
+#include "../external/easy_path/easy_path.h"
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -506,6 +507,17 @@ namespace GT
         assert(meshIndex == 0);
         {
             return m_materialOffsetCountPair;
+        }
+    }
+
+    void ModelAsset_MD2::GetMeshMaterialName(unsigned int meshIndex, unsigned int materialIndex, char* materialNameOut, unsigned int materialNameSizeInBytes) const
+    {
+        assert(meshIndex == 0);
+        assert(materialIndex == 0);
+        
+        if (materialNameOut != nullptr && materialNameSizeInBytes > 0)
+        {
+            easypath_strcpy(materialNameOut, materialNameSizeInBytes, "default");
         }
     }
 

@@ -108,6 +108,12 @@ namespace GT
         ///     the second integer is the number of elements that use the material.
         virtual const uint32_t* GetMeshMaterialIndexOffsetCountPairs(unsigned int meshIndex) const = 0;
 
+        /// Retrieves the name of the material at the given index for the given mesh.
+        ///
+        /// @param meshIndex     [in] The index of the mesh whose material is being retrieved.
+        /// @param materialIndex [in] The index of the material.
+        virtual void GetMeshMaterialName(unsigned int meshIndex, unsigned int materialIndex, char* materialNameOut, unsigned int materialNameSizeInBytes) const = 0;
+
 
         ////////////////////////////////////////
         // Animation Data

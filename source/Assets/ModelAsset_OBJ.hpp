@@ -78,6 +78,9 @@ namespace GT
         /// @copydoc ModelAsset::GetMaterialIndexOffsetCountPairs()
         const uint32_t* GetMeshMaterialIndexOffsetCountPairs(unsigned int meshIndex) const;
 
+        /// @copydoc ModelAsset::GetMeshMaterialName()
+        void GetMeshMaterialName(unsigned int meshIndex, unsigned int materialIndex, char* materialNameOut, unsigned int materialNameSizeInBytes) const;
+
 
         ////////////////////////////////////////
         // Animation Data

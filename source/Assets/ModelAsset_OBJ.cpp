@@ -6,6 +6,7 @@
 #include <GTGameEngine/FileSystem.hpp>
 #include <GTGameEngine/Math.hpp>
 #include <GTLib/Vector.hpp>
+#include "../external/easy_path/easy_path.h"
 
 // TODO: Correctly handle "usemtl" to properly handle multiple materials.
 
@@ -547,6 +548,17 @@ namespace GT
         assert(meshIndex == 0);
         {
             return m_materialOffsetCountPair;
+        }
+    }
+
+    void ModelAsset_OBJ::GetMeshMaterialName(unsigned int meshIndex, unsigned int materialIndex, char* materialNameOut, unsigned int materialNameSizeInBytes) const
+    {
+        assert(meshIndex == 0);
+        
+        if (materialNameOut != nullptr && materialNameSizeInBytes > 0)
+        {
+            // TODO: Implement this properly.
+            easypath_strcpy(materialNameOut, materialNameSizeInBytes, "default");
         }
     }
 
