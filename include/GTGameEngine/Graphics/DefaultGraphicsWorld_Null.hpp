@@ -39,14 +39,20 @@ namespace GT
         /// @copydoc GraphicsWorld::CreateTextureResource()
         HGraphicsResource CreateTextureResource(const GraphicsTextureResourceDesc &textureDesc);
 
+
         /// @copydoc GraphicsWorld::CreateMaterialResource()
         HGraphicsResource CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc);
+
+        /// @copydoc GraphicsWorld::SetMaterialResourceInputVariable()
+        void SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, HGraphicsResource hTexture);
+
 
         /// @copydoc GraphicsWorld::CreateMeshResource()
         HGraphicsResource CreateMeshResource(const GraphicsMeshResourceDesc &meshDesc);
 
         /// @copydoc GraphicsWorld::SetMeshResourceMaterial()
         void SetMeshResourceMaterial(HGraphicsResource hMeshResource, unsigned int materialSlot, HGraphicsResource hMaterialResource);
+
 
         /// @copydoc GraphicsWorld::DeleteResource()
         void DeleteResource(HGraphicsResource hResource);

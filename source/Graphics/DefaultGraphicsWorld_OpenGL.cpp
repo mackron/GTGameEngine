@@ -672,6 +672,7 @@ namespace GT
         return reinterpret_cast<HGraphicsResource>(pTexture);
     }
 
+
     HGraphicsResource DefaultGraphicsWorld_OpenGL::CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc)
     {
         this->MakeOpenGLContextCurrent();
@@ -682,10 +683,10 @@ namespace GT
         easymtl_material materialSource;
         if (easymtl_initfromexisting_nocopy(&materialSource, materialDesc.pData, materialDesc.dataSizeInBytes))
         {
-            unsigned int inputVariableCount = easymtl_getpublicinputvariablecount(&materialSource);
+            unsigned int inputVariableCount = easymtl_getpublicinputcount(&materialSource);
             for (unsigned int iInputVariable = 0; iInputVariable < inputVariableCount; ++iInputVariable)
             {
-                easymtl_input* pInputVariableSrc = easymtl_getpublicinputvariable(&materialSource, iInputVariable);
+                easymtl_input* pInputVariableSrc = easymtl_getpublicinputbyindex(&materialSource, iInputVariable);
                 if (pInputVariableSrc != nullptr)
                 {
                     easymtl_identifier* pIdentifier = easymtl_getidentifier(&materialSource, pInputVariableSrc->identifierIndex);
@@ -786,53 +787,6 @@ namespace GT
         char uniformsString[4096];
         easymtl_codegen_glsl_uniforms(&materialSource, uniformsString, 4096, NULL);
 
-#if 0
-        GTLib::String uniformsString;
-        for (size_t iUniform = 0; iUniform < inputVariableDescriptors.GetCount(); ++iUniform)
-        {
-            auto &uniformDesc = inputVariableDescriptors[iUniform];
-
-            GTLib::String uniformString("uniform ");
-
-            // Type.
-            bool isValid = true;
-            switch (uniformDesc.type)
-            {
-            case GraphicsMaterialVariableType::Float:       uniformString.Append("float "); break;
-            case GraphicsMaterialVariableType::Float2:      uniformString.Append("vec2  "); break;
-            case GraphicsMaterialVariableType::Float3:      uniformString.Append("vec3  "); break;
-            case GraphicsMaterialVariableType::Float4:      uniformString.Append("vec4  "); break;
-
-            case GraphicsMaterialVariableType::Integer:     uniformString.Append("int   "); break;
-            case GraphicsMaterialVariableType::Integer2:    uniformString.Append("ivec2 "); break;
-            case GraphicsMaterialVariableType::Integer3:    uniformString.Append("ivec3 "); break;
-            case GraphicsMaterialVariableType::Integer4:    uniformString.Append("ivec4 "); break;
-
-            case GraphicsMaterialVariableType::Texture1D:   uniformString.Append("sampler1D "); break;
-            case GraphicsMaterialVariableType::Texture2D:   uniformString.Append("sampler2D "); break;
-            case GraphicsMaterialVariableType::Texture3D:   uniformString.Append("sampler3D "); break;
-            case GraphicsMaterialVariableType::TextureCube: uniformString.Append("samplerCube "); break;
-
-            default:
-                {
-                    isValid = false;
-                    break;
-                }
-            }
-
-            if (isValid)
-            {
-                // Now we just add the name. The default values are not declared in the shader code - they are set at render time.
-                uniformString.Append(uniformDesc.name);
-                uniformString.Append(";\n");
-
-                // Now add the singular uniform string to the main uniforms string.
-                uniformsString.Append(uniformString);
-            }
-        }
-#endif
-
-
 
 
         // Vertex shader.
@@ -913,6 +867,16 @@ namespace GT
 
         return reinterpret_cast<HGraphicsResource>(pMaterialResource);
     }
+
+    void DefaultGraphicsWorld_OpenGL::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, HGraphicsResource hTexture)
+    {
+        auto pValueDest = reinterpret_cast<HGraphicsResource*>(this->GetMaterialInputVariableBufferPtr(hMaterialResource, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = hTexture;
+        }
+    }
+
 
     HGraphicsResource DefaultGraphicsWorld_OpenGL::CreateMeshResource(const GraphicsMeshResourceDesc &meshDesc)
     {
@@ -1219,7 +1183,7 @@ namespace GT
     }
     void DefaultGraphicsWorld_OpenGL::SetMeshObjectMaterialInputVariable(HGraphicsObject hMeshObject, unsigned int materialSlot, const char* variableName, HGraphicsResource hTexture)
     {
-        auto pValueDest = reinterpret_cast<HGraphicsObject*>(this->GetMeshObjectMaterialInputVariableBufferPtr(hMeshObject, materialSlot, variableName));
+        auto pValueDest = reinterpret_cast<HGraphicsResource*>(this->GetMeshObjectMaterialInputVariableBufferPtr(hMeshObject, materialSlot, variableName));
         if (pValueDest != nullptr)
         {
             pValueDest[0] = hTexture;
@@ -1819,6 +1783,21 @@ namespace GT
                         return reinterpret_cast<char*>(materialSlot.valuesBuffer.GetDataPointer()) + bufferOffset;
                     }
                 }
+            }
+        }
+
+        return nullptr;
+    }
+
+    void* DefaultGraphicsWorld_OpenGL::GetMaterialInputVariableBufferPtr(HGraphicsResource hMaterialResource, const char* variableName) const
+    {
+        auto pMaterialResource = reinterpret_cast<MaterialResource_OpenGL*>(hMaterialResource);
+        if (pMaterialResource != nullptr)
+        {
+            GLuint bufferOffset;
+            if (pMaterialResource->inputVariables.GetVariableBufferOffsetByName(variableName, bufferOffset))
+            {
+                return reinterpret_cast<char*>(pMaterialResource->inputVariables.valuesBuffer.GetDataPointer()) + bufferOffset;
             }
         }
 

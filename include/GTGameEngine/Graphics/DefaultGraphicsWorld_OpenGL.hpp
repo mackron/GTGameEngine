@@ -43,14 +43,20 @@ namespace GT
         /// @copydoc GraphicsWorld::CreateTextureResource()
         HGraphicsResource CreateTextureResource(const GraphicsTextureResourceDesc &textureDesc);
 
+
         /// @copydoc GraphicsWorld::CreateMaterialResource()
         HGraphicsResource CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc);
+
+        /// @copydoc GraphicsWorld::SetMaterialResourceInputVariable()
+        void SetMaterialResourceInputVariable(HGraphicsObject hMeshObject, const char* variableName, HGraphicsResource hTexture);
+
 
         /// @copydoc GraphicsWorld::CreateMeshResource()
         HGraphicsResource CreateMeshResource(const GraphicsMeshResourceDesc &meshDesc);
 
         /// @copydoc GraphicsWorld::SetMeshResourceMaterial()
         void SetMeshResourceMaterial(HGraphicsResource hMeshResource, unsigned int materialSlot, HGraphicsResource hMaterialResource);
+
 
         /// @copydoc GraphicsWorld::DeleteResource()
         void DeleteResource(HGraphicsResource hResource);
@@ -221,6 +227,12 @@ namespace GT
         /// @remarks
         ///     This is used when setting the value of a material input variable for the given mesh object.
         void* GetMeshObjectMaterialInputVariableBufferPtr(HGraphicsObject hMeshObject, unsigned int materialSlotIndex, const char* variableName) const;
+
+        /// Helper for retrieving a pointer to the buffer that contains the value of the given variable for the given material.
+        ///
+        /// @remarks
+        ///     This is used when setting the value of a material input variable for the given mesh object.
+        void* GetMaterialInputVariableBufferPtr(HGraphicsResource hMaterialResource, const char* variableName) const;
 
 
         /// Creates a shader object from the given shader strings.

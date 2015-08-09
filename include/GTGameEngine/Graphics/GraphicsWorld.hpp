@@ -7,7 +7,6 @@
 #include "GraphicsWorldObject.hpp"
 #include "../Math.hpp"
 #include "../GUI/GUIContext.hpp"
-#include "../SpirV.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
@@ -66,31 +65,6 @@ namespace GT
         Boolean     = 13,
     };
 
-
-    inline GraphicsMaterialVariableType ToMaterialVariableType(SpirVCommonTypeID typeSpirV)
-    {
-        switch (typeSpirV)
-        {
-        case SpirVCommonTypeID::Float:       return GraphicsMaterialVariableType::Float;
-        case SpirVCommonTypeID::Float2:      return GraphicsMaterialVariableType::Float2;
-        case SpirVCommonTypeID::Float3:      return GraphicsMaterialVariableType::Float3;
-        case SpirVCommonTypeID::Float4:      return GraphicsMaterialVariableType::Float4;
-
-        case SpirVCommonTypeID::Integer:     return GraphicsMaterialVariableType::Integer;
-        case SpirVCommonTypeID::Integer2:    return GraphicsMaterialVariableType::Integer2;
-        case SpirVCommonTypeID::Integer3:    return GraphicsMaterialVariableType::Integer3;
-        case SpirVCommonTypeID::Integer4:    return GraphicsMaterialVariableType::Integer4;
-
-        case SpirVCommonTypeID::Boolean:     return GraphicsMaterialVariableType::Boolean;
-
-        case SpirVCommonTypeID::Texture1D:   return GraphicsMaterialVariableType::Texture1D;
-        case SpirVCommonTypeID::Texture2D:   return GraphicsMaterialVariableType::Texture2D;
-        case SpirVCommonTypeID::Texture3D:   return GraphicsMaterialVariableType::Texture3D;
-        case SpirVCommonTypeID::TextureCube: return GraphicsMaterialVariableType::TextureCube;
-
-        default: return GraphicsMaterialVariableType::Unknown;
-        }
-    }
 
     /// Structure describing a texture resource.
     struct GraphicsTextureResourceDesc
@@ -187,7 +161,7 @@ namespace GT
 
 
         /// The list of material resources to use for each material slot.
-        const HGraphicsResource* materials;
+        HGraphicsResource* materials;
 
         /// A pointer to the list of integers that define the starting index for each material.
         const uint32_t* materialIndexOffsetCountPairs;
@@ -239,12 +213,18 @@ namespace GT
         ///     allocated internally, but it's specific contents will be left undefined (until it has been rendered).
         virtual HGraphicsResource CreateTextureResource(const GraphicsTextureResourceDesc &textureDesc) = 0;
 
+
         /// Creates a material resource.
         ///
         /// @remarks
         ///     Materials are immutable which means however they are defined by this method is how the material is defined for it's life. If a
         ///     change is required, the material must be deleted and re-created.
         virtual HGraphicsResource CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc) = 0;
+
+        /// Sets the value of a material resource's input variable.
+        virtual void SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, HGraphicsResource hTexture) = 0;
+
+
 
         /// Creates a mesh resource.
         virtual HGraphicsResource CreateMeshResource(const GraphicsMeshResourceDesc &meshDesc) = 0;

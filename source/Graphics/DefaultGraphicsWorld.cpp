@@ -69,10 +69,17 @@ namespace GT
         return m_pGraphicsWorldImpl->CreateTextureResource(textureDesc);
     }
 
+
     HGraphicsResource DefaultGraphicsWorld::CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc)
     {
         return m_pGraphicsWorldImpl->CreateMaterialResource(materialDesc);
     }
+
+    void DefaultGraphicsWorld::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, HGraphicsResource hTexture)
+    {
+        return m_pGraphicsWorldImpl->SetMaterialResourceInputVariable(hMaterialResource, variableName, hTexture);
+    }
+
 
     HGraphicsResource DefaultGraphicsWorld::CreateMeshResource(const GraphicsMeshResourceDesc &meshDesc)
     {
@@ -83,6 +90,7 @@ namespace GT
     {
         return m_pGraphicsWorldImpl->SetMeshResourceMaterial(hMeshResource, materialSlot, hMaterialResource);
     }
+
 
     void DefaultGraphicsWorld::DeleteResource(HGraphicsResource hResource)
     {

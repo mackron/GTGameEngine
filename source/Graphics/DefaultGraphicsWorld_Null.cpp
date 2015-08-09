@@ -35,12 +35,21 @@ namespace GT
         return 0;
     }
 
+
     HGraphicsResource DefaultGraphicsWorld_Null::CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc)
     {
         (void)materialDesc;
 
         return 0;
     }
+
+    void DefaultGraphicsWorld_Null::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, HGraphicsResource hTexture)
+    {
+        (void)hMaterialResource;
+        (void)variableName;
+        (void)hTexture;
+    }
+
 
     HGraphicsResource DefaultGraphicsWorld_Null::CreateMeshResource(const GraphicsMeshResourceDesc &meshDesc)
     {
@@ -55,6 +64,7 @@ namespace GT
         (void)materialSlot;
         (void)hMaterialResource;
     }
+
 
     void DefaultGraphicsWorld_Null::DeleteResource(HGraphicsResource hResource)
     {
