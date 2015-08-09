@@ -71,6 +71,9 @@ namespace GT
         /// @return A pointer to the attached component with the given type, or null if a component of the given type is not attached to the scene node.
         SceneNodeComponent* GetComponentByTypeID(SceneNodeComponentTypeID typeID);
 
+        
+
+
         /// Attaches the given component.
         ///
         /// @param component [in] A reference to the component to add.
@@ -80,6 +83,7 @@ namespace GT
         /// @remarks
         ///     This will fail if a component of the same type is already attached.
         bool AttachComponent(SceneNodeComponent &component);
+        bool AttachComponent(SceneNodeComponent* component) { assert(component != nullptr); return this->AttachComponent(*component); }
 
         /// Detaches the given component.
         ///
@@ -144,6 +148,17 @@ namespace GT
 
         /// Sets the scale of the scene node.
         void SetScale(const vec4 &scale);
+
+
+
+        ///////////////////////////////////
+        // Helpers
+
+        template <typename T>
+        T* GetComponent()
+        {
+            return reinterpret_cast<T*>(this->GetComponentByTypeID(T::GetTypeID()));
+        }
 
 
 
