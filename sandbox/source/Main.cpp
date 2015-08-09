@@ -3,12 +3,166 @@
 #include <GTGameEngine/GameContext.hpp>
 #include <GTGameEngine/GameState.hpp>
 #include <GTGameEngine/Graphics/DefaultGraphicsWorld.hpp>
+#include <GTGameEngine/Graphics/GraphicsAssetResourceManager.hpp>
 #include <GTGameEngine/Assets/ModelAsset.hpp>
 #include <GTGameEngine/Assets/ImageAsset.hpp>
 #include <GTGameEngine/Assets/MaterialAsset.hpp>
+#include <GTGameEngine/Scene/Scene.hpp>
+#include <GTGameEngine/Scene/SceneCallback.hpp>
+#include <GTGameEngine/Scene/SceneNode.hpp>
+#include <GTGameEngine/Scene/SceneNodeComponent_Graphics.hpp>
 #include <GTGameEngine/ConfigFile.hpp>
-#include <GTGameEngine/external/spirv.h>
 #include <GTLib/IO.hpp>
+
+class SandboxSceneCallback : public GT::SceneCallback
+{
+public:
+
+    SandboxSceneCallback()
+        : m_pGraphicsWorld(nullptr),
+          m_hTestMeshResource(0)
+    {
+    }
+
+
+    void SetGraphicsWorld(GT::GraphicsWorld* pGraphicsWorld)
+    {
+        m_pGraphicsWorld = pGraphicsWorld;
+    }
+
+    void SetTestMeshResource(GT::HGraphicsResource hTestMeshResource)
+    {
+        m_hTestMeshResource = hTestMeshResource;
+    }
+
+
+    void OnSceneNodeInserted(GT::SceneNode* pSceneNode)
+    {
+        assert(pSceneNode != nullptr);
+
+#if defined(GT_BUILD_COMPONENT_GRAPHICS)
+        auto pGraphicsComponent = pSceneNode->GetComponent<GT::SceneNodeComponent_Graphics>();
+        if (pGraphicsComponent != nullptr)
+        {
+            // TODO: Create and insert the graphics object.
+
+            auto hMeshObject = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
+            m_pGraphicsWorld->SetObjectPosition(hMeshObject, pSceneNode->GetPosition());
+
+            pGraphicsComponent->SetMeshObject(hMeshObject);
+        }
+#else
+        (void)pSceneNode;
+#endif
+    }
+
+    void OnSceneNodeRemoved(GT::SceneNode* pSceneNode)
+    {
+        assert(pSceneNode != nullptr);
+
+#if defined(GT_BUILD_COMPONENT_GRAPHICS)
+        auto pGraphicsComponent = pSceneNode->GetComponent<GT::SceneNodeComponent_Graphics>();
+        if (pGraphicsComponent != nullptr)
+        {
+            // TODO: Remove and delete the graphics object.
+
+            m_pGraphicsWorld->DeleteObject(pGraphicsComponent->GetMeshObject());
+            pGraphicsComponent->SetMeshObject(0);
+        }
+#else
+        (void)pSceneNode;
+#endif
+    }
+
+    void OnSceneNodeTransformed(GT::SceneNode* pSceneNode, const GT::vec4 &worldPosition, const GT::quat &worldRotation, const GT::vec4 &worldScale)
+    {
+        assert(pSceneNode != nullptr);
+
+#if defined(GT_BUILD_COMPONENT_GRAPHICS)
+        auto pGraphicsComponent = pSceneNode->GetComponent<GT::SceneNodeComponent_Graphics>();
+        if (pGraphicsComponent != nullptr)
+        {
+            // TODO: Update the position of the graphics object.
+
+            m_pGraphicsWorld->SetObjectPosition(pGraphicsComponent->GetMeshObject(), worldPosition);
+        }
+#else
+        (void)pSceneNode;
+#endif
+    }
+
+
+    void UpdateSceneNode(GT::SceneNode* pSceneNode, double deltaTimeInSeconds)
+    {
+        assert(pSceneNode != nullptr);
+
+        (void)pSceneNode;
+        (void)deltaTimeInSeconds;
+    }
+
+    void PostUpdateSceneNode(GT::SceneNode* pSceneNode, double deltaTimeInSeconds)
+    {
+        assert(pSceneNode != nullptr);
+
+        (void)pSceneNode;
+        (void)deltaTimeInSeconds;
+    }
+
+    void UpdateSceneNodePhysicsTransform(GT::SceneNode* pSceneNode)
+    {
+        assert(pSceneNode != nullptr);
+
+        (void)pSceneNode;
+    }
+
+
+    bool DoesSceneNodeRequireUpdate(GT::SceneNode* pSceneNode)
+    {
+        assert(pSceneNode != nullptr);
+
+        (void)pSceneNode;
+        return true;
+    }
+
+    bool DoesSceneNodeRequirePostUpdate(GT::SceneNode* pSceneNode)
+    {
+        assert(pSceneNode != nullptr);
+
+        (void)pSceneNode;
+        return true;
+    }
+
+    bool IsSceneNodeStatic(GT::SceneNode* pSceneNode)
+    {
+        assert(pSceneNode != nullptr);
+
+        (void)pSceneNode;
+        return false;
+    }
+
+    bool IsPhysicsObject(GT::SceneNode* pSceneNode)
+    {
+        assert(pSceneNode != nullptr);
+
+#if defined(GT_BUILD_COMPONENT_DYNAMICS)
+        (void)pSceneNode;
+        return true;
+#else
+        (void)pSceneNode;
+        return false;
+#endif
+    }
+
+
+private:
+
+    /// The graphics world for rendering.
+    GT::GraphicsWorld* m_pGraphicsWorld;
+
+
+    /// TEMP: The mesh resource to use for graphics components.
+    GT::HGraphicsResource m_hTestMeshResource;
+};
 
 class SandboxGameState : public GT::GameState
 {
@@ -17,9 +171,11 @@ public:
     /// Constructor.
     SandboxGameState()
         : m_pGraphicsAPI(nullptr), 
-          m_pGraphicsWorld(nullptr),
+          m_pGraphicsWorld(nullptr), m_pGraphicsAssetResourceManager(nullptr),
           m_hMainWindow(0),
-          m_isShiftKeyDown(false)
+          m_isShiftKeyDown(false),
+          m_sceneCallback(),
+          m_scene(m_sceneCallback)
     {
     }
 
@@ -101,6 +257,7 @@ public:
         gameContext.ShowWindow(m_hMainWindow);
 
 
+#if 0
         m_pTestMeshAsset = reinterpret_cast<GT::ModelAsset*>(gameContext.GetEngineContext().LoadAsset("data/cube.obj"));
         if (m_pTestMeshAsset == nullptr)
         {
@@ -118,6 +275,7 @@ public:
         {
             return false;
         }
+#endif
 
 
         m_pGraphicsAPI = gameContext.GetEngineContext().GetBestGraphicsAPI();
@@ -130,7 +288,7 @@ public:
                 m_pGraphicsWorld->SetRenderTargetProjectionAndView(m_hWindowRT, GT::mat4::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.0f), GT::mat4::translate(GT::mat4::identity, GT::vec4(0, 0, -5, 0.0f)));
 
 
-
+#if 0
                 // Textures.
                 GT::GraphicsTextureResourceDesc testTextureDesc;
                 testTextureDesc.width = m_pTestImageAsset->GetImageWidth();
@@ -164,11 +322,28 @@ public:
 
                 m_hTestMeshObject0 = m_pGraphicsWorld->CreateMeshObject(m_hTestMeshResource);
                 m_pGraphicsWorld->SetMeshObjectMaterial(m_hTestMeshObject0, 0, m_hTestMaterial0);
-                m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "DiffuseColor", 0.75f, 0.75f, 1.0f, 1.0f);
+                m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "DiffuseColor", 1.0f, 1.0f, 1.0f, 1.0f);
                 m_pGraphicsWorld->SetMeshObjectMaterialInputVariable(m_hTestMeshObject0, 0, "DiffuseMap", m_hTestTexture0);
                 m_pGraphicsWorld->SetObjectPosition(m_hTestMeshObject0, GT::vec4(0, 0, 0, 0));
+#endif
             }
+
+            m_pGraphicsAssetResourceManager = new GT::GraphicsAssetResourceManager(*m_pGraphicsWorld, gameContext.GetEngineContext().GetAssetLibrary());
+            m_pTestModelResource = m_pGraphicsAssetResourceManager->LoadModel("data/cube.obj");
         }
+
+
+        m_sceneCallback.SetGraphicsWorld(m_pGraphicsWorld);
+        m_sceneCallback.SetTestMeshResource(m_pTestModelResource->GetMeshByIndex(0)->GetGraphicsResource());
+
+        // Test scene node.
+        auto pGraphicsComponent = new GT::SceneNodeComponent_Graphics(m_pGraphicsWorld);
+        pGraphicsComponent->SetModel("data/cube.obj", gameContext.GetEngineContext());
+
+        m_pTestSceneNode = m_scene.CreateSceneNode();
+        m_pTestSceneNode->AttachComponent(pGraphicsComponent);
+        m_pTestSceneNode->SetPosition(GT::vec4(-2, 0, 0, 0));
+        m_scene.InsertSceneNode(m_pTestSceneNode);
 
 
         return true;
@@ -226,6 +401,9 @@ private:
     /// The default graphics world.
     GT::DefaultGraphicsWorld* m_pGraphicsWorld;
 
+    /// The graphics resource manager.
+    GT::GraphicsAssetResourceManager* m_pGraphicsAssetResourceManager; 
+
 
     /// The main window.
     GT::HWindow m_hMainWindow;
@@ -237,17 +415,31 @@ private:
     bool m_isShiftKeyDown;
 
 
-    GT::ModelAsset* m_pTestMeshAsset;
-    GT::MaterialAsset* m_pTestMaterialAsset;
-    GT::ImageAsset* m_pTestImageAsset;
+    //GT::ModelAsset* m_pTestMeshAsset;
+    //GT::MaterialAsset* m_pTestMaterialAsset;
+    //GT::ImageAsset* m_pTestImageAsset;
 
-    GT::HGraphicsResource m_hTestTexture0;
-    GT::HGraphicsResource m_hTestMaterial0;
+    //GT::HGraphicsResource m_hTestTexture0;
+    //GT::HGraphicsResource m_hTestMaterial0;
 
-    GT::HGraphicsResource m_hTestMeshResource;
-    GT::HGraphicsObject   m_hTestMeshObject0;
-    GT::HGraphicsObject   m_hTestMeshObject1;
-    GT::HGraphicsObject   m_hTestMeshObject2;
+    //GT::HGraphicsResource m_hTestMeshResource;
+    //GT::HGraphicsObject   m_hTestMeshObject0;
+    //GT::HGraphicsObject   m_hTestMeshObject1;
+    //GT::HGraphicsObject   m_hTestMeshObject2;
+
+
+    /// The scene callback.
+    SandboxSceneCallback m_sceneCallback;
+
+    /// The scene.
+    GT::Scene m_scene;
+
+
+    /// Test scene node.
+    GT::SceneNode* m_pTestSceneNode;
+
+    /// Test model resource.
+    GT::GraphicsAssetResource_Model* m_pTestModelResource;
 };
 
 
