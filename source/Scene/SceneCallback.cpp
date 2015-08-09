@@ -15,6 +15,10 @@ namespace GT
     {
     }
 
+    void SceneCallback::OnSceneNodeTransformed(SceneNode* pSceneNode, const vec4 &, const quat &, const vec4 &)
+    {
+    }
+
 
 
     ////////////////////////////////////////////////////////////

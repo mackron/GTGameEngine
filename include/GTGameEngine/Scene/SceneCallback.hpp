@@ -3,6 +3,8 @@
 #ifndef __GT_SceneCallback_hpp_
 #define __GT_SceneCallback_hpp_
 
+#include "../Math.hpp"
+
 namespace GT
 {
     class Scene;
@@ -34,6 +36,20 @@ namespace GT
         ///     If the scene is being stepped at the time the scene node is inserted, this event will be
         ///     deferred until the end of the step.
         virtual void OnSceneNodeRemoved(SceneNode* pSceneNode);
+
+        /// Called after a scene node has had it's transformation changed.
+        ///
+        /// @param pSceneNode    [in] A pointer to the scene node that has been transformed.
+        /// @param worldPosition [in] The absolute position of the scene node.
+        /// @param worldRotation [in] The absolute rotation of the scene node.
+        /// @param worldScale    [in] The absolute scale of the scene node.
+        ///
+        /// @remarks
+        ///     Use pSceneNode->GetPosition(), etc. to retrieve the local transformation (relative to the parent node).
+        ///     @par
+        ///     The default implementation does nothing, but this is where the graphical representation of the node will
+        ///     typically want to be updated.
+        virtual void OnSceneNodeTransformed(SceneNode* pSceneNode, const vec4 &worldPosition, const quat &worldRotation, const vec4 &worldScale);
 
 
 
