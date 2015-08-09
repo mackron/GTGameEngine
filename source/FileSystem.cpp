@@ -274,4 +274,16 @@ namespace GT
 
         return false;
     }
+
+    bool FileSystem::FindAbsolutePath(const char* filePath, const char* highestPriorityBasePath, GTLib::String &absolutePathOut) const
+    {
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_findabsolutepath_explicitbase(m_pVFS, filePath, highestPriorityBasePath, absolutePath, EASYVFS_MAX_PATH))
+        {
+            absolutePathOut = absolutePath;
+            return true;
+        }
+
+        return false;
+    }
 }
