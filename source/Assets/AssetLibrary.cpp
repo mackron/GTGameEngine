@@ -43,6 +43,12 @@ namespace GT
     }
 
 
+    FileSystem & AssetLibrary::GetFileSystem() const
+    {
+        return m_fileSystem;
+    }
+
+
     Asset* AssetLibrary::Load(const char* filePathOrIdentifier, AssetType explicitAssetType)
     {
         // When an asset is cached, the absolute path is used to retrieve the cached object. It is possible, however, for an asset to not actually

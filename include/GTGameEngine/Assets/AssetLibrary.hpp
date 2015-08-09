@@ -39,6 +39,10 @@ namespace GT
         void Shutdown();
 
 
+        /// Retrieves a reference to the asset library that is being used to load the asset files.
+        FileSystem & GetFileSystem() const;
+
+
         /// Loads an asset using the give file path.
         ///
         /// @param filePathOrIdentifier [in] The absolute or relative file path of the asset to load if it is backed by a file, or a unique identifier if the asset is not backed by a file.
