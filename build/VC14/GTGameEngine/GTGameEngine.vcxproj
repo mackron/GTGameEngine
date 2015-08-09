@@ -145,6 +145,8 @@
     <ClCompile Include="..\..\..\source\Graphics\GraphicsAPI.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\GraphicsAPI_Null.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\GraphicsAPI_OpenGL.cpp" />
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsAssetResourceManager.cpp" />
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsAssetResources.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\GraphicsWorld.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\GraphicsWorldObject.cpp" />
     <ClCompile Include="..\..\..\source\GUI\GUIContext.cpp" />
@@ -168,6 +170,9 @@
     <ClCompile Include="..\..\..\source\Scene\SceneNodeAllocator.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneNodeAllocator_Default.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneNodeComponent.cpp" />
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeComponentDescriptor.cpp" />
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeComponentDescriptor_Graphics.cpp" />
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeComponent_Graphics.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneNodeIDAllocator.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneSteppingPipeline.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneSteppingPipeline_Default.cpp" />
@@ -223,6 +228,8 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI_Null.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI_OpenGL.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAssetResourceManager.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAssetResources.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsWorld.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsWorldObject.hpp" />
@@ -249,7 +256,10 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeAllocator.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeAllocator_Default.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponent.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentDescriptor.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentDescriptor_Graphics.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentTypes.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponent_Graphics.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeIDAllocator.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneSteppingPipeline.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneSteppingPipeline_Default.hpp" />

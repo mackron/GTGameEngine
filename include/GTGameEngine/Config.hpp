@@ -33,6 +33,8 @@
 #define GT_ENABLE_D3D12				0
 #define GT_ENABLE_OPENGL            1
 
+
+
 // Asset Management
 //
 // The engine has built-in support for various types of assets. Whether or not support for these assets should be included in the build can
@@ -55,6 +57,22 @@
 
 
 
+// Components
+//
+// The engine includes implementations of common component types, however they are all optional. Note, however, that disabling
+// these components from the build will affect anything that depends on them. For example, these are the only components that
+// the sandbox knows about so it cannot do rendering without the default graphics component, physics without the default dynamics
+// component, etc.
+//
+// In most cases these will work just fine, however if your game has unique requirements you might be better off rolling out
+// your own equivalents. You'd still want to have a very good reason to do this, though.
+
+#define GT_ENABLE_COMPONENT_EVENTS      1
+#define GT_ENABLE_COMPONENT_SCRIPT      1
+#define GT_ENABLE_COMPONENT_GRAPHICS    1
+#define GT_ENABLE_COMPONENT_DYNAMICS    1
+
+
 
 //////////////////////////////////////////////////
 // Non-Configurable Section
@@ -65,6 +83,8 @@
 #if (defined(GT_ENABLE_EDITOR) && GT_ENABLE_EDITOR == 1)
 #define GT_BUILD_EDITOR
 #endif
+
+
 
 // Vulkan Support.
 #if (defined(GT_ENABLE_VULKAN) && GT_ENABLE_VULKAN == 1)
@@ -128,6 +148,29 @@
     defined(GT_BUILD_WAV)  || \
     defined(GT_BUILD_OGG)
 #define GT_BUILD_DEFAULT_ASSETS
+#endif
+
+
+
+// Components
+#if defined(GT_ENABLE_COMPONENT_EVENTS) && GT_ENABLE_COMPONENT_EVENTS == 1
+#define GT_BUILD_COMPONENT_EVENTS
+#endif
+#if defined(GT_ENABLE_COMPONENT_SCRIPT) && GT_ENABLE_COMPONENT_SCRIPT == 1
+#define GT_BUILD_COMPONENT_SCRIPT
+#endif
+#if defined(GT_ENABLE_COMPONENT_GRAPHICS) && GT_ENABLE_COMPONENT_GRAPHICS == 1
+#define GT_BUILD_COMPONENT_GRAPHICS
+#endif
+#if defined(GT_ENABLE_COMPONENT_DYNAMICS) && GT_ENABLE_COMPONENT_DYNAMICS == 1
+#define GT_BUILD_COMPONENT_DYNAMICS
+#endif
+
+#if defined(GT_ENABLE_COMPONENT_EVENTS)   || \
+    defined(GT_ENABLE_COMPONENT_SCRIPT)   || \
+    defined(GT_ENABLE_COMPONENT_GRAPHICS) || \
+    defined(GT_ENABLE_COMPONENT_DYNAMICS)
+#define GT_BUILD_DEFAULT_COMPONENTS
 #endif
 
 

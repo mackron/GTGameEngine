@@ -575,6 +575,21 @@
     <ClCompile Include="..\..\..\source\Scene\SceneSteppingPipeline_Default.cpp">
       <Filter>Source Files\Scene</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeComponent_Graphics.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeComponentDescriptor.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeComponentDescriptor_Graphics.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsAssetResourceManager.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsAssetResources.cpp">
+      <Filter>Source Files\Graphics</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp">
@@ -1095,6 +1110,21 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneSteppingPipeline_Default.hpp">
       <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponent_Graphics.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentDescriptor.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentDescriptor_Graphics.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAssetResourceManager.hpp">
+      <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAssetResources.hpp">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

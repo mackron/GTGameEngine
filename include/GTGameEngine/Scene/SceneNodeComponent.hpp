@@ -4,6 +4,7 @@
 #define __GT_SceneNodeComponent_hpp_
 
 #include "SceneNodeComponentTypes.hpp"
+#include "SceneNodeComponentDescriptor.hpp"
 
 namespace GT
 {
