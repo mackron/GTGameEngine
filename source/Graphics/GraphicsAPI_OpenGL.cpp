@@ -16,8 +16,7 @@ namespace GT
           m_pfd(),
 #endif
           m_majorVersion(0),
-          m_minorVersion(0),
-          m_extensions()
+          m_minorVersion(0)
     {
     }
 
@@ -172,13 +171,6 @@ namespace GT
 
     void GraphicsAPI_OpenGL::Shutdown()
     {
-        for (size_t iExtension = 0; iExtension < m_extensions.GetCount(); ++iExtension)
-        {
-            free(const_cast<void*>(reinterpret_cast<const void*>(m_extensions[iExtension])));
-        }
-        m_extensions.Clear();
-
-
 #if defined(GT_PLATFORM_WINDOWS)
         if (this->DeleteContext != nullptr)
         {
@@ -209,13 +201,69 @@ namespace GT
 
     bool GraphicsAPI_OpenGL::IsExtensionSupported(const char* extension) const
     {
-        for (size_t iExtension = 0; iExtension < m_extensions.GetCount(); ++iExtension)
+        if (this->GetStringi != nullptr)
         {
-            if (strcmp(m_extensions[iExtension], extension) == 0)
+            // Use the new way.
+            GLuint extensionCount = 0;
+            this->GetIntegerv(GL_NUM_EXTENSIONS, reinterpret_cast<GLint*>(&extensionCount));
+
+            for (GLuint iExtension = 0; iExtension < extensionCount; ++iExtension)
             {
-                return true;
+                const char* extensionSrc = reinterpret_cast<const char*>(this->GetStringi(GL_EXTENSIONS, iExtension));
+                if (GTLib::Strings::Equal<false>(extensionSrc, extension))
+                {
+                    return true;
+                }
             }
         }
+        else
+        {
+            // Use the old way.
+            const char* extensions = reinterpret_cast<const char*>(this->GetString(GL_EXTENSIONS));
+            if (extensions != nullptr)
+            {
+                GTLib::Strings::WhitespaceTokenizerUTF8 iExtension(extensions);
+                while (iExtension)
+                {
+                    if (GTLib::Strings::Equal<false>(iExtension.start, iExtension.GetSizeInTs(), extension))
+                    {
+                        return true;
+                    }
+
+                    ++iExtension;
+                }
+            }
+        }
+
+
+        // Not a standard extension, but might be a platform-specific one.
+#if defined(GT_PLATFORM_WINDOWS)
+        const char* extensionsWGL = nullptr;
+        if (GetExtensionsStringARB != nullptr)
+        {
+            extensionsWGL = GetExtensionsStringARB(m_hDummyDC);
+        }
+
+        if (extensionsWGL == nullptr && GetExtensionsStringEXT != nullptr)
+        {
+            extensionsWGL = GetExtensionsStringEXT();
+        }
+
+
+        if (extensionsWGL != nullptr)
+        {
+            GTLib::Strings::WhitespaceTokenizerUTF8 iExtension(extensionsWGL);
+            while (iExtension)
+            {
+                if (GTLib::Strings::Equal<false>(iExtension.start, iExtension.GetSizeInTs(), extension))
+                {
+                    return true;
+                }
+
+                ++iExtension;
+            }
+        }
+#endif
 
         return false;
     }
@@ -258,7 +306,7 @@ namespace GT
         {
             proc = this->GetProcAddress(procName);
         }
-            
+
         return proc;
 #endif
 
@@ -268,79 +316,10 @@ namespace GT
 
     bool GraphicsAPI_OpenGL::InitExtensions()
     {
-        if (this->GetStringi != nullptr)
-        {
-            // Use the new way.
-            GLuint extensionCount = 0;
-            this->GetIntegerv(GL_NUM_EXTENSIONS, reinterpret_cast<GLint*>(&extensionCount));
-
-            for (GLuint iExtension = 0; iExtension < extensionCount; ++iExtension)
-            {
-                const char* extensionStrSource = reinterpret_cast<const char*>(this->GetStringi(GL_EXTENSIONS, iExtension));
-
-                size_t extensionStrLength = strlen(extensionStrSource);
-                char* extensionStr = reinterpret_cast<char*>(malloc(extensionStrLength + 1));  // +1 for null terminator.
-                memcpy(extensionStr, extensionStrSource, extensionStrLength);
-                extensionStr[extensionStrLength] = '\0';
-
-
-                m_extensions.PushBack(extensionStr);
-            }
-        }
-        else
-        {
-            // Use the old way.
-            const char* extensions = reinterpret_cast<const char*>(this->GetString(GL_EXTENSIONS));
-            if (extensions != nullptr)
-            {
-                GTLib::Strings::WhitespaceTokenizerUTF8 extension(extensions);
-                while (extension)
-                {
-                    char* extensionStr = reinterpret_cast<char*>(malloc(extension.GetSizeInBytes() + 1));  // +1 for null terminator.
-                    extension.Copy(extensionStr);
-
-                    m_extensions.PushBack(extensionStr);
-
-                    ++extension;
-                }
-            }
-        }
-
-
 #if defined(GT_PLATFORM_WINDOWS)
-        // WGL extensions.
-        const char* extensionsWGL = nullptr;
-
-        auto _wglGetExtensionsStringARB = reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGARBPROC>(this->GetProcAddress("wglGetExtensionsStringARB"));
-        if (_wglGetExtensionsStringARB != nullptr)
-        {
-            extensionsWGL = reinterpret_cast<const char*>(_wglGetExtensionsStringARB(m_hDummyDC));
-        }
-        else
-        {
-            auto _wglGetExtensionsStringEXT = reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGEXTPROC>(this->GetProcAddress("wglGetExtensionsStringARB"));
-            if (_wglGetExtensionsStringEXT != nullptr)
-            {
-                extensionsWGL = reinterpret_cast<const char*>(_wglGetExtensionsStringEXT());
-            }
-        }
-
-
-        if (extensionsWGL != nullptr)
-        {
-            GTLib::Strings::WhitespaceTokenizerUTF8 extension(extensionsWGL);
-            while (extension)
-            {
-                char* extensionStr = reinterpret_cast<char*>(malloc(extension.GetSizeInBytes() + 1));  // +1 for null terminator.
-                extension.Copy(extensionStr);
-
-                m_extensions.PushBack(extensionStr);
-
-                ++extension;
-            }
-        }
+        GetExtensionsStringARB = reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGARBPROC>(this->GetProcAddress("wglGetExtensionsStringARB"));
+        GetExtensionsStringEXT = reinterpret_cast<PFNWGLGETEXTENSIONSSTRINGEXTPROC>(this->GetProcAddress("wglGetExtensionsStringEXT"));
 #endif
-
 
         return true;
     }
