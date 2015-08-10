@@ -30,7 +30,7 @@ public:
     }
 
 
-    void OnSceneNodeInserted(GT::SceneNode* pSceneNode)
+    void OnSceneNodeInserted(GT::SceneNode* pSceneNode, const GT::vec4 &worldPosition, const GT::quat &worldRotation, const GT::vec4 &worldScale)
     {
         assert(pSceneNode != nullptr);
 
@@ -38,7 +38,7 @@ public:
         auto pGraphicsComponent = pSceneNode->GetComponent<GT::SceneNodeComponent_Graphics>();
         if (pGraphicsComponent != nullptr)
         {
-            pGraphicsComponent->AddModelToGraphicsWorld(pSceneNode->GetPosition(), pSceneNode->GetRotation(), pSceneNode->GetScale());
+            pGraphicsComponent->AddModelToGraphicsWorld(worldPosition, worldRotation, worldScale);
         }
 #else
         (void)pSceneNode;

@@ -74,7 +74,9 @@ namespace GT
 
 
         // Let the callback know that the scene node has been added.
-        m_callback.OnSceneNodeInserted(pSceneNode);
+        //
+        // TODO: Pass in absolute transformation instead of local.
+        m_callback.OnSceneNodeInserted(pSceneNode, pSceneNode->GetPosition(), pSceneNode->GetRotation(), pSceneNode->GetScale());
     }
 
     void SceneSteppingPipeline_Default::RemoveSceneNode(SceneNode* pSceneNode)

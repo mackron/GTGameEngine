@@ -26,7 +26,7 @@ namespace GT
         /// @remarks
         ///     If the scene is being stepped at the time the scene node is inserted, this event will be
         ///     deferred until the end of the step.
-        virtual void OnSceneNodeInserted(SceneNode* pSceneNode);
+        virtual void OnSceneNodeInserted(SceneNode* pSceneNode, const vec4 &worldPosition, const quat &worldRotation, const vec4 &worldScale);
 
         /// Called when a scene node is about to be removed from the scene.
         ///

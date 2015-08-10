@@ -7,7 +7,7 @@ namespace GT
     ////////////////////////////////////////////////////////////
     // Notifications
 
-    void SceneCallback::OnSceneNodeInserted(SceneNode*)
+    void SceneCallback::OnSceneNodeInserted(SceneNode*, const vec4 &, const quat &, const vec4 &)
     {
     }
 
