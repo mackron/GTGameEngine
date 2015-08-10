@@ -164,6 +164,7 @@
     <ClCompile Include="..\..\..\source\GUI\GUISurface.cpp" />
     <ClCompile Include="..\..\..\source\GUI\GUITextLayout.cpp" />
     <ClCompile Include="..\..\..\source\Math.cpp" />
+    <ClCompile Include="..\..\..\source\MeshBuilder.cpp" />
     <ClCompile Include="..\..\..\source\Scene\Scene.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneCallback.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneNode.cpp" />
@@ -250,6 +251,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUISurface.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\GUI\GUITextLayout.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Math.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\MeshBuilder.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\Scene.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneCallback.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNode.hpp" />
