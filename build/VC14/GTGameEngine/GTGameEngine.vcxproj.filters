@@ -593,6 +593,9 @@
     <ClCompile Include="..\..\..\source\MeshBuilder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsModelObject.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp">
@@ -1131,6 +1134,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\MeshBuilder.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsModelObject.hpp">
+      <Filter>Header Files\Graphics</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

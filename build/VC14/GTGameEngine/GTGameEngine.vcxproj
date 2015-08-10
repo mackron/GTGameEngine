@@ -147,6 +147,7 @@
     <ClCompile Include="..\..\..\source\Graphics\GraphicsAPI_OpenGL.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\GraphicsAssetResourceManager.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\GraphicsAssetResources.cpp" />
+    <ClCompile Include="..\..\..\source\Graphics\GraphicsModelObject.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\GraphicsWorld.cpp" />
     <ClCompile Include="..\..\..\source\Graphics\GraphicsWorldObject.cpp" />
     <ClCompile Include="..\..\..\source\GUI\GUIContext.cpp" />
@@ -231,6 +232,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAPI_OpenGL.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAssetResourceManager.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsAssetResources.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsModelObject.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsTypes.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsWorld.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsWorldObject.hpp" />
