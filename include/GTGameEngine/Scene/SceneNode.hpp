@@ -115,20 +115,6 @@ namespace GT
         /// Determines whether or not the scene node is static.
         bool IsStatic() const;
 
-        /// Disables updates to the scene node.
-        ///
-        /// @remarks
-        ///     When this is changed, the scene node will need to be removed from the scene and re-inserted before it will take effect.
-        ///     @par
-        ///     This is just an optimization, and does not strictly need to be set. When updates are disabled, the scene state will not
-        ///     call any update events on the scene node.
-        ///     @par
-        ///     A lot of scene nodes can be disable updates, in particular decorative static meshes.
-        void SetUpdatesDisabled(bool updatesDisabled);
-
-        /// Determines whether or not scene node updates are enabled.
-        bool IsUpdatesDisabled() const;
-
 
         /// Retrieves the position of the scene node.
         vec4 GetPosition() const;
