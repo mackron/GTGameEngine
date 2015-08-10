@@ -7,8 +7,10 @@
 #include <GTGameEngine/Assets/MaterialAsset.hpp>
 #include <GTGameEngine/Assets/ModelAsset.hpp>
 #include <GTGameEngine/FileSystem.hpp>
+#include <GTGameEngine/MeshBuilder.hpp>
 #include "../external/easy_path/easy_path.h"
 #include "../external/easy_vfs/easy_vfs.h"
+#include "../external/easy_mtl/easy_mtl.h"
 
 namespace GT
 {
@@ -204,18 +206,13 @@ namespace GT
         desc.depth  = 1;
         desc.format = pImageAsset->GetImageFormat();
         desc.pData  = pImageAsset->GetImageData();
-        HGraphicsResource hGraphicsResource = m_graphicsWorld.CreateTextureResource(desc);
-        if (hGraphicsResource != 0)
+        auto pTextureResource = this->CreateTextureResourceFromDesc(desc, pAsset);
+        if (pTextureResource == nullptr)
         {
-            auto pTextureResource = new GraphicsAssetResource_Texture(pAsset, hGraphicsResource);
-            assert(pTextureResource != nullptr);
-
-            return pTextureResource;
+            pTextureResource = m_pDefaultTexture;
         }
 
-
-        // Fall through to the default resource.
-        return m_pDefaultTexture;
+        return pTextureResource;
     }
 
     GraphicsAssetResource_Material* GraphicsAssetResourceManager::LoadMaterial(Asset* pAsset, const char* absolutePath)
@@ -224,78 +221,20 @@ namespace GT
         assert(pAsset->GetClass() == AssetClass_Material);
         assert(absolutePath != nullptr);
 
+        char basePath[EASYVFS_MAX_PATH];
+        this->GetMaterialBaseDirectory(absolutePath, basePath, EASYVFS_MAX_PATH);
+
         auto pMaterialAsset = reinterpret_cast<MaterialAsset*>(pAsset);
 
         GraphicsMaterialResourceDesc desc;
         desc.pData           = pMaterialAsset->GetData();
         desc.dataSizeInBytes = pMaterialAsset->GetDataSizeInBytes();
-        HGraphicsResource hGraphicsResource = m_graphicsWorld.CreateMaterialResource(desc);
-        if (hGraphicsResource != 0)
+        auto pMaterialResource = this->CreateMaterialResourceFromDesc(desc, pAsset, basePath);
+        if (pMaterialResource == nullptr)
         {
-            auto pMaterialResource = new GraphicsAssetResource_Material(pAsset, hGraphicsResource);
-            assert(pMaterialResource != nullptr);
-
-            // Textures need to be loaded for both inputs and properties.
-            unsigned int inputCount = pMaterialAsset->GetInputCount();
-            for (unsigned int iInput = 0; iInput < inputCount; ++iInput)
-            {
-                MaterialVariable variable;
-                if (pMaterialAsset->GetInputByIndex(iInput, variable))
-                {
-                    if (variable.type == GraphicsMaterialVariableType::Texture2D)
-                    {
-                        GraphicsAssetResource_Texture* pTextureResource = nullptr;
-
-                        GTLib::String textureAbsolutePath;
-                        if (m_assetLibrary.GetFileSystem().FindAbsolutePath(variable.path.value, this->GetMaterialBaseDirectory(absolutePath).c_str(), textureAbsolutePath))
-                        {
-                            pTextureResource = this->LoadTexture(textureAbsolutePath.c_str());
-                        }
-                        else
-                        {
-                            pTextureResource = this->GetDefaultTexture();
-                        }
-
-                        pMaterialResource->_InsertInputTexture(variable.name, pTextureResource);
-
-
-                        // Set the value on the graphics world's material resource.
-                        m_graphicsWorld.SetMaterialResourceInputVariable(pMaterialResource->GetGraphicsResource(), variable.name, pTextureResource->GetGraphicsResource());
-                    }
-                }
-            }
-
-            unsigned int propertyCount = pMaterialAsset->GetPropertyCount();
-            for (unsigned int iProperty = 0; iProperty < propertyCount; ++iProperty)
-            {
-                MaterialVariable variable;
-                if (pMaterialAsset->GetPropertyByIndex(iProperty, variable))
-                {
-                    if (variable.type == GraphicsMaterialVariableType::Texture2D)
-                    {
-                        GraphicsAssetResource_Texture* pTextureResource = nullptr;
-
-                        GTLib::String textureAbsolutePath;
-                        if (m_assetLibrary.GetFileSystem().FindAbsolutePath(variable.path.value, this->GetMaterialBaseDirectory(absolutePath).c_str(), textureAbsolutePath))
-                        {
-                            pTextureResource = this->LoadTexture(textureAbsolutePath.c_str());
-                        }
-                        else
-                        {
-                            pTextureResource = this->GetDefaultTexture();
-                        }
-
-                        pMaterialResource->_InsertInputTexture(variable.name, pTextureResource);
-                    }
-                }
-            }
-
-
-            return pMaterialResource;
+            pMaterialResource = m_pDefaultMaterial;
         }
 
-
-        // Fall through to the default resource.
         return m_pDefaultMaterial;
     }
 
@@ -304,6 +243,10 @@ namespace GT
         assert(pAsset != nullptr);
         assert(pAsset->GetClass() == AssetClass_Model);
         assert(absolutePath != nullptr);
+
+        char basePath[EASYVFS_MAX_PATH];
+        this->GetModelBaseDirectory(absolutePath, basePath, EASYVFS_MAX_PATH);
+
 
         auto pModelAsset = reinterpret_cast<ModelAsset*>(pAsset);
 
@@ -323,7 +266,7 @@ namespace GT
                 pModelAsset->GetMeshMaterialName(iMesh, iMaterial, materialName, EASYVFS_MAX_PATH);
 
                 GTLib::String materialAbsolutePath;
-                if (m_assetLibrary.GetFileSystem().FindAbsolutePath(materialName, this->GetMaterialBaseDirectory(absolutePath).c_str(), materialAbsolutePath))
+                if (m_assetLibrary.GetFileSystem().FindAbsolutePath(materialName, basePath, materialAbsolutePath))
                 {
                     pMaterialResource = this->LoadMaterial(materialAbsolutePath.c_str());
                 }
@@ -376,16 +319,13 @@ namespace GT
 
     GraphicsAssetResource_Mesh* GraphicsAssetResourceManager::LoadMesh(GraphicsMeshResourceDesc &desc)
     {
-        HGraphicsResource hMeshResource = m_graphicsWorld.CreateMeshResource(desc);
-        if (hMeshResource != 0)
+        auto pMeshResource = this->CreateMeshResourceFromDesc(desc);
+        if (pMeshResource == nullptr)
         {
-            GraphicsAssetResource_Mesh* pMeshResource = new GraphicsAssetResource_Mesh(hMeshResource);
-            assert(pMeshResource != nullptr);
-
-            return pMeshResource;
+            pMeshResource = m_pDefaultMesh;
         }
 
-        return m_pDefaultMesh;
+        return pMeshResource;
     }
 
 
@@ -507,6 +447,107 @@ namespace GT
     }
 
 
+    GraphicsAssetResource_Texture* GraphicsAssetResourceManager::CreateTextureResourceFromDesc(GraphicsTextureResourceDesc &desc, Asset* pAsset)
+    {
+        HGraphicsResource hGraphicsResource = m_graphicsWorld.CreateTextureResource(desc);
+        if (hGraphicsResource != 0)
+        {
+            return new GraphicsAssetResource_Texture(pAsset, hGraphicsResource);
+        }
+
+        return nullptr;
+    }
+
+    GraphicsAssetResource_Material* GraphicsAssetResourceManager::CreateMaterialResourceFromDesc(GraphicsMaterialResourceDesc &desc, Asset* pAsset, const char* basePath)
+    {
+        HGraphicsResource hGraphicsResource = m_graphicsWorld.CreateMaterialResource(desc);
+        if (hGraphicsResource != 0)
+        {
+            auto pMaterialResource = new GraphicsAssetResource_Material(pAsset, hGraphicsResource);
+            assert(pMaterialResource != nullptr);
+
+            // Textures need to be loaded for both inputs and properties.
+            easymtl_material material;
+            if (easymtl_initfromexisting_nocopy(&material, desc.pData, desc.dataSizeInBytes))
+            {
+                // Inputs.
+                unsigned int inputCount = easymtl_getinputcount(&material);
+                for (unsigned int iInput = 0; iInput < inputCount; ++iInput)
+                {
+                    easymtl_input* pInput = easymtl_getinputbyindex(&material, iInput);
+                    if (pInput != nullptr)
+                    {
+                        easymtl_identifier* pIdentifier = easymtl_getidentifier(&material, pInput->identifierIndex);
+                        if (pIdentifier != nullptr && pIdentifier->type == easymtl_type_tex2d)
+                        {
+                            GraphicsAssetResource_Texture* pTextureResource = nullptr;
+
+                            GTLib::String textureAbsolutePath;
+                            if (m_assetLibrary.GetFileSystem().FindAbsolutePath(pInput->path.value, basePath, textureAbsolutePath))
+                            {
+                                pTextureResource = this->LoadTexture(textureAbsolutePath.c_str());
+                            }
+                            else
+                            {
+                                pTextureResource = this->GetDefaultTexture();
+                            }
+
+                            pMaterialResource->_InsertInputTexture(pIdentifier->name, pTextureResource);
+
+
+                            // Set the value on the graphics world's material resource.
+                            m_graphicsWorld.SetMaterialResourceInputVariable(pMaterialResource->GetGraphicsResource(), pIdentifier->name, pTextureResource->GetGraphicsResource());
+                        }
+                    }
+                }
+
+
+                // Properties
+                unsigned int propertyCount = easymtl_getpropertycount(&material);
+                for (unsigned int iProperty = 0; iProperty < propertyCount; ++iProperty)
+                {
+                    easymtl_property* pProperty = easymtl_getpropertybyindex(&material, iProperty);
+                    if (pProperty != nullptr && pProperty->type == easymtl_type_tex2d)
+                    {
+                        GraphicsAssetResource_Texture* pTextureResource = nullptr;
+
+                        GTLib::String textureAbsolutePath;
+                        if (m_assetLibrary.GetFileSystem().FindAbsolutePath(pProperty->path.value, basePath, textureAbsolutePath))
+                        {
+                            pTextureResource = this->LoadTexture(textureAbsolutePath.c_str());
+                        }
+                        else
+                        {
+                            pTextureResource = this->GetDefaultTexture();
+                        }
+
+                        pMaterialResource->_InsertInputTexture(pProperty->name, pTextureResource);
+                    }
+                }
+            }
+
+
+            return pMaterialResource;
+        }
+
+        return nullptr;
+    }
+
+    GraphicsAssetResource_Mesh* GraphicsAssetResourceManager::CreateMeshResourceFromDesc(GraphicsMeshResourceDesc &desc)
+    {
+        HGraphicsResource hMeshResource = m_graphicsWorld.CreateMeshResource(desc);
+        if (hMeshResource != 0)
+        {
+            GraphicsAssetResource_Mesh* pMeshResource = new GraphicsAssetResource_Mesh(hMeshResource);
+            assert(pMeshResource != nullptr);
+
+            return pMeshResource;
+        }
+
+        return nullptr;
+    }
+
+
     bool GraphicsAssetResourceManager::FindResourceIndex(GraphicsAssetResource* pResource, size_t &indexOut) const
     {
         for (size_t iExistingItem = 0; m_loadedResources.count; ++iExistingItem)
@@ -572,7 +613,7 @@ namespace GT
 
     bool GraphicsAssetResourceManager::IsDefaultResource(GraphicsAssetResource* pResource)
     {
-        return pResource == m_pDefaultTexture || pResource == m_pDefaultMaterial || pResource == m_pDefaultModel;
+        return pResource == m_pDefaultTexture || pResource == m_pDefaultMaterial || pResource == m_pDefaultModel || pResource == m_pDefaultMesh;
     }
 
     void GraphicsAssetResourceManager::LoadDefaultResources()
@@ -585,26 +626,195 @@ namespace GT
 
     void GraphicsAssetResourceManager::LoadDefaultTexture()
     {
-        // TODO: Implement.
+        uint32_t imageData[4] = 
+        {
+            0xFFFFFFFF, 0x80808080,
+            0x80808080, 0xFFFFFFFF
+        };
+
+        GraphicsTextureResourceDesc desc;
+        desc.width  = 2;
+        desc.height = 2;
+        desc.depth  = 1;
+        desc.format = TextureFormat_RGBA8;
+        desc.pData  = imageData;
+        HGraphicsResource hGraphicsResource = m_graphicsWorld.CreateTextureResource(desc);
+        if (hGraphicsResource != 0)
+        {
+            m_pDefaultTexture = new GraphicsAssetResource_Texture(nullptr, hGraphicsResource);
+        }
+
         m_pDefaultTexture = nullptr;
     }
 
     void GraphicsAssetResourceManager::LoadDefaultMaterial()
     {
-        // TODO: Implement.
+        // The default material just returns constant values for Diffuse, Specular, Specular Exponent, Emissive and Alpha.
+        easymtl_material material;
+        if (easymtl_init(&material))
+        {
+            easymtl_appendchannel(&material, easymtl_channel_float3("DiffuseChannel"));
+            easymtl_appendinstruction(&material, easymtl_retf3_c3(1, 1, 1));
+
+            easymtl_appendchannel(&material, easymtl_channel_float3("SpecularChannel"));
+            easymtl_appendinstruction(&material, easymtl_retf3_c3(1, 1, 1));
+
+            easymtl_appendchannel(&material, easymtl_channel_float3("SpecularExponentChannel"));
+            easymtl_appendinstruction(&material, easymtl_retf1_c1(10));
+
+            easymtl_appendchannel(&material, easymtl_channel_float3("EmissiveChannel"));
+            easymtl_appendinstruction(&material, easymtl_retf3_c3(0, 0, 0));
+
+            easymtl_appendchannel(&material, easymtl_channel_float3("AlphaChannel"));
+            easymtl_appendinstruction(&material, easymtl_retf1_c1(1));
+
+            easymtl_appendproperty(&material, easymtl_property_bool("IsTransparent", false));
+
+
+            GraphicsMaterialResourceDesc desc;
+            desc.pData           = material.pRawData;
+            desc.dataSizeInBytes = material.sizeInBytes;
+            m_pDefaultMaterial = this->CreateMaterialResourceFromDesc(desc, nullptr, "");
+        }
+
         m_pDefaultMaterial = nullptr;
     }
 
     void GraphicsAssetResourceManager::LoadDefaultModel()
     {
-        // TODO: Implement.
-        m_pDefaultModel = nullptr;
+        // The default model is made up of a single mesh which is set to the default mesh.
+        m_pDefaultModel = new GraphicsAssetResource_Model(nullptr);
+        assert(m_pDefaultModel);
+
+        m_pDefaultModel->_InsertMesh(m_pDefaultMesh);
     }
 
     void GraphicsAssetResourceManager::LoadDefaultMesh()
     {
-        // TODO: Implement.
-        m_pDefaultMesh = nullptr;
+        float pos0X = -1.0f; float pos0Y =  1.0f; float pos0Z =  1.0f;
+        float pos1X =  1.0f; float pos1Y =  1.0f; float pos1Z =  1.0f;
+        float pos2X = -1.0f; float pos2Y = -1.0f; float pos2Z =  1.0f;
+        float pos3X =  1.0f; float pos3Y = -1.0f; float pos3Z =  1.0f;
+        float pos4X =  1.0f; float pos4Y =  1.0f; float pos4Z = -1.0f;
+        float pos5X = -1.0f; float pos5Y =  1.0f; float pos5Z = -1.0f;
+        float pos6X =  1.0f; float pos6Y = -1.0f; float pos6Z = -1.0f;
+        float pos7X = -1.0f; float pos7Y = -1.0f; float pos7Z = -1.0f;
+        
+        float tex0X =  0.0f; float tex0Y =  1.0f;
+        float tex1X =  1.0f; float tex1Y =  1.0f;
+        float tex2X =  0.0f; float tex2Y =  0.0f;
+        float tex3X =  1.0f; float tex3Y =  0.0f;
+
+        float nor0X =  0.0f; float nor0Y =  0.0f; float nor0Z =  1.0f;
+        float nor1X =  0.0f; float nor1Y =  0.0f; float nor1Z = -1.0f;
+        float nor2X =  0.0f; float nor2Y =  1.0f; float nor2Z =  0.0f;
+        float nor3X =  0.0f; float nor3Y = -1.0f; float nor3Z =  0.0f;
+        float nor4X =  1.0f; float nor4Y =  0.0f; float nor4Z =  0.0f;
+        float nor5X = -1.0f; float nor5Y =  0.0f; float nor5Z =  0.0f;
+
+
+        MeshBuilderP3T2N3 builder(false);
+
+        // Front
+        {
+            builder.EmitVertex(pos0X, pos0Y, pos0Z, tex0X, tex0Y, nor0X, nor0Y, nor0Z);
+            builder.EmitVertex(pos1X, pos1Y, pos1Z, tex1X, tex1Y, nor0X, nor0Y, nor0Z);
+            builder.EmitVertex(pos2X, pos2Y, pos2Z, tex2X, tex2Y, nor0X, nor0Y, nor0Z);
+
+            builder.EmitVertex(pos2X, pos2Y, pos2Z, tex2X, tex2Y, nor0X, nor0Y, nor0Z);
+            builder.EmitVertex(pos1X, pos1Y, pos1Z, tex1X, tex1Y, nor0X, nor0Y, nor0Z);
+            builder.EmitVertex(pos3X, pos3Y, pos3Z, tex3X, tex3Y, nor0X, nor0Y, nor0Z);
+        }
+
+        // Back
+        {
+            builder.EmitVertex(pos4X, pos4Y, pos4Z, tex0X, tex0Y, nor1X, nor1Y, nor1Z);
+            builder.EmitVertex(pos5X, pos5Y, pos5Z, tex1X, tex1Y, nor1X, nor1Y, nor1Z);
+            builder.EmitVertex(pos6X, pos6Y, pos6Z, tex2X, tex2Y, nor1X, nor1Y, nor1Z);
+
+            builder.EmitVertex(pos6X, pos6Y, pos6Z, tex2X, tex2Y, nor1X, nor1Y, nor1Z);
+            builder.EmitVertex(pos5X, pos5Y, pos5Z, tex1X, tex1Y, nor1X, nor1Y, nor1Z);
+            builder.EmitVertex(pos7X, pos7Y, pos7Z, tex3X, tex3Y, nor1X, nor1Y, nor1Z);
+        }
+
+        // Top
+        {
+            builder.EmitVertex(pos5X, pos5Y, pos5Z, tex0X, tex0Y, nor2X, nor2Y, nor2Z);
+            builder.EmitVertex(pos4X, pos4Y, pos4Z, tex1X, tex1Y, nor2X, nor2Y, nor2Z);
+            builder.EmitVertex(pos0X, pos0Y, pos0Z, tex2X, tex2Y, nor2X, nor2Y, nor2Z);
+
+            builder.EmitVertex(pos0X, pos0Y, pos0Z, tex2X, tex2Y, nor2X, nor2Y, nor2Z);
+            builder.EmitVertex(pos4X, pos4Y, pos4Z, tex1X, tex1Y, nor2X, nor2Y, nor2Z);
+            builder.EmitVertex(pos1X, pos1Y, pos1Z, tex3X, tex3Y, nor2X, nor2Y, nor2Z);
+        }
+
+        // Bottom
+        {
+            builder.EmitVertex(pos2X, pos2Y, pos2Z, tex0X, tex0Y, nor3X, nor3Y, nor3Z);
+            builder.EmitVertex(pos3X, pos3Y, pos3Z, tex1X, tex1Y, nor3X, nor3Y, nor3Z);
+            builder.EmitVertex(pos7X, pos7Y, pos7Z, tex2X, tex2Y, nor3X, nor3Y, nor3Z);
+
+            builder.EmitVertex(pos7X, pos7Y, pos7Z, tex2X, tex2Y, nor3X, nor3Y, nor3Z);
+            builder.EmitVertex(pos3X, pos3Y, pos3Z, tex1X, tex1Y, nor3X, nor3Y, nor3Z);
+            builder.EmitVertex(pos6X, pos6Y, pos6Z, tex3X, tex3Y, nor3X, nor3Y, nor3Z);
+        }
+
+        // Right
+        {
+            builder.EmitVertex(pos1X, pos1Y, pos1Z, tex0X, tex0Y, nor4X, nor4Y, nor4Z);
+            builder.EmitVertex(pos4X, pos4Y, pos4Z, tex1X, tex1Y, nor4X, nor4Y, nor4Z);
+            builder.EmitVertex(pos3X, pos3Y, pos3Z, tex2X, tex2Y, nor4X, nor4Y, nor4Z);
+
+            builder.EmitVertex(pos3X, pos3Y, pos3Z, tex2X, tex2Y, nor4X, nor4Y, nor4Z);
+            builder.EmitVertex(pos4X, pos4Y, pos4Z, tex1X, tex1Y, nor4X, nor4Y, nor4Z);
+            builder.EmitVertex(pos6X, pos6Y, pos6Z, tex3X, tex3Y, nor4X, nor4Y, nor4Z);
+        }
+
+        // Left
+        {
+            builder.EmitVertex(pos5X, pos5Y, pos5Z, tex0X, tex0Y, nor5X, nor5Y, nor5Z);
+            builder.EmitVertex(pos0X, pos0Y, pos0Z, tex1X, tex1Y, nor5X, nor5Y, nor5Z);
+            builder.EmitVertex(pos7X, pos7Y, pos7Z, tex2X, tex2Y, nor5X, nor5Y, nor5Z);
+
+            builder.EmitVertex(pos7X, pos7Y, pos7Z, tex2X, tex2Y, nor5X, nor5Y, nor5Z);
+            builder.EmitVertex(pos0X, pos0Y, pos0Z, tex1X, tex1Y, nor5X, nor5Y, nor5Z);
+            builder.EmitVertex(pos2X, pos2Y, pos2Z, tex3X, tex3Y, nor5X, nor5Y, nor5Z);
+        }
+
+        
+        
+
+
+        VertexAttribLayout vertexLayout[3];
+        vertexLayout[0] = { VertexAttribFormat_Float, 3, sizeof(float) * 0, VertexAttribSemantic_Position };
+        vertexLayout[1] = { VertexAttribFormat_Float, 2, sizeof(float) * 3, VertexAttribSemantic_TexCoord };
+        vertexLayout[2] = { VertexAttribFormat_Float, 3, sizeof(float) * 5, VertexAttribSemantic_Normal   };
+
+        uint32_t materialOffsetCountPair[2];
+        materialOffsetCountPair[0] = 0;
+        materialOffsetCountPair[1] = 0;
+
+        HGraphicsResource hMaterialResource[1] = { m_pDefaultMaterial->GetGraphicsResource() };
+
+        GT::GraphicsMeshResourceDesc desc;
+        desc.topology                      = PrimitiveTopologyType_Triangle;
+        desc.pVertexData                   = builder.GetVertexData();
+        desc.vertexDataSize                = builder.GetVertexSizeInFloats() * sizeof(float);
+        desc.vertexStride                  = sizeof(float)*3*2*3;
+        desc.pVertexLayout                 = vertexLayout;
+        desc.vertexAttribCount             = 3;
+        desc.pIndexData                    = builder.GetIndexData();
+        desc.indexDataSize                 = builder.GetIndexCount() * sizeof(uint32_t);
+        desc.indexCount                    = builder.GetIndexCount();
+        desc.indexFormat                   = IndexFormat_UInt32;
+        desc.materialIndexOffsetCountPairs = materialOffsetCountPair;
+        desc.materialCount                 = 1;
+        desc.materials                     = hMaterialResource;
+        m_pDefaultMesh = this->CreateMeshResourceFromDesc(desc);
+        if (m_pDefaultMesh != nullptr)
+        {
+            m_pDefaultMesh->_InsertMaterial(m_pDefaultMaterial);
+        }
     }
 
     void GraphicsAssetResourceManager::UnloadDefaultResources()
@@ -636,21 +846,20 @@ namespace GT
     }
 
 
-    GTLib::String GraphicsAssetResourceManager::GetMaterialBaseDirectory(const GTLib::String &materialAbsolutePath) const
+    void GraphicsAssetResourceManager::GetMaterialBaseDirectory(const char* materialAbsolutePath, char* basePath, unsigned int basePathSize) const
     {
         // The base path for materials need special treatment because we cannot have the base path set to a .mtl archive file.
 
-        char basePath[EASYVFS_MAX_PATH];
-        easypath_basepath(materialAbsolutePath.c_str(), basePath, EASYVFS_MAX_PATH);
+        easypath_copybasepath(materialAbsolutePath, basePath, basePathSize);
 
         if (easypath_extensionequal(basePath, "mtl"))
         {
-            char basePath2[EASYVFS_MAX_PATH];
-            easypath_basepath(basePath, basePath2, EASYVFS_MAX_PATH);
-
-            return basePath2;
+            easypath_basepath(basePath);
         }
+    }
 
-        return basePath;
+    void GraphicsAssetResourceManager::GetModelBaseDirectory(const char* modelAbsolutePath, char* basePath, unsigned int basePathSize) const
+    {
+        easypath_copybasepath(modelAbsolutePath, basePath, basePathSize);
     }
 }

@@ -104,6 +104,29 @@ namespace GT
         void UnloadMesh(GraphicsAssetResource_Mesh* pMesh);
 
 
+        /// Creates a texture resource from a descriptor.
+        ///
+        /// @remarks
+        ///     This does not add the new resource to the internal list.
+        GraphicsAssetResource_Texture* CreateTextureResourceFromDesc(GraphicsTextureResourceDesc &desc, Asset* pAsset);
+
+        /// Creates a material resource from a descriptor.
+        ///
+        /// @param basePath [in] The base path of the material so that textures can be loaded relative to it.
+        ///
+        /// @remarks
+        ///     This does not add the new resource to the internal list.
+        GraphicsAssetResource_Material* CreateMaterialResourceFromDesc(GraphicsMaterialResourceDesc &desc, Asset* pAsset, const char* basePath);
+
+        /// Creates a mesh resource from a descriptor.
+        ///
+        /// @param basePath [in] The base path of the model so that materials can be loaded relative to it.
+        ///
+        /// @remarks
+        ///     This does not add the new resource to the internal list.
+        GraphicsAssetResource_Mesh* CreateMeshResourceFromDesc(GraphicsMeshResourceDesc &desc);
+
+
         /// Finds the index of the given resource.
         bool FindResourceIndex(GraphicsAssetResource* pResource, size_t &indexOut) const;
 
@@ -156,7 +179,14 @@ namespace GT
         ///     The purpose of this function is to make it possible to load a texture relative to the material. The problem, however, is that
         ///     Wavefront MTL files are contained in .mtl files which are virtualized as archive files - that cannot be used as the base path,
         ///     so we need to check for it explicitly.
-        GTLib::String GetMaterialBaseDirectory(const GTLib::String &materialAbsolutePath) const;
+        void GetMaterialBaseDirectory(const char* materialAbsolutePath, char* basePath, unsigned int basePathSize) const;
+
+        /// Helper for retrieving the base directory of the given model's path.
+        ///
+        /// @param modelAbsolutePath [in] The absolute path of the model.
+        /// @param basePath [out] A pointer to the buffer that will receive the base path.
+        /// @param basePathSize [in] The size of the buffer pointed to by basePath.
+        void GetModelBaseDirectory(const char* modelAbsolutePath, char* basePath, unsigned int basePathSize) const;
 
 
     private:
