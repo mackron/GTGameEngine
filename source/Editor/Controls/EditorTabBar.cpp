@@ -234,6 +234,8 @@ namespace GT
 
     void EditorTabBar::TabEventHandler::OnMouseEnter(GUIContext &gui, HGUIElement hElement)
     {
+        (void)gui;
+
         auto pTab = m_pTabBar->GetTabByGUIElement(hElement);
         if (pTab != nullptr)
         {
@@ -246,6 +248,8 @@ namespace GT
 
     void EditorTabBar::TabEventHandler::OnMouseLeave(GUIContext &gui, HGUIElement hElement)
     {
+        (void)gui;
+
         auto pTab = m_pTabBar->GetTabByGUIElement(hElement);
         if (pTab != nullptr)
         {
@@ -258,6 +262,8 @@ namespace GT
 
     void EditorTabBar::TabEventHandler::OnMouseButtonPressed(GUIContext &gui, HGUIElement hElement, int button, int, int)
     {
+        (void)gui;
+
         auto pTab = m_pTabBar->GetTabByGUIElement(hElement);
         if (pTab != nullptr)
         {

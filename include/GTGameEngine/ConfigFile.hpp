@@ -50,7 +50,7 @@ namespace GT
         const char* GetStringFromArray(const char* arrayName, unsigned int index) const;          //< Don't store the string for later use - make a copy.
 
         bool IsArray(const char* arrayName) const;
-        size_t GetArrayCount(const char* arrayName) const;
+        unsigned int GetArrayCount(const char* arrayName) const;
 
 
     private:

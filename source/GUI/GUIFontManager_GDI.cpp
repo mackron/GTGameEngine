@@ -135,7 +135,7 @@ namespace GT
             sizeWin32.cx = 0;
             sizeWin32.cy = 0;
 
-            int bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthInChars), nullptr, 0);
+            int bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, static_cast<int>(GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthInChars)), nullptr, 0);
             if (bufferSize > 0)
             {
                 if (bufferSize > 64)
@@ -150,7 +150,7 @@ namespace GT
                 else
                 {
                     wchar_t buffer[64];
-                    bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthInChars), buffer, 64);
+                    bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, static_cast<int>(GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthInChars)), buffer, 64);
                     if (bufferSize > 0)
                     {
                         result = GetTextExtentPoint32W(m_hDC, buffer, bufferSize, &sizeWin32);

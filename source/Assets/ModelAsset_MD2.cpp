@@ -272,7 +272,7 @@ namespace GT
         HFile hFile = fileSystem.OpenFile(absolutePath, FileAccessMode::Read);
         if (hFile != 0)
         {
-            size_t fileSize = static_cast<size_t>(fileSystem.GetFileSize(hFile));
+            unsigned int fileSize = static_cast<unsigned int>(fileSystem.GetFileSize(hFile));
             if (fileSize > sizeof(md2_header))
             {
                 bool result = true;
@@ -284,7 +284,7 @@ namespace GT
                 md2_header* header = reinterpret_cast<md2_header*>(fileData);
                 if (header->ident == '2PDI' && header->version == 8)
                 {
-                    if (fileSize > static_cast<size_t>(header->ofs_glcmds))
+                    if (fileSize > static_cast<unsigned int>(header->ofs_glcmds))
                     {
                         auto md2TexCoords = reinterpret_cast<md2_texcoord*        >(fileData + header->ofs_st);
                         auto md2Indices   = reinterpret_cast<md2_triangle_indices*>(fileData + header->ofs_tris);
@@ -494,7 +494,7 @@ namespace GT
     ////////////////////////////////////////
     // Material Data
 
-    size_t ModelAsset_MD2::GetMeshMaterialCount(unsigned int meshIndex) const
+    unsigned int ModelAsset_MD2::GetMeshMaterialCount(unsigned int meshIndex) const
     {
         assert(meshIndex == 0);
         {

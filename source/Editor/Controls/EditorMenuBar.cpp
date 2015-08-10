@@ -11,22 +11,22 @@ namespace GT
     {
     }
 
-    void EditorMenuBarButtonGUIEventHandler::OnMouseEnter(GUIContext &gui, HGUIElement hElement)
+    void EditorMenuBarButtonGUIEventHandler::OnMouseEnter(GUIContext &, HGUIElement hElement)
     {
         m_pMenuBar->_OnButtonMouseEnter(hElement);
     }
 
-    void EditorMenuBarButtonGUIEventHandler::OnMouseLeave(GUIContext &gui, HGUIElement hElement)
+    void EditorMenuBarButtonGUIEventHandler::OnMouseLeave(GUIContext &, HGUIElement hElement)
     {
         m_pMenuBar->_OnButtonMouseLeave(hElement);
     }
 
-    void EditorMenuBarButtonGUIEventHandler::OnMouseButtonPressed(GUIContext &gui, HGUIElement hElement, int, int, int)
+    void EditorMenuBarButtonGUIEventHandler::OnMouseButtonPressed(GUIContext &, HGUIElement hElement, int, int, int)
     {
         m_pMenuBar->_OnButtonPressed(hElement);
     }
 
-    void EditorMenuBarButtonGUIEventHandler::OnMouseButtonReleased(GUIContext &gui, HGUIElement hElement, int, int, int)
+    void EditorMenuBarButtonGUIEventHandler::OnMouseButtonReleased(GUIContext &, HGUIElement, int, int, int)
     {
 #if 0
         if (gui.IsElementUnderMouse(hElement))
@@ -46,7 +46,7 @@ namespace GT
     {
     }
 
-    void EditorMenuBarEditorEventHandler::OnWindowDeactivated(HWindow hWindow)
+    void EditorMenuBarEditorEventHandler::OnWindowDeactivated(HWindow)
     {
         m_pMenuBar->DeactivateActiveButton();
     }
@@ -164,10 +164,12 @@ namespace GT
 
     void EditorMenuBar::OnButtonActivated(EditorMenuBarButton* pButton)
     {
+        (void)pButton;
     }
 
     void EditorMenuBar::OnButtonDeactivated(EditorMenuBarButton* pButton)
     {
+        (void)pButton;
     }
 
 

@@ -15,7 +15,7 @@ namespace GT
     public:
 
         /// Constructor.
-        MeshBuilder(size_t vertexSizeInFloats, bool checkDuplicatesOnEmit = true);
+        MeshBuilder(unsigned int vertexSizeInFloats, bool checkDuplicatesOnEmit = true);
 
         /// Destructor.
         virtual ~MeshBuilder();
@@ -62,7 +62,7 @@ namespace GT
         const float* GetVertexData() const { return m_vertexBuffer.buffer; }
 
         /// Retrieves the number of vertices in the vertex buffer.
-        size_t GetVertexCount() const { return m_vertexBuffer.count / m_vertexSizeInFloats; }
+        unsigned int GetVertexCount() const { return static_cast<unsigned int>(m_vertexBuffer.count) / m_vertexSizeInFloats; }
 
 
         /// Retrieves a pointer to the buffer containing the indices.
@@ -70,7 +70,7 @@ namespace GT
         const unsigned int* GetIndexData() const { return m_indexBuffer.buffer; }
 
         /// Retrieves the number of indices in the vertex buffer.
-        size_t GetIndexCount() const { return m_indexBuffer.count; }
+        unsigned int GetIndexCount() const { return static_cast<unsigned int>(m_indexBuffer.count); }
 
 
         /// Clears the mesh builder.
@@ -81,13 +81,13 @@ namespace GT
         ///
         /// @remarks
         ///     The return value will always be the same as the value passed to the constructor.
-        size_t GetVertexSizeInFloats() const { return m_vertexSizeInFloats; }
+        unsigned int GetVertexSizeInFloats() const { return m_vertexSizeInFloats; }
 
 
     protected:
 
         /// The number of floats making up each vertex.
-        size_t m_vertexSizeInFloats;
+        unsigned int m_vertexSizeInFloats;
 
         /// The buffer containing the vertex data.
         GTLib::Vector<float> m_vertexBuffer;

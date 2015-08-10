@@ -4,7 +4,7 @@
 
 namespace GT
 {
-    MeshBuilder::MeshBuilder(size_t vertexSizeInFloats, bool checkDuplicatesOnEmit)
+    MeshBuilder::MeshBuilder(unsigned int vertexSizeInFloats, bool checkDuplicatesOnEmit)
         : m_vertexSizeInFloats(vertexSizeInFloats), m_vertexBuffer(), m_indexBuffer(), m_checkDuplicatesOnEmit(checkDuplicatesOnEmit)
     {
     }
@@ -18,7 +18,7 @@ namespace GT
         unsigned int index;
         if (!m_checkDuplicatesOnEmit || !this->Find(vertexData, index))
         {
-            index = static_cast<unsigned int>(m_vertexBuffer.count) / m_vertexSizeInFloats;
+            index = static_cast<unsigned int>(m_vertexBuffer.count) / static_cast<unsigned int>(m_vertexSizeInFloats);
 
             // Here is where we append the input vertex data to the mesh builder's vertex data buffer.
             for (auto i = 0U; i < m_vertexSizeInFloats; ++i)

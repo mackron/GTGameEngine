@@ -234,7 +234,7 @@ namespace GT
         HFile hFile = fileSystem.OpenFile(absolutePath, FileAccessMode::Read);
         if (hFile != 0)
         {
-            size_t fileSize = static_cast<size_t>(fileSystem.GetFileSize(hFile));
+            unsigned int fileSize = static_cast<unsigned int>(fileSystem.GetFileSize(hFile));
             if (fileSize > 0)
             {
                 bool result = true;
@@ -535,7 +535,7 @@ namespace GT
     ////////////////////////////////////////
     // Material Data
 
-    size_t ModelAsset_OBJ::GetMeshMaterialCount(unsigned int meshIndex) const
+    unsigned int ModelAsset_OBJ::GetMeshMaterialCount(unsigned int meshIndex) const
     {
         assert(meshIndex == 0);
         {
@@ -554,7 +554,7 @@ namespace GT
     void ModelAsset_OBJ::GetMeshMaterialName(unsigned int meshIndex, unsigned int materialIndex, char* materialNameOut, unsigned int materialNameSizeInBytes) const
     {
         assert(meshIndex == 0);
-        
+
         if (materialNameOut != nullptr && materialNameSizeInBytes > 0)
         {
             // TODO: Implement this properly.

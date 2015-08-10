@@ -15,7 +15,7 @@ namespace GT
     {
     }
 
-    void SceneCallback::OnSceneNodeTransformed(SceneNode* pSceneNode, const vec4 &, const quat &, const vec4 &)
+    void SceneCallback::OnSceneNodeTransformed(SceneNode*, const vec4 &, const quat &, const vec4 &)
     {
     }
 

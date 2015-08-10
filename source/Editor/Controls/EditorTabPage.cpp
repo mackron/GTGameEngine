@@ -12,7 +12,7 @@ namespace GT
         if (hRootElement != NULL)
         {
             GUIContext &gui = editor.GetGUI();
-            const EditorTheme &theme = this->GetEditor().GetTheme();
+            //const EditorTheme &theme = this->GetEditor().GetTheme();
 
             gui.SetElementHeightRatio(hRootElement, 1.0f);
             gui.SetElementWidthRatio(hRootElement, 1.0f);

@@ -98,7 +98,7 @@ namespace GT
         ///
         /// @remarks
         ///     This should never return 0.
-        virtual size_t GetMeshMaterialCount(unsigned int meshIndex) const = 0;
+        virtual unsigned int GetMeshMaterialCount(unsigned int meshIndex) const = 0;
 
         /// Retrieves the index offset/count pairs for every material.
         ///

@@ -26,7 +26,7 @@ namespace GT
         HFile hFile = fileSystem.OpenFile(absolutePath, FileAccessMode::Read);
         if (hFile != 0)
         {
-            size_t fileSize = static_cast<size_t>(fileSystem.GetFileSize(hFile));
+            unsigned int fileSize = static_cast<unsigned int>(fileSystem.GetFileSize(hFile));
             if (fileSize > 6)
             {
                 bool result = true;

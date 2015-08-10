@@ -796,7 +796,7 @@ namespace GT
 
         uint32_t materialOffsetCountPair[2];
         materialOffsetCountPair[0] = 0;
-        materialOffsetCountPair[1] = builder.GetIndexCount();
+        materialOffsetCountPair[1] = static_cast<uint32_t>(builder.GetIndexCount());
 
         HGraphicsResource hMaterialResource[1] = { 0 };
         if (m_pDefaultMaterial != nullptr)

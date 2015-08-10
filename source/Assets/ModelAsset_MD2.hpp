@@ -75,7 +75,7 @@ namespace GT
         // Material Data
 
         /// @copydoc ModelAsset::GetMaterialCount()
-        size_t GetMeshMaterialCount(unsigned int meshIndex) const;
+        unsigned int GetMeshMaterialCount(unsigned int meshIndex) const;
 
         /// @copydoc ModelAsset::GetMaterialIndexOffsetCountPairs()
         const uint32_t* GetMeshMaterialIndexOffsetCountPairs(unsigned int meshIndex) const;

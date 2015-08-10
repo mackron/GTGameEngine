@@ -42,7 +42,7 @@ namespace GT
         HFile hMetadataFile = fileSystem.OpenFile(absolutePath, GT::FileAccessMode::Read);
         if (hMetadataFile != 0)
         {
-            size_t fileSize = static_cast<size_t>(fileSystem.GetFileSize(hMetadataFile));
+            unsigned int fileSize = static_cast<unsigned int>(fileSystem.GetFileSize(hMetadataFile));
             if (fileSize > 0)
             {
                 // Read the data.
