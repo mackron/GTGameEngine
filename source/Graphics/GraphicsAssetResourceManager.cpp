@@ -695,14 +695,14 @@ namespace GT
 
     void GraphicsAssetResourceManager::LoadDefaultMesh()
     {
-        float pos0X = -1.0f; float pos0Y =  1.0f; float pos0Z =  1.0f;
-        float pos1X =  1.0f; float pos1Y =  1.0f; float pos1Z =  1.0f;
-        float pos2X = -1.0f; float pos2Y = -1.0f; float pos2Z =  1.0f;
-        float pos3X =  1.0f; float pos3Y = -1.0f; float pos3Z =  1.0f;
-        float pos4X =  1.0f; float pos4Y =  1.0f; float pos4Z = -1.0f;
-        float pos5X = -1.0f; float pos5Y =  1.0f; float pos5Z = -1.0f;
-        float pos6X =  1.0f; float pos6Y = -1.0f; float pos6Z = -1.0f;
-        float pos7X = -1.0f; float pos7Y = -1.0f; float pos7Z = -1.0f;
+        float pos0X = -0.5f; float pos0Y =  0.5f; float pos0Z =  0.5f;
+        float pos1X =  0.5f; float pos1Y =  0.5f; float pos1Z =  0.5f;
+        float pos2X = -0.5f; float pos2Y = -0.5f; float pos2Z =  0.5f;
+        float pos3X =  0.5f; float pos3Y = -0.5f; float pos3Z =  0.5f;
+        float pos4X =  0.5f; float pos4Y =  0.5f; float pos4Z = -0.5f;
+        float pos5X = -0.5f; float pos5Y =  0.5f; float pos5Z = -0.5f;
+        float pos6X =  0.5f; float pos6Y = -0.5f; float pos6Z = -0.5f;
+        float pos7X = -0.5f; float pos7Y = -0.5f; float pos7Z = -0.5f;
         
         float tex0X =  0.0f; float tex0Y =  1.0f;
         float tex1X =  1.0f; float tex1Y =  1.0f;
@@ -808,7 +808,7 @@ namespace GT
         desc.topology                      = PrimitiveTopologyType_Triangle;
         desc.pVertexData                   = builder.GetVertexData();
         desc.vertexDataSize                = builder.GetVertexSizeInFloats() * sizeof(float) * builder.GetVertexCount();
-        desc.vertexStride                  = sizeof(float) * (3 + 2 + 3);
+        desc.vertexStride                  = builder.GetVertexSizeInFloats() * sizeof(float);
         desc.pVertexLayout                 = vertexLayout;
         desc.vertexAttribCount             = 3;
         desc.pIndexData                    = builder.GetIndexData();
