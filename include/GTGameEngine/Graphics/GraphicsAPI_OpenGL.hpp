@@ -139,6 +139,13 @@ namespace GT
         /// @param extension [in] A reference to the extension string.
         ///
         /// @return True if the extension is supported.
+        ///
+        /// @remarks
+        ///     This will always return false if Startup() has not yet been successfully called. The context must also be current.
+        ///     @par
+        ///     This is a slow API and should only be called during a startup routine.
+        ///     @par
+        ///     This is not case-sensitive.
         bool IsExtensionSupported(const char* extension) const;
 
 
@@ -213,9 +220,6 @@ namespace GT
         /// The minor version of the OpenGL API that is supported by the given rendering context.
         unsigned int m_minorVersion;
 
-        /// The list of supported extensions.
-        GTLib::Vector<const char*> m_extensions;
-
 
     public:
 
@@ -229,6 +233,9 @@ namespace GT
         PFNWGLGETCURRENTCONTEXTPROC  GetCurrentContext;
         PFNWGLGETCURRENTDCPROC       GetCurrentDC;
         PFNWGLGETPROCADDRESSPROC     GetProcAddress;
+
+        PFNWGLGETEXTENSIONSSTRINGARBPROC GetExtensionsStringARB;
+        PFNWGLGETEXTENSIONSSTRINGEXTPROC GetExtensionsStringEXT;
 
         PFNWGLSWAPINTERVALEXTPROC    SwapIntervalEXT;
         PFNWGLGETSWAPINTERVALEXTPROC GetSwapIntervalEXT;
