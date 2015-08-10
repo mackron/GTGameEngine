@@ -1592,7 +1592,7 @@ namespace GT
         {
             assert((pRT->flags & RTFlag_IsWindow) != 0);
 
-            if (m_gl.MakeCurrent(pRT->hDC, m_hRC))
+            if ((m_gl.GetCurrentContext() == m_hRC && m_gl.GetCurrentDC() == pRT->hDC) || m_gl.MakeCurrent(pRT->hDC, m_hRC))
             {
                 m_gl.Viewport(pRT->viewportX, pRT->viewportY, pRT->viewportWidth, pRT->viewportHeight);
 
