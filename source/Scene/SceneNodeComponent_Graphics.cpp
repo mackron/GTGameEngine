@@ -5,40 +5,79 @@
 
 namespace GT
 {
-    //SceneNodeComponent_Graphics::SceneNodeComponent_Graphics(GraphicsResourceManager* pGraphicsResourceManager)
-    SceneNodeComponent_Graphics::SceneNodeComponent_Graphics(GraphicsWorld* pGraphicsWorld)
+    SceneNodeComponent_Graphics::SceneNodeComponent_Graphics()
         : SceneNodeComponent(SceneNodeComponentType_Graphics),
-          m_pGraphicsWorld(pGraphicsWorld),
-          m_hMeshObject(0)
+          m_pGraphicsResourceManager(nullptr),
+          m_pModelResource(nullptr),
+          m_pModelObject(nullptr)
     {
     }
 
     SceneNodeComponent_Graphics::~SceneNodeComponent_Graphics()
     {
+        this->UnsetModel();
     }
 
 
-    bool SceneNodeComponent_Graphics::SetModel(const char* modelPath, EngineContext &engineContext)
+    bool SceneNodeComponent_Graphics::SetModel(const char* modelPath, GraphicsAssetResourceManager* pGraphicsResourceManager)
     {
-        auto &assetLibrary = engineContext.GetAssetLibrary();
-        
-        auto pModelAsset = assetLibrary.Load(modelPath);
-        if (pModelAsset != nullptr)
-        {
-            
-        }
+        this->UnsetModel();
 
+        if (modelPath != nullptr && pGraphicsResourceManager != nullptr)
+        {
+            m_pModelResource = pGraphicsResourceManager->LoadModel(modelPath);
+            if (m_pModelResource != nullptr)
+            {
+                m_pGraphicsResourceManager = pGraphicsResourceManager;
+
+                // All good. We don't create the graphics objects for each mesh until AddModelToGraphicsWorld() is called.
+                return true;
+            }
+        }
+        
         return false;
     }
 
-
-    void SceneNodeComponent_Graphics::SetMeshObject(HGraphicsObject hMeshObject)
+    void SceneNodeComponent_Graphics::UnsetModel()
     {
-        m_hMeshObject = hMeshObject;
+        if (m_pModelResource != nullptr && m_pGraphicsResourceManager != nullptr)
+        {
+            // Make sure the model is removed from the graphics world first.
+            this->RemoveModelFromGraphicsWorld();
+
+            // Now we can unload the resources.
+            m_pGraphicsResourceManager->Unload(m_pModelResource);
+            m_pModelResource           = nullptr;
+            m_pGraphicsResourceManager = nullptr;
+        }
     }
 
-    HGraphicsObject SceneNodeComponent_Graphics::GetMeshObject() const
+
+    void SceneNodeComponent_Graphics::AddModelToGraphicsWorld(const vec4 &position, const quat &rotation, const vec4 &scale)
     {
-        return m_hMeshObject;
+        if (m_pModelObject == nullptr && m_pModelResource != nullptr)
+        {
+            m_pModelObject = new GraphicsModelObject;
+            m_pModelObject->Initialize(m_pModelResource, &m_pGraphicsResourceManager->GetGraphicsWorld(), position, rotation, scale);
+        }
+    }
+
+    void SceneNodeComponent_Graphics::RemoveModelFromGraphicsWorld()
+    {
+        if (m_pModelObject != nullptr)
+        {
+            m_pModelObject->Uninitialize();
+
+            delete m_pModelObject;
+            m_pModelObject = nullptr;
+        }
+    }
+
+    void SceneNodeComponent_Graphics::SetModelTransform(const vec4 &position, const quat &rotation, const vec4 &scale)
+    {
+        if (m_pModelObject != nullptr)
+        {
+            m_pModelObject->SetTransform(position, rotation, scale);
+        }
     }
 }

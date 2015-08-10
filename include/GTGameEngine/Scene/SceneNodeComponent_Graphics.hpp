@@ -5,7 +5,8 @@
 
 #include "SceneNodeComponent.hpp"
 #include "SceneNodeComponentDescriptor_Graphics.hpp"
-#include "../Graphics/GraphicsWorld.hpp"
+#include "../Graphics/GraphicsAssetResourceManager.hpp"
+#include "../Graphics/GraphicsModelObject.hpp"
 
 namespace GT
 {
@@ -16,7 +17,7 @@ namespace GT
     public:
 
         /// Constructor.
-        SceneNodeComponent_Graphics(GraphicsWorld* pGraphicsWorld);
+        SceneNodeComponent_Graphics();
 
         /// Destructor.
         ~SceneNodeComponent_Graphics();
@@ -30,14 +31,24 @@ namespace GT
         /// @remarks
         ///     If the model has not already been pre-loaded, this will do a full load. This will also load any assets that the model depends on such
         ///     as materials and textures.
-        bool SetModel(const char* modelPath, EngineContext &engineContext);
+        bool SetModel(const char* modelPath, GraphicsAssetResourceManager* pGraphicsResourceManager);
+
+        /// Unsets the current model.
+        void UnsetModel();
 
 
+        /// Adds the model to the graphics world.
+        void AddModelToGraphicsWorld(const vec4 &position, const quat &rotation, const vec4 &scale);
 
-        /// Sets the mesh resource to draw.
-        void SetMeshObject(HGraphicsObject hMeshObject);
+        /// Removes the model from the graphics world.
+        void RemoveModelFromGraphicsWorld();
 
-        HGraphicsObject GetMeshObject() const;
+        /// Sets the transformation of the model in the graphics world.
+        ///
+        /// @param position [in] The position of the model.
+        /// @param rotation [in] The rotation of the model.
+        /// @param scale    [in] The scale of the model.
+        void SetModelTransform(const vec4 &position, const quat &rotation, const vec4 &scale);
 
 
 
@@ -56,11 +67,15 @@ namespace GT
 
     private:
 
-        /// A pointer to the graphics world where the graphics object will be created from.
-        GraphicsWorld* m_pGraphicsWorld;
+        /// A pointer to the graphics resource manager that is managing the model's resources. This is used to load
+        /// the model by SetModel().
+        GraphicsAssetResourceManager* m_pGraphicsResourceManager;
 
-        /// A handle to the mesh object to draw.
-        HGraphicsObject m_hMeshObject;
+        /// The model resource that was loaded by SetModel()
+        GraphicsAssetResource_Model* m_pModelResource;
+
+        /// The model object that will be added to the graphics world by AddModelToGraphicsWorld()
+        GraphicsModelObject* m_pModelObject;
     };
 }
 
