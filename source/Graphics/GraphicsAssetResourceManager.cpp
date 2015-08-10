@@ -681,6 +681,9 @@ namespace GT
             desc.pData           = material.pRawData;
             desc.dataSizeInBytes = material.sizeInBytes;
             m_pDefaultMaterial = this->CreateMaterialResourceFromDesc(desc, nullptr, "");
+
+
+            easymtl_uninit(&material);
         }
     }
 
