@@ -693,7 +693,7 @@ namespace GT
                     if (pIdentifier != nullptr)
                     {
                         GraphicsMaterialVariableType type = (GraphicsMaterialVariableType)pIdentifier->type;    // Safe cast - the type enumerators should always be mirrored.
-                        GLuint bufferOffset = inputVariablesValuesBuffer.GetCount() * sizeof(uint32_t);
+                        GLuint bufferOffset = static_cast<GLuint>(inputVariablesValuesBuffer.GetCount() * sizeof(uint32_t));
                         const char* name = pIdentifier->name;
 
                         switch (pIdentifier->type)
@@ -739,7 +739,11 @@ namespace GT
                         case easymtl_type_tex3d:
                         case easymtl_type_texcube:
                             {
-                                inputVariablesValuesBuffer.PushBack(0);
+                                for (unsigned int i = 0; i < sizeof(HGraphicsResource) / sizeof(uint32_t); ++i)
+                                {
+                                    inputVariablesValuesBuffer.PushBack(0);
+                                }
+
                                 break;
                             }
 
@@ -1696,7 +1700,7 @@ namespace GT
                                         }
                                     }
 
-                                    m_gl.DrawElements(pMeshResource->drawMode, meshResourceMaterialSlot.indexCount, GL_UNSIGNED_INT, reinterpret_cast<const void*>(meshResourceMaterialSlot.indexOffset));
+                                    m_gl.DrawElements(pMeshResource->drawMode, meshResourceMaterialSlot.indexCount, GL_UNSIGNED_INT, reinterpret_cast<const void*>(static_cast<size_t>(meshResourceMaterialSlot.indexOffset)));
                                 }
                             }
                         }
