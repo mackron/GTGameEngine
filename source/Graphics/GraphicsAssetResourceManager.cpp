@@ -235,7 +235,7 @@ namespace GT
             pMaterialResource = m_pDefaultMaterial;
         }
 
-        return m_pDefaultMaterial;
+        return pMaterialResource;
     }
 
     GraphicsAssetResource_Model* GraphicsAssetResourceManager::LoadModel(Asset* pAsset, const char* absolutePath)
@@ -294,7 +294,15 @@ namespace GT
             desc.materials                     = new HGraphicsResource[desc.materialCount];
             for (size_t iMaterial = 0; iMaterial < materialCount; ++iMaterial)
             {
-                desc.materials[iMaterial] = materials[iMaterial]->GetGraphicsResource();
+                auto pMaterial = materials[iMaterial];
+                if (pMaterial != nullptr)
+                {
+                    desc.materials[iMaterial] = pMaterial->GetGraphicsResource();
+                }
+                else
+                {
+                    desc.materials[iMaterial] = 0;
+                }
             }
 
             auto pMeshResource = this->LoadMesh(desc);
@@ -643,8 +651,6 @@ namespace GT
         {
             m_pDefaultTexture = new GraphicsAssetResource_Texture(nullptr, hGraphicsResource);
         }
-
-        m_pDefaultTexture = nullptr;
     }
 
     void GraphicsAssetResourceManager::LoadDefaultMaterial()
@@ -676,8 +682,6 @@ namespace GT
             desc.dataSizeInBytes = material.sizeInBytes;
             m_pDefaultMaterial = this->CreateMaterialResourceFromDesc(desc, nullptr, "");
         }
-
-        m_pDefaultMaterial = nullptr;
     }
 
     void GraphicsAssetResourceManager::LoadDefaultModel()
@@ -713,7 +717,7 @@ namespace GT
         float nor5X = -1.0f; float nor5Y =  0.0f; float nor5Z =  0.0f;
 
 
-        MeshBuilderP3T2N3 builder(false);
+        MeshBuilderP3T2N3 builder;
 
         // Front
         {
@@ -792,15 +796,19 @@ namespace GT
 
         uint32_t materialOffsetCountPair[2];
         materialOffsetCountPair[0] = 0;
-        materialOffsetCountPair[1] = 0;
+        materialOffsetCountPair[1] = builder.GetIndexCount();
 
-        HGraphicsResource hMaterialResource[1] = { m_pDefaultMaterial->GetGraphicsResource() };
+        HGraphicsResource hMaterialResource[1] = { 0 };
+        if (m_pDefaultMaterial != nullptr)
+        {
+            hMaterialResource[0] = m_pDefaultMaterial->GetGraphicsResource();
+        }
 
         GT::GraphicsMeshResourceDesc desc;
         desc.topology                      = PrimitiveTopologyType_Triangle;
         desc.pVertexData                   = builder.GetVertexData();
-        desc.vertexDataSize                = builder.GetVertexSizeInFloats() * sizeof(float);
-        desc.vertexStride                  = sizeof(float)*3*2*3;
+        desc.vertexDataSize                = builder.GetVertexSizeInFloats() * sizeof(float) * builder.GetVertexCount();
+        desc.vertexStride                  = sizeof(float) * (3 + 2 + 3);
         desc.pVertexLayout                 = vertexLayout;
         desc.vertexAttribCount             = 3;
         desc.pIndexData                    = builder.GetIndexData();

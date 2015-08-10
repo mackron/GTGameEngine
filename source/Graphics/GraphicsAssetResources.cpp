@@ -46,8 +46,6 @@ namespace GT
     GraphicsAssetResource_Texture::GraphicsAssetResource_Texture(Asset* pAsset, HGraphicsResource hGraphicsResource)
         : GraphicsAssetResource(pAsset), m_hGraphicsResource(hGraphicsResource)
     {
-        assert(pAsset != nullptr);
-        assert(pAsset->GetClass() == AssetClass_Image);
     }
 
     HGraphicsResource GraphicsAssetResource_Texture::GetGraphicsResource() const
@@ -63,8 +61,6 @@ namespace GT
     GraphicsAssetResource_Material::GraphicsAssetResource_Material(Asset* pAsset, HGraphicsResource hGraphicsResource)
         : GraphicsAssetResource(pAsset), m_hGraphicsResource(hGraphicsResource), m_textures()
     {
-        assert(pAsset != nullptr);
-        assert(pAsset->GetClass() == AssetClass_Material);
     }
 
     HGraphicsResource GraphicsAssetResource_Material::GetGraphicsResource() const
@@ -178,8 +174,6 @@ namespace GT
     GraphicsAssetResource_Model::GraphicsAssetResource_Model(Asset* pAsset)
         : GraphicsAssetResource(pAsset), m_meshes()
     {
-        assert(pAsset != nullptr);
-        assert(pAsset->GetClass() == AssetClass_Model);
     }
 
     size_t GraphicsAssetResource_Model::GetMeshCount() const
