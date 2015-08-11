@@ -5,6 +5,12 @@
 
 namespace GT
 {
+    LRESULT DummyWindowProcWin32(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
+    {
+        return DefWindowProc(hWnd, msg, wParam, lParam);
+    }
+
+
     GraphicsAPI_OpenGL::GraphicsAPI_OpenGL()
         : GraphicsAPI(),
 #if defined(GT_PLATFORM_WINDOWS)
@@ -31,7 +37,19 @@ namespace GT
         m_hOpenGL32 = LoadLibraryW(L"OpenGL32.dll");
         if (m_hOpenGL32 != NULL)
         {
-            m_hDummyHWND = CreateWindowExW(0, L"STATIC", L"", 0, 0, 0, 0, 0, NULL, NULL, GetModuleHandle(NULL), NULL);
+            WNDCLASSEXW dummyWC;
+            memset(&dummyWC, 0, sizeof(dummyWC));
+            dummyWC.cbSize        = sizeof(dummyWC);
+            dummyWC.lpfnWndProc   = reinterpret_cast<WNDPROC>(DummyWindowProcWin32);
+            dummyWC.lpszClassName = L"GraphicsAPI_OpenGL_DummyHWND";
+            dummyWC.style         = CS_OWNDC;
+            if (!::RegisterClassExW(&dummyWC))
+            {
+                // Failed to register window class.
+                assert(false);
+            }
+
+            m_hDummyHWND = CreateWindowExW(0, L"GraphicsAPI_OpenGL_DummyHWND", L"", 0, 0, 0, 0, 0, NULL, NULL, GetModuleHandle(NULL), NULL);
             m_hDummyDC   = GetDC(m_hDummyHWND);
 
             memset(&m_pfd, 0, sizeof(m_pfd));
