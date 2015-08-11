@@ -40,6 +40,11 @@ namespace GT
         }
     }
 
+    EditorTabGroup::~EditorTabGroup()
+    {
+        this->CloseAllTabs();
+    }
+
 
     EditorTab* EditorTabGroup::CreateTab(const char* title)
     {
@@ -81,6 +86,15 @@ namespace GT
                 this->GetGUI().HideElement(m_tabBar.GetRootGUIElement());
                 this->GetGUI().HideElement(m_hTabPageContainer);
             }
+        }
+    }
+
+    void EditorTabGroup::CloseAllTabs()
+    {
+        // It's a bit more efficient to close tabs from right to left.
+        while (m_tabBar.GetTabCount() > 0)
+        {
+            this->CloseTab(m_tabBar.GetTabByIndex(m_tabBar.GetTabCount() - 1));
         }
     }
 

@@ -15,12 +15,18 @@ namespace GT
         /// Constructor.
         EditorTabGroup(Editor &editor);
 
+        /// Destructor.
+        ~EditorTabGroup();
+
 
         /// Creates tab.
         EditorTab* CreateTab(const char* title);
 
         /// Closes the given tab.
         void CloseTab(EditorTab* pTab);
+
+        /// Closes every open tab.
+        void CloseAllTabs();
 
         /// Activates the given tab.
         void ActivateTab(EditorTab* pTab);

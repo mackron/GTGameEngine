@@ -135,11 +135,22 @@ namespace GT
     {
         this->ShutdownFileSystemWatcher();
 
+        delete m_pFooterControl;
+        m_pFooterControl = nullptr;
 
-        // TODO: Delete all surfaces and elements.
+        delete m_pBodyControl;
+        m_pBodyControl = nullptr;
 
+        delete m_pHeaderControl;
+        m_pHeaderControl = nullptr;
+
+
+        // Delete all surfaces and elements.
+        this->DeleteAllWindowSurfacesAndElements();
+
+
+        // Ensure the global event handler is detached from the GUI.
         m_gui.DetachGlobalEventHandler(m_globalGUIEventHandler);
-
 
         // Remove all event handlers.
         m_eventHandlers.Clear();
@@ -786,7 +797,7 @@ namespace GT
         if (iSurface != nullptr)
         {
             surfaceAndElementOut = iSurface->value;
-            return false;
+            return true;
         }
         else
         {
@@ -882,6 +893,8 @@ namespace GT
                     DeleteDC(reinterpret_cast<HDC>(pSurfaceAUXData->hMemDC));
                 }
 #endif
+
+                delete pSurfaceAUXData;
             }
 
             m_gui.DeleteSurface(surfaceAndElement.hSurface);
@@ -891,6 +904,16 @@ namespace GT
             // Remove the window/surface mapping.
             m_windowSurfaceMap.RemoveByKey(hWindow);
         }
+    }
+
+    void Editor::DeleteAllWindowSurfacesAndElements()
+    {
+        while (m_windowSurfaceMap.count > 0)
+        {
+            this->DeleteWindowSurfaceAndElement(m_windowSurfaceMap.buffer[0]->key);
+        }
+
+        assert(m_windowSurfaceMap.count == 0);
     }
 
 

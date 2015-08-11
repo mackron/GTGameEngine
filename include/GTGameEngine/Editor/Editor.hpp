@@ -349,10 +349,13 @@ namespace GT
         bool CreateWindowSurfaceAndElement(HWindow hWindow, WindowGUISurfaceAndElement &surfaceAndElementOut);
         bool CreateWindowSurfaceAndElement(HWindow hWindow);
 
-        /// Deletse the GUI surface of the given window.
+        /// Deletes the GUI surface of the given window.
         ///
         /// @param hWindow [in] A handle to the window whose surface is being deleted.
         void DeleteWindowSurfaceAndElement(HWindow hWindow);
+
+        /// Deletes the GUI surface of every window used by the editor.
+        void DeleteAllWindowSurfacesAndElements();
 
 
         

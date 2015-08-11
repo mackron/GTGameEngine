@@ -40,6 +40,16 @@ namespace GT
         }
     }
 
+    EditorAssetExplorer::~EditorAssetExplorer()
+    {
+        for (size_t i = 0; i < m_baseItems.GetCount(); ++i)
+        {
+            delete m_baseItems[i];
+        }
+
+        this->GetGUI().DetachGlobalEventHandler(m_eventHandler);
+    }
+
 
     void EditorAssetExplorer::AddBaseDirectory(const char* absolutePath, const char* displayName)
     {

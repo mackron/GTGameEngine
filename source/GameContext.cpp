@@ -60,10 +60,7 @@ namespace GT
 
     void GameContext::Shutdown()
     {
-#if defined(GT_BUILD_EDITOR)
-        // Editor.
-        m_editor.Shutdown();
-#endif
+        // Some shutdown routines are done at at the end of Run(), such as the editor.
 
         // Window manager.
         if ((m_flags & IsOwnerOfWindowManagerFlag) != 0)
@@ -145,9 +142,19 @@ namespace GT
         }
 
 
+
         //////////////////////////////////////
         // Shutdown.
+
+        // The editor needs to be shut down before the game state receives OnClosing() because the game state will destroy the window that the
+        // editor uses as the parent of some of the editor's controls - these controls need to be destroyed first in order to clean them up properly.
+#if defined(GT_BUILD_EDITOR)
+        m_editor.Shutdown();
+#endif
+
+        // Post OnClosing to the game state after shutting down the editor.
         m_gameState.OnClosing(*this);
+
 
         return m_pWindowManager->GetExitCode();
     }

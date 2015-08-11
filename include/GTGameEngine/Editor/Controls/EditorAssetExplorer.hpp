@@ -14,6 +14,7 @@ namespace GT
     public:
 
         EditorAssetExplorer(Editor &editor);
+        ~EditorAssetExplorer();
 
 
 

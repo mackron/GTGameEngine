@@ -81,6 +81,7 @@ namespace GT
 
     EditorMenuBar::~EditorMenuBar()
     {
+        this->DeleteAllButtons();
         this->GetEditor().DetachEventHandler(m_editorEventHandler);
     }
 
@@ -115,6 +116,14 @@ namespace GT
             }
 
             delete pButton;
+        }
+    }
+
+    void EditorMenuBar::DeleteAllButtons()
+    {
+        while (m_buttons.GetCount() > 0)
+        {
+            this->DeleteButton(m_buttons[0]);
         }
     }
 

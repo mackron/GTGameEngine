@@ -17,9 +17,9 @@ namespace GT
             const EditorTheme &theme = editor.GetTheme();
 
             m_pFileMenuButton = this->CreateAndInsertButton("FILE");
-            this->CreateAndInsertButton("EDIT");
-            this->CreateAndInsertButton("VIEW");
-            this->CreateAndInsertButton("HELP");
+            m_pEditMenuButton = this->CreateAndInsertButton("EDIT");
+            m_pViewMenuButton = this->CreateAndInsertButton("VIEW");
+            m_pHelpMenuButton = this->CreateAndInsertButton("HELP");
 
 
             m_pFileMenu = new EditorPopupControl(editor, hParentWindow);
@@ -30,6 +30,12 @@ namespace GT
 
     EditorMainMenuBar::~EditorMainMenuBar()
     {
+        this->DeleteButton(m_pFileMenuButton);
+        this->DeleteButton(m_pEditMenuButton);
+        this->DeleteButton(m_pViewMenuButton);
+        this->DeleteButton(m_pHelpMenuButton);
+
+        delete m_pFileMenu;
     }
 
 

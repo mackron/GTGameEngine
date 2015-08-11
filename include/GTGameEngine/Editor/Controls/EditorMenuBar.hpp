@@ -79,6 +79,9 @@ namespace GT
         /// @param pButton [in] A pointer to the button to remove.
         void DeleteButton(EditorMenuBarButton* pButton);
 
+        /// Removes and delete every button.
+        void DeleteAllButtons();
+
 
         /// Activates the given button.
         ///

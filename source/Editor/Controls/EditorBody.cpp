@@ -54,6 +54,12 @@ namespace GT
 
     EditorBody::~EditorBody()
     {
+        for (size_t i = 0; i < m_tabGroups.GetCount(); ++i)
+        {
+            delete m_tabGroups[i];
+        }
+
+        delete m_pAssetExplorer;
     }
 
 

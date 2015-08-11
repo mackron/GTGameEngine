@@ -3352,6 +3352,7 @@ namespace GT
             {
                 // If the element does not have any text, delete the layout object to save memory.
                 delete pElement->pTextLayout;
+                pElement->pTextLayout = nullptr;
             }
         }
     }
@@ -3449,7 +3450,11 @@ namespace GT
     {
         for (size_t iElement = 0; iElement < m_elementsPendingDeletion.GetCount(); ++iElement)
         {
-            this->DeleteElementPtr(m_elementsPendingDeletion[iElement]);
+            auto pElement = m_elementsPendingDeletion[iElement];
+            assert(pElement != nullptr);
+
+            delete pElement->pTextLayout;
+            this->DeleteElementPtr(pElement);
         }
 
         m_elementsPendingDeletion.Clear();
