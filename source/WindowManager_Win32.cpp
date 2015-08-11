@@ -843,6 +843,7 @@ namespace GT
         WindowData* pWindowData = reinterpret_cast<WindowData*>(::GetWindowLongPtr(reinterpret_cast<HWND>(hWindow), 0));
         if (pWindowData != nullptr)
         {
+            SetWindowLongPtr(reinterpret_cast<HWND>(hWindow), 0, 0);
             delete pWindowData;
         }
 
