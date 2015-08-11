@@ -41,7 +41,11 @@ namespace GT
         m_commandLine.Parse(argc, argv);
 
         // Make the global current directory that of the executable by default.
-        GTLib::IO::SetCurrentDirectory(m_commandLine.GetApplicationDirectory());
+        #if defined(_MSC_VER)
+            _chdir(m_commandLine.GetApplicationDirectory());
+        #else
+            chdir(m_commandLine.GetApplicationDirectory());
+        #endif
 
 
         // Graphics APIs.
