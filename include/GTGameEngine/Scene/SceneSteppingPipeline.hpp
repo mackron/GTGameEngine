@@ -13,6 +13,10 @@ namespace GT
     {
     public:
 
+        /// Destructor.
+        virtual ~SceneSteppingPipeline() {}
+
+
         /// Inserts a scene node.
         virtual void InsertSceneNode(SceneNode* pSceneNode) = 0;
 

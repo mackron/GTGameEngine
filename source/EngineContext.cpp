@@ -123,17 +123,21 @@ namespace GT
 
 
         // Graphics APIs.
+        m_pGraphicsAPI_Null->Shutdown();
         delete m_pGraphicsAPI_Null;
         m_pGraphicsAPI_Null = nullptr;
 #if defined(GT_BUILD_VULKAN)
+        m_pGraphicsAPI_Vulkan->Shutdown();
         delete m_pGraphicsAPI_Vulkan;
         m_pGraphicsAPI_Vulkan = nullptr;
 #endif
 #if defined(GT_BUILD_D3D12)
+        m_pGraphicsAPI_D3D12->Shutdown();
         delete m_pGraphicsAPI_D3D12;
         m_pGraphicsAPI_D3D12 = nullptr;
 #endif
 #if defined(GT_BUILD_OPENGL)
+        m_pGraphicsAPI_OpenGL->Shutdown();
         delete m_pGraphicsAPI_OpenGL;
         m_pGraphicsAPI_OpenGL = nullptr;
 #endif

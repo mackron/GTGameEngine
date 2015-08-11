@@ -287,6 +287,7 @@ public:
         m_pGraphicsAssetResourceManager = nullptr;
 
         m_pGraphicsWorld->DeleteRenderTarget(m_hWindowRT);
+        m_pGraphicsWorld->Shutdown();
         delete m_pGraphicsWorld;
         m_pGraphicsWorld = nullptr;
 
@@ -379,31 +380,36 @@ int main(int argc, char** argv)
     _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif
 
-
-    GT::EngineContext engine;
-    if (GT::Succeeded(engine.Startup(argc, argv)))
+    int result = 1;
     {
-        SandboxGameState gameState;    
-        GT::GameContext game(engine, gameState);
-        if (GT::Succeeded(game.Startup()))
+        GT::EngineContext engine;
+        if (GT::Succeeded(engine.Startup(argc, argv)))
         {
-            int exitCode = game.Run();
+            SandboxGameState gameState;    
+            GT::GameContext game(engine, gameState);
+            if (GT::Succeeded(game.Startup()))
+            {
+                int exitCode = game.Run();
 
-            game.Shutdown();
-            engine.Shutdown();
+                game.Shutdown();
+                engine.Shutdown();
 
-            return exitCode;
+                result = exitCode;
+            }
+            else
+            {
+                // Error initializing the game.
+                engine.Shutdown();
+                result = 2;
+            }
         }
         else
         {
-            // Error initializing the game.
-            engine.Shutdown();
-            return 2;
+            // Error initializing the engine.
+            result = 1;
         }
     }
-    else
-    {
-        // Error initializing the engine.
-        return 1;
-    }    
+
+
+    return result;
 }
