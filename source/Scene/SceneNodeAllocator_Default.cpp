@@ -23,6 +23,6 @@ namespace GT
         assert(pSceneNode != nullptr);
 
         pSceneNode->~SceneNode();
-        _aligned_free(reinterpret_cast<uint8_t*>(pSceneNode - GT_SCENE_NODE_EXTRA_BYTES));
+        _aligned_free(reinterpret_cast<uint8_t*>(pSceneNode) - GT_SCENE_NODE_EXTRA_BYTES);
     }
 }

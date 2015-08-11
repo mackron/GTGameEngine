@@ -19,7 +19,7 @@ namespace GT
     AssetLibrary::~AssetLibrary()
     {
     }
-
+    
 
     bool AssetLibrary::Startup()
     {
@@ -40,6 +40,9 @@ namespace GT
                 }
             }
         }
+
+        m_loadedAssets.Clear();
+        m_allocators.Clear();
     }
 
 

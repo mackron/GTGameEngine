@@ -83,12 +83,13 @@ namespace GT
         /// @remarks
         ///     This will fail if a component of the same type is already attached.
         bool AttachComponent(SceneNodeComponent &component);
-        bool AttachComponent(SceneNodeComponent* component) { assert(component != nullptr); return this->AttachComponent(*component); }
+        bool AttachComponent(SceneNodeComponent* component) { if (component != nullptr) { return this->AttachComponent(*component); } else { return false; }}
 
         /// Detaches the given component.
         ///
         /// @param component [in] A reference to the component to detach.
         void DetachComponent(SceneNodeComponent &component);
+        void DetachComponent(SceneNodeComponent* component) { if (component != nullptr) { this->DetachComponent(*component); }}
 
         /// Detaches the component of the given type, if any.
         ///

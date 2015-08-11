@@ -1,4 +1,8 @@
 
+#define CRTDBG_MAP_ALLOC
+#include <stdlib.h>
+#include <crtdbg.h>
+
 #include <GTGameEngine/EngineContext.hpp>
 #include <GTGameEngine/GameContext.hpp>
 #include <GTGameEngine/GameState.hpp>
@@ -267,6 +271,30 @@ public:
         return true;
     }
 
+    void OnClosing(GT::GameContext &gameContext)
+    {
+        if (m_pTestSceneNode != nullptr)
+        {
+            auto pComponent = m_pTestSceneNode->GetComponent<GT::SceneNodeComponent_Graphics>();
+            m_pTestSceneNode->DetachComponent(pComponent);
+            delete pComponent;
+
+            m_scene.DeleteSceneNode(m_pTestSceneNode);
+            m_pTestSceneNode = nullptr;
+        }
+
+        delete m_pGraphicsAssetResourceManager;
+        m_pGraphicsAssetResourceManager = nullptr;
+
+        m_pGraphicsWorld->DeleteRenderTarget(m_hWindowRT);
+        delete m_pGraphicsWorld;
+        m_pGraphicsWorld = nullptr;
+
+
+        gameContext.DeleteWindow(m_hMainWindow);
+        m_hMainWindow = 0;
+    }
+
 
     void OnKeyPressed(GT::GameContext &gameContext, GT::HWindow hWindow, GTLib::Key key)
     {
@@ -347,6 +375,11 @@ private:
 
 int main(int argc, char** argv)
 {
+#if defined(_MSC_VER)
+    _CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+#endif
+
+
     GT::EngineContext engine;
     if (GT::Succeeded(engine.Startup(argc, argv)))
     {
@@ -355,7 +388,6 @@ int main(int argc, char** argv)
         if (GT::Succeeded(game.Startup()))
         {
             int exitCode = game.Run();
-
 
             game.Shutdown();
             engine.Shutdown();

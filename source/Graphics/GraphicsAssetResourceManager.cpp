@@ -51,7 +51,7 @@ namespace GT
                 auto pNewResource = this->LoadTexture(pAsset);
                 if (pNewResource != nullptr)
                 {
-                    m_loadedResources.Add(assetAbsolutePath.c_str(), pExistingResource);
+                    m_loadedResources.Add(assetAbsolutePath.c_str(), pNewResource);
                     return pNewResource;
                 }
                 else
@@ -84,7 +84,7 @@ namespace GT
                 auto pNewResource = this->LoadMaterial(pAsset, assetAbsolutePath.c_str());
                 if (pNewResource != nullptr)
                 {
-                    m_loadedResources.Add(assetAbsolutePath.c_str(), pExistingResource);
+                    m_loadedResources.Add(assetAbsolutePath.c_str(), pNewResource);
                     return pNewResource;
                 }
                 else
@@ -117,7 +117,7 @@ namespace GT
                 auto pNewResource = this->LoadModel(pAsset, assetAbsolutePath.c_str());
                 if (pNewResource != nullptr)
                 {
-                    m_loadedResources.Add(assetAbsolutePath.c_str(), pExistingResource);
+                    m_loadedResources.Add(assetAbsolutePath.c_str(), pNewResource);
                     return pNewResource;
                 }
                 else
@@ -408,7 +408,10 @@ namespace GT
             auto pTexture = pMaterial->GetTextureByIndex(iTexture);
             assert(pTexture != nullptr);
 
-            this->Unload(pTexture);
+            if (pTexture != m_pDefaultTexture)
+            {
+                this->Unload(pTexture);
+            }
         }
 
 
@@ -421,13 +424,16 @@ namespace GT
     {
         assert(pModel != nullptr);
 
-        // Unload every mesh first.
+        // Unload every mesh first, but not if it's the default mesh.
         for (size_t iMesh = 0; iMesh < pModel->GetMeshCount(); ++iMesh)
         {
             auto pMesh = pModel->GetMeshByIndex(iMesh);
             assert(pMesh != nullptr);
 
-            this->UnloadMesh(pMesh);
+            if (pMesh != m_pDefaultMesh)
+            {
+                this->UnloadMesh(pMesh);
+            }
         }
 
 
@@ -445,7 +451,10 @@ namespace GT
             auto pMaterial = pMesh->GetMaterialByIndex(iMaterial);
             assert(pMaterial != nullptr);
 
-            this->Unload(pMaterial);
+            if (pMaterial != m_pDefaultMaterial)
+            {
+                this->Unload(pMaterial);
+            }
         }
 
 
@@ -558,7 +567,7 @@ namespace GT
 
     bool GraphicsAssetResourceManager::FindResourceIndex(GraphicsAssetResource* pResource, size_t &indexOut) const
     {
-        for (size_t iExistingItem = 0; m_loadedResources.count; ++iExistingItem)
+        for (size_t iExistingItem = 0; iExistingItem < m_loadedResources.count; ++iExistingItem)
         {
             auto pExistingItem = m_loadedResources.buffer[iExistingItem];
             assert(pExistingItem != nullptr);

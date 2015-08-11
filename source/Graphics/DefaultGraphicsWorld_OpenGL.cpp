@@ -1742,6 +1742,7 @@ namespace GT
         {
             assert(pMaterial->type == GraphicsResourceType::Material);
 
+            m_gl.DeleteProgram(pMaterial->programGL);
             delete pMaterial;
         }
     }
@@ -1753,6 +1754,8 @@ namespace GT
         {
             assert(pMesh->type == GraphicsResourceType::Mesh);
 
+            m_gl.DeleteBuffers(1, &pMesh->indexBufferGL);
+            m_gl.DeleteBuffers(1, &pMesh->vertexBufferGL);
             delete pMesh;
         }
     }

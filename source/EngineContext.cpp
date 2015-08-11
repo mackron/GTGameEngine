@@ -110,11 +110,33 @@ namespace GT
     {
         // Asset library.
         m_assetLibrary.Shutdown();
+
+#if defined(GT_BUILD_DEFAULT_ASSETS)
         delete m_pDefaultAssetAllocator;
+        m_pDefaultAssetAllocator = nullptr;
+#endif
+
 
 
         // File system.
         m_fileSystem.Shutdown();
+
+
+        // Graphics APIs.
+        delete m_pGraphicsAPI_Null;
+        m_pGraphicsAPI_Null = nullptr;
+#if defined(GT_BUILD_VULKAN)
+        delete m_pGraphicsAPI_Vulkan;
+        m_pGraphicsAPI_Vulkan = nullptr;
+#endif
+#if defined(GT_BUILD_D3D12)
+        delete m_pGraphicsAPI_D3D12;
+        m_pGraphicsAPI_D3D12 = nullptr;
+#endif
+#if defined(GT_BUILD_OPENGL)
+        delete m_pGraphicsAPI_OpenGL;
+        m_pGraphicsAPI_OpenGL = nullptr;
+#endif
     }
 
 
