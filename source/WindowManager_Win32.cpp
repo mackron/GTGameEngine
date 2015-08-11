@@ -240,7 +240,7 @@ namespace GT
 
     LRESULT DefaultWindowProcWin32(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
     {
-        WindowManager_Win32::WindowData* pWindowData = reinterpret_cast<WindowManager_Win32::WindowData*>(GetWindowLongPtrW(hWnd, 0));
+        WindowManager_Win32::WindowData* pWindowData = reinterpret_cast<WindowManager_Win32::WindowData*>(GetWindowLongPtr(hWnd, 0));
         if (pWindowData != nullptr)
         {
             WindowManager_Win32* pWindowManager = pWindowData->pWindowManager;
@@ -263,7 +263,7 @@ namespace GT
             case WM_CLOSE:
                 {
                     pWindowManager->OnClose();
-                    break;
+                    return 0;
                 }
 
             case WM_MOVE:
