@@ -285,7 +285,7 @@ namespace GT
                 bmi.bmiHeader.biWidth       = m_textBitmapWidth;
                 bmi.bmiHeader.biHeight      = m_textBitmapHeight;
                 bmi.bmiHeader.biPlanes      = 1;
-                bmi.bmiHeader.biBitCount    = 32;       // TODO: See if we can get aware with 8 bits here...
+                bmi.bmiHeader.biBitCount    = 32;
                 bmi.bmiHeader.biCompression = BI_RGB;
                 m_hTextBitmap = CreateDIBSection(m_hDC, &bmi, DIB_RGB_COLORS, &m_pTextBitmapData, NULL, 0);
                 if (m_hTextBitmap == 0)
@@ -358,21 +358,19 @@ namespace GT
             // Copy to output buffer.
             GdiFlush();
 
+            uint32_t b = static_cast<uint32_t>(color.b * 255); if (b > 255) { b = 255; }
+            uint32_t g = static_cast<uint32_t>(color.g * 255); if (g > 255) { g = 255; }
+            uint32_t r = static_cast<uint32_t>(color.r * 255); if (r > 255) { r = 255; }
+            uint32_t rgb = (b << 16) | (g << 8) | (r << 0);
+
             for (int iRow = 0; iRow < textHeight; ++iRow)
             {
                 for (int iCol = 0; iCol < textWidth; ++iCol)
                 {
-                    uint32_t* pTextBitmapData32 = reinterpret_cast<uint32_t*>(m_pTextBitmapData);
-                    assert(pTextBitmapData32 != nullptr);
-
                     uint32_t  srcTexel = reinterpret_cast<uint32_t*>(m_pTextBitmapData)[(iRow * m_textBitmapWidth) + iCol];
                     uint32_t &dstTexel = reinterpret_cast<uint32_t*>(bufferOut        )[(iRow * textWidth)         + iCol];
 
-                    uint32_t a = (srcTexel & 0x00FF0000) >> 16;
-                    uint32_t b = static_cast<uint32_t>(color.b * 255); if (b > 255) { b = 255; }
-                    uint32_t g = static_cast<uint32_t>(color.g * 255); if (g > 255) { g = 255; }
-                    uint32_t r = static_cast<uint32_t>(color.r * 255); if (r > 255) { r = 255; }
-                    dstTexel = (a << 24) | (b << 16) | (g << 8) | (r << 0);
+                    dstTexel = ((srcTexel & 0x00FF0000) << 8) | rgb;
                 }
             }
 

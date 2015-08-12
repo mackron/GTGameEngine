@@ -3744,24 +3744,34 @@ namespace GT
                     // Draw the text the slow, generic way. To do this we need to allocate a buffer which we'll pass to the render and then free straight away.
                     if (m_pFontManager != nullptr)
                     {
+                        size_t imageBufferSize = 0;
+                        void* pImageBuffer = NULL;
+
                         pElement->pTextLayout->IterateVisibleTextRuns([&](const GUITextRunDesc &run) {
                             int runWidth;
                             int runHeight;
                             if (m_pFontManager->MeasureString(run.hFont, run.text.c_str(), run.text.GetCharacterCount(), runWidth, runHeight))
                             {
-                                size_t imageBufferSize = runWidth * runHeight * 4;
-                                void* pImageBuffer = malloc(imageBufferSize);
+                                size_t newImageBufferSize = runWidth * runHeight * 4;
+                                if (newImageBufferSize > imageBufferSize)
+                                {
+                                    free(pImageBuffer);
+
+                                    imageBufferSize = newImageBufferSize;
+                                    pImageBuffer = malloc(newImageBufferSize);
+                                }
+
                                 if (pImageBuffer != nullptr)
                                 {
                                     if (m_pFontManager->DrawTextToBuffer(run.hFont, run.text.c_str(), run.text.GetCharacterCount(), run.color, pImageBuffer, imageBufferSize))
                                     {
                                         Renderer_DrawRawImage(run.xPos + textRect.left, run.yPos + textRect.top, runWidth, runHeight, pImageBuffer, true);
                                     }
-
-                                    free(pImageBuffer);
                                 }
                             }
                         });
+
+                        free(pImageBuffer);
                     }
                 }
 
