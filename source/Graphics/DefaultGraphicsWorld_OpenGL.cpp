@@ -553,7 +553,8 @@ namespace GT
 
     DefaultGraphicsWorld_OpenGL::DefaultGraphicsWorld_OpenGL(GUIContext &gui, GraphicsAPI_OpenGL &gl)
         : GraphicsWorld(gui),
-          m_gl(gl)
+          m_gl(gl),
+          m_guiDrawRawImageTexture(0)
     {
     }
 
@@ -601,6 +602,38 @@ namespace GT
 
                 m_gl.DeleteShader(guiRectangleVertexShader);
                 m_gl.DeleteShader(guiRectangleFragmentShader);
+
+
+
+                GLuint guiDrawRawImageVertexShader = this->CreateShader_GLSL(GL_VERTEX_SHADER,
+                    "attribute vec2 VS_Position;\n"
+                    "uniform mat4 Projection;\n"
+                    "uniform vec4 Rect;\n"
+                    "varying vec2 FS_TexCoord;\n"
+                    "void main() {\n"
+                    "    FS_TexCoord = VS_Position * vec2(1.0, -1.0) + vec2(0.0, 1.0);"
+                    "    gl_Position = Projection * vec4((VS_Position * Rect.zw) + Rect.xy, 0.0, 1.0);\n"
+                    "};"
+                );
+
+                GLuint guiDrawRawImageFragmentShader = this->CreateShader_GLSL(GL_FRAGMENT_SHADER,
+                    "uniform vec4 Color;\n"
+                    "uniform sampler2D Texture;\n"
+                    "varying vec2 FS_TexCoord;\n"
+                    "void main() {\n"
+                    "    gl_FragColor = Color * texture2D(Texture, FS_TexCoord);\n"
+                    "};"
+                );
+
+                m_guiDrawRawImageProgram = this->CreateProgram_GLSL(guiDrawRawImageVertexShader, guiDrawRawImageFragmentShader);
+                m_guiDrawRawImageProgram_ProjectionLoc = m_gl.GetUniformLocation(m_guiDrawRawImageProgram, "Projection");
+                m_guiDrawRawImageProgram_RectLoc       = m_gl.GetUniformLocation(m_guiDrawRawImageProgram, "Rect");
+                m_guiDrawRawImageProgram_ColorLoc      = m_gl.GetUniformLocation(m_guiDrawRawImageProgram, "Color");
+                m_guiDrawRawImageProgram_TextureLoc    = m_gl.GetUniformLocation(m_guiDrawRawImageProgram, "Texture");
+
+                m_gl.DeleteShader(guiDrawRawImageVertexShader);
+                m_gl.DeleteShader(guiDrawRawImageFragmentShader);
+
 
 
                 float rectVertices[8] = {
@@ -1593,7 +1626,7 @@ namespace GT
         // We need the size of the surface because we need the height to convery from top/left coordinates to bottom/left.
         gui.GetSurfaceSize(hSurface, m_currentSurfaceWidth, m_currentSurfaceHeight);
 
-        mat4 projection(GT::mat4::ortho(0.0f, m_currentSurfaceWidth, m_currentSurfaceHeight, 0.0f, 0.0f, -1.0f));
+        m_guiProjection = GT::mat4::ortho(0.0f, static_cast<float>(m_currentSurfaceWidth), static_cast<float>(m_currentSurfaceHeight), 0.0f, 0.0f, -1.0f);
 
 
         // Set everything up for rectangles since that is the most common thing we'll draw.
@@ -1607,7 +1640,7 @@ namespace GT
         
 
         m_gl.UseProgram(m_guiRectangleProgram);
-        m_gl.UniformMatrix4fv(m_guiRectangleProgram_ProjectionLoc, 1, GL_FALSE, &projection[0][0]);
+        m_gl.UniformMatrix4fv(m_guiRectangleProgram_ProjectionLoc, 1, GL_FALSE, &m_guiProjection[0][0]);
 
 
         m_gl.FrontFace(GL_CCW);
@@ -1655,14 +1688,21 @@ namespace GT
         colorGL[2] = colour.b;
         colorGL[3] = colour.a;
 
-        
-        
-        // Setup the shader.
-        m_gl.Uniform4fv(m_guiRectangleProgram_ColorLoc, 1, colorGL);
-        m_gl.Uniform4fv(m_guiRectangleProgram_RectLoc,  1, rectGL);
+        if (colour.a == 1)
+        {
+            // Opaque.
 
-        // Draw the quad.
-        m_gl.DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            // Setup the shader.
+            m_gl.Uniform4fv(m_guiRectangleProgram_ColorLoc, 1, colorGL);
+            m_gl.Uniform4fv(m_guiRectangleProgram_RectLoc,  1, rectGL);
+
+            // Draw the quad.
+            m_gl.DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+        }
+        else
+        {
+            // Transparent.
+        }
     }
 
     void DefaultGraphicsWorld_OpenGL::GUI_SetClippingRect(GUIContext &gui, GTLib::Rect<int> rect)
@@ -1687,6 +1727,83 @@ namespace GT
         (void)textRunDesc;
     }
 
+
+    void DefaultGraphicsWorld_OpenGL::GUI_DrawRawImage(GUIContext &gui, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent)
+    {
+        (void)gui;
+        (void)xPos;
+        (void)yPos;
+        (void)width;
+        (void)height;
+        (void)pImageData;
+        (void)isTransparent;
+
+        float rectGL[4];
+        rectGL[0] = static_cast<float>(xPos);
+        rectGL[1] = static_cast<float>(yPos);
+        rectGL[2] = static_cast<float>(width);
+        rectGL[3] = static_cast<float>(height);
+
+        float colorGL[4];
+        colorGL[0] = 1;
+        colorGL[1] = 1;
+        colorGL[2] = 1;
+        colorGL[3] = 1;
+
+        // The texture object needs to be updated.
+        if (m_guiDrawRawImageTexture == 0)
+        {
+            m_gl.GenTextures(1, &m_guiDrawRawImageTexture);
+            m_gl.ActiveTexture(GL_TEXTURE0 + 0);
+            m_gl.BindTexture(GL_TEXTURE_2D, m_guiDrawRawImageTexture);
+            m_gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+            m_gl.TexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+        }
+
+        if (m_guiDrawRawImageTexture != 0)
+        {
+            m_gl.ActiveTexture(GL_TEXTURE0 + 0);
+            m_gl.BindTexture(GL_TEXTURE_2D, m_guiDrawRawImageTexture);
+            m_gl.TexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, pImageData);
+
+            // Setup the shader.
+            m_gl.UseProgram(m_guiDrawRawImageProgram);
+            m_gl.UniformMatrix4fv(m_guiDrawRawImageProgram_ProjectionLoc, 1, GL_FALSE, &m_guiProjection[0][0]);
+            m_gl.Uniform4fv(m_guiDrawRawImageProgram_RectLoc,  1, rectGL);
+            m_gl.Uniform4fv(m_guiDrawRawImageProgram_ColorLoc, 1, colorGL);
+            m_gl.Uniform1i(m_guiDrawRawImageProgram_TextureLoc, 0);
+
+            // Enable (or disable) alpha blending.
+            if (isTransparent)
+            {
+                m_gl.Enable(GL_BLEND);
+                m_gl.BlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+                m_gl.BlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+            }
+
+            // Draw the quad.
+            m_gl.DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+
+
+            // Switch to the default GUI shader which is the rectangle one.
+            m_gl.UseProgram(m_guiRectangleProgram);
+
+            // Switch back the blend state to defaults (disabled).
+            if (isTransparent)
+            {
+                m_gl.Disable(GL_BLEND);
+            }
+
+#if 0
+            GTLib::Rect<int> rect;
+            rect.left   = xPos;
+            rect.top    = yPos;
+            rect.right  = xPos + static_cast<int>(width);
+            rect.bottom = yPos + static_cast<int>(height);
+            this->GUI_DrawRectangle(gui, rect, GTLib::Colour::Red);
+#endif
+        }
+    }
 
 
     ////////////////////////////////////////////////

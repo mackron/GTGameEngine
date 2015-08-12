@@ -343,4 +343,9 @@ namespace GT
     {
         m_pGraphicsWorldImpl->GUI_DrawText(gui, textRunDesc);
     }
+
+    void DefaultGraphicsWorld::GUI_DrawRawImage(GUIContext &gui, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent)
+    {
+        m_pGraphicsWorldImpl->GUI_DrawRawImage(gui, xPos, yPos, width, height, pImageData, isTransparent);
+    }
 }

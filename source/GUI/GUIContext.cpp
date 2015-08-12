@@ -836,9 +836,12 @@ namespace GT
     {
         assert(m_renderer != nullptr);
 
-        if (rect.left < rect.right && rect.top < rect.bottom)
+        if (color.a > 0)
         {
-            m_renderer->DrawRectangle(*this, rect, color);
+            if (rect.left < rect.right && rect.top < rect.bottom)
+            {
+                m_renderer->DrawRectangle(*this, rect, color);
+            }
         }
     }
 
@@ -858,6 +861,12 @@ namespace GT
     {
         assert(m_renderer != nullptr);
         m_renderer->DrawText(*this, textRunDesc);
+    }
+
+    void GUIContext::Renderer_DrawRawImage(int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent)
+    {
+        assert(m_renderer != nullptr);
+        m_renderer->DrawRawImage(*this, xPos, yPos, width, height, pImageData, isTransparent);
     }
 
 

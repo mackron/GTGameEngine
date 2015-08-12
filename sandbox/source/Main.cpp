@@ -159,7 +159,7 @@ public:
     SandboxGameState()
         : m_pGraphicsAPI(nullptr), 
           m_pGraphicsWorld(nullptr), m_pGraphicsAssetResourceManager(nullptr),
-          m_guiRenderer(), m_gui(&m_guiRenderer, &m_guiFontManager),
+          m_guiRenderer(), m_guiFontManager(GT::FontOption_NoClearType), m_gui(&m_guiRenderer, &m_guiFontManager),
           m_hMainWindow(0),
           m_isShiftKeyDown(false),
           m_sceneCallback(),
@@ -266,10 +266,14 @@ public:
                 m_hWindowSurface = m_gui.CreateSurface();
                 GT::HGUIElement hTestElement1 = m_gui.CreateElement();
                 m_gui.AttachElementToSurface(hTestElement1, m_hWindowSurface);
-                m_gui.SetElementSize(hTestElement1, 100U, 100U);
-                m_gui.SetElementPosition(hTestElement1, 100, 100);
-                m_gui.SetElementBackgroundColor(hTestElement1, GTLib::Colour::White);
-                m_gui.SetElementBorder(hTestElement1, 2, GTLib::Colour::Black);
+                //m_gui.SetElementSize(hTestElement1, 100U, 100U);
+                //m_gui.SetElementPosition(hTestElement1, 100, 300);
+                m_gui.SetElementSizeToChildren(hTestElement1);
+                //m_gui.SetElementBackgroundColor(hTestElement1, GTLib::Colour(0.5f, 0.5f, 0.5f, 0.0f));
+                //m_gui.SetElementBorder(hTestElement1, 2, GTLib::Colour::Black);
+                m_gui.SetElementFont(hTestElement1, "Courier New", GT::FontWeight_Normal, GT::FontSlant_None, 72);
+                m_gui.SetElementText(hTestElement1, "int main()\n{\n    return 0;\n}");
+                m_gui.SetElementTextColor(hTestElement1, GTLib::Colour::White);
                 m_pGraphicsWorld->SetRenderTargetGUISurface(m_hWindowRT, m_hWindowSurface);
 
                 unsigned int windowWidth;
@@ -288,7 +292,7 @@ public:
 
         m_pTestSceneNode = m_scene.CreateSceneNode();
         m_pTestSceneNode->AttachComponent(pGraphicsComponent);
-        m_pTestSceneNode->SetPosition(GT::vec4(-2, 0, 0, 0));
+        m_pTestSceneNode->SetPosition(GT::vec4(0, 0, 0, 0));
         m_scene.InsertSceneNode(m_pTestSceneNode);
 
 

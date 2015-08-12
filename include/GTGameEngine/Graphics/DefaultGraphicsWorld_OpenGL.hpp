@@ -211,6 +211,9 @@ namespace GT
         /// @copydoc DefaultGraphicsWorld::DrawText()
         void GUI_DrawText(GUIContext &gui, const GUITextRunDesc &textRunDesc);
 
+        /// @copydoc GUIRenderer::DrawRawImage()
+        void GUI_DrawRawImage(GUIContext &gui, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent);
+
 
 
     private:
@@ -320,6 +323,28 @@ namespace GT
         /// The program to use when drawing GUI text.
         GLuint m_guiTextProgram;
 
+
+        /// The shader to use with DrawRawImage().
+        GLuint m_guiDrawRawImageProgram;
+
+        /// The location of the projection uniform variable for GUI_DrawRawImage().
+        GLuint m_guiDrawRawImageProgram_ProjectionLoc;
+
+        /// The location of the rectangle dimensions uniform variable for GUI_DrawRawImage().
+        GLuint m_guiDrawRawImageProgram_RectLoc;
+
+        /// The location of the color uniform variable for GUI_DrawRawImagE().
+        GLuint m_guiDrawRawImageProgram_ColorLoc;
+
+        /// The location of the texture uniform variable for GUI_DrawRawImage().
+        GLuint m_guiDrawRawImageProgram_TextureLoc;
+
+        /// The texture for use by DrawRawImage().
+        GLuint m_guiDrawRawImageTexture;
+
+
+        /// The projection matrix to use when drawing GUI elements.
+        mat4 m_guiProjection;
 
         /// The width of the current surface.
         unsigned int m_currentSurfaceWidth;

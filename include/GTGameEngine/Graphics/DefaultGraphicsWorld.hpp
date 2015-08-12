@@ -203,6 +203,9 @@ namespace GT
 
         /// @copydoc GUIRenderer::DrawText()
         virtual void GUI_DrawText(GUIContext &gui, const GUITextRunDesc &textRunDesc);
+
+        /// @copydoc GUIRenderer::DrawRawImage()
+        virtual void GUI_DrawRawImage(GUIContext &gui, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent);
     
 
     private:

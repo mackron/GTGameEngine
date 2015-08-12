@@ -83,4 +83,12 @@ namespace GT
             m_pGraphicsWorld->GUI_DrawText(gui, textRunDesc);
         }
     }
+
+    void GraphicsWorldGUIRenderer::DrawRawImage(GT::GUIContext &gui, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent)
+    {
+        if (m_pGraphicsWorld != nullptr)
+        {
+            m_pGraphicsWorld->GUI_DrawRawImage(gui, xPos, yPos, width, height, pImageData, isTransparent);
+        }
+    }
 }

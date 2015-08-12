@@ -57,6 +57,11 @@ namespace GT
         void DrawText(GUIContext &context, const GUITextRunDesc &textRunDesc);
 
 
+        /// @copydoc GUIRenderer::DrawRawImage()
+        void DrawRawImage(GT::GUIContext &context, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent);
+
+
+
     private:
 
         /// The PAINTSTRUCT that was created from Win32's BeginPaint() function which is called from BeginPaintSurface().
@@ -70,11 +75,6 @@ namespace GT
 
         /// A pointer to the AUX data for the current surface.
         EditorGUISurfaceAUXData* m_pCurrentSurfaceAUXData;
-
-
-
-        /// The bitmap that needs to be restored at the end of EndPaintSurface()
-        //HANDLE m_hBitmapToRestore;
     };
 }
 

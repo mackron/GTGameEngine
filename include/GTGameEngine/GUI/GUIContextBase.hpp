@@ -197,6 +197,9 @@ namespace GT
         virtual void Renderer_DrawText(const GUITextRunDesc &textRunDesc) = 0;
 
 
+        /// Draws a raw image buffer.
+        virtual void Renderer_DrawRawImage(int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent) = 0;
+
 
 
         /////////////////////////////////////////////////////////////////

@@ -3726,11 +3726,11 @@ namespace GT
                 Renderer_SetClippingRect(childClippingRect);
 
 
+                GTLib::Rect<int> textRect;
+                this->GetElementAbsoluteTextRect(pElement, textRect);
+
                 if (Renderer_CanDrawText(hFont))
                 {
-                    GTLib::Rect<int> textRect;
-                    this->GetElementAbsoluteTextRect(pElement, textRect);
-
                     pElement->pTextLayout->IterateVisibleTextRuns([&](const GUITextRunDesc &run) {
                         GUITextRunDesc run2(run);
                         run2.xPos += textRect.left;
@@ -3741,7 +3741,28 @@ namespace GT
                 }
                 else
                 {
-                    // Draw the text the slow, generic way.
+                    // Draw the text the slow, generic way. To do this we need to allocate a buffer which we'll pass to the render and then free straight away.
+                    if (m_pFontManager != nullptr)
+                    {
+                        pElement->pTextLayout->IterateVisibleTextRuns([&](const GUITextRunDesc &run) {
+                            int runWidth;
+                            int runHeight;
+                            if (m_pFontManager->MeasureString(run.hFont, run.text.c_str(), run.text.GetCharacterCount(), runWidth, runHeight))
+                            {
+                                size_t imageBufferSize = runWidth * runHeight * 4;
+                                void* pImageBuffer = malloc(imageBufferSize);
+                                if (pImageBuffer != nullptr)
+                                {
+                                    if (m_pFontManager->DrawTextToBuffer(run.hFont, run.text.c_str(), run.text.GetCharacterCount(), run.color, pImageBuffer, imageBufferSize))
+                                    {
+                                        Renderer_DrawRawImage(run.xPos + textRect.left, run.yPos + textRect.top, runWidth, runHeight, pImageBuffer, true);
+                                    }
+
+                                    free(pImageBuffer);
+                                }
+                            }
+                        });
+                    }
                 }
 
 

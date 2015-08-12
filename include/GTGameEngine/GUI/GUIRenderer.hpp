@@ -70,6 +70,13 @@ namespace GT
         /// @param context     [in] A reference to the context.
         /// @param textRunDesc [in] Information about the text to draw.
         virtual void DrawText(GT::GUIContext &context, const GUITextRunDesc &textRunDesc) = 0;
+
+
+        /// Generic function for drawing a buffer containing image data.
+        ///
+        /// @remarks
+        ///     The data is always 32-bits per pixel. Use isTransparent to determine if alpha transparency should be used.
+        virtual void DrawRawImage(GT::GUIContext &context, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent) = 0;
     };
 }
 

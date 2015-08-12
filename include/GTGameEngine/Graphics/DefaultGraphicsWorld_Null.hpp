@@ -206,6 +206,9 @@ namespace GT
 
         /// @copydoc DefaultGraphicsWorld::DrawText()
         void GUI_DrawText(GUIContext &gui, const GUITextRunDesc &textRunDesc);
+
+        /// @copydoc GUIRenderer::DrawRawImage()
+        void GUI_DrawRawImage(GUIContext &gui, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent);
     };
 }
 

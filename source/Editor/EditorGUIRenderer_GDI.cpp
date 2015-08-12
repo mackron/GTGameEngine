@@ -212,6 +212,20 @@ namespace GT
             }
         }
     }
+
+
+    void EditorGUIRenderer_GDI::DrawRawImage(GUIContext &context, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent)
+    {
+        (void)context;
+        (void)xPos;
+        (void)yPos;
+        (void)width;
+        (void)height;
+        (void)pImageData;
+        (void)isTransparent;
+
+        // TODO: Implement.
+    }
 }
 
 #endif

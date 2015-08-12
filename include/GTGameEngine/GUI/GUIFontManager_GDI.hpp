@@ -8,6 +8,7 @@
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
 #include <GTLib/HandleManager.hpp>
+#include <GTLib/Colour.hpp>
 #include "GUIFontManager.hpp"
 
 namespace GT
@@ -18,7 +19,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GUIFontManager_GDI();
+        GUIFontManager_GDI(uint32_t options = 0);
 
         /// Destructor.
         ~GUIFontManager_GDI();
@@ -45,6 +46,9 @@ namespace GT
         /// @copydoc GUIFontManager::GetGlyphMetrics()
         bool GetGlyphMetrics(HGUIFont hFont, char32_t character, GUIGlyphMetrics &metricsOut) const;
 
+        /// @copydoc GUIFontManager::DrawTextToBuffer()
+        bool DrawTextToBuffer(HGUIFont hFont, const char* text, size_t textLengthInChars, GTLib::Colour color, void* bufferOut, size_t bufferOutSize);
+
 
         /// Retrieves the Win32 font handle from the given font.
         ///
@@ -58,6 +62,16 @@ namespace GT
 
         /// A handle to the device context for doing text rendering operations.
         HDC m_hDC;
+
+        /// The bitmap to draw text into.
+        HBITMAP m_hTextBitmap;
+
+        /// A pointer to the buffer containing the bitmap data.
+        void* m_pTextBitmapData;
+
+        /// The size of the text bitmap. We use this to determine if it needs to be inflated.
+        unsigned int m_textBitmapWidth;
+        unsigned int m_textBitmapHeight;
 
 
         /// Structure containing information about a GDI font.

@@ -6,11 +6,15 @@
 #include "GUIGlyphMapManager.hpp"
 #include <GTLib/FontServer.hpp>
 #include <GTLib/Map.hpp>
+#include <GTLib/Colour.hpp>
 #include <cstdint>
 
 namespace GT
 {
     typedef uint32_t HGUIFont;
+
+    static const uint32_t FontOption_NoClearType  = (1 << 0);
+
 
     /// Structure describing a font. This is used for font selection.
     struct GUIFontInfo
@@ -107,10 +111,14 @@ namespace GT
     public:
 
         /// Constructor.
-        GUIFontManager();
+        GUIFontManager(uint32_t options = 0);
 
         /// Destructor.
         virtual ~GUIFontManager();
+
+
+        /// Retrieves the option flags that were passed to the constructor.
+        uint32_t GetOptions() const;
 
 
         /// Acquires the closest matching font based on the given font information.
@@ -205,6 +213,11 @@ namespace GT
         /// @param metricsOut [out] A reference to the object that will receive the reference.
         virtual bool GetGlyphMetrics(HGUIFont hFont, char32_t character, GUIGlyphMetrics &metricsOut) const = 0;
 
+        /// Draws the given text to a raw buffer.
+        ///
+        /// @remarks
+        ///     The output buffer should be 32-bits per pixel, and tightly packed based on the return value of MeasureString().
+        virtual bool DrawTextToBuffer(HGUIFont hFont, const char* text, size_t textLengthInChars, GTLib::Colour color, void* bufferOut, size_t bufferOutSize) = 0;
 
 
     private:
@@ -273,6 +286,9 @@ namespace GT
 
 
     private:
+
+        /// The option flags specified in the constructor.
+        uint32_t m_options;
 
         /// The list of loaded fonts.
         GTLib::Vector<LoadedFont> m_loadedFonts;

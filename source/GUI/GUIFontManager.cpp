@@ -5,13 +5,19 @@
 
 namespace GT
 {
-    GUIFontManager::GUIFontManager()
-        : m_fontFamilies()
+    GUIFontManager::GUIFontManager(uint32_t options)
+        : m_options(options), m_fontFamilies()
     {
     }
 
     GUIFontManager::~GUIFontManager()
     {
+    }
+
+
+    uint32_t GUIFontManager::GetOptions() const
+    {
+        return m_options;
     }
 
 

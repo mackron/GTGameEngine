@@ -7,9 +7,10 @@
 
 namespace GT
 {
-    GUIFontManager_GDI::GUIFontManager_GDI()
-        : GUIFontManager(),
-          m_hDC(NULL)
+    GUIFontManager_GDI::GUIFontManager_GDI(uint32_t options)
+        : GUIFontManager(options),
+          m_hDC(NULL),
+          m_hTextBitmap(0), m_textBitmapWidth(0), m_textBitmapHeight(0)
     {
         m_hDC = CreateCompatibleDC(GetDC(GetDesktopWindow()));
 		SetMapMode(m_hDC, MM_TEXT);
@@ -20,6 +21,10 @@ namespace GT
         // All loaded fonts need to be deleted.
         this->DeleteAllFonts();
         
+        if (m_hTextBitmap != 0)
+        {
+            DeleteObject(m_hTextBitmap);
+        }
 
         // The device context should be deleted last because things like fonts can depend on it.
         DeleteDC(m_hDC);
@@ -84,7 +89,7 @@ namespace GT
 		logfont.lfWeight  = weight;
 		logfont.lfItalic  = slant;
 		logfont.lfCharSet = DEFAULT_CHARSET;
-		logfont.lfQuality = (GTLib::Abs(logfont.lfHeight) <= 36) ? CLEARTYPE_QUALITY : ANTIALIASED_QUALITY;
+		logfont.lfQuality = (GTLib::Abs(logfont.lfHeight) > 36 || (this->GetOptions() & FontOption_NoClearType) != 0) ? ANTIALIASED_QUALITY : CLEARTYPE_QUALITY;
 		memcpy(logfont.lfFaceName, fontInfo.family.c_str(), (fontInfo.family.GetLength() < 31) ? fontInfo.family.GetLength() : 31);
 
 		HFONT hFontWin32 = CreateFontIndirectA(&logfont);
@@ -239,6 +244,141 @@ namespace GT
                 SelectObject(m_hDC, hPrevFontWin32);
                 return false;
             }
+        }
+
+        return false;
+    }
+
+
+    bool GUIFontManager_GDI::DrawTextToBuffer(HGUIFont hFont, const char* text, size_t textLengthChars, GTLib::Colour color, void* bufferOut, size_t bufferOutSize)
+    {
+        // The string first needs to be measured to ensure the DIB bitmap is large enough.
+        int textWidth;
+        int textHeight;
+        if (this->MeasureString(hFont, text, textLengthChars, textWidth, textHeight))
+        {
+            if (bufferOutSize < static_cast<size_t>(textWidth*textHeight*4))
+            {
+                // Output buffer is too small.
+                return false;
+            }
+
+
+            HFONT hFontWin32 = this->GetWin32FontHandle(hFont);
+
+            // Now we need to check if we need to create the bitmap.
+            if (m_hTextBitmap == 0 || static_cast<unsigned int>(textWidth) > m_textBitmapWidth || static_cast<unsigned int>(textHeight) > m_textBitmapHeight)
+            {
+                if (m_hTextBitmap == 0)
+                {
+                    DeleteObject(m_hTextBitmap);
+                    m_hTextBitmap = 0;
+                    m_pTextBitmapData = nullptr;
+                }
+
+                m_textBitmapWidth  = (static_cast<unsigned int>(textWidth)  > m_textBitmapWidth)  ? static_cast<unsigned int>(textWidth)  : m_textBitmapWidth;
+                m_textBitmapHeight = (static_cast<unsigned int>(textHeight) > m_textBitmapHeight) ? static_cast<unsigned int>(textHeight) : m_textBitmapHeight;
+
+                BITMAPINFO bmi;
+                ZeroMemory(&bmi, sizeof(bmi));
+                bmi.bmiHeader.biSize        = sizeof(bmi.bmiHeader);
+                bmi.bmiHeader.biWidth       = m_textBitmapWidth;
+                bmi.bmiHeader.biHeight      = m_textBitmapHeight;
+                bmi.bmiHeader.biPlanes      = 1;
+                bmi.bmiHeader.biBitCount    = 32;       // TODO: See if we can get aware with 8 bits here...
+                bmi.bmiHeader.biCompression = BI_RGB;
+                m_hTextBitmap = CreateDIBSection(m_hDC, &bmi, DIB_RGB_COLORS, &m_pTextBitmapData, NULL, 0);
+                if (m_hTextBitmap == 0)
+                {
+                    // An error occured while creating the DIB section.
+                    return false;
+                }
+            }
+
+
+            // At this point we should have a valid DIB section, so now we need to draw to it. Unfortunately GDI does not have any real notion of transparency, so
+            // we need to do a little bit more work to get that working. What we do is clear the bitmap to black, and then draw the text white. We then go over
+            // every pixel and use it's colour as the transparency value. To get the RGB colours, we just multiply with the requested colour.
+            //
+            // Note that this technique won't look right with ClearType fonts, so that will need to be disabled for this to look right.
+            GdiFlush();
+
+            // Clear.
+            for (int iRow = 0; iRow < textHeight; ++iRow)
+            {
+                for (int iCol = 0; iCol < textWidth; ++iCol)
+                {
+                    uint32_t* pTextBitmapData32 = reinterpret_cast<uint32_t*>(m_pTextBitmapData);
+                    assert(pTextBitmapData32 != nullptr);
+
+                    pTextBitmapData32[(iRow * m_textBitmapWidth) + iCol] = 0x00000000;
+                }
+            }
+
+
+            // Draw the text.
+            //
+            // We need to make sure the DIB section is made current before drawing (and restored afterwards).
+            HGDIOBJ hOldBitmap = SelectObject(m_hDC, m_hTextBitmap);
+            HGDIOBJ hOldFont   = SelectObject(m_hDC, hFontWin32);
+
+            SetBkMode(m_hDC, TRANSPARENT);
+            SetTextColor(m_hDC, RGB(255, 255, 255));
+
+            int bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthChars), nullptr, 0);
+            if (bufferSize > 0)
+            {
+                if (bufferSize > 64)
+                {
+                    wchar_t* buffer = reinterpret_cast<wchar_t*>(malloc(sizeof(wchar_t) * bufferSize));
+                    if (buffer != nullptr)
+                    {
+                        MultiByteToWideChar(CP_UTF8, 0, text, GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthChars), buffer, sizeof(wchar_t)*bufferSize);
+
+                        TextOutW(m_hDC, 0, 0, buffer, bufferSize);
+                        free(buffer);
+                    }
+                }
+                else
+                {
+                    wchar_t buffer[64];
+                    bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthChars), buffer, 64);
+                    if (bufferSize > 0)
+                    {
+                        TextOutW(m_hDC, 0, 0, buffer, bufferSize);
+                    }
+                }
+            }
+
+
+            SelectObject(m_hDC, hOldFont);
+            SelectObject(m_hDC, hOldBitmap);
+
+
+            // Copy to output buffer.
+            GdiFlush();
+
+            for (int iRow = 0; iRow < textHeight; ++iRow)
+            {
+                for (int iCol = 0; iCol < textWidth; ++iCol)
+                {
+                    uint32_t* pTextBitmapData32 = reinterpret_cast<uint32_t*>(m_pTextBitmapData);
+                    assert(pTextBitmapData32 != nullptr);
+
+                    uint32_t  srcTexel = reinterpret_cast<uint32_t*>(m_pTextBitmapData)[(iRow * m_textBitmapWidth) + iCol];
+                    uint32_t &dstTexel = reinterpret_cast<uint32_t*>(bufferOut        )[(iRow * textWidth)         + iCol];
+
+                    uint32_t a = (srcTexel & 0x00FF0000) >> 16;
+                    uint32_t b = static_cast<uint32_t>(color.b * 255); if (b > 255) { b = 255; }
+                    uint32_t g = static_cast<uint32_t>(color.g * 255); if (g > 255) { g = 255; }
+                    uint32_t r = static_cast<uint32_t>(color.r * 255); if (r > 255) { r = 255; }
+                    dstTexel = (a << 24) | (b << 16) | (g << 8) | (r << 0);
+                }
+            }
+
+
+            // Everything should be good at this point...
+            return true;
         }
 
         return false;

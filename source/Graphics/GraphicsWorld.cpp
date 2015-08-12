@@ -71,4 +71,15 @@ namespace GT
         (void)gui;
         (void)textRunDesc;
     }
+
+    void GraphicsWorld::GUI_DrawRawImage(GUIContext &gui, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent)
+    {
+        (void)gui;
+        (void)xPos;
+        (void)yPos;
+        (void)width;
+        (void)height;
+        (void)pImageData;
+        (void)isTransparent;
+    }
 }

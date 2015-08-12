@@ -114,7 +114,10 @@ namespace GT
         FontWeight_SemiBold   = 4,
         FontWeight_Bold       = 5,
         FontWeight_ExtraBold  = 6,
-        FontWeight_Heavy      = 7
+        FontWeight_Heavy      = 7,
+
+        FontWeight_Normal     = FontWeight_Medium,
+        FontWeight_Default    = FontWeight_Medium
     };
 
     // The various font slants.

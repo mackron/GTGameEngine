@@ -166,6 +166,9 @@ namespace GT
         /// @copydoc GUIContextBase::Renderer_DrawText()
         void Renderer_DrawText(const GUITextRunDesc &textRunDesc);
 
+        /// @copydoc GUIContextBase::Renderer_DrawRawImage()
+        void Renderer_DrawRawImage(int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent);
+
 
 
     public:

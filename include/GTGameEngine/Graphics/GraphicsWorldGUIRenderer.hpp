@@ -52,6 +52,9 @@ namespace GT
         void DrawText(GUIContext &context, const GUITextRunDesc &textRunDesc);
 
 
+        /// @copydoc GUIRenderer::DrawRawImage()
+        void DrawRawImage(GT::GUIContext &context, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent);
+
 
     private:
 
