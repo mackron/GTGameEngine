@@ -835,7 +835,11 @@ namespace GT
     void GUIContext::Renderer_DrawRectangle(GTLib::Rect<int> rect, GTLib::Colour color)
     {
         assert(m_renderer != nullptr);
-        m_renderer->DrawRectangle(*this, rect, color);
+
+        if (rect.left < rect.right && rect.top < rect.bottom)
+        {
+            m_renderer->DrawRectangle(*this, rect, color);
+        }
     }
 
     void GUIContext::Renderer_SetClippingRect(GTLib::Rect<int> clippingRect)

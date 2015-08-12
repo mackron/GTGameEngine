@@ -12,20 +12,6 @@ namespace GT
     /// Handle for GUI render buffers.
     typedef uint32_t HGUIRenderBuffer;
 
-
-    struct GUITextRenderingOptions
-    {
-        /// The text color.
-        GTLib::Colour color;
-
-        /// The x position to draw the text at.
-        unsigned int xPos;
-
-        /// The y position to draw the text at.
-        unsigned int yPos;
-    };
-
-
     /// Base class for doing GUI rendering.
     class GUIRenderer
     {

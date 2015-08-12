@@ -185,6 +185,34 @@ namespace GT
         void ExecuteRenderingCommands();
 
 
+        // GUI
+
+        /// @copydoc DefaultGraphicsWorld::GUI_BeginPaintSurface()
+        void GUI_BeginPaintSurface(GUIContext &gui, HGUISurface hSurface, void* pInputData);
+
+        /// @copydoc DefaultGraphicsWorld::GUI_EndPaintSurface()
+        void GUI_EndPaintSurface(GUIContext &gui);
+
+        /// @copydoc DefaultGraphicsWorld::Clear()
+        void GUI_Clear(GUIContext &gui);
+
+        /// @copydoc DefaultGraphicsWorld::Clear()
+        void GUI_Clear(GUIContext &gui, const GTLib::Rect<int> &rect);
+
+        /// @copydoc DefaultGraphicsWorld::DrawRectangle()
+        void GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GTLib::Colour colour);
+
+        /// @copydoc DefaultGraphicsWorld::SetClippingRect()
+        void GUI_SetClippingRect(GUIContext &gui, GTLib::Rect<int> rect);
+
+        /// @copydoc DefaultGraphicsWorld::CanDrawText()
+        bool GUI_CanDrawText(GUIContext &gui, HGUIFont hFont);
+
+        /// @copydoc DefaultGraphicsWorld::DrawText()
+        void GUI_DrawText(GUIContext &gui, const GUITextRunDesc &textRunDesc);
+
+
+
     private:
 
         /// Helper for making the world's OpenGL context current.
@@ -220,7 +248,7 @@ namespace GT
 
 
         /// Deletes the given mesh object.
-        void DeleteMeshObject(HGraphicsResource hMeshObject);
+        void DeleteMeshObject(HGraphicsObject hMeshObject);
 
         /// Helper for retrieving a pointer to the buffer that contains the value of the given variable.
         ///
@@ -266,8 +294,38 @@ namespace GT
         GTLib::Vector<HGraphicsObject> m_meshObjects;
 
 
-        /// Temporary program object for testing.
-        GLuint m_testProgramObjectGL;
+
+        /////////////////////////////////
+        // GUI
+
+        /// The program to use when drawing GUI rectangles.
+        GLuint m_guiRectangleProgram;
+
+        /// The location of the projection uniform variable for GUI's.
+        GLint m_guiRectangleProgram_ProjectionLoc;
+
+        /// The location of the rectangle color uniform variable.
+        GLint m_guiRectangleProgram_ColorLoc;
+
+        /// The location of the rectangle dimensions uniform variable.
+        GLint m_guiRectangleProgram_RectLoc;
+
+        /// The vertex buffer to use when drawing text.
+        GLuint m_guiRectangleVertexBuffer;
+
+        /// The index buffer to use when drawing text.
+        GLuint m_guiRectangleIndexBuffer;
+
+
+        /// The program to use when drawing GUI text.
+        GLuint m_guiTextProgram;
+
+
+        /// The width of the current surface.
+        unsigned int m_currentSurfaceWidth;
+
+        /// The height of the current surface.
+        unsigned int m_currentSurfaceHeight;
     };
 }
 

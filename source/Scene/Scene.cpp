@@ -192,6 +192,7 @@ namespace GT
     }
 
 
+
     void Scene::CacheInsertSceneNode(SceneNode* pSceneNode)
     {
         m_cacheLock.Lock();

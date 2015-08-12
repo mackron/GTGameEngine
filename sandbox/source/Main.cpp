@@ -1,13 +1,16 @@
 
+#if defined(_MSC_VER)
 #define CRTDBG_MAP_ALLOC
 #include <stdlib.h>
 #include <crtdbg.h>
+#endif
 
 #include <GTGameEngine/EngineContext.hpp>
 #include <GTGameEngine/GameContext.hpp>
 #include <GTGameEngine/GameState.hpp>
 #include <GTGameEngine/Graphics/DefaultGraphicsWorld.hpp>
 #include <GTGameEngine/Graphics/GraphicsAssetResourceManager.hpp>
+#include <GTGameEngine/Graphics/GraphicsWorldGUIRenderer.hpp>
 #include <GTGameEngine/Assets/ModelAsset.hpp>
 #include <GTGameEngine/Assets/ImageAsset.hpp>
 #include <GTGameEngine/Assets/MaterialAsset.hpp>
@@ -156,6 +159,7 @@ public:
     SandboxGameState()
         : m_pGraphicsAPI(nullptr), 
           m_pGraphicsWorld(nullptr), m_pGraphicsAssetResourceManager(nullptr),
+          m_guiRenderer(), m_gui(&m_guiRenderer, &m_guiFontManager),
           m_hMainWindow(0),
           m_isShiftKeyDown(false),
           m_sceneCallback(),
@@ -245,14 +249,34 @@ public:
         m_pGraphicsAPI = gameContext.GetEngineContext().GetBestGraphicsAPI();
         assert(m_pGraphicsAPI != nullptr);
         {
-            m_pGraphicsWorld = new GT::DefaultGraphicsWorld(gameContext.GetGUI(), *m_pGraphicsAPI);
+            m_pGraphicsWorld = new GT::DefaultGraphicsWorld(m_gui, *m_pGraphicsAPI);
             if (m_pGraphicsWorld->Startup())
             {
                 m_hWindowRT = m_pGraphicsWorld->CreateRenderTargetFromWindow(reinterpret_cast<HWND>(m_hMainWindow), 0);
                 m_pGraphicsWorld->SetRenderTargetProjectionAndView(m_hWindowRT, GT::mat4::perspective(45.0f, 16.0f / 9.0f, 0.1f, 1000.0f), GT::mat4::translate(GT::mat4::identity, GT::vec4(0, 0, -5, 0.0f)));
 
                 m_pGraphicsAssetResourceManager = new GT::GraphicsAssetResourceManager(*m_pGraphicsWorld, gameContext.GetEngineContext().GetAssetLibrary());
-            }   
+
+
+                // The GUI renderer needs to know about the graphics world so it knows where to route rendering commands for GUIs.
+                m_guiRenderer.SetGraphicsWorld(m_pGraphicsWorld);
+
+
+                // TESTING
+                m_hWindowSurface = m_gui.CreateSurface();
+                GT::HGUIElement hTestElement1 = m_gui.CreateElement();
+                m_gui.AttachElementToSurface(hTestElement1, m_hWindowSurface);
+                m_gui.SetElementSize(hTestElement1, 100U, 100U);
+                m_gui.SetElementPosition(hTestElement1, 100, 100);
+                m_gui.SetElementBackgroundColor(hTestElement1, GTLib::Colour::White);
+                m_gui.SetElementBorder(hTestElement1, 2, GTLib::Colour::Black);
+                m_pGraphicsWorld->SetRenderTargetGUISurface(m_hWindowRT, m_hWindowSurface);
+
+                unsigned int windowWidth;
+                unsigned int windowHeight;
+                gameContext.GetWindowSize(m_hMainWindow, windowWidth, windowHeight);
+                m_gui.SetSurfaceSize(m_hWindowSurface, windowWidth, windowHeight);
+            }
         }
 
 
@@ -295,7 +319,7 @@ public:
         gameContext.DeleteWindow(m_hMainWindow);
         m_hMainWindow = 0;
     }
-
+    
 
     void OnKeyPressed(GT::GameContext &gameContext, GT::HWindow hWindow, GTLib::Key key)
     {
@@ -331,6 +355,11 @@ public:
         if (m_pGraphicsWorld != NULL)
         {
             m_pGraphicsWorld->SetRenderTargetViewport(m_pGraphicsWorld->GetRenderTargetByWindow(reinterpret_cast<HWND>(hWindow)), 0, 0, width, height);
+            
+            if (hWindow == m_hMainWindow)
+            {
+                m_gui.SetSurfaceSize(m_hWindowSurface, width, height);
+            }
         }
     }
 
@@ -351,12 +380,25 @@ private:
     /// The graphics resource manager.
     GT::GraphicsAssetResourceManager* m_pGraphicsAssetResourceManager; 
 
+    /// The GUI renderer.
+    GT::GraphicsWorldGUIRenderer m_guiRenderer;
+
+    /// The GUI font manager. For now we're using GDI, but later on we'll make once specific to GraphicsWorld which will be better optimized.
+    GT::GUIFontManager_GDI m_guiFontManager;
+
+    /// The game's GUI.
+    GT::GUIContext m_gui;
+
 
     /// The main window.
     GT::HWindow m_hMainWindow;
 
     /// The render target for the main window.
     GT::HGraphicsRenderTarget m_hWindowRT;
+
+    /// The GUI surface associated with the main window.
+    GT::HGUISurface m_hWindowSurface;
+
 
     /// Keeps track of whether or not the shift key is down.
     bool m_isShiftKeyDown;

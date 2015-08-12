@@ -269,6 +269,7 @@ namespace GT
         PFNGLFLUSHPROC                  Flush;
         PFNGLFINISHPROC                 Finish;
         PFNGLVIEWPORTPROC               Viewport;
+        PFNGLSCISSORPROC                Scissor;
 
 
         // Drawing.

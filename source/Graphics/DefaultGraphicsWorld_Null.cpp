@@ -354,4 +354,55 @@ namespace GT
     void DefaultGraphicsWorld_Null::ExecuteRenderingCommands()
     {
     }
+
+
+    void DefaultGraphicsWorld_Null::GUI_BeginPaintSurface(GUIContext &gui, HGUISurface hSurface, void* pInputData)
+    {
+        (void)gui;
+        (void)hSurface;
+        (void)pInputData;
+    }
+
+    void DefaultGraphicsWorld_Null::GUI_EndPaintSurface(GUIContext &gui)
+    {
+        (void)gui;
+    }
+
+    void DefaultGraphicsWorld_Null::GUI_Clear(GUIContext &gui)
+    {
+        (void)gui;
+    }
+
+    void DefaultGraphicsWorld_Null::GUI_Clear(GUIContext &gui, const GTLib::Rect<int> &rect)
+    {
+        (void)gui;
+        (void)rect;
+    }
+
+    void DefaultGraphicsWorld_Null::GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GTLib::Colour colour)
+    {
+        (void)gui;
+        (void)rect;
+        (void)colour;
+    }
+
+    void DefaultGraphicsWorld_Null::GUI_SetClippingRect(GUIContext &gui, GTLib::Rect<int> rect)
+    {
+        (void)gui;
+        (void)rect;
+    }
+
+    bool DefaultGraphicsWorld_Null::GUI_CanDrawText(GUIContext &gui, HGUIFont hFont)
+    {
+        (void)gui;
+        (void)hFont;
+
+        return false;
+    }
+
+    void DefaultGraphicsWorld_Null::GUI_DrawText(GUIContext &gui, const GUITextRunDesc &textRunDesc)
+    {
+        (void)gui;
+        (void)textRunDesc;
+    }
 }

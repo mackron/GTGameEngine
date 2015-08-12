@@ -179,6 +179,33 @@ namespace GT
         
         /// @copydoc GraphicsWorld::ExecuteRenderingCommands()
         void ExecuteRenderingCommands();
+
+
+        // GUI
+
+        /// @copydoc DefaultGraphicsWorld::GUI_BeginPaintSurface()
+        void GUI_BeginPaintSurface(GUIContext &gui, HGUISurface hSurface, void* pInputData);
+
+        /// @copydoc DefaultGraphicsWorld::GUI_EndPaintSurface()
+        void GUI_EndPaintSurface(GUIContext &gui);
+
+        /// @copydoc DefaultGraphicsWorld::Clear()
+        void GUI_Clear(GUIContext &gui);
+
+        /// @copydoc DefaultGraphicsWorld::Clear()
+        void GUI_Clear(GUIContext &gui, const GTLib::Rect<int> &rect);
+
+        /// @copydoc DefaultGraphicsWorld::DrawRectangle()
+        void GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GTLib::Colour colour);
+
+        /// @copydoc DefaultGraphicsWorld::SetClippingRect()
+        void GUI_SetClippingRect(GUIContext &gui, GTLib::Rect<int> rect);
+
+        /// @copydoc DefaultGraphicsWorld::CanDrawText()
+        bool GUI_CanDrawText(GUIContext &gui, HGUIFont hFont);
+
+        /// @copydoc DefaultGraphicsWorld::DrawText()
+        void GUI_DrawText(GUIContext &gui, const GUITextRunDesc &textRunDesc);
     };
 }
 

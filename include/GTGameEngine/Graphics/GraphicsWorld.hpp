@@ -409,6 +409,38 @@ namespace GT
         virtual void ExecuteRenderingCommands() = 0;
 
 
+        // GUI
+        //
+        // When rendering a render target, the last thing to be drawn will be the GUI surface. All of these rendering commands
+        // will be routed to these functions.
+        //
+        // These are optional and do not need to be used if the host has an alternative way of doing rendering.
+
+        /// @copydoc GUIRenderer::BeginPaintSurface()
+        virtual void GUI_BeginPaintSurface(GUIContext &gui, HGUISurface hSurface, void* pInputData);
+
+        /// @copydoc GUIRenderer::EndPaintSurface()
+        virtual void GUI_EndPaintSurface(GUIContext &gui);
+
+        /// @copydoc GUIRenderer::Clear()
+        virtual void GUI_Clear(GUIContext &gui);
+
+        /// @copydoc GUIRenderer::Clear()
+        virtual void GUI_Clear(GUIContext &gui, const GTLib::Rect<int> &rect);
+
+        /// @copydoc GUIRenderer::DrawRectangle()
+        virtual void GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GTLib::Colour colour);
+
+        /// @copydoc GUIRenderer::SetClippingRect()
+        virtual void GUI_SetClippingRect(GUIContext &gui, GTLib::Rect<int> rect);
+
+        /// @copydoc GUIRenderer::CanDrawText()
+        virtual bool GUI_CanDrawText(GUIContext &gui, HGUIFont hFont);
+
+        /// @copydoc GUIRenderer::DrawText()
+        virtual void GUI_DrawText(GUIContext &gui, const GUITextRunDesc &textRunDesc);
+
+
 
     private:
 

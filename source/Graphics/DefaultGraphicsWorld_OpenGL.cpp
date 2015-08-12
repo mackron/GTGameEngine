@@ -576,6 +576,55 @@ namespace GT
                 m_gl.Enable(GL_DEPTH_TEST);
                 m_gl.Enable(GL_CULL_FACE);
 
+                
+                // GUI.
+                GLuint guiRectangleVertexShader = this->CreateShader_GLSL(GL_VERTEX_SHADER,
+                    "attribute vec2 VS_Position;\n"
+                    "uniform mat4 Projection;\n"
+                    "uniform vec4 Rect;\n"
+                    "void main() {\n"
+                    "    gl_Position = Projection * vec4((VS_Position * Rect.zw) + Rect.xy, 0.0, 1.0);\n"
+                    "};"
+                );
+
+                GLuint guiRectangleFragmentShader = this->CreateShader_GLSL(GL_FRAGMENT_SHADER,
+                    "uniform vec4 Color;\n"
+                    "void main() {\n"
+                    "    gl_FragColor = Color;\n"
+                    "};"
+                );
+
+                m_guiRectangleProgram = this->CreateProgram_GLSL(guiRectangleVertexShader, guiRectangleFragmentShader);
+                m_guiRectangleProgram_ProjectionLoc = m_gl.GetUniformLocation(m_guiRectangleProgram, "Projection");
+                m_guiRectangleProgram_ColorLoc      = m_gl.GetUniformLocation(m_guiRectangleProgram, "Color");
+                m_guiRectangleProgram_RectLoc       = m_gl.GetUniformLocation(m_guiRectangleProgram, "Rect");
+
+                m_gl.DeleteShader(guiRectangleVertexShader);
+                m_gl.DeleteShader(guiRectangleFragmentShader);
+
+
+                float rectVertices[8] = {
+                    0.0f, 1.0f,
+                    1.0f, 1.0f,
+                    1.0f, 0.0f,
+                    0.0f, 0.0f
+                };
+
+                m_gl.GenBuffers(1, &m_guiRectangleVertexBuffer);
+                m_gl.BindBuffer(GL_ARRAY_BUFFER, m_guiRectangleVertexBuffer);
+                m_gl.BufferData(GL_ARRAY_BUFFER, sizeof(rectVertices), rectVertices, GL_STATIC_DRAW);
+
+
+                uint32_t rectIndices[6] = {
+                    0, 1, 2,
+                    2, 3, 0
+                };
+
+                m_gl.GenBuffers(1, &m_guiRectangleIndexBuffer);
+                m_gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_guiRectangleIndexBuffer);
+                m_gl.BufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(rectIndices), rectIndices, GL_STATIC_DRAW);
+
+
                 return true;
             }
             else
@@ -1305,7 +1354,7 @@ namespace GT
         return 0;
     }
 
-    void DefaultGraphicsWorld_OpenGL::DeleteRenderTarget(HGraphicsResource hRT)
+    void DefaultGraphicsWorld_OpenGL::DeleteRenderTarget(HGraphicsRenderTarget hRT)
     {
         auto pRT = reinterpret_cast<RenderTarget_OpenGL*>(hRT);
         if (pRT != nullptr)
@@ -1535,6 +1584,110 @@ namespace GT
     }
 
 
+    void DefaultGraphicsWorld_OpenGL::GUI_BeginPaintSurface(GUIContext &gui, HGUISurface hSurface, void* pInputData)
+    {
+        (void)gui;
+        (void)hSurface;
+        (void)pInputData;
+
+        // We need the size of the surface because we need the height to convery from top/left coordinates to bottom/left.
+        gui.GetSurfaceSize(hSurface, m_currentSurfaceWidth, m_currentSurfaceHeight);
+
+        mat4 projection(GT::mat4::ortho(0.0f, m_currentSurfaceWidth, m_currentSurfaceHeight, 0.0f, 0.0f, -1.0f));
+
+
+        // Set everything up for rectangles since that is the most common thing we'll draw.
+        m_gl.BindBuffer(GL_ARRAY_BUFFER,         m_guiRectangleVertexBuffer);
+        m_gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_guiRectangleIndexBuffer);
+
+        m_gl.EnableVertexAttribArray(0);
+        m_gl.DisableVertexAttribArray(1);
+        m_gl.DisableVertexAttribArray(2);
+        m_gl.VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, reinterpret_cast<const void*>(0));
+        
+
+        m_gl.UseProgram(m_guiRectangleProgram);
+        m_gl.UniformMatrix4fv(m_guiRectangleProgram_ProjectionLoc, 1, GL_FALSE, &projection[0][0]);
+
+
+        m_gl.FrontFace(GL_CCW);
+        m_gl.Disable(GL_DEPTH_TEST);
+        m_gl.DepthMask(GL_FALSE);
+        m_gl.Enable(GL_SCISSOR_TEST);
+    }
+
+    void DefaultGraphicsWorld_OpenGL::GUI_EndPaintSurface(GUIContext &gui)
+    {
+        (void)gui;
+
+        m_gl.FrontFace(GL_CW);
+        m_gl.Enable(GL_DEPTH_TEST);
+        m_gl.DepthMask(GL_TRUE);
+        m_gl.Disable(GL_SCISSOR_TEST);
+    }
+
+    void DefaultGraphicsWorld_OpenGL::GUI_Clear(GUIContext &gui)
+    {
+        (void)gui;
+    }
+
+    void DefaultGraphicsWorld_OpenGL::GUI_Clear(GUIContext &gui, const GTLib::Rect<int> &rect)
+    {
+        (void)gui;
+        (void)rect;
+    }
+
+    void DefaultGraphicsWorld_OpenGL::GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GTLib::Colour colour)
+    {
+        (void)gui;
+        (void)rect;
+        (void)colour;
+
+        float rectGL[4];
+        rectGL[0] = static_cast<float>(rect.left);
+        rectGL[1] = static_cast<float>(rect.top);
+        rectGL[2] = static_cast<float>(rect.right - rect.left);
+        rectGL[3] = static_cast<float>(rect.bottom - rect.top);
+
+        float colorGL[4];
+        colorGL[0] = colour.r;
+        colorGL[1] = colour.g;
+        colorGL[2] = colour.b;
+        colorGL[3] = colour.a;
+
+        
+        
+        // Setup the shader.
+        m_gl.Uniform4fv(m_guiRectangleProgram_ColorLoc, 1, colorGL);
+        m_gl.Uniform4fv(m_guiRectangleProgram_RectLoc,  1, rectGL);
+
+        // Draw the quad.
+        m_gl.DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    }
+
+    void DefaultGraphicsWorld_OpenGL::GUI_SetClippingRect(GUIContext &gui, GTLib::Rect<int> rect)
+    {
+        (void)gui;
+        (void)rect;
+
+        m_gl.Scissor(rect.left, m_currentSurfaceHeight - rect.bottom, rect.right - rect.left, rect.bottom - rect.top);
+    }
+
+    bool DefaultGraphicsWorld_OpenGL::GUI_CanDrawText(GUIContext &gui, HGUIFont hFont)
+    {
+        (void)gui;
+        (void)hFont;
+
+        return false;
+    }
+
+    void DefaultGraphicsWorld_OpenGL::GUI_DrawText(GUIContext &gui, const GUITextRunDesc &textRunDesc)
+    {
+        (void)gui;
+        (void)textRunDesc;
+    }
+
+
 
     ////////////////////////////////////////////////
     // Private
@@ -1707,6 +1860,13 @@ namespace GT
                     }
                 }
                 
+
+                // GUI.
+                if (pRT->hSurface != 0)
+                {
+                    this->GetGUI().PaintSurface(pRT->hSurface, this);
+                }
+
 
                 SwapBuffers(pRT->hDC);
             }
