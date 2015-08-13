@@ -181,7 +181,7 @@ namespace GT
                             int runTop = run.yPos + line.alignmentOffsetY + topOffset;
 
                             GUITextRunDesc runDesc;
-                            runDesc.text              = GTLib::String(run.textStart, run.textEnd - run.textStart);
+                            GTLib::Strings::Copy(runDesc.text, GT_MAX_TEXT_RUN_SIZE_IN_BYTES, run.textStart, run.textEnd - run.textStart);
                             runDesc.hFont             = m_hFont;
                             runDesc.xPos              = runLeft;
                             runDesc.yPos              = runTop;
@@ -254,7 +254,9 @@ namespace GT
             GTLib::Strings::Iterator<char> c(iLine.start, iLine.end - iLine.start);
             while (c)
             {
-                if (c.character == '\t')
+                bool endRunEarly = ((c.str - currentRun.textStart) == (GT_MAX_TEXT_RUN_SIZE_IN_BYTES - 1));
+
+                if (c.character == '\t' || endRunEarly)
                 {
                     // If we are in the middle of a run it needs to be ended.
                     if (currentRun.textStart != nullptr)
@@ -291,11 +293,14 @@ namespace GT
 
                     
                     // Increment the tab size.
-                    newLine.width += (tabWidth - (newLine.width % tabWidth));
+                    if (c.character == '\t')
+                    {
+                        newLine.width += (tabWidth - (newLine.width % tabWidth));
+                    }
                 }
                 else
                 {
-                    // It's a normal character. If we are in the middle of a run we just continue iterating. Otherwise we begin a new one.
+                    // It's a normal character. If we are in the middle of a run we just continue iterating. Otherwise we begin a new one. The run cannot be longer than GT_MAX_TEXT_RUN_SIZE_IN_BYTES.
                     if (currentRun.textStart == nullptr)
                     {
                         currentRun.textStart = c.str;
@@ -304,7 +309,13 @@ namespace GT
                     currentRun.characterCount += 1;
                 }
 
-                ++c;
+
+                // If we ended the run early, we don't want to go to the next character. We instead want to stay where we are so that the beginning
+                // of the next run starts at the end of the last one, rather than the character after.
+                if (!endRunEarly)
+                {
+                    ++c;
+                }
             }
 
             // There might be a run that needs to be added.

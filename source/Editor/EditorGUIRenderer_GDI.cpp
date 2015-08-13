@@ -181,29 +181,11 @@ namespace GT
                 HGDIOBJ  hPrevFont      = SelectObject(m_hDC, hFontWin32);
                 COLORREF hPrevTextColor = SetTextColor(m_hDC, RGB(textRunDesc.color.r*255, textRunDesc.color.g*255, textRunDesc.color.b*255));
 
-                int bufferSize = MultiByteToWideChar(CP_UTF8, 0, textRunDesc.text.c_str(), -1, nullptr, 0);
+                wchar_t textW[GT_MAX_TEXT_RUN_SIZE_IN_BYTES];
+                int bufferSize = MultiByteToWideChar(CP_UTF8, 0, textRunDesc.text, -1, textW, GT_MAX_TEXT_RUN_SIZE_IN_BYTES - 1);
                 if (bufferSize > 0)
                 {
-                    if (bufferSize > 64)
-                    {
-                        wchar_t* buffer = reinterpret_cast<wchar_t*>(malloc(sizeof(wchar_t) * bufferSize));
-                        if (buffer != nullptr)
-                        {
-                            MultiByteToWideChar(CP_UTF8, 0, textRunDesc.text.c_str(), -1, buffer, sizeof(wchar_t)*bufferSize);
-
-                            TextOutW(m_hDC, textRunDesc.xPos, textRunDesc.yPos, buffer, bufferSize - 1);
-                            free(buffer);
-                        }
-                    }
-                    else
-                    {
-                        wchar_t buffer[64];
-                        bufferSize = MultiByteToWideChar(CP_UTF8, 0, textRunDesc.text.c_str(), -1, buffer, 64);
-                        if (bufferSize > 0)
-                        {
-                            TextOutW(m_hDC, textRunDesc.xPos, textRunDesc.yPos, buffer, bufferSize - 1);
-                        }
-                    }
+                    TextOutW(m_hDC, textRunDesc.xPos, textRunDesc.yPos, textW, bufferSize - 1);
                 }
                 
 

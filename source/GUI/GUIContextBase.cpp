@@ -3748,9 +3748,10 @@ namespace GT
                         void* pImageBuffer = NULL;
 
                         pElement->pTextLayout->IterateVisibleTextRuns([&](const GUITextRunDesc &run) {
+                            size_t textCharacterCount = GTLib::Strings::GetCharacterCount(run.text);
                             int runWidth;
                             int runHeight;
-                            if (m_pFontManager->MeasureString(run.hFont, run.text.c_str(), run.text.GetCharacterCount(), runWidth, runHeight))
+                            if (m_pFontManager->MeasureString(run.hFont, run.text, textCharacterCount, runWidth, runHeight))
                             {
                                 size_t newImageBufferSize = runWidth * runHeight * 4;
                                 if (newImageBufferSize > imageBufferSize)
@@ -3763,7 +3764,7 @@ namespace GT
 
                                 if (pImageBuffer != nullptr)
                                 {
-                                    if (m_pFontManager->DrawTextToBuffer(run.hFont, run.text.c_str(), run.text.GetCharacterCount(), run.color, pImageBuffer, imageBufferSize))
+                                    if (m_pFontManager->DrawTextToBuffer(run.hFont, run.text, textCharacterCount, run.color, pImageBuffer, imageBufferSize))
                                     {
                                         Renderer_DrawRawImage(run.xPos + textRect.left, run.yPos + textRect.top, runWidth, runHeight, pImageBuffer, true);
                                     }

@@ -27,7 +27,7 @@ namespace GT
     struct GUITextRunDesc
     {
         /// The text.
-        GTLib::String text;
+        char text[GT_MAX_TEXT_RUN_SIZE_IN_BYTES];
 
         /// A handle to the font the text should be drawn with.
         HGUIFont hFont;

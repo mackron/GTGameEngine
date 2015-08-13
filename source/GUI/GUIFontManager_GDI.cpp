@@ -325,29 +325,12 @@ namespace GT
             SetBkMode(m_hDC, TRANSPARENT);
             SetTextColor(m_hDC, RGB(255, 255, 255));
 
-            int bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthChars), nullptr, 0);
+            // We know that the input string will not be longer than GT_MAX_TEXT_RUN_SIZE_IN_BYTES.
+            wchar_t textW[GT_MAX_TEXT_RUN_SIZE_IN_BYTES];
+            int bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthChars), textW, GT_MAX_TEXT_RUN_SIZE_IN_BYTES - 1);
             if (bufferSize > 0)
             {
-                if (bufferSize > 64)
-                {
-                    wchar_t* buffer = reinterpret_cast<wchar_t*>(malloc(sizeof(wchar_t) * bufferSize));
-                    if (buffer != nullptr)
-                    {
-                        MultiByteToWideChar(CP_UTF8, 0, text, GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthChars), buffer, sizeof(wchar_t)*bufferSize);
-
-                        TextOutW(m_hDC, 0, 0, buffer, bufferSize);
-                        free(buffer);
-                    }
-                }
-                else
-                {
-                    wchar_t buffer[64];
-                    bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthChars), buffer, 64);
-                    if (bufferSize > 0)
-                    {
-                        TextOutW(m_hDC, 0, 0, buffer, bufferSize);
-                    }
-                }
+                TextOutW(m_hDC, 0, 0, textW, bufferSize);
             }
 
 

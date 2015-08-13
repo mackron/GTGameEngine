@@ -9,6 +9,8 @@
 #include <GTLib/Colour.hpp>
 #include <cstdint>
 
+#define GT_MAX_TEXT_RUN_SIZE_IN_BYTES   128
+
 namespace GT
 {
     typedef uint32_t HGUIFont;
