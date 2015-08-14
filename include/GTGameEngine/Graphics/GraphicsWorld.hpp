@@ -6,6 +6,7 @@
 #include "GraphicsTypes.hpp"
 #include "GraphicsWorldObject.hpp"
 #include "../Math.hpp"
+#include "../AlignedType.hpp"
 #include "../GUI/GUIContext.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
@@ -174,7 +175,7 @@ namespace GT
     /// Base class for a graphics world. A graphics world is where rendering occurs.
     ///
     /// The actual rendering and resource creation is performed by derived classes. 
-    class GraphicsWorld
+    class alignas(16) GraphicsWorld : public SIMDAlignedType
     {
     public:
 
@@ -457,6 +458,12 @@ namespace GT
 
         /// A reference to the GUI context.
         GUIContext &m_gui;
+
+        /// Padding.
+#if UINTPTR_MAX == UINT32_MAX
+        uint32_t m_padding0;
+        uint32_t m_padding1;
+#endif
 
 
     private:    // No copying.
