@@ -195,6 +195,14 @@ namespace GT
 
     void SceneSteppingPipeline_Default::PostEvents()
     {
+        // OnSceneNodeTransformed
+        for (size_t iSceneNode = 0; iSceneNode < m_dynamicSceneNodes.GetCount(); ++iSceneNode)
+        {
+            auto pSceneNode = m_dynamicSceneNodes[iSceneNode];
+            assert(pSceneNode);
+
+            m_callback.OnSceneNodeTransformed(pSceneNode, pSceneNode->GetPosition(), pSceneNode->GetRotation(), pSceneNode->GetScale());
+        }
     }
         
     void SceneSteppingPipeline_Default::Cleanup()
