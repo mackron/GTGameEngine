@@ -599,6 +599,12 @@
     <ClCompile Include="..\..\..\source\Graphics\GraphicsWorldGUIRenderer.cpp">
       <Filter>Source Files\Graphics</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeComponent_Events.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeComponentDescriptor_Events.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp">
@@ -1143,6 +1149,12 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Graphics\GraphicsWorldGUIRenderer.hpp">
       <Filter>Header Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponent_Events.hpp">
+      <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentDescriptor_Events.hpp">
+      <Filter>Header Files\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
