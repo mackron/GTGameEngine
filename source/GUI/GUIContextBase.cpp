@@ -276,6 +276,7 @@ namespace GT
 
             // The element needs to be isolated before deleting.
             this->DetachElementFromParentAndSiblings(pElement);
+            this->DetachElementFromSurface(pElement);
 
 
             // If the element has an invalid layout, clear it from the layout manager.
