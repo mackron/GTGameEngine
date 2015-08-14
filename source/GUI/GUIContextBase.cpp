@@ -2697,7 +2697,7 @@ namespace GT
     void GUIContextBase::OnMouseButtonPressed(GUISurface* pSurface, int mouseButton, int mousePosX, int mousePosY)
     {
         assert(pSurface != nullptr);
-        assert(pSurface == m_pSurfaceUnderMouse);
+        //assert(pSurface == m_pSurfaceUnderMouse);
 
         (void)pSurface;
 
@@ -2728,7 +2728,7 @@ namespace GT
     void GUIContextBase::OnMouseButtonReleased(GUISurface* pSurface, int mouseButton, int mousePosX, int mousePosY)
     {
         assert(pSurface != nullptr);
-        assert(pSurface == m_pSurfaceUnderMouse);
+        //assert(pSurface == m_pSurfaceUnderMouse);
 
         (void)pSurface;
 
@@ -2759,7 +2759,7 @@ namespace GT
     void GUIContextBase::OnMouseButtonDoubleClicked(GUISurface* pSurface, int mouseButton, int mousePosX, int mousePosY)
     {
         assert(pSurface != nullptr);
-        assert(pSurface == m_pSurfaceUnderMouse);
+        //assert(pSurface == m_pSurfaceUnderMouse);
 
         (void)pSurface;
 
