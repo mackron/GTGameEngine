@@ -380,6 +380,14 @@ namespace GT
         /// Retrieves the surface that is being rendered to the given render target.
         virtual HGUISurface GetRenderTargetGUISurface(HGraphicsRenderTarget hRT) const = 0;
 
+        /// Sets the size of the given surface's GUI surface to that of the viewport of the given render target.
+        ///
+        /// @param hRT [in] The render target.
+        ///
+        /// @remarks
+        ///     This is useful for updating the size of the surface when the size of the render target changes.
+        virtual void SetRenderTargetSurfaceSizeToRenderTarget(HGraphicsRenderTarget hRT) = 0;
+
 
 
         ////////////////////

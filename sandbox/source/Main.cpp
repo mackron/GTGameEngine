@@ -267,7 +267,7 @@ public:
                 GT::HGUIElement hTestElement1 = m_gui.CreateElement();
                 m_gui.AttachElementToSurface(hTestElement1, m_hWindowSurface);
                 //m_gui.SetElementSize(hTestElement1, 100U, 100U);
-                //m_gui.SetElementPosition(hTestElement1, 100, 300);
+                //m_gui.SetElementPosition(hTestElement1, 100, 100);
                 m_gui.SetElementSizeToChildren(hTestElement1);
                 //m_gui.SetElementBackgroundColor(hTestElement1, GTLib::Colour(0.5f, 0.5f, 0.5f, 0.0f));
                 //m_gui.SetElementBorder(hTestElement1, 2, GTLib::Colour::Black);

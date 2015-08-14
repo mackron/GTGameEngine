@@ -585,14 +585,14 @@ namespace GT
                     "uniform vec4 Rect;\n"
                     "void main() {\n"
                     "    gl_Position = Projection * vec4((VS_Position * Rect.zw) + Rect.xy, 0.0, 1.0);\n"
-                    "};"
+                    "}"
                 );
 
                 GLuint guiRectangleFragmentShader = this->CreateShader_GLSL(GL_FRAGMENT_SHADER,
                     "uniform vec4 Color;\n"
                     "void main() {\n"
                     "    gl_FragColor = Color;\n"
-                    "};"
+                    "}"
                 );
 
                 m_guiRectangleProgram = this->CreateProgram_GLSL(guiRectangleVertexShader, guiRectangleFragmentShader);
@@ -613,7 +613,7 @@ namespace GT
                     "void main() {\n"
                     "    FS_TexCoord = VS_Position * vec2(1.0, -1.0) + vec2(0.0, 1.0);"
                     "    gl_Position = Projection * vec4((VS_Position * Rect.zw) + Rect.xy, 0.0, 1.0);\n"
-                    "};"
+                    "}"
                 );
 
                 GLuint guiDrawRawImageFragmentShader = this->CreateShader_GLSL(GL_FRAGMENT_SHADER,
@@ -622,7 +622,7 @@ namespace GT
                     "varying vec2 FS_TexCoord;\n"
                     "void main() {\n"
                     "    gl_FragColor = Color * texture2D(Texture, FS_TexCoord);\n"
-                    "};"
+                    "}"
                 );
 
                 m_guiDrawRawImageProgram = this->CreateProgram_GLSL(guiDrawRawImageVertexShader, guiDrawRawImageFragmentShader);
@@ -781,7 +781,7 @@ namespace GT
                         switch (pIdentifier->type)
                         {
                         case easymtl_type_float:
-                        //case easymtl_type_int:
+                        case easymtl_type_int:
                         case easymtl_type_bool:
                             {
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.x);
@@ -789,7 +789,7 @@ namespace GT
                             }
 
                         case easymtl_type_float2:
-                        //case easymtl_type_int2:
+                        case easymtl_type_int2:
                             {
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.x);
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.y);
@@ -797,7 +797,7 @@ namespace GT
                             }
 
                         case easymtl_type_float3:
-                        //case easymtl_type_int3:
+                        case easymtl_type_int3:
                             {
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.x);
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.y);
@@ -807,7 +807,7 @@ namespace GT
                             }
 
                         case easymtl_type_float4:
-                        //case easymtl_type_int4:
+                        case easymtl_type_int4:
                             {
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.x);
                                 inputVariablesValuesBuffer.PushBack(pInputVariableSrc->raw4.y);
@@ -1559,6 +1559,18 @@ namespace GT
         }
 
         return 0;
+    }
+
+    void DefaultGraphicsWorld_OpenGL::SetRenderTargetSurfaceSizeToRenderTarget(HGraphicsRenderTarget hRT)
+    {
+        auto pRT = reinterpret_cast<RenderTarget_OpenGL*>(hRT);
+        if (pRT != nullptr)
+        {
+            if (pRT->hSurface != 0)
+            {
+                this->GetGUI().SetSurfaceSize(pRT->hSurface, pRT->viewportWidth, pRT->viewportHeight);
+            }
+        }
     }
 
 

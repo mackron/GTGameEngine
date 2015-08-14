@@ -278,6 +278,11 @@ namespace GT
         return m_pGraphicsWorldImpl->GetRenderTargetGUISurface(hRT);
     }
 
+    void DefaultGraphicsWorld::SetRenderTargetSurfaceSizeToRenderTarget(HGraphicsRenderTarget hRT)
+    {
+        return m_pGraphicsWorldImpl->SetRenderTargetSurfaceSizeToRenderTarget(hRT);
+    }
+
 
 
     ////////////////////

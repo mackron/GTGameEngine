@@ -160,6 +160,9 @@ namespace GT
         /// @copydoc GraphicsWorld::GetRenderTargetGUISurface()
         virtual HGUISurface GetRenderTargetGUISurface(HGraphicsRenderTarget hRT) const;
 
+        /// @copydoc GraphicsWorld::SetRenderTargetSurfaceSizeToRenderTarget()
+        virtual void SetRenderTargetSurfaceSizeToRenderTarget(HGraphicsRenderTarget hRT);
+
 
 
         ////////////////////

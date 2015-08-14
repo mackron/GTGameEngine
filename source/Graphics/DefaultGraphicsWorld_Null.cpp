@@ -333,6 +333,11 @@ namespace GT
         return 0;
     }
 
+    void DefaultGraphicsWorld_Null::SetRenderTargetSurfaceSizeToRenderTarget(HGraphicsRenderTarget hRT)
+    {
+        (void)hRT;
+    }
+
 
 
     ////////////////////
