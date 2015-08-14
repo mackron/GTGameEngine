@@ -7,6 +7,7 @@
 
 #include "Config.hpp"
 #include <GTLib/Math.hpp>
+#include <math.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -330,7 +331,6 @@ namespace GT
 
 
 
-
     //////////////////////////////////
     // quat
 
@@ -387,6 +387,22 @@ namespace GT
         {
             return *(&x + index);
         }
+
+
+        /// Creates a quaternion from an angle rotated around the given axis.
+        static quat angle_axis(float angle, float axisX, float axisY, float axisZ)
+        {
+            const float a = angle;
+		    const float s = sin(a * 0.5f);
+
+            return quat(
+                cos(a * 0.5f),
+                axisX * s,
+                axisY * s,
+                axisZ * s
+            );
+        }
+
 
 
         ///////////////////////////////////
@@ -716,6 +732,14 @@ namespace GT
         result[2] *= scale.z;
 
         return result;
+    }
+
+
+    inline float Distance(float x1, float y1, float x2, float y2)
+    {
+        float diffX = x1 - x2;
+        float diffY = y1 - y2;
+        return abs(sqrt(diffX*diffX + diffY*diffY));
     }
 }
 
