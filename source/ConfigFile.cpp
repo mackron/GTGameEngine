@@ -13,7 +13,10 @@ namespace GT
 
     ConfigFile::~ConfigFile()
     {
-        lua_close(m_pState);
+        if (m_pState != nullptr)
+        {
+            lua_close(m_pState);
+        }
     }
 
 
