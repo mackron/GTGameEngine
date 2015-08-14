@@ -304,7 +304,7 @@ namespace GT
             GdiFlush();
 
             // Clear.
-            for (int iRow = 0; iRow < textHeight; ++iRow)
+            for (int iRow = m_textBitmapHeight - textHeight; iRow < static_cast<int>(m_textBitmapHeight); ++iRow)
             {
                 for (int iCol = 0; iCol < textWidth; ++iCol)
                 {
@@ -350,7 +350,7 @@ namespace GT
             {
                 for (int iCol = 0; iCol < textWidth; ++iCol)
                 {
-                    uint32_t  srcTexel = reinterpret_cast<uint32_t*>(m_pTextBitmapData)[(iRow * m_textBitmapWidth) + iCol];
+                    uint32_t  srcTexel = reinterpret_cast<uint32_t*>(m_pTextBitmapData)[((iRow + (m_textBitmapHeight - textHeight)) * m_textBitmapWidth) + iCol];
                     uint32_t &dstTexel = reinterpret_cast<uint32_t*>(bufferOut        )[(iRow * textWidth)         + iCol];
 
                     dstTexel = ((srcTexel & 0x00FF0000) << 8) | rgb;
