@@ -3394,7 +3394,7 @@ namespace GT
             if (pOldElementUnderMouse != nullptr)
             {
                 this->IterateElementAncestorsAndSelf(pOldElementUnderMouse, [&](GUIElement* pOldAncestor) -> bool {
-                    bool isOldElementUnderMouse = pNewElementUnderMouse == pOldAncestor || this->IsElementAncestor(pNewElementUnderMouse, pOldAncestor);
+                    bool isOldElementUnderMouse = pNewElementUnderMouse == pOldAncestor || (pNewElementUnderMouse != nullptr && this->IsElementAncestor(pNewElementUnderMouse, pOldAncestor));
                     if (!isOldElementUnderMouse)
                     {
                         if (m_pElementCapturingMouseEvents == nullptr || m_pElementCapturingMouseEvents == pOldAncestor)
