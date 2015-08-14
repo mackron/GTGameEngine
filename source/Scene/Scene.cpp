@@ -124,6 +124,14 @@ namespace GT
         }
     }
 
+    void Scene::RemoveAllSceneNodes()
+    {
+        while (m_sceneNodes.GetCount() > 0)
+        {
+            this->RemoveSceneNode(m_sceneNodes.buffer[m_sceneNodes.GetCount() - 1]->value);
+        }
+    }
+
 
     SceneNode* Scene::GetSceneNodeByID(uint64_t sceneNodeID)
     {

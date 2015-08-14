@@ -62,6 +62,12 @@ namespace GT
         /// @param sceneNode [in] The scene node to remove from the scene.
         void RemoveSceneNode(SceneNode* pSceneNode);
 
+        /// Removes every scene node.
+        ///
+        /// @remarks
+        ///     This does not delete the scene nodes.
+        void RemoveAllSceneNodes();
+
 
         /// Retrieves a pointer to the scene node with the given ID.
         ///
