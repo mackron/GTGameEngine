@@ -108,6 +108,9 @@
     <Filter Include="Source Files\external\easy_mtl\extras">
       <UniqueIdentifier>{1b073a0d-2314-44c2-a9d3-b2c7f602f66a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\external\easy_partition">
+      <UniqueIdentifier>{4810c8f1-bf08-4cba-87ae-50b05d21a7b9}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\..\source\EngineContext.cpp">
@@ -604,6 +607,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\source\Scene\SceneNodeComponentDescriptor_Events.cpp">
       <Filter>Source Files\Scene</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\source\external\easy_partition\easy_partition.c">
+      <Filter>Source Files\external\easy_partition</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -1155,6 +1161,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentDescriptor_Events.hpp">
       <Filter>Header Files\Scene</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\source\external\easy_partition\easy_partition.h">
+      <Filter>Source Files\external\easy_partition</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
