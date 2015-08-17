@@ -20,32 +20,69 @@ namespace GT
     }
 
 
-    bool ConfigFile::Load(const char* absolutePath)
+    bool ConfigFile::Initialize()
     {
         if (m_pState == nullptr)
         {
             m_pState = luaL_newstate();
-            if (m_pState == nullptr)
+            if (m_pState != nullptr)
             {
-                return false;
+                luaL_openlibs(m_pState);
+
+                return true;
             }
 
-            luaL_openlibs(m_pState);
-        }
-
-        assert(m_pState != nullptr);
-        
-        if (luaL_loadfile(m_pState, absolutePath) != 0)
-        {
-            return false;
-        }
-
-        if (lua_pcall(m_pState, 0, 0, 0) != 0)
-        {
             return false;
         }
 
         return true;
+    }
+
+
+    bool ConfigFile::LoadFile(const char* path, GT::FileSystem &fileSystem)
+    {
+        if (m_pState != nullptr)
+        {
+            bool result = false;
+
+            GT::HFile hFile = fileSystem.OpenFile(path, GT::FileAccessMode::Read);
+            if (hFile != 0)
+            {
+                unsigned int fileSize = static_cast<unsigned int>(fileSystem.GetFileSize(hFile));
+                if (fileSize > 0)
+                {
+                    char* fileData = reinterpret_cast<char*>(malloc(fileSize + 1));
+                    fileSystem.ReadFile(hFile, fileSize, fileData);
+                    fileData[fileSize] = '\0';
+
+                    result = this->LoadString(fileData);
+
+                    free(fileData);
+                }
+                
+                fileSystem.CloseFile(hFile);
+            }
+
+            return result;
+        }
+
+        return false;
+    }
+
+    bool ConfigFile::LoadString(const char* configString)
+    {
+        if (m_pState != nullptr)
+        {
+            if (luaL_loadstring(m_pState, configString) == 0)
+            {
+                if (lua_pcall(m_pState, 0, 0, 0) == 0)
+                {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
 
@@ -219,6 +256,51 @@ namespace GT
     }
 
 
+    bool ConfigFile::IsNumber(const char* variableName)
+    {
+        bool result = false;
+        if (m_pState != nullptr)
+        {
+            lua_getglobal(m_pState, variableName);
+            {
+                result = lua_isnumber(m_pState, -1) != 0;
+            }
+            lua_pop(m_pState, 1);
+        }
+
+        return result;
+    }
+
+    bool ConfigFile::IsBoolean(const char* variableName)
+    {
+        bool result = false;
+        if (m_pState != nullptr)
+        {
+            lua_getglobal(m_pState, variableName);
+            {
+                result = lua_isboolean(m_pState, -1) != 0;
+            }
+            lua_pop(m_pState, 1);
+        }
+
+        return result;
+    }
+
+    bool ConfigFile::IsString(const char* variableName)
+    {
+        bool result = false;
+        if (m_pState != nullptr)
+        {
+            lua_getglobal(m_pState, variableName);
+            {
+                result = lua_isstring(m_pState, -1) != 0;
+            }
+            lua_pop(m_pState, 1);
+        }
+
+        return result;
+    }
+
     bool ConfigFile::IsArray(const char* arrayName) const
     {
         bool result = false;
@@ -253,5 +335,58 @@ namespace GT
         }
 
         return result;
+    }
+
+
+    bool ConfigFile::SetFloat(const char* variableName, float value)
+    {
+        if (m_pState != nullptr)
+        {
+            lua_pushnumber(m_pState, value);
+            lua_setglobal(m_pState, variableName);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool ConfigFile::SetInteger(const char* variableName, int value)
+    {
+        if (m_pState != nullptr)
+        {
+            lua_pushinteger(m_pState, value);
+            lua_setglobal(m_pState, variableName);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool ConfigFile::SetBoolean(const char* variableName, bool value)
+    {
+        if (m_pState != nullptr)
+        {
+            lua_pushboolean(m_pState, value);
+            lua_setglobal(m_pState, variableName);
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool ConfigFile::SetString(const char* variableName, const char* value)
+    {
+        if (m_pState != nullptr)
+        {
+            lua_pushstring(m_pState, value);
+            lua_setglobal(m_pState, variableName);
+
+            return true;
+        }
+
+        return false;
     }
 }
