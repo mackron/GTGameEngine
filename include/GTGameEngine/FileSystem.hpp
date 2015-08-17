@@ -17,6 +17,8 @@
 
 typedef struct easyvfs_context easyvfs_context;
 
+#define GT_MAX_PATH 512
+
 namespace GT
 {
     typedef size_t HFile;
