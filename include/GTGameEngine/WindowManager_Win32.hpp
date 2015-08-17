@@ -103,6 +103,13 @@ namespace GT
         virtual void GetBaseDPI(unsigned int &xDPIOut, unsigned int &yDPIOut) const;
 
 
+        /// @copydoc WindowManager::GetMonitorResolution()
+        virtual bool GetMonitorResolution(int monitor, unsigned int &resolutionXOut, unsigned int &resolutionYOut);
+
+        /// @copydoc WindowManager::GetMonitorOrigin()
+        virtual bool GetMonitorOrigin(int monitor, int &originXOut, int &originYOut);
+
+
         /// @copydoc WindowManager::EventDrivenLoop()
         virtual void EventDrivenLoop(std::function<bool ()> postLoop);
 

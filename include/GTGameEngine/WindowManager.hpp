@@ -7,6 +7,8 @@
 #include <GTLib/Keyboard.hpp>
 #include <functional>
 
+#define GT_PRIMARY_MONITOR  -1
+
 namespace GT
 {
     enum class WindowType
@@ -176,6 +178,27 @@ namespace GT
         /// @param xDPIOut [out] A reference to the variable that will receive the DPI on the x axis.
         /// @param yDPIOut [out] A reference to the variable that will receive the DPI on the y axis.
         virtual void GetBaseDPI(unsigned int &xDPIOut, unsigned int &yDPIOut) const = 0;
+
+
+        /// Retrieves the resolution of the monitor with the given index.
+        ///
+        /// @param monitor        [in]  The monitor index. Set this to 0 to use the primary monitor.
+        /// @param resolutionXOut [out] A reference to the variable that will receive the horizontal resolution.
+        /// @param resolutionYOut [out] A reference to the variable that will receive the vertical resolution.
+        ///
+        /// @remarks
+        ///     Set "monitor" to GT_PRIMARY_MONITOR to retrieve information about the primary monitor.
+        virtual bool GetMonitorResolution(int monitor, unsigned int &resolutionXOut, unsigned int &resolutionYOut) = 0;
+
+        /// Retrieves the origin (top-left corner) or the given monitor.
+        ///
+        /// @param monitor    [in]  The monitor index. Set this to 0 to use the primary monitor.
+        /// @param originXOut [out] A reference to the variable that will receive the origin on the x axis.
+        /// @param originYOut [out] A reference to the variable that will receive the origin on the y axis.
+        ///
+        /// @remarks
+        ///     Set "monitor" to GT_PRIMARY_MONITOR to retrieve information about the primary monitor.
+        virtual bool GetMonitorOrigin(int monitor, int &originXOut, int &originYOut) = 0;
 
 
         /// Enters into an event-driven loop.

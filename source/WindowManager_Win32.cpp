@@ -21,6 +21,56 @@ namespace GT
     typedef HRESULT (__stdcall * PFN_SetProcessDpiAwareness) (PROCESS_DPI_AWARENESS);
     typedef HRESULT (__stdcall * PFN_GetDpiForMonitor)       (HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX, UINT *dpiY);
 
+
+    /// Structure for passing information to EnumDisplayMonitors()
+    struct WindowEnumData
+    {
+        WindowEnumData()
+            : targetIndex(0),
+              currentIndex(0),
+              hMonitor(NULL)
+        {
+        }
+
+        /// The target iteration index.
+        int targetIndex;
+
+        /// The current iteration index.
+        int currentIndex;
+
+        /// A handle to the monitor.
+        HMONITOR hMonitor;
+    };
+
+    BOOL CALLBACK GetMonitorByIndexCallback(HMONITOR hMonitor, HDC, LPRECT, LPARAM dwData)
+    {
+        WindowEnumData* pData = reinterpret_cast<WindowEnumData*>(dwData);
+        if (pData != nullptr)
+        {
+            if (pData->targetIndex == pData->currentIndex)
+            {
+                pData->hMonitor = hMonitor;
+                return false;
+            }
+            
+
+            pData->currentIndex += 1;
+            return true;
+        }
+
+        return false;
+    }
+
+    HMONITOR GetMonitorByIndex(int monitorIndex)
+    {
+        WindowEnumData data;
+        data.targetIndex = monitorIndex;
+        EnumDisplayMonitors(NULL, NULL, GetMonitorByIndexCallback, reinterpret_cast<LPARAM>(&data));
+
+        return data.hMonitor;
+    }
+
+
     void TrackMouseLeaveEvent(HWND hWnd)
     {
         TRACKMOUSEEVENT tme;
@@ -1080,6 +1130,69 @@ namespace GT
     {
         xDPIOut = 96;
         yDPIOut = 96;
+    }
+
+
+    bool WindowManager_Win32::GetMonitorResolution(int monitor, unsigned int &resolutionXOut, unsigned int &resolutionYOut)
+    {
+        if (monitor == GT_PRIMARY_MONITOR)
+        {
+            resolutionXOut = static_cast<unsigned int>(::GetSystemMetrics(SM_CXSCREEN));
+            resolutionYOut = static_cast<unsigned int>(::GetSystemMetrics(SM_CYSCREEN));
+
+            return true;
+        }
+        else
+        {
+            HMONITOR hMonitor = GetMonitorByIndex(monitor);
+            if (hMonitor != NULL)
+            {
+                MONITORINFO mi;
+                ZeroMemory(&mi, sizeof(mi));
+                mi.cbSize = sizeof(mi);
+
+                if (GetMonitorInfoW(hMonitor, &mi))
+                {
+                    resolutionXOut = mi.rcMonitor.right  - mi.rcMonitor.left;
+                    resolutionYOut = mi.rcMonitor.bottom - mi.rcMonitor.top;
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
+    }
+
+    bool WindowManager_Win32::GetMonitorOrigin(int monitor, int &originXOut, int &originYOut)
+    {
+        if (monitor == GT_PRIMARY_MONITOR)
+        {
+            originXOut = 0;
+            originYOut = 0;
+
+            return true;
+        }
+        else
+        {
+            HMONITOR hMonitor = GetMonitorByIndex(monitor);
+            if (hMonitor != NULL)
+            {
+                MONITORINFO mi;
+                ZeroMemory(&mi, sizeof(mi));
+                mi.cbSize = sizeof(mi);
+
+                if (GetMonitorInfoW(hMonitor, &mi))
+                {
+                    originXOut = mi.rcMonitor.left;
+                    originYOut = mi.rcMonitor.top;
+
+                    return true;
+                }
+            }
+
+            return false;
+        }
     }
 
 
