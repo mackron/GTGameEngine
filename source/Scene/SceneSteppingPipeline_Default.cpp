@@ -201,7 +201,13 @@ namespace GT
             auto pSceneNode = m_dynamicSceneNodes[iSceneNode];
             assert(pSceneNode);
 
-            m_callback.OnSceneNodeTransformed(pSceneNode, pSceneNode->GetPosition(), pSceneNode->GetRotation(), pSceneNode->GetScale());
+            uint32_t flags = pSceneNode->_GetFlags();
+            if ((flags & (SceneNode::_PositionChanged | SceneNode::_RotationChanged | SceneNode::_ScaleChanged)) != 0)
+            {
+                m_callback.OnSceneNodeTransformed(pSceneNode, pSceneNode->GetPosition(), pSceneNode->GetRotation(), pSceneNode->GetScale());
+
+                pSceneNode->_SetFlags(flags & ~(SceneNode::_PositionChanged | SceneNode::_RotationChanged | SceneNode::_ScaleChanged));
+            }
         }
     }
         
