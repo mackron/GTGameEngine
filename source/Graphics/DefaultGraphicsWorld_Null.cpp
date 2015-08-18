@@ -65,6 +65,14 @@ namespace GT
         (void)hMaterialResource;
     }
 
+    void DefaultGraphicsWorld_Null::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, HGraphicsResource hTexture)
+    {
+        (void)hMeshResource;
+        (void)materialSlot;
+        (void)variableName;
+        (void)hTexture;
+    }
+
 
     void DefaultGraphicsWorld_Null::DeleteResource(HGraphicsResource hResource)
     {

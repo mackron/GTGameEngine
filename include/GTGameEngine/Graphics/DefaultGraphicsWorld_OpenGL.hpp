@@ -48,7 +48,7 @@ namespace GT
         HGraphicsResource CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc);
 
         /// @copydoc GraphicsWorld::SetMaterialResourceInputVariable()
-        void SetMaterialResourceInputVariable(HGraphicsObject hMeshObject, const char* variableName, HGraphicsResource hTexture);
+        void SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, HGraphicsResource hTexture);
 
 
         /// @copydoc GraphicsWorld::CreateMeshResource()
@@ -56,6 +56,9 @@ namespace GT
 
         /// @copydoc GraphicsWorld::SetMeshResourceMaterial()
         void SetMeshResourceMaterial(HGraphicsResource hMeshResource, unsigned int materialSlot, HGraphicsResource hMaterialResource);
+
+        /// @copydoc GraphicsWorld::SetMeshResourceMaterialInputVariable()
+        void SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, HGraphicsResource hTexture);
 
 
         /// @copydoc GraphicsWorld::DeleteResource()
@@ -262,10 +265,16 @@ namespace GT
         ///     This is used when setting the value of a material input variable for the given mesh object.
         void* GetMeshObjectMaterialInputVariableBufferPtr(HGraphicsObject hMeshObject, unsigned int materialSlotIndex, const char* variableName) const;
 
+        /// Helper for retrieving a pointer to the buffer that contains the value of the given variable.
+        ///
+        /// @remarks
+        ///     This is used when setting the value of a material input variable for the given mesh resource.
+        void* GetMeshResourceMaterialInputVariableBufferPtr(HGraphicsResource hMeshResource, unsigned int materialSlotIndex, const char* variableName) const;
+
         /// Helper for retrieving a pointer to the buffer that contains the value of the given variable for the given material.
         ///
         /// @remarks
-        ///     This is used when setting the value of a material input variable for the given mesh object.
+        ///     This is used when setting the value of a material input variable for the given material resource.
         void* GetMaterialInputVariableBufferPtr(HGraphicsResource hMaterialResource, const char* variableName) const;
 
 
@@ -298,6 +307,10 @@ namespace GT
 
         /// The list of mesh objects. This probably tempoary since we'll place these into an accelerated structure.
         GTLib::Vector<HGraphicsObject> m_meshObjects;
+
+
+        /// The default texture to use for when a material's texture is set to 0. This is just a dark red.
+        HGraphicsResource m_hDefaultTexture;
 
 
 

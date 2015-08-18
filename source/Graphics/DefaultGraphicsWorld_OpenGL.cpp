@@ -554,7 +554,8 @@ namespace GT
     DefaultGraphicsWorld_OpenGL::DefaultGraphicsWorld_OpenGL(GUIContext &gui, GraphicsAPI_OpenGL &gl)
         : GraphicsWorld(gui),
           m_gl(gl),
-          m_guiDrawRawImageTexture(0)
+          m_guiDrawRawImageTexture(0),
+          m_hDefaultTexture(0)
     {
     }
 
@@ -575,7 +576,23 @@ namespace GT
                 m_gl.FrontFace(GL_CW);
                 m_gl.DepthFunc(GL_LEQUAL);
                 m_gl.Enable(GL_DEPTH_TEST);
-                m_gl.Enable(GL_CULL_FACE);
+                //m_gl.Enable(GL_CULL_FACE);
+
+
+                // Default texture.
+                uint32_t defaultTextureData[4] =
+                {
+                    0x00000080, 0x00000080,
+                    0x00000080, 0x00000080
+                };
+
+                GraphicsTextureResourceDesc defaultTextureDesc;
+                defaultTextureDesc.width  = 2;
+                defaultTextureDesc.height = 2;
+                defaultTextureDesc.depth  = 1;
+                defaultTextureDesc.format = TextureFormat_RGBA8;
+                defaultTextureDesc.pData  = defaultTextureData;
+                m_hDefaultTexture = this->CreateTextureResource(defaultTextureDesc);
 
                 
                 // GUI.
@@ -674,6 +691,9 @@ namespace GT
 
     void DefaultGraphicsWorld_OpenGL::Shutdown()
     {
+        this->DeleteResource(m_hDefaultTexture);
+
+
         // Delete the context last.
 #if defined(GT_PLATFORM_WINDOWS)
         m_gl.DeleteContext(m_hRC);
@@ -747,8 +767,8 @@ namespace GT
             }
         }
 
-        m_gl.TexParameteri(targetGL, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        m_gl.TexParameteri(targetGL, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        m_gl.TexParameteri(targetGL, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+        m_gl.TexParameteri(targetGL, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 
 
         return reinterpret_cast<HGraphicsResource>(pTexture);
@@ -854,24 +874,122 @@ namespace GT
             }
         }
 
+
+        const char* defaultShaderString_Diffuse =
+            "vec3 DiffuseChannel() {\n"
+            "    return vec3(1.0, 1.0, 1.0);\n"
+            "}";
+
+        const char* defaultShaderString_Specular =
+            "vec3 SpecularChannel() {\n"
+            "    return vec3(1.0, 1.0, 1.0);\n"
+            "}";
+
+        const char* defaultShaderString_SpecularExponent =
+            "float SpecularExponentChannel() {\n"
+            "    return 10.0;\n"
+            "}";
+
+        const char* defaultShaderString_Emissive =
+            "vec3 EmissiveChannel() {\n"
+            "    return vec3(0.0, 0.0, 0.0);\n"
+            "}";
+
+        const char* defaultShaderString_Alpha =
+            "float AlphaChannel() {\n"
+            "    return 10.0;\n"
+            "}";
+
+
+        const char* shaderString_Diffuse          = defaultShaderString_Diffuse;
+        const char* shaderString_Specular         = defaultShaderString_Specular;
+        const char* shaderString_SpecularExponent = defaultShaderString_SpecularExponent;
+        const char* shaderString_Emissive         = defaultShaderString_Emissive;
+        const char* shaderString_Alpha            = defaultShaderString_Alpha;
         
+        char* materialShaderString_Diffuse          = nullptr;
+        char* materialShaderString_Specular         = nullptr;
+        char* materialShaderString_SpecularExponent = nullptr;
+        char* materialShaderString_Emissive         = nullptr;
+        char* materialShaderString_Alpha            = nullptr;
 
-        char shaderString_Diffuse[4096];
-        easymtl_codegen_glsl_channel(&materialSource, "DiffuseChannel", shaderString_Diffuse, 4096, NULL);
+        unsigned int materialShaderStringLength_Diffuse;
+        if (easymtl_codegen_glsl_channel(&materialSource, "DiffuseChannel", nullptr, 0, &materialShaderStringLength_Diffuse))
+        {
+            materialShaderString_Diffuse = reinterpret_cast<char*>(malloc(materialShaderStringLength_Diffuse));
+            if (materialShaderString_Diffuse != nullptr)
+            {
+                if (easymtl_codegen_glsl_channel(&materialSource, "DiffuseChannel", materialShaderString_Diffuse, materialShaderStringLength_Diffuse, nullptr))
+                {
+                    shaderString_Diffuse = materialShaderString_Diffuse;
+                }
+            }
+        }
 
-        char shaderString_Specular[4096];
-        easymtl_codegen_glsl_channel(&materialSource, "SpecularChannel", shaderString_Specular, 4096, NULL);
+        unsigned int materialShaderStringLength_Specular;
+        if (easymtl_codegen_glsl_channel(&materialSource, "SpecularChannel", nullptr, 0, &materialShaderStringLength_Specular))
+        {
+            materialShaderString_Specular = reinterpret_cast<char*>(malloc(materialShaderStringLength_Specular));
+            if (materialShaderString_Specular != nullptr)
+            {
+                if (easymtl_codegen_glsl_channel(&materialSource, "SpecularChannel", materialShaderString_Specular, materialShaderStringLength_Specular, nullptr))
+                {
+                    shaderString_Specular = materialShaderString_Specular;
+                }
+            }
+        }
 
-        char shaderString_SpecularExponent[4096];
-        easymtl_codegen_glsl_channel(&materialSource, "SpecularExponentChannel", shaderString_SpecularExponent, 4096, NULL);
+        unsigned int materialShaderStringLength_SpecularExponent;
+        if (easymtl_codegen_glsl_channel(&materialSource, "SpecularExponentChannel", nullptr, 0, &materialShaderStringLength_SpecularExponent))
+        {
+            materialShaderString_SpecularExponent = reinterpret_cast<char*>(malloc(materialShaderStringLength_SpecularExponent));
+            if (materialShaderString_SpecularExponent != nullptr)
+            {
+                if (easymtl_codegen_glsl_channel(&materialSource, "SpecularExponentChannel", materialShaderString_SpecularExponent, materialShaderStringLength_SpecularExponent, nullptr))
+                {
+                    shaderString_SpecularExponent = materialShaderString_SpecularExponent;
+                }
+            }
+        }
 
-        char shaderString_Alpha[4096];
-        easymtl_codegen_glsl_channel(&materialSource, "AlphaChannel", shaderString_Alpha, 4096, NULL);
+        unsigned int materialShaderStringLength_Emissive;
+        if (easymtl_codegen_glsl_channel(&materialSource, "EmissiveChannel", nullptr, 0, &materialShaderStringLength_Emissive))
+        {
+            materialShaderString_Emissive = reinterpret_cast<char*>(malloc(materialShaderStringLength_Emissive));
+            if (materialShaderString_Emissive != nullptr)
+            {
+                if (easymtl_codegen_glsl_channel(&materialSource, "EmissiveChannel", materialShaderString_Emissive, materialShaderStringLength_Emissive, nullptr))
+                {
+                    shaderString_Emissive = materialShaderString_Emissive;
+                }
+            }
+        }
+
+        unsigned int materialShaderStringLength_Alpha;
+        if (easymtl_codegen_glsl_channel(&materialSource, "AlphaChannel", nullptr, 0, &materialShaderStringLength_Alpha))
+        {
+            materialShaderString_Alpha = reinterpret_cast<char*>(malloc(materialShaderStringLength_Alpha));
+            if (materialShaderString_Alpha != nullptr)
+            {
+                if (easymtl_codegen_glsl_channel(&materialSource, "AlphaChannel", materialShaderString_Alpha, materialShaderStringLength_Alpha, nullptr))
+                {
+                    shaderString_Alpha = materialShaderString_Alpha;
+                }
+            }
+        }
 
 
         // Uniforms.
-        char uniformsString[4096];
-        easymtl_codegen_glsl_uniforms(&materialSource, uniformsString, 4096, NULL);
+        char* uniformsString = nullptr;
+        unsigned int uniformsStringLength;
+        if (easymtl_codegen_glsl_uniforms(&materialSource, nullptr, 0, &uniformsStringLength))
+        {
+            uniformsString = reinterpret_cast<char*>(malloc(uniformsStringLength));
+            if (uniformsString != nullptr)
+            {
+                easymtl_codegen_glsl_uniforms(&materialSource, uniformsString, uniformsStringLength, nullptr);
+            }
+        }
 
 
 
@@ -921,6 +1039,13 @@ namespace GT
             return 0;
         }
 
+
+        free(materialShaderString_Diffuse);
+        free(materialShaderString_Specular);
+        free(materialShaderString_SpecularExponent);
+        free(materialShaderString_Emissive);
+        free(materialShaderString_Alpha);
+        free(uniformsString);
 
 
         MaterialResource_OpenGL* pMaterialResource = nullptr;
@@ -1057,6 +1182,15 @@ namespace GT
             {
                 pMeshResource->materialSlots[materialSlot].valuesBuffer = pMaterialResource->inputVariables.valuesBuffer;
             }
+        }
+    }
+
+    void DefaultGraphicsWorld_OpenGL::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, HGraphicsResource hTexture)
+    {
+        auto pValueDest = reinterpret_cast<HGraphicsResource*>(this->GetMeshResourceMaterialInputVariableBufferPtr(hMeshResource, materialSlot, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = hTexture;
         }
     }
 
@@ -1956,6 +2090,11 @@ namespace GT
                                                 {
                                                     // The value for the texture will be a HGraphicsResource handle. The value we want to pass to the texture is the texture unit index.
                                                     HGraphicsResource hTexture = *reinterpret_cast<const HGraphicsResource*>(pInputValues + uniformDesc.bufferOffset);
+                                                    if (hTexture == 0)
+                                                    {
+                                                        hTexture = m_hDefaultTexture;
+                                                    }
+
                                                     if (hTexture != 0)
                                                     {
                                                         auto pTexture = reinterpret_cast<TextureResource_OpenGL*>(hTexture);
@@ -2078,6 +2217,25 @@ namespace GT
                     {
                         return reinterpret_cast<char*>(materialSlot.valuesBuffer.GetDataPointer()) + bufferOffset;
                     }
+                }
+            }
+        }
+
+        return nullptr;
+    }
+
+    void* DefaultGraphicsWorld_OpenGL::GetMeshResourceMaterialInputVariableBufferPtr(HGraphicsResource hMeshResource, unsigned int materialSlotIndex, const char* variableName) const
+    {
+        auto pMeshResource = reinterpret_cast<MeshResource_OpenGL*>(hMeshResource);
+        if (pMeshResource != nullptr)
+        {
+            auto pMaterialResource = reinterpret_cast<MaterialResource_OpenGL*>(pMeshResource->materialSlots[materialSlotIndex].hDefaultMaterial);
+            if (pMaterialResource != nullptr)
+            {
+                GLuint bufferOffset;
+                if (pMaterialResource->inputVariables.GetVariableBufferOffsetByName(variableName, bufferOffset))
+                {
+                    return reinterpret_cast<char*>(pMeshResource->materialSlots[materialSlotIndex].valuesBuffer.GetDataPointer()) + bufferOffset;
                 }
             }
         }

@@ -91,6 +91,11 @@ namespace GT
         return m_pGraphicsWorldImpl->SetMeshResourceMaterial(hMeshResource, materialSlot, hMaterialResource);
     }
 
+    void DefaultGraphicsWorld::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, HGraphicsResource hTexture)
+    {
+        return m_pGraphicsWorldImpl->SetMeshResourceMaterialInputVariable(hMeshResource, materialSlot, variableName, hTexture);
+    }
+
 
     void DefaultGraphicsWorld::DeleteResource(HGraphicsResource hResource)
     {

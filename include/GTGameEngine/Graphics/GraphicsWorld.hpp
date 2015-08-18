@@ -233,6 +233,9 @@ namespace GT
         /// Sets the default material to use for the given material slot on the given mesh.
         virtual void SetMeshResourceMaterial(HGraphicsResource hMeshResource, unsigned int materialSlot, HGraphicsResource hMaterialResource) = 0;
 
+        /// Sets the value of a mesh resource's material input variable.
+        virtual void SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, HGraphicsResource hTexture) = 0;
+
 
         /// Deletes the given resource.
         ///
