@@ -1955,15 +1955,6 @@ namespace GT
             {
                 m_gl.Disable(GL_BLEND);
             }
-
-#if 0
-            GTLib::Rect<int> rect;
-            rect.left   = xPos;
-            rect.top    = yPos;
-            rect.right  = xPos + static_cast<int>(width);
-            rect.bottom = yPos + static_cast<int>(height);
-            this->GUI_DrawRectangle(gui, rect, GTLib::Colour::Red);
-#endif
         }
     }
 
@@ -2142,6 +2133,7 @@ namespace GT
                                     if (pMaterialResource->isTransparent)
                                     {
                                         m_gl.Enable(GL_BLEND);
+                                        m_gl.BlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
                                         m_gl.BlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
                                     }
 
