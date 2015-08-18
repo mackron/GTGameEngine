@@ -376,7 +376,8 @@ namespace GT
         MaterialResource_OpenGL()
             : Resource_OpenGL(GraphicsResourceType::Material),
               programGL(0),
-              uniformLocation_Projection(-1), uniformLocation_View(-1), uniformLocation_Model(-1)
+              uniformLocation_Projection(-1), uniformLocation_View(-1), uniformLocation_Model(-1),
+              isTransparent(false)
         {
         }
 
@@ -451,6 +452,10 @@ namespace GT
             }
 
         } inputVariables;
+
+
+        // Properties.
+        bool isTransparent;
     };
 
     /// Structure representing a mesh resource.
@@ -876,8 +881,8 @@ namespace GT
 
 
         const char* defaultShaderString_Diffuse =
-            "vec3 DiffuseChannel() {\n"
-            "    return vec3(1.0, 1.0, 1.0);\n"
+            "vec4 DiffuseChannel() {\n"
+            "    return vec3(1.0, 1.0, 1.0, 1.0);\n"
             "}";
 
         const char* defaultShaderString_Specular =
@@ -897,7 +902,7 @@ namespace GT
 
         const char* defaultShaderString_Alpha =
             "float AlphaChannel() {\n"
-            "    return 10.0;\n"
+            "    return 1.0;\n"
             "}";
 
 
@@ -1022,10 +1027,10 @@ namespace GT
         const char* fragmentShaderSource =
             "varying vec2 FS_TexCoord;\n"
             "varying vec3 FS_Normal;\n"
-            "vec3 DiffuseChannel();\n"
+            "vec4 DiffuseChannel();\n"
             "void main()\n"
             "{\n"
-            "    gl_FragColor = vec4(DiffuseChannel(), 1.0);\n"
+            "    gl_FragColor = DiffuseChannel();\n"
             "}";
 
         const char* fragmentShaderStrings[3];
@@ -1069,6 +1074,17 @@ namespace GT
 
             pMaterialResource->inputVariables.variableDescriptors = inputVariableDescriptors;
             pMaterialResource->inputVariables.valuesBuffer = GT::BasicBuffer(inputVariablesValuesBuffer.buffer, inputVariablesValuesBuffer.count*sizeof(uint32_t));
+        
+        
+            // Properties.
+            easymtl_property* pIsTransparent = easymtl_getpropertybyname(&materialSource, "IsTransparent");
+            if (pIsTransparent != nullptr)
+            {
+                if (pIsTransparent->type == easymtl_type_bool && pIsTransparent->b1.x)
+                {
+                    pMaterialResource->isTransparent = true;
+                }
+            }
         }
 
 
@@ -2121,7 +2137,22 @@ namespace GT
                                         }
                                     }
 
+                                    
+
+                                    if (pMaterialResource->isTransparent)
+                                    {
+                                        m_gl.Enable(GL_BLEND);
+                                        m_gl.BlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+                                    }
+
+
                                     m_gl.DrawElements(pMeshResource->drawMode, meshResourceMaterialSlot.indexCount, GL_UNSIGNED_INT, reinterpret_cast<const void*>(static_cast<size_t>(meshResourceMaterialSlot.indexOffset)));
+
+
+                                    if (pMaterialResource->isTransparent)
+                                    {
+                                        m_gl.Disable(GL_BLEND);
+                                    }
                                 }
                             }
                         }

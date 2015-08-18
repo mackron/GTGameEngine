@@ -668,8 +668,8 @@ namespace GT
         easymtl_material material;
         if (easymtl_init(&material))
         {
-            easymtl_appendchannel(&material, easymtl_channel_float3("DiffuseChannel"));
-            easymtl_appendinstruction(&material, easymtl_retf3_c3(1, 1, 1));
+            easymtl_appendchannel(&material, easymtl_channel_float4("DiffuseChannel"));
+            easymtl_appendinstruction(&material, easymtl_retf4_c4(1, 1, 1, 1));
 
             easymtl_appendchannel(&material, easymtl_channel_float3("SpecularChannel"));
             easymtl_appendinstruction(&material, easymtl_retf3_c3(1, 1, 1));
