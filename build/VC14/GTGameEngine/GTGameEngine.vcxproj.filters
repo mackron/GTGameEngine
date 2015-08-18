@@ -611,6 +611,9 @@
     <ClCompile Include="..\..\..\source\external\easy_partition\easy_partition.c">
       <Filter>Source Files\external\easy_partition</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\FastParse.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp">
@@ -1164,6 +1167,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\source\external\easy_partition\easy_partition.h">
       <Filter>Source Files\external\easy_partition</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\FastParse.hpp">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
