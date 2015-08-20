@@ -23,7 +23,8 @@ namespace GT
     EngineContext::EngineContext()
         : m_commandLine(),
           m_fileSystem(),
-          m_assetLibrary(m_fileSystem)
+          m_assetLibrary(m_fileSystem),
+          m_componentLibrary()
     {
     }
 
@@ -104,6 +105,22 @@ namespace GT
         // Create and register the default allocator.
         m_pDefaultAssetAllocator = new DefaultAssetAllocator();
         m_assetLibrary.RegisterAllocator(*m_pDefaultAssetAllocator);
+#endif
+
+
+
+        // Components library
+#if defined(GT_BUILD_COMPONENT_EVENTS)
+        m_componentLibrary.RegisterDescriptor(m_eventsComponentDescriptor);
+#endif
+#if defined(GT_BUILD_COMPONENT_SCRIPT)
+        //m_componentLibrary.RegisterDescriptor(m_scriptComponentDescriptor);
+#endif
+#if defined(GT_ENABLE_COMPONENT_GRAPHICS)
+        m_componentLibrary.RegisterDescriptor(m_graphicsComponentDescriptor);
+#endif
+#if defined(GT_BUILD_COMPONENT_DYNAMICS)
+        //m_componentLibrary.RegisterDescriptor(m_dynamicsComponentDescriptor);
 #endif
 
 
@@ -244,6 +261,28 @@ namespace GT
         m_assetLibrary.RegisterAllocator(allocator);
     }
 
-    //////////////////////////////////////////////////////////
-    // Private
+    
+
+    ////////////////////////////////////////////////////////////////////
+    // Scene Node Component Management
+
+    void EngineContext::RegisterSceneNodeComponentDescriptor(const SceneNodeComponentDescriptor &descriptor)
+    {
+        m_componentLibrary.RegisterDescriptor(descriptor);
+    }
+
+    const SceneNodeComponentDescriptor* EngineContext::GetSceneNodeDescriptorByType(SceneNodeComponentTypeID type) const
+    {
+        return m_componentLibrary.GetDescriptorByType(type);
+    }
+
+    SceneNodeComponent* EngineContext::CreateSceneNodeComponent(SceneNodeComponentTypeID type)
+    {
+        return m_componentLibrary.CreateComponent(type);
+    }
+
+    void EngineContext::DeleteSceneNodeComponent(SceneNodeComponent* pComponent)
+    {
+        m_componentLibrary.DeleteComponent(pComponent);
+    }
 }

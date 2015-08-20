@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/Scene/SceneNodeComponentDescriptor_Graphics.hpp>
+#include <GTGameEngine/Scene/SceneNodeComponent_Graphics.hpp>
 
 namespace GT
 {
@@ -32,5 +33,16 @@ namespace GT
     const char* SceneNodeComponentDescriptor_Graphics::GetName() const
     {
         return SceneNodeComponentDescriptor_Graphics::Name();
+    }
+
+
+    SceneNodeComponent* SceneNodeComponentDescriptor_Graphics::CreateComponent() const
+    {
+        return new SceneNodeComponent_Graphics(*this);
+    }
+
+    void SceneNodeComponentDescriptor_Graphics::DeleteComponent(SceneNodeComponent* pComponent) const
+    {
+        delete pComponent;
     }
 }

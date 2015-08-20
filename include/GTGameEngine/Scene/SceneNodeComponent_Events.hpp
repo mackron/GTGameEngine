@@ -20,7 +20,7 @@ namespace GT
     public:
 
         /// Constructor.
-        SceneNodeComponent_Events();
+        SceneNodeComponent_Events(SceneNodeComponentDescriptor_Events &descriptor);
 
         /// Destructor.
         ~SceneNodeComponent_Events();

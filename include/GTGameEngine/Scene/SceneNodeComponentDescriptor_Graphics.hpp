@@ -33,6 +33,12 @@ namespace GT
 
         /// Retrieves the name of the component.
         virtual const char* GetName() const;
+
+        /// @copydoc SceneNodeComponentDescriptor::CreateComponent()
+        virtual SceneNodeComponent* CreateComponent() const;
+
+        /// @copydoc SceneNodeComponentDescriptor::DeleteComponent()
+        virtual void DeleteComponent(SceneNodeComponent* pComponent) const;
     };
 }
 

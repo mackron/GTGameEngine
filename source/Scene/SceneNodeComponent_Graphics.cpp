@@ -5,8 +5,8 @@
 
 namespace GT
 {
-    SceneNodeComponent_Graphics::SceneNodeComponent_Graphics()
-        : SceneNodeComponent(SceneNodeComponentType_Graphics),
+    SceneNodeComponent_Graphics::SceneNodeComponent_Graphics(SceneNodeComponentDescriptor_Graphics &descriptor)
+        : SceneNodeComponent(descriptor),
           m_pGraphicsResourceManager(nullptr),
           m_pModelResource(nullptr),
           m_pModelObject(nullptr)

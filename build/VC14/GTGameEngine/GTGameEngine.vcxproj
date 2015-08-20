@@ -176,6 +176,7 @@
     <ClCompile Include="..\..\..\source\Scene\SceneNodeAllocator_Default.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneNodeComponent.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneNodeComponentDescriptor.cpp" />
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeComponentDescriptorLibrary.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneNodeComponentDescriptor_Events.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneNodeComponentDescriptor_Graphics.cpp" />
     <ClCompile Include="..\..\..\source\Scene\SceneNodeComponent_Events.cpp" />
@@ -268,6 +269,7 @@
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeAllocator_Default.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponent.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentDescriptor.hpp" />
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentDescriptorLibrary.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentDescriptor_Events.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentDescriptor_Graphics.hpp" />
     <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentTypes.hpp" />

@@ -4,15 +4,26 @@
 
 namespace GT
 {
-    SceneNodeComponent::SceneNodeComponent(SceneNodeComponentTypeID typeID)
-        : m_typeID(typeID)
+    SceneNodeComponent::SceneNodeComponent(SceneNodeComponentDescriptor &descriptor)
+        : m_descriptor(descriptor), m_changeFlags(0)
     {
+    }
+
+
+    SceneNodeComponentDescriptor & SceneNodeComponent::GetDescriptor() const
+    {
+        return m_descriptor;
     }
 
 
     SceneNodeComponentTypeID SceneNodeComponent::GetTypeID() const
     {
-        return m_typeID;
+        return m_descriptor.GetTypeID();
+    }
+
+    const char* SceneNodeComponent::GetName() const
+    {
+        return m_descriptor.GetName();
     }
 
 

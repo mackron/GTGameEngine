@@ -10,6 +10,20 @@
 #include "FileSystem.hpp"
 #include "Graphics/GraphicsTypes.hpp"
 #include "Assets/AssetLibrary.hpp"
+#include "Scene/SceneNodeComponentDescriptorLibrary.hpp"
+
+#if defined(GT_BUILD_COMPONENT_EVENTS)
+#include "Scene/SceneNodeComponentDescriptor_Events.hpp"
+#endif
+#if defined(GT_BUILD_COMPONENT_SCRIPT)
+//#include "Scene/SceneNodeComponentDescriptor_Script.hpp"
+#endif
+#if defined(GT_ENABLE_COMPONENT_GRAPHICS)
+#include "Scene/SceneNodeComponentDescriptor_Graphics.hpp"
+#endif
+#if defined(GT_BUILD_COMPONENT_DYNAMICS)
+//#include "Scene/SceneNodeComponentDescriptor_Dynamics.hpp"
+#endif
 
 namespace GT
 {
@@ -126,9 +140,21 @@ namespace GT
         void RegisterAssetAllocator(AssetAllocator &allocator);
 
 
-    private:
 
+        ////////////////////////////////////////////////////////////////////
+        // Scene Node Component Management
 
+        /// @copydoc SceneNodeComponentDescriptorLibrary::RegisterDescriptor()
+        void RegisterSceneNodeComponentDescriptor(const SceneNodeComponentDescriptor &descriptor);
+
+        /// @copydoc SceneNodeComponentDescriptorLibrary::GetDescriptorByType()
+        const SceneNodeComponentDescriptor* GetSceneNodeDescriptorByType(SceneNodeComponentTypeID type) const;
+
+        /// @copydoc SceneNodeComponentDescriptorLibrary::CreateComponent()
+        SceneNodeComponent* CreateSceneNodeComponent(SceneNodeComponentTypeID type);
+
+        /// @copydoc SceneNodeComponentDescriptorLibrary::DeleteComponent()
+        void DeleteSceneNodeComponent(SceneNodeComponent* pComponent);
 
 
 
@@ -170,7 +196,25 @@ namespace GT
         AssetAllocator* m_pDefaultAssetAllocator;
 
 
-        
+#if defined(GT_BUILD_COMPONENT_EVENTS)
+        /// The Events component descriptor.
+        SceneNodeComponentDescriptor_Events m_eventsComponentDescriptor;
+#endif
+#if defined(GT_BUILD_COMPONENT_SCRIPT)
+        /// The Script component descriptor.
+        //SceneNodeComponentDescriptor_Script m_scriptComponentDescriptor;
+#endif
+#if defined(GT_ENABLE_COMPONENT_GRAPHICS)
+        /// The Graphics component descriptor.
+        SceneNodeComponentDescriptor_Graphics m_graphicsComponentDescriptor;
+#endif
+#if defined(GT_BUILD_COMPONENT_DYNAMICS)
+        /// The Dynamics component descriptor.
+        //SceneNodeComponentDescriptor_Dynamics m_dynamicsComponentDescriptor;
+#endif
+
+        /// The list of registered scene node component descriptors.
+        SceneNodeComponentDescriptorLibrary m_componentLibrary;
 
 
     private:    // No copying.

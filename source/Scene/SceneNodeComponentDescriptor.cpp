@@ -24,6 +24,7 @@ namespace GT
     {
     }
 
+
     SceneNodeComponentTypeID SceneNodeComponentDescriptor::GetTypeID() const
     {
         return SceneNodeComponentDescriptor::TypeID();
@@ -32,5 +33,16 @@ namespace GT
     const char* SceneNodeComponentDescriptor::GetName() const
     {
         return SceneNodeComponentDescriptor::Name();
+    }
+
+
+    SceneNodeComponent* SceneNodeComponentDescriptor::CreateComponent() const
+    {
+        return nullptr;
+    }
+
+    void SceneNodeComponentDescriptor::DeleteComponent(SceneNodeComponent* pComponent) const
+    {
+        delete pComponent;
     }
 }

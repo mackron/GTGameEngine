@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/Scene/SceneNodeComponentDescriptor_Events.hpp>
+#include <GTGameEngine/Scene/SceneNodeComponent_Events.hpp>
 
 namespace GT
 {
@@ -32,5 +33,15 @@ namespace GT
     const char* SceneNodeComponentDescriptor_Events::GetName() const
     {
         return SceneNodeComponentDescriptor_Events::Name();
+    }
+
+    SceneNodeComponent* SceneNodeComponentDescriptor_Events::CreateComponent() const
+    {
+        return new SceneNodeComponent_Events(*this);
+    }
+
+    void SceneNodeComponentDescriptor_Events::DeleteComponent(SceneNodeComponent* pComponent) const
+    {
+        delete pComponent;
     }
 }

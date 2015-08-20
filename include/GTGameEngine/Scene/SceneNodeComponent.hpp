@@ -4,23 +4,31 @@
 #define __GT_SceneNodeComponent_hpp_
 
 #include "SceneNodeComponentTypes.hpp"
-#include "SceneNodeComponentDescriptor.hpp"
 
 namespace GT
 {
+    class SceneNodeComponentDescriptor;
+
     /// Base class for scene node components.
     class SceneNodeComponent
     {
     public:
 
         /// Constructor.
-        SceneNodeComponent(SceneNodeComponentTypeID typeID);
+        SceneNodeComponent(SceneNodeComponentDescriptor &descriptor);
 
 
-        /// Retrieves the type ID.
+        /// Retrieves a reference to the descriptor that was passed to the constructor.
+        SceneNodeComponentDescriptor & GetDescriptor() const;
+
+
+        /// Retrieves the component's type ID.
         ///
         /// @return The component's type ID.
         SceneNodeComponentTypeID GetTypeID() const;
+
+        /// Retrieves the component's name.
+        const char* GetName() const;
         
 
         /// [Internal Use Only] Retrieves the change flags.
@@ -36,8 +44,8 @@ namespace GT
 
     private:
 
-        /// The type ID.
-        SceneNodeComponentTypeID m_typeID;
+        /// The descriptor that was passed to the constructor. This is used to describe the component such as describing it's name and unique ID.
+        SceneNodeComponentDescriptor &m_descriptor;
 
         /// Flags that track the changes that have been made to the component. This is used when handling change events so that certain things can be optimized.
         uint32_t m_changeFlags;

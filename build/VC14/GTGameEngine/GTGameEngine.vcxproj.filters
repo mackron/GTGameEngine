@@ -614,6 +614,9 @@
     <ClCompile Include="..\..\..\source\FastParse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\..\source\Scene\SceneNodeComponentDescriptorLibrary.cpp">
+      <Filter>Source Files\Scene</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\include\GTGameEngine\EngineContext.hpp">
@@ -1170,6 +1173,9 @@
     </ClInclude>
     <ClInclude Include="..\..\..\include\GTGameEngine\FastParse.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\GTGameEngine\Scene\SceneNodeComponentDescriptorLibrary.hpp">
+      <Filter>Header Files\Scene</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

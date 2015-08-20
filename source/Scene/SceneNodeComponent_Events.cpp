@@ -5,8 +5,8 @@
 
 namespace GT
 {
-    SceneNodeComponent_Events::SceneNodeComponent_Events()
-        : SceneNodeComponent(SceneNodeComponentType_Events),
+    SceneNodeComponent_Events::SceneNodeComponent_Events(SceneNodeComponentDescriptor_Events &descriptor)
+        : SceneNodeComponent(descriptor),
           m_onUpdate(nullptr), m_onPostUpdate(nullptr)
     {
     }

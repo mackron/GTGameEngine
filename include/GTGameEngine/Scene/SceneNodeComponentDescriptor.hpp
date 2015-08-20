@@ -4,6 +4,7 @@
 #define __GT_SceneNodeComponentDescriptor_hpp_
 
 #include "SceneNodeComponentTypes.hpp"
+#include "SceneNodeComponent.hpp"
 
 namespace GT
 {
@@ -37,6 +38,19 @@ namespace GT
 
         /// Retrieves the name of the component.
         virtual const char* GetName() const;
+
+
+        /// Creates an instance of the component this descriptor is associated with.
+        ///
+        /// @remarks
+        ///     The default implementation returns null. All descriptors should implement this.
+        virtual SceneNodeComponent* CreateComponent() const;
+
+        /// Deletes the given component that was created with a previous call to CreateComponent().
+        ///
+        /// @remarks
+        ///     The default implementation will delete the component as "delete pComponent".
+        virtual void DeleteComponent(SceneNodeComponent* pComponent) const;
     };
 }
 
