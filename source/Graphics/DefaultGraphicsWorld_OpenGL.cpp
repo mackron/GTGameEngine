@@ -1850,20 +1850,26 @@ namespace GT
         colorGL[2] = colour.b;
         colorGL[3] = colour.a;
 
+        // Setup the shader.
+        m_gl.Uniform4fv(m_guiRectangleProgram_ColorLoc, 1, colorGL);
+        m_gl.Uniform4fv(m_guiRectangleProgram_RectLoc,  1, rectGL);
+
         if (colour.a == 1)
         {
             // Opaque.
 
-            // Setup the shader.
-            m_gl.Uniform4fv(m_guiRectangleProgram_ColorLoc, 1, colorGL);
-            m_gl.Uniform4fv(m_guiRectangleProgram_RectLoc,  1, rectGL);
-
-            // Draw the quad.
             m_gl.DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
         }
         else
         {
             // Transparent.
+            m_gl.Enable(GL_BLEND);
+            m_gl.BlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+            m_gl.BlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+            {
+                m_gl.DrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+            }
+            m_gl.Disable(GL_BLEND);
         }
     }
 
