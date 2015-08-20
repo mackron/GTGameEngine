@@ -17,7 +17,7 @@ namespace GT
     public:
 
         /// Constructor.
-        SceneNodeComponent_Graphics(SceneNodeComponentDescriptor_Graphics &descriptor);
+        SceneNodeComponent_Graphics(const SceneNodeComponentDescriptor_Graphics &descriptor);
 
         /// Destructor.
         ~SceneNodeComponent_Graphics();

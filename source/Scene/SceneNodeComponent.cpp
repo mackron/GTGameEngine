@@ -1,16 +1,17 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/Scene/SceneNodeComponent.hpp>
+#include <GTGameEngine/Scene/SceneNodeComponentDescriptor.hpp>
 
 namespace GT
 {
-    SceneNodeComponent::SceneNodeComponent(SceneNodeComponentDescriptor &descriptor)
+    SceneNodeComponent::SceneNodeComponent(const SceneNodeComponentDescriptor &descriptor)
         : m_descriptor(descriptor), m_changeFlags(0)
     {
     }
 
 
-    SceneNodeComponentDescriptor & SceneNodeComponent::GetDescriptor() const
+    const SceneNodeComponentDescriptor & SceneNodeComponent::GetDescriptor() const
     {
         return m_descriptor;
     }

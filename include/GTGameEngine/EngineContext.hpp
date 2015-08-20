@@ -152,6 +152,13 @@ namespace GT
 
         /// @copydoc SceneNodeComponentDescriptorLibrary::CreateComponent()
         SceneNodeComponent* CreateSceneNodeComponent(SceneNodeComponentTypeID type);
+        
+        template <typename T>
+        T* CreateSceneNodeComponent()
+        {
+            return reinterpret_cast<T*>(CreateSceneNodeComponent(T::GetTypeID()));
+        }
+
 
         /// @copydoc SceneNodeComponentDescriptorLibrary::DeleteComponent()
         void DeleteSceneNodeComponent(SceneNodeComponent* pComponent);

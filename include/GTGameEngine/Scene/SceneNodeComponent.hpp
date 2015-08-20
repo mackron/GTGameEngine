@@ -15,11 +15,11 @@ namespace GT
     public:
 
         /// Constructor.
-        SceneNodeComponent(SceneNodeComponentDescriptor &descriptor);
+        SceneNodeComponent(const SceneNodeComponentDescriptor &descriptor);
 
 
         /// Retrieves a reference to the descriptor that was passed to the constructor.
-        SceneNodeComponentDescriptor & GetDescriptor() const;
+        const SceneNodeComponentDescriptor & GetDescriptor() const;
 
 
         /// Retrieves the component's type ID.
@@ -45,7 +45,7 @@ namespace GT
     private:
 
         /// The descriptor that was passed to the constructor. This is used to describe the component such as describing it's name and unique ID.
-        SceneNodeComponentDescriptor &m_descriptor;
+        const SceneNodeComponentDescriptor &m_descriptor;
 
         /// Flags that track the changes that have been made to the component. This is used when handling change events so that certain things can be optimized.
         uint32_t m_changeFlags;
