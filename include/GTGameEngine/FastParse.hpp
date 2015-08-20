@@ -6,6 +6,7 @@
 namespace GT
 {
     float atof(const char* str, const char* strEnd, const char** strEndOut);
+    int atoi(const char* str, const char* strEnd, const char** strEndOut);
 }
 
 #endif

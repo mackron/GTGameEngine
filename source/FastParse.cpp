@@ -79,4 +79,42 @@ namespace GT
             return 0.0f;
         }
     }
+
+
+    int atoi(const char* str, const char* strEnd, const char** strEndOut)
+    {
+        int sign  = 1;
+        int value = 0;
+
+        if (str < strEnd)
+        {
+            // Sign.
+            if (*str == '-')
+            {
+                sign = -1;
+                str += 1;
+            }
+            else if (*str == '+')
+            {
+                sign = 1;
+                str += 1;
+            }
+
+
+            // Value.
+            while (str < strEnd && atof_IsValidDigit(*str))
+            {
+                value = value * 10 + (*str - '0');
+                str += 1;
+            }
+        }
+
+
+        if (*strEndOut != nullptr)
+        {
+            *strEndOut = str;
+        }
+        
+        return sign * value;
+    }
 }
