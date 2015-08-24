@@ -39,8 +39,6 @@
 #include <assert.h>
 #include <string.h>
 
-//#include <stdio.h>  // For testing. Delete this later.
-
 
 #if defined(EASYFSW_PLATFORM_WINDOWS)
 #define WIN32_LEAN_AND_MEAN
@@ -88,6 +86,28 @@ void easyfsw_zeromemory(void* dst, size_t sizeInBytes)
 #endif
 
 
+void easyfsw_strcpy(char* dst, unsigned int dstSizeInBytes, const char* src)
+{
+#if defined(_MSC_VER)
+    strcpy_s(dst, dstSizeInBytes, src);
+#else
+    while (dstSizeInBytes > 0 && src[0] != '\0')
+    {
+        dst[0] = src[0];
+
+        dst += 1;
+        src += 1;
+        dstSizeInBytes -= 1;
+    }
+
+    if (dstSizeInBytes > 0)
+    {
+        dst[0] = '\0';
+    }
+#endif
+}
+
+
 int easyfsw_event_init(easyfsw_event* pEvent, easyfsw_event_type type, const char* absolutePath, const char* absolutePathNew)
 {
     if (pEvent != NULL)
@@ -96,11 +116,7 @@ int easyfsw_event_init(easyfsw_event* pEvent, easyfsw_event_type type, const cha
         
         if (absolutePath != NULL)
         {
-#if defined(EASYFSW_PLATFORM_WINDOWS)
-            strcpy_s(pEvent->absolutePath, EASYFSW_MAX_PATH, absolutePath);
-#else
-            strcpy(pEvent->absolutePath, absolutePath);
-#endif
+            easyfsw_strcpy(pEvent->absolutePath, EASYFSW_MAX_PATH, absolutePath);
         }
         else
         {
@@ -109,11 +125,7 @@ int easyfsw_event_init(easyfsw_event* pEvent, easyfsw_event_type type, const cha
 
         if (absolutePathNew != NULL)
         {
-#if defined(EASYFSW_PLATFORM_WINDOWS)
-            strcpy_s(pEvent->absolutePathNew, EASYFSW_MAX_PATH, absolutePathNew);
-#else
-            strcpy(pEvent->absolutePathNew, absolutePathNew);
-#endif
+            easyfsw_strcpy(pEvent->absolutePathNew, EASYFSW_MAX_PATH, absolutePathNew);
         }
         else
         {
@@ -371,7 +383,7 @@ int ToForwardSlashes(char* path)
 {
     if (path != NULL)
     {
-        int counter = 0;
+        unsigned int counter = 0;
         while (*path++ != '\0' && counter++ < EASYFSW_MAX_PATH)
         {
             if (*path == '\\')
@@ -470,7 +482,7 @@ void easyfsw_list_removebyindex(easyfsw_list* pList, unsigned int index)
         assert(pList->count > 0);
 
         // Just move everything down one slot.
-        for (int i = index; index < pList->count - 1; ++i)
+        for (unsigned int i = index; index < pList->count - 1; ++i)
         {
             pList->buffer[i] = pList->buffer[i + 1];
         }
@@ -509,7 +521,7 @@ int ToBackSlashesWCHAR(wchar_t* path)
 {
     if (path != NULL)
     {
-        int counter = 0;
+        unsigned int counter = 0;
         while (*path++ != L'\0' && counter++ < EASYFSW_MAX_PATH_W)
         {
             if (*path == L'/')
@@ -530,7 +542,7 @@ int UTF8ToWCHAR(const char* str, wchar_t wstrOut[EASYFSW_MAX_PATH_W])
     int wcharsWritten = MultiByteToWideChar(CP_UTF8, 0, str, -1, wstrOut, EASYFSW_MAX_PATH_W);
     if (wcharsWritten > 0)
     {
-        assert(wcharsWritten <= EASYFSW_MAX_PATH_W);
+        assert((unsigned int)wcharsWritten <= EASYFSW_MAX_PATH_W);
         return 1;
     }
 
@@ -542,7 +554,7 @@ int WCHARToUTF8(const wchar_t* wstr, int wstrCC, char pathOut[EASYFSW_MAX_PATH])
     int bytesWritten = WideCharToMultiByte(CP_UTF8, 0, wstr, wstrCC, pathOut, EASYFSW_MAX_PATH - 1, NULL, NULL);
     if (bytesWritten > 0)
     {
-        assert(bytesWritten < EASYFSW_MAX_PATH);
+        assert((unsigned int)bytesWritten < EASYFSW_MAX_PATH);
         pathOut[bytesWritten] = '\0';
 
         return 1;
@@ -614,7 +626,7 @@ typedef struct
 
 } easyfsw_context_win32;
 
-easyfsw_context* easyfsw_create_context_win32();
+easyfsw_context* easyfsw_create_context_win32(void);
 void easyfsw_delete_context_win32(easyfsw_context_win32* pContext);
 int easyfsw_add_directory_win32(easyfsw_context_win32* pContext, const char* absolutePath);
 void easyfsw_remove_directory_win32(easyfsw_context_win32* pContext, const char* absolutePath);
@@ -692,7 +704,8 @@ int easyfsw_directory_win32_init(easyfsw_directory_win32* pDirectory, easyfsw_co
         size_t length = strlen(absolutePath);
         if (length > 0)
         {
-            strcpy_s(pDirectory->absolutePath, length + 1, absolutePath);
+            memcpy(pDirectory->absolutePath, absolutePath, length);
+            pDirectory->absolutePath[length] = '\0';
 
             wchar_t absolutePathWithBackSlashes[EASYFSW_MAX_PATH_W];
             if (ToWin32PathWCHAR(absolutePath, absolutePathWithBackSlashes))
@@ -864,11 +877,10 @@ VOID CALLBACK easyfsw_win32_completionroutine(DWORD dwErrorCode, DWORD dwNumberO
         char absolutePathOld[EASYFSW_MAX_PATH];
         easyfsw_context_win32* pContext = pDirectory->pContext;     // Just for convenience.
 
-        char* pFNI8 = (char*)pDirectory->pFNIBuffer2;
+
+        FILE_NOTIFY_INFORMATION* pFNI = pDirectory->pFNIBuffer2;
         for (;;)
         {
-            FILE_NOTIFY_INFORMATION* pFNI = (FILE_NOTIFY_INFORMATION*)pFNI8;
-
             char relativePath[EASYFSW_MAX_PATH];
             if (FromWin32Path(pFNI->FileName, pFNI->FileNameLength / sizeof(wchar_t), relativePath))
             {
@@ -901,7 +913,7 @@ VOID CALLBACK easyfsw_win32_completionroutine(DWORD dwErrorCode, DWORD dwNumberO
 
                     case FILE_ACTION_RENAMED_OLD_NAME:
                         {
-                            strcpy_s(absolutePathOld, EASYFSW_MAX_PATH, absolutePath);
+                            easyfsw_strcpy(absolutePath, EASYFSW_MAX_PATH, absolutePath);
                             break;
                         }
                     case FILE_ACTION_RENAMED_NEW_NAME:
@@ -938,7 +950,7 @@ VOID CALLBACK easyfsw_win32_completionroutine(DWORD dwErrorCode, DWORD dwNumberO
                 break;
             }
 
-            pFNI8 += pFNI->NextEntryOffset;
+            pFNI = (FILE_NOTIFY_INFORMATION*)(((char*)pFNI) + pFNI->NextEntryOffset);
         }
     }
 }
@@ -1067,7 +1079,7 @@ void easyfsw_delete_context_win32(easyfsw_context_win32* pContext)
 
         // The thread has finished, so close the handle.
         CloseHandle(pContext->hThread);
-        pContext->hThread;
+        pContext->hThread = NULL;
 
 
         // We need to wait for the event queue to finish up before deleting the context for real. If we don't do this nextevent() may try
@@ -1091,7 +1103,7 @@ void easyfsw_delete_context_win32(easyfsw_context_win32* pContext)
     }
 }
 
-easyfsw_directory_win32* easyfsw_find_directory_win32(easyfsw_context_win32* pContext, const char* absolutePath, int* pIndexOut)
+easyfsw_directory_win32* easyfsw_find_directory_win32(easyfsw_context_win32* pContext, const char* absolutePath, unsigned int* pIndexOut)
 {
     assert(pContext != NULL);
 
@@ -1166,7 +1178,7 @@ void easyfsw_remove_directory_win32_no_lock(easyfsw_context_win32* pContext, con
 {
     assert(pContext != NULL);
 
-    int index;
+    unsigned int index;
     easyfsw_directory_win32* pDirectory = easyfsw_find_directory_win32(pContext, absolutePath, &index);
     if (pDirectory != NULL)
     {
