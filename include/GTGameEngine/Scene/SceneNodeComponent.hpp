@@ -17,6 +17,9 @@ namespace GT
         /// Constructor.
         SceneNodeComponent(const SceneNodeComponentDescriptor &descriptor);
 
+        /// Destructor.
+        virtual ~SceneNodeComponent();
+
 
         /// Retrieves a reference to the descriptor that was passed to the constructor.
         const SceneNodeComponentDescriptor & GetDescriptor() const;
