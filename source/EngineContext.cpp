@@ -30,6 +30,7 @@ namespace GT
 
     EngineContext::~EngineContext()
     {
+        this->Shutdown();
     }
 
 
