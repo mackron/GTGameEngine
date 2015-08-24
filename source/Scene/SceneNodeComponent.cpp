@@ -10,6 +10,10 @@ namespace GT
     {
     }
 
+    SceneNodeComponent::~SceneNodeComponent()
+    {
+    }
+
 
     const SceneNodeComponentDescriptor & SceneNodeComponent::GetDescriptor() const
     {
