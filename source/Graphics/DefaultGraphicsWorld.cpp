@@ -45,7 +45,10 @@ namespace GT
 
     DefaultGraphicsWorld::~DefaultGraphicsWorld()
     {
-        delete m_pGraphicsWorldImpl;
+        if (m_pGraphicsWorldImpl != nullptr) {
+            m_pGraphicsWorldImpl->Shutdown();
+            delete m_pGraphicsWorldImpl;
+        }
     }
 
 
