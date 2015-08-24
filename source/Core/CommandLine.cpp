@@ -135,69 +135,75 @@ namespace GTLib
         size_t cmdLineLength = strlen(cmdLine);
 
         char* arg = reinterpret_cast<char*>(malloc(cmdLineLength + 1));
-        memcpy(arg, cmdLine, cmdLineLength);
-        arg[cmdLineLength] = '\0';
+        if (arg != nullptr)
+        {
+            memcpy(arg, cmdLine, cmdLineLength);
+            arg[cmdLineLength] = '\0';
 
         
-        // First we count the arguments.
-        int argc = 1;
+            // First we count the arguments.
+            int argc = 1;
 
-        int i = 0;
-        while (arg[i] != '\0')
-        {
-            while (arg[i] != '\0' && arg[i] == ' ')
+            int i = 0;
+            while (arg[i] != '\0')
             {
-                i += 1;
-            }
-            
-            if (arg[i] != '\0')
-            {
-                ++argc;
-                
                 while (arg[i] != '\0' && arg[i] == ' ')
                 {
                     i += 1;
                 }
-            }
-        }
-        
-        // Now we tokenise the arguments.
-        char** argv = reinterpret_cast<char**>(malloc(sizeof(char*) * argc));
-        
-        int iArgv = 1;
-        
-        while (arg[0] != '\0')
-        {
-            while (arg[0] != '\0' && arg[0] == ' ')
-            {
-                ++arg;
-            }
             
-            if (arg[0] != '\0')
-            {
-                argv[iArgv] = arg;
-                iArgv += 1;
-                
-                while (arg[0] != '\0' && arg[0] == ' ')
+                if (arg[i] != '\0')
                 {
-                    ++arg;
-                }
+                    ++argc;
                 
-                if (arg[0] != '\0')
-                {
-                    arg[0] = '\0';
-                    ++arg;
+                    while (arg[i] != '\0' && arg[i] == ' ')
+                    {
+                        i += 1;
+                    }
                 }
             }
+        
+            // Now we tokenise the arguments.
+            char** argv = reinterpret_cast<char**>(malloc(sizeof(char*) * argc));
+            if (argv != nullptr)
+            {
+                int iArgv = 1;
+        
+                while (arg[0] != '\0')
+                {
+                    while (arg[0] != '\0' && arg[0] == ' ')
+                    {
+                        ++arg;
+                    }
+            
+                    if (arg[0] != '\0')
+                    {
+                        argv[iArgv] = arg;
+                        iArgv += 1;
+                
+                        while (arg[0] != '\0' && arg[0] == ' ')
+                        {
+                            ++arg;
+                        }
+                
+                        if (arg[0] != '\0')
+                        {
+                            arg[0] = '\0';
+                            ++arg;
+                        }
+                    }
+                }
+        
+        
+                // Now just parse as a main()-style command line.
+                this->Parse(argc, argv);
+
+
+                free(argv);                
+            }
+
+            free(arg);
         }
-        
-        
-        // Now just parse as a main()-style command line.
-        this->Parse(argc, argv);
-
-
-        free(arg);
-        free(argv);
     }
 
 
