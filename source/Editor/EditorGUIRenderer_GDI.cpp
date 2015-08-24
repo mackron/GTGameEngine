@@ -100,14 +100,14 @@ namespace GT
         SelectClipRgn(m_ps.hdc, NULL);
         SelectClipRgn(m_hDC, NULL);
 
+        // End painting.
+        EndPaint(m_hCurrentWindow, &m_ps);
+
+
         // Reset the current window.
         m_hCurrentWindow = NULL;
         m_hDC = NULL;
         m_pCurrentSurfaceAUXData = nullptr;
-
-
-        // End painting.
-        EndPaint(m_hCurrentWindow, &m_ps);
     }
 
 
