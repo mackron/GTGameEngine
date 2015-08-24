@@ -34,11 +34,11 @@ namespace GT
             {
                 if (hElement == m_hVerticalNeighbour)
                 {
-                    context.SetElementWidth(m_hDeadSpace, context.PixelsToPointsX(hElement, width));
+                    context.SetElementWidth(m_hDeadSpace, context.PixelsToPointsX(hElement, static_cast<int>(width)));
                 }
                 else if (hElement == m_hHorizontalNeighbour)
                 {
-                    context.SetElementHeight(m_hDeadSpace, context.PixelsToPointsY(hElement, height));
+                    context.SetElementHeight(m_hDeadSpace, context.PixelsToPointsY(hElement, static_cast<int>(height)));
                 }
             }
 
