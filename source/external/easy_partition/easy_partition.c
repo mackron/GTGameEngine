@@ -98,7 +98,7 @@ easyquadtree_bool easyquadtree_init(easyquadtree* pQuadtree, easyquadtree_aabb b
 {
     if (pQuadtree != 0)
     {
-        if (bounds.halfWidth == bounds.halfHeight)      // <-- Must be square.
+        if (bounds.halfWidth == bounds.halfHeight)      // <-- Must be exactly square.
         {
             pQuadtree->bounds = bounds;
             pQuadtree->children[0] = NULL;

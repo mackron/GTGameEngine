@@ -10,8 +10,8 @@
 //
 // Also keep in mind that not too much effort has been put towards efficiency.
 
-#ifndef __easy_partition_h_
-#define __easy_partition_h_
+#ifndef easy_partition
+#define easy_partition
 
 #ifdef __cplusplus
 extern "C" {
@@ -58,7 +58,7 @@ typedef easyquadtree_bool (* easyquadtree_query_proc)(easyquadtree* pQuadtree);
 
 
 /// malloc()
-easyquadtree* easyquadtree_malloc();
+easyquadtree* easyquadtree_malloc(void);
 
 /// free()
 void easyquadtree_free(easyquadtree* pQuadtree);
