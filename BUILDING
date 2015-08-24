@@ -1,5 +1,7 @@
 (TODO: Tidy up this file)
 
 To build the engine:
- - Compile the dependencies
- - Add every source file in "source" to your project
+ - Add every source file in "source" to your project, not including:
+    - lua.c
+    - luac.c
+    
