@@ -217,7 +217,7 @@ namespace GT
     // left
     inline void GUIElementStyle_Set_left(GUIElementStyle &style, int32_t value, uint32_t type = NumberType_Absolute)
     {
-        style.left |= ((0x80000000 & value) >> 4) | (0x0FFFFFFF & value) | type;
+        style.left = ((0x80000000 & value) >> 4) | (0x0FFFFFFF & value) | type;
     }
     inline int32_t GUIElementStyle_Get_left(const GUIElementStyle &style, uint32_t &typeOut)
     {
@@ -236,7 +236,7 @@ namespace GT
     // top
     inline void GUIElementStyle_Set_top(GUIElementStyle &style, int32_t value, uint32_t type = NumberType_Absolute)
     {
-        style.top |= ((0x80000000 & value) >> 4) | (0x0FFFFFFF & value) | type;
+        style.top = ((0x80000000 & value) >> 4) | (0x0FFFFFFF & value) | type;
     }
     inline int32_t GUIElementStyle_Get_top(const GUIElementStyle &style, uint32_t &typeOut)
     {
@@ -255,7 +255,7 @@ namespace GT
     // right
     inline void GUIElementStyle_Set_right(GUIElementStyle &style, int32_t value, uint32_t type = NumberType_Absolute)
     {
-        style.right |= ((0x80000000 & value) >> 4) | (0x0FFFFFFF & value) | type;
+        style.right = ((0x80000000 & value) >> 4) | (0x0FFFFFFF & value) | type;
     }
     inline int32_t GUIElementStyle_Get_right(const GUIElementStyle &style, uint32_t &typeOut)
     {
@@ -274,7 +274,7 @@ namespace GT
     // bottom
     inline void GUIElementStyle_Set_bottom(GUIElementStyle &style, int32_t value, uint32_t type = NumberType_Absolute)
     {
-        style.bottom |= ((0x80000000 & value) >> 4) | (0x0FFFFFFF & value) | type;
+        style.bottom = ((0x80000000 & value) >> 4) | (0x0FFFFFFF & value) | type;
     }
     inline int32_t GUIElementStyle_Get_bottom(const GUIElementStyle &style, uint32_t &typeOut)
     {
