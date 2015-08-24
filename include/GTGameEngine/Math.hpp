@@ -396,10 +396,10 @@ namespace GT
 		    const float s = sin(a * 0.5f);
 
             return quat(
-                cos(a * 0.5f),
                 axisX * s,
                 axisY * s,
-                axisZ * s
+                axisZ * s,
+                cos(a * 0.5f)
             );
         }
 
@@ -592,6 +592,53 @@ namespace GT
         static const mat4 identity;
     };
 
+    //////////////////////////
+    // Operator Overloads
+
+    // mat4 * mat4
+    inline mat4 operator*(const mat4 &m1, const mat4 &m2)
+    {
+		return mat4(
+            (m1[0] * m2[0][0]) + (m1[1] * m2[0][1]) + (m1[2] * m2[0][2]) + (m1[3] * m2[0][3]),
+            (m1[0] * m2[1][0]) + (m1[1] * m2[1][1]) + (m1[2] * m2[1][2]) + (m1[3] * m2[1][3]),
+            (m1[0] * m2[2][0]) + (m1[1] * m2[2][1]) + (m1[2] * m2[2][2]) + (m1[3] * m2[2][3]),
+            (m1[0] * m2[3][0]) + (m1[1] * m2[3][1]) + (m1[2] * m2[3][2]) + (m1[3] * m2[3][3])
+        );
+    }
+
+    // mat4 * vec4
+    inline vec4 operator*(const mat4 &m, const vec4 &v)
+    {
+        return vec4(
+            m[0][0] * v[0] + m[1][0] * v[1] + m[2][0] * v[2] + m[3][0] * v[3],
+			m[0][1] * v[0] + m[1][1] * v[1] + m[2][1] * v[2] + m[3][1] * v[3],
+			m[0][2] * v[0] + m[1][2] * v[1] + m[2][2] * v[2] + m[3][2] * v[3],
+			m[0][3] * v[0] + m[1][3] * v[1] + m[2][3] * v[2] + m[3][3] * v[3]
+        );
+    }
+
+    // vec4 * mat4
+    inline vec4 operator*(const vec4 &v, const mat4 &m)
+    {
+        return vec4(
+            (m[0][0] * v[0]) + (m[0][1] * v[1]) + (m[0][2] * v[2]) + (m[0][3] * v[3]),
+			(m[1][0] * v[0]) + (m[1][1] * v[1]) + (m[1][2] * v[2]) + (m[1][3] * v[3]),
+			(m[2][0] * v[0]) + (m[2][1] * v[1]) + (m[2][2] * v[2]) + (m[2][3] * v[3]),
+			(m[3][0] * v[0]) + (m[3][1] * v[1]) + (m[3][2] * v[2]) + (m[3][3] * v[3])
+        );
+    }
+
+    // mat4 * scalar
+    inline mat4 operator*(const mat4 &m, float s)
+    {
+        return mat4(
+			m[0] * s,
+			m[1] * s,
+			m[2] * s,
+			m[3] * s
+        );
+    }
+
 
     /// Converts a quaternion to a matrix.
     inline mat4 quat_to_mat4(const quat &q)
@@ -711,6 +758,103 @@ namespace GT
 		return result;
     }
 
+
+    /// Calculates the inverse of the given matrix.
+    ///
+    /// @remarks
+    ///     This implementation is taken from GLM: 
+    inline mat4 inverse(const mat4 &m)
+    {
+        float Coef00 = m[2][2] * m[3][3] - m[3][2] * m[2][3];
+		float Coef02 = m[1][2] * m[3][3] - m[3][2] * m[1][3];
+		float Coef03 = m[1][2] * m[2][3] - m[2][2] * m[1][3];
+
+		float Coef04 = m[2][1] * m[3][3] - m[3][1] * m[2][3];
+		float Coef06 = m[1][1] * m[3][3] - m[3][1] * m[1][3];
+		float Coef07 = m[1][1] * m[2][3] - m[2][1] * m[1][3];
+
+		float Coef08 = m[2][1] * m[3][2] - m[3][1] * m[2][2];
+		float Coef10 = m[1][1] * m[3][2] - m[3][1] * m[1][2];
+		float Coef11 = m[1][1] * m[2][2] - m[2][1] * m[1][2];
+
+		float Coef12 = m[2][0] * m[3][3] - m[3][0] * m[2][3];
+		float Coef14 = m[1][0] * m[3][3] - m[3][0] * m[1][3];
+		float Coef15 = m[1][0] * m[2][3] - m[2][0] * m[1][3];
+
+		float Coef16 = m[2][0] * m[3][2] - m[3][0] * m[2][2];
+		float Coef18 = m[1][0] * m[3][2] - m[3][0] * m[1][2];
+		float Coef19 = m[1][0] * m[2][2] - m[2][0] * m[1][2];
+
+		float Coef20 = m[2][0] * m[3][1] - m[3][0] * m[2][1];
+		float Coef22 = m[1][0] * m[3][1] - m[3][0] * m[1][1];
+		float Coef23 = m[1][0] * m[2][1] - m[2][0] * m[1][1];
+
+		vec4 Fac0(Coef00, Coef00, Coef02, Coef03);
+		vec4 Fac1(Coef04, Coef04, Coef06, Coef07);
+		vec4 Fac2(Coef08, Coef08, Coef10, Coef11);
+		vec4 Fac3(Coef12, Coef12, Coef14, Coef15);
+		vec4 Fac4(Coef16, Coef16, Coef18, Coef19);
+		vec4 Fac5(Coef20, Coef20, Coef22, Coef23);
+
+		vec4 Vec0(m[1][0], m[0][0], m[0][0], m[0][0]);
+		vec4 Vec1(m[1][1], m[0][1], m[0][1], m[0][1]);
+		vec4 Vec2(m[1][2], m[0][2], m[0][2], m[0][2]);
+		vec4 Vec3(m[1][3], m[0][3], m[0][3], m[0][3]);
+
+		vec4 Inv0(Vec1 * Fac0 - Vec2 * Fac1 + Vec3 * Fac2);
+		vec4 Inv1(Vec0 * Fac0 - Vec2 * Fac3 + Vec3 * Fac4);
+		vec4 Inv2(Vec0 * Fac1 - Vec1 * Fac3 + Vec3 * Fac5);
+		vec4 Inv3(Vec0 * Fac2 - Vec1 * Fac4 + Vec2 * Fac5);
+
+		vec4 SignA(+1, -1, +1, -1);
+		vec4 SignB(-1, +1, -1, +1);
+		mat4 Inverse(Inv0 * SignA, Inv1 * SignB, Inv2 * SignA, Inv3 * SignB);
+
+		vec4 Row0(Inverse[0][0], Inverse[1][0], Inverse[2][0], Inverse[3][0]);
+
+		vec4 Dot0(m[0] * Row0);
+		float Dot1 = (Dot0.x + Dot0.y) + (Dot0.z + Dot0.w);
+
+		float OneOverDeterminant = 1 / Dot1;
+
+		return Inverse * OneOverDeterminant;
+    }
+
+
+    /// Projects a vertex.
+    ///
+    /// @remarks
+    ///     This takes a position in the world and converts it to a point on the viewport.
+    inline vec4 project(const vec4 &in, const mat4 &projection, const mat4 &model, const vec4 &viewport)
+    {
+        vec4 out(in);
+		out = model * out;
+		out = projection * out;
+
+		out /= out.w;
+		out = out * 0.5f + 0.5f;
+		out[0] = out[0] * viewport[2] + viewport[0];
+		out[1] = out[1] * viewport[3] + viewport[1];
+
+		return out;
+    }
+
+    /// Unprojects a vertex.
+    ///
+    /// @remarks
+    ///     This takes a position on the viewport and converts it to world space based on the given matrices.
+    inline vec4 unproject(const vec4 &in, const mat4 &projection, const mat4 &model, const vec4 &viewport)
+    {
+		vec4 tmp(in);
+		tmp.x = (tmp.x - viewport[0]) / viewport[2];
+		tmp.y = (tmp.y - viewport[1]) / viewport[3];
+		tmp = tmp * 2 - 1;
+
+		vec4 out = inverse(projection * model) * tmp;
+		out /= out.w;
+
+		return out;
+    }
 
 
 
