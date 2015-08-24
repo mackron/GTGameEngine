@@ -3125,7 +3125,7 @@ namespace GT
 
         return x;
     }
-    float GUIContext::PixelsToPointsX(HGUIElement hElement, unsigned int x)
+    float GUIContext::PixelsToPointsX(HGUIElement hElement, int x)
     {
         return PixelsToPointsX(hElement, static_cast<float>(x));
     }
@@ -3140,7 +3140,7 @@ namespace GT
 
         return y;
     }
-    float GUIContext::PixelsToPointsY(HGUIElement hElement, unsigned int y)
+    float GUIContext::PixelsToPointsY(HGUIElement hElement, int y)
     {
         return PixelsToPointsY(hElement, static_cast<float>(y));
     }
@@ -3156,6 +3156,20 @@ namespace GT
         if (pElement != nullptr)
         {
             return GUIContextBase::AbsoluteToRelative(pElement, xIn, yIn, xOut, yOut);
+        }
+        else
+        {
+            xOut = xIn;
+            yOut = yIn;
+        }
+    }
+
+    void GUIContext::RelativeToAbsolute(HGUIElement hElement, int xIn, int yIn, int &xOut, int &yOut) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::RelativeToAbsolute(pElement, xIn, yIn, xOut, yOut);
         }
         else
         {

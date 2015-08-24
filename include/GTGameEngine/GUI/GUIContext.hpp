@@ -1542,11 +1542,11 @@ namespace GT
 
         /// Converts the given value from pixels to DPI-aware points based on the given element's X DPI scaling.
         float PixelsToPointsX(HGUIElement hElement, float x);
-        float PixelsToPointsX(HGUIElement hElement, unsigned int x);
+        float PixelsToPointsX(HGUIElement hElement, int x);
 
         /// Converts the given value from pixels to DPI-aware points based on the given element's Y DPI scaling.
         float PixelsToPointsY(HGUIElement hElement, float y);
-        float PixelsToPointsY(HGUIElement hElement, unsigned int y);
+        float PixelsToPointsY(HGUIElement hElement, int y);
 
 
         ////////////////////////////////////////////////////////////////
@@ -1560,6 +1560,15 @@ namespace GT
         /// @param xOut     [out] A reference to the variable that will receive the relative position on the x axis.
         /// @param yOut     [out] A reference to the variable that will receive the relative position on the y axis.
         void AbsoluteToRelative(HGUIElement hElement, int xIn, int yIn, int &xOut, int &yOut) const;
+
+        /// Converts a point from relative to absolute coordinates based on the given element.
+        ///
+        /// @param hElement [in] A handle to the element the given point is relative to.
+        /// @param xIn      [in] The relative position on the x axis.
+        /// @param yIn      [in] The relative position on the y axis.
+        /// @param xOut     [out] A reference to the variable that will receive the absolute position on the x axis.
+        /// @param yOut     [out] A reference to the variable that will receive the absolute position on the y axis.
+        void RelativeToAbsolute(HGUIElement hElement, int xIn, int yIn, int &xOut, int &yOut) const;
 
 
         ////////////////////////////////////////////////////////////////

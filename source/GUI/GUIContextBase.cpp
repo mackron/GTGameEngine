@@ -2949,6 +2949,14 @@ namespace GT
         yOut = static_cast<int>(yIn - pElement->layout.absolutePosY);
     }
 
+    void GUIContextBase::RelativeToAbsolute(GUIElement* pElement, int xIn, int yIn, int &xOut, int &yOut) const
+    {
+        assert(pElement != nullptr);
+
+        xOut = static_cast<int>(xIn + pElement->layout.absolutePosX);
+        yOut = static_cast<int>(yIn + pElement->layout.absolutePosY);
+    }
+
 
 
     ////////////////////////////////////////////////////////////////

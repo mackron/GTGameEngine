@@ -1648,6 +1648,15 @@ namespace GT
         /// @param yOut     [out] A reference to the variable that will receive the relative position on the y axis.
         void AbsoluteToRelative(GUIElement* pElement, int xIn, int yIn, int &xOut, int &yOut) const;
 
+        /// Converts a point from relative to absolute coordinates based on the given element.
+        ///
+        /// @param hElement [in] A handle to the element the given point is relative to.
+        /// @param xIn      [in] The relative position on the x axis.
+        /// @param yIn      [in] The relative position on the y axis.
+        /// @param xOut     [out] A reference to the variable that will receive the absolute position on the x axis.
+        /// @param yOut     [out] A reference to the variable that will receive the absolute position on the y axis.
+        void RelativeToAbsolute(GUIElement* pElement, int xIn, int yIn, int &xOut, int &yOut) const;
+
 
         ////////////////////////////////////////////////////////////////
         // Miscellaneous
