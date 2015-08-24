@@ -4,13 +4,12 @@ GTGameEngine is a small game engine written in C++. It's intended to be small, s
 and easy to use. Some features of this project that sets it apart from others:
 
 * Small builds
-  * The engine does not depend on any large and bloated external libraries
+  * No large and bloated dependencies
   * A lot of functionality can be excluded using compile-time options
   * The goal is to make it possible for small games to have a binary size of <1MB
 * Simple build system
   * External dependencies are included directly into the source tree where possible
   * Minimal external dependencies, and no hard-to-build dependencies
-  * Only supports static builds, so there's no static/shared confusion
   * Where possible, dependencies are linked at run-time instead of compile time
     * Direct3D and OpenGL are both linked dynamically at run-time
 
@@ -21,6 +20,7 @@ issues.
 GTGameEngine depends on the following libraries:
 
 * stb (https://github.com/nothings/stb)
+* Lua (http://http://www.lua.org/)
 
 
 
