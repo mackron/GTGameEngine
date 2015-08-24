@@ -74,6 +74,31 @@ namespace GT
         /// @param sceneNodeID [in] The ID of the scene node to retrieve.
         SceneNode* GetSceneNodeByID(uint64_t sceneNodeID);
 
+        /// Retrieves a pointer to first occurance of the scene node with the given name.
+        ///
+        /// @param name [in] The name fo the scene node to retrieve.
+        ///
+        /// @remarks
+        ///     This runs in linear time, so don't call this in time-critical code. You should usually only use this when a special
+        ///     scene node needs to be retrieved, such as the scene node representing the player, and only in an initialization routine.
+        ///     @par
+        ///     This is case-sensitive.
+        SceneNode* GetSceneNodeByName(const char* name);
+
+        /// Retrieves a pointer to the scene node at the given index.
+        ///
+        /// @param index [in] The index of the scene node.
+        ///
+        /// @remarks
+        ///     Use this in conjunction with GetSceneNodeCount().
+        SceneNode* GetSceneNodeByIndex(unsigned int index);
+
+        /// Retrieves the number of scene nodes currently contained within the scene.
+        ///
+        /// @remarks
+        ///     This only includes scene nodes that have been inserted into the scene with InsertSceneNode().
+        unsigned int GetSceneNodeCount() const;
+
 
         /// Steps the scene.
         ///

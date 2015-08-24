@@ -144,6 +144,34 @@ namespace GT
         return nullptr;
     }
 
+    SceneNode* Scene::GetSceneNodeByName(const char* name)
+    {
+        // TODO: Add support for "<parent>/<child>/<grandchild>/<etc>" format.
+
+        for (size_t iSceneNode = 0; iSceneNode < m_sceneNodes.GetCount(); ++iSceneNode)
+        {
+            auto pSceneNode = m_sceneNodes.buffer[iSceneNode]->value;
+            assert(pSceneNode != nullptr);
+
+            if (strcmp(pSceneNode->GetName(), name) == 0)
+            {
+                return pSceneNode;
+            }
+        }
+
+        return nullptr;
+    }
+
+    SceneNode* Scene::GetSceneNodeByIndex(unsigned int index)
+    {
+        return m_sceneNodes.buffer[index]->value;
+    }
+
+    unsigned int Scene::GetSceneNodeCount() const
+    {
+        return m_sceneNodes.GetCount();
+    }
+
 
     void Scene::Step(double deltaTimeInSeconds)
     {
