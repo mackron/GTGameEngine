@@ -290,8 +290,8 @@ namespace GT
             desc.indexCount                    = pModelAsset->GetMeshIndexCount(iMesh);
             desc.indexFormat                   = pModelAsset->GetMeshIndexFormat(iMesh);
             desc.materialIndexOffsetCountPairs = pModelAsset->GetMeshMaterialIndexOffsetCountPairs(iMesh);
-            desc.materialCount                 = pModelAsset->GetMeshMaterialCount(iMesh);
-            desc.materials                     = new HGraphicsResource[desc.materialCount];
+            desc.materialCount                 = materialCount;
+            desc.materials                     = new HGraphicsResource[materialCount];
             for (size_t iMaterial = 0; iMaterial < materialCount; ++iMaterial)
             {
                 auto pMaterial = materials[iMaterial];
