@@ -49,6 +49,20 @@ namespace GT
         void SetName(const char* newName);
 
 
+        /// Retrieves the scene node's tag.
+        ///
+        /// @return A pointer to a null-terminated string containing the tag of the scene node.
+        const char* GetTag() const;
+
+        /// Sets the tag of the scene node.
+        ///
+        /// @param newTag [in] A pointer to the null terminated string containing the new tag.
+        ///
+        /// @remarks
+        ///     The length of the tag cannot be more than 31. In this case, the string will be trimmed.
+        void SetTag(const char* newTag);
+
+
         /// Retrieves the number of components that are attached to the scene node.
         ///
         /// @return The number of components currently attached to the scene node.
@@ -169,6 +183,9 @@ namespace GT
         /// The name of the scene node. Does not need to be unique. Maximum of 31 characters, with the last character always padded with a null terminator. When
         /// the string is less than 31 characters, the buffer is padded with 0.
         char m_name[32];
+
+        /// The scene nodes tag. This can be used to categorize scene nodes.
+        char m_tag[32];
 
         /// The list of pointers to the components attached to the scene node.
         SceneNodeComponent* m_components[GT_MAX_SCENE_NODE_COMPONENTS];

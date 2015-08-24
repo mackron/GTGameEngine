@@ -19,6 +19,7 @@ namespace GT
     SceneNode::SceneNode(uint64_t id)
         : m_id(id),
           m_name(),
+          m_tag(),
           m_components(),
           m_componentCount(0),
           m_flags(0),
@@ -30,6 +31,11 @@ namespace GT
         for (int i = 0; i < 4; ++i)
         {
             reinterpret_cast<uint64_t*>(m_name)[i] = 0;
+        }
+
+        for (int i = 0; i < 4; ++i)
+        {
+            reinterpret_cast<uint64_t*>(m_tag)[i] = 0;
         }
 
         for (int i = 0; i < GT_MAX_SCENE_NODE_COMPONENTS; ++i)
@@ -62,6 +68,27 @@ namespace GT
         for (int i = 0; i < 31 && newName[i] != '\0'; ++i)
         {
             m_name[i] = newName[i];
+        }
+    }
+
+
+    const char* SceneNode::GetTag() const
+    {
+        return m_tag;
+    }
+
+    void SceneNode::SetTag(const char* newTag)
+    {
+        // Pad with zero.
+        for (int i = 0; i < 4; ++i)
+        {
+            reinterpret_cast<uint64_t*>(m_tag)[i] = 0;
+        }
+
+        // Copy without going past 31 characters.
+        for (int i = 0; i < 31 && newTag[i] != '\0'; ++i)
+        {
+            m_tag[i] = newTag[i];
         }
     }
 
