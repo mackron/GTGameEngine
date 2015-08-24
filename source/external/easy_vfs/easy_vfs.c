@@ -33,11 +33,28 @@ void easyvfs_memcpy(void* dst, const void* src, size_t sizeInBytes)
 {
     CopyMemory(dst, src, sizeInBytes);
 }
+#endif
+
 void easyvfs_strcpy(char* dst, size_t dstSizeInBytes, const char* src)
 {
+#if defined(_MSC_VER)
     strcpy_s(dst, dstSizeInBytes, src);
-}
+#else
+    while (dstSizeInBytes > 0 && src[0] != '\0')
+    {
+        dst[0] = src[0];
+
+        dst += 1;
+        src += 1;
+        dstSizeInBytes -= 1;
+    }
+
+    if (dstSizeInBytes > 0)
+    {
+        dst[0] = '\0';
+    }
 #endif
+}
 
 void easyvfs_strcpy2(char* dst, unsigned int dstSizeInBytes, const char* src, unsigned int srcSizeInBytes)
 {
@@ -167,7 +184,7 @@ int easyvfs_appendpathiterator(char* base, unsigned int baseBufferSizeInBytes, e
                 path2Length = baseBufferSizeInBytes - path1Length - 1;      // -1 for the null terminator.
             }
 
-            easyvfs_strcpy2(base + path1Length, baseBufferSizeInBytes - path1Length, i.path + i.segment.offset, i.segment.length);
+            easyvfs_strcpy2(base + path1Length, baseBufferSizeInBytes - path1Length, i.path + i.segment.offset, path2Length);
 
 
             return 1;
@@ -468,23 +485,23 @@ typedef struct
 
 
 /// Native implementations for archive callbacks.
-int           easyvfs_isvalidarchive_impl_native(easyvfs_context* pContext, const char* path);
-void*         easyvfs_openarchive_impl_native   (easyvfs_file* pFile, easyvfs_accessmode accessMode);
-void          easyvfs_closearchive_impl_native  (easyvfs_archive* pArchive);
-int           easyvfs_getfileinfo_impl_native   (easyvfs_archive* pArchive, const char* path, easyvfs_fileinfo *fi);
-void*         easyvfs_beginiteration_impl_native(easyvfs_archive* pArchive, const char* path);
-void          easyvfs_enditeration_impl_native  (easyvfs_archive* pArchive, easyvfs_iterator* i);
-int           easyvfs_nextiteration_impl_native (easyvfs_archive* pArchive, easyvfs_iterator* i, easyvfs_fileinfo* fi);
-void*         easyvfs_openfile_impl_native      (easyvfs_archive* pArchive, const char* path, easyvfs_accessmode accessMode);
-void          easyvfs_closefile_impl_native     (easyvfs_file* pFile);
-int           easyvfs_readfile_impl_native      (easyvfs_file* pFile, void* dst, unsigned int bytesToRead, unsigned int* bytesReadOut);
-int           easyvfs_writefile_impl_native     (easyvfs_file* pFile, const void* src, unsigned int bytesToWrite, unsigned int* bytesWrittenOut);
-easyvfs_bool  easyvfs_seekfile_impl_native      (easyvfs_file* pFile, easyvfs_int64 bytesToSeek, easyvfs_seekorigin origin);
-easyvfs_int64 easyvfs_tellfile_impl_native      (easyvfs_file* pFile);
-easyvfs_int64 easyvfs_filesize_impl_native      (easyvfs_file* pFile);
-int           easyvfs_deletefile_impl_native    (easyvfs_archive* pArchive, const char* path);
-int           easyvfs_renamefile_impl_native    (easyvfs_archive* pArchive, const char* pathOld, const char* pathNew);
-int           easyvfs_mkdir_impl_native         (easyvfs_archive* pArchive, const char* path);
+int            easyvfs_isvalidarchive_impl_native(easyvfs_context* pContext, const char* path);
+void*          easyvfs_openarchive_impl_native   (easyvfs_file* pFile, easyvfs_accessmode accessMode);
+void           easyvfs_closearchive_impl_native  (easyvfs_archive* pArchive);
+int            easyvfs_getfileinfo_impl_native   (easyvfs_archive* pArchive, const char* path, easyvfs_fileinfo *fi);
+void*          easyvfs_beginiteration_impl_native(easyvfs_archive* pArchive, const char* path);
+void           easyvfs_enditeration_impl_native  (easyvfs_archive* pArchive, easyvfs_iterator* i);
+int            easyvfs_nextiteration_impl_native (easyvfs_archive* pArchive, easyvfs_iterator* i, easyvfs_fileinfo* fi);
+void*          easyvfs_openfile_impl_native      (easyvfs_archive* pArchive, const char* path, easyvfs_accessmode accessMode);
+void           easyvfs_closefile_impl_native     (easyvfs_file* pFile);
+int            easyvfs_readfile_impl_native      (easyvfs_file* pFile, void* dst, unsigned int bytesToRead, unsigned int* bytesReadOut);
+int            easyvfs_writefile_impl_native     (easyvfs_file* pFile, const void* src, unsigned int bytesToWrite, unsigned int* bytesWrittenOut);
+easyvfs_bool   easyvfs_seekfile_impl_native      (easyvfs_file* pFile, easyvfs_int64 bytesToSeek, easyvfs_seekorigin origin);
+easyvfs_uint64 easyvfs_tellfile_impl_native      (easyvfs_file* pFile);
+easyvfs_uint64 easyvfs_filesize_impl_native      (easyvfs_file* pFile);
+int            easyvfs_deletefile_impl_native    (easyvfs_archive* pArchive, const char* path);
+int            easyvfs_renamefile_impl_native    (easyvfs_archive* pArchive, const char* pathOld, const char* pathNew);
+int            easyvfs_mkdir_impl_native         (easyvfs_archive* pArchive, const char* path);
 
 
 easyvfs_file* easyvfs_archive_openfile(easyvfs_archive* pArchive, const char* path, easyvfs_accessmode accessMode);
@@ -1384,7 +1401,7 @@ easyvfs_bool easyvfs_seekfile(easyvfs_file* pFile, easyvfs_int64 bytesToSeek, ea
     return 0;
 }
 
-easyvfs_int64 easyvfs_tellfile(easyvfs_file* pFile)
+easyvfs_uint64 easyvfs_tellfile(easyvfs_file* pFile)
 {
     if (pFile != NULL)
     {
@@ -1397,7 +1414,7 @@ easyvfs_int64 easyvfs_tellfile(easyvfs_file* pFile)
     return 0;
 }
 
-easyvfs_int64 easyvfs_filesize(easyvfs_file* pFile)
+easyvfs_uint64 easyvfs_filesize(easyvfs_file* pFile)
 {
     if (pFile != NULL)
     {
@@ -1729,11 +1746,11 @@ int easyvfs_getfileinfo_impl_native(easyvfs_archive* pArchive, const char* path,
         {
             if (fi != NULL)
             {
-                LARGE_INTEGER liSize;
+                ULARGE_INTEGER liSize;
                 liSize.LowPart  = fad.nFileSizeLow;
                 liSize.HighPart = fad.nFileSizeHigh;
 
-                LARGE_INTEGER liTime;
+                ULARGE_INTEGER liTime;
                 liTime.LowPart  = fad.ftLastWriteTime.dwLowDateTime;
                 liTime.HighPart = fad.ftLastWriteTime.dwHighDateTime;
 
@@ -1843,12 +1860,12 @@ int easyvfs_nextiteration_impl_native(easyvfs_archive* pArchive, easyvfs_iterato
         {
             easyvfs_copyandappendpath(fi->absolutePath, EASYVFS_MAX_PATH, pUserData->directoryPath, pUserData->ffd.cFileName);
 
-            LARGE_INTEGER liSize;
+            ULARGE_INTEGER liSize;
             liSize.LowPart  = pUserData->ffd.nFileSizeLow;
             liSize.HighPart = pUserData->ffd.nFileSizeHigh;
             fi->sizeInBytes = liSize.QuadPart;
 
-            LARGE_INTEGER liTime;
+            ULARGE_INTEGER liTime;
             liTime.LowPart  = pUserData->ffd.ftLastWriteTime.dwLowDateTime;
             liTime.HighPart = pUserData->ffd.ftLastWriteTime.dwHighDateTime;
             fi->lastModifiedTime = liTime.QuadPart;
@@ -1988,7 +2005,7 @@ easyvfs_bool easyvfs_seekfile_impl_native(easyvfs_file* pFile, easyvfs_int64 byt
     return SetFilePointerEx((HANDLE)pFile->pUserData, lDistanceToMove, &lNewFilePointer, dwMoveMethod);
 }
 
-easyvfs_int64 easyvfs_tellfile_impl_native(easyvfs_file* pFile)
+easyvfs_uint64 easyvfs_tellfile_impl_native(easyvfs_file* pFile)
 {
     assert(pFile != NULL);
     assert(pFile->pUserData != NULL);
@@ -1999,21 +2016,24 @@ easyvfs_int64 easyvfs_tellfile_impl_native(easyvfs_file* pFile)
 
     if (SetFilePointerEx((HANDLE)pFile->pUserData, lDistanceToMove, &lNewFilePointer, FILE_CURRENT))
     {
-        return lNewFilePointer.QuadPart;
+        return (easyvfs_uint64)lNewFilePointer.QuadPart;
     }
 
     return 0;
 }
 
-easyvfs_int64 easyvfs_filesize_impl_native(easyvfs_file* pFile)
+easyvfs_uint64 easyvfs_filesize_impl_native(easyvfs_file* pFile)
 {
     assert(pFile != NULL);
     assert(pFile->pUserData != NULL);
 
     LARGE_INTEGER fileSize;
-    GetFileSizeEx((HANDLE)pFile->pUserData, &fileSize);
+    if (GetFileSizeEx((HANDLE)pFile->pUserData, &fileSize))
+    {
+        return (easyvfs_uint64)fileSize.QuadPart;
+    }
 
-    return fileSize.QuadPart;
+    return 0;
 }
 
 int easyvfs_deletefile_impl_native(easyvfs_archive* pArchive, const char* path)
