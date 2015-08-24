@@ -110,7 +110,7 @@ namespace GT
         }
 
 
-        if (*strEndOut != nullptr)
+        if (strEndOut != nullptr)
         {
             *strEndOut = str;
         }
