@@ -286,4 +286,28 @@ namespace GT
 
         return false;
     }
+
+
+    bool FileSystem::FindAbsolutePathForWriting(const char* filePath, const char* basePath, char* absolutePathOut, unsigned int absolutePathOutSizeInBytes)
+    {
+        // All we do is append the paths.
+        if (basePath == nullptr)
+        {
+            if (easyvfs_basedirectorycount(m_pVFS) > 0)
+            {
+                easyvfs_getbasedirectorybyindex(m_pVFS, 0, absolutePathOut, absolutePathOutSizeInBytes);
+                easypath_append(absolutePathOut, absolutePathOutSizeInBytes, filePath);
+            }
+            else
+            {
+                return false;
+            }
+        }
+        else
+        {
+            easypath_copyandappend(absolutePathOut, absolutePathOutSizeInBytes, basePath, filePath);
+        }
+
+        return true;
+    }
 }

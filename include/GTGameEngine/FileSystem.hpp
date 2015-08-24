@@ -167,6 +167,17 @@ namespace GT
         bool FindAbsolutePath(const char* filePath, const char* highestPriorityBasePath, GTLib::String &absolutePathOut) const;
 
 
+        /// Finds the best absolute path to use to open a file for writing.
+        ///
+        /// @param filePath [in] The relative path whose absolute version is being retrieved.
+        /// @param basePath [in] The base path to use. If this is null, the highest priority base path is used.
+        /// @param absolutePathOut [out] A pointer to the buffer that will receive the absolute path.
+        ///
+        /// @remarks
+        ///     This does not check that the file exists.
+        bool FindAbsolutePathForWriting(const char* filePath, const char* basePath, char* absolutePathOut, unsigned int absolutePathOutSizeInBytes);
+
+
         /// Attempts to open the given file.
         ///
         /// @param filePath      [in]  The path of the file to open.
