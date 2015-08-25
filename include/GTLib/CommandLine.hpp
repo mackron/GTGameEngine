@@ -6,8 +6,9 @@
 #include "Config.hpp"
 #include "Vector.hpp"
 #include "Dictionary.hpp"
-#include "String.hpp"
 #include <cstddef>
+
+#define GT_CMDLINE_MAX_PATH    512
 
 namespace GTLib
 {
@@ -111,10 +112,10 @@ namespace GTLib
     private:
 
         /// The application directory.
-        GTLib::String m_applicationDirectory;
+        char m_applicationDirectory[GT_CMDLINE_MAX_PATH];
 
         /// The absolute path of the executable file.
-        GTLib::String m_executablePath;
+        char m_executablePath[GT_CMDLINE_MAX_PATH];
 
         /// The list of key/value arguments.
         GTLib::Dictionary<GTLib::Vector<const char*>*> m_arguments;

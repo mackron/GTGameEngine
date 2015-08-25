@@ -1,8 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTLib/CommandLine.hpp>
-#include <GTLib/Strings/Tokenizer.hpp>
-#include <GTLib/IO.hpp>
+#include "../external/easy_path/easy_path.h"
 #include <cassert>
 
 #if defined(GT_PLATFORM_WINDOWS)
@@ -35,30 +34,28 @@ namespace GTLib
         this->Clear();
 
         // Start by grabbing the executable path.
-        char executablePath[4096];
+        char executablePath[GT_CMDLINE_MAX_PATH];
 #if defined(GT_PLATFORM_WINDOWS)
-        GetModuleFileNameA(NULL, executablePath, 4096);
-        m_executablePath = IO::CleanPath(executablePath);
+        GetModuleFileNameA(NULL, executablePath, GT_CMDLINE_MAX_PATH);
 #elif defined(GT_PLATFORM_LINUX)
-        readlink("/proc/self/etc", executablePath, 4096);
-        m_executablePath = executablePath;
+        readlink("/proc/self/etc", executablePath, GT_CMDLINE_MAX_PATH);
 #else
-        if (IO::IsPathRelative(argv[0]))
+        if (easypath_isrelative(argv[0]))
         {
-            m_executablePath = GTLib::IO::ToAbsolutePath(argv[0]);
+            getcwd(executablePath, GT_CMDLINE_MAX_PATH);
+            easypath_append(argv[0]);
         }
         else
         {
-            // The file path won't necessarilly have it's "." and ".." segments resolved. We'll need to do it ourselves.
-            size_t executablePathLength = GTLib::IO::CleanPathInPlace(argv[0]);
-            m_executablePath.Assign(argv[0], static_cast<ptrdiff_t>(executablePathLength));
+            easypath_strcpy(executablePath, GT_CMDLINE_MAX_PATH, argv[0]);
         }
 #endif
 
+        // Make sure the executable path is cleaned at this point.
+        easypath_clean(executablePath, m_executablePath, GT_CMDLINE_MAX_PATH);
 
-        // We need the directory of the executable.
-        GTLib::String devnull;
-        IO::SplitPath(m_executablePath.c_str(), m_applicationDirectory, devnull);
+        // We need the directory of the executable which is just the base path.
+        easypath_copybasepath(m_executablePath, m_applicationDirectory, GT_CMDLINE_MAX_PATH);
 
 
         // The key for anonymous arguments.
@@ -209,12 +206,12 @@ namespace GTLib
 
     const char* CommandLine::GetApplicationDirectory() const
     {
-        return m_applicationDirectory.c_str();
+        return m_applicationDirectory;
     }
 
     const char* CommandLine::GetExecutablePath() const
     {
-        return m_executablePath.c_str();
+        return m_executablePath;
     }
 
     const char** CommandLine::GetArgument(const char* key) const
@@ -254,9 +251,8 @@ namespace GTLib
             delete values;
         }
 
-
-        m_applicationDirectory.Clear();
-        m_executablePath.Clear();
+        m_applicationDirectory[0] = '\0';
+        m_executablePath[0] = '\0';
         m_arguments.Clear();
     }
 
