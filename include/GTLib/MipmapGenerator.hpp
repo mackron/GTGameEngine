@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_MipmapGenerator_hpp_
-#define __GT_MipmapGenerator_hpp_
+#ifndef GT_MipmapGenerator
+#define GT_MipmapGenerator
 
 #include "ImageUtils.hpp"
 
@@ -18,7 +18,7 @@ namespace GT
         /// @param sourceHeight [in] The height of the source mipmap.
         /// @param sourceData   [in] A pointer to the source mipmaps image data.
         /// @param destData     [in] A pointer to the destination buffer. This must be preallocated.
-        /// 
+        ///
         /// @remarks
         ///     The destination buffer must be pre-allocated.
         static void GenerateRGB8(unsigned int sourceWidth, unsigned int sourceHeight, const void* sourceData, void* destData);
@@ -29,7 +29,7 @@ namespace GT
         /// @param sourceHeight [in] The height of the source mipmap.
         /// @param sourceData   [in] A pointer to the source mipmaps image data.
         /// @param destData     [in] A pointer to the destination buffer. This must be preallocated.
-        /// 
+        ///
         /// @remarks
         ///     The destination buffer must be pre-allocated.
         static void GenerateRGBA8(unsigned int sourceWidth, unsigned int sourceHeight, const void* sourceData, void* destData);
@@ -42,7 +42,7 @@ namespace GT
         /// @param componentCount [in] The number of components in each texel.
         /// @param sourceData     [in] A pointer to the source mipmaps image data.
         /// @param destData       [in] A pointer to the destination buffer. This must be preallocated.
-        /// 
+        ///
         /// @remarks
         ///     The destination buffer must be pre-allocated. The <T> template argument is the data type of each component of a texel. For example,
         ///     the RGB8 format will be an unsigned char or uint8_t.
@@ -59,7 +59,7 @@ namespace GT
                 for (unsigned int iCol = 0; iCol < destWidth; ++iCol)
                 {
                     unsigned int x = iCol << 1;
-				    
+
                     for (unsigned int iComp = 0; iComp < componentCount; ++iComp)
                     {
                         unsigned int texel00 = (((y + 0) * sourceWidth) + (x + 0)) * componentCount + iComp;

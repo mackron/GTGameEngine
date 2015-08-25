@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_ImageAsset_hpp_
-#define __GT_ImageAsset_hpp_
+#ifndef GT_ImageAsset
+#define GT_ImageAsset
 
 #include "Asset.hpp"
 #include "../Graphics/GraphicsTypes.hpp"

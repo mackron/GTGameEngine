@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_AssetAllocator_hpp_
-#define __GT_AssetAllocator_hpp_
+#ifndef GT_AssetAllocator
+#define GT_AssetAllocator
 
 #include "AssetTypes.hpp"
 

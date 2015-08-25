@@ -110,7 +110,7 @@ namespace GT
             }
         }
     }
-        
+
 
     void GUIContext::IterateSurfaces(std::function<bool (GUISurface* pSurface)> handler) const
     {
@@ -162,7 +162,7 @@ namespace GT
                     eventHandler.OnSize(*this, hElement, width, height);
                     return true;
                 }
-                
+
                 return false;
             });
 
@@ -219,7 +219,7 @@ namespace GT
                     eventHandler.OnMove(*this, hElement, x, y);
                     return true;
                 }
-                
+
                 return false;
             });
 
@@ -293,7 +293,7 @@ namespace GT
                     eventHandler.OnMouseEnter(*this, hElement);
                     return true;
                 }
-                
+
                 return false;
             });
 
@@ -351,7 +351,7 @@ namespace GT
                     eventHandler.OnMouseLeave(*this, hElement);
                     return true;
                 }
-                
+
                 return false;
             });
 
@@ -409,7 +409,7 @@ namespace GT
                     eventHandler.OnMouseMove(*this, hElement, mousePosX, mousePosY);
                     return true;
                 }
-                
+
                 return false;
             });
 
@@ -467,7 +467,7 @@ namespace GT
                     eventHandler.OnMouseButtonPressed(*this, hElement, mouseButton, mousePosX, mousePosY);
                     return true;
                 }
-                
+
                 return false;
             });
 
@@ -525,7 +525,7 @@ namespace GT
                     eventHandler.OnMouseButtonReleased(*this, hElement, mouseButton, mousePosX, mousePosY);
                     return true;
                 }
-                
+
                 return false;
             });
 
@@ -583,7 +583,7 @@ namespace GT
                     eventHandler.OnMouseButtonDoubleClicked(*this, hElement, mouseButton, mousePosX, mousePosY);
                     return true;
                 }
-                
+
                 return false;
             });
 
@@ -641,7 +641,7 @@ namespace GT
                     eventHandler.OnMouseWheel(*this, hElement, delta, mousePosX, mousePosY);
                     return true;
                 }
-                
+
                 return false;
             });
 
@@ -700,7 +700,7 @@ namespace GT
                     eventHandler.OnSetMouseEventCapture(*this, hElement);
                     return true;
                 }
-                
+
                 return false;
             });
 
@@ -758,7 +758,7 @@ namespace GT
                     eventHandler.OnReleaseMouseEventCapture(*this, hElement);
                     return true;
                 }
-                
+
                 return false;
             });
 
@@ -794,7 +794,7 @@ namespace GT
                     eventHandler.OnSurfaceNeedsRepaint(*this, hSurface, rect);
                     return true;
                 }
-                
+
                 return false;
             });
 

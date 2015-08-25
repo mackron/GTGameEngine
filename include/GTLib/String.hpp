@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_String_hpp_
-#define __GTLib_String_hpp_
+#ifndef GT_String
+#define GT_String
 
 #include "Strings/Create.hpp"
 #include "Strings/Equal.hpp"
@@ -41,14 +41,14 @@ namespace GTLib
         {
         }
 
-        BasicStringUTF(const T* str, ptrdiff_t lengthInTs = -1)
-            : data(Strings::Create(str, lengthInTs)), lengthInTs(static_cast<size_t>(Strings::SizeInTs(data)))
+        BasicStringUTF(const T* strIn, ptrdiff_t lengthInTsIn = -1)
+            : data(Strings::Create(strIn, lengthInTsIn)), lengthInTs(static_cast<size_t>(Strings::SizeInTs(data)))
         {
         }
 
         template <typename U>
-        BasicStringUTF(const U* str, ptrdiff_t lengthInUs = -1)
-            : data(Strings::Create<T>(str, lengthInUs)), lengthInTs(static_cast<size_t>(Strings::SizeInTs(data)))
+        BasicStringUTF(const U* strIn, ptrdiff_t lengthInUsIn = -1)
+            : data(Strings::Create<T>(strIn, lengthInUsIn)), lengthInTs(static_cast<size_t>(Strings::SizeInTs(data)))
         {
         }
 
@@ -157,8 +157,8 @@ namespace GTLib
             {
                 return this->Assign(other, otherSizeInTs);
             }
-            
-            
+
+
             Strings::List<T> newValue;
             newValue.Append(this->data, static_cast<ptrdiff_t>(this->lengthInTs));
             newValue.Append(other, otherSizeInTs);
@@ -235,8 +235,8 @@ namespace GTLib
 
             return *this;
         }
-        
-        
+
+
         /// Converts the string to lower case.
         ///
         /// @remarks
@@ -245,16 +245,16 @@ namespace GTLib
         {
             std::locale loc;
             BasicStringUTF<T> temp;
-            
+
             Strings::Iterator<T> i(this->data);
             while (i)
             {
                 char32_t c = std::tolower(static_cast<char>(i.character), loc);     // <-- Ideally, we should be able to remove the 'char' cast here. It's needed in order to prevent an exception.
                 temp.Append(&c, 1);
-                
+
                 ++i;
             }
-            
+
             *this = temp;
         }
 
@@ -443,7 +443,7 @@ namespace GTLib
     typedef BasicStringUTF<char>     String8;
     typedef BasicStringUTF<char16_t> String16;
     typedef BasicStringUTF<char32_t> String32;
-    
+
 
 
     /// Simple structure representing a string segment.
@@ -454,20 +454,20 @@ namespace GTLib
             : strBegin(nullptr), strEnd(nullptr)
         {
         }
-        
+
         StringSegmentUTF(T* strBeginIn, T* strEndIn)
             : strBegin(strBeginIn), strEnd(strEndIn)
         {
         }
-        
-        
+
+
         /// The beginning of the string.
         T* strBegin;
-        
+
         /// The end of the string. This should be one character after the last character. This allows the length to be computed as "strEnd - startBegin".
         T* strEnd;
     };
-    
+
     typedef StringSegmentUTF<char>     StringSegment;
     typedef StringSegmentUTF<char>     StringSegment8;
     typedef StringSegmentUTF<char16_t> StringSegment16;

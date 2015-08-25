@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EngineContext_hpp_
-#define __GT_EngineContext_hpp_
+#ifndef GT_EngineContext
+#define GT_EngineContext
 
 
 #include <GTLib/ResultCodes.hpp>
@@ -152,7 +152,7 @@ namespace GT
 
         /// @copydoc SceneNodeComponentDescriptorLibrary::CreateComponent()
         SceneNodeComponent* CreateSceneNodeComponent(SceneNodeComponentTypeID type);
-        
+
         template <typename T>
         T* CreateSceneNodeComponent()
         {

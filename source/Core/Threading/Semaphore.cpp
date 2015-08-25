@@ -20,17 +20,17 @@ namespace GTLib
 
         Semaphore::~Semaphore()
         {
-            CloseHandle((HANDLE)this->data);
+            CloseHandle(reinterpret_cast<HANDLE>(this->data));
         }
 
         void Semaphore::Wait(uint32_t timeoutInMilliseconds)
         {
-            WaitForSingleObject((HANDLE)this->data, static_cast<DWORD>(timeoutInMilliseconds));
+            WaitForSingleObject(reinterpret_cast<HANDLE>(this->data), static_cast<DWORD>(timeoutInMilliseconds));
         }
 
         void Semaphore::Release()
         {
-            ReleaseSemaphore((HANDLE)this->data, 1, nullptr);
+            ReleaseSemaphore(reinterpret_cast<HANDLE>(this->data), 1, nullptr);
         }
     }
 }

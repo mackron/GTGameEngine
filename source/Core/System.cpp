@@ -267,7 +267,7 @@ namespace GTLib
             */
             void ClearMemory()
             {
-                GTLib::Strings::Delete((char *)this->home);
+                GTLib::Strings::Delete(const_cast<char*>(reinterpret_cast<const char *>(this->home)));
                 this->home = nullptr;
 
                 DeleteFontDirectories(fonts);

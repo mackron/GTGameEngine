@@ -1,18 +1,11 @@
-// Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
+// Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Deserializer_hpp_
-#define __GTLib_Deserializer_hpp_
+#ifndef GT_Deserializer
+#define GT_Deserializer
 
-#include <cstring>      // For memcpy()
 #include "String.hpp"
 #include "IO.hpp"
-#include "Math.hpp"     // For GTLib::Min().
 #include "Vector.hpp"
-
-#if defined(_MSC_VER)
-    #pragma warning(push)
-    #pragma warning(disable:4482)   // 'this' used in initialise list.
-#endif
 
 namespace GTLib
 {
@@ -24,54 +17,23 @@ namespace GTLib
     public:
 
         /// Constructor.
-        Deserializer()
-        {
-        }
+        Deserializer();
 
         /// Destructor.
-        virtual ~Deserializer()
-        {
-        }
+        virtual ~Deserializer();
 
 
         /// @copydoc GTLib::Deserializer::ReadImpl
-        size_t Read(void* outputBuffer, size_t bytesToRead)
-        {
-            if (this->HasRoomInChunk(bytesToRead))
-            {
-                return this->ReadImpl(outputBuffer, bytesToRead);
-            }
-
-            return 0;
-        }
+        size_t Read(void* outputBuffer, size_t bytesToRead);
 
         /// @copydoc GTLib::Deserializer::PeekImpl
-        size_t Peek(void* outputBuffer, size_t bytesToRead)
-        {
-            if (this->HasRoomInChunk(bytesToRead))
-            {
-                return this->PeekImpl(outputBuffer, bytesToRead);
-            }
-
-            return 0;
-        }
+        size_t Peek(void* outputBuffer, size_t bytesToRead);
 
         /// @copydoc GTLib::Deserializer::SeekImpl
-        int64_t Seek(int64_t bytesToSkip)
-        {
-            if (this->HasRoomInChunk(bytesToSkip))
-            {
-                return this->SeekImpl(bytesToSkip);
-            }
-
-            return 0;
-        }
+        int64_t Seek(int64_t bytesToSkip);
 
         /// @copydoc GTLib::Deserializer::TellImpl
-        size_t Tell() const
-        {
-            return this->TellImpl();
-        }
+        size_t Tell() const;
 
 
 
@@ -91,30 +53,7 @@ namespace GTLib
         ///
         /// @remarks
         ///     This performs the exact opposite of Serializer::WriteString().
-        size_t ReadString(GTLib::String &object)
-        {
-            size_t bytesRead = 0;
-
-            uint32_t length;
-            bytesRead += this->Read(length);
-
-            if (length > 0)
-            {
-                // The next 'length' bytes will be the actual string content.
-                char* buffer = reinterpret_cast<char*>(malloc(length));
-                bytesRead += this->Read(buffer, length);
-
-                object.Assign(buffer, length);
-
-                free(buffer);
-            }
-            else
-            {
-                object.Assign("");
-            }
-
-            return bytesRead;
-        }
+        size_t ReadString(GTLib::String &object);
 
 
         /// Marks the beginning of the reading of a protected chunk of data.
@@ -127,33 +66,13 @@ namespace GTLib
         ///     @par
         ///     When the item is popped with EndChunk(), the current read position will be seeked to the end of the chunk if it is
         ///     not already there.
-        void StartChunk(size_t chunkSizeInBytes)
-        {
-            m_chunkStack.PushBack(_ChunkStackItem(this->Tell() + chunkSizeInBytes));
-        }
+        void StartChunk(size_t chunkSizeInBytes);
 
         /// Marks the end of the reading of a protected chunk of data.
         ///
         /// @remarks
         ///     If the current read position is not sitting at the end of the chunk, it will be seeked to it.
-        void EndChunk()
-        {
-            if (m_chunkStack.GetCount() > 0)
-            {
-                size_t currentPosition = this->Tell();
-
-                auto &topItem = m_chunkStack[0];
-                if (static_cast<int64_t>(currentPosition) < topItem.m_endPosition)
-                {
-                    this->Seek(topItem.m_endPosition - currentPosition);
-                }
-
-                assert(static_cast<int64_t>(currentPosition) == topItem.m_endPosition);
-                {
-                    m_chunkStack.PopBack();
-                }
-            }
-        }
+        void EndChunk();
 
         /// Determines whether or not there is room in the chunk for reading the given amount of bytes.
         ///
@@ -163,18 +82,7 @@ namespace GTLib
         ///
         /// @remarks
         ///     This will always return true if there is no chunk on the stack.
-        bool HasRoomInChunk(int64_t bytesToRead) const
-        {
-            if (m_chunkStack.GetCount() > 0)
-            {
-                if (static_cast<int64_t>(this->Tell()) + bytesToRead > m_chunkStack.GetBack().m_endPosition)
-                {
-                    return false;
-                }
-            }
-
-            return true;
-        }
+        bool HasRoomInChunk(int64_t bytesToRead) const;
 
 
     protected:
@@ -236,12 +144,7 @@ namespace GTLib
         GTLib::Vector<_ChunkStackItem> m_chunkStack;
     };
 
-    template <> inline size_t Deserializer::Read<GTLib::String>(GTLib::String &)
-    {
-        // Must use ReadString().
-        assert(false);
-        return 0;
-    }
+    template <> inline size_t Deserializer::Read<GTLib::String>(GTLib::String &);
 
 
 
@@ -256,15 +159,10 @@ namespace GTLib
     public:
 
         /// Constructor.
-        BasicDeserializer(const void* bufferIn, size_t bufferSizeInBytesIn)
-            : buffer(bufferIn), bufferSizeInBytes(bufferSizeInBytesIn), readPointer(0)
-        {
-        }
+        BasicDeserializer(const void* bufferIn, size_t bufferSizeInBytesIn);
 
         /// Destructor.
-        virtual ~BasicDeserializer()
-        {
-        }
+        virtual ~BasicDeserializer();
 
 
         /// Reads a value from the buffer.
@@ -284,57 +182,19 @@ namespace GTLib
     private:
 
         /// Deserializer::Read().
-        size_t ReadImpl(void* outputBuffer, size_t bytesToRead)
-        {
-            bytesToRead = this->Peek(outputBuffer, bytesToRead);
-            this->readPointer += bytesToRead;
-
-            return bytesToRead;
-        }
+        size_t ReadImpl(void* outputBuffer, size_t bytesToRead);
 
         /// Deserializer::Peek().
-        size_t PeekImpl(void* outputBuffer, size_t bytesToRead)
-        {
-            // We can't read over the buffer.
-            bytesToRead = GTLib::Min(bytesToRead, this->GetAvailableBufferSpaceInBytes());
-
-            memcpy(outputBuffer, reinterpret_cast<const uint8_t*>(this->buffer) + this->readPointer, bytesToRead);
-
-            return bytesToRead;
-        }
+        size_t PeekImpl(void* outputBuffer, size_t bytesToRead);
 
         /// Deserializer::Seek().
-        int64_t SeekImpl(int64_t bytesToSkip)
-        {
-            // We can't skip past the buffer, nor can we go before it.
-            int64_t targetPointer = static_cast<int64_t>(this->readPointer) + bytesToSkip;
-            if (targetPointer >= static_cast<int64_t>(this->bufferSizeInBytes))
-            {
-                bytesToSkip = this->GetAvailableBufferSpaceInBytes();
-            }
-            else if (targetPointer < 0)
-            {
-                assert(bytesToSkip <= targetPointer);
-                bytesToSkip = bytesToSkip - targetPointer;
-            }
-
-            this->readPointer += static_cast<ptrdiff_t>(bytesToSkip);
-
-            return bytesToSkip;
-        }
+        int64_t SeekImpl(int64_t bytesToSkip);
 
         /// Deserializer::Tell().
-        size_t TellImpl() const
-        {
-            return this->readPointer;
-        }
-
+        size_t TellImpl() const;
 
         /// Retrieves the amount of space reamining in the buffer.
-        size_t GetAvailableBufferSpaceInBytes() const
-        {
-            return this->bufferSizeInBytes - this->readPointer;
-        }
+        size_t GetAvailableBufferSpaceInBytes() const;
 
 
 
@@ -355,12 +215,7 @@ namespace GTLib
         BasicDeserializer & operator=(const BasicDeserializer &);
     };
 
-    template <> inline size_t BasicDeserializer::Read<GTLib::String>(GTLib::String &)
-    {
-        // Must use ReadString().
-        assert(false);
-        return 0;
-    }
+    template <> inline size_t BasicDeserializer::Read<GTLib::String>(GTLib::String &);
 
 
 
@@ -378,19 +233,13 @@ namespace GTLib
     public:
 
         /// Constructor.
-        FileDeserializer(FILE* fileIn)
-            : fileSTD(fileIn), fileGT(0)
-        {
-        }
-        FileDeserializer(GTLib::FileHandle fileIn)
-            : fileSTD(nullptr), fileGT(fileIn)
-        {
-        }
+        FileDeserializer(FILE* fileIn);
+
+        /// Destrucutor.
+        FileDeserializer(GTLib::FileHandle fileIn);
 
         /// Destructor.
-        virtual ~FileDeserializer()
-        {
-        }
+        virtual ~FileDeserializer();
 
 
         /// Reads a value from the buffer.
@@ -406,108 +255,16 @@ namespace GTLib
     private:
 
         /// Deserializer::Read().
-        size_t ReadImpl(void* outputBuffer, size_t bytesToRead)
-        {
-            assert(this->fileSTD != nullptr || this->fileGT != 0);
-            assert(this->fileSTD == nullptr || this->fileGT == 0);
-
-
-            if (this->fileSTD != nullptr)
-            {
-                return IO::Read(this->fileSTD, outputBuffer, bytesToRead);
-            }
-            else
-            {
-                return GTLib::ReadFile(this->fileGT, outputBuffer, bytesToRead);
-            }
-        }
+        size_t ReadImpl(void* outputBuffer, size_t bytesToRead);
 
         /// Deserializer::Peek().
-        size_t PeekImpl(void* outputBuffer, size_t bytesToRead)
-        {
-            assert(this->fileSTD != nullptr || this->fileGT != 0);
-            assert(this->fileSTD == nullptr || this->fileGT == 0);
-
-
-            if (this->fileSTD != nullptr)
-            {
-                auto readPointer = IO::Tell(this->fileSTD);
-
-                size_t bytesRead = IO::Read(this->fileSTD, outputBuffer, bytesToRead);
-                IO::Seek(this->fileSTD, readPointer, SeekOrigin::Start);
-
-                return bytesRead;
-            }
-            else
-            {
-                auto readPointer = GTLib::GetFilePointer(this->fileGT);
-
-                intptr_t bytesRead = GTLib::ReadFile(this->fileGT, outputBuffer, bytesToRead);
-                if (bytesRead != -1)
-                {
-                    SeekFile(this->fileGT, readPointer, SeekOrigin::Start);
-
-                    return bytesRead;
-                }
-                else
-                {
-                    return 0;
-                }
-            }
-        }
+        size_t PeekImpl(void* outputBuffer, size_t bytesToRead);
 
         /// Deserializer::Seek().
-        int64_t SeekImpl(int64_t bytesToSkip)
-        {
-            assert(this->fileSTD != nullptr || this->fileGT != 0);
-            assert(this->fileSTD == nullptr || this->fileGT == 0);
-
-
-            if (this->fileSTD != nullptr)
-            {
-                if (IO::Seek(this->fileSTD, bytesToSkip, SeekOrigin::Current))
-                {
-                    return bytesToSkip;
-                }
-            }
-            else
-            {
-                int64_t prevFilePointer = GTLib::GetFilePointer(this->fileGT);
-                int64_t newFilePointer  = GTLib::SeekFile(this->fileGT, bytesToSkip, SeekOrigin::Current);
-                if (newFilePointer != -1)
-                {
-                    // For consistency with the STD method, we want to skip all of bytesToSkip, or none. Nothing in between.
-                    if ((newFilePointer - prevFilePointer) == bytesToSkip)
-                    {
-                        return bytesToSkip;
-                    }
-                    else
-                    {
-                        GTLib::SeekFile(this->fileGT, prevFilePointer, SeekOrigin::Start);
-                    }
-                }
-            }
-
-
-            return 0;
-        }
+        int64_t SeekImpl(int64_t bytesToSkip);
 
         /// Deserializer::Tell().
-        size_t TellImpl() const
-        {
-            assert(this->fileSTD != nullptr || this->fileGT != 0);
-            assert(this->fileSTD == nullptr || this->fileGT == 0);
-
-
-            if (this->fileSTD != nullptr)
-            {
-                return static_cast<size_t>(IO::Tell(this->fileSTD));
-            }
-            else
-            {
-                return static_cast<size_t>(GTLib::GetFilePointer(this->fileGT));
-            }
-        }
+        size_t TellImpl() const;
 
 
     private:
@@ -524,16 +281,7 @@ namespace GTLib
         FileDeserializer & operator=(const FileDeserializer &);
     };
 
-    template <> inline size_t FileDeserializer::Read<GTLib::String>(GTLib::String &)
-    {
-        // Must use ReadString().
-        assert(false);
-        return 0;
-    }
+    template <> inline size_t FileDeserializer::Read<GTLib::String>(GTLib::String &);
 }
-
-#if defined(_MSC_VER)
-    #pragma warning(pop)
-#endif
 
 #endif

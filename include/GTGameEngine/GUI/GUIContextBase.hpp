@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUIContextBase_hpp_
-#define __GT_GUIContextBase_hpp_
+#ifndef GT_GUIContextBase
+#define GT_GUIContextBase
 
 #include "GUIElement.hpp"
 #include "GUISurface.hpp"
@@ -57,7 +57,7 @@ namespace GT
         ///
         /// @param pElement [in] The GUI element to delete.
         virtual void DeleteElementPtr(GUIElement* pElement) = 0;
-        
+
 
         /// Iterates over each surface.
         ///
@@ -72,47 +72,47 @@ namespace GT
 
         /// Posts the OnSize event.
         ///
-        /// @param element [in] A reference to the element receiving the event.
-        /// @param width   [in] The new width of the element.
-        /// @param height  [in] The new height of the element.
+        /// @param pElement [in] A reference to the element receiving the event.
+        /// @param width    [in] The new width of the element.
+        /// @param height   [in] The new height of the element.
         virtual void PostEvent_OnSize(GUIElement* pElement, unsigned int width, unsigned int height) = 0;
 
         /// Posts the OnMove event.
         ///
-        /// @param element [in] A reference to the element receiving the event.
-        /// @param x       [in] The new position of the element on the x axis, relative to the top left corner of the parent.
-        /// @param y       [in] The new position of the element on the y axis, relative to the top left corner of the parent.
+        /// @param pElement [in] A reference to the element receiving the event.
+        /// @param x        [in] The new position of the element on the x axis, relative to the top left corner of the parent.
+        /// @param y        [in] The new position of the element on the y axis, relative to the top left corner of the parent.
         virtual void PostEvent_OnMove(GUIElement* pElement, int x, int y) = 0;
 
         /// Posts the OnSize and OnMove event.
         ///
-        /// @param element [in] A reference to the element receiving the event.
-        /// @param width   [in] The new width of the element.
-        /// @param height  [in] The new height of the element.
-        /// @param x       [in] The new position of the element on the x axis, relative to the top left corner of the parent.
-        /// @param y       [in] The new position of the element on the y axis, relative to the top left corner of the parent.
+        /// @param pElement [in] A reference to the element receiving the event.
+        /// @param width    [in] The new width of the element.
+        /// @param height   [in] The new height of the element.
+        /// @param x        [in] The new position of the element on the x axis, relative to the top left corner of the parent.
+        /// @param y        [in] The new position of the element on the y axis, relative to the top left corner of the parent.
         virtual void PostEvent_OnSizeAndOnMove(GUIElement* pElement, unsigned int width, unsigned height, int x, int y) = 0;
 
         /// Posts the OnMouseEnter event.
         ///
-        /// @param element [in] A reference to the element receiving the event.
+        /// @param pElement [in] A reference to the element receiving the event.
         virtual void PostEvent_OnMouseEnter(GUIElement* pElement) = 0;
 
         /// Posts the OnMouseLeave event.
         ///
-        /// @param element [in] A reference to the element receiving the event.
+        /// @param pElement [in] A reference to the element receiving the event.
         virtual void PostEvent_OnMouseLeave(GUIElement* pElement) = 0;
 
         /// Posts the OnMouseMove event.
         ///
-        /// @param element   [in] A reference to the element receiving the event.
+        /// @param pElement  [in] A reference to the element receiving the event.
         /// @param mousePosX [in] The position of the mouse on the x axis relative to the top left corner of the element.
         /// @param mousePosY [in] The position of the mouse on the y axis relative to the top left corner of the element.
         virtual void PostEvent_OnMouseMove(GUIElement* pElement, int mousePosX, int mousePosY) = 0;
 
         /// Posts the OnMouseButtonPressed event.
         ///
-        /// @param element     [in] A reference to the element receiving the event.
+        /// @param pElement    [in] A reference to the element receiving the event.
         /// @param mouseButton [in] The mouse button.
         /// @param mousePosX   [in] The position of the mouse on the x axis relative to the top left corner of the element.
         /// @param mousePosY   [in] The position of the mouse on the y axis relative to the top left corner of the element.
@@ -120,7 +120,7 @@ namespace GT
 
         /// Posts the OnMouseButtonReleased event.
         ///
-        /// @param element     [in] A reference to the element receiving the event.
+        /// @param pElement    [in] A reference to the element receiving the event.
         /// @param mouseButton [in] The mouse button.
         /// @param mousePosX   [in] The position of the mouse on the x axis relative to the top left corner of the element.
         /// @param mousePosY   [in] The position of the mouse on the y axis relative to the top left corner of the element.
@@ -128,7 +128,7 @@ namespace GT
 
         /// Posts the OnMouseButtonDoubleClicked event.
         ///
-        /// @param element     [in] A reference to the element receiving the event.
+        /// @param pElement    [in] A reference to the element receiving the event.
         /// @param mouseButton [in] The mouse button.
         /// @param mousePosX   [in] The position of the mouse on the x axis relative to the top left corner of the element.
         /// @param mousePosY   [in] The position of the mouse on the y axis relative to the top left corner of the element.
@@ -177,16 +177,16 @@ namespace GT
         ///
         /// @param rect  [in] The rectangle to draw.
         /// @param color [in] The colour to draw the rectangle.
-        virtual void Renderer_DrawRectangle(GTLib::Rect<int> rect, GTLib::Colour colour) = 0;
+        virtual void Renderer_DrawRectangle(GTLib::Rect<int> rect, GTLib::Colour color) = 0;
 
         /// Sets the clipping rectangle for rendering.
         ///
-        /// @param rect [in] The clipping rectangle.
+        /// @param clippingRect [in] The clipping rectangle.
         virtual void Renderer_SetClippingRect(GTLib::Rect<int> clippingRect) = 0;
 
         /// Determines whether or not the current renderer can draw the given font.
         ///
-        /// @parma hFont [in] A handle to the font.
+        /// @param hFont [in] A handle to the font.
         ///
         /// @return True if the current renderer can draw text with the given font.
         virtual bool Renderer_CanDrawText(HGUIFont hFont) = 0;
@@ -229,7 +229,7 @@ namespace GT
         /// Sets the ID of the given surface.
         ///
         /// @param pSurface [in] A pointer to the surface to delete.
-        /// @param newID    [in] The new ID of the surface.
+        /// @param id       [in] The new ID of the surface.
         void SetSurfaceID(GUISurface* pSurface, const char* id);
 
         /// Retrieves the ID of the given surface.
@@ -267,8 +267,8 @@ namespace GT
 
         /// Iterates over each element that is attached to the given surface.
         ///
-        /// @param surface [in] A reference to the surface whose elements are being iterated.
-        /// @param handler [in] The function to call for each element.
+        /// @param pSurface [in] A reference to the surface whose elements are being iterated.
+        /// @param handler  [in] The function to call for each element.
         ///
         /// @return False if the iteration was terminated early as a result of handler() returning false. True if everything was iterated.
         bool IterateSurfaceElements(GUISurface* pSurface, std::function<bool (GUIElement* pElement)> handler);
@@ -280,7 +280,7 @@ namespace GT
 
         /// Sets the given surface's aux. data pointer.
         ///
-        /// @param pElement [in] A handle to the surface.
+        /// @param pSurface [in] A handle to the surface.
         /// @param auxData  [in] A pointer to the aux. data.
         ///
         /// @remarks
@@ -295,7 +295,7 @@ namespace GT
 
         /// Retrieve's the given surface's aux. data pointer.
         ///
-        /// @param pElement [in] A handle to the surface.
+        /// @param pSurface [in] A handle to the surface.
         ///
         /// @return A pointer to the aux. data.
         template <typename T>
@@ -327,7 +327,7 @@ namespace GT
         /// Sets the ID of the given element.
         ///
         /// @param pElement [in] The GUI element whose having it's ID changed.
-        /// @param newID    [in] The new ID of the GUI element.
+        /// @param id       [in] The new ID of the GUI element.
         void SetElementID(GUIElement* pElement, const char* id);
 
         /// Retrieves the ID of the given element.
@@ -731,7 +731,7 @@ namespace GT
         /// Sets the minimum width of the given element to a ratio of the parent's width.
         ///
         /// @param pElement      [in] The GUI element whose min width is being set.
-        /// @param minWidthRatio [in] The new min width ratio.
+        /// @param maxWidthRatio [in] The new min width ratio.
         ///
         /// @remarks
         ///     If both the min width and height needs to be changed, and they're both ratios, use SetGUIElementMinSizeRatio().
@@ -766,8 +766,8 @@ namespace GT
 
         /// Sets the height of the element as a ratio of the parent's height.
         ///
-        /// @param pElement [in] The GUI element whose height is being set.
-        /// @param height   [in] The new height ratio of the element.
+        /// @param pElement    [in] The GUI element whose height is being set.
+        /// @param heightRatio [in] The new height ratio of the element.
         ///
         /// @remarks
         ///     If both the width and height needs to be changed, and they are both ratios, use SetGUIElementSizeRatio().
@@ -821,7 +821,7 @@ namespace GT
         /// Sets the minimum height of the given element to a ratio of the parent's height.
         ///
         /// @param pElement       [in] The GUI element whose min height is being set.
-        /// @param minHeightRatio [in] The new min height ratio.
+        /// @param maxHeightRatio [in] The new min height ratio.
         ///
         /// @remarks
         ///     If both the min height and height needs to be changed, and they're both ratios, use SetGUIElementMinSizeRatio().
@@ -869,14 +869,14 @@ namespace GT
 
         /// Retrieves the absolute rectangle of the inner region of the given element.
         ///
-        /// @param hElement [in]  The GUI element whose absolute rectangle is being retrieved.
+        /// @param pElement [in]  The GUI element whose absolute rectangle is being retrieved.
         /// @param rectOut  [out] A reference to the structure that will receive the absolute rectangle of the given element.
         void GetElementAbsoluteInnerRect(GUIElement* pElement, GTLib::Rect<float> &rectOut) const;
         void GetElementAbsoluteInnerRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const;
 
         /// Retrieves the absolute rectangle of the inner region of the given element, but outside the padding (just inside the border).
         ///
-        /// @param hElement [in]  The GUI element whose absolute rectangle is being retrieved.
+        /// @param pElement [in]  The GUI element whose absolute rectangle is being retrieved.
         /// @param rectOut  [out] A reference to the structure that will receive the absolute rectangle of the given element.
         void GetElementAbsoluteInnerBorderRect(GUIElement* pElement, GTLib::Rect<float> &rectOut) const;
         void GetElementAbsoluteInnerBorderRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const;
@@ -925,31 +925,31 @@ namespace GT
         ///
         /// @param pElement    [in] The element whose border is being set.
         /// @param borderWidth [in] The border width.
-        void SetElementBorderLeftWidth(GUIElement* pElement, uint32_t width);
+        void SetElementBorderLeftWidth(GUIElement* pElement, uint32_t borderWidth);
 
         /// Sets the width of the top border, in DPI-aware points.
         ///
         /// @param pElement    [in] The element whose border is being set.
         /// @param borderWidth [in] The border width.
-        void SetElementBorderTopWidth(GUIElement* pElement, uint32_t width);
+        void SetElementBorderTopWidth(GUIElement* pElement, uint32_t borderWidth);
 
         /// Sets the width of the right border, in DPI-aware points.
         ///
         /// @param pElement    [in] The element whose border is being set.
         /// @param borderWidth [in] The border width.
-        void SetElementBorderRightWidth(GUIElement* pElement, uint32_t width);
+        void SetElementBorderRightWidth(GUIElement* pElement, uint32_t borderWidth);
 
         /// Sets the width of the bottom border, in DPI-aware points.
         ///
         /// @param pElement    [in] The element whose border is being set.
         /// @param borderWidth [in] The border width.
-        void SetElementBorderBottomWidth(GUIElement* pElement, uint32_t width);
+        void SetElementBorderBottomWidth(GUIElement* pElement, uint32_t borderWidth);
 
         /// Sets the width of the border of the given element, in DPI-aware points.
         ///
         /// @param pElement    [in] The element whose border width is being set.
         /// @param borderWidth [in] The border width.
-        void SetElementBorderWidth(GUIElement* pElement, uint32_t width);
+        void SetElementBorderWidth(GUIElement* pElement, uint32_t borderWidth);
 
 
         /// Sets the colour of the left border of the given element.
@@ -985,64 +985,64 @@ namespace GT
 
         /// Sets the width and color of the left border.
         ///
-        /// @param pElement [in] The element whose border is being set.
-        /// @param width    [in] The width of the border, in DPI-aware points.
-        /// @param color    [in] The colour of the border.
+        /// @param pElement    [in] The element whose border is being set.
+        /// @param width       [in] The width of the border, in DPI-aware points.
+        /// @param borderColor [in] The colour of the border.
         void SetElementBorderLeft(GUIElement* pElement, uint32_t width, const GTLib::Colour &borderColor);
 
         /// Sets the width and color of the top border.
         ///
-        /// @param pElement [in] The element whose border is being set.
-        /// @param width    [in] The width of the border, in DPI-aware points.
-        /// @param color    [in] The colour of the border.
+        /// @param pElement    [in] The element whose border is being set.
+        /// @param width       [in] The width of the border, in DPI-aware points.
+        /// @param borderColor [in] The colour of the border.
         void SetElementBorderTop(GUIElement* pElement, uint32_t width, const GTLib::Colour &borderColor);
 
         /// Sets the width and color of the right border.
         ///
-        /// @param pElement [in] The element whose border is being set.
-        /// @param width    [in] The width of the border, in DPI-aware points.
-        /// @param color    [in] The colour of the border.
+        /// @param pElement    [in] The element whose border is being set.
+        /// @param width       [in] The width of the border, in DPI-aware points.
+        /// @param borderColor [in] The colour of the border.
         void SetElementBorderRight(GUIElement* pElement, uint32_t width, const GTLib::Colour &borderColor);
 
         /// Sets the width and color of the bottom border.
         ///
-        /// @param pElement [in] The element whose border is being set.
-        /// @param width    [in] The width of the border, in DPI-aware points.
-        /// @param color    [in] The colour of the border.
+        /// @param pElement    [in] The element whose border is being set.
+        /// @param width       [in] The width of the border, in DPI-aware points.
+        /// @param borderColor [in] The colour of the border.
         void SetElementBorderBottom(GUIElement* pElement, uint32_t width, const GTLib::Colour &borderColor);
 
         /// Sets the border of the given element.
         ///
-        /// @param pElement [in] The element whose border is being set.
-        /// @param width    [in] The width of the border, in DPI-aware points.
-        /// @param color    [in] The colour of the border.
-        void SetElementBorder(GUIElement* pElement, uint32_t width, const GTLib::Colour &colour);
+        /// @param pElement    [in] The element whose border is being set.
+        /// @param borderWidth [in] The width of the border, in DPI-aware points.
+        /// @param borderColor [in] The colour of the border.
+        void SetElementBorder(GUIElement* pElement, uint32_t borderWidth, const GTLib::Colour &borderColor);
 
 
         /// Sets the region of the left border that is not drawn.
         ///
-        /// @param hElement   [in] The element whose border mask is being set.
+        /// @param pElement   [in] The element whose border mask is being set.
         /// @param maskOffset [in] The starting point of the mask, from the top.
         /// @param maskLength [in] The length of the mask.
         void SetElementBorderLeftMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// Sets the region of the top border that is not drawn.
         ///
-        /// @param hElement   [in] The element whose border mask is being set.
+        /// @param pElement   [in] The element whose border mask is being set.
         /// @param maskOffset [in] The starting point of the mask, from the left.
         /// @param maskLength [in] The length of the mask.
         void SetElementBorderTopMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// Sets the region of the right border that is not drawn.
         ///
-        /// @param hElement   [in] The element whose border mask is being set.
+        /// @param pElement   [in] The element whose border mask is being set.
         /// @param maskOffset [in] The starting point of the mask, from the top.
         /// @param maskLength [in] The length of the mask.
         void SetElementBorderRightMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
 
         /// Sets the region of the bottom border that is not drawn.
         ///
-        /// @param hElement   [in] The element whose border mask is being set.
+        /// @param pElement   [in] The element whose border mask is being set.
         /// @param maskOffset [in] The starting point of the mask, from the left.
         /// @param maskLength [in] The length of the mask.
         void SetElementBorderBottomMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
@@ -1053,7 +1053,7 @@ namespace GT
         /// @param pElement [in] The element whose padding is being set.
         /// @param padding  [in] The left padding.
         void SetElementPaddingLeft(GUIElement* pElement, uint32_t padding);
-        
+
         /// Sets the top padding of the given element, in DPI-aware points.
         ///
         /// @param pElement [in] The element whose padding is being set.
@@ -1071,7 +1071,7 @@ namespace GT
         /// @param pElement [in] The element whose padding is being set.
         /// @param padding  [in] The bottom padding.
         void SetElementPaddingBottom(GUIElement* pElement, uint32_t padding);
-        
+
         /// Sets the padding of all sides of the given element, in DPI-aware points.
         ///
         /// @param pElement [in] The element whose padding is being set.
@@ -1133,7 +1133,7 @@ namespace GT
         /// @param pElement [in] The element whose margin is being set.
         /// @param margin   [in] The margin that will be applied to all sides.
         ///
-        /// @param 
+        /// @remarks
         ///     This will set th emargin to all sides.
         void SetElementMargin(GUIElement* pElement, uint32_t margin);
 
@@ -1308,7 +1308,7 @@ namespace GT
         /// Sets the given element's inner offset on the y axis.
         ///
         /// @param pElement     [in] The element whose inner offset is being set.
-        /// @param innerOffsetX [in] The inner offset on the x offset.
+        /// @param innerOffsetY [in] The inner offset on the x offset.
         void SetElementInnerOffsetY(GUIElement* pElement, float innerOffsetY);
 
         /// Sets the given element's inner offset on both the x and y axis.
@@ -1552,7 +1552,7 @@ namespace GT
 
         /// @copydoc GUIEventHandler::OnMouseWheel()
         void OnMouseWheel(GUISurface* pSurface, int delta, int mousePosX, int mousePosY);
-            
+
 
 
 
@@ -1650,7 +1650,7 @@ namespace GT
 
         /// Converts a point from relative to absolute coordinates based on the given element.
         ///
-        /// @param hElement [in] A handle to the element the given point is relative to.
+        /// @param pElement [in] A handle to the element the given point is relative to.
         /// @param xIn      [in] The relative position on the x axis.
         /// @param yIn      [in] The relative position on the y axis.
         /// @param xOut     [out] A reference to the variable that will receive the absolute position on the x axis.
@@ -1687,7 +1687,7 @@ namespace GT
 
         /// Recursively sets the surface for the given element and it's children.
         ///
-        /// @param element  [in] A reference to the element whose surface is being set.
+        /// @param pElement [in] A reference to the element whose surface is being set.
         /// @param pSurface [in] A handle to the surface.
         void SetElementSurfaceRecursive(GUIElement* pElement, GUISurface* pSurface);
 
@@ -1702,13 +1702,13 @@ namespace GT
 
         /// Determines whether or not the given element is currently configured to be clipped against it's parent.
         ///
-        /// @param element [in] A reference to the element whose clipping state is being retrieved.
+        /// @param pElement [in] A reference to the element whose clipping state is being retrieved.
         bool IsElementClippedAgainstParent(GUIElement* pElement) const;
 
 
         /// Performs a clipped traversals of the children of the given element.
         ///
-        /// @param element      [in] A reference the root element.
+        /// @param pElement     [in] A reference the root element.
         /// @param clippingRect [in] The rectangle to clip against.
         /// @param func         [in] The function to call for the input element and each of it's children.
         ///
@@ -1721,7 +1721,7 @@ namespace GT
 
         /// Updates the given element's font based on it's current style.
         ///
-        /// @param element [in] A reference to the element whose having it's font updated.
+        /// @param pElement [in] A reference to the element whose having it's font updated.
         ///
         /// @return A pointer to the element's new font.
         HGUIFont UpdateElementFontFromStyle(GUIElement* pElement);
@@ -1762,7 +1762,7 @@ namespace GT
 
         /// Updates every element as required as a result of a change in DPI.
         ///
-        /// @param surface [in] A reference to the surface whose DPI has changed.
+        /// @param pSurface [in] A reference to the surface whose DPI has changed.
         ///
         /// @remarks
         ///     This will update the layout and font of every element.
@@ -1777,7 +1777,7 @@ namespace GT
 
         /// Updates the size of each border of the given element based on their style and current DPI scaling.
         ///
-        /// @param element [in] A reference to the element whose border sizes are being updated.
+        /// @param pElement [in] A reference to the element whose border sizes are being updated.
         ///
         /// @remarks
         ///     This does not invalidate the layout.
@@ -1785,7 +1785,7 @@ namespace GT
 
         /// Updates the size of the margins of the given element based on their style and current DPI scaling.
         ///
-        /// @param element [in] A reference to the element whose margin sizes are being updated.
+        /// @param pElement [in] A reference to the element whose margin sizes are being updated.
         ///
         /// @remarks
         ///     This does not invalidate the layout.
@@ -1793,7 +1793,7 @@ namespace GT
 
         /// Updates the size of the padding of the given element based on their style and current DPI scaling.
         ///
-        /// @param element [in] A reference to the element whose padding sizes are being updated.
+        /// @param pElement [in] A reference to the element whose padding sizes are being updated.
         ///
         /// @remarks
         ///     This does not invalidate the layout.
@@ -1805,8 +1805,8 @@ namespace GT
 
         /// Marks the given rectangle as invalid which will cause a repaint.
         ///
-        /// @param surface [in] The surface whose rectangle region is being invalidated.
-        /// @param rect    [in] The rectangle to invalidate.
+        /// @param pSurface [in] The surface whose rectangle region is being invalidated.
+        /// @param rect     [in] The rectangle to invalidate.
         ///
         /// @remarks
         ///     Invalidating a rectangle does not redraw it. It will instead be redrawn when the host application requests it with Paint().
@@ -1814,7 +1814,7 @@ namespace GT
 
         /// Invalidates the rectangle of the given element.
         ///
-        /// @param element [in] A reference to the element whose rectangle is being invalidated.
+        /// @param pElement [in] A reference to the element whose rectangle is being invalidated.
         void Painting_InvalidateElementRect(GUIElement* pElement);
 
         /// Invalidates the text rectangle of the given element.
@@ -1832,8 +1832,8 @@ namespace GT
 
         /// Paints the given element and it's descendents if they fall into the given rectangle.
         ///
-        /// @param surface      [in] The surface being drawn to.
-        /// @param element      [in] A reference to the element to draw.
+        /// @param pSurface     [in] The surface being drawn to.
+        /// @param pElement     [in] A reference to the element to draw.
         /// @param clippingRect [in] The rectangle to clip against.
         ///
         /// @remarks
@@ -1842,9 +1842,9 @@ namespace GT
 
         /// Optimized function for setting the clipping and drawing the rectangle at the same time.
         ///
-        /// @param surface [in] The surface to draw on.
-        /// @param rect    [in] The clipping rectangle, and the rectangle to draw.
-        /// @param color   [in] The color to draw the clipping rectangle.
+        /// @param pSurface [in] The surface to draw on.
+        /// @param rect     [in] The clipping rectangle, and the rectangle to draw.
+        /// @param color    [in] The color to draw the clipping rectangle.
         ///
         /// @remarks
         ///     This function simply combines SetClippingRect and DrawRectangle into a single optimized call.
@@ -1888,7 +1888,7 @@ namespace GT
         /// Helper method for setting the max width of the given element.
         ///
         /// @param pElement  [in] A handle to the element whose min size is being set.
-        /// @param minWidth  [in] The ax width of the element as a 32-bit unsigned int, the value of which is determined by widthType.
+        /// @param maxWidth  [in] The ax width of the element as a 32-bit unsigned int, the value of which is determined by widthType.
         /// @param widthType [in] The type of number the width is (actual, percentage, etc.)
         void Layout_SetElementMaxWidth(GUIElement* pElement, uint32_t maxWidth, uint32_t widthType);
 
@@ -1904,16 +1904,16 @@ namespace GT
 
         /// Helper method for setting the min height of the given element.
         ///
-        /// @param pElement  [in] A handle to the element whose min size is being set.
-        /// @param minWidth  [in] The min height of the element as a 32-bit unsigned int, the value of which is determined by widthType.
-        /// @param widthType [in] The type of number the height is (actual, percentage, etc.)
+        /// @param pElement   [in] A handle to the element whose min size is being set.
+        /// @param minHeight  [in] The min height of the element as a 32-bit unsigned int, the value of which is determined by widthType.
+        /// @param heightType [in] The type of number the height is (actual, percentage, etc.)
         void Layout_SetElementMinHeight(GUIElement* pElement, uint32_t minHeight, uint32_t heightType);
 
         /// Helper method for setting the max height of the given element.
         ///
-        /// @param pElement  [in] A handle to the element whose min size is being set.
-        /// @param minWidth  [in] The ax height of the element as a 32-bit unsigned int, the value of which is determined by widthType.
-        /// @param widthType [in] The type of number the height is (actual, percentage, etc.)
+        /// @param pElement   [in] A handle to the element whose min size is being set.
+        /// @param maxHeight  [in] The ax height of the element as a 32-bit unsigned int, the value of which is determined by widthType.
+        /// @param heightType [in] The type of number the height is (actual, percentage, etc.)
         void Layout_SetElementMaxHeight(GUIElement* pElement, uint32_t maxHeight, uint32_t heightType);
 
 
@@ -1931,34 +1931,34 @@ namespace GT
 
         /// Invalidates the applicable layouts of the applicable elements based on when the inner width of the given element changes.
         ///
-        /// @param element [in] A reference to the element whose inner width has changed.
+        /// @param pElement [in] A reference to the element whose inner width has changed.
         void Layout_InvalidateElementLayoutsOnInnerWidthChange(GUIElement* pElement);
 
         /// Invalidates the applicable layouts of the applicable elements based on when the inner height of the given element changes.
         ///
-        /// @param element [in] A reference to the element whose inner height has changed.
+        /// @param pElement [in] A reference to the element whose inner height has changed.
         void Layout_InvalidateElementLayoutsOnInnerHeightChange(GUIElement* pElement);
 
         /// Invalidates the applicable layouts of the applicable elements based on when the inner size (width and height) of the given element changes.
         ///
-        /// @param element [in] A reference to the element whose inner size has changed.
+        /// @param pElement [in] A reference to the element whose inner size has changed.
         void Layout_InvalidateElementLayoutsOnInnerSizeChange(GUIElement* pElement);
 
 
         /// Invalidates the applicable layouts of the applicable elements based on when the child axis of the given element changes.
         ///
-        /// @param element [in] A reference to the element whose child axis has changed.
+        /// @param pElement [in] A reference to the element whose child axis has changed.
         void Layout_InvalidateElementLayoutsOnChildAxisChange(GUIElement* pElement);
 
 
         /// Invalidates the applicable layouts of the applicable elements based on when the horizontal align of the given element changes.
         ///
-        /// @param element [in] A reference to the element whose horizontal alignment has changed.
+        /// @param pElement [in] A reference to the element whose horizontal alignment has changed.
         void Layout_InvalidateElementLayoutsOnHorizontalAlignChange(GUIElement* pElement);
 
         /// Invalidates the applicable layouts of the applicable elements based on when the vertical align of the given element changes.
         ///
-        /// @param element [in] A reference to the element whose vertical alignment has changed.
+        /// @param pElement [in] A reference to the element whose vertical alignment has changed.
         void Layout_InvalidateElementLayoutsOnVerticalAlignChange(GUIElement* pElement);
 
 
@@ -1998,22 +1998,22 @@ namespace GT
 
         /// Validates the layout of the given element.
         ///
-        /// @param element [in] The element whose layout is being validated.
+        /// @param pElement [in] The element whose layout is being validated.
         void Layout_ValidateElementLayout(GUIElement* pElement);
 
         /// Validates the width of the given element.
         ///
-        /// @param element [in] The element whose width is being validated.
+        /// @param pElement [in] The element whose width is being validated.
         void Layout_ValidateElementWidth(GUIElement* pElement);
 
         /// Validates the height of the given element.
         ///
-        /// @param element [in] The element whose hieght is being validated.
+        /// @param pElement [in] The element whose hieght is being validated.
         void Layout_ValidateElementHeight(GUIElement* pElement);
 
         /// Validates the position of the given element.
         ///
-        /// @param element               [in] The element whose position is being validated.
+        /// @param pElement [in] The element whose position is being validated.
         ///
         /// @remarks
         ///     The will validate both the X and Y position.
@@ -2021,7 +2021,7 @@ namespace GT
 
         /// Validates the position of the given element based on absolute positioning.
         ///
-        /// @param element               [in] The element whose position is being validated.
+        /// @param pElement [in] The element whose position is being validated.
         ///
         /// @remarks
         ///     This should only be called when the positioning of the given element is absolute.
@@ -2029,7 +2029,7 @@ namespace GT
 
         /// Validates the position of the given element based on relative positioning.
         ///
-        /// @param element [in] The element whose position is being validated.
+        /// @param pElement [in] The element whose position is being validated.
         ///
         /// @remarks
         ///     This should only be called when the positioning of the given element is relative.
@@ -2037,7 +2037,7 @@ namespace GT
 
         /// Validates the position of the given element based on automatic positioning.
         ///
-        /// @param element [in] The element whose position is being validated.
+        /// @param pElement [in] The element whose position is being validated.
         ///
         /// @remarks
         ///     This should only be called when the positioning of the given element is automatic.
@@ -2045,45 +2045,45 @@ namespace GT
 
         /// Validates the text layout of the given element.
         ///
-        /// @param element [in] The element whose text layout is being validated.
+        /// @param pElement [in] The element whose text layout is being validated.
         void Layout_ValidateElementText(GUIElement* pElement);
 
 
         /// Marks the width of the givn element as valid.
         ///
-        /// @param element [in] A reference to the element whose width is being marked as valid.
+        /// @param pElement [in] A reference to the element whose width is being marked as valid.
         void Layout_MarkElementWidthAsValid(GUIElement* pElement);
 
         /// Marks the height of the givn element as valid.
         ///
-        /// @param element [in] A reference to the element whose height is being marked as valid.
+        /// @param pElement [in] A reference to the element whose height is being marked as valid.
         void Layout_MarkElementHeightAsValid(GUIElement* pElement);
 
         /// Marks the position of the given element as valid.
         ///
-        /// @param element [in] A reference to the element whose position is being marked as valid.
+        /// @param pElement [in] A reference to the element whose position is being marked as valid.
         void Layout_MarkElementPositionAsValid(GUIElement* pElement);
 
         /// Marks the layout of the text of the given element as valid.
         ///
-        /// @param element [in] A reference to the element whose text layout is being marked as valid.
+        /// @param pElement [in] A reference to the element whose text layout is being marked as valid.
         void Layout_MarkElementTextAsValid(GUIElement* pElement);
 
 
         /// Updates the width of the given element, returning it's new outer width (width + horizontal margins).
         ///
-        /// @param element [in] The element whose width is being updated.
+        /// @param pElement [in] The element whose width is being updated.
         float Layout_UpdateElementWidth(GUIElement* pElement);
 
         /// Updastes the height of the given element, returning it's new outer height (width + vertical margins).
         ///
-        /// @param element [in] The element whose height is being updated.
+        /// @param pElement [in] The element whose height is being updated.
         float Layout_UpdateElementHeight(GUIElement* pElement);
 
 
         /// Calculates the width of the given element based on the given width style attribute.
         ///
-        /// @param element         [in] The element whose new width is being calculated.
+        /// @param pElement        [in] The element whose new width is being calculated.
         /// @param width           [in] The width style value.
         /// @param widthType       [in] The width style value type (%, absolute, etc).
         /// @param calculateFlexed [in] Whether or not flexing should be calculated.
@@ -2094,7 +2094,7 @@ namespace GT
 
         /// Calculates the height of the given element based on the given height style attribute.
         ///
-        /// @param element         [in] The element whose height is being calculated.
+        /// @param pElement        [in] The element whose height is being calculated.
         /// @param height          [in] The height style value.
         /// @param heightType      [in] The height style value type (%, absolute, etc).
         /// @param calculateFlexed [in] Whether or not flexing should be calculated.
@@ -2106,7 +2106,7 @@ namespace GT
 
         /// Calculates the width of the children of the given element for when the parent is auto-sized based on the width of it's children.
         ///
-        /// @param element [in] The element whose children width is being calculated.
+        /// @param pElement [in] The element whose children width is being calculated.
         ///
         /// @return The width of the children of the given element for when it is auto-sized based on the width of the it's children.
         ///
@@ -2117,7 +2117,7 @@ namespace GT
 
         /// Calculates the height of the children of the given element for when the parent is auto-sized based on the height of it's children.
         ///
-        /// @param element [in] The element whose children height is being calculated.
+        /// @param pElement [in] The element whose children height is being calculated.
         ///
         /// @return The height of the children of the given element for when it is auto-sized based on the height of the it's children.
         ///
@@ -2128,7 +2128,7 @@ namespace GT
 
         /// Retrieves the total width of the children of the given element that would contribute to it's width when auto-sized.
         ///
-        /// @param element [in] A reference to the element whose childrens' size is being retrieved.
+        /// @param pElement [in] A reference to the element whose childrens' size is being retrieved.
         ///
         /// @remarks
         ///     This will not include invisible children, not those that would not contribute to the size of the element if it were sized based on the children.
@@ -2136,7 +2136,7 @@ namespace GT
 
         /// Retrieves the total height of the children of the given element that would contribute to it's width when auto-sized.
         ///
-        /// @param element [in] A reference to the element whose childrens' size is being retrieved.
+        /// @param pElement [in] A reference to the element whose childrens' size is being retrieved.
         ///
         /// @remarks
         ///     This will not include invisible children, not those that would not contribute to the size of the element if it were sized based on the children.
@@ -2145,7 +2145,7 @@ namespace GT
 
         /// Retrieves the total width of the given element and it's visible, auto-positioned siblings.
         ///
-        /// @param element [in] A reference to the element whose siblings size is being retrieved.
+        /// @param pElement [in] A reference to the element whose siblings size is being retrieved.
         ///
         /// @remarks
         ///     This will not include invisible siblings, nor those that are not auto-positioned.
@@ -2153,7 +2153,7 @@ namespace GT
 
         /// Retrieves the total height of the given element and it's visible, auto-positioned siblings.
         ///
-        /// @param element [in] A reference to the element whose siblings size is being retrieved.
+        /// @param pElement [in] A reference to the element whose siblings size is being retrieved.
         ///
         /// @remarks
         ///     This will not include invisible siblings, nor those that are not auto-positioned.
@@ -2162,7 +2162,7 @@ namespace GT
 
         /// Finds the closest neighboring auto-positioned sibling of the given element.
         ///
-        /// @param element [in] The element whose neighboring sibling is being retrieved.
+        /// @param pElement [in] The element whose neighboring sibling is being retrieved.
         ///
         /// @remarks
         ///     This is used when needing to update the position of auto-positioned sibling elements because they all depend on each other.
@@ -2170,7 +2170,7 @@ namespace GT
 
         /// Finds the first auto-positioned child of the given element.
         ///
-        /// @param element [in] The element whose first auto-positioned child is being retrieved.
+        /// @param pElement [in] The element whose first auto-positioned child is being retrieved.
         ///
         /// @remarks
         ///     This is used when needing to update the position of auto-positioned children.
@@ -2180,7 +2180,7 @@ namespace GT
 
         /// Marks the position of the given element as changed.
         ///
-        /// @param element [in] A reference to the element whose position is being marked as changed.
+        /// @param pElement [in] A reference to the element whose position is being marked as changed.
         ///
         /// @remarks
         ///     At the end of validation, all elements whose position has changed will have move events posted.
@@ -2188,7 +2188,7 @@ namespace GT
 
         /// Marks the size of the given element as changed.
         ///
-        /// @param element [in] A reference to the element whose size is being marked as changed.
+        /// @param pElement [in] A reference to the element whose size is being marked as changed.
         ///
         /// @remarks
         ///     At the end of layout validation, all elements whose size is marked as changed will have size events posted.
@@ -2197,7 +2197,7 @@ namespace GT
 
         /// Recursively determines whether or not the absolute position of the given element has changed.
         ///
-        /// @param element [in] A reference to the element whose absolute position change state is being checked.
+        /// @param pElement [in] A reference to the element whose absolute position change state is being checked.
         bool Layout_HasElementAbsolutePositionChanged(GUIElement* pElement);
 
 
@@ -2209,7 +2209,7 @@ namespace GT
 
         /// Updates the absolute position of the given element, and then recursively does the same thing for it's children.
         ///
-        /// @param element [in] The element whose position is being updated.
+        /// @param pElement [in] The element whose position is being updated.
         void Layout_UpdateElementAbsolutePosition(GUIElement* pElement);
 
 
@@ -2223,40 +2223,40 @@ namespace GT
 
         ////////////////////////////
         // Static Helpers
-        
+
         /// Retrieves the horizontal padding (left padding + right padding) of the given element.
         ///
-        /// @param element [in] A reference to the element whose horizontal padding is being retrieved.
+        /// @param pElement [in] A reference to the element whose horizontal padding is being retrieved.
         static float Layout_GetElementHorizontalPadding(GUIElement* pElement);
 
         /// Retrieves the vertical padding (top padding + bottom padding) of the given element.
         ///
-        /// @param element [in] A reference to the element whose vertical padding is being retrieved.
+        /// @param pElement [in] A reference to the element whose vertical padding is being retrieved.
         static float Layout_GetElementVerticalPadding(GUIElement* pElement);
 
         /// Retrieves the horizontal margin (left margin + right margin) of the given element.
         ///
-        /// @param element [in] A reference to the element whose horizontal margin is being retrieved.
+        /// @param pElement [in] A reference to the element whose horizontal margin is being retrieved.
         static float Layout_GetElementHorizontalMargin(GUIElement* pElement);
 
         /// Retrieves the vertical margin (top margin + bottom margin) of the given element.
         ///
-        /// @param element [in] A reference to the element whose vertical margin is being retrieved.
+        /// @param pElement [in] A reference to the element whose vertical margin is being retrieved.
         static float Layout_GetElementVerticalMargin(GUIElement* pElement);
 
         /// Retrieves the size of the horizontal borders (left and right borders) of the given element.
         ///
-        /// @param element [in] A reference to the element whose horizontal border size is being retrieved.
+        /// @param pElement [in] A reference to the element whose horizontal border size is being retrieved.
         static float Layout_GetElementHorizontalBorderSize(GUIElement* pElement);
 
         /// Retrieves the size of the vertical borders (top and bottom borders) of the given element.
         ///
-        /// @param element [in] A reference to the element whose vertical border size is being retrieved.
+        /// @param pElement [in] A reference to the element whose vertical border size is being retrieved.
         static float Layout_GetElementVerticalBorderSize(GUIElement* pElement);
 
         /// Retrieves the width + left margin + right margin of the given element.
         ///
-        /// @param element [in] A reference to the element whose outer width is being retrieved.
+        /// @param pElement [in] A reference to the element whose outer width is being retrieved.
         ///
         /// @remarks
         ///     The outer width is the width of the element plus the left and right margins.
@@ -2264,7 +2264,7 @@ namespace GT
 
         /// Retrieves the height + top margin + bottom margin of the given element.
         ///
-        /// @param element [in] A reference to the element whose outer height is being retrieved.
+        /// @param pElement [in] A reference to the element whose outer height is being retrieved.
         ///
         /// @remarks
         ///     The outer height is the height of the element plus the top and bottom margins.
@@ -2272,7 +2272,7 @@ namespace GT
 
         /// Retrieves the width minus the left and right padding and borders of the given element.
         ///
-        /// @param element [in] A reference to the element whose inner width is being retrieved.
+        /// @param pElement [in] A reference to the element whose inner width is being retrieved.
         ///
         /// @remarks
         ///     The inner width is the width of the element minus the left and right padding and borders.
@@ -2280,7 +2280,7 @@ namespace GT
 
         /// Retrieves the height minus the top and bottom padding and borders of the given element.
         ///
-        /// @param element [in] A reference to the element whose inner height is being retrieved.
+        /// @param pElement [in] A reference to the element whose inner height is being retrieved.
         ///
         /// @remarks
         ///     The inner height is the height of the element minus the top and bottom padding and borders.
@@ -2288,7 +2288,7 @@ namespace GT
 
         /// Retrieves the width minus the left and right borders of the given element.
         ///
-        /// @param element [in] A reference to the element whose inner border width is being retrieved.
+        /// @param pElement [in] A reference to the element whose inner border width is being retrieved.
         ///
         /// @remarks
         ///     The inner-border width is the width of the element minus the left and right borders, but including the padding.
@@ -2296,7 +2296,7 @@ namespace GT
 
         /// Retrieves the height minus the top and bottom borders of the given element.
         ///
-        /// @param element [in] A reference to the element whose inner-border height is being retrieved.
+        /// @param pElement [in] A reference to the element whose inner-border height is being retrieved.
         ///
         /// @remarks
         ///     The inner-border height is the height of the element minus the top and bottom borders, but including the padding.
@@ -2304,35 +2304,35 @@ namespace GT
 
         /// Retrieves the width of the given element that should be used when calculating the relative width of a child.
         ///
-        /// @param element [in] A reference to the element whose width is being calculated.
+        /// @param pElement [in] A reference to the element whose width is being calculated.
         static float Layout_GetElementWidthForRelativeSizing(GUIElement* pElement);
 
         /// Retrieves the height of the given element that should be used when calculating the relative height of a child.
         ///
-        /// @param element [in] A reference to the element whose height is being calculated.
+        /// @param pElement [in] A reference to the element whose height is being calculated.
         static float Layout_GetElementHeightForRelativeSizing(GUIElement* pElement);
 
         /// Determines whether or not the width of the given element is invalid.
         ///
-        /// @param element [in] A reference to the element whose width validation state is being determined.
+        /// @param pElement [in] A reference to the element whose width validation state is being determined.
         ///
         /// @return True if the width of the given element is invalid; false otherwise.
         static bool Layout_IsElementWidthInvalid(GUIElement* pElement);
 
         /// Determines whether or not the height of the given element is invalid.
         ///
-        /// @param element [in] A reference to the element whose height validation state is being determined.
+        /// @param pElement [in] A reference to the element whose height validation state is being determined.
         ///
         /// @return True if the height of the given element is invalid; false otherwise.
         static bool Layout_IsElementHeightInvalid(GUIElement* pElement);
 
         /// Determines whether or not the position of the given element is invalid.
         ///
-        /// @param element [in] A reference to the element whose position validation state is being determined.
+        /// @param pElement [in] A reference to the element whose position validation state is being determined.
         ///
         /// @return True if the position of the given element is invalid; false otherwise.
         static bool Layout_IsElementPositionInvalid(GUIElement* pElement);
-        
+
 
 
     private:

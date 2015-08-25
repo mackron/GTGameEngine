@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_CommandLine_hpp_
-#define __GTLib_CommandLine_hpp_
+#ifndef GT_CommandLine
+#define GT_CommandLine
 
 #include "Config.hpp"
 #include "Vector.hpp"
@@ -51,7 +51,7 @@ namespace GTLib
         /// Parses a main()-style command line.
         ///
         /// @param argc [in] The argument count.
-        /// @param arbv [in] The argument array.
+        /// @param argv [in] The argument array.
         ///
         /// @remarks
         ///     This will clear any existing command line data.

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUI_EventHandler_hpp_
-#define __GT_GUI_EventHandler_hpp_
+#ifndef GT_GUI_EventHandler
+#define GT_GUI_EventHandler
 
 #include <cstdint>
 #include "GUIDataTypes.hpp"
@@ -122,9 +122,9 @@ namespace GT
 
         /// Called when the given surface needs to be redrawn.
         ///
-        /// @param context [in] The GUI context.
-        /// @param surface [in] The surface to redraw.
-        /// @param rect    [in] The rectangle region needing to be redrawn.
+        /// @param context  [in] The GUI context.
+        /// @param hSurface [in] The surface to redraw.
+        /// @param rect     [in] The rectangle region needing to be redrawn.
         virtual void OnSurfaceNeedsRepaint(GUIContext &context, HGUISurface hSurface, const GTLib::Rect<int> &rect);
     };
 

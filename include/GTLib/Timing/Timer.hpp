@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Timing_Timer_hpp_
-#define __GTLib_Timing_Timer_hpp_
+#ifndef GT_Timing_Timer
+#define GT_Timing_Timer
 
 #include "TimingCommon.hpp"
 
@@ -15,12 +15,12 @@ namespace GTLib
     class Timer
     {
     public:
-    
+
         /**
         *   \brief  Constructor.
         */
         Timer();
-        
+
         /**
         *   \brief  Updates the timer.
         *
@@ -28,7 +28,7 @@ namespace GTLib
         *       The time in seconds since the previous update.
         */
         double Update();
-        
+
         /**
         *   \brief  Retrieves the absolute time the last time Timer::Update() was called.
         *   \return	The absolute time the last time Timer::Update() was called, in seconds.
@@ -53,16 +53,16 @@ namespace GTLib
         *   \return               True if \c timeSecs has passed since the last call to Timer::update(); false otherwise.
         */
         bool HasTimePassed(double timeSecs) const;
-    
-    
+
+
     private:
-    
+
         /// The last time Update() was called.
         double lastTime;
 
         /// The time between the last two calls to Update().
         double timeInterval;
-        
+
     };
 }
 

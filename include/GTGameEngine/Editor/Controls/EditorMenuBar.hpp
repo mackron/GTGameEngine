@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorMenuBarControl_hpp_
-#define __GT_EditorMenuBarControl_hpp_
+#ifndef GT_EditorMenuBarControl
+#define GT_EditorMenuBarControl
 
 #include "EditorControl.hpp"
 #include "../EditorEventHandler.hpp"

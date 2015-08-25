@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Find_hpp_
-#define __GTLib_Strings_Find_hpp_
+#ifndef GTLib_Strings_Find
+#define GTLib_Strings_Find
 
 #include "NextChar.hpp"
 #include "Equal.hpp"
@@ -161,7 +161,7 @@ namespace GTLib
 
             return nullptr;
         }
-            
+
         /**
         *   \brief                  Finds the last occurance of an individual character that is \b not in the given character string.
         *   \param  str        [in] The string to search.
@@ -229,7 +229,7 @@ namespace GTLib
         template <typename T>
         T* FindFirst(T* str, ptrdiff_t strSizeInBytes, const T* query, ptrdiff_t querySizeInBytes)
         {
-            return (T*)FindFirst((const T*)str, strSizeInBytes, query, querySizeInBytes);
+            return reinterpret_cast<T*>(FindFirst(const_cast<const T*>(str), strSizeInBytes, query, querySizeInBytes));
         }
         template <typename T>
         const T* FindFirst(const T* str, const T* query)
@@ -241,11 +241,11 @@ namespace GTLib
         {
             return FindFirst(str, -1, query, -1);
         }
-        
+
         template <typename T>
         T* FindFirst(T* str, ptrdiff_t strSizeInBytes, char32_t character)
         {
-            return (T*)FindFirst((const T*)str, strSizeInBytes, character);
+            return reinterpret_cast<T*>(FindFirst(const_cast<const T*>(str), strSizeInBytes, character));
         }
         template <typename T>
         const T* FindFirst(const T* str, char32_t character)
@@ -265,11 +265,11 @@ namespace GTLib
         {
             return std::strchr(str, character);
         }
-        
+
         template <typename T>
         T* FindLast(T* str, ptrdiff_t strSizeInBytes, char32_t character)
         {
-            return (T*)FindLast((const T*)str, strSizeInBytes, character);
+            return reinterpret_cast<T*>(FindLast(const_cast<const T*>(str), strSizeInBytes, character));
         }
         template <typename T>
         const T* FindLast(const T* str, char32_t character)
@@ -289,11 +289,11 @@ namespace GTLib
         {
             return std::strrchr(str, character);
         }
-        
+
         template <typename T>
         T* FindFirstOf(T* str, ptrdiff_t strSizeInBytes, const T* characters, ptrdiff_t charactersSizeInBytes = -1)
         {
-            return (T*)FindFirstOf(str, strSizeInBytes, characters, charactersSizeInBytes);
+            return reinterpret_cast<T*>(FindFirstOf(const_cast<const T*>(str), strSizeInBytes, characters, charactersSizeInBytes));
         }
         template <typename T>
         const T* FindFirstOf(const T* str, const T* characters)
@@ -305,11 +305,11 @@ namespace GTLib
         {
             return FindFirstOf(str, -1, characters, -1);
         }
-        
+
         template <typename T>
         T* FindLastOf(T* str, ptrdiff_t strSizeInBytes, const T* characters, ptrdiff_t charactersSizeInBytes = -1)
         {
-            return (T*)FindLastOf((const T*)str, strSizeInBytes, characters, charactersSizeInBytes);
+            return reinterpret_cast<T*>(FindLastOf(const_cast<const T*>(str), strSizeInBytes, characters, charactersSizeInBytes));
         }
         template <typename T>
         const T* FindLastOf(const T* str, const T* characters)
@@ -321,11 +321,11 @@ namespace GTLib
         {
             return FindLastOf(str, -1, characters, -1);
         }
-        
+
         template <typename T>
         T* FindFirstNotOf(T* str, ptrdiff_t strSizeInBytes, const T* characters, ptrdiff_t charactersSizeInBytes = -1)
         {
-            return (T*)FindFirstNotOf((const T*)str, strSizeInBytes, characters, charactersSizeInBytes);
+            return reinterpret_cast<T*>(FindFirstNotOf(const_cast<const T*>(str), strSizeInBytes, characters, charactersSizeInBytes));
         }
         template <typename T>
         const T* FindFirstNotOf(const T* str, const T* characters)
@@ -337,11 +337,11 @@ namespace GTLib
         {
             return FindFirstNotOf(str, -1, characters, -1);
         }
-        
+
         template <typename T>
         T* FindLastNotOf(T* str, ptrdiff_t strSizeInBytes, const T* characters, ptrdiff_t charactersSizeInBytes = -1)
         {
-            return (T*)FindLastNotOf((const T*)str, strSizeInBytes, characters, charactersSizeInBytes);
+            return reinterpret_cast<T*>(FindLastNotOf(const_cast<const T*>(str), strSizeInBytes, characters, charactersSizeInBytes));
         }
         template <typename T>
         const T* FindLastNotOf(const T* str, const T* characters)

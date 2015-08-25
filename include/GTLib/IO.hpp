@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_IO_hpp_
-#define __GTLib_IO_hpp_
+#ifndef GTLib_IO
+#define GTLib_IO
 
 #include "IO/cstdio.hpp"
 #include "String.hpp"
@@ -96,8 +96,8 @@ namespace GTLib
         ///     function assumes the input paths have been cleaned before hand.
         GTLib::String ToRelativePath(const char* absolutePath, const char* basePath);
         GTLib::String ToRelativePath(const char* absolutePath);
-        
-        
+
+
         /// Appends two paths together and cleans them at the same time.
         ///
         /// @param part1 [in] The first (left side) part of the path.
@@ -108,8 +108,8 @@ namespace GTLib
         /// @remarks
         ///     This function will ensure there is a slash dividing the two parts.
         GTLib::String AppendAndCleanPaths(const char* part1, const char* part2);
-        
-        
+
+
         /// Splits a path into it's segments and places it into the given list.
         ///
         /// @param path     [in]  The path to split.
@@ -144,24 +144,24 @@ namespace GTLib
         ///     This function assumes the buffer is large enough to store the path.
         void BuildPath(const GTLib::Vector<StringSegmentUTF<const char>> &parts, char* pathOut);
 
-        
-        
+
+
         /// Determines whether or not the path is absolute.
         bool IsPathAbsolute(const char* path);
-        
+
         /// Determines whether or not the path is relative.
         bool IsPathRelative(const char* path);
 
-        
+
         /// Removes the file name from the given path.
         GTLib::String RemoveFileNameFromPath(const char* path);
         inline GTLib::String RemoveFileNameFromPath(const GTLib::String &path) { return RemoveFileNameFromPath(path.c_str()); }
-        
+
         /// Retrieves the parent directory of the given path.
         GTLib::String GetParentDirectoryPath(const char* path);
         inline GTLib::String GetParentDirectoryPath(const GTLib::String &path) { return GetParentDirectoryPath(path.c_str()); }
-        
-        
+
+
         /// Splits a path into is base and file name sections.
         ///
         /// @param path [in] The path to split.
@@ -213,7 +213,7 @@ namespace GTLib
         ///
         /// @param path [in] The path whose extension is being removed.
         GTLib::String RemoveExtension(const char* path);
-        
+
         /// Retrieves a pointer to the extension of the given path.
         ///
         /// @param path [in] The path whose extension is being retrieved.
@@ -229,7 +229,7 @@ namespace GTLib
 namespace GTLib
 {
     typedef size_t FileHandle;
-    
+
     /// Enumerator for the different movement origins when seeking a file.
     enum class SeekOrigin : int
     {
@@ -237,7 +237,7 @@ namespace GTLib
         Current = SEEK_CUR,
         End     = SEEK_END
     };
-    
+
     /// Structure containing information about a file.
     struct FileInfo
     {
@@ -266,7 +266,7 @@ namespace GTLib
         /// Assignment.
         FileInfo & operator=(const FileInfo &other);
 
-        
+
 
         /////////////////////////////////////////////////////////////
         // Attributes
@@ -290,7 +290,7 @@ namespace GTLib
         bool exists;
     };
 
-    
+
     /// Opens a file.
     ///
     /// @param filePath    [in]  The path of the file to load.
@@ -307,7 +307,7 @@ namespace GTLib
     FileHandle OpenFile(const char* filePath, unsigned int openMode);
     FileHandle OpenFile(const char* filePath, unsigned int openMode, FileInfo &fileInfoOut);
     FileHandle OpenFile(const char* filePath, unsigned int openMode, FileInfo* fileInfoOut);
-    
+
     /// Closes a file.
     ///
     /// @param file [in] The file to close.
@@ -315,14 +315,14 @@ namespace GTLib
     /// @remarks
     ///     If the file is mapped, it will be unmapped.
     void CloseFile(FileHandle file);
-    
-    
+
+
     /// Retrieves the size of the given file.
     ///
     /// @param file [in] The file whose size is being retrieved.
     int64_t GetFileSize(FileHandle file);
-    
-    
+
+
     /// Memory maps a file.
     ///
     /// @param file   [in] The file to memory map.
@@ -340,7 +340,7 @@ namespace GTLib
     ///     this function will fail if OpenMode::Read was not specified when opening the file with OpenFile(). For consistency, and
     ///     to help prevent cross-platform bugs, this restriction is also placed on the Linux build.
     void* MapFile(FileHandle file, size_t length, int64_t offset = 0);
-    
+
     /// Unmaps the given file.
     ///
     /// @param file [in] The file to unmap.
@@ -348,7 +348,7 @@ namespace GTLib
     /// @remarks
     ///     If the file is not mapped, this will do nothing an return immediately. A file will be unmapped when it is closed.
     void UnmapFile(FileHandle file);
-    
+
     /// Retrieves the alignment file offsets need to be set at when calling MapFile().
     ///
     /// @remarks
@@ -356,8 +356,8 @@ namespace GTLib
     ///     @par
     ///     On Linux, this the value returned by sysconf(_SC_PAGE_SIZE).
     int64_t GetFileMappingOffsetAlignment();
-    
-    
+
+
     /// Reads data from the given file, starting from the current file pointer.
     ///
     /// @param file        [in]  The file to read the data from.
@@ -373,7 +373,7 @@ namespace GTLib
     ///     @par
     ///     The  file pointer used by ReadFile() is shared with WriteFile(). Use SeekFile() to change the position of the file pointer.
     intptr_t ReadFile(FileHandle file, void* bufferOut, size_t bytesToRead);
-    
+
     /// Writes data to the given file, starting from the current file pointer.
     ///
     /// @param file         [in] The file to write the data to.
@@ -387,7 +387,7 @@ namespace GTLib
     ///     @par
     ///     The file pointer used by WriteFile() is shared with ReadFile(). Use SeekFile() to change the position of the file pointer.
     intptr_t WriteFile(FileHandle file, const void* buffer, size_t bytesToWrite);
-    
+
     /// Moves the file pointer for the given file.
     ///
     /// @param file   [in] The file whose file pointer is being moved.
@@ -401,9 +401,9 @@ namespace GTLib
     ///
     /// @param file [in] The file whose file pointer is being retrieved.
     int64_t GetFilePointer(FileHandle file);
-    
-    
-    
+
+
+
     namespace IO
     {
 		/**

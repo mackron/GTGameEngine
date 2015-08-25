@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorScrollableControl_hpp_
-#define __GT_EditorScrollableControl_hpp_
+#ifndef GT_EditorScrollableControl
+#define GT_EditorScrollableControl
 
 #include "EditorQuadControl.hpp"
 
@@ -21,26 +21,14 @@ namespace GT
 
     private:
 
-        
+
         struct DeadSpaceSizingEventHandler : public GUIEventHandler
         {
-            DeadSpaceSizingEventHandler(HGUIElement hDeadSpace, HGUIElement hVerticalNeighbour, HGUIElement hHorizontalNeighbour)
-                : m_hDeadSpace(hDeadSpace), m_hVerticalNeighbour(hVerticalNeighbour), m_hHorizontalNeighbour(hHorizontalNeighbour)
-            {
-            }
+            /// Constructor.
+            DeadSpaceSizingEventHandler(HGUIElement hDeadSpace, HGUIElement hVerticalNeighbour, HGUIElement hHorizontalNeighbour);
 
-
-            void OnSize(GUIContext &context, HGUIElement hElement, unsigned int width, unsigned int height)
-            {
-                if (hElement == m_hVerticalNeighbour)
-                {
-                    context.SetElementWidth(m_hDeadSpace, context.PixelsToPointsX(hElement, static_cast<int>(width)));
-                }
-                else if (hElement == m_hHorizontalNeighbour)
-                {
-                    context.SetElementHeight(m_hDeadSpace, context.PixelsToPointsY(hElement, static_cast<int>(height)));
-                }
-            }
+            /// @copydoc GUIEventHandler::OnSize()
+            void OnSize(GUIContext &context, HGUIElement hElement, unsigned int width, unsigned int height);
 
 
         private:
@@ -51,7 +39,7 @@ namespace GT
         };
 
 
-        /// The event handler that is attached to the neighbours of the dead space quadrant. 
+        /// The event handler that is attached to the neighbours of the dead space quadrant.
         DeadSpaceSizingEventHandler m_deadSpaceSizingHandler;
     };
 }

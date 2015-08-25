@@ -18,7 +18,7 @@ namespace GT
 
             gui.SetElementSizeRatio(hRootElement, 1.0f, 1.0f);
             gui.SetElementBorder(hRootElement, 1, theme.borderDefault);
-            
+
 
 
             HGUIElement hContentElement = this->GetContentElement();
@@ -140,10 +140,25 @@ namespace GT
         auto &gui = this->GetGUI();
 
         float newOffsetY = gui.GetElementInnerOffsetY(hContentElement) + (delta * tempScrollDistance);
-        if (newOffsetY > 0)    
+        if (newOffsetY > 0)
         {
             newOffsetY = 0;
         }
         gui.SetElementInnerOffsetY(hContentElement, newOffsetY);
+    }
+
+
+
+    EditorAssetExplorer::ExplorerEventHandler::ExplorerEventHandler(EditorAssetExplorer &explorer)
+        : m_explorer(explorer)
+    {
+    }
+
+    void EditorAssetExplorer::ExplorerEventHandler::OnMouseWheel(GUIContext &context, HGUIElement, int delta, int, int)
+    {
+        if (context.IsElementUnderMouse(m_explorer.GetRootGUIElement()))
+        {
+            m_explorer.ScrollY(delta);
+        }
     }
 }

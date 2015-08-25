@@ -16,6 +16,10 @@ namespace GT
     {
     public:
 
+        /// Destructor.
+        virtual ~SceneCallback();
+
+
         ////////////////////////////////////////////////////////////
         // Notifications
 

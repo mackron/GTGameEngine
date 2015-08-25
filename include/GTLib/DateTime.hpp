@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_DateTime_hpp_
-#define __GTLib_DateTime_hpp_
+#ifndef GT_DateTime
+#define GT_DateTime
 
 #include <GTLib/String.hpp>
 #include <GTLib/Parse.hpp>
@@ -15,20 +15,20 @@ namespace GTLib
     class DateTime
     {
     public:
-    
+
         /**
         *   \brief  Default constructor.
         */
         DateTime();
         DateTime(time_t time);
-        
+
         /**
         *   \brief              Converts the DateTime to a string.
         *   \param  format [in] The format of the date.
         *   \return             The formatted string.
         */
         GTLib::String ToFormattedString(const char *format);
-        
+
         /**
         *   \brief  Converts the DateTime to a string based on locale.
         *   \return The string representation of the DateTime.
@@ -40,16 +40,16 @@ namespace GTLib
         *   \return The time of the day converted to a string.
         */
         GTLib::String To24HourTimeString();
-    
-    
-    private:
-        
-        /// The internal time object used by this class.
-        time_t time;
 
-        
+
+    private:
+
+        /// The internal time object used by this class.
+        time_t m_time;
+
+
     public:
-    
+
         /**
         *   \brief  Static function for creating a new datetime object which is set to the time the object is created.
         */
@@ -60,6 +60,7 @@ namespace GTLib
 
 
         /// Creates a datetime object which is set to the compilation time.
+#if 0
         static DateTime BuildTime()
         {
             const char* months[] = { "Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec" };
@@ -97,6 +98,7 @@ namespace GTLib
 
             return DateTime(time);
         }
+#endif
     };
 }
 

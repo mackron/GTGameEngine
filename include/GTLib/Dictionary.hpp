@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Dictionary_hpp_
-#define __GTLib_Dictionary_hpp_
+#ifndef GT_Dictionary
+#define GT_Dictionary
 
 #include "Strings/Compare.hpp"
 #include "Strings/Create.hpp"
@@ -18,8 +18,8 @@ namespace GTLib
     {
     public:
 
-        DictionaryItemUTF(const T* key, ptrdiff_t keySizeInBytes, const U &value)
-            : key(key), keySizeInBytes(keySizeInBytes), value(value), index(0)
+        DictionaryItemUTF(const T* keyIn, ptrdiff_t keySizeInBytesIn, const U &valueIn)
+            : key(keyIn), keySizeInBytes(keySizeInBytesIn), value(valueIn), index(0)
         {
         }
 
@@ -72,12 +72,12 @@ namespace GTLib
         struct FindResult
         {
             FindResult()
-                : exact(false), index(0)
+                : index(0), exact(false)
             {
             }
 
             FindResult(const FindResult &other)
-                : exact(other.exact), index(other.index)
+                : index(other.index), exact(other.exact)
             {
             }
 
@@ -89,12 +89,13 @@ namespace GTLib
                 return *this;
             }
 
-            /// Specifies whether or not \c result is the exact match. If not, it points to the index that where it would otherwise be inserted.
-            bool exact;
 
             /// The index in the buffer of where the item is located. This depends on \c exact. Note that the index may actually fall out-of-bounds
             /// if \c exact is false.
             size_t index;
+
+            /// Specifies whether or not \c result is the exact match. If not, it points to the index that where it would otherwise be inserted.
+            bool exact;
         };
 
 
@@ -374,7 +375,7 @@ namespace GTLib
                     {
                         result.exact = true;
                         result.index = static_cast<size_t>(iMid);
-                        
+
                         return result;
                     }
                 }

@@ -2,8 +2,8 @@
 //
 // Much of the code is based on the GLM project: http://glm.g-truc.net/0.9.6/index.html
 
-#ifndef __GT_Engine_Math_hpp_
-#define __GT_Engine_Math_hpp_
+#ifndef GT_Engine_Math
+#define GT_Engine_Math
 
 #include "Config.hpp"
 #include <GTLib/Math.hpp>
@@ -15,7 +15,7 @@
 #endif
 
 
-// Technically we should be checking 
+// Technically we should be checking
 #define GT_USE_SSE2
 
 #if defined(GT_USE_SSE2)
@@ -69,7 +69,7 @@ namespace GT
     inline vec4 operator/(float v0, const vec4 &v1);
 
     /// Structure representing a vec4/float4.
-    ALIGNED_TYPE(struct, 16) vec4
+    struct alignas(16) vec4
     {
         union
         {
@@ -131,7 +131,7 @@ namespace GT
         {
             return (*this) = (*this) + other;
         }
-        
+
         vec4 & operator-=(const vec4 &other)
         {
             return (*this) = (*this) - other;
@@ -140,7 +140,7 @@ namespace GT
         {
             return (*this) = (*this) - other;
         }
-        
+
         vec4 & operator*=(const vec4 &other)
         {
             return (*this) = (*this) * other;
@@ -335,7 +335,7 @@ namespace GT
     // quat
 
     /// Structure representing a quaternion.
-    ALIGNED_TYPE(struct, 16) quat
+    struct alignas(16) quat
     {
         union
         {
@@ -393,13 +393,13 @@ namespace GT
         static quat angle_axis(float angle, float axisX, float axisY, float axisZ)
         {
             const float a = angle;
-		    const float s = sin(a * 0.5f);
+		    const float s = sinf(a * 0.5f);
 
             return quat(
                 axisX * s,
                 axisY * s,
                 axisZ * s,
-                cos(a * 0.5f)
+                cosf(a * 0.5f)
             );
         }
 
@@ -431,7 +431,7 @@ namespace GT
     // mat4
 
     /// Structure representing a column-major mat4
-    ALIGNED_TYPE(struct, 16) mat4
+    struct alignas(16) mat4
     {
         vec4 col0;
         vec4 col1;
@@ -475,7 +475,7 @@ namespace GT
         /// @return The perspective projection matrix.
         static mat4 perspective(float fovy, float aspect, float znear, float zfar)
         {
-            float const tanHalfFovy = tan(fovy * 0.5f);
+            const float tanHalfFovy = tanf(fovy * 0.5f);
 
 		    mat4 result(mat4::zero);
             result[0][0] = 1.0f / (aspect * tanHalfFovy);
@@ -483,7 +483,7 @@ namespace GT
             result[2][2] = -(zfar + znear) / (zfar - znear);
             result[2][3] = -1.0f;
             result[3][2] = -(2.0f * zfar * znear) / (zfar - znear);
-            
+
             return result;
         }
 
@@ -539,8 +539,8 @@ namespace GT
         static mat4 rotate(const mat4 &m, float angle, const vec4 &axis)
         {
             const float a = angle;
-		    const float c = cos(a);
-		    const float s = sin(a);
+		    const float c = cosf(a);
+		    const float s = sinf(a);
 
 		    vec4 temp((1.0f - c) * axis);
 
@@ -704,7 +704,7 @@ namespace GT
 			biggestIndex = 3;
 		}
 
-		float biggestVal = sqrt(fourBiggestSquaredMinus1 + 1.0f) * 0.5f;
+		float biggestVal = sqrtf(fourBiggestSquaredMinus1 + 1.0f) * 0.5f;
 		float mult = 0.25f / biggestVal;
 
 		quat result;
@@ -729,7 +729,7 @@ namespace GT
 
 			    break;
             }
-            
+
 		case 2:
             {
                 result.w = (m[2][0] - m[0][2]) * mult;
@@ -738,7 +738,7 @@ namespace GT
 			    result.z = (m[1][2] + m[2][1]) * mult;
 			    break;
             }
-			
+
 		case 3:
             {
                 result.w = (m[0][1] - m[1][0]) * mult;
@@ -748,8 +748,8 @@ namespace GT
 
 			    break;
             }
-			
-			
+
+
 		default:					// Silence a -Wswitch-default warning in GCC. Should never actually get here. Assert is just for sanity.
 			assert(false);
 			break;
@@ -762,7 +762,7 @@ namespace GT
     /// Calculates the inverse of the given matrix.
     ///
     /// @remarks
-    ///     This implementation is taken from GLM: 
+    ///     This implementation is taken from GLM:
     inline mat4 inverse(const mat4 &m)
     {
         float Coef00 = m[2][2] * m[3][3] - m[3][2] * m[2][3];
@@ -883,7 +883,7 @@ namespace GT
     {
         float diffX = x1 - x2;
         float diffY = y1 - y2;
-        return abs(sqrt(diffX*diffX + diffY*diffY));
+        return fabsf(sqrtf(diffX*diffX + diffY*diffY));
     }
 }
 

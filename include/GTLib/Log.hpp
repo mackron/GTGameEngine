@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Log_hpp_
-#define __GTLib_Log_hpp_
+#ifndef GTLib_Log
+#define GTLib_Log
 
 #include "IO.hpp"
 #include "Vector.hpp"
@@ -52,7 +52,7 @@ namespace GTLib
         *   \param  fileName [in] The file name of the log. See remarks.
         *
         *   \remarks
-        *       If <code>fileName<code>'s extension is .html, the log will be outputted to a HTML file, in HTML format. Anything
+        *       If <code>fileName</code>'s extension is .html, the log will be outputted to a HTML file, in HTML format. Anything
         *       will be a plain text log.
         *       \par
         *       This constructor will attempt to open the log. Use IsOpen() to determine if the log was opened successfully.

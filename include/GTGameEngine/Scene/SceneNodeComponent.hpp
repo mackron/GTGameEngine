@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_SceneNodeComponent_hpp_
-#define __GT_SceneNodeComponent_hpp_
+#ifndef GT_SceneNodeComponent
+#define GT_SceneNodeComponent
 
 #include "SceneNodeComponentTypes.hpp"
 
@@ -32,7 +32,7 @@ namespace GT
 
         /// Retrieves the component's name.
         const char* GetName() const;
-        
+
 
         /// [Internal Use Only] Retrieves the change flags.
         ///

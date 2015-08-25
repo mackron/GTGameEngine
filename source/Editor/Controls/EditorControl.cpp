@@ -89,4 +89,10 @@ namespace GT
     {
     }
 
+
+    EditorControl::ControlGUIEventHandler::ControlGUIEventHandler(EditorControl &control)
+        : m_control(control)
+    {
+
+    }
 }

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Create_hpp_
-#define __GTLib_Strings_Create_hpp_
+#ifndef GT_Strings_Create
+#define GT_Strings_Create
 
 #include "../BasicBuffer.hpp"
 #include "../IO/cstdio.hpp"
@@ -50,10 +50,10 @@ namespace GTLib
                 {
                     *lengthInTsOut = length;
                 }
-                
+
                 return result;
             }
-            
+
             return CreateEmpty<T>();
         }
 
@@ -68,12 +68,12 @@ namespace GTLib
                 }
 
                 size_t length = static_cast<size_t>(sourceSizeInTs);    // for ease of use.
-                
-                dest.Allocate((length + 1) * sizeof(T));                // +1 for null terminator.
-                std::memcpy(dest.ptr, source, length * sizeof(T));
 
-                T* result = static_cast<T*>(dest.ptr);
-                
+                dest.Allocate((length + 1) * sizeof(T));                // +1 for null terminator.
+                std::memcpy(dest.GetDataPointer(), source, length * sizeof(T));
+
+                T* result = static_cast<T*>(dest.GetDataPointer());
+
                 result[length] = static_cast<T>(0);
 
 
@@ -81,10 +81,10 @@ namespace GTLib
                 {
                     *lengthInTsOut = length;
                 }
-                
+
                 return result;
             }
-            
+
             return CreateEmpty<T>();
         }
 
@@ -93,7 +93,7 @@ namespace GTLib
         {
             T* result = static_cast<T*>(malloc(source.BuildStringSize()));
             source.BuildString(result);
-            
+
             return result;
         }
 
@@ -117,7 +117,7 @@ namespace GTLib
             // Strings::Copy() will null-terminate the destination, so it's now all good to return.
             return newString;
         }
-        
+
 
 
 

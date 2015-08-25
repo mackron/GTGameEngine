@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Job_hpp_
-#define __GTLib_Job_hpp_
+#ifndef GTLib_Job
+#define GTLib_Job
 
 namespace GTLib
 {
@@ -25,7 +25,7 @@ namespace GTLib
 
             /// Constructor.
             Job();
-            
+
             /// Destructor.
             virtual ~Job();
 
@@ -36,14 +36,14 @@ namespace GTLib
 
 
         private:
-        
+
             // The JobQueue is a friend. It uses 'next' directly.
             friend class JobQueue;
-        
+
             /// A pointer to the job that should be executed after this one.
             Job *next;
-            
-            
+
+
         private:    // No copying.
             Job(const Job &);
             Job & operator=(const Job &);

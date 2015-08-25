@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_AseetMetadata_hpp_
-#define __GT_AseetMetadata_hpp_
+#ifndef GT_AseetMetadata
+#define GT_AseetMetadata
 
 #include <GTLib/Vector.hpp>
 #include <GTLib/Serializer.hpp>
@@ -13,7 +13,7 @@ namespace GT
     class AssetMetadataChunk
     {
     public:
-        
+
         /// Constructor.
         AssetMetadataChunk(const char* name, uint32_t sizeInBytes, const void* pData);
 
@@ -60,14 +60,14 @@ namespace GT
 
     private:
 
+        /// A pointer to the buffer containing the raw data.
+        void* m_pData;
+
         /// The name of the chunk. Maximum of 31 characters, with the 32nd character being the null-terminator.
         char m_name[32];
 
         /// The size of the metadata data.
         uint32_t m_dataSizeInBytes;
-
-        /// A pointer to the buffer containing the raw data.
-        void* m_pData;
     };
 
 

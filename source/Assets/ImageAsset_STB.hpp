@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_ImageAsset_STB_hpp_
-#define __GT_ImageAsset_STB_hpp_
+#ifndef GT_ImageAsset_STB
+#define GT_ImageAsset_STB
 
 #include <GTGameEngine/Assets/ImageAsset.hpp>
 

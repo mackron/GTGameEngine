@@ -2,8 +2,8 @@
 
 // Clang has errors with C++0x and noexcept when using std::map. We will fix it by doing our own map... This is only very
 // basic. Need to do some documentation. Hopefully Clang will be fixed for their 3.0 release.
-#ifndef __GTLib_Map_hpp_
-#define __GTLib_Map_hpp_
+#ifndef GT_Map
+#define GT_Map
 
 #include "stdlib.hpp"
 
@@ -20,8 +20,8 @@ namespace GTLib
     {
     public:
 
-        MapItem(const T &key, const U &value)
-            : key(key), value(value), index(0)
+        MapItem(const T &keyIn, const U &valueIn)
+            : key(keyIn), value(valueIn), index(0)
         {
         }
 
@@ -57,7 +57,7 @@ namespace GTLib
 		MapItem<T, U> & operator=(const MapItem<T, U> &);
     };
 
-    
+
     /// Class representing a map data structure.
     ///
     /// Internally, items are stored in a single buffer. This makes it easier to do random access and allows us to use the good old binary search.
@@ -70,12 +70,12 @@ namespace GTLib
         struct FindResult
         {
             FindResult()
-                : exact(false), index(0)
+                : index(0), exact(false)
             {
             }
 
             FindResult(const FindResult &other)
-                : exact(other.exact), index(other.index)
+                : index(other.index), exact(other.exact)
             {
             }
 
@@ -87,12 +87,13 @@ namespace GTLib
                 return *this;
             }
 
-            /// Specifies whether or not \c result is the exact match. If not, it points to the index that where it would otherwise be inserted.
-            bool exact;
 
             /// The index in the buffer of where the item is located. This depends on \c exact. Note that the index may actually fall out-of-bounds
             /// if \c exact is false.
             size_t index;
+
+            /// Specifies whether or not \c result is the exact match. If not, it points to the index that where it would otherwise be inserted.
+            bool exact;
         };
 
 
@@ -219,7 +220,7 @@ namespace GTLib
             if (index < this->count)
             {
                 // First delete the item...
-                MapItem<T, U>::Deallocate(this->buffer[(size_t)index]);
+                MapItem<T, U>::Deallocate(this->buffer[size_t(index)]);
 
                 // Now move everything down to remove it from the array.
                 for (uint64_t i = index; i < this->count - 1; ++i)
@@ -360,22 +361,22 @@ namespace GTLib
                     {
                         result.exact = true;
                         result.index = static_cast<size_t>(iMid);
-                        
+
                         return result;
                     }
                 }
 
                 // If we have made it here, we weren't exact.
                 result.index = static_cast<size_t>(iMid + indexOffset);
-                
+
             #if 0
                 size_t iMin = 0;
                 size_t iMax = this->count - 1;
-                
+
                 while (iMin < iMax)
                 {
                     size_t iMid = (iMin + iMax) >> 1;
-                    
+
                     assert(iMid < iMax);
                     {
                         auto mid = this->buffer[iMid];
@@ -389,12 +390,12 @@ namespace GTLib
                         }
                     }
                 }
-                
+
                 assert(iMin == iMax);
                 {
                     result.index = iMin;
                     result.exact = this->buffer[iMin]->key == key;
-                    
+
                     if (!result.exact && this->buffer[iMin]->key < key)
                     {
                         result.index += 1;

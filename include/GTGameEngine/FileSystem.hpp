@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_FileSystem_hpp_
-#define __GT_FileSystem_hpp_
+#ifndef GT_FileSystem
+#define GT_FileSystem
 
 #include <GTLib/Config.hpp>
 #include <GTLib/ResultCodes.hpp>
@@ -54,8 +54,8 @@ namespace GT
         //////////////////////////////////////////
         // Flags
 
-        static const uint32_t IsDirectory = (1 << 0);   //< Whether or not the file is a directory.
-        static const uint32_t IsReadOnly  = (1 << 1);   //< Whether or not the file is read-only.
+        static const uint32_t IsDirectory = (1 << 0);   ///< Whether or not the file is a directory.
+        static const uint32_t IsReadOnly  = (1 << 1);   ///< Whether or not the file is read-only.
     };
 
     /// Class representing the engine's virtual file system.
@@ -83,19 +83,15 @@ namespace GT
         /// Shuts down the file system object.
         void Shutdown();
 
-        
+
         /// Adds a base directory to the file system.
         ///
         /// @param absolutePath [in] The absolute path of the base directory.
-        /// @param username     [in] The user name to use if authentication is required.
-        /// @param password     [in] The password to use if authentication is required.
         ///
         /// @remarks
         ///     There is no notion of current directories in this abstraction, so the notion of base paths are used to handle relative paths. There
         ///     can be any number of base directories. When a relative path is specified, the base paths will be used to resolve the path. The order
         ///     in which the relative is resolved against the base directories is determined by the order in which the base directories are added.
-        ///     @par
-        ///     The base directory can be a URL for a supported protocol (such as FTP).
         ResultCode AddBaseDirectory(const char* absolutePath);
 
         /// Inserts a base directory at a specific index.
@@ -130,8 +126,8 @@ namespace GT
 
         /// Iterates over every file and directory in the given directory.
         ///
-        /// @param absolutePath [in] The absolute path of the directory whose contents are being iterated.
-        /// 
+        /// @param absoluteOrRelativePath [in] The absolute path of the directory whose contents are being iterated.
+        ///
         /// @remarks
         ///     This is not recursive.
         ///     @par
@@ -243,7 +239,7 @@ namespace GT
         ///     If the file is at the end of the file, this should return the same value as GetSize(). Use this assertion to check if the file's read/write pointer is
         ///     at the end of the file.
         int64_t TellFile(HFile hFile);
-        
+
         /// Retrieves the size of the given file.
         ///
         /// @param hFile [in] A handle to the file whose size is being retrieved.

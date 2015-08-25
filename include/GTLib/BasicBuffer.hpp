@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_BasicBuffer_hpp_
-#define __GT_BasicBuffer_hpp_
+#ifndef GT_BasicBuffer
+#define GT_BasicBuffer
 
 #include <cstddef>
 
@@ -10,7 +10,7 @@ namespace GT
     /// Simple structure representing a buffer.
     struct BasicBuffer
     {
-        /// @Default constructor.
+        /// Default constructor.
         ///
         /// @remarks
         ///     This will create an empty buffer where \c this->ptr will be nullptr and \c this->size will be 0.
@@ -19,9 +19,9 @@ namespace GT
         /// Copy constructor.
         ///
         /// @remarks
-        ///     This will make a copy of the other buffer, including the internal data. Each buffer can be used independently of each other. 
+        ///     This will make a copy of the other buffer, including the internal data. Each buffer can be used independently of each other.
         BasicBuffer(const BasicBuffer &other);
-            
+
         /// Copy constructor.
         ///
         /// @remarks
@@ -33,7 +33,7 @@ namespace GT
         /// @remarks
         ///     This will deallocate the internal buffer.
         ~BasicBuffer();
-            
+
         /// Resizes the buffer for the given size.
         ///
         /// @param  size          [in] The new size of the buffer.
@@ -49,7 +49,7 @@ namespace GT
 
         /// A helper method for freeing the entire buffer.
         void Free() { this->Allocate(0, true); }
-            
+
 
         /// Retrieves a pointer to the internal data buffer.
               void* GetDataPointer()       { return this->m_ptr; }
@@ -57,20 +57,20 @@ namespace GT
 
         /// Retrieves the size in bytes of the internal data buffer.
         size_t GetDataSizeInBytes() const { return this->m_size; }
-        
 
-            
+
+
         /// Assigns the content of this buffer to that of another.
         ///
         /// @param  other [in] A reference to the source buffer.
         BasicBuffer & operator=(const BasicBuffer &other);
-            
-            
+
+
     private:
-            
+
         /// A pointer to the start of the buffer.
         void *m_ptr;
-            
+
         /// The size of the buffer.
         size_t m_size;
     };

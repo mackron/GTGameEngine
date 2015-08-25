@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_JobQueue_hpp_
-#define __GTLib_JobQueue_hpp_
+#ifndef GTLib_JobQueue
+#define GTLib_JobQueue
 
 #include "Job.hpp"
 
@@ -44,10 +44,10 @@ namespace GTLib
 
             /// Constructor.
             JobQueue();
-            
+
             /// Destructor.
             ~JobQueue();
-            
+
             /**
             *   \brief  Pushes a pointer to a job to the back of the back job list.
             *
@@ -55,7 +55,7 @@ namespace GTLib
             *       This is called from the thread that does not execute the jobs.
             */
             void Push(GTLib::Threading::Job *job);
-            
+
             /**
             *   \brief  Pops the next job off the front list and executes that job.
             *   \return A pointer to the new root job, or nullptr if there are no more jobs.
@@ -64,7 +64,7 @@ namespace GTLib
             *       This is called from the owner thread - the thread that executes the jobs.
             */
             Job * Pop();
-            
+
             /**
             *   \brief  Clears the back list and appends it to the front list.
             *
@@ -76,20 +76,20 @@ namespace GTLib
 
 
         private:
-        
+
             /// The root object of the front list.
             Job *frontRoot;
-            
+
             /// The last job in the front list.
             Job *frontEnd;
-            
+
             /// The root object of the back list.
             Job *backRoot;
-            
+
             /// The last job in the back list.
             Job *backEnd;
-            
-            
+
+
         private:    // No copying.
             JobQueue(const JobQueue &);
             JobQueue & operator=(const JobQueue &);

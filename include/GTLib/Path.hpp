@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Path_hpp_
-#define __GTLib_Path_hpp_
+#ifndef GTLib_Path
+#define GTLib_Path
 
 #include "Strings/List.hpp"
 #include <cstddef>
@@ -20,24 +20,24 @@ namespace GTLib
     class Path
     {
     public:
-    
+
         /**
         *   \brief            Constructor.
         *   \param  path [in] The path string.
         */
         Path(const char* path);
-        
+
         /**
         *   \brief  Destructor.
         */
         ~Path();
-        
+
         /**
         *   \brief  Retrieves the size in bytes of the path string. Required for Copy().
         *   \return The size in bytes of the path string, which can be used to allocate a buffer for Copy().
         */
         size_t Size() const;
-        
+
         /**
         *   \brief  Copies the path string into the given buffer.
         *   \param  dest [in] The destination buffer.
@@ -46,7 +46,7 @@ namespace GTLib
         *       The destination buffer must be large enough to store the whole string, plus a null terminator. Use Size() for this.
         */
         void Copy(char* dest) const;
-        
+
         /**
         *   \brief            Makes the path absolute.
         *   \param  base [in] The base part of the absolute path. This must be absolute.
@@ -67,7 +67,7 @@ namespace GTLib
         /// Makes the path relative to the current directory.
         void MakeRelative();
 
-        
+
         /**
         *   \brief             Appends another path to this one.
         *   \param  other [in] The other path to append.
@@ -84,7 +84,7 @@ namespace GTLib
         ///
         /// @return *this.
         Path & Prepend(const char* other);
-        
+
 
         /// Removes the first item in the path.
         ///
@@ -100,7 +100,7 @@ namespace GTLib
         /// Cleans the path by resolving the ".." parts.
         void Clean();
 
-        
+
         /**
         *   \brief  Determines if the path is absolute.
         */
@@ -115,38 +115,38 @@ namespace GTLib
 		*		The string will be re-constructed for each call. Don't call it more frequently than needed.
 		*/
 		const char* c_str();
-        
+
         /**
         *   \brief            Sets the path to another string.
         *   \param  path [in] The value to set for the path. Must stay in scope.
         */
         Path & operator= (const char* path);
-        
-    
+
+
     private:
-    
+
         /// The list of parts making up the path.
         Strings::List<char> parts;
 
         /// The number of parts making up the path. We need this so that we can calculate the length of the path correctly - so we know
         /// how many slashes to include when calculating the length.
         size_t partCount;
-        
-        /// Keeps track of whether or not to include a leading slash. This is because the tokenizer will remove it, but it is needed
-        /// when constructing the path string.
-        bool leadingSlash;
 
 		/// The temporary string we keep a hold of for the c_str() method.
 		char* str;
+
+		/// Keeps track of whether or not to include a leading slash. This is because the tokenizer will remove it, but it is needed
+        /// when constructing the path string.
+        bool leadingSlash;
 
 
 	private:
 		Path(const Path &);
 		Path & operator=(const Path &);
-		
-    
+
+
     public: // Statics.
-    
+
         /**
         *   \brief            Determines if a path is relative.
         *   \param  path [in] The path that is being checked.
@@ -160,24 +160,24 @@ namespace GTLib
         *   \return           True if the path is absolute; false otherwise.
         */
         static bool IsAbsolute(const char* path);
-    
+
         /**
         *   \brief            Retrieves the extension of the given path.
         *   \param  path [in] The path whose extension is being retrieved.
         *   \return           The extension of the path, or an empty string if the path does not have an extension.
         */
         static const char* Extension(const char* path);
-        
+
         /**
         *   \brief            Checks if the extension of the given path is the same as the given extension.
         *   \param  path [in] The path whose extension is being compared.
         *   \param  ext  [in] The extension used in the comparison.
-        *   
+        *
         *   \remarks
         *       The comparison is case-insensitive.
         */
         static bool ExtensionEqual(const char* path, const char* ext);
-        
+
         /**
         *   \brief                             Splits a path into it's individual sections and appends them to the given list.
         *   \param  path                 [in]  The path being split.
@@ -191,7 +191,7 @@ namespace GTLib
         *       The root directory is not included in the list, or the return value.
         */
         static size_t SplitPath(const char* path, Strings::List<char> &list, bool resolveRelativeParts = false);
-        
+
         /**
         *   \brief                Formats all of the slashes in the path to the specified slash character.
         *   \param  path     [in] The path whose slashes are being formatted.

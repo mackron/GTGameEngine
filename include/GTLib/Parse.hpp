@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Parse_hpp_
-#define __GTLib_Parse_hpp_
+#ifndef GTLib_Parse
+#define GTLib_Parse
 
 #include <cassert>
 #include <cstdint>
@@ -14,12 +14,12 @@ namespace GTLib
         assert(false);
         return T();
     }
-    
+
     template <> int          Parse<int>(const char *value, int base);
     template <> unsigned int Parse<unsigned int>(const char *value, int base);
     template <> int64_t      Parse<int64_t>(const char *value, int base);
     template <> uint64_t     Parse<uint64_t>(const char *value, int base);
-    
+
     /**
     *   \brief  Converts a string to another type.
     *
@@ -34,13 +34,13 @@ namespace GTLib
         assert(false);
         return T();
     }
-    
+
     template <> double       Parse<double>(const char *value);
     template <> inline float Parse<float>(const char *value)
     {
-        return (float)GTLib::Parse<double>(value);
+        return float(GTLib::Parse<double>(value));
     }
-    
+
     template <> inline int          Parse<int>(const char *value)              { return Parse<int>(value, 0); }
     template <> inline unsigned int Parse<unsigned int>(const char *value)     { return Parse<unsigned int>(value, 0); }
     template <> inline int64_t      Parse<int64_t>(const char *value)          { return Parse<int64_t>(value, 0); }

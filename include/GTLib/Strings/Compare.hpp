@@ -1,10 +1,11 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Compare_hpp_
-#define __GTLib_Strings_Compare_hpp_
+#ifndef GT_Strings_Compare
+#define GT_Strings_Compare
 
 #include "NextChar.hpp"
 #include <cstring>
+#include <ctype.h>
 
 namespace GTLib
 {
@@ -103,7 +104,7 @@ namespace GTLib
                         return +1;
                     }
                 }
-                
+
                 ++str1;
                 ++str2;
             }
@@ -136,7 +137,7 @@ namespace GTLib
                         return +1;
                     }
                 }
-                
+
 
                 int result = 0;
 
@@ -181,7 +182,7 @@ namespace GTLib
 
                 } while (result == 0 && c2 != T(0));
 
-            
+
                 if (result < 0)
                 {
                     return -1;

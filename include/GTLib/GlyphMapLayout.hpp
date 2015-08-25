@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GlyphMapLayout_hpp_
-#define __GTLib_GlyphMapLayout_hpp_
+#ifndef GTLib_GlyphMapLayout
+#define GTLib_GlyphMapLayout
 
 #include <GTLib/Vector.hpp>
 
@@ -15,19 +15,19 @@ namespace GTLib
             : m_yPos(yPos), width(0), height(0)
         {
         }
-        
-        
+
+
         /// The y position of the row.
         unsigned int m_yPos;
-        
+
         /// The current width of the row.
         unsigned int width;
-        
+
         /// The current height of the row.
         unsigned int height;
     };
-    
-    
+
+
     /// Class for helping layout glyphs in a glyph map.
     ///
     /// This is an order dependant layout, meaning the actual layout will be determined based on the order glyphs
@@ -38,14 +38,14 @@ namespace GTLib
     class GlyphMapLayout
     {
     public:
-        
+
         /// Constructor.
         GlyphMapLayout(unsigned int glyphMapWidth, unsigned int glyphMapHeight);
-        
+
         /// Destructor.
         ~GlyphMapLayout();
-        
-        
+
+
         /// Finds an available slot for a glyph of the given dimensions, and inserts it if possible.
         ///
         /// @param glyphWidth  [in] The width of the slot needing to be inserted.
@@ -58,35 +58,35 @@ namespace GTLib
         /// @remarks
         ///     When 'false' is returned, the contents of 'xPosOut' and 'yPosOut' are undefined.
         bool FindAndInsert(unsigned int glyphWidth, unsigned int glyphHeight, unsigned int &xPosOut, unsigned int &yPosOut);
-    
-    
-    
+
+
+
     private:
-        
+
         /////////////////////////////////////////////
         // Statics Functions
-        
+
         /// Determines whether or not the given row can fit a slot on the horizontal axis.
         ///
         /// @param row        [in] The row.
         /// @param glyphWidth [in] The width of the slot.
         bool CanFitInX(const GlyphMapLayoutRow &row, unsigned int glyphWidth);
-        
+
         /// Determines whether or not the given row can fit a slot on the vertical axis.
         ///
         /// @param row         [in] The row.
         /// @param glyphHeight [in] The height of the slot.
         bool CanFitInY(const GlyphMapLayoutRow &row, unsigned int glyphHeight);
-    
-    
+
+
     private:
-        
+
         /// The total width of the glyph map.
         unsigned int m_glyphMapWidth;
-        
+
         /// The total height of the glyph map.
         unsigned int m_glyphMapHeight;
-        
+
         /// The list of rows in the glyph map layout.
         GTLib::Vector<GlyphMapLayoutRow> m_rows;
     };

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTType_TextMesh_hpp_
-#define __GTType_TextMesh_hpp_
+#ifndef GTType_TextMesh
+#define GTType_TextMesh
 
 #include <GTLib/Vector.hpp>
 #include <GTLib/GlyphMapManager.hpp>       // <-- For GlyphMapHandle.
@@ -58,7 +58,7 @@ namespace GTLib
 
         /// Retrieves the glyph map handle that is being used when rendering the mesh.
         GlyphMapHandle GetGlyphMapHandle() const { return m_glyphMapHandle; }
-        
+
         /// Sets the handle to the glyph map to use when rendering the mesh.
         void SetGlyphMapHandle(GlyphMapHandle glyphMapHandle) { m_glyphMapHandle = glyphMapHandle; }
 
@@ -76,7 +76,7 @@ namespace GTLib
 
         /// The list of indices in the mesh.
         GTLib::Vector<unsigned int> m_indices;
-        
+
         /// A handle to the glyph map to apply to the mesh at render time. This can be null.
         GlyphMapHandle m_glyphMapHandle;
 

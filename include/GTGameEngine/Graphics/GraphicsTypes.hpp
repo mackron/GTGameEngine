@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GraphicsTypes_hpp_
-#define __GT_GraphicsTypes_hpp_
+#ifndef GT_GraphicsTypes
+#define GT_GraphicsTypes
 
 #include <cstdint>
 #include <cfloat>
@@ -38,7 +38,7 @@ namespace GT
 
 	static const GraphicsInterfaceClass GraphicsInterfaceClass_Unknown = 0x00000000;
 	static const GraphicsInterfaceClass GraphicsInterfaceClass_MT      = 0x00000001;		// Modern multi-threaded APIs - Vulkan/D3D12/Metal style APIs.
-	static const GraphicsInterfaceClass GraphicsInterfaceClass_Legacy  = 0x00000002;		// Shader Model 2/3 APIs - OpenGL2/D3D9 style APIs. 
+	static const GraphicsInterfaceClass GraphicsInterfaceClass_Legacy  = 0x00000002;		// Shader Model 2/3 APIs - OpenGL2/D3D9 style APIs.
 
 
 	// Graphics Interface Type Ranges
@@ -63,7 +63,7 @@ namespace GT
     // Object Handle Types
 
     typedef size_t HGeneric;        //< A generic handle whose purpose is to cast to another handle type.
-    
+
     typedef size_t HGraphicsDevice;
     typedef size_t HCommandAllocator;
     typedef size_t HCommandQueue;
@@ -72,7 +72,7 @@ namespace GT
     typedef size_t HDescriptorHeap;
     typedef size_t HHeap;
     typedef size_t HFence;
-    
+
     typedef size_t HBuffer;
     typedef size_t HVSInputLayout;
     typedef size_t HShader;
@@ -95,7 +95,7 @@ namespace GT
         CommandListType_Direct = 0,
         CommandListType_Bundle,
         CommandListType_Compute,
-        CommandListType_Copy,
+        CommandListType_Copy
     };
 
     enum HeapType
@@ -150,7 +150,7 @@ namespace GT
         BufferMapType_Write             = 1,
         BufferMapType_ReadWrite         = 2,
         BufferMapType_Write_Discard     = 3,
-        BufferMapType_Write_NoOverwrite = 4      //< Cannot be used with constant buffer.
+        BufferMapType_Write_NoOverwrite = 4      ///< Cannot be used with constant buffer.
     };
 
     enum BufferType
@@ -183,7 +183,7 @@ namespace GT
     {
         IndexFormat_UInt8  = 0,
         IndexFormat_UInt16 = 1,
-        IndexFormat_UInt32 = 2,
+        IndexFormat_UInt32 = 2
     };
 
     enum PrimitiveTopologyType
@@ -219,7 +219,7 @@ namespace GT
         ShaderLanguage_GLSL_430,
         ShaderLanguage_GLSL_440,
         ShaderLanguage_GLSL_450,
-        ShaderLanguage_GL_NV_5,         //< NVIDIA assembly shaders
+        ShaderLanguage_GL_NV_5,         ///< NVIDIA assembly shaders
 
         // D3D
         ShaderLanguage_HLSL_50
@@ -288,13 +288,13 @@ namespace GT
     enum ClearFlag
     {
         ClearFlag_Depth   = 0x01,
-        ClearFlag_Stencil = 0x02,
+        ClearFlag_Stencil = 0x02
     };
 
     enum GraphicsHandedness
     {
-        GraphicsHandedness_Left,     //< Forward direction = -Z
-        GraphicsHandedness_Right     //< Forward direction = +Z
+        GraphicsHandedness_Left,     ///< Forward direction = -Z
+        GraphicsHandedness_Right     ///< Forward direction = +Z
     };
 
     enum GPUVendor
@@ -338,7 +338,7 @@ namespace GT
         TextureFormat_RG16,
         TextureFormat_RGBA16,
         TextureFormat_RGB10_A2,
-        TextureFormat_SRGB8_A8,     //< sRGB, linear alpha.
+        TextureFormat_SRGB8_A8,     ///< sRGB, linear alpha.
 
         // Signed Normalized.
         TextureFormat_R8_SNORM,
@@ -383,25 +383,25 @@ namespace GT
         TextureFormat_R11G11B10F,
 
         // Special
-        TextureFormat_D24_S8,               //< GL_DEPTH24_STENCIL8 / DXGI_FORMAT_D24_UNORM_S8_UINT
+        TextureFormat_D24_S8,               ///< GL_DEPTH24_STENCIL8 / DXGI_FORMAT_D24_UNORM_S8_UINT
 
         // Compressed.
-        TextureFormat_RGBA_DXT1,            //< GL_COMPRESSED_RGBA_S3TC_DXT1_EXT       / DXGI_FORMAT_BC1_UNORM
-        TextureFormat_RGBA_DXT3,            //< GL_COMPRESSED_RGBA_S3TC_DXT3_EXT       / DXGI_FORMAT_BC2_UNORM
-        TextureFormat_RGBA_DXT5,            //< GL_COMPRESSED_RGBA_S3TC_DXT5_EXT       / DXGI_FORMAT_BC3_UNORM
-        TextureFormat_SRGB_Alpha_DXT1,      //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT / DXGI_FORMAT_BC1_UNORM_SRGB
-        TextureFormat_SRGB_Alpha_DXT3,      //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT / DXGI_FORMAT_BC2_UNORM_SRGB
-        TextureFormat_SRGB_Alpha_DXT5,      //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT / DXGI_FORMAT_BC3_UNORM_SRGB
+        TextureFormat_RGBA_DXT1,            ///< GL_COMPRESSED_RGBA_S3TC_DXT1_EXT       / DXGI_FORMAT_BC1_UNORM
+        TextureFormat_RGBA_DXT3,            ///< GL_COMPRESSED_RGBA_S3TC_DXT3_EXT       / DXGI_FORMAT_BC2_UNORM
+        TextureFormat_RGBA_DXT5,            ///< GL_COMPRESSED_RGBA_S3TC_DXT5_EXT       / DXGI_FORMAT_BC3_UNORM
+        TextureFormat_SRGB_Alpha_DXT1,      ///< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT / DXGI_FORMAT_BC1_UNORM_SRGB
+        TextureFormat_SRGB_Alpha_DXT3,      ///< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT / DXGI_FORMAT_BC2_UNORM_SRGB
+        TextureFormat_SRGB_Alpha_DXT5,      ///< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT / DXGI_FORMAT_BC3_UNORM_SRGB
 
-        TextureFormat_R_RGTC,               //< GL_COMPRESSED_RED_RGTC1        / DXGI_FORMAT_BC4_UNORM
-        TextureFormat_R_RGTC_SNORM,         //< GL_COMPRESSED_SIGNED_RED_RGTC1 / DXGI_FORMAT_BC4_SNORM
-        TextureFormat_RG_RGTC,              //< GL_COMPRESSED_RG_RGTC2         / DXGI_FORMAT_BC5_UNORM
-        TextureFormat_RG_RGTC_SNORM,        //< GL_COMPRESSED_SIGNED_RG_RGTC2  / DXGI_FORMAT_BC5_SNORM
+        TextureFormat_R_RGTC,               ///< GL_COMPRESSED_RED_RGTC1        / DXGI_FORMAT_BC4_UNORM
+        TextureFormat_R_RGTC_SNORM,         ///< GL_COMPRESSED_SIGNED_RED_RGTC1 / DXGI_FORMAT_BC4_SNORM
+        TextureFormat_RG_RGTC,              ///< GL_COMPRESSED_RG_RGTC2         / DXGI_FORMAT_BC5_UNORM
+        TextureFormat_RG_RGTC_SNORM,        ///< GL_COMPRESSED_SIGNED_RG_RGTC2  / DXGI_FORMAT_BC5_SNORM
 
-        TextureFormat_RGBA_BPTC,            //< GL_COMPRESSED_RGBA_BPTC_UNORM_ARB         / DXGI_FORMAT_BC7_UNORM
-        TextureFormat_SRGB_Alpha_BPTC,      //< GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB   / DXGI_FORMAT_BC7_UNORM_SRGB
-        TextureFormat_RGB_UF16_BPTC,        //< GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB / DXGI_FORMAT_BC6H_UF16
-        TextureFormat_RGB_SF16_BPTC,        //< GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB   / DXGI_FORMAT_BC6H_SF16
+        TextureFormat_RGBA_BPTC,            ///< GL_COMPRESSED_RGBA_BPTC_UNORM_ARB         / DXGI_FORMAT_BC7_UNORM
+        TextureFormat_SRGB_Alpha_BPTC,      ///< GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB   / DXGI_FORMAT_BC7_UNORM_SRGB
+        TextureFormat_RGB_UF16_BPTC,        ///< GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB / DXGI_FORMAT_BC6H_UF16
+        TextureFormat_RGB_SF16_BPTC         ///< GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB   / DXGI_FORMAT_BC6H_SF16
     };
 
     // Texture filters. All filters are named as TextureFilter_<minification>_<magnification>_<mipmap>
@@ -415,7 +415,7 @@ namespace GT
         TextureFilter_Linear_Point_Linear,
         TextureFilter_Linear_Linear_Point,
         TextureFilter_Linear_Linear_Linear,
-        TextureFilter_Anisotropic,
+        TextureFilter_Anisotropic
     };
 
     enum TextureAddressMode
@@ -437,12 +437,12 @@ namespace GT
         BlendParameter_Src_Alpha,
         BlendParameter_Inv_Src_Alpha,
         BlendParameter_Src_Alpha_Saturate,
-        
+
         BlendParameter_Dst_Color,
         BlendParameter_Inv_Dst_Color,
         BlendParameter_Dst_Alpha,
         BlendParameter_Inv_Dst_Alpha,
-        
+
         BlendParameter_Src1_Color,
         BlendParameter_Inv_Src1_Color,
         BlendParameter_Src1_Alpha,
@@ -536,25 +536,25 @@ namespace GT
     struct RenderTargetBlendStateDesc
     {
         RenderTargetBlendStateDesc()
-            : enableBlending(false),
-              srcBlendParameter(BlendParameter_One),
+            : srcBlendParameter(BlendParameter_One),
               dstBlendParameter(BlendParameter_Zero),
               blendOp(BlendOp_Add),
               srcAlphaBlendParameter(BlendParameter_One),
               dstAlphaBlendParameter(BlendParameter_Zero),
               blendOpAlpha(BlendOp_Add),
-              writeMask(0xFF)
+              writeMask(0xFF),
+              enableBlending(false)
         {
         }
 
-        bool           enableBlending;
         BlendParameter srcBlendParameter;
         BlendParameter dstBlendParameter;
         BlendOp        blendOp;
         BlendParameter srcAlphaBlendParameter;
         BlendParameter dstAlphaBlendParameter;
         BlendOp        blendOpAlpha;
-        uint8_t        writeMask;   //< RGBA masking.
+        uint8_t        writeMask;   ///< RGBA masking.
+        bool           enableBlending;
     };
 
     /// Structure describing the blend state.
@@ -649,21 +649,21 @@ namespace GT
     struct VSInputAttribFormat  // TODO: This is the old one. Remove this later. The difference is that the index instead of the name is used to identify the attribute.
     {
         unsigned int       slotIndex;
-        const char*        attributeName;               //< The name of the attribute variable inside the shader, or the semantic name in the case of Direct3D.
-        VertexAttribFormat attributeComponentType;      //< Float, Signed Int, etc.
-        unsigned int       attributeComponentCount;     //< float = 1, float2 = 2, etc.
-        unsigned int       attributeOffset;             //< The attribute's offset within the buffer.
-        unsigned int       instanceStepRate;            //< The rate at which the vertex attributes advance for per-instance data. When this is 0, it is advanced once per vertex, otherwise it is advanced by this value for each instance. This will usually be set to 0 for non-instance vertex data, and 1 for instanced data.
+        const char*        attributeName;               ///< The name of the attribute variable inside the shader, or the semantic name in the case of Direct3D.
+        VertexAttribFormat attributeComponentType;      ///< Float, Signed Int, etc.
+        unsigned int       attributeComponentCount;     ///< float = 1, float2 = 2, etc.
+        unsigned int       attributeOffset;             ///< The attribute's offset within the buffer.
+        unsigned int       instanceStepRate;            ///< The rate at which the vertex attributes advance for per-instance data. When this is 0, it is advanced once per vertex, otherwise it is advanced by this value for each instance. This will usually be set to 0 for non-instance vertex data, and 1 for instanced data.
     };
 
     struct VSInputAttribFormat2
     {
         unsigned int       slotIndex;
-        unsigned int       attributeIndex;              //< The index of the attribute variable inside the shader.
-        VertexAttribFormat attributeComponentType;      //< Float, Signed Int, etc.
-        unsigned int       attributeComponentCount;     //< float = 1, float2 = 2, etc.
-        unsigned int       attributeOffset;             //< The attribute's offset within the buffer.
-        unsigned int       instanceStepRate;            //< The rate at which the vertex attributes advance for per-instance data. When this is 0, it is advanced once per vertex, otherwise it is advanced by this value for each instance. This will usually be set to 0 for non-instance vertex data, and 1 for instanced data.
+        unsigned int       attributeIndex;              ///< The index of the attribute variable inside the shader.
+        VertexAttribFormat attributeComponentType;      ///< Float, Signed Int, etc.
+        unsigned int       attributeComponentCount;     ///< float = 1, float2 = 2, etc.
+        unsigned int       attributeOffset;             ///< The attribute's offset within the buffer.
+        unsigned int       instanceStepRate;            ///< The rate at which the vertex attributes advance for per-instance data. When this is 0, it is advanced once per vertex, otherwise it is advanced by this value for each instance. This will usually be set to 0 for non-instance vertex data, and 1 for instanced data.
     };
 
     struct VSInputLayoutDesc
@@ -736,7 +736,7 @@ namespace GT
     };
 
 
-    
+
 
     struct ShaderDefine
     {
@@ -745,7 +745,7 @@ namespace GT
     };
 
 
- 
+
 
     /// Structure representing a viewport.
     struct GraphicsViewport
@@ -790,12 +790,12 @@ namespace GT
     {
         TextureType   type;
         unsigned int  width;
-        unsigned int  height;           //< For 1D textures, this is the number of items in the array.
-        unsigned int  depth;            //< For 2D textures, this is the number of items in the array. For cubemaps this is a multiple of 6.
-        unsigned int  mipmapLevels;     //< Mipmap levels
+        unsigned int  height;           ///< For 1D textures, this is the number of items in the array.
+        unsigned int  depth;            ///< For 2D textures, this is the number of items in the array. For cubemaps this is a multiple of 6.
+        unsigned int  mipmapLevels;     ///< Mipmap levels
         TextureFormat format;
         unsigned int  usage;
-        unsigned int  sampleCount;      //< Only used by multisampled textures.
+        unsigned int  sampleCount;      ///< Only used by multisampled textures.
     };
 
 
@@ -876,7 +876,7 @@ namespace GT
         32,
         64,
         32,
-        32,     //< sRGB, linear alpha.
+        32,     ///< sRGB, linear alpha.
 
         // Signed Normalized.
         8,
@@ -921,25 +921,25 @@ namespace GT
         32,
 
         // Special
-        32,               //< GL_DEPTH24_STENCIL8 / DXGI_FORMAT_D24_UNORM_S8_UINT
+        32,               ///< GL_DEPTH24_STENCIL8 / DXGI_FORMAT_D24_UNORM_S8_UINT
 
         // Compressed.
-        4,              //< GL_COMPRESSED_RGBA_S3TC_DXT1_EXT       / DXGI_FORMAT_BC1_UNORM
-        8,              //< GL_COMPRESSED_RGBA_S3TC_DXT3_EXT       / DXGI_FORMAT_BC2_UNORM
-        8,              //< GL_COMPRESSED_RGBA_S3TC_DXT5_EXT       / DXGI_FORMAT_BC3_UNORM
-        4,              //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT / DXGI_FORMAT_BC1_UNORM_SRGB
-        8,              //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT / DXGI_FORMAT_BC2_UNORM_SRGB
-        8,              //< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT / DXGI_FORMAT_BC3_UNORM_SRGB
+        4,              ///< GL_COMPRESSED_RGBA_S3TC_DXT1_EXT       / DXGI_FORMAT_BC1_UNORM
+        8,              ///< GL_COMPRESSED_RGBA_S3TC_DXT3_EXT       / DXGI_FORMAT_BC2_UNORM
+        8,              ///< GL_COMPRESSED_RGBA_S3TC_DXT5_EXT       / DXGI_FORMAT_BC3_UNORM
+        4,              ///< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT / DXGI_FORMAT_BC1_UNORM_SRGB
+        8,              ///< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT / DXGI_FORMAT_BC2_UNORM_SRGB
+        8,              ///< GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT / DXGI_FORMAT_BC3_UNORM_SRGB
 
-        4,              //< GL_COMPRESSED_RED_RGTC1        / DXGI_FORMAT_BC4_UNORM
-        4,              //< GL_COMPRESSED_SIGNED_RED_RGTC1 / DXGI_FORMAT_BC4_SNORM
-        8,              //< GL_COMPRESSED_RG_RGTC2         / DXGI_FORMAT_BC5_UNORM
-        8,              //< GL_COMPRESSED_SIGNED_RG_RGTC2  / DXGI_FORMAT_BC5_SNORM
+        4,              ///< GL_COMPRESSED_RED_RGTC1        / DXGI_FORMAT_BC4_UNORM
+        4,              ///< GL_COMPRESSED_SIGNED_RED_RGTC1 / DXGI_FORMAT_BC4_SNORM
+        8,              ///< GL_COMPRESSED_RG_RGTC2         / DXGI_FORMAT_BC5_UNORM
+        8,              ///< GL_COMPRESSED_SIGNED_RG_RGTC2  / DXGI_FORMAT_BC5_SNORM
 
-        8,              //< GL_COMPRESSED_RGBA_BPTC_UNORM_ARB         / DXGI_FORMAT_BC7_UNORM
-        8,              //< GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB   / DXGI_FORMAT_BC7_UNORM_SRGB
-        8,              //< GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB / DXGI_FORMAT_BC6H_UF16
-        8,              //< GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB   / DXGI_FORMAT_BC6H_SF16
+        8,              ///< GL_COMPRESSED_RGBA_BPTC_UNORM_ARB         / DXGI_FORMAT_BC7_UNORM
+        8,              ///< GL_COMPRESSED_SRGB_ALPHA_BPTC_UNORM_ARB   / DXGI_FORMAT_BC7_UNORM_SRGB
+        8,              ///< GL_COMPRESSED_RGB_BPTC_UNSIGNED_FLOAT_ARB / DXGI_FORMAT_BC6H_UF16
+        8               ///< GL_COMPRESSED_RGB_BPTC_SIGNED_FLOAT_ARB   / DXGI_FORMAT_BC6H_SF16
     };
 }
 

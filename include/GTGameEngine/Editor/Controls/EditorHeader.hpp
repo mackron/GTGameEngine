@@ -1,14 +1,14 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorHeaderControl_hpp_
-#define __GT_EditorHeaderControl_hpp_
+#ifndef GT_EditorHeaderControl
+#define GT_EditorHeaderControl
 
 #include "EditorControl.hpp"
 #include "EditorMainMenuBar.hpp"
 
 namespace GT
 {
-    /// Control representing 
+    /// Control representing
     class EditorHeader: public EditorControl
     {
     public:

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_FileDataTypes_hpp_
-#define __GT_FileDataTypes_hpp_
+#ifndef GT_FileDataTypes
+#define GT_FileDataTypes
 
 #include <GTLib/ResultCodes.hpp>
 
@@ -11,7 +11,7 @@ namespace GT
     {
         None = 0,
         Read,
-        Write,
+        Write
     };
 
     enum class FileSeekOrigin

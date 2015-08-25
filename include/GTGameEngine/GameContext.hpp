@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GE_GameContext_hpp_
-#define __GT_GE_GameContext_hpp_
+#ifndef GT_GE_GameContext
+#define GT_GE_GameContext
 
 #include "Config.hpp"
 #include "WindowManager.hpp"
@@ -145,14 +145,14 @@ namespace GT
         /// Hides the given window.
         ///
         /// @param hWindow [in] The window to hide.
-        void HideWindow(HWindow hWinodw);
+        void HideWindow(HWindow hWindow);
 
 
         /// Closes the game.
         ///
         /// @remarks
         ///     This does not immediately shut down the game. Rather, it marks the game as needing to close and waits
-        ///     until the end of the current loop iteration. 
+        ///     until the end of the current loop iteration.
         void Close();
 
         /// Steps the game by one frame.
@@ -387,12 +387,12 @@ namespace GT
         ///////////////////////////////////////////////////////////////
         // State Flags
 
-        static const uint32_t IsSingleThreadedFlag       = (1U << 0);        //< Whether or not the game should run in single- or multi-threaded mode.
-        static const uint32_t IsOwnerOfWindowManagerFlag = (1U << 1);        //< Whether or not the context owns the window manager.
-        static const uint32_t IsRunningFlag              = (1U << 2);        //< Whether or not the game is currently running. This is used to track whether or not the game loop should continue looping.
-        static const uint32_t IsRunningRealTimeLoopFlag  = (1U << 3);        //< Whether or not a real-time loop is being used.
-        
-        static const uint32_t IsEditorInitialisedFlag    = (1U << 31);       //< Whether or not the editor has been initialized.
+        static const uint32_t IsSingleThreadedFlag       = (1U << 0);        ///< Whether or not the game should run in single- or multi-threaded mode.
+        static const uint32_t IsOwnerOfWindowManagerFlag = (1U << 1);        ///< Whether or not the context owns the window manager.
+        static const uint32_t IsRunningFlag              = (1U << 2);        ///< Whether or not the game is currently running. This is used to track whether or not the game loop should continue looping.
+        static const uint32_t IsRunningRealTimeLoopFlag  = (1U << 3);        ///< Whether or not a real-time loop is being used.
+
+        static const uint32_t IsEditorInitialisedFlag    = (1U << 31);       ///< Whether or not the editor has been initialized.
 
 
     public:

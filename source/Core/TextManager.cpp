@@ -117,14 +117,14 @@ namespace GTLib
                     m_startPosition = 0;
                     m_endPosition   = 0;
                 }
-                
-                
+
+
                 /// FontEngine::MeasureStringCallback::GetTabSize()
                 int GetTabSize() const
                 {
                     return m_tabSize;
                 }
-                
+
                 /// FontEngine::MeasureStringCallback::HandleCharacter()
                 bool HandleCharacter(const FontEngine &fontEngine, char32_t character, GlyphHandle glyph, const GTLib::Rect<int> &rect, GlyphMetrics &metrics, int &penPositionX, int &penPositionY)
                 {
@@ -133,40 +133,40 @@ namespace GTLib
                     (void)character;
                     (void)rect;
                     (void)penPositionY;
-                    
-                    
+
+
                     // If we have just hit the start, set the start position.
                     if (m_currentIndex == m_startIndex)
                     {
                         m_startPosition = penPositionX;
                     }
-                    
+
                     m_currentIndex += 1;
-                    
-                    
+
+
                     // If we're at the end we need to set the end position and kill the iteration.
                     if (m_currentIndex == m_endIndex)
                     {
                         m_endPosition = penPositionX + metrics.advance;
                         return false;       // <-- Kill the iteration.
                     }
-                    
+
                     return true;
                 }
-                
-                
+
+
                 int m_tabSize;
                 size_t m_startIndex;
                 size_t m_endIndex;
                 size_t m_currentIndex;
                 int &m_startPosition;
                 int &m_endPosition;
-                
+
             }callback(this->tabSizeInPixels, startCharIndex, endCharIndex, startPosition, endPosition);
-            
+
             // Now we measure.
             this->defaultFont->GetServer().GetFontEngine().MeasureString(this->defaultFont->GetFontHandle(), this->text.c_str(), callback);
-            
+
             // At this point the callback should have the information we need.
             return callback.m_endPosition - callback.m_startPosition;
 #endif
@@ -186,7 +186,7 @@ namespace GTLib
             endPosition   = textWidth1 + textWidth2;
             return textWidth2;
         }
-        
+
         return 0;
     }
 
@@ -306,9 +306,9 @@ namespace GTLib
 
 namespace GTLib
 {
-    TextManager::TextManager(GT::GUIFontManager* pFontManager, GT::HGUIFont defaultFont)
+    TextManager::TextManager(GT::GUIFontManager* pFontManager, GT::HGUIFont defaultFontIn)
         : text(nullptr), isTextValid(false),
-          m_pFontManager(pFontManager), defaultFont(defaultFont),
+          m_pFontManager(pFontManager), defaultFont(defaultFontIn),
           containerWidth(0), containerHeight(0),
           containerOffsetX(0), containerOffsetY(0),
           lines(),
@@ -413,7 +413,7 @@ namespace GTLib
         if (this->defaultFont != newDefaultFont)
         {
             this->defaultFont = newDefaultFont;
-        
+
 
             // Every line needs to have the font changed. This should be temp until we add support for multiple fonts.
             for (size_t i = 0; i < this->lines.count; ++i)
@@ -677,7 +677,7 @@ namespace GTLib
         {
             return this->containerHeight / m_pFontManager->GetLineHeight(this->defaultFont);
         }
-        
+
         return 0;
     }
 
@@ -792,7 +792,7 @@ namespace GTLib
                 return this->tabSize * spaceMetrics.advance;
             }
         }
-        
+
         return 0;
     }
 
@@ -943,7 +943,7 @@ namespace GTLib
         }
 
         auto sectionText = this->cursorMarker.line->GetText();
-        char cANSI = (char)c;
+        char cANSI = char(c);
 
         // We need to construct a new string for the current section.
         GTLib::Strings::List<char> newText;
@@ -988,7 +988,7 @@ namespace GTLib
                 }
             }
         }
-        
+
         //if (this->commandStack.count > 0 && this->commandIndex == this->commandStack.count && this->commandStack.GetBack().type == TextCommandType_Insert && this->commandStack.GetBack().text != "\n")
         if (appendToPreviousUndoCommand)
         {
@@ -1004,8 +1004,8 @@ namespace GTLib
     void TextManager::InsertTextAtCursor(const char* textIn, ptrdiff_t textSizeInTs, bool appendNewCommand)
     {
         // We need to grab the start so we can create an undo/redo command.
-        int lineStart          = this->cursorMarker.lineIndex;
-        int lineStartCharacter = this->cursorMarker.characterIndex;
+        size_t lineStart          = this->cursorMarker.lineIndex;
+        size_t lineStartCharacter = this->cursorMarker.characterIndex;
 
 
 
@@ -1059,10 +1059,10 @@ namespace GTLib
         // Now we need to append a new undo/redo command.
         if (appendNewCommand)
         {
-            int lineEnd          = this->cursorMarker.lineIndex;
-            int lineEndCharacter = this->cursorMarker.characterIndex;
+            size_t lineEnd          = this->cursorMarker.lineIndex;
+            size_t lineEndCharacter = this->cursorMarker.characterIndex;
 
-            this->AppendCommand(TextCommandType_Insert, textIn, textSizeInTs, lineStart, lineStartCharacter, lineEnd, lineEndCharacter, false);
+            this->AppendCommand(TextCommandType_Insert, textIn, textSizeInTs, int(lineStart), int(lineStartCharacter), int(lineEnd), int(lineEndCharacter), false);
         }
     }
 
@@ -1073,9 +1073,9 @@ namespace GTLib
 
     void TextManager::InsertNewLineAtCursor(bool appendNewCommand)
     {
-        auto currentLine               = this->cursorMarker.line;
-        auto currentLineIndex          = this->cursorMarker.lineIndex;
-        auto currentLineCharacterIndex = this->cursorMarker.characterIndex;
+        auto   currentLine               = this->cursorMarker.line;
+        size_t currentLineIndex          = this->cursorMarker.lineIndex;
+        size_t currentLineCharacterIndex = this->cursorMarker.characterIndex;
 
 
         // The new line needs text.
@@ -1117,7 +1117,7 @@ namespace GTLib
         // We need a new undo/redo command for this one.
         if (appendNewCommand)
         {
-            this->AppendCommand(TextCommandType_Insert, "\n", 1, currentLineIndex, currentLineCharacterIndex, this->cursorMarker.lineIndex, this->cursorMarker.characterIndex, false);
+            this->AppendCommand(TextCommandType_Insert, "\n", 1, int(currentLineIndex), int(currentLineCharacterIndex), int(this->cursorMarker.lineIndex), int(this->cursorMarker.characterIndex), false);
         }
     }
 
@@ -1186,8 +1186,8 @@ namespace GTLib
 
     void TextManager::DeleteCharacterAtLeftOfCursor()
     {
-        int lineEnd          = this->cursorMarker.lineIndex;
-        int lineEndCharacter = this->cursorMarker.characterIndex;
+        size_t lineEnd          = this->cursorMarker.lineIndex;
+        size_t lineEndCharacter = this->cursorMarker.characterIndex;
 
         char deletedCharacter = '\0';
 
@@ -1256,9 +1256,9 @@ namespace GTLib
 
 
             // Now we need to append an undo/redo command.
-            int lineStart          = this->cursorMarker.lineIndex;
-            int lineStartCharacter = this->cursorMarker.characterIndex;
-            this->AppendCommand(TextCommandType_Delete, &deletedCharacter, 1, lineStart, lineStartCharacter, lineEnd, lineEndCharacter, false);
+            size_t lineStart          = this->cursorMarker.lineIndex;
+            size_t lineStartCharacter = this->cursorMarker.characterIndex;
+            this->AppendCommand(TextCommandType_Delete, &deletedCharacter, 1, int(lineStart), int(lineStartCharacter), int(lineEnd), int(lineEndCharacter), false);
         }
     }
 
@@ -1326,9 +1326,9 @@ namespace GTLib
 
 
             // Now we need to append an undo/redo command.
-            int lineEnd          = (deletedCharacter != '\n') ? this->cursorMarker.lineIndex          : this->cursorMarker.lineIndex + 1;
-            int lineEndCharacter = (deletedCharacter != '\n') ? this->cursorMarker.characterIndex + 1 : 0;
-            this->AppendCommand(TextCommandType_Delete, &deletedCharacter, 1, this->cursorMarker.lineIndex, this->cursorMarker.characterIndex, lineEnd, lineEndCharacter, true);
+            size_t lineEnd          = (deletedCharacter != '\n') ? this->cursorMarker.lineIndex          : this->cursorMarker.lineIndex + 1;
+            size_t lineEndCharacter = (deletedCharacter != '\n') ? this->cursorMarker.characterIndex + 1 : 0;
+            this->AppendCommand(TextCommandType_Delete, &deletedCharacter, 1, int(this->cursorMarker.lineIndex), int(this->cursorMarker.characterIndex), int(lineEnd), int(lineEndCharacter), true);
         }
     }
 
@@ -1353,16 +1353,16 @@ namespace GTLib
             GTLib::String textForUndo = this->GetTextInRange(*start, *end);
 
             auto startLine          = this->lines[start->lineIndex];
-            int  startLineIndex     = start->lineIndex;
-            int  startLineCharacter = start->characterIndex;
+            size_t startLineIndex     = start->lineIndex;
+            size_t startLineCharacter = start->characterIndex;
             auto endLine            = this->lines[end->lineIndex];
-            int  endLineIndex       = end->lineIndex;
-            int  endLineCharacter   = end->characterIndex;
+            size_t endLineIndex       = end->lineIndex;
+            size_t endLineCharacter   = end->characterIndex;
 
 
             bool combineFirstAndLastLines = startLine != endLine;
 
-            for (int i = startLineIndex; i <= endLineIndex; )
+            for (size_t i = startLineIndex; i <= endLineIndex; )
             {
                 auto line = this->lines[i];
                 assert(line != nullptr);
@@ -1445,7 +1445,7 @@ namespace GTLib
 
             if (appendNewCommand)
             {
-                this->AppendCommand(TextCommandType_Delete, textForUndo.c_str(), textForUndo.GetLengthInTs(), startLineIndex, startLineCharacter, endLineIndex, endLineCharacter, false);
+                this->AppendCommand(TextCommandType_Delete, textForUndo.c_str(), textForUndo.GetLengthInTs(), int(startLineIndex), int(startLineCharacter), int(endLineIndex), int(endLineCharacter), false);
             }
         }
     }
@@ -1598,8 +1598,8 @@ namespace GTLib
                 // We start on the left side...
                 marker.posX           = lineRect.left;
                 marker.characterIndex = 0;
-                
-                
+
+
 #if 0
                 // It's somewhere in the middle of the line, so now we need to correctly position it next to a character.
                 struct Callback : public FontEngine::MeasureStringCallback
@@ -1608,20 +1608,20 @@ namespace GTLib
                         : m_tabSize(tabSize), m_x(x), m_marker(marker)
                     {
                     }
-                    
-                    
+
+
                     /// FontEngine::MeasureStringCallback::GetTabSize()
                     int GetTabSize() const
                     {
                         return m_tabSize;
                     }
-                    
+
                     /// FontEngine::GetXStartPosition()
                     int GetXStartPosition() const
                     {
                         return m_marker.posX;
                     }
-                    
+
                     /// FontEngine::MeasureStringCallback::HandleCharacter()
                     bool HandleCharacter(const FontEngine &fontEngine, char32_t character, GlyphHandle glyph, const GTLib::Rect<int> &rect, GlyphMetrics &metrics, int &penPositionX, int &penPositionY)
                     {
@@ -1631,10 +1631,10 @@ namespace GTLib
                         (void)rect;
                         (void)penPositionX;
                         (void)penPositionY;
-                        
-                        
+
+
                         int nextCursorPosX = m_marker.posX + metrics.advance;
-                        
+
                         if (m_x >= static_cast<int>(m_marker.posX) && m_x < nextCursorPosX)
                         {
                             // The cursor is on top of this character. We need to decide whether or not to move to the left or right of this character.
@@ -1650,17 +1650,17 @@ namespace GTLib
 
                         m_marker.posX            = nextCursorPosX;
                         m_marker.characterIndex += 1;
-                        
+
                         return true;
                     }
-                    
-                    
+
+
                     int m_tabSize;
                     int m_x;
                     Marker &m_marker;
-                    
+
                 }callback(this->GetTabSizeInPixels(), x, marker);
-                
+
                 // All we need to do is call MeasureString() and let the callback handle the setting of the marker. After MeasureString() has returned,
                 // the marker should be positioned correctly.
                 this->defaultFont->GetServer().GetFontEngine().MeasureString(this->defaultFont->GetFontHandle(), marker.line->GetText(), callback);
@@ -1851,7 +1851,7 @@ namespace GTLib
 
         // First thing we do is ensure the existing rendering info is cleared.
         renderingInfo.Clear();
-        
+
         if (!this->lines.IsEmpty() && this->defaultFont != 0)
         {
 #if 0
@@ -1887,19 +1887,19 @@ namespace GTLib
             // The foreground can be made up of multiple meshes. We create a mesh for each glyph map that's used. We map meshes to the glyph map handle.
             struct ForegroundMesh
             {
-                ForegroundMesh() 
+                ForegroundMesh()
                     : vertices(), indices(), highIndex(0)
                 {
                 }
-                
+
                 GTLib::Vector<TextMeshVertex>   vertices;
                 GTLib::Vector<unsigned int> indices;
-                
+
                 /// The largest index value currently in the list. This is used for properly calculating indices.
                 unsigned int highIndex;
             };
             GTLib::Map<GlyphMapHandle, ForegroundMesh*> foregroundMeshes;
-            
+
 
 
             // The y offset. This will increment as the line increments.
@@ -1920,8 +1920,8 @@ namespace GTLib
 
                 // The x offset. This will increment as we move along the line.
                 int offsetX = lineRect.left;
-                
-                
+
+
                 // It's somewhere in the middle of the line, so now we need to correctly position it next to a character.
                 struct Callback : public FontEngine::MeasureStringCallback
                 {
@@ -1938,33 +1938,33 @@ namespace GTLib
                         m_vertex.colourB = defaultTextColour.b;
                         m_vertex.colourA = m_options.alpha;
                     }
-                    
-                    
+
+
                     /// FontEngine::MeasureStringCallback::GetTabSize()
                     int GetTabSize() const
                     {
                         return m_tabSize;
                     }
-                    
+
                     /// FontEngine::GetXStartPosition()
                     int GetXStartPosition() const
                     {
                         return m_startPosX;
                     }
-                    
+
                     /// FontEngine::GetYStartPosition()
                     int GetYStartPosition() const
                     {
                         return m_startPosY;
                     }
-                    
+
                     /// FontEngine::MeasureStringCallback::HandleCharacter()
                     bool HandleCharacter(const FontEngine &fontEngine, char32_t character, GlyphHandle glyph, const GTLib::Rect<int> &rect, GlyphMetrics &metrics, int &penPositionX, int &penPositionY)
                     {
                         (void)metrics;
                         (void)penPositionX;
                         (void)penPositionY;
-                        
+
                         if (!GTLib::Strings::IsWhitespace(character))
                         {
                             GTLib::Rect<float> uvCoords;
@@ -1972,7 +1972,7 @@ namespace GTLib
                             if (glyphMap != 0)
                             {
                                 ForegroundMesh* foregroundMesh = nullptr;
-                            
+
                                 auto iForegroundMesh = m_foregroundMeshes.Find(glyphMap);
                                 if (iForegroundMesh != nullptr)
                                 {
@@ -1983,8 +1983,8 @@ namespace GTLib
                                     foregroundMesh = new ForegroundMesh;
                                     m_foregroundMeshes.Add(glyphMap, foregroundMesh);
                                 }
-                                
-                                
+
+
                                 float posLeft   = static_cast<float>(rect.left);
                                 float posTop    = static_cast<float>(rect.top);
                                 float posRight  = static_cast<float>(rect.right);
@@ -2037,40 +2037,40 @@ namespace GTLib
                                 foregroundMesh->highIndex += 4;
                             }
                         }
-                        
+
                         return true;
                     }
-                    
-                    
+
+
                     int m_tabSize;
                     int m_startPosX;
                     int m_startPosY;
                     Font* m_font;
                     const TextManagerRenderingOptions &m_options;
                     GTLib::Map<GlyphMapHandle, ForegroundMesh*> &m_foregroundMeshes;
-                    
+
                     /// A reusable vertex for ease of use.
                     TextMeshVertex m_vertex;
-                    
+
                 private:    // No copying.
                     Callback(const Callback &);
                     Callback & operator=(const Callback &);
-                    
+
                 }callback(this->GetTabSizeInPixels(), offsetX, offsetY, this->defaultFont, this->defaultTextColour, options, foregroundMeshes);
-                
+
                 this->defaultFont->GetServer().GetFontEngine().MeasureString(this->defaultFont->GetFontHandle(), line->GetText(), callback);
 
                 // We move down by the line height.
                 offsetY += (lineRect.bottom - lineRect.top);
             }
-            
-            
+
+
             // Now each foreground mesh needs to be added (and then deleted).
             for (size_t iForegroundMesh = 0; iForegroundMesh < foregroundMeshes.count; ++iForegroundMesh)
             {
                 auto glyphMapHandle = foregroundMeshes.buffer[iForegroundMesh]->key;
                 auto foregroundMesh = foregroundMeshes.buffer[iForegroundMesh]->value;
-                
+
                 assert(glyphMapHandle != 0);
                 assert(foregroundMesh != nullptr);
                 {
@@ -2079,7 +2079,7 @@ namespace GTLib
                         auto newMesh = new TextMesh(&foregroundMesh->vertices[0], foregroundMesh->vertices.count, &foregroundMesh->indices[0], foregroundMesh->indices.count, glyphMapHandle);
                         renderingInfo.meshes.Append(newMesh);
                     }
-                    
+
                     // The foreground mesh needs to be deleted.
                     delete foregroundMesh;
                 }

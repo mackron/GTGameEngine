@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GE_Config_hpp_
-#define __GT_GE_Config_hpp_
+#ifndef GT_GE_Config
+#define GT_GE_Config
 
 #include <GTLib/Config.hpp>
 
@@ -44,16 +44,16 @@
 //   1) The host application can do it better
 //   2) The size of the executable can be reduced if the asset type is not needed.
 
-#define GT_ENABLE_PNG   1       //< Enable PNG images.
-#define GT_ENABLE_TGA   1       //< Enable TGA images.
-#define GT_ENABLE_JPG   1       //< Enable JPG images.
-#define GT_ENABLE_PSD   1       //< Enable PSD images. PSD files are good for rapid turnaround times with texture creation, however disabling this will save a few KB in a release build.
-#define GT_ENABLE_MTL   1       //< Enable MTL materials (OBJ materials).
-#define GT_ENABLE_OBJ   1       //< Enable OBJ models.
-#define GT_ENABLE_MD2   1       //< Enable MD2 models.
-#define GT_ENABLE_OGEX  1       //< Enable OpenGEX models.
-#define GT_ENABLE_WAV   1       //< Enable WAV sounds.
-#define GT_ENABLE_OGG   1       //< Enable OGG sounds.
+#define GT_ENABLE_PNG   1       ///< Enable PNG images.
+#define GT_ENABLE_TGA   1       ///< Enable TGA images.
+#define GT_ENABLE_JPG   1       ///< Enable JPG images.
+#define GT_ENABLE_PSD   1       ///< Enable PSD images. PSD files are good for rapid turnaround times with texture creation, however disabling this will save a few KB in a release build.
+#define GT_ENABLE_MTL   1       ///< Enable MTL materials (OBJ materials).
+#define GT_ENABLE_OBJ   1       ///< Enable OBJ models.
+#define GT_ENABLE_MD2   1       ///< Enable MD2 models.
+#define GT_ENABLE_OGEX  1       ///< Enable OpenGEX models.
+#define GT_ENABLE_WAV   1       ///< Enable WAV sounds.
+#define GT_ENABLE_OGG   1       ///< Enable OGG sounds.
 
 
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorAssetExplorer_hpp_
-#define __GT_EditorAssetExplorer_hpp_
+#ifndef GT_EditorAssetExplorer
+#define GT_EditorAssetExplorer
 
 #include "EditorScrollableControl.hpp"
 #include "EditorAssetExplorerItem.hpp"
@@ -70,18 +70,11 @@ namespace GT
 
         struct ExplorerEventHandler : public GUIEventHandler
         {
-            ExplorerEventHandler(EditorAssetExplorer &explorer)
-                : m_explorer(explorer)
-            {
-            }
+            /// Constructor.
+            ExplorerEventHandler(EditorAssetExplorer &explorer);
 
-            void OnMouseWheel(GUIContext &context, HGUIElement, int delta, int, int)
-            {
-                if (context.IsElementUnderMouse(m_explorer.GetRootGUIElement()))
-                {
-                    m_explorer.ScrollY(delta);
-                }
-            }
+            /// @copydoc GUIEventHandler::OnMouseWheel()
+            void OnMouseWheel(GUIContext &context, HGUIElement, int delta, int, int);
 
 
             EditorAssetExplorer &m_explorer;

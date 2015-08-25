@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Vector_hpp_
-#define __GTLib_Vector_hpp_
+#ifndef GT_Vector
+#define GT_Vector
 
 #include <GTLib/Math.hpp>
 #include <GTLib/stdlib.hpp>
@@ -36,8 +36,8 @@ namespace GTLib
         }
 
         /// Constructor.
-        Vector(size_t bufferSize)
-            : count(0), bufferSize(bufferSize), buffer((bufferSize > 0) ? static_cast<T*>(malloc(bufferSize * sizeof(T))) : nullptr)
+        Vector(size_t bufferSizeIn)
+            : count(0), bufferSize(bufferSizeIn), buffer((bufferSizeIn > 0) ? static_cast<T*>(malloc(bufferSizeIn * sizeof(T))) : nullptr)
         {
         }
 
@@ -88,8 +88,8 @@ namespace GTLib
 
         /// Inserts an item at the given index.
         ///
-        /// @param value [in] The value to insert.
-        /// @param index [in] The index to insert the item at.
+        /// @param value       [in] The value to insert.
+        /// @param insertIndex [in] The index to insert the item at.
         ///
         /// @remarks
         ///     The index must be in the range of [0, this->count]
@@ -201,8 +201,8 @@ namespace GTLib
 
 
         /**
-        *   \brief               Resizes the internal buffer.
-        *   \param  newSize [in] The new size of the buffer. If this is smaller than the current count, nothing will be done.
+        *   \brief                     Resizes the internal buffer.
+        *   \param  newBufferSize [in] The new size of the buffer. If this is smaller than the current count, nothing will be done.
         *
         *   \remarks
         *       You can use this to reduce the size of the buffer.
@@ -249,8 +249,8 @@ namespace GTLib
 
 
         /**
-        *   \brief             Resizes the vector to contain <count> elements. Uses the default constructor for allocation.
-        *   \param  count [in] The number of elements to include in the vector.
+        *   \brief                Resizes the vector to contain <count> elements. Uses the default constructor for allocation.
+        *   \param  newCount [in] The number of elements to include in the vector.
         *
         *   \remarks
         *       Note that this is different to Reserve() in that it actually adds the objects to the vector. Reserve() simply

@@ -28,7 +28,7 @@ namespace GT
 
     GraphicsAPI_OpenGL::~GraphicsAPI_OpenGL()
     {
-        
+
     }
 
 
@@ -102,7 +102,7 @@ namespace GT
                                                 m_minorVersion = 1;
                                             }
 
-                                            if (m_majorVersion == 2 && m_minorVersion >= 0)
+                                            if (m_majorVersion == 2)
                                             {
                                                 // At this point we know we support at least OpenGL 2.0, so initialize the rest of the API by retrieving all of the
                                                 // extensions and relevant function pointers.
@@ -319,10 +319,10 @@ namespace GT
 #if defined(GT_PLATFORM_WINDOWS)
         assert(this->GetProcAddress != nullptr);
 
-        void* proc = ::GetProcAddress(m_hOpenGL32, procName);
+        void* proc = reinterpret_cast<void*>(::GetProcAddress(m_hOpenGL32, procName));
         if (proc == nullptr)
         {
-            proc = this->GetProcAddress(procName);
+            proc = reinterpret_cast<void*>(this->GetProcAddress(procName));
         }
 
         return proc;
@@ -348,7 +348,7 @@ namespace GT
 #if defined(GT_PLATFORM_WINDOWS)
         this->GetCurrentContext = reinterpret_cast<PFNWGLGETCURRENTCONTEXTPROC>(::GetProcAddress(m_hOpenGL32, "wglGetCurrentContext"));
         this->GetCurrentDC      = reinterpret_cast<PFNWGLGETCURRENTDCPROC     >(::GetProcAddress(m_hOpenGL32, "wglGetCurrentDC"));
-                
+
         if (this->IsExtensionSupported("WGL_EXT_swap_control"))
         {
             this->SwapIntervalEXT    = reinterpret_cast<PFNWGLSWAPINTERVALEXTPROC   >(this->GetGLProcAddress("wglSwapIntervalEXT"));

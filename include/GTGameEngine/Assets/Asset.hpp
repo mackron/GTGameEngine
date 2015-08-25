@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_Asset_hpp_
-#define __GT_Asset_hpp_
+#ifndef GT_Asset
+#define GT_Asset
 
 #include <GTLib/String.hpp>
 #include <GTLib/ReferenceCountedObject.hpp>

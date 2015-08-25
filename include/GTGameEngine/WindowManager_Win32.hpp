@@ -160,7 +160,7 @@ namespace GT
 
         /// Called when a mouse button is pressed.
         virtual void OnMouseButtonPressed(HWindow hWinodw, int button, int mousePosX, int mousePosY) = 0;
-        
+
         /// Called when a mouse button is released.
         virtual void OnMouseButtonReleased(HWindow hWindow, int button, int mousePosX, int mousePosY) = 0;
 
@@ -215,6 +215,9 @@ namespace GT
 
 
     private:
+
+        /// A handle to the user32.dll module. We need this to get a handle to SetProcessDPIAware().
+        HMODULE m_hUser32DLL;
 
         /// A handle to the shcore.dll module.
         HMODULE m_hSHCoreDLL;

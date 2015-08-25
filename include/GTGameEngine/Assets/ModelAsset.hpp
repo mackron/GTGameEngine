@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_ModelAsset_hpp_
-#define __GT_ModelAsset_hpp_
+#ifndef GT_ModelAsset
+#define GT_ModelAsset
 
 #include "Asset.hpp"
 #include "../Graphics/GraphicsTypes.hpp"

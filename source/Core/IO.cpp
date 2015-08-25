@@ -142,9 +142,9 @@ namespace GTLib
                 // We need to copy the path section into the temporary buffer because we need to make it null terminated. On
                 // Windows we will also attach a slash to the end to account for cases such as "C:".
 #if defined(GT_PLATFORM_WINDOWS)
-                buffer.Allocate((size_t)iPath.GetSizeInTs() + 2);    // +1 for null terminator; +1 for slash.
+                buffer.Allocate(size_t(iPath.GetSizeInTs()) + 2);    // +1 for null terminator; +1 for slash.
 #else
-                buffer.Allocate((size_t)iPath.GetSizeInTs() + 1);    // +1 for null terminator.
+                buffer.Allocate(size_t(iPath.GetSizeInTs()) + 1);    // +1 for null terminator.
 #endif
 
                 char* pathSection = static_cast<char *>(buffer.GetDataPointer());
@@ -226,8 +226,8 @@ namespace GTLib
         */
         struct _DirectoryStackItem
         {
-            _DirectoryStackItem(const char *valueIn, _DirectoryStackItem *below)
-                : value(valueIn), below(below)
+            _DirectoryStackItem(const char *valueIn, _DirectoryStackItem *belowIn)
+                : value(valueIn), below(belowIn)
             {
             }
 
@@ -245,7 +245,7 @@ namespace GTLib
         };
 
         /// The top stack item.
-        _DirectoryStackItem *DirectoryStack_Top = nullptr;
+        static _DirectoryStackItem *DirectoryStack_Top = nullptr;
 
 
         void PushCurrentDirectory()
@@ -335,7 +335,7 @@ namespace GTLib
                     return true;
                 }
             }
-            
+
             return false;
         }
 
@@ -345,8 +345,8 @@ namespace GTLib
             {
                 return IO::AppendAndCleanPaths(basePath, relativePath);
             }
-            
-            
+
+
             // We'll get here if one of the paths is not the correct type.
             return relativePath;
         }
@@ -363,64 +363,64 @@ namespace GTLib
             {
                 assert(absolutePath != nullptr);
                 assert(basePath     != nullptr);
-                
-                
+
+
                 // We do this in two phases. The first phase simply removes everything from the absolute path until we find
                 // a non-matching character. The second phase is where the ".." parts of the path are added.
                 size_t endOfLastPartAbsolute = 0;
                 size_t endOfLastPartBase     = 0;
                 size_t iCharAbsolute = 0;
                 size_t iCharBase     = 0;
-                
+
                 char c1;
                 char c2;
                 do
                 {
                     c1 = absolutePath[iCharAbsolute];
                     c2 = basePath[iCharBase];
-                    
-                    
+
+
                     if (c1 == '/' || c1 == '\\')
                     {
                         do
                         {
                             endOfLastPartAbsolute = iCharAbsolute;
                             c1 = absolutePath[++iCharAbsolute];
-                            
+
                             if (c1 == '.')
                             {
                                 c1 = absolutePath[++iCharAbsolute];
                             }
-                            
+
                         } while (c1 == '/' || c1 == '\\');
                     }
                     else
                     {
                         iCharAbsolute += 1;
                     }
-                    
-                    
+
+
                     if (c2 == '/' || c1 == '\\')
                     {
                         do
                         {
                             endOfLastPartBase = iCharBase;
                             c2 = basePath[++iCharBase];
-                            
+
                             if (c2 == '.')
                             {
                                 c2 = basePath[++iCharBase];
                             }
-                            
+
                         } while (c2 == '/' || c2 == '\\');
                     }
                     else
                     {
                         iCharBase += 1;
                     }
-                    
+
                 } while (c1 != '\0' && c2 != '\0' && c1 == c2);
-                
+
                 // If both strings are at the end it means they are equal and the result will just be an empty path.
                 if (c1 == '\0' && c2 == '\0')
                 {
@@ -432,7 +432,7 @@ namespace GTLib
 
                 // Now we need to do the ".." phase.
                 GTLib::String result;
-                
+
                 if (c2 != '\0')
                 {
                     iCharBase = endOfLastPartBase;
@@ -447,16 +447,16 @@ namespace GTLib
                                 iCharBase  += 1;        // <-- Don't need to check that character again.
                             }
                         }
-                        
+
                         iCharBase += 1;
                     }
                 }
-                
-                
+
+
                 result += absolutePath + endOfLastPartAbsolute + 1;
                 return result;
             }
-            
+
             return "";
         }
 
@@ -464,8 +464,8 @@ namespace GTLib
         {
             return ToRelativePath(absolutePath, IO::GetCurrentDirectory());
         }
-        
-        
+
+
         GTLib::String AppendAndCleanPaths(const char* part1, const char* part2)
         {
             size_t pathLength = 0;
@@ -478,25 +478,25 @@ namespace GTLib
 
 
 
-            
+
             // We have the parts, so now we just need to build the string.
             GTLib::String result;
             for (size_t iSegment = 0; iSegment < pathSegments.GetCount(); ++iSegment)
             {
                 auto &segment = pathSegments[iSegment];
-                
+
                 result.Append(segment.strBegin, segment.strEnd - segment.strBegin);
-                
+
                 if (iSegment + 1 < pathSegments.GetCount())
                 {
                     result.Append("/", 1);
                 }
             }
-            
+
             return result;
         }
-        
-        
+
+
         inline int SplitAndCleanPath_Append(const char* path, uint32_t index0, uint32_t index1, GTLib::Vector<StringSegmentUTF<const char>> &partsOut)
         {
             int length = static_cast<int>(index1 - index0);         // <-- Initially will never be negative, but can be mutated to make it negative in one case.
@@ -540,8 +540,8 @@ namespace GTLib
                     }
                 }
             }
-            
-            
+
+
             // Add or subtract one to compensate for the slash separator or null terminator.
             if (length > 0)
             {
@@ -556,7 +556,7 @@ namespace GTLib
             assert(length == 0);
             return length;
         }
-        
+
         size_t SplitAndCleanPath(const char* path, GTLib::Vector<StringSegmentUTF<const char>> &partsOut)
         {
             if (path != nullptr)
@@ -565,18 +565,18 @@ namespace GTLib
 
                 uint32_t currentIndex0 = 0;
                 uint32_t currentIndex1 = 0;
-            
+
                 // We add an empty part for the initial slash, if we have one. This is the only place where an empty part is allowed.
                 if (path[currentIndex0] == '/')
                 {
                     partsOut.PushBack(StringSegmentUTF<const char>(path + currentIndex0, path + currentIndex0));
-                
+
                     currentIndex0 = 1;
                     currentIndex1 = 1;
 
                     resultLength  = 1;   // <-- Take the slash into account.
                 }
-            
+
                 char c;
                 do
                 {
@@ -584,7 +584,7 @@ namespace GTLib
                     if (c == '/' || c == '\\')
                     {
                         resultLength += SplitAndCleanPath_Append(path, currentIndex0, currentIndex1, partsOut);
-                    
+
 
                         currentIndex0 = currentIndex1;
                         {
@@ -596,10 +596,10 @@ namespace GTLib
                     {
                         ++currentIndex1;
                     }
-                
+
                 } while (c != '\0');
-            
-            
+
+
                 // The last part needs to be added in case the path did not end with a slash and thus wasn't hit by the loop above.
                 if (currentIndex0 != currentIndex1)
                 {
@@ -619,21 +619,21 @@ namespace GTLib
             GTLib::Vector<StringSegmentUTF<const char>> pathSegments(32);
             IO::SplitAndCleanPath(path, pathSegments);
 
-            
+
             // We have the parts, so now we just need to build the string.
             GTLib::String result;
             for (size_t iSegment = 0; iSegment < pathSegments.GetCount(); ++iSegment)
             {
                 auto &segment = pathSegments[iSegment];
-                
+
                 result.Append(segment.strBegin, segment.strEnd - segment.strBegin);
-                
+
                 if (iSegment + 1 < pathSegments.GetCount())
                 {
                     result.Append("/", 1);
                 }
             }
-            
+
             return result;
         }
 
@@ -655,7 +655,7 @@ namespace GTLib
                 auto &segment = segments[iSegment];
 
                 size_t segmentLength = static_cast<size_t>(segment.strEnd - segment.strBegin);
-                
+
                 memmove(pathOut, segment.strBegin, segmentLength);
                 pathOut += segmentLength;
 
@@ -668,13 +668,13 @@ namespace GTLib
 
             pathOut[0] = '\0';  // <-- Ensure we are null terminated.
         }
-        
-        
+
+
         bool IsPathAbsolute(const char* path)
         {
             return Path::IsAbsolute(path);
         }
-        
+
         bool IsPathRelative(const char* path)
         {
             return Path::IsRelative(path);
@@ -686,15 +686,15 @@ namespace GTLib
             GTLib::StringSegmentUTF<const char> basePath;
             GTLib::StringSegmentUTF<const char> fileName;
             SplitPath(path, basePath, fileName);
-            
+
             return GTLib::String(basePath.strBegin, basePath.strEnd - basePath.strBegin);
         }
-        
+
         GTLib::String GetParentDirectoryPath(const char* path)
         {
             size_t pathEnd = 0;
             size_t iChar   = 0;
-            
+
             char c;
             do
             {
@@ -702,10 +702,10 @@ namespace GTLib
                 if (c == '/' || c == '\\')
                 {
                     size_t sectionEnd = iChar;
-                    
+
                     do { c = path[++iChar]; } while (c == '/' || c == '\\');
-                    
-                    
+
+
                     if (c == '\0')
                     {
                         break;
@@ -714,26 +714,26 @@ namespace GTLib
                     {
                         pathEnd = sectionEnd;
                     }
-                    
+
                 }
                 else
                 {
                     ++iChar;
                 }
-                
+
             } while (c != '\0');
-            
+
             return GTLib::String(path, pathEnd);
         }
-        
-        
+
+
         void SplitPath(const char* path, GTLib::StringSegmentUTF<const char> &basePathOut, GTLib::StringSegmentUTF<const char> &fileNameOut)
         {
             size_t lastSlashRegionStart = 0;
             size_t lastSlashRegionEnd   = 0;
-            
+
             size_t iChar = 0;
-            
+
             char c;
             do
             {
@@ -750,34 +750,34 @@ namespace GTLib
                 {
                     ++iChar;
                 }
-                
+
             } while (c != '\0');
-            
-            
+
+
             basePathOut.strBegin = path;
             basePathOut.strEnd   = path + lastSlashRegionStart;
-            
+
             fileNameOut.strBegin = path + lastSlashRegionEnd;
             fileNameOut.strEnd   = path + iChar - 1;
         }
-        
+
         void SplitPath(const char* path, GTLib::String &basePathOut, GTLib::String &fileNameOut)
         {
             GTLib::StringSegmentUTF<const char> basePath;
             GTLib::StringSegmentUTF<const char> fileName;
             SplitPath(path, basePath, fileName);
-            
+
             basePathOut = GTLib::String(basePath.strBegin, basePath.strEnd - basePath.strBegin);
             fileNameOut = GTLib::String(fileName.strBegin, fileName.strEnd - fileName.strBegin);
         }
-        
-        
+
+
         const char* FileName(const char *path)
         {
             // We just iterate over the string until we find the last occurance of a slash character. Since the slash characters are just
             // ASCII characters, we can do a standard iteration.
             auto result = path;
-            
+
             char c;
             do
             {
@@ -786,12 +786,12 @@ namespace GTLib
                 {
                     result = path + 1;      // <-- Take it past the slash.
                 }
-                
+
                 ++path;
-                
+
             } while (c != '\0');
-            
-            
+
+
             return result;
         }
 
@@ -807,12 +807,12 @@ namespace GTLib
             return GTLib::String(path, extension - path);
         }
 
-        
+
         const char* GetExtension(const char* path)
         {
             size_t lastDotPos = static_cast<size_t>(-1);
             size_t iChar      = 0;
-            
+
             char c;
             do
             {
@@ -823,8 +823,8 @@ namespace GTLib
                     {
                         c = path[iChar++];
                     } while (c == '.');
-                 
-                    
+
+
                     if (c != '/' && c != '\\')
                     {
                         lastDotPos = iChar - 1;
@@ -834,15 +834,15 @@ namespace GTLib
                         ++iChar;
                     }
                 }
-                
+
             } while (c != '\0');
-            
-            
+
+
             if (lastDotPos == static_cast<size_t>(-1))
             {
                 return path + iChar - 1;
             }
-            
+
             return path + lastDotPos;
         }
     }
@@ -889,7 +889,7 @@ namespace GTLib
     {
         return OpenFile(filePath, openMode, nullptr);
     }
-    
+
     FileHandle OpenFile(const char* filePath, unsigned int openMode, FileInfo &fileInfoOut)
     {
         return OpenFile(filePath, openMode, &fileInfoOut);
@@ -943,7 +943,7 @@ namespace GTLib
                 GTLib::String devnull;
                 IO::SplitPath(filePathToLoad.c_str(), directory, devnull);
                 IO::MakeDirectory(directory.c_str());
-                
+
                 win32File = CreateFileA(filePathToLoad.c_str(), dwDesiredAccess, 0, nullptr, dwCreationDisposition, FILE_ATTRIBUTE_NORMAL, nullptr);
             }
         }
@@ -967,7 +967,7 @@ namespace GTLib
                 ULARGE_INTEGER lastModifiedTime64;
                 lastModifiedTime64.LowPart  = lastModifiedTime.dwLowDateTime;
                 lastModifiedTime64.HighPart = lastModifiedTime.dwHighDateTime;
-                
+
 
                 fileInfoOut->path             = filePath;
                 fileInfoOut->absolutePath     = file->absolutePath;
@@ -989,7 +989,7 @@ namespace GTLib
         if (file != nullptr)
         {
             UnmapFile(fileIn);
-            
+
             CloseHandle(file->win32File);
             delete file;
         }
@@ -1006,7 +1006,7 @@ namespace GTLib
 
             return fileSize.QuadPart;
         }
-        
+
         return 0;
     }
 
@@ -1170,41 +1170,41 @@ namespace GTLib
             : fd(-1), openMode(0), sizeInBytes(0), mmapPtr(nullptr), absolutePath()
         {
         }
-        
-        
+
+
         /// The POSIX file descriptor.
         int fd;
-        
+
         /// The open mode that the file was created with. This is set the 'openMode' from OpenFile() verbatim. We need to keep track of this
         /// so we can correctly use mmap().
         unsigned int openMode;
-        
+
         /// The size of the file.
         int64_t sizeInBytes;
-        
+
         /// The address of the current memory mapping. If the file has not currently mapped, this is set to false.
         void* mmapPtr;
-        
+
         /// The absolute path of the file. We need this so we can fill a FileInfo structure correctly.
         GTLib::String absolutePath;
-        
-        
+
+
     private:    // No copying.
         _FileHandle(const _FileHandle &);
         _FileHandle & operator=(const _FileHandle &);
     };
-    
-    
+
+
     FileHandle OpenFile(const char* filePath, unsigned int openMode)
     {
         return OpenFile(filePath, openMode, nullptr);
     }
-    
+
     FileHandle OpenFile(const char* filePath, unsigned int openMode, FileInfo &fileInfoOut)
     {
         return OpenFile(filePath, openMode, &fileInfoOut);
     }
-    
+
     FileHandle OpenFile(const char* filePath, unsigned int openMode, FileInfo* fileInfoOut)
     {
         GTLib::String filePathToLoad;
@@ -1219,9 +1219,9 @@ namespace GTLib
         {
             filePathToLoad = filePath;
         }
-        
-        
-        
+
+
+
         int mode = O_RDONLY;
         if ((openMode & IO::OpenMode::Write) != 0)
         {
@@ -1233,18 +1233,18 @@ namespace GTLib
             {
                 mode = O_WRONLY;
             }
-            
+
             mode |= O_CREAT;
             mode |= O_TRUNC;
         }
-        
+
         if ((openMode & IO::OpenMode::Append) != 0)
         {
             mode |= O_APPEND;
         }
-        
-        
-        
+
+
+
         int fd = open(filePathToLoad.c_str(), mode);
         if (fd == -1)
         {
@@ -1256,11 +1256,11 @@ namespace GTLib
                 GTLib::String devnull;
                 IO::SplitPath(filePathToLoad.c_str(), directory, devnull);
                 IO::MakeDirectory(directory.c_str());
-                
+
                 fd = open(filePathToLoad.c_str(), mode);
             }
         }
-        
+
         if (fd != -1)
         {
             auto file = new _FileHandle;
@@ -1269,12 +1269,12 @@ namespace GTLib
             file->sizeInBytes  = 0;
             file->mmapPtr      = nullptr;
             file->absolutePath = IO::ToAbsolutePath(filePathToLoad.c_str());
-            
+
             struct stat64 st;
             if (fstat64(fd, &st) != -1)
             {
                 file->sizeInBytes = st.st_size;
-                
+
                 if (fileInfoOut != nullptr)
                 {
                     fileInfoOut->path             = filePath;
@@ -1289,27 +1289,27 @@ namespace GTLib
             {
                 assert(false);      // <-- We should never get here if the file failed to open, so fstat() should always work, I think...
             }
-            
+
             return reinterpret_cast<size_t>(file);
         }
-        
-        
+
+
         return 0;
     }
-    
+
     void CloseFile(FileHandle fileIn)
     {
         auto file = reinterpret_cast<_FileHandle*>(fileIn);
         if (file != nullptr)
         {
             UnmapFile(fileIn);
-            
+
             close(file->fd);
             delete file;
         }
     }
-    
-    
+
+
     int64_t GetFileSize(FileHandle fileIn)
     {
         auto file = reinterpret_cast<_FileHandle*>(fileIn);
@@ -1324,19 +1324,19 @@ namespace GTLib
                 {
                     return st.st_size;
                 }
-                
+
                 return 0;
             }
-            
+
             if ((file->openMode & IO::OpenMode::Read) != 0)
             {
                 return file->sizeInBytes;
             }
         }
-        
+
         return 0;
     }
-    
+
 
     void* MapFile(FileHandle fileIn, size_t length, int64_t offset)
     {
@@ -1354,8 +1354,8 @@ namespace GTLib
             {
                 return file->mmapPtr;
             }
-            
-            
+
+
             int prot = PROT_NONE;
             if ((file->openMode & IO::OpenMode::Read) != 0)
             {
@@ -1365,29 +1365,29 @@ namespace GTLib
             {
                 prot |= PROT_WRITE;
             }
-            
+
             int flags = MAP_PRIVATE;
-            
+
             file->mmapPtr = mmap(NULL, length, prot, flags, file->fd, offset);
             if (file->mmapPtr == MAP_FAILED)
             {
                 file->mmapPtr = nullptr;
             }
-            
-            
+
+
             // If the file is write-only, we want to set the size of the file to the mapped buffer size.
             if (file->mmapPtr != nullptr && (file->openMode & IO::OpenMode::Read) == 0)
             {
                 file->sizeInBytes = length;
             }
-            
-            
+
+
             return file->mmapPtr;
         }
-        
+
         return nullptr;
     }
-    
+
     void UnmapFile(FileHandle fileIn)
     {
         auto file = reinterpret_cast<_FileHandle*>(fileIn);
@@ -1399,13 +1399,13 @@ namespace GTLib
             }
         }
     }
-    
+
     int64_t GetFileMappingOffsetAlignment()
     {
         return sysconf(_SC_PAGE_SIZE);
     }
-    
-    
+
+
     intptr_t ReadFile(FileHandle fileIn, void* bufferOut, size_t bytesToRead)
     {
         auto file = reinterpret_cast<_FileHandle*>(fileIn);
@@ -1413,10 +1413,10 @@ namespace GTLib
         {
             return read(file->fd, bufferOut, bytesToRead);
         }
-        
+
         return -1;
     }
-    
+
     intptr_t WriteFile(FileHandle fileIn, void* bufferOut, size_t bytesToWrite)
     {
         auto file = reinterpret_cast<_FileHandle*>(fileIn);
@@ -1424,10 +1424,10 @@ namespace GTLib
         {
             return write(file->fd, bufferOut, bytesToWrite);
         }
-        
+
         return -1;
     }
-    
+
     int64_t SeekFile(FileHandle fileIn, int64_t offset, SeekOrigin origin)
     {
         auto file = reinterpret_cast<_FileHandle*>(fileIn);
@@ -1435,13 +1435,13 @@ namespace GTLib
         {
             return lseek64(file->fd, offset, static_cast<int>(origin));
         }
-        
+
         return -1;
     }
 #endif
-    
-    
-    
+
+
+
     namespace IO
     {
         /**
@@ -1724,10 +1724,10 @@ namespace GTLib
     {
     }
 
-    FileInfo::FileInfo(const char* path)
+    FileInfo::FileInfo(const char* pathIn)
         : path(), absolutePath(), size(0), lastModifiedTime(0), isDirectory(false), exists(false)
     {
-        GTLib::IO::GetFileInfo(path, *this);
+        GTLib::IO::GetFileInfo(pathIn, *this);
     }
 
     FileInfo::~FileInfo()

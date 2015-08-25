@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_List_hpp_
-#define __GTLib_Strings_List_hpp_
+#ifndef GT_Strings_List
+#define GT_Strings_List
 
 #include "../stdlib.hpp"
 #include "Size.hpp"
@@ -18,8 +18,8 @@ namespace GTLib
         template <typename T>
         struct ListItem
         {
-            ListItem(const T* start, const T* end, ListItem* prev, ListItem* next)
-                : start(start), end(end), prev(prev), next(next)
+            ListItem(const T* startIn, const T* endIn, ListItem* prevIn, ListItem* nextIn)
+                : start(startIn), end(endIn), prev(prevIn), next(nextIn)
             {
             }
 
@@ -109,7 +109,7 @@ namespace GTLib
             *       to the original strings (they will not make their own local copy).
             */
             List(const List<T> &other)
-                : root(nullptr), last(nullptr), lengthInTs(0), str(nullptr)
+                : root(nullptr), last(nullptr), m_lengthInTs(0), m_str(nullptr)
             {
                 for (auto i = other.root; i != nullptr; i = i->next)
                 {
@@ -129,7 +129,7 @@ namespace GTLib
 
             /**
             *   \brief                Appends a string to the list.
-            *   \param  str      [in] A pointer to the start of the string to append.
+            *   \param  strIn    [in] A pointer to the start of the string to append.
             *   \param  sizeInTs [in] The size in Ts of the string, not including the null terminator. See remarks.
             *   \return               A pointer to the new ListItem object.
             *

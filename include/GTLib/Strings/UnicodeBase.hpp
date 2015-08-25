@@ -2,11 +2,21 @@
 *   Some of the code here is taken from ftp://www.unicode.org/Public/PROGRAMS/CVTUTF/.
 *   The full copyright notice can be found at the bottom of this document.
 */
-#ifndef __GTLib_Strings_UnicodeBase_hpp_
-#define __GTLib_Strings_UnicodeBase_hpp_
+#ifndef GT_Strings_UnicodeBase
+#define GT_Strings_UnicodeBase
 
 #include <cstddef>
 #include <cassert>
+
+#ifndef __has_cpp_attribute         // Optional of course.
+  #define __has_cpp_attribute(x) 0  // Compatibility with non-clang compilers.
+#endif
+
+#if __has_cpp_attribute(clang::fallthrough)
+#define FALLTHROUGH [[clang::fallthrough]]
+#else
+#define FALLTHROUGH
+#endif
 
 namespace GTLib
 {
@@ -25,27 +35,27 @@ namespace GTLib
             {
                 return 0;
             }
-            
+
             if (firstByte < 224)
             {
                 return 1;
             }
-            
+
             if (firstByte < 240)
             {
                 return 2;
             }
-            
+
             if (firstByte < 248)
             {
                 return 3;
             }
-            
+
             // 5 and 6 byte UTF-8 strings are no longer legal.
             return -1;
         }
         */
-        
+
         /**
         *   \brief  Retrieves an offset value that is subtracted from the UTF-8 character after the bytes have been combined. This is based on the size.
         */
@@ -56,40 +66,40 @@ namespace GTLib
             {
                 return 0x00000000UL;
             }
-            
+
             if (size == 2)
             {
                 return 0x00003080UL;
             }
-            
+
             if (size == 3)
             {
                 return 0x000E2080UL;
             }
-            
+
             if (size == 4)
             {
                 return 0x03C82080UL;
             }
         }
         */
-        
+
         #define UNICODE_BOM             0xFEFF
 
-        #define UNI_REPLACEMENT_CHAR    (char32_t)0x0000FFFD
-        #define UNI_MAX_BMP             (char32_t)0x0000FFFF
-        #define UNI_MAX_UTF16           (char32_t)0x0010FFFF
-        #define UNI_MAX_UTF32           (char32_t)0x7FFFFFFF
-        #define UNI_MAX_LEGAL_UTF32     (char32_t)0x0010FFFF
+        #define UNI_REPLACEMENT_CHAR    static_cast<char32_t>(0x0000FFFD)
+        #define UNI_MAX_BMP             static_cast<char32_t>(0x0000FFFF)
+        #define UNI_MAX_UTF16           static_cast<char32_t>(0x0010FFFF)
+        #define UNI_MAX_UTF32           static_cast<char32_t>(0x7FFFFFFF)
+        #define UNI_MAX_LEGAL_UTF32     static_cast<char32_t>(0x0010FFFF)
 
-        #define UNI_SUR_HIGH_START      (char32_t)0xD800
-        #define UNI_SUR_HIGH_END        (char32_t)0xDBFF
-        #define UNI_SUR_LOW_START       (char32_t)0xDC00
-        #define UNI_SUR_LOW_END         (char32_t)0xDFFF
+        #define UNI_SUR_HIGH_START      static_cast<char32_t>(0xD800)
+        #define UNI_SUR_HIGH_END        static_cast<char32_t>(0xDBFF)
+        #define UNI_SUR_LOW_START       static_cast<char32_t>(0xDC00)
+        #define UNI_SUR_LOW_END         static_cast<char32_t>(0xDFFF)
 
-        #define UNI_HALF_SHIFT          (char32_t)10
-        #define UNI_HALF_BASE           (char32_t)0x0010000UL
-        #define UNI_HALF_MASK           (char32_t)0x3FFUL
+        #define UNI_HALF_SHIFT          static_cast<char32_t>(10)
+        #define UNI_HALF_BASE           static_cast<char32_t>(0x0010000UL)
+        #define UNI_HALF_MASK           static_cast<char32_t>(0x3FFUL)
 
 
         /*
@@ -132,10 +142,10 @@ namespace GTLib
         static const unsigned char g_firstByteMark[7] = {0x00, 0x00, 0xC0, 0xE0, 0xF0, 0xF8, 0xFC};
 
         /**
-        *   \brief              Determines if the next UTF-8 character in the specified string is legal.
-        *   \param  str    [in] The string whose first character needs to be checked.
-        *   \param  length [in] The length of the character in the string.
-        *   \return             True if the character is legal; false otherwise.
+        *   \brief                   Determines if the next UTF-8 character in the specified string is legal.
+        *   \param  str         [in] The string whose first character needs to be checked.
+        *   \param  sizeInBytes [in] The length of the character in the string.
+        *   \return                  True if the character is legal; false otherwise.
         */
         inline bool IsLegalUTF8(const char *str, unsigned short sizeInBytes)
         {
@@ -151,32 +161,34 @@ namespace GTLib
 
             case 4:
                 {
-                    a = (unsigned char)*--srcptr;
+                    a = static_cast<unsigned char>(*--srcptr);
                     if (a < 0x80 || a > 0xBF)
                     {
                         return false;
                     }
                 }
+                FALLTHROUGH;
 
             case 3:
                 {
-                    a = (unsigned char)*--srcptr;
+                    a = static_cast<unsigned char>(*--srcptr);
                     if (a < 0x80 || a > 0xBF)
                     {
                         return false;
                     }
                 }
+                FALLTHROUGH;
 
             case 2:
                 {
-                    a = (unsigned char)*--srcptr;
+                    a = static_cast<unsigned char>(*--srcptr);
                     if (a > 0xBF)
                     {
                         return false;
                     }
 
                     // Note that there is no fall-throughs with this switch.
-                    switch ((unsigned char)*str)
+                    switch (static_cast<unsigned char>(*str))
                     {
                     case 0xE0:
                         {
@@ -227,17 +239,18 @@ namespace GTLib
                         }
                     }
                 }
+                FALLTHROUGH;
 
             case 1:
                 {
-                    if ((unsigned char)*str >= 0x80 && (unsigned char)*str < 0xC2)
+                    if (static_cast<unsigned char>(*str) >= 0x80 && static_cast<unsigned char>(*str) < 0xC2)
                     {
                         return false;
                     }
                 }
             }
 
-            if ((unsigned char)*str > 0xF4)
+            if (static_cast<unsigned char>(*str) > 0xF4)
             {
                 return false;
             }
@@ -361,8 +374,8 @@ namespace GTLib
                    (c == 0x205F)                ||
                    (c == 0x3000);
         }
-        
-        
+
+
         /// Checks if the character at the start of the given UTF-8string is a whitespace character, and if so, returns it's size in bytes.
         ///
         /// @return the number of UTF-8 encoded bytes making up the character, or 0 if the character is not whitespace.
@@ -375,7 +388,7 @@ namespace GTLib
         inline size_t GetWhitespaceSize(const char* str)
         {
             // TODO: This needs to be tested properly.
-            
+
             const unsigned char byte1 = static_cast<unsigned char>(str[0]);
             if (byte1 >= 0x0009)
             {
@@ -387,11 +400,11 @@ namespace GTLib
                 {
                     return 1;
                 }
-                
+
                 if (byte1 >= 0xC2)
                 {
                     const unsigned char byte2 = static_cast<unsigned char>(str[1]);
-                    
+
                     if (byte1 == 0xC2)
                     {
                         if (byte2 == 0x85 || byte2 == 0xA0)
@@ -402,7 +415,7 @@ namespace GTLib
                     else if (byte1 >= 0xE1)
                     {
                         const unsigned char byte3 = static_cast<unsigned char>(str[2]);
-                        
+
                         if (byte1 == 0xE1)
                         {
                             if (byte2 == 0x9A && byte3 == 0x80)
@@ -424,7 +437,7 @@ namespace GTLib
                                     {
                                         return 3;
                                     }
-                                    
+
                                     if (byte3 == 0xA8 || byte3 == 0x89 || byte3 == 0xAF)
                                     {
                                         return 3;
@@ -443,10 +456,10 @@ namespace GTLib
                     }
                 }
             }
-            
+
             return 0;
         }
-        
+
 
 
         /// Retrieves the number of Ts making up a single character.
@@ -509,7 +522,7 @@ namespace GTLib
             {
                 return 0;
             }
-    
+
             return 2;
         }
 
@@ -543,10 +556,10 @@ namespace GTLib
                 // like the one in the code by Unicode, Inc.
                 switch (charSize)
                 {
-                case 4: *--dest = static_cast<char>(((c | 0x80) & 0xBF)); c >>= 6;
-                case 3: *--dest = static_cast<char>(((c | 0x80) & 0xBF)); c >>= 6;
-                case 2: *--dest = static_cast<char>(((c | 0x80) & 0xBF)); c >>= 6;
-                case 1: *--dest = static_cast<char>( (c | g_firstByteMark[charSize]));
+                case 4: *--dest = static_cast<char>(((c | 0x80) & 0xBF)); c >>= 6; FALLTHROUGH;
+                case 3: *--dest = static_cast<char>(((c | 0x80) & 0xBF)); c >>= 6; FALLTHROUGH;
+                case 2: *--dest = static_cast<char>(((c | 0x80) & 0xBF)); c >>= 6; FALLTHROUGH;
+                case 1: *--dest = static_cast<char>( (c | g_firstByteMark[charSize])); FALLTHROUGH;
                 default: break;
                 }
 
@@ -571,7 +584,7 @@ namespace GTLib
                 // replace the character.
                 if (c >= UNI_SUR_HIGH_START && c <= UNI_SUR_LOW_END)
                 {
-                    *dest++ = (char16_t)UNI_REPLACEMENT_CHAR;
+                    *dest++ = static_cast<char16_t>(UNI_REPLACEMENT_CHAR);
                 }
                 else
                 {
@@ -581,7 +594,7 @@ namespace GTLib
             else if (c > UNI_MAX_UTF16)
             {
                 // If we've made it here the character is illegal, so we will replace it.
-                *dest++ = (char16_t)UNI_REPLACEMENT_CHAR;
+                *dest++ = static_cast<char16_t>(UNI_REPLACEMENT_CHAR);
             }
             else
             {

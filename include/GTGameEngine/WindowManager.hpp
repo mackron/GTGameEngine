@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_WindowManager_hpp_
-#define __GT_WindowManager_hpp_
+#ifndef GT_WindowManager
+#define GT_WindowManager
 
 #include <GTLib/Rect.hpp>
 #include <GTLib/Keyboard.hpp>
@@ -13,10 +13,10 @@ namespace GT
 {
     enum class WindowType
     {
-        PrimaryWindow,              //< A regular application window with a border and close buttons.
-        PrimaryWindow_Borderless,   //< Same as PrimaryWindow, except without a border.
-        ChildWindow,                //< A normal child window with no background and no border.
-        PopupWindow                 //< A window for things like popup menus, dropdowns, tooltips, etc.
+        PrimaryWindow,              ///< A regular application window with a border and close buttons.
+        PrimaryWindow_Borderless,   ///< Same as PrimaryWindow, except without a border.
+        ChildWindow,                ///< A normal child window with no background and no border.
+        PopupWindow                 ///< A window for things like popup menus, dropdowns, tooltips, etc.
     };
 
     typedef size_t HWindow;

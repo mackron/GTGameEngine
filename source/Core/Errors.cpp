@@ -105,8 +105,8 @@ namespace GTLib
             if (rootHandler)
             {
                 // We need to transform the message.
-                size_t msgLength = (size_t)GTLib::IO::vsnprintf(nullptr, 0, msg, argList1);
-                char *newMsg     = (char *)malloc(msgLength + 1);
+                size_t msgLength = size_t(GTLib::IO::vsnprintf(nullptr, 0, msg, argList1));
+                char *newMsg     = reinterpret_cast<char *>(malloc(msgLength + 1));
 
                 GTLib::IO::vsnprintf(newMsg, msgLength + 1, msg, argList2);
 

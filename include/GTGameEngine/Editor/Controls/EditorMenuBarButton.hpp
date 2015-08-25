@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorMenuBarButton_hpp_
-#define __GT_EditorMenuBarButton_hpp_
+#ifndef GT_EditorMenuBarButton
+#define GT_EditorMenuBarButton
 
 #include "EditorControl.hpp"
 
@@ -47,7 +47,7 @@ namespace GT
         //////////////////////////////////////
         // Flags
 
-        static const uint32_t Flag_IsActivated = (1 << 0);      //< Is the button activated.
+        static const uint32_t Flag_IsActivated = (1 << 0);      ///< Is the button activated.
     };
 }
 

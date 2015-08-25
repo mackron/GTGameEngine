@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Threading_Semaphore_hpp_
-#define __GTLib_Threading_Semaphore_hpp_
+#ifndef GT_Threading_Semaphore
+#define GT_Threading_Semaphore
 
 #include <cstdint>
 
@@ -18,12 +18,12 @@ namespace GTLib
         class Semaphore
         {
         public:
-        
+
             /**
             *   \brief  Constructor.
             */
             Semaphore(int value);
-            
+
             /**
             *   \brief  Destructor.
             *
@@ -31,29 +31,29 @@ namespace GTLib
             *   using the semaphore do not try to use it after it has been destructed.
             */
             ~Semaphore();
-            
+
             /// Waits for the semaphore to become signaled. This will decrement the counter of the semaphore by one.
             ///
             /// @param timeoutInMilliseconds [in] The maximum amount of time to wait, in milliseconds.
             void Wait(uint32_t timeoutInMilliseconds = 0xFFFFFFFF);
-            
+
             /// Increments the counter by one, allowing another thread to pass the semaphore gate.
             void Release();
 
-            
-            
+
+
         private:
-        
+
             /// The data associated with the semaphore. Only used internally.
             void *data;
-            
-            
+
+
         private:    // No copying.
             Semaphore(const Semaphore &);
             Semaphore & operator=(const Semaphore &);
         };
     }
-    
+
     // Convenience typedef.
     typedef Threading::Semaphore Semaphore;
 }

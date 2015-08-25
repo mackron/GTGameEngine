@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_FontMetrics_hpp_
-#define __GTLib_FontMetrics_hpp_
+#ifndef GTLib_FontMetrics
+#define GTLib_FontMetrics
 
 namespace GTLib
 {
@@ -12,14 +12,14 @@ namespace GTLib
             : ascent(0), descent(0), lineHeight(0)
         {
         }
-        
-        
+
+
         /// The space between the base line and the top.
         int ascent;
-        
+
         /// The space between the base line and the bottom.
         int descent;
-        
+
         /// The height of the line.
         unsigned int lineHeight;
     };

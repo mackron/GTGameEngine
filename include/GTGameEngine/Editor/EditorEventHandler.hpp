@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorEventHandler_hpp_
-#define __GT_EditorEventHandler_hpp_
+#ifndef GT_EditorEventHandler
+#define GT_EditorEventHandler
 
 #include "../WindowManager.hpp"
 
@@ -40,7 +40,7 @@ namespace GT
         ///
         /// @param hWindow [in] A handle to the window.
         /// @param xPos    [in] The position of the cursor on the x axis relative to the top-left of the window's client area.
-        /// @param xPos    [in] The position of the cursor on the y axis relative to the top-left of the window's client area.
+        /// @param yPos    [in] The position of the cursor on the y axis relative to the top-left of the window's client area.
         ///
         /// @remarks
         ///     The position is relative to the client area of the window.
@@ -51,7 +51,7 @@ namespace GT
         /// @param hWindow [in] A handle to the window.
         /// @param button  [in] The button.
         /// @param xPos    [in] The position of the cursor on the x axis relative to the top-left of the window's client area.
-        /// @param xPos    [in] The position of the cursor on the y axis relative to the top-left of the window's client area.
+        /// @param yPos    [in] The position of the cursor on the y axis relative to the top-left of the window's client area.
         ///
         /// @remarks
         ///     The position is relative to the client area of the window.
@@ -62,7 +62,7 @@ namespace GT
         /// @param hWindow [in] A handle to the window.
         /// @param button  [in] The button.
         /// @param xPos    [in] The position of the cursor on the x axis relative to the top-left of the window's client area.
-        /// @param xPos    [in] The position of the cursor on the y axis relative to the top-left of the window's client area.
+        /// @param yPos    [in] The position of the cursor on the y axis relative to the top-left of the window's client area.
         ///
         /// @remarks
         ///     The position is relative to the client area of the window.
@@ -73,7 +73,7 @@ namespace GT
         /// @param hWindow [in] A handle to the window.
         /// @param button  [in] The button.
         /// @param xPos    [in] The position of the cursor on the x axis relative to the top-left of the window's client area.
-        /// @param xPos    [in] The position of the cursor on the y axis relative to the top-left of the window's client area.
+        /// @param yPos    [in] The position of the cursor on the y axis relative to the top-left of the window's client area.
         ///
         /// @remarks
         ///     The position is relative to the client area of the window.

@@ -15,7 +15,7 @@
 namespace GTLib
 {
     Path::Path(const char *path)
-        : parts(), partCount(0), leadingSlash(false), str(nullptr)
+        : parts(), partCount(0), str(nullptr), leadingSlash(false)
     {
         *this = path;
     }

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_DefaultAssetAllocator_hpp_
-#define __GT_DefaultAssetAllocator_hpp_
+#ifndef GT_DefaultAssetAllocator
+#define GT_DefaultAssetAllocator
 
 #include <GTGameEngine/Config.hpp>
 
@@ -17,7 +17,7 @@ namespace GT
 
         /// @copydoc AssetAllocator::GetAssetTypeByPath()
         AssetType GetAssetTypeByPath(const char* filePath) const;
-        
+
         /// @copydoc AssetAllocator::IsAssetTypeSupported()
         bool IsAssetTypeSupported(AssetType assetType) const;
 

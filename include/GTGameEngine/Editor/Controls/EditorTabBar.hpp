@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorTabBar_hpp_
-#define __GT_EditorTabBar_hpp_
+#ifndef GT_EditorTabBar
+#define GT_EditorTabBar
 
 #include "EditorTab.hpp"
 #include <GTLib/Vector.hpp>
@@ -25,8 +25,6 @@ namespace GT
         /// Removes the given tab from the tab bar and deletes it.
         ///
         /// @param pTab [in] A pointer to the tab to delete.
-        ///
-        /// @return True if the tab was deleted; false if the tab could not be found (it could be part of a different tab bar).
         void DeleteTab(EditorTab* pTab);
 
 

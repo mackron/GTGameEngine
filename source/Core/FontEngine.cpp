@@ -4,11 +4,15 @@
 
 namespace GTLib
 {
+    FontEngine::MeasureStringCallback::MeasureStringCallback() {}
+    FontEngine::MeasureStringCallback::~MeasureStringCallback() {}
+
+
     FontEngine::FontEngine(GlyphMapManager* glyphMapManager)
         : m_glyphMapManager(glyphMapManager)
     {
     }
-    
+
     FontEngine::~FontEngine()
     {
     }

@@ -4,6 +4,12 @@
 
 namespace GT
 {
+    SceneCallback::~SceneCallback()
+    {
+    }
+
+
+
     ////////////////////////////////////////////////////////////
     // Notifications
 

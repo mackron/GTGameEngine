@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Keys_hpp_
-#define __GTLib_Keys_hpp_
+#ifndef GT_Keys
+#define GT_Keys
 
 #include <cstdint>
 #include <GTLib/String.hpp>

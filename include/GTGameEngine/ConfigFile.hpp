@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_ConfigFile_hpp_
-#define __GT_ConfigFile_hpp_
+#ifndef GT_ConfigFile
+#define GT_ConfigFile
 
 #include "FileSystem.hpp"
 #include <cstdint>
@@ -15,8 +15,7 @@ namespace GT
     enum class ConfigFileType
     {
         Number,
-        Integer,
-
+        Integer
     };
 
     /// Class representing a config file.
@@ -70,12 +69,12 @@ namespace GT
         float GetFloat(const char* variableName) const;
         int GetInteger(const char* variableName) const;
         bool GetBoolean(const char* variableName) const;
-        const char* GetString(const char* variableName) const;      //< Don't store the string for later use - make a copy.
+        const char* GetString(const char* variableName) const;      // <-- Don't store the string for later use - make a copy.
 
         float GetFloatFromArray(const char* arrayName, unsigned int index) const;
         int GetIntegerFromArray(const char* arrayName, unsigned int index) const;
         bool GetBooleanFromArray(const char* arrayName, unsigned int index) const;
-        const char* GetStringFromArray(const char* arrayName, unsigned int index) const;          //< Don't store the string for later use - make a copy.
+        const char* GetStringFromArray(const char* arrayName, unsigned int index) const;          // <-- Don't store the string for later use - make a copy.
 
         bool IsNumber(const char* variableName);
         bool IsBoolean(const char* variableName);
@@ -89,7 +88,7 @@ namespace GT
         virtual bool SetInteger(const char* variableName, int value);
         virtual bool SetBoolean(const char* variableName, bool value);
         virtual bool SetString(const char* variableName, const char* value);
-        
+
 
 
     protected:

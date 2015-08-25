@@ -343,7 +343,7 @@ namespace GT
     struct TextureResource_OpenGL : public Resource_OpenGL
     {
         TextureResource_OpenGL(GLuint objectGLIn, GLenum targetGLIn, unsigned int widthIn, unsigned int heightIn, unsigned int depthIn, TextureFormat formatIn)
-            : Resource_OpenGL(GraphicsResourceType::Texture), 
+            : Resource_OpenGL(GraphicsResourceType::Texture),
               objectGL(objectGLIn), targetGL(targetGLIn),
               width(widthIn), height(heightIn), depth(depthIn),
               format(formatIn)
@@ -559,8 +559,8 @@ namespace GT
     DefaultGraphicsWorld_OpenGL::DefaultGraphicsWorld_OpenGL(GUIContext &gui, GraphicsAPI_OpenGL &gl)
         : GraphicsWorld(gui),
           m_gl(gl),
-          m_guiDrawRawImageTexture(0),
-          m_hDefaultTexture(0)
+          m_hDefaultTexture(0),
+          m_guiDrawRawImageTexture(0)
     {
     }
 
@@ -599,7 +599,7 @@ namespace GT
                 defaultTextureDesc.pData  = defaultTextureData;
                 m_hDefaultTexture = this->CreateTextureResource(defaultTextureDesc);
 
-                
+
                 // GUI.
                 GLuint guiRectangleVertexShader = this->CreateShader_GLSL(GL_VERTEX_SHADER,
                     "attribute vec2 VS_Position;\n"
@@ -721,7 +721,7 @@ namespace GT
 
         GLuint objectGL;
         m_gl.GenTextures(1, &objectGL);
-        
+
         GLenum targetGL         = 0;
         GLenum internalFormatGL = g_GLTextureFormatsTable[textureDesc.format];
         GLenum formatGL         = g_GLTextureSubImageFormatsTable[textureDesc.format];
@@ -911,7 +911,7 @@ namespace GT
         const char* shaderString_SpecularExponent = defaultShaderString_SpecularExponent;
         const char* shaderString_Emissive         = defaultShaderString_Emissive;
         const char* shaderString_Alpha            = defaultShaderString_Alpha;
-        
+
         char* materialShaderString_Diffuse          = nullptr;
         char* materialShaderString_Specular         = nullptr;
         char* materialShaderString_SpecularExponent = nullptr;
@@ -1074,8 +1074,8 @@ namespace GT
 
             pMaterialResource->inputVariables.variableDescriptors = inputVariableDescriptors;
             pMaterialResource->inputVariables.valuesBuffer = GT::BasicBuffer(inputVariablesValuesBuffer.buffer, inputVariablesValuesBuffer.count*sizeof(uint32_t));
-        
-        
+
+
             // Properties.
             easymtl_property* pIsTransparent = easymtl_getpropertybyname(&materialSource, "IsTransparent");
             if (pIsTransparent != nullptr)
@@ -1164,7 +1164,7 @@ namespace GT
                 if (meshDesc.materials != nullptr)
                 {
                     materialSlot.hDefaultMaterial = meshDesc.materials[iMaterial];
-                    
+
                     // Inherit the default values for the input variables.
                     auto pDefaultMaterial = reinterpret_cast<MaterialResource_OpenGL*>(materialSlot.hDefaultMaterial);
                     if (pDefaultMaterial != nullptr)
@@ -1176,7 +1176,7 @@ namespace GT
                 {
                     materialSlot.hDefaultMaterial = 0;
                 }
-                
+
                 pMeshResource->materialSlots.PushBack(materialSlot);
             }
         }
@@ -1745,12 +1745,12 @@ namespace GT
         // Command buffers are not supported.
         assert(false);
     }
-        
+
     void DefaultGraphicsWorld_OpenGL::ExecuteRenderingCommands()
     {
         // We need to iterate over each render target and render the world from the perspective of each of the enabled ones. Render targets are
         // rendered based on their priorities. Texture render targets are always rendered before window render targets.
-        
+
         // Texture RTs
         for (size_t iRT = 0; iRT < m_textureRTs.GetCount(); ++iRT)
         {
@@ -1799,7 +1799,7 @@ namespace GT
         m_gl.DisableVertexAttribArray(1);
         m_gl.DisableVertexAttribArray(2);
         m_gl.VertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float)*2, reinterpret_cast<const void*>(0));
-        
+
 
         m_gl.UseProgram(m_guiRectangleProgram);
         m_gl.UniformMatrix4fv(m_guiRectangleProgram_ProjectionLoc, 1, GL_FALSE, &m_guiProjection[0][0]);
@@ -2055,7 +2055,7 @@ namespace GT
                             m_gl.VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(0));
                             m_gl.VertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(sizeof(float)*3));
                             m_gl.VertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(sizeof(float)*3 + sizeof(float)*2));
-                         
+
                             for (size_t iMaterial = 0; iMaterial < pMeshResource->materialSlots.GetCount(); ++iMaterial)
                             {
                                 auto &meshResourceMaterialSlot = pMeshResource->materialSlots[iMaterial];
@@ -2134,7 +2134,7 @@ namespace GT
                                         }
                                     }
 
-                                    
+
 
                                     if (pMaterialResource->isTransparent)
                                     {
@@ -2156,7 +2156,7 @@ namespace GT
                         }
                     }
                 }
-                
+
 
                 // GUI.
                 if (pRT->hSurface != 0)

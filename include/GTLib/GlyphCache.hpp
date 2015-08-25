@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GlyphCache_hpp_
-#define __GTLib_GlyphCache_hpp_
+#ifndef GTLib_GlyphCache
+#define GTLib_GlyphCache
 
 #include "FontEngine.hpp"
 #include "GlyphMapLayout.hpp"
@@ -13,7 +13,7 @@ namespace GTLib
     ///
     /// This will cache both GlyphHandle's (mapped to char32_t character codes) and the bitmap data of the glyph. When caching a glyph,
     /// you pass the glyph's bitmap data. The bitmap data is passed to the glyph map manager, which will be assigned in the constructor
-    /// of this class. This class is responsible for finding an appropriate slot in a glyph map and creating a new glyph map when 
+    /// of this class. This class is responsible for finding an appropriate slot in a glyph map and creating a new glyph map when
     /// required.
     ///
     /// Because this class is responsible for finding a slot for the glyph in the glyph map, when a glyph is cached, the position of
@@ -31,25 +31,25 @@ namespace GTLib
     class GlyphCache
     {
     public:
-        
+
         /// Constructor.
         GlyphCache(GlyphMapManager* glyphMapManager);
-        
+
         /// Destructor.
         virtual ~GlyphCache();
-        
-        
+
+
         /// Retrieves a pointer to the glyph map manager.
         GlyphMapManager* GetGlyphMapManager() { return m_glyphMapManager; }
-        
-        
+
+
         /// Finds a cached glyph handle by it's character code.
         ///
         /// @param character [in] The character code of the glyph being retrieved.
         ///
         /// @return A handle to cached glyph if it exists in the cache, 0 otherwise.
         GlyphHandle FindGlyph(char32_t character) const;
-        
+
         /// Caches a glyph.
         ///
         /// @param character       [in]  The character code to map the glyph to.
@@ -77,7 +77,7 @@ namespace GTLib
         ///
         /// @return The number of glyphs that are currently cached.
         size_t GetGlyphCount() const;
-        
+
         /// Retrieves a glyph handle by it's index.
         ///
         /// @param glyphIndex [in] The index of the glyph to retrieve.
@@ -86,22 +86,22 @@ namespace GTLib
 
         /// Clears the cache.
         void Clear();
-        
-        
-        
+
+
+
         ///////////////////////////////////////////////////
         // Virtual methods.
-        
+
         /// Called when a glyph is cached.
         ///
         /// @param glyph      [in] A handle to the glyph.
         /// @param glyphMap   [in] The glyph map the glyph's bitmap data is placed in.
         /// @param bitmapRect [in] The rectangle region the glyph's bitmap is occupying in the glyph map.
         virtual void OnGlyphCached(GlyphHandle glyph, GlyphMapHandle glyphMap, GTLib::Rect<unsigned int> &bitmapRect);
-        
-        
+
+
     private:
-        
+
         /// Allocates a slot for a glyph of the given size and returns a handle to the glyph map and the glyphs position in that glyph map.
         ///
         /// @param glyphWidth   [in]  The width of the glyph.
@@ -111,10 +111,10 @@ namespace GTLib
         ///
         /// @return A handle to the glyph map the slot was inserted into.
         GlyphMapHandle AllocateGlyphMapSlot(unsigned int glyphWidth, unsigned int glyphHeight, unsigned int &glyphXPosOut, unsigned int &glyphYPosOut);
-    
-    
+
+
     private:
-        
+
         /// A pointer to the glyph map manager. This is where each glyph's bitmap data will be passed through to.
         GlyphMapManager* m_glyphMapManager;
 
@@ -125,11 +125,11 @@ namespace GTLib
         /// Every glyph map is mapped to a glyph map layout. We use this layout in determining where to insert additional glyphs
         /// into the map.
         GTLib::Map<GlyphMapHandle, GlyphMapLayout> m_glyphMaps;
-        
+
         /// The list of glyph handles, mapped to their character codes.
         GTLib::Map<char32_t, GlyphHandle> m_glyphs;
-        
-        
+
+
     private:    // No copying.
         GlyphCache(const GlyphCache &);
         GlyphCache & operator=(const GlyphCache &);

@@ -22,7 +22,7 @@ namespace GTLib
 
         uint64_t GetCurrentThreadID()
         {
-            return (uint64_t)::GetCurrentThreadId();
+            return uint64_t(::GetCurrentThreadId());
         }
     }
 }

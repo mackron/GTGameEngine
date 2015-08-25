@@ -33,7 +33,7 @@ namespace GTLib
             LARGE_INTEGER li;
             QueryPerformanceCounter(&li);
 
-            return (double)li.QuadPart / (double)_HighResFrequency;
+            return double(li.QuadPart) / double(_HighResFrequency);
         }
     }
 }

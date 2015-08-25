@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Colour_hpp_
-#define __GTLib_Colour_hpp_
+#ifndef GTLib_Colour
+#define GTLib_Colour
 
 #include <cstddef>
 
@@ -10,14 +10,14 @@ namespace GTLib
     class Colour
     {
     public:
-    
+
         Colour()
             : r(0.0f), g(0.0f), b(0.0f), a(1.0f)
         {
         }
-        
-        Colour(float r, float g, float b, float a = 1.0f)
-            : r(r), g(g), b(b), a(a)
+
+        Colour(float rIn, float gIn, float bIn, float aIn = 1.0f)
+            : r(rIn), g(gIn), b(bIn), a(aIn)
         {
         }
 
@@ -32,15 +32,15 @@ namespace GTLib
 
         inline bool operator==(const Colour &other) const { return this->r == other.r && this->g == other.g && this->b == other.b && this->a == other.a; }
         inline bool operator!=(const Colour &other) const { return !(*this == other); }
-        
+
     public:
-    
+
         /// The red, green, blue and alpha colour components.
         float r, g, b, a;
 
 
     public:
-    
+
         static Colour Black;
         static Colour White;
         static Colour TransparentBlack;
@@ -49,12 +49,12 @@ namespace GTLib
         static Colour Green;
         static Colour Blue;
         static Colour Alpha;
-        
+
         static Colour DefaultBackground;
-        
-        
+
+
     public:
-    
+
         /// Tries to convert a string to a colour, returning true if successful.
         static bool TryParse(Colour &colour, const char *value, ptrdiff_t valueSizeInBytes = -1);
 

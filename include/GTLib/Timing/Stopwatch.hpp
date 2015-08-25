@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Timing_Stopwatch_hpp_
-#define __GTLib_Timing_Stopwatch_hpp_
+#ifndef GT_Timing_Stopwatch
+#define GT_Timing_Stopwatch
 
 #include "TimingCommon.hpp"
 
@@ -19,9 +19,9 @@ namespace GTLib
     class Stopwatch
     {
     public:
-    
+
         Stopwatch();
-        
+
         /**
         *   \brief  Starts or resumes the stopwatch.
         */
@@ -42,9 +42,9 @@ namespace GTLib
         *   \return The total elapsed time in seconds.
         */
         double Elapsed() const;
-    
+
     private:
-    
+
         /// The start time.
         double startTime;
 

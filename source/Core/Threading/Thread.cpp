@@ -12,14 +12,12 @@ namespace GTLib
         // Base structure for the thread data sent to the thread precedure.
         struct _ThreadData
         {
-            _ThreadData()
-                : entryProc(nullptr), entryData(nullptr), busy(false), alive(true), wantsToStop(false), entrySemaphore(0), endMutex()
-            {
-            }
+            // Constructor.
+            _ThreadData();
 
-            virtual ~_ThreadData()
-            {
-            }
+            // Destructor.
+            virtual ~_ThreadData();
+
 
             // The entry point to execute.
             ThreadEntryProc entryProc;
@@ -46,6 +44,16 @@ namespace GTLib
             _ThreadData(const _ThreadData &);
             _ThreadData & operator=(const _ThreadData &);
         };
+
+        _ThreadData::_ThreadData()
+            : entryProc(nullptr), entryData(nullptr), busy(false), alive(true), wantsToStop(false), entrySemaphore(0), endMutex()
+        {
+        }
+
+        _ThreadData::~_ThreadData()
+        {
+        }
+
 
         /**
         *   \brief  The main threading loop executed by all threads.
@@ -87,7 +95,7 @@ namespace GTLib
         {
             if (data)
             {
-                ((Threading::Job *)data)->Run();
+                reinterpret_cast<Threading::Job *>(data)->Run();
             }
         }
 
@@ -236,7 +244,7 @@ namespace GTLib
 
         void Thread::SetPriority(ThreadPriority priority)
         {
-            HANDLE hThread = ((_ThreadDataWin32 *)this->data)->hThread;
+            HANDLE hThread = reinterpret_cast<_ThreadDataWin32 *>(this->data)->hThread;
 
             switch (priority)
             {
@@ -281,7 +289,7 @@ namespace GTLib
             this->data = threadData;
 
             // Now we need a thread object.
-            threadData->hThread = CreateThread(nullptr, 0, (LPTHREAD_START_ROUTINE)_ThreadProc, threadData, 0, nullptr);
+            threadData->hThread = CreateThread(nullptr, 0, reinterpret_cast<LPTHREAD_START_ROUTINE>(_ThreadProc), threadData, 0, nullptr);
         }
     }
 }

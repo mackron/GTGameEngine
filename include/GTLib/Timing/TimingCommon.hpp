@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Timing_TimingCommon_hpp_
-#define __GTLib_Timing_TimingCommon_hpp_
+#ifndef GT_Timing_TimingCommon
+#define GT_Timing_TimingCommon
 
 namespace GTLib
 {
@@ -20,7 +20,7 @@ namespace GTLib
         *       The return value can be converted to milliseconds by multiplying by 1000.
         */
         double GetTimeInSeconds();
-        
+
         /**
         *   \brief  The same as GetTimeInSeconds(), except the return value is in milliseconds.
         */

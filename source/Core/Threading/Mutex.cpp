@@ -18,17 +18,17 @@ namespace GTLib
 
         Mutex::~Mutex()
         {
-            CloseHandle((HANDLE)this->data);
+            CloseHandle(reinterpret_cast<HANDLE>(this->data));
         }
 
         void Mutex::Lock()
         {
-            WaitForSingleObject((HANDLE)this->data, INFINITE);
+            WaitForSingleObject(reinterpret_cast<HANDLE>(this->data), INFINITE);
         }
 
         void Mutex::Unlock()
         {
-            SetEvent((HANDLE)this->data);
+            SetEvent(reinterpret_cast<HANDLE>(this->data));
         }
     }
 }

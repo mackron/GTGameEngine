@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorAssetExplorerItem_hpp_
-#define __GT_EditorAssetExplorerItem_hpp_
+#ifndef GT_EditorAssetExplorerItem
+#define GT_EditorAssetExplorerItem
 
 #include "EditorControl.hpp"
 #include "../../FileSystem.hpp"
@@ -144,6 +144,9 @@ namespace GT
 
         /// Keeps track of whether or not the item is selected.
         bool m_isSelected;
+
+        /// Padding. Unused.
+        bool m_padding1;
 
 
         /// The container for the text section.

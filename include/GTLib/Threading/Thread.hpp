@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Threading_Thread_hpp_
-#define __GTLib_Threading_Thread_hpp_
+#ifndef GT_Threading_Thread
+#define GT_Threading_Thread
 
 #include "Job.hpp"
 
@@ -11,7 +11,7 @@ namespace GTLib
     {
         /// Delegate for the entry point of a thread. Contains only a single argument - a void pointer. Returns nothing.
         typedef void (* ThreadEntryProc)(void *);
-        
+
         /**
         *   \brief  Enumerator for the different thread priorities.
         */
@@ -22,7 +22,7 @@ namespace GTLib
             ThreadPriority_Normal,
             ThreadPriority_High,
             ThreadPriority_Highest,
-            
+
             ThreadPriority_Default = ThreadPriority_Normal
         };
 
@@ -37,7 +37,7 @@ namespace GTLib
         class Thread
         {
         public:
-        
+
             /**
             *   \brief  Constructor.
             *
@@ -45,7 +45,7 @@ namespace GTLib
             *   thread which will be placed in a waiting state. To start the thread, call thread::start().
             */
             Thread();
-            
+
             /**
             *   \brief  Constructor for automatically starting the execution of a thread.
             *
@@ -62,13 +62,13 @@ namespace GTLib
             *       thread once it's finished.
             */
             Thread(ThreadEntryProc entryProc, void *entryData);
-            
+
             /**
             *   \brief           Constructor for automatically starting the execution of a thread.
             *   \param  job [in] A reference to the job that should be executed.
             */
             Thread(Threading::Job &job);
-            
+
             /**
             *   \brief  Destructor.
             *
@@ -77,7 +77,7 @@ namespace GTLib
             *   and any resources released.
             */
             ~Thread();
-            
+
             /**
             *   \brief                 Begins executing the thread using the given function and input data.
             *   \param  entryProc [in] The entry point to the thread.
@@ -117,7 +117,7 @@ namespace GTLib
             /// @remarks
             ///     This can be used by the thread's currently executing function to determine whether or not it should try terminating.
             bool WantsToStop() const;
-            
+
             /**
             *   \brief  Waits for the thread to finish it's currently executing function.
             *
@@ -125,7 +125,7 @@ namespace GTLib
             *       Applications need to wait for the currently executing function to finish before they can start another one.
             */
             void Wait();
-            
+
             /**
             *   \brief  Determines whether or not the thread is busy.
             *   \return True if the thread is currently executing a procedure; false otherwise.
@@ -135,33 +135,33 @@ namespace GTLib
             *       to finish, don't call this function in a loop. Instead use Wait().
             */
             bool Busy();
-            
+
             /**
             *   \brief                Sets the priority of the thread.
             *   \param  priority [in] The new priority of the thread.
             */
             void SetPriority(ThreadPriority priority);
-        
-        
+
+
         private:
-        
+
             /**
             *   \brief  Constructor implementation.
             */
             void ctor();
-        
+
         private:
 
             /// The data associated with the thread. Only ever used internally.
             void *data;
-            
-            
+
+
         private:    // No copying.
             Thread(const Thread &);
             Thread & operator=(const Thread &);
         };
     }
-    
+
     // Typedef for making working with threads a little easier.
     typedef Threading::Thread Thread;
 }

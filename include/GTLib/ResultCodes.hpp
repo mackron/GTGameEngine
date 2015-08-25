@@ -1,7 +1,7 @@
  // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_ResultCodes_hpp_
-#define __GT_ResultCodes_hpp_
+#ifndef GT_ResultCodes
+#define GT_ResultCodes
 
 namespace GT
 {
@@ -19,9 +19,9 @@ namespace GT
 
     static inline ResultCode GenError(int errorCode)
     {
-        return (1 << 31) | errorCode;
+        return int(1 << 31) | errorCode;
     }
-    
+
 
     /////////////////////////////
     // Standard Result Codes

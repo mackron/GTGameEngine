@@ -6,7 +6,6 @@
 #include <GTLib/Timing/TimingCommon.hpp>
 
 #if defined(GT_PLATFORM_WINDOWS)
-#include "GameContext_Win32.hpp"
 #include <GTGameEngine/WindowManager_DefaultWin32.hpp>
 #endif
 
@@ -189,7 +188,7 @@ namespace GT
         {
             m_pWindowManager->SetWindowTitle(hWindow, title);
         }
-     
+
         return hWindow;
     }
 

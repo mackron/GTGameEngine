@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_LineIterator_hpp_
-#define __GTLib_LineIterator_hpp_
+#ifndef GT_LineIterator
+#define GT_LineIterator
 
 #include "Find.hpp"
 #include "Tokenizer.hpp"
@@ -21,7 +21,7 @@ namespace GTLib
             ///
             /// @param str [in] The string whose lines are being iterated.
             LineIteratorUTF(const T* str)
-                : start(str), end(str), nullTerminated(true), remainingTs(-1)
+                : start(str), end(str), remainingTs(-1), nullTerminated(true)
             {
                 this->ctor();
             }
@@ -34,14 +34,14 @@ namespace GTLib
             /// @remarks
             ///     Set 'strSizeInTs' to -1 if the string is null terminated.
             LineIteratorUTF(const T* str, ptrdiff_t strSizeInTs)
-                : start(str), end(str), nullTerminated(strSizeInTs == -1), remainingTs(strSizeInTs)
+                : start(str), end(str), remainingTs(strSizeInTs), nullTerminated(strSizeInTs == -1)
             {
                 this->ctor();
             }
 
             /// Copy constructor.
             LineIteratorUTF(const LineIteratorUTF &other)
-                : start(other.start), end(other.end), nullTerminated(other.nullTerminated), remainingTs(other.remainingTs)
+                : start(other.start), end(other.end), remainingTs(other.remainingTs), nullTerminated(other.nullTerminated)
             {
             }
 
@@ -182,12 +182,12 @@ namespace GTLib
             /// A pointer to one character past the last character of the current token.
             const T* end;
 
-            /// Keeps track of whether not the string is null terminated.
-            bool nullTerminated;
-
             /// The number of Ts remaining in the string. This is decreased as the iterator is moved forward. When it reaches 0, the iterator
             /// will have reached the end and will not move any more. This is required for non-null terminated strings.
             ptrdiff_t remainingTs;
+
+            /// Keeps track of whether not the string is null terminated.
+            bool nullTerminated;
         };
 
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Replacer_hpp_
-#define __GTLib_Strings_Replacer_hpp_
+#ifndef GT_Strings_Replacer
+#define GT_Strings_Replacer
 
 #include "../BasicBuffer.hpp"
 #include "Size.hpp"
@@ -14,7 +14,7 @@ namespace GTLib
     namespace Strings
     {
         /**
-        *   \breif  Class used for replacing content in a string.
+        *   \brief  Class used for replacing content in a string.
         *
         *   This class takes a string, called the base string, and allows you to replace parts of that string
         *   with other strings. The base string is set via the constructor or the SetBaseString() method. All
@@ -40,7 +40,7 @@ namespace GTLib
                 : m_base(nullptr), m_baseSizeInTs(0), m_buffers(), m_bufferIndex(0)
             {
             }
-            
+
             /**
             *   \brief            Constructor.
             *   \param  base [in] The string that is having content replaced.
@@ -52,7 +52,7 @@ namespace GTLib
                 : m_base(base), m_baseSizeInTs(baseSizeInTs), m_buffers(), m_bufferIndex(0)
             {
             }
-                
+
             /**
             *   \brief            Sets the base string.
             *   \param  base [in] The new base string.
@@ -65,7 +65,7 @@ namespace GTLib
 				m_base         = base;
 				m_baseSizeInTs = baseSizeInTs;
             }
-                
+
             /**
             *   \brief  Retrieves the base string.
             *   \return A pointer to the base string.
@@ -85,21 +85,21 @@ namespace GTLib
                     return static_cast<const T*>(m_buffers[m_bufferIndex].GetDataPointer());
                 }
             }
-                
-                
+
+
             /**
-            *   \brief                               Replaces every occurance of a string with another.
-            *   \param  original                [in] The string being replaced.
-            *   \param  originalSizeInBytes     [in] The size in bytes of the original string. Use this when the original string can not be null terminated.
-            *   \param  replacement             [in] The replacement string.
-            *   \param  replacementSizeInBytes  [in] The size in bytes of the replacement string. Use this when the replacement string can not be null terminated.
-            *   \return                              A null-terminated string containing the new string.
+            *   \brief                            Replaces every occurance of a string with another.
+            *   \param  original             [in] The string being replaced.
+            *   \param  originalSizeInTs     [in] The size in Ts of the original string. Use this when the original string can not be null terminated.
+            *   \param  replacement          [in] The replacement string.
+            *   \param  replacementSizeInTs  [in] The size in Ts of the replacement string. Use this when the replacement string can not be null terminated.
+            *   \return                           A null-terminated string containing the new string.
             *
             *   \remarks
             *       A copy of the base string will be made during the first call to Replace(), after which time it is safe to destroy the
             *       original base string.
             *       The *SizeInTs arguments are used when a null terminator can not easily be placed into the respective string. However,
-            *       even if the string is null terminated, always specify the size if it is already known. 
+            *       even if the string is null terminated, always specify the size if it is already known.
             */
             const T* Replace(const T* original, ptrdiff_t originalSizeInTs, const T* replacement, ptrdiff_t replacementSizeInTs)
             {
@@ -131,20 +131,20 @@ namespace GTLib
                         {
                             replacementSizeInTs = SizeInTs(replacement);
                         }
-                        
+
                         // The difference in size between the replacement and original strings are used to determine the size of the
                         // destination buffer.
                         ptrdiff_t replaceSizeDiffInTs = replacementSizeInTs - originalSizeInTs;
-                        
+
                         // Keeps track of the difference between the new size and the old size of the base string. This is just the
                         // accumulation of replaceSizeDiff for each occurance of original.
                         ptrdiff_t baseSizeDiffInTs = 0;
-                        
+
                         // We're going to create a list of tokens for each 'original' match. From that list, we can go ahead and build the
                         // final string. We do it like this because: 1) The destination buffer will only need to be resized once, at most
                         // and 2) We don't need to move the data that comes after each 'original' - we just do it once.
                         Strings::List<char> originalList;
-                        
+
                         // Now we just loop through each occurance of 'original' and add any to the list.
 						const T* nextStart = FindFirst(base, -1, original, originalSizeInTs);
 						while (nextStart)
@@ -154,45 +154,45 @@ namespace GTLib
 
 							nextStart = FindFirst(nextStart + originalSizeInTs, -1, original, originalSizeInTs);
 						}
-                        
+
                         // Now that the positions of each occurance of 'original', we can construct the result. The destination buffer is
                         // always the back buffer.
                         GT::BasicBuffer &destBuffer = m_buffers[!m_bufferIndex];
                         ptrdiff_t destSizeInTs      = m_baseSizeInTs + baseSizeDiffInTs;
-                        
+
                         destBuffer.Allocate(static_cast<size_t>(destSizeInTs + 1) * sizeof(T));    // +1 for the null terminator.
                         T* result = static_cast<T*>(destBuffer.GetDataPointer());
                         T* dest   = result;
-                        
+
                         // The pointer to the end of the last occurance of 'original'. This is used when we need to attach the last section.
                         const T* lastOriginalEnd = base;
-                        
+
                         while (originalList.root)
                         {
                             // For each oldStr, we need to copy over two section. 1) The section before the occurance and 2) newStr.
                             std::memcpy(dest, lastOriginalEnd, static_cast<size_t>(originalList.root->start - lastOriginalEnd) * sizeof(T));
                             dest += originalList.root->start - lastOriginalEnd;
-                            
+
                             std::memcpy(dest, replacement, static_cast<size_t>(replacementSizeInTs) * sizeof(T));
                             dest += replacementSizeInTs;
 
                             lastOriginalEnd = originalList.root->end;
-                            
+
                             // Remove the root to move to the next item.
                             originalList.Remove(originalList.root);
                         }
-                        
+
                         // There will be a section left over between the last occurance of oldStr and the end of the input string.
                         Copy(dest, lastOriginalEnd);
-                        
-                        
-                        
+
+
+
                         // Now we need to finish up. We no longer want to use m_base, because that is now stored in one of our buffers.
                         // The new base size will be the size of the destination buffer, since that buffer is now the new base.
                         m_base         = nullptr;
                         m_baseSizeInTs = destSizeInTs;
                         m_bufferIndex  = !m_bufferIndex;
-                        
+
                         return result;
                     }
                 }
@@ -204,7 +204,7 @@ namespace GTLib
             {
                 return this->Replace(original, -1, replacement, -1);
             }
-                
+
             /**
             *   \brief  Replaces a character with another character.
             */
@@ -238,17 +238,17 @@ namespace GTLib
             /// The base string. This is a direct reference, not a copy. Once this value has been copied into a buffer, it will be
             /// set to nullptr. It is not copied over straight away; instead it will be copied during the next call to Replace().
             const T* m_base;
-                
+
             /// The size in bytes of the base string. Can be -1.
             ptrdiff_t m_baseSizeInTs;
-            
+
             /// The two internal buffers.
             GT::BasicBuffer m_buffers[2];
-                
+
             /// The index of the current buffer. Toggles between 0 and 1.
             size_t m_bufferIndex;
-                
-                
+
+
         private:    // No copying.
             ReplacerUTF(const ReplacerUTF<T> &);
             ReplacerUTF<T> & operator=(const ReplacerUTF<T> &);

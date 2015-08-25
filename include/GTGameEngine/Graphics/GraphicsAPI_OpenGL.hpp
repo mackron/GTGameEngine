@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GraphicsAPI_OpenGL_hpp_
-#define __GT_GraphicsAPI_OpenGL_hpp_
+#ifndef GT_GraphicsAPI_OpenGL
+#define GT_GraphicsAPI_OpenGL
 
 #include <GTGameEngine/Config.hpp>
 

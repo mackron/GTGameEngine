@@ -1,7 +1,7 @@
-// Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
+// Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUI_Renderer_hpp_
-#define __GT_GUI_Renderer_hpp_
+#ifndef GT_GUI_Renderer
+#define GT_GUI_Renderer
 
 #include <GTLib/Rect.hpp>
 #include <GTLib/Colour.hpp>

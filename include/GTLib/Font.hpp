@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Font_hpp_
-#define __GTLib_Font_hpp_
+#ifndef GTLib_Font
+#define GTLib_Font
 
 #include "FontEngine.hpp"
 #include "FontInfo.hpp"
@@ -16,8 +16,8 @@
 namespace GTLib
 {
     class FontServer;
-    
-    
+
+
     /// Structure representing a glyph.
     struct Glyph
     {
@@ -27,7 +27,7 @@ namespace GTLib
               metrics(), glyphMap(0), ftIndex(0)
         {
         }
-        
+
         /// Helper method for setting the texture coordinates based on the current rectangle and the given glyph map dimensions.
         ///
         /// @param glyphMapWidth  [in] The width of the glyph map.
@@ -43,30 +43,30 @@ namespace GTLib
             this->uvBottom = static_cast<float>(this->rect.bottom) / glyphMapHeight;
             this->uvTop    = static_cast<float>(this->rect.top)    / glyphMapHeight;
         }
-        
-        
+
+
         /// The rectangle defining the position in the texture where the visual representation of the glyph is located.
         /// The rectangle can also be used to retrieve the size of the glyph.
         GTLib::Rect<int> rect;
-        
+
         // UV coordinates.
         float uvLeft;               ///< The left UV coordinate of the glyph map this glyph is located at.
         float uvRight;              ///< The right UV coordinate of the glyph map this glyph is located at.
         float uvBottom;             ///< The bottom UV coordinate of the glyph map this glyph is located at.
         float uvTop;                ///< The top UV coordinate of the glyph map this glyph is located at.
-        
+
         /// The metrics of the glyph. This is needed to position characters correctly when rendering them.
         GlyphMetrics metrics;
-        
+
         /// A handle to the glyph map the visual representation of this glyph is located in. Defaults to 0, which indicates the
         /// glyph has not yet been rendered.
         GlyphMapHandle glyphMap;
-        
+
         /// The FreeType glyph index. This is used when the glyph needs to be referenced through FreeType.
         unsigned int ftIndex;
     };
-    
-    
+
+
     /**
     *   \brief  Class representing a font.
     *
@@ -88,30 +88,30 @@ namespace GTLib
     class Font
     {
     public:
-    
+
         /// Destructor.
         ~Font();
-        
-        
+
+
         /// Retrieves a reference to the font server that owns this font.
               FontServer & GetServer()       { return this->server; }
         const FontServer & GetServer() const { return this->server; }
-        
+
         /// Retrieves a reference to the internal font handle for use by the font engine.
         FontHandle GetFontHandle() const { return this->fontHandle; }
 
-        
+
         int GetAscent() const;
         int GetDescent() const;
-        
+
         /// Retrieves the height of a line for this font.
         unsigned int GetLineHeight() const;
-        
+
 
         /// Deletes every loaded glyph and glyph map.
         void DeleteAllGlyphs();
 
-    
+
     private:
 
         /// Allocates a slot for a glyph of the given size and returns a handle to the glyph map and the glyphs position in that glyph map.
@@ -123,17 +123,17 @@ namespace GTLib
         ///
         /// @return A handle to the glyph map the slot was inserted into.
         GlyphMapHandle AllocateGlyphMapSlot(unsigned int glyphWidth, unsigned int glyphHeight, unsigned int &glyphXPosOut, unsigned int &glyphYPosOut);
-        
-        
+
+
     private:
-        
+
         /// A reference to the font server that owns this font. We mainly keep track of this so we can get easy access to the
         /// glyph map manager.
         FontServer &server;
-        
+
         /// The font handle created by the font engine.
         FontHandle fontHandle;
-        
+
         /// The metrics of the font.
         FontMetrics metrics;
 
@@ -153,7 +153,7 @@ namespace GTLib
         /// perspective.
         mutable GTLib::Map<char32_t, Glyph*> glyphs;
 
-        
+
     private:    // No copying.
         Font(const Font &);
         Font & operator=(const Font &);
@@ -161,7 +161,7 @@ namespace GTLib
 
 
     public:
-        
+
         /// Constructor. This should not be used publically; only internally by the server.
         Font(FontServer &serverIn, FontHandle fontHandleIn);
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Rect_hpp_
-#define __GTLib_Rect_hpp_
+#ifndef GTLib_Rect
+#define GTLib_Rect
 
 #include <cstdio>
 #include <GTLib/Math.hpp>
@@ -37,15 +37,15 @@ namespace GTLib
             this->right  = GTLib::Clamp(this->right,  rect.left, rect.right);
             this->top    = GTLib::Clamp(this->top,    rect.top,  rect.bottom);
         }
-        
-        
+
+
         /// Determines if a given point is inside the rectangle, including on the border.
         bool Contains(int x, int y) const
         {
             return x >= this->left && x < this->right &&
                    y >= this->top  && y < this->bottom;
         }
-        
+
 
         /// Determines whether or not the given rectangle is inside this rectangle.
         bool Contains(const Rect &other) const
@@ -86,7 +86,7 @@ namespace GTLib
             );
         }
 
-        
+
         T left;
         T top;
         T right;

@@ -1,7 +1,7 @@
-// Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
+// Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUI_Surface_hpp_
-#define __GT_GUI_Surface_hpp_
+#ifndef GT_GUI_Surface
+#define GT_GUI_Surface
 
 #include <GTLib/String.hpp>
 #include <GTLib/Vector.hpp>
@@ -17,8 +17,6 @@ namespace GT
     struct GUISurface
     {
         /// Constructor.
-        ///
-        /// @param handle [in] The handle to the surface.
         GUISurface();
 
         /// Destructor.
@@ -64,9 +62,9 @@ namespace GT
 
     struct GUISurfaceWithHandle : public GUISurface
     {
-        GUISurfaceWithHandle(HGUISurface handle)
+        GUISurfaceWithHandle(HGUISurface handleIn)
             : GUISurface(),
-              handle(handle)
+              handle(handleIn)
         {
         }
 

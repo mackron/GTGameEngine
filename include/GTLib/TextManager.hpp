@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTType_TextManager_hpp_
-#define __GTType_TextManager_hpp_
+#ifndef GTType_TextManager
+#define GTType_TextManager
 
 #include <GTLib/Font.hpp>
 #include <GTLib/TextMesh.hpp>
@@ -20,7 +20,7 @@ namespace GTLib
         Alignment_Right,
         Alignment_Top,
         Alignment_Bottom,
-        Alignment_Center,
+        Alignment_Center
     };
 
     /// An event handler for the text manager.
@@ -29,7 +29,7 @@ namespace GTLib
     public:
 
         /// Destructor.
-        virtual ~TextManagerEventHandler() {};
+        virtual ~TextManagerEventHandler() {}
 
 
     public:
@@ -41,15 +41,16 @@ namespace GTLib
     struct TextManagerRenderingOptions
     {
         TextManagerRenderingOptions()
-            : yAtTop(true), alpha(1.0f)
+            : alpha(1.0f), yAtTop(true)
         {
         }
 
-        /// Whether or not the origin of the y axis should be at the top. True by default.
-        bool yAtTop;
 
         /// The alpha colour.
         float alpha;
+
+        /// Whether or not the origin of the y axis should be at the top. True by default.
+        bool yAtTop;
     };
 
 
@@ -86,7 +87,7 @@ namespace GTLib
     enum TextCommandType
     {
         TextCommandType_Insert,
-        TextCommandType_Delete,
+        TextCommandType_Delete
     };
 
 
@@ -230,7 +231,7 @@ namespace GTLib
         /// @remarks
         ///     endCharIndex should be 1 past the last character to include. As an example, setting this to this->GetCharacterCount() will include
         ///     the very last character in the line.
-        void GetTextInRange(size_t startCharIndex, size_t endCharIndex, const char* &rangeStart, const char* &rangeOut);
+        void GetTextInRange(size_t startCharIndex, size_t endCharIndex, const char* &rangeStart, const char* &rangeEnd);
 
 
 
@@ -426,7 +427,7 @@ namespace GTLib
 
         /// Sets the event handler.
         ///
-        /// @param eventHandler [in] The event handler to use with the text manager.
+        /// @param eventHandlerIn [in] The event handler to use with the text manager.
         void SetEventHandler(TextManagerEventHandler* eventHandlerIn) { this->eventHandler = eventHandlerIn; }
         void SetEventHandler(TextManagerEventHandler &eventHandlerIn) { this->SetEventHandler(&eventHandlerIn); }
 

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_NextChar_hpp_
-#define __GTLib_Strings_NextChar_hpp_
+#ifndef GT_Strings_NextChar
+#define GT_Strings_NextChar
 
 #include "UnicodeBase.hpp"
 #include <cassert>
@@ -11,9 +11,9 @@ namespace GTLib
     namespace Strings
     {
         /**
-        *   \brief                            Retrieves the first character in a string.
-        *   \param  str            [in, out]  The string whose first character is being retrieved. See remarks.
-        *   \param  strSizeInBytes [in, out]  The size in Ts of the string.
+        *   \brief                         Retrieves the first character in a string.
+        *   \param  str         [in, out]  The string whose first character is being retrieved. See remarks.
+        *   \param  strSizeInTs [in, out]  The size in Ts of the string.
         *
         *   \remarks
         *       For the sake of speed, we do not check that each character is valid - it assumes the string is

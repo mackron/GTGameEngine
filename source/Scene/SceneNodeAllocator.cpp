@@ -4,4 +4,7 @@
 
 namespace GT
 {
+    SceneNodeAllocator::~SceneNodeAllocator()
+    {
+    }
 }

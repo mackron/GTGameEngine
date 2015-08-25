@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorPopupControl_hpp_
-#define __GT_EditorPopupControl_hpp_
+#ifndef GT_EditorPopupControl
+#define GT_EditorPopupControl
 
 #include "EditorControl.hpp"
 #include "../../WindowManager.hpp"
@@ -15,7 +15,6 @@ namespace GT
 
         /// Constructor.
         ///
-        /// @param windowManager [in] A reference to window manager that will create and delete the popup window.
         /// @param hParentWindow [in] A handle to the popup window's parent.
         ///
         /// @remarks

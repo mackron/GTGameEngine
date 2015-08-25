@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUITextLayout_hpp_
-#define __GT_GUITextLayout_hpp_
+#ifndef GT_GUITextLayout
+#define GT_GUITextLayout
 
 #include "GUIFontManager.hpp"
 #include "../../GTLib/Colour.hpp"
@@ -12,7 +12,7 @@ namespace GT
     {
         Left,
         Center,
-        Right,
+        Right
     };
 
     enum class GUITextLayoutVerticalAlignment
@@ -50,7 +50,7 @@ namespace GT
     /// This class is used to layout the text of an element. It has been built in such a way that it doesn't actually depend
     /// on a GUI context, elements or surfaces. Thus, it can be used in places outside of the normal GUI stuff.
     ///
-    /// The text is always 
+    /// The text is always
     class GUITextLayout
     {
     protected:
@@ -82,7 +82,7 @@ namespace GT
         /// @return A null-terminated string containing the text of the text layout.
         virtual const char* GetText() const = 0;
 
-    
+
         /// Sets the size of the bounding rectangle of the text.
         ///
         /// @param width  [in] The width of the bounding rectangle.
@@ -93,8 +93,8 @@ namespace GT
         ///
         /// @param widthOut  [out] A reference to the variable that will receive the width.
         /// @param heightOut [out] A reference to the variable that will receive the height.
-        virtual void GetBounds(unsigned int &width, unsigned int &height) const = 0;
-        
+        virtual void GetBounds(unsigned int &widthOut, unsigned int &heightOut) const = 0;
+
 
         /// Sets the offset of the text.
         ///
@@ -119,7 +119,7 @@ namespace GT
         ///
         /// @param tabSizeInSpaces [in] The size of a tab in spaces.
         virtual void SetTabSizeInSpaces(int tabSizeInSpaces) = 0;
-        
+
         /// Retrieves the size of a tab in spaces.
         ///
         /// @return The size of a tab character in spaces.

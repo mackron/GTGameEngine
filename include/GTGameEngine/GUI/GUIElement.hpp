@@ -1,7 +1,7 @@
-// Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
+// Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUI_Element_hpp_
-#define __GT_GUI_Element_hpp_
+#ifndef GT_GUI_Element
+#define GT_GUI_Element
 
 #include <GTLib/String.hpp>
 #include <GTLib/List.hpp>
@@ -96,7 +96,7 @@ namespace GT
             /// The unclamped height of the element (as if it were not clamped between the min and max height.)
             float unclampedHeight;
 
-            
+
             /// The actual left margin of the element.
             float marginLeft;
 
@@ -150,7 +150,7 @@ namespace GT
             /// Keeps track of a set of flags that specifies which layout properties were recently changed. This will be cleared by the
             /// context at the end of layout validation.
             uint16_t changedFlags;
-            
+
             /// The list item for the element in the invalid elements list. This is used by the layout validation component of the GUI context.
             GTLib::ListItem<GUIElement*>* layoutValidationListItem;
 
@@ -208,8 +208,8 @@ namespace GT
 
     struct GUIElementWithHandle : public GUIElement
     {
-        GUIElementWithHandle(HGUIElement handle)
-            : GUIElement(), handle(handle)
+        GUIElementWithHandle(HGUIElement handleIn)
+            : GUIElement(), handle(handleIn)
         {
         }
 

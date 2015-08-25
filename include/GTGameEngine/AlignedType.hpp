@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_AlignedType_hpp_
-#define __GT_AlignedType_hpp_
+#ifndef GT_AlignedType
+#define GT_AlignedType
 
 #include <stdlib.h>
 #include <new>

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_SceneSteppingPipeline_Default_hpp_
-#define __GT_SceneSteppingPipelin_Defaulte_hpp_
+#ifndef GT_SceneSteppingPipeline_Default
+#define GT_SceneSteppingPipeline_Default
 
 #include <cstdint>
 #include <GTGameEngine/Scene/SceneSteppingPipeline.hpp>
@@ -48,7 +48,7 @@ namespace GT
 
         /// Posts all of the cached events.
         void PostEvents();
-        
+
         /// Cleans up all of the objects that have been marked for deletion.
         void Cleanup();
 

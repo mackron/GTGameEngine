@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorGUISurfaceAUXData_hpp_
-#define __GT_EditorGUISurfaceAUXData_hpp_
+#ifndef GT_EditorGUISurfaceAUXData
+#define GT_EditorGUISurfaceAUXData
 
 #include "../WindowManager.hpp"
 

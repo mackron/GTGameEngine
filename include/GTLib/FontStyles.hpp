@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_FontStyles_hpp_
-#define __GTLib_FontStyles_hpp_
+#ifndef GTLib_FontStyles
+#define GTLib_FontStyles
 
 #include <cstdint>
 

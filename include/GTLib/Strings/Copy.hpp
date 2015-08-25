@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Copy_hpp_
-#define __GTLib_Strings_Copy_hpp_
+#ifndef GT_Strings_Copy
+#define GT_Strings_Copy
 
 #include "Iterator.hpp"
 #include "Size.hpp"
@@ -30,7 +30,7 @@ namespace GTLib
             while ((c = NextChar(source, sourceSizeInUs)) != '\0' && static_cast<size_t>(destSizeInTs) > 1)     // <-- size_t cast is important here - signed -> unsigned.
             {
                 size_t charSize = WriteChar(dest, c);
-                
+
                 dest         += charSize;
                 destSizeInTs -= static_cast<ptrdiff_t>(charSize);
             }

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_ModelAsset_MD2_hpp_
-#define __GT_ModelAsset_MD2_hpp_
+#ifndef GT_ModelAsset_MD2
+#define GT_ModelAsset_MD2
 
 #include <GTGameEngine/Config.hpp>
 

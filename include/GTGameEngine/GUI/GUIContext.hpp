@@ -1,7 +1,7 @@
-// Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
+// Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUI_Context_hpp_
-#define __GT_GUI_Context_hpp_
+#ifndef GT_GUI_Context
+#define GT_GUI_Context
 
 #include "GUIContextBase.hpp"
 #include "GUIElement.hpp"
@@ -23,7 +23,7 @@ namespace GT
 {
     /////////////////////////////////////////////////////////////////////////
     // Misc documentation
-    
+
     // Layout
     //
     // Layout is a complex issue that has several different parts to it. The first part is handling when an element needs to have
@@ -60,7 +60,7 @@ namespace GT
     // Elements are linked to each other using a standard tree structure. Each element can be attached to an element as a child. When
     // a parent element is deleted, so is it's children.
     //
-    // There are several hierarchy operations that can be performed in order to rearrange elements and their relationships. 
+    // There are several hierarchy operations that can be performed in order to rearrange elements and their relationships.
 
 
     /// Class representing the GUI context.
@@ -95,7 +95,7 @@ namespace GT
 
         /// @copydoc GUIContextBase::DeleteElementPtr()
         void DeleteElementPtr(GUIElement* pElement);
-        
+
 
         /// @copydoc GUIContextBase::IterateSurfaces()
         void IterateSurfaces(std::function<bool (GUISurface* pSurface)> handler) const;
@@ -145,7 +145,7 @@ namespace GT
         void PostEvent_OnSurfaceNeedsRepaint(GUISurface* pSurface, const GTLib::Rect<int> &rect);
 
 
-        /// @copydoc GUIContextBase::Renderer_BeginPaintSurface() 
+        /// @copydoc GUIContextBase::Renderer_BeginPaintSurface()
         void Renderer_BeginPaintSurface(GUISurface* pSurface, void* pInputData);
 
         /// @copydoc GUIContextBase::Renderer_EndPaintSurface()
@@ -200,7 +200,7 @@ namespace GT
         /// Sets the ID of the given surface.
         ///
         /// @param hSurface [in] A handle to the surface to delete.
-        /// @param newID    [in] The new ID of the surface.
+        /// @param id       [in] The new ID of the surface.
         void SetSurfaceID(HGUISurface hSurface, const char* id);
 
         /// Retrieves the ID of the given surface.
@@ -240,7 +240,7 @@ namespace GT
 
         /// Sets the given surface's aux. data pointer.
         ///
-        /// @param hElement [in] A handle to the surface.
+        /// @param hSurface [in] A handle to the surface.
         /// @param auxData  [in] A pointer to the aux. data.
         ///
         /// @remarks
@@ -256,7 +256,7 @@ namespace GT
 
         /// Retrieve's the given surface's aux. data pointer.
         ///
-        /// @param hElement [in] A handle to the surface.
+        /// @param hSurface [in] A handle to the surface.
         ///
         /// @return A pointer to the aux. data.
         template <typename T>
@@ -268,7 +268,7 @@ namespace GT
                 return reinterpret_cast<T*>(surface->auxData);
             }
 
-            return reinterpret_cast<T*>(nullptr);
+            return reinterpret_cast<T*>(0);
         }
 
 
@@ -298,7 +298,7 @@ namespace GT
         /// Sets the ID of the given element.
         ///
         /// @param hElement [in] The GUI element whose having it's ID changed.
-        /// @param newID    [in] The new ID of the GUI element.
+        /// @param id       [in] The new ID of the GUI element.
         void SetElementID(HGUIElement hElement, const char* id);
 
         /// Retrieves the ID of the given element.
@@ -659,7 +659,7 @@ namespace GT
         /// @remarks
         ///     This is equivalent to setting the min width to 0.
         void SetElementMaxWidthToDefault(HGUIElement hElement) { this->SetElementMinWidth(hElement, GUIStyleNumber_MaxUnsigned); }
-        
+
 
 
 
@@ -675,8 +675,8 @@ namespace GT
 
         /// Sets the height of the element as a ratio of the parent's height.
         ///
-        /// @param hElement [in] The GUI element whose height is being set.
-        /// @param height   [in] The new height ratio of the element.
+        /// @param hElement    [in] The GUI element whose height is being set.
+        /// @param heightRatio [in] The new height ratio of the element.
         ///
         /// @remarks
         ///     If both the width and height needs to be changed, and they are both ratios, use SetGUIElementSizeRatio().
@@ -831,31 +831,31 @@ namespace GT
         ///
         /// @param hElement    [in] The element whose border is being set.
         /// @param borderWidth [in] The border width.
-        void SetElementBorderLeftWidth(HGUIElement hElement, uint32_t width);
+        void SetElementBorderLeftWidth(HGUIElement hElement, uint32_t borderWidth);
 
         /// Sets the width of the top border, in DPI-aware points.
         ///
         /// @param hElement    [in] The element whose border is being set.
         /// @param borderWidth [in] The border width.
-        void SetElementBorderTopWidth(HGUIElement hElement, uint32_t width);
+        void SetElementBorderTopWidth(HGUIElement hElement, uint32_t borderWidth);
 
         /// Sets the width of the right border, in DPI-aware points.
         ///
         /// @param hElement    [in] The element whose border is being set.
         /// @param borderWidth [in] The border width.
-        void SetElementBorderRightWidth(HGUIElement hElement, uint32_t width);
+        void SetElementBorderRightWidth(HGUIElement hElement, uint32_t borderWidth);
 
         /// Sets the width of the bottom border, in DPI-aware points.
         ///
         /// @param hElement    [in] The element whose border is being set.
         /// @param borderWidth [in] The border width.
-        void SetElementBorderBottomWidth(HGUIElement hElement, uint32_t width);
+        void SetElementBorderBottomWidth(HGUIElement hElement, uint32_t borderWidth);
 
         /// Sets the width of the border of the given element, in DPI-aware points.
         ///
         /// @param hElement    [in] The element whose border width is being set.
         /// @param borderWidth [in] The border width.
-        void SetElementBorderWidth(HGUIElement hElement, uint32_t width);
+        void SetElementBorderWidth(HGUIElement hElement, uint32_t borderWidth);
 
 
         /// Sets the colour of the left border of the given element.
@@ -891,38 +891,38 @@ namespace GT
 
         /// Sets the width and color of the left border.
         ///
-        /// @param hElement [in] The element whose border is being set.
-        /// @param width    [in] The width of the border, in DPI-aware points.
-        /// @param color    [in] The colour of the border.
-        void SetElementBorderLeft(HGUIElement hElement, uint32_t width, const GTLib::Colour &borderColor);
+        /// @param hElement    [in] The element whose border is being set.
+        /// @param borderWidth [in] The width of the border, in DPI-aware points.
+        /// @param borderColor [in] The colour of the border.
+        void SetElementBorderLeft(HGUIElement hElement, uint32_t borderWidth, const GTLib::Colour &borderColor);
 
         /// Sets the width and color of the top border.
         ///
-        /// @param hElement [in] The element whose border is being set.
-        /// @param width    [in] The width of the border, in DPI-aware points.
-        /// @param color    [in] The colour of the border.
-        void SetElementBorderTop(HGUIElement hElement, uint32_t width, const GTLib::Colour &borderColor);
+        /// @param hElement    [in] The element whose border is being set.
+        /// @param borderWidth [in] The width of the border, in DPI-aware points.
+        /// @param borderColor [in] The colour of the border.
+        void SetElementBorderTop(HGUIElement hElement, uint32_t borderWidth, const GTLib::Colour &borderColor);
 
         /// Sets the width and color of the right border.
         ///
-        /// @param hElement [in] The element whose border is being set.
-        /// @param width    [in] The width of the border, in DPI-aware points.
-        /// @param color    [in] The colour of the border.
-        void SetElementBorderRight(HGUIElement hElement, uint32_t width, const GTLib::Colour &borderColor);
+        /// @param hElement    [in] The element whose border is being set.
+        /// @param borderWidth [in] The width of the border, in DPI-aware points.
+        /// @param borderColor [in] The colour of the border.
+        void SetElementBorderRight(HGUIElement hElement, uint32_t borderWidth, const GTLib::Colour &borderColor);
 
         /// Sets the width and color of the bottom border.
         ///
-        /// @param hElement [in] The element whose border is being set.
-        /// @param width    [in] The width of the border, in DPI-aware points.
-        /// @param color    [in] The colour of the border.
-        void SetElementBorderBottom(HGUIElement hElement, uint32_t width, const GTLib::Colour &borderColor);
+        /// @param hElement    [in] The element whose border is being set.
+        /// @param borderWidth [in] The width of the border, in DPI-aware points.
+        /// @param borderColor [in] The colour of the border.
+        void SetElementBorderBottom(HGUIElement hElement, uint32_t borderWidth, const GTLib::Colour &borderColor);
 
         /// Sets the border of the given element.
         ///
-        /// @param hElement [in] The element whose border is being set.
-        /// @param width    [in] The width of the border, in DPI-aware points.
-        /// @param color    [in] The colour of the border.
-        void SetElementBorder(HGUIElement hElement, uint32_t width, const GTLib::Colour &colour);
+        /// @param hElement    [in] The element whose border is being set.
+        /// @param borderWidth [in] The width of the border, in DPI-aware points.
+        /// @param borderColor [in] The colour of the border.
+        void SetElementBorder(HGUIElement hElement, uint32_t borderWidth, const GTLib::Colour &borderColor);
 
 
         /// @copydoc GUIContext::SetElementBorderLeftMask()
@@ -944,7 +944,7 @@ namespace GT
         /// @param hElement [in] The element whose padding is being set.
         /// @param padding  [in] The left padding.
         void SetElementPaddingLeft(HGUIElement hElement, uint32_t padding);
-        
+
         /// Sets the top padding of the given element, in DPI-aware points.
         ///
         /// @param hElement [in] The element whose padding is being set.
@@ -962,7 +962,7 @@ namespace GT
         /// @param hElement [in] The element whose padding is being set.
         /// @param padding  [in] The bottom padding.
         void SetElementPaddingBottom(HGUIElement hElement, uint32_t padding);
-        
+
         /// Sets the padding of all sides of the given element, in DPI-aware points.
         ///
         /// @param hElement [in] The element whose padding is being set.
@@ -975,22 +975,22 @@ namespace GT
 
         /// Retrieves the left padding of the given element, in DPI-aware points.
         ///
-        /// @param pElement [in] The element whose padding is being retrieved.
+        /// @param hElement [in] The element whose padding is being retrieved.
         uint32_t GetElementPaddingLeft(HGUIElement hElement) const;
 
         /// Retrieves the top padding of the given element, in DPI-aware points.
         ///
-        /// @param pElement [in] The element whose padding is being retrieved.
+        /// @param hElement [in] The element whose padding is being retrieved.
         uint32_t GetElementPaddingTop(HGUIElement hElement) const;
 
         /// Retrieves the right padding of the given element, in DPI-aware points.
         ///
-        /// @param pElement [in] The element whose padding is being retrieved.
+        /// @param hElement [in] The element whose padding is being retrieved.
         uint32_t GetElementPaddingRight(HGUIElement hElement) const;
 
         /// Retrieves the bottom padding of the given element, in DPI-aware points.
         ///
-        /// @param pElement [in] The element whose padding is being retrieved.
+        /// @param hElement [in] The element whose padding is being retrieved.
         uint32_t GetElementPaddingBottom(HGUIElement hElement) const;
 
 
@@ -1025,7 +1025,7 @@ namespace GT
         /// @param hElement [in] The element whose margin is being set.
         /// @param margin   [in] The margin that will be applied to all sides.
         ///
-        /// @param 
+        /// @remarks
         ///     This will set th emargin to all sides.
         void SetElementMargin(HGUIElement hElement, uint32_t margin);
 
@@ -1194,33 +1194,33 @@ namespace GT
 
         /// Sets the given element's inner offset on the x axis.
         ///
-        /// @param pElement     [in] The element whose inner offset is being set.
+        /// @param hElement     [in] The element whose inner offset is being set.
         /// @param innerOffsetX [in] The inner offset on the x offset.
         void SetElementInnerOffsetX(HGUIElement hElement, float innerOffsetX);
 
         /// Sets the given element's inner offset on the y axis.
         ///
-        /// @param pElement     [in] The element whose inner offset is being set.
-        /// @param innerOffsetX [in] The inner offset on the x offset.
+        /// @param hElement     [in] The element whose inner offset is being set.
+        /// @param innerOffsetY [in] The inner offset on the x offset.
         void SetElementInnerOffsetY(HGUIElement hElement, float innerOffsetY);
 
         /// Sets the given element's inner offset on both the x and y axis.
         ///
-        /// @param pElement     [in] The element whose inner offset is being set.
+        /// @param hElement     [in] The element whose inner offset is being set.
         /// @param innerOffsetX [in] The inner offset on the x offset.
         /// @param innerOffsetY [in] The inner offset on the y offset.
         void SetElementInnerOffset(HGUIElement hElement, float innerOffsetX, float innerOffsetY);
 
         /// Retrieves the given element's inner offset on the x axis.
         ///
-        /// @param pElement [in] The element whose inner offset is being retrieved.
+        /// @param hElement [in] The element whose inner offset is being retrieved.
         ///
         /// @return The inner offset on the x axis.
         float GetElementInnerOffsetX(HGUIElement hElement) const;
 
         /// Retrieves the given element's inner offset on the y axis.
         ///
-        /// @param pElement [in] The element whose inner offset is being retrieved.
+        /// @param hElement [in] The element whose inner offset is being retrieved.
         ///
         /// @return The inner offset on the y axis.
         float GetElementInnerOffsetY(HGUIElement hElement) const;
@@ -1313,7 +1313,7 @@ namespace GT
         /// @copydoc GUIContextBase::IsElementUnderPoint()
         bool IsElementUnderMouse(HGUIElement hElement) const;
 
-        
+
         /// @copydoc GUIContextBase::EnableCursorPassThrough()
         void EnableCursorPassThrough(HGUIElement hElement);
 
@@ -1441,12 +1441,12 @@ namespace GT
 
         /// Called by the host application when the mouse enters the given surface.
         ///
-        /// @param pSurface [in] A handle to the surface the mouse just entered.
+        /// @param hSurface [in] A handle to the surface the mouse just entered.
         void OnMouseEnter(HGUISurface hSurface);
 
         /// Called by the host application when the mouse leaves the given surface.
         ///
-        /// @param pSurface [in] A handle to the surface the mouse just left.
+        /// @param hSurface [in] A handle to the surface the mouse just left.
         void OnMouseLeave(HGUISurface hSurface);
 
         /// @copydoc GUIContextBase::OnMouseButtonClicked()
@@ -1581,7 +1581,7 @@ namespace GT
 
         /// Sets the element that has captured the mouse input events.
         ///
-        /// @param pElement [in] A pointer to the element that will receive the mouse events.
+        /// @param hElement [in] A pointer to the element that will receive the mouse events.
         ///
         /// @remarks
         ///     All mouse events will be routed to the given element until the capture changes, or is released.
@@ -1602,7 +1602,7 @@ namespace GT
         ///
         /// @param hSurface [in] The handle to the surface whose pointer is being retrieved.
         ///
-        /// @param A pointer to the actual surface, or null if the handle is invalid.
+        /// @return A pointer to the actual surface, or null if the handle is invalid.
         ///
         /// @remarks
         ///     If the handle is invalid, null will be returned.
@@ -1658,6 +1658,7 @@ namespace GT
 
         /// Keeps track of whether or not the context owns the renderer object.
         bool m_ownsRenderer;
+
 
         /// The list of global event handlers.
         GTLib::Vector<GUIEventHandler*> m_globalEventHandlers;

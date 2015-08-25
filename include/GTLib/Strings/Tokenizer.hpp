@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Tokenizer_hpp_
-#define __GTLib_Strings_Tokenizer_hpp_
+#ifndef GT_Strings_Tokenizer
+#define GT_Strings_Tokenizer
 
 #include "Find.hpp"
 #include "Size.hpp"
@@ -27,37 +27,37 @@ namespace GTLib
         public:
 
             /**
-            *   \brief                  Constructor.
-            *   \param  str        [in] The string being tokenized.
-            *   \param  delimiters [in] A string containing the delimiters to use when tokenizing.
+            *   \brief                    Constructor.
+            *   \param  strIn        [in] The string being tokenized.
+            *   \param  delimitersIn [in] A string containing the delimiters to use when tokenizing.
             *
             *   \remarks
             *       A copy is NOT made of either \c str or \c delimiters. Ensure both strings stay valid through the life of the iterator.
             */
-            TokenizerUTF(const T* str, const T *delimiters = nullptr)
-                : start(str), end(str), nullTerminated(true), remainingTs(-1), delimiters(delimiters)
+            TokenizerUTF(const T* strIn, const T *delimitersIn = nullptr)
+                : start(strIn), end(strIn), remainingTs(-1), delimiters(delimitersIn), nullTerminated(true)
             {
                 this->ctor();
             }
 
-            TokenizerUTF(const T* str, ptrdiff_t strSizeInTs, const char *delimiters = nullptr)
-                : start(str), end(str), nullTerminated(strSizeInTs == -1), remainingTs(strSizeInTs), delimiters(delimiters)
+            TokenizerUTF(const T* strIn, ptrdiff_t strSizeInTs, const char *delimitersIn = nullptr)
+                : start(strIn), end(strIn), remainingTs(strSizeInTs), delimiters(delimitersIn), nullTerminated(strSizeInTs == -1)
             {
                 this->ctor();
             }
 
             TokenizerUTF(const TokenizerUTF<T> &other)
-                : start(other.start), end(other.end), nullTerminated(other.nullTerminated), remainingTs(other.remainingTs), delimiters(other.delimiters)
+                : start(other.start), end(other.end), remainingTs(other.remainingTs), delimiters(other.delimiters), nullTerminated(other.nullTerminated)
             {
             }
-            
+
             /**
             *   \brief  Destructor.
             */
             ~TokenizerUTF()
             {
             }
-            
+
             /**
             *   \brief  Calculates the size of the token in Ts, not including the null terminator.
             */
@@ -72,7 +72,7 @@ namespace GTLib
                 return 0;
             }
 
-            
+
             /**
             *   \brief            Copies a null terminated copy of the current token into the given buffer.
             *   \param  dest [in] A pointer to the buffer that will receive the copy.
@@ -98,7 +98,7 @@ namespace GTLib
 
                 return 0;
             }
-            
+
             /**
             *   \brief  Checks if the token is equal to another.
             */
@@ -106,7 +106,7 @@ namespace GTLib
             {
                 return Strings::Equal(this->start, this->GetSizeInTs(), other, otherSizeInTs);
             }
-            
+
             /**
             *   \brief  Operator for moving to the next token.
             *   \return *this;
@@ -139,7 +139,7 @@ namespace GTLib
                             {
                                 this->end = this->start + this->remainingTs;
                             }
-                        
+
                             this->remainingTs -= this->end - this->start;
                         }
                     }
@@ -159,7 +159,7 @@ namespace GTLib
                 ++(*this);
                 return temp;
             }
-            
+
             TokenizerUTF<T> & operator=(const TokenizerUTF<T> &other)
             {
                 if (this != &other)
@@ -170,7 +170,7 @@ namespace GTLib
                     this->remainingTs    = other.remainingTs;
                     this->delimiters     = other.delimiters;
                 }
-            
+
                 return *this;
             }
 
@@ -182,11 +182,11 @@ namespace GTLib
                 // If both the start and end are nullptr, the tokenizer is finished.
                 return !(this->start == nullptr && this->end == nullptr);
             }
-            
-            
-    
+
+
+
         private:
-        
+
             /// Constructor implementation.
             void ctor()
             {
@@ -228,20 +228,20 @@ namespace GTLib
 
             /// A pointer to the start of the current token.
             const T* start;
-            
+
             /// A pointer to one character past the last character of the current token.
             const T* end;
-            
-            /// Keeps track of whether not the string is null terminated.
-            bool nullTerminated;
-            
+
             /// The number of Ts remaining in the string being tokenized. This is decreased as the iterator is moved forward.
             /// When it reaches 0, the iterator will have reached the end and will not move any more. This is required for non-
             /// null terminated strings.
             ptrdiff_t remainingTs;
-            
+
             /// The delimiters. If this is null, we'll use whitespaces.
             const T* delimiters;
+
+            /// Keeps track of whether not the string is null terminated.
+            bool nullTerminated;
         };
 
 
@@ -249,10 +249,10 @@ namespace GTLib
         typedef TokenizerUTF<char>     Tokenizer8;
         typedef TokenizerUTF<char16_t> Tokenizer16;
         typedef TokenizerUTF<char32_t> Tokenizer32;
-        
-        
-        
-        
+
+
+
+
         /// An optimized tokenizer for splitting a UTF-8 string by whitespace.
         ///
         /// @remarks
@@ -260,40 +260,40 @@ namespace GTLib
         class WhitespaceTokenizerUTF8
         {
         public:
-            
+
             /// Constructor.
             WhitespaceTokenizerUTF8(const char* str)
                 : start(str), end(str), inputStrEnd(nullptr)
             {
                 ++(*this);
             }
-            
+
             /// Constructor.
             WhitespaceTokenizerUTF8(const char* str, ptrdiff_t strSizeInBytes)
                 : start(str), end(str), inputStrEnd((strSizeInBytes != -1) ? str + strSizeInBytes : nullptr)
             {
                 ++(*this);
             }
-            
+
             /// Copy constructor.
             WhitespaceTokenizerUTF8(const WhitespaceTokenizerUTF8 &other)
                 : start(other.start), end(other.end), inputStrEnd(other.inputStrEnd)
             {
             }
-            
-            
+
+
             /// Gets the size of the current token in bytes, not including the null terminator.
             size_t GetSizeInBytes() const
             {
                 assert(this->end >= this->start);
-                
-                return this->end - this->start;
+
+                return size_t(this->end - this->start);
             }
-            
+
             /// The same as GetSizeInBytes(). This is only used for compatibility with TokenizerUTF.
             size_t GetSizeInTs() const { return this->GetSizeInBytes(); }
-            
-            
+
+
             /// Copies a null-terminated copy of the current token to the given buffer.
             ///
             /// @param dest [in] A pointer to the destination buffer.
@@ -306,28 +306,28 @@ namespace GTLib
             {
                 if (dest != nullptr)
                 {
-                    ptrdiff_t sizeInTs = this->GetSizeInBytes();
-                    if (this->start != nullptr && sizeInTs > 0)
+                    size_t sizeInTs = this->GetSizeInBytes();
+                    if (this->start != nullptr)
                     {
-                        std::memcpy(dest, this->start, static_cast<size_t>(sizeInTs));
+                        std::memcpy(dest, this->start, sizeInTs);
                     }
 
                     dest[sizeInTs] = '\0';
 
-                    return sizeInTs + 1;
+                    return ptrdiff_t(sizeInTs) + 1;
                 }
 
                 return 0;
             }
-            
-            
+
+
             /// Checks if the current token is equal to the given string.
             bool Equals(const char* other, ptrdiff_t otherSizeInTs = -1)
             {
-                return GTLib::Strings::Equal(this->start, this->GetSizeInBytes(), other, otherSizeInTs);
+                return GTLib::Strings::Equal(this->start, ptrdiff_t(this->GetSizeInBytes()), other, otherSizeInTs);
             }
-            
-            
+
+
             /// Moves to the next token.
             WhitespaceTokenizerUTF8 & MoveToNextToken()
             {
@@ -346,18 +346,18 @@ namespace GTLib
                         this->end = nullptr;
                     }
                 }
-                
+
                 return *this;
             }
-            
-            
-            
+
+
+
             /// Pre-increment overload.
             WhitespaceTokenizerUTF8 & operator++()
             {
                 return this->MoveToNextToken();
             }
-            
+
             /// Post-increment overload.
             WhitespaceTokenizerUTF8 operator++(int)
             {
@@ -365,17 +365,17 @@ namespace GTLib
                 ++(*this);
                 return temp;
             }
-            
-            
+
+
             /// bool casting operator.
             operator bool() const
             {
                 return this->start != nullptr;
             }
-            
-            
+
+
         private:
-            
+
             /// Finds the first occurance of a character that is not whitespace.
             ///
             /// @remarks
@@ -394,10 +394,10 @@ namespace GTLib
                         source += increment;
                     }
                 }
-                
+
                 return nullptr;
             }
-            
+
             /// Finds the next occurances of a whitespace character.
             ///
             /// @remarks
@@ -416,24 +416,24 @@ namespace GTLib
                         return source;
                     }
                 }
-                
+
                 return source;
             }
-            
-            
-            
-            
+
+
+
+
         public:
-            
+
             /// A pointer to the start of the current token.
             const char* start;
-            
+
             /// A pointer to the end of the current token.
             const char* end;
-            
-            
+
+
         private:
-            
+
             /// A pointer to the end of the main string being tokenized.
             const char* inputStrEnd;
         };

@@ -44,7 +44,7 @@ namespace GT
                 if (pIdentifier != nullptr)
                 {
                     easymtl_strcpy(variableOut.name, 28, pIdentifier->name);
-                    variableOut.type = (GraphicsMaterialVariableType)pIdentifier->type;
+                    variableOut.type = GraphicsMaterialVariableType(pIdentifier->type);
                     memcpy(variableOut.path.value, pInput->path.value, 224);
 
                     return true;
@@ -76,7 +76,7 @@ namespace GT
             if (pProperty != nullptr)
             {
                 easymtl_strcpy(variableOut.name, 28, pProperty->name);
-                variableOut.type = (GraphicsMaterialVariableType)pProperty->type;
+                variableOut.type = GraphicsMaterialVariableType(pProperty->type);
                 memcpy(variableOut.path.value, pProperty->path.value, 224);
 
                 return true;

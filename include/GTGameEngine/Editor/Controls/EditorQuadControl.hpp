@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorQuadControl_hpp_
-#define __GT_EditorQuadControl_hpp_
+#ifndef GT_EditorQuadControl
+#define GT_EditorQuadControl
 
 #include "EditorControl.hpp"
 
@@ -13,7 +13,7 @@ namespace GT
     public:
 
         EditorQuadControl(Editor &editor);
-        
+
 
         /// Retrieves a handle to the top container.
         HGUIElement GetTop();

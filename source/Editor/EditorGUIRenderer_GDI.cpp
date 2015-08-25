@@ -187,7 +187,7 @@ namespace GT
                 {
                     TextOutW(m_hDC, textRunDesc.xPos, textRunDesc.yPos, textW, bufferSize - 1);
                 }
-                
+
 
                 SelectObject(m_hDC, hPrevFont);
                 SetTextColor(m_hDC, hPrevTextColor);

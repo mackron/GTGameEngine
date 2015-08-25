@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_MaterialAsset_hpp_
-#define __GT_MaterialAsset_hpp_
+#ifndef GT_MaterialAsset
+#define GT_MaterialAsset
 
 #include "Asset.hpp"
 #include "../Graphics/GraphicsWorld.hpp"    // For material variable types.

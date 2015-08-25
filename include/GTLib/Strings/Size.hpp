@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Size_hpp_
-#define __GTLib_Strings_Size_hpp_
+#ifndef GT_Strings_Size
+#define GT_Strings_Size
 
 #include "NextChar.hpp"
 #include <cstddef>
@@ -68,7 +68,7 @@ namespace GTLib
             return 0;
         }
 
-        
+
 
 
 		/**

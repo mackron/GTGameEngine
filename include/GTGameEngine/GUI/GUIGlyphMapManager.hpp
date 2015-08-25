@@ -1,7 +1,7 @@
-// Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
+// Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUI_GlyphMapManager_hpp_
-#define __GT_GUI_GlyphMapManager_hpp_
+#ifndef GT_GUI_GlyphMapManager
+#define GT_GUI_GlyphMapManager
 
 #include <GTLib/GlyphMapManager.hpp>
 #include <GTLib/Vector.hpp>
@@ -25,10 +25,10 @@ namespace GT
 
         /// GlyphMapManager::CreateGlyphMap()
         GTLib::GlyphMapHandle CreateGlyphMap(unsigned int width, unsigned int height);
-        
+
         /// GlyphMapManager::DeleteGlyphMap()
         void DeleteGlyphMap(GTLib::GlyphMapHandle glyphMap);
-        
+
         /// GlyphMapManager::SetGlyphMapData()
         void SetGlyphMapData(GTLib::GlyphMapHandle glyphMap, int x, int y, unsigned int width, unsigned int height, void* data);
 

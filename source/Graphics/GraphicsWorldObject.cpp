@@ -43,7 +43,7 @@ namespace GT
         return m_rotation;
     }
 
-    
+
     void GraphicsWorldObject::SetScale(const vec4 &scale)
     {
         m_scale = scale;

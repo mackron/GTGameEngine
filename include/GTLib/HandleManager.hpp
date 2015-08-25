@@ -1,7 +1,7 @@
-// Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
+// Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_HandleManager_hpp_
-#define __GT_HandleManager_hpp_
+#ifndef GT_HandleManager
+#define GT_HandleManager
 
 #include "Vector.hpp"
 #include <functional>
@@ -82,7 +82,7 @@ namespace GT
             // Associate a null object by default.
             this->AssociateObjectWithHandle(handle, nullptr);
 
-        
+
             return handle;
         }
 

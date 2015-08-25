@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUI_FontManager_GDI_hpp_
-#define __GT_GUI_FontManager_GDI_hpp_
+#ifndef GT_GUI_FontManager_GDI
+#define GT_GUI_FontManager_GDI
 
 #include "../Config.hpp"
 
@@ -13,7 +13,7 @@
 
 namespace GT
 {
-    /// GDI implementation 
+    /// GDI implementation
     class GUIFontManager_GDI : public GUIFontManager
     {
     public:

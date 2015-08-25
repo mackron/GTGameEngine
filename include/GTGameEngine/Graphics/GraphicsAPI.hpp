@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GraphicsAPI_hpp_
-#define __GT_GraphicsAPI_hpp_
+#ifndef GT_GraphicsAPI
+#define GT_GraphicsAPI
 
 #include "GraphicsTypes.hpp"
 

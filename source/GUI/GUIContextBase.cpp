@@ -3,6 +3,7 @@
 #include <GTGameEngine/GUI/GUIContextBase.hpp>
 #include <GTGameEngine/GUI/GUIFontManager_GDI.hpp>
 #include <GTGameEngine/GUI/GUISimpleTextLayout.hpp>
+#include <GTLib/FontStyles.hpp>
 
 namespace GT
 {
@@ -144,7 +145,7 @@ namespace GT
                 assert(pElement != nullptr);
                 {
                     int flags = 0;
-                    
+
                     // Width.
                     if (GUIElementStyle_Get_IsAnyWidthOfType(pElement->style, NumberType_Percent))
                     {
@@ -577,7 +578,7 @@ namespace GT
 
             pElementToAppend->pPrevSibling = pElementToAppendTo;
             pElementToAppendTo->pNextSibling = pElementToAppend;
-        
+
             if (pElementToPrependTo != nullptr)
             {
                 pElementToAppend->pNextSibling = pElementToPrependTo;
@@ -835,7 +836,7 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        return this->IterateElementChildren(pElement, [&](GUIElement* pChildElement) -> bool 
+        return this->IterateElementChildren(pElement, [&](GUIElement* pChildElement) -> bool
         {
             if (handler(pChildElement))
             {
@@ -884,7 +885,7 @@ namespace GT
         assert(pParentElement != nullptr);
 
         bool result = false;
-        this->IterateElementChildren(pParentElement, [&](GUIElement* pNextChildElement) -> bool 
+        this->IterateElementChildren(pParentElement, [&](GUIElement* pNextChildElement) -> bool
         {
             if (pNextChildElement == pChildElement)
             {
@@ -910,7 +911,7 @@ namespace GT
         assert(pParentElement != nullptr);
 
         bool result = false;
-        this->IterateElementDescendants(pParentElement, [&](GUIElement* pNextDescendantElement) -> bool 
+        this->IterateElementDescendants(pParentElement, [&](GUIElement* pNextDescendantElement) -> bool
         {
             if (pDescendantElement == pNextDescendantElement)
             {
@@ -929,7 +930,7 @@ namespace GT
         assert(pChildElement != nullptr);
 
         bool result = false;
-        this->IterateElementAncestors(pChildElement, [&](GUIElement* pNextAncestorElement) -> bool 
+        this->IterateElementAncestors(pChildElement, [&](GUIElement* pNextAncestorElement) -> bool
         {
             if (pAncestorElement == pNextAncestorElement)
             {
@@ -1293,7 +1294,7 @@ namespace GT
         rectOut.bottom = static_cast<int>(GTLib::Round(rectF.bottom));
     }
 
-    
+
     void GUIContextBase::GetElementAbsoluteTextRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const
     {
         assert(pElement != nullptr);
@@ -1448,7 +1449,7 @@ namespace GT
         pElement->layout.borderRightWidth  = static_cast<float>(width) * this->GetXDPIScalingFactor(this->GetElementSurface(pElement));
         pElement->layout.borderBottomWidth = static_cast<float>(width) * this->GetYDPIScalingFactor(this->GetElementSurface(pElement));
 
-            
+
         this->BeginBatch();
         {
             this->Layout_InvalidateElementLayoutsOnInnerSizeChange(pElement);
@@ -1592,7 +1593,7 @@ namespace GT
         pElement->layout.borderRightWidth  = static_cast<float>(width) * this->GetXDPIScalingFactor(this->GetElementSurface(pElement));
         pElement->layout.borderBottomWidth = static_cast<float>(width) * this->GetYDPIScalingFactor(this->GetElementSurface(pElement));
 
-            
+
         this->BeginBatch();
         {
             this->Painting_InvalidateElementRect(pElement);
@@ -2082,7 +2083,7 @@ namespace GT
 
         GUIElementStyle_Set_visible(pElement->style, visible);
 
-        
+
         // With respect to layout, a change in visiblity is equivalent to changing the size to 0,0 and back again.
         this->BeginBatch();
         {
@@ -2631,7 +2632,7 @@ namespace GT
         m_mousePosY = mousePosY;
 
         auto pNewElementUnderMouse = this->FindElementUnderPoint(pSurface, mousePosX, mousePosY, true);
-            
+
         // OnMouseLeave/OnMouseEnter
         this->UpdateMouseEnterAndLeaveState(pNewElementUnderMouse);
 
@@ -2674,7 +2675,7 @@ namespace GT
             m_pSurfaceUnderMouse = pSurface;
         }
 
-        
+
     }
 
     void GUIContextBase::OnMouseLeave(GUISurface* pSurface)
@@ -3050,7 +3051,7 @@ namespace GT
         {
             this->GetDPI(pSurface, newXDPI, newYDPI);
         }
-        
+
 
         pElement->pSurface = pSurface;
 
@@ -3328,7 +3329,7 @@ namespace GT
             return 0;
         }
     }
-    
+
     void GUIContextBase::UpdateElementTextLayout(GUIElement* pElement, const char* text)
     {
         assert(pElement != nullptr);
@@ -3377,7 +3378,7 @@ namespace GT
                 this->UpdateElementTextLayout(pElement, this->GetElementText(pElement));
             }
 
-            
+
             // Children.
             this->IterateElementChildren(pElement, [&](GUIElement* pChild) -> bool {
                 this->RefreshTextLayoutsOfElementsWithInheritedFont(pChild);
@@ -3699,7 +3700,7 @@ namespace GT
             {
                 //this->PaintSurface(pSurface, pSurface->invalidRect);
                 this->PostEvent_OnSurfaceNeedsRepaint(pSurface, pSurface->invalidRect);
-                
+
 
                 // Make the invalid region inside-out to indicate that it's currently unset.
                 pSurface->invalidRect.left   = INT_MAX;
@@ -3791,7 +3792,7 @@ namespace GT
             }
         }
 
-        
+
 
         // Borders. These should always be drawn last so that they're always on top.
         GTLib::Rect<int> borderLeftRect;
@@ -3811,7 +3812,7 @@ namespace GT
         borderRightRect.top     = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY));
         borderRightRect.right   = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX + pElement->layout.width));
         borderRightRect.bottom  = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY + pElement->layout.height));
-        
+
         GTLib::Rect<int> borderBottomRect;
         borderBottomRect.left   = static_cast<int>(GTLib::Round(pElement->layout.absolutePosX));
         borderBottomRect.top    = static_cast<int>(GTLib::Round(pElement->layout.absolutePosY + pElement->layout.height - pElement->layout.borderBottomWidth));
@@ -3846,7 +3847,7 @@ namespace GT
 
             GTLib::Rect<int> borderLeftRect2(borderLeftRect);
             borderLeftRect2.top = GTLib::Clamp(borderLeftRect2.top + static_cast<int>(borderMaskOffset + borderMaskLength), borderLeftRect2.top, borderLeftRect2.bottom);
-            
+
 
             Renderer_DrawRectangle(borderLeftRect1, GUIElementStyle_Get_borderleftcolor(pElement->style));
             Renderer_DrawRectangle(borderLeftRect2, GUIElementStyle_Get_borderleftcolor(pElement->style));
@@ -3879,7 +3880,7 @@ namespace GT
 
             GTLib::Rect<int> borderTopRect2(borderTopRect);
             borderTopRect2.left = GTLib::Clamp(borderTopRect2.left + static_cast<int>(borderMaskOffset + borderMaskLength), borderTopRect2.left, borderTopRect2.right);
-            
+
 
             Renderer_DrawRectangle(borderTopRect1, GUIElementStyle_Get_bordertopcolor(pElement->style));
             Renderer_DrawRectangle(borderTopRect2, GUIElementStyle_Get_bordertopcolor(pElement->style));
@@ -3889,7 +3890,7 @@ namespace GT
             borderTopRect3.right = borderTopRect2.left;
             Renderer_DrawRectangle(borderTopRect3, GUIElementStyle_Get_bordertopmaskcolor(pElement->style));
         }
-        
+
 
         // Right
         {
@@ -3912,7 +3913,7 @@ namespace GT
 
             GTLib::Rect<int> borderRightRect2(borderRightRect);
             borderRightRect2.top = GTLib::Clamp(borderRightRect2.top + static_cast<int>(borderMaskOffset + borderMaskLength), borderRightRect2.top, borderRightRect2.bottom);
-            
+
 
             Renderer_DrawRectangle(borderRightRect1, GUIElementStyle_Get_borderrightcolor(pElement->style));
             Renderer_DrawRectangle(borderRightRect2, GUIElementStyle_Get_borderrightcolor(pElement->style));
@@ -3945,7 +3946,7 @@ namespace GT
 
             GTLib::Rect<int> borderBottomRect2(borderBottomRect);
             borderBottomRect2.left = GTLib::Clamp(borderBottomRect2.left + static_cast<int>(borderMaskOffset + borderMaskLength), borderBottomRect2.left, borderBottomRect2.right);
-            
+
 
             Renderer_DrawRectangle(borderBottomRect1, GUIElementStyle_Get_borderbottomcolor(pElement->style));
             Renderer_DrawRectangle(borderBottomRect2, GUIElementStyle_Get_borderbottomcolor(pElement->style));
@@ -3961,7 +3962,7 @@ namespace GT
 #if 0
         if (this->DoesElementHaveText(pElement->handle))
         {
-            // We need to iterate over each text run 
+            // We need to iterate over each text run
 
             auto font = this->GetElementFont(pElement->handle);
             if (font != nullptr)
@@ -4199,7 +4200,7 @@ namespace GT
                 // rectangle will be invalidated after validating the layout.
                 this->Painting_InvalidateElementRect(pElement);
             }
-        
+
             pElement->layout.invalidFlags |= flags;
         }
     }
@@ -4351,7 +4352,7 @@ namespace GT
             invalidLayoutFlags |= LayoutFlag_HeightInvalid;
         }
 
-        
+
 
 
         // The positions of children may have changed.
@@ -4518,7 +4519,7 @@ namespace GT
             //////////////////////////////////////////////////////////////////////////
             // Dependencies
             auto pParent = this->GetElementParent(pElement);
-            
+
             uint32_t parentWidthType = 0;
             if (pParent != nullptr)
             {
@@ -5071,7 +5072,7 @@ namespace GT
             }
         }
     }
-    
+
     void GUIContextBase::Layout_ValidateElementPosition_Relative(GUIElement* pElement)
     {
         assert(pElement != nullptr);
@@ -5099,7 +5100,7 @@ namespace GT
 
             float originX = 0.0f;
             float originY = 0.0f;
-            
+
 
             auto pParent = this->GetElementParent(pElement);
             if (pParent != nullptr)
@@ -5344,7 +5345,7 @@ namespace GT
                 return true;
             });
 
-            
+
             float offsetX = 0.0f;
             float offsetY = 0.0f;
 
@@ -5616,7 +5617,7 @@ namespace GT
             maxWidth = this->Layout_CalculateElementWidth(pElement, styleMaxWidth, styleMaxWidthType, false);        // <-- 'false' means we don't want to consider flexing.
         }
 
-        
+
         pElement->layout.unclampedWidth = newWidth;
         pElement->layout.width          = GTLib::Clamp(newWidth, minWidth, maxWidth);
 
@@ -5651,7 +5652,7 @@ namespace GT
             maxHeight = this->Layout_CalculateElementHeight(pElement, styleMaxHeight, styleMaxHeightType, false);        // <-- 'false' means we don't want to consider flexing.
         }
 
-        
+
         pElement->layout.unclampedHeight = newHeight;
         pElement->layout.height          = GTLib::Clamp(newHeight, minHeight, maxHeight);
 
@@ -6216,7 +6217,7 @@ namespace GT
         float result = 0.0f;
 
         ChildAxis childAxis = ChildAxis_Vertical;
-        
+
         auto pParent = this->GetElementParent(pElement);
         if (pParent != nullptr)
         {
@@ -6279,7 +6280,7 @@ namespace GT
         float result = 0.0f;
 
         ChildAxis childAxis = ChildAxis_Vertical;
-        
+
         auto pParent = this->GetElementParent(pElement);
         if (pParent != nullptr)
         {
@@ -6367,7 +6368,7 @@ namespace GT
                 return true;
             });
         }
-        
+
 
         return pResult;
     }

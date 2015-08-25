@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_System_hpp_
-#define __GTLib_System_hpp_
+#ifndef GTLib_System
+#define GTLib_System
 
 #include <cstddef>
 #include "Vector.hpp"
@@ -15,22 +15,22 @@ namespace GTLib
         class Directories
         {
         public:
-        
+
             /**
             *   \brief  Retrieves a pointer to the string containing the home directory path.
             */
             static const char* Home();
 
-            /// Retrieves the list of root-level font directories. Note that this does NOT include sub-directories. For example, on Linux it will include 
-            /// "/usr/share/fonts", but will not include "/usr/share/fonts/freetype". 
+            /// Retrieves the list of root-level font directories. Note that this does NOT include sub-directories. For example, on Linux it will include
+            /// "/usr/share/fonts", but will not include "/usr/share/fonts/freetype".
             static Vector<const char*> & Fonts();
         };
-        
+
         /**
         *   \brief  Retrieves the number of logical CPU's attached to the machine.
         */
         unsigned int GetCPUCount();
-        
+
         /**
         *   \brief  Retrieves the page size.
         */
@@ -39,7 +39,7 @@ namespace GTLib
 
         /// Opens a file or URL in the preferred application.
         ///
-        /// @param filePath [in] The file path to open.
+        /// @param url [in] The file path to open.
         bool OpenFileOrURL(const char* url);
     }
 }

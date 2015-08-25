@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Iterator_hpp_
-#define __GTLib_Strings_Iterator_hpp_
+#ifndef GT_Strings_Iterator
+#define GT_Strings_Iterator
 
 #include "NextChar.hpp"
 #include <cstdint>
@@ -21,18 +21,18 @@ namespace GTLib
         class Iterator
         {
         public:
-        
+
             /**
             *   \brief  Constructs the iterator from a string.
             */
-            Iterator(const T *str, ptrdiff_t strSizeInTs = -1)
-                : character('\0'), str(str), next(str), sizeInTs(strSizeInTs)
+            Iterator(const T *strIn, ptrdiff_t strSizeInTsIn = -1)
+                : str(strIn), next(str), sizeInTs(strSizeInTsIn), character('\0')
             {
                 // We just move to the first character by incrementing.
                 ++(*this);
             }
-            
-            
+
+
             Iterator & operator++()
             {
                 if (*this)
@@ -44,29 +44,29 @@ namespace GTLib
                         this->sizeInTs = 0;
                     }
                 }
-                
+
                 return *this;
             }
-        
+
             operator bool() const
             {
                 return !(this->sizeInTs == 0 && this->character == '\0');
             }
-        
-        
+
+
         public:
-        
-            /// The current character.
-            char32_t character;
 
             /// The string being iterated.
             const T* str;
 
             /// The position of the next character.
             const T* next;
-            
+
             /// the number of bytes remaining.
             ptrdiff_t sizeInTs;
+
+            /// The current character.
+            char32_t character;
         };
     }
 }

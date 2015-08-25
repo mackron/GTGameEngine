@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_List_hpp_
-#define __GTLib_List_hpp_
+#ifndef GT_List
+#define GT_List
 
 #include <cstddef>
 
@@ -16,8 +16,8 @@ namespace GTLib
         /**
         *   \brief  Constructor.
         */
-        ListItem(const T &value)
-            : value(value), prev(nullptr), next(nullptr)
+        ListItem(const T &valueIn)
+            : value(valueIn), prev(nullptr), next(nullptr)
         {
         }
 
@@ -167,7 +167,7 @@ namespace GTLib
             {
                 this->last = newItem;
             }
-            
+
 
 
             return newItem;

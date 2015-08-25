@@ -34,10 +34,10 @@ namespace GT
                 m_loadedFonts.PushBack(LoadedFont(hFont, fontInfo));
             }
         }
-        
+
         return hFont;
     }
-    
+
     void GUIFontManager::UnacquireFont(const HGUIFont hFont)
     {
         // We simply decrement the reference counter. If the new counter is at 0, we want to delete it completely.
@@ -89,36 +89,36 @@ namespace GT
 
     /////////////////////////////////////////////
     // Private
-    
+
     HGUIFont GUIFontManager::AcquireLoadedFont(const GUIFontInfo &fontInfo)
     {
         for (size_t iLoadedFont = 0; iLoadedFont < m_loadedFonts.count; ++iLoadedFont)
         {
             auto &loadedFont = m_loadedFonts[iLoadedFont];
-            
+
             if (loadedFont.fontInfo.IsEqual(fontInfo))
             {
                 loadedFont.referenceCount += 1;
                 return loadedFont.hFont;
             }
         }
-        
+
         return 0;
     }
-    
+
     GUIFontManager::LoadedFont* GUIFontManager::FindLoadedFont(HGUIFont hFont, size_t &indexOut)
     {
         for (size_t iLoadedFont = 0; iLoadedFont < m_loadedFonts.count; ++iLoadedFont)
         {
             auto &loadedFont = m_loadedFonts[iLoadedFont];
-            
+
             if (loadedFont.hFont == hFont)
             {
                 indexOut = iLoadedFont;
                 return &loadedFont;
             }
         }
-        
+
         return nullptr;
     }
 
@@ -160,10 +160,10 @@ namespace GT
                 m_loadedFonts.PushBack(LoadedFont(font, fontInfo));
             }
         }
-        
+
         return font;
     }
-    
+
     void GUIFontManagerOld::UnacquireFont(const GTLib::Font* font)
     {
         // We simply decrement the reference counter. If the new counter is at 0, we want to delete it completely.
@@ -202,41 +202,41 @@ namespace GT
 
         return nullptr;
     }
-    
-    
-    
+
+
+
     /////////////////////////////////////////////
     // Private
-    
+
     GTLib::Font* GUIFontManagerOld::AcquireLoadedFont(const GTLib::FontInfo &fontInfo)
     {
         for (size_t iLoadedFont = 0; iLoadedFont < m_loadedFonts.count; ++iLoadedFont)
         {
             auto &loadedFont = m_loadedFonts[iLoadedFont];
-            
+
             if (loadedFont.fontInfo.IsEqual(fontInfo))
             {
                 loadedFont.referenceCount += 1;
                 return loadedFont.font;
             }
         }
-        
+
         return nullptr;
     }
-    
+
     GUIFontManagerOld::LoadedFont* GUIFontManagerOld::FindLoadedFont(const GTLib::Font* font, size_t &indexOut)
     {
         for (size_t iLoadedFont = 0; iLoadedFont < m_loadedFonts.count; ++iLoadedFont)
         {
             auto &loadedFont = m_loadedFonts[iLoadedFont];
-            
+
             if (loadedFont.font == font)
             {
                 indexOut = iLoadedFont;
                 return &loadedFont;
             }
         }
-        
+
         return nullptr;
     }
 }

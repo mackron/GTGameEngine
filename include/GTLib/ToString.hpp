@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_ToString_hpp_
-#define __GTLib_ToString_hpp_
+#ifndef GT_ToString
+#define GT_ToString
 
 #include <cstdint>
 #include "String.hpp"
@@ -12,7 +12,7 @@ namespace GTLib
     inline String ToString(int32_t value) { return ToString(static_cast<int64_t>(value)); }
     inline String ToString(int16_t value) { return ToString(static_cast<int64_t>(value)); }
     inline String ToString(int8_t  value) { return ToString(static_cast<int64_t>(value)); }
-    
+
     String ToString(uint64_t value);
     inline String ToString(uint32_t value) { return ToString(static_cast<uint64_t>(value)); }
     inline String ToString(uint16_t value) { return ToString(static_cast<uint64_t>(value)); }

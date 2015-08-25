@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_SceneNodeComponentTypes_hpp_
-#define __GT_SceneNodeComponentTypes_hpp_
+#ifndef GT_SceneNodeComponentTypes
+#define GT_SceneNodeComponentTypes
 
 #include <cstdint>
 

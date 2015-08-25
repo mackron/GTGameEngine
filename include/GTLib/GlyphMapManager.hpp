@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_GlyphMapManager_hpp_
-#define __GTLib_GlyphMapManager_hpp_
+#ifndef GT_GlyphMapManager
+#define GT_GlyphMapManager
 
 #include <cstddef>
 #include <cstdint>
@@ -9,7 +9,7 @@
 namespace GTLib
 {
     typedef size_t GlyphMapHandle;
-    
+
     /// Base class for managing glyph maps.
     ///
     /// Every FontServer will be assigned an instance of one of these managers. It's used so an application can
@@ -20,30 +20,30 @@ namespace GTLib
     class GlyphMapManager
     {
     public:
-    
+
         /// Constructor.
         GlyphMapManager();
-        
+
         /// Destructor.
         virtual ~GlyphMapManager();
-        
-        
+
+
         /// Retrieves the maximum width of a glyph map.
         ///
         /// @remarks
         ///     The default value is 256.
         virtual unsigned int GetMaxWidth() const;
-        
+
         /// Retrieves the maximum height of a glyph map.
         ///
         /// @remarks
         ///     The default value is 256.
         virtual unsigned int GetMaxHeight() const;
-        
-        
+
+
         //////////////////////////////////////////////////////////
         // Methods below must be implemented by child classes.
-        
+
         /// Creates a new, empty image.
         ///
         /// @param width  [in] The width to make the new glyph map.
@@ -56,12 +56,12 @@ namespace GTLib
         ///     @par
         ///     If an error occurs, 0 should be returned.
         virtual GlyphMapHandle CreateGlyphMap(unsigned int width, unsigned int height) = 0;
-        
+
         /// Deletes a glyph created by CreateGlyphMap().
         ///
         /// @param glyphMap [in] The handle to the glyph map to delete.
         virtual void DeleteGlyphMap(GlyphMapHandle glyphMap) = 0;
-        
+
         /// Sets the data of a rectangle in the glyph map.
         ///
         /// @param glyphMap [in] The handle to the glyph map whose data is being set.
@@ -75,10 +75,10 @@ namespace GTLib
         ///     Implementations of this method are free to mutate the provided data. This is mainly to allow implementations to
         ///     flip the image data (such as for use with OpenGL) without needing to do a full memory allocation.
         virtual void SetGlyphMapData(GlyphMapHandle glyphMap, int x, int y, unsigned int width, unsigned int height, void* data) = 0;
-        
+
         /// Maps the glyph map image data.
         ///
-        /// @param glyphMap [in] The handle to the glyph map whose data is being mapped.
+        /// @param glyphMapHandle [in] The handle to the glyph map whose data is being mapped.
         ///
         /// @return A pointer to the image data of the glyph map.
         ///
@@ -88,7 +88,7 @@ namespace GTLib
 
         /// Unmaps the glyph map image data.
         ///
-        /// @param glyphMap [in] The handle to the glyph map whose data is being mapped.
+        /// @param glyphMapHandle [in] The handle to the glyph map whose data is being mapped.
         virtual void UnmapGlyphMapData(GTLib::GlyphMapHandle glyphMapHandle) = 0;
 
         /// Retrieves the dimensions of the glyph map.

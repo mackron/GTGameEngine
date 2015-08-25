@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_Equal_hpp_
-#define __GTLib_Strings_Equal_hpp_
+#ifndef GT_Strings_Equal
+#define GT_Strings_Equal
 
 #include "NextChar.hpp"
 #include "Compare.hpp"
@@ -31,12 +31,12 @@ namespace GTLib
                 {
                     c1 = NextChar(str1, str1SizeInTs);
                     c2 = NextChar(str2, str2SizeInUs);
-                    
-                    if (std::toupper((int)c1) != std::toupper((int)c2))
+
+                    if (std::toupper(int(c1)) != std::toupper(int(c2)))
                     {
                         return false;
                     }
-                    
+
                 }while (c1 != '\0' && c2 != '\0');  // Do not check the sizes - NextChar() will return '\0' if a size of 0 is given.
 
                 // If both strings are at the end, they're equal.

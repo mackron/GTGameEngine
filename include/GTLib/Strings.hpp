@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Strings_hpp_
-#define __GTLib_Strings_hpp_
+#ifndef GTLib_Strings
+#define GTLib_Strings
 
 #include "String.hpp"
 #include "Strings/Compare.hpp"

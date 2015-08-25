@@ -1,10 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_FontInfo_hpp_
-#define __GTLib_FontInfo_hpp_
+#ifndef GTLib_FontInfo
+#define GTLib_FontInfo
 
-#include "FontStyles.hpp"
-#include "GlyphRenderingModes.hpp"
 #include <GTLib/String.hpp>
 #include <cstddef>
 
@@ -22,17 +20,17 @@ namespace GTLib
               dpiX(96), dpiY(96)
         {
         }
-        
+
         FontInfo(const FontInfo &info)
             : family(info.family), styleFlags(info.styleFlags), sizeInPoints(info.sizeInPoints), sizeInPixels(info.sizeInPixels),
               dpiX(info.dpiX), dpiY(info.dpiY)
         {
         }
-        
+
         virtual ~FontInfo()
         {
         }
-        
+
         FontInfo & operator=(const FontInfo &other)
         {
             if (this != &other)
@@ -44,7 +42,7 @@ namespace GTLib
                 this->dpiX         = other.dpiX;
                 this->dpiY         = other.dpiY;
             }
-            
+
             return *this;
         }
 
@@ -57,22 +55,22 @@ namespace GTLib
                    this->dpiX            == other.dpiX          &&
                    this->dpiY            == other.dpiY;
         }
-        
-        
+
+
         /// The font family (Arial, Times, Courier, etc)
         GTLib::String family;
-        
+
         /// The style flags of the font.
         uint32_t styleFlags;
-        
-        
+
+
         /// The size of the font, in points. We use a float here so we can have values like 8.5.
         float sizeInPoints;
         float sizeInPixels;
-        
+
         /// The X DPI to use for the font. Default is 96.
         unsigned int dpiX;
-        
+
         /// The Y DPI to use for the font. Default is 96.
         unsigned int dpiY;
     };

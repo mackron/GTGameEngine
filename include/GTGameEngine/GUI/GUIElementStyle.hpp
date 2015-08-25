@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUI_ElementStyle_hpp_
-#define __GT_GUI_ElementStyle_hpp_
+#ifndef GT_GUI_ElementStyle
+#define GT_GUI_ElementStyle
 
 #include <cstdint>
 #include <GTLib/Colour.hpp>
@@ -158,6 +158,7 @@ namespace GT
         uint8_t childAxisAndAlignmentAndPositioning;        // [1,1] child axis              | [2,3] horizontal align         | [4,5] vertical align  | [6,7] positioning
         uint8_t childrenSizeBoundaryAndPositionOrigin;      // [1,2] children width boundary | [3,4] children height boundary | [5,6] position origin
         uint8_t clipping;                                   // [1,2] clipping mode           | [3,4] child clipping boundary
+        uint8_t padding1;
 
         uint8_t backgroundColourR;
         uint8_t backgroundColourG;
@@ -208,6 +209,7 @@ namespace GT
 
 
         uint16_t booleanField;
+        uint16_t padding2;
     };
 
 
@@ -395,7 +397,7 @@ namespace GT
     // Horizontal align.
     inline void GUIElementStyle_Set_horizontalalign(GUIElementStyle &style, HorizontalAlign align)
     {
-        style.childAxisAndAlignmentAndPositioning = (style.childAxisAndAlignmentAndPositioning & ~0x06) | (static_cast<uint8_t>(align) << 1);
+        style.childAxisAndAlignmentAndPositioning = uint8_t((style.childAxisAndAlignmentAndPositioning & ~0x06) | (uint8_t(align) << 1));
     }
     inline HorizontalAlign GUIElementStyle_Get_horizontalalign(const GUIElementStyle &style)
     {
@@ -405,7 +407,7 @@ namespace GT
     // Vertical align.
     inline void GUIElementStyle_Set_verticalalign(GUIElementStyle &style, VerticalAlign align)
     {
-        style.childAxisAndAlignmentAndPositioning = (style.childAxisAndAlignmentAndPositioning & ~0x18) | (static_cast<uint8_t>(align) << 3);
+        style.childAxisAndAlignmentAndPositioning = uint8_t((style.childAxisAndAlignmentAndPositioning & ~0x18) | (uint8_t(align) << 3));
     }
     inline VerticalAlign GUIElementStyle_Get_verticalalign(const GUIElementStyle &style)
     {
@@ -415,7 +417,7 @@ namespace GT
     // Positioning.
     inline void GUIElementStyle_Set_positioning(GUIElementStyle &style, Positioning positioning)
     {
-        style.childAxisAndAlignmentAndPositioning = (style.childAxisAndAlignmentAndPositioning & ~0x60) | (static_cast<uint8_t>(positioning) << 5);
+        style.childAxisAndAlignmentAndPositioning = uint8_t((style.childAxisAndAlignmentAndPositioning & ~0x60) | (uint8_t(positioning) << 5));
     }
     inline Positioning GUIElementStyle_Get_positioning(GUIElementStyle &style)
     {
@@ -425,7 +427,7 @@ namespace GT
     // Relative width boundary.
     inline void GUIElementStyle_Set_childrenwidthboundary(GUIElementStyle &style, ChildrenSizeBoundary boundary)
     {
-        style.childrenSizeBoundaryAndPositionOrigin = (style.childrenSizeBoundaryAndPositionOrigin & ~0x03) | (static_cast<uint8_t>(boundary));
+        style.childrenSizeBoundaryAndPositionOrigin = uint8_t((style.childrenSizeBoundaryAndPositionOrigin & ~0x03) | (uint8_t(boundary)));
     }
     inline ChildrenSizeBoundary GUIElementStyle_Get_childrenwidthboundary(const GUIElementStyle &style)
     {
@@ -435,7 +437,7 @@ namespace GT
     // Relative height boundary.
     inline void GUIElementStyle_Set_childrenheightboundary(GUIElementStyle &style, ChildrenSizeBoundary boundary)
     {
-        style.childrenSizeBoundaryAndPositionOrigin = (style.childrenSizeBoundaryAndPositionOrigin & ~0x0C) | (static_cast<uint8_t>(boundary) << 2);
+        style.childrenSizeBoundaryAndPositionOrigin = uint8_t((style.childrenSizeBoundaryAndPositionOrigin & ~0x0C) | (uint8_t(boundary) << 2));
     }
     inline ChildrenSizeBoundary GUIElementStyle_Get_childrenheightboundary(const GUIElementStyle &style)
     {
@@ -445,7 +447,7 @@ namespace GT
     // Position origin.
     inline void GUIElementStyle_Set_positionorigin(GUIElementStyle &style, PositionOrigin origin)
     {
-        style.childrenSizeBoundaryAndPositionOrigin = (style.childrenSizeBoundaryAndPositionOrigin & ~0x30) | (static_cast<uint8_t>(origin) << 4);
+        style.childrenSizeBoundaryAndPositionOrigin = uint8_t((style.childrenSizeBoundaryAndPositionOrigin & ~0x30) | (uint8_t(origin) << 4));
     }
     inline PositionOrigin GUIElementStyle_Get_positionorigin(const GUIElementStyle &style)
     {
@@ -466,7 +468,7 @@ namespace GT
     // Clipping boundary.
     inline void GUIElementStyle_Set_clippingboundary(GUIElementStyle &style, ClippingBoundary boundary)
     {
-        style.clipping = (style.clipping & ~0x0C) | (static_cast<uint8_t>(boundary) << 2);
+        style.clipping = uint8_t((style.clipping & ~0x0C) | (uint8_t(boundary) << 2));
     }
     inline ClippingBoundary GUIElementStyle_Get_clippingboundary(const GUIElementStyle &style)
     {
@@ -480,10 +482,10 @@ namespace GT
     // Background colour.
     inline void GUIElementStyle_Set_backgroundcolor(GUIElementStyle &style, const GTLib::Colour &colour)
     {
-        style.backgroundColourR = static_cast<uint8_t>(colour.r * 255);
-        style.backgroundColourG = static_cast<uint8_t>(colour.g * 255);
-        style.backgroundColourB = static_cast<uint8_t>(colour.b * 255);
-        style.backgroundColourA = static_cast<uint8_t>(colour.a * 255);
+        style.backgroundColourR = uint8_t(colour.r * 255);
+        style.backgroundColourG = uint8_t(colour.g * 255);
+        style.backgroundColourB = uint8_t(colour.b * 255);
+        style.backgroundColourA = uint8_t(colour.a * 255);
     }
     inline GTLib::Colour GUIElementStyle_Get_backgroundcolor(const GUIElementStyle &style)
     {

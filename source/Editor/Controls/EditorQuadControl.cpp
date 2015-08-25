@@ -17,7 +17,7 @@ namespace GT
             gui.SetElementChildAxis(hRootElement, ChildAxis_Vertical);
             gui.EnableElementChildHeightFlexing(hRootElement);
 
-            
+
             // Top row.
             m_hTopContainer = gui.CreateElement();
             gui.SetElementParent(m_hTopContainer, hRootElement);

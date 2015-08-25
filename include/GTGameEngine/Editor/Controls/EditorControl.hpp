@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorControl_hpp_
-#define __GT_EditorControl_hpp_
+#ifndef GT_EditorControl
+#define GT_EditorControl
 
 #include "../../GUI/GUIContext.hpp"
 
@@ -90,11 +90,11 @@ namespace GT
         class ControlGUIEventHandler : public GUIEventHandler
         {
         public:
-            ControlGUIEventHandler(EditorControl &control) : m_control(control) {}
+            ControlGUIEventHandler(EditorControl &control);
 
         private:
-            void OnMove(GUIContext &context, HGUIElement hElement, unsigned int width, unsigned int height)                           { m_control.OnMove(context, hElement, width, height); }
-            void OnSize(GUIContext &context, HGUIElement hElement, int x, int y)                                                      { m_control.OnSize(context, hElement, x, y); }
+            void OnSize(GUIContext &context, HGUIElement hElement, unsigned int width, unsigned int height)                           { m_control.OnSize(context, hElement, width, height); }
+            void OnMove(GUIContext &context, HGUIElement hElement, int x, int y)                                                      { m_control.OnMove(context, hElement, x, y); }
             void OnMouseEnter(GUIContext &context, HGUIElement hElement)                                                              { m_control.OnMouseEnter(context, hElement); }
             void OnMouseLeave(GUIContext &context, HGUIElement hElement)                                                              { m_control.OnMouseLeave(context, hElement); }
             void OnMouseMove(GUIContext &context, HGUIElement hElement, int mousePosX, int mousePosY)                                 { m_control.OnMouseMove(context, hElement, mousePosX, mousePosY); }

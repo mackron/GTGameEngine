@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_SceneNodeComponentDescriptor_Graphics_hpp_
-#define __GT_SceneNodeComponentDescriptor_Graphics_hpp_
+#ifndef GT_SceneNodeComponentDescriptor_Graphics
+#define GT_SceneNodeComponentDescriptor_Graphics
 
 #include "SceneNodeComponentDescriptor.hpp"
 

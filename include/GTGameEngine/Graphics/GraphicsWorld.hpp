@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GraphicsWorld_hpp_
-#define __GT_GraphicsWorld_hpp_
+#ifndef GT_GraphicsWorld
+#define GT_GraphicsWorld
 
 #include "GraphicsTypes.hpp"
 #include "GraphicsWorldObject.hpp"
@@ -21,7 +21,7 @@ namespace GT
     typedef uintptr_t HGraphicsRenderTarget;
 
     // Flags
-    static const uint32_t GraphicsRenderTarget_OnlyUI = (1 << 0);       //< Set on a render target to indicate that it should only render UI elements and not any world objects.
+    static const uint32_t GraphicsRenderTarget_OnlyUI = (1 << 0);       ///< Set on a render target to indicate that it should only render UI elements and not any world objects.
 
 
     /// The different resource types.
@@ -29,7 +29,7 @@ namespace GT
     {
         Texture,
         Material,
-        Mesh,
+        Mesh
     };
 
     /// The different object types.
@@ -38,7 +38,7 @@ namespace GT
         Mesh,
         PointLight,
         SpotLight,
-        AmbientLight,
+        AmbientLight
     };
 
 
@@ -63,7 +63,7 @@ namespace GT
         Texture3D   = 11,
         TextureCube = 12,
 
-        Boolean     = 13,
+        Boolean     = 13
     };
 
 
@@ -137,7 +137,7 @@ namespace GT
 
         /// The size of the vertex data in bytes.
         size_t vertexDataSize;
-        
+
         /// The size in bytes of a single vertex.
         size_t vertexStride;
 
@@ -174,7 +174,7 @@ namespace GT
 
     /// Base class for a graphics world. A graphics world is where rendering occurs.
     ///
-    /// The actual rendering and resource creation is performed by derived classes. 
+    /// The actual rendering and resource creation is performed by derived classes.
     class alignas(16) GraphicsWorld : public SIMDAlignedType
     {
     public:
@@ -411,7 +411,7 @@ namespace GT
         /// @remarks
         ///     This will fail if command buffers are not supported.
         virtual void ExecuteCommandBuffers() = 0;
-        
+
         /// Executes the rendering commands required for rendering the world.
         ///
         /// @remarks
@@ -505,7 +505,7 @@ namespace GT
 
         /// The size of the vertex data in bytes.
         size_t vertexDataSize;
-        
+
         /// The size in bytes of a single vertex.
         size_t vertexStride;
 
@@ -621,7 +621,7 @@ namespace GT
             /// The index format.
             IndexFormat indexFormat;
 
-            
+
             /// The input layout to use with this mesh. This is temp for now.
             HVSInputLayout inputLayout;
         };

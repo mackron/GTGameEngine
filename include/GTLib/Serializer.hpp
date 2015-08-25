@@ -1,7 +1,7 @@
-// Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
+// Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Serializer_hpp_
-#define __GTLib_Serializer_hpp_
+#ifndef GT_Serializer
+#define GT_Serializer
 
 #include <cstdlib>
 #include <cstring>      // For memcpy()
@@ -19,14 +19,10 @@ namespace GTLib
     public:
 
         /// Default constructor.
-        Serializer()
-        {
-        }
+        Serializer();
 
         /// Destructor.
-        virtual ~Serializer()
-        {
-        }
+        virtual ~Serializer();
 
 
         /// Writes a buffer of the given size.
@@ -54,29 +50,13 @@ namespace GTLib
         /// @remarks
         ///     This is a special case. Two properties will be written for strings. The first 32-bytes is the size of the string in char's. The next
         ///     bytes is the actual content of the string itself.
-        void WriteString(const char* value, ptrdiff_t sizeInTs = -1)
-        {
-            uint32_t length = (sizeInTs == -1) ? static_cast<uint32_t>(strlen(value)) : static_cast<uint32_t>(sizeInTs);
-
-            // We write the length first.
-            this->Write(length);
-
-            // Now the actual content.
-            this->Write(reinterpret_cast<const void*>(value), length);
-        }
+        void WriteString(const char* value, ptrdiff_t sizeInTs = -1);
 
         /// @copydoc GTLib::Serializer::WriteString(const char*, ptrdiff_t)
-        void WriteString(const GTLib::String &value)
-        {
-            this->WriteString(value.c_str(), value.GetLengthInTs());
-        }
+        void WriteString(const GTLib::String &value);
     };
 
-    template <> inline void Serializer::Write<GTLib::String>(const GTLib::String &)
-    {
-        // Must use WriteString().
-        assert(false);
-    }
+    template <> inline void Serializer::Write<GTLib::String>(const GTLib::String &);
 
 
 
@@ -89,39 +69,20 @@ namespace GTLib
     public:
 
         /// Default constructor.
-        BasicSerializer()
-            : buffer(nullptr), bufferSizeInBytes(0), writePointer(0)
-        {
-        }
+        BasicSerializer();
 
         /// Copy constructor.
-        BasicSerializer(const BasicSerializer &other)
-            : buffer(malloc(other.GetBufferSizeInBytes())), bufferSizeInBytes(other.GetBufferSizeInBytes()), writePointer(other.GetBufferSizeInBytes())
-        {
-            memcpy(this->buffer, other.GetBuffer(), other.GetBufferSizeInBytes());
-        }
+        BasicSerializer(const BasicSerializer &other);
 
         /// Constructor.
-        BasicSerializer(size_t bufferSizeInBytesIn)
-            : buffer(malloc(bufferSizeInBytesIn)), bufferSizeInBytes(bufferSizeInBytesIn), writePointer(0)
-        {
-        }
+        BasicSerializer(size_t bufferSizeInBytesIn);
 
         /// Destructor.
-        virtual ~BasicSerializer()
-        {
-            free(this->buffer);
-        }
+        virtual ~BasicSerializer();
 
 
         /// Serializer::Write().
-        void Write(const void* bufferIn, size_t bufferInSizeInBytes)
-        {
-            this->CheckAndAllocate(bufferInSizeInBytes);
-
-            memcpy(reinterpret_cast<uint8_t*>(this->buffer) + this->writePointer, bufferIn, bufferInSizeInBytes);
-            this->writePointer += bufferInSizeInBytes;
-        }
+        void Write(const void* bufferIn, size_t bufferInSizeInBytes);
 
 
         /// Generic template method for adding an object to the buffer.
@@ -147,33 +108,11 @@ namespace GTLib
 
 
         /// Resets the serializer to it's default state.
-        void Clear()
-        {
-            free(this->buffer);
-            this->buffer = nullptr;
-
-            this->bufferSizeInBytes = 0U;
-            this->writePointer      = 0U;
-        }
-
+        void Clear();
 
 
         /// Assignment operator
-        BasicSerializer & operator= (const BasicSerializer &other)
-        {
-            if (this != &other)
-            {
-                free(this->buffer);
-
-                this->bufferSizeInBytes = other.GetBufferSizeInBytes();
-                this->writePointer      = other.GetBufferSizeInBytes();
-
-                this->buffer = malloc(this->bufferSizeInBytes);
-                memcpy(this->buffer, other.GetBuffer(), this->bufferSizeInBytes);
-            }
-
-            return *this;
-        }
+        BasicSerializer & operator= (const BasicSerializer &other);
 
 
     private:
@@ -181,40 +120,13 @@ namespace GTLib
         /// Allocates additional space into the buffer.
         ///
         /// @param newBufferSizeInBytes [in] The new size of the buffer, in bytes.
-        void Allocate(size_t newBufferSizeInBytes)
-        {
-            if (newBufferSizeInBytes != this->bufferSizeInBytes)
-            {
-                if (newBufferSizeInBytes < this->bufferSizeInBytes)
-                {
-                    newBufferSizeInBytes = this->bufferSizeInBytes;
-                }
-
-                auto oldBuffer = this->buffer;
-
-                this->bufferSizeInBytes = newBufferSizeInBytes;
-                this->buffer            = malloc(newBufferSizeInBytes);
-                memcpy(this->buffer, oldBuffer, this->writePointer);
-
-
-                free(oldBuffer);
-            }
-        }
+        void Allocate(size_t newBufferSizeInBytes);
 
         /// Retrieves the amount of space available in the buffer.
-        size_t GetAvailableBufferSpaceInBytes() const
-        {
-            return this->bufferSizeInBytes - this->writePointer;
-        }
+        size_t GetAvailableBufferSpaceInBytes() const;
 
         /// Checks if there is enough space for the given number of bytes and allocates additional space if not.
-        void CheckAndAllocate(size_t bytesToAdd)
-        {
-            if (this->GetAvailableBufferSpaceInBytes() < bytesToAdd)
-            {
-                this->Allocate(this->bufferSizeInBytes + GTLib::Max(bytesToAdd, this->bufferSizeInBytes * 2U));
-            }
-        }
+        void CheckAndAllocate(size_t bytesToAdd);
 
 
     private:
@@ -229,11 +141,7 @@ namespace GTLib
         size_t writePointer;
     };
 
-    template <> inline void BasicSerializer::Write<GTLib::String>(const GTLib::String &)
-    {
-        // Must use WriteString().
-        assert(false);
-    }
+    template <> inline void BasicSerializer::Write<GTLib::String>(const GTLib::String &);
 
 
 
@@ -250,36 +158,17 @@ namespace GTLib
     public:
 
         /// Default constructor.
-        FileSerializer(FILE* fileIn)
-            : fileSTD(fileIn), fileGT(0)
-        {
-        }
-        FileSerializer(GTLib::FileHandle fileIn)
-            : fileSTD(nullptr), fileGT(fileIn)
-        {
-        }
+        FileSerializer(FILE* fileIn);
+
+        /// Constructor.
+        FileSerializer(GTLib::FileHandle fileIn);
 
         /// Destructor.
-        virtual ~FileSerializer()
-        {
-        }
+        virtual ~FileSerializer();
 
 
         /// Serializer::Write().
-        void Write(const void* bufferIn, size_t bufferInSizeInBytes)
-        {
-            assert(this->fileSTD != nullptr || this->fileGT != 0);
-            assert(this->fileSTD == nullptr || this->fileGT == 0);
-
-            if (this->fileSTD != nullptr)
-            {
-                GTLib::IO::Write(this->fileSTD, bufferIn, bufferInSizeInBytes);
-            }
-            else
-            {
-                GTLib::WriteFile(this->fileGT, bufferIn, bufferInSizeInBytes);
-            }
-        }
+        void Write(const void* bufferIn, size_t bufferInSizeInBytes);
 
 
         /// Generic template method for adding an object to the buffer.
@@ -310,11 +199,7 @@ namespace GTLib
         FileSerializer & operator=(const FileSerializer &);
     };
 
-    template <> inline void FileSerializer::Write<GTLib::String>(const GTLib::String &)
-    {
-        // Must use WriteString().
-        assert(false);
-    }
+    template <> inline void FileSerializer::Write<GTLib::String>(const GTLib::String &);
 }
 
 #endif

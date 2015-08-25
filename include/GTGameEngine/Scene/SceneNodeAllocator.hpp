@@ -22,6 +22,9 @@ namespace GT
     {
     public:
 
+        /// Destructor.
+        virtual ~SceneNodeAllocator();
+
         /// Allocates a scene node.
         ///
         /// The allocator must create at least an additional GT_SCENE_NODE_EXTRA_BYTES bytes of data in front of the returned pointer. Thus, the layout

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorTheme_hpp_
-#define __GT_EditorTheme_hpp_
+#ifndef GT_EditorTheme
+#define GT_EditorTheme
 
 #include "../Config.hpp"
 #include <GTLib/String.hpp>
@@ -44,12 +44,12 @@ namespace GT
         GTLib::Colour defaultTextColor;
 
         // Background colours.
-        GTLib::Colour backgroundDark;       //< The dark background colour.
-        GTLib::Colour backgroundMid;        //< The mid tone background colour.
-        GTLib::Colour backgroundPopup;      //< The background colour to use for popups.
+        GTLib::Colour backgroundDark;       ///< The dark background colour.
+        GTLib::Colour backgroundMid;        ///< The mid tone background colour.
+        GTLib::Colour backgroundPopup;      ///< The background colour to use for popups.
 
         // Border colours.
-        GTLib::Colour borderDefault;        //< The default border colours.
+        GTLib::Colour borderDefault;        ///< The default border colours.
 
         // Scroll bars.
         GTLib::Colour scrollbarBackgroundColor;

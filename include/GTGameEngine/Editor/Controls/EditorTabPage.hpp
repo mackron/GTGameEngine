@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_EditorTabPage_hpp_
-#define __GT_EditorTabPage_hpp_
+#ifndef GT_EditorTabPage
+#define GT_EditorTabPage
 
 #include "EditorControl.hpp"
 

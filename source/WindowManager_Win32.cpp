@@ -2,8 +2,54 @@
 
 #include <GTGameEngine/WindowManager_Win32.hpp>
 #include <cassert>
+
+// Normally we would include the two files below, but of course they are not in the latest build
+// of MinGW at the time of writing. Thus, we need to just copy the structures from the MSDN
+// documentation until MinGW adds these files.
+#if 0
 #include <VersionHelpers.h>
 #include <ShellScalingApi.h>
+#else
+typedef enum PROCESS_DPI_AWARENESS {
+    PROCESS_DPI_UNAWARE = 0,
+    PROCESS_SYSTEM_DPI_AWARE = 1,
+    PROCESS_PER_MONITOR_DPI_AWARE = 2
+} PROCESS_DPI_AWARENESS;
+
+typedef enum MONITOR_DPI_TYPE {
+    MDT_EFFECTIVE_DPI = 0,
+    MDT_ANGULAR_DPI = 1,
+    MDT_RAW_DPI = 2,
+    MDT_DEFAULT = MDT_EFFECTIVE_DPI
+} MONITOR_DPI_TYPE;
+
+#define VERSIONHELPERAPI inline bool
+
+VERSIONHELPERAPI
+IsWindowsVersionOrGreater(WORD wMajorVersion, WORD wMinorVersion, WORD wServicePackMajor)
+{
+    OSVERSIONINFOEXW osvi = { sizeof(osvi), 0, 0, 0, 0, {0}, 0, 0 };
+    DWORDLONG        const dwlConditionMask = VerSetConditionMask(
+        VerSetConditionMask(
+        VerSetConditionMask(
+            0, VER_MAJORVERSION, VER_GREATER_EQUAL),
+               VER_MINORVERSION, VER_GREATER_EQUAL),
+               VER_SERVICEPACKMAJOR, VER_GREATER_EQUAL);
+
+    osvi.dwMajorVersion = wMajorVersion;
+    osvi.dwMinorVersion = wMinorVersion;
+    osvi.wServicePackMajor = wServicePackMajor;
+
+    return VerifyVersionInfoW(&osvi, VER_MAJORVERSION | VER_MINORVERSION | VER_SERVICEPACKMAJOR, dwlConditionMask) != FALSE;
+}
+
+VERSIONHELPERAPI
+IsWindows8Point1OrGreater()
+{
+    return IsWindowsVersionOrGreater(HIBYTE(0x0603), LOBYTE(0x0603), 0);
+}
+#endif
+
 
 #define CURSOR_SUPPRESSED           0x00000002
 
@@ -17,7 +63,7 @@ namespace GT
     #define GET_X_LPARAM(lp)                        ((int)(short)LOWORD(lp))
     #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
 
-
+    typedef BOOL    (__stdcall * PFN_SetProcessDPIAware)     (void);
     typedef HRESULT (__stdcall * PFN_SetProcessDpiAwareness) (PROCESS_DPI_AWARENESS);
     typedef HRESULT (__stdcall * PFN_GetDpiForMonitor)       (HMONITOR hmonitor, MONITOR_DPI_TYPE dpiType, UINT *dpiX, UINT *dpiY);
 
@@ -52,7 +98,7 @@ namespace GT
                 pData->hMonitor = hMonitor;
                 return false;
             }
-            
+
 
             pData->currentIndex += 1;
             return true;
@@ -546,7 +592,7 @@ namespace GT
                             pWindowManager->OnKeyPressed(reinterpret_cast<HWindow>(hWnd), FromWin32VirtualKey(wParam));
                         }
                     }
-                    
+
                     break;
                 }
 
@@ -646,7 +692,7 @@ namespace GT
                         hActivatedWnd   = reinterpret_cast<HWND>(lParam);
                         hDeactivatedWnd = hWnd;
                     }
-                    
+
                     bool isActivatedWindowOwnedByThis   = pWindowManager->IsWindowOwnedByThis(hActivatedWnd);
                     bool isDeactivatedWindowOwnedByThis = pWindowManager->IsWindowOwnedByThis(hDeactivatedWnd);
 
@@ -715,14 +761,17 @@ namespace GT
 
     WindowManager_Win32::WindowManager_Win32()
         : WindowManager(),
+          m_hUser32DLL(NULL),
           m_hSHCoreDLL(NULL)
     {
+        bool fallBackToDiscourageDPIAPI = false;
+
         // The application should be DPI aware.
         if (IsWindows8Point1OrGreater())
         {
             // We can't call SetProcessDpiAwareness() directly because otherwise on versions of Windows < 8.1 we'll get an error at load time about
             // a missing DLL.
-            m_hSHCoreDLL = ::LoadLibraryW(L"shcore.dll");
+            m_hSHCoreDLL = ::LoadLibraryW(L"shcore.dll");   // <-- This is freed in the destructor.
             if (m_hSHCoreDLL != nullptr)
             {
                 PFN_SetProcessDpiAwareness _SetProcessDpiAwareness = reinterpret_cast<PFN_SetProcessDpiAwareness>(::GetProcAddress(m_hSHCoreDLL, "SetProcessDpiAwareness"));
@@ -733,21 +782,34 @@ namespace GT
                 else
                 {
                     // Couldn't find SetProcessDpiAwareness() so fall back to the discouraged way.
-                    SetProcessDPIAware();
+                    fallBackToDiscourageDPIAPI = true;
                 }
             }
             else
             {
                 // Couldn't find shcore.dll so fall back to the discouraged way.
-                SetProcessDPIAware();
+                fallBackToDiscourageDPIAPI = true;
             }
         }
         else
         {
             // Not running at least Windows 8.1 so fall back to the discouraged way.
-            SetProcessDPIAware();
+            fallBackToDiscourageDPIAPI = true;
         }
-        
+
+
+        if (fallBackToDiscourageDPIAPI)
+        {
+            m_hUser32DLL = ::LoadLibraryW(L"user32.dll");   // <-- This is freed in the destructor.
+            if (m_hUser32DLL != NULL)
+            {
+                PFN_SetProcessDPIAware _SetProcessDPIAware = reinterpret_cast<PFN_SetProcessDPIAware>(::GetProcAddress(m_hUser32DLL, "SetProcessDPIAware"));
+                if (_SetProcessDPIAware != NULL) {
+                    _SetProcessDPIAware();
+                }
+            }
+        }
+
 
 
         // Window classes need to be registered.
@@ -757,7 +819,7 @@ namespace GT
         wc.cbWndExtra    = sizeof(void*);
         wc.lpfnWndProc   = reinterpret_cast<WNDPROC>(DefaultWindowProcWin32);
         wc.lpszClassName = g_WindowClass;
-        wc.hCursor       = LoadCursorW(NULL, IDC_ARROW);
+        wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
         wc.style         = CS_OWNDC | CS_DBLCLKS;
         if (!::RegisterClassExW(&wc))
         {
@@ -771,7 +833,7 @@ namespace GT
         wc.cbWndExtra    = sizeof(void*);
         wc.lpfnWndProc   = reinterpret_cast<WNDPROC>(DefaultWindowProcWin32);
         wc.lpszClassName = g_WindowClassPopup;
-        wc.hCursor       = LoadCursorW(NULL, IDC_ARROW);
+        wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
         wc.style         = CS_OWNDC | CS_DBLCLKS | CS_DROPSHADOW;
         if (!::RegisterClassExW(&wc))
         {
@@ -783,7 +845,14 @@ namespace GT
     WindowManager_Win32::~WindowManager_Win32()
     {
         ::UnregisterClassW(g_WindowClass, GetModuleHandleW(NULL));
-        ::FreeLibrary(m_hSHCoreDLL);
+
+        if (m_hSHCoreDLL != NULL) {
+            ::FreeLibrary(m_hSHCoreDLL);
+        }
+
+        if (m_hUser32DLL != NULL) {
+            ::FreeLibrary(m_hUser32DLL);
+        }
     }
 
 
@@ -881,7 +950,7 @@ namespace GT
             }
 
 
-            
+
 
             m_windows.PushBack(reinterpret_cast<HWindow>(hWnd));
         }
@@ -1207,7 +1276,7 @@ namespace GT
                 // Unknown error.
                 break;
             }
-                
+
             TranslateMessage(&msg);
             DispatchMessageA(&msg);
 

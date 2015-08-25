@@ -1,7 +1,7 @@
-// Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
+// Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUI_HandleTypes_hpp_
-#define __GT_GUI_HandleTypes_hpp_
+#ifndef GT_GUI_HandleTypes
+#define GT_GUI_HandleTypes
 
 #include <cstdint>
 
@@ -17,8 +17,8 @@ namespace GT
     /// Enumerator for the various painting modes.
     enum class GUIPaintingMode
     {
-        Immediate,          //< Paint commands are posted as soon as a graphical change is made.
-        Deferred            //< Paint commands are posted via an explicit command to GUIContext::PaintSurface().
+        Immediate,          ///< Paint commands are posted as soon as a graphical change is made.
+        Deferred            ///< Paint commands are posted via an explicit command to GUIContext::PaintSurface().
     };
 }
 

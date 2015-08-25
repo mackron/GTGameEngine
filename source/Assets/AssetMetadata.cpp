@@ -13,7 +13,7 @@ namespace GT
     // AssetMetadataChunk
 
     AssetMetadataChunk::AssetMetadataChunk(const char* name, uint32_t dataSizeInBytes, const void* pData)
-        : m_name(), m_dataSizeInBytes(dataSizeInBytes), m_pData(nullptr)
+        : m_pData(nullptr), m_name(), m_dataSizeInBytes(dataSizeInBytes)
     {
         // Name.
         for (int i = 0; i < 4; ++i)
@@ -26,18 +26,18 @@ namespace GT
             m_name[i] = name[i];
         }
 
-        
+
         // Data.
         m_pData = malloc(dataSizeInBytes);
         memcpy(m_pData, pData, dataSizeInBytes);
     }
 
     AssetMetadataChunk::AssetMetadataChunk(GTLib::Deserializer &deserializer)
-        : m_name(), m_dataSizeInBytes(0), m_pData(nullptr)
+        : m_pData(nullptr), m_name(), m_dataSizeInBytes(0)
     {
         // Name.
         deserializer.Read(m_name, 32);
-        
+
         // Data size.
         deserializer.Read(m_dataSizeInBytes);
 
@@ -211,7 +211,7 @@ namespace GT
     void AssetMetadata::Serialize(GTLib::Serializer &serializer) const
     {
         serializer.Write(static_cast<uint32_t>(m_chunks.GetCount()));
-        
+
         for (uint32_t iChunk = 0; iChunk < static_cast<uint32_t>(m_chunks.GetCount()); ++iChunk)
         {
             auto pChunk = m_chunks[iChunk];

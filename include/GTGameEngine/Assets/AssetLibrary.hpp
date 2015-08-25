@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_AssetLibrary_hpp_
-#define __GT_AssetLibrary_hpp_
+#ifndef GT_AssetLibrary
+#define GT_AssetLibrary
 
 #include <GTLib/Vector.hpp>
 #include <GTLib/Dictionary.hpp>
@@ -14,7 +14,7 @@ namespace GT
     class AssetAllocator;
     class FileSystem;
 
-    
+
 
     /// Class for managing every type of asset.
     ///

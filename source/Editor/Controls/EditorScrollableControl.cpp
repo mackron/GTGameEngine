@@ -19,7 +19,7 @@ namespace GT
             // Bottom container.
             gui.SetElementHeightToChildren(this->GetBottom());
 
-            
+
             // Vertical scrollbar container.
             HGUIElement hVerticalContainer = this->GetTopRightQuadrant();
             gui.SetElementWidthToChildren(hVerticalContainer);
@@ -41,5 +41,24 @@ namespace GT
     HGUIElement EditorScrollableControl::GetContentElement() const
     {
         return this->GetTopLeftQuadrant();
+    }
+
+
+
+    EditorScrollableControl::DeadSpaceSizingEventHandler::DeadSpaceSizingEventHandler(HGUIElement hDeadSpace, HGUIElement hVerticalNeighbour, HGUIElement hHorizontalNeighbour)
+        : m_hDeadSpace(hDeadSpace), m_hVerticalNeighbour(hVerticalNeighbour), m_hHorizontalNeighbour(hHorizontalNeighbour)
+    {
+    }
+
+    void EditorScrollableControl::DeadSpaceSizingEventHandler::OnSize(GUIContext &context, HGUIElement hElement, unsigned int width, unsigned int height)
+    {
+        if (hElement == m_hVerticalNeighbour)
+        {
+            context.SetElementWidth(m_hDeadSpace, context.PixelsToPointsX(hElement, static_cast<int>(width)));
+        }
+        else if (hElement == m_hHorizontalNeighbour)
+        {
+            context.SetElementHeight(m_hDeadSpace, context.PixelsToPointsY(hElement, static_cast<int>(height)));
+        }
     }
 }

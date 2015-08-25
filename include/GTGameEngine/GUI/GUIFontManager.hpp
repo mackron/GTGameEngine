@@ -1,7 +1,7 @@
-// Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
+// Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUI_FontManager_hpp_
-#define __GT_GUI_FontManager_hpp_
+#ifndef GT_GUI_FontManager
+#define GT_GUI_FontManager
 
 #include "GUIGlyphMapManager.hpp"
 #include <GTLib/FontServer.hpp>
@@ -28,7 +28,7 @@ namespace GT
               dpiX(96), dpiY(96)
         {
         }
-        
+
         GUIFontInfo(const GUIFontInfo &info)
             : family(info.family),
               styleFlags(info.styleFlags),
@@ -36,11 +36,7 @@ namespace GT
               dpiX(info.dpiX), dpiY(info.dpiY)
         {
         }
-        
-        virtual ~GUIFontInfo()
-        {
-        }
-        
+
         GUIFontInfo & operator=(const GUIFontInfo &other)
         {
             if (this != &other)
@@ -51,7 +47,7 @@ namespace GT
                 this->dpiX       = other.dpiX;
                 this->dpiY       = other.dpiY;
             }
-            
+
             return *this;
         }
 
@@ -63,20 +59,20 @@ namespace GT
                    this->dpiX       == other.dpiX       &&
                    this->dpiY       == other.dpiY;
         }
-        
-        
+
+
         /// The font family (Arial, Times, Courier, etc)
         GTLib::String family;
-        
+
         /// The style flags of the font.
         uint32_t styleFlags;
 
         /// The size of the font, in points. We use a float here so we can have values like 8.5.
         float size;
-        
+
         /// The X DPI to use for the font. Default is 96.
         unsigned int dpiX;
-        
+
         /// The Y DPI to use for the font. Default is 96.
         unsigned int dpiY;
     };
@@ -91,16 +87,16 @@ namespace GT
 
         /// The width of the glyph.
         int width;
-        
+
         /// The height of the glyph.
         int height;
-        
+
         /// The advance for the glyph. This is the distance to advance the pen position when rendering the glyph.
         int advance;
-        
+
         /// The horizontal bearing. This is the distance between the current pen position and the leftmost border of the glyph image.
         int bearingX;
-        
+
         /// The vertical bearing. This is the distance between the base line and the topmost border of the glyph image.
         int bearingY;
     };
@@ -134,7 +130,7 @@ namespace GT
         ///     @par
         ///     The font should be unacquired with UnacquireFont().
         HGUIFont AcquireFont(const GUIFontInfo &fontInfo);
-        
+
         /// Unacquires a font that was previously acquired with AcquireFont().
         ///
         /// @param hFont [in] A pointer to the font to unacquire.
@@ -232,13 +228,13 @@ namespace GT
                 : hFont(hFontIn), fontInfo(fontInfoIn), referenceCount(1)
             {
             }
-            
+
             /// Copy constructor.
             LoadedFont(const LoadedFont &other)
                 : hFont(other.hFont), fontInfo(other.fontInfo), referenceCount(other.referenceCount)
             {
             }
-            
+
             /// Assignment operator.
             LoadedFont & operator=(const LoadedFont &other)
             {
@@ -248,24 +244,24 @@ namespace GT
                     this->fontInfo       = other.fontInfo;
                     this->referenceCount = other.referenceCount;
                 }
-                
+
                 return *this;
             }
-            
-            
+
+
             /// A pointer to the main font object.
             HGUIFont hFont;
-            
+
             /// The FontInfo structure that was used to create the font. This is used in determining identical fonts.
             GUIFontInfo fontInfo;
-            
+
             /// The reference count. When this hits zero, it marks the end of the font.
             int referenceCount;
         };
 
 
     private:
-        
+
         /// Retrieves a pointer to the already-loaded font that has the same font info.
         ///
         /// @param fontInfo [in] The FontInfo structure of the font being retrieved.
@@ -277,10 +273,10 @@ namespace GT
         ///     @par
         ///     This will increment the reference counter if non-null is returned.
         HGUIFont AcquireLoadedFont(const GUIFontInfo &fontInfo);
-        
+
         /// Retrieves a pointer to a LoadedFont structure that is mapped to the givn GTLib::Font.
         ///
-        /// @param font     [in]  A pointer to the GTLib::Font whose corresponding LoadedFont object is being retrieved.
+        /// @param hFont    [in]  A pointer to the GTLib::Font whose corresponding LoadedFont object is being retrieved.
         /// @param indexOut [out] A reference to the variable that will receive the index of the font info.
         ///
         /// @return A pointer to the LoadedFont object that corresponds to the given font.
@@ -331,12 +327,12 @@ namespace GT
         ///     @par
         ///     The font should be unacquired with UnacquireFont().
         GTLib::Font* AcquireFont(const GTLib::FontInfo &fontInfo);
-        
+
         /// Unacquires a font that was previously acquired with AcquireFont().
         ///
         /// @param font [in] A pointer to the font to unacquire.
         void UnacquireFont(const GTLib::Font* font);
-        
+
 
         /// Encodes a font-family string.
         ///
@@ -352,9 +348,9 @@ namespace GT
         /// @return The decoded font family string, or null if the string could not be decoded.
         const char* DecodeFontFamily(uint32_t family);
 
-        
+
     private:
-        
+
         /// Structure representing a font that's already loaded in the cache.
         struct LoadedFont
         {
@@ -363,13 +359,13 @@ namespace GT
                 : font(fontIn), fontInfo(fontInfoIn), referenceCount(1)
             {
             }
-            
+
             /// Copy constructor.
             LoadedFont(const LoadedFont &other)
                 : font(other.font), fontInfo(other.fontInfo), referenceCount(other.referenceCount)
             {
             }
-            
+
             /// Assignment operator.
             LoadedFont & operator=(const LoadedFont &other)
             {
@@ -379,24 +375,24 @@ namespace GT
                     this->fontInfo       = other.fontInfo;
                     this->referenceCount = other.referenceCount;
                 }
-                
+
                 return *this;
             }
-            
-            
+
+
             /// A pointer to the main font object.
             GTLib::Font* font;
-            
+
             /// The FontInfo structure that was used to create the font. This is used in determining identical fonts.
             GTLib::FontInfo fontInfo;
-            
+
             /// The reference count. When this hits zero, it marks the end of the font.
             int referenceCount;
         };
-    
-    
+
+
     private:
-        
+
         /// Retrieves a pointer to the already-loaded font that has the same font info.
         ///
         /// @param fontInfo [in] The FontInfo structure of the font being retrieved.
@@ -408,7 +404,7 @@ namespace GT
         ///     @par
         ///     This will increment the reference counter if non-null is returned.
         GTLib::Font* AcquireLoadedFont(const GTLib::FontInfo &fontInfo);
-        
+
         /// Retrieves a pointer to a LoadedFont structure that is mapped to the givn GTLib::Font.
         ///
         /// @param font     [in]  A pointer to the GTLib::Font whose corresponding LoadedFont object is being retrieved.
@@ -416,8 +412,8 @@ namespace GT
         ///
         /// @return A pointer to the LoadedFont object that corresponds to the given font.
         LoadedFont* FindLoadedFont(const GTLib::Font* font, size_t &indexOut);
-    
-    
+
+
 
 
     private:

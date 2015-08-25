@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GTLib_Threading_hpp_
-#define __GTLib_Threading_hpp_
+#ifndef GTLib_Threading
+#define GTLib_Threading
 
 #include "Threading/Thread.hpp"
 #include "Threading/Mutex.hpp"
@@ -18,7 +18,7 @@ namespace GTLib
         *   \param  milliseconds [in] The number of milliseconds to put the calling thread to sleep.
         */
         void Sleep(unsigned int milliseconds);
-        
+
         /**
         *   \brief  Terminates the calling thread.
         *
@@ -28,7 +28,7 @@ namespace GTLib
         *       \par
         *       The exit code is always 0.
         */
-        void Exit();
+        [[noreturn]] void Exit();
 
         /**
         *   \brief  Retrieves the ID of the calling thread.

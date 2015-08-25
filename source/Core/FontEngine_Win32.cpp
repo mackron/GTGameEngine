@@ -4,6 +4,7 @@
 #include "FontEngine_Win32.hpp"
 #include <GTLib/GlyphCache.hpp>
 #include <GTLib/Map.hpp>
+#include <GTLib/FontStyles.hpp>
 
 namespace GTLib
 {

@@ -42,7 +42,7 @@ namespace GT
             assert(callbackData->pFileSystem != nullptr);
             assert(callbackData->hFile       != 0);
 
-            return static_cast<int>(callbackData->pFileSystem->ReadFile(callbackData->hFile, static_cast<size_t>(size), data));
+            return static_cast<int>(callbackData->pFileSystem->ReadFile(callbackData->hFile, static_cast<unsigned int>(size), data));
         }
     }
 

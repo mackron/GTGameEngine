@@ -1,13 +1,13 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GraphicsWorldObject_hpp_
-#define __GT_GraphicsWorldObject_hpp_
+#ifndef GT_GraphicsWorldObject
+#define GT_GraphicsWorldObject
 
 #include "../Math.hpp"
 
 namespace GT
 {
-    typedef size_t HGraphicsWorldMeshDescriptor;        //< A handle representing a mesh descriptor.
+    typedef size_t HGraphicsWorldMeshDescriptor;        ///< A handle representing a mesh descriptor.
 
 
 
@@ -18,7 +18,7 @@ namespace GT
         Mesh,
         AmbientLight,
         PointLight,
-        DirectionalLight,
+        DirectionalLight
     };
 
 

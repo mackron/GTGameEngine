@@ -15,16 +15,16 @@ namespace GTLib
     Colour Colour::Green(0.0f, 1.0f, 0.0f, 1.0f);
     Colour Colour::Blue(0.0f, 0.0f, 1.0f, 1.0f);
     Colour Colour::Alpha(0.0f, 0.0f, 0.0f, 1.0f);
-    
+
     Colour Colour::DefaultBackground(0.16f, 0.164f, 0.20f, 1.0f);
-    
-    
+
+
     Colour::Colour(const char *value, ptrdiff_t valueSize)
         : r(0.0f), g(0.0f), b(0.0f), a(0.0f)
     {
         TryParse(*this, value, valueSize);
     }
-    
+
     bool Colour::TryParse(Colour &colour, const char *value, ptrdiff_t valueSize)
     {
         value     = GTLib::Strings::TrimStart(value, valueSize);
@@ -73,11 +73,11 @@ namespace GTLib
                 colour.g = g / 255.0f;
                 colour.b = b / 255.0f;
                 colour.a = a / 255.0f;
-                
+
                 return true;
             }
         }
-        
+
         return false;
     }
 
