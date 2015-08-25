@@ -275,6 +275,12 @@ namespace GT
         return false;
     }
 
+    bool FileSystem::FindAbsolutePath(const char* filePath, char* absolutePathOut, unsigned int absolutePathOutSizeInBytes)
+    {
+        return easyvfs_findabsolutepath(m_pVFS, filePath, absolutePathOut, absolutePathOutSizeInBytes) != 0;
+    }
+
+
     bool FileSystem::FindAbsolutePath(const char* filePath, const char* highestPriorityBasePath, GTLib::String &absolutePathOut) const
     {
         char absolutePath[EASYVFS_MAX_PATH];
@@ -285,6 +291,11 @@ namespace GT
         }
 
         return false;
+    }
+
+    bool FileSystem::FindAbsolutePath(const char* filePath, const char* highestPriorityBasePath, char* absolutePathOut, unsigned int absolutePathOutSizeInBytes)
+    {
+        return easyvfs_findabsolutepath_explicitbase(m_pVFS, filePath, highestPriorityBasePath, absolutePathOut, absolutePathOutSizeInBytes) != 0;
     }
 
 

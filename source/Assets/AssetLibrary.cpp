@@ -4,8 +4,7 @@
 #include <GTGameEngine/Assets/Asset.hpp>
 #include <GTGameEngine/Assets/AssetAllocator.hpp>
 #include <GTGameEngine/FileSystem.hpp>
-#include <GTLib/String.hpp>
-#include <GTLib/IO.hpp>
+#include "../external/easy_path/easy_path.h"
 
 namespace GT
 {
@@ -57,25 +56,28 @@ namespace GT
         // When an asset is cached, the absolute path is used to retrieve the cached object. It is possible, however, for an asset to not actually
         // be loaded from a file, in which case filePathOrIdentifier is used as the unique identifier without any modification.
 
-        GTLib::String absolutePathOrIdentifier;
-        if (!m_fileSystem.FindAbsolutePath(filePathOrIdentifier, absolutePathOrIdentifier))
+        char absolutePathOrIdentifier[GT_MAX_PATH];
+        if (!m_fileSystem.FindAbsolutePath(filePathOrIdentifier, absolutePathOrIdentifier, GT_MAX_PATH))
         {
             // The file could not be found, but there may be a metadata file. It is possible that the data for an asset is
             // entirely defined in the metadata file, we'll look for that file too.
-            if (m_fileSystem.FindAbsolutePath((GTLib::String(filePathOrIdentifier) + ".gtdata").c_str(), absolutePathOrIdentifier))
+            char metadataPath[GT_MAX_PATH];
+            easypath_copyandappendextension(metadataPath, GT_MAX_PATH, filePathOrIdentifier, "gtdata");
+
+            if (m_fileSystem.FindAbsolutePath(metadataPath, absolutePathOrIdentifier, GT_MAX_PATH))
             {
                 // The metadata file was found. Later on we'll load the metadata for real, so we'll need to remove the ".gtdata" extension beforehand.
-                absolutePathOrIdentifier = GTLib::IO::RemoveExtension(absolutePathOrIdentifier.c_str());
+                easypath_removeextension(absolutePathOrIdentifier);
             }
             else
             {
                 // The file nor it's metadata file could not be found, but the asset loader might be using it as a unique token, so we just assume use it as-is for the absolute path in this case.
-                absolutePathOrIdentifier = filePathOrIdentifier;
+                GTLib::Strings::Copy(absolutePathOrIdentifier, filePathOrIdentifier);
             }
         }
 
 
-        auto iExistingAsset = m_loadedAssets.Find(absolutePathOrIdentifier.c_str());
+        auto iExistingAsset = m_loadedAssets.Find(absolutePathOrIdentifier);
         if (iExistingAsset == nullptr)
         {
             AssetAllocator* pAllocator = nullptr;
@@ -83,7 +85,7 @@ namespace GT
             AssetType assetType = explicitAssetType;
             if (assetType == AssetType_Unknown)
             {
-                pAllocator = this->FindAllocatorAndTypeByPath(absolutePathOrIdentifier.c_str(), assetType);
+                pAllocator = this->FindAllocatorAndTypeByPath(absolutePathOrIdentifier, assetType);
             }
             else
             {
@@ -97,12 +99,15 @@ namespace GT
                 if (pAsset != nullptr)
                 {
                     // Load the metadata first. It does not matter if this fails so the return value doesn't need to be checked.
-                    pAsset->LoadMetadata((absolutePathOrIdentifier + ".gtdata").c_str(), m_fileSystem);
+                    char metadataAbsolutePath[GT_MAX_PATH];
+                    easypath_copyandappendextension(metadataAbsolutePath, GT_MAX_PATH, absolutePathOrIdentifier, "gtdata");
+                    pAsset->LoadMetadata(metadataAbsolutePath, m_fileSystem);
+
 
                     // Load the asset after the metadata.
-                    if (pAsset->Load(absolutePathOrIdentifier.c_str(), m_fileSystem))
+                    if (pAsset->Load(absolutePathOrIdentifier, m_fileSystem))
                     {
-                        m_loadedAssets.Add(absolutePathOrIdentifier.c_str(), pAsset);
+                        m_loadedAssets.Add(absolutePathOrIdentifier, pAsset);
                         return pAsset;
                     }
                     else
@@ -177,26 +182,32 @@ namespace GT
 
     void AssetLibrary::Reload(const char* filePathOrIdentifier)
     {
-        GTLib::String absolutePathOrIdentifier;
-        if (!m_fileSystem.FindAbsolutePath(filePathOrIdentifier, absolutePathOrIdentifier))
+        char absolutePathOrIdentifier[GT_MAX_PATH];
+        if (!m_fileSystem.FindAbsolutePath(filePathOrIdentifier, absolutePathOrIdentifier, GT_MAX_PATH))
         {
-            if (!m_fileSystem.FindAbsolutePath((GTLib::String(filePathOrIdentifier) + ".gtdata").c_str(), absolutePathOrIdentifier))
+            char metadataPath[GT_MAX_PATH];
+            easypath_copyandappendextension(metadataPath, GT_MAX_PATH, filePathOrIdentifier, "gtdata");
+
+            if (!m_fileSystem.FindAbsolutePath(metadataPath, absolutePathOrIdentifier, GT_MAX_PATH))
             {
-                absolutePathOrIdentifier = filePathOrIdentifier;
+                // The file nor it's metadata file could not be found, but the asset loader might be using it as a unique token, so we just assume use it as-is for the absolute path in this case.
+                GTLib::Strings::Copy(absolutePathOrIdentifier, filePathOrIdentifier);
             }
         }
 
-        auto iAsset = m_loadedAssets.Find(absolutePathOrIdentifier.c_str());
+        auto iAsset = m_loadedAssets.Find(absolutePathOrIdentifier);
         if (iAsset != nullptr)
         {
             auto pAsset = iAsset->value;
             assert(pAsset != nullptr);
             {
                 // Load the metadata first. It does not matter if this fails so the return value doesn't need to be checked.
-                pAsset->LoadMetadata((absolutePathOrIdentifier + ".gtdata").c_str(), m_fileSystem);
+                char metadataAbsolutePath[GT_MAX_PATH];
+                easypath_copyandappendextension(metadataAbsolutePath, GT_MAX_PATH, filePathOrIdentifier, "gtdata");
+                pAsset->LoadMetadata(metadataAbsolutePath, m_fileSystem);
 
                 // Load the asset after the metadata.
-                if (pAsset->Load(absolutePathOrIdentifier.c_str(), m_fileSystem))
+                if (pAsset->Load(absolutePathOrIdentifier, m_fileSystem))
                 {
                 }
                 else

@@ -149,6 +149,7 @@ namespace GT
         ///     @par
         ///     The priority used by the base directories is determined by the order in which the base directory was added.
         bool FindAbsolutePath(const char* filePath, GTLib::String &absolutePathOut) const;
+        bool FindAbsolutePath(const char* filePath, char* absolutePathOut, unsigned int absolutePathOutSizeInBytes);
 
         /// Finds the absolute path of the given relative path, using the given path as the highest priority base path.
         ///
@@ -161,6 +162,7 @@ namespace GT
         ///     @par
         ///     The priority used by the base directories is determined by the order in which the base directory was added.
         bool FindAbsolutePath(const char* filePath, const char* highestPriorityBasePath, GTLib::String &absolutePathOut) const;
+        bool FindAbsolutePath(const char* filePath, const char* highestPriorityBasePath, char* absolutePathOut, unsigned int absolutePathOutSizeInBytes);
 
 
         /// Finds the best absolute path to use to open a file for writing.
