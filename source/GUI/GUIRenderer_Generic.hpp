@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUI_Renderer_Generic_h_
-#define __GT_GUI_Renderer_Generic_h_
+#ifndef GT_GUI_Renderer_Generic
+#define GT_GUI_Renderer_Generic
 
 #include <GTGameEngine/GUI/GUIRenderer.hpp>
 #include <GTLib/HandleManager.hpp>

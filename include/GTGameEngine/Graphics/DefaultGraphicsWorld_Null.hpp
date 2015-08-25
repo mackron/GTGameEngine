@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_DefaultGraphicsWorld_Null_hpp_
-#define __GT_DefaultGraphicsWorld_Null_hpp_
+#ifndef GT_DefaultGraphicsWorld_Null
+#define GT_DefaultGraphicsWorld_Null
 
 #include "GraphicsWorld.hpp"
 
@@ -182,7 +182,7 @@ namespace GT
 
         /// @copydoc GraphicsWorld::ExecuteCommandBuffers()
         void ExecuteCommandBuffers();
-        
+
         /// @copydoc GraphicsWorld::ExecuteRenderingCommands()
         void ExecuteRenderingCommands();
 

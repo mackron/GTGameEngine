@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_WindowManager_Win32_hpp_
-#define __GT_WindowManager_Win32_hpp_
+#ifndef GT_WindowManager_Win32
+#define GT_WindowManager_Win32
 
 #include "Config.hpp"
 

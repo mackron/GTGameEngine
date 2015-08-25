@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 // This file contains customizations and extensions to SPIR-V.
-#ifndef __GT_SpirV_hpp_
-#define __GT_SpirV_hpp_
+#ifndef GT_SpirV
+#define GT_SpirV
 
 #include "external/spirv.h"
 

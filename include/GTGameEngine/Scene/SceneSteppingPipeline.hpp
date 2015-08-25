@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_SceneSteppingPipeline_hpp_
-#define __GT_SceneSteppingPipeline_hpp_
+#ifndef GT_SceneSteppingPipeline
+#define GT_SceneSteppingPipeline
 
 namespace GT
 {

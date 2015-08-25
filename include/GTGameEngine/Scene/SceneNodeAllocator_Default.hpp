@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_SceneNodeAllocator_Default_hpp_
-#define __GT_SceneNodeAllocator_Default_hpp_
+#ifndef GT_SceneNodeAllocator_Default
+#define GT_SceneNodeAllocator_Default
 
 #include <cstdint>
 #include "SceneNodeAllocator.hpp"

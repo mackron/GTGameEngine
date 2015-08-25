@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GUISimpleTextLayout_hpp_
-#define __GT_GUISimpleTextLayout_hpp_
+#ifndef GT_GUISimpleTextLayout
+#define GT_GUISimpleTextLayout
 
 #include "GUITextLayout.hpp"
 
@@ -49,7 +49,7 @@ namespace GT
 
         /// @copydoc GUITextLayout::SetTabSizeInSpaces()
         void SetTabSizeInSpaces(int tabSizeInSpaces);
-        
+
         /// @copydoc GUITextLayout::GetTabSizeInSpaces()
         int GetTabSizeInSpaces() const;
 

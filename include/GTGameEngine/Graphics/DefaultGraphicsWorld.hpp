@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_DefaultGraphicsWorld_hpp_
-#define __GT_DefaultGraphicsWorld_hpp_
+#ifndef GT_DefaultGraphicsWorld
+#define GT_DefaultGraphicsWorld
 
 #include "GraphicsWorld.hpp"
 #include "GraphicsAPI.hpp"
@@ -179,7 +179,7 @@ namespace GT
 
         /// @copydoc GraphicsWorld::ExecuteCommandBuffers()
         virtual void ExecuteCommandBuffers();
-        
+
         /// @copydoc GraphicsWorld::ExecuteRenderingCommands()
         virtual void ExecuteRenderingCommands();
 
@@ -212,7 +212,7 @@ namespace GT
 
         /// @copydoc GUIRenderer::DrawRawImage()
         virtual void GUI_DrawRawImage(GUIContext &gui, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent);
-    
+
 
     private:
 

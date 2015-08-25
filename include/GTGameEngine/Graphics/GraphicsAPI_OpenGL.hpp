@@ -11,9 +11,17 @@
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
+
+#if defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wreserved-id-macro" // <-- Change this to the warning code you want to disable.
+#endif
 #include <GL/gl.h>
 #include <GL/glext.h>
 #include <GL/wglext.h>
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 typedef HGLRC (WINAPI * PFNWGLCREATECONTEXTPROC)       (HDC hdc);
 typedef BOOL  (WINAPI * PFNWGLDELETECONTEXTPROC)       (HGLRC hglrc);

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_DefaultGraphicsWorld_OpenGL_hpp_
-#define __GT_DefaultGraphicsWorld_OpenGL_hpp_
+#ifndef GT_DefaultGraphicsWorld_OpenGL
+#define GT_DefaultGraphicsWorld_OpenGL
 
 #include "../Config.hpp"
 #if defined(GT_BUILD_OPENGL)
@@ -186,7 +186,7 @@ namespace GT
 
         /// @copydoc GraphicsWorld::ExecuteCommandBuffers()
         void ExecuteCommandBuffers();
-        
+
         /// @copydoc GraphicsWorld::ExecuteRenderingCommands()
         void ExecuteRenderingCommands();
 

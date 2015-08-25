@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_WindowManager_DefaultWin32_hpp_
-#define __GT_WindowManager_DefaultWin32_hpp_
+#ifndef GT_WindowManager_DefaultWin32
+#define GT_WindowManager_DefaultWin32
 
 #include "WindowManager_Win32.hpp"
 
@@ -12,7 +12,7 @@ namespace GT
 {
     class GameContext;
 
-    
+
 
     /// Default Windows implementation of the window manager.
     class WindowManager_DefaultWin32 : public WindowManager_Win32
@@ -61,7 +61,7 @@ namespace GT
 
         /// @copydoc WindowManager_Win32::OnMouseButtonPressed()
         virtual void OnMouseButtonPressed(HWindow hWinodw, int button, int mousePosX, int mousePosY);
-        
+
         /// @copydoc WindowManager_Win32::OnMouseButtonReleased()
         virtual void OnMouseButtonReleased(HWindow hWindow, int button, int mousePosX, int mousePosY);
 
@@ -82,7 +82,7 @@ namespace GT
 
         /// @copydoc WindowManager_Win32::OnPaintWindow()
         virtual void OnPaintWindow(HWindow hWindow, const GTLib::Rect<int> &rect);
-        
+
 
 
     private:

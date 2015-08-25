@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_SceneCallback_hpp_
-#define __GT_SceneCallback_hpp_
+#ifndef GT_SceneCallback
+#define GT_SceneCallback
 
 #include "../Math.hpp"
 

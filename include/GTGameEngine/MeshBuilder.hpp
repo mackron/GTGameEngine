@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE.
 
-#ifndef __GT_MeshBuilder_hpp_
-#define __GT_MeshBuilder_hpp_
+#ifndef GT_MeshBuilder
+#define GT_MeshBuilder
 
 #include <GTLib/Vector.hpp>
 

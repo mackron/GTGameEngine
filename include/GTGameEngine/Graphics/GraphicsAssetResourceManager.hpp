@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GraphicsAssetResourceManager_hpp_
-#define __GT_GraphicsAssetResourceManager_hpp_
+#ifndef GT_GraphicsAssetResourceManager
+#define GT_GraphicsAssetResourceManager
 
 #include "GraphicsAssetResources.hpp"
 #include "../Assets/AssetTypes.hpp"

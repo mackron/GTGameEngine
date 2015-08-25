@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GraphicsModelObject_hpp_
-#define __GT_GraphicsModelObject_hpp_
+#ifndef GT_GraphicsModelObject
+#define GT_GraphicsModelObject
 
 #include <GTLib/Vector.hpp>
 #include "GraphicsWorld.hpp"

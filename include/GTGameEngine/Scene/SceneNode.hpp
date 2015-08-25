@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_SceneNode_hpp_
-#define __GT_SceneNode_hpp_
+#ifndef GT_SceneNode
+#define GT_SceneNode
 
 #include <GTGameEngine/Config.hpp>
 #include <GTGameEngine/Math.hpp>
@@ -85,7 +85,7 @@ namespace GT
         /// @return A pointer to the attached component with the given type, or null if a component of the given type is not attached to the scene node.
         SceneNodeComponent* GetComponentByTypeID(SceneNodeComponentTypeID typeID);
 
-        
+
 
 
         /// Attaches the given component.
@@ -118,7 +118,7 @@ namespace GT
         /// @param index [in] The index of the component to detach.
         void DetachComponentByIndex(unsigned int index);
 
-        
+
         /// Sets the scene node to static.
         ///
         /// @remarks

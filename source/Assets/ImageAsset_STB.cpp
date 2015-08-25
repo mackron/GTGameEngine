@@ -24,7 +24,15 @@
 #if !defined(GT_BUILD_PSD)
 #define STBI_NO_PSD
 #endif
+
+#if defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wreserved-id-macro" // <-- Change this to the warning code you want to disable.
+#endif
 #include "../external/stb/stb_image.h"
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 namespace GT
 {

@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_SceneNodeIDAllocator_hpp_
-#define __GT_SceneNodeIDAllocator_hpp_
+#ifndef GT_SceneNodeIDAllocator
+#define GT_SceneNodeIDAllocator
 
 #include <GTLib/Threading/Mutex.hpp>
 #include <cstdint>

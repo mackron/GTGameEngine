@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef __GT_GraphicsAssetResources_hpp_
-#define __GT_GraphicsAssetResources_hpp_
+#ifndef GT_GraphicsAssetResources
+#define GT_GraphicsAssetResources
 
 #include "GraphicsWorld.hpp"
 #include <GTLib/Dictionary.hpp>
