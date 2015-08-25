@@ -2,7 +2,6 @@
 
 #include <GTLib/Threading/Semaphore.hpp>
 #include <GTLib/Config.hpp>
-#include <GTLib/Errors.hpp>
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
@@ -58,10 +57,6 @@ namespace GTLib
             {
                 this->data = internalSemaphore;
             }
-            else
-            {
-                GTLib::PostError("Semaphore::Semaphore() - sem_init(%d) returned -1. errno = %d.", value, errno);
-            }
         }
 
         Semaphore::~Semaphore()
@@ -74,18 +69,12 @@ namespace GTLib
             struct timespec ts;
             ts.tv_sec  = static_cast<time_t>(timeoutInMilliseconds / 1000);
             ts.tv_nsec = static_cast<long>((timeoutInMilliseconds - (ts.tv_sec * 1000)) * 1000);
-            if (sem_timedwait((sem_t *)this->data, &ts) == -1)
-            {
-                GTLib::PostError("Semaphore::Semaphore() - sem_wait() returned -1. errno = %d.", errno);
-            }
+            sem_timedwait((sem_t *)this->data, &ts);
         }
 
         void Semaphore::Release()
         {
-            if (sem_post((sem_t *)this->data) == -1)
-            {
-                GTLib::PostError("Semaphore::Semaphore() - sem_post() returned -1. errno = %d.", errno);
-            }
+            sem_post((sem_t *)this->data);
         }
     }
 }

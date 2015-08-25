@@ -2,7 +2,6 @@
 
 #include <GTLib/System.hpp>
 #include <GTLib/Config.hpp>
-#include <GTLib/Errors.hpp>
 #include <GTLib/Strings/Create.hpp>
 #include <cstring>
 
