@@ -2,14 +2,14 @@
 
 #include <GTLib/ToString.hpp>
 #include <GTLib/Strings/Copy.hpp>
-#include <GTLib/IO/cstdio.hpp>
+#include <cstdio>
 
 namespace GTLib
 {
     String ToString(int64_t value)
     {
         char dest[64];
-        GTLib::IO::snprintf(dest, 64, "%lld", value);
+        snprintf(dest, 64, "%lld", value);
         
         return dest;
     }
@@ -17,7 +17,7 @@ namespace GTLib
     String ToString(uint64_t value)
     {
         char dest[64];
-        GTLib::IO::snprintf(dest, 64, "%llu", value);
+        snprintf(dest, 64, "%llu", value);
         
         return dest;
     }
@@ -29,7 +29,7 @@ namespace GTLib
 
         if (format == nullptr)
         {
-            GTLib::IO::snprintf(dest, 64, "%f", value);
+            snprintf(dest, 64, "%f", value);
         }
         else
         {
@@ -42,11 +42,11 @@ namespace GTLib
                 printFormat[formatLength + 1] = 'f';
                 printFormat[formatLength + 2] = '\0';
 
-                GTLib::IO::snprintf(dest, 64, printFormat, value);
+                snprintf(dest, 64, printFormat, value);
             }
             else
             {
-                GTLib::IO::snprintf(dest, 64, "%f", value);
+                snprintf(dest, 64, "%f", value);
             }
         }
         

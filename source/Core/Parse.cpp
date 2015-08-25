@@ -3,8 +3,8 @@
 #include <GTLib/Parse.hpp>
 #include <GTLib/BasicBuffer.hpp>
 #include <GTLib/Config.hpp>
-#include <GTLib/stdlib.hpp>
 
+#include <cstdlib>
 #include <cstring>
 
 namespace GTLib

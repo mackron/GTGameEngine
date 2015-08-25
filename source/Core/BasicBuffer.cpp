@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTLib/BasicBuffer.hpp>
-#include <GTLib/stdlib.hpp>
+#include <cstdlib>
 #include <cstring>  // For memory stuff.
 
 namespace GT

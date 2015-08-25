@@ -3,7 +3,7 @@
 #ifndef GTLib_IO
 #define GTLib_IO
 
-#include "IO/cstdio.hpp"
+#include "Config.hpp"
 #include "String.hpp"
 #include "Vector.hpp"
 #include <cstddef>

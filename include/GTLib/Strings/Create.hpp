@@ -4,10 +4,11 @@
 #define GT_Strings_Create
 
 #include "../BasicBuffer.hpp"
-#include "../IO/cstdio.hpp"
 #include "List.hpp"
 #include "Copy.hpp"
 
+#include <cstdlib>
+#include <cstdio>
 #include <cstdarg>
 
 namespace GTLib
@@ -124,10 +125,10 @@ namespace GTLib
         /// Creates a formatted string. Currently only UTF-8.
         inline char* CreateFormatted(const char* format, va_list argList1, va_list argList2, size_t* lengthInTsOut = nullptr)
         {
-            size_t transformedValueLength = static_cast<size_t>(GTLib::IO::vsnprintf(nullptr, 0, format, argList1));
+            size_t transformedValueLength = static_cast<size_t>(vsnprintf(nullptr, 0, format, argList1));
             auto   transformedValue       = static_cast<char*>(malloc(transformedValueLength + 1));
 
-            GTLib::IO::vsnprintf(transformedValue, transformedValueLength + 1, format, argList2);
+            vsnprintf(transformedValue, transformedValueLength + 1, format, argList2);
 
 
             if (lengthInTsOut != nullptr)

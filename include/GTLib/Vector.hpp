@@ -4,7 +4,6 @@
 #define GT_Vector
 
 #include <GTLib/Math.hpp>
-#include <GTLib/stdlib.hpp>
 
 #include <cstddef>
 #include <cassert>

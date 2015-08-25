@@ -14,7 +14,7 @@
 #endif
 
 #include <GTLib/CommandLine.hpp>
-#include <GTLib/IO.hpp>
+#include <direct.h>
 
 #include "Assets/DefaultAssetAllocator.hpp"
 

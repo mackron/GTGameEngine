@@ -3,7 +3,6 @@
 #ifndef GT_Strings_List
 #define GT_Strings_List
 
-#include "../stdlib.hpp"
 #include "Size.hpp"
 #include "Equal.hpp"
 #include <cstring>

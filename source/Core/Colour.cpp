@@ -84,14 +84,14 @@ namespace GTLib
     void Colour::ToString(char *dest, size_t destSize, const Colour &colour)
     {
         char r[3];
-        GTLib::IO::snprintf(r, 3, "%.2x", static_cast<uint32_t>(colour.r * 255.0f));
+        snprintf(r, 3, "%.2x", static_cast<uint32_t>(colour.r * 255.0f));
 
         char g[3];
-        GTLib::IO::snprintf(g, 3, "%.2x", static_cast<uint32_t>(colour.g * 255.0f));
+        snprintf(g, 3, "%.2x", static_cast<uint32_t>(colour.g * 255.0f));
 
         char b[3];
-        GTLib::IO::snprintf(b, 3, "%.2x", static_cast<uint32_t>(colour.b * 255.0f));
+        snprintf(b, 3, "%.2x", static_cast<uint32_t>(colour.b * 255.0f));
 
-        GTLib::IO::snprintf(dest, destSize, "#%s%s%s", r, g, b);
+        snprintf(dest, destSize, "#%s%s%s", r, g, b);
     }
 }

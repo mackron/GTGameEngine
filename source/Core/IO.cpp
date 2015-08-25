@@ -1,13 +1,15 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
+#include <GTLib/Config.hpp>
 #include <GTLib/IO.hpp>
 #include <GTLib/Strings/Tokenizer.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/BasicBuffer.hpp>
 #include <GTLib/Vector.hpp>
-#include <GTLib/stdlib.hpp>
+#include <cstdlib>
 #include <cstring>
 #include <cerrno>
+#include <cstdio>
 
 #include "../external/easy_path/easy_path.h"
 
@@ -26,7 +28,7 @@
 #include <fcntl.h>
 #endif
 
-#include <cstdio>
+
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -161,7 +163,7 @@ namespace GTLib
                 if (!SetCurrentDirectory(pathSection, false))
                 {
                     // We need to try creating. We can check if it worked by trying to move into it again.
-                    if (IO::mkdir(pathSection) == -1)
+                    if (_mkdir(pathSection) == -1)
                     {
                         if (errno != EEXIST)
                         {
