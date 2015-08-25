@@ -6,8 +6,6 @@
 #include "external/easy_vfs/extras/easy_vfs_zip.h"
 #include "external/easy_path/easy_path.h"
 
-#include <GTLib/IO.hpp>
-
 namespace GT
 {
     FileSystem::FileSystem()
@@ -49,7 +47,10 @@ namespace GT
 
     ResultCode FileSystem::AddBaseDirectory(const char* absolutePath)
     {
-        easyvfs_addbasedirectory(m_pVFS, GTLib::IO::CleanPath(absolutePath).c_str());
+        char absolutePathCleaned[GT_MAX_PATH];
+        easypath_clean(absolutePath, absolutePathCleaned, GT_MAX_PATH);
+
+        easyvfs_addbasedirectory(m_pVFS, absolutePathCleaned);
         return 0;
     }
 
