@@ -25,38 +25,38 @@ namespace GT
     {
         (void)pInputData;
 
-        auto pAUXData = context.GetSurfaceAuxData<EditorGUISurfaceAUXData>(hSurface);
-        if (pAUXData != nullptr)
+        auto pUserData = context.GetSurfaceUserData<EditorGUISurfaceAUXData>(hSurface);
+        if (pUserData != nullptr)
         {
-            HDC hDC = BeginPaint(reinterpret_cast<HWND>(pAUXData->hWindow), &m_ps);
+            HDC hDC = BeginPaint(reinterpret_cast<HWND>(pUserData->hWindow), &m_ps);
             if (hDC != NULL)
             {
                 // The offscreen buffer may need to be refresehd.
                 RECT windowRect;
-                GetClientRect(reinterpret_cast<HWND>(pAUXData->hWindow), &windowRect);
+                GetClientRect(reinterpret_cast<HWND>(pUserData->hWindow), &windowRect);
 
                 int windowWidth  = windowRect.right  - windowRect.left;
                 int windowHeight = windowRect.bottom - windowRect.top;
-                if (pAUXData->hMemDC == NULL || (windowWidth != pAUXData->memBitmapWidth || windowHeight != pAUXData->memBitmapHeight))
+                if (pUserData->hMemDC == NULL || (windowWidth != pUserData->memBitmapWidth || windowHeight != pUserData->memBitmapHeight))
                 {
-                    if (pAUXData->hMemDC)
+                    if (pUserData->hMemDC)
                     {
-                        DeleteObject(reinterpret_cast<HANDLE>(pAUXData->hMemBitmap));
-                        DeleteDC(reinterpret_cast<HDC>(pAUXData->hMemDC));
+                        DeleteObject(reinterpret_cast<HANDLE>(pUserData->hMemBitmap));
+                        DeleteDC(reinterpret_cast<HDC>(pUserData->hMemDC));
                     }
 
-                    pAUXData->hMemDC          = reinterpret_cast<size_t>(CreateCompatibleDC(hDC));
-                    pAUXData->hMemBitmap      = reinterpret_cast<size_t>(CreateCompatibleBitmap(hDC, windowWidth, windowHeight));
-                    pAUXData->memBitmapWidth  = windowWidth;
-                    pAUXData->memBitmapHeight = windowHeight;
+                    pUserData->hMemDC          = reinterpret_cast<size_t>(CreateCompatibleDC(hDC));
+                    pUserData->hMemBitmap      = reinterpret_cast<size_t>(CreateCompatibleBitmap(hDC, windowWidth, windowHeight));
+                    pUserData->memBitmapWidth  = windowWidth;
+                    pUserData->memBitmapHeight = windowHeight;
                 }
 
-                SelectObject(reinterpret_cast<HDC>(pAUXData->hMemDC), reinterpret_cast<HANDLE>(pAUXData->hMemBitmap));
+                SelectObject(reinterpret_cast<HDC>(pUserData->hMemDC), reinterpret_cast<HANDLE>(pUserData->hMemBitmap));
 
                 // Set the current window.
-                m_hCurrentWindow         = reinterpret_cast<HWND>(pAUXData->hWindow);
-                m_hDC                    = reinterpret_cast<HDC>(pAUXData->hMemDC);
-                m_pCurrentSurfaceAUXData = pAUXData;
+                m_hCurrentWindow         = reinterpret_cast<HWND>(pUserData->hWindow);
+                m_hDC                    = reinterpret_cast<HDC>(pUserData->hMemDC);
+                m_pCurrentSurfaceAUXData = pUserData;
 
 
                 // No pen by default.

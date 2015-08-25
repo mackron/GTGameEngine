@@ -11,7 +11,7 @@ namespace GT
           xDPI(96),
           yDPI(96),
           topLevelElements(),
-          auxData(nullptr),
+          pUserData(nullptr),
           invalidRect()
     {
     }

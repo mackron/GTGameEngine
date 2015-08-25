@@ -538,7 +538,7 @@ namespace GT
 
     HWindow Editor::GetSurfaceWindow(HGUISurface hSurface) const
     {
-        EditorGUISurfaceAUXData* pSurfaceData = m_gui.GetSurfaceAuxData<EditorGUISurfaceAUXData>(hSurface);
+        EditorGUISurfaceAUXData* pSurfaceData = m_gui.GetSurfaceUserData<EditorGUISurfaceAUXData>(hSurface);
         if (pSurfaceData != nullptr)
         {
             return pSurfaceData->hWindow;
@@ -838,7 +838,7 @@ namespace GT
 
 
                     m_gui.SetSurfaceSize(hSurface, windowWidth, windowHeight);
-                    m_gui.SetSurfaceAuxData(hSurface, new EditorGUISurfaceAUXData(hWindow));
+                    m_gui.SetSurfaceUserData(hSurface, new EditorGUISurfaceAUXData(hWindow));
 
                     if (hElement == NULL)
                     {
@@ -882,19 +882,19 @@ namespace GT
         {
             // TODO: Delete the elements that are attached to the surface.
 
-            EditorGUISurfaceAUXData* pSurfaceAUXData = m_gui.GetSurfaceAuxData<EditorGUISurfaceAUXData>(surfaceAndElement.hSurface);
-            if (pSurfaceAUXData != nullptr)
+            EditorGUISurfaceAUXData* pSurfaceUserData = m_gui.GetSurfaceUserData<EditorGUISurfaceAUXData>(surfaceAndElement.hSurface);
+            if (pSurfaceUserData != nullptr)
             {
                 // TODO: Improve this a bit - don't like having platform-specific code here. Also looks a bit out of place...
 #if defined(GT_PLATFORM_WINDOWS)
-                if (pSurfaceAUXData->hMemDC != NULL)
+                if (pSurfaceUserData->hMemDC != NULL)
                 {
-                    DeleteObject(reinterpret_cast<HANDLE>(pSurfaceAUXData->hMemBitmap));
-                    DeleteDC(reinterpret_cast<HDC>(pSurfaceAUXData->hMemDC));
+                    DeleteObject(reinterpret_cast<HANDLE>(pSurfaceUserData->hMemBitmap));
+                    DeleteDC(reinterpret_cast<HDC>(pSurfaceUserData->hMemDC));
                 }
 #endif
 
-                delete pSurfaceAUXData;
+                delete pSurfaceUserData;
             }
 
             m_gui.DeleteSurface(surfaceAndElement.hSurface);

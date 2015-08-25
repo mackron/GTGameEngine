@@ -45,7 +45,7 @@ namespace GT
 
 
         /// A pointer to the aux. data.
-        void* auxData;
+        void* pUserData;
 
 
         /// The rectangle region containing the area that is invalid and needs to be re-painted. As a region is invalidated, this rectangle

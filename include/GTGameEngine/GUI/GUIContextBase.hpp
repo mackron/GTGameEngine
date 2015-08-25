@@ -278,32 +278,32 @@ namespace GT
         /// @return A reference to the surface that is currently under the mouse.
         GUISurface* GetSurfaceUnderMouse() const;
 
-        /// Sets the given surface's aux. data pointer.
+        /// Sets the given surface's user data pointer.
         ///
-        /// @param pSurface [in] A handle to the surface.
-        /// @param auxData  [in] A pointer to the aux. data.
+        /// @param pSurface  [in] A handle to the surface.
+        /// @param pUserData [in] A pointer to the user data.
         ///
         /// @remarks
         ///     The aux. data can be retrieved with GetSurfaceAuxData().
-        void SetSurfaceAuxData(GUISurface* pSurface, void* auxData)
+        void SetSurfaceUserData(GUISurface* pSurface, void* pUserData)
         {
             if (pSurface != nullptr)
             {
-                pSurface->auxData = auxData;
+                pSurface->pUserData = pUserData;
             }
         }
 
-        /// Retrieve's the given surface's aux. data pointer.
+        /// Retrieve's the given surface's user data pointer.
         ///
         /// @param pSurface [in] A handle to the surface.
         ///
-        /// @return A pointer to the aux. data.
+        /// @return A pointer to the user data.
         template <typename T>
         T* GetSurfaceAuxData(GUISurface* pSurface)
         {
             if (pSurface != nullptr)
             {
-                return reinterpret_cast<T*>(pSurface->auxData);
+                return reinterpret_cast<T*>(pSurface->pUserData);
             }
 
             return reinterpret_cast<T*>(nullptr);

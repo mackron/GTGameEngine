@@ -223,7 +223,6 @@ namespace GT
         /// @param hSurface  [in]  The handle to the surface whose size is being retrieved.
         /// @param widthOut  [out] A reference to the variable that will receive the width.
         /// @param heightOut [out] A reference to the variable that will receive the height.
-        void GetSurfaceSize(HGUISurface hSurface, float &widthOut, float &heightOut) const;
         void GetSurfaceSize(HGUISurface hSurface, unsigned int &widthOut, unsigned int &heightOut) const;
 
         /// Determines whether or not the given surface contains the given element.
@@ -238,34 +237,34 @@ namespace GT
         bool DoesSurfaceContainGUIElement(HGUISurface hSurface, HGUIElement hElement) const;
 
 
-        /// Sets the given surface's aux. data pointer.
+        /// Sets the given surface's user data data pointer.
         ///
-        /// @param hSurface [in] A handle to the surface.
-        /// @param auxData  [in] A pointer to the aux. data.
+        /// @param hSurface  [in] A handle to the surface.
+        /// @param pUserData [in] A pointer to the user data.
         ///
         /// @remarks
-        ///     The aux. data can be retrieved with GetSurfaceAuxData().
-        void SetSurfaceAuxData(HGUISurface hSurface, void* auxData)
+        ///     The user data can be retrieved with GetSurfaceUserData().
+        void SetSurfaceUserData(HGUISurface hSurface, void* pUserData)
         {
             auto surface = this->GetSurfacePtr(hSurface);
             if (surface != nullptr)
             {
-                surface->auxData = auxData;
+                surface->pUserData = pUserData;
             }
         }
 
-        /// Retrieve's the given surface's aux. data pointer.
+        /// Retrieve's the given surface's user data pointer.
         ///
         /// @param hSurface [in] A handle to the surface.
         ///
-        /// @return A pointer to the aux. data.
+        /// @return A pointer to the user data.
         template <typename T>
-        T* GetSurfaceAuxData(HGUISurface hSurface) const
+        T* GetSurfaceUserData(HGUISurface hSurface) const
         {
             auto surface = this->GetSurfacePtr(hSurface);
             if (surface != nullptr)
             {
-                return reinterpret_cast<T*>(surface->auxData);
+                return reinterpret_cast<T*>(surface->pUserData);
             }
 
             return reinterpret_cast<T*>(0);
