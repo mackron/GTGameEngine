@@ -3,13 +3,13 @@
 #include <GTLib/Config.hpp>
 #include <GTLib/Log.hpp>
 #include <GTLib/DateTime.hpp>
-#include <GTLib/Path.hpp>
 #include <GTLib/Strings/Replacer.hpp>
 #include <GTLib/Strings/List.hpp>
 #include <GTLib/Threading.hpp>
 #include <GTLib/BasicBuffer.hpp>
 #include <GTLib/IO.hpp>
 #include <GTLib/stdlib.hpp>
+#include "../external/easy_path/easy_path.h"
 
 #include <clocale>
 #include <cstdarg>
@@ -91,7 +91,7 @@ namespace GTLib
             if (this->file != nullptr)
             {
                 // We're good. Now we need to set our format based on the extension. If it is .html, we will output to a HTML file.
-                if (Path::ExtensionEqual(fileName, "html"))
+                if (easypath_extensionequal(fileName, "html"))
                 {
                     // HTML.
                     this->format = LogFormat_HTML;

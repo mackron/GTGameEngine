@@ -4,11 +4,12 @@
 #include <GTLib/Strings/Tokenizer.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/BasicBuffer.hpp>
-#include <GTLib/Path.hpp>
 #include <GTLib/Vector.hpp>
 #include <GTLib/stdlib.hpp>
 #include <cstring>
 #include <cerrno>
+
+#include "../external/easy_path/easy_path.h"
 
 
 #if defined(GT_PLATFORM_WINDOWS)
@@ -48,7 +49,7 @@ namespace GTLib
 
         #if defined(GT_PLATFORM_WINDOWS)
             _getcwd(buffer, 1024);
-            GTLib::Path::FormatSlashes(buffer, '/');     // <-- The resulting path will use back-slashes. We need to convert to forward-slashes.
+            easypath_toforwardslashes(buffer);              // <-- The resulting path will use back-slashes. We need to convert to forward-slashes.
         #else
             char *silencer = getcwd(buffer, 1024);          // <-- 'silencer' is just used to silence a warning with GCC.
             (void)silencer;
@@ -672,12 +673,12 @@ namespace GTLib
 
         bool IsPathAbsolute(const char* path)
         {
-            return Path::IsAbsolute(path);
+            return easypath_isabsolute(path) != 0;
         }
 
         bool IsPathRelative(const char* path)
         {
-            return Path::IsRelative(path);
+            return easypath_isrelative(path) != 0;
         }
 
 
@@ -898,7 +899,7 @@ namespace GTLib
     FileHandle OpenFile(const char* filePath, unsigned int openMode, FileInfo* fileInfoOut)
     {
         GTLib::String filePathToLoad;
-        if ((openMode & IO::OpenMode::NoSearchDirs) == 0 && (openMode & IO::OpenMode::Read) != 0 && (openMode & IO::OpenMode::Write) == 0 && !GTLib::Path::IsAbsolute(filePath))
+        if ((openMode & IO::OpenMode::NoSearchDirs) == 0 && (openMode & IO::OpenMode::Read) != 0 && (openMode & IO::OpenMode::Write) == 0 && !easypath_isabsolute(filePath))
         {
             if (!IO::FindAbsolutePath(filePath, filePathToLoad))
             {
@@ -1526,7 +1527,7 @@ namespace GTLib
         {
             GTLib::String fileName;
 
-            if (!GTLib::Path::IsAbsolute(fileNameIn) && useSearchDirectories && (openMode & OpenMode::Read) != 0 && (openMode & OpenMode::Write) == 0)
+            if (!easypath_isabsolute(fileNameIn) && useSearchDirectories && (openMode & OpenMode::Read) != 0 && (openMode & OpenMode::Write) == 0)
             {
                 if (!FindAbsolutePath(fileNameIn, fileName))
                 {
@@ -1549,11 +1550,11 @@ namespace GTLib
                 // the directory defined by fileNameIn and then create the file using only the file name.
                 if ((openMode & OpenMode::Write) != 0 && (openMode & OpenMode::CreateDirs) != 0)
                 {
-                    GTLib::Path path(fileName.c_str());
-                    path.RemoveLast();
+                    char basePath[512];
+                    easypath_copybasepath(fileName.c_str(), basePath, 512);
 
                     IO::PushCurrentDirectory();
-                    IO::SetCurrentDirectory(path.c_str(), true);
+                    IO::SetCurrentDirectory(basePath, true);
 
                     fileName = IO::FileName(fileNameIn);
                 }
@@ -1565,7 +1566,7 @@ namespace GTLib
                 // TODO: Implement and use String::Replace() on fileName directory for this instead.
 
                 auto newFileName = GTLib::Strings::Create(fileName.c_str());
-                GTLib::Path::FormatSlashes(newFileName, '\\');
+                easypath_tobackslashes(newFileName);
 
                 #if defined(GT_COMPILER_VC)
                 ::fopen_s(&result, newFileName, strOpenMode);
