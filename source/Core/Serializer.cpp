@@ -1,6 +1,9 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTLib/Serializer.hpp>
+#include <GTLib/Math.hpp>       // For GTLib::Max().
+#include <cstring>              // For memcpy()
+
 
 namespace GTLib
 {
@@ -137,48 +140,6 @@ namespace GTLib
 
 
     template <> inline void BasicSerializer::Write<GTLib::String>(const GTLib::String &)
-    {
-        // Must use WriteString().
-        assert(false);
-    }
-
-
-
-
-    //////////////////////////////
-    // FileSerializer
-
-    FileSerializer::FileSerializer(FILE* fileIn)
-        : fileSTD(fileIn), fileGT(0)
-    {
-    }
-    FileSerializer::FileSerializer(GTLib::FileHandle fileIn)
-        : fileSTD(nullptr), fileGT(fileIn)
-    {
-    }
-
-    FileSerializer::~FileSerializer()
-    {
-    }
-
-
-    void FileSerializer::Write(const void* bufferIn, size_t bufferInSizeInBytes)
-    {
-        assert(this->fileSTD != nullptr || this->fileGT != 0);
-        assert(this->fileSTD == nullptr || this->fileGT == 0);
-
-        if (this->fileSTD != nullptr)
-        {
-            GTLib::IO::Write(this->fileSTD, bufferIn, bufferInSizeInBytes);
-        }
-        else
-        {
-            GTLib::WriteFile(this->fileGT, bufferIn, bufferInSizeInBytes);
-        }
-    }
-
-
-    template <> inline void FileSerializer::Write<GTLib::String>(const GTLib::String &)
     {
         // Must use WriteString().
         assert(false);

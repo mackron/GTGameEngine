@@ -3,11 +3,7 @@
 #ifndef GT_Serializer
 #define GT_Serializer
 
-#include <cstdlib>
-#include <cstring>      // For memcpy()
-#include "Math.hpp"     // For GTLib::Max().
-#include "String.hpp"   // For GTLib::String specialization.
-#include "IO.hpp"       // For FILE.
+#include "String.hpp"
 
 namespace GTLib
 {
@@ -142,64 +138,6 @@ namespace GTLib
     };
 
     template <> inline void BasicSerializer::Write<GTLib::String>(const GTLib::String &);
-
-
-
-
-
-    /// Class for doing serialization from a file.
-    ///
-    /// This class does not open or close the file - that should be done at a higher level. The reason for this is that it makes it makes things
-    /// a lot more flexible.
-    ///
-    /// This will move the files write pointer as data is written.
-    class FileSerializer : public Serializer
-    {
-    public:
-
-        /// Default constructor.
-        FileSerializer(FILE* fileIn);
-
-        /// Constructor.
-        FileSerializer(GTLib::FileHandle fileIn);
-
-        /// Destructor.
-        virtual ~FileSerializer();
-
-
-        /// Serializer::Write().
-        void Write(const void* bufferIn, size_t bufferInSizeInBytes);
-
-
-        /// Generic template method for adding an object to the buffer.
-        ///
-        /// @param object [in] A reference to the object to write.
-        ///
-        /// @remarks
-        ///     This will just do a simple memcpy() operation.
-        template <typename T>
-        void Write(const T &object)
-        {
-            this->Write(&object, sizeof(T));
-        }
-
-
-
-    private:
-
-        /// The standard C file to write to. If set to null, fileGT must be non-zero.
-        FILE* fileSTD;
-
-        /// The GT file handle object to write to. If this is zero, fileSTD must be non-null.
-        FileHandle fileGT;
-
-
-    private:    // No copying
-        FileSerializer(const FileSerializer &);
-        FileSerializer & operator=(const FileSerializer &);
-    };
-
-    template <> inline void FileSerializer::Write<GTLib::String>(const GTLib::String &);
 }
 
 #endif

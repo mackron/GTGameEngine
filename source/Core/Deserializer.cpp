@@ -1,8 +1,8 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTLib/Deserializer.hpp>
-#include <GTLib/Math.hpp>     // For GTLib::Min().
-#include <cstring>      // For memcpy()
+#include <GTLib/Math.hpp>       // For GTLib::Min().
+#include <cstring>              // For memcpy()
 
 namespace GTLib
 {
@@ -189,134 +189,6 @@ namespace GTLib
     }
 
     template <> inline size_t BasicDeserializer::Read<GTLib::String>(GTLib::String &)
-    {
-        // Must use ReadString().
-        assert(false);
-        return 0;
-    }
-
-
-
-
-    ///////////////////////////////////
-    // FileDeserializer
-
-    FileDeserializer::FileDeserializer(FILE* fileIn)
-        : fileSTD(fileIn), fileGT(0)
-    {
-    }
-    FileDeserializer::FileDeserializer(GTLib::FileHandle fileIn)
-        : fileSTD(nullptr), fileGT(fileIn)
-    {
-    }
-
-    FileDeserializer::~FileDeserializer()
-    {
-    }
-
-
-    size_t FileDeserializer::ReadImpl(void* outputBuffer, size_t bytesToRead)
-    {
-        assert(this->fileSTD != nullptr || this->fileGT != 0);
-        assert(this->fileSTD == nullptr || this->fileGT == 0);
-
-
-        if (this->fileSTD != nullptr)
-        {
-            return IO::Read(this->fileSTD, outputBuffer, bytesToRead);
-        }
-        else
-        {
-            return GTLib::ReadFile(this->fileGT, outputBuffer, bytesToRead);
-        }
-    }
-
-    size_t FileDeserializer::PeekImpl(void* outputBuffer, size_t bytesToRead)
-    {
-        assert(this->fileSTD != nullptr || this->fileGT != 0);
-        assert(this->fileSTD == nullptr || this->fileGT == 0);
-
-
-        if (this->fileSTD != nullptr)
-        {
-            auto readPointer = IO::Tell(this->fileSTD);
-
-            size_t bytesRead = IO::Read(this->fileSTD, outputBuffer, bytesToRead);
-            IO::Seek(this->fileSTD, readPointer, SeekOrigin::Start);
-
-            return bytesRead;
-        }
-        else
-        {
-            auto readPointer = GTLib::GetFilePointer(this->fileGT);
-
-            intptr_t bytesRead = GTLib::ReadFile(this->fileGT, outputBuffer, bytesToRead);
-            if (bytesRead != -1)
-            {
-                SeekFile(this->fileGT, readPointer, SeekOrigin::Start);
-
-                return bytesRead;
-            }
-            else
-            {
-                return 0;
-            }
-        }
-    }
-
-    int64_t FileDeserializer::SeekImpl(int64_t bytesToSkip)
-    {
-        assert(this->fileSTD != nullptr || this->fileGT != 0);
-        assert(this->fileSTD == nullptr || this->fileGT == 0);
-
-
-        if (this->fileSTD != nullptr)
-        {
-            if (IO::Seek(this->fileSTD, bytesToSkip, SeekOrigin::Current))
-            {
-                return bytesToSkip;
-            }
-        }
-        else
-        {
-            int64_t prevFilePointer = GTLib::GetFilePointer(this->fileGT);
-            int64_t newFilePointer  = GTLib::SeekFile(this->fileGT, bytesToSkip, SeekOrigin::Current);
-            if (newFilePointer != -1)
-            {
-                // For consistency with the STD method, we want to skip all of bytesToSkip, or none. Nothing in between.
-                if ((newFilePointer - prevFilePointer) == bytesToSkip)
-                {
-                    return bytesToSkip;
-                }
-                else
-                {
-                    GTLib::SeekFile(this->fileGT, prevFilePointer, SeekOrigin::Start);
-                }
-            }
-        }
-
-
-        return 0;
-    }
-
-    size_t FileDeserializer::TellImpl() const
-    {
-        assert(this->fileSTD != nullptr || this->fileGT != 0);
-        assert(this->fileSTD == nullptr || this->fileGT == 0);
-
-
-        if (this->fileSTD != nullptr)
-        {
-            return static_cast<size_t>(IO::Tell(this->fileSTD));
-        }
-        else
-        {
-            return static_cast<size_t>(GTLib::GetFilePointer(this->fileGT));
-        }
-    }
-
-
-    template <> inline size_t FileDeserializer::Read<GTLib::String>(GTLib::String &)
     {
         // Must use ReadString().
         assert(false);

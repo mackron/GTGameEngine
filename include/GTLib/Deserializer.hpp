@@ -4,7 +4,6 @@
 #define GT_Deserializer
 
 #include "String.hpp"
-#include "IO.hpp"
 #include "Vector.hpp"
 
 namespace GTLib
@@ -216,72 +215,6 @@ namespace GTLib
     };
 
     template <> inline size_t BasicDeserializer::Read<GTLib::String>(GTLib::String &);
-
-
-
-
-
-
-    /// Class for deserialization from a file.
-    ///
-    /// This class does not open or close the file - that should be done at a higher level. The reason for this is that it makes it makes things
-    /// a lot more flexible.
-    ///
-    /// This will move the files write pointer as data is written.
-    class FileDeserializer : public Deserializer
-    {
-    public:
-
-        /// Constructor.
-        FileDeserializer(FILE* fileIn);
-
-        /// Destrucutor.
-        FileDeserializer(GTLib::FileHandle fileIn);
-
-        /// Destructor.
-        virtual ~FileDeserializer();
-
-
-        /// Reads a value from the buffer.
-        ///
-        /// @param object [in] A reference to the object that will receive the data.
-        template <typename T>
-        size_t Read(T &object)
-        {
-            return this->Read(&object, sizeof(T));
-        }
-
-
-    private:
-
-        /// Deserializer::Read().
-        size_t ReadImpl(void* outputBuffer, size_t bytesToRead);
-
-        /// Deserializer::Peek().
-        size_t PeekImpl(void* outputBuffer, size_t bytesToRead);
-
-        /// Deserializer::Seek().
-        int64_t SeekImpl(int64_t bytesToSkip);
-
-        /// Deserializer::Tell().
-        size_t TellImpl() const;
-
-
-    private:
-
-        /// The standard C file to read from. If set to null, fileGT must be non-zero.
-        FILE* fileSTD;
-
-        /// The GT file handle object to read from. If this is zero, fileSTD must be non-null.
-        FileHandle fileGT;
-
-
-    private:    // No copying.
-        FileDeserializer(const FileDeserializer &);
-        FileDeserializer & operator=(const FileDeserializer &);
-    };
-
-    template <> inline size_t FileDeserializer::Read<GTLib::String>(GTLib::String &);
 }
 
 #endif
