@@ -11,7 +11,6 @@ and easy to use. Some features of this project that sets it apart from others:
   * External dependencies are included directly into the source tree where possible
   * Minimal external dependencies, and no hard-to-build dependencies
   * Where possible, dependencies are linked at run-time instead of compile time
-    * Direct3D and OpenGL are both linked dynamically at run-time
 
 This is very early in development - expect a lot of bugs and backwards compatibility
 issues.
