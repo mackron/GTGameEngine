@@ -29,6 +29,7 @@
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wreserved-id-macro"
     #pragma GCC diagnostic ignored "-Wshadow"
+    #pragma GCC diagnostic ignored "-Wunused-function"
 #endif
 #include "../external/stb/stb_image.h"
 #if defined(__clang__)

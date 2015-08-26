@@ -10,6 +10,10 @@
 #include <VersionHelpers.h>
 #include <ShellScalingApi.h>
 #else
+#if defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wmissing-field-initializers"
+#endif
 typedef enum PROCESS_DPI_AWARENESS {
     PROCESS_DPI_UNAWARE = 0,
     PROCESS_SYSTEM_DPI_AWARE = 1,
@@ -48,6 +52,9 @@ IsWindows8Point1OrGreater()
 {
     return IsWindowsVersionOrGreater(HIBYTE(0x0603), LOBYTE(0x0603), 0);
 }
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 #endif
 
 

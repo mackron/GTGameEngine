@@ -454,6 +454,16 @@ namespace GT
         }
 
 
+        mat4 & operator=(const mat4 &other)
+        {
+            col0 = other.col0;
+            col1 = other.col1;
+            col2 = other.col2;
+            col3 = other.col3;
+
+            return *this;
+        }
+
         vec4 & operator[](int index)
         {
             return *(&col0 + index);

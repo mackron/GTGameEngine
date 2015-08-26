@@ -10,12 +10,17 @@ namespace GTLib
         // Add an initial row.
         m_rows.PushBack(GlyphMapLayoutRow(0));
     }
-    
+
+    GlyphMapLayout::GlyphMapLayout(const GlyphMapLayout &other)
+        : m_glyphMapWidth(other.m_glyphMapWidth), m_glyphMapHeight(other.m_glyphMapHeight), m_rows(other.m_rows)
+    {
+    }
+
     GlyphMapLayout::~GlyphMapLayout()
     {
     }
-    
-    
+
+
     bool GlyphMapLayout::FindAndInsert(unsigned int glyphWidth, unsigned int glyphHeight, unsigned int &xPosOut, unsigned int &yPosOut)
     {
         // We need to find an available row, starting from the bottom. We treat the bottom most row as a special case because we're going to be
@@ -33,20 +38,20 @@ namespace GTLib
                     // The slot can fit in the bottom row.
                     xPosOut = bottomRow.width;
                     yPosOut = bottomRow.m_yPos;
-                    
+
                     // Expand the row.
                     bottomRow.width += glyphWidth;
-                    
+
                     if (bottomRow.height < glyphHeight)
                     {
                         bottomRow.height = glyphHeight;
                     }
-                    
-                    
+
+
                     return true;
                 }
             }
-            
+
 
             // If we get here, it means we couldn't fit the glyph into the bottom row. We now want to check the other rows. It doesn't
             // really matter which direction we look, but we'll just go bottom up since we started at the bottom row earlier.
@@ -58,29 +63,29 @@ namespace GTLib
                     // The slot can fit in this row.
                     xPosOut = row.width;
                     yPosOut = row.m_yPos;
-                    
+
                     // Exand the row.
                     row.width += glyphWidth;
-                    
+
                     return true;
                 }
             }
         }
-        
+
         return false;
     }
-    
-    
-    
-    
+
+
+
+
     /////////////////////////////////////////////
     // Statics Functions
-    
+
     bool GlyphMapLayout::CanFitInX(const GlyphMapLayoutRow &row, unsigned int glyphWidth)
     {
         return row.width + glyphWidth <= m_glyphMapWidth;
     }
-    
+
     bool GlyphMapLayout::CanFitInY(const GlyphMapLayoutRow &row, unsigned int glyphHeight)
     {
         return glyphHeight <= row.height;

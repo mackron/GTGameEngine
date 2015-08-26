@@ -42,6 +42,9 @@ namespace GTLib
         /// Constructor.
         GlyphMapLayout(unsigned int glyphMapWidth, unsigned int glyphMapHeight);
 
+        /// Copy constructor.
+        GlyphMapLayout(const GlyphMapLayout &other);
+
         /// Destructor.
         ~GlyphMapLayout();
 
