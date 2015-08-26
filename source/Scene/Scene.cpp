@@ -169,7 +169,7 @@ namespace GT
 
     unsigned int Scene::GetSceneNodeCount() const
     {
-        return m_sceneNodes.GetCount();
+        return static_cast<unsigned int>(m_sceneNodes.GetCount());
     }
 
 

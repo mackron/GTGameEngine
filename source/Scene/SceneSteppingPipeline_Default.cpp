@@ -36,7 +36,7 @@ namespace GT
     {
     }
 
-    
+
     void SceneSteppingPipeline_Default::InsertSceneNode(SceneNode* pSceneNode)
     {
         assert(pSceneNode != NULL);
@@ -90,7 +90,7 @@ namespace GT
         {
             m_sceneNodesRequiringUpdate.RemoveFirstOccuranceOf(pSceneNode);
         }
-        
+
         if ((pAUXData->flags & SCENE_NODE_FLAG_REQUIRES_POSTUPDATE) != 0)
         {
             m_sceneNodesRequiringPostUpdate.RemoveFirstOccuranceOf(pSceneNode);
@@ -177,7 +177,7 @@ namespace GT
             }
         }
 
-        
+
         // Now do the actual physics simulation.
         m_callback.StepPhysics(deltaTimeInSeconds);
     }
@@ -201,7 +201,7 @@ namespace GT
             auto pSceneNode = m_dynamicSceneNodes[iSceneNode];
             assert(pSceneNode);
 
-            uint32_t flags = pSceneNode->_GetFlags();
+            uint16_t flags = pSceneNode->_GetFlags();
             if ((flags & (SceneNode::_PositionChanged | SceneNode::_RotationChanged | SceneNode::_ScaleChanged)) != 0)
             {
                 m_callback.OnSceneNodeTransformed(pSceneNode, pSceneNode->GetPosition(), pSceneNode->GetRotation(), pSceneNode->GetScale());
@@ -210,7 +210,7 @@ namespace GT
             }
         }
     }
-        
+
     void SceneSteppingPipeline_Default::Cleanup()
     {
     }

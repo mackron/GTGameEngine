@@ -20,7 +20,7 @@ namespace GT
     {
         // All loaded fonts need to be deleted.
         this->DeleteAllFonts();
-        
+
         if (m_hTextBitmap != 0)
         {
             DeleteObject(m_hTextBitmap);
@@ -327,7 +327,7 @@ namespace GT
 
             // We know that the input string will not be longer than GT_MAX_TEXT_RUN_SIZE_IN_BYTES.
             wchar_t textW[GT_MAX_TEXT_RUN_SIZE_IN_BYTES];
-            int bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthChars), textW, GT_MAX_TEXT_RUN_SIZE_IN_BYTES - 1);
+            int bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, int(GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthChars)), textW, GT_MAX_TEXT_RUN_SIZE_IN_BYTES - 1);
             if (bufferSize > 0)
             {
                 TextOutW(m_hDC, 0, 0, textW, bufferSize);
