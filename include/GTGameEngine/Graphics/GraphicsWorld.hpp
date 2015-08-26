@@ -35,10 +35,10 @@ namespace GT
     /// The different object types.
     enum class GraphicsObjectType
     {
-        Mesh,
-        PointLight,
-        SpotLight,
-        AmbientLight
+        Mesh//,
+        //PointLight,
+        //SpotLight,
+        //AmbientLight
     };
 
 

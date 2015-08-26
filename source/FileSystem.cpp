@@ -161,6 +161,7 @@ namespace GT
                 break;
             }
 
+        case FileAccessMode::None:
         default:
             {
                 return 0;
@@ -260,7 +261,7 @@ namespace GT
         return easyvfs_mkdir(m_pVFS, filePath) != 0;
     }
 
-    
+
 
 
 

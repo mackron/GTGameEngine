@@ -1132,6 +1132,8 @@ namespace GT
                 break;
             }
 
+        case PrimitiveTopologyType_Patch:
+        case PrimitiveTopologyType_Undefined:
         default:
             {
                 // The topology isn't supported.
@@ -2128,6 +2130,8 @@ namespace GT
                                                     break;
                                                 }
 
+                                                case GraphicsMaterialVariableType::Boolean:
+                                                case GraphicsMaterialVariableType::Unknown:
                                                 default: break;
                                                 }
                                             }
