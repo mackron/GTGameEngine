@@ -262,6 +262,13 @@ namespace GT
             this->ReleaseMouseEventCapture();
         }
 
+        // If the element is the one sitting under the mouse, it needs to be unset as such.
+        if (pElement == this->GetElementUnderMouse())
+        {
+            m_pElementUnderMouse = nullptr;
+        }
+
+
         this->BeginBatch();
         {
             // The area consumed by the deleted element needs to be invalidated so that it will be redrawn.
@@ -2095,6 +2102,11 @@ namespace GT
     bool GUIContextBase::IsElementVisible(GUIElement* pElement) const
     {
         assert(pElement != nullptr);
+
+        if (this->IsElementMarkedForDeletion(pElement))
+        {
+            return false;
+        }
 
         if (!GUIElementStyle_Get_visible(pElement->style))
         {
