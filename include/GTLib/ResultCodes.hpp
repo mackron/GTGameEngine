@@ -19,7 +19,7 @@ namespace GT
 
     static inline ResultCode GenError(int errorCode)
     {
-        return int(1 << 31) | errorCode;
+        return ResultCode((1U << 31) | errorCode);
     }
 
 

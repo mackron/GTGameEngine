@@ -11,6 +11,11 @@
 #include <cstdio>
 #include <cstdarg>
 
+#if defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wused-but-marked-unused"   // This ie emitted for vsnprintf() for some reason. Need to investigate...
+#endif
+
 namespace GTLib
 {
     namespace Strings
@@ -150,5 +155,9 @@ namespace GTLib
         }
     }
 }
+
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif
 
 #endif

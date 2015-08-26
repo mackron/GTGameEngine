@@ -58,6 +58,12 @@ IsWindows8Point1OrGreater()
 #endif
 
 
+#if defined(__clang__)
+    #pragma GCC diagnostic push
+    #pragma GCC diagnostic ignored "-Wold-style-cast"
+#endif
+
+
 #define CURSOR_SUPPRESSED           0x00000002
 
 namespace GT
@@ -615,7 +621,7 @@ namespace GT
 
             case WM_UNICHAR:
                 {
-                    if ((lParam & (1 << 31)) != 0)
+                    if ((lParam & (1U << 31)) != 0)
                     {
                         int repeatCount = lParam & 0x0000FFFF;
                         for (int i = 0; i < repeatCount; ++i)
@@ -1399,3 +1405,7 @@ namespace GT
         return hTopLevelWindow;
     }
 }
+
+#if defined(__clang__)
+    #pragma GCC diagnostic pop
+#endif

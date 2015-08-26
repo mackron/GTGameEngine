@@ -799,7 +799,7 @@ namespace GT
                     easymtl_identifier* pIdentifier = easymtl_getidentifier(&materialSource, pInputVariableSrc->identifierIndex);
                     if (pIdentifier != nullptr)
                     {
-                        GraphicsMaterialVariableType type = (GraphicsMaterialVariableType)pIdentifier->type;    // Safe cast - the type enumerators should always be mirrored.
+                        GraphicsMaterialVariableType type = GraphicsMaterialVariableType(pIdentifier->type);    // Safe cast - the type enumerators should always be mirrored.
                         GLuint bufferOffset = static_cast<GLuint>(inputVariablesValuesBuffer.GetCount() * sizeof(uint32_t));
                         const char* name = pIdentifier->name;
 

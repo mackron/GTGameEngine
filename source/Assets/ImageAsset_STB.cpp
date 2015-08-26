@@ -30,6 +30,11 @@
     #pragma GCC diagnostic ignored "-Wreserved-id-macro"
     #pragma GCC diagnostic ignored "-Wshadow"
     #pragma GCC diagnostic ignored "-Wunused-function"
+    #pragma GCC diagnostic ignored "-Wcast-align"
+    #pragma GCC diagnostic ignored "-Wint-to-pointer-cast"
+    #pragma GCC diagnostic ignored "-Wdisabled-macro-expansion"
+    #pragma GCC diagnostic ignored "-Wunused-parameter"
+    #pragma GCC diagnostic ignored "-Wold-style-cast"
 #endif
 #include "../external/stb/stb_image.h"
 #if defined(__clang__)
