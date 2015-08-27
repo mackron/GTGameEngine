@@ -270,6 +270,16 @@ namespace GT
         m_pGraphicsWorldImpl->SetRenderTargetProjectionAndView(hRT, projection, view);
     }
 
+    void DefaultGraphicsWorld::SetRenderTargetProjection(HGraphicsRenderTarget hRT, const mat4 &projection)
+    {
+        m_pGraphicsWorldImpl->SetRenderTargetProjection(hRT, projection);
+    }
+
+    void DefaultGraphicsWorld::SetRenderTargetView(HGraphicsRenderTarget hRT, const mat4 &view)
+    {
+        m_pGraphicsWorldImpl->SetRenderTargetView(hRT, view);
+    }
+
     void DefaultGraphicsWorld::GetRenderTargetProjectionAndView(HGraphicsRenderTarget hRT, mat4 &projectionOut, mat4 &viewOut) const
     {
         m_pGraphicsWorldImpl->GetRenderTargetProjectionAndView(hRT, projectionOut, viewOut);

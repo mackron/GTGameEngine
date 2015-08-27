@@ -156,6 +156,12 @@ namespace GT
         /// @copydoc GraphicsWorld::SetRenderTargetProjectionAndView()
         void SetRenderTargetProjectionAndView(HGraphicsRenderTarget hRT, const mat4 &projection, const mat4 &view);
 
+        /// @copydoc GraphicsWorld::SetRenderTargetProjection()
+        void SetRenderTargetProjection(HGraphicsRenderTarget hRT, const mat4 &projection);
+
+        /// @copydoc GraphicsWorld::SetRenderTargetView()
+        void SetRenderTargetView(HGraphicsRenderTarget hRT, const mat4 &view);
+
         /// @copydoc GraphicsWorld::GetRenderTargetProjectionAndView()
         void GetRenderTargetProjectionAndView(HGraphicsRenderTarget hRT, mat4 &projectionOut, mat4 &viewOut) const;
 

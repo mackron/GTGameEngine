@@ -365,6 +365,12 @@ namespace GT
         /// Sets the projection and view matrices to use when rendering the given render target.
         virtual void SetRenderTargetProjectionAndView(HGraphicsRenderTarget hRT, const mat4 &projection, const mat4 &view) = 0;
 
+        /// Sets the projection matrix to use when rendering the given render target.
+        virtual void SetRenderTargetProjection(HGraphicsRenderTarget hRT, const mat4 &projection) = 0;
+
+        /// Sets the view matrix to use when rendering the given render target.
+        virtual void SetRenderTargetView(HGraphicsRenderTarget hRT, const mat4 &view) = 0;
+
         /// Retrieves the projection and view matrices to use when rendering the given render target.
         ///
         /// @remarks

@@ -1682,6 +1682,24 @@ namespace GT
         }
     }
 
+    void DefaultGraphicsWorld_OpenGL::SetRenderTargetProjection(HGraphicsRenderTarget hRT, const mat4 &projection)
+    {
+        auto pRT = reinterpret_cast<RenderTarget_OpenGL*>(hRT);
+        if (pRT != nullptr)
+        {
+            pRT->projection = projection;
+        }
+    }
+
+    void DefaultGraphicsWorld_OpenGL::SetRenderTargetView(HGraphicsRenderTarget hRT, const mat4 &view)
+    {
+        auto pRT = reinterpret_cast<RenderTarget_OpenGL*>(hRT);
+        if (pRT != nullptr)
+        {
+            pRT->view = view;
+        }
+    }
+
     void DefaultGraphicsWorld_OpenGL::GetRenderTargetProjectionAndView(HGraphicsRenderTarget hRT, mat4 &projectionOut, mat4 &viewOut) const
     {
         auto pRT = reinterpret_cast<RenderTarget_OpenGL*>(hRT);

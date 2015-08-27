@@ -239,7 +239,7 @@ namespace GT
         return 0;
     }
 
-    void DefaultGraphicsWorld_Null::DeleteRenderTarget(HGraphicsResource hRT)
+    void DefaultGraphicsWorld_Null::DeleteRenderTarget(HGraphicsRenderTarget hRT)
     {
         (void)hRT;
     }
@@ -317,6 +317,18 @@ namespace GT
     {
         (void)hRT;
         (void)projection;
+        (void)view;
+    }
+
+    void DefaultGraphicsWorld_Null::SetRenderTargetProjection(HGraphicsRenderTarget hRT, const mat4 &projection)
+    {
+        (void)hRT;
+        (void)projection;
+    }
+
+    void DefaultGraphicsWorld_Null::SetRenderTargetView(HGraphicsRenderTarget hRT, const mat4 &view)
+    {
+        (void)hRT;
         (void)view;
     }
 
