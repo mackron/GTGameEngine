@@ -133,23 +133,40 @@ namespace GT
 
         /// Retrieves the position of the scene node.
         vec4 GetPosition() const;
+        vec2 GetPosition2D() const;
 
         /// Retrieves the rotation of the scene node.
         quat GetRotation() const;
 
         /// Retrieves the scane of the scene node.
         vec4 GetScale() const;
+        vec2 GetScale2D() const;
 
 
         /// Sets the position of the scene node.
         void SetPosition(const vec4 &position);
+        void SetPosition2D(const vec2 &position);
 
         /// Sets the rotation of the scene node.
         void SetRotation(const quat &rotation);
 
         /// Sets the scale of the scene node.
         void SetScale(const vec4 &scale);
+        void SetScale2D(const vec2 &scale);
 
+
+
+        /// Retrieves a vector pointing in the forward direction.
+        vec4 GetForward() const;
+        vec2 GetForward2D() const;
+
+        /// Retrieves a vector pointing in the right direction.
+        vec4 GetRight() const;
+        vec2 GetRight2D() const;
+
+        /// Retrieves a vector pointing in the left direction.
+        vec4 GetUp() const;
+        vec2 GetUp2D() const;
 
 
         ///////////////////////////////////
