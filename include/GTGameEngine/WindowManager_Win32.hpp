@@ -72,6 +72,17 @@ namespace GT
         virtual HWindow GetFocusedWindow() const;
 
 
+        /// @copydoc WindowManager::SetWindowCursor()
+        virtual void SetWindowCursor(HWindow hWindow, HCursor hCursor);
+
+
+        /// @copydoc WindowManager::CreateCursorFromFile()
+        virtual HCursor CreateCursorFromFile(const char* filePath);
+
+        /// @copydoc WindowManager::GetSystemCursor()
+        virtual HCursor GetSystemCursor(SystemCursorType cursorType) const;
+
+
         /// @copydoc WindowManager::ShowCursor()
         virtual void ShowCursor();
 
@@ -203,6 +214,9 @@ namespace GT
 
             /// Some flags to help with handling some events.
             uint32_t flags;
+
+            /// The cursor to use with the window. This should be the arrow cursor by default.
+            HCURSOR hCursor;
         };
 
 

@@ -19,7 +19,15 @@ namespace GT
         PopupWindow                 ///< A window for things like popup menus, dropdowns, tooltips, etc.
     };
 
+    enum class SystemCursorType
+    {
+        Arrow,
+        IBeam                       // For text editors.
+    };
+
+
     typedef size_t HWindow;
+    typedef size_t HCursor;
 
 
     static const int MouseButton_Left   = 1;
@@ -121,6 +129,17 @@ namespace GT
         ///
         /// @return A handle to the window that currently has the keyboard focus.
         virtual HWindow GetFocusedWindow() const = 0;
+
+
+        /// Sets the cursor to use with the given window.
+        virtual void SetWindowCursor(HWindow hWindow, HCursor hCursor) = 0;
+
+        
+        /// Loads a custom cursor from a .cur cursor file.
+        virtual HCursor CreateCursorFromFile(const char* filePath) = 0;
+
+        /// Retrieves a handle to a system cursor.
+        virtual HCursor GetSystemCursor(SystemCursorType cursorType) const = 0;
 
 
         /// Shows the cursor at a global level.

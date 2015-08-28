@@ -760,6 +760,18 @@ namespace GT
                 }
 
 
+            case WM_SETCURSOR:
+                {
+                    if (LOWORD(lParam) == HTCLIENT)
+                    {
+                        SetCursor(pWindowData->hCursor);
+                        return TRUE;
+                    }
+
+                    break;
+                }
+
+
             default:
                 {
                     break;
@@ -921,6 +933,7 @@ namespace GT
             pWindowData->relativePosY   = yPos;
             pWindowData->type           = type;
             pWindowData->flags          = 0;
+            pWindowData->hCursor        = LoadCursor(NULL, IDC_ARROW);
             ::SetWindowLongPtr(hWnd, 0, reinterpret_cast<LONG_PTR>(pWindowData));
 
 
@@ -1100,6 +1113,52 @@ namespace GT
     HWindow WindowManager_Win32::GetFocusedWindow() const
     {
         return reinterpret_cast<HWindow>(::GetFocus());
+    }
+
+
+    void WindowManager_Win32::SetWindowCursor(HWindow hWindow, HCursor hCursor)
+    {
+        if (hWindow != 0)
+        {
+            WindowData* pWindowData = reinterpret_cast<WindowData*>(::GetWindowLongPtr(reinterpret_cast<HWND>(hWindow), 0));
+            if (pWindowData != nullptr)
+            {
+                pWindowData->hCursor = reinterpret_cast<HCURSOR>(hCursor);
+
+                // If the cursor is over the window, change it now.
+                if ((pWindowData->flags & WindowFlag_IsCursorInside) != 0)
+                {
+                    SetCursor(reinterpret_cast<HCURSOR>(pWindowData->hCursor));
+                }
+            }
+        }
+    }
+
+
+    HCursor WindowManager_Win32::CreateCursorFromFile(const char* filePath)
+    {
+        return reinterpret_cast<HCursor>(LoadCursorFromFileA(filePath));
+    }
+
+    HCursor WindowManager_Win32::GetSystemCursor(SystemCursorType cursorType) const
+    {
+        switch (cursorType)
+        {
+        case SystemCursorType::Arrow:
+            {
+                return reinterpret_cast<HCursor>(LoadCursor(NULL, IDC_ARROW));
+            }
+
+        case SystemCursorType::IBeam:
+            {
+                return reinterpret_cast<HCursor>(LoadCursor(NULL, IDC_ARROW));
+            }
+
+
+        default: break;
+        }
+
+        return 0;
     }
 
 
