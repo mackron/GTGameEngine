@@ -162,6 +162,16 @@ namespace GT
         void Step();
 
 
+        /// Pauses the game.
+        void Pause();
+
+        /// Resumes the game.
+        void Resume();
+
+        /// Determines whether or not the game is paused.
+        bool IsPaused() const;
+
+
         /// Retrieves a reference to the GUI context.
         GUIContext & GetGUI();
 
@@ -187,6 +197,16 @@ namespace GT
         ///
         /// @param hWindow [in] The window.
         bool IsMouseInsideWindow(HWindow hWindow) const;
+
+
+        /// Shows the cursor.
+        void ShowCursor();
+
+        /// Hides the cursor.
+        void HideCursor();
+
+        /// Determines whether or not the cursor is visible.
+        bool IsCursorVisible() const;
 
 
         ///////////////////////////////////////////////////
@@ -380,6 +400,9 @@ namespace GT
 
         /// The editor event handler for detecting when the editor is opened and closed.
         GameContextEditorEventHandler m_editorEventHandler;
+
+        /// Keeps track of whether or not the cursor was visible before opening the editor. We use this to restore the mouse cursor state when the editor is closed.
+        bool m_wasCursorVisibleBeforeOpeningEditor;
 #endif
 
     private:
@@ -387,12 +410,13 @@ namespace GT
         ///////////////////////////////////////////////////////////////
         // State Flags
 
-        static const uint32_t IsSingleThreadedFlag       = (1U << 0);        ///< Whether or not the game should run in single- or multi-threaded mode.
-        static const uint32_t IsOwnerOfWindowManagerFlag = (1U << 1);        ///< Whether or not the context owns the window manager.
-        static const uint32_t IsRunningFlag              = (1U << 2);        ///< Whether or not the game is currently running. This is used to track whether or not the game loop should continue looping.
-        static const uint32_t IsRunningRealTimeLoopFlag  = (1U << 3);        ///< Whether or not a real-time loop is being used.
+        static const uint32_t StateFlag_IsSingleThreadedFlag       = (1U << 0);         ///< Whether or not the game should run in single- or multi-threaded mode.
+        static const uint32_t StateFlag_IsOwnerOfWindowManagerFlag = (1U << 1);         ///< Whether or not the context owns the window manager.
+        static const uint32_t StateFlag_IsRunningFlag              = (1U << 2);         ///< Whether or not the game is currently running. This is used to track whether or not the game loop should continue looping.
+        static const uint32_t StateFlag_IsRunningRealTimeLoopFlag  = (1U << 3);         ///< Whether or not a real-time loop is being used.
+        static const uint32_t StateFlag_IsPaused                   = (1U << 4);         ///< Whether or not the game is paused.
 
-        static const uint32_t IsEditorInitialisedFlag    = (1U << 31);       ///< Whether or not the editor has been initialized.
+        static const uint32_t StateFlag_IsEditorInitialisedFlag    = (1U << 31);        ///< Whether or not the editor has been initialized.
 
 
     public:

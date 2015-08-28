@@ -66,13 +66,6 @@ namespace GT
         virtual void Step(GameContext &gameContext, double deltaTimeInSeconds);
 
 
-        /// Pauses the game.
-        virtual void Pause(GameContext &gameContext);
-
-        /// Resumes the game.
-        virtual void Resume(GameContext &gameContext);
-
-
         /////////////////////////////////
         // Events
 
@@ -93,6 +86,13 @@ namespace GT
         /// @remarks
         ///     This is called outside of the loop, and just before the game returns from GameContext::Run().
         virtual void OnClosing(GameContext &gameContext);
+
+
+        /// Called when the game is paused.
+        virtual void OnPause(GameContext &gameContext);
+
+        /// Called when the game is resumed from a pause state.
+        virtual void OnResume(GameContext &gameContext);
 
 
         /// Called when the game wants to close.

@@ -40,15 +40,6 @@ namespace GT
     }
 
 
-    void GameState::Pause(GameContext &)
-    {
-    }
-
-    void GameState::Resume(GameContext &)
-    {
-    }
-
-
 
     /////////////////////////////////
     // Events
@@ -59,6 +50,14 @@ namespace GT
     }
 
     void GameState::OnClosing(GameContext &)
+    {
+    }
+
+    void GameState::OnPause(GameContext &)
+    {
+    }
+
+    void GameState::OnResume(GameContext &)
     {
     }
 

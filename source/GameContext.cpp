@@ -20,13 +20,14 @@ namespace GT
           m_flags(0)
 #if defined(GT_BUILD_EDITOR)
         , m_editor(*this),
-          m_editorEventHandler(*this)
+          m_editorEventHandler(*this),
+          m_wasCursorVisibleBeforeOpeningEditor(true)
 #endif
     {
-        m_flags |= IsRunningFlag;
-        m_flags |= IsRunningRealTimeLoopFlag;
+        m_flags |= StateFlag_IsRunningFlag;
+        m_flags |= StateFlag_IsRunningRealTimeLoopFlag;
 
-        m_flags |= IsSingleThreadedFlag;    // TODO: Remove this flag so that multi-threading is used by default.
+        m_flags |= StateFlag_IsSingleThreadedFlag;    // TODO: Remove this flag so that multi-threading is used by default.
 
         if (m_pWindowManager == nullptr)
         {
@@ -37,14 +38,14 @@ namespace GT
             m_pWindowManager = new WindowManager_DefaultX11(this);
 #endif
 
-            m_flags |= IsOwnerOfWindowManagerFlag;
+            m_flags |= StateFlag_IsOwnerOfWindowManagerFlag;
         }
     }
 
     GameContext::~GameContext()
     {
         // Window manager.
-        if ((m_flags & IsOwnerOfWindowManagerFlag) != 0)
+        if ((m_flags & StateFlag_IsOwnerOfWindowManagerFlag) != 0)
         {
             delete m_pWindowManager;
         }
@@ -62,7 +63,7 @@ namespace GT
         // Some shutdown routines are done at at the end of Run(), such as the editor.
 
         // Window manager.
-        if ((m_flags & IsOwnerOfWindowManagerFlag) != 0)
+        if ((m_flags & StateFlag_IsOwnerOfWindowManagerFlag) != 0)
         {
             delete m_pWindowManager;
             m_pWindowManager = nullptr;
@@ -102,13 +103,13 @@ namespace GT
 
         //////////////////////////////////////
         // Loop. Not too complex...
-        while ((m_flags & IsRunningFlag) != 0)
+        while ((m_flags & StateFlag_IsRunningFlag) != 0)
         {
-            if ((m_flags & IsRunningRealTimeLoopFlag) != 0)
+            if ((m_flags & StateFlag_IsRunningRealTimeLoopFlag) != 0)
             {
                 m_pWindowManager->RealTimeLoop([&]() -> bool
                 {
-                    if (((m_flags & IsRunningFlag) != 0) && ((m_flags & IsRunningRealTimeLoopFlag) != 0))
+                    if (((m_flags & StateFlag_IsRunningFlag) != 0) && ((m_flags & StateFlag_IsRunningRealTimeLoopFlag) != 0))
                     {
                         this->Step();
                         return true;
@@ -120,22 +121,22 @@ namespace GT
                 });
 
                 // If we're still running a real-time loop at this point it means we have received a quit message and need to close.
-                if ((m_flags & IsRunningRealTimeLoopFlag) != 0)
+                if ((m_flags & StateFlag_IsRunningRealTimeLoopFlag) != 0)
                 {
-                    m_flags &= ~IsRunningFlag;
+                    m_flags &= ~StateFlag_IsRunningFlag;
                 }
             }
             else
             {
                 m_pWindowManager->EventDrivenLoop([&]() -> bool
                 {
-                    return (m_flags & IsRunningRealTimeLoopFlag) == 0;
+                    return (m_flags & StateFlag_IsRunningRealTimeLoopFlag) == 0;
                 });
 
                 // If we're still running at event-driven loop at this point it means we have received a quit message and need to close.
-                if ((m_flags & IsRunningRealTimeLoopFlag) == 0)
+                if ((m_flags & StateFlag_IsRunningRealTimeLoopFlag) == 0)
                 {
-                    m_flags &= ~IsRunningFlag;
+                    m_flags &= ~StateFlag_IsRunningFlag;
                 }
             }
         }
@@ -249,6 +250,35 @@ namespace GT
         }
     }
 
+    void GameContext::Pause()
+    {
+        if (!this->IsEditorOpen())
+        {
+            if (!this->IsPaused())
+            {
+                m_flags |= StateFlag_IsPaused;
+                m_gameState.OnPause(*this);
+            }
+        }
+    }
+
+    void GameContext::Resume()
+    {
+        if (!this->IsEditorOpen())
+        {
+            if (this->IsPaused())
+            {
+                m_flags &= ~StateFlag_IsPaused;
+                m_gameState.OnResume(*this);
+            }
+        }
+    }
+
+    bool GameContext::IsPaused() const
+    {
+        return (m_flags & StateFlag_IsPaused) != 0;
+    }
+
 
     GUIContext & GameContext::GetGUI()
     {
@@ -287,27 +317,52 @@ namespace GT
         return false;
     }
 
+    
+    void GameContext::ShowCursor()
+    {
+        m_pWindowManager->ShowCursor();
+    }
+
+    void GameContext::HideCursor()
+    {
+        m_pWindowManager->HideCursor();
+    }
+
+    bool GameContext::IsCursorVisible() const
+    {
+        return m_pWindowManager->IsCursorVisible();
+    }
+
 
     bool GameContext::OpenEditor()
     {
 #if defined(GT_BUILD_EDITOR)
-        // Startup the editor if it hasn't already.
-        if ((m_flags & IsEditorInitialisedFlag) == 0)
+        if (!this->IsEditorOpen())
         {
-            if (m_editor.Startup())
+            // Startup the editor if it hasn't already.
+            if ((m_flags & StateFlag_IsEditorInitialisedFlag) == 0)
             {
-                m_editor.AttachEventHandler(m_editorEventHandler);
-                m_flags |= IsEditorInitialisedFlag;
+                if (m_editor.Startup())
+                {
+                    m_editor.AttachEventHandler(m_editorEventHandler);
+                    m_flags |= StateFlag_IsEditorInitialisedFlag;
+                }
+                else
+                {
+                    // Failed to start up the editor.
+                    return false;
+                }
             }
-            else
-            {
-                // Failed to start up the editor.
-                return false;
-            }
+
+            m_wasCursorVisibleBeforeOpeningEditor = this->IsCursorVisible();
+
+            return m_editor.Open();     // This will post OnEditorOpened()
         }
-
-
-        return m_editor.Open();     // This will post OnEditorOpened()
+        else
+        {
+            // Editor is already open.
+            return true;
+        }
 #else
         return false;
 #endif
@@ -317,6 +372,12 @@ namespace GT
     {
 #if defined(GT_BUILD_EDITOR)
         m_editor.Close();       // This will post OnEditorClosed()
+
+        if (m_wasCursorVisibleBeforeOpeningEditor) {
+            this->ShowCursor();
+        } else {
+            this->HideCursor();
+        }
 #endif
     }
 
@@ -583,14 +644,14 @@ namespace GT
     void GameContext::OnEditorOpened()
     {
 #if defined(GT_BUILD_EDITOR)
-        m_flags &= ~IsRunningRealTimeLoopFlag;      //< Switch to an event-driven application loop.
+        m_flags &= ~StateFlag_IsRunningRealTimeLoopFlag;      //< Switch to an event-driven application loop.
 #endif
     }
 
     void GameContext::OnEditorClosed()
     {
 #if defined(GT_BUILD_EDITOR)
-        m_flags |= IsRunningRealTimeLoopFlag;       //< Switch to a real-time game loop.
+        m_flags |= StateFlag_IsRunningRealTimeLoopFlag;       //< Switch to a real-time game loop.
 #endif
     }
 }
