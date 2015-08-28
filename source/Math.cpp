@@ -5,6 +5,20 @@
 namespace GT
 {
     //////////////////////////////////
+    // vec2
+
+    const vec2 vec2::zero = vec2( 0.0f,  0.0f);
+    const vec2 vec2::one  = vec2( 1.0f,  1.0f);
+
+    const vec2 vec2::posx = vec2( 1.0f,  0.0f);
+    const vec2 vec2::posy = vec2( 0.0f,  1.0f);
+
+    const vec2 vec2::negx = vec2(-1.0f,  0.0f);
+    const vec2 vec2::negy = vec2( 0.0f, -1.0f);
+
+
+
+    //////////////////////////////////
     // vec4
 
     const vec4 vec4::zero = vec4( 0.0f,  0.0f,  0.0f,  0.0f);

@@ -438,12 +438,8 @@ namespace GT
         static const vec2 one;
         static const vec2 posx;
         static const vec2 posy;
-        static const vec2 posz;
-        static const vec2 posw;
         static const vec2 negx;
         static const vec2 negy;
-        static const vec2 negz;
-        static const vec2 negw;
     };
 
     /// Performs an addition on the given vector.
