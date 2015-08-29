@@ -9,9 +9,6 @@
 
 namespace GT
 {
-    /// Handle for GUI render buffers.
-    typedef uint32_t HGUIRenderBuffer;
-
     /// Base class for doing GUI rendering.
     class GUIRenderer
     {
