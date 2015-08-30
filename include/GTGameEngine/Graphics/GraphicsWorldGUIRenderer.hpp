@@ -4,11 +4,11 @@
 #define GT_GraphicsWorldGUIRenderer
 
 #include "../GUI/GUIRenderer.hpp"
+#include "GraphicsWorld.hpp"
+#include <GTLib/Map.hpp>
 
 namespace GT
 {
-    class GraphicsWorld;
-
     class GraphicsWorldGUIRenderer : public GUIRenderer
     {
     public:
@@ -56,10 +56,30 @@ namespace GT
         void DrawRawImage(GT::GUIContext &context, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent);
 
 
+        /// @copydoc GUIRenderer::InitializeImage()
+        void InitializeImage(GT::GUIContext &context, HGUIImage hImage, unsigned int width, unsigned int height, GUIImageFormat format, const void* pData);
+
+        /// @copydoc GUIRenderer::UninitializeImage()
+        void UninitializeImage(GT::GUIContext &context, HGUIImage hImage);
+
+
+
+    private:
+
+        /// Helper function for retrieving the texture resource from the given image.
+        HGraphicsResource GetTextureResource(HGUIImage hImage);
+
+        /// Converts a GUI image for enum value to the engine's graphics world equivalent.
+        TextureFormat GUIImageFormatToGraphicsTextureFormat(GUIImageFormat imageFormat);
+
+
     private:
 
         /// A pointer to the graphcis world to route painting commands to.
         GraphicsWorld* m_pGraphicsWorld;
+
+        /// The list of texture objects, mapped to a HGUIImage object. A more optimized solution may be required if this shows up in profiling.
+        GTLib::Map<HGUIImage, HGraphicsResource> m_textures;
     };
 }
 

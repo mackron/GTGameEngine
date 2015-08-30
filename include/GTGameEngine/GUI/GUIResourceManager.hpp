@@ -19,7 +19,6 @@ namespace GT
         None,
         Unknown = None,
 
-        RGB8,
         RGBA8,
         A8
     };

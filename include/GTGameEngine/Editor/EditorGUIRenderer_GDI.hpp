@@ -61,6 +61,12 @@ namespace GT
         void DrawRawImage(GT::GUIContext &context, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent);
 
 
+        /// @copydoc GUIRenderer::InitializeImage()
+        void InitializeImage(GT::GUIContext &context, HGUIImage hImage, unsigned int width, unsigned int height, GUIImageFormat format, const void* pData);
+
+        /// @copydoc GUIRenderer::UninitializeImage()
+        void UninitializeImage(GT::GUIContext &context, HGUIImage hImage);
+
 
     private:
 

@@ -6,7 +6,7 @@
 namespace GT
 {
     GraphicsWorldGUIRenderer::GraphicsWorldGUIRenderer()
-        : m_pGraphicsWorld(nullptr)
+        : m_pGraphicsWorld(nullptr), m_textures()
     {
     }
 
@@ -89,6 +89,83 @@ namespace GT
         if (m_pGraphicsWorld != nullptr)
         {
             m_pGraphicsWorld->GUI_DrawRawImage(gui, xPos, yPos, width, height, pImageData, isTransparent);
+        }
+    }
+
+
+    void GraphicsWorldGUIRenderer::InitializeImage(GT::GUIContext &gui, HGUIImage hImage, unsigned int width, unsigned int height, GUIImageFormat format, const void* pData)
+    {
+        (void)gui;
+
+        assert(hImage != NULL);
+
+        if (m_pGraphicsWorld != nullptr)
+        {
+            GraphicsTextureResourceDesc textureDesc;
+            textureDesc.width  = width;
+            textureDesc.height = height;
+            textureDesc.depth  = 1;
+            textureDesc.format = GUIImageFormatToGraphicsTextureFormat(format);
+            textureDesc.pData  = pData;
+            HGraphicsResource hTextureResource = m_pGraphicsWorld->CreateTextureResource(textureDesc);
+            if (hTextureResource != NULL)
+            {
+                m_textures.Add(hImage, hTextureResource);
+            }
+        }
+    }
+
+    void GraphicsWorldGUIRenderer::UninitializeImage(GT::GUIContext &gui, HGUIImage hImage)
+    {
+        (void)gui;
+
+        HGraphicsResource hTextureResource = this->GetTextureResource(hImage);
+        if (hTextureResource != NULL)
+        {
+            if (m_pGraphicsWorld != nullptr)
+            {
+                m_pGraphicsWorld->DeleteResource(hTextureResource);
+            }
+
+            m_textures.RemoveByKey(hImage);
+        }
+    }
+
+
+
+    //////////////////////////////////////////////
+    // Private
+
+    HGraphicsResource GraphicsWorldGUIRenderer::GetTextureResource(HGUIImage hImage)
+    {
+        auto iTextureResource = m_textures.Find(hImage);
+        if (iTextureResource != nullptr)
+        {
+            return iTextureResource->value;
+        }
+
+        return NULL;
+    }
+
+    TextureFormat GraphicsWorldGUIRenderer::GUIImageFormatToGraphicsTextureFormat(GUIImageFormat imageFormat)
+    {
+        switch (imageFormat)
+        {
+        case GUIImageFormat::RGBA8:
+            {
+                return TextureFormat_RGBA8;
+            }
+
+        case GUIImageFormat::A8:
+            {
+                return TextureFormat_R8;
+            }
+
+        case GUIImageFormat::None:
+        default:
+            {
+                return TextureFormat_Unknown;
+            }
         }
     }
 }

@@ -208,6 +208,25 @@ namespace GT
 
         // TODO: Implement.
     }
+
+
+    void EditorGUIRenderer_GDI::InitializeImage(GT::GUIContext &context, HGUIImage hImage, unsigned int width, unsigned int height, GUIImageFormat format, const void* pData)
+    {
+        // TODO: Implement.
+        (void)context;
+        (void)hImage;
+        (void)width;
+        (void)height;
+        (void)format;
+        (void)pData;
+    }
+
+    void EditorGUIRenderer_GDI::UninitializeImage(GT::GUIContext &context, HGUIImage hImage)
+    {
+        // TODO: Implement.
+        (void)context;
+        (void)hImage;
+    }
 }
 
 #endif

@@ -74,6 +74,20 @@ namespace GT
         /// @remarks
         ///     The data is always 32-bits per pixel. Use isTransparent to determine if alpha transparency should be used.
         virtual void DrawRawImage(GT::GUIContext &context, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent) = 0;
+
+
+        /// Allows the renderer to create and initialize internal objects for the given image.
+        ///
+        /// @remarks
+        ///     A renderering backend such as OpenGL will want to create image objects in response to this function.
+        ///     @par
+        ///     UninitializeImage() will be called to allow the renderer to delete an image.
+        ///     @par
+        ///     When a shape needs to be drawn with a texture, handle to the image that was passed to this method will used specified.
+        virtual void InitializeImage(GT::GUIContext &context, HGUIImage hImage, unsigned int width, unsigned int height, GUIImageFormat format, const void* pData) = 0;
+
+        /// Allows the renderer to uninitialize and delete internal objects for the given image.
+        virtual void UninitializeImage(GT::GUIContext &context, HGUIImage hImage) = 0;
     };
 }
 
