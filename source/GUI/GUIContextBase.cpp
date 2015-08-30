@@ -1379,6 +1379,142 @@ namespace GT
         return GUIElementStyle_Get_backgroundcolor(pElement->style);
     }
 
+    bool GUIContextBase::SetElementBackgroundImage(GUIElement* pElement, const char* imageFilePath, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    {
+        assert(pElement != nullptr);
+
+        bool result = false;
+
+        HGUIImage hOldBackgroundImage = pElement->hBackgroundImage;
+        HGUIImage hNewBackgroundImage = NULL;
+
+        if (imageFilePath == nullptr)
+        {
+            // The file path is null. This is a valid case in which we remove the background image.
+            result = true;
+        }
+        else
+        {
+            if (m_pResourceManager != nullptr)
+            {
+                hNewBackgroundImage = m_pResourceManager->AcquireImage(imageFilePath);
+                if (hNewBackgroundImage != NULL)
+                {
+                    result = true;
+                }
+            }
+        }
+
+
+        if (result)
+        {
+            pElement->hBackgroundImage = hNewBackgroundImage;
+
+
+            // Style.
+            GUIElementStyle_Set_backgroundimage(pElement->style, m_pResourceManager->EncodeFilePath(imageFilePath));
+            GUIElementStyle_Set_backgroundsubimageoffsetx(pElement->style, subImageOffsetX);
+            GUIElementStyle_Set_backgroundsubimageoffsety(pElement->style, subImageOffsetY);
+            GUIElementStyle_Set_backgroundsubimagewidth(pElement->style, subImageWidth);
+            GUIElementStyle_Set_backgroundsubimageheight(pElement->style, subImageHeight);
+
+
+            // The element needs to be redrawn.
+            this->BeginBatch();
+            {
+                this->Painting_InvalidateElementRect(pElement);
+            }
+            this->EndBatch();
+
+
+            // The old background image needs to be unacquired.
+            m_pResourceManager->UnacquireImage(hOldBackgroundImage);
+        }
+
+        return result;
+    }
+
+    HGUIImage GUIContextBase::GetElementBackgroundImage(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        return pElement->hBackgroundImage;
+    }
+
+
+    void GUIContextBase::SetElementBackgroundSubImageOffset(GUIElement* pElement, unsigned int subImageOffsetX, unsigned int subImageOffsetY)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_backgroundsubimageoffsetx(pElement->style, subImageOffsetX);
+        GUIElementStyle_Set_backgroundsubimageoffsety(pElement->style, subImageOffsetY);
+
+        this->BeginBatch();
+        {
+            this->Painting_InvalidateElementRect(pElement);
+        }
+        this->EndBatch();
+    }
+
+    bool GUIContextBase::GetElementBackgroundSubImageOffset(GUIElement* pElement, unsigned int &offsetXOut, unsigned int &offsetYOut) const
+    {
+        assert(pElement != nullptr);
+
+        offsetXOut = GUIElementStyle_Get_backgroundsubimageoffsetx(pElement->style);
+        offsetYOut = GUIElementStyle_Get_backgroundsubimageoffsety(pElement->style);
+
+        return true;
+    }
+
+
+    void GUIContextBase::SetElementBackgroundSubImageSize(GUIElement* pElement, unsigned int subImageWidth, unsigned int subImageHeight)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_backgroundsubimagewidth(pElement->style, subImageWidth);
+        GUIElementStyle_Set_backgroundsubimageheight(pElement->style, subImageHeight);
+
+        this->BeginBatch();
+        {
+            this->Painting_InvalidateElementRect(pElement);
+        }
+        this->EndBatch();
+    }
+
+    bool GUIContextBase::GetElementBackgroundSubImageSize(GUIElement* pElement, unsigned int &widthOut, unsigned int &heightOut) const
+    {
+        assert(pElement != nullptr);
+
+        unsigned int fullImageWidth  = 0;
+        unsigned int fullImageHeight = 0;
+
+        unsigned int subImageWidthByStyle  = GUIElementStyle_Get_backgroundsubimagewidth(pElement->style);
+        unsigned int subImageHeightByStyle = GUIElementStyle_Get_backgroundsubimageheight(pElement->style);
+        if (subImageWidthByStyle == 0 || subImageHeightByStyle == 0)
+        {
+            if (pElement->hBackgroundImage != NULL && m_pResourceManager != nullptr)
+            {
+                if (!m_pResourceManager->GetImageSize(pElement->hBackgroundImage, fullImageWidth, fullImageHeight))
+                {
+                    return false;
+                }
+            }
+        }
+
+        if (subImageWidthByStyle == 0) {
+            widthOut = fullImageWidth;
+        } else {
+            widthOut = subImageWidthByStyle;
+        }
+
+        if (subImageHeightByStyle == 0) {
+            heightOut = fullImageHeight;
+        } else {
+            heightOut = subImageHeightByStyle;
+        }
+        
+        return true;
+    }
 
 
     void GUIContextBase::SetElementBorderLeftWidth(GUIElement* pElement, uint32_t width)

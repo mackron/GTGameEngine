@@ -490,7 +490,7 @@ namespace GT
     {
         style.backgroundSubImageOffsetX = value;
     }
-    inline uint32_t GUIElementSTyle_Get_backgroundsubimageoffsetx(const GUIElementStyle &style)
+    inline uint32_t GUIElementStyle_Get_backgroundsubimageoffsetx(const GUIElementStyle &style)
     {
         return style.backgroundSubImageOffsetX;
     }
@@ -499,7 +499,7 @@ namespace GT
     {
         style.backgroundSubImageOffsetY = value;
     }
-    inline uint32_t GUIElementSTyle_Get_backgroundsubimageoffsety(const GUIElementStyle &style)
+    inline uint32_t GUIElementStyle_Get_backgroundsubimageoffsety(const GUIElementStyle &style)
     {
         return style.backgroundSubImageOffsetY;
     }
@@ -508,7 +508,7 @@ namespace GT
     {
         style.backgroundSubImageWidth = value;
     }
-    inline uint32_t GUIElementSTyle_Get_backgroundsubimagewidth(const GUIElementStyle &style)
+    inline uint32_t GUIElementStyle_Get_backgroundsubimagewidth(const GUIElementStyle &style)
     {
         return style.backgroundSubImageWidth;
     }
@@ -517,7 +517,7 @@ namespace GT
     {
         style.backgroundSubImageWidth = value;
     }
-    inline uint32_t GUIElementSTyle_Get_backgroundsubimageheight(const GUIElementStyle &style)
+    inline uint32_t GUIElementStyle_Get_backgroundsubimageheight(const GUIElementStyle &style)
     {
         return style.backgroundSubImageHeight;
     }

@@ -821,6 +821,34 @@ namespace GT
         GTLib::Colour GetElementBackgroundColor(HGUIElement hElement) const;
 
 
+        /// Sets the background image to use with the given element.
+        ///
+        /// @param pElement      [in] The GUI element whose backgroundimage is being changed.
+        /// @param imageFilePath [in] The file path of the image to use as the background. Can be null, in which case no background image is used.
+        ///
+        /// @return True if the background image was set successfully; false otherwise.
+        bool SetElementBackgroundImage(HGUIElement hElement, const char* imageFilePath, unsigned int subImageOffsetX = 0, unsigned int subImageOffsetY = 0, unsigned int subImageWidth = 0, unsigned int subImageHeight = 0);
+
+        /// Retrieves the background image of the given element.
+        ///
+        /// @param pElement [in] The GUI element whose background image is being retrieved.
+        HGUIImage GetElementBackgroundImage(HGUIElement hElement);
+
+
+        /// Sets the offset of the given element's background sub-image.
+        void SetElementBackgroundSubImageOffset(HGUIElement hElement, unsigned int subImageOffsetX, unsigned int subImageOffsetY);
+
+        /// Retrieves the given element's background sub-image offset.
+        bool GetElementBackgroundSubImageOffset(HGUIElement hElement, unsigned int &offsetXOut, unsigned int &offsetYOut) const;
+
+
+        /// Sets the size of the given element's background sub-image.
+        void SetElementBackgroundSubImageSize(HGUIElement hElement, unsigned int subImageWidth, unsigned int subImageHeight);
+
+        /// Retrieves the sie of the given element's background sub-image.
+        bool GetElementBackgroundSubImageSize(HGUIElement hElement, unsigned int &widthOut, unsigned int &heightOut) const;
+
+
 
         /// Sets the width of the left border, in DPI-aware points.
         ///

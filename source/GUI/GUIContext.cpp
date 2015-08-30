@@ -1832,6 +1832,70 @@ namespace GT
         return GTLib::Colour(0.0f, 0.0f, 0.0f);
     }
 
+    bool GUIContext::SetElementBackgroundImage(HGUIElement hElement, const char* imageFilePath, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::SetElementBackgroundImage(pElement, imageFilePath, subImageOffsetX, subImageOffsetY, subImageWidth, subImageHeight);
+        }
+
+        return false;
+    }
+
+    HGUIImage GUIContext::GetElementBackgroundImage(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementBackgroundImage(pElement);
+        }
+
+        return NULL;
+    }
+
+
+    void GUIContext::SetElementBackgroundSubImageOffset(HGUIElement hElement, unsigned int subImageOffsetX, unsigned int subImageOffsetY)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementBackgroundSubImageOffset(pElement, subImageOffsetX, subImageOffsetY);
+        }
+    }
+
+    bool GUIContext::GetElementBackgroundSubImageOffset(HGUIElement hElement, unsigned int &offsetXOut, unsigned int &offsetYOut) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementBackgroundSubImageOffset(pElement, offsetXOut, offsetYOut);
+        }
+
+        return false;
+    }
+
+
+    void GUIContext::SetElementBackgroundSubImageSize(HGUIElement hElement, unsigned int subImageWidth, unsigned int subImageHeight)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementBackgroundSubImageSize(pElement, subImageWidth, subImageHeight);
+        }
+    }
+
+    bool GUIContext::GetElementBackgroundSubImageSize(HGUIElement hElement, unsigned int &widthOut, unsigned int &heightOut) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementBackgroundSubImageSize(pElement, widthOut, heightOut);
+        }
+
+        return false;
+    }
+
 
 
     void GUIContext::SetElementBorderLeftWidth(HGUIElement hElement, uint32_t width)

@@ -10,6 +10,7 @@
 #include "GUIElementStyle.hpp"
 #include "GUIEventHandler.hpp"
 #include "GUITextLayout.hpp"
+#include "GUIResourceManager.hpp"
 
 namespace GT
 {
@@ -181,6 +182,10 @@ namespace GT
 
         /// The element's text layout.
         GUITextLayout* pTextLayout;
+
+
+        /// The element's background image, if any.
+        HGUIImage hBackgroundImage;
 
 
         /// The list of event handlers currently attached to the element.
