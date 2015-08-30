@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/GUI/GUIContext.hpp>
-#include "GUIRenderer_Generic.hpp"
 
 extern "C" {
     //uint64_t _x64_clipping_clear(void* buffer, unsigned int stride, unsigned int rectLeft, unsigned int rectTop, uint64_t rectRight, uint64_t rectBottom);
