@@ -1,0 +1,10 @@
+// Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
+
+#include <GTGameEngine/GUI/GUIResourceManager.hpp>
+
+namespace GT
+{
+    GUIResourceManager::~GUIResourceManager()
+    {
+    }
+}
