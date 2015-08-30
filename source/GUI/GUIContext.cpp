@@ -868,6 +868,24 @@ namespace GT
         m_renderer->DrawRawImage(*this, xPos, yPos, width, height, pImageData, isTransparent);
     }
 
+    void GUIContext::Renderer_InitializeImage(HGUIImage hImage, unsigned int width, unsigned int height, GUIImageFormat format, const void* pData)
+    {
+        assert(m_renderer != nullptr);
+        m_renderer->InitializeImage(*this, hImage, width, height, format, pData);
+    }
+
+    void GUIContext::Renderer_UninitializeImage(HGUIImage hImage)
+    {
+        assert(m_renderer != nullptr);
+        m_renderer->UninitializeImage(*this, hImage);
+    }
+
+    void GUIContext::Renderer_DrawTexturedRectangle(GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    {
+        assert(m_renderer != nullptr);
+        m_renderer->DrawTexturedRectangle(*this, rect, hImage, colour, subImageOffsetX, subImageOffsetY, subImageWidth, subImageHeight);
+    }
+
 
 
 

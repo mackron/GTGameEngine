@@ -43,10 +43,10 @@ namespace GT
 
 
         /// Loads an image by the given path, or if it has already been loaded, returns a handle to the existing one.
-        HGUIImage AcquireImage(const char* filePath);
+        HGUIImage AcquireImage(const char* filePath, unsigned int &referenceCountOut);
 
         /// Unacquires the given image.
-        void UnacquireImage(HGUIImage hImage);
+        void UnacquireImage(HGUIImage hImage, unsigned int &referenceCountOut);
 
 
         /// Encodes a resource file path.
@@ -145,7 +145,7 @@ namespace GT
         ///     This does not create a new image - it simply looks at the already loaded images.
         ///     @par
         ///     This will increment the reference counter if non-null is returned.
-        HGUIImage AcquireLoadedImage(const char* filePath);
+        HGUIImage AcquireLoadedImage(const char* filePath, unsigned int &referenceCountOut);
 
         /// Retrieves a pointer to a LoadedImage structure that is mapped to the given image handle.
         ///

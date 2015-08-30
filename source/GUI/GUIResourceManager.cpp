@@ -14,16 +14,17 @@ namespace GT
     }
 
 
-    HGUIImage GUIResourceManager::AcquireImage(const char* filePath)
+    HGUIImage GUIResourceManager::AcquireImage(const char* filePath, unsigned int &referenceCountOut)
     {
         // First we need to check if the image is already loaded.
-        auto hImage = this->AcquireLoadedImage(filePath);
+        auto hImage = this->AcquireLoadedImage(filePath, referenceCountOut);
         if (hImage == 0)
         {
             // The image is not already loaded, so it needs to be loaded now.
             hImage = this->LoadImage(filePath);
             if (hImage != 0)
             {
+                referenceCountOut = 1;
                 m_loadedImages.PushBack(LoadedImage(hImage, filePath));
             }
         }
@@ -31,7 +32,7 @@ namespace GT
         return hImage;
     }
 
-    void GUIResourceManager::UnacquireImage(HGUIImage hImage)
+    void GUIResourceManager::UnacquireImage(HGUIImage hImage, unsigned int &referenceCountOut)
     {
         // We simply decrement the reference counter. If the new counter is at 0, we want to delete it completely.
         size_t loadedImageIndex;
@@ -46,6 +47,8 @@ namespace GT
                     this->UnloadImage(pLoadedImage->hImage);
                     m_loadedImages.Remove(loadedImageIndex);
                 }
+
+                referenceCountOut = pLoadedImage->referenceCount;
             }
         }
     }
@@ -86,7 +89,7 @@ namespace GT
     /////////////////////////////////////////
     // Private
 
-    HGUIImage GUIResourceManager::AcquireLoadedImage(const char* filePath)
+    HGUIImage GUIResourceManager::AcquireLoadedImage(const char* filePath, unsigned int &referenceCountOut)
     {
         for (size_t iLoadedImage = 0; iLoadedImage < m_loadedImages.count; ++iLoadedImage)
         {
@@ -95,6 +98,8 @@ namespace GT
             if (strcmp(loadedImage.filePath, filePath) == 0)
             {
                 loadedImage.referenceCount += 1;
+
+                referenceCountOut = loadedImage.referenceCount;
                 return loadedImage.hImage;
             }
         }

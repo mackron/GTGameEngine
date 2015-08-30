@@ -165,6 +165,15 @@ namespace GT
         /// @copydoc GUIContextBase::Renderer_DrawRawImage()
         void Renderer_DrawRawImage(int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent);
 
+        /// @copydoc GUIContextBase::Renderer_UninitializeImage()
+        void Renderer_InitializeImage(HGUIImage hImage, unsigned int width, unsigned int height, GUIImageFormat format, const void* pData);
+
+        /// @copydoc GUIContextBase::Renderer_UninitializeImage()
+        void Renderer_UninitializeImage(HGUIImage hImage);
+
+        /// @copydoc GUIContextBase::Renderer_DrawTexturedRectangle()
+        void Renderer_DrawTexturedRectangle(GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight);
+
 
 
     public:

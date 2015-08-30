@@ -268,6 +268,12 @@ namespace GT
             m_pElementUnderMouse = nullptr;
         }
 
+        // The background image needs to be cleared so that the renderer and resource manager can unacquire it.
+        if (this->GetElementBackgroundImage(pElement) != NULL)
+        {
+            this->SetElementBackgroundImage(pElement, nullptr);
+        }
+
 
         this->BeginBatch();
         {
@@ -1384,6 +1390,7 @@ namespace GT
         assert(pElement != nullptr);
 
         bool result = false;
+        bool needsLoadOnGraphicsSide = false;
 
         HGUIImage hOldBackgroundImage = pElement->hBackgroundImage;
         HGUIImage hNewBackgroundImage = NULL;
@@ -1397,9 +1404,14 @@ namespace GT
         {
             if (m_pResourceManager != nullptr)
             {
-                hNewBackgroundImage = m_pResourceManager->AcquireImage(imageFilePath);
+                unsigned int referenceCount = 0;
+                hNewBackgroundImage = m_pResourceManager->AcquireImage(imageFilePath, referenceCount);
                 if (hNewBackgroundImage != NULL)
                 {
+                    if (referenceCount == 1) {
+                        needsLoadOnGraphicsSide = true;
+                    }
+
                     result = true;
                 }
             }
@@ -1408,27 +1420,53 @@ namespace GT
 
         if (result)
         {
-            pElement->hBackgroundImage = hNewBackgroundImage;
-
-
-            // Style.
-            GUIElementStyle_Set_backgroundimage(pElement->style, m_pResourceManager->EncodeFilePath(imageFilePath));
-            GUIElementStyle_Set_backgroundsubimageoffsetx(pElement->style, subImageOffsetX);
-            GUIElementStyle_Set_backgroundsubimageoffsety(pElement->style, subImageOffsetY);
-            GUIElementStyle_Set_backgroundsubimagewidth(pElement->style, subImageWidth);
-            GUIElementStyle_Set_backgroundsubimageheight(pElement->style, subImageHeight);
-
-
-            // The element needs to be redrawn.
-            this->BeginBatch();
+            if (hNewBackgroundImage != hOldBackgroundImage)
             {
-                this->Painting_InvalidateElementRect(pElement);
+                // The renderer may need to know about the image.
+                if (needsLoadOnGraphicsSide)
+                {
+                    const void* backgroundImageData = m_pResourceManager->GetImageData(hNewBackgroundImage);
+                    GUIImageFormat backgroundImageFormat = m_pResourceManager->GetImageFormat(hNewBackgroundImage);
+                    unsigned int backgroundImageWidth;
+                    unsigned int backgroundImageHeight;
+                    m_pResourceManager->GetImageSize(hNewBackgroundImage, backgroundImageWidth, backgroundImageHeight);
+
+                    this->Renderer_InitializeImage(hNewBackgroundImage, backgroundImageWidth, backgroundImageHeight, backgroundImageFormat, backgroundImageData);
+                }
+
+                // The old background image needs to be unacquired.
+                if (hOldBackgroundImage != NULL)
+                {
+                    unsigned int oldBackgroundImageRefCount = 0;
+                    m_pResourceManager->UnacquireImage(hOldBackgroundImage, oldBackgroundImageRefCount);
+
+                    if (oldBackgroundImageRefCount == 0)
+                    {
+                        this->Renderer_UninitializeImage(hOldBackgroundImage);
+                    }
+                }
+
+
+
+
+                pElement->hBackgroundImage = hNewBackgroundImage;
+
+
+                // Style.
+                GUIElementStyle_Set_backgroundimage(pElement->style, m_pResourceManager->EncodeFilePath(imageFilePath));
+                GUIElementStyle_Set_backgroundsubimageoffsetx(pElement->style, subImageOffsetX);
+                GUIElementStyle_Set_backgroundsubimageoffsety(pElement->style, subImageOffsetY);
+                GUIElementStyle_Set_backgroundsubimagewidth(pElement->style, subImageWidth);
+                GUIElementStyle_Set_backgroundsubimageheight(pElement->style, subImageHeight);
+
+
+                // The element needs to be redrawn.
+                this->BeginBatch();
+                {
+                    this->Painting_InvalidateElementRect(pElement);
+                }
+                this->EndBatch();
             }
-            this->EndBatch();
-
-
-            // The old background image needs to be unacquired.
-            m_pResourceManager->UnacquireImage(hOldBackgroundImage);
         }
 
         return result;

@@ -197,9 +197,18 @@ namespace GT
         /// @param textRunDesc [in] Information about the text to draw.
         virtual void Renderer_DrawText(const GUITextRunDesc &textRunDesc) = 0;
 
-
         /// Draws a raw image buffer.
         virtual void Renderer_DrawRawImage(int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent) = 0;
+
+        /// @copydoc GUIRenderer::InitializeImage()
+        virtual void Renderer_InitializeImage(HGUIImage hImage, unsigned int width, unsigned int height, GUIImageFormat format, const void* pData) = 0;
+
+        /// @copydoc GUIRenderer::UninitializeImage()
+        virtual void Renderer_UninitializeImage(HGUIImage hImage) = 0;
+
+        /// @copydoc GUIRenderer::DrawTexturedRectangle()
+        virtual void Renderer_DrawTexturedRectangle(GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight) = 0;
+
 
 
 
