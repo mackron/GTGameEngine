@@ -49,8 +49,6 @@ namespace GT
     ///
     /// This class is used to layout the text of an element. It has been built in such a way that it doesn't actually depend
     /// on a GUI context, elements or surfaces. Thus, it can be used in places outside of the normal GUI stuff.
-    ///
-    /// The text is always
     class GUITextLayout
     {
     protected:

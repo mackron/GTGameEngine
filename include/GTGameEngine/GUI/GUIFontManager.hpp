@@ -3,7 +3,6 @@
 #ifndef GT_GUI_FontManager
 #define GT_GUI_FontManager
 
-#include "GUIGlyphMapManager.hpp"
 #include <GTLib/FontServer.hpp>
 #include <GTLib/Map.hpp>
 #include <GTLib/Colour.hpp>
