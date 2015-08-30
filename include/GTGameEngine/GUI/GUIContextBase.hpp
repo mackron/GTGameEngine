@@ -6,6 +6,7 @@
 #include "GUIElement.hpp"
 #include "GUISurface.hpp"
 #include "GUIFontManager.hpp"
+#include "GUIResourceManager.hpp"
 
 namespace GT
 {
@@ -23,7 +24,7 @@ namespace GT
     protected:
 
         /// Constructor.
-        GUIContextBase(GUIFontManager* pFontManager);
+        GUIContextBase(GUIFontManager* pFontManager, GUIResourceManager* pResourceManager);
 
         /// Destructor
         virtual ~GUIContextBase();
@@ -2339,6 +2340,9 @@ namespace GT
 
         /// A pointer to the font manager.
         GUIFontManager* m_pFontManager;
+
+        /// A pointer to the resource manager.
+        GUIResourceManager* m_pResourceManager;
 
 
         /// The base DPI on the X axis for calculating the scaling factor. Defaults to 96.

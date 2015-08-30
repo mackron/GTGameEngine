@@ -53,8 +53,8 @@ namespace GT
 
 
 
-    GUIContextBase::GUIContextBase(GUIFontManager* pFontManager)
-        : m_pFontManager(pFontManager),
+    GUIContextBase::GUIContextBase(GUIFontManager* pFontManager, GUIResourceManager* pResourceManager)
+        : m_pFontManager(pFontManager), m_pResourceManager(pResourceManager),
           m_xBaseDPI(96), m_yBaseDPI(96),
           m_pElementCapturingMouseEvents(nullptr), m_pElementUnderMouse(nullptr),
           m_pSurfaceUnderMouse(nullptr),

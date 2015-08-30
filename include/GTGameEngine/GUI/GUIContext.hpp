@@ -4,11 +4,7 @@
 #define GT_GUI_Context
 
 #include "GUIContextBase.hpp"
-#include "GUIElement.hpp"
-#include "GUISurface.hpp"
 #include "GUIRenderer.hpp"
-#include "GUIImageManager.hpp"
-#include "GUIFontManager.hpp"
 #include "GUIEventHandler.hpp"
 #include <GTLib/HandleManager.hpp>
 #include <GTLib/Vector.hpp>
@@ -72,7 +68,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GUIContext(GUIRenderer* renderer = nullptr, GUIFontManager* pFontManager = nullptr);
+        GUIContext(GUIRenderer* renderer = nullptr, GUIFontManager* pFontManager = nullptr, GUIResourceManager* pResourceManager = nullptr);
 
         /// Destructor.
         ~GUIContext();

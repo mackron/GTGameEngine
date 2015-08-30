@@ -8,8 +8,8 @@ extern "C" {
 
 namespace GT
 {
-    GUIContext::GUIContext(GUIRenderer* renderer, GUIFontManager* pFontManager)
-        : GUIContextBase(pFontManager),
+    GUIContext::GUIContext(GUIRenderer* renderer, GUIFontManager* pFontManager, GUIResourceManager* pResourceManager)
+        : GUIContextBase(pFontManager, pResourceManager),
           m_elementHandles(),
           m_surfaceHandles(),
           m_renderer(renderer),
