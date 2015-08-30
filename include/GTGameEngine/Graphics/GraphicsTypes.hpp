@@ -785,6 +785,8 @@ namespace GT
         unsigned int height;
     };
 
+
+#if 0
     /// Structure describing a texture.
     struct TextureDesc
     {
@@ -797,6 +799,7 @@ namespace GT
         unsigned int  usage;
         unsigned int  sampleCount;      ///< Only used by multisampled textures.
     };
+#endif
 
 
     /// Structure describing a sampler object.
