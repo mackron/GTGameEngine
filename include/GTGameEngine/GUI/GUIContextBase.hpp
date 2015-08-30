@@ -945,6 +945,23 @@ namespace GT
         HGUIImage GetElementBackgroundImage(GUIElement* pElement);
 
 
+        /// Sets the colour of the background image for the given element.
+        ///
+        /// @param pElement [in] The GUI element whose background colour is being changed.
+        /// @param colour   [in] The new background colour.
+        ///
+        /// @remarks
+        ///     The background image will be modulated by this color.
+        void SetElementBackgroundImageColor(GUIElement* pElement, const GTLib::Colour &colour);
+
+        /// Retrieves the colour of the background image for the given element.
+        ///
+        /// @param pElement [in] The GUI element whose background colour is being retrieved.
+        ///
+        /// @return The background colour of the given element.
+        GTLib::Colour GetElementBackgroundImageColor(GUIElement* pElement) const;
+
+
         /// Sets the offset of the given element's background sub-image.
         void SetElementBackgroundSubImageOffset(GUIElement* pElement, unsigned int subImageOffsetX, unsigned int subImageOffsetY);
 

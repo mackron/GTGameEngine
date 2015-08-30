@@ -1,12 +1,12 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/Graphics/GraphicsWorldGUIRenderer.hpp>
-#include <GTGameEngine/Graphics/GraphicsWorld.hpp>
+#include <GTGameEngine/Graphics/GraphicsWorldGUIResourceManager.hpp>
 
 namespace GT
 {
     GraphicsWorldGUIRenderer::GraphicsWorldGUIRenderer()
-        : m_pGraphicsWorld(nullptr), m_textures()
+        : m_pGraphicsWorld(nullptr)
     {
     }
 
@@ -95,40 +95,23 @@ namespace GT
 
     void GraphicsWorldGUIRenderer::InitializeImage(GT::GUIContext &gui, HGUIImage hImage, unsigned int width, unsigned int height, GUIImageFormat format, const void* pData)
     {
+        // We don't need to do anything here because this will be used in conjunction with GraphicsWorldGUIResourceManager which is where
+        // the texture resource will be created.
+
         (void)gui;
-
-        assert(hImage != NULL);
-
-        if (m_pGraphicsWorld != nullptr)
-        {
-            GraphicsTextureResourceDesc textureDesc;
-            textureDesc.width  = width;
-            textureDesc.height = height;
-            textureDesc.depth  = 1;
-            textureDesc.format = GUIImageFormatToGraphicsTextureFormat(format);
-            textureDesc.pData  = pData;
-            HGraphicsResource hTextureResource = m_pGraphicsWorld->CreateTextureResource(textureDesc);
-            if (hTextureResource != NULL)
-            {
-                m_textures.Add(hImage, hTextureResource);
-            }
-        }
+        (void)hImage;
+        (void)width;
+        (void)height;
+        (void)format;
+        (void)pData;
     }
 
     void GraphicsWorldGUIRenderer::UninitializeImage(GT::GUIContext &gui, HGUIImage hImage)
     {
+        // As above, no need to do anything here because it will all be handled by GraphicsWorldGUIResourceManager.
+
         (void)gui;
-
-        HGraphicsResource hTextureResource = this->GetTextureResource(hImage);
-        if (hTextureResource != NULL)
-        {
-            if (m_pGraphicsWorld != nullptr)
-            {
-                m_pGraphicsWorld->DeleteResource(hTextureResource);
-            }
-
-            m_textures.RemoveByKey(hImage);
-        }
+        (void)hImage;
     }
 
     void GraphicsWorldGUIRenderer::DrawTexturedRectangle(GT::GUIContext &gui, GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
@@ -149,13 +132,12 @@ namespace GT
 
     HGraphicsResource GraphicsWorldGUIRenderer::GetTextureResource(HGUIImage hImage)
     {
-        auto iTextureResource = m_textures.Find(hImage);
-        if (iTextureResource != nullptr)
-        {
-            return iTextureResource->value;
-        }
+        // The input image will be a pointer to a GraphicsAssetResource_Texture object because it will be used in conjunction with GraphicsWorldGUIResourceManager.
 
-        return NULL;
+        GraphicsAssetResource_Texture* pTextureResource = reinterpret_cast<GraphicsAssetResource_Texture*>(hImage);
+        assert(pTextureResource != nullptr);
+
+        return pTextureResource->GetGraphicsResource();
     }
 
     TextureFormat GraphicsWorldGUIRenderer::GUIImageFormatToGraphicsTextureFormat(GUIImageFormat imageFormat)

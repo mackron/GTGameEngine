@@ -345,8 +345,31 @@ namespace GT
         GLuint m_guiRectangleIndexBuffer;
 
 
-        /// The program to use when drawing GUI text.
-        GLuint m_guiTextProgram;
+
+        /// The program to use when drawing GUI rectangles.
+        GLuint m_guiTexturedRectangleProgram;
+
+        /// The location of the projection uniform variable for GUI's.
+        GLint m_guiTexturedRectangleProgram_ProjectionLoc;
+
+        /// The location of the rectangle color uniform variable.
+        GLint m_guiTexturedRectangleProgram_ColorLoc;
+
+        /// The location of the rectangle dimensions uniform variable.
+        GLint m_guiTexturedRectangleProgram_RectLoc;
+
+        /// The location of the UV offset and scale uniform variable.
+        GLint m_guiTexturedRectangleProgram_UVOffsetAndScaleLoc;
+
+        /// The location of the texture uniform variable.
+        GLint m_guiTexturedRectangleProgram_TextureLoc;
+
+        /// The vertex buffer to use when drawing text.
+        GLuint m_guiTexturedRectangleVertexBuffer;
+
+        /// The index buffer to use when drawing text.
+        GLuint m_guiTexturedRectangleIndexBuffer;
+
 
 
         /// The shader to use with DrawRawImage().

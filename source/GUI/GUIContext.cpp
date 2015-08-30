@@ -880,10 +880,17 @@ namespace GT
         m_renderer->UninitializeImage(*this, hImage);
     }
 
-    void GUIContext::Renderer_DrawTexturedRectangle(GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    void GUIContext::Renderer_DrawTexturedRectangle(GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour color, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
     {
         assert(m_renderer != nullptr);
-        m_renderer->DrawTexturedRectangle(*this, rect, hImage, colour, subImageOffsetX, subImageOffsetY, subImageWidth, subImageHeight);
+
+        if (color.a > 0)
+        {
+            if (rect.left < rect.right && rect.top < rect.bottom)
+            {
+                m_renderer->DrawTexturedRectangle(*this, rect, hImage, color, subImageOffsetX, subImageOffsetY, subImageWidth, subImageHeight);
+            }
+        }
     }
 
 
@@ -1870,6 +1877,27 @@ namespace GT
         }
 
         return NULL;
+    }
+
+
+    void GUIContext::SetElementBackgroundImageColor(HGUIElement hElement, const GTLib::Colour &color)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementBackgroundImageColor(pElement, color);
+        }
+    }
+
+    GTLib::Colour GUIContext::GetElementBackgroundImageColor(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementBackgroundImageColor(pElement);
+        }
+
+        return GTLib::Colour(1, 1, 1, 1);
     }
 
 

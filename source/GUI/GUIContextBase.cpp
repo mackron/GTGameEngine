@@ -242,8 +242,11 @@ namespace GT
             GUIElementStyle_Set_minheight(pElement->style, 0U,                         NumberType_Absolute);
             GUIElementStyle_Set_maxheight(pElement->style, GUIStyleNumber_MaxUnsigned, NumberType_Absolute);
 
+            // Background image color should be white by default.
+            GUIElementStyle_Set_backgroundimagecolor(pElement->style, GTLib::Colour(1, 1, 1, 1));
+
             // Text colour.
-            GUIElementStyle_Set_textcolor(pElement->style, GTLib::Colour(0.0f, 0.0f, 0.0f, 1.0f));
+            GUIElementStyle_Set_textcolor(pElement->style, GTLib::Colour(0, 0, 0, 1));
 
             // Inherit the font.
             GUIElementStyle_Set_inheritfont(pElement->style, true);
@@ -1453,7 +1456,12 @@ namespace GT
 
 
                 // Style.
-                GUIElementStyle_Set_backgroundimage(pElement->style, m_pResourceManager->EncodeFilePath(imageFilePath));
+                if (imageFilePath != nullptr) {
+                    GUIElementStyle_Set_backgroundimage(pElement->style, m_pResourceManager->EncodeFilePath(imageFilePath));
+                } else {
+                    GUIElementStyle_Set_backgroundimage(pElement->style, 0);
+                }
+
                 GUIElementStyle_Set_backgroundsubimageoffsetx(pElement->style, subImageOffsetX);
                 GUIElementStyle_Set_backgroundsubimageoffsety(pElement->style, subImageOffsetY);
                 GUIElementStyle_Set_backgroundsubimagewidth(pElement->style, subImageWidth);
@@ -1477,6 +1485,27 @@ namespace GT
         assert(pElement != nullptr);
 
         return pElement->hBackgroundImage;
+    }
+
+
+    void GUIContextBase::SetElementBackgroundImageColor(GUIElement* pElement, const GTLib::Colour &colour)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_backgroundimagecolor(pElement->style, colour);
+
+        this->BeginBatch();
+        {
+            this->Painting_InvalidateElementRect(pElement);
+        }
+        this->EndBatch();
+    }
+
+    GTLib::Colour GUIContextBase::GetElementBackgroundImageColor(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return GUIElementStyle_Get_backgroundimagecolor(pElement->style);
     }
 
 
@@ -3904,7 +3933,31 @@ namespace GT
         assert(pSurface != nullptr);
         assert(pElement != nullptr);
 
-        Painting_DrawAndSetClippingRect(pSurface, visibleRect, this->GetElementBackgroundColor(pElement));
+        //Painting_DrawAndSetClippingRect(pSurface, visibleRect, this->GetElementBackgroundColor(pElement));
+
+        Renderer_SetClippingRect(visibleRect);
+
+        // Background color.
+        Renderer_DrawRectangle(visibleRect, this->GetElementBackgroundColor(pElement));
+
+        // Background image.
+        HGUIImage hBackgroundImage = this->GetElementBackgroundImage(pElement);
+        if (hBackgroundImage != NULL)
+        {
+            unsigned int subImageOffsetX;
+            unsigned int subImageOffsetY;
+            if (this->GetElementBackgroundSubImageOffset(pElement, subImageOffsetX, subImageOffsetY))
+            {
+                unsigned int subImageWidth;
+                unsigned int subImageHeight;
+                if (this->GetElementBackgroundSubImageSize(pElement, subImageWidth, subImageHeight))
+                {
+                    GTLib::Colour backgroundImageColor = this->GetElementBackgroundImageColor(pElement);
+                    Renderer_DrawTexturedRectangle(visibleRect, hBackgroundImage, backgroundImageColor, subImageOffsetX, subImageOffsetY, subImageWidth, subImageHeight);
+                }
+            }
+        }
+        
 
 
         // Text.

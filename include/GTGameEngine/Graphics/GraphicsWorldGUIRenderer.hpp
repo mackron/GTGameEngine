@@ -80,9 +80,6 @@ namespace GT
 
         /// A pointer to the graphcis world to route painting commands to.
         GraphicsWorld* m_pGraphicsWorld;
-
-        /// The list of texture objects, mapped to a HGUIImage object. A more optimized solution may be required if this shows up in profiling.
-        GTLib::Map<HGUIImage, HGraphicsResource> m_textures;
     };
 }
 

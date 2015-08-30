@@ -844,6 +844,13 @@ namespace GT
         HGUIImage GetElementBackgroundImage(HGUIElement hElement);
 
 
+        /// @copydoc GUIContextBase::SetElementBackgroundImageColor()
+        void SetElementBackgroundImageColor(HGUIElement hElement, const GTLib::Colour &colour);
+
+        /// @copydoc GUIContextBase::GetElementBackgroundImageColor()
+        GTLib::Colour GetElementBackgroundImageColor(HGUIElement hElement) const;
+
+
         /// Sets the offset of the given element's background sub-image.
         void SetElementBackgroundSubImageOffset(HGUIElement hElement, unsigned int subImageOffsetX, unsigned int subImageOffsetY);
 

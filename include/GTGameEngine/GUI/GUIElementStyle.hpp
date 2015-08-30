@@ -103,6 +103,14 @@ namespace GT
         ClippingBoundary_Outer       = 2
     };
 
+    // The boundary of the background.
+    enum BackgroundBoundary
+    {
+        BackgroundBoundary_InnerBorder = 0,     ///< Inside border, outside padding.
+        BackgroundBoundary_Inner       = 1,     ///< Inside border, inside padding
+        BackgroundBoundary_Outer       = 2      ///< Outside border
+    };
+
 
     // The various font weights.
     enum FontWeight
@@ -162,10 +170,12 @@ namespace GT
         uint8_t  backgroundColourB;
         uint8_t  backgroundColourA;
         uint32_t backgroundImagePath;                       // 32-bit hash representation of the image path.
+        uint32_t backgroundImageColor;                      // [1,8] red | [9,16] green | [17,24] blue | [24,32] alpha
         uint32_t backgroundSubImageOffsetX;                 // Unsigned and always in texels.
         uint32_t backgroundSubImageOffsetY;                 // Unsigned and always in texels.
         uint32_t backgroundSubImageWidth;                   // Unsigned and always in texels. If 0, uses the width of the entire image.
         uint32_t backgroundSubImageHeight;                  // Unsigned and always in texels. If 0, uses the height of the entire image.
+        uint32_t backgroundBoundary;                        // [1,2] background color boundary | [3,4] backgound image boundary
 
         uint32_t borderLeftWidth;                           // [1,4] type | [5,32] value
         uint32_t borderTopWidth;                            // [1,4] type | [5,32] value
@@ -486,6 +496,27 @@ namespace GT
         return style.backgroundImagePath;
     }
 
+    inline void GUIElementStyle_Set_backgroundimagecolor(GUIElementStyle &style, const GTLib::Colour &color)
+    {
+        uint32_t value =
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.r * 255)) << 24) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.g * 255)) << 16) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.b * 255)) <<  8) |
+            (static_cast<uint32_t>(static_cast<uint8_t>(color.a * 255)) <<  0);
+
+        style.backgroundImageColor = value;
+    }
+    inline GTLib::Colour GUIElementStyle_Get_backgroundimagecolor(const GUIElementStyle &style)
+    {
+        GTLib::Colour color;
+        color.r = static_cast<float>((style.backgroundImageColor & 0xFF000000) >> 24) / 255.0f;
+        color.g = static_cast<float>((style.backgroundImageColor & 0x00FF0000) >> 16) / 255.0f;
+        color.b = static_cast<float>((style.backgroundImageColor & 0x0000FF00) >>  8) / 255.0f;
+        color.a = static_cast<float>((style.backgroundImageColor & 0x000000FF) >>  0) / 255.0f;
+
+        return color;
+    }
+
     inline void GUIElementStyle_Set_backgroundsubimageoffsetx(GUIElementStyle &style, uint32_t value)
     {
         style.backgroundSubImageOffsetX = value;
@@ -515,11 +546,29 @@ namespace GT
 
     inline void GUIElementStyle_Set_backgroundsubimageheight(GUIElementStyle &style, uint32_t value)
     {
-        style.backgroundSubImageWidth = value;
+        style.backgroundSubImageHeight = value;
     }
     inline uint32_t GUIElementStyle_Get_backgroundsubimageheight(const GUIElementStyle &style)
     {
         return style.backgroundSubImageHeight;
+    }
+
+    inline void GUIElementStyle_Set_backgroundcolorboundary(GUIElementStyle &style, BackgroundBoundary boundary)
+    {
+        style.backgroundBoundary = (style.backgroundBoundary & ~0x03) | (static_cast<uint8_t>(boundary));
+    }
+    inline BackgroundBoundary GUIElementStyle_Get_backgroundcolorboundary(const GUIElementStyle &style)
+    {
+        return static_cast<BackgroundBoundary>((style.backgroundBoundary & 0x03));
+    }
+
+    inline void GUIElementStyle_Set_backgroundimageboundary(GUIElementStyle &style, BackgroundBoundary boundary)
+    {
+        style.backgroundBoundary = uint8_t((style.backgroundBoundary & ~0x0C) | (uint8_t(boundary) << 2));
+    }
+    inline BackgroundBoundary GUIElementStyle_Get_backgroundimageboundary(const GUIElementStyle &style)
+    {
+        return static_cast<BackgroundBoundary>((style.backgroundBoundary & 0x0C) >> 2);
     }
 
 
