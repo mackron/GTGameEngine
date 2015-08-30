@@ -152,18 +152,20 @@ namespace GT
         uint32_t minHeight;                                 // [1,4] type | [5,32] value
         uint32_t maxHeight;                                 // [1,4] type | [5,32] value
 
-        //int32_t innerOffsetX;
-        //int32_t innerOffsetY;
-
         uint8_t childAxisAndAlignmentAndPositioning;        // [1,1] child axis              | [2,3] horizontal align         | [4,5] vertical align  | [6,7] positioning
         uint8_t childrenSizeBoundaryAndPositionOrigin;      // [1,2] children width boundary | [3,4] children height boundary | [5,6] position origin
         uint8_t clipping;                                   // [1,2] clipping mode           | [3,4] child clipping boundary
         uint8_t padding1;
 
-        uint8_t backgroundColourR;
-        uint8_t backgroundColourG;
-        uint8_t backgroundColourB;
-        uint8_t backgroundColourA;
+        uint8_t  backgroundColourR;
+        uint8_t  backgroundColourG;
+        uint8_t  backgroundColourB;
+        uint8_t  backgroundColourA;
+        uint32_t backgroundImagePath;                       // 32-bit hash representation of the image path.
+        uint32_t backgroundSubImageOffsetX;                 // Unsigned and always in texels.
+        uint32_t backgroundSubImageOffsetY;                 // Unsigned and always in texels.
+        uint32_t backgroundSubImageWidth;                   // Unsigned and always in texels. If 0, uses the width of the entire image.
+        uint32_t backgroundSubImageHeight;                  // Unsigned and always in texels. If 0, uses the height of the entire image.
 
         uint32_t borderLeftWidth;                           // [1,4] type | [5,32] value
         uint32_t borderTopWidth;                            // [1,4] type | [5,32] value
@@ -361,29 +363,6 @@ namespace GT
     }
 
 
-#if 0
-    // Inner X offset
-    inline void GUIElementStyle_Set_inneroffsetx(GUIElementStyle &style, int32_t innerOffsetX)
-    {
-        style.innerOffsetX = innerOffsetX;
-    }
-    inline int32_t GUIElementStyle_Get_inneroffsetx(GUIElementStyle &style)
-    {
-        return style.innerOffsetX;
-    }
-
-    // Inner Y offset
-    inline void GUIElementStyle_Set_inneroffsety(GUIElementStyle &style, int32_t innerOffsetY)
-    {
-        style.innerOffsetY = innerOffsetY;
-    }
-    inline int32_t GUIElementStyle_Get_inneroffsety(GUIElementStyle &style)
-    {
-        return style.innerOffsetY;
-    }
-#endif
-
-
     // Child axis.
     inline void GUIElementStyle_Set_childaxis(GUIElementStyle &style, ChildAxis childAxis)
     {
@@ -497,6 +476,52 @@ namespace GT
 
         return colour;
     }
+
+    inline void GUIElementStyle_Set_backgroundimage(GUIElementStyle &style, uint32_t backgroundImagePathHash)
+    {
+        style.backgroundImagePath = backgroundImagePathHash;
+    }
+    inline uint32_t GUIElementStyle_Get_backgroundimage(const GUIElementStyle &style)
+    {
+        return style.backgroundImagePath;
+    }
+
+    inline void GUIElementStyle_Set_backgroundsubimageoffsetx(GUIElementStyle &style, uint32_t value)
+    {
+        style.backgroundSubImageOffsetX = value;
+    }
+    inline uint32_t GUIElementSTyle_Get_backgroundsubimageoffsetx(const GUIElementStyle &style)
+    {
+        return style.backgroundSubImageOffsetX;
+    }
+
+    inline void GUIElementStyle_Set_backgroundsubimageoffsety(GUIElementStyle &style, uint32_t value)
+    {
+        style.backgroundSubImageOffsetY = value;
+    }
+    inline uint32_t GUIElementSTyle_Get_backgroundsubimageoffsety(const GUIElementStyle &style)
+    {
+        return style.backgroundSubImageOffsetY;
+    }
+
+    inline void GUIElementStyle_Set_backgroundsubimagewidth(GUIElementStyle &style, uint32_t value)
+    {
+        style.backgroundSubImageWidth = value;
+    }
+    inline uint32_t GUIElementSTyle_Get_backgroundsubimagewidth(const GUIElementStyle &style)
+    {
+        return style.backgroundSubImageWidth;
+    }
+
+    inline void GUIElementStyle_Set_backgroundsubimageheight(GUIElementStyle &style, uint32_t value)
+    {
+        style.backgroundSubImageWidth = value;
+    }
+    inline uint32_t GUIElementSTyle_Get_backgroundsubimageheight(const GUIElementStyle &style)
+    {
+        return style.backgroundSubImageHeight;
+    }
+
 
 
     // Border width.
