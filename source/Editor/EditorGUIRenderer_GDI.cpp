@@ -227,6 +227,19 @@ namespace GT
         (void)context;
         (void)hImage;
     }
+
+    void EditorGUIRenderer_GDI::DrawTexturedRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    {
+        // TODO: Implement.
+        (void)context;
+        (void)rect;
+        (void)hImage;
+        (void)colour;
+        (void)subImageOffsetX;
+        (void)subImageOffsetY;
+        (void)subImageWidth;
+        (void)subImageHeight;
+    }
 }
 
 #endif

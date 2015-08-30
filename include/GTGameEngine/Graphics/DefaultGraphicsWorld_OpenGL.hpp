@@ -226,6 +226,9 @@ namespace GT
         /// @copydoc GUIRenderer::DrawRawImage()
         void GUI_DrawRawImage(GUIContext &gui, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent);
 
+        /// @copydoc GUIRenderer::DrawTexturedRectangle()
+        void GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight);
+
 
 
     private:

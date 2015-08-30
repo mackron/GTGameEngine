@@ -205,7 +205,7 @@ namespace GT
         return m_pGraphicsWorldImpl->CreateRenderTargetFromTexture(hTextureResource, flags);
     }
 
-    void DefaultGraphicsWorld::DeleteRenderTarget(HGraphicsResource hRT)
+    void DefaultGraphicsWorld::DeleteRenderTarget(HGraphicsRenderTarget hRT)
     {
         m_pGraphicsWorldImpl->DeleteRenderTarget(hRT);
     }
@@ -370,5 +370,10 @@ namespace GT
     void DefaultGraphicsWorld::GUI_DrawRawImage(GUIContext &gui, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent)
     {
         m_pGraphicsWorldImpl->GUI_DrawRawImage(gui, xPos, yPos, width, height, pImageData, isTransparent);
+    }
+
+    void DefaultGraphicsWorld::GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    {
+        m_pGraphicsWorldImpl->GUI_DrawTexturedRectangle(gui, rect, hTextureResource, colour, subImageOffsetX, subImageOffsetY, subImageWidth, subImageHeight);
     }
 }

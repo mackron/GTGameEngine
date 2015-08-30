@@ -1984,6 +1984,18 @@ namespace GT
         }
     }
 
+    void DefaultGraphicsWorld_OpenGL::GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    {
+        (void)gui;
+        (void)rect;
+        (void)hTextureResource;
+        (void)colour;
+        (void)subImageOffsetX;
+        (void)subImageOffsetY;
+        (void)subImageWidth;
+        (void)subImageHeight;
+    }
+
 
     ////////////////////////////////////////////////
     // Private

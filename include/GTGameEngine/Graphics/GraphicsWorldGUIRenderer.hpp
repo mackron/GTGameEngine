@@ -62,6 +62,9 @@ namespace GT
         /// @copydoc GUIRenderer::UninitializeImage()
         void UninitializeImage(GT::GUIContext &context, HGUIImage hImage);
 
+        /// @copydoc GUIRenderer::DrawTexturedRectangle()
+        void DrawTexturedRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight);
+
 
 
     private:

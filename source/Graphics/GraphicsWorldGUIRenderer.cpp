@@ -131,6 +131,17 @@ namespace GT
         }
     }
 
+    void GraphicsWorldGUIRenderer::DrawTexturedRectangle(GT::GUIContext &gui, GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    {
+        (void)gui;
+
+        HGraphicsResource hTextureResource = this->GetTextureResource(hImage);
+        if (hTextureResource != NULL)
+        {
+            m_pGraphicsWorld->GUI_DrawTexturedRectangle(gui, rect, hTextureResource, colour, subImageOffsetX, subImageOffsetY, subImageWidth, subImageHeight);
+        }
+    }
+
 
 
     //////////////////////////////////////////////

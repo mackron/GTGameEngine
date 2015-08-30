@@ -88,6 +88,10 @@ namespace GT
 
         /// Allows the renderer to uninitialize and delete internal objects for the given image.
         virtual void UninitializeImage(GT::GUIContext &context, HGUIImage hImage) = 0;
+
+        /// Draws a rectangle that is textured with the given image.
+        virtual void DrawTexturedRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight) = 0;
+
     };
 }
 
