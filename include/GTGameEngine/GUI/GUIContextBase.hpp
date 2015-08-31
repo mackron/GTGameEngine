@@ -930,6 +930,12 @@ namespace GT
         /// @return The background colour of the given element.
         GTLib::Colour GetElementBackgroundColor(GUIElement* pElement) const;
 
+        /// Sets the boundary of the given element's background color.
+        void SetElementBackgroundColorBoundary(GUIElement* pElement, BackgroundBoundary boundary);
+
+        /// Retrieves the boundary of the given element's background color.
+        BackgroundBoundary GetElementBackgroundColorBoundary(GUIElement* pElement) const;
+
 
         /// Sets the background image to use with the given element.
         ///
@@ -974,6 +980,13 @@ namespace GT
 
         /// Retrieves the sie of the given element's background sub-image.
         bool GetElementBackgroundSubImageSize(GUIElement* pElement, unsigned int &widthOut, unsigned int &heightOut) const;
+
+
+        /// Sets the boundary of the given element's background image.
+        void SetElementBackgroundImageBoundary(GUIElement* pElement, BackgroundBoundary boundary);
+
+        /// Retrieves the boundary of the given element's background image.
+        BackgroundBoundary GetElementBackgroundImageBoundary(GUIElement* pElement) const;
 
 
 
@@ -1896,16 +1909,17 @@ namespace GT
         ///     If the element falls outside the given rectangle, it will ignored, as will it's descendents that are clipped against it.
         void Painting_PaintElement(GUISurface* pSurface, GUIElement* pElement, const GTLib::Rect<int> &clippingRect);
 
-        /// Optimized function for setting the clipping and drawing the rectangle at the same time.
+        /// Retrieves the rectangle that should be used for drawing the background color.
         ///
-        /// @param pSurface [in] The surface to draw on.
-        /// @param rect     [in] The clipping rectangle, and the rectangle to draw.
-        /// @param color    [in] The color to draw the clipping rectangle.
-        ///
-        /// @remarks
-        ///     This function simply combines SetClippingRect and DrawRectangle into a single optimized call.
-        void Painting_DrawAndSetClippingRect(GUISurface* pSurface, const GTLib::Rect<int> &rect, const GTLib::Colour &color);
+        /// @param clippingRect [in]  The rectangle to clip against.
+        /// @param rectOut      [out] A reference to the variable that will receive the rectangle.
+        void Painting_GetClippedBackgroundColorRect(GUIElement* pElement, const GTLib::Rect<int> &clippingRect, GTLib::Rect<int> &rectOut);
 
+        /// Retrieves the rectangle that should be used for drawing the background image.
+        ///
+        /// @param clippingRect [in]  The rectangle to clip against.
+        /// @param rectOut      [out] A reference to the variable that will receive the rectangle.
+        void Painting_GetClippedBackgroundImageRect(GUIElement* pElement, const GTLib::Rect<int> &clippingRect, GTLib::Rect<int> &rectOut);
 
 
 

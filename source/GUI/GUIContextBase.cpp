@@ -1388,6 +1388,27 @@ namespace GT
         return GUIElementStyle_Get_backgroundcolor(pElement->style);
     }
 
+    void GUIContextBase::SetElementBackgroundColorBoundary(GUIElement* pElement, BackgroundBoundary boundary)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_backgroundcolorboundary(pElement->style, boundary);
+
+        this->BeginBatch();
+        {
+            this->Painting_InvalidateElementRect(pElement);
+        }
+        this->EndBatch();
+    }
+
+    BackgroundBoundary GUIContextBase::GetElementBackgroundColorBoundary(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return GUIElementStyle_Get_backgroundcolorboundary(pElement->style);
+    }
+
+
     bool GUIContextBase::SetElementBackgroundImage(GUIElement* pElement, const char* imageFilePath, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
     {
         assert(pElement != nullptr);
@@ -1581,6 +1602,27 @@ namespace GT
         }
         
         return true;
+    }
+
+
+    void GUIContextBase::SetElementBackgroundImageBoundary(GUIElement* pElement, BackgroundBoundary boundary)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_backgroundimageboundary(pElement->style, boundary);
+
+        this->BeginBatch();
+        {
+            this->Painting_InvalidateElementRect(pElement);
+        }
+        this->EndBatch();
+    }
+
+    BackgroundBoundary GUIContextBase::GetElementBackgroundImageBoundary(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return GUIElementStyle_Get_backgroundimageboundary(pElement->style);
     }
 
 
@@ -3937,8 +3979,13 @@ namespace GT
 
         Renderer_SetClippingRect(visibleRect);
 
+
         // Background color.
-        Renderer_DrawRectangle(visibleRect, this->GetElementBackgroundColor(pElement));
+        GTLib::Rect<int> backgroundColorRect;
+        this->Painting_GetClippedBackgroundColorRect(pElement, visibleRect, backgroundColorRect);
+        Renderer_DrawRectangle(backgroundColorRect, this->GetElementBackgroundColor(pElement));
+
+
 
         // Background image.
         HGUIImage hBackgroundImage = this->GetElementBackgroundImage(pElement);
@@ -3952,8 +3999,11 @@ namespace GT
                 unsigned int subImageHeight;
                 if (this->GetElementBackgroundSubImageSize(pElement, subImageWidth, subImageHeight))
                 {
+                    GTLib::Rect<int> backgroundImageRect;
+                    this->Painting_GetClippedBackgroundImageRect(pElement, visibleRect, backgroundImageRect);
+
                     GTLib::Colour backgroundImageColor = this->GetElementBackgroundImageColor(pElement);
-                    Renderer_DrawTexturedRectangle(visibleRect, hBackgroundImage, backgroundImageColor, subImageOffsetX, subImageOffsetY, subImageWidth, subImageHeight);
+                    Renderer_DrawTexturedRectangle(backgroundImageRect, hBackgroundImage, backgroundImageColor, subImageOffsetX, subImageOffsetY, subImageWidth, subImageHeight);
                 }
             }
         }
@@ -4195,127 +4245,62 @@ namespace GT
             borderBottomRect3.right = borderBottomRect2.left;
             Renderer_DrawRectangle(borderBottomRect3, GUIElementStyle_Get_borderbottommaskcolor(pElement->style));
         }
-
-
-        // Text.
-#if 0
-        if (this->DoesElementHaveText(pElement->handle))
-        {
-            // We need to iterate over each text run
-
-            auto font = this->GetElementFont(pElement->handle);
-            if (font != nullptr)
-            {
-                // Text needs to be clipped against the inner rectangle (the same rectangle children are clipped against).
-                GTLib::Rect<int> childClippingRect;
-                this->GetElementChildrenClippingRect(pElement, childClippingRect);
-
-                // The text clipping rectangle needs to be clamped against the input clipping rectangle.
-                childClippingRect.Clamp(visibleRect);
-
-                // TODO: Optimize this so that per-character clipping is performed instead of per-pixel.
-                m_renderer->SetClippingRect(childClippingRect);
-                //Painting_SetClippingRect(surface, childClippingRect);
-
-
-                unsigned int tabSizeInPixels = 16;      // <-- Temp. Change this based on the size of the space character.
-
-                font->GetServer().GetFontEngine().MeasureString(font->GetFontHandle(), this->GetElementText(pElement->handle), tabSizeInPixels, [&](const GTLib::FontEngine &fontEngine, char32_t character, GTLib::GlyphHandle glyph, const GTLib::Rect<int> &rect, GTLib::GlyphMetrics &, int &, int &) -> bool
-                {
-                    if (!GTLib::Strings::IsWhitespace(character) && glyph != 0)
-                    {
-                        GTLib::Rect<float> uvCoords;
-                        GTLib::GlyphMapHandle glyphMap = fontEngine.GetGlyphMap(glyph, uvCoords);
-                        if (glyphMap != 0)
-                        {
-                            // We need to map the glyph map image data so we can source it's data correctly. We know this will be in A8 format.
-                            uint8_t*  srcData = reinterpret_cast<uint8_t* >(fontEngine.MapGlyphMapData(glyphMap));
-                            uint32_t* dstData = reinterpret_cast<uint32_t*>(this->MapSurfaceRenderBuffer(surface.handle));
-
-                            if (srcData != nullptr && dstData != nullptr)
-                            {
-                                float textPositionX = pElement->layout.absolutePosX + pElement->layout.borderLeftWidth + pElement->layout.paddingLeft;
-                                float textPositionY = pElement->layout.absolutePosY + pElement->layout.borderTopWidth  + pElement->layout.paddingTop;
-
-                                unsigned int glyphMapWidth;
-                                unsigned int glyphMapHeight;
-                                fontEngine.GetGlyphMapSize(glyphMap, glyphMapWidth, glyphMapHeight);
-
-                                unsigned int srcLeft   = static_cast<unsigned int>(uvCoords.left   * glyphMapWidth);
-                                unsigned int srcRight  = static_cast<unsigned int>(uvCoords.right  * glyphMapWidth);
-                                unsigned int srcTop    = static_cast<unsigned int>(uvCoords.top    * glyphMapHeight);
-                                unsigned int srcBottom = static_cast<unsigned int>(uvCoords.bottom * glyphMapHeight);
-
-                                assert(srcLeft   < glyphMapWidth);
-                                assert(srcRight  < glyphMapWidth);
-                                assert(srcTop    < glyphMapHeight);
-                                assert(srcBottom < glyphMapHeight);
-
-                                assert(srcLeft < srcRight);
-                                assert(srcTop  < srcBottom);
-
-                                unsigned int srcWidth  = srcRight - srcLeft;
-                                unsigned int srcHeight = srcBottom - srcTop;
-
-                                unsigned int dstWidth  = surface.width;
-                                unsigned int dstHeight = surface.height;
-
-                                for (unsigned int y = 0; y < srcHeight; ++y)
-                                {
-                                    unsigned int srcOffset = (y + srcTop) * glyphMapWidth;
-                                    unsigned int dstOffset = (y + static_cast<int>(roundf(textPositionY)) + rect.top) * dstWidth;
-
-                                    // TODO: Make sure we don't draw past the boundary of the buffer.
-
-                                    for (unsigned int x = 0; x < srcWidth; ++x)
-                                    {
-                                        unsigned int iSrc = srcOffset + x + srcLeft;
-                                        unsigned int iDst = dstOffset + x + static_cast<int>(roundf(textPositionX)) + rect.left;
-
-                                        if ((dstData[iDst] & 0x01))    // <-- Check clipping.
-                                        {
-                                            uint32_t src = (srcData[iSrc] | 0xFFFFFF00);
-                                            uint32_t dst = (dstData[iDst] & 0xFFFFFF00) | ((dstData[iDst] & 0x000000FE) >> 1);
-
-                                            uint32_t srcR = (src & 0xFF000000) >> 24;
-                                            uint32_t srcG = (src & 0x00FF0000) >> 16;
-                                            uint32_t srcB = (src & 0x0000FF00) >> 8;
-                                            uint32_t srcA = (src & 0x000000FF) >> 0;
-
-                                            uint32_t dstR = (dst & 0xFF000000) >> 24;
-                                            uint32_t dstG = (dst & 0x00FF0000) >> 16;
-                                            uint32_t dstB = (dst & 0x0000FF00) >> 8;
-                                            uint32_t dstA = (dst & 0x000000FF) >> 0;
-
-                                            float alpha = srcA / 255.0f;
-                                            uint32_t resR = static_cast<uint32_t>(((dstR * (1.0f-alpha)) + (srcR * alpha))) << 24;
-                                            uint32_t resG = static_cast<uint32_t>(((dstG * (1.0f-alpha)) + (srcG * alpha))) << 16;
-                                            uint32_t resB = static_cast<uint32_t>(((dstB * (1.0f-alpha)) + (srcB * alpha))) << 8;
-                                            uint32_t resA = static_cast<uint32_t>(((dstA * (1.0f-alpha)) + (srcA * alpha))) << 0;
-
-                                            dstData[iDst] = resR | resG | resB | ((resA >> 1) << 1) | (dstData[iDst] & 0x01);
-                                        }
-                                    }
-                                }
-                            }
-
-                            this->UnmapSurfaceRenderBuffer(surface.handle, dstData);
-                        }
-                    }
-
-                    return true;
-                });
-            }
-        }
-#endif
     }
 
-    void GUIContextBase::Painting_DrawAndSetClippingRect(GUISurface* pSurface, const GTLib::Rect<int> &rect, const GTLib::Colour &color)
+    void GUIContextBase::Painting_GetClippedBackgroundColorRect(GUIElement* pElement, const GTLib::Rect<int> &clippingRect, GTLib::Rect<int> &rectOut)
     {
-        (void)pSurface;
+        switch (GUIElementStyle_Get_backgroundcolorboundary(pElement->style))
+        {
+        case BackgroundBoundary_InnerBorder:
+            {
+                this->GetElementAbsoluteInnerBorderRect(pElement, rectOut);
+                rectOut.Clamp(clippingRect);
 
-        Renderer_SetClippingRect(rect);
-        Renderer_DrawRectangle(rect, color);
+                return;
+            }
+
+        case BackgroundBoundary_Inner:
+            {
+                this->GetElementAbsoluteInnerRect(pElement, rectOut);
+                rectOut.Clamp(clippingRect);
+
+                return;
+            }
+
+        default:
+            {
+                rectOut = clippingRect;
+                return;
+            }
+        }
+    }
+
+    void GUIContextBase::Painting_GetClippedBackgroundImageRect(GUIElement* pElement, const GTLib::Rect<int> &clippingRect, GTLib::Rect<int> &rectOut)
+    {
+        switch (GUIElementStyle_Get_backgroundimageboundary(pElement->style))
+        {
+        case BackgroundBoundary_InnerBorder:
+            {
+                this->GetElementAbsoluteInnerBorderRect(pElement, rectOut);
+                rectOut.Clamp(clippingRect);
+
+                return;
+            }
+
+        case BackgroundBoundary_Inner:
+            {
+                this->GetElementAbsoluteInnerRect(pElement, rectOut);
+                rectOut.Clamp(clippingRect);
+
+                return;
+            }
+
+        default:
+            {
+                rectOut = clippingRect;
+                return;
+            }
+        }
     }
 
 

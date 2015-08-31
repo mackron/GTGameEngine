@@ -829,6 +829,12 @@ namespace GT
         /// @return The background colour of the given element.
         GTLib::Colour GetElementBackgroundColor(HGUIElement hElement) const;
 
+        /// @copydoc GUIContextBase::SetElementBackgroundColorBoundary()
+        void SetElementBackgroundColorBoundary(HGUIElement hElement, BackgroundBoundary boundary);
+
+        /// @copydoc GUIContextBase::GetElementBackgroundColorBoundary()
+        BackgroundBoundary GetElementBackgroundColorBoundary(HGUIElement hElement) const;
+
 
         /// Sets the background image to use with the given element.
         ///
@@ -843,13 +849,11 @@ namespace GT
         /// @param pElement [in] The GUI element whose background image is being retrieved.
         HGUIImage GetElementBackgroundImage(HGUIElement hElement);
 
-
         /// @copydoc GUIContextBase::SetElementBackgroundImageColor()
         void SetElementBackgroundImageColor(HGUIElement hElement, const GTLib::Colour &colour);
 
         /// @copydoc GUIContextBase::GetElementBackgroundImageColor()
         GTLib::Colour GetElementBackgroundImageColor(HGUIElement hElement) const;
-
 
         /// Sets the offset of the given element's background sub-image.
         void SetElementBackgroundSubImageOffset(HGUIElement hElement, unsigned int subImageOffsetX, unsigned int subImageOffsetY);
@@ -857,12 +861,17 @@ namespace GT
         /// Retrieves the given element's background sub-image offset.
         bool GetElementBackgroundSubImageOffset(HGUIElement hElement, unsigned int &offsetXOut, unsigned int &offsetYOut) const;
 
-
         /// Sets the size of the given element's background sub-image.
         void SetElementBackgroundSubImageSize(HGUIElement hElement, unsigned int subImageWidth, unsigned int subImageHeight);
 
         /// Retrieves the sie of the given element's background sub-image.
         bool GetElementBackgroundSubImageSize(HGUIElement hElement, unsigned int &widthOut, unsigned int &heightOut) const;
+
+        /// @copydoc GUIContextBase::SetElementBackgroundColorBoundary()
+        void SetElementBackgroundImageBoundary(HGUIElement hElement, BackgroundBoundary boundary);
+
+        /// @copydoc GUIContextBase::GetElementBackgroundColorBoundary()
+        BackgroundBoundary GetElementBackgroundImageBoundary(HGUIElement hElement) const;
 
 
 

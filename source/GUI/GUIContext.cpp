@@ -1857,6 +1857,27 @@ namespace GT
         return GTLib::Colour(0.0f, 0.0f, 0.0f);
     }
 
+    void GUIContext::SetElementBackgroundColorBoundary(HGUIElement hElement, BackgroundBoundary boundary)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementBackgroundColorBoundary(pElement, boundary);
+        }
+    }
+
+    BackgroundBoundary GUIContext::GetElementBackgroundColorBoundary(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementBackgroundColorBoundary(pElement);
+        }
+
+        return BackgroundBoundary_InnerBorder;
+    }
+
+
     bool GUIContext::SetElementBackgroundImage(HGUIElement hElement, const char* imageFilePath, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
     {
         auto pElement = this->GetElementPtr(hElement);
@@ -1940,6 +1961,27 @@ namespace GT
         }
 
         return false;
+    }
+
+
+    void GUIContext::SetElementBackgroundImageBoundary(HGUIElement hElement, BackgroundBoundary boundary)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementBackgroundImageBoundary(pElement, boundary);
+        }
+    }
+
+    BackgroundBoundary GUIContext::GetElementBackgroundImageBoundary(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementBackgroundImageBoundary(pElement);
+        }
+
+        return BackgroundBoundary_InnerBorder;
     }
 
 
