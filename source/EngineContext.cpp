@@ -17,6 +17,7 @@
 #include <direct.h>
 
 #include "Assets/DefaultAssetAllocator.hpp"
+#include "Audio/OpenAL/AudioEngine_OpenAL.hpp"
 
 namespace GT
 {
@@ -24,7 +25,8 @@ namespace GT
         : m_commandLine(),
           m_fileSystem(),
           m_assetLibrary(m_fileSystem),
-          m_componentLibrary()
+          m_componentLibrary(),
+          m_audioSystem(nullptr), m_audioPlaybackDevice(0), m_audioListener(0), m_soundWorld(*this)
     {
     }
 
@@ -125,11 +127,62 @@ namespace GT
 #endif
 
 
+
+        //////////////////////////////////////////
+        // Audio System
+        //
+        // TODO: Add support for multiple audio systems.
+        m_audioSystem = new AudioEngine_OpenAL();
+        if (m_audioSystem->Startup())
+        {
+
+        }
+        else
+        {
+            // TODO: Use the null audio system.
+        }
+
+        assert(m_audioSystem != nullptr);
+        {
+            // TEMP: Print the playback devices.
+            size_t playbackDeviceCount = m_audioSystem->GetPlaybackDeviceCount();
+            for (size_t iDevice = 0; iDevice < playbackDeviceCount; ++iDevice)
+            {
+                auto deviceInfo = m_audioSystem->GetPlaybackDeviceInfo(iDevice);
+
+                GTLib::String message;
+                message.AppendFormatted("Playback Device (%d) - %s", static_cast<int>(iDevice), deviceInfo.name.c_str());
+
+                printf("%s\n", message.c_str());
+            }
+
+            if (playbackDeviceCount > 0)
+            {
+                m_audioPlaybackDevice = m_audioSystem->OpenPlaybackDevice(0);
+                m_audioListener = m_audioSystem->CreateListener(m_audioPlaybackDevice);
+            }
+        }
+
+
         return result;
     }
 
     void EngineContext::Shutdown()
     {
+        // Audio system.
+        m_soundWorld.StopAllSounds();
+
+        m_audioSystem->DeleteListener(m_audioListener);
+        m_audioListener = 0;
+
+        m_audioSystem->ClosePlaybackDevice(m_audioPlaybackDevice);
+        m_audioPlaybackDevice = 0;
+
+        delete m_audioSystem;
+        m_audioSystem = nullptr;
+
+
+
         // Asset library.
         m_assetLibrary.Shutdown();
 
@@ -285,5 +338,25 @@ namespace GT
     void EngineContext::DeleteSceneNodeComponent(SceneNodeComponent* pComponent)
     {
         m_componentLibrary.DeleteComponent(pComponent);
+    }
+
+
+
+    ////////////////////////////////////////////////////
+    // Audio
+
+    void EngineContext::PlaySound(const char* fileName, bool relativePositioning)
+    {
+        m_soundWorld.PlaySound(fileName, vec3(0, 0, 0), relativePositioning);
+    }
+
+    void EngineContext::SetListenerPosition(float x, float y, float z)
+    {
+        m_audioSystem->SetListenerPosition(m_audioListener, x, y, z);
+    }
+
+    void EngineContext::SetListenerRotation(const quat &orientation)
+    {
+        m_audioSystem->SetListenerOrientation(m_audioListener, orientation);
     }
 }

@@ -10,6 +10,8 @@
 #include "FileSystem.hpp"
 #include "Graphics/GraphicsTypes.hpp"
 #include "Assets/AssetLibrary.hpp"
+#include "Audio/AudioEngine.hpp"
+#include "Audio/SoundWorld.hpp"
 #include "Scene/SceneNodeComponentDescriptorLibrary.hpp"
 
 #if defined(GT_BUILD_COMPONENT_EVENTS)
@@ -165,6 +167,43 @@ namespace GT
 
 
 
+        ////////////////////////////////////////////////////
+        // Audio
+        //
+        // A lot of these are temp until the new audio library is done.
+
+        /// Retrieves a reference to the internal audio system.
+        ///
+        /// @return A reference to the internal audio system.
+        AudioEngine & GetAudioSystem() { return *m_audioSystem; }
+
+        /// Retrieves a handle to the playback device.
+        ///
+        /// @return A handle to the playback device.
+        HPlaybackDevice GetAudioPlaybackDevice() { return m_audioPlaybackDevice; }
+
+        /// Retrieves a handle to the audio listener.
+        ///
+        /// @return A handle to the audio listener.
+        HListener GetAudioListener() { return m_audioListener; }
+
+        /// Retrieves a reference to the global sound world.
+        ///
+        /// @return A reference to the global sound world for when a sound needs to be played globally, outside of a scene.
+        SoundWorld & GetSoundWorld() { return m_soundWorld; }
+
+
+        /// Helper for playing a sound.
+        void PlaySound(const char* fileName, bool relativePositioning = true);
+
+        /// Helper for setting the position of the audio listener.
+        void SetListenerPosition(float x, float y, float z);
+
+        /// Helper for setting the rotation of the audio listener.
+        void SetListenerRotation(const quat &orientation);
+
+
+
     private:
 
         /// An object representing the command line that was used to initialise the game engine.
@@ -222,6 +261,20 @@ namespace GT
 
         /// The list of registered scene node component descriptors.
         SceneNodeComponentDescriptorLibrary m_componentLibrary;
+
+
+
+        /// The audio system. This should never be null, but it needs to be a pointer because it's a virtual class.
+        AudioEngine* m_audioSystem;
+
+        /// The playback device handle for audio.
+        HPlaybackDevice m_audioPlaybackDevice;
+
+        /// The listener handle for audio.
+        HListener m_audioListener;
+
+        /// The global sound world.
+        SoundWorld m_soundWorld;
 
 
     private:    // No copying.
