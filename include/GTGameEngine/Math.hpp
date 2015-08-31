@@ -48,6 +48,531 @@ namespace GT
 
 
     //////////////////////////////////
+    // vec2
+
+    struct vec2;
+
+    inline vec2 operator+(const vec2 &v0, const vec2 &v1);
+    inline vec2 operator+(const vec2 &v0, float v1);
+    inline vec2 operator+(float v0, const vec2 &v1);
+
+    inline vec2 operator-(const vec2 &v0, const vec2 &v1);
+    inline vec2 operator-(const vec2 &v0, float v1);
+    inline vec2 operator-(float v0, const vec2 &v1);
+
+    inline vec2 operator*(const vec2 &v0, const vec2 &v1);
+    inline vec2 operator*(const vec2 &v0, float v1);
+    inline vec2 operator*(float v0, const vec2 &v1);
+
+    inline vec2 operator/(const vec2 &v0, const vec2 &v1);
+    inline vec2 operator/(const vec2 &v0, float v1);
+    inline vec2 operator/(float v0, const vec2 &v1);
+    
+    /// Structure representing a vec2/float2.
+    struct vec2
+    {
+        float x;
+        float y;
+
+
+        vec2()
+        {
+        }
+
+        vec2(const vec2 &other)
+            : x(other.x), y(other.y)
+        {
+        }
+
+        vec2(float _x, float _y)
+            : x(_x), y(_y)
+        {
+        }
+
+
+        vec2 & operator=(const vec2 &other)
+        {
+            x = other.x;
+            y = other.y;
+
+            return *this;
+        }
+
+        float & operator[](int index)
+        {
+            return *(&x + index);
+        }
+
+        float operator[](int index) const
+        {
+            return *(&x + index);
+        }
+
+
+        vec2 & operator+=(const vec2 &other)
+        {
+            return (*this) = (*this) + other;
+        }
+        vec2 & operator+=(float other)
+        {
+            return (*this) = (*this) + other;
+        }
+
+        vec2 & operator-=(const vec2 &other)
+        {
+            return (*this) = (*this) - other;
+        }
+        vec2 & operator-=(float other)
+        {
+            return (*this) = (*this) - other;
+        }
+
+        vec2 & operator*=(const vec2 &other)
+        {
+            return (*this) = (*this) * other;
+        }
+        vec2 & operator*=(float other)
+        {
+            return (*this) = (*this) * other;
+        }
+
+        vec2 & operator/=(const vec2 &other)
+        {
+            return (*this) = (*this) / other;
+        }
+        vec2 & operator/=(float other)
+        {
+            return (*this) = (*this) / other;
+        }
+
+
+        ///////////////////////////////////
+        // Static Members
+
+        static const vec2 zero;
+        static const vec2 one;
+        static const vec2 posx;
+        static const vec2 posy;
+        static const vec2 negx;
+        static const vec2 negy;
+    };
+
+    /// Performs an addition on the given vector.
+    inline vec2 add(const vec2 &v0, const vec2 &v1)
+    {
+        return vec2(v0.x + v1.x, v0.y + v1.y);
+    }
+    inline vec2 add(const vec2 &v0, float v1)
+    {
+        return vec2(v0.x + v1, v0.y + v1);
+    }
+
+
+    /// Performs a subtraction on the given vector.
+    inline vec2 sub(const vec2 &v0, const vec2 &v1)
+    {
+        return vec2(v0.x - v1.x, v0.y - v1.y);
+    }
+    inline vec2 sub(const vec2 &v0, float v1)
+    {
+        return vec2(v0.x - v1, v0.y - v1);
+    }
+    inline vec2 sub(float v0, const vec2 &v1)
+    {
+        return vec2(v0 - v1.x, v0 - v1.y);
+    }
+
+
+    /// Performs a multiplication on the given vector.
+    inline vec2 mul(const vec2 &v0, const vec2 &v1)
+    {
+        return vec2(v0.x * v1.x, v0.y * v1.y);
+    }
+    inline vec2 mul(const vec2 &v0, float v1)
+    {
+        return vec2(v0.x * v1, v0.y * v1);
+    }
+
+
+    /// Performs a division on the given vector.
+    inline vec2 div(const vec2 &v0, const vec2 &v1)
+    {
+        return vec2(v0.x / v1.x, v0.y / v1.y);
+    }
+    inline vec2 div(const vec2 &v0, float v1)
+    {
+        return vec2(v0.x / v1, v0.y / v1);
+    }
+    inline vec2 div(float v0, const vec2 &v1)
+    {
+        return vec2(v0 / v1.x, v0 / v1.y);
+    }
+
+
+    /// Calculates the squared length of a vector.
+    inline float length2(const vec2 &v)
+    {
+        return v.x*v.x + v.y*v.y;
+    }
+
+    /// Calculates the length of a vector.
+    inline float length(const vec2 &v)
+    {
+        return ::sqrtf(length2(v));
+    }
+
+    /// Returns the normalization of the given vector.
+    inline vec2 normalize(const vec2 &v)
+    {
+        return div(v, length(v));
+    }
+
+
+    /// Performs a dot product between two vectors.
+    inline float dot(const vec2 &v0, const vec2 &v1)
+    {
+        return v0.x*v1.x + v0.y*v1.y;
+    }
+
+
+
+    //////////////////////////
+    // Operator Overloads
+
+    inline vec2 operator+(const vec2 &v0, const vec2 &v1)
+    {
+        return add(v0, v1);
+    }
+    inline vec2 operator+(const vec2 &v0, float v1)
+    {
+        return add(v0, v1);
+    }
+    inline vec2 operator+(float v0, const vec2 &v1)
+    {
+        return add(v1, v0);
+    }
+
+    inline vec2 operator-(const vec2 &v0, const vec2 &v1)
+    {
+        return sub(v0, v1);
+    }
+    inline vec2 operator-(const vec2 &v0, float v1)
+    {
+        return sub(v0, v1);
+    }
+    inline vec2 operator-(float v0, const vec2 &v1)
+    {
+        return sub(v0, v1);
+    }
+
+    inline vec2 operator*(const vec2 &v0, const vec2 &v1)
+    {
+        return mul(v0, v1);
+    }
+    inline vec2 operator*(const vec2 &v0, float v1)
+    {
+        return mul(v0, v1);
+    }
+    inline vec2 operator*(float v0, const vec2 &v1)
+    {
+        return mul(v1, v0);
+    }
+
+    inline vec2 operator/(const vec2 &v0, const vec2 &v1)
+    {
+        return div(v0, v1);
+    }
+    inline vec2 operator/(const vec2 &v0, float v1)
+    {
+        return div(v0, v1);
+    }
+    inline vec2 operator/(float v0, const vec2 &v1)
+    {
+        return div(v0, v1);
+    }
+
+    inline bool operator==(const vec2 &v0, const vec2 &v1)
+    {
+        return v0.x == v1.x && v0.y == v1.y;
+    }
+    inline bool operator!=(const vec2 &v0, const vec2 &v1)
+    {
+        return !(v0 == v1);
+    }
+
+
+
+    //////////////////////////////////
+    // vec3
+
+    struct vec3;
+
+    inline vec3 operator+(const vec3 &v0, const vec3 &v1);
+    inline vec3 operator+(const vec3 &v0, float v1);
+    inline vec3 operator+(float v0, const vec3 &v1);
+
+    inline vec3 operator-(const vec3 &v0, const vec3 &v1);
+    inline vec3 operator-(const vec3 &v0, float v1);
+    inline vec3 operator-(float v0, const vec3 &v1);
+
+    inline vec3 operator*(const vec3 &v0, const vec3 &v1);
+    inline vec3 operator*(const vec3 &v0, float v1);
+    inline vec3 operator*(float v0, const vec3 &v1);
+
+    inline vec3 operator/(const vec3 &v0, const vec3 &v1);
+    inline vec3 operator/(const vec3 &v0, float v1);
+    inline vec3 operator/(float v0, const vec3 &v1);
+
+    /// Structure representing a vec3/float3.
+    struct vec3
+    {
+        float x;
+        float y;
+        float z;
+
+
+        vec3()
+        {
+        }
+
+        vec3(const vec3 &other)
+            : x(other.x), y(other.y), z(other.z)
+        {
+        }
+
+        vec3(float _x, float _y, float _z)
+            : x(_x), y(_y), z(_z)
+        {
+        }
+
+
+        vec3 & operator=(const vec3 &other)
+        {
+            x = other.x;
+            y = other.y;
+            z = other.z;
+
+            return *this;
+        }
+
+        float & operator[](int index)
+        {
+            return *(&x + index);
+        }
+
+        float operator[](int index) const
+        {
+            return *(&x + index);
+        }
+
+
+        vec3 & operator+=(const vec3 &other)
+        {
+            return (*this) = (*this) + other;
+        }
+        vec3 & operator+=(float other)
+        {
+            return (*this) = (*this) + other;
+        }
+
+        vec3 & operator-=(const vec3 &other)
+        {
+            return (*this) = (*this) - other;
+        }
+        vec3 & operator-=(float other)
+        {
+            return (*this) = (*this) - other;
+        }
+
+        vec3 & operator*=(const vec3 &other)
+        {
+            return (*this) = (*this) * other;
+        }
+        vec3 & operator*=(float other)
+        {
+            return (*this) = (*this) * other;
+        }
+
+        vec3 & operator/=(const vec3 &other)
+        {
+            return (*this) = (*this) / other;
+        }
+        vec3 & operator/=(float other)
+        {
+            return (*this) = (*this) / other;
+        }
+
+
+        ///////////////////////////////////
+        // Static Members
+
+        static const vec3 zero;
+        static const vec3 one;
+        static const vec3 posx;
+        static const vec3 posy;
+        static const vec3 posz;
+        static const vec3 negx;
+        static const vec3 negy;
+        static const vec3 negz;
+    };
+
+    /// Performs an addition on the given vector.
+    inline vec3 add(const vec3 &v0, const vec3 &v1)
+    {
+        return vec3(v0.x + v1.x, v0.y + v1.y, v0.z + v1.z);
+    }
+    inline vec3 add(const vec3 &v0, float v1)
+    {
+        return vec3(v0.x + v1, v0.y + v1, v0.z + v1);
+    }
+
+
+    /// Performs a subtraction on the given vector.
+    inline vec3 sub(const vec3 &v0, const vec3 &v1)
+    {
+        return vec3(v0.x - v1.x, v0.y - v1.y, v0.z - v1.z);
+    }
+    inline vec3 sub(const vec3 &v0, float v1)
+    {
+        return vec3(v0.x - v1, v0.y - v1, v0.z - v1);
+    }
+    inline vec3 sub(float v0, const vec3 &v1)
+    {
+        return vec3(v0 - v1.x, v0 - v1.y, v0 - v1.z);
+    }
+
+
+    /// Performs a multiplication on the given vector.
+    inline vec3 mul(const vec3 &v0, const vec3 &v1)
+    {
+        return vec3(v0.x * v1.x, v0.y * v1.y, v0.z * v1.z);
+    }
+    inline vec3 mul(const vec3 &v0, float v1)
+    {
+        return vec3(v0.x * v1, v0.y * v1, v0.z * v1);
+    }
+
+
+    /// Performs a division on the given vector.
+    inline vec3 div(const vec3 &v0, const vec3 &v1)
+    {
+        return vec3(v0.x / v1.x, v0.y / v1.y, v0.z / v1.z);
+    }
+    inline vec3 div(const vec3 &v0, float v1)
+    {
+        return vec3(v0.x / v1, v0.y / v1, v0.z / v1);
+    }
+    inline vec3 div(float v0, const vec3 &v1)
+    {
+        return vec3(v0 / v1.x, v0 / v1.y, v0 / v1.z);
+    }
+
+
+    /// Calculates the squared length of a vector.
+    inline float length2(const vec3 &v)
+    {
+        return v.x*v.x + v.y*v.y + v.z*v.z;
+    }
+
+    /// Calculates the length of a vector.
+    inline float length(const vec3 &v)
+    {
+        return ::sqrtf(length2(v));
+    }
+
+    /// Returns the normalization of the given vector.
+    inline vec3 normalize(const vec3 &v)
+    {
+        return div(v, length(v));
+    }
+
+
+    /// Performs a dot product between two vectors.
+    inline float dot(const vec3 &v0, const vec3 &v1)
+    {
+        return v0.x*v1.x + v0.y*v1.y + v0.z*v1.z;
+    }
+
+    /// Performs a cross product between two vectors.
+    ///
+    /// The W component is ignored and set to 0 in the returned vector.
+    inline vec3 cross(const vec3 &v0, const vec3 &v1)
+    {
+        return vec3(
+            v0.y*v1.z - v0.z*v1.y,
+            v0.z*v1.x - v0.x*v1.z,
+            v0.x*v1.y - v0.y*v1.x
+        );
+    }
+
+
+    //////////////////////////
+    // Operator Overloads
+
+    inline vec3 operator+(const vec3 &v0, const vec3 &v1)
+    {
+        return add(v0, v1);
+    }
+    inline vec3 operator+(const vec3 &v0, float v1)
+    {
+        return add(v0, v1);
+    }
+    inline vec3 operator+(float v0, const vec3 &v1)
+    {
+        return add(v1, v0);
+    }
+
+    inline vec3 operator-(const vec3 &v0, const vec3 &v1)
+    {
+        return sub(v0, v1);
+    }
+    inline vec3 operator-(const vec3 &v0, float v1)
+    {
+        return sub(v0, v1);
+    }
+    inline vec3 operator-(float v0, const vec3 &v1)
+    {
+        return sub(v0, v1);
+    }
+
+    inline vec3 operator*(const vec3 &v0, const vec3 &v1)
+    {
+        return mul(v0, v1);
+    }
+    inline vec3 operator*(const vec3 &v0, float v1)
+    {
+        return mul(v0, v1);
+    }
+    inline vec3 operator*(float v0, const vec3 &v1)
+    {
+        return mul(v1, v0);
+    }
+
+    inline vec3 operator/(const vec3 &v0, const vec3 &v1)
+    {
+        return div(v0, v1);
+    }
+    inline vec3 operator/(const vec3 &v0, float v1)
+    {
+        return div(v0, v1);
+    }
+    inline vec3 operator/(float v0, const vec3 &v1)
+    {
+        return div(v0, v1);
+    }
+
+    inline bool operator==(const vec3 &v0, const vec3 &v1)
+    {
+        return v0.x == v1.x && v0.y == v1.y && v0.z == v1.z;
+    }
+    inline bool operator!=(const vec3 &v0, const vec3 &v1)
+    {
+        return !(v0 == v1);
+    }
+
+
+
+    //////////////////////////////////
     // vec4
 
     struct vec4;
@@ -333,262 +858,6 @@ namespace GT
 
 
     //////////////////////////////////
-    // vec2
-
-    struct vec2;
-
-    inline vec2 operator+(const vec2 &v0, const vec2 &v1);
-    inline vec2 operator+(const vec2 &v0, float v1);
-    inline vec2 operator+(float v0, const vec2 &v1);
-
-    inline vec2 operator-(const vec2 &v0, const vec2 &v1);
-    inline vec2 operator-(const vec2 &v0, float v1);
-    inline vec2 operator-(float v0, const vec2 &v1);
-
-    inline vec2 operator*(const vec2 &v0, const vec2 &v1);
-    inline vec2 operator*(const vec2 &v0, float v1);
-    inline vec2 operator*(float v0, const vec2 &v1);
-
-    inline vec2 operator/(const vec2 &v0, const vec2 &v1);
-    inline vec2 operator/(const vec2 &v0, float v1);
-    inline vec2 operator/(float v0, const vec2 &v1);
-    
-    /// Structure representing a vec2/float4.
-    struct vec2
-    {
-        float x;
-        float y;
-
-
-        vec2()
-        {
-        }
-
-        vec2(const vec2 &other)
-            : x(other.x), y(other.y)
-        {
-        }
-
-        vec2(float _x, float _y)
-            : x(_x), y(_y)
-        {
-        }
-
-
-        vec2 & operator=(const vec2 &other)
-        {
-            x = other.x;
-            y = other.y;
-
-            return *this;
-        }
-
-        float & operator[](int index)
-        {
-            return *(&x + index);
-        }
-
-        float operator[](int index) const
-        {
-            return *(&x + index);
-        }
-
-
-        vec2 & operator+=(const vec2 &other)
-        {
-            return (*this) = (*this) + other;
-        }
-        vec2 & operator+=(float other)
-        {
-            return (*this) = (*this) + other;
-        }
-
-        vec2 & operator-=(const vec2 &other)
-        {
-            return (*this) = (*this) - other;
-        }
-        vec2 & operator-=(float other)
-        {
-            return (*this) = (*this) - other;
-        }
-
-        vec2 & operator*=(const vec2 &other)
-        {
-            return (*this) = (*this) * other;
-        }
-        vec2 & operator*=(float other)
-        {
-            return (*this) = (*this) * other;
-        }
-
-        vec2 & operator/=(const vec2 &other)
-        {
-            return (*this) = (*this) / other;
-        }
-        vec2 & operator/=(float other)
-        {
-            return (*this) = (*this) / other;
-        }
-
-
-        ///////////////////////////////////
-        // Static Members
-
-        static const vec2 zero;
-        static const vec2 one;
-        static const vec2 posx;
-        static const vec2 posy;
-        static const vec2 negx;
-        static const vec2 negy;
-    };
-
-    /// Performs an addition on the given vector.
-    inline vec2 add(const vec2 &v0, const vec2 &v1)
-    {
-        return vec2(v0.x + v1.x, v0.y + v1.y);
-    }
-    inline vec2 add(const vec2 &v0, float v1)
-    {
-        return vec2(v0.x + v1, v0.y + v1);
-    }
-
-
-    /// Performs a subtraction on the given vector.
-    inline vec2 sub(const vec2 &v0, const vec2 &v1)
-    {
-        return vec2(v0.x - v1.x, v0.y - v1.y);
-    }
-    inline vec2 sub(const vec2 &v0, float v1)
-    {
-        return vec2(v0.x - v1, v0.y - v1);
-    }
-    inline vec2 sub(float v0, const vec2 &v1)
-    {
-        return vec2(v0 - v1.x, v0 - v1.y);
-    }
-
-
-    /// Performs a multiplication on the given vector.
-    inline vec2 mul(const vec2 &v0, const vec2 &v1)
-    {
-        return vec2(v0.x * v1.x, v0.y * v1.y);
-    }
-    inline vec2 mul(const vec2 &v0, float v1)
-    {
-        return vec2(v0.x * v1, v0.y * v1);
-    }
-
-
-    /// Performs a division on the given vector.
-    inline vec2 div(const vec2 &v0, const vec2 &v1)
-    {
-        return vec2(v0.x / v1.x, v0.y / v1.y);
-    }
-    inline vec2 div(const vec2 &v0, float v1)
-    {
-        return vec2(v0.x / v1, v0.y / v1);
-    }
-    inline vec2 div(float v0, const vec2 &v1)
-    {
-        return vec2(v0 / v1.x, v0 / v1.y);
-    }
-
-
-    /// Calculates the squared length of a vector.
-    inline float length2(const vec2 &v)
-    {
-        return v.x*v.x + v.y*v.y;
-    }
-
-    /// Calculates the length of a vector.
-    inline float length(const vec2 &v)
-    {
-        return ::sqrtf(length2(v));
-    }
-
-    /// Returns the normalization of the given vector.
-    inline vec2 normalize(const vec2 &v)
-    {
-        return div(v, length(v));
-    }
-
-
-    /// Performs a dot product between two vectors.
-    inline float dot(const vec2 &v0, const vec2 &v1)
-    {
-        return v0.x*v1.x + v0.y*v1.y;
-    }
-
-
-
-    //////////////////////////
-    // Operator Overloads
-
-    inline vec2 operator+(const vec2 &v0, const vec2 &v1)
-    {
-        return add(v0, v1);
-    }
-    inline vec2 operator+(const vec2 &v0, float v1)
-    {
-        return add(v0, v1);
-    }
-    inline vec2 operator+(float v0, const vec2 &v1)
-    {
-        return add(v1, v0);
-    }
-
-    inline vec2 operator-(const vec2 &v0, const vec2 &v1)
-    {
-        return sub(v0, v1);
-    }
-    inline vec2 operator-(const vec2 &v0, float v1)
-    {
-        return sub(v0, v1);
-    }
-    inline vec2 operator-(float v0, const vec2 &v1)
-    {
-        return sub(v0, v1);
-    }
-
-    inline vec2 operator*(const vec2 &v0, const vec2 &v1)
-    {
-        return mul(v0, v1);
-    }
-    inline vec2 operator*(const vec2 &v0, float v1)
-    {
-        return mul(v0, v1);
-    }
-    inline vec2 operator*(float v0, const vec2 &v1)
-    {
-        return mul(v1, v0);
-    }
-
-    inline vec2 operator/(const vec2 &v0, const vec2 &v1)
-    {
-        return div(v0, v1);
-    }
-    inline vec2 operator/(const vec2 &v0, float v1)
-    {
-        return div(v0, v1);
-    }
-    inline vec2 operator/(float v0, const vec2 &v1)
-    {
-        return div(v0, v1);
-    }
-
-    inline bool operator==(const vec2 &v0, const vec2 &v1)
-    {
-        return v0.x == v1.x && v0.y == v1.y;
-    }
-    inline bool operator!=(const vec2 &v0, const vec2 &v1)
-    {
-        return !(v0 == v1);
-    }
-
-
-
-
-    //////////////////////////////////
     // quat
 
     /// Structure representing a quaternion.
@@ -683,6 +952,18 @@ namespace GT
 
         vec4 result = v + ((uv * q.w) + uuv) * 2.0f;
         result.w = v.w;
+
+        return result;
+    }
+
+    // quat * vec3
+    inline vec3 operator*(const quat &q, const vec3 &v)
+    {
+        vec3 qv(q.x, q.y, q.z);
+        vec3 uv(cross(qv, v));
+        vec3 uuv(cross(qv, uv));
+
+        vec3 result = v + ((uv * q.w) + uuv) * 2.0f;
 
         return result;
     }

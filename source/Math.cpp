@@ -17,6 +17,21 @@ namespace GT
     const vec2 vec2::negy = vec2( 0.0f, -1.0f);
 
 
+    //////////////////////////////////
+    // vec3
+
+    const vec3 vec3::zero = vec3( 0.0f,  0.0f,  0.0f);
+    const vec3 vec3::one  = vec3( 1.0f,  1.0f,  1.0f);
+
+    const vec3 vec3::posx = vec3( 1.0f,  0.0f,  0.0f);
+    const vec3 vec3::posy = vec3( 0.0f,  1.0f,  0.0f);
+    const vec3 vec3::posz = vec3( 0.0f,  0.0f,  1.0f);
+
+    const vec3 vec3::negx = vec3(-1.0f,  0.0f,  0.0f);
+    const vec3 vec3::negy = vec3( 0.0f, -1.0f,  0.0f);
+    const vec3 vec3::negz = vec3( 0.0f,  0.0f, -1.0f);
+
+
 
     //////////////////////////////////
     // vec4
