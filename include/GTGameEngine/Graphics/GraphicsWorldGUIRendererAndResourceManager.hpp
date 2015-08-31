@@ -1,27 +1,29 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef GT_GraphicsWorldGUIRenderer
-#define GT_GraphicsWorldGUIRenderer
+#ifndef GT_GraphicsWorldGUIRendererAndResourceManager
+#define GT_GraphicsWorldGUIRendererAndResourceManager
 
 #include "../GUI/GUIRenderer.hpp"
+#include "../GUI/GUIResourceManager.hpp"
+#include "GraphicsAssetResourceManager.hpp"
 #include "GraphicsWorld.hpp"
 #include <GTLib/Map.hpp>
 
 namespace GT
 {
-    class GraphicsWorldGUIRenderer : public GUIRenderer
+    class GraphicsWorldGUIRendererAndResourceManager : public GUIRenderer, public GUIResourceManager
     {
     public:
 
         /// Constructor.
-        GraphicsWorldGUIRenderer();
+        GraphicsWorldGUIRendererAndResourceManager();
 
 
-        /// Sets the graphics world that should receive the painting commands.
+        /// Sets the graphics asset resource manager to use for loading resource.
         ///
         /// @remarks
-        ///     This should be set once, at the beginning before any rendering commands are submitted.
-        void SetGraphicsWorld(GraphicsWorld* pGraphicsWorld);
+        ///     This should be set once, at the beginning before any rendering commands are submitted and any resource are loaded.
+        void SetGraphicsAssetResourceManager(GraphicsAssetResourceManager* pGraphicsResourceManager);
 
 
 
@@ -66,6 +68,24 @@ namespace GT
         void DrawTexturedRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight);
 
 
+        /////////////////////////////////////////////////
+        // GUIResourceManager
+
+        /// @copydoc GUIResourceManager::LoadImage()
+        HGUIImage LoadImage(const char* filePath);
+
+        /// @copydoc GUIResourceManager::LoadImage()
+        void UnloadImage(HGUIImage hImage);
+
+        /// @copydoc GUIResourceManager::LoadImage()
+        bool GetImageSize(HGUIImage hImage, unsigned int &widthOut, unsigned int &heightOut) const;
+
+        /// @copydoc GUIResourceManager::LoadImage()
+        GUIImageFormat GetImageFormat(HGUIImage hImage) const;
+
+        /// @copydoc GUIResourceManager::LoadImage()
+        const void* GetImageData(HGUIImage hImage) const;
+
 
     private:
 
@@ -78,8 +98,8 @@ namespace GT
 
     private:
 
-        /// A pointer to the graphcis world to route painting commands to.
-        GraphicsWorld* m_pGraphicsWorld;
+        /// A pointer to the graphics asset resource manager that will be used to load images. This is initialized to null and set with SetGraphicsAssetResourceManager().
+        GraphicsAssetResourceManager* m_pGraphicsResourceManager;
     };
 }
 
