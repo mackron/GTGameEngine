@@ -90,17 +90,6 @@ namespace GT
         ///     the engine's default asset loaders.
         void RegisterAllocator(AssetAllocator &allocator);
 
-        /// Creates a mapping between a file extension and an asset type.
-        ///
-        /// @param extensions      [in] A pointer to the list of extension mappings.
-        /// @param extensionsCount [in] The number of extensions defined in \c extensions.
-        ///
-        /// @remarks
-        ///     Once an extension has been registered, it can never be unregistered. See remarks in RegisterAllocator().
-        ///     @par
-        ///     If the same extension has already been registered, it will be overwritten.
-        //void RegisterExtensions(AssetExtensionDesc* extensions, size_t extensionsCount);
-
 
     private:
 
