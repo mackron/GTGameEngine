@@ -110,16 +110,20 @@ namespace GTLib
                 y = this->Next<T>(-radius, radius);
 
             }while (x*x + y*y > radius*radius);
+        }
 
 
-#if 0
+        /// Generates a random number on the edge of a circle.
+        template <typename T>
+        void NextRing(T radius, T &x, T &y)
+        {
             radius = std::sqrt(radius);
 
             T a = this->Next<T>(T(0.0), T(3.14159265 * 2.0));
             x = std::cos(a) * radius;
             y = std::sin(a) * radius;
-#endif
         }
+
 
         /// Generates a random number in the area of a sphere.
         template <typename T>
