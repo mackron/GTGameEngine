@@ -235,6 +235,13 @@ namespace GT
     }
 
 
+    /// Performs a linear interpolation between two vectors.
+    inline vec2 lerp(const vec2 &v0, const vec2 &v1, float t)
+    {
+        return v0*(1.0f - t) + v1*t;
+    }
+
+
 
     //////////////////////////
     // Operator Overloads
@@ -492,6 +499,14 @@ namespace GT
     {
         return v0.x*v1.x + v0.y*v1.y + v0.z*v1.z;
     }
+
+
+    /// Performs a linear interpolation between two vectors.
+    inline vec3 lerp(const vec3 &v0, const vec3 &v1, float t)
+    {
+        return v0*(1.0f - t) + v1*t;
+    }
+
 
     /// Performs a cross product between two vectors.
     ///
@@ -776,6 +791,14 @@ namespace GT
     {
         return v0.x*v1.x + v0.y*v1.y + v0.z*v1.z + v0.w*v1.w;
     }
+
+
+    /// Performs a linear interpolation between two vectors.
+    inline vec4 lerp(const vec4 &v0, const vec4 &v1, float t)
+    {
+        return v0*(1.0f - t) + v1*t;
+    }
+
 
     /// Performs a cross product between two vectors.
     ///
@@ -1447,6 +1470,13 @@ namespace GT
         float diffX = x1 - x2;
         float diffY = y1 - y2;
         return fabsf(sqrtf(diffX*diffX + diffY*diffY));
+    }
+
+
+    /// Performs a linear interpolation between two vectors.
+    inline float lerp(float v0, float v1, float t)
+    {
+        return v0*(1.0f - t) + v1*t;
     }
 }
 
