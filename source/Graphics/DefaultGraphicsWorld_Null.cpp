@@ -43,6 +43,67 @@ namespace GT
         return 0;
     }
 
+
+    void DefaultGraphicsWorld_Null::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, float x)
+    {
+        (void)hMaterialResource;
+        (void)variableName;
+        (void)x;
+    }
+    void DefaultGraphicsWorld_Null::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, float x, float y)
+    {
+        (void)hMaterialResource;
+        (void)variableName;
+        (void)x;
+        (void)y;
+    }
+    void DefaultGraphicsWorld_Null::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, float x, float y, float z)
+    {
+        (void)hMaterialResource;
+        (void)variableName;
+        (void)x;
+        (void)y;
+        (void)z;
+    }
+    void DefaultGraphicsWorld_Null::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, float x, float y, float z, float w)
+    {
+        (void)hMaterialResource;
+        (void)variableName;
+        (void)x;
+        (void)y;
+        (void)z;
+        (void)w;
+    }
+    void DefaultGraphicsWorld_Null::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, int x)
+    {
+        (void)hMaterialResource;
+        (void)variableName;
+        (void)x;
+    }
+    void DefaultGraphicsWorld_Null::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, int x, int y)
+    {
+        (void)hMaterialResource;
+        (void)variableName;
+        (void)x;
+        (void)y;
+    }
+    void DefaultGraphicsWorld_Null::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, int x, int y, int z)
+    {
+        (void)hMaterialResource;
+        (void)variableName;
+        (void)x;
+        (void)y;
+        (void)z;
+    }
+    void DefaultGraphicsWorld_Null::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, int x, int y, int z, int w)
+    {
+        (void)hMaterialResource;
+        (void)variableName;
+        (void)x;
+        (void)y;
+        (void)z;
+        (void)w;
+    }
     void DefaultGraphicsWorld_Null::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, HGraphicsResource hTexture)
     {
         (void)hMaterialResource;
@@ -54,7 +115,6 @@ namespace GT
     HGraphicsResource DefaultGraphicsWorld_Null::CreateMeshResource(const GraphicsMeshResourceDesc &meshDesc)
     {
         (void)meshDesc;
-
         return 0;
     }
 
@@ -65,6 +125,75 @@ namespace GT
         (void)hMaterialResource;
     }
 
+
+    void DefaultGraphicsWorld_Null::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, float x)
+    {
+        (void)hMeshResource;
+        (void)materialSlot;
+        (void)variableName;
+        (void)x;
+    }
+    void DefaultGraphicsWorld_Null::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, float x, float y)
+    {
+        (void)hMeshResource;
+        (void)materialSlot;
+        (void)variableName;
+        (void)x;
+        (void)y;
+    }
+    void DefaultGraphicsWorld_Null::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, float x, float y, float z)
+    {
+        (void)hMeshResource;
+        (void)materialSlot;
+        (void)variableName;
+        (void)x;
+        (void)y;
+        (void)z;
+    }
+    void DefaultGraphicsWorld_Null::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, float x, float y, float z, float w)
+    {
+        (void)hMeshResource;
+        (void)materialSlot;
+        (void)variableName;
+        (void)x;
+        (void)y;
+        (void)z;
+        (void)w;
+    }
+    void DefaultGraphicsWorld_Null::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, int x)
+    {
+        (void)hMeshResource;
+        (void)materialSlot;
+        (void)variableName;
+        (void)x;
+    }
+    void DefaultGraphicsWorld_Null::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, int x, int y)
+    {
+        (void)hMeshResource;
+        (void)materialSlot;
+        (void)variableName;
+        (void)x;
+        (void)y;
+    }
+    void DefaultGraphicsWorld_Null::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, int x, int y, int z)
+    {
+        (void)hMeshResource;
+        (void)materialSlot;
+        (void)variableName;
+        (void)x;
+        (void)y;
+        (void)z;
+    }
+    void DefaultGraphicsWorld_Null::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, int x, int y, int z, int w)
+    {
+        (void)hMeshResource;
+        (void)materialSlot;
+        (void)variableName;
+        (void)x;
+        (void)y;
+        (void)z;
+        (void)w;
+    }
     void DefaultGraphicsWorld_Null::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, HGraphicsResource hTexture)
     {
         (void)hMeshResource;

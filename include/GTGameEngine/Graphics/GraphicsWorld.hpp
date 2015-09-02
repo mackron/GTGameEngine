@@ -223,6 +223,14 @@ namespace GT
         virtual HGraphicsResource CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc) = 0;
 
         /// Sets the value of a material resource's input variable.
+        virtual void SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, float x) = 0;
+        virtual void SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, float x, float y) = 0;
+        virtual void SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, float x, float y, float z) = 0;
+        virtual void SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, float x, float y, float z, float w) = 0;
+        virtual void SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, int x) = 0;
+        virtual void SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, int x, int y) = 0;
+        virtual void SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, int x, int y, int z) = 0;
+        virtual void SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, int x, int y, int z, int w) = 0;
         virtual void SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, HGraphicsResource hTexture) = 0;
 
 
@@ -234,6 +242,14 @@ namespace GT
         virtual void SetMeshResourceMaterial(HGraphicsResource hMeshResource, unsigned int materialSlot, HGraphicsResource hMaterialResource) = 0;
 
         /// Sets the value of a mesh resource's material input variable.
+        virtual void SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, float x) = 0;
+        virtual void SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, float x, float y) = 0;
+        virtual void SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, float x, float y, float z) = 0;
+        virtual void SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, float x, float y, float z, float w) = 0;
+        virtual void SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, int x) = 0;
+        virtual void SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, int x, int y) = 0;
+        virtual void SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, int x, int y, int z) = 0;
+        virtual void SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, int x, int y, int z, int w) = 0;
         virtual void SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, HGraphicsResource hTexture) = 0;
 
 

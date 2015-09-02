@@ -1158,6 +1158,82 @@ namespace GT
         return reinterpret_cast<HGraphicsResource>(pMaterialResource);
     }
 
+    void DefaultGraphicsWorld_OpenGL::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, float x)
+    {
+        auto pValueDest = reinterpret_cast<float*>(this->GetMaterialInputVariableBufferPtr(hMaterialResource, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, float x, float y)
+    {
+        auto pValueDest = reinterpret_cast<float*>(this->GetMaterialInputVariableBufferPtr(hMaterialResource, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+            pValueDest[1] = y;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, float x, float y, float z)
+    {
+        auto pValueDest = reinterpret_cast<float*>(this->GetMaterialInputVariableBufferPtr(hMaterialResource, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+            pValueDest[1] = y;
+            pValueDest[2] = z;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, float x, float y, float z, float w)
+    {
+        auto pValueDest = reinterpret_cast<float*>(this->GetMaterialInputVariableBufferPtr(hMaterialResource, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+            pValueDest[1] = y;
+            pValueDest[2] = z;
+            pValueDest[3] = w;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, int x)
+    {
+        auto pValueDest = reinterpret_cast<int*>(this->GetMaterialInputVariableBufferPtr(hMaterialResource, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, int x, int y)
+    {
+        auto pValueDest = reinterpret_cast<int*>(this->GetMaterialInputVariableBufferPtr(hMaterialResource, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+            pValueDest[1] = y;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, int x, int y, int z)
+    {
+        auto pValueDest = reinterpret_cast<int*>(this->GetMaterialInputVariableBufferPtr(hMaterialResource, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+            pValueDest[1] = y;
+            pValueDest[2] = z;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, int x, int y, int z, int w)
+    {
+        auto pValueDest = reinterpret_cast<int*>(this->GetMaterialInputVariableBufferPtr(hMaterialResource, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+            pValueDest[1] = y;
+            pValueDest[2] = z;
+            pValueDest[3] = w;
+        }
+    }
     void DefaultGraphicsWorld_OpenGL::SetMaterialResourceInputVariable(HGraphicsResource hMaterialResource, const char* variableName, HGraphicsResource hTexture)
     {
         auto pValueDest = reinterpret_cast<HGraphicsResource*>(this->GetMaterialInputVariableBufferPtr(hMaterialResource, variableName));
@@ -1266,6 +1342,83 @@ namespace GT
         }
     }
 
+
+    void DefaultGraphicsWorld_OpenGL::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, float x)
+    {
+        auto pValueDest = reinterpret_cast<float*>(this->GetMeshResourceMaterialInputVariableBufferPtr(hMeshResource, materialSlot, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, float x, float y)
+    {
+        auto pValueDest = reinterpret_cast<float*>(this->GetMeshResourceMaterialInputVariableBufferPtr(hMeshResource, materialSlot, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+            pValueDest[1] = y;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, float x, float y, float z)
+    {
+        auto pValueDest = reinterpret_cast<float*>(this->GetMeshResourceMaterialInputVariableBufferPtr(hMeshResource, materialSlot, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+            pValueDest[1] = y;
+            pValueDest[2] = z;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, float x, float y, float z, float w)
+    {
+        auto pValueDest = reinterpret_cast<float*>(this->GetMeshResourceMaterialInputVariableBufferPtr(hMeshResource, materialSlot, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+            pValueDest[1] = y;
+            pValueDest[2] = z;
+            pValueDest[3] = w;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, int x)
+    {
+        auto pValueDest = reinterpret_cast<int*>(this->GetMeshResourceMaterialInputVariableBufferPtr(hMeshResource, materialSlot, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, int x, int y)
+    {
+        auto pValueDest = reinterpret_cast<int*>(this->GetMeshResourceMaterialInputVariableBufferPtr(hMeshResource, materialSlot, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+            pValueDest[1] = y;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, int x, int y, int z)
+    {
+        auto pValueDest = reinterpret_cast<int*>(this->GetMeshResourceMaterialInputVariableBufferPtr(hMeshResource, materialSlot, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+            pValueDest[1] = y;
+            pValueDest[2] = z;
+        }
+    }
+    void DefaultGraphicsWorld_OpenGL::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, int x, int y, int z, int w)
+    {
+        auto pValueDest = reinterpret_cast<int*>(this->GetMeshResourceMaterialInputVariableBufferPtr(hMeshResource, materialSlot, variableName));
+        if (pValueDest != nullptr)
+        {
+            pValueDest[0] = x;
+            pValueDest[1] = y;
+            pValueDest[2] = z;
+            pValueDest[3] = w;
+        }
+    }
     void DefaultGraphicsWorld_OpenGL::SetMeshResourceMaterialInputVariable(HGraphicsResource hMeshResource, unsigned int materialSlot, const char* variableName, HGraphicsResource hTexture)
     {
         auto pValueDest = reinterpret_cast<HGraphicsResource*>(this->GetMeshResourceMaterialInputVariableBufferPtr(hMeshResource, materialSlot, variableName));
@@ -1274,6 +1427,7 @@ namespace GT
             pValueDest[0] = hTexture;
         }
     }
+
 
     void DefaultGraphicsWorld_OpenGL::DeleteResource(HGraphicsResource hResource)
     {
