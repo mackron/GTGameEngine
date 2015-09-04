@@ -45,6 +45,10 @@ namespace GT
         }
     }
 
+    SceneNode::~SceneNode()
+    {
+        this->DetachAllComponents();
+    }
     
 
     Scene & SceneNode::GetScene()
@@ -150,6 +154,8 @@ namespace GT
                 m_components[m_componentCount] = &component;
                 m_componentCount += 1;
 
+                component._IUO_SetSceneNode(this);
+
                 return true;
             }
             else
@@ -201,6 +207,10 @@ namespace GT
             m_componentCount -= 1;
 
 
+            // Make sure the component is aware that it is no longer owned by this scene node.
+            m_components[index]->_IUO_SetSceneNode(nullptr);
+
+
             // Move everything down.
             for (uint16_t iComponent = static_cast<uint16_t>(index); iComponent < m_componentCount - 1; ++iComponent)
             {
@@ -209,6 +219,14 @@ namespace GT
 
             // Make sure the last item is null.
             m_components[m_componentCount] = nullptr;
+        }
+    }
+
+    void SceneNode::DetachAllComponents()
+    {
+        while (m_componentCount > 0)
+        {
+            this->DetachComponentByIndex(m_componentCount - 1);
         }
     }
 

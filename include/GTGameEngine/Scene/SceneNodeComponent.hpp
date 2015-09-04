@@ -7,6 +7,7 @@
 
 namespace GT
 {
+    class SceneNode;
     class SceneNodeComponentDescriptor;
 
     /// Base class for scene node components.
@@ -23,6 +24,13 @@ namespace GT
 
         /// Retrieves a reference to the descriptor that was passed to the constructor.
         const SceneNodeComponentDescriptor & GetDescriptor() const;
+
+
+        /// Retrieves a pointer to the scene node this component is attached to.
+        SceneNode* GetSceneNode() const;
+
+        /// [Internal Use Only] Sets the scene node that owns this component.
+        void _IUO_SetSceneNode(SceneNode* pSceneNode);
 
 
         /// Retrieves the component's type ID.
@@ -49,6 +57,9 @@ namespace GT
 
         /// The descriptor that was passed to the constructor. This is used to describe the component such as describing it's name and unique ID.
         const SceneNodeComponentDescriptor &m_descriptor;
+
+        /// A pointer to the scene node that owns this component. This is null by default and set with _SetSceneNode().
+        SceneNode* m_pSceneNode;
 
         /// Flags that track the changes that have been made to the component. This is used when handling change events so that certain things can be optimized.
         uint32_t m_changeFlags;

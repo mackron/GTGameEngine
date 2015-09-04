@@ -31,6 +31,12 @@ namespace GT
         /// Constructor.
         SceneNode(Scene &scene, uint64_t id);
 
+        /// Destructor.
+        ///
+        /// @remarks
+        ///     This will detach every component to ensure they are aware they are no longer owned by this scene node. It will not delete the components.
+        ~SceneNode();
+
 
         /// Retrieves a reference to the scene that owns this scene node.
         Scene & GetScene();
@@ -122,6 +128,9 @@ namespace GT
         ///
         /// @param index [in] The index of the component to detach.
         void DetachComponentByIndex(unsigned int index);
+
+        /// Detaches every component.
+        void DetachAllComponents();
 
 
         /// Sets the scene node to static.

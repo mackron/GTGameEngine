@@ -6,7 +6,7 @@
 namespace GT
 {
     SceneNodeComponent::SceneNodeComponent(const SceneNodeComponentDescriptor &descriptor)
-        : m_descriptor(descriptor), m_changeFlags(0)
+        : m_descriptor(descriptor), m_pSceneNode(nullptr), m_changeFlags(0)
     {
     }
 
@@ -18,6 +18,17 @@ namespace GT
     const SceneNodeComponentDescriptor & SceneNodeComponent::GetDescriptor() const
     {
         return m_descriptor;
+    }
+
+
+    SceneNode* SceneNodeComponent::GetSceneNode() const
+    {
+        return m_pSceneNode;
+    }
+
+    void SceneNodeComponent::_IUO_SetSceneNode(SceneNode* pSceneNode)
+    {
+        m_pSceneNode = pSceneNode;
     }
 
 
