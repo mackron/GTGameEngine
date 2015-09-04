@@ -5,14 +5,14 @@
 
 namespace GT
 {
-    SceneNode* SceneNodeAllocator_Default::Allocate(uint64_t sceneNodeID)
+    SceneNode* SceneNodeAllocator_Default::Allocate(Scene &scene, uint64_t sceneNodeID)
     {
         assert((GT_SCENE_NODE_EXTRA_BYTES % alignof(SceneNode)) == 0);
 
         uint8_t* ptr8 = reinterpret_cast<uint8_t*>(_aligned_malloc(GT_SCENE_NODE_EXTRA_BYTES + sizeof(SceneNode), alignof(SceneNode)));
         if (ptr8 != nullptr)
         {
-            return new (ptr8 + GT_SCENE_NODE_EXTRA_BYTES) SceneNode(sceneNodeID);
+            return new (ptr8 + GT_SCENE_NODE_EXTRA_BYTES) SceneNode(scene, sceneNodeID);
         }
 
         return nullptr;

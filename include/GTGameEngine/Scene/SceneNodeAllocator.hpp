@@ -15,6 +15,7 @@
 
 namespace GT
 {
+    class Scene;
     class SceneNode;
 
     /// Base class for scene node allocators.
@@ -29,7 +30,7 @@ namespace GT
         ///
         /// The allocator must create at least an additional GT_SCENE_NODE_EXTRA_BYTES bytes of data in front of the returned pointer. Thus, the layout
         /// should look like [GT_SCENE_NODE_EXTRA_BYTES][sizeof(SceneNode)]. These bytes will be used internally by the scene and stepping pipeline.
-        virtual SceneNode* Allocate(uint64_t sceneNodeID) = 0;
+        virtual SceneNode* Allocate(Scene &scene, uint64_t sceneNodeID) = 0;
 
         /// Deallocates a scenenode.
         virtual void Delete(SceneNode* pSceneNode) = 0;

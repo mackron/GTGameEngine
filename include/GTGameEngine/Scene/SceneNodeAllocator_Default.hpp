@@ -14,7 +14,7 @@ namespace GT
     public:
 
         /// @copydoc SceneNodeAllocator::Allocate()
-        SceneNode* Allocate(uint64_t sceneNodeID);
+        SceneNode* Allocate(Scene &scene, uint64_t sceneNodeID);
 
         /// @copydoc SceneNodeAllocator::Delete()
         void Delete(SceneNode* pSceneNode);

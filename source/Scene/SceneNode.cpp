@@ -11,12 +11,12 @@
 
 namespace GT
 {
-    SceneNode::SceneNode()
-        : SceneNode(0)
+    SceneNode::SceneNode(Scene &scene)
+        : SceneNode(scene, 0)
     {
     }
 
-    SceneNode::SceneNode(uint64_t id)
+    SceneNode::SceneNode(Scene &scene, uint64_t id)
         : m_id(id),
           m_name(),
           m_tag(),
@@ -26,7 +26,8 @@ namespace GT
           m_padding0(0),
           m_position(0.0f, 0.0f, 0.0f, 0.0f),
           m_rotation(0.0f, 0.0f, 0.0f, 1.0f),
-          m_scale(1.0f, 1.0f, 1.0f, 0.0f)
+          m_scale(1.0f, 1.0f, 1.0f, 0.0f),
+          m_scene(scene)
     {
         for (int i = 0; i < 4; ++i)
         {
@@ -44,6 +45,12 @@ namespace GT
         }
     }
 
+    
+
+    Scene & SceneNode::GetScene()
+    {
+        return m_scene;
+    }
 
     uint64_t SceneNode::GetID() const
     {
@@ -125,6 +132,11 @@ namespace GT
         }
 
         return nullptr;
+    }
+
+    const SceneNodeComponent* SceneNode::GetComponentByTypeID(SceneNodeComponentTypeID typeID) const
+    {
+        return const_cast<SceneNode*>(this)->GetComponentByTypeID(typeID);
     }
 
 

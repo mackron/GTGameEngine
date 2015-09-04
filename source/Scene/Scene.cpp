@@ -49,7 +49,7 @@ namespace GT
     SceneNode* Scene::CreateSceneNode()
     {
         assert(m_pSceneNodeAllocator != nullptr);
-        return m_pSceneNodeAllocator->Allocate(m_idAllocator.AllocateID());
+        return m_pSceneNodeAllocator->Allocate(*this, m_idAllocator.AllocateID());
     }
 
     void Scene::DeleteSceneNode(SceneNode* pSceneNode)

@@ -14,6 +14,7 @@
 
 namespace GT
 {
+    class Scene;
     class SceneNodeComponent;
 
     /// Class representing a scene node.
@@ -25,11 +26,14 @@ namespace GT
         ///
         /// @remarks
         ///     This will initialize the ID to 0.
-        SceneNode();
+        SceneNode(Scene &scene);
 
         /// Constructor.
-        SceneNode(uint64_t id);
+        SceneNode(Scene &scene, uint64_t id);
 
+
+        /// Retrieves a reference to the scene that owns this scene node.
+        Scene & GetScene();
 
         /// Retrieves the scene node's unique ID.
         uint64_t GetID() const;
@@ -84,6 +88,7 @@ namespace GT
         ///
         /// @return A pointer to the attached component with the given type, or null if a component of the given type is not attached to the scene node.
         SceneNodeComponent* GetComponentByTypeID(SceneNodeComponentTypeID typeID);
+        const SceneNodeComponent* GetComponentByTypeID(SceneNodeComponentTypeID typeID) const;
 
 
 
@@ -178,6 +183,12 @@ namespace GT
             return reinterpret_cast<T*>(this->GetComponentByTypeID(T::GetTypeID()));
         }
 
+        template <typename T>
+        const T* GetComponent() const
+        {
+            return reinterpret_cast<const T*>(this->GetComponentByTypeID(T::GetTypeID()));
+        }
+
 
 
 
@@ -227,6 +238,10 @@ namespace GT
         /// The scale of the scene node.
         vec4 m_scale;
 
+
+
+        /// A pointer to the scene that owns this scene node.
+        Scene &m_scene;
 
 
     public:
