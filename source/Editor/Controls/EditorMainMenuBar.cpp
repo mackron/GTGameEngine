@@ -51,7 +51,7 @@ namespace GT
             // Set the border mask.
             GTLib::Rect<int> buttonInnerRect;
             this->GetGUI().GetElementAbsoluteInnerBorderRect(pButton->GetRootGUIElement(), buttonInnerRect);
-            this->GetGUI().SetElementBorderTopMaskInPixels(pMenu->GetRootGUIElement(), buttonInnerRect.left - buttonRect.left, buttonInnerRect.GetWidth());
+            this->GetGUI().SetElementBorderTopMaskInPixels(pMenu->GetRootGUIElement(), buttonInnerRect.left - buttonRect.left, buttonInnerRect.GetWidth(), this->GetEditor().GetTheme().backgroundPopup);
 
 
             // Show the menu.
