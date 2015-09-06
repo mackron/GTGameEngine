@@ -19,7 +19,7 @@ namespace GT
     }
 
 
-    ResultCode FileSystem::Startup()
+    bool FileSystem::Startup()
     {
         m_pVFS = easyvfs_createcontext();
         if (m_pVFS != nullptr)
@@ -27,12 +27,12 @@ namespace GT
             easyvfs_registerarchivecallbacks_zip(m_pVFS);
             easyvfs_registerarchivecallbacks_mtl(m_pVFS);   // Add support for Wavefront MTL files.
 
-            return 0;
+            return true;
         }
         else
         {
             // Failed to create the virtual file system.
-            return 1;
+            return false;
         }
     }
 

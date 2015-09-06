@@ -53,9 +53,9 @@ namespace GT
 
 
 
-    ResultCode GameContext::Startup()
+    bool GameContext::Startup()
     {
-        return 0;   // No error.
+        return true;
     }
 
     void GameContext::Shutdown()

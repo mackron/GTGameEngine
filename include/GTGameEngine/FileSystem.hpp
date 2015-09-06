@@ -78,7 +78,7 @@ namespace GT
 
 
         /// Initializes the file system object.
-        ResultCode Startup();
+        bool Startup();
 
         /// Shuts down the file system object.
         void Shutdown();

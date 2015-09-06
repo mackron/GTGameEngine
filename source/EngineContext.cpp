@@ -36,11 +36,8 @@ namespace GT
     }
 
 
-    ResultCode EngineContext::Startup(int argc, char** argv)
+    bool EngineContext::Startup(int argc, char** argv)
     {
-        ResultCode result = 0;
-
-
         // Command line.
         m_commandLine.Parse(argc, argv);
 
@@ -87,10 +84,9 @@ namespace GT
 
 
         // File system.
-        result = m_fileSystem.Startup();
-        if (GT::Failed(result))
+        if (!m_fileSystem.Startup())
         {
-            return result;
+            return false;
         }
 
         m_fileSystem.AddBaseDirectory(m_commandLine.GetApplicationDirectory());
@@ -98,10 +94,9 @@ namespace GT
 
 
         // Asset library.
-        result = m_assetLibrary.Startup();
-        if (GT::Failed(result))
+        if (!m_assetLibrary.Startup())
         {
-            return result;
+            return false;
         }
 
 #if defined(GT_BUILD_DEFAULT_ASSETS)
@@ -164,7 +159,7 @@ namespace GT
         }
 
 
-        return result;
+        return true;
     }
 
     void EngineContext::Shutdown()
@@ -172,23 +167,27 @@ namespace GT
         // Audio system.
         m_soundWorld.StopAllSounds();
 
-        m_audioSystem->DeleteListener(m_audioListener);
-        m_audioListener = 0;
+        if (m_audioSystem != nullptr)
+        {
+            m_audioSystem->DeleteListener(m_audioListener);
+            m_audioListener = 0;
 
-        m_audioSystem->ClosePlaybackDevice(m_audioPlaybackDevice);
-        m_audioPlaybackDevice = 0;
+            m_audioSystem->ClosePlaybackDevice(m_audioPlaybackDevice);
+            m_audioPlaybackDevice = 0;
 
-        delete m_audioSystem;
-        m_audioSystem = nullptr;
-
+            delete m_audioSystem;
+            m_audioSystem = nullptr;
+        }
 
 
         // Asset library.
         m_assetLibrary.Shutdown();
 
 #if defined(GT_BUILD_DEFAULT_ASSETS)
-        delete m_pDefaultAssetAllocator;
-        m_pDefaultAssetAllocator = nullptr;
+        if (m_pDefaultAssetAllocator != nullptr) {
+            delete m_pDefaultAssetAllocator;
+            m_pDefaultAssetAllocator = nullptr;
+        }
 #endif
 
 
@@ -198,23 +197,31 @@ namespace GT
 
 
         // Graphics APIs.
-        m_pGraphicsAPI_Null->Shutdown();
-        delete m_pGraphicsAPI_Null;
-        m_pGraphicsAPI_Null = nullptr;
+        if (m_pGraphicsAPI_Null != nullptr) {
+            m_pGraphicsAPI_Null->Shutdown();
+            delete m_pGraphicsAPI_Null;
+            m_pGraphicsAPI_Null = nullptr;
+        }
 #if defined(GT_BUILD_VULKAN)
-        m_pGraphicsAPI_Vulkan->Shutdown();
-        delete m_pGraphicsAPI_Vulkan;
-        m_pGraphicsAPI_Vulkan = nullptr;
+        if (m_pGraphicsAPI_Vulkan != nullptr) {
+            m_pGraphicsAPI_Vulkan->Shutdown();
+            delete m_pGraphicsAPI_Vulkan;
+            m_pGraphicsAPI_Vulkan = nullptr;
+        }
 #endif
 #if defined(GT_BUILD_D3D12)
-        m_pGraphicsAPI_D3D12->Shutdown();
-        delete m_pGraphicsAPI_D3D12;
-        m_pGraphicsAPI_D3D12 = nullptr;
+        if (m_pGraphicsAPI_D3D12 != nullptr) {
+            m_pGraphicsAPI_D3D12->Shutdown();
+            delete m_pGraphicsAPI_D3D12;
+            m_pGraphicsAPI_D3D12 = nullptr;
+        }
 #endif
 #if defined(GT_BUILD_OPENGL)
-        m_pGraphicsAPI_OpenGL->Shutdown();
-        delete m_pGraphicsAPI_OpenGL;
-        m_pGraphicsAPI_OpenGL = nullptr;
+        if (m_pGraphicsAPI_OpenGL != nullptr) {
+            m_pGraphicsAPI_OpenGL->Shutdown();
+            delete m_pGraphicsAPI_OpenGL;
+            m_pGraphicsAPI_OpenGL = nullptr;
+        }
 #endif
     }
 

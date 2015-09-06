@@ -42,7 +42,7 @@ namespace GT
         /// Starts up the game context.
         ///
         /// @return A result code specifying whether or not the context was initialized successfully. If the return value is >= 0, it was successful, otherwise it failed.
-        ResultCode Startup();
+        bool Startup();
 
         /// Shuts down the game context.
         void Shutdown();
