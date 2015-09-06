@@ -143,6 +143,22 @@ namespace GT
         return result;
     }
 
+    bool ConfigFile::GetString(const char* variableName, char* strOut, unsigned int strOutSizeInBytes)
+    {
+        bool result = false;
+        if (m_pState != nullptr)
+        {
+            lua_getglobal(m_pState, variableName);
+            if (lua_isstring(m_pState, -1))
+            {
+                result = strcpy_s(strOut, strOutSizeInBytes, lua_tostring(m_pState, -1)) == 0;  // strcpy_s() returns 0 on success. TODO: This won't work with GCC/Clang - replace with a different implementation.
+            }
+            lua_pop(m_pState, 1);
+        }
+
+        return result;
+    }
+
     const char* ConfigFile::GetString(const char* variableName) const
     {
         const char* result = nullptr;

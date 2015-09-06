@@ -69,6 +69,7 @@ namespace GT
         float GetFloat(const char* variableName) const;
         int GetInteger(const char* variableName) const;
         bool GetBoolean(const char* variableName) const;
+        bool GetString(const char* variableName, char* strOut, unsigned int strOutSizeInBytes);
         const char* GetString(const char* variableName) const;      // <-- Don't store the string for later use - make a copy.
 
         float GetFloatFromArray(const char* arrayName, unsigned int index) const;
