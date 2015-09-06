@@ -228,6 +228,9 @@ namespace GT
         /// @return True if the editor is open; false otherwise.
         bool IsEditorOpen() const;
 
+        /// Helper for toggling the editor.
+        bool ToggleEditor();
+
 
 
         ///////////////////////////////////////////////////

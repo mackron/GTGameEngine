@@ -390,6 +390,23 @@ namespace GT
 #endif
     }
 
+    bool GameContext::ToggleEditor()
+    {
+#if defined(GT_BUILD_EDITOR)
+        if (this->IsEditorOpen())
+        {
+            this->CloseEditor();
+            return true;
+        }
+        else
+        {
+            return this->OpenEditor();
+        }
+#else
+        return false;
+#endif
+    }
+
 
 
     void GameContext::OnWantToClose()
