@@ -6,41 +6,10 @@
 
 namespace GT
 {
-    DefaultGraphicsWorld::DefaultGraphicsWorld(GUIContext &gui, GraphicsAPI &graphicsAPI)
+    DefaultGraphicsWorld::DefaultGraphicsWorld(GUIContext &gui)
         : GraphicsWorld(gui),
           m_pGraphicsWorldImpl(nullptr)
     {
-        switch (graphicsAPI.GetType())
-        {
-#if defined(GT_BUILD_VULKAN)
-        case GraphicsAPIType_Vulkan:
-            {
-                m_pGraphicsWorldImpl = new DefaultGraphicsWorld_Vulkan(gui, reinterpret_cast<GraphicsAPI_Vulkan &>(graphicsAPI));
-                break;
-            }
-#endif
-#if defined(GT_BUILD_D3D12)
-        case GraphicsAPIType_D3D12:
-            {
-                m_pGraphicsWorldImpl = new DefaultGraphicsWorld_D3D12(gui, reinterpret_cast<GraphicsAPI_D3D12 &>(graphicsAPI));
-                break;
-            }
-#endif
-#if defined(GT_BUILD_OPENGL)
-        case GraphicsAPIType_OpenGL:
-            {
-                m_pGraphicsWorldImpl = new DefaultGraphicsWorld_OpenGL(gui, reinterpret_cast<GraphicsAPI_OpenGL &>(graphicsAPI));
-                break;
-            }
-#endif
-
-        case GraphicsAPIType_Null:
-        default:
-            {
-                m_pGraphicsWorldImpl = new DefaultGraphicsWorld_Null(gui);
-                break;
-            }
-        }
     }
 
     DefaultGraphicsWorld::~DefaultGraphicsWorld()
@@ -52,14 +21,58 @@ namespace GT
     }
 
 
+    bool DefaultGraphicsWorld::Startup(GraphicsAPI &graphicsAPI)
+    {
+        switch (graphicsAPI.GetType())
+        {
+#if defined(GT_BUILD_VULKAN)
+        case GraphicsAPIType_Vulkan:
+            {
+                m_pGraphicsWorldImpl = new DefaultGraphicsWorld_Vulkan(this->GetGUI(), reinterpret_cast<GraphicsAPI_Vulkan &>(graphicsAPI));
+                break;
+            }
+#endif
+#if defined(GT_BUILD_D3D12)
+        case GraphicsAPIType_D3D12:
+            {
+                m_pGraphicsWorldImpl = new DefaultGraphicsWorld_D3D12(this->GetGUI(), reinterpret_cast<GraphicsAPI_D3D12 &>(graphicsAPI));
+                break;
+            }
+#endif
+#if defined(GT_BUILD_OPENGL)
+        case GraphicsAPIType_OpenGL:
+            {
+                m_pGraphicsWorldImpl = new DefaultGraphicsWorld_OpenGL(this->GetGUI(), reinterpret_cast<GraphicsAPI_OpenGL &>(graphicsAPI));
+                break;
+            }
+#endif
+
+        case GraphicsAPIType_Null:
+        default:
+            {
+                m_pGraphicsWorldImpl = new DefaultGraphicsWorld_Null(this->GetGUI());
+                break;
+            }
+        }
+
+        return this->Startup();
+    }
+
+
     bool DefaultGraphicsWorld::Startup()
     {
+        assert(m_pGraphicsWorldImpl != nullptr);
+
         return m_pGraphicsWorldImpl->Startup();
     }
 
     void DefaultGraphicsWorld::Shutdown()
     {
-        return m_pGraphicsWorldImpl->Shutdown();
+        if (m_pGraphicsWorldImpl != nullptr) {
+            m_pGraphicsWorldImpl->Shutdown();
+            delete m_pGraphicsWorldImpl;
+            m_pGraphicsWorldImpl = nullptr;
+        }
     }
 
 

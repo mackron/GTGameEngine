@@ -13,10 +13,15 @@ namespace GT
     public:
 
         /// Constructor.
-        DefaultGraphicsWorld(GUIContext &gui, GraphicsAPI &graphicsAPI);
+        DefaultGraphicsWorld(GUIContext &gui);
 
         /// Destructor.
         virtual ~DefaultGraphicsWorld();
+
+
+        /// Initializes the graphics world based on the given graphics API.
+        bool Startup(GraphicsAPI &graphicsAPI);
+
 
 
         ////////////////////////////////////////////
