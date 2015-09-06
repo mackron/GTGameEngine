@@ -30,6 +30,13 @@ namespace GT
         AssetLibrary & GetAssetLibrary() const;
 
 
+        /// Initializes the resource manager by loading default resources.
+        bool Startup();
+
+        /// Shuts down the resource manager by unloaded every loaded resource.
+        void Shutdown();
+
+
         /// Loads a texture.
         ///
         /// @remarks

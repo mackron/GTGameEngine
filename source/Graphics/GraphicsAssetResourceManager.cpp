@@ -18,12 +18,11 @@ namespace GT
         : m_graphicsWorld(graphicsWorld), m_assetLibrary(assetLibrary), m_loadedResources(),
           m_pDefaultTexture(nullptr), m_pDefaultMaterial(nullptr), m_pDefaultModel(nullptr), m_pDefaultMesh(nullptr)
     {
-        this->LoadDefaultResources();
     }
 
     GraphicsAssetResourceManager::~GraphicsAssetResourceManager()
     {
-        this->UnloadDefaultResources();
+        this->Shutdown();
     }
 
 
@@ -35,6 +34,18 @@ namespace GT
     AssetLibrary & GraphicsAssetResourceManager::GetAssetLibrary() const
     {
         return m_assetLibrary;
+    }
+
+
+    bool GraphicsAssetResourceManager::Startup()
+    {
+        this->LoadDefaultResources();
+        return true;
+    }
+
+    void GraphicsAssetResourceManager::Shutdown()
+    {
+        this->UnloadDefaultResources();
     }
 
 
@@ -847,22 +858,34 @@ namespace GT
 
     void GraphicsAssetResourceManager::UnloadDefaultTexture()
     {
-        this->UnloadTexture(m_pDefaultTexture);
+        if (m_pDefaultTexture != nullptr) {
+            this->UnloadTexture(m_pDefaultTexture);
+            m_pDefaultTexture = nullptr;
+        }
     }
 
     void GraphicsAssetResourceManager::UnloadDefaultMaterial()
     {
-        this->UnloadMaterial(m_pDefaultMaterial);
+        if (m_pDefaultMaterial != nullptr) {
+            this->UnloadMaterial(m_pDefaultMaterial);
+            m_pDefaultMaterial = nullptr;
+        }
     }
 
     void GraphicsAssetResourceManager::UnloadDefaultModel()
     {
-        this->UnloadModel(m_pDefaultModel);
+        if (m_pDefaultModel != nullptr) {
+            this->UnloadModel(m_pDefaultModel);
+            m_pDefaultModel = nullptr;
+        }
     }
 
     void GraphicsAssetResourceManager::UnloadDefaultMesh()
     {
-        this->UnloadMesh(m_pDefaultMesh);
+        if (m_pDefaultMesh != nullptr) {
+            this->UnloadMesh(m_pDefaultMesh);
+            m_pDefaultMesh = nullptr;
+        }
     }
 
 
