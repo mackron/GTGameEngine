@@ -117,7 +117,7 @@ namespace GT
     private:
 
         /// Retrieves the index of the file in the children list.
-        bool FirstFirstFileIndex(size_t &indexOut) const;
+        bool FindFirstFileIndex(size_t &indexOut) const;
 
 
 

@@ -239,36 +239,40 @@ namespace GT
     {
         insertIndexOut = 0;
         size_t firstFileIndex = 0;
-        if (this->FirstFirstFileIndex(firstFileIndex))
+        if (!this->FindFirstFileIndex(firstFileIndex))
         {
-            if (this->IsFolder())
-            {
-                insertIndexOut = 0;
-                for (size_t iChild = firstFileIndex; iChild > 0; --iChild)
-                {
-                    auto pChild = m_children[iChild - 1];
-                    assert(pChild != nullptr);
+            // There are no files. We set firstFileIndex to the item count which should make the algorithm work.
+            firstFileIndex = m_children.GetCount();
+        }
 
-                    if (GTLib::Strings::CompareNoCase(easypath_filename(pChild->GetAbsolutePath()), easypath_filename(absolutePath)) < 0)
-                    {
-                        insertIndexOut = iChild;
-                        return;
-                    }
+
+        if (m_fileSystem.IsDirectory(absolutePath))
+        {
+            insertIndexOut = 0;
+            for (size_t iChild = firstFileIndex; iChild > 0; --iChild)
+            {
+                auto pChild = m_children[iChild - 1];
+                assert(pChild != nullptr);
+
+                if (GTLib::Strings::CompareNoCase(easypath_filename(pChild->GetAbsolutePath()), easypath_filename(absolutePath)) < 0)
+                {
+                    insertIndexOut = iChild;
+                    return;
                 }
             }
-            else
+        }
+        else
+        {
+            insertIndexOut = firstFileIndex;
+            for (size_t iChild = m_children.GetCount(); iChild > firstFileIndex; --iChild)
             {
-                insertIndexOut = firstFileIndex;
-                for (size_t iChild = m_children.GetCount(); iChild > firstFileIndex; --iChild)
-                {
-                    auto pChild = m_children[iChild - 1];
-                    assert(pChild != nullptr);
+                auto pChild = m_children[iChild - 1];
+                assert(pChild != nullptr);
 
-                    if (GTLib::Strings::CompareNoCase(easypath_filename(pChild->GetAbsolutePath()), easypath_filename(absolutePath)) < 0)
-                    {
-                        insertIndexOut = iChild;
-                        return;
-                    }
+                if (GTLib::Strings::CompareNoCase(easypath_filename(pChild->GetAbsolutePath()), easypath_filename(absolutePath)) < 0)
+                {
+                    insertIndexOut = iChild;
+                    return;
                 }
             }
         }
@@ -472,7 +476,7 @@ namespace GT
     ///////////////////////////////////////////////////////
     // Private
 
-    bool EditorAssetExplorerItem::FirstFirstFileIndex(size_t &indexOut) const
+    bool EditorAssetExplorerItem::FindFirstFileIndex(size_t &indexOut) const
     {
         for (size_t i = 0; i < m_children.GetCount(); ++i)
         {
