@@ -278,6 +278,7 @@ namespace GT
         PFNGLFINISHPROC                 Finish;
         PFNGLVIEWPORTPROC               Viewport;
         PFNGLSCISSORPROC                Scissor;
+        PFNGLDRAWBUFFERSPROC            DrawBuffers;
 
 
         // Drawing.
@@ -340,6 +341,16 @@ namespace GT
 
 
         // Framebuffers.
+        PFNGLGENFRAMEBUFFERSEXTPROC         GenFramebuffersEXT;
+        PFNGLDELETEFRAMEBUFFERSEXTPROC      DeleteFramebuffersEXT;
+        PFNGLBINDFRAMEBUFFEREXTPROC         BindFramebufferEXT;
+        PFNGLFRAMEBUFFERTEXTURE2DEXTPROC    FramebufferTexture2DEXT;
+        PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC FramebufferRenderbufferEXT;
+        PFNGLGENRENDERBUFFERSEXTPROC        GenRenderbuffersEXT;
+        PFNGLDELETERENDERBUFFERSEXTPROC     DeleteRenderbuffersEXT;
+        PFNGLBINDRENDERBUFFEREXTPROC        BindRenderbufferEXT;
+        PFNGLRENDERBUFFERSTORAGEEXTPROC     RenderbufferStorageEXT;
+        PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC  CheckFramebufferStatusEXT;
 
 
         // GL_ARB_debug_output

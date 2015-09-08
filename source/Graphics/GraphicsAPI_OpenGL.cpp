@@ -380,6 +380,7 @@ namespace GT
         this->Finish                   = reinterpret_cast<PFNGLFINISHPROC                  >(this->GetGLProcAddress("glFinish"));
         this->Viewport                 = reinterpret_cast<PFNGLVIEWPORTPROC                >(this->GetGLProcAddress("glViewport"));
         this->Scissor                  = reinterpret_cast<PFNGLSCISSORPROC                 >(this->GetGLProcAddress("glScissor"));
+        this->DrawBuffers              = reinterpret_cast<PFNGLDRAWBUFFERSPROC             >(this->GetGLProcAddress("glDrawBuffers"));
 
         this->DrawElements             = reinterpret_cast<PFNGLDRAWELEMENTSPROC            >(this->GetGLProcAddress("glDrawElements"));
 
@@ -436,6 +437,20 @@ namespace GT
             this->DebugMessageControlARB  = reinterpret_cast<PFNGLDEBUGMESSAGECONTROLARBPROC >(this->GetGLProcAddress("glDebugMessageControlARB"));
             this->DebugMessageInsertARB   = reinterpret_cast<PFNGLDEBUGMESSAGEINSERTARBPROC  >(this->GetGLProcAddress("glDebugMessageInsertARB"));
             this->DebugMessageCallbackARB = reinterpret_cast<PFNGLDEBUGMESSAGECALLBACKARBPROC>(this->GetGLProcAddress("glDebugMessageCallbackARB"));
+        }
+
+        if (this->IsExtensionSupported("GL_EXT_framebuffer_object"))
+        {
+            this->GenFramebuffersEXT         = reinterpret_cast<PFNGLGENFRAMEBUFFERSEXTPROC        >(this->GetGLProcAddress("glGenFramebuffersEXT"));
+            this->DeleteFramebuffersEXT      = reinterpret_cast<PFNGLDELETEFRAMEBUFFERSEXTPROC     >(this->GetGLProcAddress("glDeleteFramebuffersEXT"));
+            this->BindFramebufferEXT         = reinterpret_cast<PFNGLBINDFRAMEBUFFEREXTPROC        >(this->GetGLProcAddress("glBindFramebufferEXT"));
+            this->FramebufferTexture2DEXT    = reinterpret_cast<PFNGLFRAMEBUFFERTEXTURE2DEXTPROC   >(this->GetGLProcAddress("glFramebufferTexture2DEXT"));
+            this->FramebufferRenderbufferEXT = reinterpret_cast<PFNGLFRAMEBUFFERRENDERBUFFEREXTPROC>(this->GetGLProcAddress("glFramebufferRenderbufferEXT"));
+            this->GenRenderbuffersEXT        = reinterpret_cast<PFNGLGENRENDERBUFFERSEXTPROC       >(this->GetGLProcAddress("glGenRenderbuffersEXT"));
+            this->DeleteRenderbuffersEXT     = reinterpret_cast<PFNGLDELETERENDERBUFFERSEXTPROC    >(this->GetGLProcAddress("glDeleteRenderbuffersEXT"));
+            this->BindRenderbufferEXT        = reinterpret_cast<PFNGLBINDRENDERBUFFEREXTPROC       >(this->GetGLProcAddress("glBindRenderbufferEXT"));
+            this->RenderbufferStorageEXT     = reinterpret_cast<PFNGLRENDERBUFFERSTORAGEEXTPROC    >(this->GetGLProcAddress("glRenderbufferStorageEXT"));
+            this->CheckFramebufferStatusEXT  = reinterpret_cast<PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC >(this->GetGLProcAddress("glCheckFramebufferStatusEXT"));
         }
 
         return true;   // No error.

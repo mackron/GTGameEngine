@@ -318,12 +318,18 @@ namespace GT
     {
         TextureRenderTarget_OpenGL(HGraphicsResource hTextureIn, uint32_t flagsIn)
             : RenderTarget_OpenGL(flagsIn),
-              hTexture(hTextureIn)
+              hTexture(hTextureIn), framebuffer(0), depthStencilRenderBuffer(0)
         {
         }
 
         /// A handle to the texture resource.
         HGraphicsResource hTexture;
+
+        /// The framebuffer object.
+        GLuint framebuffer;
+
+        /// The render buffer for the depth/stencil buffer.
+        GLuint depthStencilRenderBuffer;
     };
 
 
@@ -1740,6 +1746,47 @@ namespace GT
             {
                 pRT->viewportWidth  = pTextureResource->width;
                 pRT->viewportHeight = pTextureResource->height;
+
+                // We need to create a framebuffer object for the render target. To do this we need to bind the framebuffer, which means we'll need to save
+                // and restore the current binding.
+                GLuint oldFramebuffer;
+                m_gl.GetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, reinterpret_cast<GLint*>(&oldFramebuffer));
+
+                m_gl.GenFramebuffersEXT(1, &pRT->framebuffer);
+                m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebuffer);
+
+                // Depth/Stencil
+                m_gl.GenRenderbuffersEXT(1, &pRT->depthStencilRenderBuffer);
+                m_gl.BindRenderbufferEXT(GL_RENDERBUFFER_EXT, pRT->depthStencilRenderBuffer);
+                m_gl.RenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, pRT->viewportWidth, pRT->viewportHeight);
+                m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,   GL_RENDERBUFFER_EXT, pRT->depthStencilRenderBuffer);
+                m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, pRT->depthStencilRenderBuffer);
+
+                // Color.
+                m_gl.FramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, pTextureResource->targetGL, pTextureResource->objectGL, 0);
+
+                GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0_EXT };
+                m_gl.DrawBuffers(1, drawBuffers);
+
+
+                // Everything should be good - just check that the framebuffer is valid.
+                GLenum statusGL = m_gl.CheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+                if (statusGL != GL_FRAMEBUFFER_COMPLETE_EXT)
+                {
+                    // It's not valid. Abort!
+                    m_gl.DeleteRenderbuffersEXT(1, &pRT->depthStencilRenderBuffer);
+                    m_gl.DeleteFramebuffersEXT(1, &pRT->framebuffer);
+
+                    m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, oldFramebuffer);
+
+                    delete pRT;
+                    return NULL;
+                }
+
+
+                // Restore the old framebuffer binding.
+                m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, oldFramebuffer);
+
 
                 HGraphicsRenderTarget hRT = reinterpret_cast<HGraphicsRenderTarget>(pRT);
 
