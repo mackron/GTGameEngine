@@ -5,6 +5,7 @@
 #include <GTGameEngine/Editor/Controls/EditorHeader.hpp>
 #include <GTGameEngine/Editor/Controls/EditorBody.hpp>
 #include <GTGameEngine/Editor/Controls/EditorFooter.hpp>
+#include <GTGameEngine/Editor/Controls/EditorSubEditor.hpp>
 #include <GTGameEngine/GameContext.hpp>
 #include <GTGameEngine/EngineContext.hpp>
 
@@ -72,7 +73,9 @@ namespace GT
           m_isOpen(false),
           m_pHeaderControl(nullptr),
           m_pBodyControl(nullptr),
-          m_pFooterControl(nullptr)
+          m_pFooterControl(nullptr),
+          m_openedFiles(),
+          m_defaultSubEditorAllocator(), m_pUserSubEditorAllocator(nullptr)
     {
     }
 
@@ -275,12 +278,6 @@ namespace GT
                                 m_gui.OnMouseEnter(hSurface);
                             }
                         }
-
-
-                        // Testing.
-                        //EditorPopupControl* testPopup = new EditorPopupControl(*this, m_hMainWindow);
-                        //m_gameContext.ShowWindow(testPopup->GetWindow());
-                        //m_gameContext.GetWindowManager().SetWindowPosition(testPopup->GetWindow(), 2, 22);
                     }
 
                     m_gui.InvalidateSurfaceRect(hSurface);
@@ -366,8 +363,62 @@ namespace GT
                 {
                     OpenedFile openedFile;
                     openedFile.absolutePath = absolutePath;
+                    openedFile.pAsset = m_gameContext.GetEngineContext().GetAssetLibrary().Load(absolutePath);
                     openedFile.pTab = pNewTab;
+                    openedFile.pSubEditor = nullptr;
+
+                    // We now need to create the sub-editor. If we have an asset, we create the sub-editor based on the asset class. If the asset class
+                    // is unknown to the engine, we fire a callback to the host application and give it an opportunity to create a sub-editor.
+                    if (openedFile.pAsset != nullptr)
+                    {
+                        openedFile.pSubEditor = m_defaultSubEditorAllocator.CreateSubEditor(*this, absolutePath, openedFile.pAsset);
+
+                        if (openedFile.pSubEditor != nullptr) {
+                            openedFile.pAllocator = &m_defaultSubEditorAllocator;
+                        }
+                    }
+                    
+                    // It wasn't a known asset class, so try the user-defined sub-editor allocator.
+                    if (openedFile.pSubEditor == nullptr && m_pUserSubEditorAllocator != nullptr)
+                    {
+                        openedFile.pSubEditor = m_pUserSubEditorAllocator->CreateSubEditor(*this, absolutePath, openedFile.pAsset);
+
+                        if (openedFile.pSubEditor != nullptr) {
+                            openedFile.pAllocator = m_pUserSubEditorAllocator;
+                        }
+                    }
+
+                    // The file could not be opened by neither the default nor user-defined sub-editor allocators, so fall back to the text editor.
+                    if (openedFile.pSubEditor == nullptr)
+                    {
+                        openedFile.pSubEditor = m_defaultSubEditorAllocator.CreateTextFileSubEditor(*this, absolutePath);
+
+                        if (openedFile.pSubEditor != nullptr) {
+                            openedFile.pAllocator = m_pUserSubEditorAllocator;
+                        }
+
+
+                        if (openedFile.pAsset != nullptr)
+                        {
+                            m_gameContext.GetEngineContext().GetAssetLibrary().Unload(openedFile.pAsset);
+                            openedFile.pAsset = nullptr;
+                        }
+                    }
+
+
+                    // The sub editor needs to be made a child of the tab's page element.
+                    if (openedFile.pSubEditor != nullptr)
+                    {
+                        EditorTabPage* pTabPage = pTabGroup->GetTabPage(pNewTab);
+                        assert(pTabPage != nullptr);
+
+                        m_gui.SetElementParent(openedFile.pSubEditor->GetRootGUIElement(), pTabPage->GetRootGUIElement());
+                    }
+
+
+                    // Finally, add the file to the local list so we can track it.
                     m_openedFiles.PushBack(openedFile);
+
 
                     pTabGroup->ActivateTab(pNewTab);
                     return true;
@@ -404,6 +455,17 @@ namespace GT
             auto &openedFile = m_openedFiles[iOpenedFile];
             if (openedFile.pTab == pTab)
             {
+                if (openedFile.pAllocator != nullptr)
+                {
+                    openedFile.pAllocator->DeleteSubEditor(openedFile.pSubEditor);
+                }
+
+                if (openedFile.pAsset != nullptr)
+                {
+                    m_gameContext.GetEngineContext().GetAssetLibrary().Unload(openedFile.pAsset);
+                }
+
+
                 m_openedFiles.Remove(iOpenedFile);
                 break;
             }

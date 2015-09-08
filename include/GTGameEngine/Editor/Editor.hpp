@@ -11,6 +11,7 @@
 #include "EditorEventHandler.hpp"
 #include "EditorGUIEventHandler.hpp"
 #include "EditorTheme.hpp"
+#include "DefaultSubEditorAllocator.hpp"
 
 #if defined(GT_PLATFORM_WINDOWS)
 #include "EditorGUIRenderer_GDI.hpp"
@@ -32,6 +33,7 @@ namespace GT
     class EditorBody;
     class EditorFooter;
     class EditorTab;
+    class EditorSubEditor;
 
     /// Class representing the editor.
     ///
@@ -402,8 +404,17 @@ namespace GT
             /// The absolute path of the file.
             GTLib::String absolutePath;
 
+            /// A pointer to the asset associated with the file, if any. This can be null.
+            Asset* pAsset;
+
             /// A pointer to the tab associated with the file.
             EditorTab* pTab;
+
+            /// A pointer to the sub-editor associated with the file.
+            EditorSubEditor* pSubEditor;
+
+            /// A pointer to the sub-editor allocator that created the sub-editor. This is used to delete the sub-editor when the file is closed.
+            SubEditorAllocator* pAllocator;
         };
 
 
@@ -466,6 +477,12 @@ namespace GT
 
         /// The list of opened files.
         GTLib::Vector<OpenedFile> m_openedFiles;
+
+        /// The default sub-editor allocator which will be used to create sub-editors of known asset types.
+        DefaultSubEditorAllocator m_defaultSubEditorAllocator;
+
+        /// The user-defined sub-editor allocator which will be used to try and create sub-editors of unknown asset types.
+        SubEditorAllocator* m_pUserSubEditorAllocator;
 
 
     private:    // No copying.
