@@ -299,7 +299,17 @@ namespace GT
                     // elements are remove from here. To do this we just build a list of files that should be included and cross reference.
                     GTLib::Vector<GTLib::String> pathsToAdd;
                     m_fileSystem.IterateFiles(m_absolutePath.c_str(), [&](const GT::FileInfo &fi) -> bool {
-                        pathsToAdd.PushBack(fi.absolutePath);
+                        // If the extension is equal to "gtdata", we want to strip the extension. CreateAndInsertChild() will check for duplicates in
+                        // cases such as mytexture.png and mytexture.png.gtdata.
+                        if (easypath_extensionequal(fi.relativePath.c_str(), "gtdata")) {
+                            char fiAbsolutePathWithoutExtension[GT_MAX_PATH];
+                            easypath_copyandremoveextension(fiAbsolutePathWithoutExtension, GT_MAX_PATH, fi.absolutePath.c_str());
+
+                            pathsToAdd.PushBack(fiAbsolutePathWithoutExtension);
+                        } else {
+                            pathsToAdd.PushBack(fi.absolutePath);
+                        }
+
                         return true;
                     });
 
