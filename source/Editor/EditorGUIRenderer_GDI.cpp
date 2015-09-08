@@ -5,15 +5,25 @@
 #if defined(GT_BUILD_EDITOR) && defined(GT_PLATFORM_WINDOWS)
 #include <GTGameEngine/GUI/GUIContext.hpp>
 #include <GTGameEngine/GUI/GUIFontManager_GDI.hpp>
+#include <GTGameEngine/Assets/ImageAsset.hpp>
+
+#if defined(GT_COMPILER_VC)
+#pragma comment(lib, "msimg32")
+#endif
 
 namespace GT
 {
-    EditorGUIRenderer_GDI::EditorGUIRenderer_GDI()
+    EditorGUIRenderer_GDI::EditorGUIRenderer_GDI(AssetLibrary &assetLibrary)
         : GUIRenderer(),
+          m_assetLibrary(assetLibrary),
           m_ps(),
-          m_hCurrentWindow(0)
+          m_hCurrentWindow(0),
+          m_hDC(0),
+          m_pCurrentSurfaceAUXData(nullptr),
+          m_hAlphaBlendDC(0)
     {
         ZeroMemory(&m_ps, sizeof(m_ps));
+        m_hAlphaBlendDC = CreateCompatibleDC(GetDC(GetDesktopWindow()));
     }
 
     EditorGUIRenderer_GDI::~EditorGUIRenderer_GDI()
@@ -212,33 +222,184 @@ namespace GT
 
     void EditorGUIRenderer_GDI::InitializeImage(GT::GUIContext &context, HGUIImage hImage, unsigned int width, unsigned int height, GUIImageFormat format, const void* pData)
     {
-        // TODO: Implement.
         (void)context;
-        (void)hImage;
-        (void)width;
-        (void)height;
-        (void)format;
-        (void)pData;
+
+
+        if (format == GUIImageFormat::None) {
+            return;
+        }
+
+
+        void* pBitmapWin32Data = nullptr;
+
+        WORD bitcount = 32;
+        if (format == GUIImageFormat::A8) {
+            bitcount = 8;
+        }
+
+        BITMAPINFO bmi;
+        ZeroMemory(&bmi, sizeof(bmi));
+        bmi.bmiHeader.biSize        = sizeof(bmi.bmiHeader);
+        bmi.bmiHeader.biWidth       = width;
+        bmi.bmiHeader.biHeight      = height;
+        bmi.bmiHeader.biPlanes      = 1;
+        bmi.bmiHeader.biBitCount    = bitcount;
+        bmi.bmiHeader.biCompression = BI_RGB;
+        HBITMAP hBitmapWin32 = CreateDIBSection(m_hDC, &bmi, DIB_RGB_COLORS, &pBitmapWin32Data, NULL, 0);
+        if (hBitmapWin32 != 0)
+        {
+            switch (format)
+            {
+            case GUIImageFormat::RGBA8:
+                {
+                    for (unsigned int iRow = 0; iRow < height; ++iRow)
+                    {
+                        const unsigned int iRowSrc = height - (iRow + 1);
+                        const unsigned int iRowDst = iRow;
+
+                        for (unsigned int iCol = 0; iCol < width; ++iCol)
+                        {
+                            uint32_t  srcTexel = reinterpret_cast<const uint32_t*>(pData           )[(iRowSrc * width) + iCol];
+                            uint32_t &dstTexel = reinterpret_cast<      uint32_t*>(pBitmapWin32Data)[(iRowDst * width) + iCol];
+
+                            uint32_t srcTexelA = (srcTexel & 0xFF000000) >> 24;
+                            uint32_t srcTexelB = (srcTexel & 0x00FF0000) >> 16;
+                            uint32_t srcTexelG = (srcTexel & 0x0000FF00) >> 8;
+                            uint32_t srcTexelR = (srcTexel & 0x000000FF) >> 0;
+
+                            srcTexelB = srcTexelB * srcTexelA / 0xFF;
+                            srcTexelG = srcTexelG * srcTexelA / 0xFF;
+                            srcTexelR = srcTexelR * srcTexelA / 0xFF;
+
+                            dstTexel = (srcTexelR << 16) | (srcTexelG << 8) | (srcTexelB << 0) | (srcTexelA << 24);
+                        }
+                    }
+
+                    break;
+                }
+
+            case GUIImageFormat::A8:
+                {
+                    for (unsigned int iRow = 0; iRow < height; ++iRow)
+                    {
+                        for (unsigned int iCol = 0; iCol < width; ++iCol)
+                        {
+                            uint8_t  srcTexel = reinterpret_cast<const uint8_t*>(pData           )[(iRow * width) + iCol];
+                            uint8_t &dstTexel = reinterpret_cast<      uint8_t*>(pBitmapWin32Data)[(iRow * width) + iCol];
+
+                            dstTexel = srcTexel;
+                        }
+                    }
+
+                    break;
+                }
+
+            case GUIImageFormat::None:
+            default:
+                {
+                    break;
+                }
+            }
+
+            m_bitmaps.Add(hImage, hBitmapWin32);
+
+            GdiFlush();
+        }
     }
 
     void EditorGUIRenderer_GDI::UninitializeImage(GT::GUIContext &context, HGUIImage hImage)
     {
-        // TODO: Implement.
         (void)context;
-        (void)hImage;
+
+        auto iBitmapWin32 = m_bitmaps.Find(hImage);
+        if (iBitmapWin32 != nullptr)
+        {
+            DeleteObject(iBitmapWin32->value);
+            m_bitmaps.RemoveByIndex(iBitmapWin32->index);
+        }
     }
 
     void EditorGUIRenderer_GDI::DrawTexturedRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
     {
-        // TODO: Implement.
+        // NOTE: Colour is not implemented yet.
+
         (void)context;
-        (void)rect;
-        (void)hImage;
         (void)colour;
-        (void)subImageOffsetX;
-        (void)subImageOffsetY;
-        (void)subImageWidth;
-        (void)subImageHeight;
+
+        auto iBitmapWin32 = m_bitmaps.Find(hImage);
+        if (iBitmapWin32 != nullptr)
+        {
+            HBITMAP hNewBitmap = iBitmapWin32->value;
+            HBITMAP hOldBitmap = static_cast<HBITMAP>(SelectObject(m_hAlphaBlendDC, hNewBitmap));
+
+            BLENDFUNCTION blend = {AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
+            AlphaBlend(m_hDC, rect.left, rect.top, rect.GetWidth(), rect.GetHeight(), m_hAlphaBlendDC, int(subImageOffsetX), int(subImageOffsetY), int(subImageWidth), int(subImageHeight), blend);
+
+            SelectObject(m_hAlphaBlendDC, hOldBitmap);
+        }
+    }
+
+
+
+
+
+    /////////////////////////////////////////////////
+    // GUIResourceManager
+
+    HGUIImage EditorGUIRenderer_GDI::LoadImage(const char* filePath)
+    {
+        Asset* pImageAsset = m_assetLibrary.Load(filePath);
+        if (pImageAsset != nullptr) {
+            if (pImageAsset->GetClass() == AssetClass_Image) {
+                return reinterpret_cast<HGUIImage>(pImageAsset);
+            }
+        }
+
+        return NULL;
+    }
+
+    void EditorGUIRenderer_GDI::UnloadImage(HGUIImage hImage)
+    {
+        m_assetLibrary.Unload(reinterpret_cast<Asset*>(hImage));
+    }
+
+    bool EditorGUIRenderer_GDI::GetImageSize(HGUIImage hImage, unsigned int &widthOut, unsigned int &heightOut) const
+    {
+        ImageAsset* pImageAsset = reinterpret_cast<ImageAsset*>(hImage);
+        if (pImageAsset != nullptr) {
+            widthOut  = pImageAsset->GetImageWidth();
+            heightOut = pImageAsset->GetImageHeight();
+
+            return true;
+        }
+
+        return false;
+    }
+
+    GUIImageFormat EditorGUIRenderer_GDI::GetImageFormat(HGUIImage hImage) const
+    {
+        ImageAsset* pImageAsset = reinterpret_cast<ImageAsset*>(hImage);
+        if (pImageAsset != nullptr) {
+            switch (pImageAsset->GetImageFormat())
+            {
+            case TextureFormat_RGBA8: return GUIImageFormat::RGBA8;
+            case TextureFormat_R8:    return GUIImageFormat::A8;
+
+            default: break;
+            }
+        }
+
+        return GUIImageFormat::Unknown;
+    }
+
+    const void* EditorGUIRenderer_GDI::GetImageData(HGUIImage hImage) const
+    {
+        ImageAsset* pImageAsset = reinterpret_cast<ImageAsset*>(hImage);
+        if (pImageAsset != nullptr) {
+            return pImageAsset->GetImageData();
+        }
+
+        return nullptr;
     }
 }
 

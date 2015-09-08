@@ -7,8 +7,11 @@
 
 #if defined(GT_BUILD_EDITOR) && defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
+#include <GTLib/Map.hpp>
 #include <GTGameEngine/GUI/GUIRenderer.hpp>
+#include <GTGameEngine/GUI/GUIResourceManager.hpp>
 #include <GTGameEngine/Editor/EditorGUISurfaceAUXData.hpp>
+#include <GTGameEngine/Assets/AssetLibrary.hpp>
 
 namespace GT
 {
@@ -19,12 +22,12 @@ namespace GT
     ///
     /// It is also assumed that all painting commands will be executed in response to the WM_PAINT message. BeginPaintSurface()
     /// will call Win32's BeginPaint() function and EndPaintSurface() will call Win32's EndPaint() function.
-    class EditorGUIRenderer_GDI : public GUIRenderer
+    class EditorGUIRenderer_GDI : public GUIRenderer, public GUIResourceManager
     {
     public:
 
         /// Constructor.
-        EditorGUIRenderer_GDI();
+        EditorGUIRenderer_GDI(AssetLibrary &assetLibrary);
 
         /// Destructor.
         ~EditorGUIRenderer_GDI();
@@ -71,7 +74,32 @@ namespace GT
         void DrawTexturedRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight);
 
 
+
+        /////////////////////////////////////////////////
+        // GUIResourceManager
+
+        /// @copydoc GUIResourceManager::LoadImage()
+        HGUIImage LoadImage(const char* filePath);
+
+        /// @copydoc GUIResourceManager::LoadImage()
+        void UnloadImage(HGUIImage hImage);
+
+        /// @copydoc GUIResourceManager::LoadImage()
+        bool GetImageSize(HGUIImage hImage, unsigned int &widthOut, unsigned int &heightOut) const;
+
+        /// @copydoc GUIResourceManager::LoadImage()
+        GUIImageFormat GetImageFormat(HGUIImage hImage) const;
+
+        /// @copydoc GUIResourceManager::LoadImage()
+        const void* GetImageData(HGUIImage hImage) const;
+
+
+
     private:
+
+        /// A reference to the asset library that was passed to the constructor. This is used to load image resources.
+        AssetLibrary &m_assetLibrary;
+
 
         /// The PAINTSTRUCT that was created from Win32's BeginPaint() function which is called from BeginPaintSurface().
         PAINTSTRUCT m_ps;
@@ -84,6 +112,14 @@ namespace GT
 
         /// A pointer to the AUX data for the current surface.
         EditorGUISurfaceAUXData* m_pCurrentSurfaceAUXData;
+
+
+        /// The device context for drawing alpha blended bitmaps. When drawing a bitmap, we do so with the AlphaBlend() API which requires
+        /// us to make the source bitmap current on a separate DC - which is this one in our case.
+        HDC m_hAlphaBlendDC;
+
+        /// The HGUIImage -> HBITMAP mappings.
+        GTLib::Map<HGUIImage, HBITMAP> m_bitmaps;
     };
 }
 
