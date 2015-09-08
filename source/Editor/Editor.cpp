@@ -366,6 +366,7 @@ namespace GT
                     openedFile.pAsset = m_gameContext.GetEngineContext().GetAssetLibrary().Load(absolutePath);
                     openedFile.pTab = pNewTab;
                     openedFile.pSubEditor = nullptr;
+                    openedFile.pAllocator = nullptr;
 
                     // We now need to create the sub-editor. If we have an asset, we create the sub-editor based on the asset class. If the asset class
                     // is unknown to the engine, we fire a callback to the host application and give it an opportunity to create a sub-editor.
