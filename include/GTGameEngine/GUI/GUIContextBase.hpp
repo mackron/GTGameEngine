@@ -978,7 +978,7 @@ namespace GT
         /// Sets the size of the given element's background sub-image.
         void SetElementBackgroundSubImageSize(GUIElement* pElement, unsigned int subImageWidth, unsigned int subImageHeight);
 
-        /// Retrieves the sie of the given element's background sub-image.
+        /// Retrieves the size of the given element's background sub-image.
         bool GetElementBackgroundSubImageSize(GUIElement* pElement, unsigned int &widthOut, unsigned int &heightOut) const;
 
 
@@ -987,6 +987,26 @@ namespace GT
 
         /// Retrieves the boundary of the given element's background image.
         BackgroundBoundary GetElementBackgroundImageBoundary(GUIElement* pElement) const;
+
+
+        /// Sets the alignment of the given element's background image on both the x and y axis.
+        void SetElementBackgroundImageAlign(GUIElement* pElement, BackgroundAlign alignX, BackgroundAlign alignY);
+
+        /// Retrieves the alignment of the given element's background image on both the x any axis.
+        bool GetElementBackgroundImageAlign(GUIElement* pElement, BackgroundAlign &alignXOut, BackgroundAlign &alignYOut) const;
+
+        /// Sets the alignment of the given element's background repeat mode on both the x and y axis.
+        void SetElementBackgroundImageRepeat(GUIElement* pElement, BackgroundRepeat repeatX, BackgroundRepeat repeatY);
+
+        /// Retrieves the alignment of the given element's background repeat mode on both the x any axis.
+        bool GetElementBackgroundImageRepeat(GUIElement* pElement, BackgroundRepeat &repeatXOut, BackgroundRepeat &repeatYOut) const;
+
+
+        /// Sets the scale of the given element's background image.
+        void SetElementBackgroundImageScale(GUIElement* pElement, float scaleX, float scaleY);
+
+        /// Retrieves the scale of the given element's background image.
+        bool GetElementBackgroundImageScale(GUIElement* pElement, float &scaleXOut, float &scaleYOut) const;
 
 
 
@@ -1767,6 +1787,9 @@ namespace GT
         /// @param rectOut  [out] A reference to the object that will receive the children clipping rectangle.
         void GetElementChildrenClippingRect(GUIElement* pElement, GTLib::Rect<float> &rectOut) const;
         void GetElementChildrenClippingRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const;
+
+        /// Retrieves the background image boundary rectangle for the given element.
+        void GetElementBackgroundImageBoundaryRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const;
 
 
         /// Determines whether or not the given element is currently configured to be clipped against it's parent.

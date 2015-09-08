@@ -873,6 +873,24 @@ namespace GT
         /// @copydoc GUIContextBase::GetElementBackgroundColorBoundary()
         BackgroundBoundary GetElementBackgroundImageBoundary(HGUIElement hElement) const;
 
+        /// @copydoc GUIContextBase::SetElementBackgroundImageAlign()
+        void SetElementBackgroundImageAlign(HGUIElement hElement, BackgroundAlign alignX, BackgroundAlign alignY);
+
+        /// @copydoc GUIContextBase::GetElementBackgroundImageAlign()
+        bool GetElementBackgroundImageAlign(HGUIElement hElement, BackgroundAlign &alignXOut, BackgroundAlign &alignYOut) const;
+
+        /// @copydoc GUIContextBase::SetElementBackgroundImageRepeat()
+        void SetElementBackgroundImageRepeat(HGUIElement hElement, BackgroundRepeat repeatX, BackgroundRepeat repeatY);
+
+        /// @copydoc GUIContextBase::GetElementBackgroundImageRepeat()
+        bool GetElementBackgroundImageRepeat(HGUIElement hElement, BackgroundRepeat &repeatXOut, BackgroundRepeat &repeatYOut) const;
+
+        /// @copydoc GUIContextBase::SetElementBackgroundImageScale()
+        void SetElementBackgroundImageScale(HGUIElement hElement, float scaleX, float scaleY);
+
+        /// @copydoc GUIContextBase::GetElementBackgroundImageScale()
+        bool GetElementBackgroundImageScale(HGUIElement hElement, float &scaleXOut, float &scaleYOut) const;
+
 
 
         /// Sets the width of the left border, in DPI-aware points.

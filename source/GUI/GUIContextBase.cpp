@@ -245,6 +245,10 @@ namespace GT
             // Background image color should be white by default.
             GUIElementStyle_Set_backgroundimagecolor(pElement->style, GTLib::Colour(1, 1, 1, 1));
 
+            // Background image scale needs to be 1, 1 by default.
+            GUIElementStyle_Set_backgroundimagescalex(pElement->style, 1);
+            GUIElementStyle_Set_backgroundimagescaley(pElement->style, 1);
+
             // Text colour.
             GUIElementStyle_Set_textcolor(pElement->style, GTLib::Colour(0, 0, 0, 1));
 
@@ -1623,6 +1627,80 @@ namespace GT
         assert(pElement != nullptr);
 
         return GUIElementStyle_Get_backgroundimageboundary(pElement->style);
+    }
+
+
+    void GUIContextBase::SetElementBackgroundImageAlign(GUIElement* pElement, BackgroundAlign alignX, BackgroundAlign alignY)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_backgroundimagealignx(pElement->style, alignX);
+        GUIElementStyle_Set_backgroundimagealigny(pElement->style, alignY);
+
+        this->BeginBatch();
+        {
+            this->Painting_InvalidateElementRect(pElement);
+        }
+        this->EndBatch();
+    }
+
+    bool GUIContextBase::GetElementBackgroundImageAlign(GUIElement* pElement, BackgroundAlign &alignXOut, BackgroundAlign &alignYOut) const
+    {
+        assert(pElement != nullptr);
+
+        alignXOut = GUIElementStyle_Get_backgroundimagealignx(pElement->style);
+        alignYOut = GUIElementStyle_Get_backgroundimagealigny(pElement->style);
+
+        return true;
+    }
+
+    void GUIContextBase::SetElementBackgroundImageRepeat(GUIElement* pElement, BackgroundRepeat repeatX, BackgroundRepeat repeatY)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_backgroundimagerepeatx(pElement->style, repeatX);
+        GUIElementStyle_Set_backgroundimagerepeaty(pElement->style, repeatY);
+
+        this->BeginBatch();
+        {
+            this->Painting_InvalidateElementRect(pElement);
+        }
+        this->EndBatch();
+    }
+
+    bool GUIContextBase::GetElementBackgroundImageRepeat(GUIElement* pElement, BackgroundRepeat &repeatXOut, BackgroundRepeat &repeatYOut) const
+    {
+        assert(pElement != nullptr);
+
+        repeatXOut = GUIElementStyle_Get_backgroundimagerepeatx(pElement->style);
+        repeatYOut = GUIElementStyle_Get_backgroundimagerepeaty(pElement->style);
+
+        return true;
+    }
+
+
+    void GUIContextBase::SetElementBackgroundImageScale(GUIElement* pElement, float scaleX, float scaleY)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_backgroundimagescalex(pElement->style, scaleX);
+        GUIElementStyle_Set_backgroundimagescaley(pElement->style, scaleY);
+
+        this->BeginBatch();
+        {
+            this->Painting_InvalidateElementRect(pElement);
+        }
+        this->EndBatch();
+    }
+
+    bool GUIContextBase::GetElementBackgroundImageScale(GUIElement* pElement, float &scaleXOut, float &scaleYOut) const
+    {
+        assert(pElement != nullptr);
+
+        scaleXOut = GUIElementStyle_Get_backgroundimagescalex(pElement->style);
+        scaleYOut = GUIElementStyle_Get_backgroundimagescaley(pElement->style);
+
+        return true;
     }
 
 
@@ -3391,6 +3469,31 @@ namespace GT
     }
 
 
+    void GUIContextBase::GetElementBackgroundImageBoundaryRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const
+    {
+        switch (GUIElementStyle_Get_backgroundimageboundary(pElement->style))
+        {
+        case BackgroundBoundary_InnerBorder:
+            {
+                this->GetElementAbsoluteInnerBorderRect(pElement, rectOut);
+                return;
+            }
+
+        case BackgroundBoundary_Inner:
+            {
+                this->GetElementAbsoluteInnerRect(pElement, rectOut);
+                return;
+            }
+
+        default:
+            {
+                this->GetElementAbsoluteRect(pElement, rectOut);
+                return;
+            }
+        }
+    }
+
+
     bool GUIContextBase::IsElementClippedAgainstParent(GUIElement* pElement) const
     {
         assert(pElement != nullptr);
@@ -3999,11 +4102,91 @@ namespace GT
                 unsigned int subImageHeight;
                 if (this->GetElementBackgroundSubImageSize(pElement, subImageWidth, subImageHeight))
                 {
-                    GTLib::Rect<int> backgroundImageRect;
-                    this->Painting_GetClippedBackgroundImageRect(pElement, visibleRect, backgroundImageRect);
+                    BackgroundAlign alignX;
+                    BackgroundAlign alignY;
+                    if (this->GetElementBackgroundImageAlign(pElement, alignX, alignY))
+                    {
+                        BackgroundRepeat repeatX;
+                        BackgroundRepeat repeatY;
+                        if (this->GetElementBackgroundImageRepeat(pElement, repeatX, repeatY))
+                        {
+                            // TODO: Optimize clipping so that clipped rectangles are not posted to the renderer.
+                            
+                            float scaleX;
+                            float scaleY;
+                            this->GetElementBackgroundImageScale(pElement, scaleX, scaleY);
 
-                    GTLib::Colour backgroundImageColor = this->GetElementBackgroundImageColor(pElement);
-                    Renderer_DrawTexturedRectangle(backgroundImageRect, hBackgroundImage, backgroundImageColor, subImageOffsetX, subImageOffsetY, subImageWidth, subImageHeight);
+                            unsigned int subImageWidthScaled  = static_cast<unsigned int>(subImageWidth  * scaleX);
+                            unsigned int subImageHeightScaled = static_cast<unsigned int>(subImageHeight * scaleY);
+
+                            GTLib::Rect<int> backgroundImageRect;
+                            this->GetElementBackgroundImageBoundaryRect(pElement, backgroundImageRect);
+
+                            unsigned int tilesX = 1;
+                            unsigned int tilesY = 1;
+                            if (repeatX == BackgroundRepeat_Repeat) {
+                                tilesX = static_cast<unsigned int>(ceil(backgroundImageRect.GetWidth() / float(subImageWidthScaled)));
+                            }
+                            if (repeatY == BackgroundRepeat_Repeat) {
+                                tilesY = static_cast<unsigned int>(ceil(backgroundImageRect.GetHeight() / float(subImageHeightScaled)));
+                            }
+
+                            int offsetX = 0;
+                            int offsetY = 0;
+                            if (alignX != BackgroundAlign_Left) {
+                                if (alignX == BackgroundAlign_Center) {
+                                    offsetX = (int(backgroundImageRect.GetWidth()) - int(tilesX * subImageWidthScaled)) / 2;
+                                } else if (alignX == BackgroundAlign_Right) {
+                                    offsetX = (int(backgroundImageRect.GetWidth()) - int(tilesX * subImageWidthScaled));
+                                }
+                            }
+                            if (alignY != BackgroundAlign_Top) {
+                                if (alignY == BackgroundAlign_Center) {
+                                    offsetY = (int(backgroundImageRect.GetHeight()) - int(tilesY * subImageHeightScaled)) / 2;
+                                } else if (alignY == BackgroundAlign_Bottom) {
+                                    offsetY = (int(backgroundImageRect.GetHeight()) - int(tilesY * subImageHeightScaled));
+                                }
+                            }
+
+
+                            GTLib::Colour backgroundImageColor = this->GetElementBackgroundImageColor(pElement);
+                            for (unsigned int iTileY = 0; iTileY < tilesY; ++iTileY)
+                            {
+                                GTLib::Rect<int> tileRect;
+
+                                if (repeatY == BackgroundRepeat_Stretch)
+                                {
+                                    assert(tilesY == 1);
+                                    tileRect.top    = backgroundImageRect.top;
+                                    tileRect.bottom = backgroundImageRect.bottom;
+                                }
+                                else
+                                {
+                                    tileRect.top    = backgroundImageRect.top + (iTileY * subImageHeightScaled + offsetY);
+                                    tileRect.bottom = tileRect.top + subImageHeightScaled;
+                                }
+
+                                for (unsigned int iTileX = 0; iTileX < tilesX; ++iTileX)
+                                {
+                                    if (repeatX == BackgroundRepeat_Stretch)
+                                    {
+                                        assert(tilesX == 1);
+                                        tileRect.left  = backgroundImageRect.left;
+                                        tileRect.right = backgroundImageRect.right;
+                                    }
+                                    else
+                                    {
+                                        tileRect.left  = backgroundImageRect.left + (iTileX * subImageWidthScaled + offsetX);
+                                        tileRect.right = tileRect.left + subImageWidthScaled;
+                                    }
+
+                                    
+                                    
+                                    Renderer_DrawTexturedRectangle(tileRect, hBackgroundImage, backgroundImageColor, subImageOffsetX, subImageOffsetY, subImageWidth, subImageHeight);
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }

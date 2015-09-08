@@ -1985,6 +1985,67 @@ namespace GT
     }
 
 
+    void GUIContext::SetElementBackgroundImageAlign(HGUIElement hElement, BackgroundAlign alignX, BackgroundAlign alignY)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementBackgroundImageAlign(pElement, alignX, alignY);
+        }
+    }
+
+    bool GUIContext::GetElementBackgroundImageAlign(HGUIElement hElement, BackgroundAlign &alignXOut, BackgroundAlign &alignYOut) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementBackgroundImageAlign(pElement, alignXOut, alignYOut);
+        }
+
+        return false;
+    }
+
+    void GUIContext::SetElementBackgroundImageRepeat(HGUIElement hElement, BackgroundRepeat repeatX, BackgroundRepeat repeatY)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementBackgroundImageRepeat(pElement, repeatX, repeatY);
+        }
+    }
+
+    bool GUIContext::GetElementBackgroundImageRepeat(HGUIElement hElement, BackgroundRepeat &repeatXOut, BackgroundRepeat &repeatYOut) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementBackgroundImageRepeat(pElement, repeatXOut, repeatYOut);
+        }
+
+        return false;
+    }
+
+    void GUIContext::SetElementBackgroundImageScale(HGUIElement hElement, float scaleX, float scaleY)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementBackgroundImageScale(pElement, scaleX, scaleY);
+        }
+    }
+
+    bool GUIContext::GetElementBackgroundImageScale(HGUIElement hElement, float &scaleXOut, float &scaleYOut) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementBackgroundImageScale(pElement, scaleXOut, scaleYOut);
+        }
+
+        return false;
+    }
+
+
 
     void GUIContext::SetElementBorderLeftWidth(HGUIElement hElement, uint32_t width)
     {
@@ -2891,7 +2952,7 @@ namespace GT
         }
     }
 
-    void GUIContext::OnElementMouseEnter(HGUIElement hElement, std::function<void ()> handler)
+    void GUIContext::OnElementMouseEnter(HGUIElement hElement, LocalOnMouseEnterProc handler)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2905,7 +2966,7 @@ namespace GT
         }
     }
 
-    void GUIContext::OnElementMouseLeave(HGUIElement hElement, std::function<void ()> handler)
+    void GUIContext::OnElementMouseLeave(HGUIElement hElement, LocalOnMouseLeaveProc handler)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)

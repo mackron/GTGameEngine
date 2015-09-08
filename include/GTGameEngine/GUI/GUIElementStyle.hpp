@@ -103,12 +103,33 @@ namespace GT
         ClippingBoundary_Outer       = 2
     };
 
+
     // The boundary of the background.
     enum BackgroundBoundary
     {
         BackgroundBoundary_InnerBorder = 0,     ///< Inside border, outside padding.
         BackgroundBoundary_Inner       = 1,     ///< Inside border, inside padding
         BackgroundBoundary_Outer       = 2      ///< Outside border
+    };
+
+    // The alignment of the background image.
+    enum BackgroundAlign
+    {
+        BackgroundAlign_Center = 0,
+
+        BackgroundAlign_Left   = 1,
+        BackgroundAlign_Right  = 2,
+
+        BackgroundAlign_Top    = 1,
+        BackgroundAlign_Bottom = 2
+    };
+
+    // The repeat mode of the background image.
+    enum BackgroundRepeat
+    {
+        BackgroundRepeat_Stretch = 0,       ///< No repeat, stretch.
+        BackgroundRepeat_None    = 1,       ///< No repeat, no stretch.
+        BackgroundRepeat_Repeat  = 2        ///< Repeat, no stretch.
     };
 
 
@@ -163,8 +184,8 @@ namespace GT
         uint8_t childAxisAndAlignmentAndPositioning;        // [1,1] child axis              | [2,3] horizontal align         | [4,5] vertical align  | [6,7] positioning
         uint8_t childrenSizeBoundaryAndPositionOrigin;      // [1,2] children width boundary | [3,4] children height boundary | [5,6] position origin
         uint8_t clipping;                                   // [1,2] clipping mode           | [3,4] child clipping boundary
-        uint8_t padding1;
 
+        uint8_t  backgroundImageAlignAndRepeat;             // [1,2] X align | [3,4] Y align | [4,6] X repeat | [7,8] Y repeat
         uint8_t  backgroundColourR;
         uint8_t  backgroundColourG;
         uint8_t  backgroundColourB;
@@ -176,6 +197,8 @@ namespace GT
         uint32_t backgroundSubImageWidth;                   // Unsigned and always in texels. If 0, uses the width of the entire image.
         uint32_t backgroundSubImageHeight;                  // Unsigned and always in texels. If 0, uses the height of the entire image.
         uint32_t backgroundBoundary;                        // [1,2] background color boundary | [3,4] backgound image boundary
+        uint32_t backgroundImageScaleX;                     // 32-bit float
+        uint32_t backgroundImageScaleY;                     // 32-bit float
 
         uint32_t borderLeftWidth;                           // [1,4] type | [5,32] value
         uint32_t borderTopWidth;                            // [1,4] type | [5,32] value
@@ -555,7 +578,7 @@ namespace GT
 
     inline void GUIElementStyle_Set_backgroundcolorboundary(GUIElementStyle &style, BackgroundBoundary boundary)
     {
-        style.backgroundBoundary = (style.backgroundBoundary & ~0x03) | (static_cast<uint8_t>(boundary));
+        style.backgroundBoundary = (style.backgroundBoundary & ~0x03) | (uint8_t(boundary) << 0);
     }
     inline BackgroundBoundary GUIElementStyle_Get_backgroundcolorboundary(const GUIElementStyle &style)
     {
@@ -569,6 +592,60 @@ namespace GT
     inline BackgroundBoundary GUIElementStyle_Get_backgroundimageboundary(const GUIElementStyle &style)
     {
         return static_cast<BackgroundBoundary>((style.backgroundBoundary & 0x0C) >> 2);
+    }
+
+    inline void GUIElementStyle_Set_backgroundimagealignx(GUIElementStyle &style, BackgroundAlign align)
+    {
+        style.backgroundImageAlignAndRepeat = (style.backgroundImageAlignAndRepeat & ~0x03) | (uint8_t(align) << 0);
+    }
+    inline BackgroundAlign GUIElementStyle_Get_backgroundimagealignx(const GUIElementStyle &style)
+    {
+        return static_cast<BackgroundAlign>((style.backgroundImageAlignAndRepeat & 0x03) >> 0);
+    }
+
+    inline void GUIElementStyle_Set_backgroundimagealigny(GUIElementStyle &style, BackgroundAlign align)
+    {
+        style.backgroundImageAlignAndRepeat = (style.backgroundImageAlignAndRepeat & ~0x0C) | (uint8_t(align) << 2);
+    }
+    inline BackgroundAlign GUIElementStyle_Get_backgroundimagealigny(const GUIElementStyle &style)
+    {
+        return static_cast<BackgroundAlign>((style.backgroundImageAlignAndRepeat & 0x0C) >> 2);
+    }
+
+    inline void GUIElementStyle_Set_backgroundimagerepeatx(GUIElementStyle &style, BackgroundRepeat repeat)
+    {
+        style.backgroundImageAlignAndRepeat = (style.backgroundImageAlignAndRepeat & ~0x30) | (uint8_t(repeat) << 4);
+    }
+    inline BackgroundRepeat GUIElementStyle_Get_backgroundimagerepeatx(const GUIElementStyle &style)
+    {
+        return static_cast<BackgroundRepeat>((style.backgroundImageAlignAndRepeat & 0x30) >> 4);
+    }
+
+    inline void GUIElementStyle_Set_backgroundimagerepeaty(GUIElementStyle &style, BackgroundRepeat repeat)
+    {
+        style.backgroundImageAlignAndRepeat = (style.backgroundImageAlignAndRepeat & ~0xC0) | (uint8_t(repeat) << 6);
+    }
+    inline BackgroundRepeat GUIElementStyle_Get_backgroundimagerepeaty(const GUIElementStyle &style)
+    {
+        return static_cast<BackgroundRepeat>((style.backgroundImageAlignAndRepeat & 0xC0) >> 6);
+    }
+
+    inline void GUIElementStyle_Set_backgroundimagescalex(GUIElementStyle &style, float scale)
+    {
+        style.backgroundImageScaleX = *reinterpret_cast<uint32_t*>(&scale);
+    }
+    inline float GUIElementStyle_Get_backgroundimagescalex(const GUIElementStyle &style)
+    {
+        return *reinterpret_cast<const float*>(&style.backgroundImageScaleX);
+    }
+
+    inline void GUIElementStyle_Set_backgroundimagescaley(GUIElementStyle &style, float scale)
+    {
+        style.backgroundImageScaleY = *reinterpret_cast<uint32_t*>(&scale);
+    }
+    inline float GUIElementStyle_Get_backgroundimagescaley(const GUIElementStyle &style)
+    {
+        return *reinterpret_cast<const float*>(&style.backgroundImageScaleY);
     }
 
 
