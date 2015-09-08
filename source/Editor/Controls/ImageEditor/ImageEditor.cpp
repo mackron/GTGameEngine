@@ -33,8 +33,6 @@ namespace GT
 
             this->GetGUI().SetElementBackgroundImageScale(this->GetRootGUIElement(), scaleX, scaleY);
         });
-
-        gui.SetElementBorder(this->GetRootGUIElement(), 2, GTLib::Colour::Black);
     }
 
     ImageEditor::~ImageEditor()
