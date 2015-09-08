@@ -32,7 +32,6 @@ namespace GT
             gui.SetElementPaddingTop(m_hTextElement, 4);
             gui.SetElementPaddingBottom(m_hTextElement, 2);
             gui.EnableCursorPassThrough(m_hTextElement);
-            //gui.SetElementBorder(m_hTextElement, 1, GTLib::Colour(0, 0, 0));
             
             
 
@@ -47,8 +46,6 @@ namespace GT
             gui.SetElementSizeToChildren(m_hCloseElement);
             gui.SetElementMarginLeft(m_hCloseElement, 4);
             gui.SetElementMarginRight(m_hCloseElement, 4);
-            //gui.SetElementInnerOffsetY(m_hCloseElement, -2);
-            //gui.SetElementBorder(m_hCloseElement, 1, GTLib::Colour(1, 1, 1));
 
             gui.OnElementMouseEnter(m_hCloseElement, [&]() {
                 gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.75f, 0.25f, 0.25f));
@@ -57,11 +54,15 @@ namespace GT
                 gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.35f, 0.35f, 0.35f));
             });
 
-            gui.OnElementMouseButtonPressed(m_hCloseElement, [&](int, int, int) {
-                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.5f, 0.25f, 0.25f));
+            gui.OnElementMouseButtonPressed(m_hCloseElement, [&](int button, int, int) {
+                if (button == GT::MouseButton_Left) {
+                    gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.5f, 0.25f, 0.25f));
+                }
             });
-            gui.OnElementMouseButtonReleased(m_hCloseElement, [&](int, int, int) {
-                editor.CloseTab(this);
+            gui.OnElementMouseButtonReleased(m_hCloseElement, [&](int button, int, int) {
+                if (button == GT::MouseButton_Left) {
+                    editor.CloseTab(this);
+                }
             });
 
 
