@@ -1151,7 +1151,7 @@ namespace GT
 
         case SystemCursorType::IBeam:
             {
-                return reinterpret_cast<HCursor>(LoadCursor(NULL, IDC_ARROW));
+                return reinterpret_cast<HCursor>(LoadCursor(NULL, IDC_IBEAM));
             }
 
 
