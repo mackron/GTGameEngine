@@ -139,15 +139,26 @@ namespace GT
         virtual void PostEvent_OnMouseWheel(GUIElement* pElement, int delta, int mousePosX, int mousePosY) = 0;
 
 
-        /// Posts the OnSetMouseEventCapture()
+        /// Posts the OnSetMouseEventCapture event.
         ///
         /// @param pElement [in] A reference to the element that has just received the mouse capture.
         virtual void PostEvent_OnSetMouseEventCapture(GUIElement* pElement) = 0;
 
-        /// Posts the OnReleaseMouseEventCapture()
+        /// Posts the OnReleaseMouseEventCapture event.
         ///
         /// @param pElement [in] A reference to the element that has just been released of the mouse capture.
         virtual void PostEvent_OnReleaseMouseEventCapture(GUIElement* pElement) = 0;
+
+
+        /// Posts the OnReceiveKeyboardFocus event.
+        ///
+        /// @param pElement [in] The element that has just received the keyboard focus.
+        virtual void PostEvent_OnReceiveKeyboardFocus(GUIElement* pElement) = 0;
+
+        /// Posts the OnLoseKeyboardFocus event.
+        ///
+        /// @param pElement [in] The element that has just lost the keyboard focus.
+        virtual void PostEvent_OnLoseKeyboardFocus(GUIElement* pElement) = 0;
 
 
         /// Posts the OnSurfaceNeedsRepaid event.
@@ -1511,6 +1522,21 @@ namespace GT
         bool IsFocusOnMouseClickEnabled(GUIElement* pElement) const;
 
 
+        /// Gives the given element keyboard focus.
+        ///
+        /// @param pElement [in] A pointer to the element to give focus.
+        ///
+        /// @remarks
+        ///     If pElement is null, the keyboard focus is released.
+        void GiveElementKeyboardFocus(GUIElement* pElement);
+
+        /// Releases the keyboard focus from the element that currently has the focus.
+        void ReleaseKeyboardFocus();
+
+        /// Retrieves the element that has the keyboard focus.
+        GUIElement* GetElementWithKeyboardFocus() const;
+
+
 
         /// Sets the cursor to use when the mouse enters the given element.
         void SetElementCursor(GUIElement* pElement, GUISystemCursor cursor);
@@ -2504,6 +2530,10 @@ namespace GT
 
         /// The current cursor.
         GUISystemCursor m_currentCursor;
+
+
+        /// A pointer to the element that has the keyboard focus.
+        GUIElement* m_pElementWithKeyboardFocus;
 
 
         /// Object containing the necessary variables for handling layout updates.

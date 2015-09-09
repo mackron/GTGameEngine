@@ -778,6 +778,125 @@ namespace GT
     }
 
 
+    void GUIContext::PostEvent_OnReceiveKeyboardFocus(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        HGUIElement hElement = reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        assert(hElement != 0);
+        {
+            // Local
+            this->IterateLocalEventHandlers(hElement, [&](GUIEventHandler &eventHandler) -> bool
+            {
+                eventHandler.OnReceiveKeyboardFocus(*this, hElement);
+                return true;
+            });
+
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnReceiveKeyboardFocus;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i]();
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
+            // Global
+            this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    eventHandler.OnReceiveKeyboardFocus(*this, hElement);
+                    return true;
+                }
+
+                return false;
+            });
+
+
+            auto handlers = m_callbackGlobalEventHandlers.OnReceiveKeyboardFocus;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    void GUIContext::PostEvent_OnLoseKeyboardFocus(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        HGUIElement hElement = reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        assert(hElement != 0);
+        {
+            // Local
+            this->IterateLocalEventHandlers(hElement, [&](GUIEventHandler &eventHandler) -> bool
+            {
+                eventHandler.OnLoseKeyboardFocus(*this, hElement);
+                return true;
+            });
+
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnLoseKeyboardFocus;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i]();
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
+            // Global
+            this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    eventHandler.OnLoseKeyboardFocus(*this, hElement);
+                    return true;
+                }
+
+                return false;
+            });
+
+
+            auto handlers = m_callbackGlobalEventHandlers.OnLoseKeyboardFocus;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+
     void GUIContext::PostEvent_OnSurfaceNeedsRepaint(GUISurface* pSurface, const GTLib::Rect<int> &rect)
     {
         assert(pSurface != nullptr);
@@ -2827,6 +2946,26 @@ namespace GT
         }
 
         return false;
+    }
+
+
+    void GUIContext::GiveElementKeyboardFocus(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GiveElementKeyboardFocus(pElement);
+        }
+    }
+
+    void GUIContext::ReleaseKeyboardFocus()
+    {
+        GUIContextBase::ReleaseKeyboardFocus();
+    }
+
+    GUIElement* GUIContext::GetElementWithKeyboardFocus() const
+    {
+        return GUIContextBase::GetElementWithKeyboardFocus();
     }
 
 

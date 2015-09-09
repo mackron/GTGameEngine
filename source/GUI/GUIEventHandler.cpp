@@ -67,4 +67,13 @@ namespace GT
     void GUIEventHandler::OnCursorNeedsToChange(GUIContext &, GUISystemCursor)
     {
     }
+
+
+    void GUIEventHandler::OnReceiveKeyboardFocus(GUIContext &, HGUIElement)
+    {
+    }
+
+    void GUIEventHandler::OnLoseKeyboardFocus(GUIContext &, HGUIElement)
+    {
+    }
 }

@@ -137,6 +137,13 @@ namespace GT
         void PostEvent_OnReleaseMouseEventCapture(GUIElement* pElement);
 
 
+        /// @copydoc GUIContextBase::PostEvent_OnReceiveKeyboardFocus()
+        void PostEvent_OnReceiveKeyboardFocus(GUIElement* pElement);
+
+        /// @copydoc GUIContextBase::PostEvent_OnLostKeyboardFocus()
+        void PostEvent_OnLoseKeyboardFocus(GUIElement* pElement);
+
+
         /// @copydoc GUIContextBase::PostEvent_OnSurfaceNeedsRepaint()
         void PostEvent_OnSurfaceNeedsRepaint(GUISurface* pSurface, const GTLib::Rect<int> &rect);
 
@@ -1370,6 +1377,16 @@ namespace GT
 
         /// @copydoc GUIElementbase::IsFocusOnMouseClickEnabled()
         bool IsFocusOnMouseClickEnabled(HGUIElement hElement) const;
+
+
+        /// @copydoc GUIElementbase::GiveElementKeyboardFocus()
+        void GiveElementKeyboardFocus(HGUIElement hElement);
+
+        /// @copydoc GUIElementbase::ReleaseKeyboardFocus()
+        void ReleaseKeyboardFocus();
+
+        /// @copydoc GUIElementbase::GetElementWithKeyboardFocus()
+        GUIElement* GetElementWithKeyboardFocus() const;
 
 
         /// @copydoc GUIElementbase::SetElementCursor()

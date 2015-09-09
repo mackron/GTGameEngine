@@ -59,6 +59,7 @@ namespace GT
           m_pElementCapturingMouseEvents(nullptr), m_pElementUnderMouse(nullptr),
           m_pSurfaceUnderMouse(nullptr),
           m_currentCursor(GUISystemCursor::Default),
+          m_pElementWithKeyboardFocus(nullptr),
           m_layoutContext(),
           m_batchLockCounter(0)
     {
@@ -2777,6 +2778,38 @@ namespace GT
     }
 
 
+    void GUIContextBase::GiveElementKeyboardFocus(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        if (m_pElementWithKeyboardFocus != pElement)
+        {
+            GUIElement* pOldFocusedElement = m_pElementWithKeyboardFocus;
+            GUIElement* pNewFocusedElement = pElement;
+
+            if (pOldFocusedElement != nullptr) {
+                this->PostEvent_OnLoseKeyboardFocus(pOldFocusedElement);
+            }
+
+            m_pElementWithKeyboardFocus = pNewFocusedElement;
+
+            if (pNewFocusedElement != nullptr) {
+                this->PostEvent_OnReceiveKeyboardFocus(pNewFocusedElement);
+            }
+        }
+    }
+
+    void GUIContextBase::ReleaseKeyboardFocus()
+    {
+        this->GiveElementKeyboardFocus(nullptr);
+    }
+
+    GUIElement* GUIContextBase::GetElementWithKeyboardFocus() const
+    {
+        return m_pElementWithKeyboardFocus;
+    }
+
+
     void GUIContextBase::SetElementCursor(GUIElement* pElement, GUISystemCursor cursor)
     {
         assert(pElement != nullptr);
@@ -3138,6 +3171,13 @@ namespace GT
 
         if (pEventReceiver != nullptr)
         {
+            // Give the element keyboard focus if focus-on-mouse-click is enabled.
+            if (this->IsFocusOnMouseClickEnabled(pEventReceiver) && mouseButton == 1)   // 1 = left button
+            {
+                this->GiveElementKeyboardFocus(pEventReceiver);
+            }
+
+
             // Need to convert the point to local coordinates.
             int relativeMousePosX;
             int relativeMousePosY;

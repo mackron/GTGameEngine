@@ -116,6 +116,20 @@ namespace GT
         virtual void OnReleaseMouseEventCapture(GUIContext &context, HGUIElement hElement);
 
 
+        /// Called when an element receives the keyboard focus.
+        ///
+        /// @param context  [in] The GUI context.
+        /// @param hElement [in] The element receiving the event.
+        virtual void OnReceiveKeyboardFocus(GUIContext &context, HGUIElement hElement);
+
+        /// Called when an element loses the keyboard focus.
+        ///
+        /// @param context  [in] The GUI context.
+        /// @param hElement [in] The element receiving the event.
+        virtual void OnLoseKeyboardFocus(GUIContext &context, HGUIElement hElement);
+
+
+
         ///////////////////////////////////////////
         // Global Events
         //
@@ -147,6 +161,8 @@ namespace GT
     typedef std::function<void (int delta, int mousePosX, int mousePosY)>       LocalOnMouseWheelProc;
     typedef std::function<void ()>                                              LocalOnSetMouseEventCaptureProc;
     typedef std::function<void ()>                                              LocalOnReleaseMouseEventCaptureProc;
+    typedef std::function<void ()>                                              LocalOnReceiveKeyboardFocusProc;
+    typedef std::function<void ()>                                              LocalOnLoseKeyboardFocusProc;
 
     struct LocalCallbackEventHandlers
     {
@@ -161,6 +177,8 @@ namespace GT
         GTLib::Vector<LocalOnMouseWheelProc>               OnMouseWheel;
         GTLib::Vector<LocalOnSetMouseEventCaptureProc>     OnSetMouseEventCapture;
         GTLib::Vector<LocalOnReleaseMouseEventCaptureProc> OnReleaseMouseEventCapture;
+        GTLib::Vector<LocalOnReceiveKeyboardFocusProc>     OnReceiveKeyboardFocus;
+        GTLib::Vector<LocalOnLoseKeyboardFocusProc>        OnLoseKeyboardFocus;
     };
 
 
@@ -176,6 +194,8 @@ namespace GT
     typedef std::function<void (HGUIElement hElement, int delta, int mousePosX, int mousePosY)>       GlobalOnMouseWheelProc;
     typedef std::function<void (HGUIElement hElement)>                                                GlobalOnSetMouseEventCaptureProc;
     typedef std::function<void (HGUIElement hElement)>                                                GlobalOnReleaseMouseEventCaptureProc;
+    typedef std::function<void (HGUIElement hElement)>                                                GlobalOnReceiveKeyboardFocusProc;
+    typedef std::function<void (HGUIElement hElement)>                                                GlobalOnLoseKeyboardFocusProc;
     typedef std::function<void (HGUISurface hSurface, const GTLib::Rect<int> &rect)>                  GlobalOnSurfaceNeedsRepaintProc;
     typedef std::function<void (GUISystemCursor cursor)>                                              GlobalOnCursorNeedsToChangeProc;
 
@@ -192,6 +212,8 @@ namespace GT
         GTLib::Vector<GlobalOnMouseWheelProc>               OnMouseWheel;
         GTLib::Vector<GlobalOnSetMouseEventCaptureProc>     OnSetMouseEventCapture;
         GTLib::Vector<GlobalOnReleaseMouseEventCaptureProc> OnReleaseMouseEventCapture;
+        GTLib::Vector<GlobalOnReceiveKeyboardFocusProc>     OnReceiveKeyboardFocus;
+        GTLib::Vector<GlobalOnLoseKeyboardFocusProc>        OnLoseKeyboardFocus;
         GTLib::Vector<GlobalOnSurfaceNeedsRepaintProc>      OnSurfaceNeedsRepaint;
         GTLib::Vector<GlobalOnCursorNeedsToChangeProc>      OnCursorNeedsToChange;
     };
