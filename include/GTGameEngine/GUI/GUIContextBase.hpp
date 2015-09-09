@@ -1482,6 +1482,36 @@ namespace GT
         GTLib::Colour GetElementTextColor(GUIElement* pElement) const;
 
 
+        /// Enables editable text on the given element.
+        void EnableEditableText(GUIElement* pElement);
+
+        /// Disables editable text on the given element.
+        void DisableEditableText(GUIElement* pElement);
+
+        /// Determines whether or not the given element has editable text.
+        bool IsEditableTextEnabled(GUIElement* pElement) const;
+
+        /// Enables multi-line text on the given element.
+        void EnableMultiLineText(GUIElement* pElement);
+
+        /// Disables multi-line text on the given element.
+        void DisableMultiLineText(GUIElement* pElement);
+
+        /// Determines whether or not the given element has multi-line text enabled.
+        bool IsMultiLineTextEnabled(GUIElement* pElement) const;
+
+
+        /// Enables focus-on-mouse-click on the given element.
+        void EnableFocusOnMouseClick(GUIElement* pElement);
+
+        /// Disables focus-on-mouse-click on the given element.
+        void DisableFocusOnMouseClick(GUIElement* pElement);
+
+        /// Determines whether or not focus-on-mouse-click is enabled on the given element.
+        bool IsFocusOnMouseClickEnabled(GUIElement* pElement) const;
+
+
+
         /// Sets the cursor to use when the mouse enters the given element.
         void SetElementCursor(GUIElement* pElement, GUISystemCursor cursor);
 

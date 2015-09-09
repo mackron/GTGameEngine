@@ -2741,6 +2741,96 @@ namespace GT
     }
 
 
+    void GUIContext::EnableEditableText(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::EnableEditableText(pElement);
+        }
+    }
+
+    void GUIContext::DisableEditableText(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::DisableEditableText(pElement);
+        }
+    }
+
+    bool GUIContext::IsEditableTextEnabled(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::IsEditableTextEnabled(pElement);
+        }
+
+        return false;
+    }
+
+    void GUIContext::EnableMultiLineText(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::EnableMultiLineText(pElement);
+        }
+    }
+
+    void GUIContext::DisableMultiLineText(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::DisableMultiLineText(pElement);
+        }
+    }
+
+    bool GUIContext::IsMultiLineTextEnabled(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::IsMultiLineTextEnabled(pElement);
+        }
+
+        return false;
+    }
+
+
+    void GUIContext::EnableFocusOnMouseClick(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::EnableFocusOnMouseClick(pElement);
+        }
+    }
+
+    void GUIContext::DisableFocusOnMouseClick(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::DisableFocusOnMouseClick(pElement);
+        }
+    }
+
+    bool GUIContext::IsFocusOnMouseClickEnabled(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::IsFocusOnMouseClickEnabled(pElement);
+        }
+
+        return false;
+    }
+
+
+
     void GUIContext::SetElementCursor(HGUIElement hElement, GUISystemCursor cursor)
     {
         auto pElement = this->GetElementPtr(hElement);

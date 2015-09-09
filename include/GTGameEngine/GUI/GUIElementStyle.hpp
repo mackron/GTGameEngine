@@ -1142,6 +1142,46 @@ namespace GT
         return (style.booleanField & StyleBit_FlexChildrenHeight) != 0;
     }
 
+    // Cursor pass-through.
+    inline void GUIElementStyle_Set_passthroughcursorinput(GUIElementStyle &style, bool passThroughCursorInput)
+    {
+        style.booleanField = (style.booleanField & ~StyleBit_PassThroughCursorInput) | (-static_cast<int32_t>(passThroughCursorInput) & StyleBit_PassThroughCursorInput);
+    }
+    inline bool GUIElementStyle_Get_passthroughcursorinput(const GUIElementStyle &style)
+    {
+        return (style.booleanField & StyleBit_PassThroughCursorInput) != 0;
+    }
+
+    // Receive focus from mouse.
+    inline void GUIElementStyle_Set_receivefocusfrommouse(GUIElementStyle &style, bool value)
+    {
+        style.booleanField = (style.booleanField & ~StyleBit_CanReceiveFocusFromMouse) | (-static_cast<int32_t>(value) & StyleBit_CanReceiveFocusFromMouse);
+    }
+    inline bool GUIElementStyle_Get_receivefocusfrommouse(const GUIElementStyle &style)
+    {
+        return (style.booleanField & StyleBit_CanReceiveFocusFromMouse) != 0;
+    }
+
+    // Editable text
+    inline void GUIElementStyle_Set_editabletext(GUIElementStyle &style, bool value)
+    {
+        style.booleanField = (style.booleanField & ~StyleBit_EditableText) | (-static_cast<int32_t>(value) & StyleBit_EditableText);
+    }
+    inline bool GUIElementStyle_Get_editabletext(const GUIElementStyle &style)
+    {
+        return (style.booleanField & StyleBit_EditableText) != 0;
+    }
+
+    // Multiline text
+    inline void GUIElementStyle_Set_multilinetext(GUIElementStyle &style, bool value)
+    {
+        style.booleanField = (style.booleanField & ~StyleBit_MultiLineText) | (-static_cast<int32_t>(value) & StyleBit_MultiLineText);
+    }
+    inline bool GUIElementStyle_Get_multilinetext(const GUIElementStyle &style)
+    {
+        return (style.booleanField & StyleBit_MultiLineText) != 0;
+    }
+
     // Left has priority.
     inline void GUIElementStyle_Set_lefthaspriority(GUIElementStyle &style, bool hasPriority)
     {
@@ -1180,16 +1220,6 @@ namespace GT
     inline bool GUIElementStyle_Get_bottomhaspriority(const GUIElementStyle &style)
     {
         return (style.booleanField & StyleBit_BottomHasPriority) != 0;
-    }
-
-    // Cursor pass-through.
-    inline void GUIElementStyle_Set_passthroughcursorinput(GUIElementStyle &style, bool passThroughCursorInput)
-    {
-        style.booleanField = (style.booleanField & ~StyleBit_PassThroughCursorInput) | (-static_cast<int32_t>(passThroughCursorInput) & StyleBit_PassThroughCursorInput);
-    }
-    inline bool GUIElementStyle_Get_passthroughcursorinput(const GUIElementStyle &style)
-    {
-        return (style.booleanField & StyleBit_PassThroughCursorInput) != 0;
     }
 
     // Font inheritance.

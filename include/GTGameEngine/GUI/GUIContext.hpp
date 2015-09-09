@@ -1343,6 +1343,35 @@ namespace GT
         GTLib::Colour GetElementTextColor(HGUIElement hElement) const;
 
 
+        /// @copydoc GUIElementbase::EnableEditableText()
+        void EnableEditableText(HGUIElement hElement);
+
+        /// @copydoc GUIElementbase::DisableEditableText()
+        void DisableEditableText(HGUIElement hElement);
+
+        /// @copydoc GUIElementbase::IsEditableTextEnabled()
+        bool IsEditableTextEnabled(HGUIElement hElement) const;
+
+        /// @copydoc GUIElementbase::EnableMultiLineText()
+        void EnableMultiLineText(HGUIElement hElement);
+
+        /// @copydoc GUIElementbase::DisableMultiLineText()
+        void DisableMultiLineText(HGUIElement hElement);
+
+        /// @copydoc GUIElementbase::IsMultiLineTextEnabled()
+        bool IsMultiLineTextEnabled(HGUIElement hElement) const;
+
+
+        /// @copydoc GUIElementbase::EnableFocusOnMouseClick()
+        void EnableFocusOnMouseClick(HGUIElement hElement);
+
+        /// @copydoc GUIElementbase::DisableFocusOnMouseClick()
+        void DisableFocusOnMouseClick(HGUIElement hElement);
+
+        /// @copydoc GUIElementbase::IsFocusOnMouseClickEnabled()
+        bool IsFocusOnMouseClickEnabled(HGUIElement hElement) const;
+
+
         /// @copydoc GUIElementbase::SetElementCursor()
         void SetElementCursor(HGUIElement hElement, GUISystemCursor cursor);
 

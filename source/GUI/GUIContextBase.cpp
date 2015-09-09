@@ -2712,6 +2712,71 @@ namespace GT
     }
 
 
+    void GUIContextBase::EnableEditableText(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_editabletext(pElement->style, true);
+    }
+
+    void GUIContextBase::DisableEditableText(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_editabletext(pElement->style, false);
+    }
+
+    bool GUIContextBase::IsEditableTextEnabled(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return GUIElementStyle_Get_editabletext(pElement->style);
+    }
+
+    void GUIContextBase::EnableMultiLineText(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_multilinetext(pElement->style, true);
+    }
+
+    void GUIContextBase::DisableMultiLineText(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_multilinetext(pElement->style, false);
+    }
+
+    bool GUIContextBase::IsMultiLineTextEnabled(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return GUIElementStyle_Get_multilinetext(pElement->style);
+    }
+
+
+    void GUIContextBase::EnableFocusOnMouseClick(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_receivefocusfrommouse(pElement->style, true);
+    }
+
+    void GUIContextBase::DisableFocusOnMouseClick(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_receivefocusfrommouse(pElement->style, false);
+    }
+
+    bool GUIContextBase::IsFocusOnMouseClickEnabled(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return GUIElementStyle_Get_receivefocusfrommouse(pElement->style);
+    }
+
+
     void GUIContextBase::SetElementCursor(GUIElement* pElement, GUISystemCursor cursor)
     {
         assert(pElement != nullptr);
