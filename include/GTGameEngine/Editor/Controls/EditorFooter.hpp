@@ -20,6 +20,9 @@ namespace GT
 
 
     private:
+
+        /// The command text box.
+        HGUIElement m_hCommandTextBox;
     };
 }
 
