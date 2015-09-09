@@ -97,6 +97,12 @@ namespace GT
         }
 
 
+        const char** ppEditor = m_engineContext.GetCommandLine().GetArgument("editor");
+        if (ppEditor != nullptr) {
+            this->OpenEditor();
+        }
+
+
         // Set the initial frame time.
         m_lastFrameTime = GTLib::Timing::GetTimeInSeconds();
 
