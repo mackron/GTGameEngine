@@ -58,6 +58,7 @@ namespace GT
           m_xBaseDPI(96), m_yBaseDPI(96),
           m_pElementCapturingMouseEvents(nullptr), m_pElementUnderMouse(nullptr),
           m_pSurfaceUnderMouse(nullptr),
+          m_currentCursor(GUISystemCursor::Default),
           m_layoutContext(),
           m_batchLockCounter(0)
     {
@@ -2711,6 +2712,25 @@ namespace GT
     }
 
 
+    void GUIContextBase::SetElementCursor(GUIElement* pElement, GUISystemCursor cursor)
+    {
+        assert(pElement != nullptr);
+
+        GUIElementStyle_Set_cursor(pElement->style, cursor);
+
+        if (m_pElementUnderMouse == pElement && cursor != m_currentCursor) {
+            m_currentCursor = cursor;
+            this->PostEvent_OnCursorNeedsToChange(cursor);
+        }
+    }
+
+    GUISystemCursor GUIContextBase::GetElementCursor(GUIElement* pElement) const
+    {
+        assert(pElement != nullptr);
+
+        return GUIElementStyle_Get_cursor(pElement->style);
+    }
+
 
     bool GUIContextBase::AttachElementToSurface(GUIElement* pElement, GUISurface* pSurface)
     {
@@ -3754,6 +3774,18 @@ namespace GT
         {
             auto pOldElementUnderMouse = m_pElementUnderMouse;
             m_pElementUnderMouse = pNewElementUnderMouse;
+
+            GUISystemCursor newCursor = GUISystemCursor::Default;
+            if (m_pElementUnderMouse != nullptr)
+            {
+                newCursor = this->GetElementCursor(pNewElementUnderMouse);
+            }
+
+            if (newCursor != m_currentCursor) {
+                m_currentCursor = newCursor;
+                this->PostEvent_OnCursorNeedsToChange(m_currentCursor);
+            }
+
 
 
             // When posting mouse enter/leave events, it's important to remember that the mouse is considered to be hovered over the ancestors

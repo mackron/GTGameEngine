@@ -140,6 +140,9 @@ namespace GT
         /// @copydoc GUIContextBase::PostEvent_OnSurfaceNeedsRepaint()
         void PostEvent_OnSurfaceNeedsRepaint(GUISurface* pSurface, const GTLib::Rect<int> &rect);
 
+        /// @copydoc GUIContextBase::PostEvent_OnCursorNeedsToChange()
+        void PostEvent_OnCursorNeedsToChange(GUISystemCursor cursor);
+
 
         /// @copydoc GUIContextBase::Renderer_BeginPaintSurface()
         void Renderer_BeginPaintSurface(GUISurface* pSurface, void* pInputData);
@@ -1340,6 +1343,13 @@ namespace GT
         GTLib::Colour GetElementTextColor(HGUIElement hElement) const;
 
 
+        /// @copydoc GUIElementbase::SetElementCursor()
+        void SetElementCursor(HGUIElement hElement, GUISystemCursor cursor);
+
+        /// @copydoc GUIElementbase::GetElementCursor()
+        GUISystemCursor GetElementCursor(HGUIElement hElement) const;
+
+
 
         /// Attaches the given element to the given surface.
         ///
@@ -1489,6 +1499,7 @@ namespace GT
         void OnGlobalElementSetMouseEventCapture(GlobalOnSetMouseEventCaptureProc handler);
         void OnGlobalElementReleaseMouseEventCapture(GlobalOnReleaseMouseEventCaptureProc handler);
         void OnGlobalElementSurfaceNeedsRepaint(GlobalOnSurfaceNeedsRepaintProc handler);
+        void OnGlobalCursorNeedsToChange(GlobalOnCursorNeedsToChangeProc handler);
 
 
 

@@ -812,6 +812,22 @@ namespace GT
         }
     }
 
+    void GUIContext::PostEvent_OnCursorNeedsToChange(GUISystemCursor cursor)
+    {
+        // Global
+        this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+        {
+            eventHandler.OnCursorNeedsToChange(*this, cursor);
+            return true;
+        });
+
+        auto handlers = m_callbackGlobalEventHandlers.OnCursorNeedsToChange;
+        for (size_t i = 0; i < handlers.GetCount(); ++i)
+        {
+            handlers[i](cursor);
+        }
+    }
+
 
     void GUIContext::Renderer_BeginPaintSurface(GUISurface* pSurface, void* pInputData)
     {
@@ -2725,6 +2741,27 @@ namespace GT
     }
 
 
+    void GUIContext::SetElementCursor(HGUIElement hElement, GUISystemCursor cursor)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SetElementCursor(pElement, cursor);
+        }
+    }
+
+    GUISystemCursor GUIContext::GetElementCursor(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementCursor(pElement);
+        }
+
+        return GUISystemCursor::Default;
+    }
+
+
     bool GUIContext::AttachElementToSurface(HGUIElement hElement, HGUISurface hSurface)
     {
         auto pElement = this->GetElementPtr(hElement);
@@ -3137,6 +3174,11 @@ namespace GT
     void GUIContext::OnGlobalElementSurfaceNeedsRepaint(GlobalOnSurfaceNeedsRepaintProc handler)
     {
         m_callbackGlobalEventHandlers.OnSurfaceNeedsRepaint.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalCursorNeedsToChange(GlobalOnCursorNeedsToChangeProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnCursorNeedsToChange.PushBack(handler);
     }
 
 

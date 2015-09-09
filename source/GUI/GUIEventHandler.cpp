@@ -63,4 +63,8 @@ namespace GT
     void GUIEventHandler::OnSurfaceNeedsRepaint(GUIContext &, HGUISurface, const GTLib::Rect<int> &)
     {
     }
+
+    void GUIEventHandler::OnCursorNeedsToChange(GUIContext &, GUISystemCursor)
+    {
+    }
 }

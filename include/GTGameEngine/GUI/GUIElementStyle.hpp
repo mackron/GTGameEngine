@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include <GTLib/Colour.hpp>
+#include "GUISystemCursors.hpp"
 
 namespace GT
 {
@@ -243,8 +244,11 @@ namespace GT
         uint8_t textColorA;
 
 
+        uint8_t  cursor;                                    // GUISystemCursor
+        uint8_t  padding8_0;
+        
+
         uint16_t booleanField;
-        uint16_t padding2;
     };
 
 
@@ -1087,6 +1091,17 @@ namespace GT
         colour.a = style.textColorA / 255.0f;
 
         return colour;
+    }
+
+
+    // Cursor.
+    inline void GUIElementStyle_Set_cursor(GUIElementStyle &style, GUISystemCursor cursor)
+    {
+        style.cursor = static_cast<uint8_t>(cursor);
+    }
+    inline GUISystemCursor GUIElementStyle_Get_cursor(const GUIElementStyle &style)
+    {
+        return static_cast<GUISystemCursor>(style.cursor);
     }
 
 

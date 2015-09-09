@@ -5,6 +5,7 @@
 
 #include <cstdint>
 #include "GUIDataTypes.hpp"
+#include "GUISystemCursors.hpp"
 #include <GTLib/Rect.hpp>
 #include <GTLib/Vector.hpp>
 #include <functional>
@@ -126,6 +127,12 @@ namespace GT
         /// @param hSurface [in] The surface to redraw.
         /// @param rect     [in] The rectangle region needing to be redrawn.
         virtual void OnSurfaceNeedsRepaint(GUIContext &context, HGUISurface hSurface, const GTLib::Rect<int> &rect);
+
+        /// Called when the mouse cursor needs to change to a system cursor.
+        ///
+        /// @param context [in] The GUI context.
+        /// @param cursor  [in] The cursor to switch to.
+        virtual void OnCursorNeedsToChange(GUIContext &context, GUISystemCursor cursor);
     };
 
 
@@ -170,6 +177,7 @@ namespace GT
     typedef std::function<void (HGUIElement hElement)>                                                GlobalOnSetMouseEventCaptureProc;
     typedef std::function<void (HGUIElement hElement)>                                                GlobalOnReleaseMouseEventCaptureProc;
     typedef std::function<void (HGUISurface hSurface, const GTLib::Rect<int> &rect)>                  GlobalOnSurfaceNeedsRepaintProc;
+    typedef std::function<void (GUISystemCursor cursor)>                                              GlobalOnCursorNeedsToChangeProc;
 
     struct GlobalCallbackEventHandlers
     {
@@ -185,6 +193,7 @@ namespace GT
         GTLib::Vector<GlobalOnSetMouseEventCaptureProc>     OnSetMouseEventCapture;
         GTLib::Vector<GlobalOnReleaseMouseEventCaptureProc> OnReleaseMouseEventCapture;
         GTLib::Vector<GlobalOnSurfaceNeedsRepaintProc>      OnSurfaceNeedsRepaint;
+        GTLib::Vector<GlobalOnCursorNeedsToChangeProc>      OnCursorNeedsToChange;
     };
 }
 

@@ -160,6 +160,11 @@ namespace GT
         ///     to the rendering event handler.
         virtual void PostEvent_OnSurfaceNeedsRepaint(GUISurface* pSurface, const GTLib::Rect<int> &rect) = 0;
 
+        /// Posts the OnCursorNeedsToChange event.
+        ///
+        /// @param cursor [in] The cursor to change to.
+        virtual void PostEvent_OnCursorNeedsToChange(GUISystemCursor cursor) = 0;
+
 
         /// Begins painting the given surface.
         ///
@@ -1477,6 +1482,13 @@ namespace GT
         GTLib::Colour GetElementTextColor(GUIElement* pElement) const;
 
 
+        /// Sets the cursor to use when the mouse enters the given element.
+        void SetElementCursor(GUIElement* pElement, GUISystemCursor cursor);
+
+        /// Retrieves the cursor being used by the given element.
+        GUISystemCursor GetElementCursor(GUIElement* pElement) const;
+
+
 
         /// Attaches the given element to the given surface.
         ///
@@ -2459,6 +2471,9 @@ namespace GT
 
         /// The position of the mouse on the x axis relative to the top-left corner of the surface that's under the mouse.
         int m_mousePosY;
+
+        /// The current cursor.
+        GUISystemCursor m_currentCursor;
 
 
         /// Object containing the necessary variables for handling layout updates.
