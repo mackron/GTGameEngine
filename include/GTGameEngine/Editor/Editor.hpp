@@ -229,6 +229,15 @@ namespace GT
         HWindow GetSurfaceWindow(HGUISurface hSurface) const;
 
 
+
+        /// Sets the mouse cursor.
+        void SetCursor(SystemCursorType cursor);
+
+        /// Sets the mouse cursor from a GUI system cursor.
+        void SetCursorFromGUISystemCursor(GUISystemCursor cursor);
+
+
+
         ////////////////////////////////////
         // Inbound Events
 

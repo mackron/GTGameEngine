@@ -103,6 +103,10 @@ namespace GT
                     // Attach the GUI event handler.
                     m_gui.AttachGlobalEventHandler(m_globalGUIEventHandler);
 
+                    m_gui.OnGlobalCursorNeedsToChange([&](GUISystemCursor cursor) {
+                        this->SetCursorFromGUISystemCursor(cursor);
+                    });
+
 
                     // Create the header control.
                     HGUIElement hMainWindowElement = this->GetWindowElement(m_hMainWindow);
@@ -608,6 +612,32 @@ namespace GT
         }
 
         return NULL;
+    }
+
+
+    void Editor::SetCursor(SystemCursorType cursor)
+    {
+        // TODO: Set the cursor for all windows.
+        m_gameContext.GetWindowManager().SetWindowCursor(m_hMainWindow, m_gameContext.GetWindowManager().GetSystemCursor(cursor));
+    }
+
+    void Editor::SetCursorFromGUISystemCursor(GUISystemCursor cursor)
+    {
+        switch (cursor)
+        {
+        case GUISystemCursor::IBeam:
+            {
+                this->SetCursor(SystemCursorType::IBeam);
+                break;
+            }
+
+        case GUISystemCursor::Default:
+        default:
+            {
+                this->SetCursor(SystemCursorType::Arrow);
+                break;
+            }
+        }
     }
 
 
