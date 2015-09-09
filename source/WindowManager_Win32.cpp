@@ -587,10 +587,13 @@ namespace GT
             case WM_MOUSEWHEEL:
                 {
                     int delta = GET_WHEEL_DELTA_WPARAM(wParam) / WHEEL_DELTA;
-                    int xPos  = GET_X_LPARAM(lParam);
-                    int yPos  = GET_Y_LPARAM(lParam);
-                    pWindowManager->OnMouseWheel(reinterpret_cast<HWindow>(hWnd), delta, xPos, yPos);
 
+                    POINT p;
+                    p.x = GET_X_LPARAM(lParam);
+                    p.y = GET_Y_LPARAM(lParam);
+                    ScreenToClient(hWnd, &p);
+
+                    pWindowManager->OnMouseWheel(reinterpret_cast<HWindow>(hWnd), delta, p.x, p.y);
                     break;
                 }
 
