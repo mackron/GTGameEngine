@@ -1279,8 +1279,8 @@ namespace GT
 
         rectOut.left   = pElement->layout.absolutePosX + pElement->layout.borderLeftWidth + pElement->layout.paddingLeft;
         rectOut.top    = pElement->layout.absolutePosY + pElement->layout.borderTopWidth  + pElement->layout.paddingTop;
-        rectOut.right  = rectOut.left + pElement->layout.width  - this->Layout_GetElementInnerWidth(pElement);
-        rectOut.bottom = rectOut.top  + pElement->layout.height - this->Layout_GetElementInnerHeight(pElement);
+        rectOut.right  = rectOut.left + this->Layout_GetElementInnerWidth(pElement);
+        rectOut.bottom = rectOut.top  + this->Layout_GetElementInnerHeight(pElement);
     }
     void GUIContextBase::GetElementAbsoluteInnerRect(GUIElement* pElement, GTLib::Rect<int> &rectOut) const
     {
@@ -2795,6 +2795,15 @@ namespace GT
             m_pElementWithKeyboardFocus = pNewFocusedElement;
 
             if (pNewFocusedElement != nullptr) {
+                if (this->IsEditableTextEnabled(pNewFocusedElement)) {
+                    GTLib::Rect<int> textRect;
+                    if (pNewFocusedElement->pTextLayout != nullptr) {
+                        pNewFocusedElement->pTextLayout->GetTextRectRelativeToBounds(textRect);
+                    }
+
+                    this->ShowTextCursor(pNewFocusedElement, textRect.left, textRect.top);
+                }
+
                 this->PostEvent_OnReceiveKeyboardFocus(pNewFocusedElement);
             }
         }
@@ -3487,18 +3496,29 @@ namespace GT
 
     void GUIContextBase::ShowTextCursor(GUIElement* pOwnerElement, int relativePosX, int relativePosY)
     {
-        m_pTextCursorOwnerElement = pOwnerElement;
-        m_textCursorRelativePosX  = relativePosX;
-        m_textCursorRelativePosY  = relativePosY;
+        this->BeginBatch();
+        {
+            // Before changing the text cursor, we need to invalidate the rectangle of the old rectangle.
+            this->Painting_InvalidateTextCursorRect();
 
-        if (m_pTextCursorOwnerElement != nullptr)
-        {
-            m_isTextCursorVisible = true;
+            m_pTextCursorOwnerElement = pOwnerElement;
+            m_textCursorRelativePosX  = relativePosX;
+            m_textCursorRelativePosY  = relativePosY;
+
+            if (m_pTextCursorOwnerElement != nullptr)
+            {
+                m_isTextCursorVisible = true;
+            }
+            else
+            {
+                m_isTextCursorVisible = false;
+            }
+
+
+            // The owner element needs to be redrawn so that the text cursor is visible.
+            this->Painting_InvalidateTextCursorRect();
         }
-        else
-        {
-            m_isTextCursorVisible = false;
-        }
+        this->EndBatch();
     }
 
     void GUIContextBase::HideTextCursor()
@@ -3520,6 +3540,25 @@ namespace GT
     {
         relativePosXOut = m_textCursorRelativePosX;
         relativePosYOut = m_textCursorRelativePosY;
+    }
+
+    void GUIContextBase::GetTextCursorAbsoluteRect(GTLib::Rect<int> &rectOut) const
+    {
+        if (m_pTextCursorOwnerElement != nullptr)
+        {
+            this->GetElementAbsoluteInnerRect(m_pTextCursorOwnerElement, rectOut);
+
+            unsigned int textCursorWidth  = static_cast<unsigned int>(GTLib::Round(1.0f * this->GetXDPIScalingFactor(this->GetElementSurface(m_pTextCursorOwnerElement))));
+            unsigned int textCursorHeight = m_pFontManager->GetLineHeight(this->GetElementFont(m_pTextCursorOwnerElement));
+            if (textCursorHeight == 0) {
+                textCursorHeight = rectOut.GetHeight();
+            }
+
+            rectOut.left  += m_textCursorRelativePosX;
+            rectOut.top   += m_textCursorRelativePosY;
+            rectOut.right  = rectOut.left + textCursorWidth;
+            rectOut.bottom = rectOut.top  + textCursorHeight;
+        }
     }
 
 
@@ -4228,6 +4267,17 @@ namespace GT
         }
     }
 
+    void GUIContextBase::Painting_InvalidateTextCursorRect()
+    {
+        if (m_pTextCursorOwnerElement != nullptr)
+        {
+            GTLib::Rect<int> rectI;
+            this->GetTextCursorAbsoluteRect(rectI);
+
+            this->Painting_InvalidateRect(this->GetElementSurface(m_pTextCursorOwnerElement), rectI);
+        }
+    }
+
     void GUIContextBase::Painting_PaintAndValidateSurfaceRects()
     {
         this->IterateSurfaces([&](GUISurface* pSurface) -> bool
@@ -4438,6 +4488,15 @@ namespace GT
                 // The clipping rect needs to be reset.
                 Renderer_SetClippingRect(visibleRect);
             }
+        }
+
+        // Text cursor.
+        if (m_pTextCursorOwnerElement == pElement && m_isTextCursorVisible && m_pFontManager != nullptr)
+        {
+            GTLib::Rect<int> textCursorRect;
+            this->GetTextCursorAbsoluteRect(textCursorRect);
+
+            Renderer_DrawRectangle(textCursorRect, GUIElementStyle_Get_textcolor(pElement->style));
         }
 
 

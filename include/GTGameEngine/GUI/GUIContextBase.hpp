@@ -1855,6 +1855,9 @@ namespace GT
         /// Retrieves the position of the text cursor.
         void GetTextCursorRelativePosition(int &relativePosXOut, int &relativePosYOut) const;
 
+        /// Retrieves the absolute rectangle of the text cursor.
+        void GetTextCursorAbsoluteRect(GTLib::Rect<int> &rectOut) const;
+
 
 
     private:
@@ -1998,6 +2001,9 @@ namespace GT
         ///
         /// @param pElement [in] A reference to the element whose text rectangle is being invalidated.
         void Painting_InvalidateElementTextRect(GUIElement* pElement);
+
+        /// Invalidates the text cursor rectangle of the element that owns the text cursor.
+        void Painting_InvalidateTextCursorRect();
 
         /// Paints the invalid rectangles of every surface that has an invalid region.
         ///
