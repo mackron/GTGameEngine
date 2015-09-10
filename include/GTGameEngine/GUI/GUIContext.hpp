@@ -1719,6 +1719,23 @@ namespace GT
         void ReleaseMouseEventCapture();
 
 
+        /// Sets the owner of the text cursor, sets it's position relative to the owner, and shows it.
+        void ShowTextCursor(HGUIElement hOwnerElement, int relativePosX, int relativePosY);
+
+        /// Hides the text cursor.
+        void HideTextCursor();
+
+        /// Determines whether or not the text cursor is visible.
+        bool IsTextCursorVisible() const;
+
+        /// Retrieves a pointer to the element that owns the text cursor.
+        HGUIElement GetTextCursorOwnerElement() const;
+
+        /// Retrieves the position of the text cursor.
+        void GetTextCursorRelativePosition(int &relativePosXOut, int &relativePosYOut) const;
+
+
+
     private:
 
         /// Retrieve a pointer to the actual surface referred to by the given handle.

@@ -1840,6 +1840,23 @@ namespace GT
         void ReleaseMouseEventCapture();
 
 
+        /// Sets the owner of the text cursor, sets it's position relative to the owner, and shows it.
+        void ShowTextCursor(GUIElement* pOwnerElement, int relativePosX, int relativePosY);
+
+        /// Hides the text cursor.
+        void HideTextCursor();
+
+        /// Determines whether or not the text cursor is visible.
+        bool IsTextCursorVisible() const;
+
+        /// Retrieves a pointer to the element that owns the text cursor.
+        GUIElement* GetTextCursorOwnerElement() const;
+
+        /// Retrieves the position of the text cursor.
+        void GetTextCursorRelativePosition(int &relativePosXOut, int &relativePosYOut) const;
+
+
+
     private:
 
         /// Recursively sets the surface for the given element and it's children.
@@ -2534,6 +2551,17 @@ namespace GT
 
         /// A pointer to the element that has the keyboard focus.
         GUIElement* m_pElementWithKeyboardFocus;
+
+
+        /// A pointer to the element that owns the text cursor.
+        GUIElement* m_pTextCursorOwnerElement;
+
+        /// Keeps track of whether or not the text cursor is visible.
+        bool m_isTextCursorVisible;
+
+        /// The position of the text cursor, relative to the element that owns it.
+        int m_textCursorRelativePosX;
+        int m_textCursorRelativePosY;
 
 
         /// Object containing the necessary variables for handling layout updates.

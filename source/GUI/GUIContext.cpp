@@ -3696,6 +3696,42 @@ namespace GT
     }
 
 
+    void GUIContext::ShowTextCursor(HGUIElement hOwnerElement, int relativePosX, int relativePosY)
+    {
+        auto pOwnerElement = this->GetElementPtr(hOwnerElement);
+        if (pOwnerElement != nullptr)
+        {
+            GUIContextBase::ShowTextCursor(pOwnerElement, relativePosX, relativePosY);
+        }
+    }
+
+    void GUIContext::HideTextCursor()
+    {
+        GUIContextBase::HideTextCursor();
+    }
+
+    bool GUIContext::IsTextCursorVisible() const
+    {
+        return GUIContextBase::IsTextCursorVisible();
+    }
+
+    HGUIElement GUIContext::GetTextCursorOwnerElement() const
+    {
+        auto pOwnerElement = GUIContextBase::GetTextCursorOwnerElement();
+        if (pOwnerElement != nullptr)
+        {
+            return reinterpret_cast<GUIElementWithHandle*>(pOwnerElement)->handle;
+        }
+
+        return NULL;
+    }
+
+    void GUIContext::GetTextCursorRelativePosition(int &relativePosXOut, int &relativePosYOut) const
+    {
+        GUIContextBase::GetTextCursorRelativePosition(relativePosXOut, relativePosYOut);
+    }
+
+
 
     ////////////////////////////////////////////////////////////////
     // Private

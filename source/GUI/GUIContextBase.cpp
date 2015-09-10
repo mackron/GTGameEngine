@@ -60,6 +60,7 @@ namespace GT
           m_pSurfaceUnderMouse(nullptr),
           m_currentCursor(GUISystemCursor::Default),
           m_pElementWithKeyboardFocus(nullptr),
+          m_pTextCursorOwnerElement(nullptr), m_isTextCursorVisible(false), m_textCursorRelativePosX(0), m_textCursorRelativePosY(0),
           m_layoutContext(),
           m_batchLockCounter(0)
     {
@@ -3481,6 +3482,44 @@ namespace GT
             // When the element capturing mouse events changes, the mouse enter/leave state. This will post all of the applicable events.
             this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY, true));
         }
+    }
+
+
+    void GUIContextBase::ShowTextCursor(GUIElement* pOwnerElement, int relativePosX, int relativePosY)
+    {
+        m_pTextCursorOwnerElement = pOwnerElement;
+        m_textCursorRelativePosX  = relativePosX;
+        m_textCursorRelativePosY  = relativePosY;
+
+        if (m_pTextCursorOwnerElement != nullptr)
+        {
+            m_isTextCursorVisible = true;
+        }
+        else
+        {
+            m_isTextCursorVisible = false;
+        }
+    }
+
+    void GUIContextBase::HideTextCursor()
+    {
+        this->ShowTextCursor(nullptr, 0, 0);
+    }
+
+    bool GUIContextBase::IsTextCursorVisible() const
+    {
+        return m_isTextCursorVisible;
+    }
+
+    GUIElement* GUIContextBase::GetTextCursorOwnerElement() const
+    {
+        return m_pTextCursorOwnerElement;
+    }
+
+    void GUIContextBase::GetTextCursorRelativePosition(int &relativePosXOut, int &relativePosYOut) const
+    {
+        relativePosXOut = m_textCursorRelativePosX;
+        relativePosYOut = m_textCursorRelativePosY;
     }
 
 
