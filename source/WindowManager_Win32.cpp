@@ -622,14 +622,35 @@ namespace GT
                     break;
                 }
 
-            case WM_UNICHAR:
+                // NOTE: WM_UNICHAR is not posted by Windows itself, but rather intended to be posted by applications. Thus, we need to use WM_CHAR. WM_CHAR
+                //       posts events as UTF-16 code points. When the code point is a surrogate pair, we need to store it and wait for the next WM_CHAR event
+                //       which will contain the other half of the pair.
+            case WM_CHAR:
                 {
-                    if ((lParam & (1U << 31)) != 0)
+                    if ((lParam & (1U << 31)) == 0)     // Bit 31 will be 1 if the key was pressed, 0 if it was released.
                     {
-                        int repeatCount = lParam & 0x0000FFFF;
-                        for (int i = 0; i < repeatCount; ++i)
+                        if (IS_HIGH_SURROGATE(wParam))
                         {
-                            pWindowManager->OnPrintableKeyDown(reinterpret_cast<HWindow>(hWnd), static_cast<char32_t>(wParam));
+                            assert(pWindowData->utf16HighSurrogate == 0);
+                            pWindowData->utf16HighSurrogate = char16_t(wParam);
+                        }
+                        else
+                        {
+                            char32_t character = char32_t(wParam);
+                            if (IS_LOW_SURROGATE(wParam))
+                            {
+                                assert(IS_HIGH_SURROGATE(pWindowData->utf16HighSurrogate) != 0);
+                                character = GTLib::Strings::UTF16PairToUTF32(pWindowData->utf16HighSurrogate, char16_t(wParam));
+                            }
+
+                            pWindowData->utf16HighSurrogate = 0;
+
+
+                            int repeatCount = lParam & 0x0000FFFF;
+                            for (int i = 0; i < repeatCount; ++i)
+                            {
+                                pWindowManager->OnPrintableKeyDown(reinterpret_cast<HWindow>(hWnd), character);
+                            }
                         }
                     }
 
@@ -931,12 +952,13 @@ namespace GT
         {
             // Set the auxilliary window data to help in processing some window events.
             WindowData* pWindowData = new WindowData;
-            pWindowData->pWindowManager = this;
-            pWindowData->relativePosX   = xPos;
-            pWindowData->relativePosY   = yPos;
-            pWindowData->type           = type;
-            pWindowData->flags          = 0;
-            pWindowData->hCursor        = LoadCursor(NULL, IDC_ARROW);
+            pWindowData->pWindowManager     = this;
+            pWindowData->relativePosX       = xPos;
+            pWindowData->relativePosY       = yPos;
+            pWindowData->type               = type;
+            pWindowData->flags              = 0;
+            pWindowData->hCursor            = LoadCursor(NULL, IDC_ARROW);
+            pWindowData->utf16HighSurrogate = 0;
             ::SetWindowLongPtr(hWnd, 0, reinterpret_cast<LONG_PTR>(pWindowData));
 
 

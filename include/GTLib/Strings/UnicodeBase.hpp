@@ -351,6 +351,12 @@ namespace GTLib
             }
         }
         */
+
+
+        inline char32_t UTF16PairToUTF32(char16_t h, char16_t l)
+        {
+            return ((h - UNI_SUR_HIGH_START) << UNI_HALF_SHIFT) + (l - UNI_SUR_LOW_START) + UNI_HALF_BASE;
+        }
     }
 }
 

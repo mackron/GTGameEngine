@@ -217,6 +217,10 @@ namespace GT
 
             /// The cursor to use with the window. This should be the arrow cursor by default.
             HCURSOR hCursor;
+
+            /// The high-surrogate from a WM_CHAR message. This is used in order to build a surrogate pair from a couple of WM_CHAR messages. When
+            /// a WM_CHAR message is received when code point is not a high surrogate, this is set to 0.
+            char16_t utf16HighSurrogate;
         };
 
 
