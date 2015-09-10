@@ -1593,6 +1593,15 @@ namespace GT
         /// @copydoc GUIContextBase::OnMouseWheel()
         void OnMouseWheel(HGUISurface hSurface, int delta, int mousePosX, int mousePosY);
 
+        /// @copydoc GUIContextBase::OnMouseWheel()
+        void OnKeyPressed(GTLib::Key key);
+
+        /// @copydoc GUIContextBase::OnKeyReleased()
+        void OnKeyReleased(GTLib::Key key);
+
+        /// @copydoc GUIContextBase::OnPrintableKeyDown()
+        void OnPrintableKeyDown(char32_t character);
+
 
         ////////////////////////////////////////////////////////////////
         // Finding/Gathering

@@ -3653,6 +3653,21 @@ namespace GT
         }
     }
 
+    void GUIContext::OnKeyPressed(GTLib::Key key)
+    {
+        GUIContextBase::OnKeyPressed(key);
+    }
+
+    void GUIContext::OnKeyReleased(GTLib::Key key)
+    {
+        GUIContextBase::OnKeyReleased(key);
+    }
+
+    void GUIContext::OnPrintableKeyDown(char32_t character)
+    {
+        GUIContextBase::OnPrintableKeyDown(character);
+    }
+
 
 
     ////////////////////////////////////////////////////////////////
