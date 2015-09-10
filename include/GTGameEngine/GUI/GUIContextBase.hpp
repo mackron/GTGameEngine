@@ -7,6 +7,7 @@
 #include "GUISurface.hpp"
 #include "GUIFontManager.hpp"
 #include "GUIResourceManager.hpp"
+#include <GTLib/Keyboard.hpp>
 
 namespace GT
 {
@@ -137,6 +138,30 @@ namespace GT
 
         /// Posts the OnMouseWheel event.
         virtual void PostEvent_OnMouseWheel(GUIElement* pElement, int delta, int mousePosX, int mousePosY) = 0;
+
+
+        /// Posts the OnKeyPressed event.
+        ///
+        /// @param pElement [in] The element receiving the event.
+        /// @param key      [in] The virtual key code.
+        virtual void PostEvent_OnKeyPressed(GUIElement* pElement, GTLib::Key key) = 0;
+
+        /// Posts the OnKeyReleased event.
+        ///
+        /// @param pElement [in] The element receiving the event.
+        /// @param key      [in] The virtual key code.
+        virtual void PostEvent_OnKeyReleased(GUIElement* pElement, GTLib::Key key) = 0;
+
+        /// Posts the OnPrintableKeyDown event.
+        ///
+        /// @param pElement  [in] The element receiving the event.
+        /// @param character [in] The unicode code point of the printable character.
+        ///
+        /// @remarks
+        ///     This will include enter, backspace and delete key presses.
+        ///     @par
+        ///     Use this event for things like text boxes.
+        virtual void PostEvent_OnPrintableKeyDown(GUIElement* pElement, char32_t character) = 0;
 
 
         /// Posts the OnSetMouseEventCapture event.
@@ -1710,6 +1735,14 @@ namespace GT
         /// @copydoc GUIEventHandler::OnMouseWheel()
         void OnMouseWheel(GUISurface* pSurface, int delta, int mousePosX, int mousePosY);
 
+        /// @copydoc GUIEventHandler::OnMouseWheel()
+        void OnKeyPressed(GTLib::Key key);
+
+        /// @copydoc GUIEventHandler::OnKeyReleased()
+        void OnKeyReleased(GTLib::Key key);
+
+        /// @copydoc GUIEventHandler::OnPrintableKeyDown()
+        void OnPrintableKeyDown(char32_t character);
 
 
 

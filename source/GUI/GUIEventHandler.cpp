@@ -51,6 +51,19 @@ namespace GT
     }
 
 
+    void GUIEventHandler::OnKeyPressed(GUIContext &, HGUIElement, GTLib::Key)
+    {
+    }
+
+    void GUIEventHandler::OnKeyReleased(GUIContext &, HGUIElement, GTLib::Key)
+    {
+    }
+
+    void GUIEventHandler::OnPrintableKeyDown(GUIContext &, HGUIElement, char32_t)
+    {
+    }
+
+
     void GUIEventHandler::OnSetMouseEventCapture(GUIContext &, HGUIElement)
     {
     }

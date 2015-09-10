@@ -2795,15 +2795,6 @@ namespace GT
             m_pElementWithKeyboardFocus = pNewFocusedElement;
 
             if (pNewFocusedElement != nullptr) {
-                if (this->IsEditableTextEnabled(pNewFocusedElement)) {
-                    GTLib::Rect<int> textRect;
-                    if (pNewFocusedElement->pTextLayout != nullptr) {
-                        pNewFocusedElement->pTextLayout->GetTextRectRelativeToBounds(textRect);
-                    }
-
-                    this->ShowTextCursor(pNewFocusedElement, textRect.left, textRect.top);
-                }
-
                 this->PostEvent_OnReceiveKeyboardFocus(pNewFocusedElement);
             }
         }
@@ -3181,17 +3172,29 @@ namespace GT
 
         if (pEventReceiver != nullptr)
         {
-            // Give the element keyboard focus if focus-on-mouse-click is enabled.
-            if (this->IsFocusOnMouseClickEnabled(pEventReceiver) && mouseButton == 1)   // 1 = left button
-            {
-                this->GiveElementKeyboardFocus(pEventReceiver);
-            }
-
-
             // Need to convert the point to local coordinates.
             int relativeMousePosX;
             int relativeMousePosY;
             this->AbsoluteToRelative(pEventReceiver, mousePosX, mousePosY, relativeMousePosX, relativeMousePosY);
+
+
+            // Give the element keyboard focus if focus-on-mouse-click is enabled.
+            if (this->IsFocusOnMouseClickEnabled(pEventReceiver) && mouseButton == 1)   // 1 = left button
+            {
+                this->GiveElementKeyboardFocus(pEventReceiver);
+
+                if (this->IsEditableTextEnabled(pEventReceiver)) {
+                    int textCursorPosX = 0;
+                    int textCursorPosY = 0;
+                    if (pEventReceiver->pTextLayout != nullptr) {
+                        pEventReceiver->pTextLayout->MoveCursorToPoint(relativeMousePosX, relativeMousePosY);
+                        pEventReceiver->pTextLayout->GetCursorPosition(textCursorPosX, textCursorPosY);
+                    }
+
+                    this->ShowTextCursor(pEventReceiver, textCursorPosX, textCursorPosY);
+                }
+            }
+
 
             this->PostEvent_OnMouseButtonPressed(pEventReceiver, mouseButton, relativeMousePosX, relativeMousePosY);
         }
@@ -3284,6 +3287,36 @@ namespace GT
             this->AbsoluteToRelative(pEventReceiver, mousePosX, mousePosY, relativeMousePosX, relativeMousePosY);
 
             this->PostEvent_OnMouseWheel(pEventReceiver, delta, relativeMousePosX, relativeMousePosY);
+        }
+    }
+
+
+    void GUIContextBase::OnKeyPressed(GTLib::Key key)
+    {
+        if (m_pElementWithKeyboardFocus != nullptr)
+        {
+            this->PostEvent_OnKeyPressed(m_pElementWithKeyboardFocus, key);
+        }
+    }
+
+    void GUIContextBase::OnKeyReleased(GTLib::Key key)
+    {
+        if (m_pElementWithKeyboardFocus != nullptr)
+        {
+            this->PostEvent_OnKeyReleased(m_pElementWithKeyboardFocus, key);
+        }
+    }
+
+    void GUIContextBase::OnPrintableKeyDown(char32_t character)
+    {
+        if (m_pElementWithKeyboardFocus != nullptr)
+        {
+            this->PostEvent_OnPrintableKeyDown(m_pElementWithKeyboardFocus, character);
+
+            if (this->IsEditableTextEnabled(m_pElementWithKeyboardFocus))
+            {
+                __asm int 3;
+            }
         }
     }
 
@@ -3910,9 +3943,9 @@ namespace GT
 
                 assert(pElement->pTextLayout != nullptr);
                 {
-                    pElement->pTextLayout->SetText(text);
                     pElement->pTextLayout->SetDefaultFont(this->GetElementFont(pElement));
                     pElement->pTextLayout->SetDefaultTextColor(this->GetElementTextColor(pElement));
+                    pElement->pTextLayout->SetText(text);
 
                     unsigned int textBoundsWidth  = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerWidth(pElement)));
                     unsigned int textBoundsHeight = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerHeight(pElement)));

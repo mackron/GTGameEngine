@@ -2,10 +2,6 @@
 
 #include <GTGameEngine/GUI/GUIContext.hpp>
 
-extern "C" {
-    //uint64_t _x64_clipping_clear(void* buffer, unsigned int stride, unsigned int rectLeft, unsigned int rectTop, uint64_t rectRight, uint64_t rectBottom);
-}
-
 namespace GT
 {
     GUIContext::GUIContext(GUIRenderer* renderer, GUIFontManager* pFontManager, GUIResourceManager* pResourceManager)
@@ -768,6 +764,184 @@ namespace GT
                 if (pElement == this->GetElementPtr(hElement))
                 {
                     handlers[i](hElement);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+
+    void GUIContext::PostEvent_OnKeyPressed(GUIElement* pElement, GTLib::Key key)
+    {
+        assert(pElement != nullptr);
+
+        HGUIElement hElement = reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        assert(hElement != 0);
+        {
+            // Local
+            this->IterateLocalEventHandlers(hElement, [&](GUIEventHandler &eventHandler) -> bool
+            {
+                eventHandler.OnKeyPressed(*this, hElement, key);
+                return true;
+            });
+
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnKeyPressed;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i](key);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
+            // Global
+            this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    eventHandler.OnKeyPressed(*this, hElement, key);
+                    return true;
+                }
+
+                return false;
+            });
+
+
+            auto handlers = m_callbackGlobalEventHandlers.OnKeyPressed;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement, key);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    void GUIContext::PostEvent_OnKeyReleased(GUIElement* pElement, GTLib::Key key)
+    {
+        assert(pElement != nullptr);
+
+        HGUIElement hElement = reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        assert(hElement != 0);
+        {
+            // Local
+            this->IterateLocalEventHandlers(hElement, [&](GUIEventHandler &eventHandler) -> bool
+            {
+                eventHandler.OnKeyReleased(*this, hElement, key);
+                return true;
+            });
+
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnKeyReleased;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i](key);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
+            // Global
+            this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    eventHandler.OnKeyReleased(*this, hElement, key);
+                    return true;
+                }
+
+                return false;
+            });
+
+
+            auto handlers = m_callbackGlobalEventHandlers.OnKeyReleased;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement, key);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+    void GUIContext::PostEvent_OnPrintableKeyDown(GUIElement* pElement, char32_t character)
+    {
+        assert(pElement != nullptr);
+
+        HGUIElement hElement = reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        assert(hElement != 0);
+        {
+            // Local
+            this->IterateLocalEventHandlers(hElement, [&](GUIEventHandler &eventHandler) -> bool
+            {
+                eventHandler.OnPrintableKeyDown(*this, hElement, character);
+                return true;
+            });
+
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnPrintableKeyDown;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i](character);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
+            // Global
+            this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    eventHandler.OnPrintableKeyDown(*this, hElement, character);
+                    return true;
+                }
+
+                return false;
+            });
+
+
+            auto handlers = m_callbackGlobalEventHandlers.OnPrintableKeyDown;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement, character);
                 }
                 else
                 {

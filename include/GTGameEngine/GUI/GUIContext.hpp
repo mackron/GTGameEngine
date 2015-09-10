@@ -136,6 +136,15 @@ namespace GT
         /// @copydoc GUIContextBase::PostEvent_OnReleaseMouseEventCapture()
         void PostEvent_OnReleaseMouseEventCapture(GUIElement* pElement);
 
+        /// @copydoc GUIContextBase::PostEvent_OnKeyPressed()
+        void PostEvent_OnKeyPressed(GUIElement* pElement, GTLib::Key key);
+
+        /// @copydoc GUIContextBase::PostEvent_OnKeyReleased()
+        void PostEvent_OnKeyReleased(GUIElement* pElement, GTLib::Key key);
+
+        /// @copydoc GUIContextBase::PostEvent_OnPrintableKeyDown()
+        void PostEvent_OnPrintableKeyDown(GUIElement* pElement, char32_t character);
+
 
         /// @copydoc GUIContextBase::PostEvent_OnReceiveKeyboardFocus()
         void PostEvent_OnReceiveKeyboardFocus(GUIElement* pElement);
