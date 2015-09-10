@@ -197,6 +197,62 @@ namespace GT
     }
 
 
+    void GUISimpleTextLayout::CalculateTextCursorPosition(int inputPosX, int inputPosY, int &textCursorPosX, int &textCursorPosY) const
+    {
+        textCursorPosX = 0;
+        textCursorPosY = 0;
+
+        if (m_lines.GetCount() > 0)
+        {
+            // Y axis
+            const TextLine* pLine = &m_lines[0];
+
+            int lineHeight = this->GetFontManager().GetLineHeight(m_hFont);
+            for (size_t iLine = 0; iLine < m_lines.GetCount(); ++iLine)
+            {
+                pLine = &m_lines[iLine];
+
+                int lineTop    = pLine->height * static_cast<int>(iLine) + m_offsetY + pLine->alignmentOffsetY;
+                int lineBottom = lineTop + lineHeight;
+
+                textCursorPosY = lineTop;
+                if (inputPosY >= lineTop)
+                {
+                    if (inputPosY <= lineBottom)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    assert(iLine == 0);
+                    break;
+                }
+            }
+
+
+            // X axis.
+            assert(pLine != nullptr);
+
+            int lineLeft  = pLine->alignmentOffsetX + m_offsetX;
+            int lineRight = lineLeft + pLine->width;
+
+            if (inputPosX < lineLeft)
+            {
+                textCursorPosX = lineLeft;
+            }
+            else if (inputPosX > lineRight)
+            {
+                textCursorPosX = lineRight;
+            }
+            else
+            {
+                textCursorPosX = inputPosX;
+            }
+        }
+    }
+
+
 
 
     //////////////////////////////////////////
@@ -431,13 +487,13 @@ namespace GT
             {
             case GUITextLayoutHorizontalAlignment::Right:
                 {
-                    line.alignmentOffsetX = m_boundsWidth - line.width;
+                    line.alignmentOffsetX = int(m_boundsWidth) - line.width;
                     break;
                 }
 
             case GUITextLayoutHorizontalAlignment::Center:
                 {
-                    line.alignmentOffsetX = (m_boundsWidth - line.width) / 2;
+                    line.alignmentOffsetX = (int(m_boundsWidth) - line.width) / 2;
                     break;
                 }
 
@@ -454,13 +510,13 @@ namespace GT
             {
             case GUITextLayoutVerticalAlignment::Bottom:
                 {
-                    line.alignmentOffsetY = m_boundsHeight - m_textBoundsHeight;
+                    line.alignmentOffsetY = int(m_boundsHeight) - m_textBoundsHeight;
                     break;
                 }
 
             case GUITextLayoutVerticalAlignment::Center:
                 {
-                    line.alignmentOffsetY = (m_boundsHeight - m_textBoundsHeight) / 2;
+                    line.alignmentOffsetY = (int(m_boundsHeight) - m_textBoundsHeight) / 2;
                     break;
                 }
 

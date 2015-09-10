@@ -194,6 +194,12 @@ namespace GT
         virtual void GetTextRectRelativeToBounds(GTLib::Rect<int> &rectOut) const = 0;
 
 
+        /// Calculates the position to place the text cursor based on an input position relative to the bounds.
+        ///
+        /// @remarks
+        ///     You would typically call this in response to something like a mouse click.
+        virtual void CalculateTextCursorPosition(int inputPosX, int inputPosY, int &textCursorPosX, int &textCursorPosY) const = 0;
+
 
     private:
 

@@ -95,6 +95,10 @@ namespace GT
         void GetTextRectRelativeToBounds(GTLib::Rect<int> &rectOut) const;
 
 
+        /// @copydoc GUITextLayout::GetTextRectRelativeToBounds()
+        void CalculateTextCursorPosition(int inputPosX, int inputPosY, int &textCursorPosX, int &textCursorPosY) const;
+
+
     private:
 
         /// Structure containing information about a text run.
