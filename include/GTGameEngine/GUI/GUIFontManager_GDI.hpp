@@ -46,6 +46,9 @@ namespace GT
         /// @copydoc GUIFontManager::GetGlyphMetrics()
         bool GetGlyphMetrics(HGUIFont hFont, char32_t character, GUIGlyphMetrics &metricsOut) const;
 
+        /// @copydoc GUIFontManager::GetTextCursorPositionFromPoint()
+        bool GetTextCursorPositionFromPoint(HGUIFont hFont, const char* text, unsigned int textLengthInChars, unsigned int maxWidth, int inputPosX, int &textCursorPosXOut, unsigned int &characterIndexOut) const;
+
         /// @copydoc GUIFontManager::DrawTextToBuffer()
         bool DrawTextToBuffer(HGUIFont hFont, const char* text, size_t textLengthInChars, GTLib::Colour color, void* bufferOut, size_t bufferOutSize);
 

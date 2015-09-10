@@ -247,7 +247,54 @@ namespace GT
             }
             else
             {
-                textCursorPosX = inputPosX;
+                for (size_t iRun = 0; iRun < pLine->runs.GetCount(); ++iRun)
+                {
+                    const TextRun &run = pLine->runs[iRun];
+
+                    int runLeft  = run.xPos;
+                    int runRight = run.xPos + run.width;
+
+                    if (iRun > 0)
+                    {
+                        const TextRun &prevRun = pLine->runs[iRun - 1];
+
+                        const int spaceBetweenRuns = run.xPos - (prevRun.xPos + prevRun.width);
+                        runLeft += spaceBetweenRuns / 2;
+                    }
+
+                    if (iRun < pLine->runs.GetCount() - 1)
+                    {
+                        const TextRun &nextRun = pLine->runs[iRun + 1];
+                        
+                        const int spaceBetweenRuns = nextRun.xPos - (run.xPos + run.width);
+                        runRight += spaceBetweenRuns / 2;
+                    }
+
+
+
+                    if (inputPosX >= runLeft && inputPosX < runRight)
+                    {
+                        // It is somewhere on this run.
+                        int inputPosXRelativeToRun = inputPosX - run.xPos;
+                        if (inputPosXRelativeToRun <= 0)
+                        {
+                            // It's in the spacing between this run and the previous one, but closer to this one. Set it to the position of the first character in the run.
+                            textCursorPosX = run.xPos;
+                        }
+                        else
+                        {
+                            int textCursorPosXRelativeToRun = 0;    // Set by GetTextCursorPositionFromPoint()
+
+                            unsigned int unused;
+                            if (this->GetFontManager().GetTextCursorPositionFromPoint(m_hFont, run.textStart, run.characterCount, run.width, inputPosXRelativeToRun, textCursorPosXRelativeToRun, unused))
+                            {
+                                textCursorPosX = textCursorPosXRelativeToRun + run.xPos;
+                            }
+                        }
+
+                        break;
+                    }
+                }
             }
         }
     }

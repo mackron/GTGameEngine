@@ -210,6 +210,9 @@ namespace GT
         /// @param metricsOut [out] A reference to the object that will receive the reference.
         virtual bool GetGlyphMetrics(HGUIFont hFont, char32_t character, GUIGlyphMetrics &metricsOut) const = 0;
 
+        /// Calculates the position to place a text cursor based on the given input position.
+        virtual bool GetTextCursorPositionFromPoint(HGUIFont hFont, const char* text, unsigned int textLengthInChars, unsigned int maxWidth, int inputPosX, int &textCursorPosXOut, unsigned int &characterIndexOut) const = 0;
+
         /// Draws the given text to a raw buffer.
         ///
         /// @remarks

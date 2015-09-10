@@ -140,27 +140,11 @@ namespace GT
             sizeWin32.cx = 0;
             sizeWin32.cy = 0;
 
-            int bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, static_cast<int>(GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthInChars)), nullptr, 0);
+            wchar_t textW[GT_MAX_TEXT_RUN_SIZE_IN_BYTES];
+            int bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, int(GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthInChars)), textW, GT_MAX_TEXT_RUN_SIZE_IN_BYTES - 1);
             if (bufferSize > 0)
             {
-                if (bufferSize > 64)
-                {
-                    wchar_t* buffer = reinterpret_cast<wchar_t*>(malloc(sizeof(wchar_t) * bufferSize));
-                    if (buffer != nullptr)
-                    {
-                        result = GetTextExtentPoint32W(m_hDC, buffer, bufferSize, &sizeWin32);
-                        free(buffer);
-                    }
-                }
-                else
-                {
-                    wchar_t buffer[64];
-                    bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, static_cast<int>(GTLib::Strings::SizeInTsFromCharacterCount(text, textLengthInChars)), buffer, 64);
-                    if (bufferSize > 0)
-                    {
-                        result = GetTextExtentPoint32W(m_hDC, buffer, bufferSize, &sizeWin32);
-                    }
-                }
+                result = GetTextExtentPoint32W(m_hDC, textW, bufferSize, &sizeWin32);
             }
 
 
@@ -247,6 +231,73 @@ namespace GT
         }
 
         return false;
+    }
+
+    bool GUIFontManager_GDI::GetTextCursorPositionFromPoint(HGUIFont hFont, const char* text, unsigned int textLengthInChars, unsigned int maxWidth, int inputPosX, int &textCursorPosXOut, unsigned int &characterIndexOut) const
+    {
+        bool successful = false;
+
+        FontGDI* pFont = m_fontHandles.GetAssociatedObject(hFont);
+        if (pFont != nullptr)
+        {
+            HGDIOBJ hPrevFontWin32 = SelectObject(m_hDC, pFont->hFontWin32);
+
+            GCP_RESULTS results;
+            ZeroMemory(&results, sizeof(results));
+            results.lStructSize = sizeof(results);
+            results.nGlyphs     = textLengthInChars;
+            
+            wchar_t textW[GT_MAX_TEXT_RUN_SIZE_IN_BYTES];
+            int bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, int(results.nGlyphs), textW, GT_MAX_TEXT_RUN_SIZE_IN_BYTES - 1);
+            if (bufferSize > 0)
+            {
+                textW[bufferSize] = '\0';
+
+                results.lpCaretPos = reinterpret_cast<int*>(malloc(sizeof(int) * results.nGlyphs));
+                if (results.lpCaretPos != nullptr)
+                {
+                    if (GetCharacterPlacementW(m_hDC, textW, results.nGlyphs, int(maxWidth), &results, GCP_MAXEXTENT | GCP_USEKERNING) != 0)
+                    {
+                        characterIndexOut = 0;
+                        textCursorPosXOut = 0;
+
+                        for (unsigned int iChar = 0; iChar < results.nGlyphs; ++iChar)
+                        {
+                            int charBoundsLeft = results.lpCaretPos[iChar];
+                            int charBoundsRight = 0;
+                            if (iChar < results.nGlyphs - 1) {
+                                charBoundsRight = results.lpCaretPos[iChar + 1];
+                            } else {
+                                charBoundsRight = int(maxWidth);
+                            }
+
+                            if (inputPosX >= charBoundsLeft && inputPosX <= charBoundsRight)
+                            {
+                                // The input position is somewhere on top of this character. If it's positioned on the left side of the character, set the output
+                                // value to the character at iChar. Otherwise it should be set to the character at iChar + 1.
+                                int charBoundsRightHalf = charBoundsLeft + int(ceil(((charBoundsRight - charBoundsLeft) / 2.0f)));
+                                if (inputPosX <= charBoundsRightHalf) {
+                                    textCursorPosXOut = charBoundsLeft;
+                                    characterIndexOut = iChar;
+                                } else {
+                                    textCursorPosXOut = charBoundsRight;
+                                    characterIndexOut = iChar + 1;
+                                }
+                            }
+                        }
+
+                        successful = true;
+                    }
+
+                    free(results.lpCaretPos);
+                }
+            }
+
+
+            SelectObject(m_hDC, hPrevFontWin32);
+        }
+
+        return successful;
     }
 
 
