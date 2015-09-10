@@ -830,23 +830,21 @@ namespace GT
             }
         }
 
-        //m_gui.OnKeyPressed(key);
+        m_gui.OnKeyPressed(key);
     }
 
     void Editor::OnKeyReleased(HWindow hWindow, GTLib::Key key)
     {
         (void)hWindow;
-        (void)key;
 
-        //m_gui.OnKeyReleased(key);
+        m_gui.OnKeyReleased(key);
     }
 
     void Editor::OnPrintableKeyDown(HWindow hWindow, char32_t character)
     {
         (void)hWindow;
-        (void)character;
 
-        //m_gui.OnPrintableKeyDown(character);
+        m_gui.OnPrintableKeyDown(character);
     }
 
     void Editor::OnPaintWindow(HWindow hWindow, const GTLib::Rect<int> &rect)
