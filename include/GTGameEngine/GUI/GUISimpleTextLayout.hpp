@@ -91,6 +91,9 @@ namespace GT
         GTLib::Colour GetDefaultTextColor() const;
 
 
+        /// @copydoc GUITextLayout::GetTextRectRelativeToBounds()
+        void GetTextRectRelativeToBounds(GTLib::Rect<int> &rectOut) const;
+
 
     private:
 

@@ -143,6 +143,60 @@ namespace GT
     }
 
 
+    void GUISimpleTextLayout::GetTextRectRelativeToBounds(GTLib::Rect<int> &rectOut) const
+    {
+        rectOut.left   = 0;
+        rectOut.top    = 0;
+
+        switch (m_horizontalAlignment)
+        {
+        case GUITextLayoutHorizontalAlignment::Right:
+            {
+                rectOut.left = m_boundsWidth - m_textBoundsWidth;
+                break;
+            }
+
+        case GUITextLayoutHorizontalAlignment::Center:
+            {
+                rectOut.left = (m_boundsWidth - m_textBoundsWidth) / 2;
+                break;
+            }
+
+        case GUITextLayoutHorizontalAlignment::Left:
+        default:
+            {
+                break;
+            }
+        }
+
+
+        switch (m_verticalAlignment)
+        {
+        case GUITextLayoutVerticalAlignment::Bottom:
+            {
+                rectOut.top = m_boundsHeight - m_textBoundsHeight;
+                break;
+            }
+
+        case GUITextLayoutVerticalAlignment::Center:
+            {
+                rectOut.top = (m_boundsHeight - m_textBoundsHeight) / 2;
+                break;
+            }
+
+        case GUITextLayoutVerticalAlignment::Top:
+        default:
+            {
+                break;
+            }
+        }
+
+
+        rectOut.right  = rectOut.left + m_textBoundsWidth;
+        rectOut.bottom = rectOut.top  + m_textBoundsHeight;
+    }
+
+
 
 
     //////////////////////////////////////////
