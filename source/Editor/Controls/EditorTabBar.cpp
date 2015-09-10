@@ -56,10 +56,6 @@ namespace GT
             //gui.SetElementText(m_hDropDownContainer, "\xE2\x8B\xAF");   // <-- Midline ellipsis (U+22EF)
             gui.SetElementText(m_hDropDownContainer, "\xE2\x96\xBC");   // <-- Black Down-Pointing Triangle (U+25BC)
             gui.SetElementTextColor(m_hDropDownContainer, GTLib::Colour(0.8f, 0.8f, 0.8f));
-
-
-
-
         }
     }
 
