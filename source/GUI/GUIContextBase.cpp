@@ -3296,6 +3296,24 @@ namespace GT
         if (m_pElementWithKeyboardFocus != nullptr)
         {
             this->PostEvent_OnKeyPressed(m_pElementWithKeyboardFocus, key);
+
+            if (this->IsEditableTextEnabled(m_pElementWithKeyboardFocus))
+            {
+                if (m_pElementWithKeyboardFocus->pTextLayout != nullptr) {
+                    if (key == GTLib::Keys::ArrowLeft) {
+                        m_pElementWithKeyboardFocus->pTextLayout->MoveCursorLeft();
+                    }
+                    if (key == GTLib::Keys::ArrowRight) {
+                        m_pElementWithKeyboardFocus->pTextLayout->MoveCursorRight();
+                    }
+
+                    int textCursorPosX = 0;
+                    int textCursorPosY = 0;
+                    m_pElementWithKeyboardFocus->pTextLayout->GetCursorPosition(textCursorPosX, textCursorPosY);
+
+                    this->ShowTextCursor(m_pElementWithKeyboardFocus, textCursorPosX, textCursorPosY);
+                }
+            }
         }
     }
 
@@ -3315,7 +3333,9 @@ namespace GT
 
             if (this->IsEditableTextEnabled(m_pElementWithKeyboardFocus))
             {
-                __asm int 3;
+                if (m_pElementWithKeyboardFocus->pTextLayout != nullptr) {
+                    m_pElementWithKeyboardFocus->pTextLayout->InsertCharacterAtCursor(character);
+                }
             }
         }
     }
@@ -3949,7 +3969,7 @@ namespace GT
 
                     unsigned int textBoundsWidth  = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerWidth(pElement)));
                     unsigned int textBoundsHeight = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerHeight(pElement)));
-                    pElement->pTextLayout->SetBounds(textBoundsWidth, textBoundsHeight);
+                    pElement->pTextLayout->SetContainerBounds(textBoundsWidth, textBoundsHeight);
 
                     pElement->pTextLayout->SetAlignment(ToGUITextLayoutHorizontalAlignment(this->GetElementHorizontalAlign(pElement)), ToGUITextLayoutVerticalAlignment(this->GetElementVerticalAlign(pElement)));
                 }
@@ -7250,7 +7270,7 @@ namespace GT
                 {
                     unsigned int textBoundsWidth  = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerWidth(pElement)));
                     unsigned int textBoundsHeight = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerHeight(pElement)));
-                    pElement->pTextLayout->SetBounds(textBoundsWidth, textBoundsHeight);
+                    pElement->pTextLayout->SetContainerBounds(textBoundsWidth, textBoundsHeight);
                 }
             }
         }

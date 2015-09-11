@@ -9,14 +9,15 @@ namespace GT
     GUISimpleTextLayout::GUISimpleTextLayout(GUIFontManager &fontManager)
         : GUITextLayout(fontManager),
           m_text(),
-          m_boundsWidth(0), m_boundsHeight(0),
+          m_containerBoundsWidth(0), m_containerBoundsHeight(0),
           m_offsetX(0), m_offsetY(0),
           m_tabSizeInSpaces(4),
           m_horizontalAlignment(GUITextLayoutHorizontalAlignment::Left), m_verticalAlignment(GUITextLayoutVerticalAlignment::Top),
           m_hFont(0),
           m_color(),
           m_lines(),
-          m_textBoundsWidth(0), m_textBoundsHeight(0)
+          m_textBoundsWidth(0), m_textBoundsHeight(0),
+          m_cursor()
     {
     }
 
@@ -38,18 +39,18 @@ namespace GT
     }
 
 
-    void GUISimpleTextLayout::SetBounds(unsigned int width, unsigned int height)
+    void GUISimpleTextLayout::SetContainerBounds(unsigned int width, unsigned int height)
     {
-        m_boundsWidth  = width;
-        m_boundsHeight = height;
+        m_containerBoundsWidth  = width;
+        m_containerBoundsHeight = height;
 
         this->RefreshLayout();
     }
 
-    void GUISimpleTextLayout::GetBounds(unsigned int &widthOut, unsigned int &heightOut) const
+    void GUISimpleTextLayout::GetContainerBounds(unsigned int &widthOut, unsigned int &heightOut) const
     {
-        widthOut  = m_boundsWidth;
-        heightOut = m_boundsHeight;
+        widthOut  = m_containerBoundsWidth;
+        heightOut = m_containerBoundsHeight;
     }
 
 
@@ -152,13 +153,13 @@ namespace GT
         {
         case GUITextLayoutHorizontalAlignment::Right:
             {
-                rectOut.left = m_boundsWidth - m_textBoundsWidth;
+                rectOut.left = m_containerBoundsWidth - m_textBoundsWidth;
                 break;
             }
 
         case GUITextLayoutHorizontalAlignment::Center:
             {
-                rectOut.left = (m_boundsWidth - m_textBoundsWidth) / 2;
+                rectOut.left = (m_containerBoundsWidth - m_textBoundsWidth) / 2;
                 break;
             }
 
@@ -174,13 +175,13 @@ namespace GT
         {
         case GUITextLayoutVerticalAlignment::Bottom:
             {
-                rectOut.top = m_boundsHeight - m_textBoundsHeight;
+                rectOut.top = m_containerBoundsHeight - m_textBoundsHeight;
                 break;
             }
 
         case GUITextLayoutVerticalAlignment::Center:
             {
-                rectOut.top = (m_boundsHeight - m_textBoundsHeight) / 2;
+                rectOut.top = (m_containerBoundsHeight - m_textBoundsHeight) / 2;
                 break;
             }
 
@@ -191,115 +192,91 @@ namespace GT
             }
         }
 
+        rectOut.left  += m_offsetX;
+        rectOut.right += m_offsetY;
 
         rectOut.right  = rectOut.left + m_textBoundsWidth;
         rectOut.bottom = rectOut.top  + m_textBoundsHeight;
     }
 
 
-    void GUISimpleTextLayout::CalculateTextCursorPosition(int inputPosX, int inputPosY, int &textCursorPosX, int &textCursorPosY) const
+    void GUISimpleTextLayout::MoveCursorToPoint(int inputPosX, int inputPosY)
     {
-        textCursorPosX = 0;
-        textCursorPosY = 0;
+        this->InitMarkerByPointRelativeToContainer(inputPosX, inputPosY, m_cursor);
+    }
 
-        if (m_lines.GetCount() > 0)
+    void GUISimpleTextLayout::GetCursorPosition(int &posXOut, int &posYOut) const
+    {
+        this->GetMarkerPositionRelativeToContainer(m_cursor, posXOut, posYOut);
+    }
+
+    bool GUISimpleTextLayout::MoveCursorLeft()
+    {
+        return this->MoveMarkerLeft(m_cursor);
+    }
+
+    bool GUISimpleTextLayout::MoveCursorRight()
+    {
+        return this->MoveMarkerRight(m_cursor);
+    }
+
+
+    //////////////////////////////
+    // Editing
+
+    void GUISimpleTextLayout::InsertCharacterAtCursor(char32_t character)
+    {
+        switch (character)
         {
-            // Y axis
-            const TextLine* pLine = &m_lines[0];
-
-            int lineHeight = this->GetFontManager().GetLineHeight(m_hFont);
-            for (size_t iLine = 0; iLine < m_lines.GetCount(); ++iLine)
+        case '\b':
             {
-                pLine = &m_lines[iLine];
-
-                int lineTop    = pLine->height * static_cast<int>(iLine) + m_offsetY + pLine->alignmentOffsetY;
-                int lineBottom = lineTop + lineHeight;
-
-                textCursorPosY = lineTop;
-                if (inputPosY >= lineTop)
-                {
-                    if (inputPosY <= lineBottom)
-                    {
-                        break;
-                    }
-                }
-                else
-                {
-                    assert(iLine == 0);
-                    break;
-                }
+                this->DeleteCharacterToLeftOfCursor();
+                break;
             }
 
-
-            // X axis.
-            assert(pLine != nullptr);
-
-            int lineLeft  = pLine->alignmentOffsetX + m_offsetX;
-            int lineRight = lineLeft + pLine->width;
-
-            if (inputPosX < lineLeft)
+        case '\n':
+        case '\r':
             {
-                textCursorPosX = lineLeft;
+                this->InsertNewLineAtCursor();
+                break;
             }
-            else if (inputPosX > lineRight)
+
+        case '\t':
             {
-                textCursorPosX = lineRight;
+                this->InsertTabAtCursor();
+                break;
             }
-            else
+
+        default:
             {
-                for (size_t iRun = 0; iRun < pLine->runs.GetCount(); ++iRun)
-                {
-                    const TextRun &run = pLine->runs[iRun];
-
-                    int runLeft  = run.xPos;
-                    int runRight = run.xPos + run.width;
-
-                    if (iRun > 0)
-                    {
-                        const TextRun &prevRun = pLine->runs[iRun - 1];
-
-                        const int spaceBetweenRuns = run.xPos - (prevRun.xPos + prevRun.width);
-                        runLeft += spaceBetweenRuns / 2;
-                    }
-
-                    if (iRun < pLine->runs.GetCount() - 1)
-                    {
-                        const TextRun &nextRun = pLine->runs[iRun + 1];
-                        
-                        const int spaceBetweenRuns = nextRun.xPos - (run.xPos + run.width);
-                        runRight += spaceBetweenRuns / 2;
-                    }
-
-
-
-                    if (inputPosX >= runLeft && inputPosX < runRight)
-                    {
-                        // It is somewhere on this run.
-                        int inputPosXRelativeToRun = inputPosX - run.xPos;
-                        if (inputPosXRelativeToRun <= 0)
-                        {
-                            // It's in the spacing between this run and the previous one, but closer to this one. Set it to the position of the first character in the run.
-                            textCursorPosX = run.xPos;
-                        }
-                        else
-                        {
-                            int textCursorPosXRelativeToRun = 0;    // Set by GetTextCursorPositionFromPoint()
-
-                            unsigned int unused;
-                            if (this->GetFontManager().GetTextCursorPositionFromPoint(m_hFont, run.textStart, run.characterCount, run.width, inputPosXRelativeToRun, textCursorPosXRelativeToRun, unused))
-                            {
-                                textCursorPosX = textCursorPosXRelativeToRun + run.xPos;
-                            }
-                        }
-
-                        break;
-                    }
-                }
+                // Assume a regular character.
+                break;
             }
         }
     }
 
+    void GUISimpleTextLayout::DeleteCharacterToLeftOfCursor()
+    {
+        if (this->MoveCursorLeft())
+        {
+            this->DeleteCharacterToRightOfCursor();
+        }
+    }
 
+    void GUISimpleTextLayout::DeleteCharacterToRightOfCursor()
+    {
+        this->DeleteCharacterToRightOfMarker(m_cursor);
+    }
+
+    void GUISimpleTextLayout::InsertNewLineAtCursor()
+    {
+        // TODO: Implement.
+    }
+
+    void GUISimpleTextLayout::InsertTabAtCursor()
+    {
+        // TODO: Implement.
+    }
 
 
     //////////////////////////////////////////
@@ -317,12 +294,12 @@ namespace GT
             int lineTop    = line.height * static_cast<int>(iLine) + m_offsetY + topOffset;
             int lineBottom = lineTop + lineHeight;
             
-            if (lineBottom > 0 && lineTop < static_cast<int>(m_boundsHeight))
+            if (lineBottom > 0 && lineTop < static_cast<int>(m_containerBoundsHeight))
             {
                 int lineLeft  = line.alignmentOffsetX + m_offsetX;
                 int lineRight = lineLeft + line.width;
 
-                if (lineRight > 0 && lineLeft < static_cast<int>(m_boundsWidth))
+                if (lineRight > 0 && lineLeft < static_cast<int>(m_containerBoundsWidth))
                 {
                     // The line is visible. Now iterate over each of it's runs.
                     for (size_t iRun = 0; iRun < line.runs.GetCount(); ++iRun)
@@ -332,7 +309,7 @@ namespace GT
                         int runLeft  = lineLeft + run.xPos;
                         int runRight = runLeft + run.width;
 
-                        if (runRight > 0 && runLeft < static_cast<int>(m_boundsWidth))
+                        if (runRight > 0 && runLeft < static_cast<int>(m_containerBoundsWidth))
                         {
                             // The run is visible.
                             int runTop = run.yPos + line.alignmentOffsetY + topOffset;
@@ -400,7 +377,7 @@ namespace GT
             newLine.alignmentOffsetY = 0;
 
             TextRun currentRun;
-            currentRun.textStart      = nullptr;
+            currentRun.textStart      = iLine.start;
             currentRun.textEnd        = nullptr;
             currentRun.characterCount = 0;
             currentRun.width          = 0;
@@ -534,13 +511,13 @@ namespace GT
             {
             case GUITextLayoutHorizontalAlignment::Right:
                 {
-                    line.alignmentOffsetX = int(m_boundsWidth) - line.width;
+                    line.alignmentOffsetX = int(m_containerBoundsWidth) - line.width;
                     break;
                 }
 
             case GUITextLayoutHorizontalAlignment::Center:
                 {
-                    line.alignmentOffsetX = (int(m_boundsWidth) - line.width) / 2;
+                    line.alignmentOffsetX = (int(m_containerBoundsWidth) - line.width) / 2;
                     break;
                 }
 
@@ -557,13 +534,13 @@ namespace GT
             {
             case GUITextLayoutVerticalAlignment::Bottom:
                 {
-                    line.alignmentOffsetY = int(m_boundsHeight) - m_textBoundsHeight;
+                    line.alignmentOffsetY = int(m_containerBoundsHeight) - m_textBoundsHeight;
                     break;
                 }
 
             case GUITextLayoutVerticalAlignment::Center:
                 {
-                    line.alignmentOffsetY = (int(m_boundsHeight) - m_textBoundsHeight) / 2;
+                    line.alignmentOffsetY = (int(m_containerBoundsHeight) - m_textBoundsHeight) / 2;
                     break;
                 }
 
@@ -575,5 +552,358 @@ namespace GT
                 }
             }
         }
+    }
+
+
+
+    void GUISimpleTextLayout::MakeRelativeToContainer(int inputPosX, int inputPosY, int &posXOut, int &posYOut) const
+    {
+        posXOut = inputPosX;
+        posYOut = inputPosY;
+
+        switch (m_horizontalAlignment)
+        {
+        case GUITextLayoutHorizontalAlignment::Right:
+            {
+                posXOut += m_containerBoundsWidth - m_textBoundsWidth;
+                break;
+            }
+
+        case GUITextLayoutHorizontalAlignment::Center:
+            {
+                posXOut += (m_containerBoundsWidth - m_textBoundsWidth) / 2;
+                break;
+            }
+
+        case GUITextLayoutHorizontalAlignment::Left:
+        default:
+            {
+                break;
+            }
+        }
+
+
+        switch (m_verticalAlignment)
+        {
+        case GUITextLayoutVerticalAlignment::Bottom:
+            {
+                posYOut += m_containerBoundsHeight - m_textBoundsHeight;
+                break;
+            }
+
+        case GUITextLayoutVerticalAlignment::Center:
+            {
+                posYOut += (m_containerBoundsHeight - m_textBoundsHeight) / 2;
+                break;
+            }
+
+        case GUITextLayoutVerticalAlignment::Top:
+        default:
+            {
+                break;
+            }
+        }
+
+        posXOut += m_offsetX;
+        posYOut += m_offsetY;
+    }
+
+    void GUISimpleTextLayout::MakeRelativeToTextBounds(int inputPosX, int inputPosY, int &posXOut, int &posYOut) const
+    {
+        // TODO: Implement me.
+        posXOut = inputPosX;
+        posYOut = inputPosY;
+    }
+
+
+    bool GUISimpleTextLayout::InitMarkerByPointRelativeToContainer(int inputPosX, int inputPosY, TextMarker &markerOut) const
+    {
+        markerOut.iLine        = 0;
+        markerOut.iRun         = 0;
+        markerOut.iChar        = 0;
+        markerOut.relativePosX = 0;
+
+        if (m_lines.GetCount() > 0)
+        {
+            // Y axis.
+            const TextLine* pLine = nullptr;
+
+            int lineHeight = this->GetFontManager().GetLineHeight(m_hFont);
+            for (unsigned int iLine = 0; iLine < static_cast<unsigned int>(m_lines.GetCount()); ++iLine)
+            {
+                pLine = &m_lines[iLine];
+                markerOut.iLine = iLine;
+
+                int lineTop    = pLine->height * int(markerOut.iLine) + m_offsetY + pLine->alignmentOffsetY;
+                int lineBottom = lineTop + lineHeight;
+
+                if (inputPosY >= lineTop)
+                {
+                    if (inputPosY <= lineBottom)
+                    {
+                        break;
+                    }
+                }
+                else
+                {
+                    assert(markerOut.iLine == 0);
+                    break;
+                }
+            }
+
+
+            // X axis.
+            assert(pLine != nullptr);
+
+            int lineLeft  = pLine->alignmentOffsetX + m_offsetX;
+            int lineRight = lineLeft + pLine->width;
+
+            if (inputPosX < lineLeft)
+            {
+                markerOut.iRun         = 0;
+                markerOut.iChar        = 0;
+                markerOut.relativePosX = 0;
+            }
+            else if (inputPosX > lineRight)
+            {
+                markerOut.iRun         = pLine->runs.GetCount() - 1;
+                markerOut.iChar        = pLine->runs.GetBack().characterCount;
+                markerOut.relativePosX = pLine->runs.GetBack().width;
+            }
+            else
+            {
+                for (unsigned int iRun = 0; iRun < static_cast<unsigned int>(pLine->runs.GetCount()); ++iRun)
+                {
+                    const TextRun &run = pLine->runs[iRun];
+
+                    int runLeft  = run.xPos;
+                    int runRight = run.xPos + run.width;
+
+                    if (iRun > 0)
+                    {
+                        const TextRun &prevRun = pLine->runs[iRun - 1];
+
+                        const int spaceBetweenRuns = run.xPos - (prevRun.xPos + prevRun.width);
+                        runLeft -= int(GTLib::Round(spaceBetweenRuns / 2.0f));
+                    }
+
+                    if (iRun < pLine->runs.GetCount() - 1)
+                    {
+                        const TextRun &nextRun = pLine->runs[iRun + 1];
+                        
+                        const int spaceBetweenRuns = nextRun.xPos - (run.xPos + run.width);
+                        runRight += int(GTLib::Round(spaceBetweenRuns / 2.0f));
+                    }
+
+
+
+                    if (inputPosX >= runLeft && inputPosX <= runRight)
+                    {
+                        // It is somewhere on this run.
+                        markerOut.iRun = iRun;
+
+                        int inputPosXRelativeToRun = inputPosX - run.xPos;
+                        if (inputPosXRelativeToRun <= 0)
+                        {
+                            // It's in the spacing between this run and the previous one, but closer to this one. Set it to the position of the first character in the run.
+                            markerOut.iChar        = 0;
+                            markerOut.relativePosX = 0;
+                        }
+                        else if (inputPosXRelativeToRun >= run.xPos + int(run.width))
+                        {
+                            // It's in the spaceing between this run and the next one, but closer to this one. Set it to the position of the last character in this run.
+                            markerOut.iChar        = pLine->runs[iRun].characterCount;
+                            markerOut.relativePosX = pLine->runs[iRun].width;
+                        }
+                        else
+                        {
+                            if (!this->GetFontManager().GetTextCursorPositionFromPoint(m_hFont, run.textStart, run.characterCount, run.width, inputPosXRelativeToRun, markerOut.relativePosX, markerOut.iChar))
+                            {
+                                // An error occured somehow.
+                                return false;
+                            }
+                        }
+
+                        break;
+                    }
+                }
+            }
+        }
+        
+        return true;
+    }
+
+    void GUISimpleTextLayout::GetMarkerPositionRelativeToContainer(const TextMarker &marker, int &posXOut, int &posYOut) const
+    {
+        posXOut = 0;
+        posYOut = 0;
+
+        if (marker.iLine < m_lines.GetCount())
+        {
+            posYOut = m_lines[marker.iLine].height * int(marker.iLine) + m_offsetY + m_lines[marker.iLine].alignmentOffsetY;
+
+            if (marker.iRun < m_lines[marker.iLine].runs.GetCount())
+            {
+                posXOut = m_lines[marker.iLine].runs[marker.iRun].xPos + m_offsetX + m_lines[marker.iLine].alignmentOffsetX + marker.relativePosX;
+            }
+        }
+    }
+
+
+    bool GUISimpleTextLayout::MoveMarkerLeft(TextMarker &marker)
+    {
+        if (m_lines.GetCount() > 0)
+        {
+            if (marker.iChar > 0)
+            {
+                marker.iChar -= 1;
+                return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_lines[marker.iLine].runs[marker.iRun].textStart, marker.iChar, marker.relativePosX);
+            }
+            else
+            {
+                // We're at the beginning of the run which means we need to transfer the cursor to the end of the previous run.
+                return this->MoveMarkerToEndOfPreviousRun(marker);
+            }
+        }
+        
+        return false;
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerRight(TextMarker &marker)
+    {
+        if (m_lines.GetCount() > 0)
+        {
+            if (marker.iChar < m_lines[marker.iLine].runs[marker.iRun].characterCount)
+            {
+                marker.iChar += 1;
+                return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_lines[marker.iLine].runs[marker.iRun].textStart, marker.iChar, marker.relativePosX);
+            }
+            else
+            {
+                // We're at the end of the run which means we need to transfer the cursor to the beginning of the next run.
+                return this->MoveMarkerToStartOfNextRun(marker);
+            }
+        }
+
+        return false;
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerToEndOfPreviousRun(TextMarker &marker)
+    {
+        if (marker.iRun > 0)
+        {
+            // The previous run is on the same line.
+            marker.iRun        -= 1;
+            marker.iChar        = m_lines[marker.iLine].runs[marker.iRun].characterCount;
+            marker.relativePosX = m_lines[marker.iLine].runs[marker.iRun].width;
+
+            return true;
+        }
+        else
+        {
+            // The previous run is on the previous line.
+            return this->MoveMarkerToEndOfPreviousLine(marker);
+        }
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerToStartOfNextRun(TextMarker &marker)
+    {
+        assert(m_lines[marker.iLine].runs.GetCount() > 0);
+
+        if (marker.iRun < m_lines[marker.iLine].runs.GetCount() - 1)
+        {
+            // The next run is on the same line.
+            marker.iRun        += 1;
+            marker.iChar        = 0;
+            marker.relativePosX = 0;
+
+            return true;
+        }
+        else
+        {
+            // The next run is on the next line.
+            return this->MoveMarkerToStartOfNextLine(marker);
+        }
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerToEndOfPreviousLine(TextMarker &marker)
+    {
+        if (marker.iLine > 0)
+        {
+            marker.iLine       -= 1;
+            marker.iRun         = m_lines[marker.iLine].runs.GetCount() - 1;
+            marker.iChar        = m_lines[marker.iLine].runs[marker.iRun].characterCount;
+            marker.relativePosX = m_lines[marker.iLine].runs[marker.iRun].width;
+
+            return true;
+        }
+        else
+        {
+            // There is no previous line.
+            return false;
+        }
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerToStartOfNextLine(TextMarker &marker)
+    {
+        if (m_lines.GetCount() > 0)
+        {
+            if (marker.iLine < m_lines.GetCount() - 1)
+            {
+                marker.iLine       += 1;
+                marker.iRun         = 0;
+                marker.iChar        = 0;
+                marker.relativePosX = 0;
+
+                return true;
+            }
+            else
+            {
+                // There is no next line.
+                return false;
+            }
+        }
+        else
+        {
+            // There are no lones at all.
+            return false;
+        }
+    }
+
+    bool GUISimpleTextLayout::DeleteCharacterToRightOfMarker(TextMarker &marker)
+    {
+        if (m_lines.GetCount() > 0)
+        {
+            if (marker.iChar < m_lines[marker.iLine].runs[marker.iRun].characterCount)
+            {
+                // It's not at the end of the run.
+
+                
+            }
+            else
+            {
+                // It's at the end of the run.
+                assert(m_lines[marker.iLine].runs.GetCount() > 0);
+
+                if (marker.iRun < m_lines[marker.iLine].runs.GetCount() - 1)
+                {
+                    // It's not the last run on the line. If the character to the right is a tab character, it needs to be removed. If there is another tab character to the
+                    // right, then the runs should be left unmerged. Otherwise, they need to be merged.
+
+                    
+                }
+                else
+                {
+                    // It's 
+                }
+
+                if (marker.iLine < m_lines.GetCount() - 1)
+                {
+                    // It's at the very end of 
+                }
+            }
+        }
+
+        return false;
     }
 }

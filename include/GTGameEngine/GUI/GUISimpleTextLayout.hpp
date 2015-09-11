@@ -30,10 +30,10 @@ namespace GT
 
 
         /// @copydoc GUITextLayout::SetBounds()
-        void SetBounds(unsigned int width, unsigned int height);
+        void SetContainerBounds(unsigned int width, unsigned int height);
 
         /// @copydoc GUITextLayout::GetBounds()
-        void GetBounds(unsigned int &widthOut, unsigned int &heightOut) const;
+        void GetContainerBounds(unsigned int &widthOut, unsigned int &heightOut) const;
 
 
         /// @copydoc GUITextLayout::SetOffset()
@@ -95,8 +95,36 @@ namespace GT
         void GetTextRectRelativeToBounds(GTLib::Rect<int> &rectOut) const;
 
 
-        /// @copydoc GUITextLayout::GetTextRectRelativeToBounds()
-        void CalculateTextCursorPosition(int inputPosX, int inputPosY, int &textCursorPosX, int &textCursorPosY) const;
+        /// @copydoc GUITextLayout::MoveCursorToPoint()
+        void MoveCursorToPoint(int inputPosX, int inputPosY);
+
+        /// @copydoc GUITextLayout::GetCursorPositionRelativeToContainer()
+        void GetCursorPosition(int &posXOut, int &posYOut) const;
+
+        /// @copydoc GUITextLayout::MoveCursorLeft()
+        bool MoveCursorLeft();
+
+        /// @copydoc GUITextLayout::MoveCursorRight()
+        bool MoveCursorRight();
+
+
+        //////////////////////////////
+        // Editing
+
+        /// @copydoc GUITextLayout::InsertCharacterAtCursor()
+        void InsertCharacterAtCursor(char32_t character);
+
+        /// @copydoc GUITextLayout::DeleteCharacterToLeftOfCursor()
+        void DeleteCharacterToLeftOfCursor();
+
+        /// @copydoc GUITextLayout::DeleteCharacterToRightOfCursor()
+        void DeleteCharacterToRightOfCursor();
+
+        /// @copydoc GUITextLayout::InsertNewLineAtCursor()
+        void InsertNewLineAtCursor();
+
+        /// @copydoc GUITextLayout::InsertTabAtCursor()
+        void InsertTabAtCursor();
 
 
     private:
@@ -142,6 +170,27 @@ namespace GT
             int alignmentOffsetY;
         };
 
+        /// Structure representing a position within the text.
+        struct TextMarker
+        {
+            TextMarker()
+                : iLine(0), iRun(0), iChar(0), relativePosX(0)
+            {
+            }
+
+            /// The index of the line the marker is positioned on.
+            unsigned int iLine;
+
+            /// The index of the run within the line the marker is positioned on.
+            unsigned int iRun;
+
+            /// The index of the character within the run the marker is positioned to the left of.
+            unsigned int iChar;
+
+            /// The position on the x axis, relative to the x position of the run.
+            int relativePosX;
+        };
+
 
     private:
 
@@ -152,6 +201,46 @@ namespace GT
         void RefreshAlignment();
 
 
+        /// Converts a point relative to the text bounds to the container bounds.
+        void MakeRelativeToContainer(int inputPosX, int inputPosY, int &posXOut, int &posYOut) const;
+
+        /// Converts a point relative to the container bounds to the text bounds.
+        void MakeRelativeToTextBounds(int inputPosX, int inputPosY, int &posXOut, int &posYOut) const;
+
+
+        /// Creates a marker from the given input position, relative to the container bounds.
+        bool InitMarkerByPointRelativeToContainer(int inputPosX, int inputPosY, TextMarker &markerOut) const;
+
+        /// Retrieves the position of the given marker relative to the text boundary.
+        void GetMarkerPositionRelativeToContainer(const TextMarker &marker, int &posXOut, int &posYOut) const;
+
+
+        /// Moves the given marker to the left by one character.
+        bool MoveMarkerLeft(TextMarker &marker);
+
+        /// Moves the given marker to the right by one character.
+        bool MoveMarkerRight(TextMarker &marker);
+
+        /// Moves the given marker to the end of the previous run.
+        bool MoveMarkerToEndOfPreviousRun(TextMarker &marker);
+
+        /// Moves the given marker to the start of the next run.
+        bool MoveMarkerToStartOfNextRun(TextMarker &marker);
+
+        /// Moves the given marker to the end of the previous line.
+        bool MoveMarkerToEndOfPreviousLine(TextMarker &marker);
+
+        /// Moves the given marker to the start of the next line.
+        bool MoveMarkerToStartOfNextLine(TextMarker &marker);
+
+
+        /// Deletes the character to the right of the given marker.
+        ///
+        /// @remarks
+        ///     This does not move the marker.
+        bool DeleteCharacterToRightOfMarker(TextMarker &marker);
+
+
 
     private:
 
@@ -160,10 +249,10 @@ namespace GT
 
 
         /// The width of the text boundary.
-        unsigned int m_boundsWidth;
+        unsigned int m_containerBoundsWidth;
 
         /// The height of the text boundary.
-        unsigned int m_boundsHeight;
+        unsigned int m_containerBoundsHeight;
 
 
         /// The offset of the text on the x axis.
@@ -201,6 +290,10 @@ namespace GT
 
         /// The height of the text.
         int m_textBoundsHeight;
+
+
+        /// The marker representing the text cursor.
+        TextMarker m_cursor;
     };
 }
 

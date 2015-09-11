@@ -300,6 +300,46 @@ namespace GT
         return successful;
     }
 
+    bool GUIFontManager_GDI::GetTextCursorPositionFromCharacter(HGUIFont hFont, const char* text, unsigned int characterIndex, int &textCursorPosXOut) const
+    {
+        bool successful = false;
+
+        FontGDI* pFont = m_fontHandles.GetAssociatedObject(hFont);
+        if (pFont != nullptr)
+        {
+            HGDIOBJ hPrevFontWin32 = SelectObject(m_hDC, pFont->hFontWin32);
+
+            GCP_RESULTS results;
+            ZeroMemory(&results, sizeof(results));
+            results.lStructSize = sizeof(results);
+            results.nGlyphs     = characterIndex + 1;
+            
+            wchar_t textW[GT_MAX_TEXT_RUN_SIZE_IN_BYTES];
+            int bufferSize = MultiByteToWideChar(CP_UTF8, 0, text, int(results.nGlyphs), textW, GT_MAX_TEXT_RUN_SIZE_IN_BYTES - 1);
+            if (bufferSize > 0)
+            {
+                textW[bufferSize] = '\0';
+
+                results.lpCaretPos = reinterpret_cast<int*>(malloc(sizeof(int) * results.nGlyphs));
+                if (results.lpCaretPos != nullptr)
+                {
+                    if (GetCharacterPlacementW(m_hDC, textW, results.nGlyphs, 0, &results, GCP_USEKERNING) != 0)
+                    {
+                        textCursorPosXOut = results.lpCaretPos[characterIndex];
+                        successful = true;
+                    }
+
+                    free(results.lpCaretPos);
+                }
+            }
+
+
+            SelectObject(m_hDC, hPrevFontWin32);
+        }
+
+        return successful;
+    }
+
 
     bool GUIFontManager_GDI::DrawTextToBuffer(HGUIFont hFont, const char* text, size_t textLengthChars, GTLib::Colour color, void* bufferOut, size_t bufferOutSize)
     {

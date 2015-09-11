@@ -81,17 +81,17 @@ namespace GT
         virtual const char* GetText() const = 0;
 
 
-        /// Sets the size of the bounding rectangle of the text.
+        /// Sets the size of the bounding rectangle of the container that contains text.
         ///
         /// @param width  [in] The width of the bounding rectangle.
         /// @param height [in] The height of the bounding rectangle.
-        virtual void SetBounds(unsigned int width, unsigned int height) = 0;
+        virtual void SetContainerBounds(unsigned int width, unsigned int height) = 0;
 
-        /// Retrieves the bounding rectangle.
+        /// Retrieves the bounding rectangle of the container that contains the text.
         ///
         /// @param widthOut  [out] A reference to the variable that will receive the width.
         /// @param heightOut [out] A reference to the variable that will receive the height.
-        virtual void GetBounds(unsigned int &widthOut, unsigned int &heightOut) const = 0;
+        virtual void GetContainerBounds(unsigned int &widthOut, unsigned int &heightOut) const = 0;
 
 
         /// Sets the offset of the text.
@@ -194,11 +194,52 @@ namespace GT
         virtual void GetTextRectRelativeToBounds(GTLib::Rect<int> &rectOut) const = 0;
 
 
-        /// Calculates the position to place the text cursor based on an input position relative to the bounds.
+        /// Positions the cursor at the closest character based on the given input coordinates, relative to the local bounds.
+        virtual void MoveCursorToPoint(int inputPosX, int inputPosY) = 0;
+
+        /// Retrieves the position of the cursor relative to the container bounds.
+        virtual void GetCursorPosition(int &posXOut, int &posYOut) const = 0;
+
+        /// Moves the cursor one character to the left.
+        virtual bool MoveCursorLeft() = 0;
+
+        /// Moves the cursor one character to the right.
+        virtual bool MoveCursorRight() = 0;
+
+
+        //////////////////////////////
+        // Editing
+        //
+        // The editing methods below will move the cursor where appropriate.
+
+        /// Inserts a character at the position of the cursor.
+        ///
+        /// @param character [in] The character to insert.
         ///
         /// @remarks
-        ///     You would typically call this in response to something like a mouse click.
-        virtual void CalculateTextCursorPosition(int inputPosX, int inputPosY, int &textCursorPosX, int &textCursorPosY) const = 0;
+        ///     This should be used for backspace, delete and enter characters.
+        virtual void InsertCharacterAtCursor(char32_t character) = 0;
+
+        /// Deletes the character to the left of the cursor, and moves the cursor in response.
+        ///
+        /// @remarks
+        ///     You would typically call this for backspace key presses.
+        virtual void DeleteCharacterToLeftOfCursor() = 0;
+
+        /// Deletes the character to the right of the cursor.
+        ///
+        /// @remarks
+        ///     This will not move the cursor.
+        virtual void DeleteCharacterToRightOfCursor() = 0;
+
+        /// Inserts a new line at the position of the cursor, and moves the cursor to the beginning of the new line.
+        ///
+        /// @remarks
+        ///     This will move the text to the right of the cursor to the new line.
+        virtual void InsertNewLineAtCursor() = 0;
+
+        /// Inserts a tab character at the position of the cursor.
+        virtual void InsertTabAtCursor() = 0;
 
 
     private:
