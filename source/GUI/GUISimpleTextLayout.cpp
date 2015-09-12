@@ -393,13 +393,7 @@ namespace GT
         GUIFontManager &fontManager = this->GetFontManager();
 
         int lineHeight = fontManager.GetLineHeight(m_hFont);
-        int tabWidth = 0;
-
-        GUIGlyphMetrics spaceMetrics;
-        if (fontManager.GetGlyphMetrics(m_hFont, ' ', spaceMetrics))
-        {
-            tabWidth = spaceMetrics.advance * this->GetTabSizeInSpaces();
-        }
+        int tabWidth = this->GetTabWidth();
 
 
         // We split the runs based on tabs and new-lines. We want to create runs for tabs and new-line characters as well because we want
@@ -662,11 +656,9 @@ namespace GT
                 markerOut.relativePosX = run.width;
 
                 if (m_text.c_str()[run.iChar] == '\n') {
+                    assert(markerOut.iChar == 1);
                     markerOut.iChar       -= 1;
                     markerOut.relativePosX = 0;
-
-                    assert(markerOut.iChar == 0);
-                    //return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[markerOut.iRun].iChar, markerOut.iChar, markerOut.relativePosX);
                 }
             }
             else
