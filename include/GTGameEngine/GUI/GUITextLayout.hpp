@@ -98,13 +98,13 @@ namespace GT
         ///
         /// @param offsetX [in] The offset on the x axis.
         /// @param offsetY [in] The offset on the y axis.
-        virtual void SetOffset(int offsetX, int offsetY) = 0;
+        virtual void SetContainerInnerOffset(int offsetX, int offsetY) = 0;
 
         /// Retrieves the offset of the text.
         ///
         /// @param offsetXOut [out] A reference to the variable that will receive the offset on the x axis.
         /// @param offsetYOut [out] A reference to the variable that will receive the offset on the y axis.
-        virtual void GetOffset(int &offsetXOut, int &offsetYOut) const = 0;
+        virtual void GetContainerInnerOffset(int &offsetXOut, int &offsetYOut) const = 0;
 
 
         /// Iterates over every text run contained withing the current bounds.

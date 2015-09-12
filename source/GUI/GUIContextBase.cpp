@@ -2549,7 +2549,7 @@ namespace GT
 
         if (pElement->pTextLayout != nullptr)
         {
-            pElement->pTextLayout->SetOffset(static_cast<int>(GTLib::Round(pElement->layout.innerOffsetX)), static_cast<int>(GTLib::Round(pElement->layout.innerOffsetY)));
+            pElement->pTextLayout->SetContainerInnerOffset(static_cast<int>(GTLib::Round(pElement->layout.innerOffsetX)), static_cast<int>(GTLib::Round(pElement->layout.innerOffsetY)));
         }
 
 

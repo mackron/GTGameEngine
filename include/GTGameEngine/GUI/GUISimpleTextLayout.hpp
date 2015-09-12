@@ -29,18 +29,18 @@ namespace GT
         const char* GetText() const;
 
 
-        /// @copydoc GUITextLayout::SetBounds()
+        /// @copydoc GUITextLayout::SetContainerBounds()
         void SetContainerBounds(unsigned int width, unsigned int height);
 
-        /// @copydoc GUITextLayout::GetBounds()
+        /// @copydoc GUITextLayout::GetContainerBounds()
         void GetContainerBounds(unsigned int &widthOut, unsigned int &heightOut) const;
 
 
-        /// @copydoc GUITextLayout::SetOffset()
-        void SetOffset(int offsetX, int offsetY);
+        /// @copydoc GUITextLayout::SetContainerInnerOffset()
+        void SetContainerInnerOffset(int offsetX, int offsetY);
 
-        /// @copydoc GUITextLayout::GetOffset()
-        void GetOffset(int &offsetXOut, int &offsetYOut) const;
+        /// @copydoc GUITextLayout::GetContainerInnerOffset()
+        void GetContainerInnerOffset(int &offsetXOut, int &offsetYOut) const;
 
 
         /// @copydoc GUITextLayout::IterateVisibleTextRuns()
@@ -129,6 +129,40 @@ namespace GT
 
     private:
 
+        /// Structure representing a text run.
+        ///
+        /// A text run is just a group of 
+        struct TextRun2
+        {
+            /// Index of the line the run is placed on. For runs that are new line characters, this will represent the number of lines that came before it. For
+            /// example, if this run represents the new-line character for the first line, this will be 0 and so on.
+            unsigned int iLine;
+
+            /// Index in the main text string of the first character of the run.
+            unsigned int iChar;
+
+            /// Index in the main text string of the character just past the last character in the run.
+            unsigned int iCharEnd;
+
+            /// The number of characters making up the run. Note that this is not the number of bytes. It is possible for runs to have this set to zero, which
+            /// will be the case for runs that contain only tabs and new-line characters. This is used to indicate that these runs are dividers.
+            unsigned int characterCount;
+
+
+            /// Position of the run on the x axis relative to the left side of the text boundary.
+            int posX;
+
+            /// Position of the run on the y axis relative to the top side of the text boundary.
+            int posY;
+
+            /// The width of the run. This will be 0 for new-line runs.
+            int width;
+
+            /// The height of the run.
+            int height;
+        };
+
+
         /// Structure containing information about a text run.
         struct TextRun
         {
@@ -194,11 +228,18 @@ namespace GT
 
     private:
 
+        /// Finds the next run string.
+        static bool NextRunString(const char* runStart, const char* &runEnd);
+
+
         /// Refreshes the layout.
         void RefreshLayout();
 
         /// Refreshes the alignment of the text.
         void RefreshAlignment();
+
+        /// Calculates the offsets to apply to a line based on it's width and the current text bounds.
+        void CalculateLineAlignmentOffset(int lineWidth, int &offsetXOut, int &offsetYOut) const;
 
 
         /// Converts a point relative to the text bounds to the container bounds.
@@ -256,10 +297,10 @@ namespace GT
 
 
         /// The offset of the text on the x axis.
-        int m_offsetX;
+        int m_containerInnerOffsetX;
 
         /// The offset of the text on the y axis.
-        int m_offsetY;
+        int m_containerInnerOffsetY;
 
 
         /// The size of a tab character in spaces.
@@ -280,6 +321,9 @@ namespace GT
         /// The colour of the text.
         GTLib::Colour m_color;
 
+
+        /// The list of runs making up the layout.
+        GTLib::Vector<TextRun2> m_runs;
 
         /// The list of text runs making up the layout.
         GTLib::Vector<TextLine> m_lines;

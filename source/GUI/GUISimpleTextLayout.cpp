@@ -4,17 +4,26 @@
 #include <GTLib/Strings/LineIterator.hpp>
 #include <GTLib/Strings/Tokenizer.hpp>
 
+#ifndef OUT
+#define OUT
+#endif
+
+#ifndef DO_NOTHING
+#define DO_NOTHING
+#endif
+
 namespace GT
 {
     GUISimpleTextLayout::GUISimpleTextLayout(GUIFontManager &fontManager)
         : GUITextLayout(fontManager),
           m_text(),
           m_containerBoundsWidth(0), m_containerBoundsHeight(0),
-          m_offsetX(0), m_offsetY(0),
+          m_containerInnerOffsetX(0), m_containerInnerOffsetY(0),
           m_tabSizeInSpaces(4),
           m_horizontalAlignment(GUITextLayoutHorizontalAlignment::Left), m_verticalAlignment(GUITextLayoutVerticalAlignment::Top),
           m_hFont(0),
           m_color(),
+          m_runs(),
           m_lines(),
           m_textBoundsWidth(0), m_textBoundsHeight(0),
           m_cursor()
@@ -54,16 +63,16 @@ namespace GT
     }
 
 
-    void GUISimpleTextLayout::SetOffset(int offsetX, int offsetY)
+    void GUISimpleTextLayout::SetContainerInnerOffset(int offsetX, int offsetY)
     {
-        m_offsetX = offsetX;
-        m_offsetY = offsetY;
+        m_containerInnerOffsetX = offsetX;
+        m_containerInnerOffsetY = offsetY;
     }
 
-    void GUISimpleTextLayout::GetOffset(int &offsetXOut, int &offsetYOut) const
+    void GUISimpleTextLayout::GetContainerInnerOffset(int &offsetXOut, int &offsetYOut) const
     {
-        offsetXOut = m_offsetX;
-        offsetYOut = m_offsetY;
+        offsetXOut = m_containerInnerOffsetX;
+        offsetYOut = m_containerInnerOffsetY;
     }
 
 
@@ -192,8 +201,8 @@ namespace GT
             }
         }
 
-        rectOut.left  += m_offsetX;
-        rectOut.right += m_offsetY;
+        rectOut.left  += m_containerInnerOffsetX;
+        rectOut.right += m_containerInnerOffsetY;
 
         rectOut.right  = rectOut.left + m_textBoundsWidth;
         rectOut.bottom = rectOut.top  + m_textBoundsHeight;
@@ -284,6 +293,7 @@ namespace GT
 
     void GUISimpleTextLayout::IterateVisibleTextRuns(std::function<void (const GUITextRunDesc &textRunDesc)> func) const
     {
+#if 0
         int lineHeight = this->GetFontManager().GetLineHeight(m_hFont);
         int topOffset  = 0; //this->GetFontManager().GetAscent(m_hFont); // - lineHeight;
 
@@ -291,12 +301,12 @@ namespace GT
         {
             auto &line = m_lines[iLine];
 
-            int lineTop    = line.height * static_cast<int>(iLine) + m_offsetY + topOffset;
+            int lineTop    = line.height * static_cast<int>(iLine) + m_containerInnerOffsetY + topOffset;
             int lineBottom = lineTop + lineHeight;
             
             if (lineBottom > 0 && lineTop < static_cast<int>(m_containerBoundsHeight))
             {
-                int lineLeft  = line.alignmentOffsetX + m_offsetX;
+                int lineLeft  = line.alignmentOffsetX + m_containerInnerOffsetX;
                 int lineRight = lineLeft + line.width;
 
                 if (lineRight > 0 && lineLeft < static_cast<int>(m_containerBoundsWidth))
@@ -327,6 +337,38 @@ namespace GT
                 }
             }
         }
+#endif
+
+        // This is a naive implementation. Can be improved a bit.
+        for (size_t iRun = 0; iRun < m_runs.GetCount(); ++iRun)
+        {
+            const TextRun2 &run = m_runs[iRun];
+
+            if (run.characterCount > 0)
+            {
+                int runTop    = run.posY + m_containerInnerOffsetY;
+                int runBottom = runTop   + run.height;
+
+                if (runBottom > 0 && runTop < int(m_containerBoundsHeight))
+                {
+                    int runLeft  = run.posX + m_containerInnerOffsetX;
+                    int runRight = runLeft  + run.width;
+
+                    if (runRight > 0 && runLeft < int(m_containerBoundsWidth))
+                    {
+                        // The run is visible.
+                        GUITextRunDesc runDesc;
+                        GTLib::Strings::Copy(runDesc.text, GT_MAX_TEXT_RUN_SIZE_IN_BYTES, m_text.c_str() + run.iChar, run.iCharEnd - run.iChar);
+                        runDesc.hFont             = m_hFont;
+                        runDesc.xPos              = runLeft;
+                        runDesc.yPos              = runTop;
+                        runDesc.rotationInDegrees = 0;
+                        runDesc.color             = m_color;
+                        func(runDesc);
+                    }
+                }
+            }
+        }
     }
 
 
@@ -345,12 +387,51 @@ namespace GT
     //////////////////////////////////////////
     // Private
 
+    bool GUISimpleTextLayout::NextRunString(const char* runStart, const char* &runEnd)
+    {
+        if (runStart == nullptr || runStart[0] == '\0')
+        {
+            // String is empty.
+            return false;
+        }
+
+
+        char firstChar = runStart[0];
+        if (firstChar == '\t')
+        {
+            // We loop until we hit anything that is not a tab character (tabs will be grouped together into a single run).
+            do
+            {
+                runStart += 1;
+                runEnd = runStart;
+            } while (runStart[0] != '\0' && runStart[0] == '\t');
+
+            return true;
+        }
+        else if (firstChar == '\n')
+        {
+            runStart += 1;
+
+            if (runStart[0] == '\r') {
+                runStart += 1;
+            }
+
+            runEnd = runStart;
+        }
+        else
+        {
+            do
+            {
+                runStart += 1;
+                runEnd = runStart;
+            } while (runStart[0] != '\0' && runStart[0] != '\t' && runStart[0] != '\n');
+        }
+
+        return true;
+    }
+
     void GUISimpleTextLayout::RefreshLayout()
     {
-        // The previous runs need to be removed.
-        m_lines.Clear();
-
-
         GUIFontManager &fontManager = this->GetFontManager();
 
         int lineHeight = fontManager.GetLineHeight(m_hFont);
@@ -361,6 +442,14 @@ namespace GT
         {
             tabWidth = spaceMetrics.advance * this->GetTabSizeInSpaces();
         }
+
+
+
+        /////////////////////////////////////////////////////
+        // OLD Implementation
+
+        // The previous runs need to be removed.
+        m_lines.Clear();
 
         int textBoundsWidth  = 0;
         int textBoundsHeight = 0;
@@ -493,6 +582,102 @@ namespace GT
         m_textBoundsHeight = textBoundsHeight;
 
 
+
+        /////////////////////////////////////////////////////
+        // New Implementation
+
+        // We split the runs based on tabs and new-lines. We want to create runs for tabs and new-line characters as well because we want
+        // to have the entire string covered by runs for the sake of simplicity when it comes to editing.
+        //
+        // The first pass positions the runs based on a top-to-bottom, left-to-right alignment. The second pass then repositions the runs
+        // based on alignment.
+        //m_textBoundsWidth  = 0;
+        //m_textBoundsHeight = 0;
+
+        // The previous runs need to be removed.
+        m_runs.Clear();
+
+        unsigned int iCurrentLine = 0;
+
+        const char* nextRunStart = m_text.c_str();
+        const char* nextRunEnd;
+        while (this->NextRunString(nextRunStart, OUT nextRunEnd))
+        {
+            TextRun2 run;
+            run.iLine          = iCurrentLine;
+            run.iChar          = nextRunStart - m_text.c_str();
+            run.iCharEnd       = nextRunEnd   - m_text.c_str();
+            run.characterCount = GTLib::Strings::GetCharacterCount(nextRunStart, nextRunEnd - nextRunStart);
+            run.width          = 0;
+            run.height         = lineHeight;
+            run.posX           = 0;
+            run.posY           = run.iLine * lineHeight;
+
+            // X position
+            //
+            // The x position depends on the previous run that's on the same line.
+            if (m_runs.GetCount() > 0)
+            {
+                TextRun2 &prevRun = m_runs.GetBack();
+                if (prevRun.iLine == iCurrentLine)
+                {
+                    run.posX = prevRun.posX + prevRun.width;
+                }
+                else
+                {
+                    // It's the first run on the line.
+                    run.posX = 0;
+                }
+            }
+
+
+            // Width.
+            assert(nextRunEnd > nextRunStart);
+            if (nextRunStart[0] == '\t')
+            {
+                // Tab.
+                const unsigned int tabCount = run.iCharEnd - run.iChar;
+                run.width = ((tabCount*tabWidth) - (run.posX % tabWidth));
+            }
+            else if (nextRunStart[0] == '\n')
+            {
+                // New line.
+                iCurrentLine += 1;
+                run.width = 0;
+            }
+            else
+            {
+                // Normal run.
+                int runWidth  = 0;
+                int runHeight = 0;
+                if (fontManager.MeasureString(m_hFont, nextRunStart, run.characterCount, runWidth, runHeight))
+                {
+                    run.width = runWidth;
+                }
+            }
+
+
+
+            // Update the text bounds.
+            if (m_textBoundsWidth < run.posX + run.width)
+            {
+                m_textBoundsWidth = run.posX + run.width;
+            }
+
+            m_textBoundsHeight = (iCurrentLine + 1) * lineHeight;
+
+
+
+            // Add the run to the internal list.
+            m_runs.PushBack(run);
+
+            // Go to the next run string.
+            nextRunStart = nextRunEnd;
+        }
+
+
+
+
         // If we were to return now the text would be alignment top/left. If the alignment is not top/left we need to refresh the layout.
         if (m_horizontalAlignment != GUITextLayoutHorizontalAlignment::Left || m_verticalAlignment != GUITextLayoutVerticalAlignment::Top)
         {
@@ -503,6 +688,9 @@ namespace GT
 
     void GUISimpleTextLayout::RefreshAlignment()
     {
+        /////////////////////////////////////////////////////
+        // OLD Implementation
+
         for (size_t iLine = 0; iLine < m_lines.GetCount(); ++iLine)
         {
             auto &line = m_lines[iLine];
@@ -550,6 +738,98 @@ namespace GT
                     line.alignmentOffsetY = 0;
                     break;
                 }
+            }
+        }
+
+
+
+
+        /////////////////////////////////////////////////////
+        // New Implementation
+
+        const int lineHeight = this->GetFontManager().GetLineHeight(m_hFont);
+
+        unsigned int iCurrentLine = 0;
+        for (size_t iRun = 0; iRun < m_runs.GetCount(); DO_NOTHING)     // iRun is incremented from within the loop.
+        {
+            int lineWidth = 0;
+
+            // This loop does a few things. First, it defines the end point for the loop after this one (jRun). Second, it calculates
+            // the line width which is needed for center and right alignment. Third it resets the position of each run to their
+            // unaligned equivalents which will be offsetted in the second loop.
+            size_t jRun;
+            for (jRun = iRun; jRun < m_runs.GetCount() && m_runs[jRun].iLine == iCurrentLine; ++jRun)
+            {
+                TextRun2 &run = m_runs[jRun];
+                run.posX = lineWidth;
+                run.posY = iCurrentLine * lineHeight;
+
+                lineWidth += m_runs[jRun].width;
+            }
+
+
+            // The actual alignment is done here.
+            int lineOffsetX;
+            int lineOffsetY;
+            this->CalculateLineAlignmentOffset(lineWidth, OUT lineOffsetX, OUT lineOffsetY);
+
+            for (DO_NOTHING; iRun < jRun; ++iRun)
+            {
+                TextRun2 &run = m_runs[iRun];
+                run.posX += lineOffsetX;
+                run.posY += lineOffsetY;
+            }
+
+
+            // Go to the next line.
+            iCurrentLine += 1;
+        }
+    }
+
+    void GUISimpleTextLayout::CalculateLineAlignmentOffset(int lineWidth, int &offsetXOut, int &offsetYOut) const
+    {
+        switch (m_horizontalAlignment)
+        {
+        case GUITextLayoutHorizontalAlignment::Right:
+            {
+                offsetXOut = int(m_containerBoundsWidth) - lineWidth;
+                break;
+            }
+
+        case GUITextLayoutHorizontalAlignment::Center:
+            {
+                offsetXOut = (int(m_containerBoundsWidth) - lineWidth) / 2;
+                break;
+            }
+
+        case GUITextLayoutHorizontalAlignment::Left:
+        default:
+            {
+                offsetXOut = 0;
+                break;
+            }
+        }
+
+
+        switch (m_verticalAlignment)
+        {
+        case GUITextLayoutVerticalAlignment::Bottom:
+            {
+                offsetYOut = int(m_containerBoundsHeight) - m_textBoundsHeight;
+                break;
+            }
+
+        case GUITextLayoutVerticalAlignment::Center:
+            {
+                offsetYOut = (int(m_containerBoundsHeight) - m_textBoundsHeight) / 2;
+                break;
+            }
+
+        case GUITextLayoutVerticalAlignment::Top:
+        default:
+            {
+                offsetYOut = 0;
+                break;
             }
         }
     }
@@ -604,8 +884,8 @@ namespace GT
             }
         }
 
-        posXOut += m_offsetX;
-        posYOut += m_offsetY;
+        posXOut += m_containerInnerOffsetX;
+        posYOut += m_containerInnerOffsetY;
     }
 
     void GUISimpleTextLayout::MakeRelativeToTextBounds(int inputPosX, int inputPosY, int &posXOut, int &posYOut) const
@@ -634,7 +914,7 @@ namespace GT
                 pLine = &m_lines[iLine];
                 markerOut.iLine = iLine;
 
-                int lineTop    = pLine->height * int(markerOut.iLine) + m_offsetY + pLine->alignmentOffsetY;
+                int lineTop    = pLine->height * int(markerOut.iLine) + m_containerInnerOffsetY + pLine->alignmentOffsetY;
                 int lineBottom = lineTop + lineHeight;
 
                 if (inputPosY >= lineTop)
@@ -655,7 +935,7 @@ namespace GT
             // X axis.
             assert(pLine != nullptr);
 
-            int lineLeft  = pLine->alignmentOffsetX + m_offsetX;
+            int lineLeft  = pLine->alignmentOffsetX + m_containerInnerOffsetX;
             int lineRight = lineLeft + pLine->width;
 
             if (inputPosX < lineLeft)
@@ -740,11 +1020,11 @@ namespace GT
 
         if (marker.iLine < m_lines.GetCount())
         {
-            posYOut = m_lines[marker.iLine].height * int(marker.iLine) + m_offsetY + m_lines[marker.iLine].alignmentOffsetY;
+            posYOut = m_lines[marker.iLine].height * int(marker.iLine) + m_containerInnerOffsetY + m_lines[marker.iLine].alignmentOffsetY;
 
             if (marker.iRun < m_lines[marker.iLine].runs.GetCount())
             {
-                posXOut = m_lines[marker.iLine].runs[marker.iRun].xPos + m_offsetX + m_lines[marker.iLine].alignmentOffsetX + marker.relativePosX;
+                posXOut = m_lines[marker.iLine].runs[marker.iRun].xPos + m_containerInnerOffsetX + m_lines[marker.iLine].alignmentOffsetX + marker.relativePosX;
             }
         }
     }
