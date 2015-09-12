@@ -24,7 +24,6 @@ namespace GT
           m_hFont(0),
           m_color(),
           m_runs(),
-          m_lines(),
           m_textBoundsWidth(0), m_textBoundsHeight(0),
           m_cursor()
     {
@@ -293,56 +292,10 @@ namespace GT
 
     void GUISimpleTextLayout::IterateVisibleTextRuns(std::function<void (const GUITextRunDesc &textRunDesc)> func) const
     {
-#if 0
-        int lineHeight = this->GetFontManager().GetLineHeight(m_hFont);
-        int topOffset  = 0; //this->GetFontManager().GetAscent(m_hFont); // - lineHeight;
-
-        for (size_t iLine = 0; iLine < m_lines.GetCount(); ++iLine)
-        {
-            auto &line = m_lines[iLine];
-
-            int lineTop    = line.height * static_cast<int>(iLine) + m_containerInnerOffsetY + topOffset;
-            int lineBottom = lineTop + lineHeight;
-            
-            if (lineBottom > 0 && lineTop < static_cast<int>(m_containerBoundsHeight))
-            {
-                int lineLeft  = line.alignmentOffsetX + m_containerInnerOffsetX;
-                int lineRight = lineLeft + line.width;
-
-                if (lineRight > 0 && lineLeft < static_cast<int>(m_containerBoundsWidth))
-                {
-                    // The line is visible. Now iterate over each of it's runs.
-                    for (size_t iRun = 0; iRun < line.runs.GetCount(); ++iRun)
-                    {
-                        auto &run = line.runs[iRun];
-
-                        int runLeft  = lineLeft + run.xPos;
-                        int runRight = runLeft + run.width;
-
-                        if (runRight > 0 && runLeft < static_cast<int>(m_containerBoundsWidth))
-                        {
-                            // The run is visible.
-                            int runTop = run.yPos + line.alignmentOffsetY + topOffset;
-
-                            GUITextRunDesc runDesc;
-                            GTLib::Strings::Copy(runDesc.text, GT_MAX_TEXT_RUN_SIZE_IN_BYTES, run.textStart, run.textEnd - run.textStart);
-                            runDesc.hFont             = m_hFont;
-                            runDesc.xPos              = runLeft;
-                            runDesc.yPos              = runTop;
-                            runDesc.rotationInDegrees = 0;
-                            runDesc.color             = m_color;
-                            func(runDesc);
-                        }
-                    }
-                }
-            }
-        }
-#endif
-
         // This is a naive implementation. Can be improved a bit.
         for (size_t iRun = 0; iRun < m_runs.GetCount(); ++iRun)
         {
-            const TextRun2 &run = m_runs[iRun];
+            const TextRun &run = m_runs[iRun];
 
             if (run.characterCount > 0)
             {
@@ -444,155 +397,13 @@ namespace GT
         }
 
 
-
-        /////////////////////////////////////////////////////
-        // OLD Implementation
-
-        // The previous runs need to be removed.
-        m_lines.Clear();
-
-        int textBoundsWidth  = 0;
-        int textBoundsHeight = 0;
-
-        // We split by lines and then again by tabs.
-        int lineCount = 0;
-        GTLib::Strings::LineIterator iLine(m_text.c_str());
-        while (iLine)
-        {
-            TextLine newLine;
-            newLine.width  = 0;
-            newLine.height = lineHeight;
-            newLine.alignmentOffsetX = 0;
-            newLine.alignmentOffsetY = 0;
-
-            TextRun currentRun;
-            currentRun.textStart      = iLine.start;
-            currentRun.textEnd        = nullptr;
-            currentRun.characterCount = 0;
-            currentRun.width          = 0;
-            currentRun.xPos           = 0;
-            currentRun.yPos           = 0;
-
-            // We need to split the string based on tabs.
-            GTLib::Strings::Iterator<char> c(iLine.start, iLine.end - iLine.start);
-            while (c)
-            {
-                bool endRunEarly = ((c.str - currentRun.textStart) == (GT_MAX_TEXT_RUN_SIZE_IN_BYTES - 1));
-
-                if (c.character == '\t' || endRunEarly)
-                {
-                    // If we are in the middle of a run it needs to be ended.
-                    if (currentRun.textStart != nullptr)
-                    {
-                        // End the run and add it to the list of runs.
-                        {
-                            currentRun.textEnd = c.str;
-                            currentRun.xPos    = newLine.width;
-                            currentRun.yPos    = newLine.height * lineCount;
-
-                            int runWidth  = 0;
-                            int runHeight = 0;
-                            if (fontManager.MeasureString(m_hFont, currentRun.textStart, currentRun.characterCount, runWidth, runHeight))
-                            {
-                                currentRun.width = runWidth;
-                                newLine.width += runWidth;
-                            }
-
-
-                            newLine.runs.PushBack(currentRun);
-                        }
-                        
-
-                        // Reset the run.
-                        {
-                            currentRun.textStart      = nullptr;
-                            currentRun.textEnd        = nullptr;
-                            currentRun.characterCount = 0;
-                            currentRun.width          = 0;
-                            currentRun.xPos           = 0;
-                            currentRun.yPos           = 0;
-                        }
-                    }
-
-                    
-                    // Increment the tab size.
-                    if (c.character == '\t')
-                    {
-                        newLine.width += (tabWidth - (newLine.width % tabWidth));
-                    }
-                }
-                else
-                {
-                    // It's a normal character. If we are in the middle of a run we just continue iterating. Otherwise we begin a new one. The run cannot be longer than GT_MAX_TEXT_RUN_SIZE_IN_BYTES.
-                    if (currentRun.textStart == nullptr)
-                    {
-                        currentRun.textStart = c.str;
-                    }
-
-                    currentRun.characterCount += 1;
-                }
-
-
-                // If we ended the run early, we don't want to go to the next character. We instead want to stay where we are so that the beginning
-                // of the next run starts at the end of the last one, rather than the character after.
-                if (!endRunEarly)
-                {
-                    ++c;
-                }
-            }
-
-            // There might be a run that needs to be added.
-            if (currentRun.textStart != nullptr)
-            {
-                currentRun.textEnd = c.str;
-                currentRun.xPos    = newLine.width;
-                currentRun.yPos    = newLine.height * lineCount;
-
-                int runWidth  = 0;
-                int runHeight = 0;
-                if (fontManager.MeasureString(m_hFont, currentRun.textStart, currentRun.characterCount, runWidth, runHeight))
-                {
-                    currentRun.width = runWidth;
-                    newLine.width += runWidth;
-                }
-
-
-                newLine.runs.PushBack(currentRun);
-            }
-
-
-
-            if (textBoundsWidth < newLine.width)
-            {
-                textBoundsWidth = newLine.width;
-            }
-
-            textBoundsHeight += newLine.height;
-
-
-
-            m_lines.PushBack(newLine);
-
-            lineCount += 1;
-            ++iLine;
-        }
-
-
-        m_textBoundsWidth  = textBoundsWidth;
-        m_textBoundsHeight = textBoundsHeight;
-
-
-
-        /////////////////////////////////////////////////////
-        // New Implementation
-
         // We split the runs based on tabs and new-lines. We want to create runs for tabs and new-line characters as well because we want
         // to have the entire string covered by runs for the sake of simplicity when it comes to editing.
         //
         // The first pass positions the runs based on a top-to-bottom, left-to-right alignment. The second pass then repositions the runs
         // based on alignment.
-        //m_textBoundsWidth  = 0;
-        //m_textBoundsHeight = 0;
+        m_textBoundsWidth  = 0;
+        m_textBoundsHeight = 0;
 
         // The previous runs need to be removed.
         m_runs.Clear();
@@ -603,7 +414,7 @@ namespace GT
         const char* nextRunEnd;
         while (this->NextRunString(nextRunStart, OUT nextRunEnd))
         {
-            TextRun2 run;
+            TextRun run;
             run.iLine          = iCurrentLine;
             run.iChar          = nextRunStart - m_text.c_str();
             run.iCharEnd       = nextRunEnd   - m_text.c_str();
@@ -618,7 +429,7 @@ namespace GT
             // The x position depends on the previous run that's on the same line.
             if (m_runs.GetCount() > 0)
             {
-                TextRun2 &prevRun = m_runs.GetBack();
+                TextRun &prevRun = m_runs.GetBack();
                 if (prevRun.iLine == iCurrentLine)
                 {
                     run.posX = prevRun.posX + prevRun.width;
@@ -675,6 +486,30 @@ namespace GT
             nextRunStart = nextRunEnd;
         }
 
+        
+        // We now need to add a run to act as the null terminator.
+        assert(nextRunStart[0] == '\0');
+        TextRun terminatorRun;
+        terminatorRun.iLine          = iCurrentLine;
+        terminatorRun.iChar          = nextRunStart - m_text.c_str();
+        terminatorRun.iCharEnd       = terminatorRun.iChar;
+        terminatorRun.characterCount = 0;
+        terminatorRun.width          = 0;
+        terminatorRun.height         = lineHeight;
+        terminatorRun.posX           = 0;
+        terminatorRun.posY           = terminatorRun.iLine * lineHeight;
+
+        if (m_runs.GetCount() > 0)
+        {
+            TextRun &prevRun = m_runs.GetBack();
+            if (prevRun.iLine == iCurrentLine)
+            {
+                terminatorRun.posX = prevRun.posX + prevRun.width;
+            }
+        }
+
+        m_runs.PushBack(terminatorRun);
+
 
 
 
@@ -688,65 +523,6 @@ namespace GT
 
     void GUISimpleTextLayout::RefreshAlignment()
     {
-        /////////////////////////////////////////////////////
-        // OLD Implementation
-
-        for (size_t iLine = 0; iLine < m_lines.GetCount(); ++iLine)
-        {
-            auto &line = m_lines[iLine];
-
-            switch (m_horizontalAlignment)
-            {
-            case GUITextLayoutHorizontalAlignment::Right:
-                {
-                    line.alignmentOffsetX = int(m_containerBoundsWidth) - line.width;
-                    break;
-                }
-
-            case GUITextLayoutHorizontalAlignment::Center:
-                {
-                    line.alignmentOffsetX = (int(m_containerBoundsWidth) - line.width) / 2;
-                    break;
-                }
-
-            case GUITextLayoutHorizontalAlignment::Left:
-            default:
-                {
-                    line.alignmentOffsetX = 0;
-                    break;
-                }
-            }
-
-
-            switch (m_verticalAlignment)
-            {
-            case GUITextLayoutVerticalAlignment::Bottom:
-                {
-                    line.alignmentOffsetY = int(m_containerBoundsHeight) - m_textBoundsHeight;
-                    break;
-                }
-
-            case GUITextLayoutVerticalAlignment::Center:
-                {
-                    line.alignmentOffsetY = (int(m_containerBoundsHeight) - m_textBoundsHeight) / 2;
-                    break;
-                }
-
-            case GUITextLayoutVerticalAlignment::Top:
-            default:
-                {
-                    line.alignmentOffsetY = 0;
-                    break;
-                }
-            }
-        }
-
-
-
-
-        /////////////////////////////////////////////////////
-        // New Implementation
-
         const int lineHeight = this->GetFontManager().GetLineHeight(m_hFont);
 
         unsigned int iCurrentLine = 0;
@@ -760,7 +536,7 @@ namespace GT
             size_t jRun;
             for (jRun = iRun; jRun < m_runs.GetCount() && m_runs[jRun].iLine == iCurrentLine; ++jRun)
             {
-                TextRun2 &run = m_runs[jRun];
+                TextRun &run = m_runs[jRun];
                 run.posX = lineWidth;
                 run.posY = iCurrentLine * lineHeight;
 
@@ -775,7 +551,7 @@ namespace GT
 
             for (DO_NOTHING; iRun < jRun; ++iRun)
             {
-                TextRun2 &run = m_runs[iRun];
+                TextRun &run = m_runs[iRun];
                 run.posX += lineOffsetX;
                 run.posY += lineOffsetY;
             }
@@ -835,182 +611,58 @@ namespace GT
     }
 
 
-
-    void GUISimpleTextLayout::MakeRelativeToContainer(int inputPosX, int inputPosY, int &posXOut, int &posYOut) const
-    {
-        posXOut = inputPosX;
-        posYOut = inputPosY;
-
-        switch (m_horizontalAlignment)
-        {
-        case GUITextLayoutHorizontalAlignment::Right:
-            {
-                posXOut += m_containerBoundsWidth - m_textBoundsWidth;
-                break;
-            }
-
-        case GUITextLayoutHorizontalAlignment::Center:
-            {
-                posXOut += (m_containerBoundsWidth - m_textBoundsWidth) / 2;
-                break;
-            }
-
-        case GUITextLayoutHorizontalAlignment::Left:
-        default:
-            {
-                break;
-            }
-        }
-
-
-        switch (m_verticalAlignment)
-        {
-        case GUITextLayoutVerticalAlignment::Bottom:
-            {
-                posYOut += m_containerBoundsHeight - m_textBoundsHeight;
-                break;
-            }
-
-        case GUITextLayoutVerticalAlignment::Center:
-            {
-                posYOut += (m_containerBoundsHeight - m_textBoundsHeight) / 2;
-                break;
-            }
-
-        case GUITextLayoutVerticalAlignment::Top:
-        default:
-            {
-                break;
-            }
-        }
-
-        posXOut += m_containerInnerOffsetX;
-        posYOut += m_containerInnerOffsetY;
-    }
-
-    void GUISimpleTextLayout::MakeRelativeToTextBounds(int inputPosX, int inputPosY, int &posXOut, int &posYOut) const
-    {
-        // TODO: Implement me.
-        posXOut = inputPosX;
-        posYOut = inputPosY;
-    }
-
-
     bool GUISimpleTextLayout::InitMarkerByPointRelativeToContainer(int inputPosX, int inputPosY, TextMarker &markerOut) const
     {
-        markerOut.iLine        = 0;
         markerOut.iRun         = 0;
         markerOut.iChar        = 0;
         markerOut.relativePosX = 0;
 
-        if (m_lines.GetCount() > 0)
+        GTLib::Rect<int> textRect;
+        this->GetTextRectRelativeToBounds(textRect);
+
+        int inputPosXRelativeToText = inputPosX - textRect.left;
+        int inputPosYRelativeToText = inputPosY - textRect.top;
+
+        unsigned int iClosestRunToPoint;
+        if (this->FindClosestRunToPoint(inputPosXRelativeToText, inputPosYRelativeToText, OUT iClosestRunToPoint))
         {
-            // Y axis.
-            const TextLine* pLine = nullptr;
+            const TextRun &run = m_runs[iClosestRunToPoint];
 
-            int lineHeight = this->GetFontManager().GetLineHeight(m_hFont);
-            for (unsigned int iLine = 0; iLine < static_cast<unsigned int>(m_lines.GetCount()); ++iLine)
+            markerOut.iRun = iClosestRunToPoint;
+
+            if (inputPosXRelativeToText < run.posX)
             {
-                pLine = &m_lines[iLine];
-                markerOut.iLine = iLine;
-
-                int lineTop    = pLine->height * int(markerOut.iLine) + m_containerInnerOffsetY + pLine->alignmentOffsetY;
-                int lineBottom = lineTop + lineHeight;
-
-                if (inputPosY >= lineTop)
-                {
-                    if (inputPosY <= lineBottom)
-                    {
-                        break;
-                    }
-                }
-                else
-                {
-                    assert(markerOut.iLine == 0);
-                    break;
-                }
-            }
-
-
-            // X axis.
-            assert(pLine != nullptr);
-
-            int lineLeft  = pLine->alignmentOffsetX + m_containerInnerOffsetX;
-            int lineRight = lineLeft + pLine->width;
-
-            if (inputPosX < lineLeft)
-            {
-                markerOut.iRun         = 0;
                 markerOut.iChar        = 0;
                 markerOut.relativePosX = 0;
             }
-            else if (inputPosX > lineRight)
+            else if (inputPosXRelativeToText > run.posX + run.width)
             {
-                markerOut.iRun         = pLine->runs.GetCount() - 1;
-                markerOut.iChar        = pLine->runs.GetBack().characterCount;
-                markerOut.relativePosX = pLine->runs.GetBack().width;
+                // It may be a new line run. If so, we need to move the marker to the front of it, not the back.
+                markerOut.iChar        = run.characterCount;
+                markerOut.relativePosX = run.width;
+
+                if (m_text.c_str()[run.iChar] == '\n') {
+                    markerOut.iChar -= 1;
+                    return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[markerOut.iRun].iChar, markerOut.iChar, markerOut.relativePosX);
+                }
             }
             else
             {
-                for (unsigned int iRun = 0; iRun < static_cast<unsigned int>(pLine->runs.GetCount()); ++iRun)
+                int inputPosXRelativeToRun = inputPosX - run.posX;
+                if (!this->GetFontManager().GetTextCursorPositionFromPoint(m_hFont, m_text.c_str() + run.iChar, run.characterCount, run.width, inputPosXRelativeToRun, markerOut.relativePosX, markerOut.iChar))
                 {
-                    const TextRun &run = pLine->runs[iRun];
-
-                    int runLeft  = run.xPos;
-                    int runRight = run.xPos + run.width;
-
-                    if (iRun > 0)
-                    {
-                        const TextRun &prevRun = pLine->runs[iRun - 1];
-
-                        const int spaceBetweenRuns = run.xPos - (prevRun.xPos + prevRun.width);
-                        runLeft -= int(GTLib::Round(spaceBetweenRuns / 2.0f));
-                    }
-
-                    if (iRun < pLine->runs.GetCount() - 1)
-                    {
-                        const TextRun &nextRun = pLine->runs[iRun + 1];
-                        
-                        const int spaceBetweenRuns = nextRun.xPos - (run.xPos + run.width);
-                        runRight += int(GTLib::Round(spaceBetweenRuns / 2.0f));
-                    }
-
-
-
-                    if (inputPosX >= runLeft && inputPosX <= runRight)
-                    {
-                        // It is somewhere on this run.
-                        markerOut.iRun = iRun;
-
-                        int inputPosXRelativeToRun = inputPosX - run.xPos;
-                        if (inputPosXRelativeToRun <= 0)
-                        {
-                            // It's in the spacing between this run and the previous one, but closer to this one. Set it to the position of the first character in the run.
-                            markerOut.iChar        = 0;
-                            markerOut.relativePosX = 0;
-                        }
-                        else if (inputPosXRelativeToRun >= run.xPos + int(run.width))
-                        {
-                            // It's in the spaceing between this run and the next one, but closer to this one. Set it to the position of the last character in this run.
-                            markerOut.iChar        = pLine->runs[iRun].characterCount;
-                            markerOut.relativePosX = pLine->runs[iRun].width;
-                        }
-                        else
-                        {
-                            if (!this->GetFontManager().GetTextCursorPositionFromPoint(m_hFont, run.textStart, run.characterCount, run.width, inputPosXRelativeToRun, markerOut.relativePosX, markerOut.iChar))
-                            {
-                                // An error occured somehow.
-                                return false;
-                            }
-                        }
-
-                        break;
-                    }
+                    // An error occured somehow.
+                    return false;
                 }
             }
+
+            return true;
         }
-        
-        return true;
+        else
+        {
+            // Couldn't find a run.
+            return false;
+        }
     }
 
     void GUISimpleTextLayout::GetMarkerPositionRelativeToContainer(const TextMarker &marker, int &posXOut, int &posYOut) const
@@ -1018,172 +670,196 @@ namespace GT
         posXOut = 0;
         posYOut = 0;
 
-        if (marker.iLine < m_lines.GetCount())
+        if (marker.iRun < m_runs.GetCount())
         {
-            posYOut = m_lines[marker.iLine].height * int(marker.iLine) + m_containerInnerOffsetY + m_lines[marker.iLine].alignmentOffsetY;
-
-            if (marker.iRun < m_lines[marker.iLine].runs.GetCount())
-            {
-                posXOut = m_lines[marker.iLine].runs[marker.iRun].xPos + m_containerInnerOffsetX + m_lines[marker.iLine].alignmentOffsetX + marker.relativePosX;
-            }
+            posXOut = m_runs[marker.iRun].posX + marker.relativePosX + m_containerInnerOffsetX;
+            posYOut = m_runs[marker.iRun].posY                       + m_containerInnerOffsetY;
         }
     }
 
 
-    bool GUISimpleTextLayout::MoveMarkerLeft(TextMarker &marker)
+    bool GUISimpleTextLayout::FindClosestRunToPoint(int inputPosXRelativeToText, int inputPosYRelativeToText, unsigned int &iRunOut) const
     {
-        if (m_lines.GetCount() > 0)
+        unsigned int iFirstRunOnLine;
+        unsigned int iLastRunOnLinePlus1;
+        if (this->FindClosestLineToPoint(inputPosYRelativeToText, OUT iFirstRunOnLine, OUT iLastRunOnLinePlus1))
         {
-            if (marker.iChar > 0)
+            const TextRun &firstRunOnLine = m_runs[iFirstRunOnLine];
+            const TextRun &lastRunOnLine  = m_runs[iLastRunOnLinePlus1 - 1];
+
+            if (inputPosXRelativeToText < firstRunOnLine.posX)
             {
-                marker.iChar -= 1;
-                return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_lines[marker.iLine].runs[marker.iRun].textStart, marker.iChar, marker.relativePosX);
+                // It's to the left of the first run.
+                iRunOut = iFirstRunOnLine;
+            }
+            else if (inputPosXRelativeToText > lastRunOnLine.posX + lastRunOnLine.width)
+            {
+                // It's to the right of the last run.
+                iRunOut = iLastRunOnLinePlus1 - 1;
             }
             else
             {
-                // We're at the beginning of the run which means we need to transfer the cursor to the end of the previous run.
-                return this->MoveMarkerToEndOfPreviousRun(marker);
-            }
-        }
-        
-        return false;
-    }
+                // It's in the middle of the line. We just iterate over each run on the line and return the first one that contains the point.
+                for (unsigned int iRun = iFirstRunOnLine; iRun < iLastRunOnLinePlus1; ++iRun)
+                {
+                    const TextRun &run = m_runs[iRun];
 
-    bool GUISimpleTextLayout::MoveMarkerRight(TextMarker &marker)
-    {
-        if (m_lines.GetCount() > 0)
-        {
-            if (marker.iChar < m_lines[marker.iLine].runs[marker.iRun].characterCount)
-            {
-                marker.iChar += 1;
-                return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_lines[marker.iLine].runs[marker.iRun].textStart, marker.iChar, marker.relativePosX);
+                    if (inputPosXRelativeToText >= run.posX && inputPosXRelativeToText <= run.posX + run.width)
+                    {
+                        iRunOut = iRun;
+                        break;
+                    }
+                }
             }
-            else
-            {
-                // We're at the end of the run which means we need to transfer the cursor to the beginning of the next run.
-                return this->MoveMarkerToStartOfNextRun(marker);
-            }
-        }
-
-        return false;
-    }
-
-    bool GUISimpleTextLayout::MoveMarkerToEndOfPreviousRun(TextMarker &marker)
-    {
-        if (marker.iRun > 0)
-        {
-            // The previous run is on the same line.
-            marker.iRun        -= 1;
-            marker.iChar        = m_lines[marker.iLine].runs[marker.iRun].characterCount;
-            marker.relativePosX = m_lines[marker.iLine].runs[marker.iRun].width;
 
             return true;
         }
         else
         {
-            // The previous run is on the previous line.
-            return this->MoveMarkerToEndOfPreviousLine(marker);
+            // There was an error finding the closest line.
+            return false;
         }
     }
 
-    bool GUISimpleTextLayout::MoveMarkerToStartOfNextRun(TextMarker &marker)
+    bool GUISimpleTextLayout::FindClosestLineToPoint(int inputPosYRelativeToText, unsigned int &iFirstRunOnLineOut, unsigned int &iLastRunOnLinePlus1Out) const
     {
-        assert(m_lines[marker.iLine].runs.GetCount() > 0);
-
-        if (marker.iRun < m_lines[marker.iLine].runs.GetCount() - 1)
+        if (m_runs.GetCount() > 0)
         {
-            // The next run is on the same line.
+            unsigned int iFirstRunOnLine     = 0;
+            unsigned int iLastRunOnLinePlus1 = 0;
+
+            int runningLineTop = 0;
+
+            int lineHeight;
+            while (this->FindLineInfo(iFirstRunOnLine, OUT iLastRunOnLinePlus1, OUT lineHeight))
+            {
+                const int lineTop    = runningLineTop;
+                const int lineBottom = lineTop + lineHeight;
+
+                iFirstRunOnLineOut     = iFirstRunOnLine;
+                iLastRunOnLinePlus1Out = iLastRunOnLinePlus1;
+
+                if (inputPosYRelativeToText <= lineBottom)
+                {
+                    // It's on this line.
+                    break;
+                }
+                else
+                {
+                    // It's not on this line - go to the next one.
+                    iFirstRunOnLine = iLastRunOnLinePlus1;
+                    runningLineTop  = lineBottom;
+                }
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool GUISimpleTextLayout::FindLineInfo(unsigned int iFirstRunOnLine, unsigned int &iLastRunOnLinePlus1Out, int &lineHeightOut) const
+    {
+        if (iFirstRunOnLine < m_runs.GetCount())
+        {
+            const unsigned int iLine = m_runs[iFirstRunOnLine].iLine;
+            int lineHeight = 0;
+
+            unsigned int iRun;
+            for (iRun = iFirstRunOnLine; iRun < m_runs.GetCount() && m_runs[iRun].iLine == iLine; ++iRun)
+            {
+                if (lineHeight < m_runs[iRun].height) {
+                    lineHeight = m_runs[iRun].height;
+                }
+            }
+
+            assert(iRun > iFirstRunOnLine);
+            iLastRunOnLinePlus1Out = iRun;
+            lineHeightOut          = lineHeight;
+
+            return true;
+        }
+
+        return false;
+    }
+
+
+    bool GUISimpleTextLayout::MoveMarkerLeft(TextMarker &marker)
+    {
+        if (m_runs.GetCount() > 0)
+        {
+            if (marker.iChar > 0)
+            {
+                marker.iChar -= 1;
+                return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[marker.iRun].iChar, marker.iChar, marker.relativePosX);
+            }
+            else
+            {
+                // We're at the beginning of the run which means we need to transfer the cursor to the end of the previous run.
+                return this->MoveMarkerToLastCharacterOfPreviousRun(marker);
+            }
+        }
+
+        return false;
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerRight(TextMarker &marker)
+    {
+        if (m_runs.GetCount() > 0)
+        {
+            if (marker.iChar + 1 < m_runs[marker.iRun].characterCount)
+            {
+                marker.iChar += 1;
+                return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[marker.iRun].iChar, marker.iChar, marker.relativePosX);
+            }
+            else
+            {
+                // We're at the end of the run which means we need to transfer the cursor to the beginning of the next run.
+                return this->MoveMarkerToFirstCharacterOfNextRun(marker);
+            }
+        }
+
+        return false;
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerToLastCharacterOfPreviousRun(TextMarker &marker)
+    {
+        if (marker.iRun > 0)
+        {
+            // The previous run is on the same line.
+            marker.iRun        -= 1;
+            marker.iChar        = m_runs[marker.iRun].characterCount;
+            marker.relativePosX = m_runs[marker.iRun].width;
+
+            if (marker.iChar > 0) {
+                marker.iChar -= 1;
+                return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[marker.iRun].iChar, marker.iChar, marker.relativePosX);
+            }
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerToFirstCharacterOfNextRun(TextMarker &marker)
+    {
+        assert(m_runs.GetCount() > 0);
+
+        if (marker.iRun < m_runs.GetCount() - 1)
+        {
             marker.iRun        += 1;
             marker.iChar        = 0;
             marker.relativePosX = 0;
 
             return true;
         }
-        else
-        {
-            // The next run is on the next line.
-            return this->MoveMarkerToStartOfNextLine(marker);
-        }
-    }
-
-    bool GUISimpleTextLayout::MoveMarkerToEndOfPreviousLine(TextMarker &marker)
-    {
-        if (marker.iLine > 0)
-        {
-            marker.iLine       -= 1;
-            marker.iRun         = m_lines[marker.iLine].runs.GetCount() - 1;
-            marker.iChar        = m_lines[marker.iLine].runs[marker.iRun].characterCount;
-            marker.relativePosX = m_lines[marker.iLine].runs[marker.iRun].width;
-
-            return true;
-        }
-        else
-        {
-            // There is no previous line.
-            return false;
-        }
-    }
-
-    bool GUISimpleTextLayout::MoveMarkerToStartOfNextLine(TextMarker &marker)
-    {
-        if (m_lines.GetCount() > 0)
-        {
-            if (marker.iLine < m_lines.GetCount() - 1)
-            {
-                marker.iLine       += 1;
-                marker.iRun         = 0;
-                marker.iChar        = 0;
-                marker.relativePosX = 0;
-
-                return true;
-            }
-            else
-            {
-                // There is no next line.
-                return false;
-            }
-        }
-        else
-        {
-            // There are no lones at all.
-            return false;
-        }
+        
+        return false;
     }
 
     bool GUISimpleTextLayout::DeleteCharacterToRightOfMarker(TextMarker &marker)
     {
-        if (m_lines.GetCount() > 0)
-        {
-            if (marker.iChar < m_lines[marker.iLine].runs[marker.iRun].characterCount)
-            {
-                // It's not at the end of the run.
-
-                
-            }
-            else
-            {
-                // It's at the end of the run.
-                assert(m_lines[marker.iLine].runs.GetCount() > 0);
-
-                if (marker.iRun < m_lines[marker.iLine].runs.GetCount() - 1)
-                {
-                    // It's not the last run on the line. If the character to the right is a tab character, it needs to be removed. If there is another tab character to the
-                    // right, then the runs should be left unmerged. Otherwise, they need to be merged.
-
-                    
-                }
-                else
-                {
-                    // It's 
-                }
-
-                if (marker.iLine < m_lines.GetCount() - 1)
-                {
-                    // It's at the very end of 
-                }
-            }
-        }
-
         return false;
     }
 }

@@ -132,7 +132,7 @@ namespace GT
         /// Structure representing a text run.
         ///
         /// A text run is just a group of 
-        struct TextRun2
+        struct TextRun
         {
             /// Index of the line the run is placed on. For runs that are new line characters, this will represent the number of lines that came before it. For
             /// example, if this run represents the new-line character for the first line, this will be 0 and so on.
@@ -163,57 +163,13 @@ namespace GT
         };
 
 
-        /// Structure containing information about a text run.
-        struct TextRun
-        {
-            /// A pointer to the start of the text.
-            const char* textStart;
-
-            /// A pointer to the end of the text.
-            const char* textEnd;
-
-            /// The number of characters making up the text run.
-            unsigned int characterCount;
-
-            /// The position of the run on the x axis, relative to the left side of the line.
-            int xPos;
-
-            /// The position of the run on the y axis, relative to the top side of the line.
-            int yPos;
-
-            /// The width of the text run.
-            unsigned int width;
-        };
-
-        /// Structure containing information about a text line.
-        struct TextLine
-        {
-            /// The list of text runs making up the line.
-            GTLib::Vector<TextRun> runs;
-
-            /// The width of the line.
-            int width;
-
-            /// The height of the line.
-            int height;
-
-            /// The offset on the x axis to apply to the line to account for horizontal alignment.
-            int alignmentOffsetX;
-
-            /// The offset on the y axis to apply to the line to account for vertical alignment.
-            int alignmentOffsetY;
-        };
-
         /// Structure representing a position within the text.
         struct TextMarker
         {
             TextMarker()
-                : iLine(0), iRun(0), iChar(0), relativePosX(0)
+                : iRun(0), iChar(0), relativePosX(0)
             {
             }
-
-            /// The index of the line the marker is positioned on.
-            unsigned int iLine;
 
             /// The index of the run within the line the marker is positioned on.
             unsigned int iRun;
@@ -242,18 +198,28 @@ namespace GT
         void CalculateLineAlignmentOffset(int lineWidth, int &offsetXOut, int &offsetYOut) const;
 
 
-        /// Converts a point relative to the text bounds to the container bounds.
-        void MakeRelativeToContainer(int inputPosX, int inputPosY, int &posXOut, int &posYOut) const;
-
-        /// Converts a point relative to the container bounds to the text bounds.
-        void MakeRelativeToTextBounds(int inputPosX, int inputPosY, int &posXOut, int &posYOut) const;
-
-
         /// Creates a marker from the given input position, relative to the container bounds.
         bool InitMarkerByPointRelativeToContainer(int inputPosX, int inputPosY, TextMarker &markerOut) const;
 
         /// Retrieves the position of the given marker relative to the text boundary.
         void GetMarkerPositionRelativeToContainer(const TextMarker &marker, int &posXOut, int &posYOut) const;
+
+
+        /// Finds the run closest to the given point.
+        ///
+        /// @remarks
+        ///     Note that it's possible for the point to not actually be contained within the run, such as if it falls outside of a line.
+        ///     @par
+        ///     If the point is in line with the run on the y axis, the closest run to the point on the x axis will be returned. If the
+        ///     point is in line with the run on the x axis, then the closest run to the point on the y axis will be returned.
+        bool FindClosestRunToPoint(int inputPosXRelativeToText, int inputPosYRelativeToText, unsigned int &iRun) const;
+
+        /// Finds the line closest to the given point.
+        bool FindClosestLineToPoint(int inputPosYRelativeToText, unsigned int &iFirstRunOnLineOut, unsigned int &iLastRunOnLinePlus1Out) const;
+
+        /// Finds information about a line that begins with the run at the given index.
+        bool FindLineInfo(unsigned int iFirstRunOnLine, unsigned int &iLastRunOnLinePlus1Out, int &lineHeightOut) const;
+
 
 
         /// Moves the given marker to the left by one character.
@@ -262,17 +228,12 @@ namespace GT
         /// Moves the given marker to the right by one character.
         bool MoveMarkerRight(TextMarker &marker);
 
+
         /// Moves the given marker to the end of the previous run.
-        bool MoveMarkerToEndOfPreviousRun(TextMarker &marker);
+        bool MoveMarkerToLastCharacterOfPreviousRun(TextMarker &marker);
 
         /// Moves the given marker to the start of the next run.
-        bool MoveMarkerToStartOfNextRun(TextMarker &marker);
-
-        /// Moves the given marker to the end of the previous line.
-        bool MoveMarkerToEndOfPreviousLine(TextMarker &marker);
-
-        /// Moves the given marker to the start of the next line.
-        bool MoveMarkerToStartOfNextLine(TextMarker &marker);
+        bool MoveMarkerToFirstCharacterOfNextRun(TextMarker &marker);
 
 
         /// Deletes the character to the right of the given marker.
@@ -323,10 +284,7 @@ namespace GT
 
 
         /// The list of runs making up the layout.
-        GTLib::Vector<TextRun2> m_runs;
-
-        /// The list of text runs making up the layout.
-        GTLib::Vector<TextLine> m_lines;
+        GTLib::Vector<TextRun> m_runs;
 
 
         /// The width of the text.
