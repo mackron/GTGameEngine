@@ -198,6 +198,14 @@ namespace GT
         void CalculateLineAlignmentOffset(int lineWidth, int &offsetXOut, int &offsetYOut) const;
 
 
+        /// Determines if the given run is whitespace.
+        ///
+        /// @remarks
+        ///     This is not a typical whitespace checker. A run made up of entire space characters will return false here. Instead, this is only
+        ///     used for tabs, new lines and the null terminator run.
+        bool IsRunWhitespace(const TextRun &run) const;
+
+
         /// Creates a marker from the given input position, relative to the container bounds.
         bool InitMarkerByPointRelativeToContainer(int inputPosX, int inputPosY, TextMarker &markerOut) const;
 
@@ -223,17 +231,17 @@ namespace GT
 
 
         /// Moves the given marker to the left by one character.
-        bool MoveMarkerLeft(TextMarker &marker);
+        bool MoveMarkerLeft(TextMarker &marker) const;
 
         /// Moves the given marker to the right by one character.
-        bool MoveMarkerRight(TextMarker &marker);
+        bool MoveMarkerRight(TextMarker &marker) const;
 
 
         /// Moves the given marker to the end of the previous run.
-        bool MoveMarkerToLastCharacterOfPreviousRun(TextMarker &marker);
+        bool MoveMarkerToLastCharacterOfPreviousRun(TextMarker &marker) const;
 
         /// Moves the given marker to the start of the next run.
-        bool MoveMarkerToFirstCharacterOfNextRun(TextMarker &marker);
+        bool MoveMarkerToFirstCharacterOfNextRun(TextMarker &marker) const;
 
 
         /// Deletes the character to the right of the given marker.
@@ -241,6 +249,19 @@ namespace GT
         /// @remarks
         ///     This does not move the marker.
         bool DeleteCharacterToRightOfMarker(TextMarker &marker);
+
+
+        /// Retrieves the width of a space character.
+        ///
+        /// @remarks
+        ///     This is inefficient. Call this once at the start and avoid calling it in loops.
+        int GetSpaceWidth() const;
+
+        /// Retrieves the width of a tab character.
+        ///
+        /// @remarks
+        ///     This is inefficient. Call this once at the start and avoid calling it in loops.
+        int GetTabWidth() const;
 
 
 

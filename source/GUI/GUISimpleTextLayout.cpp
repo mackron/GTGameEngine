@@ -12,6 +12,11 @@
 #define DO_NOTHING
 #endif
 
+#ifndef DEFAULT_SPACE_WIDTH
+#define DEFAULT_SPACE_WIDTH     4
+#endif
+
+
 namespace GT
 {
     GUISimpleTextLayout::GUISimpleTextLayout(GUIFontManager &fontManager)
@@ -297,7 +302,7 @@ namespace GT
         {
             const TextRun &run = m_runs[iRun];
 
-            if (run.characterCount > 0)
+            if (!this->IsRunWhitespace(run))
             {
                 int runTop    = run.posY + m_containerInnerOffsetY;
                 int runBottom = runTop   + run.height;
@@ -611,6 +616,20 @@ namespace GT
     }
 
 
+    bool GUISimpleTextLayout::IsRunWhitespace(const TextRun &run) const
+    {
+        if (run.characterCount > 0)
+        {
+            if (m_text.c_str()[run.iChar] != '\t' && m_text.c_str()[run.iChar] != '\n')
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+
     bool GUISimpleTextLayout::InitMarkerByPointRelativeToContainer(int inputPosX, int inputPosY, TextMarker &markerOut) const
     {
         markerOut.iRun         = 0;
@@ -632,27 +651,71 @@ namespace GT
 
             if (inputPosXRelativeToText < run.posX)
             {
+                // It's to the left of the run.
                 markerOut.iChar        = 0;
                 markerOut.relativePosX = 0;
             }
             else if (inputPosXRelativeToText > run.posX + run.width)
             {
-                // It may be a new line run. If so, we need to move the marker to the front of it, not the back.
+                // It's to the right of the run. It may be a new-line run. If so, we need to move the marker to the front of it, not the back.
                 markerOut.iChar        = run.characterCount;
                 markerOut.relativePosX = run.width;
 
                 if (m_text.c_str()[run.iChar] == '\n') {
-                    markerOut.iChar -= 1;
-                    return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[markerOut.iRun].iChar, markerOut.iChar, markerOut.relativePosX);
+                    markerOut.iChar       -= 1;
+                    markerOut.relativePosX = 0;
+
+                    assert(markerOut.iChar == 0);
+                    //return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[markerOut.iRun].iChar, markerOut.iChar, markerOut.relativePosX);
                 }
             }
             else
             {
-                int inputPosXRelativeToRun = inputPosX - run.posX;
-                if (!this->GetFontManager().GetTextCursorPositionFromPoint(m_hFont, m_text.c_str() + run.iChar, run.characterCount, run.width, inputPosXRelativeToRun, markerOut.relativePosX, markerOut.iChar))
+                // It's somewhere in the middle of the run. We need to handle this a little different for tab runs since they are aligned differently.
+                if (m_text.c_str()[run.iChar] == '\t')
                 {
-                    // An error occured somehow.
-                    return false;
+                    // It's a tab run.
+                    markerOut.iChar        = 0;
+                    markerOut.relativePosX = 0;
+
+                    int tabWidth = this->GetTabWidth();
+
+                    int tabLeft = run.posX + markerOut.relativePosX;
+                    for (; markerOut.iChar < run.characterCount; ++markerOut.iChar)
+                    {
+                        const int tabRight = tabWidth * ((run.posX + (tabWidth*(markerOut.iChar + 1))) / tabWidth);
+                        if (inputPosX >= tabLeft && inputPosX <= tabRight)
+                        {
+                            // The input position is somewhere on top of this character. If it's positioned on the left side of the character, set the output
+                            // value to the character at iChar. Otherwise it should be set to the character at iChar + 1.
+                            int charBoundsRightHalf = tabLeft + int(ceil(((tabRight - tabLeft) / 2.0f)));
+                            if (inputPosX <= charBoundsRightHalf) {
+                                markerOut.relativePosX = tabLeft - run.posX;
+                            } else {
+                                markerOut.relativePosX = tabRight - run.posX;
+                                markerOut.iChar += 1;
+                            }
+
+                            break;
+                        }
+
+                        tabLeft = tabRight;
+                    }
+
+                    // If we're past the last character in the tab run, we actually want to normalize it and move to the start of the next run.
+                    if (markerOut.iChar == run.characterCount) {
+                        this->MoveMarkerToFirstCharacterOfNextRun(markerOut);
+                    }
+                }
+                else
+                {
+                    // It's a standard run.
+                    int inputPosXRelativeToRun = inputPosX - run.posX;
+                    if (!this->GetFontManager().GetTextCursorPositionFromPoint(m_hFont, m_text.c_str() + run.iChar, run.characterCount, run.width, inputPosXRelativeToRun, OUT markerOut.relativePosX, OUT markerOut.iChar))
+                    {
+                        // An error occured somehow.
+                        return false;
+                    }
                 }
             }
 
@@ -784,14 +847,34 @@ namespace GT
     }
 
 
-    bool GUISimpleTextLayout::MoveMarkerLeft(TextMarker &marker)
+    bool GUISimpleTextLayout::MoveMarkerLeft(TextMarker &marker) const
     {
         if (m_runs.GetCount() > 0)
         {
             if (marker.iChar > 0)
             {
                 marker.iChar -= 1;
-                return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[marker.iRun].iChar, marker.iChar, marker.relativePosX);
+
+                const TextRun &run = m_runs[marker.iRun];
+                if (m_text.c_str()[run.iChar] == '\t')
+                {
+                    const int tabWidth = this->GetTabWidth();
+
+                    if (marker.iChar == 0)
+                    {
+                        // Simple case - it's the first tab character which means the relative position is just 0.
+                        marker.relativePosX = 0;
+                    }
+                    else
+                    {
+                        marker.relativePosX  = tabWidth * ((run.posX + (tabWidth*(marker.iChar + 0))) / tabWidth);
+                        marker.relativePosX -= run.posX;
+                    }
+                }
+                else
+                {
+                    return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[marker.iRun].iChar, marker.iChar, marker.relativePosX);
+                }
             }
             else
             {
@@ -803,14 +886,26 @@ namespace GT
         return false;
     }
 
-    bool GUISimpleTextLayout::MoveMarkerRight(TextMarker &marker)
+    bool GUISimpleTextLayout::MoveMarkerRight(TextMarker &marker) const
     {
         if (m_runs.GetCount() > 0)
         {
             if (marker.iChar + 1 < m_runs[marker.iRun].characterCount)
             {
                 marker.iChar += 1;
-                return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[marker.iRun].iChar, marker.iChar, marker.relativePosX);
+
+                const TextRun &run = m_runs[marker.iRun];
+                if (m_text.c_str()[run.iChar] == '\t')
+                {
+                    const int tabWidth = this->GetTabWidth();
+
+                    marker.relativePosX  = tabWidth * ((run.posX + (tabWidth*(marker.iChar + 0))) / tabWidth);
+                    marker.relativePosX -= run.posX;
+                }
+                else
+                {
+                    return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[marker.iRun].iChar, marker.iChar, marker.relativePosX);
+                }
             }
             else
             {
@@ -822,7 +917,7 @@ namespace GT
         return false;
     }
 
-    bool GUISimpleTextLayout::MoveMarkerToLastCharacterOfPreviousRun(TextMarker &marker)
+    bool GUISimpleTextLayout::MoveMarkerToLastCharacterOfPreviousRun(TextMarker &marker) const
     {
         if (marker.iRun > 0)
         {
@@ -831,9 +926,10 @@ namespace GT
             marker.iChar        = m_runs[marker.iRun].characterCount;
             marker.relativePosX = m_runs[marker.iRun].width;
 
-            if (marker.iChar > 0) {
-                marker.iChar -= 1;
-                return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[marker.iRun].iChar, marker.iChar, marker.relativePosX);
+            if (marker.iChar > 0)
+            {
+                // At this point we are located one character past the last character - we need to move it left.
+                return this->MoveMarkerLeft(marker);
             }
 
             return true;
@@ -842,7 +938,7 @@ namespace GT
         return false;
     }
 
-    bool GUISimpleTextLayout::MoveMarkerToFirstCharacterOfNextRun(TextMarker &marker)
+    bool GUISimpleTextLayout::MoveMarkerToFirstCharacterOfNextRun(TextMarker &marker) const
     {
         assert(m_runs.GetCount() > 0);
 
@@ -861,5 +957,22 @@ namespace GT
     bool GUISimpleTextLayout::DeleteCharacterToRightOfMarker(TextMarker &marker)
     {
         return false;
+    }
+
+
+    int GUISimpleTextLayout::GetSpaceWidth() const
+    {
+        GUIGlyphMetrics spaceMetrics;
+        if (this->GetFontManager().GetGlyphMetrics(m_hFont, ' ', spaceMetrics))
+        {
+            return spaceMetrics.advance;
+        }
+
+        return DEFAULT_SPACE_WIDTH;
+    }
+
+    int GUISimpleTextLayout::GetTabWidth() const
+    {
+        return this->GetTabSizeInSpaces() * this->GetSpaceWidth();
     }
 }
