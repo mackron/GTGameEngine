@@ -3504,6 +3504,13 @@ namespace GT
 
             if (this->IsEditableTextEnabled(m_pElementWithKeyboardFocus))
             {
+                // Filter new-line key presses if multi-line text is disabled.
+                if ((character == '\r' || character == '\n') && !this->IsMultiLineTextEnabled(m_pElementWithKeyboardFocus))
+                {
+                    return;
+                }
+
+
                 if (m_pElementWithKeyboardFocus->pTextLayout != nullptr) {
                     if (m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected()) {
                         m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText();
