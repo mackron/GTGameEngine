@@ -209,6 +209,22 @@ namespace GTLib
         }
 
 
+        /// Erases the character at the given index.
+        void EraseCharacterByIndex(unsigned int iChar)
+        {
+            if (iChar < this->lengthInTs)
+            {
+                // We're not going to re-create the buffer. Instead, we just move everything down a spot.
+                for (size_t i = iChar; i < this->lengthInTs; ++i)
+                {
+                    this->data[i] = this->data[i + 1];
+                }
+
+                this->lengthInTs -= 1;
+            }
+        }
+
+
         /// Performs a simple character replacement.
         ///
         /// @param source [in] The character to be replaced.
