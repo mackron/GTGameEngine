@@ -107,7 +107,7 @@ namespace GT
                 char absoluteFilePath[GT_MAX_PATH];
                 if (m_engineContext.GetFileSystem().FindAbsolutePath(ppEditor[0], absoluteFilePath, GT_MAX_PATH))
                 {
-                    m_editor.OpenFile(ppEditor[0]);
+                    m_editor.OpenFile(absoluteFilePath);
                 }
 
                 ppEditor += 1;
