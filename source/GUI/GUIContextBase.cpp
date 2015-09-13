@@ -2790,6 +2790,12 @@ namespace GT
 
             if (pOldFocusedElement != nullptr) {
                 this->PostEvent_OnLoseKeyboardFocus(pOldFocusedElement);
+
+                // When losing focus, make sure selection mode is disabled.
+                if (this->IsEditableTextEnabled(pOldFocusedElement) && pOldFocusedElement->pTextLayout != nullptr)
+                {
+                    pOldFocusedElement->pTextLayout->LeaveSelectionMode();
+                }
             }
 
             m_pElementWithKeyboardFocus = pNewFocusedElement;
@@ -3184,14 +3190,32 @@ namespace GT
                 this->GiveElementKeyboardFocus(pEventReceiver);
 
                 if (this->IsEditableTextEnabled(pEventReceiver)) {
+                    bool needsFullRepaint = false;
+
                     int textCursorPosX = 0;
                     int textCursorPosY = 0;
                     if (pEventReceiver->pTextLayout != nullptr) {
+                        if (!pEventReceiver->pTextLayout->IsInSelectionMode()) {
+                            if (pEventReceiver->pTextLayout->IsAnythingSelected()) {
+                                pEventReceiver->pTextLayout->DeselectAll();
+                                needsFullRepaint = true;
+                            }
+                        }
+
                         pEventReceiver->pTextLayout->MoveCursorToPoint(relativeMousePosX, relativeMousePosY);
                         pEventReceiver->pTextLayout->GetCursorPosition(textCursorPosX, textCursorPosY);
                     }
 
-                    this->ShowTextCursor(pEventReceiver, textCursorPosX, textCursorPosY);
+
+                    this->BeginBatch();
+                    {
+                        this->ShowTextCursor(pEventReceiver, textCursorPosX, textCursorPosY);
+
+                        if (needsFullRepaint) {
+                            this->Painting_InvalidateElementRect(pEventReceiver);
+                        }
+                    }
+                    this->EndBatch();
                 }
             }
 
@@ -3296,6 +3320,15 @@ namespace GT
         if (m_pElementWithKeyboardFocus != nullptr)
         {
             this->PostEvent_OnKeyPressed(m_pElementWithKeyboardFocus, key);
+
+            if (this->IsEditableTextEnabled(m_pElementWithKeyboardFocus))
+            {
+                if (m_pElementWithKeyboardFocus->pTextLayout != nullptr) {
+                    if (key == GTLib::Keys::Shift) {
+                        m_pElementWithKeyboardFocus->pTextLayout->EnterSelectionMode();
+                    }
+                }
+            }
         }
     }
 
@@ -3310,14 +3343,16 @@ namespace GT
                 if (m_pElementWithKeyboardFocus->pTextLayout != nullptr) {
                     this->BeginBatch();
                     {
+                        bool needsFullRepaint = m_pElementWithKeyboardFocus->pTextLayout->IsInSelectionMode();
+
                         // Editing.
                         if (key == GTLib::Keys::Backspace) {
                             m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToLeftOfCursor();
-                            this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
+                            needsFullRepaint = true;
                         }
                         if (key == GTLib::Keys::Delete) {
                             m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToRightOfCursor();
-                            this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
+                            needsFullRepaint = true;
                         }
 
                         // Cursor / Caret
@@ -3340,7 +3375,12 @@ namespace GT
                             m_pElementWithKeyboardFocus->pTextLayout->MoveCursorToStartOfLine();
                         }
 
-                        this->UpdateTextCursorByFocusedElement();
+
+                        if (needsFullRepaint) {
+                            this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
+                        } else {
+                            this->UpdateTextCursorByFocusedElement();
+                        }
                     }
                     this->EndBatch();
                 }
@@ -3353,6 +3393,15 @@ namespace GT
         if (m_pElementWithKeyboardFocus != nullptr)
         {
             this->PostEvent_OnKeyReleased(m_pElementWithKeyboardFocus, key);
+
+            if (this->IsEditableTextEnabled(m_pElementWithKeyboardFocus))
+            {
+                if (m_pElementWithKeyboardFocus->pTextLayout != nullptr) {
+                    if (key == GTLib::Keys::Shift) {
+                        m_pElementWithKeyboardFocus->pTextLayout->LeaveSelectionMode();
+                    }
+                }
+            }
         }
     }
 
@@ -4531,6 +4580,23 @@ namespace GT
         // Text.
         if (this->DoesElementHaveText(pElement))
         {
+            GTLib::Rect<int> textRect;
+            this->GetElementAbsoluteTextRect(pElement, textRect);
+
+
+            // Background and selection rectangles.
+            pElement->pTextLayout->IterateVisibleSelectionRects([&](const GUITextRectDesc &rect) {
+                GUITextRectDesc rect2(rect);
+                rect2.rect.left   += textRect.left;
+                rect2.rect.right  += textRect.left;
+                rect2.rect.top    += textRect.top;
+                rect2.rect.bottom += textRect.top;
+
+                Renderer_DrawRectangle(rect2.rect, rect2.colour);
+            });
+
+
+            // The text itself.
             HGUIFont hFont = this->GetElementFont(pElement);
             if (hFont != 0)
             {
@@ -4543,8 +4609,7 @@ namespace GT
                 Renderer_SetClippingRect(childClippingRect);
 
 
-                GTLib::Rect<int> textRect;
-                this->GetElementAbsoluteTextRect(pElement, textRect);
+                
 
                 if (Renderer_CanDrawText(hFont))
                 {

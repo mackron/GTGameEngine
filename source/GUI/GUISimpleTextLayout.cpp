@@ -33,7 +33,8 @@ namespace GT
           m_color(),
           m_runs(),
           m_textBoundsWidth(0), m_textBoundsHeight(0),
-          m_cursor()
+          m_cursor(),
+          m_selectionAnchor(), m_isInSelectionMode(false), m_isAnythingSelected(false)
     {
     }
 
@@ -219,6 +220,10 @@ namespace GT
     void GUISimpleTextLayout::MoveCursorToPoint(int inputPosX, int inputPosY)
     {
         this->InitMarkerByPointRelativeToContainer(inputPosX, inputPosY, m_cursor);
+
+        if (m_isInSelectionMode) {
+            m_isAnythingSelected = true;
+        }
     }
 
     void GUISimpleTextLayout::GetCursorPosition(int &posXOut, int &posYOut) const
@@ -228,32 +233,86 @@ namespace GT
 
     bool GUISimpleTextLayout::MoveCursorLeft()
     {
-        return this->MoveMarkerLeft(m_cursor);
+        if (this->MoveMarkerLeft(m_cursor))
+        {
+            if (m_isInSelectionMode) {
+                m_isAnythingSelected = true;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     bool GUISimpleTextLayout::MoveCursorRight()
     {
-        return this->MoveMarkerRight(m_cursor);
+        if (this->MoveMarkerRight(m_cursor))
+        {
+            if (m_isInSelectionMode) {
+                m_isAnythingSelected = true;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     bool GUISimpleTextLayout::MoveCursorUp()
     {
-        return this->MoveMarkerUp(m_cursor);
+        if (this->MoveMarkerUp(m_cursor))
+        {
+            if (m_isInSelectionMode) {
+                m_isAnythingSelected = true;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     bool GUISimpleTextLayout::MoveCursorDown()
     {
-        return this->MoveMarkerDown(m_cursor);
+        if (this->MoveMarkerDown(m_cursor))
+        {
+            if (m_isInSelectionMode) {
+                m_isAnythingSelected = true;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     bool GUISimpleTextLayout::MoveCursorToEndOfLine()
     {
-        return this->MoveMarkerToEndOfLine(m_cursor);
+        if (this->MoveMarkerToEndOfLine(m_cursor))
+        {
+            if (m_isInSelectionMode) {
+                m_isAnythingSelected = true;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
     bool GUISimpleTextLayout::MoveCursorToStartOfLine()
     {
-        return this->MoveMarkerToStartOfLine(m_cursor);
+        if (this->MoveMarkerToStartOfLine(m_cursor))
+        {
+            if (m_isInSelectionMode) {
+                m_isAnythingSelected = true;
+            }
+
+            return true;
+        }
+
+        return false;
     }
 
 
@@ -298,6 +357,106 @@ namespace GT
     {
         this->DeleteCharacterToRightOfMarker(m_cursor);
     }
+
+
+
+    //////////////////////////////
+    // Selection
+
+    void GUISimpleTextLayout::EnterSelectionMode()
+    {
+        if (!m_isInSelectionMode)
+        {
+            // If nothing is currently selected, we want to set the selection anchor to the current cursor position.
+            if (!m_isAnythingSelected)
+            {
+                m_selectionAnchor = m_cursor;
+            }
+
+
+            m_isInSelectionMode = true;
+        }
+    }
+
+    void GUISimpleTextLayout::LeaveSelectionMode()
+    {
+        if (m_isInSelectionMode)
+        {
+            m_isInSelectionMode = false;
+        }
+    }
+
+    bool GUISimpleTextLayout::IsInSelectionMode() const
+    {
+        return m_isInSelectionMode;
+    }
+
+    bool GUISimpleTextLayout::IsAnythingSelected() const
+    {
+        return m_isAnythingSelected && (m_cursor.iRun != m_selectionAnchor.iRun || m_cursor.iChar != m_selectionAnchor.iChar);
+    }
+
+    void GUISimpleTextLayout::DeselectAll()
+    {
+        m_isAnythingSelected = false;
+    }
+
+    void GUISimpleTextLayout::IterateVisibleSelectionRects(std::function<void (const GUITextRectDesc &textRectDesc)> callback) const
+    {
+        if (this->IsAnythingSelected())
+        {
+            TextMarker selectionStart = m_selectionAnchor;
+            TextMarker selectionEnd   = m_cursor;
+
+            if (selectionStart.iRun > selectionEnd.iRun || (selectionStart.iRun == selectionEnd.iRun && selectionStart.iChar > selectionEnd.iChar))
+            {
+                std::swap(selectionStart, selectionEnd);
+            }
+
+
+            GUITextRectDesc desc;
+            desc.colour = GTLib::Colour(0.2f, 0.6f, 0.8f);
+
+            if (selectionStart.iRun == selectionEnd.iRun)
+            {
+                // The selection region is on the same run.
+                const TextRun &run = m_runs[selectionStart.iRun];
+
+                desc.rect.left   = run.posX + selectionStart.relativePosX + m_containerInnerOffsetX;
+                desc.rect.top    = run.posY + m_containerInnerOffsetY;
+                desc.rect.right  = run.posX + selectionEnd.relativePosX + m_containerInnerOffsetX;
+                desc.rect.bottom = run.posY + run.height + m_containerInnerOffsetY;
+                callback(desc);
+            }
+            else
+            {
+                // First run.
+                desc.rect.left   = m_runs[selectionStart.iRun].posX + selectionStart.relativePosX + m_containerInnerOffsetX;
+                desc.rect.top    = m_runs[selectionStart.iRun].posY + m_containerInnerOffsetY;
+                desc.rect.right  = m_runs[selectionStart.iRun].posX + m_runs[selectionStart.iRun].width;
+                desc.rect.bottom = m_runs[selectionStart.iRun].posY + m_runs[selectionStart.iRun].height + m_containerInnerOffsetY;
+                callback(desc);
+
+                // Every run in between the two markers.
+                for (unsigned int iRun = selectionStart.iRun + 1; iRun < selectionEnd.iRun; ++iRun)
+                {
+                    desc.rect.left   = m_runs[iRun].posX + m_containerInnerOffsetX;
+                    desc.rect.top    = m_runs[iRun].posY + m_containerInnerOffsetY;
+                    desc.rect.right  = m_runs[iRun].posX + m_runs[iRun].width;
+                    desc.rect.bottom = m_runs[iRun].posY + m_runs[iRun].height + m_containerInnerOffsetY;
+                    callback(desc);
+                }
+
+                // The last run.
+                desc.rect.left   = m_runs[selectionEnd.iRun].posX + m_containerInnerOffsetX;
+                desc.rect.top    = m_runs[selectionEnd.iRun].posY + m_containerInnerOffsetY;
+                desc.rect.right  = m_runs[selectionEnd.iRun].posX + selectionEnd.relativePosX;
+                desc.rect.bottom = m_runs[selectionEnd.iRun].posY + m_runs[selectionEnd.iRun].height + m_containerInnerOffsetY;
+                callback(desc);
+            }
+        }
+    }
+
 
 
     //////////////////////////////////////////
@@ -403,10 +562,9 @@ namespace GT
 
     void GUISimpleTextLayout::RefreshLayout()
     {
-        GUIFontManager &fontManager = this->GetFontManager();
-
-        const int lineHeight = fontManager.GetLineHeight(m_hFont);
-        const int tabWidth = this->GetTabWidth();
+        const int lineHeight = this->GetLineHeight();
+        const int spaceWidth = this->GetSpaceWidth();
+        const int tabWidth   = this->GetTabWidth();
 
 
         // We split the runs based on tabs and new-lines. We want to create runs for tabs and new-line characters as well because we want
@@ -466,7 +624,7 @@ namespace GT
             {
                 // New line.
                 iCurrentLine += 1;
-                run.width = 0;
+                run.width = spaceWidth;     // Set the width of this to a space so that blank lines are visualized when selected.
             }
             else if (nextRunStart[0] == '\0')
             {
@@ -478,7 +636,7 @@ namespace GT
                 // Normal run.
                 int runWidth  = 0;
                 int runHeight = 0;
-                if (fontManager.MeasureString(m_hFont, nextRunStart, run.characterCount, runWidth, runHeight))
+                if (this->GetFontManager().MeasureString(m_hFont, nextRunStart, run.characterCount, runWidth, runHeight))
                 {
                     run.width = runWidth;
                 }

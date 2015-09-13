@@ -45,6 +45,19 @@ namespace GT
         GTLib::Colour color;
     };
 
+    /// Structure containing information about a colored rectangle region in the text layout.
+    ///
+    /// This structure is used for selection rectangles and background colours.
+    struct GUITextRectDesc
+    {
+        /// The rectangle.
+        GTLib::Rect<int> rect;
+
+        /// The colour of the rectangle.
+        GTLib::Colour colour;
+    };
+
+
     /// Base class for laying out text.
     ///
     /// This class is used to layout the text of an element. It has been built in such a way that it doesn't actually depend
@@ -243,6 +256,28 @@ namespace GT
         /// @remarks
         ///     This will not move the cursor.
         virtual void DeleteCharacterToRightOfCursor() = 0;
+
+
+        //////////////////////////////
+        // Selection
+
+        /// Enters into selection mode.
+        virtual void EnterSelectionMode() = 0;
+
+        /// Leaves selection mode, but does not clear the selection.
+        virtual void LeaveSelectionMode() = 0;
+
+        /// Determines whether or not selection mode is enabled.
+        virtual bool IsInSelectionMode() const = 0;
+
+        /// Determines whether or not anything is selected.
+        virtual bool IsAnythingSelected() const = 0;
+
+        /// Deselects everything.
+        virtual void DeselectAll() = 0;
+
+        /// Iterates over all of the visible selection rectangles.
+        virtual void IterateVisibleSelectionRects(std::function<void (const GUITextRectDesc &textRectDesc)> callback) const = 0;
 
 
     private:

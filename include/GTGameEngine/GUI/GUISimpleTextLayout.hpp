@@ -133,6 +133,28 @@ namespace GT
         void DeleteCharacterToRightOfCursor();
 
 
+        //////////////////////////////
+        // Selection
+
+        /// @copydoc GUITextLayout::EnterSelectionMode()
+        void EnterSelectionMode();
+
+        /// @copydoc GUITextLayout::LeaveSelectionMode()
+        void LeaveSelectionMode();
+
+        /// @copydoc GUITextLayout::IsInSelectionMode()
+        bool IsInSelectionMode() const;
+
+        /// @copydoc GUITextLayout::IsAnythingSelected()
+        bool IsAnythingSelected() const;
+
+        /// @copydoc GUITextLayout::DeselectAll()
+        void DeselectAll();
+
+        /// @copydoc GUITextLayout::IterateVisibleSelectionRects()
+        void IterateVisibleSelectionRects(std::function<void (const GUITextRectDesc &textRectDesc)> callback) const;
+
+
     private:
 
         /// Structure representing a text run.
@@ -383,8 +405,17 @@ namespace GT
         int m_textBoundsHeight;
 
 
-        /// The marker representing the text cursor.
+        /// The marker representing the text cursor. The text cursor also acts as the end point for the selection range.
         TextMarker m_cursor;
+
+        /// The marker representing the selection anchor.
+        TextMarker m_selectionAnchor;
+
+        /// Keeps track of whether or not we are in selection mode.
+        bool m_isInSelectionMode;
+
+        /// Keeps track of whether or not anything is selected.
+        bool m_isAnythingSelected;
     };
 }
 
