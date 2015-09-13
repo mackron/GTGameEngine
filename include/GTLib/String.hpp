@@ -223,6 +223,21 @@ namespace GTLib
             this->Assign(newValue.c_str());
         }
 
+
+        /// Erases the characters in the given range.
+        void EraseRange(unsigned int iCharStart, unsigned int iCharEnd)
+        {
+            assert(iCharStart <  iCharEnd);
+            assert(iCharStart <  this->lengthInTs);
+            assert(iCharEnd   <= this->lengthInTs);
+
+            Strings::List<T> newValue;
+            newValue.Append(this->data,            iCharStart);
+            newValue.Append(this->data + iCharEnd, ptrdiff_t(this->lengthInTs - iCharEnd));
+
+            this->Assign(newValue.c_str());
+        }
+
         /// Erases the character at the given index.
         void EraseCharacterByIndex(unsigned int iChar)
         {
