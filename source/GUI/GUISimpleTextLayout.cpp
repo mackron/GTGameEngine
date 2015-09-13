@@ -316,49 +316,6 @@ namespace GT
     }
 
 
-    //////////////////////////////
-    // Editing
-
-    void GUISimpleTextLayout::InsertCharacterAtCursor(char32_t character)
-    {
-        // Transform '\r' to '\n'.
-        if (character == '\r') {
-            character = '\n';
-        }
-
-
-        TextRun &run = m_runs[m_cursor.iRun];
-        unsigned int iAbsoluteMarkerChar = run.iChar + m_cursor.iChar;
-
-        // Insert the character into the string.
-        m_text.InsertCharacter(character, iAbsoluteMarkerChar);
-
-        // The layout will have changed so it needs to be refreshed.
-        this->RefreshLayout();
-
-
-        // The marker needs to be updated based on the new layout and it's new position, which is one character ahead.
-        this->MoveMarkerToCharacter(m_cursor, iAbsoluteMarkerChar + 1);
-
-
-        // The cursor's sticky position needs to be updated whenever the text is edited.
-        this->UpdateMarkerStickyPosition(m_cursor);
-    }
-
-    void GUISimpleTextLayout::DeleteCharacterToLeftOfCursor()
-    {
-        if (this->MoveCursorLeft())
-        {
-            this->DeleteCharacterToRightOfCursor();
-        }
-    }
-
-    void GUISimpleTextLayout::DeleteCharacterToRightOfCursor()
-    {
-        this->DeleteCharacterToRightOfMarker(m_cursor);
-    }
-
-
 
     //////////////////////////////
     // Selection
@@ -403,17 +360,10 @@ namespace GT
 
     void GUISimpleTextLayout::IterateVisibleSelectionRects(std::function<void (const GUITextRectDesc &textRectDesc)> callback) const
     {
-        if (this->IsAnythingSelected())
+        TextMarker selectionStart;
+        TextMarker selectionEnd;
+        if (this->GetSelectionMarkers(selectionStart, selectionEnd))
         {
-            TextMarker selectionStart = m_selectionAnchor;
-            TextMarker selectionEnd   = m_cursor;
-
-            if (selectionStart.iRun > selectionEnd.iRun || (selectionStart.iRun == selectionEnd.iRun && selectionStart.iChar > selectionEnd.iChar))
-            {
-                std::swap(selectionStart, selectionEnd);
-            }
-
-
             GUITextRectDesc desc;
             desc.colour = GTLib::Colour(0.2f, 0.6f, 0.8f);
 
@@ -456,6 +406,85 @@ namespace GT
             }
         }
     }
+
+
+
+    //////////////////////////////
+    // Editing
+
+    void GUISimpleTextLayout::InsertCharacterAtCursor(char32_t character)
+    {
+        // Transform '\r' to '\n'.
+        if (character == '\r') {
+            character = '\n';
+        }
+
+
+        TextRun &run = m_runs[m_cursor.iRun];
+        unsigned int iAbsoluteMarkerChar = run.iChar + m_cursor.iChar;
+
+        // Insert the character into the string.
+        m_text.InsertCharacter(character, iAbsoluteMarkerChar);
+
+        // The layout will have changed so it needs to be refreshed.
+        this->RefreshLayout();
+
+
+        // The marker needs to be updated based on the new layout and it's new position, which is one character ahead.
+        this->MoveMarkerToCharacter(m_cursor, iAbsoluteMarkerChar + 1);
+
+
+        // The cursor's sticky position needs to be updated whenever the text is edited.
+        this->UpdateMarkerStickyPosition(m_cursor);
+    }
+
+    void GUISimpleTextLayout::DeleteCharacterToLeftOfCursor()
+    {
+        if (this->MoveCursorLeft())
+        {
+            this->DeleteCharacterToRightOfCursor();
+        }
+    }
+
+    void GUISimpleTextLayout::DeleteCharacterToRightOfCursor()
+    {
+        this->DeleteCharacterToRightOfMarker(m_cursor);
+    }
+
+    void GUISimpleTextLayout::DeleteSelectedText()
+    {
+        // We need to get the selected text range and then delete that section from the internal string. Then, we want to position the cursor
+        // at the first character index of that range.
+
+        TextMarker selectionStart;
+        TextMarker selectionEnd;
+        if (this->GetSelectionMarkers(selectionStart, selectionEnd))
+        {
+            unsigned int iCharStart = m_runs[selectionStart.iRun].iChar + selectionStart.iChar;
+            unsigned int iCharEnd   = m_runs[selectionEnd.iRun].iChar   + selectionEnd.iChar;
+
+
+            // Remove the character from the string.
+            m_text.EraseRange(iCharStart, iCharEnd);
+
+            // The layout will have changed.
+            this->RefreshLayout();
+
+
+            // The marker needs to be updated based on the new layout.
+            this->MoveMarkerToCharacter(m_cursor, iCharStart);
+
+
+            // The cursor's sticky position needs to be updated whenever the text is edited.
+            this->UpdateMarkerStickyPosition(m_cursor);
+
+
+            // Reset the selection marker.
+            m_selectionAnchor = m_cursor;
+            m_isAnythingSelected = false;
+        }
+    }
+
 
 
 
@@ -1391,6 +1420,28 @@ namespace GT
                 // If we get here it means the marker is sitting past the last character in it's run. This is an erroneous case.
                 assert(false);
             }
+        }
+
+        return false;
+    }
+
+
+    bool GUISimpleTextLayout::GetSelectionMarkers(TextMarker &startOut, TextMarker &endOut) const
+    {
+        if (this->IsAnythingSelected())
+        {
+            if (m_selectionAnchor.iRun > m_cursor.iRun || (m_selectionAnchor.iRun == m_cursor.iRun && m_selectionAnchor.iChar > m_cursor.iChar))
+            {
+                startOut = m_cursor;
+                endOut   = m_selectionAnchor;
+            }
+            else
+            {
+                startOut = m_selectionAnchor;
+                endOut   = m_cursor;
+            }
+
+            return true;
         }
 
         return false;

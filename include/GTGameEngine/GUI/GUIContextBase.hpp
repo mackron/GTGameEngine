@@ -2596,6 +2596,12 @@ namespace GT
         /// A pointer to the element that has the keyboard focus.
         GUIElement* m_pElementWithKeyboardFocus;
 
+        /// Keeps track of whether or not text is being selected with the mouse.
+        bool m_isSelectingTextWithMouse;
+
+        /// Keeps track of whether or not the shift key is being held down on the element with keyboard focus.
+        bool m_isSelectingWithShiftKey;
+
 
         /// A pointer to the element that owns the text cursor.
         GUIElement* m_pTextCursorOwnerElement;

@@ -758,16 +758,7 @@ namespace GT
         HGUISurface hSurface = this->GetWindowSurface(hWindow);
         if (hSurface != 0)
         {
-            // The cursor position may be on the client area which means it wasn't moved while on top of the GUI surface. Don't post
-            // the event to the GUI if the position is not inside the surface's area.
-            unsigned int surfaceWidth;
-            unsigned int surfaceHeight;
-            m_gui.GetSurfaceSize(hSurface, surfaceWidth, surfaceHeight);
-
-            if (xPos > 0 && yPos > 0 && xPos < static_cast<int>(surfaceWidth) && yPos < static_cast<int>(surfaceHeight))
-            {
-                m_gui.OnMouseButtonReleased(hSurface, button, xPos, yPos);
-            }
+            m_gui.OnMouseButtonReleased(hSurface, button, xPos, yPos);
         }
     }
 

@@ -230,6 +230,30 @@ namespace GT
 
         /// Moves the cursor to the start of the line.
         virtual bool MoveCursorToStartOfLine() = 0;
+        
+
+
+        //////////////////////////////
+        // Selection
+
+        /// Enters into selection mode.
+        virtual void EnterSelectionMode() = 0;
+
+        /// Leaves selection mode, but does not clear the selection.
+        virtual void LeaveSelectionMode() = 0;
+
+        /// Determines whether or not selection mode is enabled.
+        virtual bool IsInSelectionMode() const = 0;
+
+        /// Determines whether or not anything is selected.
+        virtual bool IsAnythingSelected() const = 0;
+
+        /// Deselects everything.
+        virtual void DeselectAll() = 0;
+
+        /// Iterates over all of the visible selection rectangles.
+        virtual void IterateVisibleSelectionRects(std::function<void (const GUITextRectDesc &textRectDesc)> callback) const = 0;
+
 
 
         //////////////////////////////
@@ -257,27 +281,11 @@ namespace GT
         ///     This will not move the cursor.
         virtual void DeleteCharacterToRightOfCursor() = 0;
 
+        /// Deletes the selected text.
+        virtual void DeleteSelectedText() = 0;
 
-        //////////////////////////////
-        // Selection
 
-        /// Enters into selection mode.
-        virtual void EnterSelectionMode() = 0;
-
-        /// Leaves selection mode, but does not clear the selection.
-        virtual void LeaveSelectionMode() = 0;
-
-        /// Determines whether or not selection mode is enabled.
-        virtual bool IsInSelectionMode() const = 0;
-
-        /// Determines whether or not anything is selected.
-        virtual bool IsAnythingSelected() const = 0;
-
-        /// Deselects everything.
-        virtual void DeselectAll() = 0;
-
-        /// Iterates over all of the visible selection rectangles.
-        virtual void IterateVisibleSelectionRects(std::function<void (const GUITextRectDesc &textRectDesc)> callback) const = 0;
+        
 
 
     private:

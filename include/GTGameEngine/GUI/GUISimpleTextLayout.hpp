@@ -120,18 +120,6 @@ namespace GT
         bool MoveCursorToStartOfLine();
 
 
-        //////////////////////////////
-        // Editing
-
-        /// @copydoc GUITextLayout::InsertCharacterAtCursor()
-        void InsertCharacterAtCursor(char32_t character);
-
-        /// @copydoc GUITextLayout::DeleteCharacterToLeftOfCursor()
-        void DeleteCharacterToLeftOfCursor();
-
-        /// @copydoc GUITextLayout::DeleteCharacterToRightOfCursor()
-        void DeleteCharacterToRightOfCursor();
-
 
         //////////////////////////////
         // Selection
@@ -153,6 +141,24 @@ namespace GT
 
         /// @copydoc GUITextLayout::IterateVisibleSelectionRects()
         void IterateVisibleSelectionRects(std::function<void (const GUITextRectDesc &textRectDesc)> callback) const;
+
+
+
+        //////////////////////////////
+        // Editing
+
+        /// @copydoc GUITextLayout::InsertCharacterAtCursor()
+        void InsertCharacterAtCursor(char32_t character);
+
+        /// @copydoc GUITextLayout::DeleteCharacterToLeftOfCursor()
+        void DeleteCharacterToLeftOfCursor();
+
+        /// @copydoc GUITextLayout::DeleteCharacterToRightOfCursor()
+        void DeleteCharacterToRightOfCursor();
+
+        /// @copydoc GUITextLayout::DeleteSelectedText()
+        void DeleteSelectedText();
+
 
 
     private:
@@ -336,6 +342,14 @@ namespace GT
         ///     This does not move the marker.
         bool DeleteCharacterToRightOfMarker(TextMarker &marker);
 
+
+        /// Retrieves the markers that mark the current selection range.
+        ///
+        /// @remarks
+        ///     One of these markers will be an exact copy of the cursor.
+        ///     @par
+        ///     This will return false if nothing is selected.
+        bool GetSelectionMarkers(TextMarker &startOut, TextMarker &endOut) const;
 
 
         /// Retrieves the height of a line.

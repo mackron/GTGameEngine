@@ -59,7 +59,7 @@ namespace GT
           m_pElementCapturingMouseEvents(nullptr), m_pElementUnderMouse(nullptr),
           m_pSurfaceUnderMouse(nullptr),
           m_currentCursor(GUISystemCursor::Default),
-          m_pElementWithKeyboardFocus(nullptr),
+          m_pElementWithKeyboardFocus(nullptr), m_isSelectingTextWithMouse(false), m_isSelectingWithShiftKey(false),
           m_pTextCursorOwnerElement(nullptr), m_isTextCursorVisible(false), m_textCursorRelativePosX(0), m_textCursorRelativePosY(0),
           m_layoutContext(),
           m_batchLockCounter(0)
@@ -2795,6 +2795,13 @@ namespace GT
                 if (this->IsEditableTextEnabled(pOldFocusedElement) && pOldFocusedElement->pTextLayout != nullptr)
                 {
                     pOldFocusedElement->pTextLayout->LeaveSelectionMode();
+
+                    m_isSelectingWithShiftKey  = false;
+                    m_isSelectingTextWithMouse = false;
+                    if (pOldFocusedElement == this->GetMouseEventCapture())
+                    {
+                        this->ReleaseMouseEventCapture();
+                    }
                 }
             }
 
@@ -3085,9 +3092,6 @@ namespace GT
         }
 
 
-        //int prevMousePosX = m_mousePosX;
-        //int prevMousePosY = m_mousePosY;
-
         m_mousePosX = mousePosX;
         m_mousePosY = mousePosY;
 
@@ -3116,6 +3120,31 @@ namespace GT
             int relativeMousePosX;
             int relativeMousePosY;
             this->AbsoluteToRelative(pEventReceiver, mousePosX, mousePosY, relativeMousePosX, relativeMousePosY);
+
+
+            // If the element has text editing enabled, and it is the one currently being editted, the selection region needs to be updated.
+            if (m_pElementWithKeyboardFocus == pEventReceiver && m_isSelectingTextWithMouse && this->IsEditableTextEnabled(pEventReceiver))
+            {
+                pEventReceiver->pTextLayout->MoveCursorToPoint(relativeMousePosX, relativeMousePosY);
+
+                
+                // Repaint.
+                this->BeginBatch();
+                {
+                    // Paint the cursor.
+                    int textCursorPosX = 0;
+                    int textCursorPosY = 0;
+                    pEventReceiver->pTextLayout->GetCursorPosition(textCursorPosX, textCursorPosY);
+                    
+                    this->ShowTextCursor(pEventReceiver, textCursorPosX, textCursorPosY);
+
+
+                    // Paint the text selection.
+                    this->Painting_InvalidateElementRect(pEventReceiver);
+                }
+                this->EndBatch();
+            }
+
 
             this->PostEvent_OnMouseMove(pEventReceiver, relativeMousePosX, relativeMousePosY);
         }
@@ -3202,11 +3231,21 @@ namespace GT
                             }
                         }
 
+
                         pEventReceiver->pTextLayout->MoveCursorToPoint(relativeMousePosX, relativeMousePosY);
                         pEventReceiver->pTextLayout->GetCursorPosition(textCursorPosX, textCursorPosY);
+
+
+                        // Enter selection mode.
+                        pEventReceiver->pTextLayout->EnterSelectionMode();
+
+                        // Capture mouse events so we can do reliable mouse selection.
+                        this->SetMouseEventCapture(pEventReceiver);
+                        m_isSelectingTextWithMouse = true;
                     }
 
 
+                    // Repaint.
                     this->BeginBatch();
                     {
                         this->ShowTextCursor(pEventReceiver, textCursorPosX, textCursorPosY);
@@ -3252,6 +3291,21 @@ namespace GT
             this->AbsoluteToRelative(pEventReceiver, mousePosX, mousePosY, relativeMousePosX, relativeMousePosY);
 
             this->PostEvent_OnMouseButtonReleased(pEventReceiver, mouseButton, relativeMousePosX, relativeMousePosY);
+
+
+            if (pEventReceiver == m_pElementWithKeyboardFocus && mouseButton == 1)
+            {
+                if (this->GetMouseEventCapture() == pEventReceiver && this->IsEditableTextEnabled(pEventReceiver))
+                {
+                    this->ReleaseMouseEventCapture();
+                    m_isSelectingTextWithMouse = false;
+                }
+
+                // Leave selection mode.
+                if (!m_isSelectingWithShiftKey) {
+                    pEventReceiver->pTextLayout->LeaveSelectionMode();
+                }
+            }
         }
     }
 
@@ -3326,6 +3380,7 @@ namespace GT
                 if (m_pElementWithKeyboardFocus->pTextLayout != nullptr) {
                     if (key == GTLib::Keys::Shift) {
                         m_pElementWithKeyboardFocus->pTextLayout->EnterSelectionMode();
+                        m_isSelectingWithShiftKey = true;
                     }
                 }
             }
@@ -3347,11 +3402,21 @@ namespace GT
 
                         // Editing.
                         if (key == GTLib::Keys::Backspace) {
-                            m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToLeftOfCursor();
+                            if (m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected()) {
+                                m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText();
+                            } else {
+                                m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToLeftOfCursor();
+                            }
+                            
                             needsFullRepaint = true;
                         }
                         if (key == GTLib::Keys::Delete) {
-                            m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToRightOfCursor();
+                            if (m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected()) {
+                                m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText();
+                            } else {
+                                m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToRightOfCursor();
+                            }
+
                             needsFullRepaint = true;
                         }
 
@@ -3378,9 +3443,9 @@ namespace GT
 
                         if (needsFullRepaint) {
                             this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
-                        } else {
-                            this->UpdateTextCursorByFocusedElement();
                         }
+
+                        this->UpdateTextCursorByFocusedElement();
                     }
                     this->EndBatch();
                 }
@@ -3398,7 +3463,11 @@ namespace GT
             {
                 if (m_pElementWithKeyboardFocus->pTextLayout != nullptr) {
                     if (key == GTLib::Keys::Shift) {
-                        m_pElementWithKeyboardFocus->pTextLayout->LeaveSelectionMode();
+                        m_isSelectingWithShiftKey = false;
+
+                        if (!m_isSelectingTextWithMouse) {
+                            m_pElementWithKeyboardFocus->pTextLayout->LeaveSelectionMode();
+                        }
                     }
                 }
             }
