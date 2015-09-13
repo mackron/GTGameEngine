@@ -209,6 +209,20 @@ namespace GTLib
         }
 
 
+        /// Inserts a character at the given index.
+        void InsertCharacter(char32_t character, unsigned int index)
+        {
+            T charStr[8];
+            size_t charLength = GTLib::Strings::WriteChar(charStr, character);
+
+            Strings::List<T> newValue;
+            newValue.Append(this->data,         static_cast<ptrdiff_t>(index));
+            newValue.Append(charStr,            charLength);
+            newValue.Append(this->data + index, static_cast<ptrdiff_t>(this->lengthInTs - index));
+
+            this->Assign(newValue.c_str());
+        }
+
         /// Erases the character at the given index.
         void EraseCharacterByIndex(unsigned int iChar)
         {
