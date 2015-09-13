@@ -621,6 +621,20 @@ namespace GT
 #endif
     }
 
+    void GameContext::OnKeyPressedAutoRepeat(HWindow hWindow, GTLib::Key key)
+    {
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnKeyPressedAutoRepeat(*this, hWindow, key);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnKeyPressedAutoRepeat(hWindow, key);
+        }
+#endif
+    }
+
     void GameContext::OnKeyReleased(HWindow hWindow, GTLib::Key key)
     {
         if (!this->IsEditorOpen())

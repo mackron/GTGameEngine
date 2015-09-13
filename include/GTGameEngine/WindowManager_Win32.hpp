@@ -182,7 +182,7 @@ namespace GT
         virtual void OnMouseWheel(HWindow hWindow, int delta, int mousePosX, int mousePosY) = 0;
 
         /// Called when a key is pressed.
-        virtual void OnKeyPressed(HWindow hWnd, GTLib::Key key) = 0;
+        virtual void OnKeyPressed(HWindow hWnd, GTLib::Key key, bool autoRepeat) = 0;
 
         /// Called when a key is released.
         virtual void OnKeyReleased(HWindow hWnd, GTLib::Key key) = 0;

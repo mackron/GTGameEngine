@@ -138,6 +138,7 @@ namespace GT
 
         /// @copydoc GUIContextBase::PostEvent_OnKeyPressed()
         void PostEvent_OnKeyPressed(GUIElement* pElement, GTLib::Key key);
+        void PostEvent_OnKeyPressedAutoRepeat(GUIElement* pElement, GTLib::Key key);
 
         /// @copydoc GUIContextBase::PostEvent_OnKeyReleased()
         void PostEvent_OnKeyReleased(GUIElement* pElement, GTLib::Key key);
@@ -1593,8 +1594,9 @@ namespace GT
         /// @copydoc GUIContextBase::OnMouseWheel()
         void OnMouseWheel(HGUISurface hSurface, int delta, int mousePosX, int mousePosY);
 
-        /// @copydoc GUIContextBase::OnMouseWheel()
+        /// @copydoc GUIContextBase::OnKeyPressed()
         void OnKeyPressed(GTLib::Key key);
+        void OnKeyPressedAutoRepeat(GTLib::Key key);
 
         /// @copydoc GUIContextBase::OnKeyReleased()
         void OnKeyReleased(GTLib::Key key);

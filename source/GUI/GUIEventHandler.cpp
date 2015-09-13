@@ -55,6 +55,10 @@ namespace GT
     {
     }
 
+    void GUIEventHandler::OnKeyPressedAutoRepeat(GUIContext &, HGUIElement, GTLib::Key)
+    {
+    }
+
     void GUIEventHandler::OnKeyReleased(GUIContext &, HGUIElement, GTLib::Key)
     {
     }

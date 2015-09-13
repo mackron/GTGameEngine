@@ -833,6 +833,65 @@ namespace GT
         }
     }
 
+    void GUIContext::PostEvent_OnKeyPressedAutoRepeat(GUIElement* pElement, GTLib::Key key)
+    {
+        assert(pElement != nullptr);
+
+        HGUIElement hElement = reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        assert(hElement != 0);
+        {
+            // Local
+            this->IterateLocalEventHandlers(hElement, [&](GUIEventHandler &eventHandler) -> bool
+            {
+                eventHandler.OnKeyPressedAutoRepeat(*this, hElement, key);
+                return true;
+            });
+
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnKeyPressedAutoRepeat;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i](key);
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
+            // Global
+            this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    eventHandler.OnKeyPressedAutoRepeat(*this, hElement, key);
+                    return true;
+                }
+
+                return false;
+            });
+
+
+            auto handlers = m_callbackGlobalEventHandlers.OnKeyPressedAutoRepeat;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement, key);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+
     void GUIContext::PostEvent_OnKeyReleased(GUIElement* pElement, GTLib::Key key)
     {
         assert(pElement != nullptr);
@@ -3656,6 +3715,11 @@ namespace GT
     void GUIContext::OnKeyPressed(GTLib::Key key)
     {
         GUIContextBase::OnKeyPressed(key);
+    }
+
+    void GUIContext::OnKeyPressedAutoRepeat(GTLib::Key key)
+    {
+        GUIContextBase::OnKeyPressedAutoRepeat(key);
     }
 
     void GUIContext::OnKeyReleased(GTLib::Key key)

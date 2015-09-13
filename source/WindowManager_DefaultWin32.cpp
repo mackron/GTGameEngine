@@ -81,9 +81,14 @@ namespace GT
         m_pGameContext->OnMouseWheel(hWindow, delta, mousePosX, mousePosY);
     }
 
-    void WindowManager_DefaultWin32::OnKeyPressed(HWindow hWindow, GTLib::Key key)
+    void WindowManager_DefaultWin32::OnKeyPressed(HWindow hWindow, GTLib::Key key, bool autoRepeat)
     {
-        m_pGameContext->OnKeyPressed(hWindow, key);
+        if (!autoRepeat)
+        {
+            m_pGameContext->OnKeyPressed(hWindow, key);
+        }
+        
+        m_pGameContext->OnKeyPressedAutoRepeat(hWindow, key);
     }
 
     void WindowManager_DefaultWin32::OnKeyReleased(HWindow hWindow, GTLib::Key key)

@@ -122,6 +122,10 @@ namespace GT
     {
     }
 
+    void GameState::OnKeyPressedAutoRepeat(GameContext &, HWindow, GTLib::Key)
+    {
+    }
+
     void GameState::OnKeyReleased(GameContext &, HWindow, GTLib::Key)
     {
     }

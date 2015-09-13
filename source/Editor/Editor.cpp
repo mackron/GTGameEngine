@@ -833,6 +833,13 @@ namespace GT
         m_gui.OnKeyPressed(key);
     }
 
+    void Editor::OnKeyPressedAutoRepeat(HWindow hWindow, GTLib::Key key)
+    {
+        (void)hWindow;
+
+        m_gui.OnKeyPressedAutoRepeat(key);
+    }
+
     void Editor::OnKeyReleased(HWindow hWindow, GTLib::Key key)
     {
         (void)hWindow;

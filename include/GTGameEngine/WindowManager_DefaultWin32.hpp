@@ -72,7 +72,7 @@ namespace GT
         virtual void OnMouseWheel(HWindow hWindow, int delta, int mousePosX, int mousePosY);
 
         /// @copydoc WindowManager_Win32::OnKeyPressed()
-        virtual void OnKeyPressed(HWindow hWindow, GTLib::Key key);
+        virtual void OnKeyPressed(HWindow hWindow, GTLib::Key key, bool autoRepeat);
 
         /// @copydoc WindowManager_Win32::OnKeyReleased()
         virtual void OnKeyReleased(HWindow hWindow, GTLib::Key key);

@@ -3296,18 +3296,53 @@ namespace GT
         if (m_pElementWithKeyboardFocus != nullptr)
         {
             this->PostEvent_OnKeyPressed(m_pElementWithKeyboardFocus, key);
+        }
+    }
+
+    void GUIContextBase::OnKeyPressedAutoRepeat(GTLib::Key key)
+    {
+        if (m_pElementWithKeyboardFocus != nullptr)
+        {
+            this->PostEvent_OnKeyPressedAutoRepeat(m_pElementWithKeyboardFocus, key);
 
             if (this->IsEditableTextEnabled(m_pElementWithKeyboardFocus))
             {
                 if (m_pElementWithKeyboardFocus->pTextLayout != nullptr) {
-                    if (key == GTLib::Keys::ArrowLeft) {
-                        m_pElementWithKeyboardFocus->pTextLayout->MoveCursorLeft();
-                    }
-                    if (key == GTLib::Keys::ArrowRight) {
-                        m_pElementWithKeyboardFocus->pTextLayout->MoveCursorRight();
-                    }
+                    this->BeginBatch();
+                    {
+                        // Editing.
+                        if (key == GTLib::Keys::Backspace) {
+                            m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToLeftOfCursor();
+                            this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
+                        }
+                        if (key == GTLib::Keys::Delete) {
+                            m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToRightOfCursor();
+                            this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
+                        }
 
-                    this->UpdateTextCursorByFocusedElement();
+                        // Cursor / Caret
+                        if (key == GTLib::Keys::ArrowLeft) {
+                            m_pElementWithKeyboardFocus->pTextLayout->MoveCursorLeft();
+                        }
+                        if (key == GTLib::Keys::ArrowRight) {
+                            m_pElementWithKeyboardFocus->pTextLayout->MoveCursorRight();
+                        }
+                        if (key == GTLib::Keys::ArrowUp) {
+                            m_pElementWithKeyboardFocus->pTextLayout->MoveCursorUp();
+                        }
+                        if (key == GTLib::Keys::ArrowDown) {
+                            m_pElementWithKeyboardFocus->pTextLayout->MoveCursorDown();
+                        }
+                        if (key == GTLib::Keys::End) {
+                            m_pElementWithKeyboardFocus->pTextLayout->MoveCursorToEndOfLine();
+                        }
+                        if (key == GTLib::Keys::Home) {
+                            m_pElementWithKeyboardFocus->pTextLayout->MoveCursorToStartOfLine();
+                        }
+
+                        this->UpdateTextCursorByFocusedElement();
+                    }
+                    this->EndBatch();
                 }
             }
         }

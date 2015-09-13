@@ -145,6 +145,7 @@ namespace GT
         /// @param pElement [in] The element receiving the event.
         /// @param key      [in] The virtual key code.
         virtual void PostEvent_OnKeyPressed(GUIElement* pElement, GTLib::Key key) = 0;
+        virtual void PostEvent_OnKeyPressedAutoRepeat(GUIElement* pElement, GTLib::Key key) = 0;
 
         /// Posts the OnKeyReleased event.
         ///
@@ -1735,8 +1736,9 @@ namespace GT
         /// @copydoc GUIEventHandler::OnMouseWheel()
         void OnMouseWheel(GUISurface* pSurface, int delta, int mousePosX, int mousePosY);
 
-        /// @copydoc GUIEventHandler::OnMouseWheel()
+        /// @copydoc GUIEventHandler::OnKeyPressed()
         void OnKeyPressed(GTLib::Key key);
+        void OnKeyPressedAutoRepeat(GTLib::Key key);
 
         /// @copydoc GUIEventHandler::OnKeyReleased()
         void OnKeyReleased(GTLib::Key key);

@@ -189,6 +189,7 @@ namespace GT
         /// @param hWindow [in] A handle to the window that has the keyboard focus and thus received the key press event.
         /// @param key     [in] The virtual key code for the key that was pressed.
         virtual void OnKeyPressed(GameContext &gameContext, HWindow hWindow, GTLib::Key key);
+        virtual void OnKeyPressedAutoRepeat(GameContext &gameContext, HWindow hWindow, GTLib::Key key);
 
         /// Called when a key is released.
         ///

@@ -285,6 +285,7 @@ namespace GT
 
         /// @copydoc GameContext::OnKeyPressed()
         void OnKeyPressed(HWindow hWindow, GTLib::Key key);
+        void OnKeyPressedAutoRepeat(HWindow hWindow, GTLib::Key key);
 
         /// @copydoc GameContext::OnKeyReleased()
         void OnKeyReleased(HWindow hWindow, GTLib::Key key);

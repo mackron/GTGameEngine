@@ -603,10 +603,8 @@ namespace GT
                 {
                     if (!IsWin32MouseButtonKeyCode(wParam))
                     {
-                        if ((lParam & (1 << 30)) == 0)  // No auto-repeat.
-                        {
-                            pWindowManager->OnKeyPressed(reinterpret_cast<HWindow>(hWnd), FromWin32VirtualKey(wParam));
-                        }
+                        bool autoRepeat = (lParam & (1 << 30)) != 0;
+                        pWindowManager->OnKeyPressed(reinterpret_cast<HWindow>(hWnd), FromWin32VirtualKey(wParam), autoRepeat);
                     }
 
                     break;
@@ -627,6 +625,13 @@ namespace GT
                 //       which will contain the other half of the pair.
             case WM_CHAR:
                 {
+                    // Windows will post WM_CHAR events for keys we don't particularly want. We'll filter them out here (they will be processed by WM_KEYDOWN).
+                    if (wParam == VK_BACK)  // Backspace
+                    {
+                        break;
+                    }
+
+
                     if ((lParam & (1U << 31)) == 0)     // Bit 31 will be 1 if the key was pressed, 0 if it was released.
                     {
                         if (IS_HIGH_SURROGATE(wParam))
