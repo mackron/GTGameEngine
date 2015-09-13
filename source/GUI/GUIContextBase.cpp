@@ -3307,11 +3307,7 @@ namespace GT
                         m_pElementWithKeyboardFocus->pTextLayout->MoveCursorRight();
                     }
 
-                    int textCursorPosX = 0;
-                    int textCursorPosY = 0;
-                    m_pElementWithKeyboardFocus->pTextLayout->GetCursorPosition(textCursorPosX, textCursorPosY);
-
-                    this->ShowTextCursor(m_pElementWithKeyboardFocus, textCursorPosX, textCursorPosY);
+                    this->UpdateTextCursorByFocusedElement();
                 }
             }
         }
@@ -3335,6 +3331,15 @@ namespace GT
             {
                 if (m_pElementWithKeyboardFocus->pTextLayout != nullptr) {
                     m_pElementWithKeyboardFocus->pTextLayout->InsertCharacterAtCursor(character);
+                    this->UpdateTextCursorByFocusedElement();
+
+
+                    // The text will have changed.
+                    this->BeginBatch();
+                    {
+                        this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
+                    }
+                    this->EndBatch();
                 }
             }
         }
@@ -4000,6 +4005,22 @@ namespace GT
                 this->RefreshTextLayoutsOfElementsWithInheritedFont(pChild);
                 return true;
             });
+        }
+    }
+
+    void GUIContextBase::UpdateTextCursorByFocusedElement()
+    {
+        if (m_pElementWithKeyboardFocus != nullptr)
+        {
+            int textCursorPosX = 0;
+            int textCursorPosY = 0;
+            m_pElementWithKeyboardFocus->pTextLayout->GetCursorPosition(textCursorPosX, textCursorPosY);
+
+            this->ShowTextCursor(m_pElementWithKeyboardFocus, textCursorPosX, textCursorPosY);
+        }
+        else
+        {
+            this->HideTextCursor();
         }
     }
 

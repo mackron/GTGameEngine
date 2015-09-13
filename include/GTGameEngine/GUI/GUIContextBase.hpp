@@ -1948,6 +1948,9 @@ namespace GT
         /// Updates the text layout of the given element and all of it's descendants that do not have a font.
         void RefreshTextLayoutsOfElementsWithInheritedFont(GUIElement* pElement);
 
+        /// Updates the text cursor based on the focused element.
+        void UpdateTextCursorByFocusedElement();
+
 
         /// Updates the mouse enter/leave state and posts the relevant events.
         ///
