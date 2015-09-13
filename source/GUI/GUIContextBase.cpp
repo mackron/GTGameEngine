@@ -2719,6 +2719,12 @@ namespace GT
         assert(pElement != nullptr);
 
         GUIElementStyle_Set_editabletext(pElement->style, true);
+
+        // Make sure we have a text layout.
+        if (pElement->pTextLayout == nullptr)
+        {
+            this->UpdateElementTextLayout(pElement, "");
+        }
     }
 
     void GUIContextBase::DisableEditableText(GUIElement* pElement)
@@ -3303,7 +3309,9 @@ namespace GT
 
                 // Leave selection mode.
                 if (!m_isSelectingWithShiftKey) {
-                    pEventReceiver->pTextLayout->LeaveSelectionMode();
+                    if (pEventReceiver->pTextLayout != nullptr) {
+                        pEventReceiver->pTextLayout->LeaveSelectionMode();
+                    }
                 }
             }
         }
