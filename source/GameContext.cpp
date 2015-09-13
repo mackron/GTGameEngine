@@ -97,9 +97,21 @@ namespace GT
         }
 
 
+        // --editor <file name>
         const char** ppEditor = m_engineContext.GetCommandLine().GetArgument("editor");
         if (ppEditor != nullptr) {
             this->OpenEditor();
+
+            while (ppEditor[0] != nullptr)
+            {
+                char absoluteFilePath[GT_MAX_PATH];
+                if (m_engineContext.GetFileSystem().FindAbsolutePath(ppEditor[0], absoluteFilePath, GT_MAX_PATH))
+                {
+                    m_editor.OpenFile(ppEditor[0]);
+                }
+
+                ppEditor += 1;
+            }
         }
 
 
