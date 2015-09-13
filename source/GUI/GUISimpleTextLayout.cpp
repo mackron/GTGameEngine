@@ -345,9 +345,11 @@ namespace GT
     //////////////////////////////////////////
     // Private
 
-    bool GUISimpleTextLayout::NextRunString(const char* runStart, const char* &runEnd)
+    bool GUISimpleTextLayout::NextRunString(const char* runStart, const char* textEndPastNullTerminator, const char* &runEnd)
     {
-        if (runStart == nullptr || runStart[0] == '\0')
+        assert(runStart <= textEndPastNullTerminator);
+
+        if (runStart == nullptr || runStart == textEndPastNullTerminator)
         {
             // String is empty.
             return false;
@@ -363,8 +365,6 @@ namespace GT
                 runStart += 1;
                 runEnd = runStart;
             } while (runStart[0] != '\0' && runStart[0] == '\t');
-
-            return true;
         }
         else if (firstChar == '\n')
         {
@@ -375,6 +375,11 @@ namespace GT
             }
 
             runEnd = runStart;
+        }
+        else if (firstChar == '\0')
+        {
+            assert(runStart + 1 == textEndPastNullTerminator);
+            runEnd = textEndPastNullTerminator;
         }
         else
         {
@@ -392,8 +397,8 @@ namespace GT
     {
         GUIFontManager &fontManager = this->GetFontManager();
 
-        int lineHeight = fontManager.GetLineHeight(m_hFont);
-        int tabWidth = this->GetTabWidth();
+        const int lineHeight = fontManager.GetLineHeight(m_hFont);
+        const int tabWidth = this->GetTabWidth();
 
 
         // We split the runs based on tabs and new-lines. We want to create runs for tabs and new-line characters as well because we want
@@ -411,7 +416,7 @@ namespace GT
 
         const char* nextRunStart = m_text.c_str();
         const char* nextRunEnd;
-        while (this->NextRunString(nextRunStart, OUT nextRunEnd))
+        while (this->NextRunString(nextRunStart, m_text.c_str() + m_text.GetLengthInTs() + 1, OUT nextRunEnd))
         {
             TextRun run;
             run.iLine          = iCurrentLine;
@@ -455,6 +460,11 @@ namespace GT
                 iCurrentLine += 1;
                 run.width = 0;
             }
+            else if (nextRunStart[0] == '\0')
+            {
+                // Null terminator.
+                run.width = 0;
+            }
             else
             {
                 // Normal run.
@@ -484,32 +494,6 @@ namespace GT
             // Go to the next run string.
             nextRunStart = nextRunEnd;
         }
-
-        
-        // We now need to add a run to act as the null terminator.
-        assert(nextRunStart[0] == '\0');
-        TextRun terminatorRun;
-        terminatorRun.iLine          = iCurrentLine;
-        terminatorRun.iChar          = nextRunStart - m_text.c_str();
-        terminatorRun.iCharEnd       = terminatorRun.iChar;
-        terminatorRun.characterCount = 0;
-        terminatorRun.width          = 0;
-        terminatorRun.height         = lineHeight;
-        terminatorRun.posX           = 0;
-        terminatorRun.posY           = terminatorRun.iLine * lineHeight;
-
-        if (m_runs.GetCount() > 0)
-        {
-            TextRun &prevRun = m_runs.GetBack();
-            if (prevRun.iLine == iCurrentLine)
-            {
-                terminatorRun.posX = prevRun.posX + prevRun.width;
-            }
-        }
-
-        m_runs.PushBack(terminatorRun);
-
-
 
 
         // If we were to return now the text would be alignment top/left. If the alignment is not top/left we need to refresh the layout.
@@ -813,6 +797,31 @@ namespace GT
         return false;
     }
 
+    unsigned int GUISimpleTextLayout::FindRunAtCharacterIndex(unsigned int iChar)
+    {
+        if (iChar < m_text.GetLengthInTs())
+        {
+            for (unsigned int iRun = 0; iRun < static_cast<unsigned int>(m_runs.GetCount()); ++iRun)
+            {
+                TextRun &run = m_runs[iRun];
+
+                if (iChar < run.iCharEnd)
+                {
+                    return iRun;
+                }
+            }
+
+            // Should never get here.
+            assert(false);
+            return 0;
+        }
+        else
+        {
+            // The character index is too high. Return the last run.
+            return static_cast<unsigned int>(m_runs.GetCount()) - 1;
+        }
+    }
+
     bool GUISimpleTextLayout::FindLineInfo(unsigned int iFirstRunOnLine, unsigned int &iLastRunOnLinePlus1Out, int &lineHeightOut) const
     {
         if (iFirstRunOnLine < m_runs.GetCount())
@@ -862,6 +871,8 @@ namespace GT
                         marker.relativePosX  = tabWidth * ((run.posX + (tabWidth*(marker.iChar + 0))) / tabWidth);
                         marker.relativePosX -= run.posX;
                     }
+
+                    return true;
                 }
                 else
                 {
@@ -946,11 +957,88 @@ namespace GT
         return false;
     }
 
+    bool GUISimpleTextLayout::MoveMarkerToCharacter(TextMarker &marker, unsigned int iAbsoluteChar)
+    {
+        assert(m_runs.GetCount() > 0);
+
+        marker.iRun = this->FindRunAtCharacterIndex(iAbsoluteChar);
+        
+        assert(marker.iRun < m_runs.GetCount());
+        marker.iChar = iAbsoluteChar - m_runs[marker.iRun].iChar;
+
+
+        // The relative position depends on whether or not the run is a tab character.
+        return this->UpdateMarkerRelativePosition(marker);
+    }
+
+    bool GUISimpleTextLayout::UpdateMarkerRelativePosition(TextMarker &marker) const
+    {
+        assert(m_runs.GetCount() > 0);
+
+        const TextRun &run = m_runs[marker.iRun];
+        if (m_text.c_str()[run.iChar] == '\t')
+        {
+            const int tabWidth = this->GetTabWidth();
+
+            if (marker.iChar == 0)
+            {
+                // Simple case - it's the first tab character which means the relative position is just 0.
+                marker.relativePosX = 0;
+            }
+            else
+            {
+                marker.relativePosX  = tabWidth * ((run.posX + (tabWidth*(marker.iChar + 0))) / tabWidth);
+                marker.relativePosX -= run.posX;
+            }
+
+            return true;
+        }
+        else
+        {
+            return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[marker.iRun].iChar, marker.iChar, marker.relativePosX);
+        }
+    }
+
+
+
     bool GUISimpleTextLayout::DeleteCharacterToRightOfMarker(TextMarker &marker)
     {
+        TextRun &run = m_runs[marker.iRun];
+
+        if (marker.iChar < run.characterCount)
+        {
+            // The marker may need to be repositioned based on the new layout. To do this, we just get the character
+            // index before refreshing the layout, and then update the marker based on the old character index.
+            unsigned int iAbsoluteMarkerChar = run.iChar + marker.iChar;
+
+
+            // Remove the character from the string.
+            m_text.EraseCharacterByIndex(run.iChar + marker.iChar);
+
+            // The layout will have changed.
+            this->RefreshLayout();
+
+
+            // The marker needs to be updated based on the new layout.
+            this->MoveMarkerToCharacter(marker, iAbsoluteMarkerChar);
+
+
+            return true;
+        }
+        else
+        {
+            // If we get here it means the marker is sitting past the last character in it's run. This is an erroneous case.
+            assert(false);
+        }
+
         return false;
     }
 
+
+    int GUISimpleTextLayout::GetLineHeight() const
+    {
+        return this->GetFontManager().GetLineHeight(this->GetDefaultFont());
+    }
 
     int GUISimpleTextLayout::GetSpaceWidth() const
     {

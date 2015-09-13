@@ -185,7 +185,15 @@ namespace GT
     private:
 
         /// Finds the next run string.
-        static bool NextRunString(const char* runStart, const char* &runEnd);
+        ///
+        /// @remarks
+        ///     This is intended to be called in a loop, with each iteration replacing runStart with runEndOut.
+        ///     @par
+        ///     This will include the null terminator in the iteration. Note that if runStart is on the null terminator, this will still return true,
+        ///     in which case it'll be a null-terminator run. In this case runEndOut will be equal to textEndPastNullTerminator.
+        ///     @par
+        ///     Do not dereference runEndOut, but rather use it to 1) calculate the length of the run and 2) pass it to the next iteration.
+        static bool NextRunString(const char* runStart, const char* textEndPastNullTerminator, const char* &runEndOut);
 
 
         /// Refreshes the layout.
@@ -225,6 +233,9 @@ namespace GT
         /// Finds the line closest to the given point.
         bool FindClosestLineToPoint(int inputPosYRelativeToText, unsigned int &iFirstRunOnLineOut, unsigned int &iLastRunOnLinePlus1Out) const;
 
+        /// Finds the run that contains the character at the given index.
+        unsigned int FindRunAtCharacterIndex(unsigned int iChar);
+
         /// Finds information about a line that begins with the run at the given index.
         bool FindLineInfo(unsigned int iFirstRunOnLine, unsigned int &iLastRunOnLinePlus1Out, int &lineHeightOut) const;
 
@@ -244,12 +255,27 @@ namespace GT
         bool MoveMarkerToFirstCharacterOfNextRun(TextMarker &marker) const;
 
 
+        /// Moves the marker to the character at the given index.
+        bool MoveMarkerToCharacter(TextMarker &marker, unsigned int iAbsoluteChar);
+
+
+        /// Updates the relative position of the given marker.
+        ///
+        /// @remarks
+        ///     This assumes the iRun and iChar properties of the the marker are valid.
+        bool UpdateMarkerRelativePosition(TextMarker &marker) const;
+
+
         /// Deletes the character to the right of the given marker.
         ///
         /// @remarks
         ///     This does not move the marker.
         bool DeleteCharacterToRightOfMarker(TextMarker &marker);
 
+
+
+        /// Retrieves the height of a line.
+        int GetLineHeight() const;
 
         /// Retrieves the width of a space character.
         ///
