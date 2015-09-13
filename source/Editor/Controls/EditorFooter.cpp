@@ -66,8 +66,8 @@ namespace GT
             gui.SetElementCursor(m_hCommandTextBox, GUISystemCursor::IBeam);
             gui.EnableEditableText(m_hCommandTextBox);
             gui.EnableFocusOnMouseClick(m_hCommandTextBox);
+            gui.SetElementFont(m_hCommandTextBox, "Courier New", FontWeight_Medium, FontSlant_None, 12);
             gui.SetElementTextColor(m_hCommandTextBox, theme.defaultTextColor);
-            gui.SetElementText(m_hCommandTextBox, "loadlevel('testing.lvl');");    // TEMP
         }
     }
 
