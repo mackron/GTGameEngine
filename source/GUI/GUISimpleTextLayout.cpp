@@ -1,8 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/GUI/GUISimpleTextLayout.hpp>
-#include <GTLib/Strings/LineIterator.hpp>
-#include <GTLib/Strings/Tokenizer.hpp>
+#include <GTLib/Keyboard.hpp>
 
 #ifndef OUT
 #define OUT
@@ -10,6 +9,10 @@
 
 #ifndef DO_NOTHING
 #define DO_NOTHING
+#endif
+
+#ifndef UNUSED
+#define UNUSED
 #endif
 
 #ifndef DEFAULT_SPACE_WIDTH
@@ -233,39 +236,54 @@ namespace GT
         return this->MoveMarkerRight(m_cursor);
     }
 
+    bool GUISimpleTextLayout::MoveCursorUp()
+    {
+        return this->MoveMarkerUp(m_cursor);
+    }
+
+    bool GUISimpleTextLayout::MoveCursorDown()
+    {
+        return this->MoveMarkerDown(m_cursor);
+    }
+
+    bool GUISimpleTextLayout::MoveCursorToEndOfLine()
+    {
+        return this->MoveMarkerToEndOfLine(m_cursor);
+    }
+
+    bool GUISimpleTextLayout::MoveCursorToStartOfLine()
+    {
+        return this->MoveMarkerToStartOfLine(m_cursor);
+    }
+
 
     //////////////////////////////
     // Editing
 
     void GUISimpleTextLayout::InsertCharacterAtCursor(char32_t character)
     {
-        switch (character)
-        {
-        case '\b':
-            {
-                this->DeleteCharacterToLeftOfCursor();
-                break;
-            }
-
-        case '\n':
-        case '\r':
-            {
-                this->InsertNewLineAtCursor();
-                break;
-            }
-
-        case '\t':
-            {
-                this->InsertTabAtCursor();
-                break;
-            }
-
-        default:
-            {
-                // Assume a regular character.
-                break;
-            }
+        // Transform '\r' to '\n'.
+        if (character == '\r') {
+            character = '\n';
         }
+
+
+        TextRun &run = m_runs[m_cursor.iRun];
+        unsigned int iAbsoluteMarkerChar = run.iChar + m_cursor.iChar;
+
+        // Insert the character into the string.
+        m_text.InsertCharacter(character, iAbsoluteMarkerChar);
+
+        // The layout will have changed so it needs to be refreshed.
+        this->RefreshLayout();
+
+
+        // The marker needs to be updated based on the new layout and it's new position, which is one character ahead.
+        this->MoveMarkerToCharacter(m_cursor, iAbsoluteMarkerChar + 1);
+
+
+        // The cursor's sticky position needs to be updated whenever the text is edited.
+        this->UpdateMarkerStickyPosition(m_cursor);
     }
 
     void GUISimpleTextLayout::DeleteCharacterToLeftOfCursor()
@@ -279,16 +297,6 @@ namespace GT
     void GUISimpleTextLayout::DeleteCharacterToRightOfCursor()
     {
         this->DeleteCharacterToRightOfMarker(m_cursor);
-    }
-
-    void GUISimpleTextLayout::InsertNewLineAtCursor()
-    {
-        // TODO: Implement.
-    }
-
-    void GUISimpleTextLayout::InsertTabAtCursor()
-    {
-        // TODO: Implement.
     }
 
 
@@ -619,89 +627,13 @@ namespace GT
 
         int inputPosXRelativeToText = inputPosX - textRect.left;
         int inputPosYRelativeToText = inputPosY - textRect.top;
-
-        unsigned int iClosestRunToPoint;
-        if (this->FindClosestRunToPoint(inputPosXRelativeToText, inputPosYRelativeToText, OUT iClosestRunToPoint))
+        if (this->MoveMarkerToPoint(markerOut, inputPosXRelativeToText, inputPosYRelativeToText))
         {
-            const TextRun &run = m_runs[iClosestRunToPoint];
-
-            markerOut.iRun = iClosestRunToPoint;
-
-            if (inputPosXRelativeToText < run.posX)
-            {
-                // It's to the left of the run.
-                markerOut.iChar        = 0;
-                markerOut.relativePosX = 0;
-            }
-            else if (inputPosXRelativeToText > run.posX + run.width)
-            {
-                // It's to the right of the run. It may be a new-line run. If so, we need to move the marker to the front of it, not the back.
-                markerOut.iChar        = run.characterCount;
-                markerOut.relativePosX = run.width;
-
-                if (m_text.c_str()[run.iChar] == '\n') {
-                    assert(markerOut.iChar == 1);
-                    markerOut.iChar       -= 1;
-                    markerOut.relativePosX = 0;
-                }
-            }
-            else
-            {
-                // It's somewhere in the middle of the run. We need to handle this a little different for tab runs since they are aligned differently.
-                if (m_text.c_str()[run.iChar] == '\t')
-                {
-                    // It's a tab run.
-                    markerOut.iChar        = 0;
-                    markerOut.relativePosX = 0;
-
-                    int tabWidth = this->GetTabWidth();
-
-                    int tabLeft = run.posX + markerOut.relativePosX;
-                    for (; markerOut.iChar < run.characterCount; ++markerOut.iChar)
-                    {
-                        const int tabRight = tabWidth * ((run.posX + (tabWidth*(markerOut.iChar + 1))) / tabWidth);
-                        if (inputPosX >= tabLeft && inputPosX <= tabRight)
-                        {
-                            // The input position is somewhere on top of this character. If it's positioned on the left side of the character, set the output
-                            // value to the character at iChar. Otherwise it should be set to the character at iChar + 1.
-                            int charBoundsRightHalf = tabLeft + int(ceil(((tabRight - tabLeft) / 2.0f)));
-                            if (inputPosX <= charBoundsRightHalf) {
-                                markerOut.relativePosX = tabLeft - run.posX;
-                            } else {
-                                markerOut.relativePosX = tabRight - run.posX;
-                                markerOut.iChar += 1;
-                            }
-
-                            break;
-                        }
-
-                        tabLeft = tabRight;
-                    }
-
-                    // If we're past the last character in the tab run, we actually want to normalize it and move to the start of the next run.
-                    if (markerOut.iChar == run.characterCount) {
-                        this->MoveMarkerToFirstCharacterOfNextRun(markerOut);
-                    }
-                }
-                else
-                {
-                    // It's a standard run.
-                    int inputPosXRelativeToRun = inputPosX - run.posX;
-                    if (!this->GetFontManager().GetTextCursorPositionFromPoint(m_hFont, m_text.c_str() + run.iChar, run.characterCount, run.width, inputPosXRelativeToRun, OUT markerOut.relativePosX, OUT markerOut.iChar))
-                    {
-                        // An error occured somehow.
-                        return false;
-                    }
-                }
-            }
-
+            this->UpdateMarkerStickyPosition(markerOut);
             return true;
         }
-        else
-        {
-            // Couldn't find a run.
-            return false;
-        }
+
+        return false;
     }
 
     void GUISimpleTextLayout::GetMarkerPositionRelativeToContainer(const TextMarker &marker, int &posXOut, int &posYOut) const
@@ -778,7 +710,7 @@ namespace GT
                 iFirstRunOnLineOut     = iFirstRunOnLine;
                 iLastRunOnLinePlus1Out = iLastRunOnLinePlus1;
 
-                if (inputPosYRelativeToText <= lineBottom)
+                if (inputPosYRelativeToText < lineBottom)
                 {
                     // It's on this line.
                     break;
@@ -847,6 +779,166 @@ namespace GT
         return false;
     }
 
+    bool GUISimpleTextLayout::FindLineInfoByIndex(unsigned int iLine, GTLib::Rect<int> &rectOut, unsigned int &iFirstRunOut, unsigned int &iLastRunPlus1Out) const
+    {
+        unsigned int iFirstRunOnLine     = 0;
+        unsigned int iLastRunOnLinePlus1 = 0;
+
+        int lineTop    = 0;
+        int lineHeight = 0;
+
+        for (unsigned int iCurrentLine = 0; iCurrentLine <= iLine; ++iCurrentLine)
+        {
+            lineTop += lineHeight;
+
+            if (!this->FindLineInfo(iFirstRunOnLine, iLastRunOnLinePlus1, lineHeight))
+            {
+                // There was an error retrieving information about the line.
+                return false;
+            }
+        }
+
+
+        // At this point we have the first and last runs that make up the line and we can generate our output.
+        if (iLastRunOnLinePlus1 > iFirstRunOnLine)
+        {
+            iFirstRunOut     = iFirstRunOnLine;
+            iLastRunPlus1Out = iLastRunOnLinePlus1;
+
+            rectOut.left   = m_runs[iFirstRunOnLine].posX;
+            rectOut.right  = m_runs[iLastRunOnLinePlus1 - 1].posX + m_runs[iLastRunOnLinePlus1 - 1].width;
+            rectOut.top    = lineTop;
+            rectOut.bottom = rectOut.top + lineHeight;
+
+            return true;
+        }
+        else
+        {
+            // We couldn't find any runs.
+            return false;
+        }
+    }
+
+
+    bool GUISimpleTextLayout::FindLastRunOnLineStartingFromRun(unsigned int iRun, unsigned int &iLastRunOnLineOut) const
+    {
+        unsigned int iLine = m_runs[iRun].iLine;
+        for (DO_NOTHING; iRun < m_runs.GetCount() && m_runs[iRun].iLine == iLine; ++iRun)
+        {
+            iLastRunOnLineOut = iRun;
+        }
+
+
+        return true;
+    }
+
+    bool GUISimpleTextLayout::FindFirstRunOnLineStartingFromRun(unsigned int iRun, unsigned int &iFirstRunOnLineOut) const
+    {
+        iFirstRunOnLineOut = iRun;
+
+        unsigned int iLine = m_runs[iRun].iLine;
+        for (DO_NOTHING; iRun > 0 && m_runs[iRun - 1].iLine == iLine; --iRun)
+        {
+            iFirstRunOnLineOut = iRun - 1;
+        }
+
+        return true;
+    }
+
+
+
+    bool GUISimpleTextLayout::MoveMarkerToPoint(TextMarker &marker, int inputPosXRelativeToText, int inputPosYRelativeToText) const
+    {
+        unsigned int iClosestRunToPoint;
+        if (this->FindClosestRunToPoint(inputPosXRelativeToText, inputPosYRelativeToText, OUT iClosestRunToPoint))
+        {
+            const TextRun &run = m_runs[iClosestRunToPoint];
+
+            marker.iRun = iClosestRunToPoint;
+
+            if (inputPosXRelativeToText < run.posX)
+            {
+                // It's to the left of the run.
+                marker.iChar        = 0;
+                marker.relativePosX = 0;
+            }
+            else if (inputPosXRelativeToText > run.posX + run.width)
+            {
+                // It's to the right of the run. It may be a new-line run. If so, we need to move the marker to the front of it, not the back.
+                marker.iChar        = run.characterCount;
+                marker.relativePosX = run.width;
+
+                if (m_text.c_str()[run.iChar] == '\n') {
+                    assert(marker.iChar == 1);
+                    marker.iChar       -= 1;
+                    marker.relativePosX = 0;
+                }
+            }
+            else
+            {
+                // It's somewhere in the middle of the run. We need to handle this a little different for tab runs since they are aligned differently.
+                if (m_text.c_str()[run.iChar] == '\t')
+                {
+                    // It's a tab run.
+                    marker.iChar        = 0;
+                    marker.relativePosX = 0;
+
+                    int tabWidth = this->GetTabWidth();
+
+                    int tabLeft = run.posX + marker.relativePosX;
+                    for (; marker.iChar < run.characterCount; ++marker.iChar)
+                    {
+                        const int tabRight = tabWidth * ((run.posX + (tabWidth*(marker.iChar + 1))) / tabWidth);
+                        if (inputPosXRelativeToText >= tabLeft && inputPosXRelativeToText <= tabRight)
+                        {
+                            // The input position is somewhere on top of this character. If it's positioned on the left side of the character, set the output
+                            // value to the character at iChar. Otherwise it should be set to the character at iChar + 1.
+                            int charBoundsRightHalf = tabLeft + int(ceil(((tabRight - tabLeft) / 2.0f)));
+                            if (inputPosXRelativeToText <= charBoundsRightHalf) {
+                                marker.relativePosX = tabLeft - run.posX;
+                            } else {
+                                marker.relativePosX = tabRight - run.posX;
+                                marker.iChar += 1;
+                            }
+
+                            break;
+                        }
+
+                        tabLeft = tabRight;
+                    }
+
+                    // If we're past the last character in the tab run, we want to move to the start of the next run.
+                    if (marker.iChar == run.characterCount) {
+                        this->MoveMarkerToFirstCharacterOfNextRun(marker);
+                    }
+                }
+                else
+                {
+                    // It's a standard run.
+                    int inputPosXRelativeToRun = inputPosXRelativeToText - run.posX;
+                    if (this->GetFontManager().GetTextCursorPositionFromPoint(m_hFont, m_text.c_str() + run.iChar, run.characterCount, run.width, inputPosXRelativeToRun, OUT marker.relativePosX, OUT marker.iChar))
+                    {
+                        // If the marker is past the last character of the run it needs to be moved to the start of the next one.
+                        if (marker.iChar == run.characterCount) {
+                            this->MoveMarkerToFirstCharacterOfNextRun(marker);
+                        }
+                    }
+                    else
+                    {
+                        // An error occured somehow.
+                        return false;
+                    }
+                }
+            }
+
+            return true;
+        }
+        else
+        {
+            // Couldn't find a run.
+            return false;
+        }
+    }
 
     bool GUISimpleTextLayout::MoveMarkerLeft(TextMarker &marker) const
     {
@@ -871,19 +963,26 @@ namespace GT
                         marker.relativePosX  = tabWidth * ((run.posX + (tabWidth*(marker.iChar + 0))) / tabWidth);
                         marker.relativePosX -= run.posX;
                     }
-
-                    return true;
                 }
                 else
                 {
-                    return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[marker.iRun].iChar, marker.iChar, marker.relativePosX);
+                    if (!this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[marker.iRun].iChar, marker.iChar, marker.relativePosX))
+                    {
+                        return false;
+                    }
                 }
             }
             else
             {
                 // We're at the beginning of the run which means we need to transfer the cursor to the end of the previous run.
-                return this->MoveMarkerToLastCharacterOfPreviousRun(marker);
+                if (!this->MoveMarkerToLastCharacterOfPreviousRun(marker))
+                {
+                    return false;
+                }
             }
+
+            this->UpdateMarkerStickyPosition(marker);
+            return true;
         }
 
         return false;
@@ -907,25 +1006,106 @@ namespace GT
                 }
                 else
                 {
-                    return this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[marker.iRun].iChar, marker.iChar, marker.relativePosX);
+                    if (!this->GetFontManager().GetTextCursorPositionFromCharacter(this->GetDefaultFont(), m_text.c_str() + m_runs[marker.iRun].iChar, marker.iChar, marker.relativePosX))
+                    {
+                        return false;
+                    }
                 }
             }
             else
             {
                 // We're at the end of the run which means we need to transfer the cursor to the beginning of the next run.
-                return this->MoveMarkerToFirstCharacterOfNextRun(marker);
+                if (!this->MoveMarkerToFirstCharacterOfNextRun(marker))
+                {
+                    return false;
+                }
             }
+
+            this->UpdateMarkerStickyPosition(marker);
+            return true;
         }
 
         return false;
     }
 
-    bool GUISimpleTextLayout::MoveMarkerToLastCharacterOfPreviousRun(TextMarker &marker) const
+    bool GUISimpleTextLayout::MoveMarkerUp(TextMarker &marker) const
     {
-        if (marker.iRun > 0)
+        const TextRun &oldRun = m_runs[marker.iRun];
+        if (oldRun.iLine > 0)
         {
-            // The previous run is on the same line.
-            marker.iRun        -= 1;
+            GTLib::Rect<int> lineRect;
+            unsigned int iFirstRunOnLine;
+            unsigned int iLastRunOnLinePlus1;
+            if (this->FindLineInfoByIndex(oldRun.iLine - 1, OUT lineRect, OUT iFirstRunOnLine, OUT iLastRunOnLinePlus1))
+            {
+                int newMarkerPosX = marker.absoluteSickyPosX; //oldRun.posX + marker.relativePosX;
+                int newMarkerPosY = lineRect.top;
+                this->MoveMarkerToPoint(marker, newMarkerPosX, newMarkerPosY);
+
+                return true;
+            }
+            else
+            {
+                // An error occured while finding information about the line above.
+                return false;
+            }
+        }
+        else
+        {
+            // The cursor is already on the top line.
+            return false;
+        }
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerDown(TextMarker &marker) const
+    {
+        const TextRun &oldRun = m_runs[marker.iRun];
+
+        GTLib::Rect<int> lineRect;
+        unsigned int iFirstRunOnLine;
+        unsigned int iLastRunOnLinePlus1;
+        if (this->FindLineInfoByIndex(oldRun.iLine + 1, OUT lineRect, OUT iFirstRunOnLine, OUT iLastRunOnLinePlus1))
+        {
+            int newMarkerPosX = marker.absoluteSickyPosX; //oldRun.posX + marker.relativePosX;
+            int newMarkerPosY = lineRect.top;
+            this->MoveMarkerToPoint(marker, newMarkerPosX, newMarkerPosY);
+
+            return true;
+        }
+        else
+        {
+            // An error occured while finding information about the line above.
+            return false;
+        }
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerToEndOfLine(TextMarker &marker) const
+    {
+        unsigned int iLastRunOnLine;
+        if (this->FindLastRunOnLineStartingFromRun(marker.iRun, iLastRunOnLine))
+        {
+            return this->MoveMarkerToLastCharacterOfRun(marker, iLastRunOnLine);
+        }
+
+        return false;
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerToStartOfLine(TextMarker &marker) const
+    {
+        unsigned int iFirstRunOnLine;
+        if (this->FindFirstRunOnLineStartingFromRun(marker.iRun, iFirstRunOnLine))
+        {
+            return this->MoveMarkerToFirstCharacterOfRun(marker, iFirstRunOnLine);
+        }
+
+        return false;
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerToLastCharacterOfRun(TextMarker &marker, unsigned int iRun) const
+    {
+        if (iRun < m_runs.GetCount())
+        {
+            marker.iRun         = iRun;
             marker.iChar        = m_runs[marker.iRun].characterCount;
             marker.relativePosX = m_runs[marker.iRun].width;
 
@@ -941,17 +1121,37 @@ namespace GT
         return false;
     }
 
+    bool GUISimpleTextLayout::MoveMarkerToFirstCharacterOfRun(TextMarker &marker, unsigned int iRun) const
+    {
+        if (iRun < m_runs.GetCount())
+        {
+            marker.iRun         = iRun;
+            marker.iChar        = 0;
+            marker.relativePosX = 0;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerToLastCharacterOfPreviousRun(TextMarker &marker) const
+    {
+        if (marker.iRun > 0)
+        {
+            return this->MoveMarkerToLastCharacterOfRun(marker, marker.iRun - 1);
+        }
+
+        return false;
+    }
+
     bool GUISimpleTextLayout::MoveMarkerToFirstCharacterOfNextRun(TextMarker &marker) const
     {
         assert(m_runs.GetCount() > 0);
 
         if (marker.iRun < m_runs.GetCount() - 1)
         {
-            marker.iRun        += 1;
-            marker.iChar        = 0;
-            marker.relativePosX = 0;
-
-            return true;
+            return this->MoveMarkerToFirstCharacterOfRun(marker, marker.iRun + 1);
         }
         
         return false;
@@ -999,36 +1199,40 @@ namespace GT
         }
     }
 
+    void GUISimpleTextLayout::UpdateMarkerStickyPosition(TextMarker &marker) const
+    {
+        marker.absoluteSickyPosX = m_runs[marker.iRun].posX + marker.relativePosX;
+    }
+
 
 
     bool GUISimpleTextLayout::DeleteCharacterToRightOfMarker(TextMarker &marker)
     {
         TextRun &run = m_runs[marker.iRun];
 
-        if (marker.iChar < run.characterCount)
+        unsigned int iAbsoluteMarkerChar = run.iChar + marker.iChar;
+        if (iAbsoluteMarkerChar < m_text.GetLengthInTs())
         {
-            // The marker may need to be repositioned based on the new layout. To do this, we just get the character
-            // index before refreshing the layout, and then update the marker based on the old character index.
-            unsigned int iAbsoluteMarkerChar = run.iChar + marker.iChar;
+            if (marker.iChar < run.characterCount)
+            {
+                // Remove the character from the string.
+                m_text.EraseCharacterByIndex(run.iChar + marker.iChar);
+
+                // The layout will have changed.
+                this->RefreshLayout();
 
 
-            // Remove the character from the string.
-            m_text.EraseCharacterByIndex(run.iChar + marker.iChar);
-
-            // The layout will have changed.
-            this->RefreshLayout();
+                // The marker needs to be updated based on the new layout.
+                this->MoveMarkerToCharacter(marker, iAbsoluteMarkerChar);
 
 
-            // The marker needs to be updated based on the new layout.
-            this->MoveMarkerToCharacter(marker, iAbsoluteMarkerChar);
-
-
-            return true;
-        }
-        else
-        {
-            // If we get here it means the marker is sitting past the last character in it's run. This is an erroneous case.
-            assert(false);
+                return true;
+            }
+            else
+            {
+                // If we get here it means the marker is sitting past the last character in it's run. This is an erroneous case.
+                assert(false);
+            }
         }
 
         return false;

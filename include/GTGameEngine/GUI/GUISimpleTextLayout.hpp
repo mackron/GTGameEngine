@@ -107,6 +107,18 @@ namespace GT
         /// @copydoc GUITextLayout::MoveCursorRight()
         bool MoveCursorRight();
 
+        /// @copydoc GUITextLayout::MoveCursorUp()
+        bool MoveCursorUp();
+
+        /// @copydoc GUITextLayout::MoveCursorDown()
+        bool MoveCursorDown();
+
+        /// @copydoc GUITextLayout::MoveCursorToEndOfLine()
+        bool MoveCursorToEndOfLine();
+
+        /// @copydoc GUITextLayout::MoveCursorToStartOfLine()
+        bool MoveCursorToStartOfLine();
+
 
         //////////////////////////////
         // Editing
@@ -119,12 +131,6 @@ namespace GT
 
         /// @copydoc GUITextLayout::DeleteCharacterToRightOfCursor()
         void DeleteCharacterToRightOfCursor();
-
-        /// @copydoc GUITextLayout::InsertNewLineAtCursor()
-        void InsertNewLineAtCursor();
-
-        /// @copydoc GUITextLayout::InsertTabAtCursor()
-        void InsertTabAtCursor();
 
 
     private:
@@ -167,7 +173,7 @@ namespace GT
         struct TextMarker
         {
             TextMarker()
-                : iRun(0), iChar(0), relativePosX(0)
+                : iRun(0), iChar(0), relativePosX(0), absoluteSickyPosX(0)
             {
             }
 
@@ -179,6 +185,10 @@ namespace GT
 
             /// The position on the x axis, relative to the x position of the run.
             int relativePosX;
+
+            /// The absolute position on the x axis to place the marker when moving up and down lines. Note that this is not relative
+            /// to the run, but rather the line. This will be updated when the marker is moved left and right.
+            int absoluteSickyPosX;
         };
 
 
@@ -236,10 +246,23 @@ namespace GT
         /// Finds the run that contains the character at the given index.
         unsigned int FindRunAtCharacterIndex(unsigned int iChar);
 
+
         /// Finds information about a line that begins with the run at the given index.
         bool FindLineInfo(unsigned int iFirstRunOnLine, unsigned int &iLastRunOnLinePlus1Out, int &lineHeightOut) const;
 
+        /// Finds information about a line by it's index.
+        bool FindLineInfoByIndex(unsigned int iLine, GTLib::Rect<int> &rectOut, unsigned int &iFirstRun, unsigned int &iLastRunPlus1) const;
 
+
+        /// Finds the last run on the line that the given run is sitting on.
+        bool FindLastRunOnLineStartingFromRun(unsigned int iRun, unsigned int &iLastRunOnLineOut) const;
+
+        /// Finds the first run on the line that the given run is sitting on.
+        bool FindFirstRunOnLineStartingFromRun(unsigned int iRun, unsigned int &iFirstRunOnLineOut) const;
+
+
+        /// Moves the marker to the given point relative to the text rectangle (not the container bounds).
+        bool MoveMarkerToPoint(TextMarker &marker, int posX, int posY) const;
 
         /// Moves the given marker to the left by one character.
         bool MoveMarkerLeft(TextMarker &marker) const;
@@ -247,13 +270,29 @@ namespace GT
         /// Moves the given marker to the right by one character.
         bool MoveMarkerRight(TextMarker &marker) const;
 
+        /// Moves the given marker up by one line.
+        bool MoveMarkerUp(TextMarker &marker) const;
+
+        /// Moves the given marker down by one line.
+        bool MoveMarkerDown(TextMarker &marker) const;
+
+        /// Moves the given marker to the end of the line.
+        bool MoveMarkerToEndOfLine(TextMarker &marker) const;
+
+        /// Moves the given marker to the start of the line.
+        bool MoveMarkerToStartOfLine(TextMarker &marker) const;
+
+        /// Moves the given marker to the last character of the given run.
+        bool MoveMarkerToLastCharacterOfRun(TextMarker &marker, unsigned int iRun) const;
+
+        /// Moves the given marker to the start of the next run.
+        bool MoveMarkerToFirstCharacterOfRun(TextMarker &marker, unsigned int iRun) const;
 
         /// Moves the given marker to the end of the previous run.
         bool MoveMarkerToLastCharacterOfPreviousRun(TextMarker &marker) const;
 
         /// Moves the given marker to the start of the next run.
         bool MoveMarkerToFirstCharacterOfNextRun(TextMarker &marker) const;
-
 
         /// Moves the marker to the character at the given index.
         bool MoveMarkerToCharacter(TextMarker &marker, unsigned int iAbsoluteChar);
@@ -264,6 +303,9 @@ namespace GT
         /// @remarks
         ///     This assumes the iRun and iChar properties of the the marker are valid.
         bool UpdateMarkerRelativePosition(TextMarker &marker) const;
+
+        /// Updates the given marker's sticky position based on it's current state.
+        void UpdateMarkerStickyPosition(TextMarker &marker) const;
 
 
         /// Deletes the character to the right of the given marker.

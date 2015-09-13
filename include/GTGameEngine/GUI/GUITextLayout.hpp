@@ -206,6 +206,18 @@ namespace GT
         /// Moves the cursor one character to the right.
         virtual bool MoveCursorRight() = 0;
 
+        /// Moves the cursor up one line.
+        virtual bool MoveCursorUp() = 0;
+
+        /// Moves the cursor down one line.
+        virtual bool MoveCursorDown() = 0;
+
+        /// Moves the cursor to the end of the line.
+        virtual bool MoveCursorToEndOfLine() = 0;
+
+        /// Moves the cursor to the start of the line.
+        virtual bool MoveCursorToStartOfLine() = 0;
+
 
         //////////////////////////////
         // Editing
@@ -231,15 +243,6 @@ namespace GT
         /// @remarks
         ///     This will not move the cursor.
         virtual void DeleteCharacterToRightOfCursor() = 0;
-
-        /// Inserts a new line at the position of the cursor, and moves the cursor to the beginning of the new line.
-        ///
-        /// @remarks
-        ///     This will move the text to the right of the cursor to the new line.
-        virtual void InsertNewLineAtCursor() = 0;
-
-        /// Inserts a tab character at the position of the cursor.
-        virtual void InsertTabAtCursor() = 0;
 
 
     private:
