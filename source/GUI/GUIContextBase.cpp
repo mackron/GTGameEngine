@@ -3399,6 +3399,7 @@ namespace GT
                     this->BeginBatch();
                     {
                         bool needsFullRepaint = m_pElementWithKeyboardFocus->pTextLayout->IsInSelectionMode();
+                        bool needsDeselect = false;
 
                         // Editing.
                         if (key == GTLib::Keys::Backspace) {
@@ -3423,21 +3424,34 @@ namespace GT
                         // Cursor / Caret
                         if (key == GTLib::Keys::ArrowLeft) {
                             m_pElementWithKeyboardFocus->pTextLayout->MoveCursorLeft();
+                            needsDeselect = true;
                         }
                         if (key == GTLib::Keys::ArrowRight) {
                             m_pElementWithKeyboardFocus->pTextLayout->MoveCursorRight();
+                            needsDeselect = true;
                         }
                         if (key == GTLib::Keys::ArrowUp) {
                             m_pElementWithKeyboardFocus->pTextLayout->MoveCursorUp();
+                            needsDeselect = true;
                         }
                         if (key == GTLib::Keys::ArrowDown) {
                             m_pElementWithKeyboardFocus->pTextLayout->MoveCursorDown();
+                            needsDeselect = true;
                         }
                         if (key == GTLib::Keys::End) {
                             m_pElementWithKeyboardFocus->pTextLayout->MoveCursorToEndOfLine();
+                            needsDeselect = true;
                         }
                         if (key == GTLib::Keys::Home) {
                             m_pElementWithKeyboardFocus->pTextLayout->MoveCursorToStartOfLine();
+                            needsDeselect = true;
+                        }
+
+
+                        // Deselect.
+                        if (needsDeselect && m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected() && !m_pElementWithKeyboardFocus->pTextLayout->IsInSelectionMode()) {
+                            m_pElementWithKeyboardFocus->pTextLayout->DeselectAll();
+                            needsFullRepaint = true;
                         }
 
 
@@ -3483,6 +3497,10 @@ namespace GT
             if (this->IsEditableTextEnabled(m_pElementWithKeyboardFocus))
             {
                 if (m_pElementWithKeyboardFocus->pTextLayout != nullptr) {
+                    if (m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected()) {
+                        m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText();
+                    }
+
                     m_pElementWithKeyboardFocus->pTextLayout->InsertCharacterAtCursor(character);
                     this->UpdateTextCursorByFocusedElement();
 

@@ -222,7 +222,7 @@ namespace GT
         this->InitMarkerByPointRelativeToContainer(inputPosX, inputPosY, m_cursor);
 
         if (m_isInSelectionMode) {
-            m_isAnythingSelected = true;
+            m_isAnythingSelected = this->HasSpacingBetweenSelectionMarkers();
         }
     }
 
@@ -236,7 +236,7 @@ namespace GT
         if (this->MoveMarkerLeft(m_cursor))
         {
             if (m_isInSelectionMode) {
-                m_isAnythingSelected = true;
+                m_isAnythingSelected = this->HasSpacingBetweenSelectionMarkers();
             }
 
             return true;
@@ -250,7 +250,7 @@ namespace GT
         if (this->MoveMarkerRight(m_cursor))
         {
             if (m_isInSelectionMode) {
-                m_isAnythingSelected = true;
+                m_isAnythingSelected = this->HasSpacingBetweenSelectionMarkers();
             }
 
             return true;
@@ -264,7 +264,7 @@ namespace GT
         if (this->MoveMarkerUp(m_cursor))
         {
             if (m_isInSelectionMode) {
-                m_isAnythingSelected = true;
+                m_isAnythingSelected = this->HasSpacingBetweenSelectionMarkers();
             }
 
             return true;
@@ -278,7 +278,7 @@ namespace GT
         if (this->MoveMarkerDown(m_cursor))
         {
             if (m_isInSelectionMode) {
-                m_isAnythingSelected = true;
+                m_isAnythingSelected = this->HasSpacingBetweenSelectionMarkers();
             }
 
             return true;
@@ -292,7 +292,7 @@ namespace GT
         if (this->MoveMarkerToEndOfLine(m_cursor))
         {
             if (m_isInSelectionMode) {
-                m_isAnythingSelected = true;
+                m_isAnythingSelected = this->HasSpacingBetweenSelectionMarkers();
             }
 
             return true;
@@ -306,7 +306,7 @@ namespace GT
         if (this->MoveMarkerToStartOfLine(m_cursor))
         {
             if (m_isInSelectionMode) {
-                m_isAnythingSelected = true;
+                m_isAnythingSelected = this->HasSpacingBetweenSelectionMarkers();
             }
 
             return true;
@@ -350,7 +350,7 @@ namespace GT
 
     bool GUISimpleTextLayout::IsAnythingSelected() const
     {
-        return m_isAnythingSelected && (m_cursor.iRun != m_selectionAnchor.iRun || m_cursor.iChar != m_selectionAnchor.iChar);
+        return m_isAnythingSelected;
     }
 
     void GUISimpleTextLayout::DeselectAll()
@@ -1064,7 +1064,13 @@ namespace GT
             else
             {
                 // It's somewhere in the middle of the run. We need to handle this a little different for tab runs since they are aligned differently.
-                if (m_text.c_str()[run.iChar] == '\t')
+                if (m_text.c_str()[run.iChar] == '\n')
+                {
+                    // It's a new line character. It needs to be placed at the beginning of it.
+                    marker.iChar        = 0;
+                    marker.relativePosX = 0;
+                }
+                else if (m_text.c_str()[run.iChar] == '\t')
                 {
                     // It's a tab run.
                     marker.iChar        = 0;
@@ -1445,6 +1451,11 @@ namespace GT
         }
 
         return false;
+    }
+
+    bool GUISimpleTextLayout::HasSpacingBetweenSelectionMarkers() const
+    {
+        return (m_cursor.iRun != m_selectionAnchor.iRun || m_cursor.iChar != m_selectionAnchor.iChar);
     }
 
 

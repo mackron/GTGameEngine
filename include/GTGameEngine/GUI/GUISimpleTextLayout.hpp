@@ -351,6 +351,9 @@ namespace GT
         ///     This will return false if nothing is selected.
         bool GetSelectionMarkers(TextMarker &startOut, TextMarker &endOut) const;
 
+        /// Determines whether or not the selection markers are different.
+        bool HasSpacingBetweenSelectionMarkers() const;
+
 
         /// Retrieves the height of a line.
         int GetLineHeight() const;
