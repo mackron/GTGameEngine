@@ -264,8 +264,6 @@ namespace GT
                 HGUISurface hSurface = this->GetWindowSurface(m_hMainWindow);
                 if (hSurface != NULL)
                 {
-                    //printf("Open\n");
-
                     unsigned int windowWidth;
                     unsigned int windowHeight;
                     if (m_gameContext.GetWindowSize(m_hMainWindow, windowWidth, windowHeight))
@@ -308,8 +306,7 @@ namespace GT
     {
         if (this->IsOpen())
         {
-            // Every relevant windows needs to be hidden.
-            //printf("Closed\n");
+            // TODO: Every relevant windows needs to be hidden.
 
 
             // We are hiding everything surface, so we want to let the GUI know that the mouse has left whatever surface it is

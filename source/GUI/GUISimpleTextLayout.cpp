@@ -1231,7 +1231,7 @@ namespace GT
             unsigned int iLastRunOnLinePlus1;
             if (this->FindLineInfoByIndex(oldRun.iLine - 1, OUT lineRect, OUT iFirstRunOnLine, OUT iLastRunOnLinePlus1))
             {
-                int newMarkerPosX = marker.absoluteSickyPosX; //oldRun.posX + marker.relativePosX;
+                int newMarkerPosX = marker.absoluteSickyPosX;
                 int newMarkerPosY = lineRect.top;
                 this->MoveMarkerToPoint(marker, newMarkerPosX, newMarkerPosY);
 
@@ -1259,7 +1259,7 @@ namespace GT
         unsigned int iLastRunOnLinePlus1;
         if (this->FindLineInfoByIndex(oldRun.iLine + 1, OUT lineRect, OUT iFirstRunOnLine, OUT iLastRunOnLinePlus1))
         {
-            int newMarkerPosX = marker.absoluteSickyPosX; //oldRun.posX + marker.relativePosX;
+            int newMarkerPosX = marker.absoluteSickyPosX;
             int newMarkerPosY = lineRect.top;
             this->MoveMarkerToPoint(marker, newMarkerPosX, newMarkerPosY);
 
