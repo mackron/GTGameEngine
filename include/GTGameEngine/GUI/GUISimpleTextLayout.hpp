@@ -145,10 +145,16 @@ namespace GT
         /// @copydoc GUITextLayout::MoveSelectionAnchorToCursor()
         void MoveSelectionAnchorToCursor();
 
+        /// @copydoc GUITextLayout::GetSelectedText()
+        GTLib::String GetSelectedText() const;
+
 
 
         //////////////////////////////
         // Editing
+
+        /// @copydoc GUITextLayout::InsertStringAtCursor()
+        bool InsertStringAtCursor(const char* text);
 
         /// @copydoc GUITextLayout::InsertCharacterAtCursor()
         bool InsertCharacterAtCursor(char32_t character);
@@ -327,6 +333,10 @@ namespace GT
 
         /// Moves the marker to the character at the given index.
         bool MoveMarkerToCharacter(TextMarker &marker, unsigned int iAbsoluteChar);
+
+
+        /// Retrieves the index of the character the marker is currently sitting on.
+        unsigned int GetMarkerAbsoluteCharacterIndex(TextMarker &marker) const;
 
 
         /// Updates the relative position of the given marker.

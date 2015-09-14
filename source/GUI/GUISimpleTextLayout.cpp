@@ -46,13 +46,26 @@ namespace GT
 
     void GUISimpleTextLayout::SetText(const char* text)
     {
+        // When setting the text, the cursor may have changed position.
+        unsigned int iCursorCharacter = this->GetMarkerAbsoluteCharacterIndex(m_cursor);
+
+
         // We need to transform '\r\n' to '\n' characters.
         GTLib::Strings::Replacer replacer(text);
         replacer.Replace("\r\n", "\n");
-
         m_text = replacer.c_str();
 
+        // A change in text requires the layout to be refreshed.
         this->RefreshLayout();
+
+
+        // Now we need to try and move the cursor to the previous character position.
+        this->MoveMarkerToCharacter(m_cursor, iCursorCharacter);
+
+
+        // The selection state will be dirty, so just deselect everything and move the selection anchor to the cursor.
+        this->DeselectAll();
+        this->MoveSelectionAnchorToCursor();
     }
 
     const char* GUISimpleTextLayout::GetText() const
@@ -417,10 +430,52 @@ namespace GT
         m_selectionAnchor = m_cursor;
     }
 
+    GTLib::String GUISimpleTextLayout::GetSelectedText() const
+    {
+        TextMarker selectionStart;
+        TextMarker selectionEnd;
+        if (this->GetSelectionMarkers(selectionStart, selectionEnd))
+        {
+            unsigned int iCharStart = this->GetMarkerAbsoluteCharacterIndex(selectionStart);
+            unsigned int iCharEnd   = this->GetMarkerAbsoluteCharacterIndex(selectionEnd);
+
+            return GTLib::String(m_text.c_str() + iCharStart, iCharEnd - iCharStart);
+        }
+        else
+        {
+            // Nothing is selected.
+            return "";
+        }
+    }
+
+
 
 
     //////////////////////////////
     // Editing
+
+    bool GUISimpleTextLayout::InsertStringAtCursor(const char* text)
+    {
+        unsigned int iCursorCharacter = this->GetMarkerAbsoluteCharacterIndex(m_cursor);
+
+        // '\r\n' -> '\n'
+        GTLib::Strings::Replacer replacer(text);
+        replacer.Replace("\r\n", "\n");
+        m_text.Insert(replacer.c_str(), iCursorCharacter);
+
+
+        // The layout will have changed so it needs to be refreshed.
+        this->RefreshLayout();
+
+        // The marker needs to be updated based on the new layout and it's new position, which is one character ahead.
+        this->MoveMarkerToCharacter(m_cursor, iCursorCharacter + strlen(replacer.c_str()));
+
+        // The cursor's sticky position needs to be updated whenever the text is edited.
+        this->UpdateMarkerStickyPosition(m_cursor);
+
+
+        return true;
+    }
 
     bool GUISimpleTextLayout::InsertCharacterAtCursor(char32_t character)
     {
@@ -436,13 +491,12 @@ namespace GT
         // Insert the character into the string.
         m_text.InsertCharacter(character, iAbsoluteMarkerChar);
 
+
         // The layout will have changed so it needs to be refreshed.
         this->RefreshLayout();
 
-
         // The marker needs to be updated based on the new layout and it's new position, which is one character ahead.
         this->MoveMarkerToCharacter(m_cursor, iAbsoluteMarkerChar + 1);
-
 
         // The cursor's sticky position needs to be updated whenever the text is edited.
         this->UpdateMarkerStickyPosition(m_cursor);
@@ -1369,6 +1423,11 @@ namespace GT
     {
         assert(m_runs.GetCount() > 0);
 
+        // Clamp the character to the end of the string.
+        if (iAbsoluteChar > m_text.GetLengthInTs()) {
+            iAbsoluteChar = m_text.GetLengthInTs();
+        }
+
         marker.iRun = this->FindRunAtCharacterIndex(iAbsoluteChar);
         
         assert(marker.iRun < m_runs.GetCount());
@@ -1378,6 +1437,18 @@ namespace GT
         // The relative position depends on whether or not the run is a tab character.
         return this->UpdateMarkerRelativePosition(marker);
     }
+
+
+    unsigned int GUISimpleTextLayout::GetMarkerAbsoluteCharacterIndex(TextMarker &marker) const
+    {
+        if (marker.iRun < m_runs.GetCount())
+        {
+            return m_runs[marker.iRun].iChar + marker.iChar;
+        }
+
+        return 0;
+    }
+
 
     bool GUISimpleTextLayout::UpdateMarkerRelativePosition(TextMarker &marker) const
     {

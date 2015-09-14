@@ -257,6 +257,9 @@ namespace GT
         /// Moves the selection anchor to the cursor.
         virtual void MoveSelectionAnchorToCursor() = 0;
 
+        /// Retrieves the selected text.
+        virtual GTLib::String GetSelectedText() const = 0;
+
 
 
         //////////////////////////////
@@ -264,12 +267,17 @@ namespace GT
         //
         // The editing methods below will move the cursor where appropriate.
 
+        /// Inserts a string at the position of the cursor, and moves the cursor to the end of that string.
+        ///
+        /// @param text [in] The text to insert.
+        virtual bool InsertStringAtCursor(const char* text) = 0;
+
         /// Inserts a character at the position of the cursor.
         ///
         /// @param character [in] The character to insert.
         ///
         /// @remarks
-        ///     This should be used for backspace, delete and enter characters.
+        ///     This should be used for enter characters.
         virtual bool InsertCharacterAtCursor(char32_t character) = 0;
 
         /// Deletes the character to the left of the cursor, and moves the cursor in response.
