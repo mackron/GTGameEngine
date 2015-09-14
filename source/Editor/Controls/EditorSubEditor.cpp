@@ -5,11 +5,25 @@
 namespace GT
 {
     EditorSubEditor::EditorSubEditor(Editor &editor)
-        : EditorControl(editor)
+        : EditorControl(editor),
+          m_onChangedProc(nullptr)
     {
     }
 
     EditorSubEditor::~EditorSubEditor()
     {
+    }
+
+
+    void EditorSubEditor::OnChanged(OnChangedProc onChangedProc)
+    {
+        m_onChangedProc = onChangedProc;
+    }
+
+    void EditorSubEditor::OnChanged()
+    {
+        if (m_onChangedProc != nullptr) {
+            m_onChangedProc();
+        }
     }
 }

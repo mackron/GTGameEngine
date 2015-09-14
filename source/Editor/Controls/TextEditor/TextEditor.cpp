@@ -27,6 +27,9 @@ namespace GT
         gui.SetElementFont(m_textBox.GetContentElement(), "Courier New", FontWeight_Medium, FontSlant_None, 15);
         gui.SetElementTextColor(m_textBox.GetContentElement(), theme.defaultTextColor);
         gui.GiveElementKeyboardFocus(m_textBox.GetContentElement());
+        gui.OnElementTextChanged(m_textBox.GetContentElement(), [&]() {
+            this->OnChanged();
+        });
 
 
         this->LoadFile(absolutePath);

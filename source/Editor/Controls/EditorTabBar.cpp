@@ -69,8 +69,13 @@ namespace GT
         this->GetGUI().AttachLocalEventHandler(pTab->GetRootGUIElement(), m_tabEventHandler);
 
         this->GetGUI().OnElementMove(pTab->GetRootGUIElement(), [&, pTab](int, int) {
-            if (pTab == this->GetActiveTab())
-            {
+            if (pTab == this->GetActiveTab()) {
+                this->UpdateActiveTabBorderMask();
+            }
+        });
+
+        this->GetGUI().OnElementSize(pTab->GetRootGUIElement(), [&, pTab](unsigned int, unsigned int) {
+            if (pTab == this->GetActiveTab()) {
                 this->UpdateActiveTabBorderMask();
             }
         });

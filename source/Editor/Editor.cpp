@@ -420,6 +420,14 @@ namespace GT
                         assert(pTabPage != nullptr);
 
                         m_gui.SetElementParent(openedFile.pSubEditor->GetRootGUIElement(), pTabPage->GetRootGUIElement());
+
+
+                        openedFile.pSubEditor->OnChanged([&, pNewTab]() {
+                            GTLib::String newString = easypath_filename(this->FindFileAbsolutePathFromTab(pNewTab));
+                            newString += "*";
+
+                            pNewTab->SetText(newString.c_str());
+                        });
                     }
 
 
@@ -505,7 +513,9 @@ namespace GT
     {
         OpenedFile &openedFile = m_openedFiles[index];
         if (openedFile.pSubEditor != nullptr) {
-            return openedFile.pSubEditor->SaveFile(openedFile.absolutePath.c_str());
+            if (openedFile.pSubEditor->SaveFile(openedFile.absolutePath.c_str())) {
+                openedFile.pTab->SetText(easypath_filename(openedFile.absolutePath.c_str()));
+            }
         }
 
         return false;
