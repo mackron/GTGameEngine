@@ -2,6 +2,7 @@
 
 #include <GTGameEngine/Editor/DefaultSubEditorAllocator.hpp>
 #include <GTGameEngine/Editor/Controls/ImageEditor/ImageEditor.hpp>
+#include <GTGameEngine/Editor/Controls/TextEditor/TextEditor.hpp>
 #include <GTGameEngine/Assets/Asset.hpp>
 
 namespace GT
@@ -18,8 +19,6 @@ namespace GT
 
     EditorSubEditor* DefaultSubEditorAllocator::CreateSubEditor(Editor &editor, const char* absolutePath, Asset* pAsset)
     {
-        (void)absolutePath;
-
         if (pAsset != nullptr)
         {
             switch (pAsset->GetClass())
@@ -45,9 +44,6 @@ namespace GT
 
     EditorSubEditor* DefaultSubEditorAllocator::CreateTextFileSubEditor(Editor &editor, const char* absolutePath)
     {
-        (void)editor;
-        (void)absolutePath;
-
-        return nullptr;
+        return new TextEditor(editor, absolutePath);
     }
 }
