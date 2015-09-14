@@ -2701,6 +2701,25 @@ namespace GT
         return "";
     }
 
+    void GUIContextBase::SelectAllText(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        if (this->IsEditableTextEnabled(pElement))
+        {
+            if (pElement->pTextLayout != nullptr) {
+                pElement->pTextLayout->SelectAll();
+
+                this->BeginBatch();
+                {
+                    this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
+                    this->UpdateTextCursorByFocusedElement();
+                }
+                this->EndBatch();
+            }
+        }
+    }
+
 
     HGUIFont GUIContextBase::SetElementFont(GUIElement* pElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType)
     {

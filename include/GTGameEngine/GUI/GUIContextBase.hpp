@@ -1503,6 +1503,9 @@ namespace GT
         /// Retrieves the selected text on the element that owns the text cursor.
         GTLib::String GetSelectedText(GUIElement* pElement);
 
+        /// Selects all of the given element's text, if allowed.
+        void SelectAllText(GUIElement* pElement);
+
 
         /// Sets the font of the given element.
         ///

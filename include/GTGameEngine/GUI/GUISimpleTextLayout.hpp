@@ -136,6 +136,9 @@ namespace GT
         /// @copydoc GUITextLayout::IsAnythingSelected()
         bool IsAnythingSelected() const;
 
+        /// @copydoc GUITextLayout::SelectAll()
+        void SelectAll();
+
         /// @copydoc GUITextLayout::DeselectAll()
         void DeselectAll();
 
@@ -318,6 +321,12 @@ namespace GT
 
         /// Moves the given marker to the start of the line.
         bool MoveMarkerToStartOfLine(TextMarker &marker) const;
+
+        /// Moves the given marker to the end of the text.
+        bool MoveMarkerToEndOfText(TextMarker &marker);
+
+        /// Moves the given marker to the start of the text.
+        bool MoveMarkerToStartOfText(TextMarker &marker);
 
         /// Moves the given marker to the last character of the given run.
         bool MoveMarkerToLastCharacterOfRun(TextMarker &marker, unsigned int iRun) const;

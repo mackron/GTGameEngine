@@ -154,6 +154,7 @@ namespace GT
     {
         if (this->GetGUI().GetElementWithKeyboardFocus() == m_textBox.GetContentElement())
         {
+            this->GetGUI().SelectAllText(m_textBox.GetContentElement());
         }
     }
 }

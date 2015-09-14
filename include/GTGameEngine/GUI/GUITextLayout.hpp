@@ -248,6 +248,9 @@ namespace GT
         /// Determines whether or not anything is selected.
         virtual bool IsAnythingSelected() const = 0;
 
+        /// Selects everything.
+        virtual void SelectAll() = 0;
+
         /// Deselects everything.
         virtual void DeselectAll() = 0;
 

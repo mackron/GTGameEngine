@@ -1345,6 +1345,9 @@ namespace GT
         /// @copydoc GUIContextBase::GetSelectedText()
         GTLib::String GetSelectedText(HGUIElement hElement);
 
+        /// @copydoc GUIContextBase::SelectAllText()
+        void SelectAllText(HGUIElement hElement);
+
 
         /// Sets the font of the given element.
         ///

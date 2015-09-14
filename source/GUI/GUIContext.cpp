@@ -3138,6 +3138,15 @@ namespace GT
         return "";
     }
 
+    void GUIContext::SelectAllText(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::SelectAllText(pElement);
+        }
+    }
+
 
     HGUIFont GUIContext::SetElementFont(HGUIElement hElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType)
     {

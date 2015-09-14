@@ -856,6 +856,9 @@ namespace GT
                 return;
             }
         }
+
+        // We'll get here if the focused element is not a descendant of the sub-editor.
+        m_gui.SelectAllText(m_gui.GetElementWithKeyboardFocus());
     }
 
 

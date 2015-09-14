@@ -371,6 +371,14 @@ namespace GT
         return m_isAnythingSelected;
     }
 
+    void GUISimpleTextLayout::SelectAll()
+    {
+        this->MoveMarkerToStartOfText(m_selectionAnchor);
+        this->MoveMarkerToEndOfText(m_cursor);
+
+        m_isAnythingSelected = this->HasSpacingBetweenSelectionMarkers();
+    }
+
     void GUISimpleTextLayout::DeselectAll()
     {
         m_isAnythingSelected = false;
@@ -1361,6 +1369,16 @@ namespace GT
         }
 
         return false;
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerToEndOfText(TextMarker &marker)
+    {
+        return this->MoveMarkerToLastCharacterOfRun(marker, m_runs.GetCount() - 1);
+    }
+
+    bool GUISimpleTextLayout::MoveMarkerToStartOfText(TextMarker &marker)
+    {
+        return this->MoveMarkerToFirstCharacterOfRun(marker, 0);
     }
 
     bool GUISimpleTextLayout::MoveMarkerToLastCharacterOfRun(TextMarker &marker, unsigned int iRun) const
