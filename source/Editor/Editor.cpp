@@ -539,7 +539,21 @@ namespace GT
 
     void Editor::ActivateTab(EditorTab* pTab)
     {
+        auto pOldFocusedSubEditor = this->GetFocusedSubEditor();
+        
         m_pBodyControl->ActivateTab(pTab);
+
+        auto pNewFocusedSubEditor = this->GetFocusedSubEditor();
+        if (pOldFocusedSubEditor != pNewFocusedSubEditor)
+        {
+            if (pOldFocusedSubEditor != nullptr) {
+                pOldFocusedSubEditor->OnDeactivate();
+            }
+
+            if (pNewFocusedSubEditor != nullptr) {
+                pNewFocusedSubEditor->OnActivate();
+            }
+        }
     }
 
     bool Editor::ActivateFileTab(const char* absolutePath)
@@ -553,6 +567,7 @@ namespace GT
 
         return false;
     }
+
 
     EditorTab* Editor::GetFocusedTab()
     {
@@ -574,6 +589,25 @@ namespace GT
         if (pFocusedTab != nullptr)
         {
             return this->FindFileAbsolutePathFromTab(pFocusedTab);
+        }
+
+        return nullptr;
+    }
+
+    EditorSubEditor* Editor::GetFocusedSubEditor()
+    {
+        return this->GetSubEditorByTab(this->GetFocusedTab());
+    }
+
+    EditorSubEditor* Editor::GetSubEditorByTab(EditorTab* pTab)
+    {
+        for (size_t iOpenedFile = 0; iOpenedFile < m_openedFiles.GetCount(); ++iOpenedFile)
+        {
+            auto &openedFile = m_openedFiles[iOpenedFile];
+            if (openedFile.pTab == pTab)
+            {
+                return openedFile.pSubEditor;
+            }
         }
 
         return nullptr;
@@ -733,6 +767,60 @@ namespace GT
                 this->SetCursor(SystemCursorType::Arrow);
                 break;
             }
+        }
+    }
+
+
+
+
+    ////////////////////////////////////
+    // Common Shortcuts
+
+    void Editor::DoCut()
+    {
+        auto pFocusedSubEditor = this->GetFocusedSubEditor();
+        if (pFocusedSubEditor != nullptr) {
+            pFocusedSubEditor->Cut();
+        }
+    }
+
+    void Editor::DoCopy()
+    {
+        auto pFocusedSubEditor = this->GetFocusedSubEditor();
+        if (pFocusedSubEditor != nullptr) {
+            pFocusedSubEditor->Copy();
+        }
+    }
+
+    void Editor::DoPaste()
+    {
+        auto pFocusedSubEditor = this->GetFocusedSubEditor();
+        if (pFocusedSubEditor != nullptr) {
+            pFocusedSubEditor->Paste();
+        }
+    }
+
+    void Editor::DoUndo()
+    {
+        auto pFocusedSubEditor = this->GetFocusedSubEditor();
+        if (pFocusedSubEditor != nullptr) {
+            pFocusedSubEditor->Undo();
+        }
+    }
+
+    void Editor::DoRedo()
+    {
+        auto pFocusedSubEditor = this->GetFocusedSubEditor();
+        if (pFocusedSubEditor != nullptr) {
+            pFocusedSubEditor->Redo();
+        }
+    }
+
+    void Editor::DoSelectAll()
+    {
+        auto pFocusedSubEditor = this->GetFocusedSubEditor();
+        if (pFocusedSubEditor != nullptr) {
+            pFocusedSubEditor->SelectAll();
         }
     }
 
@@ -920,14 +1008,47 @@ namespace GT
         }
 
 
-        // Save the current file.
-        if (key == GTLib::Keys::S)
+        // Shortcuts
+        if (m_gameContext.IsKeyDown(GTLib::Keys::Ctrl))
         {
-            if (m_gameContext.IsKeyDown(GTLib::Keys::Ctrl))
-            {
+            // Save
+            if (key == GTLib::Keys::S) {
                 this->SaveFile(this->GetFocusedFileAbsolutePath());
             }
+
+
+            // Cut
+            if (key == GTLib::Keys::X) {
+                this->DoCut();
+            }
+
+            // Copy
+            if (key == GTLib::Keys::C) {
+                this->DoCopy();
+            }
+
+            // Paste
+            if (key == GTLib::Keys::V) {
+                this->DoPaste();
+            }
+
+            // Undo
+            if (key == GTLib::Keys::Z) {
+                this->DoUndo();
+            }
+
+            // Redo
+            if (key == GTLib::Keys::Y) {
+                this->DoRedo();
+            }
+
+
+            // Select All
+            if (key == GTLib::Keys::A) {
+                this->DoSelectAll();
+            }
         }
+        
 
 
         m_gui.OnKeyPressed(key);

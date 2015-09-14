@@ -4,6 +4,8 @@
 #include <GTGameEngine/Editor/Editor.hpp>
 #include <GTGameEngine/EngineContext.hpp>
 
+#include <GTLib/Windowing/Clipboard.hpp>        // For cut/copy/paste
+
 namespace GT
 {
     TextEditor::TextEditor(Editor &editor, const char* absolutePath)
@@ -90,5 +92,62 @@ namespace GT
         }
 
         return false;
+    }
+
+    void TextEditor::OnActivate()
+    {
+        this->GetGUI().GiveElementKeyboardFocus(m_textBox.GetContentElement());
+    }
+
+    void TextEditor::OnDeactivate()
+    {
+    }
+
+
+    void TextEditor::Cut()
+    {
+        if (this->GetGUI().GetElementWithKeyboardFocus() == m_textBox.GetContentElement())
+        {
+            GTLib::String selectedText = this->GetGUI().GetSelectedText(m_textBox.GetContentElement());
+        }
+    }
+
+    void TextEditor::Copy()
+    {
+        if (this->GetGUI().GetElementWithKeyboardFocus() == m_textBox.GetContentElement())
+        {
+        }
+    }
+
+    void TextEditor::Paste()
+    {
+        if (this->GetGUI().GetElementWithKeyboardFocus() == m_textBox.GetContentElement())
+        {
+            GTLib::String clipboard = GTLib::Clipboard::GetText();
+            if (clipboard.GetLengthInTs() > 0) {
+                this->GetGUI().InsertTextAtCursor(m_textBox.GetContentElement(), clipboard.c_str());
+            }
+        }
+    }
+
+    void TextEditor::Undo()
+    {
+        if (this->GetGUI().GetElementWithKeyboardFocus() == m_textBox.GetContentElement())
+        {
+        }
+    }
+
+    void TextEditor::Redo()
+    {
+        if (this->GetGUI().GetElementWithKeyboardFocus() == m_textBox.GetContentElement())
+        {
+        }
+    }
+
+    void TextEditor::SelectAll()
+    {
+        if (this->GetGUI().GetElementWithKeyboardFocus() == m_textBox.GetContentElement())
+        {
+        }
     }
 }

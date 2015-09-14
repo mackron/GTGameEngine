@@ -32,6 +32,33 @@ namespace GT
         /// Saves the contents to the given file.
         virtual bool SaveFile(const char* absolutePath) = 0;
 
+        /// Called when the sub editor is activated.
+        ///
+        /// @remarks
+        ///     This allows the sub-editor to do things like give an element keyboard focus or whatnot.
+        virtual void OnActivate() = 0;
+
+        /// Called when the sub-editor is deactivated.
+        virtual void OnDeactivate() = 0;
+
+
+        /// Performs a cut operation
+        virtual void Cut() = 0;
+
+        /// Performs a copy operation
+        virtual void Copy() = 0;
+
+        /// Performs a paste operation
+        virtual void Paste() = 0;
+
+        /// Performs a undo operation
+        virtual void Undo() = 0;
+
+        /// Performs a redo operation
+        virtual void Redo() = 0;
+
+        /// Performs a select-all operation.
+        virtual void SelectAll() = 0;
 
 
     private:

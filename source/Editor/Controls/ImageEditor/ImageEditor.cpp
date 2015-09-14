@@ -45,4 +45,36 @@ namespace GT
         (void)absolutePath;
         return false;
     }
+
+    void ImageEditor::OnActivate()
+    {
+    }
+
+    void ImageEditor::OnDeactivate()
+    {
+    }
+
+    void ImageEditor::Cut()
+    {
+    }
+
+    void ImageEditor::Copy()
+    {
+    }
+
+    void ImageEditor::Paste()
+    {
+    }
+
+    void ImageEditor::Undo()
+    {
+    }
+
+    void ImageEditor::Redo()
+    {
+    }
+
+    void ImageEditor::SelectAll()
+    {
+    }
 }

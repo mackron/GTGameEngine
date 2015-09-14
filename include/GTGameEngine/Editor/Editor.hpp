@@ -177,11 +177,18 @@ namespace GT
         /// @param absolutePath [in] The absolute path of the file whose tab should be activated.
         bool ActivateFileTab(const char* absolutePath);
 
+
         /// Retrieves a point to the tab that currently has focus.
         EditorTab* GetFocusedTab();
 
         /// Retrieves the absolute path of the opened file that has the focused editor.
         const char* GetFocusedFileAbsolutePath();
+
+        /// Retrieves a pointer to the focused sub editor.
+        EditorSubEditor* GetFocusedSubEditor();
+
+        /// Retrieves a pointer to the sub-editor based on the given tab.
+        EditorSubEditor* GetSubEditorByTab(EditorTab* pTab);
 
 
         /// Attaches an event handler.
@@ -273,6 +280,29 @@ namespace GT
 
         /// Sets the mouse cursor from a GUI system cursor.
         void SetCursorFromGUISystemCursor(GUISystemCursor cursor);
+
+
+
+        ////////////////////////////////////
+        // Common Shortcuts
+
+        /// Performs a cut operation
+        void DoCut();
+
+        /// Performs a copy operation
+        void DoCopy();
+
+        /// Performs a paste operation
+        void DoPaste();
+
+        /// Performs a undo operation
+        void DoUndo();
+
+        /// Performs a redo operation
+        void DoRedo();
+
+        /// Performs a select-all operation.
+        void DoSelectAll();
 
 
 

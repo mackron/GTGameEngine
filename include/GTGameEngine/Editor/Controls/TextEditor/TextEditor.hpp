@@ -22,8 +22,33 @@ namespace GT
         /// Loads the given file.
         bool LoadFile(const char* absolutePath);
 
+
         /// @copydoc EditorSubEditor::SaveFile()
         bool SaveFile(const char* absolutePath);
+
+        /// @copydoc EditorSubEditor::OnActivate()
+        void OnActivate();
+
+        /// @copydoc EditorSubEditor::OnDeactivate()
+        void OnDeactivate();
+
+        /// @copydoc EditorSubEditor::Cut()
+        void Cut();
+
+        /// @copydoc EditorSubEditor::Copy()
+        void Copy();
+
+        /// @copydoc EditorSubEditor::Paste()
+        void Paste();
+
+        /// @copydoc EditorSubEditor::Undo()
+        void Undo();
+
+        /// @copydoc EditorSubEditor::Redo()
+        void Redo();
+
+        /// @copydoc EditorSubEditor::SelectAll()
+        void SelectAll();
 
 
     private:
