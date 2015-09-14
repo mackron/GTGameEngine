@@ -151,7 +151,7 @@ namespace GT
                     return (m_flags & StateFlag_IsRunningRealTimeLoopFlag) == 0;
                 });
 
-                // If we're still running at event-driven loop at this point it means we have received a quit message and need to close.
+                // If we're still running an event-driven loop at this point it means we have received a quit message and need to close.
                 if ((m_flags & StateFlag_IsRunningRealTimeLoopFlag) == 0)
                 {
                     m_flags &= ~StateFlag_IsRunningFlag;
