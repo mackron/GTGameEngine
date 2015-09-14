@@ -138,6 +138,26 @@ namespace GT
         ///     This will fail if the file with the given absolute path is not open.
         bool SaveFile(const char* absolutePath);
 
+        /// Saves and closes all open files.
+        void SaveAndCloseAllOpenFiles();
+
+
+        /// Retrieves the number of opened files.
+        unsigned int GetOpenFileCount() const;
+
+        /// Closes the file at the given index.
+        ///
+        /// @remarks
+        ///     Use this in conjunction with GetOpenFileCount().
+        void CloseFileByIndex(unsigned int index);
+
+        /// Saves the files at the given index.
+        ///
+        /// @remarks
+        ///     Use this in conjunction with GetOpenFileCount().
+        bool SaveFileByIndex(unsigned int index);
+
+
 
         /// Finds the tab associated with the given file.
         EditorTab* FindFileTab(const char* absolutePath);

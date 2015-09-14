@@ -140,6 +140,11 @@ namespace GT
 
     void Editor::Shutdown()
     {
+        // Every open file needs to be saved and closed.
+        this->SaveAndCloseAllOpenFiles();
+
+
+
         this->ShutdownFileSystemWatcher();
 
         delete m_pFooterControl;
@@ -396,7 +401,7 @@ namespace GT
                         openedFile.pSubEditor = m_defaultSubEditorAllocator.CreateTextFileSubEditor(*this, absolutePath);
 
                         if (openedFile.pSubEditor != nullptr) {
-                            openedFile.pAllocator = m_pUserSubEditorAllocator;
+                            openedFile.pAllocator = &m_defaultSubEditorAllocator;
                         }
 
 
@@ -454,10 +459,53 @@ namespace GT
             auto &openedFile = m_openedFiles[iOpenedFile];
             if (openedFile.absolutePath == absolutePath)
             {
-                if (openedFile.pSubEditor != nullptr) {
-                    return openedFile.pSubEditor->SaveFile(absolutePath);
-                }
+                return this->SaveFileByIndex(static_cast<unsigned int>(iOpenedFile));
             }
+        }
+
+        return false;
+    }
+
+    void Editor::SaveAndCloseAllOpenFiles()
+    {
+        while (this->GetOpenFileCount() > 0)
+        {
+            unsigned int iLastOpenFile = this->GetOpenFileCount() - 1;
+
+            this->SaveFileByIndex(iLastOpenFile);
+            this->CloseFileByIndex(iLastOpenFile);
+        }
+    }
+
+
+    unsigned int Editor::GetOpenFileCount() const
+    {
+        return m_openedFiles.GetCount();
+    }
+
+    void Editor::CloseFileByIndex(unsigned int index)
+    {
+        OpenedFile &openedFile = m_openedFiles[index];
+        if (openedFile.pAllocator != nullptr)
+        {
+            openedFile.pAllocator->DeleteSubEditor(openedFile.pSubEditor);
+        }
+
+        if (openedFile.pAsset != nullptr)
+        {
+            m_gameContext.GetEngineContext().GetAssetLibrary().Unload(openedFile.pAsset);
+        }
+
+
+        m_pBodyControl->CloseTab(openedFile.pTab);
+        m_openedFiles.Remove(index);
+    }
+
+    bool Editor::SaveFileByIndex(unsigned int index)
+    {
+        OpenedFile &openedFile = m_openedFiles[index];
+        if (openedFile.pSubEditor != nullptr) {
+            return openedFile.pSubEditor->SaveFile(openedFile.absolutePath.c_str());
         }
 
         return false;
@@ -473,25 +521,10 @@ namespace GT
             auto &openedFile = m_openedFiles[iOpenedFile];
             if (openedFile.pTab == pTab)
             {
-                if (openedFile.pAllocator != nullptr)
-                {
-                    openedFile.pAllocator->DeleteSubEditor(openedFile.pSubEditor);
-                }
-
-                if (openedFile.pAsset != nullptr)
-                {
-                    m_gameContext.GetEngineContext().GetAssetLibrary().Unload(openedFile.pAsset);
-                }
-
-
-                m_openedFiles.Remove(iOpenedFile);
+                this->CloseFileByIndex(iOpenedFile);
                 break;
             }
         }
-
-
-
-        m_pBodyControl->CloseTab(pTab);
     }
 
     void Editor::ActivateTab(EditorTab* pTab)
