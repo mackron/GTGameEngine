@@ -2643,32 +2643,11 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        if (pElement->pTextLayout != nullptr)
+        if (this->IsEditableTextEnabled(pElement))
         {
-            if (pElement->pTextLayout->InsertStringAtCursor(text))
+            if (pElement->pTextLayout != nullptr)
             {
-                this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
-
-
-                this->BeginBatch();
-                {
-                    this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
-                    this->UpdateTextCursorByFocusedElement();
-                }
-                this->EndBatch();
-            }
-        }
-    }
-
-    void GUIContextBase::DeleteSelectedText(GUIElement* pElement)
-    {
-        assert(pElement != nullptr);
-
-        if (pElement->pTextLayout != nullptr)
-        {
-            if (m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected())
-            {
-                if (m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText())
+                if (pElement->pTextLayout->InsertStringAtCursor(text))
                 {
                     this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
 
@@ -2684,6 +2663,33 @@ namespace GT
         }
     }
 
+    void GUIContextBase::DeleteSelectedText(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        if (this->IsEditableTextEnabled(pElement))
+        {
+            if (pElement->pTextLayout != nullptr)
+            {
+                if (m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected())
+                {
+                    if (m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText())
+                    {
+                        this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
+
+
+                        this->BeginBatch();
+                        {
+                            this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
+                            this->UpdateTextCursorByFocusedElement();
+                        }
+                        this->EndBatch();
+                    }
+                }
+            }
+        }
+    }
+
     GTLib::String GUIContextBase::GetSelectedText(GUIElement* pElement)
     {
         assert(pElement != nullptr);
@@ -2691,6 +2697,8 @@ namespace GT
         if (pElement->pTextLayout != nullptr) {
             return pElement->pTextLayout->GetSelectedText();
         }
+
+        return "";
     }
 
 

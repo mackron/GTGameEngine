@@ -109,6 +109,9 @@ namespace GT
         if (this->GetGUI().GetElementWithKeyboardFocus() == m_textBox.GetContentElement())
         {
             GTLib::String selectedText = this->GetGUI().GetSelectedText(m_textBox.GetContentElement());
+            GTLib::Clipboard::SetText(selectedText.c_str(), selectedText.GetLengthInTs());
+
+            this->GetGUI().DeleteSelectedText(m_textBox.GetContentElement());
         }
     }
 
@@ -116,6 +119,8 @@ namespace GT
     {
         if (this->GetGUI().GetElementWithKeyboardFocus() == m_textBox.GetContentElement())
         {
+            GTLib::String selectedText = this->GetGUI().GetSelectedText(m_textBox.GetContentElement());
+            GTLib::Clipboard::SetText(selectedText.c_str(), selectedText.GetLengthInTs());
         }
     }
 
@@ -125,6 +130,7 @@ namespace GT
         {
             GTLib::String clipboard = GTLib::Clipboard::GetText();
             if (clipboard.GetLengthInTs() > 0) {
+                this->GetGUI().DeleteSelectedText(m_textBox.GetContentElement());
                 this->GetGUI().InsertTextAtCursor(m_textBox.GetContentElement(), clipboard.c_str());
             }
         }

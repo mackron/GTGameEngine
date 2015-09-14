@@ -13,6 +13,8 @@
 #include "../external/easy_fsw/easy_fsw.h"
 #include "../external/easy_path/easy_path.h"
 
+#include <GTLib/Windowing/Clipboard.hpp>
+
 #if defined(GT_PLATFORM_WINDOWS)
 #include <shellapi.h>
 #endif
@@ -780,31 +782,57 @@ namespace GT
     {
         auto pFocusedSubEditor = this->GetFocusedSubEditor();
         if (pFocusedSubEditor != nullptr) {
-            pFocusedSubEditor->Cut();
+            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootGUIElement(), m_gui.GetElementWithKeyboardFocus())) {
+                pFocusedSubEditor->Cut();
+                return;
+            }
         }
+
+        // We'll get here if the focused element is not a descendant of the sub-editor.
+        GTLib::String text = m_gui.GetSelectedText(m_gui.GetElementWithKeyboardFocus());
+        GTLib::Clipboard::SetText(text.c_str(), text.GetLengthInTs());
+
+        m_gui.DeleteSelectedText(m_gui.GetElementWithKeyboardFocus());
     }
 
     void Editor::DoCopy()
     {
         auto pFocusedSubEditor = this->GetFocusedSubEditor();
         if (pFocusedSubEditor != nullptr) {
-            pFocusedSubEditor->Copy();
+            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootGUIElement(), m_gui.GetElementWithKeyboardFocus())) {
+                pFocusedSubEditor->Copy();
+                return;
+            }
         }
+
+        // We'll get here if the focused element is not a descendant of the sub-editor.
+        GTLib::String text = m_gui.GetSelectedText(m_gui.GetElementWithKeyboardFocus());
+        GTLib::Clipboard::SetText(text.c_str(), text.GetLengthInTs());
     }
 
     void Editor::DoPaste()
     {
         auto pFocusedSubEditor = this->GetFocusedSubEditor();
         if (pFocusedSubEditor != nullptr) {
-            pFocusedSubEditor->Paste();
+            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootGUIElement(), m_gui.GetElementWithKeyboardFocus())) {
+                pFocusedSubEditor->Paste();
+                return;
+            }
         }
+
+        // We'll get here if the focused element is not a descendant of the sub-editor.
+        m_gui.DeleteSelectedText(m_gui.GetElementWithKeyboardFocus());
+        m_gui.InsertTextAtCursor(m_gui.GetElementWithKeyboardFocus(), GTLib::Clipboard::GetText().c_str());
     }
 
     void Editor::DoUndo()
     {
         auto pFocusedSubEditor = this->GetFocusedSubEditor();
         if (pFocusedSubEditor != nullptr) {
-            pFocusedSubEditor->Undo();
+            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootGUIElement(), m_gui.GetElementWithKeyboardFocus())) {
+                pFocusedSubEditor->Undo();
+                return;
+            }
         }
     }
 
@@ -812,7 +840,10 @@ namespace GT
     {
         auto pFocusedSubEditor = this->GetFocusedSubEditor();
         if (pFocusedSubEditor != nullptr) {
-            pFocusedSubEditor->Redo();
+            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootGUIElement(), m_gui.GetElementWithKeyboardFocus())) {
+                pFocusedSubEditor->Redo();
+                return;
+            }
         }
     }
 
@@ -820,7 +851,10 @@ namespace GT
     {
         auto pFocusedSubEditor = this->GetFocusedSubEditor();
         if (pFocusedSubEditor != nullptr) {
-            pFocusedSubEditor->SelectAll();
+            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootGUIElement(), m_gui.GetElementWithKeyboardFocus())) {
+                pFocusedSubEditor->SelectAll();
+                return;
+            }
         }
     }
 
