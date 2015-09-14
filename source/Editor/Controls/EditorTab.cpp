@@ -29,7 +29,7 @@ namespace GT
             gui.SetElementVerticalAlign(m_hTextElement, VerticalAlign_Center);
             gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.8f, 0.8f, 0.8f));
             gui.SetElementPadding(m_hTextElement, 4);
-            gui.SetElementPaddingTop(m_hTextElement, 4);
+            gui.SetElementPaddingTop(m_hTextElement, 2);
             gui.SetElementPaddingBottom(m_hTextElement, 2);
             gui.EnableCursorPassThrough(m_hTextElement);
             
@@ -95,10 +95,10 @@ namespace GT
             // Hide the border, and compensate with padding.
             gui.BeginBatch();
             {
-                gui.SetElementPaddingLeft(hRootElement, 1);
+                gui.SetElementPaddingLeft(hRootElement, 2);
                 gui.SetElementPaddingRight(hRootElement, 1);
                 gui.SetElementPaddingTop(hRootElement, 1);
-                gui.SetElementPaddingBottom(hRootElement, 0);
+                gui.SetElementPaddingBottom(hRootElement, 2);
                 gui.SetElementBorderWidth(hRootElement, 0U);
 
                 // Background.
@@ -126,10 +126,10 @@ namespace GT
             // Hide the border, and compensate with padding.
             gui.BeginBatch();
             {
-                gui.SetElementPaddingLeft(hRootElement, 1);
+                gui.SetElementPaddingLeft(hRootElement, 2);
                 gui.SetElementPaddingRight(hRootElement, 1);
                 gui.SetElementPaddingTop(hRootElement, 1);
-                gui.SetElementPaddingBottom(hRootElement, 0);
+                gui.SetElementPaddingBottom(hRootElement, 2);
 
                 //gui.SetElementBorderWidth(hRootElement, 1U);
                 //gui.SetElementBorderBottomWidth(hRootElement, 0U);
@@ -159,10 +159,10 @@ namespace GT
             // Hide the border, and compensate with padding.
             gui.BeginBatch();
             {
-                gui.SetElementPaddingLeft(hRootElement, 0);
+                gui.SetElementPaddingLeft(hRootElement, 1);
                 gui.SetElementPaddingRight(hRootElement, 0);
                 gui.SetElementPaddingTop(hRootElement, 0);
-                gui.SetElementPaddingBottom(hRootElement, 0);
+                gui.SetElementPaddingBottom(hRootElement, 2);
 
                 // Border.
                 gui.SetElementBorderWidth(hRootElement, 1U);
