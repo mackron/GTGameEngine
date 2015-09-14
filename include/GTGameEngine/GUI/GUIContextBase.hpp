@@ -1491,6 +1491,19 @@ namespace GT
         /// @return True if the given element has any text.
         bool DoesElementHaveText(GUIElement* pElement) const;
 
+        /// Inserts the given string of text into the element that owns the text cursor.
+        ///
+        /// @remarks
+        ///     This will not work if editable text is disabled.
+        void InsertTextAtCursor(GUIElement* pElement, const char* text);
+
+        /// Deletes the text that is selected on the element that owns the text cursor.
+        void DeleteSelectedText(GUIElement* pElement);
+
+        /// Retrieves the selected text on the element that owns the text cursor.
+        GTLib::String GetSelectedText(GUIElement* pElement);
+
+
         /// Sets the font of the given element.
         ///
         /// @param pElement [in] A handle to the GUI element whose font is being set.
@@ -1575,7 +1588,6 @@ namespace GT
 
         /// Retrieves the cursor being used by the given element.
         GUISystemCursor GetElementCursor(GUIElement* pElement) const;
-
 
 
         /// Attaches the given element to the given surface.

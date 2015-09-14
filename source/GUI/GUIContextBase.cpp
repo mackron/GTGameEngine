@@ -2639,6 +2639,61 @@ namespace GT
         return false;
     }
 
+    void GUIContextBase::InsertTextAtCursor(GUIElement* pElement, const char* text)
+    {
+        assert(pElement != nullptr);
+
+        if (pElement->pTextLayout != nullptr)
+        {
+            if (pElement->pTextLayout->InsertStringAtCursor(text))
+            {
+                this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
+
+
+                this->BeginBatch();
+                {
+                    this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
+                    this->UpdateTextCursorByFocusedElement();
+                }
+                this->EndBatch();
+            }
+        }
+    }
+
+    void GUIContextBase::DeleteSelectedText(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        if (pElement->pTextLayout != nullptr)
+        {
+            if (m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected())
+            {
+                if (m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText())
+                {
+                    this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
+
+
+                    this->BeginBatch();
+                    {
+                        this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
+                        this->UpdateTextCursorByFocusedElement();
+                    }
+                    this->EndBatch();
+                }
+            }
+        }
+    }
+
+    GTLib::String GUIContextBase::GetSelectedText(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        if (pElement->pTextLayout != nullptr) {
+            return pElement->pTextLayout->GetSelectedText();
+        }
+    }
+
+
     HGUIFont GUIContextBase::SetElementFont(GUIElement* pElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType)
     {
         assert(pElement != nullptr);

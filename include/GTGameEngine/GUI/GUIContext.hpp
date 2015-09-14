@@ -1336,6 +1336,15 @@ namespace GT
         /// @return True if the given element has any text.
         bool DoesElementHaveText(HGUIElement hElement) const;
 
+        /// @copydoc GUIContextBase::InsertTextAtCursor()
+        void InsertTextAtCursor(HGUIElement hElement, const char* text);
+
+        /// @copydoc GUIContextBase::DeleteSelectedText()
+        void DeleteSelectedText(HGUIElement hElement);
+
+        /// @copydoc GUIContextBase::GetSelectedText()
+        GTLib::String GetSelectedText(HGUIElement hElement);
+
 
         /// Sets the font of the given element.
         ///
@@ -1400,7 +1409,7 @@ namespace GT
         void ReleaseKeyboardFocus();
 
         /// @copydoc GUIElementbase::GetElementWithKeyboardFocus()
-        GUIElement* GetElementWithKeyboardFocus() const;
+        HGUIElement GetElementWithKeyboardFocus() const;
 
 
         /// @copydoc GUIElementbase::SetElementCursor()

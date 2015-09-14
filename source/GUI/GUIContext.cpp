@@ -3109,6 +3109,36 @@ namespace GT
         return false;
     }
 
+    void GUIContext::InsertTextAtCursor(HGUIElement hElement, const char* text)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::InsertTextAtCursor(pElement, text);
+        }
+    }
+
+    void GUIContext::DeleteSelectedText(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            GUIContextBase::DeleteSelectedText(pElement);
+        }
+    }
+
+    GTLib::String GUIContext::GetSelectedText(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetSelectedText(pElement);
+        }
+
+        return "";
+    }
+
+
     HGUIFont GUIContext::SetElementFont(HGUIElement hElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType)
     {
         auto pElement = this->GetElementPtr(hElement);
@@ -3256,9 +3286,15 @@ namespace GT
         GUIContextBase::ReleaseKeyboardFocus();
     }
 
-    GUIElement* GUIContext::GetElementWithKeyboardFocus() const
+    HGUIElement GUIContext::GetElementWithKeyboardFocus() const
     {
-        return GUIContextBase::GetElementWithKeyboardFocus();
+        auto pElement = reinterpret_cast<GUIElementWithHandle*>(GUIContextBase::GetElementWithKeyboardFocus());
+        if (pElement != nullptr)
+        {
+            return pElement->handle;
+        }
+
+        return NULL;
     }
 
 
