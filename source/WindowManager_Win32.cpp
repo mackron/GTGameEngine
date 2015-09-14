@@ -626,9 +626,13 @@ namespace GT
             case WM_CHAR:
                 {
                     // Windows will post WM_CHAR events for keys we don't particularly want. We'll filter them out here (they will be processed by WM_KEYDOWN).
-                    if (wParam == VK_BACK)  // Backspace
+                    if (wParam < 32 || wParam == 127)       // 127 = ASCII DEL (will be triggered by CTRL+Backspace)
                     {
-                        break;
+                        if (wParam != VK_TAB  &&
+                            wParam != VK_RETURN)    // VK_RETURN = Enter Key.
+                        {
+                            break;
+                        }
                     }
 
 
