@@ -142,6 +142,9 @@ namespace GT
         /// @copydoc GUITextLayout::IterateVisibleSelectionRects()
         void IterateVisibleSelectionRects(std::function<void (const GUITextRectDesc &textRectDesc)> callback) const;
 
+        /// @copydoc GUITextLayout::MoveSelectionAnchorToCursor()
+        void MoveSelectionAnchorToCursor();
+
 
 
         //////////////////////////////

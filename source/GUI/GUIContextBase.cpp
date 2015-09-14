@@ -278,6 +278,13 @@ namespace GT
             m_pElementUnderMouse = nullptr;
         }
 
+        // If the element has the keyboard focus, unset it.
+        if (pElement == this->GetElementWithKeyboardFocus())
+        {
+            this->ReleaseKeyboardFocus();
+        }
+
+
         // The background image needs to be cleared so that the renderer and resource manager can unacquire it.
         if (this->GetElementBackgroundImage(pElement) != NULL)
         {
@@ -2787,8 +2794,6 @@ namespace GT
 
     void GUIContextBase::GiveElementKeyboardFocus(GUIElement* pElement)
     {
-        assert(pElement != nullptr);
-
         if (m_pElementWithKeyboardFocus != pElement)
         {
             GUIElement* pOldFocusedElement = m_pElementWithKeyboardFocus;
@@ -3518,6 +3523,11 @@ namespace GT
 
                     m_pElementWithKeyboardFocus->pTextLayout->InsertCharacterAtCursor(character);
                     this->UpdateTextCursorByFocusedElement();
+
+
+                    if (m_isSelectingWithShiftKey) {
+                        m_pElementWithKeyboardFocus->pTextLayout->MoveSelectionAnchorToCursor();
+                    }
 
 
                     // The text will have changed.

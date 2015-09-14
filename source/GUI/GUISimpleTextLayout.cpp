@@ -412,6 +412,11 @@ namespace GT
         }
     }
 
+    void GUISimpleTextLayout::MoveSelectionAnchorToCursor()
+    {
+        m_selectionAnchor = m_cursor;
+    }
+
 
 
     //////////////////////////////

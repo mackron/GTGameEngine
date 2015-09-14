@@ -254,6 +254,9 @@ namespace GT
         /// Iterates over all of the visible selection rectangles.
         virtual void IterateVisibleSelectionRects(std::function<void (const GUITextRectDesc &textRectDesc)> callback) const = 0;
 
+        /// Moves the selection anchor to the cursor.
+        virtual void MoveSelectionAnchorToCursor() = 0;
+
 
 
         //////////////////////////////
