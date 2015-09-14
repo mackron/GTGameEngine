@@ -284,6 +284,12 @@ namespace GT
             this->ReleaseKeyboardFocus();
         }
 
+        // If the element owns the text cursor, the cursor needs to be hidden.
+        if (pElement == this->GetTextCursorOwnerElement())
+        {
+            this->HideTextCursor();
+        }
+
 
         // The background image needs to be cleared so that the renderer and resource manager can unacquire it.
         if (this->GetElementBackgroundImage(pElement) != NULL)
@@ -2820,6 +2826,10 @@ namespace GT
 
             if (pNewFocusedElement != nullptr) {
                 this->PostEvent_OnReceiveKeyboardFocus(pNewFocusedElement);
+
+                if (this->IsEditableTextEnabled(pNewFocusedElement) && pNewFocusedElement->pTextLayout != nullptr) {
+                    this->UpdateTextCursorByFocusedElement();
+                }
             }
         }
     }
@@ -3420,6 +3430,10 @@ namespace GT
                                 m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText();
                             } else {
                                 m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToLeftOfCursor();
+                                
+                                if (m_isSelectingWithShiftKey) {
+                                    m_pElementWithKeyboardFocus->pTextLayout->MoveSelectionAnchorToCursor();
+                                }
                             }
                             
                             needsFullRepaint = true;
@@ -3429,6 +3443,10 @@ namespace GT
                                 m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText();
                             } else {
                                 m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToRightOfCursor();
+
+                                if (m_isSelectingWithShiftKey) {
+                                    m_pElementWithKeyboardFocus->pTextLayout->MoveSelectionAnchorToCursor();
+                                }
                             }
 
                             needsFullRepaint = true;
@@ -4541,10 +4559,14 @@ namespace GT
     {
         if (m_pTextCursorOwnerElement != nullptr)
         {
-            GTLib::Rect<int> rectI;
-            this->GetTextCursorAbsoluteRect(rectI);
+            auto pSurface = this->GetElementSurface(m_pTextCursorOwnerElement);
+            if (pSurface != nullptr)
+            {
+                GTLib::Rect<int> rectI;
+                this->GetTextCursorAbsoluteRect(rectI);
 
-            this->Painting_InvalidateRect(this->GetElementSurface(m_pTextCursorOwnerElement), rectI);
+                this->Painting_InvalidateRect(pSurface, rectI);
+            }
         }
     }
 
