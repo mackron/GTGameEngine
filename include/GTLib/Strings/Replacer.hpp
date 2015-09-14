@@ -229,7 +229,7 @@ namespace GTLib
                     return m_base;
                 }
 
-                return static_cast<T*>(m_buffers[m_bufferIndex].ptr);
+                return reinterpret_cast<const T*>(m_buffers[m_bufferIndex].GetDataPointer());
             }
 
 
