@@ -2,6 +2,7 @@
 
 #include <GTGameEngine/GUI/GUISimpleTextLayout.hpp>
 #include <GTLib/Keyboard.hpp>
+#include <GTLib/Strings/Replacer.hpp>       // For converting "\r\n" to "\n"
 
 #ifndef OUT
 #define OUT
@@ -45,7 +46,11 @@ namespace GT
 
     void GUISimpleTextLayout::SetText(const char* text)
     {
-        m_text = text;
+        // We need to transform '\r\n' to '\n' characters.
+        GTLib::Strings::Replacer replacer(text);
+        replacer.Replace("\r\n", "\n");
+
+        m_text = replacer.c_str();
 
         this->RefreshLayout();
     }
@@ -565,11 +570,6 @@ namespace GT
         else if (firstChar == '\n')
         {
             runStart += 1;
-
-            if (runStart[0] == '\r') {
-                runStart += 1;
-            }
-
             runEnd = runStart;
         }
         else if (firstChar == '\0')
@@ -1057,7 +1057,7 @@ namespace GT
 
                 if (m_text.c_str()[run.iChar] == '\n') {
                     assert(marker.iChar == 1);
-                    marker.iChar       -= 1;
+                    marker.iChar        = 0;
                     marker.relativePosX = 0;
                 }
             }
@@ -1434,7 +1434,7 @@ namespace GT
 
     bool GUISimpleTextLayout::GetSelectionMarkers(TextMarker &startOut, TextMarker &endOut) const
     {
-        if (this->IsAnythingSelected())
+        if (this->IsAnythingSelected() && this->HasSpacingBetweenSelectionMarkers())
         {
             if (m_selectionAnchor.iRun > m_cursor.iRun || (m_selectionAnchor.iRun == m_cursor.iRun && m_selectionAnchor.iChar > m_cursor.iChar))
             {
