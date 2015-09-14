@@ -22,7 +22,7 @@ namespace GT
             gui.SetElementPadding(hRootElement, 2);
             gui.SetElementFont(hRootElement, theme.defaultFontFamily, FontWeight_Medium, FontSlant_None, 12);
 
-            gui.SetElementBorderTop(hRootElement, 1, GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
+            //gui.SetElementBorderTop(hRootElement, 1, GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
 
 
             // The left side container.
@@ -66,7 +66,7 @@ namespace GT
             gui.SetElementCursor(m_hCommandTextBox, GUISystemCursor::IBeam);
             gui.EnableEditableText(m_hCommandTextBox);
             gui.EnableFocusOnMouseClick(m_hCommandTextBox);
-            gui.SetElementFont(m_hCommandTextBox, "Courier New", FontWeight_Medium, FontSlant_None, 12);
+            gui.SetElementFont(m_hCommandTextBox, "Courier New", FontWeight_Medium, FontSlant_None, 15);
             gui.SetElementTextColor(m_hCommandTextBox, theme.defaultTextColor);
         }
     }
