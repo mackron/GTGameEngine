@@ -447,6 +447,22 @@ namespace GT
         this->CloseFile(absolutePath);
     }
 
+    bool Editor::SaveFile(const char* absolutePath)
+    {
+        for (size_t iOpenedFile = 0; iOpenedFile < m_openedFiles.GetCount(); ++iOpenedFile)
+        {
+            auto &openedFile = m_openedFiles[iOpenedFile];
+            if (openedFile.absolutePath == absolutePath)
+            {
+                if (openedFile.pSubEditor != nullptr) {
+                    return openedFile.pSubEditor->SaveFile(absolutePath);
+                }
+            }
+        }
+
+        return false;
+    }
+
 
 
     void Editor::CloseTab(EditorTab* pTab)
@@ -495,6 +511,32 @@ namespace GT
         return false;
     }
 
+    EditorTab* Editor::GetFocusedTab()
+    {
+        if (m_pBodyControl != nullptr)
+        {
+            // NOTE: For now, just look at the first tab group. Need to reconsider this when working with multiple tab groups.
+            if (m_pBodyControl->GetTabGroupCount() > 0)
+            {
+                return m_pBodyControl->GetTabGroupByIndex(0)->GetActiveTab();
+            }
+        }
+
+        return nullptr;
+    }
+
+    const char* Editor::GetFocusedFileAbsolutePath()
+    {
+        EditorTab* pFocusedTab = this->GetFocusedTab();
+        if (pFocusedTab != nullptr)
+        {
+            return this->FindFileAbsolutePathFromTab(pFocusedTab);
+        }
+
+        return nullptr;
+    }
+
+
     EditorTab* Editor::FindFileTab(const char* absolutePath)
     {
         for (size_t iOpenedFile = 0; iOpenedFile < m_openedFiles.GetCount(); ++iOpenedFile)
@@ -503,6 +545,20 @@ namespace GT
             if (openedFile.absolutePath == absolutePath)
             {
                 return openedFile.pTab;
+            }
+        }
+
+        return nullptr;
+    }
+
+    const char* Editor::FindFileAbsolutePathFromTab(EditorTab* pTab)
+    {
+        for (size_t iOpenedFile = 0; iOpenedFile < m_openedFiles.GetCount(); ++iOpenedFile)
+        {
+            auto &openedFile = m_openedFiles[iOpenedFile];
+            if (openedFile.pTab == pTab)
+            {
+                return openedFile.absolutePath.c_str();
             }
         }
 
@@ -803,6 +859,8 @@ namespace GT
     {
         (void)hWindow;
 
+
+        // Editor toggle.
         if (key == GTLib::Keys::Tab)
         {
             if (m_gameContext.IsKeyDown(GTLib::Keys::Shift))
@@ -817,6 +875,17 @@ namespace GT
                 }
             }
         }
+
+
+        // Save the current file.
+        if (key == GTLib::Keys::S)
+        {
+            if (m_gameContext.IsKeyDown(GTLib::Keys::Ctrl))
+            {
+                this->SaveFile(this->GetFocusedFileAbsolutePath());
+            }
+        }
+
 
         m_gui.OnKeyPressed(key);
     }

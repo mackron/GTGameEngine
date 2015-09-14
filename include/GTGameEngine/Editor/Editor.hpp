@@ -130,8 +130,20 @@ namespace GT
         /// Same as CloseFile(), except shows a confirmation message if the file has been modified.
         void TryCloseFile(const char* absolutePath);
 
+        /// Saves the file by it's absolute path.
+        ///
+        /// @param absolutePath [in] The absolute path of the file.
+        ///
+        /// @remarks
+        ///     This will fail if the file with the given absolute path is not open.
+        bool SaveFile(const char* absolutePath);
+
+
         /// Finds the tab associated with the given file.
         EditorTab* FindFileTab(const char* absolutePath);
+
+        /// Finds the file path associated with the given tab.
+        const char* FindFileAbsolutePathFromTab(EditorTab* pTab);
 
 
         /// Closes the given tab.
@@ -144,6 +156,12 @@ namespace GT
         ///
         /// @param absolutePath [in] The absolute path of the file whose tab should be activated.
         bool ActivateFileTab(const char* absolutePath);
+
+        /// Retrieves a point to the tab that currently has focus.
+        EditorTab* GetFocusedTab();
+
+        /// Retrieves the absolute path of the opened file that has the focused editor.
+        const char* GetFocusedFileAbsolutePath();
 
 
         /// Attaches an event handler.

@@ -38,4 +38,11 @@ namespace GT
     ImageEditor::~ImageEditor()
     {
     }
+
+
+    bool ImageEditor::SaveFile(const char* absolutePath)
+    {
+        (void)absolutePath;
+        return false;
+    }
 }

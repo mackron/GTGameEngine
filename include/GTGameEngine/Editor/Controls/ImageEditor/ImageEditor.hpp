@@ -19,6 +19,9 @@ namespace GT
         virtual ~ImageEditor();
 
 
+        /// @copydoc EditorSubEditor::SaveFile()
+        bool SaveFile(const char* absolutePath);
+
 
     private:
 

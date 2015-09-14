@@ -16,6 +16,10 @@ namespace GT
 
         /// Destructor.
         virtual ~EditorSubEditor();
+
+
+        /// Saves the contents to the given file.
+        virtual bool SaveFile(const char* absolutePath) = 0;
     
     };
 }

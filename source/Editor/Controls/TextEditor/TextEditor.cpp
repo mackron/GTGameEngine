@@ -26,7 +26,7 @@ namespace GT
         gui.EnableFocusOnMouseClick(m_textBox.GetContentElement());
         gui.SetElementFont(m_textBox.GetContentElement(), "Courier New", FontWeight_Medium, FontSlant_None, 15);
         gui.SetElementTextColor(m_textBox.GetContentElement(), theme.defaultTextColor);
-
+        gui.GiveElementKeyboardFocus(m_textBox.GetContentElement());
 
 
         this->LoadFile(absolutePath);
@@ -65,6 +65,25 @@ namespace GT
 
             fileSystem.CloseFile(hFile);
             return result;
+        }
+
+        return false;
+    }
+
+    bool TextEditor::SaveFile(const char* absolutePath)
+    {
+        const char* fileData = this->GetGUI().GetElementText(m_textBox.GetContentElement());
+        if (fileData != nullptr)
+        {
+            FileSystem &fileSystem = this->GetEditor().GetEngineContext().GetFileSystem();
+            HFile hFile = fileSystem.OpenFile(absolutePath, FileAccessMode::Write);
+            if (hFile != NULL)
+            {
+                fileSystem.WriteFile(hFile, strlen(fileData), fileData);
+                fileSystem.CloseFile(hFile);
+
+                return true;
+            }
         }
 
         return false;
