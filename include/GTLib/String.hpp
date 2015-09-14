@@ -209,6 +209,17 @@ namespace GTLib
         }
 
 
+        /// Inserts a string at the given index.
+        void Insert(const T* text, unsigned int index)
+        {
+            Strings::List<T> newValue;
+            newValue.Append(this->data,         static_cast<ptrdiff_t>(index));
+            newValue.Append(text);
+            newValue.Append(this->data + index, static_cast<ptrdiff_t>(this->lengthInTs - index));
+
+            this->Assign(newValue.c_str());
+        }
+
         /// Inserts a character at the given index.
         void InsertCharacter(char32_t character, unsigned int index)
         {
