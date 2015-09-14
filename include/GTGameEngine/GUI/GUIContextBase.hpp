@@ -165,6 +165,12 @@ namespace GT
         virtual void PostEvent_OnPrintableKeyDown(GUIElement* pElement, char32_t character) = 0;
 
 
+        /// Posts the OnTextChanged event.
+        ///
+        /// @param pelement [in] The element receiving the event.
+        virtual void PostEvent_OnTextChanged(GUIElement* pElement) = 0;
+
+
         /// Posts the OnSetMouseEventCapture event.
         ///
         /// @param pElement [in] A reference to the element that has just received the mouse capture.

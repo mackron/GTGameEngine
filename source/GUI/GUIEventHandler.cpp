@@ -68,6 +68,11 @@ namespace GT
     }
 
 
+    void GUIEventHandler::OnTextChanged(GUIContext &, HGUIElement)
+    {
+    }
+
+
     void GUIEventHandler::OnSetMouseEventCapture(GUIContext &, HGUIElement)
     {
     }

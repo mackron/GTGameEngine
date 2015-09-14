@@ -422,7 +422,7 @@ namespace GT
     //////////////////////////////
     // Editing
 
-    void GUISimpleTextLayout::InsertCharacterAtCursor(char32_t character)
+    bool GUISimpleTextLayout::InsertCharacterAtCursor(char32_t character)
     {
         // Transform '\r' to '\n'.
         if (character == '\r') {
@@ -446,22 +446,27 @@ namespace GT
 
         // The cursor's sticky position needs to be updated whenever the text is edited.
         this->UpdateMarkerStickyPosition(m_cursor);
+
+
+        return true;
     }
 
-    void GUISimpleTextLayout::DeleteCharacterToLeftOfCursor()
+    bool GUISimpleTextLayout::DeleteCharacterToLeftOfCursor()
     {
         if (this->MoveCursorLeft())
         {
-            this->DeleteCharacterToRightOfCursor();
+            return this->DeleteCharacterToRightOfCursor();
         }
+
+        return false;
     }
 
-    void GUISimpleTextLayout::DeleteCharacterToRightOfCursor()
+    bool GUISimpleTextLayout::DeleteCharacterToRightOfCursor()
     {
-        this->DeleteCharacterToRightOfMarker(m_cursor);
+        return this->DeleteCharacterToRightOfMarker(m_cursor);
     }
 
-    void GUISimpleTextLayout::DeleteSelectedText()
+    bool GUISimpleTextLayout::DeleteSelectedText()
     {
         // We need to get the selected text range and then delete that section from the internal string. Then, we want to position the cursor
         // at the first character index of that range.
@@ -492,7 +497,12 @@ namespace GT
             // Reset the selection marker.
             m_selectionAnchor = m_cursor;
             m_isAnythingSelected = false;
+
+            return true;
         }
+
+
+        return false;
     }
 
 

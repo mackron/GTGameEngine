@@ -134,6 +134,9 @@ namespace GT
         virtual void OnPrintableKeyDown(GUIContext &context, HGUIElement hElement, char32_t character);
 
 
+        /// Called when the text of an element changes.
+        virtual void OnTextChanged(GUIContext &context, HGUIElement hElement);
+
 
         /// Called when an element receives the mouse event capture.
         ///
@@ -195,6 +198,7 @@ namespace GT
     typedef std::function<void (GTLib::Key key)>                                LocalOnKeyPressedAutoRepeatProc;
     typedef std::function<void (GTLib::Key key)>                                LocalOnKeyReleasedProc;
     typedef std::function<void (char32_t character)>                            LocalOnPrintableKeyDownProc;
+    typedef std::function<void ()>                                              LocalOnTextChangedProc;
     typedef std::function<void ()>                                              LocalOnSetMouseEventCaptureProc;
     typedef std::function<void ()>                                              LocalOnReleaseMouseEventCaptureProc;
     typedef std::function<void ()>                                              LocalOnReceiveKeyboardFocusProc;
@@ -215,6 +219,7 @@ namespace GT
         GTLib::Vector<LocalOnKeyPressedAutoRepeatProc>     OnKeyPressedAutoRepeat;
         GTLib::Vector<LocalOnKeyReleasedProc>              OnKeyReleased;
         GTLib::Vector<LocalOnPrintableKeyDownProc>         OnPrintableKeyDown;
+        GTLib::Vector<LocalOnTextChangedProc>              OnTextChanged;
         GTLib::Vector<LocalOnSetMouseEventCaptureProc>     OnSetMouseEventCapture;
         GTLib::Vector<LocalOnReleaseMouseEventCaptureProc> OnReleaseMouseEventCapture;
         GTLib::Vector<LocalOnReceiveKeyboardFocusProc>     OnReceiveKeyboardFocus;
@@ -236,6 +241,7 @@ namespace GT
     typedef std::function<void (HGUIElement hElement, GTLib::Key key)>                                GlobalOnKeyPressedAutoRepeatProc;
     typedef std::function<void (HGUIElement hElement, GTLib::Key key)>                                GlobalOnKeyReleasedProc;
     typedef std::function<void (HGUIElement hElement, char32_t character)>                            GlobalOnPrintableKeyDownProc;
+    typedef std::function<void (HGUIElement hElement)>                                                GlobalOnTextChangedProc;
     typedef std::function<void (HGUIElement hElement)>                                                GlobalOnSetMouseEventCaptureProc;
     typedef std::function<void (HGUIElement hElement)>                                                GlobalOnReleaseMouseEventCaptureProc;
     typedef std::function<void (HGUIElement hElement)>                                                GlobalOnReceiveKeyboardFocusProc;
@@ -258,6 +264,7 @@ namespace GT
         GTLib::Vector<GlobalOnKeyPressedAutoRepeatProc>     OnKeyPressedAutoRepeat;
         GTLib::Vector<GlobalOnKeyReleasedProc>              OnKeyReleased;
         GTLib::Vector<GlobalOnPrintableKeyDownProc>         OnPrintableKeyDown;
+        GTLib::Vector<GlobalOnTextChangedProc>              OnTextChanged;
         GTLib::Vector<GlobalOnSetMouseEventCaptureProc>     OnSetMouseEventCapture;
         GTLib::Vector<GlobalOnReleaseMouseEventCaptureProc> OnReleaseMouseEventCapture;
         GTLib::Vector<GlobalOnReceiveKeyboardFocusProc>     OnReceiveKeyboardFocus;

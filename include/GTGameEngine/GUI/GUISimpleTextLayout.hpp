@@ -151,16 +151,16 @@ namespace GT
         // Editing
 
         /// @copydoc GUITextLayout::InsertCharacterAtCursor()
-        void InsertCharacterAtCursor(char32_t character);
+        bool InsertCharacterAtCursor(char32_t character);
 
         /// @copydoc GUITextLayout::DeleteCharacterToLeftOfCursor()
-        void DeleteCharacterToLeftOfCursor();
+        bool DeleteCharacterToLeftOfCursor();
 
         /// @copydoc GUITextLayout::DeleteCharacterToRightOfCursor()
-        void DeleteCharacterToRightOfCursor();
+        bool DeleteCharacterToRightOfCursor();
 
         /// @copydoc GUITextLayout::DeleteSelectedText()
-        void DeleteSelectedText();
+        bool DeleteSelectedText();
 
 
 

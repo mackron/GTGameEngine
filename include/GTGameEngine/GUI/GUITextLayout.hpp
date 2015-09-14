@@ -270,22 +270,22 @@ namespace GT
         ///
         /// @remarks
         ///     This should be used for backspace, delete and enter characters.
-        virtual void InsertCharacterAtCursor(char32_t character) = 0;
+        virtual bool InsertCharacterAtCursor(char32_t character) = 0;
 
         /// Deletes the character to the left of the cursor, and moves the cursor in response.
         ///
         /// @remarks
         ///     You would typically call this for backspace key presses.
-        virtual void DeleteCharacterToLeftOfCursor() = 0;
+        virtual bool DeleteCharacterToLeftOfCursor() = 0;
 
         /// Deletes the character to the right of the cursor.
         ///
         /// @remarks
         ///     This will not move the cursor.
-        virtual void DeleteCharacterToRightOfCursor() = 0;
+        virtual bool DeleteCharacterToRightOfCursor() = 0;
 
         /// Deletes the selected text.
-        virtual void DeleteSelectedText() = 0;
+        virtual bool DeleteSelectedText() = 0;
 
 
         

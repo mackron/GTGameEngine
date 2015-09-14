@@ -1011,6 +1011,66 @@ namespace GT
     }
 
 
+    void GUIContext::PostEvent_OnTextChanged(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        HGUIElement hElement = reinterpret_cast<GUIElementWithHandle*>(pElement)->handle;
+        assert(hElement != 0);
+        {
+            // Local
+            this->IterateLocalEventHandlers(hElement, [&](GUIEventHandler &eventHandler) -> bool
+            {
+                eventHandler.OnTextChanged(*this, hElement);
+                return true;
+            });
+
+            if (this->GetElementPtr(hElement) == pElement && pElement->pCallbackEventHandlers)
+            {
+                auto handlers = pElement->pCallbackEventHandlers->OnTextChanged;
+                for (size_t i = 0; i < handlers.GetCount(); ++i)
+                {
+                    if (pElement == this->GetElementPtr(hElement))
+                    {
+                        handlers[i]();
+                    }
+                    else
+                    {
+                        break;
+                    }
+                }
+            }
+
+
+            // Global
+            this->IterateGlobalEventHandlers([&](GUIEventHandler &eventHandler) -> bool
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    eventHandler.OnTextChanged(*this, hElement);
+                    return true;
+                }
+
+                return false;
+            });
+
+
+            auto handlers = m_callbackGlobalEventHandlers.OnTextChanged;
+            for (size_t i = 0; i < handlers.GetCount(); ++i)
+            {
+                if (pElement == this->GetElementPtr(hElement))
+                {
+                    handlers[i](hElement);
+                }
+                else
+                {
+                    break;
+                }
+            }
+        }
+    }
+
+
     void GUIContext::PostEvent_OnReceiveKeyboardFocus(GUIElement* pElement)
     {
         assert(pElement != nullptr);
@@ -3577,6 +3637,20 @@ namespace GT
         }
     }
 
+    void GUIContext::OnElementTextChanged(HGUIElement hElement, LocalOnTextChangedProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnTextChanged.PushBack(handler);
+        }
+    }
+
 
     void GUIContext::OnGlobalElementMove(GlobalOnMoveProc handler)
     {
@@ -3631,6 +3705,11 @@ namespace GT
     void GUIContext::OnGlobalElementReleaseMouseEventCapture(GlobalOnReleaseMouseEventCaptureProc handler)
     {
         m_callbackGlobalEventHandlers.OnReleaseMouseEventCapture.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementTextChanged(GlobalOnTextChangedProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnTextChanged.PushBack(handler);
     }
 
     void GUIContext::OnGlobalElementSurfaceNeedsRepaint(GlobalOnSurfaceNeedsRepaintProc handler)

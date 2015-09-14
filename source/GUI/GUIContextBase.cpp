@@ -3427,9 +3427,13 @@ namespace GT
                         // Editing.
                         if (key == GTLib::Keys::Backspace) {
                             if (m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected()) {
-                                m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText();
+                                if (m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText()) {
+                                    this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
+                                }
                             } else {
-                                m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToLeftOfCursor();
+                                if (m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToLeftOfCursor()) {
+                                    this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
+                                }
                                 
                                 if (m_isSelectingWithShiftKey) {
                                     m_pElementWithKeyboardFocus->pTextLayout->MoveSelectionAnchorToCursor();
@@ -3440,9 +3444,13 @@ namespace GT
                         }
                         if (key == GTLib::Keys::Delete) {
                             if (m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected()) {
-                                m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText();
+                                if (m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText()) {
+                                    this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
+                                }
                             } else {
-                                m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToRightOfCursor();
+                                if (m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToRightOfCursor()) {
+                                    this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
+                                }
 
                                 if (m_isSelectingWithShiftKey) {
                                     m_pElementWithKeyboardFocus->pTextLayout->MoveSelectionAnchorToCursor();
@@ -3536,10 +3544,14 @@ namespace GT
 
                 if (m_pElementWithKeyboardFocus->pTextLayout != nullptr) {
                     if (m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected()) {
-                        m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText();
+                        if (m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText()) {
+                            this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
+                        }
                     }
 
-                    m_pElementWithKeyboardFocus->pTextLayout->InsertCharacterAtCursor(character);
+                    if (m_pElementWithKeyboardFocus->pTextLayout->InsertCharacterAtCursor(character)) {
+                        this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
+                    }
                     this->UpdateTextCursorByFocusedElement();
 
 
@@ -4173,7 +4185,10 @@ namespace GT
         {
             if (text != nullptr)
             {
-                // TODO: Compare the type of the current text layout and replace with a new one if the new type is different.
+                // We need to determine if the font is different depending on 
+                const char* pOldText = this->GetElementText(pElement);
+                bool isTextDifferent = (pOldText == nullptr || (pOldText != text && !GTLib::Strings::Equal(text, pOldText)));
+
 
                 if (pElement->pTextLayout == nullptr)
                 {
@@ -4181,23 +4196,30 @@ namespace GT
                 }
 
                 assert(pElement->pTextLayout != nullptr);
-                {
-                    pElement->pTextLayout->SetDefaultFont(this->GetElementFont(pElement));
-                    pElement->pTextLayout->SetDefaultTextColor(this->GetElementTextColor(pElement));
-                    pElement->pTextLayout->SetText(text);
+                pElement->pTextLayout->SetDefaultFont(this->GetElementFont(pElement));
+                pElement->pTextLayout->SetDefaultTextColor(this->GetElementTextColor(pElement));
+                pElement->pTextLayout->SetText(text);
 
-                    unsigned int textBoundsWidth  = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerWidth(pElement)));
-                    unsigned int textBoundsHeight = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerHeight(pElement)));
-                    pElement->pTextLayout->SetContainerBounds(textBoundsWidth, textBoundsHeight);
+                unsigned int textBoundsWidth  = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerWidth(pElement)));
+                unsigned int textBoundsHeight = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerHeight(pElement)));
+                pElement->pTextLayout->SetContainerBounds(textBoundsWidth, textBoundsHeight);
 
-                    pElement->pTextLayout->SetAlignment(ToGUITextLayoutHorizontalAlignment(this->GetElementHorizontalAlign(pElement)), ToGUITextLayoutVerticalAlignment(this->GetElementVerticalAlign(pElement)));
+                pElement->pTextLayout->SetAlignment(ToGUITextLayoutHorizontalAlignment(this->GetElementHorizontalAlign(pElement)), ToGUITextLayoutVerticalAlignment(this->GetElementVerticalAlign(pElement)));
+
+                if (isTextDifferent) {
+                    this->PostEvent_OnTextChanged(pElement);
                 }
             }
             else
             {
                 // If the element does not have any text, delete the layout object to save memory.
-                delete pElement->pTextLayout;
-                pElement->pTextLayout = nullptr;
+                if (pElement->pTextLayout != nullptr)
+                {
+                    delete pElement->pTextLayout;
+                    pElement->pTextLayout = nullptr;
+
+                    this->PostEvent_OnTextChanged(pElement);
+                }
             }
         }
     }

@@ -147,6 +147,10 @@ namespace GT
         void PostEvent_OnPrintableKeyDown(GUIElement* pElement, char32_t character);
 
 
+        /// @copydoc GUIContextBase::PostEvent_OnTextChanged()
+        void PostEvent_OnTextChanged(GUIElement* pElement);
+
+
         /// @copydoc GUIContextBase::PostEvent_OnReceiveKeyboardFocus()
         void PostEvent_OnReceiveKeyboardFocus(GUIElement* pElement);
 
@@ -1542,6 +1546,7 @@ namespace GT
         void OnElementMouseWheel(HGUIElement hElement, LocalOnMouseWheelProc handler);
         void OnElementSetMouseEventCapture(HGUIElement hElement, LocalOnSetMouseEventCaptureProc handler);
         void OnElementReleaseMouseEventCapture(HGUIElement hElement, LocalOnReleaseMouseEventCaptureProc handler);
+        void OnElementTextChanged(HGUIElement hElement, LocalOnTextChangedProc handler);
 
         void OnGlobalElementSize(GlobalOnSizeProc handler);
         void OnGlobalElementMove(GlobalOnMoveProc handler);
@@ -1554,8 +1559,10 @@ namespace GT
         void OnGlobalElementMouseWheel(GlobalOnMouseWheelProc handler);
         void OnGlobalElementSetMouseEventCapture(GlobalOnSetMouseEventCaptureProc handler);
         void OnGlobalElementReleaseMouseEventCapture(GlobalOnReleaseMouseEventCaptureProc handler);
+        void OnGlobalElementTextChanged(GlobalOnTextChangedProc handler);
         void OnGlobalElementSurfaceNeedsRepaint(GlobalOnSurfaceNeedsRepaintProc handler);
         void OnGlobalCursorNeedsToChange(GlobalOnCursorNeedsToChangeProc handler);
+        
 
 
 
