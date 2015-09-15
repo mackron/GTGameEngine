@@ -203,6 +203,13 @@ namespace GT
         virtual GTLib::Colour GetDefaultTextColor() const = 0;
 
 
+        /// Sets the default colour of the selection background.
+        virtual void SetSelectionBackgroundColor(const GTLib::Colour &color) = 0;
+
+        /// Retrieves the default colour of the selection background.
+        virtual GTLib::Colour GetSelectionBackgroundColor() const = 0;
+
+
         /// Retrieves the text rectangle relative to the bounds.
         virtual void GetTextRectRelativeToBounds(GTLib::Rect<int> &rectOut) const = 0;
 

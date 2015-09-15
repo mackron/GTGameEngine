@@ -91,6 +91,13 @@ namespace GT
         GTLib::Colour GetDefaultTextColor() const;
 
 
+        /// @copydoc GUITextLayout::SetSelectionBackgroundColor()
+        void SetSelectionBackgroundColor(const GTLib::Colour &color);
+
+        /// @copydoc GUITextLayout::GetSelectionBackgroundColor()
+        GTLib::Colour GetSelectionBackgroundColor() const;
+
+
         /// @copydoc GUITextLayout::GetTextRectRelativeToBounds()
         void GetTextRectRelativeToBounds(GTLib::Rect<int> &rectOut) const;
 
@@ -431,6 +438,9 @@ namespace GT
 
         /// The colour of the text.
         GTLib::Colour m_color;
+
+        /// The colour of the selection background.
+        GTLib::Colour m_selectionBackgroundColor;
 
 
         /// The list of runs making up the layout.

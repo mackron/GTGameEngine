@@ -31,7 +31,7 @@ namespace GT
           m_tabSizeInSpaces(4),
           m_horizontalAlignment(GUITextLayoutHorizontalAlignment::Left), m_verticalAlignment(GUITextLayoutVerticalAlignment::Top),
           m_hFont(0),
-          m_color(),
+          m_color(), m_selectionBackgroundColor(0.2f, 0.6f, 0.8f),
           m_runs(),
           m_textBoundsWidth(0), m_textBoundsHeight(0),
           m_cursor(),
@@ -176,6 +176,17 @@ namespace GT
     GTLib::Colour GUISimpleTextLayout::GetDefaultTextColor() const
     {
         return m_color;
+    }
+
+
+    void GUISimpleTextLayout::SetSelectionBackgroundColor(const GTLib::Colour &color)
+    {
+        m_selectionBackgroundColor = color;
+    }
+
+    GTLib::Colour GUISimpleTextLayout::GetSelectionBackgroundColor() const
+    {
+        return m_selectionBackgroundColor;
     }
 
 
@@ -391,7 +402,7 @@ namespace GT
         if (this->GetSelectionMarkers(selectionStart, selectionEnd))
         {
             GUITextRectDesc desc;
-            desc.colour = GTLib::Colour(0.2f, 0.6f, 0.8f);
+            desc.colour = m_selectionBackgroundColor;
 
             if (selectionStart.iRun == selectionEnd.iRun)
             {
