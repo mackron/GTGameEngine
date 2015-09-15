@@ -250,7 +250,8 @@ namespace GT
         : ModelAsset(assetType),
           m_vertexData(nullptr), m_vertexCount(0), m_vertexCountPerFrame(0), m_vertexLayout(),
           m_indexData(nullptr), m_indexCount(0),
-          m_materialOffsetCountPair()
+          m_materialOffsetCountPair(),
+          m_keyframeCount(0)
     {
         m_vertexLayout[0] = {VertexAttribFormat_Float, 3, sizeof(float) * 0, VertexAttribSemantic_Position};
         m_vertexLayout[1] = {VertexAttribFormat_Float, 2, sizeof(float) * 3, VertexAttribSemantic_TexCoord};
