@@ -215,7 +215,6 @@ namespace GT
             int height;
         };
 
-
         /// Structure representing a position within the text.
         struct TextMarker
         {
