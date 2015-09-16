@@ -199,13 +199,13 @@ namespace GT
         {
         case GUITextLayoutHorizontalAlignment::Right:
             {
-                rectOut.left = m_containerBoundsWidth - m_textBoundsWidth;
+                rectOut.left = int(m_containerBoundsWidth) - m_textBoundsWidth;
                 break;
             }
 
         case GUITextLayoutHorizontalAlignment::Center:
             {
-                rectOut.left = (m_containerBoundsWidth - m_textBoundsWidth) / 2;
+                rectOut.left = (int(m_containerBoundsWidth) - m_textBoundsWidth) / 2;
                 break;
             }
 
@@ -221,13 +221,13 @@ namespace GT
         {
         case GUITextLayoutVerticalAlignment::Bottom:
             {
-                rectOut.top = m_containerBoundsHeight - m_textBoundsHeight;
+                rectOut.top = int(m_containerBoundsHeight) - m_textBoundsHeight;
                 break;
             }
 
         case GUITextLayoutVerticalAlignment::Center:
             {
-                rectOut.top = (m_containerBoundsHeight - m_textBoundsHeight) / 2;
+                rectOut.top = (int(m_containerBoundsHeight) - m_textBoundsHeight) / 2;
                 break;
             }
 
