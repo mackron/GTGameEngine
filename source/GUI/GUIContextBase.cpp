@@ -4824,7 +4824,7 @@ namespace GT
         if (this->DoesElementHaveText(pElement))
         {
             GTLib::Rect<int> textRect;
-            this->GetElementAbsoluteTextRect(pElement, textRect);
+            this->GetElementAbsoluteInnerRect(pElement, textRect);
 
 
             // Background and selection rectangles.

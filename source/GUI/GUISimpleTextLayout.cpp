@@ -239,7 +239,7 @@ namespace GT
         }
 
         rectOut.left  += m_containerInnerOffsetX;
-        rectOut.right += m_containerInnerOffsetY;
+        rectOut.top   += m_containerInnerOffsetY;
 
         rectOut.right  = rectOut.left + m_textBoundsWidth;
         rectOut.bottom = rectOut.top  + m_textBoundsHeight;
