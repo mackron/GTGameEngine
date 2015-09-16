@@ -6,6 +6,7 @@
 #include "Size.hpp"
 #include "Equal.hpp"
 #include <cstring>
+#include <cstdlib>
 
 namespace GTLib
 {
