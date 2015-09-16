@@ -401,6 +401,25 @@ namespace GT
         TextMarker selectionEnd;
         if (this->GetSelectionMarkers(selectionStart, selectionEnd))
         {
+            const int spaceWidth = this->GetSpaceWidth();
+
+            int lineLeadingSpace  = spaceWidth;
+            int lineTrailingSpace = spaceWidth;
+            if (m_horizontalAlignment == GUITextLayoutHorizontalAlignment::Left) {
+                lineLeadingSpace = 0;
+            }
+            if (m_horizontalAlignment == GUITextLayoutHorizontalAlignment::Right) {
+                lineTrailingSpace = 0;
+            }
+            if (m_horizontalAlignment == GUITextLayoutHorizontalAlignment::Center) {
+                lineLeadingSpace  /= 2;
+                lineTrailingSpace /= 2;
+            }
+
+
+            GTLib::Rect<int> textRect;
+            this->GetTextRectRelativeToBounds(textRect);
+
             GUITextRectDesc desc;
             desc.colour = m_selectionBackgroundColor;
 
@@ -409,36 +428,47 @@ namespace GT
                 // The selection region is on the same run.
                 const TextRun &run = m_runs[selectionStart.iRun];
 
-                desc.rect.left   = run.posX + selectionStart.relativePosX + m_containerInnerOffsetX;
-                desc.rect.top    = run.posY + m_containerInnerOffsetY;
-                desc.rect.right  = run.posX + selectionEnd.relativePosX + m_containerInnerOffsetX;
-                desc.rect.bottom = run.posY + run.height + m_containerInnerOffsetY;
+                desc.rect.left   = textRect.left + run.posX + selectionStart.relativePosX;
+                desc.rect.top    = textRect.top  + run.posY;
+                desc.rect.right  = textRect.left + run.posX + selectionEnd.relativePosX;
+                desc.rect.bottom = textRect.top  + run.posY + run.height;
                 callback(desc);
             }
             else
             {
                 // First run.
-                desc.rect.left   = m_runs[selectionStart.iRun].posX + selectionStart.relativePosX + m_containerInnerOffsetX;
-                desc.rect.top    = m_runs[selectionStart.iRun].posY + m_containerInnerOffsetY;
-                desc.rect.right  = m_runs[selectionStart.iRun].posX + m_runs[selectionStart.iRun].width;
-                desc.rect.bottom = m_runs[selectionStart.iRun].posY + m_runs[selectionStart.iRun].height + m_containerInnerOffsetY;
+                desc.rect.left   = textRect.left + m_runs[selectionStart.iRun].posX + selectionStart.relativePosX;
+                desc.rect.top    = textRect.top  + m_runs[selectionStart.iRun].posY;
+                desc.rect.right  = textRect.left + m_runs[selectionStart.iRun].posX + m_runs[selectionStart.iRun].width;
+                desc.rect.bottom = textRect.top  + m_runs[selectionStart.iRun].posY + m_runs[selectionStart.iRun].height;
                 callback(desc);
 
                 // Every run in between the two markers.
                 for (unsigned int iRun = selectionStart.iRun + 1; iRun < selectionEnd.iRun; ++iRun)
                 {
-                    desc.rect.left   = m_runs[iRun].posX + m_containerInnerOffsetX;
-                    desc.rect.top    = m_runs[iRun].posY + m_containerInnerOffsetY;
-                    desc.rect.right  = m_runs[iRun].posX + m_runs[iRun].width;
-                    desc.rect.bottom = m_runs[iRun].posY + m_runs[iRun].height + m_containerInnerOffsetY;
+                    desc.rect.left   = textRect.left + m_runs[iRun].posX;
+                    desc.rect.top    = textRect.top  + m_runs[iRun].posY;
+                    desc.rect.right  = textRect.left + m_runs[iRun].posX + m_runs[iRun].width;
+                    desc.rect.bottom = textRect.top  + m_runs[iRun].posY + m_runs[iRun].height;
+
+                    // If the run is the first on the line, include the leading space.
+                    if (m_runs[iRun - 1].iLine != m_runs[iRun].iLine) {
+                        desc.rect.left -= lineLeadingSpace;
+                    }
+
+                    // If the run is the last on the line, include the trailing space.
+                    if (m_text.c_str()[m_runs[iRun].iChar] == '\n') {
+                        desc.rect.right += lineTrailingSpace;
+                    }
+
                     callback(desc);
                 }
 
                 // The last run.
-                desc.rect.left   = m_runs[selectionEnd.iRun].posX + m_containerInnerOffsetX;
-                desc.rect.top    = m_runs[selectionEnd.iRun].posY + m_containerInnerOffsetY;
-                desc.rect.right  = m_runs[selectionEnd.iRun].posX + selectionEnd.relativePosX;
-                desc.rect.bottom = m_runs[selectionEnd.iRun].posY + m_runs[selectionEnd.iRun].height + m_containerInnerOffsetY;
+                desc.rect.left   = textRect.left + m_runs[selectionEnd.iRun].posX;
+                desc.rect.top    = textRect.top  + m_runs[selectionEnd.iRun].posY;
+                desc.rect.right  = textRect.left + m_runs[selectionEnd.iRun].posX + selectionEnd.relativePosX;
+                desc.rect.bottom = textRect.top  + m_runs[selectionEnd.iRun].posY + m_runs[selectionEnd.iRun].height;
                 callback(desc);
             }
         }
@@ -586,6 +616,10 @@ namespace GT
 
     void GUISimpleTextLayout::IterateVisibleTextRuns(std::function<void (const GUITextRunDesc &textRunDesc)> func) const
     {
+        // The position of each run will be relative to the text bounds. We want to make it relative to the container bounds.
+        GTLib::Rect<int> textRect;
+        this->GetTextRectRelativeToBounds(textRect);
+
         // This is a naive implementation. Can be improved a bit.
         for (size_t iRun = 0; iRun < m_runs.GetCount(); ++iRun)
         {
@@ -593,12 +627,12 @@ namespace GT
 
             if (!this->IsRunWhitespace(run))
             {
-                int runTop    = run.posY + m_containerInnerOffsetY;
+                int runTop    = run.posY + textRect.top;
                 int runBottom = runTop   + run.height;
 
                 if (runBottom > 0 && runTop < int(m_containerBoundsHeight))
                 {
-                    int runLeft  = run.posX + m_containerInnerOffsetX;
+                    int runLeft  = run.posX + textRect.left;
                     int runRight = runLeft  + run.width;
 
                     if (runRight > 0 && runLeft < int(m_containerBoundsWidth))
@@ -680,7 +714,6 @@ namespace GT
     void GUISimpleTextLayout::RefreshLayout()
     {
         const int lineHeight = this->GetLineHeight();
-        const int spaceWidth = this->GetSpaceWidth();
         const int tabWidth   = this->GetTabWidth();
 
 
@@ -741,7 +774,7 @@ namespace GT
             {
                 // New line.
                 iCurrentLine += 1;
-                run.width = spaceWidth;     // Set the width of this to a space so that blank lines are visualized when selected.
+                run.width = 0;
             }
             else if (nextRunStart[0] == '\0')
             {
@@ -784,8 +817,6 @@ namespace GT
         {
             this->RefreshAlignment();
         }
-
-        this->UpdateMarkerStickyPosition(m_cursor);
     }
 
 
@@ -828,8 +859,6 @@ namespace GT
             // Go to the next line.
             iCurrentLine += 1;
         }
-
-        this->UpdateMarkerStickyPosition(m_cursor);
     }
 
     void GUISimpleTextLayout::CalculateLineAlignmentOffset(int lineWidth, int &offsetXOut, int &offsetYOut) const
@@ -838,13 +867,13 @@ namespace GT
         {
         case GUITextLayoutHorizontalAlignment::Right:
             {
-                offsetXOut = int(m_containerBoundsWidth) - lineWidth;
+                offsetXOut = int(m_textBoundsWidth) - lineWidth;
                 break;
             }
 
         case GUITextLayoutHorizontalAlignment::Center:
             {
-                offsetXOut = (int(m_containerBoundsWidth) - lineWidth) / 2;
+                offsetXOut = (int(m_textBoundsWidth) - lineWidth) / 2;
                 break;
             }
 
@@ -861,13 +890,13 @@ namespace GT
         {
         case GUITextLayoutVerticalAlignment::Bottom:
             {
-                offsetYOut = int(m_containerBoundsHeight) - m_textBoundsHeight;
+                offsetYOut = int(m_textBoundsHeight) - m_textBoundsHeight;
                 break;
             }
 
         case GUITextLayoutVerticalAlignment::Center:
             {
-                offsetYOut = (int(m_containerBoundsHeight) - m_textBoundsHeight) / 2;
+                offsetYOut = (int(m_textBoundsHeight) - m_textBoundsHeight) / 2;
                 break;
             }
 
@@ -922,8 +951,11 @@ namespace GT
 
         if (marker.iRun < m_runs.GetCount())
         {
-            posXOut = m_runs[marker.iRun].posX + marker.relativePosX + m_containerInnerOffsetX;
-            posYOut = m_runs[marker.iRun].posY                       + m_containerInnerOffsetY;
+            GTLib::Rect<int> textRect;
+            this->GetTextRectRelativeToBounds(textRect);
+
+            posXOut = textRect.left + m_runs[marker.iRun].posX + marker.relativePosX;
+            posYOut = textRect.top  + m_runs[marker.iRun].posY;
         }
     }
 
