@@ -14,7 +14,12 @@
 #endif
 
 #include <GTLib/CommandLine.hpp>
+
+#if defined(_MSC_VER)
 #include <direct.h>
+#else
+#include <unistd.h>
+#endif
 
 #include "Assets/DefaultAssetAllocator.hpp"
 #include "Audio/OpenAL/AudioEngine_OpenAL.hpp"
