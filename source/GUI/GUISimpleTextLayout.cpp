@@ -784,6 +784,8 @@ namespace GT
         {
             this->RefreshAlignment();
         }
+
+        this->UpdateMarkerStickyPosition(m_cursor);
     }
 
 
@@ -826,6 +828,8 @@ namespace GT
             // Go to the next line.
             iCurrentLine += 1;
         }
+
+        this->UpdateMarkerStickyPosition(m_cursor);
     }
 
     void GUISimpleTextLayout::CalculateLineAlignmentOffset(int lineWidth, int &offsetXOut, int &offsetYOut) const

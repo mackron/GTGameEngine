@@ -4288,6 +4288,11 @@ namespace GT
 
                 pElement->pTextLayout->SetAlignment(ToGUITextLayoutHorizontalAlignment(this->GetElementHorizontalAlign(pElement)), ToGUITextLayoutVerticalAlignment(this->GetElementVerticalAlign(pElement)));
 
+                // If the element owns the cursor, refresh it's position.
+                if (pElement == this->GetTextCursorOwnerElement()) {
+                    this->UpdateTextCursorByFocusedElement();
+                }
+
                 if (isTextDifferent) {
                     this->PostEvent_OnTextChanged(pElement);
                 }
@@ -6568,10 +6573,7 @@ namespace GT
     {
         assert(pElement != nullptr);
 
-        // TODO: Update the layout of the text container.
-
-
-
+        
         // If the size is auto sized, it needs to be invalidated.
         if (GUIElementStyle_Get_IsAnyHeightOfType(pElement->style, NumberType_Auto))
         {
@@ -6730,7 +6732,7 @@ namespace GT
     // If the child is not flexed, r is simply the size ratio of the child without any changes. On the other hand, if the child is flexed, the size is
     // distributed between every flexed child within the available flexing area.
     //
-    // The available flexing area is the width of the parent, minus and fixed sized pElements (including margins). It is calculated using the parent as:
+    // The available flexing area is the width of the parent, minus and fixed sized elements (including margins). It is calculated using the parent as:
     //   f = 0
     //   for each child do
     //       if child is auto-positioned and visible then
@@ -6744,11 +6746,11 @@ namespace GT
     //   end loop
     //   a = parentWidth - f;
     //
-    // We ignore relative and absolute positioned children since they are usually a special case. Invisible pElements should not contribute to the calculation
+    // We ignore relative and absolute positioned children since they are usually a special case. Invisible elements should not contribute to the calculation
     // either so they are also ignored. The margin and padding of children are always fixed (for now), so they are always included regardless of whether or
     // not the child has a flexible size.
     //
-    // Once the available space has been determined, every pElement whose size is relative will be distributed into that space based on their width value. As
+    // Once the available space has been determined, every element whose size is relative will be distributed into that space based on their width value. As
     // an example, if there are two pElements, one with a size of 10% and the other with a size of 20%, the pElements will be distributed such that the 10%
     // pElement is a third of the size of the 20% pElement (10% / (10% + 20%) = 0.333...)
 
@@ -6862,8 +6864,6 @@ namespace GT
                 {
                     assert(pElement->pTextLayout != nullptr);
                     result += pElement->pTextLayout->GetTextWidth();
-
-                    //result += pElement->textManager.GetTextWidth();
                 }
 
                 break;
@@ -7630,6 +7630,10 @@ namespace GT
                     unsigned int textBoundsWidth  = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerWidth(pElement)));
                     unsigned int textBoundsHeight = static_cast<unsigned int>(GTLib::Round(this->Layout_GetElementInnerHeight(pElement)));
                     pElement->pTextLayout->SetContainerBounds(textBoundsWidth, textBoundsHeight);
+
+                    if (pElement == m_pTextCursorOwnerElement) {
+                        this->UpdateTextCursorByFocusedElement();
+                    }
                 }
             }
         }

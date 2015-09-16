@@ -33,6 +33,8 @@ namespace GT
             this->OnChanged();
         });
 
+        gui.SetElementVerticalAlign(m_textBox.GetContentElement(), VerticalAlign_Center);
+
 
         this->LoadFile(absolutePath);
     }
