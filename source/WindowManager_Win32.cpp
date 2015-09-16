@@ -1,6 +1,8 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
 #include <GTGameEngine/WindowManager_Win32.hpp>
+
+#if defined(GT_PLATFORM_WINDOWS)
 #include <cassert>
 
 // Normally we would include the two files below, but of course they are not in the latest build
@@ -1501,4 +1503,6 @@ namespace GT
 
 #if defined(__clang__)
     #pragma GCC diagnostic pop
+#endif
+
 #endif
