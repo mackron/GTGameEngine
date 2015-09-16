@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <new>
 
+
+
 /// Base class for correctly aligning new operations.
 template <int Alignment>
 class AlignedType

@@ -14,7 +14,7 @@
 
 #if defined(__clang__)
     #pragma GCC diagnostic push
-    #pragma GCC diagnostic ignored "-Wreserved-id-macro" // <-- Change this to the warning code you want to disable.
+    #pragma GCC diagnostic ignored "-Wreserved-id-macro"
 #endif
 #include <GL/gl.h>
 #include <GL/glext.h>
@@ -30,6 +30,12 @@ typedef HGLRC (WINAPI * PFNWGLGETCURRENTCONTEXTPROC)   ();
 typedef PROC  (WINAPI * PFNWGLGETPROCADDRESSPROC)      (LPCSTR lpszProc);
 typedef BOOL  (WINAPI * PFNWGLSHARELISTSPROC)          (HGLRC hglrc1, HGLRC hglrc2);
 typedef HDC   (WINAPI * PFNWGLGETCURRENTDCPROC)        ();
+#endif
+
+#if defined(GT_PLATFORM_LINUX)
+#include <GL/gl.h>
+#include <GL/glext.h>
+#include <GL/glxext.h>
 #endif
 
 // Version 1.0
