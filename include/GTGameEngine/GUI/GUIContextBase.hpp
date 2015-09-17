@@ -1946,6 +1946,9 @@ namespace GT
         /// Determines whether or not the text cursor is visible based on it's blink rate.
         bool IsTextCursorBlinkVisible() const;
 
+        /// Sets the blink time of the text cursor.
+        void SetTextCursorBlinkTime(float blinkTimeInSeconds);
+
         /// Retrieves a pointer to the element that owns the text cursor.
         GUIElement* GetTextCursorOwnerElement() const;
 

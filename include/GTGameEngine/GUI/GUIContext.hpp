@@ -1801,6 +1801,9 @@ namespace GT
         /// Determines whether or not the text cursor is visible.
         bool IsTextCursorVisible() const;
 
+        /// Sets the blink time of the text cursor.
+        void SetTextCursorBlinkTime(float blinkTimeInSeconds);
+
         /// Retrieves a pointer to the element that owns the text cursor.
         HGUIElement GetTextCursorOwnerElement() const;
 

@@ -4244,6 +4244,11 @@ namespace GT
         return GUIContextBase::IsTextCursorVisible();
     }
 
+    void GUIContext::SetTextCursorBlinkTime(float blinkTimeInSeconds)
+    {
+        return GUIContextBase::SetTextCursorBlinkTime(blinkTimeInSeconds);
+    }
+
     HGUIElement GUIContext::GetTextCursorOwnerElement() const
     {
         auto pOwnerElement = GUIContextBase::GetTextCursorOwnerElement();

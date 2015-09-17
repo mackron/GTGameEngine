@@ -4045,6 +4045,11 @@ namespace GT
         return modf((m_timeSinceTextCursorShown / m_textCursorBlinkRatePerSecond), &unused) < 0.5f;
     }
 
+    void GUIContextBase::SetTextCursorBlinkTime(float blinkTimeInSeconds)
+    {
+        m_textCursorBlinkRatePerSecond = blinkTimeInSeconds;
+    }
+
     GUIElement* GUIContextBase::GetTextCursorOwnerElement() const
     {
         return m_pTextCursorOwnerElement;
