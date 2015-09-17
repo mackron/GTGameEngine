@@ -21,6 +21,8 @@
 
 namespace GT
 {
+    static const float EditorStepTimeInSeconds = 0.1f;
+
     void EditorFSWProc(void* pEditorIn)
     {
         auto pEditor = reinterpret_cast<Editor*>(pEditorIn);
@@ -68,6 +70,7 @@ namespace GT
           m_guiFontManager(),
           m_gui(&m_guiRenderer, &m_guiFontManager, &m_guiRenderer),
           m_globalGUIEventHandler(),
+          m_guiStepTimerID(1),
           m_hMainWindow(NULL),
           m_windowSurfaceMap(),
           m_eventHandlers(),
@@ -127,8 +130,7 @@ namespace GT
                         m_gui.SetElementParent(m_pFooterControl->GetRootGUIElement(), hMainWindowElement);
 
 
-
-                        
+                        m_gui.SetTextCursorBlinkTime(m_gameContext.GetWindowManager().GetTextCursorBlinkTime());
 
 
                         return true;
@@ -296,6 +298,11 @@ namespace GT
                     this->PostEvent_OnEditorOpened();
                     m_isOpen = true;
 
+
+                    // We need to initialize the timer for the GUI time step. This will be killed in CloseEditor() to ensure it is only triggered while the editor is open.
+                    m_gameContext.GetWindowManager().CreateTimer(m_hMainWindow, m_guiStepTimerID, static_cast<unsigned int>(EditorStepTimeInSeconds * 1000.0f));     // 100 milliseconds = 10 times per second.
+
+
                     return true;
                 }
             }
@@ -314,6 +321,10 @@ namespace GT
         if (this->IsOpen())
         {
             // TODO: Every relevant windows needs to be hidden.
+
+
+            // The GUI stepping timer needs to be killed so that it is not triggered while the editor is closed.
+            m_gameContext.GetWindowManager().DeleteTimer(m_hMainWindow, m_guiStepTimerID);
 
 
             // We are hiding everything surface, so we want to let the GUI know that the mouse has left whatever surface it is
@@ -1099,6 +1110,15 @@ namespace GT
         if (hSurface != 0)
         {
             m_gui.PaintSurface(hSurface, rect, nullptr);
+        }
+    }
+
+    void Editor::OnTimer(HWindow hWindow, size_t timerID)
+    {
+        (void)hWindow;
+
+        if (timerID == m_guiStepTimerID) {
+            m_gui.Step(EditorStepTimeInSeconds);
         }
     }
 

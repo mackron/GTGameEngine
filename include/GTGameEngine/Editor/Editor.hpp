@@ -369,6 +369,9 @@ namespace GT
         /// @copydoc GameContext::OnPaintWindow()
         void OnPaintWindow(HWindow hWindow, const GTLib::Rect<int> &rect);
 
+        /// @copydoc GameContext::OnTimer()
+        void OnTimer(HWindow hWindow, size_t timerID);
+
 
         /// Called from the file system watcher thread when a file in one of the base directories has been created.
         ///
@@ -499,6 +502,9 @@ namespace GT
 
         /// The global event handler.
         EditorGUIEventHandler m_globalGUIEventHandler;
+
+        /// The timer ID for stepping the GUI.
+        size_t m_guiStepTimerID;
 
         /// The theme.
         EditorTheme m_theme;
