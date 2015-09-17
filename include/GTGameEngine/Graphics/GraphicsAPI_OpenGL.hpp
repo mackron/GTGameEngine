@@ -35,6 +35,7 @@ typedef HDC   (WINAPI * PFNWGLGETCURRENTDCPROC)        ();
 #if defined(GT_PLATFORM_LINUX)
 #include <GL/gl.h>
 #include <GL/glext.h>
+#include <GL/glx.h>
 #include <GL/glxext.h>
 #endif
 

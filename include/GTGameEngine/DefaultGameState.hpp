@@ -243,8 +243,10 @@ namespace GT
         /// The GUI renderer.
         GraphicsWorldGUIRendererAndResourceManager m_guiRendererAndResourceManager;
 
+#if defined(GT_PLATFORM_WINDOWS)
         /// The GUI font manager. For now we're using GDI, but later on we'll make once specific to GraphicsWorld which will be better optimized.
         GUIFontManager_GDI m_guiFontManager;
+#endif
 
         /// The GUI.
         GUIContext m_gui;
