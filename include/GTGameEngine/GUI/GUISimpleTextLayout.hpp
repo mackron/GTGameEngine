@@ -179,6 +179,22 @@ namespace GT
         bool DeleteSelectedText();
 
 
+        /// @copydoc GUITextLayout::EnableUndoRedo()
+        void EnableUndoRedo();
+
+        /// @copydoc GUITextLayout::DisableUndoRedo()
+        void DisableUndoRedo();
+
+        /// @copydoc GUITextLayout::CreateUndoRedoPoint()
+        bool CreateUndoRedoPoint();
+
+        /// @copydoc GUITextLayout::Undo()
+        bool Undo();
+
+        /// @copydoc GUITextLayout::Redo()
+        bool Redo();
+
+
 
     private:
 
@@ -235,6 +251,22 @@ namespace GT
             /// The absolute position on the x axis to place the marker when moving up and down lines. Note that this is not relative
             /// to the run, but rather the line. This will be updated when the marker is moved left and right.
             int absoluteSickyPosX;
+        };
+
+        /// Structure representing an undo/redo point.
+        struct UndoRedoState
+        {
+            /// The text at the point of the undo/redo point.
+            GTLib::String text;
+
+            /// The index of the character the cursor is positioned at.
+            unsigned int iCursorCharacter;
+
+            /// The index of the character the selection anchor is positioned at.
+            unsigned int iSelectionAnchorCharacter;
+
+            /// Whether or not anything is selected.
+            bool isAnythingSelected;
         };
 
 
@@ -400,6 +432,27 @@ namespace GT
 
 
 
+        ///////////////////////////
+        // Undo/Redo
+
+        /// Initializes the undo/redo stack.
+        ///
+        /// @remarks
+        ///     When undo/redo is enabled, this will create a stack frame at position 0 which represents the original state
+        ///     at the time this function is called. When undo/redo is disabled, the state stack will be completely empty to
+        ///     save on memory.
+        void InitUndoRedoStack();
+
+        /// Removes the undo/redo state stack items after the current undo/redo point.
+        void TrimUndoRedoStack();
+        
+        /// Sets the layout based on the current undo/redo point.
+        void ApplyUndoRedoState();
+
+        /// Takes a snaphot of the current state and pushes it to the top of the undo/redo stack.
+        void PushUndoRedoPointFromCurrentState();
+
+
     private:
 
         /// The text.
@@ -464,6 +517,16 @@ namespace GT
 
         /// Keeps track of whether or not anything is selected.
         bool m_isAnythingSelected;
+
+
+        /// Whether or not undo/redo is enabled.
+        bool m_isUndoRedoEnabled;
+
+        /// The undo/redo stack.
+        GTLib::Vector<UndoRedoState> m_undoRedoStateStack;
+
+        /// The index of the undo/redo state item we are currently sitting on.
+        unsigned int m_iUndoRedoState;
     };
 }
 

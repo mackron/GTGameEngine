@@ -86,6 +86,9 @@ namespace GT
         /// Sets the text of the text manager.
         ///
         /// @param text [in] The text.
+        ///
+        /// @remarks
+        ///     This will reset the undo/redo stack.
         virtual void SetText(const char* text) = 0;
 
         /// Retrieves a pointer to the text.
@@ -306,6 +309,20 @@ namespace GT
         virtual bool DeleteSelectedText() = 0;
 
 
+        /// Enables undo/redo.
+        virtual void EnableUndoRedo() = 0;
+
+        /// Disables undo/redo.
+        virtual void DisableUndoRedo() = 0;
+
+        /// Creates a snapshot of the current state of the text layout and pushes it to the top of the undo/redo stack.
+        virtual bool CreateUndoRedoPoint() = 0;
+
+        /// Performs an undo operation.
+        virtual bool Undo() = 0;
+
+        /// Performs a redo operation.
+        virtual bool Redo() = 0;
         
 
 

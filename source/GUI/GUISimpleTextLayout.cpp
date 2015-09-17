@@ -35,7 +35,8 @@ namespace GT
           m_runs(),
           m_textBoundsWidth(0), m_textBoundsHeight(0),
           m_cursor(),
-          m_selectionAnchor(), m_isInSelectionMode(false), m_isAnythingSelected(false)
+          m_selectionAnchor(), m_isInSelectionMode(false), m_isAnythingSelected(false),
+          m_isUndoRedoEnabled(), m_undoRedoStateStack(), m_iUndoRedoState(0)
     {
     }
 
@@ -66,6 +67,10 @@ namespace GT
         // The selection state will be dirty, so just deselect everything and move the selection anchor to the cursor.
         this->DeselectAll();
         this->MoveSelectionAnchorToCursor();
+
+
+        // The undo/redo stack needs to be reset.
+        this->InitUndoRedoStack();
     }
 
     const char* GUISimpleTextLayout::GetText() const
@@ -605,6 +610,75 @@ namespace GT
         }
 
 
+        return false;
+    }
+
+
+    void GUISimpleTextLayout::EnableUndoRedo()
+    {
+        if (!m_isUndoRedoEnabled) {
+            m_isUndoRedoEnabled = true;
+
+            // Make sure the undo/redo stack is initialized.
+            this->InitUndoRedoStack();
+        }
+    }
+
+    void GUISimpleTextLayout::DisableUndoRedo()
+    {
+        if (m_isUndoRedoEnabled) {
+            m_isUndoRedoEnabled = false;
+
+            // Make sure the undo/redo stack is reset. When undo/redo is disabled, the undo/redo stack is emptied to free up as much memory as possible.
+            this->InitUndoRedoStack();
+        }
+    }
+
+    bool GUISimpleTextLayout::CreateUndoRedoPoint()
+    {
+        if (m_isUndoRedoEnabled)
+        {
+            // Everything after the current undo/redo point needs to be removed.
+            this->TrimUndoRedoStack();
+
+            this->PushUndoRedoPointFromCurrentState();
+            m_iUndoRedoState += 1;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool GUISimpleTextLayout::Undo()
+    {
+        if (m_isUndoRedoEnabled)
+        {
+            if (m_iUndoRedoState > 0)
+            {
+                m_iUndoRedoState -= 1;
+                this->ApplyUndoRedoState();
+
+                return true;
+            }
+        }
+        
+        return false;
+    }
+
+    bool GUISimpleTextLayout::Redo()
+    {
+        if (m_isUndoRedoEnabled)
+        {
+            if (m_iUndoRedoState < m_undoRedoStateStack.GetCount())
+            {
+                m_iUndoRedoState += 1;
+                this->ApplyUndoRedoState();
+
+                return true;
+            }
+        }
+        
         return false;
     }
 
@@ -1629,5 +1703,50 @@ namespace GT
     int GUISimpleTextLayout::GetTabWidth() const
     {
         return this->GetTabSizeInSpaces() * this->GetSpaceWidth();
+    }
+
+
+    void GUISimpleTextLayout::InitUndoRedoStack()
+    {
+        m_iUndoRedoState = 0;
+        m_undoRedoStateStack.Clear();
+
+        if (m_isUndoRedoEnabled)
+        {
+            this->PushUndoRedoPointFromCurrentState();      // <-- This does not increment m_iUndoRedoState.
+        }
+    }
+
+    void GUISimpleTextLayout::TrimUndoRedoStack()
+    {
+        while (m_undoRedoStateStack.GetCount() > m_iUndoRedoState + 1)
+        {
+            m_undoRedoStateStack.PopBack();
+        }
+    }
+        
+    void GUISimpleTextLayout::ApplyUndoRedoState()
+    {
+        if (m_iUndoRedoState < m_undoRedoStateStack.GetCount())
+        {
+            UndoRedoState &state = m_undoRedoStateStack[m_iUndoRedoState];
+            
+            m_text = state.text;
+            m_isAnythingSelected = state.isAnythingSelected;
+            this->MoveMarkerToCharacter(m_cursor, state.iCursorCharacter);
+            this->MoveMarkerToCharacter(m_selectionAnchor, state.iSelectionAnchorCharacter);
+        }
+    }
+
+    void GUISimpleTextLayout::PushUndoRedoPointFromCurrentState()
+    {
+        // NOTE: This does not increment m_iUndoRedoState.
+        UndoRedoState pState;
+        pState.text                      = m_text;
+        pState.iCursorCharacter          = this->GetMarkerAbsoluteCharacterIndex(m_cursor);
+        pState.iSelectionAnchorCharacter = this->GetMarkerAbsoluteCharacterIndex(m_selectionAnchor);
+        pState.isAnythingSelected        = m_isAnythingSelected;
+
+        m_undoRedoStateStack.PushBack(pState);
     }
 }

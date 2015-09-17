@@ -4278,6 +4278,11 @@ namespace GT
                 }
 
                 assert(pElement->pTextLayout != nullptr);
+
+                if (this->IsEditableTextEnabled(pElement)) {
+                    pElement->pTextLayout->EnableUndoRedo();
+                }
+
                 pElement->pTextLayout->SetDefaultFont(this->GetElementFont(pElement));
                 pElement->pTextLayout->SetDefaultTextColor(this->GetElementTextColor(pElement));
                 pElement->pTextLayout->SetText(text);
