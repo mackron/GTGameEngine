@@ -60,6 +60,7 @@ namespace GT
           m_pSurfaceUnderMouse(nullptr),
           m_currentCursor(GUISystemCursor::Default),
           m_pElementWithKeyboardFocus(nullptr), m_isSelectingTextWithMouse(false), m_isSelectingWithShiftKey(false),
+          m_timeSinceTextCursorShown(0), m_textCursorBlinkRatePerSecond(1),
           m_pTextCursorOwnerElement(nullptr), m_isTextCursorVisible(false), m_textCursorRelativePosX(0), m_textCursorRelativePosY(0),
           m_layoutContext(),
           m_batchLockCounter(0)
@@ -3222,6 +3223,30 @@ namespace GT
 
 
     ////////////////////////////////////////////////////////////////
+    // Time Stepping
+
+    void GUIContextBase::Step(double deltaTimeInSeconds)
+    {
+        this->BeginBatch();
+
+        if (m_isTextCursorVisible)
+        {
+            bool wasTextCursorBlinkVisible = this->IsTextCursorBlinkVisible();
+            m_timeSinceTextCursorShown += float(deltaTimeInSeconds);
+
+            if (this->IsTextCursorBlinkVisible() != wasTextCursorBlinkVisible)
+            {
+                // The visibility state of the text cursor has changed which means that section needs to be repainted.
+                this->Painting_InvalidateTextCursorRect();
+            }
+        }
+        
+        this->EndBatch();
+    }
+
+
+
+    ////////////////////////////////////////////////////////////////
     // Painting
 
     void GUIContextBase::InvalidateSurfaceRect(GUISurface* pSurface, const GTLib::Rect<int> &rect)
@@ -3983,9 +4008,10 @@ namespace GT
             // Before changing the text cursor, we need to invalidate the rectangle of the old rectangle.
             this->Painting_InvalidateTextCursorRect();
 
-            m_pTextCursorOwnerElement = pOwnerElement;
-            m_textCursorRelativePosX  = relativePosX;
-            m_textCursorRelativePosY  = relativePosY;
+            m_pTextCursorOwnerElement  = pOwnerElement;
+            m_textCursorRelativePosX   = relativePosX;
+            m_textCursorRelativePosY   = relativePosY;
+            m_timeSinceTextCursorShown = 0;
 
             if (m_pTextCursorOwnerElement != nullptr)
             {
@@ -4011,6 +4037,12 @@ namespace GT
     bool GUIContextBase::IsTextCursorVisible() const
     {
         return m_isTextCursorVisible;
+    }
+
+    bool GUIContextBase::IsTextCursorBlinkVisible() const
+    {
+        float unused;
+        return modf((m_timeSinceTextCursorShown / m_textCursorBlinkRatePerSecond), &unused) < 0.5f;
     }
 
     GUIElement* GUIContextBase::GetTextCursorOwnerElement() const
@@ -5029,7 +5061,7 @@ namespace GT
         }
 
         // Text cursor.
-        if (m_pTextCursorOwnerElement == pElement && m_isTextCursorVisible && m_pFontManager != nullptr)
+        if (m_pTextCursorOwnerElement == pElement && m_isTextCursorVisible && m_pFontManager != nullptr && this->IsTextCursorBlinkVisible())
         {
             GTLib::Rect<int> textCursorRect;
             this->GetTextCursorAbsoluteRect(textCursorRect);

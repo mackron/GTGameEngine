@@ -1703,6 +1703,22 @@ namespace GT
         void EndBatch();
 
 
+
+        ////////////////////////////////////////////////////////////////
+        // Time Stepping
+
+        /// Performs a time step.
+        ///
+        /// @param deltaTimeInSeconds [in] The time in seconds since the last time step.
+        ///
+        /// @remarks
+        ///     This will update anything time-based such as animations and the text cursor. 
+        ///     @par
+        ///     This will trigger the appropriate painting events.
+        void Step(double deltaTimeInSeconds);
+
+
+
         ////////////////////////////////////////////////////////////////
         // Painting
 
@@ -1927,6 +1943,9 @@ namespace GT
         /// Determines whether or not the text cursor is visible.
         bool IsTextCursorVisible() const;
 
+        /// Determines whether or not the text cursor is visible based on it's blink rate.
+        bool IsTextCursorBlinkVisible() const;
+
         /// Retrieves a pointer to the element that owns the text cursor.
         GUIElement* GetTextCursorOwnerElement() const;
 
@@ -1935,7 +1954,6 @@ namespace GT
 
         /// Retrieves the absolute rectangle of the text cursor.
         void GetTextCursorAbsoluteRect(GTLib::Rect<int> &rectOut) const;
-
 
 
     private:
@@ -2655,6 +2673,13 @@ namespace GT
         /// The position of the text cursor, relative to the element that owns it.
         int m_textCursorRelativePosX;
         int m_textCursorRelativePosY;
+
+        /// The time since the cursor was last shown. We use this when determining whether or not the cursor should be visible based on blink rate.
+        float m_timeSinceTextCursorShown;
+
+        /// The text cursor's blink rate per second.
+        float m_textCursorBlinkRatePerSecond;
+
 
 
         /// Object containing the necessary variables for handling layout updates.

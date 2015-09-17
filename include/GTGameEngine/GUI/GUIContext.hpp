@@ -1513,6 +1513,14 @@ namespace GT
 
 
         ////////////////////////////////////////////////////////////////
+        // Time Stepping
+
+        /// @copydoc GUIContextBase::Step()    
+        void Step(double deltaTimeInSeconds);
+
+
+
+        ////////////////////////////////////////////////////////////////
         // Painting
 
         /// Invalidates a rectangular region of the given surface.
@@ -1591,10 +1599,10 @@ namespace GT
         void OnGlobalElementMouseButtonReleased(GlobalOnMouseButtonReleasedProc handler);
         void OnGlobalElementMouseButtonDoubleClicked(GlobalOnMouseButtonDoubleClickedProc handler);
         void OnGlobalElementMouseWheel(GlobalOnMouseWheelProc handler);
-        void OnGlobalElementKeyPressed(HGUIElement hElement, GlobalOnKeyPressedProc handler);
-        void OnGlobalElementKeyPressedAutoRepeat(HGUIElement hElement, GlobalOnKeyPressedAutoRepeatProc handler);
-        void OnGlobalElementKeyReleased(HGUIElement hElement, GlobalOnKeyReleasedProc handler);
-        void OnGlobalElementPrintableKeyDown(HGUIElement hElement, GlobalOnPrintableKeyDownProc handler);
+        void OnGlobalElementKeyPressed(GlobalOnKeyPressedProc handler);
+        void OnGlobalElementKeyPressedAutoRepeat(GlobalOnKeyPressedAutoRepeatProc handler);
+        void OnGlobalElementKeyReleased(GlobalOnKeyReleasedProc handler);
+        void OnGlobalElementPrintableKeyDown(GlobalOnPrintableKeyDownProc handler);
         void OnGlobalElementSetMouseEventCapture(GlobalOnSetMouseEventCaptureProc handler);
         void OnGlobalElementReleaseMouseEventCapture(GlobalOnReleaseMouseEventCaptureProc handler);
         void OnGlobalElementTextChanged(GlobalOnTextChangedProc handler);

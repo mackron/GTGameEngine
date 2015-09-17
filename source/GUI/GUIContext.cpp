@@ -3506,6 +3506,16 @@ namespace GT
 
 
     ////////////////////////////////////////////////////////////////
+    // Time Stepping
+
+    void GUIContext::Step(double deltaTimeInSeconds)
+    {
+        GUIContextBase::Step(deltaTimeInSeconds);
+    }
+
+
+
+    ////////////////////////////////////////////////////////////////
     // Painting
 
     void GUIContext::InvalidateSurfaceRect(HGUISurface hSurface, const GTLib::Rect<int> &rect)
@@ -3864,22 +3874,22 @@ namespace GT
         m_callbackGlobalEventHandlers.OnMouseWheel.PushBack(handler);
     }
 
-    void GUIContext::OnGlobalElementKeyPressed(HGUIElement hElement, GlobalOnKeyPressedProc handler)
+    void GUIContext::OnGlobalElementKeyPressed(GlobalOnKeyPressedProc handler)
     {
         m_callbackGlobalEventHandlers.OnKeyPressed.PushBack(handler);
     }
 
-    void GUIContext::OnGlobalElementKeyPressedAutoRepeat(HGUIElement hElement, GlobalOnKeyPressedAutoRepeatProc handler)
+    void GUIContext::OnGlobalElementKeyPressedAutoRepeat(GlobalOnKeyPressedAutoRepeatProc handler)
     {
         m_callbackGlobalEventHandlers.OnKeyPressedAutoRepeat.PushBack(handler);
     }
 
-    void GUIContext::OnGlobalElementKeyReleased(HGUIElement hElement, GlobalOnKeyReleasedProc handler)
+    void GUIContext::OnGlobalElementKeyReleased(GlobalOnKeyReleasedProc handler)
     {
         m_callbackGlobalEventHandlers.OnKeyReleased.PushBack(handler);
     }
 
-    void GUIContext::OnGlobalElementPrintableKeyDown(HGUIElement hElement, GlobalOnPrintableKeyDownProc handler)
+    void GUIContext::OnGlobalElementPrintableKeyDown(GlobalOnPrintableKeyDownProc handler)
     {
         m_callbackGlobalEventHandlers.OnPrintableKeyDown.PushBack(handler);
     }
