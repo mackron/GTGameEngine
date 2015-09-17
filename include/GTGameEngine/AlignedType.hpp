@@ -6,6 +6,7 @@
 #include <stdlib.h>
 #include <new>
 
+#include <easy_util/easy_util.h>
 
 
 /// Base class for correctly aligning new operations.
@@ -16,7 +17,7 @@ public:
 
     void* operator new(size_t size)
     {
-        return _aligned_malloc(size, Alignment);
+        return aligned_malloc(Alignment, size);
     }
     void* operator new(size_t, void* ptr)
     {
@@ -24,12 +25,12 @@ public:
     }
     void* operator new(size_t size, const std::nothrow_t &)
     {
-        return _aligned_malloc(size, Alignment);
+        return aligned_malloc(Alignment, size);
     }
 
     void* operator new[](size_t size)
     {
-        return _aligned_malloc(size, Alignment);
+        return aligned_malloc(Alignment, size);
     }
     void* operator new[](size_t, void* ptr)
     {
@@ -37,34 +38,34 @@ public:
     }
     void* operator new[](size_t size, const std::nothrow_t &)
     {
-        return _aligned_malloc(size, Alignment);
+        return aligned_malloc(Alignment, size);
     }
 
 
     void operator delete(void* ptr)
     {
-        _aligned_free(ptr);
+        aligned_free(ptr);
     }
     void operator delete(void* ptr, const std::nothrow_t &)
     {
-        _aligned_free(ptr);
+        aligned_free(ptr);
     }
     void operator delete(void* ptr, void*)
     {
-        _aligned_free(ptr);
+        aligned_free(ptr);
     }
 
     void operator delete[](void* ptr)
     {
-        _aligned_free(ptr);
+        aligned_free(ptr);
     }
     void operator delete[](void* ptr, const std::nothrow_t &)
     {
-        _aligned_free(ptr);
+        aligned_free(ptr);
     }
     void operator delete[](void* ptr, void*)
     {
-        _aligned_free(ptr);
+        aligned_free(ptr);
     }
 };
 
