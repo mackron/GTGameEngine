@@ -1348,6 +1348,24 @@ namespace GT
         /// @copydoc GUIContextBase::SelectAllText()
         void SelectAllText(HGUIElement hElement);
 
+        /// @copydoc GUIContextBase::UndoTextEdit()
+        bool UndoTextEdit(HGUIElement hElement);
+
+        /// @copydoc GUIContextBase::RedoTextEdit()
+        bool RedoTextEdit(HGUIElement hElement);
+
+        /// @copydoc GUIContextBase::GetUndoPointsRemainingCount()
+        unsigned int GetUndoPointsRemainingCount(HGUIElement hElement);
+
+        /// @copydoc GUIContextBase::GetRedoPointsRemainingCount()
+        unsigned int GetRedoPointsRemainingCount(HGUIElement hElement);
+
+        /// @copydoc GUIContextBase::PrepareUndoRedoPoint()
+        bool PrepareUndoRedoPoint(HGUIElement hElement);
+
+        /// @copydoc GUIContextBase::CreateUndoRedoPoint()
+        bool CreateUndoRedoPoint(HGUIElement hElement);
+
 
         /// Sets the font of the given element.
         ///

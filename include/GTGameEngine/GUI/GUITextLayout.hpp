@@ -315,6 +315,12 @@ namespace GT
         /// Disables undo/redo.
         virtual void DisableUndoRedo() = 0;
 
+        /// Prepares the next undo/redo point.
+        ///
+        /// @remarks
+        ///     This captures the state that will be applied when the undo/redo point is undone.
+        virtual bool PrepareUndoRedoPoint() = 0;
+
         /// Creates a snapshot of the current state of the text layout and pushes it to the top of the undo/redo stack.
         virtual bool CreateUndoRedoPoint() = 0;
 
@@ -323,6 +329,15 @@ namespace GT
 
         /// Performs a redo operation.
         virtual bool Redo() = 0;
+
+        /// Retrieves the number of undo points remaining in the stack.
+        virtual unsigned int GetUndoPointsRemainingCount() const = 0;
+
+        /// Retrieves the number of redo points remaining in the stack.
+        virtual unsigned int GetRedoPointsRemainingCount() const = 0;
+
+        /// Updates the current undo/redo point so that it's state is equal to the current state of the layout.
+        //virtual bool SetCurrentUndoRedoPointToCurrentState() = 0;
         
 
 

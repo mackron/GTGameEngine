@@ -185,6 +185,9 @@ namespace GT
         /// @copydoc GUITextLayout::DisableUndoRedo()
         void DisableUndoRedo();
 
+        /// @copydoc GUITextLayout::PrepareUndoRedoPoint()
+        bool PrepareUndoRedoPoint();
+
         /// @copydoc GUITextLayout::CreateUndoRedoPoint()
         bool CreateUndoRedoPoint();
 
@@ -193,6 +196,15 @@ namespace GT
 
         /// @copydoc GUITextLayout::Redo()
         bool Redo();
+
+        /// @copydoc GUITextLayout::GetUndoPointsRemainingCount()
+        unsigned int GetUndoPointsRemainingCount() const;
+
+        /// @copydoc GUITextLayout::GetRedoPointsRemainingCount()
+        unsigned int GetRedoPointsRemainingCount() const;
+
+        /// @copydoc GUITextLayout::GetRedoPointsRemainingCount()
+        //bool SetCurrentUndoRedoPointToCurrentState();
 
 
 
@@ -267,6 +279,16 @@ namespace GT
 
             /// Whether or not anything is selected.
             bool isAnythingSelected;
+
+
+            /// Undo Only: The index of the character the cursor is positioned at.
+            unsigned int iCursorCharacter_OnUndo;
+
+            /// Undo Only: The index of the character the selection anchor is positioned at.
+            unsigned int iSelectionAnchorCharacter_OnUndo;
+
+            /// Undo Only: Whether or not anything is selected.
+            bool isAnythingSelected_OnUndo;
         };
 
 
@@ -447,7 +469,7 @@ namespace GT
         void TrimUndoRedoStack();
         
         /// Sets the layout based on the current undo/redo point.
-        void ApplyUndoRedoState();
+        void ApplyUndoRedoState(unsigned int iCursorChar, unsigned int iSelectionAnchorChar, bool isAnythingSelected);
 
         /// Takes a snaphot of the current state and pushes it to the top of the undo/redo stack.
         void PushUndoRedoPointFromCurrentState();
@@ -521,6 +543,9 @@ namespace GT
 
         /// Whether or not undo/redo is enabled.
         bool m_isUndoRedoEnabled;
+
+        /// The prepared undo/redo state. This will be filled with some state by PrepareUndoRedoPoint() and again with CreateUndoRedoPoint().
+        UndoRedoState m_preparedUndoRedoState;
 
         /// The undo/redo stack.
         GTLib::Vector<UndoRedoState> m_undoRedoStateStack;

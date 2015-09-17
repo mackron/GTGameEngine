@@ -17,6 +17,7 @@ namespace GT
     public:
 
         typedef std::function<void ()> OnChangedProc;
+        typedef std::function<void ()> OnUnchangedProc;
 
 
         /// Constructor.
@@ -45,6 +46,16 @@ namespace GT
 
         /// Calls the OnChanged function.
         void OnChanged();
+
+
+        /// Sets the function to call when a resource goes from a changed state to an unchanged state.
+        ///
+        /// @remarks
+        ///     This callback will be called in response to the resource being saved, or if a change is undone with an undo command or whatnot.
+        void OnUnchanged(OnUnchangedProc onUnchangedProc);
+
+        /// Calls the OnUnchanged function().
+        void OnUnchanged();
 
 
         /// Saves the contents to the given file.
@@ -90,8 +101,13 @@ namespace GT
         /// A pointer to the tab associated with the sub editor.
         EditorTab* m_pTab;
 
+
         /// The function to call when the resource is modified. This is set by OnChanged()
         OnChangedProc m_onChangedProc;
+
+        /// The function to call when the resource goes from a modified to an unmodified state. An example would be when a change is
+        /// made to a text file, and then that changed is undone with an undo command or whatnot. This is set via OnUnchanged().
+        OnUnchangedProc m_onUnchangedProc;
     };
 }
 

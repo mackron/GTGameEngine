@@ -12,7 +12,7 @@ namespace GT
           m_allocator(allocator),
           m_absolutePathOrIdentifier(),
           m_pTab(nullptr),
-          m_onChangedProc(nullptr)
+          m_onChangedProc(nullptr), m_onUnchangedProc(nullptr)
     {
         strcpy_s(m_absolutePathOrIdentifier, GT_MAX_PATH, absolutePathOrIdentifier);
     }
@@ -53,6 +53,19 @@ namespace GT
     {
         if (m_onChangedProc != nullptr) {
             m_onChangedProc();
+        }
+    }
+
+
+    void EditorSubEditor::OnUnchanged(OnUnchangedProc onUnchangedProc)
+    {
+        m_onUnchangedProc = onUnchangedProc;
+    }
+
+    void EditorSubEditor::OnUnchanged()
+    {
+        if (m_onUnchangedProc != nullptr) {
+            m_onUnchangedProc();
         }
     }
 }

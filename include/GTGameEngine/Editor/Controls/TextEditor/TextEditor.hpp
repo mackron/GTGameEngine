@@ -55,6 +55,10 @@ namespace GT
 
         /// The scrollable control that contains the text.
         EditorScrollableControl m_textBox;
+
+        /// The index of the undo/redo point at the time the file was last loaded or saved. This is used to control when OnUnchanged() should
+        /// be called in response to undo/redo operations.
+        unsigned int m_undoRedoPointAtTimeOfLastSave;
     };
 }
 

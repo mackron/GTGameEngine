@@ -2720,6 +2720,108 @@ namespace GT
         }
     }
 
+    bool GUIContextBase::UndoTextEdit(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        if (this->IsEditableTextEnabled(pElement))
+        {
+            if (pElement->pTextLayout != nullptr) {
+                if (pElement->pTextLayout->Undo()) {
+                    this->PostEvent_OnTextChanged(pElement);
+
+                    this->BeginBatch();
+                    {
+                        this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
+                        this->UpdateTextCursorByFocusedElement();
+                    }
+                    this->EndBatch();
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    bool GUIContextBase::RedoTextEdit(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        if (this->IsEditableTextEnabled(pElement))
+        {
+            if (pElement->pTextLayout != nullptr) {
+                if (pElement->pTextLayout->Redo()) {
+                    this->PostEvent_OnTextChanged(pElement);
+
+                    this->BeginBatch();
+                    {
+                        this->Painting_InvalidateElementRect(m_pElementWithKeyboardFocus);
+                        this->UpdateTextCursorByFocusedElement();
+                    }
+                    this->EndBatch();
+
+                    return true;
+                }
+            }
+        }
+
+        return false;
+    }
+
+    unsigned int GUIContextBase::GetUndoPointsRemainingCount(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        if (this->IsEditableTextEnabled(pElement))
+        {
+            if (pElement->pTextLayout != nullptr) {
+                return pElement->pTextLayout->GetUndoPointsRemainingCount();
+            }
+        }
+
+        return 0;
+    }
+
+    unsigned int GUIContextBase::GetRedoPointsRemainingCount(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        if (this->IsEditableTextEnabled(pElement))
+        {
+            if (pElement->pTextLayout != nullptr) {
+                return pElement->pTextLayout->GetRedoPointsRemainingCount();
+            }
+        }
+
+        return 0;
+    }
+
+    bool GUIContextBase::PrepareUndoRedoPoint(GUIElement* pElement)
+    {
+        assert(pElement != nullptr);
+
+        if (this->IsEditableTextEnabled(pElement)) {
+            if (pElement->pTextLayout != nullptr) {
+                return pElement->pTextLayout->PrepareUndoRedoPoint();
+            }
+        }
+
+        return false;
+    }
+
+    bool GUIContextBase::CreateUndoRedoPoint(GUIElement* pElement)
+    {
+        if (this->IsEditableTextEnabled(pElement)) {
+            if (pElement->pTextLayout != nullptr) {
+                return pElement->pTextLayout->CreateUndoRedoPoint();
+            }
+        }
+
+        return false;
+    }
+
 
     HGUIFont GUIContextBase::SetElementFont(GUIElement* pElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType)
     {
@@ -3508,13 +3610,17 @@ namespace GT
 
                         // Editing.
                         if (key == GTLib::Keys::Backspace) {
+                            m_pElementWithKeyboardFocus->pTextLayout->PrepareUndoRedoPoint();
+
                             if (m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected()) {
                                 if (m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText()) {
                                     this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
+                                    m_pElementWithKeyboardFocus->pTextLayout->CreateUndoRedoPoint();
                                 }
                             } else {
                                 if (m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToLeftOfCursor()) {
                                     this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
+                                    m_pElementWithKeyboardFocus->pTextLayout->CreateUndoRedoPoint();
                                 }
                                 
                                 if (m_isSelectingWithShiftKey) {
@@ -3525,13 +3631,17 @@ namespace GT
                             needsFullRepaint = true;
                         }
                         if (key == GTLib::Keys::Delete) {
+                            m_pElementWithKeyboardFocus->pTextLayout->PrepareUndoRedoPoint();
+
                             if (m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected()) {
                                 if (m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText()) {
                                     this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
+                                    m_pElementWithKeyboardFocus->pTextLayout->CreateUndoRedoPoint();
                                 }
                             } else {
                                 if (m_pElementWithKeyboardFocus->pTextLayout->DeleteCharacterToRightOfCursor()) {
                                     this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
+                                    m_pElementWithKeyboardFocus->pTextLayout->CreateUndoRedoPoint();
                                 }
 
                                 if (m_isSelectingWithShiftKey) {
@@ -3625,6 +3735,8 @@ namespace GT
 
 
                 if (m_pElementWithKeyboardFocus->pTextLayout != nullptr) {
+                    m_pElementWithKeyboardFocus->pTextLayout->PrepareUndoRedoPoint();
+
                     if (m_pElementWithKeyboardFocus->pTextLayout->IsAnythingSelected()) {
                         if (m_pElementWithKeyboardFocus->pTextLayout->DeleteSelectedText()) {
                             this->PostEvent_OnTextChanged(m_pElementWithKeyboardFocus);
@@ -3640,6 +3752,10 @@ namespace GT
                     if (m_isSelectingWithShiftKey) {
                         m_pElementWithKeyboardFocus->pTextLayout->MoveSelectionAnchorToCursor();
                     }
+
+
+                    // Undo/redo point.
+                    m_pElementWithKeyboardFocus->pTextLayout->CreateUndoRedoPoint();
 
 
                     // The text will have changed.

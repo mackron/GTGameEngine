@@ -1495,9 +1495,13 @@ namespace GT
         ///
         /// @remarks
         ///     This will not work if editable text is disabled.
+        ///     @par
+        ///     This will not create an undo/redo point. Use PepareUndoRedoPoint() and CreateUndoRedoPoint() to do this.
         void InsertTextAtCursor(GUIElement* pElement, const char* text);
 
         /// Deletes the text that is selected on the element that owns the text cursor.
+        ///     @par
+        ///     This will not create an undo/redo point. Use PepareUndoRedoPoint() and CreateUndoRedoPoint() to do this.
         void DeleteSelectedText(GUIElement* pElement);
 
         /// Retrieves the selected text on the element that owns the text cursor.
@@ -1505,6 +1509,24 @@ namespace GT
 
         /// Selects all of the given element's text, if allowed.
         void SelectAllText(GUIElement* pElement);
+
+        /// Performs an undo operation on the given element's text.
+        bool UndoTextEdit(GUIElement* pElement);
+
+        /// Performs a redo operation on the given element's text.
+        bool RedoTextEdit(GUIElement* pElement);
+
+        /// Determines how many undo points remain on the given element's text layout.
+        unsigned int GetUndoPointsRemainingCount(GUIElement* pElement);
+
+        /// Determines how many undo points remain on the given element's text layout.
+        unsigned int GetRedoPointsRemainingCount(GUIElement* pElement);
+
+        /// Prepares an undo/redo point.
+        bool PrepareUndoRedoPoint(GUIElement* pElement);
+
+        /// Creates an undo/redo point.
+        bool CreateUndoRedoPoint(GUIElement* pElement);
 
 
         /// Sets the font of the given element.

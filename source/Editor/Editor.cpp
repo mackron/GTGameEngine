@@ -401,11 +401,16 @@ namespace GT
 
 
                         pSubEditor->SetTab(pNewTab);
-                        pSubEditor->OnChanged([&]() {
+
+                        pSubEditor->OnChanged([&, pSubEditor]() {
                             GTLib::String newString = easypath_filename(pSubEditor->GetAbsolutePathOrIdentifier());
                             newString += "*";
 
-                            pNewTab->SetText(newString.c_str());
+                            pSubEditor->GetTab()->SetText(newString.c_str());
+                        });
+
+                        pSubEditor->OnUnchanged([&, pSubEditor]() {
+                            pSubEditor->GetTab()->SetText(easypath_filename(pSubEditor->GetAbsolutePathOrIdentifier()));
                         });
 
                         
@@ -511,12 +516,7 @@ namespace GT
         EditorSubEditor* pOpenedFile = m_openedFiles[index];
         assert(pOpenedFile != nullptr);
 
-        if (pOpenedFile->Save()) {
-            pOpenedFile->GetTab()->SetText(easypath_filename(pOpenedFile->GetAbsolutePathOrIdentifier()));
-            return true;
-        }
-
-        return false;
+        return pOpenedFile->Save();
     }
 
 

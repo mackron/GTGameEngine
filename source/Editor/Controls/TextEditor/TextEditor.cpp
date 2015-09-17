@@ -10,7 +10,8 @@ namespace GT
 {
     TextEditor::TextEditor(Editor &editor, SubEditorAllocator &allocator, const char* absolutePath)
         : EditorSubEditor(editor, allocator, absolutePath),
-          m_textBox(editor)
+          m_textBox(editor),
+          m_undoRedoPointAtTimeOfLastSave(0)
     {
         GUIContext &gui = editor.GetGUI();
         const EditorTheme &theme = editor.GetTheme();
@@ -90,6 +91,13 @@ namespace GT
                 fileSystem.WriteFile(hFile, strlen(fileData), fileData);
                 fileSystem.CloseFile(hFile);
 
+
+                // We need to update the undo/redo point at the time of saving so that we can correctly call OnUnchanged() in response to undo/redo operations.
+                m_undoRedoPointAtTimeOfLastSave = this->GetGUI().GetUndoPointsRemainingCount(m_textBox.GetContentElement());
+
+                // We just saved which means we are now unchanged - post the event.
+                this->OnUnchanged();
+
                 return true;
             }
         }
@@ -114,7 +122,11 @@ namespace GT
             GTLib::String selectedText = this->GetGUI().GetSelectedText(m_textBox.GetContentElement());
             GTLib::Clipboard::SetText(selectedText.c_str(), selectedText.GetLengthInTs());
 
-            this->GetGUI().DeleteSelectedText(m_textBox.GetContentElement());
+            this->GetGUI().PrepareUndoRedoPoint(m_textBox.GetContentElement());
+            {
+                this->GetGUI().DeleteSelectedText(m_textBox.GetContentElement());
+            }
+            this->GetGUI().CreateUndoRedoPoint(m_textBox.GetContentElement());
         }
     }
 
@@ -133,8 +145,12 @@ namespace GT
         {
             GTLib::String clipboard = GTLib::Clipboard::GetText();
             if (clipboard.GetLengthInTs() > 0) {
-                this->GetGUI().DeleteSelectedText(m_textBox.GetContentElement());
-                this->GetGUI().InsertTextAtCursor(m_textBox.GetContentElement(), clipboard.c_str());
+                this->GetGUI().PrepareUndoRedoPoint(m_textBox.GetContentElement());
+                {
+                    this->GetGUI().DeleteSelectedText(m_textBox.GetContentElement());
+                    this->GetGUI().InsertTextAtCursor(m_textBox.GetContentElement(), clipboard.c_str());
+                }
+                this->GetGUI().CreateUndoRedoPoint(m_textBox.GetContentElement());
             }
         }
     }
@@ -143,6 +159,11 @@ namespace GT
     {
         if (this->GetGUI().GetElementWithKeyboardFocus() == m_textBox.GetContentElement())
         {
+            if (this->GetGUI().UndoTextEdit(m_textBox.GetContentElement())) {
+                if (this->GetGUI().GetUndoPointsRemainingCount(m_textBox.GetContentElement()) == m_undoRedoPointAtTimeOfLastSave) {
+                    this->OnUnchanged();
+                }
+            }
         }
     }
 
@@ -150,6 +171,11 @@ namespace GT
     {
         if (this->GetGUI().GetElementWithKeyboardFocus() == m_textBox.GetContentElement())
         {
+            if (this->GetGUI().RedoTextEdit(m_textBox.GetContentElement())) {
+                if (this->GetGUI().GetUndoPointsRemainingCount(m_textBox.GetContentElement()) == m_undoRedoPointAtTimeOfLastSave) {
+                    this->OnUnchanged();
+                }
+            }
         }
     }
 

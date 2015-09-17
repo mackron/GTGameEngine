@@ -3147,6 +3147,72 @@ namespace GT
         }
     }
 
+    bool GUIContext::UndoTextEdit(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::UndoTextEdit(pElement);
+        }
+
+        return false;
+    }
+
+    bool GUIContext::RedoTextEdit(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::RedoTextEdit(pElement);
+        }
+
+        return false;
+    }
+
+    unsigned int GUIContext::GetUndoPointsRemainingCount(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetUndoPointsRemainingCount(pElement);
+        }
+
+        return 0;
+    }
+
+    unsigned int GUIContext::GetRedoPointsRemainingCount(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetRedoPointsRemainingCount(pElement);
+        }
+
+        return 0;
+    }
+
+    bool GUIContext::PrepareUndoRedoPoint(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::PrepareUndoRedoPoint(pElement);
+        }
+
+        return false;
+    }
+
+    bool GUIContext::CreateUndoRedoPoint(HGUIElement hElement)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::CreateUndoRedoPoint(pElement);
+        }
+
+        return false;
+    }
+
 
     HGUIFont GUIContext::SetElementFont(HGUIElement hElement, const char* family, FontWeight weight, FontSlant slant, uint32_t size, uint32_t sizeType)
     {
