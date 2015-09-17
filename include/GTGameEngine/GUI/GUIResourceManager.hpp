@@ -8,6 +8,9 @@
 #include <GTLib/Map.hpp>
 #include <GTLib/String.hpp>
 
+#define EASYUTIL_ONLY_MSVC_COMPAT
+#include <easy_util/easy_util.h>
+
 #define GT_GUI_MAX_RESOURCE_PATH    256
 
 namespace GT
