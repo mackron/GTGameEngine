@@ -104,7 +104,7 @@ namespace GT
 
 
         /// @copydoc WindowManager::GetTextCursorBlinkTime()
-        virtual double GetTextCursorBlinkTime();
+        virtual float GetTextCursorBlinkTime();
 
 
         /// @copydoc WindowManager::PostQuitMessage()

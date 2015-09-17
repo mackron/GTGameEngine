@@ -1263,7 +1263,7 @@ namespace GT
     }
 
 
-    double WindowManager_Win32::GetTextCursorBlinkTime()
+    float WindowManager_Win32::GetTextCursorBlinkTime()
     {
         return GetCaretBlinkTime() / 1000.0f * 2.0f;    // Multiply by 2 because Win32 reports only the time between inverting the cursor, not the whole visible + invisible time.
     }

@@ -172,7 +172,7 @@ namespace GT
         ///
         /// @remarks
         ///     This should be the sum of both the visible and invisible state.
-        virtual double GetTextCursorBlinkTime() = 0;
+        virtual float GetTextCursorBlinkTime() = 0;
 
 
         /// Posts a message to the window manager's event queue.
