@@ -61,7 +61,7 @@ namespace GT
             });
             gui.OnElementMouseButtonReleased(m_hCloseElement, [&](int button, int, int) {
                 if (button == GT::MouseButton_Left) {
-                    editor.CloseTab(this);
+                    editor.CloseFileByTab(this);
                 }
             });
 

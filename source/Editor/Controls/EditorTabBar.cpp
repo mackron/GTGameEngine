@@ -275,7 +275,7 @@ namespace GT
             }
             else if (button == 3)   // Middle
             {
-                m_pTabBar->GetEditor().CloseTab(pTab);
+                m_pTabBar->GetEditor().CloseFileByTab(pTab);
             }
         }
     }

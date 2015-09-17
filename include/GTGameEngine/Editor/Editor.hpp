@@ -112,6 +112,11 @@ namespace GT
         void Step(double deltaTimeInSeconds);
 
 
+
+        /// Retrieves the number of opened files.
+        unsigned int GetOpenFileCount() const;
+
+
         /// Opens a file by it's absolute path.
         ///
         /// @param absolutePath [in] The absolute path of the file.
@@ -122,6 +127,7 @@ namespace GT
         ///     This will create the appropriate tab, but not activate it. Use ActivateFileTab() to activate the tab.
         bool OpenFile(const char* absolutePath);
 
+
         /// Closes a file by it's absolute path.
         ///
         /// @param absolutePath [in] The absolute path of the file.
@@ -129,6 +135,16 @@ namespace GT
 
         /// Same as CloseFile(), except shows a confirmation message if the file has been modified.
         void TryCloseFile(const char* absolutePath);
+
+        /// Closes a file by it's tab.
+        void CloseFileByTab(EditorTab* pTab);
+
+        /// Closes the file at the given index.
+        ///
+        /// @remarks
+        ///     Use this in conjunction with GetOpenFileCount().
+        void CloseFileByIndex(unsigned int index);
+
 
         /// Saves the file by it's absolute path.
         ///
@@ -138,36 +154,25 @@ namespace GT
         ///     This will fail if the file with the given absolute path is not open.
         bool SaveFile(const char* absolutePath);
 
-        /// Saves and closes all open files.
-        void SaveAndCloseAllOpenFiles();
-
-
-        /// Retrieves the number of opened files.
-        unsigned int GetOpenFileCount() const;
-
-        /// Closes the file at the given index.
-        ///
-        /// @remarks
-        ///     Use this in conjunction with GetOpenFileCount().
-        void CloseFileByIndex(unsigned int index);
-
         /// Saves the files at the given index.
         ///
         /// @remarks
         ///     Use this in conjunction with GetOpenFileCount().
         bool SaveFileByIndex(unsigned int index);
 
+        /// Saves and closes all open files.
+        void SaveAndCloseAllOpenFiles();
 
+
+
+
+        /// Finds a sub editor by it's absolute path or identifier.
+        EditorSubEditor* FindSubEditorByAbsolutePathOrIdentifier(const char* absolutePathOrIdentifier);
 
         /// Finds the tab associated with the given file.
         EditorTab* FindFileTab(const char* absolutePath);
 
-        /// Finds the file path associated with the given tab.
-        const char* FindFileAbsolutePathFromTab(EditorTab* pTab);
-
-
-        /// Closes the given tab.
-        void CloseTab(EditorTab* pTab);
+        
 
         /// Activates the given tab.
         void ActivateTab(EditorTab* pTab);
@@ -471,31 +476,6 @@ namespace GT
 
         /// Posts the OnMouseWheel event to every attached event handler.
         void PostEvent_OnMouseWheel(HWindow hWindow, int delta, int xPos, int yPos);
-
-
-
-    private:
-
-#if 0
-        /// Structure containing information about an open file in the editor.
-        struct OpenedFile
-        {
-            /// The absolute path of the file.
-            GTLib::String absolutePath;
-
-            /// A pointer to the asset associated with the file, if any. This can be null.
-            Asset* pAsset;
-
-            /// A pointer to the tab associated with the file.
-            EditorTab* pTab;
-
-            /// A pointer to the sub-editor associated with the file.
-            EditorSubEditor* pSubEditor;
-
-            /// A pointer to the sub-editor allocator that created the sub-editor. This is used to delete the sub-editor when the file is closed.
-            SubEditorAllocator* pAllocator;
-        };
-#endif
 
 
 
