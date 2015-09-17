@@ -1574,6 +1574,10 @@ namespace GT
         void OnElementMouseButtonReleased(HGUIElement hElement, LocalOnMouseButtonReleasedProc handler);
         void OnElementMouseButtonDoubleClicked(HGUIElement hElement, LocalOnMouseButtonDoubleClickedProc handler);
         void OnElementMouseWheel(HGUIElement hElement, LocalOnMouseWheelProc handler);
+        void OnElementKeyPressed(HGUIElement hElement, LocalOnKeyPressedProc handler);
+        void OnElementKeyPressedAutoRepeat(HGUIElement hElement, LocalOnKeyPressedAutoRepeatProc handler);
+        void OnElementKeyReleased(HGUIElement hElement, LocalOnKeyReleasedProc handler);
+        void OnElementPrintableKeyDown(HGUIElement hElement, LocalOnPrintableKeyDownProc handler);
         void OnElementSetMouseEventCapture(HGUIElement hElement, LocalOnSetMouseEventCaptureProc handler);
         void OnElementReleaseMouseEventCapture(HGUIElement hElement, LocalOnReleaseMouseEventCaptureProc handler);
         void OnElementTextChanged(HGUIElement hElement, LocalOnTextChangedProc handler);
@@ -1587,6 +1591,10 @@ namespace GT
         void OnGlobalElementMouseButtonReleased(GlobalOnMouseButtonReleasedProc handler);
         void OnGlobalElementMouseButtonDoubleClicked(GlobalOnMouseButtonDoubleClickedProc handler);
         void OnGlobalElementMouseWheel(GlobalOnMouseWheelProc handler);
+        void OnGlobalElementKeyPressed(HGUIElement hElement, GlobalOnKeyPressedProc handler);
+        void OnGlobalElementKeyPressedAutoRepeat(HGUIElement hElement, GlobalOnKeyPressedAutoRepeatProc handler);
+        void OnGlobalElementKeyReleased(HGUIElement hElement, GlobalOnKeyReleasedProc handler);
+        void OnGlobalElementPrintableKeyDown(HGUIElement hElement, GlobalOnPrintableKeyDownProc handler);
         void OnGlobalElementSetMouseEventCapture(GlobalOnSetMouseEventCaptureProc handler);
         void OnGlobalElementReleaseMouseEventCapture(GlobalOnReleaseMouseEventCaptureProc handler);
         void OnGlobalElementTextChanged(GlobalOnTextChangedProc handler);

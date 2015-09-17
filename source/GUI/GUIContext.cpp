@@ -3720,6 +3720,62 @@ namespace GT
         }
     }
 
+    void GUIContext::OnElementKeyPressed(HGUIElement hElement, LocalOnKeyPressedProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnKeyPressed.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementKeyPressedAutoRepeat(HGUIElement hElement, LocalOnKeyPressedAutoRepeatProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnKeyPressedAutoRepeat.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementKeyReleased(HGUIElement hElement, LocalOnKeyReleasedProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnKeyReleased.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementPrintableKeyDown(HGUIElement hElement, LocalOnPrintableKeyDownProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnPrintableKeyDown.PushBack(handler);
+        }
+    }
+
     void GUIContext::OnElementSetMouseEventCapture(HGUIElement hElement, LocalOnSetMouseEventCaptureProc handler)
     {
         auto pElement = this->GetElementPtr(hElement);
@@ -3806,6 +3862,26 @@ namespace GT
     void GUIContext::OnGlobalElementMouseWheel(GlobalOnMouseWheelProc handler)
     {
         m_callbackGlobalEventHandlers.OnMouseWheel.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementKeyPressed(HGUIElement hElement, GlobalOnKeyPressedProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnKeyPressed.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementKeyPressedAutoRepeat(HGUIElement hElement, GlobalOnKeyPressedAutoRepeatProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnKeyPressedAutoRepeat.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementKeyReleased(HGUIElement hElement, GlobalOnKeyReleasedProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnKeyReleased.PushBack(handler);
+    }
+
+    void GUIContext::OnGlobalElementPrintableKeyDown(HGUIElement hElement, GlobalOnPrintableKeyDownProc handler)
+    {
+        m_callbackGlobalEventHandlers.OnPrintableKeyDown.PushBack(handler);
     }
 
     void GUIContext::OnGlobalElementSetMouseEventCapture(GlobalOnSetMouseEventCaptureProc handler)
