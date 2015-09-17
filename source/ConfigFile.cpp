@@ -4,6 +4,9 @@
 #include "external/lua-5.3.1/src/lua.hpp"
 #include <assert.h>
 
+#define EASYUTIL_ONLY_MSVC_COMPAT
+#include <easy_util/easy_util.h>
+
 namespace GT
 {
     ConfigFile::ConfigFile()
@@ -151,7 +154,7 @@ namespace GT
             lua_getglobal(m_pState, variableName);
             if (lua_isstring(m_pState, -1))
             {
-                result = strcpy_s(strOut, strOutSizeInBytes, lua_tostring(m_pState, -1)) == 0;  // strcpy_s() returns 0 on success. TODO: This won't work with GCC/Clang - replace with a different implementation.
+                result = strcpy_s(strOut, strOutSizeInBytes, lua_tostring(m_pState, -1)) == 0;  // strcpy_s() returns 0 on success.
             }
             lua_pop(m_pState, 1);
         }
