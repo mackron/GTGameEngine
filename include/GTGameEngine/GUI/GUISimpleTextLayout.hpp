@@ -203,9 +203,6 @@ namespace GT
         /// @copydoc GUITextLayout::GetRedoPointsRemainingCount()
         unsigned int GetRedoPointsRemainingCount() const;
 
-        /// @copydoc GUITextLayout::GetRedoPointsRemainingCount()
-        //bool SetCurrentUndoRedoPointToCurrentState();
-
 
 
     private:

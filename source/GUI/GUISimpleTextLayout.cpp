@@ -716,27 +716,6 @@ namespace GT
         return 0;
     }
 
-#if 0
-    bool GUISimpleTextLayout::SetCurrentUndoRedoPointToCurrentState()
-    {
-        if (m_undoRedoStateStack.GetCount() > 0)
-        {
-            assert(m_iUndoRedoState < m_undoRedoStateStack.GetCount());
-            
-            UndoRedoState &state = m_undoRedoStateStack[m_iUndoRedoState];
-            state.text                      = m_text;
-            state.iCursorCharacter          = this->GetMarkerAbsoluteCharacterIndex(m_cursor);
-            state.iSelectionAnchorCharacter = this->GetMarkerAbsoluteCharacterIndex(m_selectionAnchor);
-            state.isAnythingSelected        = m_isAnythingSelected;
-
-            return true;
-        }
-
-        return false;
-    }
-#endif
-
-
 
 
     //////////////////////////////////////////

@@ -335,9 +335,6 @@ namespace GT
 
         /// Retrieves the number of redo points remaining in the stack.
         virtual unsigned int GetRedoPointsRemainingCount() const = 0;
-
-        /// Updates the current undo/redo point so that it's state is equal to the current state of the layout.
-        //virtual bool SetCurrentUndoRedoPointToCurrentState() = 0;
         
 
 
