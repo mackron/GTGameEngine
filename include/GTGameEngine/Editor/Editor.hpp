@@ -476,6 +476,7 @@ namespace GT
 
     private:
 
+#if 0
         /// Structure containing information about an open file in the editor.
         struct OpenedFile
         {
@@ -494,6 +495,7 @@ namespace GT
             /// A pointer to the sub-editor allocator that created the sub-editor. This is used to delete the sub-editor when the file is closed.
             SubEditorAllocator* pAllocator;
         };
+#endif
 
 
 
@@ -553,8 +555,8 @@ namespace GT
         EditorFooter* m_pFooterControl;
 
 
-        /// The list of opened files.
-        GTLib::Vector<OpenedFile> m_openedFiles;
+        /// The list of opened sub-editors.
+        GTLib::Vector<EditorSubEditor*> m_openedFiles;
 
         /// The default sub-editor allocator which will be used to create sub-editors of known asset types.
         DefaultSubEditorAllocator m_defaultSubEditorAllocator;

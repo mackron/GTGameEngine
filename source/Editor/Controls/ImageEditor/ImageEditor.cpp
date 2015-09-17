@@ -6,8 +6,8 @@
 
 namespace GT
 {
-    ImageEditor::ImageEditor(Editor &editor, const char* absolutePath, ImageAsset* pAsset)
-        : EditorSubEditor(editor), m_pAsset(pAsset)
+    ImageEditor::ImageEditor(Editor &editor, SubEditorAllocator &allocator, const char* absolutePath, ImageAsset* pAsset)
+        : EditorSubEditor(editor, allocator, absolutePath), m_pAsset(pAsset)
     {
         GUIContext &gui = editor.GetGUI();
 
@@ -40,9 +40,8 @@ namespace GT
     }
 
 
-    bool ImageEditor::SaveFile(const char* absolutePath)
+    bool ImageEditor::Save()
     {
-        (void)absolutePath;
         return false;
     }
 

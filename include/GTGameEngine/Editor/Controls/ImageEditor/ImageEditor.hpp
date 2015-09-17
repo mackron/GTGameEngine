@@ -13,14 +13,14 @@ namespace GT
     public:
 
         /// Constructor.
-        ImageEditor(Editor &editor, const char* absolutePath, ImageAsset* pAsset);
+        ImageEditor(Editor &editor, SubEditorAllocator &allocator, const char* absolutePath, ImageAsset* pAsset);
 
         /// Destructor.
         virtual ~ImageEditor();
 
 
-        /// @copydoc EditorSubEditor::SaveFile()
-        bool SaveFile(const char* absolutePath);
+        /// @copydoc EditorSubEditor::Save()
+        bool Save();
 
         /// @copydoc EditorSubEditor::OnActivate()
         void OnActivate();

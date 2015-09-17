@@ -4,6 +4,8 @@
 #include <GTGameEngine/Editor/Controls/ImageEditor/ImageEditor.hpp>
 #include <GTGameEngine/Editor/Controls/TextEditor/TextEditor.hpp>
 #include <GTGameEngine/Assets/Asset.hpp>
+#include <GTGameEngine/Editor/Editor.hpp>
+#include <GTGameEngine/EngineContext.hpp>
 
 namespace GT
 {
@@ -17,13 +19,14 @@ namespace GT
     }
 
 
-    EditorSubEditor* DefaultSubEditorAllocator::CreateSubEditor(Editor &editor, const char* absolutePath, Asset* pAsset)
+    EditorSubEditor* DefaultSubEditorAllocator::CreateSubEditor(Editor &editor, const char* absolutePath)
     {
+        Asset* pAsset = editor.GetEngineContext().GetAssetLibrary().Load(absolutePath);
         if (pAsset != nullptr)
         {
             switch (pAsset->GetClass())
             {
-            case AssetClass_Image: return new ImageEditor(editor, absolutePath, reinterpret_cast<ImageAsset*>(pAsset));
+            case AssetClass_Image: return new ImageEditor(editor, *this, absolutePath, reinterpret_cast<ImageAsset*>(pAsset));
 
             default:
                 {
@@ -44,6 +47,6 @@ namespace GT
 
     EditorSubEditor* DefaultSubEditorAllocator::CreateTextFileSubEditor(Editor &editor, const char* absolutePath)
     {
-        return new TextEditor(editor, absolutePath);
+        return new TextEditor(editor, *this, absolutePath);
     }
 }

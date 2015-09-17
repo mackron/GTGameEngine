@@ -366,6 +366,62 @@ namespace GT
             }
             else
             {
+                // We first need to try creating a sub-editor. If we cannot open it, we need to return false.
+                EditorSubEditor* pSubEditor = m_defaultSubEditorAllocator.CreateSubEditor(*this, absolutePath);
+                if (pSubEditor == nullptr)
+                {
+                    // We failed to create the editor from the default allocator, so try the user-defined one. If this fails we fall back to a text editor.
+                    if (m_pUserSubEditorAllocator != nullptr) {
+                        pSubEditor = m_pUserSubEditorAllocator->CreateSubEditor(*this, absolutePath);
+                    }
+
+                    // Fall back to a text editor if all else fails.
+                    if (pSubEditor == nullptr) {
+                        pSubEditor = m_defaultSubEditorAllocator.CreateTextFileSubEditor(*this, absolutePath);
+                    }
+                }
+
+                if (pSubEditor != nullptr)
+                {
+                    // We created the sub editor so now we need to create the tab and assign the sub-editor to it.
+                    EditorTab* pNewTab = pTabGroup->CreateTab(easypath_filename(absolutePath));
+                    if (pNewTab != nullptr)
+                    {
+                        EditorTabPage* pTabPage = pTabGroup->GetTabPage(pNewTab);
+                        assert(pTabPage != nullptr);
+
+                        m_gui.SetElementParent(pSubEditor->GetRootGUIElement(), pTabPage->GetRootGUIElement());
+
+
+                        pSubEditor->SetTab(pNewTab);
+                        pSubEditor->OnChanged([&, pNewTab]() {
+                            GTLib::String newString = easypath_filename(this->FindFileAbsolutePathFromTab(pNewTab));
+                            newString += "*";
+
+                            pNewTab->SetText(newString.c_str());
+                        });
+
+                        
+                        pTabGroup->ActivateTab(pNewTab);
+
+
+                        m_openedFiles.PushBack(pSubEditor);
+                        return true;
+                    }
+                    else
+                    {
+                        // We failed to create the tab somehow. We need to unload the file and return false.
+                        pSubEditor->GetAllocator().DeleteSubEditor(pSubEditor);
+                        return false;
+                    }
+                }
+                else
+                {
+                    return false;
+                }
+
+
+#if 0
                 auto pNewTab = pTabGroup->CreateTab(easypath_filename(absolutePath));
                 if (pNewTab != nullptr)
                 {
@@ -440,6 +496,7 @@ namespace GT
                     pTabGroup->ActivateTab(pNewTab);
                     return true;
                 }
+#endif
             }
         }
 
@@ -464,12 +521,13 @@ namespace GT
 
     bool Editor::SaveFile(const char* absolutePath)
     {
-        for (size_t iOpenedFile = 0; iOpenedFile < m_openedFiles.GetCount(); ++iOpenedFile)
+        for (unsigned int iOpenedFile = 0; iOpenedFile < static_cast<unsigned int>(m_openedFiles.GetCount()); ++iOpenedFile)
         {
-            auto &openedFile = m_openedFiles[iOpenedFile];
-            if (openedFile.absolutePath == absolutePath)
-            {
-                return this->SaveFileByIndex(static_cast<unsigned int>(iOpenedFile));
+            EditorSubEditor* pOpenedFile = m_openedFiles[iOpenedFile];
+            assert(pOpenedFile != nullptr);
+
+            if (strcmp(pOpenedFile->GetAbsolutePathOrIdentifier(), absolutePath) == 0) {
+                return this->SaveFileByIndex(iOpenedFile);
             }
         }
 
@@ -495,29 +553,24 @@ namespace GT
 
     void Editor::CloseFileByIndex(unsigned int index)
     {
-        OpenedFile &openedFile = m_openedFiles[index];
-        if (openedFile.pAllocator != nullptr)
-        {
-            openedFile.pAllocator->DeleteSubEditor(openedFile.pSubEditor);
-        }
+        EditorSubEditor* pOpenedFile = m_openedFiles[index];
+        assert(pOpenedFile != nullptr);
 
-        if (openedFile.pAsset != nullptr)
-        {
-            m_gameContext.GetEngineContext().GetAssetLibrary().Unload(openedFile.pAsset);
-        }
+        m_pBodyControl->CloseTab(pOpenedFile->GetTab());
 
+        pOpenedFile->GetAllocator().DeleteSubEditor(pOpenedFile);
 
-        m_pBodyControl->CloseTab(openedFile.pTab);
         m_openedFiles.Remove(index);
     }
 
     bool Editor::SaveFileByIndex(unsigned int index)
     {
-        OpenedFile &openedFile = m_openedFiles[index];
-        if (openedFile.pSubEditor != nullptr) {
-            if (openedFile.pSubEditor->SaveFile(openedFile.absolutePath.c_str())) {
-                openedFile.pTab->SetText(easypath_filename(openedFile.absolutePath.c_str()));
-            }
+        EditorSubEditor* pOpenedFile = m_openedFiles[index];
+        assert(pOpenedFile != nullptr);
+
+        if (pOpenedFile->Save()) {
+            pOpenedFile->GetTab()->SetText(easypath_filename(pOpenedFile->GetAbsolutePathOrIdentifier()));
+            return true;
         }
 
         return false;
@@ -530,9 +583,10 @@ namespace GT
         // Check if the tab is associated with a file.
         for (size_t iOpenedFile = 0; iOpenedFile < m_openedFiles.GetCount(); ++iOpenedFile)
         {
-            auto &openedFile = m_openedFiles[iOpenedFile];
-            if (openedFile.pTab == pTab)
-            {
+            EditorSubEditor* pOpenedFile = m_openedFiles[iOpenedFile];
+            assert(pOpenedFile != nullptr);
+
+            if (pOpenedFile->GetTab() == pTab) {
                 this->CloseFileByIndex(iOpenedFile);
                 break;
             }
@@ -605,10 +659,11 @@ namespace GT
     {
         for (size_t iOpenedFile = 0; iOpenedFile < m_openedFiles.GetCount(); ++iOpenedFile)
         {
-            auto &openedFile = m_openedFiles[iOpenedFile];
-            if (openedFile.pTab == pTab)
-            {
-                return openedFile.pSubEditor;
+            EditorSubEditor *pOpenedFile = m_openedFiles[iOpenedFile];
+            assert(pOpenedFile != nullptr);
+
+            if (pOpenedFile->GetTab() == pTab) {
+                return pOpenedFile;
             }
         }
 
@@ -620,24 +675,26 @@ namespace GT
     {
         for (size_t iOpenedFile = 0; iOpenedFile < m_openedFiles.GetCount(); ++iOpenedFile)
         {
-            auto &openedFile = m_openedFiles[iOpenedFile];
-            if (openedFile.absolutePath == absolutePath)
-            {
-                return openedFile.pTab;
+            EditorSubEditor *pOpenedFile = m_openedFiles[iOpenedFile];
+            assert(pOpenedFile != nullptr);
+
+            if (strcmp(pOpenedFile->GetAbsolutePathOrIdentifier(), absolutePath) == 0) {
+                return pOpenedFile->GetTab();
             }
         }
 
         return nullptr;
     }
 
-    const char* Editor::FindFileAbsolutePathFromTab(EditorTab* pTab)
+    const char* Editor::FindFileAbsolutePathFromTab(EditorTab* pTab)        // TODO: WHERE IS THIS BEING USED?
     {
         for (size_t iOpenedFile = 0; iOpenedFile < m_openedFiles.GetCount(); ++iOpenedFile)
         {
-            auto &openedFile = m_openedFiles[iOpenedFile];
-            if (openedFile.pTab == pTab)
-            {
-                return openedFile.absolutePath.c_str();
+            EditorSubEditor *pOpenedFile = m_openedFiles[iOpenedFile];
+            assert(pOpenedFile != nullptr);
+
+            if (pOpenedFile->GetTab() == pTab) {
+                return pOpenedFile->GetAbsolutePathOrIdentifier();
             }
         }
 

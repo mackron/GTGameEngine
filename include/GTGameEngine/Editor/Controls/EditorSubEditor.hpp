@@ -4,10 +4,14 @@
 #define GT_EditorSubEditor
 
 #include "EditorControl.hpp"
+#include "../../FileSystem.hpp" // For GT_MAX_PATH
 #include <functional>
 
 namespace GT
 {
+    class EditorTab;
+    class SubEditorAllocator;
+
     class EditorSubEditor : public EditorControl
     {
     public:
@@ -16,10 +20,24 @@ namespace GT
 
 
         /// Constructor.
-        EditorSubEditor(Editor &editor);
+        EditorSubEditor(Editor &editor, SubEditorAllocator &pAllocator, const char* absolutePathOrIdentifier);
 
         /// Destructor.
         virtual ~EditorSubEditor();
+
+
+        /// Retrieves a pointer to the allocator that created the sub-editor. This is used to delete the sub-editor.
+        SubEditorAllocator & GetAllocator() const;
+
+        /// Retrieves the absolute path or identifier of the resource the sub-editor is associated with.
+        const char* GetAbsolutePathOrIdentifier() const;
+
+
+        /// Sets the tab to associate with the sub editor.
+        void SetTab(EditorTab* pTab);
+
+        /// Retrieves a pointer to the tab associated with the sub-editor.
+        EditorTab* GetTab() const;
 
 
         /// Sets the function to call when a change is made to the resource.
@@ -30,7 +48,7 @@ namespace GT
 
 
         /// Saves the contents to the given file.
-        virtual bool SaveFile(const char* absolutePath) = 0;
+        virtual bool Save() = 0;
 
         /// Called when the sub editor is activated.
         ///
@@ -63,9 +81,17 @@ namespace GT
 
     private:
 
+        /// A pointer to the allocator that created the sub-editor.
+        SubEditorAllocator &m_allocator;
+
+        /// The absolute path of the resource being editted, or a unique identifier in cases when it is not an asset being editted.
+        char m_absolutePathOrIdentifier[GT_MAX_PATH];
+
+        /// A pointer to the tab associated with the sub editor.
+        EditorTab* m_pTab;
+
         /// The function to call when the resource is modified. This is set by OnChanged()
         OnChangedProc m_onChangedProc;
-    
     };
 }
 

@@ -22,7 +22,7 @@ namespace GT
 
 
         /// Creates a sub-editor based on the given absolute path and an optional asset object.
-        virtual EditorSubEditor* CreateSubEditor(Editor &editor, const char* absolutePath, Asset* pAsset) = 0;
+        virtual EditorSubEditor* CreateSubEditor(Editor &editor, const char* absolutePath) = 0;
 
         /// Deletes the given sub-editor.
         virtual void DeleteSubEditor(EditorSubEditor* pSubEditor) = 0;

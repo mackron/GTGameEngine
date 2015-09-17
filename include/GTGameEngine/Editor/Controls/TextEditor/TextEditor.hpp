@@ -13,18 +13,18 @@ namespace GT
     public:
 
         /// Constructor.
-        TextEditor(Editor &editor, const char* absolutePath);
+        TextEditor(Editor &editor, SubEditorAllocator &allocator, const char* absolutePath);
 
         /// Destructor.
         ~TextEditor();
 
 
-        /// Loads the given file.
-        bool LoadFile(const char* absolutePath);
+        /// Loads the file.
+        bool Load();
 
 
-        /// @copydoc EditorSubEditor::SaveFile()
-        bool SaveFile(const char* absolutePath);
+        /// @copydoc EditorSubEditor::Save()
+        bool Save();
 
         /// @copydoc EditorSubEditor::OnActivate()
         void OnActivate();

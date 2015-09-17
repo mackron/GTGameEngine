@@ -8,8 +8,8 @@
 
 namespace GT
 {
-    TextEditor::TextEditor(Editor &editor, const char* absolutePath)
-        : EditorSubEditor(editor),
+    TextEditor::TextEditor(Editor &editor, SubEditorAllocator &allocator, const char* absolutePath)
+        : EditorSubEditor(editor, allocator, absolutePath),
           m_textBox(editor)
     {
         GUIContext &gui = editor.GetGUI();
@@ -37,7 +37,7 @@ namespace GT
         gui.SetElementHorizontalAlign(m_textBox.GetContentElement(), HorizontalAlign_Left);
 
 
-        this->LoadFile(absolutePath);
+        this->Load();
     }
 
     TextEditor::~TextEditor()
@@ -45,10 +45,10 @@ namespace GT
     }
 
 
-    bool TextEditor::LoadFile(const char* absolutePath)
+    bool TextEditor::Load()
     {
         FileSystem &fileSystem = this->GetEditor().GetEngineContext().GetFileSystem();
-        HFile hFile = fileSystem.OpenFile(absolutePath, FileAccessMode::Read);
+        HFile hFile = fileSystem.OpenFile(this->GetAbsolutePathOrIdentifier(), FileAccessMode::Read);
         if (hFile != NULL)
         {
             bool result = false;
@@ -78,13 +78,13 @@ namespace GT
         return false;
     }
 
-    bool TextEditor::SaveFile(const char* absolutePath)
+    bool TextEditor::Save()
     {
         const char* fileData = this->GetGUI().GetElementText(m_textBox.GetContentElement());
         if (fileData != nullptr)
         {
             FileSystem &fileSystem = this->GetEditor().GetEngineContext().GetFileSystem();
-            HFile hFile = fileSystem.OpenFile(absolutePath, FileAccessMode::Write);
+            HFile hFile = fileSystem.OpenFile(this->GetAbsolutePathOrIdentifier(), FileAccessMode::Write);
             if (hFile != NULL)
             {
                 fileSystem.WriteFile(hFile, strlen(fileData), fileData);

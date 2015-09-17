@@ -20,7 +20,7 @@ namespace GT
 
 
         /// @copydoc SubEditorAllocator::CreateSubEditor()
-        EditorSubEditor* CreateSubEditor(Editor &editor, const char* absolutePath, Asset* pAsset);
+        EditorSubEditor* CreateSubEditor(Editor &editor, const char* absolutePath);
 
         /// @copydoc SubEditorAllocator::DeleteSubEditor()
         void DeleteSubEditor(EditorSubEditor* pSubEditor);
