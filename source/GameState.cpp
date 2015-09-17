@@ -138,6 +138,10 @@ namespace GT
     {
     }
 
+    void GameState::OnTimer(GameContext &, HWindow, size_t)
+    {
+    }
+
 
     bool GameState::OnWantToOpenEditor(GameContext &)
     {

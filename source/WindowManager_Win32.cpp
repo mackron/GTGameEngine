@@ -807,6 +807,13 @@ namespace GT
                 }
 
 
+            case WM_TIMER:
+                {
+                    pWindowManager->OnTimer(reinterpret_cast<HWindow>(hWnd), static_cast<size_t>(wParam));
+                    break;
+                }
+
+
             default:
                 {
                     break;
@@ -1242,6 +1249,23 @@ namespace GT
         }
 
         return false;
+    }
+
+
+    bool WindowManager_Win32::CreateTimer(HWindow hWindow, size_t timerID, unsigned int milliseconds)
+    {
+        return SetTimer(reinterpret_cast<HWND>(hWindow), UINT_PTR(timerID), milliseconds, nullptr) != 0;
+    }
+
+    void WindowManager_Win32::DeleteTimer(HWindow hWindow, size_t timerID)
+    {
+        KillTimer(reinterpret_cast<HWND>(hWindow), timerID);
+    }
+
+
+    double WindowManager_Win32::GetTextCursorBlinkTime()
+    {
+        return GetCaretBlinkTime() / 1000.0f * 2.0f;    // Multiply by 2 because Win32 reports only the time between inverting the cursor, not the whole visible + invisible time.
     }
 
 

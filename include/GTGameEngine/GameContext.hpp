@@ -362,6 +362,9 @@ namespace GT
         ///     rather only draws the regions that have actually changed.
         void OnPaintWindow(HWindow hWindow, const GTLib::Rect<int> &rect);
 
+        /// Called when a timer is triggered.
+        void OnTimer(HWindow hWindow, size_t timerID);
+
 
         /// Called when the editor is opened.
         void OnEditorOpened();

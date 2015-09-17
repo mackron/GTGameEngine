@@ -105,6 +105,11 @@ namespace GT
     {
         m_pGameContext->OnPaintWindow(hWindow, rect);
     }
+
+    void WindowManager_DefaultWin32::OnTimer(HWindow hWnd, size_t timerID)
+    {
+        m_pGameContext->OnTimer(hWnd, timerID);
+    }
 }
 
 #endif

@@ -96,6 +96,17 @@ namespace GT
         virtual bool GetCursorPosition(HWindow hWindow, int &mousePosXOut, int &mousePosYOut) const;
 
 
+        /// @copydoc WindowManager::CreateTimer()
+        virtual bool CreateTimer(HWindow hWindow, size_t timerID, unsigned int milliseconds);
+
+        /// @copydoc WindowManager::DeleteTimer()
+        virtual void DeleteTimer(HWindow hWindow, size_t timerID);
+
+
+        /// @copydoc WindowManager::GetTextCursorBlinkTime()
+        virtual double GetTextCursorBlinkTime();
+
+
         /// @copydoc WindowManager::PostQuitMessage()
         virtual void PostQuitMessage(int exitCode);
 
@@ -192,6 +203,9 @@ namespace GT
 
         /// Called when the WM_PAINT message is received.
         virtual void OnPaintWindow(HWindow hWnd, const GTLib::Rect<int> &rect) = 0;
+
+        /// Called when the WM_TIMER message is received.
+        virtual void OnTimer(HWindow hWnd, size_t timerID) = 0;
 
 
     public:

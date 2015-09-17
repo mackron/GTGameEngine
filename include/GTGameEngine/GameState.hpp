@@ -220,6 +220,9 @@ namespace GT
         ///     rather only draws the regions that have actually changed.
         virtual void OnPaintWindow(GameContext &gameContext, HWindow hWindow, const GTLib::Rect<int> &rect);
 
+        /// Called when a timer is triggered.
+        virtual void OnTimer(GameContext &gameContext, HWindow hWindow, size_t timerID);
+
 
 
         /// Called when the editor is wanting to open.

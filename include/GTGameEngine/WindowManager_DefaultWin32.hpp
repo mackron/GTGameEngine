@@ -83,6 +83,9 @@ namespace GT
         /// @copydoc WindowManager_Win32::OnPaintWindow()
         virtual void OnPaintWindow(HWindow hWindow, const GTLib::Rect<int> &rect);
 
+        /// @copydoc WindowManager_Win32::OnTimer()
+        virtual void OnTimer(HWindow hWnd, size_t timerID);
+
 
 
     private:

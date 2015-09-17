@@ -689,6 +689,20 @@ namespace GT
 #endif
     }
 
+    void GameContext::OnTimer(HWindow hWindow, size_t timerID)
+    {
+        if (!this->IsEditorOpen())
+        {
+            m_gameState.OnTimer(*this, hWindow, timerID);
+        }
+#if defined(GT_BUILD_EDITOR)
+        else
+        {
+            m_editor.OnTimer(hWindow, timerID);
+        }
+#endif
+    }
+
 
     void GameContext::OnEditorOpened()
     {

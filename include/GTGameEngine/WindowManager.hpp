@@ -161,6 +161,20 @@ namespace GT
         virtual bool GetCursorPosition(HWindow hWindow, int &mousePosXOut, int &mousePosYOut) const = 0;
 
 
+        /// Creates a timer.
+        virtual bool CreateTimer(HWindow hWindow, size_t timerID, unsigned int milliseconds) = 0;
+
+        /// Deletes a timer.
+        virtual void DeleteTimer(HWindow hWindow, size_t timerID) = 0;
+
+
+        /// Retrieves the amount of time it takes to blink the text cursor, in seconds.
+        ///
+        /// @remarks
+        ///     This should be the sum of both the visible and invisible state.
+        virtual double GetTextCursorBlinkTime() = 0;
+
+
         /// Posts a message to the window manager's event queue.
         ///
         /// @remarks
