@@ -2367,7 +2367,9 @@ namespace GT
             hDC = m_gl.GetDummyDC();
         }
 
-        m_gl.MakeCurrent(hDC, m_hRC);
+        if (m_gl.GetCurrentContext() != m_hRC || m_gl.GetCurrentDC() != hDC) {
+            m_gl.MakeCurrent(hDC, m_hRC);
+        }
 #endif
     }
 
@@ -2414,150 +2416,11 @@ namespace GT
 
             if ((m_gl.GetCurrentContext() == m_hRC && m_gl.GetCurrentDC() == pRT->hDC) || m_gl.MakeCurrent(pRT->hDC, m_hRC))
             {
-                m_gl.Viewport(pRT->viewportX, pRT->viewportY, pRT->viewportWidth, pRT->viewportHeight);
-
-                GLbitfield clearFlags = GL_DEPTH_BUFFER_BIT;
-                if ((pRT->flags & RTFlag_IsColorClearingDisabled) == 0)
-                {
-                    m_gl.ClearColor(pRT->clearColor.r, pRT->clearColor.g, pRT->clearColor.b, pRT->clearColor.a);
-                    clearFlags |= GL_COLOR_BUFFER_BIT;
-                }
-
-                m_gl.ClearDepth(1.0f);
-                m_gl.Clear(clearFlags);
+                m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+                this->ExecuteRTRenderingCommands(hRT);
 
 
-                for (size_t iMesh = 0; iMesh < m_meshObjects.GetCount(); ++iMesh)
-                {
-                    auto pMeshObject = reinterpret_cast<MeshObject_OpenGL*>(m_meshObjects[iMesh]);
-                    assert(pMeshObject != nullptr);
-                    {
-                        auto pMeshResource = reinterpret_cast<MeshResource_OpenGL*>(pMeshObject->hMeshResource);
-                        assert(pMeshResource != nullptr);
-                        {
-                            GLsizei stride = sizeof(float)*3 + sizeof(float)*2 + sizeof(float)*3;
-
-                            m_gl.BindBuffer(GL_ARRAY_BUFFER,         pMeshResource->vertexBufferGL);
-                            m_gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, pMeshResource->indexBufferGL);
-
-                            m_gl.EnableVertexAttribArray(0);
-                            m_gl.EnableVertexAttribArray(1);
-                            m_gl.EnableVertexAttribArray(2);
-                            m_gl.VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(0));
-                            m_gl.VertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(sizeof(float)*3));
-                            m_gl.VertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(sizeof(float)*3 + sizeof(float)*2));
-
-                            for (size_t iMaterial = 0; iMaterial < pMeshResource->materialSlots.GetCount(); ++iMaterial)
-                            {
-                                auto &meshResourceMaterialSlot = pMeshResource->materialSlots[iMaterial];
-                                auto &meshObjectMaterialSlot   = pMeshObject->materials[iMaterial];
-
-                                auto pMaterialResource = reinterpret_cast<MaterialResource_OpenGL*>(pMeshObject->materials[iMaterial].hMaterial);
-                                if (pMaterialResource != nullptr)
-                                {
-                                    // TODO: Render per-material and set the global uniforms once rather than per-object.
-                                    m_gl.UseProgram(pMaterialResource->programGL);
-                                    m_gl.UniformMatrix4fv(pMaterialResource->uniformLocation_Projection, 1, GL_FALSE, &pRT->projection[0][0]);
-                                    m_gl.UniformMatrix4fv(pMaterialResource->uniformLocation_View,       1, GL_FALSE, &pRT->view[0][0]);
-
-                                    mat4 model = CalculateTransformMatrix(pMeshObject->position, pMeshObject->rotation, pMeshObject->scale);
-                                    m_gl.UniformMatrix4fv(pMaterialResource->uniformLocation_Model, 1, GL_FALSE, &model[0][0]);
-
-                                    // Set the material's input variables.
-                                    const char* pInputValues = reinterpret_cast<const char*>(meshObjectMaterialSlot.valuesBuffer.GetDataPointer());
-                                    if (pInputValues != nullptr)
-                                    {
-                                        int currentTextureUnit = 0;
-
-                                        for (size_t iUniform = 0; iUniform < pMaterialResource->inputVariables.variableDescriptors.GetCount(); ++iUniform)
-                                        {
-                                            auto &uniformDesc = pMaterialResource->inputVariables.variableDescriptors[iUniform];
-                                            if (uniformDesc.uniformLocation != -1)
-                                            {
-                                                // TODO: Remove this switch and replace with a pointer to a function.
-                                                switch (uniformDesc.type)
-                                                {
-                                                case GraphicsMaterialVariableType::Float:    m_gl.Uniform1fv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLfloat*>(pInputValues + uniformDesc.bufferOffset)); break;
-                                                case GraphicsMaterialVariableType::Float2:   m_gl.Uniform2fv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLfloat*>(pInputValues + uniformDesc.bufferOffset)); break;
-                                                case GraphicsMaterialVariableType::Float3:   m_gl.Uniform3fv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLfloat*>(pInputValues + uniformDesc.bufferOffset)); break;
-                                                case GraphicsMaterialVariableType::Float4:   m_gl.Uniform4fv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLfloat*>(pInputValues + uniformDesc.bufferOffset)); break;
-
-                                                case GraphicsMaterialVariableType::Integer:  m_gl.Uniform1iv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLint*>(pInputValues + uniformDesc.bufferOffset)); break;
-                                                case GraphicsMaterialVariableType::Integer2: m_gl.Uniform2iv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLint*>(pInputValues + uniformDesc.bufferOffset)); break;
-                                                case GraphicsMaterialVariableType::Integer3: m_gl.Uniform3iv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLint*>(pInputValues + uniformDesc.bufferOffset)); break;
-                                                case GraphicsMaterialVariableType::Integer4: m_gl.Uniform4iv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLint*>(pInputValues + uniformDesc.bufferOffset)); break;
-
-                                                case GraphicsMaterialVariableType::Texture1D:
-                                                case GraphicsMaterialVariableType::Texture2D:
-                                                case GraphicsMaterialVariableType::Texture3D:
-                                                case GraphicsMaterialVariableType::TextureCube:
-                                                {
-                                                    // The value for the texture will be a HGraphicsResource handle. The value we want to pass to the texture is the texture unit index.
-                                                    HGraphicsResource hTexture = *reinterpret_cast<const HGraphicsResource*>(pInputValues + uniformDesc.bufferOffset);
-                                                    if (hTexture == 0)
-                                                    {
-                                                        hTexture = m_hDefaultTexture;
-                                                    }
-
-                                                    if (hTexture != 0)
-                                                    {
-                                                        auto pTexture = reinterpret_cast<TextureResource_OpenGL*>(hTexture);
-                                                        assert(pTexture != nullptr);
-                                                        {
-                                                            // Activate the texture...
-                                                            m_gl.ActiveTexture(GL_TEXTURE0 + currentTextureUnit);
-                                                            m_gl.BindTexture(pTexture->targetGL, pTexture->objectGL);
-
-                                                            // ... and let the shader know which unit it is bound to.
-                                                            m_gl.Uniform1i(uniformDesc.uniformLocation, currentTextureUnit);
-
-                                                            // Go to the next texture unit.
-                                                            currentTextureUnit += 1;
-                                                        }
-                                                    }
-
-                                                    break;
-                                                }
-
-                                                case GraphicsMaterialVariableType::Boolean:
-                                                case GraphicsMaterialVariableType::Unknown:
-                                                default: break;
-                                                }
-                                            }
-                                        }
-                                    }
-
-
-
-                                    if (pMaterialResource->isTransparent)
-                                    {
-                                        m_gl.Enable(GL_BLEND);
-                                        m_gl.BlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
-                                        m_gl.BlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
-                                    }
-
-
-                                    m_gl.DrawElements(pMeshResource->drawMode, meshResourceMaterialSlot.indexCount, GL_UNSIGNED_INT, reinterpret_cast<const void*>(static_cast<size_t>(meshResourceMaterialSlot.indexOffset)));
-
-
-                                    if (pMaterialResource->isTransparent)
-                                    {
-                                        m_gl.Disable(GL_BLEND);
-                                    }
-                                }
-                            }
-                        }
-                    }
-                }
-
-
-                // GUI.
-                if (pRT->hSurface != 0)
-                {
-                    this->GetGUI().PaintSurface(pRT->hSurface, this);
-                }
-
-
+                // For windowed render targets we want to swap the buffers.
                 SwapBuffers(pRT->hDC);
             }
         }
@@ -2569,6 +2432,161 @@ namespace GT
         if (pRT != nullptr)
         {
             assert((pRT->flags & RTFlag_IsTexture) != 0);
+
+            this->MakeOpenGLContextCurrent();
+
+            m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebuffer);
+            this->ExecuteRTRenderingCommands(hRT);
+        }
+    }
+
+    void DefaultGraphicsWorld_OpenGL::ExecuteRTRenderingCommands(HGraphicsRenderTarget hRT)
+    {
+        auto pRT = reinterpret_cast<RenderTarget_OpenGL*>(hRT);
+        if (pRT != nullptr)
+        {
+            m_gl.Viewport(pRT->viewportX, pRT->viewportY, pRT->viewportWidth, pRT->viewportHeight);
+
+            GLbitfield clearFlags = GL_DEPTH_BUFFER_BIT;
+            if ((pRT->flags & RTFlag_IsColorClearingDisabled) == 0)
+            {
+                m_gl.ClearColor(pRT->clearColor.r, pRT->clearColor.g, pRT->clearColor.b, pRT->clearColor.a);
+                clearFlags |= GL_COLOR_BUFFER_BIT;
+            }
+
+            m_gl.ClearDepth(1.0f);
+            m_gl.Clear(clearFlags);
+
+
+            for (size_t iMesh = 0; iMesh < m_meshObjects.GetCount(); ++iMesh)
+            {
+                auto pMeshObject = reinterpret_cast<MeshObject_OpenGL*>(m_meshObjects[iMesh]);
+                assert(pMeshObject != nullptr);
+                {
+                    auto pMeshResource = reinterpret_cast<MeshResource_OpenGL*>(pMeshObject->hMeshResource);
+                    assert(pMeshResource != nullptr);
+                    {
+                        GLsizei stride = sizeof(float)*3 + sizeof(float)*2 + sizeof(float)*3;
+
+                        m_gl.BindBuffer(GL_ARRAY_BUFFER,         pMeshResource->vertexBufferGL);
+                        m_gl.BindBuffer(GL_ELEMENT_ARRAY_BUFFER, pMeshResource->indexBufferGL);
+
+                        m_gl.EnableVertexAttribArray(0);
+                        m_gl.EnableVertexAttribArray(1);
+                        m_gl.EnableVertexAttribArray(2);
+                        m_gl.VertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(0));
+                        m_gl.VertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(sizeof(float)*3));
+                        m_gl.VertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, reinterpret_cast<const void*>(sizeof(float)*3 + sizeof(float)*2));
+
+                        for (size_t iMaterial = 0; iMaterial < pMeshResource->materialSlots.GetCount(); ++iMaterial)
+                        {
+                            auto &meshResourceMaterialSlot = pMeshResource->materialSlots[iMaterial];
+                            auto &meshObjectMaterialSlot   = pMeshObject->materials[iMaterial];
+
+                            auto pMaterialResource = reinterpret_cast<MaterialResource_OpenGL*>(pMeshObject->materials[iMaterial].hMaterial);
+                            if (pMaterialResource != nullptr)
+                            {
+                                // TODO: Render per-material and set the global uniforms once rather than per-object.
+                                m_gl.UseProgram(pMaterialResource->programGL);
+                                m_gl.UniformMatrix4fv(pMaterialResource->uniformLocation_Projection, 1, GL_FALSE, &pRT->projection[0][0]);
+                                m_gl.UniformMatrix4fv(pMaterialResource->uniformLocation_View,       1, GL_FALSE, &pRT->view[0][0]);
+
+                                mat4 model = CalculateTransformMatrix(pMeshObject->position, pMeshObject->rotation, pMeshObject->scale);
+                                m_gl.UniformMatrix4fv(pMaterialResource->uniformLocation_Model, 1, GL_FALSE, &model[0][0]);
+
+                                // Set the material's input variables.
+                                const char* pInputValues = reinterpret_cast<const char*>(meshObjectMaterialSlot.valuesBuffer.GetDataPointer());
+                                if (pInputValues != nullptr)
+                                {
+                                    int currentTextureUnit = 0;
+
+                                    for (size_t iUniform = 0; iUniform < pMaterialResource->inputVariables.variableDescriptors.GetCount(); ++iUniform)
+                                    {
+                                        auto &uniformDesc = pMaterialResource->inputVariables.variableDescriptors[iUniform];
+                                        if (uniformDesc.uniformLocation != -1)
+                                        {
+                                            // TODO: Remove this switch and replace with a pointer to a function.
+                                            switch (uniformDesc.type)
+                                            {
+                                            case GraphicsMaterialVariableType::Float:    m_gl.Uniform1fv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLfloat*>(pInputValues + uniformDesc.bufferOffset)); break;
+                                            case GraphicsMaterialVariableType::Float2:   m_gl.Uniform2fv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLfloat*>(pInputValues + uniformDesc.bufferOffset)); break;
+                                            case GraphicsMaterialVariableType::Float3:   m_gl.Uniform3fv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLfloat*>(pInputValues + uniformDesc.bufferOffset)); break;
+                                            case GraphicsMaterialVariableType::Float4:   m_gl.Uniform4fv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLfloat*>(pInputValues + uniformDesc.bufferOffset)); break;
+
+                                            case GraphicsMaterialVariableType::Integer:  m_gl.Uniform1iv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLint*>(pInputValues + uniformDesc.bufferOffset)); break;
+                                            case GraphicsMaterialVariableType::Integer2: m_gl.Uniform2iv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLint*>(pInputValues + uniformDesc.bufferOffset)); break;
+                                            case GraphicsMaterialVariableType::Integer3: m_gl.Uniform3iv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLint*>(pInputValues + uniformDesc.bufferOffset)); break;
+                                            case GraphicsMaterialVariableType::Integer4: m_gl.Uniform4iv(uniformDesc.uniformLocation, 1, reinterpret_cast<const GLint*>(pInputValues + uniformDesc.bufferOffset)); break;
+
+                                            case GraphicsMaterialVariableType::Texture1D:
+                                            case GraphicsMaterialVariableType::Texture2D:
+                                            case GraphicsMaterialVariableType::Texture3D:
+                                            case GraphicsMaterialVariableType::TextureCube:
+                                            {
+                                                // The value for the texture will be a HGraphicsResource handle. The value we want to pass to the texture is the texture unit index.
+                                                HGraphicsResource hTexture = *reinterpret_cast<const HGraphicsResource*>(pInputValues + uniformDesc.bufferOffset);
+                                                if (hTexture == 0)
+                                                {
+                                                    hTexture = m_hDefaultTexture;
+                                                }
+
+                                                if (hTexture != 0)
+                                                {
+                                                    auto pTexture = reinterpret_cast<TextureResource_OpenGL*>(hTexture);
+                                                    assert(pTexture != nullptr);
+                                                    {
+                                                        // Activate the texture...
+                                                        m_gl.ActiveTexture(GL_TEXTURE0 + currentTextureUnit);
+                                                        m_gl.BindTexture(pTexture->targetGL, pTexture->objectGL);
+
+                                                        // ... and let the shader know which unit it is bound to.
+                                                        m_gl.Uniform1i(uniformDesc.uniformLocation, currentTextureUnit);
+
+                                                        // Go to the next texture unit.
+                                                        currentTextureUnit += 1;
+                                                    }
+                                                }
+
+                                                break;
+                                            }
+
+                                            case GraphicsMaterialVariableType::Boolean:
+                                            case GraphicsMaterialVariableType::Unknown:
+                                            default: break;
+                                            }
+                                        }
+                                    }
+                                }
+
+
+
+                                if (pMaterialResource->isTransparent)
+                                {
+                                    m_gl.Enable(GL_BLEND);
+                                    m_gl.BlendEquationSeparate(GL_FUNC_ADD, GL_FUNC_ADD);
+                                    m_gl.BlendFuncSeparate(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA, GL_ONE, GL_ZERO);
+                                }
+
+
+                                m_gl.DrawElements(pMeshResource->drawMode, meshResourceMaterialSlot.indexCount, GL_UNSIGNED_INT, reinterpret_cast<const void*>(static_cast<size_t>(meshResourceMaterialSlot.indexOffset)));
+
+
+                                if (pMaterialResource->isTransparent)
+                                {
+                                    m_gl.Disable(GL_BLEND);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+
+            // GUI.
+            if (pRT->hSurface != 0)
+            {
+                this->GetGUI().PaintSurface(pRT->hSurface, this);
+            }
         }
     }
 

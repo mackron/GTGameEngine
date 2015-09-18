@@ -280,6 +280,9 @@ namespace GT
         /// Executes the rendering commands for the given texture render target.
         void ExecuteTextureRTRenderingCommands(HGraphicsRenderTarget hRT);
 
+        /// Executes the rendering commands for the current framebuffer.
+        void ExecuteRTRenderingCommands(HGraphicsRenderTarget hRT);
+
 
         /// Deletes the given texture resource.
         void DeleteTextureResource(HGraphicsResource hTextureResource);
