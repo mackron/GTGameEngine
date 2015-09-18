@@ -214,6 +214,21 @@ namespace GT
         ///     allocated internally, but it's specific contents will be left undefined (until it has been rendered).
         virtual HGraphicsResource CreateTextureResource(const GraphicsTextureResourceDesc &textureDesc) = 0;
 
+        /// Retrieves the dimensions of the given texture.
+        ///
+        /// @param hTextureResource [in] A handle to the texture resource whose dimensions are being retrieved.
+        virtual void GetTextureSize(HGraphicsResource hTextureResource, unsigned int &widthOut, unsigned int &heightOut, unsigned int &depthOut) = 0;
+
+        /// Retrieves the format of the given texture's data.
+        ///
+        /// @param hTextureResource [in] A handle to the texture resource whose data format is being retrieved.
+        virtual TextureFormat GetTextureFormat(HGraphicsResource hTextureResource) = 0;
+
+        /// Retrieves the data of the given texture resource.
+        ///
+        /// @param hTextureResource [in] A handle to the texture resource whose data is being retrieved.
+        virtual bool GetTextureData(HGraphicsResource hTextureResource, void* pDataOut) = 0;
+
 
         /// Creates a material resource.
         ///

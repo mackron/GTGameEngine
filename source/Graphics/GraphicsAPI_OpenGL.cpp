@@ -431,6 +431,8 @@ namespace GT
         this->TexImage2D               = reinterpret_cast<PFNGLTEXIMAGE2DPROC              >(this->GetGLProcAddress("glTexImage2D"));
         this->TexImage3D               = reinterpret_cast<PFNGLTEXIMAGE3DPROC              >(this->GetGLProcAddress("glTexImage3D"));
         this->TexParameteri            = reinterpret_cast<PFNGLTEXPARAMETERIPROC           >(this->GetGLProcAddress("glTexParameteri"));
+        this->GetTexImage              = reinterpret_cast<PFNGLGETTEXIMAGEPROC             >(this->GetGLProcAddress("glGetTexImage"));
+
 
         if (this->IsExtensionSupported("GL_ARB_debug_output"))
         {

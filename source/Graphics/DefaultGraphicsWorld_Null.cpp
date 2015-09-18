@@ -35,6 +35,31 @@ namespace GT
         return 0;
     }
 
+    void DefaultGraphicsWorld_Null::GetTextureSize(HGraphicsResource hTextureResource, unsigned int &widthOut, unsigned int &heightOut, unsigned int &depthOut)
+    {
+        (void)hTextureResource;
+        (void)widthOut;
+        (void)heightOut;
+        (void)depthOut;
+    }
+
+    TextureFormat DefaultGraphicsWorld_Null::GetTextureFormat(HGraphicsResource hTextureResource)
+    {
+        (void)hTextureResource;
+
+        return TextureFormat_Unknown;
+    }
+
+    bool DefaultGraphicsWorld_Null::GetTextureData(HGraphicsResource hTextureResource, void* pDataOut)
+    {
+        (void)hTextureResource;
+        (void)pDataOut;
+
+        return false;
+    }
+
+
+
 
     HGraphicsResource DefaultGraphicsWorld_Null::CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc)
     {

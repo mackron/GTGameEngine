@@ -85,6 +85,21 @@ namespace GT
         return m_pGraphicsWorldImpl->CreateTextureResource(textureDesc);
     }
 
+    void DefaultGraphicsWorld::GetTextureSize(HGraphicsResource hTextureResource, unsigned int &widthOut, unsigned int &heightOut, unsigned int &depthOut)
+    {
+        m_pGraphicsWorldImpl->GetTextureSize(hTextureResource, widthOut, heightOut, depthOut);
+    }
+
+    TextureFormat DefaultGraphicsWorld::GetTextureFormat(HGraphicsResource hTextureResource)
+    {
+        return m_pGraphicsWorldImpl->GetTextureFormat(hTextureResource);
+    }
+
+    bool DefaultGraphicsWorld::GetTextureData(HGraphicsResource hTextureResource, void* pDataOut)
+    {
+        return m_pGraphicsWorldImpl->GetTextureData(hTextureResource, pDataOut);
+    }
+
 
     HGraphicsResource DefaultGraphicsWorld::CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc)
     {

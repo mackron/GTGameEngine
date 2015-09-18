@@ -848,6 +848,55 @@ namespace GT
         return reinterpret_cast<HGraphicsResource>(pTexture);
     }
 
+    void DefaultGraphicsWorld_OpenGL::GetTextureSize(HGraphicsResource hTextureResource, unsigned int &widthOut, unsigned int &heightOut, unsigned int &depthOut)
+    {
+        auto pTextureResource = reinterpret_cast<TextureResource_OpenGL*>(hTextureResource);
+        if (pTextureResource != nullptr)
+        {
+            widthOut  = pTextureResource->width;
+            heightOut = pTextureResource->height;
+            depthOut  = pTextureResource->depth;
+        }
+        else
+        {
+            widthOut  = 0;
+            heightOut = 0;
+            depthOut  = 0;
+        }
+    }
+
+    TextureFormat DefaultGraphicsWorld_OpenGL::GetTextureFormat(HGraphicsResource hTextureResource)
+    {
+        auto pTextureResource = reinterpret_cast<TextureResource_OpenGL*>(hTextureResource);
+        if (pTextureResource != nullptr)
+        {
+            return pTextureResource->format;
+        }
+
+        return TextureFormat_Unknown;
+    }
+
+    bool DefaultGraphicsWorld_OpenGL::GetTextureData(HGraphicsResource hTextureResource, void* pDataOut)
+    {
+        if (pDataOut == nullptr) {
+            return false;
+        }
+
+        auto pTextureResource = reinterpret_cast<TextureResource_OpenGL*>(hTextureResource);
+        if (pTextureResource != nullptr)
+        {
+            this->MakeOpenGLContextCurrent();
+
+            m_gl.BindTexture(pTextureResource->targetGL, pTextureResource->objectGL);
+            m_gl.GetTexImage(pTextureResource->targetGL, 0, g_GLTextureSubImageFormatsTable[pTextureResource->format], g_GLTextureSubImageTypesTable[pTextureResource->format], pDataOut);
+
+
+            return true;
+        }
+
+        return false;
+    }
+
 
     HGraphicsResource DefaultGraphicsWorld_OpenGL::CreateMaterialResource(const GraphicsMaterialResourceDesc &materialDesc)
     {
