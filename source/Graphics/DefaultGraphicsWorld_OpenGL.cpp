@@ -2115,7 +2115,6 @@ namespace GT
     void DefaultGraphicsWorld_OpenGL::GUI_BeginPaintSurface(GUIContext &gui, HGUISurface hSurface, void* pInputData)
     {
         (void)gui;
-        (void)hSurface;
         (void)pInputData;
 
         // We need the size of the surface because we need the height to convery from top/left coordinates to bottom/left.
@@ -2168,8 +2167,6 @@ namespace GT
     void DefaultGraphicsWorld_OpenGL::GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GTLib::Colour colour)
     {
         (void)gui;
-        (void)rect;
-        (void)colour;
 
         float rectGL[4];
         rectGL[0] = static_cast<float>(rect.left);
@@ -2231,12 +2228,6 @@ namespace GT
     void DefaultGraphicsWorld_OpenGL::GUI_DrawRawImage(GUIContext &gui, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent)
     {
         (void)gui;
-        (void)xPos;
-        (void)yPos;
-        (void)width;
-        (void)height;
-        (void)pImageData;
-        (void)isTransparent;
 
         float rectGL[4];
         rectGL[0] = static_cast<float>(xPos);
@@ -2299,13 +2290,6 @@ namespace GT
     void DefaultGraphicsWorld_OpenGL::GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
     {
         (void)gui;
-        (void)rect;
-        (void)hTextureResource;
-        (void)colour;
-        (void)subImageOffsetX;
-        (void)subImageOffsetY;
-        (void)subImageWidth;
-        (void)subImageHeight;
 
         TextureResource_OpenGL* pTextureResource = reinterpret_cast<TextureResource_OpenGL*>(hTextureResource);
         assert(pTextureResource != nullptr);
