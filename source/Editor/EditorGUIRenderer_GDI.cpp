@@ -20,7 +20,8 @@ namespace GT
           m_hCurrentWindow(0),
           m_hDC(0),
           m_pCurrentSurfaceAUXData(nullptr),
-          m_hAlphaBlendDC(0)
+          m_hAlphaBlendDC(0),
+          m_hRawBitmap(0)
     {
         ZeroMemory(&m_ps, sizeof(m_ps));
         m_hAlphaBlendDC = CreateCompatibleDC(GetDC(GetDesktopWindow()));
@@ -209,14 +210,67 @@ namespace GT
     void EditorGUIRenderer_GDI::DrawRawImage(GUIContext &context, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent)
     {
         (void)context;
-        (void)xPos;
-        (void)yPos;
-        (void)width;
-        (void)height;
-        (void)pImageData;
-        (void)isTransparent;
 
-        // TODO: Implement.
+        void* pBitmapWin32Data = nullptr;
+
+        // The old HBITMAP needs to be deleted.
+        if (m_hRawBitmap != 0) {
+            DeleteObject(m_hRawBitmap);
+        }
+
+        
+        BITMAPINFO bmi;
+        ZeroMemory(&bmi, sizeof(bmi));
+        bmi.bmiHeader.biSize        = sizeof(bmi.bmiHeader);
+        bmi.bmiHeader.biWidth       = width;
+        bmi.bmiHeader.biHeight      = height;
+        bmi.bmiHeader.biPlanes      = 1;
+        bmi.bmiHeader.biBitCount    = 32;
+        bmi.bmiHeader.biCompression = BI_RGB;
+        m_hRawBitmap = CreateDIBSection(m_hDC, &bmi, DIB_RGB_COLORS, &pBitmapWin32Data, NULL, 0);
+        if (m_hRawBitmap != 0)
+        {
+            // Image data is assumed to be RGBA.
+            for (unsigned int iRow = 0; iRow < height; ++iRow)
+            {
+                const unsigned int iRowSrc = height - (iRow + 1);
+                const unsigned int iRowDst = iRow;
+
+                for (unsigned int iCol = 0; iCol < width; ++iCol)
+                {
+                    uint32_t  srcTexel = reinterpret_cast<const uint32_t*>(pImageData      )[(iRowSrc * width) + iCol];
+                    uint32_t &dstTexel = reinterpret_cast<      uint32_t*>(pBitmapWin32Data)[(iRowDst * width) + iCol];
+
+                    uint32_t srcTexelA = (srcTexel & 0xFF000000) >> 24;
+                    uint32_t srcTexelB = (srcTexel & 0x00FF0000) >> 16;
+                    uint32_t srcTexelG = (srcTexel & 0x0000FF00) >> 8;
+                    uint32_t srcTexelR = (srcTexel & 0x000000FF) >> 0;
+
+                    if (isTransparent)
+                    {
+                        srcTexelB = srcTexelB * srcTexelA / 0xFF;
+                        srcTexelG = srcTexelG * srcTexelA / 0xFF;
+                        srcTexelR = srcTexelR * srcTexelA / 0xFF;
+                    }
+
+                    dstTexel = (srcTexelR << 16) | (srcTexelG << 8) | (srcTexelB << 0) | (srcTexelA << 24);
+                }
+            }
+
+            GdiFlush();
+
+
+            HBITMAP hOldBitmap = static_cast<HBITMAP>(SelectObject(m_hAlphaBlendDC, m_hRawBitmap));
+
+            if (isTransparent) {
+                BLENDFUNCTION blend = {AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
+                AlphaBlend(m_hDC, xPos, yPos, width, height, m_hAlphaBlendDC, 0, 0, width, height, blend);
+            } else {
+                BitBlt(m_hDC, xPos, yPos, width, height, m_hAlphaBlendDC, 0, 0, SRCCOPY);
+            }
+
+            SelectObject(m_hAlphaBlendDC, hOldBitmap);
+        }
     }
 
 

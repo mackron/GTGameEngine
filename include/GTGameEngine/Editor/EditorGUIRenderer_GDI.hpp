@@ -120,6 +120,10 @@ namespace GT
 
         /// The HGUIImage -> HBITMAP mappings.
         GTLib::Map<HGUIImage, HBITMAP> m_bitmaps;
+
+
+        /// The bitmap to use with DrawRawImage().
+        HBITMAP m_hRawBitmap;
     };
 }
 
