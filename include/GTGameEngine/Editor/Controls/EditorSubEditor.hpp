@@ -21,7 +21,7 @@ namespace GT
 
 
         /// Constructor.
-        EditorSubEditor(Editor &editor, SubEditorAllocator &pAllocator, const char* absolutePathOrIdentifier);
+        EditorSubEditor(Editor &editor, SubEditorAllocator &allocator, const char* absolutePathOrIdentifier);
 
         /// Destructor.
         virtual ~EditorSubEditor();
