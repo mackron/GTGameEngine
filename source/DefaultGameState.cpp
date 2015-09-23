@@ -351,13 +351,9 @@ namespace GT
 
     bool DefaultGameState::InitializeGraphics()
     {
-        GraphicsAPI* pBestAPI = m_engine.GetBestGraphicsAPI();
-        if (pBestAPI != nullptr)
+        if (m_graphicsWorld.Startup(m_engine))
         {
-            if (m_graphicsWorld.Startup(*pBestAPI))
-            {
-                return m_graphicsAssetResourceManager.Startup();
-            }
+            return m_graphicsAssetResourceManager.Startup();
         }
 
         return false;

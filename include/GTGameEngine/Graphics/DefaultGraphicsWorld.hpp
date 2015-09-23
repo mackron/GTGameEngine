@@ -4,7 +4,7 @@
 #define GT_DefaultGraphicsWorld
 
 #include "GraphicsWorld.hpp"
-#include "GraphicsAPI.hpp"
+#include "../EngineContext.hpp"
 
 namespace GT
 {
@@ -20,7 +20,7 @@ namespace GT
 
 
         /// Initializes the graphics world based on the given graphics API.
-        bool Startup(GraphicsAPI &graphicsAPI);
+        bool Startup(EngineContext &engine);
 
 
 

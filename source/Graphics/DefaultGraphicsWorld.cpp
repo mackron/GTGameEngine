@@ -21,38 +21,47 @@ namespace GT
     }
 
 
-    bool DefaultGraphicsWorld::Startup(GraphicsAPI &graphicsAPI)
+    bool DefaultGraphicsWorld::Startup(EngineContext &engine)
     {
-        switch (graphicsAPI.GetType())
+        GraphicsAPI* pAPI = engine.GetBestGraphicsAPI();
+        if (pAPI != nullptr)
         {
-#if defined(GT_BUILD_VULKAN)
-        case GraphicsAPIType_Vulkan:
+            switch (pAPI->GetType())
             {
-                m_pGraphicsWorldImpl = new DefaultGraphicsWorld_Vulkan(this->GetGUI(), reinterpret_cast<GraphicsAPI_Vulkan &>(graphicsAPI));
-                break;
-            }
-#endif
-#if defined(GT_BUILD_D3D12)
-        case GraphicsAPIType_D3D12:
-            {
-                m_pGraphicsWorldImpl = new DefaultGraphicsWorld_D3D12(this->GetGUI(), reinterpret_cast<GraphicsAPI_D3D12 &>(graphicsAPI));
-                break;
-            }
-#endif
-#if defined(GT_BUILD_OPENGL)
-        case GraphicsAPIType_OpenGL:
-            {
-                m_pGraphicsWorldImpl = new DefaultGraphicsWorld_OpenGL(this->GetGUI(), reinterpret_cast<GraphicsAPI_OpenGL &>(graphicsAPI));
-                break;
-            }
-#endif
+    #if defined(GT_BUILD_VULKAN)
+            case GraphicsAPIType_Vulkan:
+                {
+                    m_pGraphicsWorldImpl = new DefaultGraphicsWorld_Vulkan(this->GetGUI(), reinterpret_cast<GraphicsAPI_Vulkan &>(*pAPI));
+                    break;
+                }
+    #endif
+    #if defined(GT_BUILD_D3D12)
+            case GraphicsAPIType_D3D12:
+                {
+                    m_pGraphicsWorldImpl = new DefaultGraphicsWorld_D3D12(this->GetGUI(), reinterpret_cast<GraphicsAPI_D3D12 &>(*pAPI));
+                    break;
+                }
+    #endif
+    #if defined(GT_BUILD_OPENGL)
+            case GraphicsAPIType_OpenGL:
+                {
+                    m_pGraphicsWorldImpl = new DefaultGraphicsWorld_OpenGL(this->GetGUI(), reinterpret_cast<GraphicsAPI_OpenGL &>(*pAPI));
+                    break;
+                }
+    #endif
 
-        case GraphicsAPIType_Null:
-        default:
-            {
-                m_pGraphicsWorldImpl = new DefaultGraphicsWorld_Null(this->GetGUI());
-                break;
+            case GraphicsAPIType_Null:
+            default:
+                {
+                    m_pGraphicsWorldImpl = new DefaultGraphicsWorld_Null(this->GetGUI());
+                    break;
+                }
             }
+        }
+        else
+        {
+            // Failed to retrieve an API object. Default the null graphics world.
+            m_pGraphicsWorldImpl = new DefaultGraphicsWorld_Null(this->GetGUI());
         }
 
         return this->Startup();
