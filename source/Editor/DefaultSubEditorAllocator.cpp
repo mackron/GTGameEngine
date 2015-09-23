@@ -2,6 +2,7 @@
 
 #include <GTGameEngine/Editor/DefaultSubEditorAllocator.hpp>
 #include <GTGameEngine/Editor/Controls/ImageEditor/ImageEditor.hpp>
+#include <GTGameEngine/Editor/Controls/ModelEditor/ModelEditor.hpp>
 #include <GTGameEngine/Editor/Controls/TextEditor/TextEditor.hpp>
 #include <GTGameEngine/Assets/Asset.hpp>
 #include <GTGameEngine/Editor/Editor.hpp>
@@ -27,6 +28,7 @@ namespace GT
             switch (pAsset->GetClass())
             {
             case AssetClass_Image: return new ImageEditor(editor, *this, absolutePath, reinterpret_cast<ImageAsset*>(pAsset));
+            case AssetClass_Model: return new ModelEditor(editor, *this, absolutePath, reinterpret_cast<ModelAsset*>(pAsset));
 
             default:
                 {
