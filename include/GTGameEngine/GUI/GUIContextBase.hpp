@@ -171,6 +171,15 @@ namespace GT
         virtual void PostEvent_OnTextChanged(GUIElement* pElement) = 0;
 
 
+        /// Posts the OnPaint event.
+        ///
+        /// @param pElement [in] A pointer to the element received the event.
+        ///
+        /// @remarks
+        ///     This is called at the top of the element's paint procedure, just after clipping, but before drawing the background.
+        virtual void PostEvent_OnPaint(GUIElement* pElement) = 0;
+
+
         /// Posts the OnSetMouseEventCapture event.
         ///
         /// @param pElement [in] A reference to the element that has just received the mouse capture.

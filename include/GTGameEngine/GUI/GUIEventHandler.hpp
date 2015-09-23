@@ -14,6 +14,7 @@
 namespace GT
 {
     class GUIContext;
+    class GUIRenderer;
 
     /// Base class for event handlers in the GUI system.
     class GUIEventHandler
@@ -203,6 +204,7 @@ namespace GT
     typedef std::function<void ()>                                              LocalOnReleaseMouseEventCaptureProc;
     typedef std::function<void ()>                                              LocalOnReceiveKeyboardFocusProc;
     typedef std::function<void ()>                                              LocalOnLoseKeyboardFocusProc;
+    typedef std::function<void (GUIRenderer* pRenderer)>                        LocalOnPaintProc;
 
     struct LocalCallbackEventHandlers
     {
@@ -224,6 +226,8 @@ namespace GT
         GTLib::Vector<LocalOnReleaseMouseEventCaptureProc> OnReleaseMouseEventCapture;
         GTLib::Vector<LocalOnReceiveKeyboardFocusProc>     OnReceiveKeyboardFocus;
         GTLib::Vector<LocalOnLoseKeyboardFocusProc>        OnLoseKeyboardFocus;
+        GTLib::Vector<LocalOnPaintProc>                    OnPaint;
+        
     };
 
 

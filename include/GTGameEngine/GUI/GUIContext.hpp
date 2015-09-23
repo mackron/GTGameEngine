@@ -150,6 +150,9 @@ namespace GT
         /// @copydoc GUIContextBase::PostEvent_OnTextChanged()
         void PostEvent_OnTextChanged(GUIElement* pElement);
 
+        /// @copydoc GUIContextBase::PostEvent_OnPaint()
+        void PostEvent_OnPaint(GUIElement* pElement);
+
 
         /// @copydoc GUIContextBase::PostEvent_OnReceiveKeyboardFocus()
         void PostEvent_OnReceiveKeyboardFocus(GUIElement* pElement);
@@ -1589,6 +1592,7 @@ namespace GT
         void OnElementSetMouseEventCapture(HGUIElement hElement, LocalOnSetMouseEventCaptureProc handler);
         void OnElementReleaseMouseEventCapture(HGUIElement hElement, LocalOnReleaseMouseEventCaptureProc handler);
         void OnElementTextChanged(HGUIElement hElement, LocalOnTextChangedProc handler);
+        void OnElementPaint(HGUIElement hElement, LocalOnPaintProc handler);
 
         void OnGlobalElementSize(GlobalOnSizeProc handler);
         void OnGlobalElementMove(GlobalOnMoveProc handler);

@@ -1071,6 +1071,18 @@ namespace GT
     }
 
 
+    void GUIContext::PostEvent_OnPaint(GUIElement* pElement)
+    {
+        if (pElement != nullptr && pElement->pCallbackEventHandlers != nullptr)
+        {
+            for (size_t i = 0; i < pElement->pCallbackEventHandlers->OnPaint.GetCount(); ++i)
+            {
+                pElement->pCallbackEventHandlers->OnPaint[i](m_renderer);
+            }
+        }
+    }
+
+
     void GUIContext::PostEvent_OnReceiveKeyboardFocus(GUIElement* pElement)
     {
         assert(pElement != nullptr);
@@ -3825,6 +3837,20 @@ namespace GT
             }
 
             pElement->pCallbackEventHandlers->OnTextChanged.PushBack(handler);
+        }
+    }
+
+    void GUIContext::OnElementPaint(HGUIElement hElement, LocalOnPaintProc handler)
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            if (pElement->pCallbackEventHandlers == nullptr)
+            {
+                pElement->pCallbackEventHandlers = new LocalCallbackEventHandlers;
+            }
+
+            pElement->pCallbackEventHandlers->OnPaint.PushBack(handler);
         }
     }
 

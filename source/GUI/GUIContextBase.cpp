@@ -4863,9 +4863,15 @@ namespace GT
         assert(pSurface != nullptr);
         assert(pElement != nullptr);
 
-        //Painting_DrawAndSetClippingRect(pSurface, visibleRect, this->GetElementBackgroundColor(pElement));
 
+        // The clipping rectangle needs to be set before any drawing.
         Renderer_SetClippingRect(visibleRect);
+
+
+
+        // OnPaint()
+        PostEvent_OnPaint(pElement);
+
 
 
         // Background color.
