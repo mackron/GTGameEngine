@@ -446,6 +446,12 @@ namespace GT
                 desc.rect.top    = textRect.top  + m_runs[selectionStart.iRun].posY;
                 desc.rect.right  = textRect.left + m_runs[selectionStart.iRun].posX + m_runs[selectionStart.iRun].width;
                 desc.rect.bottom = textRect.top  + m_runs[selectionStart.iRun].posY + m_runs[selectionStart.iRun].height;
+                
+                // If the run is the last on the line, include the trailing space.
+                if (m_text.c_str()[m_runs[selectionStart.iRun].iChar] == '\n') {
+                    desc.rect.right += lineTrailingSpace;
+                }
+
                 callback(desc);
 
                 // Every run in between the two markers.
