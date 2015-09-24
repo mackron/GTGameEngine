@@ -48,7 +48,6 @@ namespace GT
             m_tabGroups.PushBack(pDefaultTabGroup);
 
             gui.SetElementParent(pDefaultTabGroup->GetRootGUIElement(), m_hMiddleContainer);
-            //gui.SetElementMarginTop(pDefaultTabGroup->GetRootGUIElement(), 8);
         }
     }
 
@@ -79,10 +78,6 @@ namespace GT
         auto pTabGroup = this->FindTabGroup(pTab);
         if (pTabGroup != nullptr)
         {
-            // TODO: The tab group is oblivious to the actual contents of the tab's page. We need to determine what the tab is for
-            //       and delete the content appropriately before closing the tab. If it's something like a scene editor, the scene
-            //       and all it's resources need to be deleted.
-
             // If the tab is active we want to activate it's neighbour.
             if (pTab == pTabGroup->GetActiveTab())
             {

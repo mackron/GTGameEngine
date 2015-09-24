@@ -250,6 +250,8 @@ namespace GT
                     this->GetGUI().GetElementAbsolutePosition(this->GetRootGUIElement(), posX, posY);
 
                     pRenderer->DrawRawImage(this->GetGUI(), posX, posY, width, height, m_pViewportRTTextureData, false);
+
+                    printf("Testing\n");
                 }
             }
         }

@@ -435,7 +435,7 @@ namespace GT
                         });
 
                         
-                        pTabGroup->ActivateTab(pNewTab);
+                        this->ActivateTab(pNewTab);
 
 
                         m_openedFiles.PushBack(pSubEditor);
@@ -495,6 +495,18 @@ namespace GT
     {
         EditorSubEditor* pOpenedFile = m_openedFiles[index];
         assert(pOpenedFile != nullptr);
+
+
+        // Before deleting the tab, we want to make sure the neighbouring tab is the active one.
+        if (this->IsTabActive(pOpenedFile->GetTab()))
+        {
+            EditorTab* pNeighbouringTab = this->GetNeighbouringTab(pOpenedFile->GetTab());
+            if (pNeighbouringTab != nullptr) {
+                this->ActivateTab(pNeighbouringTab);
+            }
+        }
+
+        
 
         m_pBodyControl->CloseTab(pOpenedFile->GetTab());
 
@@ -638,6 +650,31 @@ namespace GT
 
             if (pOpenedFile->GetTab() == pTab) {
                 return pOpenedFile;
+            }
+        }
+
+        return nullptr;
+    }
+
+
+    bool Editor::IsTabActive(EditorTab * pTab)
+    {
+        if (m_pBodyControl != nullptr) {
+            EditorTabGroup* pTabGroup = m_pBodyControl->FindTabGroup(pTab);
+            if (pTabGroup != nullptr) {
+                return pTabGroup->GetActiveTab() == pTab;
+            }
+        }
+
+        return false;
+    }
+
+    EditorTab * Editor::GetNeighbouringTab(EditorTab * pTab)
+    {
+        if (m_pBodyControl != nullptr) {
+            EditorTabGroup* pTabGroup = m_pBodyControl->FindTabGroup(pTab);
+            if (pTabGroup != nullptr) {
+                return pTabGroup->GetNeighbouringTab(pTab);
             }
         }
 

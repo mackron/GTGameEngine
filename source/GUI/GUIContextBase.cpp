@@ -2996,6 +2996,10 @@ namespace GT
                 // When losing focus, make sure selection mode is disabled.
                 if (this->IsEditableTextEnabled(pOldFocusedElement) && pOldFocusedElement->pTextLayout != nullptr)
                 {
+                    if (pOldFocusedElement == m_pTextCursorOwnerElement) {
+                        this->HideTextCursor();
+                    }
+
                     pOldFocusedElement->pTextLayout->LeaveSelectionMode();
 
                     m_isSelectingWithShiftKey  = false;
@@ -3229,7 +3233,7 @@ namespace GT
     {
         this->BeginBatch();
 
-        if (m_isTextCursorVisible)
+        if (this->IsTextCursorVisible())
         {
             bool wasTextCursorBlinkVisible = this->IsTextCursorBlinkVisible();
             m_timeSinceTextCursorShown += float(deltaTimeInSeconds);
@@ -4036,7 +4040,7 @@ namespace GT
 
     bool GUIContextBase::IsTextCursorVisible() const
     {
-        return m_isTextCursorVisible;
+        return m_isTextCursorVisible && m_pTextCursorOwnerElement != nullptr && this->IsElementVisible(m_pTextCursorOwnerElement);
     }
 
     bool GUIContextBase::IsTextCursorBlinkVisible() const

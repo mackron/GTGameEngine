@@ -112,6 +112,9 @@ namespace GT
 
     void TextEditor::OnDeactivate()
     {
+        if (this->GetGUI().GetTextCursorOwnerElement() == m_textBox.GetContentElement()) {
+            this->GetGUI().ReleaseKeyboardFocus();
+        }
     }
 
 

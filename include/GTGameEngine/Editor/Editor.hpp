@@ -199,6 +199,16 @@ namespace GT
         /// Retrieves a pointer to the sub-editor based on the given tab.
         EditorSubEditor* GetSubEditorByTab(EditorTab* pTab);
 
+        /// Determines if the given tab is active.
+        ///
+        /// @remarks
+        ///     This is not the same as the focused tab. There can only be one focused tab throughout the entire editor, however
+        ///     there can be multiple active tabs (one per tab group).
+        bool IsTabActive(EditorTab* pTab);
+
+        /// Retrieves the neighbouring tab, if any.
+        EditorTab* GetNeighbouringTab(EditorTab* pTab);
+
 
         /// Attaches an event handler.
         ///
