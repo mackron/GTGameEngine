@@ -261,6 +261,11 @@ namespace GT
         return m_gameContext.GetEngineContext();
     }
 
+    WindowManager & Editor::GetWindowManager()
+    {
+        return m_gameContext.GetWindowManager();
+    }
+
 
     bool Editor::Open()
     {

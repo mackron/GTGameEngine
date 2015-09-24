@@ -88,6 +88,9 @@ namespace GT
         /// Retrieves a reference to the engine context.
         EngineContext & GetEngineContext();
 
+        /// Retrieves a reference to the window manager.
+        WindowManager & GetWindowManager();
+
 
         /// Opens the editor.
         bool Open();
