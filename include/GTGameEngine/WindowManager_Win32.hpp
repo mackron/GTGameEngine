@@ -92,8 +92,17 @@ namespace GT
         /// @copydoc WindowManager::IsCursorVisible()
         virtual bool IsCursorVisible() const;
 
-        /// @copydoc WindowManager::GetMousePosition()
+        /// @copydoc WindowManager::GetCursorPosition()
         virtual bool GetCursorPosition(HWindow hWindow, int &mousePosXOut, int &mousePosYOut) const;
+
+        /// @copydoc WindowManager::SetCursorPosition()
+        virtual bool SetCursorPosition(HWindow hWindow, int relativePosX, int relativePosY);
+
+        /// @copydoc WindowManager::GetCursorPosition()
+        virtual bool GetCursorPosition(int &mousePosXOut, int &mousePosYOut) const;
+
+        /// @copydoc WindowManager::SetCursorPosition()
+        virtual bool SetCursorPosition(int mousePosX, int mousePosY);
 
 
         /// @copydoc WindowManager::CreateTimer()

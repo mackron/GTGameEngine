@@ -22,7 +22,8 @@ namespace GT
     enum class SystemCursorType
     {
         Arrow,
-        IBeam                       // For text editors.
+        IBeam,                      // For text editors.
+        Cross
     };
 
 
@@ -159,6 +160,18 @@ namespace GT
         /// @param mousePosXOut [out] A reference to the variable that will receive the position of the mouse on the x axis relative to the top left of the given window.
         /// @param mousePosYOut [out] A reference to the variable that will receive the position of the mouse on the y axis relative to the top left of the given window.
         virtual bool GetCursorPosition(HWindow hWindow, int &mousePosXOut, int &mousePosYOut) const = 0;
+
+        /// Sets the position of the mouse curosr relative to the given window.
+        ///
+        /// @param hWindow [in] The window.
+        virtual bool SetCursorPosition(HWindow hWindow, int relativePosX, int relativePosY) = 0;
+
+        /// Retrieves the position of the mouse in screen coordinates.
+        virtual bool GetCursorPosition(int &mousePosXOut, int &mousePosYOut) const = 0;
+
+        /// Sets the position of the mouse in screen coordinates.
+        virtual bool SetCursorPosition(int mousePosX, int mousePosY) = 0;
+
 
 
         /// Creates a timer.

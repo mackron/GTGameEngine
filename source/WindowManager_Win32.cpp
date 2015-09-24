@@ -1197,6 +1197,11 @@ namespace GT
                 return reinterpret_cast<HCursor>(LoadCursor(NULL, IDC_IBEAM));
             }
 
+        case SystemCursorType::Cross:
+            {
+                return reinterpret_cast<HCursor>(LoadCursor(NULL, IDC_CROSS));
+            }
+
 
         default: break;
         }
@@ -1249,6 +1254,38 @@ namespace GT
         }
 
         return false;
+    }
+
+    bool WindowManager_Win32::SetCursorPosition(HWindow hWindow, int relativePosX, int relativePosY)
+    {
+        POINT p;
+        p.x = relativePosX;
+        p.y = relativePosY;
+        if (ClientToScreen(reinterpret_cast<HWND>(hWindow), &p))
+        {
+            return SetCursorPos(p.x, p.y) != 0;
+        }
+
+        return false;
+    }
+
+    bool WindowManager_Win32::GetCursorPosition(int &mousePosXOut, int &mousePosYOut) const
+    {
+        POINT p;
+        if (GetCursorPos(&p))
+        {
+            mousePosXOut = p.x;
+            mousePosYOut = p.y;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool WindowManager_Win32::SetCursorPosition(int mousePosX, int mousePosY)
+    {
+        return SetCursorPos(mousePosX, mousePosY) != 0;
     }
 
 
