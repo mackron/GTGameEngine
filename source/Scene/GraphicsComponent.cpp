@@ -5,6 +5,52 @@
 
 namespace GT
 {
+    SceneNodeComponentTypeID SceneNodeComponentDescriptor_Graphics::TypeID()
+    {
+        return SceneNodeComponentType_Graphics;
+    }
+
+    const char* SceneNodeComponentDescriptor_Graphics::Name()
+    {
+        return "Graphics";
+    }
+
+
+    SceneNodeComponentDescriptor_Graphics::SceneNodeComponentDescriptor_Graphics()
+    {
+    }
+
+    SceneNodeComponentDescriptor_Graphics::~SceneNodeComponentDescriptor_Graphics()
+    {
+    }
+
+    SceneNodeComponentTypeID SceneNodeComponentDescriptor_Graphics::GetTypeID() const
+    {
+        return SceneNodeComponentDescriptor_Graphics::TypeID();
+    }
+
+    const char* SceneNodeComponentDescriptor_Graphics::GetName() const
+    {
+        return SceneNodeComponentDescriptor_Graphics::Name();
+    }
+
+
+    SceneNodeComponent* SceneNodeComponentDescriptor_Graphics::CreateComponent() const
+    {
+        return new SceneNodeComponent_Graphics(*this);
+    }
+
+    void SceneNodeComponentDescriptor_Graphics::DeleteComponent(SceneNodeComponent* pComponent) const
+    {
+        delete pComponent;
+    }
+
+
+
+
+
+
+
     SceneNodeComponent_Graphics::SceneNodeComponent_Graphics(const SceneNodeComponentDescriptor_Graphics &descriptor)
         : SceneNodeComponent(descriptor),
           m_pGraphicsResourceManager(nullptr),

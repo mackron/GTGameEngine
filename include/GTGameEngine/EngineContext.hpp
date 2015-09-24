@@ -15,16 +15,16 @@
 #include "Scene/SceneNodeComponentDescriptorLibrary.hpp"
 
 #if defined(GT_BUILD_COMPONENT_EVENTS)
-#include "Scene/SceneNodeComponentDescriptor_Events.hpp"
+#include "Scene/EventsComponent.hpp"
 #endif
 #if defined(GT_BUILD_COMPONENT_SCRIPT)
-//#include "Scene/SceneNodeComponentDescriptor_Script.hpp"
+//#include "Scene/ScriptComponent.hpp"
 #endif
 #if defined(GT_ENABLE_COMPONENT_GRAPHICS)
-#include "Scene/SceneNodeComponentDescriptor_Graphics.hpp"
+#include "Scene/GraphicsComponent.hpp"
 #endif
 #if defined(GT_BUILD_COMPONENT_DYNAMICS)
-//#include "Scene/SceneNodeComponentDescriptor_Dynamics.hpp"
+//#include "Scene/DynamicsComponent.hpp"
 #endif
 
 namespace GT

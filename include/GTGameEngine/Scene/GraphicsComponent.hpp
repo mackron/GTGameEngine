@@ -4,13 +4,47 @@
 #define GT_SceneNodeComponent_Graphics
 
 #include "SceneNodeComponent.hpp"
-#include "SceneNodeComponentDescriptor_Graphics.hpp"
 #include "../Graphics/GraphicsAssetResourceManager.hpp"
 #include "../Graphics/GraphicsModelObject.hpp"
 
 namespace GT
 {
-    class EngineContext;
+    class SceneNodeComponentDescriptor_Graphics : public SceneNodeComponentDescriptor
+    {
+    public:
+
+        /// Retrieves the type ID of the component.
+        static SceneNodeComponentTypeID TypeID();
+
+        /// Retrieves the name of the component.
+        static const char* Name();
+
+
+
+    public:
+
+        /// Constructor.
+        SceneNodeComponentDescriptor_Graphics();
+
+        /// Destructor.
+        virtual ~SceneNodeComponentDescriptor_Graphics();
+
+
+        /// Retrieves the unique ID of the component.
+        virtual SceneNodeComponentTypeID GetTypeID() const;
+
+        /// Retrieves the name of the component.
+        virtual const char* GetName() const;
+
+        /// @copydoc SceneNodeComponentDescriptor::CreateComponent()
+        virtual SceneNodeComponent* CreateComponent() const;
+
+        /// @copydoc SceneNodeComponentDescriptor::DeleteComponent()
+        virtual void DeleteComponent(SceneNodeComponent* pComponent) const;
+    };
+
+
+
 
     class SceneNodeComponent_Graphics : public SceneNodeComponent
     {

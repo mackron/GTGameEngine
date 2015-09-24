@@ -3,7 +3,7 @@
 #ifndef GT_SceneNodeComponentDescriptorLibrary
 #define GT_SceneNodeComponentDescriptorLibrary
 
-#include "SceneNodeComponentDescriptor.hpp"
+#include "SceneNodeComponent.hpp"
 #include <GTLib/Map.hpp>
 
 namespace GT

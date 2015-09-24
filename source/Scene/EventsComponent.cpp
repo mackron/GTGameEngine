@@ -5,6 +5,48 @@
 
 namespace GT
 {
+    SceneNodeComponentTypeID SceneNodeComponentDescriptor_Events::TypeID()
+    {
+        return SceneNodeComponentType_Events;
+    }
+
+    const char* SceneNodeComponentDescriptor_Events::Name()
+    {
+        return "Events";
+    }
+
+
+    SceneNodeComponentDescriptor_Events::SceneNodeComponentDescriptor_Events()
+    {
+    }
+
+    SceneNodeComponentDescriptor_Events::~SceneNodeComponentDescriptor_Events()
+    {
+    }
+
+    SceneNodeComponentTypeID SceneNodeComponentDescriptor_Events::GetTypeID() const
+    {
+        return SceneNodeComponentDescriptor_Events::TypeID();
+    }
+
+    const char* SceneNodeComponentDescriptor_Events::GetName() const
+    {
+        return SceneNodeComponentDescriptor_Events::Name();
+    }
+
+    SceneNodeComponent* SceneNodeComponentDescriptor_Events::CreateComponent() const
+    {
+        return new SceneNodeComponent_Events(*this);
+    }
+
+    void SceneNodeComponentDescriptor_Events::DeleteComponent(SceneNodeComponent* pComponent) const
+    {
+        delete pComponent;
+    }
+
+
+
+
     SceneNodeComponent_Events::SceneNodeComponent_Events(const SceneNodeComponentDescriptor_Events &descriptor)
         : SceneNodeComponent(descriptor),
           m_onUpdate(nullptr), m_onPostUpdate(nullptr)
