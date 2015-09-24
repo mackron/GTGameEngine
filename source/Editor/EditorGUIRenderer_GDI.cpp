@@ -21,7 +21,7 @@ namespace GT
           m_hDC(0),
           m_pCurrentSurfaceAUXData(nullptr),
           m_hAlphaBlendDC(0),
-          m_hRawBitmap(0)
+          m_hRawBitmap(0), m_pRawBitmapData(nullptr), m_rawBitmapWidth(0), m_rawBitmapHeight(0)
     {
         ZeroMemory(&m_ps, sizeof(m_ps));
         m_hAlphaBlendDC = CreateCompatibleDC(GetDC(GetDesktopWindow()));
@@ -29,6 +29,11 @@ namespace GT
 
     EditorGUIRenderer_GDI::~EditorGUIRenderer_GDI()
     {
+        DeleteDC(m_hAlphaBlendDC);
+
+        if (m_hRawBitmap != 0) {
+            DeleteObject(m_hRawBitmap);
+        }
     }
 
 
@@ -211,23 +216,36 @@ namespace GT
     {
         (void)context;
 
-        void* pBitmapWin32Data = nullptr;
 
-        // The old HBITMAP needs to be deleted.
-        if (m_hRawBitmap != 0) {
-            DeleteObject(m_hRawBitmap);
+        // If the width or height of the image data is larger than that of the existing bitmap, the bitmap will need to be recreated.
+        if (width > m_rawBitmapWidth || height > m_rawBitmapHeight)
+        {
+            // The old HBITMAP needs to be deleted.
+            if (m_hRawBitmap != 0) {
+                DeleteObject(m_hRawBitmap);
+            }
+
+            BITMAPINFO bmi;
+            ZeroMemory(&bmi, sizeof(bmi));
+            bmi.bmiHeader.biSize        = sizeof(bmi.bmiHeader);
+            bmi.bmiHeader.biWidth       = width;
+            bmi.bmiHeader.biHeight      = height;
+            bmi.bmiHeader.biPlanes      = 1;
+            bmi.bmiHeader.biBitCount    = 32;
+            bmi.bmiHeader.biCompression = BI_RGB;
+            m_hRawBitmap = CreateDIBSection(m_hDC, &bmi, DIB_RGB_COLORS, &m_pRawBitmapData, NULL, 0);
+            if (m_hRawBitmap != 0) {
+                m_rawBitmapWidth  = width;
+                m_rawBitmapHeight = height;
+            } else {
+                m_pRawBitmapData  = nullptr;
+                m_rawBitmapWidth  = 0;
+                m_rawBitmapHeight = 0;
+            }
         }
 
+
         
-        BITMAPINFO bmi;
-        ZeroMemory(&bmi, sizeof(bmi));
-        bmi.bmiHeader.biSize        = sizeof(bmi.bmiHeader);
-        bmi.bmiHeader.biWidth       = width;
-        bmi.bmiHeader.biHeight      = height;
-        bmi.bmiHeader.biPlanes      = 1;
-        bmi.bmiHeader.biBitCount    = 32;
-        bmi.bmiHeader.biCompression = BI_RGB;
-        m_hRawBitmap = CreateDIBSection(m_hDC, &bmi, DIB_RGB_COLORS, &pBitmapWin32Data, NULL, 0);
         if (m_hRawBitmap != 0)
         {
             // Image data is assumed to be RGBA.
@@ -238,8 +256,8 @@ namespace GT
 
                 for (unsigned int iCol = 0; iCol < width; ++iCol)
                 {
-                    uint32_t  srcTexel = reinterpret_cast<const uint32_t*>(pImageData      )[(iRowSrc * width) + iCol];
-                    uint32_t &dstTexel = reinterpret_cast<      uint32_t*>(pBitmapWin32Data)[(iRowDst * width) + iCol];
+                    uint32_t  srcTexel = reinterpret_cast<const uint32_t*>(pImageData      )[(iRowSrc * width)            + iCol];
+                    uint32_t &dstTexel = reinterpret_cast<      uint32_t*>(m_pRawBitmapData)[(iRowDst * m_rawBitmapWidth) + iCol];
 
                     uint32_t srcTexelA = (srcTexel & 0xFF000000) >> 24;
                     uint32_t srcTexelB = (srcTexel & 0x00FF0000) >> 16;
@@ -266,7 +284,7 @@ namespace GT
                 BLENDFUNCTION blend = {AC_SRC_OVER, 0, 255, AC_SRC_ALPHA};
                 AlphaBlend(m_hDC, xPos, yPos, width, height, m_hAlphaBlendDC, 0, 0, width, height, blend);
             } else {
-                BitBlt(m_hDC, xPos, yPos, width, height, m_hAlphaBlendDC, 0, 0, SRCCOPY);
+                BitBlt(m_hDC, xPos, yPos, width, height, m_hAlphaBlendDC, 0, m_rawBitmapHeight - height, SRCCOPY);
             }
 
             SelectObject(m_hAlphaBlendDC, hOldBitmap);

@@ -124,6 +124,15 @@ namespace GT
 
         /// The bitmap to use with DrawRawImage().
         HBITMAP m_hRawBitmap;
+
+        /// A pointer to the buffer containing the data of the raw bitmap.
+        void* m_pRawBitmapData;
+
+        /// The width of the raw bitmap.
+        unsigned int m_rawBitmapWidth;
+
+        /// The height of the raw bitmap.
+        unsigned int m_rawBitmapHeight;
     };
 }
 
