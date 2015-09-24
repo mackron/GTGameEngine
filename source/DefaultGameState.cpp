@@ -10,7 +10,7 @@ namespace GT
           m_config(),
           m_guiRendererAndResourceManager(), m_guiFontManager(FontOption_NoClearType), m_gui(&m_guiRendererAndResourceManager, &m_guiFontManager, &m_guiRendererAndResourceManager),
           m_graphicsWorld(m_gui), m_graphicsAssetResourceManager(m_graphicsWorld, m_engine.GetAssetLibrary()),
-          m_sceneCallback(), m_scene(m_sceneCallback),
+          m_sceneCallback(), m_scene(m_engine, m_sceneCallback),
           m_flags(0)
     {
     }

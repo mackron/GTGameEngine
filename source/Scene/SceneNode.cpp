@@ -143,45 +143,29 @@ namespace GT
         return const_cast<SceneNode*>(this)->GetComponentByTypeID(typeID);
     }
 
-
-    bool SceneNode::AttachComponent(SceneNodeComponent &component)
+    
+    SceneNodeComponent* SceneNode::AttachComponentByTypeID(SceneNodeComponentTypeID typeID)
     {
+        // NOTE: The component is deleted in DetachComponentByIndex().
+
         if (m_componentCount < GT_MAX_SCENE_NODE_COMPONENTS)
         {
-            // Check a component of the same type is not already attached.
-            if (this->GetComponentByTypeID(component.GetTypeID()) == nullptr)
+            if (this->GetComponentByTypeID(typeID) == nullptr)
             {
-                m_components[m_componentCount] = &component;
-                m_componentCount += 1;
+                SceneNodeComponent* pComponent = m_scene.GetEngineContext().CreateSceneNodeComponent(typeID);
+                if (pComponent != nullptr)
+                {
+                    m_components[m_componentCount] = pComponent;
+                    m_componentCount += 1;
 
-                component._IUO_SetSceneNode(this);
+                    pComponent->_IUO_SetSceneNode(this);
+                }
 
-                return true;
-            }
-            else
-            {
-                // A component of the same type is already attached.
-                return false;
+                return pComponent;
             }
         }
-        else
-        {
-            // No available slots. Max GT_MAX_SCENE_NODE_COMPONENTS.
-            return false;
-        }
-    }
 
-    void SceneNode::DetachComponent(SceneNodeComponent &component)
-    {
-        for (uint16_t i = 0; i < m_componentCount; ++i)
-        {
-            auto pComponent = m_components[i];
-            if (pComponent == &component)
-            {
-                this->DetachComponentByIndex(i);
-                break;
-            }
-        }
+        return nullptr;
     }
 
     void SceneNode::DetachComponentByTypeID(SceneNodeComponentTypeID typeID)
@@ -204,6 +188,10 @@ namespace GT
     {
         if (index < m_componentCount)
         {
+            SceneNodeComponent* pComponent = m_components[index];
+            assert(pComponent != nullptr);
+
+
             m_componentCount -= 1;
 
 
@@ -219,6 +207,11 @@ namespace GT
 
             // Make sure the last item is null.
             m_components[m_componentCount] = nullptr;
+
+
+
+            // Finally, the component needs to be deleted.
+            m_scene.GetEngineContext().DeleteSceneNodeComponent(pComponent);
         }
     }
 

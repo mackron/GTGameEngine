@@ -4,6 +4,7 @@
 #define GT_Scene
 
 #include "SceneNodeIDAllocator.hpp"
+#include "../EngineContext.hpp"
 #include <GTLib/Map.hpp>
 #include <GTLib/Vector.hpp>
 
@@ -22,10 +23,14 @@ namespace GT
     public:
 
         /// Constructor.
-        Scene(SceneCallback& callback);
+        Scene(EngineContext &engine, SceneCallback& callback);
 
         /// Destructor.
         ~Scene();
+
+
+        /// Retrieves a reference to the engine context.
+        EngineContext & GetEngineContext() { return m_engine; }
 
 
         /// Creates a new, empty scene node.
@@ -120,6 +125,10 @@ namespace GT
 
 
     private:
+
+        /// A reference to the engine context. This is required in order to create and delete scene node components.
+        EngineContext &m_engine;
+
 
         /// The scene node ID allocator for generating unique scene node IDs. This is serialized with the scene so that IDs are persistent.
         SceneNodeIDAllocator m_idAllocator;

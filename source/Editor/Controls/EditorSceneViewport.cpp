@@ -8,7 +8,7 @@ namespace GT
 {
     EditorSceneViewport::EditorSceneViewport(Editor &editor)
         : EditorControl(editor),
-          m_sceneCallback(), m_scene(m_sceneCallback),
+          m_sceneCallback(), m_scene(editor.GetEngineContext(), m_sceneCallback),
           m_graphicsWorld(this->GetGUI()), m_graphicsAssetResourceManager(m_graphicsWorld, editor.GetEngineContext().GetAssetLibrary()),
           m_hViewportRTTexture(0), m_hViewportRT(0),
           m_pViewportRTTextureData(nullptr), m_viewportRTTextureDataSize(0),

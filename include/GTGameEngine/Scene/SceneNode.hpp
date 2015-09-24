@@ -8,13 +8,13 @@
 #include <GTGameEngine/AlignedType.hpp>
 #include <cstdint>
 
+#include "Scene.hpp"
 #include "SceneNodeComponentTypes.hpp"
 
 #define GT_MAX_SCENE_NODE_COMPONENTS        8
 
 namespace GT
 {
-    class Scene;
     class SceneNodeComponent;
 
     /// Class representing a scene node.
@@ -97,24 +97,13 @@ namespace GT
         const SceneNodeComponent* GetComponentByTypeID(SceneNodeComponentTypeID typeID) const;
 
 
-
-
-        /// Attaches the given component.
+        /// Attaches a component by it's type ID.
         ///
-        /// @param component [in] A reference to the component to add.
+        /// @param typeID [in] The type ID of the component to attach.
         ///
-        /// @return True if the component was attached successfully; false otherwise.
-        ///
-        /// @remarks
-        ///     This will fail if a component of the same type is already attached.
-        bool AttachComponent(SceneNodeComponent &component);
-        bool AttachComponent(SceneNodeComponent* component) { if (component != nullptr) { return this->AttachComponent(*component); } else { return false; }}
-
-        /// Detaches the given component.
-        ///
-        /// @param component [in] A reference to the component to detach.
-        void DetachComponent(SceneNodeComponent &component);
-        void DetachComponent(SceneNodeComponent* component) { if (component != nullptr) { this->DetachComponent(*component); }}
+        /// @return
+        ///     A pointer to the new component.
+        SceneNodeComponent* AttachComponentByTypeID(SceneNodeComponentTypeID typeID);
 
         /// Detaches the component of the given type, if any.
         ///
@@ -131,6 +120,37 @@ namespace GT
 
         /// Detaches every component.
         void DetachAllComponents();
+
+
+        /// Retrieves a pointer to the component of the given type, if it is attached.
+        ///
+        /// @remarks
+        ///     If a component of the given type is not attached to the scene node null is returned.
+        template <typename T>
+        T* GetComponent()
+        {
+            return reinterpret_cast<T*>(GetComponentByTypeID(T::GetTypeID()));
+        }
+
+        template <typename T>
+        const T* GetComponent() const
+        {
+            return reinterpret_cast<const T*>(this->GetComponentByTypeID(T::GetTypeID()));
+        }
+
+        /// Attaches a component.
+        template <typename T>
+        T* AttachComponent()
+        {
+            return reinterpret_cast<T*>(AttachComponentByTypeID(T::GetTypeID()));
+        }
+
+        /// Detaches a component.
+        template <typename T>
+        void DetachComponent()
+        {
+            DetachComponentByTypeID(T::GetTypeID());
+        }
 
 
         /// Sets the scene node to static.
@@ -183,20 +203,6 @@ namespace GT
         vec2 GetUp2D() const;
 
 
-        ///////////////////////////////////
-        // Helpers
-
-        template <typename T>
-        T* GetComponent()
-        {
-            return reinterpret_cast<T*>(this->GetComponentByTypeID(T::GetTypeID()));
-        }
-
-        template <typename T>
-        const T* GetComponent() const
-        {
-            return reinterpret_cast<const T*>(this->GetComponentByTypeID(T::GetTypeID()));
-        }
 
 
 
@@ -249,7 +255,7 @@ namespace GT
 
 
 
-        /// A pointer to the scene that owns this scene node.
+        /// A reference to the scene that owns this scene node.
         Scene &m_scene;
 
 

@@ -8,8 +8,9 @@
 
 namespace GT
 {
-    Scene::Scene(SceneCallback &callback)
-        : m_idAllocator(1),
+    Scene::Scene(EngineContext &engine, SceneCallback &callback)
+        : m_engine(engine),
+          m_idAllocator(1),
           m_sceneNodes(),
           m_callback(callback),
           m_pSceneNodeAllocator(nullptr),

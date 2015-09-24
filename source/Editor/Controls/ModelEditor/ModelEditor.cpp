@@ -40,15 +40,10 @@ namespace GT
 
             // We need to create a scene node with a graphics component attached to it.
             m_pSceneNode = m_viewport.GetScene().CreateSceneNode();
-            m_pSceneNode->AttachComponent(editor.GetEngineContext().CreateSceneNodeComponent<SceneNodeComponent_Graphics>());
-            
-            auto pGraphicsComponent = m_pSceneNode->GetComponent<SceneNodeComponent_Graphics>();
+            auto pGraphicsComponent = m_pSceneNode->AttachComponent<SceneNodeComponent_Graphics>();
             if (pGraphicsComponent != nullptr)
             {
-                if (!pGraphicsComponent->SetModel(absolutePath, &m_viewport.GetGraphicsAssetResourceManager()))
-                {
-                    __asm int 3;
-                }
+                pGraphicsComponent->SetModel(absolutePath, &m_viewport.GetGraphicsAssetResourceManager());
             }
 
             m_viewport.GetScene().InsertSceneNode(m_pSceneNode);
@@ -60,15 +55,6 @@ namespace GT
 
     ModelEditor::~ModelEditor()
     {
-        m_viewport.GetScene().RemoveSceneNode(m_pSceneNode);
-
-        auto pGraphicsComponent = m_pSceneNode->GetComponent<SceneNodeComponent_Graphics>();
-        m_pSceneNode->DetachComponent(pGraphicsComponent);
-        if (pGraphicsComponent != nullptr) {
-            this->GetEditor().GetEngineContext().DeleteSceneNodeComponent(pGraphicsComponent);
-        }
-        
-
         m_viewport.GetScene().DeleteSceneNode(m_pSceneNode);
     }
 
