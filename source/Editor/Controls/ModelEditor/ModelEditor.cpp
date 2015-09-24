@@ -4,7 +4,7 @@
 #include <GTGameEngine/Editor/Editor.hpp>
 #include <GTGameEngine/EngineContext.hpp>
 #include <GTGameEngine/Scene/SceneNode.hpp>
-#include <GTGameEngine/Scene/SceneNodeComponent_Graphics.hpp>
+#include <GTGameEngine/Scene/GraphicsComponent.hpp>
 
 namespace GT
 {

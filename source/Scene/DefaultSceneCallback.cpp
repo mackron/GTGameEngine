@@ -2,8 +2,8 @@
 
 #include <GTGameEngine/Scene/DefaultSceneCallback.hpp>
 #include <GTGameEngine/Scene/SceneNode.hpp>
-#include <GTGameEngine/Scene/SceneNodeComponent_Graphics.hpp>
-#include <GTGameEngine/Scene/SceneNodeComponent_Events.hpp>
+#include <GTGameEngine/Scene/GraphicsComponent.hpp>
+#include <GTGameEngine/Scene/EventsComponent.hpp>
 
 namespace GT
 {

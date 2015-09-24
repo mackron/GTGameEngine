@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Scene/SceneNodeComponent_Graphics.hpp>
+#include <GTGameEngine/Scene/GraphicsComponent.hpp>
 #include <GTGameEngine/EngineContext.hpp>
 
 namespace GT
