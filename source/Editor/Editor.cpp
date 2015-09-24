@@ -760,6 +760,12 @@ namespace GT
                 break;
             }
 
+        case GUISystemCursor::Cross:
+            {
+                this->SetCursor(SystemCursorType::Cross);
+                break;
+            }
+
         case GUISystemCursor::Default:
         default:
             {

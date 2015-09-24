@@ -8,7 +8,8 @@ namespace GT
     enum class GUISystemCursor
     {
         Default = 0,
-        IBeam   = 1
+        IBeam   = 1,
+        Cross   = 2
     };
 }
 
