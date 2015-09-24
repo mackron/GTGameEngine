@@ -60,6 +60,16 @@ namespace GT
 
     ModelEditor::~ModelEditor()
     {
+        m_viewport.GetScene().RemoveSceneNode(m_pSceneNode);
+
+        auto pGraphicsComponent = m_pSceneNode->GetComponent<SceneNodeComponent_Graphics>();
+        m_pSceneNode->DetachComponent(pGraphicsComponent);
+        if (pGraphicsComponent != nullptr) {
+            this->GetEditor().GetEngineContext().DeleteSceneNodeComponent(pGraphicsComponent);
+        }
+        
+
+        m_viewport.GetScene().DeleteSceneNode(m_pSceneNode);
     }
 
     bool ModelEditor::Save()
