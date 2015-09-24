@@ -265,6 +265,10 @@ namespace GT
     {
         return m_gameContext.GetWindowManager();
     }
+    const WindowManager & Editor::GetWindowManager() const
+    {
+        return m_gameContext.GetWindowManager();
+    }
 
 
     bool Editor::Open()
@@ -353,6 +357,7 @@ namespace GT
     {
         (void)deltaTimeInSeconds;
     }
+
 
 
 
@@ -719,7 +724,7 @@ namespace GT
         }
     }
 
-    HGUISurface Editor::GetWindowElement(HWindow hWindow) const
+    HGUIElement Editor::GetWindowElement(HWindow hWindow) const
     {
         auto iSurface = m_windowSurfaceMap.Find(hWindow);
         if (iSurface != nullptr)
@@ -741,6 +746,11 @@ namespace GT
         }
 
         return NULL;
+    }
+
+    HWindow Editor::GetElementWindow(HGUIElement hElement) const
+    {
+        return this->GetSurfaceWindow(m_gui.GetElementSurface(hElement));
     }
 
 

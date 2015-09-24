@@ -90,6 +90,7 @@ namespace GT
 
         /// Retrieves a reference to the window manager.
         WindowManager & GetWindowManager();
+        const WindowManager & GetWindowManager() const;
 
 
         /// Opens the editor.
@@ -280,6 +281,12 @@ namespace GT
         ///
         /// @return A handle to the window that is associated with the given surface, if any.
         HWindow GetSurfaceWindow(HGUISurface hSurface) const;
+
+        /// Retrieves the window that the given GUI element is attached to.
+        ///
+        /// @remarks
+        ///     This will only work if the element is owned by the editor.
+        HWindow GetElementWindow(HGUIElement hElement) const;
 
 
 

@@ -1289,6 +1289,39 @@ namespace GT
     }
 
 
+    bool WindowManager_Win32::RelativeToAbsolute(HWindow hWindow, int posXIn, int posYIn, int & posXOut, int & posYOut) const
+    {
+        POINT p;
+        p.x = posXIn;
+        p.y = posYIn;
+        if (ClientToScreen(reinterpret_cast<HWND>(hWindow), &p))
+        {
+            posXOut = p.x;
+            posYOut = p.y;
+
+            return true;
+        }
+
+        return false;
+    }
+
+    bool WindowManager_Win32::AbsoluteToRelative(HWindow hWindow, int posXIn, int posYIn, int & posXOut, int & posYOut) const
+    {
+        POINT p;
+        p.x = posXIn;
+        p.y = posYIn;
+        if (ScreenToClient(reinterpret_cast<HWND>(hWindow), &p))
+        {
+            posXOut = p.x;
+            posYOut = p.y;
+
+            return true;
+        }
+
+        return false;
+    }
+
+
     bool WindowManager_Win32::CreateTimer(HWindow hWindow, size_t timerID, unsigned int milliseconds)
     {
         return SetTimer(reinterpret_cast<HWND>(hWindow), UINT_PTR(timerID), milliseconds, nullptr) != 0;

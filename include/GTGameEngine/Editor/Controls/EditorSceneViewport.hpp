@@ -32,11 +32,42 @@ namespace GT
 
     private:
 
-        /// Resizes the viewport.
-        void Resize(unsigned int width, unsigned int height);
+        /// @copydoc EditorControl::OnSize()
+        void OnSize(unsigned int width, unsigned int height);
 
+        /// @copydoc EditorControl::OnMouseMove()
+        void OnMouseMove(int mousePosX, int mousePosY);
+
+        /// @copydoc EditorControl::OnMouseButtonPressed()
+        void OnMouseButtonPressed(int button, int posX, int posY);
+
+        /// @copydoc EditorControl::OnMouseButtonReleased()
+        void OnMouseButtonReleased(int button, int posX, int posY);
+
+        
         /// Paints the viewport.
         void Paint(GUIRenderer* pRenderer);
+
+
+
+        void OnLMBPressed();
+        void OnRMBPressed();
+        void OnMMBPressed();
+
+        void OnLMBReleased();
+        void OnRMBReleased();
+        void OnMMBReleased();
+
+        bool IsAnyMouseButtonDown() const;
+
+        void CaptureCursor();
+        void ReleaseCursor();
+        bool IsCursorCaptured() const;
+
+        void UpdateCursorCaptureOrigin();
+        void MoveCursorToCaptureOrigin();
+
+        bool RelativeToScreen(int posXIn, int posYIn, int &posXOut, int &posYOut) const;
 
 
     private:
@@ -60,6 +91,34 @@ namespace GT
 
         /// The texture render target for the viewport.
         HGraphicsRenderTarget m_hViewportRT;
+
+        
+        /// The buffer used to store the raw image data of the render target's texture. We need this so we can pass it to the GUI's renderer
+        /// and draw the render target to the window. Later on we'll look at how to render this directly to the window using a window render
+        /// target.
+        ///
+        /// This buffer will grow as required, but never shrink.
+        void* m_pViewportRTTextureData;
+
+        /// The size of the buffer at m_pViewportRTTextureData.
+        size_t m_viewportRTTextureDataSize;
+
+
+        /// The position of the mouse at the time it was hidden. This is used to reposition the mouse upon release.
+        int m_cursorPosXOnCapture;
+        int m_cursorPosYOnCapture;
+
+        /// The position of the mouse cursor at it's origin while captured.
+        int m_cursorOriginPosX;
+        int m_cursorOriginPosY;
+
+        /// Keeps track of whether or not a mouse button is down.
+        bool m_isLMBDown;
+        bool m_isRMBDown;
+        bool m_isMMBDown;
+
+        /// Keeps track of whether or not the cursor is captured.
+        bool m_isCursorCaptured;
     };
 }
 

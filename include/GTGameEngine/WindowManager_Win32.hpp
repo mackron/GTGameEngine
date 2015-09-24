@@ -105,6 +105,13 @@ namespace GT
         virtual bool SetCursorPosition(int mousePosX, int mousePosY);
 
 
+        /// @copydoc WindowManager::RelativeToAbsolute()
+        virtual bool RelativeToAbsolute(HWindow hWindow, int posXIn, int posYIn, int &posXOut, int &posYOut) const;
+
+        /// @copydoc WindowManager::AbsoluteToRelative()
+        virtual bool AbsoluteToRelative(HWindow hWindow, int posXIn, int posYIn, int &posXOut, int &posYOut) const;
+
+
         /// @copydoc WindowManager::CreateTimer()
         virtual bool CreateTimer(HWindow hWindow, size_t timerID, unsigned int milliseconds);
 

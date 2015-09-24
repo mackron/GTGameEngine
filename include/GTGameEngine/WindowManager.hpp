@@ -174,6 +174,14 @@ namespace GT
 
 
 
+        /// Converts a point relative to the given window to screen space.
+        virtual bool RelativeToAbsolute(HWindow hWindow, int posXIn, int posYIn, int &posXOut, int &posYOut) const = 0;
+
+        /// Converts a point in screen space to window space.
+        virtual bool AbsoluteToRelative(HWindow hWindow, int posXIn, int posYIn, int &posXOut, int &posYOut) const = 0;
+
+
+
         /// Creates a timer.
         virtual bool CreateTimer(HWindow hWindow, size_t timerID, unsigned int milliseconds) = 0;
 
