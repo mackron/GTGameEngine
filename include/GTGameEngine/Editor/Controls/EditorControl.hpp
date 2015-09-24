@@ -46,34 +46,34 @@ namespace GT
 
 
         /// @copydoc GUIEventHandler::OnMove()
-        virtual void OnMove(GUIContext &context, HGUIElement hElement, unsigned int width, unsigned int height);
+        virtual void OnMove(int x, int y);
 
         /// @copydoc GUIEventHandler::OnSize()
-        virtual void OnSize(GUIContext &context, HGUIElement hElement, int x, int y);
+        virtual void OnSize(unsigned int width, unsigned int height);
 
         /// @copydoc GUIEventHandler::OnMouseEnter()
-        virtual void OnMouseEnter(GUIContext &context, HGUIElement hElement);
+        virtual void OnMouseEnter();
 
         /// @copydoc GUIEventHandler::OnMouseLeave()
-        virtual void OnMouseLeave(GUIContext &context, HGUIElement hElement);
+        virtual void OnMouseLeave();
 
         /// @copydoc GUIEventHandler::OnMouseMove()
-        virtual void OnMouseMove(GUIContext &context, HGUIElement hElement, int mousePosX, int mousePosY);
+        virtual void OnMouseMove(int mousePosX, int mousePosY);
 
         /// @copydoc GUIEventHandler::OnMouseButtonPressed()
-        virtual void OnMouseButtonPressed(GUIContext &context, HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY);
+        virtual void OnMouseButtonPressed(int mouseButton, int mousePosX, int mousePosY);
 
         /// @copydoc GUIEventHandler::OnMouseButtonReleased()
-        virtual void OnMouseButtonReleased(GUIContext &context, HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY);
+        virtual void OnMouseButtonReleased(int mouseButton, int mousePosX, int mousePosY);
 
         /// @copydoc GUIEventHandler::OnMouseButtonDoubleClicked()
-        virtual void OnMouseButtonDoubleClicked(GUIContext &context, HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY);
+        virtual void OnMouseButtonDoubleClicked(int mouseButton, int mousePosX, int mousePosY);
 
         /// @copydoc GUIEventHandler::OnSetMouseEventCapture()
-        virtual void OnSetMouseEventCapture(GUIContext &context, HGUIElement hElement);
+        virtual void OnSetMouseEventCapture();
 
         /// @copydoc GUIEventHandler::OnReleasedMouseEventCapture()
-        virtual void OnReleaseMouseEventCapture(GUIContext &context, HGUIElement hElement);
+        virtual void OnReleaseMouseEventCapture();
 
 
 
@@ -93,16 +93,16 @@ namespace GT
             ControlGUIEventHandler(EditorControl &control);
 
         private:
-            void OnSize(GUIContext &context, HGUIElement hElement, unsigned int width, unsigned int height)                           { m_control.OnSize(context, hElement, width, height); }
-            void OnMove(GUIContext &context, HGUIElement hElement, int x, int y)                                                      { m_control.OnMove(context, hElement, x, y); }
-            void OnMouseEnter(GUIContext &context, HGUIElement hElement)                                                              { m_control.OnMouseEnter(context, hElement); }
-            void OnMouseLeave(GUIContext &context, HGUIElement hElement)                                                              { m_control.OnMouseLeave(context, hElement); }
-            void OnMouseMove(GUIContext &context, HGUIElement hElement, int mousePosX, int mousePosY)                                 { m_control.OnMouseMove(context, hElement, mousePosX, mousePosY); }
-            void OnMouseButtonPressed(GUIContext &context, HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY)       { m_control.OnMouseButtonPressed(context, hElement, mouseButton, mousePosX, mousePosY); }
-            void OnMouseButtonReleased(GUIContext &context, HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY)      { m_control.OnMouseButtonReleased(context, hElement, mouseButton, mousePosX, mousePosY); }
-            void OnMouseButtonDoubleClicked(GUIContext &context, HGUIElement hElement, int mouseButton, int mousePosX, int mousePosY) { m_control.OnMouseButtonDoubleClicked(context, hElement, mouseButton, mousePosX, mousePosY); }
-            void OnSetMouseEventCapture(GUIContext &context, HGUIElement hElement)                                                    { m_control.OnSetMouseEventCapture(context, hElement); }
-            void OnReleaseMouseEventCapture(GUIContext &context, HGUIElement hElement)                                                { m_control.OnReleaseMouseEventCapture(context, hElement); }
+            void OnSize(GUIContext &, HGUIElement, unsigned int width, unsigned int height)                           { m_control.OnSize(width, height); }
+            void OnMove(GUIContext &, HGUIElement, int x, int y)                                                      { m_control.OnMove(x, y); }
+            void OnMouseEnter(GUIContext &, HGUIElement)                                                              { m_control.OnMouseEnter(); }
+            void OnMouseLeave(GUIContext &, HGUIElement)                                                              { m_control.OnMouseLeave(); }
+            void OnMouseMove(GUIContext &, HGUIElement, int mousePosX, int mousePosY)                                 { m_control.OnMouseMove(mousePosX, mousePosY); }
+            void OnMouseButtonPressed(GUIContext &, HGUIElement, int mouseButton, int mousePosX, int mousePosY)       { m_control.OnMouseButtonPressed(mouseButton, mousePosX, mousePosY); }
+            void OnMouseButtonReleased(GUIContext &, HGUIElement, int mouseButton, int mousePosX, int mousePosY)      { m_control.OnMouseButtonReleased(mouseButton, mousePosX, mousePosY); }
+            void OnMouseButtonDoubleClicked(GUIContext &, HGUIElement, int mouseButton, int mousePosX, int mousePosY) { m_control.OnMouseButtonDoubleClicked(mouseButton, mousePosX, mousePosY); }
+            void OnSetMouseEventCapture(GUIContext &, HGUIElement)                                                    { m_control.OnSetMouseEventCapture(); }
+            void OnReleaseMouseEventCapture(GUIContext &, HGUIElement)                                                { m_control.OnReleaseMouseEventCapture(); }
 
             EditorControl &m_control;
 
