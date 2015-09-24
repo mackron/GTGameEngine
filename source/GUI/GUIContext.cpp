@@ -3557,6 +3557,14 @@ namespace GT
         }
     }
 
+    void GUIContext::InvalidateElementRect(HGUIElement hElement)
+    {
+        GTLib::Rect<int> rect;
+        this->GetElementAbsoluteRect(hElement, rect);
+
+        this->InvalidateSurfaceRect(this->GetElementSurface(hElement), rect);
+    }
+
     void GUIContext::PaintSurface(HGUISurface hSurface, const GTLib::Rect<int> &rect, void* pInputData)
     {
         auto pSurface = this->GetSurfacePtr(hSurface);

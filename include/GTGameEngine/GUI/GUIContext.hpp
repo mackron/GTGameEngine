@@ -1533,6 +1533,9 @@ namespace GT
         void InvalidateSurfaceRect(HGUISurface hSurface, const GTLib::Rect<int> &rect);
         void InvalidateSurfaceRect(HGUISurface hSurcface);
 
+        /// Invalidates the rectangle of the given element.
+        void InvalidateElementRect(HGUIElement hElement);
+
         /// Paints a portion of the given surface.
         ///
         /// @param hSurface [in] The surface to paint.
