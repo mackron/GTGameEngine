@@ -59,6 +59,10 @@ namespace GT
 
         /// The panel.
         HGUIElement m_hPanel;
+
+
+        /// The scene node to show in the viewport.
+        SceneNode* m_pSceneNode;
     };
 }
 

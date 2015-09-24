@@ -146,6 +146,12 @@ namespace GT
         }
 
 
+        vec2 operator-()
+        {
+            return vec2(-x, -y);
+        }
+
+
         ///////////////////////////////////
         // Static Members
 
@@ -410,6 +416,12 @@ namespace GT
         }
 
 
+        vec3 operator-()
+        {
+            return vec3(-x, -y, -z);
+        }
+
+
         ///////////////////////////////////
         // Static Members
 
@@ -641,6 +653,11 @@ namespace GT
         {
         }
 
+        vec4(const vec3 &xyz, float _w)
+            : x(xyz.x), y(xyz.y), z(xyz.z), w(_w)
+        {
+        }
+
 
         vec4 & operator=(const vec4 &other)
         {
@@ -697,6 +714,12 @@ namespace GT
         vec4 & operator/=(float other)
         {
             return (*this) = (*this) / other;
+        }
+
+
+        vec4 operator-()
+        {
+            return vec4(-x, -y, -z, -w);
         }
 
 
@@ -964,6 +987,17 @@ namespace GT
     //////////////////////////
     // Operator Overloads
 
+    // quat * quat
+    inline quat operator*(const quat &q0, const quat &q1)
+    {
+        return quat(
+            q0.w * q1.x + q0.x * q1.w + q0.y * q1.z - q0.z * q1.y,
+            q0.w * q1.y + q0.y * q1.w + q0.z * q1.x - q0.x * q1.z,
+            q0.w * q1.z + q0.z * q1.w + q0.x * q1.y - q0.y * q1.x,
+            q0.w * q1.w - q0.x * q1.x - q0.y * q1.y - q0.z * q1.z
+        );
+    }
+
     // quat * vec4
     inline vec4 operator*(const quat &q, const vec4 &v)
     {
@@ -991,6 +1025,14 @@ namespace GT
         return result;
     }
 
+
+    // quat / float
+    inline quat operator/(const quat &q, float s)
+    {
+        return quat(q.x / s, q.y / s, q.z / s, q.w / s);
+    }
+
+
     inline bool operator==(const quat &v0, const quat &v1)
     {
         return v0.x == v1.x && v0.y == v1.y && v0.z == v1.z && v0.w == v1.w;
@@ -998,6 +1040,22 @@ namespace GT
     inline bool operator!=(const quat &v0, const quat &v1)
     {
         return !(v0 == v1);
+    }
+
+
+    inline quat conjugate(const quat &q)
+    {
+        return quat(-q.x, -q.y, -q.z, q.w);
+    }
+
+    inline float dot(const quat &q0, const quat &q1)
+    {
+        return q0.x*q1.x + q0.y*q1.y + q0.z*q1.z + q0.w*q1.w;
+    }
+
+    inline quat inverse(const quat &q)
+    {
+        return conjugate(q) / dot(q, q);
     }
 
 
@@ -1462,6 +1520,17 @@ namespace GT
         result[2] *= scale.z;
 
         return result;
+    }
+
+    inline void CalculateViewMatrix(const vec3 &position, const quat &orientation, mat4 &result)
+    {
+        // rotation.
+        result = quat_to_mat4(inverse(orientation));
+
+        // position.
+        result[3][0] = -position.x;
+        result[3][1] = -position.y;
+        result[3][2] = -position.z;
     }
 
 

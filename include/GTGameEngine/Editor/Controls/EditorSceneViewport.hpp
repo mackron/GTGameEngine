@@ -28,6 +28,22 @@ namespace GT
         /// Retrieves a reference to the graphics world.
         GraphicsWorld & GetGraphicsWorld() { return m_graphicsWorld; }
 
+        /// Retrieves a reference to the graphics asset resource manager object.
+        GraphicsAssetResourceManager & GetGraphicsAssetResourceManager() { return m_graphicsAssetResourceManager; }
+
+
+        /// Retrieves the position of the camera.
+        vec3 GetCameraPosition() const;
+
+        /// Sets the camera position.
+        void SetCameraPosition(const vec3 &cameraPosition);
+
+        /// Sets the rotation of the camera in degrees.
+        void SetCameraRotationInDegrees(float rotationX, float rotationY, float rotationZ);
+
+        /// Retrieves the rotation of the camera in degrees.
+        void GetCameraRotationInDegrees(float &rotationX, float &rotationY, float &rotationZ);
+
 
 
     private:
@@ -68,6 +84,29 @@ namespace GT
         void MoveCursorToCaptureOrigin();
 
         bool RelativeToScreen(int posXIn, int posYIn, int &posXOut, int &posYOut) const;
+
+
+        void UpdateViewMatrix();
+        void ScheduleRedraw();
+
+        void UpdateViewMatrixAndScheduleRedraw()
+        {
+            this->UpdateViewMatrix();
+            this->ScheduleRedraw();
+        }
+
+
+        /// Calculates the cameras rotation quaternion.
+        quat GetCameraRotation() const;
+
+        /// Calculates the camera's right vector.
+        vec3 GetCameraRight() const;
+
+        /// Calculates the camera's up vector.
+        vec3 GetCameraUp() const;
+
+        /// Calculates the camera's forward vector.
+        vec3 GetCameraForward() const;
 
 
     private:
@@ -119,6 +158,14 @@ namespace GT
 
         /// Keeps track of whether or not the cursor is captured.
         bool m_isCursorCaptured;
+
+
+
+        /// The position of the camera.
+        vec4 m_cameraPosition;
+
+        /// The rotation of the camera.
+        vec3 m_cameraRotation;
     };
 }
 

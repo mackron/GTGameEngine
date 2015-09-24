@@ -3,12 +3,15 @@
 #include <GTGameEngine/Editor/Controls/ModelEditor/ModelEditor.hpp>
 #include <GTGameEngine/Editor/Editor.hpp>
 #include <GTGameEngine/EngineContext.hpp>
+#include <GTGameEngine/Scene/SceneNode.hpp>
+#include <GTGameEngine/Scene/SceneNodeComponent_Graphics.hpp>
 
 namespace GT
 {
     ModelEditor::ModelEditor(Editor &editor, SubEditorAllocator &allocator, const char* absolutePath, ModelAsset* pAsset)
         : EditorSubEditor(editor, allocator, absolutePath),
-          m_pAsset(pAsset), m_viewport(editor), m_hPanel(0)
+          m_pAsset(pAsset), m_viewport(editor), m_hPanel(0),
+          m_pSceneNode(nullptr)
     {
         GUIContext &gui = this->GetGUI();
         //const EditorTheme &theme = this->GetEditor().GetTheme();
@@ -32,6 +35,26 @@ namespace GT
             gui.SetElementParent(m_hPanel, hRootElement);
             gui.SetElementWidth(m_hPanel, 256U);
             gui.SetElementHeightRatio(m_hPanel, 1);
+
+
+
+            // We need to create a scene node with a graphics component attached to it.
+            m_pSceneNode = m_viewport.GetScene().CreateSceneNode();
+            m_pSceneNode->AttachComponent(editor.GetEngineContext().CreateSceneNodeComponent<SceneNodeComponent_Graphics>());
+            
+            auto pGraphicsComponent = m_pSceneNode->GetComponent<SceneNodeComponent_Graphics>();
+            if (pGraphicsComponent != nullptr)
+            {
+                if (!pGraphicsComponent->SetModel(absolutePath, &m_viewport.GetGraphicsAssetResourceManager()))
+                {
+                    __asm int 3;
+                }
+            }
+
+            m_viewport.GetScene().InsertSceneNode(m_pSceneNode);
+
+
+            m_viewport.SetCameraPosition(vec3(0, 0, 5));
         }
     }
 

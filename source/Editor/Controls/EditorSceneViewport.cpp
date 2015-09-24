@@ -12,7 +12,8 @@ namespace GT
           m_graphicsWorld(this->GetGUI()), m_graphicsAssetResourceManager(m_graphicsWorld, editor.GetEngineContext().GetAssetLibrary()),
           m_hViewportRTTexture(0), m_hViewportRT(0),
           m_pViewportRTTextureData(nullptr), m_viewportRTTextureDataSize(0),
-          m_cursorPosXOnCapture(0), m_cursorPosYOnCapture(0), m_cursorOriginPosX(0), m_cursorOriginPosY(0), m_isLMBDown(false), m_isRMBDown(false), m_isMMBDown(false), m_isCursorCaptured(false)
+          m_cursorPosXOnCapture(0), m_cursorPosYOnCapture(0), m_cursorOriginPosX(0), m_cursorOriginPosY(0), m_isLMBDown(false), m_isRMBDown(false), m_isMMBDown(false), m_isCursorCaptured(false),
+          m_cameraRotation(0, 0, 0), m_cameraPosition(0, 0, 0, 0)
     {
         if (m_graphicsWorld.Startup(editor.GetEngineContext()) && m_graphicsAssetResourceManager.Startup())
         {
@@ -49,7 +50,33 @@ namespace GT
     }
 
     
+    vec3 EditorSceneViewport::GetCameraPosition() const
+    {
+        return vec3(m_cameraPosition.x, m_cameraPosition.y, m_cameraPosition.z);
+    }
 
+    void EditorSceneViewport::SetCameraPosition(const vec3 & cameraPosition)
+    {
+        m_cameraPosition = vec4(cameraPosition.x, cameraPosition.y, cameraPosition.z, 0.0f);
+
+        this->UpdateViewMatrixAndScheduleRedraw();
+    }
+
+    void EditorSceneViewport::SetCameraRotationInDegrees(float rotationX, float rotationY, float rotationZ)
+    {
+        m_cameraRotation.x = Radians(rotationX);
+        m_cameraRotation.y = Radians(rotationY);
+        m_cameraRotation.z = Radians(rotationZ);
+
+        this->UpdateViewMatrixAndScheduleRedraw();
+    }
+
+    void EditorSceneViewport::GetCameraRotationInDegrees(float & rotationX, float & rotationY, float & rotationZ)
+    {
+        rotationX = Degrees(m_cameraRotation.x);
+        rotationY = Degrees(m_cameraRotation.y);
+        rotationZ = Degrees(m_cameraRotation.z);
+    }
 
 
     ///////////////////////////////////////
@@ -68,8 +95,8 @@ namespace GT
         }
 
         GraphicsTextureResourceDesc texDesc;
-        texDesc.width  = width;
-        texDesc.height = height;
+        texDesc.width  = (width  > 0) ? width  : 1;
+        texDesc.height = (height > 0) ? height : 1;
         texDesc.depth  = 1;
         texDesc.format = TextureFormat_RGBA8;
         m_hViewportRTTexture = m_graphicsWorld.CreateTextureResource(texDesc);
@@ -77,6 +104,9 @@ namespace GT
         {
             m_hViewportRT = m_graphicsWorld.CreateRenderTargetFromTexture(m_hViewportRTTexture, 0);
             m_graphicsWorld.SetRenderTargetClearColor(m_hViewportRT, GTLib::Colour(0.33f, 0.33f, 0.33f));
+
+            m_graphicsWorld.SetRenderTargetProjection(m_hViewportRT, mat4::perspective(45.0f, float(width) / float(height), 0.1f, 1000.0f));
+            this->UpdateViewMatrix();
         }
     }
 
@@ -90,16 +120,44 @@ namespace GT
             int cursorScreenPosY;
             if (this->RelativeToScreen(mousePosX, mousePosY, cursorScreenPosX, cursorScreenPosY))
             {
-                int cursorOffsetX = cursorScreenPosX - m_cursorOriginPosX;
-                int cursorOffsetY = cursorScreenPosY - m_cursorOriginPosY;
+                const int cursorOffsetX = cursorScreenPosX - m_cursorOriginPosX;
+                const int cursorOffsetY = cursorScreenPosY - m_cursorOriginPosY;
+
+                const float translateSpeed = 0.025f;
+                const float rotateSpeed    = 0.003f;
                 
                 if (cursorOffsetX != 0 || cursorOffsetY != 0)
                 {
                     // The mouse has moved.
-                    printf("%d %d\n", cursorOffsetX, cursorOffsetY);
+
+                    if (m_isLMBDown)
+                    {
+                        // LMB is down.
+                        if (m_isRMBDown)
+                        {
+                            // LMB + RMB - Pan up and down.
+                            m_cameraPosition = m_cameraPosition + (this->GetCameraRotation() * vec4(cursorOffsetX * translateSpeed, cursorOffsetY * translateSpeed, 0, 0));
+                        }
+                        else
+                        {
+                            // LMB Only - Move forward by Y axis, rotate by X axis.
+                            m_cameraPosition = m_cameraPosition - vec4(this->GetCameraForward() * (cursorOffsetY * translateSpeed), 0);
+                            m_cameraRotation.y -= cursorOffsetX * rotateSpeed;
+                        }
+                    }
+                    else
+                    {
+                        // LMB is up.
+                        if (m_isRMBDown)
+                        {
+                            // RMB Only - Rotate in place.
+                            m_cameraRotation.x += cursorOffsetY * rotateSpeed;
+                            m_cameraRotation.y -= cursorOffsetX * rotateSpeed;
+                        }
+                    }
 
 
-
+                    this->UpdateViewMatrixAndScheduleRedraw();
 
 
                     // Finally, pin the cursor to the origin.
@@ -270,7 +328,7 @@ namespace GT
             this->GetGUI().SetMouseEventCapture(this->GetRootGUIElement());
 
             // The cursor needs to be hidden and then moved to the center of the viewport.
-            //this->GetEditor().GetWindowManager().HideCursor();
+            this->GetEditor().GetWindowManager().HideCursor();
 
 
             // While captured, the cursor will pinned to a fixed position called the origin. The origin needs to be calculated now.
@@ -337,5 +395,36 @@ namespace GT
 
         // We use the window manager to convert to screen coordiantes.
         return this->GetEditor().GetWindowManager().RelativeToAbsolute(this->GetEditor().GetElementWindow(this->GetRootGUIElement()), posXWindow, posYWindow, posXOut, posYOut);
+    }
+
+    void EditorSceneViewport::UpdateViewMatrix()
+    {
+        const mat4 view = quat_to_mat4(inverse(this->GetCameraRotation())) * mat4::translate(mat4::identity, -m_cameraPosition);
+
+        m_graphicsWorld.SetRenderTargetView(m_hViewportRT, view);
+    }
+
+    void EditorSceneViewport::ScheduleRedraw()
+    {
+        // We don't draw straight away. Rather, we let the GUI know that the region has become invalid and let the GUI handle the redrawing when it's ready.
+        this->GetGUI().InvalidateElementRect(this->GetRootGUIElement());
+    }
+
+    quat EditorSceneViewport::GetCameraRotation() const
+    {
+        return quat::angle_axis(m_cameraRotation.y, 0, 1, 0) * quat::angle_axis(m_cameraRotation.x, 1, 0, 0);
+    }
+
+    vec3 EditorSceneViewport::GetCameraRight() const
+    {
+        return this->GetCameraRotation() * vec3(1.0f, 0.0f, 0.0f);
+    }
+    vec3 EditorSceneViewport::GetCameraUp() const
+    {
+        return this->GetCameraRotation() * vec3(0.0f, 1.0f, 0.0f);
+    }
+    vec3 EditorSceneViewport::GetCameraForward() const
+    {
+        return this->GetCameraRotation() * vec3(0.0f, 0.0f, -1.0f);
     }
 }
