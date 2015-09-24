@@ -5,42 +5,42 @@
 
 namespace GT
 {
-    SceneNodeComponentTypeID SceneNodeComponentDescriptor_Graphics::TypeID()
+    SceneNodeComponentTypeID GraphicsComponentDescriptor::TypeID()
     {
         return SceneNodeComponentType_Graphics;
     }
 
-    const char* SceneNodeComponentDescriptor_Graphics::Name()
+    const char* GraphicsComponentDescriptor::Name()
     {
         return "Graphics";
     }
 
 
-    SceneNodeComponentDescriptor_Graphics::SceneNodeComponentDescriptor_Graphics()
+    GraphicsComponentDescriptor::GraphicsComponentDescriptor()
     {
     }
 
-    SceneNodeComponentDescriptor_Graphics::~SceneNodeComponentDescriptor_Graphics()
+    GraphicsComponentDescriptor::~GraphicsComponentDescriptor()
     {
     }
 
-    SceneNodeComponentTypeID SceneNodeComponentDescriptor_Graphics::GetTypeID() const
+    SceneNodeComponentTypeID GraphicsComponentDescriptor::GetTypeID() const
     {
-        return SceneNodeComponentDescriptor_Graphics::TypeID();
+        return GraphicsComponentDescriptor::TypeID();
     }
 
-    const char* SceneNodeComponentDescriptor_Graphics::GetName() const
+    const char* GraphicsComponentDescriptor::GetName() const
     {
-        return SceneNodeComponentDescriptor_Graphics::Name();
+        return GraphicsComponentDescriptor::Name();
     }
 
 
-    SceneNodeComponent* SceneNodeComponentDescriptor_Graphics::CreateComponent() const
+    SceneNodeComponent* GraphicsComponentDescriptor::CreateComponent() const
     {
-        return new SceneNodeComponent_Graphics(*this);
+        return new GraphicsComponent(*this);
     }
 
-    void SceneNodeComponentDescriptor_Graphics::DeleteComponent(SceneNodeComponent* pComponent) const
+    void GraphicsComponentDescriptor::DeleteComponent(SceneNodeComponent* pComponent) const
     {
         delete pComponent;
     }
@@ -51,7 +51,7 @@ namespace GT
 
 
 
-    SceneNodeComponent_Graphics::SceneNodeComponent_Graphics(const SceneNodeComponentDescriptor_Graphics &descriptor)
+    GraphicsComponent::GraphicsComponent(const GraphicsComponentDescriptor &descriptor)
         : SceneNodeComponent(descriptor),
           m_pGraphicsResourceManager(nullptr),
           m_pModelResource(nullptr),
@@ -59,13 +59,13 @@ namespace GT
     {
     }
 
-    SceneNodeComponent_Graphics::~SceneNodeComponent_Graphics()
+    GraphicsComponent::~GraphicsComponent()
     {
         this->UnsetModel();
     }
 
 
-    bool SceneNodeComponent_Graphics::SetModel(const char* modelPath, GraphicsAssetResourceManager* pGraphicsResourceManager)
+    bool GraphicsComponent::SetModel(const char* modelPath, GraphicsAssetResourceManager* pGraphicsResourceManager)
     {
         this->UnsetModel();
 
@@ -84,7 +84,7 @@ namespace GT
         return false;
     }
 
-    void SceneNodeComponent_Graphics::UnsetModel()
+    void GraphicsComponent::UnsetModel()
     {
         if (m_pModelResource != nullptr && m_pGraphicsResourceManager != nullptr)
         {
@@ -99,7 +99,7 @@ namespace GT
     }
 
 
-    void SceneNodeComponent_Graphics::AddModelToGraphicsWorld(const vec4 &position, const quat &rotation, const vec4 &scale)
+    void GraphicsComponent::AddModelToGraphicsWorld(const vec4 &position, const quat &rotation, const vec4 &scale)
     {
         if (m_pModelObject == nullptr && m_pModelResource != nullptr)
         {
@@ -108,7 +108,7 @@ namespace GT
         }
     }
 
-    void SceneNodeComponent_Graphics::RemoveModelFromGraphicsWorld()
+    void GraphicsComponent::RemoveModelFromGraphicsWorld()
     {
         if (m_pModelObject != nullptr)
         {
@@ -119,7 +119,7 @@ namespace GT
         }
     }
 
-    void SceneNodeComponent_Graphics::SetModelTransform(const vec4 &position, const quat &rotation, const vec4 &scale)
+    void GraphicsComponent::SetModelTransform(const vec4 &position, const quat &rotation, const vec4 &scale)
     {
         if (m_pModelObject != nullptr)
         {

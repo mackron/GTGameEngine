@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef GT_SceneNodeComponent_Graphics
-#define GT_SceneNodeComponent_Graphics
+#ifndef GT_GraphicsComponent
+#define GT_GraphicsComponent
 
 #include "SceneNodeComponent.hpp"
 #include "../Graphics/GraphicsAssetResourceManager.hpp"
@@ -9,7 +9,7 @@
 
 namespace GT
 {
-    class SceneNodeComponentDescriptor_Graphics : public SceneNodeComponentDescriptor
+    class GraphicsComponentDescriptor : public SceneNodeComponentDescriptor
     {
     public:
 
@@ -24,10 +24,10 @@ namespace GT
     public:
 
         /// Constructor.
-        SceneNodeComponentDescriptor_Graphics();
+        GraphicsComponentDescriptor();
 
         /// Destructor.
-        virtual ~SceneNodeComponentDescriptor_Graphics();
+        virtual ~GraphicsComponentDescriptor();
 
 
         /// Retrieves the unique ID of the component.
@@ -46,15 +46,15 @@ namespace GT
 
 
 
-    class SceneNodeComponent_Graphics : public SceneNodeComponent
+    class GraphicsComponent : public SceneNodeComponent
     {
     public:
 
         /// Constructor.
-        SceneNodeComponent_Graphics(const SceneNodeComponentDescriptor_Graphics &descriptor);
+        GraphicsComponent(const GraphicsComponentDescriptor &descriptor);
 
         /// Destructor.
-        ~SceneNodeComponent_Graphics();
+        ~GraphicsComponent();
 
 
         /// Sets the model to use with this graphics component.
@@ -90,11 +90,11 @@ namespace GT
         // Statics
 
         static SceneNodeComponentTypeID GetTypeID() {
-            return SceneNodeComponentDescriptor_Graphics::TypeID();
+            return GraphicsComponentDescriptor::TypeID();
         }
 
         static const char* GetName() {
-            return SceneNodeComponentDescriptor_Graphics::Name();
+            return GraphicsComponentDescriptor::Name();
         }
 
 

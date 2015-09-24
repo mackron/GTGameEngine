@@ -40,7 +40,7 @@ namespace GT
 
             // We need to create a scene node with a graphics component attached to it.
             m_pSceneNode = m_viewport.GetScene().CreateSceneNode();
-            auto pGraphicsComponent = m_pSceneNode->AttachComponent<SceneNodeComponent_Graphics>();
+            auto pGraphicsComponent = m_pSceneNode->AttachComponent<GraphicsComponent>();
             if (pGraphicsComponent != nullptr)
             {
                 pGraphicsComponent->SetModel(absolutePath, &m_viewport.GetGraphicsAssetResourceManager());

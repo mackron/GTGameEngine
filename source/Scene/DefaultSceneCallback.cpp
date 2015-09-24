@@ -17,7 +17,7 @@ namespace GT
          assert(pSceneNode != nullptr);
 
 #if defined(GT_BUILD_COMPONENT_GRAPHICS)
-        auto pGraphicsComponent = pSceneNode->GetComponent<GT::SceneNodeComponent_Graphics>();
+        auto pGraphicsComponent = pSceneNode->GetComponent<GT::GraphicsComponent>();
         if (pGraphicsComponent != nullptr)
         {
             pGraphicsComponent->AddModelToGraphicsWorld(worldPosition, worldRotation, worldScale);
@@ -32,7 +32,7 @@ namespace GT
         assert(pSceneNode != nullptr);
 
 #if defined(GT_BUILD_COMPONENT_GRAPHICS)
-        auto pGraphicsComponent = pSceneNode->GetComponent<GT::SceneNodeComponent_Graphics>();
+        auto pGraphicsComponent = pSceneNode->GetComponent<GT::GraphicsComponent>();
         if (pGraphicsComponent != nullptr)
         {
             pGraphicsComponent->RemoveModelFromGraphicsWorld();
@@ -47,7 +47,7 @@ namespace GT
         assert(pSceneNode != nullptr);
 
 #if defined(GT_BUILD_COMPONENT_GRAPHICS)
-        auto pGraphicsComponent = pSceneNode->GetComponent<GT::SceneNodeComponent_Graphics>();
+        auto pGraphicsComponent = pSceneNode->GetComponent<GT::GraphicsComponent>();
         if (pGraphicsComponent != nullptr)
         {
             pGraphicsComponent->SetModelTransform(worldPosition, worldRotation, worldScale);
@@ -64,7 +64,7 @@ namespace GT
         assert(pSceneNode != nullptr);
 
 #if defined(GT_BUILD_COMPONENT_EVENTS)
-        auto pEventsComponent = pSceneNode->GetComponent<GT::SceneNodeComponent_Events>();
+        auto pEventsComponent = pSceneNode->GetComponent<GT::EventsComponent>();
         if (pEventsComponent != nullptr)
         {
             pEventsComponent->PostOnUpdate(deltaTimeInSeconds);
@@ -80,7 +80,7 @@ namespace GT
         assert(pSceneNode != nullptr);
 
 #if defined(GT_BUILD_COMPONENT_EVENTS)
-        auto pEventsComponent = pSceneNode->GetComponent<GT::SceneNodeComponent_Events>();
+        auto pEventsComponent = pSceneNode->GetComponent<GT::EventsComponent>();
         if (pEventsComponent != nullptr)
         {
             pEventsComponent->PostOnPostUpdate(deltaTimeInSeconds);
@@ -108,7 +108,7 @@ namespace GT
         assert(pSceneNode != nullptr);
 
 #if defined(GT_BUILD_COMPONENT_EVENTS)
-        auto pEventsComponent = pSceneNode->GetComponent<GT::SceneNodeComponent_Events>();
+        auto pEventsComponent = pSceneNode->GetComponent<GT::EventsComponent>();
         if (pEventsComponent != nullptr)
         {
             if (pEventsComponent->IsOnUpdateEnabled())
@@ -129,7 +129,7 @@ namespace GT
         assert(pSceneNode != nullptr);
 
 #if defined(GT_BUILD_COMPONENT_EVENTS)
-        auto pEventsComponent = pSceneNode->GetComponent<GT::SceneNodeComponent_Events>();
+        auto pEventsComponent = pSceneNode->GetComponent<GT::EventsComponent>();
         if (pEventsComponent != nullptr)
         {
             if (pEventsComponent->IsOnPostUpdateEnabled())

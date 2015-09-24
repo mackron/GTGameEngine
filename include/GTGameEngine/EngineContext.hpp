@@ -244,7 +244,7 @@ namespace GT
 
 #if defined(GT_BUILD_COMPONENT_EVENTS)
         /// The Events component descriptor.
-        SceneNodeComponentDescriptor_Events m_eventsComponentDescriptor;
+        EventsComponentDescriptor m_eventsComponentDescriptor;
 #endif
 #if defined(GT_BUILD_COMPONENT_SCRIPT)
         /// The Script component descriptor.
@@ -252,7 +252,7 @@ namespace GT
 #endif
 #if defined(GT_ENABLE_COMPONENT_GRAPHICS)
         /// The Graphics component descriptor.
-        SceneNodeComponentDescriptor_Graphics m_graphicsComponentDescriptor;
+        GraphicsComponentDescriptor m_graphicsComponentDescriptor;
 #endif
 #if defined(GT_BUILD_COMPONENT_DYNAMICS)
         /// The Dynamics component descriptor.

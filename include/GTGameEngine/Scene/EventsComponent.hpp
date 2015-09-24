@@ -1,14 +1,14 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#ifndef GT_SceneNodeComponent_Events
-#define GT_SceneNodeComponent_Events
+#ifndef GT_EventsComponent
+#define GT_EventsComponent
 
 #include "SceneNodeComponent.hpp"
 #include <functional>
 
 namespace GT
 {
-    class SceneNodeComponentDescriptor_Events : public SceneNodeComponentDescriptor
+    class EventsComponentDescriptor : public SceneNodeComponentDescriptor
     {
     public:
 
@@ -23,10 +23,10 @@ namespace GT
     public:
 
         /// Constructor.
-        SceneNodeComponentDescriptor_Events();
+        EventsComponentDescriptor();
 
         /// Destructor.
-        virtual ~SceneNodeComponentDescriptor_Events();
+        virtual ~EventsComponentDescriptor();
 
 
         /// Retrieves the unique ID of the component.
@@ -47,7 +47,7 @@ namespace GT
 
 
 
-    class SceneNodeComponent_Events : public SceneNodeComponent
+    class EventsComponent : public SceneNodeComponent
     {
     public:
 
@@ -58,10 +58,10 @@ namespace GT
     public:
 
         /// Constructor.
-        SceneNodeComponent_Events(const SceneNodeComponentDescriptor_Events &descriptor);
+        EventsComponent(const EventsComponentDescriptor &descriptor);
 
         /// Destructor.
-        ~SceneNodeComponent_Events();
+        ~EventsComponent();
 
 
         /// Determines whether or not the OnUpdate event is enabled.
@@ -91,11 +91,11 @@ namespace GT
         // Statics
 
         static SceneNodeComponentTypeID GetTypeID() {
-            return SceneNodeComponentDescriptor_Events::TypeID();
+            return EventsComponentDescriptor::TypeID();
         }
 
         static const char* GetName() {
-            return SceneNodeComponentDescriptor_Events::Name();
+            return EventsComponentDescriptor::Name();
         }
 
 

@@ -5,41 +5,41 @@
 
 namespace GT
 {
-    SceneNodeComponentTypeID SceneNodeComponentDescriptor_Events::TypeID()
+    SceneNodeComponentTypeID EventsComponentDescriptor::TypeID()
     {
         return SceneNodeComponentType_Events;
     }
 
-    const char* SceneNodeComponentDescriptor_Events::Name()
+    const char* EventsComponentDescriptor::Name()
     {
         return "Events";
     }
 
 
-    SceneNodeComponentDescriptor_Events::SceneNodeComponentDescriptor_Events()
+    EventsComponentDescriptor::EventsComponentDescriptor()
     {
     }
 
-    SceneNodeComponentDescriptor_Events::~SceneNodeComponentDescriptor_Events()
+    EventsComponentDescriptor::~EventsComponentDescriptor()
     {
     }
 
-    SceneNodeComponentTypeID SceneNodeComponentDescriptor_Events::GetTypeID() const
+    SceneNodeComponentTypeID EventsComponentDescriptor::GetTypeID() const
     {
-        return SceneNodeComponentDescriptor_Events::TypeID();
+        return EventsComponentDescriptor::TypeID();
     }
 
-    const char* SceneNodeComponentDescriptor_Events::GetName() const
+    const char* EventsComponentDescriptor::GetName() const
     {
-        return SceneNodeComponentDescriptor_Events::Name();
+        return EventsComponentDescriptor::Name();
     }
 
-    SceneNodeComponent* SceneNodeComponentDescriptor_Events::CreateComponent() const
+    SceneNodeComponent* EventsComponentDescriptor::CreateComponent() const
     {
-        return new SceneNodeComponent_Events(*this);
+        return new EventsComponent(*this);
     }
 
-    void SceneNodeComponentDescriptor_Events::DeleteComponent(SceneNodeComponent* pComponent) const
+    void EventsComponentDescriptor::DeleteComponent(SceneNodeComponent* pComponent) const
     {
         delete pComponent;
     }
@@ -47,40 +47,40 @@ namespace GT
 
 
 
-    SceneNodeComponent_Events::SceneNodeComponent_Events(const SceneNodeComponentDescriptor_Events &descriptor)
+    EventsComponent::EventsComponent(const EventsComponentDescriptor &descriptor)
         : SceneNodeComponent(descriptor),
           m_onUpdate(nullptr), m_onPostUpdate(nullptr)
     {
     }
 
-    SceneNodeComponent_Events::~SceneNodeComponent_Events()
+    EventsComponent::~EventsComponent()
     {
     }
 
 
-    bool SceneNodeComponent_Events::IsOnUpdateEnabled() const
+    bool EventsComponent::IsOnUpdateEnabled() const
     {
         return m_onUpdate != nullptr;
     }
 
-    bool SceneNodeComponent_Events::IsOnPostUpdateEnabled() const
+    bool EventsComponent::IsOnPostUpdateEnabled() const
     {
         return m_onPostUpdate != nullptr;
     }
 
 
-    void SceneNodeComponent_Events::OnUpdate(SceneNodeComponent_Events::OnUpdateProc proc)
+    void EventsComponent::OnUpdate(EventsComponent::OnUpdateProc proc)
     {
         m_onUpdate = proc;
     }
 
-    void SceneNodeComponent_Events::OnPostUpdate(SceneNodeComponent_Events::OnPostUpdateProc proc)
+    void EventsComponent::OnPostUpdate(EventsComponent::OnPostUpdateProc proc)
     {
         m_onPostUpdate = proc;
     }
 
 
-    void SceneNodeComponent_Events::PostOnUpdate(double deltaTimeInSeconds)
+    void EventsComponent::PostOnUpdate(double deltaTimeInSeconds)
     {
         if (m_onUpdate != nullptr)
         {
@@ -88,7 +88,7 @@ namespace GT
         }
     }
 
-    void SceneNodeComponent_Events::PostOnPostUpdate(double deltaTimeInSeconds)
+    void EventsComponent::PostOnPostUpdate(double deltaTimeInSeconds)
     {
         if (m_onPostUpdate != nullptr)
         {
