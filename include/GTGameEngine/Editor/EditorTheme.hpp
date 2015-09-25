@@ -27,6 +27,7 @@ namespace GT
               backgroundPopup(0.2f, 0.2f, 0.2f),
 
               borderDefault(0.4f, 0.4f, 0.4f),
+              borderDim(0.3f, 0.3f, 0.3f),
 
               scrollbarBackgroundColor(0.325f, 0.325f, 0.325f),
               scrollbarWidth(16)
@@ -50,6 +51,7 @@ namespace GT
 
         // Border colours.
         GTLib::Colour borderDefault;        ///< The default border colours.
+        GTLib::Colour borderDim;            ///< A border color that is slightly less bright than the default border.
 
         // Scroll bars.
         GTLib::Colour scrollbarBackgroundColor;
