@@ -385,10 +385,11 @@ namespace GT
     }
 #endif
 
-    HGraphicsRenderTarget DefaultGraphicsWorld_Null::CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, unsigned int samplesMSAA, uint32_t flags)
+    HGraphicsRenderTarget DefaultGraphicsWorld_Null::CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, AAType aaType, unsigned int aaQuality, uint32_t flags)
     {
         (void)hTextureResource;
-        (void)samplesMSAA;
+        (void)aaType;
+        (void)aaQuality;
         (void)flags;
 
         return 0;

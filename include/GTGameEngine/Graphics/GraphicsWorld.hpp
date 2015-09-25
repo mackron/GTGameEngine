@@ -339,7 +339,7 @@ namespace GT
 #endif
 
         /// Creates a render target where the result is output to the given texture.
-        virtual HGraphicsRenderTarget CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, unsigned int samplesMSAA, uint32_t flags = 0) = 0;
+        virtual HGraphicsRenderTarget CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, AAType aaType, unsigned int aaQuality, uint32_t flags = 0) = 0;
 
         /// Deletes the given render target.
         virtual void DeleteRenderTarget(HGraphicsRenderTarget hRT) = 0;

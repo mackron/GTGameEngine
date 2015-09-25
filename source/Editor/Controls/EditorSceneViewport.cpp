@@ -102,7 +102,7 @@ namespace GT
         m_hViewportRTTexture = m_graphicsWorld.CreateTextureResource(texDesc);
         if (m_hViewportRTTexture != 0)
         {
-            m_hViewportRT = m_graphicsWorld.CreateRenderTargetFromTexture(m_hViewportRTTexture, 4, 0);
+            m_hViewportRT = m_graphicsWorld.CreateRenderTargetFromTexture(m_hViewportRTTexture, AAType::SSAA, 2, 0);
             m_graphicsWorld.SetRenderTargetClearColor(m_hViewportRT, GTLib::Colour(0.33f, 0.33f, 0.33f));
 
             m_graphicsWorld.SetRenderTargetProjection(m_hViewportRT, mat4::perspective(45.0f, float(width) / float(height), 0.1f, 1000.0f));
@@ -250,8 +250,6 @@ namespace GT
                     this->GetGUI().GetElementAbsolutePosition(this->GetRootGUIElement(), posX, posY);
 
                     pRenderer->DrawRawImage(this->GetGUI(), posX, posY, width, height, m_pViewportRTTextureData, false);
-
-                    printf("Testing\n");
                 }
             }
         }

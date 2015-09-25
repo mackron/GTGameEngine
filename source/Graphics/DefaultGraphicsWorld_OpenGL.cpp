@@ -316,29 +316,55 @@ namespace GT
 
     struct TextureRenderTarget_OpenGL : public RenderTarget_OpenGL, SIMDAlignedType
     {
-        TextureRenderTarget_OpenGL(HGraphicsResource hTextureIn, unsigned int samplesIn, uint32_t flagsIn)
+        TextureRenderTarget_OpenGL(HGraphicsResource hTextureIn, AAType aaTypeIn, unsigned int aaQualityIn, uint32_t flagsIn)
             : RenderTarget_OpenGL(flagsIn),
-              hTexture(hTextureIn), framebuffer(0), framebufferMSAA(0), colorMSAARenderbuffer(0), depthStencilRenderbuffer(0), samples(samplesIn)
+              hTexture(hTextureIn), framebuffer(0), aaType(aaTypeIn), aaQuality(aaQualityIn), depthStencilRenderbuffer(0)
         {
         }
 
-        /// A handle to the texture resource.
+        /// A handle to the texture resource where the final image will be drawn to.
         HGraphicsResource hTexture;
+
+        /// The anti-aliasing type being used for this render target.
+        AAType aaType;
+
+        /// The anti-aliasing quality to be used for this render target. It's exact usage depends on the anti-aliasing mode being used.
+        unsigned int aaQuality;
+
 
         /// The framebuffer object where the final output will be placed.
         GLuint framebuffer;
 
-        /// The framebuffer object where the multisampled output will be placed.
-        GLuint framebufferMSAA;
-
-        /// The color renderbuffer for the MSAA framebuffer.
-        GLuint colorMSAARenderbuffer;
-
         /// The render buffer for the depth/stencil buffer.
         GLuint depthStencilRenderbuffer;
 
-        /// The number of samples to use for MSAA. Set to 0 or 1 if MSAA should not be used.
-        unsigned int samples;
+
+        // Anti-aliasing type specific data.
+        union
+        {
+            // SSAA
+            struct
+            {
+                /// The framebuffer object where the multisampled output will be placed.
+                GLuint intermediateFramebuffer;
+
+                /// The color renderbuffer for the MSAA framebuffer.
+                GLuint intermediateColorBuffer;
+
+            } ssaa;
+
+
+            // MSAA
+            struct
+            {
+                /// The framebuffer object where the multisampled output will be placed.
+                GLuint framebufferMSAA;
+
+                /// The color renderbuffer for the MSAA framebuffer.
+                GLuint colorMSAARenderbuffer;
+
+            } msaa;
+        };
     };
 
 
@@ -1825,14 +1851,14 @@ namespace GT
     }
 #endif
 
-    HGraphicsRenderTarget DefaultGraphicsWorld_OpenGL::CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, unsigned int samplesMSAA, uint32_t flags)
+    HGraphicsRenderTarget DefaultGraphicsWorld_OpenGL::CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, AAType aaType, unsigned int aaQuality, uint32_t flags)
     {
         auto pTextureResource = reinterpret_cast<TextureResource_OpenGL*>(hTextureResource);
         if (pTextureResource != nullptr)
         {
             this->MakeOpenGLContextCurrent();
 
-            auto pRT = new TextureRenderTarget_OpenGL(hTextureResource, samplesMSAA, flags | RTFlag_IsTexture);
+            auto pRT = new TextureRenderTarget_OpenGL(hTextureResource, aaType, aaQuality, flags | RTFlag_IsTexture);
             if (pRT != 0)
             {
                 pRT->viewportWidth  = pTextureResource->width;
@@ -1847,67 +1873,106 @@ namespace GT
                 GLuint oldFramebuffer;
                 m_gl.GetIntegerv(GL_FRAMEBUFFER_BINDING_EXT, reinterpret_cast<GLint*>(&oldFramebuffer));
 
+                bool isComplete = false;
+
                 m_gl.GenFramebuffersEXT(1, &pRT->framebuffer);
                 m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebuffer);
                 m_gl.FramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, pTextureResource->targetGL, pTextureResource->objectGL, 0);
                 m_gl.DrawBuffers(1, drawBuffers);
 
-                
+                switch (aaType)
+                {
+                    case AAType::SSAA:
+                    {
+                        // Intermediate framebuffer.
+                        m_gl.GenFramebuffersEXT(1, &pRT->ssaa.intermediateFramebuffer);
+                        m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->ssaa.intermediateFramebuffer);
 
-                if (samplesMSAA > 1) {
-                    m_gl.GenFramebuffersEXT(1, &pRT->framebufferMSAA);
-                    m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebufferMSAA);
+                        // Color.
+                        m_gl.GenRenderbuffersEXT(1, &pRT->ssaa.intermediateColorBuffer);
+                        m_gl.BindRenderbufferEXT(GL_RENDERBUFFER_EXT, pRT->ssaa.intermediateColorBuffer);
+                        m_gl.RenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_RGBA, pRT->viewportWidth * aaQuality, pRT->viewportHeight * aaQuality);
+                        m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, pRT->ssaa.intermediateColorBuffer);
+                        m_gl.DrawBuffers(1, drawBuffers);
 
-                    m_gl.GenRenderbuffersEXT(1, &pRT->colorMSAARenderbuffer);
-                    m_gl.BindRenderbufferEXT(GL_RENDERBUFFER_EXT, pRT->colorMSAARenderbuffer);
-                    m_gl.RenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samplesMSAA, GL_RGBA, pRT->viewportWidth, pRT->viewportHeight);
-                    m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, pRT->colorMSAARenderbuffer);
-                    m_gl.DrawBuffers(1, drawBuffers);
+                        // Depth/Stencil.
+                        m_gl.GenRenderbuffersEXT(1, &pRT->depthStencilRenderbuffer);
+                        m_gl.BindRenderbufferEXT(GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
+                        m_gl.RenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, pRT->viewportWidth * aaQuality, pRT->viewportHeight * aaQuality);
+                        m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,   GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
+                        m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
+
+
+                        // Check that both framebuffers are complete.
+                        isComplete = m_gl.CheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) == GL_FRAMEBUFFER_COMPLETE_EXT;
+
+                        m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebuffer);
+                        isComplete = isComplete && m_gl.CheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) == GL_FRAMEBUFFER_COMPLETE_EXT;
+
+                        break;
+                    }
+
+                    case AAType::MSAA:
+                    {
+                        // Intermediate framebuffer.
+                        m_gl.GenFramebuffersEXT(1, &pRT->msaa.framebufferMSAA);
+                        m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->msaa.framebufferMSAA);
+
+                        // Color.
+                        m_gl.GenRenderbuffersEXT(1, &pRT->msaa.colorMSAARenderbuffer);
+                        m_gl.BindRenderbufferEXT(GL_RENDERBUFFER_EXT, pRT->msaa.colorMSAARenderbuffer);
+                        m_gl.RenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, aaQuality, GL_RGBA, pRT->viewportWidth, pRT->viewportHeight);
+                        m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, pRT->msaa.colorMSAARenderbuffer);
+                        m_gl.DrawBuffers(1, drawBuffers);
+
+                        // Depth/Stencil.
+                        m_gl.GenRenderbuffersEXT(1, &pRT->depthStencilRenderbuffer);
+                        m_gl.BindRenderbufferEXT(GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
+                        m_gl.RenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, aaQuality, GL_DEPTH24_STENCIL8_EXT, pRT->viewportWidth, pRT->viewportHeight);
+                        m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,   GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
+                        m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
+
+
+                        // Check that both framebuffers are complete.
+                        isComplete = m_gl.CheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) == GL_FRAMEBUFFER_COMPLETE_EXT;
+
+                        m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebuffer);
+                        isComplete = isComplete && m_gl.CheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) == GL_FRAMEBUFFER_COMPLETE_EXT;
+
+                        break;
+                    }
+
+                    case AAType::None:
+                    default:
+                    {
+                        // Depth/Stencil.
+                        m_gl.GenRenderbuffersEXT(1, &pRT->depthStencilRenderbuffer);
+                        m_gl.BindRenderbufferEXT(GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
+                        m_gl.RenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, pRT->viewportWidth, pRT->viewportHeight);
+                        m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,   GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
+                        m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
+
+                        isComplete = m_gl.CheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT) == GL_FRAMEBUFFER_COMPLETE_EXT;
+                        break;
+                    }
                 }
 
-                
 
-
-                // Depth/Stencil
-                m_gl.GenRenderbuffersEXT(1, &pRT->depthStencilRenderbuffer);
-                m_gl.BindRenderbufferEXT(GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
-                
-                if (samplesMSAA > 1) {
-                    m_gl.RenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samplesMSAA, GL_DEPTH24_STENCIL8_EXT, pRT->viewportWidth, pRT->viewportHeight);
-                } else {
-                    m_gl.RenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, pRT->viewportWidth, pRT->viewportHeight);
-                }
-                
-                m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,   GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
-                m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
-
-
-
-                
-                
-
-
-                // Everything should be good - just check that the framebuffer is valid.
-                m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebuffer);
-                GLenum statusGL = m_gl.CheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-
-                
-                GLenum statusGLMSAA = GL_FRAMEBUFFER_COMPLETE_EXT;
-                if (samplesMSAA > 1) {
-                    m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebufferMSAA);
-                    statusGLMSAA = m_gl.CheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-                }
-
-
-                if (statusGL != GL_FRAMEBUFFER_COMPLETE_EXT || statusGLMSAA != GL_FRAMEBUFFER_COMPLETE_EXT)
+                if (!isComplete)
                 {
                     // It's not valid. Abort!
                     m_gl.DeleteRenderbuffersEXT(1, &pRT->depthStencilRenderbuffer);
                     m_gl.DeleteFramebuffersEXT(1, &pRT->framebuffer);
 
-                    if (samplesMSAA > 1) {
-                        m_gl.DeleteRenderbuffersEXT(1, &pRT->colorMSAARenderbuffer);
-                        m_gl.DeleteFramebuffersEXT(1, &pRT->framebufferMSAA);
+                    if (aaType == AAType::SSAA)
+                    {
+                        m_gl.DeleteRenderbuffersEXT(1, &pRT->ssaa.intermediateColorBuffer);
+                        m_gl.DeleteFramebuffersEXT(1, &pRT->ssaa.intermediateFramebuffer);
+                    }
+                    if (aaType == AAType::MSAA)
+                    {
+                        m_gl.DeleteRenderbuffersEXT(1, &pRT->msaa.colorMSAARenderbuffer);
+                        m_gl.DeleteFramebuffersEXT(1, &pRT->msaa.framebufferMSAA);
                     }
 
 
@@ -2460,10 +2525,10 @@ namespace GT
         {
             this->MakeOpenGLContextCurrent();
 
-            if (pRT->samples > 1)
+            if (pRT->aaType == AAType::MSAA)
             {
-                m_gl.DeleteFramebuffersEXT(1, &pRT->framebufferMSAA);
-                m_gl.DeleteRenderbuffersEXT(1, &pRT->colorMSAARenderbuffer);
+                m_gl.DeleteFramebuffersEXT(1, &pRT->msaa.framebufferMSAA);
+                m_gl.DeleteRenderbuffersEXT(1, &pRT->msaa.colorMSAARenderbuffer);
             }
 
             m_gl.DeleteFramebuffersEXT(1, &pRT->framebuffer);
@@ -2499,6 +2564,8 @@ namespace GT
             if ((m_gl.GetCurrentContext() == m_hRC && m_gl.GetCurrentDC() == pRT->hDC) || m_gl.MakeCurrent(pRT->hDC, m_hRC))
             {
                 m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0);
+                m_gl.Viewport(pRT->viewportX, pRT->viewportY, pRT->viewportWidth, pRT->viewportHeight);
+
                 this->ExecuteRTRenderingCommands(hRT);
 
 
@@ -2517,27 +2584,65 @@ namespace GT
 
             this->MakeOpenGLContextCurrent();
 
+            m_gl.Viewport(pRT->viewportX, pRT->viewportY, pRT->viewportWidth, pRT->viewportHeight);
+
 
             // The framebuffer needs to be bound, but differently depending on whether or not MSAA is being used.
-            if (pRT->samples > 1) {
-                m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebufferMSAA);
-                m_gl.Enable(GL_MULTISAMPLE);
-            } else {
-                m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebuffer);
+            switch (pRT->aaType)
+            {
+                case AAType::SSAA:
+                {
+                    m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->ssaa.intermediateFramebuffer);
+                    m_gl.Viewport(pRT->viewportX, pRT->viewportY, pRT->viewportWidth * pRT->aaQuality, pRT->viewportHeight * pRT->aaQuality);
+                    break;
+                }
+
+                case AAType::MSAA:
+                {
+                    m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->msaa.framebufferMSAA);
+                    m_gl.Enable(GL_MULTISAMPLE);
+                    break;
+                }
+
+                case AAType::None:
+                default:
+                {
+                    m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebuffer);
+                    break;
+                }
             }
+
 
             this->ExecuteRTRenderingCommands(hRT);
 
 
-            // If MSAA is being used we need to do a blit operation to resolve the samples and place the result in the texture.
-            if (pRT->samples > 1) {
-                m_gl.BindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, pRT->framebuffer);
-                m_gl.BindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, pRT->framebufferMSAA);
-                m_gl.BlitFramebufferEXT(0, 0, pRT->viewportWidth, pRT->viewportHeight, 0, 0, pRT->viewportWidth, pRT->viewportHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+            // We may need to do a post-processing step depending on which AA technique is being used.
+            switch (pRT->aaType)
+            {
+                case AAType::SSAA:
+                {
+                    m_gl.BindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, pRT->framebuffer);
+                    m_gl.BindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, pRT->ssaa.intermediateFramebuffer);
+                    m_gl.BlitFramebufferEXT(0, 0, pRT->viewportWidth * pRT->aaQuality, pRT->viewportHeight * pRT->aaQuality, 0, 0, pRT->viewportWidth, pRT->viewportHeight, GL_COLOR_BUFFER_BIT, GL_LINEAR);
+                    break;
+                }
 
+                case AAType::MSAA:
+                {
+                    m_gl.BindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, pRT->framebuffer);
+                    m_gl.BindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, pRT->msaa.framebufferMSAA);
+                    m_gl.BlitFramebufferEXT(0, 0, pRT->viewportWidth, pRT->viewportHeight, 0, 0, pRT->viewportWidth, pRT->viewportHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+                    m_gl.Disable(GL_MULTISAMPLE);
 
-                // At the top we enabled multisampling, but it needs to be disabled now so that the state is reverted back to it's default state.
-                m_gl.Disable(GL_MULTISAMPLE);
+                    break;
+                }
+
+                case AAType::None:
+                default:
+                {
+                    // Nothing to do when AA is not being used.
+                    break;
+                }
             }
         }
     }
@@ -2547,8 +2652,6 @@ namespace GT
         auto pRT = reinterpret_cast<RenderTarget_OpenGL*>(hRT);
         if (pRT != nullptr)
         {
-            m_gl.Viewport(pRT->viewportX, pRT->viewportY, pRT->viewportWidth, pRT->viewportHeight);
-
             GLbitfield clearFlags = GL_DEPTH_BUFFER_BIT;
             if ((pRT->flags & RTFlag_IsColorClearingDisabled) == 0)
             {

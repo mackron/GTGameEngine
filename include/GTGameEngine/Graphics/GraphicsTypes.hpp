@@ -28,64 +28,6 @@ namespace GT
     static const GraphicsAPIType GraphicsAPIType_D3D12   = 0x00000004;
 
 
-#if 0
-    typedef uint32_t GraphicsInterfaceClass;
-	typedef uint32_t GraphicsInterfaceType;
-
-	// Graphics Interface Class Ranges
-	//  0x00000000 - 0x000000FF : Reserved by the engine.
-	//  0x00000100 - 0xFFFFFFFF : Custom
-
-	static const GraphicsInterfaceClass GraphicsInterfaceClass_Unknown = 0x00000000;
-	static const GraphicsInterfaceClass GraphicsInterfaceClass_MT      = 0x00000001;		// Modern multi-threaded APIs - Vulkan/D3D12/Metal style APIs.
-	static const GraphicsInterfaceClass GraphicsInterfaceClass_Legacy  = 0x00000002;		// Shader Model 2/3 APIs - OpenGL2/D3D9 style APIs.
-
-
-	// Graphics Interface Type Ranges
-	//  0x00000000 - 0x0000FFFF : Reserved by the engine
-	//  0x00010000 - 0xFFFFFFFF : Custom
-
-	// Special - 0x00000000 - 0x000000FF
-	static const GraphicsInterfaceType GraphicsInterfaceType_Unknown = 0x00000000;
-
-	// Default Multi-Threaded - 0x00000100 - 0x000001FF
-	static const GraphicsInterfaceType GraphicsInterfaceType_Vulkan  = 0x00000100;
-	static const GraphicsInterfaceType GraphicsInterfaceType_D3D12   = 0x00000101;
-	static const GraphicsInterfaceType GraphicsInterfaceType_Metal   = 0x00000102;
-
-	// Default Legacy - 0x00000200 - 0x000002FF
-	static const GraphicsInterfaceType GraphicsInterfaceType_OpenGL  = 0x000000200;
-
-
-
-
-    //////////////////////////////////////////
-    // Object Handle Types
-
-    typedef size_t HGeneric;        //< A generic handle whose purpose is to cast to another handle type.
-
-    typedef size_t HGraphicsDevice;
-    typedef size_t HCommandAllocator;
-    typedef size_t HCommandQueue;
-    typedef size_t HCommandList;
-    typedef size_t HPipelineState;
-    typedef size_t HDescriptorHeap;
-    typedef size_t HHeap;
-    typedef size_t HFence;
-
-    typedef size_t HBuffer;
-    typedef size_t HVSInputLayout;
-    typedef size_t HShader;
-    typedef size_t HTexture;
-    typedef size_t HTextureView;
-    typedef size_t HSampler;
-    typedef size_t HFramebuffer;
-    typedef size_t HRasterizerState;
-    typedef size_t HDepthStencilState;
-    typedef size_t HBlendState;
-#endif
-
-
 
     //////////////////////////////////////////
     // Enumerators
@@ -470,6 +412,15 @@ namespace GT
         VertexAttribSemantic_Tangent,
         VertexAttribSemantic_Binormal
     };
+
+    enum AAType
+    {
+        None,
+        SSAA,   // Super-sampling AA
+        MSAA,
+        FXAA
+    };
+
 
 
     //////////////////////////////////////////
