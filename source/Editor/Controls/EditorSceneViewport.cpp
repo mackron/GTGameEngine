@@ -99,6 +99,7 @@ namespace GT
         texDesc.height = (height > 0) ? height : 1;
         texDesc.depth  = 1;
         texDesc.format = TextureFormat_RGBA8;
+        texDesc.samplesMSAA = 4;
         m_hViewportRTTexture = m_graphicsWorld.CreateTextureResource(texDesc);
         if (m_hViewportRTTexture != 0)
         {

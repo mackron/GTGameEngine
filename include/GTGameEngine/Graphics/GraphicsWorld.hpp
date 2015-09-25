@@ -71,7 +71,7 @@ namespace GT
     struct GraphicsTextureResourceDesc
     {
         GraphicsTextureResourceDesc()
-            : width(1), height(1), depth(1), format(TextureFormat_RGBA8), pData(nullptr)
+            : width(1), height(1), depth(1), format(TextureFormat_RGBA8), samplesMSAA(0), pData(nullptr)
         {
         }
 
@@ -87,6 +87,10 @@ namespace GT
 
         /// The format of the texture data.
         TextureFormat format;
+
+        /// The number of samples to use with this texture for multisample anti-aliasing. Set to 0 or 1 to not use multisampling. If multisampling is requested,
+        /// but the underlying rendering API does not support it, texture creation will fail.
+        unsigned int samplesMSAA;
 
         /// A pointer to the raw texture data.
         const void* pData;

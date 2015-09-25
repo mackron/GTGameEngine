@@ -360,6 +360,15 @@ namespace GT
         PFNGLRENDERBUFFERSTORAGEEXTPROC     RenderbufferStorageEXT;
         PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC  CheckFramebufferStatusEXT;
 
+        // GL_EXT_framebuffer_multisample
+        PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC RenderbufferStorageMultisampleEXT;
+
+        // GL_ARB_texture_multisample
+        PFNGLTEXIMAGE2DMULTISAMPLEPROC      TexImage2DMultisample;
+        PFNGLTEXIMAGE3DMULTISAMPLEPROC      TexImage3DMultisample;
+        PFNGLGETMULTISAMPLEFVPROC           GetMultisamplefv;
+        PFNGLSAMPLEMASKIPROC                SampleMaski;
+
 
         // GL_ARB_debug_output
         PFNGLDEBUGMESSAGECONTROLARBPROC  DebugMessageControlARB;

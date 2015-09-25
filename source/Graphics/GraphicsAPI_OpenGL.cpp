@@ -455,6 +455,19 @@ namespace GT
             this->CheckFramebufferStatusEXT  = reinterpret_cast<PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC >(this->GetGLProcAddress("glCheckFramebufferStatusEXT"));
         }
 
+        if (this->IsExtensionSupported("GL_EXT_framebuffer_multisample"))
+        {
+            this->RenderbufferStorageMultisampleEXT = reinterpret_cast<PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC>(this->GetGLProcAddress("glRenderbufferStorageMultisampleEXT"));
+        }
+
+        if (this->IsExtensionSupported("GL_ARB_texture_multisample"))
+        {
+            this->TexImage2DMultisample = reinterpret_cast<PFNGLTEXIMAGE2DMULTISAMPLEPROC>(this->GetGLProcAddress("glTexImage2DMultisample"));
+            this->TexImage3DMultisample = reinterpret_cast<PFNGLTEXIMAGE3DMULTISAMPLEPROC>(this->GetGLProcAddress("glTexImage3DMultisample"));
+            this->GetMultisamplefv      = reinterpret_cast<PFNGLGETMULTISAMPLEFVPROC     >(this->GetGLProcAddress("glGetMultisamplefv"));
+            this->SampleMaski           = reinterpret_cast<PFNGLSAMPLEMASKIPROC          >(this->GetGLProcAddress("glSampleMaski"));
+        }
+
         return true;   // No error.
     }
 }

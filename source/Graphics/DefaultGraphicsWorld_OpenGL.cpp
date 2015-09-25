@@ -348,11 +348,12 @@ namespace GT
     /// Structure representing a texture resource.
     struct TextureResource_OpenGL : public Resource_OpenGL
     {
-        TextureResource_OpenGL(GLuint objectGLIn, GLenum targetGLIn, unsigned int widthIn, unsigned int heightIn, unsigned int depthIn, TextureFormat formatIn)
+        TextureResource_OpenGL(GLuint objectGLIn, GLenum targetGLIn, unsigned int widthIn, unsigned int heightIn, unsigned int depthIn, TextureFormat formatIn, unsigned int samplesMSAAIn)
             : Resource_OpenGL(GraphicsResourceType::Texture),
               objectGL(objectGLIn), targetGL(targetGLIn),
               width(widthIn), height(heightIn), depth(depthIn),
-              format(formatIn)
+              format(formatIn),
+              samplesMSAA(samplesMSAAIn)
         {
         }
 
@@ -374,6 +375,9 @@ namespace GT
 
         /// The data format.
         TextureFormat format;
+
+        /// The number of samples to use with MSAA.
+        unsigned int samplesMSAA;
     };
 
     /// Structure representing a material resource.
@@ -587,7 +591,7 @@ namespace GT
                 m_gl.FrontFace(GL_CW);
                 m_gl.DepthFunc(GL_LEQUAL);
                 m_gl.Enable(GL_DEPTH_TEST);
-                //m_gl.Enable(GL_CULL_FACE);
+                m_gl.Enable(GL_CULL_FACE);
 
 
                 // Default texture.
@@ -785,8 +789,15 @@ namespace GT
         assert(textureDesc.height > 0);
         assert(textureDesc.depth  > 0);
 
+        if (textureDesc.samplesMSAA > 1) {
+            if (m_gl.TexImage2DMultisample == nullptr) {
+                // Requested multisampled texture, but it's not supported.
+                return 0;
+            }
+        }
 
         this->MakeOpenGLContextCurrent();
+
 
         GLuint objectGL;
         m_gl.GenTextures(1, &objectGL);
@@ -803,7 +814,11 @@ namespace GT
             }
             else
             {
-                targetGL = GL_TEXTURE_2D;
+                if (textureDesc.samplesMSAA <= 1) {
+                    targetGL = GL_TEXTURE_2D;
+                } else {
+                    targetGL = GL_TEXTURE_2D_MULTISAMPLE;
+                }
             }
         }
         else
@@ -814,7 +829,7 @@ namespace GT
 
         m_gl.BindTexture(targetGL, objectGL);
 
-        auto pTexture = new TextureResource_OpenGL(objectGL, targetGL, textureDesc.width, textureDesc.height, textureDesc.depth, textureDesc.format);
+        auto pTexture = new TextureResource_OpenGL(objectGL, targetGL, textureDesc.width, textureDesc.height, textureDesc.depth, textureDesc.format, textureDesc.samplesMSAA);
         switch (targetGL)
         {
         case GL_TEXTURE_1D:
@@ -825,13 +840,23 @@ namespace GT
 
         case GL_TEXTURE_2D:
             {
-                m_gl.TexImage2D(targetGL, 0, internalFormatGL, textureDesc.width, textureDesc.height, 0, formatGL, typeGL, textureDesc.pData);
+                if (textureDesc.samplesMSAA <= 1) {
+                    m_gl.TexImage2D(targetGL, 0, internalFormatGL, textureDesc.width, textureDesc.height, 0, formatGL, typeGL, textureDesc.pData);
+                } else {
+                    m_gl.TexImage2DMultisample(targetGL, GLsizei(textureDesc.samplesMSAA), internalFormatGL, textureDesc.width, textureDesc.height, GL_FALSE);
+                }
+                
                 break;
             }
 
         case GL_TEXTURE_3D:
             {
-                m_gl.TexImage3D(targetGL, 0, internalFormatGL, textureDesc.width, textureDesc.height, textureDesc.depth, 0, formatGL, typeGL, textureDesc.pData);
+                if (textureDesc.samplesMSAA <= 1) {
+                    m_gl.TexImage3D(targetGL, 0, internalFormatGL, textureDesc.width, textureDesc.height, textureDesc.depth, 0, formatGL, typeGL, textureDesc.pData);
+                } else {
+                    m_gl.TexImage3DMultisample(targetGL, GLsizei(textureDesc.samplesMSAA), internalFormatGL, textureDesc.width, textureDesc.height, textureDesc.depth, GL_FALSE);
+                }
+
                 break;
             }
 
@@ -1807,12 +1832,19 @@ namespace GT
                 // Depth/Stencil
                 m_gl.GenRenderbuffersEXT(1, &pRT->depthStencilRenderBuffer);
                 m_gl.BindRenderbufferEXT(GL_RENDERBUFFER_EXT, pRT->depthStencilRenderBuffer);
-                m_gl.RenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, pRT->viewportWidth, pRT->viewportHeight);
+                
+                if (pTextureResource->samplesMSAA <= 1) {
+                    m_gl.RenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, pRT->viewportWidth, pRT->viewportHeight);
+                } else {
+                    m_gl.RenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, pTextureResource->samplesMSAA, GL_DEPTH24_STENCIL8_EXT, pRT->viewportWidth, pRT->viewportHeight);
+                }
+                
                 m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,   GL_RENDERBUFFER_EXT, pRT->depthStencilRenderBuffer);
                 m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, pRT->depthStencilRenderBuffer);
 
                 // Color.
                 m_gl.FramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, pTextureResource->targetGL, pTextureResource->objectGL, 0);
+
 
                 GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0_EXT };
                 m_gl.DrawBuffers(1, drawBuffers);
