@@ -316,20 +316,29 @@ namespace GT
 
     struct TextureRenderTarget_OpenGL : public RenderTarget_OpenGL, SIMDAlignedType
     {
-        TextureRenderTarget_OpenGL(HGraphicsResource hTextureIn, uint32_t flagsIn)
+        TextureRenderTarget_OpenGL(HGraphicsResource hTextureIn, unsigned int samplesIn, uint32_t flagsIn)
             : RenderTarget_OpenGL(flagsIn),
-              hTexture(hTextureIn), framebuffer(0), depthStencilRenderBuffer(0)
+              hTexture(hTextureIn), framebuffer(0), framebufferMSAA(0), colorMSAARenderbuffer(0), depthStencilRenderbuffer(0), samples(samplesIn)
         {
         }
 
         /// A handle to the texture resource.
         HGraphicsResource hTexture;
 
-        /// The framebuffer object.
+        /// The framebuffer object where the final output will be placed.
         GLuint framebuffer;
 
+        /// The framebuffer object where the multisampled output will be placed.
+        GLuint framebufferMSAA;
+
+        /// The color renderbuffer for the MSAA framebuffer.
+        GLuint colorMSAARenderbuffer;
+
         /// The render buffer for the depth/stencil buffer.
-        GLuint depthStencilRenderBuffer;
+        GLuint depthStencilRenderbuffer;
+
+        /// The number of samples to use for MSAA. Set to 0 or 1 if MSAA should not be used.
+        unsigned int samples;
     };
 
 
@@ -750,9 +759,6 @@ namespace GT
                 }
 
 
-                
-
-
                 return true;
             }
             else
@@ -868,6 +874,9 @@ namespace GT
 
         m_gl.TexParameteri(targetGL, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
         m_gl.TexParameteri(targetGL, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+        //m_gl.TexParameteri(targetGL, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        //m_gl.TexParameteri(targetGL, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
 
 
         return reinterpret_cast<HGraphicsResource>(pTexture);
@@ -1140,6 +1149,9 @@ namespace GT
         }
 
 
+        // Version
+        const char* glslVersionString = "#version 120\n";
+
 
         // Vertex shader.
         const char* vertexShaderSource =
@@ -1158,7 +1170,11 @@ namespace GT
             "    \n"
             "    gl_Position = Projection * View * Model * vec4(VS_Position, 1.0);\n"
             "}";
-        GLuint vertexShader = this->CreateShader_GLSL(GL_VERTEX_SHADER, vertexShaderSource);
+
+        const char* vertexShaderStrings[2];
+        vertexShaderStrings[0] = glslVersionString;
+        vertexShaderStrings[1] = vertexShaderSource;
+        GLuint vertexShader = this->CreateShader_GLSL(GL_VERTEX_SHADER, sizeof(vertexShaderStrings) / sizeof(vertexShaderStrings[0]), vertexShaderStrings, nullptr);
         if (vertexShader == 0)
         {
             return 0;
@@ -1176,10 +1192,11 @@ namespace GT
             "    gl_FragColor = DiffuseChannel();\n"
             "}";
 
-        const char* fragmentShaderStrings[3];
-        fragmentShaderStrings[0] = uniformsString;
-        fragmentShaderStrings[1] = fragmentShaderSource;
-        fragmentShaderStrings[2] = shaderString_Diffuse;
+        const char* fragmentShaderStrings[4];
+        fragmentShaderStrings[0] = glslVersionString;
+        fragmentShaderStrings[1] = uniformsString;
+        fragmentShaderStrings[2] = fragmentShaderSource;
+        fragmentShaderStrings[3] = shaderString_Diffuse;
         GLuint fragmentShader = this->CreateShader_GLSL(GL_FRAGMENT_SHADER, sizeof(fragmentShaderStrings) / sizeof(fragmentShaderStrings[0]), fragmentShaderStrings, nullptr);
         if (fragmentShader == 0)
         {
@@ -1808,18 +1825,22 @@ namespace GT
     }
 #endif
 
-    HGraphicsRenderTarget DefaultGraphicsWorld_OpenGL::CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, uint32_t flags)
+    HGraphicsRenderTarget DefaultGraphicsWorld_OpenGL::CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, unsigned int samplesMSAA, uint32_t flags)
     {
         auto pTextureResource = reinterpret_cast<TextureResource_OpenGL*>(hTextureResource);
         if (pTextureResource != nullptr)
         {
             this->MakeOpenGLContextCurrent();
 
-            auto pRT = new TextureRenderTarget_OpenGL(hTextureResource, flags | RTFlag_IsTexture);
+            auto pRT = new TextureRenderTarget_OpenGL(hTextureResource, samplesMSAA, flags | RTFlag_IsTexture);
             if (pRT != 0)
             {
                 pRT->viewportWidth  = pTextureResource->width;
                 pRT->viewportHeight = pTextureResource->height;
+
+                GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0_EXT };
+
+                
 
                 // We need to create a framebuffer object for the render target. To do this we need to bind the framebuffer, which means we'll need to save
                 // and restore the current binding.
@@ -1828,35 +1849,67 @@ namespace GT
 
                 m_gl.GenFramebuffersEXT(1, &pRT->framebuffer);
                 m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebuffer);
+                m_gl.FramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, pTextureResource->targetGL, pTextureResource->objectGL, 0);
+                m_gl.DrawBuffers(1, drawBuffers);
+
+                
+
+                if (samplesMSAA > 1) {
+                    m_gl.GenFramebuffersEXT(1, &pRT->framebufferMSAA);
+                    m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebufferMSAA);
+
+                    m_gl.GenRenderbuffersEXT(1, &pRT->colorMSAARenderbuffer);
+                    m_gl.BindRenderbufferEXT(GL_RENDERBUFFER_EXT, pRT->colorMSAARenderbuffer);
+                    m_gl.RenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samplesMSAA, GL_RGBA, pRT->viewportWidth, pRT->viewportHeight);
+                    m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_RENDERBUFFER_EXT, pRT->colorMSAARenderbuffer);
+                    m_gl.DrawBuffers(1, drawBuffers);
+                }
+
+                
+
 
                 // Depth/Stencil
-                m_gl.GenRenderbuffersEXT(1, &pRT->depthStencilRenderBuffer);
-                m_gl.BindRenderbufferEXT(GL_RENDERBUFFER_EXT, pRT->depthStencilRenderBuffer);
+                m_gl.GenRenderbuffersEXT(1, &pRT->depthStencilRenderbuffer);
+                m_gl.BindRenderbufferEXT(GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
                 
-                if (pTextureResource->samplesMSAA <= 1) {
-                    m_gl.RenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, pRT->viewportWidth, pRT->viewportHeight);
+                if (samplesMSAA > 1) {
+                    m_gl.RenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, samplesMSAA, GL_DEPTH24_STENCIL8_EXT, pRT->viewportWidth, pRT->viewportHeight);
                 } else {
-                    m_gl.RenderbufferStorageMultisampleEXT(GL_RENDERBUFFER_EXT, pTextureResource->samplesMSAA, GL_DEPTH24_STENCIL8_EXT, pRT->viewportWidth, pRT->viewportHeight);
+                    m_gl.RenderbufferStorageEXT(GL_RENDERBUFFER_EXT, GL_DEPTH24_STENCIL8_EXT, pRT->viewportWidth, pRT->viewportHeight);
                 }
                 
-                m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,   GL_RENDERBUFFER_EXT, pRT->depthStencilRenderBuffer);
-                m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, pRT->depthStencilRenderBuffer);
-
-                // Color.
-                m_gl.FramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, pTextureResource->targetGL, pTextureResource->objectGL, 0);
+                m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_DEPTH_ATTACHMENT_EXT,   GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
+                m_gl.FramebufferRenderbufferEXT(GL_FRAMEBUFFER_EXT, GL_STENCIL_ATTACHMENT_EXT, GL_RENDERBUFFER_EXT, pRT->depthStencilRenderbuffer);
 
 
-                GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0_EXT };
-                m_gl.DrawBuffers(1, drawBuffers);
+
+                
+                
 
 
                 // Everything should be good - just check that the framebuffer is valid.
+                m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebuffer);
                 GLenum statusGL = m_gl.CheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-                if (statusGL != GL_FRAMEBUFFER_COMPLETE_EXT)
+
+                
+                GLenum statusGLMSAA = GL_FRAMEBUFFER_COMPLETE_EXT;
+                if (samplesMSAA > 1) {
+                    m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebufferMSAA);
+                    statusGLMSAA = m_gl.CheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
+                }
+
+
+                if (statusGL != GL_FRAMEBUFFER_COMPLETE_EXT || statusGLMSAA != GL_FRAMEBUFFER_COMPLETE_EXT)
                 {
                     // It's not valid. Abort!
-                    m_gl.DeleteRenderbuffersEXT(1, &pRT->depthStencilRenderBuffer);
+                    m_gl.DeleteRenderbuffersEXT(1, &pRT->depthStencilRenderbuffer);
                     m_gl.DeleteFramebuffersEXT(1, &pRT->framebuffer);
+
+                    if (samplesMSAA > 1) {
+                        m_gl.DeleteRenderbuffersEXT(1, &pRT->colorMSAARenderbuffer);
+                        m_gl.DeleteFramebuffersEXT(1, &pRT->framebufferMSAA);
+                    }
+
 
                     m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, oldFramebuffer);
 
@@ -1867,6 +1920,7 @@ namespace GT
 
                 // Restore the old framebuffer binding.
                 m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, oldFramebuffer);
+
 
 
                 HGraphicsRenderTarget hRT = reinterpret_cast<HGraphicsRenderTarget>(pRT);
@@ -2404,6 +2458,18 @@ namespace GT
         auto pRT = reinterpret_cast<TextureRenderTarget_OpenGL*>(hRT);
         if (pRT != nullptr)
         {
+            this->MakeOpenGLContextCurrent();
+
+            if (pRT->samples > 1)
+            {
+                m_gl.DeleteFramebuffersEXT(1, &pRT->framebufferMSAA);
+                m_gl.DeleteRenderbuffersEXT(1, &pRT->colorMSAARenderbuffer);
+            }
+
+            m_gl.DeleteFramebuffersEXT(1, &pRT->framebuffer);
+            m_gl.DeleteRenderbuffersEXT(1, &pRT->depthStencilRenderbuffer);
+
+
             m_textureRTs.RemoveFirstOccuranceOf(hRT);
             delete pRT;
         }
@@ -2451,8 +2517,28 @@ namespace GT
 
             this->MakeOpenGLContextCurrent();
 
-            m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebuffer);
+
+            // The framebuffer needs to be bound, but differently depending on whether or not MSAA is being used.
+            if (pRT->samples > 1) {
+                m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebufferMSAA);
+                m_gl.Enable(GL_MULTISAMPLE);
+            } else {
+                m_gl.BindFramebufferEXT(GL_FRAMEBUFFER_EXT, pRT->framebuffer);
+            }
+
             this->ExecuteRTRenderingCommands(hRT);
+
+
+            // If MSAA is being used we need to do a blit operation to resolve the samples and place the result in the texture.
+            if (pRT->samples > 1) {
+                m_gl.BindFramebufferEXT(GL_DRAW_FRAMEBUFFER_EXT, pRT->framebuffer);
+                m_gl.BindFramebufferEXT(GL_READ_FRAMEBUFFER_EXT, pRT->framebufferMSAA);
+                m_gl.BlitFramebufferEXT(0, 0, pRT->viewportWidth, pRT->viewportHeight, 0, 0, pRT->viewportWidth, pRT->viewportHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+
+                // At the top we enabled multisampling, but it needs to be disabled now so that the state is reverted back to it's default state.
+                m_gl.Disable(GL_MULTISAMPLE);
+            }
         }
     }
 

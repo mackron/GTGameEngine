@@ -46,6 +46,24 @@ namespace GT
     }
 
 
+    inline unsigned int NextPowerOf2(unsigned int value)
+    {
+        --value;
+
+        value = (value >> 1)  | value;
+        value = (value >> 2)  | value;
+        value = (value >> 4)  | value;
+        value = (value >> 8)  | value;
+        value = (value >> 16) | value;
+        
+        return value + 1;
+    }
+    inline int NextPowerOf2(int value)
+    {
+        return static_cast<int>(NextPowerOf2(static_cast<unsigned int>(value)));
+    }
+
+
 
     //////////////////////////////////
     // vec2

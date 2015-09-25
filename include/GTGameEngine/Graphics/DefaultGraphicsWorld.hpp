@@ -141,7 +141,7 @@ namespace GT
 #endif
 
         /// @copydoc GraphicsWorld::CreateRenderTargetFromTexture()
-        virtual HGraphicsRenderTarget CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, uint32_t flags);
+        virtual HGraphicsRenderTarget CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, unsigned int samplesMSAA, uint32_t flags);
 
         /// @copydoc GraphicsWorld::DeleteRenderTarget()
         virtual void DeleteRenderTarget(HGraphicsRenderTarget hRT);

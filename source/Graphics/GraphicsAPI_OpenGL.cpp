@@ -359,6 +359,7 @@ namespace GT
         this->GetIntegerv              = reinterpret_cast<PFNGLGETINTEGERVPROC             >(this->GetGLProcAddress("glGetIntegerv"));
         this->DepthFunc                = reinterpret_cast<PFNGLDEPTHFUNCPROC               >(this->GetGLProcAddress("glDepthFunc"));
         this->DepthMask                = reinterpret_cast<PFNGLDEPTHMASKPROC               >(this->GetGLProcAddress("glDepthMask"));
+        this->GetError                 = reinterpret_cast<PFNGLGETERRORPROC                >(this->GetGLProcAddress("glGetError"));
         this->StencilOpSeparate        = reinterpret_cast<PFNGLSTENCILOPSEPARATEPROC       >(this->GetGLProcAddress("glStencilOpSeparate"));
         this->StencilFuncSeparate      = reinterpret_cast<PFNGLSTENCILFUNCSEPARATEPROC     >(this->GetGLProcAddress("glStencilFuncSeparate"));
         this->StencilMaskSeparate      = reinterpret_cast<PFNGLSTENCILMASKSEPARATEPROC     >(this->GetGLProcAddress("glStencilMaskSeparate"));
@@ -381,6 +382,8 @@ namespace GT
         this->Viewport                 = reinterpret_cast<PFNGLVIEWPORTPROC                >(this->GetGLProcAddress("glViewport"));
         this->Scissor                  = reinterpret_cast<PFNGLSCISSORPROC                 >(this->GetGLProcAddress("glScissor"));
         this->DrawBuffers              = reinterpret_cast<PFNGLDRAWBUFFERSPROC             >(this->GetGLProcAddress("glDrawBuffers"));
+        this->DrawBuffer               = reinterpret_cast<PFNGLDRAWBUFFERPROC              >(this->GetGLProcAddress("glDrawBuffer"));
+        this->ReadBuffer               = reinterpret_cast<PFNGLREADBUFFERPROC              >(this->GetGLProcAddress("glReadBuffer"));
 
         this->DrawElements             = reinterpret_cast<PFNGLDRAWELEMENTSPROC            >(this->GetGLProcAddress("glDrawElements"));
 
@@ -453,6 +456,11 @@ namespace GT
             this->BindRenderbufferEXT        = reinterpret_cast<PFNGLBINDRENDERBUFFEREXTPROC       >(this->GetGLProcAddress("glBindRenderbufferEXT"));
             this->RenderbufferStorageEXT     = reinterpret_cast<PFNGLRENDERBUFFERSTORAGEEXTPROC    >(this->GetGLProcAddress("glRenderbufferStorageEXT"));
             this->CheckFramebufferStatusEXT  = reinterpret_cast<PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC >(this->GetGLProcAddress("glCheckFramebufferStatusEXT"));
+        }
+
+        if (this->IsExtensionSupported("GL_EXT_framebuffer_blit"))
+        {
+            this->BlitFramebufferEXT = reinterpret_cast<PFNGLBLITFRAMEBUFFEREXTPROC>(this->GetGLProcAddress("glBlitFramebufferEXT"));
         }
 
         if (this->IsExtensionSupported("GL_EXT_framebuffer_multisample"))

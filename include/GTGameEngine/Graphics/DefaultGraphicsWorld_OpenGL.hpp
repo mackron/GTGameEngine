@@ -143,7 +143,7 @@ namespace GT
 #endif
 
         /// @copydoc GraphicsWorld::CreateRenderTargetFromTexture()
-        HGraphicsRenderTarget CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, uint32_t flags);
+        HGraphicsRenderTarget CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, unsigned int samplesMSAA, uint32_t flags);
 
         /// @copydoc GraphicsWorld::DeleteRenderTarget()
         void DeleteRenderTarget(HGraphicsRenderTarget hRT);

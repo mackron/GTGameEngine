@@ -302,9 +302,9 @@ namespace GT
     }
 #endif
 
-    HGraphicsRenderTarget DefaultGraphicsWorld::CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, uint32_t flags)
+    HGraphicsRenderTarget DefaultGraphicsWorld::CreateRenderTargetFromTexture(HGraphicsResource hTextureResource, unsigned int samplesMSAA, uint32_t flags)
     {
-        return m_pGraphicsWorldImpl->CreateRenderTargetFromTexture(hTextureResource, flags);
+        return m_pGraphicsWorldImpl->CreateRenderTargetFromTexture(hTextureResource, samplesMSAA, flags);
     }
 
     void DefaultGraphicsWorld::DeleteRenderTarget(HGraphicsRenderTarget hRT)

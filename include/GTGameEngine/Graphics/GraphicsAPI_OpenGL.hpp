@@ -262,6 +262,7 @@ namespace GT
         PFNGLGETSTRINGPROC              GetString;
         PFNGLGETSTRINGIPROC             GetStringi;
         PFNGLGETINTEGERVPROC            GetIntegerv;
+        PFNGLGETERRORPROC               GetError;
         PFNGLDEPTHFUNCPROC              DepthFunc;
         PFNGLDEPTHMASKPROC              DepthMask;
         PFNGLSTENCILOPSEPARATEPROC      StencilOpSeparate;
@@ -286,6 +287,8 @@ namespace GT
         PFNGLVIEWPORTPROC               Viewport;
         PFNGLSCISSORPROC                Scissor;
         PFNGLDRAWBUFFERSPROC            DrawBuffers;
+        PFNGLDRAWBUFFERPROC             DrawBuffer;
+        PFNGLREADBUFFERPROC             ReadBuffer;
 
 
         // Drawing.
@@ -359,6 +362,9 @@ namespace GT
         PFNGLBINDRENDERBUFFEREXTPROC        BindRenderbufferEXT;
         PFNGLRENDERBUFFERSTORAGEEXTPROC     RenderbufferStorageEXT;
         PFNGLCHECKFRAMEBUFFERSTATUSEXTPROC  CheckFramebufferStatusEXT;
+
+        // GL_EXT_framebuffer_blit
+        PFNGLBLITFRAMEBUFFEREXTPROC         BlitFramebufferEXT;
 
         // GL_EXT_framebuffer_multisample
         PFNGLRENDERBUFFERSTORAGEMULTISAMPLEEXTPROC RenderbufferStorageMultisampleEXT;
