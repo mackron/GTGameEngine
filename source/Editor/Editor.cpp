@@ -1119,16 +1119,6 @@ namespace GT
                 this->DoPaste();
             }
 
-            // Undo
-            if (key == GTLib::Keys::Z) {
-                this->DoUndo();
-            }
-
-            // Redo
-            if (key == GTLib::Keys::Y) {
-                this->DoRedo();
-            }
-
 
             // Select All
             if (key == GTLib::Keys::A) {
@@ -1144,6 +1134,20 @@ namespace GT
     void Editor::OnKeyPressedAutoRepeat(HWindow hWindow, GTLib::Key key)
     {
         (void)hWindow;
+
+        // Shortcuts
+        if (m_gameContext.IsKeyDown(GTLib::Keys::Ctrl))
+        {
+            // Undo
+            if (key == GTLib::Keys::Z) {
+                this->DoUndo();
+            }
+
+            // Redo
+            if (key == GTLib::Keys::Y) {
+                this->DoRedo();
+            }
+        }
 
         m_gui.OnKeyPressedAutoRepeat(key);
     }
