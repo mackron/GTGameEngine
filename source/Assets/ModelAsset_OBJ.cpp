@@ -209,8 +209,8 @@ namespace GT
 
 
 
-    ModelAsset_OBJ::ModelAsset_OBJ(AssetType assetType)
-        : ModelAsset(assetType),
+    ModelAsset_OBJ::ModelAsset_OBJ(const char* absolutePathOrIdentifier, AssetType assetType)
+        : ModelAsset(absolutePathOrIdentifier, assetType),
          m_vertexData(nullptr),
          m_indexData(nullptr)
     {

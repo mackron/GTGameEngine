@@ -246,8 +246,8 @@ namespace GT
 
 
 
-    ModelAsset_MD2::ModelAsset_MD2(AssetType assetType)
-        : ModelAsset(assetType),
+    ModelAsset_MD2::ModelAsset_MD2(const char* absolutePathOrIdentifier, AssetType assetType)
+        : ModelAsset(absolutePathOrIdentifier, assetType),
           m_vertexData(nullptr), m_vertexCount(0), m_vertexCountPerFrame(0), m_vertexLayout(),
           m_indexData(nullptr), m_indexCount(0),
           m_materialOffsetCountPair(),

@@ -152,12 +152,12 @@ namespace GT
         }
     }
 
-    Asset* DefaultAssetAllocator::CreateAsset(AssetType type)
+    Asset* DefaultAssetAllocator::CreateAsset(const char* absolutePathOrIdentifier, AssetType type)
     {
         // Images
         if (type >= AssetType_Image_PNG && type <= AssetType_Image_PSD)
         {
-            return new ImageAsset_STB(type);
+            return new ImageAsset_STB(absolutePathOrIdentifier, type);
         }
 
 
@@ -165,7 +165,7 @@ namespace GT
 #if defined(GT_BUILD_MTL)
         if (type == AssetType_Material_MTL)
         {
-            return new MaterialAsset_MTL(type);
+            return new MaterialAsset_MTL(absolutePathOrIdentifier, type);
         }
 #endif
 
@@ -174,21 +174,21 @@ namespace GT
 #if defined(GT_BUILD_OBJ)
         if (type == AssetType_Model_OBJ)
         {
-            return new ModelAsset_OBJ(type);
+            return new ModelAsset_OBJ(absolutePathOrIdentifier, type);
         }
 #endif
 
 #if defined(GT_BUILD_MD2)
         if (type == AssetType_Model_MD2)
         {
-            return new ModelAsset_MD2(type);
+            return new ModelAsset_MD2(absolutePathOrIdentifier, type);
         }
 #endif
 
 #if defined(GT_BUILD_OGEX)
         if (type == AssetType_Model_OGEX)
         {
-            //return new ModelAsset_OGEX(type);
+            //return new ModelAsset_OGEX(absolutePathOrIdentifier, type);
         }
 #endif
 

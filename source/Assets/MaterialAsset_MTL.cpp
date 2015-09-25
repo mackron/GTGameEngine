@@ -9,8 +9,8 @@
 
 namespace GT
 {
-    MaterialAsset_MTL::MaterialAsset_MTL(AssetType assetType)
-        : MaterialAsset(assetType),
+    MaterialAsset_MTL::MaterialAsset_MTL(const char* absolutePathOrIdentifier, AssetType assetType)
+        : MaterialAsset(absolutePathOrIdentifier, assetType),
           m_pData(nullptr), m_dataSizeInBytes(0)
     {
     }

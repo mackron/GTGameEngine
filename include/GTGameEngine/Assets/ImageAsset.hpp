@@ -14,7 +14,7 @@ namespace GT
     public:
 
         /// Constructor.
-        ImageAsset(AssetType type);
+        ImageAsset(const char* absolutePathOrIdentifier, AssetType type);
 
         /// Destructor.
         virtual ~ImageAsset();

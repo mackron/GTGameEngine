@@ -35,10 +35,18 @@
     #pragma GCC diagnostic ignored "-Wdisabled-macro-expansion"
     #pragma GCC diagnostic ignored "-Wunused-parameter"
     #pragma GCC diagnostic ignored "-Wold-style-cast"
+#elif defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4100)
+    #pragma warning(disable:4456)
+    #pragma warning(disable:4457)
+    #pragma warning(disable:4505)
 #endif
 #include "../external/stb/stb_image.h"
 #if defined(__clang__)
     #pragma GCC diagnostic pop
+#elif defined(_MSC_VER)
+    #pragma warning(pop)
 #endif
 
 namespace GT
@@ -87,8 +95,8 @@ namespace GT
 
 
 
-    ImageAsset_STB::ImageAsset_STB(AssetType type)
-        : ImageAsset(type),
+    ImageAsset_STB::ImageAsset_STB(const char* absolutePathOrIdentifier, AssetType type)
+        : ImageAsset(absolutePathOrIdentifier, type),
           m_width(0),
           m_height(0),
           m_format(GT::TextureFormat_RGBA8),

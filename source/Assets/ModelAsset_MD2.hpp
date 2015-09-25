@@ -25,7 +25,7 @@ namespace GT
     public:
 
         /// Constructor.
-        ModelAsset_MD2(AssetType assetType);
+        ModelAsset_MD2(const char* absolutePathOrIdentifier, AssetType assetType);
 
         /// Destructor.
         virtual ~ModelAsset_MD2();

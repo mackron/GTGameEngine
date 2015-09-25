@@ -4,8 +4,8 @@
 
 namespace GT
 {
-    ModelAsset::ModelAsset(AssetType assetType)
-        : Asset(assetType)
+    ModelAsset::ModelAsset(const char* absolutePathOrIdentifier, AssetType assetType)
+        : Asset(absolutePathOrIdentifier, assetType)
     {
     }
 

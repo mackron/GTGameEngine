@@ -22,7 +22,7 @@ namespace GT
         bool IsAssetTypeSupported(AssetType assetType) const;
 
         /// @copydoc AssetAllocator::CreateAsset()
-        Asset* CreateAsset(AssetType assetType);
+        Asset* CreateAsset(const char* absolutePathOrIdentifier, AssetType assetType);
 
         /// @copydoc AssetAllocator::DeleteAsset()
         void DeleteAsset(Asset* pAsset);

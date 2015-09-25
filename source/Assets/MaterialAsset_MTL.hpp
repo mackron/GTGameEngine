@@ -16,7 +16,7 @@ namespace GT
     public:
 
         /// Constructor.
-        MaterialAsset_MTL(AssetType assetType);
+        MaterialAsset_MTL(const char* absolutePathOrIdentifier, AssetType assetType);
 
         /// Destructor.
         ~MaterialAsset_MTL();

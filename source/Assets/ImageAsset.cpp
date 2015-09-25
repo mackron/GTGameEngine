@@ -4,8 +4,8 @@
 
 namespace GT
 {
-    ImageAsset::ImageAsset(AssetType type)
-        : Asset(type)
+    ImageAsset::ImageAsset(const char* absolutePathOrIdentifier, AssetType type)
+        : Asset(absolutePathOrIdentifier, type)
     {
     }
 

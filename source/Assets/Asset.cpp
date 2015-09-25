@@ -2,18 +2,25 @@
 
 #include <GTGameEngine/Assets/Asset.hpp>
 #include <GTGameEngine/FileSystem.hpp>
+#include <easy_util/easy_util.h>
 
 namespace GT
 {
-    Asset::Asset(AssetType type)
-        : m_type(type)
+    Asset::Asset(const char* absolutePathOrIdentifier, AssetType type)
+        : m_absolutePathOrIdentifier(), m_type(type), m_metadata()
     {
+        strcpy_s(m_absolutePathOrIdentifier, GT_MAX_PATH, absolutePathOrIdentifier);
     }
 
     Asset::~Asset()
     {
     }
 
+
+    const char * Asset::GetAbsolutePathOrIdentifier() const
+    {
+        return m_absolutePathOrIdentifier;
+    }
 
     AssetType Asset::GetType() const
     {

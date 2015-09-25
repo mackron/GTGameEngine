@@ -22,7 +22,7 @@ namespace GT
     public:
 
         /// Constructor.
-        ModelAsset(AssetType assetType);
+        ModelAsset(const char* absolutePathOrIdentifier, AssetType assetType);
 
         /// Destructor.
         virtual ~ModelAsset();

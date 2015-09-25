@@ -13,7 +13,7 @@ namespace GT
     public:
 
         /// Constructor.
-        ImageAsset_STB(AssetType type);
+        ImageAsset_STB(const char* absolutePathOrIdentifier, AssetType type);
 
         /// Destructor.
         ~ImageAsset_STB();

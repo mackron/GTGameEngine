@@ -79,7 +79,7 @@ namespace GT
     public:
 
         /// Constructor.
-        MaterialAsset(AssetType assetType);
+        MaterialAsset(const char* absolutePathOrIdentifier, AssetType assetType);
 
         /// Destructor.
         virtual ~MaterialAsset();

@@ -37,10 +37,11 @@ namespace GT
 
         /// Creates an instantiation of an asset of the given type.
         ///
-        /// @param assetType [in] The type of asset to create.
+        /// @param absolutePathOrIdentifier [in] The absolute path or identifier of the asset.
+        /// @param assetType                [in] The type of asset to create.
         ///
         /// @return A pointer to the new asset object.
-        virtual Asset* CreateAsset(AssetType assetType);
+        virtual Asset* CreateAsset(const char* absolutePathOrIdentifier, AssetType assetType);
 
         /// Deletes the given asset.
         ///

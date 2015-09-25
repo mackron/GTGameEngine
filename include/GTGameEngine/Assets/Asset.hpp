@@ -7,6 +7,7 @@
 #include <GTLib/ReferenceCountedObject.hpp>
 #include "AssetTypes.hpp"
 #include "AssetMetadata.hpp"
+#include "../FileSystem.hpp"        // For GT_MAX_PATH
 
 namespace GT
 {
@@ -18,11 +19,14 @@ namespace GT
     public:
 
         /// Constructor.
-        Asset(AssetType type);
+        Asset(const char* absolutePathOrIdentifier, AssetType type);
 
         /// Destructor.
         virtual ~Asset();
 
+
+        /// Retrieves the absolute path or identifier of the asset.
+        const char* GetAbsolutePathOrIdentifier() const;
 
         /// Retrieves the type of this asset.
         AssetType GetType() const;
@@ -80,6 +84,9 @@ namespace GT
 
 
     private:
+
+        /// The absolute path or identifier of the asset.
+        char m_absolutePathOrIdentifier[GT_MAX_PATH];
 
         /// The asset type.
         AssetType m_type;

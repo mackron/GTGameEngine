@@ -71,7 +71,7 @@ namespace GT
             }
             else
             {
-                // The file nor it's metadata file could not be found, but the asset loader might be using it as a unique token, so we just assume use it as-is for the absolute path in this case.
+                // The file nor it's metadata file could not be found, but the asset loader might be using it as a unique identifier, so we just use it as-is in this case.
                 GTLib::Strings::Copy(absolutePathOrIdentifier, filePathOrIdentifier);
             }
         }
@@ -95,7 +95,7 @@ namespace GT
 
             if (pAllocator != nullptr)
             {
-                auto pAsset = pAllocator->CreateAsset(assetType);
+                auto pAsset = pAllocator->CreateAsset(absolutePathOrIdentifier, assetType);
                 if (pAsset != nullptr)
                 {
                     // Load the metadata first. It does not matter if this fails so the return value doesn't need to be checked.

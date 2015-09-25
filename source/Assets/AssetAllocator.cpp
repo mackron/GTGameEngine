@@ -23,7 +23,7 @@ namespace GT
         return false;
     }
 
-    Asset* AssetAllocator::CreateAsset(AssetType)
+    Asset* AssetAllocator::CreateAsset(const char*, AssetType)
     {
         return nullptr;
     }

@@ -23,7 +23,7 @@ namespace GT
     public:
 
         /// Constructor.
-        ModelAsset_OBJ(AssetType assetType);
+        ModelAsset_OBJ(const char* absolutePathOrIdentifier, AssetType assetType);
 
         /// Destructor
         ~ModelAsset_OBJ();
