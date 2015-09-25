@@ -57,6 +57,13 @@ namespace GT
         ///     If there is an error loading the asset, the default model is returned.
         GraphicsAssetResource_Model* LoadModel(const char* assetPath);
 
+        /// Loads a resource from a pre-loaded asset.
+        ///
+        /// @remarks
+        ///     The asset must have been created by the asset library that was passed to the constructor of this object.
+        GraphicsAssetResource* Load(Asset* pAsset);
+        GraphicsAssetResource* Load(Asset &asset) { return Load(&asset); }
+
 
         /// Unloads a resource by it;s path.
         void Unload(const char* assetPath);
@@ -66,7 +73,7 @@ namespace GT
 
 
         /// Finds an already-loaded resource by it's path.
-        GraphicsAssetResource* FindLoadedResourceByPath(const char* assetPath, OUT GTLib::String &absolutePath);
+        GraphicsAssetResource* FindLoadedResourceByPath(const char* assetPath, OUT char* absolutePath, size_t absolutePathSize);
 
 
         /// Retrieves the default texture.
@@ -88,10 +95,10 @@ namespace GT
         GraphicsAssetResource_Texture* LoadTexture(Asset* pAsset);
 
         /// Loads a material.
-        GraphicsAssetResource_Material* LoadMaterial(Asset* pAsset, const char* absolutePath);
+        GraphicsAssetResource_Material* LoadMaterial(Asset* pAsset);
 
         /// Loads a model.
-        GraphicsAssetResource_Model* LoadModel(Asset* pAsset, const char* absolutePath);
+        GraphicsAssetResource_Model* LoadModel(Asset* pAsset);
 
         /// Loads a mesh from a mesh descriptor.
         GraphicsAssetResource_Mesh* LoadMesh(GraphicsMeshResourceDesc &desc);
@@ -140,10 +147,10 @@ namespace GT
         bool FindResourceIndex(GraphicsAssetResource* pResource, size_t &indexOut) const;
 
         /// Finds the index of the resource by it's path.
-        bool FindResourceIndexByPath(const char* assetPath, OUT GTLib::String &absolutePath, size_t &indexOut) const;
+        bool FindResourceIndexByPath(const char* assetPath, OUT size_t &indexOut, OUT char* absolutePath, size_t absolutePathSize) const;
 
         /// Finds an already-loaded resource, and if it doesn't exist, loads the asset.
-        GraphicsAssetResource* FindExistingResourceOrLoadAsset(const char* assetPath, AssetClass expectedAssetClass, OUT GTLib::String &absolutePath, OUT Asset* &pAsset);
+        GraphicsAssetResource* FindExistingResourceOrLoadAsset(const char* assetPath, AssetClass expectedAssetClass, OUT Asset* &pAsset);
 
 
         /// Determines whether or not the given resource is a default one.

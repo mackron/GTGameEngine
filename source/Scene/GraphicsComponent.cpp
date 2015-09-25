@@ -2,6 +2,7 @@
 
 #include <GTGameEngine/Scene/GraphicsComponent.hpp>
 #include <GTGameEngine/EngineContext.hpp>
+#include <GTGameEngine/Assets/Asset.hpp>
 
 namespace GT
 {
@@ -65,22 +66,39 @@ namespace GT
     }
 
 
-    bool GraphicsComponent::SetModel(const char* modelPath, GraphicsAssetResourceManager* pGraphicsResourceManager)
+    bool GraphicsComponent::SetModel(const char* modelPath, GraphicsAssetResourceManager &graphicsResourceManager)
     {
         this->UnsetModel();
 
-        if (modelPath != nullptr && pGraphicsResourceManager != nullptr)
+        if (modelPath != nullptr)
         {
-            m_pModelResource = pGraphicsResourceManager->LoadModel(modelPath);
-            if (m_pModelResource != nullptr)
-            {
-                m_pGraphicsResourceManager = pGraphicsResourceManager;
-
-                // All good. We don't create the graphics objects for each mesh until AddModelToGraphicsWorld() is called.
-                return true;
-            }
+            return this->SetModel(graphicsResourceManager.LoadModel(modelPath), graphicsResourceManager);
         }
         
+        return false;
+    }
+
+    bool GraphicsComponent::SetModel(Asset* pModelAsset, GraphicsAssetResourceManager &graphicsResourceManager)
+    {
+        if (pModelAsset != nullptr && pModelAsset->GetClass() == AssetClass_Model)
+        {
+            return this->SetModel(graphicsResourceManager.Load(pModelAsset), graphicsResourceManager);
+        }
+        
+        return false;
+    }
+
+    bool GraphicsComponent::SetModel(GraphicsAssetResource *pModelResource, GraphicsAssetResourceManager &graphicsResourceManager)
+    {
+        if (pModelResource != nullptr)
+        {
+            m_pModelResource           = reinterpret_cast<GraphicsAssetResource_Model*>(pModelResource);
+            m_pGraphicsResourceManager = &graphicsResourceManager;
+                
+            // All good. We don't create the graphics objects for each mesh until AddModelToGraphicsWorld() is called.
+            return true;
+        }
+
         return false;
     }
 

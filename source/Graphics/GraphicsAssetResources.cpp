@@ -7,11 +7,16 @@
 
 namespace GT
 {
-    GraphicsAssetResource::GraphicsAssetResource(Asset* pAsset)
-        : m_pAsset(pAsset), m_referenceCount(1)
+    GraphicsAssetResource::GraphicsAssetResource(GraphicsAssetResourceManager &resourceManager, Asset* pAsset)
+        : m_resourceManager(resourceManager), m_pAsset(pAsset), m_referenceCount(1)
     {
     }
 
+
+    GraphicsAssetResourceManager & GraphicsAssetResource::GetResourceManager()
+    {
+        return m_resourceManager;
+    }
 
     Asset* GraphicsAssetResource::GetAsset() const
     {
@@ -43,8 +48,8 @@ namespace GT
     ///////////////////////////////////////////
     // Textures
 
-    GraphicsAssetResource_Texture::GraphicsAssetResource_Texture(Asset* pAsset, HGraphicsResource hGraphicsResource)
-        : GraphicsAssetResource(pAsset), m_hGraphicsResource(hGraphicsResource)
+    GraphicsAssetResource_Texture::GraphicsAssetResource_Texture(GraphicsAssetResourceManager &resourceManager, Asset* pAsset, HGraphicsResource hGraphicsResource)
+        : GraphicsAssetResource(resourceManager, pAsset), m_hGraphicsResource(hGraphicsResource)
     {
     }
 
@@ -58,8 +63,8 @@ namespace GT
     ///////////////////////////////////////////
     // Materials
 
-    GraphicsAssetResource_Material::GraphicsAssetResource_Material(Asset* pAsset, HGraphicsResource hGraphicsResource)
-        : GraphicsAssetResource(pAsset), m_hGraphicsResource(hGraphicsResource), m_textures()
+    GraphicsAssetResource_Material::GraphicsAssetResource_Material(GraphicsAssetResourceManager &resourceManager, Asset* pAsset, HGraphicsResource hGraphicsResource)
+        : GraphicsAssetResource(resourceManager, pAsset), m_hGraphicsResource(hGraphicsResource), m_textures()
     {
     }
 
@@ -140,8 +145,8 @@ namespace GT
     ///////////////////////////////////////////
     // Meshes
 
-    GraphicsAssetResource_Mesh::GraphicsAssetResource_Mesh(HGraphicsResource hGraphicsResource)
-        : GraphicsAssetResource(nullptr), m_hGraphicsResource(hGraphicsResource), m_materials()
+    GraphicsAssetResource_Mesh::GraphicsAssetResource_Mesh(GraphicsAssetResourceManager &resourceManager, HGraphicsResource hGraphicsResource)
+        : GraphicsAssetResource(resourceManager, nullptr), m_hGraphicsResource(hGraphicsResource), m_materials()
     {
     }
 
@@ -171,8 +176,8 @@ namespace GT
     ///////////////////////////////////////////
     // Models
 
-    GraphicsAssetResource_Model::GraphicsAssetResource_Model(Asset* pAsset)
-        : GraphicsAssetResource(pAsset), m_meshes()
+    GraphicsAssetResource_Model::GraphicsAssetResource_Model(GraphicsAssetResourceManager &resourceManager, Asset* pAsset)
+        : GraphicsAssetResource(resourceManager, pAsset), m_meshes()
     {
     }
 

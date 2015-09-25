@@ -9,6 +9,7 @@
 namespace GT
 {
     class Asset;
+    class GraphicsAssetResourceManager;
 
     /// Base class for tying graphics resources to assets.
     class GraphicsAssetResource
@@ -16,10 +17,13 @@ namespace GT
     protected:
 
         /// Constructor.
-        GraphicsAssetResource(Asset* pAsset);
+        GraphicsAssetResource(GraphicsAssetResourceManager &resourceManager, Asset* pAsset);
 
 
     public:
+
+        /// Retrieves the resource manager that owns the asset.
+        GraphicsAssetResourceManager & GetResourceManager();
 
         /// Retrieves a pointer to the asset.
         Asset* GetAsset() const;
@@ -35,6 +39,9 @@ namespace GT
 
 
     private:
+
+        /// A reference to the resource manager that created the resource.
+        GraphicsAssetResourceManager &m_resourceManager;
 
         /// A pointer to the associated asset.
         Asset* m_pAsset;
@@ -53,7 +60,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GraphicsAssetResource_Texture(Asset* pAsset, HGraphicsResource hGraphicsResource);
+        GraphicsAssetResource_Texture(GraphicsAssetResourceManager &resourceManager, Asset* pAsset, HGraphicsResource hGraphicsResource);
 
         /// Retrieves a handle to the associated graphics resource.
         HGraphicsResource GetGraphicsResource() const;
@@ -75,7 +82,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GraphicsAssetResource_Material(Asset* pAsset, HGraphicsResource hGraphicsResource);
+        GraphicsAssetResource_Material(GraphicsAssetResourceManager &resourceManager, Asset* pAsset, HGraphicsResource hGraphicsResource);
 
         /// Retrieves a handle to the associated graphics resource.
         HGraphicsResource GetGraphicsResource() const;
@@ -141,7 +148,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GraphicsAssetResource_Mesh(HGraphicsResource hGraphicsResource);
+        GraphicsAssetResource_Mesh(GraphicsAssetResourceManager &resourceManager, HGraphicsResource hGraphicsResource);
 
         /// Retrieves a handle to the associated graphics resource.
         HGraphicsResource GetGraphicsResource() const;
@@ -178,7 +185,7 @@ namespace GT
     public:
 
         /// Constructor.
-        GraphicsAssetResource_Model(Asset* pAsset);
+        GraphicsAssetResource_Model(GraphicsAssetResourceManager &resourceManager, Asset* pAsset);
 
 
         /// Retrieves the number of meshes this model references.

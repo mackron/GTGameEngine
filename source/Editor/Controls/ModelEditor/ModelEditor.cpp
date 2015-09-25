@@ -43,7 +43,7 @@ namespace GT
             auto pGraphicsComponent = m_pSceneNode->AttachComponent<GraphicsComponent>();
             if (pGraphicsComponent != nullptr)
             {
-                pGraphicsComponent->SetModel(absolutePath, &m_viewport.GetGraphicsAssetResourceManager());
+                pGraphicsComponent->SetModel(pAsset, m_viewport.GetGraphicsAssetResourceManager());
             }
 
             m_viewport.GetScene().InsertSceneNode(m_pSceneNode);

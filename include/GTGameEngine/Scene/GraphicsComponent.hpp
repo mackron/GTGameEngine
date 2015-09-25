@@ -59,13 +59,26 @@ namespace GT
 
         /// Sets the model to use with this graphics component.
         ///
-        /// @param modelPath     [in] The path of the model asset to set as the model.
-        /// @param engineContext [in] A reference to the engine context. This is used to gain access to the asset manager so the model can be loaded.
+        /// @param modelPath               [in] The path of the model asset to set as the model.
+        /// @param graphicsResourceManager [in] A reference to the graphics asset resource manager which is used to load the model.
         ///
         /// @remarks
         ///     If the model has not already been pre-loaded, this will do a full load. This will also load any assets that the model depends on such
         ///     as materials and textures.
-        bool SetModel(const char* modelPath, GraphicsAssetResourceManager* pGraphicsResourceManager);
+        bool SetModel(const char* modelPath, GraphicsAssetResourceManager &graphicsResourceManager);
+
+        /// Sets the model to use with this graphics component from a pre-loaded model asset.
+        ///
+        /// @remarks
+        ///     This assumes the asset was loaded by the asset library referenced by \c graphicsResourceManager.
+        bool SetModel(Asset* pModelAsset, GraphicsAssetResourceManager &graphicsResourceManager);
+
+        /// Sets the model to use with this graphics component.
+        ///
+        /// @remarks
+        ///     This assumes the given resource is a model resource.
+        bool SetModel(GraphicsAssetResource* pModelResource, GraphicsAssetResourceManager &graphicsResourceManager);
+
 
         /// Unsets the current model.
         void UnsetModel();

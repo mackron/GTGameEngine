@@ -51,9 +51,8 @@ namespace GT
 
     GraphicsAssetResource_Texture* GraphicsAssetResourceManager::LoadTexture(const char* assetPath)
     {
-        GTLib::String assetAbsolutePath;
         Asset* pAsset = nullptr;
-        auto pExistingResource = this->FindExistingResourceOrLoadAsset(assetPath, AssetClass_Image, OUT assetAbsolutePath, OUT pAsset);
+        auto pExistingResource = this->FindExistingResourceOrLoadAsset(assetPath, AssetClass_Image, OUT pAsset);
         if (pExistingResource == nullptr)
         {
             // The resource has not already been loaded.
@@ -62,7 +61,7 @@ namespace GT
                 auto pNewResource = this->LoadTexture(pAsset);
                 if (pNewResource != nullptr)
                 {
-                    m_loadedResources.Add(assetAbsolutePath.c_str(), pNewResource);
+                    m_loadedResources.Add(pAsset->GetAbsolutePathOrIdentifier(), pNewResource);
                     return pNewResource;
                 }
                 else
@@ -84,18 +83,17 @@ namespace GT
 
     GraphicsAssetResource_Material* GraphicsAssetResourceManager::LoadMaterial(const char* assetPath)
     {
-        GTLib::String assetAbsolutePath;
         Asset* pAsset = nullptr;
-        auto pExistingResource = this->FindExistingResourceOrLoadAsset(assetPath, AssetClass_Material, OUT assetAbsolutePath, OUT pAsset);
+        auto pExistingResource = this->FindExistingResourceOrLoadAsset(assetPath, AssetClass_Material, OUT pAsset);
         if (pExistingResource == nullptr)
         {
             // The resource has not already been loaded.
             if (pAsset != nullptr)
             {
-                auto pNewResource = this->LoadMaterial(pAsset, assetAbsolutePath.c_str());
+                auto pNewResource = this->LoadMaterial(pAsset);
                 if (pNewResource != nullptr)
                 {
-                    m_loadedResources.Add(assetAbsolutePath.c_str(), pNewResource);
+                    m_loadedResources.Add(pAsset->GetAbsolutePathOrIdentifier(), pNewResource);
                     return pNewResource;
                 }
                 else
@@ -117,18 +115,17 @@ namespace GT
 
     GraphicsAssetResource_Model* GraphicsAssetResourceManager::LoadModel(const char* assetPath)
     {
-        GTLib::String assetAbsolutePath;
         Asset* pAsset = nullptr;
-        auto pExistingResource = this->FindExistingResourceOrLoadAsset(assetPath, AssetClass_Model, OUT assetAbsolutePath, OUT pAsset);
+        auto pExistingResource = this->FindExistingResourceOrLoadAsset(assetPath, AssetClass_Model, OUT pAsset);
         if (pExistingResource == nullptr)
         {
             // The resource has not already been loaded.
             if (pAsset != nullptr)
             {
-                auto pNewResource = this->LoadModel(pAsset, assetAbsolutePath.c_str());
+                auto pNewResource = this->LoadModel(pAsset);
                 if (pNewResource != nullptr)
                 {
-                    m_loadedResources.Add(assetAbsolutePath.c_str(), pNewResource);
+                    m_loadedResources.Add(pAsset->GetAbsolutePathOrIdentifier(), pNewResource);
                     return pNewResource;
                 }
                 else
@@ -149,11 +146,38 @@ namespace GT
     }
 
 
+    GraphicsAssetResource* GraphicsAssetResourceManager::Load(Asset* pAsset)
+    {
+        if (pAsset != nullptr)
+        {
+            GraphicsAssetResource* pNewResource = nullptr;
+            switch (pAsset->GetClass())
+            {
+                case AssetClass_Image:    pNewResource = this->LoadTexture(pAsset);  break;
+                case AssetClass_Material: pNewResource = this->LoadMaterial(pAsset); break;
+                case AssetClass_Model:    pNewResource = this->LoadModel(pAsset);    break;
+                default: break;
+            }
+
+
+            if (pNewResource != nullptr)
+            {
+                // The reference counter of the asset needs to be incremeneted because it will be unloaded 
+                m_assetLibrary.Load(pAsset);
+                m_loadedResources.Add(pAsset->GetAbsolutePathOrIdentifier(), pNewResource);
+
+                return pNewResource;
+            }
+        }
+
+        return nullptr;
+    }
+
+
     void GraphicsAssetResourceManager::Unload(const char* assetPath)
     {
-        GTLib::String assetAbsolutePath;
         size_t resourceIndex;
-        if (this->FindResourceIndexByPath(assetPath, OUT assetAbsolutePath, OUT resourceIndex))
+        if (this->FindResourceIndexByPath(assetPath, OUT resourceIndex, nullptr, 0))
         {
             this->UnloadByIndex(resourceIndex);
         }
@@ -169,10 +193,10 @@ namespace GT
     }
 
 
-    GraphicsAssetResource* GraphicsAssetResourceManager::FindLoadedResourceByPath(const char* assetPath, OUT GTLib::String &absolutePath)
+    GraphicsAssetResource* GraphicsAssetResourceManager::FindLoadedResourceByPath(const char* assetPath, OUT char* absolutePath, size_t absolutePathSize)
     {
         size_t resourceIndex;
-        if (this->FindResourceIndexByPath(assetPath, OUT absolutePath, OUT resourceIndex))
+        if (this->FindResourceIndexByPath(assetPath, OUT resourceIndex, OUT absolutePath, absolutePathSize))
         {
             return m_loadedResources.buffer[resourceIndex]->value;
         }
@@ -226,14 +250,13 @@ namespace GT
         return pTextureResource;
     }
 
-    GraphicsAssetResource_Material* GraphicsAssetResourceManager::LoadMaterial(Asset* pAsset, const char* absolutePath)
+    GraphicsAssetResource_Material* GraphicsAssetResourceManager::LoadMaterial(Asset* pAsset)
     {
         assert(pAsset != nullptr);
         assert(pAsset->GetClass() == AssetClass_Material);
-        assert(absolutePath != nullptr);
 
         char basePath[EASYVFS_MAX_PATH];
-        this->GetMaterialBaseDirectory(absolutePath, basePath, EASYVFS_MAX_PATH);
+        this->GetMaterialBaseDirectory(pAsset->GetAbsolutePathOrIdentifier(), basePath, EASYVFS_MAX_PATH);
 
         auto pMaterialAsset = reinterpret_cast<MaterialAsset*>(pAsset);
 
@@ -249,19 +272,18 @@ namespace GT
         return pMaterialResource;
     }
 
-    GraphicsAssetResource_Model* GraphicsAssetResourceManager::LoadModel(Asset* pAsset, const char* absolutePath)
+    GraphicsAssetResource_Model* GraphicsAssetResourceManager::LoadModel(Asset* pAsset)
     {
         assert(pAsset != nullptr);
         assert(pAsset->GetClass() == AssetClass_Model);
-        assert(absolutePath != nullptr);
 
         char basePath[EASYVFS_MAX_PATH];
-        this->GetModelBaseDirectory(absolutePath, basePath, EASYVFS_MAX_PATH);
+        this->GetModelBaseDirectory(pAsset->GetAbsolutePathOrIdentifier(), basePath, EASYVFS_MAX_PATH);
 
 
         auto pModelAsset = reinterpret_cast<ModelAsset*>(pAsset);
 
-        GraphicsAssetResource_Model* pModelResource = new GraphicsAssetResource_Model(pAsset);
+        GraphicsAssetResource_Model* pModelResource = new GraphicsAssetResource_Model(*this, pAsset);
 
         unsigned int meshCount = pModelAsset->GetMeshCount();
         for (unsigned int iMesh = 0; iMesh < meshCount; ++iMesh)
@@ -480,7 +502,7 @@ namespace GT
         HGraphicsResource hGraphicsResource = m_graphicsWorld.CreateTextureResource(desc);
         if (hGraphicsResource != 0)
         {
-            return new GraphicsAssetResource_Texture(pAsset, hGraphicsResource);
+            return new GraphicsAssetResource_Texture(*this, pAsset, hGraphicsResource);
         }
 
         return nullptr;
@@ -491,7 +513,7 @@ namespace GT
         HGraphicsResource hGraphicsResource = m_graphicsWorld.CreateMaterialResource(desc);
         if (hGraphicsResource != 0)
         {
-            auto pMaterialResource = new GraphicsAssetResource_Material(pAsset, hGraphicsResource);
+            auto pMaterialResource = new GraphicsAssetResource_Material(*this, pAsset, hGraphicsResource);
             assert(pMaterialResource != nullptr);
 
             // Textures need to be loaded for both inputs and properties.
@@ -566,7 +588,7 @@ namespace GT
         HGraphicsResource hMeshResource = m_graphicsWorld.CreateMeshResource(desc);
         if (hMeshResource != 0)
         {
-            GraphicsAssetResource_Mesh* pMeshResource = new GraphicsAssetResource_Mesh(hMeshResource);
+            GraphicsAssetResource_Mesh* pMeshResource = new GraphicsAssetResource_Mesh(*this, hMeshResource);
             assert(pMeshResource != nullptr);
 
             return pMeshResource;
@@ -593,26 +615,44 @@ namespace GT
         return false;
     }
 
-    bool GraphicsAssetResourceManager::FindResourceIndexByPath(const char* assetPath, OUT GTLib::String &absolutePath, size_t &indexOut) const
+    bool GraphicsAssetResourceManager::FindResourceIndexByPath(const char* assetPath, OUT size_t &indexOut, OUT char* absolutePath, size_t absolutePathSize) const
     {
         FileSystem &fileSystem = m_assetLibrary.GetFileSystem();
         
-        if (fileSystem.FindAbsolutePath(assetPath, absolutePath))
+        if (absolutePath != nullptr)
         {
-            auto iExistingItem = m_loadedResources.Find(absolutePath.c_str(), absolutePath.GetLengthInTs());
-            if (iExistingItem != nullptr)
+            if (fileSystem.FindAbsolutePath(assetPath, absolutePath, absolutePathSize))
             {
-                indexOut = iExistingItem->index;
-                return true;
+                auto iExistingItem = m_loadedResources.Find(absolutePath, absolutePathSize);
+                if (iExistingItem != nullptr)
+                {
+                    indexOut = iExistingItem->index;
+                    return true;
+                }
             }
         }
+        else
+        {
+            char tempAbsolutePath[GT_MAX_PATH];
+            if (fileSystem.FindAbsolutePath(assetPath, tempAbsolutePath, GT_MAX_PATH))
+            {
+                auto iExistingItem = m_loadedResources.Find(tempAbsolutePath, GT_MAX_PATH);
+                if (iExistingItem != nullptr)
+                {
+                    indexOut = iExistingItem->index;
+                    return true;
+                }
+            }
+        }
+        
 
         return false;
     }
 
-    GraphicsAssetResource* GraphicsAssetResourceManager::FindExistingResourceOrLoadAsset(const char* assetPath, AssetClass expectedAssetClass, OUT GTLib::String &absolutePathOut, OUT Asset* &pAssetOut)
+    GraphicsAssetResource* GraphicsAssetResourceManager::FindExistingResourceOrLoadAsset(const char* assetPath, AssetClass expectedAssetClass, OUT Asset* &pAssetOut)
     {
-        auto pExistingResource = this->FindLoadedResourceByPath(assetPath, OUT absolutePathOut);
+        char absolutePath[GT_MAX_PATH];
+        auto pExistingResource = this->FindLoadedResourceByPath(assetPath, OUT absolutePath, GT_MAX_PATH);
         if (pExistingResource != nullptr)
         {
             // Already exists. We need to increment the reference counter and return the existing item.
@@ -621,7 +661,7 @@ namespace GT
         else
         {
             // Doesn't already exist. We will load the asset from absolutePathOut which was set by FindLoadedResourceByPath().
-            Asset* pAsset = m_assetLibrary.Load(absolutePathOut.c_str());
+            Asset* pAsset = m_assetLibrary.Load(absolutePath);
             if (pAsset != nullptr)
             {
                 if (pAsset->GetClass() != expectedAssetClass)
@@ -669,7 +709,7 @@ namespace GT
         HGraphicsResource hGraphicsResource = m_graphicsWorld.CreateTextureResource(desc);
         if (hGraphicsResource != 0)
         {
-            m_pDefaultTexture = new GraphicsAssetResource_Texture(nullptr, hGraphicsResource);
+            m_pDefaultTexture = new GraphicsAssetResource_Texture(*this, nullptr, hGraphicsResource);
         }
     }
 
@@ -710,7 +750,7 @@ namespace GT
     void GraphicsAssetResourceManager::LoadDefaultModel()
     {
         // The default model is made up of a single mesh which is set to the default mesh.
-        m_pDefaultModel = new GraphicsAssetResource_Model(nullptr);
+        m_pDefaultModel = new GraphicsAssetResource_Model(*this, nullptr);
         assert(m_pDefaultModel);
 
         m_pDefaultModel->_InsertMesh(m_pDefaultMesh);
