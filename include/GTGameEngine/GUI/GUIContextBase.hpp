@@ -2048,6 +2048,9 @@ namespace GT
         ///     This will post the relevant OnMouseEnter and OnMouseLeave events.
         void UpdateMouseEnterAndLeaveState(GUIElement* pNewElementUnderMouse);
 
+        /// Sets the system cursor based on the cursor of the given element.
+        void SetCursorByElement(GUIElement* pElement);
+
 
         /// Marks the given element for deletion.
         void MarkElementForDeletion(GUIElement* pElement);

@@ -3433,7 +3433,6 @@ namespace GT
     void GUIContextBase::OnMouseLeave(GUISurface* pSurface)
     {
         assert(pSurface != nullptr);
-        //assert(pSurface == m_pSurfaceUnderMouse);
 
         if (pSurface == m_pSurfaceUnderMouse)
         {
@@ -3451,7 +3450,6 @@ namespace GT
     void GUIContextBase::OnMouseButtonPressed(GUISurface* pSurface, int mouseButton, int mousePosX, int mousePosY)
     {
         assert(pSurface != nullptr);
-        //assert(pSurface == m_pSurfaceUnderMouse);
 
         (void)pSurface;
 
@@ -3529,7 +3527,6 @@ namespace GT
     void GUIContextBase::OnMouseButtonReleased(GUISurface* pSurface, int mouseButton, int mousePosX, int mousePosY)
     {
         assert(pSurface != nullptr);
-        //assert(pSurface == m_pSurfaceUnderMouse);
 
         (void)pSurface;
 
@@ -3577,7 +3574,6 @@ namespace GT
     void GUIContextBase::OnMouseButtonDoubleClicked(GUISurface* pSurface, int mouseButton, int mousePosX, int mousePosY)
     {
         assert(pSurface != nullptr);
-        //assert(pSurface == m_pSurfaceUnderMouse);
 
         (void)pSurface;
 
@@ -4030,6 +4026,11 @@ namespace GT
 
             // When the element capturing mouse events changes, the mouse enter/leave state. This will post all of the applicable events.
             this->UpdateMouseEnterAndLeaveState(this->FindElementUnderPoint(m_pSurfaceUnderMouse, m_mousePosX, m_mousePosY, true));
+
+            // While the mouse is captured, the cursor will not change from whatever cursor the captured element is using. Now that the
+            // capture has been released, we need to make sure the cursor is set correctly based on the element it is currently sitting
+            // on top of.
+            this->SetCursorByElement(m_pElementUnderMouse);
         }
     }
 
@@ -4546,16 +4547,12 @@ namespace GT
             auto pOldElementUnderMouse = m_pElementUnderMouse;
             m_pElementUnderMouse = pNewElementUnderMouse;
 
-            GUISystemCursor newCursor = GUISystemCursor::Default;
-            if (m_pElementUnderMouse != nullptr)
+            
+            if (m_pElementCapturingMouseEvents == nullptr || m_pElementCapturingMouseEvents == m_pElementUnderMouse)
             {
-                newCursor = this->GetElementCursor(pNewElementUnderMouse);
+                this->SetCursorByElement(pNewElementUnderMouse);
             }
-
-            if (newCursor != m_currentCursor) {
-                m_currentCursor = newCursor;
-                this->PostEvent_OnCursorNeedsToChange(m_currentCursor);
-            }
+            
 
 
 
@@ -4597,6 +4594,20 @@ namespace GT
                     return true;
                 });
             }
+        }
+    }
+
+    void GUIContextBase::SetCursorByElement(GUIElement * pElement)
+    {
+        GUISystemCursor newCursor = GUISystemCursor::Default;
+        if (pElement != nullptr)
+        {
+            newCursor = this->GetElementCursor(pElement);
+        }
+
+        if (newCursor != m_currentCursor) {
+            m_currentCursor = newCursor;
+            this->PostEvent_OnCursorNeedsToChange(m_currentCursor);
         }
     }
 
