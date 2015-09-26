@@ -495,30 +495,30 @@ namespace GT
 
     void GameContext::OnWindowResized(HWindow hWindow, unsigned int width, unsigned int height)
     {
+#if defined(GT_BUILD_EDITOR)
+        if (m_editor.IsWindowUsedByEditor(hWindow)) {
+            m_editor.OnWindowResized(hWindow, width, height);
+        }
+#endif
+
         if (!this->IsEditorOpen())
         {
             m_gameState.OnWindowResized(*this, hWindow, width, height);
         }
-#if defined(GT_BUILD_EDITOR)
-        else
-        {
-            m_editor.OnWindowResized(hWindow, width, height);
-        }
-#endif
     }
 
     void GameContext::OnWindowMoved(HWindow hWindow, int xPos, int yPos)
     {
+#if defined(GT_BUILD_EDITOR)
+        if (m_editor.IsWindowUsedByEditor(hWindow)) {
+            m_editor.OnWindowMoved(hWindow, xPos, yPos);
+        }
+#endif
+
         if (!this->IsEditorOpen())
         {
             m_gameState.OnWindowMoved(*this, hWindow, xPos, yPos);
         }
-#if defined(GT_BUILD_EDITOR)
-        else
-        {
-            m_editor.OnWindowMoved(hWindow, xPos, yPos);
-        }
-#endif
     }
 
     void GameContext::OnMouseMove(HWindow hWindow, int xPos, int yPos)

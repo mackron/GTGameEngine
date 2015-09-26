@@ -10,7 +10,7 @@ namespace GT
           m_verticalScrollbar(editor.GetGUI(), 0, ScrollbarOrientation::Vertical),
           m_deadSpaceSizingHandler(this->GetBottomRightQuadrant(), this->GetTopRightQuadrant(), this->GetBottomLeftQuadrant())
     {
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != NULL)
         {
             GUIContext &gui = editor.GetGUI();

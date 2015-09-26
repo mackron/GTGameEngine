@@ -20,7 +20,8 @@ namespace GT
 
 
         /// Retrieves a reference to the GUI object that owns this control and was passed into the constructor.
-        GUIContext & GetGUIContext() const;
+              GUIContext & GetGUI();
+        const GUIContext & GetGUI() const;
 
         /// Retrieves a handle to the root GUI element.
         HGUIElement GetRootElement() const;
@@ -102,6 +103,9 @@ namespace GT
 
             NO_COPY(ControlGUIEventHandler)
         } m_eventHandler;
+
+
+    NO_COPY(GUIControl)
     };
 }
 

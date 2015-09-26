@@ -10,7 +10,7 @@ namespace GT
     {
         GUIContext &gui = editor.GetGUI();
 
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != NULL)
         {
             gui.SetElementHeightRatio(hRootElement, 1.0f);
@@ -40,14 +40,14 @@ namespace GT
 
             // The asset explorer.
             m_pAssetExplorer = new EditorAssetExplorer(editor);
-            gui.SetElementParent(m_pAssetExplorer->GetRootGUIElement(), m_hLeftContainer);
+            gui.SetElementParent(m_pAssetExplorer->GetRootElement(), m_hLeftContainer);
 
 
             // The tab group.
             EditorTabGroup* pDefaultTabGroup = new EditorTabGroup(editor);
             m_tabGroups.PushBack(pDefaultTabGroup);
 
-            gui.SetElementParent(pDefaultTabGroup->GetRootGUIElement(), m_hMiddleContainer);
+            gui.SetElementParent(pDefaultTabGroup->GetRootElement(), m_hMiddleContainer);
         }
     }
 

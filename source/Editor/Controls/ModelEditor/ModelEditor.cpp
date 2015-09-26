@@ -16,7 +16,7 @@ namespace GT
         GUIContext &gui = this->GetGUI();
         //const EditorTheme &theme = this->GetEditor().GetTheme();
 
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != 0)
         {
             gui.SetElementSizeRatio(hRootElement, 1, 1);
@@ -25,9 +25,9 @@ namespace GT
 
 
             // Viewport
-            gui.SetElementParent(m_viewport.GetRootGUIElement(), hRootElement);
-            gui.SetElementSizeRatio(m_viewport.GetRootGUIElement(), 1, 1);
-            gui.SetElementBorder(m_viewport.GetRootGUIElement(), 1, GTLib::Colour(0.2f, 0.2f, 0.2f));
+            gui.SetElementParent(m_viewport.GetRootElement(), hRootElement);
+            gui.SetElementSizeRatio(m_viewport.GetRootElement(), 1, 1);
+            gui.SetElementBorder(m_viewport.GetRootElement(), 1, GTLib::Colour(0.2f, 0.2f, 0.2f));
                 
 
             // Panel

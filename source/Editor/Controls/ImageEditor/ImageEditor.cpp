@@ -11,15 +11,15 @@ namespace GT
     {
         GUIContext &gui = editor.GetGUI();
 
-        gui.SetElementSizeRatio(this->GetRootGUIElement(), 1, 1);
-        gui.SetElementBackgroundImage(this->GetRootGUIElement(), absolutePath);
-        gui.SetElementBackgroundImageColor(this->GetRootGUIElement(), GTLib::Colour::White);
-        gui.SetElementBackgroundImageRepeat(this->GetRootGUIElement(), BackgroundRepeat_None, BackgroundRepeat_None);
+        gui.SetElementSizeRatio(this->GetRootElement(), 1, 1);
+        gui.SetElementBackgroundImage(this->GetRootElement(), absolutePath);
+        gui.SetElementBackgroundImageColor(this->GetRootElement(), GTLib::Colour::White);
+        gui.SetElementBackgroundImageRepeat(this->GetRootElement(), BackgroundRepeat_None, BackgroundRepeat_None);
 
-        gui.OnElementMouseWheel(this->GetRootGUIElement(), [&](int delta, int, int) {
+        gui.OnElementMouseWheel(this->GetRootElement(), [&](int delta, int, int) {
             float scaleX;
             float scaleY;
-            this->GetGUI().GetElementBackgroundImageScale(this->GetRootGUIElement(), scaleX, scaleY);
+            this->GetGUI().GetElementBackgroundImageScale(this->GetRootElement(), scaleX, scaleY);
 
             scaleX += scaleX * delta * 0.1f;
             scaleY += scaleY * delta * 0.1f;
@@ -31,7 +31,7 @@ namespace GT
                 scaleY = 0.1f;
             }
 
-            this->GetGUI().SetElementBackgroundImageScale(this->GetRootGUIElement(), scaleX, scaleY);
+            this->GetGUI().SetElementBackgroundImageScale(this->GetRootElement(), scaleX, scaleY);
         });
     }
 

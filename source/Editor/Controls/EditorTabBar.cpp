@@ -12,7 +12,7 @@ namespace GT
           m_hTabContainer(NULL), m_hDropDownContainer(NULL),
           m_tabEventHandler(this)
     {
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != NULL)
         {
             GUIContext &gui = editor.GetGUI();
@@ -65,16 +65,16 @@ namespace GT
         EditorTab* pTab = new EditorTab(this->GetEditor());
         pTab->SetText(text);
 
-        this->GetGUI().PrependChildElement(m_hTabContainer, pTab->GetRootGUIElement());
-        this->GetGUI().AttachLocalEventHandler(pTab->GetRootGUIElement(), m_tabEventHandler);
+        this->GetGUI().PrependChildElement(m_hTabContainer, pTab->GetRootElement());
+        this->GetGUI().AttachLocalEventHandler(pTab->GetRootElement(), m_tabEventHandler);
 
-        this->GetGUI().OnElementMove(pTab->GetRootGUIElement(), [&, pTab](int, int) {
+        this->GetGUI().OnElementMove(pTab->GetRootElement(), [&, pTab](int, int) {
             if (pTab == this->GetActiveTab()) {
                 this->UpdateActiveTabBorderMask();
             }
         });
 
-        this->GetGUI().OnElementSize(pTab->GetRootGUIElement(), [&, pTab](unsigned int, unsigned int) {
+        this->GetGUI().OnElementSize(pTab->GetRootElement(), [&, pTab](unsigned int, unsigned int) {
             if (pTab == this->GetActiveTab()) {
                 this->UpdateActiveTabBorderMask();
             }
@@ -111,7 +111,7 @@ namespace GT
             auto pTab = m_tabs[i];
             assert(pTab != nullptr);
             {
-                if (pTab->GetRootGUIElement() == hElement)
+                if (pTab->GetRootElement() == hElement)
                 {
                     return pTab;
                 }
@@ -147,7 +147,7 @@ namespace GT
             m_pActiveTab->ApplyDefaultStyle();
             m_pActiveTab = nullptr;
 
-            this->GetGUI().SetElementBorderBottomMaskInPixels(this->GetRootGUIElement(), 0, 0);
+            this->GetGUI().SetElementBorderBottomMaskInPixels(this->GetRootElement(), 0, 0);
         }
     }
 
@@ -211,16 +211,16 @@ namespace GT
         if (pActiveTab != nullptr)
         {
             GTLib::Rect<int> tabParentRect;
-            gui.GetElementAbsoluteRect(this->GetGUI().GetElementParent(pActiveTab->GetRootGUIElement()), tabParentRect);
+            gui.GetElementAbsoluteRect(this->GetGUI().GetElementParent(pActiveTab->GetRootElement()), tabParentRect);
 
             GTLib::Rect<int> tabInnerRect;
-            gui.GetElementAbsoluteInnerBorderRect(pActiveTab->GetRootGUIElement(), tabInnerRect);
-            gui.SetElementBorderBottomMaskInPixels(this->GetRootGUIElement(), tabInnerRect.left - tabParentRect.left, tabInnerRect.GetWidth(), GTLib::Colour(0.25f, 0.25f, 0.25f));
+            gui.GetElementAbsoluteInnerBorderRect(pActiveTab->GetRootElement(), tabInnerRect);
+            gui.SetElementBorderBottomMaskInPixels(this->GetRootElement(), tabInnerRect.left - tabParentRect.left, tabInnerRect.GetWidth(), GTLib::Colour(0.25f, 0.25f, 0.25f));
         }
         else
         {
             // Nothing is activated so remove the mask.
-            gui.SetElementBorderBottomMaskInPixels(this->GetRootGUIElement(), 0, 0);
+            gui.SetElementBorderBottomMaskInPixels(this->GetRootElement(), 0, 0);
         }
     }
 

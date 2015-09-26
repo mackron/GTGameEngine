@@ -19,7 +19,7 @@ namespace GT
         {
             GUIContext &gui = this->GetGUI();
 
-            HGUIElement hRootElement = this->GetRootGUIElement();
+            HGUIElement hRootElement = this->GetRootElement();
             if (hRootElement != 0)
             {
                 gui.SetElementCursor(hRootElement, GUISystemCursor::Cross);
@@ -247,7 +247,7 @@ namespace GT
                 {
                     int posX;
                     int posY;
-                    this->GetGUI().GetElementAbsolutePosition(this->GetRootGUIElement(), posX, posY);
+                    this->GetGUI().GetElementAbsolutePosition(this->GetRootElement(), posX, posY);
 
                     pRenderer->DrawRawImage(this->GetGUI(), posX, posY, width, height, m_pViewportRTTextureData, false);
                 }
@@ -325,7 +325,7 @@ namespace GT
 
 
             // We want all mouse events to be posted to this element until the cursor is released.
-            this->GetGUI().SetMouseEventCapture(this->GetRootGUIElement());
+            this->GetGUI().SetMouseEventCapture(this->GetRootElement());
 
             // The cursor needs to be hidden and then moved to the center of the viewport.
             this->GetEditor().GetWindowManager().HideCursor();
@@ -369,8 +369,8 @@ namespace GT
     void EditorSceneViewport::UpdateCursorCaptureOrigin()
     {
         // The capture origin will be the center of the viewport.
-        int viewportWidth  = int(this->GetGUI().GetElementWidth( this->GetRootGUIElement()));
-        int viewportHeight = int(this->GetGUI().GetElementHeight(this->GetRootGUIElement()));
+        int viewportWidth  = int(this->GetGUI().GetElementWidth( this->GetRootElement()));
+        int viewportHeight = int(this->GetGUI().GetElementHeight(this->GetRootElement()));
 
         int centerX = viewportWidth  / 2;
         int centerY = viewportHeight / 2;
@@ -390,11 +390,11 @@ namespace GT
     {
         int posXWindow;
         int posYWindow;
-        this->GetGUI().RelativeToAbsolute(this->GetRootGUIElement(), posXIn, posYIn, posXWindow, posYWindow);
+        this->GetGUI().RelativeToAbsolute(this->GetRootElement(), posXIn, posYIn, posXWindow, posYWindow);
 
 
         // We use the window manager to convert to screen coordiantes.
-        return this->GetEditor().GetWindowManager().RelativeToAbsolute(this->GetEditor().GetElementWindow(this->GetRootGUIElement()), posXWindow, posYWindow, posXOut, posYOut);
+        return this->GetEditor().GetWindowManager().RelativeToAbsolute(this->GetEditor().GetElementWindow(this->GetRootElement()), posXWindow, posYWindow, posXOut, posYOut);
     }
 
     void EditorSceneViewport::UpdateViewMatrix()
@@ -407,7 +407,7 @@ namespace GT
     void EditorSceneViewport::ScheduleRedraw()
     {
         // We don't draw straight away. Rather, we let the GUI know that the region has become invalid and let the GUI handle the redrawing when it's ready.
-        this->GetGUI().InvalidateElementRect(this->GetRootGUIElement());
+        this->GetGUI().InvalidateElementRect(this->GetRootElement());
     }
 
     quat EditorSceneViewport::GetCameraRotation() const

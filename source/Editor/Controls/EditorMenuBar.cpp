@@ -69,11 +69,11 @@ namespace GT
         GUIContext &gui = editor.GetGUI();
         const EditorTheme &theme = editor.GetTheme();
 
-        gui.SetElementChildAxis(this->GetRootGUIElement(), ChildAxis_Horizontal);
-        gui.SetElementWidthToChildren(this->GetRootGUIElement());
-        gui.SetElementHeightToChildren(this->GetRootGUIElement());
-        gui.SetElementBackgroundColor(this->GetRootGUIElement(), theme.backgroundMid);
-        gui.SetElementFont(this->GetRootGUIElement(), "Segoe UI", FontWeight_Medium, FontSlant_None, 13);
+        gui.SetElementChildAxis(this->GetRootElement(), ChildAxis_Horizontal);
+        gui.SetElementWidthToChildren(this->GetRootElement());
+        gui.SetElementHeightToChildren(this->GetRootElement());
+        gui.SetElementBackgroundColor(this->GetRootElement(), theme.backgroundMid);
+        gui.SetElementFont(this->GetRootElement(), "Segoe UI", FontWeight_Medium, FontSlant_None, 13);
 
 
         editor.AttachEventHandler(m_editorEventHandler);
@@ -89,10 +89,10 @@ namespace GT
     EditorMenuBarButton* EditorMenuBar::CreateAndInsertButton(const char* buttonText)
     {
         auto pButton = new EditorMenuBarButton(this->GetEditor(), buttonText);
-        this->GetGUI().SetElementParent(pButton->GetRootGUIElement(), this->GetRootGUIElement());
-        this->GetGUI().SetElementSizeToChildren(pButton->GetRootGUIElement());
+        this->GetGUI().SetElementParent(pButton->GetRootElement(), this->GetRootElement());
+        this->GetGUI().SetElementSizeToChildren(pButton->GetRootElement());
 
-        this->GetGUI().AttachLocalEventHandler(pButton->GetRootGUIElement(), m_buttonEventHandler);
+        this->GetGUI().AttachLocalEventHandler(pButton->GetRootElement(), m_buttonEventHandler);
 
         m_buttons.PushBack(pButton);
 
@@ -139,7 +139,7 @@ namespace GT
             // Now actiate the new button.
             if (pButton != nullptr)
             {
-                this->GetGUI().SetElementTextColor(pButton->GetRootGUIElement(), GTLib::Colour(0.75f, 0.75f, 0.75f, 1.0f));
+                this->GetGUI().SetElementTextColor(pButton->GetRootElement(), GTLib::Colour(0.75f, 0.75f, 0.75f, 1.0f));
 
                 pButton->Activate();
                 m_pActiveButton = pButton;
@@ -242,7 +242,7 @@ namespace GT
             auto pButton = m_buttons[iButton];
             assert(pButton != nullptr);
             {
-                if (pButton->GetRootGUIElement() == hElement)
+                if (pButton->GetRootElement() == hElement)
                 {
                     return pButton;
                 }

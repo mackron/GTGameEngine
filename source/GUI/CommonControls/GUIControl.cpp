@@ -23,10 +23,15 @@ namespace GT
     }
 
 
-    GUIContext & GUIControl::GetGUIContext() const
+    GUIContext & GUIControl::GetGUI()
     {
         return m_gui;
     }
+    const GUIContext & GUIControl::GetGUI() const
+    {
+        return m_gui;
+    }
+
 
     HGUIElement GUIControl::GetRootElement() const
     {

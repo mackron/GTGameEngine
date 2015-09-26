@@ -10,7 +10,7 @@ namespace GT
           m_hTextElement(NULL),
           m_hCloseElement(NULL)
     {
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != NULL)
         {
             GUIContext &gui = editor.GetGUI();
@@ -86,7 +86,7 @@ namespace GT
 
     void EditorTab::ApplyDefaultStyle()
     {
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != NULL)
         {
             GUIContext &gui = this->GetGUI();
@@ -117,7 +117,7 @@ namespace GT
 
     void EditorTab::ApplyHoveredStyle()
     {
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != NULL)
         {
             GUIContext &gui = this->GetGUI();
@@ -150,7 +150,7 @@ namespace GT
 
     void EditorTab::ApplyActivatedStyle()
     {
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != NULL)
         {
             GUIContext &gui = this->GetGUI();

@@ -12,7 +12,7 @@ namespace GT
         GUIContext &gui = editor.GetGUI();
         const EditorTheme &theme = editor.GetTheme();
 
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != NULL)
         {
             gui.SetElementHeight(hRootElement, 28U);

@@ -9,7 +9,7 @@ namespace GT
         : EditorControl(editor),
           m_flags(0)
     {
-        HGUIElement hElement = this->GetRootGUIElement();
+        HGUIElement hElement = this->GetRootElement();
         if (hElement != 0)
         {
             GUIContext &gui = editor.GetGUI();
@@ -62,7 +62,7 @@ namespace GT
 
     void EditorMenuBarButton::ShowBorder()
     {
-        HGUIElement hElement = this->GetRootGUIElement();
+        HGUIElement hElement = this->GetRootElement();
         if (hElement != NULL)
         {
             GUIContext &gui = this->GetGUI();
@@ -102,7 +102,7 @@ namespace GT
 
     void EditorMenuBarButton::HideBorder()
     {
-        HGUIElement hElement = this->GetRootGUIElement();
+        HGUIElement hElement = this->GetRootElement();
         if (hElement != NULL)
         {
             GUIContext &gui = this->GetGUI();

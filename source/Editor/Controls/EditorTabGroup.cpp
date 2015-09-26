@@ -11,7 +11,7 @@ namespace GT
           m_tabPages(),
           m_hTabPageContainer(NULL)
     {
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != NULL)
         {
             GUIContext &gui = editor.GetGUI();
@@ -22,7 +22,7 @@ namespace GT
             gui.SetElementChildAxis(hRootElement, ChildAxis_Vertical);
 
             // Tab bar.
-            gui.SetElementParent(m_tabBar.GetRootGUIElement(), hRootElement);
+            gui.SetElementParent(m_tabBar.GetRootElement(), hRootElement);
 
             // Tab page container.
             m_hTabPageContainer = gui.CreateElement();
@@ -35,7 +35,7 @@ namespace GT
 
 
             // Hide the tab bar and page container by default. This will be made visible when a tab is added.
-            gui.HideElement(m_tabBar.GetRootGUIElement());
+            gui.HideElement(m_tabBar.GetRootElement());
             gui.HideElement(m_hTabPageContainer);
         }
     }
@@ -54,10 +54,10 @@ namespace GT
             auto pTabPage = new EditorTabPage(this->GetEditor());
             m_tabPages.Add(pTab, pTabPage);
 
-            this->GetGUI().SetElementParent(pTabPage->GetRootGUIElement(), m_hTabPageContainer);
+            this->GetGUI().SetElementParent(pTabPage->GetRootElement(), m_hTabPageContainer);
 
             // Make sure the tab bar and page container are shown.
-            this->GetGUI().ShowElement(m_tabBar.GetRootGUIElement());
+            this->GetGUI().ShowElement(m_tabBar.GetRootElement());
             this->GetGUI().ShowElement(m_hTabPageContainer);
         }
 
@@ -83,7 +83,7 @@ namespace GT
             // If there are no more tabs, hide the page container.
             if (m_tabBar.GetTabCount() == 0)
             {
-                this->GetGUI().HideElement(m_tabBar.GetRootGUIElement());
+                this->GetGUI().HideElement(m_tabBar.GetRootElement());
                 this->GetGUI().HideElement(m_hTabPageContainer);
             }
         }
@@ -109,7 +109,7 @@ namespace GT
         auto pTabPage = this->GetTabPage(pTab);
         if (pTabPage != nullptr)
         {
-            this->GetGUI().ShowElement(pTabPage->GetRootGUIElement());
+            this->GetGUI().ShowElement(pTabPage->GetRootElement());
         }
     }
 
@@ -132,7 +132,7 @@ namespace GT
             auto pTabPage = this->GetTabPage(pActiveTab);
             if (pTabPage != nullptr)
             {
-                this->GetGUI().HideElement(pTabPage->GetRootGUIElement());
+                this->GetGUI().HideElement(pTabPage->GetRootElement());
             }
         }
     }

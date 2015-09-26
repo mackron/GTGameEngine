@@ -298,6 +298,9 @@ namespace GT
         ///     This will only work if the element is owned by the editor.
         HWindow GetElementWindow(HGUIElement hElement) const;
 
+        /// Determines whether or not the given window is used by the editor.
+        bool IsWindowUsedByEditor(HWindow hWindow) const;
+
 
 
         /// Sets the mouse cursor.

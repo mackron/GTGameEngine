@@ -10,10 +10,8 @@ namespace GT
         : EditorMenuBar(editor),
           m_pFileMenuButton(nullptr), m_pFileMenu(nullptr)
     {
-        HGUIElement hElement = this->GetRootGUIElement();
-        if (hElement != NULL)
+        if (m_hRootElement != NULL)
         {
-            GUIContext &gui = editor.GetGUI();
             const EditorTheme &theme = editor.GetTheme();
 
             m_pFileMenuButton = this->CreateAndInsertButton("FILE");
@@ -22,8 +20,8 @@ namespace GT
 
 
             m_pFileMenu = new EditorPopupControl(editor, hParentWindow);
-            gui.SetElementBackgroundColor(m_pFileMenu->GetRootGUIElement(), theme.backgroundPopup);
-            gui.SetElementBorderColor(m_pFileMenu->GetRootGUIElement(), theme.borderDefault);
+            m_gui.SetElementBackgroundColor(m_pFileMenu->GetRootElement(), theme.backgroundPopup);
+            m_gui.SetElementBorderColor(m_pFileMenu->GetRootElement(), theme.borderDefault);
         }
     }
 
@@ -43,13 +41,13 @@ namespace GT
         if (pMenu != nullptr)
         {
             GTLib::Rect<int> buttonRect;
-            this->GetGUI().GetElementAbsoluteRect(pButton->GetRootGUIElement(), buttonRect);
+            this->GetGUI().GetElementAbsoluteRect(pButton->GetRootElement(), buttonRect);
 
 
             // Set the border mask.
             GTLib::Rect<int> buttonInnerRect;
-            this->GetGUI().GetElementAbsoluteInnerBorderRect(pButton->GetRootGUIElement(), buttonInnerRect);
-            this->GetGUI().SetElementBorderTopMaskInPixels(pMenu->GetRootGUIElement(), buttonInnerRect.left - buttonRect.left, buttonInnerRect.GetWidth(), this->GetEditor().GetTheme().backgroundPopup);
+            this->GetGUI().GetElementAbsoluteInnerBorderRect(pButton->GetRootElement(), buttonInnerRect);
+            this->GetGUI().SetElementBorderTopMaskInPixels(pMenu->GetRootElement(), buttonInnerRect.left - buttonRect.left, buttonInnerRect.GetWidth(), this->GetEditor().GetTheme().backgroundPopup);
 
 
             // Show the menu.
@@ -81,7 +79,7 @@ namespace GT
         {
             // Don't do anything if we clicked on the active window. We do this because the GUI event handling will handle the button presses.
             GTLib::Rect<int> buttonRect;
-            this->GetGUI().GetElementAbsoluteRect(pActiveButton->GetRootGUIElement(), buttonRect);
+            this->GetGUI().GetElementAbsoluteRect(pActiveButton->GetRootElement(), buttonRect);
             
             if (!buttonRect.Contains(xPos, yPos))
             {

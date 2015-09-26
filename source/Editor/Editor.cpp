@@ -119,15 +119,15 @@ namespace GT
                     {
                         // Create the header control.
                         m_pHeaderControl = new EditorHeader(*this, m_hMainWindow);
-                        m_gui.SetElementParent(m_pHeaderControl->GetRootGUIElement(), hMainWindowElement);
+                        m_gui.SetElementParent(m_pHeaderControl->GetRootElement(), hMainWindowElement);
 
                         // Create the body control.
                         m_pBodyControl = new EditorBody(*this);
-                        m_gui.SetElementParent(m_pBodyControl->GetRootGUIElement(), hMainWindowElement);
+                        m_gui.SetElementParent(m_pBodyControl->GetRootElement(), hMainWindowElement);
 
                         // Create the footer control.
                         m_pFooterControl = new EditorFooter(*this);
-                        m_gui.SetElementParent(m_pFooterControl->GetRootGUIElement(), hMainWindowElement);
+                        m_gui.SetElementParent(m_pFooterControl->GetRootElement(), hMainWindowElement);
 
 
                         m_gui.SetTextCursorBlinkTime(m_gameContext.GetWindowManager().GetTextCursorBlinkTime());
@@ -418,7 +418,7 @@ namespace GT
                         EditorTabPage* pTabPage = pTabGroup->GetTabPage(pNewTab);
                         assert(pTabPage != nullptr);
 
-                        m_gui.SetElementParent(pSubEditor->GetRootGUIElement(), pTabPage->GetRootGUIElement());
+                        m_gui.SetElementParent(pSubEditor->GetRootElement(), pTabPage->GetRootElement());
 
 
                         pSubEditor->SetTab(pNewTab);
@@ -790,6 +790,11 @@ namespace GT
         return this->GetSurfaceWindow(m_gui.GetElementSurface(hElement));
     }
 
+    bool Editor::IsWindowUsedByEditor(HWindow hWindow) const
+    {
+        return this->GetWindowSurface(hWindow) != 0;
+    }
+
 
     void Editor::SetCursor(SystemCursorType cursor)
     {
@@ -832,7 +837,7 @@ namespace GT
     {
         auto pFocusedSubEditor = this->GetFocusedSubEditor();
         if (pFocusedSubEditor != nullptr) {
-            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootGUIElement(), m_gui.GetElementWithKeyboardFocus())) {
+            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootElement(), m_gui.GetElementWithKeyboardFocus())) {
                 pFocusedSubEditor->Cut();
                 return;
             }
@@ -849,7 +854,7 @@ namespace GT
     {
         auto pFocusedSubEditor = this->GetFocusedSubEditor();
         if (pFocusedSubEditor != nullptr) {
-            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootGUIElement(), m_gui.GetElementWithKeyboardFocus())) {
+            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootElement(), m_gui.GetElementWithKeyboardFocus())) {
                 pFocusedSubEditor->Copy();
                 return;
             }
@@ -864,7 +869,7 @@ namespace GT
     {
         auto pFocusedSubEditor = this->GetFocusedSubEditor();
         if (pFocusedSubEditor != nullptr) {
-            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootGUIElement(), m_gui.GetElementWithKeyboardFocus())) {
+            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootElement(), m_gui.GetElementWithKeyboardFocus())) {
                 pFocusedSubEditor->Paste();
                 return;
             }
@@ -879,7 +884,7 @@ namespace GT
     {
         auto pFocusedSubEditor = this->GetFocusedSubEditor();
         if (pFocusedSubEditor != nullptr) {
-            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootGUIElement(), m_gui.GetElementWithKeyboardFocus())) {
+            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootElement(), m_gui.GetElementWithKeyboardFocus())) {
                 pFocusedSubEditor->Undo();
                 return;
             }
@@ -890,7 +895,7 @@ namespace GT
     {
         auto pFocusedSubEditor = this->GetFocusedSubEditor();
         if (pFocusedSubEditor != nullptr) {
-            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootGUIElement(), m_gui.GetElementWithKeyboardFocus())) {
+            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootElement(), m_gui.GetElementWithKeyboardFocus())) {
                 pFocusedSubEditor->Redo();
                 return;
             }
@@ -901,7 +906,7 @@ namespace GT
     {
         auto pFocusedSubEditor = this->GetFocusedSubEditor();
         if (pFocusedSubEditor != nullptr) {
-            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootGUIElement(), m_gui.GetElementWithKeyboardFocus())) {
+            if (m_gui.IsElementDescendant(pFocusedSubEditor->GetRootElement(), m_gui.GetElementWithKeyboardFocus())) {
                 pFocusedSubEditor->SelectAll();
                 return;
             }

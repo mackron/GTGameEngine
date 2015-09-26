@@ -8,7 +8,7 @@ namespace GT
     EditorTabPage::EditorTabPage(Editor &editor)
         : EditorControl(editor)
     {
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != NULL)
         {
             GUIContext &gui = editor.GetGUI();

@@ -10,7 +10,7 @@ namespace GT
         : EditorScrollableControl(editor),
           m_eventHandler(*this)
     {
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != NULL)
         {
             GUIContext &gui = editor.GetGUI();
@@ -58,7 +58,7 @@ namespace GT
             GUIContext &gui = this->GetGUI();
 
             EditorAssetExplorerItem* pItem = new EditorAssetExplorerItem(this->GetEditor(), nullptr, *this, this->GetEditor().GetEngineContext().GetFileSystem(), absolutePath, displayName);
-            HGUIElement hItemElement = pItem->GetRootGUIElement();
+            HGUIElement hItemElement = pItem->GetRootElement();
             if (hItemElement != NULL)
             {
                 gui.SetElementParent(hItemElement, this->GetContentElement());
@@ -75,8 +75,8 @@ namespace GT
     {
         EditorAssetExplorerItem* pItem = new EditorAssetExplorerItem(this->GetEditor(), *this, this->GetEditor().GetEngineContext().GetFileSystem(), absolutePath, nullptr);
 
-        this->GetGUI().SetElementParent(pItem->GetRootGUIElement(), this->GetContentElement());
-        this->GetGUI().SetElementText(pItem->GetRootGUIElement(), absolutePath);
+        this->GetGUI().SetElementParent(pItem->GetRootElement(), this->GetContentElement());
+        this->GetGUI().SetElementText(pItem->GetRootElement(), absolutePath);
     }
 #endif
 

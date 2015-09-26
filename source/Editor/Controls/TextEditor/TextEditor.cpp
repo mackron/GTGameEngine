@@ -17,13 +17,13 @@ namespace GT
         GUIContext &gui = editor.GetGUI();
         const EditorTheme &theme = editor.GetTheme();
 
-        gui.SetElementSizeRatio(this->GetRootGUIElement(), 1, 1);
-        gui.SetElementBorder(this->GetRootGUIElement(), 1, theme.borderDefault);
+        gui.SetElementSizeRatio(this->GetRootElement(), 1, 1);
+        gui.SetElementBorder(this->GetRootElement(), 1, theme.borderDefault);
 
 
         // The text box.
-        gui.SetElementParent(m_textBox.GetRootGUIElement(), this->GetRootGUIElement());
-        gui.SetElementSizeRatio(m_textBox.GetRootGUIElement(), 1, 1);
+        gui.SetElementParent(m_textBox.GetRootElement(), this->GetRootElement());
+        gui.SetElementSizeRatio(m_textBox.GetRootElement(), 1, 1);
 
         gui.SetElementPadding(m_textBox.GetContentElement(), 2);
         gui.SetElementCursor(m_textBox.GetContentElement(), GUISystemCursor::IBeam);
@@ -256,7 +256,7 @@ namespace GT
 
     void TextEditor::TryScrollY(int delta)
     {
-        if (this->GetGUI().IsElementUnderMouse(m_textBox.GetRootGUIElement()))
+        if (this->GetGUI().IsElementUnderMouse(m_textBox.GetRootElement()))
         {
             m_textBox.GetVerticalScrollbar().Scroll(-delta);
         }

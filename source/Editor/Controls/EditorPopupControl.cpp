@@ -9,7 +9,7 @@ namespace GT
         : EditorControl(editor),
           m_hWindow(0)
     {
-        HGUIElement hElement = this->GetRootGUIElement();
+        HGUIElement hElement = this->GetRootElement();
         if (hElement != 0)
         {
             editor.GetGUI().SetElementBorder(hElement, 1, GTLib::Colour(0.4f, 0.4f, 0.4f, 1.0f));

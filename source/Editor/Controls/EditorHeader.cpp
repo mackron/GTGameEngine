@@ -12,7 +12,7 @@ namespace GT
         GUIContext &gui = editor.GetGUI();
         const EditorTheme &theme = editor.GetTheme();
 
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != NULL)
         {
             gui.SetElementHeight(hRootElement, 26U);
@@ -22,7 +22,7 @@ namespace GT
             gui.SetElementBorderBottom(hRootElement, 1, GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
             gui.SetElementPaddingLeft(hRootElement, 2);
 
-            gui.SetElementParent(m_menuBar.GetRootGUIElement(), this->GetRootGUIElement());
+            gui.SetElementParent(m_menuBar.GetRootElement(), this->GetRootElement());
         }
     }
 

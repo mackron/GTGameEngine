@@ -27,7 +27,7 @@ namespace GT
           m_isSelected(false),
           m_titleEventHandler(*this)
     {
-        HGUIElement hRootElement = this->GetRootGUIElement();
+        HGUIElement hRootElement = this->GetRootElement();
         if (hRootElement != NULL)
         {
             GUIContext &gui = editor.GetGUI();
@@ -162,12 +162,12 @@ namespace GT
                     pItemToInsertAfter = m_children[insertIndex - 1];
                     assert(pItemToInsertAfter != nullptr);
 
-                    gui.AppendSiblingElement(pItemToInsertAfter->GetRootGUIElement(), pNewItem->GetRootGUIElement());
+                    gui.AppendSiblingElement(pItemToInsertAfter->GetRootElement(), pNewItem->GetRootElement());
                 }
                 else
                 {
                     // It's the first in the list. The GUI element is appended to the child container.
-                    gui.PrependChildElement(m_hChildContainer, pNewItem->GetRootGUIElement());
+                    gui.PrependChildElement(m_hChildContainer, pNewItem->GetRootElement());
                 }
 
                 m_children.InsertAt(pNewItem, insertIndex);
