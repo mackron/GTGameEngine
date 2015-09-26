@@ -918,6 +918,10 @@ namespace GT
         float GetElementWidth(GUIElement* pElement) const;
         float GetElementWidthInPoints(GUIElement* pElement) const;
 
+        /// Retrieves the inner width of the given element.
+        float GetElementInnerWidth(GUIElement* pElement) const;
+
+
         /// Retrieves the actual height of the element.
         ///
         /// @param pElement [in] The GUI element whose actual height is being retrieved.
@@ -925,6 +929,9 @@ namespace GT
         /// @return The actual height of the element.
         float GetElementHeight(GUIElement* pElement) const;
         float GetElementHeightInPoints(GUIElement* pElement) const;
+
+        /// Retrieves the inner height of the given element.
+        float GetElementInnerHeight(GUIElement* pElement) const;
 
 
         /// Retrieves the absolute rectangle of the given element.
@@ -1556,6 +1563,10 @@ namespace GT
         ///
         /// @return A pointer to the font object.
         HGUIFont GetElementFont(GUIElement* pElement) const;
+
+
+        /// Retrieves the line height for the given element based on it's current font.
+        unsigned int GetElementLineHeight(GUIElement* pElement) const;
 
 
         /// Sets the colour of the element's text.

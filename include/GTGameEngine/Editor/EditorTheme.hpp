@@ -28,8 +28,9 @@ namespace GT
 
               borderDefault(0.4f, 0.4f, 0.4f),
               borderDim(0.3f, 0.3f, 0.3f),
+              borderDark(0.2f, 0.2f, 0.2f),
 
-              scrollbarBackgroundColor(0.325f, 0.325f, 0.325f),
+              scrollbarBackgroundColor(0.3f, 0.3f, 0.3f),
               scrollbarWidth(16)
         {
 #if defined(GT_PLATFORM_WINDOWS)
@@ -52,6 +53,7 @@ namespace GT
         // Border colours.
         GTLib::Colour borderDefault;        ///< The default border colours.
         GTLib::Colour borderDim;            ///< A border color that is slightly less bright than the default border.
+        GTLib::Colour borderDark;           ///< A border color that is darker than the default border.
 
         // Scroll bars.
         GTLib::Colour scrollbarBackgroundColor;

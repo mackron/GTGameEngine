@@ -5,6 +5,7 @@
 #include <GTGameEngine/EngineContext.hpp>
 
 #include <GTLib/Windowing/Clipboard.hpp>        // For cut/copy/paste
+#include <GTLib/Strings/LineIterator.hpp>       // For GetLineCount()
 
 namespace GT
 {
@@ -17,12 +18,13 @@ namespace GT
         const EditorTheme &theme = editor.GetTheme();
 
         gui.SetElementSizeRatio(this->GetRootGUIElement(), 1, 1);
-        gui.SetElementBorder(this->GetRootGUIElement(), 1, theme.borderDim);
+        gui.SetElementBorder(this->GetRootGUIElement(), 1, theme.borderDefault);
 
 
         // The text box.
         gui.SetElementParent(m_textBox.GetRootGUIElement(), this->GetRootGUIElement());
         gui.SetElementSizeRatio(m_textBox.GetRootGUIElement(), 1, 1);
+
         gui.SetElementPadding(m_textBox.GetContentElement(), 2);
         gui.SetElementCursor(m_textBox.GetContentElement(), GUISystemCursor::IBeam);
         gui.EnableEditableText(m_textBox.GetContentElement());
@@ -32,11 +34,20 @@ namespace GT
         gui.SetElementTextColor(m_textBox.GetContentElement(), theme.defaultTextColor);
         gui.GiveElementKeyboardFocus(m_textBox.GetContentElement());
         gui.OnElementTextChanged(m_textBox.GetContentElement(), [&]() {
-            this->OnChanged();
+            this->OnTextChanged();
+        });
+        gui.OnElementSize(m_textBox.GetContentElement(), [&](unsigned int, unsigned int) {
+            this->RefreshScrollbars();
+        });
+        gui.OnElementMouseWheel(m_textBox.GetContentElement(), [&](int delta, int, int) {
+            this->TryScrollY(delta);
         });
 
-        gui.SetElementVerticalAlign(m_textBox.GetContentElement(), VerticalAlign_Top);
-        gui.SetElementHorizontalAlign(m_textBox.GetContentElement(), HorizontalAlign_Left);
+
+        // Scrollbars
+        m_textBox.GetVerticalScrollbar().OnScroll([&](int scrollPos) {
+            gui.SetElementInnerOffsetY(m_textBox.GetContentElement(), float(-scrollPos * static_cast<int>(this->GetLineHeight())));
+        });
 
 
         this->Load();
@@ -188,6 +199,66 @@ namespace GT
         if (this->GetGUI().GetElementWithKeyboardFocus() == m_textBox.GetContentElement())
         {
             this->GetGUI().SelectAllText(m_textBox.GetContentElement());
+        }
+    }
+
+
+    /////////////////////////////////////////
+    // Private
+
+    void TextEditor::OnTextChanged()
+    {
+        this->RefreshScrollbars();
+        this->OnChanged();              // <-- Let's the main editor know that this sub-editor should be marked as modified.
+    }
+
+    void TextEditor::RefreshScrollbars()
+    {
+        int textLines = this->GetLineCount();
+        int pageLines = this->GetLinesPerPage();
+        int scrollingLines = textLines + pageLines - 1 - 1;     // -1 because the range is zero based and -1 because want to see the last line in the text box when scrolled to the bottom.
+        if (scrollingLines < 0) {
+            scrollingLines = 0;
+        }
+
+        m_textBox.GetVerticalScrollbar().SetRange(0, scrollingLines);
+        m_textBox.GetVerticalScrollbar().SetPageSize(pageLines);
+    }
+
+    unsigned int TextEditor::GetLineCount() const
+    {
+        const char* pText = this->GetGUI().GetElementText(m_textBox.GetContentElement());
+        if (pText != nullptr)
+        {
+            unsigned int lineCount = 0;
+            GTLib::Strings::LineIterator iLine(pText);
+            while (iLine)
+            {
+                ++iLine;
+                ++lineCount;
+            }
+
+            return lineCount;
+        }
+
+        return 0;
+    }
+
+    unsigned int TextEditor::GetLinesPerPage() const
+    {
+        return static_cast<unsigned int>(this->GetGUI().GetElementHeight(m_textBox.GetContentElement()) / this->GetLineHeight());
+    }
+
+    unsigned int TextEditor::GetLineHeight() const
+    {
+        return this->GetGUI().GetElementLineHeight(m_textBox.GetContentElement());
+    }
+
+    void TextEditor::TryScrollY(int delta)
+    {
+        if (this->GetGUI().IsElementUnderMouse(m_textBox.GetRootGUIElement()))
+        {
+            m_textBox.GetVerticalScrollbar().Scroll(-delta);
         }
     }
 }

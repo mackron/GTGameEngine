@@ -156,7 +156,7 @@ namespace GT
 
     void EditorAssetExplorer::ExplorerEventHandler::OnMouseWheel(GUIContext &context, HGUIElement, int delta, int, int)
     {
-        if (context.IsElementUnderMouse(m_explorer.GetRootGUIElement()))
+        if (context.IsElementUnderMouse(m_explorer.GetContentElement()))
         {
             m_explorer.ScrollY(delta);
         }

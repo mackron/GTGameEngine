@@ -1254,6 +1254,12 @@ namespace GT
         return pElement->layout.width / this->GetXDPIScalingFactor(this->GetElementSurface(pElement));
     }
 
+    float GUIContextBase::GetElementInnerWidth(GUIElement *pElement) const
+    {
+        return Layout_GetElementInnerWidth(pElement);
+    }
+
+
     float GUIContextBase::GetElementHeight(GUIElement* pElement) const
     {
         assert(pElement != nullptr);
@@ -1265,6 +1271,11 @@ namespace GT
         assert(pElement != nullptr);
 
         return pElement->layout.height / this->GetYDPIScalingFactor(this->GetElementSurface(pElement));
+    }
+
+    float GUIContextBase::GetElementInnerHeight(GUIElement *pElement) const
+    {
+        return Layout_GetElementInnerHeight(pElement);
     }
 
 
@@ -2564,6 +2575,10 @@ namespace GT
         if (pElement->pTextLayout != nullptr)
         {
             pElement->pTextLayout->SetContainerInnerOffset(static_cast<int>(GTLib::Round(pElement->layout.innerOffsetX)), static_cast<int>(GTLib::Round(pElement->layout.innerOffsetY)));
+
+            if (pElement == this->GetTextCursorOwnerElement()) {
+                this->UpdateTextCursorByFocusedElement();
+            }
         }
 
 
@@ -2579,6 +2594,8 @@ namespace GT
 
                 return true;
             });
+
+            this->Painting_InvalidateElementRect(pElement);
         }
         this->EndBatch();
     }
@@ -2881,6 +2898,18 @@ namespace GT
         }
 
         return pElement->hFont;
+    }
+
+    unsigned int GUIContextBase::GetElementLineHeight(GUIElement *pElement) const
+    {
+        HGUIFont hFont = this->GetElementFont(pElement);
+        if (hFont != 0) {
+            if (m_pFontManager != nullptr) {
+                return m_pFontManager->GetLineHeight(hFont);
+            }
+        }
+
+        return 0;
     }
 
 

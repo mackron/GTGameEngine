@@ -51,6 +51,28 @@ namespace GT
         void SelectAll();
 
 
+
+    private:
+
+        /// Called when the text changes.
+        void OnTextChanged();
+
+        /// Refreshes the scrollbars.
+        void RefreshScrollbars();
+
+        /// Counts the number of lines making up the text.
+        unsigned int GetLineCount() const;
+
+        /// Calculates the number of lines that fit on a single page.
+        unsigned int GetLinesPerPage() const;
+
+        /// Retrieves the line height in pixels.
+        unsigned int GetLineHeight() const;
+
+        /// Attempts to vertically scroll.
+        void TryScrollY(int delta);
+
+
     private:
 
         /// The scrollable control that contains the text.

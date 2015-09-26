@@ -7,6 +7,7 @@ namespace GT
 {
     EditorScrollableControl::EditorScrollableControl(Editor &editor)
         : EditorQuadControl(editor),
+          m_verticalScrollbar(editor.GetGUI(), 0, ScrollbarOrientation::Vertical),
           m_deadSpaceSizingHandler(this->GetBottomRightQuadrant(), this->GetTopRightQuadrant(), this->GetBottomLeftQuadrant())
     {
         HGUIElement hRootElement = this->GetRootGUIElement();
@@ -26,6 +27,14 @@ namespace GT
             //gui.SetElementWidth(hVerticalContainer, theme.scrollbarWidth);
             gui.SetElementBackgroundColor(hVerticalContainer, theme.scrollbarBackgroundColor);
             gui.AttachLocalEventHandler(hVerticalContainer, m_deadSpaceSizingHandler);
+
+            // Vertical scrollbar.
+            gui.SetElementParent(m_verticalScrollbar, hVerticalContainer);
+            gui.SetElementWidth(m_verticalScrollbar, 16U);
+            gui.SetElementHeightRatio(m_verticalScrollbar, 1);
+            m_verticalScrollbar.SetRange(0, 2);
+            m_verticalScrollbar.SetPageSize(1);
+            m_verticalScrollbar.SetScrollPosition(0);
 
 
             // Horizontal scrollbar container.

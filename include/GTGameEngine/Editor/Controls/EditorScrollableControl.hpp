@@ -4,6 +4,7 @@
 #define GT_EditorScrollableControl
 
 #include "EditorQuadControl.hpp"
+#include <GTGameEngine/GUI/CommonControls/Scrollbar.hpp>
 
 namespace GT
 {
@@ -19,7 +20,15 @@ namespace GT
         HGUIElement GetContentElement() const;
 
 
+        /// Retrieves a reference to the vertical scrollbar control.
+        Scrollbar & GetVerticalScrollbar() { return m_verticalScrollbar; }
+
+
+
     private:
+
+        // The vertical scrollbar.
+        Scrollbar m_verticalScrollbar;
 
 
         struct DeadSpaceSizingEventHandler : public GUIEventHandler

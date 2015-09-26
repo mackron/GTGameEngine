@@ -2180,6 +2180,17 @@ namespace GT
         return 0;
     }
 
+    float GUIContext::GetElementInnerWidth(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr) {
+            return GUIContextBase::GetElementInnerWidth(pElement);
+        }
+
+        return 0.0f;
+    }
+
+
     float GUIContext::GetElementHeight(HGUIElement hElement) const
     {
         auto pElement = this->GetElementPtr(hElement);
@@ -2201,6 +2212,15 @@ namespace GT
         return 0;
     }
 
+    float GUIContext::GetElementInnerHeight(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr) {
+            return GUIContextBase::GetElementInnerHeight(pElement);
+        }
+
+        return 0.0f;
+    }
 
     void GUIContext::GetElementAbsoluteRect(HGUIElement hElement, GTLib::Rect<float> &rectOut) const
     {
@@ -3243,6 +3263,17 @@ namespace GT
         if (pElement != nullptr)
         {
             return GUIContextBase::GetElementFont(pElement);
+        }
+
+        return 0;
+    }
+
+    unsigned int GUIContext::GetElementLineHeight(HGUIElement hElement) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementLineHeight(pElement);
         }
 
         return 0;
