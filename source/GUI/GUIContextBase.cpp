@@ -3176,7 +3176,7 @@ namespace GT
 
         if (pElement->pSurface != nullptr)
         {
-            return m_pElementUnderMouse == pElement || this->IsElementAncestor(m_pElementUnderMouse, pElement);
+            return m_pElementUnderMouse == pElement || (m_pElementUnderMouse != nullptr && this->IsElementAncestor(m_pElementUnderMouse, pElement));
         }
         else
         {
