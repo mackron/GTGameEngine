@@ -17,6 +17,7 @@ namespace GT
         const EditorTheme &theme = editor.GetTheme();
 
         gui.SetElementSizeRatio(this->GetRootGUIElement(), 1, 1);
+        gui.SetElementBorder(this->GetRootGUIElement(), 1, theme.borderDim);
 
 
         // The text box.
