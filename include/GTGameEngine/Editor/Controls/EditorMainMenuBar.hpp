@@ -54,9 +54,6 @@ namespace GT
         /// A pointer to the button for the Edit menu.
         EditorMenuBarButton* m_pEditMenuButton;
 
-        /// A pointer to the button for the View menu.
-        EditorMenuBarButton* m_pViewMenuButton;
-
         /// A pointer to the button for the Help menu.
         EditorMenuBarButton* m_pHelpMenuButton;
 

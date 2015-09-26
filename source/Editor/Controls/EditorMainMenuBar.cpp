@@ -18,7 +18,6 @@ namespace GT
 
             m_pFileMenuButton = this->CreateAndInsertButton("FILE");
             m_pEditMenuButton = this->CreateAndInsertButton("EDIT");
-            m_pViewMenuButton = this->CreateAndInsertButton("VIEW");
             m_pHelpMenuButton = this->CreateAndInsertButton("HELP");
 
 
@@ -32,7 +31,6 @@ namespace GT
     {
         this->DeleteButton(m_pFileMenuButton);
         this->DeleteButton(m_pEditMenuButton);
-        this->DeleteButton(m_pViewMenuButton);
         this->DeleteButton(m_pHelpMenuButton);
 
         delete m_pFileMenu;
