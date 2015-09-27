@@ -11,6 +11,7 @@ namespace GT
           m_orientation(orientation),
           m_rangeMin(0), m_rangeMax(0), m_pageSize(0), m_scrollPos(0),
           m_dragRelativeMousePosX(0), m_dragRelativeMousePosY(0), m_isDraggingThumb(false),
+          m_autoHideThumb(true),
           m_onScroll(),
           m_thumbDefaultColor(0.4f, 0.4f, 0.4f), m_thumbHoveredColor(0.5f, 0.5f, 0.5f), m_thumbPressedColor(0.6f, 0.6f, 0.6f)
     {
@@ -146,6 +147,30 @@ namespace GT
     }
 
 
+    void Scrollbar::EnableThumbAutoHide()
+    {
+        if (!m_autoHideThumb)
+        {
+            m_autoHideThumb = true;
+
+            // We need to refresh the thumb in order for the auto-hide to potentially kick in.
+            this->RefreshThumb();
+        }
+        
+    }
+
+    void Scrollbar::DisableThumbAutoHide()
+    {
+        if (m_autoHideThumb)
+        {
+            m_autoHideThumb = false;
+
+            // Just refresh the thumb to show it again.
+            this->RefreshThumb();
+        }
+    }
+
+
     void Scrollbar::SetRange(int rangeMin, int rangeMax)
     {
         assert(rangeMax >= rangeMin);
@@ -266,6 +291,16 @@ namespace GT
     {
         this->RefreshThumbSize();
         this->RefreshThumbPosition();
+
+
+        if (m_autoHideThumb && m_pageSize >= (m_rangeMax - m_rangeMin + 1))
+        {
+            m_gui.HideElement(m_hThumb);
+        }
+        else
+        {
+            m_gui.ShowElement(m_hThumb);
+        }
     }
 
     int Scrollbar::GetContainerSize() const

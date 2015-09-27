@@ -54,6 +54,16 @@ namespace GT
         void SetPressedThumbColor(const GT::Color &color);
 
 
+        /// Enables auto-hiding of the thumb.
+        void EnableThumbAutoHide();
+
+        /// Disables auto-hiding of the thumb.
+        void DisableThumbAutoHide();
+
+        /// Determines whether or not thumb auto-hiding is enabled.
+        bool IsThumbAutoHideEnabled() const { return m_autoHideThumb; }
+
+
         /// Sets the scrollbar's range.
         void SetRange(int rangeMin, int rangeMax);
 
@@ -179,6 +189,9 @@ namespace GT
 
         /// Keeps track of whether or not we are dragging the thumb.
         bool m_isDraggingThumb;
+
+        /// Keeps track of whether or not the thumb should be hidden automatically when the page size is larger than the range.
+        bool m_autoHideThumb;
 
 
         /// The list of OnScroll event handlers.
