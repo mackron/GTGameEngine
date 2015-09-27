@@ -5797,7 +5797,7 @@ namespace GT
         float oldOuterWidth = GUIContextBase::Layout_GetElementOuterWidth(pElement);
         float newOuterWidth = this->Layout_UpdateElementWidth(pElement);
 
-        if (oldOuterWidth != newOuterWidth || (pElement->layout.invalidFlags & LayoutFlag_ForceHeightRevalidation) != 0)
+        if (oldOuterWidth != newOuterWidth || (pElement->layout.invalidFlags & LayoutFlag_ForceWidthRevalidation) != 0)
         {
             this->Layout_MarkElementSizeAsChanged(pElement);
 
@@ -5854,7 +5854,7 @@ namespace GT
 
                 if (widthType != NumberType_Percent)
                 {
-                    this->Layout_InvalidateElementLayout(pParent, LayoutFlag_WidthInvalid);
+                    this->Layout_InvalidateElementLayout(pParent, LayoutFlag_WidthInvalid | LayoutFlag_ForceWidthRevalidation);
                 }
             }
 
@@ -6027,7 +6027,7 @@ namespace GT
 
                 if (heightType != NumberType_Percent)
                 {
-                    this->Layout_InvalidateElementLayout(pParent, LayoutFlag_HeightInvalid);
+                    this->Layout_InvalidateElementLayout(pParent, LayoutFlag_HeightInvalid | LayoutFlag_ForceHeightRevalidation);
                 }
             }
 
