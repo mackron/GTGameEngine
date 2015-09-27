@@ -32,7 +32,7 @@ namespace GT
             gui.SetElementParent(m_verticalScrollbar, hVerticalContainer);
             gui.SetElementWidth(m_verticalScrollbar, 16U);
             gui.SetElementHeightRatio(m_verticalScrollbar, 1);
-            m_verticalScrollbar.SetRange(0, 2);
+            m_verticalScrollbar.SetRange(0, 0);
             m_verticalScrollbar.SetPageSize(1);
             m_verticalScrollbar.SetScrollPosition(0);
 
@@ -48,7 +48,7 @@ namespace GT
             gui.SetElementParent(m_horizontalScrollbar, hHorizontalContainer);
             gui.SetElementHeight(m_horizontalScrollbar, 16U);
             gui.SetElementWidthRatio(m_horizontalScrollbar, 1);
-            m_horizontalScrollbar.SetRange(0, 2);
+            m_horizontalScrollbar.SetRange(0, 0);
             m_horizontalScrollbar.SetPageSize(1);
             m_horizontalScrollbar.SetScrollPosition(0);
         }

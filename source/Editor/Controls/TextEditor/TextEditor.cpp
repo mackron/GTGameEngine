@@ -5,7 +5,6 @@
 #include <GTGameEngine/EngineContext.hpp>
 
 #include <GTLib/Windowing/Clipboard.hpp>        // For cut/copy/paste
-#include <GTLib/Strings/LineIterator.hpp>       // For GetLineCount()
 
 namespace GT
 {
@@ -234,7 +233,7 @@ namespace GT
         unsigned int textHeight = 0;
         m_gui.GetElementTextSize(m_textBox.GetContentElement(), OUT textWidth, OUT textHeight);
 
-        int pageWidth = m_gui.GetElementInnerWidth(m_textBox.GetContentElement());
+        int pageWidth = int(m_gui.GetElementInnerWidth(m_textBox.GetContentElement()));
         int extraHorzScroll = pageWidth / 2;
         m_textBox.GetHorizontalScrollbar().SetRange(0, textWidth + extraHorzScroll);
         m_textBox.GetHorizontalScrollbar().SetPageSize(pageWidth);
@@ -245,18 +244,20 @@ namespace GT
         const char* pText = this->GetGUI().GetElementText(m_textBox.GetContentElement());
         if (pText != nullptr)
         {
-            unsigned int lineCount = 0;
-            GTLib::Strings::LineIterator iLine(pText);
-            while (iLine)
+            unsigned int lineCount = 1;
+            while (pText[0] != '\0')
             {
-                ++iLine;
-                ++lineCount;
+                if (pText[0] == '\n') {
+                    lineCount += 1;
+                }
+
+                pText += 1;
             }
 
             return lineCount;
         }
 
-        return 0;
+        return 1;
     }
 
     unsigned int TextEditor::GetLinesPerPage() const
