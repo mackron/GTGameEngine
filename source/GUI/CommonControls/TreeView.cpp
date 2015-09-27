@@ -88,6 +88,12 @@ namespace GT
         m_horizontalScrollbar.OnScroll([&](int scrollPos) {
             m_gui.SetElementInnerOffsetX(m_hRootItemContainer, float(-scrollPos));
         });
+
+        m_gui.OnGlobalElementMouseWheel([&](HGUIElement, int delta, int, int) {
+            if (m_gui.IsElementUnderMouse(m_hRootItemContainer)) {
+                m_verticalScrollbar.Scroll(-delta * m_verticalScrollbar.GetMouseWheelScale());
+            }
+        });
     }
 
     TreeView::~TreeView()
