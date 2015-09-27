@@ -23,14 +23,8 @@ namespace GT
 
 
 
-        //m_pItem0 = new TreeViewItem(editor.GetGUI(), nullptr, "Item 0");
-        //m_gui.SetElementParent(m_pItem0->GetRootElement(), m_hTV);
         m_pItem0 = m_pTV->CreateAndAppendItem(nullptr, "Item 0");
-
-        //m_pItem1 = new TreeViewItem(editor.GetGUI(), nullptr, "Item 1");
-        //m_gui.SetElementParent(m_pItem1->GetRootElement(), m_hTV);
         m_pItem1 = m_pTV->CreateAndAppendItem(nullptr, "Item 1");
-
 
         m_pItem0_0 = m_pTV->CreateAndInsertItem(m_pItem0, "Item 0 0 - With a long string so I can test some scroll bar functionality.", m_pItem0->GetChildCount());
         m_pItem1_0 = m_pTV->CreateAndInsertItem(m_pItem1, "Item 1 0", m_pItem1->GetChildCount());
@@ -38,7 +32,6 @@ namespace GT
 
     WorkbenchEditor::~WorkbenchEditor()
     {
-        delete m_pItem1;
-        delete m_pItem0;
+        delete m_pTV;
     }
 }
