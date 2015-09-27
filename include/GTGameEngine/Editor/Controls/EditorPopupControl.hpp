@@ -50,7 +50,7 @@ namespace GT
         void SetSize(unsigned int width, unsigned int height);
 
 
-    private:
+    protected:
 
         /// A handle to the window.
         HWindow m_hWindow;

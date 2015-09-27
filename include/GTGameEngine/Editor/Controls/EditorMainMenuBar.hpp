@@ -4,7 +4,7 @@
 #define GT_EditorMainMenuBarControl
 
 #include "EditorMenuBar.hpp"
-#include "EditorPopupControl.hpp"
+#include "EditorMenu.hpp"
 
 namespace GT
 {
@@ -58,7 +58,7 @@ namespace GT
         EditorMenuBarButton* m_pHelpMenuButton;
 
         /// A pointer to the popup control for the popup menu.
-        EditorPopupControl* m_pFileMenu;
+        EditorMenu* m_pFileMenu;
     };
 }
 

@@ -3,6 +3,7 @@
 #include <GTGameEngine/Editor/Controls/EditorMainMenuBar.hpp>
 #include <GTGameEngine/Editor/Controls/EditorMenuBarButton.hpp>
 #include <GTGameEngine/Editor/Editor.hpp>
+#include <GTGameEngine/GameContext.hpp>
 
 namespace GT
 {
@@ -19,9 +20,31 @@ namespace GT
             m_pHelpMenuButton = this->CreateAndInsertButton("HELP");
 
 
-            m_pFileMenu = new EditorPopupControl(editor, hParentWindow);
+            m_pFileMenu = new EditorMenu(editor, hParentWindow);
             m_gui.SetElementBackgroundColor(m_pFileMenu->GetRootElement(), theme.backgroundPopup);
             m_gui.SetElementBorderColor(m_pFileMenu->GetRootElement(), theme.borderDefault);
+
+            EditorMenuItem* pSave = m_pFileMenu->AppendMenuItem("Save", "Ctrl+S");
+            pSave->OnPressed([&]() {
+                //m_editor.SaveFocusedFile();
+                this->DeactivateActiveButton();
+            });
+
+            EditorMenuItem* pSaveAll = m_pFileMenu->AppendMenuItem("Save All", "Ctrl+Shift+S");
+            pSaveAll->OnPressed([&]() {
+                //m_editor.SaveAllOpenFiles();
+                this->DeactivateActiveButton();
+            });
+            
+            m_pFileMenu->AppendSeparator();
+            
+            EditorMenuItem* pExit = m_pFileMenu->AppendMenuItem("Exit to Desktop", "Alt+F4");
+            pExit->OnPressed([&]() {
+                m_editor.GetGameContext().Close();
+            });
+
+
+            m_pFileMenu->RefreshMenuItemAlignments();
         }
     }
 
