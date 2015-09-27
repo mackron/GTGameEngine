@@ -59,35 +59,35 @@ namespace GT
 
 
         /// Saves the contents to the given file.
-        virtual bool Save() = 0;
+        virtual bool Save();
 
         /// Called when the sub editor is activated.
         ///
         /// @remarks
         ///     This allows the sub-editor to do things like give an element keyboard focus or whatnot.
-        virtual void OnActivate() = 0;
+        virtual void OnActivate();
 
         /// Called when the sub-editor is deactivated.
-        virtual void OnDeactivate() = 0;
+        virtual void OnDeactivate();
 
 
         /// Performs a cut operation
-        virtual void Cut() = 0;
+        virtual void Cut();
 
         /// Performs a copy operation
-        virtual void Copy() = 0;
+        virtual void Copy();
 
         /// Performs a paste operation
-        virtual void Paste() = 0;
+        virtual void Paste();
 
         /// Performs a undo operation
-        virtual void Undo() = 0;
+        virtual void Undo();
 
         /// Performs a redo operation
-        virtual void Redo() = 0;
+        virtual void Redo();
 
         /// Performs a select-all operation.
-        virtual void SelectAll() = 0;
+        virtual void SelectAll();
 
 
     private:

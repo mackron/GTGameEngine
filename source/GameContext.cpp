@@ -104,10 +104,19 @@ namespace GT
 
             while (ppEditor[0] != nullptr)
             {
-                char absoluteFilePath[GT_MAX_PATH];
-                if (m_engineContext.GetFileSystem().FindAbsolutePath(ppEditor[0], absoluteFilePath, GT_MAX_PATH))
+                // If the path starts with a square bracket it means it is a non-asset editor. Thus, we need to check for that
+                // and not try to find an absolute path on it.
+                if (ppEditor[0][0] == '[')
                 {
-                    m_editor.OpenFile(absoluteFilePath);
+                    m_editor.OpenFile(ppEditor[0]);
+                }
+                else
+                {
+                    char absoluteFilePath[GT_MAX_PATH];
+                    if (m_engineContext.GetFileSystem().FindAbsolutePath(ppEditor[0], absoluteFilePath, GT_MAX_PATH))
+                    {
+                        m_editor.OpenFile(absoluteFilePath);
+                    }
                 }
 
                 ppEditor += 1;

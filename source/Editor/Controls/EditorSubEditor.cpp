@@ -68,4 +68,42 @@ namespace GT
             m_onUnchangedProc();
         }
     }
+
+
+    bool EditorSubEditor::Save()
+    {
+        return false;
+    }
+
+    void EditorSubEditor::OnActivate()
+    {
+    }
+
+    void EditorSubEditor::OnDeactivate()
+    {
+    }
+
+    void EditorSubEditor::Cut()
+    {
+    }
+
+    void EditorSubEditor::Copy()
+    {
+    }
+
+    void EditorSubEditor::Paste()
+    {
+    }
+
+    void EditorSubEditor::Undo()
+    {
+    }
+
+    void EditorSubEditor::Redo()
+    {
+    }
+
+    void EditorSubEditor::SelectAll()
+    {
+    }
 }
