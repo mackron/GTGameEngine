@@ -93,6 +93,10 @@ namespace GT
         /// Refreshes the scrollbars.
         void RefreshScrollbars();
 
+        /// Retrieves the height of a single item in the tree view. This is used for scrolling.
+        int GetFirstItemHeight() const;
+
+
 
     private:
 

@@ -63,6 +63,9 @@ namespace GT
         /// Retrieves a pointer to the child item at the given index.
         TreeViewItem* GetChildByIndex(unsigned int index) const;
 
+        /// Recursively counts the number of children that are visible on the given element.
+        unsigned int CountVisibleChildren() const;
+
 
         /// Expands the item.
         void Expand();

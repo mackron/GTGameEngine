@@ -192,11 +192,27 @@ namespace GT
         return m_children[index];
     }
 
+    unsigned int TreeViewItem::CountVisibleChildren() const
+    {
+        unsigned int count = m_children.GetCount();
+        for (size_t i = 0; i < m_children.GetCount(); ++i)
+        {
+            if (m_children[i]->IsExpanded())
+            {
+                count += m_children[i]->CountVisibleChildren();
+            }
+        }
+
+        return count;
+    }
+
 
     void TreeViewItem::Expand()
     {
         if (!this->IsExpanded())
         {
+            m_isExpanded = true;
+
             if (this->HasChildren()) {
                 m_gui.SetElementText(m_hTitleArrow, g_ArrowFacingDownString);
             }
@@ -206,8 +222,6 @@ namespace GT
             if (m_onExpanded != nullptr) {
                 m_onExpanded();
             }
-
-            m_isExpanded = true;
         }
     }
 
@@ -215,6 +229,8 @@ namespace GT
     {
         if (this->IsExpanded())
         {
+            m_isExpanded = false;
+
             if (this->HasChildren()) {
                 m_gui.SetElementText(m_hTitleArrow, g_ArrowFacingRightString);
             }
@@ -224,8 +240,6 @@ namespace GT
             if (m_onCollapsed != nullptr) {
                 m_onCollapsed();
             }
-
-            m_isExpanded = false;
         }
     }
 

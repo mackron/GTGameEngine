@@ -83,7 +83,7 @@ namespace GT
 
         // Scrolling.
         m_verticalScrollbar.OnScroll([&](int scrollPos) {
-            m_gui.SetElementInnerOffsetY(m_hRootItemContainer, float(-scrollPos));
+            m_gui.SetElementInnerOffsetY(m_hRootItemContainer, float(-scrollPos * this->GetFirstItemHeight()));
         });
         m_horizontalScrollbar.OnScroll([&](int scrollPos) {
             m_gui.SetElementInnerOffsetX(m_hRootItemContainer, float(-scrollPos));
@@ -250,10 +250,11 @@ namespace GT
 
 
         // Vertical.
-        int pageHeight    = int(m_gui.GetElementHeight(m_hRootItemContainer));
-        int contentHeight = int(m_gui.GetElementHeight(m_rootItem.GetRootElement()));
+        int itemHeight = this->GetFirstItemHeight();
+        int pageHeight = int(m_gui.GetElementHeight(m_hRootItemContainer)) / itemHeight;
+        int itemCount  = int(m_rootItem.CountVisibleChildren());
         m_verticalScrollbar.SetPageSize(pageHeight);
-        m_verticalScrollbar.SetRange(0, contentHeight + pageHeight - 1);    // -1 because the range is zero based and inclusive.
+        m_verticalScrollbar.SetRange(0, itemCount + pageHeight - 1 - 1);    // -1 because the range is zero based and inclusive and -1 because we want to see the last item.
 
 
         // Horizontal.
@@ -261,5 +262,14 @@ namespace GT
         int contentWidth = int(m_gui.GetElementWidth(m_rootItem.GetRootElement()));
         m_horizontalScrollbar.SetPageSize(pageWidth);
         m_horizontalScrollbar.SetRange(0, contentWidth - 1);                // -1 because the range is zero based and inclusive.
+    }
+
+    int TreeView::GetFirstItemHeight() const
+    {
+        if (m_rootItem.GetChildCount() > 0) {
+            return int(m_gui.GetElementHeight(m_rootItem.GetChildByIndex(0)->GetTitleElement()));
+        }
+
+        return 21;
     }
 }
