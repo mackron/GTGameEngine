@@ -80,6 +80,12 @@ namespace GT
     {
         if (pSurface != nullptr)
         {
+            // If the surface is the one under the mouse, clear it.
+            if (pSurface == m_pSurfaceUnderMouse) {
+                this->OnMouseLeave(pSurface);
+            }
+
+
             // Detach any elements that are attached to this surface.
             while (pSurface->topLevelElements.GetCount() > 0)
             {
