@@ -64,6 +64,16 @@ namespace GT
         bool IsThumbAutoHideEnabled() const { return m_autoHideThumb; }
 
 
+        /// Sets the mouse wheel scale.
+        ///
+        /// @remarks
+        ///     Set this to a negative value to reverse the direction.
+        void SetMouseWheelScale(int scale);
+
+        /// Retrieves the mouse wheel scale.
+        int GetMouseWheelScale() const;
+
+
         /// Sets the scrollbar's range.
         void SetRange(int rangeMin, int rangeMax);
 
@@ -192,6 +202,10 @@ namespace GT
 
         /// Keeps track of whether or not the thumb should be hidden automatically when the page size is larger than the range.
         bool m_autoHideThumb;
+
+
+        /// The scale to apply to scroll wheel scrolls.
+        int m_mouseWheelScale;
 
 
         /// The list of OnScroll event handlers.

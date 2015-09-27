@@ -12,6 +12,7 @@ namespace GT
           m_rangeMin(0), m_rangeMax(0), m_pageSize(0), m_scrollPos(0),
           m_dragRelativeMousePosX(0), m_dragRelativeMousePosY(0), m_isDraggingThumb(false),
           m_autoHideThumb(true),
+          m_mouseWheelScale(1),
           m_onScroll(),
           m_thumbDefaultColor(0.4f, 0.4f, 0.4f), m_thumbHoveredColor(0.5f, 0.5f, 0.5f), m_thumbPressedColor(0.6f, 0.6f, 0.6f)
     {
@@ -59,10 +60,10 @@ namespace GT
 
         // Mouse wheel.
         gui.OnElementMouseWheel(m_hRootElement, [&](int delta, int, int) {
-            this->Scroll(-delta);
+            this->Scroll(-delta * m_mouseWheelScale);
         });
         gui.OnElementMouseWheel(m_hThumb, [&](int delta, int, int) {
-            this->Scroll(-delta);
+            this->Scroll(-delta * m_mouseWheelScale);
         });
 
 
@@ -168,6 +169,17 @@ namespace GT
             // Just refresh the thumb to show it again.
             this->RefreshThumb();
         }
+    }
+
+
+    void Scrollbar::SetMouseWheelScale(int scale)
+    {
+        m_mouseWheelScale = scale;
+    }
+
+    int Scrollbar::GetMouseWheelScale() const
+    {
+        return m_mouseWheelScale;
     }
 
 
