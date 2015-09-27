@@ -5,6 +5,8 @@
 
 #include "../EditorSubEditor.hpp"
 
+#include <GTGameEngine/GUI/CommonControls/TreeView.hpp>
+
 namespace GT
 {
     class WorkbenchEditor : public EditorSubEditor
@@ -21,7 +23,18 @@ namespace GT
 
     private:
 
+        //HGUIElement m_hTV;
 
+        TreeView* m_pTV;
+
+
+        TreeViewItem* m_pRootItem;
+
+        TreeViewItem* m_pItem0;
+        TreeViewItem* m_pItem0_0;
+
+        TreeViewItem* m_pItem1;
+        TreeViewItem* m_pItem1_0;
     };
 }
 
