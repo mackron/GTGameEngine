@@ -39,14 +39,17 @@ namespace GT
             this->RefreshScrollbars();
         });
         gui.OnElementMouseWheel(m_textBox.GetContentElement(), [&](int delta, int, int) {
-            this->TryScrollY(delta);
+            this->TryScrollY(delta * m_textBox.GetVerticalScrollbar().GetMouseWheelScale());
         });
 
 
         // Scrollbars
+        m_textBox.GetVerticalScrollbar().SetMouseWheelScale(3);
         m_textBox.GetVerticalScrollbar().OnScroll([&](int scrollPos) {
             gui.SetElementInnerOffsetY(m_textBox.GetContentElement(), float(-scrollPos * static_cast<int>(this->GetLineHeight())));
         });
+
+        m_textBox.GetHorizontalScrollbar().SetMouseWheelScale(3);
         m_textBox.GetHorizontalScrollbar().OnScroll([&](int scrollPos) {
             gui.SetElementInnerOffsetX(m_textBox.GetContentElement(), float(-scrollPos));
         });
