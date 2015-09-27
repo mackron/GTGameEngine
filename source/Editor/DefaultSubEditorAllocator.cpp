@@ -5,6 +5,7 @@
 #include <GTGameEngine/Editor/Controls/ModelEditor/ModelEditor.hpp>
 #include <GTGameEngine/Editor/Controls/TextEditor/TextEditor.hpp>
 #include <GTGameEngine/Editor/Controls/PreferencesEditor/PreferencesEditor.hpp>
+#include <GTGameEngine/Editor/Controls/WorkbenchEditor/WorkbenchEditor.hpp>
 #include <GTGameEngine/Assets/Asset.hpp>
 #include <GTGameEngine/Editor/Editor.hpp>
 #include <GTGameEngine/EngineContext.hpp>
@@ -24,10 +25,14 @@ namespace GT
     EditorSubEditor* DefaultSubEditorAllocator::CreateSubEditor(Editor &editor, const char* absolutePath)
     {
         // Check non-asset editors first. These are editors like the Preferences editor.
-        if (strcmp(absolutePath, "[PREFERENCES]") == 0)
-        {
+        if (strcmp(absolutePath, "[PREFERENCES]") == 0) {
             return new PreferencesEditor(editor, *this, absolutePath);
         }
+
+        if (strcmp(absolutePath, "[WORKBENCH_0]") == 0) {
+            return new WorkbenchEditor(editor, *this, absolutePath);
+        }
+
 
         Asset* pAsset = editor.GetEngineContext().GetAssetLibrary().Load(absolutePath);
         if (pAsset != nullptr)
