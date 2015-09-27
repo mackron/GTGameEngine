@@ -27,7 +27,7 @@ namespace GT
             gui.SetElementParent(m_hTextElement, hRootElement);
             gui.SetElementSizeToChildren(m_hTextElement);
             gui.SetElementVerticalAlign(m_hTextElement, VerticalAlign_Center);
-            gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.8f, 0.8f, 0.8f));
+            gui.SetElementTextColor(m_hTextElement, GT::Color(0.8f, 0.8f, 0.8f));
             gui.SetElementPadding(m_hTextElement, 4);
             gui.SetElementPaddingTop(m_hTextElement, 2);
             gui.SetElementPaddingBottom(m_hTextElement, 2);
@@ -42,21 +42,21 @@ namespace GT
             gui.SetElementText(m_hCloseElement, "\xC3\x97");    // <-- Multiplication sign - U+00D7
             gui.SetElementVerticalAlign(m_hCloseElement, VerticalAlign_Center);
             gui.SetElementHorizontalAlign(m_hCloseElement, HorizontalAlign_Center);
-            gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.35f, 0.35f, 0.35f));
+            gui.SetElementTextColor(m_hCloseElement, GT::Color(0.35f, 0.35f, 0.35f));
             gui.SetElementSizeToChildren(m_hCloseElement);
             gui.SetElementMarginLeft(m_hCloseElement, 4);
             gui.SetElementMarginRight(m_hCloseElement, 4);
 
             gui.OnElementMouseEnter(m_hCloseElement, [&]() {
-                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.75f, 0.25f, 0.25f));
+                gui.SetElementTextColor(m_hCloseElement, GT::Color(0.75f, 0.25f, 0.25f));
             });
             gui.OnElementMouseLeave(m_hCloseElement, [&]() {
-                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.35f, 0.35f, 0.35f));
+                gui.SetElementTextColor(m_hCloseElement, GT::Color(0.35f, 0.35f, 0.35f));
             });
 
             gui.OnElementMouseButtonPressed(m_hCloseElement, [&](int button, int, int) {
                 if (button == GT::MouseButton_Left) {
-                    gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.5f, 0.25f, 0.25f));
+                    gui.SetElementTextColor(m_hCloseElement, GT::Color(0.5f, 0.25f, 0.25f));
                 }
             });
             gui.OnElementMouseButtonReleased(m_hCloseElement, [&](int button, int, int) {
@@ -102,10 +102,10 @@ namespace GT
                 gui.SetElementBorderWidth(hRootElement, 0U);
 
                 // Background.
-                gui.SetElementBackgroundColor(hRootElement, GTLib::Colour(0, 0, 0, 0));
+                gui.SetElementBackgroundColor(hRootElement, GT::Color(0, 0, 0, 0));
 
                 // Text.
-                gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.75f, 0.75f, 0.75f));
+                gui.SetElementTextColor(m_hTextElement, GT::Color(0.75f, 0.75f, 0.75f));
 
 
                 // Close button.
@@ -135,14 +135,14 @@ namespace GT
                 //gui.SetElementBorderBottomWidth(hRootElement, 0U);
 
                 // Background.
-                gui.SetElementBackgroundColor(hRootElement, GTLib::Colour(0, 0, 0, 0));
+                gui.SetElementBackgroundColor(hRootElement, GT::Color(0, 0, 0, 0));
 
                 // Text
-                gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.9f, 0.9f, 0.9f));
+                gui.SetElementTextColor(m_hTextElement, GT::Color(0.9f, 0.9f, 0.9f));
 
 
                 // Close button.
-                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.4f, 0.4f, 0.4f));
+                gui.SetElementTextColor(m_hCloseElement, GT::Color(0.4f, 0.4f, 0.4f));
             }
             gui.EndBatch();
         }
@@ -172,10 +172,10 @@ namespace GT
                 gui.SetElementBackgroundColor(hRootElement, theme.backgroundMid);
 
                 // Text
-                gui.SetElementTextColor(m_hTextElement, GTLib::Colour(0.9f, 0.9f, 0.9f));
+                gui.SetElementTextColor(m_hTextElement, GT::Color(0.9f, 0.9f, 0.9f));
 
                 // Close button.
-                gui.SetElementTextColor(m_hCloseElement, GTLib::Colour(0.4f, 0.4f, 0.4f));
+                gui.SetElementTextColor(m_hCloseElement, GT::Color(0.4f, 0.4f, 0.4f));
             }
             gui.EndBatch();
         }

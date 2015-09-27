@@ -14,7 +14,7 @@ namespace GT
         m_gui.SetElementHeight(m_hRootElement, 5U);
         m_gui.SetElementWidthRatio(m_hRootElement, 1);
         m_gui.SetElementBackgroundColorBoundary(m_hRootElement, BackgroundBoundary_Inner);
-        m_gui.SetElementBackgroundColor(m_hRootElement, GTLib::Colour(0.3, 0.3, 0.3));
+        m_gui.SetElementBackgroundColor(m_hRootElement, GT::Color(0.3, 0.3, 0.3));
     }
 
     EditorMenuSeparator::~EditorMenuSeparator()

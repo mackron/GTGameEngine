@@ -12,7 +12,7 @@ namespace GT
         HGUIElement hElement = this->GetRootElement();
         if (hElement != 0)
         {
-            editor.GetGUI().SetElementBorder(hElement, 1, GTLib::Colour(0.4f, 0.4f, 0.4f, 1.0f));
+            editor.GetGUI().SetElementBorder(hElement, 1, GT::Color(0.4f, 0.4f, 0.4f, 1.0f));
 
             m_hWindow = editor.CreateWindow(hParentWindow, WindowType::PopupWindow, 0, 0, 300, 400, hElement);
         }

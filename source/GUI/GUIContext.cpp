@@ -1271,7 +1271,7 @@ namespace GT
         m_renderer->Clear(*this, rect);
     }
 
-    void GUIContext::Renderer_DrawRectangle(GTLib::Rect<int> rect, GTLib::Colour color)
+    void GUIContext::Renderer_DrawRectangle(GTLib::Rect<int> rect, GT::Color color)
     {
         assert(m_renderer != nullptr);
 
@@ -1320,7 +1320,7 @@ namespace GT
         m_renderer->UninitializeImage(*this, hImage);
     }
 
-    void GUIContext::Renderer_DrawTexturedRectangle(GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour color, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    void GUIContext::Renderer_DrawTexturedRectangle(GTLib::Rect<int> rect, HGUIImage hImage, GT::Color color, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
     {
         assert(m_renderer != nullptr);
 
@@ -2297,7 +2297,7 @@ namespace GT
 
 
 
-    void GUIContext::SetElementBackgroundColor(HGUIElement hElement, const GTLib::Colour &color)
+    void GUIContext::SetElementBackgroundColor(HGUIElement hElement, const GT::Color &color)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2306,7 +2306,7 @@ namespace GT
         }
     }
 
-    GTLib::Colour GUIContext::GetElementBackgroundColor(HGUIElement hElement) const
+    GT::Color GUIContext::GetElementBackgroundColor(HGUIElement hElement) const
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2314,7 +2314,7 @@ namespace GT
             return GUIContextBase::GetElementBackgroundColor(pElement);
         }
 
-        return GTLib::Colour(0.0f, 0.0f, 0.0f);
+        return GT::Color(0.0f, 0.0f, 0.0f);
     }
 
     void GUIContext::SetElementBackgroundColorBoundary(HGUIElement hElement, BackgroundBoundary boundary)
@@ -2361,7 +2361,7 @@ namespace GT
     }
 
 
-    void GUIContext::SetElementBackgroundImageColor(HGUIElement hElement, const GTLib::Colour &color)
+    void GUIContext::SetElementBackgroundImageColor(HGUIElement hElement, const GT::Color &color)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2370,7 +2370,7 @@ namespace GT
         }
     }
 
-    GTLib::Colour GUIContext::GetElementBackgroundImageColor(HGUIElement hElement) const
+    GT::Color GUIContext::GetElementBackgroundImageColor(HGUIElement hElement) const
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2378,7 +2378,7 @@ namespace GT
             return GUIContextBase::GetElementBackgroundImageColor(pElement);
         }
 
-        return GTLib::Colour(1, 1, 1, 1);
+        return GT::Color(1, 1, 1, 1);
     }
 
 
@@ -2553,7 +2553,7 @@ namespace GT
     }
 
 
-    void GUIContext::SetElementBorderLeftColor(HGUIElement hElement, const GTLib::Colour &borderColor)
+    void GUIContext::SetElementBorderLeftColor(HGUIElement hElement, const GT::Color &borderColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2562,7 +2562,7 @@ namespace GT
         }
     }
 
-    void GUIContext::SetElementBorderTopColor(HGUIElement hElement, const GTLib::Colour &borderColor)
+    void GUIContext::SetElementBorderTopColor(HGUIElement hElement, const GT::Color &borderColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2571,7 +2571,7 @@ namespace GT
         }
     }
 
-    void GUIContext::SetElementBorderRightColor(HGUIElement hElement, const GTLib::Colour &borderColor)
+    void GUIContext::SetElementBorderRightColor(HGUIElement hElement, const GT::Color &borderColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2580,7 +2580,7 @@ namespace GT
         }
     }
 
-    void GUIContext::SetElementBorderBottomColor(HGUIElement hElement, const GTLib::Colour &borderColor)
+    void GUIContext::SetElementBorderBottomColor(HGUIElement hElement, const GT::Color &borderColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2589,7 +2589,7 @@ namespace GT
         }
     }
 
-    void GUIContext::SetElementBorderColor(HGUIElement hElement, const GTLib::Colour &borderColor)
+    void GUIContext::SetElementBorderColor(HGUIElement hElement, const GT::Color &borderColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2598,7 +2598,7 @@ namespace GT
         }
     }
 
-    void GUIContext::SetElementBorderLeft(HGUIElement hElement, uint32_t width, const GTLib::Colour &color)
+    void GUIContext::SetElementBorderLeft(HGUIElement hElement, uint32_t width, const GT::Color &color)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2607,7 +2607,7 @@ namespace GT
         }
     }
 
-    void GUIContext::SetElementBorderTop(HGUIElement hElement, uint32_t width, const GTLib::Colour &color)
+    void GUIContext::SetElementBorderTop(HGUIElement hElement, uint32_t width, const GT::Color &color)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2616,7 +2616,7 @@ namespace GT
         }
     }
 
-    void GUIContext::SetElementBorderRight(HGUIElement hElement, uint32_t width, const GTLib::Colour &color)
+    void GUIContext::SetElementBorderRight(HGUIElement hElement, uint32_t width, const GT::Color &color)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2625,7 +2625,7 @@ namespace GT
         }
     }
 
-    void GUIContext::SetElementBorderBottom(HGUIElement hElement, uint32_t width, const GTLib::Colour &color)
+    void GUIContext::SetElementBorderBottom(HGUIElement hElement, uint32_t width, const GT::Color &color)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2634,7 +2634,7 @@ namespace GT
         }
     }
 
-    void GUIContext::SetElementBorder(HGUIElement hElement, uint32_t width, const GTLib::Colour &color)
+    void GUIContext::SetElementBorder(HGUIElement hElement, uint32_t width, const GT::Color &color)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2644,7 +2644,7 @@ namespace GT
     }
 
 
-    void GUIContext::SetElementBorderLeftMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContext::SetElementBorderLeftMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GT::Color &maskColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2653,7 +2653,7 @@ namespace GT
         }
     }
 
-    void GUIContext::SetElementBorderTopMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContext::SetElementBorderTopMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GT::Color &maskColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2662,7 +2662,7 @@ namespace GT
         }
     }
 
-    void GUIContext::SetElementBorderRightMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContext::SetElementBorderRightMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GT::Color &maskColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -2671,7 +2671,7 @@ namespace GT
         }
     }
 
-    void GUIContext::SetElementBorderBottomMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContext::SetElementBorderBottomMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GT::Color &maskColor)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -3280,7 +3280,7 @@ namespace GT
     }
 
 
-    void GUIContext::SetElementTextColor(HGUIElement hElement, const GTLib::Colour &color)
+    void GUIContext::SetElementTextColor(HGUIElement hElement, const GT::Color &color)
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -3289,7 +3289,7 @@ namespace GT
         }
     }
 
-    GTLib::Colour GUIContext::GetElementTextColor(HGUIElement hElement) const
+    GT::Color GUIContext::GetElementTextColor(HGUIElement hElement) const
     {
         auto pElement = this->GetElementPtr(hElement);
         if (pElement != nullptr)
@@ -3297,7 +3297,7 @@ namespace GT
             return GUIContextBase::GetElementTextColor(pElement);
         }
 
-        return GTLib::Colour(0.0f, 0.0f, 0.0f, 1.0f);
+        return GT::Color(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
 

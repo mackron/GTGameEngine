@@ -1,31 +1,31 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTLib/Colour.hpp>
+#include <GTLib/Color.hpp>
 #include <GTLib/Strings/Trim.hpp>
 #include <GTLib/Parse.hpp>
 #include <cstdio>
 
-namespace GTLib
+namespace GT
 {
-    Colour Colour::Black(0.0f, 0.0f, 0.0f, 1.0f);
-    Colour Colour::White(1.0f, 1.0f, 1.0f, 1.0f);
-    Colour Colour::TransparentBlack(0.0f, 0.0f, 0.0f, 0.0f);
-    Colour Colour::TransparentWhite(1.0f, 1.0f, 1.0f, 0.0f);
-    Colour Colour::Red(1.0f, 0.0f, 0.0f, 1.0f);
-    Colour Colour::Green(0.0f, 1.0f, 0.0f, 1.0f);
-    Colour Colour::Blue(0.0f, 0.0f, 1.0f, 1.0f);
-    Colour Colour::Alpha(0.0f, 0.0f, 0.0f, 1.0f);
+    Color Color::Black(0.0f, 0.0f, 0.0f, 1.0f);
+    Color Color::White(1.0f, 1.0f, 1.0f, 1.0f);
+    Color Color::TransparentBlack(0.0f, 0.0f, 0.0f, 0.0f);
+    Color Color::TransparentWhite(1.0f, 1.0f, 1.0f, 0.0f);
+    Color Color::Red(1.0f, 0.0f, 0.0f, 1.0f);
+    Color Color::Green(0.0f, 1.0f, 0.0f, 1.0f);
+    Color Color::Blue(0.0f, 0.0f, 1.0f, 1.0f);
+    Color Color::Alpha(0.0f, 0.0f, 0.0f, 1.0f);
 
-    Colour Colour::DefaultBackground(0.16f, 0.164f, 0.20f, 1.0f);
+    Color Color::DefaultBackground(0.16f, 0.164f, 0.20f, 1.0f);
 
 
-    Colour::Colour(const char *value, ptrdiff_t valueSize)
+    Color::Color(const char *value, ptrdiff_t valueSize)
         : r(0.0f), g(0.0f), b(0.0f), a(0.0f)
     {
         TryParse(*this, value, valueSize);
     }
 
-    bool Colour::TryParse(Colour &colour, const char *value, ptrdiff_t valueSize)
+    bool Color::TryParse(Color &colour, const char *value, ptrdiff_t valueSize)
     {
         value     = GTLib::Strings::TrimStart(value, valueSize);
         valueSize = GTLib::Strings::TrimEnd(value, valueSize) - value;
@@ -81,7 +81,7 @@ namespace GTLib
         return false;
     }
 
-    void Colour::ToString(char *dest, size_t destSize, const Colour &colour)
+    void Color::ToString(char *dest, size_t destSize, const Color &colour)
     {
         char r[3];
         snprintf(r, 3, "%.2x", static_cast<uint32_t>(colour.r * 255.0f));

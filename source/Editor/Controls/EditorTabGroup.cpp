@@ -28,7 +28,7 @@ namespace GT
             m_hTabPageContainer = gui.CreateElement();
             gui.SetElementParent(m_hTabPageContainer, hRootElement);
             gui.SetElementSizeRatio(m_hTabPageContainer, 1.0f, 1.0f);
-            gui.SetElementBorder(m_hTabPageContainer, 1, GTLib::Colour(0.4f, 0.4f, 0.4f));
+            gui.SetElementBorder(m_hTabPageContainer, 1, GT::Color(0.4f, 0.4f, 0.4f));
             gui.SetElementBorderTopWidth(m_hTabPageContainer, 0);
             gui.SetElementBackgroundColor(m_hTabPageContainer, theme.backgroundMid);
             gui.SetElementPadding(m_hTabPageContainer, 2);

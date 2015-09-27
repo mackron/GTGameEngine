@@ -8,7 +8,7 @@
 #if defined(GT_PLATFORM_WINDOWS)
 #include <GTLib/windows.hpp>
 #include <GTLib/HandleManager.hpp>
-#include <GTLib/Colour.hpp>
+#include <GTLib/Color.hpp>
 #include "GUIFontManager.hpp"
 
 namespace GT
@@ -53,7 +53,7 @@ namespace GT
         bool GetTextCursorPositionFromCharacter(HGUIFont hFont, const char* text, unsigned int characterIndex, int &textCursorPosXOut) const;
 
         /// @copydoc GUIFontManager::DrawTextToBuffer()
-        bool DrawTextToBuffer(HGUIFont hFont, const char* text, size_t textLengthInChars, GTLib::Colour color, void* bufferOut, size_t bufferOutSize);
+        bool DrawTextToBuffer(HGUIFont hFont, const char* text, size_t textLengthInChars, GT::Color color, void* bufferOut, size_t bufferOutSize);
 
 
         /// Retrieves the Win32 font handle from the given font.

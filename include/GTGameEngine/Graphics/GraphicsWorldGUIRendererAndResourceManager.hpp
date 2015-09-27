@@ -41,7 +41,7 @@ namespace GT
         void Clear(GUIContext &context, const GTLib::Rect<int> &rect);
 
         /// @copydoc GUIRenderer::DrawRectangle()
-        void DrawRectangle(GUIContext &context, GTLib::Rect<int> rect, GTLib::Colour colour);
+        void DrawRectangle(GUIContext &context, GTLib::Rect<int> rect, GT::Color colour);
 
         /// @copydoc GUIRenderer::SetClippingRect()
         void SetClippingRect(GUIContext &context, GTLib::Rect<int> rect);
@@ -65,7 +65,7 @@ namespace GT
         void UninitializeImage(GT::GUIContext &context, HGUIImage hImage);
 
         /// @copydoc GUIRenderer::DrawTexturedRectangle()
-        void DrawTexturedRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight);
+        void DrawTexturedRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, HGUIImage hImage, GT::Color colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight);
 
 
         /////////////////////////////////////////////////

@@ -20,10 +20,10 @@ namespace GT
         m_gui.SetElementFont(m_hRootElement, m_editor.GetTheme().defaultFontFamily, FontWeight_Normal, FontSlant_None, 13);
 
         m_gui.OnElementMouseEnter(m_hRootElement, [&]() {
-            m_gui.SetElementBackgroundColor(m_hRootElement, GTLib::Colour(0.4f, 0.4f, 0.4f));
+            m_gui.SetElementBackgroundColor(m_hRootElement, GT::Color(0.4f, 0.4f, 0.4f));
         });
         m_gui.OnElementMouseLeave(m_hRootElement, [&]() {
-            m_gui.SetElementBackgroundColor(m_hRootElement, GTLib::Colour(0, 0, 0, 0));
+            m_gui.SetElementBackgroundColor(m_hRootElement, GT::Color(0, 0, 0, 0));
         });
         m_gui.OnElementMouseButtonPressed(m_hRootElement, [&](int button, int, int) {
             if (button == MouseButton_Left) {

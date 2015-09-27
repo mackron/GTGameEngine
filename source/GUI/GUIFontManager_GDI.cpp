@@ -341,7 +341,7 @@ namespace GT
     }
 
 
-    bool GUIFontManager_GDI::DrawTextToBuffer(HGUIFont hFont, const char* text, size_t textLengthChars, GTLib::Colour color, void* bufferOut, size_t bufferOutSize)
+    bool GUIFontManager_GDI::DrawTextToBuffer(HGUIFont hFont, const char* text, size_t textLengthChars, GT::Color color, void* bufferOut, size_t bufferOutSize)
     {
         // The string first needs to be measured to ensure the DIB bitmap is large enough.
         int textWidth;

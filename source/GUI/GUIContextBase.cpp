@@ -253,14 +253,14 @@ namespace GT
             GUIElementStyle_Set_maxheight(pElement->style, GUIStyleNumber_MaxUnsigned, NumberType_Absolute);
 
             // Background image color should be white by default.
-            GUIElementStyle_Set_backgroundimagecolor(pElement->style, GTLib::Colour(1, 1, 1, 1));
+            GUIElementStyle_Set_backgroundimagecolor(pElement->style, GT::Color(1, 1, 1, 1));
 
             // Background image scale needs to be 1, 1 by default.
             GUIElementStyle_Set_backgroundimagescalex(pElement->style, 1);
             GUIElementStyle_Set_backgroundimagescaley(pElement->style, 1);
 
             // Text colour.
-            GUIElementStyle_Set_textcolor(pElement->style, GTLib::Colour(0, 0, 0, 1));
+            GUIElementStyle_Set_textcolor(pElement->style, GT::Color(0, 0, 0, 1));
 
             // Inherit the font.
             GUIElementStyle_Set_inheritfont(pElement->style, true);
@@ -1406,7 +1406,7 @@ namespace GT
 
 
 
-    void GUIContextBase::SetElementBackgroundColor(GUIElement* pElement, const GTLib::Colour &colour)
+    void GUIContextBase::SetElementBackgroundColor(GUIElement* pElement, const GT::Color &colour)
     {
         assert(pElement != nullptr);
 
@@ -1419,7 +1419,7 @@ namespace GT
         this->EndBatch();
     }
 
-    GTLib::Colour GUIContextBase::GetElementBackgroundColor(GUIElement* pElement) const
+    GT::Color GUIContextBase::GetElementBackgroundColor(GUIElement* pElement) const
     {
         assert(pElement != nullptr);
 
@@ -1547,7 +1547,7 @@ namespace GT
     }
 
 
-    void GUIContextBase::SetElementBackgroundImageColor(GUIElement* pElement, const GTLib::Colour &colour)
+    void GUIContextBase::SetElementBackgroundImageColor(GUIElement* pElement, const GT::Color &colour)
     {
         assert(pElement != nullptr);
 
@@ -1560,7 +1560,7 @@ namespace GT
         this->EndBatch();
     }
 
-    GTLib::Colour GUIContextBase::GetElementBackgroundImageColor(GUIElement* pElement) const
+    GT::Color GUIContextBase::GetElementBackgroundImageColor(GUIElement* pElement) const
     {
         assert(pElement != nullptr);
 
@@ -1822,7 +1822,7 @@ namespace GT
     }
 
 
-    void GUIContextBase::SetElementBorderLeftColor(GUIElement* pElement, const GTLib::Colour &borderColor)
+    void GUIContextBase::SetElementBorderLeftColor(GUIElement* pElement, const GT::Color &borderColor)
     {
         assert(pElement != nullptr);
 
@@ -1837,7 +1837,7 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderTopColor(GUIElement* pElement, const GTLib::Colour &borderColor)
+    void GUIContextBase::SetElementBorderTopColor(GUIElement* pElement, const GT::Color &borderColor)
     {
         assert(pElement != nullptr);
 
@@ -1852,7 +1852,7 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderRightColor(GUIElement* pElement, const GTLib::Colour &borderColor)
+    void GUIContextBase::SetElementBorderRightColor(GUIElement* pElement, const GT::Color &borderColor)
     {
         assert(pElement != nullptr);
 
@@ -1867,7 +1867,7 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderBottomColor(GUIElement* pElement, const GTLib::Colour &borderColor)
+    void GUIContextBase::SetElementBorderBottomColor(GUIElement* pElement, const GT::Color &borderColor)
     {
         assert(pElement != nullptr);
 
@@ -1882,7 +1882,7 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderColor(GUIElement* pElement, const GTLib::Colour &borderColor)
+    void GUIContextBase::SetElementBorderColor(GUIElement* pElement, const GT::Color &borderColor)
     {
         assert(pElement != nullptr);
 
@@ -1898,7 +1898,7 @@ namespace GT
     }
 
 
-    void GUIContextBase::SetElementBorderLeft(GUIElement* pElement, uint32_t width, const GTLib::Colour &borderColor)
+    void GUIContextBase::SetElementBorderLeft(GUIElement* pElement, uint32_t width, const GT::Color &borderColor)
     {
         assert(pElement != nullptr);
 
@@ -1910,7 +1910,7 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderTop(GUIElement* pElement, uint32_t width, const GTLib::Colour &borderColor)
+    void GUIContextBase::SetElementBorderTop(GUIElement* pElement, uint32_t width, const GT::Color &borderColor)
     {
         assert(pElement != nullptr);
 
@@ -1922,7 +1922,7 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderRight(GUIElement* pElement, uint32_t width, const GTLib::Colour &borderColor)
+    void GUIContextBase::SetElementBorderRight(GUIElement* pElement, uint32_t width, const GT::Color &borderColor)
     {
         assert(pElement != nullptr);
 
@@ -1934,7 +1934,7 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderBottom(GUIElement* pElement, uint32_t width, const GTLib::Colour &borderColor)
+    void GUIContextBase::SetElementBorderBottom(GUIElement* pElement, uint32_t width, const GT::Color &borderColor)
     {
         assert(pElement != nullptr);
 
@@ -1946,7 +1946,7 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorder(GUIElement* pElement, uint32_t width, const GTLib::Colour &color)
+    void GUIContextBase::SetElementBorder(GUIElement* pElement, uint32_t width, const GT::Color &color)
     {
         assert(pElement != nullptr);
 
@@ -1967,7 +1967,7 @@ namespace GT
     }
 
 
-    void GUIContextBase::SetElementBorderLeftMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContextBase::SetElementBorderLeftMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GT::Color &maskColor)
     {
         assert(pElement != nullptr);
 
@@ -1983,7 +1983,7 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderTopMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContextBase::SetElementBorderTopMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GT::Color &maskColor)
     {
         assert(pElement != nullptr);
 
@@ -1999,7 +1999,7 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderRightMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContextBase::SetElementBorderRightMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GT::Color &maskColor)
     {
         assert(pElement != nullptr);
 
@@ -2015,7 +2015,7 @@ namespace GT
         this->EndBatch();
     }
 
-    void GUIContextBase::SetElementBorderBottomMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor)
+    void GUIContextBase::SetElementBorderBottomMaskInPixels(GUIElement* pElement, uint32_t maskOffset, uint32_t maskLength, const GT::Color &maskColor)
     {
         assert(pElement != nullptr);
 
@@ -2919,7 +2919,7 @@ namespace GT
     }
 
 
-    void GUIContextBase::SetElementTextColor(GUIElement* pElement, const GTLib::Colour &color)
+    void GUIContextBase::SetElementTextColor(GUIElement* pElement, const GT::Color &color)
     {
         assert(pElement != nullptr);
 
@@ -2939,7 +2939,7 @@ namespace GT
         this->EndBatch();
     }
 
-    GTLib::Colour GUIContextBase::GetElementTextColor(GUIElement* pElement) const
+    GT::Color GUIContextBase::GetElementTextColor(GUIElement* pElement) const
     {
         assert(pElement != nullptr);
 
@@ -4990,7 +4990,7 @@ namespace GT
                             }
 
 
-                            GTLib::Colour backgroundImageColor = this->GetElementBackgroundImageColor(pElement);
+                            GT::Color backgroundImageColor = this->GetElementBackgroundImageColor(pElement);
                             for (unsigned int iTileY = 0; iTileY < tilesY; ++iTileY)
                             {
                                 GTLib::Rect<int> tileRect;

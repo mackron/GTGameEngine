@@ -1925,7 +1925,7 @@ namespace GTLib
                 // It's somewhere in the middle of the line, so now we need to correctly position it next to a character.
                 struct Callback : public FontEngine::MeasureStringCallback
                 {
-                    Callback(int tabSize, int startPosX, int startPosY, Font* font, const GTLib::Colour &defaultTextColour, const TextManagerRenderingOptions &options, GTLib::Map<GlyphMapHandle, ForegroundMesh*> &foregroundMeshes)
+                    Callback(int tabSize, int startPosX, int startPosY, Font* font, const GT::Color &defaultTextColour, const TextManagerRenderingOptions &options, GTLib::Map<GlyphMapHandle, ForegroundMesh*> &foregroundMeshes)
                         : m_tabSize(tabSize),
                           m_startPosX(startPosX), m_startPosY(startPosY),
                           m_font(font),

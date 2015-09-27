@@ -353,7 +353,7 @@ namespace GT
 
 
         /// Sets the clear color for the given render target.
-        virtual void SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GTLib::Colour &color) = 0;
+        virtual void SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GT::Color &color) = 0;
 
         /// Enables clearing of the background color of the given render target.
         ///
@@ -482,7 +482,7 @@ namespace GT
         virtual void GUI_Clear(GUIContext &gui, const GTLib::Rect<int> &rect);
 
         /// @copydoc GUIRenderer::DrawRectangle()
-        virtual void GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GTLib::Colour colour);
+        virtual void GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GT::Color colour);
 
         /// @copydoc GUIRenderer::SetClippingRect()
         virtual void GUI_SetClippingRect(GUIContext &gui, GTLib::Rect<int> rect);
@@ -497,7 +497,7 @@ namespace GT
         virtual void GUI_DrawRawImage(GUIContext &gui, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent);
 
         /// @copydoc GUIRenderer::DrawTexturedRectangle()
-        virtual void GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight);
+        virtual void GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GT::Color colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight);
 
 
     private:

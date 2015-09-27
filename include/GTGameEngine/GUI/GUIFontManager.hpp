@@ -5,7 +5,7 @@
 
 #include <GTLib/FontServer.hpp>
 #include <GTLib/Map.hpp>
-#include <GTLib/Colour.hpp>
+#include <GTLib/Color.hpp>
 #include <cstdint>
 
 #define GT_MAX_TEXT_RUN_SIZE_IN_BYTES   128
@@ -222,7 +222,7 @@ namespace GT
         ///
         /// @remarks
         ///     The output buffer should be 32-bits per pixel, and tightly packed based on the return value of MeasureString().
-        virtual bool DrawTextToBuffer(HGUIFont hFont, const char* text, size_t textLengthInChars, GTLib::Colour color, void* bufferOut, size_t bufferOutSize) = 0;
+        virtual bool DrawTextToBuffer(HGUIFont hFont, const char* text, size_t textLengthInChars, GT::Color color, void* bufferOut, size_t bufferOutSize) = 0;
 
 
     private:

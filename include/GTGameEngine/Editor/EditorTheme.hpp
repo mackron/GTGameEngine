@@ -5,7 +5,7 @@
 
 #include "../Config.hpp"
 #include <GTLib/String.hpp>
-#include <GTLib/Colour.hpp>
+#include <GTLib/Color.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -43,20 +43,20 @@ namespace GT
         // Fonts and text
         char defaultFontFamily[128];
         char defaultSymbolFontFamily[128];
-        GTLib::Colour defaultTextColor;
+        GT::Color defaultTextColor;
 
         // Background colours.
-        GTLib::Colour backgroundDark;       ///< The dark background colour.
-        GTLib::Colour backgroundMid;        ///< The mid tone background colour.
-        GTLib::Colour backgroundPopup;      ///< The background colour to use for popups.
+        GT::Color backgroundDark;       ///< The dark background colour.
+        GT::Color backgroundMid;        ///< The mid tone background colour.
+        GT::Color backgroundPopup;      ///< The background colour to use for popups.
 
         // Border colours.
-        GTLib::Colour borderDefault;        ///< The default border colours.
-        GTLib::Colour borderDim;            ///< A border color that is slightly less bright than the default border.
-        GTLib::Colour borderDark;           ///< A border color that is darker than the default border.
+        GT::Color borderDefault;        ///< The default border colours.
+        GT::Color borderDim;            ///< A border color that is slightly less bright than the default border.
+        GT::Color borderDark;           ///< A border color that is darker than the default border.
 
         // Scroll bars.
-        GTLib::Colour scrollbarBackgroundColor;
+        GT::Color scrollbarBackgroundColor;
         unsigned int scrollbarWidth;
     };
 }

@@ -282,7 +282,7 @@ namespace GT
         unsigned int viewportHeight;
 
         /// The clear color.
-        GTLib::Colour clearColor;
+        GT::Color clearColor;
 
         /// The priority.
         int priority;
@@ -2045,7 +2045,7 @@ namespace GT
     }
 
 
-    void DefaultGraphicsWorld_OpenGL::SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GTLib::Colour &color)
+    void DefaultGraphicsWorld_OpenGL::SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GT::Color &color)
     {
         auto pRT = reinterpret_cast<RenderTarget_OpenGL*>(hRT);
         if (pRT != nullptr)
@@ -2315,7 +2315,7 @@ namespace GT
         (void)rect;
     }
 
-    void DefaultGraphicsWorld_OpenGL::GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GTLib::Colour colour)
+    void DefaultGraphicsWorld_OpenGL::GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GT::Color colour)
     {
         (void)gui;
 
@@ -2438,7 +2438,7 @@ namespace GT
         }
     }
 
-    void DefaultGraphicsWorld_OpenGL::GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    void DefaultGraphicsWorld_OpenGL::GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GT::Color colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
     {
         (void)gui;
 

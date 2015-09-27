@@ -157,7 +157,7 @@ namespace GT
 
 
         /// @copydoc GraphicsWorld::SetRenderTargetClearColor()
-        void SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GTLib::Colour &color);
+        void SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GT::Color &color);
 
         /// @copydoc GraphicsWorld::EnableRenderTargetColorClearing()
         void EnableRenderTargetColorClearing(HGraphicsRenderTarget hRT);
@@ -238,7 +238,7 @@ namespace GT
         void GUI_Clear(GUIContext &gui, const GTLib::Rect<int> &rect);
 
         /// @copydoc DefaultGraphicsWorld::DrawRectangle()
-        void GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GTLib::Colour colour);
+        void GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GT::Color colour);
 
         /// @copydoc DefaultGraphicsWorld::SetClippingRect()
         void GUI_SetClippingRect(GUIContext &gui, GTLib::Rect<int> rect);
@@ -253,7 +253,7 @@ namespace GT
         void GUI_DrawRawImage(GUIContext &gui, int xPos, int yPos, unsigned int width, unsigned int height, const void* pImageData, bool isTransparent);
 
         /// @copydoc GUIRenderer::DrawTexturedRectangle()
-        void GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight);
+        void GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GT::Color colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight);
 
 
 

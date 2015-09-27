@@ -4,7 +4,7 @@
 #define GT_GUITextLayout
 
 #include "GUIFontManager.hpp"
-#include "../../GTLib/Colour.hpp"
+#include "../../GTLib/Color.hpp"
 
 namespace GT
 {
@@ -42,7 +42,7 @@ namespace GT
         int rotationInDegrees;
 
         /// The color of the text.
-        GTLib::Colour color;
+        GT::Color color;
     };
 
     /// Structure containing information about a colored rectangle region in the text layout.
@@ -54,7 +54,7 @@ namespace GT
         GTLib::Rect<int> rect;
 
         /// The colour of the rectangle.
-        GTLib::Colour colour;
+        GT::Color colour;
     };
 
 
@@ -198,19 +198,19 @@ namespace GT
         /// Sets the default colour for the text.
         ///
         /// @param color [in] The default color of the text.
-        virtual void SetDefaultTextColor(const GTLib::Colour &color) = 0;
+        virtual void SetDefaultTextColor(const GT::Color &color) = 0;
 
         /// Retrieves the default colour of the text.
         ///
         /// @return The default colour of the text.
-        virtual GTLib::Colour GetDefaultTextColor() const = 0;
+        virtual GT::Color GetDefaultTextColor() const = 0;
 
 
         /// Sets the default colour of the selection background.
-        virtual void SetSelectionBackgroundColor(const GTLib::Colour &color) = 0;
+        virtual void SetSelectionBackgroundColor(const GT::Color &color) = 0;
 
         /// Retrieves the default colour of the selection background.
-        virtual GTLib::Colour GetSelectionBackgroundColor() const = 0;
+        virtual GT::Color GetSelectionBackgroundColor() const = 0;
 
 
         /// Retrieves the text rectangle relative to the bounds.

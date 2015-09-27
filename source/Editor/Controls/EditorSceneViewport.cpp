@@ -103,7 +103,7 @@ namespace GT
         if (m_hViewportRTTexture != 0)
         {
             m_hViewportRT = m_graphicsWorld.CreateRenderTargetFromTexture(m_hViewportRTTexture, AAType::SSAA, 2, 0);
-            m_graphicsWorld.SetRenderTargetClearColor(m_hViewportRT, GTLib::Colour(0.33f, 0.33f, 0.33f));
+            m_graphicsWorld.SetRenderTargetClearColor(m_hViewportRT, GT::Color(0.33f, 0.33f, 0.33f));
 
             m_graphicsWorld.SetRenderTargetProjection(m_hViewportRT, mat4::perspective(45.0f, float(width) / float(height), 0.1f, 1000.0f));
             this->UpdateViewMatrix();

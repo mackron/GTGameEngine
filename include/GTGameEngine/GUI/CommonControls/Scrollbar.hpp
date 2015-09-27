@@ -42,16 +42,16 @@ namespace GT
         ///
         /// @remarks
         ///     The track is actually the root element, so this is equality to doing gui.SetElementBackgroundColor(scrollbar.GetRootElement(), color).
-        void SetTrackColor(const GTLib::Colour &color);
+        void SetTrackColor(const GT::Color &color);
 
         /// Sets the default color of the thumb.
-        void SetDefaultThumbColor(const GTLib::Colour &color);
+        void SetDefaultThumbColor(const GT::Color &color);
 
         /// Sets the hovered color of the thumb.
-        void SetHoveredThumbColor(const GTLib::Colour &color);
+        void SetHoveredThumbColor(const GT::Color &color);
 
         /// Sets the pressed color of the thumb.
-        void SetPressedThumbColor(const GTLib::Colour &color);
+        void SetPressedThumbColor(const GT::Color &color);
 
 
         /// Sets the scrollbar's range.
@@ -186,13 +186,13 @@ namespace GT
 
 
         /// The default color of the thumb.
-        GTLib::Colour m_thumbDefaultColor;
+        GT::Color m_thumbDefaultColor;
 
         /// Sets the color of the thumb when the mouse is hovered over it.
-        GTLib::Colour m_thumbHoveredColor;
+        GT::Color m_thumbHoveredColor;
 
         /// Sets the color of the thumb when the mouse is pressed on the thumb.
-        GTLib::Colour m_thumbPressedColor;
+        GT::Color m_thumbPressedColor;
     };
 }
 

@@ -324,7 +324,7 @@ namespace GT
     }
 
 
-    void DefaultGraphicsWorld::SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GTLib::Colour &color)
+    void DefaultGraphicsWorld::SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GT::Color &color)
     {
         m_pGraphicsWorldImpl->SetRenderTargetClearColor(hRT, color);
     }
@@ -449,7 +449,7 @@ namespace GT
         m_pGraphicsWorldImpl->GUI_Clear(gui, rect);
     }
 
-    void DefaultGraphicsWorld::GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GTLib::Colour colour)
+    void DefaultGraphicsWorld::GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GT::Color colour)
     {
         m_pGraphicsWorldImpl->GUI_DrawRectangle(gui, rect, colour);
     }
@@ -474,7 +474,7 @@ namespace GT
         m_pGraphicsWorldImpl->GUI_DrawRawImage(gui, xPos, yPos, width, height, pImageData, isTransparent);
     }
 
-    void DefaultGraphicsWorld::GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    void DefaultGraphicsWorld::GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GT::Color colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
     {
         m_pGraphicsWorldImpl->GUI_DrawTexturedRectangle(gui, rect, hTextureResource, colour, subImageOffsetX, subImageOffsetY, subImageWidth, subImageHeight);
     }

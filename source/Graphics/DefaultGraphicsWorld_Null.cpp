@@ -420,7 +420,7 @@ namespace GT
     }
 
 
-    void DefaultGraphicsWorld_Null::SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GTLib::Colour &color)
+    void DefaultGraphicsWorld_Null::SetRenderTargetClearColor(HGraphicsRenderTarget hRT, const GT::Color &color)
     {
         (void)hRT;
         (void)color;
@@ -560,7 +560,7 @@ namespace GT
         (void)rect;
     }
 
-    void DefaultGraphicsWorld_Null::GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GTLib::Colour colour)
+    void DefaultGraphicsWorld_Null::GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GT::Color colour)
     {
         (void)gui;
         (void)rect;
@@ -598,7 +598,7 @@ namespace GT
         (void)isTransparent;
     }
 
-    void DefaultGraphicsWorld_Null::GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    void DefaultGraphicsWorld_Null::GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GT::Color colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
     {
         (void)gui;
         (void)rect;

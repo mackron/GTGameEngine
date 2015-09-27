@@ -15,7 +15,7 @@ namespace GT
           m_thumbDefaultColor(0.4f, 0.4f, 0.4f), m_thumbHoveredColor(0.5f, 0.5f, 0.5f), m_thumbPressedColor(0.6f, 0.6f, 0.6f)
     {
         gui.SetElementPadding(m_hRootElement, 2);
-        gui.SetElementBackgroundColor(m_hRootElement, GTLib::Colour(0.3f, 0.3f, 0.3f));
+        gui.SetElementBackgroundColor(m_hRootElement, GT::Color(0.3f, 0.3f, 0.3f));
 
 
         m_hThumb = gui.CreateElement();
@@ -116,12 +116,12 @@ namespace GT
         return m_orientation;
     }
 
-    void Scrollbar::SetTrackColor(const GTLib::Colour & color)
+    void Scrollbar::SetTrackColor(const GT::Color & color)
     {
         m_gui.SetElementBackgroundColor(m_hRootElement, color);
     }
 
-    void Scrollbar::SetDefaultThumbColor(const GTLib::Colour & color)
+    void Scrollbar::SetDefaultThumbColor(const GT::Color & color)
     {
         m_thumbDefaultColor = color;
         if (!m_isDraggingThumb && !m_gui.IsElementUnderMouse(m_hThumb)) {
@@ -129,7 +129,7 @@ namespace GT
         }
     }
 
-    void Scrollbar::SetHoveredThumbColor(const GTLib::Colour & color)
+    void Scrollbar::SetHoveredThumbColor(const GT::Color & color)
     {
         m_thumbHoveredColor = color;
         if (!m_isDraggingThumb && m_gui.IsElementUnderMouse(m_hThumb)) {
@@ -137,7 +137,7 @@ namespace GT
         }
     }
 
-    void Scrollbar::SetPressedThumbColor(const GTLib::Colour & color)
+    void Scrollbar::SetPressedThumbColor(const GT::Color & color)
     {
         m_thumbPressedColor = color;
         if (m_isDraggingThumb) {

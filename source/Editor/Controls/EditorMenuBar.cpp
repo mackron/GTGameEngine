@@ -31,11 +31,11 @@ namespace GT
 #if 0
         if (gui.IsElementUnderMouse(hElement))
         {
-            gui.SetElementTextColor(hElement, GTLib::Colour(1.0f, 1.0f, 1.0f, 1.0f));
+            gui.SetElementTextColor(hElement, GT::Color(1.0f, 1.0f, 1.0f, 1.0f));
         }
         else
         {
-            gui.SetElementTextColor(hElement, GTLib::Colour(0.75f, 0.75f, 0.75f, 1.0f));
+            gui.SetElementTextColor(hElement, GT::Color(0.75f, 0.75f, 0.75f, 1.0f));
         }
 #endif
     }
@@ -139,7 +139,7 @@ namespace GT
             // Now actiate the new button.
             if (pButton != nullptr)
             {
-                this->GetGUI().SetElementTextColor(pButton->GetRootElement(), GTLib::Colour(0.75f, 0.75f, 0.75f, 1.0f));
+                this->GetGUI().SetElementTextColor(pButton->GetRootElement(), GT::Color(0.75f, 0.75f, 0.75f, 1.0f));
 
                 pButton->Activate();
                 m_pActiveButton = pButton;
@@ -200,13 +200,13 @@ namespace GT
         }
         else
         {
-            this->GetGUI().SetElementTextColor(hButtonElement, GTLib::Colour(1.0f, 1.0f, 1.0f, 1.0f));
+            this->GetGUI().SetElementTextColor(hButtonElement, GT::Color(1.0f, 1.0f, 1.0f, 1.0f));
         }
     }
 
     void EditorMenuBar::_OnButtonMouseLeave(HGUIElement hButtonElement)
     {
-        this->GetGUI().SetElementTextColor(hButtonElement, GTLib::Colour(0.75f, 0.75f, 0.75f, 1.0f));
+        this->GetGUI().SetElementTextColor(hButtonElement, GT::Color(0.75f, 0.75f, 0.75f, 1.0f));
     }
 
     void EditorMenuBar::_OnButtonPressed(HGUIElement hButtonElement)

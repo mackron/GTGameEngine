@@ -6,7 +6,7 @@
 #include <GTLib/Font.hpp>
 #include <GTLib/TextMesh.hpp>
 #include <GTLib/Rect.hpp>
-#include <GTLib/Colour.hpp>
+#include <GTLib/Color.hpp>
 #include <GTLib/Vector.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/List.hpp>
@@ -786,10 +786,10 @@ namespace GTLib
 
 
         /// The default text colour.
-        GTLib::Colour defaultTextColour;
+        GT::Color defaultTextColour;
 
         /// The selection background colour.
-        GTLib::Colour selectionBackgroundColour;
+        GT::Color selectionBackgroundColour;
 
 
         /// Keeps track of the cursors last horizontal character index before doing vertical movements. Needed to place the cursor relative to

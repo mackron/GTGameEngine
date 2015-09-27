@@ -4,7 +4,7 @@
 #define GT_GUI_Renderer
 
 #include <GTLib/Rect.hpp>
-#include <GTLib/Colour.hpp>
+#include <GTLib/Color.hpp>
 #include "GUISurface.hpp"
 
 namespace GT
@@ -45,7 +45,7 @@ namespace GT
         ///
         /// @param rect   [in] The rectangle to draw.
         /// @param colour [in] The colour of the rectangle.
-        virtual void DrawRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, GTLib::Colour colour) = 0;
+        virtual void DrawRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, GT::Color colour) = 0;
 
         /// Sets the clipping rectangle.
         ///
@@ -90,7 +90,7 @@ namespace GT
         virtual void UninitializeImage(GT::GUIContext &context, HGUIImage hImage) = 0;
 
         /// Draws a rectangle that is textured with the given image.
-        virtual void DrawTexturedRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight) = 0;
+        virtual void DrawTexturedRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, HGUIImage hImage, GT::Color colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight) = 0;
 
     };
 }

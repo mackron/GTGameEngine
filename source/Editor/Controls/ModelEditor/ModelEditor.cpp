@@ -27,7 +27,7 @@ namespace GT
             // Viewport
             gui.SetElementParent(m_viewport.GetRootElement(), hRootElement);
             gui.SetElementSizeRatio(m_viewport.GetRootElement(), 1, 1);
-            gui.SetElementBorder(m_viewport.GetRootElement(), 1, GTLib::Colour(0.2f, 0.2f, 0.2f));
+            gui.SetElementBorder(m_viewport.GetRootElement(), 1, GT::Color(0.2f, 0.2f, 0.2f));
                 
 
             // Panel

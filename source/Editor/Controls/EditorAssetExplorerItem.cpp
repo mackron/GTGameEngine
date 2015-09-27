@@ -38,7 +38,7 @@ namespace GT
             gui.SetElementFont(hRootElement, theme.defaultFontFamily, FontWeight_Medium, FontSlant_None, 12);
             gui.SetElementTextColor(hRootElement, theme.defaultTextColor);
             gui.SetElementHeightToChildren(hRootElement);
-            //gui.SetElementBorder(hRootElement, 1, GTLib::Colour::Black);
+            //gui.SetElementBorder(hRootElement, 1, GT::Color::Black);
 
 
             // Title.
@@ -60,7 +60,7 @@ namespace GT
             gui.SetElementHeightToChildren(m_hTitleArrow);
             gui.SetElementWidth(m_hTitleArrow, 16U);
             gui.OnElementMouseEnter(m_hTitleArrow, [&]() {
-                gui.SetElementTextColor(m_hTitleArrow, GTLib::Colour::White);
+                gui.SetElementTextColor(m_hTitleArrow, GT::Color::White);
             });
             gui.OnElementMouseLeave(m_hTitleArrow, [&]() {
                 gui.SetElementTextColor(m_hTitleArrow, theme.defaultTextColor);
@@ -78,7 +78,7 @@ namespace GT
             if (fileSystem.IsDirectory(absolutePath))
             {
                 gui.SetElementText(m_hTitleIcon, g_FoldeClosedIconString);
-                gui.SetElementTextColor(m_hTitleIcon, GTLib::Colour(0.8f, 0.7f, 0.4f));
+                gui.SetElementTextColor(m_hTitleIcon, GT::Color(0.8f, 0.7f, 0.4f));
             }
             else
             {
@@ -439,7 +439,7 @@ namespace GT
         {
             auto &gui = this->GetGUI();
         
-            gui.SetElementBackgroundColor(m_hTitleContainer, GTLib::Colour(0.35f, 0.35f, 0.35f));
+            gui.SetElementBackgroundColor(m_hTitleContainer, GT::Color(0.35f, 0.35f, 0.35f));
         }
     }
 
@@ -449,7 +449,7 @@ namespace GT
         {
             auto &gui = this->GetGUI();
         
-            gui.SetElementBackgroundColor(m_hTitleContainer, GTLib::Colour(0, 0, 0, 0));
+            gui.SetElementBackgroundColor(m_hTitleContainer, GT::Color(0, 0, 0, 0));
         }
     }
 
@@ -466,7 +466,7 @@ namespace GT
     {
         auto &gui = this->GetGUI();
         
-        gui.SetElementBackgroundColor(m_hTitleContainer, GTLib::Colour(0, 0, 0, 0));
+        gui.SetElementBackgroundColor(m_hTitleContainer, GT::Color(0, 0, 0, 0));
     }
 
 

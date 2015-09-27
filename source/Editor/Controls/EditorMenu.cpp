@@ -26,7 +26,7 @@ namespace GT
 
 
         // Set the initial size of the window.
-        this->SetSize(m_gui.GetElementWidth(m_hRootElement), m_gui.GetElementHeight(m_hRootElement));
+        this->SetSize(static_cast<unsigned int>(m_gui.GetElementWidth(m_hRootElement)), static_cast<unsigned int>(m_gui.GetElementHeight(m_hRootElement)));
     }
 
     EditorMenu::~EditorMenu()

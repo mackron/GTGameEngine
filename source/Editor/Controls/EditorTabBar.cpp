@@ -22,7 +22,7 @@ namespace GT
             gui.SetElementHeightToChildren(hRootElement);
             gui.SetElementWidthRatio(hRootElement, 1.0f);
             gui.SetElementBackgroundColor(hRootElement, theme.backgroundDark);
-            gui.SetElementBorderBottom(hRootElement, 1, GTLib::Colour(0.35f, 0.35f, 0.35f));
+            gui.SetElementBorderBottom(hRootElement, 1, GT::Color(0.35f, 0.35f, 0.35f));
             gui.EnableElementChildWidthFlexing(hRootElement);
             gui.SetElementChildAxis(hRootElement, ChildAxis_Horizontal);
             gui.SetElementFont(hRootElement, theme.defaultFontFamily, FontWeight_Medium, FontSlant_None, 12);
@@ -55,7 +55,7 @@ namespace GT
 
             //gui.SetElementText(m_hDropDownContainer, "\xE2\x8B\xAF");   // <-- Midline ellipsis (U+22EF)
             gui.SetElementText(m_hDropDownContainer, "\xE2\x96\xBC");   // <-- Black Down-Pointing Triangle (U+25BC)
-            gui.SetElementTextColor(m_hDropDownContainer, GTLib::Colour(0.8f, 0.8f, 0.8f));
+            gui.SetElementTextColor(m_hDropDownContainer, GT::Color(0.8f, 0.8f, 0.8f));
         }
     }
 
@@ -215,7 +215,7 @@ namespace GT
 
             GTLib::Rect<int> tabInnerRect;
             gui.GetElementAbsoluteInnerBorderRect(pActiveTab->GetRootElement(), tabInnerRect);
-            gui.SetElementBorderBottomMaskInPixels(this->GetRootElement(), tabInnerRect.left - tabParentRect.left, tabInnerRect.GetWidth(), GTLib::Colour(0.25f, 0.25f, 0.25f));
+            gui.SetElementBorderBottomMaskInPixels(this->GetRootElement(), tabInnerRect.left - tabParentRect.left, tabInnerRect.GetWidth(), GT::Color(0.25f, 0.25f, 0.25f));
         }
         else
         {

@@ -45,7 +45,7 @@ namespace GT
         (void)rect;
     }
 
-    void GraphicsWorld::GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GTLib::Colour colour)
+    void GraphicsWorld::GUI_DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GT::Color colour)
     {
         (void)gui;
         (void)rect;
@@ -83,7 +83,7 @@ namespace GT
         (void)isTransparent;
     }
 
-    void GraphicsWorld::GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    void GraphicsWorld::GUI_DrawTexturedRectangle(GUIContext &gui, GTLib::Rect<int> rect, HGraphicsResource hTextureResource, GT::Color colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
     {
         (void)gui;
         (void)rect;

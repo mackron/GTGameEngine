@@ -50,7 +50,7 @@ namespace GT
         }
     }
 
-    void GraphicsWorldGUIRendererAndResourceManager::DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GTLib::Colour colour)
+    void GraphicsWorldGUIRendererAndResourceManager::DrawRectangle(GUIContext &gui, GTLib::Rect<int> rect, GT::Color colour)
     {
         if (m_pGraphicsResourceManager != nullptr)
         {
@@ -113,7 +113,7 @@ namespace GT
         (void)hImage;
     }
 
-    void GraphicsWorldGUIRendererAndResourceManager::DrawTexturedRectangle(GT::GUIContext &gui, GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    void GraphicsWorldGUIRendererAndResourceManager::DrawTexturedRectangle(GT::GUIContext &gui, GTLib::Rect<int> rect, HGUIImage hImage, GT::Color colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
     {
         (void)gui;
 

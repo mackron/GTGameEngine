@@ -140,11 +140,11 @@ namespace GT
         this->SetClippingRect(context, rect);
 
         // There is no need to clear to black with GDI.
-        //this->DrawRectangle(context, rect, GTLib::Colour(0, 0, 0, 1));
+        //this->DrawRectangle(context, rect, GT::Color(0, 0, 0, 1));
     }
 
 
-    void EditorGUIRenderer_GDI::DrawRectangle(GUIContext &context, GTLib::Rect<int> rect, GTLib::Colour color)
+    void EditorGUIRenderer_GDI::DrawRectangle(GUIContext &context, GTLib::Rect<int> rect, GT::Color color)
     {
         (void)context;
 
@@ -391,7 +391,7 @@ namespace GT
         }
     }
 
-    void EditorGUIRenderer_GDI::DrawTexturedRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
+    void EditorGUIRenderer_GDI::DrawTexturedRectangle(GT::GUIContext &context, GTLib::Rect<int> rect, HGUIImage hImage, GT::Color colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight)
     {
         // NOTE: Colour is not implemented yet.
 

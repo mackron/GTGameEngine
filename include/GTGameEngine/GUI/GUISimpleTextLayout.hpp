@@ -85,17 +85,17 @@ namespace GT
 
 
         /// @copydoc GUITextLayout::SetDefaultTextColor()
-        void SetDefaultTextColor(const GTLib::Colour &color);
+        void SetDefaultTextColor(const GT::Color &color);
 
         /// @copydoc GUITextLayout::GetDefaultTextColor()
-        GTLib::Colour GetDefaultTextColor() const;
+        GT::Color GetDefaultTextColor() const;
 
 
         /// @copydoc GUITextLayout::SetSelectionBackgroundColor()
-        void SetSelectionBackgroundColor(const GTLib::Colour &color);
+        void SetSelectionBackgroundColor(const GT::Color &color);
 
         /// @copydoc GUITextLayout::GetSelectionBackgroundColor()
-        GTLib::Colour GetSelectionBackgroundColor() const;
+        GT::Color GetSelectionBackgroundColor() const;
 
 
         /// @copydoc GUITextLayout::GetTextRectRelativeToBounds()
@@ -508,10 +508,10 @@ namespace GT
         HGUIFont m_hFont;
 
         /// The colour of the text.
-        GTLib::Colour m_color;
+        GT::Color m_color;
 
         /// The colour of the selection background.
-        GTLib::Colour m_selectionBackgroundColor;
+        GT::Color m_selectionBackgroundColor;
 
 
         /// The list of runs making up the layout.

@@ -19,7 +19,7 @@ namespace GT
             gui.SetElementWidthRatio(hRootElement, 1.0f);
             gui.SetElementVerticalAlign(hRootElement, VerticalAlign_Center);
             gui.SetElementBackgroundColor(hRootElement, theme.backgroundMid);
-            gui.SetElementBorderBottom(hRootElement, 1, GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
+            gui.SetElementBorderBottom(hRootElement, 1, GT::Color(0.2f, 0.2f, 0.2f, 1.0f));
             gui.SetElementPaddingLeft(hRootElement, 2);
 
             gui.SetElementParent(m_menuBar.GetRootElement(), this->GetRootElement());

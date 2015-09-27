@@ -22,7 +22,7 @@ namespace GT
             gui.SetElementPadding(hRootElement, 2);
             gui.SetElementFont(hRootElement, theme.defaultFontFamily, FontWeight_Medium, FontSlant_None, 12);
 
-            //gui.SetElementBorderTop(hRootElement, 1, GTLib::Colour(0.2f, 0.2f, 0.2f, 1.0f));
+            //gui.SetElementBorderTop(hRootElement, 1, GT::Color(0.2f, 0.2f, 0.2f, 1.0f));
 
 
             // The left side container.
@@ -59,8 +59,8 @@ namespace GT
             gui.SetElementParent(m_hCommandTextBox, m_hLeftContainer);
             gui.SetElementHeightRatio(m_hCommandTextBox, 1);
             gui.SetElementWidthRatio(m_hCommandTextBox, 1);
-            gui.SetElementBorder(m_hCommandTextBox, 1, GTLib::Colour(0.4f, 0.4f, 0.4f));
-            gui.SetElementBackgroundColor(m_hCommandTextBox, GTLib::Colour(0.25f, 0.25f, 0.25f));
+            gui.SetElementBorder(m_hCommandTextBox, 1, GT::Color(0.4f, 0.4f, 0.4f));
+            gui.SetElementBackgroundColor(m_hCommandTextBox, GT::Color(0.25f, 0.25f, 0.25f));
             gui.SetElementPadding(m_hCommandTextBox, 2);
             gui.SetElementVerticalAlign(m_hCommandTextBox, VerticalAlign_Center);
             gui.SetElementCursor(m_hCommandTextBox, GUISystemCursor::IBeam);

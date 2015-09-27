@@ -178,7 +178,7 @@ namespace GT
         void Renderer_Clear(const GTLib::Rect<int> &rect);
 
         /// @copydoc GUIContextBase::Renderer_DrawRectangle()
-        void Renderer_DrawRectangle(GTLib::Rect<int> rect, GTLib::Colour colour);
+        void Renderer_DrawRectangle(GTLib::Rect<int> rect, GT::Color colour);
 
         /// @copydoc GUIContextBase::Renderer_SetClippingRect()
         void Renderer_SetClippingRect(GTLib::Rect<int> clippingRect);
@@ -199,7 +199,7 @@ namespace GT
         void Renderer_UninitializeImage(HGUIImage hImage);
 
         /// @copydoc GUIContextBase::Renderer_DrawTexturedRectangle()
-        void Renderer_DrawTexturedRectangle(GTLib::Rect<int> rect, HGUIImage hImage, GTLib::Colour colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight);
+        void Renderer_DrawTexturedRectangle(GTLib::Rect<int> rect, HGUIImage hImage, GT::Color colour, unsigned int subImageOffsetX, unsigned int subImageOffsetY, unsigned int subImageWidth, unsigned int subImageHeight);
 
 
 
@@ -854,14 +854,14 @@ namespace GT
         ///
         /// @param hElement [in] The GUI element whose background colour is being changed.
         /// @param colour   [in] The new background colour.
-        void SetElementBackgroundColor(HGUIElement hElement, const GTLib::Colour &colour);
+        void SetElementBackgroundColor(HGUIElement hElement, const GT::Color &colour);
 
         /// Retrieves the background colour of the given element.
         ///
         /// @param hElement [in] The GUI element whose background colour is being retrieved.
         ///
         /// @return The background colour of the given element.
-        GTLib::Colour GetElementBackgroundColor(HGUIElement hElement) const;
+        GT::Color GetElementBackgroundColor(HGUIElement hElement) const;
 
         /// @copydoc GUIContextBase::SetElementBackgroundColorBoundary()
         void SetElementBackgroundColorBoundary(HGUIElement hElement, BackgroundBoundary boundary);
@@ -884,10 +884,10 @@ namespace GT
         HGUIImage GetElementBackgroundImage(HGUIElement hElement);
 
         /// @copydoc GUIContextBase::SetElementBackgroundImageColor()
-        void SetElementBackgroundImageColor(HGUIElement hElement, const GTLib::Colour &colour);
+        void SetElementBackgroundImageColor(HGUIElement hElement, const GT::Color &colour);
 
         /// @copydoc GUIContextBase::GetElementBackgroundImageColor()
-        GTLib::Colour GetElementBackgroundImageColor(HGUIElement hElement) const;
+        GT::Color GetElementBackgroundImageColor(HGUIElement hElement) const;
 
         /// Sets the offset of the given element's background sub-image.
         void SetElementBackgroundSubImageOffset(HGUIElement hElement, unsigned int subImageOffsetX, unsigned int subImageOffsetY);
@@ -962,31 +962,31 @@ namespace GT
         ///
         /// @param hElement    [in] The element whose border colour is being set.
         /// @param borderColor [in] The border colour.
-        void SetElementBorderLeftColor(HGUIElement hElement, const GTLib::Colour &borderColor);
+        void SetElementBorderLeftColor(HGUIElement hElement, const GT::Color &borderColor);
 
         /// Sets the colour of the top border of the given element.
         ///
         /// @param hElement    [in] The element whose border colour is being set.
         /// @param borderColor [in] The border colour.
-        void SetElementBorderTopColor(HGUIElement hElement, const GTLib::Colour &borderColor);
+        void SetElementBorderTopColor(HGUIElement hElement, const GT::Color &borderColor);
 
         /// Sets the colour of the right border of the given element.
         ///
         /// @param hElement    [in] The element whose border colour is being set.
         /// @param borderColor [in] The border colour.
-        void SetElementBorderRightColor(HGUIElement hElement, const GTLib::Colour &borderColor);
+        void SetElementBorderRightColor(HGUIElement hElement, const GT::Color &borderColor);
 
         /// Sets the colour of the bottom border of the given element.
         ///
         /// @param hElement    [in] The element whose border colour is being set.
         /// @param borderColor [in] The border colour.
-        void SetElementBorderBottomColor(HGUIElement hElement, const GTLib::Colour &borderColor);
+        void SetElementBorderBottomColor(HGUIElement hElement, const GT::Color &borderColor);
 
         /// Sets the colour of all four borders of the given element.
         ///
         /// @param hElement    [in] The element whose border colour is being set.
         /// @param borderColor [in] The border colour.
-        void SetElementBorderColor(HGUIElement hElement, const GTLib::Colour &borderColor);
+        void SetElementBorderColor(HGUIElement hElement, const GT::Color &borderColor);
 
 
         /// Sets the width and color of the left border.
@@ -994,48 +994,48 @@ namespace GT
         /// @param hElement    [in] The element whose border is being set.
         /// @param borderWidth [in] The width of the border, in DPI-aware points.
         /// @param borderColor [in] The colour of the border.
-        void SetElementBorderLeft(HGUIElement hElement, uint32_t borderWidth, const GTLib::Colour &borderColor);
+        void SetElementBorderLeft(HGUIElement hElement, uint32_t borderWidth, const GT::Color &borderColor);
 
         /// Sets the width and color of the top border.
         ///
         /// @param hElement    [in] The element whose border is being set.
         /// @param borderWidth [in] The width of the border, in DPI-aware points.
         /// @param borderColor [in] The colour of the border.
-        void SetElementBorderTop(HGUIElement hElement, uint32_t borderWidth, const GTLib::Colour &borderColor);
+        void SetElementBorderTop(HGUIElement hElement, uint32_t borderWidth, const GT::Color &borderColor);
 
         /// Sets the width and color of the right border.
         ///
         /// @param hElement    [in] The element whose border is being set.
         /// @param borderWidth [in] The width of the border, in DPI-aware points.
         /// @param borderColor [in] The colour of the border.
-        void SetElementBorderRight(HGUIElement hElement, uint32_t borderWidth, const GTLib::Colour &borderColor);
+        void SetElementBorderRight(HGUIElement hElement, uint32_t borderWidth, const GT::Color &borderColor);
 
         /// Sets the width and color of the bottom border.
         ///
         /// @param hElement    [in] The element whose border is being set.
         /// @param borderWidth [in] The width of the border, in DPI-aware points.
         /// @param borderColor [in] The colour of the border.
-        void SetElementBorderBottom(HGUIElement hElement, uint32_t borderWidth, const GTLib::Colour &borderColor);
+        void SetElementBorderBottom(HGUIElement hElement, uint32_t borderWidth, const GT::Color &borderColor);
 
         /// Sets the border of the given element.
         ///
         /// @param hElement    [in] The element whose border is being set.
         /// @param borderWidth [in] The width of the border, in DPI-aware points.
         /// @param borderColor [in] The colour of the border.
-        void SetElementBorder(HGUIElement hElement, uint32_t borderWidth, const GTLib::Colour &borderColor);
+        void SetElementBorder(HGUIElement hElement, uint32_t borderWidth, const GT::Color &borderColor);
 
 
         /// @copydoc GUIContext::SetElementBorderLeftMask()
-        void SetElementBorderLeftMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
+        void SetElementBorderLeftMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GT::Color &maskColor = GT::Color(0, 0, 0, 0));
 
         /// @copydoc GUIContext::SetElementBorderTopMask()
-        void SetElementBorderTopMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
+        void SetElementBorderTopMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GT::Color &maskColor = GT::Color(0, 0, 0, 0));
 
         /// @copydoc GUIContext::SetElementBorderRightMask()
-        void SetElementBorderRightMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
+        void SetElementBorderRightMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GT::Color &maskColor = GT::Color(0, 0, 0, 0));
 
         /// @copydoc GUIContext::SetElementBorderBottomMask()
-        void SetElementBorderBottomMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GTLib::Colour &maskColor = GTLib::Colour(0, 0, 0, 0));
+        void SetElementBorderBottomMaskInPixels(HGUIElement hElement, uint32_t maskOffset, uint32_t maskLength, const GT::Color &maskColor = GT::Color(0, 0, 0, 0));
 
 
 
@@ -1402,10 +1402,10 @@ namespace GT
 
 
         /// @copydoc GUIElementBase::SetElementTextColor()
-        void SetElementTextColor(HGUIElement hElement, const GTLib::Colour &color);
+        void SetElementTextColor(HGUIElement hElement, const GT::Color &color);
 
         /// @copydoc GUIElementbase::GetElementTextColor()
-        GTLib::Colour GetElementTextColor(HGUIElement hElement) const;
+        GT::Color GetElementTextColor(HGUIElement hElement) const;
 
 
         /// @copydoc GUIElementbase::EnableEditableText()

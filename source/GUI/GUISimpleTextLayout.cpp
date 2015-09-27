@@ -173,23 +173,23 @@ namespace GT
     }
 
 
-    void GUISimpleTextLayout::SetDefaultTextColor(const GTLib::Colour &color)
+    void GUISimpleTextLayout::SetDefaultTextColor(const GT::Color &color)
     {
         m_color = color;
     }
 
-    GTLib::Colour GUISimpleTextLayout::GetDefaultTextColor() const
+    GT::Color GUISimpleTextLayout::GetDefaultTextColor() const
     {
         return m_color;
     }
 
 
-    void GUISimpleTextLayout::SetSelectionBackgroundColor(const GTLib::Colour &color)
+    void GUISimpleTextLayout::SetSelectionBackgroundColor(const GT::Color &color)
     {
         m_selectionBackgroundColor = color;
     }
 
-    GTLib::Colour GUISimpleTextLayout::GetSelectionBackgroundColor() const
+    GT::Color GUISimpleTextLayout::GetSelectionBackgroundColor() const
     {
         return m_selectionBackgroundColor;
     }

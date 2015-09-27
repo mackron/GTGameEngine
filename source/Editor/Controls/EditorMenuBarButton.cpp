@@ -19,7 +19,7 @@ namespace GT
             gui.SetElementPaddingTop(hElement, 1);
             gui.SetElementPaddingBottom(hElement, 2);
             gui.SetElementText(hElement, text);
-            gui.SetElementTextColor(hElement, GTLib::Colour(0.75f, 0.75f, 0.75f, 1.0f));
+            gui.SetElementTextColor(hElement, GT::Color(0.75f, 0.75f, 0.75f, 1.0f));
         }
     }
 
@@ -74,7 +74,7 @@ namespace GT
             uint32_t paddingBottom = gui.GetElementPaddingBottom(hElement);
 
             uint32_t borderWidth = 1;
-            GTLib::Colour borderColor(theme.borderDefault);
+            GT::Color borderColor(theme.borderDefault);
 
             paddingLeft   = ((paddingLeft   > borderWidth) ? (paddingLeft   - borderWidth) : (0));
             paddingTop    = ((paddingTop    > borderWidth) ? (paddingTop    - borderWidth) : (0));

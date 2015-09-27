@@ -13,7 +13,7 @@ namespace GT
 
         gui.SetElementSizeRatio(this->GetRootElement(), 1, 1);
         gui.SetElementBackgroundImage(this->GetRootElement(), absolutePath);
-        gui.SetElementBackgroundImageColor(this->GetRootElement(), GTLib::Colour::White);
+        gui.SetElementBackgroundImageColor(this->GetRootElement(), GT::Color::White);
         gui.SetElementBackgroundImageRepeat(this->GetRootElement(), BackgroundRepeat_None, BackgroundRepeat_None);
 
         gui.OnElementMouseWheel(this->GetRootElement(), [&](int delta, int, int) {
