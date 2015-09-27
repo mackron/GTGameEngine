@@ -552,6 +552,24 @@ namespace GT
         return pOpenedFile->Save();
     }
 
+    bool Editor::SaveFocusedFile()
+    {
+        EditorSubEditor* pFocusedFile = this->GetFocusedSubEditor();
+        if (pFocusedFile != nullptr) {
+            return pFocusedFile->Save();
+        }
+
+        return false;
+    }
+
+    void Editor::SaveAllOpenFiles()
+    {
+        for (size_t i = 0; i < m_openedFiles.GetCount(); ++i)
+        {
+            m_openedFiles[i]->Save();
+        }
+    }
+
 
     EditorSubEditor* Editor::FindSubEditorByAbsolutePathOrIdentifier(const char* absolutePathOrIdentifier)
     {
@@ -1069,7 +1087,11 @@ namespace GT
         {
             // Save
             if (key == GTLib::Keys::S) {
-                this->SaveFile(this->GetFocusedFileAbsolutePath());
+                if (m_gameContext.IsKeyDown(GTLib::Keys::Shift)) {
+                    this->SaveAllOpenFiles();
+                } else {
+                    this->SaveFocusedFile();
+                }
             }
 
 

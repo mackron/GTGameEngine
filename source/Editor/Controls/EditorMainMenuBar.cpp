@@ -26,13 +26,13 @@ namespace GT
 
             EditorMenuItem* pSave = m_pFileMenu->AppendMenuItem("Save", "Ctrl+S");
             pSave->OnPressed([&]() {
-                //m_editor.SaveFocusedFile();
+                m_editor.SaveFocusedFile();
                 this->DeactivateActiveButton();
             });
 
             EditorMenuItem* pSaveAll = m_pFileMenu->AppendMenuItem("Save All", "Ctrl+Shift+S");
             pSaveAll->OnPressed([&]() {
-                //m_editor.SaveAllOpenFiles();
+                m_editor.SaveAllOpenFiles();
                 this->DeactivateActiveButton();
             });
             

@@ -164,6 +164,12 @@ namespace GT
         ///     Use this in conjunction with GetOpenFileCount().
         bool SaveFileByIndex(unsigned int index);
 
+        /// Saves the focused file.
+        bool SaveFocusedFile();
+
+        /// Saves every open file.
+        void SaveAllOpenFiles();
+
         /// Saves and closes all open files.
         void SaveAndCloseAllOpenFiles();
 
