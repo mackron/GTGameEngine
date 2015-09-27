@@ -1583,6 +1583,10 @@ namespace GT
         GT::Color GetElementTextColor(GUIElement* pElement) const;
 
 
+        /// Retrieves the size of the given element's text.
+        bool GetElementTextSize(GUIElement* pElement, unsigned int &widthOut, unsigned int &heightOut) const;
+
+
         /// Enables editable text on the given element.
         void EnableEditableText(GUIElement* pElement);
 

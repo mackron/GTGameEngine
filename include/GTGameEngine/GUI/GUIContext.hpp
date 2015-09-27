@@ -1408,6 +1408,10 @@ namespace GT
         GT::Color GetElementTextColor(HGUIElement hElement) const;
 
 
+        /// @copydoc GUIElementbase::GetElementTextRect()
+        bool GetElementTextSize(HGUIElement hElement, unsigned int &widthOut, unsigned int &heightOut) const;
+
+
         /// @copydoc GUIElementbase::EnableEditableText()
         void EnableEditableText(HGUIElement hElement);
 

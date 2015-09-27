@@ -3300,6 +3300,17 @@ namespace GT
         return GT::Color(0.0f, 0.0f, 0.0f, 1.0f);
     }
 
+    bool GUIContext::GetElementTextSize(HGUIElement hElement, unsigned int &widthOut, unsigned int &heightOut) const
+    {
+        auto pElement = this->GetElementPtr(hElement);
+        if (pElement != nullptr)
+        {
+            return GUIContextBase::GetElementTextSize(pElement, widthOut, heightOut);
+        }
+
+        return false;
+    }
+
 
     void GUIContext::EnableEditableText(HGUIElement hElement)
     {

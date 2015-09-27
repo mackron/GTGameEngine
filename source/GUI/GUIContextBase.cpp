@@ -2946,6 +2946,19 @@ namespace GT
         return GUIElementStyle_Get_textcolor(pElement->style);
     }
 
+    bool GUIContextBase::GetElementTextSize(GUIElement *pElement, unsigned int &widthOut, unsigned int &heightOut) const
+    {
+        assert(pElement != nullptr);
+
+        GTLib::Rect<int> rect;
+        this->GetElementAbsoluteTextRect(pElement, rect);
+
+        widthOut  = rect.right  - rect.left;
+        heightOut = rect.bottom - rect.top;
+
+        return true;
+    }
+
 
     void GUIContextBase::EnableEditableText(GUIElement* pElement)
     {

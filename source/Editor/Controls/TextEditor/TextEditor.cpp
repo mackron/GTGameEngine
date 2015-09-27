@@ -48,6 +48,9 @@ namespace GT
         m_textBox.GetVerticalScrollbar().OnScroll([&](int scrollPos) {
             gui.SetElementInnerOffsetY(m_textBox.GetContentElement(), float(-scrollPos * static_cast<int>(this->GetLineHeight())));
         });
+        m_textBox.GetHorizontalScrollbar().OnScroll([&](int scrollPos) {
+            gui.SetElementInnerOffsetX(m_textBox.GetContentElement(), float(-scrollPos));
+        });
 
 
         this->Load();
@@ -214,6 +217,7 @@ namespace GT
 
     void TextEditor::RefreshScrollbars()
     {
+        // Vertical.
         int textLines = this->GetLineCount();
         int pageLines = this->GetLinesPerPage();
         int scrollingLines = textLines + pageLines - 1 - 1;     // -1 because the range is zero based and -1 because want to see the last line in the text box when scrolled to the bottom.
@@ -223,6 +227,17 @@ namespace GT
 
         m_textBox.GetVerticalScrollbar().SetRange(0, scrollingLines);
         m_textBox.GetVerticalScrollbar().SetPageSize(pageLines);
+
+
+        // Horizontal.
+        unsigned int textWidth = 0;
+        unsigned int textHeight = 0;
+        m_gui.GetElementTextSize(m_textBox.GetContentElement(), OUT textWidth, OUT textHeight);
+
+        int pageWidth = m_gui.GetElementInnerWidth(m_textBox.GetContentElement());
+        int extraHorzScroll = pageWidth / 2;
+        m_textBox.GetHorizontalScrollbar().SetRange(0, textWidth + extraHorzScroll);
+        m_textBox.GetHorizontalScrollbar().SetPageSize(pageWidth);
     }
 
     unsigned int TextEditor::GetLineCount() const

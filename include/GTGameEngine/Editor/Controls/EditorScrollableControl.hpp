@@ -23,12 +23,18 @@ namespace GT
         /// Retrieves a reference to the vertical scrollbar control.
         Scrollbar & GetVerticalScrollbar() { return m_verticalScrollbar; }
 
+        /// Retrieves a reference to the horizontal scrollbar control.
+        Scrollbar & GetHorizontalScrollbar() { return m_horizontalScrollbar; }
+
 
 
     private:
 
-        // The vertical scrollbar.
+        /// The vertical scrollbar.
         Scrollbar m_verticalScrollbar;
+
+        /// The horizontal scrollbar.
+        Scrollbar m_horizontalScrollbar;
 
 
         struct DeadSpaceSizingEventHandler : public GUIEventHandler

@@ -1,13 +1,13 @@
 // Copyright (C) 2011 - 2015 David Reid. See included LICENCE file.
 
-#include <GTGameEngine/Editor/Controls/EditorAssetExplorer.hpp>
+#include <GTGameEngine/Editor/Controls/EditorScrollableControl.hpp>
 #include <GTGameEngine/Editor/Editor.hpp>
 
 namespace GT
 {
     EditorScrollableControl::EditorScrollableControl(Editor &editor)
         : EditorQuadControl(editor),
-          m_verticalScrollbar(editor.GetGUI(), 0, ScrollbarOrientation::Vertical),
+          m_verticalScrollbar(editor.GetGUI(), 0, ScrollbarOrientation::Vertical), m_horizontalScrollbar(editor.GetGUI(), 0, ScrollbarOrientation::Horizontal),
           m_deadSpaceSizingHandler(this->GetBottomRightQuadrant(), this->GetTopRightQuadrant(), this->GetBottomLeftQuadrant())
     {
         HGUIElement hRootElement = this->GetRootElement();
@@ -43,6 +43,14 @@ namespace GT
             //gui.SetElementHeight(hHorizontalContainer, theme.scrollbarWidth);
             gui.SetElementBackgroundColor(hHorizontalContainer, theme.scrollbarBackgroundColor);
             gui.AttachLocalEventHandler(hHorizontalContainer, m_deadSpaceSizingHandler);
+
+            // Horizontal scrollbar.
+            gui.SetElementParent(m_horizontalScrollbar, hHorizontalContainer);
+            gui.SetElementHeight(m_horizontalScrollbar, 16U);
+            gui.SetElementWidthRatio(m_horizontalScrollbar, 1);
+            m_horizontalScrollbar.SetRange(0, 2);
+            m_horizontalScrollbar.SetPageSize(1);
+            m_horizontalScrollbar.SetScrollPosition(0);
         }
     }
 
