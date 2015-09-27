@@ -13,38 +13,27 @@ namespace GT
     {
         if (m_hRootElement != NULL)
         {
-            const EditorTheme &theme = editor.GetTheme();
+            //const EditorTheme &theme = editor.GetTheme();
 
             m_pFileMenuButton = this->CreateAndInsertButton("FILE");
             m_pEditMenuButton = this->CreateAndInsertButton("EDIT");
             m_pHelpMenuButton = this->CreateAndInsertButton("HELP");
 
 
-            m_pFileMenu = new EditorMenu(editor, hParentWindow);
-            m_gui.SetElementBackgroundColor(m_pFileMenu->GetRootElement(), theme.backgroundPopup);
-            m_gui.SetElementBorderColor(m_pFileMenu->GetRootElement(), theme.borderDefault);
-
-            EditorMenuItem* pSave = m_pFileMenu->AppendMenuItem("Save", "Ctrl+S");
-            pSave->OnPressed([&]() {
-                m_editor.SaveFocusedFile();
+            m_pFileMenu = new EditorFileMenu(editor, hParentWindow);
+            m_pFileMenu->OnClose([&]() {
                 this->DeactivateActiveButton();
             });
 
-            EditorMenuItem* pSaveAll = m_pFileMenu->AppendMenuItem("Save All", "Ctrl+Shift+S");
-            pSaveAll->OnPressed([&]() {
-                m_editor.SaveAllOpenFiles();
+            m_pEditMenu = new EditorEditMenu(editor, hParentWindow);
+            m_pEditMenu->OnClose([&]() {
                 this->DeactivateActiveButton();
             });
-            
-            m_pFileMenu->AppendSeparator();
-            
-            EditorMenuItem* pExit = m_pFileMenu->AppendMenuItem("Exit to Desktop", "Alt+F4");
-            pExit->OnPressed([&]() {
-                m_editor.GetGameContext().Close();
+
+            m_pHelpMenu = new EditorHelpMenu(editor, hParentWindow);
+            m_pHelpMenu->OnClose([&]() {
+                this->DeactivateActiveButton();
             });
-
-
-            m_pFileMenu->RefreshMenuItemAlignments();
         }
     }
 
@@ -55,6 +44,8 @@ namespace GT
         this->DeleteButton(m_pHelpMenuButton);
 
         delete m_pFileMenu;
+        delete m_pEditMenu;
+        delete m_pHelpMenu;
     }
 
 
@@ -129,9 +120,14 @@ namespace GT
 
     EditorPopupControl* EditorMainMenuBar::GetButtonMenu(EditorMenuBarButton* pButton) const
     {
-        if (pButton == m_pFileMenuButton)
-        {
+        if (pButton == m_pFileMenuButton) {
             return m_pFileMenu;
+        }
+        if (pButton == m_pEditMenuButton) {
+            return m_pEditMenu;
+        }
+        if (pButton == m_pHelpMenuButton) {
+            return m_pHelpMenu;
         }
 
 

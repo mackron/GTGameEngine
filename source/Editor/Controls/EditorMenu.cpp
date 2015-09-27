@@ -9,22 +9,37 @@ namespace GT
         : EditorPopupControl(editor, hParentWindow),
           m_onClose(nullptr)
     {
+        m_gui.SetElementBackgroundColor(m_hRootElement, editor.GetTheme().backgroundPopup);
+        m_gui.SetElementBorderColor(m_hRootElement, editor.GetTheme().borderDefault);
         m_gui.SetElementPaddingTop(m_hRootElement, 2);
         m_gui.SetElementPaddingBottom(m_hRootElement, 2);
 
         m_gui.SetElementWidthToChildren(m_hRootElement);
         m_gui.SetElementHeightToChildren(m_hRootElement);
         m_gui.SetElementMinWidth(m_hRootElement, 100U);
-        m_gui.SetElementMinHeight(m_hRootElement, 32U);
+        m_gui.SetElementMinHeight(m_hRootElement, 16U);
 
         // We size the window based on the size of the element.
         m_gui.OnElementSize(m_hRootElement, [&](unsigned int width, unsigned int height) {
             this->SetSize(width, height);
         });
+
+
+        // Set the initial size of the window.
+        this->SetSize(m_gui.GetElementWidth(m_hRootElement), m_gui.GetElementHeight(m_hRootElement));
     }
 
     EditorMenu::~EditorMenu()
     {
+        for (size_t i = 0; i < m_menuItems.GetCount(); ++i)
+        {
+            delete m_menuItems[i];
+        }
+
+        for (size_t i = 0; i < m_menuSeparators.GetCount(); ++i)
+        {
+            delete m_menuSeparators[i];
+        }
     }
 
 
