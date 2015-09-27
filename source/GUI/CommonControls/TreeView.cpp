@@ -7,10 +7,61 @@ namespace GT
     TreeView::TreeView(GUIContext &gui, HGUIElement hParent)
         : GUIControl(gui, hParent),
           m_rootItem(gui, nullptr, ""),
+          m_hTopContainer(0), m_hBottomContainer(0), m_hRootItemContainer(0),
+          m_verticalScrollbar(gui, 0, ScrollbarOrientation::Vertical), m_horizontalScrollbar(gui, 0, ScrollbarOrientation::Horizontal),
+          m_hDeadSpace(0),
           m_isMultiSelectionEnabled(false),
           m_onItemSelected(nullptr), m_onItemDeselected(nullptr), m_onItemExpanded(nullptr), m_onItemCollapsed(nullptr), m_onLeafItemPicked(nullptr)
     {
-        m_gui.SetElementParent(m_rootItem.GetRootElement(), m_hRootElement);
+        m_gui.EnableElementChildWidthFlexing(m_hRootElement);
+        m_gui.EnableElementChildHeightFlexing(m_hRootElement);
+        
+
+        // Top
+        {
+            m_hTopContainer = m_gui.CreateElement();
+            m_gui.SetElementParent(m_hTopContainer, m_hRootElement);
+            m_gui.SetElementSizeRatio(m_hTopContainer, 1, 1);
+            m_gui.SetElementChildAxis(m_hTopContainer, ChildAxis_Horizontal);
+            m_gui.EnableElementChildWidthFlexing(m_hTopContainer);
+
+
+            // Main content on the left...
+            m_hRootItemContainer = m_gui.CreateElement();
+            m_gui.SetElementParent(m_hRootItemContainer, m_hTopContainer);
+            m_gui.SetElementSizeRatio(m_hRootItemContainer, 1, 1);
+            
+            m_gui.SetElementParent(m_rootItem.GetRootElement(), m_hRootItemContainer);
+
+
+            // ... and the vertical scrollbar on the right.
+            m_gui.SetElementParent(m_verticalScrollbar.GetRootElement(), m_hTopContainer);
+            m_gui.SetElementWidth(m_verticalScrollbar.GetRootElement(), 16U);
+            m_gui.SetElementHeightRatio(m_verticalScrollbar.GetRootElement(), 1);
+        }
+
+
+        // Bottom
+        {
+            m_hBottomContainer = m_gui.CreateElement();
+            m_gui.SetElementParent(m_hBottomContainer, m_hRootElement);
+            m_gui.SetElementWidthRatio(m_hBottomContainer, 1);
+            m_gui.SetElementHeightToChildren(m_hBottomContainer);
+            m_gui.SetElementChildAxis(m_hBottomContainer, ChildAxis_Horizontal);
+            m_gui.EnableElementChildWidthFlexing(m_hBottomContainer);
+
+
+            // Horizontal scrollbar on the left...
+            m_gui.SetElementParent(m_horizontalScrollbar.GetRootElement(), m_hBottomContainer);
+            m_gui.SetElementWidthRatio(m_horizontalScrollbar.GetRootElement(), 1);
+            m_gui.SetElementHeight(m_horizontalScrollbar.GetRootElement(), 16U);
+
+
+            // ... and dead space on the right.
+            m_hDeadSpace = m_gui.CreateElement();
+            m_gui.SetElementParent(m_hDeadSpace, m_hBottomContainer);
+            m_gui.SetElementSize(m_hDeadSpace, 16U, 16U);
+        }
 
 
         // We need to make a few changes the root item since it's a special one.
@@ -18,6 +69,25 @@ namespace GT
         m_rootItem.DisableSelection();
         m_rootItem.SetChildrenIndentation(0);
         m_rootItem.Expand();
+
+        // When the root item changes size, we need to refresh scrollbars.
+        m_gui.OnElementSize(m_rootItem.GetRootElement(), [&](unsigned int, unsigned int) {
+            this->RefreshScrollbars();
+        });
+
+        // We also need to refresh scrollbars when the container element for the root item changes size.
+        m_gui.OnElementSize(m_hRootItemContainer, [&](unsigned int, unsigned int) {
+            this->RefreshScrollbars();
+        });
+
+
+        // Scrolling.
+        m_verticalScrollbar.OnScroll([&](int scrollPos) {
+            m_gui.SetElementInnerOffsetY(m_hRootItemContainer, float(-scrollPos));
+        });
+        m_horizontalScrollbar.OnScroll([&](int scrollPos) {
+            m_gui.SetElementInnerOffsetX(m_hRootItemContainer, float(-scrollPos));
+        });
     }
 
     TreeView::~TreeView()
@@ -153,22 +223,43 @@ namespace GT
         }
     }
 
-    void TreeView::OnItemExpanded(TreeViewItem * pItem)
+    void TreeView::OnItemExpanded(TreeViewItem* pItem)
     {
         if (m_onItemExpanded != nullptr) {
             m_onItemExpanded(pItem);
         }
     }
-    void TreeView::OnItemCollapsed(TreeViewItem * pItem)
+    void TreeView::OnItemCollapsed(TreeViewItem* pItem)
     {
         if (m_onItemCollapsed != nullptr) {
             m_onItemCollapsed(pItem);
         }
     }
-    void TreeView::OnLeafItemPicked(TreeViewItem * pItem)
+    void TreeView::OnLeafItemPicked(TreeViewItem* pItem)
     {
         if (m_onLeafItemPicked != nullptr) {
             m_onLeafItemPicked(pItem);
         }
+    }
+
+
+    void TreeView::RefreshScrollbars()
+    {
+        // We just use simple settings for now, but later we'll do this proeprly where we scroll at notches equal to the size of one line of text
+        // so we can have cleaner scrolls with the mouse wheel.
+
+
+        // Vertical.
+        int pageHeight    = int(m_gui.GetElementHeight(m_hRootItemContainer));
+        int contentHeight = int(m_gui.GetElementHeight(m_rootItem.GetRootElement()));
+        m_verticalScrollbar.SetPageSize(pageHeight);
+        m_verticalScrollbar.SetRange(0, contentHeight + pageHeight - 1);    // -1 because the range is zero based and inclusive.
+
+
+        // Horizontal.
+        int pageWidth    = int(m_gui.GetElementWidth(m_hRootItemContainer));
+        int contentWidth = int(m_gui.GetElementWidth(m_rootItem.GetRootElement()));
+        m_horizontalScrollbar.SetPageSize(pageWidth);
+        m_horizontalScrollbar.SetRange(0, contentWidth - 1);                // -1 because the range is zero based and inclusive.
     }
 }

@@ -32,7 +32,7 @@ namespace GT
         m_pItem1 = m_pTV->CreateAndAppendItem(nullptr, "Item 1");
 
 
-        m_pItem0_0 = m_pTV->CreateAndInsertItem(m_pItem0, "Item 0 0", m_pItem0->GetChildCount());
+        m_pItem0_0 = m_pTV->CreateAndInsertItem(m_pItem0, "Item 0 0 - With a long string so I can test some scroll bar functionality.", m_pItem0->GetChildCount());
         m_pItem1_0 = m_pTV->CreateAndInsertItem(m_pItem1, "Item 1 0", m_pItem1->GetChildCount());
     }
 

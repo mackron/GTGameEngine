@@ -4,6 +4,7 @@
 #define GT_TreeView
 
 #include "TreeViewItem.hpp"
+#include "Scrollbar.hpp"
 
 namespace GT
 {
@@ -89,10 +90,40 @@ namespace GT
         void OnLeafItemPicked(TreeViewItem* pItem);
 
 
+        /// Refreshes the scrollbars.
+        void RefreshScrollbars();
+
+
     private:
 
         /// The root tree view item. All items are children of this item.
         TreeViewItem m_rootItem;
+
+
+        // In order to make room for the scrollbars, the tree view is divided up into four parts. The main content
+        // is placed in the top-left section, the vertical scrollbar is in the top-right, and the horizontal scrollbar
+        // is placed in the bottom-left section. The bottom-right section is the dead spot between the scrollbars.
+
+        /// The element containing the top elements (the main content and the vertical scrollbar).
+        HGUIElement m_hTopContainer;
+
+        /// The element containing the bottom elements (the horizontal scrollbar and the dead space).
+        HGUIElement m_hBottomContainer;
+
+
+        /// The container for the root item.
+        HGUIElement m_hRootItemContainer;
+
+        /// The vertical scrollbar.
+        Scrollbar m_verticalScrollbar;
+
+        /// The horizontal scrollbar.
+        Scrollbar m_horizontalScrollbar;
+
+        /// The dead space between the scrollbars.
+        HGUIElement m_hDeadSpace;
+
+
 
         /// Keeps track of all of the selected items.
         GTLib::Vector<TreeViewItem*> m_selectedItems;
