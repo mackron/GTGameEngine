@@ -56,7 +56,7 @@ namespace GTEngine
                 "        self[componentID] = self:GetComponent(componentID);"
                 "    end;"
                 "end;"
-                
+
                 "function GTEngine.SceneNode:UnregisterComponents()"
                 "    local componentIDs = self:GetAttachedComponentIDs();"
                 "    for i,componentID in ipairs(componentIDs) do"
@@ -147,7 +147,7 @@ namespace GTEngine
                 "        eventHandler.method             = value;"
                 "        eventHandler.scriptRelativePath = scriptRelativePath;"
                 ""
-                "        self._eventHandlers[name][#self._eventHandlers[name] + 1] = eventHandler;" 
+                "        self._eventHandlers[name][#self._eventHandlers[name] + 1] = eventHandler;"
                 "    end;"
                 "end;"
 
@@ -227,6 +227,10 @@ namespace GTEngine
                 "    return GTEngine.System.SceneNode.GetAttachedComponentIDs(self._internalPtr);"
                 "end;"
 
+
+                "function GTEngine.SceneNode:GetParent()"
+                "    return self.Scene:GetSceneNodeByPtr(GTEngine.System.SceneNode.GetParentPtr(self._internalPtr));"
+                "end;"
 
                 "function GTEngine.SceneNode:GetChildByName(name)"
                 "    return self.Scene:GetSceneNodeByID(self:GetChildIDByName(name));"
@@ -833,7 +837,7 @@ namespace GTEngine
 
                                         script.Call(2, 1);      // <-- Two arguments (self, serializer) and 1 return value (the version).
 
-                                            
+
                                         // At this point, the top item on the stack (the return value from OnSerialize()) is the version number.
                                         uint32_t version = static_cast<uint32_t>(script.ToInteger(-1));
 
@@ -846,7 +850,7 @@ namespace GTEngine
                                         intermediarySerializer.Write(version);
                                         intermediarySerializer.Write(static_cast<uint32_t>(localSerializer.GetBufferSizeInBytes()));
                                         intermediarySerializer.Write(localSerializer.GetBuffer(), localSerializer.GetBufferSizeInBytes());
-                                            
+
 
                                         // The data counter needs to be incremented.
                                         dataCount += 1;
@@ -927,7 +931,7 @@ namespace GTEngine
                                                     script.PushValue(-7);                                                   // <-- 'self'
                                                     GTLib::Scripting::PushNewDeserializer(script, deserializer);            // <-- 'deserializer'
                                                     script.Push(static_cast<int>(version));                                 // <-- 'version'
-                                                
+
                                                     script.Call(3, 0);
                                                 }
                                                 deserializer.EndChunk();
@@ -1403,7 +1407,7 @@ namespace GTEngine
                 auto componentName = script.ToString(2);
 
                 sceneNode->RemoveComponentByName(componentName);
-                
+
                 return 0;
             }
 
@@ -2010,7 +2014,7 @@ namespace GTEngine
                     if (script.IsTable(3))
                     {
                         axis = Scripting::ToVector3(script, 3);
-                        
+
                         if (script.IsTable(4))
                         {
                             pivot = Scripting::ToVector3(script, 4);
