@@ -189,12 +189,12 @@ namespace GTEngine
         }
     }
     
-    void DefaultGUIRenderer::SetCurrentShader(Shader* shader)
+    void DefaultGUIRenderer::SetCurrentShader(Shader* shaderIn)
     {
-        if (this->currentShader != shader)
+        if (this->currentShader != shaderIn)
         {
-            GTEngine::Renderer::SetCurrentShader(shader);
-            this->currentShader = shader;
+            GTEngine::Renderer::SetCurrentShader(shaderIn);
+            this->currentShader = shaderIn;
         }
     }
 }

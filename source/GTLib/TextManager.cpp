@@ -271,14 +271,14 @@ namespace GTLib
 namespace GTLib
 {
     TextManager::TextManager(GTLib::Font* defaultFont)
-        : text(nullptr), isTextValid(false),
+        : m_text(nullptr), isTextValid(false),
           defaultFont(defaultFont),
           containerWidth(0), containerHeight(0),
           containerOffsetX(0), containerOffsetY(0),
           lines(),
           textRect(),
           horizontalAlign(Alignment_Left), verticalAlign(Alignment_Top),
-          eventHandler(nullptr),
+          m_eventHandler(nullptr),
           cursorMarker(),
           selectionStartMarker(), selectionEndMarker(),
           defaultTextColour(), selectionBackgroundColour(),
@@ -340,7 +340,7 @@ namespace GTLib
     {
         if (!this->isTextValid)
         {
-            GTLib::Strings::Delete(this->text);
+            GTLib::Strings::Delete(m_text);
 
             GTLib::Strings::List<char> newTextList;
             for (size_t i = 0; i < this->lines.count; ++i)
@@ -353,11 +353,11 @@ namespace GTLib
                 }
             }
 
-            this->text        = GTLib::Strings::Create(newTextList);
+            m_text        = GTLib::Strings::Create(newTextList);
             this->isTextValid = true;
         }
 
-        return this->text;
+        return m_text;
     }
 
     bool TextManager::HasText() const
@@ -970,7 +970,7 @@ namespace GTLib
         }
     }
 
-    void TextManager::InsertTextAtCursor(const char* text, ptrdiff_t textSizeInTs, bool appendNewCommand)
+    void TextManager::InsertTextAtCursor(const char* textIn, ptrdiff_t textSizeInTs, bool appendNewCommand)
     {
         // We need to grab the start so we can create an undo/redo command.
         int lineStart          = this->cursorMarker.lineIndex;
@@ -986,11 +986,11 @@ namespace GTLib
 
 
         // We need to insert line-by-line.
-        GTLib::Strings::LineIterator lineText(text, textSizeInTs);
+        GTLib::Strings::LineIterator lineText(textIn, textSizeInTs);
         while (lineText)
         {
             // TODO: Do an additional check to see if the text manager is in single-line mode. Only care about the first line in that case.
-            if (lineText.start != text)
+            if (lineText.start != textIn)
             {
                 this->InsertNewLineAtCursor(false);
             }
@@ -1031,7 +1031,7 @@ namespace GTLib
             int lineEnd          = this->cursorMarker.lineIndex;
             int lineEndCharacter = this->cursorMarker.characterIndex;
 
-            this->AppendCommand(TextCommandType_Insert, text, textSizeInTs, lineStart, lineStartCharacter, lineEnd, lineEndCharacter, false);
+            this->AppendCommand(TextCommandType_Insert, textIn, textSizeInTs, lineStart, lineStartCharacter, lineEnd, lineEndCharacter, false);
         }
     }
 
@@ -2054,8 +2054,8 @@ namespace GTLib
 
     void TextManager::Reset()
     {
-        GTLib::Strings::Delete(this->text);
-        this->text        = nullptr;
+        GTLib::Strings::Delete(m_text);
+        m_text        = nullptr;
         this->isTextValid = false;
 
 

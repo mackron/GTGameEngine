@@ -139,16 +139,16 @@ namespace GTLib
             *       \par
             *       The return value can be passed to Remove().
             */
-            ListItem<T>* Append(const T* str, ptrdiff_t sizeInTs = -1)
+            ListItem<T>* Append(const T* strIn, ptrdiff_t sizeInTs = -1)
             {
-                if (str != nullptr)
+                if (strIn != nullptr)
                 {
                     if (sizeInTs == -1)
                     {
-                        sizeInTs = SizeInTs(str);
+                        sizeInTs = SizeInTs(strIn);
                     }
 
-                    auto newItem = ListItem<T>::Allocate(str, str + sizeInTs, this->last, nullptr);
+                    auto newItem = ListItem<T>::Allocate(strIn, strIn + sizeInTs, this->last, nullptr);
 
                     if (this->last)
                     {
@@ -176,16 +176,16 @@ namespace GTLib
             /// @param sizeInTs [in] The size in Ts of the string, not including the null terminator.
             ///
             /// @return A pointer to the new ListItem object.
-            ListItem<T>* Prepend(const T* str, ptrdiff_t sizeInTs = -1)
+            ListItem<T>* Prepend(const T* strIn, ptrdiff_t sizeInTs = -1)
             {
-                if (str != nullptr)
+                if (strIn != nullptr)
                 {
                     if (sizeInTs == -1)
                     {
-                        sizeInTs = SizeInTs(str);
+                        sizeInTs = SizeInTs(strIn);
                     }
 
-                    auto newItem = ListItem<T>::Allocate(str, str + sizeInTs, nullptr, this->root);
+                    auto newItem = ListItem<T>::Allocate(strIn, strIn + sizeInTs, nullptr, this->root);
 
                     if (this->root != nullptr)
                     {

@@ -139,9 +139,9 @@ namespace GTEngine
         this->StepGUI(this->deltaTimeInSeconds);
     }
 
-    void Game::StepGUI(double deltaTimeInSeconds)
+    void Game::StepGUI(double deltaTimeInSecondsIn)
     {
-        this->gui.Step(deltaTimeInSeconds);
+        this->gui.Step(deltaTimeInSecondsIn);
         this->gui.Paint();
     }
 
@@ -517,9 +517,9 @@ namespace GTEngine
     }
 
 
-    bool Game::ExecuteScript(const char* script)
+    bool Game::ExecuteScript(const char* scriptIn)
     {
-        return this->script.Execute(script);
+        return this->script.Execute(scriptIn);
     }
 
 
@@ -1089,8 +1089,6 @@ namespace GTEngine
         }
 
 
-        double deltaTimeInSeconds = this->GetDeltaTimeInSeconds();
-
         // If the debugging overlay is open, we need to show the debugging information.
         if (this->IsDebuggingOpen())
         {
@@ -1101,16 +1099,16 @@ namespace GTEngine
         // If the editor is open it also needs to be updated.
         if (this->editor.IsOpen())
         {
-            this->editor.Update(deltaTimeInSeconds);
+            this->editor.Update(this->deltaTimeInSeconds);
         }
 
         // The game needs to know that we're updating...
-        m_gameStateManager.OnUpdate(*this, deltaTimeInSeconds);
-        this->PostScriptEvent_OnUpdate(deltaTimeInSeconds);
+        m_gameStateManager.OnUpdate(*this, this->deltaTimeInSeconds);
+        this->PostScriptEvent_OnUpdate(this->deltaTimeInSeconds);
 
 
         // We will step the GUI after updating the game. This will call rendering functions.
-        this->StepGUI(deltaTimeInSeconds);
+        this->StepGUI(this->deltaTimeInSeconds);
 
 
         if (this->profiler.IsEnabled())
@@ -1475,15 +1473,15 @@ namespace GTEngine
             {
                 auto eventContext = this->gui.BeginPostingEvents();
                 {
-                    GameEvent e;
+                    GameEvent e2;
 
-                    e.code            = EventCodes::OnKeyReleased;
-                    e.keyreleased.key = iKey->key;
-                    this->HandleEvent_OnKeyReleased(e, eventContext);
+                    e2.code            = EventCodes::OnKeyReleased;
+                    e2.keyreleased.key = iKey->key;
+                    this->HandleEvent_OnKeyReleased(e2, eventContext);
 
-                    e.code      = EventCodes::OnKeyUp;
-                    e.keyup.key = iKey->key;
-                    this->HandleEvent_OnKeyUp(e, eventContext);
+                    e2.code      = EventCodes::OnKeyUp;
+                    e2.keyup.key = iKey->key;
+                    this->HandleEvent_OnKeyUp(e2, eventContext);
                 }
                 this->gui.EndPostingEvents(eventContext);
 
@@ -1506,7 +1504,7 @@ namespace GTEngine
     }
 
 
-    void Game::PostScriptEvent_OnUpdate(double deltaTimeInSeconds)
+    void Game::PostScriptEvent_OnUpdate(double deltaTimeInSecondsIn)
     {
         this->script.GetGlobal("Game");
         assert(this->script.IsTable(-1));
@@ -1517,7 +1515,7 @@ namespace GTEngine
             {
                 this->script.PushNewTable();
                 this->script.Push("deltaTimeInSeconds");
-                this->script.Push(deltaTimeInSeconds);
+                this->script.Push(deltaTimeInSecondsIn);
                 this->script.SetTableValue(-3);
 
                 this->script.Call(1, 0);

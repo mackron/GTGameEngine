@@ -20,7 +20,7 @@ namespace GTEngine
         : CollisionShapeComponent(node),
           motionState(node),
           rigidBody(new RigidBody(0.0f, collisionShape, &motionState)),
-          world(nullptr),
+          m_world(nullptr),
           mass(0.0f),
           isKinematic(false),
           useWithNavigationMesh(true)
@@ -533,10 +533,10 @@ namespace GTEngine
 
     void DynamicsComponent::OnPreCollisionShapeChanged()
     {
-        this->world = this->rigidBody->GetWorld();
-        if (this->world != nullptr)
+        m_world = this->rigidBody->GetWorld();
+        if (m_world != nullptr)
         {
-            this->world->RemoveRigidBody(*this->rigidBody);
+            m_world->RemoveRigidBody(*this->rigidBody);
         }
     }
 
@@ -546,11 +546,11 @@ namespace GTEngine
         this->UpdateMass();
 
         // Now we need to re-add the rigid body to the world, if it has one.
-        if (this->world != nullptr)
+        if (m_world != nullptr)
         {
-            this->world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
+            m_world->AddRigidBody(*this->rigidBody, this->collisionGroup, this->collisionMask);
         }
 
-        this->world = nullptr;
+        m_world = nullptr;
     }
 }

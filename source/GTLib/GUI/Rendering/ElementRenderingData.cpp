@@ -153,8 +153,6 @@ namespace GTGUI
             // We only need to do this if we actually have a radius > 0.0.
             if (radius > 0.0f)
             {
-                const float pi = 3.14159265f;
-
                 int   segmentsPerCorner   = (static_cast<int>(2.0f * pi * radius) / 4) + 1;
                 float segmentAngleRadians = radians(90.0f / static_cast<float>(segmentsPerCorner));
 

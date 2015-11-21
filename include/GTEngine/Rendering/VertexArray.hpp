@@ -70,19 +70,19 @@ namespace GTEngine
         ///
         /// remarks
         ///     Use this method for read-only access to the vertex data. If the data needs to be modified, use MapVertexData()/UnmapVertexData() or SetVertexData().
-        inline const float* GetVertexDataPtr() const { return this->vertices; }
+        inline const float* GetVertexDataPtr() const { return m_vertices; }
 
         /// Retrieves the number of vertices in the vertex array.
-        inline unsigned int GetVertexCount() const { return this->vertexCount; }
+        inline unsigned int GetVertexCount() const { return m_vertexCount; }
 
         /// Retrieves a constant pointer to the index data.
         ///
         /// @remarks
         ///     Use this method for read-only access to the index data. If the data needs to be modified, use MapIndexData()/UnmapIndexData() or SetIndexData().
-        inline const unsigned int* GetIndexDataPtr() const { return this->indices; }
+        inline const unsigned int* GetIndexDataPtr() const { return m_indices; }
 
         /// Retrieves the number of indices in the vertex array.
-        inline unsigned int GetIndexCount() const { return this->indexCount; }
+        inline unsigned int GetIndexCount() const { return m_indexCount; }
 
 
         /// Returns a writable pointer to the vertex data. Returns nullptr if the data is already mapped.
@@ -179,25 +179,25 @@ namespace GTEngine
 
 
         /// A pointer to the the vertex information. The format of the data in this array is determined by 'format'.
-        float* vertices;
+        float* m_vertices;
 
         /// The number of vertices. This is NOT the number of float's in 'vertices', but rather the number of vertices that the data
         /// in 'vertices' defines.
-        unsigned int vertexCount;
+        unsigned int m_vertexCount;
 
         /// The size in floats of the vertex buffer.
-        unsigned int vertexBufferSize;
+        unsigned int m_vertexBufferSize;
 
 
 
         /// A pointer to the indices that determine the vertices that make up each polygon in the array.
-        unsigned int* indices;
+        unsigned int* m_indices;
 
         /// The number of indices making up the vertex array.
-        unsigned int indexCount;
+        unsigned int m_indexCount;
 
         /// The size in unsigned ints of the index buffer.
-        unsigned int indexBufferSize;
+        unsigned int m_indexBufferSize;
 
 
 

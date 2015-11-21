@@ -1382,9 +1382,9 @@ namespace GTEngine
                     btVector3 localScaling = shape->getLocalScaling();
                     shape->setLocalScaling(btVector3(1.0f, 1.0f, 1.0f));
 
-                    for (size_t iConvexHull = 0; iConvexHull < definition.convexHulls.count; ++iConvexHull)
+                    for (size_t iConvexHull = 0; iConvexHull < definition.m_convexHulls.count; ++iConvexHull)
                     {
-                        auto convexHull = definition.convexHulls[iConvexHull];
+                        auto convexHull = definition.m_convexHulls[iConvexHull];
                         assert(convexHull != nullptr);
                         {
                             auto convexHullShape = new btConvexHullShape(static_cast<const btScalar*>(convexHull->GetVertices()), convexHull->GetVertexCount(), 12);

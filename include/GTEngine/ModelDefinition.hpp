@@ -134,7 +134,7 @@ namespace GTEngine
         void BuildConvexHulls(ConvexHullBuildSettings &settings) { this->BuildConvexDecomposition(settings); }
 
         /// Retrieves a constant reference to the internal list of convex hulls for this model.
-        const GTLib::Vector<ConvexHull*> & GetConvexHulls() const { return this->convexHulls; }
+        const GTLib::Vector<ConvexHull*> & GetConvexHulls() const { return m_convexHulls; }
 
 
 
@@ -155,7 +155,7 @@ namespace GTEngine
 
 
         /// Determines whether or not the definition has convex hulls.
-        bool HasConvexHulls() const { return this->convexHulls.count > 0; }
+        bool HasConvexHulls() const { return m_convexHulls.count > 0; }
 
 
 
@@ -287,11 +287,11 @@ namespace GTEngine
 
         /// A map of every bone of the model, indexed by it's name. We use a map here to make it easier for avoiding duplication and
         /// also fast lookups.
-        GTLib::Vector<Bone*> bones;
+        GTLib::Vector<Bone*> m_bones;
 
 
         /// The model's animation object.
-        Animation animation;
+        Animation m_animation;
 
         /// The map for mapping a bone to an animation channel.
         GTLib::Map<Bone*, AnimationChannel*> animationChannelBones;
@@ -306,7 +306,7 @@ namespace GTEngine
 
         /// The list of the convex hulls making up the convex decomposition of this model. This is either loaded from the model's file or
         /// generated with BuildConvexDecomposition().
-        GTLib::Vector<ConvexHull*> convexHulls;
+        GTLib::Vector<ConvexHull*> m_convexHulls;
 
         /// The settings that were used to build the convex hulls.
         ConvexHullBuildSettings convexHullBuildSettings;

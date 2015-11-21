@@ -205,13 +205,13 @@ namespace GTEngine
 
 
         /// The relative position of the bone.
-        glm::vec3 position;
+        glm::vec3 m_position;
 
         /// The relative rotation of the bone.
-        glm::quat rotation;
+        glm::quat m_rotation;
 
         /// The relative scale of the bone.
-        glm::vec3 scale;
+        glm::vec3 m_scale;
 
 
         /// The offset matrix for this bone.

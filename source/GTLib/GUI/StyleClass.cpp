@@ -83,14 +83,14 @@ namespace GTGUI
         GTLib::Strings::Delete(this->includes);
     }
 
-    GTLib::String StyleClass::GetAttribute(const char* name, ptrdiff_t nameSizeInTs)
+    GTLib::String StyleClass::GetAttribute(const char* nameIn, ptrdiff_t nameSizeInTs)
     {
-        return this->server.GetStyleAttribute(*this, name, nameSizeInTs);
+        return this->server.GetStyleAttribute(*this, nameIn, nameSizeInTs);
     }
     
-    bool StyleClass::SetAttribute(const char* name, ptrdiff_t nameSizeInTs, const char *value, ptrdiff_t valueSizeInTs)
+    bool StyleClass::SetAttribute(const char* nameIn, ptrdiff_t nameSizeInTs, const char *value, ptrdiff_t valueSizeInTs)
     {
-        return this->server.SetStyleAttribute(*this, name, nameSizeInTs, value, valueSizeInTs);
+        return this->server.SetStyleAttribute(*this, nameIn, nameSizeInTs, value, valueSizeInTs);
     }
 
     void StyleClass::AppendIncludes(const char *newIncludes)
@@ -156,22 +156,22 @@ namespace GTGUI
         }
     }
 
-    void StyleClass::UnsetModifierClass(StyleClassType type)
+    void StyleClass::UnsetModifierClass(StyleClassType typeIn)
     {
-        if (type >= 0 && type < StyleClassType_End)
+        if (typeIn >= 0 && typeIn < StyleClassType_End)
         {
-            auto &modifierAttrib = this->modifiers[type];
+            auto &modifierAttrib = this->modifiers[typeIn];
 
             modifierAttrib.isset = false;
             modifierAttrib.value = nullptr;
         }
     }
 
-    StyleClass* StyleClass::GetModifierClass(StyleClassType type)
+    StyleClass* StyleClass::GetModifierClass(StyleClassType typeIn)
     {
-        if (type >= 0 && type < StyleClassType_End)
+        if (typeIn >= 0 && typeIn < StyleClassType_End)
         {
-            auto &modifierAttrib = this->modifiers[type];
+            auto &modifierAttrib = this->modifiers[typeIn];
 
             if (modifierAttrib.isset)
             {

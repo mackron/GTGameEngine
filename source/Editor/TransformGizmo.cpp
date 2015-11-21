@@ -7,7 +7,7 @@
 namespace GTEngine
 {
     TransformGizmo::TransformGizmo()
-        : position(), orientation(), scale(1.0f, 1.0f, 1.0f),
+        : m_position(), m_orientation(), m_scale(1.0f, 1.0f, 1.0f),
           isVisible(false), showingTranslationHandles(false), showingRotationHandles(false), showingScaleHandles(false),
           xTranslateHandle(HandleAxis_X), yTranslateHandle(HandleAxis_Y), zTranslateHandle(HandleAxis_Z),
           xRotateHandle(HandleAxis_X),    yRotateHandle(HandleAxis_Y),    zRotateHandle(HandleAxis_Z), cameraFacingRotateHandle(HandleAxis_FrontFacing),
@@ -22,40 +22,40 @@ namespace GTEngine
 
     void TransformGizmo::SetPosition(const glm::vec3 &newPosition, const SceneNode &cameraNode, bool onlyVisibleHandles)
     {
-        this->position = newPosition;
+        m_position = newPosition;
         this->UpdateHandleTransforms(cameraNode, onlyVisibleHandles);
     }
 
     const glm::vec3 & TransformGizmo::GetPosition() const
     {
-        return this->position;
+        return m_position;
     }
 
 
     void TransformGizmo::SetRotation(const glm::quat &rotation, const SceneNode &cameraNode, bool onlyVisibleHandles)
     {
-        this->orientation = rotation;
+        m_orientation = rotation;
         this->UpdateHandleTransforms(cameraNode, onlyVisibleHandles);
     }
 
 
     void TransformGizmo::SetScale(const glm::vec3 &newScale, const SceneNode &cameraNode, bool onlyVisibleHandles)
     {
-        this->scale = newScale;
+        m_scale = newScale;
         this->UpdateHandleTransforms(cameraNode, onlyVisibleHandles);
     }
 
     const glm::vec3 & TransformGizmo::GetScale() const
     {
-        return this->scale;
+        return m_scale;
     }
 
 
     void TransformGizmo::SetTransform(const glm::vec3 &position, const glm::quat &rotation, const glm::vec3 &scale, const SceneNode &cameraNode, bool updateOnlyVisibleHandles)
     {
-        this->position    = position;
-        this->orientation = rotation;
-        this->scale       = scale;
+        m_position    = position;
+        m_orientation = rotation;
+        m_scale       = scale;
         this->UpdateHandleTransforms(cameraNode, updateOnlyVisibleHandles);
     }
 
@@ -70,24 +70,24 @@ namespace GTEngine
 
         if (!onlyVisibleHandles || this->showingTranslationHandles)
         {
-            this->xTranslateHandle.UpdateTransform(this->position, this->orientation, this->scale);
-            this->yTranslateHandle.UpdateTransform(this->position, this->orientation, this->scale);
-            this->zTranslateHandle.UpdateTransform(this->position, this->orientation, this->scale);
+            this->xTranslateHandle.UpdateTransform(m_position, m_orientation, m_scale);
+            this->yTranslateHandle.UpdateTransform(m_position, m_orientation, m_scale);
+            this->zTranslateHandle.UpdateTransform(m_position, m_orientation, m_scale);
         }
 
         if (!onlyVisibleHandles || this->showingRotationHandles)
         {
-            this->xRotateHandle.UpdateTransform(this->position, this->orientation, this->scale, viewMatrix);
-            this->yRotateHandle.UpdateTransform(this->position, this->orientation, this->scale, viewMatrix);
-            this->zRotateHandle.UpdateTransform(this->position, this->orientation, this->scale, viewMatrix);
-            this->cameraFacingRotateHandle.UpdateTransform(this->position, this->orientation, this->scale, viewMatrix);
+            this->xRotateHandle.UpdateTransform(m_position, m_orientation, m_scale, viewMatrix);
+            this->yRotateHandle.UpdateTransform(m_position, m_orientation, m_scale, viewMatrix);
+            this->zRotateHandle.UpdateTransform(m_position, m_orientation, m_scale, viewMatrix);
+            this->cameraFacingRotateHandle.UpdateTransform(m_position, m_orientation, m_scale, viewMatrix);
         }
 
         if (!onlyVisibleHandles || this->showingScaleHandles)
         {
-            this->xScaleHandle.UpdateTransform(this->position, this->orientation, this->scale);
-            this->yScaleHandle.UpdateTransform(this->position, this->orientation, this->scale);
-            this->zScaleHandle.UpdateTransform(this->position, this->orientation, this->scale);
+            this->xScaleHandle.UpdateTransform(m_position, m_orientation, m_scale);
+            this->yScaleHandle.UpdateTransform(m_position, m_orientation, m_scale);
+            this->zScaleHandle.UpdateTransform(m_position, m_orientation, m_scale);
         }
     }
 
@@ -424,11 +424,11 @@ namespace GTEngine
             offset = basis * offset;
 
             // The box shape needs to have an offset applied.
-            btTransform transform;
-            transform.setBasis(basis);
-            transform.setOrigin(offset);
+            btTransform bulletTransform;
+            bulletTransform.setBasis(basis);
+            bulletTransform.setOrigin(offset);
 
-            this->pickingShape.updateChildTransform(0, transform);
+            this->pickingShape.updateChildTransform(0, bulletTransform);
         }
 
 
@@ -624,16 +624,16 @@ namespace GTEngine
             {
                 float angle = segmentAngle * static_cast<float>(i);
 
-                btVector3 position;
-                position.setX(std::cos(angle) * outerRadius);
-                position.setY(std::sin(angle) * outerRadius);
-                position.setZ(0.0f);
+                btVector3 bulletPosition;
+                bulletPosition.setX(std::cos(angle) * outerRadius);
+                bulletPosition.setY(std::sin(angle) * outerRadius);
+                bulletPosition.setZ(0.0f);
 
-                btQuaternion rotation(btVector3(0.0f, 0.0f, -1.0f), angle);
+                btQuaternion bulletRotation(btVector3(0.0f, 0.0f, -1.0f), angle);
 
                 segmentTransform.setIdentity();
-                segmentTransform.setOrigin(position);
-                segmentTransform.setRotation(rotation);
+                segmentTransform.setOrigin(bulletPosition);
+                segmentTransform.setRotation(bulletRotation);
                 this->pickingShape.addChildShape(segmentTransform, &this->pickingShapeSegment);
             }
 
@@ -843,11 +843,11 @@ namespace GTEngine
             offset = basis * offset;
 
             // The box shape needs to have an offset applied.
-            btTransform transform;
-            transform.setBasis(basis);
-            transform.setOrigin(offset);
+            btTransform bulletTransform;
+            bulletTransform.setBasis(basis);
+            bulletTransform.setOrigin(offset);
 
-            this->pickingShape.updateChildTransform(0, transform);
+            this->pickingShape.updateChildTransform(0, bulletTransform);
         }
 
 

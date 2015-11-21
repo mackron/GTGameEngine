@@ -634,48 +634,48 @@ namespace GTGUI
         }
 
         /// OnMouseButtonDown.
-        void OnMouseButtonDown(int button, int x, int y)
+        void OnMouseButtonDown(int button, int xIn, int yIn)
         {
             for (auto i = this->eventHandlers.root; this->eventHandlers.root != nullptr && i != nullptr; i = i->next)
             {
-                i->value->OnMouseButtonDown(*this, button, x, y);
+                i->value->OnMouseButtonDown(*this, button, xIn, yIn);
             }
         }
 
         /// OnMouseButtonUp.
-        void OnMouseButtonUp(int button, int x, int y)
+        void OnMouseButtonUp(int button, int xIn, int yIn)
         {
             for (auto i = this->eventHandlers.root; this->eventHandlers.root != nullptr && i != nullptr; i = i->next)
             {
-                i->value->OnMouseButtonUp(*this, button, x, y);
+                i->value->OnMouseButtonUp(*this, button, xIn, yIn);
             }
         }
         
         /// OnMouseButtonDoubleClick
-        void OnMouseButtonDoubleClick(int button, int x, int y)
+        void OnMouseButtonDoubleClick(int button, int xIn, int yIn)
         {
             for (auto i = this->eventHandlers.root; this->eventHandlers.root != nullptr && i != nullptr; i = i->next)
             {
-                i->value->OnMouseButtonDoubleClick(*this, button, x, y);
+                i->value->OnMouseButtonDoubleClick(*this, button, xIn, yIn);
             }
         }
 
 
         /// OnMouseMove
-        void OnMouseMove(int x, int y)
+        void OnMouseMove(int xIn, int yIn)
         {
             for (auto i = this->eventHandlers.root; this->eventHandlers.root != nullptr && i != nullptr; i = i->next)
             {
-                i->value->OnMouseMove(*this, x, y);
+                i->value->OnMouseMove(*this, xIn, yIn);
             }
         }
 
         /// OnMouseWheel
-        void OnMouseWheel(int delta, int x, int y)
+        void OnMouseWheel(int delta, int xIn, int yIn)
         {
             for (auto i = this->eventHandlers.root; this->eventHandlers.root != nullptr && i != nullptr; i = i->next)
             {
-                i->value->OnMouseWheel(*this, delta, x, y);
+                i->value->OnMouseWheel(*this, delta, xIn, yIn);
             }
         }
 
@@ -868,7 +868,7 @@ namespace GTGUI
         StyleStack style;
 
         /// A pointer to the primary style class of this element. This is lazily initialised in GetPrimaryStyleClass(), and thus mutable.
-        mutable StyleClass* primaryStyleClass;
+        mutable StyleClass* m_primaryStyleClass;
 
         // TODO: Consider using a pointer for this so that elements without event handlers (most elements) do not have to have a GTLib::List object instantiated. This 
         //       will save a single pointer (GTLib::List objects are only two pointers in size).

@@ -71,8 +71,8 @@ namespace GTGUI
         *   \remarks
         *       This method is fairly slow. Use a direct assignment if possible. This is mainly used for setting the attribute from a string.
         */
-        bool SetAttribute(const char* name, ptrdiff_t nameSizeInTs, const char* value, ptrdiff_t valueSizeInTs = -1);
-        bool SetAttribute(const char* name, const char* value) { return this->SetAttribute(name, -1, value, -1); }
+        bool SetAttribute(const char* nameIn, ptrdiff_t nameSizeInTs, const char* value, ptrdiff_t valueSizeInTs = -1);
+        bool SetAttribute(const char* nameIn, const char* value) { return this->SetAttribute(nameIn, -1, value, -1); }
         
         /**
         *   \brief  Appends the given includes.

@@ -132,7 +132,7 @@ namespace GTEngine
 
 
         /// A pointer to the event handler.
-        CharacterControllerEventHandler* eventHandler;
+        CharacterControllerEventHandler* m_eventHandler;
 
 
     private:    // No copying.

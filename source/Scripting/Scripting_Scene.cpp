@@ -64,9 +64,9 @@ namespace GTEngine
             
             
             /// RayTestCallback::NeedsCollision()
-            bool NeedsCollision(short collisionGroup, short collisionMask, SceneNode &otherSceneNode)
+            bool NeedsCollision(short collisionGroupIn, short collisionMaskIn, SceneNode &otherSceneNode)
             {
-                bool result = RayTestCallback::NeedsCollision(collisionGroup, collisionMask, otherSceneNode);
+                bool result = RayTestCallback::NeedsCollision(collisionGroupIn, collisionMaskIn, otherSceneNode);
                 if (result)
                 {
                     // We now need to check if the table at the top of the stack on the script contains the method "NeedsCollision". If so, call it and look

@@ -18,9 +18,9 @@ namespace GTEngine
         }
     }
 
-    void GhostObject::SetWorld(DynamicsWorld *world)
+    void GhostObject::SetWorld(DynamicsWorld *worldIn)
     {
-        this->world = world;
+        this->world = worldIn;
     }
 
     DynamicsWorld * GhostObject::GetWorld()

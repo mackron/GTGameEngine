@@ -48,10 +48,10 @@ namespace GTEngine
         ///     This should only be used internally by DynamicsWorld.
         ///     @par
         ///     This will not remove the constraint from the previous world - it is just a simple setter.
-        void SetWorld(DynamicsWorld* newWorld) { this->world = newWorld; }
+        void SetWorld(DynamicsWorld* newWorld) { m_world = newWorld; }
 
         /// Retrieves a pointer to the world that contains this constraint.
-        DynamicsWorld* GetWorld() { return this->world; }
+        DynamicsWorld* GetWorld() { return m_world; }
 
 
         /// Sets whether or not collisions between linked bodies is enabled.
@@ -68,7 +68,7 @@ namespace GTEngine
     private:
 
         /// The world that contains the constraint.
-        DynamicsWorld* world;
+        DynamicsWorld* m_world;
 
         /// Keeps track of whether or not collisions between linked bodies are disabled.
         bool isCollisionBetweenLinkedBodiesDisabled;

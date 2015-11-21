@@ -180,11 +180,11 @@ namespace GTGUI
     void StyleStack::Attach(StyleClass &style, bool refresh)
     {
         // We need to check if the style class already exists. If it does, we just move it to the front.
-        auto i = this->classes.Find(&style);
-        if (i != nullptr)
+        auto iClass = this->classes.Find(&style);
+        if (iClass != nullptr)
         {
             // We need to detach before re-attaching.
-            this->classes.Remove(i);
+            this->classes.Remove(iClass);
             style.hosts.Remove(style.hosts.Find(this));
         }
 

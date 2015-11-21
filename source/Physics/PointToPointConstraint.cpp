@@ -8,21 +8,21 @@ namespace GTEngine
 {
     PointToPointConstraint::PointToPointConstraint(RigidBody &bodyA, RigidBody &bodyB, const glm::vec3 &pivotInA, const glm::vec3 &pivotInB)
         : btPoint2PointConstraint(bodyA, bodyB, ToBulletVector3(pivotInA), ToBulletVector3(pivotInB)),
-          world(nullptr), isCollisionBetweenLinkedBodiesDisabled(false)
+          m_world(nullptr), isCollisionBetweenLinkedBodiesDisabled(false)
     {
     }
 
     PointToPointConstraint::PointToPointConstraint(RigidBody &bodyB, const glm::vec3 &pivotInB)
         : btPoint2PointConstraint(bodyB, ToBulletVector3(pivotInB)),
-          world(nullptr), isCollisionBetweenLinkedBodiesDisabled(false)
+          m_world(nullptr), isCollisionBetweenLinkedBodiesDisabled(false)
     {
     }
 
     PointToPointConstraint::~PointToPointConstraint()
     {
-        if (this->world != nullptr)
+        if (m_world != nullptr)
         {
-            this->world->RemoveConstraint(*this);
+            m_world->RemoveConstraint(*this);
         }
     }
 

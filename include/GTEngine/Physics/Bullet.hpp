@@ -8,6 +8,7 @@
     #pragma warning(disable:4127)   // Conditional expression is constant.
     #pragma warning(disable:4100)   // Unreferenced formal parameter.
     #pragma warning(disable:4324)   // structure was padded due to __declspec(align())
+    #pragma warning(disable:4456)   // declaration of '...' hides previous local declaration
 #elif defined(__GNUC__)
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Weffc++"

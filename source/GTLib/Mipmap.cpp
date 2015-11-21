@@ -66,10 +66,10 @@ namespace GTLib
         this->data = nullptr;
     }
 
-    void Mipmap::SetDataDirect(void *data)
+    void Mipmap::SetDataDirect(void *dataIn)
     {
         free(this->data);
-        this->data = data;
+        this->data = dataIn;
     }
 
     void Mipmap::Reset()

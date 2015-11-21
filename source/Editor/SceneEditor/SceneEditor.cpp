@@ -37,9 +37,9 @@ namespace GTEngine
     // Scene Editor
     SceneEditor::SceneEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
-          camera(), cameraEventHandler(*this), cameraXRotation(0.0f), cameraYRotation(0.0f),
+          camera(), cameraEventHandler(*this), m_cameraXRotation(0.0f), m_cameraYRotation(0.0f),
           updateManager(camera), physicsManager(), cullingManager(),
-          scene(updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
+          m_scene(updateManager, physicsManager, cullingManager), sceneEventHandler(*this),
           playbackEventFilter(), eventFilterBeforePlaying(nullptr),
           selectedNodes(), selectedNodesBeforePlaying(), selectedNodesBeforePhysicsSimulation(),
           pickingWorld(),
@@ -51,24 +51,24 @@ namespace GTEngine
           playbackState(PlaybackState_Stopped), wasPlayingBeforeHide(false), wasPlayingBeforeLosingFocus(false),
           isViewportMouseControlsEnabled(false),
           parentChangedLockCounter(0),
-          GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), scene.GetDefaultViewport()),
+          GUI(), viewportEventHandler(*this, ownerEditor.GetGame(), m_scene.GetDefaultViewport()),
           grid(1.0f, 8, 32), isShowingGrid(false), wasShowingGridBeforePlaying(false),
           axisArrows(), isShowingAxisArrows(false), wasShowingAxisArrowsBeforePlaying(false),
-          prefabLinker(scene, *this),
+          prefabLinker(m_scene, *this),
           pauseState(),
           navigationMeshRendererMeshes(),
           prefabDeserializingCount(0),
           insertionPosition(), insertionPlaneCollisionObject(), insertionPlaneShape(btVector3(0.0f, -1.0f, 0.0f), 0.0f)
     {
         //__itt_resume();
-        this->scene.SetPrefabLinker(this->prefabLinker);
+        m_scene.SetPrefabLinker(this->prefabLinker);
 
-        this->scene.SetDefaultViewportCamera(this->camera);
-        this->scene.AttachEventHandler(this->sceneEventHandler);
+        m_scene.SetDefaultViewportCamera(this->camera);
+        m_scene.AttachEventHandler(sceneEventHandler);
 
         // We're going to register the scene to the scripting environment right from the start.
-        this->scene.RegisterToScript(this->GetScript());
-        this->scene.BlockScriptEvents();                        // <-- Don't want any events posted to scripts while in edit mode.
+        m_scene.RegisterToScript(this->GetScript());
+        m_scene.BlockScriptEvents();                        // <-- Don't want any events posted to scripts while in edit mode.
 
 
         // We will add the system scene nodes to the scene before setting the minimum automatic scene node IDs. This will save
@@ -183,7 +183,7 @@ namespace GTEngine
             else
             {
                 // We want to do an initial commit.
-                this->scene.CommitStateStackFrame();
+                m_scene.CommitStateStackFrame();
             }
 
 
@@ -232,7 +232,7 @@ namespace GTEngine
 
     void SceneEditor::SetViewportCamera(SceneNode &sceneNode)
     {
-        this->scene.GetDefaultViewport().SetCameraNode(sceneNode);
+        m_scene.GetDefaultViewport().SetCameraNode(sceneNode);
         this->viewportEventHandler.OnSize(*this->GUI.Viewport);         // <-- Ensure the projection is set correctly.
     }
 
@@ -256,15 +256,15 @@ namespace GTEngine
             {
                 // In order to properly restore the scene, what we'll do is stage an update for every scene node. Then we commit a stack frame, which will be reverted
                 // when playback is stopped. We need to do this before setting the playback state to Transitioning, otherwise CommitStateStackFrame() won't actually
-                // do anything. Alternatively, we could just call this->scene.CommitStateStackFrame(), which is a legitmate alternative.
-                for (size_t iNode = 0; iNode < this->scene.GetSceneNodeCount(); ++iNode)
+                // do anything. Alternatively, we could just call m_scene.CommitStateStackFrame(), which is a legitmate alternative.
+                for (size_t iNode = 0; iNode < m_scene.GetSceneNodeCount(); ++iNode)
                 {
-                    auto node = this->scene.GetSceneNodeByIndex(iNode);
+                    auto node = m_scene.GetSceneNodeByIndex(iNode);
                     assert(node != nullptr);
                     {
                         if (node->IsStateStackStagingEnabled())
                         {
-                            this->scene.StageUpdateOnStateStack(node->GetID());
+                            m_scene.StageUpdateOnStateStack(node->GetID());
                         }
                     }
                 }
@@ -362,14 +362,14 @@ namespace GTEngine
 
 
                 // We want to unblock script events before posting OnStartup.
-                this->scene.UnblockScriptEvents();
+                m_scene.UnblockScriptEvents();
 
                 // We'll call OnStartup on all scene nodes here.
-                this->scene.PostSceneNodeScriptEvent_OnStartup();
+                m_scene.PostSceneNodeScriptEvent_OnStartup();
 
 
                 // If the camera is not he main camera, we want to disable mouse capture in the viewport.
-                if (this->scene.GetViewportByIndex(0).GetCameraNode() != &this->camera)
+                if (m_scene.GetViewportByIndex(0).GetCameraNode() != &this->camera)
                 {
                     this->DisableViewportMouseControls();
                 }
@@ -435,10 +435,10 @@ namespace GTEngine
 
 
                 // We'll call OnShutdown on all scene nodes here.
-                this->scene.PostSceneNodeScriptEvent_OnShutdown();
+                m_scene.PostSceneNodeScriptEvent_OnShutdown();
 
                 // Events need to be blocked from being posted to scripts since we're now in proper edit mode.
-                this->scene.BlockScriptEvents();
+                m_scene.BlockScriptEvents();
 
 
                 // Some functions need to be restored.
@@ -488,8 +488,8 @@ namespace GTEngine
 
 
                 // To restore, all we need to do is revert the staging area.
-                //this->scene.RevertStateStackStagingArea();
-                this->scene.SeekStateStack(-1);
+                //m_scene.RevertStateStackStagingArea();
+                m_scene.SeekStateStack(-1);
 
                 // We want to revert the selections, but we don't want to stage these on the state stack.
                 this->DeselectAll(SelectionOption_NoStateStaging);
@@ -554,7 +554,7 @@ namespace GTEngine
 
 
                 // To restore, all we need to do is revert the staging area.
-                this->scene.RevertStateStackStagingArea();
+                m_scene.RevertStateStackStagingArea();
 
                 // We want to revert the selections, but we don't want to stage these on the state stack.
                 this->DeselectAll(SelectionOption_NoStateStaging);
@@ -573,12 +573,12 @@ namespace GTEngine
 
     SceneNode* SceneEditor::GetSceneNodeByID(uint64_t id)
     {
-        return this->scene.GetSceneNodeByID(id);
+        return m_scene.GetSceneNodeByID(id);
     }
 
     const SceneNode* SceneEditor::GetSceneNodeByID(uint64_t id) const
     {
-        return this->scene.GetSceneNodeByID(id);
+        return m_scene.GetSceneNodeByID(id);
     }
 
 
@@ -640,7 +640,7 @@ namespace GTEngine
     {
         if (!this->isShowingGrid)
         {
-            this->grid.Show(this->scene.GetRenderer());
+            this->grid.Show(m_scene.GetRenderer());
             this->isShowingGrid = true;
         }
     }
@@ -649,7 +649,7 @@ namespace GTEngine
     {
         if (this->isShowingGrid)
         {
-            this->grid.Hide(this->scene.GetRenderer());
+            this->grid.Hide(m_scene.GetRenderer());
             this->isShowingGrid = false;
         }
     }
@@ -664,7 +664,7 @@ namespace GTEngine
     {
         if (!this->isShowingAxisArrows)
         {
-            this->axisArrows.Show(this->scene.GetRenderer());
+            this->axisArrows.Show(m_scene.GetRenderer());
             this->isShowingAxisArrows = true;
         }
     }
@@ -673,7 +673,7 @@ namespace GTEngine
     {
         if (this->isShowingAxisArrows)
         {
-            this->axisArrows.Hide(this->scene.GetRenderer());
+            this->axisArrows.Hide(m_scene.GetRenderer());
             this->isShowingAxisArrows = false;
         }
     }
@@ -686,19 +686,19 @@ namespace GTEngine
 
     void SceneEditor::SetSceneName(const char* sceneName)
     {
-        this->scene.SetName(sceneName);
+        m_scene.SetName(sceneName);
         this->MarkAsModified();
     }
 
     const char* SceneEditor::GetSceneName() const
     {
-        return this->scene.GetName();
+        return m_scene.GetName();
     }
 
 
     void SceneEditor::EnableSceneBackgroundClearing(float r, float g, float b, bool markAsModified)
     {
-        this->scene.EnableBackgroundClearing(r, g, b);
+        m_scene.EnableBackgroundClearing(r, g, b);
 
         if (markAsModified)
         {
@@ -708,7 +708,7 @@ namespace GTEngine
 
     void SceneEditor::DisableSceneBackgroundClearing(bool markAsModified)
     {
-        this->scene.DisableBackgroundClearing();
+        m_scene.DisableBackgroundClearing();
 
         if (markAsModified)
         {
@@ -718,18 +718,18 @@ namespace GTEngine
 
     bool SceneEditor::IsSceneBackgroundClearingEnabled() const
     {
-        return this->scene.IsBackgroundClearingEnabled();
+        return m_scene.IsBackgroundClearingEnabled();
     }
 
     const glm::vec3 SceneEditor::GetSceneBackgroundClearColour() const
     {
-        return this->scene.GetBackgroundClearColour();
+        return m_scene.GetBackgroundClearColour();
     }
 
 
     void SceneEditor::EnableSceneHDR(bool markAsModified)
     {
-        this->scene.EnableHDR();
+        m_scene.EnableHDR();
 
         if (markAsModified)
         {
@@ -739,7 +739,7 @@ namespace GTEngine
 
     void SceneEditor::DisableSceneHDR(bool markAsModified)
     {
-        this->scene.DisableHDR();
+        m_scene.DisableHDR();
 
         if (markAsModified)
         {
@@ -749,13 +749,13 @@ namespace GTEngine
 
     bool SceneEditor::IsSceneHDREnabled() const
     {
-        return this->scene.IsHDREnabled();
+        return m_scene.IsHDREnabled();
     }
 
 
     void SceneEditor::EnableSceneBloom(bool markAsModified)
     {
-        this->scene.EnableBloom();
+        m_scene.EnableBloom();
 
         if (markAsModified)
         {
@@ -765,7 +765,7 @@ namespace GTEngine
 
     void SceneEditor::DisableSceneBloom(bool markAsModified)
     {
-        this->scene.DisableBloom();
+        m_scene.DisableBloom();
 
         if (markAsModified)
         {
@@ -775,7 +775,7 @@ namespace GTEngine
 
     bool SceneEditor::IsSceneBloomEnabled() const
     {
-        return this->scene.IsBloomEnabled();
+        return m_scene.IsBloomEnabled();
     }
 
 
@@ -815,7 +815,7 @@ namespace GTEngine
             MeshBuilderP3 mainMeshBuilder;
             MeshBuilderP3 innerEdgeMeshBuilder;
             MeshBuilderP3 outerEdgeMeshBuilder;
-            this->scene.GetNavigationMesh(index).BuildMeshVisualization(mainMeshBuilder, innerEdgeMeshBuilder, outerEdgeMeshBuilder);
+            m_scene.GetNavigationMesh(index).BuildMeshVisualization(mainMeshBuilder, innerEdgeMeshBuilder, outerEdgeMeshBuilder);
 
             mainMesh->vertexArray->SetVertexData(mainMeshBuilder.GetVertexData(), mainMeshBuilder.GetVertexCount());
             mainMesh->vertexArray->SetIndexData( mainMeshBuilder.GetIndexData(),  mainMeshBuilder.GetIndexCount());
@@ -840,9 +840,9 @@ namespace GTEngine
         // Show the mesh.
         assert(mainMesh != nullptr);
         {
-            this->scene.GetRenderer().AddExternalMesh(*mainMesh);
-            this->scene.GetRenderer().AddExternalMesh(*innerEdgeMesh);
-            this->scene.GetRenderer().AddExternalMesh(*outerEdgeMesh);
+            m_scene.GetRenderer().AddExternalMesh(*mainMesh);
+            m_scene.GetRenderer().AddExternalMesh(*innerEdgeMesh);
+            m_scene.GetRenderer().AddExternalMesh(*outerEdgeMesh);
         }
     }
 
@@ -859,9 +859,9 @@ namespace GTEngine
             assert(rendererMesh.m_innerEdgeMesh);
             assert(rendererMesh.m_outerEdgeMesh);
             {
-                this->scene.GetRenderer().RemoveExternalMesh(*rendererMesh.m_mainMesh);
-                this->scene.GetRenderer().RemoveExternalMesh(*rendererMesh.m_innerEdgeMesh);
-                this->scene.GetRenderer().RemoveExternalMesh(*rendererMesh.m_outerEdgeMesh);
+                m_scene.GetRenderer().RemoveExternalMesh(*rendererMesh.m_mainMesh);
+                m_scene.GetRenderer().RemoveExternalMesh(*rendererMesh.m_innerEdgeMesh);
+                m_scene.GetRenderer().RemoveExternalMesh(*rendererMesh.m_outerEdgeMesh);
 
                 // Delete the renderer mesh.
                 MaterialLibrary::Delete(rendererMesh.m_mainMesh->material);
@@ -920,7 +920,7 @@ namespace GTEngine
 
         glm::vec3 rayStart;
         glm::vec3 rayEnd;
-        this->scene.GetDefaultViewport().CalculatePickingRay(mousePosX, mousePosY, rayStart, rayEnd);
+        m_scene.GetDefaultViewport().CalculatePickingRay(mousePosX, mousePosY, rayStart, rayEnd);
 
         CollisionWorld::ClosestRayTestCallback rayTestCallback(rayStart, rayEnd);
         rayTestCallback.m_collisionFilterGroup = CollisionGroups::EditorSelectionRay;
@@ -952,7 +952,7 @@ namespace GTEngine
 
     glm::vec3 SceneEditor::UpdateInsertionPositionToInFrontOfCamera()
     {
-        auto cameraNode = this->scene.GetDefaultViewport().GetCameraNode();
+        auto cameraNode = m_scene.GetDefaultViewport().GetCameraNode();
         if (cameraNode != nullptr)
         {
             this->insertionPosition = cameraNode->GetWorldPosition() + (cameraNode->GetWorldForwardVector() * 15.0f);
@@ -987,7 +987,7 @@ namespace GTEngine
 
             glm::vec3 rayStart;
             glm::vec3 rayEnd;
-            this->scene.GetDefaultViewport().CalculatePickingRay(clickPosX, clickPosY, rayStart, rayEnd);
+            m_scene.GetDefaultViewport().CalculatePickingRay(clickPosX, clickPosY, rayStart, rayEnd);
 
 
             CollisionWorld::ClosestRayTestCallback rayTestCallback(rayStart, rayEnd);
@@ -1029,8 +1029,8 @@ namespace GTEngine
                     // The mouse dragging has a different level of influence depending on the direction of the axis. We need to calculate that now. We project two points - the
                     // center of the gizmo and the end point of the selected axis. From that we can get a normalised direction vector and use that as the influence.
                     glm::vec3 gizmoWorldPos        = this->transformGizmo.GetPosition();
-                    glm::vec3 gizmoCenterWindowPos = this->scene.GetDefaultViewport().Project(gizmoWorldPos);
-                    glm::vec3 axisTipWindowPos     = this->scene.GetDefaultViewport().Project(gizmoWorldPos + (handle->GetForwardVector() * this->transformGizmo.GetScale()));
+                    glm::vec3 gizmoCenterWindowPos = m_scene.GetDefaultViewport().Project(gizmoWorldPos);
+                    glm::vec3 axisTipWindowPos     = m_scene.GetDefaultViewport().Project(gizmoWorldPos + (handle->GetForwardVector() * this->transformGizmo.GetScale()));
 
                     this->gizmoDragFactor = glm::vec2(axisTipWindowPos - gizmoCenterWindowPos);
                     if (glm::dot(this->gizmoDragFactor, this->gizmoDragFactor) > 0.0f)
@@ -1077,7 +1077,7 @@ namespace GTEngine
 
             glm::vec3 rayStart;
             glm::vec3 rayEnd;
-            this->scene.GetDefaultViewport().CalculatePickingRay(clickPosX, clickPosY, rayStart, rayEnd);
+            m_scene.GetDefaultViewport().CalculatePickingRay(clickPosX, clickPosY, rayStart, rayEnd);
 
 
             CollisionWorld::ClosestRayTestCallback rayTestCallback(rayStart, rayEnd);
@@ -1137,11 +1137,11 @@ namespace GTEngine
 
 
         // TODO: This feels bad. See if we can remove this.
-        size_t sceneNodeCount = this->scene.GetSceneNodeCount();
+        size_t sceneNodeCount = m_scene.GetSceneNodeCount();
 
         for (size_t i = 0; i < sceneNodeCount; ++i)
         {
-            auto node = this->scene.GetSceneNodeByIndex(i);
+            auto node = m_scene.GetSceneNodeByIndex(i);
             assert(node != nullptr);
             {
                 auto metadata = node->GetComponent<EditorMetadataComponent>();
@@ -1213,13 +1213,13 @@ namespace GTEngine
                 if (node.HasComponent<DynamicsComponent>())
                 {
                     metadata->ShowCollisionShapeMesh();
-                    this->scene.GetRenderer().AddExternalMesh(metadata->GetCollisionShapeMesh());
+                    m_scene.GetRenderer().AddExternalMesh(metadata->GetCollisionShapeMesh());
                 }
 
                 if (node.HasComponent<ProximityComponent>())
                 {
                     metadata->ShowProximityShapeMesh();
-                    this->scene.GetRenderer().AddExternalMesh(metadata->GetProximityShapeMesh());
+                    m_scene.GetRenderer().AddExternalMesh(metadata->GetProximityShapeMesh());
                 }
 
 
@@ -1246,7 +1246,7 @@ namespace GTEngine
                 // updating the scene from the state stack.
                 if (!(options & SelectionOption_NoStateStaging) && !this->isUpdatingFromStateStack)
                 {
-                    this->scene.StageUpdateOnStateStack(node);
+                    m_scene.StageUpdateOnStateStack(node);
                 }
             }
         }
@@ -1283,14 +1283,14 @@ namespace GTEngine
                 {
                     metadata->HideCollisionShapeMesh();
 
-                    this->scene.GetRenderer().RemoveExternalMesh(metadata->GetCollisionShapeMesh());
+                    m_scene.GetRenderer().RemoveExternalMesh(metadata->GetCollisionShapeMesh());
                 }
 
                 if (node.HasComponent<ProximityComponent>())
                 {
                     metadata->HideProximityShapeMesh();
 
-                    this->scene.GetRenderer().RemoveExternalMesh(metadata->GetProximityShapeMesh());
+                    m_scene.GetRenderer().RemoveExternalMesh(metadata->GetProximityShapeMesh());
                 }
 
 
@@ -1317,7 +1317,7 @@ namespace GTEngine
                 // We want to add this node to the staging area as an update command.
                 if (!(options & SelectionOption_NoStateStaging))
                 {
-                    this->scene.StageUpdateOnStateStack(node);
+                    m_scene.StageUpdateOnStateStack(node);
                 }
             }
         }
@@ -1427,14 +1427,14 @@ namespace GTEngine
 
     void SceneEditor::RemoveSceneNode(SceneNode &sceneNodeToRemove)
     {
-        this->scene.RemoveSceneNode(sceneNodeToRemove);
+        m_scene.RemoveSceneNode(sceneNodeToRemove);
     }
 
     void SceneEditor::RemoveSceneNodes(const GTLib::Vector<uint64_t> &sceneNodeIDs)
     {
         for (size_t i = 0; i < sceneNodeIDs.count; ++i)
         {
-            this->scene.RemoveSceneNodeByID(sceneNodeIDs[i]);
+            m_scene.RemoveSceneNodeByID(sceneNodeIDs[i]);
         }
     }
 
@@ -1508,7 +1508,7 @@ namespace GTEngine
     void SceneEditor::Undo()
     {
         // Don't bother doing anything if we're already at the start of the current branch.
-        if (this->scene.GetStateStackCurrentFrameIndex() > 0)
+        if (m_scene.GetStateStackCurrentFrameIndex() > 0)
         {
             this->LockParentChangedEvents();
             this->isUpdatingFromStateStack = true;
@@ -1527,7 +1527,7 @@ namespace GTEngine
                 // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
                 this->DeselectAll(SelectionOption_NoScriptNotify | SelectionOption_NoStateStaging);
 
-                this->scene.SeekStateStack(-1);
+                m_scene.SeekStateStack(-1);
                 this->MarkAsModified();
 
                 // All nodes need to be reselected.
@@ -1540,7 +1540,7 @@ namespace GTEngine
 
     void SceneEditor::Redo()
     {
-        if (this->scene.GetStateStackCurrentFrameIndex() < this->scene.GetStateStackMaxFrameIndex())
+        if (m_scene.GetStateStackCurrentFrameIndex() < m_scene.GetStateStackMaxFrameIndex())
         {
             this->LockParentChangedEvents();
             this->isUpdatingFromStateStack = true;
@@ -1559,7 +1559,7 @@ namespace GTEngine
                 // We deselect everything because we're going to be reselecting the appropriate nodes after the state change.
                 this->DeselectAll(SelectionOption_NoScriptNotify | SelectionOption_NoStateStaging);
 
-                this->scene.SeekStateStack(+1);
+                m_scene.SeekStateStack(+1);
                 this->MarkAsModified();
 
                 // All nodes need to be reselected.
@@ -1586,9 +1586,9 @@ namespace GTEngine
         
         if (this->IsStopped())
         {
-            if (this->scene.IsStateStackEnabled())
+            if (m_scene.IsStateStackEnabled())
             {
-                this->scene.CommitStateStackFrame();
+                m_scene.CommitStateStackFrame();
 
                 if (markAsModified)
                 {
@@ -1606,7 +1606,7 @@ namespace GTEngine
 
     void SceneEditor::ClearStateStackStagingArea()
     {
-        this->scene.ClearStateStackStagingArea();
+        m_scene.ClearStateStackStagingArea();
     }
 
 
@@ -1652,7 +1652,7 @@ namespace GTEngine
         this->LockParentChangedEvents();
         this->isInstantiatingPrefab = true;
         {
-            rootSceneNode = this->scene.CreateNewSceneNode();
+            rootSceneNode = m_scene.CreateNewSceneNode();
             assert(rootSceneNode != nullptr);
             {
                 if (this->LinkSceneNodeToPrefab(*rootSceneNode, relativePath))
@@ -1663,7 +1663,7 @@ namespace GTEngine
                 }
                 else
                 {
-                    this->scene.RemoveSceneNode(*rootSceneNode);
+                    m_scene.RemoveSceneNode(*rootSceneNode);
                     rootSceneNode = nullptr;
                 }
             }
@@ -1805,14 +1805,14 @@ namespace GTEngine
         glm::quat orientation = this->GetGizmoRotation();
 
         // Scale.
-        glm::vec3 windowPos = this->scene.GetDefaultViewport().Project(position);
+        glm::vec3 windowPos = m_scene.GetDefaultViewport().Project(position);
         windowPos.y += 64.0f;
 
-        glm::vec3 scale(glm::distance(this->scene.GetDefaultViewport().Unproject(windowPos), position));
+        glm::vec3 scale(glm::distance(m_scene.GetDefaultViewport().Unproject(windowPos), position));
 
 
         // Now we just update in one go.
-        this->transformGizmo.SetTransform(position, orientation, scale, *this->scene.GetViewportByIndex(0).GetCameraNode(), onlyUpdateVisibleHandles);
+        this->transformGizmo.SetTransform(position, orientation, scale, *m_scene.GetViewportByIndex(0).GetCameraNode(), onlyUpdateVisibleHandles);
     }
 
 
@@ -2218,7 +2218,7 @@ namespace GTEngine
                         if (metadata->IsSelected())
                         {
                             metadata->ShowCollisionShapeMesh();
-                            this->scene.GetRenderer().AddExternalMesh(metadata->GetCollisionShapeMesh());
+                            m_scene.GetRenderer().AddExternalMesh(metadata->GetCollisionShapeMesh());
                         }
                     }
                 }
@@ -2232,7 +2232,7 @@ namespace GTEngine
                         if (metadata->IsSelected())
                         {
                             metadata->ShowProximityShapeMesh();
-                            this->scene.GetRenderer().AddExternalMesh(metadata->GetProximityShapeMesh());
+                            m_scene.GetRenderer().AddExternalMesh(metadata->GetProximityShapeMesh());
                         }
                     }
                 }
@@ -2281,7 +2281,7 @@ namespace GTEngine
                         if (metadata->IsSelected())
                         {
                             metadata->HideCollisionShapeMesh();
-                            this->scene.GetRenderer().RemoveExternalMesh(metadata->GetCollisionShapeMesh());
+                            m_scene.GetRenderer().RemoveExternalMesh(metadata->GetCollisionShapeMesh());
                         }
                     }
                     else if (GTLib::Strings::Equal(component.GetName(), ProximityComponent::Name))
@@ -2289,7 +2289,7 @@ namespace GTEngine
                         if (metadata->IsSelected())
                         {
                             metadata->HideProximityShapeMesh();
-                            this->scene.GetRenderer().RemoveExternalMesh(metadata->GetProximityShapeMesh());
+                            m_scene.GetRenderer().RemoveExternalMesh(metadata->GetProximityShapeMesh());
                         }
                     }
 
@@ -2428,13 +2428,13 @@ namespace GTEngine
 
     void SceneEditor::OnStateStackFrameCommitted()
     {
-        assert(this->scene.IsStateStackEnabled());
+        assert(m_scene.IsStateStackEnabled());
 
         // We'll commit a new frame whenever something worthy of an undo/redo operation has happened. And when that happens, we want the scene to be marked as modified.
         //
         // We only mark as modified if this is not the initial commit. We can determine this by looking at the number of frames. If there is only 1, it was the initial
         // commit and we don't want to mark as modified in that case.
-        if (!this->isDeserializing && this->scene.GetStateStackFrameCount() > 1)
+        if (!this->isDeserializing && m_scene.GetStateStackFrameCount() > 1)
         {
             this->MarkAsModified();
         }
@@ -2456,12 +2456,12 @@ namespace GTEngine
         glm::vec3 cameraForward       = this->camera.GetWorldForwardVector();
         glm::vec3 arrowsWorldPosition = cameraPosition + (cameraForward * 1.0f);
 
-        glm::vec3 windowPos      = this->scene.GetDefaultViewport().Project(arrowsWorldPosition);
-        glm::vec3 arrowsPosition = this->scene.GetDefaultViewport().Unproject(glm::vec3(screenPositionX, screenPositionY, windowPos.z));
+        glm::vec3 windowPos      = m_scene.GetDefaultViewport().Project(arrowsWorldPosition);
+        glm::vec3 arrowsPosition = m_scene.GetDefaultViewport().Unproject(glm::vec3(screenPositionX, screenPositionY, windowPos.z));
 
 
         // We actually need to scale this a bit to keep it a constant size.
-        glm::vec3 arrowsScale(glm::distance(this->scene.GetDefaultViewport().Unproject(glm::vec3(screenPositionX, screenPositionY + screenSize, windowPos.z)), arrowsPosition));
+        glm::vec3 arrowsScale(glm::distance(m_scene.GetDefaultViewport().Unproject(glm::vec3(screenPositionX, screenPositionY + screenSize, windowPos.z)), arrowsPosition));
 
 
         // World Space -> Local Space.
@@ -2681,7 +2681,7 @@ namespace GTEngine
             }
 
 
-            this->scene.Update(deltaTimeInSeconds);
+            m_scene.Update(deltaTimeInSeconds);
 
 
             // If we're playing and have only a single selected node and it has a script component, we want to update the GUI to show those values.
@@ -2781,11 +2781,11 @@ namespace GTEngine
         // We want to go through and notify the editor of a change to the model component of any scene node referencing this file (if it's a model file).
         if (GTEngine::IO::IsSupportedModelExtension(item.info.path.c_str()))
         {
-            size_t sceneNodeCount = this->scene.GetSceneNodeCount();
+            size_t sceneNodeCount = m_scene.GetSceneNodeCount();
 
             for (size_t i = 0; i < sceneNodeCount; ++i)
             {
-                auto sceneNode = this->scene.GetSceneNodeByIndex(i);
+                auto sceneNode = m_scene.GetSceneNodeByIndex(i);
                 assert(sceneNode != nullptr);
                 {
                     auto modelComponent = sceneNode->GetComponent<ModelComponent>();
@@ -2849,8 +2849,8 @@ namespace GTEngine
     void SceneEditor::CreateAndAddSystemNodes()
     {
         // There are a few pre-conditions that neeed to be met.
-        assert(this->scene.GetSceneNodeCount()     == 0);
-        assert(this->scene.GetMinAutoSceneNodeID() == 1);
+        assert(m_scene.GetSceneNodeCount()     == 0);
+        assert(m_scene.GetMinAutoSceneNodeID() == 1);
         {
             this->camera.AttachEventHandler(this->cameraEventHandler);
             this->camera.AddComponent<GTEngine::CameraComponent>()->Set3DProjection(90.0f, 16.0f / 9.0f, 0.1f, 1000.0f);
@@ -2858,9 +2858,9 @@ namespace GTEngine
             this->camera.DisableStateStackStaging();
 
 
-            this->scene.GetDefaultViewport().SetCameraNode(this->camera);
-            this->scene.AddViewport(this->scene.GetDefaultViewport());
-            this->scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
+            m_scene.GetDefaultViewport().SetCameraNode(this->camera);
+            m_scene.AddViewport(m_scene.GetDefaultViewport());
+            m_scene.GetRenderer().EnableBackgroundColourClearing(0.5f, 0.5f, 0.5f);
         }
     }
 
@@ -2871,7 +2871,7 @@ namespace GTEngine
 
     void SceneEditor::SerializeScene(GTLib::Serializer &serializer, bool serializeMetadata) const
     {
-        this->scene.Serialize(serializer);
+        m_scene.Serialize(serializer);
 
         // We now want to save our own chunk. This will contain metadata such as the camera position and whatnot.
         if (serializeMetadata)
@@ -2906,11 +2906,11 @@ namespace GTEngine
 
     void SceneEditor::DeserializeScene(GTLib::Deserializer &deserializer)
     {
-        this->scene.DisableStateStack();
+        m_scene.DisableStateStack();
         this->LockParentChangedEvents();
         this->isDeserializing = true;
         {
-            this->transformGizmo.Hide(this->scene.GetRenderer(), this->pickingWorld);
+            this->transformGizmo.Hide(m_scene.GetRenderer(), this->pickingWorld);
 
 
             // The scene deserialize callback for handling non-standard chunks.
@@ -2992,7 +2992,7 @@ namespace GTEngine
 
 
             // With pre-deserialization done, we can now do a full deserialization of the scene.
-            this->scene.Deserialize(deserializer, deserializeCallback);
+            m_scene.Deserialize(deserializer, deserializeCallback);
 
             // The projection and aspect ratios of the camera may not be correct for the viewport dimensions, so we'll simulate
             // a viewport resize by calling the OnSize event directly.
@@ -3004,7 +3004,7 @@ namespace GTEngine
         }
         this->isDeserializing = false;
         this->UnlockParentChangedEvents();
-        this->scene.EnableStateStack();
+        m_scene.EnableStateStack();
 
 
         // There needs to be an initial commit on the state stack, but it needs to be done after enabling the state stack.
@@ -3043,9 +3043,9 @@ namespace GTEngine
             node->Deserialize(deserializer);
 
             // If the node is not contained in the editor's scene, we need to add it.
-            if (node->GetScene() != &this->scene)
+            if (node->GetScene() != &m_scene)
             {
-                this->scene.AddSceneNode(*node);
+                m_scene.AddSceneNode(*node);
             }
         }
     }
@@ -3053,13 +3053,13 @@ namespace GTEngine
 
     void SceneEditor::ShowGizmo()
     {
-        this->transformGizmo.Show(this->scene.GetRenderer(), this->pickingWorld);
+        this->transformGizmo.Show(m_scene.GetRenderer(), this->pickingWorld);
         this->UpdateGizmo();
     }
 
     void SceneEditor::HideGizmo()
     {
-        this->transformGizmo.Hide(this->scene.GetRenderer(), this->pickingWorld);
+        this->transformGizmo.Hide(m_scene.GetRenderer(), this->pickingWorld);
     }
 
 
@@ -3075,19 +3075,19 @@ namespace GTEngine
         {
         case GizmoTransformMode_Translate:
             {
-                this->transformGizmo.ShowTranslationHandles(this->scene.GetRenderer(), this->pickingWorld);
+                this->transformGizmo.ShowTranslationHandles(m_scene.GetRenderer(), this->pickingWorld);
                 break;
             }
 
         case GizmoTransformMode_Rotate:
             {
-                this->transformGizmo.ShowRotationHandles(this->scene.GetRenderer(), this->pickingWorld);
+                this->transformGizmo.ShowRotationHandles(m_scene.GetRenderer(), this->pickingWorld);
                 break;
             }
 
         case GizmoTransformMode_Scale:
             {
-                this->transformGizmo.ShowScaleHandles(this->scene.GetRenderer(), this->pickingWorld);
+                this->transformGizmo.ShowScaleHandles(m_scene.GetRenderer(), this->pickingWorld);
                 break;
             }
 
@@ -3446,10 +3446,10 @@ namespace GTEngine
         // Grab the nodes marked as selected.
         GTLib::Vector<SceneNode*> nodesForReselection;
 
-        size_t sceneNodeCount = this->scene.GetSceneNodeCount();
+        size_t sceneNodeCount = m_scene.GetSceneNodeCount();
         for (size_t i = 0; i < sceneNodeCount; ++i)
         {
-            auto sceneNode = this->scene.GetSceneNodeByIndex(i);
+            auto sceneNode = m_scene.GetSceneNodeByIndex(i);
             assert(sceneNode != nullptr);
             {
                 auto metadata = sceneNode->GetComponent<EditorMetadataComponent>();
@@ -3498,7 +3498,7 @@ namespace GTEngine
 
 
             GTLib::BasicDeserializer deserializer(serializer.GetBuffer(), serializer.GetBufferSizeInBytes());
-            newNode = this->scene.CreateNewSceneNode(deserializer, 0, true);      // <-- 'true' means to generate a new ID if a node of the same ID already exists (spoiler: it does already exist).
+            newNode = m_scene.CreateNewSceneNode(deserializer, 0, true);      // <-- 'true' means to generate a new ID if a node of the same ID already exists (spoiler: it does already exist).
 
 
 
@@ -3552,9 +3552,9 @@ namespace GTEngine
     {
         // The first step is to extract the root nodes that are linked to the prefab.
         GTLib::Vector<SceneNode*> rootSceneNodes;
-        for (size_t iSceneNode = 0; iSceneNode < this->scene.GetSceneNodeCount(); ++iSceneNode)
+        for (size_t iSceneNode = 0; iSceneNode < m_scene.GetSceneNodeCount(); ++iSceneNode)
         {
-            auto sceneNode = this->scene.GetSceneNodeByIndex(iSceneNode);
+            auto sceneNode = m_scene.GetSceneNodeByIndex(iSceneNode);
             assert(sceneNode != nullptr);
             {
                 auto prefabComponent = sceneNode->GetComponent<PrefabComponent>();
@@ -3587,14 +3587,14 @@ namespace GTEngine
     void SceneEditor::UpdateAllSceneNodesLinkedToScript(const char* scriptRelativePath)
     {
         // If the scene is registered to the script we're going to reload the definition.
-        if (this->scene.GetRegisteredScript() != nullptr)
+        if (m_scene.GetRegisteredScript() != nullptr)
         {
             if (ScriptLibrary::IsLoaded(scriptRelativePath))
             {
                 auto definition = ScriptLibrary::Acquire(scriptRelativePath);
                 assert(definition != nullptr);
                 {
-                    Scripting::LoadScriptDefinition(*this->scene.GetRegisteredScript(), scriptRelativePath, definition->GetScriptString());
+                    Scripting::LoadScriptDefinition(*m_scene.GetRegisteredScript(), scriptRelativePath, definition->GetScriptString());
                 }
                 ScriptLibrary::Unacquire(definition);
             }
@@ -3606,11 +3606,11 @@ namespace GTEngine
         bool notifyScriptingEnvironment = false;
 
 
-        size_t sceneNodeCount = this->scene.GetSceneNodeCount();
+        size_t sceneNodeCount = m_scene.GetSceneNodeCount();
 
         for (size_t i = 0; i < sceneNodeCount; ++i)
         {
-            auto sceneNode = this->scene.GetSceneNodeByIndex(i);
+            auto sceneNode = m_scene.GetSceneNodeByIndex(i);
             assert(sceneNode != nullptr);
             {
                 auto scriptComponent = sceneNode->GetComponent<ScriptComponent>();
@@ -3626,9 +3626,9 @@ namespace GTEngine
                                 scriptComponent->ReloadScript(iScript);
 
                                 // After the script component itself has been reloaded we want to update the Lua object as well if the scene is currently registered.
-                                if (this->scene.GetRegisteredScript() != nullptr)
+                                if (m_scene.GetRegisteredScript() != nullptr)
                                 {
-                                    Scripting::RegisterComponent(*this->scene.GetRegisteredScript(), *sceneNode, ScriptComponent::Name);
+                                    Scripting::RegisterComponent(*m_scene.GetRegisteredScript(), *sceneNode, ScriptComponent::Name);
                                 }
 
 
@@ -3659,11 +3659,11 @@ namespace GTEngine
 
     void SceneEditor::ResetAllParticleSystems()
     {
-        size_t sceneNodeCount = this->scene.GetSceneNodeCount();
+        size_t sceneNodeCount = m_scene.GetSceneNodeCount();
 
         for (size_t iSceneNode = 0; iSceneNode < sceneNodeCount; ++iSceneNode)
         {
-            auto sceneNode = this->scene.GetSceneNodeByIndex(iSceneNode);
+            auto sceneNode = m_scene.GetSceneNodeByIndex(iSceneNode);
             assert(sceneNode != nullptr);
             {
                 auto particleSystemComponent = sceneNode->GetComponent<ParticleSystemComponent>();
@@ -3697,7 +3697,7 @@ namespace GTEngine
     void SceneEditor::CapturePauseState()
     {
         this->pauseState.wasMouseCaptured = this->GetOwnerEditor().GetGame().IsMouseCaptured();
-        this->pauseState.cameraNode       = this->scene.GetDefaultViewport().GetCameraNode();
+        this->pauseState.cameraNode       = m_scene.GetDefaultViewport().GetCameraNode();
     }
 
     void SceneEditor::RestorePauseState()
@@ -3728,9 +3728,9 @@ namespace GTEngine
 
     void SceneEditor::HideAllSpritesAndDirectionalArrows()
     {
-        for (size_t iSceneNode = 0; iSceneNode < this->scene.GetSceneNodeCount(); ++iSceneNode)
+        for (size_t iSceneNode = 0; iSceneNode < m_scene.GetSceneNodeCount(); ++iSceneNode)
         {
-            auto sceneNode = this->scene.GetSceneNodeByIndex(iSceneNode);
+            auto sceneNode = m_scene.GetSceneNodeByIndex(iSceneNode);
             assert(sceneNode != nullptr);
             {
                 auto metadata = sceneNode->GetComponent<EditorMetadataComponent>();

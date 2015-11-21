@@ -525,8 +525,6 @@ namespace GTEngine
 
                         for (size_t iLightGroup = 0; iLightGroup < lightGroups.count; ++iLightGroup)
                         {
-                            auto &mesh = meshList->buffer[iMesh];
-
                             if (!(mesh.flags & SceneRendererMesh::NoDepthWrite))
                             {
                                 this->RenderMesh(mesh, lightGroups[iLightGroup], 0);

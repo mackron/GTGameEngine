@@ -77,11 +77,11 @@ namespace GTLib
 			}
 
         #if defined(_MSC_VER)
-            int result = _chdir(directory);
+            int chdir_result = _chdir(directory);
         #else
-            int result = chdir(directory);
+            int chdir_result = chdir(directory);
         #endif
-            if (result == -1)
+            if (chdir_result == -1)
             {
                 // We have an error so try creating the directory if applicable.
                 if (errno == ENOENT && create == true)
@@ -1762,17 +1762,17 @@ namespace GTLib
         return *this;
     }
 
-    bool FileInfo::SetPath(const char* path)
+    bool FileInfo::SetPath(const char* pathIn)
     {
-        this->path = path;
+        this->path = pathIn;
 
         // FindAbsolutePath() will attempt to look for files that actually exist and use the search directories for determining
         // the absolute path.
-        if (!GTLib::IO::FindAbsolutePath(path, this->absolutePath))
+        if (!GTLib::IO::FindAbsolutePath(pathIn, this->absolutePath))
         {
             // If we get here, it means the file doesn't actually exist. This is OK, in which case we just use the current directory
             // to determine the absolute path.
-            this->absolutePath = GTLib::IO::ToAbsolutePath(path, GTLib::IO::GetCurrentDirectory());
+            this->absolutePath = GTLib::IO::ToAbsolutePath(pathIn, GTLib::IO::GetCurrentDirectory());
             this->exists       = false;
         }
         else

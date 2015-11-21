@@ -184,7 +184,7 @@ namespace GTEngine
         }
     }
 
-    void Model::GetAABB(glm::vec3 &aabbMin, glm::vec3 &aabbMax) const
+    void Model::GetAABB(glm::vec3 &aabbMinOut, glm::vec3 &aabbMaxOut) const
     {
         // We may need to update the AABB.
         if (!this->isAABBValid)
@@ -218,8 +218,8 @@ namespace GTEngine
             if (this->aabbMax.z - this->aabbMin.z < glm::epsilon<float>()) this->aabbMax.z = this->aabbMin.z + glm::epsilon<float>();
         }
 
-        aabbMin = this->aabbMin;
-        aabbMax = this->aabbMax;
+        aabbMinOut = this->aabbMin;
+        aabbMaxOut = this->aabbMax;
     }
 
     void Model::SetAABB(const glm::vec3 &aabbMinIn, const glm::vec3 &aabbMaxIn)
@@ -238,10 +238,10 @@ namespace GTEngine
 
 
         // We need to create copies of the bones. It is important that this is done before adding the meshes.
-        this->CopyAndAttachBones(this->definition.bones);
+        this->CopyAndAttachBones(this->definition.m_bones);
 
         // Now the animation.
-        this->CopyAnimation(this->definition.animation, this->definition.animationChannelBones);
+        this->CopyAnimation(this->definition.m_animation, this->definition.animationChannelBones);
         
         // Now we need to create the meshes. This must be done after adding the bones.
         for (size_t i = 0; i < this->definition.meshes.count; ++i)

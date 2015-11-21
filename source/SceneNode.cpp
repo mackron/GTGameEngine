@@ -7,13 +7,13 @@
 namespace GTEngine
 {
     SceneNode::SceneNode()
-        : uniqueID(0), name(),
-          parent(nullptr),
+        : uniqueID(0), m_name(),
+          m_parent(nullptr),
           firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
-          position(), orientation(), scale(1.0f, 1.0f, 1.0f),
+          m_position(), m_orientation(), m_scale(1.0f, 1.0f, 1.0f),
           eventHandlers(), components(), dataPointers(),
           scene(nullptr),
-          flags(0),
+          m_flags(0),
           eventLockCounter(0),
           modelComponent(nullptr), pointLightComponent(nullptr), spotLightComponent(nullptr), editorMetadataComponent(nullptr)
     {
@@ -32,14 +32,14 @@ namespace GTEngine
 
     const char* SceneNode::GetName() const
     {
-        return this->name.c_str();
+        return m_name.c_str();
     }
 
     void SceneNode::SetName(const char* newName)
     {
-        if (!GTLib::Strings::Equal(newName, this->name.c_str()))
+        if (!GTLib::Strings::Equal(newName, m_name.c_str()))
         {
-            this->name = newName;
+            m_name = newName;
 
             if (this->scene != nullptr)
             {
@@ -62,12 +62,12 @@ namespace GTEngine
 
     SceneNode* SceneNode::GetParent()
     {
-        return this->parent;
+        return m_parent;
     }
 
     const SceneNode* SceneNode::GetParent() const
     {
-        return this->parent;
+        return m_parent;
     }
 
 
@@ -117,9 +117,9 @@ namespace GTEngine
 
     SceneNode* SceneNode::GetTopAncestor()
     {
-        if (this->parent != nullptr)
+        if (m_parent != nullptr)
         {
-            return this->parent->GetTopAncestor();
+            return m_parent->GetTopAncestor();
         }
 
         return this;
@@ -127,9 +127,9 @@ namespace GTEngine
 
     const SceneNode* SceneNode::GetTopAncestor() const
     {
-        if (this->parent != nullptr)
+        if (m_parent != nullptr)
         {
-            return this->parent->GetTopAncestor();
+            return m_parent->GetTopAncestor();
         }
 
         return this;
@@ -387,14 +387,14 @@ namespace GTEngine
 
     bool SceneNode::IsAncestor(const SceneNode &other) const
     {
-        if (this->parent != nullptr)
+        if (m_parent != nullptr)
         {
-            if (this->parent == &other)
+            if (m_parent == &other)
             {
                 return true;
             }
 
-            return this->parent->IsAncestor(other);
+            return m_parent->IsAncestor(other);
         }
 
         return false;
@@ -423,7 +423,7 @@ namespace GTEngine
 
     void SceneNode::_SetParent(SceneNode *parent)
     {
-        this->parent = parent;
+        m_parent = parent;
     }
 
     void SceneNode::_SetPrevSibling(SceneNode* newPrevSibling)
@@ -443,9 +443,9 @@ namespace GTEngine
 
     void SceneNode::SetPosition(const glm::vec3 &position, bool updateDynamicsObject)
     {
-        if (this->position.x != position.x || this->position.y != position.y || this->position.z != position.z)
+        if (m_position.x != position.x || m_position.y != position.y || m_position.z != position.z)
         {
-            this->position = position;
+            m_position = position;
 
             if (!this->EventsLocked())
             {
@@ -456,33 +456,33 @@ namespace GTEngine
 
     glm::vec3 SceneNode::GetWorldPosition() const
     {
-        if (this->parent != nullptr && this->IsPositionInheritanceEnabled())
+        if (m_parent != nullptr && this->IsPositionInheritanceEnabled())
         {
             glm::quat orientation;
             if (this->IsOrientationInheritanceEnabled())
             {
-                orientation = this->parent->GetWorldOrientation();
+                orientation = m_parent->GetWorldOrientation();
             }
 
             glm::vec3 scale(1.0f, 1.0f, 1.0f);
             if (this->IsScaleInheritanceEnabled())
             {
-                scale = this->parent->GetWorldScale();
+                scale = m_parent->GetWorldScale();
             }
 
-            return this->parent->GetWorldPosition() + (orientation * (scale * this->position));
+            return m_parent->GetWorldPosition() + (orientation * (scale * m_position));
         }
 
-        return this->position;
+        return m_position;
     }
 
     void SceneNode::SetWorldPosition(const glm::vec3 &worldPosition, bool updateDynamicsObject)
     {
-        if (this->parent != nullptr && this->IsPositionInheritanceEnabled())
+        if (m_parent != nullptr && this->IsPositionInheritanceEnabled())
         {
-            glm::vec3 Pp = this->parent->GetWorldPosition();
-            glm::vec3 Ps = this->parent->GetWorldScale();
-            glm::quat Po = this->parent->GetOrientation();
+            glm::vec3 Pp = m_parent->GetWorldPosition();
+            glm::vec3 Ps = m_parent->GetWorldScale();
+            glm::quat Po = m_parent->GetOrientation();
 
             this->SetPosition(((worldPosition - Pp) * Po) / Ps, updateDynamicsObject);
         }
@@ -495,12 +495,12 @@ namespace GTEngine
 
     void SceneNode::SetOrientation(const glm::quat &orientation, bool updateDynamicsObject)
     {
-        if (this->orientation[0] != orientation[0] ||
-            this->orientation[1] != orientation[1] ||
-            this->orientation[2] != orientation[2] ||
-            this->orientation[3] != orientation[3])
+        if (m_orientation[0] != orientation[0] ||
+            m_orientation[1] != orientation[1] ||
+            m_orientation[2] != orientation[2] ||
+            m_orientation[3] != orientation[3])
         {
-            this->orientation = orientation;
+            m_orientation = orientation;
 
             if (!this->EventsLocked())
             {
@@ -511,19 +511,19 @@ namespace GTEngine
 
     glm::quat SceneNode::GetWorldOrientation() const
     {
-        if (this->parent != nullptr && this->IsOrientationInheritanceEnabled())
+        if (m_parent != nullptr && this->IsOrientationInheritanceEnabled())
         {
-            return this->parent->GetWorldOrientation() * this->orientation;
+            return m_parent->GetWorldOrientation() * m_orientation;
         }
 
-        return this->orientation;
+        return m_orientation;
     }
 
     void SceneNode::SetWorldOrientation(const glm::quat &worldOrientation, bool updateDynamicsObject)
     {
-        if (this->parent != nullptr && this->IsOrientationInheritanceEnabled())
+        if (m_parent != nullptr && this->IsOrientationInheritanceEnabled())
         {
-            this->SetOrientation(glm::inverse(this->parent->GetWorldOrientation()) * worldOrientation, updateDynamicsObject);
+            this->SetOrientation(glm::inverse(m_parent->GetWorldOrientation()) * worldOrientation, updateDynamicsObject);
         }
         else
         {
@@ -534,9 +534,9 @@ namespace GTEngine
 
     void SceneNode::SetScale(const glm::vec3 &scale)
     {
-        if (this->scale.x != scale.x || this->scale.y != scale.y || this->scale.z != scale.z)
+        if (m_scale.x != scale.x || m_scale.y != scale.y || m_scale.z != scale.z)
         {
-            this->scale = scale;
+            m_scale = scale;
 
             if (!this->EventsLocked())
             {
@@ -547,19 +547,19 @@ namespace GTEngine
 
     glm::vec3 SceneNode::GetWorldScale() const
     {
-        if (this->parent != nullptr && this->IsScaleInheritanceEnabled())
+        if (m_parent != nullptr && this->IsScaleInheritanceEnabled())
         {
-            return this->parent->GetWorldScale() * this->scale;
+            return m_parent->GetWorldScale() * m_scale;
         }
 
-        return this->scale;
+        return m_scale;
     }
 
     void SceneNode::SetWorldScale(const glm::vec3 &worldScale)
     {
-        if (this->parent != nullptr && this->IsScaleInheritanceEnabled())
+        if (m_parent != nullptr && this->IsScaleInheritanceEnabled())
         {
-            this->SetScale(worldScale / this->parent->GetWorldScale());
+            this->SetScale(worldScale / m_parent->GetWorldScale());
         }
         else
         {
@@ -603,55 +603,55 @@ namespace GTEngine
 
     void SceneNode::GetWorldTransformComponents(glm::vec3 &positionOut, glm::quat &orientationOut, glm::vec3 &scaleOut) const
     {
-        if (this->parent != nullptr)
+        if (m_parent != nullptr)
         {
-            this->parent->GetWorldTransformComponents(positionOut, orientationOut, scaleOut);
+            m_parent->GetWorldTransformComponents(positionOut, orientationOut, scaleOut);
 
             glm::vec3 temp;
             if (!this->IsPositionInheritanceEnabled())
             {
-                positionOut = this->position;
+                positionOut = m_position;
 
                 if (!this->IsScaleInheritanceEnabled())
                 {
-                    scaleOut = this->scale;
+                    scaleOut = m_scale;
                 }
                 else
                 {
-                    scaleOut = scaleOut * this->scale;
+                    scaleOut = scaleOut * m_scale;
                 }
 
                 if (!this->IsOrientationInheritanceEnabled())
                 {
-                    orientationOut = this->orientation;
+                    orientationOut = m_orientation;
                 }
                 else
                 {
-                    orientationOut = orientationOut * this->orientation;
+                    orientationOut = orientationOut * m_orientation;
                 }
             }
             else
             {
-                glm::vec3 offset = this->position;
+                glm::vec3 offset = m_position;
 
                 if (!this->IsScaleInheritanceEnabled())
                 {
-                    scaleOut = this->scale;
+                    scaleOut = m_scale;
                 }
                 else
                 {
                     offset   = scaleOut * offset;
-                    scaleOut = scaleOut * this->scale;
+                    scaleOut = scaleOut * m_scale;
                 }
 
                 if (!this->IsOrientationInheritanceEnabled())
                 {
-                    orientationOut = this->orientation;
+                    orientationOut = m_orientation;
                 }
                 else
                 {
                     offset         = orientationOut * offset;
-                    orientationOut = orientationOut * this->orientation;
+                    orientationOut = orientationOut * m_orientation;
                 }
 
                 positionOut += offset;
@@ -659,20 +659,20 @@ namespace GTEngine
         }
         else
         {
-            positionOut    = this->position;
-            orientationOut = this->orientation;
-            scaleOut       = this->scale;
+            positionOut    = m_position;
+            orientationOut = m_orientation;
+            scaleOut       = m_scale;
         }
     }
 
     void SceneNode::SetWorldTransformComponents(const glm::vec3 &position, const glm::quat &orientation, const glm::vec3 &scale, bool updateDynamicsObject)
     {
-        if (this->parent != nullptr)
+        if (m_parent != nullptr)
         {
             glm::vec3 Pp;
             glm::quat Po;
             glm::vec3 Ps;
-            this->parent->GetWorldTransformComponents(Pp, Po, Ps);
+            m_parent->GetWorldTransformComponents(Pp, Po, Ps);
 
             this->SetPosition(((position - Pp) * Po) / Ps, updateDynamicsObject);
             this->SetOrientation(glm::inverse(Po) * orientation, updateDynamicsObject);
@@ -745,38 +745,38 @@ namespace GTEngine
 
     void SceneNode::Translate(const glm::vec3 &offset)
     {
-        this->SetPosition(this->position + (this->orientation * offset));
+        this->SetPosition(m_position + (m_orientation * offset));
     }
 
     void SceneNode::Rotate(float angle, const glm::vec3 &axis)
     {
-        this->SetOrientation(this->orientation * glm::angleAxis(glm::radians(angle), axis));
+        this->SetOrientation(m_orientation * glm::angleAxis(glm::radians(angle), axis));
     }
 
     void SceneNode::Scale(const glm::vec3 &scale)
     {
-        this->SetScale(this->scale * scale);
+        this->SetScale(m_scale * scale);
     }
 
 
     void SceneNode::InterpolatePosition(const glm::vec3 &dest, float a)
     {
-        this->SetPosition(glm::mix(this->position, dest, a));
+        this->SetPosition(glm::mix(m_position, dest, a));
     }
 
     void SceneNode::InterpolateOrientation(const glm::quat &dest, float a)
     {
-        this->SetOrientation(glm::mix(this->orientation, dest, a));
+        this->SetOrientation(glm::mix(m_orientation, dest, a));
     }
 
     void SceneNode::InterpolateScale(const glm::vec3 &dest, float a)
     {
-        this->SetScale(glm::mix(this->scale, dest, a));
+        this->SetScale(glm::mix(m_scale, dest, a));
     }
 
     void SceneNode::Slerp(const glm::quat &dest, float a)
     {
-        this->SetOrientation(glm::slerp(this->orientation, dest, a));
+        this->SetOrientation(glm::slerp(m_orientation, dest, a));
     }
 
 
@@ -805,17 +805,17 @@ namespace GTEngine
 
     glm::vec3 SceneNode::GetForwardVector() const
     {
-        return this->orientation * glm::vec3(0.0f, 0.0f, -1.0f);
+        return m_orientation * glm::vec3(0.0f, 0.0f, -1.0f);
     }
 
     glm::vec3 SceneNode::GetRightVector() const
     {
-        return this->orientation * glm::vec3(1.0f, 0.0f, 0.0f);
+        return m_orientation * glm::vec3(1.0f, 0.0f, 0.0f);
     }
 
     glm::vec3 SceneNode::GetUpVector() const
     {
-        return this->orientation * glm::vec3(0.0f, 1.0f, 0.0f);
+        return m_orientation * glm::vec3(0.0f, 1.0f, 0.0f);
     }
 
 
@@ -838,7 +838,7 @@ namespace GTEngine
 
     void SceneNode::GetTransform(glm::mat4 &transform)
     {
-        Math::CalculateTransformMatrix(this->position, this->orientation, this->scale, transform);
+        Math::CalculateTransformMatrix(m_position, m_orientation, m_scale, transform);
     }
 
 
@@ -1043,11 +1043,11 @@ namespace GTEngine
         {
             if (isStaticIn)
             {
-                this->flags = this->flags | Static;
+                m_flags = m_flags | Static;
             }
             else
             {
-                this->flags = this->flags & ~Static;
+                m_flags = m_flags & ~Static;
             }
 
 
@@ -1060,7 +1060,7 @@ namespace GTEngine
 
     bool SceneNode::IsStatic() const
     {
-        return (this->flags & Static) != 0;
+        return (m_flags & Static) != 0;
     }
 
 
@@ -1071,11 +1071,11 @@ namespace GTEngine
         {
             if (isVisibleIn)
             {
-                this->flags = this->flags & ~Invisible;
+                m_flags = m_flags & ~Invisible;
             }
             else
             {
-                this->flags = this->flags | Invisible;
+                m_flags = m_flags | Invisible;
             }
 
 
@@ -1088,13 +1088,13 @@ namespace GTEngine
 
     bool SceneNode::IsVisible(bool recursive) const
     {
-        bool locallyVisible = (this->flags & Invisible) == 0;
+        bool locallyVisible = (m_flags & Invisible) == 0;
 
         if (locallyVisible)
         {
-            if (recursive && this->parent != nullptr)
+            if (recursive && m_parent != nullptr)
             {
-                return this->parent->IsVisible();
+                return m_parent->IsVisible();
             }
 
             return true;
@@ -1110,7 +1110,7 @@ namespace GTEngine
     {
         auto worldPosition = this->GetWorldPosition();
 
-        this->flags = this->flags | NoPositionInheritance;
+        m_flags = m_flags | NoPositionInheritance;
         this->SetWorldPosition(worldPosition);     // This will ensure the position is correct.
     }
 
@@ -1118,13 +1118,13 @@ namespace GTEngine
     {
         auto worldPosition = this->GetWorldPosition();
 
-        this->flags = this->flags & ~NoPositionInheritance;
+        m_flags = m_flags & ~NoPositionInheritance;
         this->SetWorldPosition(worldPosition);     // This will ensure the position is correct.
     }
 
     bool SceneNode::IsPositionInheritanceEnabled() const
     {
-        return (this->flags & NoPositionInheritance) == 0;
+        return (m_flags & NoPositionInheritance) == 0;
     }
 
 
@@ -1133,7 +1133,7 @@ namespace GTEngine
     {
         auto worldOrientation = this->GetWorldOrientation();
 
-        this->flags = this->flags | NoOrientationInheritance;
+        m_flags = m_flags | NoOrientationInheritance;
         this->SetWorldOrientation(worldOrientation);
     }
 
@@ -1141,13 +1141,13 @@ namespace GTEngine
     {
         auto worldOrientation = this->GetWorldOrientation();
 
-        this->flags = this->flags & ~NoOrientationInheritance;
+        m_flags = m_flags & ~NoOrientationInheritance;
         this->SetWorldOrientation(worldOrientation);
     }
 
     bool SceneNode::IsOrientationInheritanceEnabled() const
     {
-        return (this->flags & NoOrientationInheritance) == 0;
+        return (m_flags & NoOrientationInheritance) == 0;
     }
 
 
@@ -1156,7 +1156,7 @@ namespace GTEngine
     {
         auto worldScale = this->GetWorldScale();
 
-        this->flags = this->flags | NoScaleInheritance;
+        m_flags = m_flags | NoScaleInheritance;
         this->SetWorldScale(worldScale);
     }
 
@@ -1164,13 +1164,13 @@ namespace GTEngine
     {
         auto worldScale = this->GetWorldScale();
 
-        this->flags = this->flags & ~NoOrientationInheritance;
+        m_flags = m_flags & ~NoOrientationInheritance;
         this->SetWorldScale(worldScale);
     }
 
     bool SceneNode::IsScaleInheritanceEnabled() const
     {
-        return (this->flags & NoScaleInheritance) == 0;
+        return (m_flags & NoScaleInheritance) == 0;
     }
 
 
@@ -1193,11 +1193,11 @@ namespace GTEngine
             secondarySerializer.Write(static_cast<uint64_t>(0));
         }
 
-        secondarySerializer.WriteString(this->name);
-        secondarySerializer.Write(this->position);
-        secondarySerializer.Write(this->orientation);
-        secondarySerializer.Write(this->scale);
-        secondarySerializer.Write(static_cast<uint32_t>(this->flags));
+        secondarySerializer.WriteString(m_name);
+        secondarySerializer.Write(m_position);
+        secondarySerializer.Write(m_orientation);
+        secondarySerializer.Write(m_scale);
+        secondarySerializer.Write(static_cast<uint32_t>(m_flags));
 
 
         Serialization::ChunkHeader header;
@@ -1303,7 +1303,7 @@ namespace GTEngine
                         deserializer.Read(newPosition);
                         deserializer.Read(newOrientation);
                         deserializer.Read(newScale);
-                        deserializer.Read(reinterpret_cast<uint32_t &>(this->flags));
+                        deserializer.Read(reinterpret_cast<uint32_t &>(m_flags));
 
                         break;
                     }
@@ -1438,21 +1438,21 @@ namespace GTEngine
 
     void SceneNode::DisableSerialization()
     {
-        this->flags = this->flags | NoSerialization;
+        m_flags = m_flags | NoSerialization;
     }
 
     void SceneNode::EnableSerialization()
     {
-        this->flags = this->flags & ~NoSerialization;
+        m_flags = m_flags & ~NoSerialization;
     }
 
     bool SceneNode::IsSerializationEnabled() const
     {
-        bool locallyEnabled = (this->flags & NoSerialization) == 0;
+        bool locallyEnabled = (m_flags & NoSerialization) == 0;
 
-        if (locallyEnabled && this->parent != nullptr)
+        if (locallyEnabled && m_parent != nullptr)
         {
-            return this->parent->IsSerializationEnabled();
+            return m_parent->IsSerializationEnabled();
         }
         else
         {
@@ -1463,21 +1463,21 @@ namespace GTEngine
 
     void SceneNode::DisableStateStackStaging()
     {
-        this->flags = this->flags | NoStateStackStaging;
+        m_flags = m_flags | NoStateStackStaging;
     }
 
     void SceneNode::EnableStateStackStaging()
     {
-        this->flags = this->flags & ~NoStateStackStaging;
+        m_flags = m_flags & ~NoStateStackStaging;
     }
 
     bool SceneNode::IsStateStackStagingEnabled() const
     {
-        bool locallyEnabled = (this->flags & NoStateStackStaging) == 0;
+        bool locallyEnabled = (m_flags & NoStateStackStaging) == 0;
 
-        if (locallyEnabled && this->parent != nullptr)
+        if (locallyEnabled && m_parent != nullptr)
         {
-            return this->parent->IsStateStackStagingEnabled();
+            return m_parent->IsStateStackStagingEnabled();
         }
         else
         {

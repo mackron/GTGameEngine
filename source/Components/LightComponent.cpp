@@ -18,9 +18,9 @@ namespace GTEngine
     }
 
 
-    void PointLightComponent::SetColour(const glm::vec3 &colour)
+    void PointLightComponent::SetColour(const glm::vec3 &colourIn)
     {
-        this->colour = colour;
+        this->colour = colourIn;
         this->OnChanged();
     }
 
@@ -128,9 +128,9 @@ namespace GTEngine
     }
 
 
-    void SpotLightComponent::SetColour(const glm::vec3 &colour)
+    void SpotLightComponent::SetColour(const glm::vec3 &colourIn)
     {
-        this->colour = colour;
+        this->colour = colourIn;
         this->OnChanged();
     }
 
@@ -262,9 +262,9 @@ namespace GTEngine
     }
 
 
-    void DirectionalLightComponent::SetColour(const glm::vec3 &colour)
+    void DirectionalLightComponent::SetColour(const glm::vec3 &colourIn)
     {
-        this->colour = colour;
+        this->colour = colourIn;
         this->OnChanged();
     }
 
@@ -345,9 +345,9 @@ namespace GTEngine
     }
 
 
-    void AmbientLightComponent::SetColour(const glm::vec3 &colour)
+    void AmbientLightComponent::SetColour(const glm::vec3 &colourIn)
     {
-        this->colour = colour;
+        this->colour = colourIn;
         this->OnChanged();
     }
 

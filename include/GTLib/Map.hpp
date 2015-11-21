@@ -146,7 +146,7 @@ namespace GTLib
 						    // We failed to allocate a buffer that is twice the size of the old one. We may have run out of memory, so we will instead attempt to create a buffer that is only
 						    // 1 item larger.
 						    newBufferSize = this->bufferSize + 1;
-						    auto newbuffer = static_cast<MapItem<T, U>**>(malloc(sizeof(MapItem<T, U>*) * newBufferSize));
+						    newbuffer = static_cast<MapItem<T, U>**>(malloc(sizeof(MapItem<T, U>*) * newBufferSize));
 						    if (newbuffer == nullptr)
 						    {
 							    // We still failed to create the new buffer. Returning null in this case.

@@ -7,6 +7,7 @@
     #pragma warning(push)
     #pragma warning(disable:4201)   // nameless struct/union
     #pragma warning(disable:4324)   // structure was padded due to __declspec(align())
+    #pragma warning(disable:4459)   // declaration of '...' hides global declaration
 #elif defined(__GNUC__)
     #pragma GCC diagnostic push
     #pragma GCC diagnostic ignored "-Wpedantic"

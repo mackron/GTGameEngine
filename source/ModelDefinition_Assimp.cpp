@@ -228,9 +228,9 @@ namespace GTEngine
 
         // If the scale has a negative component we need to reverse the polygon winding.
         aiVector3t<float>    scale;
-        aiQuaterniont<float> rotation;
-        aiVector3t<float>    position;
-        node.mTransformation.Decompose(scale, rotation, position);
+        aiQuaterniont<float> rotation_unused;
+        aiVector3t<float>    position_unused;
+        node.mTransformation.Decompose(scale, rotation_unused, position_unused);
 
         bool useReverseWinding = scale.x < 0.0f || scale.y < 0.0f || scale.z < 0.0f;
 
@@ -487,7 +487,7 @@ namespace GTEngine
                     assert(animation != nullptr);
 
                     // The starting keyframe will be equal to the number of keyframes in the animation at this point.
-                    size_t startKeyFrame = this->animation.GetKeyFrameCount();
+                    size_t startKeyFrame = m_animation.GetKeyFrameCount();
 
                     // Now we need to loop through and add the actual key frames to the animation. This is done a little strange, but the Animation class
                     // will make sure everything is clean. Basically, we loop through every channel and then add the keys for each channel. It's slow, but
@@ -519,7 +519,7 @@ namespace GTEngine
 
 
                         // Now we create the channel.
-                        auto &newChannel = this->animation.CreateChannel();
+                        auto &newChannel = m_animation.CreateChannel();
                         this->MapAnimationChannelToBone(*bone, newChannel);
 
                         // Here is where we add the key frames. Since we are looping over the channels, each key frame will probably be creating twice. This is OK because
@@ -530,7 +530,7 @@ namespace GTEngine
                             auto &rotationKey = channel->mRotationKeys[iKey];
                             auto &scaleKey    = channel->mScalingKeys[iKey];
 
-                            size_t keyFrameIndex = this->animation.AppendKeyFrame(segmentStartTime + positionKey.mTime);
+                            size_t keyFrameIndex = m_animation.AppendKeyFrame(segmentStartTime + positionKey.mTime);
 
                             auto key = this->CreateAnimationKey(vec3_cast(positionKey.mValue), quat_cast(rotationKey.mValue), vec3_cast(scaleKey.mValue));
                             newChannel.SetKey(keyFrameIndex, key);
@@ -540,7 +540,7 @@ namespace GTEngine
 
 
                     // At this point we can now create the named segment.
-                    this->animation.AddNamedSegment(animation->mName.C_Str(), startKeyFrame, this->animation.GetKeyFrameCount());
+                    m_animation.AddNamedSegment(animation->mName.C_Str(), startKeyFrame, m_animation.GetKeyFrameCount());
 
                     // The start time of the next segment will be equal to the previous start time plus the duration of iAnimation.
                     if (animation->mTicksPerSecond > 0)

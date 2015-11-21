@@ -88,13 +88,13 @@ namespace GTEngine
 
 
         /// Retrieves the colour buffer of the viewport.
-        Texture2D* GetColourBuffer() { return this->colourBuffer; }
+        Texture2D* GetColourBuffer() { return m_colourBuffer; }
 
         /// Sets the colour buffer of the viewport.
         ///
         /// @remarks
         ///     This should only need to be used by renderers. This is just a simple setter.
-        void SetColourBuffer(Texture2D* colourBuffer) { this->colourBuffer = colourBuffer; }
+        void SetColourBuffer(Texture2D* colourBuffer) { m_colourBuffer = colourBuffer; }
 
 
 
@@ -155,7 +155,7 @@ namespace GTEngine
 
 
         /// The texture that will hold the colour data of the viewport. Retrieve this with GetColourBuffer().
-        Texture2D* colourBuffer;
+        Texture2D* m_colourBuffer;
 
 
     private: // No copying.

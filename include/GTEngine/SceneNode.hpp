@@ -213,7 +213,7 @@ namespace GTEngine
         // Transformation
 
         /// Retrieves the position of the object.
-        const glm::vec3 & GetPosition() const { return this->position; }
+        const glm::vec3 & GetPosition() const { return m_position; }
 
         /// Sets the position of the node relative to the parent.
         ///
@@ -236,7 +236,7 @@ namespace GTEngine
 
 
         /// Retrieves the orientation of the object.
-        const glm::quat & GetOrientation() const { return this->orientation; }
+        const glm::quat & GetOrientation() const { return m_orientation; }
 
         /// Sets the orientation of the node relative to the parent.
         ///
@@ -254,12 +254,12 @@ namespace GTEngine
 
 
         /// Retrieves the scale of the object.
-        const glm::vec3 & GetScale() const { return this->scale; }
+        const glm::vec3 & GetScale() const { return m_scale; }
 
         /// Sets the scale of the node relative to the parent.
         ///
         /// @param  scale [in] The new scale of the node relative to the parent.
-        void SetScale(const glm::vec3 &scale);
+        void SetScale(const glm::vec3 &scaleIn);
         void SetScale(float x, float y, float z) { this->SetScale(glm::vec3(x, y, z)); }
 
 
@@ -503,7 +503,7 @@ namespace GTEngine
         /// @param  name [in] The name of the component to retrieve.
         ///
         /// return A pointer to the component whose name is that of 'name'. Returns null if no such component exists.
-              Component* GetComponentByName(const char *name);
+              Component* GetComponentByName(const char* name);
         const Component* GetComponentByName(const char* name) const { return const_cast<SceneNode*>(this)->GetComponentByName(name); }
 
 
@@ -681,12 +681,12 @@ namespace GTEngine
         ///     In order for flags to take effect, the scene node should be removed and then re-added to the scene.
         ///     @par
         ///     The accepted flags are those defined in SceneNode::Flags.
-        void SetFlags(unsigned int newFlags) { this->flags = newFlags; }
+        void SetFlags(unsigned int newFlags) { m_flags = newFlags; }
 
         /// Retrieves the scene node's flags.
         ///
         /// @return The scene node's current flags.
-        unsigned int GetFlags() const { return this->flags; }
+        unsigned int GetFlags() const { return m_flags; }
 
 
 
@@ -811,10 +811,10 @@ namespace GTEngine
 
         /// The name of this node. Should usually be unique, but doesn't need to be. This can be modified, so we'll use a String object
         /// to make things easier.
-        GTLib::String name;
+        GTLib::String m_name;
 
         /// The parent of the scene node. If this is null, it is a root object.
-        SceneNode* parent;
+        SceneNode* m_parent;
 
         /// A pointer to the first child node.
         SceneNode* firstChild;
@@ -830,13 +830,13 @@ namespace GTEngine
 
 
         /// The position of the scene node, relative to the parent.
-        glm::vec3 position;
+        glm::vec3 m_position;
 
         /// The orientation of the scene node, relative to the parent.
-        glm::quat orientation;
+        glm::quat m_orientation;
 
         /// The scale of the scene node, relative to the parent.
-        glm::vec3 scale;
+        glm::vec3 m_scale;
 
 
 
@@ -860,7 +860,7 @@ namespace GTEngine
 
 
         /// The scene node's flags. Defaults to 0. Changing a flags requires the node be removed and re-added to the scene in order to take effect.
-        unsigned int flags;
+        unsigned int m_flags;
 
 
         /// The counter used for event locks. If it is > 0, the events are locked. Otherwise they are unlocked. Defaults to 0. LockEvents()

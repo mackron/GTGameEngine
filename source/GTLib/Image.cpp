@@ -13,12 +13,12 @@
 namespace GTLib
 {
     Image::Image()
-        : format(ImageFormat_Auto), mipmaps(), loader(nullptr), flipped(false)
+        : m_format(ImageFormat_Auto), m_mipmaps(), m_loader(nullptr), m_flipped(false)
     {
     }
 
     Image::Image(unsigned int width, unsigned int height, ImageFormat format, const void * data)
-        : format(ImageFormat_Auto), mipmaps(), loader(nullptr), flipped(false)
+        : m_format(ImageFormat_Auto), m_mipmaps(), m_loader(nullptr), m_flipped(false)
     {
         if (!this->Load(width, height, format, data))
         {
@@ -27,7 +27,7 @@ namespace GTLib
     }
 
     Image::Image(const char *filename)
-        : format(ImageFormat_Auto), mipmaps(), loader(nullptr), flipped(false)
+        : m_format(ImageFormat_Auto), m_mipmaps(), m_loader(nullptr), m_flipped(false)
     {
         this->LinkToFile(filename);
     }
@@ -43,16 +43,16 @@ namespace GTLib
         // The image must be reset.
         this->Reset();
 
-        this->loader = ImageLoader::Create(filename, this->flipped);
+        m_loader = ImageLoader::Create(filename, m_flipped);
         
         return this->InitFromImageLoader();
     }
 
     const char* Image::GetLinkedFileName() const
     {
-        if (this->loader != nullptr)
+        if (m_loader != nullptr)
         {
-            return this->loader->GetFileName();
+            return m_loader->GetFileName();
         }
 
         return nullptr;
@@ -60,12 +60,12 @@ namespace GTLib
 
     bool Image::LoadMipmapFromFile(unsigned int mipmapIndex)
     {
-        if (this->loader != nullptr)
+        if (m_loader != nullptr)
         {
-            if (this->loader->HasFileChanged())
+            if (m_loader->HasFileChanged())
             {
                 // When a file changes, the loader needs to be re-opened...
-                if (this->loader->Open())
+                if (m_loader->Open())
                 {
                     // ... and re-initialised from the loader.
                     if (this->InitFromImageLoader())
@@ -77,10 +77,10 @@ namespace GTLib
                 }
             }
 
-            if (mipmapIndex < this->mipmaps.count)
+            if (mipmapIndex < m_mipmaps.count)
             {
-                Mipmap &mipmap = this->mipmaps[mipmapIndex];
-                if (this->loader->LoadMipmap(mipmapIndex, mipmap))
+                Mipmap &mipmap = m_mipmaps[mipmapIndex];
+                if (m_loader->LoadMipmap(mipmapIndex, mipmap))
                 {
                     this->OnMipmapChanged(mipmapIndex);
                     return true;
@@ -93,12 +93,12 @@ namespace GTLib
 
     bool Image::PullNextMipmap()
     {
-        if (this->loader != nullptr)
+        if (m_loader != nullptr)
         {
-            if (this->loader->HasFileChanged())
+            if (m_loader->HasFileChanged())
             {
                 // When a file changes, the loader needs to be re-opened...
-                if (this->loader->Open())
+                if (m_loader->Open())
                 {
                     // ... and re-initialised from the loader.
                     if (this->InitFromImageLoader())
@@ -115,18 +115,18 @@ namespace GTLib
             // we do this is we loop over each mipmap available by the image and load the first one that maps to an empty mipmap in the Image
             // object. We then load that specific mipmap.
             ImageFileInfo fi;
-            this->loader->GetImageInfo(fi);
+            m_loader->GetImageInfo(fi);
 
             // We loop over the file's mipmaps backwards.
             for (unsigned int i = fi.mipmapCount; i > 0; --i)
             {
                 unsigned int mipmapIndex = i - 1;
-                auto & mipmap            = this->mipmaps[mipmapIndex];
+                auto & mipmap            = m_mipmaps[mipmapIndex];
 
                 if (mipmap.data == nullptr)
                 {
                     // We have found the mipmap. Now we load into it.
-                    if (this->loader->LoadMipmap(mipmapIndex, mipmap))
+                    if (m_loader->LoadMipmap(mipmapIndex, mipmap))
                     {
                         this->OnMipmapChanged(mipmapIndex);
                         return true;
@@ -144,7 +144,7 @@ namespace GTLib
 
     bool Image::PullAllMipmaps()
     {
-        if (this->loader != nullptr)
+        if (m_loader != nullptr)
         {
             while (this->PullNextMipmap());
             return true;
@@ -162,20 +162,20 @@ namespace GTLib
         if (width > 0 || height > 0)
         {
             // We need a copy of the data.
-            void* newdata = ImageUtils::CopyImageData(format, width, height, data, this->flipped);
+            void* newdata = ImageUtils::CopyImageData(format, width, height, data, m_flipped);
             if ((data != nullptr && newdata != nullptr) || data == nullptr)
             {
                 // Mipmaps need to be reset before adding any data.
                 this->ResetMipmaps(ImageUtils::CalculateMipmapCount(width, height));
 
-                Mipmap &base = this->mipmaps[0];
+                Mipmap &base = m_mipmaps[0];
                 base.format  = format;
                 base.width   = width;
                 base.height  = height;
                 base.data    = newdata;
                 this->OnMipmapChanged(0);
 
-                this->format = format;
+                m_format = format;
 
                 return true;
             }
@@ -186,9 +186,9 @@ namespace GTLib
     
     bool Image::SetSubData(int xPos, int yPos, unsigned int width, unsigned int height, const void* data)
     {
-        if (this->mipmaps.count > 0)
+        if (m_mipmaps.count > 0)
         {
-            auto &mipmap = this->mipmaps[0];
+            auto &mipmap = m_mipmaps[0];
             
             if (mipmap.data != nullptr)
             {
@@ -198,10 +198,10 @@ namespace GTLib
                     if (xPos >= 0 && yPos >= 0)
                     {
                         // Input is OK. We need to update, remembering to take whether or not the image is flipped into account. We do the copy row-by-row.
-                        size_t srcPitch = ImageUtils::CalculatePitch(width,        this->format);
-                        size_t dstPitch = ImageUtils::CalculatePitch(mipmap.width, this->format);
+                        size_t srcPitch = ImageUtils::CalculatePitch(width,        m_format);
+                        size_t dstPitch = ImageUtils::CalculatePitch(mipmap.width, m_format);
                         
-                        if (this->flipped)
+                        if (m_flipped)
                         {
                             //yPos = mipmap.height - yPos - height;
                             
@@ -210,7 +210,7 @@ namespace GTLib
                                 const uint8_t* srcData = reinterpret_cast<const uint8_t*>(data) + (iSourceRow * srcPitch);
                                       uint8_t* dstData = reinterpret_cast<      uint8_t*>(mipmap.data);
                                 dstData += ((yPos + (height - iSourceRow - 1)) * dstPitch);     // <-- Y offset.
-                                dstData += (xPos * GetTexelSizeInBytes(this->format));          // <-- X offset.
+                                dstData += (xPos * GetTexelSizeInBytes(m_format));          // <-- X offset.
                                 
                                 memcpy(dstData, srcData, srcPitch);
                             }
@@ -222,7 +222,7 @@ namespace GTLib
                                 const uint8_t* srcData = reinterpret_cast<const uint8_t*>(data) + (iSourceRow * srcPitch);
                                       uint8_t* dstData = reinterpret_cast<      uint8_t*>(mipmap.data);
                                 dstData += ((yPos + iSourceRow) * dstPitch);                    // <-- Y offset.
-                                dstData += (xPos * GetTexelSizeInBytes(this->format));          // <-- X offset.
+                                dstData += (xPos * GetTexelSizeInBytes(m_format));          // <-- X offset.
                                 
                                 memcpy(dstData, srcData, srcPitch);
                             }
@@ -240,14 +240,14 @@ namespace GTLib
     bool Image::GenerateMipmaps()
     {
         // In order to generate mipmaps, we must have at least a base mipmap.
-        if (this->mipmaps.count > 0 && this->mipmaps[0].IsValid())
+        if (m_mipmaps.count > 0 && m_mipmaps[0].IsValid())
         {
-            for (size_t i = 1; i < this->mipmaps.count; ++i)    // Important to start at 1. Each mipmap is generate based on the previous one.
+            for (size_t i = 1; i < m_mipmaps.count; ++i)    // Important to start at 1. Each mipmap is generate based on the previous one.
             {
-                auto &mipmap = this->mipmaps[i];
+                auto &mipmap = m_mipmaps[i];
                 if (!mipmap.IsValid())              // We don't generate mipmaps for already-valid mipmaps.
                 {
-                    auto &sourceMipmap = this->mipmaps[i - 1];
+                    auto &sourceMipmap = m_mipmaps[i - 1];
                     MipmapGenerator::Generate(sourceMipmap, mipmap);
 
                     this->OnMipmapChanged(static_cast<unsigned int>(i));
@@ -263,40 +263,40 @@ namespace GTLib
 
     size_t Image::GetMipmapCount() const
     {
-        return this->mipmaps.count;
+        return m_mipmaps.count;
     }
 
     Mipmap & Image::GetMipmap(unsigned int index)
     {
-        assert(index < this->mipmaps.count);
+        assert(index < m_mipmaps.count);
         {
-            return this->mipmaps[index];
+            return m_mipmaps[index];
         }
     }
 
     const Mipmap & Image::GetMipmap(unsigned int index) const
     {
-        assert(index < this->mipmaps.count);
+        assert(index < m_mipmaps.count);
         {
-            return this->mipmaps[index];
+            return m_mipmaps[index];
         }
     }
 
     ImageFormat Image::GetFormat() const
     {
-        return this->format;
+        return m_format;
     }
 
     bool Image::IsFloatingPointFormat() const
     {
-        return GetImageFormatDataType(this->format) == ImageFormatDataTypes::Float;
+        return GetImageFormatDataType(m_format) == ImageFormatDataTypes::Float;
     }
 
     unsigned int Image::GetWidth() const
     {
-        if (this->mipmaps.count > 0 && this->mipmaps[0].IsValid())
+        if (m_mipmaps.count > 0 && m_mipmaps[0].IsValid())
         {
-            return this->mipmaps[0].width;
+            return m_mipmaps[0].width;
         }
 
         return 0;
@@ -304,9 +304,9 @@ namespace GTLib
 
     unsigned int Image::GetHeight() const
     {
-        if (this->mipmaps.count > 0)
+        if (m_mipmaps.count > 0)
         {
-            return this->mipmaps[0].height;
+            return m_mipmaps[0].height;
         }
 
         return 0;
@@ -314,9 +314,9 @@ namespace GTLib
 
     const void* Image::GetBaseMipmapData() const
     {
-        if (this->mipmaps.count > 0)
+        if (m_mipmaps.count > 0)
         {
-            return this->mipmaps[0].data;
+            return m_mipmaps[0].data;
         }
 
         return nullptr;
@@ -324,9 +324,9 @@ namespace GTLib
 
     size_t Image::GetBaseMipmapDataSize() const
     {
-        if (this->mipmaps.count > 0)
+        if (m_mipmaps.count > 0)
         {
-            return this->mipmaps[0].GetDataSizeInBytes();
+            return m_mipmaps[0].GetDataSizeInBytes();
         }
 
         return 0;
@@ -335,21 +335,21 @@ namespace GTLib
     void Image::FlipVertically()
     {
         // Any existing data needs to be flipped.
-        for (size_t i = 0; i < this->mipmaps.count; ++i)
+        for (size_t i = 0; i < m_mipmaps.count; ++i)
         {
-            if (this->mipmaps[i].data != nullptr)
+            if (m_mipmaps[i].data != nullptr)
             {
-                this->mipmaps[i].FlipVertically();
+                m_mipmaps[i].FlipVertically();
                 this->OnMipmapChanged(static_cast<unsigned int>(i));
             }
         }
 
-        this->flipped = !this->flipped;
+        m_flipped = !m_flipped;
 
         // If we have a loader, that needs to be configured, too.
-        if (this->loader != nullptr)
+        if (m_loader != nullptr)
         {
-            this->loader->SetLoadUpsideDown(this->flipped);
+            m_loader->SetLoadUpsideDown(m_flipped);
         }
     }
 
@@ -358,9 +358,9 @@ namespace GTLib
         bool foundBase = false;
 
         // First we find the base level...
-        for (size_t i = 0; i < this->mipmaps.count; ++i)
+        for (size_t i = 0; i < m_mipmaps.count; ++i)
         {
-            if (this->mipmaps[i].IsValid())
+            if (m_mipmaps[i].IsValid())
             {
                 baseLevel = i;
                 maxLevel  = i;
@@ -373,9 +373,9 @@ namespace GTLib
         if (foundBase)
         {
             // Now we find the max level.
-            for (size_t i = baseLevel + 1; i < this->mipmaps.count; ++i)
+            for (size_t i = baseLevel + 1; i < m_mipmaps.count; ++i)
             {
-                if (this->mipmaps[i].IsValid())
+                if (m_mipmaps[i].IsValid())
                 {
                     ++maxLevel;
                 }
@@ -400,46 +400,46 @@ namespace GTLib
 
     void Image::Reset()
     {
-        this->format = ImageFormat_Auto;
+        m_format = ImageFormat_Auto;
 
         // Any mipmaps must be deleted.
         this->ResetMipmaps(0);
 
-        ImageLoader::Delete(this->loader);
-        this->loader = nullptr;
+        ImageLoader::Delete(m_loader);
+        m_loader = nullptr;
     }
 
     void Image::ResetMipmaps(size_t newMipmapCount)
     {
         // We need to post events letting everything know that mipmaps are being deleted.
-        for (size_t i = this->mipmaps.count; i > 0; --i)
+        for (size_t i = m_mipmaps.count; i > 0; --i)
         {
             this->OnMipmapDeleted(static_cast<unsigned int>(i) - 1);
         }
 
-        this->mipmaps.Clear();
-        this->mipmaps.Resize(newMipmapCount);
+        m_mipmaps.Clear();
+        m_mipmaps.Resize(newMipmapCount);
     }
 
     bool Image::InitFromImageLoader()
     {
-        if (this->loader != nullptr)
+        if (m_loader != nullptr)
         {
             // First we need image information.
             ImageFileInfo info;
-            this->loader->GetImageInfo(info);
+            m_loader->GetImageInfo(info);
 
             // Our mipmaps need to be reset.
             this->ResetMipmaps(ImageUtils::CalculateMipmapCount(info.width, info.height));
 
 
             // Now we can set the base mipmap. It won't have any data at this point.
-            Mipmap &base = this->mipmaps[0];
+            Mipmap &base = m_mipmaps[0];
             base.format  = info.format;
             base.width   = info.width;
             base.height  = info.height;
             
-            this->format = info.format;
+            m_format = info.format;
 
             return true;
         }

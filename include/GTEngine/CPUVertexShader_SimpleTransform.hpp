@@ -34,10 +34,10 @@ namespace GTEngine
     private:
 
         /// The matrix to apply to the vertex transformation.
-        glm::simdMat4 transform;
+        glm::simdMat4 m_transform;
 
         /// The transformation matrix for normals.
-        glm::mat3 normalTransform;
+        glm::mat3 m_normalTransform;
 
     };
 }

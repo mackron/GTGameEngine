@@ -23,23 +23,23 @@ namespace GTEngine
 
 
         /// Retrieves a pointer to the Texture2D image.
-              Texture2D* GetImage()       { return this->image; }
-        const Texture2D* GetImage() const { return this->image; }
+              Texture2D* GetImage()       { return m_image; }
+        const Texture2D* GetImage() const { return m_image; }
 
 
         /// Retrieves the current zoom.
-        float GetZoom() const { return this->zoom; }
+        float GetZoom() const { return m_zoom; }
 
         /// Sets the current zoom.
-        void SetZoom(float newZoom) { this->zoom = newZoom; }
+        void SetZoom(float newZoom) { m_zoom = newZoom; }
 
 
         ///////////////////////////////////////////////////
         // Virtual Methods.
 
         /// SubEditor::GetMainElement()
-              GTGUI::Element* GetMainElement()        { return this->viewportElement; }
-        const GTGUI::Element* GetMainElement( ) const { return this->viewportElement; }
+              GTGUI::Element* GetMainElement()        { return m_viewportElement; }
+        const GTGUI::Element* GetMainElement( ) const { return m_viewportElement; }
 
         /// SubEditor::Show()
         void Show();
@@ -54,7 +54,7 @@ namespace GTEngine
     private:
 
         /// The viewport the image will be drawn to.
-        GTGUI::Element* viewportElement;
+        GTGUI::Element* m_viewportElement;
 
         /// The event handler for the viewport. We need this for the mouse wheel and drawing.
         /// Event handler for the viewport. Mainly needed for drawing the image at draw time.
@@ -91,15 +91,15 @@ namespace GTEngine
             ViewportEventHandler & operator=(const ViewportEventHandler &);
 
         friend class ImageEditor;
-        }viewportEventHandler;
+        } m_viewportEventHandler;
 
 
 
         /// The texture to draw.
-        Texture2D* image;
+        Texture2D* m_image;
 
         /// The zoom level.
-        float zoom;
+        float m_zoom;
 
 
     private:    // No copying.

@@ -8,21 +8,21 @@ namespace GTEngine
 {
     ConeTwistConstraint::ConeTwistConstraint(RigidBody &bodyA, RigidBody &bodyB, const glm::mat4 &frameA, const glm::mat4 &frameB)
         : btConeTwistConstraint(bodyA, bodyB, BulletUtils::CreateTransform(frameA), BulletUtils::CreateTransform(frameB)),
-          world(nullptr), isCollisionBetweenLinkedBodiesDisabled(true)
+          m_world(nullptr), isCollisionBetweenLinkedBodiesDisabled(true)
     {
     }
 
     ConeTwistConstraint::ConeTwistConstraint(RigidBody &bodyB, const glm::mat4 &frameB)
         : btConeTwistConstraint(bodyB, BulletUtils::CreateTransform(frameB)),
-          world(nullptr), isCollisionBetweenLinkedBodiesDisabled(true)
+          m_world(nullptr), isCollisionBetweenLinkedBodiesDisabled(true)
     {
     }
 
     ConeTwistConstraint::~ConeTwistConstraint()
     {
-        if (this->world != nullptr)
+        if (m_world != nullptr)
         {
-            this->world->RemoveConstraint(*this);
+            m_world->RemoveConstraint(*this);
         }
     }
 

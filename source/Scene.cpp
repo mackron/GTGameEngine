@@ -976,7 +976,7 @@ namespace GTEngine
     }
 
 
-    SceneNode* Scene::FindFirstNode(const char* name)
+    SceneNode* Scene::FindFirstNode(const char* nameIn)
     {
         // Here we check every node and their children.
         for (size_t i = 0; i < this->sceneNodes.GetCount(); ++i)
@@ -984,7 +984,7 @@ namespace GTEngine
             auto node = this->sceneNodes.GetSceneNodeAtIndex(i);
             assert(node != nullptr);
             {
-                if (GTLib::Strings::Equal(node->GetName(), name))
+                if (GTLib::Strings::Equal(node->GetName(), nameIn))
                 {
                     return node;
                 }

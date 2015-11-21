@@ -57,9 +57,9 @@ namespace GTEngine
         this->OnChanged(ChangeFlag_Flags | ChangeFlag_Model);
     }
 
-    void ModelComponent::SetModel(Model &model, bool takeOwnership)
+    void ModelComponent::SetModel(Model &modelIn, bool takeOwnership)
     {
-        this->SetModel(&model, takeOwnership);
+        this->SetModel(&modelIn, takeOwnership);
     }
 
     Model* ModelComponent::SetModel(const char* fileName, const char* relativeTo)

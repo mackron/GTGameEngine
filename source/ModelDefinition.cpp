@@ -10,10 +10,10 @@ namespace GTEngine
 {
     ModelDefinition::ModelDefinition()
         : absolutePath(), relativePath(),
-          meshes(), bones(),
-          animation(), animationChannelBones(), animationKeyCache(),
+          meshes(), m_bones(),
+          m_animation(), animationChannelBones(), animationKeyCache(),
           animationAABBPadding(0.25f),
-          convexHulls(), convexHullBuildSettings()
+          m_convexHulls(), convexHullBuildSettings()
     {
     }
 
@@ -165,11 +165,11 @@ namespace GTEngine
     void ModelDefinition::BuildConvexDecomposition(ConvexHullBuildSettings &settings)
     {
         // We need to delete the old convex hulls.
-        for (size_t i = 0; i < this->convexHulls.count; ++i)
+        for (size_t i = 0; i < m_convexHulls.count; ++i)
         {
-            delete this->convexHulls[i];
+            delete m_convexHulls[i];
         }
-        this->convexHulls.Clear();
+        m_convexHulls.Clear();
 
 
         // After deleting the old convex hulls we can build the new ones.
@@ -183,7 +183,7 @@ namespace GTEngine
 
                 for (size_t iHull = 0; iHull < count; ++iHull)
                 {
-                    this->convexHulls.PushBack(new ConvexHull(convexHulls[iHull]));
+                    m_convexHulls.PushBack(new ConvexHull(convexHulls[iHull]));
                 }
 
                 ConvexHull::DeleteConvexHulls(convexHulls);
@@ -211,16 +211,16 @@ namespace GTEngine
 
     void ModelDefinition::ClearBones()
     {
-        for (size_t i = 0; i < this->bones.count; ++i)
+        for (size_t i = 0; i < m_bones.count; ++i)
         {
-            delete this->bones.buffer[i];
+            delete m_bones.buffer[i];
         }
-        this->bones.Clear();
+        m_bones.Clear();
     }
 
     void ModelDefinition::ClearAnimations(bool clearNamedSegments)
     {
-        this->animation.Clear(clearNamedSegments);
+        m_animation.Clear(clearNamedSegments);
 
         for (size_t i = 0; i < this->animationKeyCache.count; ++i)
         {
@@ -233,16 +233,16 @@ namespace GTEngine
 
     void ModelDefinition::ClearNamedAnimationSegments()
     {
-        this->animation.ClearNamedSegments();
+        m_animation.ClearNamedSegments();
     }
 
     void ModelDefinition::ClearConvexHulls()
     {
-        for (size_t i = 0; i < this->convexHulls.count; ++i)
+        for (size_t i = 0; i < m_convexHulls.count; ++i)
         {
-            delete this->convexHulls[i];
+            delete m_convexHulls[i];
         }
-        this->convexHulls.Clear();
+        m_convexHulls.Clear();
     }
 
 
@@ -286,15 +286,15 @@ namespace GTEngine
 
     size_t ModelDefinition::AddBone(Bone* bone)
     {
-        this->bones.PushBack(bone);
-        return this->bones.count - 1;
+        m_bones.PushBack(bone);
+        return m_bones.count - 1;
     }
 
     Bone* ModelDefinition::GetBoneByName(const char* boneName)
     {
-        for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
+        for (size_t iBone = 0; iBone < m_bones.count; ++iBone)
         {
-            auto bone = this->bones[iBone];
+            auto bone = m_bones[iBone];
             assert(bone != nullptr);
             {
                 if (GTLib::Strings::Equal(bone->GetName(), boneName))
@@ -309,9 +309,9 @@ namespace GTEngine
 
     const Bone* ModelDefinition::GetBoneByName(const char* boneName) const
     {
-        for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
+        for (size_t iBone = 0; iBone < m_bones.count; ++iBone)
         {
-            auto bone = this->bones[iBone];
+            auto bone = m_bones[iBone];
             assert(bone != nullptr);
             {
                 if (GTLib::Strings::Equal(bone->GetName(), boneName))
@@ -327,20 +327,20 @@ namespace GTEngine
 
     Bone* ModelDefinition::GetBoneByIndex(size_t boneIndex)
     {
-        return this->bones[boneIndex];
+        return m_bones[boneIndex];
     }
 
     const Bone* ModelDefinition::GetBoneByIndex(size_t boneIndex) const
     {
-        return this->bones[boneIndex];
+        return m_bones[boneIndex];
     }
 
 
     bool ModelDefinition::FindBoneIndex(const Bone* bone, size_t &indexOut) const
     {
-        for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
+        for (size_t iBone = 0; iBone < m_bones.count; ++iBone)
         {
-            if (this->bones[iBone] == bone)
+            if (m_bones[iBone] == bone)
             {
                 indexOut = iBone;
                 return true;
@@ -352,9 +352,9 @@ namespace GTEngine
 
     bool ModelDefinition::FindBoneIndex(const char* boneName, size_t &indexOut) const
     {
-        for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
+        for (size_t iBone = 0; iBone < m_bones.count; ++iBone)
         {
-            auto bone = this->bones[iBone];
+            auto bone = m_bones[iBone];
             assert(bone != nullptr);
             {
                 if (GTLib::Strings::Equal(bone->GetName(), boneName))
@@ -370,7 +370,7 @@ namespace GTEngine
 
     size_t ModelDefinition::GetBoneCount() const
     {
-        return this->bones.count;
+        return m_bones.count;
     }
 
 
@@ -396,12 +396,12 @@ namespace GTEngine
         /////////////////////////////////////
         // Bones
 
-        intermediarySerializer.Write(static_cast<uint32_t>(this->bones.count));
+        intermediarySerializer.Write(static_cast<uint32_t>(m_bones.count));
         
         // Local information.
-        for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
+        for (size_t iBone = 0; iBone < m_bones.count; ++iBone)
         {
-            auto bone = this->bones[iBone];
+            auto bone = m_bones[iBone];
             assert(bone != nullptr);
             {
                 // Name.
@@ -418,9 +418,9 @@ namespace GTEngine
         }
 
         // Parents. -1 for bones without parents.
-        for (size_t iBone = 0; iBone < this->bones.count; ++iBone)
+        for (size_t iBone = 0; iBone < m_bones.count; ++iBone)
         {
-            auto bone = this->bones[iBone];
+            auto bone = m_bones[iBone];
             assert(bone != nullptr);
             {
                 auto parentBone = bone->GetParent();
@@ -555,12 +555,12 @@ namespace GTEngine
         // Animation
 
         intermediarySerializer.Clear();
-        intermediarySerializer.Write(static_cast<uint32_t>(this->animation.GetKeyFrameCount()));
+        intermediarySerializer.Write(static_cast<uint32_t>(m_animation.GetKeyFrameCount()));
 
-        for (uint32_t iKeyFrame = 0; iKeyFrame < this->animation.GetKeyFrameCount(); ++iKeyFrame)
+        for (uint32_t iKeyFrame = 0; iKeyFrame < m_animation.GetKeyFrameCount(); ++iKeyFrame)
         {
             // Time.
-            intermediarySerializer.Write(static_cast<float>(this->animation.GetKeyFrameTimeByIndex(iKeyFrame)));
+            intermediarySerializer.Write(static_cast<float>(m_animation.GetKeyFrameTimeByIndex(iKeyFrame)));
             
             
             // Channels.
@@ -623,11 +623,11 @@ namespace GTEngine
         // Animation Segments
 
         intermediarySerializer.Clear();
-        intermediarySerializer.Write(static_cast<uint32_t>(this->animation.GetNamedSegmentCount()));
+        intermediarySerializer.Write(static_cast<uint32_t>(m_animation.GetNamedSegmentCount()));
 
-        for (size_t iSegment = 0; iSegment < this->animation.GetNamedSegmentCount(); ++iSegment)
+        for (size_t iSegment = 0; iSegment < m_animation.GetNamedSegmentCount(); ++iSegment)
         {
-            auto segment = this->animation.GetNamedSegmentByIndex(iSegment);
+            auto segment = m_animation.GetNamedSegmentByIndex(iSegment);
             assert(segment != nullptr);
             {
                 intermediarySerializer.WriteString(segment->name);
@@ -667,16 +667,16 @@ namespace GTEngine
         // Convex Hulls
 
         intermediarySerializer.Clear();
-        intermediarySerializer.Write(static_cast<uint32_t>(this->convexHulls.count));
+        intermediarySerializer.Write(static_cast<uint32_t>(m_convexHulls.count));
 
-        GTLib::Vector<uint32_t> vertexCounts(this->convexHulls.count);
-        GTLib::Vector<uint32_t> indexCounts( this->convexHulls.count);
+        GTLib::Vector<uint32_t> vertexCounts(m_convexHulls.count);
+        GTLib::Vector<uint32_t> indexCounts( m_convexHulls.count);
         GTLib::Vector<float>    vertices;
         GTLib::Vector<uint32_t> indices;
 
-        for (size_t iConvexHull = 0; iConvexHull < this->convexHulls.count; ++iConvexHull)
+        for (size_t iConvexHull = 0; iConvexHull < m_convexHulls.count; ++iConvexHull)
         {
-            auto convexHull = this->convexHulls[iConvexHull];
+            auto convexHull = m_convexHulls[iConvexHull];
             assert(convexHull != nullptr);
             {
                 uint32_t vertexCount = static_cast<uint32_t>(convexHull->GetVertexCount());
@@ -784,7 +784,7 @@ namespace GTEngine
 
 
                             // We need to create a channel for this bone. We then need to map that channel to a bone.
-                            auto &channel = this->animation.CreateChannel();
+                            auto &channel = m_animation.CreateChannel();
                             this->animationChannelBones.Add(bone, &channel);
                         }
 
@@ -799,7 +799,7 @@ namespace GTEngine
 
                             if (parentIndex != static_cast<uint32_t>(-1))
                             {
-                                this->bones[parentIndex]->AttachChild(*this->bones[iBone]);
+                                m_bones[parentIndex]->AttachChild(*m_bones[iBone]);
                             }
                         }
 
@@ -943,7 +943,7 @@ namespace GTEngine
                             float time;
                             deserializer.Read(time);
 
-                            size_t keyFrameIndex = this->animation.AppendKeyFrame(static_cast<double>(time));
+                            size_t keyFrameIndex = m_animation.AppendKeyFrame(static_cast<double>(time));
 
 
                             // With the key frame added, we now need to iterate over each channel in the key frame.
@@ -955,7 +955,7 @@ namespace GTEngine
                                 uint32_t boneIndex;
                                 deserializer.Read(boneIndex);
 
-                                auto bone = this->bones[boneIndex];
+                                auto bone = m_bones[boneIndex];
                                 assert(bone != nullptr);
                                 {
                                     auto iChannelBone = this->animationChannelBones.Find(bone);
@@ -1012,7 +1012,7 @@ namespace GTEngine
                             deserializer.Read(startKeyFrame);
                             deserializer.Read(endKeyFrame);
 
-                            this->animation.AddNamedSegment(name.c_str(), static_cast<size_t>(startKeyFrame), static_cast<size_t>(endKeyFrame));
+                            m_animation.AddNamedSegment(name.c_str(), static_cast<size_t>(startKeyFrame), static_cast<size_t>(endKeyFrame));
                         }
                     }
                     else
@@ -1078,7 +1078,7 @@ namespace GTEngine
                             size_t vertexCount = static_cast<size_t>(vertexCounts[iConvexHull]);
                             size_t indexCount  = static_cast<size_t>(indexCounts[iConvexHull]);
 
-                            this->convexHulls.PushBack(new ConvexHull(currentVertices, vertexCount, currentIndices, indexCount));
+                            m_convexHulls.PushBack(new ConvexHull(currentVertices, vertexCount, currentIndices, indexCount));
 
                             // Now we need to move our pointers forward.
                             currentVertices += vertexCount * 3;

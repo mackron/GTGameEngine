@@ -209,7 +209,7 @@ namespace GTEngine
 
         /// A very temporary pointer that keeps track of the world the rigid body is contained in. This is used for when the rigid body
         /// needs to be removed from and then re-added to the world.
-        GTEngine::DynamicsWorld* world;
+        GTEngine::DynamicsWorld* m_world;
 
         
         /// The mass of the rigid body. Defaults to 0 (static).

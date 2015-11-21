@@ -15,7 +15,7 @@ namespace GTEngine
 {
     ModelEditor::ModelEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
-          modelDefinition(), model(modelDefinition),
+          modelDefinition(), m_model(modelDefinition),
           scene(), camera(),
           modelNode(), convexHullParentNode(), convexHullNodes(),
           mainElement(nullptr), viewportElement(nullptr), timelineElement(nullptr),
@@ -54,10 +54,10 @@ namespace GTEngine
         }
 
         // Refresh the model to have it show the current state of the model definition.
-        this->model.OnDefinitionChanged();
+        m_model.OnDefinitionChanged();
 
         // Add a model component to the scene node.
-        this->modelNode.AddComponent<GTEngine::ModelComponent>()->SetModel(this->model);
+        this->modelNode.AddComponent<GTEngine::ModelComponent>()->SetModel(m_model);
 
 
         auto &gui    = this->GetGUI();
@@ -196,7 +196,7 @@ namespace GTEngine
 
     void ModelEditor::RefreshViewport()
     {
-        this->model.OnDefinitionChanged();
+        m_model.OnDefinitionChanged();
     }
 
 
@@ -228,19 +228,19 @@ namespace GTEngine
 
     void ModelEditor::AddNewAnimationSegment(const char* name, size_t startIndex, size_t endIndex)
     {
-        this->modelDefinition.animation.AddNamedSegment(name, startIndex, endIndex);
+        this->modelDefinition.m_animation.AddNamedSegment(name, startIndex, endIndex);
         this->MarkAsModified();
     }
 
     void ModelEditor::RemoveAnimationSegmentByIndex(size_t index)
     {
-        this->modelDefinition.animation.RemoveSegmentByIndex(index);
+        this->modelDefinition.m_animation.RemoveSegmentByIndex(index);
         this->MarkAsModified();
     }
 
     void ModelEditor::SetAnimationSegmentName(size_t index, const char* newName)
     {
-        auto segment = this->modelDefinition.animation.GetNamedSegmentByIndex(index);
+        auto segment = this->modelDefinition.m_animation.GetNamedSegmentByIndex(index);
         if (segment != nullptr)
         {
             segment->name = newName;
@@ -250,7 +250,7 @@ namespace GTEngine
 
     const char* ModelEditor::GetAnimationSegmentName(size_t index) const
     {
-        auto segment = this->modelDefinition.animation.GetNamedSegmentByIndex(index);
+        auto segment = this->modelDefinition.m_animation.GetNamedSegmentByIndex(index);
         if (segment != nullptr)
         {
             return segment->name.c_str();
@@ -261,7 +261,7 @@ namespace GTEngine
 
     void ModelEditor::SetAnimationSegmentFrameIndices(size_t segmentIndex, size_t startIndex, size_t endIndex)
     {
-        auto segment = this->modelDefinition.animation.GetNamedSegmentByIndex(segmentIndex);
+        auto segment = this->modelDefinition.m_animation.GetNamedSegmentByIndex(segmentIndex);
         if (segment != nullptr)
         {
             segment->startKeyFrame = startIndex;
@@ -273,7 +273,7 @@ namespace GTEngine
 
     void ModelEditor::GetAnimationSegmentFrameIndices(size_t segmentIndex, size_t &startIndex, size_t &endIndex) const
     {
-        auto segment = this->modelDefinition.animation.GetNamedSegmentByIndex(segmentIndex);
+        auto segment = this->modelDefinition.m_animation.GetNamedSegmentByIndex(segmentIndex);
         if (segment != nullptr)
         {
             startIndex = segment->startKeyFrame;
@@ -284,13 +284,13 @@ namespace GTEngine
 
     void ModelEditor::PlayAnimationSegmentByIndex(size_t segmentIndex)
     {
-        auto segment = this->modelDefinition.animation.GetNamedSegmentByIndex(segmentIndex);
+        auto segment = this->modelDefinition.m_animation.GetNamedSegmentByIndex(segmentIndex);
         if (segment != nullptr)
         {
             AnimationSequence sequence;
             sequence.AddFrame(segment->startKeyFrame, segment->endKeyFrame, 0.0, true);
 
-            this->model.PlayAnimation(sequence);
+            m_model.PlayAnimation(sequence);
             this->UpdateAnimationPlaybackControls();
         }
     }
@@ -298,37 +298,37 @@ namespace GTEngine
     void ModelEditor::PlayAnimation()
     {
         AnimationSequence sequence;
-        sequence.AddFrame(0, this->model.animation.GetKeyFrameCount(), 0.0f, true);      // '0.0f' is the transition time. 'true' says to loop.
+        sequence.AddFrame(0, m_model.animation.GetKeyFrameCount(), 0.0f, true);      // '0.0f' is the transition time. 'true' says to loop.
 
-        this->model.PlayAnimation(sequence);
+        m_model.PlayAnimation(sequence);
     }
 
     void ModelEditor::ResumeAnimation()
     {
-        this->model.ResumeAnimation();
+        m_model.ResumeAnimation();
         this->UpdateAnimationPlaybackControls();
     }
 
     void ModelEditor::StopAnimation()
     {
-        this->model.StopAnimation();
+        m_model.StopAnimation();
         this->UpdateAnimationPlaybackControls();
     }
 
     void ModelEditor::PauseAnimation()
     {
-        this->model.PauseAnimation();
+        m_model.PauseAnimation();
         this->UpdateAnimationPlaybackControls();
     }
 
     bool ModelEditor::IsAnimationPlaying() const
     {
-        return this->model.IsAnimating();
+        return m_model.IsAnimating();
     }
 
     bool ModelEditor::IsAnimationPaused() const
     {
-        return this->model.IsAnimationPaused();
+        return m_model.IsAnimationPaused();
     }
 
 

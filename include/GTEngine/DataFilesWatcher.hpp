@@ -52,9 +52,9 @@ namespace GTEngine
             /// Adds a child item.
             ///
             /// @param info [in] The file info of the child.
-            void InsertChild(const GTLib::FileInfo &info)
+            void InsertChild(const GTLib::FileInfo &infoIn)
             {
-                this->children.Add(info.path.c_str(), new Item(info, this));
+                this->children.Add(infoIn.path.c_str(), new Item(infoIn, this));
             }
 
             /// Removes a child item.
@@ -254,7 +254,7 @@ namespace GTEngine
     private:
 
         /// The root item. This children of this item will be the root directories specified by AddRootDirectory().
-        Item root;
+        Item m_root;
 
         /// The thread that will perform the asynchronous file checks.
         GTLib::Thread thread;

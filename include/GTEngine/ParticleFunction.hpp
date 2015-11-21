@@ -148,10 +148,10 @@ namespace GTEngine
     private:
 
         /// The min value in the range.
-        glm::vec3 rangeMin;
+        glm::vec3 m_rangeMin;
 
         /// The max value in the range.
-        glm::vec3 rangeMax;
+        glm::vec3 m_rangeMax;
     };
 
 

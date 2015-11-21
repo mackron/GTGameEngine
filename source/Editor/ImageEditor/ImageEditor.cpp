@@ -14,19 +14,19 @@ namespace GTEngine
 {
     ImageEditor::ImageEditor(Editor &ownerEditor, const char* absolutePath, const char* relativePath)
         : SubEditor(ownerEditor, absolutePath, relativePath),
-          viewportElement(nullptr), viewportEventHandler(*this),
-          image(Texture2DLibrary::Acquire(absolutePath, GTEngine::IO::GetBasePath(absolutePath, relativePath).c_str())), zoom(1.0f)
+          m_viewportElement(nullptr), m_viewportEventHandler(*this),
+          m_image(Texture2DLibrary::Acquire(absolutePath, GTEngine::IO::GetBasePath(absolutePath, relativePath).c_str())), m_zoom(1.0f)
     {
-        if (this->image != nullptr)
+        if (m_image != nullptr)
         {
             auto &gui    = this->GetGUI();
             auto &script = this->GetScript();
 
-            this->viewportElement = gui.CreateElement("<div parentid='Editor_SubEditorContainer' styleclass='image-editor' />");
-            assert(this->viewportElement != nullptr);
+            m_viewportElement = gui.CreateElement("<div parentid='Editor_SubEditorContainer' styleclass='image-editor' />");
+            assert(m_viewportElement != nullptr);
             {
                 // The element has been created, but we need to execute a script to have it turn into a proper image editor.
-                script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", this->viewportElement->id).c_str());
+                script.Get(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s')", m_viewportElement->id).c_str());
                 assert(script.IsTable(-1));
                 {
                     script.Push("ImageEditor");
@@ -39,7 +39,7 @@ namespace GTEngine
                     }
                 }
 
-                this->viewportElement->AttachEventHandler(this->viewportEventHandler);
+                m_viewportElement->AttachEventHandler(m_viewportEventHandler);
             }
         }
     }
@@ -47,14 +47,14 @@ namespace GTEngine
     ImageEditor::~ImageEditor()
     {
         /// The vertex array in the viewports event handler needs to be deleted.
-        Renderer::DeleteVertexArray(this->viewportEventHandler.vertexArray);
+        Renderer::DeleteVertexArray(m_viewportEventHandler.vertexArray);
 
         // The image needs to be unacquired.
-        Texture2DLibrary::Unacquire(this->image);
+        Texture2DLibrary::Unacquire(m_image);
 
 
         // We created the viewport element in the constructor so it needs to be deleted here.
-        this->GetGUI().DeleteElement(this->viewportElement);
+        this->GetGUI().DeleteElement(m_viewportElement);
     }
 
 
@@ -64,12 +64,12 @@ namespace GTEngine
 
     void ImageEditor::Show()
     {
-        this->viewportElement->Show();
+        m_viewportElement->Show();
     }
 
     void ImageEditor::Hide()
     {
-        this->viewportElement->Hide();
+        m_viewportElement->Hide();
     }
 
     bool ImageEditor::Save()

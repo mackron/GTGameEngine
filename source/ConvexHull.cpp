@@ -72,13 +72,13 @@ namespace GTEngine
             HACD::HACD* hacd = HACD::CreateHACD(nullptr);    // heh.
             if (hacd != nullptr)
             {
-                GTLib::Vector<HACD::Vec3<HACD::Real>> points(vertexCount);
+                GTLib::Vector<HACD::Vec3<HACD::Real>> pointsHACD(vertexCount);
                 GTLib::Vector<HACD::Vec3<long>>       triangles(indexCount / 3);
 
                 for (size_t i = 0; i < vertexCount; ++i)
                 {
                     auto position = vertexData + (i * vertexSize) + positionOffset;
-                    points.PushBack(HACD::Vec3<HACD::Real>(position[0], position[1], position[2]));
+                    pointsHACD.PushBack(HACD::Vec3<HACD::Real>(position[0], position[1], position[2]));
                 }
 
                 for (size_t i = 0; i < indexCount; i += 3)
@@ -86,8 +86,8 @@ namespace GTEngine
                     triangles.PushBack(HACD::Vec3<long>(indexData[i + 0], indexData[i + 1], indexData[i + 2]));
                 }
 
-                hacd->SetPoints(&points[0]);
-                hacd->SetNPoints(points.count);
+                hacd->SetPoints(&pointsHACD[0]);
+                hacd->SetNPoints(pointsHACD.count);
                 hacd->SetTriangles(&triangles[0]);
                 hacd->SetNTriangles(triangles.count);
 

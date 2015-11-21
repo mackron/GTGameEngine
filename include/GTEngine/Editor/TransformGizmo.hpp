@@ -292,13 +292,13 @@ namespace GTEngine
     private:
 
         /// The position of the gizmo.
-        glm::vec3 position;
+        glm::vec3 m_position;
 
         /// The orientation of the gizmo.
-        glm::quat orientation;
+        glm::quat m_orientation;
 
         /// The scale of the gizmo.
-        glm::vec3 scale;
+        glm::vec3 m_scale;
 
 
         /// Keeps track of whether or not the gizmo itself is visible.

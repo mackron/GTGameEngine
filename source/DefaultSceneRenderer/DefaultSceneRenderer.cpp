@@ -16,7 +16,7 @@ namespace GTEngine
 
 
     DefaultSceneRenderer::DefaultSceneRenderer()
-        : viewportFramebuffers(), materialShaders(), depthPassShader(nullptr), externalMeshes(),
+        : viewportFramebuffers(), m_materialShaders(), depthPassShader(nullptr), externalMeshes(),
           directionalShadowMapFramebuffer(1, 1), pointShadowMapFramebuffer(1, 1), spotShadowMapFramebuffer(1, 1),
           fullscreenTriangleVA(nullptr),
           shadowMapShader(nullptr), pointShadowMapShader(nullptr),
@@ -93,9 +93,9 @@ namespace GTEngine
         Renderer::DeleteShader(this->shadowBlurShaderX);
         Renderer::DeleteShader(this->shadowBlurShaderY);
 
-        for (size_t i = 0; i < this->materialShaders.count; ++i)
+        for (size_t i = 0; i < m_materialShaders.count; ++i)
         {
-            auto materialShaders = this->materialShaders.buffer[i]->value;
+            auto materialShaders = m_materialShaders.buffer[i]->value;
             assert(materialShaders != nullptr);
             {
                 delete materialShaders;
@@ -941,22 +941,22 @@ namespace GTEngine
 
     void DefaultSceneRenderer::OnDeleteMaterialDefinition(MaterialDefinition &definition)
     {
-        auto iShaders = this->materialShaders.Find(&definition);
+        auto iShaders = m_materialShaders.Find(&definition);
         if (iShaders != nullptr)
         {
             delete iShaders->value;
-            this->materialShaders.RemoveByIndex(iShaders->index);
+            m_materialShaders.RemoveByIndex(iShaders->index);
         }
     }
 
     void DefaultSceneRenderer::OnReloadMaterialDefinition(MaterialDefinition &definition)
     {
         // All we want to do is delete the shaders. This will force the renderer to recreated them when the material is used next.
-        auto iShaders = this->materialShaders.Find(&definition);
+        auto iShaders = m_materialShaders.Find(&definition);
         if (iShaders != nullptr)
         {
             delete iShaders->value;
-            this->materialShaders.RemoveByIndex(iShaders->index);
+            m_materialShaders.RemoveByIndex(iShaders->index);
         }
     }
 
@@ -1110,12 +1110,12 @@ namespace GTEngine
     DefaultSceneRenderer_MaterialShaders* DefaultSceneRenderer::GetMaterialShaders(Material &material)
     {
         // A single set of shaders is created for each definition. We map the shaders to the definition, with the definition acting as the key.
-        auto iMaterialShaders = this->materialShaders.Find(&material.GetDefinition());
+        auto iMaterialShaders = m_materialShaders.Find(&material.GetDefinition());
         if (iMaterialShaders == nullptr)
         {
             // The shaders structure has not yet been created, so it needs to be created now.
             auto shaders = new DefaultSceneRenderer_MaterialShaders;
-            this->materialShaders.Add(&material.GetDefinition(), shaders);
+            m_materialShaders.Add(&material.GetDefinition(), shaders);
 
             return shaders;
         }

@@ -26,7 +26,7 @@ namespace GTEngine
 
     NavigationMesh::NavigationMesh()
         : config(),
-          mesh(nullptr), detailMesh(nullptr),
+          m_mesh(nullptr), detailMesh(nullptr),
           detourNavMesh(nullptr), navMeshQuery(nullptr),
           walkableHeight(2.0f), walkableRadius(0.85f), walkableSlope(27.5f), walkableClimb(0.25f),
           visualVA(Renderer::CreateVertexArray(VertexArrayUsage_Static, VertexFormat::P3T2N3))
@@ -45,7 +45,7 @@ namespace GTEngine
 
     NavigationMesh::~NavigationMesh()
     {
-        rcFreePolyMesh(this->mesh);
+        rcFreePolyMesh(m_mesh);
         rcFreePolyMeshDetail(this->detailMesh);
         dtFreeNavMesh(this->detourNavMesh);
         dtFreeNavMeshQuery(this->navMeshQuery);
@@ -74,8 +74,8 @@ namespace GTEngine
 	    rcVcopy(this->config.bmax, &aabbMax[0]);
         rcCalcGridSize(this->config.bmin, this->config.bmax, this->config.cs, &this->config.width, &this->config.height);
 
-        rcFreePolyMesh(this->mesh);
-        this->mesh = nullptr;
+        rcFreePolyMesh(m_mesh);
+        m_mesh = nullptr;
 
         rcFreePolyMeshDetail(this->detailMesh);
         this->detailMesh = nullptr;
@@ -156,24 +156,24 @@ namespace GTEngine
 
                 if (rcBuildContours(&context, *compactHeightfield, this->config.maxSimplificationError, this->config.maxEdgeLen, *contours))
                 {
-                    this->mesh = rcAllocPolyMesh();
-                    assert(this->mesh != nullptr);
+                    m_mesh = rcAllocPolyMesh();
+                    assert(m_mesh != nullptr);
 
-                    if (rcBuildPolyMesh(&context, *contours, this->config.maxVertsPerPoly, *this->mesh))
+                    if (rcBuildPolyMesh(&context, *contours, this->config.maxVertsPerPoly, *m_mesh))
                     {
                         // Now we create the detail mesh.
                         this->detailMesh = rcAllocPolyMeshDetail();
                         assert(this->detailMesh != nullptr);
 
-                        if (rcBuildPolyMeshDetail(&context, *this->mesh, *compactHeightfield, this->config.detailSampleDist, this->config.detailSampleMaxError, *this->detailMesh))
+                        if (rcBuildPolyMeshDetail(&context, *m_mesh, *compactHeightfield, this->config.detailSampleDist, this->config.detailSampleMaxError, *this->detailMesh))
                         {
                             // Update poly flags from areas.
-		                    for (int i = 0; i < this->mesh->npolys; ++i)
+		                    for (int i = 0; i < m_mesh->npolys; ++i)
 		                    {
-			                    if (this->mesh->areas[i] == RC_WALKABLE_AREA)
+			                    if (m_mesh->areas[i] == RC_WALKABLE_AREA)
                                 {
-				                    this->mesh->areas[i] = 1;
-                                    this->mesh->flags[i] = 1;
+				                    m_mesh->areas[i] = 1;
+                                    m_mesh->flags[i] = 1;
                                 }
 		                    }
 
@@ -183,13 +183,13 @@ namespace GTEngine
                             params.cs               = this->config.cs;
 		                    params.ch               = this->config.ch;
 		                    params.buildBvTree      = true;
-		                    params.verts            = this->mesh->verts;
-		                    params.vertCount        = this->mesh->nverts;
-		                    params.polys            = this->mesh->polys;
-		                    params.polyAreas        = this->mesh->areas;
-		                    params.polyFlags        = this->mesh->flags;
-		                    params.polyCount        = this->mesh->npolys;
-		                    params.nvp              = this->mesh->nvp;
+		                    params.verts            = m_mesh->verts;
+		                    params.vertCount        = m_mesh->nverts;
+		                    params.polys            = m_mesh->polys;
+		                    params.polyAreas        = m_mesh->areas;
+		                    params.polyFlags        = m_mesh->flags;
+		                    params.polyCount        = m_mesh->npolys;
+		                    params.nvp              = m_mesh->nvp;
                             params.detailMeshes     = this->detailMesh->meshes;
 		                    params.detailVerts      = this->detailMesh->verts;
 		                    params.detailVertsCount = this->detailMesh->nverts;
@@ -198,8 +198,8 @@ namespace GTEngine
                             params.walkableHeight   = this->walkableHeight;
                             params.walkableRadius   = this->walkableRadius;
                             params.walkableClimb    = this->walkableClimb;
-		                    rcVcopy(params.bmin, this->mesh->bmin);
-		                    rcVcopy(params.bmax, this->mesh->bmax);
+		                    rcVcopy(params.bmin, m_mesh->bmin);
+		                    rcVcopy(params.bmax, m_mesh->bmax);
 		                    
 
                             unsigned char* navData     = nullptr;
@@ -545,29 +545,29 @@ namespace GTEngine
 
 
         // The recast poly-mesh.
-        if (this->mesh != nullptr)
+        if (m_mesh != nullptr)
         {
             intermediarySerializer.Clear();
 
-            intermediarySerializer.Write(static_cast<int32_t>(this->mesh->nverts));
-            intermediarySerializer.Write(static_cast<int32_t>(this->mesh->npolys));
-            intermediarySerializer.Write(static_cast<int32_t>(this->mesh->maxpolys));
-            intermediarySerializer.Write(static_cast<int32_t>(this->mesh->nvp));
-            intermediarySerializer.Write(static_cast<float>(this->mesh->bmin[0]));
-            intermediarySerializer.Write(static_cast<float>(this->mesh->bmin[1]));
-            intermediarySerializer.Write(static_cast<float>(this->mesh->bmin[2]));
-            intermediarySerializer.Write(static_cast<float>(this->mesh->bmax[0]));
-            intermediarySerializer.Write(static_cast<float>(this->mesh->bmax[1]));
-            intermediarySerializer.Write(static_cast<float>(this->mesh->bmax[2]));
-            intermediarySerializer.Write(static_cast<float>(this->mesh->cs));
-            intermediarySerializer.Write(static_cast<float>(this->mesh->ch));
-            intermediarySerializer.Write(static_cast<int32_t>(this->mesh->borderSize));
+            intermediarySerializer.Write(static_cast<int32_t>(m_mesh->nverts));
+            intermediarySerializer.Write(static_cast<int32_t>(m_mesh->npolys));
+            intermediarySerializer.Write(static_cast<int32_t>(m_mesh->maxpolys));
+            intermediarySerializer.Write(static_cast<int32_t>(m_mesh->nvp));
+            intermediarySerializer.Write(static_cast<float>(m_mesh->bmin[0]));
+            intermediarySerializer.Write(static_cast<float>(m_mesh->bmin[1]));
+            intermediarySerializer.Write(static_cast<float>(m_mesh->bmin[2]));
+            intermediarySerializer.Write(static_cast<float>(m_mesh->bmax[0]));
+            intermediarySerializer.Write(static_cast<float>(m_mesh->bmax[1]));
+            intermediarySerializer.Write(static_cast<float>(m_mesh->bmax[2]));
+            intermediarySerializer.Write(static_cast<float>(m_mesh->cs));
+            intermediarySerializer.Write(static_cast<float>(m_mesh->ch));
+            intermediarySerializer.Write(static_cast<int32_t>(m_mesh->borderSize));
 
-            intermediarySerializer.Write(this->mesh->verts, sizeof(uint16_t) * this->mesh->nverts * 3);     // <-- 3 components for each vertex (x, y, z).
-            intermediarySerializer.Write(this->mesh->polys, sizeof(uint16_t) * this->mesh->maxpolys * 2 * this->mesh->nvp);
-            intermediarySerializer.Write(this->mesh->regs,  sizeof(uint16_t) * this->mesh->maxpolys);
-            intermediarySerializer.Write(this->mesh->flags, sizeof(uint16_t) * this->mesh->maxpolys);
-            intermediarySerializer.Write(this->mesh->areas, sizeof(uint8_t)  * this->mesh->maxpolys);
+            intermediarySerializer.Write(m_mesh->verts, sizeof(uint16_t) * m_mesh->nverts * 3);     // <-- 3 components for each vertex (x, y, z).
+            intermediarySerializer.Write(m_mesh->polys, sizeof(uint16_t) * m_mesh->maxpolys * 2 * m_mesh->nvp);
+            intermediarySerializer.Write(m_mesh->regs,  sizeof(uint16_t) * m_mesh->maxpolys);
+            intermediarySerializer.Write(m_mesh->flags, sizeof(uint16_t) * m_mesh->maxpolys);
+            intermediarySerializer.Write(m_mesh->areas, sizeof(uint8_t)  * m_mesh->maxpolys);
 
 
 
@@ -677,13 +677,13 @@ namespace GTEngine
                         //deserializer.Seek(header.sizeInBytes);
 
                         // Old mesh must be deleted.
-                        if (this->mesh != nullptr)
+                        if (m_mesh != nullptr)
                         {
-                            rcFreePolyMesh(this->mesh);
+                            rcFreePolyMesh(m_mesh);
                         }
 
                         // New mesh must be created.
-                        this->mesh = rcAllocPolyMesh();
+                        m_mesh = rcAllocPolyMesh();
 
                         int32_t nverts;
                         int32_t npolys;
@@ -737,31 +737,31 @@ namespace GTEngine
                         // I'm unaware of a public API for creating a mesh from raw data like this, so we're going to copy the implementation of
                         // rcCopyPolyMesh(). We use the same memory allocation routines as that function.
 
-                        this->mesh->nverts     = static_cast<int>(nverts);
-                        this->mesh->npolys     = static_cast<int>(npolys);
-                        this->mesh->maxpolys   = static_cast<int>(maxpolys);
-                        this->mesh->nvp        = static_cast<int>(nvp);
-                        this->mesh->bmin[0]    = bmin[0];
-                        this->mesh->bmin[1]    = bmin[1];
-                        this->mesh->bmin[2]    = bmin[2];
-                        this->mesh->bmax[0]    = bmax[0];
-                        this->mesh->bmax[1]    = bmax[1];
-                        this->mesh->bmax[2]    = bmax[2];
-                        this->mesh->cs         = cs;
-                        this->mesh->ch         = ch;
-                        this->mesh->borderSize = static_cast<int>(borderSize);
+                        m_mesh->nverts     = static_cast<int>(nverts);
+                        m_mesh->npolys     = static_cast<int>(npolys);
+                        m_mesh->maxpolys   = static_cast<int>(maxpolys);
+                        m_mesh->nvp        = static_cast<int>(nvp);
+                        m_mesh->bmin[0]    = bmin[0];
+                        m_mesh->bmin[1]    = bmin[1];
+                        m_mesh->bmin[2]    = bmin[2];
+                        m_mesh->bmax[0]    = bmax[0];
+                        m_mesh->bmax[1]    = bmax[1];
+                        m_mesh->bmax[2]    = bmax[2];
+                        m_mesh->cs         = cs;
+                        m_mesh->ch         = ch;
+                        m_mesh->borderSize = static_cast<int>(borderSize);
 
-                        this->mesh->verts = static_cast<unsigned short*>(rcAlloc(sizeof(unsigned short) * verts.count, RC_ALLOC_PERM));
-                        this->mesh->polys = static_cast<unsigned short*>(rcAlloc(sizeof(unsigned short) * polys.count, RC_ALLOC_PERM));
-                        this->mesh->regs  = static_cast<unsigned short*>(rcAlloc(sizeof(unsigned short) * regs.count,  RC_ALLOC_PERM));
-                        this->mesh->flags = static_cast<unsigned short*>(rcAlloc(sizeof(unsigned short) * flags.count, RC_ALLOC_PERM));
-                        this->mesh->areas = static_cast<unsigned char* >(rcAlloc(sizeof(unsigned char)  * areas.count, RC_ALLOC_PERM));
+                        m_mesh->verts = static_cast<unsigned short*>(rcAlloc(sizeof(unsigned short) * verts.count, RC_ALLOC_PERM));
+                        m_mesh->polys = static_cast<unsigned short*>(rcAlloc(sizeof(unsigned short) * polys.count, RC_ALLOC_PERM));
+                        m_mesh->regs  = static_cast<unsigned short*>(rcAlloc(sizeof(unsigned short) * regs.count,  RC_ALLOC_PERM));
+                        m_mesh->flags = static_cast<unsigned short*>(rcAlloc(sizeof(unsigned short) * flags.count, RC_ALLOC_PERM));
+                        m_mesh->areas = static_cast<unsigned char* >(rcAlloc(sizeof(unsigned char)  * areas.count, RC_ALLOC_PERM));
 
-                        memcpy(this->mesh->verts, verts.buffer, sizeof(unsigned short) * verts.count);
-                        memcpy(this->mesh->polys, polys.buffer, sizeof(unsigned short) * polys.count);
-                        memcpy(this->mesh->regs,  regs.buffer,  sizeof(unsigned short) * regs.count);
-                        memcpy(this->mesh->flags, flags.buffer, sizeof(unsigned short) * flags.count);
-                        memcpy(this->mesh->areas, areas.buffer, sizeof(unsigned char)  * areas.count);
+                        memcpy(m_mesh->verts, verts.buffer, sizeof(unsigned short) * verts.count);
+                        memcpy(m_mesh->polys, polys.buffer, sizeof(unsigned short) * polys.count);
+                        memcpy(m_mesh->regs,  regs.buffer,  sizeof(unsigned short) * regs.count);
+                        memcpy(m_mesh->flags, flags.buffer, sizeof(unsigned short) * flags.count);
+                        memcpy(m_mesh->areas, areas.buffer, sizeof(unsigned char)  * areas.count);
                     }
                     else
                     {

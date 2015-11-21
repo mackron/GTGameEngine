@@ -118,43 +118,43 @@ namespace GTEngine
     private:
 
         /// The input buffer.
-        const float* input;
+        const float* m_input;
 
         /// The number of vertices.
-        size_t vertexCount;
+        size_t m_vertexCount;
 
         /// The format of the input and output buffers.
-        VertexFormat format;
+        VertexFormat m_format;
 
         /// The size of 'format'. We keep this separate because format.GetSize() runs in linear time.
-        size_t vertexSizeInFloats;
+        size_t m_vertexSizeInFloats;
 
 
         /// The output buffer.
-        float* output;
+        float* m_output;
 
 
         /// The variables below control whether or not the various common vertex attributes are used by the vertex shader.
-        bool usingPosition;
-        bool usingTexCoord;
-        bool usingNormal;
-        bool usingTangent;
-        bool usingBitangent;
+        bool m_usingPosition;
+        bool m_usingTexCoord;
+        bool m_usingNormal;
+        bool m_usingTangent;
+        bool m_usingBitangent;
 
-        size_t positionComponentCount;
-        size_t positionOffset;
+        size_t m_positionComponentCount;
+        size_t m_positionOffset;
 
-        size_t texCoordComponentCount;
-        size_t texCoordOffset;
+        size_t m_texCoordComponentCount;
+        size_t m_texCoordOffset;
 
-        size_t normalComponentCount;
-        size_t normalOffset;
+        size_t m_normalComponentCount;
+        size_t m_normalOffset;
 
-        size_t tangentComponentCount;
-        size_t tangentOffset;
+        size_t m_tangentComponentCount;
+        size_t m_tangentOffset;
 
-        size_t bitangentComponentCount;
-        size_t bitangentOffset;
+        size_t m_bitangentComponentCount;
+        size_t m_bitangentOffset;
 
 
     private:    // No copying.

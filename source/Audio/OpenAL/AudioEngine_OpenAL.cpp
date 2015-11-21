@@ -382,15 +382,15 @@ namespace GTEngine
                     glm::vec3 forward = orientation * glm::vec3(0.0f, 0.0f, -1.0f);
                     glm::vec3 up      = orientation * glm::vec3(0.0f, 1.0f,  0.0f);
 
-                    ALfloat orientation[6];
-                    orientation[0] = forward.x;
-                    orientation[1] = forward.y;
-                    orientation[2] = forward.z;
-                    orientation[3] = up.x;
-                    orientation[4] = up.y;
-                    orientation[5] = up.z;
+                    ALfloat orientationAL[6];
+                    orientationAL[0] = forward.x;
+                    orientationAL[1] = forward.y;
+                    orientationAL[2] = forward.z;
+                    orientationAL[3] = up.x;
+                    orientationAL[4] = up.y;
+                    orientationAL[5] = up.z;
 
-                    m_alListenerfv(AL_ORIENTATION, orientation);
+                    m_alListenerfv(AL_ORIENTATION, orientationAL);
                 }
             }
         }

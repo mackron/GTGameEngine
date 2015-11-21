@@ -8,7 +8,7 @@ namespace GTEngine
     GTENGINE_IMPL_COMPONENT_ATTRIBS(ProximityComponent, "Proximity")
 
     ProximityComponent::ProximityComponent(SceneNode &node)
-        : CollisionShapeComponent(node), ghostObject(), world(nullptr), sceneNodesInsideVolume()
+        : CollisionShapeComponent(node), ghostObject(), m_world(nullptr), sceneNodesInsideVolume()
     {
         this->ghostObject.setCollisionShape(&this->collisionShape);
         this->ghostObject.setCollisionFlags(btCollisionObject::CF_NO_CONTACT_RESPONSE);
@@ -63,10 +63,10 @@ namespace GTEngine
 
 
         // At this point we'll have a list of nodes that have left the volume. We need to copies these over to 'sceneNodesLeft'.
-        for (size_t i = 0; i < sceneNodesLeaving.count; ++i)
+        for (size_t j = 0; j < sceneNodesLeaving.count; ++j)
         {
-            sceneNodesLeft.PushBack(sceneNodesLeaving[i]);
-            this->sceneNodesInsideVolume.RemoveFirstOccuranceOf(sceneNodesLeaving[i]);
+            sceneNodesLeft.PushBack(sceneNodesLeaving[j]);
+            this->sceneNodesInsideVolume.RemoveFirstOccuranceOf(sceneNodesLeaving[j]);
         }
     }
 
@@ -113,21 +113,21 @@ namespace GTEngine
 
     void ProximityComponent::OnPreCollisionShapeChanged()
     {
-        this->world = this->ghostObject.GetWorld();
-        if (this->world != nullptr)
+        m_world = this->ghostObject.GetWorld();
+        if (m_world != nullptr)
         {
-            this->world->RemoveGhostObject(this->ghostObject);
+            m_world->RemoveGhostObject(this->ghostObject);
         }
     }
 
     void ProximityComponent::OnPostCollisionShapeChanged()
     {
-        if (this->world != nullptr)
+        if (m_world != nullptr)
         {
-            this->world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
+            m_world->AddGhostObject(this->ghostObject, this->collisionGroup, this->collisionMask);
         }
 
-        this->world = nullptr;
+        m_world = nullptr;
     }
 }
 

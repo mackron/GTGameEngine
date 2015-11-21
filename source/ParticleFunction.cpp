@@ -59,12 +59,12 @@ namespace GTEngine
     // Generic Vector3
 
     ParticleFunction_Vector3::ParticleFunction_Vector3(ParticleFunctionType type, const glm::vec3 &rangeMinIn, const glm::vec3 &rangeMaxIn)
-        : ParticleFunction(type), rangeMin(rangeMinIn), rangeMax(rangeMaxIn)
+        : ParticleFunction(type), m_rangeMin(rangeMinIn), m_rangeMax(rangeMaxIn)
     {
     }
 
     ParticleFunction_Vector3::ParticleFunction_Vector3(const ParticleFunction_Vector3 &other)
-        : ParticleFunction(other), rangeMin(other.rangeMin), rangeMax(other.rangeMax)
+        : ParticleFunction(other), m_rangeMin(other.m_rangeMin), m_rangeMax(other.m_rangeMax)
     {
     }
 
@@ -74,19 +74,19 @@ namespace GTEngine
 
     void ParticleFunction_Vector3::SetRange(const glm::vec3 &rangeMinIn, const glm::vec3 &rangeMaxIn)
     {
-        this->rangeMin = rangeMinIn;
-        this->rangeMax = rangeMaxIn;
+        m_rangeMin = rangeMinIn;
+        m_rangeMax = rangeMaxIn;
     }
 
     void ParticleFunction_Vector3::GetRange(glm::vec3 &rangeMinOut, glm::vec3 &rangeMaxOut) const
     {
-        rangeMinOut = this->rangeMin;
-        rangeMaxOut = this->rangeMax;
+        rangeMinOut = m_rangeMin;
+        rangeMaxOut = m_rangeMax;
     }
 
     glm::vec3 ParticleFunction_Vector3::Evaluate(float lifetimeRatio) const
     {
-        return glm::mix(this->rangeMin, this->rangeMax, lifetimeRatio);
+        return glm::mix(m_rangeMin, m_rangeMax, lifetimeRatio);
     }
 
 

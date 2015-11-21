@@ -211,27 +211,27 @@ namespace GTEngine
             for (uint16_t i = 0; i < source.GetShadowDirectionalLightCount(); ++i)
             {
                 output.PushBack(DefaultSceneRenderer_LightGroup());
-                auto &lightGroup = output.GetBack();
+                auto &newLightGroup = output.GetBack();
                 {
-                    lightGroup.AddShadowDirectionalLight(source.lightIDs[i + source.GetShadowDirectionalLightStartIndex()]);
+                    newLightGroup.AddShadowDirectionalLight(source.lightIDs[i + source.GetShadowDirectionalLightStartIndex()]);
                 }
             }
 
             for (uint16_t i = 0; i < source.GetShadowPointLightCount(); ++i)
             {
                 output.PushBack(DefaultSceneRenderer_LightGroup());
-                auto &lightGroup = output.GetBack();
+                auto &newLightGroup = output.GetBack();
                 {
-                    lightGroup.AddShadowPointLight(source.lightIDs[i + source.GetShadowPointLightStartIndex()]);
+                    newLightGroup.AddShadowPointLight(source.lightIDs[i + source.GetShadowPointLightStartIndex()]);
                 }
             }
 
             for (uint16_t i = 0; i < source.GetShadowSpotLightCount(); ++i)
             {
                 output.PushBack(DefaultSceneRenderer_LightGroup());
-                auto &lightGroup = output.GetBack();
+                auto &newLightGroup = output.GetBack();
                 {
-                    lightGroup.AddShadowSpotLight(source.lightIDs[i + source.GetShadowSpotLightStartIndex()]);
+                    newLightGroup.AddShadowSpotLight(source.lightIDs[i + source.GetShadowSpotLightStartIndex()]);
                 }
             }
         }

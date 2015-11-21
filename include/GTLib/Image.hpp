@@ -74,7 +74,7 @@ namespace GTLib
         /// Determines whether or not the image is linked to a file.
         ///
         /// @return True if the image is linked to a file.
-        bool IsLinkedToFile() const { return this->loader != nullptr; }
+        bool IsLinkedToFile() const { return m_loader != nullptr; }
 
 
         /// Retrieves the name of the file as specified by the constructor or LinkToFile().
@@ -241,18 +241,18 @@ namespace GTLib
     private:
 
         /// The format of the image's data. This is something like RGBA8.
-        ImageFormat format;
+        ImageFormat m_format;
 
         /// The array of mipmaps making up this image. This will always contain a full mipmap array, even when only some are used. For example,
         /// a PNG file will start out with only a single valid mipmap (the base mipmap), but the array will still be filled with a full array of
         /// mipmaps. The empty/invalid mipmaps will not allocate any data until they are actually needed.
-        GTLib::Vector<Mipmap> mipmaps;
+        GTLib::Vector<Mipmap> m_mipmaps;
 
         /// The loader for the linked file. This will be null if no file is linked to the image.
-        ImageLoader* loader;
+        ImageLoader* m_loader;
 
         /// Whether or not the image is vertically flipped.
-        bool flipped;
+        bool m_flipped;
 
 
     private:    // No copying, for now.

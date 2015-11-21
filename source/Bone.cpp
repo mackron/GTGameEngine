@@ -6,14 +6,14 @@ namespace GTEngine
 {
     Bone::Bone()
         : parent(nullptr), children(),
-          name(), position(), rotation(), scale(1.0f, 1.0f, 1.0f),
+          name(), m_position(), m_rotation(), m_scale(1.0f, 1.0f, 1.0f),
           offsetMatrix(), skinningMatrix()
     {
     }
 
     Bone::Bone(const Bone &other)
         : parent(nullptr), children(),
-          name(other.name), position(other.position), rotation(other.rotation), scale(other.scale),
+          name(other.name), m_position(other.m_position), m_rotation(other.m_rotation), m_scale(other.m_scale),
           offsetMatrix(other.offsetMatrix), skinningMatrix(other.skinningMatrix)
     {
     }
@@ -54,33 +54,33 @@ namespace GTEngine
 
     const glm::vec3 & Bone::GetPosition() const
     {
-        return this->position;
+        return m_position;
     }
 
     const glm::quat & Bone::GetRotation() const
     {
-        return this->rotation;
+        return m_rotation;
     }
 
     const glm::vec3 & Bone::GetScale() const
     {
-        return this->scale;
+        return m_scale;
     }
 
 
     void Bone::SetPosition(const glm::vec3 &newPosition)
     {
-        this->position = newPosition;
+        m_position = newPosition;
     }
 
     void Bone::SetRotation(const glm::quat &newRotation)
     {
-        this->rotation = newRotation;
+        m_rotation = newRotation;
     }
 
     void Bone::SetScale(const glm::vec3 &newScale)
     {
-        this->scale = newScale;
+        m_scale = newScale;
     }
 
 
@@ -91,30 +91,30 @@ namespace GTEngine
             glm::quat rotation = this->parent->GetAbsoluteRotation();
             glm::vec3 scale    = this->parent->GetAbsoluteScale();
 
-            return this->parent->GetAbsolutePosition() + (rotation * (scale * this->position));
+            return this->parent->GetAbsolutePosition() + (rotation * (scale * m_position));
         }
 
-        return this->position;
+        return m_position;
     }
 
     glm::quat Bone::GetAbsoluteRotation() const
     {
         if (this->parent != nullptr)
         {
-            return this->parent->GetAbsoluteRotation() * this->rotation;
+            return this->parent->GetAbsoluteRotation() * m_rotation;
         }
 
-        return this->rotation;
+        return m_rotation;
     }
 
     glm::vec3 Bone::GetAbsoluteScale() const
     {
         if (this->parent != nullptr)
         {
-            return this->parent->GetAbsoluteScale() * this->scale;
+            return this->parent->GetAbsoluteScale() * m_scale;
         }
 
-        return this->scale;
+        return m_scale;
     }
 
     
@@ -124,15 +124,15 @@ namespace GTEngine
         {
             this->parent->GetAbsoluteTransformComponents(positionOut, rotationOut, scaleOut);
 
-            positionOut = positionOut + (rotationOut * (scaleOut * this->position));
-            rotationOut = rotationOut * this->rotation;
-            scaleOut    = scaleOut    * this->scale;
+            positionOut = positionOut + (rotationOut * (scaleOut * m_position));
+            rotationOut = rotationOut * m_rotation;
+            scaleOut    = scaleOut    * m_scale;
         }
         else
         {
-            positionOut = this->position;
-            rotationOut = this->rotation;
-            scaleOut    = this->scale;
+            positionOut = m_position;
+            rotationOut = m_rotation;
+            scaleOut    = m_scale;
         }
     }
 
@@ -140,7 +140,7 @@ namespace GTEngine
     glm::mat4 Bone::GetTransform() const
     {
         glm::mat4 result;
-        Math::CalculateTransformMatrix(this->position, this->rotation, this->scale, result);
+        Math::CalculateTransformMatrix(m_position, m_rotation, m_scale, result);
 
         return result;
     }
@@ -173,15 +173,15 @@ namespace GTEngine
             glm::vec3 Ps;
             this->parent->GetAbsoluteTransformComponents(Pp, Po, Ps);
 
-            this->position = ((absolutePosition - Pp) * Po) / Ps;
-            this->rotation = glm::inverse(Po) * absoluteRotation;
-            this->scale    = absoluteScale / Ps;
+            m_position = ((absolutePosition - Pp) * Po) / Ps;
+            m_rotation = glm::inverse(Po) * absoluteRotation;
+            m_scale    = absoluteScale / Ps;
         }
         else
         {
-            this->position = absolutePosition;
-            this->rotation = absoluteRotation;
-            this->scale    = absoluteScale;
+            m_position = absolutePosition;
+            m_rotation = absoluteRotation;
+            m_scale    = absoluteScale;
         }
     }
 
@@ -194,13 +194,13 @@ namespace GTEngine
             glm::vec3 Ps;
             this->parent->GetAbsoluteTransformComponents(Pp, Po, Ps);
 
-            this->position = ((absolutePosition - Pp) * Po) / Ps;
-            this->rotation = glm::inverse(Po) * absoluteRotation;
+            m_position = ((absolutePosition - Pp) * Po) / Ps;
+            m_rotation = glm::inverse(Po) * absoluteRotation;
         }
         else
         {
-            this->position = absolutePosition;
-            this->rotation = absoluteRotation;
+            m_position = absolutePosition;
+            m_rotation = absoluteRotation;
         }
     }
 
@@ -224,9 +224,9 @@ namespace GTEngine
     }
 
 
-    void Bone::SetOffsetMatrix(const glm::mat4 &offsetMatrix)
+    void Bone::SetOffsetMatrix(const glm::mat4 &offsetMatrixIn)
     {
-        this->offsetMatrix = offsetMatrix;
+        this->offsetMatrix = offsetMatrixIn;
     }
 
     const glm::mat4 & Bone::GetOffsetMatrix() const
@@ -257,9 +257,9 @@ namespace GTEngine
     void Bone::Serialize(GTLib::Serializer &serializer) const
     {
         serializer.WriteString(this->name);
-        serializer.Write(this->position);
-        serializer.Write(this->rotation);
-        serializer.Write(this->scale);
+        serializer.Write(m_position);
+        serializer.Write(m_rotation);
+        serializer.Write(m_scale);
         serializer.Write(this->offsetMatrix);
         serializer.Write(this->skinningMatrix);
     }
@@ -267,9 +267,9 @@ namespace GTEngine
     void Bone::Deserialize(GTLib::Deserializer &deserializer)
     {
         deserializer.ReadString(this->name);
-        deserializer.Read(this->position);
-        deserializer.Read(this->rotation);
-        deserializer.Read(this->scale);
+        deserializer.Read(m_position);
+        deserializer.Read(m_rotation);
+        deserializer.Read(m_scale);
         deserializer.Read(this->offsetMatrix);
         deserializer.Read(this->skinningMatrix);
     }

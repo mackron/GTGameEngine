@@ -9,6 +9,11 @@
 #include "CollisionGroups.hpp"
 #include "SceneNode.hpp"
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4457)   // declaration of '...' hides function parameter
+#endif
+
 namespace GTEngine
 {
     /// The default culling manager for scenes.
@@ -178,7 +183,7 @@ namespace GTEngine
 
 
         /// The collision world containing collision objects for everything needing culling.
-        CollisionWorld world;
+        CollisionWorld m_world;
 
         /// A container for mapping metadata for models to scene nodes.
         GTLib::Map<const SceneNode*, CullingObject*> models;
@@ -689,8 +694,7 @@ namespace GTEngine
                             x[0] - x[2] - dx[2]*width
                         };
 
-                        int      a   = x[2]*y[0] + x[0]*y[1] - x[2]*y[1] - x[0]*y[2] + x[1]*y[2] - x[1]*y[0];
-                        btScalar ia  = 1.0f / static_cast<btScalar>(a);
+                        btScalar ia  = 1.0f / static_cast<btScalar>(x[2]*y[0] + x[0]*y[1] - x[2]*y[1] - x[0]*y[2] + x[1]*y[2] - x[1]*y[0]);
                         btScalar dzx = ia * (y[2]*(z[1] - z[0]) + y[1]*(z[0] - z[2]) + y[0]*(z[2] - z[1]));
                         btScalar dzy = ia * (x[2]*(z[0] - z[1]) + x[0]*(z[1] - z[2]) + x[1]*(z[2] - z[0])) - (dzx * width);
 
@@ -859,5 +863,9 @@ namespace GTEngine
         };
     };
 }
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 
 #endif

@@ -188,7 +188,7 @@ namespace GTEngine
         ModelDefinition modelDefinition;
 
         /// The model to show in the viewport.
-        Model model;
+        Model m_model;
 
 
         /// The scene containing the model.

@@ -118,25 +118,25 @@ namespace GTEngine
         for (size_t i = firstVertexID; i <= lastVertexID; ++i)
         {
             // The first step is to copy the vertex data to the output buffer.
-            auto vertexOutput = shader.output + (i * shader.vertexSizeInFloats);
-            auto vertexInput  = shader.input  + (i * shader.vertexSizeInFloats);
+            auto vertexOutput = shader.m_output + (i * shader.m_vertexSizeInFloats);
+            auto vertexInput  = shader.m_input  + (i * shader.m_vertexSizeInFloats);
             //memcpy(vertexOutput, vertexInput, shader.vertexSizeInFloats * sizeof(float));
 
             // Now we can process the vertex.
-            CPUVertexShader::Vertex vertex(i, vertexOutput, shader.format);
-            if (shader.usingPosition)  vertex.Position  = GetVertexAttribute4(vertexInput, shader.positionComponentCount,  shader.positionOffset);
-            if (shader.usingTexCoord)  vertex.TexCoord  = GetVertexAttribute4(vertexInput, shader.texCoordComponentCount,  shader.texCoordOffset);
-            if (shader.usingNormal)    vertex.Normal    = GetVertexAttribute4(vertexInput, shader.normalComponentCount,    shader.normalOffset);
-            if (shader.usingTangent)   vertex.Tangent   = GetVertexAttribute4(vertexInput, shader.tangentComponentCount,   shader.tangentOffset);
-            if (shader.usingBitangent) vertex.Bitangent = GetVertexAttribute4(vertexInput, shader.bitangentComponentCount, shader.bitangentOffset);
+            CPUVertexShader::Vertex vertex(i, vertexOutput, shader.m_format);
+            if (shader.m_usingPosition)  vertex.Position  = GetVertexAttribute4(vertexInput, shader.m_positionComponentCount,  shader.m_positionOffset);
+            if (shader.m_usingTexCoord)  vertex.TexCoord  = GetVertexAttribute4(vertexInput, shader.m_texCoordComponentCount,  shader.m_texCoordOffset);
+            if (shader.m_usingNormal)    vertex.Normal    = GetVertexAttribute4(vertexInput, shader.m_normalComponentCount,    shader.m_normalOffset);
+            if (shader.m_usingTangent)   vertex.Tangent   = GetVertexAttribute4(vertexInput, shader.m_tangentComponentCount,   shader.m_tangentOffset);
+            if (shader.m_usingBitangent) vertex.Bitangent = GetVertexAttribute4(vertexInput, shader.m_bitangentComponentCount, shader.m_bitangentOffset);
 
             shader.ProcessVertex(vertex);
 
-            if (shader.usingPosition)  SetVertexAttribute4(vertexOutput, shader.positionComponentCount,  shader.positionOffset,  vertex.Position);
-            if (shader.usingTexCoord)  SetVertexAttribute4(vertexOutput, shader.texCoordComponentCount,  shader.texCoordOffset,  vertex.TexCoord);
-            if (shader.usingNormal)    SetVertexAttribute4(vertexOutput, shader.normalComponentCount,    shader.normalOffset,    vertex.Normal);
-            if (shader.usingTangent)   SetVertexAttribute4(vertexOutput, shader.tangentComponentCount,   shader.tangentOffset,   vertex.Tangent);
-            if (shader.usingBitangent) SetVertexAttribute4(vertexOutput, shader.bitangentComponentCount, shader.bitangentOffset, vertex.Bitangent);
+            if (shader.m_usingPosition)  SetVertexAttribute4(vertexOutput, shader.m_positionComponentCount,  shader.m_positionOffset,  vertex.Position);
+            if (shader.m_usingTexCoord)  SetVertexAttribute4(vertexOutput, shader.m_texCoordComponentCount,  shader.m_texCoordOffset,  vertex.TexCoord);
+            if (shader.m_usingNormal)    SetVertexAttribute4(vertexOutput, shader.m_normalComponentCount,    shader.m_normalOffset,    vertex.Normal);
+            if (shader.m_usingTangent)   SetVertexAttribute4(vertexOutput, shader.m_tangentComponentCount,   shader.m_tangentOffset,   vertex.Tangent);
+            if (shader.m_usingBitangent) SetVertexAttribute4(vertexOutput, shader.m_bitangentComponentCount, shader.m_bitangentOffset, vertex.Bitangent);
         }
     }
 
@@ -148,13 +148,13 @@ namespace GTEngine
 
         /// Default constructor.
         ProcessVertexShaderJob()
-            : shader(nullptr), firstVertexID(0), lastVertexID(0)
+            : m_shader(nullptr), m_firstVertexID(0), m_lastVertexID(0)
         {
         }
 
         /// Constructor.
         ProcessVertexShaderJob(CPUVertexShader &shader, size_t firstVertexID, size_t lastVertexID)
-            : shader(&shader), firstVertexID(firstVertexID), lastVertexID(lastVertexID)
+            : m_shader(&shader), m_firstVertexID(firstVertexID), m_lastVertexID(lastVertexID)
         {
         }
 
@@ -162,17 +162,17 @@ namespace GTEngine
         /// Sets the range of vertices to execute.
         void SetVertexRange(CPUVertexShader &shader, size_t firstVertexID, size_t lastVertexID)
         {
-            this->shader        = &shader;
-            this->firstVertexID = firstVertexID;
-            this->lastVertexID  = lastVertexID;
+            m_shader        = &shader;
+            m_firstVertexID = firstVertexID;
+            m_lastVertexID  = lastVertexID;
         }
 
 
         void Run()
         {
-            if (this->shader != nullptr)
+            if (m_shader != nullptr)
             {
-                ProcessVertexShader(*this->shader, this->firstVertexID, this->lastVertexID);
+                ProcessVertexShader(*m_shader, m_firstVertexID, m_lastVertexID);
             }
         }
 
@@ -180,13 +180,13 @@ namespace GTEngine
     private:
 
         /// A pointer to the shader this job will be working on.
-        CPUVertexShader* shader;
+        CPUVertexShader* m_shader;
 
         /// The index of the first vertex to work on.
-        size_t firstVertexID;
+        size_t m_firstVertexID;
 
         /// the index of the last vertex to work on.
-        size_t lastVertexID;
+        size_t m_lastVertexID;
         
         
     private:    // No copying.
@@ -202,13 +202,13 @@ namespace GTEngine
     GTLib::Benchmarker benchmarker;
 
     CPUVertexShader::CPUVertexShader()
-        : input(nullptr), vertexCount(0), format(), vertexSizeInFloats(format.GetSize()), output(nullptr),
-          usingPosition(false), usingTexCoord(false), usingNormal(false), usingTangent(false), usingBitangent(false),
-          positionComponentCount(0), positionOffset(0),
-          texCoordComponentCount(0), texCoordOffset(0),
-          normalComponentCount(0), normalOffset(0),
-          tangentComponentCount(0), tangentOffset(0),
-          bitangentComponentCount(0), bitangentOffset(0)
+        : m_input(nullptr), m_vertexCount(0), m_format(), m_vertexSizeInFloats(m_format.GetSize()), m_output(nullptr),
+          m_usingPosition(false), m_usingTexCoord(false), m_usingNormal(false), m_usingTangent(false), m_usingBitangent(false),
+          m_positionComponentCount(0), m_positionOffset(0),
+          m_texCoordComponentCount(0), m_texCoordOffset(0),
+          m_normalComponentCount(0), m_normalOffset(0),
+          m_tangentComponentCount(0), m_tangentOffset(0),
+          m_bitangentComponentCount(0), m_bitangentOffset(0)
     {
     }
 
@@ -225,21 +225,21 @@ namespace GTEngine
 
             this->OnStartExecute();
 
-            this->input              = input;
-            this->vertexCount        = vertexCount;
-            this->format             = format;
-            this->vertexSizeInFloats = this->format.GetSize();
-            this->output             = output;
+            m_input              = input;
+            m_vertexCount        = vertexCount;
+            m_format             = format;
+            m_vertexSizeInFloats = m_format.GetSize();
+            m_output             = output;
 
-            this->usingPosition  = this->format.GetAttributeInfo(VertexAttribs::Position,  this->positionComponentCount,  this->positionOffset);
-            this->usingTexCoord  = this->format.GetAttributeInfo(VertexAttribs::TexCoord,  this->texCoordComponentCount,  this->texCoordOffset);
-            this->usingNormal    = this->format.GetAttributeInfo(VertexAttribs::Normal,    this->normalComponentCount,    this->normalOffset);
-            this->usingTangent   = this->format.GetAttributeInfo(VertexAttribs::Tangent,   this->tangentComponentCount,   this->tangentOffset);
-            this->usingBitangent = this->format.GetAttributeInfo(VertexAttribs::Bitangent, this->bitangentComponentCount, this->bitangentOffset);
+            m_usingPosition  = m_format.GetAttributeInfo(VertexAttribs::Position,  m_positionComponentCount,  m_positionOffset);
+            m_usingTexCoord  = m_format.GetAttributeInfo(VertexAttribs::TexCoord,  m_texCoordComponentCount,  m_texCoordOffset);
+            m_usingNormal    = m_format.GetAttributeInfo(VertexAttribs::Normal,    m_normalComponentCount,    m_normalOffset);
+            m_usingTangent   = m_format.GetAttributeInfo(VertexAttribs::Tangent,   m_tangentComponentCount,   m_tangentOffset);
+            m_usingBitangent = m_format.GetAttributeInfo(VertexAttribs::Bitangent, m_bitangentComponentCount, m_bitangentOffset);
 
 
             // We only do multithreading if we have enough vertices to warrant it.
-            if (this->vertexCount >= 64 && threadCount > 1)
+            if (m_vertexCount >= 64 && threadCount > 1)
             {
                 // What we do here is modify <threadCount> to store the number of helper threads. That is, the number of thread, not including the calling thread.
                 --threadCount;
@@ -272,17 +272,17 @@ namespace GTEngine
 
 
                 // With the helper threads created, we can now divide up the work and start executing.
-                size_t vertexChunkSize = this->vertexCount / (threadCount + 1);
+                size_t vertexChunkSize = m_vertexCount / (threadCount + 1);
                 size_t firstVertexID   = 0;
 
-                for (size_t i = 0; (i < threadCount) && (firstVertexID < this->vertexCount - 1); ++i)
+                for (size_t i = 0; (i < threadCount) && (firstVertexID < m_vertexCount - 1); ++i)
                 {
                     auto thread = threads[i];
                     auto job    = jobs[i];
 
                     assert(thread != nullptr && job != nullptr);
 
-                    size_t lastVertexID = GTLib::Min(firstVertexID + vertexChunkSize, this->vertexCount - 1);
+                    size_t lastVertexID = GTLib::Min(firstVertexID + vertexChunkSize, m_vertexCount - 1);
                     job->SetVertexRange(*this, firstVertexID, lastVertexID);
                         
                     thread->Start(*job, false);     // <-- second argument specifies not to wait for the execution of the current procedure to complete. It will be guaranteed that the thread won't already be running.
@@ -293,7 +293,7 @@ namespace GTEngine
 
 
                 // We will get the calling thread to process whatever is left over.
-                ProcessVertexShader(*this, firstVertexID, this->vertexCount - 1);
+                ProcessVertexShader(*this, firstVertexID, m_vertexCount - 1);
 
 
                 // Now we need to do a cleanup.
@@ -311,7 +311,7 @@ namespace GTEngine
             else
             {
                 // We'll get here if we're not bothering with multithreading.
-                ProcessVertexShader(*this, 0, this->vertexCount - 1);
+                ProcessVertexShader(*this, 0, m_vertexCount - 1);
             }
 
             this->OnEndExecute();

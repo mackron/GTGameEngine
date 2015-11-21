@@ -189,8 +189,8 @@ namespace GTGUI
         void SetImageManager(ImageManager &imageManager) { this->SetImageManager(&imageManager); }
         
         /// Retrieves a pointer to the current image manager.
-              ImageManager* GetImageManager()       { return this->imageManager; }
-        const ImageManager* GetImageManager() const { return this->imageManager; }
+              ImageManager* GetImageManager()       { return m_imageManager; }
+        const ImageManager* GetImageManager() const { return m_imageManager; }
 
 
         /// Sets the renderer that will receive the rendering operations.
@@ -203,8 +203,8 @@ namespace GTGUI
         void SetRenderer(Renderer &renderer) { this->SetRenderer(&renderer); }
 
         /// Retrieves a pointer to the current renderer.
-              Renderer* GetRenderer()       { return this->renderer; }
-        const Renderer* GetRenderer() const { return this->renderer; }
+              Renderer* GetRenderer()       { return m_renderer; }
+        const Renderer* GetRenderer() const { return m_renderer; }
 
 
 
@@ -902,7 +902,7 @@ namespace GTGUI
 
 
         /// A pointer to the image manager. This can be null, in which case images and fonts/text will not be supported.
-        ImageManager* imageManager;
+        ImageManager* m_imageManager;
 
         /// The glyph map manager for use by the font server.
         FontGlyphMapManager glyphMapManager;
@@ -911,7 +911,7 @@ namespace GTGUI
 
         /// A pointer to the renderer. This can be null, so we use a pointer instead of a reference. If this is null, rendering commands
         /// will simply not be posted.
-        Renderer* renderer;
+        Renderer* m_renderer;
         
         
         /// A binary search tree containing all of the loaded elements. This is index by the element's ID.

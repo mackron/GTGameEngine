@@ -17,8 +17,8 @@ namespace GTGUI
         : operationMode(OperationMode_Delayed),
           eventHandler(&ServerEventHandler::Default), scripting(*this, script), styling(*this),
           markupLoader(*this),
-          imageManager(imageManagerIn), glyphMapManager(*this),
-          renderer(nullptr),
+          m_imageManager(imageManagerIn), glyphMapManager(*this),
+          m_renderer(nullptr),
           elements(),
           absoluteElements(),
           elementsUsingZIndex(),
@@ -82,16 +82,16 @@ namespace GTGUI
 
 
         // Images need to be unloaded.
-        if (this->imageManager != nullptr)
+        if (m_imageManager != nullptr)
         {
             for (size_t i = 0; i < this->loadedImages.count; ++i)
             {
-                this->imageManager->DeleteImage(this->loadedImages.buffer[i]->value);
+                m_imageManager->DeleteImage(this->loadedImages.buffer[i]->value);
             }
 
             for (size_t i = 0; i < this->registeredImages.count; ++i)
             {
-                this->imageManager->DeleteImage(this->registeredImages.buffer[i]->value);
+                m_imageManager->DeleteImage(this->registeredImages.buffer[i]->value);
             }
         }
     }
@@ -115,9 +115,9 @@ namespace GTGUI
     }
 
 
-    void Server::SetEventHandler(ServerEventHandler &eventHandler)
+    void Server::SetEventHandler(ServerEventHandler &eventHandlerIn)
     {
-        this->eventHandler = &eventHandler;
+        this->eventHandler = &eventHandlerIn;
     }
 
     ServerEventHandler & Server::GetEventHandler()
@@ -184,12 +184,12 @@ namespace GTGUI
     void Server::SetImageManager(ImageManager* newImageManager)
     {
         // TODO: Need to unload all currently loaded images and reload with the new image manager.
-        this->imageManager = newImageManager;
+        m_imageManager = newImageManager;
     }
 
     void Server::SetRenderer(Renderer* newRenderer)
     {
-        this->renderer = newRenderer;
+        m_renderer = newRenderer;
     }
 
 
@@ -534,11 +534,7 @@ namespace GTGUI
 
     void Server::Paint()
     {
-        unsigned int viewportWidth;
-        unsigned int viewportHeight;
-        this->GetViewportSize(viewportWidth, viewportHeight);
-
-        this->Paint(0, 0, viewportWidth, viewportHeight);
+        this->Paint(0, 0, this->viewportWidth, this->viewportHeight);
     }
 
 
@@ -656,7 +652,7 @@ namespace GTGUI
 
     ImageHandle Server::AcquireImage(const char* absURLOrID)
     {
-        if (this->imageManager != nullptr)
+        if (m_imageManager != nullptr)
         {
             if (GTLib::Path::IsAbsolute(absURLOrID))
             {
@@ -669,7 +665,7 @@ namespace GTGUI
                 else
                 {
                     // The image does not exist. We simply load it, add it to our loaded list and then return it.
-                    auto newImage = this->imageManager->LoadImage(absURLOrID);
+                    auto newImage = m_imageManager->LoadImage(absURLOrID);
                     if (newImage != 0)
                     {
                         this->loadedImages.Add(absURLOrID, newImage);
@@ -2360,10 +2356,10 @@ namespace GTGUI
     void Server::Render()
     {
         // Don't do anything if we don't have a renderer attached.
-        if (this->renderer != nullptr)
+        if (m_renderer != nullptr)
         {
             // First thing is to let the renderer know that we're starting.
-            renderer->Begin(*this);
+            m_renderer->Begin(*this);
 
 
             // Elements with a higher z-index are rendered last. They need to be shown on top of everything below it.
@@ -2381,7 +2377,7 @@ namespace GTGUI
                             // children that use a z-index since they will be drawn separately.
                             if (element->IsVisible())
                             {
-                                this->renderer->RenderElement(*this, *element);
+                                m_renderer->RenderElement(*this, *element);
                             }
                         }
                     }
@@ -2390,7 +2386,7 @@ namespace GTGUI
 
 
             // Finally, the renderer needs to know that we're finished.
-            renderer->End();
+            m_renderer->End();
         }
     }
 
@@ -2438,17 +2434,17 @@ namespace GTGUI
 
     void Server::RegisterImage(const char* id, unsigned int width, unsigned int height, unsigned int bpp, const void* data)
     {
-        if (this->imageManager != nullptr)
+        if (m_imageManager != nullptr)
         {
             // Delete existing image.
             auto iImage = this->registeredImages.Find(id);
             if (iImage != nullptr)
             {
-                this->imageManager->DeleteImage(iImage->value);
+                m_imageManager->DeleteImage(iImage->value);
                 this->registeredImages.Remove(id);
             }
 
-            this->registeredImages.Add(id, this->imageManager->CreateImage(width, height, (bpp == 3) ? GTGUI::ImageFormat_RGB8 : GTGUI::ImageFormat_RGBA8, data));
+            this->registeredImages.Add(id, m_imageManager->CreateImage(width, height, (bpp == 3) ? GTGUI::ImageFormat_RGB8 : GTGUI::ImageFormat_RGBA8, data));
         }
     }
 

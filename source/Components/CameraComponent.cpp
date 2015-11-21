@@ -16,12 +16,12 @@ namespace GTEngine
     {
     }
 
-    void CameraComponent::Set3DProjection(float fov, float aspect, float zNear, float zFar)
+    void CameraComponent::Set3DProjection(float fovIn, float aspectIn, float zNearIn, float zFarIn)
     {
-        this->perspective.fov    = fov;
-        this->perspective.aspect = aspect;
-        this->zNear              = zNear;
-        this->zFar               = zFar;
+        this->perspective.fov    = fovIn;
+        this->perspective.aspect = aspectIn;
+        this->zNear              = zNearIn;
+        this->zFar               = zFarIn;
         
         // The aspect ratio must be larger than 0. If it's not, we'll default to 16/9.
         if (this->perspective.aspect <= 0)
@@ -51,14 +51,14 @@ namespace GTEngine
         this->OnChanged();
     }
 
-    void CameraComponent::Set2DProjection(float left, float right, float bottom, float top, float zNear, float zFar)
+    void CameraComponent::Set2DProjection(float leftIn, float rightIn, float bottomIn, float topIn, float zNearIn, float zFarIn)
     {
-        this->ortho.left   = left;
-        this->ortho.right  = right;
-        this->ortho.bottom = bottom;
-        this->ortho.top    = top;
-        this->zNear        = zNear;
-        this->zFar         = zFar;
+        this->ortho.left   = leftIn;
+        this->ortho.right  = rightIn;
+        this->ortho.bottom = bottomIn;
+        this->ortho.top    = topIn;
+        this->zNear        = zNearIn;
+        this->zFar         = zFarIn;
         
         
         // We can't let the near and far planes equal each other. If this is the case, we're going to take the near plane and multiply it

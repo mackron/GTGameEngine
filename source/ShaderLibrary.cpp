@@ -83,9 +83,9 @@ namespace GTEngine
         /**
         *   \brief  Sets the content fo the shader directly.
         */
-        void SetContent(const char* content)
+        void SetContent(const char* contentIn)
         {
-            this->content = content;
+            this->content = contentIn;
         }
 
 
@@ -100,10 +100,10 @@ namespace GTEngine
         /**
         *   \brief  Appends an anonymous include to the shader.
         */
-        void AppendAnonymousInclude(const char *content)
+        void AppendAnonymousInclude(const char *contentIn)
         {
             auto newInclude = new ShaderLibraryShader(nullptr);
-            newInclude->SetContent(content);
+            newInclude->SetContent(contentIn);
 
             this->includes.Append(newInclude);
             this->anonIncludes.Append(newInclude);

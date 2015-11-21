@@ -625,7 +625,7 @@ namespace GTEngine
         GTLib::Map<SceneViewport*, DefaultSceneRendererFramebuffer*> viewportFramebuffers;
 
         /// Keeps track of the shaders associated with each referenced material definition. Keyed by the material definition.
-        GTLib::Map<const MaterialDefinition*, DefaultSceneRenderer_MaterialShaders*> materialShaders;
+        GTLib::Map<const MaterialDefinition*, DefaultSceneRenderer_MaterialShaders*> m_materialShaders;
 
 
         /// The shader to use with the depth pre-pass.

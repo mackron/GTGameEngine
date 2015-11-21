@@ -872,18 +872,18 @@ namespace GTEngine
     ///////////////////////////////////////////////
     // SceneNodeEventHandler
 
-    void EditorMetadataComponent::SceneNodeEventHandler::OnTransform(SceneNode &node)
+    void EditorMetadataComponent::SceneNodeEventHandler::OnTransform(SceneNode &nodeIn)
     {
-        auto editorMetadata = node.GetComponent<EditorMetadataComponent>();
+        auto editorMetadata = nodeIn.GetComponent<EditorMetadataComponent>();
         assert(editorMetadata != nullptr);
         {
             editorMetadata->OnSceneNodeTransform();
         }
     }
 
-    void EditorMetadataComponent::SceneNodeEventHandler::OnScale(SceneNode &node)
+    void EditorMetadataComponent::SceneNodeEventHandler::OnScale(SceneNode &nodeIn)
     {
-        auto editorMetadata = node.GetComponent<EditorMetadataComponent>();
+        auto editorMetadata = nodeIn.GetComponent<EditorMetadataComponent>();
         assert(editorMetadata != nullptr);
         {
             editorMetadata->OnSceneNodeScale();

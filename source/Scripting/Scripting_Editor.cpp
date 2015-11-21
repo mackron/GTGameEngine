@@ -873,9 +873,9 @@ namespace GTEngine
                 {
                     auto &definition = modelEditor->GetModelDefinition();
 
-                    for (size_t i = 0; i < definition.animation.GetNamedSegmentCount(); ++i)
+                    for (size_t i = 0; i < definition.m_animation.GetNamedSegmentCount(); ++i)
                     {
-                        auto segment = definition.animation.GetNamedSegmentByIndex(i);
+                        auto segment = definition.m_animation.GetNamedSegmentByIndex(i);
                         assert(segment != nullptr);
                         {
                             // Key

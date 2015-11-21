@@ -9,21 +9,21 @@ namespace GTEngine
 {
     GenericConstraint::GenericConstraint(RigidBody &bodyA, RigidBody &bodyB, const glm::mat4 &frameA, const glm::mat4 &frameB)
         : btGeneric6DofConstraint(bodyA, bodyB, BulletUtils::CreateTransform(frameA), BulletUtils::CreateTransform(frameB), false),
-          world(nullptr), isCollisionBetweenLinkedBodiesDisabled(false)
+          m_world(nullptr), isCollisionBetweenLinkedBodiesDisabled(false)
     {
     }
 
     GenericConstraint::GenericConstraint(RigidBody &bodyB, const glm::mat4 &frameB)
         : btGeneric6DofConstraint(bodyB, BulletUtils::CreateTransform(frameB), false),
-          world(nullptr), isCollisionBetweenLinkedBodiesDisabled(false)
+          m_world(nullptr), isCollisionBetweenLinkedBodiesDisabled(false)
     {
     }
 
     GenericConstraint::~GenericConstraint()
     {
-        if (this->world != nullptr)
+        if (m_world != nullptr)
         {
-            this->world->RemoveConstraint(*this);
+            m_world->RemoveConstraint(*this);
         }
     }
 

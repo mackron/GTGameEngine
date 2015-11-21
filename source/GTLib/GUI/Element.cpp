@@ -12,7 +12,7 @@ namespace GTGUI
 {
     Element::Element(const char* id, Server &server)
         : id(GTLib::Strings::Create(id)), server(server), parent(nullptr), firstChild(nullptr), lastChild(nullptr), prevSibling(nullptr), nextSibling(nullptr),
-          style(*this), primaryStyleClass(nullptr),
+          style(*this), m_primaryStyleClass(nullptr),
           eventHandlers(),
           x(0), y(0), width(0), height(0),
           layout(),
@@ -271,16 +271,16 @@ namespace GTGUI
 
     StyleClass* Element::GetPrimaryStyleClass() const
     {
-        if (this->primaryStyleClass == nullptr)
+        if (m_primaryStyleClass == nullptr)
         {
             GTLib::Strings::List<char> className;
             className.Append("#");
             className.Append(this->id);
 
-            this->primaryStyleClass = this->server.GetStyleServer().GetStyleClass(className.c_str());
+            m_primaryStyleClass = this->server.GetStyleServer().GetStyleClass(className.c_str());
         }
 
-        return this->primaryStyleClass;
+        return m_primaryStyleClass;
     }
 
     void Element::DeletePrimaryStyleClass()
@@ -289,7 +289,7 @@ namespace GTGUI
         if (primaryStyleClass != nullptr)
         {
             this->GetServer().GetStyleServer().DeleteStyleClass(*primaryStyleClass, false);      // Last arguments means to not refresh the style stack. Setting this to true will crash.
-            this->primaryStyleClass = nullptr;
+            m_primaryStyleClass = nullptr;
         }
     }
 
@@ -832,13 +832,13 @@ namespace GTGUI
         childrenScissorRect.Clamp(scissorRect);
     }
 
-    void Element::AbsoluteToRelative(int &x, int &y)
+    void Element::AbsoluteToRelative(int &xInOut, int &yInOut)
     {
         GTLib::Rect<int> absRect;
         this->GetAbsoluteRect(absRect);
 
-        x -= absRect.left;
-        y -= absRect.top;
+        xInOut -= absRect.left;
+        yInOut -= absRect.top;
     }
 
     void Element::UpdateTextManagerContainerSize()
@@ -1006,7 +1006,7 @@ namespace GTGUI
     }
 
 
-    void Element::SetPosition(int x, int y)
+    void Element::SetPosition(int xIn, int yIn)
     {
         auto styleClass = this->GetPrimaryStyleClass();
         if (styleClass != nullptr)
@@ -1018,18 +1018,18 @@ namespace GTGUI
             }
             
             // Now we set the actual position.
-            styleClass->SetAttribute("left", GTLib::ToString(x).c_str());
-            styleClass->SetAttribute("top",  GTLib::ToString(y).c_str());
+            styleClass->SetAttribute("left", GTLib::ToString(xIn).c_str());
+            styleClass->SetAttribute("top",  GTLib::ToString(yIn).c_str());
         }
     }
 
-    void Element::SetSize(unsigned int width, unsigned int height)
+    void Element::SetSize(unsigned int widthIn, unsigned int heightIn)
     {
         auto styleClass = this->GetPrimaryStyleClass();
         if (styleClass != nullptr)
         {
-            styleClass->SetAttribute("width",  GTLib::ToString(width).c_str());
-            styleClass->SetAttribute("height", GTLib::ToString(height).c_str());
+            styleClass->SetAttribute("width",  GTLib::ToString(widthIn).c_str());
+            styleClass->SetAttribute("height", GTLib::ToString(heightIn).c_str());
         }
     }
 

@@ -792,11 +792,11 @@ namespace GTEngine
             {
             }
 
-            bool Initialise(GTGUI::Server &gui)
+            bool Initialise(GTGUI::Server &guiIn)
             {
                 if (!this->isInitialised)
                 {
-                    this->gui = &gui;
+                    this->gui = &guiIn;
 
                     if (this->gui->LoadFromFile("engine/gui/debugging.xml"))
                     {
@@ -813,18 +813,18 @@ namespace GTEngine
             }
 
             // Updates the debugging information. This should be called once per frame.
-            void Update(Profiler &profiler)
+            void Update(Profiler &profilerIn)
             {
                 if (GTLib::Timing::GetTimeInSeconds() - this->lastUpdateTime >= this->updateIntervalInSeconds)
                 {
                     this->lastUpdateTime = GTLib::Timing::GetTimeInSeconds();
 
-                    double delta = profiler.GetAverageFrameTime();
+                    double delta = profilerIn.GetAverageFrameTime();
                     double fps   = 0.0;
 
                     if (delta > 0.0)
                     {
-                        fps = 1.0 / profiler.GetAverageFrameTime();
+                        fps = 1.0 / profilerIn.GetAverageFrameTime();
                     }
 
                     char valueStr[64];
@@ -838,8 +838,8 @@ namespace GTEngine
 
 
                     // Update and Render time.
-                    double updateTime = profiler.GetAverageUpdateTime();
-                    double renderTime = profiler.GetAverageRenderingTime();
+                    double updateTime = profilerIn.GetAverageUpdateTime();
+                    double renderTime = profilerIn.GetAverageRenderingTime();
 
                     GTLib::IO::snprintf(valueStr, 64, "%.4f (%.1f%%)", updateTime * 1000, updateTime / delta * 100.0);
                     this->UpdateTime->SetText(valueStr);

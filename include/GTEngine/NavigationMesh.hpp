@@ -119,7 +119,7 @@ namespace GTEngine
         rcConfig config;
 
         /// A pointer to the main navigation mesh.
-        rcPolyMesh* mesh;
+        rcPolyMesh* m_mesh;
 
         /// A pointer to the detail mesh containing height information.
         rcPolyMeshDetail* detailMesh;

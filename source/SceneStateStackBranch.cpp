@@ -331,9 +331,9 @@ namespace GTEngine
                     auto &updates   = frame->GetUpdates();
                     //auto &hierarchy = frame->GetHierarchy();
 
-                    for (size_t i = 0; i < inserts.count; ++i)
+                    for (size_t j = 0; j < inserts.count; ++j)
                     {
-                        uint64_t sceneNodeID       = inserts.buffer[i]->key;
+                        uint64_t sceneNodeID       = inserts.buffer[j]->key;
                         uint64_t parentSceneNodeID = 0;
 
                         /*
@@ -347,9 +347,9 @@ namespace GTEngine
                         commands.AddInsert(sceneNodeID, parentSceneNodeID, nullptr);
                     }
 
-                    for (size_t i = 0; i < deletes.count; ++i)
+                    for (size_t j = 0; j < deletes.count; ++j)
                     {
-                        uint64_t sceneNodeID       = deletes.buffer[i]->key;
+                        uint64_t sceneNodeID       = deletes.buffer[j]->key;
                         uint64_t parentSceneNodeID = 0;
 
                         /*
@@ -363,9 +363,9 @@ namespace GTEngine
                         commands.AddDelete(sceneNodeID, parentSceneNodeID, nullptr);
                     }
 
-                    for (size_t i = 0; i < updates.count; ++i)
+                    for (size_t j = 0; j < updates.count; ++j)
                     {
-                        uint64_t sceneNodeID       = updates.buffer[i]->key;
+                        uint64_t sceneNodeID       = updates.buffer[j]->key;
                         uint64_t parentSceneNodeID = 0;
 
                         /*
@@ -394,9 +394,9 @@ namespace GTEngine
                     auto &updates   = frame->GetUpdates();
                     //auto &hierarchy = frame->GetHierarchy();
 
-                    for (size_t i = 0; i < inserts.count; ++i)
+                    for (size_t j = 0; j < inserts.count; ++j)
                     {
-                        uint64_t sceneNodeID       = inserts.buffer[i]->key;
+                        uint64_t sceneNodeID       = inserts.buffer[j]->key;
                         uint64_t parentSceneNodeID = 0;
 
                         /*
@@ -410,9 +410,9 @@ namespace GTEngine
                         commands.AddDelete(sceneNodeID, parentSceneNodeID, nullptr);
                     }
 
-                    for (size_t i = 0; i < deletes.count; ++i)
+                    for (size_t j = 0; j < deletes.count; ++j)
                     {
-                        uint64_t sceneNodeID       = deletes.buffer[i]->key;
+                        uint64_t sceneNodeID       = deletes.buffer[j]->key;
                         uint64_t parentSceneNodeID = 0;
 
                         /*
@@ -426,9 +426,9 @@ namespace GTEngine
                         commands.AddInsert(sceneNodeID, parentSceneNodeID, nullptr);
                     }
 
-                    for (size_t i = 0; i < updates.count; ++i)
+                    for (size_t j = 0; j < updates.count; ++j)
                     {
-                        uint64_t sceneNodeID       = updates.buffer[i]->key;
+                        uint64_t sceneNodeID       = updates.buffer[j]->key;
                         uint64_t parentSceneNodeID = 0;
 
                         /*

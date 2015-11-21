@@ -16,11 +16,11 @@ namespace GTGUI
         delete this->mesh;
     }
 
-    void Caret::Show(Element *owner)
+    void Caret::Show(Element *ownerIn)
     {
-        if (this->owner != owner)
+        if (this->owner != ownerIn)
         {
-            this->owner = owner;
+            this->owner = ownerIn;
             this->InvalidateRenderingData();
         }
     }
@@ -58,21 +58,21 @@ namespace GTGUI
         }
     }
 
-    void Caret::GetSize(unsigned int &width, unsigned int &height)
+    void Caret::GetSize(unsigned int &widthOut, unsigned int &heightOut)
     {
         if (this->owner != nullptr)
         {
-            width  = this->width;
-            height = this->height;
+            widthOut  = this->width;
+            heightOut = this->height;
         }
     }
 
-    void Caret::SetSize(unsigned int width, unsigned int height)
+    void Caret::SetSize(unsigned int widthIn, unsigned int heightIn)
     {
         if (this->owner != nullptr)
         {
-            this->width  = width;
-            this->height = height;
+            this->width  = widthIn;
+            this->height = heightIn;
 
             this->InvalidateRenderingData();
         }

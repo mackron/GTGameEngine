@@ -84,7 +84,7 @@ namespace GTEngine
 
         /// Constructor.
         SceneCullingManager()
-            : flags(0)
+            : m_flags(0)
         {
         }
 
@@ -276,18 +276,18 @@ namespace GTEngine
         };
 
         /// Retrieves the flags of the culling manager.
-        unsigned int GetFlags() const { return this->flags; }
+        unsigned int GetFlags() const { return m_flags; }
 
         /// Sets the flags of the culling manager.
         ///
         /// @param newFlags [in] The new flags to use with the manager.
-        void SetFlags(unsigned int newFlags) { this->flags = newFlags; }
+        void SetFlags(unsigned int newFlags) { m_flags = newFlags; }
 
 
     private:
 
         /// The culling manager's flags.
-        unsigned int flags;
+        unsigned int m_flags;
     };
 }
 

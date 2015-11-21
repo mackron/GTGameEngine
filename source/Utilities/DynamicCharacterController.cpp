@@ -14,7 +14,7 @@ namespace GTEngine
         : sceneNode(), sceneNodeEventHandler(*this),
           height(heightIn), radius(radiusIn),
           onGround(false), isHeadTouchingSomething(false),
-          eventHandler(nullptr)
+          m_eventHandler(nullptr)
     {
         // TODO: Change to a capsule later.
 
@@ -73,12 +73,12 @@ namespace GTEngine
 
     void DynamicCharacterController::SetEventHandler(CharacterControllerEventHandler &eventHandler)
     {
-        this->eventHandler = &eventHandler;
+        m_eventHandler = &eventHandler;
     }
 
     void DynamicCharacterController::RemoveEventHandler()
     {
-        this->eventHandler = nullptr;
+        m_eventHandler = nullptr;
     }
 
 
@@ -161,34 +161,34 @@ namespace GTEngine
 
 
 
-            if (this->eventHandler != nullptr)
+            if (m_eventHandler != nullptr)
             {
-                this->eventHandler->OnUpdate(deltaTimeInSeconds);
+                m_eventHandler->OnUpdate(deltaTimeInSeconds);
             }
         }
     }
 
     void DynamicCharacterController::OnLand()
     {
-        if (this->eventHandler != nullptr)
+        if (m_eventHandler != nullptr)
         {
-            this->eventHandler->OnLand();
+            m_eventHandler->OnLand();
         }
     }
 
     void DynamicCharacterController::OnRaise()
     {
-        if (this->eventHandler != nullptr)
+        if (m_eventHandler != nullptr)
         {
-            this->eventHandler->OnRaise();
+            m_eventHandler->OnRaise();
         }
     }
 
     void DynamicCharacterController::OnHitHead()
     {
-        if (this->eventHandler != nullptr)
+        if (m_eventHandler != nullptr)
         {
-            this->eventHandler->OnHitHead();
+            m_eventHandler->OnHitHead();
         }
     }
 }

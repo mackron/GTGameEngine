@@ -15,7 +15,7 @@ namespace GTEngine
 
 
     DataFilesWatcher::DataFilesWatcher()
-        : root(), thread(),
+        : m_root(), thread(),
           eventHandlers(), events(),
           isActive(true)
     {
@@ -27,12 +27,12 @@ namespace GTEngine
 
     void DataFilesWatcher::AddRootDirectory(const char* directory)
     {
-        this->root.InsertChild(GTLib::FileInfo(directory));
+        m_root.InsertChild(GTLib::FileInfo(directory));
     }
 
     void DataFilesWatcher::RemoveRootDirectory(const char* directory)
     {
-        this->root.RemoveChild(directory);
+        m_root.RemoveChild(directory);
     }
 
 
@@ -44,7 +44,7 @@ namespace GTEngine
 
             if (postInsertEventsForExistingFiles)
             {
-                this->__PostOnInsertRecursively(this->root, eventHandler);
+                this->__PostOnInsertRecursively(m_root, eventHandler);
             }
         }
     }
@@ -141,7 +141,7 @@ namespace GTEngine
     void DataFilesWatcher::__CheckForChangesOnCallingThread()
     {
         // We need to recursively check directories.
-        this->__CheckForChangesOnCallingThread(this->root);
+        this->__CheckForChangesOnCallingThread(m_root);
     }
 
     void DataFilesWatcher::__CheckForChangesOnCallingThread(Item &root)
@@ -173,7 +173,7 @@ namespace GTEngine
 
             GTLib::List<GTLib::String> currentChildren;
 
-            if (&this->root != &root)
+            if (&m_root != &root)
             {
                 if (newInfo.isDirectory)
                 {
@@ -276,7 +276,7 @@ namespace GTEngine
     void DataFilesWatcher::__PostOnInsertRecursively(const Item &rootItem, EventHandler &eventHandler)
     {
         // We want to ignore root items here.
-        if (&rootItem != &this->root && rootItem.parent != &this->root)
+        if (&rootItem != &m_root && rootItem.parent != &m_root)
         {
             eventHandler.OnInsert(rootItem);
         }

@@ -13,7 +13,7 @@
 namespace GTEngine
 {
     DefaultSceneCullingManager::DefaultSceneCullingManager()
-        : world(), models(), pointLights(), spotLights(), ambientLights(), directionalLights(), particleSystems(),
+        : m_world(), models(), pointLights(), spotLights(), ambientLights(), directionalLights(), particleSystems(),
           dbvtPolicy(*this)
     {
     }
@@ -49,7 +49,7 @@ namespace GTEngine
 
 
                 // The culling object needs to be added to the world...
-                this->world.AddCollisionObject(cullingObject->collisionObject, cullingObject->collisionGroup, cullingObject->collisionMask);
+                m_world.AddCollisionObject(cullingObject->collisionObject, cullingObject->collisionGroup, cullingObject->collisionMask);
 
 
                 // With everything setup we now just add the store a pointer culling object.
@@ -87,7 +87,7 @@ namespace GTEngine
 
 
             // The culling object needs to be added to the world...
-            this->world.AddCollisionObject(cullingObject->collisionObject, cullingObject->collisionGroup, cullingObject->collisionMask);
+            m_world.AddCollisionObject(cullingObject->collisionObject, cullingObject->collisionGroup, cullingObject->collisionMask);
 
 
             // With everything setup we now just add the store a pointer culling object.
@@ -125,7 +125,7 @@ namespace GTEngine
 
 
             // The culling object needs to be added to the world...
-            this->world.AddCollisionObject(cullingObject->collisionObject, cullingObject->collisionGroup, cullingObject->collisionMask);
+            m_world.AddCollisionObject(cullingObject->collisionObject, cullingObject->collisionGroup, cullingObject->collisionMask);
 
 
             // With everything setup we now just add the store a pointer culling object.
@@ -194,7 +194,7 @@ namespace GTEngine
 
 
                 // The culling object needs to be added to the world...
-                this->world.AddCollisionObject(cullingObject->collisionObject, cullingObject->collisionGroup, cullingObject->collisionMask);
+                m_world.AddCollisionObject(cullingObject->collisionObject, cullingObject->collisionGroup, cullingObject->collisionMask);
 
 
                 // With everything setup we now just add the store a pointer culling object.
@@ -225,7 +225,7 @@ namespace GTEngine
             sceneNode.GetWorldTransform(transform);
             collisionObject.setWorldTransform(transform);
 
-            this->world.AddCollisionObject(collisionObject, CollisionGroups::Occluder, CollisionGroups::All);
+            m_world.AddCollisionObject(collisionObject, CollisionGroups::Occluder, CollisionGroups::All);
         }
     }
 
@@ -234,7 +234,7 @@ namespace GTEngine
         auto occluderComponent = sceneNode.GetComponent<OccluderComponent>();
         assert(occluderComponent != nullptr);
         {
-            this->world.RemoveCollisionObject(occluderComponent->GetCollisionObject());
+            m_world.RemoveCollisionObject(occluderComponent->GetCollisionObject());
         }
     }
 
@@ -401,7 +401,7 @@ namespace GTEngine
     {
         btVector3 tempMin;
         btVector3 tempMax;
-        this->world.GetBroadphase().getBroadphaseAabb(tempMin, tempMax);
+        m_world.GetBroadphase().getBroadphaseAabb(tempMin, tempMax);
 
         aabbMin = ToGLMVector3(tempMin);
         aabbMax = ToGLMVector3(tempMax);
@@ -418,7 +418,7 @@ namespace GTEngine
 
         if ((flags & SceneCullingManager::NoFrustumCulling) && (flags & SceneCullingManager::NoOcclusionCulling))
         {
-            auto collisionObjects = this->world.GetInternalWorld().getCollisionObjectArray();
+            auto collisionObjects = m_world.GetInternalWorld().getCollisionObjectArray();
             for (int i = 0; i < collisionObjects.size(); ++i)
             {
                 auto collisionObject = collisionObjects[i];
@@ -458,13 +458,13 @@ namespace GTEngine
 
             if (!(flags & SceneCullingManager::NoOcclusionCulling))
             {
-                btDbvt::collideOCL(this->world.GetBroadphase().m_sets[1].m_root, planes_n, planes_o, sortDirection, 6, dbvtPolicy);
-		        btDbvt::collideOCL(this->world.GetBroadphase().m_sets[0].m_root, planes_n, planes_o, sortDirection, 6, dbvtPolicy);
+                btDbvt::collideOCL(m_world.GetBroadphase().m_sets[1].m_root, planes_n, planes_o, sortDirection, 6, dbvtPolicy);
+		        btDbvt::collideOCL(m_world.GetBroadphase().m_sets[0].m_root, planes_n, planes_o, sortDirection, 6, dbvtPolicy);
             }
             else
             {
-                btDbvt::collideKDOP(this->world.GetBroadphase().m_sets[1].m_root, planes_n, planes_o, 6, dbvtPolicy);
-			    btDbvt::collideKDOP(this->world.GetBroadphase().m_sets[0].m_root, planes_n, planes_o, 6, dbvtPolicy);
+                btDbvt::collideKDOP(m_world.GetBroadphase().m_sets[1].m_root, planes_n, planes_o, 6, dbvtPolicy);
+			    btDbvt::collideKDOP(m_world.GetBroadphase().m_sets[0].m_root, planes_n, planes_o, 6, dbvtPolicy);
             }
         }
 
@@ -489,7 +489,7 @@ namespace GTEngine
             assert(cullingObject != nullptr);
             {
                 LightContactTestCallback callback(light, callbackIn, cullingObject->collisionGroup, cullingObject->collisionMask);
-                this->world.ContactTest(cullingObject->collisionObject, callback);
+                m_world.ContactTest(cullingObject->collisionObject, callback);
             }
         }
     }
@@ -503,7 +503,7 @@ namespace GTEngine
             assert(cullingObject != nullptr);
             {
                 LightContactTestCallback callback(light, callbackIn, cullingObject->collisionGroup, cullingObject->collisionMask);
-                this->world.ContactTest(cullingObject->collisionObject, callback);
+                m_world.ContactTest(cullingObject->collisionObject, callback);
             }
         }
     }

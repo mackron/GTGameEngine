@@ -16,7 +16,7 @@ namespace GTEngine
     SceneViewport::SceneViewport()
         : scene(nullptr), cameraNodes(),
           width(1), height(1),
-          colourBuffer(nullptr)
+          m_colourBuffer(nullptr)
     {
         cameraNodes[ViewportLayer::Background] = nullptr;
         cameraNodes[ViewportLayer::Main]       = nullptr;
@@ -27,9 +27,9 @@ namespace GTEngine
     }
 
 
-    void SceneViewport::SetScene(Scene* scene)
+    void SceneViewport::SetScene(Scene* sceneIn)
     {
-        this->scene = scene;
+        this->scene = sceneIn;
     }
 
     Scene* SceneViewport::GetScene()

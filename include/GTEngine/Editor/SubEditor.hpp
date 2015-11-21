@@ -31,8 +31,8 @@ namespace GTEngine
 
         
         /// Retrieves a reference to the owner editor.
-              Editor & GetOwnerEditor()       { return this->ownerEditor; }
-        const Editor & GetOwnerEditor() const { return this->ownerEditor; }
+              Editor & GetOwnerEditor()       { return m_ownerEditor; }
+        const Editor & GetOwnerEditor() const { return m_ownerEditor; }
 
 
         /// Retrieves the absolute path of this editor's file.
@@ -43,8 +43,8 @@ namespace GTEngine
 
 
         /// Retrieves the tab GUI element associated with this editor.
-              GTGUI::Element* GetTabElement()       { return this->tabElement; }
-        const GTGUI::Element* GetTabElement() const { return this->tabElement; }
+              GTGUI::Element* GetTabElement()       { return m_tabElement; }
+        const GTGUI::Element* GetTabElement() const { return m_tabElement; }
 
 
         /// Marks the file as modified.
@@ -159,22 +159,22 @@ namespace GTEngine
     private:
 
         /// A reference to the Editor object that owns this sub-editor.
-        Editor &ownerEditor;
+        Editor &m_ownerEditor;
 
         /// The absolute path of the file this editor is editting.
-        GTLib::String absolutePath;
+        GTLib::String m_absolutePath;
 
         /// The relative path of the file this editor is editting.
-        GTLib::String relativePath;
+        GTLib::String m_relativePath;
 
         /// A pointer to the tab element associated with this editor.
-        GTGUI::Element* tabElement;
+        GTGUI::Element* m_tabElement;
 
         /// The event handler to attack to the tab.
-        SubEditorTabEventHandler tabEventHandler;
+        SubEditorTabEventHandler m_tabEventHandler;
 
         /// Keeps track of whether or not the file is marked as modified.
-        bool isMarkedAsModified;
+        bool m_isMarkedAsModified;
 
         /// Keeps track of whether or not marking as modified is enabled. When this is set to false, MarkAsModified() will do nothing.
         bool m_isMarkingAsModifiedEnabled;

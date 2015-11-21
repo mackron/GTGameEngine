@@ -7,92 +7,92 @@ namespace GTEngine
 {
     VertexArray::VertexArray(VertexArrayUsage usage, const VertexFormat &format)
         : usage(usage), format(format),
-          vertices(nullptr), vertexCount(0), vertexBufferSize(0), indices(nullptr), indexCount(0), indexBufferSize(0),
+          m_vertices(nullptr), m_vertexCount(0), m_vertexBufferSize(0), m_indices(nullptr), m_indexCount(0), m_indexBufferSize(0),
           verticesMapped(false), indicesMapped(false)
     {
     }
 
     VertexArray::~VertexArray()
     {
-        free(this->vertices);
-        free(this->indices);
+        free(m_vertices);
+        free(m_indices);
     }
 
-    void VertexArray::SetData(const float* vertices, unsigned int vertexCount, const unsigned int* indices, unsigned int indexCount)
+    void VertexArray::SetData(const float* verticesIn, unsigned int vertexCountIn, const unsigned int* indicesIn, unsigned int indexCountIn)
     {
-        this->SetVertexData(vertices, vertexCount);
-        this->SetIndexData(indices, indexCount);
+        this->SetVertexData(verticesIn, vertexCountIn);
+        this->SetIndexData(indicesIn, indexCountIn);
     }
 
-    void VertexArray::SetVertexData(const float* vertices, unsigned int vertexCount)
+    void VertexArray::SetVertexData(const float* verticesIn, unsigned int vertexCountIn)
     {
         assert(!this->verticesMapped);
 
 
-        size_t vertexDataSize = vertexCount * this->format.GetSize();
+        size_t vertexDataSize = vertexCountIn * this->format.GetSize();
 
-        if (this->vertexBufferSize < vertexDataSize || this->vertexBufferSize > vertexDataSize * 2)
+        if (m_vertexBufferSize < vertexDataSize || m_vertexBufferSize > vertexDataSize * 2)
         {
-            free(this->vertices);
+            free(m_vertices);
 
-            if (vertexCount > 0)
+            if (vertexCountIn > 0)
             {
-                this->vertices = static_cast<float*>(malloc(vertexDataSize * sizeof(float)));
+                m_vertices = static_cast<float*>(malloc(vertexDataSize * sizeof(float)));
             }
             else
             {
-                this->vertices = nullptr;
+                m_vertices = nullptr;
             }
 
 
-            this->vertexBufferSize = vertexDataSize;
+            m_vertexBufferSize = vertexDataSize;
         }
 
 
-        if (this->vertices != nullptr && vertices != nullptr)
+        if (m_vertices != nullptr && verticesIn != nullptr)
         {
             for (size_t i = 0; i < vertexDataSize; ++i)
             {
-                this->vertices[i] = vertices[i];
+                m_vertices[i] = verticesIn[i];
             }
         }
 
         
-        this->vertexCount = vertexCount;
+        m_vertexCount = vertexCountIn;
         this->OnVertexDataChanged();
     }
 
-    void VertexArray::SetIndexData(const unsigned int* indices, unsigned int indexCount)
+    void VertexArray::SetIndexData(const unsigned int* indicesIn, unsigned int indexCountIn)
     {
         assert(!this->indicesMapped);
 
-        if (this->indexBufferSize < indexCount || this->indexBufferSize > indexCount * 2)
+        if (m_indexBufferSize < indexCountIn || m_indexBufferSize > indexCountIn * 2)
         {
-            free(this->indices);
+            free(m_indices);
 
-            if (indexCount > 0)
+            if (indexCountIn > 0)
             {
-                this->indices = static_cast<unsigned int*>(malloc(indexCount * sizeof(unsigned int)));
+                m_indices = static_cast<unsigned int*>(malloc(indexCountIn * sizeof(unsigned int)));
             }
             else
             {
-                this->indices = 0;
+                m_indices = 0;
             }
 
             
-            this->indexBufferSize = indexCount;
+            m_indexBufferSize = indexCountIn;
         }
 
-        if (this->indices != nullptr && indices != nullptr)
+        if (m_indices != nullptr && indicesIn != nullptr)
         {
-            for (unsigned int i = 0; i < indexCount; ++i)
+            for (unsigned int i = 0; i < indexCountIn; ++i)
             {
-                this->indices[i] = indices[i];
+                m_indices[i] = indicesIn[i];
             }
         }
 
 
-        this->indexCount = indexCount;
+        m_indexCount = indexCountIn;
         this->OnIndexDataChanged();
     }
 
@@ -102,7 +102,7 @@ namespace GTEngine
         {
             this->verticesMapped = true;
 
-            return this->vertices;
+            return m_vertices;
         }
 
         return nullptr;
@@ -123,7 +123,7 @@ namespace GTEngine
         {
             this->indicesMapped = true;
 
-            return this->indices;
+            return m_indices;
         }
 
         return nullptr;
@@ -166,12 +166,12 @@ namespace GTEngine
         header.version     = 1;
         header.sizeInBytes =
             sizeof(uint32_t) +                                                  // <-- Vertex count.
-            sizeof(float) * this->format.GetSize() * this->vertexCount;         // <-- Vertex data.
+            sizeof(float) * this->format.GetSize() * m_vertexCount;         // <-- Vertex data.
 
         serializer.Write(header);
         {
-            serializer.Write(static_cast<uint32_t>(this->vertexCount));
-            serializer.Write(this->vertices, sizeof(float) * this->format.GetSize() * this->vertexCount);
+            serializer.Write(static_cast<uint32_t>(m_vertexCount));
+            serializer.Write(m_vertices, sizeof(float) * this->format.GetSize() * m_vertexCount);
         }
 
 
@@ -181,12 +181,12 @@ namespace GTEngine
         header.version     = 1;
         header.sizeInBytes =
             sizeof(uint32_t) +                               // <-- Index count.
-            sizeof(unsigned int) * this->indexCount;         // <-- Index data.
+            sizeof(unsigned int) * m_indexCount;         // <-- Index data.
 
         serializer.Write(header);
         {
-            serializer.Write(static_cast<uint32_t>(this->indexCount));
-            serializer.Write(this->indices, sizeof(unsigned int) * this->indexCount);
+            serializer.Write(static_cast<uint32_t>(m_indexCount));
+            serializer.Write(m_indices, sizeof(unsigned int) * m_indexCount);
         }
     }
 
@@ -235,11 +235,11 @@ namespace GTEngine
                     uint32_t newVertexCount;
                     deserializer.Read(newVertexCount);
                     
-                    this->vertexCount = static_cast<size_t>(newVertexCount);
+                    m_vertexCount = static_cast<size_t>(newVertexCount);
 
-                    free(this->vertices);
-                    this->vertices = static_cast<float*>(malloc(this->format.GetSize() * this->vertexCount * sizeof(float)));
-                    deserializer.Read(this->vertices, sizeof(float) * this->format.GetSize() * this->vertexCount);
+                    free(m_vertices);
+                    m_vertices = static_cast<float*>(malloc(this->format.GetSize() * m_vertexCount * sizeof(float)));
+                    deserializer.Read(m_vertices, sizeof(float) * this->format.GetSize() * m_vertexCount);
                 }
 
             default:
@@ -262,11 +262,11 @@ namespace GTEngine
                     uint32_t newIndexCount;
                     deserializer.Read(newIndexCount);
 
-                    this->indexCount = static_cast<size_t>(newIndexCount);
+                    m_indexCount = static_cast<size_t>(newIndexCount);
 
-                    free(this->indices);
-                    this->indices = static_cast<unsigned int*>(malloc(this->indexCount * sizeof(unsigned int)));
-                    deserializer.Read(this->indices, sizeof(unsigned int) * this->indexCount);
+                    free(m_indices);
+                    m_indices = static_cast<unsigned int*>(malloc(m_indexCount * sizeof(unsigned int)));
+                    deserializer.Read(m_indices, sizeof(unsigned int) * m_indexCount);
                 }
 
             default:

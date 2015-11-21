@@ -52,11 +52,11 @@ namespace GT
             
 
         /// Retrieves a pointer to the internal data buffer.
-              void* GetDataPointer()       { return this->m_ptr; }
-        const void* GetDataPointer() const { return this->m_ptr; }
+              void* GetDataPointer()       { return m_ptr; }
+        const void* GetDataPointer() const { return m_ptr; }
 
         /// Retrieves the size in bytes of the internal data buffer.
-        size_t GetDataSizeInBytes() const { return this->m_size; }
+        size_t GetDataSizeInBytes() const { return m_size; }
         
 
             

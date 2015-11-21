@@ -37,8 +37,8 @@ namespace GTEngine
 
 
         /// Retrieves a reference to the scene.
-              Scene & GetScene()       { return this->scene; }
-        const Scene & GetScene() const { return this->scene; }
+              Scene & GetScene()       { return m_scene; }
+        const Scene & GetScene() const { return m_scene; }
 
 
         /// Resets the camera to the default position.
@@ -793,8 +793,8 @@ namespace GTEngine
 
         }cameraEventHandler;
 
-        float cameraXRotation;      ///< The camera's current X rotation.
-        float cameraYRotation;      ///< The camera's current Y rotation.
+        float m_cameraXRotation;      ///< The camera's current X rotation.
+        float m_cameraYRotation;      ///< The camera's current Y rotation.
 
 
         /// The update manager to use with the scene.
@@ -807,7 +807,7 @@ namespace GTEngine
         DefaultSceneCullingManager cullingManager;
 
         /// The scene object for actually displaying the scene.
-        Scene scene;
+        Scene m_scene;
 
         /// The event handler to attach to the scene.
         SceneEditorSceneEventHandler sceneEventHandler;

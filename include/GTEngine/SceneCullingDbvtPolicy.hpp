@@ -6,6 +6,11 @@
 #include "Physics.hpp"
 #include <GTLib/Vector.hpp>
 
+#if defined(_MSC_VER)
+    #pragma warning(push)
+    #pragma warning(disable:4457)   // declaration of '...' hides function parameter
+#endif
+
 namespace GTEngine
 {
     class SceneNode;
@@ -218,8 +223,7 @@ namespace GTEngine
                         x[0] - x[2] - dx[2]*width
                     };
 
-                    int      a   = x[2]*y[0] + x[0]*y[1] - x[2]*y[1] - x[0]*y[2] + x[1]*y[2] - x[1]*y[0];
-                    btScalar ia  = 1.0f / static_cast<btScalar>(a);
+                    btScalar ia  = 1.0f / x[2]*y[0] + x[0]*y[1] - x[2]*y[1] - x[0]*y[2] + x[1]*y[2] - x[1]*y[0];
                     btScalar dzx = ia * (y[2]*(z[1] - z[0]) + y[1]*(z[0] - z[2]) + y[0]*(z[2] - z[1]));
                     btScalar dzy = ia * (x[2]*(z[0] - z[1]) + x[0]*(z[1] - z[2]) + x[1]*(z[2] - z[0])) - (dzx * width);		
 
@@ -301,5 +305,9 @@ namespace GTEngine
         btAlignedObjectArray<btScalar> buffer;
     };
 }
+
+#if defined(_MSC_VER)
+    #pragma warning(pop)
+#endif
 
 #endif

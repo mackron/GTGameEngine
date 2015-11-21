@@ -423,7 +423,7 @@ namespace GTLib
         /// Sets the event handler.
         ///
         /// @param eventHandler [in] The event handler to use with the text manager.
-        void SetEventHandler(TextManagerEventHandler* eventHandler) { this->eventHandler = eventHandler; }
+        void SetEventHandler(TextManagerEventHandler* eventHandler) { m_eventHandler = eventHandler; }
         void SetEventHandler(TextManagerEventHandler &eventHandler) { this->SetEventHandler(&eventHandler); }
 
 
@@ -724,9 +724,9 @@ namespace GTLib
         /// Helper method for posting OnTextChanged events.
         void OnTextChanged()
         {
-            if (this->eventHandler != nullptr)
+            if (m_eventHandler != nullptr)
             {
-                this->eventHandler->OnTextChanged(this->text);
+                m_eventHandler->OnTextChanged(m_text);
             }
         }
 
@@ -739,7 +739,7 @@ namespace GTLib
         /// A pointer to the text managed by the text manager. This is created by GetText(). It becomes invalid whenever text
         /// is modified, in which case it will be re-created by GetText(). 'isTextValid' is used to keep track of whether or
         /// not the text needs to be updated.
-        mutable char* text;
+        mutable char* m_text;
 
         /// Keeps track of whether or not 'text' needs to be updated in the next call to GetText().
         mutable bool isTextValid;
@@ -764,7 +764,7 @@ namespace GTLib
 
 
         /// The event handler. This needs to be a pointer because it can be changed with SetEventHandler(). Defaults to null.
-        TextManagerEventHandler* eventHandler;
+        TextManagerEventHandler* m_eventHandler;
 
 
         /// The marker for the cursor.
