@@ -367,40 +367,6 @@ namespace GTLib
 
                 // If we have made it here, we weren't exact.
                 result.index = static_cast<size_t>(iMid + indexOffset);
-                
-            #if 0
-                size_t iMin = 0;
-                size_t iMax = this->count - 1;
-                
-                while (iMin < iMax)
-                {
-                    size_t iMid = (iMin + iMax) >> 1;
-                    
-                    assert(iMid < iMax);
-                    {
-                        auto mid = this->buffer[iMid];
-                        if (mid->key < key)
-                        {
-                            iMin = iMid + 1;
-                        }
-                        else
-                        {
-                            iMax = iMid;
-                        }
-                    }
-                }
-                
-                assert(iMin == iMax);
-                {
-                    result.index = iMin;
-                    result.exact = this->buffer[iMin]->key == key;
-                    
-                    if (!result.exact && this->buffer[iMin]->key < key)
-                    {
-                        result.index += 1;
-                    }
-                }
-            #endif
             }
 
             return result;
