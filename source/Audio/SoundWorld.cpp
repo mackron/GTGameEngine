@@ -7,42 +7,6 @@ namespace GT
 {
     namespace Engine
     {
-#if 0
-        class InlineSoundPlaybackEventHandler : public SoundPlaybackEventHandler
-        {
-        public:
-
-            /// Constructor.
-            InlineSoundPlaybackEventHandler(SoundWorld &world, Sound &sound)
-                : m_world(world),
-                  m_sound(sound)
-            {
-            }
-
-
-            /// SoundPlaybackEventHandler::OnStop().
-            void OnStop() override
-            {
-                m_world._OnInlineSoundStop(m_sound);
-            }
-
-
-
-        private:
-
-            /// A reference to the world that contains the sound.
-            SoundWorld &m_world;
-
-            /// A reference to the applicable sound.
-            Sound &m_sound;
-
-
-        private:    // No copying.
-            InlineSoundPlaybackEventHandler(const InlineSoundPlaybackEventHandler &);
-            InlineSoundPlaybackEventHandler & operator=(const InlineSoundPlaybackEventHandler &);
-        };
-#endif
-
         static void EA_OnStreamingBufferStop(easyaudio_buffer* pBuffer, unsigned int eventID, void *pUserData)
         {
             Sound* pSound = reinterpret_cast<Sound*>(pUserData);
@@ -52,8 +16,7 @@ namespace GT
             assert(pWorld != NULL);
 
             // When an inline sound stops we want to delete it.
-            pWorld->_UntrackInlineSound(*pSound);
-            delete pSound;
+            pWorld->_UntrackAndDeleteInlineSound(*pSound);
         }
 
 
@@ -76,10 +39,6 @@ namespace GT
             }
 
             assert(m_inlineSounds.GetCount() == 0);
-            //for (size_t iSound = 0; iSound < m_inlineSounds.GetCount(); ++iSound)
-            //{
-            //    m_inlineSounds[iSound]->Stop();
-            //}
         }
 
 
@@ -99,10 +58,6 @@ namespace GT
             auto sound = new Sound(m_engineContext);
             if (sound->LoadFromFile(filePath))
             {
-                // We need an event handler here so we know that the sound needs to be deleted.
-                //auto eventHandler = new InlineSoundPlaybackEventHandler(*this, *sound);
-                //sound->AddPlaybackEventHandler(*eventHandler);
-
                 sound->SetWorld(this);
                 m_engineContext.GetAudioSystem().OnBufferStop(sound->GetAudioBuffer(), EA_OnStreamingBufferStop, sound);
 
@@ -166,24 +121,14 @@ namespace GT
             m_inlineSoundsMutex.Unlock();
         }
 
-        void SoundWorld::_UntrackInlineSound(Sound &sound)
+        void SoundWorld::_UntrackAndDeleteInlineSound(Sound &sound)
         {
             m_inlineSoundsMutex.Lock();
             {
                 m_inlineSounds.RemoveFirstOccuranceOf(&sound);
+                delete &sound;
             }
             m_inlineSoundsMutex.Unlock();
         }
-
-        
-#if 0
-        void SoundWorld::_OnInlineSoundStop(Sound &sound)
-        {
-            m_inlineSounds.RemoveFirstOccuranceOf(&sound);
-
-            // It looks bad, but we actually want to delete the input sound here.
-            delete &sound;
-        }
-#endif
     }
 }

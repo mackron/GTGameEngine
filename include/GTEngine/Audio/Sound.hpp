@@ -28,21 +28,6 @@ namespace GT
             ~Sound();
 
 
-#if 0
-            /// Retrieve the internal sound source handle.
-            ///
-            /// @return The internal sound source handle.
-            GTEngine::HSound GetSoundHandle();
-
-            /// Retrieves the internal audio buffers for the the sound.
-            ///
-            /// @return The two audio data buffers used by the sound.
-            ///
-            /// @remarks
-            ///     The returned pointer is of a 2-element buffer.
-            GTEngine::HAudioBuffer* GetAudioBuffers();
-#endif
-
             /// Sets the world that owns this sound.
             void SetWorld(SoundWorld* pWorld) { m_pWorld = pWorld; }
 
@@ -123,89 +108,6 @@ namespace GT
             bool IsPositionRelative() const;
 
 
-
-#if 0
-            /// Attaches a playback event handler to the sound.
-            ///
-            /// @param eventHandler [in] A reference to the event handler to attach to the sound.
-            void AddPlaybackEventHandler(SoundPlaybackEventHandler &eventHandler);
-
-            /// Removes the given playback event handler from the sound.
-            ///
-            /// @param eventHandler [in] A reference to the event handler to remove from the sound.
-            void RemovePlaybackEventHandler(SoundPlaybackEventHandler &eventHandler);
-
-            /// Removes the playback event handler at the given index.
-            ///
-            /// @param eventHandlerIndex [in] The index of the event handler to remove.
-            ///
-            /// @remarks
-            ///     The index of all event other event handlers that are located at indices after eventHandlerIndex will be moved down a position.
-            void RemovePlaybackEventHandlerAtIndex(size_t eventHandlerIndex);
-
-            /// Retrieves the number of event handlers that are attached to the sound.
-            ///
-            /// @return The number of event handlers that are attached to the sound.
-            size_t GetPlaybackEventHandlerCount() const;
-
-            /// Retrieves a reference to the event handler at the given index.
-            ///
-            /// @param index [in] The index of the event handler to retrieve.
-            SoundPlaybackEventHandler & GetPlaybackEventHandlerAtIndex(size_t index);
-#endif
-
-
-#if 0
-
-        private:
-
-            /// Helper for posting the OnStart() event to every attached event handler.
-            void OnStart();
-
-            /// Helper for posting the OnStop() event to every attached event handler.
-            void OnStop();
-
-            /// Helper for posting the OnResume() event to every attached event handler.
-            void OnResume();
-
-            /// Helper for posting the OnPause() event to every attached event handler.
-            void OnPause();
-
-
-        private:
-
-            /// Custom implementation of the SoundPlaybackEventHandler so we can catch when the playback thread has stopped playing.
-            class PlaybackThreadPlaybackEventHandler : public SoundPlaybackEventHandler
-            {
-            public:
-
-                /// Constructor.
-                PlaybackThreadPlaybackEventHandler(Sound &sound)
-                    : SoundPlaybackEventHandler(), m_sound(sound)
-                {
-                }
-
-
-                /// SoundPlaybackEventHandler::OnStop().
-                void OnStop()
-                {
-                    m_sound.Stop();
-                }
-
-
-            private:
-
-                /// A reference to the sound.
-                Sound &m_sound;
-
-
-            private:    // No copying.
-                PlaybackThreadPlaybackEventHandler(const PlaybackThreadPlaybackEventHandler &);
-                PlaybackThreadPlaybackEventHandler & operator=(const PlaybackThreadPlaybackEventHandler &);
-            };
-#endif
-
-
         private:
 
             /// A reference to the engine context that owns the sound.
@@ -214,36 +116,11 @@ namespace GT
             /// A pointer to the sound world, if any, that owns this sound.
             SoundWorld* m_pWorld;
 
-            /// The list of event handlers that are attached to the sound.
-            //GTLib::Vector<SoundPlaybackEventHandler*> m_playbackEventHandlers;
-
-
-            /// The handle to the sound source.
-            //GTEngine::HSound m_hSound;
-
-            /// The handle to the two audio data buffers. Index 0 is the read buffer and 1 is the write buffer.
-            //GTEngine::HAudioBuffer m_hBuffers[2];
-
-
             /// A handle to the audio buffer for this sound.
             GTEngine::HAudioBuffer m_hBuffer;
 
-
             /// A pointer to the streamer to load the audio data from.
             GTEngine::SoundStreamer* m_streamer;
-
-            /// A pointer to the thread that is playing the sound. This is acquired through the engine context.
-            //GTLib::Thread* m_playbackThread;
-
-            /// The playback event handler that will be attached to the playback thread.
-            //PlaybackThreadPlaybackEventHandler m_playbackThreadEventHandler;
-
-            /// The playback thread procedure that will do the actual streaming on a separate thread.
-            //SoundPlaybackThreadProc m_playbackThreadProc;
-
-
-            /// The current playback state.
-            //SoundPlaybackState m_playbackState;
 
 
 

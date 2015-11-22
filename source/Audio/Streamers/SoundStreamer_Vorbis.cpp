@@ -1,14 +1,5 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#pragma warning(push)
-#pragma warning(disable: 4100)
-#pragma warning(disable: 4127)
-#pragma warning(disable: 4244)
-#define STB_VORBIS_NO_STDIO
-#define STB_VORBIS_NO_PUSHDATA_API
-#define STB_VORBIS_NO_INTEGER_CONVERSION        // <-- Not specifying this causes some compiler errors...
-#pragma warning(pop)
-
 #include "SoundStreamer_Vorbis.hpp"
 
 namespace GT
@@ -78,12 +69,12 @@ namespace GT
 
         unsigned int SoundStreamer_Vorbis::GetNumChannels() const
         {
-            return static_cast<uint16_t>(m_vorbisInfo.channels);
+            return (unsigned int)m_vorbisInfo.channels;
         }
 
         unsigned int SoundStreamer_Vorbis::GetBitsPerSample() const
         {
-            return 4;   // Float data.
+            return sizeof(float) * 8;   // Float data.
         }
 
         unsigned int SoundStreamer_Vorbis::GetSampleRate() const

@@ -8,9 +8,6 @@
 #include "Streamers/SoundStreamer_WAV.hpp"
 #include "Streamers/SoundStreamer_Vorbis.hpp"
 
-#pragma warning(push)
-#pragma warning(disable: 4351)      // Buffers will be default initialized.
-
 namespace GT
 {
     namespace Engine
@@ -34,41 +31,18 @@ namespace GT
 
         Sound::Sound(EngineContext &engineContext)
             : m_engineContext(engineContext),
-              //m_hSound(0),
-              //m_hBuffers(),
               m_hBuffer(NULL),
               m_streamer(nullptr)
-              //m_playbackThread(nullptr),
-              //m_playbackThreadEventHandler(*this),
-              //m_playbackThreadProc(engineContext, m_playbackThreadEventHandler),
-              //m_playbackState(SoundPlaybackState_Stopped)
         {
-            //m_hSound      = engineContext.GetAudioSystem().CreateSound(engineContext.GetAudioPlaybackDevice());
-            //m_hBuffers[0] = engineContext.GetAudioSystem().CreateAudioBuffer(engineContext.GetAudioPlaybackDevice());
-            //m_hBuffers[1] = engineContext.GetAudioSystem().CreateAudioBuffer(engineContext.GetAudioPlaybackDevice());)
         }
 
         Sound::~Sound()
         {
-            //m_engineContext.GetAudioSystem().DeleteSound(m_hSound);
             m_engineContext.GetAudioSystem().DeleteBuffer(m_hBuffer);
             m_engineContext.GetAssetLibrary().CloseSoundStreamer(m_streamer);
-
-            //m_engineContext.UnacquireThread(m_playbackThread);
         }
 
 
-#if 0
-        GTEngine::HSound Sound::GetSoundHandle()
-        {
-            return m_hSound;
-        }
-
-        GTEngine::HAudioBuffer* Sound::GetAudioBuffers()
-        {
-            return m_hBuffers;
-        }
-#endif
 
         GTEngine::HAudioBuffer Sound::GetAudioBuffer()
         {
@@ -93,13 +67,18 @@ namespace GT
             if (m_streamer != nullptr)
             {
                 easyaudio_buffer_desc desc;
-                desc.flags         = EASYAUDIO_ENABLE_3D;
+                desc.flags         = 0;
                 desc.format        = m_streamer->GetFormat();
                 desc.channels      = m_streamer->GetNumChannels();
                 desc.sampleRate    = m_streamer->GetSampleRate();
                 desc.bitsPerSample = m_streamer->GetBitsPerSample();
                 desc.sizeInBytes   = 0;
                 desc.pInitialData  = nullptr;
+
+                if (desc.channels == 1) {
+                    desc.flags = EASYAUDIO_ENABLE_3D;
+                }
+
 
                 easyaudio_streaming_callbacks callbacks;
                 callbacks.read = EA_Read;
@@ -124,79 +103,18 @@ namespace GT
 
         void Sound::Play()
         {
-            if (m_streamer != nullptr)
-            {
+            if (m_streamer != nullptr) {
                 m_engineContext.GetAudioSystem().PlayStreamingBuffer(m_hBuffer, false);
-
-#if 0
-                switch (m_playbackState)
-                {
-                case SoundPlaybackState_Stopped:
-                    {
-                        if (m_playbackThread == nullptr)
-                        {
-                            m_playbackThread = m_engineContext.AcquireThread();
-                        }
-
-                        m_playbackThreadProc.Initialize(m_hSound, m_hBuffers, *m_streamer);
-                        m_playbackThread->Start(m_playbackThreadProc);
-
-                        this->OnStart();
-
-                        break;
-                    }
-
-                case SoundPlaybackState_Paused:
-                    {
-                        m_playbackThreadProc.Resume();
-
-                        this->OnResume();
-
-                        break;
-                    }
-
-                case SoundPlaybackState_Playing:
-                default:
-                    {
-                        // Don't do anything in the default case.
-                        break;
-                    }
-                }
-
-
-                // Make sure the playback state is set correctly.
-                m_playbackState = SoundPlaybackState_Playing;
-#endif
             }
         }
 
         void Sound::Stop()
         {
-#if 0
-            if (m_playbackState != SoundPlaybackState_Stopped)
-            {
-                m_playbackState = SoundPlaybackState_Stopped;
-                m_playbackThreadProc.Stop();
-
-                this->OnStop();
-            }
-#endif
-
             m_engineContext.GetAudioSystem().StopBuffer(m_hBuffer);
         }
 
         void Sound::Pause()
         {
-#if 0
-            if (m_playbackState == SoundPlaybackState_Playing)
-            {
-                m_playbackState = SoundPlaybackState_Paused;
-                m_playbackThreadProc.Pause();
-
-                this->OnPause();
-            }
-#endif
-
             m_engineContext.GetAudioSystem().PauseBuffer(m_hBuffer);
         }
 
@@ -226,100 +144,5 @@ namespace GT
         {
             return m_engineContext.GetAudioSystem().GetBufferPlaybackState(m_hBuffer);
         }
-
-
-#if 0
-        void Sound::AddPlaybackEventHandler(SoundPlaybackEventHandler &eventHandler)
-        {
-            assert(!m_playbackEventHandlers.Exists(&eventHandler));     // <-- If this fails it means the event handler is already attached.
-            {
-                m_playbackEventHandlers.PushBack(&eventHandler);
-            }
-        }
-
-        void Sound::RemovePlaybackEventHandler(SoundPlaybackEventHandler &eventHandler)
-        {
-            m_playbackEventHandlers.RemoveFirstOccuranceOf(&eventHandler);
-
-            assert(!m_playbackEventHandlers.Exists(&eventHandler));     // <-- If this fails it means the event handler was attached more than once.
-        }
-
-        void Sound::RemovePlaybackEventHandlerAtIndex(size_t eventHandlerIndex)
-        {
-            m_playbackEventHandlers.Remove(eventHandlerIndex);
-        }
-
-        size_t Sound::GetPlaybackEventHandlerCount() const
-        {
-            return m_playbackEventHandlers.GetCount();
-        }
-
-        SoundPlaybackEventHandler & Sound::GetPlaybackEventHandlerAtIndex(size_t index)
-        {
-            assert(m_playbackEventHandlers[index] != nullptr);
-
-            return *m_playbackEventHandlers[index];
-        }
-
-
-
-
-        /////////////////////////////////////////////////
-        // Private
-
-        void Sound::OnStart()
-        {
-            auto eventHandlers = m_playbackEventHandlers;
-            for (size_t iEventHandler = 0; iEventHandler < eventHandlers.GetCount(); ++iEventHandler)
-            {
-                auto eventHandler = eventHandlers[iEventHandler];
-                assert(eventHandler != nullptr);
-                {
-                    eventHandler->OnStart();
-                }
-            }
-        }
-
-        void Sound::OnStop()
-        {
-            auto eventHandlers = m_playbackEventHandlers;
-            for (size_t iEventHandler = 0; iEventHandler < eventHandlers.GetCount(); ++iEventHandler)
-            {
-                auto eventHandler = eventHandlers[iEventHandler];
-                assert(eventHandler != nullptr);
-                {
-                    eventHandler->OnStop();
-                }
-            }
-        }
-
-        void Sound::OnResume()
-        {
-            auto eventHandlers = m_playbackEventHandlers;
-            for (size_t iEventHandler = 0; iEventHandler < eventHandlers.GetCount(); ++iEventHandler)
-            {
-                auto eventHandler = eventHandlers[iEventHandler];
-                assert(eventHandler != nullptr);
-                {
-                    eventHandler->OnResume();
-                }
-            }
-        }
-
-        void Sound::OnPause()
-        {
-            auto eventHandlers = m_playbackEventHandlers;
-            for (size_t iEventHandler = 0; iEventHandler < eventHandlers.GetCount(); ++iEventHandler)
-            {
-                auto eventHandler = eventHandlers[iEventHandler];
-                assert(eventHandler != nullptr);
-                {
-                    eventHandler->OnPause();
-                }
-            }
-        }
-#endif
     }
 }
-
-#pragma warning(pop)

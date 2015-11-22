@@ -57,6 +57,7 @@ namespace GT
             void StopAllSounds();
 
 
+
             ////////////////////////////////////////////////////////
             // Internal-Use-Only Methods
 
@@ -64,13 +65,7 @@ namespace GT
             void _TrackInlineSound(Sound &sound);
 
             /// Untracks the given inline sound.
-            void _UntrackInlineSound(Sound &sound);
-
-
-            /// Called by a sound playback event handler when an inline sound finishes playing.
-            ///
-            /// @param sound [in] A reference to the sound that has stopped playing.
-            void _OnInlineSoundStop(Sound &sound);
+            void _UntrackAndDeleteInlineSound(Sound &sound);
 
 
         private:
