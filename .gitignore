@@ -1,2 +1,5 @@
-build/VC14/
+bin/GTGameEngine*
+bin/data/var/
+build/
 lib/
+sanbox/build/
