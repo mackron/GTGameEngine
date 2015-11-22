@@ -29,26 +29,26 @@ namespace GT
             bool Initialize();
 
 
-            /// SoundStreamer::ReadChunk().
-            const void* ReadNextChunk(size_t &dataSizeOut);
+            /// SoundStreamer::Read().
+            bool Read(void* pDataOut, unsigned int bytesToRead, unsigned int* bytesReadOut);
 
             /// SoundStreamer::Seek().
             ///
             /// @remarks
             ///     This currently doesn't work for Vorbis files except for when time is 0.0, in which case it'll be rewound to the start.
-            void Seek(double time);
+            bool Seek(unsigned int offsetInBytesFromStart);
 
             /// SoundStreamer::GetNumChannels()
-            uint16_t GetNumChannels() const;
+            unsigned int GetNumChannels() const;
 
             /// SoundStreamer::GetBitsPerSample()
-            uint16_t GetBitsPerSample() const;
+            unsigned int GetBitsPerSample() const;
 
             /// SoundStreamer::GetSampleRate()
-            uint32_t GetSampleRate() const;
+            unsigned int GetSampleRate() const;
 
             /// SoundStreamer::GetFormat()
-            GTEngine::AudioDataFormat GetFormat() const;
+            easyaudio_format GetFormat() const;
 
 
         private:
@@ -65,10 +65,6 @@ namespace GT
 
             /// The structure containing the Vorbis data so we don't have to keep calling stb_vorbis_get_info().
             stb_vorbis_info m_vorbisInfo;
-
-
-            /// A pointer to the buffer that contains the sample data of the next data chunk. This is allocated and freed once.
-            float* m_nextChunkData;
 
 
 

@@ -23,12 +23,12 @@ namespace GTEngine
 {
     void AudioComposer::SetListenerPosition(float x, float y, float z)
     {
-        g_EngineContext->GetAudioSystem().SetListenerPosition(g_EngineContext->GetAudioListener(), x, y, z);
+        g_EngineContext->GetAudioSystem().SetListenerPosition(g_EngineContext->GetAudioPlaybackDevice(), x, y, z);
     }
 
-    void AudioComposer::SetListenerOrientation(const glm::quat &orientation)
+    void AudioComposer::SetListenerOrientation(glm::vec3 forward, glm::vec3 up)
     {
-        g_EngineContext->GetAudioSystem().SetListenerOrientation(g_EngineContext->GetAudioListener(), orientation);
+        g_EngineContext->GetAudioSystem().SetListenerOrientation(g_EngineContext->GetAudioPlaybackDevice(), forward, up);
     }
 }
 

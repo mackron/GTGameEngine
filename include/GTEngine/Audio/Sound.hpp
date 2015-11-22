@@ -5,14 +5,14 @@
 
 #include <GTLib/Vector.hpp>
 #include "SoundStreamer.hpp"
-#include "SoundPlaybackState.hpp"
-#include "SoundPlaybackThreadProc.hpp"
+#include "AudioEngine.hpp"
 
 namespace GT
 {
     namespace Engine
     {
         class EngineContext;
+        class SoundWorld;
 
         /// Class representing a sound.
         class Sound
@@ -28,6 +28,7 @@ namespace GT
             ~Sound();
 
 
+#if 0
             /// Retrieve the internal sound source handle.
             ///
             /// @return The internal sound source handle.
@@ -40,6 +41,17 @@ namespace GT
             /// @remarks
             ///     The returned pointer is of a 2-element buffer.
             GTEngine::HAudioBuffer* GetAudioBuffers();
+#endif
+
+            /// Sets the world that owns this sound.
+            void SetWorld(SoundWorld* pWorld) { m_pWorld = pWorld; }
+
+            /// Retrieves a pointer to the world that owns this sound.
+            SoundWorld* GetWorld() const { return m_pWorld; }
+
+
+            /// Retrieves a handle to the audio buffer.
+            GTEngine::HAudioBuffer GetAudioBuffer();
 
 
             /// Loads a sound from the given sound file.
@@ -72,16 +84,16 @@ namespace GT
             void Pause();
 
             /// Retrieves the playback state of the sound (whether or not it is playing, stopped or paused).
-            SoundPlaybackState GetPlaybackState() const;
+            easyaudio_playback_state GetPlaybackState() const;
 
             /// Helper method for determining whether or not the sound is playing.
-            bool IsPlaying() const { return this->GetPlaybackState() == SoundPlaybackState_Playing; }
+            bool IsPlaying() const { return this->GetPlaybackState() == easyaudio_playing; }
 
             /// Helper method for determining whether or not the sound is paused.
-            bool IsPaused() const { return this->GetPlaybackState() == SoundPlaybackState_Paused; }
+            bool IsPaused() const { return this->GetPlaybackState() == easyaudio_paused; }
 
             /// Helper method for determining whether or not the sound is stopped.
-            bool IsStopped() const { return this->GetPlaybackState() == SoundPlaybackState_Stopped; }
+            bool IsStopped() const { return this->GetPlaybackState() == easyaudio_stopped; }
 
 
 
@@ -112,6 +124,7 @@ namespace GT
 
 
 
+#if 0
             /// Attaches a playback event handler to the sound.
             ///
             /// @param eventHandler [in] A reference to the event handler to attach to the sound.
@@ -139,8 +152,10 @@ namespace GT
             ///
             /// @param index [in] The index of the event handler to retrieve.
             SoundPlaybackEventHandler & GetPlaybackEventHandlerAtIndex(size_t index);
+#endif
 
 
+#if 0
 
         private:
 
@@ -188,7 +203,7 @@ namespace GT
                 PlaybackThreadPlaybackEventHandler(const PlaybackThreadPlaybackEventHandler &);
                 PlaybackThreadPlaybackEventHandler & operator=(const PlaybackThreadPlaybackEventHandler &);
             };
-
+#endif
 
 
         private:
@@ -196,32 +211,39 @@ namespace GT
             /// A reference to the engine context that owns the sound.
             EngineContext &m_engineContext;
 
+            /// A pointer to the sound world, if any, that owns this sound.
+            SoundWorld* m_pWorld;
+
             /// The list of event handlers that are attached to the sound.
-            GTLib::Vector<SoundPlaybackEventHandler*> m_playbackEventHandlers;
+            //GTLib::Vector<SoundPlaybackEventHandler*> m_playbackEventHandlers;
 
 
             /// The handle to the sound source.
-            GTEngine::HSound m_hSound;
+            //GTEngine::HSound m_hSound;
 
             /// The handle to the two audio data buffers. Index 0 is the read buffer and 1 is the write buffer.
-            GTEngine::HAudioBuffer m_hBuffers[2];
+            //GTEngine::HAudioBuffer m_hBuffers[2];
+
+
+            /// A handle to the audio buffer for this sound.
+            GTEngine::HAudioBuffer m_hBuffer;
 
 
             /// A pointer to the streamer to load the audio data from.
             GTEngine::SoundStreamer* m_streamer;
 
             /// A pointer to the thread that is playing the sound. This is acquired through the engine context.
-            GTLib::Thread* m_playbackThread;
+            //GTLib::Thread* m_playbackThread;
 
             /// The playback event handler that will be attached to the playback thread.
-            PlaybackThreadPlaybackEventHandler m_playbackThreadEventHandler;
+            //PlaybackThreadPlaybackEventHandler m_playbackThreadEventHandler;
 
             /// The playback thread procedure that will do the actual streaming on a separate thread.
-            SoundPlaybackThreadProc m_playbackThreadProc;
+            //SoundPlaybackThreadProc m_playbackThreadProc;
 
 
             /// The current playback state.
-            SoundPlaybackState m_playbackState;
+            //SoundPlaybackState m_playbackState;
 
 
 

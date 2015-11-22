@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTEngine/EngineContext.hpp>
-#include "Audio/OpenAL/AudioEngine_OpenAL.hpp"
 
 namespace GT
 {
@@ -15,7 +14,7 @@ namespace GT
               m_executableDirectoryAbsolutePath(),
               m_applicationConfig(),
               m_messageHandler(), m_messageDispatcher(),
-              m_audioSystem(nullptr), m_audioPlaybackDevice(0), m_audioListener(0), m_soundWorld(*this),
+              m_audioSystem(nullptr), m_audioPlaybackDevice(0), m_soundWorld(*this),
               m_activeThreads(), m_dormantThreads(), m_threadManagementLock(),
               m_assetLibrary()
         {
@@ -73,16 +72,12 @@ namespace GT
             // Audio System
             //
             // TODO: Add support for multiple audio systems.
-            m_audioSystem = new GTEngine::AudioEngine_OpenAL();
-            if (m_audioSystem->Startup())
+            m_audioSystem = new GTEngine::AudioEngine();
+            if (!m_audioSystem->Startup())
             {
+                this->PostWarningMessage("Failed to create audio system.");
+            }
 
-            }
-            else
-            {
-                // TODO: Use the null audio system.
-                this->PostWarningMessage("Failed to create audio system. Defaulting to null audio system.");
-            }
 
             assert(m_audioSystem != nullptr);
             {
@@ -90,7 +85,8 @@ namespace GT
                 size_t playbackDeviceCount = m_audioSystem->GetPlaybackDeviceCount();
                 for (size_t iDevice = 0; iDevice < playbackDeviceCount; ++iDevice)
                 {
-                    auto deviceInfo = m_audioSystem->GetPlaybackDeviceInfo(iDevice);
+                    GTEngine::AudioEngine::PlaybackDeviceInfo deviceInfo;
+                    m_audioSystem->GetPlaybackDeviceInfo(iDevice, deviceInfo);
 
                     GTLib::String message;
                     message.AppendFormatted("Playback Device (%d) - %s", static_cast<int>(iDevice), deviceInfo.name.c_str());
@@ -101,7 +97,6 @@ namespace GT
                 if (playbackDeviceCount > 0)
                 {
                     m_audioPlaybackDevice = m_audioSystem->OpenPlaybackDevice(0);
-                    m_audioListener = m_audioSystem->CreateListener(m_audioPlaybackDevice);
                 }
             }
         }
@@ -142,9 +137,6 @@ namespace GT
 
             //////////////////////////////////////////
             // Audio System
-
-            m_audioSystem->DeleteListener(m_audioListener);
-            m_audioListener = 0;
 
             m_audioSystem->ClosePlaybackDevice(m_audioPlaybackDevice);
             m_audioPlaybackDevice = 0;
@@ -316,12 +308,6 @@ namespace GT
         {
             assert(m_audioPlaybackDevice != 0);
             return m_audioPlaybackDevice;
-        }
-
-        GTEngine::HListener EngineContext::GetAudioListener()
-        {
-            assert(m_audioListener != 0);
-            return m_audioListener;
         }
 
         SoundWorld & EngineContext::GetSoundWorld()

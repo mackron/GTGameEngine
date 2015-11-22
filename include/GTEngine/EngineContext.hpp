@@ -133,11 +133,6 @@ namespace GT
             /// @return A handle to the playback device.
             GTEngine::HPlaybackDevice GetAudioPlaybackDevice();
 
-            /// Retrieves a handle to the audio listener.
-            ///
-            /// @return A handle to the audio listener.
-            GTEngine::HListener GetAudioListener();
-
             /// Retrieves a reference to the global sound world.
             ///
             /// @return A reference to the global sound world for when a sound needs to be played globally, outside of a scene.
@@ -191,9 +186,6 @@ namespace GT
 
             /// The playback device handle for audio.
             GTEngine::HPlaybackDevice m_audioPlaybackDevice;
-
-            /// The listener handle for audio.
-            GTEngine::HListener m_audioListener;
 
             /// The global sound world.
             SoundWorld m_soundWorld;

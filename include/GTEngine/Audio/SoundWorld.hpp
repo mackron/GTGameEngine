@@ -5,7 +5,7 @@
 
 #include <GTLib/Vector.hpp>
 #include "Sound.hpp"
-
+#include <GTLib/Threading/Mutex.hpp>
 
 namespace GT
 {
@@ -60,6 +60,13 @@ namespace GT
             ////////////////////////////////////////////////////////
             // Internal-Use-Only Methods
 
+            /// Tracks the given inline sound.
+            void _TrackInlineSound(Sound &sound);
+
+            /// Untracks the given inline sound.
+            void _UntrackInlineSound(Sound &sound);
+
+
             /// Called by a sound playback event handler when an inline sound finishes playing.
             ///
             /// @param sound [in] A reference to the sound that has stopped playing.
@@ -76,6 +83,9 @@ namespace GT
 
             /// The list of inline sounds. These sounds are created by PlaySound() and deleted when they are no longer playing.
             GTLib::Vector<Sound*> m_inlineSounds;
+
+            /// Mutex for synchronizing inline sounds.
+            GTLib::Mutex m_inlineSoundsMutex;
 
 
         private:    // No copying.

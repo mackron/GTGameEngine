@@ -23,23 +23,23 @@ namespace GTEngine
         bool Initialize();
 
 
-        /// SoundStreamer::ReadNextChunk()
-        const void* ReadNextChunk(size_t &dataSizeOut);
+        /// SoundStreamer::Read()
+        bool Read(void* pDataOut, unsigned int bytesToRead, unsigned int* bytesReadOut);
 
         /// SoundStreamer::Seek()
-        void Seek(double time);
+        bool Seek(unsigned int offsetInBytesFromStart);
 
         /// SoundStreamer::GetNumChannels()
-        uint16_t GetNumChannels() const;
+        unsigned int GetNumChannels() const;
 
         /// SoundStreamer::GetBitsPerSample()
-        uint16_t GetBitsPerSample() const;
+        unsigned int GetBitsPerSample() const;
 
         /// SoundStreamer::GetSampleRate()
-        uint32_t GetSampleRate() const;
+        unsigned int GetSampleRate() const;
 
         /// SoundStreamer::GetFormat()
-        AudioDataFormat GetFormat() const;
+        easyaudio_format GetFormat() const;
 
 
     private:
@@ -94,12 +94,12 @@ namespace GTEngine
         /// The size of the audio data, in bytes.
         size_t m_audioDataSize;
 
+        /// The current read position.
+        size_t m_readPos;
+
 
         /// A pointer to the next chunk that'll be read.
-        const void* m_nextChunkData;
-
-        /// The size of the data of the next chunk, in bytes.
-        size_t m_nextChunkDataSize;
+        //const void* m_nextChunkData;
 
         
     private:    // No copying.

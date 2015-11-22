@@ -15,19 +15,16 @@ namespace GT
 {
     namespace Engine
     {
-        static const size_t ChunkSampleCount = 8192;       // <-- This controls the size of each streaming chunk. Larger values mean more memory usage, but less chance of stuttering.
-
         SoundStreamer_Vorbis::SoundStreamer_Vorbis(const void* fileData, size_t fileDataSizeInBytes)
             : SoundStreamer(),
               m_fileDataPtr(fileData), m_fileDataSizeInBytes(fileDataSizeInBytes),
-              m_vorbis(nullptr), m_vorbisInfo(),
-              m_nextChunkData(nullptr)
+              m_vorbis(nullptr), m_vorbisInfo()
         {
         }
 
         SoundStreamer_Vorbis::~SoundStreamer_Vorbis()
         {
-            free(m_nextChunkData);
+            stb_vorbis_close(m_vorbis);
         }
 
         bool SoundStreamer_Vorbis::Initialize()
@@ -37,8 +34,6 @@ namespace GT
             if (m_vorbis != nullptr)
             {
                 m_vorbisInfo = stb_vorbis_get_info(m_vorbis);
-                m_nextChunkData = reinterpret_cast<float*>(malloc(m_vorbisInfo.channels * ChunkSampleCount * sizeof(float)));
-
                 return true;
             }
             else
@@ -49,64 +44,56 @@ namespace GT
         }
 
 
-        const void* SoundStreamer_Vorbis::ReadNextChunk(size_t &dataSizeOut)
+        bool SoundStreamer_Vorbis::Read(void* pDataOut, unsigned int bytesToRead, unsigned int* bytesReadOut)
         {
-            dataSizeOut = stb_vorbis_get_samples_float_interleaved(m_vorbis, m_vorbisInfo.channels, m_nextChunkData, ChunkSampleCount * m_vorbisInfo.channels) * m_vorbisInfo.channels * sizeof(float);
-            if (dataSizeOut > 0)
+            int bytesRead = stb_vorbis_get_samples_float_interleaved(m_vorbis, m_vorbisInfo.channels, reinterpret_cast<float*>(pDataOut), bytesToRead / sizeof(float)) * m_vorbisInfo.channels * sizeof(float);
+            if (bytesRead > 0)
             {
-                return m_nextChunkData;
+                if (bytesReadOut != nullptr) {
+                    *bytesReadOut = bytesRead;
+                }
+
+                return true;
             }
-            else
-            {
-                return nullptr;
-            }
+
+            return false;
         }
 
 
-        void SoundStreamer_Vorbis::Seek(double time)
+        bool SoundStreamer_Vorbis::Seek(unsigned int offsetInBytesFromStart)
         {
-            (void)time;
-
-            if (time == 0.0)
+            if (offsetInBytesFromStart == 0)
             {
                 stb_vorbis_seek_start(m_vorbis);
+                return true;
             }
             else
             {
                 // Not working at the moment.
             }
+
+            return false;
         }
 
 
-        uint16_t SoundStreamer_Vorbis::GetNumChannels() const
+        unsigned int SoundStreamer_Vorbis::GetNumChannels() const
         {
             return static_cast<uint16_t>(m_vorbisInfo.channels);
         }
 
-        uint16_t SoundStreamer_Vorbis::GetBitsPerSample() const
+        unsigned int SoundStreamer_Vorbis::GetBitsPerSample() const
         {
             return 4;   // Float data.
         }
 
-        uint32_t SoundStreamer_Vorbis::GetSampleRate() const
+        unsigned int SoundStreamer_Vorbis::GetSampleRate() const
         {
             return m_vorbisInfo.sample_rate;
         }
 
-        GTEngine::AudioDataFormat SoundStreamer_Vorbis::GetFormat() const
+        easyaudio_format SoundStreamer_Vorbis::GetFormat() const
         {
-            if (m_vorbisInfo.channels == 1)
-            {
-                return GTEngine::AudioDataFormat_Mono32F;
-            }
-            else if (m_vorbisInfo.channels == 2)
-            {
-                return GTEngine::AudioDataFormat_Stereo32F;
-            }
-
-
-            // Default case.
-            return GTEngine::AudioDataFormat_Mono32F;
+            return easyaudio_format_float;
         }
     }
 }

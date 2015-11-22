@@ -25,7 +25,8 @@ namespace GTEngine
           m_blockAlign(0),
           m_bitsPerSample(0),
           m_audioData(nullptr), m_audioDataSize(0),
-          m_nextChunkData(nullptr), m_nextChunkDataSize(0)
+          m_readPos(0)
+          //m_nextChunkData(nullptr)//, m_nextChunkDataSize(0)
     {
     }
 
@@ -35,11 +36,46 @@ namespace GTEngine
 
     bool SoundStreamer_WAV::Initialize()
     {
-        return this->ReadRIFFHeaderAndChunks();
+        bool result = this->ReadRIFFHeaderAndChunks();
+        if (result)
+        {
+            if (m_formatCode == WAVE_FORMAT_PCM || m_formatCode == WAVE_FORMAT_IEEE_FLOAT)
+            {
+                return true;
+            }
+            else
+            {
+                // Unsupported format. Only supporting PCM and IEEE float for the moment.
+                return false;
+            }
+        }
+
+        return false;
     }
 
-    const void* SoundStreamer_WAV::ReadNextChunk(size_t &dataSizeOut)
+    bool SoundStreamer_WAV::Read(void* pDataOut, unsigned int bytesToRead, unsigned int* bytesReadOut)
     {
+        if (m_readPos >= m_audioDataSize)
+        {
+            // No data available.
+            return false;
+        }
+
+        size_t bytesAvailable = m_audioDataSize - m_readPos;
+        if (bytesAvailable < bytesToRead) {
+            bytesToRead = static_cast<unsigned int>(bytesAvailable);
+        }
+
+        memcpy(pDataOut, reinterpret_cast<const char*>(m_audioData) + m_readPos, bytesToRead);
+        m_readPos += bytesToRead;
+
+        if (bytesReadOut != NULL) {
+            *bytesReadOut = bytesToRead;
+        }
+
+        return true;
+
+#if 0
         // We need to calculate how much data is available to read. To do this, we'll first move the next chunk data pointer
         // forward by it's data size such that it will point to the new data chunk.
         m_nextChunkData = reinterpret_cast<const void*>(reinterpret_cast<size_t>(m_nextChunkData) + m_nextChunkDataSize);
@@ -56,34 +92,48 @@ namespace GTEngine
         {
             return nullptr;
         }
+#endif
     }
 
-    void SoundStreamer_WAV::Seek(double time)
+    bool SoundStreamer_WAV::Seek(unsigned int offsetInBytesFromStart)
     {
-        assert(time >= 0.0);
+        assert(offsetInBytesFromStart >= 0);
 
-        m_nextChunkData     = reinterpret_cast<const int8_t*>(m_audioData) + static_cast<int>(this->GetBytesPerSecond() * time);
-        m_nextChunkDataSize = 0;
+        if (offsetInBytesFromStart > m_audioDataSize) {
+            return false;
+        }
+
+        m_readPos = offsetInBytesFromStart;
+        return true;
+
+        //m_nextChunkData = reinterpret_cast<const int8_t*>(m_audioData) + offsetInBytesFromStart;
     }
 
 
-    uint16_t SoundStreamer_WAV::GetNumChannels() const
+    unsigned int SoundStreamer_WAV::GetNumChannels() const
     {
         return m_numChannels;
     }
 
-    uint16_t SoundStreamer_WAV::GetBitsPerSample() const
+    unsigned int SoundStreamer_WAV::GetBitsPerSample() const
     {
         return m_bitsPerSample;
     }
 
-    uint32_t SoundStreamer_WAV::GetSampleRate() const
+    unsigned int SoundStreamer_WAV::GetSampleRate() const
     {
         return m_sampleRate;
     }
 
-    AudioDataFormat SoundStreamer_WAV::GetFormat() const
+    easyaudio_format SoundStreamer_WAV::GetFormat() const
     {
+        if (m_formatCode == WAVE_FORMAT_IEEE_FLOAT) {
+            return easyaudio_format_float;
+        }
+
+        return easyaudio_format_pcm;
+
+#if 0
         if (m_bitsPerSample == 8)
         {
             if (m_formatCode == WAVE_FORMAT_ALAW)
@@ -182,6 +232,7 @@ namespace GTEngine
 
         // Default case.
         return AudioDataFormat_Mono8;
+#endif
     }
 
 
@@ -267,9 +318,10 @@ namespace GTEngine
                 {
                     m_audioData     = reinterpret_cast<const void*>(fileData32);
                     m_audioDataSize = static_cast<uint32_t>(chunkSize);
+                    m_readPos       = 0;
 
-                    m_nextChunkData     = m_audioData;
-                    m_nextChunkDataSize = 0;
+                    //m_nextChunkData     = m_audioData;
+                    //m_nextChunkDataSize = 0;
 
 
                     foundDATA = true;

@@ -44,7 +44,7 @@ namespace GTEngine
 
             int SetListenerOrientation(GTLib::Script &script)
             {
-                AudioComposer::SetListenerOrientation(Scripting::ToQuaternion(script, 1));
+                AudioComposer::SetListenerOrientation(Scripting::ToVector3(script, 1), Scripting::ToVector3(script, 2));
                 return 0;
             }
         }

@@ -30,7 +30,7 @@ namespace GTEngine
         static void SetListenerPosition(const glm::vec3 &position) { SetListenerPosition(position.x, position.y, position.z); }
 
         /// Sets the orientation of the listener.
-        static void SetListenerOrientation(const glm::quat &orientation);
+        static void SetListenerOrientation(glm::vec3 forward, glm::vec3 up);
 
 
     // Misc.

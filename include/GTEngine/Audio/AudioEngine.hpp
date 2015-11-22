@@ -3,8 +3,9 @@
 #ifndef __GTGameEngine_AudioEngine_hpp_
 #define __GTGameEngine_AudioEngine_hpp_
 
-#include "AudioDataFormats.hpp"
+#include <functional>
 #include <GTLib/String.hpp>
+#include <easy_audio/easy_audio.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -36,17 +37,11 @@
 
 namespace GTEngine
 {
-    //typedef size_t PlaybackDeviceHandle;
-    //typedef size_t CaptureDeviceHandle;
-    //typedef size_t ListenerHandle;
-    //typedef size_t SoundHandle;
-    //typedef size_t AudioBufferHandle;
-
-    typedef uint32_t HPlaybackDevice;
-    typedef uint32_t HCaptureDevice;
-    typedef uint32_t HListener;
-    typedef uint32_t HSound;
-    typedef uint32_t HAudioBuffer;
+    typedef void* HPlaybackDevice;
+    typedef void* HCaptureDevice;
+    typedef void* HListener;
+    typedef void* HSound;
+    typedef void* HAudioBuffer;
 
 
     /// Base class for handling audio playback.
@@ -85,6 +80,9 @@ namespace GTEngine
         };
 
 
+        typedef std::function<bool (void* pDataOut, unsigned int bytesToRead, unsigned int* bytesReadOut)> ReadProc;
+        typedef std::function<bool (unsigned int offsetInBytesFromStart)> SeekProc;
+
 
     public:
 
@@ -95,7 +93,7 @@ namespace GTEngine
         AudioEngine();
 
         /// Destructor.
-        virtual ~AudioEngine();
+        ~AudioEngine();
 
 
 
@@ -105,27 +103,28 @@ namespace GTEngine
         /// Initializes the audio engine.
         ///
         /// @return True if the audio engine is initialized successfully; false otherwise.
-        virtual bool Startup() = 0;
+        bool Startup();
 
         /// Shuts down the audio engine.
         ///
         /// @remarks
         ///     After calling this function, the audio engine can not be used until Startup() is called again.
-        virtual void Shutdown() = 0;
+        void Shutdown();
 
 
         /// Retrieves the number of playback devices.
         ///
         /// @remarks
         ///     Use this for iterating over each device.
-        virtual size_t GetPlaybackDeviceCount() const = 0;
+        unsigned int GetPlaybackDeviceCount() const;
 
         /// Retrieves the name of the playback device at the given index.
         ///
         /// @param deviceIndex [in] The index of the device.
         ///
         /// @return A structure containing information about the device.
-        virtual PlaybackDeviceInfo GetPlaybackDeviceInfo(size_t deviceIndex) const = 0;
+        bool GetPlaybackDeviceInfo(unsigned int deviceIndex, PlaybackDeviceInfo &infoOut) const;
+
 
         /// Opens a playback device.
         ///
@@ -138,7 +137,7 @@ namespace GTEngine
         ///     @par
         ///     The device will need to be passed to every creation function. This is because each listener, sound, etc, must be associated with a device so the
         ///     audio engine knows which device to playback the audio from.
-        virtual HPlaybackDevice OpenPlaybackDevice(size_t deviceIndex) = 0;
+        HPlaybackDevice OpenPlaybackDevice(unsigned int deviceIndex);
 
         /// Closes a playback device.
         ///
@@ -146,88 +145,173 @@ namespace GTEngine
         ///
         /// @remarks
         ///     When a playback device is closed, every resource (listeners, sounds, etc) that's associated with that device will be deleted.
-        virtual void ClosePlaybackDevice(HPlaybackDevice device) = 0;
+        void ClosePlaybackDevice(HPlaybackDevice device);
 
 
-
-        /// Creates a listener.
-        ///
-        /// @param device [in] The device the listener should be associated with.
-        virtual HListener CreateListener(HPlaybackDevice device) = 0;
-
-        /// Deletes a listener.
-        ///
-        /// @param listener [in] A handle to the listener to delete.
-        virtual void DeleteListener(HListener listener) = 0;
-
-        /// Sets the position of the given listener.
+        /// Sets the position of the listener of the given playback device.
         ///
         /// @param listener [in] The listener whose position is being set.
         /// @param position [in] The new position of the listener.
-        virtual void SetListenerPosition(HListener listener, glm::vec3 position) = 0;
+        void SetListenerPosition(HPlaybackDevice device, glm::vec3 position);
 
-        /// Retrieves the position of the listener.
+        /// Retrieves the position of the listener of the given playback device.
         ///
         /// @param listener [in]  The listener whose position is being retrieved.
         ///
         /// @return A vec3 containing the position of the sound.
-        virtual glm::vec3 GetListenerPosition(HListener listener) const = 0;
+        glm::vec3 GetListenerPosition(HPlaybackDevice device) const;
 
-        /// Sets the orientation of the given listener.
+        /// Sets the orientation of the listener of the given playback device.
         ///
         /// @param listener    [in] The listener whose orientation is being set.
         /// @param orientation [in] The quaternion representing the target orientation.
-        virtual void SetListenerOrientation(HListener listener, glm::quat orientation) = 0;
+        void SetListenerOrientation(HPlaybackDevice device, glm::vec3 forward, glm::vec3 up);
 
-        /// Retrieves the orientation of the given listener.
+        /// Retrieves the orientation of the listener of the given playback device.
         ///
         /// @param listener [in] The listener whose orientation is being retrieved.
-        virtual glm::quat GetListenerOrientation(HListener listener) const = 0;
+        void GetListenerOrientation(HPlaybackDevice device, glm::vec3 &forwardOut, glm::vec3 &upOut) const;
 
 
 
+
+        /// Creates an audio buffer of the given format.
+        HAudioBuffer CreateBuffer(HPlaybackDevice device, easyaudio_buffer_desc &desc);
+
+        /// Deletes the given audio buffer.
+        void DeleteBuffer(HAudioBuffer buffer);
+
+        /// Sets the position of the given buffer in 3D space.
+        void SetBufferPosition(HAudioBuffer buffer, glm::vec3 position);
+
+        /// Retrieves the position of the given buffer in 3D space.
+        glm::vec3 GetBufferPosition(HAudioBuffer buffer) const;
+
+        /// Sets whether or not the position of the given buffer should be relative to the listener.
+        ///
+        /// @param sound      [in] The sound handle.
+        /// @param isRelative [in] True is the sound's position should be relative to the player; false otherwise.
+        void SetIsBufferPositionRelative(HAudioBuffer buffer, bool isRelative);
+
+        /// Determines whether or not the position of the given buffer is relative to the listener.
+        ///
+        /// @param sound [in] The sound handle.
+        ///
+        /// @return True if the sound is relative to the listener; false otherwise.
+        bool IsBufferPositionRelative(HAudioBuffer buffer) const;
+
+        /// Starts, replay or resume the given sound.
+        ///
+        /// @param sound [in] The sound to play.
+        void PlayBuffer(HAudioBuffer buffer, bool loop);
+
+        /// Stops playing the sound.
+        ///
+        /// @param sound [in] The sound to stop.
+        ///
+        /// @remarks
+        ///     Calling Play() after this will cause the sound to restart from the start. Use Pause() if you want pause functionality.
+        void StopBuffer(HAudioBuffer buffer);
+
+        /// Pauses playback of the given sound.
+        ///
+        /// @param sound [in] The sound to pause.
+        ///
+        /// @remarks
+        ///     Calling Play() after this will cause the sound to resume from where it was left off. Use Stop() or Rewind() if you want to go back to the beginning.
+        void PauseBuffer(HAudioBuffer buffer);
+
+        /// Restarts the given sound from the beginning.
+        ///
+        /// @param sound [in] The sound to restart.
+        ///
+        /// @remarks
+        ///     This does not stop playback.
+        void RewindBuffer(HAudioBuffer buffer);
+
+        /// Retrieves the playback state of the given buffer.
+        easyaudio_playback_state GetBufferPlaybackState(HAudioBuffer buffer);
+
+        /// Determines whether or not the sound is currently being played.
+        ///
+        /// @param sound [in] The sound handle.
+        ///
+        /// @return True if the sound is currently in a playing state; false otherwise.
+        bool IsBufferPlaying(HAudioBuffer buffer);
+
+        /// Determines whether or not the sound is currently paused.
+        ///
+        /// @param sound [in] The sound handle.
+        ///
+        /// @return True if the sound is currently paused; false otherwise.
+        bool IsBufferPaused(HAudioBuffer buffer);
+
+        /// Determines whether or not the sound is currently stopped.
+        ///
+        /// @param sound [in] The sound handle.
+        ///
+        /// @return True if the sound is currently stopped; false otherwise.
+        bool IsBufferStopped(HAudioBuffer buffer);
+
+
+        /// Sets the function to call when the given sound buffer is stopped.
+        void OnBufferStop(HAudioBuffer buffer, easyaudio_event_callback_proc callback, void* pUserData);
+
+
+
+        //// High-Level Helpers ////
+
+        /// Creates a streaming buffer.
+        HAudioBuffer CreateStreamingBuffer(HPlaybackDevice device, easyaudio_buffer_desc &desc, easyaudio_streaming_callbacks callbacks, void* pUserData);
+
+        /// Plays a streaming buffer.
+        void PlayStreamingBuffer(HAudioBuffer buffer, bool loop);
+
+
+#if 0
         /// Creates a sound.
         ///
         /// @param device [in] The device the sound should be played from.
         ///
         /// @return A handle to the new sound object.
-        virtual HSound CreateSound(HPlaybackDevice device) = 0;
+        HSound CreateSound(HPlaybackDevice device);
 
         /// Deletes a sound that was previously created with CreateSound().
         ///
         /// @param sound [in] A handle to the sound to delete.
-        virtual void DeleteSound(HSound sound) = 0;
+        void DeleteSound(HSound sound);
 
         /// Determines whether or not the given handle is a valid sound object.
         ///
         /// @param hSound [in] A handle to the sound object.
-        virtual bool IsValidSound(HSound hSound) const = 0;
+        bool IsValidSound(HSound hSound) const;
 
         /// Sets the position of the given sound.
         ///
         /// @param sound    [in] The sound whose position is being set.
         /// @param position [in] The new position of the sound.
-        virtual void SetSoundPosition(HSound sound, glm::vec3 position) = 0;
+        void SetSoundPosition(HSound sound, glm::vec3 position);
 
         /// Retrieves the position of the given sound.
         ///
         /// @param sound [in] The sound whose position is being retrieved.
         ///
         /// @return A vec3 containing the position of the sound.
-        virtual glm::vec3 GetSoundPosition(HSound sound) const = 0;
+        glm::vec3 GetSoundPosition(HSound sound) const;
 
         /// Sets whether or not the position of the sound should be relative to the listener.
         ///
         /// @param sound      [in] The sound handle.
         /// @param isRelative [in] True is the sound's position should be relative to the player; false otherwise.
-        virtual void SetIsSoundPositionRelative(HSound sound, bool isRelative) = 0;
+        void SetIsSoundPositionRelative(HSound sound, bool isRelative);
 
         /// Determines whether or not the position of the given sound is relative to the listener.
         ///
         /// @param sound [in] The sound handle.
         ///
         /// @return True if the sound is relative to the listener; false otherwise.
-        virtual bool IsSoundPositionRelative(HSound sound) const = 0;
+        bool IsSoundPositionRelative(HSound sound) const;
+
 
         /// Adds the given buffer to the end of the given sound's buffer queue.
         ///
@@ -252,6 +336,7 @@ namespace GTEngine
         ///
         /// @param sound [in] The sound handle.
         virtual unsigned int GetProcessedQueuedAudioBufferCount(HSound sound) = 0;
+
 
         /// Starts, replay or resume the given sound.
         ///
@@ -328,7 +413,7 @@ namespace GTEngine
         /// @remarks
         ///     This will make a copy of the data. The data can be deleted once this returns.
         virtual void SetAudioBufferData(HAudioBuffer buffer, const void *data, size_t dataSizeInBytes, AudioDataFormat format, unsigned int frequency) = 0;
-
+#endif
 
 
 
@@ -350,7 +435,14 @@ namespace GTEngine
         /// @param xPos  [in] The new x position of the sound.
         /// @param yPos  [in] The new y position of the sound.
         /// @param zPos  [in] The new z position of the sound.
-        void SetSoundPosition(HSound sound, float xPos, float yPos, float zPos) { this->SetSoundPosition(sound, glm::vec3(xPos, yPos, zPos)); }
+        void SetBufferPosition(HAudioBuffer buffer, float xPos, float yPos, float zPos) { this->SetBufferPosition(buffer, glm::vec3(xPos, yPos, zPos)); }
+
+
+
+    private:
+
+        /// The easy_audio context.
+        easyaudio_context* m_pContext;
     };
 }
 
