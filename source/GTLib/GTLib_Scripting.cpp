@@ -1383,19 +1383,19 @@ namespace GTLib
                     GTLib::String query(directoryName);
                     query.Append(".*");
 
-                    IO::FileIterator i(query.c_str());
-                    while (i)
+                    IO::FileIterator iFile(query.c_str());
+                    while (iFile)
                     {
-                        if (i.isDirectory)
+                        if (iFile.isDirectory)
                         {
-                            directories.Add(IO::FileName(i.name), true);
+                            directories.Add(IO::FileName(iFile.name), true);
                         }
                         else
                         {
-                            files.Add(IO::FileName(i.name), true);
+                            files.Add(IO::FileName(iFile.name), true);
                         }
 
-                        ++i;
+                        ++iFile;
                     }
 
 

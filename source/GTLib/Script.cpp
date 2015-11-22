@@ -82,8 +82,8 @@ namespace GTLib
                     GTLib::Strings::Tokenizer iToken(lineNumberStart + lineNumberPrefix.GetLength(), ":");
 
                     // 1 - The line numer.
-                    GTLib::String lineNumber(iToken.start, iToken.end - iToken.start);
-                    this->lineNumber = GTLib::Parse<int>(lineNumber.c_str());
+                    GTLib::String lineNumberStr(iToken.start, iToken.end - iToken.start);
+                    this->lineNumber = GTLib::Parse<int>(lineNumberStr.c_str());
                     ++iToken;
 
                     // 2 - The error message.
