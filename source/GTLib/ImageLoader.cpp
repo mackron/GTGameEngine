@@ -45,7 +45,7 @@ namespace GTLib
 // Static part.
 namespace GTLib
 {
-    ImageLoader * ImageLoader::Create(const char *filename, bool loadUpsideDown)
+    ImageLoader * ImageLoader::Create(const char *filename)
     {
         auto    extension = GTLib::Path::Extension(filename);
         ImageLoader* loader    = nullptr;
@@ -68,7 +68,6 @@ namespace GTLib
         // the loader and return nullptr.
         if (loader != nullptr)
         {
-            loader->SetLoadUpsideDown(loadUpsideDown);
             if (loader->Open())
             {
                 return loader;

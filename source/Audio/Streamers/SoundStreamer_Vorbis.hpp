@@ -7,7 +7,7 @@
 #include <GTLib/IO.hpp>
 
 #define STB_VORBIS_HEADER_ONLY
-#include "../../stb/stb_vorbis.c"
+#include <GTEngine/external/stb_vorbis.c>
 
 namespace GT
 {

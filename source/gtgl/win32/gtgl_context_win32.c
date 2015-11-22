@@ -163,8 +163,8 @@ void GTGLcontext_DeleteDummyHWND(GTGLcontext self)
 
 GLboolean GTGLcontext_EnableExtendedContext(GTGLcontext self)
 {
-    PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)gtglGetProcAddress("wglCreateContextAttribsARB");
-    if (wglCreateContextAttribsARB != NULL)
+    PFNWGLCREATECONTEXTATTRIBSARBPROC _wglCreateContextAttribsARB = (PFNWGLCREATECONTEXTATTRIBSARBPROC)gtglGetProcAddress("wglCreateContextAttribsARB");
+    if (_wglCreateContextAttribsARB != NULL)
     {
         HGLRC oldRC = self->RC;
         HGLRC newRC;
@@ -221,7 +221,7 @@ GLboolean GTGLcontext_EnableExtendedContext(GTGLcontext self)
         }
 
 
-        newRC = wglCreateContextAttribsARB(self->CurrentDC, 0, attribList);
+        newRC = _wglCreateContextAttribsARB(self->CurrentDC, 0, attribList);
         if (newRC != 0)
         {
             self->RC = newRC;

@@ -6,7 +6,7 @@
 
 #include <GTLib/ImageLoader.hpp>
 #include <GTLib/IO.hpp>
-#include <png.h>
+#include <GTEngine/external/stb_image.h>
 
 namespace GTLib
 {
@@ -29,14 +29,12 @@ namespace GTLib
         /// GTLib::ImageLoader::LoadMipmap().
         bool LoadMipmap(unsigned int mipmapIndex, Mipmap &dest);
 
-        /// GTLib::ImageLoader::SetLoadUpsideDown().
-        void SetLoadUpsideDown(bool loadUpsideDown);
-
         /// GTLib::ImageLoader::HasFileChanged().
         bool HasFileChanged() const;
 
     private:
 
+#if 0
         /**
         *   \brief  Performs all of the initialisation required to start reading the PNG file.
         *
@@ -49,20 +47,27 @@ namespace GTLib
         *   \brief  Uninitailises the PNG structures from InitPNG().
         */
         void UninitPNG(FILE *file);
+#endif
 
 
     private:
 
-        /// Whether or not we're loading upside down.
-        bool loadUpsideDown;
-
         // The libpng structures we need for reading.
-        png_structp png;
-        png_infop   pngInfo;
-        png_infop   pngEndInfo;
+        //png_structp png;
+        //png_infop   pngInfo;
+        //png_infop   pngEndInfo;
+
+        
+
+
+        // The channel count.
+        int m_channelCount;
+
+        // A pointer to the image data. This is loaded with stb_image.
+        void* m_pImageData;
 
         // Information about the image.
-        ImageFileInfo info;
+        ImageFileInfo m_info;
 
 
     private:    // No copying.

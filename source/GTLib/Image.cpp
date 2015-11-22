@@ -43,7 +43,7 @@ namespace GTLib
         // The image must be reset.
         this->Reset();
 
-        m_loader = ImageLoader::Create(filename, m_flipped);
+        m_loader = ImageLoader::Create(filename);
         
         return this->InitFromImageLoader();
     }
@@ -345,12 +345,6 @@ namespace GTLib
         }
 
         m_flipped = !m_flipped;
-
-        // If we have a loader, that needs to be configured, too.
-        if (m_loader != nullptr)
-        {
-            m_loader->SetLoadUpsideDown(m_flipped);
-        }
     }
 
     bool Image::GetValidMipmapRange(size_t &baseLevel, size_t &maxLevel) const

@@ -7,7 +7,6 @@
 #define STB_VORBIS_NO_STDIO
 #define STB_VORBIS_NO_PUSHDATA_API
 #define STB_VORBIS_NO_INTEGER_CONVERSION        // <-- Not specifying this causes some compiler errors...
-#include "../../stb/stb_vorbis.c"
 #pragma warning(pop)
 
 #include "SoundStreamer_Vorbis.hpp"

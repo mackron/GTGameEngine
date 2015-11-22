@@ -13,10 +13,11 @@
 // Helper functions.
 namespace GTLib
 {
-    /**
-    *   \brief  Retrieves the image format from the given PNG channel count.
-    */
-    ImageFormat GetImageFormatFromPNGChannels(png_byte channels)
+}
+
+namespace GTLib
+{
+    ImageFormat GetImageFormatFromSTBChannels(int channels)
     {
         switch (channels)
         {
@@ -28,23 +29,94 @@ namespace GTLib
 
         return ImageFormat_Auto;
     }
-}
 
-namespace GTLib
-{
-    ImageLoader_PNG::ImageLoader_PNG(const char *filename)
-        : ImageLoader(filename), loadUpsideDown(false), png(nullptr), pngInfo(nullptr), pngEndInfo(nullptr),
-          info()
+
+    struct STBICallbackData
     {
-        info.mipmapCount = 1;   // PNG's will always have 1 mipmap.
+        FILE* pFile;
+    };
+
+    int STBI_Read(void* user, char *data, int size)
+    {
+        auto callbackData = reinterpret_cast<STBICallbackData*>(user);
+        assert(callbackData != nullptr);
+        {
+            assert(callbackData->pFile != nullptr);
+
+            GTLib::IO::Read(callbackData->pFile, data, size);
+            if (ferror(callbackData->pFile)) {
+                return 0;
+            }
+
+            return 1;
+        }
+    }
+
+    void STBI_Skip(void* user, int n)
+    {
+        auto callbackData = reinterpret_cast<STBICallbackData*>(user);
+        assert(callbackData != nullptr);
+        {
+            assert(callbackData->pFile != nullptr);
+            GTLib::IO::Seek(callbackData->pFile, n, SeekOrigin::Current);
+        }
+    }
+
+    int STBI_EOF(void* user)
+    {
+        auto callbackData = reinterpret_cast<STBICallbackData*>(user);
+        assert(callbackData != nullptr);
+        {
+            assert(callbackData->pFile != nullptr);
+            return GTLib::IO::AtEnd(callbackData->pFile);
+        }
+    }
+
+
+    ImageLoader_PNG::ImageLoader_PNG(const char *filename)
+        : ImageLoader(filename), m_channelCount(0), m_pImageData(nullptr), m_info()
+    {
+        m_info.mipmapCount = 1;               // PNG's will always have 1 mipmap.
     }
 
     ImageLoader_PNG::~ImageLoader_PNG()
     {
+        stbi_image_free(m_pImageData);
     }
 
     bool ImageLoader_PNG::Open()
     {
+        FILE* pFile = GTLib::IO::Open(this->absolutePath.c_str(), GTLib::IO::OpenMode::Read);
+        if (pFile != nullptr)
+        {
+            STBICallbackData callbackData;
+            callbackData.pFile = pFile;
+
+            stbi_io_callbacks stbiCallbacks;
+            stbiCallbacks.read = STBI_Read;
+            stbiCallbacks.skip = STBI_Skip;
+            stbiCallbacks.eof  = STBI_EOF;
+
+            int imageWidth;
+            int imageHeight;
+            m_pImageData = stbi_load_from_callbacks(&stbiCallbacks, &callbackData, &imageWidth, &imageHeight, &m_channelCount, 0);
+            if (m_pImageData != nullptr)
+            {
+                m_info = ImageFileInfo(this->absolutePath.c_str());
+
+                m_info.format = GetImageFormatFromSTBChannels(m_channelCount);
+                m_info.width  = static_cast<unsigned int>(imageWidth);
+                m_info.height = static_cast<unsigned int>(imageHeight);
+                m_info.mipmapCount = 1;
+
+                return true;
+            }
+        }
+
+        return false;
+
+
+#if 0
         // First we need a file...
         FILE *file = this->InitPNG();
         if (file != nullptr)
@@ -62,11 +134,12 @@ namespace GTLib
         }
 
         return false;
+#endif
     }
 
     void ImageLoader_PNG::GetImageInfo(ImageFileInfo &info)
     {
-        info = this->info;
+        info = m_info;
     }
 
     bool ImageLoader_PNG::LoadMipmap(unsigned int mipmapIndex, Mipmap &destMipmap)
@@ -74,6 +147,19 @@ namespace GTLib
         // PNG's don't use the notion of mipmaps, so we only support a mipmap index of 0.
         if (mipmapIndex == 0)
         {
+            size_t imageDataSize = m_info.width * m_info.height * m_channelCount;
+
+            destMipmap.DeleteLocalData();
+            destMipmap.data = malloc(imageDataSize);
+            memcpy(destMipmap.data, m_pImageData, imageDataSize);
+
+            destMipmap.format = m_info.format;
+            destMipmap.width  = m_info.width;
+            destMipmap.height = m_info.height;
+
+            return true;
+
+#if 0
             FILE *file = this->InitPNG();
             if (file != nullptr)
             {
@@ -93,14 +179,7 @@ namespace GTLib
                 for (unsigned int i = 0; i < height; ++i)
                 {
                     png_bytep dest = nullptr;
-                    if (!this->loadUpsideDown)
-                    {
-                        dest = ((png_bytep)destMipmap.data) + (i * pitch);
-                    }
-                    else
-                    {
-                        dest = ((png_bytep)destMipmap.data) + ((height - i - 1) * pitch);
-                    }
+                    dest = ((png_bytep)destMipmap.data) + (i * pitch);
 
                     png_read_row(this->png, dest, nullptr);
                 }
@@ -113,21 +192,17 @@ namespace GTLib
                 this->UninitPNG(file);
                 return true;
             }
+#endif
         }
 
         return false;
-    }
-
-    void ImageLoader_PNG::SetLoadUpsideDown(bool loadUpsideDown)
-    {
-        this->loadUpsideDown = loadUpsideDown;
     }
 
     bool ImageLoader_PNG::HasFileChanged() const
     {
         // We just need to check the last modified data. If it's different, the file has changed.
         GTLib::FileInfo tempInfo(this->absolutePath.c_str());
-        if (tempInfo.lastModifiedTime != this->info.lastModifiedTime)
+        if (tempInfo.lastModifiedTime != m_info.lastModifiedTime)
         {
             return true;
         }
@@ -136,6 +211,7 @@ namespace GTLib
     }
 
 
+#if 0
     FILE * ImageLoader_PNG::InitPNG()
     {
         volatile auto file = GTLib::IO::Open(this->absolutePath.c_str(), GTLib::IO::OpenMode::Read);
@@ -196,6 +272,7 @@ namespace GTLib
         // The file also needs to be closed.
         GTLib::IO::Close(file);
     }
+#endif
 }
 
 #endif

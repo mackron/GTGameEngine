@@ -70,11 +70,6 @@ namespace GTLib
         */
         virtual bool HasFileChanged() const = 0;
 
-        /**
-        *   \brief  Sets whether or not to load data upside down. This can be toggled, but only affects future loads.
-        */
-        virtual void SetLoadUpsideDown(bool loadUpsideDown) = 0;
-
 
     protected:
 
@@ -96,7 +91,7 @@ namespace GTLib
         *   \remarks
         *       This function will return nullptr if the image file is unsupported.
         */
-        static ImageLoader* Create(const char* filename, bool loadUpsideDown = false);
+        static ImageLoader* Create(const char* filename);
 
         /**
         *   \brief  Deletes a loader that was previously created with Create().

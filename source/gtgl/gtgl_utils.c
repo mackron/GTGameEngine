@@ -19,7 +19,6 @@ double gtglGetTime()
     /* Timing must be initialised if it hasn't already. */
     if (!GTGL_TimingInitialised)
     {
-        LARGE_INTEGER li;
         QueryPerformanceFrequency(&li);
 
         GTGL_HighResFrequency  = li.QuadPart;
