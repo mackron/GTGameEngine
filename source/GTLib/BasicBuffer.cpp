@@ -42,7 +42,7 @@ namespace GT
         {
             free(m_ptr);
 
-            if (m_size > 0)
+            if (size > 0)
             {
                 m_ptr = malloc(size);
             }
