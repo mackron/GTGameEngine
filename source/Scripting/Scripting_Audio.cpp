@@ -3,6 +3,7 @@
 #include <GTEngine/Scripting/Scripting_Audio.hpp>
 #include <GTEngine/Scripting/Scripting_Math.hpp>
 #include <GTEngine/Audio.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GTEngine
 {
@@ -32,19 +33,19 @@ namespace GTEngine
                 auto position = Scripting::ToVector3(script, 2);
                 auto relative = script.ToBoolean(3);
 
-                AudioComposer::Play(fileName, position, relative);
+                g_EngineContext->GetSoundWorld().PlaySound(fileName, position, relative);
                 return 0;
             }
 
             int SetListenerPosition(GTLib::Script &script)
             {
-                AudioComposer::SetListenerPosition(Scripting::ToVector3(script, 1));
+                g_EngineContext->GetAudioSystem().SetListenerPosition(g_EngineContext->GetAudioPlaybackDevice(), Scripting::ToVector3(script, 1));
                 return 0;
             }
 
             int SetListenerOrientation(GTLib::Script &script)
             {
-                AudioComposer::SetListenerOrientation(Scripting::ToVector3(script, 1), Scripting::ToVector3(script, 2));
+                g_EngineContext->GetAudioSystem().SetListenerOrientation(g_EngineContext->GetAudioPlaybackDevice(), Scripting::ToVector3(script, 1), Scripting::ToVector3(script, 2));
                 return 0;
             }
         }

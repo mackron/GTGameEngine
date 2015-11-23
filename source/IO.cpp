@@ -2,7 +2,6 @@
 
 #include <GTEngine/IO.hpp>
 #include <GTEngine/ModelLibrary.hpp>
-#include <GTEngine/Audio/AudioComposer.hpp>
 #include <GTLib/ImageLoader.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/Strings/Find.hpp>
@@ -31,7 +30,10 @@ namespace GTEngine
 
         bool IsSupportedSoundExtension(const char* fileName)
         {
-            return AudioComposer::IsFileExtensionSupported(GTLib::Path::Extension(fileName));
+            const char* extension = GTLib::Path::Extension(fileName);
+            
+            return GTLib::Strings::Equal<false>(extension, "wav") ||
+                   GTLib::Strings::Equal<false>(extension, "ogg");
         }
 
         bool IsSupportedParticleSystemExtension(const char* fileName)

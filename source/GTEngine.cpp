@@ -5,7 +5,6 @@
 #include <GTEngine/ApplicationConfig.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Rendering.hpp>
-#include <GTEngine/Audio/AudioComposer.hpp>
 #include <GTEngine/ShaderLibrary.hpp>
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
@@ -19,8 +18,6 @@
 #include <GTLib/CommandLine.hpp>
 #include <GTLib/IO.hpp>
 #include <GTLib/WindowManagement.hpp>
-
-//#include "Audio/OpenAL/AudioEngine_OpenAL.hpp"
 
 // Basic globals.
 namespace GTEngine
@@ -37,29 +34,6 @@ namespace GTEngine
     bool _PreStartup(const GTLib::CommandLine &commandLine)
     {
         (void)commandLine;
-
-#if 0
-        AudioEngine_OpenAL audioEngine;
-        if (audioEngine.Startup())
-        {
-            PlaybackDeviceHandle device = audioEngine.OpenPlaybackDevice(0);
-            if (device != 0)
-            {
-                audioEngine.ClosePlaybackDevice(device);
-            }
-            else
-            {
-                printf("Failed to open playback device.\n");
-            }
-
-            audioEngine.Shutdown();
-        }
-        else
-        {
-            printf("Failed to initialize OpenAL audio engine.\n");
-        }
-#endif
-        
         
         // Before we can do any windowing operations we will need to initialise the window management module of GTLib.
         GTLib::StartupWindowManager();
@@ -87,18 +61,6 @@ namespace GTEngine
         {
             return false;
         }
-
-#if 0
-        Log("Starting Audio Sub-System...");
-        if (AudioComposer::Startup())
-        {
-            // Perhaps allow some cached sounds?
-        }
-        else
-        {
-            return false;
-        }
-#endif
 
 
         // With sub-systems started up, we can startup our resource libraries.
@@ -154,7 +116,6 @@ namespace GTEngine
 
         // We shutdown major sub-systems before logging. This allows us to log shutdown info.
         Renderer::Shutdown();
-        //AudioComposer::Shutdown();
 
 
         // Thread cache.
