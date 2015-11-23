@@ -1,6 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTEngine/EngineContext.hpp>
+#include <easy_path/easy_path.h>
+#include <easy_fs/easy_vfs.h>
 
 namespace GT
 {
@@ -52,15 +54,17 @@ namespace GT
 
 
             // We will need to open the log file as soon as possible, but it needs to be done after ensuring the current directory is set to that of the executable.
+            char logpath[EASYVFS_MAX_PATH];
+            easypath_clean(m_commandLine.GetApplicationDirectory(), logpath, sizeof(logpath));
+
             const char** cmdLine_logfile = m_commandLine.GetArgument("logfile");
-            if (cmdLine_logfile != nullptr)
-            {
-                m_messageHandler.OpenLogFile(cmdLine_logfile[0]);
+            if (cmdLine_logfile != nullptr) {
+                easypath_append(logpath, sizeof(logpath), cmdLine_logfile[0]);
+            } else {
+                easypath_append(logpath, sizeof(logpath), "var/logs/engine.html");
             }
-            else
-            {
-                m_messageHandler.OpenLogFile("var/logs/engine.html");
-            }
+
+            m_messageHandler.OpenLogFile(logpath);
 
 
             // At this point the message handler should be setup, so we'll go ahead and add it to the dispatcher.
