@@ -41,10 +41,8 @@ namespace GTEngine
 
     /// Starts up the engine.
     ///
-    /// @param commandLine [in] A reference to the command line.
-    ///
     /// @return True if the engine is initialised successfully; false otherwise.
-    bool _PreStartup(const GTLib::CommandLine &commandLine);
+    bool _PreStartup();
 
 
     /// Starts up the engine, returning an instance of the given game class (T).
@@ -63,10 +61,10 @@ namespace GTEngine
         if (GlobalGame == nullptr && g_EngineContext == nullptr)
         {
             g_EngineContext = new GT::Engine::EngineContext(argc, argv);
-            if (_PreStartup(g_EngineContext->GetCommandLine()))
+            if (_PreStartup())
             {
                 GlobalGame = new T(gameStateManager);
-                if (!GlobalGame->Startup(g_EngineContext->GetCommandLine()))
+                if (!GlobalGame->Startup())
                 {
                     delete GlobalGame;
                     GlobalGame = nullptr;

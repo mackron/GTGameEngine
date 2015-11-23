@@ -17,7 +17,6 @@
 #include "GameStateManager.hpp"
 #include <GTLib/Threading.hpp>
 #include <GTLib/Timing.hpp>
-#include <GTLib/CommandLine.hpp>
 #include <GTLib/FontServer.hpp>
 #include <GTLib/GUI/Server.hpp>
 
@@ -66,7 +65,7 @@ namespace GTEngine
         ///     This will call OnLoadConfigs() and OnStartup().
         ///     @par
         ///     Client application should not call this method directly. It will instead be called internally by GTEngine::Startup().
-        bool Startup(const GTLib::CommandLine &commandLine);
+        bool Startup();
 
         /// Shuts down the game.
         ///
@@ -100,10 +99,10 @@ namespace GTEngine
         ///
         /// @remarks
         ///     The return value will not include the executable file name.
-        const char* GetExecutableDirectoryAbsolutePath() const;
+        //const char* GetExecutableDirectoryAbsolutePath() const;
 
         /// Retrieves the absolute path of the executable file.
-        const char* GetExecutableAbsolutePath() const;
+        //const char* GetExecutableAbsolutePath() const;
 
 
         /// Sends an event to the game.
@@ -689,13 +688,6 @@ namespace GTEngine
         bool closing;
 
         
-        /// The absolute path of the executable.
-        GTLib::String executablePath;
-
-        /// The absolute path of the directory containing the executable.
-        GTLib::String executableDirectoryPath;
-
-
         /// The list of events that are queued and ready for processing.
         GameEventQueue eventQueue;
 

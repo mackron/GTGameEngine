@@ -15,7 +15,6 @@
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/MessageDispatcher.hpp>
-#include <GTLib/CommandLine.hpp>
 #include <GTLib/IO.hpp>
 #include <GTLib/WindowManagement.hpp>
 
@@ -31,10 +30,8 @@ namespace GTEngine
 
 namespace GTEngine
 {
-    bool _PreStartup(const GTLib::CommandLine &commandLine)
+    bool _PreStartup()
     {
-        (void)commandLine;
-        
         // Before we can do any windowing operations we will need to initialise the window management module of GTLib.
         GTLib::StartupWindowManager();
 

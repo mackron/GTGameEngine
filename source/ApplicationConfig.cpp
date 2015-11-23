@@ -90,7 +90,7 @@ namespace GT
             return m_dataDirectories;
         }
 
-        void ApplicationConfig::GetDataDirectories(GTLib::Vector<const char*> &directories) const
+        void ApplicationConfig::GetDataDirectories(GTLib::Vector<GTLib::String> &directories) const
         {
             for (size_t i = 0; i < m_dataDirectories.count; ++i)
             {

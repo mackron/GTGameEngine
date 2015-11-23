@@ -19,11 +19,8 @@
 #include <GTLib/System.hpp>
 #include <GTLib/Strings/Tokenizer.hpp>
 #include <GTLib/String.hpp>
-#include <GTLib/CommandLine.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/Keyboard.hpp>
-//#include <GTLib/Profiling/valgrind/callgrind.h>
-//#include <ittnotify.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -37,7 +34,6 @@ namespace GTEngine
     Game::Game(GameStateManager &gameStateManager)
         : m_gameStateManager(gameStateManager),
           isInitialised(false), closing(false),
-          executablePath(), executableDirectoryPath(),
           eventQueue(), eventQueueLock(),
           eventFilter(nullptr),
           window(nullptr), windowEventHandler(*this),
@@ -96,6 +92,7 @@ namespace GTEngine
     }
 
 
+#if 0
     const char* Game::GetExecutableDirectoryAbsolutePath() const
     {
         return this->executableDirectoryPath.c_str();
@@ -105,6 +102,7 @@ namespace GTEngine
     {
         return this->executablePath.c_str();
     }
+#endif
 
 
     void Game::SendEvent(const GameEvent &e)
@@ -539,7 +537,7 @@ namespace GTEngine
 
     bool Game::PackageForDistribution(const char* outputDirectory, const char* executableName)
     {
-        GTLib::Path absoluteOutputDirectory(this->GetExecutableDirectoryAbsolutePath());
+        GTLib::Path absoluteOutputDirectory(g_EngineContext->GetExecutableDirectoryAbsolutePath());
         absoluteOutputDirectory.Append(outputDirectory);
 
         // We will start by creating the output directory.
@@ -565,30 +563,20 @@ namespace GTEngine
             }
         }
 
-        if (GTLib::Path::ExtensionEqual(this->GetExecutableAbsolutePath(), "exe"))
+        if (GTLib::Path::ExtensionEqual(g_EngineContext->GetExecutableAbsolutePath(), "exe"))
         {
             if (GTLib::Path::ExtensionEqual(executableName, "exe"))
             {
-                packager.CopyExecutable(this->GetExecutableAbsolutePath(), executableName);
+                packager.CopyExecutable(g_EngineContext->GetExecutableAbsolutePath(), executableName);
             }
             else
             {
-                packager.CopyExecutable(this->GetExecutableAbsolutePath(), (GTLib::String(executableName) + ".exe").c_str());
+                packager.CopyExecutable(g_EngineContext->GetExecutableAbsolutePath(), (GTLib::String(executableName) + ".exe").c_str());
             }
-
-            // This is the Windows build. We need to check for OpenAL32.dll, also.
-            GTLib::Path openAL32SourcePath(this->GetExecutableDirectoryAbsolutePath());
-            openAL32SourcePath.Append("OpenAL32.dll");
-
-            GTLib::Path openAL32DestinationPath(executableName);
-            openAL32DestinationPath.RemoveLast();
-            openAL32DestinationPath.Append("OpenAL32.dll");
-
-            packager.CopyFile(openAL32SourcePath.c_str(), openAL32DestinationPath.c_str());
         }
         else
         {
-            packager.CopyExecutable(this->GetExecutableAbsolutePath(), executableName);
+            packager.CopyExecutable(g_EngineContext->GetExecutableAbsolutePath(), executableName);
         }
 
         packager.WriteConfig();
@@ -851,12 +839,22 @@ namespace GTEngine
 #endif
 
 
-
-    bool Game::Startup(const GTLib::CommandLine &commandLine)
+    bool GameCommandLineProc(const char* key, const char* value, void* pUserData)
     {
-        this->executablePath          = commandLine.GetExecutablePath();
-        this->executableDirectoryPath = commandLine.GetApplicationDirectory();
+        Game* pGame = reinterpret_cast<Game*>(pUserData);
+        assert(pGame != nullptr);
 
+        if (strcmp(key, "config") == 0) {
+            pGame->GetScript().ExecuteFile(value);
+            return true;
+        }
+
+        return true;
+    }
+
+
+    bool Game::Startup()
+    {
         // The first thing we do is load up the scripting environment. We do this first because it will contain configuration properties
         // for things later on.
         if (this->script.Startup())
@@ -865,6 +863,9 @@ namespace GTEngine
             m_gameStateManager.OnLoadConfigs(*this);
 
             // This is where the user config scripts are loaded.
+            easyutil_parse_cmdline(&g_EngineContext->GetCommandLine(), GameCommandLineProc, this);
+
+#if 0
             const char** cmdLine_config = commandLine.GetArgument("config");
             if (cmdLine_config != nullptr)
             {
@@ -873,6 +874,8 @@ namespace GTEngine
                     this->script.ExecuteFile(cmdLine_config[i]);
                 }
             }
+#endif
+
 
             // Here we will set the default anistropy for textures via the texture library.
             Texture2DLibrary::SetDefaultAnisotropy(static_cast<unsigned int>(this->script.GetInteger("GTEngine.Display.Textures.Anisotropy")));
@@ -914,7 +917,7 @@ namespace GTEngine
 
 
                 // Here is where we let the game object do some startup stuff.
-                if (m_gameStateManager.OnStartup(*this, commandLine))
+                if (m_gameStateManager.OnStartup(*this))
                 {
                     this->script.Execute("Game.OnStartup();");
                     return true;

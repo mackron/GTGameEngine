@@ -275,7 +275,7 @@ namespace GTEngine
     bool ShaderLibrary::LoadFromDirectory(const char* directory, bool recursive)
     {
         // We need to do this for every data directory, including the current directory.
-        GTLib::Vector<const char*> baseDirectories;
+        GTLib::Vector<GTLib::String> baseDirectories;
         baseDirectories.PushBack(GTLib::IO::GetCurrentDirectory());
 
         if (!GTLib::Path::IsAbsolute(directory))
@@ -288,7 +288,7 @@ namespace GTEngine
         {
             // Here we save and then set the current directory.
             GTLib::IO::PushCurrentDirectory();
-            GTLib::IO::SetCurrentDirectory(baseDirectories[iBaseDirectory]);
+            GTLib::IO::SetCurrentDirectory(baseDirectories[iBaseDirectory].c_str());
 
             // First we need the files in the directory.
             GTLib::Path searchQuery(directory);

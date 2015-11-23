@@ -58,14 +58,12 @@ namespace GTLib
         }
 
 
-        const char* GetCurrentDirectory()
+        GTLib::String GetCurrentDirectory()
         {
-            if (CurrentDirectory.GetLength() == 0)
-            {
-                __GetCurrentDirectory(CurrentDirectory);
-            }
+            GTLib::String result;
+            __GetCurrentDirectory(result);
 
-            return CurrentDirectory.c_str();
+            return result;
         }
 
 
@@ -267,7 +265,7 @@ namespace GTLib
         void PushCurrentDirectory()
         {
             // We need a new top item.
-            auto newTop = new _DirectoryStackItem(IO::GetCurrentDirectory(), DirectoryStack_Top);
+            auto newTop = new _DirectoryStackItem(IO::GetCurrentDirectory().c_str(), DirectoryStack_Top);
             DirectoryStack_Top = newTop;
         }
 
@@ -369,7 +367,7 @@ namespace GTLib
 
         GTLib::String ToAbsolutePath(const char* relativePath)
         {
-            return ToAbsolutePath(relativePath, IO::GetCurrentDirectory());
+            return ToAbsolutePath(relativePath, IO::GetCurrentDirectory().c_str());
         }
 
 
@@ -478,7 +476,7 @@ namespace GTLib
 
         GTLib::String ToRelativePath(const char* absolutePath)
         {
-            return ToRelativePath(absolutePath, IO::GetCurrentDirectory());
+            return ToRelativePath(absolutePath, IO::GetCurrentDirectory().c_str());
         }
         
         
@@ -1772,7 +1770,7 @@ namespace GTLib
         {
             // If we get here, it means the file doesn't actually exist. This is OK, in which case we just use the current directory
             // to determine the absolute path.
-            this->absolutePath = GTLib::IO::ToAbsolutePath(pathIn, GTLib::IO::GetCurrentDirectory());
+            this->absolutePath = GTLib::IO::ToAbsolutePath(pathIn, GTLib::IO::GetCurrentDirectory().c_str());
             this->exists       = false;
         }
         else
@@ -1812,7 +1810,7 @@ namespace GTLib
             else
             {
                 fi.path             = filename;
-                fi.absolutePath     = GTLib::IO::ToAbsolutePath(filename, GTLib::IO::GetCurrentDirectory());
+                fi.absolutePath     = GTLib::IO::ToAbsolutePath(filename, GTLib::IO::GetCurrentDirectory().c_str());
                 fi.size             = 0;
                 fi.lastModifiedTime = 0;
                 fi.isDirectory      = false;

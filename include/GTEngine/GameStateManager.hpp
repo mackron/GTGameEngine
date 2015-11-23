@@ -6,7 +6,6 @@
 #include <GTLib/Serializer.hpp>
 #include <GTLib/Deserializer.hpp>
 #include <GTLib/Dictionary.hpp>
-#include <GTLib/CommandLine.hpp>
 #include <GTEngine/GameEvent.hpp>
 
 namespace GTEngine
@@ -58,7 +57,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This is called after OnLoadConfigs() and after the window has been created and shown.
-        virtual bool OnStartup(Game &game, const GTLib::CommandLine &commandLine);
+        virtual bool OnStartup(Game &game);
 
         /// Called when the game is shutting down.
         ///
@@ -456,7 +455,7 @@ namespace GTEngine
         // Events
 
         /// GameStateManager::OnStartup().
-        virtual bool OnStartup(GTEngine::Game &game, const GTLib::CommandLine &commandLine);
+        virtual bool OnStartup(GTEngine::Game &game);
 
         /// GameStateManager::OnShutdown().
         virtual void OnShutdown(GTEngine::Game &game);

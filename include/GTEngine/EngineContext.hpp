@@ -8,9 +8,10 @@
 #include "DefaultMessageHandler.hpp"
 #include "Audio/SoundWorld.hpp"
 #include "AssetLibrary.hpp"
-#include <GTLib/CommandLine.hpp>
 #include <GTLib/Vector.hpp>
 #include <GTLib/Threading.hpp>
+#include <easy_util/easy_util.h>
+#include <easy_fs/easy_vfs.h>
 
 #undef GetCommandLine
 
@@ -36,8 +37,8 @@ namespace GT
 
             /// Retrieve a reference to the internal command line object.
             ///
-            /// @return A reference to the internal command line object.
-            const GTLib::CommandLine & GetCommandLine() const;
+            /// @return A pointer to the internal command line object.
+            easyutil_cmdline & GetCommandLine() { return m_cmdline; }
 
 
 
@@ -55,6 +56,12 @@ namespace GT
             // File System Management
 
             /// Retrieves the executable's absolute file path.
+            const char* GetExecutableAbsolutePath() const;
+
+            /// Retrieves the absolute path of the executable's directory.
+            ///
+            /// @remarks
+            ///     This does not include the executable's directory
             const char* GetExecutableDirectoryAbsolutePath() const;
 
 
@@ -145,12 +152,21 @@ namespace GT
 
         private:
 
-            /// The command line object. This is constructed from the argc and argv parameters in the constructor.
-            GTLib::CommandLine m_commandLine;
+            /// The command line object.
+            easyutil_cmdline m_cmdline;
 
+            /// The absolute path of the executable.
+            char m_executableAbsolutePath[EASYVFS_MAX_PATH];
+
+            /// The absolute path of the directory of the application's executable.
+            char m_executableDirectoryAbsolutePath[EASYVFS_MAX_PATH];
+
+
+            /// The command line object. This is constructed from the argc and argv parameters in the constructor.
+            //GTLib::CommandLine m_commandLine;
 
             /// The absolute path of the directory the application's executable is located in.
-            GTLib::String m_executableDirectoryAbsolutePath;
+            //GTLib::String m_executableDirectoryAbsolutePath;
 
 
             /// The list of every active thread that is owned by the engine. When a thread is created, it'll be added to this list. When a thread is

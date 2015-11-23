@@ -11,8 +11,50 @@ namespace GT
         static const size_t MaxDormantThreads = 64;     ///< The maximum number of threads to allow to lie around dormant.
 
 
+        typedef struct
+        {
+            /// The absolute path of the executable's directory.
+            char absoluteExeDirPath[EASYVFS_MAX_PATH];
+
+            /// The relative executable path.
+            char absoluteExePath[EASYVFS_MAX_PATH];
+
+            /// The relative path of the log file.
+            char relativeLogPath[EASYVFS_MAX_PATH];
+
+        } CommandLineData;
+
+
+        static bool parse_cmdline_proc(const char* key, const char* value, void* pUserData)
+        {
+            CommandLineData* pData = reinterpret_cast<CommandLineData*>(pUserData);
+            assert(pData != NULL);
+
+            if (strcmp(key, "[path]") == 0)
+            {
+                char exeDirectoryPath[EASYVFS_MAX_PATH];
+                easypath_copybasepath(value, exeDirectoryPath, sizeof(exeDirectoryPath));
+
+                _chdir(exeDirectoryPath);
+                _getcwd(pData->absoluteExeDirPath, sizeof(pData->absoluteExeDirPath));
+
+                easypath_copyandappend(pData->absoluteExePath, sizeof(pData->absoluteExePath), pData->absoluteExeDirPath, easypath_filename(value));
+
+                return true;
+            }
+
+            if (strcmp(key, "logfile") == 0)
+            {
+                strcpy_s(pData->relativeLogPath, sizeof(pData->relativeLogPath), value);
+                return true;
+            }
+
+            return true;
+        }
+
+
         EngineContext::EngineContext(int argc, char** argv)
-            : m_commandLine(),
+            : m_cmdline(),
               m_executableDirectoryAbsolutePath(),
               m_applicationConfig(),
               m_messageHandler(), m_messageDispatcher(),
@@ -20,13 +62,32 @@ namespace GT
               m_activeThreads(), m_dormantThreads(), m_threadManagementLock(),
               m_assetLibrary()
         {
-            m_commandLine.Parse(argc, argv);
+            // Parse the command line.
+            CommandLineData cmdlineData;
+            strcpy_s(cmdlineData.absoluteExePath, sizeof(cmdlineData.absoluteExePath), "");
+            strcpy_s(cmdlineData.relativeLogPath, sizeof(cmdlineData.relativeLogPath), "var/logs/engine.html");
 
-            // First this is to more into the applications directory. We get this from the command line.
-            GTLib::IO::SetCurrentDirectory(m_commandLine.GetApplicationDirectory());
+            if (easyutil_init_cmdline(&m_cmdline, argc, argv))
+            {
+                easyutil_parse_cmdline(&m_cmdline, parse_cmdline_proc, &cmdlineData);
+            }
 
-            // We need to keep hold of the executable directory for GetExecutableDirectory().
-            m_executableDirectoryAbsolutePath = GTLib::IO::ToAbsolutePath(m_commandLine.GetApplicationDirectory(), GTLib::IO::GetCurrentDirectory());
+            // Make sure the executable's absolute path is clean for future things.
+            easypath_clean(cmdlineData.absoluteExeDirPath, m_executableDirectoryAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
+            easypath_clean(cmdlineData.absoluteExePath, m_executableAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
+            
+
+
+            // We will need to open the log file as soon as possible, but it needs to be done after ensuring the current directory is set to that of the executable.
+            char logpath[EASYVFS_MAX_PATH];
+            easypath_copyandappend(logpath, sizeof(logpath), m_executableDirectoryAbsolutePath, cmdlineData.relativeLogPath);
+            
+            m_messageHandler.OpenLogFile(logpath);
+
+
+            // At this point the message handler should be setup, so we'll go ahead and add it to the dispatcher.
+            m_messageDispatcher.AddMessageHandler(m_messageHandler);
+
 
             // After moving into the application directory, we need to load up the config file and move into the data directory. From
             // there we can read the user configs and setup the log file.
@@ -51,24 +112,6 @@ namespace GT
                     }
                 }
             }
-
-
-            // We will need to open the log file as soon as possible, but it needs to be done after ensuring the current directory is set to that of the executable.
-            char logpath[EASYVFS_MAX_PATH];
-            easypath_clean(m_commandLine.GetApplicationDirectory(), logpath, sizeof(logpath));
-
-            const char** cmdLine_logfile = m_commandLine.GetArgument("logfile");
-            if (cmdLine_logfile != nullptr) {
-                easypath_append(logpath, sizeof(logpath), cmdLine_logfile[0]);
-            } else {
-                easypath_append(logpath, sizeof(logpath), "var/logs/engine.html");
-            }
-
-            m_messageHandler.OpenLogFile(logpath);
-
-
-            // At this point the message handler should be setup, so we'll go ahead and add it to the dispatcher.
-            m_messageDispatcher.AddMessageHandler(m_messageHandler);
 
 
 
@@ -148,16 +191,6 @@ namespace GT
         ////////////////////////////////////////////////////
         // Command Line
 
-        const GTLib::CommandLine & EngineContext::GetCommandLine() const
-        {
-            return m_commandLine;
-        }
-
-
-
-        ////////////////////////////////////////////////////
-        // Command Line
-
         const ApplicationConfig & EngineContext::GetApplicationConfig() const
         {
             return m_applicationConfig;
@@ -168,9 +201,14 @@ namespace GT
         ////////////////////////////////////////////////////
         // File System Management
 
+        const char* EngineContext::GetExecutableAbsolutePath() const
+        {
+            return m_executableAbsolutePath;
+        }
+
         const char* EngineContext::GetExecutableDirectoryAbsolutePath() const
         {
-            return m_executableDirectoryAbsolutePath.c_str();
+            return m_executableDirectoryAbsolutePath;
         }
 
 
@@ -295,20 +333,6 @@ namespace GT
 
         ////////////////////////////////////////////////////
         // Audio
-
-#if 0
-        GTEngine::AudioEngine & EngineContext::GetAudioSystem()
-        {
-            assert(m_audioSystem != nullptr);
-            return *m_audioSystem;
-        }
-
-        GTEngine::HPlaybackDevice EngineContext::GetAudioPlaybackDevice()
-        {
-            assert(m_audioPlaybackDevice != 0);
-            return m_audioPlaybackDevice;
-        }
-#endif
 
         easyaudio_context* EngineContext::GetAudioContext()
         {

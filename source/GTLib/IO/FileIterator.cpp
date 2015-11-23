@@ -191,7 +191,7 @@ namespace GTLib
 
                             if (IO::IsPathRelative(newFI->path.c_str()))
                             {
-                                newFI->absolutePath = IO::ToAbsolutePath(newFI->path.c_str(), currentDirectory);
+                                newFI->absolutePath = IO::ToAbsolutePath(newFI->path.c_str(), currentDirectory.c_str());
                             }
                             else
                             {

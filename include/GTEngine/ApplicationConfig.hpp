@@ -40,7 +40,7 @@ namespace GT
             ///
             /// @remarks
             ///     The values will be pushed to the back. Existing items will not be cleared.
-            void GetDataDirectories(GTLib::Vector<const char*> &directories) const;
+            void GetDataDirectories(GTLib::Vector<GTLib::String> &directories) const;
 
 
 

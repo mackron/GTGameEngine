@@ -24,7 +24,7 @@ namespace GTLib
         /// Retrieves the current directory.
         ///
         /// @return A pointer to the current directory.
-        const char* GetCurrentDirectory();
+        GTLib::String GetCurrentDirectory();
 
         /// Sets the current directory.
         ///

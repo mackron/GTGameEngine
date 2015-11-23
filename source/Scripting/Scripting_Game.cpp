@@ -1,7 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/Scripting/Scripting_Game.hpp>
-#include <GTEngine/Game.hpp>
+#include <GTEngine/GTEngine.hpp>    // For g_EngineContext
 
 namespace GTEngine
 {
@@ -202,13 +202,15 @@ namespace GTEngine
 
             int GetExecutableDirectoryAbsolutePath(GTLib::Script &script)
             {
-                script.Push(GetGame(script).GetExecutableDirectoryAbsolutePath());
+                //script.Push(GetGame(script).GetExecutableDirectoryAbsolutePath());
+                script.Push(g_EngineContext->GetExecutableDirectoryAbsolutePath());
                 return 1;
             }
 
             int GetExecutableAbsolutePath(GTLib::Script &script)
             {
-                script.Push(GetGame(script).GetExecutableAbsolutePath());
+                //script.Push(GetGame(script).GetExecutableAbsolutePath());
+                script.Push(g_EngineContext->GetExecutableAbsolutePath());
                 return 1;
             }
 

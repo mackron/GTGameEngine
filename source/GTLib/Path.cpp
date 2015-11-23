@@ -131,7 +131,7 @@ namespace GTLib
 
     void Path::MakeAbsolute()
     {
-        this->MakeAbsolute(GTLib::IO::GetCurrentDirectory());
+        this->MakeAbsolute(GTLib::IO::GetCurrentDirectory().c_str());
     }
 
 
@@ -180,7 +180,7 @@ namespace GTLib
 
     void Path::MakeRelative()
     {
-        this->MakeRelative(GTLib::IO::GetCurrentDirectory());
+        this->MakeRelative(GTLib::IO::GetCurrentDirectory().c_str());
     }
 
 

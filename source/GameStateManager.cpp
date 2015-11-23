@@ -15,7 +15,7 @@ namespace GTEngine
     {
     }
 
-    bool GameStateManager::OnStartup(Game &, const GTLib::CommandLine &)
+    bool GameStateManager::OnStartup(Game &)
     {
         return true;
     }
@@ -397,10 +397,8 @@ namespace GTEngine
     }
 
 
-    bool DefaultGameStateManager::OnStartup(GTEngine::Game &game, const GTLib::CommandLine &commandLine)
+    bool DefaultGameStateManager::OnStartup(GTEngine::Game &game)
     {
-        (void)commandLine;
-
         auto &script = game.GetScript();
         script.ExecuteFile("game-config.lua");
 
