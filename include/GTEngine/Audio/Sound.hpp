@@ -4,8 +4,9 @@
 #define __GT_Engine_Sound_hpp_
 
 #include <GTLib/Vector.hpp>
+#include <easy_audio/easy_audio.h>
 #include "SoundStreamer.hpp"
-#include "AudioEngine.hpp"
+#include "../Math.hpp"
 
 namespace GT
 {
@@ -35,8 +36,8 @@ namespace GT
             SoundWorld* GetWorld() const { return m_pWorld; }
 
 
-            /// Retrieves a handle to the audio buffer.
-            GTEngine::HAudioBuffer GetAudioBuffer();
+            /// Retrieves a pointer to the audio buffer.
+            easyaudio_buffer* GetAudioBuffer();
 
 
             /// Loads a sound from the given sound file.
@@ -116,8 +117,8 @@ namespace GT
             /// A pointer to the sound world, if any, that owns this sound.
             SoundWorld* m_pWorld;
 
-            /// A handle to the audio buffer for this sound.
-            GTEngine::HAudioBuffer m_hBuffer;
+            /// A pointer to the audio buffer for this sound.
+            easyaudio_buffer* m_pBuffer;
 
             /// A pointer to the streamer to load the audio data from.
             GTEngine::SoundStreamer* m_streamer;

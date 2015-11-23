@@ -9,6 +9,9 @@ namespace GT
     {
         static void EA_OnStreamingBufferStop(easyaudio_buffer* pBuffer, unsigned int eventID, void *pUserData)
         {
+            (void)eventID;
+            (void)pBuffer;
+
             Sound* pSound = reinterpret_cast<Sound*>(pUserData);
             assert(pSound != NULL);
 
@@ -59,7 +62,7 @@ namespace GT
             if (sound->LoadFromFile(filePath))
             {
                 sound->SetWorld(this);
-                m_engineContext.GetAudioSystem().OnBufferStop(sound->GetAudioBuffer(), EA_OnStreamingBufferStop, sound);
+                easyaudio_register_stop_callback(sound->GetAudioBuffer(), EA_OnStreamingBufferStop, sound);
 
                 _TrackInlineSound(*sound);
 

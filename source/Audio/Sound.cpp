@@ -31,22 +31,22 @@ namespace GT
 
         Sound::Sound(EngineContext &engineContext)
             : m_engineContext(engineContext),
-              m_hBuffer(NULL),
+              m_pBuffer(nullptr),
               m_streamer(nullptr)
         {
         }
 
         Sound::~Sound()
         {
-            m_engineContext.GetAudioSystem().DeleteBuffer(m_hBuffer);
+            easyaudio_delete_buffer(m_pBuffer);
             m_engineContext.GetAssetLibrary().CloseSoundStreamer(m_streamer);
         }
 
 
 
-        GTEngine::HAudioBuffer Sound::GetAudioBuffer()
+        easyaudio_buffer* Sound::GetAudioBuffer()
         {
-            return m_hBuffer;
+            return m_pBuffer;
         }
 
 
@@ -83,8 +83,8 @@ namespace GT
                 easyaudio_streaming_callbacks callbacks;
                 callbacks.read = EA_Read;
                 callbacks.seek = EA_Seek;
-                m_hBuffer = m_engineContext.GetAudioSystem().CreateStreamingBuffer(m_engineContext.GetAudioPlaybackDevice(), desc, callbacks, m_streamer);
-                if (m_hBuffer == nullptr)
+                m_pBuffer = easyaudio_create_streaming_buffer(m_engineContext.GetAudioPlaybackDevice(), &desc, callbacks, m_streamer);
+                if (m_pBuffer == nullptr)
                 {
                     m_engineContext.GetAssetLibrary().CloseSoundStreamer(m_streamer);
                     m_streamer = nullptr;
@@ -104,45 +104,52 @@ namespace GT
         void Sound::Play()
         {
             if (m_streamer != nullptr) {
-                m_engineContext.GetAudioSystem().PlayStreamingBuffer(m_hBuffer, false);
+                easyaudio_play_streaming_buffer(m_pBuffer, false);
             }
         }
 
         void Sound::Stop()
         {
-            m_engineContext.GetAudioSystem().StopBuffer(m_hBuffer);
+            easyaudio_stop(m_pBuffer);
         }
 
         void Sound::Pause()
         {
-            m_engineContext.GetAudioSystem().PauseBuffer(m_hBuffer);
+            easyaudio_pause(m_pBuffer);
         }
 
 
         void Sound::SetPosition(const glm::vec3 &position)
         {
-            m_engineContext.GetAudioSystem().SetBufferPosition(m_hBuffer, position);
+            easyaudio_set_position(m_pBuffer, position.x, position.y, position.z);
         }
 
         glm::vec3 Sound::GetPosition() const
         {
-            return m_engineContext.GetAudioSystem().GetBufferPosition(m_hBuffer);
+            float pos[3];
+            easyaudio_get_position(m_pBuffer, pos);
+
+            return glm::vec3(pos[0], pos[1], pos[2]);
         }
 
         void Sound::SetIsPositionRelative(bool isRelative)
         {
-            m_engineContext.GetAudioSystem().SetIsBufferPositionRelative(m_hBuffer, isRelative);
+            if (isRelative) {
+                easyaudio_set_3d_mode(m_pBuffer, easyaudio_3d_mode_relative);
+            } else {
+                easyaudio_set_3d_mode(m_pBuffer, easyaudio_3d_mode_absolute);
+            }
         }
 
         bool Sound::IsPositionRelative() const
         {
-            return m_engineContext.GetAudioSystem().IsBufferPositionRelative(m_hBuffer);
+            return easyaudio_get_3d_mode(m_pBuffer) == easyaudio_3d_mode_relative;
         }
 
 
         easyaudio_playback_state Sound::GetPlaybackState() const
         {
-            return m_engineContext.GetAudioSystem().GetBufferPlaybackState(m_hBuffer);
+            return easyaudio_get_playback_state(m_pBuffer);
         }
     }
 }

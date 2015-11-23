@@ -14,7 +14,7 @@ namespace GT
               m_executableDirectoryAbsolutePath(),
               m_applicationConfig(),
               m_messageHandler(), m_messageDispatcher(),
-              m_audioSystem(nullptr), m_audioPlaybackDevice(0), m_soundWorld(*this),
+              m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
               m_activeThreads(), m_dormantThreads(), m_threadManagementLock(),
               m_assetLibrary()
         {
@@ -70,34 +70,28 @@ namespace GT
 
             //////////////////////////////////////////
             // Audio System
-            //
-            // TODO: Add support for multiple audio systems.
-            m_audioSystem = new GTEngine::AudioEngine();
-            if (!m_audioSystem->Startup())
-            {
+            
+            m_pAudioContext = easyaudio_create_context();
+            if (m_pAudioContext == NULL) {
                 this->PostWarningMessage("Failed to create audio system.");
             }
 
-
-            assert(m_audioSystem != nullptr);
+            // TEMP: Print the playback devices.
+            unsigned int playbackDeviceCount = easyaudio_get_output_device_count(m_pAudioContext);
+            for (unsigned int iDevice = 0; iDevice < playbackDeviceCount; ++iDevice)
             {
-                // TEMP: Print the playback devices.
-                size_t playbackDeviceCount = m_audioSystem->GetPlaybackDeviceCount();
-                for (size_t iDevice = 0; iDevice < playbackDeviceCount; ++iDevice)
+                easyaudio_device_info info;
+                if (easyaudio_get_output_device_info(m_pAudioContext, iDevice, &info))
                 {
-                    GTEngine::AudioEngine::PlaybackDeviceInfo deviceInfo;
-                    m_audioSystem->GetPlaybackDeviceInfo(iDevice, deviceInfo);
-
                     GTLib::String message;
-                    message.AppendFormatted("Playback Device (%d) - %s", static_cast<int>(iDevice), deviceInfo.name.c_str());
+                    message.AppendFormatted("Playback Device (%d) - %s", iDevice, info.description);
 
                     this->PostLogMessage(message.c_str());
                 }
+            }
 
-                if (playbackDeviceCount > 0)
-                {
-                    m_audioPlaybackDevice = m_audioSystem->OpenPlaybackDevice(0);
-                }
+            if (playbackDeviceCount > 0) {
+                m_pAudioPlaybackDevice = easyaudio_create_output_device(m_pAudioContext, 0);
             }
         }
 
@@ -138,11 +132,11 @@ namespace GT
             //////////////////////////////////////////
             // Audio System
 
-            m_audioSystem->ClosePlaybackDevice(m_audioPlaybackDevice);
-            m_audioPlaybackDevice = 0;
+            easyaudio_delete_output_device(m_pAudioPlaybackDevice);
+            m_pAudioPlaybackDevice = nullptr;
 
-            delete m_audioSystem;
-            m_audioSystem = nullptr;
+            easyaudio_delete_context(m_pAudioContext);
+            m_pAudioContext = nullptr;
         }
 
 
@@ -298,6 +292,7 @@ namespace GT
         ////////////////////////////////////////////////////
         // Audio
 
+#if 0
         GTEngine::AudioEngine & EngineContext::GetAudioSystem()
         {
             assert(m_audioSystem != nullptr);
@@ -308,6 +303,17 @@ namespace GT
         {
             assert(m_audioPlaybackDevice != 0);
             return m_audioPlaybackDevice;
+        }
+#endif
+
+        easyaudio_context* EngineContext::GetAudioContext()
+        {
+            return m_pAudioContext;
+        }
+        
+        easyaudio_device* EngineContext::GetAudioPlaybackDevice()
+        {
+            return m_pAudioPlaybackDevice;
         }
 
         SoundWorld & EngineContext::GetSoundWorld()

@@ -26,7 +26,6 @@ namespace GTEngine
           m_bitsPerSample(0),
           m_audioData(nullptr), m_audioDataSize(0),
           m_readPos(0)
-          //m_nextChunkData(nullptr)//, m_nextChunkDataSize(0)
     {
     }
 
@@ -74,25 +73,6 @@ namespace GTEngine
         }
 
         return true;
-
-#if 0
-        // We need to calculate how much data is available to read. To do this, we'll first move the next chunk data pointer
-        // forward by it's data size such that it will point to the new data chunk.
-        m_nextChunkData = reinterpret_cast<const void*>(reinterpret_cast<size_t>(m_nextChunkData) + m_nextChunkDataSize);
-
-        const size_t targetSize = ChunkSampleCount * m_numChannels * (m_bitsPerSample / 8);
-        const size_t bytesLeft  = m_audioDataSize - (reinterpret_cast<size_t>(m_nextChunkData) - reinterpret_cast<size_t>(m_audioData));
-
-        dataSizeOut = m_nextChunkDataSize = (targetSize < bytesLeft) ? targetSize : bytesLeft;
-        if (m_nextChunkDataSize != 0)
-        {
-            return m_nextChunkData;
-        }
-        else
-        {
-            return nullptr;
-        }
-#endif
     }
 
     bool SoundStreamer_WAV::Seek(unsigned int offsetInBytesFromStart)
@@ -105,8 +85,6 @@ namespace GTEngine
 
         m_readPos = offsetInBytesFromStart;
         return true;
-
-        //m_nextChunkData = reinterpret_cast<const int8_t*>(m_audioData) + offsetInBytesFromStart;
     }
 
 
@@ -132,107 +110,6 @@ namespace GTEngine
         }
 
         return easyaudio_format_pcm;
-
-#if 0
-        if (m_bitsPerSample == 8)
-        {
-            if (m_formatCode == WAVE_FORMAT_ALAW)
-            {
-                if (m_numChannels == 1)
-                {
-                    return AudioDataFormat_Mono_ALaw;
-                }
-                else if (m_numChannels == 2)
-                {
-                    return AudioDataFormat_Stereo_ALaw;
-                }
-            }
-            else if (m_formatCode == WAVE_FORMAT_MULAW)
-            {
-                if (m_numChannels == 1)
-                {
-                    return AudioDataFormat_Mono_ULaw;
-                }
-                else if (m_numChannels == 2)
-                {
-                    return AudioDataFormat_Stereo_ULaw;
-                }
-            }
-            else
-            {
-                if (m_numChannels == 1)
-                {
-                    return AudioDataFormat_Mono8;
-                }
-                else if (m_numChannels == 2)
-                {
-                    return AudioDataFormat_Stereo8;
-                }
-            }
-        }
-        else if (m_bitsPerSample == 16)
-        {
-            if (m_numChannels == 1)
-            {
-                return AudioDataFormat_Mono16;
-            }
-            else if (m_numChannels == 2)
-            {
-                return AudioDataFormat_Stereo16;
-            }
-        }
-        else if (m_bitsPerSample == 24)
-        {
-            if (m_numChannels == 1)
-            {
-                return AudioDataFormat_Mono24;
-            }
-            else if (m_numChannels == 2)
-            {
-                return AudioDataFormat_Stereo24;
-            }
-        }
-        else if (m_bitsPerSample == 32)
-        {
-            if (m_formatCode == WAVE_FORMAT_PCM)
-            {
-                // TODO: How would we handle this? Just add support for 32-bit with a data conversion?
-            }
-            else
-            {
-                if (m_numChannels == 1)
-                {
-                    return AudioDataFormat_Mono32F;
-                }
-                else if (m_numChannels == 2)
-                {
-                    return AudioDataFormat_Stereo32F;
-                }
-            }
-        }
-        else if (m_bitsPerSample == 64)
-        {
-            if (m_formatCode == WAVE_FORMAT_PCM)
-            {
-                // TODO: How would we handle this? Just add support for 64-bit with a data conversion?
-            }
-            else
-            {
-                if (m_numChannels == 1)
-                {
-                    return AudioDataFormat_Mono64F;
-                }
-                else if (m_numChannels == 2)
-                {
-                    return AudioDataFormat_Stereo64F;
-                }
-            }
-        }
-
-
-        // Default case.
-        return AudioDataFormat_Mono8;
-#endif
     }
 
 

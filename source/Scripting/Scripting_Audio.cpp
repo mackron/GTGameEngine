@@ -39,13 +39,18 @@ namespace GTEngine
 
             int SetListenerPosition(GTLib::Script &script)
             {
-                g_EngineContext->GetAudioSystem().SetListenerPosition(g_EngineContext->GetAudioPlaybackDevice(), Scripting::ToVector3(script, 1));
+                glm::vec3 pos = Scripting::ToVector3(script, 1);
+                easyaudio_set_listener_position(g_EngineContext->GetAudioPlaybackDevice(), pos.x, pos.y, pos.z);
+
                 return 0;
             }
 
             int SetListenerOrientation(GTLib::Script &script)
             {
-                g_EngineContext->GetAudioSystem().SetListenerOrientation(g_EngineContext->GetAudioPlaybackDevice(), Scripting::ToVector3(script, 1), Scripting::ToVector3(script, 2));
+                glm::vec3 forward = Scripting::ToVector3(script, 1);
+                glm::vec3 up = Scripting::ToVector3(script, 1);
+                easyaudio_set_listener_orientation(g_EngineContext->GetAudioPlaybackDevice(), forward.x, forward.y, forward.z, up.x, up.y, up.z);
+
                 return 0;
             }
         }

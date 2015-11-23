@@ -6,7 +6,6 @@
 #include "ApplicationConfig.hpp"
 #include "MessageDispatcher.hpp"
 #include "DefaultMessageHandler.hpp"
-#include "Audio/AudioEngine.hpp"
 #include "Audio/SoundWorld.hpp"
 #include "AssetLibrary.hpp"
 #include <GTLib/CommandLine.hpp>
@@ -123,15 +122,11 @@ namespace GT
             ////////////////////////////////////////////////////
             // Audio
 
-            /// Retrieves a reference to the internal audio system.
-            ///
-            /// @return A reference to the internal audio system.
-            GTEngine::AudioEngine & GetAudioSystem();
+            /// Retrieves a pointer to the easy_audio context.
+            easyaudio_context* GetAudioContext();
 
-            /// Retrieves a handle to the playback device.
-            ///
-            /// @return A handle to the playback device.
-            GTEngine::HPlaybackDevice GetAudioPlaybackDevice();
+            /// Retrieves a pointer to the audio playback device.
+            easyaudio_device* GetAudioPlaybackDevice();
 
             /// Retrieves a reference to the global sound world.
             ///
@@ -181,11 +176,11 @@ namespace GT
             MessageDispatcher m_messageDispatcher;
 
 
-            /// The audio system. This should never be null, but it needs to be a pointer because it's a virtual class.
-            GTEngine::AudioEngine* m_audioSystem;
+            /// A pointer to the easy_audio context for audio playback.
+            easyaudio_context* m_pAudioContext;
 
-            /// The playback device handle for audio.
-            GTEngine::HPlaybackDevice m_audioPlaybackDevice;
+            /// A pointer to the device for audio playback.
+            easyaudio_device* m_pAudioPlaybackDevice;
 
             /// The global sound world.
             SoundWorld m_soundWorld;
