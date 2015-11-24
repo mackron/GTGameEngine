@@ -3,7 +3,6 @@
 #ifndef __GTLib_IO_hpp_
 #define __GTLib_IO_hpp_
 
-#include "IO/FileIterator.hpp"
 #include "IO/cstdio.hpp"
 #include "String.hpp"
 #include "Vector.hpp"
