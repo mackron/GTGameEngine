@@ -56,7 +56,7 @@ namespace GTLib
         /**
         *   \brief  The same as MakeAbsolute(const char *), except uses the current directory for the base.
         */
-        void MakeAbsolute();
+        //void MakeAbsolute();
 
 
         /// Makes the path relative to the given absolute path.
@@ -65,7 +65,7 @@ namespace GTLib
         void MakeRelative(const char* relativeTo);
 
         /// Makes the path relative to the current directory.
-        void MakeRelative();
+        //void MakeRelative();
 
         
         /**

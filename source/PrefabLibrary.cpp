@@ -4,6 +4,7 @@
 #include <GTEngine/Errors.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/Dictionary.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <utility>
 
 
@@ -60,27 +61,24 @@ namespace GTEngine
         }
 
 
-        GTLib::String absolutePath;
-        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
-            auto iLoadedPrefab = LoadedPrefabs.Find(absolutePath.c_str());
+            auto iLoadedPrefab = LoadedPrefabs.Find(absolutePath);
             if (iLoadedPrefab == nullptr)
             {
                 // Does not exist. Needs to be loaded.
-                auto file = GTLib::IO::Open(absolutePath.c_str(), GTLib::IO::OpenMode::Read);
-                if (file != nullptr)
+                easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), absolutePath, EASYVFS_READ, 0);
+                if (pFile != nullptr)
                 {
-                    // We use a file deserializer for this.
-                    GTLib::FileDeserializer deserializer(file);
+                    GTLib::FileDeserializer deserializer(pFile);
                     
-                    auto newPrefab = new Prefab(absolutePath.c_str(), relativePath.c_str());
+                    auto newPrefab = new Prefab(absolutePath, relativePath.c_str());
                     newPrefab->Deserialize(deserializer);
 
-                    LoadedPrefabs.Add(absolutePath.c_str(), PrefabReference(newPrefab, 1));
+                    LoadedPrefabs.Add(absolutePath, PrefabReference(newPrefab, 1));
 
-                    // Can't forget to close the file.
-                    GTLib::IO::Close(file);
-
+                    easyvfs_close(pFile);
                     return newPrefab;
                 }
                 else

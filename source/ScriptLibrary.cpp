@@ -74,25 +74,26 @@ namespace GTEngine
         }
 
 
-        GTLib::String absolutePath;
-        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
-            auto iLoadedClass = LoadedDefinitions.Find(absolutePath.c_str());
+            auto iLoadedClass = LoadedDefinitions.Find(absolutePath);
             if (iLoadedClass == nullptr)
             {
                 // Does not exist. Needs to be loaded.
-                GTLib::String scriptString;
-                if (GTLib::IO::OpenAndReadTextFile(absolutePath.c_str(), scriptString))
+                char* scriptString = easyvfs_open_and_read_text_file(g_EngineContext->GetVFS(), absolutePath, nullptr);
+                if (scriptString != nullptr)
                 {
-                    auto newDefinition = new ScriptDefinition(absolutePath.c_str(), relativePath.c_str(), scriptString.c_str());
-                    LoadedDefinitions.Add(absolutePath.c_str(), ScriptDefinitionReference(newDefinition, 1));
+                    auto newDefinition = new ScriptDefinition(absolutePath, relativePath.c_str(), scriptString);
+                    LoadedDefinitions.Add(absolutePath, ScriptDefinitionReference(newDefinition, 1));
 
 
                     assert(GlobalGame != nullptr);
                     {
-                        Scripting::LoadScriptDefinition(GlobalGame->GetScript(), relativePath.c_str(), scriptString.c_str());
+                        Scripting::LoadScriptDefinition(GlobalGame->GetScript(), relativePath.c_str(), scriptString);
                     }
 
+                    easyvfs_free(scriptString);
                     return newDefinition;
                 }
                 else
@@ -173,10 +174,10 @@ namespace GTEngine
 
 
         // We key the definitions by their absolute path, so we'll need to retrieve that.
-        GTLib::String absolutePath;
-        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
-            return LoadedDefinitions.Exists(absolutePath.c_str());
+            return LoadedDefinitions.Exists(absolutePath);
         }
 
         return false;
@@ -201,10 +202,10 @@ namespace GTEngine
 
 
         // We key the definitions by their absolute path, so we'll need to retrieve that.
-        GTLib::String absolutePath;
-        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
-            auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
+            auto iDefinition = LoadedDefinitions.Find(absolutePath);
             if (iDefinition != nullptr)
             {
                 auto definition = iDefinition->value.first;
@@ -212,18 +213,19 @@ namespace GTEngine
                 {
                     // This next part is easy. We just destruct and reconstruct, while leaving the pointer as-is. It's important that we keep the same pointer because
                     // other objects may be referencing it.
-                    GTLib::String scriptString;
-                    if (GTLib::IO::OpenAndReadTextFile(absolutePath.c_str(), scriptString))
+                    char* scriptString = easyvfs_open_and_read_text_file(g_EngineContext->GetVFS(), absolutePath, nullptr);
+                    if (scriptString != nullptr)
                     {
                         definition->~ScriptDefinition();
-                        new (definition) ScriptDefinition(absolutePath.c_str(), relativePath.c_str(), scriptString.c_str());
+                        new (definition) ScriptDefinition(absolutePath, relativePath.c_str(), scriptString);
 
 
                         assert(GlobalGame != nullptr);
                         {
-                            Scripting::LoadScriptDefinition(GlobalGame->GetScript(), relativePath.c_str(), scriptString.c_str());
+                            Scripting::LoadScriptDefinition(GlobalGame->GetScript(), relativePath.c_str(), scriptString);
                         }
 
+                        easyvfs_free(scriptString);
                         return true;
                     }
                 }

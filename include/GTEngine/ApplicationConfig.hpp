@@ -6,6 +6,7 @@
 #include <GTLib/Vector.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/Script.hpp>
+#include <easy_fs/easy_vfs.h>
 
 namespace GT
 {
@@ -28,7 +29,7 @@ namespace GT
             ///
             /// @remarks
             ///     You must call Close() when finished with the configuration.
-            bool Open(const char* fileName);
+            bool Open(easyvfs_context* pContext, const char* fileName);
         
 
             /// Retrieves a reference to the list containing the data directories.

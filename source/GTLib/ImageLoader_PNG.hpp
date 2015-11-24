@@ -32,33 +32,8 @@ namespace GTLib
         /// GTLib::ImageLoader::HasFileChanged().
         bool HasFileChanged() const;
 
-    private:
-
-#if 0
-        /**
-        *   \brief  Performs all of the initialisation required to start reading the PNG file.
-        *
-        *   \remarks
-        *       Use UninitPNG() when you are finished doing anything with the PNG.
-        */
-        FILE * InitPNG();
-
-        /**
-        *   \brief  Uninitailises the PNG structures from InitPNG().
-        */
-        void UninitPNG(FILE *file);
-#endif
-
 
     private:
-
-        // The libpng structures we need for reading.
-        //png_structp png;
-        //png_infop   pngInfo;
-        //png_infop   pngEndInfo;
-
-        
-
 
         // The channel count.
         int m_channelCount;

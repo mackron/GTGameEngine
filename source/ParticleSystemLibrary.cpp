@@ -2,9 +2,11 @@
 
 #include <GTEngine/ParticleSystemLibrary.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTLib/Dictionary.hpp>
 #include <GTLib/Vector.hpp>
 #include <GTLib/Path.hpp>
+
 
 namespace GTEngine
 {
@@ -95,12 +97,12 @@ namespace GTEngine
         }
 
 
-        GTLib::String absolutePath;
-        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             ParticleSystemDefinition* definition = nullptr;
 
-            auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
+            auto iDefinition = LoadedDefinitions.Find(absolutePath);
             if (iDefinition != nullptr)
             {
                 // Definition is already loaded. All we do it increment the reference counter.
@@ -112,9 +114,9 @@ namespace GTEngine
             {
                 // Definition is not yet loaded.
                 definition = new ParticleSystemDefinition;
-                if (definition->LoadFromFile(absolutePath.c_str(), relativePath.c_str()))
+                if (definition->LoadFromFile(absolutePath, relativePath.c_str()))
                 {
-                    LoadedDefinitions.Add(absolutePath.c_str(), ParticleSystemDefinitionReference(definition, 1));
+                    LoadedDefinitions.Add(absolutePath, ParticleSystemDefinitionReference(definition, 1));
                 }
                 else
                 {
@@ -185,10 +187,10 @@ namespace GTEngine
 
     bool ParticleSystemLibrary::Reload(const char* fileName)
     {
-        GTLib::String absolutePath;
-        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
-            auto iDefinition = LoadedDefinitions.Find(absolutePath.c_str());
+            auto iDefinition = LoadedDefinitions.Find(absolutePath);
             if (iDefinition != nullptr)
             {
                 auto &reference = iDefinition->value;

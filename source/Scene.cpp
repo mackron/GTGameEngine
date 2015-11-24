@@ -8,6 +8,7 @@
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Scripting.hpp>
 #include <GTLib/ToString.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -316,15 +317,15 @@ namespace GTEngine
 
     bool Scene::LoadFromFile(const char* relativeFilePath)
     {
-        auto file = GTLib::IO::Open(relativeFilePath, GTLib::IO::OpenMode::Read);
-        if (file != nullptr)
+        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), relativeFilePath, EASYVFS_READ, 0);
+        if (pFile != nullptr)
         {
             bool result = false;
 
-            GTLib::FileDeserializer deserializer(file);
+            GTLib::FileDeserializer deserializer(pFile);
             result = this->Deserialize(deserializer);
 
-            GTLib::IO::Close(file);
+            easyvfs_close(pFile);
             return result;
         }
 

@@ -77,59 +77,69 @@ namespace GTLib
     {
     }
 
-    Log::Log(const char *fileName, const char *title)
+    Log::Log(easyvfs_context* pVFS, const char *fileName, const char *title)
         : file(nullptr), format(LogFormat_Text), isOpen(false), currentHTMLPosition(0), eventHandlers()
     {
-        this->Open(fileName, title);
+        this->Open(pVFS, fileName, title);
     }
 
-    bool Log::Open(const char *fileName, const char *title)
+    bool Log::Open(easyvfs_context* pVFS, const char *fileName, const char *title)
     {
         if (fileName)
         {
-            this->file = IO::Open(fileName, IO::OpenMode::Read | IO::OpenMode::Write | IO::OpenMode::CreateDirs);
-            if (this->file != nullptr)
+            this->file = easyvfs_open(pVFS, fileName, EASYVFS_READ | EASYVFS_WRITE, 0);
+            if (this->file == nullptr)
             {
-                // We're good. Now we need to set our format based on the extension. If it is .html, we will output to a HTML file.
-                if (Path::ExtensionEqual(fileName, "html"))
-                {
-                    // HTML.
-                    this->format = LogFormat_HTML;
-
-                    Detail::LogMutex.Lock();
-                    {
-                        // We need to setup a few things if we're doing HTML. We first output the header, then we grab the position, then we
-                        // write the tail. We need the position just after the header because that is where new entries will be inserted. We
-                        // can't insert new log entries at the end of the file, because that would result in invalid HTML.
-                        IO::WriteString(this->file, this->BuildHTMLHead(title));
-
-                        // We need to grab the current position of the file so that we can set that as the position to start inserting rows.
-						this->currentHTMLPosition = IO::Tell(this->file);
-
-                        IO::WriteString(this->file, this->BuildHTMLTail());
-                    }
-                    Detail::LogMutex.Unlock();
-
-                    IO::Flush(this->file);
-                }
-                else
-                {
-                    // Text.
-                    this->format = LogFormat_Text;
-
-                    IO::WriteString(this->file, title);
-                    IO::Flush(this->file);
+                // We weren't able to open the file. It may be because the directory structure isn't in place yet - we'll try creating
+                // the directories and try opening the file again.
+                if (!easyvfs_mkdir_recursive(pVFS, fileName)) {
+                    return false;
                 }
 
-                this->isOpen = true;
-                this->OnOpen(fileName, title);
+                this->file = easyvfs_open(pVFS, fileName, EASYVFS_READ | EASYVFS_WRITE, 0);
+                if (this->file == nullptr) {
+                    return false;
+                }
+            }
 
-                return true;
+            assert(this->file != nullptr);
+
+
+            // We're good. Now we need to set our format based on the extension. If it is .html, we will output to a HTML file.
+            if (Path::ExtensionEqual(fileName, "html"))
+            {
+                // HTML.
+                this->format = LogFormat_HTML;
+
+                Detail::LogMutex.Lock();
+                {
+                    // We need to setup a few things if we're doing HTML. We first output the header, then we grab the position, then we
+                    // write the tail. We need the position just after the header because that is where new entries will be inserted. We
+                    // can't insert new log entries at the end of the file, because that would result in invalid HTML.
+                    easyvfs_write_string(this->file, this->BuildHTMLHead(title));
+
+                    // We need to grab the current position of the file so that we can set that as the position to start inserting rows.
+                    this->currentHTMLPosition = (int64_t)easyvfs_tell(this->file);
+
+                    easyvfs_write_string(this->file, this->BuildHTMLTail());
+                }
+                Detail::LogMutex.Unlock();
+
+                easyvfs_flush(this->file);
             }
             else
             {
-                return false;
+                // Text.
+                this->format = LogFormat_Text;
+
+                easyvfs_write_string(this->file, title);
+                easyvfs_flush(this->file);
             }
+
+            this->isOpen = true;
+            this->OnOpen(fileName, title);
+
+            return true;
         }
 
         return false;
@@ -141,7 +151,7 @@ namespace GTLib
 
         if (this->file != nullptr)
         {
-            IO::Close(this->file);
+            easyvfs_close(this->file);
         }
 
         this->isOpen = false;
@@ -157,26 +167,32 @@ namespace GTLib
                 // always need to make sure the tail is attached after each entry so that we have valid HTML.
                 Detail::LogMutex.Lock();
                 {
-					IO::Seek(this->file, this->currentHTMLPosition, SeekOrigin::Start);
-                    IO::WriteString(this->file, this->BuildHTMLEntry(value));
-                    this->currentHTMLPosition = IO::Tell(this->file);
+					//IO::Seek(this->file, this->currentHTMLPosition, SeekOrigin::Start);
+                    //IO::WriteString(this->file, this->BuildHTMLEntry(value));
+                    //this->currentHTMLPosition = IO::Tell(this->file);
 
-                    IO::WriteString(this->file, this->BuildHTMLTail());
+                    //IO::WriteString(this->file, this->BuildHTMLTail());
+
+                    easyvfs_seek(this->file, this->currentHTMLPosition, easyvfs_start);
+                    easyvfs_write_string(this->file, this->BuildHTMLEntry(value));
+                    this->currentHTMLPosition = (int64_t)easyvfs_tell(this->file);
+
+                    easyvfs_write_string(this->file, this->BuildHTMLTail());
                 }
                 Detail::LogMutex.Unlock();
 
-                IO::Flush(this->file);
+                easyvfs_flush(this->file);
             }
             else
             {
                 // All we need to do is build the text entry, throw it into the file and then flush.
                 Detail::LogMutex.Lock();
                 {
-                    IO::WriteString(this->file, this->BuildTextEntry(value));
+                    easyvfs_write_string(this->file, this->BuildTextEntry(value));
                 }
                 Detail::LogMutex.Unlock();
 
-                IO::Flush(this->file);
+                easyvfs_flush(this->file);
             }
 
             this->OnWrite(value);

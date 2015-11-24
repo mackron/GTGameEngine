@@ -5,9 +5,11 @@
 #include <GTEngine/Texture2DLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/ShaderParameter.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTLib/Parse.hpp>
 #include <GTLib/Strings/Tokenizer.hpp>
 #include <GTLib/Path.hpp>
+#include <easy_path/easy_path.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -281,17 +283,17 @@ namespace GTEngine
 
     bool MaterialDefinition::LoadFromFile(const char* fileNameIn, const char* relativePathIn)
     {
-        GTLib::String newAbsolutePath;
-        GTLib::String newRelativePath;
+        char newAbsolutePath[EASYVFS_MAX_PATH];
+        char newRelativePath[EASYVFS_MAX_PATH];
 
 
         if (GTLib::Path::IsAbsolute(fileNameIn))
         {
-            newAbsolutePath = fileNameIn;
+            strcpy_s(newAbsolutePath, sizeof(newAbsolutePath), fileNameIn);
 
             if (relativePathIn != nullptr)
             {
-                newRelativePath = relativePathIn;
+                strcpy_s(newRelativePath, sizeof(newRelativePath), relativePathIn);
             }
             else
             {
@@ -301,40 +303,26 @@ namespace GTEngine
         }
         else
         {
-            newRelativePath = fileNameIn;
+            strcpy_s(newRelativePath, sizeof(newRelativePath), fileNameIn);
 
-            if (!GTLib::IO::FindAbsolutePath(fileNameIn, newAbsolutePath))
+            if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
             {
                 return false;
             }
         }
 
 
-
-        auto file = GTLib::IO::Open(newAbsolutePath.c_str(), GTLib::IO::OpenMode::Binary | GTLib::IO::OpenMode::Read);
-        if (file != nullptr)
+        char* pFileData = easyvfs_open_and_read_text_file(g_EngineContext->GetVFS(), newAbsolutePath, NULL);
+        if (pFileData != nullptr)
         {
-            size_t fileSize = static_cast<size_t>(GTLib::IO::Size(file));
-
-            auto data = static_cast<char*>(malloc(fileSize + 1));
-            GTLib::IO::Read(file, data, fileSize);
-
-            // String must be null-terminated.
-            data[fileSize] = '\0';
-
-            // Now we load the XML...
-            bool result = this->LoadFromXML(data);
-
-            // Finally, we clean up and return the result.
-            free(data);
-            GTLib::IO::Close(file);
+            bool result = this->LoadFromXML(pFileData);
 
 
             // LoadFromXML() will have reset the paths to "" so we need to make sure they are set again.
             this->absolutePath = newAbsolutePath;
             this->relativePath = newRelativePath;
 
-
+            easyvfs_free(pFileData);
             return result;
         }
 

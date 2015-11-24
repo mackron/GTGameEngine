@@ -55,6 +55,9 @@ namespace GT
             ////////////////////////////////////////////////////
             // File System Management
 
+            /// Retrieves a pointer to the virtual file system object.
+            easyvfs_context* GetVFS() { return m_pVFS; }
+
             /// Retrieves the executable's absolute file path.
             const char* GetExecutableAbsolutePath() const;
 
@@ -162,11 +165,8 @@ namespace GT
             char m_executableDirectoryAbsolutePath[EASYVFS_MAX_PATH];
 
 
-            /// The command line object. This is constructed from the argc and argv parameters in the constructor.
-            //GTLib::CommandLine m_commandLine;
-
-            /// The absolute path of the directory the application's executable is located in.
-            //GTLib::String m_executableDirectoryAbsolutePath;
+            /// A pointer to the object representing the virtual file system. This is where base directories are added.
+            easyvfs_context* m_pVFS;
 
 
             /// The list of every active thread that is owned by the engine. When a thread is created, it'll be added to this list. When a thread is

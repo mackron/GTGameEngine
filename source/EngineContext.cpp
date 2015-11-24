@@ -56,15 +56,19 @@ namespace GT
         EngineContext::EngineContext(int argc, char** argv)
             : m_cmdline(),
               m_executableDirectoryAbsolutePath(),
+              m_pVFS(nullptr),
               m_applicationConfig(),
               m_messageHandler(), m_messageDispatcher(),
               m_pAudioContext(nullptr), m_pAudioPlaybackDevice(nullptr), m_soundWorld(*this),
               m_activeThreads(), m_dormantThreads(), m_threadManagementLock(),
               m_assetLibrary()
         {
+            // We need to initialize the virtual file system early so we can do things like create logs and cache files.
+            m_pVFS = easyvfs_create_context();
+
+
             // Parse the command line.
             CommandLineData cmdlineData;
-            strcpy_s(cmdlineData.absoluteExePath, sizeof(cmdlineData.absoluteExePath), "");
             strcpy_s(cmdlineData.relativeLogPath, sizeof(cmdlineData.relativeLogPath), "var/logs/engine.html");
 
             if (easyutil_init_cmdline(&m_cmdline, argc, argv))
@@ -75,6 +79,10 @@ namespace GT
             // Make sure the executable's absolute path is clean for future things.
             easypath_clean(cmdlineData.absoluteExeDirPath, m_executableDirectoryAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
             easypath_clean(cmdlineData.absoluteExePath, m_executableAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
+
+
+            // The directory containing the executable needs to be the lowest-priority base path.
+            easyvfs_add_base_directory(m_pVFS, m_executableDirectoryAbsolutePath);
             
 
 
@@ -82,7 +90,7 @@ namespace GT
             char logpath[EASYVFS_MAX_PATH];
             easypath_copyandappend(logpath, sizeof(logpath), m_executableDirectoryAbsolutePath, cmdlineData.relativeLogPath);
             
-            m_messageHandler.OpenLogFile(logpath);
+            m_messageHandler.OpenLogFile(m_pVFS, logpath);
 
 
             // At this point the message handler should be setup, so we'll go ahead and add it to the dispatcher.
@@ -95,20 +103,19 @@ namespace GT
             // This is different from a user configuration (which are located in the 'configs' folder). The application configuration
             // usually remains constant. It defines things like directories. We won't return false if we fail to open, in which case
             // the game will use defaults.
-            if (m_applicationConfig.Open("config.lua"))
+            if (m_applicationConfig.Open(m_pVFS, "config.lua"))
             {
                 // The application config will define the data directories where all of the game's data and assets are located. We will
                 // move into the directory of the first defined data directory.
                 auto &directories = m_applicationConfig.GetDataDirectories();
                 if (directories.count > 0)
                 {
-                    GTLib::IO::SetCurrentDirectory(directories[0].c_str());
-
-                    // Here we are going to set additional search directories which will make GTLib search these directories if it can not
-                    // open a file from the current directory. We intentionally don't include the first directory.
-                    for (size_t i = 1; i < directories.count; ++i)
+                    // Here is where we add each of the base directories. Each directory is inserted in the second-to-last position
+                    // because we always want the executable's directory to be the lowest priority one.
+                    for (size_t i = 0; i < directories.count; ++i)
                     {
-                        GTLib::IO::AddAdditionalSearchPath(directories[i].c_str());
+                        //GTLib::IO::AddAdditionalSearchPath(directories[i].c_str());
+                        easyvfs_insert_base_directory(m_pVFS, directories[i].c_str(), easyvfs_get_base_directory_count(m_pVFS) - 1);
                     }
                 }
             }

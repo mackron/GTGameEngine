@@ -92,18 +92,6 @@ namespace GTEngine
     }
 
 
-#if 0
-    const char* Game::GetExecutableDirectoryAbsolutePath() const
-    {
-        return this->executableDirectoryPath.c_str();
-    }
-
-    const char* Game::GetExecutableAbsolutePath() const
-    {
-        return this->executablePath.c_str();
-    }
-#endif
-
 
     void Game::SendEvent(const GameEvent &e)
     {
@@ -541,15 +529,14 @@ namespace GTEngine
         absoluteOutputDirectory.Append(outputDirectory);
 
         // We will start by creating the output directory.
-        if (!GTLib::IO::DirectoryExists(absoluteOutputDirectory.c_str()))
+        if (!easyvfs_is_existing_directory(g_EngineContext->GetVFS(), absoluteOutputDirectory.c_str()))
         {
-            if (!GTLib::IO::CreateDirectory(absoluteOutputDirectory.c_str()))
+            if (!easyvfs_mkdir(g_EngineContext->GetVFS(), absoluteOutputDirectory.c_str()))
             {
                 // Failed to create the output directory.
                 return false;
             }
         }
-
 
         GTEngine::GamePackager packager(absoluteOutputDirectory.c_str());
 
@@ -599,37 +586,39 @@ namespace GTEngine
     void Game::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
         // If the file is an asset, we need to update everything that is using it. We do this via the asset libraries.
-        if (!item.info.isDirectory)
+        if ((item.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) == 0)
         {
-            auto extension = GTLib::Path::Extension(item.info.path.c_str());
+            // It's not a directory.
+
+            auto extension = GTLib::Path::Extension(item.info.absolutePath);
 
             if (ModelLibrary::IsExtensionSupported(extension))
             {
-                ModelLibrary::Reload(item.info.path.c_str());
+                ModelLibrary::Reload(item.info.absolutePath);
             }
             else if (Texture2DLibrary::IsExtensionSupported(extension))
             {
-                Texture2DLibrary::Reload(item.info.path.c_str());
+                Texture2DLibrary::Reload(item.info.absolutePath);
             }
-            else if (IO::IsSupportedMaterialExtension(item.info.path.c_str()))
+            else if (IO::IsSupportedMaterialExtension(item.info.absolutePath))
             {
-                MaterialLibrary::Reload(item.relativePath.c_str());
+                MaterialLibrary::Reload(item.info.absolutePath);
             }
-            else if (IO::IsSupportedParticleSystemExtension(item.info.path.c_str()))
+            else if (IO::IsSupportedParticleSystemExtension(item.info.absolutePath))
             {
-                ParticleSystemLibrary::Reload(item.relativePath.c_str());
+                ParticleSystemLibrary::Reload(item.info.absolutePath);
             }
             else
             {
                 // It might be a script file. We'll try reloading.
-                ScriptLibrary::Reload(item.relativePath.c_str());
+                ScriptLibrary::Reload(item.info.absolutePath);
 
                 // If we have a script file we will reload it if applicable.
                 if (this->IsScriptAutoReloadEnabled())
                 {
-                    if (this->script.HasFileBeenLoaded(item.info.path.c_str()))
+                    if (this->script.HasFileBeenLoaded(item.info.absolutePath))
                     {
-                        this->script.ExecuteFile(item.info.path.c_str());
+                        this->script.ExecuteFile(g_EngineContext->GetVFS(), item.info.absolutePath);
                     }
                 }
             }
@@ -683,6 +672,7 @@ namespace GTEngine
 
     bool Game::SaveGameState(const char* destinationFilePath)
     {
+#if 0
         GTLib::FileHandle file = GTLib::OpenFile(destinationFilePath, GTLib::IO::OpenMode::Write | GTLib::IO::OpenMode::CreateDirs);
         if (file)
         {
@@ -692,19 +682,31 @@ namespace GTEngine
             GTLib::CloseFile(file);
             return result;
         }
+#endif
+        // TODO: CREATE_DIRS
+
+        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), destinationFilePath, EASYVFS_WRITE, 0);
+        if (pFile != nullptr)
+        {
+            GTLib::FileSerializer serializer(pFile);
+            bool result = this->SerializeGameState(serializer);
+
+            easyvfs_close(pFile);
+            return result;
+        }
 
         return false;
     }
 
     bool Game::LoadGameState(const char* sourceFilePath)
     {
-        GTLib::FileHandle file = GTLib::OpenFile(sourceFilePath, GTLib::IO::OpenMode::Read | GTLib::IO::OpenMode::CreateDirs);
-        if (file)
+        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), sourceFilePath, EASYVFS_READ, 0);
+        if (pFile != nullptr)
         {
-            GTLib::FileDeserializer deserializer(file);
+            GTLib::FileDeserializer deserializer(pFile);
             bool result = this->DeserializeGameState(deserializer);
 
-            GTLib::CloseFile(file);
+            easyvfs_close(pFile);
             return result;
         }
 
@@ -717,135 +719,13 @@ namespace GTEngine
     }
 
 
-
-#if 0
-    void Game::OnLoadConfigs()
-    {
-    }
-
-    bool Game::OnStartup(const GTLib::CommandLine &)
-    {
-        return true;
-    }
-
-    void Game::OnShutdown()
-    {
-    }
-
-    void Game::OnUpdate(double)
-    {
-    }
-
-    void Game::OnDraw()
-    {
-    }
-
-    void Game::OnPostDraw()
-    {
-    }
-
-    void Game::OnStartFrame()
-    {
-    }
-
-    void Game::OnEndFrame()
-    {
-    }
-
-    void Game::OnSize(unsigned int, unsigned int)
-    {
-    }
-
-    void Game::OnMouseMove(int, int)
-    {
-    }
-
-    void Game::OnMouseWheel(int, int, int)
-    {
-    }
-
-    void Game::OnMouseButtonDown(GTLib::MouseButton, int, int)
-    {
-    }
-
-    void Game::OnMouseButtonUp(GTLib::MouseButton, int, int)
-    {
-    }
-
-    void Game::OnMouseButtonDoubleClick(GTLib::MouseButton, int, int)
-    {
-    }
-
-    void Game::OnKeyPressed(GTLib::Key)
-    {
-    }
-
-    void Game::OnKeyReleased(GTLib::Key)
-    {
-    }
-
-    void Game::OnKeyDown(GTLib::Key)
-    {
-    }
-
-    void Game::OnKeyUp(GTLib::Key)
-    {
-    }
-
-    void Game::OnReceiveFocus()
-    {
-    }
-
-    void Game::OnLoseFocus()
-    {
-    }
-
-    void Game::OnHandleEvent(GameEvent &)
-    {
-    }
-
-    void Game::OnPause()
-    {
-    }
-
-    void Game::OnResume()
-    {
-    }
-
-
-    bool Game::OnLoadScene(const char*)
-    {
-        return false;
-    }
-
-
-    bool Game::OnEditorOpening()
-    {
-        return true;
-    }
-
-    bool Game::OnEditorClosing()
-    {
-        return true;
-    }
-
-    void Game::OnEditorOpen()
-    {
-    }
-
-    void Game::OnEditorClose()
-    {
-    }
-#endif
-
-
     bool GameCommandLineProc(const char* key, const char* value, void* pUserData)
     {
         Game* pGame = reinterpret_cast<Game*>(pUserData);
         assert(pGame != nullptr);
 
         if (strcmp(key, "config") == 0) {
-            pGame->GetScript().ExecuteFile(value);
+            pGame->GetScript().ExecuteFile(g_EngineContext->GetVFS(), value);
             return true;
         }
 

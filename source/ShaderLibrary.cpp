@@ -10,6 +10,7 @@
 #include <GTLib/Dictionary.hpp>
 #include <GTLib/Vector.hpp>
 #include <GTLib/String.hpp>
+#include <easy_path/easy_path.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -274,6 +275,53 @@ namespace GTEngine
 {
     bool ShaderLibrary::LoadFromDirectory(const char* directory, bool recursive)
     {
+        easyvfs_context* pVFS = g_EngineContext->GetVFS();
+        assert(pVFS != nullptr);
+
+        if (easypath_isabsolute(directory))
+        {
+            // Absolute.
+
+            easyvfs_iterator iFile;
+            if (easyvfs_begin_iteration(pVFS, directory, &iFile))
+            {
+                easyvfs_file_info fi;
+                while (easyvfs_next_iteration(pVFS, &iFile, &fi))
+                {
+                    if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                    {
+                        if (recursive)
+                        {
+                            ShaderLibrary::LoadFromDirectory(fi.absolutePath);
+                        }
+                    }
+                    else
+                    {
+                        ShaderLibrary::LoadFromFile(fi.absolutePath);
+                    }
+                }
+            }
+        }
+        else
+        {
+            // Relative. We just call this recursively with the absolute path.
+
+            unsigned int baseDirectoryCount = easyvfs_get_base_directory_count(pVFS);
+            for (unsigned int iBaseDirectory = 0; iBaseDirectory < baseDirectoryCount; ++iBaseDirectory)
+            {
+                char baseDirectory[EASYVFS_MAX_PATH];
+                if (easyvfs_get_base_directory_by_index(pVFS, iBaseDirectory, baseDirectory, sizeof(baseDirectory)))
+                {
+                    char searchDir[EASYVFS_MAX_PATH];
+                    easypath_copyandappend(searchDir, sizeof(searchDir), baseDirectory, directory);
+
+                    ShaderLibrary::LoadFromDirectory(searchDir, recursive);
+                }
+            }
+        }
+
+
+#if 0
         // We need to do this for every data directory, including the current directory.
         GTLib::Vector<GTLib::String> baseDirectories;
         baseDirectories.PushBack(GTLib::IO::GetCurrentDirectory());
@@ -315,12 +363,14 @@ namespace GTEngine
             // Can't forget to restore the previous directory.
             GTLib::IO::PopCurrentDirectory();
         }
+#endif
         
         return true;
     }
 
     bool ShaderLibrary::LoadFromFile(const char* fileName)
     {
+#if 0
         auto file = GTLib::IO::Open(fileName, GTLib::IO::OpenMode::Read);
         if (file)
         {
@@ -340,6 +390,28 @@ namespace GTEngine
             return result;
         }
         
+        return false;
+#endif
+
+        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), fileName, EASYVFS_READ, 0);
+        if (pFile != nullptr)
+        {
+            // We need to read the content of the file and then load it as XML. We cast the size to a size_t to
+            // play nicely with 32-bit compilations. We can pretty safely assume the XML file will not exceed that.
+            size_t fileSize = static_cast<size_t>(easyvfs_file_size(pFile));
+            
+            auto fileData = static_cast<char*>(malloc(fileSize + 1));
+            easyvfs_read(pFile, fileData, fileSize, nullptr);
+            fileData[fileSize] = '\0';
+            
+            easyvfs_close(pFile);
+            
+            bool result = ShaderLibrary::LoadFromXML(fileData);
+            
+            free(fileData);
+            return result;
+        }
+
         return false;
     }
 

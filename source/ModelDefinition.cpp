@@ -4,7 +4,9 @@
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/IO.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTLib/Path.hpp>
+#include <easy_path/easy_path.h>
 
 namespace GTEngine
 {
@@ -33,16 +35,16 @@ namespace GTEngine
 
     bool ModelDefinition::LoadFromFile(const char* fileNameIn, const char* relativePathIn, bool &needsSerialize)
     {
-        GTLib::String newAbsolutePath;
-        GTLib::String newRelativePath;
+        char newAbsolutePath[EASYVFS_MAX_PATH];
+        char newRelativePath[EASYVFS_MAX_PATH];
 
         if (GTLib::Path::IsAbsolute(fileNameIn))
         {
-            newAbsolutePath = fileNameIn;
+            strcpy_s(newAbsolutePath, sizeof(newAbsolutePath), fileNameIn);
 
             if (relativePathIn != nullptr)
             {
-                newRelativePath = relativePathIn;
+                strcpy_s(newRelativePath, sizeof(newRelativePath), relativePathIn);
             }
             else
             {
@@ -52,46 +54,46 @@ namespace GTEngine
         }
         else
         {
-            newRelativePath = fileNameIn;
+            strcpy_s(newRelativePath, sizeof(newRelativePath), fileNameIn);
 
-            if (!GTLib::IO::FindAbsolutePath(fileNameIn, newAbsolutePath))
+            if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
             {
                 return false;
             }
         }
 
 
-        GTLib::String nativeAbsolutePath;
-        if (GTLib::Path::ExtensionEqual(newAbsolutePath.c_str(), "gtmodel"))
+        char nativeAbsolutePath[EASYVFS_MAX_PATH];
+        if (GTLib::Path::ExtensionEqual(newAbsolutePath, "gtmodel"))
         {
-            nativeAbsolutePath = newAbsolutePath;
+            strcpy_s(nativeAbsolutePath, sizeof(nativeAbsolutePath), newAbsolutePath);
 
-            newAbsolutePath = GTLib::IO::RemoveExtension(newAbsolutePath.c_str());
-            newRelativePath = GTLib::IO::RemoveExtension(newRelativePath.c_str());
+            easypath_removeextension(newAbsolutePath);
+            easypath_removeextension(newRelativePath);
         }
         else
         {
-            nativeAbsolutePath = newAbsolutePath + ".gtmodel";
+            easypath_copyandappendextension(nativeAbsolutePath, sizeof(nativeAbsolutePath), newAbsolutePath, "gtmodel");
         }
 
 
         bool loadFromNativeFile = false;
 
         // We need file info of both the foreign and native files. If the foreign file is different to the file that would used to generate
-        // the existing native file, it will be reloaded. 
-        GTLib::FileInfo foreignFileInfo;
-        GTLib::IO::GetFileInfo(newAbsolutePath.c_str(), foreignFileInfo);
+        // the existing native file, it will be reloaded.
+        easyvfs_file_info foreignFileInfo;
+        bool foreignFileExists = easyvfs_get_file_info(g_EngineContext->GetVFS(), newAbsolutePath, &foreignFileInfo);
 
-        GTLib::FileInfo nativeFileInfo;
-        GTLib::IO::GetFileInfo(nativeAbsolutePath.c_str(), nativeFileInfo);
+        easyvfs_file_info nativeFileInfo;
+        bool nativeFileExists = easyvfs_get_file_info(g_EngineContext->GetVFS(), nativeAbsolutePath, &nativeFileInfo);
 
-        if (!foreignFileInfo.exists && !nativeFileInfo.exists)
+        if (!foreignFileExists && !nativeFileExists)
         {
             return false;
         }
         else
         {
-            if (!foreignFileInfo.exists || (nativeFileInfo.exists && nativeFileInfo.lastModifiedTime > foreignFileInfo.lastModifiedTime))
+            if (!foreignFileExists || (nativeFileExists && nativeFileInfo.lastModifiedTime > foreignFileInfo.lastModifiedTime))
             {
                 loadFromNativeFile = true;
             }
@@ -1141,13 +1143,13 @@ namespace GTEngine
         // When loading from a native file, all we need to do is deserialize.
         bool successful = false;
 
-        auto file = GTLib::IO::Open(absolutePathIn.c_str(), GTLib::IO::OpenMode::Read);
-        if (file != nullptr)
+        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), absolutePathIn.c_str(), EASYVFS_READ, 0);
+        if (pFile != nullptr)
         {
-            GTLib::FileDeserializer deserializer(file);
+            GTLib::FileDeserializer deserializer(pFile);
             successful = this->Deserialize(deserializer);
 
-            GTLib::IO::Close(file);
+            easyvfs_close(pFile);
         }
 
         return successful;

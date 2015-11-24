@@ -5,21 +5,17 @@
 
 #include "ImageFormats.hpp"
 #include <GTLib/IO.hpp>
+#include <easy_fs/easy_vfs.h>
 
 namespace GTLib
 {
-    struct ImageFileInfo : public GTLib::FileInfo
+    struct ImageFileInfo : public easyvfs_file_info
     {
         ImageFileInfo()
-            : FileInfo(), format(ImageFormat_Auto), width(0), height(0), mipmapCount(0)
+            : easyvfs_file_info(), format(ImageFormat_Auto), width(0), height(0), mipmapCount(0)
         {
         }
 
-        ImageFileInfo(const char *filename)
-            : FileInfo(filename), format(ImageFormat_Auto), width(0), height(0), mipmapCount(0)
-        {
-        }
-        
         ~ImageFileInfo()
         {
         }
@@ -27,7 +23,7 @@ namespace GTLib
         /// Assignment.
         ImageFileInfo & operator=(const ImageFileInfo &other)
         {
-            GTLib::FileInfo::operator=(other);
+            easyvfs_file_info::operator=(other);
 
             this->format      = other.format;
             this->width       = other.width;

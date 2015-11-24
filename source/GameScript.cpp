@@ -56,26 +56,26 @@ namespace GTEngine
     }
 
 
-    bool GameScript::LoadFile(const char* fileName)
+    bool GameScript::LoadFile(easyvfs_context* pVFS, const char* fileName)
     {
         if (!this->HasFileBeenLoaded(fileName))
         {
-            GTLib::String absolutePath;
-            if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
+            char absolutePath[EASYVFS_MAX_PATH];
+            if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
             {
                 this->loadedFiles.PushBack(absolutePath);
             }
         }
 
-        return GTLib::Script::LoadFile(fileName);
+        return GTLib::Script::LoadFile(pVFS, fileName);
     }
 
 
 
     bool GameScript::HasFileBeenLoaded(const char* fileName) const
     {
-        GTLib::String absolutePath;
-        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             return this->loadedFiles.Exists(absolutePath);
         }

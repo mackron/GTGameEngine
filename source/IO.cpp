@@ -5,6 +5,7 @@
 #include <GTLib/ImageLoader.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/Strings/Find.hpp>
+#include <easy_path/easy_path.h>
 
 namespace GTEngine
 {
@@ -65,7 +66,7 @@ namespace GTEngine
         AssetType GetAssetTypeFromExtension(const char* fileName)
         {
             // If the path is a directory instead of a file, we need to return AssetType_None.
-            if (GTLib::Strings::IsNullOrEmpty(GTLib::IO::FileName(fileName)))
+            if (GTLib::Strings::IsNullOrEmpty(easypath_filename(fileName)))
             {
                 return AssetType_None;
             }

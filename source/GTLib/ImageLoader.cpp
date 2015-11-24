@@ -5,6 +5,7 @@
 #include <GTLib/Log.hpp>
 #include <GTLib/Strings/Equal.hpp>
 #include <GTLib/Strings/Create.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 // TODO: Delete this once DDS is implemented.
 #define GTLIB_NO_DDS
@@ -24,7 +25,10 @@ namespace GTLib
         : fileName(fileNameIn), absolutePath()
     {
         // We need to find the absolute path.
-        GTLib::IO::FindAbsolutePath(fileNameIn, this->absolutePath);
+        char absolutePathTemp[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), fileNameIn, absolutePathTemp, sizeof(absolutePathTemp))) {
+            this->absolutePath = absolutePathTemp;
+        }
     }
 
     ImageLoader::~ImageLoader()

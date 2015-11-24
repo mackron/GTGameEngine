@@ -10,6 +10,8 @@
 #include <cstddef>
 #include <cstdio>
 
+#if 0
+
 // The following #undef's are just in case this file is included after windows.h.
 #undef DeleteFile
 #undef CopyFile
@@ -600,5 +602,18 @@ namespace GTLib
         bool OpenAndWriteTextFile(const char* fileName, const char* content, ptrdiff_t contentSizeInBytes = -1);
     }
 }
+
+#endif
+
+
+// TEMP STUFF
+namespace GTLib
+{
+    namespace IO
+    {
+        GTLib::String ToRelativePath(const char* absolutePath, const char* basePath);
+    }
+}
+
 
 #endif

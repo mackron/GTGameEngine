@@ -5,7 +5,10 @@
 
 #include <GTLib/IO.hpp>
 #include <GTLib/Dictionary.hpp>
+#include <GTLib/List.hpp>
 #include <GTLib/Threading.hpp>
+#include <easy_fs/easy_fsw.h>
+#include <easy_fs/easy_vfs.h>
 
 namespace GTEngine
 {
@@ -27,16 +30,12 @@ namespace GTEngine
         struct Item
         {
             Item()
-                : info(),
-                  relativePath(), absolutePath(),
-                  parent(nullptr), children()
+                : info(), parent(nullptr), children()
             {
             }
 
-            Item(const GTLib::FileInfo &infoIn, Item* parent)
-                : info(infoIn),
-                  relativePath(infoIn.path), absolutePath(infoIn.absolutePath),
-                  parent(parent), children()
+            Item(const easyvfs_file_info &infoIn, Item* parent)
+                : info(infoIn), parent(parent), children()
             {
             }
 
@@ -52,9 +51,9 @@ namespace GTEngine
             /// Adds a child item.
             ///
             /// @param info [in] The file info of the child.
-            void InsertChild(const GTLib::FileInfo &infoIn)
+            void InsertChild(const easyvfs_file_info &infoIn)
             {
-                this->children.Add(infoIn.path.c_str(), new Item(infoIn, this));
+                this->children.Add(infoIn.absolutePath, new Item(infoIn, this));
             }
 
             /// Removes a child item.
@@ -64,7 +63,7 @@ namespace GTEngine
             {
                 if (item != nullptr)
                 {
-                    this->RemoveChild(item->info.path.c_str());
+                    this->RemoveChild(item->info.absolutePath);
                 }
 
                 delete item;
@@ -101,14 +100,7 @@ namespace GTEngine
 
 
             /// The file info.
-            GTLib::FileInfo info;
-
-            /// The relative path.
-            GTLib::String relativePath;
-
-            /// The absolute path.
-            GTLib::String absolutePath;
-
+            easyvfs_file_info info;
 
             /// A pointer to the parent item. Can be null.
             Item* parent;

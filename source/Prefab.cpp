@@ -2,6 +2,7 @@
 
 #include <GTEngine/Prefab.hpp>
 #include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GTEngine
 {
@@ -274,6 +275,7 @@ namespace GTEngine
 
     bool Prefab::WriteToFile()
     {
+#if 0
         auto file = GTLib::IO::Open(this->absolutePath.c_str(), GTLib::IO::OpenMode::Write);
         if (file != nullptr)
         {
@@ -282,6 +284,17 @@ namespace GTEngine
 
 
             GTLib::IO::Close(file);
+            return true;
+        }
+#endif
+
+        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), this->absolutePath.c_str(), EASYVFS_READ, 0);
+        if (pFile != nullptr)
+        {
+            GTLib::FileSerializer serializer(pFile);
+            this->Serialize(serializer);
+
+            easyvfs_close(pFile);
             return true;
         }
         else

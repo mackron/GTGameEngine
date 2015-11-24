@@ -129,10 +129,10 @@ namespace GTLib
         }
     }
 
-    void Path::MakeAbsolute()
-    {
-        this->MakeAbsolute(GTLib::IO::GetCurrentDirectory().c_str());
-    }
+    //void Path::MakeAbsolute()
+    //{
+    //    this->MakeAbsolute(GTLib::IO::GetCurrentDirectory().c_str());
+    //}
 
 
     void Path::MakeRelative(const char* relativeTo)
@@ -178,10 +178,10 @@ namespace GTLib
         }
     }
 
-    void Path::MakeRelative()
-    {
-        this->MakeRelative(GTLib::IO::GetCurrentDirectory().c_str());
-    }
+    //void Path::MakeRelative()
+    //{
+    //    this->MakeRelative(GTLib::IO::GetCurrentDirectory().c_str());
+    //}
 
 
     Path & Path::Append(const char* other)

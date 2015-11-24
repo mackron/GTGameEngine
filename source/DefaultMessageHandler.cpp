@@ -18,9 +18,9 @@ namespace GT
         }
 
 
-        void DefaultMessageHandler::OpenLogFile(const char* filePath)
+        void DefaultMessageHandler::OpenLogFile(easyvfs_context* pVFS, const char* filePath)
         {
-            m_log.Open(filePath, "GTEngine");
+            m_log.Open(pVFS, filePath, "GTEngine");
         }
 
 

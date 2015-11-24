@@ -2,8 +2,11 @@
 
 #include <GTEngine/GamePackager.hpp>
 #include <GTEngine/IO.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTLib/IO.hpp>
 #include <GTLib/Path.hpp>
+#include <easy_path/easy_path.h>
+#include <easy_fs/easy_vfs.h>
 
 namespace GTEngine
 {
@@ -21,12 +24,12 @@ namespace GTEngine
 
     void GamePackager::CopyDataDirectory(const char* sourceAbsolutePath, const char* destinationRelativePath)
     {
-        GTLib::String directoryName = GTLib::IO::FileName(sourceAbsolutePath);
+        GTLib::String directoryName = easypath_filename(sourceAbsolutePath);
 
         bool isRootDataDirectory = false;
         if (destinationRelativePath == nullptr)
         {
-            destinationRelativePath = GTLib::IO::FileName(sourceAbsolutePath);
+            destinationRelativePath = easypath_filename(sourceAbsolutePath);
 
             // When we hit this case, it means the directory is a root data directory. This will later on need to be part of the config, so we'll need
             // to keep track of it.
@@ -35,49 +38,50 @@ namespace GTEngine
         }
 
 
-        GTLib::IO::FileIterator iFile((GTLib::String(sourceAbsolutePath) + "/.*").c_str());
-        while (iFile)
+        easyvfs_iterator iFile;
+        if (easyvfs_begin_iteration(g_EngineContext->GetVFS(), sourceAbsolutePath, &iFile))
         {
-            auto fileAbsolutePath = iFile.name;
-            auto fileName         = GTLib::IO::FileName(fileAbsolutePath);
+            easyvfs_file_info fi;
+            while (easyvfs_next_iteration(g_EngineContext->GetVFS(), &iFile, &fi))
+            {
+                const char* fileAbsolutePath = fi.absolutePath;
+                const char* fileName         = easypath_filename(fileAbsolutePath);
 
-            if (iFile.isDirectory)
-            {
-                // Recursive. Don't want to copy over "var" directories.
-                if (!(isRootDataDirectory && GTLib::Strings::Equal<false>(fileName, "var")))
+                if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                 {
-                    this->CopyDataDirectory((GTLib::String(sourceAbsolutePath) + "/" + fileName).c_str(), (GTLib::String(destinationRelativePath) + "/" + fileName).c_str());
-                }
-            }
-            else
-            {
-                // It's a normal file.
-                //
-                // If the file is a model file that is not a .gtmodel, we need to check if it has an associated .gtmodel file that's newer. If so, we can
-                // ignore the original model file.
-                if (GTEngine::IO::IsSupportedModelExtension(fileName) && !GTLib::Path::ExtensionEqual(fileName, ".gtmodel"))
-                {
-                    // It's a non-gtmodel file. We need to look for an associated .gtmodel file.
-                    GTLib::FileInfo gtmodelInfo;
-                    if (GTLib::IO::GetFileInfo((GTLib::String(fileAbsolutePath) + ".gtmodel").c_str(), gtmodelInfo))
+                    // Recursive. Don't want to copy over "var" directories.
+                    if (!(isRootDataDirectory && GTLib::Strings::Equal<false>(fileName, "var")))
                     {
-                        GTLib::FileInfo originalInfo;
-                        if (GTLib::IO::GetFileInfo(fileAbsolutePath, originalInfo))
+                        this->CopyDataDirectory((GTLib::String(sourceAbsolutePath) + "/" + fileName).c_str(), (GTLib::String(destinationRelativePath) + "/" + fileName).c_str());
+                    }
+                }
+                else
+                {
+                    // It's a normal file.
+                    //
+                    // If the file is a model file that is not a .gtmodel, we need to check if it has an associated .gtmodel file that's newer. If so, we can
+                    // ignore the original model file.
+                    if (GTEngine::IO::IsSupportedModelExtension(fileName) && !GTLib::Path::ExtensionEqual(fileName, ".gtmodel"))
+                    {
+                        // It's a non-gtmodel file. We need to look for an associated .gtmodel file.
+                        easyvfs_file_info gtmodelInfo;
+                        if (easyvfs_get_file_info(g_EngineContext->GetVFS(), (GTLib::String(fileAbsolutePath) + ".gtmodel").c_str(), &gtmodelInfo))
                         {
-                            if (gtmodelInfo.lastModifiedTime > originalInfo.lastModifiedTime)
+                            easyvfs_file_info originalInfo;
+                            if (easyvfs_get_file_info(g_EngineContext->GetVFS(), fileAbsolutePath, &originalInfo))
                             {
-                                // We want to skip this file.
-                                ++iFile;
-                                continue;
+                                if (gtmodelInfo.lastModifiedTime > originalInfo.lastModifiedTime)
+                                {
+                                    // We want to skip this file.
+                                    continue;
+                                }
                             }
                         }
                     }
+
+                    this->CopyFile(fileAbsolutePath, (GTLib::String(destinationRelativePath) + "/" + fileName).c_str());
                 }
-
-                this->CopyFile(fileAbsolutePath, (GTLib::String(destinationRelativePath) + "/" + fileName).c_str());
             }
-
-            ++iFile;
         }
     }
 
@@ -90,7 +94,7 @@ namespace GTEngine
         // We need to let the packager know where the main executable is so we can correctly build the 
         if (destinationRelativePath == nullptr)
         {
-            destinationRelativePath = GTLib::IO::FileName(sourceAbsolutePath);
+            destinationRelativePath = easypath_filename(sourceAbsolutePath);
         }
 
         this->executableRelativePath = destinationRelativePath;
@@ -103,10 +107,10 @@ namespace GTEngine
     {
         if (destinationRelativePath == nullptr)
         {
-            destinationRelativePath = GTLib::IO::FileName(sourceAbsolutePath);
+            destinationRelativePath = easypath_filename(sourceAbsolutePath);
         }
 
-        return GTLib::IO::CopyFile(sourceAbsolutePath, (this->outputDirectoryAbsolutePath + "/" + destinationRelativePath).c_str());
+        return easyvfs_copy_file(g_EngineContext->GetVFS(), sourceAbsolutePath, (this->outputDirectoryAbsolutePath + "/" + destinationRelativePath).c_str(), false);
     }
 
 
@@ -133,20 +137,19 @@ namespace GTEngine
             GTLib::Path configPath(executableDirectory.c_str());
             configPath.Append("config.lua");
 
-
-            auto file = GTLib::IO::Open(configPath.c_str(), GTLib::IO::OpenMode::Write);
-            if (file != nullptr)
+            easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), configPath.c_str(), EASYVFS_WRITE, 0);
+            if (pFile != nullptr)
             {
                 for (size_t iDataDirectory = 0; iDataDirectory < dataDirectoryConfigPaths.count; ++iDataDirectory)
                 {
                     auto index = static_cast<int>(iDataDirectory + 1);       // +1 because Lua is 1 based.
                     auto path  = dataDirectoryConfigPaths[iDataDirectory].c_str();
 
-                    GTLib::IO::WriteString(file, GTLib::String::CreateFormatted("Directories.Data[%d] = \"%s\";", index, path).c_str());
+                    easyvfs_write_string(pFile, GTLib::String::CreateFormatted("Directories.Data[%d] = \"%s\";", index, path).c_str());
                 }
 
 
-                GTLib::IO::Close(file);
+                easyvfs_close(pFile);
                 return true;
             }
         }

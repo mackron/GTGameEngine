@@ -6,6 +6,8 @@
 #include <GTLib/String.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/stdlib.hpp>
+#include <GTEngine/GTEngine.hpp>
+#include <easy_path/easy_path.h>
 
 // Delete the headers below later on.
 #include <iostream>
@@ -188,24 +190,26 @@ namespace GTGUI
 
     bool StyleServer::LoadFromFile(const char* filePath)
     {
-        GTLib::FileInfo fi;
-        auto file = GTLib::OpenFile(filePath, GTLib::IO::OpenMode::Read, fi);
-        if (file != 0)
+        char* pFileData = easyvfs_open_and_read_text_file(GTEngine::g_EngineContext->GetVFS(), filePath, nullptr);
+        if (pFileData != nullptr)
         {
+            char absolutePath[EASYVFS_MAX_PATH];
+            if (!easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
+            {
+                // Failed to retrieve the absolute path. Just use the original path.
+                strcpy_s(absolutePath, sizeof(absolutePath), filePath);
+            }
+
             // We want to unload the file before re-loading it.
-            this->UnloadFile(fi.absolutePath.c_str());
-            
-            char* fileData = reinterpret_cast<char*>(malloc(static_cast<size_t>(fi.size + 1)));       // <-- +1 for null terminator.
-            GTLib::ReadFile(file, fileData, static_cast<size_t>(fi.size));
-            fileData[static_cast<size_t>(fi.size)] = '\0';
+            this->UnloadFile(absolutePath);
+
+            char absolutePathBase[EASYVFS_MAX_PATH];
+            easypath_copybasepath(absolutePath, absolutePathBase, sizeof(absolutePathBase));
+
+            bool successful = this->Load(pFileData, absolutePathBase, absolutePath);
             
 
-            bool successful = this->Load(fileData, GTLib::IO::RemoveFileNameFromPath(fi.absolutePath).c_str(), fi.absolutePath.c_str());
-            
-
-            free(fileData);
-            GTLib::CloseFile(file);
-            
+            easyvfs_free(pFileData);
             return successful;
         }
         else
@@ -221,20 +225,19 @@ namespace GTGUI
     void StyleServer::UnloadFile(const char* filePath)
     {
         // The file path needs to be absolute.
-        GTLib::String absolutePath;
-        if (!GTLib::IO::IsPathAbsolute(filePath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (!easypath_isabsolute(filePath))
         {
-            if (!GTLib::IO::FindAbsolutePath(filePath, absolutePath))
-            {
-                absolutePath = GTLib::IO::ToAbsolutePath(filePath);
+            if (!easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath))) {
+                strcpy_s(absolutePath, sizeof(absolutePath), filePath);
             }
         }
         else
         {
-            absolutePath = filePath;
+            strcpy_s(absolutePath, sizeof(absolutePath), filePath);
         }
         
-        this->Unload(absolutePath.c_str(), false);       // 'true' means to only remove the first occurance. There should only ever be a single file in the compilation stack at a time.
+        this->Unload(absolutePath, false);       // 'true' means to only remove the first occurance. There should only ever be a single file in the compilation stack at a time.
     }
 
 

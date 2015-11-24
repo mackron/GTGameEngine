@@ -3,6 +3,8 @@
 #include <GTLib/GUI/MarkupLoader.hpp>
 #include <GTLib/GUI/Server.hpp>
 #include <GTLib/IO.hpp>
+#include <GTEngine/GTEngine.hpp>
+#include <easy_path/easy_path.h>
 
 namespace GTGUI
 {
@@ -53,10 +55,10 @@ namespace GTGUI
     
     void MarkupLoader::UnloadFile(const char* filePath)
     {
-        GTLib::String absolutePath;
-        if (GTLib::IO::FindAbsolutePath(filePath, absolutePath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
         {
-            m_loadedFiles.Remove(absolutePath.c_str());
+            m_loadedFiles.Remove(absolutePath);
         }
     }
     
@@ -83,19 +85,18 @@ namespace GTGUI
             for (auto i = parser.includes.root; i != nullptr; i = i->next)
             {
                 // Step 1: Translate the 'url' attribute to an absolute path based on 'directory'.
-                GTLib::String absURL;
-
+                char absURL[EASYVFS_MAX_PATH];
                 if (absoluteDirectory != nullptr)
                 {
-                    absURL = GTLib::IO::ToAbsolutePath(i->start, absoluteDirectory);
+                    easypath_copyandappend(absURL, sizeof(absURL), absoluteDirectory, i->start);
                 }
                 else
                 {
-                    GTLib::IO::FindAbsolutePath(i->start, absURL);
+                    easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), i->start, absURL, sizeof(absURL));
                 }
 
                 // Step 2: Load the include file.
-                this->LoadFile(absURL.c_str(), loadedElementsOut);
+                this->LoadFile(absURL, loadedElementsOut);
             }
 
 
@@ -114,18 +115,18 @@ namespace GTGUI
             for (auto i = parser.externalStyles.root; i != nullptr; i = i->next)
             {
                 // Step 1: Get the absolute path of this URL based on 'directory'.
-                GTLib::String absURL;
+                char absURL[EASYVFS_MAX_PATH];
                 if (absoluteDirectory != nullptr)
                 {
-                    absURL = GTLib::IO::ToAbsolutePath(i->start, absoluteDirectory);
+                    easypath_copyandappend(absURL, sizeof(absURL), absoluteDirectory, i->start);
                 }
                 else
                 {
-                    GTLib::IO::FindAbsolutePath(i->start, absURL);
+                    easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), i->start, absURL, sizeof(absURL));
                 }
 
                 // Step 2: Load the file.
-                m_server.GetStyleServer().LoadFromFile(absURL.c_str());
+                m_server.GetStyleServer().LoadFromFile(absURL);
             }
 
             // 2) <style>...</style>
@@ -278,19 +279,18 @@ namespace GTGUI
             for (auto i = parser.externalScripts.root; i != nullptr; i = i->next)
             {
                 // Step 1: Get the absolute path of this URL based on 'directory'.
-                GTLib::String absURL;
-
+                char absURL[EASYVFS_MAX_PATH];
                 if (absoluteDirectory != nullptr)
                 {
-                    absURL = GTLib::IO::ToAbsolutePath(i->start, absoluteDirectory);
+                    easypath_copyandappend(absURL, sizeof(absURL), absoluteDirectory, i->start);
                 }
                 else
                 {
-                    GTLib::IO::FindAbsolutePath(i->start, absURL);
+                    easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), i->start, absURL, sizeof(absURL));
                 }
 
                 // Step 2: Load the file.
-                m_server.GetScriptServer().ExecuteFromFile(absURL.c_str(), 0);
+                m_server.GetScriptServer().ExecuteFromFile(absURL, 0);
             }
 
 
@@ -309,38 +309,31 @@ namespace GTGUI
     
     bool MarkupLoader::LoadFile(const char* filePath, GTLib::Vector<Element*> &loadedElementsOut)
     {
-        GTLib::String absolutePath;
-        if (GTLib::IO::FindAbsolutePath(filePath, absolutePath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath)))
         {
-            if (this->IsFileLoaded(absolutePath.c_str()))
+            if (this->IsFileLoaded(absolutePath))
             {
                 return true;
             }
             else
             {
-                GTLib::FileHandle file = GTLib::OpenFile(absolutePath.c_str(), GTLib::IO::OpenMode::Read);
-                if (file != 0)
+                size_t fileSize;
+                char* pFileData = easyvfs_open_and_read_text_file(GTEngine::g_EngineContext->GetVFS(), absolutePath, &fileSize);
+                if (pFileData != nullptr)
                 {
-                    size_t fileSize = static_cast<size_t>(GTLib::GetFileSize(file));
-                    
-                    void* fileBuffer = GTLib::MapFile(file, fileSize);
-                    if (fileBuffer != nullptr)
+                    char absoluteDir[EASYVFS_MAX_PATH];
+                    easypath_copybasepath(absolutePath, absoluteDir, sizeof(absoluteDir));
+
+                    bool result = this->Load(pFileData, fileSize, absoluteDir, loadedElementsOut);
+                    if (result)
                     {
-                        GTLib::String absoluteDirectory;
-                        GTLib::String devnull;
-                        GTLib::IO::SplitPath(absolutePath.c_str(), absoluteDirectory, devnull);
-                        
-                        bool result = this->Load(reinterpret_cast<char*>(fileBuffer), fileSize, absoluteDirectory.c_str(), loadedElementsOut);
-                        if (result)
-                        {
-                            // We need to keep track of the file so it's not unnecessarily reloaded.
-                            m_loadedFiles.Add(absolutePath.c_str(), true);
-                        }
-                        
-                        
-                        GTLib::CloseFile(file);     // <-- This will unmap the file.
-                        return result;
+                        // We need to keep track of the file so it's not unnecessarily reloaded.
+                        m_loadedFiles.Add(absolutePath, true);
                     }
+
+                    easyvfs_free(pFileData);
+                    return result;
                 }
             }
         }

@@ -9,7 +9,8 @@
 #include <GTLib/System.hpp>
 #include <GTLib/Windowing/Keys.hpp>
 #include <GTLib/Windowing/MouseButtons.hpp>
-
+#include <easy_path/easy_path.h>
+#include <GTEngine/GTEngine.hpp>
 
 // Temp until we get some more support in Script.
 extern "C"
@@ -1383,19 +1384,21 @@ namespace GTLib
                     GTLib::String query(directoryName);
                     query.Append(".*");
 
-                    IO::FileIterator iFile(query.c_str());
-                    while (iFile)
+                    easyvfs_iterator iFile;
+                    if (easyvfs_begin_iteration(GTEngine::g_EngineContext->GetVFS(), directoryName, &iFile))
                     {
-                        if (iFile.isDirectory)
+                        easyvfs_file_info fi;
+                        while (easyvfs_next_iteration(GTEngine::g_EngineContext->GetVFS(), &iFile, &fi))
                         {
-                            directories.Add(IO::FileName(iFile.name), true);
+                            if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
+                            {
+                                directories.Add(easypath_filename(fi.absolutePath), true);
+                            }
+                            else
+                            {
+                                files.Add(easypath_filename(fi.absolutePath), true);
+                            }
                         }
-                        else
-                        {
-                            files.Add(IO::FileName(iFile.name), true);
-                        }
-
-                        ++iFile;
                     }
 
 
@@ -1438,69 +1441,101 @@ namespace GTLib
             {
                 int __GetFileInfo(GTLib::Script &script)
                 {
-                    FileInfo info(script.ToString(1));
-                    
-                    script.Push(info.path.c_str());
-                    script.Push(info.absolutePath.c_str());
-                    script.Push(static_cast<int>(info.size));
-                    script.Push(static_cast<int>(info.lastModifiedTime));       // <-- Erroneous! time_t is 64-bit, but we're casting down to 32-bit!
-                    script.Push(info.isDirectory);
+                    //FileInfo info(script.ToString(1));
 
-                    return 5;
+                    easyvfs_file_info info;
+                    if (easyvfs_get_file_info(GTEngine::g_EngineContext->GetVFS(), script.ToString(1), &info))
+                    {
+                        script.Push(script.ToString(1));
+                        script.Push(info.absolutePath);
+                        script.Push(static_cast<int>(info.sizeInBytes));            // <-- Erroneous! sizeInBytes is 64-bit, but we're casting down to 32-bit!
+                        script.Push(static_cast<int>(info.lastModifiedTime));       // <-- Erroneous! lastModifiedTime is 64-bit, but we're casting down to 32-bit!
+                        script.Push((info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0);
+
+                        return 5;
+                    }
+                    else
+                    {
+                        return 0;
+                    }
                 }
 
                 int GetParentDirectoryPath(GTLib::Script &script)
                 {
-                    script.Push(GTLib::IO::GetParentDirectoryPath(script.ToString(1)).c_str());
+                    //script.Push(GTLib::IO::GetParentDirectoryPath(script.ToString(1)).c_str());
+
+                    char baseDir[EASYVFS_MAX_PATH];
+                    easypath_copybasepath(script.ToString(1), baseDir, sizeof(baseDir));
+
+                    script.Push(baseDir);
                     return 1;
                 }
 
                 int GetFileNameFromPath(GTLib::Script &script)
                 {
-                    script.Push(GTLib::IO::FileName(script.ToString(1)));
+                    script.Push(easypath_filename(script.ToString(1)));
                     return 1;
                 }
 
                 int GetExtension(GTLib::Script &script)
                 {
-                    script.Push(GTLib::IO::GetExtension(script.ToString(1)));
+                    //script.Push(GTLib::IO::GetExtension(script.ToString(1)));
+                    script.Push(easypath_extension(script.ToString(1)));
                     return 1;
                 }
 
                 int RemoveExtension(GTLib::Script &script)
                 {
-                    script.Push(GTLib::IO::RemoveExtension(script.ToString(1)).c_str());
+                    //script.Push(GTLib::IO::RemoveExtension(script.ToString(1)).c_str());
+
+                    char path[EASYVFS_MAX_PATH];
+                    easypath_copyandremoveextension(path, sizeof(path), script.ToString(1));
+
                     return 1;
                 }
 
                 int FileExists(GTLib::Script &script)
                 {
-                    script.Push(GTLib::IO::FileExists(script.ToString(1)));
+                    //script.Push(GTLib::IO::FileExists(script.ToString(1)));
+
+                    script.Push(easyvfs_exists(GTEngine::g_EngineContext->GetVFS(), script.ToString(1)));
                     return 1;
                 }
 
                 int CreateDirectory(GTLib::Script &script)
                 {
-                    GTLib::IO::PushCurrentDirectory();
-                    GTLib::IO::SetCurrentDirectory(script.ToString(1), true);
-                    GTLib::IO::PopCurrentDirectory();
+                    //GTLib::IO::PushCurrentDirectory();
+                    //GTLib::IO::SetCurrentDirectory(script.ToString(1), true);
+                    //GTLib::IO::PopCurrentDirectory();
 
+                    easyvfs_mkdir_recursive(GTEngine::g_EngineContext->GetVFS(), script.ToString(1));
                     return 0;
                 }
 
                 int DeleteDirectory(GTLib::Script &script)
                 {
-                    GTLib::IO::DeleteDirectory(script.ToString(1));
+                    //GTLib::IO::DeleteDirectory(script.ToString(1));
+
+                    if (easyvfs_is_existing_directory(GTEngine::g_EngineContext->GetVFS(), script.ToString(1))) {
+                        easyvfs_delete_file(GTEngine::g_EngineContext->GetVFS(), script.ToString(1));
+                    }
 
                     return 0;
                 }
 
                 int CreateEmptyFile(GTLib::Script &script)
                 {
-                    auto file = GTLib::IO::Open(script.ToString(1), GTLib::IO::OpenMode::Write | GTLib::IO::OpenMode::CreateDirs);
-                    if (file != nullptr)
+                    //auto file = GTLib::IO::Open(script.ToString(1), GTLib::IO::OpenMode::Write | GTLib::IO::OpenMode::CreateDirs);
+                    //if (file != nullptr)
+                    //{
+                    //    GTLib::IO::Close(file);
+                    //}
+
+                    // TODO: CREATE_DIRS
+                    easyvfs_file* pFile = easyvfs_open(GTEngine::g_EngineContext->GetVFS(), script.ToString(1), EASYVFS_WRITE, 0);
+                    if (pFile != nullptr)
                     {
-                        GTLib::IO::Close(file);
+                        easyvfs_close(pFile);
                     }
 
                     return 0;
@@ -1508,7 +1543,9 @@ namespace GTLib
 
                 int DeleteFile(GTLib::Script &script)
                 {
-                    GTLib::IO::DeleteFile(script.ToString(1));
+                    //GTLib::IO::DeleteFile(script.ToString(1));
+
+                    easyvfs_delete_file(GTEngine::g_EngineContext->GetVFS(), script.ToString(1));
                     return 0;
                 }
             }
@@ -1631,6 +1668,7 @@ namespace GTLib
             {
                 int CreateFromFile(GTLib::Script &script)
                 {
+#if 0
                     GTLib::String absolutePath;
                     if (GTLib::IO::FindAbsolutePath(script.ToString(1), absolutePath))
                     {
@@ -1645,6 +1683,18 @@ namespace GTLib
                             return 2;
                         }
                     }
+#endif
+
+                    easyvfs_file* pFile = easyvfs_open(GTEngine::g_EngineContext->GetVFS(), script.ToString(1), EASYVFS_READ, 0);
+                    if (pFile != nullptr)
+                    {
+                        auto deserializer = new FileDeserializer(pFile);
+
+                        script.Push(deserializer);
+                        script.Push(reinterpret_cast<void*>(pFile));
+
+                        return 2;
+                    }
 
                     return 0;
                 }
@@ -1652,9 +1702,9 @@ namespace GTLib
                 int DeleteFromFile(GTLib::Script &script)
                 {
                     auto deserializer = reinterpret_cast<Deserializer*>(script.ToPointer(1));
-                    auto file         = reinterpret_cast<FileHandle>(script.ToPointer(2));
+                    auto file         = reinterpret_cast<easyvfs_file*>(script.ToPointer(2));
 
-                    GTLib::CloseFile(file);
+                    easyvfs_close(file);
                     delete deserializer;
 
                     return 0;

@@ -5,9 +5,11 @@
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/IO.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTLib/GUI/Server.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/Keyboard.hpp>
+#include <easy_path/easy_path.h>
 
 
 #if defined(_MSC_VER)
@@ -147,7 +149,7 @@ namespace GTEngine
 
 
                 // Here we need to attach our files watcher event handler.
-                this->game.GetDataFilesWatcher().AddEventHandler(this->dataFilesWatcherEventHandler);
+                //this->game.GetDataFilesWatcher().AddEventHandler(this->dataFilesWatcherEventHandler);
 
 
                 this->isStarted = true;
@@ -171,12 +173,12 @@ namespace GTEngine
 
             // We always want to watch the data files while in the editor, but the game may or may not want to have watching enabled after the editor is closed. We will need
             // keep track of whether or not we should disable watching when the editor is closed.
-            this->disableFileWatchingAfterClose = !this->game.IsDataFilesWatchingEnabled();
-            this->game.EnableDataFilesWatching();
+            //this->disableFileWatchingAfterClose = !this->game.IsDataFilesWatchingEnabled();
+            //this->game.EnableDataFilesWatching();
 
             // We also want to get an update on the data files immediately.
-            this->game.GetDataFilesWatcher().CheckForChanges(false);
-            this->game.GetDataFilesWatcher().DispatchEvents();
+            //this->game.GetDataFilesWatcher().CheckForChanges(false);
+            //this->game.GetDataFilesWatcher().DispatchEvents();
 
 
             this->isOpen = true;
@@ -193,14 +195,14 @@ namespace GTEngine
             this->SaveAllOpenModifiedFiles();
 
             // We want to update the data files so we can see them in-game.
-            this->game.GetDataFilesWatcher().CheckForChanges(false);
-            this->game.GetDataFilesWatcher().DispatchEvents();
+            //this->game.GetDataFilesWatcher().CheckForChanges(false);
+            //this->game.GetDataFilesWatcher().DispatchEvents();
 
             // We may want to disable file watching.
-            if (this->disableFileWatchingAfterClose)
-            {
-                this->game.DisableDataFilesWatching();
-            }
+            //if (this->disableFileWatchingAfterClose)
+            //{
+            //    this->game.DisableDataFilesWatching();
+            //}
 
 
             this->isOpen = false;
@@ -214,8 +216,8 @@ namespace GTEngine
 
 
         // We need to make sure we have an absolute and relative path.
-        GTLib::String absolutePath;
-        GTLib::String relativePath;
+        char absolutePath[EASYVFS_MAX_PATH];
+        char relativePath[EASYVFS_MAX_PATH];
 
         if (!isSpecialEditor)
         {
@@ -223,8 +225,11 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = path;
-                    relativePath = GTLib::IO::ToRelativePath(path, relativeTo);
+                    //absolutePath = path;
+                    //relativePath = GTLib::IO::ToRelativePath(path, relativeTo);
+
+                    strcpy_s(absolutePath, sizeof(absolutePath), path);
+                    strcpy_s(relativePath, sizeof(relativePath), GTLib::IO::ToRelativePath(path, relativeTo).c_str());
                 }
                 else
                 {
@@ -235,16 +240,21 @@ namespace GTEngine
             else
             {
                 // The file needs to exist. If it doesn't, we need to return false.
-                if (GTLib::IO::FindAbsolutePath(path, absolutePath))
+                if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), path, absolutePath, sizeof(absolutePath)))
                 {
-                    relativePath = path;
+                    strcpy_s(relativePath, sizeof(relativePath), path);
                 }
                 else
                 {
                     // The file might have an associated .gtmodel file. We'll let it pass if so.
-                    if (GTEngine::IO::IsSupportedModelExtension(path) && GTLib::IO::FindAbsolutePath((GTLib::String(path) + ".gtmodel").c_str(), absolutePath))
+                    if (GTEngine::IO::IsSupportedModelExtension(path))
                     {
-                        relativePath = path;
+                        char pathWithExt[EASYVFS_MAX_PATH];
+                        easypath_copyandappendextension(pathWithExt, sizeof(pathWithExt), path, "gtmodel");
+
+                        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), pathWithExt, absolutePath, sizeof(absolutePath))) {
+                            strcpy_s(relativePath, sizeof(relativePath), path);
+                        }
                     }
                     else
                     {
@@ -256,8 +266,8 @@ namespace GTEngine
         }
         else
         {
-            absolutePath = path;
-            relativePath = path;
+            strcpy_s(absolutePath, sizeof(absolutePath), path);
+            strcpy_s(relativePath, sizeof(relativePath), path);
         }
 
 
@@ -265,18 +275,21 @@ namespace GTEngine
         // to open it.
         SubEditor* newSubEditor = nullptr;
 
-        auto iExistingSubEditor = this->openedFiles.Find(absolutePath.c_str());
+        auto iExistingSubEditor = this->openedFiles.Find(absolutePath);
         if (iExistingSubEditor == nullptr)
         {
             if (!isSpecialEditor)
             {
                 // We'll check if the file exists from here.
-                if (!GTLib::IO::FileExists(absolutePath.c_str()))
+                if (!easyvfs_is_existing_file(g_EngineContext->GetVFS(), absolutePath))
                 {
                     // The file doesn't exist, but it might be a model so we'll need to check if it's got an associated .gtmodel file.
-                    if (GTEngine::IO::IsSupportedModelExtension(absolutePath.c_str()))
+                    if (GTEngine::IO::IsSupportedModelExtension(absolutePath))
                     {
-                        if (!GTLib::IO::FileExists((absolutePath + ".gtmodel").c_str()))
+                        char absolutePathWithExt[EASYVFS_MAX_PATH];
+                        easypath_copyandappendextension(absolutePathWithExt, sizeof(absolutePathWithExt), absolutePath, "gtmodel");
+
+                        if (!easyvfs_is_existing_file(g_EngineContext->GetVFS(), absolutePathWithExt))
                         {
                             GTEngine::PostError("Editor: Can not open model file '%s'. Associated .gtmodel file does not exist.\n", path);
                             return nullptr;
@@ -291,45 +304,45 @@ namespace GTEngine
 
 
                 // The file exists, so now we just create our sub-editor. The specific sub-editor will be based on the file name.
-                auto type = GTEngine::IO::GetAssetTypeFromExtension(absolutePath.c_str());
+                auto type = GTEngine::IO::GetAssetTypeFromExtension(absolutePath);
 
                 switch (type)
                 {
                 case AssetType_Image:
                     {
-                        newSubEditor = new ImageEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        newSubEditor = new ImageEditor(*this, absolutePath, relativePath);
                         break;
                     }
 
                 case AssetType_Model:
                     {
-                        newSubEditor = new ModelEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        newSubEditor = new ModelEditor(*this, absolutePath, relativePath);
                         break;
                     }
 
                 case AssetType_Material:
                     {
-                        newSubEditor = new MaterialEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        newSubEditor = new MaterialEditor(*this, absolutePath, relativePath);
                         break;
                     }
 
 
                 case AssetType_Scene:
                     {
-                        newSubEditor = new SceneEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        newSubEditor = new SceneEditor(*this, absolutePath, relativePath);
                         break;
                     }
 
                 case AssetType_ParticleSystem:
                     {
-                        newSubEditor = new ParticleEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        newSubEditor = new ParticleEditor(*this, absolutePath, relativePath);
                         break;
                     }
 
                 case AssetType_Script:
                 case AssetType_TextFile:
                     {
-                        newSubEditor = new TextEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        newSubEditor = new TextEditor(*this, absolutePath, relativePath);
                         break;
                     }
 
@@ -342,16 +355,16 @@ namespace GTEngine
                         // If we get here it means we don't have a sub editor for the given asset type. We will post a warning and just create
                         // a SubEditor object for it.
                         GTEngine::Log("Warning: Editor: An editor is not currently supported for the given asset. '%s'.", path);
-                        newSubEditor = new SubEditor(*this, absolutePath.c_str(), relativePath.c_str());
+                        newSubEditor = new SubEditor(*this, absolutePath, relativePath);
                     }
                 }
             }
             else
             {
                 // Specials.
-                if (GTLib::Strings::Equal<false>(absolutePath.c_str(), PackagingToolPath))
+                if (GTLib::Strings::Equal<false>(absolutePath, PackagingToolPath))
                 {
-                    newSubEditor = new PackagingToolEditor(*this, absolutePath.c_str());
+                    newSubEditor = new PackagingToolEditor(*this, absolutePath);
                 }
             }
 
@@ -359,7 +372,7 @@ namespace GTEngine
             if (newSubEditor != nullptr)
             {
                 // At this point we will have a sub-editor and all we need to do is add it to our list and show it.
-                this->openedFiles.Add(absolutePath.c_str(), newSubEditor);
+                this->openedFiles.Add(absolutePath, newSubEditor);
 
                 // There is a center panel that needs to be shown. It is the center, center panel.
                 this->GUI.EditorCenterCenterPanel->Show();
@@ -372,14 +385,15 @@ namespace GTEngine
         }
 
         // Now we just to need show the newly opened file.
-        this->ShowFile(absolutePath.c_str());
+        this->ShowFile(absolutePath);
 
         return newSubEditor;
     }
 
     void Editor::CloseFile(const char* path, const char* relativeTo)
     {
-        GTLib::String absolutePath(path);
+        char absolutePath[EASYVFS_MAX_PATH];
+        strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
         {
@@ -387,7 +401,8 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -398,7 +413,7 @@ namespace GTEngine
         }
 
         // At this point we will have our absolute path. We need to retrieve the sub editor, and call it's hide function before we completely delete it.
-        auto iEditor = this->openedFiles.Find(absolutePath.c_str());
+        auto iEditor = this->openedFiles.Find(absolutePath);
         if (iEditor != nullptr)
         {
             auto editor = iEditor->value;
@@ -408,11 +423,11 @@ namespace GTEngine
                 // the file is saved and closed.
                 if (editor->IsMarkedAsModified())
                 {
-                    this->ShowSaveFileDialog(absolutePath.c_str());
+                    this->ShowSaveFileDialog(absolutePath);
                 }
                 else
                 {
-                    this->ForceCloseFile(absolutePath.c_str());
+                    this->ForceCloseFile(absolutePath);
                 }
             }
         }
@@ -420,7 +435,8 @@ namespace GTEngine
 
     void Editor::ForceCloseFile(const char* path, const char* relativeTo)
     {
-        GTLib::String absolutePath(path);
+        char absolutePath[EASYVFS_MAX_PATH];
+        strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
         {
@@ -428,7 +444,8 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -439,7 +456,7 @@ namespace GTEngine
         }
 
         // At this point we will have our absolute path. We need to retrieve the sub editor, and call it's hide function before we completely delete it.
-        auto iEditor = this->openedFiles.Find(absolutePath.c_str());
+        auto iEditor = this->openedFiles.Find(absolutePath);
         if (iEditor != nullptr)
         {
             auto editor = iEditor->value;
@@ -498,7 +515,8 @@ namespace GTEngine
 
     bool Editor::ShowFile(const char* path, const char* relativeTo)
     {
-        GTLib::String absolutePath(path);
+        char absolutePath[EASYVFS_MAX_PATH];
+        strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
         {
@@ -506,7 +524,8 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -516,7 +535,7 @@ namespace GTEngine
             }
         }
 
-        auto iEditorToShow = this->openedFiles.Find(absolutePath.c_str());
+        auto iEditorToShow = this->openedFiles.Find(absolutePath);
         if (iEditorToShow != nullptr)
         {
             auto editorToShow = iEditorToShow->value;
@@ -595,7 +614,8 @@ namespace GTEngine
 
     bool Editor::SaveFile(const char* path, const char* relativeTo)
     {
-        GTLib::String absolutePath(path);
+        char absolutePath[EASYVFS_MAX_PATH];
+        strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
         {
@@ -603,7 +623,8 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -613,7 +634,7 @@ namespace GTEngine
             }
         }
 
-        auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
+        auto iSubEditor = this->openedFiles.Find(absolutePath);
         if (iSubEditor != nullptr)
         {
             auto subEditor = iSubEditor->value;
@@ -658,7 +679,8 @@ namespace GTEngine
 
     void Editor::MarkFileAsModified(const char* path, const char* relativeTo)
     {
-        GTLib::String absolutePath(path);
+        char absolutePath[EASYVFS_MAX_PATH];
+        strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
         {
@@ -666,7 +688,8 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -676,7 +699,7 @@ namespace GTEngine
             }
         }
 
-        auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
+        auto iSubEditor = this->openedFiles.Find(absolutePath);
         if (iSubEditor != nullptr)
         {
             auto subEditor = iSubEditor->value;
@@ -690,7 +713,8 @@ namespace GTEngine
 
     void Editor::UnmarkFileAsModified(const char* path, const char* relativeTo)
     {
-        GTLib::String absolutePath(path);
+        char absolutePath[EASYVFS_MAX_PATH];
+        strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
         {
@@ -698,7 +722,8 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -708,7 +733,7 @@ namespace GTEngine
             }
         }
 
-        auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
+        auto iSubEditor = this->openedFiles.Find(absolutePath);
         if (iSubEditor != nullptr)
         {
             auto subEditor = iSubEditor->value;
@@ -723,7 +748,8 @@ namespace GTEngine
 
     bool Editor::IsFileMarkedAsModified(const char* path, const char* relativeTo)
     {
-        GTLib::String absolutePath(path);
+        char absolutePath[EASYVFS_MAX_PATH];
+        strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
         {
@@ -731,7 +757,8 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -741,7 +768,7 @@ namespace GTEngine
             }
         }
 
-        auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
+        auto iSubEditor = this->openedFiles.Find(absolutePath);
         if (iSubEditor != nullptr)
         {
             auto subEditor = iSubEditor->value;
@@ -812,7 +839,8 @@ namespace GTEngine
 
     GTGUI::Element* Editor::GetFileEditorElement(const char* path, const char* relativeTo)
     {
-        GTLib::String absolutePath(path);
+        char absolutePath[EASYVFS_MAX_PATH];
+        strcpy_s(absolutePath, sizeof(absolutePath), path);
 
         if (!this->IsSpecialPath(path))
         {
@@ -820,7 +848,8 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    //absolutePath = GTLib::IO::ToAbsolutePath(path, relativeTo);
+                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -830,7 +859,7 @@ namespace GTEngine
             }
         }
 
-        auto iSubEditor = this->openedFiles.Find(absolutePath.c_str());
+        auto iSubEditor = this->openedFiles.Find(absolutePath);
         if (iSubEditor != nullptr)
         {
             auto subEditor = iSubEditor->value;
@@ -961,11 +990,11 @@ namespace GTEngine
                                 assert(script.IsFunction(-1));
                                 {
                                     script.PushNewTable();
-                                    script.SetTableValue(-1, "path",             item.info.absolutePath.c_str());
-                                    script.SetTableValue(-1, "absolutePath",     item.info.absolutePath.c_str());
-                                    script.SetTableValue(-1, "size",             item.info.size);
-                                    script.SetTableValue(-1, "lastModifiedTime", item.info.lastModifiedTime);
-                                    script.SetTableValue(-1, "isDirectory",      item.info.isDirectory);
+                                    script.SetTableValue(-1, "path",             item.info.absolutePath);
+                                    script.SetTableValue(-1, "absolutePath",     item.info.absolutePath);
+                                    script.SetTableValue(-1, "size",             (int)item.info.sizeInBytes);
+                                    script.SetTableValue(-1, "lastModifiedTime", (int)item.info.lastModifiedTime);
+                                    script.SetTableValue(-1, "isDirectory",      (item.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0);
                                     script.Call(1, 1);
 
                                     script.InsertIntoStack(-4);
@@ -1030,11 +1059,11 @@ namespace GTEngine
                                 assert(script.IsFunction(-1));
                                 {
                                     script.PushNewTable();
-                                    script.SetTableValue(-1, "path",             item.info.absolutePath.c_str());
-                                    script.SetTableValue(-1, "absolutePath",     item.info.absolutePath.c_str());
-                                    script.SetTableValue(-1, "size",             item.info.size);
-                                    script.SetTableValue(-1, "lastModifiedTime", item.info.lastModifiedTime);
-                                    script.SetTableValue(-1, "isDirectory",      item.info.isDirectory);
+                                    script.SetTableValue(-1, "path",             item.info.absolutePath);
+                                    script.SetTableValue(-1, "absolutePath",     item.info.absolutePath);
+                                    script.SetTableValue(-1, "size",             (int)item.info.sizeInBytes);
+                                    script.SetTableValue(-1, "lastModifiedTime", (int)item.info.lastModifiedTime);
+                                    script.SetTableValue(-1, "isDirectory",      (item.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0);
                                     script.Call(1, 1);
 
                                     script.InsertIntoStack(-4);
@@ -1098,11 +1127,11 @@ namespace GTEngine
                                 assert(script.IsFunction(-1));
                                 {
                                     script.PushNewTable();
-                                    script.SetTableValue(-1, "path",             item.info.absolutePath.c_str());
-                                    script.SetTableValue(-1, "absolutePath",     item.info.absolutePath.c_str());
-                                    script.SetTableValue(-1, "size",             item.info.size);
-                                    script.SetTableValue(-1, "lastModifiedTime", item.info.lastModifiedTime);
-                                    script.SetTableValue(-1, "isDirectory",      item.info.isDirectory);
+                                    script.SetTableValue(-1, "path",             item.info.absolutePath);
+                                    script.SetTableValue(-1, "absolutePath",     item.info.absolutePath);
+                                    script.SetTableValue(-1, "size",             (int)item.info.sizeInBytes);
+                                    script.SetTableValue(-1, "lastModifiedTime", (int)item.info.lastModifiedTime);
+                                    script.SetTableValue(-1, "isDirectory",      (item.info.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0);
                                     script.Call(1, 1);
 
                                     script.InsertIntoStack(-4);

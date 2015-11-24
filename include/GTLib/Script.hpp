@@ -7,6 +7,7 @@
 #include <GTLib/Vector.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/Strings/LineIterator.hpp>
+#include <easy_fs/easy_vfs.h>
 
 namespace GTLib
 {
@@ -194,7 +195,7 @@ namespace GTLib
         *   \remarks
         *       Execute the script with Script::Execute().
         */
-        virtual bool LoadFile(const char *fileName);
+        virtual bool LoadFile(easyvfs_context* pVFS, const char *fileName);
 
         /**
         *   \brief  Executes the script.
@@ -253,7 +254,7 @@ namespace GTLib
         *       return this->LoadFile(someFileName) && this->Execute();
         *       </code>
         */
-        virtual bool ExecuteFile(const char* filename, int returnValueCount = -1) { return this->LoadFileAndExecute(filename, returnValueCount); }
+        virtual bool ExecuteFile(easyvfs_context* pVFS, const char* filename, int returnValueCount = -1) { return this->LoadFileAndExecute(pVFS, filename, returnValueCount); }
 
 
         /**
@@ -287,7 +288,7 @@ namespace GTLib
         *   \param  returnValueCount [in] The number of return values.
         *   \return                       True if the file is loaded and executed successfully.
         */
-        virtual bool LoadFileAndExecute(const char* filename, int returnValueCount = -1);
+        virtual bool LoadFileAndExecute(easyvfs_context* pVFS, const char* filename, int returnValueCount = -1);
 
 
         /// Loads the GT library.

@@ -631,7 +631,9 @@ namespace GTGUI
 
                                                                         // We have the URL, so now it needs to translated into an absolute path and added to the value string.
                                                                         GTLib::Path translatedURL(url.c_str());
-                                                                        translatedURL.MakeAbsolute(baseURLPath != nullptr ? baseURLPath : GTLib::IO::GetCurrentDirectory().c_str());
+                                                                        if (baseURLPath != nullptr) {
+                                                                            translatedURL.MakeAbsolute(baseURLPath);
+                                                                        }
 
                                                                         // We may need to ensure we place a space between the existing value string and the url.
                                                                         if (value.GetLengthInTs() > 0)

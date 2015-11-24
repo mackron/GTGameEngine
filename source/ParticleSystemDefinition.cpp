@@ -2,6 +2,7 @@
 
 #include <GTEngine/ParticleSystemDefinition.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/IO.hpp>
 
@@ -21,17 +22,17 @@ namespace GTEngine
 
     bool ParticleSystemDefinition::LoadFromFile(const char* fileNameIn, const char* relativePathIn)
     {
-        GTLib::String newAbsolutePath;
-        GTLib::String newRelativePath;
+        char newAbsolutePath[EASYVFS_MAX_PATH];
+        char newRelativePath[EASYVFS_MAX_PATH];
 
 
         if (GTLib::Path::IsAbsolute(fileNameIn))
         {
-            newAbsolutePath = fileNameIn;
+            strcpy_s(newAbsolutePath, sizeof(newAbsolutePath), fileNameIn);
 
             if (relativePathIn != nullptr)
             {
-                newRelativePath = relativePathIn;
+                strcpy_s(newRelativePath, sizeof(newRelativePath), relativePathIn);
             }
             else
             {
@@ -41,26 +42,26 @@ namespace GTEngine
         }
         else
         {
-            newRelativePath = fileNameIn;
+            strcpy_s(newRelativePath, sizeof(newRelativePath), fileNameIn);
 
-            if (!GTLib::IO::FindAbsolutePath(fileNameIn, newAbsolutePath))
+            if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileNameIn, newAbsolutePath, sizeof(newAbsolutePath)))
             {
                 return false;
             }
         }
 
 
-        auto file = GTLib::IO::Open(newAbsolutePath.c_str(), GTLib::IO::OpenMode::Binary | GTLib::IO::OpenMode::Read);
-        if (file != nullptr)
+        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), newAbsolutePath, EASYVFS_READ, 0);
+        if (pFile != nullptr)
         {
-            GTLib::FileDeserializer deserializer(file);
+            GTLib::FileDeserializer deserializer(pFile);
             this->Deserialize(deserializer);
 
 
             this->absolutePath = newAbsolutePath;
             this->relativePath = newRelativePath;
 
-            GTLib::IO::Close(file);
+            easyvfs_close(pFile);
             return true;
         }
 

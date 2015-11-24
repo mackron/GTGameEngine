@@ -4,6 +4,7 @@
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/IO.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -256,7 +257,7 @@ namespace GTEngine
 
         this->isSaving = true;
         {
-            auto file = GTLib::IO::Open(this->GetAbsolutePath(), GTLib::IO::OpenMode::Write);
+            auto file = easyvfs_open(g_EngineContext->GetVFS(), this->GetAbsolutePath(), EASYVFS_WRITE, 0);
             if (file != nullptr)
             {
                 GTLib::FileSerializer serializer(file);
@@ -264,7 +265,7 @@ namespace GTEngine
 
                 this->UnmarkAsModified();
 
-                GTLib::IO::Close(file);
+                easyvfs_close(file);
                 wasSaved = true;
 
 

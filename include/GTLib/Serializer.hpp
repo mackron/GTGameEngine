@@ -7,7 +7,8 @@
 #include <cstring>      // For memcpy()
 #include "Math.hpp"     // For GTLib::Max().
 #include "String.hpp"   // For GTLib::String specialization.
-#include "IO.hpp"       // For FILE.
+//#include "IO.hpp"       // For FILE.
+#include <easy_fs/easy_vfs.h>
 
 namespace GTLib
 {
@@ -251,11 +252,11 @@ namespace GTLib
 
         /// Default constructor.
         FileSerializer(FILE* fileIn)
-            : fileSTD(fileIn), fileGT(0)
+            : fileSTD(fileIn), fileVFS(nullptr)
         {
         }
-        FileSerializer(GTLib::FileHandle fileIn)
-            : fileSTD(nullptr), fileGT(fileIn)
+        FileSerializer(easyvfs_file* pFileIn)
+            : fileSTD(nullptr), fileVFS(pFileIn)
         {
         }
 
@@ -268,16 +269,16 @@ namespace GTLib
         /// Serializer::Write().
         void Write(const void* bufferIn, size_t bufferInSizeInBytes)
         {
-            assert(this->fileSTD != nullptr || this->fileGT != 0);
-            assert(this->fileSTD == nullptr || this->fileGT == 0);
+            assert(this->fileSTD != nullptr || this->fileVFS != nullptr);
+            assert(this->fileSTD == nullptr || this->fileVFS == nullptr);
 
             if (this->fileSTD != nullptr)
             {
-                GTLib::IO::Write(this->fileSTD, bufferIn, bufferInSizeInBytes);
+                fwrite(bufferIn, 1, bufferInSizeInBytes, this->fileSTD);
             }
             else
             {
-                GTLib::WriteFile(this->fileGT, bufferIn, bufferInSizeInBytes);
+                easyvfs_write(this->fileVFS, bufferIn, static_cast<unsigned int>(bufferInSizeInBytes), nullptr);
             }
         }
 
@@ -298,11 +299,11 @@ namespace GTLib
 
     private:
 
-        /// The standard C file to write to. If set to null, fileGT must be non-zero.
+        /// The standard C file to write to. If set to null, fileVFS must be non-zero.
         FILE* fileSTD;
 
-        /// The GT file handle object to write to. If this is zero, fileSTD must be non-null.
-        FileHandle fileGT;
+        /// The virtual file system file object to write to. If this is NULL, fileSTD must be non-null.
+        easyvfs_file* fileVFS;
 
 
     private:    // No copying

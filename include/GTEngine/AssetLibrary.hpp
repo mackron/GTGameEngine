@@ -8,6 +8,7 @@
 #include <GTLib/Map.hpp>
 #include <GTLib/IO.hpp>
 #include <GTLib/Threading/Mutex.hpp>
+#include <easy_fs/easy_vfs.h>
 
 namespace GT
 {
@@ -56,17 +57,24 @@ namespace GT
 
             struct FileCounter
             {
-                FileCounter(GTLib::FileHandle file, unsigned int count)
-                    : m_file(file), m_count(count)
+                FileCounter(easyvfs_file* file, unsigned int count, size_t fileSize, void* fileData)
+                    : m_file(file), m_count(count), dataSize(fileSize), pFileData(fileData)
                 {
                 }
 
                 /// The file handle.
-                GTLib::FileHandle m_file;
+                easyvfs_file* m_file;
 
                 /// The current open counter. When a file is opened, this is incremented. When it is closed, this is decremented. When it hits 0,
                 /// the file will be closed for real.
                 unsigned int m_count;
+
+
+                /// The size of the file data.
+                size_t dataSize;
+
+                /// A pointer to the file data.
+                void* pFileData;
             };
 
 

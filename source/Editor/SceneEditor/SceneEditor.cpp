@@ -8,6 +8,7 @@
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/Scripting.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTLib/Serializer.hpp>
 #include <GTLib/Deserializer.hpp>
 #include <GTLib/Path.hpp>
@@ -81,7 +82,7 @@ namespace GTEngine
         auto &script = this->GetScript();
 
         // We need to load the scene.
-        auto file = GTLib::IO::Open(absolutePath, GTLib::IO::OpenMode::Read);
+        easyvfs_file* file = easyvfs_open(g_EngineContext->GetVFS(), absolutePath, EASYVFS_READ, 0);
         if (file != nullptr)
         {
             // We need to now create the GUI elements for this particular file. We start with the main element.
@@ -175,7 +176,7 @@ namespace GTEngine
 
 
             // At this point we should actually load the scene file. If this is an empty file, we'll just load an empty scene.
-            if (GTLib::IO::Size(file) > 0)
+            if (easyvfs_file_size(file) > 0)
             {
                 GTLib::FileDeserializer deserializer(file);
                 this->DeserializeScene(deserializer);
@@ -192,7 +193,7 @@ namespace GTEngine
 
 
             // The scene will be done loading by this pointer, so we can close the file.
-            GTLib::IO::Close(file);
+            easyvfs_close(file);
         }
         //__itt_pause();
     }
@@ -2509,7 +2510,7 @@ namespace GTEngine
 
     bool SceneEditor::Save()
     {
-        FILE* file = GTLib::IO::Open(this->GetAbsolutePath(), GTLib::IO::OpenMode::Write);
+        easyvfs_file* file = easyvfs_open(g_EngineContext->GetVFS(), this->GetAbsolutePath(), EASYVFS_WRITE, 0);
         if (file != nullptr)
         {
             // If the physics simulation is running or the game is playing, it needs to be stopped first.
@@ -2526,7 +2527,7 @@ namespace GTEngine
             GTLib::FileSerializer serializer(file);
             this->SerializeScene(serializer);
 
-            GTLib::IO::Close(file);
+            easyvfs_close(file);
 
             this->UnmarkAsModified();
 
@@ -2778,8 +2779,13 @@ namespace GTEngine
 
     void SceneEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
+        // NOTE: File System Refactor: Disabling hot reloading for now due to not having proper relative paths working yet. Need easy_fsw to report
+        //       the relative and base paths for a particular file.
+        (void)item;
+
+#if 0
         // We want to go through and notify the editor of a change to the model component of any scene node referencing this file (if it's a model file).
-        if (GTEngine::IO::IsSupportedModelExtension(item.info.path.c_str()))
+        if (GTEngine::IO::IsSupportedModelExtension(item.info.absolutePath))
         {
             size_t sceneNodeCount = m_scene.GetSceneNodeCount();
 
@@ -2823,7 +2829,7 @@ namespace GTEngine
                 }
             }
         }
-        else if (GTEngine::IO::IsSupportedPrefabExtension(item.relativePath.c_str()))
+        else if (GTEngine::IO::IsSupportedPrefabExtension(item.info.absolutePath))
         {
             this->RelinkSceneNodesLinkedToPrefab(item.relativePath.c_str());
         }
@@ -2837,6 +2843,7 @@ namespace GTEngine
                 this->UpdateAllSceneNodesLinkedToScript(item.relativePath.c_str());
             }
         }
+#endif
     }
 
 

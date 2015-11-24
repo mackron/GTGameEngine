@@ -5,6 +5,7 @@
 #include <GTEngine/Game.hpp>
 #include <GTEngine/Scripting.hpp>
 #include <GTLib/Path.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -22,8 +23,8 @@ namespace GTEngine
           compilationScript(nullptr),
           isScriptFile(false)
     {
-        GTLib::String fileContent;
-        if (GTLib::IO::OpenAndReadTextFile(absolutePath, fileContent))
+        char* fileContent = easyvfs_open_and_read_text_file(g_EngineContext->GetVFS(), absolutePath, nullptr);
+        if (fileContent != nullptr)
         {
             auto &gui    = this->GetGUI();
             auto &script = this->GetScript();
@@ -61,7 +62,7 @@ namespace GTEngine
                 this->textArea = gui.GetElementByID(script.GetString(GTLib::String::CreateFormatted("GTGUI.Server.GetElementByID('%s').TextBox.TextArea:GetID();", this->mainElement->id).c_str()));
                 assert(this->textArea != nullptr);
                 {
-                    this->textArea->SetText(fileContent.c_str());
+                    this->textArea->SetText(fileContent);
                     this->textArea->SetStyleAttribute("background-color", "inherit");
                     this->textArea->SetStyleAttribute("text-color",       "inherit");
                      
@@ -108,6 +109,9 @@ namespace GTEngine
                     this->CompileAndUpdateErrorOutput();
                 }
             }
+
+            
+            easyvfs_free(fileContent);
         }
     }
 
@@ -172,11 +176,11 @@ namespace GTEngine
         auto text = this->textArea->GetText();
         if (text != nullptr)
         {
-            wasSaved = GTLib::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), text);
+            wasSaved = easyvfs_open_and_write_text_file(GTEngine::g_EngineContext->GetVFS(), this->GetAbsolutePath(), text);
         }
         else
         {
-            wasSaved = GTLib::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), "");
+            wasSaved = easyvfs_open_and_write_text_file(GTEngine::g_EngineContext->GetVFS(), this->GetAbsolutePath(), "");
         }
 
         if (wasSaved)

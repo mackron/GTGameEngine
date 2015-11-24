@@ -5,6 +5,7 @@
 
 #include "IO.hpp"
 #include "Vector.hpp"
+#include <easy_fs/easy_vfs.h>
 
 namespace GTLib
 {
@@ -57,7 +58,7 @@ namespace GTLib
         *       \par
         *       This constructor will attempt to open the log. Use IsOpen() to determine if the log was opened successfully.
         */
-        Log(const char *fileName, const char *title);
+        Log(easyvfs_context* pVFS, const char *fileName, const char *title);
 
         /**
         *   \brief  Opens a log for writing.
@@ -66,7 +67,7 @@ namespace GTLib
         *   \remarks
         *       A log must be opened before it can be used.
         */
-        bool Open(const char *fileName, const char *title);
+        bool Open(easyvfs_context* pVFS, const char *fileName, const char *title);
 
         /**
         *   \brief  Closes the log.
@@ -130,7 +131,7 @@ namespace GTLib
     private:
 
         // The file the log will be written to.
-        FILE *file;
+        easyvfs_file* file;
 
         // The format of the log.
         unsigned int format;

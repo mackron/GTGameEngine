@@ -7,6 +7,7 @@
 #include <GTLib/ToString.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/Math.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GTGUI
 {
@@ -1147,10 +1148,13 @@ namespace GTGUI
         auto sc = this->GetPrimaryStyleClass();
         assert(sc != nullptr);
        
-        GTLib::Path absImageURL(imageURL);
-        absImageURL.MakeAbsolute();
+        char absoluteURL[EASYVFS_MAX_PATH];
+        if (!easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), imageURL, absoluteURL, sizeof(absoluteURL)))
+        {
+            strcpy_s(absoluteURL, sizeof(absoluteURL), imageURL);
+        }
 
-        sc->SetAttribute("background-image", absImageURL.c_str());
+        sc->SetAttribute("background-image", absoluteURL);
     }
 
 

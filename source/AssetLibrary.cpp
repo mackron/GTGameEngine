@@ -1,6 +1,7 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTEngine/AssetLibrary.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTLib/IO.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/String.hpp>
@@ -24,26 +25,35 @@ namespace GT
 
         GTEngine::SoundStreamer* AssetLibrary::OpenSoundStreamer(const char* relativeFilePath)
         {
-            GTLib::String absoluteFilePath;
-            if (GTLib::IO::FindAbsolutePath(relativeFilePath, absoluteFilePath))
+            char absoluteFilePath[EASYVFS_MAX_PATH];
+            if (easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), relativeFilePath, absoluteFilePath, sizeof(absoluteFilePath)))
             {
                 GTEngine::SoundStreamer* streamer     = nullptr;
-                GTLib::FileHandle        streamerFile = 0;
+                easyvfs_file*            streamerFile = nullptr;
+                size_t fileSize = 0;
+                void* fileData = nullptr;
 
 
                 m_openedSoundFilesLock.Lock();
-                auto iFile = m_openedSoundFiles.Find(absoluteFilePath.c_str());
+                auto iFile = m_openedSoundFiles.Find(absoluteFilePath);
                 if (iFile != nullptr)
                 {
                     streamerFile = iFile->value.m_file;
+                    fileSize = iFile->value.dataSize;
+                    fileData = iFile->value.pFileData;
+
                     iFile->value.m_count += 1;
                 }
                 else
                 {
-                    streamerFile = GTLib::OpenFile(absoluteFilePath.c_str(), GTLib::IO::OpenMode::Read);
+                    streamerFile = easyvfs_open(GTEngine::g_EngineContext->GetVFS(), absoluteFilePath, EASYVFS_READ, 0);
                     if (streamerFile != 0)
                     {
-                        m_openedSoundFiles.Add(absoluteFilePath.c_str(), FileCounter(streamerFile, 1));
+                        fileSize = (size_t)easyvfs_file_size(streamerFile);
+                        fileData = malloc(fileSize);
+                        easyvfs_read(streamerFile, fileData, fileSize, nullptr);
+
+                        m_openedSoundFiles.Add(absoluteFilePath, FileCounter(streamerFile, 1, fileSize, fileData));
                     }
                 }
                 m_openedSoundFilesLock.Unlock();
@@ -51,17 +61,14 @@ namespace GT
 
                 if (streamerFile != 0)
                 {
-                    auto fileDataSizeInBytes = static_cast<size_t>(GTLib::GetFileSize(streamerFile));
-                    auto fileData            = GTLib::MapFile(streamerFile, fileDataSizeInBytes);
-
                     auto ext = GTLib::Path::Extension(relativeFilePath);
                     if (GTLib::Strings::Equal<false>(ext, "wav"))
                     {
-                        streamer = new GTEngine::SoundStreamer_WAV(fileData, fileDataSizeInBytes);
+                        streamer = new GTEngine::SoundStreamer_WAV(fileData, fileSize);
                     }
                     if (GTLib::Strings::Equal<false>(ext, "ogg"))
                     {
-                        streamer = new SoundStreamer_Vorbis(fileData, fileDataSizeInBytes);
+                        streamer = new SoundStreamer_Vorbis(fileData, fileSize);
                     }
                 }
 
@@ -77,7 +84,7 @@ namespace GT
                     {
                         // Failed to open the streamer. Probably a corrupt or not the file type it's pretending to be.
                         delete streamer;
-                        GTLib::CloseFile(streamerFile);
+                        easyvfs_close(streamerFile);
 
                         return nullptr;
                     }
@@ -85,7 +92,7 @@ namespace GT
                 else
                 {
                     // Unknown or unsupported file format.
-                    GTLib::CloseFile(streamerFile);
+                    easyvfs_close(streamerFile);
                     return nullptr;
                 }
             }
@@ -112,7 +119,8 @@ namespace GT
 
                         if (iFile->value.m_count == 0)
                         {
-                            GTLib::CloseFile(iFile->value.m_file);
+                            easyvfs_close(iFile->value.m_file);
+                            free(iFile->value.pFileData);
                             m_openedSoundFiles.RemoveByIndex(iFile->index);
                         }
                     }

@@ -275,24 +275,16 @@ namespace GTLib
         lua_close(LUA_STATE);
     }
 
-    bool Script::LoadFile(const char* fileName)
+    bool Script::LoadFile(easyvfs_context* pVFS, const char* fileName)
     {
-        // We don't use Lua's built in file loading API. Instead we use our own FileSystem class.
-        auto file = IO::Open(fileName, IO::OpenMode::Read);
-        if (file != nullptr)
+        // We don't use Lua's built in file loading API. Instead we use our own virtual file system.
+
+        char* pFileData = easyvfs_open_and_read_text_file(pVFS, fileName, nullptr);
+        if (pFileData != nullptr)
         {
-            // We need to read all of the content in one go.
-            size_t fileSize = static_cast<size_t>(IO::Size(file));
+            bool retValue = this->Load(pFileData, fileName);
 
-            auto data = static_cast<char*>(malloc(fileSize + 1));
-            IO::Read(file, data, fileSize);
-            data[fileSize] = '\0';
-
-            bool retValue = this->Load(data, fileName);
-
-            free(data);
-            IO::Close(file);
-
+            easyvfs_free(pFileData);
             return retValue;
         }
         else
@@ -367,9 +359,9 @@ namespace GTLib
         return this->LoadBinary(script, size, name) && this->Execute(returnValueCount);
     }
 
-    bool Script::LoadFileAndExecute(const char* filename, int returnValueCount)
+    bool Script::LoadFileAndExecute(easyvfs_context* pVFS, const char* filename, int returnValueCount)
     {
-        return this->LoadFile(filename) && this->Execute(returnValueCount);
+        return this->LoadFile(pVFS, filename) && this->Execute(returnValueCount);
     }
 
 

@@ -1,12 +1,15 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTLib/IO.hpp>
+#include <GTLib/IO/FileIterator.hpp>
+
+#if 0
 #include <GTLib/Config.hpp>
 #include <GTLib/Errors.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/Strings/Create.hpp>
 #include <GTLib/Strings/Equal.hpp>
 #include <GTLib/Regex.hpp>
+#include <easy_path/easy_path.h>
 
 #if    defined(GT_PLATFORM_WINDOWS)
 // --- Windows ---
@@ -24,13 +27,13 @@ namespace GTLib
     namespace IO
     {
         FileIterator::FileIterator()
-            : name(nullptr), absolutePath(nullptr), size(0), lastModified(0), isDirectory(false), fileInfoList(new GTLib::List<FileInfo *>), count(1)
+            : name(nullptr), absolutePath(nullptr), size(0), lastModified(0), isDirectory(false), fileInfoList(new GTLib::List<easyvfs_file_info *>), count(1)
         {
 			this->ctor(nullptr);
         }
 
 		FileIterator::FileIterator(const char *fileQuery)
-			: name(nullptr), absolutePath(nullptr), size(0), lastModified(0), isDirectory(false), fileInfoList(new GTLib::List<FileInfo *>), count(1)
+			: name(nullptr), absolutePath(nullptr), size(0), lastModified(0), isDirectory(false), fileInfoList(new GTLib::List<easyvfs_file_info *>), count(1)
 		{
 			this->ctor(fileQuery);
 		}
@@ -70,11 +73,11 @@ namespace GTLib
                 {
                     auto fi = this->fileInfoList->root->value;
 
-                    this->name         = fi->path.c_str();
-                    this->absolutePath = fi->absolutePath.c_str();
-                    this->size         = fi->size;
+                    this->name         = easypath_filename(fi->absolutePath);
+                    this->absolutePath = fi->absolutePath;
+                    this->size         = fi->sizeInBytes;
                     this->lastModified = fi->lastModifiedTime;
-                    this->isDirectory  = fi->isDirectory;
+                    this->isDirectory  = (fi->attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0;
                 }
                 else
                 {
@@ -121,12 +124,12 @@ namespace GTLib
     {
 #if defined(GT_PLATFORM_WINDOWS)
         // This function does not set the paths!
-        void WIN32_FIND_DATAToFileInfo(const WIN32_FIND_DATAA &ffd, FileInfo &fi)
+        void WIN32_FIND_DATAToFileInfo(const WIN32_FIND_DATAA &ffd, easyvfs_file_info &fi)
         {
             LARGE_INTEGER size;
             size.LowPart  = ffd.nFileSizeLow;
             size.HighPart = (LONG)ffd.nFileSizeHigh;
-            fi.size = size.QuadPart;
+            fi.sizeInBytes = size.QuadPart;
 
             // We're assuming time_t is 64-bit.
             ULARGE_INTEGER ull;
@@ -134,7 +137,13 @@ namespace GTLib
             ull.HighPart = ffd.ftLastWriteTime.dwHighDateTime;
             fi.lastModifiedTime = static_cast<time_t>(ull.QuadPart / 10000000ULL - 11644473600ULL);
 
-            fi.isDirectory = (ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0;
+            fi.attributes = 0;
+            if ((ffd.dwFileAttributes & FILE_ATTRIBUTE_DIRECTORY) != 0) {
+                fi.attributes |= EASYVFS_FILE_ATTRIBUTE_DIRECTORY;
+            }
+            if ((ffd.dwFileAttributes & FILE_ATTRIBUTE_READONLY) != 0) {
+                fi.attributes |= EASYVFS_FILE_ATTRIBUTE_READONLY;
+            }
         }
 #endif
 
@@ -150,27 +159,35 @@ namespace GTLib
 		    //     - The names should not be the absolute path and should not contain only the file name portion.
 		    // To solve these, we just take the directory portion of the input query and use that to construct
 		    // the paths of each file.
-            GTLib::String basePath;
-            GTLib::String regexQuery;
-            GTLib::IO::SplitPath(query, basePath, regexQuery);
+            char basePath[EASYVFS_MAX_PATH];
+            char regexQuery[EASYVFS_MAX_PATH];
+            easypath_copybasepath(query, basePath, sizeof(basePath));
+            easypath_copy_file_name(query, regexQuery, sizeof(regexQuery));
             
 
             // Now we do the actual iteration. POSIX doesn't use wildcard matching, so we do it manually using our
             // regular expression API.
-            GTLib::Regex regex(regexQuery.c_str());
+            GTLib::Regex regex(regexQuery);
 
             // === Start of platform-specific code ===
 #if defined(GT_PLATFORM_WINDOWS)
             // --- Windows ---
-            basePath += "/";
+            strcat_s(basePath, sizeof(basePath), "/");
+            
 
             WIN32_FIND_DATAA ffd;
-            auto currentDirectory = IO::GetCurrentDirectory();
+
+            //auto currentDirectory = IO::GetCurrentDirectory();
+            char currentDirectory[EASYVFS_MAX_PATH];
+            _getcwd(currentDirectory, sizeof(currentDirectory));
 
             // We need to put a '*' as the wildcard symbol on Windows. This will find every file in the directory. We then
             // use our own regex matcher for doing matching.
-            HANDLE hFind = FindFirstFileA((basePath + "*").c_str(), &ffd);
+            char win32SearchQuery[EASYVFS_MAX_PATH];
+            strcpy_s(win32SearchQuery, sizeof(win32SearchQuery), basePath);
+            strcat_s(win32SearchQuery, sizeof(win32SearchQuery), "*");
 
+            HANDLE hFind = FindFirstFileA(win32SearchQuery, &ffd);
             if (hFind != INVALID_HANDLE_VALUE)
             {
                 do
@@ -182,20 +199,25 @@ namespace GTLib
                         // we just don't bother adding it.
                         if (regex.Match(ffd.cFileName))
                         {
-                            FileInfo *newFI = new FileInfo();
+                            easyvfs_file_info *newFI = new easyvfs_file_info();
                             WIN32_FIND_DATAToFileInfo(ffd, *newFI);
 
                             // WIN32_FIND_DATAToFileInfo will not set the path. We need to set it here. We don't want to use SetPath() here because it
                             // will unnecessarilly call IO::FindAbsolutePath(). We can get the absolute path from the current directory.
-                            newFI->path = basePath + ffd.cFileName;
 
-                            if (IO::IsPathRelative(newFI->path.c_str()))
+                            //newFI->path = basePath + ffd.cFileName;
+                            char tempPath[EASYVFS_MAX_PATH];
+                            strcpy_s(tempPath, sizeof(tempPath), basePath);
+                            strcat_s(tempPath, sizeof(tempPath), ffd.cFileName);
+
+                            //if (IO::IsPathRelative(tempPath))
+                            if (easypath_isrelative(tempPath))
                             {
-                                newFI->absolutePath = IO::ToAbsolutePath(newFI->path.c_str(), currentDirectory.c_str());
+                                easypath_copyandappend(newFI->absolutePath, sizeof(newFI->absolutePath), currentDirectory, tempPath);
                             }
                             else
                             {
-                                newFI->absolutePath = newFI->path;
+                                strcpy_s(newFI->absolutePath, sizeof(newFI->absolutePath), tempPath);
                             }
 
                             this->fileInfoList->Append(newFI);
@@ -252,12 +274,14 @@ namespace GTLib
             {
                 auto fi = this->fileInfoList->root->value;
 
-                this->name         = fi->path.c_str();
-                this->absolutePath = fi->absolutePath.c_str();
-                this->size         = fi->size;
+                this->name         = easypath_filename(fi->absolutePath);
+                this->absolutePath = fi->absolutePath;
+                this->size         = fi->sizeInBytes;
                 this->lastModified = fi->lastModifiedTime;
-                this->isDirectory  = fi->isDirectory;
+                this->isDirectory  = (fi->attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0;
             }
 		}
     }
 }
+
+#endif

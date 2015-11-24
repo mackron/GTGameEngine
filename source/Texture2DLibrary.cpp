@@ -4,8 +4,10 @@
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/Rendering/Renderer.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTLib/Dictionary.hpp>
 #include <GTLib/Path.hpp>
+#include <easy_path/easy_path.h>
 
 namespace GTEngine
 {
@@ -67,13 +69,13 @@ namespace GTEngine
         }
 
 
-        GTLib::String absFileName;
-        if (GTLib::IO::FindAbsolutePath(fileName, absFileName))
+        char absFileName[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absFileName, sizeof(absFileName)))
         {
-            auto iTexture = LoadedTextures.Find(absFileName.c_str());
+            auto iTexture = LoadedTextures.Find(absFileName);
             if (iTexture == nullptr)
             {
-                GTLib::Image image(absFileName.c_str());
+                GTLib::Image image(absFileName);
                 if (image.IsLinkedToFile())
                 {
                     image.PullAllMipmaps();     // <-- This loads the image data.
@@ -94,7 +96,7 @@ namespace GTEngine
                     newTexture->DeleteLocalData();
 
 
-                    LoadedTextures.Add(absFileName.c_str(), newTexture);
+                    LoadedTextures.Add(absFileName, newTexture);
                     return newTexture;
                 }
                 else
@@ -151,16 +153,16 @@ namespace GTEngine
 
     bool Texture2DLibrary::Reload(const char* fileName)
     {
-        GTLib::String absFileName;
-        if (GTLib::IO::FindAbsolutePath(fileName, absFileName))
+        char absFileName[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absFileName, sizeof(absFileName)))
         {
-            auto iTexture = LoadedTextures.Find(absFileName.c_str());
+            auto iTexture = LoadedTextures.Find(absFileName);
             if (iTexture != nullptr)
             {
                 auto texture = iTexture->value;
                 assert(texture != nullptr);
                 {
-                    GTLib::Image image(absFileName.c_str());
+                    GTLib::Image image(absFileName);
                     if (image.IsLinkedToFile())
                     {
                         texture->SetData(image.GetWidth(), image.GetHeight(), image.GetFormat(), image.GetBaseMipmapData());

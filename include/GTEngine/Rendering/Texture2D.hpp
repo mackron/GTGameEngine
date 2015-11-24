@@ -7,6 +7,7 @@
 #include "TextureWrapModes.hpp"
 #include <GTLib/Image.hpp>
 #include <GTLib/Map.hpp>
+#include <GTLib/List.hpp>
 
 namespace GTEngine
 {

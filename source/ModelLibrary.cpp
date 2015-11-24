@@ -5,8 +5,10 @@
 #include <GTEngine/VertexArrayLibrary.hpp>
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/IO.hpp>
+#include <easy_path/easy_path.h>
 
 #if defined(__GNUC__)
     #pragma GCC diagnostic push
@@ -223,18 +225,17 @@ namespace GTEngine
 
     bool ModelLibrary::Reload(const char* fileNameIn)
     {
-        GTLib::String fileName;
-        if (GTLib::Path::ExtensionEqual(fileNameIn, "gtmodel"))
+        char fileName[EASYVFS_MAX_PATH];
+        strcpy_s(fileName, sizeof(fileName), fileNameIn);
+
+        if (GTLib::Path::ExtensionEqual(fileName, "gtmodel"))
         {
-            fileName = GTLib::IO::RemoveExtension(fileNameIn);
-        }
-        else
-        {
-            fileName = fileNameIn;
+            easypath_removeextension(fileName);
         }
 
+
         // We need to find the definition that we're updating.
-        auto definition = ModelLibrary::FindDefinition(fileName.c_str());
+        auto definition = ModelLibrary::FindDefinition(fileName);
         if (definition != nullptr)
         {
             bool needsSerialize;
@@ -279,13 +280,13 @@ namespace GTEngine
             fileName += ".gtmodel";
         }
 
-        auto file = GTLib::IO::Open(fileName.c_str(), GTLib::IO::OpenMode::Write);
-        if (file != nullptr)
+        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), fileName.c_str(), EASYVFS_WRITE, 0);
+        if (pFile != nullptr)
         {
-            GTLib::FileSerializer serializer(file);
+            GTLib::FileSerializer serializer(pFile);
             definition.Serialize(serializer);
 
-            GTLib::IO::Close(file);
+            easyvfs_close(pFile);
             return true;
         }
 
@@ -305,7 +306,10 @@ namespace GTEngine
         {
             if (GTLib::Path::ExtensionEqual(fileName, "gtmodel"))
             {
-                iDefinition = LoadedDefinitions.Find(GTLib::IO::RemoveExtension(fileName).c_str());
+                char fileNameWithoutExtension[EASYVFS_MAX_PATH];
+                easypath_copyandremoveextension(fileNameWithoutExtension, sizeof(fileNameWithoutExtension), fileName);
+
+                iDefinition = LoadedDefinitions.Find(fileNameWithoutExtension);
             }
         }
 
@@ -352,19 +356,24 @@ namespace GTEngine
 
     bool ModelLibrary::FindAbsolutePath(const char* relativePath, GTLib::String &absolutePath)
     {
-        if (!GTLib::IO::FindAbsolutePath(relativePath, absolutePath))
+        char absolutePathTemp[EASYVFS_MAX_PATH];
+        if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), relativePath, absolutePathTemp, sizeof(absolutePathTemp)))
         {
-            // The file doesn't exist. We need to either remove or add the .gtmodel extension and try again.
-            if (GTLib::Path::ExtensionEqual(relativePath, "gtmodel"))
-            {
-                return GTLib::IO::FindAbsolutePath(GTLib::IO::RemoveExtension(relativePath).c_str(), absolutePath);
+            char adjustedRelativePath[EASYVFS_MAX_PATH];
+            strcpy_s(adjustedRelativePath, sizeof(adjustedRelativePath), relativePath);
+
+            if (easypath_extensionequal(relativePath, "gtmodel")) {
+                easypath_removeextension(adjustedRelativePath);
+            } else {
+                easypath_appendextension(adjustedRelativePath, sizeof(adjustedRelativePath), "gtmodel");
             }
-            else
-            {
-                return GTLib::IO::FindAbsolutePath((GTLib::String(relativePath) + ".gtmodel").c_str(), absolutePath);
+
+            if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), adjustedRelativePath, absolutePathTemp, sizeof(absolutePathTemp))) {
+                return false;
             }
         }
 
+        absolutePath = absolutePathTemp;
         return true;
     }
 

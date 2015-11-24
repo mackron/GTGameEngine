@@ -9,6 +9,7 @@
 #include <GTLib/ToString.hpp>
 #include <GTLib/Path.hpp>
 #include <cassert>
+#include <GTEngine/GTEngine.hpp>
 
 // Server
 namespace GTGUI
@@ -160,10 +161,12 @@ namespace GTGUI
     bool Server::IsFileLoaded(const char* filename)
     {
         // We need to check with the absolute path.
-        GTLib::String absPath;
-        if (GTLib::IO::FindAbsolutePath(filename, absPath))
+        //GTLib::String absPath;
+        //if (GTLib::IO::FindAbsolutePath(filename, absPath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(GTEngine::g_EngineContext->GetVFS(), filename, absolutePath, sizeof(absolutePath)))
         {
-            return this->markupLoader.IsFileLoaded(absPath.c_str());
+            return this->markupLoader.IsFileLoaded(absolutePath);
         }
 
         return false;

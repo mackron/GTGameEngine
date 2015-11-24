@@ -3,6 +3,7 @@
 #include <GTEngine/GameStateManager.hpp>
 #include <GTEngine/Scene.hpp>
 #include <GTEngine/Game.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GTEngine
 {
@@ -400,7 +401,7 @@ namespace GTEngine
     bool DefaultGameStateManager::OnStartup(GTEngine::Game &game)
     {
         auto &script = game.GetScript();
-        script.ExecuteFile("game-config.lua");
+        script.ExecuteFile(g_EngineContext->GetVFS(), "game-config.lua");
 
 
         // First we'll configure the window...

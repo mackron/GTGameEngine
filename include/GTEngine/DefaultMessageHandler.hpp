@@ -5,6 +5,7 @@
 
 #include "MessageHandler.hpp"
 #include <GTLib/Log.hpp>
+#include <easy_fs/easy_vfs.h>
 
 namespace GT
 {
@@ -27,7 +28,7 @@ namespace GT
             /// Opens the log file.
             ///
             /// @param filePath [in] The path of the log file to write the log to.
-            void OpenLogFile(const char* filePath);
+            void OpenLogFile(easyvfs_context* pVFS, const char* filePath);
 
 
             /// MessageHandler::HandleMessage()

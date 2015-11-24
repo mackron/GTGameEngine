@@ -5,6 +5,7 @@
 #include <GTEngine/Game.hpp>
 #include <GTLib/IO.hpp>
 #include <GTLib/Path.hpp>
+#include <easy_path/easy_path.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -33,7 +34,7 @@ namespace GTEngine
             assert(script.IsFunction(-1));
             {
                 script.PushValue(-2);
-                script.Push(GTLib::IO::FileName(m_absolutePath.c_str()));
+                script.Push(easypath_filename(m_absolutePath.c_str()));
                 script.Call(2, 1);
 
                 // The top item on the stack is the tab GUI element. We now need to set the 'absolutePath' and 'relativePath' attributes.
@@ -138,7 +139,7 @@ namespace GTEngine
                 m_isMarkedAsModified = true;
 
                 // We will modify the text of the tab to show a star to the right.
-                GTLib::String tabText(GTLib::IO::FileName(this->GetRelativePath())); tabText += "*";
+                GTLib::String tabText(easypath_filename(this->GetRelativePath())); tabText += "*";
                 this->SetTabText(tabText.c_str());
 
 
@@ -154,7 +155,7 @@ namespace GTEngine
             m_isMarkedAsModified = false;
 
             // Now we want to remove the star.
-            this->SetTabText(GTLib::IO::FileName(this->GetRelativePath()));
+            this->SetTabText(easypath_filename(this->GetRelativePath()));
 
 
             m_ownerEditor.UpdateMenuButtonEnableStates();

@@ -2,6 +2,7 @@
 
 #include <GTLib/GUI/Server.hpp>
 #include <cassert>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GTGUI
 {
@@ -35,21 +36,12 @@ namespace GTGUI
 
     bool ScriptServer::ExecuteFromFile(const char *filename, int returnValueCount)
     {
-        auto file = GTLib::IO::Open(filename, GTLib::IO::OpenMode::Read);
-        if (file != NULL)
+        char* pFileData = easyvfs_open_and_read_text_file(GTEngine::g_EngineContext->GetVFS(), filename, nullptr);
+        if (pFileData != nullptr)
         {
-            // We need to read all of the content in one go.
-            size_t fileSize = (size_t)GTLib::IO::Size(file);
-            
-            char *data = new char[fileSize + 1];
-            GTLib::IO::Read(file, data, fileSize);
-            data[fileSize] = '\0';
+            bool successful = this->Execute(pFileData, returnValueCount);
 
-            bool successful = this->Execute(data, returnValueCount);
-            
-            delete [] data;
-            GTLib::IO::Close(file);
-
+            easyvfs_free(pFileData);
             return successful;
         }
         else

@@ -5,6 +5,7 @@
 #include <GTEngine/IO.hpp>
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTLib/Path.hpp>
+#include <easy_path/easy_path.h>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -474,9 +475,14 @@ namespace GTEngine
             }
             else
             {
-                if (GTLib::Path::ExtensionEqual(item.info.absolutePath.c_str(), "gtmodel") && GTLib::IO::RemoveExtension(item.info.absolutePath.c_str()) == this->GetAbsolutePath())
+                if (GTLib::Path::ExtensionEqual(item.info.absolutePath, "gtmodel"))
                 {
-                    this->Reload();
+                    char absolutePathNoExt[EASYVFS_MAX_PATH];
+                    easypath_copyandremoveextension(absolutePathNoExt, sizeof(absolutePathNoExt), item.info.absolutePath);
+
+                    if (strcmp(absolutePathNoExt, this->GetAbsolutePath()) == 0) {
+                        this->Reload();
+                    }
                 }
             }
         }

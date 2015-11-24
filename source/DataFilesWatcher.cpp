@@ -1,6 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE.
 
 #include <GTEngine/DataFilesWatcher.hpp>
+#include <GTEngine/GTEngine.hpp>
+#include <easy_path/easy_path.h>
 
 namespace GTEngine
 {
@@ -27,7 +29,12 @@ namespace GTEngine
 
     void DataFilesWatcher::AddRootDirectory(const char* directory)
     {
-        m_root.InsertChild(GTLib::FileInfo(directory));
+        //m_root.InsertChild(GTLib::FileInfo(directory));
+
+        easyvfs_file_info fi;
+        if (easyvfs_get_file_info(g_EngineContext->GetVFS(), directory, &fi)) {
+            m_root.InsertChild(fi);
+        }
     }
 
     void DataFilesWatcher::RemoveRootDirectory(const char* directory)
@@ -149,12 +156,17 @@ namespace GTEngine
         if (this->isActive)
         {
             // We first check ourselves for changes. 'root' will be the old info.
-            GTLib::FileInfo newInfo;
+            easyvfs_file_info newInfo;
+            newInfo.absolutePath[0] = '\0';
+            newInfo.attributes = 0;
+            newInfo.lastModifiedTime = 0;
+            newInfo.sizeInBytes = 0;
 
             // The absolute root element will not have a valid path.
             if (root.parent != nullptr)
             {
-                GTLib::IO::GetFileInfoFromAbsolutePath(root.info.absolutePath.c_str(), newInfo);
+                //GTLib::IO::GetFileInfoFromAbsolutePath(root.info.absolutePath.c_str(), newInfo);
+                easyvfs_get_file_info(g_EngineContext->GetVFS(), root.info.absolutePath, &newInfo);
 
                 if (newInfo.lastModifiedTime != root.info.lastModifiedTime)
                 {
@@ -175,13 +187,16 @@ namespace GTEngine
 
             if (&m_root != &root)
             {
-                if (newInfo.isDirectory)
+                if ((newInfo.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                 {
-                    GTLib::IO::FileIterator i((root.info.absolutePath + "/.*").c_str());
-                    while (i)
+                    easyvfs_iterator iFile;
+                    if (easyvfs_begin_iteration(g_EngineContext->GetVFS(), root.info.absolutePath, &iFile))
                     {
-                        currentChildren.Append(i.name);
-                        ++i;
+                        easyvfs_file_info fi;
+                        while (easyvfs_next_iteration(g_EngineContext->GetVFS(), &iFile, &fi))
+                        {
+                            currentChildren.Append(easypath_filename(fi.absolutePath));
+                        }
                     }
                 }
             }
@@ -217,16 +232,19 @@ namespace GTEngine
             GTLib::List<Item*> addedChildren;
             for (auto iChild = currentChildren.root; iChild != nullptr; iChild = iChild->next)
             {
-                GTLib::FileInfo info;
-                GTLib::IO::GetFileInfoFromAbsolutePath(iChild->value.c_str(), info);
+                //GTLib::FileInfo info;
+                //GTLib::IO::GetFileInfoFromAbsolutePath(iChild->value.c_str(), info);
 
-                if (root.children.Find(info.absolutePath.c_str()) == nullptr)
+                easyvfs_file_info info;
+                easyvfs_get_file_info(g_EngineContext->GetVFS(), iChild->value.c_str(), &info);
+
+                if (root.children.Find(info.absolutePath) == nullptr)
                 {
                     auto newItem = new Item(info, &root);
                     addedChildren.Append(newItem);
 
-                    newItem->relativePath = GTLib::IO::ToRelativePath(info.absolutePath.c_str(), newItem->GetRootDirectory().c_str());
-                    newItem->absolutePath = info.absolutePath;
+                    //newItem->relativePath = GTLib::IO::ToRelativePath(info.absolutePath, newItem->GetRootDirectory().c_str());
+                    //newItem->absolutePath = info.absolutePath;
 
                     Event e;
                     e.type = 0;                 // <-- Insert
@@ -247,13 +265,13 @@ namespace GTEngine
             // We need to actually remove the children from root's children list.
             for (auto iChild = removedChildren.root; iChild != nullptr; iChild = iChild->next)
             {
-                root.children.Remove(iChild->value->info.absolutePath.c_str());
+                root.children.Remove(iChild->value->info.absolutePath);
             }
 
             // And now the new children.
             for (auto iChild = addedChildren.root; iChild != nullptr; iChild = iChild->next)
             {
-                root.children.Add(iChild->value->info.absolutePath.c_str(), iChild->value);
+                root.children.Add(iChild->value->info.absolutePath, iChild->value);
             }
 
 

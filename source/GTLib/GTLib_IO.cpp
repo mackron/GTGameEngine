@@ -1,6 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTLib/IO.hpp>
+
+#if 0
 #include <GTLib/Strings/Tokenizer.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/BasicBuffer.hpp>
@@ -1896,3 +1898,118 @@ namespace GTLib
 #if defined(_MSC_VER)
     #pragma warning(pop)
 #endif
+
+
+#endif
+
+#include <easy_path/easy_path.h>
+
+namespace GTLib
+{
+    namespace IO
+    {
+        GTLib::String ToRelativePath(const char* absolutePath, const char* basePath)
+        {
+            //if (IO::IsPathAbsolute(absolutePath) && IO::IsPathAbsolute(basePath))
+            if (easypath_isabsolute(absolutePath) && easypath_isabsolute(basePath))
+            {
+                assert(absolutePath != nullptr);
+                assert(basePath     != nullptr);
+                
+                
+                // We do this in two phases. The first phase simply removes everything from the absolute path until we find
+                // a non-matching character. The second phase is where the ".." parts of the path are added.
+                size_t endOfLastPartAbsolute = 0;
+                size_t endOfLastPartBase     = 0;
+                size_t iCharAbsolute = 0;
+                size_t iCharBase     = 0;
+                
+                char c1;
+                char c2;
+                do
+                {
+                    c1 = absolutePath[iCharAbsolute];
+                    c2 = basePath[iCharBase];
+                    
+                    
+                    if (c1 == '/' || c1 == '\\')
+                    {
+                        do
+                        {
+                            endOfLastPartAbsolute = iCharAbsolute;
+                            c1 = absolutePath[++iCharAbsolute];
+                            
+                            if (c1 == '.')
+                            {
+                                c1 = absolutePath[++iCharAbsolute];
+                            }
+                            
+                        } while (c1 == '/' || c1 == '\\');
+                    }
+                    else
+                    {
+                        iCharAbsolute += 1;
+                    }
+                    
+                    
+                    if (c2 == '/' || c1 == '\\')
+                    {
+                        do
+                        {
+                            endOfLastPartBase = iCharBase;
+                            c2 = basePath[++iCharBase];
+                            
+                            if (c2 == '.')
+                            {
+                                c2 = basePath[++iCharBase];
+                            }
+                            
+                        } while (c2 == '/' || c2 == '\\');
+                    }
+                    else
+                    {
+                        iCharBase += 1;
+                    }
+                    
+                } while (c1 != '\0' && c2 != '\0' && c1 == c2);
+                
+                // If both strings are at the end it means they are equal and the result will just be an empty path.
+                if (c1 == '\0' && c2 == '\0')
+                {
+                    return "";
+                }
+
+
+
+
+                // Now we need to do the ".." phase.
+                GTLib::String result;
+                
+                if (c2 != '\0')
+                {
+                    iCharBase = endOfLastPartBase;
+                    while ((c2 = basePath[iCharBase]) != '\0')
+                    {
+                        if (c2 == '/' || c2 == '\\')
+                        {
+                            c2 = basePath[iCharBase + 1];
+                            if (c2 != '/' && c2 != '\\' && c2 != '\0')
+                            {
+                                result     += "../";
+                                iCharBase  += 1;        // <-- Don't need to check that character again.
+                            }
+                        }
+                        
+                        iCharBase += 1;
+                    }
+                }
+                
+                
+                result += absolutePath + endOfLastPartAbsolute + 1;
+                return result;
+            }
+            
+            return "";
+        }
+    }
+}

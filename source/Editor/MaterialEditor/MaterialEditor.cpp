@@ -4,6 +4,7 @@
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
 #include <GTEngine/IO.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 #if defined(_MSC_VER)
     #pragma warning(push)
@@ -198,11 +199,11 @@ namespace GTEngine
             auto xmlString = this->scriptTextBoxElement->GetText();
             if (xmlString != nullptr)
             {
-                wasSaved = GTLib::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), xmlString);
+                wasSaved = easyvfs_open_and_write_text_file(g_EngineContext->GetVFS(), this->GetAbsolutePath(), xmlString);
             }
             else
             {
-                wasSaved = GTLib::IO::OpenAndWriteTextFile(this->GetAbsolutePath(), "");
+                wasSaved = easyvfs_open_and_write_text_file(g_EngineContext->GetVFS(), this->GetAbsolutePath(), "");
             }
 
             if (wasSaved)
@@ -230,7 +231,7 @@ namespace GTEngine
 
     void MaterialEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
-        if (GTLib::Strings::Equal(item.absolutePath.c_str(), this->GetAbsolutePath()))
+        if (GTLib::Strings::Equal(item.info.absolutePath, this->GetAbsolutePath()))
         {
             if (!this->isSaving)
             {

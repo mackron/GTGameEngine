@@ -6,6 +6,9 @@
 #include <GTLib/stdlib.hpp>
 #include "ImageLoader_PNG.hpp"
 
+#include <GTEngine/GTEngine.hpp>
+#include <easy_fs/easy_vfs.h>
+
 namespace GTLib
 {
     ImageFormat GetImageFormatFromSTBChannels(int channels)
@@ -24,7 +27,7 @@ namespace GTLib
 
     struct STBICallbackData
     {
-        FILE* pFile;
+        easyvfs_file* pFile;
     };
 
     int STBI_Read(void* user, char *data, int size)
@@ -34,12 +37,12 @@ namespace GTLib
         {
             assert(callbackData->pFile != nullptr);
 
-            size_t bytesRead = GTLib::IO::Read(callbackData->pFile, data, size);
-            if (ferror(callbackData->pFile)) {
+            unsigned int bytesRead;
+            if (!easyvfs_read(callbackData->pFile, data, (unsigned int)size, &bytesRead)) {
                 return 0;
             }
 
-            return (int)bytesRead;
+            return bytesRead;
         }
     }
 
@@ -49,7 +52,7 @@ namespace GTLib
         assert(callbackData != nullptr);
         {
             assert(callbackData->pFile != nullptr);
-            GTLib::IO::Seek(callbackData->pFile, n, SeekOrigin::Current);
+            easyvfs_seek(callbackData->pFile, n, easyvfs_current);
         }
     }
 
@@ -59,7 +62,7 @@ namespace GTLib
         assert(callbackData != nullptr);
         {
             assert(callbackData->pFile != nullptr);
-            return GTLib::IO::AtEnd(callbackData->pFile);
+            return easyvfs_eof(callbackData->pFile);
         }
     }
 
@@ -77,7 +80,8 @@ namespace GTLib
 
     bool ImageLoader_PNG::Open()
     {
-        FILE* pFile = GTLib::IO::Open(this->absolutePath.c_str(), GTLib::IO::OpenMode::Read);
+        //FILE* pFile = GTLib::IO::Open(this->absolutePath.c_str(), GTLib::IO::OpenMode::Read);
+        easyvfs_file* pFile = easyvfs_open(GTEngine::g_EngineContext->GetVFS(), this->absolutePath.c_str(), EASYVFS_READ, 0);
         if (pFile != nullptr)
         {
             STBICallbackData callbackData;
@@ -93,7 +97,7 @@ namespace GTLib
             m_pImageData = stbi_load_from_callbacks(&stbiCallbacks, &callbackData, &imageWidth, &imageHeight, &m_channelCount, 0);
             if (m_pImageData != nullptr)
             {
-                m_info = ImageFileInfo(this->absolutePath.c_str());
+                easyvfs_get_file_info(GTEngine::g_EngineContext->GetVFS(), this->absolutePath.c_str(), &m_info);
 
                 m_info.format = GetImageFormatFromSTBChannels(m_channelCount);
                 m_info.width  = static_cast<unsigned int>(imageWidth);
@@ -136,7 +140,9 @@ namespace GTLib
     bool ImageLoader_PNG::HasFileChanged() const
     {
         // We just need to check the last modified data. If it's different, the file has changed.
-        GTLib::FileInfo tempInfo(this->absolutePath.c_str());
+        easyvfs_file_info tempInfo;
+        easyvfs_get_file_info(GTEngine::g_EngineContext->GetVFS(), this->absolutePath.c_str(), &tempInfo);
+
         if (tempInfo.lastModifiedTime != m_info.lastModifiedTime)
         {
             return true;

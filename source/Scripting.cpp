@@ -862,7 +862,7 @@ namespace GTEngine
 
             int ExecuteFile(GTLib::Script &script)
             {
-                script.Push(GameFFI::GetGame(script).GetScript().ExecuteFile(script.ToString(1)));
+                script.Push(GameFFI::GetGame(script).GetScript().ExecuteFile(g_EngineContext->GetVFS(), script.ToString(1)));
                 return 1;
             }
 

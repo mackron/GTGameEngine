@@ -6,6 +6,7 @@
 #include <GTLib/String.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/stdlib.hpp>
+#include <easy_path/easy_path.h>
 
 #include <cstring>
 
@@ -24,7 +25,7 @@ namespace GT
         }
 
 
-        bool ApplicationConfig::Open(const char* fileName)
+        bool ApplicationConfig::Open(easyvfs_context* pVFS, const char* fileName)
         {
             // Reset everything just to be sure.
             m_dataDirectories.Clear();
@@ -45,8 +46,11 @@ namespace GT
 
 
             // Everything is reset, so now we load the script.
-            if (m_script.LoadFileAndExecute(fileName))
+            if (m_script.LoadFileAndExecute(pVFS, fileName))
             {
+                char cwd[EASYVFS_MAX_PATH];
+                _getcwd(cwd, sizeof(cwd));
+
                 m_script.GetGlobal("Directories");
                 assert(m_script.IsTable(-1));
                 {
@@ -55,7 +59,7 @@ namespace GT
                     if (m_script.IsString(-1))
                     {
                         GTLib::Path absPath(m_script.ToString(-1));
-                        absPath.MakeAbsolute();
+                        absPath.MakeAbsolute(cwd);
 
                         m_dataDirectories.PushBack(absPath.c_str());
                     }
@@ -66,10 +70,13 @@ namespace GT
                         {
                             if (m_script.IsString(-1))
                             {
-                                GTLib::Path absPath(m_script.ToString(-1));
-                                absPath.MakeAbsolute();
+                                //GTLib::Path absPath(m_script.ToString(-1));
+                                //absPath.MakeAbsolute(cwd);
 
-                                m_dataDirectories.PushBack(absPath.c_str());
+                                char absPath[EASYVFS_MAX_PATH];
+                                easypath_copyandappend(absPath, sizeof(absPath), cwd, m_script.ToString(-1));
+
+                                m_dataDirectories.PushBack(absPath);
                             }
                         }
                     }

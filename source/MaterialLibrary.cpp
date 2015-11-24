@@ -2,10 +2,12 @@
 
 #include <GTEngine/MaterialLibrary.hpp>
 #include <GTEngine/Errors.hpp>
+#include <GTEngine/GTEngine.hpp>
 #include <GTLib/Dictionary.hpp>
 #include <GTLib/List.hpp>
 #include <GTLib/Vector.hpp>
 #include <GTLib/Path.hpp>
+#include <easy_path/easy_path.h>
 #include <utility>
 
 namespace GTEngine
@@ -161,12 +163,12 @@ namespace GTEngine
         }
 
 
-        GTLib::String absolutePath;
-        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
             MaterialDefinition* definition = nullptr;
 
-            auto iMaterialDefinition = MaterialDefinitions.Find(absolutePath.c_str());
+            auto iMaterialDefinition = MaterialDefinitions.Find(absolutePath);
             if (iMaterialDefinition != nullptr)
             {
                 // Definition is already loaded. All we do it increment the reference counter.
@@ -178,9 +180,9 @@ namespace GTEngine
             {
                 // Definition is not yet loaded.
                 definition = new MaterialDefinition;
-                if (definition->LoadFromFile(absolutePath.c_str(), relativePath.c_str()))
+                if (definition->LoadFromFile(absolutePath, relativePath.c_str()))
                 {
-                    MaterialDefinitions.Add(absolutePath.c_str(), MaterialDefinitionReference(definition, 1));
+                    MaterialDefinitions.Add(absolutePath, MaterialDefinitionReference(definition, 1));
                     MaterialLibrary_OnCreateMaterialDefinition(*definition);
                 }
                 else
@@ -260,10 +262,10 @@ namespace GTEngine
 
     bool MaterialLibrary::Reload(const char* fileName)
     {
-        GTLib::String absolutePath;
-        if (GTLib::IO::FindAbsolutePath(fileName, absolutePath))
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), fileName, absolutePath, sizeof(absolutePath)))
         {
-            auto iDefinition = MaterialDefinitions.Find(absolutePath.c_str());
+            auto iDefinition = MaterialDefinitions.Find(absolutePath);
             if (iDefinition != nullptr)
             {
                 auto &reference = iDefinition->value;
