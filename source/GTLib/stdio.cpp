@@ -1,6 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTLib/cstdio.hpp>
+#include <GTLib/stdio.hpp>
 
 namespace GTLib
 {

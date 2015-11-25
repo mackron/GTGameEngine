@@ -2,7 +2,7 @@
 
 #include <GTLib/ToString.hpp>
 #include <GTLib/Strings/Copy.hpp>
-#include <GTLib/cstdio.hpp>
+#include <GTLib/stdio.hpp>
 
 namespace GTLib
 {
