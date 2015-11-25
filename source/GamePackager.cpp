@@ -128,10 +128,14 @@ namespace GTEngine
             {
                 GTLib::Path dataDirectoryAbsolutePath((this->outputDirectoryAbsolutePath + "/" + this->dataDirectoryRelativePaths[iDataDirectory]).c_str());
                 dataDirectoryAbsolutePath.Clean();
-                GTLib::Path dataDirectoryRelativePath(GTLib::IO::ToRelativePath(dataDirectoryAbsolutePath.c_str(), executableDirectory.c_str()).c_str());
-                dataDirectoryRelativePath.Clean();
 
-                dataDirectoryConfigPaths.PushBack(dataDirectoryRelativePath.c_str());
+                //GTLib::Path dataDirectoryRelativePath(GTLib::IO::ToRelativePath(dataDirectoryAbsolutePath.c_str(), executableDirectory.c_str()).c_str());
+                //dataDirectoryRelativePath.Clean();
+
+                char dataDirectoryRelativePath[EASYVFS_MAX_PATH];
+                easypath_to_relative(dataDirectoryAbsolutePath.c_str(), executableDirectory.c_str(), dataDirectoryRelativePath, sizeof(dataDirectoryRelativePath));
+
+                dataDirectoryConfigPaths.PushBack(dataDirectoryRelativePath);
             }
 
             GTLib::Path configPath(executableDirectory.c_str());

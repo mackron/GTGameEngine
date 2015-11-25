@@ -7,6 +7,7 @@
 #include <GTLib/IO.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/Dictionary.hpp>
+#include <easy_path/easy_path.h>
 #include <utility>
 
 namespace GTEngine
@@ -58,13 +59,15 @@ namespace GTEngine
 
     ScriptDefinition* ScriptLibrary::Acquire(const char* fileName, const char* makeRelativeTo, bool silenceMissingFileWarning)
     {
-        GTLib::String relativePath(fileName);
+        char relativePath[EASYVFS_MAX_PATH];
+        strcpy_s(relativePath, sizeof(relativePath), fileName);
 
         if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
+                //relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
+                easypath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
             }
             else
             {
@@ -84,13 +87,13 @@ namespace GTEngine
                 char* scriptString = easyvfs_open_and_read_text_file(g_EngineContext->GetVFS(), absolutePath, nullptr);
                 if (scriptString != nullptr)
                 {
-                    auto newDefinition = new ScriptDefinition(absolutePath, relativePath.c_str(), scriptString);
+                    auto newDefinition = new ScriptDefinition(absolutePath, relativePath, scriptString);
                     LoadedDefinitions.Add(absolutePath, ScriptDefinitionReference(newDefinition, 1));
 
 
                     assert(GlobalGame != nullptr);
                     {
-                        Scripting::LoadScriptDefinition(GlobalGame->GetScript(), relativePath.c_str(), scriptString);
+                        Scripting::LoadScriptDefinition(GlobalGame->GetScript(), relativePath, scriptString);
                     }
 
                     easyvfs_free(scriptString);
@@ -157,13 +160,14 @@ namespace GTEngine
 
     bool ScriptLibrary::IsLoaded(const char* fileName, const char* makeRelativeTo)
     {
-        GTLib::String relativePath(fileName);
+        char relativePath[EASYVFS_MAX_PATH];
+        strcpy_s(relativePath, sizeof(relativePath), fileName);
 
         if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
+                easypath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
             }
             else
             {
@@ -185,13 +189,14 @@ namespace GTEngine
 
     bool ScriptLibrary::Reload(const char* fileName, const char* makeRelativeTo)
     {
-        GTLib::String relativePath(fileName);
+        char relativePath[EASYVFS_MAX_PATH];
+        strcpy_s(relativePath, sizeof(relativePath), fileName);
 
         if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
+                easypath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
             }
             else
             {
@@ -217,12 +222,12 @@ namespace GTEngine
                     if (scriptString != nullptr)
                     {
                         definition->~ScriptDefinition();
-                        new (definition) ScriptDefinition(absolutePath, relativePath.c_str(), scriptString);
+                        new (definition) ScriptDefinition(absolutePath, relativePath, scriptString);
 
 
                         assert(GlobalGame != nullptr);
                         {
-                            Scripting::LoadScriptDefinition(GlobalGame->GetScript(), relativePath.c_str(), scriptString);
+                            Scripting::LoadScriptDefinition(GlobalGame->GetScript(), relativePath, scriptString);
                         }
 
                         easyvfs_free(scriptString);

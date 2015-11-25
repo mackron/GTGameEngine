@@ -1429,9 +1429,10 @@ namespace GTLib
                 auto path = script.ToString(1);
                 auto base = script.ToString(2);
                 
-                GTLib::String relativePath = IO::ToRelativePath(path, base);
+                char relativePath[EASYVFS_MAX_PATH];
+                easypath_to_relative(path, base, relativePath, sizeof(relativePath));
                 
-                script.Push(relativePath.c_str());
+                script.Push(relativePath);
                 return 1;
             }
 

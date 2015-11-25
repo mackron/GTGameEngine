@@ -53,13 +53,14 @@ namespace GTEngine
 
     Texture2D* Texture2DLibrary::Acquire(const char* fileName, const char* makeRelativeTo)
     {
-        GTLib::String relativePath(fileName);
+        char relativePath[EASYVFS_MAX_PATH];
+        strcpy_s(relativePath, sizeof(relativePath), fileName);
 
         if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
+                easypath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
             }
             else
             {
@@ -82,7 +83,7 @@ namespace GTEngine
 
 
                     auto newTexture = Renderer::CreateTexture2D();
-                    newTexture->SetRelativePath(relativePath.c_str());
+                    newTexture->SetRelativePath(relativePath);
                     newTexture->SetData(image.GetWidth(), image.GetHeight(), image.GetFormat(), image.GetBaseMipmapData());
 
                     Renderer::PushTexture2DData(*newTexture);

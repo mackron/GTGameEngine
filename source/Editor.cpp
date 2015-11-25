@@ -225,11 +225,8 @@ namespace GTEngine
             {
                 if (relativeTo != nullptr)
                 {
-                    //absolutePath = path;
-                    //relativePath = GTLib::IO::ToRelativePath(path, relativeTo);
-
                     strcpy_s(absolutePath, sizeof(absolutePath), path);
-                    strcpy_s(relativePath, sizeof(relativePath), GTLib::IO::ToRelativePath(path, relativeTo).c_str());
+                    easypath_to_relative(path, relativeTo, relativePath, sizeof(relativePath));
                 }
                 else
                 {

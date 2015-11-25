@@ -6,6 +6,7 @@
 #include <GTLib/Dictionary.hpp>
 #include <GTLib/Vector.hpp>
 #include <GTLib/Path.hpp>
+#include <easy_path/easy_path.h>
 
 
 namespace GTEngine
@@ -81,13 +82,14 @@ namespace GTEngine
 
     ParticleSystem* ParticleSystemLibrary::Create(const char* fileName, const char* makeRelativeTo)
     {
-        GTLib::String relativePath(fileName);
+        char relativePath[EASYVFS_MAX_PATH];
+        strcpy_s(relativePath, sizeof(relativePath), fileName);
 
         if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
+                easypath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
             }
             else
             {
@@ -114,7 +116,7 @@ namespace GTEngine
             {
                 // Definition is not yet loaded.
                 definition = new ParticleSystemDefinition;
-                if (definition->LoadFromFile(absolutePath, relativePath.c_str()))
+                if (definition->LoadFromFile(absolutePath, relativePath))
                 {
                     LoadedDefinitions.Add(absolutePath, ParticleSystemDefinitionReference(definition, 1));
                 }

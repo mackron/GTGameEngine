@@ -610,7 +610,7 @@ namespace GTLib
 {
     namespace IO
     {
-        GTLib::String ToRelativePath(const char* absolutePath, const char* basePath);
+        //GTLib::String ToRelativePath(const char* absolutePath, const char* basePath);
     }
 }
 

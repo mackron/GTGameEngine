@@ -100,13 +100,14 @@ namespace GTEngine
 
     Model* ModelLibrary::Create(const char* fileName, const char* makeRelativeTo)
     {
-        GTLib::String relativePath(fileName);
+        char relativePath[EASYVFS_MAX_PATH];
+        strcpy_s(relativePath, sizeof(relativePath), fileName);
 
         if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
+                easypath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
             }
             else
             {
@@ -136,7 +137,7 @@ namespace GTEngine
                 definition = new ModelDefinition;
 
                 bool needsSerialize;
-                if (definition->LoadFromFile(absolutePath.c_str(), relativePath.c_str(), needsSerialize))
+                if (definition->LoadFromFile(absolutePath.c_str(), relativePath, needsSerialize))
                 {
                     LoadedDefinitions.Add(definition->absolutePath.c_str(), ModelDefinitionReference(definition, 1));
 

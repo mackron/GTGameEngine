@@ -1902,6 +1902,7 @@ namespace GTLib
 
 #endif
 
+#if 0
 #include <easy_path/easy_path.h>
 
 namespace GTLib
@@ -2013,3 +2014,4 @@ namespace GTLib
         }
     }
 }
+#endif

@@ -5,6 +5,7 @@
 #include <GTLib/Path.hpp>
 #include <GTLib/Dictionary.hpp>
 #include <GTEngine/GTEngine.hpp>
+#include <easy_path/easy_path.h>
 #include <utility>
 
 
@@ -45,13 +46,14 @@ namespace GTEngine
 
     Prefab* PrefabLibrary::Acquire(const char* fileName, const char* makeRelativeTo)
     {
-        GTLib::String relativePath(fileName);
+        char relativePath[EASYVFS_MAX_PATH];
+        strcpy_s(relativePath, sizeof(relativePath), fileName);
 
         if (GTLib::Path::IsAbsolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
-                relativePath = GTLib::IO::ToRelativePath(fileName, makeRelativeTo);
+                easypath_to_relative(fileName, makeRelativeTo, relativePath, sizeof(relativePath));
             }
             else
             {
@@ -73,7 +75,7 @@ namespace GTEngine
                 {
                     GTLib::FileDeserializer deserializer(pFile);
                     
-                    auto newPrefab = new Prefab(absolutePath, relativePath.c_str());
+                    auto newPrefab = new Prefab(absolutePath, relativePath);
                     newPrefab->Deserialize(deserializer);
 
                     LoadedPrefabs.Add(absolutePath, PrefabReference(newPrefab, 1));
