@@ -3,8 +3,8 @@
 #ifndef __GTEngine_IO_hpp_
 #define __GTEngine_IO_hpp_
 
-#include <GTLib/IO.hpp>
 #include <GTEngine/AssetTypes.hpp>
+#include <GTLib/String.hpp>
 
 namespace GTEngine
 {

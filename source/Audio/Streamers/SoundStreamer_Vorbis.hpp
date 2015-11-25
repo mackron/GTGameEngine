@@ -4,7 +4,6 @@
 #define __GT_Engine_SoundStreamer_Vorbis_hpp_
 
 #include <GTEngine/Audio/SoundStreamer.hpp>
-#include <GTLib/IO.hpp>
 
 #define STB_VORBIS_HEADER_ONLY
 #include <GTEngine/external/stb_vorbis.c>

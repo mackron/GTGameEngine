@@ -3,7 +3,7 @@
 #ifndef __GTLib_Errors_hpp_
 #define __GTLib_Errors_hpp_
 
-#include "IO.hpp"
+#include "Errors.hpp"
 #include <cstdarg>  // For variable arguments.
 
 namespace GTLib

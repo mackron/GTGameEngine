@@ -2,7 +2,6 @@
 
 #include <GTLib/GUI/MarkupLoader.hpp>
 #include <GTLib/GUI/Server.hpp>
-#include <GTLib/IO.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <easy_path/easy_path.h>
 

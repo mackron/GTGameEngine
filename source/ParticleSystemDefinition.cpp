@@ -4,7 +4,6 @@
 #include <GTEngine/Errors.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <GTLib/Path.hpp>
-#include <GTLib/IO.hpp>
 
 namespace GTEngine
 {

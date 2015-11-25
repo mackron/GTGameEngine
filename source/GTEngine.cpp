@@ -15,7 +15,6 @@
 #include <GTEngine/ScriptLibrary.hpp>
 #include <GTEngine/ThreadCache.hpp>
 #include <GTEngine/MessageDispatcher.hpp>
-#include <GTLib/IO.hpp>
 #include <GTLib/WindowManagement.hpp>
 
 // Basic globals.

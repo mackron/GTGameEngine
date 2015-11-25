@@ -4,7 +4,6 @@
 #define __GTEngine_Audio_SoundStreamer_WAV_hpp_
 
 #include <GTEngine/Audio/SoundStreamer.hpp>
-#include <GTLib/IO.hpp>
 
 namespace GTEngine
 {

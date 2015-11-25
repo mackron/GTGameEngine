@@ -2,7 +2,6 @@
 
 #include <GTEngine/AssetLibrary.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTLib/IO.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/String.hpp>
 

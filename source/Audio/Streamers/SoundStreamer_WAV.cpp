@@ -2,7 +2,6 @@
 
 #include "SoundStreamer_WAV.hpp"
 #include <GTEngine/Errors.hpp>
-#include <GTLib/IO.hpp>
 
 
 #define WAVE_FORMAT_PCM        0x1

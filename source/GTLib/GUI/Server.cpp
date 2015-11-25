@@ -2,7 +2,6 @@
 
 #include <GTLib/GUI/Server.hpp>
 #include <GTLib/GUI/StandardLibrary.hpp>
-#include <GTLib/IO.hpp>
 #include <GTLib/Strings/Tokenizer.hpp>
 #include <GTLib/Strings/Create.hpp>
 #include <GTLib/Strings/Equal.hpp>

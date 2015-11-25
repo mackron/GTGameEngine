@@ -3,7 +3,7 @@
 #include <GTLib/Colour.hpp>
 #include <GTLib/Strings/Trim.hpp>
 #include <GTLib/Parse.hpp>
-#include <GTLib/IO.hpp>  // for snprintf
+#include <GTLib/IO/cstdio.hpp>  // for snprintf
 
 namespace GTLib
 {

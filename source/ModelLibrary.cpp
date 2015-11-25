@@ -7,7 +7,6 @@
 #include <GTEngine/Logging.hpp>
 #include <GTEngine/GTEngine.hpp>
 #include <GTLib/Path.hpp>
-#include <GTLib/IO.hpp>
 #include <easy_path/easy_path.h>
 
 #if defined(__GNUC__)

@@ -5,6 +5,7 @@
 
 #include "ImageFileInfo.hpp"
 #include "Mipmap.hpp"
+#include <GTLib/String.hpp>
 
 namespace GTLib
 {

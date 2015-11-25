@@ -3,7 +3,6 @@
 #ifndef __GTLib_Log_hpp_
 #define __GTLib_Log_hpp_
 
-#include "IO.hpp"
 #include "Vector.hpp"
 #include <easy_fs/easy_vfs.h>
 

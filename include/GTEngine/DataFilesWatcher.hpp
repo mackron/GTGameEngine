@@ -3,10 +3,10 @@
 #ifndef __GTEngine_DataFilesWatcher_hpp_
 #define __GTEngine_DataFilesWatcher_hpp_
 
-#include <GTLib/IO.hpp>
 #include <GTLib/Dictionary.hpp>
 #include <GTLib/List.hpp>
 #include <GTLib/Threading.hpp>
+#include <GTLib/String.hpp>
 #include <easy_fs/easy_fsw.h>
 #include <easy_fs/easy_vfs.h>
 

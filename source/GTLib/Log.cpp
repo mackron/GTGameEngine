@@ -8,7 +8,6 @@
 #include <GTLib/Strings/List.hpp>
 #include <GTLib/Threading.hpp>
 #include <GTLib/BasicBuffer.hpp>
-#include <GTLib/IO.hpp>
 #include <GTLib/stdlib.hpp>
 
 #include <clocale>

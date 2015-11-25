@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTLib/Scripting.hpp>
-#include <GTLib/IO.hpp>
 
 #include <GTLib/Strings/List.hpp>
 #include <GTLib/Strings/Tokenizer.hpp>

@@ -3,7 +3,6 @@
 #include <GTEngine/GamePackager.hpp>
 #include <GTEngine/IO.hpp>
 #include <GTEngine/GTEngine.hpp>
-#include <GTLib/IO.hpp>
 #include <GTLib/Path.hpp>
 #include <easy_path/easy_path.h>
 #include <easy_fs/easy_vfs.h>

@@ -3,7 +3,6 @@
 #include <GTLib/GUI/StyleScriptCompiler.hpp>
 #include "StyleTokenizer.hpp"
 
-#include <GTLib/IO.hpp>
 #include <GTLib/Path.hpp>
 
 namespace GTGUI

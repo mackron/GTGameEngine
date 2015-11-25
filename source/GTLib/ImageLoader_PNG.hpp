@@ -5,7 +5,6 @@
 #ifndef GTLIB_NO_PNG
 
 #include <GTLib/ImageLoader.hpp>
-#include <GTLib/IO.hpp>
 #include <GTEngine/external/stb_image.h>
 
 namespace GTLib

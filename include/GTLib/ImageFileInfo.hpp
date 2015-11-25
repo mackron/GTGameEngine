@@ -4,7 +4,6 @@
 #define __GTLib_ImageInfo_hpp_
 
 #include "ImageFormats.hpp"
-#include <GTLib/IO.hpp>
 #include <easy_fs/easy_vfs.h>
 
 namespace GTLib

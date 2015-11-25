@@ -7,7 +7,7 @@
 #include <GTLib/Strings/List.hpp>
 #include <GTLib/Strings/Find.hpp>
 #include <GTLib/Strings/Iterator.hpp>
-#include <GTLib/IO.hpp>
+#include <GTLib/Strings/Create.hpp>
 #include <GTLib/stdlib.hpp>
 
 #include <cstring>

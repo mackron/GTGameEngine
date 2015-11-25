@@ -6,7 +6,6 @@
 #include "Audio/SoundStreamer.hpp"
 #include <GTLib/Dictionary.hpp>
 #include <GTLib/Map.hpp>
-#include <GTLib/IO.hpp>
 #include <GTLib/Threading/Mutex.hpp>
 #include <easy_fs/easy_vfs.h>
 

@@ -4,7 +4,6 @@
 #define __GTEngine_ModelLibrary_hpp_
 
 #include "Model.hpp"
-#include <GTLib/IO.hpp>
 
 namespace GTEngine
 {

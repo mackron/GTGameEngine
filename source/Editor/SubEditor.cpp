@@ -3,7 +3,6 @@
 #include <GTEngine/Editor/SubEditor.hpp>
 #include <GTEngine/Editor.hpp>
 #include <GTEngine/Game.hpp>
-#include <GTLib/IO.hpp>
 #include <GTLib/Path.hpp>
 #include <easy_path/easy_path.h>
 

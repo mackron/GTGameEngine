@@ -5,7 +5,6 @@
 
 #include <cstring>      // For memcpy()
 #include "String.hpp"
-#include "IO.hpp"
 #include "Math.hpp"     // For GTLib::Min().
 #include "Vector.hpp"
 
