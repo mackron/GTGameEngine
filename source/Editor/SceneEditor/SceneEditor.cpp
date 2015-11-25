@@ -2783,7 +2783,7 @@ namespace GTEngine
         //       the relative and base paths for a particular file.
         (void)item;
 
-#if 0
+#if 1
         // We want to go through and notify the editor of a change to the model component of any scene node referencing this file (if it's a model file).
         if (GTEngine::IO::IsSupportedModelExtension(item.info.absolutePath))
         {

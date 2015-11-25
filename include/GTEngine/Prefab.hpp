@@ -11,9 +11,7 @@
 
 namespace GTEngine
 {
-    /// Class representing the definition of a hierarchy of scene nodes.
-    ///
-    /// Think of this class as a "prefab".
+    /// Class representing a prefab.
     class Prefab
     {
     public:
@@ -24,6 +22,9 @@ namespace GTEngine
         /// Destructor.
         ~Prefab();
 
+
+        /// Retrieves the absolute path of the prefab.
+        const char* GetAbsolutePath() const;
 
         /// Retrieves the relative path of the prefab.
         const char* GetRelativePath() const;

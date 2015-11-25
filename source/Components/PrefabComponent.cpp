@@ -3,6 +3,7 @@
 #include <GTEngine/Components/PrefabComponent.hpp>
 #include <GTEngine/SceneNode.hpp>
 #include <GTEngine/Logging.hpp>
+#include <GTEngine/GTEngine.hpp>
 
 namespace GTEngine
 {
@@ -10,12 +11,19 @@ namespace GTEngine
 
     PrefabComponent::PrefabComponent(SceneNode &node)
         : Component(node),
+          prefabAbsolutePath(),
           prefabRelativePath(), localHierarchyID(0)
     {
     }
 
     PrefabComponent::~PrefabComponent()
     {
+    }
+
+
+    const char* PrefabComponent::GetPrefabAbsolutePath() const
+    {
+        return this->prefabAbsolutePath.c_str();
     }
 
 
@@ -26,6 +34,14 @@ namespace GTEngine
 
     void PrefabComponent::SetPrefabRelativePath(const char* relativePath)
     {
+        char absolutePath[EASYVFS_MAX_PATH];
+        if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), relativePath, absolutePath, sizeof(absolutePath))) {
+            g_EngineContext->PostWarningMessage("Could not find absolute path of prefab.");
+        }
+
+        this->prefabAbsolutePath = absolutePath;
+
+
         this->prefabRelativePath = relativePath;
         this->OnChanged();
     }

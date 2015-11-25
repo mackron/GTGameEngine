@@ -19,6 +19,10 @@ namespace GTEngine
         ~PrefabComponent();
 
 
+        /// Retrieves the absolute path of the prefab the scene node is linked to.
+        const char* GetPrefabAbsolutePath() const;
+
+
         /// Retrieves the relative path of the prefab the scene node is linked to.
         ///
         /// @return The relative path of the prefab the scene node is linked to.
@@ -56,6 +60,10 @@ namespace GTEngine
 
 
     private:
+
+        /// The absolute path of the prefab the scene node is linked to. This is not serialized and is set based on the
+        /// relative path set by SetPrefabRelativePath().
+        GTLib::String prefabAbsolutePath;
 
         /// The relative path of the prefab the scene node is linked to.
         GTLib::String prefabRelativePath;

@@ -17,6 +17,11 @@ namespace GTEngine
     }
 
 
+    const char* Prefab::GetAbsolutePath() const
+    {
+        return this->absolutePath.c_str();
+    }
+
     const char* Prefab::GetRelativePath() const
     {
         return this->relativePath.c_str();
