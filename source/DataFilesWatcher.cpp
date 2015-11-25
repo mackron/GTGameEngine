@@ -165,7 +165,6 @@ namespace GTEngine
             // The absolute root element will not have a valid path.
             if (root.parent != nullptr)
             {
-                //GTLib::IO::GetFileInfoFromAbsolutePath(root.info.absolutePath.c_str(), newInfo);
                 easyvfs_get_file_info(g_EngineContext->GetVFS(), root.info.absolutePath, &newInfo);
 
                 if (newInfo.lastModifiedTime != root.info.lastModifiedTime)
@@ -195,7 +194,7 @@ namespace GTEngine
                         easyvfs_file_info fi;
                         while (easyvfs_next_iteration(g_EngineContext->GetVFS(), &iFile, &fi))
                         {
-                            currentChildren.Append(easypath_filename(fi.absolutePath));
+                            currentChildren.Append(fi.absolutePath);
                         }
                     }
                 }
@@ -232,9 +231,6 @@ namespace GTEngine
             GTLib::List<Item*> addedChildren;
             for (auto iChild = currentChildren.root; iChild != nullptr; iChild = iChild->next)
             {
-                //GTLib::FileInfo info;
-                //GTLib::IO::GetFileInfoFromAbsolutePath(iChild->value.c_str(), info);
-
                 easyvfs_file_info info;
                 easyvfs_get_file_info(g_EngineContext->GetVFS(), iChild->value.c_str(), &info);
 
@@ -242,9 +238,6 @@ namespace GTEngine
                 {
                     auto newItem = new Item(info, &root);
                     addedChildren.Append(newItem);
-
-                    //newItem->relativePath = GTLib::IO::ToRelativePath(info.absolutePath, newItem->GetRootDirectory().c_str());
-                    //newItem->absolutePath = info.absolutePath;
 
                     Event e;
                     e.type = 0;                 // <-- Insert
