@@ -368,7 +368,7 @@ namespace GTLib
 
     /// Class for deserialization from a file.
     ///
-    /// This class does not open or close the file - that should be done at a higher level. The reason for this is that it makes it makes things
+    /// This class does not open or close the file - that should be done at a higher level. The reason for this is that it makes things
     /// a lot more flexible.
     ///
     /// This will move the files write pointer as data is written.
@@ -377,12 +377,8 @@ namespace GTLib
     public:
 
         /// Constructor.
-        FileDeserializer(FILE* fileIn)
-            : fileSTD(fileIn), fileVFS(nullptr)
-        {
-        }
         FileDeserializer(easyvfs_file* pFileIn)
-            : fileSTD(nullptr), fileVFS(pFileIn)
+            : m_pFile(pFileIn)
         {
         }
 
@@ -407,126 +403,44 @@ namespace GTLib
         /// Deserializer::Read().
         size_t ReadImpl(void* outputBuffer, size_t bytesToRead)
         {
-            assert(this->fileSTD != nullptr || this->fileVFS != nullptr);
-            assert(this->fileSTD == nullptr || this->fileVFS == nullptr);
+            assert(m_pFile != nullptr);
 
-
-            if (this->fileSTD != nullptr)
+            unsigned int bytesRead = 0;
+            if (!easyvfs_read(m_pFile, outputBuffer, static_cast<unsigned int>(bytesToRead), &bytesRead))
             {
-                //return IO::Read(this->fileSTD, outputBuffer, bytesToRead);
-                return fread(outputBuffer, 1, bytesToRead, this->fileSTD);
+                // Error reading.
+                bytesRead = 0;
             }
-            else
-            {
-                //return GTLib::ReadFile(this->fileGT, outputBuffer, bytesToRead);
-                unsigned int bytesRead = 0;
-                if (!easyvfs_read(this->fileVFS, outputBuffer, static_cast<unsigned int>(bytesToRead), &bytesRead))
-                {
-                    // Error reading.
-                    bytesRead = 0;
-                }
 
-                return bytesRead;
-            }
+            return bytesRead;
         }
 
         /// Deserializer::Peek().
         size_t PeekImpl(void* outputBuffer, size_t bytesToRead)
         {
-            assert(this->fileSTD != nullptr || this->fileVFS != nullptr);
-            assert(this->fileSTD == nullptr || this->fileVFS == nullptr);
+            assert(m_pFile != nullptr);
 
+            easyvfs_uint64 readPointer = easyvfs_tell(m_pFile);
 
-            if (this->fileSTD != nullptr)
+            unsigned int bytesRead = 0;
+            if (!easyvfs_read(m_pFile, outputBuffer, static_cast<unsigned int>(bytesToRead), &bytesRead))
             {
-                //auto readPointer = IO::Tell(this->fileSTD);
-
-                //size_t bytesRead = IO::Read(this->fileSTD, outputBuffer, bytesToRead);
-                //IO::Seek(this->fileSTD, readPointer, SeekOrigin::Start);
-
-                //return bytesRead;
-
-                int readPointer = ftell(this->fileSTD);
-
-                size_t bytesRead = fread(outputBuffer, 1, bytesToRead, this->fileSTD);
-                fseek(this->fileSTD, readPointer, SEEK_SET);
-
-                return bytesRead;
+                // Error reading.
+                return 0;
             }
-            else
-            {
-#if 0
-                auto readPointer = GTLib::GetFilePointer(this->fileGT);
-
-                intptr_t bytesRead = GTLib::ReadFile(this->fileGT, outputBuffer, bytesToRead);
-                if (bytesRead != -1)
-                {
-                    SeekFile(this->fileGT, readPointer, SeekOrigin::Start);
-
-                    return bytesRead;
-                }
-                else
-                {
-                    return 0;
-                }
-#endif
-
-                easyvfs_uint64 readPointer = easyvfs_tell(this->fileVFS);
-
-                unsigned int bytesRead = 0;
-                if (!easyvfs_read(this->fileVFS, outputBuffer, static_cast<unsigned int>(bytesToRead), &bytesRead))
-                {
-                    // Error reading.
-                    return 0;
-                }
                 
-                easyvfs_seek(this->fileVFS, static_cast<easyvfs_int64>(readPointer), easyvfs_start);
-                return bytesRead;
-            }
+            easyvfs_seek(m_pFile, static_cast<easyvfs_int64>(readPointer), easyvfs_start);
+            return bytesRead;
         }
 
         /// Deserializer::Seek().
         int64_t SeekImpl(int64_t bytesToSkip)
         {
-            assert(this->fileSTD != nullptr || this->fileVFS != nullptr);
-            assert(this->fileSTD == nullptr || this->fileVFS == nullptr);
+            assert(m_pFile != nullptr);
 
-
-            if (this->fileSTD != nullptr)
-            {
-                //if (IO::Seek(this->fileSTD, bytesToSkip, SeekOrigin::Current))
-                //{
-                //    return bytesToSkip;
-                //}
-
-                if (fseek(this->fileSTD, static_cast<long>(bytesToSkip), SEEK_CUR)) {
-                    return bytesToSkip;
-                }
+            if (easyvfs_seek(m_pFile, bytesToSkip, easyvfs_current)) {
+                return bytesToSkip;
             }
-            else
-            {
-#if 0
-                int64_t prevFilePointer = GTLib::GetFilePointer(this->fileGT);
-                int64_t newFilePointer  = GTLib::SeekFile(this->fileGT, bytesToSkip, SeekOrigin::Current);
-                if (newFilePointer != -1)
-                {
-                    // For consistency with the STD method, we want to skip all of bytesToSkip, or none. Nothing in between.
-                    if ((newFilePointer - prevFilePointer) == bytesToSkip)
-                    {
-                        return bytesToSkip;
-                    }
-                    else
-                    {
-                        GTLib::SeekFile(this->fileGT, prevFilePointer, SeekOrigin::Start);
-                    }
-                }
-#endif
-
-                if (easyvfs_seek(this->fileVFS, bytesToSkip, easyvfs_current)) {
-                    return bytesToSkip;
-                }
-            }
-
 
             return 0;
         }
@@ -534,30 +448,16 @@ namespace GTLib
         /// Deserializer::Tell().
         size_t TellImpl() const
         {
-            assert(this->fileSTD != nullptr || this->fileVFS != nullptr);
-            assert(this->fileSTD == nullptr || this->fileVFS == nullptr);
+            assert(m_pFile != nullptr);
 
-
-            if (this->fileSTD != nullptr)
-            {
-                //return static_cast<size_t>(IO::Tell(this->fileSTD));
-                return static_cast<size_t>(ftell(this->fileSTD));
-            }
-            else
-            {
-                //return static_cast<size_t>(GTLib::GetFilePointer(this->fileGT));
-                return static_cast<size_t>(easyvfs_tell(this->fileVFS));
-            }
+            return static_cast<size_t>(easyvfs_tell(m_pFile));
         }
 
 
     private:
 
-        /// The standard C file to read from. If set to null, fileGT must be non-zero.
-        FILE* fileSTD;
-
-        /// The virtual file system file object to read from. If this is NULL, fileSTD must be non-null.
-        easyvfs_file* fileVFS;
+        /// The virtual file system file object to read from.
+        easyvfs_file* m_pFile;
 
 
     private:    // No copying.
