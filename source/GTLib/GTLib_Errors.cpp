@@ -3,7 +3,7 @@
 #include <GTLib/Errors.hpp>
 #include <GTLib/Threading/Mutex.hpp>
 #include <GTLib/stdlib.hpp>
-#include <GTLib/IO/cstdio.hpp>
+#include <GTLib/cstdio.hpp>
 
 namespace GTLib
 {

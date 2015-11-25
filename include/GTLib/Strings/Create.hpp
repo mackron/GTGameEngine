@@ -4,7 +4,7 @@
 #define __GTLib_Strings_Create_hpp_
 
 #include "../BasicBuffer.hpp"
-#include "../IO/cstdio.hpp"
+#include "../cstdio.hpp"
 #include "List.hpp"
 #include "Copy.hpp"
 

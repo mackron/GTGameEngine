@@ -11,7 +11,7 @@
 #include <GTLib/Colour.hpp>
 #include <GTLib/String.hpp>
 #include <GTLib/Parse.hpp>
-#include <GTLib/IO/cstdio.hpp>
+#include <GTLib/cstdio.hpp>
 #include <GTLib/stdlib.hpp>
 
 #if defined(_MSC_VER)
