@@ -29,8 +29,6 @@ namespace GTEngine
 
     void DataFilesWatcher::AddRootDirectory(const char* directory)
     {
-        //m_root.InsertChild(GTLib::FileInfo(directory));
-
         easyvfs_file_info fi;
         if (easyvfs_get_file_info(g_EngineContext->GetVFS(), directory, &fi)) {
             m_root.InsertChild(fi);
