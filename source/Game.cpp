@@ -672,20 +672,7 @@ namespace GTEngine
 
     bool Game::SaveGameState(const char* destinationFilePath)
     {
-#if 0
-        GTLib::FileHandle file = GTLib::OpenFile(destinationFilePath, GTLib::IO::OpenMode::Write | GTLib::IO::OpenMode::CreateDirs);
-        if (file)
-        {
-            GTLib::FileSerializer serializer(file);
-            bool result = this->SerializeGameState(serializer);
-
-            GTLib::CloseFile(file);
-            return result;
-        }
-#endif
-        // TODO: CREATE_DIRS
-
-        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), destinationFilePath, EASYVFS_WRITE, 0);
+        easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), destinationFilePath, EASYVFS_WRITE | EASYVFS_CREATE_DIRS, 0);
         if (pFile != nullptr)
         {
             GTLib::FileSerializer serializer(pFile);

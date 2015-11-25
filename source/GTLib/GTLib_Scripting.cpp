@@ -1441,8 +1441,6 @@ namespace GTLib
             {
                 int __GetFileInfo(GTLib::Script &script)
                 {
-                    //FileInfo info(script.ToString(1));
-
                     easyvfs_file_info info;
                     if (easyvfs_get_file_info(GTEngine::g_EngineContext->GetVFS(), script.ToString(1), &info))
                     {
@@ -1462,8 +1460,6 @@ namespace GTLib
 
                 int GetParentDirectoryPath(GTLib::Script &script)
                 {
-                    //script.Push(GTLib::IO::GetParentDirectoryPath(script.ToString(1)).c_str());
-
                     char baseDir[EASYVFS_MAX_PATH];
                     easypath_copybasepath(script.ToString(1), baseDir, sizeof(baseDir));
 
@@ -1479,15 +1475,12 @@ namespace GTLib
 
                 int GetExtension(GTLib::Script &script)
                 {
-                    //script.Push(GTLib::IO::GetExtension(script.ToString(1)));
                     script.Push(easypath_extension(script.ToString(1)));
                     return 1;
                 }
 
                 int RemoveExtension(GTLib::Script &script)
                 {
-                    //script.Push(GTLib::IO::RemoveExtension(script.ToString(1)).c_str());
-
                     char path[EASYVFS_MAX_PATH];
                     easypath_copyandremoveextension(path, sizeof(path), script.ToString(1));
 
@@ -1496,26 +1489,18 @@ namespace GTLib
 
                 int FileExists(GTLib::Script &script)
                 {
-                    //script.Push(GTLib::IO::FileExists(script.ToString(1)));
-
                     script.Push(easyvfs_exists(GTEngine::g_EngineContext->GetVFS(), script.ToString(1)));
                     return 1;
                 }
 
                 int CreateDirectory(GTLib::Script &script)
                 {
-                    //GTLib::IO::PushCurrentDirectory();
-                    //GTLib::IO::SetCurrentDirectory(script.ToString(1), true);
-                    //GTLib::IO::PopCurrentDirectory();
-
                     easyvfs_mkdir_recursive(GTEngine::g_EngineContext->GetVFS(), script.ToString(1));
                     return 0;
                 }
 
                 int DeleteDirectory(GTLib::Script &script)
                 {
-                    //GTLib::IO::DeleteDirectory(script.ToString(1));
-
                     if (easyvfs_is_existing_directory(GTEngine::g_EngineContext->GetVFS(), script.ToString(1))) {
                         easyvfs_delete_file(GTEngine::g_EngineContext->GetVFS(), script.ToString(1));
                     }
@@ -1525,14 +1510,7 @@ namespace GTLib
 
                 int CreateEmptyFile(GTLib::Script &script)
                 {
-                    //auto file = GTLib::IO::Open(script.ToString(1), GTLib::IO::OpenMode::Write | GTLib::IO::OpenMode::CreateDirs);
-                    //if (file != nullptr)
-                    //{
-                    //    GTLib::IO::Close(file);
-                    //}
-
-                    // TODO: CREATE_DIRS
-                    easyvfs_file* pFile = easyvfs_open(GTEngine::g_EngineContext->GetVFS(), script.ToString(1), EASYVFS_WRITE, 0);
+                    easyvfs_file* pFile = easyvfs_open(GTEngine::g_EngineContext->GetVFS(), script.ToString(1), EASYVFS_WRITE | EASYVFS_CREATE_DIRS, 0);
                     if (pFile != nullptr)
                     {
                         easyvfs_close(pFile);
@@ -1543,8 +1521,6 @@ namespace GTLib
 
                 int DeleteFile(GTLib::Script &script)
                 {
-                    //GTLib::IO::DeleteFile(script.ToString(1));
-
                     easyvfs_delete_file(GTEngine::g_EngineContext->GetVFS(), script.ToString(1));
                     return 0;
                 }

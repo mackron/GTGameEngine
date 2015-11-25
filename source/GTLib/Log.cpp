@@ -86,19 +86,9 @@ namespace GTLib
     {
         if (fileName)
         {
-            this->file = easyvfs_open(pVFS, fileName, EASYVFS_READ | EASYVFS_WRITE, 0);
-            if (this->file == nullptr)
-            {
-                // We weren't able to open the file. It may be because the directory structure isn't in place yet - we'll try creating
-                // the directories and try opening the file again.
-                if (!easyvfs_mkdir_recursive(pVFS, fileName)) {
-                    return false;
-                }
-
-                this->file = easyvfs_open(pVFS, fileName, EASYVFS_READ | EASYVFS_WRITE, 0);
-                if (this->file == nullptr) {
-                    return false;
-                }
+            this->file = easyvfs_open(pVFS, fileName, EASYVFS_READ | EASYVFS_WRITE | EASYVFS_CREATE_DIRS, 0);
+            if (this->file == nullptr) {
+                return false;
             }
 
             assert(this->file != nullptr);
