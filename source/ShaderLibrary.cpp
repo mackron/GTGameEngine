@@ -308,8 +308,8 @@ namespace GTEngine
             unsigned int baseDirectoryCount = easyvfs_get_base_directory_count(pVFS);
             for (unsigned int iBaseDirectory = 0; iBaseDirectory < baseDirectoryCount; ++iBaseDirectory)
             {
-                char baseDirectory[EASYVFS_MAX_PATH];
-                if (easyvfs_get_base_directory_by_index(pVFS, iBaseDirectory, baseDirectory, sizeof(baseDirectory)))
+                const char* baseDirectory = easyvfs_get_base_directory_by_index(pVFS, iBaseDirectory);
+                if (baseDirectory != nullptr)
                 {
                     char searchDir[EASYVFS_MAX_PATH];
                     easypath_copyandappend(searchDir, sizeof(searchDir), baseDirectory, directory);
