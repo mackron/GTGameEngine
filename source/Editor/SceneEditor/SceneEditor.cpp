@@ -13,6 +13,7 @@
 #include <GTLib/Deserializer.hpp>
 #include <GTLib/Path.hpp>
 #include <GTLib/String.hpp>
+#include <easy_path/easy_path.h>
 //#include <ittnotify.h>
 
 #undef min
@@ -2779,11 +2780,6 @@ namespace GTEngine
 
     void SceneEditor::OnFileUpdate(const DataFilesWatcher::Item &item)
     {
-        // NOTE: File System Refactor: Disabling hot reloading for now due to not having proper relative paths working yet. Need easy_fsw to report
-        //       the relative and base paths for a particular file.
-        (void)item;
-
-#if 1
         // We want to go through and notify the editor of a change to the model component of any scene node referencing this file (if it's a model file).
         if (GTEngine::IO::IsSupportedModelExtension(item.info.absolutePath))
         {
@@ -2800,7 +2796,10 @@ namespace GTEngine
                         auto model = modelComponent->GetModel();
                         if (model != nullptr)
                         {
-                            if (model->GetDefinition().absolutePath == item.info.absolutePath || GTLib::IO::RemoveExtension(item.info.absolutePath.c_str()) == model->GetDefinition().absolutePath)
+                            char absolutePathWithoutExt[EASYVFS_MAX_PATH];
+                            easypath_copyandremoveextension(absolutePathWithoutExt, sizeof(absolutePathWithoutExt), item.info.absolutePath);
+
+                            if (model->GetDefinition().absolutePath == item.info.absolutePath || model->GetDefinition().absolutePath == absolutePathWithoutExt)
                             {
                                 modelComponent->OnChanged();
 
@@ -2829,21 +2828,44 @@ namespace GTEngine
                 }
             }
         }
-        else if (GTEngine::IO::IsSupportedPrefabExtension(item.info.absolutePath))
-        {
-            this->RelinkSceneNodesLinkedToPrefab(item.relativePath.c_str());
-        }
         else
         {
-            // It might be a script file.
-            if (GTLib::Strings::Equal<false>(GTLib::Path::Extension(item.relativePath.c_str()), "lua")    ||
-                GTLib::Strings::Equal<false>(GTLib::Path::Extension(item.relativePath.c_str()), "script") ||
-                GTLib::Strings::Equal<false>(GTLib::Path::Extension(item.relativePath.c_str()), "gtscript"))
+            // Note that the APIs below request relative paths, however only an absolute path is made available to us. To resolve this
+            // we will find the most likely base path and use that to derive a relative path. This is not a robust way of doing this and
+            // will be updated when the asset management system is updated.
+            const char* mostLikelyBasePath = nullptr;
+            for (unsigned int iBasePath = 0; iBasePath < easyvfs_get_base_directory_count(g_EngineContext->GetVFS()); ++iBasePath)
             {
-                this->UpdateAllSceneNodesLinkedToScript(item.relativePath.c_str());
+                const char* basePath = easyvfs_get_base_directory_by_index(g_EngineContext->GetVFS(), iBasePath);
+                if (easypath_isdescendant(item.info.absolutePath, basePath))
+                {
+                    mostLikelyBasePath = basePath;
+                    break;
+                }
+            }
+
+            if (mostLikelyBasePath != nullptr)
+            {
+                char relativePath[EASYVFS_MAX_PATH];
+                if (easypath_to_relative(item.info.absolutePath, mostLikelyBasePath, relativePath, sizeof(relativePath)))
+                {
+                    if (GTEngine::IO::IsSupportedPrefabExtension(item.info.absolutePath))
+                    {
+                        this->RelinkSceneNodesLinkedToPrefab(relativePath);
+                    }
+                    else
+                    {
+                        // It might be a script file.
+                        if (easypath_extensionequal(relativePath, "lua")    ||
+                            easypath_extensionequal(relativePath, "script") ||
+                            easypath_extensionequal(relativePath, "gtscript"))
+                        {
+                            this->UpdateAllSceneNodesLinkedToScript(relativePath);
+                        }
+                    }
+                }
             }
         }
-#endif
     }
 
 
