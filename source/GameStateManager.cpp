@@ -278,12 +278,12 @@ namespace GTEngine
         return true;
     }
 
-    uint32_t GenericGameStateManager::SerializeHeaderData(Game &game, GTLib::Serializer &deserializer)
+    uint32_t GenericGameStateManager::SerializeHeaderData(Game &, GTLib::Serializer &)
     {
         return 0;
     }
 
-    uint32_t GenericGameStateManager::SerializeGlobalData(Game &game, GTLib::Serializer &serializer)
+    uint32_t GenericGameStateManager::SerializeGlobalData(Game &, GTLib::Serializer &)
     {
         return 0;
     }
@@ -364,12 +364,12 @@ namespace GTEngine
         return true;
     }
 
-    bool GenericGameStateManager::DeserializeHeaderData(Game &game, GTLib::Deserializer &deserializer, uint32_t version)
+    bool GenericGameStateManager::DeserializeHeaderData(Game &, GTLib::Deserializer &, uint32_t)
     {
         return true;
     }
 
-    bool GenericGameStateManager::DeserializeGlobalData(Game &game, GTLib::Deserializer &serializer, uint32_t version)
+    bool GenericGameStateManager::DeserializeGlobalData(Game &, GTLib::Deserializer &, uint32_t)
     {
         return true;
     }
