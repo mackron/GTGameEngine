@@ -80,7 +80,6 @@ namespace GT
             easypath_clean(cmdlineData.absoluteExeDirPath, m_executableDirectoryAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
             easypath_clean(cmdlineData.absoluteExePath, m_executableAbsolutePath, sizeof(m_executableDirectoryAbsolutePath));
 
-
             // The directory containing the executable needs to be the lowest-priority base path.
             easyvfs_add_base_directory(m_pVFS, m_executableDirectoryAbsolutePath);
             
