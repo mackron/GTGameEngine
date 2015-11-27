@@ -7,131 +7,125 @@ namespace GT
 {
     namespace Engine
     {
-        static void EA_OnStreamingBufferStop(easyaudio_buffer* pBuffer, unsigned int eventID, void *pUserData)
+        struct EA_SoundData
         {
-            (void)eventID;
-            (void)pBuffer;
+            // A pointer to the engine context.
+            GT::Engine::EngineContext* pEngineContext;
 
-            Sound* pSound = reinterpret_cast<Sound*>(pUserData);
-            assert(pSound != NULL);
+            // A pointer to the streamer.
+            GTEngine::SoundStreamer* pStreamer;
+        };
 
-            SoundWorld* pWorld = pSound->GetWorld();
-            assert(pWorld != NULL);
+        static void EA_OnSoundDelete(easyaudio_sound* pSound)
+        {
+            // The streamer needs to be closed.
+            EA_SoundData* pSoundData = reinterpret_cast<EA_SoundData*>(easyaudio_get_sound_extra_data(pSound));
+            assert(pSoundData != NULL);
 
-            // When an inline sound stops we want to delete it.
-            pWorld->_UntrackAndDeleteInlineSound(*pSound);
+            pSoundData->pEngineContext->GetAssetLibrary().CloseSoundStreamer(pSoundData->pStreamer);
+            pSoundData->pStreamer = NULL;
+        }
+
+        static easyaudio_bool EA_OnSoundRead(easyaudio_sound* pSound, void* pDataOut, unsigned int bytesToRead, unsigned int* bytesReadOut)
+        {
+            EA_SoundData* pSoundData = reinterpret_cast<EA_SoundData*>(easyaudio_get_sound_extra_data(pSound));
+            assert(pSoundData != NULL);
+
+            if (pSoundData->pStreamer != NULL) {
+                return pSoundData->pStreamer->Read(pDataOut, bytesToRead, bytesReadOut);
+            }
+
+            return false;
+        }
+
+        static easyaudio_bool EA_OnSoundSeek(easyaudio_sound* pSound, unsigned int offsetInBytesFromStart)
+        {
+            EA_SoundData* pSoundData = reinterpret_cast<EA_SoundData*>(easyaudio_get_sound_extra_data(pSound));
+            assert(pSoundData != NULL);
+
+            if (pSoundData->pStreamer != NULL) {
+                return pSoundData->pStreamer->Seek(offsetInBytesFromStart);
+            }
+
+            return false;
         }
 
 
 
         SoundWorld::SoundWorld(GT::Engine::EngineContext &engineContext)
             : m_engineContext(engineContext),
-              m_sounds(),
-              m_inlineSounds()
+              m_pWorld(nullptr)
         {
+            
         }
 
         SoundWorld::~SoundWorld()
         {
-            this->StopAllSounds();
+        }
 
-            // All sounds need to be deleted and removed from the scene. The sound will be stopped during destructor.
-            for (size_t iSound = 0; iSound < m_sounds.GetCount(); ++iSound)
+
+        bool SoundWorld::Startup()
+        {
+            m_pWorld = easyaudio_create_world(m_engineContext.GetAudioPlaybackDevice());
+            if (m_pWorld != nullptr)
             {
-                delete m_sounds[iSound];
+                return true;
             }
 
-            assert(m_inlineSounds.GetCount() == 0);
+            return false;
         }
 
-
-        void SoundWorld::AddSound(Sound &sound)
+        void SoundWorld::Shutdown()
         {
-            (void)sound;
-        }
-
-        void SoundWorld::RemoveSound(Sound &sound)
-        {
-            (void)sound;
+            easyaudio_delete_world(m_pWorld);
+            m_pWorld = nullptr;
         }
 
 
         bool SoundWorld::PlaySound(const char* filePath, const glm::vec3 &position, bool relative)
         {
-            auto sound = new Sound(m_engineContext);
-            if (sound->LoadFromFile(filePath))
+            // TODO: Don't use streaming for tiny sounds.
+
+            // We need to first open a streamer.
+            GTEngine::SoundStreamer* pStreamer = m_engineContext.GetAssetLibrary().OpenSoundStreamer(filePath);
+            if (pStreamer != nullptr)
             {
-                sound->SetWorld(this);
-                easyaudio_register_stop_callback(sound->GetAudioBuffer(), EA_OnStreamingBufferStop, sound);
+                EA_SoundData extraData;
+                extraData.pEngineContext = &m_engineContext;
+                extraData.pStreamer      = pStreamer;
 
-                _TrackInlineSound(*sound);
+                easyaudio_sound_desc desc;
+                desc.flags         = 0;
+                desc.format        = pStreamer->GetFormat();
+                desc.channels      = pStreamer->GetNumChannels();
+                desc.sampleRate    = pStreamer->GetSampleRate();
+                desc.bitsPerSample = pStreamer->GetBitsPerSample();
+                desc.sizeInBytes   = 0;
+                desc.pInitialData  = nullptr;
+                desc.onDelete      = EA_OnSoundDelete;
+                desc.onRead        = EA_OnSoundRead;
+                desc.onSeek        = EA_OnSoundSeek;
+                desc.extraDataSize = sizeof(EA_SoundData);
+                desc.pExtraData    = &extraData;
+                if (desc.channels == 1) {
+                    desc.flags = EASYAUDIO_ENABLE_3D;
 
-                // Now we actually want to start playing the sound.
-                sound->SetPosition(position);
-                sound->SetIsPositionRelative(relative);
-                sound->Play();
+                    if (relative) {
+                        desc.flags = EASYAUDIO_RELATIVE_3D;
+                    }
+                }
+
+                easyaudio_play_inline_sound_3f(m_pWorld, desc, position.x, position.y, position.z);
 
                 return true;
             }
-            else
-            {
-                // Failed to load the sound.
-                delete sound;
-                
-                return false;
-            }
+
+            return false;
         }
-
-
 
         void SoundWorld::StopAllSounds()
         {
-            for (size_t iSound = 0; iSound < m_sounds.GetCount(); ++iSound)
-            {
-                auto sound = m_sounds[iSound];
-                assert(sound != nullptr);
-                {
-                    sound->Stop();
-                }
-            }
-
-
-            // Inline sounds. For these, when the sound is stopped, it will be removed from the list, and so we need to do a different loop to
-            // the one we use for normal sounds.
-            while (m_inlineSounds.GetCount() > 0)
-            {
-                auto sound = m_inlineSounds.GetBack();
-                assert(sound != nullptr);
-                {
-                    sound->Stop();
-                }
-            }
-        }
-
-
-
-
-
-        ////////////////////////////////////////////////////////
-        // Internal-Use-Only Methods
-
-        void SoundWorld::_TrackInlineSound(Sound &sound)
-        {
-            m_inlineSoundsMutex.Lock();
-            {
-                m_inlineSounds.PushBack(&sound);
-            }
-            m_inlineSoundsMutex.Unlock();
-        }
-
-        void SoundWorld::_UntrackAndDeleteInlineSound(Sound &sound)
-        {
-            m_inlineSoundsMutex.Lock();
-            {
-                m_inlineSounds.RemoveFirstOccuranceOf(&sound);
-                delete &sound;
-            }
-            m_inlineSoundsMutex.Unlock();
+            easyaudio_stop_all_sounds(m_pWorld);
         }
     }
 }

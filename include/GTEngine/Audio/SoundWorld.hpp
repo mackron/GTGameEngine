@@ -4,8 +4,9 @@
 #define __GT_Engine_SoundWorld_hpp_
 
 #include <GTLib/Vector.hpp>
-#include "Sound.hpp"
 #include <GTLib/Threading/Mutex.hpp>
+#include "../Math.hpp"
+#include <easy_audio/easy_audio.h>
 
 namespace GT
 {
@@ -25,15 +26,11 @@ namespace GT
             ~SoundWorld();
 
 
-            /// Adds a sound to the world.
-            ///
-            /// @param sound [in] A reference to the sound to add to the world.
-            void AddSound(Sound &sound);
+            /// Initializes the sound world.
+            bool Startup();
 
-            /// Removes the given sound from the world.
-            ///
-            /// @param sound [in] A reference to the sound to remove from the world.
-            void RemoveSound(Sound &sound);
+            /// Shuts down the sound world.
+            void Shutdown();
 
 
             /// A helper function for plays a sound in place at the given position.
@@ -58,29 +55,14 @@ namespace GT
 
 
 
-            ////////////////////////////////////////////////////////
-            // Internal-Use-Only Methods
-
-            /// Tracks the given inline sound.
-            void _TrackInlineSound(Sound &sound);
-
-            /// Untracks the given inline sound.
-            void _UntrackAndDeleteInlineSound(Sound &sound);
-
-
         private:
 
             /// A reference to the engine context.
             GT::Engine::EngineContext &m_engineContext;
 
-            /// The list of sounds that are currently in the world.
-            GTLib::Vector<Sound*> m_sounds;
+            /// A pointer to the easy_audio world.
+            easyaudio_world* m_pWorld;
 
-            /// The list of inline sounds. These sounds are created by PlaySound() and deleted when they are no longer playing.
-            GTLib::Vector<Sound*> m_inlineSounds;
-
-            /// Mutex for synchronizing inline sounds.
-            GTLib::Mutex m_inlineSoundsMutex;
 
 
         private:    // No copying.

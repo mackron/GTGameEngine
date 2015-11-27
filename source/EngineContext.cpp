@@ -114,7 +114,6 @@ namespace GT
                     // because we always want the executable's directory to be the lowest priority one.
                     for (size_t i = 0; i < directories.count; ++i)
                     {
-                        //GTLib::IO::AddAdditionalSearchPath(directories[i].c_str());
                         easyvfs_insert_base_directory(m_pVFS, directories[i].c_str(), easyvfs_get_base_directory_count(m_pVFS) - 1);
                     }
                 }
@@ -147,14 +146,12 @@ namespace GT
             if (playbackDeviceCount > 0) {
                 m_pAudioPlaybackDevice = easyaudio_create_output_device(m_pAudioContext, 0);
             }
+
+            m_soundWorld.Startup();
         }
 
         EngineContext::~EngineContext()
         {
-            // All sounds need to be stopped so we can clean up the threads.
-            m_soundWorld.StopAllSounds();
-
-
             //////////////////////////////////////////
             // Threading
             //
@@ -185,6 +182,8 @@ namespace GT
 
             //////////////////////////////////////////
             // Audio System
+
+            m_soundWorld.Shutdown();
 
             easyaudio_delete_output_device(m_pAudioPlaybackDevice);
             m_pAudioPlaybackDevice = nullptr;
