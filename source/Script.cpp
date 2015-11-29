@@ -433,7 +433,7 @@ namespace GT
 
     bool Script::Set(const char* dest, int value)
     {
-        String valueStr = ToString(value);
+        String valueStr = GT::ToString(value);
 
         Strings::List<char> command;
         command.Append(dest);
@@ -446,7 +446,7 @@ namespace GT
 
     bool Script::Set(const char* dest, double value)
     {
-        String valueStr = ToString(value);
+        String valueStr = GT::ToString(value);
 
         Strings::List<char> command;
         command.Append(dest);

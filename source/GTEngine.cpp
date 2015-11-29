@@ -24,7 +24,7 @@ namespace GT
     Game* GlobalGame = nullptr;
 
     /// The global engine context. TODO: Remove this and have applications create this themselves. This global object is only used during the transition phase.
-    GT::Engine::EngineContext* g_EngineContext = nullptr;
+    GT::EngineContext* g_EngineContext = nullptr;
 }
 
 namespace GT

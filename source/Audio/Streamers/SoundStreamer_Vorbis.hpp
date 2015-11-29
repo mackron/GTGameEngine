@@ -13,68 +13,65 @@
 
 namespace GT
 {
-    namespace Engine
+    /// Sound streamer for Ogg Vorbis files.
+    class SoundStreamer_Vorbis : public SoundStreamer
     {
-        /// Sound streamer for Ogg Vorbis files.
-        class SoundStreamer_Vorbis : public SoundStreamer
-        {
-        public:
+    public:
 
-            /// Constructor.
-            SoundStreamer_Vorbis(const void* fileData, size_t fileDataSizeInBytes);
+        /// Constructor.
+        SoundStreamer_Vorbis(const void* fileData, size_t fileDataSizeInBytes);
 
-            /// Destructor.
-            ~SoundStreamer_Vorbis();
+        /// Destructor.
+        ~SoundStreamer_Vorbis();
 
 
-            /// SoundStreamer::Initialize()
-            bool Initialize();
+        /// SoundStreamer::Initialize()
+        bool Initialize();
 
 
-            /// SoundStreamer::Read().
-            bool Read(void* pDataOut, unsigned int bytesToRead, unsigned int* bytesReadOut);
+        /// SoundStreamer::Read().
+        bool Read(void* pDataOut, unsigned int bytesToRead, unsigned int* bytesReadOut);
 
-            /// SoundStreamer::Seek().
-            ///
-            /// @remarks
-            ///     This currently doesn't work for Vorbis files except for when time is 0.0, in which case it'll be rewound to the start.
-            bool Seek(unsigned int offsetInBytesFromStart);
+        /// SoundStreamer::Seek().
+        ///
+        /// @remarks
+        ///     This currently doesn't work for Vorbis files except for when time is 0.0, in which case it'll be rewound to the start.
+        bool Seek(unsigned int offsetInBytesFromStart);
 
-            /// SoundStreamer::GetNumChannels()
-            unsigned int GetNumChannels() const;
+        /// SoundStreamer::GetNumChannels()
+        unsigned int GetNumChannels() const;
 
-            /// SoundStreamer::GetBitsPerSample()
-            unsigned int GetBitsPerSample() const;
+        /// SoundStreamer::GetBitsPerSample()
+        unsigned int GetBitsPerSample() const;
 
-            /// SoundStreamer::GetSampleRate()
-            unsigned int GetSampleRate() const;
+        /// SoundStreamer::GetSampleRate()
+        unsigned int GetSampleRate() const;
 
-            /// SoundStreamer::GetFormat()
-            easyaudio_format GetFormat() const;
-
-
-        private:
-
-            /// A pointer to the file data.
-            const void* m_fileDataPtr;
-
-            /// The size of the file data in bytes.
-            size_t m_fileDataSizeInBytes;
+        /// SoundStreamer::GetFormat()
+        easyaudio_format GetFormat() const;
 
 
-            /// A pointer to the stb_vorbis for doing the actual reading of the Vorbis file.
-            stb_vorbis* m_vorbis;
+    private:
 
-            /// The structure containing the Vorbis data so we don't have to keep calling stb_vorbis_get_info().
-            stb_vorbis_info m_vorbisInfo;
+        /// A pointer to the file data.
+        const void* m_fileDataPtr;
+
+        /// The size of the file data in bytes.
+        size_t m_fileDataSizeInBytes;
+
+
+        /// A pointer to the stb_vorbis for doing the actual reading of the Vorbis file.
+        stb_vorbis* m_vorbis;
+
+        /// The structure containing the Vorbis data so we don't have to keep calling stb_vorbis_get_info().
+        stb_vorbis_info m_vorbisInfo;
 
 
 
-        private:    // No copying.
-            SoundStreamer_Vorbis(const SoundStreamer_Vorbis &);
-            SoundStreamer_Vorbis & operator=(const SoundStreamer_Vorbis &);
-        };
-    }
+    private:    // No copying.
+        SoundStreamer_Vorbis(const SoundStreamer_Vorbis &);
+        SoundStreamer_Vorbis & operator=(const SoundStreamer_Vorbis &);
+    };
 }
 
 #endif

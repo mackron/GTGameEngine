@@ -40,7 +40,7 @@ namespace GT
             switch (pSoundAsset->GetCompressedDataFormat())
             {
             case GT::CompressedAudioFormat::WAV:    pStreamer = new SoundStreamer_WAV(dataInfo.pData, dataInfo.sizeInBytes);      break;
-            case GT::CompressedAudioFormat::Vorbis: pStreamer = new GT::Engine::SoundStreamer_Vorbis(dataInfo.pData, dataInfo.sizeInBytes); break;
+            case GT::CompressedAudioFormat::Vorbis: pStreamer = new GT::SoundStreamer_Vorbis(dataInfo.pData, dataInfo.sizeInBytes); break;
 
             case GT::CompressedAudioFormat::FLAC:
             case GT::CompressedAudioFormat::Unknown:

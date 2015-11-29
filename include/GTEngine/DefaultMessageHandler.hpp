@@ -9,39 +9,36 @@
 
 namespace GT
 {
-    namespace Engine
+    /// The engine's default message handler.
+    ///
+    /// This message handler simply writes the message to the log file.
+    class DefaultMessageHandler : public MessageHandler
     {
-        /// The engine's default message handler.
+    public:
+
+        /// Constructor.
+        DefaultMessageHandler();
+
+        /// Destructor.
+        ~DefaultMessageHandler();
+
+
+        /// Opens the log file.
         ///
-        /// This message handler simply writes the message to the log file.
-        class DefaultMessageHandler : public MessageHandler
-        {
-        public:
-
-            /// Constructor.
-            DefaultMessageHandler();
-
-            /// Destructor.
-            ~DefaultMessageHandler();
+        /// @param filePath [in] The path of the log file to write the log to.
+        void OpenLogFile(easyvfs_context* pVFS, const char* filePath);
 
 
-            /// Opens the log file.
-            ///
-            /// @param filePath [in] The path of the log file to write the log to.
-            void OpenLogFile(easyvfs_context* pVFS, const char* filePath);
-
-
-            /// MessageHandler::HandleMessage()
-            void HandleMessage(const Message &message) override;
+        /// MessageHandler::HandleMessage()
+        void HandleMessage(const Message &message) override;
 
 
 
-        private:
+    private:
 
-            /// The log to write the messages to.
-            LogFile m_log;
-        };
-    }
+        /// The log to write the messages to.
+        LogFile m_log;
+    };
 }
 
 #endif // !__GT_Engine_DefaultMessageHandler_hpp_

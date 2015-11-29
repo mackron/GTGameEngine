@@ -10,55 +10,52 @@
 
 namespace GT
 {
-    namespace Engine
+    class ApplicationConfig
     {
-        class ApplicationConfig
-        {
-        public:
+    public:
 
-            /// Constructor.
-            ApplicationConfig();
+        /// Constructor.
+        ApplicationConfig();
 
-            /// Destructor.
-            ~ApplicationConfig();
+        /// Destructor.
+        ~ApplicationConfig();
 
     
-            /// Opens the application configuration from the given file.
-            ///
-            /// @param  fileName [in] The name of the config file to load.
-            ///
-            /// @remarks
-            ///     You must call Close() when finished with the configuration.
-            bool Open(easyvfs_context* pContext, const char* fileName);
+        /// Opens the application configuration from the given file.
+        ///
+        /// @param  fileName [in] The name of the config file to load.
+        ///
+        /// @remarks
+        ///     You must call Close() when finished with the configuration.
+        bool Open(easyvfs_context* pContext, const char* fileName);
         
 
-            /// Retrieves a reference to the list containing the data directories.
-            const Vector<String> & GetDataDirectories() const;
+        /// Retrieves a reference to the list containing the data directories.
+        const Vector<String> & GetDataDirectories() const;
 
-            /// Copies the data directory strings from the internal list into the given list.
-            ///
-            /// @param directoriesOut [out] A reference the list that the directories will be copied into.
-            ///
-            /// @remarks
-            ///     The values will be pushed to the back. Existing items will not be cleared.
-            void GetDataDirectories(Vector<String> &directories) const;
-
-
-
-        private:
-
-            /// The script object that will be used to read the config file.
-            GT::Script m_script;
-
-            /// The list of data directories.
-            Vector<String> m_dataDirectories;
+        /// Copies the data directory strings from the internal list into the given list.
+        ///
+        /// @param directoriesOut [out] A reference the list that the directories will be copied into.
+        ///
+        /// @remarks
+        ///     The values will be pushed to the back. Existing items will not be cleared.
+        void GetDataDirectories(Vector<String> &directories) const;
 
 
-        private:    // No copying.
-            ApplicationConfig(const ApplicationConfig &);
-            ApplicationConfig & operator=(const ApplicationConfig &);
-        };
-    }
+
+    private:
+
+        /// The script object that will be used to read the config file.
+        GT::Script m_script;
+
+        /// The list of data directories.
+        Vector<String> m_dataDirectories;
+
+
+    private:    // No copying.
+        ApplicationConfig(const ApplicationConfig &);
+        ApplicationConfig & operator=(const ApplicationConfig &);
+    };
 }
 
 #endif

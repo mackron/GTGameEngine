@@ -36,7 +36,7 @@ namespace GT
     extern Game* GlobalGame;
 
     /// The global engine context. TODO: Remove this and have applications create this themselves. This global object is only used during the transition phase.
-    extern GT::Engine::EngineContext* g_EngineContext;
+    extern GT::EngineContext* g_EngineContext;
 
 
     /// Starts up the engine.
@@ -60,7 +60,7 @@ namespace GT
     {
         if (GlobalGame == nullptr && g_EngineContext == nullptr)
         {
-            g_EngineContext = new GT::Engine::EngineContext(argc, argv);
+            g_EngineContext = new GT::EngineContext(argc, argv);
             if (_PreStartup())
             {
                 GlobalGame = new T(gameStateManager);

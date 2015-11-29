@@ -24,7 +24,7 @@ namespace GT
         m_dataInfo.pData = easyvfs_open_and_read_binary_file(pVFS, absolutePath, &m_dataInfo.sizeInBytes);
         if (m_dataInfo.pData != nullptr)
         {
-            GT::Engine::SoundStreamer_Vorbis streamer(m_dataInfo.pData, m_dataInfo.sizeInBytes);
+            GT::SoundStreamer_Vorbis streamer(m_dataInfo.pData, m_dataInfo.sizeInBytes);
             if (streamer.Initialize())
             {
                 m_dataInfo.flags         = 0;
