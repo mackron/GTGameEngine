@@ -6,7 +6,6 @@
 #include "Threading/Thread.hpp"
 #include "Threading/Mutex.hpp"
 #include "Threading/Semaphore.hpp"
-#include "Threading/JobQueue.hpp"
 #include <cstdint>
 
 namespace GT
