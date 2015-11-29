@@ -94,7 +94,7 @@ namespace GT
 
 
             // We're good. Now we need to set our format based on the extension. If it is .html, we will output to a HTML file.
-            if (easypath_extensionequal(fileName, "html"))
+            if (easypath_extension_equal(fileName, "html"))
             {
                 // HTML.
                 this->format = LogFormat_HTML;

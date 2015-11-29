@@ -276,7 +276,7 @@ namespace GT
         easyvfs_context* pVFS = g_EngineContext->GetVFS();
         assert(pVFS != nullptr);
 
-        if (easypath_isabsolute(directory))
+        if (easypath_is_absolute(directory))
         {
             // Absolute.
 
@@ -311,7 +311,7 @@ namespace GT
                 if (baseDirectory != nullptr)
                 {
                     char searchDir[EASYVFS_MAX_PATH];
-                    easypath_copyandappend(searchDir, sizeof(searchDir), baseDirectory, directory);
+                    easypath_copy_and_append(searchDir, sizeof(searchDir), baseDirectory, directory);
 
                     ShaderLibrary::LoadFromDirectory(searchDir, recursive);
                 }

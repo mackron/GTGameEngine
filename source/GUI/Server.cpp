@@ -654,7 +654,7 @@ namespace GTGUI
     {
         if (m_imageManager != nullptr)
         {
-            if (easypath_isabsolute(absURLOrID))
+            if (easypath_is_absolute(absURLOrID))
             {
                 // We will first check that the image isn't already loaded. If it is, we just return the existing image.
                 auto iImage = this->loadedImages.Find(absURLOrID);

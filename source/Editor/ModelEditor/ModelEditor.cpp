@@ -474,10 +474,10 @@ namespace GT
             }
             else
             {
-                if (easypath_extensionequal(item.info.absolutePath, "gtmodel"))
+                if (easypath_extension_equal(item.info.absolutePath, "gtmodel"))
                 {
                     char absolutePathNoExt[EASYVFS_MAX_PATH];
-                    easypath_copyandremoveextension(absolutePathNoExt, sizeof(absolutePathNoExt), item.info.absolutePath);
+                    easypath_copy_and_remove_extension(absolutePathNoExt, sizeof(absolutePathNoExt), item.info.absolutePath);
 
                     if (strcmp(absolutePathNoExt, this->GetAbsolutePath()) == 0) {
                         this->Reload();

@@ -37,7 +37,7 @@ namespace GT
         char newAbsolutePath[EASYVFS_MAX_PATH];
         char newRelativePath[EASYVFS_MAX_PATH];
 
-        if (easypath_isabsolute(fileNameIn))
+        if (easypath_is_absolute(fileNameIn))
         {
             strcpy_s(newAbsolutePath, sizeof(newAbsolutePath), fileNameIn);
 
@@ -63,16 +63,16 @@ namespace GT
 
 
         char nativeAbsolutePath[EASYVFS_MAX_PATH];
-        if (easypath_extensionequal(newAbsolutePath, "gtmodel"))
+        if (easypath_extension_equal(newAbsolutePath, "gtmodel"))
         {
             strcpy_s(nativeAbsolutePath, sizeof(nativeAbsolutePath), newAbsolutePath);
 
-            easypath_removeextension(newAbsolutePath);
-            easypath_removeextension(newRelativePath);
+            easypath_remove_extension(newAbsolutePath);
+            easypath_remove_extension(newRelativePath);
         }
         else
         {
-            easypath_copyandappendextension(nativeAbsolutePath, sizeof(nativeAbsolutePath), newAbsolutePath, "gtmodel");
+            easypath_copy_and_append_extension(nativeAbsolutePath, sizeof(nativeAbsolutePath), newAbsolutePath, "gtmodel");
         }
 
 

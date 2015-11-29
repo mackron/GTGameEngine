@@ -286,7 +286,7 @@ namespace GT
         char newRelativePath[EASYVFS_MAX_PATH];
 
 
-        if (easypath_isabsolute(fileNameIn))
+        if (easypath_is_absolute(fileNameIn))
         {
             strcpy_s(newAbsolutePath, sizeof(newAbsolutePath), fileNameIn);
 

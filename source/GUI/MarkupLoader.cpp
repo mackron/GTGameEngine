@@ -87,7 +87,7 @@ namespace GTGUI
                 char absURL[EASYVFS_MAX_PATH];
                 if (absoluteDirectory != nullptr)
                 {
-                    easypath_copyandappend(absURL, sizeof(absURL), absoluteDirectory, i->start);
+                    easypath_copy_and_append(absURL, sizeof(absURL), absoluteDirectory, i->start);
                 }
                 else
                 {
@@ -117,7 +117,7 @@ namespace GTGUI
                 char absURL[EASYVFS_MAX_PATH];
                 if (absoluteDirectory != nullptr)
                 {
-                    easypath_copyandappend(absURL, sizeof(absURL), absoluteDirectory, i->start);
+                    easypath_copy_and_append(absURL, sizeof(absURL), absoluteDirectory, i->start);
                 }
                 else
                 {
@@ -281,7 +281,7 @@ namespace GTGUI
                 char absURL[EASYVFS_MAX_PATH];
                 if (absoluteDirectory != nullptr)
                 {
-                    easypath_copyandappend(absURL, sizeof(absURL), absoluteDirectory, i->start);
+                    easypath_copy_and_append(absURL, sizeof(absURL), absoluteDirectory, i->start);
                 }
                 else
                 {
@@ -322,7 +322,7 @@ namespace GTGUI
                 if (pFileData != nullptr)
                 {
                     char absoluteDir[EASYVFS_MAX_PATH];
-                    easypath_copybasepath(absolutePath, absoluteDir, sizeof(absoluteDir));
+                    easypath_copy_base_path(absolutePath, absoluteDir, sizeof(absoluteDir));
 
                     bool result = this->Load(pFileData, fileSize, absoluteDir, loadedElementsOut);
                     if (result)

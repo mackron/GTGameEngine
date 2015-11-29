@@ -2141,11 +2141,11 @@ namespace GT
                     {
                         if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                         {
-                            directories.Add(easypath_filename(fi.absolutePath), true);
+                            directories.Add(easypath_file_name(fi.absolutePath), true);
                         }
                         else
                         {
-                            files.Add(easypath_filename(fi.absolutePath), true);
+                            files.Add(easypath_file_name(fi.absolutePath), true);
                         }
                     }
                 }
@@ -2335,7 +2335,7 @@ namespace GT
             int GetParentDirectoryPath(Script &script)
             {
                 char baseDir[EASYVFS_MAX_PATH];
-                easypath_copybasepath(script.ToString(1), baseDir, sizeof(baseDir));
+                easypath_copy_base_path(script.ToString(1), baseDir, sizeof(baseDir));
 
                 script.Push(baseDir);
                 return 1;
@@ -2343,7 +2343,7 @@ namespace GT
 
             int GetFileNameFromPath(Script &script)
             {
-                script.Push(easypath_filename(script.ToString(1)));
+                script.Push(easypath_file_name(script.ToString(1)));
                 return 1;
             }
 
@@ -2356,7 +2356,7 @@ namespace GT
             int RemoveExtension(Script &script)
             {
                 char path[EASYVFS_MAX_PATH];
-                easypath_copyandremoveextension(path, sizeof(path), script.ToString(1));
+                easypath_copy_and_remove_extension(path, sizeof(path), script.ToString(1));
 
                 return 1;
             }

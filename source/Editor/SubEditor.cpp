@@ -32,7 +32,7 @@ namespace GT
             assert(script.IsFunction(-1));
             {
                 script.PushValue(-2);
-                script.Push(easypath_filename(m_absolutePath.c_str()));
+                script.Push(easypath_file_name(m_absolutePath.c_str()));
                 script.Call(2, 1);
 
                 // The top item on the stack is the tab GUI element. We now need to set the 'absolutePath' and 'relativePath' attributes.
@@ -137,7 +137,7 @@ namespace GT
                 m_isMarkedAsModified = true;
 
                 // We will modify the text of the tab to show a star to the right.
-                String tabText(easypath_filename(this->GetRelativePath())); tabText += "*";
+                String tabText(easypath_file_name(this->GetRelativePath())); tabText += "*";
                 this->SetTabText(tabText.c_str());
 
 
@@ -153,7 +153,7 @@ namespace GT
             m_isMarkedAsModified = false;
 
             // Now we want to remove the star.
-            this->SetTabText(easypath_filename(this->GetRelativePath()));
+            this->SetTabText(easypath_file_name(this->GetRelativePath()));
 
 
             m_ownerEditor.UpdateMenuButtonEnableStates();

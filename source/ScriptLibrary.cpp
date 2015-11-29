@@ -60,7 +60,7 @@ namespace GT
         char relativePath[EASYVFS_MAX_PATH];
         strcpy_s(relativePath, sizeof(relativePath), fileName);
 
-        if (easypath_isabsolute(fileName))
+        if (easypath_is_absolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
@@ -161,7 +161,7 @@ namespace GT
         char relativePath[EASYVFS_MAX_PATH];
         strcpy_s(relativePath, sizeof(relativePath), fileName);
 
-        if (easypath_isabsolute(fileName))
+        if (easypath_is_absolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
@@ -190,7 +190,7 @@ namespace GT
         char relativePath[EASYVFS_MAX_PATH];
         strcpy_s(relativePath, sizeof(relativePath), fileName);
 
-        if (easypath_isabsolute(fileName))
+        if (easypath_is_absolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {

@@ -101,7 +101,7 @@ namespace GT
         char relativePath[EASYVFS_MAX_PATH];
         strcpy_s(relativePath, sizeof(relativePath), fileName);
 
-        if (easypath_isabsolute(fileName))
+        if (easypath_is_absolute(fileName))
         {
             if (makeRelativeTo != nullptr)
             {
@@ -227,9 +227,9 @@ namespace GT
         char fileName[EASYVFS_MAX_PATH];
         strcpy_s(fileName, sizeof(fileName), fileNameIn);
 
-        if (easypath_extensionequal(fileName, "gtmodel"))
+        if (easypath_extension_equal(fileName, "gtmodel"))
         {
-            easypath_removeextension(fileName);
+            easypath_remove_extension(fileName);
         }
 
 
@@ -274,7 +274,7 @@ namespace GT
     {
         // We have a model, so now we need to check that we can open the file.
         String fileName(fileNameIn);
-        if (!easypath_extensionequal(fileNameIn, "gtmodel"))
+        if (!easypath_extension_equal(fileNameIn, "gtmodel"))
         {
             fileName += ".gtmodel";
         }
@@ -303,10 +303,10 @@ namespace GT
         auto iDefinition = LoadedDefinitions.Find(fileName);
         if (iDefinition == nullptr)
         {
-            if (easypath_extensionequal(fileName, "gtmodel"))
+            if (easypath_extension_equal(fileName, "gtmodel"))
             {
                 char fileNameWithoutExtension[EASYVFS_MAX_PATH];
-                easypath_copyandremoveextension(fileNameWithoutExtension, sizeof(fileNameWithoutExtension), fileName);
+                easypath_copy_and_remove_extension(fileNameWithoutExtension, sizeof(fileNameWithoutExtension), fileName);
 
                 iDefinition = LoadedDefinitions.Find(fileNameWithoutExtension);
             }
@@ -361,10 +361,10 @@ namespace GT
             char adjustedRelativePath[EASYVFS_MAX_PATH];
             strcpy_s(adjustedRelativePath, sizeof(adjustedRelativePath), relativePath);
 
-            if (easypath_extensionequal(relativePath, "gtmodel")) {
-                easypath_removeextension(adjustedRelativePath);
+            if (easypath_extension_equal(relativePath, "gtmodel")) {
+                easypath_remove_extension(adjustedRelativePath);
             } else {
-                easypath_appendextension(adjustedRelativePath, sizeof(adjustedRelativePath), "gtmodel");
+                easypath_append_extension(adjustedRelativePath, sizeof(adjustedRelativePath), "gtmodel");
             }
 
             if (!easyvfs_find_absolute_path(g_EngineContext->GetVFS(), adjustedRelativePath, absolutePathTemp, sizeof(absolutePathTemp))) {

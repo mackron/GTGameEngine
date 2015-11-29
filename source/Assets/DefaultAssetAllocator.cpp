@@ -80,7 +80,7 @@ namespace GT
             else
             {
                 // There's no extension, so it could be a material in a Wavefront MTL file. To do this we look for the last dot.
-                const char* filename = easypath_filename(filePath);
+                const char* filename = easypath_file_name(filePath);
                 if (filename != NULL && filename[0] != '\0')
                 {
                     const char* extension = filename;

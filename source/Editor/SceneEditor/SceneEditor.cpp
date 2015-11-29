@@ -2790,7 +2790,7 @@ namespace GT
                         if (model != nullptr)
                         {
                             char absolutePathWithoutExt[EASYVFS_MAX_PATH];
-                            easypath_copyandremoveextension(absolutePathWithoutExt, sizeof(absolutePathWithoutExt), item.info.absolutePath);
+                            easypath_copy_and_remove_extension(absolutePathWithoutExt, sizeof(absolutePathWithoutExt), item.info.absolutePath);
 
                             if (model->GetDefinition().absolutePath == item.info.absolutePath || model->GetDefinition().absolutePath == absolutePathWithoutExt)
                             {
@@ -2830,7 +2830,7 @@ namespace GT
             for (unsigned int iBasePath = 0; iBasePath < easyvfs_get_base_directory_count(g_EngineContext->GetVFS()); ++iBasePath)
             {
                 const char* basePath = easyvfs_get_base_directory_by_index(g_EngineContext->GetVFS(), iBasePath);
-                if (easypath_isdescendant(item.info.absolutePath, basePath))
+                if (easypath_is_descendant(item.info.absolutePath, basePath))
                 {
                     mostLikelyBasePath = basePath;
                     break;
@@ -2849,9 +2849,9 @@ namespace GT
                     else
                     {
                         // It might be a script file.
-                        if (easypath_extensionequal(relativePath, "lua")    ||
-                            easypath_extensionequal(relativePath, "script") ||
-                            easypath_extensionequal(relativePath, "gtscript"))
+                        if (easypath_extension_equal(relativePath, "lua")    ||
+                            easypath_extension_equal(relativePath, "script") ||
+                            easypath_extension_equal(relativePath, "gtscript"))
                         {
                             this->UpdateAllSceneNodesLinkedToScript(relativePath);
                         }

@@ -31,12 +31,12 @@ namespace GT
         if (strcmp(key, "[path]") == 0)
         {
             char exeDirectoryPath[EASYVFS_MAX_PATH];
-            easypath_copybasepath(value, exeDirectoryPath, sizeof(exeDirectoryPath));
+            easypath_copy_base_path(value, exeDirectoryPath, sizeof(exeDirectoryPath));
 
             _chdir(exeDirectoryPath);
             _getcwd(pData->absoluteExeDirPath, sizeof(pData->absoluteExeDirPath));
 
-            easypath_copyandappend(pData->absoluteExePath, sizeof(pData->absoluteExePath), pData->absoluteExeDirPath, easypath_filename(value));
+            easypath_copy_and_append(pData->absoluteExePath, sizeof(pData->absoluteExePath), pData->absoluteExeDirPath, easypath_file_name(value));
 
             return true;
         }
@@ -85,7 +85,7 @@ namespace GT
 
         // We will need to open the log file as soon as possible, but it needs to be done after ensuring the current directory is set to that of the executable.
         char logpath[EASYVFS_MAX_PATH];
-        easypath_copyandappend(logpath, sizeof(logpath), m_executableDirectoryAbsolutePath, cmdlineData.relativeLogPath);
+        easypath_copy_and_append(logpath, sizeof(logpath), m_executableDirectoryAbsolutePath, cmdlineData.relativeLogPath);
             
         m_messageHandler.OpenLogFile(m_pVFS, logpath);
 

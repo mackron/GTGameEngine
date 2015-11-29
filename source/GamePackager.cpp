@@ -22,12 +22,12 @@ namespace GT
 
     void GamePackager::CopyDataDirectory(const char* sourceAbsolutePath, const char* destinationRelativePath)
     {
-        String directoryName = easypath_filename(sourceAbsolutePath);
+        String directoryName = easypath_file_name(sourceAbsolutePath);
 
         bool isRootDataDirectory = false;
         if (destinationRelativePath == nullptr)
         {
-            destinationRelativePath = easypath_filename(sourceAbsolutePath);
+            destinationRelativePath = easypath_file_name(sourceAbsolutePath);
 
             // When we hit this case, it means the directory is a root data directory. This will later on need to be part of the config, so we'll need
             // to keep track of it.
@@ -43,7 +43,7 @@ namespace GT
             while (easyvfs_next_iteration(g_EngineContext->GetVFS(), &iFile, &fi))
             {
                 const char* fileAbsolutePath = fi.absolutePath;
-                const char* fileName         = easypath_filename(fileAbsolutePath);
+                const char* fileName         = easypath_file_name(fileAbsolutePath);
 
                 if ((fi.attributes & EASYVFS_FILE_ATTRIBUTE_DIRECTORY) != 0)
                 {
@@ -59,7 +59,7 @@ namespace GT
                     //
                     // If the file is a model file that is not a .gtmodel, we need to check if it has an associated .gtmodel file that's newer. If so, we can
                     // ignore the original model file.
-                    if (GT::IsSupportedModelExtension(fileName) && !easypath_extensionequal(fileName, ".gtmodel"))
+                    if (GT::IsSupportedModelExtension(fileName) && !easypath_extension_equal(fileName, ".gtmodel"))
                     {
                         // It's a non-gtmodel file. We need to look for an associated .gtmodel file.
                         easyvfs_file_info gtmodelInfo;
@@ -92,7 +92,7 @@ namespace GT
         // We need to let the packager know where the main executable is so we can correctly build the 
         if (destinationRelativePath == nullptr)
         {
-            destinationRelativePath = easypath_filename(sourceAbsolutePath);
+            destinationRelativePath = easypath_file_name(sourceAbsolutePath);
         }
 
         this->executableRelativePath = destinationRelativePath;
@@ -105,7 +105,7 @@ namespace GT
     {
         if (destinationRelativePath == nullptr)
         {
-            destinationRelativePath = easypath_filename(sourceAbsolutePath);
+            destinationRelativePath = easypath_file_name(sourceAbsolutePath);
         }
 
         return easyvfs_copy_file(g_EngineContext->GetVFS(), sourceAbsolutePath, (this->outputDirectoryAbsolutePath + "/" + destinationRelativePath).c_str(), false);
@@ -117,7 +117,7 @@ namespace GT
         if (!this->executableRelativePath.IsEmpty())
         {
             char executableDirectory[EASYVFS_MAX_PATH];
-            easypath_copyandappend(executableDirectory, sizeof(executableDirectory), this->outputDirectoryAbsolutePath.c_str(), executableRelativePath.c_str());
+            easypath_copy_and_append(executableDirectory, sizeof(executableDirectory), this->outputDirectoryAbsolutePath.c_str(), executableRelativePath.c_str());
             easypath_remove_file_name(executableDirectory);
 
             //Path executableDirectory(this->outputDirectoryAbsolutePath.c_str());
@@ -147,7 +147,7 @@ namespace GT
             //configPath.Append("config.lua");
 
             char configPath[EASYVFS_MAX_PATH];
-            easypath_copyandappend(configPath, sizeof(configPath), executableDirectory, "config.lua");
+            easypath_copy_and_append(configPath, sizeof(configPath), executableDirectory, "config.lua");
 
             easyvfs_file* pFile = easyvfs_open(g_EngineContext->GetVFS(), configPath, EASYVFS_WRITE, 0);
             if (pFile != nullptr)

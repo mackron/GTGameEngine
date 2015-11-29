@@ -63,7 +63,7 @@ namespace GT
     AssetType GetAssetClassFromExtension(const char* fileName)
     {
         // If the path is a directory instead of a file, we need to return AssetType_None.
-        if (Strings::IsNullOrEmpty(easypath_filename(fileName)))
+        if (Strings::IsNullOrEmpty(easypath_file_name(fileName)))
         {
             return AssetClass_Unknown;
         }

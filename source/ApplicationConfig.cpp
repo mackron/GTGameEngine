@@ -66,7 +66,7 @@ namespace GT
                         if (m_script.IsString(-1))
                         {
                             char absPath[EASYVFS_MAX_PATH];
-                            easypath_copyandappend(absPath, sizeof(absPath), cwd, m_script.ToString(-1));
+                            easypath_copy_and_append(absPath, sizeof(absPath), cwd, m_script.ToString(-1));
 
                             m_dataDirectories.PushBack(absPath);
                         }

@@ -221,7 +221,7 @@ namespace GT
 
         if (!isSpecialEditor)
         {
-            if (easypath_isabsolute(path))
+            if (easypath_is_absolute(path))
             {
                 if (relativeTo != nullptr)
                 {
@@ -247,7 +247,7 @@ namespace GT
                     if (GT::IsSupportedModelExtension(path))
                     {
                         char pathWithExt[EASYVFS_MAX_PATH];
-                        easypath_copyandappendextension(pathWithExt, sizeof(pathWithExt), path, "gtmodel");
+                        easypath_copy_and_append_extension(pathWithExt, sizeof(pathWithExt), path, "gtmodel");
 
                         if (easyvfs_find_absolute_path(g_EngineContext->GetVFS(), pathWithExt, absolutePath, sizeof(absolutePath))) {
                             strcpy_s(relativePath, sizeof(relativePath), path);
@@ -284,7 +284,7 @@ namespace GT
                     if (GT::IsSupportedModelExtension(absolutePath))
                     {
                         char absolutePathWithExt[EASYVFS_MAX_PATH];
-                        easypath_copyandappendextension(absolutePathWithExt, sizeof(absolutePathWithExt), absolutePath, "gtmodel");
+                        easypath_copy_and_append_extension(absolutePathWithExt, sizeof(absolutePathWithExt), absolutePath, "gtmodel");
 
                         if (!easyvfs_is_existing_file(g_EngineContext->GetVFS(), absolutePathWithExt))
                         {
@@ -394,12 +394,12 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_isrelative(path))
+            if (easypath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
                     //absolutePath = IO::ToAbsolutePath(path, relativeTo);
-                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -437,12 +437,12 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_isrelative(path))
+            if (easypath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
                     //absolutePath = IO::ToAbsolutePath(path, relativeTo);
-                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -517,12 +517,12 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_isrelative(path))
+            if (easypath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
                     //absolutePath = IO::ToAbsolutePath(path, relativeTo);
-                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -616,12 +616,12 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_isrelative(path))
+            if (easypath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
                     //absolutePath = IO::ToAbsolutePath(path, relativeTo);
-                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -681,12 +681,12 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_isrelative(path))
+            if (easypath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
                     //absolutePath = IO::ToAbsolutePath(path, relativeTo);
-                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -715,12 +715,12 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_isrelative(path))
+            if (easypath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
                     //absolutePath = IO::ToAbsolutePath(path, relativeTo);
-                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -750,11 +750,11 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_isrelative(path))
+            if (easypath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
-                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {
@@ -840,12 +840,12 @@ namespace GT
 
         if (!this->IsSpecialPath(path))
         {
-            if (easypath_isrelative(path))
+            if (easypath_is_relative(path))
             {
                 if (relativeTo != nullptr)
                 {
                     //absolutePath = IO::ToAbsolutePath(path, relativeTo);
-                    easypath_copyandappend(absolutePath, sizeof(absolutePath), relativeTo, path);
+                    easypath_copy_and_append(absolutePath, sizeof(absolutePath), relativeTo, path);
                 }
                 else
                 {

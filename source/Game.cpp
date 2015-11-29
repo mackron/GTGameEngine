@@ -524,7 +524,7 @@ namespace GT
     bool Game::PackageForDistribution(const char* outputDirectory, const char* executableName)
     {
         char absoluteOutputDirectory[EASYVFS_MAX_PATH];
-        easypath_copyandappend(absoluteOutputDirectory, sizeof(absoluteOutputDirectory), g_EngineContext->GetExecutableDirectoryAbsolutePath(), outputDirectory);
+        easypath_copy_and_append(absoluteOutputDirectory, sizeof(absoluteOutputDirectory), g_EngineContext->GetExecutableDirectoryAbsolutePath(), outputDirectory);
 
         // We will start by creating the output directory.
         if (!easyvfs_is_existing_directory(g_EngineContext->GetVFS(), absoluteOutputDirectory))
@@ -548,9 +548,9 @@ namespace GT
             }
         }
 
-        if (easypath_extensionequal(g_EngineContext->GetExecutableAbsolutePath(), "exe"))
+        if (easypath_extension_equal(g_EngineContext->GetExecutableAbsolutePath(), "exe"))
         {
-            if (easypath_extensionequal(executableName, "exe"))
+            if (easypath_extension_equal(executableName, "exe"))
             {
                 packager.CopyExecutable(g_EngineContext->GetExecutableAbsolutePath(), executableName);
             }

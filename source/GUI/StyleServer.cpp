@@ -203,7 +203,7 @@ namespace GTGUI
             this->UnloadFile(absolutePath);
 
             char absolutePathBase[EASYVFS_MAX_PATH];
-            easypath_copybasepath(absolutePath, absolutePathBase, sizeof(absolutePathBase));
+            easypath_copy_base_path(absolutePath, absolutePathBase, sizeof(absolutePathBase));
 
             bool successful = this->Load(pFileData, absolutePathBase, absolutePath);
             
@@ -225,7 +225,7 @@ namespace GTGUI
     {
         // The file path needs to be absolute.
         char absolutePath[EASYVFS_MAX_PATH];
-        if (!easypath_isabsolute(filePath))
+        if (!easypath_is_absolute(filePath))
         {
             if (!easyvfs_find_absolute_path(GT::g_EngineContext->GetVFS(), filePath, absolutePath, sizeof(absolutePath))) {
                 strcpy_s(absolutePath, sizeof(absolutePath), filePath);
