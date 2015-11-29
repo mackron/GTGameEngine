@@ -34,7 +34,7 @@ namespace GTEngine
     private:
 
         /// The matrix to apply to the vertex transformation.
-        glm::simdMat4 m_transform;
+        glm::mat4 m_transform;
 
         /// The transformation matrix for normals.
         glm::mat3 m_normalTransform;

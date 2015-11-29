@@ -379,10 +379,10 @@ namespace GTEngine
 
 
         /// The position of the emitter.
-        glm::vec3 position;
+        glm::vec3 m_position;
 
         /// The orientation of the emitter.
-        glm::quat orientation;
+        glm::quat m_orientation;
 
 
         /// Various boolean flags. Defaults to 0 (all false).
@@ -460,8 +460,8 @@ namespace GTEngine
         ParticleList particles;
 
 
-        glm::vec3 aabbMin;
-        glm::vec3 aabbMax;
+        glm::vec3 m_aabbMin;
+        glm::vec3 m_aabbMax;
         
 
         /// The vertex array for rendering. This will only be used by the renderer.

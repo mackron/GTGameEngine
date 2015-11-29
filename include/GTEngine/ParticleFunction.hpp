@@ -208,7 +208,7 @@ namespace GTEngine
 
 
     /// The Angular Velocity over Time particle function.
-    class GLM_ALIGN(16) ParticleFunction_AngularVelocityOverTime : public ParticleFunction_Vector3
+    class ParticleFunction_AngularVelocityOverTime : public ParticleFunction_Vector3
     {
     public:
 
@@ -238,10 +238,10 @@ namespace GTEngine
     private:
 
         /// The min value in the range, as a quaternion.
-        glm::simdQuat rangeMinQuat;
+        glm::quat rangeMinQuat;
 
         /// The max value in the range, as a quaternion.
-        glm::simdQuat rangeMaxQuat;
+        glm::quat rangeMaxQuat;
     };
 
 

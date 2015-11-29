@@ -21,7 +21,7 @@ namespace GTEngine
     /// notion of in/out interpolated variables. These shouldn't be needed anyway. Next, if a vertex attribute is not explicitly set, the output
     /// will be set to the input. Thus, if the ProcessVertex() function is left empty it will perform a simple (and inefficient) copy. Don't use
     /// this class for copying...
-    class GLM_ALIGN(16) CPUVertexShader
+    class CPUVertexShader
     {
     public:
 
@@ -91,11 +91,11 @@ namespace GTEngine
         public:
 
             // The variables below are for fast-access to common attributes.
-            glm::simdVec4 Position;
-            glm::simdVec4 TexCoord;
-            glm::simdVec4 Normal;
-            glm::simdVec4 Tangent;
-            glm::simdVec4 Bitangent;
+            glm::vec4 Position;
+            glm::vec4 TexCoord;
+            glm::vec4 Normal;
+            glm::vec4 Tangent;
+            glm::vec4 Bitangent;
 
 
         private:    // No copying.

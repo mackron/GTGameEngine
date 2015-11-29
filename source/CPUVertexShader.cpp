@@ -4,18 +4,11 @@
 #include <GTEngine/ThreadCache.hpp>
 #include <GTLib/Timing.hpp>
 
-// Benchmarking Notes:
-//
-// NOTE: Clear these notes when the test data changes.
-//
-// 16/05/2012 - i7 2600K @ 4.6GHz
-//    Debug   (Pure / SSE): ~0.005sec   / ~0.001sec    : +5x
-//    Release (Pure / SSE): ~0.00011sec / ~0.000075sec : +1.46x
 
 // Helpers
 namespace GTEngine
 {
-    inline glm::simdVec4 GetVertexAttribute4(const float* data, size_t componentCount, size_t offset)
+    inline glm::vec4 GetVertexAttribute4(const float* data, size_t componentCount, size_t offset)
     {
         if (data != nullptr)
         {
@@ -24,64 +17,38 @@ namespace GTEngine
             // We'll try and be clever here and predict the most common scenarios and put them first.
             if (componentCount == 3)
             {
-                return glm::simdVec4(data[0], data[1], data[2], 0.0f);
+                return glm::vec4(data[0], data[1], data[2], 0.0f);
             }
             else if (componentCount == 2)
             {
-                return glm::simdVec4(data[0], data[1], 0.0f, 0.0f);
+                return glm::vec4(data[0], data[1], 0.0f, 0.0f);
             }
             else if (componentCount == 4)
             {
-                return glm::simdVec4(data[0], data[1], data[2], data[3]);
+                return glm::vec4(data[0], data[1], data[2], data[3]);
             }
             else if (componentCount == 1)
             {
-                return glm::simdVec4(data[0], 0.0f, 0.0f, 0.0f);
+                return glm::vec4(data[0], 0.0f, 0.0f, 0.0f);
             }
             else
             {
-                return glm::simdVec4(0.0f, 0.0f, 0.0f, 0.0f);
+                return glm::vec4(0.0f, 0.0f, 0.0f, 0.0f);
             }
         }
         else
         {
-            return glm::simdVec4();
+            return glm::vec4();
         }
     }
 
-    inline void SetVertexAttribute4(float* data, size_t componentCount, size_t offset, const glm::simdVec4 &value)
+    inline void SetVertexAttribute4(float* data, size_t componentCount, size_t offset, const glm::vec4 &value)
     {
         if (data != nullptr)
         {
             data += offset;
 
             // As above, we'll try and be clever here and predict the most common scenarios and put them first.
-            /*
-            if (componentCount == 3)
-            {
-                data[0] = value.x;
-                data[1] = value.y;
-                data[2] = value.z;
-            }
-            else if (componentCount == 2)
-            {
-                data[0] = value.x;
-                data[1] = value.y;
-            }
-            else if (componentCount == 4)
-            {
-                data[0] = value.x;
-                data[1] = value.y;
-                data[2] = value.z;
-                data[3] = value.w;
-            }
-            else if (componentCount == 1)
-            {
-                data[0] = value.x;
-            }
-            */
-
-            
             if (componentCount == 3)
             {
                 data[0] = value.x;
@@ -120,7 +87,6 @@ namespace GTEngine
             // The first step is to copy the vertex data to the output buffer.
             auto vertexOutput = shader.m_output + (i * shader.m_vertexSizeInFloats);
             auto vertexInput  = shader.m_input  + (i * shader.m_vertexSizeInFloats);
-            //memcpy(vertexOutput, vertexInput, shader.vertexSizeInFloats * sizeof(float));
 
             // Now we can process the vertex.
             CPUVertexShader::Vertex vertex(i, vertexOutput, shader.m_format);
@@ -367,7 +333,7 @@ namespace GTEngine
 
     glm::vec4 CPUVertexShader::Vertex::Get(int attribute)
     {
-        glm::simdVec4 value(0.0f, 0.0f, 0.0f, 1.0f);
+        glm::vec4 value(0.0f, 0.0f, 0.0f, 1.0f);
 
         size_t componentCount;
         size_t stride;
@@ -400,7 +366,7 @@ namespace GTEngine
         size_t stride;
         if (this->format.GetAttributeInfo(attribute, componentCount, stride))
         {
-            SetVertexAttribute4(this->data, componentCount, stride, glm::simdVec4(value));
+            SetVertexAttribute4(this->data, componentCount, stride, glm::vec4(value));
         }
     }
 }

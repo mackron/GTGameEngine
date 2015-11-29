@@ -16,7 +16,7 @@ namespace GTEngine
 
     void CPUVertexShader_SimpleTransform::SetTransform(const glm::mat4 &transform)
     {
-        m_transform       = glm::simdMat4(transform);
+        m_transform       = glm::mat4(transform);
         m_normalTransform = glm::inverse(glm::transpose(glm::mat3(transform)));
     }
 
@@ -26,6 +26,6 @@ namespace GTEngine
         vertex.Position.w = 1.0f;
 
         vertex.Position = m_transform * vertex.Position;
-        vertex.Normal   = glm::simdVec4(m_normalTransform * glm::vec3(vertex.Normal.x, vertex.Normal.y, vertex.Normal.z), 0.0f);
+        vertex.Normal   = glm::vec4(m_normalTransform * glm::vec3(vertex.Normal.x, vertex.Normal.y, vertex.Normal.z), 0.0f);
     }
 }

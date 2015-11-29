@@ -20,7 +20,7 @@
     #endif
 #endif
 #define GLM_FORCE_ONLY_XYZW
-#define GLM_FORCE_SSE2
+#define GLM_FORCE_PURE
 #define GLM_SIMD_ENABLE_XYZW_UNION
 #define GLM_SIMD_ENABLE_DEFAULT_INIT
 #define GLM_FORCE_RADIANS
@@ -35,9 +35,6 @@
 #include <glm/gtx/fast_trigonometry.hpp>
 #include <glm/gtx/fast_square_root.hpp>
 #include <glm/gtx/fast_exponential.hpp>
-#include <glm/gtx/simd_mat4.hpp>
-#include <glm/gtx/simd_vec4.hpp>
-#include <glm/gtx/simd_quat.hpp>
 #if defined(_MSC_VER)
     #pragma warning(pop)
 #elif defined(__GNUC__)
@@ -125,10 +122,12 @@ namespace GTEngine
             return btVector3(other.x, other.y, other.z);
         }
 
+#if 0
         inline btVector3 btVector3_cast(const glm::simdVec4 &other)
         {
             return btVector3(other.x, other.y, other.z);
         }
+#endif
 
 
         inline btQuaternion btQuaternion_cast(const glm::quat &other)
@@ -136,10 +135,12 @@ namespace GTEngine
             return btQuaternion(other.x, other.y, other.z, other.w);
         }
 
+#if 0
         inline btQuaternion btQuaternion_cast(const glm::simdQuat &other)
         {
             return btQuaternion(other.x, other.y, other.z, other.w);
         }
+#endif
 
 
         inline btMatrix3x3 btMatrix3x3_cast(const glm::mat3 &other)
@@ -188,10 +189,12 @@ namespace GTEngine
             return glm::vec4(other.x(), other.y(), other.z(), 0.0f);
         }
 
+#if 0
         inline glm::simdVec4 vec4SIMD_cast(const btVector3 &other)
         {
             return glm::simdVec4(other.x(), other.y(), other.z(), 0.0f);
         }
+#endif
 
 
         inline glm::quat quat_cast(const btQuaternion &other)
@@ -199,10 +202,12 @@ namespace GTEngine
             return glm::quat(other.w(), other.x(), other.y(), other.z());
         }
 
+#if 0
         inline glm::simdQuat quatSIMD_cast(const btQuaternion &other)
         {
             return glm::simdQuat(other.w(), other.x(), other.y(), other.z());
         }
+#endif
 
 
         inline glm::mat3 mat3_cast(const btMatrix3x3 &other)

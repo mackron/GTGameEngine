@@ -54,8 +54,8 @@ namespace GTEngine
 
     void CPUVertexShader_Skinning::OnStartExecute()
     {
-        this->aabbMin = glm::simdVec4( FLT_MAX);
-        this->aabbMax = glm::simdVec4(-FLT_MAX);
+        this->aabbMin = glm::vec4( FLT_MAX);
+        this->aabbMax = glm::vec4(-FLT_MAX);
     }
 
 
@@ -71,17 +71,10 @@ namespace GTEngine
         vertex.Tangent.w   = 0.0f;
         vertex.Bitangent.w = 0.0f;
 
-        /*
         glm::vec4 newPosition(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec4 newNormal(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec4 newTangent(0.0f, 0.0f, 0.0f, 0.0f);
         glm::vec4 newBitangent(0.0f, 0.0f, 0.0f, 0.0f);
-        */
-
-        glm::simdVec4 newPosition(0.0f, 0.0f, 0.0f, 0.0f);
-        glm::simdVec4 newNormal(0.0f, 0.0f, 0.0f, 0.0f);
-        glm::simdVec4 newTangent(0.0f, 0.0f, 0.0f, 0.0f);
-        glm::simdVec4 newBitangent(0.0f, 0.0f, 0.0f, 0.0f);
         
 
         // For each bone...
@@ -93,8 +86,7 @@ namespace GTEngine
             assert(bone != nullptr);
 
             
-            //const glm::mat4 &skinningTransform = bone->GetSkinningTransform();
-            glm::simdMat4 skinningTransform(bone->GetSkinningTransform());
+            const glm::mat4 &skinningTransform = bone->GetSkinningTransform();
             
             newPosition  += weight * (skinningTransform * vertex.Position);
             newNormal    += weight * (skinningTransform * vertex.Normal);

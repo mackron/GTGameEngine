@@ -44,7 +44,7 @@ namespace GTEngine
     }
 
 
-    inline glm::simdQuat MixFromOrigin(const glm::simdQuat &q, float a)
+    inline glm::quat MixFromOrigin(const glm::quat &q, float a)
     {
         if (q.w > 1.0f - glm::epsilon<float>())
         {
@@ -60,9 +60,9 @@ namespace GTEngine
             MixFromOriginSin(angle, a, s0, s1, d);
 
 
-            glm::simdQuat result    = s1 * q;
-                          result.w += s0;
-                          result    = result * d;
+            glm::quat result    = s1 * q;
+                      result.w += s0;
+                      result    = result * d;
 
             return result;
         }
@@ -71,7 +71,7 @@ namespace GTEngine
 
 
     ParticleEmitter::ParticleEmitter()
-        : name(""), position(), orientation(),
+        : name(""), m_position(), m_orientation(),
           flags(0), durationInSeconds(0.0), delayInSeconds(0.0),
           gravityFactor(0.0), emissionRatePerSecond(10.0),
           emissionShapeType(EmissionShapeType_Cone), emissionShapeCone(), emissionShapeSphere(), emissionShapeBox(),
@@ -85,14 +85,14 @@ namespace GTEngine
           random(),
           timeSinceLastEmission(1.0 / emissionRatePerSecond),
           particles(),
-          aabbMin(), aabbMax(),
+          m_aabbMin(), m_aabbMax(),
           vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P4T4N4C4))
     {
         this->SetMaterial("engine/materials/simple-diffuse.material");
     }
 
     ParticleEmitter::ParticleEmitter(const ParticleEmitter &other)
-        : name(other.name), position(other.position), orientation(other.orientation),
+        : name(other.name), m_position(other.m_position), m_orientation(other.m_orientation),
           flags(other.flags), durationInSeconds(other.durationInSeconds),  delayInSeconds(other.delayInSeconds),
           gravityFactor(other.gravityFactor), emissionRatePerSecond(other.emissionRatePerSecond),
           emissionShapeType(other.emissionShapeType), emissionShapeCone(other.emissionShapeCone), emissionShapeSphere(other.emissionShapeSphere), emissionShapeBox(other.emissionShapeBox),
@@ -106,7 +106,7 @@ namespace GTEngine
           random(other.random),
           timeSinceLastEmission(other.timeSinceLastEmission),
           particles(other.particles),
-          aabbMin(other.aabbMin), aabbMax(other.aabbMax),
+          m_aabbMin(other.m_aabbMin), m_aabbMax(other.m_aabbMax),
           vertexArray(Renderer::CreateVertexArray(VertexArrayUsage_Dynamic, VertexFormat::P4T4N4C4))
     {
         // The functions need to be copied over.
@@ -202,9 +202,8 @@ namespace GTEngine
 
 
 
-        float         deltaTimeInSecondsF = static_cast<float>(deltaTimeInSeconds);
-        glm::simdVec4 gravity             = glm::simdVec4(gravityIn.x, gravityIn.y, gravityIn.z, 1.0f) * static_cast<float>(this->gravityFactor * deltaTimeInSeconds);
-        glm::simdQuat orientationSIMD     = glm::simdQuat(this->orientation);
+        float     deltaTimeInSecondsF = static_cast<float>(deltaTimeInSeconds);
+        glm::vec4 gravity             = glm::vec4(gravityIn.x, gravityIn.y, gravityIn.z, 1.0f) * static_cast<float>(this->gravityFactor * deltaTimeInSeconds);
 
 
         // Now we need to spawn some particles if applicable. We need to do this before stepping particles because we want
@@ -264,15 +263,15 @@ namespace GTEngine
 
             // The spawning position and direction is different depending on the spawn shape. The position and direction is calculated
             // in local space, which is then later transformed by the emitters transform.
-            glm::simdVec4 spawnPosition  = glm::simdVec4(0.0f, 0.0f,  0.0f, 1.0f);
-            glm::simdVec4 spawnDirection = glm::simdVec4(0.0f, 0.0f, -1.0f, 1.0f);
+            glm::vec4 spawnPosition  = glm::vec4(0.0f, 0.0f,  0.0f, 1.0f);
+            glm::vec4 spawnDirection = glm::vec4(0.0f, 0.0f, -1.0f, 1.0f);
 
             switch (this->emissionShapeType)
             {
             case EmissionShapeType_Cone:
                 {
                     // We first get an untransformed random position on the surface of a circle. The z axis will be 0.0.
-                    glm::simdVec4 normalizedPosition;
+                    glm::vec3 normalizedPosition;
                     this->random.NextCircle(1.0f, normalizedPosition.x, normalizedPosition.y);
 
                     float distanceFactor = glm::length(normalizedPosition);
@@ -283,9 +282,9 @@ namespace GTEngine
 
                     // Now we need an untransformed direction.
                     float rotationAngle    = this->emissionShapeCone.angle * distanceFactor;
-                    glm::simdVec4 rotationAxis = glm::cross(glm::simdVec4(0.0f, 0.0f, -1.0f, 1.0f), glm::normalize(normalizedPosition));
+                    glm::vec3 rotationAxis = glm::cross(glm::vec3(0.0f, 0.0f, -1.0f), glm::normalize(normalizedPosition));
                     
-                    spawnDirection = glm::normalize(glm::angleAxisSIMD(glm::radians(rotationAngle), glm::vec3(rotationAxis.x, rotationAxis.y, rotationAxis.z)) * glm::simdVec4(0.0f, 0.0f, -1.0f, 0.0f));
+                    spawnDirection = glm::normalize(glm::angleAxis(glm::radians(rotationAngle), glm::vec3(rotationAxis.x, rotationAxis.y, rotationAxis.z)) * glm::vec4(0.0f, 0.0f, -1.0f, 0.0f));
 
 
                     break;
@@ -317,22 +316,22 @@ namespace GTEngine
 
 
             // Now we need to transform the position and calculate the velocity.
-            glm::simdMat4 transform = glm::mat4SIMD_cast(orientationSIMD);
-            transform[3] = glm::simdVec4(this->position, 1.0f);
+            glm::mat4 transform = glm::mat4_cast(m_orientation);
+            transform[3] = glm::vec4(m_position, 1.0f);
 
-            particle.scale = glm::simdVec4(
+            particle.scale = glm::vec4(
                 this->random.Next(this->startScaleMin.x, this->startScaleMax.x),
                 this->random.Next(this->startScaleMin.y, this->startScaleMax.y),
                 this->random.Next(this->startScaleMin.z, this->startScaleMax.z),
                 1.0f);
 
-            particle.orientation = glm::simdQuat(glm::radians(glm::vec3(
+            particle.orientation = glm::quat(glm::radians(glm::vec3(
                 this->random.Next(this->startRotationMin.x, this->startRotationMax.x),
                 this->random.Next(this->startRotationMin.y, this->startRotationMax.y),
                 this->random.Next(this->startRotationMin.z, this->startRotationMax.z))));
 
             particle.position            = transform * spawnPosition;
-            particle.spawnLinearVelocity = (orientationSIMD * spawnDirection) * static_cast<float>(this->random.Next(this->startSpeedMin, this->startSpeedMax));
+            particle.spawnLinearVelocity = (m_orientation * spawnDirection) * static_cast<float>(this->random.Next(this->startSpeedMin, this->startSpeedMax));
 
 
             particle.timeLeftToDeath = particle.lifetime = this->random.Next(this->lifetimeMin, this->lifetimeMax);
@@ -342,8 +341,8 @@ namespace GTEngine
 
 
         // Here we will update any still-alive particles.
-        __m128 m128_aabbMin = _mm_set1_ps( FLT_MAX);
-        __m128 m128_aabbMax = _mm_set1_ps(-FLT_MAX);
+        glm::vec4 aabbMin = glm::vec4( FLT_MAX);
+        glm::vec4 aabbMax = glm::vec4(-FLT_MAX);
 
 
         const float    uTexCoordSize  = 1.0f / this->textureTilesX;
@@ -414,8 +413,8 @@ namespace GTEngine
 
 
                     // We need to check the position against the AABB.
-                    m128_aabbMin = _mm_min_ps(m128_aabbMin, particle.position.Data);
-                    m128_aabbMax = _mm_max_ps(m128_aabbMax, particle.position.Data);
+                    aabbMin = glm::min(aabbMin, particle.position);
+                    aabbMax = glm::max(aabbMax, particle.position);
 
 
                     ++iParticle;
@@ -424,20 +423,13 @@ namespace GTEngine
         }
 
 
-        
-        GLM_ALIGN(16) float aabbMinFloats[4];
-        GLM_ALIGN(16) float aabbMaxFloats[4];
-
-        _mm_store_ps(aabbMinFloats, m128_aabbMin);
-        _mm_store_ps(aabbMaxFloats, m128_aabbMax);
-
-        this->aabbMin = glm::vec3(aabbMinFloats[0], aabbMinFloats[1], aabbMinFloats[2]);
-        this->aabbMax = glm::vec3(aabbMaxFloats[0], aabbMaxFloats[1], aabbMaxFloats[2]);
+        m_aabbMin = glm::vec3(aabbMin.x, aabbMin.y, aabbMin.z);
+        m_aabbMax = glm::vec3(aabbMax.x, aabbMax.y, aabbMax.z);
         
 
         // AABB padding. Should probably find a way to do this more accurately.
-        this->aabbMin -= glm::vec3(4.0f, 4.0f, 4.0f);
-        this->aabbMax += glm::vec3(4.0f, 4.0f, 4.0f);
+        m_aabbMin -= glm::vec3(4.0f, 4.0f, 4.0f);
+        m_aabbMax += glm::vec3(4.0f, 4.0f, 4.0f);
 
 
         // We need to have the emitter know that the first emission has been performed.
@@ -461,29 +453,29 @@ namespace GTEngine
 
     const glm::vec3 & ParticleEmitter::GetPosition() const
     {
-        return this->position;
+        return m_position;
     }
 
     void ParticleEmitter::SetPosition(const glm::vec3 &newPosition)
     {
-        this->position = newPosition;
+        m_position = newPosition;
     }
 
 
     const glm::quat & ParticleEmitter::GetOrientation() const
     {
-        return this->orientation;
+        return m_orientation;
     }
 
     void ParticleEmitter::SetOrientation(const glm::quat &newOrientation)
     {
-        this->orientation = newOrientation;
+        m_orientation = newOrientation;
     }
 
     
     glm::vec3 ParticleEmitter::GetForwardVector() const
     {
-        return this->orientation * glm::vec3(0.0f, 0.0f, -1.0f);
+        return m_orientation * glm::vec3(0.0f, 0.0f, -1.0f);
     }
 
 
@@ -730,8 +722,8 @@ namespace GTEngine
 
     void ParticleEmitter::GetAABB(glm::vec3 &aabbMinOut, glm::vec3 &aabbMaxOut) const
     {
-        aabbMinOut = this->aabbMin;
-        aabbMaxOut = this->aabbMax;
+        aabbMinOut = m_aabbMin;
+        aabbMaxOut = m_aabbMax;
     }
 
 
@@ -758,8 +750,8 @@ namespace GTEngine
 
         // First chunk is the main information.
         intermediarySerializer.WriteString(this->name.c_str());
-        intermediarySerializer.Write(this->position);
-        intermediarySerializer.Write(this->orientation);
+        intermediarySerializer.Write(m_position);
+        intermediarySerializer.Write(m_orientation);
         intermediarySerializer.Write(this->flags);
         intermediarySerializer.Write(this->durationInSeconds);
         intermediarySerializer.Write(this->delayInSeconds);
@@ -853,8 +845,8 @@ namespace GTEngine
 
 
                 deserializer.ReadString(this->name);
-                deserializer.Read(this->position);
-                deserializer.Read(this->orientation);
+                deserializer.Read(m_position);
+                deserializer.Read(m_orientation);
                 deserializer.Read(this->flags);
                 deserializer.Read(this->durationInSeconds);
                 deserializer.Read(this->delayInSeconds);

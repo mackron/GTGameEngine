@@ -30,34 +30,34 @@ namespace GTEngine
 
 
         /// The position of the particle.
-        glm::simdVec4 position;
+        glm::vec4 position;
 
         /// The orienation of the particle.
-        glm::simdQuat orientation;
+        glm::quat orientation;
 
         /// The scale of the particle.e
-        glm::simdVec4 scale;
+        glm::vec4 scale;
 
 
         /// The current linear velocity of the particle.
-        glm::simdVec4 linearVelocity;
+        glm::vec4 linearVelocity;
 
         /// The current angular velocity of the particle.
-        glm::simdQuat angularVelocity;
+        glm::quat angularVelocity;
 
 
         /// The linear velocity of the particle when it was spawned.
-        glm::simdVec4 spawnLinearVelocity;
+        glm::vec4 spawnLinearVelocity;
 
         /// The current linear velocity applied to the particle due to gravity.
-        glm::simdVec4 gravityLinearVelocity;
+        glm::vec4 gravityLinearVelocity;
 
         /// The linear velocity of the particle as defined by the linear-velocity functions.
-        glm::simdVec4 functionLinearVelocity;
+        glm::vec4 functionLinearVelocity;
 
 
         /// The current colour of the particle.
-        glm::simdVec4 colour;
+        glm::vec4 colour;
 
 
         /// The lifetime of the particle.

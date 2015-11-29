@@ -12,7 +12,7 @@ namespace GTEngine
     ///
     /// The bones affecting each vertex is stored as a vertex attribute, which is simply an array that's indexable by the
     /// vertex ID.
-    class GLM_ALIGN(16) CPUVertexShader_Skinning : public CPUVertexShader
+    class CPUVertexShader_Skinning : public CPUVertexShader
     {
     public:
 
@@ -61,8 +61,8 @@ namespace GTEngine
         const SkinningVertexAttribute* skinningVertexAttributes;
 
         /// The AABB containing each vertex.
-        glm::simdVec4 aabbMin;
-        glm::simdVec4 aabbMax;
+        glm::vec4 aabbMin;
+        glm::vec4 aabbMax;
         
     
     private:    // No copying.

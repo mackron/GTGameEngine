@@ -384,7 +384,7 @@ namespace GTEngine
 
 
         // Now we need to build the mesh to draw for each particle system.
-        glm::simdQuat inverseView = glm::simdQuat(glm::inverse(glm::quat_cast(this->viewMatrix)));
+        glm::quat inverseView = glm::quat(glm::inverse(glm::quat_cast(this->viewMatrix)));
 
         for (size_t iParticleSystem = 0; iParticleSystem < this->visibleParticleSystems.count; ++iParticleSystem)
         {
@@ -432,34 +432,34 @@ namespace GTEngine
                                                 auto vertex2 = vertex1 + vertexSize;
                                                 auto vertex3 = vertex2 + vertexSize;
 
-                                                glm::simdQuat absoluteOrientation = inverseView * particle.orientation;
+                                                glm::quat absoluteOrientation = inverseView * particle.orientation;
 
 
-                                                glm::simdMat4 transform = glm::mat4SIMD_cast(absoluteOrientation);
+                                                glm::mat4 transform = glm::mat4_cast(absoluteOrientation);
                                                 transform[0] *= particle.scale.x;
                                                 transform[1] *= particle.scale.y;
                                                 transform[2] *= particle.scale.z;
                                                 transform[3]  = particle.position;
 
-                                                glm::simdVec4 position0 = transform * glm::simdVec4(-0.5f, -0.5f, 0.0f, 1.0f);
-                                                glm::simdVec4 position1 = transform * glm::simdVec4( 0.5f, -0.5f, 0.0f, 1.0f);
-                                                glm::simdVec4 position2 = transform * glm::simdVec4( 0.5f,  0.5f, 0.0f, 1.0f);
-                                                glm::simdVec4 position3 = transform * glm::simdVec4(-0.5f,  0.5f, 0.0f, 1.0f);
+                                                glm::vec4 position0 = transform * glm::vec4(-0.5f, -0.5f, 0.0f, 1.0f);
+                                                glm::vec4 position1 = transform * glm::vec4( 0.5f, -0.5f, 0.0f, 1.0f);
+                                                glm::vec4 position2 = transform * glm::vec4( 0.5f,  0.5f, 0.0f, 1.0f);
+                                                glm::vec4 position3 = transform * glm::vec4(-0.5f,  0.5f, 0.0f, 1.0f);
 
                                                 glm::vec4 texcoord0     = glm::vec4(particle.uTexCoordMin0, particle.vTexCoordMin0, particle.uTexCoordMin1, particle.vTexCoordMin1);
                                                 glm::vec4 texcoord1     = glm::vec4(particle.uTexCoordMax0, particle.vTexCoordMin0, particle.uTexCoordMax1, particle.vTexCoordMin1);
                                                 glm::vec4 texcoord2     = glm::vec4(particle.uTexCoordMax0, particle.vTexCoordMax0, particle.uTexCoordMax1, particle.vTexCoordMax1);
                                                 glm::vec4 texcoord3     = glm::vec4(particle.uTexCoordMin0, particle.vTexCoordMax0, particle.uTexCoordMin1, particle.vTexCoordMax1);
 
-                                                glm::simdVec4 normal0   = absoluteOrientation * glm::simdVec4(0.0f, 0.0f, 1.0f, 0.0f); normal0.w = particle.uvTileInterpolationFactor;
-                                                glm::simdVec4 normal1   = normal0;
-                                                glm::simdVec4 normal2   = normal0;
-                                                glm::simdVec4 normal3   = normal0;
+                                                glm::vec4 normal0   = absoluteOrientation * glm::vec4(0.0f, 0.0f, 1.0f, 0.0f); normal0.w = particle.uvTileInterpolationFactor;
+                                                glm::vec4 normal1   = normal0;
+                                                glm::vec4 normal2   = normal0;
+                                                glm::vec4 normal3   = normal0;
 
-                                                glm::simdVec4 colour0   = particle.colour;
-                                                glm::simdVec4 colour1   = particle.colour;
-                                                glm::simdVec4 colour2   = particle.colour;
-                                                glm::simdVec4 colour3   = particle.colour;
+                                                glm::vec4 colour0   = particle.colour;
+                                                glm::vec4 colour1   = particle.colour;
+                                                glm::vec4 colour2   = particle.colour;
+                                                glm::vec4 colour3   = particle.colour;
 
                                                 vertex0[0]  = position0.x; vertex0[1]  = position0.y; vertex0[2]  = position0.z; vertex0[3]  = 1.0f;
                                                 vertex0[4]  = texcoord0.x; vertex0[5]  = texcoord0.y; vertex0[6]  = texcoord0.z; vertex0[7]  = texcoord0.w;
