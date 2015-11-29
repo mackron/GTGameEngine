@@ -16,100 +16,100 @@ namespace GT
     ///
     /// @remarks
     ///     This will create the global Game object.
-    bool LoadGameLibrary(GTLib::Script &script, GTEngine::Game &game);
+    bool LoadGameLibrary(GT::Script &script, GTEngine::Game &game);
 
 
     namespace GameFFI
     {
         /// Retrieves a reference to the global game object.
-        GTEngine::Game & GetGame(GTLib::Script &script);
+        GTEngine::Game & GetGame(GT::Script &script);
 
 
         /// Retrieves the absolute path of the directory containing the game executable.
-        int GetExecutableDirectoryAbsolutePath(GTLib::Script &script);
+        int GetExecutableDirectoryAbsolutePath(GT::Script &script);
 
         /// Retrieves the absolute path of the game executable.
-        int GetExecutableAbsolutePath(GTLib::Script &script);
+        int GetExecutableAbsolutePath(GT::Script &script);
 
 
         /// Closes the game.
-        int Close(GTLib::Script &script);
+        int Close(GT::Script &script);
 
         /// Pauses the game.
-        int Pause(GTLib::Script &script);
+        int Pause(GT::Script &script);
 
         /// Resumes the game.
-        int Resume(GTLib::Script &script);
+        int Resume(GT::Script &script);
 
         /// Determines whether or not the game is paused.
-        int IsPaused(GTLib::Script &script);
+        int IsPaused(GT::Script &script);
 
         /// Enables fullscreen mode.
-        int EnableFullscreen(GTLib::Script &script);
+        int EnableFullscreen(GT::Script &script);
 
         /// Disable fullscreen mode.
-        int DisableFullscreen(GTLib::Script &script);
+        int DisableFullscreen(GT::Script &script);
 
 
         /// Opens the editor.
-        int OpenEditor(GTLib::Script &script);
+        int OpenEditor(GT::Script &script);
 
         /// Closes the editor.
-        int CloseEditor(GTLib::Script &script);
+        int CloseEditor(GT::Script &script);
 
 
         /// Shows the debugging information.
-        int ShowDebug(GTLib::Script &script);
+        int ShowDebug(GT::Script &script);
 
         /// Hides the debugging information.
-        int HideDebug(GTLib::Script &script);
+        int HideDebug(GT::Script &script);
 
         /// Determines if the given key is down.
         ///
         /// @remarks
         ///     Argument 1: The key code of the key to check.
-        int IsKeyDown(GTLib::Script &script);
+        int IsKeyDown(GT::Script &script);
 
         /// Determines if the given mouse button is down.
         ///
         /// @remarks
         ///     Argument 1: the mouse button to check.
-        int IsMouseButtonDown(GTLib::Script &script);
+        int IsMouseButtonDown(GT::Script &script);
 
         /// Captures the mouse.
-        int CaptureMouse(GTLib::Script &script);
+        int CaptureMouse(GT::Script &script);
 
         /// Releases the mouse.
-        int ReleaseMouse(GTLib::Script &script);
+        int ReleaseMouse(GT::Script &script);
 
         /// Determines whether or not the mouse is captured.
-        int IsMouseCaptured(GTLib::Script &script);
+        int IsMouseCaptured(GT::Script &script);
 
         /// Retrieves the mouse offset for when it is captured as two floats.
         ///
         /// @remarks
         ///     This returns nil if the mouse is not captured.
-        int GetMouseOffset(GTLib::Script &script);
+        int GetMouseOffset(GT::Script &script);
 
         /// Enables mouse smoothing.
-        int EnableMouseSmoothing(GTLib::Script &script);
+        int EnableMouseSmoothing(GT::Script &script);
 
         /// Disables mouse smoothing.
-        int DisableMouseSmoothing(GTLib::Script &script);
+        int DisableMouseSmoothing(GT::Script &script);
 
         /// Determines whether or not mouse smoothing is enabled.
-        int IsMouseSmoothingEnabled(GTLib::Script &script);
+        int IsMouseSmoothingEnabled(GT::Script &script);
 
 
         /// Scans the data files for changes and posts the relevant events.
         ///
         /// @remarks
         ///     This happens immediately and synchronously.
-        int ScanDataFilesForChanges(GTLib::Script &script);
+        int ScanDataFilesForChanges(GT::Script &script);
 
 
         /// Retrieves the GUI element of the main game window.
-        int GetGameWindowGUIElement(GTLib::Script &script);
+        int GetGameWindowGUIElement(GT::Script &script);
 
 
         /// Saves the game state to the given file.
@@ -119,7 +119,7 @@ namespace GT
         ///     @par
         ///     Argument 1: A string containing the destination file path for the save game. Can be relative or absolute.
         ///     Return:     True if the file is saved successfully; false otherwise.
-        int SaveGameState(GTLib::Script &script);
+        int SaveGameState(GT::Script &script);
 
         /// Restores the game state from the given file.
         ///
@@ -128,13 +128,13 @@ namespace GT
         ///     @par
         ///     Argument 1: A string containing the source file path for the save game. Can be relative or absolute.
         ///     Return:     True if the game is loaded successfully; false otherwise.
-        int LoadGameState(GTLib::Script &script);
+        int LoadGameState(GT::Script &script);
 
         /// Loads the given scene.
         ///
         /// @remarks
         ///     Argument 1: A string containing the path of the scene to load.
-        int LoadScene(GTLib::Script &script);
+        int LoadScene(GT::Script &script);
 
 
         /// Packages the game for distribution.
@@ -145,7 +145,7 @@ namespace GT
         ///     Argument 1: The path of the destination directory, relative to the running executable.
         ///     Argument 2: The new name of the executable, not including the path.
         ///     Return:     True if successful.
-        int PackageForDistribution(GTLib::Script &script);
+        int PackageForDistribution(GT::Script &script);
     }
 }
 

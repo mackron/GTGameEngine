@@ -4,7 +4,7 @@
 
 namespace GT
 {
-    bool LoadAnimationLibrary(GTLib::Script &script)
+    bool LoadAnimationLibrary(GT::Script &script)
     {
         script.Execute
         (
@@ -36,7 +36,7 @@ namespace GT
     }
 
 
-    GTEngine::AnimationSequence ToAnimationSequence(GTLib::Script &script, int position)
+    GTEngine::AnimationSequence ToAnimationSequence(GT::Script &script, int position)
     {
         GTEngine::AnimationSequence result;
 

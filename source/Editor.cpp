@@ -1233,7 +1233,7 @@ namespace GTEngine
 
     /////////////////////////////////////////////
     // FFI.
-    Game & Editor::FFI::GetGame(GTLib::Script &script)
+    Game & Editor::FFI::GetGame(GT::Script &script)
     {
         script.GetGlobal("__GamePtr");
         auto game = static_cast<Game*>(script.ToPointer(-1));
@@ -1243,13 +1243,13 @@ namespace GTEngine
         return *game;
     }
 
-    Editor & Editor::FFI::GetEditor(GTLib::Script &script)
+    Editor & Editor::FFI::GetEditor(GT::Script &script)
     {
         return GetGame(script).GetEditor();
     }
 
 
-    void Editor::FFI::PushElement(GTLib::Script &script, GTGUI::Element* element)
+    void Editor::FFI::PushElement(GT::Script &script, GTGUI::Element* element)
     {
         if (element != nullptr)
         {
@@ -1281,20 +1281,20 @@ namespace GTEngine
     }
 
 
-    int Editor::FFI::Open(GTLib::Script &script)
+    int Editor::FFI::Open(GT::Script &script)
     {
         GetGame(script).OpenEditor();
         return 0;
     }
 
-    int Editor::FFI::Close(GTLib::Script &script)
+    int Editor::FFI::Close(GT::Script &script)
     {
         GetGame(script).CloseEditor();
         return 0;
     }
 
 
-    int Editor::FFI::OpenFile(GTLib::Script &script)
+    int Editor::FFI::OpenFile(GT::Script &script)
     {
         auto subEditor = FFI::GetEditor(script).OpenFile(script.ToString(1), script.ToString(2));
         if (subEditor != nullptr)
@@ -1309,79 +1309,79 @@ namespace GTEngine
         return 1;
     }
 
-    int Editor::FFI::CloseFile(GTLib::Script &script)
+    int Editor::FFI::CloseFile(GT::Script &script)
     {
         FFI::GetEditor(script).CloseFile(script.ToString(1), script.ToString(2));
         return 0;
     }
 
-    int Editor::FFI::ForceCloseFile(GTLib::Script &script)
+    int Editor::FFI::ForceCloseFile(GT::Script &script)
     {
         FFI::GetEditor(script).ForceCloseFile(script.ToString(1), script.ToString(2));
         return 0;
     }
 
-    int Editor::FFI::CloseAllOpenFiles(GTLib::Script &script)
+    int Editor::FFI::CloseAllOpenFiles(GT::Script &script)
     {
         FFI::GetEditor(script).CloseAllOpenFiles();
         return 0;
     }
 
-    int Editor::FFI::CloseCurrentlyShownFile(GTLib::Script &script)
+    int Editor::FFI::CloseCurrentlyShownFile(GT::Script &script)
     {
         FFI::GetEditor(script).CloseCurrentlyShownFile();
         return 0;
     }
 
-    int Editor::FFI::ShowFile(GTLib::Script &script)
+    int Editor::FFI::ShowFile(GT::Script &script)
     {
         script.Push(FFI::GetEditor(script).ShowFile(script.ToString(1), script.ToString(2)));
         return 1;
     }
 
-    int Editor::FFI::HideCurrentlyShownFile(GTLib::Script &script)
+    int Editor::FFI::HideCurrentlyShownFile(GT::Script &script)
     {
         FFI::GetEditor(script).HideCurrentlyShownFile();
         return 0;
     }
 
-    int Editor::FFI::SaveFile(GTLib::Script &script)
+    int Editor::FFI::SaveFile(GT::Script &script)
     {
         script.Push(FFI::GetEditor(script).SaveFile(script.ToString(1), script.ToString(2)));
         return 1;
     }
 
-    int Editor::FFI::SaveAllOpenModifiedFiles(GTLib::Script &script)
+    int Editor::FFI::SaveAllOpenModifiedFiles(GT::Script &script)
     {
         FFI::GetEditor(script).SaveAllOpenModifiedFiles();
         return 0;
     }
 
-    int Editor::FFI::SaveCurrentlyShownFile(GTLib::Script &script)
+    int Editor::FFI::SaveCurrentlyShownFile(GT::Script &script)
     {
         script.Push(FFI::GetEditor(script).SaveCurrentlyShownFile());
         return 1;
     }
 
-    int Editor::FFI::MarkFileAsModified(GTLib::Script &script)
+    int Editor::FFI::MarkFileAsModified(GT::Script &script)
     {
         FFI::GetEditor(script).MarkFileAsModified(script.ToString(1), script.ToString(2));
         return 0;
     }
 
-    int Editor::FFI::UnmarkFileAsModified(GTLib::Script &script)
+    int Editor::FFI::UnmarkFileAsModified(GT::Script &script)
     {
         FFI::GetEditor(script).UnmarkFileAsModified(script.ToString(1), script.ToString(2));
         return 0;
     }
 
-    int Editor::FFI::IsFileMarkedAsModified(GTLib::Script &script)
+    int Editor::FFI::IsFileMarkedAsModified(GT::Script &script)
     {
         script.Push(FFI::GetEditor(script).IsFileMarkedAsModified(script.ToString(1), script.ToString(2)));
         return 1;
     }
 
-    int Editor::FFI::GetCurrentlyShownEditor(GTLib::Script &script)
+    int Editor::FFI::GetCurrentlyShownEditor(GT::Script &script)
     {
         auto subEditor = FFI::GetEditor(script).GetCurrentlyShownEditor();
         if (subEditor != nullptr)
@@ -1396,7 +1396,7 @@ namespace GTEngine
         return 1;
     }
 
-    int Editor::FFI::OpenPackagingTool(GTLib::Script &script)
+    int Editor::FFI::OpenPackagingTool(GT::Script &script)
     {
         auto subEditor = FFI::GetEditor(script).OpenPackagingTool();
         if (subEditor != nullptr)

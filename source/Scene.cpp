@@ -1152,7 +1152,7 @@ namespace GTEngine
 
 
 
-    void Scene::RegisterToScript(GTLib::Script &script)
+    void Scene::RegisterToScript(GT::Script &script)
     {
         if (this->registeredScript != &script)
         {
@@ -2467,7 +2467,7 @@ namespace GTEngine
         // don't do this straight away, we'll run into problems when posting events to the scene node's script.
         if (this->registeredScript != nullptr && node.HasComponent<ScriptComponent>())
         {
-            Scripting::InstantiateSceneNode(*this->registeredScript, node);
+            InstantiateSceneNode(*this->registeredScript, node);
 
             // We now need to post an OnStartup event if applicable. All scene nodes should have 1 OnStartup and 1 OnShutdown called for each time they are part
             // of the scene.

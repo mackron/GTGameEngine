@@ -92,7 +92,7 @@ namespace GTEngine
         ///
         /// @remarks
         ///     This script does not contain any high-level script functionality.
-        static GTLib::Script & GetWorkingScript();
+        static GT::Script & GetWorkingScript();
     };
 }
 

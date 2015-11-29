@@ -7,7 +7,7 @@
 
 namespace GT
 {
-    bool LoadAudioLibrary(GTLib::Script &script)
+    bool LoadAudioLibrary(GT::Script &script)
     {
         script.GetGlobal("GTEngine");
         assert(script.IsTable(-1));
@@ -25,7 +25,7 @@ namespace GT
 
     namespace AudioFFI
     {
-        int Play(GTLib::Script &script)
+        int Play(GT::Script &script)
         {
             auto fileName = script.ToString(1);
             auto position = ToVector3(script, 2);
@@ -35,7 +35,7 @@ namespace GT
             return 0;
         }
 
-        int SetListenerPosition(GTLib::Script &script)
+        int SetListenerPosition(GT::Script &script)
         {
             glm::vec3 pos = ToVector3(script, 1);
             easyaudio_set_listener_position(GTEngine::g_EngineContext->GetAudioPlaybackDevice(), pos.x, pos.y, pos.z);
@@ -43,7 +43,7 @@ namespace GT
             return 0;
         }
 
-        int SetListenerOrientation(GTLib::Script &script)
+        int SetListenerOrientation(GT::Script &script)
         {
             glm::vec3 forward = ToVector3(script, 1);
             glm::vec3 up = ToVector3(script, 1);

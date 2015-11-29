@@ -67,7 +67,7 @@ namespace GTEngine
             }
         }
 
-        return GTLib::Script::LoadFile(pVFS, fileName);
+        return GT::Script::LoadFile(pVFS, fileName);
     }
 
 
@@ -93,7 +93,7 @@ namespace GTEngine
     {
     }
 
-    void GameScript::ErrorHandler::OnError(GTLib::Script &, const char* message)
+    void GameScript::ErrorHandler::OnError(GT::Script &, const char* message)
     {
         this->script.SetLastError(message);
         PostError("Script Error: %s", message);

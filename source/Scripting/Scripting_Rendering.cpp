@@ -5,7 +5,7 @@
 
 namespace GT
 {
-    bool LoadRenderingLibrary(GTLib::Script &script)
+    bool LoadRenderingLibrary(GT::Script &script)
     {
         script.GetGlobal("GTEngine");
         assert(script.IsTable(-1));
@@ -25,13 +25,13 @@ namespace GT
 
     namespace RenderingFFI
     {
-        int EnableVSync(GTLib::Script &)
+        int EnableVSync(GT::Script &)
         {
             GTEngine::Renderer::SetSwapInterval(1);
             return 0;
         }
 
-        int DisableVSync(GTLib::Script &)
+        int DisableVSync(GT::Script &)
         {
             GTEngine::Renderer::SetSwapInterval(0);
             return 0;

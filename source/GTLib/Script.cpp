@@ -20,7 +20,7 @@ extern "C"
 #define LUA_STATE ((lua_State*)this->state)
 
 
-namespace GTLib
+namespace GT
 {
     ScriptErrorHandler::ScriptErrorHandler()
     {
@@ -30,7 +30,7 @@ namespace GTLib
     {
     }
 
-    void ScriptErrorHandler::OnError(GTLib::Script &, const char*)
+    void ScriptErrorHandler::OnError(Script &, const char*)
     {
     }
 
@@ -96,11 +96,10 @@ namespace GTLib
 
         return *this;
     }
-}
 
 
-namespace GTLib
-{
+
+
     ////////////////////////////////////////////////////////////////////////////////////////////////////
     // Some hacky void* <-> function pointer casts to avoid warnings and make the code technically more
     // correct. The sizeof() comparisons are constant, so they should hopefully be stripped at compile
@@ -366,7 +365,7 @@ namespace GTLib
 
     bool Script::LoadGTLibrary()
     {
-        return GTLib::Scripting::LoadGTScriptLibrary(*this);
+        return LoadGTScriptLibrary(*this);
     }
 
 
@@ -430,7 +429,7 @@ namespace GTLib
 
     bool Script::Get(const char* statement)
     {
-        Strings::List<char> command;
+        GTLib::Strings::List<char> command;
         command.Append("return ");
         command.Append(statement);
 
@@ -439,9 +438,9 @@ namespace GTLib
 
     bool Script::Set(const char* dest, int value)
     {
-        String valueStr = GTLib::ToString(value);
+        GTLib::String valueStr = GTLib::ToString(value);
 
-        Strings::List<char> command;
+        GTLib::Strings::List<char> command;
         command.Append(dest);
         command.Append("=");
         command.Append(valueStr.c_str());
@@ -452,9 +451,9 @@ namespace GTLib
 
     bool Script::Set(const char* dest, double value)
     {
-        String valueStr = GTLib::ToString(value);
+        GTLib::String valueStr = GTLib::ToString(value);
 
-        Strings::List<char> command;
+        GTLib::Strings::List<char> command;
         command.Append(dest);
         command.Append("=");
         command.Append(valueStr.c_str());
@@ -465,7 +464,7 @@ namespace GTLib
 
     bool Script::Set(const char* dest, bool value)
     {
-        Strings::List<char> command;
+        GTLib::Strings::List<char> command;
         command.Append(dest);
         command.Append("=");
         command.Append(value ? "true;" : "false;");
@@ -475,7 +474,7 @@ namespace GTLib
 
     bool Script::Set(const char* dest, const char* value)
     {
-        Strings::List<char> command;
+        GTLib::Strings::List<char> command;
         command.Append(dest);
         command.Append("='");
         command.Append(value);

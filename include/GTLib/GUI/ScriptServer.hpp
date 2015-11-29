@@ -23,7 +23,7 @@ namespace GTGUI
         *   \brief              Constructor.
         *   \param  script [in] A pointer to the script object to use for scripting. Can be null, in which case GTGUI will create it's own script object.
         */
-        ScriptServer(Server &server, GTLib::Script* script);
+        ScriptServer(Server &server, GT::Script* script);
         
         /**
         *   \brief  Destructor.
@@ -57,7 +57,7 @@ namespace GTGUI
         *   \remarks
         *       Use this function to manually build your application's foreign function interface.
         */
-        GTLib::Script & GetScript();
+        GT::Script & GetScript();
 
 
         /// Removes the given element from the scripting environment.
@@ -215,7 +215,7 @@ namespace GTGUI
     
         /// The internal script object. This object basically IS the script server. We use a pointer here because applications have the option
         /// of using their own script object for scripting.
-        GTLib::Script* script;
+        GT::Script* script;
 
         /// Keeps track of whether or not to delete the script object.
         bool deleteScript;
@@ -225,102 +225,102 @@ namespace GTGUI
     
         struct FFI
         {
-            static Server & GetServer(GTLib::Script &script);
+            static Server & GetServer(GT::Script &script);
 
 
             // System.
-            static int _CreateNewElement(GTLib::Script &script);
-            static int _DeleteElement(GTLib::Script &script);
+            static int _CreateNewElement(GT::Script &script);
+            static int _DeleteElement(GT::Script &script);
             
-            static int _GetElementID(GTLib::Script &script);
+            static int _GetElementID(GT::Script &script);
 
-            static int _AppendChild(GTLib::Script &script);
-            static int _PrependChild(GTLib::Script &script);
-            static int _RemoveChild(GTLib::Script &script);
-            static int _RemoveAllChildren(GTLib::Script &script);
-            static int _DeleteAllChildren(GTLib::Script &script);
+            static int _AppendChild(GT::Script &script);
+            static int _PrependChild(GT::Script &script);
+            static int _RemoveChild(GT::Script &script);
+            static int _RemoveAllChildren(GT::Script &script);
+            static int _DeleteAllChildren(GT::Script &script);
 
-            static int _IsAncestor(GTLib::Script &script);
-            static int _IsChild(GTLib::Script &script);
-            static int _AttachStyleClass(GTLib::Script &script);
-            static int _DetachStyleClass(GTLib::Script &script);
-            static int _GetStyle(GTLib::Script &script);
-            static int _SetStyle(GTLib::Script &script);
+            static int _IsAncestor(GT::Script &script);
+            static int _IsChild(GT::Script &script);
+            static int _AttachStyleClass(GT::Script &script);
+            static int _DetachStyleClass(GT::Script &script);
+            static int _GetStyle(GT::Script &script);
+            static int _SetStyle(GT::Script &script);
 
-            static int _LoadStyleScriptFromFile(GTLib::Script &script);
+            static int _LoadStyleScriptFromFile(GT::Script &script);
 
             ///////////////////////////////////
             // Text
-            static int _GetText(GTLib::Script &script);
-            static int _SetText(GTLib::Script &script);
-            static int _GetTextWidth(GTLib::Script &script);
-            static int _GetTextHeight(GTLib::Script &script);
-            static int _GetTextLineHeight(GTLib::Script &script);
-            static int _GetTextLineCount(GTLib::Script &script);
-            static int _GetTextPageLineCount(GTLib::Script &script);
-            static int _SelectAllText(GTLib::Script &script);
-            static int _GoToLine(GTLib::Script &script);
+            static int _GetText(GT::Script &script);
+            static int _SetText(GT::Script &script);
+            static int _GetTextWidth(GT::Script &script);
+            static int _GetTextHeight(GT::Script &script);
+            static int _GetTextLineHeight(GT::Script &script);
+            static int _GetTextLineCount(GT::Script &script);
+            static int _GetTextPageLineCount(GT::Script &script);
+            static int _SelectAllText(GT::Script &script);
+            static int _GoToLine(GT::Script &script);
 
             
             
-            static int _GetWidth(GTLib::Script &script);
-            static int _GetHeight(GTLib::Script &script);
-            static int _GetInnerWidth(GTLib::Script &script);
-            static int _GetInnerHeight(GTLib::Script &script);
-            static int _GetXPosition(GTLib::Script &script);
-            static int _GetYPosition(GTLib::Script &script);
-            static int _GetInnerXPosition(GTLib::Script &script);
-            static int _GetInnerYPosition(GTLib::Script &script);
-            static int _GetInnerXOffset(GTLib::Script &script);
-            static int _GetInnerYOffset(GTLib::Script &script);
-            static int _GetAbsolutePosition(GTLib::Script &script);
+            static int _GetWidth(GT::Script &script);
+            static int _GetHeight(GT::Script &script);
+            static int _GetInnerWidth(GT::Script &script);
+            static int _GetInnerHeight(GT::Script &script);
+            static int _GetXPosition(GT::Script &script);
+            static int _GetYPosition(GT::Script &script);
+            static int _GetInnerXPosition(GT::Script &script);
+            static int _GetInnerYPosition(GT::Script &script);
+            static int _GetInnerXOffset(GT::Script &script);
+            static int _GetInnerYOffset(GT::Script &script);
+            static int _GetAbsolutePosition(GT::Script &script);
 
 
-            static int _GetLeftPadding(GTLib::Script &script);
-            static int _GetRightPadding(GTLib::Script &script);
-            static int _GetTopPadding(GTLib::Script &script);
-            static int _GetBottomPadding(GTLib::Script &script);
-            static int _GetHorizontalPadding(GTLib::Script &script);
-            static int _GetVerticalPadding(GTLib::Script &script);
+            static int _GetLeftPadding(GT::Script &script);
+            static int _GetRightPadding(GT::Script &script);
+            static int _GetTopPadding(GT::Script &script);
+            static int _GetBottomPadding(GT::Script &script);
+            static int _GetHorizontalPadding(GT::Script &script);
+            static int _GetVerticalPadding(GT::Script &script);
 
-            static int _Show(GTLib::Script &script);
-            static int _Hide(GTLib::Script &script);
-            static int _IsVisible(GTLib::Script &script);
-            static int _LockStyleRefreshing(GTLib::Script &script);
-            static int _UnlockStyleRefreshing(GTLib::Script &script);
-            static int _RefreshStyle(GTLib::Script &script);
+            static int _Show(GT::Script &script);
+            static int _Hide(GT::Script &script);
+            static int _IsVisible(GT::Script &script);
+            static int _LockStyleRefreshing(GT::Script &script);
+            static int _UnlockStyleRefreshing(GT::Script &script);
+            static int _RefreshStyle(GT::Script &script);
 
-            static int _GetNextSiblingID(GTLib::Script &script);
-            static int _GetPrevSiblingID(GTLib::Script &script);
+            static int _GetNextSiblingID(GT::Script &script);
+            static int _GetPrevSiblingID(GT::Script &script);
 
-            static int _SetDragAndDropProxyElement(GTLib::Script &script);
-            static int _GetDragAndDropProxyElementID(GTLib::Script &script);
-            static int _RemoveCurrentDragAndDropProxyElement(GTLib::Script &script);
-            static int _SetDragAndDropProxyElementOffset(GTLib::Script &script);
+            static int _SetDragAndDropProxyElement(GT::Script &script);
+            static int _GetDragAndDropProxyElementID(GT::Script &script);
+            static int _RemoveCurrentDragAndDropProxyElement(GT::Script &script);
+            static int _SetDragAndDropProxyElementOffset(GT::Script &script);
 
-            static int _FocusElement(GTLib::Script &script);
-            static int _GetFocusedElementID(GTLib::Script &script);
+            static int _FocusElement(GT::Script &script);
+            static int _GetFocusedElementID(GT::Script &script);
 
-            static int _BringToTop(GTLib::Script &script);
-            static int _PushToBack(GTLib::Script &script);
+            static int _BringToTop(GT::Script &script);
+            static int _PushToBack(GT::Script &script);
 
-            static int _GetViewportWidth(GTLib::Script &script);
-            static int _GetViewportHeight(GTLib::Script &script);
+            static int _GetViewportWidth(GT::Script &script);
+            static int _GetViewportHeight(GT::Script &script);
 
             
             // Server.
-            static int Log(GTLib::Script &script);
-            static int New(GTLib::Script &script);
-            static int BlurFocusedElement(GTLib::Script &script);
-            static int IsCTRLKeyDown(GTLib::Script &script);
-            static int IsShiftKeyDown(GTLib::Script &script);
-            static int GetMousePosition(GTLib::Script &script);
+            static int Log(GT::Script &script);
+            static int New(GT::Script &script);
+            static int BlurFocusedElement(GT::Script &script);
+            static int IsCTRLKeyDown(GT::Script &script);
+            static int IsShiftKeyDown(GT::Script &script);
+            static int GetMousePosition(GT::Script &script);
 
-            static int IsLMBDown(GTLib::Script &script);
-            static int IsRMBDown(GTLib::Script &script);
-            static int IsMMBDown(GTLib::Script &script);
+            static int IsLMBDown(GT::Script &script);
+            static int IsRMBDown(GT::Script &script);
+            static int IsMMBDown(GT::Script &script);
 
-            static int DoesFocusedElementHaveEditableText(GTLib::Script &script);
+            static int DoesFocusedElementHaveEditableText(GT::Script &script);
         };
         
         

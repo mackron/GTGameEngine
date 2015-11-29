@@ -479,13 +479,13 @@ namespace GTEngine
         ///
         /// @remarks
         ///     It is up to the user to make sure the scene is unregistered before destroying the script. Use Scene::UnregisterFromScript() to do this.
-        void RegisterToScript(GTLib::Script &script);
+        void RegisterToScript(GT::Script &script);
 
         /// Unregisters the scene from the script it is currently registered to.
         void UnregisterFromScript();
 
         /// Retrieves a pointer ot the script that this scene is current registered to, if any.
-        GTLib::Script* GetRegisteredScript() const { return this->registeredScript; }
+        GT::Script* GetRegisteredScript() const { return this->registeredScript; }
         
 
 
@@ -1084,7 +1084,7 @@ namespace GTEngine
 
 
         /// A pointer to the script the scene is current registered to.
-        GTLib::Script* registeredScript;
+        GT::Script* registeredScript;
 
         /// Keeps track of whether or not script events are blocked. False by default.
         bool isScriptEventsBlocked;

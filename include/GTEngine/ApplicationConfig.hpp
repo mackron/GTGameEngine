@@ -48,7 +48,7 @@ namespace GT
         private:
 
             /// The script object that will be used to read the config file.
-            GTLib::Script m_script;
+            GT::Script m_script;
 
             /// The list of data directories.
             GTLib::Vector<GTLib::String> m_dataDirectories;

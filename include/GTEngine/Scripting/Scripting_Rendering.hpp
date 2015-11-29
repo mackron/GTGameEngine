@@ -12,17 +12,17 @@ namespace GT
     /// @param script [in] A reference to the script to load the library into.
     ///
     /// @return True if the library is loaded successfully; false otherwise.
-    bool LoadRenderingLibrary(GTLib::Script &script);
+    bool LoadRenderingLibrary(GT::Script &script);
 
 
 
     namespace RenderingFFI
     {
         /// Enables v-sync on the renderer.
-        int EnableVSync(GTLib::Script &script);
+        int EnableVSync(GT::Script &script);
 
         /// Disables v-sync on the renderer.
-        int DisableVSync(GTLib::Script &script);
+        int DisableVSync(GT::Script &script);
     }
 }
 

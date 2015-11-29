@@ -6,13 +6,13 @@
 
 namespace GTGUI
 {
-    ScriptServer::ScriptServer(Server &server, GTLib::Script* script)
+    ScriptServer::ScriptServer(Server &server, GT::Script* script)
         : server(server), script(script), deleteScript(false)
     {
         // If no script was specified, we need to create one.
         if (this->script == nullptr)
         {
-            this->script       = new GTLib::Script;
+            this->script       = new GT::Script;
             this->deleteScript = true;
         }
 
@@ -55,7 +55,7 @@ namespace GTGUI
     }
 
 
-    GTLib::Script & ScriptServer::GetScript()
+    GT::Script & ScriptServer::GetScript()
     {
         assert(this->script != nullptr);
         return *this->script;
@@ -2135,7 +2135,7 @@ namespace GTGUI
     }
     
     
-    Server & ScriptServer::FFI::GetServer(GTLib::Script &script)
+    Server & ScriptServer::FFI::GetServer(GT::Script &script)
     {
         script.GetGlobal("_GTGUI_Server");
         auto server = static_cast<Server*>(script.ToPointer(-1));
@@ -2148,7 +2148,7 @@ namespace GTGUI
 
 
 
-    int ScriptServer::FFI::Log(GTLib::Script &script)
+    int ScriptServer::FFI::Log(GT::Script &script)
     {
         auto &server = FFI::GetServer(script);
 
@@ -2160,7 +2160,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_CreateNewElement(GTLib::Script &script)
+    int ScriptServer::FFI::_CreateNewElement(GT::Script &script)
     {
         auto &server = FFI::GetServer(script);
         
@@ -2176,7 +2176,7 @@ namespace GTGUI
         return 0;
     }
     
-    int ScriptServer::FFI::_DeleteElement(GTLib::Script &script)
+    int ScriptServer::FFI::_DeleteElement(GT::Script &script)
     {
         auto elementToDelete = static_cast<Element*>(script.ToPointer(1));
         if (elementToDelete)
@@ -2187,7 +2187,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_DeleteAllChildren(GTLib::Script &script)
+    int ScriptServer::FFI::_DeleteAllChildren(GT::Script &script)
     {
         auto parent = static_cast<Element*>(script.ToPointer(1));
         if (parent != nullptr)
@@ -2198,7 +2198,7 @@ namespace GTGUI
         return 0;
     }
     
-    int ScriptServer::FFI::_GetElementID(GTLib::Script &script)
+    int ScriptServer::FFI::_GetElementID(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2210,7 +2210,7 @@ namespace GTGUI
         return 0;
     }
     
-    int ScriptServer::FFI::New(GTLib::Script &script)
+    int ScriptServer::FFI::New(GT::Script &script)
     {
         auto &server = FFI::GetServer(script);
 
@@ -2254,25 +2254,25 @@ namespace GTGUI
         return 1;
     }
 
-    int ScriptServer::FFI::BlurFocusedElement(GTLib::Script &script)
+    int ScriptServer::FFI::BlurFocusedElement(GT::Script &script)
     {
         FFI::GetServer(script).BlurFocusedElement();
         return 0;
     }
 
-    int ScriptServer::FFI::IsCTRLKeyDown(GTLib::Script &script)
+    int ScriptServer::FFI::IsCTRLKeyDown(GT::Script &script)
     {
         script.Push(FFI::GetServer(script).IsCTRLKeyDown());
         return 1;
     }
 
-    int ScriptServer::FFI::IsShiftKeyDown(GTLib::Script &script)
+    int ScriptServer::FFI::IsShiftKeyDown(GT::Script &script)
     {
         script.Push(FFI::GetServer(script).IsShiftKeyDown());
         return 1;
     }
 
-    int ScriptServer::FFI::GetMousePosition(GTLib::Script &script)
+    int ScriptServer::FFI::GetMousePosition(GT::Script &script)
     {
         int xPos;
         int yPos;
@@ -2285,26 +2285,26 @@ namespace GTGUI
     }
 
 
-    int ScriptServer::FFI::IsLMBDown(GTLib::Script &script)
+    int ScriptServer::FFI::IsLMBDown(GT::Script &script)
     {
         script.Push(FFI::GetServer(script).IsLMBDown());
         return 1;
     }
 
-    int ScriptServer::FFI::IsRMBDown(GTLib::Script &script)
+    int ScriptServer::FFI::IsRMBDown(GT::Script &script)
     {
         script.Push(FFI::GetServer(script).IsRMBDown());
         return 1;
     }
 
-    int ScriptServer::FFI::IsMMBDown(GTLib::Script &script)
+    int ScriptServer::FFI::IsMMBDown(GT::Script &script)
     {
         script.Push(FFI::GetServer(script).IsMMBDown());
         return 1;
     }
 
 
-    int ScriptServer::FFI::DoesFocusedElementHaveEditableText(GTLib::Script &script)
+    int ScriptServer::FFI::DoesFocusedElementHaveEditableText(GT::Script &script)
     {
         auto &server = FFI::GetServer(script);
 
@@ -2322,7 +2322,7 @@ namespace GTGUI
     
 
 
-    int ScriptServer::FFI::_AppendChild(GTLib::Script &script)
+    int ScriptServer::FFI::_AppendChild(GT::Script &script)
     {
         auto child  = static_cast<Element*>(script.ToPointer(1));
         auto parent = static_cast<Element*>(script.ToPointer(2));
@@ -2334,7 +2334,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_PrependChild(GTLib::Script &script)
+    int ScriptServer::FFI::_PrependChild(GT::Script &script)
     {
         auto child  = static_cast<Element*>(script.ToPointer(1));
         auto parent = static_cast<Element*>(script.ToPointer(2));
@@ -2346,7 +2346,7 @@ namespace GTGUI
         return 0;
     }
     
-    int ScriptServer::FFI::_RemoveChild(GTLib::Script &script)
+    int ScriptServer::FFI::_RemoveChild(GT::Script &script)
     {
         auto child  = static_cast<Element*>(script.ToPointer(1));
         auto parent = static_cast<Element*>(script.ToPointer(2));
@@ -2358,7 +2358,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_RemoveAllChildren(GTLib::Script &script)
+    int ScriptServer::FFI::_RemoveAllChildren(GT::Script &script)
     {
         auto parent = static_cast<Element*>(script.ToPointer(1));
         if (parent != nullptr)
@@ -2370,7 +2370,7 @@ namespace GTGUI
     }
 
 
-    int ScriptServer::FFI::_IsAncestor(GTLib::Script &script)
+    int ScriptServer::FFI::_IsAncestor(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         auto other   = static_cast<Element*>(script.ToPointer(2));
@@ -2383,7 +2383,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_IsChild(GTLib::Script &script)
+    int ScriptServer::FFI::_IsChild(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         auto other   = static_cast<Element*>(script.ToPointer(2));
@@ -2396,7 +2396,7 @@ namespace GTGUI
         return 0;
     }
     
-    int ScriptServer::FFI::_AttachStyleClass(GTLib::Script &script)
+    int ScriptServer::FFI::_AttachStyleClass(GT::Script &script)
     {
         auto &server = FFI::GetServer(script);
         
@@ -2414,7 +2414,7 @@ namespace GTGUI
         return 0;
     }
     
-    int ScriptServer::FFI::_DetachStyleClass(GTLib::Script &script)
+    int ScriptServer::FFI::_DetachStyleClass(GT::Script &script)
     {
         auto &server = FFI::GetServer(script);
         
@@ -2433,7 +2433,7 @@ namespace GTGUI
     }
 
     
-    int ScriptServer::FFI::_GetStyle(GTLib::Script &script)
+    int ScriptServer::FFI::_GetStyle(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2452,7 +2452,7 @@ namespace GTGUI
         return 0;
     }
     
-    int ScriptServer::FFI::_SetStyle(GTLib::Script &script)
+    int ScriptServer::FFI::_SetStyle(GT::Script &script)
     {
         auto element  = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2466,7 +2466,7 @@ namespace GTGUI
     }
 
 
-    int ScriptServer::FFI::_LoadStyleScriptFromFile(GTLib::Script &script)
+    int ScriptServer::FFI::_LoadStyleScriptFromFile(GT::Script &script)
     {
         script.Push(FFI::GetServer(script).GetStyleServer().LoadFromFile(script.ToString(1)));
         return 1;
@@ -2476,7 +2476,7 @@ namespace GTGUI
     ///////////////////////////////////////////////////////////////
     // Text
 
-    int ScriptServer::FFI::_GetText(GTLib::Script &script)
+    int ScriptServer::FFI::_GetText(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2499,7 +2499,7 @@ namespace GTGUI
         return 1;
     }
     
-    int ScriptServer::FFI::_SetText(GTLib::Script &script)
+    int ScriptServer::FFI::_SetText(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2513,7 +2513,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetTextWidth(GTLib::Script &script)
+    int ScriptServer::FFI::_GetTextWidth(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2528,7 +2528,7 @@ namespace GTGUI
         return 1;
     }
 
-    int ScriptServer::FFI::_GetTextHeight(GTLib::Script &script)
+    int ScriptServer::FFI::_GetTextHeight(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2543,7 +2543,7 @@ namespace GTGUI
         return 1;
     }
 
-    int ScriptServer::FFI::_GetTextLineHeight(GTLib::Script &script)
+    int ScriptServer::FFI::_GetTextLineHeight(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2566,7 +2566,7 @@ namespace GTGUI
         return 1;
     }
 
-    int ScriptServer::FFI::_GetTextLineCount(GTLib::Script &script)
+    int ScriptServer::FFI::_GetTextLineCount(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2581,7 +2581,7 @@ namespace GTGUI
         return 1;
     }
 
-    int ScriptServer::FFI::_GetTextPageLineCount(GTLib::Script &script)
+    int ScriptServer::FFI::_GetTextPageLineCount(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2596,7 +2596,7 @@ namespace GTGUI
         return 1;
     }
 
-    int ScriptServer::FFI::_SelectAllText(GTLib::Script &script)
+    int ScriptServer::FFI::_SelectAllText(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2607,7 +2607,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GoToLine(GTLib::Script &script)
+    int ScriptServer::FFI::_GoToLine(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2622,7 +2622,7 @@ namespace GTGUI
 
 
 
-    int ScriptServer::FFI::_GetWidth(GTLib::Script &script)
+    int ScriptServer::FFI::_GetWidth(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2634,7 +2634,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetHeight(GTLib::Script &script)
+    int ScriptServer::FFI::_GetHeight(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2646,7 +2646,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetInnerWidth(GTLib::Script &script)
+    int ScriptServer::FFI::_GetInnerWidth(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2658,7 +2658,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetInnerHeight(GTLib::Script &script)
+    int ScriptServer::FFI::_GetInnerHeight(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2671,7 +2671,7 @@ namespace GTGUI
     }
 
 
-    int ScriptServer::FFI::_GetXPosition(GTLib::Script &script)
+    int ScriptServer::FFI::_GetXPosition(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2683,7 +2683,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetYPosition(GTLib::Script &script)
+    int ScriptServer::FFI::_GetYPosition(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2695,7 +2695,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetInnerXPosition(GTLib::Script &script)
+    int ScriptServer::FFI::_GetInnerXPosition(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2715,7 +2715,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetInnerYPosition(GTLib::Script &script)
+    int ScriptServer::FFI::_GetInnerYPosition(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2734,7 +2734,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetInnerXOffset(GTLib::Script &script)
+    int ScriptServer::FFI::_GetInnerXOffset(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2746,7 +2746,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetInnerYOffset(GTLib::Script &script)
+    int ScriptServer::FFI::_GetInnerYOffset(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2759,7 +2759,7 @@ namespace GTGUI
     }
 
 
-    int ScriptServer::FFI::_GetAbsolutePosition(GTLib::Script &script)
+    int ScriptServer::FFI::_GetAbsolutePosition(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2778,7 +2778,7 @@ namespace GTGUI
 
 
 
-    int ScriptServer::FFI::_GetLeftPadding(GTLib::Script &script)
+    int ScriptServer::FFI::_GetLeftPadding(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2790,7 +2790,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetRightPadding(GTLib::Script &script)
+    int ScriptServer::FFI::_GetRightPadding(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2802,7 +2802,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetTopPadding(GTLib::Script &script)
+    int ScriptServer::FFI::_GetTopPadding(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2814,7 +2814,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetBottomPadding(GTLib::Script &script)
+    int ScriptServer::FFI::_GetBottomPadding(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2826,7 +2826,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetHorizontalPadding(GTLib::Script &script)
+    int ScriptServer::FFI::_GetHorizontalPadding(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2838,7 +2838,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetVerticalPadding(GTLib::Script &script)
+    int ScriptServer::FFI::_GetVerticalPadding(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2851,7 +2851,7 @@ namespace GTGUI
     }
 
 
-    int ScriptServer::FFI::_Show(GTLib::Script &script)
+    int ScriptServer::FFI::_Show(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2862,7 +2862,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_Hide(GTLib::Script &script)
+    int ScriptServer::FFI::_Hide(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2873,7 +2873,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_IsVisible(GTLib::Script &script)
+    int ScriptServer::FFI::_IsVisible(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2885,7 +2885,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_LockStyleRefreshing(GTLib::Script &script)
+    int ScriptServer::FFI::_LockStyleRefreshing(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2896,7 +2896,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_UnlockStyleRefreshing(GTLib::Script &script)
+    int ScriptServer::FFI::_UnlockStyleRefreshing(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2907,7 +2907,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_RefreshStyle(GTLib::Script &script)
+    int ScriptServer::FFI::_RefreshStyle(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2918,7 +2918,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetNextSiblingID(GTLib::Script &script)
+    int ScriptServer::FFI::_GetNextSiblingID(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2933,7 +2933,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetPrevSiblingID(GTLib::Script &script)
+    int ScriptServer::FFI::_GetPrevSiblingID(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -2949,7 +2949,7 @@ namespace GTGUI
     }
 
 
-    int ScriptServer::FFI::_SetDragAndDropProxyElement(GTLib::Script &script)
+    int ScriptServer::FFI::_SetDragAndDropProxyElement(GT::Script &script)
     {
         auto &server = FFI::GetServer(script);
         {
@@ -2967,7 +2967,7 @@ namespace GTGUI
         }
     }
 
-    int ScriptServer::FFI::_GetDragAndDropProxyElementID(GTLib::Script &script)
+    int ScriptServer::FFI::_GetDragAndDropProxyElementID(GT::Script &script)
     {
         auto &server = FFI::GetServer(script);
         {
@@ -2985,7 +2985,7 @@ namespace GTGUI
         }
     }
 
-    int ScriptServer::FFI::_RemoveCurrentDragAndDropProxyElement(GTLib::Script &script)
+    int ScriptServer::FFI::_RemoveCurrentDragAndDropProxyElement(GT::Script &script)
     {
         auto &server = FFI::GetServer(script);
         {
@@ -2995,7 +2995,7 @@ namespace GTGUI
         }
     }
 
-    int ScriptServer::FFI::_SetDragAndDropProxyElementOffset(GTLib::Script &script)
+    int ScriptServer::FFI::_SetDragAndDropProxyElementOffset(GT::Script &script)
     {
         auto &server = FFI::GetServer(script);
         {
@@ -3005,7 +3005,7 @@ namespace GTGUI
     }
 
 
-    int ScriptServer::FFI::_FocusElement(GTLib::Script &script)
+    int ScriptServer::FFI::_FocusElement(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -3016,7 +3016,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_GetFocusedElementID(GTLib::Script &script)
+    int ScriptServer::FFI::_GetFocusedElementID(GT::Script &script)
     {
         auto &server = FFI::GetServer(script);
         {
@@ -3032,7 +3032,7 @@ namespace GTGUI
     }
 
 
-    int ScriptServer::FFI::_BringToTop(GTLib::Script &script)
+    int ScriptServer::FFI::_BringToTop(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -3043,7 +3043,7 @@ namespace GTGUI
         return 0;
     }
 
-    int ScriptServer::FFI::_PushToBack(GTLib::Script &script)
+    int ScriptServer::FFI::_PushToBack(GT::Script &script)
     {
         auto element = static_cast<Element*>(script.ToPointer(1));
         if (element != nullptr)
@@ -3055,7 +3055,7 @@ namespace GTGUI
     }
 
 
-    int ScriptServer::FFI::_GetViewportWidth(GTLib::Script &script)
+    int ScriptServer::FFI::_GetViewportWidth(GT::Script &script)
     {
         auto &server = FFI::GetServer(script);
         {
@@ -3069,7 +3069,7 @@ namespace GTGUI
         return 1;
     }
 
-    int ScriptServer::FFI::_GetViewportHeight(GTLib::Script &script)
+    int ScriptServer::FFI::_GetViewportHeight(GT::Script &script)
     {
         auto &server = FFI::GetServer(script);
         {

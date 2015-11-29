@@ -146,7 +146,7 @@ namespace GTEngine
         }
     }
 
-    void TextEditor::OnScriptSyntaxError(GTLib::Script &script, int lineNumber, const char* message)
+    void TextEditor::OnScriptSyntaxError(GT::Script &script, int lineNumber, const char* message)
     {
         (void)script;
 

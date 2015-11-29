@@ -11,7 +11,7 @@ namespace GT
     /// Loads the animation sequence library.
     ///
     /// @param script [in] A reference to the script to load the library into.
-    bool LoadAnimationLibrary(GTLib::Script &script);
+    bool LoadAnimationLibrary(GT::Script &script);
 
 
     /// Converts the table at the given position to an AnimationSequence.
@@ -20,7 +20,7 @@ namespace GT
     /// @param position [in] The position of the table to read.
     ///
     /// @return The AnimationSequence at the given position, or an empty sequence if an error occurs.
-    GTEngine::AnimationSequence ToAnimationSequence(GTLib::Script &script, int position);
+    GTEngine::AnimationSequence ToAnimationSequence(GT::Script &script, int position);
 }
 
 #endif

@@ -19,7 +19,7 @@ namespace GTEngine
     static GTLib::Dictionary<ScriptDefinitionReference> LoadedDefinitions;
 
     /// A pointer to the working script. This is instantiated in Startup() and deleted in Shutdown().
-    static GTLib::Script* WorkingScript = nullptr;
+    static GT::Script* WorkingScript = nullptr;
 
 
 
@@ -28,7 +28,7 @@ namespace GTEngine
 
     bool ScriptLibrary::Startup()
     {
-        WorkingScript = new GTLib::Script;
+        WorkingScript = new GT::Script;
         if (!GT::LoadExtendedMathLibrary(*WorkingScript))
         {
             delete WorkingScript;
@@ -261,7 +261,7 @@ namespace GTEngine
     /////////////////////////////////////////////////
     // Misc.
 
-    GTLib::Script & ScriptLibrary::GetWorkingScript()
+    GT::Script & ScriptLibrary::GetWorkingScript()
     {
         assert(WorkingScript != nullptr);
         return *WorkingScript;

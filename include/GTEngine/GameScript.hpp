@@ -14,12 +14,12 @@ namespace GTEngine
 
     /// Class representing the scripting environment of a game.
     ///
-    /// This class is actually a GTLib::Script object, but with additional stuff to make it suitable for use by a game.
+    /// This class is actually a GT::Script object, but with additional stuff to make it suitable for use by a game.
     ///
     /// Anything involving a script is done through this, including configuration.
     ///
     /// The commands sent to the engine are actually just Lua scripts which are executed through the scripting environment.
-    class GameScript : public GTLib::Script
+    class GameScript : public GT::Script
     {
     public:
 
@@ -35,7 +35,7 @@ namespace GTEngine
         bool Startup();
 
 
-        /// GTLib::Script::LoadFile().
+        /// GT::Script::LoadFile().
         ///
         /// @remarks
         ///     This is a special implementation that keeps track of the file so we can do auto-reloading.
@@ -74,7 +74,7 @@ namespace GTEngine
         //struct FFI
         //{
             /// A helper for retrieving the Game instance from the script.
-            //static Game & GetGameObject(GTLib::Script &script);
+            //static Game & GetGameObject(GT::Script &script);
         //};
 
 
@@ -97,13 +97,13 @@ namespace GTEngine
 
 
         /// The error handler of the game script.
-        struct ErrorHandler : GTLib::ScriptErrorHandler
+        struct ErrorHandler : GT::ScriptErrorHandler
         {
             /// Constructor.
             ErrorHandler(GameScript &script);
 
-            /// GTLib::ScriptErrorHandler::OnError().
-            void OnError(GTLib::Script &, const char* message);
+            /// GT::ScriptErrorHandler::OnError().
+            void OnError(GT::Script &, const char* message);
 
 
 

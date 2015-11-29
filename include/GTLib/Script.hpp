@@ -9,7 +9,7 @@
 #include <GTLib/Strings/LineIterator.hpp>
 #include <easy_fs/easy_vfs.h>
 
-namespace GTLib
+namespace GT
 {
     class Script;
 
@@ -135,7 +135,7 @@ namespace GTLib
     private:
 
         /// The line iterator.
-        Strings::LineIterator lineIterator;
+        GTLib::Strings::LineIterator lineIterator;
 
         /// Whether or not the iterator is done.
         bool isDone;
@@ -143,12 +143,12 @@ namespace GTLib
 
 
     // Return value should be the number of return values pushed onto the stack.
-    typedef int (* script_function_proc)(GTLib::Script &);
+    typedef int (* script_function_proc)(GT::Script &);
 
     /**
     *   \brief  A class used for scripting.
     *
-    *   A GTLib::Script is just a Lua script. It uses the Lua syntax and API paradigms.
+    *   A GT::Script is just a Lua script. It uses the Lua syntax and API paradigms.
     */
     class Script
     {
@@ -351,7 +351,7 @@ namespace GTLib
         *       \endcode
         *       The above code first pushes the 2 items that should be associated with the function onto the stack. The first item
         *       is some integer and the second item is a string. We then push the closure onto the stack, specifying the name of
-        *       the function which is declared as "int foo(GTLib::Script *)" (all C functions which need to be called from within the
+        *       the function which is declared as "int foo(GT::Script *)" (all C functions which need to be called from within the
         *       script must use the same signiture). We associate a name with the function be setting the global variable with the
         *       name of the function ("foo", in this case) through the pop_global() function.
         *       \par

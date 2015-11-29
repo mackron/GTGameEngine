@@ -12,7 +12,7 @@ namespace GT
     /// @param script [in] A reference to the script to load the library into.
     ///
     /// @return True if the library is loaded successfully; false otherwise.
-    bool LoadEditorLibrary(GTLib::Script &script);
+    bool LoadEditorLibrary(GT::Script &script);
 
 
     namespace SubEditorFFI
@@ -21,26 +21,26 @@ namespace GT
         ///
         /// @remarks
         ///     Argument 1: A pointer to the sub-editor.
-        int GetAbsolutePath(GTLib::Script &script);
+        int GetAbsolutePath(GT::Script &script);
 
         /// Retrieves the relative path of the file loaded in the given sub-editor.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the sub-editor.
-        int GetRelativePath(GTLib::Script &script);
+        int GetRelativePath(GT::Script &script);
 
 
         /// Marks the editor as modified.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the sub-editor to mark as modified.
-        int MarkAsModified(GTLib::Script &script);
+        int MarkAsModified(GT::Script &script);
 
         /// Unmarks the editor as modified.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the sub-editor to unmark as modified.
-        int UnmarkAsModified(GTLib::Script &script);
+        int UnmarkAsModified(GT::Script &script);
     }
 
     namespace ModelEditorFFI
@@ -49,21 +49,21 @@ namespace GT
         ///
         /// @remark
         ///     Argument 1: A pointer to the model editor.
-        int GetMeshNames(GTLib::Script &script);
+        int GetMeshNames(GT::Script &script);
 
 
         /// Retrieves the relative names of all of the materials in the model of the given model editor.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
-        int GetMaterials(GTLib::Script &script);
+        int GetMaterials(GT::Script &script);
 
         /// Retrieves the relative path of the material at the given index.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
         ///     Argument 2: The index of the mesh whose material is being retrieved.
-        int GetMaterialRelativePath(GTLib::Script &script);
+        int GetMaterialRelativePath(GT::Script &script);
 
         /// Retrieves a table containing the uniforms of a material.
         ///
@@ -73,7 +73,7 @@ namespace GT
         ///
         ///     The return value is a table. Each item in the table is another table with the properties 'type' and 'value'. For textures, the
         ///     value is a string containing the relative path of the texture.
-        int GetMaterialUniformValues(GTLib::Script &script);
+        int GetMaterialUniformValues(GT::Script &script);
 
         /// Sets a material on the model loaded in the given model editor.
         ///
@@ -81,7 +81,7 @@ namespace GT
         ///     Argument 1: A pointer to the model editor.
         ///     Argument 2: The index of the material being set.
         ///     Argument 3: The relative path of the material to use.
-        int SetMaterial(GTLib::Script &script);
+        int SetMaterial(GT::Script &script);
 
         /// Sets the value of a uniform of the given meshes material.
         ///
@@ -90,18 +90,18 @@ namespace GT
         ///     Argument 2: The index of the material/mesh whose uniform is getting set.
         ///     Argument 3: The name of the uniform getting set.
         ///     Argument 4: The value of the uniform.
-        int SetMaterialUniform_Float(GTLib::Script &script);
-        int SetMaterialUniform_Float2(GTLib::Script &script);
-        int SetMaterialUniform_Float3(GTLib::Script &script);
-        int SetMaterialUniform_Float4(GTLib::Script &script);
-        int SetMaterialUniform_Texture2D(GTLib::Script &script);
+        int SetMaterialUniform_Float(GT::Script &script);
+        int SetMaterialUniform_Float2(GT::Script &script);
+        int SetMaterialUniform_Float3(GT::Script &script);
+        int SetMaterialUniform_Float4(GT::Script &script);
+        int SetMaterialUniform_Texture2D(GT::Script &script);
             
 
         /// Retrieves the number of bones containing the in the model of the given model editor.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
-        int GetBoneCount(GTLib::Script &script);
+        int GetBoneCount(GT::Script &script);
 
         /// Retrieves an array containing the names of every bone.
         ///
@@ -109,7 +109,7 @@ namespace GT
         ///     There is 1 table for every bone in the array. Each item contains two properties which should be self explanatory: 'name' and 'parentName'.
         ///
         ///     Argument 1: A pointer to the model editor.
-        int GetBones(GTLib::Script &script);
+        int GetBones(GT::Script &script);
 
 
         /// Plays the animation segment.
@@ -119,43 +119,43 @@ namespace GT
         ///     Argument 2: The index of the animation segment to play.
         ///
         ///     The animation will be looped.
-        int PlayAnimationSegmentByIndex(GTLib::Script &script);
+        int PlayAnimationSegmentByIndex(GT::Script &script);
 
         /// Plays the animation track of the model loaded in the given model editor.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
-        int PlayAnimation(GTLib::Script &script);
+        int PlayAnimation(GT::Script &script);
 
         /// Resumes playback of the model's animation.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
-        int ResumeAnimation(GTLib::Script &script);
+        int ResumeAnimation(GT::Script &script);
 
         /// Stops the animation track of the model loaded in the given model editor.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
-        int StopAnimation(GTLib::Script &script);
+        int StopAnimation(GT::Script &script);
 
         /// Pauses playback of the model's animation.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
-        int PauseAnimation(GTLib::Script &script);
+        int PauseAnimation(GT::Script &script);
 
         /// Determines whether or not the model is currently animating.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
-        int IsAnimationPlaying(GTLib::Script &script);
+        int IsAnimationPlaying(GT::Script &script);
 
         /// Determines whether or not the model is currently paused.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
-        int IsAnimationPaused(GTLib::Script &script);
+        int IsAnimationPaused(GT::Script &script);
 
 
         /// Adds a new animation segment to the model.
@@ -165,14 +165,14 @@ namespace GT
         ///     Argument 2: The name of the new animation segment.
         ///     Argument 3: The start frame index.
         ///     Argument 4: The end frame index.
-        int AddNewAnimationSegment(GTLib::Script &script);
+        int AddNewAnimationSegment(GT::Script &script);
 
         /// Removes an animation segment by it's index.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
         ///     Argument 2: The index of the animation segment to remove.
-        int RemoveAnimationSegmentByIndex(GTLib::Script &script);
+        int RemoveAnimationSegmentByIndex(GT::Script &script);
 
         /// Sets the name of the given animation segment.
         ///
@@ -180,14 +180,14 @@ namespace GT
         ///     Argument 1: A pointer to the model editor.
         ///     Argument 2: The index of the animation segment whose name is being set.
         ///     Argument 3: The new name.
-        int SetAnimationSegmentName(GTLib::Script &script);
+        int SetAnimationSegmentName(GT::Script &script);
 
         /// Retrieves the name of the given animation segment.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
         ///     Argument 2: The index of the animation segment whose name is being retrieved.
-        int GetAnimationSegmentName(GTLib::Script &script);
+        int GetAnimationSegmentName(GT::Script &script);
 
         /// Sets the start and end frame indices of the given animation segment.
         ///
@@ -196,7 +196,7 @@ namespace GT
         ///     Argument 2: The index of the animation segment whose frame indices are being set.
         ///     Argument 3: The start index.
         ///     Argument 4: The end index.
-        int SetAnimationSegmentFrameIndices(GTLib::Script &script);
+        int SetAnimationSegmentFrameIndices(GT::Script &script);
 
         /// Retrieves the start and end frame indices of the given animation segment.
         ///
@@ -205,7 +205,7 @@ namespace GT
         ///     Argument 2: The index of the animation segment whose frame indices are being retrieved.
         ///     
         //      The return value is two integers.
-        int GetAnimationSegmentFrameIndices(GTLib::Script &script);
+        int GetAnimationSegmentFrameIndices(GT::Script &script);
 
         /// Retrieves a list of animation segments currently attached to the model.
         ///
@@ -213,39 +213,39 @@ namespace GT
         ///     Argument 1: A pointer to the model editor.
         ///
         ///     Each item in the returned list is a table containing 'name', 'startKeyFrame' and 'endKeyFrame'.
-        int GetAnimationSegments(GTLib::Script &script);
+        int GetAnimationSegments(GT::Script &script);
 
 
         /// Retrieves the settings used to build the convex hull of the model loaded in the given model editor.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
-        int GetConvexHullBuildSettings(GTLib::Script &script);
+        int GetConvexHullBuildSettings(GT::Script &script);
 
         /// Shows the convex decomposition of the model.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
-        int ShowConvexDecomposition(GTLib::Script &script);
+        int ShowConvexDecomposition(GT::Script &script);
 
         /// Hides the convex decomposition of the model.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
-        int HideConvexDecomposition(GTLib::Script &script);
+        int HideConvexDecomposition(GT::Script &script);
 
         /// Builds the convex decomposition of the model.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
-        int BuildConvexDecomposition(GTLib::Script &script);
+        int BuildConvexDecomposition(GT::Script &script);
 
 
         /// Retrieves a pointer to the viewport camera scene node.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the model editor.
-        int GetViewportCameraSceneNodePtr(GTLib::Script &script);
+        int GetViewportCameraSceneNodePtr(GT::Script &script);
 
 
         /// Retrieves the AABB of the model of the given model editor as two math.vec3s.
@@ -254,7 +254,7 @@ namespace GT
         ///     Argument 1: A pointer to the model editor.
         ///
         ///     The return value is two math.vec3s. The first is the lower bounds and the second is the upper bounds.
-        int GetModelAABB(GTLib::Script &script);
+        int GetModelAABB(GT::Script &script);
     }
 
     namespace MaterialEditorFFI
@@ -263,7 +263,7 @@ namespace GT
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int GetViewportCameraSceneNodePtr(GTLib::Script &script);
+        int GetViewportCameraSceneNodePtr(GT::Script &script);
     }
 
     namespace SceneEditorFFI
@@ -272,7 +272,7 @@ namespace GT
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int GetScenePtr(GTLib::Script &script);
+        int GetScenePtr(GT::Script &script);
 
 
         /// Sets the insertion position.
@@ -280,14 +280,14 @@ namespace GT
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: A math.vec3 containing the new insertion position.
-        int SetInsertionPosition(GTLib::Script &script);
+        int SetInsertionPosition(GT::Script &script);
 
         /// Retrieves the insertion position.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Return: A math.vec3 containing the insertion position, in world space.
-        int GetInsertionPosition(GTLib::Script &script);
+        int GetInsertionPosition(GT::Script &script);
 
         /// Updates the insertion position based on the current position of the mouse.
         ///
@@ -297,20 +297,20 @@ namespace GT
         ///     to just in front of the camera.
         ///
         ///     Argument 1: A pointer to the scene editor.
-        int UpdateInsertionPositionFromMouse(GTLib::Script &script);
+        int UpdateInsertionPositionFromMouse(GT::Script &script);
 
         /// Updates the insertion position such that it is placed just in front of the camera.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int UpdateInsertionPositionToInFrontOfCamera(GTLib::Script &script);
+        int UpdateInsertionPositionToInFrontOfCamera(GT::Script &script);
 
 
         /// Deselects everything in the given scene editor.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int DeselectAll(GTLib::Script &script);
+        int DeselectAll(GT::Script &script);
 
         /// Selects the given scene node.
         ///
@@ -318,7 +318,7 @@ namespace GT
         ///     Argument 1: A pointer to the scene editor containing the scene node.
         ///     Argument 2: A pointer to the scene node to select.
         ///     Argument 3: A boolean controlling whether or not to notify the editor of the change. A value of false means the editor WILL receive notification.
-        int SelectSceneNode(GTLib::Script &script);
+        int SelectSceneNode(GT::Script &script);
 
         /// Deselects the given scene node.
         ///
@@ -326,32 +326,32 @@ namespace GT
         ///     Argument 1: A pointer to the scene editor containing the scene node.
         ///     Argument 2: A pointer to the scene node to deselect.
         ///     Argument 3: A boolean controlling whether or not to notify the editor of the change. A value of false means the editor WILL receive notification.
-        int DeselectSceneNode(GTLib::Script &script);
+        int DeselectSceneNode(GT::Script &script);
 
         /// Retrieves the number of nodes that are currently selected.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int GetSelectedSceneNodeCount(GTLib::Script &script);
+        int GetSelectedSceneNodeCount(GT::Script &script);
 
         /// Retrieves a pointer to the first selected node.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int GetFirstSelectedSceneNodePtr(GTLib::Script &script);
+        int GetFirstSelectedSceneNodePtr(GT::Script &script);
 
         /// Retrieves an array containing the selected scene node IDs.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int GetSelectedSceneNodeIDs(GTLib::Script &script);
+        int GetSelectedSceneNodeIDs(GT::Script &script);
 
         /// Determines if the given scene node is selected.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: The ID of the scene node.
-        int IsSceneNodeSelectedByID(GTLib::Script &script);
+        int IsSceneNodeSelectedByID(GT::Script &script);
 
 
         /// Attempts to select a gizmo with the mouse.
@@ -360,227 +360,227 @@ namespace GT
         ///     Argument 1: A pointer to the scene editor.
         ///
         ///     Returns true if a gizmo was selected.
-        int TryGizmoMouseSelect(GTLib::Script &script);
+        int TryGizmoMouseSelect(GT::Script &script);
 
         /// Performs a mouse selection.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int DoMouseSelection(GTLib::Script &script);
+        int DoMouseSelection(GT::Script &script);
 
 
         /// Deletes all of the selected nodes.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int RemoveSelectedSceneNodes(GTLib::Script &script);
+        int RemoveSelectedSceneNodes(GT::Script &script);
 
         /// Deletes the given node.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: A pointer to the scene node to delete.
-        int RemoveSceneNode(GTLib::Script &script);
+        int RemoveSceneNode(GT::Script &script);
 
         /// Duplicates the selected scene nodes.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int DuplicateSelectedSceneNodes(GTLib::Script &script);
+        int DuplicateSelectedSceneNodes(GT::Script &script);
 
         /// Duplicates the given node.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: A pointer to the scene node to duplicate.
-        int DuplicateSceneNode(GTLib::Script &script);
+        int DuplicateSceneNode(GT::Script &script);
 
 
         /// Switches the gizmo to translate mode.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int SwitchGizmoToTranslateMode(GTLib::Script &script);
+        int SwitchGizmoToTranslateMode(GT::Script &script);
 
         /// Switches the gizmo to rotate mode.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int SwitchGizmoToRotateMode(GTLib::Script &script);
+        int SwitchGizmoToRotateMode(GT::Script &script);
 
         /// Switches the gizmo to scale mode.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int SwitchGizmoToScaleMode(GTLib::Script &script);
+        int SwitchGizmoToScaleMode(GT::Script &script);
 
         /// Switches the gizmo to local space.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int SwitchGizmoToLocalSpace(GTLib::Script &script);
+        int SwitchGizmoToLocalSpace(GT::Script &script);
 
         /// Switches the gizmo to global space.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int SwitchGizmoToGlobalSpace(GTLib::Script &script);
+        int SwitchGizmoToGlobalSpace(GT::Script &script);
 
         /// Toggles the gizmo space.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int ToggleGizmoSpace(GTLib::Script &script);
+        int ToggleGizmoSpace(GT::Script &script);
 
         /// Determines whether or not the gizmo is in local space.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int IsGizmoInLocalSpace(GTLib::Script &script);
+        int IsGizmoInLocalSpace(GT::Script &script);
 
         /// Determines whether or not the gizmo is in global space.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int IsGizmoInGlobalSpace(GTLib::Script &script);
+        int IsGizmoInGlobalSpace(GT::Script &script);
 
         /// Updates the transformation of the selection gizmo.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int UpdateSelectionGizmoTransform(GTLib::Script &script);
+        int UpdateSelectionGizmoTransform(GT::Script &script);
 
         /// Sets the translation snapping interval.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: The new snapping interval.
-        int SetTranslationSnappingInterval(GTLib::Script &script);
+        int SetTranslationSnappingInterval(GT::Script &script);
 
         /// Retrieves the translation snapping interval.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int GetTranslationSnappingInterval(GTLib::Script &script);
+        int GetTranslationSnappingInterval(GT::Script &script);
 
         /// Enables snapping to the grid.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int EnableSnapToGrid(GTLib::Script &script);
+        int EnableSnapToGrid(GT::Script &script);
 
         /// Disables snapping to the grid.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int DisableSnapToGrid(GTLib::Script &script);
+        int DisableSnapToGrid(GT::Script &script);
 
         /// Determines whether or not the editor is snapping to the grid.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int IsSnappingToGrid(GTLib::Script &script);
+        int IsSnappingToGrid(GT::Script &script);
 
 
         /// Plays the game.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int StartPlaying(GTLib::Script &script);
+        int StartPlaying(GT::Script &script);
 
         /// Pauses the game.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int PausePlaying(GTLib::Script &script);
+        int PausePlaying(GT::Script &script);
 
         /// Stops the game.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int StopPlaying(GTLib::Script &script);
+        int StopPlaying(GT::Script &script);
 
         /// Determines whether or not the game is playing.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int IsPlaying(GTLib::Script &script);
+        int IsPlaying(GT::Script &script);
 
         /// Determines whether or not the game is paused.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int IsPaused(GTLib::Script &script);
+        int IsPaused(GT::Script &script);
 
         /// Determines whether or not the game is stopped (the default state).
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int IsStopped(GTLib::Script &script);
+        int IsStopped(GT::Script &script);
 
 
         /// Pauses updating of the scene that's currently being played.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int PauseSceneUpdates(GTLib::Script &script);
+        int PauseSceneUpdates(GT::Script &script);
 
         /// Resumes updating of the scene that's currently being played.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int ResumeSceneUpdates(GTLib::Script &script);
+        int ResumeSceneUpdates(GT::Script &script);
 
         /// Determines whether or not scene updates are current paused in the editor.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Return:     True if scene updates are paused; false otherwise.
-        int IsSceneUpdatesPaused(GTLib::Script &script);
+        int IsSceneUpdatesPaused(GT::Script &script);
 
 
         /// Enables physics simulation.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int EnablePhysicsSimulation(GTLib::Script &script);
+        int EnablePhysicsSimulation(GT::Script &script);
 
         /// Disable physics simulation.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int DisablePhysicsSimulation(GTLib::Script &script);
+        int DisablePhysicsSimulation(GT::Script &script);
 
         /// Determines whether or not physics simulation is enabled.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int IsPhysicsSimulationEnabled(GTLib::Script &script);
+        int IsPhysicsSimulationEnabled(GT::Script &script);
 
 
         /// Commits a state stack frame for undo/redo operations.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int CommitStateStackFrame(GTLib::Script &script);
+        int CommitStateStackFrame(GT::Script &script);
 
         /// Clears the state stack staging area for undo/redo operations.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int ClearStateStackStagingArea(GTLib::Script &script);
+        int ClearStateStackStagingArea(GT::Script &script);
 
         /// Performs an undo operation.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int Undo(GTLib::Script &script);
+        int Undo(GT::Script &script);
 
         /// Performs a redo operation.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int Redo(GTLib::Script &script);
+        int Redo(GT::Script &script);
 
 
         /// Creates a prefab from the given scene node.
@@ -590,7 +590,7 @@ namespace GT
         ///     Argument 2: The absolute path to save the prefab file at.
         ///     Argument 3: The base path to use to convert the absolute path to a relative path.
         ///     Argument 4: A pointer to the scene node.
-        int CreatePrefab(GTLib::Script &script);
+        int CreatePrefab(GT::Script &script);
 
         /// Instantiates a prefab, returning a pointer to the root node.
         ///
@@ -599,7 +599,7 @@ namespace GT
         ///     Argument 2: The relative path of the prefab file.
         ///
         ///     This leaves the prefab positioned at the origin. Reposition the scene node manually if needed.
-        int InstantiatePrefab(GTLib::Script &script);
+        int InstantiatePrefab(GT::Script &script);
 
         /// Links a scene node to a prefab.
         ///
@@ -608,14 +608,14 @@ namespace GT
         ///     Argument 2: A pointer to the scene node being linked.
         ///     Argument 3: The relative path of the prefab to link to.
         ///     Argument 4: Whether or not the given scene node is the source scene node.
-        int LinkSceneNodeToPrefab(GTLib::Script &script);
+        int LinkSceneNodeToPrefab(GT::Script &script);
 
         /// Unlinks a scene node from a prefab.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: A pointer to the scene node being unlinked.
-        int UnlinkSceneNodeFromPrefab(GTLib::Script &script);
+        int UnlinkSceneNodeFromPrefab(GT::Script &script);
 
 
         /// Retrieves a pointer to the scene node of the given ID.
@@ -623,13 +623,13 @@ namespace GT
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: The ID of the scene node to retrieve.
-        int GetSceneNodePtrByID(GTLib::Script &script);
+        int GetSceneNodePtrByID(GT::Script &script);
 
         /// Retrieves a array of pointers to the scene nodes in the scene.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int GetSceneNodes(GTLib::Script &script);
+        int GetSceneNodes(GT::Script &script);
 
 
         /// Positions the given scene node in front of the camera.
@@ -637,87 +637,87 @@ namespace GT
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: A pointer to the scene node.
-        int PositionSceneNodeInFrontOfCamera(GTLib::Script &script);
+        int PositionSceneNodeInFrontOfCamera(GT::Script &script);
 
         /// Sets the position of the given scene node to the current insertion position of the camera.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: A pointer to the scene node.
-        int SetSceneNodePositionToInsertionPosition(GTLib::Script &script);
+        int SetSceneNodePositionToInsertionPosition(GT::Script &script);
 
         /// Sets the transform of the given scene node to that of the camera.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: A pointer to the scene node.
-        int SetSceneNodeTransformToCamera(GTLib::Script &script);
+        int SetSceneNodeTransformToCamera(GT::Script &script);
 
         /// Sets the position of the given scene node to that of the camera.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: A pointer to the scene node.
-        int SetSceneNodePositionToCamera(GTLib::Script &script);
+        int SetSceneNodePositionToCamera(GT::Script &script);
 
         /// Sets the orientation of the given scene node to that of the camera.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: A pointer to the scene node.
-        int SetSceneNodeOrientationToCamera(GTLib::Script &script);
+        int SetSceneNodeOrientationToCamera(GT::Script &script);
 
         /// Sets the scale of the given scene ndoe to that of the camera.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: A pointer to the scene node.
-        int SetSceneNodeScaleToCamera(GTLib::Script &script);
+        int SetSceneNodeScaleToCamera(GT::Script &script);
 
 
         /// Shows the grid if it isn't showing already.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int ShowGrid(GTLib::Script &script);
+        int ShowGrid(GT::Script &script);
 
         /// Hides the grid if it isn't hidden already.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int HideGrid(GTLib::Script &script);
+        int HideGrid(GT::Script &script);
 
         /// Determines whether or not the grid is showing.
         ///
         /// @remakrs
         ///     Argument 1: A pointer to the scene editor.
-        int IsShowingGrid(GTLib::Script &script);
+        int IsShowingGrid(GT::Script &script);
 
 
         /// Shows the axis arrows if it isn't showing already.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int ShowAxisArrows(GTLib::Script &script);
+        int ShowAxisArrows(GT::Script &script);
 
         /// Hides the axis arrows if it isn't hidden already.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int HideAxisArrows(GTLib::Script &script);
+        int HideAxisArrows(GT::Script &script);
 
         /// Determines whether or not the grid is showing.
         ///
         /// @remakrs
         ///     Argument 1: A pointer to the scene editor.
-        int IsShowingAxisArrows(GTLib::Script &script);
+        int IsShowingAxisArrows(GT::Script &script);
 
 
         /// Retrieves a pointer to the viewport camera scene node.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int GetViewportCameraSceneNodePtr(GTLib::Script &script);
+        int GetViewportCameraSceneNodePtr(GT::Script &script);
 
 
         /// Sets the name of the scene.
@@ -727,7 +727,7 @@ namespace GT
         ///     Argument 2: The new name of the scene.
         ///
         ///     The name of a scene is just metadata that games can use if needed. This is not the file name.
-        int SetSceneName(GTLib::Script &script);
+        int SetSceneName(GT::Script &script);
 
         /// Retrieves the name of the scene.
         ///
@@ -735,7 +735,7 @@ namespace GT
         ///     Argument 1: A pointer to the scene editor.
         ///
         ///     The name of a scene is just metadata that games can use if needed. This is not the file name.
-        int GetSceneName(GTLib::Script &script);
+        int GetSceneName(GT::Script &script);
 
 
         /// Enables background clearing.
@@ -743,63 +743,63 @@ namespace GT
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: A math.vec3 containing the new clear colour.
-        int EnableSceneBackgroundClearing(GTLib::Script &script);
+        int EnableSceneBackgroundClearing(GT::Script &script);
 
         /// Disables background clearing.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int DisableSceneBackgroundClearing(GTLib::Script &script);
+        int DisableSceneBackgroundClearing(GT::Script &script);
 
         /// Determines whether or not background clearing is enabled.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int IsSceneBackgroundClearingEnabled(GTLib::Script &script);
+        int IsSceneBackgroundClearingEnabled(GT::Script &script);
 
         /// Retrieves a math.vec3 containing the background clear colour.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int GetSceneBackgroundClearColour(GTLib::Script &script);
+        int GetSceneBackgroundClearColour(GT::Script &script);
 
 
         /// Enables HDR on the scene.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int EnableSceneHDR(GTLib::Script &script);
+        int EnableSceneHDR(GT::Script &script);
 
         /// Disables HDR on the scene.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int DisableSceneHDR(GTLib::Script &script);
+        int DisableSceneHDR(GT::Script &script);
 
         /// Determines whether or not HDR is enabled on the scene.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int IsSceneHDREnabled(GTLib::Script &script);
+        int IsSceneHDREnabled(GT::Script &script);
 
 
         /// Enables bloom on the scene.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int EnableSceneBloom(GTLib::Script &script);
+        int EnableSceneBloom(GT::Script &script);
 
         /// Disables bloom on the scene.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int DisableSceneBloom(GTLib::Script &script);
+        int DisableSceneBloom(GT::Script &script);
 
         /// Determines whether or not bloom is enabled on the scene.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
-        int IsSceneBloomEnabled(GTLib::Script &script);
+        int IsSceneBloomEnabled(GT::Script &script);
 
 
         /// Shows the navigation mesh at the given index.
@@ -807,14 +807,14 @@ namespace GT
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: The index of the navigation mesh to show.
-        int ShowNavigationMesh(GTLib::Script &script);
+        int ShowNavigationMesh(GT::Script &script);
 
         /// Hides the navigation mesh at the given index.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the scene editor.
         ///     Argument 2: The index of the navigation mesh to hide.
-        int HideNavigationMesh(GTLib::Script &script);
+        int HideNavigationMesh(GT::Script &script);
     }
 
 
@@ -824,7 +824,7 @@ namespace GT
         ///
         /// @remarks
         ///     Argument 1: A pointer to the particle edittor.
-        int GetParticleSystemDefinitionPtr(GTLib::Script &script);
+        int GetParticleSystemDefinitionPtr(GT::Script &script);
 
 
         /// Refreshes the viewport to show the current state of the particle system being modified.
@@ -833,59 +833,59 @@ namespace GT
         ///     This is called whenever a property of the particle system is modified.
         ///
         ///     Argument 1: A pointer to the particle editor.
-        int RefreshViewport(GTLib::Script &script);
+        int RefreshViewport(GT::Script &script);
 
 
         /// Sets the orientation of the preview particle system.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the particle editor.
-        int SetOrientation(GTLib::Script &script);
+        int SetOrientation(GT::Script &script);
 
 
         /// Shows the grid if it isn't showing already.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the particle editor.
-        int ShowGrid(GTLib::Script &script);
+        int ShowGrid(GT::Script &script);
 
         /// Hides the grid if it isn't hidden already.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the particle editor.
-        int HideGrid(GTLib::Script &script);
+        int HideGrid(GT::Script &script);
 
         /// Determines whether or not the grid is showing.
         ///
         /// @remakrs
         ///     Argument 1: A pointer to the particle editor.
-        int IsShowingGrid(GTLib::Script &script);
+        int IsShowingGrid(GT::Script &script);
 
 
         /// Shows the axis arrows if it isn't showing already.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the particle editor.
-        int ShowAxisArrows(GTLib::Script &script);
+        int ShowAxisArrows(GT::Script &script);
 
         /// Hides the axis arrows if it isn't hidden already.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the particle editor.
-        int HideAxisArrows(GTLib::Script &script);
+        int HideAxisArrows(GT::Script &script);
 
         /// Determines whether or not the grid is showing.
         ///
         /// @remakrs
         ///     Argument 1: A pointer to the particle editor.
-        int IsShowingAxisArrows(GTLib::Script &script);
+        int IsShowingAxisArrows(GT::Script &script);
 
 
         /// Retrieves a pointer to the viewport camera scene node.
         ///
         /// @remarks
         ///     Argument 1: A pointer to the particle editor.
-        int GetViewportCameraSceneNodePtr(GTLib::Script &script);
+        int GetViewportCameraSceneNodePtr(GT::Script &script);
     }
 }
 

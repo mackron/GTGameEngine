@@ -375,30 +375,30 @@ namespace GTEngine
         /// The scripting FFI.
         struct FFI
         {
-            static Game   & GetGame(GTLib::Script &script);
-            static Editor & GetEditor(GTLib::Script &script);
+            static Game   & GetGame(GT::Script &script);
+            static Editor & GetEditor(GT::Script &script);
 
-            static void PushElement(GTLib::Script &script, GTGUI::Element* element);
+            static void PushElement(GT::Script &script, GTGUI::Element* element);
 
 
-            static int Open(GTLib::Script &script);
-            static int Close(GTLib::Script &script);
+            static int Open(GT::Script &script);
+            static int Close(GT::Script &script);
 
-            static int OpenFile(GTLib::Script &script);
-            static int CloseFile(GTLib::Script &script);
-            static int ForceCloseFile(GTLib::Script &script);
-            static int CloseAllOpenFiles(GTLib::Script &script);
-            static int CloseCurrentlyShownFile(GTLib::Script &script);
-            static int ShowFile(GTLib::Script &script);
-            static int HideCurrentlyShownFile(GTLib::Script &script);
-            static int SaveFile(GTLib::Script &script);
-            static int SaveAllOpenModifiedFiles(GTLib::Script &script);
-            static int SaveCurrentlyShownFile(GTLib::Script &script);
-            static int MarkFileAsModified(GTLib::Script &script);
-            static int UnmarkFileAsModified(GTLib::Script &script);
-            static int IsFileMarkedAsModified(GTLib::Script &script);
-            static int GetCurrentlyShownEditor(GTLib::Script &script);
-            static int OpenPackagingTool(GTLib::Script &script);
+            static int OpenFile(GT::Script &script);
+            static int CloseFile(GT::Script &script);
+            static int ForceCloseFile(GT::Script &script);
+            static int CloseAllOpenFiles(GT::Script &script);
+            static int CloseCurrentlyShownFile(GT::Script &script);
+            static int ShowFile(GT::Script &script);
+            static int HideCurrentlyShownFile(GT::Script &script);
+            static int SaveFile(GT::Script &script);
+            static int SaveAllOpenModifiedFiles(GT::Script &script);
+            static int SaveCurrentlyShownFile(GT::Script &script);
+            static int MarkFileAsModified(GT::Script &script);
+            static int UnmarkFileAsModified(GT::Script &script);
+            static int IsFileMarkedAsModified(GT::Script &script);
+            static int GetCurrentlyShownEditor(GT::Script &script);
+            static int OpenPackagingTool(GT::Script &script);
         };
 
 

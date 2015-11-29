@@ -6,7 +6,7 @@
 
 namespace GT
 {
-    bool LoadSceneNodeLibrary(GTLib::Script &script)
+    bool LoadSceneNodeLibrary(GT::Script &script)
     {
         bool successful = script.Execute
         (
@@ -643,7 +643,7 @@ namespace GT
     }
 
 
-    void InstantiateSceneNode(GTLib::Script &script, GTEngine::SceneNode &sceneNode)
+    void InstantiateSceneNode(GT::Script &script, GTEngine::SceneNode &sceneNode)
     {
         // We need to find the scene in GTEngine.RegisteredScenes which will be keyed by the scene. We then want to call InstantiateSceneNode() on it.
         script.GetGlobal("GTEngine");
@@ -674,7 +674,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void UninstantiateSceneNode(GTLib::Script &script, GTEngine::SceneNode &sceneNode)
+    void UninstantiateSceneNode(GT::Script &script, GTEngine::SceneNode &sceneNode)
     {
         // We need to find the scene in GTEngine.RegisteredScenes which will be keyed by the scene. We then want to call InstantiateSceneNode() on it.
         script.GetGlobal("GTEngine");
@@ -704,7 +704,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void UpdatePublicVariables(GTLib::Script &script, GTEngine::SceneNode &sceneNode)
+    void UpdatePublicVariables(GT::Script &script, GTEngine::SceneNode &sceneNode)
     {
         PushSceneNode(script, sceneNode);
         assert(script.IsTable(-1));
@@ -720,7 +720,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void RegisterComponent(GTLib::Script &script, GTEngine::SceneNode &sceneNode, const char* componentID)
+    void RegisterComponent(GT::Script &script, GTEngine::SceneNode &sceneNode, const char* componentID)
     {
         PushSceneNode(script, sceneNode);
         assert(script.IsTable(-1));
@@ -737,7 +737,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void UnregisterComponent(GTLib::Script &script, GTEngine::SceneNode &sceneNode, const char* componentID)
+    void UnregisterComponent(GT::Script &script, GTEngine::SceneNode &sceneNode, const char* componentID)
     {
         PushSceneNode(script, sceneNode);
         assert(script.IsTable(-1));
@@ -754,7 +754,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PushSceneNode(GTLib::Script &script, GTEngine::SceneNode &sceneNode)
+    void PushSceneNode(GT::Script &script, GTEngine::SceneNode &sceneNode)
     {
         script.GetGlobal("GTEngine");
         assert(script.IsTable(-1));
@@ -788,7 +788,7 @@ namespace GT
     }
 
 
-    void DoOnSerialize(GTLib::Script &script, GTEngine::SceneNode &sceneNode, GTLib::Serializer &serializer)
+    void DoOnSerialize(GT::Script &script, GTEngine::SceneNode &sceneNode, GTLib::Serializer &serializer)
     {
         // We want to keep track of the number of serialized data chunks that are written to the serializer so we can know how many iterations to do when deserializing.
         uint32_t dataCount = 0;
@@ -831,7 +831,7 @@ namespace GT
                                     GTLib::BasicSerializer localSerializer;
 
                                     script.PushValue(-7);                                // <-- 'self'
-                                    GTLib::Scripting::PushNewSerializer(script, localSerializer);   // <-- 'serializer'
+                                    GT::PushNewSerializer(script, localSerializer);   // <-- 'serializer'
 
                                     script.Call(2, 1);      // <-- Two arguments (self, serializer) and 1 return value (the version).
 
@@ -877,7 +877,7 @@ namespace GT
         serializer.Write(intermediarySerializer.GetBuffer(), intermediarySerializer.GetBufferSizeInBytes());
     }
 
-    void DoOnDeserialize(GTLib::Script &script, GTEngine::SceneNode &sceneNode, GTLib::Deserializer &deserializer)
+    void DoOnDeserialize(GT::Script &script, GTEngine::SceneNode &sceneNode, GTLib::Deserializer &deserializer)
     {
         uint32_t dataCount;
         deserializer.Read(dataCount);
@@ -927,7 +927,7 @@ namespace GT
                                             deserializer.StartChunk(dataSizeInBytes);
                                             {
                                                 script.PushValue(-7);                                                   // <-- 'self'
-                                                GTLib::Scripting::PushNewDeserializer(script, deserializer);            // <-- 'deserializer'
+                                                GT::PushNewDeserializer(script, deserializer);            // <-- 'deserializer'
                                                 script.Push(static_cast<int>(version));                                 // <-- 'version'
 
                                                 script.Call(3, 0);
@@ -979,7 +979,7 @@ namespace GT
     }
 
 
-    void PostSceneNodeEvent_OnUpdate(GTLib::Script &script, GTEngine::SceneNode &sceneNode, double deltaTimeInSeconds)
+    void PostSceneNodeEvent_OnUpdate(GT::Script &script, GTEngine::SceneNode &sceneNode, double deltaTimeInSeconds)
     {
         // First we push the scene node.
         PushSceneNode(script, sceneNode);
@@ -999,7 +999,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostSceneNodeEvent_OnStartup(GTLib::Script &script, GTEngine::SceneNode &sceneNode)
+    void PostSceneNodeEvent_OnStartup(GT::Script &script, GTEngine::SceneNode &sceneNode)
     {
         PushSceneNode(script, sceneNode);
         assert(script.IsTable(-1));
@@ -1015,7 +1015,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostSceneNodeEvent_OnShutdown(GTLib::Script &script, GTEngine::SceneNode &sceneNode)
+    void PostSceneNodeEvent_OnShutdown(GT::Script &script, GTEngine::SceneNode &sceneNode)
     {
         PushSceneNode(script, sceneNode);
         assert(script.IsTable(-1));
@@ -1031,7 +1031,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostSceneNodeEvent_OnShow(GTLib::Script &script, GTEngine::SceneNode &sceneNode)
+    void PostSceneNodeEvent_OnShow(GT::Script &script, GTEngine::SceneNode &sceneNode)
     {
         PushSceneNode(script, sceneNode);
         assert(script.IsTable(-1));
@@ -1047,7 +1047,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostSceneNodeEvent_OnHide(GTLib::Script &script, GTEngine::SceneNode &sceneNode)
+    void PostSceneNodeEvent_OnHide(GT::Script &script, GTEngine::SceneNode &sceneNode)
     {
         PushSceneNode(script, sceneNode);
         assert(script.IsTable(-1));
@@ -1063,7 +1063,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostSceneNodeEvent_OnSceneNodeEnter(GTLib::Script &script, GTEngine::SceneNode &sceneNode, GTEngine::SceneNode &otherSceneNode)
+    void PostSceneNodeEvent_OnSceneNodeEnter(GT::Script &script, GTEngine::SceneNode &sceneNode, GTEngine::SceneNode &otherSceneNode)
     {
         PushSceneNode(script, sceneNode);
         assert(script.IsTable(-1));
@@ -1080,7 +1080,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostSceneNodeEvent_OnEnterSceneNode(GTLib::Script &script, GTEngine::SceneNode &sceneNode, GTEngine::SceneNode &otherSceneNode)
+    void PostSceneNodeEvent_OnEnterSceneNode(GT::Script &script, GTEngine::SceneNode &sceneNode, GTEngine::SceneNode &otherSceneNode)
     {
         PushSceneNode(script, sceneNode);
         assert(script.IsTable(-1));
@@ -1097,7 +1097,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostSceneNodeEvent_OnSceneNodeLeave(GTLib::Script &script, GTEngine::SceneNode &sceneNode, GTEngine::SceneNode &otherSceneNode)
+    void PostSceneNodeEvent_OnSceneNodeLeave(GT::Script &script, GTEngine::SceneNode &sceneNode, GTEngine::SceneNode &otherSceneNode)
     {
         PushSceneNode(script, sceneNode);
         assert(script.IsTable(-1));
@@ -1114,7 +1114,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostSceneNodeEvent_OnLeaveSceneNode(GTLib::Script &script, GTEngine::SceneNode &sceneNode, GTEngine::SceneNode &otherSceneNode)
+    void PostSceneNodeEvent_OnLeaveSceneNode(GT::Script &script, GTEngine::SceneNode &sceneNode, GTEngine::SceneNode &otherSceneNode)
     {
         PushSceneNode(script, sceneNode);
         assert(script.IsTable(-1));
@@ -1131,7 +1131,7 @@ namespace GT
         script.Pop(1);
     }
 
-    void PostSceneNodeEvent_OnSerializeGlobalData(GTLib::Script &script, GTEngine::SceneNode &sceneNode, GTLib::Serializer &serializer)
+    void PostSceneNodeEvent_OnSerializeGlobalData(GT::Script &script, GTEngine::SceneNode &sceneNode, GTLib::Serializer &serializer)
     {
         PushSceneNode(script, sceneNode);
         assert(script.IsTable(-1));
@@ -1141,14 +1141,14 @@ namespace GT
             assert(script.IsFunction(-1));
             {
                 script.PushValue(-2);                                       // <-- 'self'
-                GTLib::Scripting::PushNewSerializer(script, serializer);    // <-- 'serializer'
+                GT::PushNewSerializer(script, serializer);    // <-- 'serializer'
                 script.Call(2, 0);
             }
         }
         script.Pop(1);
     }
 
-    void PostSceneNodeEvent_OnDeserializeGlobalData(GTLib::Script &script, GTEngine::SceneNode &sceneNode, GTLib::Deserializer &deserializer)
+    void PostSceneNodeEvent_OnDeserializeGlobalData(GT::Script &script, GTEngine::SceneNode &sceneNode, GTLib::Deserializer &deserializer)
     {
         PushSceneNode(script, sceneNode);
         assert(script.IsTable(-1));
@@ -1158,7 +1158,7 @@ namespace GT
             assert(script.IsFunction(-1));
             {
                 script.PushValue(-2);                                           // <-- 'self'
-                GTLib::Scripting::PushNewDeserializer(script, deserializer);    // <-- 'deserializer'
+                GT::PushNewDeserializer(script, deserializer);    // <-- 'deserializer'
                 script.Call(2, 0);
             }
         }
@@ -1168,20 +1168,20 @@ namespace GT
 
     namespace SceneNodeFFI
     {
-        int Create(GTLib::Script &script)
+        int Create(GT::Script &script)
         {
             script.Push(new GTEngine::SceneNode());
             return 1;
         }
 
-        int Delete(GTLib::Script &script)
+        int Delete(GT::Script &script)
         {
             delete reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             return 0;
         }
 
 
-        int GetID(GTLib::Script &script)
+        int GetID(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1197,7 +1197,7 @@ namespace GT
         }
 
 
-        int GetName(GTLib::Script &script)
+        int GetName(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1212,7 +1212,7 @@ namespace GT
             return 1;
         }
 
-        int SetName(GTLib::Script &script)
+        int SetName(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1224,7 +1224,7 @@ namespace GT
         }
 
 
-        int GetParentPtr(GTLib::Script &script)
+        int GetParentPtr(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1247,7 +1247,7 @@ namespace GT
             return 1;
         }
 
-        int AttachChild(GTLib::Script &script)
+        int AttachChild(GT::Script &script)
         {
             auto parentNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             auto childNode  = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
@@ -1260,7 +1260,7 @@ namespace GT
             return 0;
         }
 
-        int Orphan(GTLib::Script &script)
+        int Orphan(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1271,7 +1271,7 @@ namespace GT
             return 0;
         }
 
-        int IsAncestor(GTLib::Script &script)
+        int IsAncestor(GT::Script &script)
         {
             auto sceneNode         = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             auto ancestorSceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
@@ -1288,7 +1288,7 @@ namespace GT
             return 1;
         }
 
-        int IsDescendant(GTLib::Script &script)
+        int IsDescendant(GT::Script &script)
         {
             auto sceneNode           = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             auto descendantSceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
@@ -1305,7 +1305,7 @@ namespace GT
             return 1;
         }
 
-        int IsRelative(GTLib::Script &script)
+        int IsRelative(GT::Script &script)
         {
             auto sceneNode         = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             auto relativeSceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(2));
@@ -1323,7 +1323,7 @@ namespace GT
         }
 
 
-        int GetChildrenIDs(GTLib::Script &script)
+        int GetChildrenIDs(GT::Script &script)
         {
             script.PushNewTable();
 
@@ -1341,7 +1341,7 @@ namespace GT
             return 1;
         }
 
-        int GetChildIDByName(GTLib::Script &script)
+        int GetChildIDByName(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1364,7 +1364,7 @@ namespace GT
             return 1;
         }
 
-        int GetDescendantIDByName(GTLib::Script &script)
+        int GetDescendantIDByName(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1389,7 +1389,7 @@ namespace GT
 
 
 
-        int AddComponent(GTLib::Script &script)
+        int AddComponent(GT::Script &script)
         {
             auto sceneNode     = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             auto componentName = script.ToString(2);
@@ -1399,7 +1399,7 @@ namespace GT
             return 1;
         }
 
-        int RemoveComponent(GTLib::Script &script)
+        int RemoveComponent(GT::Script &script)
         {
             auto sceneNode     = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             auto componentName = script.ToString(2);
@@ -1409,7 +1409,7 @@ namespace GT
             return 0;
         }
 
-        int GetComponent(GTLib::Script &script)
+        int GetComponent(GT::Script &script)
         {
             auto sceneNode     = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             auto componentName = script.ToString(2);
@@ -1421,7 +1421,7 @@ namespace GT
 
 
 
-        int DisablePositionInheritance(GTLib::Script &script)
+        int DisablePositionInheritance(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1432,7 +1432,7 @@ namespace GT
             return 0;
         }
 
-        int EnablePositionInheritance(GTLib::Script &script)
+        int EnablePositionInheritance(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1443,7 +1443,7 @@ namespace GT
             return 0;
         }
 
-        int IsPositionInheritanceEnabled(GTLib::Script &script)
+        int IsPositionInheritanceEnabled(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1455,7 +1455,7 @@ namespace GT
         }
 
 
-        int DisableOrientationInheritance(GTLib::Script &script)
+        int DisableOrientationInheritance(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1466,7 +1466,7 @@ namespace GT
             return 0;
         }
 
-        int EnableOrientationInheritance(GTLib::Script &script)
+        int EnableOrientationInheritance(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1477,7 +1477,7 @@ namespace GT
             return 0;
         }
 
-        int IsOrientationInheritanceEnabled(GTLib::Script &script)
+        int IsOrientationInheritanceEnabled(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1489,7 +1489,7 @@ namespace GT
         }
 
 
-        int DisableScaleInheritance(GTLib::Script &script)
+        int DisableScaleInheritance(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1500,7 +1500,7 @@ namespace GT
             return 0;
         }
 
-        int EnableScaleInheritance(GTLib::Script &script)
+        int EnableScaleInheritance(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1511,7 +1511,7 @@ namespace GT
             return 0;
         }
 
-        int IsScaleInheritanceEnabled(GTLib::Script &script)
+        int IsScaleInheritanceEnabled(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1525,7 +1525,7 @@ namespace GT
 
 
 
-        int GetPosition(GTLib::Script &script)
+        int GetPosition(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1540,7 +1540,7 @@ namespace GT
             return 1;
         }
 
-        int GetWorldPosition(GTLib::Script &script)
+        int GetWorldPosition(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1556,7 +1556,7 @@ namespace GT
         }
 
 
-        int SetPosition(GTLib::Script &script)
+        int SetPosition(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1578,7 +1578,7 @@ namespace GT
             return 0;
         }
 
-        int SetWorldPosition(GTLib::Script &script)
+        int SetWorldPosition(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1601,7 +1601,7 @@ namespace GT
         }
 
 
-        int GetOrientation(GTLib::Script &script)
+        int GetOrientation(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1616,7 +1616,7 @@ namespace GT
             return 1;
         }
 
-        int GetWorldOrientation(GTLib::Script &script)
+        int GetWorldOrientation(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1631,7 +1631,7 @@ namespace GT
             return 1;
         }
 
-        int SetOrientation(GTLib::Script &script)
+        int SetOrientation(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1659,7 +1659,7 @@ namespace GT
             return 0;
         }
 
-        int SetWorldOrientation(GTLib::Script &script)
+        int SetWorldOrientation(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1688,7 +1688,7 @@ namespace GT
         }
 
 
-        int GetEulerRotation(GTLib::Script &script)
+        int GetEulerRotation(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1704,7 +1704,7 @@ namespace GT
             return 1;
         }
 
-        int GetWorldEulerRotation(GTLib::Script &script)
+        int GetWorldEulerRotation(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1721,7 +1721,7 @@ namespace GT
         }
 
 
-        int SetEulerRotation(GTLib::Script &script)
+        int SetEulerRotation(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1755,7 +1755,7 @@ namespace GT
             return 0;
         }
 
-        int SetWorldEulerRotation(GTLib::Script &script)
+        int SetWorldEulerRotation(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1791,7 +1791,7 @@ namespace GT
 
 
 
-        int GetScale(GTLib::Script &script)
+        int GetScale(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1806,7 +1806,7 @@ namespace GT
             return 1;
         }
 
-        int GetWorldScale(GTLib::Script &script)
+        int GetWorldScale(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1822,7 +1822,7 @@ namespace GT
         }
 
 
-        int SetScale(GTLib::Script &script)
+        int SetScale(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1844,7 +1844,7 @@ namespace GT
             return 0;
         }
 
-        int SetWorldScale(GTLib::Script &script)
+        int SetWorldScale(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1867,7 +1867,7 @@ namespace GT
         }
 
 
-        int Translate(GTLib::Script &script)
+        int Translate(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1891,7 +1891,7 @@ namespace GT
             return 0;
         }
 
-        int Rotate(GTLib::Script &script)
+        int Rotate(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1921,7 +1921,7 @@ namespace GT
             return 0;
         }
 
-        int Scale(GTLib::Script &script)
+        int Scale(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1946,7 +1946,7 @@ namespace GT
         }
 
 
-        int TranslateWorld(GTLib::Script &script)
+        int TranslateWorld(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -1970,7 +1970,7 @@ namespace GT
             return 0;
         }
 
-        int RotateWorld(GTLib::Script &script)
+        int RotateWorld(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2000,7 +2000,7 @@ namespace GT
             return 0;
         }
 
-        int RotateWorldAroundPivot(GTLib::Script &script)
+        int RotateWorldAroundPivot(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2055,7 +2055,7 @@ namespace GT
         }
 
 
-        int InterpolatePosition(GTLib::Script &script)
+        int InterpolatePosition(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2066,7 +2066,7 @@ namespace GT
             return 0;
         }
 
-        int InterpolateOrientation(GTLib::Script &script)
+        int InterpolateOrientation(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2077,7 +2077,7 @@ namespace GT
             return 0;
         }
 
-        int InterpolateScale(GTLib::Script &script)
+        int InterpolateScale(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2088,7 +2088,7 @@ namespace GT
             return 0;
         }
 
-        int Slerp(GTLib::Script &script)
+        int Slerp(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2100,7 +2100,7 @@ namespace GT
         }
 
 
-        int ClampPosition(GTLib::Script &script)
+        int ClampPosition(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2111,7 +2111,7 @@ namespace GT
             return 0;
         }
 
-        int ClampWorldPosition(GTLib::Script &script)
+        int ClampWorldPosition(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2122,7 +2122,7 @@ namespace GT
             return 0;
         }
 
-        int ClampScale(GTLib::Script &script)
+        int ClampScale(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2133,7 +2133,7 @@ namespace GT
             return 0;
         }
 
-        int ClampWorldScale(GTLib::Script &script)
+        int ClampWorldScale(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2146,7 +2146,7 @@ namespace GT
 
 
 
-        int LookAt(GTLib::Script &script)
+        int LookAt(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2160,7 +2160,7 @@ namespace GT
             return 0;
         }
 
-        int LookAtSceneNode(GTLib::Script &script)
+        int LookAtSceneNode(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2177,7 +2177,7 @@ namespace GT
             return 0;
         }
 
-        int LookInDirection(GTLib::Script &script)
+        int LookInDirection(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2192,7 +2192,7 @@ namespace GT
         }
 
 
-        int Forward(GTLib::Script &script)
+        int Forward(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2207,7 +2207,7 @@ namespace GT
             return 1;
         }
 
-        int Up(GTLib::Script &script)
+        int Up(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2222,7 +2222,7 @@ namespace GT
             return 1;
         }
 
-        int Right(GTLib::Script &script)
+        int Right(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2237,7 +2237,7 @@ namespace GT
             return 1;
         }
 
-        int WorldForward(GTLib::Script &script)
+        int WorldForward(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2252,7 +2252,7 @@ namespace GT
             return 1;
         }
 
-        int WorldUp(GTLib::Script &script)
+        int WorldUp(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2267,7 +2267,7 @@ namespace GT
             return 1;
         }
 
-        int WorldRight(GTLib::Script &script)
+        int WorldRight(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2285,7 +2285,7 @@ namespace GT
 
 
 
-        int GetAttachedComponentIDs(GTLib::Script &script)
+        int GetAttachedComponentIDs(GT::Script &script)
         {
             script.PushNewTable();
 
@@ -2305,7 +2305,7 @@ namespace GT
         }
 
 
-        int Show(GTLib::Script &script)
+        int Show(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2316,7 +2316,7 @@ namespace GT
             return 0;
         }
 
-        int Hide(GTLib::Script &script)
+        int Hide(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2327,7 +2327,7 @@ namespace GT
             return 0;
         }
 
-        int IsVisible(GTLib::Script &script)
+        int IsVisible(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr)
@@ -2342,7 +2342,7 @@ namespace GT
             return 1;
         }
 
-        int GetScenePtr(GTLib::Script &script)
+        int GetScenePtr(GT::Script &script)
         {
             auto sceneNode = reinterpret_cast<GTEngine::SceneNode*>(script.ToPointer(1));
             if (sceneNode != nullptr && sceneNode->GetScene() != nullptr)
@@ -2358,7 +2358,7 @@ namespace GT
         }
 
 
-        void PushComponent(GTLib::Script &script, GTEngine::Component* component)
+        void PushComponent(GT::Script &script, GTEngine::Component* component)
         {
             if (component != nullptr)
             {

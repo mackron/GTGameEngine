@@ -13,7 +13,7 @@
 // Server
 namespace GTGUI
 {
-    Server::Server(GTLib::Script* script, ImageManager* imageManagerIn)
+    Server::Server(GT::Script* script, ImageManager* imageManagerIn)
         : operationMode(OperationMode_Delayed),
           eventHandler(&ServerEventHandler::Default), scripting(*this, script), styling(*this),
           markupLoader(*this),

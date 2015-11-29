@@ -77,7 +77,7 @@ namespace GTGUI
         *   \brief  Constructor.
         *   \param  script     [in] A pointer to the script to use for scripting. Can be null, in which case GTGUI will create it's own script object.
         */
-        Server(GTLib::Script* script, ImageManager* imageManagerIn = nullptr);
+        Server(GT::Script* script, ImageManager* imageManagerIn = nullptr);
     
         /**
         *   \brief  Destructor.

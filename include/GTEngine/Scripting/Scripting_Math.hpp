@@ -16,7 +16,7 @@ namespace GT
     ///
     /// @remarks
     ///     This will load the library into the global 'math' table. This will not override existing functions.
-    bool LoadExtendedMathLibrary(GTLib::Script &script);
+    bool LoadExtendedMathLibrary(GT::Script &script);
 
 
     /// Converts the table at the given position to a glm::vec2.
@@ -25,7 +25,7 @@ namespace GT
     /// @param position [in] The position of the table to read.
     ///
     /// @return The glm::vec2 at the given position, or (0, 0) if an error occurs.
-    glm::vec2 ToVector2(GTLib::Script &script, int position);
+    glm::vec2 ToVector2(GT::Script &script, int position);
 
     /// Converts the table at the given position to a glm::vec3.
     ///
@@ -33,7 +33,7 @@ namespace GT
     /// @param position [in] The position of the table to read.
     ///
     /// @return The glm::vec3 at the given position, or (0, 0, 0) if an error occurs.
-    glm::vec3 ToVector3(GTLib::Script &script, int position);
+    glm::vec3 ToVector3(GT::Script &script, int position);
 
     /// Converts the table at the given position to a glm::vec4.
     ///
@@ -41,7 +41,7 @@ namespace GT
     /// @param position [in] The position of the table to read.
     ///
     /// @return The glm::vec4 at the given position, or (0, 0, 0, 0) if an error occurs.
-    glm::vec4 ToVector4(GTLib::Script &script, int position);
+    glm::vec4 ToVector4(GT::Script &script, int position);
 
     /// Converts the table at the given position to a glm::quat.
     ///
@@ -49,7 +49,7 @@ namespace GT
     /// @param position [in] The position of the table to read.
     ///
     /// @return The glm::vec4 at the given position, or (0, 0, 0, 0) if an error occurs.
-    glm::quat ToQuaternion(GTLib::Script &script, int position);
+    glm::quat ToQuaternion(GT::Script &script, int position);
 
 
     /// Pushes a new math.vec2 table.
@@ -57,8 +57,8 @@ namespace GT
     /// @param value [in] The glm::vec2 containing the initial value of the math.vec2.
     /// @param x     [in] The initial x value.
     /// @param y     [in] The initial y value.
-    void PushNewVector2(GTLib::Script &script, float x, float y);
-    inline void PushNewVector2(GTLib::Script &script, const glm::vec2 &value) { PushNewVector2(script, value.x, value.y); }
+    void PushNewVector2(GT::Script &script, float x, float y);
+    inline void PushNewVector2(GT::Script &script, const glm::vec2 &value) { PushNewVector2(script, value.x, value.y); }
 
     /// Pushes a new math.vec3 table.
     ///
@@ -66,8 +66,8 @@ namespace GT
     /// @param x     [in] The initial x value.
     /// @param y     [in] The initial y value.
     /// @param z     [in] The initial z value.
-    void PushNewVector3(GTLib::Script &script, float x, float y, float z);
-    inline void PushNewVector3(GTLib::Script &script, const glm::vec3 &value) { PushNewVector3(script, value.x, value.y, value.z); }
+    void PushNewVector3(GT::Script &script, float x, float y, float z);
+    inline void PushNewVector3(GT::Script &script, const glm::vec3 &value) { PushNewVector3(script, value.x, value.y, value.z); }
 
     /// Pushes a new math.vec4 table.
     ///
@@ -76,8 +76,8 @@ namespace GT
     /// @param y     [in] The initial y value.
     /// @param z     [in] The initial z value.
     /// @param w     [in] The initial w value.
-    void PushNewVector4(GTLib::Script &script, float x, float y, float z, float w);
-    inline void PushNewVector4(GTLib::Script &script, const glm::vec4 &value) { PushNewVector4(script, value.x, value.y, value.z, value.w); }
+    void PushNewVector4(GT::Script &script, float x, float y, float z, float w);
+    inline void PushNewVector4(GT::Script &script, const glm::vec4 &value) { PushNewVector4(script, value.x, value.y, value.z, value.w); }
 
     /// Pushes a new math.quat table.
     ///
@@ -86,8 +86,8 @@ namespace GT
     /// @param y     [in] The initial y value.
     /// @param z     [in] The initial z value.
     /// @param w     [in] The initial w value.
-    void PushNewQuaternion(GTLib::Script &script, float x, float y, float z, float w);
-    inline void PushNewQuaternion(GTLib::Script &script, const glm::quat &value) { PushNewQuaternion(script, value.x, value.y, value.z, value.w); }
+    void PushNewQuaternion(GT::Script &script, float x, float y, float z, float w);
+    inline void PushNewQuaternion(GT::Script &script, const glm::quat &value) { PushNewQuaternion(script, value.x, value.y, value.z, value.w); }
 
 
     /// Determines whether or not the value at the given index is a math.vec2.
@@ -96,7 +96,7 @@ namespace GT
     /// @param index  [in] The index of the item to check.
     ///
     /// @return 'true' if the item is a math.vec2; false otherwise.
-    bool IsVector2(GTLib::Script &script, int index);
+    bool IsVector2(GT::Script &script, int index);
 
     /// Determines whether or not the value at the given index is a math.vec3.
     ///
@@ -104,7 +104,7 @@ namespace GT
     /// @param index  [in] The index of the item to check.
     ///
     /// @return 'true' if the item is a math.vec3; false otherwise.
-    bool IsVector3(GTLib::Script &script, int index);
+    bool IsVector3(GT::Script &script, int index);
 
     /// Determines whether or not the value at the given index is a math.vec4.
     ///
@@ -112,7 +112,7 @@ namespace GT
     /// @param index  [in] The index of the item to check.
     ///
     /// @return 'true' if the item is a math.vec4; false otherwise.
-    bool IsVector4(GTLib::Script &script, int index);
+    bool IsVector4(GT::Script &script, int index);
 
 
     namespace FFI
