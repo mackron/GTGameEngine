@@ -17,23 +17,18 @@ namespace GT
     {
     public:
         
-        /**
-        *   \brief  Constructor.
-        */
+        /// Constructor.
         Semaphore(int value);
             
-        /**
-        *   \brief  Destructor.
-        *
-        *   Remember that once the semaphore is destructed, Wait() and Release() will be undefined. Ensure any threads
-        *   using the semaphore do not try to use it after it has been destructed.
-        */
+        /// Destructor.
+        ///
+        /// @remarks
+        ///     Remember that once the semaphore is destructed, Wait() and Release() will be undefined. Ensure any threads
+        ///     using the semaphore do not try to use it after it has been destructed.
         ~Semaphore();
             
-        /// Waits for the semaphore to become signaled. This will decrement the counter of the semaphore by one.
-        ///
-        /// @param timeoutInMilliseconds [in] The maximum amount of time to wait, in milliseconds.
-        void Wait(uint32_t timeoutInMilliseconds = 0xFFFFFFFF);
+        /// Waits for the semaphore to become signaled and decrements the counter of the semaphore by one.
+        void Wait();
             
         /// Increments the counter by one, allowing another thread to pass the semaphore gate.
         void Release();

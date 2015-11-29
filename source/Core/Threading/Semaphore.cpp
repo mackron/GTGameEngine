@@ -20,9 +20,9 @@ namespace GT
         CloseHandle((HANDLE)this->data);
     }
 
-    void Semaphore::Wait(uint32_t timeoutInMilliseconds)
+    void Semaphore::Wait()
     {
-        WaitForSingleObject((HANDLE)this->data, static_cast<DWORD>(timeoutInMilliseconds));
+        WaitForSingleObject((HANDLE)this->data, INFINITE);
     }
 
     void Semaphore::Release()
@@ -63,12 +63,9 @@ namespace GT
         sem_close((sem_t *)this->data);
     }
 
-    void Semaphore::Wait(uint32_t timeoutInMilliseconds)
+    void Semaphore::Wait()
     {
-        struct timespec ts;
-        ts.tv_sec  = static_cast<time_t>(timeoutInMilliseconds / 1000);
-        ts.tv_nsec = static_cast<long>((timeoutInMilliseconds - (ts.tv_sec * 1000)) * 1000);
-        if (sem_timedwait((sem_t *)this->data, &ts) == -1)
+        if (sem_wait((sem_t*)this->data) == -1)
         {
             PostError("Semaphore::Semaphore() - sem_wait() returned -1. errno = %d.", errno);
         }
@@ -76,7 +73,7 @@ namespace GT
 
     void Semaphore::Release()
     {
-        if (sem_post((sem_t *)this->data) == -1)
+        if (sem_post((sem_t*)this->data) == -1)
         {
             PostError("Semaphore::Semaphore() - sem_post() returned -1. errno = %d.", errno);
         }
