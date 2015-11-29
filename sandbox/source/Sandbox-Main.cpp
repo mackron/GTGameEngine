@@ -2,14 +2,14 @@
 #include <GTEngine/GTEngine.hpp>
 #include <GTEngine/Game.hpp>
 
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(_WIN32)
 #include <windows.h>
 #endif
 
 
 int main(int argc, char** argv)
 {
-#if defined(GT_PLATFORM_LINUX)
+#if defined(__linux__)
     XInitThreads();
 #endif
 
@@ -18,7 +18,7 @@ int main(int argc, char** argv)
 #endif
 
 
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(_WIN32)
     //FreeConsole();
 #endif
 

@@ -99,7 +99,7 @@ namespace GTLib
     void StopWindowTimer(WindowHandle window, uint32_t timerID);
     
     
-#if defined(GT_PLATFORM_LINUX)
+#if defined(__linux__)
     /// Retrieves the X11 display that was created in StartupWindowManager().
     ///
     /// @remarks

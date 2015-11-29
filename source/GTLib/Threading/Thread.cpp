@@ -1,6 +1,5 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTLib/Config.hpp>
 #include <GTLib/Threading/Thread.hpp>
 #include <GTLib/Threading/Semaphore.hpp>
 #include <GTLib/Threading/Mutex.hpp>
@@ -193,7 +192,7 @@ namespace GTLib
 }
 
 
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(_WIN32)
 #include <GTLib/windows.hpp>
 
 namespace GTLib

@@ -6,7 +6,6 @@
 #include "FontEngine_FCFT.hpp"
 #include "FontEngine_Win32.hpp"
 
-#include <GTLib/Config.hpp>
 #include <GTLib/System.hpp>
 #include <cassert>
 
@@ -15,9 +14,9 @@ namespace GTLib
     FontServer::FontServer(GlyphMapManager &glyphMapManager)
         : m_fontEngine(nullptr), m_glyphMapManager(&glyphMapManager), eventHandlers()
     {
-    #if defined(GT_PLATFORM_LINUX)
+    #if defined(__linux__)
         m_fontEngine = new FontEngine_FCFT(m_glyphMapManager);
-    #elif defined(GT_PLATFORM_WINDOWS)
+    #elif defined(_WIN32)
         m_fontEngine = new FontEngine_Win32(m_glyphMapManager);
     #endif
     }

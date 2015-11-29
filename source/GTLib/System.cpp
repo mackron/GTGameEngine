@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTLib/System.hpp>
-#include <GTLib/Config.hpp>
 #include <GTLib/Errors.hpp>
 #include <GTLib/Strings/Create.hpp>
 #include <cstring>
@@ -16,7 +15,7 @@ string onto the heap, copy the contents of the path into that string, and then r
 with malloc(). It will be free with free().
 */
 
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(_WIN32)
 
 #if defined(__clang__)
     #pragma GCC diagnostic push
@@ -129,7 +128,7 @@ namespace GTLib
 }
 
 
-#elif defined(GT_PLATFORM_LINUX)
+#elif defined(__linux__)
 #include <sys/time.h>
 #include <sys/types.h>
 #include <sys/stat.h>

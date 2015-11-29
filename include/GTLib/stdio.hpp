@@ -3,11 +3,10 @@
 #ifndef __GTLib_IO_cstdio_HPP_
 #define __GTLib_IO_cstdio_HPP_
 
-#include <GTLib/Config.hpp>
 #include <cstdarg>
 #include <cstdio>
 
-#if defined(GT_COMPILER_VC)
+#if defined(_MSC_VER)
 #include <direct.h>
 
 namespace GTLib
@@ -50,7 +49,7 @@ namespace GTLib
     {
         inline int mkdir(const char *directory)
         {
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(_WIN32)
             return ::mkdir(directory);
 #else
             return ::mkdir(directory, 0777);

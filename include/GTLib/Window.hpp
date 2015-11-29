@@ -8,7 +8,7 @@
 #include "Cursors.hpp"
 #include "Vector.hpp"
 
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(_WIN32)
 #include "windows.hpp"
 #endif
 
@@ -199,7 +199,7 @@ namespace GTLib
     ///     simpler in practice.
     struct _Window
     {
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(_WIN32)
         /// The Win32 window handle.
         HWND hWnd;
         
@@ -285,11 +285,11 @@ namespace GTLib
     /// @param colormap    [in] (X11 only) The colour map to use when creating the window. Can be 0, in which case it will be created based on the XVisualInfo structure.
     WindowHandle CreateWindow(int x, int y, unsigned int width, unsigned int height);
 
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(_WIN32)
     WindowHandle CreateWindow(int x, int y, unsigned int width, unsigned int height, int pixelFormat, const struct tagPIXELFORMATDESCRIPTOR* pfd);
 #endif
 
-#if defined(GT_PLATFORM_LINUX)
+#if defined(__linux__)
     WindowHandle CreateWindow(int x, int y, unsigned int width, unsigned int height, XVisualInfo* visualInfo, Colormap colormap = 0);
 #endif
     

@@ -1,6 +1,5 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
-#include <GTLib/Config.hpp>
 #include <GTLib/Log.hpp>
 #include <GTLib/DateTime.hpp>
 #include <GTLib/Strings/Replacer.hpp>
@@ -56,7 +55,7 @@ namespace GTLib
         Threading::Mutex LogMutex;
     }
 
-    #if defined(GT_PLATFORM_WINDOWS)
+    #if defined(_WIN32)
     static const char *newline = "\r\n";
     #else
     static const char *newline = "\n";

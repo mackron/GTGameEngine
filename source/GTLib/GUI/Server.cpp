@@ -398,7 +398,7 @@ namespace GTGUI
         destBuffer[1] = '_';
         destBuffer[2] = 'E';
 
-    #if defined(GT_COMPILER_VC)
+    #if defined(_MSC_VER)
         _itoa_s(this->autoElementCounter++, destBuffer + 3, destBufferSizeInBytes - 3, 10);
     #else
         GTLib::IO::snprintf(destBuffer + 3, destBufferSizeInBytes - 3, "%d", this->autoElementCounter++);

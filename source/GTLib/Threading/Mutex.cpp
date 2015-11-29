@@ -1,9 +1,8 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTLib/Threading/Mutex.hpp>
-#include <GTLib/Config.hpp>
 
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(_WIN32)
 #include <GTLib/windows.hpp>
 
 namespace GTLib

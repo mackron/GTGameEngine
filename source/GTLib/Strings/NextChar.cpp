@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTLib/Strings/NextChar.hpp>
-#include <GTLib/Config.hpp>
 
 namespace GTLib
 {
@@ -130,7 +129,7 @@ namespace GTLib
 
         char32_t NextCharImplementation(const wchar_t* &str, ptrdiff_t &strSizeInTs)
         {
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(_WIN32)
             return NextCharImplementation(reinterpret_cast<const char16_t* &>(str), strSizeInTs);
 #else
             return NextCharImplementation(reinterpret_cast<const char32_t* &>(str), strSizeInTs);

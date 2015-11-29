@@ -3,10 +3,9 @@
 #ifndef __GTLib_InternalWindowObjects_hpp_
 #define __GTLib_InternalWindowObjects_hpp_
 
-#include <GTLib/Config.hpp>
 #include <cstddef>
 
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(_WIN32)
 #include "Win32/windows_types.h"
 #else
 #include <X11/Xlib.h>
@@ -20,7 +19,7 @@ namespace GTLib
     */
     struct InternalWindowObjects
     {
-    #if defined(GT_PLATFORM_WINDOWS)
+    #if defined(_WIN32)
         InternalWindowObjects()
             : hWnd(0), hDC(0)
         {
@@ -36,7 +35,7 @@ namespace GTLib
 
         /// The device context of the window.
         HDC hDC;
-    #elif defined(GT_PLATFORM_LINUX)
+    #elif defined(__linux__)
         InternalWindowObjects()
             : window(0), display(0), vi(0), colormap(0)
         {

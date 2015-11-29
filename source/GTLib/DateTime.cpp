@@ -1,7 +1,6 @@
 // Copyright (C) 2011 - 2014 David Reid. See included LICENCE file.
 
 #include <GTLib/DateTime.hpp>
-#include <GTLib/Config.hpp>
 
 namespace GTLib
 {
@@ -19,7 +18,7 @@ namespace GTLib
     {
         char stringBuffer[64];
 
-#if defined(GT_COMPILER_VC)
+#if defined(_MSC_VER)
 		tm local;
 		localtime_s(&local, &this->time);
         strftime(stringBuffer, 64, format, &local);

@@ -8,7 +8,7 @@
 
 #include <gtgl/gtgl.h>
 
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(_WIN32)
 #include <WinGDI.h>
 #else
 #include <GTLib/Windowing/X11/X11.hpp>
@@ -318,7 +318,7 @@ namespace GTEngine
         assert(IsInitialised);
         {
             // When creating a window, we use GTLib to create the main window. Then we do platform specific stuff to get it working with the GTGL context.
-        #ifdef GT_PLATFORM_WINDOWS
+        #ifdef _WIN32
             GTLib::Window *window = new GTLib::Window();
             const GTLib::InternalWindowObjects &iwo = window->GetInternalObjects();
 
@@ -343,7 +343,7 @@ namespace GTEngine
 
     void Renderer::SetCurrentWindow(GTLib::Window *window)
     {
-    #ifdef GT_PLATFORM_WINDOWS
+    #ifdef _WIN32
         if (window != nullptr)
         {
             gtglSetCurrentDC(window->GetInternalObjects().hDC);

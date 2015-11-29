@@ -3,8 +3,6 @@
 #ifndef GT_GE_Config
 #define GT_GE_Config
 
-#include <GTLib/Config.hpp>
-
 //////////////////////////////////////////////////
 // Configurable Section
 //

@@ -2,11 +2,10 @@
 
 #include <GTLib/Windowing/Clipboard.hpp>
 #include <GTLib/WindowManagement.hpp>
-#include <GTLib/Config.hpp>
 #include <GTLib/Strings.hpp>
 #include <GTLib/Vector.hpp>
 
-#if defined(GT_PLATFORM_WINDOWS)
+#if defined(_WIN32)
 #include <GTLib/Windowing/Win32/Win32.hpp>
 #include <GTLib/Strings/LineIterator.hpp>
 
@@ -102,7 +101,7 @@ namespace GTLib
         return result;
     }
 }
-#elif defined(GT_PLATFORM_LINUX)
+#elif defined(__linux__)
 #include <GTLib/Windowing/X11/X11.hpp>
 #include <unistd.h>
 
